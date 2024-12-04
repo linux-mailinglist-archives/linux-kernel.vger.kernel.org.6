@@ -1,292 +1,144 @@
-Return-Path: <linux-kernel+bounces-431972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5A09E452A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:56:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3AA9E463C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:02:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C596B870CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:26:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B34DB630B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ACC1F03EC;
-	Wed,  4 Dec 2024 18:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5C61A8F83;
+	Wed,  4 Dec 2024 18:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fVqjD8o6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4p+d1v2"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA8F1F03C9;
-	Wed,  4 Dec 2024 18:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0402391AC;
+	Wed,  4 Dec 2024 18:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733336711; cv=none; b=RfsU7Jqy8RERwSboJ8iaMKen+8uorXGzttRIODF4Cugl9joqLzirWV624hYBC/4nTItsJYVnfVf2UtfO8JjkNOADxjDOKyIK1t9h56XUyMLZJml05rPBuKPskUyEFSQuTNaPljYkj2NwoJOmlxXwFUPAjdNmQjMjizOieW6O5Hg=
+	t=1733337102; cv=none; b=IYUi73r7UykvVmBVwepjqt/p03gPtEr3AAUhvOp0Pz3Le+sYhdGdezzBEsUUPd9s7DNvIyQiq+9W/pVJLBveGWROB9nZboPtYfJOFXTiXTHQt9jw3m/3buZXilR8Qncf6V9rg0Qb2VuKRUozblLGj/kjkqCTEON7NvtDaurRiQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733336711; c=relaxed/simple;
-	bh=cDSoQ16BDvvCzMtk2ozbB2lFby1naJ8lH/Pj+fxbBS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrej0gSeTlOPPoZg4GLLNX2T8JX367G9ok99LiW9fLZJX6HRIWtbiBnlTWm4nFCTkVlW1pQMWpIqCkdHR8E0w2txVA3OciEs50dlBPb86JTGS2c3WPx1fY1Dhaq5kYqhH6m92KmYmQaIoe7NNsmTnuj/IOPJGJ4Of6NEc+b7jSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fVqjD8o6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5502CC4CEE0;
-	Wed,  4 Dec 2024 18:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733336711;
-	bh=cDSoQ16BDvvCzMtk2ozbB2lFby1naJ8lH/Pj+fxbBS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fVqjD8o6EiOQa7vkywq13UdLd+UwDgzEY9ps1jFT6FPqFhz+WhlZu6Wd4kghxVg4I
-	 EOHWwJJf29ftKzgRrmyE/JzcHbrdDQxmPyNn0uc6zQIGNtnfsqqKwe8ChuZd0nY4gB
-	 4MjmTn1yi6TuyjQWxPhXcBn2nSnqal0v/RxgqDaQ=
-Date: Wed, 4 Dec 2024 19:25:07 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] sample: rust_misc_device: Demonstrate additional
- get/set value functionality
-Message-ID: <2024120453-unfunded-oversight-5161@gregkh>
-References: <20241204174627.1151288-1-lee@kernel.org>
- <20241204174627.1151288-2-lee@kernel.org>
+	s=arc-20240116; t=1733337102; c=relaxed/simple;
+	bh=MSqRuGMFM0xx57KHFYJ68dNlGmd8TmNYplr3P5UZQFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/Jwhsi0ggj8YbEvn2fNlRnRhZTc6VWwM0HludK9gFlxbkNhxsOsT7tjiZPTF5lgtpv0ToEG02+VHEdXV//NRMaTAB/zWGEgAKEPv6rCDsX1/svXj6pzO0BHzFETvIbIEiJ075zgNoVEgaT2w5O03ejnBESy48GHMggnSU/dA88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4p+d1v2; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa549d9dffdso1496266b.2;
+        Wed, 04 Dec 2024 10:31:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733337099; x=1733941899; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hGj4lyZABGpbptmi5AYYQfdcsOzBKvF8wyh41stUwec=;
+        b=E4p+d1v2KmYdBZN80Lmjq8v2hJsdEBs/85ovD9wZ6LaBktO/4RCR+B8mLCiEoEzjQ9
+         nZRHopJjoRiy6WxfgqgxXkjsvYfFnFEGgQLnBdeT/1n5bjyn0JPKN7x7bp0+XXHaDO6l
+         +TXeFI6GLSvBJhyJswqwPkxxG8UINhNZbZqHu2i0T3ZEE+pIHLh0Bo6ba9tiOwnj7y+B
+         mh+WGe9nvOAuebGiNPri8J0FrmrBjG0OypUzz16oIZzlEeN/cqw/Gmj67CT+CHjYSP+k
+         PDMx60o1FwrFpdue5XDYucrc3m3jOsPa6PyJXvbfUaAt/QSbl2h9KlCwk5MotWXK++oa
+         zuCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733337099; x=1733941899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hGj4lyZABGpbptmi5AYYQfdcsOzBKvF8wyh41stUwec=;
+        b=nimWlD5JN/5Hk+epm/3gUtDslHTZsGz3LkR2qcBxZHll+M56eyi1exkxEelrG6dWVi
+         MsZ1CqbHqhZg/omLhHQ1vAeLXS2CShE8my/1vozd7ZcZ5d9UVzm72bcPK95Qj8nPowVq
+         8UL6Bvd9oplCPD4PdUpd2tvO8Qf33s5GNnYYBzw18He4BHA5+OjDEKHLpjcdkrNZGG7e
+         JgKsg6OgfjnU3oUFky03klC/tp5pupAKjiXdQC/Z1eeDYo9MQtUa73r3F6yzmWJILRjJ
+         BySLJSIdYwQrHp97rHwkfd+VprNTV1L6feAGAKZsHOZ33nJCcLbfdiyyQJw6ciEuNu5v
+         R85g==
+X-Forwarded-Encrypted: i=1; AJvYcCXabWrVBbsRBij4JR7k9u09JyNg3N0M+69yz0LOXEeKty8fMgGPfQWb0exthPwzpRGKmLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg6Tq2/d8pXiuYb8zueDM1oR2NOU/kEWTpKYLPYr+23TarIV3m
+	XTTGedZJBfwlptril0O+Z/O3/UzaqPsMh3zk8K1vZleUPwQ1eDzzm29wmQ2gUm178FB1jsG/mDR
+	/HhkPXfLY2JDl5ISeQJVsZaT3SqM=
+X-Gm-Gg: ASbGncsVvbPcj3YdfNErZMy20RO0uV2iQbXBDI8KiBF8VvIfCo4OxUScbIHbZmu4xPG
+	HL4FoAvtVGCbY3F51kxXusMZXK/RLi08=
+X-Google-Smtp-Source: AGHT+IEQeTwmSEzTutR+k2GVtxkmUbI/HF+bbX8DVpLUnXNi6dPM8GqKxdV7NVtvWSsuycrv/pdD9CCfPctxpEJV/28=
+X-Received: by 2002:a17:906:3150:b0:aa4:8186:4e93 with SMTP id
+ a640c23a62f3a-aa5f7cabf86mr651766666b.1.1733337098594; Wed, 04 Dec 2024
+ 10:31:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204174627.1151288-2-lee@kernel.org>
+References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-5-arnd@kernel.org>
+In-Reply-To: <20241204103042.1904639-5-arnd@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 4 Dec 2024 20:31:01 +0200
+Message-ID: <CAHp75VcYojM8uYURbaNjquod7n_EJe58Er-57Dw0iaZFc-+i8Q@mail.gmail.com>
+Subject: Re: [PATCH 04/11] x86: split CPU selection into 32-bit and 64-bit
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Sean Christopherson <seanjc@google.com>, Davide Ciminaghi <ciminaghi@gnudd.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04, 2024 at 05:46:25PM +0000, Lee Jones wrote:
-> Expand the complexity of the sample driver by providing the ability to
-> get and set an integer.  The value is protected by a mutex.
-> 
-> Here is a simple userspace program that fully exercises the sample
-> driver's capabilities.
-> 
-> int main() {
->   int value, new_value;
->   int fd, ret;
-> 
->   // Open the device file
->   printf("Opening /dev/rust-misc-device for reading and writing\n");
->   fd = open("/dev/rust-misc-device", O_RDWR);
->   if (fd < 0) {
->     perror("open");
->     return errno;
->   }
-> 
->   // Make call into driver to say "hello"
->   printf("Calling Hello\n");
->   ret = ioctl(fd, RUST_MISC_DEV_HELLO, NULL);
->   if (ret < 0) {
->     perror("ioctl: Failed to call into Hello");
->     close(fd);
->     return errno;
->   }
-> 
->   // Get initial value
->   printf("Fetching initial value\n");
->   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &value);
->   if (ret < 0) {
->     perror("ioctl: Failed to fetch the initial value");
->     close(fd);
->     return errno;
->   }
-> 
->   value++;
-> 
->   // Set value to something different
->   printf("Submitting new value (%d)\n", value);
->   ret = ioctl(fd, RUST_MISC_DEV_SET_VALUE, &value);
->   if (ret < 0) {
->     perror("ioctl: Failed to submit new value");
->     close(fd);
->     return errno;
->   }
-> 
->   // Ensure new value was applied
->   printf("Fetching new value\n");
->   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &new_value);
->   if (ret < 0) {
->     perror("ioctl: Failed to fetch the new value");
->     close(fd);
->     return errno;
->   }
-> 
->   if (value != new_value) {
->     printf("Failed: Committed and retrieved values are different (%d - %d)\n", value, new_value);
->     close(fd);
->     return -1;
->   }
-> 
->   // Call the unsuccessful ioctl
->   printf("Attempting to call in to an non-existent IOCTL\n");
->   ret = ioctl(fd, RUST_MISC_DEV_FAIL, NULL);
->   if (ret < 0) {
->     perror("ioctl: Succeeded to fail - this was expected");
->   } else {
->     printf("ioctl: Failed to fail\n");
->     close(fd);
->     return -1;
->   }
-> 
->   // Close the device file
->   printf("Closing /dev/rust-misc-device\n");
->   close(fd);
-> 
->   printf("Success\n");
->   return 0;
-> }
-> 
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> ---
->  samples/rust/rust_misc_device.rs | 82 ++++++++++++++++++++++++--------
->  1 file changed, 62 insertions(+), 20 deletions(-)
-> 
-> diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-> index 5f1b69569ef7..9c041497d881 100644
-> --- a/samples/rust/rust_misc_device.rs
-> +++ b/samples/rust/rust_misc_device.rs
-> @@ -2,13 +2,20 @@
->  
->  //! Rust misc device sample.
->  
-> +use core::pin::Pin;
-> +
->  use kernel::{
->      c_str,
-> -    ioctl::_IO,
-> +    ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
->      miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
-> +    new_mutex,
->      prelude::*,
-> +    sync::Mutex,
-> +    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
->  };
->  
-> +const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('R' as u32, 7);
-> +const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('R' as u32, 8);
+On Wed, Dec 4, 2024 at 12:31=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The x86 CPU selection menu is confusing for a number of reasons.
+> One of them is how it's possible to build a 32-bit kernel for
+> a small number of early 64-bit microarchitectures (K8, Core2)
 
-Shouldn't this be 'W'?
+Core 2
 
->  const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
->  
->  module! {
-> @@ -40,45 +47,80 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
->      }
->  }
->  
-> -struct RustMiscDevice;
-> +struct Inner {
-> +    value: i32,
-> +}
->  
-> -impl RustMiscDevice {
-> -    fn new() -> Self {
-> -        Self
-> -    }
-> +#[pin_data(PinnedDrop)]
-> +struct RustMiscDevice {
-> +    #[pin]
-> +    inner: Mutex<Inner>,
->  }
->  
->  #[vtable]
->  impl MiscDevice for RustMiscDevice {
-> -    type Ptr = KBox<Self>;
-> +    type Ptr = Pin<KBox<Self>>;
->  
-> -    fn open() -> Result<KBox<Self>> {
-> +    fn open() -> Result<Pin<KBox<Self>>> {
->          pr_info!("Opening Rust Misc Device Sample\n");
->  
-> -        Ok(KBox::new(RustMiscDevice::new(), GFP_KERNEL)?)
-> +        KBox::try_pin_init(
-> +            try_pin_init! {
-> +                RustMiscDevice { inner <- new_mutex!( Inner{ value: 0_i32 } )}
-> +            },
-> +            GFP_KERNEL,
-> +        )
->      }
->  
-> -    fn ioctl(
-> -        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
-> -        cmd: u32,
-> -        _arg: usize,
-> -    ) -> Result<isize> {
-> +    fn ioctl(device: Pin<&RustMiscDevice>, cmd: u32, arg: usize) -> Result<isize> {
->          pr_info!("IOCTLing Rust Misc Device Sample\n");
->  
-> -        match cmd {
-> -            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
-> +        let size = _IOC_SIZE(cmd);
-> +
-> +        let _ = match cmd {
-> +            RUST_MISC_DEV_GET_VALUE => device.get_value(UserSlice::new(arg, size).writer())?,
-> +            RUST_MISC_DEV_SET_VALUE => device.set_value(UserSlice::new(arg, size).reader())?,
-> +            RUST_MISC_DEV_HELLO => device.hello()?,
->              _ => {
-> -                pr_err!("IOCTL not recognised: {}\n", cmd);
-> +                pr_err!("-> IOCTL not recognised: {}\n", cmd);
->                  return Err(EINVAL);
+It spells with a space starting with a capital letter, some issues of
+the spelling below as well.
 
-Nit, wrong return value for an invalid ioctl, I missed that in patch 1,
-sorry about that.
+> but not the regular generic 64-bit target that is the normal
+> default.
+>
+> There is no longer a reason to run 32-bit kernels on production
+> 64-bit systems, so simplify the configuration menu by completely
+> splitting the two into 32-bit-only and 64-bit-only machines.
+>
+> Testing generic 32-bit kernels on 64-bit hardware remains
+> possible, just not building a 32-bit kernel that requires
+> a 64-bit CPU.
 
->              }
-> -        }
-> +        };
->  
->          Ok(0)
->      }
->  }
->  
-> -impl Drop for RustMiscDevice {
-> -    fn drop(&mut self) {
-> +#[pinned_drop]
-> +impl PinnedDrop for RustMiscDevice {
-> +    fn drop(self: Pin<&mut Self>) {
->          pr_info!("Exiting the Rust Misc Device Sample\n");
->      }
->  }
+> +choice
+> +       prompt "x86-64 Processor family"
+> +       depends on X86_64
+> +       default GENERIC_CPU
+> +       help
+> +         This is the processor type of your CPU. This information is
+> +         used for optimizing purposes. In order to compile a kernel
+> +         that can run on all supported x86 CPU types (albeit not
+> +         optimally fast), you can specify "Generic-x86-64" here.
 > +
-> +impl RustMiscDevice {
-> +    fn set_value(&self, mut reader: UserSliceReader) -> Result<isize> {
-> +        let new_value = reader.read::<i32>()?;
-> +        let mut guard = self.inner.lock();
-> +
-> +        pr_info!("-> Copying data from userspace (value: {})\n", new_value);
-> +
-> +        guard.value = new_value;
-> +        Ok(0)
-> +    }
-> +
-> +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
-> +        let guard = self.inner.lock();
-> +
-> +        pr_info!("-> Copying data to userspace (value: {})\n", &guard.value);
-> +
-> +        writer.write::<i32>(&guard.value)?;
+> +         Here are the settings recommended for greatest speed:
+> +         - "Opteron/Athlon64/Hammer/K8" for all K8 and newer AMD CPUs.
+> +         - "Intel P4" for the Pentium 4/Netburst microarchitecture.
+> +         - "Core 2/newer Xeon" for all core2 and newer Intel CPUs.
 
-What happens if it fails, shouldn't your pr_info() happen after this?
+Core 2
 
-thanks,
-
-greg k-h
-
-> +        Ok(0)
-> +    }
+> +         - "Intel Atom" for the Atom-microarchitecture CPUs.
+> +         - "Generic-x86-64" for a kernel which runs on any x86-64 CPU.
 > +
-> +    fn hello(&self) -> Result<isize> {
-> +        pr_info!("-> Hello from the Rust Misc Device\n");
-> +
-> +        Ok(0)
-> +    }
-> +}
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
+> +         See each option's help text for additional details. If you don'=
+t know
+> +         what to do, choose "Generic-x86-64".
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
