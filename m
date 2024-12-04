@@ -1,210 +1,256 @@
-Return-Path: <linux-kernel+bounces-432042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C289E4435
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:12:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B84961692C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:12:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2815B1A8F9A;
-	Wed,  4 Dec 2024 19:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yOYbqjVG"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA119E443E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:13:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F40C1A8F6E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733339523; cv=fail; b=kWbeg7PGc1KHUZjiUakAzHeacZjDyj+rwBD6YZVxptAnpejX6ZyIJDjU9YddEyDBmqNgP1AVvm2662llKBemsQYdqffNNM2pjaAHQisyv/LAr5suynTscAP2PFte9CZHPkPdcgnXDX14yqawq/m7xPXJGdpxOROxH48JyXRi2j8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733339523; c=relaxed/simple;
-	bh=ByOM5XL6yOw3rd/xSe5aS5EFs6Y3aozFcNcsgU8p7oE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E6Sc2oXDY8Y1KjKqfVxBRBD67X1WTi2EwB+Vd1UBzEQJku+/Z6xFzW2ZM5EC41H/usPAlUQVlYvEm2/UcBEVSX6cDqu8BwVw2qskMqwvjcSIf2qqnAx6RKtyLQXV4+iIn2CeKIVfwXlxdIF7ul3zarFMFRiMqKlCFxjNKZrx01U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yOYbqjVG; arc=fail smtp.client-ip=40.107.94.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ky3LKFWY0uzH/WpOBrkV5pkSE60EVx/UKmHby8UJaAh4BGyr+fa75BMqSZLRuwawzL8EXxgKIYZGhG0TW1NNeWpmZUHoW/EZ0wXY19uZIpL5kIgxXpv0L2FE5NfLuxm1/EAZFfxUbEk08N+EkRBX/6z+iZBXjHuT62iNCFpvVUbroBwOiABnqWvHdbt/xEiw8Teid7F8/InzLfrVf3YgLIqq3GMj8RNEXpkAbaTqvPp4+7k/64JHFYPXFFyTFDsj3liRaJkKhGR4q34ey5yCpSXo1osCVeK5OhP83B2LUu8U5iFIBVoFfYu2MazdYI3iwchVTgpjkkVTURW5huXn5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VIvU9Z5ByWuz4UFhN3A/jP8+K+nyO8vRzw/nm2mnmWM=;
- b=Jy2mW2s1ojAuYbgQxS7zxf/rIaNofAKUhe8+wT+07WZFFtEQ5nz367U48rcr9V7G4Xr/NWtvC0dlI+X/I9T2Z4cq7Y1Eq0MbmdSzqYD8Jubz2FuUEx4FToBX8kaCpT6RX2h+AbFPoMA7YPwmRbSrXKn6R/Xjcrf51PktuyuiVZBP9UZq4Y212LpQ3QGhv2ZnZJTJANnPBzyhH9GbSY/xa3jIwdjDWh2x9Zb2XX4+ZrgJdEcEpKOCljeiwY6xhXSpYuJnrDgPgdcFqhMzDrb97tRXg22AryBOUbYDSMFzGa5PazhJMRDANV5TwFBUHw34TwmLbJYeFzZ3rFjAVkYq2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VIvU9Z5ByWuz4UFhN3A/jP8+K+nyO8vRzw/nm2mnmWM=;
- b=yOYbqjVGz7u/ff2m1kuOpb0OIY6ZXOXld3EUk4U8Ezo/2plrXQOzeG4I2p2MR6zwzh55kslgz/tzuuWhxIOXyaL0I9N8dF/3Yg8jd8nFFA+XyQzhE3KTVt9CiMTTpYIrSSm+97CFAHCjuDAs3UfyDfRAnjwWO2dtpGDkRTjlyuM=
-Received: from BL1PR13CA0134.namprd13.prod.outlook.com (2603:10b6:208:2bb::19)
- by SA1PR12MB5638.namprd12.prod.outlook.com (2603:10b6:806:229::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.20; Wed, 4 Dec
- 2024 19:11:55 +0000
-Received: from BL02EPF0001A0FE.namprd03.prod.outlook.com
- (2603:10b6:208:2bb:cafe::a3) by BL1PR13CA0134.outlook.office365.com
- (2603:10b6:208:2bb::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Wed, 4
- Dec 2024 19:11:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL02EPF0001A0FE.mail.protection.outlook.com (10.167.242.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Wed, 4 Dec 2024 19:11:55 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
- 2024 13:11:54 -0600
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
- 2024 13:11:54 -0600
-Received: from [172.25.146.163] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 4 Dec 2024 13:11:53 -0600
-Message-ID: <89ab9108-aa40-4da4-8e9f-dfa3bd49e2f4@amd.com>
-Date: Wed, 4 Dec 2024 14:11:52 -0500
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC9528691E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:13:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958771C3BF3;
+	Wed,  4 Dec 2024 19:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kttFc9TR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31561C3BE8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733339631; cv=none; b=cAwfGew1uoXnHS/piNa2FMwyCoUT9M7G7d0MSXFiQjkbuW1jdd3cdYgaHDopfu5RuVk14HjJFjfiXGnAGYGmjelevl8d0fZ2HeOFOwcyMaWnOd5sXAuGu++Gwi4K4iskQzRCETK64Ywm7BJ1BPKXKrenbgN0DNmo+CQ7A7NgNw0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733339631; c=relaxed/simple;
+	bh=y6Z1BboDyGXrBlp/9phIXCTZkngI1+QTcK1R5uxh3x0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pLw69xoManNts0Beo9m+DksY79DFAnHHZPEOyj6cAaszQ6Sv9EcuTheJgtXpKuXoXqMlBbLfl9nm5te5nk+/unXmcdJ9NTwyNT8zlqb7Ch5r0XnbxGd9ZFYmad0nDT1auK6T3AOqnMAcPYEGWlcNRPgPEVGvuaKoJNplwJsoJlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kttFc9TR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE0BC4CECD;
+	Wed,  4 Dec 2024 19:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733339631;
+	bh=y6Z1BboDyGXrBlp/9phIXCTZkngI1+QTcK1R5uxh3x0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kttFc9TRajLPnFT656INLu7F7zoYsTFtdl64tEPXZvFZX00sNtktAik6cqhciy4RS
+	 esHrmNDjVuVzWxQ8H8rH5lusyFJXEbmB2WZjvDzoa3PZCanpPS1zB1jQz2GcVpvOQr
+	 0e/u05VkaegndM545KbMqNaTWzfOn1MqNtlNZFerV1yYXofjkhb3LLA3V6mx7V61OI
+	 6rCxGW74Zn9ClAGtAfQjjp+u2eBcM79lZAtMhc91GiOdFayRqVImFcd9maQTyrlSa4
+	 NyBw2DftXCw5wU1zY9ouMgzzsbr1XyhkW4JvicP94YjVlGI1mYOelU84ziswwIv1wU
+	 5Wus3Ar3q+Sng==
+Received: from 82-132-238-195.dab.02.net ([82.132.238.195] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tIuom-000YwB-1Z;
+	Wed, 04 Dec 2024 19:13:48 +0000
+Date: Wed, 04 Dec 2024 19:13:09 +0000
+Message-ID: <87h67js1mi.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Vitaly Chikunov <vt@altlinux.org>
+Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"Wangzhou (B)" <wangzhou1@hisilicon.com>,
+	Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
+In-Reply-To: <20241204182231.ovvj6rpvcs2f5gv7@altlinux.org>
+References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
+	<20241202153618.GA6834@willie-the-truck>
+	<86ttbmt71k.wl-maz@kernel.org>
+	<20241202155940.p267a3tz5ypj4sog@altlinux.org>
+	<86ser6t6fs.wl-maz@kernel.org>
+	<20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
+	<20241203092721.j473dthkbq6wzez7@altlinux.org>
+	<1847e34fa7724d28aeb22d93752f64f2@huawei.com>
+	<20241203221453.mwh6sozyczi4ec2k@altlinux.org>
+	<87jzcfsuep.wl-maz@kernel.org>
+	<20241204182231.ovvj6rpvcs2f5gv7@altlinux.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] xen/acpi: upload power and performance related
- data from a PVH dom0
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Penny Zheng
-	<Penny.Zheng@amd.com>, Stefano Stabellini <sstabellini@kernel.org>, Oleksandr
- Tyshchenko <oleksandr_tyshchenko@epam.com>
-CC: Ray Huang <Ray.Huang@amd.com>, Xenia Ragiadakou
-	<Xenia.Ragiadakou@amd.com>, <xen-devel@lists.xenproject.org>,
-	<linux-kernel@vger.kernel.org>, =?UTF-8?Q?Roger_Pau_Monn=C3=A9?=
-	<roger.pau@citrix.com>
-References: <20241204082430.469092-1-Penny.Zheng@amd.com>
- <20241204082430.469092-2-Penny.Zheng@amd.com>
- <fc2ef8da-62e8-431a-8a1b-508b3f9d5ef4@suse.com>
-Content-Language: en-US
-From: Jason Andryuk <jason.andryuk@amd.com>
-In-Reply-To: <fc2ef8da-62e8-431a-8a1b-508b3f9d5ef4@suse.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FE:EE_|SA1PR12MB5638:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1c04954-d3a4-4f88-626f-08dd149784a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Rk9UMHRwTFRCbGlSc0kzaytZdVJyR3VKVHp6aE9JV0ZKWjBYVzhYZmJTUCta?=
- =?utf-8?B?enJjclIrMVNuWFpZMGsvcnFEa2VnZnRrV3Y4bjc5VXgwaWkwajl3TEJTR3M1?=
- =?utf-8?B?ZGhVQ0xYRjVFc2dlZmwxaHprU3BPNlpBYStzZVlOcERudkFqRVBSQlVlRUt0?=
- =?utf-8?B?d1cwaWlHeEhCbGRNMUhTT0ZkdFBEWXVNemRZWTU3ZWJOdGpUWk5paVduaUoy?=
- =?utf-8?B?K3AxYmU4VzdpMk5oOFJ4T00zY3IzMzNhd21jWVdHMDZBa2dyRzZEZmprdS9Q?=
- =?utf-8?B?bHVVb3FkSTFTLzZhUjFSU2JINFd3dEE3Z3Q2T2FxemtSczhkaXZBNm1wWjhL?=
- =?utf-8?B?Y3BtNTM3TWRpeFUrR3pkSlFsL1hLbC9KSlZtY1pmeU1kMWpBS3lTN2JnRU5m?=
- =?utf-8?B?ZXl1dmZwMkJNL3JiUU10TkorWndnbW1iTjZObXhLRnhXcmw0WEJvNTBpS21C?=
- =?utf-8?B?YldWYzJIb1dIQ3FSa0NoL0Mya20rV3J1Y2w5MC9DOHFpdllHeXFPTFJCVWFX?=
- =?utf-8?B?NjhEcUFOQmpVQWVGYXdDTndydEV4TmJtOVhJb1UvU1gyYVk4UCs3SGFVVUpx?=
- =?utf-8?B?TkNieXlBYjhOOTFxNnFtT2phM0owOHdGMzV1SzM5UVhiaENKQUtFVE9WUWw4?=
- =?utf-8?B?UENVaTRCOUNJblNERWU5UE14VXYxUzQ4Z3JNZDN2S2RmQU8yT3lNWjd5SlZS?=
- =?utf-8?B?d21EOEhaUy9qY2ZJeERMdjhwV3ZvSEtNZ1Y1WEZVLzlaL1NNaWNMMjBYSVBE?=
- =?utf-8?B?NTA5NmVDKzU4QWUyTUNseGhGQXMrLzFWdm8wbXRzZkxPTDBibnZRZnVVZGFj?=
- =?utf-8?B?Rm8zb29pVFJGandlbTQ0ZnQ5RFcwWW1UamFiUFZWcTdCTVE5THkydStweXJs?=
- =?utf-8?B?NVhaWWhTdVN3eWduazlxbzUwZlYvVzhkNjE1QWtGcFBnb01lM0J5dHNYNWZ5?=
- =?utf-8?B?bENvTHZ6SnhXbjZFWGEzQmFld1pmc0pJVGRVcmMzYi9tTE9NQ1haZS90d3BR?=
- =?utf-8?B?S0gxdWdHTG9pRnVJazh0bHdCWFh3VitVZG10VVRLa29yWC8xOEFxSFBvZ1A1?=
- =?utf-8?B?cDZHSzYyTnR0eDl6SER4dTNZclFhbXhFZEQxOXhBQmhsY1F3WDNGdm90aFAz?=
- =?utf-8?B?SHdiZFo4Z1RoSXQrZDNzZENUTTFaZktZbUo5VkEwUVlFREpGMTNnQnJha1J6?=
- =?utf-8?B?TXFGMDArdU5pSnIxRnRleEhVOHJ0aW9zVjI5czJSMVd3Ui9BeCtNVUVJYlZS?=
- =?utf-8?B?T05aVUR3OERSNk5vL2d0WlI5L2Q0UTVkUDBFRlJBWDIwc2pZV21FRlBmN241?=
- =?utf-8?B?RFhGb3FDNWNXRDBZcGFoYWZUeVphRENwRU80SDFTVzlzbnZtYnM0a2p4MnEv?=
- =?utf-8?B?bGpWSDlINlVKaExzQXVmN2wzT05XZzhSbUZGWlhFVUU3MVpCbkNUeGp5MHBx?=
- =?utf-8?B?ck53ZUovUzVRTUcwbXFnVWpUWmR4NC9QWEI0UWJ3c056WFB3ZVYwZ3dYTFVt?=
- =?utf-8?B?cmpUT1VJM1NRVDcxcUw4OVRocTZYY2hGb1pneldQV005djlsakExano0SGZW?=
- =?utf-8?B?cDFadm04K2U3dy9kZnJsUXREYXd4bi92YTlmeXFVd2hCRXJhUitCZ2hRMno2?=
- =?utf-8?B?ZnR4U1R6NmdRd0c2QmRONzVMdU1pZEt2YjJvSGRZZmJzZW5nLzhNVVg4QVRP?=
- =?utf-8?B?NEg4eThPVkk5dVJEd3FuRTV5ZW5NQjkxNG84VHBJcllFNHBmSmx1K21OMDVp?=
- =?utf-8?B?NFl0eURSTCtHcFBCMGhpSWNCYkpMbVVjaEJLTmpWUVNDem9oMS91eVlBMllC?=
- =?utf-8?B?cmRsTUVRTHE2SWp6d2lPWmI3VWFVQm0yYTVvVVJBcjdlQUNlUXUrRjBwWlUv?=
- =?utf-8?B?WHdkcVpMNDFVcE1YN2VaU1hsK3JpZjJaVU11K0dFVi9pclE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 19:11:55.3705
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1c04954-d3a4-4f88-626f-08dd149784a2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5638
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.238.195
+X-SA-Exim-Rcpt-To: vt@altlinux.org, shameerali.kolothum.thodi@huawei.com, will@kernel.org, james.morse@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, mark.rutland@arm.com, wangzhou1@hisilicon.com, glebfm@altlinux.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2024-12-04 03:29, Jürgen Groß wrote:
-> On 04.12.24 09:24, Penny Zheng wrote:
->> From: Roger Pau Monné <roger.pau@citrix.com>
->>
->> When running as a PVH dom0 the ACPI MADT is crafted by Xen in order to
->> report the correct numbers of vCPUs that dom0 has, so the host MADT is
->> not provided to dom0.  This creates issues when parsing the power and
->> performance related data from ACPI dynamic tables, as the ACPI
->> Processor UIDs found on the dynamic code are likely to not match the
->> ones crafted by Xen in the dom0 MADT.
->>
->> Xen would rely on Linux having filled at least the power and
->> performance related data of the vCPUs on the system, and would clone
->> that information in order to setup the remaining pCPUs on the system
->> if dom0 vCPUs < pCPUs.  However when running as PVH dom0 it's likely
->> that none of dom0 CPUs will have the power and performance data
->> filled, and hence the Xen ACPI Processor driver needs to fetch that
->> information by itself.
->>
->> In order to do so correctly, introduce a new helper to fetch the _CST
->> data without taking into account the system capabilities from the
->> CPUID output, as the capabilities reported to dom0 in CPUID might be
->> different from the ones on the host.
->>
->> Note that the newly introduced code will only fetch the _CST, _PSS,
->> _PPC and _PCT from a single CPU, and clone that information for all the
->> other Processors.  This won't work on an heterogeneous system with
->> Processors having different power and performance related data between
->> them.
->>
->> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
->> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+On Wed, 04 Dec 2024 18:34:53 +0000,
+Vitaly Chikunov <vt@altlinux.org> wrote:
 > 
-> I think this is the V2 version of Jason's patch, of which he sent V3 just
-> yesterday?
+> Marc,
+> 
+> On Wed, Dec 04, 2024 at 08:51:26AM +0000, Marc Zyngier wrote:
+> > On Tue, 03 Dec 2024 22:14:53 +0000,
+> > Vitaly Chikunov <vt@altlinux.org> wrote:
+> > > 
+> > > Shameer, Marc, Oliver, Will,
+> > > 
+> > > On Tue, Dec 03, 2024 at 10:03:11AM +0000, Shameerali Kolothum Thodi wrote:
+> > > > > -----Original Message-----
+> > > > > From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
+> > > > > Behalf Of Vitaly Chikunov
+> > > > > Sent: Tuesday, December 3, 2024 9:27 AM
+> > > > > To: Marc Zyngier <maz@kernel.org>
+> > > > > Cc: Will Deacon <will@kernel.org>; james.morse@arm.com; linux-arm-
+> > > > > kernel@lists.infradead.org; Catalin Marinas <catalin.marinas@arm.com>;
+> > > > > linux-kernel@vger.kernel.org; oliver.upton@linux.dev;
+> > > > > mark.rutland@arm.com
+> > > > > Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
+> > > > > 0000000002000000 [#1] SMP
+> > > > > 
+> > > > > Marc,
+> > > > > 
+> > > > > On Tue, Dec 03, 2024 at 01:31:19AM +0300, Vitaly Chikunov wrote:
+> > > > > > On Mon, Dec 02, 2024 at 04:07:03PM +0000, Marc Zyngier wrote:
+> > > > > > > On Mon, 02 Dec 2024 15:59:40 +0000,
+> > > > > > > Vitaly Chikunov <vt@altlinux.org> wrote:
+> > > > > > > >
+> > > > > > > > Marc,
+> > > > > > > >
+> > > > > > > > On Mon, Dec 02, 2024 at 03:53:59PM +0000, Marc Zyngier wrote:
+> > > > > > > > >
+> > > > > > > > > What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
+> > > > > > > >
+> > > > > > > > No, host is 6.6.60.
+> > > > > > >
+> > > > > > > Right. I wouldn't be surprised if:
+> > > > > > >
+> > > > > > > - this v6.6 kernel doesn't hide the MPAM feature as it should (and
+> > > > > > >   that's proably something we should backport)
+> > > > > >
+> > > > > > How to confirm this? Currently I cannot find any (case-insensitive)
+> > > > > > "MPAM" files in /sys, nor mpam string in /proc/cpuinfo, nor MPAM
+> > > > > > strings in `strace -v` (as it decodes some KVM ioctls) of qemu process.
+> > > > > >
+> > > > > > >
+> > > > > > > - you get a nastygram in the host log telling you that the guest has
+> > > > > > >   executed something it shouldn't (you'll get the encoding of the
+> > > > > > >   instruction)
+> > > > > >
+> > > > > > I requested admins of the box for dmesg output since I don't have root
+> > > > > > access myself and nowadays dmesg is not accessible for a user.
+> > > > > 
+> > > > > This is what they reported:
+> > > > > 
+> > > > >   kvm [2502822]: Unsupported guest sys_reg access at: ffff80008003e9f0
+> > > > > [000000c5]
+> > > > >                    { Op0( 3), Op1( 0), CRn(10), CRm( 4), Op2( 4), func_read },
+> > > > > 
+> > > > 
+> > > > As Will pointed out I think this is access to MPAMIDR_EL1 and is from this
+> > > > code here,
+> > > > 
+> > > > +++ b/arch/arm64/kernel/cpuinfo.c
+> > > > @@ -478,6 +478,9 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
+> > > >  	if (id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0))
+> > > >  		__cpuinfo_store_cpu_32bit(&info->aarch32);
+> > > >  
+> > > > +	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
+> > > > +		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
+> > > > +
+> > > >  	cpuinfo_detect_icache_policy(info);
+> > > >  }
+> > > > 
+> > > > I did manage to boot my setup in 6.6 and this is what happens,
+> > > > 
+> > > > Host kernel 6.6
+> > > > Guest Kernel 6.13-rc1
+> > > > 
+> > > > [    0.195392] smp: Brought up 1 node, 8 CPUs
+> > > > [    0.219000] SMP: Total of 8 processors activated.
+> > > > [    0.219629] CPU: All CPU(s) started at EL1
+> > > > ...
+> > > > [    0.223212] CPU features: detected: RAS Extension Support
+> > > > [    0.223927] CPU features: detected: Memory Partitioning And Monitoring
+> > > > [    0.224796] CPU features: detected: Memory Partitioning And Monitoring Virtualisation
+> > > > [    0.225961] alternatives: applying system-wide alternatives
+> > > > ...
+> > > > 
+> > > > Guest detects MPAM and boots fine.
+> > > > 
+> > > > Host kernel 6.13-rc1
+> > > > Guest Kernel 6.13-rc1
+> > > > 
+> > > > [    0.196625] smp: Brought up 1 node, 8 CPUs
+> > > > [    0.222093] SMP: Total of 8 processors activated.
+> > > > [    0.222769] CPU: All CPU(s) started at EL1
+> > > > ...
+> > > > [    0.226620] CPU features: detected: RAS Extension Support
+> > > > [    0.227453] alternatives: applying system-wide alternatives
+> > > > 
+> > > > MPAM is not visible to Guest in this case.
+> > > > 
+> > > > So as I pointed out earlier could it be a case where the ID register reports MPAM support
+> > > > but the firmware has not enabled MPAM?
+> > > > 
+> > > > James seems to be mentioning that case here,
+> > > > 
+> > > > " (If you have a boot failure that bisects here its likely your CPUs
+> > > > advertise MPAM in the id registers, but firmware failed to either enable
+> > > > or MPAM, or emulate the trap as if it were disabled)"
+> > > 
+> > > I tried to verify that MPAM is advertised with qemu+gdb method, as
+> > > suggested by Oliver, but ID_AA64PFR0_EL1 register is not there.
+> > > 
+> > >   (gdb) i r ID_AA64PFR0_EL1
+> > >   Invalid register `ID_AA64PFR0_EL1'
+> > 
+> > Then there is a bug in either QEMU or the GDB stubs. This register
+> > exists, or you wouldn't be here.
+> 
+> 
+> In case this is useful:
+> 
+>   builder@aarch64:/.in$ qemu-system-aarch64 --version
+>   QEMU emulator version 9.1.1 (qemu-9.1.1-alt2)
+>   Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers
+>   builder@aarch64:/.in$ gdb --version
+>   GNU gdb (GDB) 14.1.0.56.d739d4fd457-alt1 (ALT Sisyphus)
+>   Copyright (C) 2023 Free Software Foundation, Inc.
+>   License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+>   This is free software: you are free to change and redistribute it.
+>   There is NO WARRANTY, to the extent permitted by law.
+> 
+> Is there way to get content of this register with these possible
+> gdb/qemu bugs?
 
-Penny's patch has some of the changes I made, but then I made an 
-additional change and didn't tell her about it.
+I have no idea. And frankly, I don't think this matters.
 
-> Please sync with him how to proceed: is his patch meant to be a 
-> prerequisite
-> for your series or a part of it?
+> Perhaps, we can add some debugging print in guest kernel.
+> 
+> > > 
+> > > Are there other suggestions?
+> > 
+> > Mark has described what the problem is likely to be. 6.6-stable needs
+> > to have 6685f5d572c22e10 backported, and it probably should have been
+> > Cc: to stable. Can you please apply the following patch to your *host*
+> > machine and retest?
+> 
+> Unfortunately I cannot. But I can apply patches to the guest kernel. [I
+> will try to convince admins of the server to apply the patch, though, but
+> this can take time, and they can refuse since this is production build
+> server and it's update procedure is complicated.]
 
-Sorry for the confusion.  Penny, I think you should just grab my v3 
-(https://lore.kernel.org/xen-devel/20241203225338.1336-1-jason.andryuk@amd.com/T/#u) 
-and resubmit with that.  It removes a BUG_ON that checkpatch complained 
-about (which is unreachable because of an earlier NULL check).
+Then I really cannot help you. I'm not going to paper over a
+hypervisor bug in the guest kernel, and if you/they are happy to run
+with critical bugs in your production machine, that's about it then.
 
-Thanks,
-Jason
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
