@@ -1,66 +1,56 @@
-Return-Path: <linux-kernel+bounces-432253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E649E4865
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:05:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF309E4868
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F5E282CEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B03128511C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8AE1AB6D4;
-	Wed,  4 Dec 2024 23:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C662D1F5422;
+	Wed,  4 Dec 2024 23:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="StHjZG3c"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fs4E/bc6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C819E1865FA;
-	Wed,  4 Dec 2024 23:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2F61917D7;
+	Wed,  4 Dec 2024 23:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733353533; cv=none; b=IyWe4McbYhf3AKOnaD3MZWGiy+zs6ibHq5XN5PEeFpK2eE0nzpXvJisY/ef2/aU107xEfGDB5pd7b2dllxmCpk+qAD15FwRDfSy5bebOE0Uw8qFoKYLZuuuj6TDKvRKOZVWEozuTCzpS0EhgboRgRe6Z7bCjikN75AqKR33xb6g=
+	t=1733353642; cv=none; b=Et44SGZrQInRcaz0Wyl5d7ErdGICJozn2R3Iv9IOBFEmNiq+jYVYStKCIc5IVy6rc0QdptYvYZCIoZ02piC4OqZZBCmBgkp/L2+c8h1IOXk3kA9tcN1tRZYTu9nNo1/UI9aBCk1sGFXqnWfBf9gtlcoIApr/31k/IvHGUPLg+3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733353533; c=relaxed/simple;
-	bh=sKZ17KVqvPATSw8Iva9s0FGFDOLFPDsST5IY6gV9WXg=;
+	s=arc-20240116; t=1733353642; c=relaxed/simple;
+	bh=OMN2IFSUiKKrufELvPCeQ45Asb0k1nPnIEIFNMCPGCc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cyIcryLtWKiR1TplScAT1BJlyKmCbSsBy7e/WceX8bTegs//NW6zGxVDRS8IhwCPX9/6Xk6YOKrmsBMUTrJ0WSm/XWva+yvXj4ZdwMr4n3mk5IL85D/vqHMzvaKeJy5mesRfkmPxAlsYgv/+pMr+KXWR+dCbiuG2zLCOGfITcaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=StHjZG3c; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=a8SLkbZvpqXwmiENBJZYl8OI6ICPWxj+qMeA9HdiP00=; b=StHjZG3cOogG9/V71mlxIhvsv4
-	xV/Ms3rWCvWfgNEEDeH5nf0aYKUhJCnTERLb6jJ1nd0hyZ5EROBlL2RGOEazJR9Ja6DWwtI1/UYvy
-	Q66XNRlBnwilyZgKQnJQfjnrHTEtVmJbiGsKRKb15QmH1ojhIth10u9SCRt6rgqH6WsQrSjpLF29d
-	VLQ9Ix7ltiTwVyd4BBoodFUi4Z3RdWmaxWf5ycljEZ0dC5bIarE7WM04L6awHb/8h4fd24fFNN7En
-	J/pSTA1MoX+lP5SHgHqysu1DAKTbOJKzu15gYT3ci1LRukQDrl7j1zTs8SCteXi54tffQYol6dn31
-	S56mLyPw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIyQw-00000004tqJ-3suz;
-	Wed, 04 Dec 2024 23:05:26 +0000
-Date: Wed, 4 Dec 2024 23:05:26 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Pawel Chmielewski <pawel.chmielewski@intel.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Paul Greenwalt <paul.greenwalt@intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>
-Subject: Re: WARNING: [xtensa] modpost: vmlinux: section mismatch in
- reference: ice_adv_lnk_speed_maps+0x14 (section: .data) ->
- __setup_str_initcall_blacklist (section: .init.rodata)
-Message-ID: <20241204230526.GA1166824@ZenIV>
-References: <202408220755.LlaA10C6-lkp@intel.com>
- <3ba6caea-654e-4dcd-a4a4-bfdcf808f0e5@intel.com>
- <CAMo8BfJOPNaHb0f3Rf2GyhApCDg5bFfCGETWU9-LBJWiJpLeFw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKCh6aY3uJk59tzzcFP7guZoICqPrKPvu1KtqYefQKlA1s+adiCo94Z9Fdd8g0xXXDYOx6lIrcfTOuLY81ni+8smlZYrBwtf6/ybrLo9cnLQRi1CvUqVkmFpieYfdeiavsvEOabld9vxOZo3oatZA3DRWMRc283NDiwop/DhgSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fs4E/bc6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76290C4CECD;
+	Wed,  4 Dec 2024 23:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733353641;
+	bh=OMN2IFSUiKKrufELvPCeQ45Asb0k1nPnIEIFNMCPGCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fs4E/bc6JHOFacKvtGTQdWSOCzr4ShViz2jCviiAQ3ECqIwxoKLV3KeIoFeGrJx5/
+	 efGrr4PceciPtadid/p3h8hK4hdq8Lt2PfwT3oNl0FkIu9Z/6yO7D1B6Ge0r4XkEBB
+	 0ocy/eE69NlAd+IzhOkUxjPb9l4dAHDgGPFk1POXPDGm3ZFZk3vU8M0NFMsLODSINm
+	 W2mo2tPf0NOg0fM27dNdsYcp6baMJS8OcRozKPwudhQht52EOXibUw3npciURf5FGl
+	 qm1pmVHNlabs7bn/cjbqqMiP3J/IOzHDPizwynhFADPa6x6EtPcytT3wS95YQxnF6d
+	 mOSpwVHmq5dUQ==
+Date: Wed, 4 Dec 2024 15:07:20 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Ole Schuerks <ole0811sch@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, jude.gyimah@rub.de,
+	thorsten.berger@rub.de, deltaone@debian.org, jan.sollmann@rub.de,
+	masahiroy@kernel.org, linux-kernel@vger.kernel.org,
+	nathan@kernel.org, nicolas@fjasle.eu
+Subject: Re: [PATCH v6 01/11] kconfig: Add PicoSAT interface
+Message-ID: <Z1DgqAb2wnlDjnLR@bombadil.infradead.org>
+References: <20241028034949.95322-1-ole0811sch@gmail.com>
+ <20241028034949.95322-2-ole0811sch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,36 +59,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMo8BfJOPNaHb0f3Rf2GyhApCDg5bFfCGETWU9-LBJWiJpLeFw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241028034949.95322-2-ole0811sch@gmail.com>
 
-On Fri, Aug 23, 2024 at 11:41:17PM -0700, Max Filippov wrote:
+On Mon, Oct 28, 2024 at 04:49:39AM +0100, Ole Schuerks wrote:
+> PicoSAT (https://fmv.jku.at/picosat/) is the SAT solver used in this
 
-> static struct ethtool_forced_speed_map ice_adv_lnk_speed_maps[]
-> __ro_after_init = {
->        ETHTOOL_FORCED_SPEED_MAP(ice_adv_lnk_speed, 100),
-> 
-> that array goes into the .data,
+PicoSAT [0] ... etc etc..
 
-... due to
+Then at the bottom you use the tag:
 
-#define __ro_after_init __read_mostly
+Link: https://fmv.jku.at/picosat/ # [0]
 
-in your asm/cache.h, instead of the usual .data..ro_after_init,
-which would be enough for modpost to assume that driver knows
-what it's doing and won't access the dangling pointers to
-.init.rodata in there after the initmem had been freed.
+> project. It is used as a dynamically loaded library. 
 
-The same goes for qed and the same thing happens on openrisc,
-for exact same reason.
+OK
 
-While we are at it, that might as well had been
-#define __ro_after_init
-since __read_mostly is not defined on xtensa and default is empty.
+> This commit contains a
 
-If you don't want that stuff to go into RODATA, why not
-simply define an empty RO_AFTER_INIT_DATA in your vmlinux.lds
-and put those sections explicitly there, along with the data ones,
-as e.g. s390 does?  Or arch/arm/kernel/vmlinux-xip.lds.S,
-for that matter...
+Obviously this commit exits... be more imperative...
+
+> script that installs PicoSAT as a library on the host system, a source file
+> that provides a function for loading a subset of functions from the
+> library, and a header file that declares these functions.
+
+Just say something like:
+
+Add PicoSAT dynamic library support to kconfig. Support for this will be
+used subsequent patches.
+
+> +static void load_function(const char *name, void **ptr, void *handle, bool *failed)
+> +{
+> +	if (*failed)
+> +		return;
+> +
+> +	*ptr = dlsym(handle, name);
+> +	if (!*ptr) {
+> +		printd("While loading %s: %s\n", name, dlerror());
+> +		*failed = true;
+> +	}
+> +}
+> +
+> +bool load_picosat(void)
+> +{
+> +	void *handle = NULL;
+> +	bool failed = false;
+> +
+> +	/*
+> +	 * Try different names for the .so library. This is necessary since
+> +	 * all packages don't use the same versioning.
+> +	 */
+> +	for (int i = 0; i < ARRAY_SIZE(picosat_lib_names) && !handle; ++i)
+> +		handle = dlopen(picosat_lib_names[i], RTLD_LAZY);
+> +	if (!handle) {
+
+This just deals with the first error and there is no unwinding, is that OK?
+
+Other than that, did you run this through checkpatch.pl?
+
+ Luis
 
