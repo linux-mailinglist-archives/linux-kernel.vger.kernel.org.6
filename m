@@ -1,275 +1,440 @@
-Return-Path: <linux-kernel+bounces-431412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F089E3DAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:05:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3471C9E3D07
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29F1AB374A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:45:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEAC22824BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ED720B1F3;
-	Wed,  4 Dec 2024 14:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49EE20ADCE;
+	Wed,  4 Dec 2024 14:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JtU15SvG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNSr/yv3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFC520A5ED
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A646E20A5D8;
+	Wed,  4 Dec 2024 14:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323504; cv=none; b=usjJ4XkUVbkZiM/GQrm2MEydjhEzdB2iPsVzjc9lvCiXt7uk5UFGEtQ8GBw+1VwpHEVkD55pvufJnJ5XoltKbxFS8Ja0pCy/TSEKNpeJFN2NHTGNl4iaQT4MpM0b0u/+7YzCoF1xzRKHPIxuLLaXsxAtzE/mOtCfoPYRDHLeQPk=
+	t=1733323423; cv=none; b=QzkVO+RhCdmMFuG4JlepAXPBUyHYxU9ngISZSyocIvyuoz2rR4eYgcUi+QnFe8Cn2Ylm+wOOtZjuoINbLo3mq0+1OKUs8ovwOCQ59/RVPAiXle1yFZCOA5yH5fqwlxUenA3bxkw54EFYR/amC0cyO7ZFIb//G78kd2SJWY8k1AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323504; c=relaxed/simple;
-	bh=UKVpTREXOSud6qEEoYP9tSM7tENUkEIc2W0Beuq2vMU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=tjLUkcA7Kp85GPZ+HNwdtnHwP9zXq8CQrgpQBKDakrx4kJSkVZayP1j6iA5QppG8Kh8Aqi8wFdi/zYDmXSpydF2oQPkT3kQwkK29jW2RrG7+UADW37scoGV4exPppN/2rvD6URJv/yHTmlVb2Cuo/TGYOw5hbkzejojsa9/TjdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JtU15SvG; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733323502; x=1764859502;
-  h=date:from:to:cc:subject:message-id;
-  bh=UKVpTREXOSud6qEEoYP9tSM7tENUkEIc2W0Beuq2vMU=;
-  b=JtU15SvGLYcNdpn6aET7+AbjHkN7PuGUgDUZsLyielX7IgxUmvfz8g3Z
-   hUnGO4GnKxulYL+P0vRDKPgjWcSuqnidJbhfD07BwQcumbs311ff6OnFg
-   WaeCXr55DOVlOno7cmdsS4408TU/F7gzqdQx6LlrxpbVO8nufl1dXqzhE
-   AVlHH/+r49+TZ2iKKhzDh7aEbJF+e4lj775oIvBr9YyILnJJkt8qoDKPm
-   o4AENkaPXi5LQdEYIgHGAXWhpFEPVHO9N2sK8eFL3HL7k3Wiod/7dgoiO
-   /4OmqsCH6IyU5TqyeTx56BgHn1NRilf/cl1fwj5s9ZyZxBS4AjV5Cryqw
-   w==;
-X-CSE-ConnectionGUID: 8/4QiL5rRj+FBmhNCDzTgw==
-X-CSE-MsgGUID: snP2CNuVTWiWDxW1+x2lHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="44970355"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="44970355"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:44:59 -0800
-X-CSE-ConnectionGUID: 89hzHUWBTHO6L3C+9OJmQQ==
-X-CSE-MsgGUID: MAPTSN4+ToyeZmOCzqu4AA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93673963"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 04 Dec 2024 06:44:57 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIqcZ-000382-0u;
-	Wed, 04 Dec 2024 14:44:55 +0000
-Date: Wed, 04 Dec 2024 22:42:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/urgent] BUILD SUCCESS
- 9151299ee5101e03eeed544c1280b0e14b89a8a4
-Message-ID: <202412042251.fPEpJTq2-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1733323423; c=relaxed/simple;
+	bh=undE9DTFHVhAQNgkdMypYeAhhRQBawi8NRp2IEnHt4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqpmYO55YioLi2Ca1vpVR0DRGeYVX+rbMiJtkZEzJtLBTLx3vSD4xzxlOn4oXv9QG7i6429uRn2t+2yKCZRHoBBlGebqYlUR4ol0eTWewGVyDHaQLAs85jqOSgwL+kS/3qNoJOAnLrzSKgy+UNxjWTRSa4ZhHDwip3DVp5jZCqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNSr/yv3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1679BC4CECD;
+	Wed,  4 Dec 2024 14:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733323423;
+	bh=undE9DTFHVhAQNgkdMypYeAhhRQBawi8NRp2IEnHt4I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rNSr/yv3mj0EZ/m19i9RxOi7Nnlo/ogkCfR8bstdKVHxnpVm1srNVqcNNAT0btNi3
+	 C+lK1KSh5Yg33D4Hc4e2P0mVokgOosFLtXz1Ed1AupAgTtTo9/Ru1n7qcopV/vATBM
+	 qgnQokM6eCoLHQtjNutQsARREPrgLTcHrCCyBq8a0dXgEKstk5h8402MOavxy56C/S
+	 UegD73F9aJ3EvvkF8FUFFemQcoFlp8ARql4eo/g469HN2u4NsVywqK4FP8qkMrh94K
+	 6dHnlAeKVE7hHw9hOH+rjiXDz2gJ2wgJ54uEp7UC/ZOEfLlN3hJVUzDx+XVxtQxvj1
+	 LxpalJjq4+huA==
+Date: Wed, 4 Dec 2024 08:43:41 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v5 3/5] dt-bindings: pinctrl: add binding for MT7988 SoC
+Message-ID: <20241204144341.GA191772-robh@kernel.org>
+References: <20241202110045.22084-1-linux@fw-web.de>
+ <20241202110045.22084-4-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202110045.22084-4-linux@fw-web.de>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
-branch HEAD: 9151299ee5101e03eeed544c1280b0e14b89a8a4  irqchip/stm32mp-exti: CONFIG_STM32MP_EXTI should not default to y when compile-testing
+On Mon, Dec 02, 2024 at 12:00:37PM +0100, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> This adds bindings for MT7988 pinctrl driver.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+> changes in v5 (so not adding RB from Rob given in v4):
+> - do not use MTK_DRIVE_8mA in example
+> - add _0 functions for pwm
 
-elapsed time: 723m
+Minor enough to keep my R-by, but if I review it again I can always find 
+more. :)
 
-configs tested: 183
-configs skipped: 7
+> 
+> changes in v4:
+> - dt-binding: pinctrl: fix dt_binding_check fixed-string error
+> 
+> '^mux$' should not be valid under {'pattern': '^\\^[a-zA-Z0-9,\\-._#@]+\\$$'}
+> 	hint: Fixed strings belong in 'properties', not 'patternProperties'
+> 
+> changes in v3:
+> - limit conf subnode name with optional suffix like mmc on mt7986
+> - match mux subnode without wildcards
+> 
+> changes in v2:
+> - drop gpio-cells description
+> - move ref in mux subnode up
+> - order uart-functions alphanumeric and fix typo
+> ---
+>  .../pinctrl/mediatek,mt7988-pinctrl.yaml      | 578 ++++++++++++++++++
+>  1 file changed, 578 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..dd5584557135
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
+> @@ -0,0 +1,578 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/mediatek,mt7988-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT7988 Pin Controller
+> +
+> +maintainers:
+> +  - Sean Wang <sean.wang@kernel.org>
+> +
+> +description:
+> +  The MediaTek's MT7988 Pin controller is used to control SoC pins.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt7988-pinctrl
+> +
+> +  reg:
+> +    minItems: 7
+> +    maxItems: 7
+> +
+> +  reg-names:
+> +    items:
+> +      - const: gpio
+> +      - const: iocfg_tr
+> +      - const: iocfg_br
+> +      - const: iocfg_rb
+> +      - const: iocfg_lb
+> +      - const: iocfg_tl
+> +      - const: eint
+> +
+> +  gpio-controller: true
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio-ranges:
+> +    minItems: 1
+> +    maxItems: 5
+> +    description:
+> +      GPIO valid number range.
+> +
+> +  interrupt-controller: true
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      'mux':
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Drop quotes.
 
-tested configs:
-alpha                            alldefconfig    gcc-14.2.0
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                      axs103_smp_defconfig    gcc-14.2.0
-arc                 nsimosci_hs_smp_defconfig    clang-20
-arc                            randconfig-001    clang-20
-arc                   randconfig-001-20241204    clang-14
-arc                            randconfig-002    clang-20
-arc                   randconfig-002-20241204    clang-14
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                       aspeed_g4_defconfig    clang-20
-arm                         at91_dt_defconfig    clang-20
-arm                            dove_defconfig    gcc-14.2.0
-arm                          ep93xx_defconfig    gcc-14.2.0
-arm                       imx_v6_v7_defconfig    clang-20
-arm                          ixp4xx_defconfig    gcc-14.2.0
-arm                        keystone_defconfig    gcc-14.2.0
-arm                         lpc18xx_defconfig    clang-20
-arm                          moxart_defconfig    gcc-14.2.0
-arm                        mvebu_v5_defconfig    gcc-14.2.0
-arm                          pxa3xx_defconfig    clang-15
-arm                          pxa3xx_defconfig    gcc-14.2.0
-arm                            qcom_defconfig    clang-15
-arm                            qcom_defconfig    clang-20
-arm                            randconfig-001    clang-20
-arm                   randconfig-001-20241204    clang-14
-arm                            randconfig-002    clang-20
-arm                   randconfig-002-20241204    clang-14
-arm                            randconfig-003    clang-20
-arm                   randconfig-003-20241204    clang-14
-arm                            randconfig-004    clang-20
-arm                   randconfig-004-20241204    clang-14
-arm                             rpc_defconfig    gcc-14.2.0
-arm                         s5pv210_defconfig    gcc-14.2.0
-arm                        shmobile_defconfig    clang-18
-arm                        shmobile_defconfig    gcc-14.2.0
-arm                          sp7021_defconfig    clang-20
-arm                           spitz_defconfig    gcc-14.2.0
-arm                         wpcm450_defconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                          randconfig-001    clang-20
-arm64                 randconfig-001-20241204    clang-14
-arm64                          randconfig-002    clang-20
-arm64                 randconfig-002-20241204    clang-14
-arm64                          randconfig-003    clang-20
-arm64                 randconfig-003-20241204    clang-14
-arm64                          randconfig-004    clang-20
-arm64                 randconfig-004-20241204    clang-14
-csky                             alldefconfig    clang-20
-csky                              allnoconfig    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-i386                 buildonly-randconfig-001    gcc-12
-i386        buildonly-randconfig-001-20241204    gcc-12
-i386                 buildonly-randconfig-002    gcc-12
-i386        buildonly-randconfig-002-20241204    gcc-12
-i386                 buildonly-randconfig-003    gcc-12
-i386        buildonly-randconfig-003-20241204    gcc-12
-i386                 buildonly-randconfig-004    gcc-12
-i386        buildonly-randconfig-004-20241204    gcc-12
-i386                 buildonly-randconfig-005    gcc-12
-i386        buildonly-randconfig-005-20241204    gcc-12
-i386                 buildonly-randconfig-006    gcc-12
-i386        buildonly-randconfig-006-20241204    gcc-12
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                 loongson3_defconfig    clang-18
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                          atari_defconfig    clang-18
-m68k                          atari_defconfig    gcc-14.2.0
-m68k                       bvme6000_defconfig    gcc-14.2.0
-m68k                        m5407c3_defconfig    gcc-14.2.0
-m68k                            q40_defconfig    clang-15
-microblaze                       alldefconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                          ath25_defconfig    clang-20
-mips                          ath79_defconfig    gcc-14.2.0
-mips                      bmips_stb_defconfig    clang-18
-mips                           ci20_defconfig    clang-18
-mips                          eyeq5_defconfig    gcc-14.2.0
-mips                          eyeq6_defconfig    clang-20
-mips                          eyeq6_defconfig    gcc-14.2.0
-mips                           ip22_defconfig    clang-15
-mips                           ip22_defconfig    gcc-14.2.0
-mips                           ip28_defconfig    gcc-14.2.0
-mips                           ip32_defconfig    gcc-14.2.0
-mips                           jazz_defconfig    clang-20
-mips                     loongson1b_defconfig    clang-15
-mips                          rb532_defconfig    clang-18
-mips                         rt305x_defconfig    clang-20
-mips                        vocore2_defconfig    clang-15
-mips                           xway_defconfig    clang-20
-nios2                         10m50_defconfig    gcc-14.2.0
-nios2                         3c120_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-openrisc                         alldefconfig    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                       virt_defconfig    clang-20
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.2.0
-parisc                generic-64bit_defconfig    clang-15
-powerpc                    adder875_defconfig    clang-15
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                        fsp2_defconfig    clang-15
-powerpc                     kmeter1_defconfig    gcc-14.2.0
-powerpc                 linkstation_defconfig    clang-20
-powerpc                 linkstation_defconfig    gcc-14.2.0
-powerpc                   motionpro_defconfig    clang-18
-powerpc                   motionpro_defconfig    gcc-14.2.0
-powerpc                 mpc8313_rdb_defconfig    clang-20
-powerpc                 mpc8315_rdb_defconfig    clang-15
-powerpc                  mpc866_ads_defconfig    clang-20
-powerpc                      pmac32_defconfig    gcc-14.2.0
-powerpc                     ppa8548_defconfig    clang-20
-powerpc                     skiroot_defconfig    gcc-14.2.0
-powerpc                  storcenter_defconfig    clang-15
-powerpc                     stx_gp3_defconfig    clang-20
-powerpc                     tqm5200_defconfig    gcc-14.2.0
-powerpc                      tqm8xx_defconfig    clang-20
-powerpc                         wii_defconfig    gcc-14.2.0
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-riscv                    nommu_k210_defconfig    clang-20
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                ecovec24-romimage_defconfig    clang-20
-sh                ecovec24-romimage_defconfig    gcc-14.2.0
-sh                         ecovec24_defconfig    gcc-14.2.0
-sh                            hp6xx_defconfig    gcc-14.2.0
-sh                          landisk_defconfig    clang-20
-sh                          rsk7264_defconfig    gcc-14.2.0
-sh                          sdk7780_defconfig    gcc-14.2.0
-sh                          sdk7786_defconfig    clang-20
-sh                           se7343_defconfig    clang-20
-sh                           se7619_defconfig    gcc-14.2.0
-sh                           se7712_defconfig    gcc-14.2.0
-sh                           se7722_defconfig    gcc-14.2.0
-sh                           se7751_defconfig    clang-20
-sh                           se7780_defconfig    gcc-14.2.0
-sh                   secureedge5410_defconfig    clang-20
-sh                     sh7710voipgw_defconfig    gcc-14.2.0
-sh                        sh7757lcr_defconfig    gcc-14.2.0
-sh                            shmin_defconfig    clang-20
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                       sparc32_defconfig    gcc-14.2.0
-sparc                       sparc64_defconfig    clang-15
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                             i386_defconfig    gcc-14.2.0
-um                           x86_64_defconfig    gcc-14.2.0
-x86_64      buildonly-randconfig-001-20241204    clang-19
-x86_64      buildonly-randconfig-002-20241204    clang-19
-x86_64      buildonly-randconfig-003-20241204    clang-19
-x86_64      buildonly-randconfig-004-20241204    clang-19
-x86_64      buildonly-randconfig-005-20241204    clang-19
-x86_64      buildonly-randconfig-006-20241204    clang-19
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                  nommu_kc705_defconfig    clang-20
-xtensa                    smp_lx200_defconfig    gcc-14.2.0
-xtensa                         virt_defconfig    gcc-14.2.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +        type: object
+> +        additionalProperties: false
+> +        $ref: /schemas/pinctrl/pinmux-node.yaml
+> +        description: |
+> +          pinmux configuration nodes.
+> +
+> +          The following table shows the effective values of "group", "function"
+> +          properties and chip pinout pins
+> +
+> +          groups               function           pins (in pin#)
+> +          ---------------------------------------------------------------------
+> +          "tops_jtag0_0"       "jtag"             0, 1, 2, 3, 4
+> +          "wo0_jtag"           "jtag"             50, 51, 52, 53, 54
+> +          "wo1_jtag"           "jtag"             50, 51, 52, 53, 54
+> +          "wo2_jtag"           "jtag"             50, 51, 52, 53, 54
+> +          "jtag"               "jtag"             58, 59, 60, 61, 62
+> +          "tops_jtag0_1"       "jtag"             58, 59, 60, 61, 62
+> +          "int_usxgmii"        "int_usxgmii"      2, 3
+> +          "pwm0"               "pwm"              57
+> +          "pwm1"               "pwm"              21
+> +          "pwm2"               "pwm"              80
+> +          "pwm2_0"             "pwm"              58
+> +          "pwm3"               "pwm"              81
+> +          "pwm3_0"             "pwm"              59
+> +          "pwm4"               "pwm"              82
+> +          "pwm4_0"             "pwm"              60
+> +          "pwm5"               "pwm"              83
+> +          "pwm5_0"             "pwm"              61
+> +          "pwm6"               "pwm"              69
+> +          "pwm6_0"             "pwm"              62
+> +          "pwm7"               "pwm"              70
+> +          "pwm7_0"             "pwm"              4
+> +          "dfd"                "dfd"              0, 1, 2, 3, 4
+> +          "xfi_phy0_i2c0"      "i2c"              0, 1
+> +          "xfi_phy1_i2c0"      "i2c"              0, 1
+> +          "xfi_phy_pll_i2c0"   "i2c"              3, 4
+> +          "xfi_phy_pll_i2c1"   "i2c"              3, 4
+> +          "i2c0_0"             "i2c"              5, 6
+> +          "i2c1_sfp"           "i2c"              5, 6
+> +          "xfi_pextp_phy0_i2c" "i2c"              5, 6
+> +          "xfi_pextp_phy1_i2c" "i2c"              5, 6
+> +          "i2c0_1"             "i2c"              15, 16
+> +          "u30_phy_i2c0"       "i2c"              15, 16
+> +          "u32_phy_i2c0"       "i2c"              15, 16
+> +          "xfi_phy0_i2c1"      "i2c"              15, 16
+> +          "xfi_phy1_i2c1"      "i2c"              15, 16
+> +          "xfi_phy_pll_i2c2"   "i2c"              15, 16
+> +          "i2c1_0"             "i2c"              17, 18
+> +          "u30_phy_i2c1"       "i2c"              17, 18
+> +          "u32_phy_i2c1"       "i2c"              17, 18
+> +          "xfi_phy_pll_i2c3"   "i2c"              17, 18
+> +          "sgmii0_i2c"         "i2c"              17, 18
+> +          "sgmii1_i2c"         "i2c"              17, 18
+> +          "i2c1_2"             "i2c"              69, 70
+> +          "i2c2_0"             "i2c"              69, 70
+> +          "i2c2_1"             "i2c"              71, 72
+> +          "mdc_mdio0"          "eth"              5, 6
+> +          "2p5g_ext_mdio"      "eth"              28, 29
+> +          "gbe_ext_mdio"       "eth"              30, 31
+> +          "mdc_mdio1"          "eth"              69, 70
+> +          "pcie_wake_n0_0"     "pcie"             7
+> +          "pcie_clk_req_n0_0"  "pcie"             8
+> +          "pcie_wake_n3_0"     "pcie"             9
+> +          "pcie_clk_req_n3"    "pcie"             10
+> +          "pcie_clk_req_n0_1"  "pcie"             10
+> +          "pcie_p0_phy_i2c"    "pcie"             7, 8
+> +          "pcie_p1_phy_i2c"    "pcie"             7, 8
+> +          "pcie_p3_phy_i2c"    "pcie"             9, 10
+> +          "pcie_p2_phy_i2c"    "pcie"             7, 8
+> +          "ckm_phy_i2c"        "pcie"             9, 10
+> +          "pcie_wake_n0_1"     "pcie"             13
+> +          "pcie_wake_n3_1"     "pcie"             14
+> +          "pcie_2l_0_pereset"  "pcie"             19
+> +          "pcie_1l_1_pereset"  "pcie"             20
+> +          "pcie_clk_req_n2_1"  "pcie"             63
+> +          "pcie_2l_1_pereset"  "pcie"             73
+> +          "pcie_1l_0_pereset"  "pcie"             74
+> +          "pcie_wake_n1_0"     "pcie"             75
+> +          "pcie_clk_req_n1"    "pcie"             76
+> +          "pcie_wake_n2_0"     "pcie"             77
+> +          "pcie_clk_req_n2_0"  "pcie"             78
+> +          "pcie_wake_n2_1"     "pcie"             79
+> +          "pmic"               "pmic"             11
+> +          "watchdog"           "watchdog"         12
+> +          "spi0_wp_hold"       "spi"              22, 23
+> +          "spi0"               "spi"              24, 25, 26, 27
+> +          "spi1"               "spi"              28, 29, 30, 31
+> +          "spi2"               "spi"              32, 33, 34, 35
+> +          "spi2_wp_hold"       "spi"              36, 37
+> +          "snfi"               "flash"            22, 23, 24, 25, 26, 27
+> +          "emmc_45"            "flash"            21, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
+> +          "sdcard"             "flash"            32, 33, 34, 35, 36, 37
+> +          "emmc_51"            "flash"            38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49
+> +          "uart2"              "uart"             0, 1, 2, 3
+> +          "tops_uart0_0"       "uart"             22, 23
+> +          "uart2_0"            "uart"             28, 29, 30, 31
+> +          "uart1_0"            "uart"             32, 33, 34, 35
+> +          "uart2_1"            "uart"             32, 33, 34, 35
+> +          "net_wo0_uart_txd_0" "uart"             28
+> +          "net_wo1_uart_txd_0" "uart"             29
+> +          "net_wo2_uart_txd_0" "uart"             30
+> +          "tops_uart1_0"       "uart"             28, 29
+> +          "tops_uart0_1"       "uart"             30, 31
+> +          "tops_uart1_1"       "uart"             36, 37
+> +          "uart0"              "uart"             55, 56
+> +          "tops_uart0_2"       "uart"             55, 56
+> +          "uart2_2"            "uart"             50, 51, 52, 53
+> +          "uart1_1"            "uart"             58, 59, 60, 61
+> +          "uart2_3"            "uart"             58, 59, 60, 61
+> +          "uart1_2"            "uart"             80, 81, 82, 83
+> +          "uart1_2_lite"       "uart"             80, 81
+> +          "tops_uart1_2"       "uart"             80, 81
+> +          "net_wo0_uart_txd_1" "uart"             80
+> +          "net_wo1_uart_txd_1" "uart"             81
+> +          "net_wo2_uart_txd_1" "uart"             82
+> +          "udi"                "udi"              32, 33, 34, 35, 36
+> +          "i2s"                "audio"            50, 51, 52, 53, 54
+> +          "pcm"                "audio"            50, 51, 52, 53
+> +          "gbe0_led1"          "led"              58
+> +          "gbe1_led1"          "led"              59
+> +          "gbe2_led1"          "led"              60
+> +          "gbe3_led1"          "led"              61
+> +          "2p5gbe_led1"        "led"              62
+> +          "gbe0_led0"          "led"              64
+> +          "gbe1_led0"          "led"              65
+> +          "gbe2_led0"          "led"              66
+> +          "gbe3_led0"          "led"              67
+> +          "2p5gbe_led0"        "led"              68
+> +          "drv_vbus_p1"        "usb"              63
+> +          "drv_vbus"           "usb"              79
+> +
+> +        properties:
+> +          function:
+> +            description:
+> +              A string containing the name of the function to mux to the group.
+> +            enum: [audio, dfd, eth, flash, i2c, int_usxgmii, jtag, led, pcie, pmic, pwm, spi,
+> +                   uart, udi, usb, watchdog]
+> +          groups:
+> +            description:
+> +              An array of strings. Each string contains the name of a group.
+
+blank line
+
+> +        required:
+> +          - function
+> +          - groups
+> +
+> +        allOf:
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: audio
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [i2s, pcm]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: jtag
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [jtag, tops_jtag0_0, tops_jtag0_1, wo0_jtag, wo1_jtag, wo2_jtag]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: int_usxgmii
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [int_usxgmii]
+
+Use const if only 1. Elsewhere too.
+
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: dfd
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [dfd]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: flash
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [emmc_45, emmc_51, sdcard, snfi]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: eth
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [2p5g_ext_mdio, gbe_ext_mdio, mdc_mdio0, mdc_mdio1]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: i2c
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [xfi_phy0_i2c0, xfi_phy1_i2c0, xfi_phy_pll_i2c0,
+> +                         xfi_phy_pll_i2c1, i2c0_0, i2c1_sfp, xfi_pextp_phy0_i2c,
+> +                         xfi_pextp_phy1_i2c, i2c0_1, u30_phy_i2c0, u32_phy_i2c0,
+> +                         xfi_phy0_i2c1, xfi_phy1_i2c1, xfi_phy_pll_i2c2, i2c1_0,
+> +                         u30_phy_i2c1, u32_phy_i2c1, xfi_phy_pll_i2c3, sgmii0_i2c,
+> +                         sgmii1_i2c, i2c1_2, i2c2_0, i2c2_1]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: led
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [2p5gbe_led0, 2p5gbe_led1, gbe0_led0, gbe0_led1, gbe1_led0, gbe1_led1,
+> +                         gbe2_led0, gbe2_led1, gbe3_led0, gbe3_led1, wf5g_led0, wf5g_led1]
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: pcie
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [pcie_wake_n0_0, pcie_clk_req_n0_0, pcie_wake_n3_0,
+> +                           pcie_clk_req_n3, pcie_p0_phy_i2c, pcie_p1_phy_i2c,
+> +                           pcie_p3_phy_i2c, pcie_p2_phy_i2c, ckm_phy_i2c,
+> +                           pcie_wake_n0_1, pcie_wake_n3_1, pcie_2l_0_pereset,
+> +                           pcie_1l_1_pereset, pcie_clk_req_n2_1, pcie_2l_1_pereset,
+> +                           pcie_1l_0_pereset, pcie_wake_n1_0, pcie_clk_req_n1,
+> +                           pcie_wake_n2_0, pcie_clk_req_n2_0, pcie_wake_n2_1,
+> +                           pcie_clk_req_n0_1]
+> +                  maxItems: 3
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: pmic
+> +            then:
+> +              properties:
+> +                groups:
+> +                  items:
+> +                    enum: [pmic]
+> +                  maxItems: 1
+
+This can be just:
+
+groups:
+  const: pmic
+
+A few other places too.
+
+Rob
 
