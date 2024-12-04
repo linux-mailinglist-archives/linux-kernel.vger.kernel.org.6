@@ -1,182 +1,97 @@
-Return-Path: <linux-kernel+bounces-431636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245559E3FC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AA69E3FC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DF11650EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19C74165107
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B382720CCC0;
-	Wed,  4 Dec 2024 16:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A46620CCC0;
+	Wed,  4 Dec 2024 16:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Bgz/rgP/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i3QZhTqh"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XCVVLKK0"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9955C1547C3;
-	Wed,  4 Dec 2024 16:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718181F16B;
+	Wed,  4 Dec 2024 16:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330062; cv=none; b=dOCgEp4FiTsiEajGNqN4gaOvujcO36PJXWET8Y8Q9/vgdtvVKTief9Hfh27NblUXh9umza7u6Bfn3DO0TBABXNMwdKPQrw4w7Ltff2KQbDb2WpJEg2i5IcX3oftJKvV0qBkccEV4V0UMzP1W32F3Wy32Pdc/+njRXyy6wTUHS6Y=
+	t=1733330094; cv=none; b=qUCTXCJ/AUz8aic+hQxtxZYF3dYOuzY6jlmI+NBymYE6J4508+nue8z3nomkZ/vXu3UhHY54LbBC3LqdbnCfPuW6f2NMcTInaCVEBOAxh7jlvhZjIYpgfEJvmINCrtVq2bmwayaoTehMmdPRRqElHpSSfS4MWyvpuVrxF082cyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330062; c=relaxed/simple;
-	bh=x78ACWAOEZm++OCDsqG7/c0mVwye3P8tzwVfBS2KS84=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=RpTjS67rY0FZGg3yxOTortPjr+5xQ3sPGUYNfP+efvGLbX1op6ZssskoNXJv6A/F3/fcEpbePZJe1xicSUJiTnrOOq8mcVSg+6BfJcLg/P4+YhoZx8bOr5CuUxsU97LII4iJrcF6fpbIYjf71W80KM02kmH9Pvqyrkv6yMDrxSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Bgz/rgP/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i3QZhTqh; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 4B62811401D5;
-	Wed,  4 Dec 2024 11:34:18 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 11:34:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733330058;
-	 x=1733416458; bh=Ah70jlP4CTaxYAWVJ4RDilPcmjlaIxhGSKcMYOP92jw=; b=
-	Bgz/rgP/rbciUaPGqY2T3BoA6Hn2zEV/kByiE1kyZQG+kfS/TkxHGrVjWOlfxDYe
-	8ZH9j2sz2cZ9F2yFj4Of2USSJIFYFI6uDLo7a5j6pqOp3zw1y77xCG9o+s5CouU0
-	NYt4X+V92Zmk1CIlQ8OOSiuA/cGNrJlRw9+tLMELy++7d7CuGE3nXUfSbx5CjpSC
-	cBylWUXFob1xjRec19aW292Kpq6vsRMo+qPZjm64Hah7zdxM7Nf/HQj9PQ8lwfS8
-	BKZyLL8UVf/OYQT9vLXu+EUxyiJ4enKDTkDxWN7OnJSeXaeDxJ0xzlu4muvc3U9t
-	NiGSUq166HdOcv5YrGIpWg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733330058; x=
-	1733416458; bh=Ah70jlP4CTaxYAWVJ4RDilPcmjlaIxhGSKcMYOP92jw=; b=i
-	3QZhTqhBZKJAh64ysePHTOf5V9j0ogPScaaqrkuI/8qEz0S4w9N63NXsrN+bonbS
-	AFxzlYlj10Nn8vT4NRUQUCOzgK81UwvV6a+ceHmTu6TB14eGtUdYJQM+ZNnEH/Zp
-	yIATyZITF9MNZQF64PZK8kIFrq4OeEfa8MkRDqi5ykZlDNXK5yucS/czq2o1ARCv
-	DOqjPaVQz0gX0cf+BE/uEWO+kZOyGMzHqB+reItDcdnh1teFuJ3Eq2Epqtx8xbVu
-	lO7K9H6cJAb4HMZJBiIyTzyXiCMO1jUTmEoPy0FZeUXoMpaIPUvYxDJC2ZALPx9g
-	R01wmE0Do74tWgIsLyRcA==
-X-ME-Sender: <xms:iYRQZ5P4VkR9mZXjSbymRRoy_dVJGGGO2fgNixTyN1iz5o8b1eRt7Q>
-    <xme:iYRQZ78E1iUGLfxfK2V_YNHcB4b8fnvBbhJctOqcnHBkJvbaaKdK9DYZV5G3AuDvV
-    ePwdBmGq2WHT8TH6ew>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgdekiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
-    hpthhtoheptghimhhinhgrghhhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggr
-    nhhjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvg
-    grugdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphht
-    thhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:iYRQZ4T3112cRzwmCs5KIhZTO7PC40uLVK1f5fb7qcRgieEPEFSXJg>
-    <xmx:iYRQZ1tn6Oe_zSU_P3NsbgNWOppvawQfIK1GXrcVLkiEIBvpl84eLw>
-    <xmx:iYRQZxeI9_hIN2rr4QXf81ZGygsLT6b28nbbmcqx4dYpgXXdY4YgXQ>
-    <xmx:iYRQZx04xE3iirr5QntJttrlCLCtfFrE_z9P1c0P4DvPS10Yw7vZGQ>
-    <xmx:ioRQZ82OD2mhqILmQZxp7mH4r5lmE-yzLCstRa81WHTlxPCYuR9p44RM>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 68E422220072; Wed,  4 Dec 2024 11:34:17 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733330094; c=relaxed/simple;
+	bh=NZZO6eL7q4YMxahlCRwxMqBfM41DqBDT83ns2VDCXVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YhwBRxYCnXBRMHpuLUBSQQmZomYlvzPdyMB8XuDzsfEUUL47z9DERZ5BYsfiPNCFgVT2qNY72625Yavs4c6zELg/YaSk8pfUNyJGhO96by9/4M1HnJ5T/1lq5Byah9W76iMw21YzRWFAcsgojQwe/FT4z6YBMIJ8KR5Y7/ISt7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XCVVLKK0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BXeVMf7TisBcYMTsJIlRVGXec9/iHimih/bk5ZLjdsc=; b=XCVVLKK08G6encFtU49bhJjRUv
+	Xj/aR/rfLgC56Zxru9wxRSW6SIgZR4CqBHu8bH0sLAiXV5jvHlBJX9IS6fE9ZRlU8evIPv2/4VDv4
+	ehDbgJHwEtVN1ngFKjIULjjEXYwlYCMNlnZ+sZ082Ky2scUjdSFxENmclEoY1FCyFXnCCndrZOlyg
+	84MKsUP8PwImB9zAiuQ7XzFrgPp/bLL+9OQWYztRkTqoib3dOyfsLrH0R7WBNoUCeAAD9d29v2+Qj
+	qH9UfqFrspkTs41H1cqKiGhY7cEcdOLVgMbTi7VGnhLdHNSFTIyKCGDU1U9gTb6grx/maBkI9ugVg
+	E+H4Rogw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIsKv-00000004p5m-1oT1;
+	Wed, 04 Dec 2024 16:34:49 +0000
+Date: Wed, 4 Dec 2024 16:34:49 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jan Kara <jack@suse.cz>
+Cc: I Hsin Cheng <richard120310@gmail.com>, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] file: Wrap locking mechanism for f_pos_lock
+Message-ID: <20241204163449.GR3387508@ZenIV>
+References: <20241204092325.170349-1-richard120310@gmail.com>
+ <20241204102644.hvutdftkueiiyss7@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Dec 2024 17:33:57 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sean Christopherson" <seanjc@google.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
- "Davide Ciminaghi" <ciminaghi@gnudd.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
-Message-Id: <bb9d86e4-4641-4b1b-af9e-7d468dc2e2ee@app.fastmail.com>
-In-Reply-To: <Z1B1phcpbiYWLgCD@google.com>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-12-arnd@kernel.org> <Z1B1phcpbiYWLgCD@google.com>
-Subject: Re: [PATCH 11/11] x86: drop 32-bit KVM host support
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204102644.hvutdftkueiiyss7@quack3>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Dec 4, 2024, at 16:30, Sean Christopherson wrote:
-> On Wed, Dec 04, 2024, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> There are very few 32-bit machines that support KVM, the main exceptions
->> are the "Yonah" Generation Xeon-LV and Core Duo from 2006 and the Atom
->> Z5xx "Silverthorne" from 2008 that were all release just before their
->> 64-bit counterparts.
->> 
->> Using KVM as a host on a 64-bit CPU using a 32-bit kernel generally
->> works fine, but is rather pointless since 64-bit kernels are much better
->> supported and deal better with the memory requirements of VM guests.
->> 
->> Drop all the 32-bit-only portions and the "#ifdef CONFIG_X86_64" checks
->> of the x86 KVM code and add a Kconfig dependency to only allow building
->> this on 64-bit kernels.
->
-> While 32-bit KVM doesn't need to be a thing for x86 usage, Paolo 
-> expressed concerns
-> that dropping 32-bit support on x86 would cause general 32-bit KVM 
-> support to
-> bitrot horribly.  32-bit x86 doesn't get much testing, but I do at 
-> least boot VMs
-> with it on a semi-regular basis.  I don't think we can say the same for 
-> other
-> architectures with 32-bit variants.
+On Wed, Dec 04, 2024 at 11:26:44AM +0100, Jan Kara wrote:
+> On Wed 04-12-24 17:23:25, I Hsin Cheng wrote:
+> > As the implementation of "f->f_pos_lock" may change in the future,
+> > wrapping the actual implementation of locking and unlocking of it can
+> > provide better decoupling semantics.
+> > 
+> > "__f_unlock_pos()" already exist and does that, adding "__f_lock_pos()"
+> > can provide full decoupling.
+> > 
+> > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> 
+> I guess this would make sense for consistence. But Al, what was the
+> motivation of introducing __f_unlock_pos() in the first place? It has one
+> caller and was silently introduced in 63b6df14134d ("give
+> readdir(2)/getdents(2)/etc. uniform exclusion with lseek()") about 8 years
+> ago.
 
-I see.
+Encapsulation, actually.  Look:
 
-> PPC apparently still has 32-bit users[1][2],
+* grabbing the lock without setting FDPUT_POS_UNLOCK should never happen;
+fdget_pos() does handle that, no need for grabbing the lock as an operation
+on existing struct fd instance
 
-I looked at the links but only see 64-bit users there.
+* dropping the lock is done in destructor; no need for separate "it may be
+locked here" scope
 
-There is KVM support for 32-bit BookE (e500v2, e500mc)
-in the PPC85xx and QorIQ P1/P2/P3/P4, and Crystal mentioned
-that there might be users, but did not point to anyone
-in particular.
+* we want fdput_pos() to be inlined (and preferably eliminated in the case
+of failed fdget_pos())
 
-The A-EON AmigaOne X5000 and Powerboard Tyche that were
-mentioned in the thread as being actively used are both
-64-bit QorIQ P5/T2 (e5500, e6500) based. These are the
-same platform ("85xx" in Linux, "e500" in qemu), so it's
-easy to confuse. We can probably ask again if anyone
-cares about removing the 32-bit side of this.
-
-> and 32-bit RISC-V is a thing,
-
-There are many 32-bit RISC-V chips, but all RISC-V
-SoCs supported by Linux today are in fact 64-bit.
-
-While there is still talk of adding support for 32-bit
-SoCs, the only usecase for those is really to allow
-machines with smaller amounts of physical RAM, which
-tends to rule out virtualization.
-
-There is one more platform that supports virtualization
-on 32-bit CPUs, which is the MIPS P5600 core in the
-Baikal T1.
-
-I still think it makes sense to just drop KVM support
-for all 32-bit hosts, but I agree that it also
-makes sense to keep x86-32 as the last one of those
-for testing purposes.
-
-    Arnd
+__f_lock_pos() would *break* encapsulation - any user of that thing would
+have to deal with FDPUT_POS_UNLOCK bit and the rest of struct fd guts.
 
