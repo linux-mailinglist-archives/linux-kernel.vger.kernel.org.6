@@ -1,135 +1,214 @@
-Return-Path: <linux-kernel+bounces-431016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93C29E382D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:03:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1308F9E381E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5928161D5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51C216993A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAC21B219C;
-	Wed,  4 Dec 2024 11:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BF31B1D65;
+	Wed,  4 Dec 2024 11:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="d6MIJPTd"
-Received: from smtpcmd13146.aruba.it (smtpcmd13146.aruba.it [62.149.156.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BKthbUhy"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D081AF0AE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377F41AD3E0
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310204; cv=none; b=Mmxtwk2cSx01XbEbaaYnvBB9BEUIIlJA9eaiY84gb/sJhxxPMjUJWHcIV+d5n+U3wgN5Aa2xy+uVd0lFL5g5+eouwFcnQytJRYKy936d+fNi1oZGAwSERVcwZZVvqkKF7TSvnjeonmllyPNAdARVtGwhyDReQWY45CPg9cM6c/M=
+	t=1733310021; cv=none; b=exmqPy178AhqoV5WtnsAM6ukW2XYCX9jSpPZ1A4uSEHDWOEP/kt4q9Pbo/M5kVp37cloV5e+OYpn+I9Uqe8DGN+LhdF53Hc9quxuzajvGVSLYHNuCHzZW2sgJhrctmVMSpH17DGhK3W0JThRtdW/mx+Wd2OBWZfmvAOi8M6BgPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310204; c=relaxed/simple;
-	bh=HiRHBVxJRzJUX7pxKBAGHT2nWDVudw+euIZaibZo5IM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OR8hGLoOwucLfaTtFrdr9cyrlF0GFhpS2O2vgS8BHf1pzpy/5SJjtPKNPBAyH31SJmzBu2kUCdulahRbVDodqL0CZ44PHwJoRAtdMXSlsyUmKDIfbGMGDSnMt1EIHYOEugloerq3wlPOKeXO4vVuLTST8XxLqHWymWf3gNHuBQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=d6MIJPTd; arc=none smtp.client-ip=62.149.156.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [172.18.100.99] ([109.238.20.116])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id In73tJdcv15fBIn73tOtCY; Wed, 04 Dec 2024 12:00:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1733310010; bh=HiRHBVxJRzJUX7pxKBAGHT2nWDVudw+euIZaibZo5IM=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=d6MIJPTd1wESepjIfn1rsvMfFycQ8XYJ41Tt5C80yo7813WA0VSFIgMwg24dQocIt
-	 +Yfaf3xVSQBgb4Lcb0F+lel7N4JPtULvcn2t8a+j+85vY6yDfY8XzyPc84Dl4pQVNs
-	 hYEKpKLUjqOLOMqJeaSjPuOfmhmRfswx6EXKTQpsLfxa0mf1jzGZCb4CPUcfGjyrbK
-	 Kt4vF0NXgGUrE5ns9Uv2my20ha8mqeGDLmVkgwP7YUJMr7Quug743/pZ6CwDz+y0o3
-	 cMznwljtclP7KaGPc1D+jSexnM1xiPDEbUZlA/Es/6L7R7KlZOcM6osgMBWEq/a3Iz
-	 cYIMGPWc5D5kg==
-Message-ID: <c32efa4a-287f-4ae4-bb3d-74b6e595dfc6@enneenne.com>
-Date: Wed, 4 Dec 2024 12:00:09 +0100
+	s=arc-20240116; t=1733310021; c=relaxed/simple;
+	bh=hum9XH/iQEVn6rvdWBZbw3PzECry8JMXGpvWCzKve8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8cq4gtGMW6TcqQgt2EaXvMZM/ZMh08rAi2ufBpnbcSGg/p4F7xVQg70PpCMvsa0csLfQBNnzqBiSCI6p+ytyqE8xQuJNR1Tv1zLNwTWY0vf25HJGBk98wDigh/ObfV2Q0KK1JwLC5plO/XfDQXVtmz89XdaKWLdTrVrz9b1Ylg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BKthbUhy; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so77011811fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:00:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733310017; x=1733914817; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GJdH0FDAVg0EEk1mbuvWK42ZlhNl2Kz+F54+9FBuNwQ=;
+        b=BKthbUhyePhBpmj2P0hk9/uENeQYTeP4+h7v6jtQEiRpsna3E62hBKQCJaEfag0b1+
+         g2jBQhO4hC++ngNtuWkOqX49gZh2H5RDtKZpO7xtOCMs4FL7t9QZJf4r8j835jx9Lnee
+         bUPOuYzMjQF7QWzcfGqK7HmfZzeh2Em46m2111LcFhpnMU0Idju4WKlols+r8NzK3KKc
+         QJAj4ATooFpyudbjJVUxngt63h9xP7L9ZI4ppzF/SzvqYYLaMbmZVfdVy1kb7bKRhoVW
+         9AJQ99xWcmzjANkou36eucVMtoz0J7JGJ3fyEtxiwiOrkaoB5wNbTWg9ATAQnjj48wzI
+         xlkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733310017; x=1733914817;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GJdH0FDAVg0EEk1mbuvWK42ZlhNl2Kz+F54+9FBuNwQ=;
+        b=DoXtqP5qtXiA9iljtoHXaqTqKm91CWBF3QvvYoMrfqodwV2BPyVfelMPYe8xcSuDc/
+         yPX4LVUAJT6z2fbRK7qf29dlXRjnBfBkKzznMHqKi5s7fuCtXLDLrYbjEOJuOKI9WiOs
+         jkGf6amg/jGG4kW5ROy5iHdYQHP6u5wABos39ytPQoJE87jYiCO+5RwcLXsVWSZKj8TF
+         d0ihWji2DiqNs0jQC5o8wlgHb05fDSvYJCkvxhoF45jF6n/b7Pjm8rwl7YxOlTeWgZCt
+         n+sidQ7Sl8tnwnFA5SJkP68RFrM9PVqhKQQmv5r/aKNUZbKJ1g+xBvIShpgKXpGVYt6X
+         jNJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzPrlBSm2ijOox6Pyn5BbxIPdnk3jKMhHdXMqBYflwQ9lbZau4Ip2tR+cNXeVxGQ10Yt57tCzyaLvbRMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqjN+6Yc3htlwYIt/wxwszO592DTMXM6QkhysUqHz/ok/vY1tF
+	3qAl5/h3a9FfTYEGRbdX0Keuc0TcL1jET6EkGzeTqtaFPLoka8Ukv0nLvG0N6WI=
+X-Gm-Gg: ASbGncuSZoZVX/bpvll3CEEoe60yxfjlv7c4krpWDJB4WhVxGpmdoz/r2gUUKxeZmTK
+	LXsEMhED3ZGYQ83Trr3e8CEPH2e3Yn8bj330YYZYnrYANBjpbGXNiB3KnVWeFr3I1oV+adUUA4S
+	8+3JeyGZ/d399h9u25nVPx0/8BmSUiApwba+oLi7gpa8RNfWDdZS8KS/RN/znKpMgLVaiUseVGU
+	TU+RLnSU1H6GBvMbiWAEJKcjheobalmw/cvDD8B9PggRFo8r17nbe8+LTNeQDdwOGqoLRrEJtpk
+	f61WjBR4vbi5Cu+6wdQPLJOSCPYg9A==
+X-Google-Smtp-Source: AGHT+IH2m5MdbvSvbQSirMXSPeeVLCVyuJiF+F6i3kFP5GX6kABJsSiszeviPrPnCBLylQWVUOX0TQ==
+X-Received: by 2002:a2e:a912:0:b0:2ff:aa0c:5d35 with SMTP id 38308e7fff4ca-30009be4859mr36174051fa.9.1733310017154;
+        Wed, 04 Dec 2024 03:00:17 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbb8e7fsm19991021fa.2.2024.12.04.03.00.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 03:00:15 -0800 (PST)
+Date: Wed, 4 Dec 2024 13:00:13 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Brian Masney <bmasney@redhat.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Taniya Das <quic_tdas@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
+ scale DDR/L3
+Message-ID: <fddfl7ohxlo6sqm365s7x3ykfas7ucxdc6csxphusdpzzoxlbi@x7vhdtebb5gu>
+References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
+ <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
+ <ZxEwVShJuMH4J1Hp@x1>
+ <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
+ <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
+ <5c3d91e3-e9d3-4e8d-bd4f-f7cbe765dddc@oss.qualcomm.com>
+ <d78e6fc9-2238-4f55-a604-f60df8565166@quicinc.com>
+ <fhueah2gfi7fartnitasetvxiax3vgpgnbjis6ydjt523cnksk@vs4jmmtxk5jw>
+ <e88a1685-5aa3-497a-84a0-18065f1bf6a4@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] pps: clients: gpio: Bypass edge's direction check
- when not needed
-Content-Language: en-US, it, it-IT
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, herve.codina@bootlin.com,
- christophercordahi@nanometrics.ca,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20240425122853.29544-1-bastien.curutchet@bootlin.com>
- <3612b36e-3350-4a5c-827e-482434753e95@enneenne.com>
- <973aa216-4932-4e21-b9a1-184ce809d483@bootlin.com>
- <956e2244-a95e-4c5e-a4a3-fb694c124739@enneenne.com>
- <39b78b3e-466c-4ab2-81a0-1633df48ef3e@bootlin.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <39b78b3e-466c-4ab2-81a0-1633df48ef3e@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfHe4arRZRB1UwNwIpwNSITkquhqwPht+2KYw+VkfpSIC7ymUoPOn7QqvYwV/8C9DdsK4y6/v39FyEuZqyYadNzBnf2L/aeI/4yTOCPaYPosjKMs0qB3O
- /puXoYL76nxGh/gRJ2Tj9qRyHPdIkG165TjL9gJofXw2zkqE8bflXiW4WS33qqT+mWvKNpf5txJsjMxkXHigV6g0qyMLMkeliwSgCc7bAt6jdrl5uAkXuQh9
- 3wpHdb/H1yYkA41MIDTSVNRrMbsLvuACFf2fB+oylAPtCZ/qKny8CPdYXoFZqAaRzCbqzmdGgo+vR4Nd+OE/JHljhxNiFupjsH6kKQK7ndNn5fWpgbuwG57Y
- twM1uoyXdy6Jli4AWCSfO/ykcrBu3WTU3sCUNo9eGov0Fa4o6Q7X7qIpppZV7FMTkC3h4MQOTwpwVQzX8XPSTnCDIegMEGankRb3YxXJhfMTet4R1W4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e88a1685-5aa3-497a-84a0-18065f1bf6a4@quicinc.com>
 
-On 04/12/24 11:34, Bastien Curutchet wrote:
-> Hi Rodolfo,
+On Wed, Dec 04, 2024 at 02:15:09PM +0530, Jagadeesh Kona wrote:
 > 
-> I revive this topic.
 > 
-> On 6/26/24 4:16 PM, Rodolfo Giometti wrote:
->> On 26/06/24 14:55, Bastien Curutchet wrote:
->>> Hi Rodolfo
->>>
->>> On 4/25/24 14:42, Rodolfo Giometti wrote:
->>>> On 25/04/24 14:28, Bastien Curutchet wrote:
->>>>> In the IRQ handler, the GPIO's state is read to verify the direction of
->>>>> the edge that triggered the interruption before generating the PPS event.
->>>>> If a pulse is too short, the GPIO line can reach back its original state
->>>>> before this verification and the PPS event is lost.
->>>>>
->>>>> This check is needed when info->capture_clear is set because it needs
->>>>> interruptions on both rising and falling edges. When info- >capture_clear
->>>>> is not set, interruption is triggered by one edge only so this check can
->>>>> be omitted.
->>>>>
->>>>> Add a warning if irq_handler is left without triggering any PPS event.
->>>>> Bypass the edge's direction verification when info->capture_clear is not
->>>>> set.
->>>>>
->>>>> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
->>>>
->>>> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
->>>>
->>>
->>> I don't think I've received any updates since you acked this. Is there 
->>> something missing before the patch can be applied?
->>
->> No updates. It can be applied.
->>
+> On 12/4/2024 8:43 AM, Dmitry Baryshkov wrote:
+> > On Tue, Dec 03, 2024 at 08:33:46PM +0530, Jagadeesh Kona wrote:
+> >>
+> >>
+> >> On 11/30/2024 8:02 PM, Konrad Dybcio wrote:
+> >>> On 14.11.2024 11:48 PM, Dmitry Baryshkov wrote:
+> >>>> On Mon, Nov 11, 2024 at 06:39:48PM +0530, Jagadeesh Kona wrote:
+> >>>>>
+> >>>>>
+> >>>>> On 10/17/2024 9:12 PM, Brian Masney wrote:
+> >>>>>> On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
+> >>>>>>> +	cpu0_opp_table: opp-table-cpu0 {
+> >>>>>>> +		compatible = "operating-points-v2";
+> >>>>>>> +		opp-shared;
+> >>>>>>> +
+> >>>>>>> +		cpu0_opp_1267mhz: opp-1267200000 {
+> >>>>>>> +			opp-hz = /bits/ 64 <1267200000>;
+> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
+> >>>>>>> +		};
+> >>>>>>> +
+> >>>>>>> +		cpu0_opp_1363mhz: opp-1363200000 {
+> >>>>>>> +			opp-hz = /bits/ 64 <1363200000>;
+> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
+> >>>>>>> +		};
+> >>>>>>
+> >>>>>> [snip]
+> >>>>>>
+> >>>>>>> +	cpu4_opp_table: opp-table-cpu4 {
+> >>>>>>> +		compatible = "operating-points-v2";
+> >>>>>>> +		opp-shared;
+> >>>>>>> +
+> >>>>>>> +		cpu4_opp_1267mhz: opp-1267200000 {
+> >>>>>>> +			opp-hz = /bits/ 64 <1267200000>;
+> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
+> >>>>>>> +		};
+> >>>>>>> +
+> >>>>>>> +		cpu4_opp_1363mhz: opp-1363200000 {
+> >>>>>>> +			opp-hz = /bits/ 64 <1363200000>;
+> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
+> >>>>>>> +		};
+> >>>>>>
+> >>>>>> There's no functional differences in the cpu0 and cpu4 opp tables. Can
+> >>>>>> a single table be used?
+> >>>>>>
+> >>>>>> This aligns with my recollection that this particular SoC only has the
+> >>>>>> gold cores.
+> >>>>>>
+> >>>>>> Brian
+> >>>>>>
+> >>>>>
+> >>>>> Thanks Brian for your review. Sorry for the delayed response.
+> >>>>>
+> >>>>> We require separate OPP tables for CPU0 and CPU4 to allow independent
+> >>>>> scaling of DDR and L3 frequencies for each CPU domain, with the final
+> >>>>> DDR and L3 frequencies being an aggregate of both.
+> >>>>>
+> >>>>> If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
+> >>>>> won't be invoked for CPU4. As a result both CPU devices will end up in sharing
+> >>>>> the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
+> >>>>> votes of other.
+> >>>
+> >>> Oh that's a fun find.. clocks get the same treatment.. very bad,
+> >>> but may explain some schroedingerbugs.
+> >>>
+> >>> Taking a peek at some code paths, wouldn't dropping opp-shared
+> >>> solve our issues? dev_pm_opp_set_sharing_cpus() overrides it
+> >>>
+> >>> Konrad
+> >>
+> >> Thanks Konrad for your review.
+> >>
+> >> Yes, correct. I tried dropping opp-shared but it is again getting set due to
+> >> dev_pm_opp_set_sharing_cpus().
+> > 
+> > It should be set, but then it should get the limited CPU mask rather
+> > than the full CPU set. Isn't that enough for your case?
+> > 
 > 
-> In the MAINTAINER file, you are listed as the sole maintainer for the PPS 
-> subsystem. Could you let me know if there's someone else in charge of applying 
-> patches so I can gently ping them please ?
+> Even if we call dev_pm_opp_set_sharing_cpus() with the limited CPU mask, it adds
+> OPP_TABLE_ACCESS_SHARED flag to the OPP table. Due to this flag being set, if this
+> same opp table is used for another CPU domain(CPU4-7) also in DT, then _managed_opp[1]
+> which gets called inside from dev_pm_opp_of_add_table() for CPU4 will return the same
+> CPU0 OPP table. 
 > 
-> I checked, the patch still applies to v6.13-rc1
+> Due to above, _allocate_opp_table() [2] won't be invoked for CPU4 but instead CPU4 will be
+> added as device under the CPU0 OPP table [3]. Due to this, dev_pm_opp_of_find_icc_paths() [4]
+> won't be invoked for CPU4 device and hence CPU4 won't be able to independently scale it's
+> interconnects. Both CPU0 and CPU4 devices will scale the same ICC path which can lead to one
+> device overwriting the BW vote placed by other device. So we need two separate OPP tables for
+> both domains.
 
-I was quite sure to have acked and then forwarded this patch to Greg and Andrew 
-for the inclusion.
+Ack, that makes sense. Thanks for the explanation!
 
-If not (I'm sorry), please resend the patch, and I'm going to pass it to Greg 
-and Andrew right away.
-
-Ciao,
-
-Rodolfo
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1600
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1613
+> [3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1606
+> [4] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1484
+> 
+> Thanks,
+> Jagadeesh
 
 -- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
-
+With best wishes
+Dmitry
 
