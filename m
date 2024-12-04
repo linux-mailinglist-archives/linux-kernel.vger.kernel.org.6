@@ -1,132 +1,167 @@
-Return-Path: <linux-kernel+bounces-430843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1541F9E3655
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:15:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA2F9E365E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:19:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9362166C10
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:19:15 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEDB1A38E3;
+	Wed,  4 Dec 2024 09:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H/hePZXY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFD772823E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:15:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C28A19DF66;
-	Wed,  4 Dec 2024 09:15:28 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9861017B50E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 09:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3F5BE5E;
+	Wed,  4 Dec 2024 09:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733303728; cv=none; b=sIeRMwvha2XJY1fCy8J4pz/0wVjMeV3NQsMWBIxqp1+135oIsx+vlq1anSHVvOnM8UQf8QdTYgr+GAnILPH2B+M5OWyBqpFeEFbLuKC18I/AFgN9UVhptQ18T0eWkDwWLvLqoaX/zVxvb4sSgPpIsLAKG+IfP1IRKgeOZ6EmqqM=
+	t=1733303951; cv=none; b=BmuIXayGBQswvu+/2WCPYXqk/aRFYmdUm61HUmcHadf+FGWFywiNR8gcWPqqHDKCPRJVkPY6KAC2/LYP2FORmoJwhMD1ovv3YRjBxXLfCCBiW5IwLmCzzZTIcJ1bhDFjtJpo6x3qdB407RL3ByQXgeBTm+I2+uAO6Oe/072fiTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733303728; c=relaxed/simple;
-	bh=OSIQVeqA7BjoP8zOcS1ipuCVyk4y5qwnWOvjFzpXt3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4XVhprDQo4I/FrRi4jI7rbnMORu45EY+lTIFGKe4Ra3+2IizvlHDClaWUxGRsUOU68WFXb/Qglv/laBU3dkdIKcKsjj22iYVRtR5wY7MdVxgDlNhzmWAH1u94ijXIclH5r+sLbtVxr1gbYjIsQAeXX2gTLbAr8G9PGMAz1dfhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F26A72115C;
-	Wed,  4 Dec 2024 09:15:24 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51565139C2;
-	Wed,  4 Dec 2024 09:15:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wN0nEawdUGfYaAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 04 Dec 2024 09:15:24 +0000
-Date: Wed, 4 Dec 2024 10:15:14 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: Re: [PATCH RESEND v2 4/6] mm/page_alloc: sort out the
- alloc_contig_range() gfp flags mess
-Message-ID: <Z1AdotZfAJG-zVZX@localhost.localdomain>
-References: <20241203094732.200195-1-david@redhat.com>
- <20241203094732.200195-5-david@redhat.com>
- <feffbbe8-4176-48e8-b503-ef53d7914197@suse.cz>
- <96c92857-4850-4f85-9474-ac193c5ea48c@redhat.com>
- <04c1d28e-bbea-4499-9a6d-770f9ca53ba9@suse.cz>
- <d736f1c0-343e-4031-88ba-3b33b73dbeba@redhat.com>
- <Z1AaC5Hj2RV_5FDD@localhost.localdomain>
- <15096b27-6f27-45fc-8a8b-de781a9c42a5@suse.cz>
+	s=arc-20240116; t=1733303951; c=relaxed/simple;
+	bh=a/TiQBAn8mB5DG3m5NaKujcwCQeL/Tj7UURK3WB1Av4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HACcnGgRTPS9YvXWX1ewiwAkypGALjM/mixjTW9zS+MlepesylVKRo3eyOL2ghKtijauL1CNiA4vI3OPEKRdzxB8KjIwPZ3CfGu67CwxQQSxmNBjBV0Z75/DHtBjUEJcKAZEoGmRdl2al6MWU3pyTwcOTJ5Q3fTJsMEFoqh8DqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H/hePZXY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B47OxXX031188;
+	Wed, 4 Dec 2024 09:19:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NsQC541Wy2M5AkIUI3XoGDVWyD/Fqu65MZwjqEEUb8E=; b=H/hePZXYezdqQiI5
+	s6s8ZCXANi13LiHje+a07LCs/Xaqbr8SCxQOZ6jkExugb8Pnm4o8UJ0Q7/su4ChV
+	06Yg5I98VZe9gQ4oQ/c+XStMTmDmQSNm6CuVWjD2JuWBtMb1PeoaFyVVGQXe+FrG
+	85eAV0P1kkdm0gQJf8SlXdjVybBYZL1Oqcbk5xBNBwK6JNT5Kmy2cFNqUsHtjFSB
+	wjAIqPfmOpUN3rHib3Ct5immVHcLGimkSV709r+fIvqOCxGA7+3nMCrJERuELqr9
+	a2FGw4Fyi6msLfscshFlAEi4/LhkUhTZHfuRp1hxT0x9O6lVSoDVfAg0/JcQSk1F
+	YjdwlQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w90upym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 09:19:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B49J0L3020539
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 09:19:00 GMT
+Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 01:18:58 -0800
+Message-ID: <f75a1655-fa5d-4675-85d0-b9b97dceba6f@quicinc.com>
+Date: Wed, 4 Dec 2024 17:18:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15096b27-6f27-45fc-8a8b-de781a9c42a5@suse.cz>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: F26A72115C
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
+ are supported
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <quic_cjhuang@quicinc.com>, <vbenes@redhat.com>
+References: <1b09c2c9-53bd-4960-b09c-7468f506b0a3@quicinc.com>
+ <20241204075128.5547-1-jtornosm@redhat.com>
+Content-Language: en-US
+From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
+In-Reply-To: <20241204075128.5547-1-jtornosm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xXpfcqjeULg995snnzaHt5ebHfUuIjp8
+X-Proofpoint-GUID: xXpfcqjeULg995snnzaHt5ebHfUuIjp8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040072
 
-On Wed, Dec 04, 2024 at 10:03:28AM +0100, Vlastimil Babka wrote:
-> On 12/4/24 09:59, Oscar Salvador wrote:
-> > On Tue, Dec 03, 2024 at 08:19:02PM +0100, David Hildenbrand wrote:
-> >> It was always set using "GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL",
-> >> and I removed the same flag combination in #2 from memory offline code, and
-> >> we do have the exact same thing in do_migrate_range() in
-> >> mm/memory_hotplug.c.
-> >> 
-> >> We should investigate if__GFP_HARDWALL is the right thing to use here, and
-> >> if we can get rid of that by switching to GFP_KERNEL in all these places.
-> > 
-> > Why would not we want __GFP_HARDWALL set?
-> > Without it, we could potentially migrate the page to a node which is not
-> > part of the cpuset of the task that originally allocated it, thus violating the
-> > policy? Is not that a problem?
+
+
+On 12/4/2024 3:51 PM, Jose Ignacio Tornos Martinez wrote:
+>> Pls try add interface with type __ap or directly use hostapd up the ap
+>> interfaces that will re-type managed to ap.
+> This is what I am doing.
+But I see your interfaces all be added with managed， right?
 > 
-> The task doing the alloc_contig_range() will likely not be the same task as
-> the one that originally allocated the page, so its policy would be
-> different, no? So even with __GFP_HARDWALL we might be already migrating
-> outside the original tasks's constraint? Am I missing something?
+>> f019f4dff2e4 ("wifi: ath11k: support 2 station interfaces") update about
+>> interface combination limits.
+> My patch by means of a parameter allows to come back to the original
+> interface combination (before f019f4dff2e4 and not the current one that
+> you comment), so as I commented, this is the interface combination that
+> I am finally using to setup the two APs:
+> # iw list | grep -A4 "valid interface combinations:"
+>   	valid interface combinations:
+>   		 * #{ managed } <= 1, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
+>   		   total <= 16, #channels <= 1, STA/AP BI must match, radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz }
+>   
+>   	HT Capability overrides:
+> And I repeat that with that, my setup is working (no error log).
+> 
+>> If chip support DBS, station interfaces max is 2 that why you can't up
+>> the 3rd managed type interface. You better add interface with ap type.
+> Ok, but as I commented this is what I am doing.
+> Just to clarify, only with your proposed interface combination I am getting
+> problems with a 3rd managed type interface.
+> 
+>> 2.4GHz works fine also.
+> That is great.
+> 
+> Ok, at this point, as I need my setup, in order to allow me to debug and
+> get the differences, could you share how you are configuring the two APs to
+> test and debug here?
+> 
+sure.
 
-Yes, that is right, I thought we derive the policy from the old page
-somehow when migrating it, but reading the code does not seem to be the
-case.
+apply f019f4dff2e4 ("wifi: ath11k: support 2 station interfaces")
+apply 
+https://lore.kernel.org/all/20241127022742.4016870-1-quic_yuzha@quicinc.com/
 
-Looking at prepare_alloc_pages(), if !ac->nodemask, which would be the
-case here, we would get the policy from the current task
-(alloc_contig_range()) when cpusets are enabled.
+Test steps:
+1. add interface
+#iw dev wlan0 interface add wlan1 type __ap
+#iw dev wlan0 interface add wlan2 type __ap
 
-So yes, I am a bit puzzled why __GFP_HARDWALL was chosen in the first
-place.
+2.run hostapd
+#hostapd hostapd1.conf &
+#hostapd hostapd2.conf &
 
+refer hostapd.conf:
+---
+interface=wlan1
+driver=nl80211
+ssid=QSoftAP1
+hw_mode=g
+channel=6
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=12345678
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP CCMP
+rsn_pairwise=CCMP
+---
+> Thanks
+> 
+> Best regards
+> Jose Ignacio
+> 
 
--- 
-Oscar Salvador
-SUSE Labs
 
