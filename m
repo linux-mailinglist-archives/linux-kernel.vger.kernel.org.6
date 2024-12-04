@@ -1,242 +1,175 @@
-Return-Path: <linux-kernel+bounces-431407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BC69E3E82
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:41:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6EE9E3DE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE395B2A0BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:43:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 691FDB43055
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE620ADC9;
-	Wed,  4 Dec 2024 14:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6127120C00D;
+	Wed,  4 Dec 2024 14:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IzWAt6GH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gA03IGoy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6A920A5D9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C78A20A5E7;
+	Wed,  4 Dec 2024 14:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323408; cv=none; b=qyqYFGv5JPG0Fv+PVA3MOWX02yDxZrP65fD/6rrtamdhVCZGwkfBmZYfKGSBUr9bagZMMBkJeNSqxVGzGal//9MXA4FQHivS6DacbzXMQ8PKd8r+t7FLw6W6OlV2q6xPe1gfgVmBopgJd9x7Deee4oFJV9pY7C/QuGdxm98DvhU=
+	t=1733323986; cv=none; b=khI3/sVB6fm9VSnztHedaZp0bCS2k6ucC/0DI/etpil9Z4BpVjkWE+dTBsFFZmaqU6Ie8FXNAZxAAmcj+EyFexSFvuX4m2CNsBUEkIvpBGmjWwYm8J2A4lxbXV0gkwl4KEUfwYqPFvAko9H/e/gYuUlLPDB/eqb8Ie4W4uUPhQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323408; c=relaxed/simple;
-	bh=kvFdArL1ZY74UgL0StTd3arSWzQkhQzPAtiY5apGJKg=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=jCuOcdo5oaBG8/bIcpYCQvNvjCyJvQYIcyzDG6uf6YO8NjPXq3oEP2CDIG30NYEGRDIMUqDoPsSaoxbuFhZm91ikK+YP3cImaoSJDqCPipCuVV7rYx1bWmRn82ka5lY5XeA4OhGFvZ4WagsPZ0yhLJn2zUicy9F7UmvQkCNINMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IzWAt6GH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733323405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zS0GUTcXAW8C5l6NDquyV5IGiwNX/D1m1BEkvfj9tDg=;
-	b=IzWAt6GH3h/AGdQ+tC/29N4p1T01tPJyWjPQQ88yp5+K2B4cZH9Al+SbixTCu0q5s5qBQb
-	xM4GBZZusf9EyC7OIynv50Edbiuu4ucEuUteMFZyGAqcxhTtZYNVyVa592EHoEzSrXPyY3
-	WKJK0X4ahk37BrMJ2HIZNQ5idZKP7bw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-eKNXhUbnNBiYHoyN_JsVJg-1; Wed,
- 04 Dec 2024 09:43:22 -0500
-X-MC-Unique: eKNXhUbnNBiYHoyN_JsVJg-1
-X-Mimecast-MFC-AGG-ID: eKNXhUbnNBiYHoyN_JsVJg
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F1311955DA4;
-	Wed,  4 Dec 2024 14:43:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 59466195609D;
-	Wed,  4 Dec 2024 14:43:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <67506987.050a0220.17bd51.006f.GAE@google.com>
-References: <67506987.050a0220.17bd51.006f.GAE@google.com>
-To: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, jlayton@kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
+	s=arc-20240116; t=1733323986; c=relaxed/simple;
+	bh=9S0hchzxez9pNCIR/AUpcl6f3DdTEiAyq8NPSfzzvbk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=aG96ZQbG7ZdJsFYQ69m3zCeRR3o3Xk6nP2yKCDFvJ+P19rUXcQ8pQT1+8prixRtJsX2Z+E7B3QLFsrbYR8kU7qQaf1pl0IjKZj54ea4aPMecvPS1q8k9CkzFIfR2/mK6Od50NO3i3/DKP/zFpts4ClSR1OMEoP5rWiYhiR7+N9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gA03IGoy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B45xt8Z010494;
+	Wed, 4 Dec 2024 14:52:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=v0Q3KIInuD+e/4A2nf8kVW
+	+ZNT1dMVERaJJR2vF10wk=; b=gA03IGoy4GSBCSLOot9ZJvb5H4Rr74w+yi9Klt
+	IaqduRyXNiiHZq/5d44QX8Rtu4hHwO4Kg9jf5PUAF0nH5ov0jgX8cOyyGnqA059C
+	903l48Z5lcxcYXNWDuJq1cA1QtEh3YrlcwS9O3rFU82fz5Ssc5AOpCfPgfYPuYYV
+	YMwGosb2jS7tjB1KMs61MGCW/+tutuVaBIHt0NT6unZG1jxNpEcjKoctYrQUhbz8
+	Jbo+IxqKCdnZdRhA9OtjuPIEhHH0NzEHgBuVJJdYJAikAJUQVFngTIxCvM5LvBZV
+	3yGfq+uOpZgFDJKgv8NEokHiVk46ZcdHR+H/aF0FB5pGSiCw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439v7yvq7a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 14:52:45 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4EqiSR030728
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 14:52:44 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Dec 2024 06:52:38 -0800
+From: Lei Wei <quic_leiwei@quicinc.com>
+Subject: [PATCH net-next v2 0/5] Add PCS support for Qualcomm IPQ9574 SoC
+Date: Wed, 4 Dec 2024 22:43:52 +0800
+Message-ID: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1203229.1733323398.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Dec 2024 14:43:18 +0000
-Message-ID: <1203250.1733323398@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKlqUGcC/22NQQ6CMBBFr0JmbU2nCCor72EIIcNUZmGBFhsM4
+ e42Xbt8efnv7xDYCwdoih08RwkyuQTmVACNvXuxkiExGG0uiBqVzEs3U+g8oTJ1z3gr6U51CWk
+ xe7ay5doTHK/K8bZCm8woYZ38N99EzP5vMaLSyg5sq2tVG032sXyExNGZpje0x3H8AHm9lFOyA
+ AAA
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King
+	<linux@armlinux.org.uk>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_luoj@quicinc.com>,
+        <quic_leiwei@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <bartosz.golaszewski@linaro.org>, <vsmuthu@qti.qualcomm.com>,
+        <john@phrozen.org>, <linux-arm-msm@vger.kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733323958; l=2722;
+ i=quic_leiwei@quicinc.com; s=20240829; h=from:subject:message-id;
+ bh=9S0hchzxez9pNCIR/AUpcl6f3DdTEiAyq8NPSfzzvbk=;
+ b=TwiQqbN21gN2NUDoQT9bnnN0+W5SjHXUHaBqyo04LIwEqTEbB815Y6gocFsjmF/bt78JFlf46
+ G3r9RuRLxa0BFd0fNxpp8o/YlTLyoJH9xh/doLpq72YB9qGtZLF5PaF
+X-Developer-Key: i=quic_leiwei@quicinc.com; a=ed25519;
+ pk=uFXBHtxtDjtIrTKpDEZlMLSn1i/sonZepYO8yioKACM=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jTDta9_5_Do2iZCtEpTmO0sx1vys-34K
+X-Proofpoint-GUID: jTDta9_5_Do2iZCtEpTmO0sx1vys-34K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1011
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040114
 
-This looks like it's probably a separate bug.
+The 'UNIPHY' PCS block in the Qualcomm IPQ9574 SoC provides Ethernet
+PCS and SerDes functions. It supports 1Gbps mode PCS and 10-Gigabit
+mode PCS (XPCS) functions, and supports various interface modes for
+the connectivity between the Ethernet MAC and the external PHYs/Switch.
+There are three UNIPHY (PCS) instances in IPQ9574, supporting the six
+Ethernet ports.
 
-David
+This patch series adds base driver support for initializing the PCS,
+and PCS phylink ops for managing the PCS modes/states. Support for
+SGMII/QSGMII (PCS) and USXGMII (XPCS) modes is being added initially.
 
-syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com> wrote:
+The Ethernet driver which handles the MAC operations will create the
+PCS instances and phylink for the MAC, by utilizing the API exported
+by this driver.
 
-> syzbot has tested the proposed patch but the reproducer is still trigger=
-ing an issue:
-> possible deadlock in __submit_bio
-> =
+While support is being added initially for IPQ9574, the driver is
+expected to be easily extendable later for other SoCs in the IPQ
+family such as IPQ5332.
 
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: possible circular locking dependency detected
-> 6.13.0-rc1-syzkaller-dirty #0 Not tainted
-> ------------------------------------------------------
-> kswapd0/75 is trying to acquire lock:
-> ffff888034c41438 (&q->q_usage_counter(io)#37){++++}-{0:0}, at: __submit_=
-bio+0x2c6/0x560 block/blk-core.c:629
-> =
+Signed-off-by: Lei Wei <quic_leiwei@quicinc.com>
+---
+Changes in v2:
+- dtbindings updates
+  a.) Rename dt-binding header file to match binding file name.
+  b.) Drop unused labels and the redundant examples.
+  c.) Rename "mii_rx"/"mii_tx" clock names to "rx"/"tx".
+- Rename "PCS_QCOM_IPQ" with specific name "PCS_QCOM_IPQ9574" in
+  Kconfig.
+- Remove interface mode check for the PCS lock.
+- Use Cisco SGMII AN mode as default SGMII/QSGMII AN mode.
+- Instantiate MII PCS instances in probe and export "ipq_pcs_get" and
+  "ipq_pcs_put" APIs.
+- Move MII RX and TX clock enable and disable to "pcs_enable" and
+  "pcs_disable" methods.
+- Change "dev_dbg" to "dev_dbg_ratelimited" in "pcs_get_state" method.
+- Link to v1: https://lore.kernel.org/r/20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com
 
-> but task is already holding lock:
-> ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c=
-:6864 [inline]
-> ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x36f0 mm/vm=
-scan.c:7246
-> =
+---
+Lei Wei (5):
+      dt-bindings: net: pcs: Add Ethernet PCS for Qualcomm IPQ9574 SoC
+      net: pcs: Add PCS driver for Qualcomm IPQ9574 SoC
+      net: pcs: qcom-ipq9574: Add PCS instantiation and phylink operations
+      net: pcs: qcom-ipq9574: Add USXGMII interface mode support
+      MAINTAINERS: Add maintainer for Qualcomm IPQ9574 PCS driver
 
-> which lock already depends on the new lock.
-> =
+ .../bindings/net/pcs/qcom,ipq9574-pcs.yaml         | 190 +++++
+ MAINTAINERS                                        |   9 +
+ drivers/net/pcs/Kconfig                            |   9 +
+ drivers/net/pcs/Makefile                           |   1 +
+ drivers/net/pcs/pcs-qcom-ipq9574.c                 | 884 +++++++++++++++++++++
+ include/dt-bindings/net/qcom,ipq9574-pcs.h         |  15 +
+ include/linux/pcs/pcs-qcom-ipq9574.h               |  16 +
+ 7 files changed, 1124 insertions(+)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241101-ipq_pcs_rc1-26ae183c9c63
 
-> =
-
-> the existing dependency chain (in reverse order) is:
-> =
-
-> -> #1 (fs_reclaim){+.+.}-{0:0}:
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        __fs_reclaim_acquire mm/page_alloc.c:3851 [inline]
->        fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3865
->        might_alloc include/linux/sched/mm.h:318 [inline]
->        slab_pre_alloc_hook mm/slub.c:4055 [inline]
->        slab_alloc_node mm/slub.c:4133 [inline]
->        __do_kmalloc_node mm/slub.c:4282 [inline]
->        __kmalloc_node_noprof+0xb2/0x4d0 mm/slub.c:4289
->        __kvmalloc_node_noprof+0x72/0x190 mm/util.c:650
->        sbitmap_init_node+0x2d4/0x670 lib/sbitmap.c:132
->        scsi_realloc_sdev_budget_map+0x2a7/0x460 drivers/scsi/scsi_scan.c=
-:246
->        scsi_add_lun drivers/scsi/scsi_scan.c:1106 [inline]
->        scsi_probe_and_add_lun+0x3173/0x4bd0 drivers/scsi/scsi_scan.c:128=
-7
->        __scsi_add_device+0x228/0x2f0 drivers/scsi/scsi_scan.c:1622
->        ata_scsi_scan_host+0x236/0x740 drivers/ata/libata-scsi.c:4575
->        async_run_entry_fn+0xa8/0x420 kernel/async.c:129
->        process_one_work kernel/workqueue.c:3229 [inline]
->        process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
->        worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->        kthread+0x2f0/0x390 kernel/kthread.c:389
->        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> =
-
-> -> #0 (&q->q_usage_counter(io)#37){++++}-{0:0}:
->        check_prev_add kernel/locking/lockdep.c:3161 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
->        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
->        __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        bio_queue_enter block/blk.h:75 [inline]
->        blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
->        __submit_bio+0x2c6/0x560 block/blk-core.c:629
->        __submit_bio_noacct_mq block/blk-core.c:710 [inline]
->        submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
->        swap_writepage_bdev_async mm/page_io.c:451 [inline]
->        __swap_writepage+0x5fc/0x1400 mm/page_io.c:474
->        swap_writepage+0x8f4/0x1170 mm/page_io.c:289
->        pageout mm/vmscan.c:689 [inline]
->        shrink_folio_list+0x3c0e/0x8cb0 mm/vmscan.c:1367
->        evict_folios+0x5568/0x7be0 mm/vmscan.c:4593
->        try_to_shrink_lruvec+0x9a6/0xc70 mm/vmscan.c:4789
->        shrink_one+0x3b9/0x850 mm/vmscan.c:4834
->        shrink_many mm/vmscan.c:4897 [inline]
->        lru_gen_shrink_node mm/vmscan.c:4975 [inline]
->        shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
->        kswapd_shrink_node mm/vmscan.c:6785 [inline]
->        balance_pgdat mm/vmscan.c:6977 [inline]
->        kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
->        kthread+0x2f0/0x390 kernel/kthread.c:389
->        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> =
-
-> other info that might help us debug this:
-> =
-
->  Possible unsafe locking scenario:
-> =
-
->        CPU0                    CPU1
->        ----                    ----
->   lock(fs_reclaim);
->                                lock(&q->q_usage_counter(io)#37);
->                                lock(fs_reclaim);
->   rlock(&q->q_usage_counter(io)#37);
-> =
-
->  *** DEADLOCK ***
-> =
-
-> 1 lock held by kswapd0/75:
->  #0: ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vms=
-can.c:6864 [inline]
->  #0: ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x36f0 =
-mm/vmscan.c:7246
-> =
-
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 75 Comm: kswapd0 Not tainted 6.13.0-rc1-syzkaller-dir=
-ty #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1=
-.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
->  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
->  check_prev_add kernel/locking/lockdep.c:3161 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
->  validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
->  __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
->  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->  bio_queue_enter block/blk.h:75 [inline]
->  blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
->  __submit_bio+0x2c6/0x560 block/blk-core.c:629
->  __submit_bio_noacct_mq block/blk-core.c:710 [inline]
->  submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
->  swap_writepage_bdev_async mm/page_io.c:451 [inline]
->  __swap_writepage+0x5fc/0x1400 mm/page_io.c:474
->  swap_writepage+0x8f4/0x1170 mm/page_io.c:289
->  pageout mm/vmscan.c:689 [inline]
->  shrink_folio_list+0x3c0e/0x8cb0 mm/vmscan.c:1367
->  evict_folios+0x5568/0x7be0 mm/vmscan.c:4593
->  try_to_shrink_lruvec+0x9a6/0xc70 mm/vmscan.c:4789
->  shrink_one+0x3b9/0x850 mm/vmscan.c:4834
->  shrink_many mm/vmscan.c:4897 [inline]
->  lru_gen_shrink_node mm/vmscan.c:4975 [inline]
->  shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
->  kswapd_shrink_node mm/vmscan.c:6785 [inline]
->  balance_pgdat mm/vmscan.c:6977 [inline]
->  kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
+Best regards,
+-- 
+Lei Wei <quic_leiwei@quicinc.com>
 
 
