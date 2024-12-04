@@ -1,143 +1,190 @@
-Return-Path: <linux-kernel+bounces-432067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B239E4671
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:18:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E0F9E4731
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52195B61500
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:26:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21335B80F9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF861B4130;
-	Wed,  4 Dec 2024 19:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC22202C53;
+	Wed,  4 Dec 2024 19:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mUXTa+iW"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dfnfqXED"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05172391AA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA5A1F03DD;
+	Wed,  4 Dec 2024 19:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340404; cv=none; b=G3I8Tpf3XZCfrzOsFyOn7daUhVn0umvkLI3FDfGXqhn440eNlQCWqjoib59CmybqU66jsnvGAXHWiYy/ddU3bZTeh/iXqfOyNoen9NxK9znoXWbAtBoTsYYCbRpuewu8ssRfk81NkgCg2dAFp4gC8KHRTM3bQORAcNWz0MEK5Tk=
+	t=1733341068; cv=none; b=n8xSPNX2lMB5FcJf5Y86pSf4jnMBObMoUmSs1BAb1eOpjDP/mqA9ZsJpuDPmDayvsebaz51xYds28XqAXvk9/6KsbH3Mfm6jYNpvvMk65ZHYHi8UeLJCtOezMro/v9Uf4GAlgzY6c4pt9MPODLfRZhtXwYcdgXZ3tbg3NT9EFtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340404; c=relaxed/simple;
-	bh=C3/eH/02n2G+qGii9hOeQTOzIV1MarUbuxZoSo6Tdrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYnrd3GUmmng//T3SPgbUXHr2ZnLCcCE1eqQZcp6ejZYZMVGVb+7nRUPkwsh8ZalysNVJTfvjWottMDNqM9+yZ6sPsKHy0LgGOuxRDciW/rDkABLJgOUF3v6KJcQUXSUgBxpiPyX5GjX/Aqvqp1F/wEGEjMfKkpBbAhhlYx8luU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mUXTa+iW; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21572ca3cccso824775ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:26:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733340401; x=1733945201; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FfDzJKHmceL++JmZOwtSaEgDluQjsPVd6lxF3uJYfTI=;
-        b=mUXTa+iWqWcfg+MCPWGGweocf2pf+lk8auPNm87Qk4JT4rpUXFK56eHKp4mbVA5Z5p
-         F6dtEPpoe6Ln7XaiL9y2iaoXxv4bSOWb+wxHhGz3vy9xNdPvLRZW95lwR9e+ZhikuXNo
-         HG9kF8jXu8k2wZb9TO46Y1VUDOApFnoZDt1Yk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733340401; x=1733945201;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FfDzJKHmceL++JmZOwtSaEgDluQjsPVd6lxF3uJYfTI=;
-        b=PN4s/8nro4U5f8IdT4Pdt06icpfOoStn/iWUNAF9nR3SGkKFDYBZwLijtiHB+ssCFs
-         Y9P68SI07xmsMwaZU3Wfphjj2Fe7NacQDuJ4KIkWMDU41d3PnfuDoeDQ9qaADR33oU4P
-         /s5tpYaYppX/3WZhHquSG+xPjwkbklvNidMqwJl95XB4yRRSUkeRFpX7WpZfc6KQfKi1
-         fo9RxLLUKxKR2uJ6lDmPUsnataLTbjcTVM9ja3gOXgFgUpzLh1/gDvU8J7/Sx+iAU3Sy
-         Be6VS6h1vZF8meUVQdMkqt4LgIXvPOc4VKHlQsrOSBjYL9ufxjVjeI744Mh8g3J/Xvgp
-         eYqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUX8WT9IUNkr5KAkedkkYVHs1lkPPkHdIFoYofIbv5mmlIuerNweFGOfdg34QtYO7D0JiMFGZq07/ZNDII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKVt4I8JjnYjViEgFlq1OzuDPMbJW7RmUdcVbf+LyKsDfw6MUn
-	2xD7PSUhjd0w1OtWuGKqE7y7dvXL0ycHmf8YIF8XMsBr99Kh6d82JAmt0MVNqg==
-X-Gm-Gg: ASbGncukGhiEg9mHLZh8mCxzPr+b+6+PQpPHVqW5DgCfC+sHncQpbFawoJxSfWvMS/c
-	v50B1VZ7Qw2FG2ux2/DSsfcMQBysZ/gsPIaI9H40o8cwNgdm1TPrSCaSiCQUjJgVcpVVVfZnxoX
-	COlyLzeuIBl27ug9j2SWQ3UhfmSnXfZhWzYKRNVF2DWFOu5Uz1S32GFDAb5R/G6wh1J+aHSbDct
-	NW3EcrWdUbYaPCrH9HnugMXXeOk6C9zSeC+gCFM/lhE3eLggr68qMuHBhRpGMqInv4+4POKftSl
-	g068uY7okT0i
-X-Google-Smtp-Source: AGHT+IHxUYmCQGfedzcLT9G70tfx6EHSHgI0l7Hqj6BU+GVxbnRMM+a76gXXhoU/zLwe8R45jQN9lg==
-X-Received: by 2002:a17:903:2349:b0:215:8270:77d6 with SMTP id d9443c01a7336-215bd200a05mr84754445ad.27.1733340401202;
-        Wed, 04 Dec 2024 11:26:41 -0800 (PST)
-Received: from localhost ([2a00:79e0:2e14:7:8ab8:57a6:96ad:47f7])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-215e57cef2dsm10559385ad.269.2024.12.04.11.26.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 11:26:40 -0800 (PST)
-Date: Wed, 4 Dec 2024 11:26:39 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
- from 10s to 5s
-Message-ID: <Z1Cs7-ajeWn7UOpr@google.com>
-References: <20241127105709.4014302-1-treapking@chromium.org>
- <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
- <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
- <CAD=FV=XuResyZK1ke1NtaGREfwm_3MB-u5t6vw459kYPt0LZwQ@mail.gmail.com>
- <Z0-4umP9TnNAbJXO@google.com>
- <CAEXTbpeeZVwCYWR0wzX8QMYJ7okj=zmziwt9Nvtu2kzA4iMCmA@mail.gmail.com>
+	s=arc-20240116; t=1733341068; c=relaxed/simple;
+	bh=ybquNvhu3fwqsGgB0h3HTK1V90aQE1rAdBik/KxijJY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=GIXpdPgQccJ60urqTVgsOqhOeZyS1TdEa8Mgrgi6DXufrDzs0YvgJh3UePsj9jn1wC7P37XsmpGLYHON/5aswDqMHQjNb2xsuWmyI5wgZzSXWkhvC7w3GNTWY7vFS0pozAiPS5OJaYuOdQnzU7zILJJPqC4+YSFl0dpg5Wb9V/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dfnfqXED; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4H6KpV024772;
+	Wed, 4 Dec 2024 19:37:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JqaiQr43W7Y8YIMX4TayhXzJvPjTkQo4hxliRcBkemU=; b=dfnfqXEDXryh0DKK
+	DaAVnnclP/Un6c/2aNZg/EzL86ywFpjjJWBBr+q1Fft99ZFavzcJuXVZHJ8f1cQJ
+	/9nvSGjxZksAom6Y6git2WWnCfuLpctXLjCVraZLfE6u0w4GIFi9GwqO+4Xt8lcu
+	yKK4IEXlRo6t1tYC0cMqGYtxAaSbYKGyI7JSlsA1yBdh0FvEaAJjrVkhs3lMG0zi
+	ofGxpfdnCyB3H9pg+XMqEX7Gzb5F/XqB4So322FULbpKPLRrAgAp9wuyV7QEtY86
+	Yd/nL7JvJEOKe0ooMuPC3aezZvz6z3tWq21ye2vSdfFAzp3pgNj26sLt8LLcRhdT
+	D3sgjw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnywa56-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 19:37:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4JbeLJ031068
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 19:37:40 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Dec 2024 11:37:39 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+Date: Wed, 4 Dec 2024 11:37:16 -0800
+Subject: [PATCH v3 4/8] clk: qcom: clk-alpha-pll: Add support for
+ controlling Taycan PLLs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEXTbpeeZVwCYWR0wzX8QMYJ7okj=zmziwt9Nvtu2kzA4iMCmA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241204-sm8750_master_clks-v3-4-1a8f31a53a86@quicinc.com>
+References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
+In-Reply-To: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733341058; l=3482;
+ i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
+ bh=NnNEqYZ5pV8Imdcrsg1kU2E1AOytgnDs8DFuBqwClzI=;
+ b=LAnzFjB99jLjkvqOrLKEIvXdXc/GCcYtZrl3gqW0lxOn/0xmFWKg5Vv96m3ruNO1Y8RuLu+zk
+ WmEuOE0n0aZD8AuqivoZO7/RNm+ug676/ZOROf0Bk/PoCVYkX6hVjAj
+X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
+ pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NwpLKTWyg_w-jsCiMuOjVybpDkokGPZA
+X-Proofpoint-GUID: NwpLKTWyg_w-jsCiMuOjVybpDkokGPZA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ mlxlogscore=999 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040150
 
-On Wed, Dec 04, 2024 at 09:45:11PM +0800, Pin-yen Lin wrote:
-> On Wed, Dec 4, 2024 at 10:04 AM Brian Norris <briannorris@chromium.org> wrote:
-> >
-> > > >  Can you try testing (and gather timing numbers) when
-> > > > suspending soon after initiating scans? It's hard to judge what the
-> > > > lower limit of this timeout should really be without any numbers, just
-> > > > like it's hard to judge whether your 10 second watchdog is reasonable.
-> > >
-> > > Pin-yen: is this something you could gather?
-> 
-> I tried entering suspend right after wifi scans, and the time spent in
-> mwifiex_enable_hs() is always around 100ms. It seems initiating
-> suspend does not increase the execution time for mwifiex_enable_hs(),
-> so I think the driver is capable of interrupting a scan.
+From: Taniya Das <quic_tdas@quicinc.com>
 
-Thanks! At some level, there are things we can only verify by
-experimentation, since we don't have firmware source code. This seems
-fine to me then.
+Add clock ops for Taycan PLL, add the register offsets for supporting
+the PLL.
 
-> > > > Also, for the record, since we might have to field regression reports
-> > > > for other systems: what hardware (chip variant, FW version) are you
-> > > > seeing problems on?
-> > >
-> > > Pin-yen: I'm assuming you'll provide this.
-> 
-> From the debugfs entry:
-> 
-> driver_name = "mwifiex"
-> driver_version = mwifiex 1.0 (15.68.19.p54)
-> verext = w8897o-B0, RF87XX, FP68, 15.68.19.p54
-> 
-> The compatible string of the DT is "marvell,sd8897".
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 14 ++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  7 +++++++
+ 2 files changed, 21 insertions(+)
 
-Thanks.
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index b8351f8c0b8401f55c564e8ea32308333d012887..5e9217ea3760efe640718040b8659cb37ef9ede5 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -197,6 +197,20 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U1] = 0x34,
+ 		[PLL_OFF_TEST_CTL_U2] = 0x38,
+ 	},
++	[CLK_ALPHA_PLL_TYPE_TAYCAN_ELU] = {
++		[PLL_OFF_OPMODE] = 0x04,
++		[PLL_OFF_STATE] = 0x08,
++		[PLL_OFF_STATUS] = 0x0c,
++		[PLL_OFF_L_VAL] = 0x10,
++		[PLL_OFF_ALPHA_VAL] = 0x14,
++		[PLL_OFF_USER_CTL] = 0x18,
++		[PLL_OFF_USER_CTL_U] = 0x1c,
++		[PLL_OFF_CONFIG_CTL] = 0x20,
++		[PLL_OFF_CONFIG_CTL_U] = 0x24,
++		[PLL_OFF_CONFIG_CTL_U1] = 0x28,
++		[PLL_OFF_TEST_CTL] = 0x2c,
++		[PLL_OFF_TEST_CTL_U] = 0x30,
++	},
+ 	[CLK_ALPHA_PLL_TYPE_RIVIAN_EVO] = {
+ 		[PLL_OFF_OPMODE] = 0x04,
+ 		[PLL_OFF_STATUS] = 0x0c,
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index c6d1b8429f951a27fa18cd5b82f067acdf826454..87bd469d9c2c2ec4e0758c97231527b92fe6afe5 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -27,6 +27,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_ZONDA_OLE,
+ 	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
+ 	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
++	CLK_ALPHA_PLL_TYPE_TAYCAN_ELU,
+ 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
+ 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
+@@ -185,12 +186,15 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
+ #define clk_alpha_pll_zonda_ole_ops clk_alpha_pll_zonda_ops
+ 
+ extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
++#define clk_alpha_pll_taycan_elu_ops clk_alpha_pll_lucid_evo_ops
+ extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
+ #define clk_alpha_pll_reset_lucid_ole_ops clk_alpha_pll_reset_lucid_evo_ops
+ extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
+ #define clk_alpha_pll_fixed_lucid_ole_ops clk_alpha_pll_fixed_lucid_evo_ops
++#define clk_alpha_pll_fixed_taycan_elu_ops clk_alpha_pll_fixed_lucid_evo_ops
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
+ #define clk_alpha_pll_postdiv_lucid_ole_ops clk_alpha_pll_postdiv_lucid_evo_ops
++#define clk_alpha_pll_postdiv_taycan_elu_ops clk_alpha_pll_postdiv_lucid_evo_ops
+ 
+ extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+ #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
+@@ -218,6 +222,9 @@ void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
+ 				 const struct alpha_pll_config *config);
+ void clk_lucid_ole_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 				 const struct alpha_pll_config *config);
++#define clk_taycan_elu_pll_configure(pll, regmap, config) \
++	clk_lucid_evo_pll_configure(pll, regmap, config)
++
+ void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 				  const struct alpha_pll_config *config);
+ void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
 
-I think it'd be good to see this info in the commit message, but
-otherwise you can carry my:
+-- 
+2.46.1
 
-Acked-by: Brian Norris <briannorris@chromium.org>
-
-It'd be extra nice to see that you successfully use this patch in
-your own releases, but I don't think that's a requirement for upstream.
-And anyway, the upstream RC cycle is pretty long.
-
-Brian
 
