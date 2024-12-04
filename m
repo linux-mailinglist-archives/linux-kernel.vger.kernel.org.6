@@ -1,168 +1,152 @@
-Return-Path: <linux-kernel+bounces-432102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCD19E451D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:54:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F6F9E452F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA622829B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:54:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345E9282551
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C811F03D2;
-	Wed,  4 Dec 2024 19:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CBA1F03DA;
+	Wed,  4 Dec 2024 19:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ojGGbQcW"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PYrPrXQA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959981F03C2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5713C13D246;
+	Wed,  4 Dec 2024 19:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733342073; cv=none; b=q1ho+EEPwjl9V8AKCZ50m3mnojQCEqio6FghVt3LaStSIcAYTRky3KzdW+zWAcSMjP29q1+CVnZdAQqDHdQkYNKjN073O/jLG2Qr55wYtzV2WUyXkoJpIJyFa83VRYrDR6DvwWI7yZzxx5j1j/Vbm1wtcjSCOHh/TImvvPep/E4=
+	t=1733342257; cv=none; b=QuadpHXcgd0ZJjNCQfiKGNDG56LZxXN9nhudooG3qz7PiGyxMg8QHzmBgaUY0PZDsUuTm/UGOANFaTZEuZSiUqwVJJYKuj5BYVGPdw5i1Gb7iZB1inmbEhOKecXkxZfGgB3Z5sx9cPaYe0lckBzoXnhbhLjlmyIBVr4zhJu0Vbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733342073; c=relaxed/simple;
-	bh=NCb3UXTZuke/KXB7dhkw3bbUTNrL5acQl/Jk89k8fBo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lQz93CeSKbaBeG3fRmwCjAbIJECgbMPiL37l+Vak+nuh1uZdr1Ozxg/M2VzbF6xGC3BdT30I9FUMh3QoPzO/R+alqBsepCUrlQfXSeVhPFOZqt902y6oLUWsVBW3W536U49XAc3lDMTGs+ZBJG9tPcZMdUoLk6P8LH6jLsAj3kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ojGGbQcW; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a77ab3ebfaso19045ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:54:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733342071; x=1733946871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NCb3UXTZuke/KXB7dhkw3bbUTNrL5acQl/Jk89k8fBo=;
-        b=ojGGbQcWeP3r9Xw9pVVWPCUi15GfkzCIpeK3R/FA4ZjMBbfgeKd2sPxcbQXBxaulo4
-         7ZoBaBnCeV9dUrMUt7lD+nWFno8qoVHR+Me3xMMeu6TNSaHO/z4JuvmkoTSue7aH4gkN
-         azY6JefHEhHc18sueSluFuZxrDyAzQ5ZfTiLUTUAD48DvgZzxwnx6l8C/pdJpU+bnjsI
-         bWcyMtEHCumPcJ6l3+MsZdRyK4k7eTWhO2LnPoMchKj6jBu7ZUHiJJlbKDCuOI1JEfld
-         ofEa6m+1z9A2ZI/2mY+rzKnzOAkSe8uiZOgA3nmb2Xzgf+7rxQogAtexKoYAJ+Of2aE8
-         HTwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733342071; x=1733946871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NCb3UXTZuke/KXB7dhkw3bbUTNrL5acQl/Jk89k8fBo=;
-        b=aIkO3n6XBsOrZRRFidPscoUlDhJV8x/952tPGXLqfPx8xy71tDuRFiVoYm6gBRQpcG
-         ahF6FIi9OiUDklvLsKe4D0T6FVrztg5RqGbGRCRogc/gt8vgNnLnBIGPQEU0C0t5VCmm
-         aALvzeMqJtBrbZtWZcpAdIOnBfwoBFzIwzVIICp/UnWdN4SiNnk7SKFhbnG9TmQGjuV/
-         kaQeh61U9Rwqkm8FlnYkjkSbUsyPz89m/DT66nF03ICzSpUIXapNsVXFZBK9UiVhTIh1
-         07TF22Fme6FHZhNy+K3vzmHvqyMwVKrekDazH5Js30dBLvj+dPVtlI0RqvZ/hCJ/Xmgi
-         4Hlg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+EBRO62j5G+9L7yPkL11hD/FvOT+JdoDXVgLwWZUlRZ10V+XV9wxyFYzWPoJPztk3npuwW/csJxcmRUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqNxgmWM4AzrohRktY9Qs71G1XHpcGYreX+3YMcrVcrMEwtqhs
-	rxf8GfOq2VpbGZ7GZ1a2Z0ODwrfLa0ru/K8QaEaaTxEX0N89yH/fj+1a8zE3x/karNSLhXvhXTm
-	EqN9q75+fl1woIvpmVFoZrnVYsj7UlenCJpNV
-X-Gm-Gg: ASbGncvPZSQRbSWPcrBtKAL/mKZ1vYOjK5IzaRg+aozuGFVu1FA0g5vFKaDSNHE5O8n
-	e8qQwAm4vvvl5/9ms4B0jvzBPrLqoH+L8
-X-Google-Smtp-Source: AGHT+IH0+K8UgFv5k5HW39jYjWkgbktV38bY29Y1wZ3mF2Qk/8GKySXtYSZ8ExRC8GmAc+hoLzIUSUNJC4VMOGbrX5E=
-X-Received: by 2002:a05:6e02:3312:b0:3a7:d763:902a with SMTP id
- e9e14a558f8ab-3a808569c7bmr332615ab.23.1733342069611; Wed, 04 Dec 2024
- 11:54:29 -0800 (PST)
+	s=arc-20240116; t=1733342257; c=relaxed/simple;
+	bh=xIdxTrbHkhTQoVGwvXPYabjjueCAUAJwk6ASmPg/y7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CIq/YkrXkSxvmMVkuBVOcrrKyKMgSAOvaZAkokTX0kyVtIH2abRazdWe8seAPXQ2XLxuRqLM2o1K4wgyOgF+uFvilx6mDFBjB+cpO5nTqUFfFaMYvzNQ94FC6979GiMhJXeFK5jhPzcUpKY2wND5BYmjqEZffc980zxioeqmWgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PYrPrXQA; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733342255; x=1764878255;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=xIdxTrbHkhTQoVGwvXPYabjjueCAUAJwk6ASmPg/y7g=;
+  b=PYrPrXQA9WjJKQanY/fP1KolG7xQI6xtMcrV9BkoDvM2fs4dWCduD1Bg
+   DqS+rDbyGyMXQYim8DAav3huq0CAVq9QLt+PAYsi7TdNmMKwDiaYeCvEf
+   GprPfPy1mu9i4s7ZbCFbqMXVCu8doi0GwgG+mO7FoOI7SA7lEWdzW2AHg
+   JyrinxTgV/rEzVWmqbK/9J340scRgjDzVupRLe4d2VKxnPeN2X1mXC1kD
+   wtsmaDz+eH/bCXBKGlYG6Bmk846a636idJx+v821rv7I69RCb9MXVdyLq
+   oC5eRKsIlFPNna/OiJJqtjXPj0WdkWcVD6e0n/VInKmra2VtuYXnd0Ln2
+   w==;
+X-CSE-ConnectionGUID: 3h8RI/VSQl+Rg6UuSY9AuA==
+X-CSE-MsgGUID: 4ilxJ+GtTXePbCLS6aTJ5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="56109467"
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="56109467"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 11:57:34 -0800
+X-CSE-ConnectionGUID: 2cHJZCpgQlasYKo8GidWlw==
+X-CSE-MsgGUID: Gj68+C1JR7i2ayiK+C5mHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="124684029"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.223.226]) ([10.124.223.226])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 11:57:33 -0800
+Message-ID: <0854fbf0-c885-4331-8e9d-30eaa557b266@intel.com>
+Date: Wed, 4 Dec 2024 11:57:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128133553.823722-1-yangjihong@bytedance.com>
- <Z0jPPRA8JXSrwyaC@x1> <Z04qmNnt86zcGE5Q@google.com> <ff9bc82e-669b-44b7-a02c-f5c704c0cd9b@bytedance.com>
-In-Reply-To: <ff9bc82e-669b-44b7-a02c-f5c704c0cd9b@bytedance.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 4 Dec 2024 11:54:18 -0800
-Message-ID: <CAP-5=fVocYqEbv6P=UP7rQCUhZHSmJZ3GGE08koTMG2rWWumgA@mail.gmail.com>
-Subject: Re: [External] Re: [RFC 00/12] perf record: Add event action support
-To: Yang Jihong <yangjihong@bytedance.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, peterz@infradead.org, 
-	mingo@redhat.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	james.clark@arm.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 5/6] x86/virt/tdx: Add SEAMCALL wrappers for TDX
+ VM/vCPU field access
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
+ pbonzini@redhat.com, seanjc@google.com
+Cc: isaku.yamahata@gmail.com, kai.huang@intel.com,
+ linux-kernel@vger.kernel.org, tony.lindgren@linux.intel.com,
+ xiaoyao.li@intel.com, yan.y.zhao@intel.com, x86@kernel.org,
+ adrian.hunter@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Yuan Yao <yuan.yao@intel.com>
+References: <20241203010317.827803-1-rick.p.edgecombe@intel.com>
+ <20241203010317.827803-6-rick.p.edgecombe@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241203010317.827803-6-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 4, 2024 at 12:35=E2=80=AFAM Yang Jihong <yangjihong@bytedance.c=
-om> wrote:
->
-> Hello,
->
-> On 12/3/24 05:46, Namhyung Kim wrote:
-> > Hello,
-> >
-> > On Thu, Nov 28, 2024 at 05:14:53PM -0300, Arnaldo Carvalho de Melo wrot=
-e:
-> >> On Thu, Nov 28, 2024 at 09:35:41PM +0800, Yang Jihong wrote:
-> >>> In perf-record, when an event is triggered, default behavior is to
-> >>> save sample data to perf.data. Sometimes, we may just want to do
-> >>> some lightweight actions, such as printing a log.
-> >>
-> >>> Based on this requirement, add the --action option to the event to
-> >>> specify the behavior when the event occurs.
-> >>
-> >> 'perf record' is centered on saving data to disk without processing
-> >> events, while it has sideband events for some needs, like processing B=
-PF
-> >> related events (PERF_RECORD_BPF_EVENT to catch PERF_BPF_EVENT_PROG_LOA=
-D
-> >> and UNLOAD), doing things in a "live" way as your patchkit does seems
-> >> more appropriate to do in 'perf trace' :-)
-> >
-> > Agreed, 'perf trace' looks like a better place as you seem to target
-> > tracepoint events mostly.
-> >
-> Okay, will do it in 'perf trace'.
->
-> Attaching to a kprobe events will also be supported in the future.
+On 12/2/24 17:03, Rick Edgecombe wrote:
+> +u64 tdh_vp_wr(struct tdx_vp *vp, u64 field, u64 data, u64 mask)
+> +{
+> +	struct tdx_module_args args = {
+> +		.rcx = tdx_tdvpr_pa(vp),
+> +		.rdx = field,
+> +		.r8 = data,
+> +		.r9 = mask,
+> +	};
+> +
+> +	return seamcall(TDH_VP_WR, &args);
+> +}
+> +EXPORT_SYMBOL_GPL(tdh_vp_wr);
 
-Hi Yang,
+There's a bit more tweaking you could _probably_ do here like giving
+'field' a real type that means something, probably an enum. But that's
+well into nitpicky territory and might not buy anything in practice.
 
-Just some extra information in case it is useful on python scripting,
-which could be reused to avoid writing a new interpreter as in this
-series. There are quite a few perf script examples here:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/scripts/python?h=3Dperf-tools-next
-There are also standalone scripts here including for tracepoints:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/python?h=3Dperf-tools-next
-One of the things missing for standalone scripts was being able to
-conveniently parse events - you'd need to manually determine PMU type
-and config values. That is fixed in this reviewed but not merged
-series:
-https://lore.kernel.org/lkml/20241119011644.971342-1-irogers@google.com/
+Overall this set looks fine to me. The types are much more safe and
+helpers are much more self-explanatory.  So, for the series:
 
-I'd like to see the python code improved as it allows quicker command
-creation like your example. Another example I'd recently tweaked is:
-https://lore.kernel.org/lkml/20241119180130.19160-1-irogers@google.com/
-Ultimately I think it would be nice to be creating tools using UIs
-like textualize:
-https://www.textualize.io/
-and our Gecko Google summer-of-code project was an improvement here:
-https://lore.kernel.org/lkml/ZOrsiZA+C0zbWEQS@yoga/
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
-Other than basic functionality, perf's python support could be
-improved in a number of ways that we've discussed in office hours or
-on the list. Some things that come to mind:
-1) The perf script callback mechanism doesn't feel particularly
-pythonic, generators or coroutines could be better.
-2) We should probably have more library python code rather than adding
-new functions to `tools/perf/util/python.c` - I may do this to add
-type hints for mypy. If we could have a subset that works without the
-C code then it could be a basis for `perf.data` file analysis not tied
-to Linux, or `pip install`-able. There is a similar library with
-simpleperf, but shipping something with the perf codebase means we can
-keep the file format and library synchronized.
-3) We'd like to reduce the number of dependencies `perf` as a command
-has, and libpython is a big one. Something `uftrace` did was dlopen
-libpython to avoid needing to link against it. A project similarly
-rethinking python binding with C code is HPy.
-
-Thanks,
-Ian
 
