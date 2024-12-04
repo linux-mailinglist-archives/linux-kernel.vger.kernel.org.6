@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-431942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4999F9E4633
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9749E4542
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:03:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5510BE62D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:08:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41DE7BE6647
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CFC1C3C1F;
-	Wed,  4 Dec 2024 18:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D0D1F543C;
+	Wed,  4 Dec 2024 18:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaQRWsZe"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ja6+pfNF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uolwrSlS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001851C3C05;
-	Wed,  4 Dec 2024 18:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A8E1F542C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733335359; cv=none; b=c8V0cIgZpztHMqTRf0Vu9zhjXLR6nbuAs4hB6SVK5nvZb9l8xKsgcjqMjcyOsH3oGdWTK4d3u+WphXZv62Glot6Y78q3nmcL8K9BkarkcSfRRe1K85EdF7i1BcceYvJ4yejPlRjSyk2Jie4seZcuxnUXNV+090LULLpHCBA2aAs=
+	t=1733335392; cv=none; b=qKjfxP2uilEcahb/CpItdK8uhBoVeuW/Gat6mZtxkq3rcrU9eFDczatH+WvvZZAh9Bj+ni/goz9m2mw2WsNz4+N2dZubYzbKvVvBCWO6LN5OFEkwrj5DYHlff9rRdMaLkNDaqKKIiIfRuhj0QNlTq+GyHStDKmF/iShIhvCBjKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733335359; c=relaxed/simple;
-	bh=x/6cjXwLIpZfwSRp36yamP6IaujEqfNuSpAlnson4kI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=goWcvHtj8iz8OzEyUDojTRuCDYrWz4UOJIzHDIi778NsBCQ7jhRIH9xRYMFI1pBeYmK0WI/pOc/YlpMF09eMVgMCWfK9rxKcN86AWkRopxAD6XB+XbADd+1xsXa/TZ6UcRPIGAmpegSddLRJgvHPIh212Y3SE00Z/nulr/5WvZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaQRWsZe; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7250844b0ecso87599b3a.1;
-        Wed, 04 Dec 2024 10:02:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733335357; x=1733940157; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bAlGt/tiVuSRFhJS9Rkw9mOuskNJthnKTcKF5ulNOvw=;
-        b=eaQRWsZeyATGcCtVinzhMn9t7KS9yNRHOnurKhP0obzrBgwKbVcSXIEScR5GIlsSs5
-         MWI7Kp7SoLC5toCyfBFFSwEdyV/dQWy8ZgS9VnQRStptuYzEh9z/2ySncfvipyreb3ba
-         zgPz0badl9GjA+Q4bBc1aOIPH2biIvCG9ocNoiMus6KufZFIrhkkVE7PWscJ7CB+ZXHc
-         E8sCnxkZUbEQLkukHcaBDps+Bqb8+itHJOk+RWWxspzqJVoc53oHXy6EgTRGfW1XdlJo
-         sLzpHvJHRftA2iesZp/J3TwXjxg8XxU7+eF8xlPvWkGyPLriiU49migTdaJ5wYOxI26i
-         s6mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733335357; x=1733940157;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bAlGt/tiVuSRFhJS9Rkw9mOuskNJthnKTcKF5ulNOvw=;
-        b=B0XaWcEoTs5JLVEP7xZzcw8ScFScbFupzM72ddxYzpr1+lU9vCWh3xnEYRG/JURGD1
-         YxYfMaCJr6ejxeaGuoQF017IOPtINIEulANnljLeljFCtXOwwnCFBcmC81vqgKmgp7YM
-         S3ZP2ZsUQye6WEKdbWe51Y4t9HIRTxqk0Ah7QnWn2KjgDs4bD2rij3zQF6z2HeVfsMM+
-         PRJKAL3SndG3DYCqDSlHwQHH9iwuqokFYCdqZAd6kyLCDNaPbsa52Es5UGGz2hDlgS/X
-         pgtxZZZX8qlUwShxMXe4OE1TiKTU9Nz8P6uMxOmLO8iY+Yiaq6acs9ZhRE97nv59wIW/
-         8WgA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ahRLmOvz8uMvXfJL+xnaVHozUapbDx+bh2H73VtDTkzWfhQ0Mbwi1pZZ4wSTv85+glbNOPphHrr0uw==@vger.kernel.org, AJvYcCX4waq4EOrSATvtNI25Nu8VmyGhKGCBOwhtJwiZlBxS8i5pgpin4t1FQh7J90e2R7SfTj0IG0O/@vger.kernel.org, AJvYcCXpARw8rYyPbzIU7V4jtDnZpBLWY4hskJqRicGvO93OaFSANHmURkImzvCnVHgkfhukViRuKBCAGZ9YGbij@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjAfFQCFEXUoYtbX6sHK4PyQYw9tlgf9VVJRqyn4x9GRbHWFhf
-	KLW7jCee8svltMIZlSE+UOHHkOKyg2AQEv+xYnX3lTnyj4s/lOjg
-X-Gm-Gg: ASbGncv+Ezd8odfUl+gnKH+BuZH6DvIpZ7nt6NZFU9GfvfQ6yOaDyuoTpkp0WT5Jp9p
-	f2aEu+AqYRHAI1aA+8PitsRMtCL08GO1rWOnQC3Kb+SCnEENOtGuMKsbyb3ANS2uKYrKlVNeafx
-	qwOTkfFkFmEGIuwf8SmpIxkI0rOc4CvmXTnKIlm6cbzzrgt1QoUK0iyobmT4MM2mqzVo1EGIC1Q
-	UHtC5NTJpUFwgJa7hau3rmRvGKTuusZd23i/ogyKgd6LK7rz+brzCA8/+JKfFpPVOgb6x0=
-X-Google-Smtp-Source: AGHT+IHeql1iWXSfpkc9alhz3TOTPqPIWd0paC+yeqbkwcITYB2dvWkcwBYhP1UiZzR3SpjSJkLP+g==
-X-Received: by 2002:a05:6a00:3c8c:b0:71e:f4:dbc with SMTP id d2e1a72fcca58-7257fcced2cmr9725349b3a.25.1733335357173;
-        Wed, 04 Dec 2024 10:02:37 -0800 (PST)
-Received: from KASONG-MC4.tencent.com ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7258947b48fsm2064736b3a.47.2024.12.04.10.02.34
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 04 Dec 2024 10:02:36 -0800 (PST)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>,
-	Desheng Wu <deshengwu@tencent.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] zram: fix uninitialized ZRAM not releasing backing device
-Date: Thu,  5 Dec 2024 02:02:24 +0800
-Message-ID: <20241204180224.31069-3-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241204180224.31069-1-ryncsn@gmail.com>
-References: <20241204180224.31069-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+	s=arc-20240116; t=1733335392; c=relaxed/simple;
+	bh=zFbkvESmiF6G63PnrSjsWpk4Nnnr/CB453GxVDp2Z58=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EWYyKiq7yj+vYqVJ9VPKECaDwA+HwliziCxgTb+6dUSgsevUFCOr8oDAeYeux0mlvAC3v38DO3zXi20/WaYhB9HdeVYFCaC6NZ8zFjLbJJkJ0GWe9m2RHakT5gWEQBBlEpC1xEtxm5w+WkP7E7UdC7/WjeAndIZRF2zdp0TROjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ja6+pfNF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uolwrSlS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733335388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xv+UQGYrPPO4Z+df8iM+mZ+8XwnjjuMiYsr6QUKXyVU=;
+	b=Ja6+pfNFngE4wCN1DCFCYMMsny4tDRe7zkRhVNPn8ZHE5eZcj4fJZ6E4fd6Ah0ODju9Du9
+	wtuZm7uDXXcGmDkoSNwtasKuLMlJnqBq4ksnbCmd9NPM/ADQVnlVearJXmSX7jM5IIoJLs
+	x+gm2KcR8COlsWQgBR8FUI7znt3HpcDlrlrIMqjsibkI9ic4zcnJm9X2l5NccBHVBptwhc
+	/rUXv7q5oZWxHJxYoqmC+uUKGQjAi26ikYCq+XfJ5P4yA8iALQJAn3U9/XZwkLW7iqRtVG
+	4HPv8ruY8WoWRSbxljiXeR79r46KiR8c/zdoFZ8jtnH+XBH7X0t3pfDqEJVn3Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733335388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xv+UQGYrPPO4Z+df8iM+mZ+8XwnjjuMiYsr6QUKXyVU=;
+	b=uolwrSlSEJshe0A26OlY6LEddbPEA231ftdDGLNlqFdQgSxvsdP+MBNUhaf4qwa97EzIvw
+	wfBORAbrRwJbU5Cw==
+To: Waiman Long <llong@redhat.com>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Peter
+ Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>
+Subject: Re: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use
+ it in nmi_shootdown_cpus()
+In-Reply-To: <7aa93137-4b5e-474f-a99c-47acffdf71a3@redhat.com>
+References: <20241203150732.182065-1-longman@redhat.com>
+ <87h67jsif0.ffs@tglx> <7aa93137-4b5e-474f-a99c-47acffdf71a3@redhat.com>
+Date: Wed, 04 Dec 2024 19:03:08 +0100
+Message-ID: <87zflbqqar.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Kairui Song <kasong@tencent.com>
+On Wed, Dec 04 2024 at 12:23, Waiman Long wrote:
+> On 12/4/24 8:10 AM, Thomas Gleixner wrote:
+>> On Tue, Dec 03 2024 at 10:07, Waiman Long wrote:
+>>> +	/*
+>>> +	 * Call the emergency handler first, if set
+>>> +	 * Emergency handler is not traced or checked by nmi_check_duration().
+>>> +	 */
+>>> +	ehandler = READ_ONCE(desc->emerg_handler);
+>>> +	if (ehandler)
+>>> +		handled = ehandler(type, regs);
+>> Shouldn't this just stop processing right here?
+>
+> Yes in the case of crash_nmi_callback(). I suppose it is a no-return 
+> call. As the emergency handler is supposed to be a general mechanism in 
+> design, I don't want to make too many assumptions of what will happen 
+> when the handler is invoked.
 
-Setting backing device is done before ZRAM initialization.
-If we set the backing device, then remove the ZRAM module without
-initializing the device, the backing device reference will be leaked
-and the device will be hold forever.
+I'm not convinced that this should be used as a general mechanism. It's
+for emergency situations and that's where it stops. If the thing
+returns, it's a bug IMO.
 
-Fix this by always check and release the backing device when resetting
-or removing ZRAM.
+Thanks,
 
-Fixes: 013bf95a83ec ("zram: add interface to specif backing device")
-Reported-by: Desheng Wu <deshengwu@tencent.com>
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: stable@vger.kernel.org
----
- drivers/block/zram/zram_drv.c | 3 +++
- 1 file changed, 3 insertions(+)
+        tglx
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index dd48df5b97c8..dfe9a994e437 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -2335,6 +2335,9 @@ static void zram_reset_device(struct zram *zram)
- 	zram->limit_pages = 0;
- 
- 	if (!init_done(zram)) {
-+		/* Backing device could be set before ZRAM initialization. */
-+		reset_bdev(zram);
-+
- 		up_write(&zram->init_lock);
- 		return;
- 	}
--- 
-2.47.0
 
 
