@@ -1,139 +1,199 @@
-Return-Path: <linux-kernel+bounces-430500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F499E31AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:01:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D33B160E81
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:01:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739364D9FB;
-	Wed,  4 Dec 2024 03:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sn9/+nHG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A049E31B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:02:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068402CA9;
-	Wed,  4 Dec 2024 03:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D9F282793
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:01:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0ED7082C;
+	Wed,  4 Dec 2024 03:01:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719B32CA9;
+	Wed,  4 Dec 2024 03:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733281274; cv=none; b=llBIG3Cd2WMsaM284kjMwcuDbHH3sjEt60miXbghGhoOd7qZoNeY06ZMlNQnhY5eCV7f8IMPbiPcbO9a1j0n9exFCVQqM8LbkS95QVfjiZ0gWmWsgfHmhPGmV9fYjLLNZNxje5bcRJ+dxSITPMUKwoqPKd6Nq4+cw9J9nrrlzJc=
+	t=1733281314; cv=none; b=QoZgXp97Sjg3RusgasU+oLlub3akxzNKtALGBl7NHUryn/awngJwcO2ubCZiPhH4NIunWq3/aQuEtxfsciM/c9fCHl/uU5Ls22VT8KwrMRPd1wcDDhUl7wmiRQ1dzefE4LCPILF7nr2HxNdAGh+XSaheNsKG46nqUfcPHQvaec4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733281274; c=relaxed/simple;
-	bh=QWOyW0RSuqhTNUZgpIyrrKeMl0sjLC/tNnJLur0kPaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+iX/xzDffWGoC7U90FaX5fzsX083NnOnHVbePxUgMEu7OPl1MDT52BirfgnMFlGjJewvV8Pua5M4WfIYiyCl2nmiDzM71y3HYFkqzmCXpiq7KJrUqrLiW8a4yKmkhtJUJPrYBUnz8UCEh7dC1HAAiK8Et+wDldbwqCZqtRZw4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sn9/+nHG; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733281273; x=1764817273;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QWOyW0RSuqhTNUZgpIyrrKeMl0sjLC/tNnJLur0kPaY=;
-  b=Sn9/+nHG1Ae42qDOmu5qvfBPduJdccqvnXBu2RC0RUEoS23DYEQ0+oIB
-   Oo5E3bH2/pRCT4H11IgZURYdRV0hnApQa7Y1zouMCgWEVUawFwstHUmAo
-   cMplcXep7HcU7G99/Tl8x2vEEJ0vFnvGojjZBzn/2uYhthN0QJ7HvU3Vs
-   yZ8T1zqKgo/ujFyWWgWLnhcyZuvrxRLdM2ZvZ1ZMGSkXEUgo9/7aEYSSF
-   FnbcBxrvNlggxP+D0HHv4t38lxph970rMWhf6dU84Ei4ggvIsfeAOqeNF
-   4dkelkJDxeFz4CLLCL580/5nc0tJD8HKsdr1oWGzvrEKkgbTPT7alWlQA
-   A==;
-X-CSE-ConnectionGUID: DMP5c/hMQaeVRPQW/aMklg==
-X-CSE-MsgGUID: K7gIEnYITTyNrNPMG7v9Ww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33451401"
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="33451401"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 19:01:12 -0800
-X-CSE-ConnectionGUID: NwlLOQ4zQyuoS95H/H3L3A==
-X-CSE-MsgGUID: nKLzkpWsQSe2kjo+Jcmvbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="124459102"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 19:01:08 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tIfdQ-00000003cpL-1Rrx;
-	Wed, 04 Dec 2024 05:01:04 +0200
-Date: Wed, 4 Dec 2024 05:01:04 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: Raghavendra K T <raghavendra.kt@amd.com>, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, bharata@amd.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
-	ilpo.jarvinen@linux.intel.com,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Fontenot Nathan <Nathan.Fontenot@amd.com>,
-	Wei Huang <wei.huang2@amd.com>
-Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
-Message-ID: <Z0_F8EuGpxPPytFM@smile.fi.intel.com>
-References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
- <87frn5wac3.fsf@DESKTOP-5N7EMDA>
- <Z08KiPwwiw72Vo9R@smile.fi.intel.com>
- <87iks06w17.fsf@DESKTOP-5N7EMDA>
+	s=arc-20240116; t=1733281314; c=relaxed/simple;
+	bh=b0z7pjDYB3g0PL82pvzT/L1Mbt9JFeLuWFLQfcBWLCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lCXE6hnkcYI7n4jv6ihYRg8dnVOA6MdkqzPaqIjnSijhk9rz8wuKwdjCrP/OlcS/tkjz1atwg0MVjOhc2U3x5H6aRjXr7BzV8ChaAfUJLB3FJMvJNmLR49378krg7vge4bHIz487KW4Jv+wMN84GYGLG/fqGui+MdIJ9DlaQ6YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 925EFC4CEDC;
+	Wed,  4 Dec 2024 03:01:52 +0000 (UTC)
+Date: Tue, 3 Dec 2024 22:01:53 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, Paul Burton
+ <paulburton@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
+Message-ID: <20241203220153.3f81f12b@gandalf.local.home>
+In-Reply-To: <ee401848-f7a1-4877-b896-36bec32ca985@roeck-us.net>
+References: <20241003181629.36209057@gandalf.local.home>
+	<bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net>
+	<20241203155542.462b1b21@gandalf.local.home>
+	<ee401848-f7a1-4877-b896-36bec32ca985@roeck-us.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87iks06w17.fsf@DESKTOP-5N7EMDA>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 10:07:16AM +0800, Huang, Ying wrote:
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> > On Tue, Dec 03, 2024 at 02:26:52PM +0800, Huang, Ying wrote:
-> >> Raghavendra K T <raghavendra.kt@amd.com> writes:
+On Tue, 3 Dec 2024 17:48:33 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-...
-
-> >> > git bisect had led to below commit
-> >> > Fixes: b4afe4183ec7 ("resource: fix region_intersects() vs add_memory_driver_managed()")
-> >> 
-> >> This breaks you case, sorry about that.  But this also fixed a real bug
-> >> too.  So, it's not appropriate just to revert it blindly.
-> >
-> > Linus was clear about this recently. Even if it fixes a bug, regression is
-> > still regression and might (*) lead to a revert.
-> > https://lwn.net/Articles/990599/
-> >
-> > (*) in general fixes are better than reverts, but depends on the timing in
-> >     the release cycle the revert may be the only option.
+> Hmm. If you say so. Note that powerpc has the same or a similar problem.
 > 
-> I don't think that the timing is so tight that we should not work on
-> proper fix firstly.  I'm trying to work with the reporter on this.
+> [    0.142039][    T0] RCU not watching for tracepoint
+> [    0.142488][    T0]
+> [    0.142659][    T0] =============================
+> [    0.142755][    T0] WARNING: suspicious RCU usage
+> [    0.142914][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> [    0.143082][    T0] -----------------------------
+> [    0.143178][    T0] kernel/notifier.c:586 notify_die called but RCU thinks we're quiescent!
+> 
+> 
+> [    0.152733][    T0] RCU not watching for tracepoint
+> [    0.152770][    T0]
+> [    0.152995][    T0] =============================
+> [    0.153092][    T0] WARNING: suspicious RCU usage
+> [    0.153187][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> [    0.153301][    T0] -----------------------------
+> [    0.153394][    T0] include/linux/rcupdate.h:850 rcu_read_lock() used illegally while idle!
+> 
+> [    0.165396][    T0] RCU not watching for tracepoint
+> [    0.165540][    T0]
+> [    0.165712][    T0] =============================
+> [    0.165811][    T0] WARNING: suspicious RCU usage
+> [    0.165909][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> [    0.166026][    T0] -----------------------------
+> [    0.166122][    T0] include/linux/rcupdate.h:878 rcu_read_unlock() used illegally while idle!
+> 
+> and many more.
 
-I agree on this, please do.
+Grumble. It's just that one file. I wonder if we could just do a hack like
+this?
 
-> BTW, the commit b4afe4183ec7 ("resource: fix region_intersects() vs
-> add_memory_driver_managed()") fixed a security related bug.  The bug
-> weakened the protection to prevent users read/write system memory via
-> /dev/mem.  So, IMO, we need to be more careful about this.
+Paul?
 
-My point was that the regression is obvious and it needs to be fixed.
-That's all. Revert is a last resort in this sense.
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+index 5c03633316a6..58098873efa9 100644
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -10,11 +10,42 @@
+ #include <linux/module.h>
+ #include <linux/ftrace.h>
+ #include <linux/kprobes.h>
++#include <linux/hardirq.h>
+ #include "trace.h"
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/preemptirq.h>
+ 
++/*
++ * Use regular trace points on architectures that implement noinstr
++ * tooling: these calls will only happen with RCU enabled, which can
++ * use a regular tracepoint.
++ *
++ * On older architectures, RCU may not be watching in idle. In that
++ * case, wake up RCU to watch while calling the tracepoint. These
++ * aren't NMI-safe - so exclude NMI contexts:
++ */
++#ifdef CONFIG_ARCH_WANTS_NO_INSTR
++#define trace(point, args)	trace_##point(args)
++#else
++#define trace(point, args)					\
++	do {							\
++		if (trace_##point##_enabled()) {		\
++			bool exit_rcu = false;			\
++			if (in_nmi())				\
++				break;				\
++			if (!IS_ENABLED(CONFIG_TINY_RCU) &&	\
++			    is_idle_task(current)) {		\
++				ct_irq_enter();			\
++				exit_rcu = true;		\
++			}					\
++			trace_##point(args);			\
++			if (exit_rcu)				\
++				ct_irq_exit();			\
++		}						\
++	} while (0)
++#endif
++
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ /* Per-cpu variable to prevent redundant calls when IRQs already off */
+ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+@@ -28,7 +59,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+ void trace_hardirqs_on_prepare(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -39,7 +70,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
+ void trace_hardirqs_on(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -61,7 +92,7 @@ void trace_hardirqs_off_finish(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+ 	}
+ 
+ }
+@@ -75,7 +106,7 @@ void trace_hardirqs_off(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+ 	}
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off);
+@@ -86,13 +117,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
+ 
+ void trace_preempt_on(unsigned long a0, unsigned long a1)
+ {
+-	trace_preempt_enable(a0, a1);
++	trace(preempt_enable, TP_ARGS(a0, a1));
+ 	tracer_preempt_on(a0, a1);
+ }
+ 
+ void trace_preempt_off(unsigned long a0, unsigned long a1)
+ {
+-	trace_preempt_disable(a0, a1);
++	trace(preempt_disable, TP_ARGS(a0, a1));
+ 	tracer_preempt_off(a0, a1);
+ }
+ #endif
 
--- 
-With Best Regards,
-Andy Shevchenko
 
+I tested this by forcing x86 to use this code, and it appeared to work.
 
+-- Steve
 
