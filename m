@@ -1,157 +1,156 @@
-Return-Path: <linux-kernel+bounces-430401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5709E306F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:39:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A899E3076
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5C56B23698
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6621AB246D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF18C1854;
-	Wed,  4 Dec 2024 00:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDE35227;
+	Wed,  4 Dec 2024 00:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOW7tbio"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AS4W69/C"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD537F9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452142500AC;
+	Wed,  4 Dec 2024 00:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733272743; cv=none; b=W0ZL4uNodiYCjaBOvy1MhpICrazbQzsU6008SZl5nM5W3Z68NvfeMUzenEKz8eGoAlVGzThww0Aj+1dGTF7oiDiu/I5QCNHnOPd80xglc94mXmNPa8MI4vxFFFTtKk67wY3S4oRcqnJvDf8tWpezU9Tv7Ja/6oscBkNdbfv5S1I=
+	t=1733273134; cv=none; b=eE9nVD1rCgB1OwnL3SjQuDTXdF1KXir6frAldLp4PpREYexurPMZIj6JnJ/A7K8TrX01HpN3U13HnPhFj7ekDNZZSugt8Syn0MZV12HDeWJOrlayS/k1vNjaFLWczo2CghYbf2/loaJqm+puG/MiTQdyBk9cA8Z/D36/UCsmOJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733272743; c=relaxed/simple;
-	bh=c2G/7EJkBEWgvygfaSCOqrOJGNYN5fuZ9sPfMdIgAFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2Z2Zv4FOpMahIhays2OSMGJCfvl6DWQuXsdzeoFXuashKp6AvDu8brlw0hIiGKsSWd8AgZu/ZDQQJ/P4oR+6uwrmQ47X+re9bz+WpQgFQc1jd407QUUPRZaTRa8X0nHZtQmcXlQBMl+s0Ad153SrYwtNo5ogVTLBJP+tMEJ3E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOW7tbio; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-724fc1aaa91so5613618b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 16:39:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733272741; x=1733877541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2iy64dWSEgtoo4nfx4yZcRtBBDLE3Df+R/OhP0nDrk0=;
-        b=eOW7tbio1RAGWJJttkwjIdjNr6JRtvfZUP7er4FTgkZwk74/KZSja/Jr2APPCZEfII
-         GS9Ex/PUtRg5dB/pe2tk2u8G5Jm2VVEX0gTx3iijyYlGkMHkdgnkWbLuVi5sltLGJlsE
-         5vhZkDoDxhYmXzN0J+Km2rRh1k9UlZQ8v3cScAWC8lWRVC2XRyGF8It3eBUNhX8Lk00M
-         PIvxQLak2EioN9J7HMTD7znK7ffu2KyzNbwWIthLSygX7O5arqRDBSfo+NvRrGwzg2DD
-         9/OoXsuhX3GPQ9A/AVXK+iBJv23Gr8GmGZ7XOWA6fwpsbla+m1JJHx3j/geVB2ZOFM17
-         6Wmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733272741; x=1733877541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2iy64dWSEgtoo4nfx4yZcRtBBDLE3Df+R/OhP0nDrk0=;
-        b=VsQOfj2tqCygCLKXuA437fuZd8T4JVRjdcQHx8Z2+67/h19XO6IU9VkQbIo+i4PTTh
-         ffZ5EJLBVZXni8YReN2Mego1dF3DOMMcq5nTjO/g4ijQfFIc/wQkIaxutcQQ24PhdVGC
-         PPFT+Me2+45B1SVqM8gvwOAT4QptoC/OmVwlLMH/A2qgHngu1RoAIrCJ9xN81WpssCrH
-         XACEFiMB9t40lA/tGbypEgwo6Qgfeg+C36TB+cC3W3YLoIx4HrMXO5EeLR/wPcMyMSQw
-         l/qwPuHzLKTM46d2Wf44kkAouz7FJPzZKbmtJJtxXLrsODYDE+7z7ypNYd66hasVQB5s
-         8HUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxUQF++EmbQN7Bty6GeqfeWjdJpIu36O25Y0xRFmkS2ftUaOuovBGtDhkm/YRUAQ8s4s6CZled8uzmOi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAzYA9DrTPNmpiTwbmSI5tgZE3K/cWWBOJK/+GqGu4CitxzGAq
-	HaJtkzWq35RD6wvda8s9D7lp1jsjICq/ENwkZBLZL97IScRR90hU
-X-Gm-Gg: ASbGncsqdr8RIdvIlwi5wKi63rpg477tMXunLcDNEUtrdqJOsczfu++KnTOw/3YIsOh
-	w9nTUafK6knbLdRpxPZbxheLdqBqioaPVFxUGSEp8rOYnYJm0Wo+pIyH9PR1K5d7FfMDeeIU/xI
-	5+SVphkNdBa/AVsrKbDaZxO/dcReLQv+TAtRwnLbVAgk3ZTPJGXa7VCxtTh3g7hQXateEHARZzA
-	fjASwmvmLPV0Qeu/U8vi6TH73EeiU2hTwha4alvThm6oHs51g==
-X-Google-Smtp-Source: AGHT+IGQXD1t2sZSOCF4oOUgFUBCImHDNtvG8ZU6r+iuznTIFCooAiZpkt7S3qxQC3WQnfEY7B8bxg==
-X-Received: by 2002:a05:6a00:9a0:b0:71e:6c65:e7c4 with SMTP id d2e1a72fcca58-7257fce9159mr6941537b3a.26.1733272740908;
-        Tue, 03 Dec 2024 16:39:00 -0800 (PST)
-Received: from localhost ([216.228.125.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fb8easm11062236b3a.114.2024.12.03.16.38.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 16:39:00 -0800 (PST)
-Date: Tue, 3 Dec 2024 16:38:58 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrea Righi <arighi@nvidia.com>, David Vernet <void@manifault.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] sched_ext: Introduce per-NUMA idle cpumasks
-Message-ID: <Z0-kovS-Ba9CaP9J@yury-ThinkPad>
-References: <20241203154917.123419-1-arighi@nvidia.com>
- <20241203154917.123419-3-arighi@nvidia.com>
- <Z0-cf7gUzV8jIWIX@slm.duckdns.org>
+	s=arc-20240116; t=1733273134; c=relaxed/simple;
+	bh=KwpksROF8MIl17VHFw2GUEgj6nQPUlGTObzL6xopRRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lW0nAszP44OOpSHZi/sbviEo4kSSxODsUMSKyeVxtZTL6rUsLm+87u3iah/pZ35NJe1ipmw+BXOSY7UIqnaDfLBzf4XqFRwjKpd8MRhYQoT1CzsRX9ny6fh6JZlTEQ2jCGm4NEQc0HDRfa7J3sJQ1i7Y4xNf3S6baOp9ccagZ8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AS4W69/C; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3GaDOc024054;
+	Wed, 4 Dec 2024 00:45:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S9+QcQG+ya2i4p6PSZQryV4ua7A0gAjw7d9g+kWUA7w=; b=AS4W69/C75Ne5Bh3
+	Wq8fkSZmg6Syn3IaOYloxq4TSAbdS5rTM6+7909Pad2LKnrAPqWdhsvFsJcUwsOw
+	yhYUNML2cFVoDWfYlWomwhY83sOuRIvoioedwcB7dWtQ5kGB+W7J+7KCFp0JVtZb
+	TTD0xlNtO9iEneihahEJ0yiwxExaVVe93nh/WLL2M6sQtPO9OCGDFcnTdgxo6nt2
+	xoE/CgDnw2vizk1HqQM1k0JB9S9qyU3VxSCRyu85t12Y0xxc+yQXw6AZgOal5s7P
+	pNKU47T9e5OhAnGwjm9w3DUUmheIalNexInBtL59p7k7KbHvmkA5H2hv+LcCA9FF
+	IrsWyQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnytm2a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 00:45:23 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B40jM5v005563
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 00:45:22 GMT
+Received: from [10.4.85.39] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 16:45:19 -0800
+Message-ID: <873da5ca-c18a-4f31-a4a5-53903e14950f@quicinc.com>
+Date: Wed, 4 Dec 2024 11:45:17 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0-cf7gUzV8jIWIX@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] Trusted Execution Environment (TEE) driver for
+ Qualcomm TEE (QTEE)
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Trilok Soni <quic_tsoni@quicinc.com>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+ <518ee3f1-b871-4349-ba85-3b3fc835a4ca@quicinc.com>
+ <0df58435-94e7-4b81-b688-ec0e1c49c0e0@quicinc.com>
+ <gtfm7paylpcobucmwmapgdxva2wnvn5skkakaalzpx4ip7x2h2@lphbinkzaw7k>
+From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+In-Reply-To: <gtfm7paylpcobucmwmapgdxva2wnvn5skkakaalzpx4ip7x2h2@lphbinkzaw7k>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8y4aOpmRfA2PO1Qffh1I4_FYMo2mbQwd
+X-Proofpoint-GUID: 8y4aOpmRfA2PO1Qffh1I4_FYMo2mbQwd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ mlxlogscore=947 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040005
 
-On Tue, Dec 03, 2024 at 02:04:15PM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, Dec 03, 2024 at 04:36:11PM +0100, Andrea Righi wrote:
-> ...
-> > Probably a better way to solve this issue is to introduce new kfunc's to
-> > explicitly select specific per-NUMA cpumask and modify the scx
-> > schedulers to transition to this new API, for example:
-> > 
-> >   const struct cpumask *scx_bpf_get_idle_numa_cpumask(int node)
-> >   const struct cpumask *scx_bpf_get_idle_numa_smtmask(int node)
-> 
-> Yeah, I don't think we want to break backward compat here. Can we introduce
-> a flag to switch between node-aware and flattened logic and trigger ops
-> error if the wrong flavor is used? Then, we can deprecate and drop the old
-> behavior after a few releases. Also, I think it can be named
-> scx_bpf_get_idle_cpumask_node().
-> 
-> > +static struct cpumask *get_idle_cpumask(int cpu)
-> > +{
-> > +	int node = cpu_to_node(cpu);
-> > +
-> > +	return idle_masks[node]->cpu;
-> > +}
-> > +
-> > +static struct cpumask *get_idle_smtmask(int cpu)
-> > +{
-> > +	int node = cpu_to_node(cpu);
-> > +
-> > +	return idle_masks[node]->smt;
-> > +}
-> 
-> Hmm... why are they keyed by cpu? Wouldn't it make more sense to key them by
-> node?
-> 
-> > +static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, u64 flags)
-> > +{
-> > +	int start = cpu_to_node(smp_processor_id());
-> > +	int node, cpu;
-> > +
-> > +	for_each_node_state_wrap(node, N_ONLINE, start) {
-> > +		/*
-> > +		 * scx_pick_idle_cpu_from_node() can be expensive and redundant
-> > +		 * if none of the CPUs in the NUMA node can be used (according
-> > +		 * to cpus_allowed).
-> > +		 *
-> > +		 * Therefore, check if the NUMA node is usable in advance to
-> > +		 * save some CPU cycles.
-> > +		 */
-> > +		if (!cpumask_intersects(cpumask_of_node(node), cpus_allowed))
-> > +			continue;
-> > +		cpu = scx_pick_idle_cpu_from_node(node, cpus_allowed, flags);
-> > +		if (cpu >= 0)
-> > +			return cpu;
-> 
-> This is fine for now but it'd be ideal if the iteration is in inter-node
-> distance order so that each CPU radiates from local node to the furthest
-> ones.
 
-cpumask_local_spread() does exactly that - traverses CPUs in NUMA-aware
-order. Or we can use for_each_numa_hop_mask() iterator, which does the
-same thing more efficiently.
 
-Thanks,
-Yury
+On 12/4/2024 10:43 AM, Dmitry Baryshkov wrote:
+> On Wed, Dec 04, 2024 at 09:13:43AM +1100, Amirreza Zarrabi wrote:
+>> Based on our discussions, we implemented significant changes. We essentially
+>> rewrote most of the files and altered the overall direction, except for a
+>> couple of files. The changelog entry would have been extensive.
+> 
+> At least some changelog should be provided, even if tells "reworked to
+> use TEE framework, made it jump over the head and tie the shoelaces".
+> 
+
+Sure, I'll provide some changelog.
+
+> Also please don't top-post, this style is frowned upon in the mailing
+> list discussions, it breaks the logic of reading.
+> 
+
+;) Oops, that shouldn't have been sent out like this. My apologies.
+I'll ensure it doesn't happen again..
+
+- Amir
+
+>>
+>> - Amir
+>>
+>> On 12/3/2024 5:06 PM, Trilok Soni wrote:
+>>> On 12/2/2024 8:19 PM, Amirreza Zarrabi wrote:
+>>>> This patch series introduces a Trusted Execution Environment (TEE)
+>>>> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
+>>>> and services to run securely. It uses an object-based interface, where
+>>>> each service is an object with sets of operations. Clients can invoke
+>>>> these operations on objects, which can generate results, including other
+>>>> objects. For example, an object can load a TA and return another object
+>>>> that represents the loaded TA, allowing access to its services.
+>>>
+>>> The first patch series was RFC and now you had removed the RFC. Can you please
+>>> provide the reasons?
+>>>
+>>> https://lwn.net/ml/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com/
+>>>
+>>> I understand that you have now changed to tee framework but I want to check
+>>> if we should continue with the version and increment here or start from [00]?
+>>>
+> 
 
