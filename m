@@ -1,231 +1,118 @@
-Return-Path: <linux-kernel+bounces-432031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741DF9E4404
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:04:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C7D9E4417
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C14164728
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:04:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3FE1625F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A8B1C3BE2;
-	Wed,  4 Dec 2024 19:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDEE1C3BE3;
+	Wed,  4 Dec 2024 19:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qim8GpN2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="cg5XFyfW"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818421A8F73;
-	Wed,  4 Dec 2024 19:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DAC1A8F73
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733339056; cv=none; b=Fqn3NFVpZPUCdoWENMOSp41SpseWpyKUgYJGztC3a8I2wMlwISnHOBFyMgzs0NkrMMXh+1A9pzoOJjhVte3Aq4sSrOSSt8O83omHDvz2OvT4W5sOr2N12T4VR5rIR6v1MJ8kNOAjAkHkgbOxA6W7267VRpgdqBueiD71o3Vc5WM=
+	t=1733339215; cv=none; b=kGGsxUSwfV78FpZta9Cm2xbvPal5oGQet0kh4oXvdVExFMQtoNEMso7R/SQKnIY5A2fPm9oPaIHOlXWh/cy/zfIJWmp7OVPRj7LRE2ZfeJTpfGYj6zbeUGnhjlGm4NwUhlJj/eXe94jl8NgVIrxv1BM7yZQL0O5J9h35lzamBvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733339056; c=relaxed/simple;
-	bh=DG03WzUac3F7M/jznCfNYNvGITnqTs335jUh43IakQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Dci4BR182Mr5Q/1Xodkky2ioUwWQUiyCyPAWaX5fPvmeG8FlDsvsLJD+etguwq1B5Gftr8tltVBh79/lnfo5iVQO3SZRUEacrMK4hAxkTt8iEEMaLg3jfjXTB+ue7eMMoNx+Wg8XQio+cmhuUUL+AqAX52CWL6uFDoNDAwizaQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qim8GpN2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4Ebhvi010267;
-	Wed, 4 Dec 2024 19:04:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rKvaVoAo9QZzYIpLIpPzm19Rx6mJMrYuo4XWJfhmVVI=; b=Qim8GpN2MyDDoYea
-	WTXtsbIlCKXlvffsILgxUcJ2aZkxK3XcJnvArzid3vRw1m65JLcIHQ7qAJljJ/bD
-	aYLL3GWGupRB3IPqrESmGjOz1kr82W7YgTgl+mHfup4T25uoQY5FWSVvRKGF2nkm
-	7NeW//gE5GX+tzZtES2Rl29BiAAAJyYFGUxFWrEH9FpWimsMo4VIK7P1ii5zI0Iu
-	V8P3b/JGE4YN0247nJ5FNfV2dqRaofhRNJ99GG6++56GBjoPDGhG7OrxNqBxcPNR
-	v0TGDO8pKcBySnGpL9pbUGkqBvNUY8xqI/5SRy/aVEtLzF9lIcH/hHk5fusXiNMw
-	bPBnyA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439v7ywcje-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 19:04:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4J42lX027274
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 19:04:02 GMT
-Received: from [10.216.22.114] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 11:03:57 -0800
-Message-ID: <f603f71c-64f4-4f29-b8b9-430d758a738b@quicinc.com>
-Date: Thu, 5 Dec 2024 00:33:55 +0530
+	s=arc-20240116; t=1733339215; c=relaxed/simple;
+	bh=eUKSN5vKrqhW8FK5cgPw/vpHyjEc3geIG/6GnQCVg7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qOwfHJadoSFfL30pRX1YmJu0uF0rt/aBIAKD1ZnIGMbHb96vjTdmwyJeorNDfQXUxl1JlzAbZZjeD2D3YgoONAqmVMHL5gCGsc8caCWu3AJGSd5f3Rlf1jrrPZ9NT+pYeg21GBZuXcCmGICQG7tNVJS7ZCt0VShsZeLoaBRo+rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=cg5XFyfW; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1733339209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mcTkKmanEr2PwIBSDfsP1SV1PVVrlfYHu7XxJmfmhzM=;
+	b=cg5XFyfW8RsFUMmzJaSf3HHB/rVwd2UQLS2TVrGKys43akX+iFMEvIT32KNHIEU2QXtI3t
+	8Zqmlyn8LehNz5qEwULhK2wAzaCnUCTskV+Cm5/+VpVs7uKbn4VXyGJV1TzxmUiBhnMew1
+	Wbm9SHKk6CnfkRNSnkr9CEDHfBCQPR0NMknfEXi5BEgUpEcbelwcVaX0+xSgspFjvaFtT/
+	y6MlJKRJe/rZO4z/gvY727A029id+Cy0mpmTi6PNXryvkyK8lzG7IGAOoOc/1xPKd7GpQS
+	kQQKXPZ6wH1pp4Q5otv/O4x6w58mkWZVz8n43NGknj5ccJ5Omte4XdnHrqjPVA==
+From: Val Packett <val@packett.cool>
+To: 
+Cc: Val Packett <val@packett.cool>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Fabien Parent <fparent@baylibre.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 0/5] MT8516/MT8167 dtsi fixes
+Date: Wed,  4 Dec 2024 16:05:03 -0300
+Message-ID: <20241204190524.21862-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] drm/msm/adreno: Introduce ADRENO_QUIRK_NO_SYSCACHE
-To: Rob Clark <robdclark@gmail.com>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Sean Paul
-	<sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Rob Clark
-	<robdclark@chromium.org>
-References: <20241125-a612-gpu-support-v2-0-b7cc38e60191@quicinc.com>
- <20241125-a612-gpu-support-v2-1-b7cc38e60191@quicinc.com>
- <752484b5-2db1-4714-8046-17cd5496d81d@oss.qualcomm.com>
- <0aa547fc-4c88-4457-8d01-81f93fb3832c@quicinc.com>
- <CAF6AEGvqPEFN+j0Txa5KPmxF8tXCn_uUsM86i4uo+tc2mTWYgg@mail.gmail.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <CAF6AEGvqPEFN+j0Txa5KPmxF8tXCn_uUsM86i4uo+tc2mTWYgg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YWQExhXkQneS9244YNdV1kL_d4jQndXa
-X-Proofpoint-GUID: YWQExhXkQneS9244YNdV1kL_d4jQndXa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1011
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040145
+X-Migadu-Flow: FLOW_OUT
 
-On 12/1/2024 10:06 PM, Rob Clark wrote:
-> On Sat, Nov 30, 2024 at 12:30 PM Akhil P Oommen
-> <quic_akhilpo@quicinc.com> wrote:
->>
->> On 11/30/2024 7:01 PM, Konrad Dybcio wrote:
->>> On 25.11.2024 5:33 PM, Akhil P Oommen wrote:
->>>> There are a few chipsets which don't have system cache a.k.a LLC.
->>>> Currently, the assumption in the driver is that the system cache
->>>> availability correlates with the presence of GMU or RPMH, which
->>>> is not true. For instance, Snapdragon 6 Gen 1 has RPMH and a GPU
->>>> with a full blown GMU, but doesnot have a system cache. So,
->>>> introduce an Adreno Quirk flag to check support for system cache
->>>> instead of using gmu_wrapper flag.
->>>>
->>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>> ---
->>>>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 3 ++-
->>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 7 +------
->>>>  drivers/gpu/drm/msm/adreno/adreno_gpu.h   | 1 +
->>>>  3 files changed, 4 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->>>> index 0c560e84ad5a..5e389f6b8b8a 100644
->>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
->>>> @@ -682,6 +682,7 @@ static const struct adreno_info a6xx_gpus[] = {
->>>>              },
->>>>              .gmem = (SZ_128K + SZ_4K),
->>>>              .inactive_period = DRM_MSM_INACTIVE_PERIOD,
->>>> +            .quirks = ADRENO_QUIRK_NO_SYSCACHE,
->>>>              .init = a6xx_gpu_init,
->>>>              .zapfw = "a610_zap.mdt",
->>>>              .a6xx = &(const struct a6xx_info) {
->>>> @@ -1331,7 +1332,7 @@ static const struct adreno_info a7xx_gpus[] = {
->>>>              },
->>>>              .gmem = SZ_128K,
->>>>              .inactive_period = DRM_MSM_INACTIVE_PERIOD,
->>>> -            .quirks = ADRENO_QUIRK_HAS_HW_APRIV,
->>>> +            .quirks = ADRENO_QUIRK_HAS_HW_APRIV | ADRENO_QUIRK_NO_SYSCACHE,
->>>>              .init = a6xx_gpu_init,
->>>>              .zapfw = "a702_zap.mbn",
->>>>              .a6xx = &(const struct a6xx_info) {
->>>
->>> +a619_holi
->>>
->>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> index 019610341df1..a8b928d0f320 100644
->>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> @@ -1863,10 +1863,6 @@ static void a7xx_llc_activate(struct a6xx_gpu *a6xx_gpu)
->>>>
->>>>  static void a6xx_llc_slices_destroy(struct a6xx_gpu *a6xx_gpu)
->>>>  {
->>>> -    /* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
->>>> -    if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
->>>> -            return;
->>>> -
->>>>      llcc_slice_putd(a6xx_gpu->llc_slice);
->>>>      llcc_slice_putd(a6xx_gpu->htw_llc_slice);
->>>>  }
->>>> @@ -1876,8 +1872,7 @@ static void a6xx_llc_slices_init(struct platform_device *pdev,
->>>>  {
->>>>      struct device_node *phandle;
->>>>
->>>> -    /* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
->>>> -    if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
->>>> +    if (a6xx_gpu->base.info->quirks & ADRENO_QUIRK_NO_SYSCACHE)
->>>>              return;
->>>
->>> I think A612 is the "quirky" one here.. it has some sort of a GMU,
->>> but we're choosing not to implement it. maybe a check for
->>>
->>> if (adreno_has_gmu_wrapper && !adreno_is_a612)
->>>
->>> would be clearer here, with a comment that RGMU support is not
->>> implemented
->>>
->>>
->>>
->>> But going further, I'm a bit concerned about dt-bindings.. If we
->>> implement RGMU on the driver side in the future, that will require
->>> DT changes which will make the currently proposed description invalid.
->>>
->>> I think a better angle would be to add a adreno_has_rgmu() func with
->>> a qcom,adreno-rgmu compatible and plumb it correctly from the get-go.
->>>
->>> This way, we can avoid this syscache quirk as well.
->>>
->>
->> I am aware of at least Adreno 710 which doesn't have syscache, but has
->> proper GMU. And I don't see any reason why there couldn't be another one
->> in future to save silicon area. So, a quirk flag doesn't seem so bad in
->> this case.
->>
->> The correct way to avoid this quirk flag is by making LLCC driver return
->> a proper error to detect the absence of syscache. Currently, it just
->> returns EPROBE_DEFER which put driver in an infinite probe loop.
-> 
-> Hmm, this seems solvable?  llcc has a node in the dt, so it seems like
-> it should be able to tell the difference between not existing and not
-> being probed yet.  Something maybe like, initialize drv_data to NULL
-> instead of -EPROBE_DEFER, and then in the various entry points, if
-> (!drv_data) return not_probed_helper(); which would check if a
-> compatible node exists in dt?
+Hi everyone,
 
-Sounds like that would work. Can we explore that separately?
+I've been working on mainline bringup on an MT8167 tablet I found at a
+junkyard sale (lenovo,tb7304f) for postmarketOS :3
 
-I am a bit worried about adding another subsystem's patch to this
-series. That might delay this series by weeks.
+This first series consists of basic device tree fixes for the MT8516
+dtsi that the MT8167 one inherits from.
 
--Akhil
+The changes that follow add support for the MT6392 PMIC, and that's
+mostly been implemented by Fabien Parent back in 2020 and not merged:
 
-> 
-> BR,
-> -R
-> 
->> Agree about the dt binding suggestion. I will define a new compatible
->> string for rgmu.
->>
->> -Akhil.
->>
->>> Konrad
->>
+<https://patchwork.kernel.org/project/linux-arm-kernel/patch/20201027181157.862927-3-fparent@baylibre.com/>
+<https://patchwork.kernel.org/project/linux-arm-kernel/patch/20201024200304.1427864-2-fparent@baylibre.com/>
+
+but I have a couple changes on top of those patches (like adding the
+missing mt6392_set_buck_vosel_reg). I'm wondering what the best way to
+get this in would be, should I squash my changes and submit the "final"
+patches with a Co-developed-by tag?
+
+(Similar situation with DRM nodes, not merged due to "concerns about
+the driver architecture" in 2021, now missing GCE/CMDQ mailbox props:
+<https://lore.kernel.org/df4c57f9-115b-c4da-e656-e4bdec62c2d7@gmail.com/>)
+
+By the way, is anyone familiar with PSCI cpuidle/hot-unplug issues on
+Mediatek Android devices from around this time? Specifically on this
+tablet, I can't make the cores come back from suspend. I have
+investigated local-timer-stop and arm,no-tick-in-suspend, Fabien pointed
+me to the mediatek timer and its required clocks, but nothing helped.
+Trying the psci_checker, I realized that it's not just suspend: they
+do not come back from hot-unplug either. Initial CPU_ON on boot is fine,
+but then after a CPU_OFF they do not actually come back when CPU_ON
+supposedly turns them on. Now I can't help but notice that the only DTS
+in mainline for a device that came with Android, mt6795-sony-xperia-m5,
+does not have any cpuidle nodes in its SoC's dtsi either..
+
+Val Packett (5):
+  arm64: dts: mediatek: mt8516: fix GICv2 range
+  arm64: dts: mediatek: mt8516: fix wdt irq type
+  arm64: dts: mediatek: mt8516: add i2c clock-div property
+  arm64: dts: mediatek: mt8516: reserve 192 KiB for TF-A
+  arm64: dts: mediatek: mt8516: add keypad node
+
+ arch/arm64/boot/dts/mediatek/mt8516.dtsi      | 21 +++++++++++++++----
+ .../boot/dts/mediatek/pumpkin-common.dtsi     |  2 --
+ 2 files changed, 17 insertions(+), 6 deletions(-)
+
+-- 
+2.47.1
 
 
