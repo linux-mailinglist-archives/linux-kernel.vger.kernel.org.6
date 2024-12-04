@@ -1,99 +1,104 @@
-Return-Path: <linux-kernel+bounces-431620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4419C9E3F8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B48B69E3F8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:25:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04127281BC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755A7281B16
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D16120C480;
-	Wed,  4 Dec 2024 16:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5AB20C48F;
+	Wed,  4 Dec 2024 16:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QoQHSMtd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EkAml4HD"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04E319993D;
-	Wed,  4 Dec 2024 16:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5E420CCC8;
+	Wed,  4 Dec 2024 16:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733329520; cv=none; b=FfpfGpIKAqUXR62kmPIw1HYkFT5XcEIrmE8f+6ntLV9yaWxAR1jz5TjO+Lqsy+OwuzLB1UUDLB6RWySx8g/vL8DdhoVGRTysbkV9WM2DWoYXnebfxwJf00Ya7TbERwvodfY8TusXXnsIkliG5BhrTwTcBLXFRDLoDHBLV9gQENY=
+	t=1733329526; cv=none; b=GhsKecNN/CBtSTavmHHau5Q613cVWnHt3uj/MGPaiTG3DJIVsnfHEcBPMq0wUMsn9NuzFNV2zcAQ8un1n3pYmX4/TO4zUOf3s5QJRi1x3WxCOLiPZq8bZrKpVOX2pjg3lDi3mwtG7+WOws2+EfvRhmnhuy8EZ7P83JuVu3PkGkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733329520; c=relaxed/simple;
-	bh=Nc+FOIpt7TbIStp6l8xTivwnrh0gB0h1NmUqHHiH7nA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Gtryd7prF5L8DgWOKOHt9g6wlK+zTKRNZntMA3dnJ768RBGi7HKj25BZF+RAj/B1hJSNF6VZOIDqo6qs9VPF5vfJIkqYNlnv4XykMhVJqsmuy4DTMaBm+EyAeU3wS2Dyql0HTpvwK2Gj41bRHfmss1NBtDcWVDVwn3IjWHExbjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QoQHSMtd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25188C4CECD;
-	Wed,  4 Dec 2024 16:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733329520;
-	bh=Nc+FOIpt7TbIStp6l8xTivwnrh0gB0h1NmUqHHiH7nA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QoQHSMtd4xRonXrPYqRL5VXJnmIHOEMFLAjKen/RG11dUzDEesTySsjhWqTTjzqnZ
-	 MAKhvpaB9jZCECSo4t7d+Y0PvsofWNp6HV0LXi31HY1e8g7pAJ6V3F9GU/eCOmyEud
-	 DbLP/nBZh5Z07dtyGnM0xXKHJg9nwgzYxsPmnjLR+VYyG6TpI3w1WWaXb5FzgV5Cwc
-	 5lTFhVNFjQQ7JgihP759ATsJEtYFrBCj4AY4a7/ZGuwuhq+MQx1t01UDlmcqFDBWvs
-	 I6VQBGeeEeiGYCM01I+7vKkhjdk/kh+D/o6wU9l8QfxMikyQgcGyjMKY7KVBJIEfJ0
-	 ObcI5NywDCjEQ==
-From: Mark Brown <broonie@kernel.org>
-To: Jon Lin <jon.lin@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- heiko@sntech.de, linux-arm-kernel@lists.infradead.org, 
- linux-spi@vger.kernel.org
-In-Reply-To: <20241203013513.2628810-1-jon.lin@rock-chips.com>
-References: <20241203013513.2628810-1-jon.lin@rock-chips.com>
-Subject: Re: [PATCH] spi: rockchip-sfc: Optimize the judgment mechanism
- completed by the controller
-Message-Id: <173332951887.13421.11537303801053149682.b4-ty@kernel.org>
-Date: Wed, 04 Dec 2024 16:25:18 +0000
+	s=arc-20240116; t=1733329526; c=relaxed/simple;
+	bh=J0NkytdeoSDuYK02EGcBE+sEaWUWn9wKPlUOOeTyzhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkQ+NvstCLfwjGk+UtsCeB5GvJ0R4fZ6EbwB8DUF6FIZ9HdHtVva7p7WVZG9scLR/jgJiiaFW1SKIU3xfJ53zMsJg3wp/F6DVYdoTcE7C0mH/03WCb/8FB8lZzFmBQbxRhWXMK8r080EdNPsMtJLnOHrG29GrzJ9XYJs9nVdbrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EkAml4HD; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tnChT+DuHDBrgRdPGMFu9O3S0vDozFvAcTxya8Mah08=; b=EkAml4HDHQeTM3S4ksspHSqI8V
+	9cFfB11GrmxwQkmfOEMi2i2TgvicxvqYQqUOhH2dih+gHtguzxJqv2uqChF6piP6kwRXdI9aF8zA/
+	v84rDyJJ05mN/MqBOHPLQcxYQworusOLBYA1Ru3hJNIdUSfd/Sx4ni5i5ESKMdWa69omqGqFxqjBN
+	q84ZnqCC90vda5XOmCWnaesmuhsIkjRZTloYUlu8IuuFXecwe3BrmnGTH1+u8IK3oaaLrDKs0Fw60
+	DU9JWhAGsNHsOYUGVKtWMJzeOeG3ugvxBhVznCxA/agYVqLZDILr38kDuFSUuYIEw8OtBRFLpCH0C
+	XJ1WFfmQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIsBk-0000000BdtE-0GgU;
+	Wed, 04 Dec 2024 16:25:20 +0000
+Date: Wed, 4 Dec 2024 16:25:19 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>,
+	asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in
+ sys_io_uring_register
+Message-ID: <Z1CCbyZVOXQRDz_2@casper.infradead.org>
+References: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+ <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
+ <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk>
+ <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
+ <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk>
 
-On Tue, 03 Dec 2024 09:35:13 +0800, Jon Lin wrote:
-> There is very little data left in fifo, and the controller will
-> complete the transmission in a short period of time, so
-> use readl_poll_timeout() for busy wait 10us to accelerate response.
+On Wed, Dec 04, 2024 at 09:17:27AM -0700, Jens Axboe wrote:
+> >   XA_STATE(xas, xa, index);
+> > - return xas_result(&xas, xas_store(&xas, NULL));
+> > + return xas_result(&xas, xa_zero_to_null(xas_store(&xas, NULL)));
+> >  }
+> >  EXPORT_SYMBOL(__xa_erase);
+> > 
+> > This would explain deletion of a reserved entry returning
+> > `XA_ZERO_ENTRY` rather than `NULL`.
 > 
+> Yep this works.
 > 
+> > My apologies for this breakage. Should I send a new version? A new
+> > "fixes" patch?
+> 
+> Since it seems quite drastically broken, and since it looks like Andrew
+> is holding it, seems like the best course of action would be to have it
+> folded with the existing patch.
 
-Applied to
+... and please include an addition to the test-suite that would catch
+this bug.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Wait, why doesn't this one catch it?  You did run the test-suite, right?
 
-Thanks!
-
-[1/1] spi: rockchip-sfc: Optimize the judgment mechanism completed by the controller
-      commit: 577f1cf76ceedb5fbdc9aca4f712b21864ac15ee
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+        /* xa_insert treats it as busy */
+        XA_BUG_ON(xa, xa_reserve(xa, 12345678, GFP_KERNEL) != 0);
+        XA_BUG_ON(xa, xa_insert(xa, 12345678, xa_mk_value(12345678), 0) !=
+                        -EBUSY);
+        XA_BUG_ON(xa, xa_empty(xa));
+        XA_BUG_ON(xa, xa_erase(xa, 12345678) != NULL);
+        XA_BUG_ON(xa, !xa_empty(xa));
 
 
