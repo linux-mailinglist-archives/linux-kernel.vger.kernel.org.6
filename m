@@ -1,135 +1,210 @@
-Return-Path: <linux-kernel+bounces-432109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F1D9E454D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:10:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4D3168277
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:09:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76A71F03DD;
-	Wed,  4 Dec 2024 20:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O/w27WJA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039C59E4555
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:10:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9891C3C04
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 20:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FFA284633
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:10:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389E81F5404;
+	Wed,  4 Dec 2024 20:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1BwHGaH"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBE31F03DF;
+	Wed,  4 Dec 2024 20:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733342996; cv=none; b=X5vPGUBBBQDXgivNG45rU9jqGXNzedKKchnfUsS+FPwIZP3f4z7prCVWkDh1two/n2HqcGQs2coITsh+wAsVUFPViJ319N2ZoifRJ8O70vIzEp1ZoRme1PDRyQpwVEfbJfKVMtQBxFrxF0+JWWkcZ+qkGpwQpllMfNevjznmpt4=
+	t=1733343010; cv=none; b=nJxHaiSwlyCWLr748Ya5nQzoAxKtYab7jj+zFHrzbyfcaxSDl412bLP1ZDDLxnK2JdqpwiAMbBPR+TfCi6YZFTYy2u44RS8OjLr9lJQcyMuZ3vw86iEp3ow5g/i6W9wGn37ODBeeSrj270c3WIGAIr7Gf5qa7dThqiAddf4EJNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733342996; c=relaxed/simple;
-	bh=yF6HQtLwTtRXYBnNwEC0Rc8WBNM/f0oVnV8EAkCZNuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ULesV/0U9P5gYcYDbllc/KgEXKh7qF1niPYWM5vIpdNHPkyI+8Or7ohoUoV1rpmSDroqvmp+BCi8u82phVPJ6Y42OqXeOD9q2w3Lj6Yl6tae0vboo8apg+n1Tmei5DWWn5gydvDyCZthUm3vOSUIq7jgA3U3kwlPI3eaZGwvtwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O/w27WJA; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733342993; x=1764878993;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yF6HQtLwTtRXYBnNwEC0Rc8WBNM/f0oVnV8EAkCZNuc=;
-  b=O/w27WJArHQedx+OwqLondRQ/mXCOn3Rf/z5Dj14Fpx7rN7chr9f5JnW
-   8x8vOK12UmhwcsfGrUjz/qpEi8UCBrPnF0uYa+MGTQjX0yp9ePNZPgXf+
-   xxHrLMwTWU4GrbXP0ZRpf8aUvKG5uIMdmEOV3pN9oHmfSYx/Dv5kPpAxN
-   Wok4ZMZGJ5Ur5LSgiS6iqwR5vuzPLoDh8wASVxAtvpgyYD2HkbefUIht5
-   40jWz+Sf1/cBvXEaZLza/fN1YEhhnqviGyLcaz1w0Jv9eu1d3pzIM4AA7
-   zOjUnyXppo6iQr7KEfw56OdM6qd3xFDm87gJB+qgrfTRdrnegl9JYkQ4Q
-   g==;
-X-CSE-ConnectionGUID: ENLJGhepQmyW5Os+4qoAdA==
-X-CSE-MsgGUID: aeBWdo0bTrecC5ScR+7q7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="45007400"
-X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
-   d="scan'208";a="45007400"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 12:09:53 -0800
-X-CSE-ConnectionGUID: hjKRbg0iTvuqQACuITIkjA==
-X-CSE-MsgGUID: pgsX1FHaTcq981ieRnU2wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
-   d="scan'208";a="124686798"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 04 Dec 2024 12:09:49 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIvgw-0003Rr-0U;
-	Wed, 04 Dec 2024 20:09:46 +0000
-Date: Thu, 5 Dec 2024 04:09:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 4/4] powerpc/static_call: Implement inline static calls
-Message-ID: <202412050317.rQGggDIb-lkp@intel.com>
-References: <3dbd0b2ba577c942729235d0211d04a406653d81.1733245362.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1733343010; c=relaxed/simple;
+	bh=QPLa0r+6p8PLfccDRaeRG4DbcK4v55uLKkJBlNlcdC8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HBJIOwTNJ4Y1S170dga8IuzpxU0pi7cPm4lTBp5HQgR88ATBxscyj4Llu8TBauaQ3Vjolo95mTsTcMo9lj86mF/Kw9gs0/KuL0tYAP5yyUIeWalGrP8IdxfsZ7XIlkTTPcShCF2swCGIWGYxdvrxohLeHRldxpEgPWFsj7EdEDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1BwHGaH; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so190165a12.0;
+        Wed, 04 Dec 2024 12:10:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733343006; x=1733947806; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iR3FhZB90yY2CtQD1Z8nT3lcBvWhMlkfTygUbcwhlIE=;
+        b=L1BwHGaHBlZ4r2uaSg9wed2d3+gO+BtaFTex0z82UWtvBKD2azHn52To95F8ErjZBs
+         xK76Fs2I+ARdRuzO3jyh+a64wi1KHDBGR7hMfulDuYil2kreXAREQW24iLASNCcsSLqJ
+         84voq7POuidsJvnYov6V62oHVkdx6iXw/WuHcVmvdxVHyRyJBFZsKKI0UBvH1UaJ7q8O
+         /7Md7lWh0tc5Ezw+V38/KlMhQZjNUV8e8hjJMR4lZYK0RrBN/rKo+vyosyrcmA9Wvc3a
+         y4jpaJuNrSjn7NtCQjg3xV+hJZXPSAS+512ovTq11uxmX00Ibr6W4z1vvsXKErINoJOK
+         4Ikw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733343006; x=1733947806;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iR3FhZB90yY2CtQD1Z8nT3lcBvWhMlkfTygUbcwhlIE=;
+        b=DknCH2WYTzYiW3X7Rodik8+M4ZXmLOJEN9aC6lrFhtyRyBcmUBvdmLADFBUdrO+X8P
+         zY4wUOOyWauxdelzbDPuZaRoU7q+o7IW4s3OAYq/89ddzNEEB45hqovRJ7dyK4eicxG5
+         QnMYYdwyESoGmxMzU8bGmSS7KqY+miw2Epsm/E8xbgPN7iMIUQ/sI0EVeb/Yojvo5eNZ
+         9hqmZQ7/rolIyApG3ndKqa3Jn41bN3E1pwOBwBvbCwxBBR+DjGmmgnmEgyaN7gmQQxpN
+         Riax0DsGnlOQazZ5/6dCQ8pBNiSVbfMFeJmKRVnQnyij4WAoJZuYoaow3XgPcGF4Msez
+         6p3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAqQJ9bYBenKxSI5OVXHB4K3xwCPzP7BVAqSHOzcCH4lRfJVa0S+w2wEgQO5sRDshtQfdv8tMMaEz13kEE@vger.kernel.org, AJvYcCW1ne5tNPM1HXArXde72orQuitE/hnZ1zNnc/ReGSdgZkiCplEWpzrSHl++5hr0+Q/MYt2G8A3o9DKWMqc=@vger.kernel.org, AJvYcCW4U68grR7KtA3/p9cy8J5asYje014eBj5Fd4WSqhPC/daWr5fQeg5z5qXeupmMZW30Gp1kxeuif1XtCA==@vger.kernel.org, AJvYcCWv+2wwyooKPMUbp4IXLfSZ7ii+af/BZgZ4ghIRgpN2D3nzHV80U+C/2w/ybo9ULbJCouzfvHYnLC1V@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw91hrAl2i7xpsOb+qIZdEiiTSszLc/lXn5DvEvH+Qsy6coXn9P
+	dEZhK5wAlFokyG9bYIPcclO/2Y84S/2DQ9aezNC4Mke/4ZBZMZJXjQcvGg==
+X-Gm-Gg: ASbGncv6/yLpGFG3mir840XZegNNvZ7Jx4b0LmFUEuAwaTAoWY04OfZLoqRE2VOwH1S
+	cgV8OjKwk90s55OrSVZDxDoFGHWjqpKdZj+b14RaO2qhuUJGpE1JdKBrnAczASBFxdJR2Pl6hBl
+	kzWO9HmnvmPvQl3vktHZyXDdlLdBVLS7OPERcMEB6dgMggo3J7p2/K99G4Wls8Ufi6jZ4xY3vge
+	dFSpiADkHgj36XCrviILBFtH+WwJqVA6000cTFzcwtknP0v
+X-Google-Smtp-Source: AGHT+IEUUgdhIfO47YE8X0YhH4Y6sYmYrtouHL+4ILHkEsbtMSf1sDjiOZAZuFHaFJt/fsJw5HCJAw==
+X-Received: by 2002:a05:6402:2743:b0:5cf:bb9e:cca7 with SMTP id 4fb4d7f45d1cf-5d10cb9ae01mr9440108a12.28.1733343005941;
+        Wed, 04 Dec 2024 12:10:05 -0800 (PST)
+Received: from [127.0.1.1] ([46.53.242.72])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b7ce5584sm6266526a12.54.2024.12.04.12.10.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 12:10:04 -0800 (PST)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v10 0/8] Add support for Maxim Integrated MAX77705 PMIC
+Date: Wed, 04 Dec 2024 23:09:50 +0300
+Message-Id: <20241204-starqltechn_integration_upstream-v10-0-7de85e48e562@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3dbd0b2ba577c942729235d0211d04a406653d81.1733245362.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAA+3UGcC/43SUW+DIBAH8K/S+DyWAxTQp32PpWkOhEqitkVru
+ jT97jvbbDXdw3wh4Qy/O/B/zQafoh+yanPNkp/iEA89bTi8bTLXYL/3LNZUyASIHBTXbBgxndr
+ Ru6bfxX70+4QjHdqdj8OYPHbMOqNMAVYELzNiLA6e2YS9awjqz21LxWPyIV7ujT+3tG/iMB7S1
+ 32OSc7Vn47m/46TZMC8DEopAVyj+9h3GNt3d+iyGZ/yJ1hyuQLMCRS18KEuXGG0fgWL5YQr3mQ
+ q5gkBpAw85zX/A6pfkAOsARWBUEtjCyjBFX9AvQDFmitrAksbEGXIkSO8gmYBSr4CNPMbBqSf4
+ oSU4F/B8gnSsgIsCaTJaictemHNErw9MpX86UwZHh/BekSPvndxrDYhN8oZRK6s4VoEJW1dOw2
+ cKwRnSo06yAAiW0a/2twH5GCYzVmHF64hF6yUoILTBQb0FcVre7t9AxPTlTlLAwAA
+To: Sebastian Reichel <sre@kernel.org>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Purism Kernel Team <kernel@puri.sm>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-leds@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733343003; l=4992;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=QPLa0r+6p8PLfccDRaeRG4DbcK4v55uLKkJBlNlcdC8=;
+ b=OfzIXUB5S/YQ9pEPQ6Qro0CsjNNBncwzoUVtA9/KvcXXCUgVb6o/U0EhiWdnnLnBAv/sU5Lvi
+ iEnds+4/x/WD6acv8E8Q9X+S2g0kQZzK8imBMFQk2BWSvTCRdguMzbf
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi Christophe,
+The Maxim MAX77705 is a Companion Power Management and Type-C
+interface IC which includes charger, fuelgauge, LED, haptic motor driver and
+Type-C management IC. It's used in Samsung S series smart phones
+starting from S9 model.
 
-kernel test robot noticed the following build warnings:
+Add features:
+  - charger
+  - fuelgauge
+  - haptic
+  - led
 
-[auto build test WARNING on powerpc/next]
-[also build test WARNING on powerpc/fixes linus/master v6.13-rc1 next-20241204]
-[cannot apply to tip/x86/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v10:
+- drop NACKed 'dt-bindings: power: supply: max17042: remove reg from
+  required' patch
+- review fixes
+- use dev_err_probe for errors in probe functions
+- Link to v9: https://lore.kernel.org/r/20241202-starqltechn_integration_upstream-v9-0-a1adc3bae2b8@gmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Leroy/static_call_inline-Provide-trampoline-address-when-updating-sites/20241204-120612
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-patch link:    https://lore.kernel.org/r/3dbd0b2ba577c942729235d0211d04a406653d81.1733245362.git.christophe.leroy%40csgroup.eu
-patch subject: [PATCH v4 4/4] powerpc/static_call: Implement inline static calls
-config: powerpc-randconfig-r062-20241204 (https://download.01.org/0day-ci/archive/20241205/202412050317.rQGggDIb-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412050317.rQGggDIb-lkp@intel.com/reproduce)
+Changes in v9:
+- fuel gauge: use max17042 driver instead of separate max77705
+- fix kernel bot error
+- charger: enable interrupt after power supply registration
+- add dependency on max17042 patch series
+- Link to v8: https://lore.kernel.org/r/20241031-starqltechn_integration_upstream-v8-0-2fa666c2330e@gmail.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412050317.rQGggDIb-lkp@intel.com/
+Changes in v8:
+- Fix comment style
+- join line where possible to fit in 100 chars
+- Link to v7: https://lore.kernel.org/r/20241023-starqltechn_integration_upstream-v7-0-9bfaa3f4a1a0@gmail.com
 
-All warnings (new ones prefixed by >>):
+Changes in v7:
+- Fix review comments
+- Link to v6: https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-0-0d38b5090c57@gmail.com
 
-   In file included from arch/powerpc/platforms/powermac/bootx_init.c:18:
-   In file included from arch/powerpc/include/asm/io.h:24:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   1 warning generated.
->> arch/powerpc/platforms/powermac/bootx_init.o: warning: objtool: bootx_init+0x28: unannotated intra-function call
+Changes in v6:
+- fix binding review comments
+- update trailers
+- Link to v5: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-e0033f141d17@gmail.com
 
+Changes in v5:
+- Split patchset per subsystem
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
+
+Changes in v4:
+- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+- Reorder patches:
+  - squash max77705 subdevice bindings in core file because
+    no resources there
+  - split device tree changes
+- Use _ as space for filenames in power/supply like the majority
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
+
+---
+Dzmitry Sankouski (8):
+      power: supply: add undervoltage health status property
+      dt-bindings: power: supply: max17042: add max77705 support
+      dt-bindings: mfd: add maxim,max77705
+      power: supply: max17042: add max77705 fuel gauge support
+      mfd: Add new driver for MAX77705 PMIC
+      input: max77693: add max77705 haptic support
+      power: supply: max77705: Add charger driver for Maxim 77705
+      leds: max77705: Add LEDs support
+
+ Documentation/ABI/testing/sysfs-class-power                        |   2 +-
+ Documentation/devicetree/bindings/mfd/maxim,max77705.yaml          | 192 +++++++++++++++++++++++++++++++++++++
+ Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml |   1 +
+ MAINTAINERS                                                        |   4 +
+ drivers/input/misc/Kconfig                                         |   4 +-
+ drivers/input/misc/Makefile                                        |   1 +
+ drivers/input/misc/max77693-haptic.c                               |  15 ++-
+ drivers/leds/Kconfig                                               |   6 ++
+ drivers/leds/Makefile                                              |   1 +
+ drivers/leds/leds-max77705.c                                       | 267 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/mfd/Kconfig                                                |  12 +++
+ drivers/mfd/Makefile                                               |   2 +
+ drivers/mfd/max77705.c                                             | 233 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/power/supply/Kconfig                                       |   6 ++
+ drivers/power/supply/Makefile                                      |   1 +
+ drivers/power/supply/max17042_battery.c                            |   3 +
+ drivers/power/supply/max77705_charger.c                            | 590 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/power/supply/power_supply_sysfs.c                          |   1 +
+ include/linux/mfd/max77693-common.h                                |   4 +-
+ include/linux/mfd/max77705-private.h                               | 194 +++++++++++++++++++++++++++++++++++++
+ include/linux/power/max77705_charger.h                             | 194 +++++++++++++++++++++++++++++++++++++
+ include/linux/power_supply.h                                       |   1 +
+ 22 files changed, 1729 insertions(+), 5 deletions(-)
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
+prerequisite-change-id: 20241108-b4-max17042-9306fc75afae:v4
+prerequisite-patch-id: a78c51c4a1b48756c00cbc3d56b9e019577e4a6b
+prerequisite-patch-id: 735d52c3137c5e474f3601adf010f9fe2f3f7036
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dzmitry Sankouski <dsankouski@gmail.com>
+
 
