@@ -1,114 +1,143 @@
-Return-Path: <linux-kernel+bounces-432056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84F09E46B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:32:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B239E4671
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:18:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58931BA6836
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:17:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52195B61500
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBD4207DE8;
-	Wed,  4 Dec 2024 19:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF861B4130;
+	Wed,  4 Dec 2024 19:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ijNsiXfs"
-Received: from mail-vs1-f74.google.com (mail-vs1-f74.google.com [209.85.217.74])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mUXTa+iW"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F5D206F12
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05172391AA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733339669; cv=none; b=RIO0jAFC2zHaJr5TrNdacfrrANbXqQtt6gPqu7ngXYNijC1RPK2NxfcpVP8mmCP2D398RsBuM1zO3mSO2IoFs432pz7T3RVvejUN9bzrf7mJ6hQ2kv8yMszW9Awt6BlrYlOAVMnrp7FOWcgHxqMaOuVWfRA1dvFEcfHpADpb3TM=
+	t=1733340404; cv=none; b=G3I8Tpf3XZCfrzOsFyOn7daUhVn0umvkLI3FDfGXqhn440eNlQCWqjoib59CmybqU66jsnvGAXHWiYy/ddU3bZTeh/iXqfOyNoen9NxK9znoXWbAtBoTsYYCbRpuewu8ssRfk81NkgCg2dAFp4gC8KHRTM3bQORAcNWz0MEK5Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733339669; c=relaxed/simple;
-	bh=DB3D34LMo76wSyQOQTjLpchEbwFt3tbBmtNUE1453so=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cI9ZUD2ZHusiuEVrPzOMhmnXPUSZi1aLgSXrGrC0DxaIMYVjIx0oY5VzqCbdkcUpR4KhneuDwbbhRGA+MWbGZZEhDynlTbvKE4utFCF23dioU66psUQcOLUFGPrZmMszsEjnkiTLBSAPMVS4OJIBYSy3LiXFj2aP7EDb5apsxOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ijNsiXfs; arc=none smtp.client-ip=209.85.217.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-vs1-f74.google.com with SMTP id ada2fe7eead31-4af5824e449so10935137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:14:26 -0800 (PST)
+	s=arc-20240116; t=1733340404; c=relaxed/simple;
+	bh=C3/eH/02n2G+qGii9hOeQTOzIV1MarUbuxZoSo6Tdrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YYnrd3GUmmng//T3SPgbUXHr2ZnLCcCE1eqQZcp6ejZYZMVGVb+7nRUPkwsh8ZalysNVJTfvjWottMDNqM9+yZ6sPsKHy0LgGOuxRDciW/rDkABLJgOUF3v6KJcQUXSUgBxpiPyX5GjX/Aqvqp1F/wEGEjMfKkpBbAhhlYx8luU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mUXTa+iW; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21572ca3cccso824775ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:26:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733339666; x=1733944466; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s5zlVcABwgcAqDrk/hYCqATZ71WnZcE4eWZqt1Al9mM=;
-        b=ijNsiXfsLfCRNzBTKUenbeOgOV2tUuKXfdYd1oOBhqHioD0Qnawgu04ON6s4hsMikI
-         T1sRcnx8zWtIS/tWSRdENTKv6znXli6x5xjq0w9r6EfUdkXppkPTcWv+2+MDAjOddhv2
-         +kNCLzT0JVklDYJ8WDM8Me75cm0q3FNxkntVQ2HHuMkIjjZmUCpWxuyS3XCyq2xCRoef
-         i15paCYU1Rc3AeZiOGDHDel0+3WhfxFT55NFpymO6wEtDYKN/pjfppVvw7Jme8PgWz6X
-         BOEv+KWCre4XIIBInE2e/KWSADD4pnOsnv+1/qFP7tPenYZjLcPoPzM5yHVYx2tjTih/
-         SiUw==
+        d=chromium.org; s=google; t=1733340401; x=1733945201; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FfDzJKHmceL++JmZOwtSaEgDluQjsPVd6lxF3uJYfTI=;
+        b=mUXTa+iWqWcfg+MCPWGGweocf2pf+lk8auPNm87Qk4JT4rpUXFK56eHKp4mbVA5Z5p
+         F6dtEPpoe6Ln7XaiL9y2iaoXxv4bSOWb+wxHhGz3vy9xNdPvLRZW95lwR9e+ZhikuXNo
+         HG9kF8jXu8k2wZb9TO46Y1VUDOApFnoZDt1Yk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733339666; x=1733944466;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s5zlVcABwgcAqDrk/hYCqATZ71WnZcE4eWZqt1Al9mM=;
-        b=SE8BhGZxSb9t1J+gCzWpIwQJVkRtRJHq7n3eQ6wHODIGFT4k1j/alFyy0oIfn2iGf5
-         JAhiNhAwa1MrdfyjefBWOfSkHHNQNbm2Ol1bMRNDwgEunHRcTi8LsWmB4A3g7yoQ+AYY
-         c4n2Q3Q3fHBNNFaRcmWDnPaosN1ZN6hccHQ1TBFS/4ouNaQxmgKyfRR5/LPdK3Lys+Fk
-         +7kyNi7j8tTeLrMTbKGj1u9UqHE4hCsTfLTcQZcmD0Ug7G83Re8B2onsT6ElPh2VgJ5I
-         gAoc7FCJGxvzLBN9f9JGyUx6Y1om8cDcZZOiICJNooB4Ny2dvphLdPWiFYk0O79t2jy+
-         mMcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWp/4/izI8RYDCb5RT0ROU9Rarp80Vc+k0XFYTImJpfr4RqR9Iqp1RzAEopRoLVhGBpmN0ihtA92tO8zJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF7srOkPCSsxW7SWx1VVuYykdAQN7xfmno1tKg+ThaeBcliX+q
-	rDVYI3P+RnAgvXXU7s4tOWFtasMH1hcVx9zsp3XrCSAogd1jKVbPkWZqLiuZwRRU16I6lzto1V6
-	OPweiZbQfxYGX9ES4jA==
-X-Google-Smtp-Source: AGHT+IF2FEM1OG8guhI8P1BVhXWIFhfslfAcmBKz5oOAxjNRJSTj9A5XfYD8J6BgPkOCk8O5eB0FX2IaOdHwSH+I
-X-Received: from vsvj20.prod.google.com ([2002:a05:6102:3e14:b0:4af:5a9b:90bd])
- (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6102:3ed0:b0:4a3:ab95:9637 with SMTP id ada2fe7eead31-4af97243dc7mr11657456137.12.1733339666111;
- Wed, 04 Dec 2024 11:14:26 -0800 (PST)
-Date: Wed,  4 Dec 2024 19:13:46 +0000
-In-Reply-To: <20241204191349.1730936-1-jthoughton@google.com>
+        d=1e100.net; s=20230601; t=1733340401; x=1733945201;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FfDzJKHmceL++JmZOwtSaEgDluQjsPVd6lxF3uJYfTI=;
+        b=PN4s/8nro4U5f8IdT4Pdt06icpfOoStn/iWUNAF9nR3SGkKFDYBZwLijtiHB+ssCFs
+         Y9P68SI07xmsMwaZU3Wfphjj2Fe7NacQDuJ4KIkWMDU41d3PnfuDoeDQ9qaADR33oU4P
+         /s5tpYaYppX/3WZhHquSG+xPjwkbklvNidMqwJl95XB4yRRSUkeRFpX7WpZfc6KQfKi1
+         fo9RxLLUKxKR2uJ6lDmPUsnataLTbjcTVM9ja3gOXgFgUpzLh1/gDvU8J7/Sx+iAU3Sy
+         Be6VS6h1vZF8meUVQdMkqt4LgIXvPOc4VKHlQsrOSBjYL9ufxjVjeI744Mh8g3J/Xvgp
+         eYqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX8WT9IUNkr5KAkedkkYVHs1lkPPkHdIFoYofIbv5mmlIuerNweFGOfdg34QtYO7D0JiMFGZq07/ZNDII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKVt4I8JjnYjViEgFlq1OzuDPMbJW7RmUdcVbf+LyKsDfw6MUn
+	2xD7PSUhjd0w1OtWuGKqE7y7dvXL0ycHmf8YIF8XMsBr99Kh6d82JAmt0MVNqg==
+X-Gm-Gg: ASbGncukGhiEg9mHLZh8mCxzPr+b+6+PQpPHVqW5DgCfC+sHncQpbFawoJxSfWvMS/c
+	v50B1VZ7Qw2FG2ux2/DSsfcMQBysZ/gsPIaI9H40o8cwNgdm1TPrSCaSiCQUjJgVcpVVVfZnxoX
+	COlyLzeuIBl27ug9j2SWQ3UhfmSnXfZhWzYKRNVF2DWFOu5Uz1S32GFDAb5R/G6wh1J+aHSbDct
+	NW3EcrWdUbYaPCrH9HnugMXXeOk6C9zSeC+gCFM/lhE3eLggr68qMuHBhRpGMqInv4+4POKftSl
+	g068uY7okT0i
+X-Google-Smtp-Source: AGHT+IHxUYmCQGfedzcLT9G70tfx6EHSHgI0l7Hqj6BU+GVxbnRMM+a76gXXhoU/zLwe8R45jQN9lg==
+X-Received: by 2002:a17:903:2349:b0:215:8270:77d6 with SMTP id d9443c01a7336-215bd200a05mr84754445ad.27.1733340401202;
+        Wed, 04 Dec 2024 11:26:41 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:8ab8:57a6:96ad:47f7])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-215e57cef2dsm10559385ad.269.2024.12.04.11.26.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 11:26:40 -0800 (PST)
+Date: Wed, 4 Dec 2024 11:26:39 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>,
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
+ from 10s to 5s
+Message-ID: <Z1Cs7-ajeWn7UOpr@google.com>
+References: <20241127105709.4014302-1-treapking@chromium.org>
+ <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
+ <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
+ <CAD=FV=XuResyZK1ke1NtaGREfwm_3MB-u5t6vw459kYPt0LZwQ@mail.gmail.com>
+ <Z0-4umP9TnNAbJXO@google.com>
+ <CAEXTbpeeZVwCYWR0wzX8QMYJ7okj=zmziwt9Nvtu2kzA4iMCmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241204191349.1730936-1-jthoughton@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241204191349.1730936-12-jthoughton@google.com>
-Subject: [PATCH v1 11/13] KVM: selftests: Inform set_memory_region_test of KVM_MEM_USERFAULT
-From: James Houghton <jthoughton@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Yan Zhao <yan.y.zhao@intel.com>, 
-	James Houghton <jthoughton@google.com>, Nikita Kalyazin <kalyazin@amazon.com>, 
-	Anish Moorthy <amoorthy@google.com>, Peter Gonda <pgonda@google.com>, Peter Xu <peterx@redhat.com>, 
-	David Matlack <dmatlack@google.com>, Wang@google.com, Wei W <wei.w.wang@intel.com>, 
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEXTbpeeZVwCYWR0wzX8QMYJ7okj=zmziwt9Nvtu2kzA4iMCmA@mail.gmail.com>
 
-The KVM_MEM_USERFAULT flag is supported iff KVM_CAP_USERFAULT is
-available.
+On Wed, Dec 04, 2024 at 09:45:11PM +0800, Pin-yen Lin wrote:
+> On Wed, Dec 4, 2024 at 10:04 AM Brian Norris <briannorris@chromium.org> wrote:
+> >
+> > > >  Can you try testing (and gather timing numbers) when
+> > > > suspending soon after initiating scans? It's hard to judge what the
+> > > > lower limit of this timeout should really be without any numbers, just
+> > > > like it's hard to judge whether your 10 second watchdog is reasonable.
+> > >
+> > > Pin-yen: is this something you could gather?
+> 
+> I tried entering suspend right after wifi scans, and the time spent in
+> mwifiex_enable_hs() is always around 100ms. It seems initiating
+> suspend does not increase the execution time for mwifiex_enable_hs(),
+> so I think the driver is capable of interrupting a scan.
 
-Signed-off-by: James Houghton <jthoughton@google.com>
----
- tools/testing/selftests/kvm/set_memory_region_test.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks! At some level, there are things we can only verify by
+experimentation, since we don't have firmware source code. This seems
+fine to me then.
 
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-index a8267628e9ed..d233cdfb0241 100644
---- a/tools/testing/selftests/kvm/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-@@ -364,6 +364,9 @@ static void test_invalid_memory_region_flags(void)
- 	if (kvm_check_cap(KVM_CAP_MEMORY_ATTRIBUTES) & KVM_MEMORY_ATTRIBUTE_PRIVATE)
- 		supported_flags |= KVM_MEM_GUEST_MEMFD;
- 
-+	if (kvm_check_cap(KVM_CAP_USERFAULT))
-+		supported_flags |= KVM_MEM_USERFAULT;
-+
- 	for (i = 0; i < 32; i++) {
- 		if ((supported_flags & BIT(i)) && !(v2_only_flags & BIT(i)))
- 			continue;
--- 
-2.47.0.338.g60cca15819-goog
+> > > > Also, for the record, since we might have to field regression reports
+> > > > for other systems: what hardware (chip variant, FW version) are you
+> > > > seeing problems on?
+> > >
+> > > Pin-yen: I'm assuming you'll provide this.
+> 
+> From the debugfs entry:
+> 
+> driver_name = "mwifiex"
+> driver_version = mwifiex 1.0 (15.68.19.p54)
+> verext = w8897o-B0, RF87XX, FP68, 15.68.19.p54
+> 
+> The compatible string of the DT is "marvell,sd8897".
 
+Thanks.
+
+I think it'd be good to see this info in the commit message, but
+otherwise you can carry my:
+
+Acked-by: Brian Norris <briannorris@chromium.org>
+
+It'd be extra nice to see that you successfully use this patch in
+your own releases, but I don't think that's a requirement for upstream.
+And anyway, the upstream RC cycle is pretty long.
+
+Brian
 
