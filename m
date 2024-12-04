@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-432398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61809E4A32
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:56:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE7C9E4A35
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:56:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C19B2817F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37A416137E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4B219DF66;
-	Wed,  4 Dec 2024 23:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8691B372C;
+	Wed,  4 Dec 2024 23:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QGPa36ly"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kD13ZmRS"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AD52B9B7
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 23:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032C7193091;
+	Wed,  4 Dec 2024 23:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733356577; cv=none; b=HwGabF+bZ5lWQLrjT1CCm9BIenUTYyzsw5HY9JEDg9qzjdjYjjLvYi6brKSlMuu3VRrXoM8uR0AjaKRV/0ONsL/YkVgmKmLlmchoaT5WqEWmaDWB/4qBHkPTmiLstdRtqFGCtp9jovxpIb5wgvE6Y0dbDdUasDeqyEZFrLin/l4=
+	t=1733356599; cv=none; b=EcUSwOo4lHtiQ/tq+BZabTrvinSmX+FPCbQBbCK4OjpVnv2ss9Uq+UNCaDaXCVLs6plpy2kimTsHa5JEUlCRO52hO41xJcRaLEh/xEh/VzxbqT2qR2Q9kmZz0aCUb53GFG3Znp9Ds38MzPbB2rnOdWE6AhIeDUQCMhBzYNIWCPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733356577; c=relaxed/simple;
-	bh=l3U0yJJE36QRWVI/0Ef+4QhRMoufGHj2/nrmEhWmea0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KA/NgHimHF9U66zsGIp/s3PxjHOh0Dk+mNkb5nKKF9iV1czuj+LBkBzwQeAE9Bb6bn3O024pIAwxBwee4fSpjal/d1dV9gIbSuw/1mYX3r17VTHCc8Rn5wyJDfMqNrNCt08jwIc3qPRlzXVEbmijByxr+GZr8QLO6z+2JUGiMY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QGPa36ly; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a77ab3ebfaso26565ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 15:56:15 -0800 (PST)
+	s=arc-20240116; t=1733356599; c=relaxed/simple;
+	bh=JZuTqkMiJci5M6VD9ttBclHzFQ2hopxCrSemkU44NuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ckt1yrkwSmqRy1LdovHxIYH7EP2AxIO/lQbk/041jmQiswvmTA9gIDuc/sk0/K7IGO3IJTBVHfh3Jf2EdLgzMdk+spHzlSLAEMbS277zxidzGTAQoWLBaT895RU6W3UHrpGrTDEPJLxTXj0NgHnLh0TaYPPyFShj20TwSIZxNuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kD13ZmRS; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so447563a12.0;
+        Wed, 04 Dec 2024 15:56:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733356575; x=1733961375; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733356596; x=1733961396; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R8Q+F6en17eJQgfw76pO4T5MKRbHqUZjXgG7qVMS2IU=;
-        b=QGPa36lylsEGZfi7Vauzz0BmDxS4PgrE5o5JA3JOCfv4e8iloA6cdrBpM8LD/n3OB/
-         UmOPcGiLsjW9W0BGr34ZrR1YmSXy1bSG4YyhAC8EOVy1c6Htk2uoiz+Y27f9sRNvsXnV
-         B7CjGgw/tNUO3xkwv0O3V6ovS8OAne6/PiCsxAM248gGNxWNLg0kfWgowTeBaKRNJHN9
-         YO1yAr0zN9mHL2JkRhMdfk1VkMamVl4pVmfCRMTHThQg+Wwta1rY30HEaGVPcwTYpafU
-         9kFMHDOQoWMpzOaZHuX1naoXUmWaNm4R0nu9xCI3BWZ55bcWYaH1mAkzU3VM10CirYhv
-         +Cnw==
+        bh=vJKz2wj2juop4/IeMZVrYzFBdQURnaygM5UccUrxv6w=;
+        b=kD13ZmRS/mTVptHsHWCY8WYPgv/7ypTSVYJ8O09/eP7vHtQdgi01+g6Dht7mP18N6T
+         Rp8XODDTBi4T+7jQQxJRiA3jxr9rv+w8p9IZRLqxtG+c5ZK8JnceUxB4+zT7ZlYsHN1k
+         XmVdYgCOpQ7WjBjkUxpXu/QJ3+BFUAcgmxz8/l+J3I1+GqFAB9Ve43Du9gIuoNu+6rxy
+         wz3Xu+PYCXhDnjTsAb0TOEueayWXah3MPB2jR3v7GiIFS6w0fOdi4+YQ7IQqMJThiCS4
+         uF8K8xKBAhfjuUGKxLLs0+esRVycoR7qY/1WsIIckSbCv5c9FmxVgEilAwrqGBRj7Cnk
+         YMHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733356575; x=1733961375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R8Q+F6en17eJQgfw76pO4T5MKRbHqUZjXgG7qVMS2IU=;
-        b=t3Tt5VX4k+WtaX5864kHgVtuqvSLHwkpvEY5XJKtwJGJ52N/+kfogcKNaV+5SzZ6BW
-         8BQzjT199wqI+j79tw4uFLfVcie+flmpTU+I1JBgRkE/gbzVlEGi+TvzYe3Bc2WNEAgc
-         OmPbFQYMzYRC1FXcFBpadtsNj1dcrlmawkHt6hNYyRbnX3ACbr4eTlgO0Gfc9QZHymFY
-         Cz94huZ72AsZESqlHAWLB/PhUBt3BvkISBLmLNoR3dN9Kl3sZNKCS6/RjuUefUEs7Xov
-         lYuZhcC82diOcZMmdstQHPQOD+CW28hdjfEFlYy3pzKn6c8Ge++SpGGpnPfVppJP4HIX
-         hiVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKPY2p09zviSz+NonIHBupwCAkbg3plrN5V6P04sD3QU3t+I9Q6ydDaOA38HvzxAOzBIHzsaFaogvpA9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3ujui/vfJF7NwlJwWUgDrdZYHDYrveK5kJEVMO8UIBqqnN3ch
-	73r2aG6l4H75eCFv2QA/WhL5fKmJIeU6q6L3VTrTc18HIe+Rk76goM8zHJrA+i9cr+LGqxbgDRR
-	XXDyLyxxhnHmW+YOvrNAzPJle0kGHtTOYdA0A
-X-Gm-Gg: ASbGncuD8IXV4sEPhdypkXeS2TXYM2n7ASD9GH1N8dEFk6RsBgaoo8iHCtQktrno9NU
-	e8FQf9x16RLn7bYl+y+fWgFlFYd2i/GJw
-X-Google-Smtp-Source: AGHT+IHRiOICm/Y/IPwvPUgx3E/i5KvQt+b8VmnQpipO1sGUnM5NcQm+mIVfODWSKuu/gQnH8obw8GpXOkA4UKKZxJQ=
-X-Received: by 2002:a05:6e02:3693:b0:3a7:5cf1:8a5f with SMTP id
- e9e14a558f8ab-3a80933c362mr625605ab.13.1733356574602; Wed, 04 Dec 2024
- 15:56:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733356596; x=1733961396;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vJKz2wj2juop4/IeMZVrYzFBdQURnaygM5UccUrxv6w=;
+        b=D3AAUNQvwwkjws0+J4v4bDomNdOnl0G7DtxyOEkHHLhK5ysxY4Z5edSpFAju3pyoDt
+         H1k03KUMm/bcmJe3x+3U329yxRVPurpzkG6Fy7xlYyh1y3yrsjXgh35mbtWRfezquHtV
+         KzgIYUGlaFJuKtgz2wUkxkkbncsuPON2JTH4EfJOsGG6gS+aw06BRgd1V4iNjLFwLV32
+         cTTaNTytOpLRpwjvZbilWLuz8fSDRCPBXaaA+L+vjpGSiz0SRgB+ZfzOKNzsLksyhHDo
+         afx5kQNSbLk6v5dUVlhXT7QLJY+nmGI7TuyyjXRtrDrgQYYlqNyTAUaqezTiGCsFMkaF
+         DbXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtgeHPX59APD+A3xiJvUMDs1SsuW7CI9buphst9PyUqFq6kOthW+Zl0G2zHIKuCMCcAfPBlZSHHWWycaX7@vger.kernel.org, AJvYcCX73lYUeYGXpVfPDdMRkyiEarDGGe7LINYbf/Jsvs35FvSIeDZHK7SgmuGGtDa5QEAVb1Jbubs/8GlnOVrp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/Gj5pHIUZlR4mO8hQEuC8aZs5krx5KbB7lTz9pkO0J/HF54kh
+	EbvkUL/7ulissxItG6K8+clu/lhmzD+XGevdiWt+Z4Cn8y9awMbp
+X-Gm-Gg: ASbGncs5iWAbtJlWTzDW1Jh1VizM9qJFZN3+NsXbmrPLu02ifBn0crSlL/doEGm0txC
+	+yYfCDwN2QJZ/IYcLFGjw8UaVOQWLICfSsLlgdCL1TVc8lHRU4+Zf5xpDtw/b4Ip8wOrsYNSHLQ
+	95ywecma8mJiH2uFwtgn11BC5Aeu/fr3Ganoeh4ryGwUvJAgVauHylOQxC3b7VIYmVOsNW4KBt+
+	tWg4xOX/EdPlAB1Sfov+Vr6LcB8JbSTMUR3OJYbPT1TLMs+nQ==
+X-Google-Smtp-Source: AGHT+IH8dzA/+2KKrO1cHwwQZR17w7HCC+oSR5sKhkw++P4LEAldEsyaN/rRyXoeSB1VU7N5URE/zQ==
+X-Received: by 2002:a05:6402:510a:b0:5d0:f9a0:7c1f with SMTP id 4fb4d7f45d1cf-5d10cb817d3mr7963616a12.23.1733356596024;
+        Wed, 04 Dec 2024 15:56:36 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c799224sm97394a12.69.2024.12.04.15.56.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Dec 2024 15:56:34 -0800 (PST)
+Date: Wed, 4 Dec 2024 23:56:32 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] mm/vma: make more mmap logic userland testable
+Message-ID: <20241204235632.e44hokoy7izmrdtx@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202182815.639124-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20241202182815.639124-1-andriy.shevchenko@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 4 Dec 2024 15:56:03 -0800
-Message-ID: <CAP-5=fXbjvsmuKrNe1uAOYLV0k5U9OBuHV+drSs_5JyUuXQ9SQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] pref/x86/rapl: Remove unused function
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Mon, Dec 2, 2024 at 10:28=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> get_rapl_pmu_cpumask() is unused, it prevents kernel builds
-> with clang, `make W=3D1` and CONFIG_WERROR=3Dy:
->
->   arch/x86/events/rapl.c:165:37: error: unused function 'get_rapl_pmu_cpu=
-mask' [-Werror,-Wunused-function]
->
-> Fix this by removing unused function.
->
-> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> inline functions for W=3D1 build").
->
-> Fixes: 9e9af8bbb5f9 ("perf/x86/rapl: Clean up cpumask and hotplug")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Tue, Dec 03, 2024 at 06:05:07PM +0000, Lorenzo Stoakes wrote:
+>This series carries on the work the work started in previous series and
+                        ^^^      ^^^
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+Duplicated?
 
-nit: s/pref/perf/ in the commit message title
+>continued in commit 52956b0d7fb9 ("mm: isolate mmap internal logic to
+>mm/vma.c"), moving the remainder of memory mapping implementation details
+>logic into mm/vma.c allowing the bulk of the mapping logic to be unit
+>tested.
+>
+>It is highly useful to do so, as this means we can both fundamentally test
+>this core logic, and introduce regression tests to ensure any issues
+>previously resolved do not recur.
+>
+>Vitally, this includes the do_brk_flags() function, meaning we have both
+>core means of userland mapping memory now testable.
+>
+>Performance testing was performed after this change given the brk() system
+>call's sensitivity to change, and no performance regression was observed.
 
-Thanks,
-Ian
+May I ask what performance test is done?
 
-> ---
->  arch/x86/events/rapl.c | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-> index a8defc813c36..3ed5ea2aa867 100644
-> --- a/arch/x86/events/rapl.c
-> +++ b/arch/x86/events/rapl.c
-> @@ -162,12 +162,6 @@ static inline unsigned int get_rapl_pmu_idx(int cpu)
->                                          topology_logical_die_id(cpu);
->  }
->
-> -static inline const struct cpumask *get_rapl_pmu_cpumask(int cpu)
-> -{
-> -       return rapl_pmu_is_pkg_scope() ? topology_core_cpumask(cpu) :
-> -                                        topology_die_cpumask(cpu);
-> -}
-> -
->  static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
->  {
->         unsigned int rapl_pmu_idx =3D get_rapl_pmu_idx(cpu);
-> --
-> 2.43.0.rc1.1336.g36b5255a03ac
->
+
+-- 
+Wei Yang
+Help you, Help me
 
