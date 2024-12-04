@@ -1,65 +1,96 @@
-Return-Path: <linux-kernel+bounces-431575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABB49E3FC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:34:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797AB9E3F02
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 869B3B44EA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34248285E1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208DE217F30;
-	Wed,  4 Dec 2024 15:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60FA2144BD;
+	Wed,  4 Dec 2024 15:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkUIglKK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="bGXbu7bS"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D0721767D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173972144A2
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327908; cv=none; b=mIKYukmIIHWIrCvOnjXO+kVu08kcY6cKM4I2PDiGVIqji5UAvPmAz+WGj0Sl9POckSbkmB8o6HYf0hnO8rr5uZM1DoH+jd3lQX7BhRD2dH17uzgt1eaZK+8W0bm9yEUoE+ALyPmrkmQtB7NTWPhsK7m1ZQj4Xdgw7qKvCeRRSyE=
+	t=1733327899; cv=none; b=FGF85UlNx7nR6ooHvnTIs08rczhjALuy3DKvgB45arj8+o4N3GQAAR37ogZ1I7QLLS0uhsaReXwPoMuG916P64Vca7lahRcHXJiH3FuOM2M4dF7xGfSyA2hPBt/q6rYbaNrbUAdrAoMcjWNYCEhKvk//8u23+VrddIofbeH0v/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327908; c=relaxed/simple;
-	bh=wJulQYESwlqAXPVkXZVUiU2AeJ1Jd49Tk06eYN+hXRg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PVwwMBPk/eRpXIQjzInluaz/ZYmwudP97co4tWXLu+9WGYqUn8NOgzpks7ed0H029/TeVoRs05KOlOlihkdVDzjdIQZiV9IdvCDKAOCX7dT9foyABWyXDOCogORlMNC9ujj5IlSdM7EOFWhr2B7EINDMmg4NbORPSIJCMMN33lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkUIglKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9524C4CEE1;
-	Wed,  4 Dec 2024 15:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733327908;
-	bh=wJulQYESwlqAXPVkXZVUiU2AeJ1Jd49Tk06eYN+hXRg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JkUIglKKiXtx7Dl4ww0Z6c7uxYOx35BXgKi5h1q86vnrAojzan5c4GdwzrnA6mKzu
-	 axtZft3RprPfbkEx2NiS2L9sS4M/vNKoTjeWGSXEIez/VORyq8ZIJxaMMkdx+WCApu
-	 Sx70UWIxeHtHtFNKwNrmyOUKf16cKQEAaAJQDXkXFs+YeSXfY7Qc6ePl8Dw5iOuPgt
-	 EGrh6jDOERc7rEsMxyfI4550YJ6SnU10t33qJerpXWeuSJ1+R56pNyo/QRLYKz+FlM
-	 6SNg1AIZ/bf6r1mieTdmmof3fofgq2hua1F4GGQOFV6MAIF0/uaal99HAbvcfmwlep
-	 ehfThNly4jPjg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
-	(envelope-from <mchehab@kernel.org>)
-	id 1tIrlf-00000000HYy-3S8R;
-	Wed, 04 Dec 2024 16:58:23 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	s=arc-20240116; t=1733327899; c=relaxed/simple;
+	bh=vVMilANw4305qRJE+mP/zriYLgYpMDHwTKIWeVMIaYg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oXNt5F/is9eb+Tv8Wv1ZaWR6JPMI64IoOjjlaZ60IThf6HaZvWYsOaIkk+siDR7+h3CLlst4poRYgNr7wkVwND+7ToHCbnAevq5Qj5lWj3ixnp2HF6T1eh8EDXWSisx1VPl4nonCiTA7fj+8IbEwFog9gFVXc9exH5xnqxP5sqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=bGXbu7bS; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4349fb56260so61302725e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:58:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1733327894; x=1733932694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rCa75btXGR+JBvjWE4MSNe0BWB1SJNgQ2NyGvR5jDOE=;
+        b=bGXbu7bSGx3NmZRiGhOywXh+x6fwEJfAIvm+sEnm08v3fJSBxAspKs2djyH3GkPCSp
+         /Qn+bkl8439rPKphEfZvmnxMoF4+D3faRNOPN/4Ukg4gkOv+81v5+1Fraq/GR1hbfM42
+         1dxWlCN4jq9o0oQQznsPWqfBtTb3nDJJ0rqNYYAhWWcArFWeWgPK8oHF2JB22EAjYy27
+         sC5VKq0YWjnZe444QmxtNU+08VC3BjctfM+zrQoQcbsawJzgT3T8Cpr3ok3BYXQnTHtJ
+         XSkperLmNNtBsLai8vA8rIjDRBg8PyT2lzTBFKOrteewKbt5MYMIdHFR40t+HMWbV7OW
+         9oqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733327894; x=1733932694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rCa75btXGR+JBvjWE4MSNe0BWB1SJNgQ2NyGvR5jDOE=;
+        b=HkgAOjVHVuwHBF6vgT745Y6z1b6QnRD9vJzuVpuNrMsQywiV9umpY02wXTkYLVVtE2
+         4rQD641k7nBdoSoWNhwWoNUkYsg11epyFDBDMDvIm82lrOKZi8Qe3efdUJ3K37OsodCK
+         sQR1BM4T8hSy0zBBEtmnOmoTml09s68v+CuJeR74qRfHexP2Yf5TyaThM0fkAAYWKjSC
+         /MTracaQ4m1vN7h7Qckd2Jm3taWlWG9RqgprRPbOm3MgiAJMR3SmXinakvBZOfnr9eqO
+         R/OsE6nc1NVgZyWJmj5tdDCx8GZRANpvOepbeStKewAJDB54iN2dY8Hn57+IG66JvYbK
+         YPtA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6+C1l53qcKJA8gSXjYrEc2g8/BXNq9P2WxOmuszkTHuX4idtp2ACsEGtjICLEsfTxbawjcL5AeAz+csM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwGCdHg35XyliwX7UfgkdHYDSBEAQtU10lfAmGJQeT0xtQScNv
+	+izD2UopedxXoDN7MSThfYBKkY/z90kSoJKp1HuzahGqS53iiUsAEShH1U65Y8M=
+X-Gm-Gg: ASbGncthzuXRMNEzojJTATRjAHuPUGyzUAsZaroWLleFYL8pO1Alky7POdpB8kLhXk0
+	ut1NdNQLvLoxo1oI/DqRNeZUO0C6dfZFPq/6wPBy/ZF2WrmvDL1rbvn7FVUQozL4rXu4me9nWS6
+	dczJ+aW5GBRnVoeyoF9nGZ/kBCmHVUycdxxW6Z3eFYK5w/NOILdKs6LtrMnFWKHQU6pMZudh1aZ
+	mP8QI029dXJxSu6sbQ6wGdbLwIWReJL5ByTSS1ve8IijKVvX0bleRE3n3V/pVGaOWZF9TyzQKu+
+	oxY8
+X-Google-Smtp-Source: AGHT+IEhS9vjmVrzP9oYWIqvMT/vBgUQO27+Wg3FLUUWaMq97U4rJ5LeXOih8bwGbMJrzOhbenEGqQ==
+X-Received: by 2002:a05:600c:524d:b0:431:5aea:95f with SMTP id 5b1f17b1804b1-434d09ce368mr64118675e9.16.1733327894161;
+        Wed, 04 Dec 2024 07:58:14 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52b5677sm29043695e9.37.2024.12.04.07.58.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 07:58:13 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	wsa+renesas@sang-engineering.com,
+	geert+renesas@glider.be,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	lethal@linux-sh.org,
+	g.liakhovetski@gmx.de,
+	groeck@chromium.org,
+	mka@chromium.org,
+	ulrich.hecht+renesas@gmail.com,
+	ysato@users.sourceforge.jp
+Cc: claudiu.beznea@tuxon.dev,
 	linux-kernel@vger.kernel.org,
-	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v3 3/5] acpi/ghes: Use HEST table offsets when preparing GHES records
-Date: Wed,  4 Dec 2024 16:57:57 +0100
-Message-ID: <b7ead99f3b19b63b9ee7c0672864dd7944c9c825.1733327276.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1733327276.git.mchehab+huawei@kernel.org>
-References: <cover.1733327276.git.mchehab+huawei@kernel.org>
+	linux-serial@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH RFT 0/6] serial: sh-sci: Fixes for earlycon and keep_bootcon
+Date: Wed,  4 Dec 2024 17:58:00 +0200
+Message-Id: <20241204155806.3781200-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,164 +98,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-There are two pointers that are needed during error injection:
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-1. The start address of the CPER block to be stored;
-2. The address of the ack, which needs a reset before next error.
+Hi,
 
-It is preferable to calculate them from the HEST table.  This allows
-checking the source ID, the size of the table and the type of the
-HEST error block structures.
+This series adds fixes for earlycon and keep_bootcon on sh-sci driver.
 
-Yet, keep the old code, as this is needed for migration purposes.
+Patch 1/6 was initially part of [1], then posted as standalone
+fix at [2].
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- hw/acpi/ghes.c | 106 ++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 96 insertions(+), 10 deletions(-)
+Patch 5/6 was integrated but then reverted as issues were identified
+after that with it as standalone patch.
 
-diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index 4a826c8ca6d4..af55bfe106bf 100644
---- a/hw/acpi/ghes.c
-+++ b/hw/acpi/ghes.c
-@@ -61,6 +61,25 @@
-  */
- #define ACPI_GHES_GESB_SIZE                 20
- 
-+/*
-+ * Offsets with regards to the start of the HEST table stored at
-+ * ags->hest_addr_le, according with the memory layout map at
-+ * docs/specs/acpi_hest_ghes.rst.
-+ */
-+
-+/*
-+ * ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2
-+ * Table 18-382 Generic Hardware Error Source version 2 (GHESv2) Structure
-+ */
-+#define HEST_GHES_V2_TABLE_SIZE  92
-+#define GHES_ACK_OFFSET          (64 + GAS_ADDR_OFFSET)
-+
-+/*
-+ * ACPI 6.2: 18.3.2.7: Generic Hardware Error Source
-+ * Table 18-380: 'Error Status Address' field
-+ */
-+#define GHES_ERR_ST_ADDR_OFFSET  (20 + GAS_ADDR_OFFSET)
-+
- /*
-  * Values for error_severity field
-  */
-@@ -212,14 +231,6 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker,
- {
-     int i, error_status_block_offset;
- 
--    /*
--     * TODO: Current version supports only one source.
--     * A further patch will drop this check, after adding a proper migration
--     * code, as, for the code to work, we need to store a bios pointer to the
--     * HEST table.
--     */
--    assert(num_sources == 1);
--
-     /* Build error_block_address */
-     for (i = 0; i < num_sources; i++) {
-         build_append_int_noprefix(hardware_errors, 0, sizeof(uint64_t));
-@@ -419,6 +430,76 @@ static void get_hw_error_offsets(uint64_t ghes_addr,
-     *read_ack_register_addr = ghes_addr + sizeof(uint64_t);
- }
- 
-+static void get_ghes_source_offsets(uint16_t source_id, uint64_t hest_addr,
-+                                    uint64_t *cper_addr,
-+                                    uint64_t *read_ack_start_addr,
-+                                    Error **errp)
-+{
-+    uint64_t hest_err_block_addr, hest_read_ack_addr;
-+    uint64_t err_source_struct, error_block_addr;
-+    uint32_t num_sources, i;
-+
-+    if (!hest_addr) {
-+        return;
-+    }
-+
-+    cpu_physical_memory_read(hest_addr, &num_sources, sizeof(num_sources));
-+    num_sources = le32_to_cpu(num_sources);
-+
-+    err_source_struct = hest_addr + sizeof(num_sources);
-+
-+    /*
-+     * Currently, HEST Error source navigates only for GHESv2 tables
-+     */
-+
-+    for (i = 0; i < num_sources; i++) {
-+        uint64_t addr = err_source_struct;
-+        uint16_t type, src_id;
-+
-+        cpu_physical_memory_read(addr, &type, sizeof(type));
-+        type = le16_to_cpu(type);
-+
-+        /* For now, we only know the size of GHESv2 table */
-+        if (type != ACPI_GHES_SOURCE_GENERIC_ERROR_V2) {
-+            error_setg(errp, "HEST: type %d not supported.", type);
-+            return;
-+        }
-+
-+        /* Compare CPER source address at the GHESv2 structure */
-+        addr += sizeof(type);
-+        cpu_physical_memory_read(addr, &src_id, sizeof(src_id));
-+
-+        if (src_id == source_id) {
-+            break;
-+        }
-+
-+        err_source_struct += HEST_GHES_V2_TABLE_SIZE;
-+    }
-+    if (i == num_sources) {
-+        error_setg(errp, "HEST: Source %d not found.", source_id);
-+        return;
-+    }
-+
-+    /* Navigate though table address pointers */
-+    hest_err_block_addr = err_source_struct + GHES_ERR_ST_ADDR_OFFSET;
-+    hest_read_ack_addr = err_source_struct + GHES_ACK_OFFSET;
-+
-+    cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
-+                             sizeof(error_block_addr));
-+
-+    error_block_addr =  le64_to_cpu(error_block_addr);
-+
-+    cpu_physical_memory_read(error_block_addr, cper_addr,
-+                             sizeof(*cper_addr));
-+
-+    *cper_addr = le64_to_cpu(*cper_addr);
-+
-+    cpu_physical_memory_read(hest_read_ack_addr, read_ack_start_addr,
-+                             sizeof(*read_ack_start_addr));
-+
-+    *read_ack_start_addr = le64_to_cpu(*read_ack_start_addr);
-+}
-+
- void ghes_record_cper_errors(const void *cper, size_t len,
-                              uint16_t source_id, Error **errp)
- {
-@@ -439,8 +520,13 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-     }
-     ags = &acpi_ged_state->ghes_state;
- 
--    get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
--                         &cper_addr, &read_ack_register_addr);
-+    if (!ags->hest_addr_le) {
-+        get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
-+                             &cper_addr, &read_ack_register_addr);
-+    } else {
-+        get_ghes_source_offsets(source_id, le64_to_cpu(ags->hest_addr_le),
-+                                &cper_addr, &read_ack_register_addr, errp);
-+    }
- 
-     if (!cper_addr) {
-         error_setg(errp, "can not find Generic Error Status Block");
+I added it in this series to keep all the sh-sci
+fixes in the same place. All these fixes are prerequisites for the
+Renesas RZ/G3S SCI support.
+
+Series was tested on the boards with the following device trees binaries:
+- r8a7742-iwg21d-q7.dtb
+- r8a7743-iwg20d-q7.dtb
+- r8a7745-iwg22d-sodimm.dtb
+- r8a77470-iwg23s-sbc.dtb
+- r8a774a1-hihope-rzg2m-ex.dtb
+- r8a774b1-hihope-rzg2n-ex.dtb
+- r8a774e1-hihope-rzg2h-ex.dtb
+- r9a07g043u11-smarc.dtb
+- r9a07g044c2-smarc.dtb
+- r9a07g044l2-smarc.dtb
+- r9a07g054l2-smarc.dtb
+- r9a08g045s33-smarc.dtb
+- r9a08g045s33-smarc-pmod.dtb (not integrated in the latest kernel tree,
+  but the device tree was posted at [3])
+
+in the following scenarios:
+
+1/ "earlycon keep_bootcon" were present in bootargs
+2/ only "earlycon" was present in bootargs
+3/ none of the "earlycon" or "earlycon keep_bootcon" were present in
+   bootargs
+
+1, 2, 3 were tested also with renesas_defconfig on
+r9a08g045s33-smarc-pmod.dtb.
+
+Please give it a try on your devices as well.
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/all/20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com/
+[2] https://lore.kernel.org/all/20241125115856.513642-1-claudiu.beznea.uj@bp.renesas.com/
+[3] https://lore.kernel.org/all/20241115134401.3893008-9-claudiu.beznea.uj@bp.renesas.com/
+
+Claudiu Beznea (6):
+  serial: sh-sci: Check if TX data was written to device in .tx_empty()
+  serial: sh-sci: Drop __initdata macro for port_cfg
+  serial: sh-sci: Move runtime PM enable to sci_probe_single()
+  serial: sh-sci: Do not probe the serial port if its slot in
+    sci_ports[] is in use
+  serial: sh-sci: Clean sci_ports[0] after at earlycon exit
+  serial: sh-sci: Increment the runtime usage counter for the earlycon
+    device
+
+ drivers/tty/serial/sh-sci.c | 121 ++++++++++++++++++++++++++++++------
+ 1 file changed, 102 insertions(+), 19 deletions(-)
+
 -- 
-2.47.1
+2.39.2
 
 
