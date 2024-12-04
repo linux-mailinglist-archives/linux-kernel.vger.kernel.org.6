@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-431155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6099E39D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:26:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46389E3998
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:12:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E708816A138
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:11:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86971B87C9;
+	Wed,  4 Dec 2024 12:11:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C179B3A79C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:12:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E811B87D6;
-	Wed,  4 Dec 2024 12:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DAVWzc7Y"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C044D1B81DC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1981B4156;
+	Wed,  4 Dec 2024 12:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733314316; cv=none; b=Nm8sYMLQqt6hab+yI7RmHlaDhvnI8JErLTbfepE4Yk2mrBcUGmPrTTqejJgZaYRGG8kMrILnnoPQTMpOIJb8x5SlpwmLl8M6FosFWSO89t2Dhm23h9itVLnOnpy0V71+kwke8TrgtFwX97HYAskv93SGpySlRvBbQ1AQHpguZdk=
+	t=1733314308; cv=none; b=l/KiLg0jOLTHYRk89Yq6pyKVQKss57DUzCpYuZd+FjZu8jDY9TP6XbYzx0ek3gJ7Si3Z7vfZc6417p0DgaObixQrnqy7I0TKzLTNgyL9IkBxKOcG2sp75q2hDt57OTSjrr4ZNjqi5cNfdE5BLGe5FwUZp0LZIlXCLE5QIIhzSN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733314316; c=relaxed/simple;
-	bh=bmOv8dHKm+h6YIB+9sGaNR2bD8pKHVQN2XHvFsxAu5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EVHoQ6ae1+ZXIgP1NJJpCc7N9vdb37Rauzm80mpCDza/WHaJDROiFT9FsG/UE3xUi1Gdq4X9Lmtk5t6rjzxa27PLeLIcXiow2R0f2AsvUUo3HePB+oPooPtJkbh0AOa2V5YTsHSp5A5Qy8Xuk7d8qFJ6elMXVWslAf7kWSFIHd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DAVWzc7Y; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9e8522445dso937452066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 04:11:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733314313; x=1733919113; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lRFuG3PiOj6PlkwBJ3cIrdG7oQVVs/3CSY6wYR/X++s=;
-        b=DAVWzc7YpgRcG/c1qf21BEOXz3zUOFAsd5/0mxgqz1uLcqMZly72NKfb8jzLO9UKoB
-         kSl397jU4cJdE3WgzzW2Ho4JQqR0J35fbcGJoayZhERNICCEwnHJhq89eDAgcgKvHkD0
-         0qq8EHN83RL6fhYGJmgneabXSQowqPXQH2G7q3STjSvsJ9oUUZ5KnKhvPIUPVxoOIuKh
-         0m5cUG/0CLYDJ1oFDFu2vvUfPJGgUFD9thcAPsIwN1Bmzh9Oy+Y2OgBy/dpWzHJdqEQk
-         5SfNPaI5cDKxFLqIRP09Zp93j4a6TXR6c1rQXf+BLtgNx0p6j0wLUwtZhiicqoJvPMmk
-         xMhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733314313; x=1733919113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lRFuG3PiOj6PlkwBJ3cIrdG7oQVVs/3CSY6wYR/X++s=;
-        b=ZvZS5qfm/oLzJQt/cY2NTjRzJ8xokV3YvwpeIftaTv3Xl37bu8UV7cHW4WpZxO8e7x
-         iuIret43NeF7trotFFnGG8S5hFmwQoewe9J4S4Stn7vH+dTdpSqCUa/5w1PYF2wpkEwS
-         fbWy5bG8Iv24S26O6PFqEvwrgWSbRnXYpq8jnMHbM8hluylTXOZ3dZLu5vj1tNwZKSnN
-         ryruy5PuL4yYsXWaFrgx61PMtomy0oXRzLmomHxKnms1oEFr7+VamtWkpzWTGtmb770F
-         iY+6zHiROQOV+jPXNwo5z04ASgj+Rs4F1C15MZ7Y88aIaIKhEBWjeJPd4xHhDWvRk3Yz
-         CfBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7lMJWtCBzUdyUhWMY9APAxHs7+Rnk52weg+XoE+7kfY/R+zlG+XajJcSvzIfHntZehiAUJRDoYOE1DBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPRWvy9bL99OFBFonocNvlQN8lj5dlupoilfL1UA0GevtkYuJr
-	QLVzscyAPl3vb/cNtafrLT86ivItMWbDXBtVzOLP5GFW6qFDjLq5gteyiBY6lziCjUzVCcP3mJA
-	2nGgYpyKdD3vM7+/J/AUmnpt5tKNlbxEKO4Qt
-X-Gm-Gg: ASbGncuvYCyV2jE9TOnWyJdH2bIM6EaCGfdMCQE6JuVfi/uCkJ2GbymHk+nAFjwHgOy
-	NpqocFNzr9rpXC5bnk/sP9N/kv3jw5Lwq
-X-Google-Smtp-Source: AGHT+IE+PewjMa0mEHtyeqwBytsWAUZHirCIUBbwztyT4virh3IT7us/tEMBvPvnKoceSir7uuVYA3UNrowtbDRu9Gw=
-X-Received: by 2002:a17:906:2192:b0:aa5:4800:37be with SMTP id
- a640c23a62f3a-aa5f7da96ffmr479877166b.32.1733314312852; Wed, 04 Dec 2024
- 04:11:52 -0800 (PST)
+	s=arc-20240116; t=1733314308; c=relaxed/simple;
+	bh=QZpKmJ6sBrSgww05xDv65tB4zzCrJccrNGUUStFDQRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a99spQyGISSgGkRXcPsWG4o9C2/hX+UrlMKB56s128N04Tkmf6AJWIjdaUzKLGmPIk36FEBnL7gi3K6PcWlkbPMfXmIx5Kex5DLHSLmc+ZzMo6hXLUcUZ0mtyLinyCukS1GFE4wl4WaA6CRLstzoiQLsItqRF2V4Wt4H6/AI/wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF4BC4CED1;
+	Wed,  4 Dec 2024 12:11:46 +0000 (UTC)
+Message-ID: <57ed2ba7-ebe8-433f-bb52-914a020ca468@xs4all.nl>
+Date: Wed, 4 Dec 2024 13:11:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89i+ZtxW1HoiZaA2hB4r4+QBbif=biG6tQ1Fc2jHFPWH8Sw@mail.gmail.com>
- <1733310027-29602-1-git-send-email-mengensun@tencent.com>
-In-Reply-To: <1733310027-29602-1-git-send-email-mengensun@tencent.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 4 Dec 2024 13:11:41 +0100
-Message-ID: <CANn89iJ6PxKf4AbwaXK7cLg8rgeVGe=1WNoPkhrc_etdCo+_XA@mail.gmail.com>
-Subject: Re: [PATCH] tcp: replace head->tstamp with head->skb_mstamp_ns in tcp_tso_should_defer()
-To: MengEn Sun <mengensun88@gmail.com>
-Cc: dsahern@kernel.org, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, mengensun@tencent.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, yuehongwu@tencent.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] docs: media: profile: make it clearer about
+ maintainership duties
+Content-Language: en-US
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <cover.1733218348.git.mchehab+huawei@kernel.org>
+ <f74d32eba4c1799fe7fd407a3889a3de91fb09f2.1733218348.git.mchehab+huawei@kernel.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <f74d32eba4c1799fe7fd407a3889a3de91fb09f2.1733218348.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 4, 2024 at 12:00=E2=80=AFPM MengEn Sun <mengensun88@gmail.com> =
-wrote:
->
-> Thank you very much for your reply!
->
-> There is no functional issue with using tstamp here.
->
-> TCP does indeed use tstamp in many places, but it seems that most of
-> them are related to SO_TIMESTAMP*.
+On 12/3/24 10:35, Mauro Carvalho Chehab wrote:
+> During the review of the media committer's profile, it was noticed
+> that the responsibility for timely review patches was not clear:
+> such review is expected that all developers listed at MAINTAINERS
+> with the "M:" tag (e.g. "maintainers" on its broad sense).
+> 
+> This is orthogonal of being a media committer or not. Such duty
+> is implied at:
+> 
+> 	Documentation/admin-guide/reporting-issues.rst
+> 
+> and at the MAINTAINERS header, when it says that even when the
+> status is "odd fixes", the patches will flow in.
+> 
+> So, let make it explicit at the maintainer-entry-profile that
+> maintainers need to do timely reviews.
+> 
+> Also, while right now our focus is on granting committer rights to
+> maintainers, the media-committer model may evolve in the future to
+> accept other committers that don't have such duties.
+> 
+> So, make it clear at the media-committer.rst that the duties
+> related to reviewing patches from others are for the drivers
+> they are maintainers as well.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/driver-api/media/maintainer-entry-profile.rst | 5 +++++
+>  Documentation/driver-api/media/media-committer.rst          | 6 +++---
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> index fa28059f7b3f..87b71f89b1df 100644
+> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> @@ -173,6 +173,11 @@ b. Committers' workflow: patches are handled by media committers::
+>  On both workflows, all patches shall be properly reviewed at
+>  linux-media@vger.kernel.org (LMML) before being merged at media-committers.git.
+>  
+> +Such patches will be reviewed timely by the maintainers and reviewers as
+> +listed in the MAINTAINERS file. The subsystem maintainers will follow one of
+> +the above workflows, e. g. they will either send a pull request or merge
+> +patches directly at the media-committers tree.
+> +
+>  When patches are picked by patchwork and when merged at media-committers,
+>  CI bots will check for errors and may provide e-mail feedback about
+>  patch problems. When this happens, the patch submitter must fix them, or
+> diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
+> index 3d0987a8a93b..0bc038a0fdcc 100644
+> --- a/Documentation/driver-api/media/media-committer.rst
+> +++ b/Documentation/driver-api/media/media-committer.rst
+> @@ -90,9 +90,9 @@ be a part of their maintenance tasks.
+>  Due to that, to become a committer or a core committer, a consensus between
+>  all subsystem maintainers is required, as they all need to trust a developer
+>  well enough to be delegated the responsibility to maintain part of the code
+> -and to properly review patches from third parties, in a timely manner and
+> -keeping the status of the reviewed code at https://patchwork.linuxtv.org
+> -updated.
+> +and to properly review patches from third parties for the drivers that they
+> +maintain in a timely manner and keeping the status of the patches at
+> +https://patchwork.linuxtv.org updated.
+>  
+>  .. Note::
+>  
 
-Not at all. TCP switched to EDT model back in 2018, the goal had
-nothing to do with SO_TIMESTAMP
+Looks OK to me, but I thought this was supposed to be folded into the 3/5 and 4/5 patches?
 
-commit d3edd06ea8ea9e03de6567fda80b8be57e21a537 tcp: provide earliest
-departure time in skb->tstamp
+Regards,
 
-Note how a prior field (skb->skb_mstamp) has been renamed to
-skb->skb_mstamp_ns to express
-the fact that a change in units happened at that time, because suddenly
-TCP was providing skb->tstamp to lower stack (fq qdisc for instance
-makes use of it) in ns units.
-
-Starting from this point, skb->tstamp and skb->skb_mstamp_ns had the
-same meaning as far as TCP is concerned.
-
-Note how it is absolutely clear in the doc:
-
-include/linux/skbuff.h:762: *   @skb_mstamp_ns: (aka @tstamp) earliest
-departure time; start point
-include/linux/skbuff.h:892:             u64             skb_mstamp_ns;
-/* earliest departure time */
-
-I actually had in my TODO list a _removal_ of skb_mstamp_ns, mostly because=
- of
-an unfortunate naming (mstamp would imply millisecond units, which is
-simply not true)
-
-Same remark for tp->tcp_mstamp :  quite a bad name, but unfortunately
-changing it would make future backports more difficult.
+	Hans
 
