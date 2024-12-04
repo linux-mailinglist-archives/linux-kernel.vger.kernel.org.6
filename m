@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-431639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE28B9E3FCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:36:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D98D9E3FD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:38:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2931618FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250BB28124F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B80720CCC5;
-	Wed,  4 Dec 2024 16:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F91120C495;
+	Wed,  4 Dec 2024 16:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oBkh3P/J"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Y7GsxTJU"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0FE182D9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E0615B10D;
+	Wed,  4 Dec 2024 16:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330173; cv=none; b=p06sZ/b6ugi8qsiWZjYYPIlQEIZoVscSpNobQbN9Ql36AC1AhBC9drIrah/Hpz+X+yxRiXblRNWOJcq2rkLh1XwbJttLhRgVFoomuVHbMPdniPaon4lBB9XlvndSMapw5+87PIH5/3x5mqyxv7Hs7RLgdy3cR4wMddf5cK7ZbvA=
+	t=1733330282; cv=none; b=cuj9EeCRPgAcJRJsrjJnFYFsEd/FLNCMjDpfkusgJHjuO4JamFuWIdwl3o/9unibyQ148xsAUrIrh9CINJWrFdhO+8pWv23cquf7J6aSmsfmKcnGYzoDwgCrI7l/dLJdBvtTk+qKoUSPck3aGdLpJtm2e0g1gP9irBczq5REtWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330173; c=relaxed/simple;
-	bh=XIp2HnEBwxrCbQQ7Wteksg6Xj0ba4HtjLTdVyqpEJvE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GBhtGmI0CLZSUPitZMj004EWVCYh/WcwxcS2TroKVxYHJu2xqtl14+petBNaCUC41pKD0XNdCZ247scn5EAu40pzfm69aY47SiXRLZW5VrIes8azGqLvaz355wtFqz6BknEsMXa4jip6U8VaSUeAaqe6L/DVW38cApYWT2CxN9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oBkh3P/J; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215770613dbso31815325ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:36:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733330171; x=1733934971; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mBbo3x7wMFASP+XmblVLwMY6/AMJyW6BW/SbEh64LkY=;
-        b=oBkh3P/JffZWQNJJJ0csj7vVSOYBFU2zv58GYJm2LMH1maOToFJX84ltqLRPhLehgR
-         F36h89bVg4FOuCI35Uq31MjY1yXIZjtP/WaJOm/rcb61GfVMUsajS2uMigEd+Jd8r7jz
-         U4yJMZw0d6Zvt5N7F5l+LwaDlY0gCUGBLn15Xp4+KEvDAbpqFhhB+rRRoKyOEBS8WMKe
-         uIbsl9bXKVD6zxjLFejmkycc500ITeQ4MaqGiStaHQHt+31K2vHhClh5yq7KDG7WdcGT
-         Dv7mAh44HKiYkAyHexQZsAqEUKiSqzxvU6p87kFYjec93AC7xN1pGzNIKWfCAXibroeJ
-         dtjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733330171; x=1733934971;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBbo3x7wMFASP+XmblVLwMY6/AMJyW6BW/SbEh64LkY=;
-        b=k7w9TPaV34nUPK1SdZ5qNBXF9cv12q9pLP3+5t6abpvKgQcrSIE0qhx8zVa/kP81WO
-         D8wZ2j73cNnHsOwY2oZ7rFA9wZWH9jCsrb5XslOA7ySfrlVb73WYSLIB47E7Mj8PGd49
-         N3lC6mqOHKXdHBG1YhRW1ttel9sxUAogqQwErrBr61GTPyIwezVC330azTzgJs1FfSdK
-         z0UjTAaeQP47MfWC0UqFC+KU2TQmQ+RLhs/1arny2TI/ZiAi8InN3P6ynu51AyP2X47L
-         G4PWxz88KgTTc1jJuFPHpYHh9ofgT0uf5MSp0P/0vO2lJOjvBQQkUo2yTAV1Oaguq2Jo
-         ZGpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWB0RVSzcUGB1ZTMivRx0JQjdbpW2c1A5we4qkYqtrIn7rNYAjKWBL7+9pF9A1M2j7nc2rXgbS2/qHddn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTafkdFMfe3mjMDj7Jyaka1L5Khqq/x1FlvGF/OI31JCwrDivk
-	carEWOvpxMOZv159FAHxnHtMoq7pLo9SCvPjolmW5PbjDYGgbc1f8uMLThXjSkw=
-X-Gm-Gg: ASbGncvIzbZnw059gnk/maIpKqmCa3SjnM8R+Q0AfFrl5T7zxblk6zVM7yJz8FBOkKC
-	/JpJ2OErjVQ25OYmjgBeNIehvvxrMaX5sr00zP2SfNLiE/bzhEEdvdtud/xdzQcbDy82Lkm6zIG
-	GN0IIHFN/vxdWzn1Z7rd5rACbIWtZ/5DI/NAGq/Z4KrAGkQdqT1acUteUHscG8RbsyBovT74RHx
-	sLUjhm2+Wt2rkHAAMJjOInYSoCzoc9Uxr/gnSq+nW5Y9MiUgcmIRGt1BA==
-X-Google-Smtp-Source: AGHT+IFq0BWXPoO7jWkTFXTi5lL/pCwZIadLDCF1MS35XKXYXClo4zLPDa/VIHisfmZxq+inWAb0tA==
-X-Received: by 2002:a17:903:1c9:b0:215:6211:693 with SMTP id d9443c01a7336-215bd18ed72mr65189235ad.57.1733330171446;
-        Wed, 04 Dec 2024 08:36:11 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:a7a9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219c52b6sm113227935ad.254.2024.12.04.08.36.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 08:36:10 -0800 (PST)
-Message-ID: <2c851bce-a65e-4132-9e0b-e7519e22dbca@kernel.dk>
-Date: Wed, 4 Dec 2024 09:36:09 -0700
+	s=arc-20240116; t=1733330282; c=relaxed/simple;
+	bh=x+97R4+Qu2pFUYhYlj9AO6jmWcDs0wrX0RY+HiKcAFA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=IKgpLspmZNp4BSaSbXw0k58akXRPUKGI0m7mZvTfNCxQAs7dAVMIYFgThhtAz7uE+HmiebTvcVIgAGiKAStFeVxejJNPDhmSExEcCvbp634TJXIvq0albMR1yaL3lW8Nb3Mbu1ZQAm9pMdh/AqFdNw0eZv+RaIdnRmjtGR4PeL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Y7GsxTJU; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4B4GbNvO1111657
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 4 Dec 2024 08:37:24 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4B4GbNvO1111657
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024111601; t=1733330245;
+	bh=zUEN7Y+zdFzQNIkoosq21iA5Pa8Pqr2J5qBpK5Y272I=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Y7GsxTJUzd7tnZOvV4vTQGc+ZqIqIKUED8WoxyjNaD9/qwlJWnGMSVsDsR6xfo1NM
+	 XwdaMDhlkQMFzQ/goZnyTulzCo0fSlk+acOc25XPc68WilK6UxXl9oOxRiTXa/b2l6
+	 92fqn0VXHvhrbW4dPxcGapY9zTLvuZSJobPBBQ9E7p1eNsKDg73z5va/Z8iLxrzil7
+	 KbBSX0DP89lVUbVMEbw3DEYqw5TLJNaWUj5dyEf4nRnmTFOTwC3Dd+DREmD/Ink4i1
+	 WwdTyki9632ll2v+Mf5TUiBba9o0bZJqU3yHbZggPgpS0WzM+ENO1d8qqXWSL5mOX/
+	 +XZl47y3EXMQg==
+Date: Wed, 04 Dec 2024 08:37:22 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Brian Gerst <brgerst@gmail.com>, Arnd Bergmann <arnd@kernel.org>
+CC: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sean Christopherson <seanjc@google.com>,
+        Davide Ciminaghi <ciminaghi@gnudd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com>
+References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-6-arnd@kernel.org> <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com>
+Message-ID: <A0F192E7-EFD2-4DD4-8E84-764BF7210C6A@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org, kirill@shutemov.name,
- bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
- <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
- <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
- <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
- <20241204055241.GA7820@frogsfrogsfrogs>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241204055241.GA7820@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 12/3/24 10:52 PM, Darrick J. Wong wrote:
-> On Tue, Dec 03, 2024 at 03:41:53PM -0700, Jens Axboe wrote:
->> On 12/3/24 3:16 PM, Christoph Lameter (Ampere) wrote:
->>> On Tue, 3 Dec 2024, Jens Axboe wrote:
->>>
->>>> I actually did consider using some form of temporal, as it's the only
->>>> other name I liked. But I do think cached_uncached becomes pretty
->>>> unwieldy. Which is why I just stuck with uncached. Yes I know it means
->>>> different things in different circles, but probably mostly an overlap
->>>> with deeper technical things like that. An honestly almost impossible to
->>>> avoid overlap these days, everything has been used already :-)
->>>>
->>>> IOW, I think uncached is probably still the most descriptive thing out
->>>> there, even if I'm certainly open to entertaining other names. Just not
->>>> anything yet that has really resonated with me.
->>>
->>> How about calling this a "transitory" page? It means fleeting, not
->>> persistent and I think we have not used that term with a page/folio yet.
+On December 4, 2024 5:29:17 AM PST, Brian Gerst <brgerst@gmail=2Ecom> wrote=
+:
+>On Wed, Dec 4, 2024 at 5:34=E2=80=AFAM Arnd Bergmann <arnd@kernel=2Eorg> =
+wrote:
 >>
->> I also hit the thesaurus ;-)
+>> From: Arnd Bergmann <arnd@arndb=2Ede>
 >>
->> I'm honestly not too worried about the internal name, as developers can
->> figure that out. It's more about presenting an external name that sys
->> developers will not need a lot of explaining to know what it's about.
->> And something that isn't too long. BRIEFLY_CACHED? TRANSIENT_CACHE?
+>> The HIGHMEM64G support was added in linux-2=2E3=2E25 to support (then)
+>> high-end Pentium Pro and Pentium III Xeon servers with more than 4GB of
+>> addressing, NUMA and PCI-X slots started appearing=2E
 >>
->> Dunno, I keep going back to uncached as it's pretty easy to grok!
-> 
-> <shrug> RWF_DONTCACHE, to match {I,DCACHE}_DONTCACHE ? ;)
-> 
-> They sound pretty similar ("load this so I can do something with it,
-> evict it immediately if possible") though I wouldn't rely on people
-> outside the kernel being familiar with the existing dontcaches.
+>> I have found no evidence of this ever being used in regular dual-socket
+>> servers or consumer devices, all the users seem obsolete these days,
+>> even by i386 standards:
+>>
+>>  - Support for NUMA servers (NUMA-Q, IBM x440, unisys) was already
+>>    removed ten years ago=2E
+>>
+>>  - 4+ socket non-NUMA servers based on Intel 450GX/450NX, HP F8 and
+>>    ServerWorks ServerSet/GrandChampion could theoretically still work
+>>    with 8GB, but these were exceptionally rare even 20 years ago and
+>>    would have usually been equipped with than the maximum amount of
+>>    RAM=2E
+>>
+>>  - Some SKUs of the Celeron D from 2004 had 64-bit mode fused off but
+>>    could still work in a Socket 775 mainboard designed for the later
+>>    Core 2 Duo and 8GB=2E Apparently most BIOSes at the time only allowe=
+d
+>>    64-bit CPUs=2E
+>>
+>>  - In the early days of x86-64 hardware, there was sometimes the need
+>>    to run a 32-bit kernel to work around bugs in the hardware drivers,
+>>    or in the syscall emulation for 32-bit userspace=2E This likely stil=
+l
+>>    works but there should never be a need for this any more=2E
+>>
+>> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOTLB=2E
+>> PAE mode is still required to get access to the 'NX' bit on Atom
+>> 'Pentium M' and 'Core Duo' CPUs=2E
+>
+>8GB of memory is still useful for 32-bit guest VMs=2E
+>
+>
+>Brian Gerst
+>
 
-Naming is hard! Most people do seem to grok what uncached means, when
-I've shopped it around. The fact that it does use the page cache is
-pretty irrelevant, that's more of an implementation detail to solve
-various issues around competing users of it. That it doesn't persist is
-the important bit, and uncached does seem to relay that pretty nicely.
-
--- 
-Jens Axboe
+By the way, there are 64-bit machines which require swiotlb=2E
 
