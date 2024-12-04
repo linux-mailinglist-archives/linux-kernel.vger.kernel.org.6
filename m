@@ -1,306 +1,163 @@
-Return-Path: <linux-kernel+bounces-430998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D739E37F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:54:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B7D16988A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:54:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E973A1B0F27;
-	Wed,  4 Dec 2024 10:54:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F759E37FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:55:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702D47442F;
-	Wed,  4 Dec 2024 10:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B58028182B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:55:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937281B0F11;
+	Wed,  4 Dec 2024 10:55:07 +0000 (UTC)
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82ED1B0103
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733309690; cv=none; b=VXufdM+PqlxRkkYFzjqQjlL+8lIMp8/y2CZG1w5K89De+owacfpO/8K/V+NNBFsFE1YqWeXizeLj1/azfj7s1/8fVhGjnj3kBZ0ISMfhGZ9pm/NXMO960sYodhqql2BGPuDjY3F0CikdRxyfmMUCFddrU4e368Q+Vq9IXwg43ag=
+	t=1733309707; cv=none; b=Y2WN4MxZNU9D+MBjUr07TbHXbuGsb4/V5SVsRU/ppzduu3fx59CuzC7XB1hN6SGcbweoLDQg/WNgp1H5Fu1Ao94/wyT33nuttU/N226NYdB9UjgXG81ftwxOfsVqM7qQT4RENwSOXb+RO3wGTeYnRYVSWkFef43bOvMHwZnGe6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733309690; c=relaxed/simple;
-	bh=9qOOMVRLj24dF0G+B7UhakX9K+6dsnNX3VJMCg1sBQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ECfo+zLbNrvSkzYPm6ZdhxjDu+yoRluJPlXKU1oHDfilSEDk4DtaRXJ5Jkbl5yMVWESmdwUMLkkjDwmk1PFqs18pj6aDfNMF5sPfL6qQPqAf7t4uhWkeRL1n+1IcFwDNhwD/bJh4R/oMKSc56smvqrHFMbSE37McJSjZ55FDXR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F8C2C4CED1;
-	Wed,  4 Dec 2024 10:54:48 +0000 (UTC)
-Message-ID: <52517849-48ed-4fe8-8638-ec2a4dc2bcbd@linux-m68k.org>
-Date: Wed, 4 Dec 2024 20:54:45 +1000
+	s=arc-20240116; t=1733309707; c=relaxed/simple;
+	bh=m9KQVD/Dmj+L/CbOVhhGDK/Po1hFtlAH66JPxNh/jq4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=lsdFPpfEnb6pqKVtmse7KM5jL3qUwGjGR9EwncWvh9UGPpb9gFtU9bhT7LjS/msih0Q/mJXChjwTJi/oFeLksHAD8bBEJnumsc/EzNdhQiS7Mg+SCVYlrVt13PO2RjJIELjdQXUNNr6+X8gNPnEsYj/yXthXMwwiItO4ulKcMrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: from mail.steuer-voss.de (localhost [127.0.0.1])
+	by mail.steuer-voss.de (Postfix) with ESMTP id 29AB22248;
+	Wed,  4 Dec 2024 11:55:00 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] m68k: coldfire: Support resources for UART
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20241202-m5441x_uart_resource-v1-1-6b28cb295fb5@yoseli.org>
-Content-Language: en-US
-From: Greg Ungerer <gerg@linux-m68k.org>
-In-Reply-To: <20241202-m5441x_uart_resource-v1-1-6b28cb295fb5@yoseli.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Wed, 04 Dec 2024 11:55:00 +0100
+From: Nikolaus Voss <nv@vosn.de>
+To: Marek Vasut <marex@denx.de>
+Cc: Liu Ying <victor.liu@oss.nxp.com>, Alexander Stein
+ <alexander.stein@ew.tq-group.com>, Liu Ying <victor.liu@nxp.com>, Luca
+ Ceresoli <luca.ceresoli@bootlin.com>, Fabio Estevam <festevam@denx.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nikolaus.voss@haag-streit.com, miquel.raynal@bootlin.com
+Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+In-Reply-To: <b86666cc-da63-405d-9036-96cb4e69dafb@denx.de>
+References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
+ <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
+ <000b34cdd1591c82265ce1f9848828d1@vosn.de>
+ <2c950130-84b4-4a81-84a2-b5e08af43616@oss.nxp.com>
+ <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
+ <808d4092a9e97b95480d47c1bd84d930@vosn.de>
+ <b86666cc-da63-405d-9036-96cb4e69dafb@denx.de>
+User-Agent: Roundcube Webmail/1.5.0
+Message-ID: <21ea39dba5e35e99ea499b4408cb1bdf@vosn.de>
+X-Sender: nv@vosn.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi JM,
+Hi Marek,
 
-On 2/12/24 20:34, Jean-Michel Hautbois wrote:
-> In order to use the eDMA channels for UART, the mcf_platform_uart needs
-> to be changed. Instead of adding another custom member for the
-> structure, use a resource tree in a platform_device per UART. It then
-> makes it possible to have a device named like "mcfuart.N" with N the
-> UART number.
+On 04.12.2024 00:40, Marek Vasut wrote:
+> On 12/3/24 8:20 AM, Nikolaus Voss wrote:
+>> On 03.12.2024 04:12, Marek Vasut wrote:
+>>> On 12/3/24 3:22 AM, Liu Ying wrote:
+>>> 
+>>> [...]
+>>> 
+>>>>>> I doubt that pixel clock tree cannot find appropriate division 
+>>>>>> ratios
+>>>>>> for some pixel clock rates, especially for dual-link LVDS on 
+>>>>>> i.MX8MP
+>>>>>> and i.MX93 platforms, because PLL clock rate should be 7x faster 
+>>>>>> than
+>>>>>> pixel clock rate and 2x faster than "ldb" clock rate so that the 
+>>>>>> 3.5
+>>>>>> folder between "ldb" clock and pixel clock can be met. That means 
+>>>>>> the
+>>>>>> PLL clock rate needs to be explicitly set first for this case.
+>>>>>> 
+>>>>>> Can you assign the PLL clock rate in DT to satisfy the "ldb" and 
+>>>>>> pixel
+>>>>>> clock rates like the below commit does, if you use a LVDS panel?
+>>>>>> 
+>>>>>> 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
+>>>>>> frequency to 506.8 MHz")
+>>>>> 
+>>>>> I probably could. The point of my patch is you don't have to know 
+>>>>> in
+>>>>> advance which LVDS panel is connected, and you don't have to 
+>>>>> calculate
+>>>>> the base PLL clock by hand and store it in the device tree.
+>>>>> 
+>>>>> In my test system, I have three different LVDS panels with EDID 
+>>>>> EEPROM,
+>>>>> none of which worked with the stock driver, but all work with this
+>>>>> patch.
+>>>>> With slightly adapted pixel clocks though.
+>>>> 
+>>>> If each of the three LVDS panels has only one display mode, you may
+>>>> assign the PLL clock rates in DT overlays for the panels.
+>>> I temporarily agree.
+>>> 
+>>> I also currently use DTOs for various panels including their PLL
+>>> setting, but in the end, I think/hope the work of Miquel and co. is
+>>> going to make that PLL setting part unnecessary.
+>> 
+>> That is exactly what my patch is about. I want to use one DT for all
+>> panels
 > 
-> Later, adding the dma channel in the mcf tty driver will also be more
-> straightfoward.
+> Right
 > 
-> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> ---
->   arch/m68k/coldfire/device.c | 96 ++++++++++++++-------------------------------
->   drivers/tty/serial/mcf.c    | 69 +++++++++++++++++++-------------
->   2 files changed, 70 insertions(+), 95 deletions(-)
-> 
-> diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
-> index b6958ec2a220cf91a78a14fc7fa18749451412f7..fd7d0b0ce7eb2970cb8ffe33589fe8d7e88c268d 100644
-> --- a/arch/m68k/coldfire/device.c
-> +++ b/arch/m68k/coldfire/device.c
-> @@ -24,73 +24,35 @@
->   #include <linux/platform_data/dma-mcf-edma.h>
->   #include <linux/platform_data/mmc-esdhc-mcf.h>
->   
-> -/*
-> - *	All current ColdFire parts contain from 2, 3, 4 or 10 UARTS.
-> - */
-> -static struct mcf_platform_uart mcf_uart_platform_data[] = {
-> -	{
-> -		.mapbase	= MCFUART_BASE0,
-> -		.irq		= MCF_IRQ_UART0,
-> -	},
-> -	{
-> -		.mapbase	= MCFUART_BASE1,
-> -		.irq		= MCF_IRQ_UART1,
-> -	},
-> -#ifdef MCFUART_BASE2
-> -	{
-> -		.mapbase	= MCFUART_BASE2,
-> -		.irq		= MCF_IRQ_UART2,
-> -	},
-> -#endif
-> -#ifdef MCFUART_BASE3
-> -	{
-> -		.mapbase	= MCFUART_BASE3,
-> -		.irq		= MCF_IRQ_UART3,
-> -	},
-> -#endif
-> -#ifdef MCFUART_BASE4
-> -	{
-> -		.mapbase	= MCFUART_BASE4,
-> -		.irq		= MCF_IRQ_UART4,
-> -	},
-> -#endif
-> -#ifdef MCFUART_BASE5
-> -	{
-> -		.mapbase	= MCFUART_BASE5,
-> -		.irq		= MCF_IRQ_UART5,
-> -	},
-> -#endif
-> -#ifdef MCFUART_BASE6
-> -	{
-> -		.mapbase	= MCFUART_BASE6,
-> -		.irq		= MCF_IRQ_UART6,
-> -	},
-> -#endif
-> -#ifdef MCFUART_BASE7
-> -	{
-> -		.mapbase	= MCFUART_BASE7,
-> -		.irq		= MCF_IRQ_UART7,
-> +static u64 mcf_uart_mask = DMA_BIT_MASK(32);
-> +
-> +static struct resource mcf_uart0_resource[] = {
-> +	[0] = {
-> +		.start = MCFUART_BASE0,
-> +		.end   = MCFUART_BASE0 + 0x3fff,
-> +		.flags = IORESOURCE_MEM,
->   	},
-> -#endif
-> -#ifdef MCFUART_BASE8
-> -	{
-> -		.mapbase	= MCFUART_BASE8,
-> -		.irq		= MCF_IRQ_UART8,
-> +	[1] = {
-> +		.start = 2,
-> +		.end   = 3,
-> +		.flags = IORESOURCE_DMA,
->   	},
-> -#endif
-> -#ifdef MCFUART_BASE9
-> -	{
-> -		.mapbase	= MCFUART_BASE9,
-> -		.irq		= MCF_IRQ_UART9,
-> +	[2] = {
-> +		.start = MCF_IRQ_UART0,
-> +		.end   = MCF_IRQ_UART0,
-> +		.flags = IORESOURCE_IRQ,
->   	},
-> -#endif
-> -	{ },
->   };
->   
-> -static struct platform_device mcf_uart = {
-> +static struct platform_device mcf_uart0 = {
->   	.name			= "mcfuart",
->   	.id			= 0,
-> -	.dev.platform_data	= mcf_uart_platform_data,
-> +	.num_resources = ARRAY_SIZE(mcf_uart0_resource),
-> +	.resource = mcf_uart0_resource,
-> +	.dev = {
-> +		.dma_mask = &mcf_uart_mask,
-> +		.coherent_dma_mask = DMA_BIT_MASK(32),
-> +	},
->   };
->   
->   #ifdef MCFFEC_BASE0
-> @@ -485,12 +447,12 @@ static struct platform_device mcf_i2c5 = {
->   static const struct dma_slave_map mcf_edma_map[] = {
->   	{ "dreq0", "rx-tx", MCF_EDMA_FILTER_PARAM(0) },
->   	{ "dreq1", "rx-tx", MCF_EDMA_FILTER_PARAM(1) },
-> -	{ "uart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
-> -	{ "uart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
-> -	{ "uart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
-> -	{ "uart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
-> -	{ "uart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
-> -	{ "uart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
-> +	{ "mcfuart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
-> +	{ "mcfuart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
-> +	{ "mcfuart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
-> +	{ "mcfuart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
-> +	{ "mcfuart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
-> +	{ "mcfuart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
->   	{ "timer0", "rx-tx", MCF_EDMA_FILTER_PARAM(8) },
->   	{ "timer1", "rx-tx", MCF_EDMA_FILTER_PARAM(9) },
->   	{ "timer2", "rx-tx", MCF_EDMA_FILTER_PARAM(10) },
-> @@ -623,7 +585,7 @@ static struct platform_device mcf_flexcan0 = {
->   #endif /* MCFFLEXCAN_SIZE */
->   
->   static struct platform_device *mcf_devices[] __initdata = {
-> -	&mcf_uart,
-> +	&mcf_uart0,
->   #ifdef MCFFEC_BASE0
->   	&mcf_fec0,
->   #endif
-> diff --git a/drivers/tty/serial/mcf.c b/drivers/tty/serial/mcf.c
-> index 93e7dda4d39acd23daf8c0d4c29ac8d666f263c5..07b8decfdb6005f0265dd130765e45c3fd1715eb 100644
-> --- a/drivers/tty/serial/mcf.c
-> +++ b/drivers/tty/serial/mcf.c
-> @@ -570,31 +570,46 @@ static struct uart_driver mcf_driver = {
->   
->   static int mcf_probe(struct platform_device *pdev)
->   {
-> -	struct mcf_platform_uart *platp = dev_get_platdata(&pdev->dev);
->   	struct uart_port *port;
-> -	int i;
-> -
-> -	for (i = 0; ((i < MCF_MAXPORTS) && (platp[i].mapbase)); i++) {
-> -		port = &mcf_ports[i].port;
-> -
-> -		port->line = i;
-> -		port->type = PORT_MCF;
-> -		port->mapbase = platp[i].mapbase;
-> -		port->membase = (platp[i].membase) ? platp[i].membase :
-> -			(unsigned char __iomem *) platp[i].mapbase;
-> -		port->dev = &pdev->dev;
-> -		port->iotype = SERIAL_IO_MEM;
-> -		port->irq = platp[i].irq;
-> -		port->uartclk = MCF_BUSCLK;
-> -		port->ops = &mcf_uart_ops;
-> -		port->flags = UPF_BOOT_AUTOCONF;
-> -		port->rs485_config = mcf_config_rs485;
-> -		port->rs485_supported = mcf_rs485_supported;
-> -		port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
-> -
-> -		uart_add_one_port(&mcf_driver, port);
-> +	struct mcf_uart *pp;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	int id = pdev->id;
-> +
-> +	if (id == -1 || id >= MCF_MAXPORTS) {
-> +		dev_err(&pdev->dev, "uart%d out of range\n",
-> +			id);
-> +		return -EINVAL;
->   	}
->   
-> +	port = &mcf_ports[id].port;
-> +	port->line = id;
-> +
-> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	port->mapbase = res->start;
-> +	port->membase = base;
-> +
-> +	port->irq = platform_get_irq(pdev, 0);
-> +	if (port->irq < 0)
-> +		return port->irq;
-> +
-> +	port->type = PORT_MCF;
-> +	port->dev = &pdev->dev;
-> +	port->iotype = SERIAL_IO_MEM;
-> +	port->uartclk = MCF_BUSCLK;
-> +	port->ops = &mcf_uart_ops;
-> +	port->flags = UPF_BOOT_AUTOCONF;
-> +	port->rs485_config = mcf_config_rs485;
-> +	port->rs485_supported = mcf_rs485_supported;
-> +	port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
-> +
-> +	pp = container_of(port, struct mcf_uart, port);
-> +
-> +	uart_add_one_port(&mcf_driver, port);
-> +
+>> and store the panel's timing in EDID EEPROM.
+> Oh, that is a new one. Does the EDID EEPROM store the entirety of
+> 'struct display_timing {}' somehow , or is that a custom format ?
 
-This breaks platforms with more than one UART - which is quite a few of
-the ColdFire platforms. Numerous boards bring and use more than one UART.
+Well, sort of ;-). VESA has taken care of this 30 years ago
+(https://en.wikipedia.org/wiki/Extended_Display_Identification_Data).
 
-Regards
-Greg
+DRM handles this with drm_get_edid() and siblings, e.g. :
 
+@@ -86,16 +92,36 @@ static int panel_lvds_get_modes(struct drm_panel 
+*panel,
+  {
+         struct panel_lvds *lvds = to_panel_lvds(panel);
+         struct drm_display_mode *mode;
++       int num = 0;
++
++       /* probe EDID if a DDC bus is available */
++       if (lvds->ddc) {
++               pm_runtime_get_sync(lvds->dev);
++
++               if (!lvds->edid)
++                       lvds->edid = drm_get_edid(connector, lvds->ddc);
++
++               if (lvds->edid)
++                       num += drm_add_edid_modes(connector, 
+lvds->edid);
++
++               pm_runtime_mark_last_busy(lvds->dev);
++               pm_runtime_put_autosuspend(lvds->dev);
++       }
 
+panel-simple.c does that in mainline, I added it to panel-lvds.c.
+The kernel subdir tools/edid has some code to generate the EEPROM data
+from timings and flags.
 
->   	return 0;
->   }
->   
-> @@ -603,13 +618,11 @@ static int mcf_probe(struct platform_device *pdev)
->   static void mcf_remove(struct platform_device *pdev)
->   {
->   	struct uart_port *port;
-> -	int i;
-> +	int id = pdev->id;
->   
-> -	for (i = 0; (i < MCF_MAXPORTS); i++) {
-> -		port = &mcf_ports[i].port;
-> -		if (port)
-> -			uart_remove_one_port(&mcf_driver, port);
-> -	}
-> +	port = &mcf_ports[id].port;
-> +	if (port)
-> +		uart_remove_one_port(&mcf_driver, port);
->   }
->   
->   /****************************************************************************/
-> 
-> ---
-> base-commit: e457f18d7f25288d143c1fe024a620d0b15caec1
-> change-id: 20241202-m5441x_uart_resource-729b30c15363
-> 
-> Best regards,
+We keep the DDC EEPROM on a small adapter glued to to back of the panel
+so we can replace the usually short-lived panel with a successor.
+
+-- 
+Nikolaus Voss
 
