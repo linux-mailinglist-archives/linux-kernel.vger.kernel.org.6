@@ -1,308 +1,118 @@
-Return-Path: <linux-kernel+bounces-430815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317B39E35F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D60F9E35F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:52:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81D0D288CEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3242028899E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F55A1990D3;
-	Wed,  4 Dec 2024 08:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A991990CE;
+	Wed,  4 Dec 2024 08:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHEjzf1v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="i9VVAO/2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5BGe4aMW"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A768F19306F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E131946BC;
+	Wed,  4 Dec 2024 08:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733302347; cv=none; b=COVpxzqVc1MMFSB35nGEWoQRuxm5nTLt1JzZGgshRn6gcqJQXUysdOjZ4dEq5eIL7z2JgrZ0rcDPMgBCM+11pd10Y2uTn7ZcSNIa4LCAR/ZeL+2/STfMWiLbPl+6woCHfuAO8jWrDbjDV8dV4G9HPGdybCSltSOpYXWbYlM5ri0=
+	t=1733302329; cv=none; b=JmH836nOHCsaVq8hsHe9czPju8m1hmOAgkttGpk5CJoSnD/LJJ5kPJPYu+/K2ybnOJ/TcP0ANVaPS/OBtv/U8u2PCIePgFgNypCybdrzCjBoK8lGjA/QzBp6AcRKqh+7p6Qp4fRgRsodZCHVgszwTTr0R7NmEhxV9bPbHzJauZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733302347; c=relaxed/simple;
-	bh=H+6ZPXSfRxIrWcaR3h/acU4Q4bj6nn/C2IsiJDBTtOM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KzD5fjgyxpdcaz+QWaRPoBUvD01J/HiF0tfgir9KoQnCwz4iJC1USJl/nUh0DcPEc7vyDtWxPfLjZjegOXRq6TFVgmO0pToHp9oJ0gowajwQ4odrqMtqf2gjc+kroQPX+A6f7vPJafzf49a1O0G02pHzjGaksS/ab57fwVv1zMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHEjzf1v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A23CC4CED1;
-	Wed,  4 Dec 2024 08:52:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733302347;
-	bh=H+6ZPXSfRxIrWcaR3h/acU4Q4bj6nn/C2IsiJDBTtOM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SHEjzf1v3SsYhBL6mDo2WpswRpfzOXuUmd3vRfNS9yA/Ou1vLb7d7iHUFDJ2RCxPx
-	 yE0spsz9YU58RsMIvywQ0BuqEfn//w5bPn3OiQXzwFBfPRod7hpb5rfjozLl3pnv6i
-	 LgujaVC+RYTvEYM3UhjLjxrIS/KxaElXRwFCQ9+Fuk5wa3R2hporNBTi4F7Qns3zvW
-	 LEEX7lqTUV5WcOSvqzaQQIGpkFHoViDjZqkMulxPHi8V9QfnspPdNn+HJq+QackTt5
-	 1rbZhNl+u4R05tYvgF/cpanYDj4fmco/2yjOuuTFtiR/pXC5wfN/eXiQNwcBjOl2al
-	 CfdJZup2LyxfQ==
-Received: from 82-132-237-135.dab.02.net ([82.132.237.135] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tIl6r-000NUO-Jr;
-	Wed, 04 Dec 2024 08:52:24 +0000
-Date: Wed, 04 Dec 2024 08:51:26 +0000
-Message-ID: <87jzcfsuep.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Vitaly Chikunov <vt@altlinux.org>
-Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-	Will Deacon <will@kernel.org>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"Wangzhou (B)" <wangzhou1@hisilicon.com>,
-	"Dmitry V. Levin" <ldv@altlinux.org>
-Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
-In-Reply-To: <20241203221453.mwh6sozyczi4ec2k@altlinux.org>
-References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
-	<20241202153618.GA6834@willie-the-truck>
-	<86ttbmt71k.wl-maz@kernel.org>
-	<20241202155940.p267a3tz5ypj4sog@altlinux.org>
-	<86ser6t6fs.wl-maz@kernel.org>
-	<20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
-	<20241203092721.j473dthkbq6wzez7@altlinux.org>
-	<1847e34fa7724d28aeb22d93752f64f2@huawei.com>
-	<20241203221453.mwh6sozyczi4ec2k@altlinux.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733302329; c=relaxed/simple;
+	bh=zIcQJvA+oKpRsAfJuyACQLHY0DQLwZWhzgfqlh/fzA0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=QGC02CuAd0HVDPTbXG9tdxWnJq37PyJwBxNJ9TCmfbwyO4kocX1WoH4z/Z7VVBxJxE5G/XjNoW0rFh1OYZ3+XjP95xlt/EluyWc30kvhJViEhsVyukBzeonaqO1+u1twaIYZa05WliO9F3G4FY6FjKcU9Rt7Yy2BMN4bicFWIJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=i9VVAO/2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5BGe4aMW; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 17E2F1140122;
+	Wed,  4 Dec 2024 03:52:05 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 03:52:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733302325;
+	 x=1733388725; bh=zIcQJvA+oKpRsAfJuyACQLHY0DQLwZWhzgfqlh/fzA0=; b=
+	i9VVAO/2eSjekmfjZMyGWZSj0oO08SuuusIbfvUNfuwYi5exo5qIq4o5Dh04jNLi
+	VZSQnMYc8JUuzs+gZefJqioqkrEi6gc2MLt3N12xBNIVMJtuu017z0tZ6FDAMJHR
+	jPYEzznRcsPLZP1dKGnG/vXpGMJhZ5/oqjprBHtxngc7KQ/NURChCOVL1UOsScMU
+	mR7uTgHm00CT6G4qMe/SPHpZmmwmjdu4hrAiAwnuBf64Hc0jofc7/DxxpfsVIwyo
+	4cknDpJAErwnhC5KkVgPnsruQJSdoFm4o/cwGl7etYn+030Pi1m35vC+tL6Js7td
+	nsZTvjBNYGEXBRsxim26Uw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733302325; x=
+	1733388725; bh=zIcQJvA+oKpRsAfJuyACQLHY0DQLwZWhzgfqlh/fzA0=; b=5
+	BGe4aMW3s+6AsdFqTKHiEypiD7kqbCXk2RjjUZVoQKcrcUTZJ3OsxGPkG6/xEsF3
+	O3xi/1eV2EYEmI4JHaPW9pNIdTriTOUKdb7czd6NkgVMNyDLaGXLcz64v4cs+ABJ
+	HZziKcwV1aJUNlyGzO4LkrAdcAb0x4DcuxDNILpqDraTgI4jKmJbWAWHiRLD7ZFG
+	El/ZgTnql2PjLWJZnio9u0aLoUZZCfW/X6AqoxTBOkZk6jWCxDYXUvGXr/Tw0olR
+	sve+4cmF9AdA6/YvFvoIBWzaKAGEC8awZwphcph/QYSeP6OMfoh6xj4N8I7ZJ5tk
+	eQrFTPRAoUumLAiBpjqjQ==
+X-ME-Sender: <xms:NBhQZ7rxsgUuQr7pdhD-A68BzOQsBZ3TARqt37qjekDjF1KYSqmbRA>
+    <xme:NBhQZ1okzJ1fUbf1gK_SstYTdbnGgmRp5NZ7vT4DYlvQR5yLqnUTW3VivM9lTzv6l
+    LIhGx88qc-tqRNvh2Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieeggdduvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohephedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprh
+    gtphhtthhopehjrghmvghsrdgsohhtthhomhhlvgihsehhrghnshgvnhhprghrthhnvghr
+    shhhihhprdgtohhmpdhrtghpthhtohepjhhulhhirghnsehouhhtvghrqdhlihhmihhtsh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhprghrihhstgesvhhgvghrrdhkvghrnh
+    gvlhdrohhrgh
+X-ME-Proxy: <xmx:NBhQZ4Ou7B6qSOwvaonH0vCl65r5dKYgW3jx2j_PPFmxo0asGdn_sg>
+    <xmx:NBhQZ-5rN49UsAzrbL4K4aBPrd_zk3CFj4pI5GMbCJMCb9eVCaIONA>
+    <xmx:NBhQZ66MPOWyHe8tmSNzOxUPOTN9dLaSQ4Ay8jABvatPfOuisfzVvQ>
+    <xmx:NBhQZ2jWehaxemh9mYfQzO-exsXDIeARzbo32B2S3_MYh1wPtU-Clg>
+    <xmx:NRhQZ11GwuXS6AJF6Z-EmkR1grMeIhoD_jgNnFCGFzQnpXiYEvKyRNOS>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 8B6EB2220072; Wed,  4 Dec 2024 03:52:04 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.237.135
-X-SA-Exim-Rcpt-To: vt@altlinux.org, shameerali.kolothum.thodi@huawei.com, will@kernel.org, james.morse@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, mark.rutland@arm.com, wangzhou1@hisilicon.com, ldv@altlinux.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Date: Wed, 04 Dec 2024 09:51:42 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Julian Vetter" <julian@outer-limits.org>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Helge Deller" <deller@gmx.de>
+Cc: linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <e8c80d6e-4b4e-4108-bdd0-b096c8d634f5@app.fastmail.com>
+In-Reply-To: <20241204074632.3683523-1-julian@outer-limits.org>
+References: <20241204074632.3683523-1-julian@outer-limits.org>
+Subject: Re: [PATCH] parisc: Remove memcpy_toio and memset_io
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, 03 Dec 2024 22:14:53 +0000,
-Vitaly Chikunov <vt@altlinux.org> wrote:
-> 
-> Shameer, Marc, Oliver, Will,
-> 
-> On Tue, Dec 03, 2024 at 10:03:11AM +0000, Shameerali Kolothum Thodi wrote:
-> > > -----Original Message-----
-> > > From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
-> > > Behalf Of Vitaly Chikunov
-> > > Sent: Tuesday, December 3, 2024 9:27 AM
-> > > To: Marc Zyngier <maz@kernel.org>
-> > > Cc: Will Deacon <will@kernel.org>; james.morse@arm.com; linux-arm-
-> > > kernel@lists.infradead.org; Catalin Marinas <catalin.marinas@arm.com>;
-> > > linux-kernel@vger.kernel.org; oliver.upton@linux.dev;
-> > > mark.rutland@arm.com
-> > > Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
-> > > 0000000002000000 [#1] SMP
-> > > 
-> > > Marc,
-> > > 
-> > > On Tue, Dec 03, 2024 at 01:31:19AM +0300, Vitaly Chikunov wrote:
-> > > > On Mon, Dec 02, 2024 at 04:07:03PM +0000, Marc Zyngier wrote:
-> > > > > On Mon, 02 Dec 2024 15:59:40 +0000,
-> > > > > Vitaly Chikunov <vt@altlinux.org> wrote:
-> > > > > >
-> > > > > > Marc,
-> > > > > >
-> > > > > > On Mon, Dec 02, 2024 at 03:53:59PM +0000, Marc Zyngier wrote:
-> > > > > > >
-> > > > > > > What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
-> > > > > >
-> > > > > > No, host is 6.6.60.
-> > > > >
-> > > > > Right. I wouldn't be surprised if:
-> > > > >
-> > > > > - this v6.6 kernel doesn't hide the MPAM feature as it should (and
-> > > > >   that's proably something we should backport)
-> > > >
-> > > > How to confirm this? Currently I cannot find any (case-insensitive)
-> > > > "MPAM" files in /sys, nor mpam string in /proc/cpuinfo, nor MPAM
-> > > > strings in `strace -v` (as it decodes some KVM ioctls) of qemu process.
-> > > >
-> > > > >
-> > > > > - you get a nastygram in the host log telling you that the guest has
-> > > > >   executed something it shouldn't (you'll get the encoding of the
-> > > > >   instruction)
-> > > >
-> > > > I requested admins of the box for dmesg output since I don't have root
-> > > > access myself and nowadays dmesg is not accessible for a user.
-> > > 
-> > > This is what they reported:
-> > > 
-> > >   kvm [2502822]: Unsupported guest sys_reg access at: ffff80008003e9f0
-> > > [000000c5]
-> > >                    { Op0( 3), Op1( 0), CRn(10), CRm( 4), Op2( 4), func_read },
-> > > 
-> > 
-> > As Will pointed out I think this is access to MPAMIDR_EL1 and is from this
-> > code here,
-> > 
-> > +++ b/arch/arm64/kernel/cpuinfo.c
-> > @@ -478,6 +478,9 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
-> >  	if (id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0))
-> >  		__cpuinfo_store_cpu_32bit(&info->aarch32);
-> >  
-> > +	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
-> > +		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
-> > +
-> >  	cpuinfo_detect_icache_policy(info);
-> >  }
-> > 
-> > I did manage to boot my setup in 6.6 and this is what happens,
-> > 
-> > Host kernel 6.6
-> > Guest Kernel 6.13-rc1
-> > 
-> > [    0.195392] smp: Brought up 1 node, 8 CPUs
-> > [    0.219000] SMP: Total of 8 processors activated.
-> > [    0.219629] CPU: All CPU(s) started at EL1
-> > ...
-> > [    0.223212] CPU features: detected: RAS Extension Support
-> > [    0.223927] CPU features: detected: Memory Partitioning And Monitoring
-> > [    0.224796] CPU features: detected: Memory Partitioning And Monitoring Virtualisation
-> > [    0.225961] alternatives: applying system-wide alternatives
-> > ...
-> > 
-> > Guest detects MPAM and boots fine.
-> > 
-> > Host kernel 6.13-rc1
-> > Guest Kernel 6.13-rc1
-> > 
-> > [    0.196625] smp: Brought up 1 node, 8 CPUs
-> > [    0.222093] SMP: Total of 8 processors activated.
-> > [    0.222769] CPU: All CPU(s) started at EL1
-> > ...
-> > [    0.226620] CPU features: detected: RAS Extension Support
-> > [    0.227453] alternatives: applying system-wide alternatives
-> > 
-> > MPAM is not visible to Guest in this case.
-> > 
-> > So as I pointed out earlier could it be a case where the ID register reports MPAM support
-> > but the firmware has not enabled MPAM?
-> > 
-> > James seems to be mentioning that case here,
-> > 
-> > " (If you have a boot failure that bisects here its likely your CPUs
-> > advertise MPAM in the id registers, but firmware failed to either enable
-> > or MPAM, or emulate the trap as if it were disabled)"
-> 
-> I tried to verify that MPAM is advertised with qemu+gdb method, as
-> suggested by Oliver, but ID_AA64PFR0_EL1 register is not there.
-> 
->   (gdb) i r ID_AA64PFR0_EL1
->   Invalid register `ID_AA64PFR0_EL1'
+On Wed, Dec 4, 2024, at 08:46, Julian Vetter wrote:
+> Recently new functions for IO memcpy and IO memset were added in
+> libs/iomem_copy.c. So, remove the arch specific implementations, to fall
+> back to the generic ones which do exactly the same. Keep memcpy_fromio
+> for now, because it's slight more optimized by doing 'u16' accesses if
+> the buffer is aligned this way.
+>
+> Signed-off-by: Julian Vetter <julian@outer-limits.org>
 
-Then there is a bug in either QEMU or the GDB stubs. This register
-exists, or you wouldn't be here.
-
-> 
-> Are there other suggestions?
-
-Mark has described what the problem is likely to be. 6.6-stable needs
-to have 6685f5d572c22e10 backported, and it probably should have been
-Cc: to stable. Can you please apply the following patch to your *host*
-machine and retest?
-
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 370a1a7bd369..258a39bcd3c7 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1330,6 +1330,7 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
- 			val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MTE);
- 
- 		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_SME);
-+		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MPAM_frac);
- 		break;
- 	case SYS_ID_AA64ISAR1_EL1:
- 		if (!vcpu_has_ptrauth(vcpu))
-@@ -1472,6 +1473,13 @@ static u64 read_sanitised_id_aa64pfr0_el1(struct kvm_vcpu *vcpu,
- 
- 	val &= ~ID_AA64PFR0_EL1_AMU_MASK;
- 
-+	/*
-+	 * MPAM is disabled by default as KVM also needs a set of PARTID to
-+	 * program the MPAMVPMx_EL2 PARTID remapping registers with. But some
-+	 * older kernels let the guest see the ID bit.
-+	 */
-+	val &= ~ID_AA64PFR0_EL1_MPAM_MASK;
-+
- 	return val;
- }
- 
-@@ -1560,6 +1568,29 @@ static int set_id_dfr0_el1(struct kvm_vcpu *vcpu,
- 	return set_id_reg(vcpu, rd, val);
- }
- 
-+static int set_id_aa64pfr0_el1(struct kvm_vcpu *vcpu,
-+			       const struct sys_reg_desc *rd, u64 user_val)
-+{
-+	u64 hw_val = read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
-+	u64 mpam_mask = ID_AA64PFR0_EL1_MPAM_MASK;
-+
-+	/*
-+	 * Commit 011e5f5bf529f ("arm64/cpufeature: Add remaining feature bits
-+	 * in ID_AA64PFR0 register") exposed the MPAM field of AA64PFR0_EL1 to
-+	 * guests, but didn't add trap handling. KVM doesn't support MPAM and
-+	 * always returns an UNDEF for these registers. The guest must see 0
-+	 * for this field.
-+	 *
-+	 * But KVM must also accept values from user-space that were provided
-+	 * by KVM. On CPUs that support MPAM, permit user-space to write
-+	 * the sanitizied value to ID_AA64PFR0_EL1.MPAM, but ignore this field.
-+	 */
-+	if ((hw_val & mpam_mask) == (user_val & mpam_mask))
-+		user_val &= ~ID_AA64PFR0_EL1_MPAM_MASK;
-+
-+	return set_id_reg(vcpu, rd, user_val);
-+}
-+
- /*
-  * cpufeature ID register user accessors
-  *
-@@ -2018,7 +2049,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	{ SYS_DESC(SYS_ID_AA64PFR0_EL1),
- 	  .access = access_id_reg,
- 	  .get_user = get_id_reg,
--	  .set_user = set_id_reg,
-+	  .set_user = set_id_aa64pfr0_el1,
- 	  .reset = read_sanitised_id_aa64pfr0_el1,
- 	  .val = ID_AA64PFR0_EL1_CSV2_MASK | ID_AA64PFR0_EL1_CSV3_MASK, },
- 	ID_SANITISED(ID_AA64PFR1_EL1),
-
-> > https://lore.kernel.org/all/20241030160317.2528209-4-joey.gouly@arm.com/
-> > 
-> > Is there a way you can find out the BIOS version on that board?
-> 
-> Unfortunately, admins of the server do not provide me with this
-> info.
-
-This doesn't really help, I'm afraid.
-
-> For such cases, when MPAM is incorrectly advertised, can we have kernel
-> command line parameter like mpam=0 to override it's detection?
-
-We could, but only when we can confirm what the problem is.
-
-> I think with "If you have a boot failure that bisects here" it's
-> acknowledged possibility and it's confirmed by our server.
-
-Not really. This talks about firmware. We are debugging the hypervisor
-here. This might be closely related, but these are not the same
-things.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
