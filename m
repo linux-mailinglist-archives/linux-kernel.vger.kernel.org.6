@@ -1,127 +1,165 @@
-Return-Path: <linux-kernel+bounces-432207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADD09E477D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:08:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6949E4783
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:08:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDD9E284B45
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F13EB164010
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFAD19DFB4;
-	Wed,  4 Dec 2024 22:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE96199FA4;
+	Wed,  4 Dec 2024 22:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cusyRzWA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9Ndj2DQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A31194C94;
-	Wed,  4 Dec 2024 22:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD0A2391A0;
+	Wed,  4 Dec 2024 22:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733350102; cv=none; b=mVnXHnGSo5MpOHgrgBro3P2LWznKztMHSgSN6pql1aN+L32i+n70v3j26Q1xhpbG8x6rpOFpL97U5MxCMExdg9QRkKLgYquHG2ZlXe1KeQKW6Xet82vctJNaRk1pAMhvgmqEv7O8X5q7qRROPqFuMYowUMIZbeG5AvWDJnAOPzY=
+	t=1733350130; cv=none; b=lML776LQzf3eV10jDE1Ko75WWN534xzzLu4aBxRy52uyWwPM/glk2MySGr6P8JZOCub3l1XavvLsylecXJQxqPqnaBYh7ElhxJoiBTtwN3rkvO1aJNx+XahVQJXkk7sgIvDWqim5C7FqeiscMsqZXTWvYvewIjziHJ892YMDdIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733350102; c=relaxed/simple;
-	bh=dDeGdNCjF74KwY0MX07HSBQzSKPMdTi2G/auzevOK+I=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rZS1bUPIRRCbkdzP7QvAZ0AHQDVEfWXUqsiIr0yQPLaMgHK2cVimPmSCcl+YOqQHev7XFAON7QWdOEK0IqMbWrga5za89b860w5Im/E7kfyp0nRwlfCr1rHrd0dP36Ly25ZEQN1c37hbd+zaiVM4OCjaJ9NXub81MeHF8+GC67U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cusyRzWA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EA5C4CECD;
-	Wed,  4 Dec 2024 22:08:17 +0000 (UTC)
+	s=arc-20240116; t=1733350130; c=relaxed/simple;
+	bh=9WUkVEFFi58F5ojed1vxoss3U/Fr3/XFqUfdXLpl4nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=g/y3h8Y8Zvkp/AG8I1a97Ig7UdaQcYQaMrBq8tB5jRW3HzTbWJAnOMNF6MUa7a8jZ/J4UHMqgCg6aysEJzXdxkAmCRG0FJixl2XBASSH536JpjFw2nz6pzGv4mkoysJMrurcvLPV/S0MzeF2VYYAw9qqmVSj6GVwGqSFWaOKkQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9Ndj2DQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE26BC4CED1;
+	Wed,  4 Dec 2024 22:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733350101;
-	bh=dDeGdNCjF74KwY0MX07HSBQzSKPMdTi2G/auzevOK+I=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=cusyRzWAIEmcpZ0qfrqMrrm1qz6iXPcNDcbx73p+i6CtBHrI4DDRGy1/3gG4zXL5Q
-	 vsmIpPlXA8BLXIQ7PcYu4+bJqpvR8tAy49YlL7Zvfec0PPEYiBWIjpfe4Kk7D0Ekeq
-	 PB87JtdeC8/vbWFfuAo0N2SNzLz5BHCW4H35QtRoKqB5Kr3OPeipbkDdZT55X43Mdd
-	 IP/viasKusOA8tVgh48TfLJp/VUHgOwg8dJFo8wjW8uKBVfM+YUbDoQv2ZI+UjhkGS
-	 piq2q0Op1SsG96oGaM3wN4Odq8hQRGJTlE/Dh3ldECmrCrk/CapdHH8shup78eV9D0
-	 mEBKVj1MJcHtg==
-Message-ID: <bf5da4d3-c317-4616-ac68-0d49bb5815c2@kernel.org>
-Date: Wed, 4 Dec 2024 22:08:15 +0000
+	s=k20201202; t=1733350129;
+	bh=9WUkVEFFi58F5ojed1vxoss3U/Fr3/XFqUfdXLpl4nY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=J9Ndj2DQ0yXMfvB4oW8wKZ2I6S95iWRsxj7aeUISgdIvI3kr1PM68BVbX/ogdg8yF
+	 XXV0jMJwCWnVJi08ql9b/dNg831wIRpM+0gCdGKi5QkxmrxuwfBgzMKdrbZsnHp35g
+	 6p5YmWWCmuWbqsEQ2EI8aPV6TsjnwBdRCaHC+73LZpZx1HRUC2E+y6p5VDhvEAyHek
+	 QpVBHnFwopMysRVv9IZ/y3DWky4tTb4I8f8gRIlDas+Z7okrKENoQpEzwCtixSpBjX
+	 MFBLIAnrRKoTEQfSRHo6/sXJ5slvdBOf1EDSFZSd4wOcp1YYZCJL2E637MUxtZNCrg
+	 sj8bKmOs++FpA==
+Date: Wed, 4 Dec 2024 16:08:47 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Cameron Williams <cang1@live.co.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Fenghua Yu <fenghua.yu@intel.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-pci@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v1 2/2] serial: 8250_pci: Share WCH IDs with
+ parport_serial driver
+Message-ID: <20241204220847.GA3023286@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH] bpftool: Fix failure with static linkage
-To: Namhyung Kim <namhyung@kernel.org>, Leo Yan <leo.yan@arm.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Nick Terrell <terrelln@fb.com>,
- bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mahe Tardy <mahe.tardy@gmail.com>
-References: <20241204213059.2792453-1-leo.yan@arm.com>
- <Z1DLYCha0-o1RWkF@google.com>
-Content-Language: en-GB
-In-Reply-To: <Z1DLYCha0-o1RWkF@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204031114.1029882-3-andriy.shevchenko@linux.intel.com>
 
-2024-12-04 13:36 UTC-0800 ~ Namhyung Kim <namhyung@kernel.org>
-> Hi Leo,
+On Wed, Dec 04, 2024 at 05:09:22AM +0200, Andy Shevchenko wrote:
+> parport_serial driver uses subset of WCH IDs that are present in 8250_pci.
+> Share them via pci_ids.h and switch parport_serial to use defined constants.
 > 
-> On Wed, Dec 04, 2024 at 09:30:59PM +0000, Leo Yan wrote:
->> When building perf with static linkage:
->>
->>   make O=/build LDFLAGS="-static" -C tools/perf VF=1 DEBUG=1
->>   ...
->>   LINK    /build/util/bpf_skel/.tmp/bootstrap/bpftool
->>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_compress':
->>   (.text+0x113): undefined reference to `ZSTD_createCCtx'
->>   /usr/bin/ld: (.text+0x2a9): undefined reference to `ZSTD_compressStream2'
->>   /usr/bin/ld: (.text+0x2b4): undefined reference to `ZSTD_isError'
->>   /usr/bin/ld: (.text+0x2db): undefined reference to `ZSTD_freeCCtx'
->>   /usr/bin/ld: (.text+0x5a0): undefined reference to `ZSTD_compressStream2'
->>   /usr/bin/ld: (.text+0x5ab): undefined reference to `ZSTD_isError'
->>   /usr/bin/ld: (.text+0x6b9): undefined reference to `ZSTD_freeCCtx'
->>   /usr/bin/ld: (.text+0x835): undefined reference to `ZSTD_freeCCtx'
->>   /usr/bin/ld: (.text+0x86f): undefined reference to `ZSTD_freeCCtx'
->>   /usr/bin/ld: (.text+0x91b): undefined reference to `ZSTD_freeCCtx'
->>   /usr/bin/ld: (.text+0xa12): undefined reference to `ZSTD_freeCCtx'
->>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress':
->>   (.text+0xbfc): undefined reference to `ZSTD_decompress'
->>   /usr/bin/ld: (.text+0xc04): undefined reference to `ZSTD_isError'
->>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress_elf':
->>   (.text+0xd45): undefined reference to `ZSTD_decompress'
->>   /usr/bin/ld: (.text+0xd4d): undefined reference to `ZSTD_isError'
->>   collect2: error: ld returned 1 exit status
->>
->> Building bpftool with static linkage also fails with the same errors:
->>
->>   make O=/build -C tools/bpf/bpftool/ V=1
->>
->> To fix the issue, explicitly link libzstd.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/parport/parport_serial.c   | 12 ++++++++----
+>  drivers/tty/serial/8250/8250_pci.c | 10 ++--------
+>  include/linux/pci_ids.h            | 11 +++++++++++
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci-ids.h
+
+>  3 files changed, 21 insertions(+), 12 deletions(-)
 > 
-> I was about to report exactly the same. :)
-
-Thank you both. This has been reported before [0] but I didn't find the
-time to look into a proper fix.
-
-The tricky part is that static linkage works well without libzstd for
-older versions of elfutils [1], but newer versions now require this
-library. Which means that we don't want to link against libzstd
-unconditionally, or users trying to build bpftool may have to install
-unnecessary dependencies. Instead we should add a new probe under
-tools/build/feature (Note that we already have several combinations in
-there, libbfd, libbfd-liberty, libbfd-liberty-z, and I'm not sure what's
-the best approach in terms of new combinations).
-
-Thanks,
-Quentin
-
-
-[0] https://github.com/libbpf/bpftool/issues/152
-[1] https://github.com/libbpf/bpftool/issues/152#issuecomment-2343131810
+> diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
+> index 3644997a8342..24d4f3a3ec3d 100644
+> --- a/drivers/parport/parport_serial.c
+> +++ b/drivers/parport/parport_serial.c
+> @@ -266,10 +266,14 @@ static struct pci_device_id parport_serial_pci_tbl[] = {
+>  	{ 0x1409, 0x7168, 0x1409, 0xd079, 0, 0, timedia_9079c },
+>  
+>  	/* WCH CARDS */
+> -	{ 0x4348, 0x5053, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p},
+> -	{ 0x4348, 0x7053, 0x4348, 0x3253, 0, 0, wch_ch353_2s1p},
+> -	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382_0s1p},
+> -	{ 0x1c00, 0x3250, 0x1c00, 0x3250, 0, 0, wch_ch382_2s1p},
+> +	{ PCI_VENDOR_ID_WCHCN, PCI_DEVICE_ID_WCHCN_CH353_1S1P,
+> +	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p },
+> +	{ PCI_VENDOR_ID_WCHCN, PCI_DEVICE_ID_WCHCN_CH353_2S1P,
+> +	  0x4348, 0x3253, 0, 0, wch_ch353_2s1p },
+> +	{ PCI_VENDOR_ID_WCHIC, PCI_DEVICE_ID_WCHIC_CH382_0S1P,
+> +	  0x1c00, 0x3050, 0, 0, wch_ch382_0s1p },
+> +	{ PCI_VENDOR_ID_WCHIC, PCI_DEVICE_ID_WCHIC_CH382_2S1P,
+> +	  0x1c00, 0x3250, 0, 0, wch_ch382_2s1p },
+>  
+>  	/* BrainBoxes PX272/PX306 MIO card */
+>  	{ PCI_VENDOR_ID_INTASHIELD, 0x4100,
+> diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+> index dfac79744d37..df4d0d832e54 100644
+> --- a/drivers/tty/serial/8250/8250_pci.c
+> +++ b/drivers/tty/serial/8250/8250_pci.c
+> @@ -64,23 +64,17 @@
+>  #define PCIE_DEVICE_ID_NEO_2_OX_IBM	0x00F6
+>  #define PCI_DEVICE_ID_PLX_CRONYX_OMEGA	0xc001
+>  #define PCI_DEVICE_ID_INTEL_PATSBURG_KT 0x1d3d
+> -#define PCI_VENDOR_ID_WCHCN		0x4348
+> +
+>  #define PCI_DEVICE_ID_WCHCN_CH352_2S	0x3253
+> -#define PCI_DEVICE_ID_WCHCN_CH353_4S	0x3453
+> -#define PCI_DEVICE_ID_WCHCN_CH353_2S1PF	0x5046
+> -#define PCI_DEVICE_ID_WCHCN_CH353_1S1P	0x5053
+> -#define PCI_DEVICE_ID_WCHCN_CH353_2S1P	0x7053
+>  #define PCI_DEVICE_ID_WCHCN_CH355_4S	0x7173
+> +
+>  #define PCI_VENDOR_ID_AGESTAR		0x5372
+>  #define PCI_DEVICE_ID_AGESTAR_9375	0x6872
+>  #define PCI_DEVICE_ID_BROADCOM_TRUMANAGE 0x160a
+>  #define PCI_DEVICE_ID_AMCC_ADDIDATA_APCI7800 0x818e
+>  
+> -#define PCI_VENDOR_ID_WCHIC		0x1c00
+> -#define PCI_DEVICE_ID_WCHIC_CH382_2S1P	0x3250
+>  #define PCI_DEVICE_ID_WCHIC_CH384_4S	0x3470
+>  #define PCI_DEVICE_ID_WCHIC_CH384_8S	0x3853
+> -#define PCI_DEVICE_ID_WCHIC_CH382_2S	0x3253
+>  
+>  #define PCI_DEVICE_ID_MOXA_CP102E	0x1024
+>  #define PCI_DEVICE_ID_MOXA_CP102EL	0x1025
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index d2402bf4aea2..de5deb1a0118 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -2593,6 +2593,11 @@
+>  
+>  #define PCI_VENDOR_ID_REDHAT		0x1b36
+>  
+> +#define PCI_VENDOR_ID_WCHIC		0x1c00
+> +#define PCI_DEVICE_ID_WCHIC_CH382_0S1P	0x3050
+> +#define PCI_DEVICE_ID_WCHIC_CH382_2S1P	0x3250
+> +#define PCI_DEVICE_ID_WCHIC_CH382_2S	0x3253
+> +
+>  #define PCI_VENDOR_ID_SILICOM_DENMARK	0x1c2c
+>  
+>  #define PCI_VENDOR_ID_AMAZON_ANNAPURNA_LABS	0x1c36
+> @@ -2647,6 +2652,12 @@
+>  #define PCI_VENDOR_ID_AKS		0x416c
+>  #define PCI_DEVICE_ID_AKS_ALADDINCARD	0x0100
+>  
+> +#define PCI_VENDOR_ID_WCHCN		0x4348
+> +#define PCI_DEVICE_ID_WCHCN_CH353_4S	0x3453
+> +#define PCI_DEVICE_ID_WCHCN_CH353_2S1PF	0x5046
+> +#define PCI_DEVICE_ID_WCHCN_CH353_1S1P	0x5053
+> +#define PCI_DEVICE_ID_WCHCN_CH353_2S1P	0x7053
+> +
+>  #define PCI_VENDOR_ID_ACCESSIO		0x494f
+>  #define PCI_DEVICE_ID_ACCESSIO_WDG_CSM	0x22c0
+>  
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
+> 
 
