@@ -1,183 +1,402 @@
-Return-Path: <linux-kernel+bounces-430827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35DEF9E3623
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:04:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3DC9E3624
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:04:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD191B2CCF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:02:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26827B2E80B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8804199FD0;
-	Wed,  4 Dec 2024 09:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A7B19B5B8;
+	Wed,  4 Dec 2024 09:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oxjk/ujv"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kCY89UIE"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1556819068E;
-	Wed,  4 Dec 2024 09:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815CE1632FE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 09:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733302955; cv=none; b=CBKYslOcI/SFuT5XxIjxdpb61IBJxIuZzoG8hgTwEaZJRACOIS3WsWIwsdCwBKpXhDrb2Mw3E1HUWC/GE64JByVeEPlnzHiB6SGXQEjuGI4NGxMUMX1Yf7LmnXEM2YHBVbETiE53W1kMMP8L2ZgVNl2rvAYHGIoouZ4uO4sWU94=
+	t=1733303009; cv=none; b=EK/AIOsoebq3hCMKSJakCo76VXyStz7izosNZ0OGzDH7KdbUDo3cW3iFB9hppkM7v5YJkkaMms+4/2lfBFlP1Ov52sZLeBqMAlNi5EM5AnxEA5XNlMzcGmqmt6BcrO+kw/BvuTDCZRRl43jL3bglYXGy8a4GRyze2YkukF238wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733302955; c=relaxed/simple;
-	bh=8RmifYdzdZy0clOcnFMeiV2uzq1tXJOgoEnRmiFptXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UQs5uYEKyfe3RMZqKnA9k89CP9awItzSNBjS+fmc2WjxaKjaJWL5RwbUCp9HqBjz00FEQ4fFzZ9StkLDRUBfccemI9+bbJYcaQv1E2wx7AJLI9AYPAw5u1yks2GnAgohg1uEJ7AVBlDH8u7/tqDScZZC8ZFVmvwLmIefghsBads=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oxjk/ujv; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a7ee3d60so3412345e9.1;
-        Wed, 04 Dec 2024 01:02:32 -0800 (PST)
+	s=arc-20240116; t=1733303009; c=relaxed/simple;
+	bh=U3exSd67Bg0H9ndMzrzeN58hbc4uyawb1SjPIXhFQhw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LNQCrGNOpMDYkhiYa0x/+QOQ3cWz/9hwqbowYX+OMsvl59PzgjXiiPqOP9NkMi98kGQTMto5p1NTEu6VmLNcT4X3StMvqTXYVwqJiBfe4R6iqeTvDVXKgFhZwGIkf9rdd9hGP0b17X5qataopr2kAwt1/7j0X593DDHLK4xdn6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kCY89UIE; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa549f2fa32so968555366b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 01:03:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733302951; x=1733907751; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/DGtO9+27cwfmhQKMhcolvJLEg37XkgAaNptn6u3uc=;
-        b=Oxjk/ujvnQ89stkBg05sQgGcX3Fc3lfaWl7+8rZha1U1bUHpUlcBs9f6z972v9SBrV
-         sfNWgXJnbeQ4iwBLNzNgJ6Hp9VxCWX6NP2H6hJT1sWfj7+tQAv8ZX3agysAY1mIHBpY0
-         n+Ud6YIWMN5Df4b1b9804YcVad2KmBNR4h5R0JWhSaBFNrfNaWhGwUziz+Nnh6Ef0etT
-         0Xm7aJvXMdQVxcduvf7w4N+mwju0pAZZ+F3NVGUhP7k65jpqhdLgiECW97OB9/paEHXc
-         6AI/vHELiXcx+YX3Fxww4CYyeqiidHiNW36m5RiSn+XcF9FlyuPgZBR5Xg4MNPZH/EI+
-         8QTQ==
+        d=google.com; s=20230601; t=1733303006; x=1733907806; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IPA5toiVxXUHE/tQE67BPR/az6YfNeLKTCP+d7Cb8Pk=;
+        b=kCY89UIEQ7c16O3AioqYeIqc3PQYq8ocLFqRyb33ihA8rT5yjmOdTpDCKx2Gw+O8Mu
+         u4/eOyWn6niQhcZZqMZEhuL8RThPlstoTJmaRxSiAaLTdScoraciYng79bVHjrTNX2+Y
+         JkCxXAiBhCs28NBSkM9yeAaXCKjQcSFTe83ogxAzIPu/y5xRRJPRfStWjnKc7pLwmghT
+         qi8j7e2zvPTUGgiANq2RUP+8k9mXMyC4vgFSULGwnQwopK6B5b5EnfRawPqSm1C9T2Vj
+         j1A5Rob3z7j5SlUYTjqDheIXwjwevLdSZMekKFuvuyLV2eR735Ua1LSP6vGn+H400YFw
+         1TkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733302951; x=1733907751;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j/DGtO9+27cwfmhQKMhcolvJLEg37XkgAaNptn6u3uc=;
-        b=eujdBn1pdX6zXZGnWt0a02mwY6i69bHQ4QOqk4b1MKeSqJB/MO9Z5FO6m+EnVuNWIa
-         0i0m3NT9syRb4NlWrwIsw8NNfk1f814Brb7hzi5Mo+0JKIQo6LvOA566SI7zNFi5Z3LJ
-         IJqv/8dsiwvC4mQDEnhjru7A3AWThz33AZ2xP7akXIsnd2NLLzJLRhs1Cnx7Umq3O9fd
-         ZgS7Kl+fePWJ+WXAm/p3DQMMpf/Kg3/yk22QZzjeIzEdRE6YY3UxmhG8GbiqP23fUdkr
-         OJHa5zAWnV8YEcqcyEOleM/obMtTBHrYNYRkLPYgJQ6C8PRgTABbCKJQzeinM/PjpB2J
-         4WOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqoY7/u8KHgErWCed4qatUC/+NyeAHMLewMaKCAOV/Z2tc+haFD/rXJ3wkc9fnWXkKutFqRGIAMFPKIjME@vger.kernel.org, AJvYcCWzDI4L68EDf8nduXijqVggf+420VVps6VcH+o31O8NgwxKQenWt+G+wji0C4gB/1/SEyhqLy9Ejryp@vger.kernel.org
-X-Gm-Message-State: AOJu0YweidrvixLTRc5K7CB5nBDevJRT13aN4ug/4tM7D8GEKd0lW1T2
-	rJbnNl1RbrT6On7MUuNGgzCenTeEKUWWWeeUf/dKM5tMsWrLhiCk
-X-Gm-Gg: ASbGnct52LKgQw8MQMwJkxLI33BiFJZneGlLYLvg2EaFOV4IAD2aEdVi82Hs1AGxQhl
-	lQmW7p2xGdtb90ORNfG/ZXcSoempdlc0Vqq1lWhK6GGmNh8qFlIoM3CVQJ+cX7st//59AhuNSSp
-	hM2WWmeKAdy/1xeKaAxNuyTAE6jjr1U9oixIddjHT4ebQweosgr9pyEEq9nLrhrNMjQJJs91hsl
-	TJ+9aGIGw/xKbroBQ5XyB3fMm+wmsVbOiCpDlW0gC94n944
-X-Google-Smtp-Source: AGHT+IHOZyan41T29GhI3L/+7yODIM3OobyZIQ9f0WdfdWkg06i4pMAX6Beavn05s3mVIrNze+wU2A==
-X-Received: by 2002:a05:600c:3589:b0:431:15f1:421d with SMTP id 5b1f17b1804b1-434afc44774mr215133165e9.16.1733302951069;
-        Wed, 04 Dec 2024 01:02:31 -0800 (PST)
-Received: from Max.. ([176.13.144.22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd80435sm17436742f8f.100.2024.12.04.01.02.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 01:02:30 -0800 (PST)
-From: Max Brener <linmaxi@gmail.com>
-To: tytso@mit.edu
-Cc: adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Max Brener <linmaxi@gmail.com>
-Subject: [PATCH v3] ext4: Optimization of no-op ext4_truncate triggers
-Date: Wed,  4 Dec 2024 11:02:25 +0200
-Message-ID: <20241204090225.721618-1-linmaxi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1733303006; x=1733907806;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IPA5toiVxXUHE/tQE67BPR/az6YfNeLKTCP+d7Cb8Pk=;
+        b=ql5oOHoUypXAik5yppnIfngwHwPPZMOVQTKo8+ypxtOKN4ZhewHAmaJKunxJ6ug8da
+         EB88FAHAxVcYGOh+qgcfO7uKYvsT9GlfvgZKdCAY8rJM9lq0VsgsaqOVc/3rCZA+QtMg
+         lxPYgfcgS9zlk1X1ntVPurB46hnABPSKbhW+VOZYhjdG5w739hAR++lyjYRpw4CCCviV
+         HGbNTd4PckpyoBkwNG1dbu77yrT8A3NXyFTrKbEUgglRJ+fh/cKOFNcLi0X8ELMNzSoz
+         pRqk+PZzEVBy2avo/wSJnLFlsiWW1RKNJfxuW4U8HN/T0uf43+A3K2UsBlzaQAnmqSv+
+         TVhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFCLOq0cEHTlUIjfACODkhDPsyHGxmuSbHrFQLw8Pj2VzQsBwJAzgmU8lGL79y0psFxQAUCNE3YujMlaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqLeaoGeEiX8FAk47DuqAL5GNixWA7jFFJ/fcm91+sPg3lIbsj
+	O+pt8DBfPVpOB9m9F5nwyyQOKQmM4EfG3z4WxFXW7FhXXhNlJCo9CobXavfyqrsZpG0VVRR7+Ky
+	8FWOPnQS1wLzocZ1UuOs+Zy12pVIQS4T0pOQn
+X-Gm-Gg: ASbGncvjhDGhDS2FA8dB0nzzG7m7QUzqWoQru7q5NN2dWaty4TkIKXF9QCCz50LngOB
+	8MckI94in0l6PmPPgD0baGLpv31fl4RKS
+X-Google-Smtp-Source: AGHT+IHSBFbQAqAfBoEnqan6Som7MtDbq8ZIromdhALOi+EDSTwgyJ1nfgSILZGTHRjmNzRqZ1cLZdoRE5X7gWrynWc=
+X-Received: by 2002:a17:906:6a18:b0:a9e:c267:78c5 with SMTP id
+ a640c23a62f3a-aa5f7f19e62mr569963566b.55.1733303005354; Wed, 04 Dec 2024
+ 01:03:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295@epcas2p2.samsung.com>
+ <20241203081247.1533534-1-youngmin.nam@samsung.com> <CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
+ <Z0/HyztKs8UFBOa0@perf>
+In-Reply-To: <Z0/HyztKs8UFBOa0@perf>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 4 Dec 2024 10:03:14 +0100
+Message-ID: <CANn89iLSMKNsmtvD=d+_3CNBbDhBQ+41R_tesVUYO50S72-YWg@mail.gmail.com>
+Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Neal Cardwell <ncardwell@google.com>, davem@davemloft.net, dsahern@kernel.org, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, dujeong.lee@samsung.com, 
+	guo88.liu@samsung.com, yiwang.cai@samsung.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, joonki.min@samsung.com, hajun.sung@samsung.com, 
+	d7271.choe@samsung.com, sw.ju@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219306
-v2: https://lore.kernel.org/lkml/20241001082459.14580-1-linmaxi@gmail.com/T/
-OR
-	https://patchwork.ozlabs.org/project/linux-ext4/patch/20241016111624.5229-1-linmaxi@gmail.com/
+On Wed, Dec 4, 2024 at 4:05=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung.c=
+om> wrote:
+>
+> Hi Eric.
+> Thanks for looking at this issue.
+>
+> On Tue, Dec 03, 2024 at 12:07:05PM +0100, Eric Dumazet wrote:
+> > On Tue, Dec 3, 2024 at 9:10=E2=80=AFAM Youngmin Nam <youngmin.nam@samsu=
+ng.com> wrote:
+> > >
+> > > We encountered the following WARNINGs
+> > > in tcp_sacktag_write_queue()/tcp_fastretrans_alert()
+> > > which triggered a kernel panic due to panic_on_warn.
+> > >
+> > > case 1.
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 4 PID: 453 at net/ipv4/tcp_input.c:2026
+> > > Call trace:
+> > >  tcp_sacktag_write_queue+0xae8/0xb60
+> > >  tcp_ack+0x4ec/0x12b8
+> > >  tcp_rcv_state_process+0x22c/0xd38
+> > >  tcp_v4_do_rcv+0x220/0x300
+> > >  tcp_v4_rcv+0xa5c/0xbb4
+> > >  ip_protocol_deliver_rcu+0x198/0x34c
+> > >  ip_local_deliver_finish+0x94/0xc4
+> > >  ip_local_deliver+0x74/0x10c
+> > >  ip_rcv+0xa0/0x13c
+> > > Kernel panic - not syncing: kernel: panic_on_warn set ...
+> > >
+> > > case 2.
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 648 at net/ipv4/tcp_input.c:3004
+> > > Call trace:
+> > >  tcp_fastretrans_alert+0x8ac/0xa74
+> > >  tcp_ack+0x904/0x12b8
+> > >  tcp_rcv_state_process+0x22c/0xd38
+> > >  tcp_v4_do_rcv+0x220/0x300
+> > >  tcp_v4_rcv+0xa5c/0xbb4
+> > >  ip_protocol_deliver_rcu+0x198/0x34c
+> > >  ip_local_deliver_finish+0x94/0xc4
+> > >  ip_local_deliver+0x74/0x10c
+> > >  ip_rcv+0xa0/0x13c
+> > > Kernel panic - not syncing: kernel: panic_on_warn set ...
+> > >
+> >
+> > I have not seen these warnings firing. Neal, have you seen this in the =
+past ?
+> >
+> > Please provide the kernel version (this must be a pristine LTS one).
+> We are running Android kernel for Android mobile device which is based on=
+ LTS kernel 6.6-30.
+> But we've seen this issue since kernel 5.15 LTS.
+>
+> > and symbolized stack traces using scripts/decode_stacktrace.sh
+> Unfortunately, we don't have the matched vmlinux right now. So we need to=
+ rebuild and reproduce.
+> >
+> > If this warning was easy to trigger, please provide a packetdrill test =
+?
+> I'm not sure if we can run packetdrill test on Android device. Anyway let=
+ me check.
+>
+> FYI, Here are more detailed logs.
+>
+> Case 1.
+> [26496.422651]I[4:  napi/wlan0-33:  467] ------------[ cut here ]--------=
+----
+> [26496.422665]I[4:  napi/wlan0-33:  467] WARNING: CPU: 4 PID: 467 at net/=
+ipv4/tcp_input.c:2026 tcp_sacktag_write_queue+0xae8/0xb60
+> [26496.423420]I[4:  napi/wlan0-33:  467] CPU: 4 PID: 467 Comm: napi/wlan0=
+-33 Tainted: G S         OE      6.6.30-android15-8-geeceb2c9cdf1-ab2024093=
+0.125201-4k #1 a1c80b36942fa6e9575b2544032a7536ed502804
+> [26496.423427]I[4:  napi/wlan0-33:  467] Hardware name: Samsung ERD9955 b=
+oard based on S5E9955 (DT)
+> [26496.423432]I[4:  napi/wlan0-33:  467] pstate: 83400005 (Nzcv daif +PAN=
+ -UAO +TCO +DIT -SSBS BTYPE=3D--)
+> [26496.423438]I[4:  napi/wlan0-33:  467] pc : tcp_sacktag_write_queue+0xa=
+e8/0xb60
+> [26496.423446]I[4:  napi/wlan0-33:  467] lr : tcp_ack+0x4ec/0x12b8
+> [26496.423455]I[4:  napi/wlan0-33:  467] sp : ffffffc096b8b690
+> [26496.423458]I[4:  napi/wlan0-33:  467] x29: ffffffc096b8b710 x28: 00000=
+00000008001 x27: 000000005526d635
+> [26496.423469]I[4:  napi/wlan0-33:  467] x26: ffffff8a19079684 x25: 00000=
+0005526dbfd x24: 0000000000000001
+> [26496.423480]I[4:  napi/wlan0-33:  467] x23: 000000000000000a x22: fffff=
+f88e5f5b680 x21: 000000005526dbc9
+> [26496.423489]I[4:  napi/wlan0-33:  467] x20: ffffff8a19078d80 x19: fffff=
+f88e9f4193e x18: ffffffd083114c80
+> [26496.423499]I[4:  napi/wlan0-33:  467] x17: 00000000529c6ef0 x16: 00000=
+0000000ff8b x15: 0000000000000000
+> [26496.423508]I[4:  napi/wlan0-33:  467] x14: 0000000000000001 x13: 00000=
+00000000001 x12: 0000000000000000
+> [26496.423517]I[4:  napi/wlan0-33:  467] x11: 0000000000000000 x10: 00000=
+00000000001 x9 : 00000000fffffffd
+> [26496.423526]I[4:  napi/wlan0-33:  467] x8 : 0000000000000001 x7 : 00000=
+00000000000 x6 : ffffffd081ec0bc4
+> [26496.423536]I[4:  napi/wlan0-33:  467] x5 : 0000000000000000 x4 : 00000=
+00000000000 x3 : ffffffc096b8b818
+> [26496.423545]I[4:  napi/wlan0-33:  467] x2 : 000000005526d635 x1 : fffff=
+f88e5f5b680 x0 : ffffff8a19078d80
+> [26496.423555]I[4:  napi/wlan0-33:  467] Call trace:
+> [26496.423558]I[4:  napi/wlan0-33:  467]  tcp_sacktag_write_queue+0xae8/0=
+xb60
+> [26496.423566]I[4:  napi/wlan0-33:  467]  tcp_ack+0x4ec/0x12b8
+> [26496.423573]I[4:  napi/wlan0-33:  467]  tcp_rcv_state_process+0x22c/0xd=
+38
+> [26496.423580]I[4:  napi/wlan0-33:  467]  tcp_v4_do_rcv+0x220/0x300
+> [26496.423590]I[4:  napi/wlan0-33:  467]  tcp_v4_rcv+0xa5c/0xbb4
+> [26496.423596]I[4:  napi/wlan0-33:  467]  ip_protocol_deliver_rcu+0x198/0=
+x34c
+> [26496.423607]I[4:  napi/wlan0-33:  467]  ip_local_deliver_finish+0x94/0x=
+c4
+> [26496.423614]I[4:  napi/wlan0-33:  467]  ip_local_deliver+0x74/0x10c
+> [26496.423620]I[4:  napi/wlan0-33:  467]  ip_rcv+0xa0/0x13c
+> [26496.423625]I[4:  napi/wlan0-33:  467]  __netif_receive_skb_core+0xe14/=
+0x1104
+> [26496.423642]I[4:  napi/wlan0-33:  467]  __netif_receive_skb_list_core+0=
+xb8/0x2dc
+> [26496.423649]I[4:  napi/wlan0-33:  467]  netif_receive_skb_list_internal=
++0x234/0x320
+> [26496.423655]I[4:  napi/wlan0-33:  467]  napi_complete_done+0xb4/0x1a0
+> [26496.423660]I[4:  napi/wlan0-33:  467]  slsi_rx_netif_napi_poll+0x22c/0=
+x258 [scsc_wlan 16ac2100e65b7c78ce863cecc238b39b162dbe82]
+> [26496.423822]I[4:  napi/wlan0-33:  467]  __napi_poll+0x5c/0x238
+> [26496.423829]I[4:  napi/wlan0-33:  467]  napi_threaded_poll+0x110/0x204
+> [26496.423836]I[4:  napi/wlan0-33:  467]  kthread+0x114/0x138
+> [26496.423845]I[4:  napi/wlan0-33:  467]  ret_from_fork+0x10/0x20
+> [26496.423856]I[4:  napi/wlan0-33:  467] Kernel panic - not syncing: kern=
+el: panic_on_warn set ..
+>
+> Case 2.
+> [ 1843.463330]I[0: surfaceflinger:  648] ------------[ cut here ]--------=
+----
+> [ 1843.463355]I[0: surfaceflinger:  648] WARNING: CPU: 0 PID: 648 at net/=
+ipv4/tcp_input.c:3004 tcp_fastretrans_alert+0x8ac/0xa74
+> [ 1843.464508]I[0: surfaceflinger:  648] CPU: 0 PID: 648 Comm: surfacefli=
+nger Tainted: G S         OE      6.6.30-android15-8-geeceb2c9cdf1-ab202410=
+17.075836-4k #1 de751202c2c5ab3ec352a00ae470fc5e907bdcfe
+> [ 1843.464520]I[0: surfaceflinger:  648] Hardware name: Samsung ERD8855 b=
+oard based on S5E8855 (DT)
+> [ 1843.464527]I[0: surfaceflinger:  648] pstate: 23400005 (nzCv daif +PAN=
+ -UAO +TCO +DIT -SSBS BTYPE=3D--)
+> [ 1843.464535]I[0: surfaceflinger:  648] pc : tcp_fastretrans_alert+0x8ac=
+/0xa74
+> [ 1843.464548]I[0: surfaceflinger:  648] lr : tcp_ack+0x904/0x12b8
+> [ 1843.464556]I[0: surfaceflinger:  648] sp : ffffffc0800036e0
+> [ 1843.464561]I[0: surfaceflinger:  648] x29: ffffffc0800036e0 x28: 00000=
+00000008005 x27: 000000001bc05562
+> [ 1843.464579]I[0: surfaceflinger:  648] x26: ffffff890418a3c4 x25: 00000=
+00000000000 x24: 000000000000cd02
+> [ 1843.464595]I[0: surfaceflinger:  648] x23: 000000001bc05562 x22: 00000=
+00000000000 x21: ffffffc080003800
+> [ 1843.464611]I[0: surfaceflinger:  648] x20: ffffffc08000378c x19: fffff=
+f8904189ac0 x18: 0000000000000000
+> [ 1843.464627]I[0: surfaceflinger:  648] x17: 00000000529c6ef0 x16: 00000=
+0000000ff8b x15: 0000000000000001
+> [ 1843.464642]I[0: surfaceflinger:  648] x14: 0000000000000001 x13: 00000=
+00000000001 x12: 0000000000000000
+> [ 1843.464658]I[0: surfaceflinger:  648] x11: ffffff883e9c9540 x10: 00000=
+00000000001 x9 : 0000000000000001
+> [ 1843.464673]I[0: surfaceflinger:  648] x8 : 0000000000000000 x7 : 00000=
+00000000000 x6 : ffffffd081ec0bc4
+> [ 1843.464689]I[0: surfaceflinger:  648] x5 : 0000000000000000 x4 : fffff=
+fc08000378c x3 : ffffffc080003800
+> [ 1843.464704]I[0: surfaceflinger:  648] x2 : 0000000000000000 x1 : 00000=
+0001bc05562 x0 : ffffff8904189ac0
+> [ 1843.464720]I[0: surfaceflinger:  648] Call trace:
+> [ 1843.464725]I[0: surfaceflinger:  648]  tcp_fastretrans_alert+0x8ac/0xa=
+74
+> [ 1843.464735]I[0: surfaceflinger:  648]  tcp_ack+0x904/0x12b8
+> [ 1843.464743]I[0: surfaceflinger:  648]  tcp_rcv_state_process+0x22c/0xd=
+38
+> [ 1843.464751]I[0: surfaceflinger:  648]  tcp_v4_do_rcv+0x220/0x300
+> [ 1843.464760]I[0: surfaceflinger:  648]  tcp_v4_rcv+0xa5c/0xbb4
+> [ 1843.464767]I[0: surfaceflinger:  648]  ip_protocol_deliver_rcu+0x198/0=
+x34c
+> [ 1843.464776]I[0: surfaceflinger:  648]  ip_local_deliver_finish+0x94/0x=
+c4
+> [ 1843.464784]I[0: surfaceflinger:  648]  ip_local_deliver+0x74/0x10c
+> [ 1843.464791]I[0: surfaceflinger:  648]  ip_rcv+0xa0/0x13c
+> [ 1843.464799]I[0: surfaceflinger:  648]  __netif_receive_skb_core+0xe14/=
+0x1104
+> [ 1843.464810]I[0: surfaceflinger:  648]  __netif_receive_skb+0x40/0x124
+> [ 1843.464818]I[0: surfaceflinger:  648]  netif_receive_skb+0x7c/0x234
+> [ 1843.464825]I[0: surfaceflinger:  648]  slsi_rx_data_deliver_skb+0x1e0/=
+0xdbc [scsc_wlan 12b378a8d5cf5e6cd833136fc49079d43751bd28]
+> [ 1843.465025]I[0: surfaceflinger:  648]  slsi_ba_process_complete+0x70/0=
+xa4 [scsc_wlan 12b378a8d5cf5e6cd833136fc49079d43751bd28]
+> [ 1843.465219]I[0: surfaceflinger:  648]  slsi_ba_aging_timeout_handler+0=
+x324/0x354 [scsc_wlan 12b378a8d5cf5e6cd833136fc49079d43751bd28]
+> [ 1843.465410]I[0: surfaceflinger:  648]  call_timer_fn+0xd0/0x360
+> [ 1843.465423]I[0: surfaceflinger:  648]  __run_timers+0x1b4/0x268
+> [ 1843.465432]I[0: surfaceflinger:  648]  run_timer_softirq+0x24/0x4c
+> [ 1843.465440]I[0: surfaceflinger:  648]  __do_softirq+0x158/0x45c
+> [ 1843.465448]I[0: surfaceflinger:  648]  ____do_softirq+0x10/0x20
+> [ 1843.465455]I[0: surfaceflinger:  648]  call_on_irq_stack+0x3c/0x74
+> [ 1843.465463]I[0: surfaceflinger:  648]  do_softirq_own_stack+0x1c/0x2c
+> [ 1843.465470]I[0: surfaceflinger:  648]  __irq_exit_rcu+0x54/0xb4
+> [ 1843.465480]I[0: surfaceflinger:  648]  irq_exit_rcu+0x10/0x1c
+> [ 1843.465489]I[0: surfaceflinger:  648]  el0_interrupt+0x54/0xe0
+> [ 1843.465499]I[0: surfaceflinger:  648]  __el0_irq_handler_common+0x18/0=
+x28
+> [ 1843.465508]I[0: surfaceflinger:  648]  el0t_64_irq_handler+0x10/0x1c
+> [ 1843.465516]I[0: surfaceflinger:  648]  el0t_64_irq+0x1a8/0x1ac
+> [ 1843.465525]I[0: surfaceflinger:  648] Kernel panic - not syncing: kern=
+el: panic_on_warn set ...
+>
+> > > When we check the socket state value at the time of the issue,
+> > > it was 0x4.
+> > >
+> > > skc_state =3D 0x4,
+> > >
+> > > This is "TCP_FIN_WAIT1" and which means the device closed its socket.
+> > >
+> > > enum {
+> > >         TCP_ESTABLISHED =3D 1,
+> > >         TCP_SYN_SENT,
+> > >         TCP_SYN_RECV,
+> > >         TCP_FIN_WAIT1,
+> > >
+> > > And also this means tp->packets_out was initialized as 0
+> > > by tcp_write_queue_purge().
+> >
+> > What stack trace leads to this tcp_write_queue_purge() exactly ?
+> I couldn't find the exact call stack to this.
+> But I just thought that the function would be called based on ramdump sna=
+pshot.
+>
+> (*(struct tcp_sock *)(0xFFFFFF800467AB00)).packets_out =3D 0
+> (*(struct inet_connection_sock *)0xFFFFFF800467AB00).icsk_backoff =3D 0
 
-Fix from last version:
-Clear the EXT4_STATE_TRUNCATED flag at ext4_mb_new_blocks() in order to
-make sure that every attempt to allocate new blocks, will result in resetting
-the 'truncated' state of the inode.
-Why is this needed? We want the ability to truncate preallocated blocks of an inode
-by using ext4_truncate(). However, when ftruncate is called from the vfs, the call
-is blocked (at ext4_setattr()) when used on already-truncated inodes. We want that
-call to be blocked only if the truncate call is redundant (meanning there is
-nothing there to truncate).
+TCP_FIN_WAIT1 is set whenever the application does a shutdown(fd, SHUT_WR);
 
+This means that all bytes in the send queue and retransmit queue
+should be kept, and will eventually be sent.
 
----
- fs/ext4/ext4.h    | 1 +
- fs/ext4/extents.c | 5 +++++
- fs/ext4/inode.c   | 6 +++++-
- fs/ext4/mballoc.c | 5 +++++
- 4 files changed, 16 insertions(+), 1 deletion(-)
+ tcp_write_queue_purge() must not be called until we receive some
+valid RST packet or fatal timeout.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 44b0d418143c..032e51f2a92b 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1915,6 +1915,7 @@ enum {
- 	EXT4_STATE_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
- 	EXT4_STATE_FC_COMMITTING,	/* Fast commit ongoing */
- 	EXT4_STATE_ORPHAN_FILE,		/* Inode orphaned in orphan file */
-+	EXT4_STATE_TRUNCATED, 		/* Inode is truncated */
- };
- 
- #define EXT4_INODE_BIT_FNS(name, field, offset)				\
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 34e25eee6521..531fa0f2ccd3 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4782,6 +4782,11 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 		ret = ext4_zero_range(file, offset, len, mode);
- 		goto exit;
- 	}
-+
-+	if (mode & FALLOC_FL_KEEP_SIZE) {
-+		ext4_clear_inode_state(inode, EXT4_STATE_TRUNCATED);
-+	}
-+
- 	trace_ext4_fallocate_enter(inode, offset, len, mode);
- 	lblk = offset >> blkbits;
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 54bdd4884fe6..cbdad3253920 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4193,6 +4193,8 @@ int ext4_truncate(struct inode *inode)
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
- 
-+	ext4_set_inode_state(inode, EXT4_STATE_TRUNCATED);
-+
- out_stop:
- 	/*
- 	 * If this was a simple ftruncate() and the file will remain alive,
-@@ -5492,7 +5494,9 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 * Call ext4_truncate() even if i_size didn't change to
- 		 * truncate possible preallocated blocks.
- 		 */
--		if (attr->ia_size <= oldsize) {
-+		if (attr->ia_size < oldsize ||
-+			(attr->ia_size == oldsize &&
-+			!ext4_test_inode_state(inode, EXT4_STATE_TRUNCATED))) {
- 			rc = ext4_truncate(inode);
- 			if (rc)
- 				error = rc;
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index d73e38323879..4f0dbd53b3df 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -6149,6 +6149,11 @@ ext4_fsblk_t ext4_mb_new_blocks(handle_t *handle,
- 	sb = ar->inode->i_sb;
- 	sbi = EXT4_SB(sb);
- 
-+	/* Once there is an attempt to allocate new blocks,
-+	 * the inode is no longer considered truncated.
-+	 */
-+	ext4_clear_inode_state(ar->inode, EXT4_STATE_TRUNCATED);
-+
- 	trace_ext4_request_blocks(ar);
- 	if (sbi->s_mount_state & EXT4_FC_REPLAY)
- 		return ext4_mb_new_blocks_simple(ar, errp);
--- 
-2.43.0
+6.6.30 is old, LTS 6.6.63 has some TCP changes that might br related.
 
+$ git log --oneline v6.6.30..v6.6.63 -- net/ipv4/tcp*c
+229dfdc36f31a8d47433438bc0e6e1662c4ab404 tcp: fix mptcp DSS corruption
+due to large pmtu xmit
+2daffbd861de532172079dceef5c0f36a26eee14 tcp: fix TFO SYN_RECV to not
+zero retrans_stamp with retransmits out
+718c49f840ef4e451bf44a8a62aae89ebdd5a687 tcp: new TCP_INFO stats for RTO ev=
+ents
+04dce9a120502aea4ca66eebf501f404a22cd493 tcp: fix tcp_enter_recovery()
+to zero retrans_stamp when it's safe
+e676ca60ad2a6fdeb718b5e7a337a8fb1591d45f tcp: fix to allow timestamp
+undo if no retransmits were sent
+5cce1c07bf8972d3ab94c25aa9fb6170f99082e0 tcp: avoid reusing FIN_WAIT2
+when trying to find port in connect() process
+4fe707a2978929b498d3730d77a6ab103881420d tcp: process the 3rd ACK with
+sk_socket for TFO/MPTCP
+9fd29738377c10749cb292510ebc202988ea0a31 tcp: Don't drop SYN+ACK for
+simultaneous connect().
+c8219a27fa43a2cbf99f5176f6dddfe73e7a24ae tcp_bpf: fix return value of
+tcp_bpf_sendmsg()
+69f397e60c3be615c32142682d62fc0b6d5d5d67 net: remove NULL-pointer net
+parameter in ip_metrics_convert
+f0974e6bc385f0e53034af17abbb86ac0246ef1c tcp: do not export tcp_twsk_purge(=
+)
+99580ae890ec8bd98b21a2a9c6668f8f1555b62e tcp: prevent concurrent
+execution of tcp_sk_exit_batch
+7348061662c7149b81e38e545d5dd6bd427bec81 tcp/dccp: do not care about
+families in inet_twsk_purge()
+227355ad4e4a6da5435451b3cc7f3ed9091288fa tcp: Update window clamping condit=
+ion
+77100f2e8412dbb84b3e7f1b947c9531cb509492 tcp_metrics: optimize
+tcp_metrics_flush_all()
+6772c4868a8e7ad5305957cdb834ce881793acb7 net: drop bad gso csum_start
+and offset in virtio_net_hdr
+1cfdc250b3d210acd5a4a47337b654e04693cf7f tcp: Adjust clamping window
+for applications specifying SO_RCVBUF
+f9fef23a81db9adc1773979fabf921eba679d5e7 tcp: annotate data-races
+around tp->window_clamp
+44aa1e461ccd1c2e49cffad5e75e1b944ec590ef tcp: fix races in tcp_v[46]_err()
+bc4f9c2ccd68afec3a8395d08fd329af2022c7e8 tcp: fix race in tcp_write_err()
+ecc6836d63513fb4857a7525608d7fdd0c837cb3 tcp: add tcp_done_with_error() hel=
+per
+dfcdd7f89e401d2c6616be90c76c2fac3fa98fde tcp: avoid too many retransmit pac=
+kets
+b75f281bddebdcf363884f0d53c562366e9ead99 tcp: use signed arithmetic in
+tcp_rtx_probe0_timed_out()
+124886cf20599024eb33608a2c3608b7abf3839b tcp: fix incorrect undo
+caused by DSACK of TLP retransmit
+8c2debdd170e395934ac0e039748576dfde14e99 tcp_metrics: validate source
+addr length
+8a7fc2362d6d234befde681ea4fb6c45c1789ed5 UPSTREAM: tcp: fix DSACK undo
+in fast recovery to call tcp_try_to_open()
+b4b26d23a1e2bc188cec8592e111d68d83b9031f tcp: fix
+tcp_rcv_fastopen_synack() to enter TCP_CA_Loss for failed TFO
+fdae4d139f4778b20a40c60705c53f5f146459b5 Fix race for duplicate reqsk
+on identical SYN
+250fad18b0c959b137ad745428fb411f1ac1bbc6 tcp: clear tp->retrans_stamp
+in tcp_rcv_fastopen_synack()
+acdf17546ef8ee73c94e442e3f4b933e42c3dfac tcp: count CLOSE-WAIT sockets
+for TCP_MIB_CURRESTAB
+50569d12945f86fa4b321c4b1c3005874dbaa0f1 net: tls: fix marking packets
+as decrypted
+02261d3f9dc7d1d7be7d778f839e3404ab99034c tcp: Fix shift-out-of-bounds
+in dctcp_update_alpha().
+00bb933578acd88395bf6e770cacdbe2d6a0be86 tcp: avoid premature drops in
+tcp_add_backlog()
+6e48faad92be13166184d21506e4e54c79c13adc tcp: Use
+refcount_inc_not_zero() in tcp_twsk_unique().
+f47d0d32fa94e815fdd78b8b88684873e67939f4 tcp: defer
+shutdown(SEND_SHUTDOWN) for TCP_SYN_RECV sockets
 
