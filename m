@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-431782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9860F9E416E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:26:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82A79E416F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:26:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5243A287EBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:26:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0A21622D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A33B225772;
-	Wed,  4 Dec 2024 17:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E53225791;
+	Wed,  4 Dec 2024 17:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KndTVd65"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyDc9wRt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F412225761;
-	Wed,  4 Dec 2024 17:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0219225771;
+	Wed,  4 Dec 2024 17:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331776; cv=none; b=e34/kthtXKZDN9R1kcaC9reTcCUmGBvAePMP0OUt3+l712/mq/oUT5BbXy1v8r9vADFRt1crH2Lmz4eUiTx8DXFaQQ1ZIQiN7AerTAkJq1SEDPzUGJ4KXDZPsP7g3LxIEnVZ8DwzPj5qSPnl72SNRCSalPOMxAJwXugLC7EgCs4=
+	t=1733331781; cv=none; b=th+HOkBTJNzybrkB/CJ6eA1ZYLr/g8htPYO0Mqwby/X+P1K+vmHUQb/Vnw9LGnG+myid3VHRJnX12WkyAuRIc13SRkaNrxSbqqW20FPOQxOhvpmYA+qTDCXTccGaNbOMG+ORDsszmHVai6Ef47Xv56+6Od5hlIFoHYy8ACsAK6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331776; c=relaxed/simple;
-	bh=oDKrhmkhEDIgHaXI1MH3VxbvBxyG9qAbuFJiKqPcUpY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bvaqNtHz6AJiypjgRU+J3n+3uOBnMV4LQIgFZaJXqbbCQ7szuSYiaqBCa3VH2CHhqSObMZRadlF2XrTYEOtb4O3zj3MkPntwUHiYg3SB05a0QOFNQNzWW1SscZ0JZyGx4Ss3EJuew0DnS30Zf78re6srv7G5yrcbMsMCPvgH56s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KndTVd65; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13C5C4CECD;
-	Wed,  4 Dec 2024 17:02:55 +0000 (UTC)
+	s=arc-20240116; t=1733331781; c=relaxed/simple;
+	bh=YwO3Q2f4FsLS/5XpKdz3ZlRCiBwyZqJ3ML/XJ3gZePw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sz4KHdEoXQYNW/Gzf/Pw3mAYiz5XgmTF9B7igiq4zQhX9F0FckJY/6QUdOF/l5/UlG+WQyVPcWBeYk61W9FDHz+MYnHaoMM7MpV16TRcHDogD9MHD4Y11kPiHmlMFu3R/fuGPNow6UTRFQU42o8kWFt/EuXk7XWsJoYr52IdaWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyDc9wRt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20794C4CECD;
+	Wed,  4 Dec 2024 17:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331776;
-	bh=oDKrhmkhEDIgHaXI1MH3VxbvBxyG9qAbuFJiKqPcUpY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KndTVd65RhjB6f6f9T/McUINRIIeW2GBGFWyEN6rIwxBJj2p9oD4eBYF5TiMhAfce
-	 JNGgz8ZDl5H9hYwpxcdVsX9zXxm68BmwDTpWEULWibzwcIR00YE1+2t8ord71+I6f7
-	 8LiXga5V85CSvcWCWUxtwG6sbAohE691T4XenCUBxuxuGGPkCtdmRr7nEJBxvVoRGR
-	 WFphtTBMBpV1BSRWWaj0Gb4g6KQjxMKBP8/pcsfRGT+ols6CY6erpea3wpSvS3NwC9
-	 wjrso3GfxAx7djaOCgjJ1aLlNrMJRXu4hkWgSO3Sz7pMvm+uscKLxg2+hM108FwRaK
-	 C+NQuxYvZwLYA==
+	s=k20201202; t=1733331781;
+	bh=YwO3Q2f4FsLS/5XpKdz3ZlRCiBwyZqJ3ML/XJ3gZePw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hyDc9wRt1Bqh0YoMGQXxFkETWYMiaQwDfEOQPVIHAmG31PyVlR5EEhEFlbFZeuZBd
+	 p5G5fu9+YPZGFihDSY7wzfL05OIHE53MFnD1DObjHsv3+cqD0ly7J6JK7eQXw970jP
+	 cc777a9O2MQxp8ld+pTZH88Lk2temSc5cE5FP51a2f6InpJb8bQ3TDsGBDvSEZlm0W
+	 TvvVjUaiUJW0W0JaMh0yuqJ9RiTFKjDR5wSx0UoPEpAUjet4ATNST9FoovATWGUA2w
+	 pKeO5Py8fY+MKNmwqVyopmRGKBhvA5KOIB+U5krcbUJoicwsHr1J60rLYEdT8OVRMx
+	 lPIu4TpSCJudA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
+Cc: Esben Haabendal <esben@geanix.com>,
+	kernel test robot <lkp@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 15/15] verification/dot2: Improve dot parser robustness
-Date: Wed,  4 Dec 2024 10:50:54 -0500
-Message-ID: <20241204155105.2214350-15-sashal@kernel.org>
+	aisheng.dong@nxp.com,
+	festevam@gmail.com,
+	shawnguo@kernel.org,
+	ping.bai@nxp.com,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 1/9] pinctrl: freescale: fix COMPILE_TEST error with PINCTRL_IMX_SCU
+Date: Wed,  4 Dec 2024 10:51:31 -0500
+Message-ID: <20241204155141.2214748-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204155105.2214350-1-sashal@kernel.org>
-References: <20241204155105.2214350-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,100 +63,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.119
+X-stable-base: Linux 5.15.173
 Content-Transfer-Encoding: 8bit
 
-From: Gabriele Monaco <gmonaco@redhat.com>
+From: Esben Haabendal <esben@geanix.com>
 
-[ Upstream commit 571f8b3f866a6d990a50fe5c89fe0ea78784d70b ]
+[ Upstream commit 58414a31c5713afb5449fd74a26a843d34cc62e8 ]
 
-This patch makes the dot parser used by dot2c and dot2k slightly more
-robust, namely:
-* allows parsing files with the gv extension (GraphViz)
-* correctly parses edges with any indentation
-    * used to work only with a single character (e.g. '\t')
-Additionally it fixes a couple of warnings reported by pylint such as
-wrong indentation and comparison to False instead of `not ...`
+When PINCTRL_IMX_SCU was selected by PINCTRL_IMX8DXL or PINCTRL_IMX8QM
+combined with COMPILE_TEST on a non-arm platforms, the IMX_SCU
+dependency could not be enabled.
 
-Link: https://lore.kernel.org/20241017064238.41394-2-gmonaco@redhat.com
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410031439.GyTSa0kX-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202410030852.q0Hukplf-lkp@intel.com/
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+Link: https://lore.kernel.org/20241003-imx-pinctrl-compile-test-fix-v1-1-145ca1948cc3@geanix.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/verification/dot2/automata.py | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/pinctrl/freescale/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/verification/dot2/automata.py b/tools/verification/dot2/automata.py
-index baffeb960ff0b..bdeb98baa8b06 100644
---- a/tools/verification/dot2/automata.py
-+++ b/tools/verification/dot2/automata.py
-@@ -29,11 +29,11 @@ class Automata:
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index 21fa21c6547b1..93b38d97a7263 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -9,7 +9,7 @@ config PINCTRL_IMX
  
-     def __get_model_name(self):
-         basename = ntpath.basename(self.__dot_path)
--        if basename.endswith(".dot") == False:
-+        if not basename.endswith(".dot") and not basename.endswith(".gv"):
-             print("not a dot file")
-             raise Exception("not a dot file: %s" % self.__dot_path)
+ config PINCTRL_IMX_SCU
+ 	tristate
+-	depends on IMX_SCU
++	depends on IMX_SCU || COMPILE_TEST
+ 	select PINCTRL_IMX
  
--        model_name = basename[0:-4]
-+        model_name = ntpath.splitext(basename)[0]
-         if model_name.__len__() == 0:
-             raise Exception("not a dot file: %s" % self.__dot_path)
- 
-@@ -68,9 +68,9 @@ class Automata:
-     def __get_cursor_begin_events(self):
-         cursor = 0
-         while self.__dot_lines[cursor].split()[0] != "{node":
--           cursor += 1
-+            cursor += 1
-         while self.__dot_lines[cursor].split()[0] == "{node":
--           cursor += 1
-+            cursor += 1
-         # skip initial state transition
-         cursor += 1
-         return cursor
-@@ -94,11 +94,11 @@ class Automata:
-                 initial_state = state[7:]
-             else:
-                 states.append(state)
--                if self.__dot_lines[cursor].__contains__("doublecircle") == True:
-+                if "doublecircle" in self.__dot_lines[cursor]:
-                     final_states.append(state)
-                     has_final_states = True
- 
--                if self.__dot_lines[cursor].__contains__("ellipse") == True:
-+                if "ellipse" in self.__dot_lines[cursor]:
-                     final_states.append(state)
-                     has_final_states = True
- 
-@@ -110,7 +110,7 @@ class Automata:
-         # Insert the initial state at the bein og the states
-         states.insert(0, initial_state)
- 
--        if has_final_states == False:
-+        if not has_final_states:
-             final_states.append(initial_state)
- 
-         return states, initial_state, final_states
-@@ -120,7 +120,7 @@ class Automata:
-         cursor = self.__get_cursor_begin_events()
- 
-         events = []
--        while self.__dot_lines[cursor][1] == '"':
-+        while self.__dot_lines[cursor].lstrip()[0] == '"':
-             # transitions have the format:
-             # "all_fired" -> "both_fired" [ label = "disable_irq" ];
-             #  ------------ event is here ------------^^^^^
-@@ -161,7 +161,7 @@ class Automata:
-         # and we are back! Let's fill the matrix
-         cursor = self.__get_cursor_begin_events()
- 
--        while self.__dot_lines[cursor][1] == '"':
-+        while self.__dot_lines[cursor].lstrip()[0] == '"':
-             if self.__dot_lines[cursor].split()[1] == "->":
-                 line = self.__dot_lines[cursor].split()
-                 origin_state = line[0].replace('"','').replace(',','_')
+ config PINCTRL_IMX1_CORE
 -- 
 2.43.0
 
