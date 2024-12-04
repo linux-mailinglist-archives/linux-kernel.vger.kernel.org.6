@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-431704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F759E408D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:06:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFB29E4095
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7531C28146A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E7C280D29
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5113A233D97;
-	Wed,  4 Dec 2024 16:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DCC1A8F6C;
+	Wed,  4 Dec 2024 16:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTu7d3a1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ba5vuvCx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8174920E037;
-	Wed,  4 Dec 2024 16:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1233DAC00;
+	Wed,  4 Dec 2024 16:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331533; cv=none; b=iMCwXYHAhk6DB1SeLFq0MQs6SFyvqBmiTGPkWKqnK9vfX9elWkIOybSiNioK6g5M8yzK73EklBk9c4aChYIihld+K6UBe+LsEvsX+n6uHAkh46iqaKzf8b12hnB/F/zKnF1OaXLWfQaOibjKZnefu3QSqLp2uS95PzDXoI3puH8=
+	t=1733331543; cv=none; b=krzhzLM1FeUFS49HWbvLRxcTqOisfYWTVJmuKuoRKGsKcn5Doi58+hxqmmOfhsVTTCLuKmdCVtEzZgvhxeLPcOPKqMiwafdNaNf8ZC5jDi6NdIFyD6+G05nr9qDVuP6ReIircuBiUIFCChE8XNJQh9VYBlFbCkIhU5geVhkWcjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331533; c=relaxed/simple;
-	bh=Y+M6Ju5s92/n8wJKiY38brJg0HJKpvXZeYRvtorhhNA=;
+	s=arc-20240116; t=1733331543; c=relaxed/simple;
+	bh=7TN0xW6egqreWmtzs9zkF80AingF69k+BcAEFWULy5o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kVQg9v+YS8iQtSFZ/jMMj5AE3yPZnU5tOjV6JVaCNl7Vf3Icpey+KRqgXocH/mtPnC5q1/tG2fRMgRixSNQfDeHGDRhatfQbJkhBvpoy28/ds5rP6Pnzvd0hVQw7tl25WZb+7xMB64G6jTncuoiwAHkfbZzWZvxmhe6gk9gd+KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTu7d3a1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F66CC4CECD;
-	Wed,  4 Dec 2024 16:58:52 +0000 (UTC)
+	 MIME-Version; b=DmTQ2CoUzB4IeAaLRS986230C/oPYjSLelbePPR+fPVyEOGEOfHAUaB8fhv0GeokjDmGqQphB/YZazKbrecG01OEHcJCIK953gzvjVyRFWRIsxKwPJGg7/0HwV+Qe4Lj4y7JQXpP8/YH1JGQOKk9HaNU1lRr70L4RFWLunS+kPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ba5vuvCx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33DC0C4CECD;
+	Wed,  4 Dec 2024 16:59:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331533;
-	bh=Y+M6Ju5s92/n8wJKiY38brJg0HJKpvXZeYRvtorhhNA=;
+	s=k20201202; t=1733331543;
+	bh=7TN0xW6egqreWmtzs9zkF80AingF69k+BcAEFWULy5o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jTu7d3a1+f2ukvnGPW5YlUaOi7rzXKVIlkkUlk0oW3ILozldlNzKjg4Lf3b6moygY
-	 CfIpYn+97wyrJRMdmDptFVoJQjlKKS0gwrLMibhlEmTvZ6V88w/00Kw9bNhM5SRRGG
-	 wx3scLrF9f9vAab2m1+4bK6OVbqq7/fZBPbNYeT675IQ6kF6an+ubztsOGqiTjy0lj
-	 /G+PQmB21kmB/3tXqg8kjCRk6Ds0IYi1nrADXI1tbW7dbU8E1V4l9eDLnyPgsoYOOT
-	 wV9Y3VlpXs9jQ//zFoWyUuD7VdWm6IEw8lrdLZ8gbUIW7FCH1dPo+CIRBxQHbyjSsD
-	 3hX4dH/tF9UCw==
+	b=Ba5vuvCxzs7h0R5OfmTLgQl94iEzY8Ygo1d84utug0fNTRp+rzEy9wq7CisBm5bPq
+	 RkjC1SCBWa6MXl1rrpgruBf+W8FJbZ7fhH9a2jBB1IktkpYh6FWP1R4lp8QnNAnRUs
+	 4RYpvvLRCQVC5Hh5uHphlc3VIH9y+RStftRzb04OjVInYANQ4Is4EcRJ0l2JqF6D14
+	 z1OWMq9YjtzH6QgsSyYnX9uIqxAtFDJLFCPUNzaDVSTq7EmssYTPEIZPKveBvDSKZz
+	 VYLXgCq2rzqI1tGklWr1oLHJeekRljyQz43ALfudP9nF3/TIS73Hmh0btBX7k6+QFG
+	 9HRAm57PGW0lQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
+Cc: Adam Young <admiyo@os.amperecomputing.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 33/36] tracing: Fix function name for trampoline
-Date: Wed,  4 Dec 2024 10:45:49 -0500
-Message-ID: <20241204154626.2211476-33-sashal@kernel.org>
+	robert.moore@intel.com,
+	rafael.j.wysocki@intel.com,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.12 36/36] mailbox: pcc: Check before sending MCTP PCC response ACK
+Date: Wed,  4 Dec 2024 10:45:52 -0500
+Message-ID: <20241204154626.2211476-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -66,161 +68,164 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Tatsuya S <tatsuya.s2862@gmail.com>
+From: Adam Young <admiyo@os.amperecomputing.com>
 
-[ Upstream commit 6ce5a6f0a07d37cc377df08a8d8a9c283420f323 ]
+[ Upstream commit 7f9e19f207be0c534d517d65e01417ba968cdd34 ]
 
-The issue that unrelated function name is shown on stack trace like
-following even though it should be trampoline code address is caused by
-the creation of trampoline code in the area where .init.text section
-of module was freed after module is loaded.
+Type 4 PCC channels have an option to send back a response
+to the platform when they are done processing the request.
+The flag to indicate whether or not to respond is inside
+the message body, and thus is not available to the pcc
+mailbox.
 
-bash-1344    [002] .....    43.644608: <stack trace>
-=> (MODULE INIT FUNCTION)
-=> vfs_write
-=> ksys_write
-=> do_syscall_64
-=> entry_SYSCALL_64_after_hwframe
+If the flag is not set, still set command completion
+bit after processing message.
 
-To resolve this, when function address of stack trace entry is in
-trampoline, output without looking up symbol name.
+In order to read the flag, this patch maps the shared
+buffer to virtual memory. To avoid duplication of mapping
+the shared buffer is then made available to be used by
+the driver that uses the mailbox.
 
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20241021071454.34610-2-tatsuya.s2862@gmail.com
-Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace.c        | 33 +++++++++++++++++++++++++--------
- kernel/trace/trace.h        |  7 +++++++
- kernel/trace/trace_output.c |  4 ++++
- 3 files changed, 36 insertions(+), 8 deletions(-)
+ drivers/mailbox/pcc.c | 61 +++++++++++++++++++++++++++++++++++++------
+ include/acpi/pcc.h    |  7 +++++
+ 2 files changed, 60 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 6a891e00aa7f4..17d2ffde0bb60 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -988,7 +988,8 @@ static inline void trace_access_lock_init(void)
- #endif
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index 94885e411085a..82102a4c5d688 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -269,6 +269,35 @@ static bool pcc_mbox_cmd_complete_check(struct pcc_chan_info *pchan)
+ 	return !!val;
+ }
  
- #ifdef CONFIG_STACKTRACE
--static void __ftrace_trace_stack(struct trace_buffer *buffer,
-+static void __ftrace_trace_stack(struct trace_array *tr,
-+				 struct trace_buffer *buffer,
- 				 unsigned int trace_ctx,
- 				 int skip, struct pt_regs *regs);
- static inline void ftrace_trace_stack(struct trace_array *tr,
-@@ -997,7 +998,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
- 				      int skip, struct pt_regs *regs);
- 
- #else
--static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
-+static inline void __ftrace_trace_stack(struct trace_array *tr,
-+					struct trace_buffer *buffer,
- 					unsigned int trace_ctx,
- 					int skip, struct pt_regs *regs)
- {
-@@ -2947,7 +2949,8 @@ struct ftrace_stacks {
- static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
- static DEFINE_PER_CPU(int, ftrace_stack_reserve);
- 
--static void __ftrace_trace_stack(struct trace_buffer *buffer,
-+static void __ftrace_trace_stack(struct trace_array *tr,
-+				 struct trace_buffer *buffer,
- 				 unsigned int trace_ctx,
- 				 int skip, struct pt_regs *regs)
- {
-@@ -2994,6 +2997,20 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
- 		nr_entries = stack_trace_save(fstack->calls, size, skip);
- 	}
- 
-+#ifdef CONFIG_DYNAMIC_FTRACE
-+	/* Mark entry of stack trace as trampoline code */
-+	if (tr->ops && tr->ops->trampoline) {
-+		unsigned long tramp_start = tr->ops->trampoline;
-+		unsigned long tramp_end = tramp_start + tr->ops->trampoline_size;
-+		unsigned long *calls = fstack->calls;
++static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
++{
++	struct acpi_pcct_ext_pcc_shared_memory pcc_hdr;
 +
-+		for (int i = 0; i < nr_entries; i++) {
-+			if (calls[i] >= tramp_start && calls[i] < tramp_end)
-+				calls[i] = FTRACE_TRAMPOLINE_MARKER;
-+		}
++	if (pchan->type != ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
++		return;
++	/* If the memory region has not been mapped, we cannot
++	 * determine if we need to send the message, but we still
++	 * need to set the cmd_update flag before returning.
++	 */
++	if (pchan->chan.shmem == NULL) {
++		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
++		return;
 +	}
-+#endif
++	memcpy_fromio(&pcc_hdr, pchan->chan.shmem,
++		      sizeof(struct acpi_pcct_ext_pcc_shared_memory));
++	/*
++	 * The PCC slave subspace channel needs to set the command complete bit
++	 * after processing message. If the PCC_ACK_FLAG is set, it should also
++	 * ring the doorbell.
++	 *
++	 * The PCC master subspace channel clears chan_in_use to free channel.
++	 */
++	if (le32_to_cpup(&pcc_hdr.flags) & PCC_ACK_FLAG_MASK)
++		pcc_send_data(chan, NULL);
++	else
++		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
++}
 +
- 	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
- 				    struct_size(entry, caller, nr_entries),
- 				    trace_ctx);
-@@ -3024,7 +3041,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
- 	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
+ /**
+  * pcc_mbox_irq - PCC mailbox interrupt handler
+  * @irq:	interrupt number
+@@ -306,14 +335,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+ 
+ 	mbox_chan_received_data(chan, NULL);
+ 
+-	/*
+-	 * The PCC slave subspace channel needs to set the command complete bit
+-	 * and ring doorbell after processing message.
+-	 *
+-	 * The PCC master subspace channel clears chan_in_use to free channel.
+-	 */
+-	if (pchan->type == ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
+-		pcc_send_data(chan, NULL);
++	check_and_ack(pchan, chan);
+ 	pchan->chan_in_use = false;
+ 
+ 	return IRQ_HANDLED;
+@@ -365,14 +387,37 @@ EXPORT_SYMBOL_GPL(pcc_mbox_request_channel);
+ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
+ {
+ 	struct mbox_chan *chan = pchan->mchan;
++	struct pcc_chan_info *pchan_info;
++	struct pcc_mbox_chan *pcc_mbox_chan;
+ 
+ 	if (!chan || !chan->cl)
  		return;
++	pchan_info = chan->con_priv;
++	pcc_mbox_chan = &pchan_info->chan;
++	if (pcc_mbox_chan->shmem) {
++		iounmap(pcc_mbox_chan->shmem);
++		pcc_mbox_chan->shmem = NULL;
++	}
  
--	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
-+	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
+ 	mbox_free_channel(chan);
  }
+ EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
  
- void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
-@@ -3033,7 +3050,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
- 	struct trace_buffer *buffer = tr->array_buffer.buffer;
- 
- 	if (rcu_is_watching()) {
--		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
-+		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
- 		return;
- 	}
- 
-@@ -3050,7 +3067,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
- 		return;
- 
- 	ct_irq_enter_irqson();
--	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
-+	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
- 	ct_irq_exit_irqson();
- }
- 
-@@ -3067,8 +3084,8 @@ void trace_dump_stack(int skip)
- 	/* Skip 1 to skip this function. */
- 	skip++;
- #endif
--	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
--			     tracing_gen_ctx(), skip, NULL);
-+	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
-+				tracing_gen_ctx(), skip, NULL);
- }
- EXPORT_SYMBOL_GPL(trace_dump_stack);
- 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index c866991b9c78b..30d6675c78cfe 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -2176,4 +2176,11 @@ static inline int rv_init_interface(void)
- }
- #endif
- 
-+/*
-+ * This is used only to distinguish
-+ * function address from trampoline code.
-+ * So this value has no meaning.
-+ */
-+#define FTRACE_TRAMPOLINE_MARKER  ((unsigned long) INT_MAX)
++int pcc_mbox_ioremap(struct mbox_chan *chan)
++{
++	struct pcc_chan_info *pchan_info;
++	struct pcc_mbox_chan *pcc_mbox_chan;
 +
- #endif /* _LINUX_KERNEL_TRACE_H */
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 868f2f912f280..c14573e5a9033 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -1246,6 +1246,10 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
- 			break;
++	if (!chan || !chan->cl)
++		return -1;
++	pchan_info = chan->con_priv;
++	pcc_mbox_chan = &pchan_info->chan;
++	pcc_mbox_chan->shmem = ioremap(pcc_mbox_chan->shmem_base_addr,
++				       pcc_mbox_chan->shmem_size);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pcc_mbox_ioremap);
++
+ /**
+  * pcc_send_data - Called from Mailbox Controller code. Used
+  *		here only to ring the channel doorbell. The PCC client
+diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
+index 9b373d172a776..699c1a37b8e78 100644
+--- a/include/acpi/pcc.h
++++ b/include/acpi/pcc.h
+@@ -12,6 +12,7 @@
+ struct pcc_mbox_chan {
+ 	struct mbox_chan *mchan;
+ 	u64 shmem_base_addr;
++	void __iomem *shmem;
+ 	u64 shmem_size;
+ 	u32 latency;
+ 	u32 max_access_rate;
+@@ -31,11 +32,13 @@ struct pcc_mbox_chan {
+ #define PCC_CMD_COMPLETION_NOTIFY	BIT(0)
  
- 		trace_seq_puts(s, " => ");
-+		if ((*p) == FTRACE_TRAMPOLINE_MARKER) {
-+			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
-+			continue;
-+		}
- 		seq_print_ip_sym(s, (*p) + delta, flags);
- 		trace_seq_putc(s, '\n');
- 	}
+ #define MAX_PCC_SUBSPACES	256
++#define PCC_ACK_FLAG_MASK	0x1
+ 
+ #ifdef CONFIG_PCC
+ extern struct pcc_mbox_chan *
+ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id);
+ extern void pcc_mbox_free_channel(struct pcc_mbox_chan *chan);
++extern int pcc_mbox_ioremap(struct mbox_chan *chan);
+ #else
+ static inline struct pcc_mbox_chan *
+ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+@@ -43,6 +46,10 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+ 	return ERR_PTR(-ENODEV);
+ }
+ static inline void pcc_mbox_free_channel(struct pcc_mbox_chan *chan) { }
++static inline int pcc_mbox_ioremap(struct mbox_chan *chan)
++{
++	return 0;
++};
+ #endif
+ 
+ #endif /* _PCC_H */
 -- 
 2.43.0
 
