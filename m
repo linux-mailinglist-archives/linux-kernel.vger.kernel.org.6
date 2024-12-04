@@ -1,251 +1,180 @@
-Return-Path: <linux-kernel+bounces-431305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667669E3CAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:27:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018BE9E3BC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:55:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEFFBB2A906
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:54:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C488F164622
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1781F707D;
-	Wed,  4 Dec 2024 13:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0C61F8F18;
+	Wed,  4 Dec 2024 13:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oXJBhl4+"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDYdWGIn"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D349F15E97
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D3A1F667F;
+	Wed,  4 Dec 2024 13:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320419; cv=none; b=BFA43iawYThJJkPo1AcWv+wrJ8jj6py6dPM8jXfD/pY9uWsnPpAUELmDCba+ItqGWVOKIn+DACKNnBdpajsQ+lG4dMbMPjnEuVLdVmGKi6YHzfTWRnFrtaFkXSlHPFoHr9Yy5S1y3C9b/ufmloxtFj5TGs4BQ16A2fOFKEL5VqU=
+	t=1733320469; cv=none; b=tGZEJMB5BWw4Hi4pUraOUEuGQ/oTGuq3Y9QCSYUxCe3vX+c8pxWHJPFD8bPlQKqOX9YbqgrzWc4Ofvh/tL/Focl+P9ZidClHkkcf44DbQiCSm/hzsUDb/gfBoK3QAfqye8yQ/8gj+6ARq+1OaXj0DOubQJHW1QexYtRwFnGZktQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320419; c=relaxed/simple;
-	bh=pGfE1RzcB2ZxZeBdmX+clCPr+9jcwKF8lC4v55m0G5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UWlHO0CEluzFX8jjPPLNNN+ZzvRfOkiAp2FfbUtAeVVGm5SAeoDIT2Al62wx2PyrB0mL13j86VbSiQ4essSH4WAfPzd3tU/ycMSlZRKcNdcG6oqnxh1NLw0+exZrJN3Nh74rt5JD8YVz1ePf6rqzChOFDtMycr2q5/GN4TnP8Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oXJBhl4+; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B4DrURK117889;
-	Wed, 4 Dec 2024 07:53:30 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733320410;
-	bh=S93UvHgh8XYLvPpL89G3ksgsz6hVMnSyaavZSi2WEIk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=oXJBhl4+IFQyh0BIhJgtBiKftd725f6hUifdl4g49xbVXIY3vaMyJwFkrpTeh5b1F
-	 RdlQBQbdyN8uCvJQn91T2EQNFG225ZV8gFiQY5JJucHzg6X59CszGnDLm+jMoxdP3h
-	 m1vJHADrBoge7UE5f1A/COVB1/I4h5DdP986T2gY=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B4DrUXs024720;
-	Wed, 4 Dec 2024 07:53:30 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Dec 2024 07:53:30 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Dec 2024 07:53:30 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B4DrUWl001321;
-	Wed, 4 Dec 2024 07:53:30 -0600
-Message-ID: <d7e9d9f8-ac81-4cbb-897c-585741ca00c9@ti.com>
-Date: Wed, 4 Dec 2024 07:53:30 -0600
+	s=arc-20240116; t=1733320469; c=relaxed/simple;
+	bh=glB2djWeXag327qCP/wXVgxmC14NcW9oTf9ZFLlGMNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ChEXVmt+LoEhgyf94sYcKTx7qjvdleTiRwkCl6VhS/ZdCXy65Hi86VHPVn6VNBGugX32+i4JnT6WBRAQGCOC4VvAep6cPxFpKNoixsohyDOxIvp99LDL7BKJS1DG3PKmta/8URiYULumrld37aXxq/80sMxVYGLUKhjnflNuzAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDYdWGIn; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46686a258c2so57330421cf.2;
+        Wed, 04 Dec 2024 05:54:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733320466; x=1733925266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RptwRUavW0SsrYigmdi9DJqiFrjgQ2+PoZGqM36Tnes=;
+        b=nDYdWGIn9QXW4+tyYMp98WWE7jCY97SPRs3ybVj47HE9fcxrLwyyqlVln4Kx199LHW
+         3aZZ5lYN5YrQzvPiIA5ZFvIZW3WjJtoGJHu+X9lTSCjzo2AK4C2FxdIOdCAGiu0SZKLv
+         4KvDgFvVsEM29E3MrwzOhUU5ynMrwXYxRtmaALe1u7S3elKwvvYOXAB/cb4or1Jb1R3A
+         jtmrlA+7gtl2mOwbkWGQnubxLWYYMohrgumSjXBMWDDpPgpIszVbocPGGYqoLOmLfdeJ
+         njeNILZ7X5KhN1zMpDWpevmepLXcTJCCUyvBz1zyL4bPQ3wdx/xo0LR6o0tHsc/1FP1A
+         jFSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733320466; x=1733925266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RptwRUavW0SsrYigmdi9DJqiFrjgQ2+PoZGqM36Tnes=;
+        b=Kh8/EjFCCFEAe2eWSEHzVGCH+ER1a5pg/wNaqkjmfuzACmQNhpgAgYnTeDf3thxTZL
+         DMHYa4FZZn6BK7dHkg4D4F8eJP9EYTXeJDyLKF5N7G6MURYRQsXejZARFmfL6LbhwCdE
+         sGXrdXxIhSO6nH/VELhuPkCqCvFMdg9RBXxhLslZZVIaQPG3ywufYjo2xjLDz4Zw/sSl
+         eYBjG8qpNsztbGxgvikg/QBhvww7nUagZCicmoIMkndEtPwyc3lyCk4vbFKfxnJ76EE4
+         gHT3Ep3QIQNUslnmZnJNpQOgeop2h62qoRARnZwE/On1ignGkn2lfxQNGX53JkgXxXBG
+         Mr0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLBJwseCMhkmcug3Ph6A8lSgdBU0G+IXb1/MNF2ufqfYpCFnBBQqJ81eZeCoYMBh6ry88h5XgyxtfE00Xw@vger.kernel.org, AJvYcCX9F+8ZmeU8wzKmYKMy6PZLrry54sIm2tua2KzsyV/W0DSPCmLmgrfx/Lbby85cTVwuc2DzUg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YysQUxPyRTXpJW/+DxzntJO9PvPmuvCViVPm8GVPMm+WFfIkstr
+	kZUgrYC8jVhKxKOFYNKm1wKvy0XjEszBDs63sAuFkwSgykVTy0rrx8riy5fRWLtjjxTg1BWtgG6
+	w3HwAmKQYjF1mqu/TF/CqQ/4bSk0=
+X-Gm-Gg: ASbGnctqLGiDW9n4lvnoESEbceUMPXuNkA/rMmuTGPbWpZcNRrzuwHmCUGC96dlOoV9
+	yVAoeCZDLBsL3iOH0PKvxfVqd49TiiBz/
+X-Google-Smtp-Source: AGHT+IEGXPgm+w6l+jXcgmNgGIg5E/Grvio5jopOy18S00FmbnC1mKUG9PARRRF+/t4dmbFLDflbqcH9aPH/PQ3orjw=
+X-Received: by 2002:a05:620a:2416:b0:7b1:f1d:d0c2 with SMTP id
+ af79cd13be357-7b6a5d66510mr794665985a.19.1733320466168; Wed, 04 Dec 2024
+ 05:54:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mux: mmio: Add suspend and resume support
-To: Thomas Richard <thomas.richard@bootlin.com>, Peter Rosin <peda@axentia.se>
-CC: <linux-kernel@vger.kernel.org>, <gregory.clement@bootlin.com>,
-        <theo.lebrun@bootlin.com>, <thomas.petazzoni@bootlin.com>,
-        <u-kumar1@ti.com>
-References: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241203060350.69472-1-laoar.shao@gmail.com> <CAHC9VhTRaX02x+KFpsxmguze3R=AAF9yjTtDxf_ghVpQ3XdU2A@mail.gmail.com>
+ <CALOAHbDgb5LW+XF1_VHGpr7zcjenMwSQzOy-pTsyV3buOW1N6Q@mail.gmail.com>
+ <CAHC9VhSA7U5D0mzg+OmGi5RpDpw-+eufyTEDtLu9m=nkMHe+yA@mail.gmail.com> <CALOAHbBH8p3Xp2JdajHKWzfWxtMvgA_XTBoqi8RVUV1meveFZQ@mail.gmail.com>
+In-Reply-To: <CALOAHbBH8p3Xp2JdajHKWzfWxtMvgA_XTBoqi8RVUV1meveFZQ@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 4 Dec 2024 21:53:50 +0800
+Message-ID: <CALOAHbDZ69ZoCwHXkR=iBfLf_pXwLYQW-3LY8OogB0EpbEPzbw@mail.gmail.com>
+Subject: Re: [PATCH] auditsc: Implement a workaround for a GCC bug triggered
+ by task comm changes
+To: Paul Moore <paul@paul-moore.com>
+Cc: keescook@chromium.org, qiuxu.zhuo@intel.com, rostedt@goodmis.org, 
+	lkp@intel.com, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/24 3:53 AM, Thomas Richard wrote:
-> The status of each mux is read during suspend and stored in the private
-> memory of the mux_chip.
-> Then the state is restored during the resume.
-> 
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> ---
-> In this second version, as discussed with Peter, everything is done in the
-> mmio-mux driver.
-> A mux_mmio_set() function was added, and used during suspend stage to get
-> the status of the of the muxes.
-> This status is stored in the private memory of the mux_chip.
-> ---
-> Changes in v2:
-> - Remove all modifications done in the mux subsystem
-> - Add a mux_mmio_set()
-> - Read the status of muxes during suspend and store in the private memory
->    of the mux_chip.
+On Wed, Dec 4, 2024 at 2:07=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> w=
+rote:
+>
+> On Wed, Dec 4, 2024 at 11:43=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > On Tue, Dec 3, 2024 at 10:00=E2=80=AFPM Yafang Shao <laoar.shao@gmail.c=
+om> wrote:
+> > > On Wed, Dec 4, 2024 at 6:06=E2=80=AFAM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > > On Tue, Dec 3, 2024 at 1:04=E2=80=AFAM Yafang Shao <laoar.shao@gmai=
+l.com> wrote:
+> > > > >
+> > > > > From: Yafang shao <laoar.shao@gmail.com>
+> > > > >
+> > > > > A build failure has been reported with the following details:
+> > > > >
+> > > > >    In file included from include/linux/string.h:390,
+> > > > >                     from include/linux/bitmap.h:13,
+> > > > >                     from include/linux/cpumask.h:12,
+> > > > >                     from include/linux/smp.h:13,
+> > > > >                     from include/linux/lockdep.h:14,
+> > > > >                     from include/linux/spinlock.h:63,
+> > > > >                     from include/linux/wait.h:9,
+> > > > >                     from include/linux/wait_bit.h:8,
+> > > > >                     from include/linux/fs.h:6,
+> > > > >                     from kernel/auditsc.c:37:
+> > > > >    In function 'sized_strscpy',
+> > > > >        inlined from '__audit_ptrace' at kernel/auditsc.c:2732:2:
+> > > > > >> include/linux/fortify-string.h:293:17: error: call to '__write=
+_overflow' declared with attribute error: detected write beyond size of obj=
+ect (1st parameter)
+> > > > >      293 |                 __write_overflow();
+> > > > >          |                 ^~~~~~~~~~~~~~~~~~
+> > > > >    In function 'sized_strscpy',
+> > > > >        inlined from 'audit_signal_info_syscall' at kernel/auditsc=
+.c:2759:3:
+> > > > > >> include/linux/fortify-string.h:293:17: error: call to '__write=
+_overflow' declared with attribute error: detected write beyond size of obj=
+ect (1st parameter)
+> > > > >      293 |                 __write_overflow();
+> > > > >          |                 ^~~~~~~~~~~~~~~~~~
+> > > > >
+> > > > > The issue appears to be a GCC bug, though the root cause remains
+> > > > > unclear at this time. For now, let's implement a workaround.
+> > > > >
+> > > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > > Closes: https://lore.kernel.org/oe-kbuild-all/202410171420.1V00IC=
+VG-lkp@intel.com/
+> > > > > Reported-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > > > > Closes: https://lore.kernel.org/all/20241128182435.57a1ea6f@ganda=
+lf.local.home/
+> > > > > Reported-by: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+> > > > > Closes: https://lore.kernel.org/all/CY8PR11MB71348E568DBDA576F17D=
+AFF389362@CY8PR11MB7134.namprd11.prod.outlook.com/
+> > > > > Originally-by: Kees Cook <kees@kernel.org>
+> > > > > Link: https://lore.kernel.org/linux-hardening/202410171059.C2C395=
+030@keescook/
+> > > > > Signed-off-by: Yafang shao <laoar.shao@gmail.com>
+> > > > > Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > > > > ---
+> > > > >  kernel/auditsc.c | 4 ++--
+> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > Thanks, does anyone have a link to the GCC bug report?  We really
+> > > > should mention that in the commit description and/or metadata.
+> > >
+> > > I came across a GCC bug report [0] while researching online. This
+> > > issue was reportedly fixed in GCC-12.1 [1], yet it seems the same bug
+> > > is still being triggered in GCC-14.2.0[2].
+> > > Should I file a new bug report with GCC to address this?
+> >
+> > I was under the impression that this had already been reported, if it
+> > hasn't, then yes, please report the bug to the GCC team so we can get
+> > this fixed.  Once you have the bug report, please post it here so it
+> > can be included in the commit.
+>
+> Sure, I=E2=80=99ll file a new report. However, it seems I need to create =
+a new
+> account for the bug tracker and wait for its approval. Please bear
+> with me=E2=80=94I=E2=80=99ll provide an update as soon as it=E2=80=99s co=
+mpleted.
 
-Do you need this private memory? Since this is already using regmap, why
-not use the regmap cache, then you can restore all the values on resume
-with a simple call to regcache_sync().
+JFYI, the bug report has been filed:
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D117912
 
-Andrew
-
-> - Use this status to restore muxes during resume.
-> - Link to v1: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com
-> ---
->   drivers/mux/mmio.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++------
->   1 file changed, 73 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
-> index 30a952c34365..30b84382637f 100644
-> --- a/drivers/mux/mmio.c
-> +++ b/drivers/mux/mmio.c
-> @@ -15,11 +15,25 @@
->   #include <linux/property.h>
->   #include <linux/regmap.h>
->   
-> +struct mux_mmio {
-> +	struct regmap_field **fields;
-> +	unsigned int *hardware_states;
-> +};
-> +
-> +static int mux_mmio_get(struct mux_control *mux, int *state)
-> +{
-> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-> +	unsigned int index = mux_control_get_index(mux);
-> +
-> +	return regmap_field_read(mux_mmio->fields[index], state);
-> +}
-> +
->   static int mux_mmio_set(struct mux_control *mux, int state)
->   {
-> -	struct regmap_field **fields = mux_chip_priv(mux->chip);
-> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-> +	unsigned int index = mux_control_get_index(mux);
->   
-> -	return regmap_field_write(fields[mux_control_get_index(mux)], state);
-> +	return regmap_field_write(mux_mmio->fields[index], state);
->   }
->   
->   static const struct mux_control_ops mux_mmio_ops = {
-> @@ -37,8 +51,8 @@ static int mux_mmio_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct device_node *np = dev->of_node;
-> -	struct regmap_field **fields;
->   	struct mux_chip *mux_chip;
-> +	struct mux_mmio *mux_mmio;
->   	struct regmap *regmap;
->   	int num_fields;
->   	int ret;
-> @@ -69,12 +83,20 @@ static int mux_mmio_probe(struct platform_device *pdev)
->   	}
->   	num_fields = ret / 2;
->   
-> -	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
-> -				       sizeof(*fields));
-> +	mux_chip = devm_mux_chip_alloc(dev, num_fields, sizeof(struct mux_mmio));
->   	if (IS_ERR(mux_chip))
->   		return PTR_ERR(mux_chip);
->   
-> -	fields = mux_chip_priv(mux_chip);
-> +	mux_mmio = mux_chip_priv(mux_chip);
-> +
-> +	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
-> +	if (IS_ERR(mux_mmio->fields))
-> +		return PTR_ERR(mux_mmio->fields);
-> +
-> +	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
-> +						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
-> +	if (IS_ERR(mux_mmio->hardware_states))
-> +		return PTR_ERR(mux_mmio->hardware_states);
->   
->   	for (i = 0; i < num_fields; i++) {
->   		struct mux_control *mux = &mux_chip->mux[i];
-> @@ -104,9 +126,9 @@ static int mux_mmio_probe(struct platform_device *pdev)
->   			return -EINVAL;
->   		}
->   
-> -		fields[i] = devm_regmap_field_alloc(dev, regmap, field);
-> -		if (IS_ERR(fields[i])) {
-> -			ret = PTR_ERR(fields[i]);
-> +		mux_mmio->fields[i] = devm_regmap_field_alloc(dev, regmap, field);
-> +		if (IS_ERR(mux_mmio->fields[i])) {
-> +			ret = PTR_ERR(mux_mmio->fields[i]);
->   			dev_err(dev, "bitfield %d: failed allocate: %d\n",
->   				i, ret);
->   			return ret;
-> @@ -130,13 +152,55 @@ static int mux_mmio_probe(struct platform_device *pdev)
->   
->   	mux_chip->ops = &mux_mmio_ops;
->   
-> +	dev_set_drvdata(dev, mux_chip);
-> +
->   	return devm_mux_chip_register(dev, mux_chip);
->   }
->   
-> +static int mux_mmio_suspend_noirq(struct device *dev)
-> +{
-> +	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-> +	unsigned int state;
-> +	int ret, i;
-> +
-> +	for (i = 0; i < mux_chip->controllers; i++) {
-> +		ret = mux_mmio_get(&mux_chip->mux[i], &state);
-> +		if (ret) {
-> +			dev_err(dev, "control %u: error saving mux: %d\n", i, ret);
-> +			return ret;
-> +		}
-> +
-> +		mux_mmio->hardware_states[i] = state;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int mux_mmio_resume_noirq(struct device *dev)
-> +{
-> +	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-> +	int ret, i;
-> +
-> +	for (i = 0; i < mux_chip->controllers; i++) {
-> +		ret = mux_mmio_set(&mux_chip->mux[i], mux_mmio->hardware_states[i]);
-> +		if (ret) {
-> +			dev_err(dev, "control %u: error restoring mux: %d\n", i, ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, mux_mmio_suspend_noirq, mux_mmio_resume_noirq);
-> +
->   static struct platform_driver mux_mmio_driver = {
->   	.driver = {
->   		.name = "mmio-mux",
->   		.of_match_table	= mux_mmio_dt_ids,
-> +		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
->   	},
->   	.probe = mux_mmio_probe,
->   };
-> 
-> ---
-> base-commit: caf614bf68351c7e9e38dd37e07539417c757813
-> change-id: 20240613-mux-mmio-resume-support-4f3b2a34a32a
-> 
-> Best regards,
+--=20
+Regards
+Yafang
 
