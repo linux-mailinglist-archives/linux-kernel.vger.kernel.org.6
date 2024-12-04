@@ -1,116 +1,169 @@
-Return-Path: <linux-kernel+bounces-431297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F859E3BA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:48:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730879E3BA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:49:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD646286F70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33480281E2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1731714CF;
-	Wed,  4 Dec 2024 13:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABD51BC9F0;
+	Wed,  4 Dec 2024 13:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WySxUk0w"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NsKgxXLg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EBA1B4152
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60C1AF0C6
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320076; cv=none; b=Xbg0YGnUTCtZNLwWLdkkuqbYuv5oq65vQNmNf1M3/o7RbnPuWemLXKESSIMjTZ96QEByTvlyia49VR5zCa+xDSyDXWORJEEeflG2n7SIfrA2cHmeeoNirpIWDtMQVMm70sin6jo2+RwbnqcTb/5VNUVgIfoX12G1469LqIHvxVw=
+	t=1733320150; cv=none; b=qKMBwRX8GqVUTixBi1Jc9DdY3BwIO+QRJfqd1iC/fEeP4WGPJzrA5bDbxwbLVd1eZE3BJ3PEmQac3LIn2XCsTcMoN/TLKZTuhQwypGo2Tvt/Zh+1IFMHLNnR1q6CNYjvmB56JIGPZj0DOQUGRVPBNtTEgYuAQphL3iTNqY25+4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320076; c=relaxed/simple;
-	bh=N7/vkh77qk1fPHVjfiBISqmE4uv/JTxV7LgwE4hm2a0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RVW42ad030DIHFTrEZpiC+wbiTnXxos3Y5lZglHIZjeJVpBLE20dklFX98YE5VAnAHGtMmevFLcEgcZ9o7A383BCMphuq4MdrL2jLvb2Ryz8GXjTL5/Xi8oGCAl4BDnGKcZ2xwfAfTRgNS5knSS9SuiKCfOEgSDn5tz0CEDcXyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WySxUk0w; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso62697635e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:47:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733320073; x=1733924873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7dkS0jxrNDHpGzyQIGNBb3o5Ra/IS2ul8BnWsJrSOvg=;
-        b=WySxUk0wWBiHni28UtltSPBZArrlpsUtaBD2E/QQ1rkDSIW3CvXiTpHI/QpeNqLMZO
-         cf/qH08jGjUxrjmubok8L90x5V2B+Y7yNvPK3Hs8w0fAR8Imd2x9SotDUs5PN0KQc5QL
-         6/jvbnzUbOxWyuUUHrbix2BZWNXjY3zbbYLceQMH7Xj7pd/HDA2Y08OVr1VpSVWuPkJp
-         33tnK0UY1r431lSqecx85UkZh2bhVP3+eUMIKfNC1hb8+BmsqK7gPy8En2GWSMyK/e2D
-         Hx9R/tfh4XmfXSGtVphXbEJ5y8y2GMJv3lU7sGSzA2l/lHVzQTuaO8qzkTRwiKwQuIrB
-         aIiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733320073; x=1733924873;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7dkS0jxrNDHpGzyQIGNBb3o5Ra/IS2ul8BnWsJrSOvg=;
-        b=kmDHKCK5IlBC7T8ViExzo5AMvR41vtShHk8TiRZBAO3ZCMEXGA93gm6VuH98/DSN7d
-         MajvRmW4jjDgRURtejVuqET3VXZ0Iqv+42BVM9h74MyVep7oEXCKEq6HYggxtbyfXQPG
-         98GbQZkdvlxX6pw5rNhabgTN7D27STgLW8cIrQzr/UEWmf7zwE+VOM5u0AI2+6C2tPPh
-         ZzKSGnMolZ9LT6d3sfQ9gDz71Hb5GRKYGpZqfazhJkcgQ6pHJ3FuCuMJVvgEiXRPhSr0
-         2xi4UIhL1LSvEzXbvSrMMsFGbFp9tipMSismNRxPs0ziBw6PT9Dfafgb5SWNyphuGnn2
-         puCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeP7mUmc34UIiOsmS/zu/tnGXV8QxUvSpdnzEsDSEFOUgofNQBZiQevIsvLqkU3hIsnk7a+oxLoUT+Mys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2t+vxAy2x/oqL/XEgeE0dsVh1YnW0DgM3fp0G6irWut+vUvEn
-	/kxJZJWWJYugztrXK7G5uqong6JprOPsU/FCa4t9Zst49Lh2yrWH
-X-Gm-Gg: ASbGnctNOsqj0XiAFrQ8IiZjsnJsFjJcSlxOjiUz/akH76O0VzoQ2bUkPKvmIHjkyIW
-	YV0NmSkmrmV+9g7HcK+86Z1soz8lZrbxV7tkkR2aDohoRDS55fzCCzObhS6aghpHHj26U1TRxyM
-	2vqdumQ3jgBTcAFy2ehwL4H4bSUs0M9ImvdGRCKySIn659UYcR2HGPsDGYW6uOTGjIF9XHcZ7JE
-	GtxCYW1G+jUybZYUm1XhhjVXQeDgOy8/798nc5wdU31pqToZsqCokV8W/Dlc5cy9psoGMlv4k6H
-	37IIiJVt3w==
-X-Google-Smtp-Source: AGHT+IEERzG3Y2W6qTUJPL9AaT3DvYbYKP20IfUHmhXP+mAbXsk1BfF07T4abHbvNiGofdVOsKIM8A==
-X-Received: by 2002:a05:6000:1fa5:b0:382:47d0:64be with SMTP id ffacd0b85a97d-385fd3ec1c0mr5280390f8f.29.1733320072859;
-        Wed, 04 Dec 2024 05:47:52 -0800 (PST)
-Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385deeb6acdsm15939891f8f.81.2024.12.04.05.47.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 05:47:52 -0800 (PST)
-From: Dave Penkler <dpenkler@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: sfr@canb.auug.org.au,
-	Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH] staging: gpib: Workaround for ppc build failure
-Date: Wed,  4 Dec 2024 14:47:36 +0100
-Message-ID: <20241204134736.6660-1-dpenkler@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733320150; c=relaxed/simple;
+	bh=0j6FJ8fiuDYyiH6zzM42a3gMbVjQLvsLiYprWteC/PE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qC459oLEA2rW0zRSkbO1ETulSTaTdNoXzGGR3JQzTTh/oGZJR69Ng2zmuHTrtWLv3cVMTKvdXJT05Go2Iyz4L+T2uH4vD9iRw6UqAe+zQ0OGd7Y1Wu8MPgxo5IqMB7jEANammnewY+zHmDPdoXcerdVS5xvuleVNw+7Y0bvLQMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NsKgxXLg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733320148;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qsBR5UG4HjqdO1NFkUMDoQH9Jpl+TuhICWoMUDLMLik=;
+	b=NsKgxXLgEYs/1sOXYJPiGUzIpgmRCXArS3XFyDR/3rIx8R9uEgteWC7ZgejhDPcZMwaPPI
+	p+V4qCHm+0r/Yr9Gnaf5ib+HOfSI64RJLfrUjrEXIouZhW+srf0Ar329OOaRhAIGZh/pFG
+	e2LtwB0qIQeP9xEpUT4+59j5cM+gT/0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-245--aBLzE9zP2OUyHJDjRZ_bQ-1; Wed,
+ 04 Dec 2024 08:49:02 -0500
+X-MC-Unique: -aBLzE9zP2OUyHJDjRZ_bQ-1
+X-Mimecast-MFC-AGG-ID: -aBLzE9zP2OUyHJDjRZ_bQ
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 528E01956055;
+	Wed,  4 Dec 2024 13:48:58 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.134])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8E93E19560A2;
+	Wed,  4 Dec 2024 13:48:50 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  4 Dec 2024 14:48:36 +0100 (CET)
+Date: Wed, 4 Dec 2024 14:48:27 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	"Lai, Yi" <yi1.lai@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
+Message-ID: <20241204134826.GA923@redhat.com>
+References: <Zx9Losv4YcJowaP/@ly-workstation>
+ <Zx-B0wK3xqRQsCOS@localhost.localdomain>
+ <20241029172126.5XY8vLBH@linutronix.de>
+ <20241030140721.pZzb9D-u@linutronix.de>
+ <ZyJUzhzHGDu5CLdi@localhost.localdomain>
+ <20241107144617.MjCWysud@linutronix.de>
+ <Zy4OFlxoRK2jM5zo@localhost.localdomain>
+ <20241108190835.GA11231@redhat.com>
+ <Zy6QHHakztIXvudC@pavilion.home>
+ <20241111120857.5cWFpNkJ@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111120857.5cWFpNkJ@linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Make GPIB_FMH depend on !PPC
+On 11/11, Sebastian Andrzej Siewior wrote:
+>
+> On 2024-11-08 23:26:36 [+0100], Frederic Weisbecker wrote:
+> > > Please see
+> > > https://lore.kernel.org/all/1440816150.8932.123.camel@edumazet-glaptop2.roam.corp.google.com/
+> > > and the whole thread.
+>
+> Thank you for this Oleg.
+>
+> > > I don't think raw_spin_lock_irq + cmpxchg for each work is a good
+> > > idea, but quite possibly I misunderstood this change.
+> >
+> > I did not realize there could be gazillion files released in a row. So there
+> > could be noticeable performance issues I guess...
+>
+> I made a testcase to open 2M (2 *10^6) files and then exit. This led
+> task_work_run() run 2M + 3 callbacks (+ stdin/out/err) for the task.
+>
+> Running 70 samples on the "orig" kernel:
+> - avg callback time 1.156.470,3 us
+> - 63 samples are starting with 11 (1,1 sec) avg: 1.128.046,7 us
+> - 6 samples are starting with 14 (1,4 sec) avg: 1.435.294,8us
+>
+> Running 70 samples on the "patched" kernel:
+> - avg callback time 1.278.938,8 us
+> - 59 samples are starting with 12 (1,2 sec) avg: 1.230.189,1 us
+> - 10 samples are starting with 15 (1,5sec) avg: 1.555.934,5 us
+>
+> With the extra lock the task_work_run() runtime extends by approximately
+> ~122ms for the 2M invoked callbacks.
+> The spike 1,1sec -> 1,4sec or 1,2sec -> 1,5 sec is due to context
+> switching (there are few cond_resched()/ might_sleep()).
+>
+> It is not that bad, is it?
 
-Reported_by: Stephen Rothwell <sfr@canb.auug.org.au>
-Link: https://lore.kernel.org/all/20241015165538.634707e5@canb.auug.org.au/
+Not that bad, but I personally dislike this patch for other reasons.
+But lets forget it for the moment.
 
-Signed-off-by: Dave Penkler <dpenkler@gmail.com>
----
- drivers/staging/gpib/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The numbers in
 
-diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
-index 95308d15a555..a9b811165f6b 100644
---- a/drivers/staging/gpib/Kconfig
-+++ b/drivers/staging/gpib/Kconfig
-@@ -128,7 +128,7 @@ config GPIB_FMH
-        tristate "FMH FPGA based devices"
-        select GPIB_COMMON
-        select GPIB_NEC7210
--       depends on BROKEN
-+       depends on !PPC
-        depends on OF && PCI
-        help
-          GPIB driver for fmhess FPGA based devices
--- 
-2.47.1
+	PATCH] task_work: remove fifo ordering guarantee
+	https://lore.kernel.org/all/1440816150.8932.123.camel@edumazet-glaptop2.roam.corp.google.com/
+
+didn't look too bad too, yet they convinced Linus and other reviewers.
+
+I still think that fifo makes much more sense. The main (only?) offender
+is fput(), so perhaps we can do something like
+https://lore.kernel.org/all/20150907134924.GA24254@redhat.com/
+but when I look at this change now I see it is racy.
+
+Stupid question. What if we revert this "task_work: remove fifo ordering guarantee"
+patch above? Can this help?
+
+I don't understand this code and the problem. But when I (try to) read the
+previous discussion on lore.kernel.org it seems that perf_pending_task_sync()
+fails to cancel event->pending_task because it is called from task_work_run()
+and then rcuwait_wait_event() obviously hangs.
+
+Your patch can only help if task_work_add(current, &event->pending_task) was
+called before fput()->task_work_add(task, &file->f_task_work(), right?
+So perhaps, if we restore the fifo ordering, we can rely on the fact that
+current should call perf_pending_task() before it calls perf_release/free_event ?
+
+Sorry in advance, I am sure I have missed something...
+
+Oleg.
 
 
