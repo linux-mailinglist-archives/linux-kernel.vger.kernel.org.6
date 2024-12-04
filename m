@@ -1,178 +1,112 @@
-Return-Path: <linux-kernel+bounces-432393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE689E4A1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FB39E4878
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6506E163EA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD9881694A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39AD2066EE;
-	Wed,  4 Dec 2024 23:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDA6202C2B;
+	Wed,  4 Dec 2024 23:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/WCXuV5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YT0nZoWG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB9420DD5B;
-	Wed,  4 Dec 2024 23:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4E91917D7;
+	Wed,  4 Dec 2024 23:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733355408; cv=none; b=uMuX05zD1aALOo2W9F11JX8G+Cjff94p7+xrOiN7KaVFU7MSARiLc5HtPPf5FezaFyFGi5N/pYLErWkrAYF614QS6L0tqxxPn806d0i+Yby6U1AJd1YEpej6JjF4Xtw1mJlvexpQMYpNUvBAtY8i8CYoct1D2BzYjvA02fJ0/S8=
+	t=1733353859; cv=none; b=b/vlm+4BMhPkQAvU71MLp9Pt7ZPK/dqKGW6JNzY8aO8r5XEoDr4TBEOVqjgmZGPSxHxronkCiExW0gifYDxqMZ0pscWXKAks6QkbSNF6JMNSCnwK3/DT9RGdKxC2L+FWnlTPD2EUIJS0Tm/ujjdYhwyt9VBKn88hTD1L3snGvgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733355408; c=relaxed/simple;
-	bh=MFtM7Jc8YQIYkycGN7zLxsOEYcWNogypf6UQuSlYpF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JDTQc6iBm4XiPn/e60k382n4rSNHwHtCDfZVH/aopiyTMzCuykOMrr1N8nu4fIU/nUQx9GPVHAScsfp+4jxbMVrcOLPF+LRX5ttjf060o3LvYOWpkIWsW/T/cOeVA/bs+gRQ2jsmGBee6v6rKYTPjvf2BaabnQ2bKedfedJlo9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/WCXuV5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271BCC4CECD;
-	Wed,  4 Dec 2024 23:36:47 +0000 (UTC)
+	s=arc-20240116; t=1733353859; c=relaxed/simple;
+	bh=7XpoUhfG8MJEb4Fmy8iGPH/58klFSTC5STKYSZRdPQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UtzD4Hu8sSL/8ZgxaCQk4phASol2w72vC09M2DFQ57yxnDfbaBHy/o4DyqisNPSGVMphEr/6OMKEESIWfXjVvrbHIlR0Iyj2GHZzTZ/ujC1oVBFiTKrmE13BGDWStG1rI50m5sdfcSF9gd7ovQ4yQZcOU94a6OyXZABA/QOh120=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YT0nZoWG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CD4C4CECD;
+	Wed,  4 Dec 2024 23:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733355407;
-	bh=MFtM7Jc8YQIYkycGN7zLxsOEYcWNogypf6UQuSlYpF0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D/WCXuV5lvBj+rrm7qQpMdEwtA2p+tOK09fSRY1QnMrzU4tJCgTYZY3X3O94hB51l
-	 hXgdD8xGuOTGMT34ZmMqmhfXsKbfdmF6Ys6KgwYXSdI6t1UIiLUGt5s6DYJL7s2+Hv
-	 Tyg8nHyVUYdZs4oweeUC8sHxAjsLhFEGdj+kY2dfZ/83Ss2vBuQrBUFc8GFxy5rXdV
-	 +A1AWFJRMfKW+hbgwgePWPhy/0tvkq+fz+czc5C2temfORoWFSJjTTHQ5vA6Ub6/9v
-	 56qdph5y2Xhh81LyWST2rgt2ngjLVahfl+gq48BdQrEoye1QWbSAzjAeLpKAJcawaM
-	 E1ymNrEqbgh1A==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Parker Newman <pnewman@connecttech.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19] misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
-Date: Wed,  4 Dec 2024 17:25:20 -0500
-Message-ID: <20241204222528.2250575-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1733353858;
+	bh=7XpoUhfG8MJEb4Fmy8iGPH/58klFSTC5STKYSZRdPQ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YT0nZoWGHpepu2vQiyPAF527lbR3ZNU77EGCUanhHJ0GR2NX7HGuJ2Zcb2mUNzvN9
+	 F0vxJRbNdB7uch7LnST0dlKcrNVXV2rRPnX5/pjMkYHsQwObfG416NeTW+IBsCQqPg
+	 FniktmAElhIppocLFaR7yyGbgV7qYGKzQdCvHK6ZyRCbMMwBmFKYWcKbGc5s+TCi4d
+	 zPcdCptwyvqZBi5y7YdqUYIiIT4OCGmLc5hQpZdZXHLrq2V32fvtkAp/jYIe4iiYp/
+	 BO9vfBmSMRdZiJh9024capOJ3W+pTRtag30efwd9yB8ccNh3mb592XD2iyNJKwHaUK
+	 teATnJWy4pbJQ==
+Date: Wed, 4 Dec 2024 17:10:57 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org,
+	p.zabel@pengutronix.de, quic_nsekar@quicinc.com,
+	dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	Praveenkumar I <quic_ipkumar@quicinc.com>
+Subject: Re: [PATCH v2 4/6] pci: qcom: Add support for IPQ5332
+Message-ID: <20241204231057.GA3026683@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.324
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204113329.3195627-5-quic_varada@quicinc.com>
 
-From: Parker Newman <pnewman@connecttech.com>
+On Wed, Dec 04, 2024 at 05:03:27PM +0530, Varadarajan Narayanan wrote:
+> From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> 
+> The Qualcomm IPQ5332 PCIe controller instances are based on
+> SNPS core 5.90a with Gen3 Single-lane and Dual-lane support.
+> The Qualcomm IP can be handled by the 2.9.0 ops, hence using
+> that for IPQ5332.
 
-[ Upstream commit 7738a7ab9d12c5371ed97114ee2132d4512e9fd5 ]
+If you have occasion to update this series, please update the subject
+to follow the drivers/pci convention (use "git log --oneline
+drivers/pci/controller/dwc/pcie-qcom.c" and match the capitalization
+style):
 
-Add a quirk similar to eeprom_93xx46 to add an extra clock cycle before
-reading data from the EEPROM.
+  PCI: qcom: Add IPQ5332 support
 
-The 93Cx6 family of EEPROMs output a "dummy 0 bit" between the writing
-of the op-code/address from the host to the EEPROM and the reading of
-the actual data from the EEPROM.
-
-More info can be found on page 6 of the AT93C46 datasheet (linked below).
-Similar notes are found in other 93xx6 datasheets.
-
-In summary the read operation for a 93Cx6 EEPROM is:
-Write to EEPROM:	110[A5-A0]	(9 bits)
-Read from EEPROM:	0[D15-D0]	(17 bits)
-
-Where:
-	110 is the start bit and READ OpCode
-	[A5-A0] is the address to read from
-	0 is a "dummy bit" preceding the actual data
-	[D15-D0] is the actual data.
-
-Looking at the READ timing diagrams in the 93Cx6 datasheets the dummy
-bit should be clocked out on the last address bit clock cycle meaning it
-should be discarded naturally.
-
-However, depending on the hardware configuration sometimes this dummy
-bit is not discarded. This is the case with Exar PCI UARTs which require
-an extra clock cycle between sending the address and reading the data.
-
-Datasheet: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPROM-AT93C46D-Datasheet.pdf
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Parker Newman <pnewman@connecttech.com>
-Link: https://lore.kernel.org/r/0f23973efefccd2544705a0480b4ad4c2353e407.1727880931.git.pnewman@connecttech.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/misc/eeprom/eeprom_93cx6.c | 10 ++++++++++
- include/linux/eeprom_93cx6.h       | 11 +++++++++++
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/misc/eeprom/eeprom_93cx6.c b/drivers/misc/eeprom/eeprom_93cx6.c
-index 0cf2c9d676be8..31c69642f13e0 100644
---- a/drivers/misc/eeprom/eeprom_93cx6.c
-+++ b/drivers/misc/eeprom/eeprom_93cx6.c
-@@ -195,6 +195,11 @@ void eeprom_93cx6_read(struct eeprom_93cx6 *eeprom, const u8 word,
- 	eeprom_93cx6_write_bits(eeprom, command,
- 		PCI_EEPROM_WIDTH_OPCODE + eeprom->width);
- 
-+	if (has_quirk_extra_read_cycle(eeprom)) {
-+		eeprom_93cx6_pulse_high(eeprom);
-+		eeprom_93cx6_pulse_low(eeprom);
-+	}
-+
- 	/*
- 	 * Read the requested 16 bits.
- 	 */
-@@ -261,6 +266,11 @@ void eeprom_93cx6_readb(struct eeprom_93cx6 *eeprom, const u8 byte,
- 	eeprom_93cx6_write_bits(eeprom, command,
- 		PCI_EEPROM_WIDTH_OPCODE + eeprom->width + 1);
- 
-+	if (has_quirk_extra_read_cycle(eeprom)) {
-+		eeprom_93cx6_pulse_high(eeprom);
-+		eeprom_93cx6_pulse_low(eeprom);
-+	}
-+
- 	/*
- 	 * Read the requested 8 bits.
- 	 */
-diff --git a/include/linux/eeprom_93cx6.h b/include/linux/eeprom_93cx6.h
-index eb0b1988050ae..ec913059a5299 100644
---- a/include/linux/eeprom_93cx6.h
-+++ b/include/linux/eeprom_93cx6.h
-@@ -24,6 +24,8 @@
- 	Supported chipsets: 93c46, 93c56 and 93c66.
-  */
- 
-+#include <linux/bits.h>
-+
- /*
-  * EEPROM operation defines.
-  */
-@@ -47,6 +49,7 @@
-  * @register_write(struct eeprom_93cx6 *eeprom): handler to
-  * write to the eeprom register by using all reg_* fields.
-  * @width: eeprom width, should be one of the PCI_EEPROM_WIDTH_* defines
-+ * @quirks: eeprom or controller quirks
-  * @drive_data: Set if we're driving the data line.
-  * @reg_data_in: register field to indicate data input
-  * @reg_data_out: register field to indicate data output
-@@ -63,6 +66,9 @@ struct eeprom_93cx6 {
- 	void (*register_write)(struct eeprom_93cx6 *eeprom);
- 
- 	int width;
-+	unsigned int quirks;
-+/* Some EEPROMs require an extra clock cycle before reading */
-+#define PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE	BIT(0)
- 
- 	char drive_data;
- 	char reg_data_in;
-@@ -84,3 +90,8 @@ extern void eeprom_93cx6_wren(struct eeprom_93cx6 *eeprom, bool enable);
- 
- extern void eeprom_93cx6_write(struct eeprom_93cx6 *eeprom,
- 			       u8 addr, u16 data);
-+
-+static inline bool has_quirk_extra_read_cycle(struct eeprom_93cx6 *eeprom)
-+{
-+	return eeprom->quirks & PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE;
-+}
--- 
-2.43.0
-
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v2: Removed dependency on [1]
+> 
+> 1. https://lore.kernel.org/all/20230519090219.15925-1-quic_devipriy@quicinc.com/
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index dc102d8bd58c..68e6f97535db 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1835,6 +1835,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>  	{ .compatible = "qcom,pcie-apq8064", .data = &cfg_2_1_0 },
+>  	{ .compatible = "qcom,pcie-apq8084", .data = &cfg_1_0_0 },
+>  	{ .compatible = "qcom,pcie-ipq4019", .data = &cfg_2_4_0 },
+> +	{ .compatible = "qcom,pcie-ipq5332", .data = &cfg_2_9_0 },
+>  	{ .compatible = "qcom,pcie-ipq6018", .data = &cfg_2_9_0 },
+>  	{ .compatible = "qcom,pcie-ipq8064", .data = &cfg_2_1_0 },
+>  	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
+> -- 
+> 2.34.1
+> 
+> 
+> -- 
+> linux-phy mailing list
+> linux-phy@lists.infradead.org
+> https://lists.infradead.org/mailman/listinfo/linux-phy
 
