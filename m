@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-430712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39009E34A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:56:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 088AD9E34A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6971C286277
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:56:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2443284F84
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADB31DF745;
-	Wed,  4 Dec 2024 07:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F911F471D;
+	Wed,  4 Dec 2024 07:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i6ZzN4Di"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X6NbV12S"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3388B193091
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20C51DFE1E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733298566; cv=none; b=gF/M/6hz3vP0XFP32wNQpjEDaaBsKWTEvWDUCuXdnj+XmVp0pI+izOM0aoypCrXd92QCTxRStlwGJFhcZNKGJfll6hH1rF6hrs2vDNkPnHvQB5wsOYNguNN4gxWwE20PiGEKbe/D/QQGUD4PvoeVyTsSDNv606L0j+y6m9TpLEk=
+	t=1733298570; cv=none; b=VBl3zoTtDxs6gntwnM4jqS3qI5g6cKUkttZrX+cqeNtVotVdGmnGfkF+9xV8XqVxi1keHM7SHEuZvMbgmz+8A0aJudCLn60Gjn0bqiWFYwDaxW0PcZz2HydHOXrgknRtfsqms4MYBQLvt/PoJeC8cpWqSG2u/ukIkH/DvEuudJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733298566; c=relaxed/simple;
-	bh=YtjjrJglzNbaWY3oR5O84SLCh/26+LOHepc0+fkoFTo=;
+	s=arc-20240116; t=1733298570; c=relaxed/simple;
+	bh=q8eI2LFlXh5tUytmJruAwYqFJpkoG3KwZN+jS6Rw+WQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mfVs5IRLX6RdLa9Pm37eVdYLKhdL+0SEkCzKaMFv2Z2m1B+QP62Sqc0YYFONBctrRDQSsXxnenWgodsFI1dFQg3aBsFXTE6UeGjaKVDH3w//VmH5y1o6izvPYIrynoxU+3I+GNPFHp6cLAFhH6jScEJXaqjZtr+HsRPML8SQt8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i6ZzN4Di; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=oqFxXopMnPFDGpSExDg27X+zHG8X+y44K/DRek0a8aCw9RUDhdl0XQTDOgxAL0kO00utRN1ni9sBLOiof1xWLhMVo4YIDpdalpLsoHM+Z9Q2H6rDtzkX2U/xd0uyxnm87XTHDzxVcBafPaElkxVi6FLiVT96DRQ/wbYv5GKYun4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X6NbV12S; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733298564;
+	s=mimecast20190719; t=1733298567;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rF+8sPKxES4A1AKWrEyikFQcOwxRXaA9QVPagIN61Ew=;
-	b=i6ZzN4DioMyCYAWANKTSQv5CIlxoj0frc2/14ttgp8ZhaAvAL+bEuYkfCAba/jZ72pRHyK
-	J8FtP56505bLY9u6wmwIzrDOY3RSk68xPfyJOZS7IyuWPBpQhz4xiZanEcDrnEjSTdPXrI
-	GtStpaTgxqAeFXAfxL3UVATzfT+cqOA=
+	bh=oQgmi9sMCMQxv1vrK3Hj0AIG3gww5bOixPaAJ5ZigAk=;
+	b=X6NbV12SZz8rdhU1ojhHeg21IG036+BbeLCxnV9v/3dQN2BG33V4/YYNoYFoz1IngH8VLO
+	jljRK2gLvMmCSH0g8vR8vOzjmopj5bgirBXYnuUQTxx56CTrtUGv9ys4Pnw4jyT9Fkz0ka
+	Bfi+d3bFeOivdNZN261wWPlacqvnI2A=
 Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-yxjoyEIPObS8NWWEPyEmgA-1; Wed,
- 04 Dec 2024 02:49:19 -0500
-X-MC-Unique: yxjoyEIPObS8NWWEPyEmgA-1
-X-Mimecast-MFC-AGG-ID: yxjoyEIPObS8NWWEPyEmgA
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-aZVkxZFGPmSVjevHovESwg-1; Wed,
+ 04 Dec 2024 02:49:23 -0500
+X-MC-Unique: aZVkxZFGPmSVjevHovESwg-1
+X-Mimecast-MFC-AGG-ID: aZVkxZFGPmSVjevHovESwg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F96D1956053;
-	Wed,  4 Dec 2024 07:49:17 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5791B19560A2;
+	Wed,  4 Dec 2024 07:49:22 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.48])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A29BB3000199;
-	Wed,  4 Dec 2024 07:49:14 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E210E1956048;
+	Wed,  4 Dec 2024 07:49:18 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: netdev@vger.kernel.org
 Cc: David Howells <dhowells@redhat.com>,
@@ -66,11 +66,10 @@ Cc: David Howells <dhowells@redhat.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
 	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Simon Wilkinson <sxw@auristor.com>
-Subject: [PATCH net-next v2 29/39] rxrpc: Fix the calculation and use of RTO
-Date: Wed,  4 Dec 2024 07:46:57 +0000
-Message-ID: <20241204074710.990092-30-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 30/39] rxrpc: Fix initial resend timeout
+Date: Wed,  4 Dec 2024 07:46:58 +0000
+Message-ID: <20241204074710.990092-31-dhowells@redhat.com>
 In-Reply-To: <20241204074710.990092-1-dhowells@redhat.com>
 References: <20241204074710.990092-1-dhowells@redhat.com>
 Precedence: bulk
@@ -80,27 +79,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Make the following changes to the calculation and use of RTO:
+The constant for the initial resend timeout is in milliseconds, but the
+variable it's assigned to is in microseconds.  Fix the constant to be in
+microseconds.
 
- (1) Fix rxrpc_resend() to use the backed-off RTO value obtained by calling
-     rxrpc_get_rto_backoff() rather than extracting the value itself.
-     Without this, it may retransmit packets too early.
-
- (2) The RTO value being similar to the RTT causes a lot of extraneous
-     resends because the RTT doesn't end up taking account of clearing out
-     of the receive queue on the server.  Worse, responses to PING-ACKs are
-     made as fast as possible and so are less than the DATA-requested-ACK
-     RTT and so skew the RTT down.
-
-     Fix this by putting a lower bound on the RTO by adding 100ms to it and
-     limiting the lower end to 200ms.
-
-Fixes: c410bf01933e ("rxrpc: Fix the excessive initial retransmission timeout")
-Fixes: 37473e416234 ("rxrpc: Clean up the resend algorithm")
 Signed-off-by: David Howells <dhowells@redhat.com>
-Suggested-by: Simon Wilkinson <sxw@auristor.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
 cc: "David S. Miller" <davem@davemloft.net>
 cc: Eric Dumazet <edumazet@google.com>
@@ -109,36 +94,21 @@ cc: Paolo Abeni <pabeni@redhat.com>
 cc: linux-afs@lists.infradead.org
 cc: netdev@vger.kernel.org
 ---
- net/rxrpc/call_event.c | 3 ++-
- net/rxrpc/rtt.c        | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ net/rxrpc/rtt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/rxrpc/call_event.c b/net/rxrpc/call_event.c
-index f71773b18e22..4390c97e3ba6 100644
---- a/net/rxrpc/call_event.c
-+++ b/net/rxrpc/call_event.c
-@@ -103,7 +103,8 @@ void rxrpc_resend(struct rxrpc_call *call, rxrpc_serial_t ack_serial, bool ping_
- 		.now	= ktime_get_real(),
- 	};
- 	struct rxrpc_txqueue *tq = call->tx_queue;
--	ktime_t lowest_xmit_ts = KTIME_MAX, rto	= ns_to_ktime(call->peer->rto_us * NSEC_PER_USEC);
-+	ktime_t lowest_xmit_ts = KTIME_MAX;
-+	ktime_t rto = rxrpc_get_rto_backoff(call->peer, false);
- 	bool unacked = false;
- 
- 	_enter("{%d,%d}", call->tx_bottom, call->tx_top);
 diff --git a/net/rxrpc/rtt.c b/net/rxrpc/rtt.c
-index e0b7d99854b4..3f1ec8e420a6 100644
+index 3f1ec8e420a6..aff75e168de8 100644
 --- a/net/rxrpc/rtt.c
 +++ b/net/rxrpc/rtt.c
-@@ -27,7 +27,7 @@ static u32 __rxrpc_set_rto(const struct rxrpc_peer *peer)
+@@ -12,7 +12,7 @@
+ #include "ar-internal.h"
  
- static u32 rxrpc_bound_rto(u32 rto)
- {
--	return umin(rto, RXRPC_RTO_MAX);
-+	return clamp(200000, rto + 100000, RXRPC_RTO_MAX);
- }
+ #define RXRPC_RTO_MAX	(120 * USEC_PER_SEC)
+-#define RXRPC_TIMEOUT_INIT ((unsigned int)(1 * MSEC_PER_SEC)) /* RFC6298 2.1 initial RTO value */
++#define RXRPC_TIMEOUT_INIT ((unsigned int)(1 * USEC_PER_SEC)) /* RFC6298 2.1 initial RTO value */
+ #define rxrpc_jiffies32 ((u32)jiffies)		/* As rxrpc_jiffies32 */
  
- /*
+ static u32 rxrpc_rto_min_us(struct rxrpc_peer *peer)
 
 
