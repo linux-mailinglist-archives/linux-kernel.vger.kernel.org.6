@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-431700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C439E4312
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:12:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0149E414F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:23:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16E8DB64251
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:05:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A955B64E5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B8123099D;
-	Wed,  4 Dec 2024 16:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D783DABF5;
+	Wed,  4 Dec 2024 16:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHXmAJDR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RrjCbauj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFCA230995;
-	Wed,  4 Dec 2024 16:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBDD20E306;
+	Wed,  4 Dec 2024 16:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331527; cv=none; b=itpvzLJcY2arxElvzbXJ6U0hlbNdGsw8OoW2gcYtJD0F3gQJV3vyF+gIsr/d+iDk2pspeQXVOf2UL8QH8ClSI0KPTMDWOMEBWTF3MG1IvvKdwaNw3LRFr4RnR+QldKk+/N5iSdh8VsyFhfRwTH1fz0fjcdx0tGADG2XS48ABSng=
+	t=1733331539; cv=none; b=tzzrI0iUyR19LTqVfL773d2xuH0JLnv3wDvbmIG3dpkuQ2Larrvp823MMn/DTiVpb6ffvl90ll/FVUvmkC5tvj4AxDMapxNH5bl2sMDWqZEVDrVq9l5Vlioj8rPxvhdln/IIOegK1XmRLNy0DJINpaUnmJ77Qylvn5IaguTMPQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331527; c=relaxed/simple;
-	bh=jL/RgBUIFHij6tVEOwmpRNZtSrfS7K4xo6QB6iNlzm0=;
+	s=arc-20240116; t=1733331539; c=relaxed/simple;
+	bh=u7iL59JZ+LF+ix8WSFcbLB17jl81Z2NxO53eafh12M8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzsmxHWy1b1GM6oPWmmL3J38yGFP5ZOCWrFL0j0a9gCy+GJQ8SNQ0vKacMVYKzPsbvGEKFn0Wj03nKuBX21jzw5QMjkTm8mKVK7TohH6cDTCDImMSfeXWI0pP7o6iJapvuyBlvGrMWxUkVZ/4Z9qX7o2c76VnRNhQXbJnEJ+78s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHXmAJDR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF07C4CECD;
-	Wed,  4 Dec 2024 16:58:45 +0000 (UTC)
+	 MIME-Version; b=ozeDgK4hlfeof38u3of7EmiIvbU+1f3UTqA+aPTvbnAJTguVV2jEcbnXSDZFG6fRxRJTFiMzZH1sLNLsBhLPSUnwhW5+Omf/bkjvV71L8HjwwsyfeLu47CGiXJLzRHNXx1Jkhqh9eB/ufgcgE+q7LNFOi0IURkGINDLLYg4khSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RrjCbauj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3F8C4CED1;
+	Wed,  4 Dec 2024 16:58:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331526;
-	bh=jL/RgBUIFHij6tVEOwmpRNZtSrfS7K4xo6QB6iNlzm0=;
+	s=k20201202; t=1733331538;
+	bh=u7iL59JZ+LF+ix8WSFcbLB17jl81Z2NxO53eafh12M8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MHXmAJDR+KYAzG7s/Rab76vUAr4sVvkcngPZIsHJCMbpRWti5fuXkfcArH+o0v7Si
-	 lr2oRX26z+DoGCxMIYEQt1GJOTIrnvUdoOl/osvLL09TBwyD7BWQCKAsDHvlVilna5
-	 lJLdZzncW0VGdCHv7pbNHFo6IaAL63bLcmsgBdKFeACy5InNy92xwHHvadgQQVRwvz
-	 sj+K6Oow6JfF+T6eS//i8m/5AsCqeoDO5FgEzbXnXIU9k8jiAnJHiWSftIlvPlCFEP
-	 a1C8kUibofZCqY1ua8CRpuD+1S57M2/M+4N0Q8fU2uVOvxyXR3Oo7gszwUJKlNwqHV
-	 mfTUmKYtiOkaw==
+	b=RrjCbaujZZU4rTws3aN7S8Tcs+ePgAi1kkuRIG3Dc6Fq1DLvpj/lFnBWcD4y6lVYj
+	 UDomamL5vq3FwBR86RNsJ5EqfTK0+UZ/QM/sHoItYEEiQTpKaJTO+OvbVPm70G2nbl
+	 fNBWpiB+ICe1AeEZJKVQ4J9Wzf2qiWpr3lOWOYGoGeGocASDpXPfIjuiJ1t8R2Mv5i
+	 tSAKGCTkRXI/7gewqnddrH3EEXjrzuilTmamOnor6ATmcTVHlLOlvCfDijSPLm8MDg
+	 2yMG1pi3APkSnb0TIDfoU0ujTf3I2EZUI/7+CWTf8XYepriiOrq2936SpcTK/+/rJv
+	 YTxdQXiJKomNw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
+Cc: furkanonder <furkanonder@protonmail.com>,
+	"jkacur@redhat.com" <jkacur@redhat.com>,
+	"lgoncalv@redhat.com" <lgoncalv@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	Sasha Levin <sashal@kernel.org>,
-	andersson@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 29/36] pinctrl: qcom: spmi-mpp: Add PM8937 compatible
-Date: Wed,  4 Dec 2024 10:45:45 -0500
-Message-ID: <20241204154626.2211476-29-sashal@kernel.org>
+	bristot@kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 34/36] tools/rtla: Enhance argument parsing in timerlat_load.py
+Date: Wed,  4 Dec 2024 10:45:50 -0500
+Message-ID: <20241204154626.2211476-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -62,40 +63,66 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Barnabás Czémán <barnabas.czeman@mainlining.org>
+From: furkanonder <furkanonder@protonmail.com>
 
-[ Upstream commit f755261190e88f5d19fe0a3b762f0bbaff6bd438 ]
+[ Upstream commit bd26818343dc02936a4f2f7b63368d5e1e1773c8 ]
 
-The PM8937 provides 4 MPPs.
-Add a compatible to support them.
+The enhancements made to timerlat_load.py are aimed at improving the clarity of argument parsing.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-Link: https://lore.kernel.org/20241031-msm8917-v2-4-8a075faa89b1@mainlining.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Summary of Changes:
+- The cpu argument is now specified as an integer type in the argument
+  parser to enforce input validation, and the construction of affinity_mask
+  has been simplified to directly use the integer value of args.cpu.
+- The prio argument is similarly updated to be of integer type for
+  consistency and validation, eliminating the need for the conversion of
+  args.prio to an integer, as this is now handled by the argument parser.
+
+Cc: "jkacur@redhat.com" <jkacur@redhat.com>
+Cc: "lgoncalv@redhat.com" <lgoncalv@redhat.com>
+Link: https://lore.kernel.org/QfgO7ayKD9dsLk8_ZDebkAV0OF7wla7UmasbP9CBmui_sChOeizy512t3RqCHTjvQoUBUDP8dwEOVCdHQ5KvVNEiP69CynMY94SFDERWl94=@protonmail.com
+Signed-off-by: Furkan Onder <furkanonder@protonmail.com>
+Reviewed-by: Tomas Glozar <tglozar@redhat.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/tracing/rtla/sample/timerlat_load.py | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index d16ece90d926c..5fa04e7c1d5c4 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -983,6 +983,7 @@ static const struct of_device_id pmic_mpp_of_match[] = {
- 	{ .compatible = "qcom,pm8226-mpp", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8841-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm8916-mpp", .data = (void *) 4 },
-+	{ .compatible = "qcom,pm8937-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm8941-mpp", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8950-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pmi8950-mpp", .data = (void *) 4 },
+diff --git a/tools/tracing/rtla/sample/timerlat_load.py b/tools/tracing/rtla/sample/timerlat_load.py
+index 8cc5eb2d2e69e..52eccb6225f92 100644
+--- a/tools/tracing/rtla/sample/timerlat_load.py
++++ b/tools/tracing/rtla/sample/timerlat_load.py
+@@ -25,13 +25,12 @@ import sys
+ import os
+ 
+ parser = argparse.ArgumentParser(description='user-space timerlat thread in Python')
+-parser.add_argument("cpu", help='CPU to run timerlat thread')
+-parser.add_argument("-p", "--prio", help='FIFO priority')
+-
++parser.add_argument("cpu", type=int, help='CPU to run timerlat thread')
++parser.add_argument("-p", "--prio", type=int, help='FIFO priority')
+ args = parser.parse_args()
+ 
+ try:
+-    affinity_mask = { int(args.cpu) }
++    affinity_mask = {args.cpu}
+ except:
+     print("Invalid cpu: " + args.cpu)
+     exit(1)
+@@ -44,7 +43,7 @@ except:
+ 
+ if (args.prio):
+     try:
+-        param = os.sched_param(int(args.prio))
++        param = os.sched_param(args.prio)
+         os.sched_setscheduler(0, os.SCHED_FIFO, param)
+     except:
+         print("Error setting priority")
 -- 
 2.43.0
 
