@@ -1,223 +1,283 @@
-Return-Path: <linux-kernel+bounces-430561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412059E32D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:02:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B919E9E32DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:08:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E743A283DDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414121646E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF2F17335C;
-	Wed,  4 Dec 2024 05:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CE6184527;
+	Wed,  4 Dec 2024 05:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrgiif3C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="sXXBhTxw"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF7D2500D2;
-	Wed,  4 Dec 2024 05:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22C91591E3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 05:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733288520; cv=none; b=tm23w+22Og2Z26bYri/JS42oZlrAugdaNX3bjx9uBJ5bGuKOjEIffro9tVHFSfO0ZV1YTFur3nQnlHmUVPoAulBVm05/PKV8kKTrUeHsRtpSBOOXEqmogUNIHJLMvqzqen0BSYCkd0nCVThYP6EhAwayIUVQJjpyYSP65ckMj8s=
+	t=1733288881; cv=none; b=uM4XatyWFh08TEAwM1jAg4Rh3IG/foLMe7QJPKcJYkaXirHfrlXZtDWhz5fX1ZL2xBpry5+lZspxWN1hPelLLBT3USVUnB7kC3ru6uhAE0MrIWA47zr9tT2fDNe8yA2/uiQ/k2Cs/uxXfrsF4B+CURK5ZwNRfxLluEASVL0fa9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733288520; c=relaxed/simple;
-	bh=Z2r+meoiww+z2J9ZDDWze7d4oLsTH8tux9nd2txvRIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bl//NYlqaVF6Eb3t/AqoapHOQFi5Dbx5LIiiF2EBgYzcGsFv+hD7y8W4JyppOaCtGzNn9RxrToSMp3M+CIK268saALflzs2aHjhx2vS/6V6I+/vVQxgRV7uQHD91ExWCdTO74WV+KGhP1hGBoyU+QJ0eozcujJxgQ20QOSGTmTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qrgiif3C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2044DC4CED1;
-	Wed,  4 Dec 2024 05:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733288520;
-	bh=Z2r+meoiww+z2J9ZDDWze7d4oLsTH8tux9nd2txvRIY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=qrgiif3CtJvXRKiXzEPXN1LmIvWpr5Ot0OqWz6F3PZAFeVA/uP0/1HKREU+YAAPWr
-	 do7FIvz8RzjKRCoG/VYabxkwUGuuRNhLC6IrWVYfbUX1niO4d0r4kmN3Ft9fUCZ14M
-	 q64Xt6DOjqDDjjERCQIYKnxUJ4PF/MJk9R7c5BN8FsIC65wK5Pi3ZFCtE0+Urcp7bn
-	 EyEuwnIVbc3Vp2nMY0BgwiVSxlSfBdsusWiHnbD/SPHSby2WFeUfNLULQ5AGnxTssj
-	 TcC9AqzA/jsjCZL/7CbfgAePkZwjOa1UMaejGCr+v9O2V9M7ZKEjFSk/MXQLp+XqfC
-	 DwcbF+k28rqYw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 54549CE071A; Tue,  3 Dec 2024 21:01:59 -0800 (PST)
-Date: Tue, 3 Dec 2024 21:01:59 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org, Paul Burton <paulburton@kernel.org>
-Subject: Re: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
-Message-ID: <60749a43-17ad-4491-a13f-a2db7b6cb00c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241003181629.36209057@gandalf.local.home>
- <bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net>
- <20241203155542.462b1b21@gandalf.local.home>
- <ee401848-f7a1-4877-b896-36bec32ca985@roeck-us.net>
- <20241203220153.3f81f12b@gandalf.local.home>
+	s=arc-20240116; t=1733288881; c=relaxed/simple;
+	bh=E6K2qhXKBZqacA8cIcKWmp7q2R60C0PDZf74XcJ1ptE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HNvOpcBp+QibkgMr3yJdNuosZsAh5y1FfvE1qN/Osg8IcLFsL1Fzm0ewShBOLMofRXeGz8Nu0R1YXCzUoUq/9LuYadINqPtyb/iNwvTrd7p8vStwDV78gLHJdjyTYwHbBT/h77agKGwVewgZ71TYND66bjCOdxNEsekxYbodnMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=sXXBhTxw; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C8B953FDB1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 05:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1733288875;
+	bh=HPspYRYMA8Krw+dq7W0oGtPutTxQv4jYXZxqmAy++mo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=sXXBhTxwpJiCk3Fe+QjfWnEpmUi9v/jPS2kPckUQQ0m/i2GtM6juHh3yBkna0p4Wy
+	 N6ouGobQdFeXoH1Dk0oQXqH6wRj99sI9jxZmBBbiOHI9W5J91aNMZzI/hTg8kIg+aS
+	 BJOmN/on4KndtXx9n5SRY9ub2O9kOoDC5b4CaqbOomL2fHQjnwXCRfEFnjRyKt5AcT
+	 OjjRG7nSHUXuIcGmnWFTpmgyVgoF6TeWbFJ/Ehxj5B1KEhPGRRP5hDLartYAnAM0p6
+	 o69s4HVTIIfaXuahbracjazcPzWFMGRkh8chFe4fLZ5WcAI7oG6/I5/uHdFfyTANDG
+	 Goe0TUFjNwFdw==
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-7f80959f894so496578a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 21:07:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733288874; x=1733893674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HPspYRYMA8Krw+dq7W0oGtPutTxQv4jYXZxqmAy++mo=;
+        b=vaoN6e1bxeUl8OHj78S4/D+awyM0PpbmfIbPqpAzoy4XRto2bXTRSZBiM7vd/XoMAB
+         X7s9dX68LsD882d5bzkLJ4ftL1lo+ocd7QaYmrKFlgLzbx7abrZ2GhHKk2cIp1vziAsl
+         Ob28vYx6bRLb1O5eXd1egU2oBJ+UUQYbY2UFsC64hsscvE6RIs3/dTDlNhF1nOhxqsty
+         iFYcj74XLp6VPYPZsHcipdjaxzThJdhaj2n3lYLg98Okk8sz0FbTnFpyKoYC0w3Yr+dy
+         1JEjRfkVCTJnqR2kByroTCaUyxV6CTLIjHxGevojMHCiWvYGGrmYdN8k7OxK4eFmeG7Y
+         t2cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOO8uA+axVpmSb/aiAFNuuX9nFHnEUcSpLmmkZM4thst2Z1C386qdZdOQdIXSkNO1dli0jiCrWf7Iy+6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv5vp/15BvlFwUxaJp5lA8c3FnV+b9z6mVdP53OyZkSD/krcuc
+	aqbeuJ+xMjECyOFsXUq6RbZkycLVMA3GJdT409MozDOQ4/bCGn8Q5yOOciYm5RVzIkE8Pgcr/Xl
+	D4hfk77mQo5CUYHUa47XV0pT7QzYwOchT1dVeMnnzAJnOXd3DLA4HI3DlTfBtWVpD8vLW1iatqr
+	ghPueDT9jXfw==
+X-Gm-Gg: ASbGncu2/PTlfPevFqcTAqwArA8ejgaqARRZctUIyJ7IA56akUZ749awB0HvlA87+H9
+	zjbm1N4D0hQQYlth0rk6CK/30Z8wNI38h2+ZURZqJ4J4kSKNfHMA6gZXgahvqYHMshueFjSRePe
+	0Wj1WTT8DlIcHLfBN7RHKZ7Aw8qBob7YyWbc/UlJKVDeWJQD05ZvprAGl2Vf4iI9f6i4CFN/8uk
+	VYBmyh6I5n8P+WClRft3CDakFv0bnh0qZ998W4szlx3ai3swU3qqHDI8s2QeVOXZ9+C
+X-Received: by 2002:a05:6a21:33a1:b0:1d9:19bc:9085 with SMTP id adf61e73a8af0-1e165aac0e4mr8466214637.14.1733288874080;
+        Tue, 03 Dec 2024 21:07:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFsN9k6xrnXp0/S+euHyL/sc1Zt915RrbukH8WMzqI+Lfptb/W6Kj4WHOBELiBcGyANMEVGBw==
+X-Received: by 2002:a05:6a21:33a1:b0:1d9:19bc:9085 with SMTP id adf61e73a8af0-1e165aac0e4mr8466178637.14.1733288873702;
+        Tue, 03 Dec 2024 21:07:53 -0800 (PST)
+Received: from localhost.localdomain ([240f:74:7be:1:9c88:3d14:cbea:e537])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd0a0682d6sm145466a12.10.2024.12.03.21.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 21:07:53 -0800 (PST)
+From: Koichiro Den <koichiro.den@canonical.com>
+To: virtualization@lists.linux.dev
+Cc: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	jiri@resnulli.us,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net-next v3 0/7] virtio_net: correct netdev_tx_reset_queue() invocation points
+Date: Wed,  4 Dec 2024 14:07:17 +0900
+Message-ID: <20241204050724.307544-1-koichiro.den@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203220153.3f81f12b@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 10:01:53PM -0500, Steven Rostedt wrote:
-> On Tue, 3 Dec 2024 17:48:33 -0800
-> Guenter Roeck <linux@roeck-us.net> wrote:
-> 
-> > Hmm. If you say so. Note that powerpc has the same or a similar problem.
-> > 
-> > [    0.142039][    T0] RCU not watching for tracepoint
-> > [    0.142488][    T0]
-> > [    0.142659][    T0] =============================
-> > [    0.142755][    T0] WARNING: suspicious RCU usage
-> > [    0.142914][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
-> > [    0.143082][    T0] -----------------------------
-> > [    0.143178][    T0] kernel/notifier.c:586 notify_die called but RCU thinks we're quiescent!
-> > 
-> > 
-> > [    0.152733][    T0] RCU not watching for tracepoint
-> > [    0.152770][    T0]
-> > [    0.152995][    T0] =============================
-> > [    0.153092][    T0] WARNING: suspicious RCU usage
-> > [    0.153187][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
-> > [    0.153301][    T0] -----------------------------
-> > [    0.153394][    T0] include/linux/rcupdate.h:850 rcu_read_lock() used illegally while idle!
-> > 
-> > [    0.165396][    T0] RCU not watching for tracepoint
-> > [    0.165540][    T0]
-> > [    0.165712][    T0] =============================
-> > [    0.165811][    T0] WARNING: suspicious RCU usage
-> > [    0.165909][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
-> > [    0.166026][    T0] -----------------------------
-> > [    0.166122][    T0] include/linux/rcupdate.h:878 rcu_read_unlock() used illegally while idle!
-> > 
-> > and many more.
-> 
-> Grumble. It's just that one file. I wonder if we could just do a hack like
-> this?
-> 
-> Paul?
+When virtnet_close is followed by virtnet_open, some TX completions can
+possibly remain unconsumed, until they are finally processed during the
+first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
+[1]. Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
+before RX napi enable") was not sufficient to eliminate all BQL crash
+cases for virtio-net.
 
-Looks plausible to me, though I don't understand why the introduction
-of trace() doesn't permit removal of the corresponding current code.
-(Or did I miss a previous patch that did just that?)
+This issue can be reproduced with the latest net-next master by running:
+`while :; do ip l set DEV down; ip l set DEV up; done` under heavy network
+TX load from inside the machine.
 
-							Thanx, Paul
+This patch series resolves the issue and also addresses similar existing
+problems:
 
-> diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-> index 5c03633316a6..58098873efa9 100644
-> --- a/kernel/trace/trace_preemptirq.c
-> +++ b/kernel/trace/trace_preemptirq.c
-> @@ -10,11 +10,42 @@
->  #include <linux/module.h>
->  #include <linux/ftrace.h>
->  #include <linux/kprobes.h>
-> +#include <linux/hardirq.h>
->  #include "trace.h"
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/preemptirq.h>
->  
-> +/*
-> + * Use regular trace points on architectures that implement noinstr
-> + * tooling: these calls will only happen with RCU enabled, which can
-> + * use a regular tracepoint.
-> + *
-> + * On older architectures, RCU may not be watching in idle. In that
-> + * case, wake up RCU to watch while calling the tracepoint. These
-> + * aren't NMI-safe - so exclude NMI contexts:
-> + */
-> +#ifdef CONFIG_ARCH_WANTS_NO_INSTR
-> +#define trace(point, args)	trace_##point(args)
-> +#else
-> +#define trace(point, args)					\
-> +	do {							\
-> +		if (trace_##point##_enabled()) {		\
-> +			bool exit_rcu = false;			\
-> +			if (in_nmi())				\
-> +				break;				\
-> +			if (!IS_ENABLED(CONFIG_TINY_RCU) &&	\
-> +			    is_idle_task(current)) {		\
-> +				ct_irq_enter();			\
-> +				exit_rcu = true;		\
-> +			}					\
-> +			trace_##point(args);			\
-> +			if (exit_rcu)				\
-> +				ct_irq_exit();			\
-> +		}						\
-> +	} while (0)
-> +#endif
-> +
->  #ifdef CONFIG_TRACE_IRQFLAGS
->  /* Per-cpu variable to prevent redundant calls when IRQs already off */
->  static DEFINE_PER_CPU(int, tracing_irq_cpu);
-> @@ -28,7 +59,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
->  void trace_hardirqs_on_prepare(void)
->  {
->  	if (this_cpu_read(tracing_irq_cpu)) {
-> -		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
->  		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
->  		this_cpu_write(tracing_irq_cpu, 0);
->  	}
-> @@ -39,7 +70,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
->  void trace_hardirqs_on(void)
->  {
->  	if (this_cpu_read(tracing_irq_cpu)) {
-> -		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
->  		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
->  		this_cpu_write(tracing_irq_cpu, 0);
->  	}
-> @@ -61,7 +92,7 @@ void trace_hardirqs_off_finish(void)
->  	if (!this_cpu_read(tracing_irq_cpu)) {
->  		this_cpu_write(tracing_irq_cpu, 1);
->  		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
-> -		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
->  	}
->  
->  }
-> @@ -75,7 +106,7 @@ void trace_hardirqs_off(void)
->  	if (!this_cpu_read(tracing_irq_cpu)) {
->  		this_cpu_write(tracing_irq_cpu, 1);
->  		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
-> -		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
-> +		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
->  	}
->  }
->  EXPORT_SYMBOL(trace_hardirqs_off);
-> @@ -86,13 +117,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
->  
->  void trace_preempt_on(unsigned long a0, unsigned long a1)
->  {
-> -	trace_preempt_enable(a0, a1);
-> +	trace(preempt_enable, TP_ARGS(a0, a1));
->  	tracer_preempt_on(a0, a1);
->  }
->  
->  void trace_preempt_off(unsigned long a0, unsigned long a1)
->  {
-> -	trace_preempt_disable(a0, a1);
-> +	trace(preempt_disable, TP_ARGS(a0, a1));
->  	tracer_preempt_off(a0, a1);
->  }
->  #endif
-> 
-> 
-> I tested this by forcing x86 to use this code, and it appeared to work.
-> 
-> -- Steve
+(a). Drop netdev_tx_reset_queue() from open/close path. This eliminates the
+     BQL crashes due to the problematic open/close path.
+
+(b). As a result of (a), netdev_tx_reset_queue() is now explicitly required
+     in freeze/restore path. Add netdev_tx_reset_queue() to
+     free_unused_bufs().
+
+(c). Fix missing resetting in virtnet_tx_resize().
+     virtnet_tx_resize() has lacked proper resetting since commit
+     c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits").
+
+(d). Fix missing resetting in the XDP_SETUP_XSK_POOL path.
+     Similar to (c), this path lacked proper resetting. Call
+     netdev_tx_reset_queue() when virtqueue_reset() has actually recycled
+     unused buffers.
+
+This patch series consists of five commits:
+  [1/7]: Resolves (a) and (b).
+  [2/7[: Minor fix to make [3/7] streamlined.
+  [3/7]: Prerequisite for (c) and (d).
+  [4/7]: Prerequisite for (c).
+  [5/7]: Resolves (c).
+  [6/7]: Preresuisite for (d).
+  [7/7]: Resolves (d).
+
+Changes for v3:
+  - replace 'flushed' argument with 'recycle_done'
+Changes for v2:
+  - add tx queue resetting for (b) to (d) above
+
+v2: https://lore.kernel.org/all/20241203073025.67065-1-koichiro.den@canonical.com/
+v1: https://lore.kernel.org/all/20241130181744.3772632-1-koichiro.den@canonical.com/
+
+
+[1]:
+------------[ cut here ]------------
+kernel BUG at lib/dynamic_queue_limits.c:99!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
+Tainted: [N]=TEST
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
+BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+RIP: 0010:dql_completed+0x26b/0x290
+Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
+4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
+d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
+RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
+RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
+RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
+RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
+R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
+FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
+PKRU: 55555554
+Call Trace:
+ <IRQ>
+ ? die+0x32/0x80
+ ? do_trap+0xd9/0x100
+ ? dql_completed+0x26b/0x290
+ ? dql_completed+0x26b/0x290
+ ? do_error_trap+0x6d/0xb0
+ ? dql_completed+0x26b/0x290
+ ? exc_invalid_op+0x4c/0x60
+ ? dql_completed+0x26b/0x290
+ ? asm_exc_invalid_op+0x16/0x20
+ ? dql_completed+0x26b/0x290
+ __free_old_xmit+0xff/0x170 [virtio_net]
+ free_old_xmit+0x54/0xc0 [virtio_net]
+ virtnet_poll+0xf4/0xe30 [virtio_net]
+ ? __update_load_avg_cfs_rq+0x264/0x2d0
+ ? update_curr+0x35/0x260
+ ? reweight_entity+0x1be/0x260
+ __napi_poll.constprop.0+0x28/0x1c0
+ net_rx_action+0x329/0x420
+ ? enqueue_hrtimer+0x35/0x90
+ ? trace_hardirqs_on+0x1d/0x80
+ ? kvm_sched_clock_read+0xd/0x20
+ ? sched_clock+0xc/0x30
+ ? kvm_sched_clock_read+0xd/0x20
+ ? sched_clock+0xc/0x30
+ ? sched_clock_cpu+0xd/0x1a0
+ handle_softirqs+0x138/0x3e0
+ do_softirq.part.0+0x89/0xc0
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0xa7/0xb0
+ virtnet_open+0xc8/0x310 [virtio_net]
+ __dev_open+0xfa/0x1b0
+ __dev_change_flags+0x1de/0x250
+ dev_change_flags+0x22/0x60
+ do_setlink.isra.0+0x2df/0x10b0
+ ? rtnetlink_rcv_msg+0x34f/0x3f0
+ ? netlink_rcv_skb+0x54/0x100
+ ? netlink_unicast+0x23e/0x390
+ ? netlink_sendmsg+0x21e/0x490
+ ? ____sys_sendmsg+0x31b/0x350
+ ? avc_has_perm_noaudit+0x67/0xf0
+ ? cred_has_capability.isra.0+0x75/0x110
+ ? __nla_validate_parse+0x5f/0xee0
+ ? __pfx___probestub_irq_enable+0x3/0x10
+ ? __create_object+0x5e/0x90
+ ? security_capable+0x3b/0x7[I0
+ rtnl_newlink+0x784/0xaf0
+ ? avc_has_perm_noaudit+0x67/0xf0
+ ? cred_has_capability.isra.0+0x75/0x110
+ ? stack_depot_save_flags+0x24/0x6d0
+ ? __pfx_rtnl_newlink+0x10/0x10
+ rtnetlink_rcv_msg+0x34f/0x3f0
+ ? do_syscall_64+0x6c/0x180
+ ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+ netlink_rcv_skb+0x54/0x100
+ netlink_unicast+0x23e/0x390
+ netlink_sendmsg+0x21e/0x490
+ ____sys_sendmsg+0x31b/0x350
+ ? copy_msghdr_from_user+0x6d/0xa0
+ ___sys_sendmsg+0x86/0xd0
+ ? __pte_offset_map+0x17/0x160
+ ? preempt_count_add+0x69/0xa0
+ ? __call_rcu_common.constprop.0+0x147/0x610
+ ? preempt_count_add+0x69/0xa0
+ ? preempt_count_add+0x69/0xa0
+ ? _raw_spin_trylock+0x13/0x60
+ ? trace_hardirqs_on+0x1d/0x80
+ __sys_sendmsg+0x66/0xc0
+ do_syscall_64+0x6c/0x180
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f41defe5b34
+Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
+f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
+f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
+RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
+RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
+R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
+R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
+ </TASK>
+[...]
+---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+
+
+Koichiro Den (7):
+  virtio_net: correct netdev_tx_reset_queue() invocation point
+  virtio_ring: add a func argument 'recycle_done' to virtqueue_resize()
+  virtio_net: replace vq2rxq with vq2txq where appropriate
+  virtio_net: introduce virtnet_sq_free_unused_buf_done()
+  virtio_net: ensure netdev_tx_reset_queue is called on tx ring resize
+  virtio_ring: add a func argument 'recycle_done' to virtqueue_reset()
+  virtio_net: ensure netdev_tx_reset_queue is called on bind xsk for tx
+
+ drivers/net/virtio_net.c     | 23 +++++++++++++++++------
+ drivers/virtio/virtio_ring.c | 12 ++++++++++--
+ include/linux/virtio.h       |  6 ++++--
+ 3 files changed, 31 insertions(+), 10 deletions(-)
+
+-- 
+2.43.0
+
 
