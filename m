@@ -1,123 +1,165 @@
-Return-Path: <linux-kernel+bounces-432016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75309E43CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:53:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FE39E43CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:53:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB1E164CAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E62A1647B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2087E1C3BF4;
-	Wed,  4 Dec 2024 18:52:54 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A051C3BEE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D191C3BE4;
+	Wed,  4 Dec 2024 18:53:13 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D24F1A8F97
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338373; cv=none; b=N+TjqZ3IZZm8pP9O388KZj3I5FimGbeVvYL79neaUSG7GO6xY1ubN5Z+oChc08YoWWEbsbQ7w62TfIz7o8IKNZ2HNppVNim2Zf6KWBMT+UjrogIZhP0B8dTK+3bB6HThPADlwxOuyxAFRznu29a/K1Wa5dAIF/U9jE9++LsBfoE=
+	t=1733338392; cv=none; b=V1Kug3uqGsUSq3HeQkWy86jCZucPZCU7/96r4WdbCGYS5B99dUqwB15c1cVlQVW4G1jGjZ3T23VZ0XSxRFkDch/xJvXq4AtjMrDRZ5V8XwSw8/hgTntCGQP8cGkt0+MLvSGTigtKipqjpU84y5NDIMEqMRP6x1iRx5NojOb6oCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338373; c=relaxed/simple;
-	bh=YwY9xHZHGpEHtbkNcyeJTSKGNlyl22M9/V3vuq7ghwA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=ZPESLrbmcEj+aqXkmMl85FZvIsYx9SlIFogbMT9T2Y/2BZNNjRDJ/d3cHGzS7kfFTGNVUgorhKflklFFi7svoAF0Ov8adN+svLKCaHADK0x+G+ez++5CC9VbtaYEMILbnwj/UXmrvi5bkAXCgSWEvGVIo3f5MO6Gxl/HbmNhjiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-232-Fo2j8UHqOR6f0adwkoLvrA-1; Wed, 04 Dec 2024 18:52:49 +0000
-X-MC-Unique: Fo2j8UHqOR6f0adwkoLvrA-1
-X-Mimecast-MFC-AGG-ID: Fo2j8UHqOR6f0adwkoLvrA
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
- 2024 18:52:10 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 4 Dec 2024 18:52:10 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, Martin Uecker
-	<Martin.Uecker@med.uni-goettingen.de>
-CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
+	s=arc-20240116; t=1733338392; c=relaxed/simple;
+	bh=5m0M7F9A85L0in+vQnBG9abJrYWf+6uew75LWLb5Xfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPQV827wJnbNgZlQnTKAAkVfkHO5J9RBKeQ70ig9IRm2g5ms4TUowqZQOPXFIqeZyUFgZptEfpMOZgdHCAiWjWS3Z2VUV8Ycorcl7GDd44n7G/WO8UF8BRUAkpyxUOr0mustQ0zVNN3BpX488m3aaUBOc5Wezxao1SbnXfwWM/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 3A22872C97F;
+	Wed,  4 Dec 2024 21:53:09 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+	by imap.altlinux.org (Postfix) with ESMTPSA id 2915C36D0178;
+	Wed,  4 Dec 2024 21:53:09 +0300 (MSK)
+Date: Wed, 4 Dec 2024 21:53:09 +0300
+From: Vitaly Chikunov <vt@altlinux.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 04/10] linux/bits.h: simplify GENMASK_INPUT_CHECK() by
- using is_const_true()
-Thread-Topic: [PATCH 04/10] linux/bits.h: simplify GENMASK_INPUT_CHECK() by
- using is_const_true()
-Thread-Index: AQHbROFQQHprgo51TES1ijsBCX2RL7LWcP7w
-Date: Wed, 4 Dec 2024 18:52:10 +0000
-Message-ID: <dff4cdd543104e3792e4856375f310c1@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-4-4e4cbaecc216@wanadoo.fr>
-In-Reply-To: <20241203-is_constexpr-refactor-v1-4-4e4cbaecc216@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"Wangzhou (B)" <wangzhou1@hisilicon.com>,
+	Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
+ 0000000002000000 [#1] SMP
+Message-ID: <20241204185309.v4yq6n7antt7m7jb@altlinux.org>
+References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
+ <20241202153618.GA6834@willie-the-truck>
+ <86ttbmt71k.wl-maz@kernel.org>
+ <20241202155940.p267a3tz5ypj4sog@altlinux.org>
+ <86ser6t6fs.wl-maz@kernel.org>
+ <20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
+ <20241203092721.j473dthkbq6wzez7@altlinux.org>
+ <1847e34fa7724d28aeb22d93752f64f2@huawei.com>
+ <20241203221453.mwh6sozyczi4ec2k@altlinux.org>
+ <87jzcfsuep.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -O0oyLE_qJu4nf1wkW_9cIjafbtg8tqzuBubxmH1gQk_1733338368
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <87jzcfsuep.wl-maz@kernel.org>
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
-DQo+ICAgX19idWlsdGluX2Nob29zZV9leHByKF9faXNfY29uc3RleHByKChsKSA+IChoKSksIChs
-KSA+IChoKSwgMCkNCj4gDQo+IGlzIGVxdWl2YWxlbnQgdG86DQo+IA0KPiAgIGlzX2NvbnN0X3Ry
-dWUoKGwpID4gKGgpKQ0KDQpDaGFuZ2UgaXQgdG8gQlVJTERfQlVHX09OX01TRyhzdGF0aWNhbGx5
-X3RydWUoKGwpIDwgKGgpKSwgImVycm9yIG1lc3NhZ2UiKQ0KDQphbmQgdGhlbiBmaXggYWxsIHRo
-ZSBmYWxsb3V0IDotKQ0KDQoJRGF2aWQNCg0KPiANCj4gQXBwbHkgaXNfY29uc3RfdHJ1ZSgpIHRv
-IHNpbXBsaWZ5IEdFTk1BU0tfSU5QVVRfQ0hFQ0soKS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFZp
-bmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+DQo+IC0tLQ0KPiBUaGlz
-IGNoYW5nZSBwYXNzZXMgdGhlIHVuaXQgdGVzdHMgZnJvbSBDT05GSUdfQklUU19URVNULCBpbmNs
-dWRpbmcgdGhlDQo+IGV4dHJhIG5lZ2F0aXZlIHRlc3RzIHByb3ZpZGVkIHVuZGVyICNpZmRlZiBU
-RVNUX0dFTk1BU0tfRkFJTFVSRVMgWzFdLg0KPiANCj4gWzFdIGNvbW1pdCA2ZDUxMTAyMGUxM2Qg
-KCJsaWIvdGVzdF9iaXRzLmM6IGFkZCB0ZXN0cyBvZiBHRU5NQVNLIikNCj4gTGluazogaHR0cHM6
-Ly9naXQua2VybmVsLm9yZy90b3J2YWxkcy9jLzZkNTExMDIwZTEzZA0KPiAtLS0NCj4gIGluY2x1
-ZGUvbGludXgvYml0cy5oIHwgNSArKy0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9u
-cygrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2Jp
-dHMuaCBiL2luY2x1ZGUvbGludXgvYml0cy5oDQo+IGluZGV4IDYwMDQ0YjYwODgxNzJiM2YyNmFh
-M2YxN2NkYWVkZTk3ODY4NjNkYWUuLmVmMDExOWU2MTc5ZTFjYTk1MzQ1YTNkNGQzMzI3YmExOTYz
-MzAyOGUgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvYml0cy5oDQo+ICsrKyBiL2luY2x1
-ZGUvbGludXgvYml0cy5oDQo+IEBAIC0yMCw5ICsyMCw4IEBADQo+ICAgKi8NCj4gICNpZiAhZGVm
-aW5lZChfX0FTU0VNQkxZX18pDQo+ICAjaW5jbHVkZSA8bGludXgvYnVpbGRfYnVnLmg+DQo+IC0j
-ZGVmaW5lIEdFTk1BU0tfSU5QVVRfQ0hFQ0soaCwgbCkgXA0KPiAtCShCVUlMRF9CVUdfT05fWkVS
-TyhfX2J1aWx0aW5fY2hvb3NlX2V4cHIoIFwNCj4gLQkJX19pc19jb25zdGV4cHIoKGwpID4gKGgp
-KSwgKGwpID4gKGgpLCAwKSkpDQo+ICsjaW5jbHVkZSA8bGludXgvY29tcGlsZXIuaD4NCj4gKyNk
-ZWZpbmUgR0VOTUFTS19JTlBVVF9DSEVDSyhoLCBsKSBCVUlMRF9CVUdfT05fWkVSTyhpc19jb25z
-dF90cnVlKChsKSA+IChoKSkpDQo+ICAjZWxzZQ0KPiAgLyoNCj4gICAqIEJVSUxEX0JVR19PTl9a
-RVJPIGlzIG5vdCBhdmFpbGFibGUgaW4gaCBmaWxlcyBpbmNsdWRlZCBmcm9tIGFzbSBmaWxlcywN
-Cj4gDQo+IC0tDQo+IDIuNDUuMg0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
-LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
-ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Marc,
 
+On Wed, Dec 04, 2024 at 08:51:26AM +0000, Marc Zyngier wrote:
+> On Tue, 03 Dec 2024 22:14:53 +0000,
+> Vitaly Chikunov <vt@altlinux.org> wrote:
+> > 
+> > I tried to verify that MPAM is advertised with qemu+gdb method, as
+> > suggested by Oliver, but ID_AA64PFR0_EL1 register is not there.
+> > 
+> >   (gdb) i r ID_AA64PFR0_EL1
+> >   Invalid register `ID_AA64PFR0_EL1'
+> 
+> Then there is a bug in either QEMU or the GDB stubs. This register
+> exists, or you wouldn't be here.
+> 
+> > 
+> > Are there other suggestions?
+> 
+> Mark has described what the problem is likely to be. 6.6-stable needs
+> to have 6685f5d572c22e10 backported, and it probably should have been
+> Cc: to stable. Can you please apply the following patch to your *host*
+> machine and retest?
+
+Looks like I will be able to test this.
+
+Thanks,
+
+> 
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 370a1a7bd369..258a39bcd3c7 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -1330,6 +1330,7 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
+>  			val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MTE);
+>  
+>  		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_SME);
+> +		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_MPAM_frac);
+>  		break;
+>  	case SYS_ID_AA64ISAR1_EL1:
+>  		if (!vcpu_has_ptrauth(vcpu))
+> @@ -1472,6 +1473,13 @@ static u64 read_sanitised_id_aa64pfr0_el1(struct kvm_vcpu *vcpu,
+>  
+>  	val &= ~ID_AA64PFR0_EL1_AMU_MASK;
+>  
+> +	/*
+> +	 * MPAM is disabled by default as KVM also needs a set of PARTID to
+> +	 * program the MPAMVPMx_EL2 PARTID remapping registers with. But some
+> +	 * older kernels let the guest see the ID bit.
+> +	 */
+> +	val &= ~ID_AA64PFR0_EL1_MPAM_MASK;
+> +
+>  	return val;
+>  }
+>  
+> @@ -1560,6 +1568,29 @@ static int set_id_dfr0_el1(struct kvm_vcpu *vcpu,
+>  	return set_id_reg(vcpu, rd, val);
+>  }
+>  
+> +static int set_id_aa64pfr0_el1(struct kvm_vcpu *vcpu,
+> +			       const struct sys_reg_desc *rd, u64 user_val)
+> +{
+> +	u64 hw_val = read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
+> +	u64 mpam_mask = ID_AA64PFR0_EL1_MPAM_MASK;
+> +
+> +	/*
+> +	 * Commit 011e5f5bf529f ("arm64/cpufeature: Add remaining feature bits
+> +	 * in ID_AA64PFR0 register") exposed the MPAM field of AA64PFR0_EL1 to
+> +	 * guests, but didn't add trap handling. KVM doesn't support MPAM and
+> +	 * always returns an UNDEF for these registers. The guest must see 0
+> +	 * for this field.
+> +	 *
+> +	 * But KVM must also accept values from user-space that were provided
+> +	 * by KVM. On CPUs that support MPAM, permit user-space to write
+> +	 * the sanitizied value to ID_AA64PFR0_EL1.MPAM, but ignore this field.
+> +	 */
+> +	if ((hw_val & mpam_mask) == (user_val & mpam_mask))
+> +		user_val &= ~ID_AA64PFR0_EL1_MPAM_MASK;
+> +
+> +	return set_id_reg(vcpu, rd, user_val);
+> +}
+> +
+>  /*
+>   * cpufeature ID register user accessors
+>   *
+> @@ -2018,7 +2049,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	{ SYS_DESC(SYS_ID_AA64PFR0_EL1),
+>  	  .access = access_id_reg,
+>  	  .get_user = get_id_reg,
+> -	  .set_user = set_id_reg,
+> +	  .set_user = set_id_aa64pfr0_el1,
+>  	  .reset = read_sanitised_id_aa64pfr0_el1,
+>  	  .val = ID_AA64PFR0_EL1_CSV2_MASK | ID_AA64PFR0_EL1_CSV3_MASK, },
+>  	ID_SANITISED(ID_AA64PFR1_EL1),
+> 
 
