@@ -1,121 +1,178 @@
-Return-Path: <linux-kernel+bounces-431993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADB89E4394
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:42:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB279E4399
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9105716361A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B651639C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358FD1A8F8D;
-	Wed,  4 Dec 2024 18:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299D1A8F93;
+	Wed,  4 Dec 2024 18:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edj+LNbg"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xxz+F7aL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0741A8F78;
-	Wed,  4 Dec 2024 18:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEA726AFC;
+	Wed,  4 Dec 2024 18:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733337737; cv=none; b=l967cujsmyCwCg3rto+RLFPzvgai69UmapZ1YcMlHbgU29X+oaep0mgk0oIMDe2hGkfhCHQR4c1y4pQ5+QKw0ZvKpeNKSVUHLHjbu7Scyt6Lky/KCeUIxs3adLa9uHHPl4xej8TfAR7/nQ/ApxrEwV8FPaNAfd6hNkFL2CVd3hM=
+	t=1733337776; cv=none; b=urbTChR6mVsHjuBzu41RPZykxfw5ytLv+RtS6883/zXIvkJPyWXrZbgrQWYT7FfjHFaSsB6VIuYRe9Qgl59kMGJHvomoigQ9r51J8zAWqwZnfTxBkmMgcIN9KbsWQ88BdjPi2ksSbGo8wIIYB1InZyH1Y+hw4stZUPz/yXbmbeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733337737; c=relaxed/simple;
-	bh=wiRmPcDPfl447CPd2d06m48S9Tj33PHLmHZm/NeD6WE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PSnZZjbR0HhvoGT0A7ol0tKzgw8mchtRm+L0gAytr235TOi8kJntkxvQm3Q1e4ntsFEn7vXVzciOHHrxACI2u7LFM571sfLxQ9HgVQuQkITiu4KtsJmFk65LrGCO3bXL4FXK2wNJ/GG76KxRe+3UDdcid7htjgSNswWOAE6w1xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=edj+LNbg; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa53ebdf3caso4403866b.2;
-        Wed, 04 Dec 2024 10:42:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733337733; x=1733942533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M3C6QThKHzGlWczzeqqYbCy3PuGqDdCeGAsd/QclkMA=;
-        b=edj+LNbgLGF4cj29aej3LPdAt+b3WD+UP+ePezi+m6Ri/jOuodxpip9/ru2gvRsqHc
-         dtfwTjbW2bfWcPMb8TK4EKtIBDKwqgC42pC4Rg4gtZe3gxcduH0LFbqXOuzn6rtjPFhc
-         FjqONeZ8ZD1vdqv27JqUzEue7SqgevFR3TdltlAqxfyPCUR1EfZAUCqJBR8O5edgv7l1
-         RcRqQC/XvZtUWGjaTyrVXHp53zT1XPoHqq0iID43pmZ10Dcv8D+nPCgSGn6ybKOY7DKy
-         oB3KsGwHs+CiuoxBZsydmy7dDNZmW31NCH4Fk1SITNQQ6EdOThzMqSV1EvltQV3P4hN8
-         K7CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733337733; x=1733942533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M3C6QThKHzGlWczzeqqYbCy3PuGqDdCeGAsd/QclkMA=;
-        b=D2kH0+vl/q42xmc3r0Fh5AlK7sidZZGy6ig5I5EJSM28NmpDIeVprT4nU7Nz+AfYNm
-         BlI4T/keehGgfVRN+dXtD0pXEU0jWI1UbNNNDc2/XJ5WHS65C8spFh9gSbEG78yUi8uW
-         MNmoMeiMXjNOFIp6Vog+FMpDzhxOC5bFkQOzQ0xo6RVje5MUPviHwQuXeS+5eFlOJJqZ
-         hTFwlnGHLb8IkXWeQRIxubLR2i8x+9KBsuCgjdlUYXNhIdtNMrM7gpX/8T4JBo8IvC7u
-         siFMeS8qpwGgUw3TcnoLbgQMQ8rEkck87soMjfryw6Z2IXoGJ5ET4BVXPr92WvfZb2Im
-         U4pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwwduEXoA+8/LFHM7lV79uaW7++sRo7jkbATdT4pyY7jXqQSGEZ094cZrBFhjwHh8HzI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2r/oEH4ZCnh4IRiR43TNYax4a32+jvrfRnTNU1NszxfDDebPu
-	fVACUvz2Pbqa6ltPF3NSLGoXZTpgV4b6dJgtqrm3ZcC3ipLQYX1lauwyQyyTv/0wudlD1ZfOHc2
-	S4sVOL71fRqH87ePnSRto6PBNFb0=
-X-Gm-Gg: ASbGnctIP8xNzoh1q8QldGFG7kjyIGKOY+aTbSp+Br2cgzF/4hEA1bSyAcQEVyfXC9h
-	KJqXG9K9RjYqn/j0EXcn12mcLSE+Na4E=
-X-Google-Smtp-Source: AGHT+IEa7Gtl4pp7owEvUuHPLflJ+zvC65UMe54y6Ui0RggEQA4RoD4lnAJki0FHTdD9fRU+FHBJ0o7jW75EaSmav7g=
-X-Received: by 2002:a17:906:30ca:b0:aa6:1e9a:e46a with SMTP id
- a640c23a62f3a-aa61e9ae53emr80364766b.57.1733337733169; Wed, 04 Dec 2024
- 10:42:13 -0800 (PST)
+	s=arc-20240116; t=1733337776; c=relaxed/simple;
+	bh=O/Zhj6xXRdGGJvpcvnu3X4YlT27afIf8vci2UWRYD8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKNq59ON518F7X4LtnR/U0/YH/9uFgHsUHHrLZwkWqEmu5BFTQLgjbaBoNCGtK///Y+oNQhuJRuJkSD3pQ9jPDrVqzTCghKP2WsuN+6Oaiwy/HgATutk5HutTkYPjQQ9Kzis39mMXvARWst8UuW1YRXiv6ixIuzj60kORgVeCIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xxz+F7aL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FD6C4CECD;
+	Wed,  4 Dec 2024 18:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733337775;
+	bh=O/Zhj6xXRdGGJvpcvnu3X4YlT27afIf8vci2UWRYD8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xxz+F7aLLfjGHjIzFprjn4YKE88Bz8lM2bNlz3cjUDmY6I3apxHsBtbz3C5SXVK/F
+	 htBcirayED50YJAv+AV8gz769qUo+jlWDhX0cEFO3cDucmEwmOFLhBqVQBJXYhQWjY
+	 5DpsWBuMSyHSVcZt3j72B8DXFAmsbveyb3wVTP8YXuSGM5KOU0h3ntyCA5N9X23VNP
+	 mFYPY5ir59WCxtkRTiExB4XqFy7jyd21a/QRo5edtDX/IPaddrVidlI5tsT9Jb4HaR
+	 phQExR0YzklauXWG6jQs3gkTs3Lo4FCQugCoICaRAQVytLoWhogmBJpo8w8RCDO/pc
+	 CzwuXbBQYooNA==
+Date: Wed, 4 Dec 2024 12:42:53 -0600
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: cpufreq: Document support for Airoha
+ EN7581 CPUFreq
+Message-ID: <20241204184253.GA276662-robh@kernel.org>
+References: <20241203163158.580-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-7-arnd@kernel.org>
-In-Reply-To: <20241204103042.1904639-7-arnd@kernel.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 4 Dec 2024 20:41:36 +0200
-Message-ID: <CAHp75VcQcDD3gbfc6UzH3wYgge6EqSBEyWWOQ_dTkz8Eo+XgFw@mail.gmail.com>
-Subject: Re: [PATCH 06/11] x86: drop SWIOTLB and PHYS_ADDR_T_64BIT for PAE
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>, Davide Ciminaghi <ciminaghi@gnudd.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203163158.580-1-ansuelsmth@gmail.com>
 
-On Wed, Dec 4, 2024 at 12:31=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
-te:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Since kernels with and without CONFIG_X86_PAE are now limited
-> to the low 4GB of physical address space, there is no need to
-> use either swiotlb or 64-bit phys_addr_t any more, so stop
-> selecting these and fix up the build warnings from that.
+On Tue, Dec 03, 2024 at 05:31:49PM +0100, Christian Marangi wrote:
+> Document required property for Airoha EN7581 CPUFreq .
+> 
+> On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
+> to ATF and no clocks are exposed to the OS.
+> 
+> The SoC have performance state described by ID for each OPP, for this a
+> Power Domain is used that sets the performance state ID according to the
+> required OPPs defined in the CPU OPP tables.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+> Changes v5:
+> - Add Reviewed-by tag
+> - Fix OPP node name error
+> - Rename cpufreq node name to power-domain
+> - Rename CPU node power domain name to perf
+> - Add model and compatible to example
+> Changes v4:
+> - Add this patch
+> 
+>  .../cpufreq/airoha,en7581-cpufreq.yaml        | 262 ++++++++++++++++++
+>  1 file changed, 262 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> new file mode 100644
+> index 000000000000..7e36fa037e4b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> @@ -0,0 +1,262 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/cpufreq/airoha,en7581-cpufreq.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha EN7581 CPUFreq
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: |
+> +  On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
+> +  to ATF and no clocks are exposed to the OS.
+> +
+> +  The SoC have performance state described by ID for each OPP, for this a
+> +  Power Domain is used that sets the performance state ID according to the
+> +  required OPPs defined in the CPU OPP tables.
+> +
+> +properties:
+> +  compatible:
+> +    const: airoha,en7581-cpufreq
+> +
+> +  '#clock-cells':
+> +    const: 0
 
-...
+You just said no clocks are exposed to the OS.
 
->         mtrr_type_lookup(addr, addr + PMD_SIZE, &uniform);
->         if (!uniform) {
->                 pr_warn_once("%s: Cannot satisfy [mem %#010llx-%#010llx] =
-with a huge-page mapping due to MTRR override.\n",
-> -                            __func__, addr, addr + PMD_SIZE);
-> +                            __func__, (u64)addr, (u64)addr + PMD_SIZE);
+> +
+> +  '#power-domain-cells':
+> +    const: 0
+> +
+> +  operating-points-v2: true
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +  - '#power-domain-cells'
+> +  - operating-points-v2
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    / {
+> +        model = "Airoha EN7581 Evaluation Board";
+> +        compatible = "airoha,en7581-evb", "airoha,en7581";
+> +
+> +        #address-cells = <2>;
+> +      	#size-cells = <2>;
 
-Instead of castings I would rather:
-1) have addr and size (? does above have off-by-one error?) or end;
-2) use struct resource / range with the respective %p[Rr][a] specifier
-or use %pa.
+mixed tab and spaces.
 
+Can't I just go read the actual .dts files if I want to see 
+*everything*? Examples should generally be just what the schema covers.
 
+> +
+> +        cpus {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            cpu0: cpu@0 {
+> +                device_type = "cpu";
+> +                compatible = "arm,cortex-a53";
+> +                reg = <0x0>;
+> +                operating-points-v2 = <&cpu_opp_table>;
+> +                enable-method = "psci";
+> +                clocks = <&cpu_pd>;
+> +                clock-names = "cpu";
+> +                power-domains = <&cpu_pd>;
+> +                power-domain-names = "perf";
+> +                next-level-cache = <&l2>;
+> +                #cooling-cells = <2>;
 
---=20
-With Best Regards,
-Andy Shevchenko
+I don't understand why you have clocks, power-domains and OPP? 
+Certainly that's conceivable, but not with how you're abusing 
+power-domains for performance points and you said clocks are not exposed 
+to the OS.
+
+Rob
 
