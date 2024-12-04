@@ -1,150 +1,179 @@
-Return-Path: <linux-kernel+bounces-431382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43E49E3C9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:21:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D1529E3CB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:30:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB32161044
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:21:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7936DB38ABF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7171FDE05;
-	Wed,  4 Dec 2024 14:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA3F1FECDC;
+	Wed,  4 Dec 2024 14:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aej1h0HG"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f/X7kzKN"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546F81BD014
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286E61FC100
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733322110; cv=none; b=TKPD6DYgsCjZe6cm7Aqf0aHyCQPSPos13knX9nmRFILbzXlW26N3CnmT0g+ngEN0oGeY2evNyzbvYrDu7Uv2ykjmGAvR3gbsG6XnuLZdgxvRRqvUU1wOjAadgmgKOj9BF+Yt8ksAWg/4o+UVry4S3EIb1bT/EpehYH4SCCQ+GqI=
+	t=1733322129; cv=none; b=ICo/Cbl3hYayozJ75aqlVrRSHIpgC9gycaAsr2qcEA8TogjgEuboaVislWJlOEgSD9Dn5MldYVRju+FK0co/IjchtDLiGP7punr44jDDnzleipeOkvMhCdj/y553+/mU+n334awAbp59c1vBJLX8rfXXrJC6QWmnpdYBz3XA2pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733322110; c=relaxed/simple;
-	bh=24iJMNEALk3yeDjV3Bk01jcXq2XIIasf6iyqvQ2nmko=;
+	s=arc-20240116; t=1733322129; c=relaxed/simple;
+	bh=jZFPdtuKM/4MGujdMzoVO7WTjmvayBrMQSDKHpFSMK0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ARu59TW+urKsjaCYB+NX+ysxR7TVnnsAEnFwcfRbX7aQfDH4SWdsosYeuqmTtWGgEeKfwG7rp/im6ZopU2lXw7rqXJmPokvJcMuNLGVq0tT3ij899ywhQOXS0HMYq/bC00y90stCgnkKINQzNmrNVaUV+vrKV+DI/YlimvMPZ2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aej1h0HG; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-215810fff52so39633955ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:21:49 -0800 (PST)
+	 To:Cc:Content-Type; b=Vcp/A3YuN1+mFOK1v8QnuVO0gMXuzFvOxj/HepOokMxQMCFgHquCqwxHPqjFGdPTwBrlpY7ib9uidS/RKDftQ1InYhQq5+YsE2z+hRle01Te51mLfLEMRVRYuwsjWCEFAWGaVOGAXmTsuWWKBmNyX2w4Tfdb47r6+NW3OGxKyGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f/X7kzKN; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-466ab386254so212171cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:22:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733322108; x=1733926908; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733322127; x=1733926927; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gRP0LK379oO2c2wmV7bc4BGWSbNhwQ82H70Yc7kGYLE=;
-        b=Aej1h0HGR0Qe+i5QKFdohUOei3Gd20ml95X4pwjVQs/ZKUgZmAw3DkWoZFX8cD0N31
-         jqOcquq+Dqo484kCTOpGmG7f46gjg7KiOeKMmbFafG8mD+hE848pYGygVQ2VB1jZ3WaE
-         jfzKa00NikJ3EL7YiqYa+Lky/NRUN/RGeEBaxVtyJWAj8BlgQZm4L0cM7Ct9NEm4EQmh
-         8Z+DNDKyt8lcJPQ98WeLYFOL4XcHlH4iZNaSEUji3BKnJc0Zkfgsxip1gnomxAJIuM9w
-         W2L+CYBVxWtAnSRf6STVQhrMMLZQw/HdXdx/6NCbcRyB+qEFX4433GYo/ZqIozSc+n7z
-         BQiQ==
+        bh=jZFPdtuKM/4MGujdMzoVO7WTjmvayBrMQSDKHpFSMK0=;
+        b=f/X7kzKNo1W5XUY0QV1eRYLg75v5F/nl5WWqiHuFZ1G9XuvOw7ajwuDeoXY+OQCiSJ
+         wwELstnqpIFG1IN5DsM1rukinUuyD9K94Dc6RWw3nwnEP0BYmA9IBd8fAKA0VvkqxdfQ
+         N2K857WyJhGiVZYYfq2hmsP2r9q+xFSqPUlIJ0+lDOpRdmKQSAt7wNHAVSRNkPcayrSI
+         7972oSYalDh626i9yg5m2a3JLAOPPuOTt3lCQP2r4XM2g4PB6FdStr+P08/g3SbBKDT9
+         I5hcU0rVuRZaHWvuLwjmh/7kV1P96xLKBCY3uixhQQxFND6lg/iSxqX8NrS+sOtFIaOC
+         dESg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733322108; x=1733926908;
+        d=1e100.net; s=20230601; t=1733322127; x=1733926927;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gRP0LK379oO2c2wmV7bc4BGWSbNhwQ82H70Yc7kGYLE=;
-        b=PkWeqreWMWo14mHNN1wiMKIfjDA78UFXhSdeHy3Pz0mA25/Gr5RI40aYmOXw88s2cd
-         pz3RXH3suHuVHFEO9LxjhV9DyYXWX698rbaHsR/08Al3Fd8rOC7hcd+PlmZkuVnSnI0T
-         j61HwjOA8vfj0T/LLq2pocrHNTOnD1xfvAX4gfrd3h8l3opFvxhRDmAkFXCLUc6zODkS
-         p14x8B45aONvB8Zsyh1xDdgF8Kkf1JSA+epFjcvhTPV4Z3zgm9WNv6WrkgmJjHK2ozK5
-         qSSqHGX6017PGOCPmNwQdk1PK/2eNnjJeRRtv605YlQYujLUMj4QPlT6f782+HayPjW8
-         kiVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQQ0Jw1w+jcr9wWO2Bt01ZRfhpYQPU8rfLnbssCyQnTwutIa0YZ0e0YUHb3rK4M2lMizwm/2gHVx6tNic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynnuvgIkLUN0zUIw8yKoO3DILlb4XcpTGY0Qoywc6Ef5De6a1W
-	x3iZJBUG0WesYqOYOz2Xu4tXM0ye6dzf8CeaDkwZ0gYinknf5eH/c6c96RJKqgk5RD8C6d0Ho1v
-	T3cYu6zOIXZ0CK/bk2lVRf/oCcZ8=
-X-Gm-Gg: ASbGncvfIYZ1RKdOX/kaUbYhLzEjgaPB1yea6Gj9THHCa3eWWxhLU9CRhlBXBSW4w61
-	ZgfbT6uxE2cOsR/Te/BNXWeE/WQqel68=
-X-Google-Smtp-Source: AGHT+IEhQp50zTrtMghVbxKM6Ou+CIF3ijU487pVYVEw9sK5K7QfwReJj5ycsmTPECwvl95PID2IRePOADM6FuNTzJw=
-X-Received: by 2002:a17:902:ecc5:b0:215:8f2e:eeda with SMTP id
- d9443c01a7336-215bd26a3fbmr73008755ad.52.1733322108412; Wed, 04 Dec 2024
- 06:21:48 -0800 (PST)
+        bh=jZFPdtuKM/4MGujdMzoVO7WTjmvayBrMQSDKHpFSMK0=;
+        b=BpYJMXg8mBF9SdAnDVWbqkb6hwBHF1ZByMQ5Kgc1qz5Ex8AFxIteRacwms0T8GjETb
+         pZ0Gs5fmXYPSZ3uec1z0SpVv1IotPwGaXgTYIWII5hNsMDuuFt5euugSQDa/wa9wlnSD
+         aYvEjmX2G9JkRjMHqlklJquOQCG7DRBsaLgL+9XYCdOJH4bMhugYDMjEy5B9sIYBWJdO
+         6Od+h6yrdChDlSln7P5E3vjFtf0LNQL5mLqiXOpEcIhfXoWegUN4rGKSDsnETIEkPL4S
+         BTjrmLW2aAqRRIRHLdNudlz93KDfnfThh5gVii3hIDyQQ89dZPx+EiX/5LuB2D+CBkFS
+         XynQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQZQvW575yC6sSP7evE27GAvnzBD9JlvjyP8F0WppEeOfey+pEmbqmCiZK0F8Xq1TCvtEFKmHYdBA4wo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaTDOMW8Dc8Iddwmh3EaoyuDA6OP42taIbIq4L1DAZpiZltDOV
+	gp4aYFeSxnMsnZJPmLfsj5YSxlV08R0ZT7WLf0DDd7/moCKMh5ti8R1qTX2M90MnRd4LrwSWeKi
+	11enPpW8kfFRmBvvCWlJA4iECEXIiIM4J83md
+X-Gm-Gg: ASbGnctDwZ6AhuZRQRqAEQzhAD5AXYO68STsK52T3JZzSz2Gvg+mMgUKOCkvF8dV4b9
+	yvfoURqV6Y7zh+1CVNrBx56k2xGwaVVnyYDG6X55fQB9x8VtvoA9X2f1qiFbk9Qh/
+X-Google-Smtp-Source: AGHT+IEpQhE7D5Vey9wUDnuOEEvDJ2gnQubvBzk/ZoMblukjuUumP/CvUjMEuRtoZLBwjzXpYGjqRO+eWikphM5x5+E=
+X-Received: by 2002:a05:622a:124e:b0:466:8c7c:3663 with SMTP id
+ d75a77b69052e-4671b68fa81mr2911711cf.5.1733322126557; Wed, 04 Dec 2024
+ 06:22:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026132014.73050-1-aford173@gmail.com>
-In-Reply-To: <20241026132014.73050-1-aford173@gmail.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 4 Dec 2024 08:21:37 -0600
-Message-ID: <CAHCN7xKH40UiLq3XaBA40B2uhvRadhPGLTWqqtLBaVNQJC=9nw@mail.gmail.com>
-Subject: Re: [PATCH V2 1/3] phy: freescale: fsl-samsung-hdmi: Expand Integer
- divider range
-To: linux-phy@lists.infradead.org
-Cc: aford@beaconembedded.com, sandor.yu@nxp.com, 
-	Frieder Schrempf <frieder.schrempf@kontron.de>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Dominique Martinet <dominique.martinet@atmark-techno.com>, 
-	Marco Felsch <m.felsch@pengutronix.de>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org
+References: <CGME20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295@epcas2p2.samsung.com>
+ <20241203081247.1533534-1-youngmin.nam@samsung.com> <CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
+ <CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com>
+ <20241203181839.7d0ed41c@kernel.org> <Z0/O1ivIwiVVNRf0@perf>
+ <CANn89iKms_9EX+wArf1FK7Cy3-Cr_ryX+MJ2YC8yt1xmvpY=Uw@mail.gmail.com> <009e01db4620$f08f42e0$d1adc8a0$@samsung.com>
+In-Reply-To: <009e01db4620$f08f42e0$d1adc8a0$@samsung.com>
+From: Neal Cardwell <ncardwell@google.com>
+Date: Wed, 4 Dec 2024 09:21:50 -0500
+Message-ID: <CADVnQykPo35mQ1y16WD3zppENCeOi+2Ea_2m-AjUQVPc9SXm4g@mail.gmail.com>
+Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
+To: "Dujeong.lee" <dujeong.lee@samsung.com>
+Cc: Eric Dumazet <edumazet@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, 
+	Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, dsahern@kernel.org, 
+	pabeni@redhat.com, horms@kernel.org, guo88.liu@samsung.com, 
+	yiwang.cai@samsung.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	joonki.min@samsung.com, hajun.sung@samsung.com, d7271.choe@samsung.com, 
+	sw.ju@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 26, 2024 at 8:20=E2=80=AFAM Adam Ford <aford173@gmail.com> wrot=
-e:
+On Wed, Dec 4, 2024 at 2:48=E2=80=AFAM Dujeong.lee <dujeong.lee@samsung.com=
+> wrote:
 >
-> The Integer divder uses values of P,M, and S to determine the PLL
-> rate.  Currently, the range of M was set based on a series of
-> table entries where the range was limited.  Since the ref manual
-> shows it is 8-bit wide, expand the range to be up to 255.
+> On Wed, Dec 4, 2024 at 4:14 PM Eric Dumazet wrote:
+> > To: Youngmin Nam <youngmin.nam@samsung.com>
+> > Cc: Jakub Kicinski <kuba@kernel.org>; Neal Cardwell <ncardwell@google.c=
+om>;
+> > davem@davemloft.net; dsahern@kernel.org; pabeni@redhat.com;
+> > horms@kernel.org; dujeong.lee@samsung.com; guo88.liu@samsung.com;
+> > yiwang.cai@samsung.com; netdev@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; joonki.min@samsung.com; hajun.sung@samsung.com;
+> > d7271.choe@samsung.com; sw.ju@samsung.com
+> > Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
+> >
+> > On Wed, Dec 4, 2024 at 4:35=E2=80=AFAM Youngmin Nam <youngmin.nam@samsu=
+ng.com>
+> > wrote:
+> > >
+> > > On Tue, Dec 03, 2024 at 06:18:39PM -0800, Jakub Kicinski wrote:
+> > > > On Tue, 3 Dec 2024 10:34:46 -0500 Neal Cardwell wrote:
+> > > > > > I have not seen these warnings firing. Neal, have you seen this=
+ in
+> > the past ?
+> > > > >
+> > > > > I can't recall seeing these warnings over the past 5 years or so,
+> > > > > and (from checking our monitoring) they don't seem to be firing i=
+n
+> > > > > our fleet recently.
+> > > >
+> > > > FWIW I see this at Meta on 5.12 kernels, but nothing since.
+> > > > Could be that one of our workloads is pinned to 5.12.
+> > > > Youngmin, what's the newest kernel you can repro this on?
+> > > >
+> > > Hi Jakub.
+> > > Thank you for taking an interest in this issue.
+> > >
+> > > We've seen this issue since 5.15 kernel.
+> > > Now, we can see this on 6.6 kernel which is the newest kernel we are
+> > running.
+> >
+> > The fact that we are processing ACK packets after the write queue has b=
+een
+> > purged would be a serious bug.
+> >
+> > Thus the WARN() makes sense to us.
+> >
+> > It would be easy to build a packetdrill test. Please do so, then we can
+> > fix the root cause.
+> >
+> > Thank you !
 >
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+>
+> Please let me share some more details and clarifications on the issue fro=
+m ramdump snapshot locally secured.
+>
+> 1) This issue has been reported from Android-T linux kernel when we enabl=
+ed panic_on_warn for the first time.
+> Reproduction rate is not high and can be seen in any test cases with publ=
+ic internet connection.
+>
+> 2) Analysis from ramdump (which is not available at the moment).
+> 2-A) From ramdump, I was able to find below values.
+> tp->packets_out =3D 0
+> tp->retrans_out =3D 1
+> tp->max_packets_out =3D 1
+> tp->max_packets_Seq =3D 1575830358
+> tp->snd_ssthresh =3D 5
+> tp->snd_cwnd =3D 1
+> tp->prior_cwnd =3D 10
+> tp->wite_seq =3D 1575830359
+> tp->pushed_seq =3D 1575830358
+> tp->lost_out =3D 1
+> tp->sacked_out =3D 0
 
-Vinod,
+Thanks for all the details! If the ramdump becomes available again at
+some point, would it be possible to pull out the following values as
+well:
 
-Do you have any feedback on this series?  RC1 is available, and it
-would be nice to see this series merged soon unless you have changes
-you want implemented.
+tp->mss_cache
+inet_csk(sk)->icsk_pmtu_cookie
+inet_csk(sk)->icsk_ca_state
 
-Thank you,
-
-adam
-> ---
-> V2:  Fix typo in comment
->
-> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/f=
-reescale/phy-fsl-samsung-hdmi.c
-> index 2c8038864357..412c03b7dcd6 100644
-> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> @@ -406,16 +406,15 @@ static unsigned long fsl_samsung_hdmi_phy_find_pms(=
-unsigned long fout, u8 *p, u1
->                                 continue;
->
->                         /*
-> -                        * TODO: Ref Manual doesn't state the range of _m
-> -                        * so this should be further refined if possible.
-> -                        * This range was set based on the original value=
-s
-> -                        * in the lookup table
-> +                        * The Ref manual doesn't explicitly state the ra=
-nge of M,
-> +                        * but it does show it as an 8-bit value, so reje=
-ct
-> +                        * any value above 255.
->                          */
->                         tmp =3D (u64)fout * (_p * _s);
->                         do_div(tmp, 24 * MHZ);
-> -                       _m =3D tmp;
-> -                       if (_m < 0x30 || _m > 0x7b)
-> +                       if (tmp > 255)
->                                 continue;
-> +                       _m =3D tmp;
->
->                         /*
->                          * Rev 2 of the Ref Manual states the
-> --
-> 2.45.2
->
+Thanks,
+neal
 
