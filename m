@@ -1,157 +1,243 @@
-Return-Path: <linux-kernel+bounces-431122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B537A9E3934
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:48:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9650168C31
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:48:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EA71B395F;
-	Wed,  4 Dec 2024 11:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Eiabl8mJ"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1DD9E3936
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:48:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8919C1B393A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC3B228484A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:48:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E231B5ECB;
+	Wed,  4 Dec 2024 11:48:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC6B1B4152;
+	Wed,  4 Dec 2024 11:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733312914; cv=none; b=XGjF/U1mFzuVYkUtv0cIfSZ4wxBBK8Cd/bg08MWg6JEuVJ6gsgUDBR9bjjVi7DWcSPUO4W/FOGbVkp0d/9q3xckYXg71veoAUUknrLA3UVrYhIIj1TZSErzYsRpweT+raSoh8tkU7a9K/GtRxDZn2T0RSb1ME9Q42YGVuzbMAEg=
+	t=1733312921; cv=none; b=rDysUAIQD3EgG3mOXH5yxozVTY19x4oGzwp2zv9hTJ+fMHZt/doBHxYK/ONWFbeCAWl4Ed1+2BhvmLaSLMksFHEKxunsPWpePoJFMgDcVc+tTJ8ZfOofGbhESlqnizm+Ngxq+a0fmQneJCV2qmlHiLGfgIEu2OCEHqIo5WpAIOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733312914; c=relaxed/simple;
-	bh=4r0p1BOG67VHgM5UWaGYXDCZt5TDFsUUNnk5813gz2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H/zCKQVunqimReZS8/4qK+jhIEd1brMQIJfTrwQ9Mybp2RfKNfIq4mh5SJIpkRnZeF6PeRjhf2sZDSxXX9x2Shc0fAmSw+WmrmKjpRx9Lj1gPl8LoP6UyLb4UKSpBuijD87kmibiZ6O3X2eKyf/cpXhFJxXCgL3Bpo5XIvXGmSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Eiabl8mJ; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B6E76E0008;
-	Wed,  4 Dec 2024 11:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733312909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4r0p1BOG67VHgM5UWaGYXDCZt5TDFsUUNnk5813gz2I=;
-	b=Eiabl8mJKkEzMn4lRypudyvJL3uHutZ8oEfKKPGAyx51LgiSZQTIltEvf0jgR67PaN91CO
-	/QJwkCYCNGm5oqbcYbhyohTXDzdB3bhdyVplJjqB2y+bgtXfAKxGkyttQnUBLdx5C6txnS
-	qDkK1416ESTJ8C+k/KHZh6c61jx67tUV0bBVVmly4a4kLJM5+4vXfiYRuqCtFIK50Acjku
-	YBOmORcZvt9AWJestLyYVmtmg0Z4Xk88zqjt5uE8DInFFKhseAgqKdQwlu9hxBRPbr6xIU
-	DZ3cPOELCvE4l0P4C8QzU8IND77C12kqGDi4Itr8PPt7qeeSovLjnVVnligoLA==
-Date: Wed, 4 Dec 2024 12:48:26 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Francesco <francesco.dolcini@toradex.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley
- <conor@kernel.org>, =?UTF-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>
-Subject: Re: [PATCH v3] driver core: fw_devlink: Stop trying to optimize
- cycle detection logic
-Message-ID: <20241204124826.2e055091@booty>
-In-Reply-To: <20241030171009.1853340-1-saravanak@google.com>
-References: <20241030171009.1853340-1-saravanak@google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733312921; c=relaxed/simple;
+	bh=/yIIYUBP7kkSoJoC2I9xEAcI7i1lAFny+D59IeEc0IQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q33tQ3TAtpvEqGkzB4f4gCk39Rlrqi3eyj672FdMzIsO9DgZJ+wJUIHf7+xaJyEf1ZL3ZlTYfR049veR8Imacy2lxgzQtdE0k/DtU9E8bVDbFSE8/r+dlcGerCzJrhyxWb11COYKO3fRWeZFdEu/ufYGFk4ef5mSj8W0ZIfjSvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DA49FEC;
+	Wed,  4 Dec 2024 03:49:05 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E3B73F71E;
+	Wed,  4 Dec 2024 03:48:35 -0800 (PST)
+Date: Wed, 4 Dec 2024 11:48:26 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
+	konrad.dybcio@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com,
+	arm-scmi@vger.kernel.org
+Subject: Re: [PATCH V5 1/2] firmware: arm_scmi: Add QCOM Generic Vendor
+ Protocol documentation
+Message-ID: <Z1BBirNWH1eaSKtr@pluto>
+References: <20241115011515.1313447-1-quic_sibis@quicinc.com>
+ <20241115011515.1313447-2-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115011515.1313447-2-quic_sibis@quicinc.com>
 
-Hello Saravana,
+On Fri, Nov 15, 2024 at 06:45:14AM +0530, Sibi Sankar wrote:
+> Add QCOM System Control Management Interface (SCMI) Generic Vendor
+> Extensions Protocol documentation.
+> 
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+> 
+> v4:
+> * Update the protol attributes doc with more information. [Cristian]
+> 
+>  .../arm_scmi/vendors/qcom/qcom_generic.rst    | 211 ++++++++++++++++++
+>  1 file changed, 211 insertions(+)
+>  create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
+> 
+> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
+> new file mode 100644
+> index 000000000000..141bc932e30f
+> --- /dev/null
+> +++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
+> @@ -0,0 +1,211 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. include:: <isonum.txt>
+> +
+> +===============================================================================
+> +QCOM System Control and Management Interface(SCMI) Vendor Protocols Extension
+> +===============================================================================
+> +
+> +:Copyright: |copy| 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> +
+> +:Author: Sibi Sankar <quic_sibis@quicinc.com>
+> +
+> +SCMI_GENERIC: System Control and Management Interface QCOM Generic Vendor Protocol
+> +==================================================================================
+> +
+> +This protocol is intended as a generic way of exposing a number of Qualcomm
+> +SoC specific features through a mixture of pre-determined algorithm string and
+> +param_id pairs hosted on the SCMI controller. It implements an interface compliant
+> +with the Arm SCMI Specification with additional vendor specific commands as
+> +detailed below.
+> +
+> +Commands:
+> +_________
+> +
+> +PROTOCOL_VERSION
+> +~~~~~~~~~~~~~~~~
+> +
+> +message_id: 0x0
+> +protocol_id: 0x80
+> +
+> ++---------------+--------------------------------------------------------------+
+> +|Return values                                                                 |
+> ++---------------+--------------------------------------------------------------+
+> +|Name           |Description                                                   |
+> ++---------------+--------------------------------------------------------------+
+> +|int32 status   |See ARM SCMI Specification for status code definitions.       |
+> ++---------------+--------------------------------------------------------------+
+> +|uint32 version |For this revision of the specification, this value must be    |
+> +|               |0x10000.                                                      |
+> ++---------------+--------------------------------------------------------------+
+> +
+> +PROTOCOL_ATTRIBUTES
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +message_id: 0x1
+> +protocol_id: 0x80
+> +
+> ++---------------+--------------------------------------------------------------+
+> +|Return values                                                                 |
+> ++------------------+-----------------------------------------------------------+
+> +|Name              |Description                                                |
+> ++------------------+-----------------------------------------------------------+
+> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 attributes |Bits[31:16] Reserved, must be to 0.                        |
+> +|                  |Bits[15:8] Number of agents in the system                  |
+> +|                  |Bits[7:0] Number of vendor protocols in the system         |
+> ++------------------+-----------------------------------------------------------+
 
-+Cc. DT maintainers, Herv=C3=A9
+Thanks of clarifing this....may I ask why number of agents is reported
+here too given that it is already exposed by Base protocol ?
 
-On Wed, 30 Oct 2024 10:10:07 -0700
-Saravana Kannan <saravanak@google.com> wrote:
+Not really arguing about this so much, but you will end up having to maintain this
+on 2 different protocols fw side...or are they not 'agents' in the SCMI meaning ?
 
-> In attempting to optimize fw_devlink runtime, I introduced numerous cycle
-> detection bugs by foregoing cycle detection logic under specific
-> conditions. Each fix has further narrowed the conditions for optimization.
->=20
-> It's time to give up on these optimization attempts and just run the cycle
-> detection logic every time fw_devlink tries to create a device link.
->=20
-> The specific bug report that triggered this fix involved a supplier fwnode
-> that never gets a device created for it. Instead, the supplier fwnode is
-> represented by the device that corresponds to an ancestor fwnode.
->=20
-> In this case, fw_devlink didn't do any cycle detection because the cycle
-> detection logic is only run when a device link is created between the
-> devices that correspond to the actual consumer and supplier fwnodes.
->=20
-> With this change, fw_devlink will run cycle detection logic even when
-> creating SYNC_STATE_ONLY proxy device links from a device that is an
-> ancestor of a consumer fwnode.
->=20
-> Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d276@=
-ideasonboard.com/
-> Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of overl=
-apping cycles")
-> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+Anyway, I'm fine with it, even though you dont seem to use this
+anywhere.
 
-After rebasing my work for the hotplug connector driver using device
-tree overlays [0] on v6.13-rc1 I started getting these OF errors on
-overlay removal:
+> +
+> +PROTOCOL_MESSAGE_ATTRIBUTES
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +message_id: 0x2
+> +protocol_id: 0x80
+> +
+> ++---------------+--------------------------------------------------------------+
+> +|Return values                                                                 |
+> ++------------------+-----------------------------------------------------------+
+> +|Name              |Description                                                |
+> ++------------------+-----------------------------------------------------------+
+> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 attributes |For all message id's the parameter has a value of 0.       |
+> ++------------------+-----------------------------------------------------------+
+> +
+> +QCOM_SCMI_SET_PARAM
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +message_id: 0x10
+> +protocol_id: 0x80
+> +
+> ++------------------+-----------------------------------------------------------+
+> +|Parameters                                                                    |
+> ++------------------+-----------------------------------------------------------+
+> +|Name              |Description                                                |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 ext_id     |Reserved, must be zero.                                    |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
+> +|                  |and is used to set various parameters supported by it.     |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
+> +|                  |algorithm string pair.                                     |
+> ++------------------+-----------------------------------------------------------+
+> +|Return values                                                                 |
+> ++------------------+-----------------------------------------------------------+
+> +|Name              |Description                                                |
+> ++------------------+-----------------------------------------------------------+
+> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
+> +|                  |by the chosen algorithm string.                            |
+> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
+> +|                  |matches.                                                   |
+> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
+> +|                  |is rejected by the algorithm string.                       |
+> ++------------------+-----------------------------------------------------------+
+> +
+> +QCOM_SCMI_GET_PARAM
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +message_id: 0x11
+> +protocol_id: 0x80
+> +
+> ++------------------+-----------------------------------------------------------+
+> +|Parameters                                                                    |
+> ++------------------+-----------------------------------------------------------+
+> +|Name              |Description                                                |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 ext_id     |Reserved, must be zero.                                    |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 param_id   |Serves as the token message id for the algorithm string.   |
+> ++------------------+-----------------------------------------------------------+
+> +|uint32 buf[]      |Serves as the payload and store of value for the specified |
+> +|                  |param_id and algorithm string pair.                        |
+> ++------------------+-----------------------------------------------------------+
+> +|Return values                                                                 |
+> ++------------------+-----------------------------------------------------------+
+> +|Name              |Description                                                |
+> ++------------------+-----------------------------------------------------------+
+> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
+> +|                  |by the chosen algorithm string and the result is copied    |
+> +|                  |into buf[].                                                |
+> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
+> +|                  |matches.                                                   |
+> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
+> +|                  |is rejected by the algorithm string.                       |
+> ++------------------+-----------------------------------------------------------+
 
-OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
-node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
-ector/devices/panel-dsi-lvds
-OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
-node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
-ector/devices/backlight-addon
-OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
-node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
-ector/devices/battery-charger
-OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
-node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
-ector/devices/regulator-addon-5v0-sys
-OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
-node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
-ector/devices/regulator-addon-3v3-sys
+..missed this last time...so you should add here also a field describing
+the reply buf right ? (as it happenns really in your code) something
+like:
 
-...and many more. Exactly one per each device in the overlay 'devices'
-node, each implemented by a platform driver.
+ ++------------------+-----------------------------------------------------------+
+ +|uint32 buf[]      |Holds the payload of the result of the query.	 	 |
+ +|                  |					                         |
+ ++------------------+-----------------------------------------------------------+
 
-Bisecting found this patch is triggering these error messages, which
-in fact disappear by reverting it.
-
-I looked at the differences in dmesg and /sys/class/devlink/ in the
-"good" and "bad" cases, and found almost no differences. The only
-relevant difference is in cycle detection for the panel node, which was
-expected, but nothing about all the other nodes like regulators.
-
-Enabling debug messages in core.c also does not show significant
-changes between the two cases, even though it's hard to be sure given
-the verbosity of the log and the reordering of messages.
-
-I suspect the new version of the cycle removal code is missing an
-of_node_get() somewhere, but that is not directly visible in the patch
-diff itself.
-
-Any clues?
-
-[0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-0-bc4dfee61b=
-e6@bootlin.com/
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Cristian
 
