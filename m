@@ -1,93 +1,210 @@
-Return-Path: <linux-kernel+bounces-430506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8119E31DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:10:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2A79E31E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:11:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46660B28AF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:10:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426FEB21127
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765E315098F;
-	Wed,  4 Dec 2024 03:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AEA143888;
+	Wed,  4 Dec 2024 03:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCFM8mZL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjBk146R"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4514D9FB;
-	Wed,  4 Dec 2024 03:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE23E136658;
+	Wed,  4 Dec 2024 03:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733281819; cv=none; b=j/D4fTeU63gjUEFMo4Q6CIcDGM0O+sBBl7VMNPv33ysQAUacUHu7g5umgXE6Vpt4KAeZVyq9HSjJJ5EsOKt1g4nUVSn8ebu1H+WrbY0zVn2dT4fdPA4noqRYz+jq4+vBXRRhEH7+EzXhqfmoA2Ra1br5kVOL28wv8fvb5L67Yew=
+	t=1733281878; cv=none; b=acl89oaNYkzjWzw+YEBD4WJ2BMlRe7mIVBYZ67ZYgc2H6WwlCPO8d3YnYJtBO4gKyi0EV1feUYsTQJegA9gCl0ImTG8IBPxsjsICnzgzr0Mxx+/el9vr/KeEN5Jj9hQ9o8jDanr4KB6FS93gpRBUmGau90fDIsjKELImNIhMeQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733281819; c=relaxed/simple;
-	bh=WmrE0DC5qwIB4Vgu/OlnByp2tC0LRSQN3RMWZUkdeFU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NSDIQDkdJYtNMb7gtBtkzSFpNM5GZce0TOj8woCV4MKVt5Wj0xkCw3c7adRdwmmruh6tPn4Uht6DWQG4EH6o5IsbZFCFBvls5CLkXNyT3aTz5gLledp/QzCHljeOAFwv/mMxbcbU0Fk0kAsKAxIafBqbLSeNm1tQLPxcyrUfbHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCFM8mZL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4F7C4CEDC;
-	Wed,  4 Dec 2024 03:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733281817;
-	bh=WmrE0DC5qwIB4Vgu/OlnByp2tC0LRSQN3RMWZUkdeFU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YCFM8mZL7gome89XLNLCmtOdYb3+dKYF7EhVnEBUdxE8j8g5Gj7gM3UkgxI97Gp9K
-	 lApY+e2lZ0q07l8pT/Pwu1pHT0/NuDTilkWrg5cKmrw+GVC7qM/G36E0su+Okz+EUN
-	 6zcngXwkaLFjielLu4PMn57aMUB3YJO3bomF8jI3QbscSteV+CogL0rHfoypl66Q74
-	 7M30Te64pIZN/GY4Cu4DtIZAxAql5meMhC0A6eukGgVx9iyYd/StaKiUVCn3MI6pkn
-	 DULIM0UlaCp+4X4SicfSA0ZvAvM1kUR4gADFZ08rCAG8K71b0N3YptfSy4lkJlRbqd
-	 VCx7WHOkXFJbw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7217F3806656;
-	Wed,  4 Dec 2024 03:10:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733281878; c=relaxed/simple;
+	bh=FC1IO+5zq7LugENdBj6DrnnJuMser+B89cR1TBzHDug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TdwDgS6gNcIUoBdo3g1D8OOsqqxr8gBG+080LiHChcr390fpIk8BsczO54NTiOUFtudkXxJe1Rz1hrjluvX8dx3dCbzTOU4Q+Bd3nu57KQqV1CQUI76ZGf3DVtLfdVmtv7Sl6eNBsIrJ0KxLUu0N/Zm490EIZZknO6RON+fl6S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjBk146R; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9e8522445dso877123766b.1;
+        Tue, 03 Dec 2024 19:11:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733281875; x=1733886675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHq1dAMl45aI7ZS4WgJJtiN3EJIyNkMWjx+eXqTV7sU=;
+        b=YjBk146Rpez7vv3nviorXLAw6N8WgKZBzbfici60LH/W1CNuTQbPve3O1C028HAXgC
+         L/oDoKBWjulbKBn7Av+4pqfrbHIquMYKCfRNOyVklIqeCRcQy+1GXjThfQoUnrh/MmAL
+         SWxPQrhROo72RxKI6hlma326NrXbW6HyO93civWx/OkBxC2YGRKk+CYuUn4zK/8HtOdV
+         037PGZQecZaJP1KNBareRI5cxM6f4iKLXbZSezsJk17HZF6xRNqsiWf5/AYc186JXrRo
+         3ER73fQbhq5dIYdTImSnLNRQfxOijjj/albe/AUgy/2Cs9FMwEgC+CfDiPoG+q8E+k7B
+         9iKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733281875; x=1733886675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vHq1dAMl45aI7ZS4WgJJtiN3EJIyNkMWjx+eXqTV7sU=;
+        b=Lt9JG1DlBfATO0zVIU1kUQPojYt2gv+K7+1gQrChYhwk339IZPJ4Iq4G4iJAbFumb7
+         NpIhPc7Uaw9kW4SHyvUM1XqbMRrQXpwnfdW7tnYt6cyQGnF1sf1sHeCJ7ve5wO3hrMGz
+         I9nsfg7jji7Unnzi+qdWzpmDyRdgCvKimapZ2YY68B7LNAJEJZzgmLtAujOwv9lOAuMG
+         doM2UQN+EBcxSzsOM9ti30sE/woUYvAyak6oT7Qufl9b5lTO/sbKL6ju8Jc70MOOWcm6
+         0s/O1i+3V6UltaDhraU8C117bjKzeAV2+PvR2D1NiMwKGKMQla2cnhhE4dlW0v2R/eeE
+         fiBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHN+0cqAR2cUUn1+Xr0wTJfEp7PiSzSdN7JflQsO59KCG85x4digNAj6WN8OjvsJMVEDIQIoRwq3z8/2Cz@vger.kernel.org, AJvYcCWO/yYmAw77VIN4ilCQlo5AlBbhb+gMBl09Nsj1Sb2gnCu2tFq8tVDww7lXHd/SPDt05o6k1DCajKiA@vger.kernel.org, AJvYcCXt+9y4oJ4PymU9hShRDlJ9xDkSHIfC4Mr38xfnc0Yb5UxQ5CXA1j6buDePQ2f2csVnCT1+7amOjgBr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJJW1wpY0lKub6Lhn+8DQfVBSFr5xnVMNiRX2NEow+48hh2tNJ
+	yAQZ3V6QiAlRN+sqT9f2bEbETuCAnnG82sMUJE30q38f15BKH8unMQdt3WlXGy3b9KlQ0f44ziD
+	YkNr2v/ytE5inbuJwklQV0c20QGU=
+X-Gm-Gg: ASbGncteBaTjrzPHwhXdlseXVbzc9pUVHF9j08oyMohBOgeD3Fk0poje4pTB5CdGw3H
+	w976t4qkaGtRUBhz8eFeoUqxyvmARt54=
+X-Google-Smtp-Source: AGHT+IHq0xfIi11duE9fpLS8hULXoZ211QH6ftIQfZtPmWl0i10iI9AvhODiMZP73poEwbzDTPOxIXqVpsVjjeTUD1Q=
+X-Received: by 2002:a17:906:9c9:b0:aa5:4d72:6dd7 with SMTP id
+ a640c23a62f3a-aa5f7da2bcfmr315567566b.29.1733281875078; Tue, 03 Dec 2024
+ 19:11:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net] net: Make napi_hash_lock irq safe
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173328183200.718738.18254702355170016369.git-patchwork-notify@kernel.org>
-Date: Wed, 04 Dec 2024 03:10:32 +0000
-References: <20241202182103.363038-1-jdamato@fastly.com>
-In-Reply-To: <20241202182103.363038-1-jdamato@fastly.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, edumazet@google.com,
- kuba@kernel.org, mkarsten@uwaterloo.ca, stable@vger.kernel.org,
- linux@roeck-us.net, davem@davemloft.net, horms@kernel.org,
- dsahern@kernel.org, bigeasy@linutronix.de, lorenzo@kernel.org,
- aleksander.lobakin@intel.com, linux-kernel@vger.kernel.org
+References: <20241203091540.3695650-1-j2anfernee@gmail.com>
+ <20241203091540.3695650-2-j2anfernee@gmail.com> <4c5044a0-8286-463c-ace9-78a4245f112e@kernel.org>
+In-Reply-To: <4c5044a0-8286-463c-ace9-78a4245f112e@kernel.org>
+From: Yu-Hsian Yang <j2anfernee@gmail.com>
+Date: Wed, 4 Dec 2024 11:10:38 +0800
+Message-ID: <CA+4VgcKWAOh=sQ=wUUPD89ORjYqZP0EDqJfqFT7FjNPppf=4Ow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
+ NCT720x ADCs
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com, 
+	javier.carrasco.cruz@gmail.com, andriy.shevchenko@linux.intel.com, 
+	marcelo.schmitt@analog.com, olivier.moysan@foss.st.com, 
+	mitrutzceclan@gmail.com, tgamblin@baylibre.com, matteomartelli3@gmail.com, 
+	alisadariana@gmail.com, gstols@baylibre.com, thomas.bonnefille@bootlin.com, 
+	ramona.nechita@analog.com, mike.looijmans@topic.nl, 
+	chanh@os.amperecomputing.com, KWLIU@nuvoton.com, yhyang2@nuvoton.com, 
+	openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Dear Krzysztof Kozlowski,
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Thank you for your kind feedback.
 
-On Mon,  2 Dec 2024 18:21:02 +0000 you wrote:
-> Make napi_hash_lock IRQ safe. It is used during the control path, and is
-> taken and released in napi_hash_add and napi_hash_del, which will
-> typically be called by calls to napi_enable and napi_disable.
-> 
-> This change avoids a deadlock in pcnet32 (and other any other drivers
-> which follow the same pattern):
-> 
-> [...]
+Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2024=E5=B9=B412=E6=9C=883=
+=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=885:25=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On 03/12/2024 10:15, Eason Yang wrote:
+> > This adds a binding specification for the Nuvoton NCT7201/NCT7202
+>
+>
+> Please do not use "This commit/patch/change", but imperative mood. See
+> longer explanation here:
+> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/sub=
+mitting-patches.rst#L95
+>
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree=
+/bindings/submitting-patches.rst#L18
+>
 
-Here is the summary with links:
-  - [net] net: Make napi_hash_lock irq safe
-    https://git.kernel.org/netdev/net/c/cecc1555a8c2
+I read the submit patch rule and understand how to rewrite it.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> >
+> > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+> > ---
+> >  .../bindings/iio/adc/nuvoton,nct720x.yaml     | 40 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 41 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,n=
+ct720x.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.=
+yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > new file mode 100644
+> > index 000000000000..2ed1e15b953b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > @@ -0,0 +1,40 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Nuvoton nct7202 and similar ADCs
+> > +
+> > +maintainers:
+> > +  - Eason Yang <j2anfernee@gmail.com>
+> > +
+> > +description: |
+> > +   Family of ADCs with i2c interface.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - nuvoton,nct7201
+> > +      - nuvoton,nct7202
+> > +
+> > +  reg:
+> > +    maxItems: 1
+>
+>
+> No other properties? No resources?
+>
 
+The difference is to remove read-vin-data-size property and default
+use read word vin data.
 
+> I think you skipped quite a lot from previous review.
+>
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        nct7202@1d {
+>
+> Nothing improved here.
+>
+> <form letter>
+> This is a friendly reminder during the review process.
+>
+> It seems my or other reviewer's previous comments were not fully
+> addressed. Maybe the feedback got lost between the quotes, maybe you
+> just forgot to apply it. Please go back to the previous discussion and
+> either implement all requested changes or keep discussing them.
+>
+> Thank you.
+> </form letter>
+>
+
+Thanks for your friendly reminder.
+It's impolite not to reply to every reviewer's comment.
+I would keep discussing with reviewers and apply the changes in the
+next version.
+
+>
+> Best regards,
+> Krzysztof
 
