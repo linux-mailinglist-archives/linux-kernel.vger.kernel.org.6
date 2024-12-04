@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-431261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FBF9E3BB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:51:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB329E3B43
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A81FB2576A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4962E28566E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B8F1BD014;
-	Wed,  4 Dec 2024 13:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC821BE871;
+	Wed,  4 Dec 2024 13:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="S7s1XsDe"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b9ahTYN1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FE91714B3;
-	Wed,  4 Dec 2024 13:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC4F189F57;
+	Wed,  4 Dec 2024 13:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733318866; cv=none; b=gfdUpwcgGXz+sXDYzyWzK99Rqna5sZl86VVGdMZuKaw4Djjf5Lqn6nBs5a/+o7KB2PJ1+YdwpNbelbJv6JDqocdTO9NFxvpHFelX//svTaPW2g+tqdggIbO2BLh9w7rIJrtnlfs6XEPS21+TEmpxAB8WWXEhwwR2aUOQ6J80X+Y=
+	t=1733318963; cv=none; b=kfpI+4AtH72F1GobDi2XtEib/uzwMmmJ45R8VHz0ooWWKrYUxx513xnDmm/69J7tsGZPrMFHzH8Y344yUt4rsX3BIK1zi4GnE9x3EQubbGDCUc4BJBI8h040EVIwjwvwXKyWDd0Qc4YkHPhPgtZiFVwRxEyEHI3Bt9NTW1Qc530=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733318866; c=relaxed/simple;
-	bh=sE23B4ttHCwF11SMH/4cQGZLTPJosFh75fu9WJI1yRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U/RDRAqzKcDCu9ytrIxqNazmBj46Z+ttFrdQ5QEflQ4ViK6s9HVTj5OSe1k1ZSNOJ+5huPd8puNKauLnYGjHB3MXMXvsZ3a/g4ywALadQOlaZUX4tFcTrla9P8gM3e3gns7c7r0ElCfFkmtYrKLdrI9UHZKI/VwbtJ1nHtPAmdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=S7s1XsDe; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1733318845; x=1733923645; i=wahrenst@gmx.net;
-	bh=sE23B4ttHCwF11SMH/4cQGZLTPJosFh75fu9WJI1yRg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=S7s1XsDeA9AwZId04CoS+4zfCsuHwmpDQUsxAEFF+CDyauoaxLwu3cyFeku+btkr
-	 nSUwCnHHXO7kOaQxZqfEL0eT3n3ySX0uS7lpgW+e6N4P1sGwGVA9rzMgvLbqZWBbR
-	 siw4DqIAsVB5qy4xfq8G99px0uxrdV3aiQCKV3VnJJFtpt1E8LOb/UjyMyhlD6QbP
-	 HY5F4+tJgrNtnh3PDdELp2dnUDH598gGnz7qgKDzgLWJL2blRc98DXLlspw6zJiKm
-	 qEErLTZcD9+sv7iHO5L1cKUp8DQfV6sGfsF8XcfsCt/Pw+YtgcpBbfARobUKc46CI
-	 tJ4rmERt7OR8onrPiA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.106] ([37.4.251.153]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M2O6Y-1tMfxb0lHq-0036dg; Wed, 04
- Dec 2024 14:27:25 +0100
-Message-ID: <5ab9b62a-6577-4a3f-9dfe-c7362bf725db@gmx.net>
-Date: Wed, 4 Dec 2024 14:27:24 +0100
+	s=arc-20240116; t=1733318963; c=relaxed/simple;
+	bh=RmBGqspqXsajXwu4RLl1HIg3BMspCKtkk7gAJW/krkg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iB1dVYSzhnyMYRzKchqBTktmx0UjfMPTKnbc2NTtPPull8Ue53NouXP29GTt82W0wDbpQibc8aD+ksAF+jEhcKaRzwH19lsSWQmlNL/TQCJ4LYpgdr0UvGmju+ThMfc7xTUidhN0rPGyVpoK9IZdFc4y28mQOkOFtbCDOpgUv58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b9ahTYN1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4CVKQQ027245;
+	Wed, 4 Dec 2024 13:29:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QMDnXqoZZqkTdv7hAKhPDMUmYWXJrFRc1vxAvkZ6ZIg=; b=b9ahTYN1U0Sqig1d
+	hHim4MF/OYa1nHm5+WBFikKYZT2aorqvKfUxBBm/YROSkNGakhlEbdX9VwuuoL5H
+	+MVFTwNtxXlDmoTFsNBYbfIOK6WYYCe692t9ynFvES2Tu14bn6u3yJzNN5B2TzDZ
+	lcBR1i2JhZyvBqa5htdpvho3oXHmQ47+MmmiMeGTYvJxEakLOpAufqOqsEcTwTK+
+	0BPNNHIZd4hlCwv/PEn4sMk3ncEdo4ycPMUmIUHyjsdEwZ9tJJFeMXnpWUhYkXdI
+	4bFDH1hShu0NRAimriAwm/vlN77JPopmEsH3hLudZVSAhOmZux4CmUNdOmr+YIo9
+	17elkw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a1g5kj3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 13:29:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4DTHwx008420
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 13:29:17 GMT
+Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 05:29:15 -0800
+Message-ID: <9c6127e3-17e1-4235-90b6-91f5dfa3166d@quicinc.com>
+Date: Wed, 4 Dec 2024 18:59:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,71 +64,173 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] spi-mxs: Fix chipselect glitch
-To: Fabio Estevam <festevam@gmail.com>, Ralf Schlatterbeck <rsc@runtux.com>
-Cc: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- NXP Linux Team <linux-imx@nxp.com>, linux-spi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240202115330.wxkbfmvd76sy3a6a@runtux.com>
- <20240213170657.puwlx5pjl3odcs2k@runtux.com>
- <CAOMZO5CD7+E_BBH+oQ8HUdBeRFZxWW7s2uJgS5eaQAW_Fe4CNg@mail.gmail.com>
+Subject: Re: [PATCH v3] dmaengine: qcom: gpi: Add GPI immediate DMA support
+ for SPI protocol
+To: <neil.armstrong@linaro.org>, Vinod Koul <vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+References: <20241204122059.24239-1-quic_jseerapu@quicinc.com>
+ <2c66c9df-49f1-42d5-8f80-27e36476e19b@linaro.org>
 Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <CAOMZO5CD7+E_BBH+oQ8HUdBeRFZxWW7s2uJgS5eaQAW_Fe4CNg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:G4xJvxn9JxBbFBtOCBgaPWVT/H5beKdM/r033wNOSnEfcHMS4uR
- kP50qLZwHr/eS++qjjefOovIiAMdSxwRdW7R39dQQcAclLnAEK2A6AXIpxWvfSG5tWJIM45
- 5DsoOZSUoAnGuog2Klzv8mDYPC3LoLesgHuf52WG+9XY9ajGvQrFT1FRq6gAZLz3bD+33Rl
- 4Gut2eCbMwAdMEbJBZdZg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:n7ckTBxpn3Y=;meKGvBZSvoTceDyMUxt1Uwb/XKi
- EfnkEIwv36g25zdscY73nH7gKor1Xdd++wVXwrrbJphgiQHkTLB/dpViCk7rL0WKgegZHl3n3
- buOUlrbi9zY+oyTKNpma7+PR4OcO8DCO25qpReW3vRqIECTU9JmpAlYSliAu78WI0o/mcCMRK
- z4bKQdS7cXHc8maddHaiGfvGCCKePGEv9XP2fmjLBAiJCjFJUlezo8IrA32lvXP03UzkyNc3S
- 0bsvVGgCuWVNXEQXtDHn9mB+2s5sD+pcE0q9UPc2xxz7ZO5X1M5MQ/4PklFynXj90+Tg7KB8c
- YkCQHWJX7nE2ryUxdmD1+X4xcJ4YJJoldXRdX/jPn08Fv957uyB5Ie9PDpYHyVFF+hN9Iil2u
- +lrcXgbHUYMAyq+iz1bslZDvQORL29LurfiB0i1q6ZnsUF490H0Fp/WRPc4QaDlCf8QqsLlaG
- UQzNBzpx3IEezahZpBgcYNyRGrlKrIb7mH+1GIIOGMO4DCqIHG1b0X0u+r4PZ+AkpzA+FtzLm
- DW4wpF5BQ8UEuUoJMCDjXXza3EDXtjZFeES1EJoxv4IVNSThMn+amekm7KS5SbJetUdznGYUk
- egl/M0Jmu57HNU7l5DCKZumFTTCWF9at/IRYiXtF70KXc9+mMDf3qf46J1fhks7W+ypBqoYtr
- lscVVFEvdhPc1D44LLVsogWrUcHg16GSLT0wig8f9CB2hbeM8h8ADuuWS4Q/4dUtVczRqx640
- KoiGL6+WG8CJkpyXrUoUfGwrTlIXqYpe4uT5oj82UE9Hq1uu75YaPjiLnSBuujAUCdx9SHqjo
- Fb92h43dQo1fpsMk7HzHLuVUHD/ZbwU+3qBRh2JZuKKTuIj+WUZ7E5v6Dpkwf5mt5S0FC7SiT
- e3Ep8IyPJOoOYQnzu5OxRB+d2xwr+P/2J6Swdizslf8KW0RTPptvaMIa4QvsP9co2hyRSgpFQ
- 8wN+kBLhHm1dvKd9TQLNVxTEXFk0um5APrLQQ7NUpo1mPkhyCDHTGYf9WiiqHiHTJjhY+D7rN
- ihehpC8JfNMM7413lT+32ZeU07xNbqCU7TzCnJE3i54Jb0MECcLdT9+AER2Kjtx+hdZTnFYff
- 3dV+7L6DCkIEW/jcOdFDtD4wDRjn3q
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+In-Reply-To: <2c66c9df-49f1-42d5-8f80-27e36476e19b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _h_59ho68LYZmAPh7NEIY-tmcHUdnZLP
+X-Proofpoint-ORIG-GUID: _h_59ho68LYZmAPh7NEIY-tmcHUdnZLP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 clxscore=1011 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040103
 
-Hi,
 
-Am 13.02.24 um 18:22 schrieb Fabio Estevam:
-> Hi Ralf,
->
-> On Tue, Feb 13, 2024 at 2:07=E2=80=AFPM Ralf Schlatterbeck <rsc@runtux.c=
-om> wrote:
->> On Fri, Feb 02, 2024 at 12:53:30PM +0100, Ralf Schlatterbeck wrote:
->>> There was a change in the mxs-dma engine that uses a new custom flag.
->>> The change was not applied to the mxs spi driver.
->>> This results in chipselect being deasserted too early.
->>> This fixes the chipselect problem by using the new flag in the mxs-spi
->>> driver.
->>>
->>> Fixes: ceeeb99cd821 ("dmaengine: mxs: rename custom flag")
->>> Signed-off-by: Ralf Schlatterbeck <rsc@runtux.com>
->>> ---
->>> For oscilloscope screenshots and a verbose explanation see my blog pos=
-t
->>> at https://blog.runtux.com/posts/2024/02/01/
-> I suggest putting the link to your detailed explanation into the
-> commit log as this is useful information.
->
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-I noticed that this patch hasn't applied to stable yet.
 
-Are there reason for not doing this or is it just because the patch
-missed the Cc: stable@vger.kernel.org ?
+On 12/4/2024 6:19 PM, neil.armstrong@linaro.org wrote:
+> Hi,
+> 
+> On 04/12/2024 13:20, Jyothi Kumar Seerapu wrote:
+>> The DMA TRE(Transfer ring element) buffer contains the DMA
+>> buffer address. Accessing data from this address can cause
+>> significant delays in SPI transfers, which can be mitigated to
+>> some extent by utilizing immediate DMA support.
+>>
+>> QCOM GPI DMA hardware supports an immediate DMA feature for data
+>> up to 8 bytes, storing the data directly in the DMA TRE buffer
+>> instead of the DMA buffer address. This enhancement enables faster
+>> SPI data transfers.
+>>
+>> This optimization reduces the average transfer time from 25 us to
+>> 16 us for a single SPI transfer of 8 bytes length, with a clock
+>> frequency of 50 MHz.
+>>
+>> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+>> ---
+>>
+>> v2-> v3:
+>>     - When to enable Immediate DMA support, control is moved to GPI 
+>> driver
+>>       from SPI driver.
+>>     - Optimizations are done in GPI driver related to immediate dma 
+>> changes.
+>>     - Removed the immediate dma supported changes in qcom-gpi-dma.h file
+>>       and handled in GPI driver.
+>>
+>>     Link to v2:
+>>     https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
+>>     https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
+>>
+>> v1 -> v2:
+>>     - Separated the patches to dmaengine and spi subsystems
+>>     - Removed the changes which are not required for this feature from
+>>       qcom-gpi-dma.h file.
+>>     - Removed the type conversions used in gpi_create_spi_tre.
+>>     Link to v1:
+>>     https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
+>>
+>>   drivers/dma/qcom/gpi.c | 32 +++++++++++++++++++++++++++-----
+>>   1 file changed, 27 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+>> index 52a7c8f2498f..35451d5a81f7 100644
+>> --- a/drivers/dma/qcom/gpi.c
+>> +++ b/drivers/dma/qcom/gpi.c
+>> @@ -27,6 +27,7 @@
+>>   #define TRE_FLAGS_IEOT        BIT(9)
+>>   #define TRE_FLAGS_BEI        BIT(10)
+>>   #define TRE_FLAGS_LINK        BIT(11)
+>> +#define TRE_FLAGS_IMMEDIATE_DMA    BIT(16)
+>>   #define TRE_FLAGS_TYPE        GENMASK(23, 16)
+>>   /* SPI CONFIG0 WD0 */
+>> @@ -64,6 +65,7 @@
+>>   /* DMA TRE */
+>>   #define TRE_DMA_LEN        GENMASK(23, 0)
+>> +#define TRE_DMA_IMMEDIATE_LEN    GENMASK(3, 0)
+>>   /* Register offsets from gpi-top */
+>>   #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)    (0x20000 + (0x4000 * (n)) 
+>> + (0x80 * (k)))
+>> @@ -1711,6 +1713,8 @@ static int gpi_create_spi_tre(struct gchan 
+>> *chan, struct gpi_desc *desc,
+>>       dma_addr_t address;
+>>       struct gpi_tre *tre;
+>>       unsigned int i;
+>> +    int len;
+>> +    u8 immediate_dma;
+> 
+> Should be bool
+Hi Neil, Thanks for the review.
+Sure, will change it to bool.
+> 
+>>       /* first create config tre if applicable */
+>>       if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+>> @@ -1763,14 +1767,32 @@ static int gpi_create_spi_tre(struct gchan 
+>> *chan, struct gpi_desc *desc,
+>>       tre_idx++;
+>>       address = sg_dma_address(sgl);
+>> -    tre->dword[0] = lower_32_bits(address);
+>> -    tre->dword[1] = upper_32_bits(address);
+>> +    len = sg_dma_len(sgl);
+>> -    tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
+>> +    immediate_dma = (direction == DMA_MEM_TO_DEV) && len <= 2 * 
+>> sizeof(tre->dword[0]);
+> 
+> I would have added () around 2 * sizeof(tre->dword[0])
+
+Below condition is fine or should i add brackets ?
+
+immediate_dma = direction == DMA_MEM_TO_DEV &&
+                 len <= 2 * sizeof(tre->dword[0]);
+> 
+>> +
+>> +    /* Support Immediate dma for write transfers for data length up 
+>> to 8 bytes */
+>> +    if (immediate_dma) {
+>> +        /*
+>> +         * For Immediate dma, data length may not always be length of 
+>> 8 bytes,
+>> +         * it can be length less than 8, hence initialize both 
+>> dword's with 0
+>> +         */
+>> +        tre->dword[0] = 0;
+>> +        tre->dword[1] = 0;
+>> +        memcpy(&tre->dword[0], sg_virt(sgl), len);
+>> +
+>> +        tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
+>> +    } else {
+>> +        tre->dword[0] = lower_32_bits(address);
+>> +        tre->dword[1] = upper_32_bits(address);
+>> +
+>> +        tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
+>> +    }
+>>       tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+>> -    if (direction == DMA_MEM_TO_DEV)
+>> -        tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
+>> +    tre->dword[3] |= u32_encode_bits(!!immediate_dma, 
+>> TRE_FLAGS_IMMEDIATE_DMA);
+> 
+> And you can drop !! if it's a bool
+Sure thanks, i will drop !! in V4.
+> 
+>> +    tre->dword[3] |= u32_encode_bits(!!(direction == DMA_MEM_TO_DEV),
+>> +                     TRE_FLAGS_IEOT);
+> 
+> I thingk you can drop !! here aswell, the check will return a bool
+Sure thanks, i will drop !! in V4.
+> 
+>>       for (i = 0; i < tre_idx; i++)
+>>           dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
+> 
+> Otherwise I like the simplification :-)
+Thanks, i will incorporate the changes in V4.
+> 
+> Thanks,
+> Neil
 
