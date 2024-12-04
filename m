@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-431597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735CC9E3F45
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:09:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FF89E3F79
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D5E282E2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B8EDB32666
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F7E20D4FA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060CB20D4FB;
 	Wed,  4 Dec 2024 16:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Px9j/j1R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAQHGcD+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486B320C00C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485FE1885A0;
 	Wed,  4 Dec 2024 16:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733328394; cv=none; b=O4lBXMy5CbB2XwAZsC+5ppLGQrZriwlcEF9l/LX60VgSiJ2Ale//gGpxbvssIMHg/VEejWxLBkDIx6ewKwl+l/86gJH6i2Z/tJQtZvE/Y61215pXlcBPPuhIefbmvVio7+/kLJLPxYAB/na4xcxJEQjwbZbxXCsvfDCzV+Zs6VQ=
+	t=1733328394; cv=none; b=mtlGQ306omrAHNJMS7ea4ZonQaBNvOIEKX39pdkDhsbQJRJcodjev4nczH2MZZf1v/FGGNfsQMhLfRxrT3RN9R4X0esEVv9cWHFFRDlg1XC/HdO6+dYVu5F/JzZsDsIdm1/vznDzMULfFlnr8NrSOEcTCVzjRo6hvMDo2Ey1u+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733328394; c=relaxed/simple;
-	bh=HNblYFGy1Ig37KXJlD6WXui3N0XjQbqGnX6arBwFr9Y=;
+	bh=3JhEAbqjaIpg38TjTLzxVnmiyUVlm2z5VLfTs/oY8h4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B6apyjMZPIccNh74GPHsIWdFUPNHOurJjiGAuDtMjQt6Z2WHuzfOJIgcZnn+JgSmtiWh/dCsAkdPJlM5QGRppBtuXUy3N+E9iVg8Ny/vzE/cE0kWK2xJFdCSbgsTATe/j4vog7rfvw7qCjkJ/OqUkKK/ycVJoTEKyE8gEFVBasY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Px9j/j1R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CC34FC4CEDF;
+	 In-Reply-To:To:Cc; b=eVlrPi157iQwpyuR4pJQ+oXYWrsuFhMRGCuBxpU0ROwYInk6oA9hJ5mrRdSaQ6pVhsn7/aelG9tN+EcQN4gZB+sOGC88uItYCHupvHuiygVfXhL85sj0mo1EtXDcgwE4FeivknzGS5AbZqXpwi2cvV4ZDWDIOmudPRdPzIZyH70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAQHGcD+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD007C4CEE3;
 	Wed,  4 Dec 2024 16:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733328393;
-	bh=HNblYFGy1Ig37KXJlD6WXui3N0XjQbqGnX6arBwFr9Y=;
+	bh=3JhEAbqjaIpg38TjTLzxVnmiyUVlm2z5VLfTs/oY8h4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Px9j/j1RYWiymXMQuwRWRP1t0khCqGyFfnLMx98swNGzusdiUxG+KZjFMP173VjxM
-	 6DEtbx7H45nkpLzaSDf/t+ilxtmUMeYSJ2mVvfEpOjFTYxuGzdExt5y0NOP3ExS/zD
-	 ylRaiKa9/k9055RDcWvCPIT3N0mHcwpq3xOsQKaQEoRi76jvsawthlaOgKZaMpFIRb
-	 MrABEiVVNfE2jMZ/B0/s9XjzPbS4hoevz3q0otO4IHA2Fh0uqTH1Pp5dgwbQT5nDFd
-	 753501H+cxKBpXhZgU//4gvwXQBlV0UhZn/ywALiR8Wu4c8cKT11wTvXwZZVAUL3wn
-	 jqLDQpEzJSFtg==
+	b=dAQHGcD+ocNBc1lNCJzUhY1zBqxA+tNzqaKkl0DRB85yss+bhT9+6DgfN0tvD+mfT
+	 OF+OwXLBLem1u7gpjvY0VGEoEr9zk63r2+5v0pJh/lccfBPataK9Pw9b8l7O4Avf50
+	 K1qgf7k0juBP9kxKYg0ziN3dGKSDm4S8wmpyKB4mTXMM2sye4b89YU0IYvH5v7dnSf
+	 Gjs93gLAX3lj70w15lFedMnCxO6CV69MpBOcltDn8MHKenEGJemCwtPo+TN5FOUegy
+	 aDc/eLDFtm+gvRZZsrIqNswk8vDujh0HcvzC9rH/HUmNOwcfwZ28IFHoKeYOjrr/TK
+	 JdTfIq5n4Xjdw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B18E7716B;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C909CE77170;
 	Wed,  4 Dec 2024 16:06:33 +0000 (UTC)
 From: Nikolaos Pasaloukos via B4 Relay <devnull+nikolaos.pasaloukos.blaize.com@kernel.org>
-Date: Wed, 04 Dec 2024 16:05:24 +0000
-Subject: [PATCH v5 1/6] dt-bindings: Add Blaize vendor prefix
+Date: Wed, 04 Dec 2024 16:05:25 +0000
+Subject: [PATCH v5 2/6] dt-bindings: arm: blaize: Add Blaize BLZP1600 SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-blaize-blzp1600_init_board_support-v5-1-b642bcc49307@blaize.com>
+Message-Id: <20241204-blaize-blzp1600_init_board_support-v5-2-b642bcc49307@blaize.com>
 References: <20241204-blaize-blzp1600_init_board_support-v5-0-b642bcc49307@blaize.com>
 In-Reply-To: <20241204-blaize-blzp1600_init_board_support-v5-0-b642bcc49307@blaize.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -66,13 +66,14 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
  Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev
+ linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733328392; l=977;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733328392; l=2168;
  i=nikolaos.pasaloukos@blaize.com; s=20241111; h=from:subject:message-id;
- bh=1p4NJqsf17xN5CcZrMIAnl7jCYm1QXfL6oCC9V0Tk3w=;
- b=64y+oANFB0qQeuvkTUwTBMYbGMUUYnye9j461IexzjJ3LzVVGMKHRB8OKKbjV+SjZIL33zGBK
- ErfzePQmuiWCkbKLCNzjqpIJKUpD9tO7Fv5YXop3zeoCbjx20OilcNE
+ bh=nZrtoLEBx9eSJm+LA7iUVDlX7hTZ20Riw/HSYwpf1yo=;
+ b=X+HoK8cBDfO3U5Zsc18jHTANKsInOutc6BStS8FgN09ozvbyIvQsF4cWbAHf1H0/ys2VyGzZs
+ MEqNXCeh3ECCUh+oeImi+YskXlmmc61MBXXt0Mcx7A0fCfy40+y9ShU
 X-Developer-Key: i=nikolaos.pasaloukos@blaize.com; a=ed25519;
  pk=gGEjGCXdSuvCJPIiu0p0UeiPcW5LC710Z6KGN/dzo3g=
 X-Endpoint-Received: by B4 Relay for
@@ -82,28 +83,67 @@ Reply-To: nikolaos.pasaloukos@blaize.com
 
 From: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
 
-Blaize, Inc. (www.blaize.com) is a SoC manufacturer with integrated
-programmable Graph-Streaming-Processors for AI and ML.
+Add device tree bindings for the Blaize BLZP1600 CB2 development
+board (carrier board). This board integrates a Blaize BLZP1600
+SoM (System on Module) which is based on the Blaize BLZP1600 SoC.
+
+The Blaize BLZP1600 SoC integrates a dual core ARM Cortex A53
+cluster and a Blaize Graph Streaming Processor for AI and ML
+workloads, plus a suite of connectivity and other peripherals.
 
 Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Matt Redfearn <matt.redfearn@blaize.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/arm/blaize.yaml | 40 +++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index b320a39de7fe40ce4d97ed3ea264a5971a3428dd..809086061a1992567ca6c5d404fbcee8a33ee300 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -216,6 +216,8 @@ patternProperties:
-     description: Shenzhen BigTree Tech Co., LTD
-   "^bitmain,.*":
-     description: Bitmain Technologies
-+  "^blaize,.*":
-+    description: Blaize, Inc.
-   "^blutek,.*":
-     description: BluTek Power
-   "^boe,.*":
+diff --git a/Documentation/devicetree/bindings/arm/blaize.yaml b/Documentation/devicetree/bindings/arm/blaize.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..af39e2756407baacee3030f6909cf2aa7dc5776c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/blaize.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/blaize.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Blaize Platforms
++
++maintainers:
++  - James Cowgill <james.cowgill@blaize.com>
++  - Matt Redfearn <matt.redfearn@blaize.com>
++  - Neil Jones <neil.jones@blaize.com>
++  - Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
++
++description: |
++  Blaize Platforms using SoCs designed by Blaize Inc.
++
++  The products based on the BLZP1600 SoC:
++
++  - BLZP1600-SoM: SoM (System on Module)
++  - BLZP1600-CB2: Development board CB2 based on BLZP1600-SoM
++
++  BLZP1600 SoC integrates a dual core ARM Cortex A53 cluster
++  and a Blaize Graph Streaming Processor for AI and ML workloads,
++  plus a suite of connectivity and other peripherals.
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: Blaize BLZP1600 based boards
++        items:
++          - enum:
++              - blaize,blzp1600-cb2
++          - const: blaize,blzp1600
++
++additionalProperties: true
++
++...
 
 -- 
 2.43.0
