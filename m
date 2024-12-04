@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-432045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43F09E4444
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:14:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5DE9E4540
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:02:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D3A169303
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:14:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A419B31D98
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34E81C3BFC;
-	Wed,  4 Dec 2024 19:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8741F03D0;
+	Wed,  4 Dec 2024 19:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3ASAAo2Y"
-Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LZbQ8zsy"
+Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFF71C3BF2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1051C3C01
 	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733339659; cv=none; b=FBiHKkNvDLs842tAHQISV+NSkvKWpc0qunszulYmXUNZ9DfSSbP+OPk+yq0s8HnJqJ3hLmWr/woWcwZcmQjqiA0jkylFLB+5LoS/jfg7DGrLlSXWkroHaWYd382B35AHRGJeZqCFDryplsQwy33ISpRTHEs4NKN6Kui8Dc54NSM=
+	t=1733339659; cv=none; b=NHPtpARQOOQtbOWIgIPMEVgxnOS/UB7KSkYsQv5vOfmbapOGLb+7/SzOPVMvYLId+RbL0RfU6aCeHIu/b5HdrVinJZ/4OaPeoak6FmPqnsiokgA9et9otv++ifJvxgC5Uu+CrhXeUVTBWOriRsY7dK+Gjm4SMMGl+jYHrcEtTlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733339659; c=relaxed/simple;
-	bh=c0rr8TXquNcORgcEqiRhpBJYz8YSK62+12i246a2psY=;
+	bh=Pe5YIDGyVsJn3IDNSsuwg/PtWitlNtJM3kxtfZFGD8o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lYt9iPKlSdw8rm3LQLF3QjB+h6O96rlyS8Dmukm2nWP/EpPttu1pbDTtEQrXOzo/rAJfPTuLbO4mhoQGe21nF4vesSFrZeLLbkyQWVAS2qrGcHwajLjIRqkauuppToM386TvsENq75ghHpjne3c9wfwDJI6v/N204kTy03fwEBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3ASAAo2Y; arc=none smtp.client-ip=209.85.222.201
+	 To:Cc:Content-Type; b=NoYZPdSmmWEPE2cCOhs961hVeHS3mlNVDcwnkKN8F+MYfaeEKZE9Ca9+Ae4j7CUvZu7xmIQKn3Ap9VYFTGRk38I4Y2fN5r352N1TQQNJUwyzP039f3+RmtDwfqJeT7NA+H9M5YLnsoiWoGzrnV/248O/NkfFzzFz1KIDTEykHko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LZbQ8zsy; arc=none smtp.client-ip=209.85.161.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7b67aace1ffso21528785a.0
+Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-5f2033c97cfso118212eaf.3
         for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:14:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733339656; x=1733944456; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733339657; x=1733944457; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zrj0l+L1/XMejjcdAt6Cg23oGRx5OMh6hw9EKc02Jsg=;
-        b=3ASAAo2Y6Q32t9MXSrcYfZOAa50WFDxmtoN1qwrCLDCq/DzGJZh5lo7DH4EjK/sJ3Y
-         +wqS3W96Fxzek4+V4Pw1sA8xstABIptzWLPaWdOQBk1sJ0H0lh5R26Na5mHy3xZ7ilod
-         hY1XDycUeCotGs36F2HeCbGm7d9TQ+BqlsgPZdbGOKR78SbAzsTbMx56NvATEuCY4fxH
-         n/+MfqdapFpFRVKa+7zIOP6lejaSNRA/dntmxn0LoG8LpvN69E9Wpy/L+obI49D7Ldnt
-         1+HNBxj5LStUVRbA+gehk2YaDB4nmwu0qyem9Ws2eSDe7CvxCepCEIsGwSnnurPj/yED
-         bK/Q==
+        bh=ifppD8XOVrlj0Y18bnChdCi7ngFpMAIfTyMrOgFm5Gc=;
+        b=LZbQ8zsySnHzNTQwM+VYSwJ6n8soxGXUC9vCnCQUk5lKbQNVoE3sTTxnOM2THOP1VL
+         O0WHxpLOsLUFz8VujjNK9tNV13Z/b+2mW9BOkt19LNy/bJaylC9on3CsLy568FKjERQL
+         XnwZocCV9Ry4o2oc2obKLOVMp0nlxZT7gPB0oKHMZGhafgBMmVt7Zlp8sQGNGPNd7gmv
+         ACjVkigeuxs1deI3ZX2UN7C6xIN+tv9saq8ykSBZCzsb3qh7lm3hwr1yppmUU+dEVKbm
+         aLbxh1kDQ72CNQPEQRyEJQtZfbPvqZAr51sidUOZ9MZ8mErDeiz8/kceHYkwvMF6u2BN
+         kgHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733339656; x=1733944456;
+        d=1e100.net; s=20230601; t=1733339657; x=1733944457;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zrj0l+L1/XMejjcdAt6Cg23oGRx5OMh6hw9EKc02Jsg=;
-        b=EXc2GnnjXKYlizaowOysNK5//XnZtB4pgknw49yGNUCIV0HmeECDx7viy3XZ5Dz3PO
-         p94NoeeOsHb+Yva2tmSKIPql8zmAesfyPW9RxbYkJSqdNdkgvErTarFHOXYVFVqP05D0
-         SGEYiQnJTJmJ9KEYiiZ9K7Nm2ndsfDlW6BG5KrY8JN6LcoNYMtD12O8mrUm9Fl282v1g
-         SVAJrsZzf4qNU7MVSf7+vuJD5g1hhsQGB1KfCsmxmtsIQ/h4bkFutC3/+T7Ab4SBSbdM
-         Q/j32HXOkESKST8FYUKrCU/lVK5GoCKJk7pA/r11LrbijaMqn0GvT0OzFQ8wJ2dqgdiM
-         ltzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbQ+UbP3CKd2xLbo50bg3nVTe7kWeRoEPTMabxcsnwwLFVhRJnsT00VoTbdNxNR+PXz6SkoyN3xB6ccSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYbylQkzie8cGmSsD8tAbTVBWu4is++IZxTIwWclVt8JqyUac9
-	qAcm1Ta6zgunaAurU2aMFPSdqae16vrnbWlpt/O8IoUrK17FSxw33m+g4xUjC1HvClN+z1o2NXv
-	xTUmRws0vnl/ZrlXwbQ==
-X-Google-Smtp-Source: AGHT+IEsH4AhFxEPswA6HSpr3bvQoscIWPYhswjH6B0ZmAUwG6NVAuJoyTvkHIFeYc2jG+fxyhqARW7A5Wn5aFvO
-X-Received: from uabib8.prod.google.com ([2002:a05:6130:1c88:b0:85b:d490:f925])
+        bh=ifppD8XOVrlj0Y18bnChdCi7ngFpMAIfTyMrOgFm5Gc=;
+        b=VsBObgfWdtfOSUmhMajvLcUtnJYP7IhZPMHXG8YESlPZqheQ1bePI+auT1/ZhIdqnJ
+         TvvtZuLF77eDPa4kpi7CzicrfybT5srypSgedrBWFtr20z9IM2AC11RcIBL8fthBA5Tw
+         RcKPKBcRSLf+24BWHuLfcmhEkcY/kh7zDBmHN37KN9BasvNsmd1mo+HzWSl0SjA3yeQ1
+         I4pnj7JoWh5ZGMuW11vPrsQf33wc57g7OQ5Wy+/If/marD6J3trLj7pmzm5tlUbbtj/B
+         4MAIv+JVnqPsnc5mIgrL5Vl4rkmF4VeZc+DvV8NJs/tb6rg0MAWPyvtH3qE/auUw1Z2w
+         +UwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV66ojL0zXyaEuXBDypNLiBKzxHJVHcx8XQ4dlWQfytfBBkfsHVhE5ABtEOjRzrblF71yBzNCP18nUp27A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywobdc+m7RV9rTVtR6Xl/TtSFPTWxMHT3Kj+Tv7uTiiLiYoKwQh
+	DoKZiacJFwOBZcQ6Q5blb0w8WlxJ4BRLSI1zVgMMisY9ZPVREEEgGxQa7wSex3MroUtfSPcsHeo
+	+BJClSXZsAFetMl0krg==
+X-Google-Smtp-Source: AGHT+IGqVM1yUneXF0DiEvK0H0RPVa3NLvh9Vv5/V4X8bp9PJGOl+SW8n3O2HwvzvAHA/QzfxuBonL+2sIMiSocO
+X-Received: from uaf26.prod.google.com ([2002:a05:6130:6d1a:b0:850:15b2:33d7])
  (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:2685:b0:7a9:acd5:1b21 with SMTP id af79cd13be357-7b6a61cb6e2mr738681685a.50.1733339656100;
+ 2002:a05:6359:230b:b0:1c3:94:8ffa with SMTP id e5c5f4694b2df-1caeabc2133mr709229655d.22.1733339656984;
  Wed, 04 Dec 2024 11:14:16 -0800 (PST)
-Date: Wed,  4 Dec 2024 19:13:36 +0000
+Date: Wed,  4 Dec 2024 19:13:37 +0000
 In-Reply-To: <20241204191349.1730936-1-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241204191349.1730936-1-jthoughton@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241204191349.1730936-2-jthoughton@google.com>
-Subject: [PATCH v1 01/13] KVM: Add KVM_MEM_USERFAULT memslot flag and bitmap
+Message-ID: <20241204191349.1730936-3-jthoughton@google.com>
+Subject: [PATCH v1 02/13] KVM: Add KVM_MEMORY_EXIT_FLAG_USERFAULT
 From: James Houghton <jthoughton@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
@@ -86,142 +86,26 @@ Cc: Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
 	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-Use one of the 14 reserved u64s in struct kvm_userspace_memory_region2
-for the user to provide `userfault_bitmap`.
-
-The memslot flag indicates if KVM should be reading from the
-`userfault_bitmap` field from the memslot. The user is permitted to
-provide a bogus pointer. If the pointer cannot be read from, we will
-return -EFAULT (with no other information) back to the user.
+This flag is used for vCPU memory faults caused by KVM Userfault; i.e.,
+the bit in `userfault_bitmap` corresponding to the faulting gfn was set.
 
 Signed-off-by: James Houghton <jthoughton@google.com>
 ---
- include/linux/kvm_host.h | 14 ++++++++++++++
- include/uapi/linux/kvm.h |  4 +++-
- virt/kvm/Kconfig         |  3 +++
- virt/kvm/kvm_main.c      | 28 ++++++++++++++++++++++++++++
- 4 files changed, 48 insertions(+), 1 deletion(-)
+ include/uapi/linux/kvm.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 401439bb21e3..f7a3dfd5e224 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -590,6 +590,7 @@ struct kvm_memory_slot {
- 	unsigned long *dirty_bitmap;
- 	struct kvm_arch_memory_slot arch;
- 	unsigned long userspace_addr;
-+	unsigned long __user *userfault_bitmap;
- 	u32 flags;
- 	short id;
- 	u16 as_id;
-@@ -724,6 +725,11 @@ static inline bool kvm_arch_has_readonly_mem(struct kvm *kvm)
- }
- #endif
- 
-+static inline bool kvm_has_userfault(struct kvm *kvm)
-+{
-+	return IS_ENABLED(CONFIG_HAVE_KVM_USERFAULT);
-+}
-+
- struct kvm_memslots {
- 	u64 generation;
- 	atomic_long_t last_used_slot;
-@@ -2553,4 +2559,12 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
- 				    struct kvm_pre_fault_memory *range);
- #endif
- 
-+int kvm_gfn_userfault(struct kvm *kvm, struct kvm_memory_slot *memslot,
-+		      gfn_t gfn);
-+
-+static inline bool kvm_memslot_userfault(struct kvm_memory_slot *memslot)
-+{
-+	return memslot->flags & KVM_MEM_USERFAULT;
-+}
-+
- #endif
 diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 502ea63b5d2e..94be7e8b46a4 100644
+index 94be7e8b46a4..641a2e580441 100644
 --- a/include/uapi/linux/kvm.h
 +++ b/include/uapi/linux/kvm.h
-@@ -40,7 +40,8 @@ struct kvm_userspace_memory_region2 {
- 	__u64 guest_memfd_offset;
- 	__u32 guest_memfd;
- 	__u32 pad1;
--	__u64 pad2[14];
-+	__u64 userfault_bitmap;
-+	__u64 pad2[13];
- };
- 
- /*
-@@ -51,6 +52,7 @@ struct kvm_userspace_memory_region2 {
- #define KVM_MEM_LOG_DIRTY_PAGES	(1UL << 0)
- #define KVM_MEM_READONLY	(1UL << 1)
- #define KVM_MEM_GUEST_MEMFD	(1UL << 2)
-+#define KVM_MEM_USERFAULT	(1UL << 3)
- 
- /* for KVM_IRQ_LINE */
- struct kvm_irq_level {
-diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-index 54e959e7d68f..9eb1fae238b1 100644
---- a/virt/kvm/Kconfig
-+++ b/virt/kvm/Kconfig
-@@ -124,3 +124,6 @@ config HAVE_KVM_ARCH_GMEM_PREPARE
- config HAVE_KVM_ARCH_GMEM_INVALIDATE
-        bool
-        depends on KVM_PRIVATE_MEM
-+
-+config HAVE_KVM_USERFAULT
-+       bool
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index de2c11dae231..23fa3e911c4e 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1541,6 +1541,9 @@ static int check_memory_region_flags(struct kvm *kvm,
- 	    !(mem->flags & KVM_MEM_GUEST_MEMFD))
- 		valid_flags |= KVM_MEM_READONLY;
- 
-+	if (kvm_has_userfault(kvm))
-+		valid_flags |= KVM_MEM_USERFAULT;
-+
- 	if (mem->flags & ~valid_flags)
- 		return -EINVAL;
- 
-@@ -2042,6 +2045,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		if (r)
- 			goto out;
- 	}
-+	if (mem->flags & KVM_MEM_USERFAULT)
-+		new->userfault_bitmap = (unsigned long *)mem->userfault_bitmap;
- 
- 	r = kvm_set_memslot(kvm, old, new, change);
- 	if (r)
-@@ -6426,3 +6431,26 @@ void kvm_exit(void)
- 	kvm_irqfd_exit();
- }
- EXPORT_SYMBOL_GPL(kvm_exit);
-+
-+int kvm_gfn_userfault(struct kvm *kvm, struct kvm_memory_slot *memslot,
-+		       gfn_t gfn)
-+{
-+	unsigned long bitmap_chunk = 0;
-+	off_t offset;
-+
-+	if (!kvm_memslot_userfault(memslot))
-+		return 0;
-+
-+	if (WARN_ON_ONCE(!memslot->userfault_bitmap))
-+		return 0;
-+
-+	offset = gfn - memslot->base_gfn;
-+
-+	if (copy_from_user(&bitmap_chunk,
-+			   memslot->userfault_bitmap + offset / BITS_PER_LONG,
-+			   sizeof(bitmap_chunk)))
-+		return -EFAULT;
-+
-+	/* Set in the bitmap means that the gfn is userfault */
-+	return !!(bitmap_chunk & (1ul << (offset % BITS_PER_LONG)));
-+}
+@@ -444,6 +444,7 @@ struct kvm_run {
+ 		/* KVM_EXIT_MEMORY_FAULT */
+ 		struct {
+ #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
++#define KVM_MEMORY_EXIT_FLAG_USERFAULT	(1ULL << 4)
+ 			__u64 flags;
+ 			__u64 gpa;
+ 			__u64 size;
 -- 
 2.47.0.338.g60cca15819-goog
 
