@@ -1,124 +1,106 @@
-Return-Path: <linux-kernel+bounces-431842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DE59E443B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:13:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1269E4578
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2076B29F1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:41:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 695F9BA4BEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFFD23098A;
-	Wed,  4 Dec 2024 17:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B54D1F497D;
+	Wed,  4 Dec 2024 17:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+0y34dH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjC4avRH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724792066DF;
-	Wed,  4 Dec 2024 17:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6457C1F496D;
+	Wed,  4 Dec 2024 17:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332308; cv=none; b=az92GJoSV122ZeQPUnwcN2li4nMREwmHQkuz5nU1/qniMXWbZDn01zCKFvVyvlrXK22W4tCFCV0mEnto0k1ABZ1vDads9Gu3O3uAJGXogCcyOHX3Za0peljVs0puR6G6rfyX306eCyJG7cYzbhm62zrTUPAt66LHonsvJaWhqTU=
+	t=1733332332; cv=none; b=NN06XLbj5vlYjx6YBHMHcLZB2pleQjr09Vn/Dh1iQtTKyxm7dzDnegMI8zX/TUyZnT4fajLiLCiyd63zMd9aXVqCdmMYK4UOit2jTLSWRbcjgmfMP8AcSTm5C1F1bg+gsJY/ufUIAEX+5HdADq15nUJy0Bj/v5ivNGX0coQo0CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332308; c=relaxed/simple;
-	bh=ckDMjVDSyBTqcPOpG8jfSlViv6qZAcYWL7qVzsWgtYM=;
+	s=arc-20240116; t=1733332332; c=relaxed/simple;
+	bh=LwKBW2PNt4O54PgpeomZsFObp2g62nnnrZO2ev9ZYzk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lhmRhscA7lmo9t0LHaIXaIVHCjHwwvQMVu0tckEo/WZO4hFUrKK3tbB0J8YHvX1J9fI8ARKhG322dPx72fr5z9jgs0yTsq8AHtOzLbd97FXiudg7J72dvmw4gassXnojLpIMQlje0JlK/JLV+UUf+WxbCQ2K1AH1crzo78YcCdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+0y34dH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96631C4CED1;
-	Wed,  4 Dec 2024 17:11:47 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nweqhL1rO6foP4jQax7vh4sYkjr/P83DHyskJDdw5wN7fffzNDtf4a8zdCkT75dokt8empkQfUFlfB2AxCEIiEbfwfTvA6ER5fWD2resw4W9qy54v7areS7usKcQInDGDRit1JgVZzNpc77PolRsOn8jraWqqgudSg1+FJgxLA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjC4avRH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F4B1C4CECD;
+	Wed,  4 Dec 2024 17:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332308;
-	bh=ckDMjVDSyBTqcPOpG8jfSlViv6qZAcYWL7qVzsWgtYM=;
+	s=k20201202; t=1733332332;
+	bh=LwKBW2PNt4O54PgpeomZsFObp2g62nnnrZO2ev9ZYzk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O+0y34dH1JxPON9SVzJD7sKA8r22l82AakgPqymQo8nMI1eBeZJvejIM/+n8SOIAb
-	 CYg48uDbDk+HpLDzAncNhJvZ7TY2FFrrbYORLF6/dUYe9VRwWG4vTs0ucBfgHMj9Nx
-	 Xqon6oBYfWEESUbBLR9D1YLPCOwzPnQuMe0RinYeXuc2pu859noaf1bfd4vLkUO++8
-	 BmqmhAIoCPeR7wxdk+WsQc5H3LEdY+mAG+rVVA3tRCBlHNOWW3D8KaAZaoZYAwL6fm
-	 0ikjTOjqnQurTZERBbUuQ0yHB4HiFMvfnC9+FDeLWflyPibXWovSmW1umpeGUf5qZ5
-	 7b8JTqMum/New==
+	b=EjC4avRHun/qNm6z1V7pw+ZfMVRzcOH706sVucJxDcGglsR76C3I45zEt90B8OD3i
+	 WZeRUvOI1ssYJ1awvXzCFA1+Y5q/ENuwsgoscxjGQyNgl/ir20xmbLMbZTOzc/sBZw
+	 EAbfSCQuw8ZuDzxl8QjO3uUgXuSdDUHgU8u/LpMec3xPzNUrkqCGTWDmNzJiakK7j+
+	 XowoujloN4af8qniEZDhReaZRoQHHduQUIhWsaRoD4QE1IqpoiD/3gapVTiH0L41lj
+	 /YuTN4eIqiAzdhdFKTT/K84vrzFTfNZqCi3q7YMGTcxSW5ayBn1wqW9jmwwdejRhfx
+	 5JDTKBf0wzehg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
+Cc: Nirmal Patel <nirmal.patel@linux.ntel.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
+	nirmal.patel@linux.intel.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
 	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 10/15] PCI: Add ACS quirk for Wangxun FF5xxx NICs
-Date: Wed,  4 Dec 2024 10:59:58 -0500
-Message-ID: <20241204160010.2216008-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.11 05/13] PCI: vmd: Add DID 8086:B06F and 8086:B60B for Intel client SKUs
+Date: Wed,  4 Dec 2024 11:00:30 -0500
+Message-ID: <20241204160044.2216380-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204160010.2216008-1-sashal@kernel.org>
-References: <20241204160010.2216008-1-sashal@kernel.org>
+In-Reply-To: <20241204160044.2216380-1-sashal@kernel.org>
+References: <20241204160044.2216380-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.1
+X-stable-base: Linux 6.11.10
 Content-Transfer-Encoding: 8bit
 
-From: Mengyuan Lou <mengyuanlou@net-swift.com>
+From: Nirmal Patel <nirmal.patel@linux.ntel.com>
 
-[ Upstream commit aa46a3736afcb7b0793766d22479b8b99fc1b322 ]
+[ Upstream commit b727484cace4be22be9321cc0bc9487648ba447b ]
 
-Wangxun FF5xxx NICs are similar to SFxxx, RP1000 and RP2000 NICs.  They may
-be multi-function devices, but they do not advertise an ACS capability.
+Add support for this VMD device which supports the bus restriction mode.
+The feature that turns off vector 0 for MSI-X remapping is also enabled.
 
-But the hardware does isolate FF5xxx functions as though it had an ACS
-capability and PCI_ACS_RR and PCI_ACS_CR were set in the ACS Control
-register, i.e., all peer-to-peer traffic is directed upstream instead of
-being routed internally.
-
-Add ACS quirk for FF5xxx NICs in pci_quirk_wangxun_nic_acs() so the
-functions can be in independent IOMMU groups.
-
-Link: https://lore.kernel.org/r/E16053DB2B80E9A5+20241115024604.30493-1-mengyuanlou@net-swift.com
-Signed-off-by: Mengyuan Lou <mengyuanlou@net-swift.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Link: https://lore.kernel.org/r/20241011175657.249948-1-nirmal.patel@linux.intel.com
+Signed-off-by: Nirmal Patel <nirmal.patel@linux.ntel.com>
+Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/quirks.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/pci/controller/vmd.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index dccb60c1d9cc3..8103bc24a54ea 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4996,18 +4996,21 @@ static int pci_quirk_brcm_acs(struct pci_dev *dev, u16 acs_flags)
- }
- 
- /*
-- * Wangxun 10G/1G NICs have no ACS capability, and on multi-function
-- * devices, peer-to-peer transactions are not be used between the functions.
-- * So add an ACS quirk for below devices to isolate functions.
-+ * Wangxun 40G/25G/10G/1G NICs have no ACS capability, but on
-+ * multi-function devices, the hardware isolates the functions by
-+ * directing all peer-to-peer traffic upstream as though PCI_ACS_RR and
-+ * PCI_ACS_CR were set.
-  * SFxxx 1G NICs(em).
-  * RP1000/RP2000 10G NICs(sp).
-+ * FF5xxx 40G/25G/10G NICs(aml).
-  */
- static int  pci_quirk_wangxun_nic_acs(struct pci_dev *dev, u16 acs_flags)
- {
- 	switch (dev->device) {
--	case 0x0100 ... 0x010F:
--	case 0x1001:
--	case 0x2001:
-+	case 0x0100 ... 0x010F: /* EM */
-+	case 0x1001: case 0x2001: /* SP */
-+	case 0x5010: case 0x5025: case 0x5040: /* AML */
-+	case 0x5110: case 0x5125: case 0x5140: /* AML */
- 		return pci_acs_ctrl_enabled(acs_flags,
- 			PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF);
- 	}
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index a726de0af011f..4429a3ca1de17 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -1111,6 +1111,10 @@ static const struct pci_device_id vmd_ids[] = {
+ 		.driver_data = VMD_FEATS_CLIENT,},
+ 	{PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_VMD_9A0B),
+ 		.driver_data = VMD_FEATS_CLIENT,},
++	{PCI_VDEVICE(INTEL, 0xb60b),
++                .driver_data = VMD_FEATS_CLIENT,},
++	{PCI_VDEVICE(INTEL, 0xb06f),
++                .driver_data = VMD_FEATS_CLIENT,},
+ 	{0,}
+ };
+ MODULE_DEVICE_TABLE(pci, vmd_ids);
 -- 
 2.43.0
 
