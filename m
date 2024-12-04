@@ -1,196 +1,223 @@
-Return-Path: <linux-kernel+bounces-430457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8E79E3116
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:04:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68989E3119
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2837F1672E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A016F167D04
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFB421106;
-	Wed,  4 Dec 2024 02:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A832746C;
+	Wed,  4 Dec 2024 02:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hwKzEtYH"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsYW2yYy"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60495227
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 02:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AFFEEB5;
+	Wed,  4 Dec 2024 02:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733277887; cv=none; b=FBcRLPzz/+375pnFutjwMQKX76d5lFGHnfoJIc3xz2gtgCp93CgwWk1WAnWdpdFO7/WtG42PalibpaIVtJi+zuDu9cpCpiU8TgBKBJqav2CG0DltNNRC4TOyszCHvAuvWm3KWXIteMHXFBw27ub6aZX23UxJHSf3++qgExdO02Y=
+	t=1733278000; cv=none; b=N21UosNnLJQDGYZRBTLop1tSlOgwvFHyeKJYeJuTUK36y95qeMylhkzAoPcPLxG6pIcNd9PIOa9xtk3rsxXQZ9CGlWnDhHdqSDDvMzn4wsMAfsFtz3X6m/h+SCxWfdO2IRW2NsYDUl15aJ0rdr3uMPjVfw0fTnVOj/eFaN8/8yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733277887; c=relaxed/simple;
-	bh=pNiFolC76ExhieVQMQFF8JSvZA2vSPq1BxLKk2ioJxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLuPO6AjN3WBxuWVbyIkARlZCStRiqn1R3++7iEtyx/TwGNfK/cB4pjSNGb2jjKk7LCOY5WAooD2JkgAQLdMlEDJHZTHExlqfLIoPCgmFmbwAfc2tzf2vDVVSU/8Q2Brv2UrJX5F2xtJmUo8NlqDyT3qTQIPiXq/IWA5PGEwNiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hwKzEtYH; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-724e7d5d5b2so5955611b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 18:04:45 -0800 (PST)
+	s=arc-20240116; t=1733278000; c=relaxed/simple;
+	bh=gD2jR3gXRirsqS/R6OmNKsgKA+ejRcqc/CQiI+0Vy5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fIUpzXVLQx+gPchTSYFY/FyVkNuWHlmxnurB7p1Gku/8TTi1TRL50iSHpJb5q7nT9DxIzb8wrJAWs2tYJoqaisJCrTey+NNS0Gb2QsZGAa4u2GT/57cxSR4WKGAVV56Q33Qm7oneIlSfmHFtPvgeeHP+8XzcojgGdJK2e4GWytA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsYW2yYy; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee51c5f000so3470953a91.0;
+        Tue, 03 Dec 2024 18:06:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733277885; x=1733882685; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0lkwcza4lR0Ccd84VeETqMtWnsNfx0dgjzB65ixZLd4=;
-        b=hwKzEtYHyau8f0d4DO+31ryXczYzaj3DEMBoF/xnPR7FUQyOCqYg9q1xI4+Adl2X6D
-         PtZnm5BxZZlacYKNElEKFccrHo+bgk9ayj1sxS6QX0QNRq5uDT9xDVyABv6mQGD/uQFu
-         Zm8Hds9oecv4kR/LumGxnakW3h5VU02zHADUA=
+        d=gmail.com; s=20230601; t=1733277998; x=1733882798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rNCW5mumtIow08xaMZzjbFZ1Q4xmmpxfquO0jRDWfzQ=;
+        b=EsYW2yYyJzrvZF9NM8Capt1aTbBsHxzyVjrCXEHVrH3wARGPwVijlSpgg3DMSR8vHk
+         1IazqgHWCZxo13xO8hbIo7ic3WAEGaDYdG7hiY/HSoFUl0pFmEj4ITOCtE61K2BF0iMw
+         KVFkc4TqRSQ6DyJuNGJeBoRi1KIh+UupTZYBB/4VhSn+wtkjnKV2N1XCNwIA7B7lL0ct
+         1hO/GraqsySnxVD2mT42md8Qywl521izk8w6kBzHJu3hfQs3K/1QWqPOKaoJCy1gDWt1
+         6G+BsPTkIOmahj5PwgWcWFpIRMhSh2EKzOtcBj41WzUljYbgQ0W1LZsyKndzbrJauIN5
+         wCWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733277885; x=1733882685;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0lkwcza4lR0Ccd84VeETqMtWnsNfx0dgjzB65ixZLd4=;
-        b=F6cjsDjjpmlEAPI8bQvVtUjXjT55Ar8UV4U5Xq9Xi6IQCKA1Gx1MmI606lMK1n3Xab
-         NTjXFNeNbw/1lRjjBEk/gWht+rY9qW5z4AMg4W8l3PwNc4bkAt+DkGF/1o1D8bsRNQFw
-         kOCt63caN3iGKMwCvqq35KaagyOAplbFTgvBASSkIEGHhMEuV7X/C+oqF8SEMRuMlNk8
-         T2U6fD/DIed2pZKns83BhDTSWcX/siThejOqOFNdmprXaUyE89WdG7Z6udqqccXALJsX
-         uBnQMIzTSpwtyfqeMYT63BiO8q04eA6zqJ/Ifjy4D2q4fzASe9cjie5Vl2kWK9uSjbDt
-         BlmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmbAa2n9GSXBCk3MXtwsGPxmCKL4LyJXGlJrG/ASxVQw7VLIFqWBg6mxl7evseWNscQXBTpvuTjQR/Jx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFlczejpYxiVCCe5ceqxWaKySGSIII/vKl3UJXsqyMWTTSwDB5
-	NCgy4TGp2frUPl1iAJarJxAwlxqSaYwdl8HDJE4JsyOTvGd8RK7er+lP+j7FwQ==
-X-Gm-Gg: ASbGncvX98BgpdWIa1TuC+AG3DZQAQurw0lWQWq9XqSd3nIEtachg4T8KTUbpQyfk2u
-	ZCQAKayHebaS5Jkx3okjcihOsA5meUgq1V6GRV/cbKfudFLZuNpXHglkv5rso0VZVgS2zJAPSNb
-	ZN9PccesgXF3lNSVfN+vgWceFHyeCPkc3aiTmi0YzP2doTnDRpM2DnkbJsEu8RRMnp+aP7lkYVZ
-	1KPQXYZLodhgCyCehxqqFfx2ABihJVV4pl2GC/J2Aw4dogXYImeE5JicV/LeXvikvZa8/zbtm/x
-	JDE+BVgUI2+x
-X-Google-Smtp-Source: AGHT+IFpZ/RZ49422Kd7KVYSNsi/NlhPCf3EpP3hywu9bAd1sv2QI3B8XKbRZlBw8dZikjOWL3sP0g==
-X-Received: by 2002:a05:6a00:3994:b0:71e:6c3f:2fb6 with SMTP id d2e1a72fcca58-7257fa758a8mr8425832b3a.8.1733277884954;
-        Tue, 03 Dec 2024 18:04:44 -0800 (PST)
-Received: from localhost ([2a00:79e0:2e14:7:8ab8:57a6:96ad:47f7])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7254182c817sm11201228b3a.170.2024.12.03.18.04.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 18:04:44 -0800 (PST)
-Date: Tue, 3 Dec 2024 18:04:42 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Pin-yen Lin <treapking@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
- from 10s to 5s
-Message-ID: <Z0-4umP9TnNAbJXO@google.com>
-References: <20241127105709.4014302-1-treapking@chromium.org>
- <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
- <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
- <CAD=FV=XuResyZK1ke1NtaGREfwm_3MB-u5t6vw459kYPt0LZwQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1733277998; x=1733882798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rNCW5mumtIow08xaMZzjbFZ1Q4xmmpxfquO0jRDWfzQ=;
+        b=Umn4CI7xK8ElTkRIc9I24a3oUI5m13PFDecUL0G82auAAQSM3RRVHEIsX9FbqKaTLQ
+         Rmgtgrbac5h5y0GKmia0qZSFVM8voGf2hbIzX0AOyLUaelofBD9pUDK/+W5To7dn17DU
+         skuPfZY9eSIlhjlq+D54qprg9KZeaMTyxphFUKsuJIps/WE0Lb/Qr4ZNo6swhR79EC5g
+         JBVyB9xrQP7RoPWf8eLzpIDEaMARNxvoXIqNiT8wORWmDJakRjEf0QGaECkVkyMAGrPp
+         HDNZoGTfaf8+AyI2QtrZOvSsiJ5sdEIe1JKO/twkbe6UrM3TPEAH7p+0Ib3Lgi1USjlT
+         1FBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVe8iXLFtEJK7g92h1SCOPHANYUF87MHpq3joqyMSk9aKAYbUx9exF9ewhm/+d9ImOHY01am1jO5Qp7knF0@vger.kernel.org, AJvYcCWTqBnxmG4JprjfKq/P1WDcesn6is+O4SD++rxBHwHV5+NSYbGXP+EkE6+yH0fxWNjCSfjOeWTx1EcRI0Tr@vger.kernel.org, AJvYcCWYV3q0q4lDzKgapFBbQfdDRR0j3GHOwc+boxx0XS9KXPb1HoHB36R1Vo4IZeXryTEvSRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqDREwQZP+dna/97Sdo0tL2rmmNNu+zJGV29f366XXVD9dCTsH
+	J44Kxa+J7MiCicABEHrP7JtybeGxQVnvFEzm5xx2lHhYWKQstzWJrZYEJiMpxIr0ny3GJo1MUNZ
+	jXmLxRAGuF210PDBQE6qYQZslGBg=
+X-Gm-Gg: ASbGncvQwUdhNIXF0n6xA3DpQIf3R7mqjOxmNHoUah/GkUEGRou+i7HJMqPdkG2yyJe
+	5mgK70+iA7Pol0BLimfpXT2GgM3V0yP5ay6Bu3HpHLEjSn7Q=
+X-Google-Smtp-Source: AGHT+IH2RY4OtNaizvVDGMW2S6a5vJRlmNNDi0za4gLjjCEup5LAwkD/Uszkr76IGY9+R8uVdlGu5VDpGwem4ZkrUvQ=
+X-Received: by 2002:a17:90a:fc4b:b0:2ee:e961:3052 with SMTP id
+ 98e67ed59e1d1-2ef1ce834e4mr3668779a91.14.1733277998018; Tue, 03 Dec 2024
+ 18:06:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=XuResyZK1ke1NtaGREfwm_3MB-u5t6vw459kYPt0LZwQ@mail.gmail.com>
+References: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net>
+ <20241126-resolve_btfids-v2-1-288c37cb89ee@weissschuh.net>
+ <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com> <9a11cf2f-ddca-4a50-817f-74183d31dcaf@t-8ch.de>
+In-Reply-To: <9a11cf2f-ddca-4a50-817f-74183d31dcaf@t-8ch.de>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 3 Dec 2024 18:06:26 -0800
+Message-ID: <CAEf4BzZqeo00C5a9QO6Ah3i-doWRbg7v_2y=y9Kfg3=JyrA=zQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] tools/resolve_btfids: Add --fatal-warnings option
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Doug,
-
-On Tue, Dec 03, 2024 at 05:38:55PM -0800, Doug Anderson wrote:
-> On Tue, Dec 3, 2024 at 3:05 PM Brian Norris <briannorris@chromium.org> wrote:
-> > The Kconfig default is 120 seconds, and it's hidden under
-> > CONFIG_EXPERT. What makes you think 10 is a good value? (It sounds
-> > pretty small for triggering panics.) The smallest I can see outside of
-> > ChromeOS is 12 seconds, although 60 seconds is much more common. I
-> > also happen to see other WiFi drivers have hit similar problems, but
-> > they settled on 20 seconds (assuming a 60s timeout on other distros):
-> > https://lore.kernel.org/linux-wireless/20230329162038.8637-1-kvalo@kernel.org/
-> > https://git.kernel.org/linus/cf5fa3ca0552f1b7ba8490de40700bbfb6979b17
+On Tue, Dec 3, 2024 at 3:09=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
+huh.net> wrote:
+>
+> On 2024-12-03 14:31:01-0800, Andrii Nakryiko wrote:
+> > On Tue, Nov 26, 2024 at 1:17=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@we=
+issschuh.net> wrote:
+> > >
+> > > Currently warnings emitted by resolve_btfids are buried in the build =
+log
+> > > and are slipping into mainline frequently.
+> > > Add an option to elevate warnings to hard errors so the CI bots can
+> > > catch any new warnings.
+> > >
+> > > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > >  tools/bpf/resolve_btfids/main.c | 12 ++++++++++--
+> > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfi=
+ds/main.c
+> > > index bd9f960bce3d5b74dc34159b35af1e0b33524d2d..571d29d2da97fea75e5f9=
+c544a95b9ac65f9e579 100644
+> > > --- a/tools/bpf/resolve_btfids/main.c
+> > > +++ b/tools/bpf/resolve_btfids/main.c
+> > > @@ -141,6 +141,7 @@ struct object {
+> > >  };
+> > >
+> > >  static int verbose;
+> > > +static int warnings;
+> > >
+> > >  static int eprintf(int level, int var, const char *fmt, ...)
+> > >  {
+> > > @@ -604,6 +605,7 @@ static int symbols_resolve(struct object *obj)
+> > >                         if (id->id) {
+> > >                                 pr_info("WARN: multiple IDs found for=
+ '%s': %d, %d - using %d\n",
+> > >                                         str, id->id, type_id, id->id)=
+;
+> > > +                               warnings++;
+> > >                         } else {
+> > >                                 id->id =3D type_id;
+> > >                                 (*nr)--;
+> > > @@ -625,8 +627,10 @@ static int id_patch(struct object *obj, struct b=
+tf_id *id)
+> > >         int i;
+> > >
+> > >         /* For set, set8, id->id may be 0 */
+> > > -       if (!id->id && !id->is_set && !id->is_set8)
+> > > +       if (!id->id && !id->is_set && !id->is_set8) {
+> > >                 pr_err("WARN: resolve_btfids: unresolved symbol %s\n"=
+, id->name);
+> > > +               warnings++;
+> > > +       }
+> > >
+> > >         for (i =3D 0; i < id->addr_cnt; i++) {
+> > >                 unsigned long addr =3D id->addr[i];
+> > > @@ -782,6 +786,7 @@ int main(int argc, const char **argv)
+> > >                 .funcs    =3D RB_ROOT,
+> > >                 .sets     =3D RB_ROOT,
+> > >         };
+> > > +       bool fatal_warnings =3D false;
+> > >         struct option btfid_options[] =3D {
+> > >                 OPT_INCR('v', "verbose", &verbose,
+> > >                          "be more verbose (show errors, etc)"),
+> > > @@ -789,6 +794,8 @@ int main(int argc, const char **argv)
+> > >                            "BTF data"),
+> > >                 OPT_STRING('b', "btf_base", &obj.base_btf_path, "file=
+",
+> > >                            "path of file providing base BTF"),
+> > > +               OPT_BOOLEAN(0, "fatal-warnings", &fatal_warnings,
+> > > +                           "turn warnings into errors"),
 > >
-> > Technically, this Kconfig lets you set a value as small as 1 second. I
-> > don't think we should work at reducing all timeouts to fit that
-> > target.
+> > We are mixing naming styles here: we have "btf_base" with underscore
+> > separator, and you are adding "fatal-warnings" with dash separator. I
+> > personally like dashes, but whichever way we should stay consistent.
+> > So let's fix it, otherwise it looks a bit sloppy.
+>
+> Ack.
+>
 > >
-> > I could maybe approve lowering this one, but I'd also recommend
-> > reconsidering your timeout value. And more questions below.
-> 
-> That's fair. I guess having a 10 second timeout for full system
-> suspend didn't seem totally crazy to me. If a system is taking more
-> than 10 seconds to do a full system suspend then that seems like
-> something is pretty broken. I guess it's somewhat like the same
-> argument that the WiFi driver had for picking 10 seconds but applied
-> to the whole system level, and I guess that's where we get into
-> trouble. That made me think that even 5 seconds seems a bit long for
-> any given driver to suspend. ...but yeah, it's squishy.
+> > Please also use [PATCH bpf-next v3] subject prefix to make it explicit
+> > that this should go through bpf-next tree.
+>
+> Ack.
+>
+> >
+> > pw-bot: cr
+> >
+> > >                 OPT_END()
+> > >         };
+> > >         int err =3D -1;
+> > > @@ -823,7 +830,8 @@ int main(int argc, const char **argv)
+> > >         if (symbols_patch(&obj))
+> > >                 goto out;
+> > >
+> > > -       err =3D 0;
+> > > +       if (!(fatal_warnings && warnings))
+> > > +               err =3D 0;
+> >
+> > nit: just
+> >
+> > if (!fatal_warnings)
+> >     err =3D 0;
+> >
+> > ?
+>
+> This seems wrong. Now the actual warning counter is never evaluated.
+> And --fatal_warnings will always lead to an error exit code.
 
-10 seconds is likely that *something* is wrong (or at least suboptimal),
-but IMO, it's not quite at unreasonable levels. But yes, my point was
-mainly that it's squishy, and I personally wouldn't want to be the one
-running with the lowest CONFIG_DPM_WATCHDOG_TIMEOUT out there, given the
-known behavior of multiple drivers and the timeout-means-panic behavior.
+Ah, I missed that you are using default -1 value here. I wonder if we
+should make it a bit more explicit?
 
-> Maybe the ChromeOS should change to 15 seconds for the DPM Watchdog
-> timer and that's a better solution and leave the WiFi driver how it
-> is?
+if (fatal_warnings)
+    err =3D warnings ? -1 : 0;
+else
+    err =3D 0;
 
-That seems reasonable.
+Something like that?
 
-To be clear, I'm OK with this patch, if we can get a little more
-confidence in it (like the timing data and HW info). I *think* 5 vs 10
-isn't a big deal here, but I don't have much other than my guess at the
-moment.
-
-> Another thought: I wonder if it's possible to be dynamic and somehow
-> set the timeout as "max(10, dpm_watchdog_timeout / 2)". Not that I've
-
-You probably meant min()?
-
-> checked to see if the mwifiex can actually query the DPM watchdog
-> timeout... ;-)
-
-Yeah, I wondered similarly -- or in reverse, if we could somehow "pat"
-the watchdog or prime it with an expected timeout. But AFAICT, neither
-such feature exists today.
-
-> ...also, it sure seems like if we're going to choose a value so low
-> that we shouldn't panic. All of our other watchdogs that panic aren't
-> so short, so probably this one shouldn't be either. Maybe we could
-> submit a patch to make the DPM watchdog just abort the suspend if
-> that's not too hard (and if the power people accept it).
-
-Yeah, if you made the watchdog just interrupt suspend and dump some
-warnings, then the effect would be pretty similar to this patch.
-
-> > I wonder what the distribution of (successful) timing is today. I'd
-> > assume this typically take on the order of milliseconds, but do we
-> > commonly see outliers? What if a system is fully loaded while
-> > suspending?
-> 
-> I would hope this doesn't affect things from the DPM watchdog, but I
-> haven't researched. Hopefully the DPM watchdog starts after userspace
-> is frozen so the system being fully loaded shouldn't matter?
-
-I was just throwing out ideas, but I didn't specifically mean user
-space. You provided a few more ideas. Anyway, I was just fishing for
-*some* attempt at real-world (and, as-bad-as-you-can-simulate world)
-numbers, since that's the point of a timeout like this.
-
-> >  Can you try testing (and gather timing numbers) when
-> > suspending soon after initiating scans? It's hard to judge what the
-> > lower limit of this timeout should really be without any numbers, just
-> > like it's hard to judge whether your 10 second watchdog is reasonable.
-> 
-> Pin-yen: is this something you could gather?
-> 
-> 
-> > Also, for the record, since we might have to field regression reports
-> > for other systems: what hardware (chip variant, FW version) are you
-> > seeing problems on?
-> 
-> Pin-yen: I'm assuming you'll provide this.
-
-I'll leave it up to y'all (Doug and Pin-Yen) whether you want to provide
-the above to provide a little more confidence, or if you want to
-reconsider your use of CONFIG_DPM_WATCHDOG_TIMEOUT.
-
-Brian
+>
+> > >  out:
+> > >         if (obj.efile.elf) {
+> > >                 elf_end(obj.efile.elf);
+> > >
+> > > --
+> > > 2.47.1
+> > >
 
