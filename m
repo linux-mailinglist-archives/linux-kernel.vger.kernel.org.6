@@ -1,222 +1,164 @@
-Return-Path: <linux-kernel+bounces-430872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EFC9E36B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:33:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C235B9E36C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC54E28101C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:33:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A4A5B30EFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3BA1AC8B8;
-	Wed,  4 Dec 2024 09:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q/Zx6J0P";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lTihsWB3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q/Zx6J0P";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lTihsWB3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841041AE00E;
+	Wed,  4 Dec 2024 09:32:34 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63951AC43A;
-	Wed,  4 Dec 2024 09:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FA91AC448
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 09:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733304723; cv=none; b=WsRZkyIT2ICaZASIDP/UJBXZ+KHMO35BX22o7g6VzpSleCKmsoZCb1+ZcYZshJlrmmSAlau6L1vRoKK+S6d99NOqT53tZhoZJN5xwKNgss5zA8gesvEU/s3jsHsmntnEzQfBhKMe4Uct2A8tIGtXZHqI8QbY7Re2Bcb21P93ESs=
+	t=1733304754; cv=none; b=DOXPKiVGWzSpLecoJE4Whh7DnFaItkj0u9QfBwNYkP0axznVMuetwc1u1KfMe8v1GP8JD8NDFBoroj9/DdmJGtra7ZrwzJ0RGhWlTz7EAgGtZcgj8TyA1A43ol5x75CP7bm8j7Cf2yun3Yzb/rzUthTekA5uOnELDHNkBYlmPhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733304723; c=relaxed/simple;
-	bh=JrJuyLzuA97RnzKWyuOh7ow+3Xx7AvY6TWUxL8wm9/4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NtRGEL5CnrPmGQSHP1fegtNL6GnJ7U/fLHTMb9uTfb17UYtQyRkDNBIXWm7rgqAvH7nhIog6JOuR5n3S6aN744ELKWc1pQn3I1bdNwFJG16Alt2ga6cpBJnz59PWuyyku3wSaxAt6SY05YXbYK1hXPi6m4EgIE4LHWOX8/rvqag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q/Zx6J0P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lTihsWB3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q/Zx6J0P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lTihsWB3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BE1FD1F365;
-	Wed,  4 Dec 2024 09:31:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733304719; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0+yNJvxiUtgTb8b5gEnOI/DFtHXBiV88LZiuL4b5AE=;
-	b=Q/Zx6J0POyWyBv/xg/b1y6Y/vPj+6HCGsx5CAnly2KYRlTkby3v79us9B9s4nNfoDUuKAP
-	HGcgurVs2daX4qfs/dYJwnHfTJ8tcHoivRExQ9Pa29vNJOSEKFm1lNRQa71ZXG+9qyArQB
-	9vtIgdHSsh2J7fsOF8RgC4cr9VHnkHY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733304719;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0+yNJvxiUtgTb8b5gEnOI/DFtHXBiV88LZiuL4b5AE=;
-	b=lTihsWB35+IWboTJM30qxwXaX0VccJN+70TzFwmidQK2cCiSv+PeBrTz6WrBA4d4X06+Ll
-	Ki+nxSlGrfVakHBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733304719; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0+yNJvxiUtgTb8b5gEnOI/DFtHXBiV88LZiuL4b5AE=;
-	b=Q/Zx6J0POyWyBv/xg/b1y6Y/vPj+6HCGsx5CAnly2KYRlTkby3v79us9B9s4nNfoDUuKAP
-	HGcgurVs2daX4qfs/dYJwnHfTJ8tcHoivRExQ9Pa29vNJOSEKFm1lNRQa71ZXG+9qyArQB
-	9vtIgdHSsh2J7fsOF8RgC4cr9VHnkHY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733304719;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0+yNJvxiUtgTb8b5gEnOI/DFtHXBiV88LZiuL4b5AE=;
-	b=lTihsWB35+IWboTJM30qxwXaX0VccJN+70TzFwmidQK2cCiSv+PeBrTz6WrBA4d4X06+Ll
-	Ki+nxSlGrfVakHBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 949BD139C2;
-	Wed,  4 Dec 2024 09:31:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9sUEI48hUGcXbgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 04 Dec 2024 09:31:59 +0000
-Date: Wed, 04 Dec 2024 10:31:59 +0100
-Message-ID: <87ttbjx08g.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: asihpi: Delete redundant judgments
-In-Reply-To: <20241203154635.2512-1-liujing@cmss.chinamobile.com>
-References: <20241203154635.2512-1-liujing@cmss.chinamobile.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1733304754; c=relaxed/simple;
+	bh=JrPxY6246hfsb6xDn3f0xR470U+27UJSIDIJf2VpfCQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AG/i2LuUyd+cRCJiKb7dMjdHO9O+ulyMX+zxOVG1gpchZEH38ATRIKXl7Jyh5tGP8MiTwlr74aiQ8hgY22+foObBlCweTBaLiRroOhCnfAR5QXP6nFAeDHyVaUvEMv/codcdtvO8Lf/pcDv/2DVl/v7R/kozCeCQmNjiOYfL0Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso128984355ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 01:32:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733304751; x=1733909551;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=skT9lAYd79bQf42/trX7AO1ZhAjaVgemtAGCwOzst60=;
+        b=e3BVjstItGEBimtHaTvSJN71tSoM4Zec/hKOG3FOvyKYmu0Ca264dTVbfN/dtiVz9v
+         hZVHDxZtm3E4E7ggXiaNl1hi3yL1CUI939GtGZ7Jz8EBvB++tChjN3+O+o2BMUUC8Azp
+         WMWt03V2byCPHnsKh/4//CIggHu+F5fj5rWFdJND1ZRlIxh9msugBwveAHnQYBK7fjxo
+         tHjJQof5FORcgJP0rmgRgCL65ognED4vLp9mxHquCMtN+3Zyzv/zZfcFnsaBAXTO/3uX
+         qCFVboXP5UjJCSFdst+IeTPUm8mS/OYJREIsAhA5mcv+c6k/wqKfFtkbDJhJhTEMe+VR
+         bGkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyZhjbT6u7/4NNdpipieIrhGga/dlyZu4GtsZ0LOHt2xGbqYizJmVGIUVcUESxxpBz/UA0CWpH+cML1Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjwsQ645gl+bGe+E16SARDG9eSRwB2HrYMlwvmkfp/gVPBjeN6
+	fBHrVbxeHOgGjKCxhO86m9cKtoVFBzV6OO5fBmtTaCTVxPQKvSWn4BrKSyfdp3lKh3eKjQ+qhIV
+	wBxs6puqorls32z3De66oiSsAmwGbQ7tS8K1r1axfpgA5sWveUdUODAI=
+X-Google-Smtp-Source: AGHT+IGuiLPY1XF4IM3hqm9K92Zyp7n7VoEb802vwOLn9x9TtBycJ7+oLqSpHaZLiMLrRbbOkGIjGZeIIWGW5kAR/xq2fCtrb4lH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1c47:b0:3a7:776e:93fb with SMTP id
+ e9e14a558f8ab-3a7fecc86f2mr40377725ab.8.1733304751329; Wed, 04 Dec 2024
+ 01:32:31 -0800 (PST)
+Date: Wed, 04 Dec 2024 01:32:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675021af.050a0220.17bd51.0061.GAE@google.com>
+Subject: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (3)
+From: syzbot <syzbot+bd5829ba3619f08e2341@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wpan@vger.kernel.org, miquel.raynal@bootlin.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 03 Dec 2024 16:46:35 +0100,
-liujing wrote:
-> 
-> Since HPI6205_TIMEOUT is a constant, time_out is always true,
-> so unneeded judgments are removed.
-> 
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+Hello,
 
-Keeping it allows to remove the time_out for experiments, and compiler
-would optimize things in anyway, so there must be no code difference
-in the end.
+syzbot found the following issue on:
 
-Since this doesn't improve things so significantly, I'd rather leave
-as is.
+HEAD commit:    2ba9f676d0a2 Merge tag 'drm-next-2024-11-29' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b7b9e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7903df3280dd39ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=bd5829ba3619f08e2341
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b7b9e8580000
 
-And you mixed different fixes (the conversion of printf format) in a
-single patch without explanation, too.  Please split, if any.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2ba9f676.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/49a0011f6379/vmlinux-2ba9f676.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ac57640f6a59/bzImage-2ba9f676.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bd5829ba3619f08e2341@syzkaller.appspotmail.com
+
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f2cedb45fa0 R15: 00007ffcd711e1d8
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 20692 at net/ieee802154/core.c:258 cfg802154_switch_netns+0x3c7/0x3d0 net/ieee802154/core.c:258
+Modules linked in:
+CPU: 0 UID: 0 PID: 20692 Comm: syz.3.7229 Not tainted 6.12.0-syzkaller-11677-g2ba9f676d0a2 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:cfg802154_switch_netns+0x3c7/0x3d0 net/ieee802154/core.c:258
+Code: e1 07 38 c1 7c 92 48 89 ef e8 c5 74 87 f6 eb 88 e8 7e 8d 1c f6 e9 66 fe ff ff e8 74 8d 1c f6 e9 5c fe ff ff e8 6a 8d 1c f6 90 <0f> 0b 90 e9 4e fe ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000dcff3c8 EFLAGS: 00010293
+RAX: ffffffff8b795426 RBX: 00000000fffffff4 RCX: ffff888000342440
+RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
+RBP: ffff88801f128198 R08: ffffffff8b795270 R09: 1ffffffff285fb12
+R10: dffffc0000000000 R11: fffffbfff285fb13 R12: ffff888032cb4db0
+R13: 0000000000000000 R14: ffff88801f128078 R15: dffffc0000000000
+FS:  00007f2cee7af6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000000120f6000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:726
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
+ ___sys_sendmsg net/socket.c:2637 [inline]
+ __sys_sendmsg+0x269/0x350 net/socket.c:2669
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2ced980849
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2cee7af058 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f2cedb45fa0 RCX: 00007f2ced980849
+RDX: 0000000000000000 RSI: 0000000020000f40 RDI: 0000000000000004
+RBP: 00007f2cee7af0a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f2cedb45fa0 R15: 00007ffcd711e1d8
+ </TASK>
 
 
-thanks,
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Takashi
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> 
-> diff --git a/sound/pci/asihpi/hpi6205.c b/sound/pci/asihpi/hpi6205.c
-> index c7d7eff86727..391cce428a11 100644
-> --- a/sound/pci/asihpi/hpi6205.c
-> +++ b/sound/pci/asihpi/hpi6205.c
-> @@ -2127,22 +2127,20 @@ static u16 message_response_sequence(struct hpi_adapter_obj *pao,
->  	time_out = HPI6205_TIMEOUT;
->  
->  	/* read the result */
-> -	if (time_out) {
-> -		if (interface->u.response_buffer.response.size <= phr->size)
-> -			memcpy(phr, &interface->u.response_buffer,
-> -				interface->u.response_buffer.response.size);
-> -		else {
-> -			HPI_DEBUG_LOG(ERROR,
-> +	if (interface->u.response_buffer.response.size <= phr->size)
-> +		memcpy(phr, &interface->u.response_buffer,
-> +			interface->u.response_buffer.response.size);
-> +	else {
-> +		HPI_DEBUG_LOG(ERROR,
->  				"response len %d too big for buffer %d\n",
->  				interface->u.response_buffer.response.size,
->  				phr->size);
-> -			memcpy(phr, &interface->u.response_buffer,
-> +		memcpy(phr, &interface->u.response_buffer,
->  				sizeof(struct hpi_response_header));
-> -			phr->error = HPI_ERROR_RESPONSE_BUFFER_TOO_SMALL;
-> -			phr->specific_error =
-> -				interface->u.response_buffer.response.size;
-> -			phr->size = sizeof(struct hpi_response_header);
-> -		}
-> +		phr->error = HPI_ERROR_RESPONSE_BUFFER_TOO_SMALL;
-> +		phr->specific_error =
-> +			interface->u.response_buffer.response.size;
-> +		phr->size = sizeof(struct hpi_response_header);
->  	}
->  	/* set interface back to idle */
->  	send_dsp_command(phw, H620_HIF_IDLE);
-> diff --git a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
-> index 7ceaf6a7a77e..cac5fcaef08b 100644
-> --- a/sound/pci/mixart/mixart.c
-> +++ b/sound/pci/mixart/mixart.c
-> @@ -1320,12 +1320,12 @@ static int snd_mixart_probe(struct pci_dev *pci,
->  			idx = index[dev];
->  		else
->  			idx = index[dev] + i;
-> -		snprintf(tmpid, sizeof(tmpid), "%s-%d", id[dev] ? id[dev] : "MIXART", i);
-> +		snprintf(tmpid, sizeof(tmpid), "%s-%u", id[dev] ? id[dev] : "MIXART", i);
->  		err = snd_card_new(&pci->dev, idx, tmpid, THIS_MODULE,
->  				   0, &card);
->  
->  		if (err < 0) {
-> -			dev_err(&pci->dev, "cannot allocate the card %d\n", i);
-> +			dev_err(&pci->dev, "cannot allocate the card %u\n", i);
->  			snd_mixart_free(mgr);
->  			return err;
->  		}
-> @@ -1334,7 +1334,7 @@ static int snd_mixart_probe(struct pci_dev *pci,
->  		snprintf(card->shortname, sizeof(card->shortname),
->  			 "Digigram miXart [PCM #%d]", i);
->  		snprintf(card->longname, sizeof(card->longname),
-> -			"Digigram miXart at 0x%lx & 0x%lx, irq %i [PCM #%d]",
-> +			"Digigram miXart at 0x%lx & 0x%lx, irq %i [PCM #%u]",
->  			mgr->mem[0].phys, mgr->mem[1].phys, mgr->irq, i);
->  
->  		err = snd_mixart_create(mgr, card, i);
-> -- 
-> 2.27.0
-> 
-> 
-> 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
