@@ -1,169 +1,251 @@
-Return-Path: <linux-kernel+bounces-431299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730879E3BA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:49:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667669E3CAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33480281E2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:49:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEFFBB2A906
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABD51BC9F0;
-	Wed,  4 Dec 2024 13:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1781F707D;
+	Wed,  4 Dec 2024 13:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NsKgxXLg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oXJBhl4+"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60C1AF0C6
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D349F15E97
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320150; cv=none; b=qKMBwRX8GqVUTixBi1Jc9DdY3BwIO+QRJfqd1iC/fEeP4WGPJzrA5bDbxwbLVd1eZE3BJ3PEmQac3LIn2XCsTcMoN/TLKZTuhQwypGo2Tvt/Zh+1IFMHLNnR1q6CNYjvmB56JIGPZj0DOQUGRVPBNtTEgYuAQphL3iTNqY25+4k=
+	t=1733320419; cv=none; b=BFA43iawYThJJkPo1AcWv+wrJ8jj6py6dPM8jXfD/pY9uWsnPpAUELmDCba+ItqGWVOKIn+DACKNnBdpajsQ+lG4dMbMPjnEuVLdVmGKi6YHzfTWRnFrtaFkXSlHPFoHr9Yy5S1y3C9b/ufmloxtFj5TGs4BQ16A2fOFKEL5VqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320150; c=relaxed/simple;
-	bh=0j6FJ8fiuDYyiH6zzM42a3gMbVjQLvsLiYprWteC/PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qC459oLEA2rW0zRSkbO1ETulSTaTdNoXzGGR3JQzTTh/oGZJR69Ng2zmuHTrtWLv3cVMTKvdXJT05Go2Iyz4L+T2uH4vD9iRw6UqAe+zQ0OGd7Y1Wu8MPgxo5IqMB7jEANammnewY+zHmDPdoXcerdVS5xvuleVNw+7Y0bvLQMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NsKgxXLg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733320148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qsBR5UG4HjqdO1NFkUMDoQH9Jpl+TuhICWoMUDLMLik=;
-	b=NsKgxXLgEYs/1sOXYJPiGUzIpgmRCXArS3XFyDR/3rIx8R9uEgteWC7ZgejhDPcZMwaPPI
-	p+V4qCHm+0r/Yr9Gnaf5ib+HOfSI64RJLfrUjrEXIouZhW+srf0Ar329OOaRhAIGZh/pFG
-	e2LtwB0qIQeP9xEpUT4+59j5cM+gT/0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-245--aBLzE9zP2OUyHJDjRZ_bQ-1; Wed,
- 04 Dec 2024 08:49:02 -0500
-X-MC-Unique: -aBLzE9zP2OUyHJDjRZ_bQ-1
-X-Mimecast-MFC-AGG-ID: -aBLzE9zP2OUyHJDjRZ_bQ
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 528E01956055;
-	Wed,  4 Dec 2024 13:48:58 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.134])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8E93E19560A2;
-	Wed,  4 Dec 2024 13:48:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  4 Dec 2024 14:48:36 +0100 (CET)
-Date: Wed, 4 Dec 2024 14:48:27 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Lai, Yi" <yi1.lai@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
-Message-ID: <20241204134826.GA923@redhat.com>
-References: <Zx9Losv4YcJowaP/@ly-workstation>
- <Zx-B0wK3xqRQsCOS@localhost.localdomain>
- <20241029172126.5XY8vLBH@linutronix.de>
- <20241030140721.pZzb9D-u@linutronix.de>
- <ZyJUzhzHGDu5CLdi@localhost.localdomain>
- <20241107144617.MjCWysud@linutronix.de>
- <Zy4OFlxoRK2jM5zo@localhost.localdomain>
- <20241108190835.GA11231@redhat.com>
- <Zy6QHHakztIXvudC@pavilion.home>
- <20241111120857.5cWFpNkJ@linutronix.de>
+	s=arc-20240116; t=1733320419; c=relaxed/simple;
+	bh=pGfE1RzcB2ZxZeBdmX+clCPr+9jcwKF8lC4v55m0G5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UWlHO0CEluzFX8jjPPLNNN+ZzvRfOkiAp2FfbUtAeVVGm5SAeoDIT2Al62wx2PyrB0mL13j86VbSiQ4essSH4WAfPzd3tU/ycMSlZRKcNdcG6oqnxh1NLw0+exZrJN3Nh74rt5JD8YVz1ePf6rqzChOFDtMycr2q5/GN4TnP8Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oXJBhl4+; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B4DrURK117889;
+	Wed, 4 Dec 2024 07:53:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733320410;
+	bh=S93UvHgh8XYLvPpL89G3ksgsz6hVMnSyaavZSi2WEIk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=oXJBhl4+IFQyh0BIhJgtBiKftd725f6hUifdl4g49xbVXIY3vaMyJwFkrpTeh5b1F
+	 RdlQBQbdyN8uCvJQn91T2EQNFG225ZV8gFiQY5JJucHzg6X59CszGnDLm+jMoxdP3h
+	 m1vJHADrBoge7UE5f1A/COVB1/I4h5DdP986T2gY=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B4DrUXs024720;
+	Wed, 4 Dec 2024 07:53:30 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
+ Dec 2024 07:53:30 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 4 Dec 2024 07:53:30 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B4DrUWl001321;
+	Wed, 4 Dec 2024 07:53:30 -0600
+Message-ID: <d7e9d9f8-ac81-4cbb-897c-585741ca00c9@ti.com>
+Date: Wed, 4 Dec 2024 07:53:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111120857.5cWFpNkJ@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mux: mmio: Add suspend and resume support
+To: Thomas Richard <thomas.richard@bootlin.com>, Peter Rosin <peda@axentia.se>
+CC: <linux-kernel@vger.kernel.org>, <gregory.clement@bootlin.com>,
+        <theo.lebrun@bootlin.com>, <thomas.petazzoni@bootlin.com>,
+        <u-kumar1@ti.com>
+References: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 11/11, Sebastian Andrzej Siewior wrote:
->
-> On 2024-11-08 23:26:36 [+0100], Frederic Weisbecker wrote:
-> > > Please see
-> > > https://lore.kernel.org/all/1440816150.8932.123.camel@edumazet-glaptop2.roam.corp.google.com/
-> > > and the whole thread.
->
-> Thank you for this Oleg.
->
-> > > I don't think raw_spin_lock_irq + cmpxchg for each work is a good
-> > > idea, but quite possibly I misunderstood this change.
-> >
-> > I did not realize there could be gazillion files released in a row. So there
-> > could be noticeable performance issues I guess...
->
-> I made a testcase to open 2M (2 *10^6) files and then exit. This led
-> task_work_run() run 2M + 3 callbacks (+ stdin/out/err) for the task.
->
-> Running 70 samples on the "orig" kernel:
-> - avg callback time 1.156.470,3 us
-> - 63 samples are starting with 11 (1,1 sec) avg: 1.128.046,7 us
-> - 6 samples are starting with 14 (1,4 sec) avg: 1.435.294,8us
->
-> Running 70 samples on the "patched" kernel:
-> - avg callback time 1.278.938,8 us
-> - 59 samples are starting with 12 (1,2 sec) avg: 1.230.189,1 us
-> - 10 samples are starting with 15 (1,5sec) avg: 1.555.934,5 us
->
-> With the extra lock the task_work_run() runtime extends by approximately
-> ~122ms for the 2M invoked callbacks.
-> The spike 1,1sec -> 1,4sec or 1,2sec -> 1,5 sec is due to context
-> switching (there are few cond_resched()/ might_sleep()).
->
-> It is not that bad, is it?
+On 9/11/24 3:53 AM, Thomas Richard wrote:
+> The status of each mux is read during suspend and stored in the private
+> memory of the mux_chip.
+> Then the state is restored during the resume.
+> 
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+> ---
+> In this second version, as discussed with Peter, everything is done in the
+> mmio-mux driver.
+> A mux_mmio_set() function was added, and used during suspend stage to get
+> the status of the of the muxes.
+> This status is stored in the private memory of the mux_chip.
+> ---
+> Changes in v2:
+> - Remove all modifications done in the mux subsystem
+> - Add a mux_mmio_set()
+> - Read the status of muxes during suspend and store in the private memory
+>    of the mux_chip.
 
-Not that bad, but I personally dislike this patch for other reasons.
-But lets forget it for the moment.
+Do you need this private memory? Since this is already using regmap, why
+not use the regmap cache, then you can restore all the values on resume
+with a simple call to regcache_sync().
 
-The numbers in
+Andrew
 
-	PATCH] task_work: remove fifo ordering guarantee
-	https://lore.kernel.org/all/1440816150.8932.123.camel@edumazet-glaptop2.roam.corp.google.com/
-
-didn't look too bad too, yet they convinced Linus and other reviewers.
-
-I still think that fifo makes much more sense. The main (only?) offender
-is fput(), so perhaps we can do something like
-https://lore.kernel.org/all/20150907134924.GA24254@redhat.com/
-but when I look at this change now I see it is racy.
-
-Stupid question. What if we revert this "task_work: remove fifo ordering guarantee"
-patch above? Can this help?
-
-I don't understand this code and the problem. But when I (try to) read the
-previous discussion on lore.kernel.org it seems that perf_pending_task_sync()
-fails to cancel event->pending_task because it is called from task_work_run()
-and then rcuwait_wait_event() obviously hangs.
-
-Your patch can only help if task_work_add(current, &event->pending_task) was
-called before fput()->task_work_add(task, &file->f_task_work(), right?
-So perhaps, if we restore the fifo ordering, we can rely on the fact that
-current should call perf_pending_task() before it calls perf_release/free_event ?
-
-Sorry in advance, I am sure I have missed something...
-
-Oleg.
-
+> - Use this status to restore muxes during resume.
+> - Link to v1: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com
+> ---
+>   drivers/mux/mmio.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 73 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
+> index 30a952c34365..30b84382637f 100644
+> --- a/drivers/mux/mmio.c
+> +++ b/drivers/mux/mmio.c
+> @@ -15,11 +15,25 @@
+>   #include <linux/property.h>
+>   #include <linux/regmap.h>
+>   
+> +struct mux_mmio {
+> +	struct regmap_field **fields;
+> +	unsigned int *hardware_states;
+> +};
+> +
+> +static int mux_mmio_get(struct mux_control *mux, int *state)
+> +{
+> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
+> +	unsigned int index = mux_control_get_index(mux);
+> +
+> +	return regmap_field_read(mux_mmio->fields[index], state);
+> +}
+> +
+>   static int mux_mmio_set(struct mux_control *mux, int state)
+>   {
+> -	struct regmap_field **fields = mux_chip_priv(mux->chip);
+> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
+> +	unsigned int index = mux_control_get_index(mux);
+>   
+> -	return regmap_field_write(fields[mux_control_get_index(mux)], state);
+> +	return regmap_field_write(mux_mmio->fields[index], state);
+>   }
+>   
+>   static const struct mux_control_ops mux_mmio_ops = {
+> @@ -37,8 +51,8 @@ static int mux_mmio_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+>   	struct device_node *np = dev->of_node;
+> -	struct regmap_field **fields;
+>   	struct mux_chip *mux_chip;
+> +	struct mux_mmio *mux_mmio;
+>   	struct regmap *regmap;
+>   	int num_fields;
+>   	int ret;
+> @@ -69,12 +83,20 @@ static int mux_mmio_probe(struct platform_device *pdev)
+>   	}
+>   	num_fields = ret / 2;
+>   
+> -	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
+> -				       sizeof(*fields));
+> +	mux_chip = devm_mux_chip_alloc(dev, num_fields, sizeof(struct mux_mmio));
+>   	if (IS_ERR(mux_chip))
+>   		return PTR_ERR(mux_chip);
+>   
+> -	fields = mux_chip_priv(mux_chip);
+> +	mux_mmio = mux_chip_priv(mux_chip);
+> +
+> +	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
+> +	if (IS_ERR(mux_mmio->fields))
+> +		return PTR_ERR(mux_mmio->fields);
+> +
+> +	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
+> +						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
+> +	if (IS_ERR(mux_mmio->hardware_states))
+> +		return PTR_ERR(mux_mmio->hardware_states);
+>   
+>   	for (i = 0; i < num_fields; i++) {
+>   		struct mux_control *mux = &mux_chip->mux[i];
+> @@ -104,9 +126,9 @@ static int mux_mmio_probe(struct platform_device *pdev)
+>   			return -EINVAL;
+>   		}
+>   
+> -		fields[i] = devm_regmap_field_alloc(dev, regmap, field);
+> -		if (IS_ERR(fields[i])) {
+> -			ret = PTR_ERR(fields[i]);
+> +		mux_mmio->fields[i] = devm_regmap_field_alloc(dev, regmap, field);
+> +		if (IS_ERR(mux_mmio->fields[i])) {
+> +			ret = PTR_ERR(mux_mmio->fields[i]);
+>   			dev_err(dev, "bitfield %d: failed allocate: %d\n",
+>   				i, ret);
+>   			return ret;
+> @@ -130,13 +152,55 @@ static int mux_mmio_probe(struct platform_device *pdev)
+>   
+>   	mux_chip->ops = &mux_mmio_ops;
+>   
+> +	dev_set_drvdata(dev, mux_chip);
+> +
+>   	return devm_mux_chip_register(dev, mux_chip);
+>   }
+>   
+> +static int mux_mmio_suspend_noirq(struct device *dev)
+> +{
+> +	struct mux_chip *mux_chip = dev_get_drvdata(dev);
+> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
+> +	unsigned int state;
+> +	int ret, i;
+> +
+> +	for (i = 0; i < mux_chip->controllers; i++) {
+> +		ret = mux_mmio_get(&mux_chip->mux[i], &state);
+> +		if (ret) {
+> +			dev_err(dev, "control %u: error saving mux: %d\n", i, ret);
+> +			return ret;
+> +		}
+> +
+> +		mux_mmio->hardware_states[i] = state;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mux_mmio_resume_noirq(struct device *dev)
+> +{
+> +	struct mux_chip *mux_chip = dev_get_drvdata(dev);
+> +	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
+> +	int ret, i;
+> +
+> +	for (i = 0; i < mux_chip->controllers; i++) {
+> +		ret = mux_mmio_set(&mux_chip->mux[i], mux_mmio->hardware_states[i]);
+> +		if (ret) {
+> +			dev_err(dev, "control %u: error restoring mux: %d\n", i, ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, mux_mmio_suspend_noirq, mux_mmio_resume_noirq);
+> +
+>   static struct platform_driver mux_mmio_driver = {
+>   	.driver = {
+>   		.name = "mmio-mux",
+>   		.of_match_table	= mux_mmio_dt_ids,
+> +		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
+>   	},
+>   	.probe = mux_mmio_probe,
+>   };
+> 
+> ---
+> base-commit: caf614bf68351c7e9e38dd37e07539417c757813
+> change-id: 20240613-mux-mmio-resume-support-4f3b2a34a32a
+> 
+> Best regards,
 
