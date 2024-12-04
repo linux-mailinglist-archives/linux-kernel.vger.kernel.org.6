@@ -1,121 +1,137 @@
-Return-Path: <linux-kernel+bounces-430750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08EE9E34FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:09:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10C89E3502
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:10:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DF1282B5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:09:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9816164B77
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFA4188012;
-	Wed,  4 Dec 2024 08:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1C018DF73;
+	Wed,  4 Dec 2024 08:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="SSt9Ck6r"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvwGu+w9"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0463F1714B3;
-	Wed,  4 Dec 2024 08:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2031FA4;
+	Wed,  4 Dec 2024 08:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733299774; cv=none; b=NFXLQq0hjymgrcVXrN8FVoDTZCY3EO6yg0I3hjF5UgVWXQ89coptTC0Whb69Bn+/87EyR06/ktCe44+8nxp6aRk+9Mk/JvY9/k9r84tAmcXkKv5ks74NJ160XqluoEMTF7jpFXGf5cpNe6+LI/KB48lt0YhmdOkd962ZMB61jqU=
+	t=1733299821; cv=none; b=t3B0mGYw5QCYzy30a22K3hez+xKCN9B/6Sq5SZRfcsH4SxDlHKJFw5m2NIJQ0xVopFC7M2iKKTOsLEz07+hs9QTnziLHz57ZjF06euEJv5IhaxkHC0j+HT1fYUFl8Dav67rk/L3eBybpSfo4K/ZiOepa507p+O2xP7FU15I2HVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733299774; c=relaxed/simple;
-	bh=+FW2eXT1WDvAA3ouamIbr2wH+2ChUGr+wp8mCetrjfE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GM6bDfw/CQgyy/yPRG8nmxUwI8+ynVimNDHPezeiLevg/6/6BPRfjqcae7wExpF/WQjHQ/4PHYpWo8jjOGImkG6roMvarJLpq3ah+sxwze5Fg1e8mqjWqqFb8GH2Dfe+nwuyG46ztcQPjtq+tSfUqJJ0hT/QmKkukSO9Pmi1myU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=SSt9Ck6r; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=YadcVfReBs2XK7Wp6qew5wyT/6xKrDqXPFq+/V2+s1M=; b=SSt9Ck6rXSe3GL44TdtuQwfFD5
-	QJsGr8JSdRzsTF11jrSZ/UX61yTgUff3ext3xzkyh+LZMZ5MBhTlNpWdfkWT/NOC24SMpI4ywpuwO
-	4rSS5zFJqF1Os+KQcc8JiDmVk02TBUo6YpXDWIGv4Gu+3glOfM2x4tN0wxOrSaleU/Als43WjQwvP
-	NLXQV6Mb/fu1k4WNKUIR7LxiLWx7fHyagZ5Qf2bWnSldxv+35sUbHr6U9sgyvgVF8K1elPJGQkNZF
-	6uBpGGttksW6JfgwZhuHhxC7yGtUl+FRsbiS+suuWv4mkrgRMLqOeYNR+jzVfPwo6aAYEF3UuwZTw
-	IUEQIyag==;
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1tIkRk-00067Y-46; Wed, 04 Dec 2024 09:09:20 +0100
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1tIkRj-0002A9-2K;
-	Wed, 04 Dec 2024 09:09:19 +0100
-From: Esben Haabendal <esben@geanix.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  stable@vger.kernel.org,  Patrice
- Chotard <patrice.chotard@foss.st.com>
-Subject: Re: [PATCH 0/6] rtc: Fix problems with missing UIE irqs
-In-Reply-To: <20241203-rtc-uie-irq-fixes-v1-0-01286ecd9f3f@geanix.com> (Esben
-	Haabendal's message of "Tue, 03 Dec 2024 11:45:30 +0100")
-References: <20241203-rtc-uie-irq-fixes-v1-0-01286ecd9f3f@geanix.com>
-Date: Wed, 04 Dec 2024 09:09:19 +0100
-Message-ID: <87cyi798eo.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1733299821; c=relaxed/simple;
+	bh=WUawS9XNP8c3d2doKds4JvReeI2uvWaigDw2I6FJsCA=;
+	h=Message-ID:Date:From:To:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nB9gYud1HBeFiSjEP7uVLPWPALo5utoBPJTL9P2gwJRQhkURHlX3rxgkKXNnPbSOX1//YHIjJKs+V0jhGttDzgRkpEyDi073nQHra9VNQ2Do1GBkqw3kOxRkA3gc8n527t9/f5bJaY3ynim43rhN2HkRQc1K5f1P9R9ARdXI24g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvwGu+w9; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385e1fcb0e1so2320247f8f.2;
+        Wed, 04 Dec 2024 00:10:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733299817; x=1733904617; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:to
+         :from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fZ9eVjs+6mWlP9P3iqs25nJjg2fN1NzBMTr4VrGDn+M=;
+        b=ZvwGu+w97RhJzu1tZ42tev8kvbF3g8gPu+SKZy4qZ91o6zT5MGAbTatZ1DNcs86kLk
+         iWB8ZRV8yiCzlVjAT31r5dJDiEj2F94Bd36wGzrmkX9x4jO9JyjhQEBxov/PhJgM65eB
+         Y34cJ5NuIh++C2XHU9RpGtMUsieOetWWVUS1dYwCVJKRJPPGahwk/WHarHVSqMjXN6Y3
+         NngI8FIMDfqa0BDPK+ETzr0iQ6Y2vfwcGBWuTvVz7LPFLN54aYC4yDopo+cSdV9wAdH/
+         G363ARtr/az/Ad7rogqkGhBxPq6hct6d5iqFnoZatuh6gXo9T5ooL9axAErwDGQGAS02
+         X7sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733299817; x=1733904617;
+        h=in-reply-to:content-disposition:mime-version:references:subject:to
+         :from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fZ9eVjs+6mWlP9P3iqs25nJjg2fN1NzBMTr4VrGDn+M=;
+        b=O1NleDtBR1kRvClBWaSy+8KMSATmxqJiDexCDheOcG5GTK8Cp4mIdhR85Of5tI9rzS
+         xXC43QeaYKjWcvrLoO3G9xs/JmgLQuwRruDim9JdUneXZgUroSL5DdidOPO/WGtPh/+y
+         afuZtJHvcrRdoTd1ONtgt+Xtm+3SkfU0nP9cB/2YBmGVGc8dUqSC6M1qm767S7cwf55q
+         eVEC4SFg+cDHLHn8PcJGCvm9WdmMqEk9CgfhdsGnUwwtGQhTwOC7aZU0jxT8gDAiUTmG
+         Omvd4aSrgbhwi94OflCwqMIPVHBIbif0pBko3unZCEsKCg9SiXIfy/BlJDUniMxGBd5g
+         YneQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMxJ7M+XMMfRr2r19jieeBYGqZtsjVNEGAypuiG9mQhn/JvFyigaygcqT+NwTbwAjcLQz8rBfAAM36piSz@vger.kernel.org, AJvYcCUkgAGy8KWHAoqBM9CxMy2G8AqbMoDOt5oJoSiGe2MbXzwPiKQ9ot87aNKKJpt5uBZGQMsAXRsEsCI=@vger.kernel.org, AJvYcCUnPAwr4L9UQMcbMhXR6eO7BIlnH/zEbvl/hRCf01z1l7maOQXox9AoSUc8ky2fiFq405MuVHLJEKjH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9vWEFqpdzmQDnEGn8b+Vd3f+nP9c1cv5+TGgnXZL2fa89CVYm
+	KVFM/3PAKzOps/FPhlZp3D5oMvSwUlTnWMggioh4P9WqnBOJuaz9
+X-Gm-Gg: ASbGncv2wkTywhPf898v4C6imGa85O9/Ho9gs6ncW0UN9xmpsJqSu8rMdv/RGgaVbwX
+	AuKzTTsQZKLNx5Qwxr2KGQgFA2UW59k2KK+IQDKX0fkDFpVcVocRE+NJ60uskaO6LdGHlYKabN9
+	I4cR/YYYrDeQAqGmlq+eNYbp8BwFgDI0NyqEYOPIlM2SFWMad+vO9f4fDYe5zIvMScge/ypr9xa
+	QpQyFLogrhPfOsIeUetOOIt/BIM1k1C2KyjpU0uzWxX/cFkd8JGbD7AoDewnzNX5FJ2KICOm7x4
+	EdxIvw==
+X-Google-Smtp-Source: AGHT+IGBBdWdqXBu+yYRALH5lOzPQr7jM9OP9wfUJ4oAbtRRm/dgtKRMHATPNJWIY35eUMPcJapYPg==
+X-Received: by 2002:a5d:47cc:0:b0:382:31a1:8dc3 with SMTP id ffacd0b85a97d-38607ae5ee6mr2579229f8f.35.1733299816899;
+        Wed, 04 Dec 2024 00:10:16 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52b66ecsm15381865e9.39.2024.12.04.00.10.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 00:10:16 -0800 (PST)
+Message-ID: <67500e68.050a0220.2f3736.2ccb@mx.google.com>
+X-Google-Original-Message-ID: <Z1AOZQK-WAFKYiqj@Ansuel-XPS.>
+Date: Wed, 4 Dec 2024 09:10:13 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v4 2/2] thermal: Add support for Airoha EN7581 thermal
+ sensor
+References: <20241114211958.32137-1-ansuelsmth@gmail.com>
+ <20241114211958.32137-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27476/Tue Dec  3 10:52:11 2024)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114211958.32137-2-ansuelsmth@gmail.com>
 
-Esben Haabendal <esben@geanix.com> writes:
-
-> This fixes a couple of different problems, that can cause RTC (alarm)
-> irqs to be missing when generating UIE interrupts.
->
-> The first commit fixes a long-standing problem, which has been
-> documented in a comment since 2010. This fixes a race that could cause
-> UIE irqs to stop being generated, which was easily reproduced by
-> timing the use of RTC_UIE_ON ioctl with the seconds tick in the RTC.
->
-> The last commit ensures that RTC (alarm) irqs are enabled whenever
-> RTC_UIE_ON ioctl is used.
->
-> The driver specific commits avoids kernel warnings about unbalanced
-> enable_irq/disable_irq, which gets triggered on first RTC_UIE_ON with
-> the last commit. Before this series, the same warning should be seen
-> on initial RTC_AIE_ON with those drivers.
-
-I don't have access to hardware using cpcap, st-lpc or tps6586x rtc
-drivers, so I have not been able to test those 3 patches.
-
-/Esben
-
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
+On Thu, Nov 14, 2024 at 10:19:19PM +0100, Christian Marangi wrote:
+> Add support for Airoha EN7581 thermal sensor. This provide support for
+> reading the CPU or SoC Package sensor and to setup trip points for hot
+> and critical condition. An interrupt is fired to react on this and
+> doesn't require passive poll to read the temperature.
+> 
+> The thermal regs provide a way to read the ADC value from an external
+> register placed in the Chip SCU regs. Monitor will read this value and
+> fire an interrupt if the trip condition configured is reached.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
-> Esben Haabendal (6):
->       rtc: interface: Fix long-standing race when setting alarm
->       rtc: isl12022: Fix initial enable_irq/disable_irq balance
->       rtc: cpcap: Fix initial enable_irq/disable_irq balance
->       rtc: st-lpc: Fix initial enable_irq/disable_irq balance
->       rtc: tps6586x: Fix initial enable_irq/disable_irq balance
->       rtc: interface: Ensure alarm irq is enabled when UIE is enabled
->
->  drivers/rtc/interface.c    | 27 +++++++++++++++++++++++++++
->  drivers/rtc/rtc-cpcap.c    |  1 +
->  drivers/rtc/rtc-isl12022.c |  1 +
->  drivers/rtc/rtc-st-lpc.c   |  1 +
->  drivers/rtc/rtc-tps6586x.c |  1 +
->  5 files changed, 31 insertions(+)
-> ---
-> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-> change-id: 20241203-rtc-uie-irq-fixes-f2838782d0f8
->
-> Best regards,
+> Changes v4:
+> - Handle offset and slope in priv driver
+> Changes v3:
+> - Handle thermal_zone_device moved in different header
+> - Enable interrupt after thermal register
+> - Use new way to provide slope and offset
+> Changes v2:
+> - Add missing Makefile and Kconfig entry (somehow not included in v1)
+> - Sort include header
+> - Add missing bitfield.h
+> 
+>  drivers/thermal/Kconfig          |   9 +
+>  drivers/thermal/Makefile         |   1 +
+>  drivers/thermal/airoha_thermal.c | 480 +++++++++++++++++++++++++++++++
+>  3 files changed, 490 insertions(+)
+>  create mode 100644 drivers/thermal/airoha_thermal.c
+> 
+
+Hi Daniel,
+
+sorry if I get annoying just to not lose track of this on my side,
+I dropped the sysfs change and now it's handled in priv... Should be ok
+now?
+
+-- 
+	Ansuel
 
