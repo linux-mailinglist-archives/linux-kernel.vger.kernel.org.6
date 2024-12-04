@@ -1,218 +1,292 @@
-Return-Path: <linux-kernel+bounces-431977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C152A9E45E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5A09E452A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7FABBA7023
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:27:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C596B870CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8ABB2066CA;
-	Wed,  4 Dec 2024 18:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ACC1F03EC;
+	Wed,  4 Dec 2024 18:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FoJ4basF"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fVqjD8o6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E76B202C35;
-	Wed,  4 Dec 2024 18:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA8F1F03C9;
+	Wed,  4 Dec 2024 18:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733336717; cv=none; b=Jyzv6XY0oNG2ip2qBnswnsiCl3VzvgQNg/hwkdmG3TRA5nNEwPplzIrzeWjenM3mT9VQ6QOKbcfhgWWwn9xVr0xcLEtlOgl62a76un83x+2bBm5u5ajUiFaj8WKDzzeF4kuMcQXZnae9zEigrRcDB81QN/hdRjz7OIAA9SsFZvY=
+	t=1733336711; cv=none; b=RfsU7Jqy8RERwSboJ8iaMKen+8uorXGzttRIODF4Cugl9joqLzirWV624hYBC/4nTItsJYVnfVf2UtfO8JjkNOADxjDOKyIK1t9h56XUyMLZJml05rPBuKPskUyEFSQuTNaPljYkj2NwoJOmlxXwFUPAjdNmQjMjizOieW6O5Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733336717; c=relaxed/simple;
-	bh=1JB2wb1ixUQ2tLhVrAdRSy7hUKQW2Tn/gK7Kv0OWlYM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=USFuXxgn7xK2TT5LPnlfQ/5d0AZiuu5Jna6/Z68+FihHQhkgPNkrHg/4AeXCKdl2PFTVcSIyBOvVzwpFi2nOqF4gaEZAvB+fhZvCcCq3dA2HIBlnbTQA94Q17SIaZhIufGDqzx3SmpdHm0lK9Icixjp98r8FfxgEc1gV3E5NVyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FoJ4basF; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a36b82b7so90485e9.1;
-        Wed, 04 Dec 2024 10:25:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733336714; x=1733941514; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xNQM2De0uWsZzOP6u/2v236oC/9A63z8kL2Apq3LH5U=;
-        b=FoJ4basFxZ+WIAo4uXdC62+WFbq4fsFx0+6/0NNjB5ByLI8oi+2fi1V8Rcz5cSF/oY
-         SjFQd+M2/3vzQAT7ewJWNMF6xsOyKmmvqs96ezsnke9O7TfB+L8gkW4f68Ls8NJpH2Mi
-         bAQ72jA6Tw4BqrOtABcE16K3dZLHFbSK2Uv+C7Xbx1G3njDPSBApJB8SIVDRXHLgy6Ba
-         /KF2CNb1OhMXco5/RPvxBvrUFAwYGSjWyuCbDRGEa9Ozf1zPkh9LsANmtmIYtg486KoI
-         BuJ/NA8EfeoF0YS5F1lvKLSZWFLUL4xHNJ3vGg7ITObJ0HN2ib5SZ1ssni+/5dSsil9E
-         aPkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733336714; x=1733941514;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xNQM2De0uWsZzOP6u/2v236oC/9A63z8kL2Apq3LH5U=;
-        b=WX+sKxU3veqe+fJTipGxvOaQRXSII6qeeNTK3E3gqGmT/Wd9heMBoo+wXqoJp6Oaus
-         +/fkTIxs0lruloQSd/L8dOQxenCoX9U/vu+AOqLqNMkuCF4Wa6TFIO6bWwvQZCu2n2H3
-         e2RFUtRJFtYpY1AKnBibcf+v7GLjRvpAU0EGD7yX9yGbKzsROOTP40QMQ5dHKBYAmwSK
-         URZRuyUkZJMwMX87uhrtKHpPV6oO4CEGf5zFgwdfdPIKgYDR6sV16umgtjRwq4YzCOzK
-         txkO1KYC1Mjx5xs2qOZ1cZaNu5sef4DqeHeA0vvfM1VR1cpwiT3sixswo9RjVUZHff4a
-         iOHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsD9wkTrhC8qXvUKXXpyV2s+IIJ68dKbGk0dG/X+AytF7QMLpz28IKYrL7S14k+F1Ky0fv2q4ZYl1ul3bz@vger.kernel.org, AJvYcCXhyEIKAR6GMBpD6vOpkxeV7mjEHiqgE0rToxoKjg+CQlZEZdig0zGk1AREYG3QivwpCp4xRrFP9p4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrVCrMMbpITafBpZ/GFlvPSXCR2uc162sn+ksX83eXuiwQvFvw
-	pCxS2mIjTOhq47yvShr9nQwCKNcJ//OrVBO0k7fRvjJMwGz+tmlO
-X-Gm-Gg: ASbGncu5hujKtTkJXV9jiXMG5Bz+6s64oYg9Gbejvok4N0yR6Tq95sFHZUATEWpZUWp
-	tqdlc9wLK1aK4pgUr0ajq6jInieXavmf5s4OW2WDoMj/ckWrIVlvPPzoBffHSaNtXbI8y5kcIF6
-	3NFzMbBJahsfJTMG5DZnlXYt8hj0Bcw7A5lasXA+1nvPoSksnY5H6k0CBuuikbUKkyrmLIC2AW2
-	9r+7vWqEwjaEJ+xKAjjZKv4Eiqwio/9ROTunTIScYWg/iYbAMy6KkkzARsqPqBF5fNpNbv88kdc
-	sm7GetDJuzF/jE3FhOIc6jcOlKNT
-X-Google-Smtp-Source: AGHT+IFW1FLYDpdRtB5tR/zp4nXMF6Gn37gIcoA5IgJjlA6tw3LUgBIkGiAgCISOrgI9G/Rng48BPQ==
-X-Received: by 2002:a05:600c:1ca2:b0:434:9d0d:1347 with SMTP id 5b1f17b1804b1-434d0a03f25mr26595175e9.5.1733336714339;
-        Wed, 04 Dec 2024 10:25:14 -0800 (PST)
-Received: from 7b58d44c4ff6.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbf57sm31959755e9.39.2024.12.04.10.25.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 10:25:13 -0800 (PST)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	jic23@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	eraretuya@gmail.com,
-	l.rubusch@gmail.com
-Subject: [PATCH v4 08/10] iio: accel: adxl345: initialize FIFO delay value for SPI
-Date: Wed,  4 Dec 2024 18:24:49 +0000
-Message-Id: <20241204182451.144381-9-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241204182451.144381-1-l.rubusch@gmail.com>
-References: <20241204182451.144381-1-l.rubusch@gmail.com>
+	s=arc-20240116; t=1733336711; c=relaxed/simple;
+	bh=cDSoQ16BDvvCzMtk2ozbB2lFby1naJ8lH/Pj+fxbBS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lrej0gSeTlOPPoZg4GLLNX2T8JX367G9ok99LiW9fLZJX6HRIWtbiBnlTWm4nFCTkVlW1pQMWpIqCkdHR8E0w2txVA3OciEs50dlBPb86JTGS2c3WPx1fY1Dhaq5kYqhH6m92KmYmQaIoe7NNsmTnuj/IOPJGJ4Of6NEc+b7jSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fVqjD8o6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5502CC4CEE0;
+	Wed,  4 Dec 2024 18:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733336711;
+	bh=cDSoQ16BDvvCzMtk2ozbB2lFby1naJ8lH/Pj+fxbBS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fVqjD8o6EiOQa7vkywq13UdLd+UwDgzEY9ps1jFT6FPqFhz+WhlZu6Wd4kghxVg4I
+	 EOHWwJJf29ftKzgRrmyE/JzcHbrdDQxmPyNn0uc6zQIGNtnfsqqKwe8ChuZd0nY4gB
+	 4MjmTn1yi6TuyjQWxPhXcBn2nSnqal0v/RxgqDaQ=
+Date: Wed, 4 Dec 2024 19:25:07 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/2] sample: rust_misc_device: Demonstrate additional
+ get/set value functionality
+Message-ID: <2024120453-unfunded-oversight-5161@gregkh>
+References: <20241204174627.1151288-1-lee@kernel.org>
+ <20241204174627.1151288-2-lee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204174627.1151288-2-lee@kernel.org>
 
-Add the possibility to delay FIFO access when SPI is used. According to
-the datasheet this is needed for the adxl345. When initialization
-happens over SPI the need for delay is to be signalized, and the delay
-will be used.
+On Wed, Dec 04, 2024 at 05:46:25PM +0000, Lee Jones wrote:
+> Expand the complexity of the sample driver by providing the ability to
+> get and set an integer.  The value is protected by a mutex.
+> 
+> Here is a simple userspace program that fully exercises the sample
+> driver's capabilities.
+> 
+> int main() {
+>   int value, new_value;
+>   int fd, ret;
+> 
+>   // Open the device file
+>   printf("Opening /dev/rust-misc-device for reading and writing\n");
+>   fd = open("/dev/rust-misc-device", O_RDWR);
+>   if (fd < 0) {
+>     perror("open");
+>     return errno;
+>   }
+> 
+>   // Make call into driver to say "hello"
+>   printf("Calling Hello\n");
+>   ret = ioctl(fd, RUST_MISC_DEV_HELLO, NULL);
+>   if (ret < 0) {
+>     perror("ioctl: Failed to call into Hello");
+>     close(fd);
+>     return errno;
+>   }
+> 
+>   // Get initial value
+>   printf("Fetching initial value\n");
+>   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &value);
+>   if (ret < 0) {
+>     perror("ioctl: Failed to fetch the initial value");
+>     close(fd);
+>     return errno;
+>   }
+> 
+>   value++;
+> 
+>   // Set value to something different
+>   printf("Submitting new value (%d)\n", value);
+>   ret = ioctl(fd, RUST_MISC_DEV_SET_VALUE, &value);
+>   if (ret < 0) {
+>     perror("ioctl: Failed to submit new value");
+>     close(fd);
+>     return errno;
+>   }
+> 
+>   // Ensure new value was applied
+>   printf("Fetching new value\n");
+>   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &new_value);
+>   if (ret < 0) {
+>     perror("ioctl: Failed to fetch the new value");
+>     close(fd);
+>     return errno;
+>   }
+> 
+>   if (value != new_value) {
+>     printf("Failed: Committed and retrieved values are different (%d - %d)\n", value, new_value);
+>     close(fd);
+>     return -1;
+>   }
+> 
+>   // Call the unsuccessful ioctl
+>   printf("Attempting to call in to an non-existent IOCTL\n");
+>   ret = ioctl(fd, RUST_MISC_DEV_FAIL, NULL);
+>   if (ret < 0) {
+>     perror("ioctl: Succeeded to fail - this was expected");
+>   } else {
+>     printf("ioctl: Failed to fail\n");
+>     close(fd);
+>     return -1;
+>   }
+> 
+>   // Close the device file
+>   printf("Closing /dev/rust-misc-device\n");
+>   close(fd);
+> 
+>   printf("Success\n");
+>   return 0;
+> }
+> 
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
+>  samples/rust/rust_misc_device.rs | 82 ++++++++++++++++++++++++--------
+>  1 file changed, 62 insertions(+), 20 deletions(-)
+> 
+> diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+> index 5f1b69569ef7..9c041497d881 100644
+> --- a/samples/rust/rust_misc_device.rs
+> +++ b/samples/rust/rust_misc_device.rs
+> @@ -2,13 +2,20 @@
+>  
+>  //! Rust misc device sample.
+>  
+> +use core::pin::Pin;
+> +
+>  use kernel::{
+>      c_str,
+> -    ioctl::_IO,
+> +    ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
+>      miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+> +    new_mutex,
+>      prelude::*,
+> +    sync::Mutex,
+> +    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
+>  };
+>  
+> +const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('R' as u32, 7);
+> +const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('R' as u32, 8);
 
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
----
- drivers/iio/accel/adxl345.h      |  1 +
- drivers/iio/accel/adxl345_core.c | 12 ++++++++++++
- drivers/iio/accel/adxl345_i2c.c  |  2 +-
- drivers/iio/accel/adxl345_spi.c  |  7 +++++--
- 4 files changed, 19 insertions(+), 3 deletions(-)
+Shouldn't this be 'W'?
 
-diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
-index ed81d5cf445..c07709350d3 100644
---- a/drivers/iio/accel/adxl345.h
-+++ b/drivers/iio/accel/adxl345.h
-@@ -127,6 +127,7 @@ struct adxl345_chip_info {
- };
- 
- int adxl345_core_probe(struct device *dev, struct regmap *regmap,
-+		       bool fifo_delay_default,
- 		       int (*setup)(struct device*, struct regmap*));
- 
- #endif /* _ADXL345_H_ */
-diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-index e0a8b32239f..0696e908bdf 100644
---- a/drivers/iio/accel/adxl345_core.c
-+++ b/drivers/iio/accel/adxl345_core.c
-@@ -22,6 +22,7 @@ struct adxl345_state {
- 	int irq;
- 	const struct adxl345_chip_info *info;
- 	struct regmap *regmap;
-+	bool fifo_delay; /* delay: delay is needed for SPI */
- 	u8 intio;
- };
- 
-@@ -193,12 +194,21 @@ static const struct iio_info adxl345_info = {
-  * adxl345_core_probe() - Probe and setup for the accelerometer.
-  * @dev:	Driver model representation of the device
-  * @regmap:	Regmap instance for the device
-+ * @fifo_delay_default: Using FIFO with SPI needs delay
-  * @setup:	Setup routine to be executed right before the standard device
-  *		setup
-  *
-+ * For SPI operation greater than 1.6 MHz, it is necessary to deassert the CS
-+ * pin to ensure a total delay of 5 us; otherwise, the delay is not sufficient.
-+ * The total delay necessary for 5 MHz operation is at most 3.4 us. This is not
-+ * a concern when using I2C mode because the communication rate is low enough
-+ * to ensure a sufficient delay between FIFO reads.
-+ * Ref: "Retrieving Data from FIFO", p. 21 of 36, Data Sheet ADXL345 Rev. G
-+ *
-  * Return: 0 on success, negative errno on error
-  */
- int adxl345_core_probe(struct device *dev, struct regmap *regmap,
-+		       bool fifo_delay_default,
- 		       int (*setup)(struct device*, struct regmap*))
- {
- 	struct adxl345_state *st;
-@@ -230,6 +240,8 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
- 	if (!st->info)
- 		return -ENODEV;
- 
-+	st->fifo_delay = fifo_delay_default;
-+
- 	indio_dev->name = st->info->name;
- 	indio_dev->info = &adxl345_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
-diff --git a/drivers/iio/accel/adxl345_i2c.c b/drivers/iio/accel/adxl345_i2c.c
-index 4065b8f7c8a..28d997c5860 100644
---- a/drivers/iio/accel/adxl345_i2c.c
-+++ b/drivers/iio/accel/adxl345_i2c.c
-@@ -27,7 +27,7 @@ static int adxl345_i2c_probe(struct i2c_client *client)
- 	if (IS_ERR(regmap))
- 		return dev_err_probe(&client->dev, PTR_ERR(regmap), "Error initializing regmap\n");
- 
--	return adxl345_core_probe(&client->dev, regmap, NULL);
-+	return adxl345_core_probe(&client->dev, regmap, false, NULL);
- }
- 
- static const struct adxl345_chip_info adxl345_i2c_info = {
-diff --git a/drivers/iio/accel/adxl345_spi.c b/drivers/iio/accel/adxl345_spi.c
-index 61fd9a6f5fc..9829d5d3d43 100644
---- a/drivers/iio/accel/adxl345_spi.c
-+++ b/drivers/iio/accel/adxl345_spi.c
-@@ -12,6 +12,7 @@
- #include "adxl345.h"
- 
- #define ADXL345_MAX_SPI_FREQ_HZ		5000000
-+#define ADXL345_MAX_FREQ_NO_FIFO_DELAY	1500000
- 
- static const struct regmap_config adxl345_spi_regmap_config = {
- 	.reg_bits = 8,
-@@ -28,6 +29,7 @@ static int adxl345_spi_setup(struct device *dev, struct regmap *regmap)
- static int adxl345_spi_probe(struct spi_device *spi)
- {
- 	struct regmap *regmap;
-+	bool needs_delay;
- 
- 	/* Bail out if max_speed_hz exceeds 5 MHz */
- 	if (spi->max_speed_hz > ADXL345_MAX_SPI_FREQ_HZ)
-@@ -38,10 +40,11 @@ static int adxl345_spi_probe(struct spi_device *spi)
- 	if (IS_ERR(regmap))
- 		return dev_err_probe(&spi->dev, PTR_ERR(regmap), "Error initializing regmap\n");
- 
-+	needs_delay = (spi->max_speed_hz > ADXL345_MAX_FREQ_NO_FIFO_DELAY);
- 	if (spi->mode & SPI_3WIRE)
--		return adxl345_core_probe(&spi->dev, regmap, adxl345_spi_setup);
-+		return adxl345_core_probe(&spi->dev, regmap, needs_delay, adxl345_spi_setup);
- 	else
--		return adxl345_core_probe(&spi->dev, regmap, NULL);
-+		return adxl345_core_probe(&spi->dev, regmap, needs_delay, NULL);
- }
- 
- static const struct adxl345_chip_info adxl345_spi_info = {
--- 
-2.39.2
+>  const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
+>  
+>  module! {
+> @@ -40,45 +47,80 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
+>      }
+>  }
+>  
+> -struct RustMiscDevice;
+> +struct Inner {
+> +    value: i32,
+> +}
+>  
+> -impl RustMiscDevice {
+> -    fn new() -> Self {
+> -        Self
+> -    }
+> +#[pin_data(PinnedDrop)]
+> +struct RustMiscDevice {
+> +    #[pin]
+> +    inner: Mutex<Inner>,
+>  }
+>  
+>  #[vtable]
+>  impl MiscDevice for RustMiscDevice {
+> -    type Ptr = KBox<Self>;
+> +    type Ptr = Pin<KBox<Self>>;
+>  
+> -    fn open() -> Result<KBox<Self>> {
+> +    fn open() -> Result<Pin<KBox<Self>>> {
+>          pr_info!("Opening Rust Misc Device Sample\n");
+>  
+> -        Ok(KBox::new(RustMiscDevice::new(), GFP_KERNEL)?)
+> +        KBox::try_pin_init(
+> +            try_pin_init! {
+> +                RustMiscDevice { inner <- new_mutex!( Inner{ value: 0_i32 } )}
+> +            },
+> +            GFP_KERNEL,
+> +        )
+>      }
+>  
+> -    fn ioctl(
+> -        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
+> -        cmd: u32,
+> -        _arg: usize,
+> -    ) -> Result<isize> {
+> +    fn ioctl(device: Pin<&RustMiscDevice>, cmd: u32, arg: usize) -> Result<isize> {
+>          pr_info!("IOCTLing Rust Misc Device Sample\n");
+>  
+> -        match cmd {
+> -            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
+> +        let size = _IOC_SIZE(cmd);
+> +
+> +        let _ = match cmd {
+> +            RUST_MISC_DEV_GET_VALUE => device.get_value(UserSlice::new(arg, size).writer())?,
+> +            RUST_MISC_DEV_SET_VALUE => device.set_value(UserSlice::new(arg, size).reader())?,
+> +            RUST_MISC_DEV_HELLO => device.hello()?,
+>              _ => {
+> -                pr_err!("IOCTL not recognised: {}\n", cmd);
+> +                pr_err!("-> IOCTL not recognised: {}\n", cmd);
+>                  return Err(EINVAL);
 
+Nit, wrong return value for an invalid ioctl, I missed that in patch 1,
+sorry about that.
+
+>              }
+> -        }
+> +        };
+>  
+>          Ok(0)
+>      }
+>  }
+>  
+> -impl Drop for RustMiscDevice {
+> -    fn drop(&mut self) {
+> +#[pinned_drop]
+> +impl PinnedDrop for RustMiscDevice {
+> +    fn drop(self: Pin<&mut Self>) {
+>          pr_info!("Exiting the Rust Misc Device Sample\n");
+>      }
+>  }
+> +
+> +impl RustMiscDevice {
+> +    fn set_value(&self, mut reader: UserSliceReader) -> Result<isize> {
+> +        let new_value = reader.read::<i32>()?;
+> +        let mut guard = self.inner.lock();
+> +
+> +        pr_info!("-> Copying data from userspace (value: {})\n", new_value);
+> +
+> +        guard.value = new_value;
+> +        Ok(0)
+> +    }
+> +
+> +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
+> +        let guard = self.inner.lock();
+> +
+> +        pr_info!("-> Copying data to userspace (value: {})\n", &guard.value);
+> +
+> +        writer.write::<i32>(&guard.value)?;
+
+What happens if it fails, shouldn't your pr_info() happen after this?
+
+thanks,
+
+greg k-h
+
+> +        Ok(0)
+> +    }
+> +
+> +    fn hello(&self) -> Result<isize> {
+> +        pr_info!("-> Hello from the Rust Misc Device\n");
+> +
+> +        Ok(0)
+> +    }
+> +}
+> -- 
+> 2.47.0.338.g60cca15819-goog
+> 
 
