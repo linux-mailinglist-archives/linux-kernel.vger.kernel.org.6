@@ -1,264 +1,157 @@
-Return-Path: <linux-kernel+bounces-430516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378979E3200
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:18:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E139E3205
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:21:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 008DE1667FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B07828487C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD96E142E86;
-	Wed,  4 Dec 2024 03:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0543714A4FF;
+	Wed,  4 Dec 2024 03:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HF6HVH77"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ihbdj/p3"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393CA502B1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 03:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A6617BA1;
+	Wed,  4 Dec 2024 03:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733282300; cv=none; b=nTwrdu2uA79nnecMiW2OSi2gmdNr96zCorGvkP103kByHMLJFR1CiZmEpSjfVDHhpztpGCkYDfsy75ZMVPYi+yjCc2iOTe8/neyPElQuMGEimMg/rRTod4Hg2nGIuKEUceqfpe1Yqlmx3zSdCpW+qE2eFCl0mV47PiwJW60bMz4=
+	t=1733282460; cv=none; b=BMJJlLjrvXMHVjn0zDe1C+PB9DcUtdaaoiFXrpt83bNHf3fiLSPlOTM6uoaZmU9r9GL6iQmnz2oCbwB1s2gPXiUhg+e6gjeOdrITZr7j4jSNChg3b+71IUcw2nc+ZgiDVzW/WPktFDNOI0U+jYMt8Se1tYxDqaM+ImOmNOdooDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733282300; c=relaxed/simple;
-	bh=ZzkoTxzFwdN3sVW4Abdq+hmUBfCh0XNTwwDjGZQPyUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qX/ZmhKfhozdEyxPcSbbWXx+4rNORNtZFhEUvthSVp2/j2y7AB9ZkeVUQquQS3PQFoC0bNqGyzrGDGEFfAKL3lp8N+jb7tNGtN6wol3h00N6cB6IuGslrQOZWlxbdYqyhDWUVds+cXmJZDkra40wMIuYKK7F69Smwygo1oWehkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HF6HVH77; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53df63230d0so7629209e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 19:18:16 -0800 (PST)
+	s=arc-20240116; t=1733282460; c=relaxed/simple;
+	bh=xFiJD3eDhYrPQHtnKlD8TkcwxwRmE2OmsefHI750AS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AhFkJmzMZzbG9t5oK8FQndxCuXff76l/f3msF3j2qWdRuY7bw6gT8hJvQLljnzCXiFle4XCEebBEUfuNttLVDN0+PdwVIpUL1WM236wgYIpJchO+t/FOyoczwT++J6qUZHyvBDKmu46FlSZEJ7PkIUU8LCET8+2ZXa2sLe7RWkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ihbdj/p3; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9ec267b879so1038482566b.2;
+        Tue, 03 Dec 2024 19:20:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733282295; x=1733887095; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ov4oIDApdgx4WHS7bE5m2BIEReCDIeuVyAq9ezmep2w=;
-        b=HF6HVH77ngef3B+UTvtrlFveqt3xpWkslUZUg/vZFQyLiy3Aulw6yfYt33icJqK17y
-         Kdrwt3tJCCKfHJiJ1mC3wIPVn/55XhFjl6V/knHpY66hyKzYsdJMx/VRdH0c0nM91Wic
-         +B5vPP2XykFsEzXU8lyAnmXzpJFLscWkkhP+SJkuDtbsevJZZuSCibBVd9pnmw2BDlLh
-         0nKuEwm9YkAHc/gZ/puek/Rzglv6uKT348+3bZKTq/tHPB5QwsnqcZscbhUpBbwgY/RY
-         LAcPVR7QNXZUTbK5kMcoLQllN9hdmtEy7lN8jN9litFYUF/Qib0D/XGhIEaFQeW3jzXf
-         M4RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733282295; x=1733887095;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733282457; x=1733887257; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ov4oIDApdgx4WHS7bE5m2BIEReCDIeuVyAq9ezmep2w=;
-        b=FSr+lI4TC2T7XIduNk+7MMOqygyrWQeGOsoFVBRC0cZuxPLz9ZzJ3OgkK991jyCFfE
-         wtvwNuAKs4WNHM8g60pWpm/gnan1XKTEKvKnvHhhmRBr0awB9USvcN1sRJDmxgkNkOav
-         T0r4iAtlRhvTledwa3TKb2/MuT3g8/e+8gF7SNGMvUJAz7/mlSnI0cIt3mXIEhP9T7of
-         f/K53b22MJuzIy4EFHetMp4fqr65kfetZB5QH6lDtfDtNHoPN5I+5J5Vdrdc8DOSgjq6
-         CQB0ZRH5zhnQDxnewZLvcdUwMOh+epbzZqa6TREeowH99Yb8vT9ntC3TPhoNjPQUgFbc
-         Kmqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZB8yZPzoz69MbAJBhSTlS/18/Y8xIiJXYW49CWBASFhBgH1t/k3mFjCO0qGvl1CxRFMU/gzEfGxW2bjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvgP4odK5V/WZ08fP7YA7jsCDEYtZA7LxHC/4ReXDR15lDY7eP
-	Ef8JU80oz0+2zP3hvZiPtDuFBJfyYRG+rSsevSiWsW9oYNJsqbtwNh13XbKJgJU=
-X-Gm-Gg: ASbGncuyFg7tTf3N3RnXc4rENg1Vm7jnyz+UvVdeQv74hUqR65W+HMsrrPXzL+E6Tek
-	aTtpIAobIfR17qMAr9rwdQ55NDhtzkalNNg1ilW31yLNcg26Qrbs/W9qe40I4LXdj1TTSFG2H6+
-	dH2Ke4btHv7Gaa2poWmHhijF8MXgcjk4JA3X9jCYc0ZQOKZ1H1AG3tq2eZAlBpm7olID60oNJHr
-	5wM1pzqXIPiXUoAYICjglAyuUd4ETLYimb2vdGe/L/gxOj/XjfLG68WK9z0Sc2ywgniX/Rqn90t
-	RsOOkDTVN6t+hi8pgPnHuRW8I0zbHQ==
-X-Google-Smtp-Source: AGHT+IFJX8QZfHrEBC9Xxxj95DpGajpX3DiwA7TRxy/4ydOL7I3C5fwKfR6CJxAdfz87Jxn9zNInqQ==
-X-Received: by 2002:a05:6512:3a8e:b0:53d:a550:2885 with SMTP id 2adb3069b0e04-53e12a34282mr2179215e87.47.1733282295266;
-        Tue, 03 Dec 2024 19:18:15 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f13csm2058532e87.230.2024.12.03.19.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 19:18:14 -0800 (PST)
-Date: Wed, 4 Dec 2024 05:18:11 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 7/9] drm/bridge_connector: hook
- drm_atomic_helper_connector_hdmi_update_edid()
-Message-ID: <txzri7x4pdeakx4juandk3hfhsbx3dhlulxfuehqlmrr7b3wpw@jaunqktsro6x>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-7-b5316e82f61a@linaro.org>
- <87a5dc4zd5.fsf@intel.com>
+        bh=y04cA3TO1YirE/koG9dsISeizBY/CnfgH65djkwX2Bk=;
+        b=Ihbdj/p37YTVFZ6A8ZMvwRBI4LhuFzSMu55Z/6MWvBNtfxbSydNk92luFdg9QxgZpj
+         g4Fe2wPRgAxZcFugiSjaLa6BTqlSzIH6GwY/31IZTyRN9kzy/cFnlrKeE6nQfj6exOGX
+         2sATQXgO2fzrAiywelfaxR4UnVgkJ+tc1N77AyyqBWh4CoJuu3eqLxUULCJolsJjqO93
+         4j5XM3/8SOTEeRLQgsR6zEilgqzRtMK5XU/wq8SLUm4tY1agkJcdUvrqX1ZrAz+sZ+z4
+         jI5nbCqlbyHJ9Pgr0jXpn2pjWhlhOmzbHMzJpAt2l7vhRhpXf3wcWTDBEtmwhBujcuCd
+         DbBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733282457; x=1733887257;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y04cA3TO1YirE/koG9dsISeizBY/CnfgH65djkwX2Bk=;
+        b=JWLQ19ZxrDR8EDegXYv2V0plr4zApAd2yWHXemzd8TewDAVT2tTrurn/Mkk1m1ru8E
+         XQSdYAaTdunuR+qRp1uPSNIxdy2X6/ODArrc1Gs+VonkrrVuEkNk7htnIZgC3gvNZzu2
+         HnC51r5UaPeLazqZAKarcKEUELO5+W1+5sjEr7Xy3lMo9ZtLOE+C5rDwkrcFev9dHMzC
+         KtY9YaVbEuxb5ETAUDekd6G5cyMnQ5GHeDzfGc+sB7qI8CN6wJEg9D+zLzXC0UoxBX2X
+         BSgZ2sdYKXX0nFof+77o/CNJdOcHt4TNZnINPp6holCFFw4GzXO6ZG9Uqo7djGiEOM4F
+         +JMw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0h0jzvgEbeUbeg9HgTNtSh7FgS5Hnn2P+rux9xbuWqlhXySykmCgVCFKwZgIpllNsZQrMWr+rAbq/R7Sk@vger.kernel.org, AJvYcCUfPZmsC8ctwYjjfC9ORqVLRqE/gvK7rmtBcX5796LXscHeoAxO2v4tLEgsSuXWCHJOxjlR6lSeFY1e@vger.kernel.org, AJvYcCXAJKPwwqeT9Aw5rAZgQTA6xVj2rPibRjWDJfiKMJ2CVX8KLPG0LCTSn8M9ykXu1UTJjpyC+E8LLzIa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1SvMabUnIb4KcO1+SkNyjqO42QV92Hu+Z4+FU1x4y1wLVSnpc
+	ZpFy9ldOTJDm/E4P+3RxDDucvJH1pKbBvfweM6Hdxy7bG2a8ivezwbpI+2GhYMHbDKrRAaisY3E
+	TPpTwZERPTMFAbEh1LdPXTx8chVg=
+X-Gm-Gg: ASbGncuyrKk2MqoTFBBPh5jJKADWu5b46p9n+g1DR9sDstZ5LMiBDb1Wlg2L9Juycg4
+	GOByT0TZiYjvAtFpdft3Q4jh035PMX8o=
+X-Google-Smtp-Source: AGHT+IGwe/oix06krX2fuoZe1ERy+q9naY8xqOUcm7s53LomcongR2PQFcGeSdVl85Uok60HVU/VrIr7KREYgLQOuhE=
+X-Received: by 2002:a17:906:32ce:b0:aa5:1d68:1ec8 with SMTP id
+ a640c23a62f3a-aa5f7cce55cmr446672366b.7.1733282457090; Tue, 03 Dec 2024
+ 19:20:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a5dc4zd5.fsf@intel.com>
+References: <20241203091540.3695650-1-j2anfernee@gmail.com>
+ <20241203091540.3695650-3-j2anfernee@gmail.com> <Z08MkR40fjfW3MXZ@smile.fi.intel.com>
+In-Reply-To: <Z08MkR40fjfW3MXZ@smile.fi.intel.com>
+From: Yu-Hsian Yang <j2anfernee@gmail.com>
+Date: Wed, 4 Dec 2024 11:20:20 +0800
+Message-ID: <CA+4VgcJW=9rtuqr3VZbfA8QxgYAR+KvfAHdf_0xv4XLQtVVQJw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: add Nuvoton NCT720x ADC driver
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com, 
+	javier.carrasco.cruz@gmail.com, marcelo.schmitt@analog.com, 
+	olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com, 
+	matteomartelli3@gmail.com, alisadariana@gmail.com, gstols@baylibre.com, 
+	thomas.bonnefille@bootlin.com, ramona.nechita@analog.com, 
+	mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com, 
+	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 04:25:58PM +0200, Jani Nikula wrote:
-> On Sun, 01 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > Extend drm_bridge_connector code to read the EDID and use it to update
-> > connector status if the bridge chain implements HDMI bridge. Performing
-> > it from the generic location minimizes individual bridge's code and
-> > enforces standard behaviour from all corresponding drivers.
+Dear Andy Shevchenko,
+
+Thank you for your comment.
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
+12=E6=9C=883=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=889:50=E5=AF=AB=E9=
+=81=93=EF=BC=9A
+>
+> On Tue, Dec 03, 2024 at 05:15:40PM +0800, Eason Yang wrote:
+> > Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
 > >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/display/drm_bridge_connector.c | 67 ++++++++++++++++++++------
-> >  1 file changed, 53 insertions(+), 14 deletions(-)
+> > NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up =
+to
+> > 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins fo=
+r
+> > independent alarm signals, and the all threshold values could be set fo=
+r
+> > system protection without any timing delay. It also supports reset inpu=
+t
+> > RSTIN# to recover system from a fault condition.
 > >
-> > diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-> > index 12ab9f14cc8a8672478ae2804c9a68d766d88ea5..71ae3b2c9049016d1cc0d39a787f6461633efd53 100644
-> > --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> > +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> > @@ -17,6 +17,7 @@
-> >  #include <drm/drm_edid.h>
-> >  #include <drm/drm_managed.h>
-> >  #include <drm/drm_modeset_helper_vtables.h>
-> > +#include <drm/drm_print.h>
-> >  #include <drm/drm_probe_helper.h>
-> >  #include <drm/display/drm_hdmi_state_helper.h>
-> >  
-> > @@ -175,17 +176,55 @@ static void drm_bridge_connector_disable_hpd(struct drm_connector *connector)
-> >   * Bridge Connector Functions
-> >   */
-> >  
-> > +static const struct drm_edid *
-> > +drm_bridge_connector_read_edid(struct drm_connector *connector,
-> > +			       enum drm_connector_status status)
-> > +{
-> > +	struct drm_bridge_connector *bridge_connector =
-> > +		to_drm_bridge_connector(connector);
-> > +	const struct drm_edid *drm_edid;
-> > +	struct drm_bridge *bridge;
-> > +
-> > +	bridge = bridge_connector->bridge_edid;
-> > +	if (!bridge)
-> > +		return NULL;
-> > +
-> > +	if (status != connector_status_connected)
-> > +		return NULL;
-> > +
-> > +	drm_edid = drm_bridge_edid_read(bridge, connector);
-> > +	if (!drm_edid_valid(drm_edid)) {
-> 
-> What's the case this check is for?
-> 
-> My preference would be that bridge->funcs->edid_read() uses
-> drm_edid_read*() family of functions that do the checks and return the
-> EDID.
-> 
-> There are some cases that just allocate a blob and return it. Would be
-> nice if they could be converted, but in the mean time could use
-> drm_edid_valid() right there. Additional validity checks are redundant.
+> > Currently, only single-edge mode conversion and threshold events suppor=
+t.
+>
+> Please, get rid of explicit castings where the are not needed or implied,=
+ like
+>
+>         u16 foo;
+>         ...
+>         foo =3D (u16)bar;
+>
+> you have a lot of this in the code.
+>
 
-This was c&p from drm_bridge_connector_get_modes_edid(). If you think
-that the check is redundant, could you please send a patch dropping the
-check?
+We would  get rid of explicit castings in all codes.
 
-> 
-> BR,
-> Jani.
-> 
-> 
-> > +		drm_edid_free(drm_edid);
-> > +		return NULL;
-> > +	}
-> > +
-> > +	return drm_edid;
-> > +}
-> > +
-> >  static enum drm_connector_status
-> >  drm_bridge_connector_detect(struct drm_connector *connector, bool force)
-> >  {
-> >  	struct drm_bridge_connector *bridge_connector =
-> >  		to_drm_bridge_connector(connector);
-> >  	struct drm_bridge *detect = bridge_connector->bridge_detect;
-> > +	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
-> >  	enum drm_connector_status status;
-> >  
-> >  	if (detect) {
-> >  		status = detect->funcs->detect(detect);
-> >  
-> > +		if (hdmi) {
-> > +			const struct drm_edid *drm_edid;
-> > +			int ret;
-> > +
-> > +			drm_edid = drm_bridge_connector_read_edid(connector, status);
-> > +			ret = drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
-> > +			if (ret)
-> > +				drm_warn(connector->dev, "updating EDID failed with %d\n", ret);
-> > +
-> > +			drm_edid_free(drm_edid);
-> > +		}
-> > +
-> >  		drm_bridge_connector_hpd_notify(connector, status);
-> >  	} else {
-> >  		switch (connector->connector_type) {
-> > @@ -246,29 +285,29 @@ static const struct drm_connector_funcs drm_bridge_connector_funcs = {
-> >  static int drm_bridge_connector_get_modes_edid(struct drm_connector *connector,
-> >  					       struct drm_bridge *bridge)
-> >  {
-> > +	struct drm_bridge_connector *bridge_connector =
-> > +		to_drm_bridge_connector(connector);
-> > +	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
-> >  	enum drm_connector_status status;
-> >  	const struct drm_edid *drm_edid;
-> > -	int n;
-> >  
-> >  	status = drm_bridge_connector_detect(connector, false);
-> >  	if (status != connector_status_connected)
-> > -		goto no_edid;
-> > +		return 0;
-> >  
-> > -	drm_edid = drm_bridge_edid_read(bridge, connector);
-> > -	if (!drm_edid_valid(drm_edid)) {
-> > +	/* In HDMI setup the EDID has been read and handled as a part of .detect() */
-> > +	if (!hdmi) {
-> > +		drm_edid = drm_bridge_connector_read_edid(connector, status);
-> > +		if (!drm_edid) {
-> > +			drm_edid_connector_update(connector, NULL);
-> > +			return 0;
-> > +		}
-> > +
-> > +		drm_edid_connector_update(connector, drm_edid);
-> >  		drm_edid_free(drm_edid);
-> > -		goto no_edid;
-> >  	}
-> >  
-> > -	drm_edid_connector_update(connector, drm_edid);
-> > -	n = drm_edid_connector_add_modes(connector);
-> > -
-> > -	drm_edid_free(drm_edid);
-> > -	return n;
-> > -
-> > -no_edid:
-> > -	drm_edid_connector_update(connector, NULL);
-> > -	return 0;
-> > +	return drm_edid_connector_add_modes(connector);
-> >  }
-> >  
-> >  static int drm_bridge_connector_get_modes(struct drm_connector *connector)
-> 
-> -- 
-> Jani Nikula, Intel
+> Second, why do you need two regmaps? How debugfs is supposed to work on t=
+he
+> registers that are 16-bit if you access them via 8-bit regmap and vice ve=
+rsa?
+>
+> Can't you simply use bulk reads/writes when it makes sense and drop 16-bi=
+t
+> regmap completely?
+>
+>
 
--- 
-With best wishes
-Dmitry
+Read VIN info can use word read or byte read, and other registers
+should use byte read.
+
+For a reviewer's comment,
+If the i2c controller allows word read
+then the right thing is to always use it.
+
+
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
