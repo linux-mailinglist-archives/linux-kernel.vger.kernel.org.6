@@ -1,137 +1,347 @@
-Return-Path: <linux-kernel+bounces-432205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840199E476F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:07:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978B19E4774
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FC9F163928
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:07:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60320163B82
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0464B1990DB;
-	Wed,  4 Dec 2024 22:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF1F197A9F;
+	Wed,  4 Dec 2024 22:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jypwH+ZI"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Op6mzCz1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FE3191F9C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4FE194096;
+	Wed,  4 Dec 2024 22:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733350027; cv=none; b=iQqBXmB6NUZ9EBpWAI12Tq4Uz1mwc91G7fOW/DBj9VqXmUtR2LRaSkTRPERqq2z4vcVG8nBh4zO2fPvVikFK86+hf/VfA7JbzZJM9OJFs90tezFPDIP03a5pU7nHjgAX+XqkI2WzzU87K8oPts40BYtbK+EmEF2ciQax3pK85kw=
+	t=1733350037; cv=none; b=eV7ITJJ4Yf0xKTS/ZNIY9YfYuY7zJGO2eQ3LJaT5+wqmX7jskVQmEFuecfMgkUvg/lzy/34tj8WlIPItnrqX+oEQsitYlKiajTKjlly82hIHAgFBXbRNRVhHmeWHaRh8ip3HeIJnb7UEH6nUUGJY9/iMVRJy9GMe9D4hUsos1GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733350027; c=relaxed/simple;
-	bh=hcKJkigpDfJnVEw+g7V0Jj2o3XXwPHpc8NPohID/TZw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LyoeEkwPuTZJTlbltuIcYMhEwU0ZYZ0dyVpo2oPNsRM9GxiGPr+oS2Us84KNeTY+MTNa3hMy7ELrJfJhktTYDre5h+EJN3j/viqdu7eQsHBDCB8DgfS1kG/VYshJwwuwOZ/G3AMZUs4miV4NWHYRcr7ymE5idf51+wl2vx4599w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jypwH+ZI; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7f8b37ede6bso266894a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:07:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733350025; x=1733954825; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PtfbGj6yD8jziLUL93ECE0Ci1aFCtpcn9XBirZhmTWc=;
-        b=jypwH+ZIWriM7GEy/cIzjLytXeM1ys4jdK+aQIQ/1/5g2p4alby9vr5wlqFvvTbtRP
-         jnPkH2G47wN56kGa70ARbR4zRpOIaPjMfzOcxNKjmjjOBEjUj9IuqieHBzucsTQ2Ufbl
-         j/cJG8UcFAWT0ccPLvTrcQ+JRuzfbjUnROAi1fSHXUps1hPtrBH4g/BOEyb/j6eWs1SZ
-         o4/whbtDd8D/n1f3rQTMdJyVAnskq+mIZqJuQ9BWVDTtlg3hGyH8JthJWhw3tBkp+23J
-         Ip6zpFSVcBTbMutLZ9hyoCFhzYjJ77XkxV+TbfD2RlsJmaarnc7RAL+gJdBMhPUsngt0
-         crxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733350025; x=1733954825;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PtfbGj6yD8jziLUL93ECE0Ci1aFCtpcn9XBirZhmTWc=;
-        b=iJ3aE/AKh/CxaMa8CQn+/DmJZ6eX5JCTd0NgdmoT8jSj4tEYzpNy7DrPYs/JcMX4VT
-         88/BCO3KqWpN4exE4mjvttKUTu5Za77bKTxQzFocV9W1sEnFgdgvP9Xz3Ouuu8Go8g2V
-         rFTZac9Xk944kXNdFLaQVbo9E3zn4HGKe0g+HWBodFgucObaN30EdT4xmVzqetc4Q1Xl
-         nXtEw/3RH0E4KL4vXgZqybITvHwF3RRUw0PAq7U3gJuMQSU3SUtX2GS8dq7qXfnQ0Z1L
-         smQ9ykeUlNnH98sToCRKoaGeF7Z7WZeEelOFeyQ8cSlWQTcxu+pOjDuGt4Huvn5IB66B
-         AfwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzco+cc1WJ2BPFltSUApoKmcE/oGet7XJxJAdGwPgd6tWoKdTOtdKTQJpUZE9mFg5Gx8Luk3SMRnIWW6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJEQk2J6lXquBULnWSsYx91kPbHBtmMOxUCT8Y0dvDHIYXDzYj
-	Xrb9c2tbslfD/6q+I4BKeC5G6yICmzrFINftuwgEwvffR+GOS/n0/ciCkRJlwt6OYVSqZPUlcO5
-	tTw==
-X-Google-Smtp-Source: AGHT+IGPXD2ivV206newVgIjgG0cM79vtCVvTqItdXqiGWrhdXRy+QwdJhqaPWzEJIHaT7cvQqYC9m/CM0M=
-X-Received: from pfbcu14.prod.google.com ([2002:a05:6a00:448e:b0:724:e19a:dfd1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:118e:b0:1e0:f059:cd4
- with SMTP id adf61e73a8af0-1e16539f77cmr11618855637.4.1733350025283; Wed, 04
- Dec 2024 14:07:05 -0800 (PST)
-Date: Wed, 4 Dec 2024 14:06:58 -0800
-In-Reply-To: <CAGdbjm+GmtYEQJsVspFC3_-5nx83qABDroPmyCHPebiKRt-4HQ@mail.gmail.com>
+	s=arc-20240116; t=1733350037; c=relaxed/simple;
+	bh=0NK5fQhfJILN0TmhkBr2bI0x1f488pGh3da65yqbmFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=imwOeAOaScwGwL3PkTYcxMVQzxrjS9tiPwXbr5baXV878VoOiWRigFHoeBBFB1Z9Hp3WyN80km3MLfC9tuKTJ1PVqMTpkIhOMnBdXJWNf0e7AJY4C72cHWf+T3pVQ0dvGBWCbZTUC0t6oywbhESeUDO6Z9uDZgLGhgX06cCCPuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Op6mzCz1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD8FC4CECD;
+	Wed,  4 Dec 2024 22:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733350037;
+	bh=0NK5fQhfJILN0TmhkBr2bI0x1f488pGh3da65yqbmFQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Op6mzCz1FvyZlml6vvKnA9GU9VbNHkr2o+biDrWlxtvNU9wyXGmOZMjK0XHUo6v4Q
+	 B2MIC5XXbopePloosKHH+2BK7FqKn1xe3D40PKwZDv/TMTMZP2o+FzHX/q6T9fYP5N
+	 ib8lPshlmJBxKXdTTWx/ST/q/AdvKKZ18TGCBRYcpslx30fPfgd3JlNeugD2RkDwgz
+	 2lb9rx2Ju+3aM+2J5uaWecNHJlJflUBimk7jLaGy7kG2Hu/iFORWFcBg3AePU9WH+3
+	 /ZWTt83ftjE6P4FOb/sGFa+oM6m2z4+poIVSRS0D3fAKiUIfVIALwflTcpV8M5dfiT
+	 Icf2+jhJxRHBg==
+Date: Wed, 4 Dec 2024 16:07:15 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Improve parameter docu for request APIs
+Message-ID: <20241204220715.GA3023116@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240411140445.1038319-1-szy0127@sjtu.edu.cn> <20240411140445.1038319-3-szy0127@sjtu.edu.cn>
- <Z0-h73xBQgGuAI3H@google.com> <CAGdbjm+GmtYEQJsVspFC3_-5nx83qABDroPmyCHPebiKRt-4HQ@mail.gmail.com>
-Message-ID: <Z1DSgmzo3sX0gWY3@google.com>
-Subject: Re: [PATCH v4 2/2] KVM: SVM: Flush cache only on CPUs running SEV guest
-From: Sean Christopherson <seanjc@google.com>
-To: Kevin Loughlin <kevinloughlin@google.com>
-Cc: Zheyun Shen <szy0127@sjtu.edu.cn>, thomas.lendacky@amd.com, pbonzini@redhat.com, 
-	tglx@linutronix.de, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203100023.31152-2-pstanner@redhat.com>
 
-On Wed, Dec 04, 2024, Kevin Loughlin wrote:
-> On Tue, Dec 3, 2024 at 4:27=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > > @@ -2152,7 +2191,7 @@ void sev_vm_destroy(struct kvm *kvm)
-> > >        * releasing the pages back to the system for use. CLFLUSH will
-> > >        * not do this, so issue a WBINVD.
-> > >        */
-> > > -     wbinvd_on_all_cpus();
-> > > +     sev_do_wbinvd(kvm);
-> >
-> > I am 99% certain this wbinvd_on_all_cpus() can simply be dropped.  sev_=
-vm_destroy()
-> > is called after KVM's mmu_notifier has been unregistered, which means i=
-t's called
-> > after kvm_mmu_notifier_release() =3D> kvm_arch_guest_memory_reclaimed()=
-.
->=20
-> I think we need a bit of rework before dropping it (which I propose we
-> do in a separate series), but let me know if there's a mistake in my
-> reasoning here...
->=20
-> Right now, sev_guest_memory_reclaimed() issues writebacks for SEV and
-> SEV-ES guests but does *not* issue writebacks for SEV-SNP guests.
-> Thus, I believe it's possible a SEV-SNP guest reaches sev_vm_destroy()
-> with dirty encrypted lines in processor caches. Because SME_COHERENT
-> doesn't guarantee coherence across CPU-DMA interactions (d45829b351ee
-> ("KVM: SVM: Flush when freeing encrypted pages even on SME_COHERENT
-> CPUs")), it seems possible that the memory gets re-allocated for DMA,
-> written back from an (unencrypted) DMA, and then corrupted when the
-> dirty encrypted version gets written back over that, right?
->=20
-> And potentially the same thing for why we can't yet drop the writeback
-> in sev_flush_encrypted_page() without a bit of rework?
+On Tue, Dec 03, 2024 at 11:00:24AM +0100, Philipp Stanner wrote:
+> PCI region request functions have a @name parameter (sometimes called
+> "res_name"). It is used in a log message to inform drivers about request
+> collisions, i.e., when another driver has requested that region already.
+> 
+> This message is only useful when it contains the actual owner of the
+> region, i.e., which driver requested it. So far, a great many drivers
+> misuse the @name parameter and just pass pci_name(), which doesn't
+> result in useful debug information.
+> 
+> Rename "res_name" to "name".
+> 
+> Detail @name's purpose in the docstrings.
+> 
+> Improve formatting a bit.
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-Argh, this last one probably does apply to SNP.  KVM requires SNP VMs to be=
- backed
-with guest_memfd, and flushing for that memory is handled by sev_gmem_inval=
-idate().
-But the VMSA is kernel allocated and so needs to be flushed manually.  On t=
-he plus
-side, the VMSA flush shouldn't use WB{NO}INVD unless things go sideways, so=
- trying
-to optimize that path isn't worth doing.
+Applied to pci/resource for v6.14, thanks!
 
-> It's true that the SNP firmware will require WBINVD before
-> SNP_DF_FLUSH [1], but I think we're only currently doing that when an
-> ASID is recycled, *not* when an ASID is deactivated.
->=20
-> [1] https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/=
-specifications/56860.pdf
+> ---
+>  drivers/pci/devres.c | 12 ++++----
+>  drivers/pci/pci.c    | 69 +++++++++++++++++++++-----------------------
+>  2 files changed, 39 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+> index 3b59a86a764b..ffaffa880b88 100644
+> --- a/drivers/pci/devres.c
+> +++ b/drivers/pci/devres.c
+> @@ -101,7 +101,7 @@ static inline void pcim_addr_devres_clear(struct pcim_addr_devres *res)
+>   * @bar: BAR the range is within
+>   * @offset: offset from the BAR's start address
+>   * @maxlen: length in bytes, beginning at @offset
+> - * @name: name associated with the request
+> + * @name: name of the resource requestor
+>   * @req_flags: flags for the request, e.g., for kernel-exclusive requests
+>   *
+>   * Returns: 0 on success, a negative error code on failure.
+> @@ -723,7 +723,7 @@ EXPORT_SYMBOL(pcim_iounmap);
+>   * pcim_iomap_region - Request and iomap a PCI BAR
+>   * @pdev: PCI device to map IO resources for
+>   * @bar: Index of a BAR to map
+> - * @name: Name associated with the request
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: __iomem pointer on success, an IOMEM_ERR_PTR on failure.
+>   *
+> @@ -790,7 +790,7 @@ EXPORT_SYMBOL(pcim_iounmap_region);
+>   * pcim_iomap_regions - Request and iomap PCI BARs (DEPRECATED)
+>   * @pdev: PCI device to map IO resources for
+>   * @mask: Mask of BARs to request and iomap
+> - * @name: Name associated with the requests
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+> @@ -857,7 +857,7 @@ static int _pcim_request_region(struct pci_dev *pdev, int bar, const char *name,
+>   * pcim_request_region - Request a PCI BAR
+>   * @pdev: PCI device to requestion region for
+>   * @bar: Index of BAR to request
+> - * @name: Name associated with the request
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, a negative error code on failure.
+>   *
+> @@ -876,7 +876,7 @@ EXPORT_SYMBOL(pcim_request_region);
+>   * pcim_request_region_exclusive - Request a PCI BAR exclusively
+>   * @pdev: PCI device to requestion region for
+>   * @bar: Index of BAR to request
+> - * @name: Name associated with the request
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, a negative error code on failure.
+>   *
+> @@ -932,7 +932,7 @@ static void pcim_release_all_regions(struct pci_dev *pdev)
+>  /**
+>   * pcim_request_all_regions - Request all regions
+>   * @pdev: PCI device to map IO resources for
+> - * @name: name associated with the request
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 0b29ec6e8e5e..cb96d12571a8 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3941,15 +3941,14 @@ EXPORT_SYMBOL(pci_release_region);
+>   * __pci_request_region - Reserved PCI I/O and memory resource
+>   * @pdev: PCI device whose resources are to be reserved
+>   * @bar: BAR to be reserved
+> - * @res_name: Name to be associated with resource.
+> + * @name: Name of the resource requestor
+>   * @exclusive: whether the region access is exclusive or not
+>   *
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+> - * Mark the PCI region associated with PCI device @pdev BAR @bar as
+> - * being reserved by owner @res_name.  Do not access any
+> - * address inside the PCI regions unless this call returns
+> - * successfully.
+> + * Mark the PCI region associated with PCI device @pdev BAR @bar as being
+> + * reserved by owner @name. Do not access any address inside the PCI regions
+> + * unless this call returns successfully.
+>   *
+>   * If @exclusive is set, then the region is marked so that userspace
+>   * is explicitly not allowed to map the resource via /dev/mem or
+> @@ -3959,13 +3958,13 @@ EXPORT_SYMBOL(pci_release_region);
+>   * message is also printed on failure.
+>   */
+>  static int __pci_request_region(struct pci_dev *pdev, int bar,
+> -				const char *res_name, int exclusive)
+> +				const char *name, int exclusive)
+>  {
+>  	if (pci_is_managed(pdev)) {
+>  		if (exclusive == IORESOURCE_EXCLUSIVE)
+> -			return pcim_request_region_exclusive(pdev, bar, res_name);
+> +			return pcim_request_region_exclusive(pdev, bar, name);
+>  
+> -		return pcim_request_region(pdev, bar, res_name);
+> +		return pcim_request_region(pdev, bar, name);
+>  	}
+>  
+>  	if (pci_resource_len(pdev, bar) == 0)
+> @@ -3973,11 +3972,11 @@ static int __pci_request_region(struct pci_dev *pdev, int bar,
+>  
+>  	if (pci_resource_flags(pdev, bar) & IORESOURCE_IO) {
+>  		if (!request_region(pci_resource_start(pdev, bar),
+> -			    pci_resource_len(pdev, bar), res_name))
+> +			    pci_resource_len(pdev, bar), name))
+>  			goto err_out;
+>  	} else if (pci_resource_flags(pdev, bar) & IORESOURCE_MEM) {
+>  		if (!__request_mem_region(pci_resource_start(pdev, bar),
+> -					pci_resource_len(pdev, bar), res_name,
+> +					pci_resource_len(pdev, bar), name,
+>  					exclusive))
+>  			goto err_out;
+>  	}
+> @@ -3994,14 +3993,13 @@ static int __pci_request_region(struct pci_dev *pdev, int bar,
+>   * pci_request_region - Reserve PCI I/O and memory resource
+>   * @pdev: PCI device whose resources are to be reserved
+>   * @bar: BAR to be reserved
+> - * @res_name: Name to be associated with resource
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+> - * Mark the PCI region associated with PCI device @pdev BAR @bar as
+> - * being reserved by owner @res_name.  Do not access any
+> - * address inside the PCI regions unless this call returns
+> - * successfully.
+> + * Mark the PCI region associated with PCI device @pdev BAR @bar as being
+> + * reserved by owner @name. Do not access any address inside the PCI regions
+> + * unless this call returns successfully.
+>   *
+>   * Returns 0 on success, or %EBUSY on error.  A warning
+>   * message is also printed on failure.
+> @@ -4011,9 +4009,9 @@ static int __pci_request_region(struct pci_dev *pdev, int bar,
+>   * when pcim_enable_device() has been called in advance. This hybrid feature is
+>   * DEPRECATED! If you want managed cleanup, use the pcim_* functions instead.
+>   */
+> -int pci_request_region(struct pci_dev *pdev, int bar, const char *res_name)
+> +int pci_request_region(struct pci_dev *pdev, int bar, const char *name)
+>  {
+> -	return __pci_request_region(pdev, bar, res_name, 0);
+> +	return __pci_request_region(pdev, bar, name, 0);
+>  }
+>  EXPORT_SYMBOL(pci_request_region);
+>  
+> @@ -4036,13 +4034,13 @@ void pci_release_selected_regions(struct pci_dev *pdev, int bars)
+>  EXPORT_SYMBOL(pci_release_selected_regions);
+>  
+>  static int __pci_request_selected_regions(struct pci_dev *pdev, int bars,
+> -					  const char *res_name, int excl)
+> +					  const char *name, int excl)
+>  {
+>  	int i;
+>  
+>  	for (i = 0; i < PCI_STD_NUM_BARS; i++)
+>  		if (bars & (1 << i))
+> -			if (__pci_request_region(pdev, i, res_name, excl))
+> +			if (__pci_request_region(pdev, i, name, excl))
+>  				goto err_out;
+>  	return 0;
+>  
+> @@ -4059,7 +4057,7 @@ static int __pci_request_selected_regions(struct pci_dev *pdev, int bars,
+>   * pci_request_selected_regions - Reserve selected PCI I/O and memory resources
+>   * @pdev: PCI device whose resources are to be reserved
+>   * @bars: Bitmask of BARs to be requested
+> - * @res_name: Name to be associated with resource
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+> @@ -4069,9 +4067,9 @@ static int __pci_request_selected_regions(struct pci_dev *pdev, int bars,
+>   * DEPRECATED! If you want managed cleanup, use the pcim_* functions instead.
+>   */
+>  int pci_request_selected_regions(struct pci_dev *pdev, int bars,
+> -				 const char *res_name)
+> +				 const char *name)
+>  {
+> -	return __pci_request_selected_regions(pdev, bars, res_name, 0);
+> +	return __pci_request_selected_regions(pdev, bars, name, 0);
+>  }
+>  EXPORT_SYMBOL(pci_request_selected_regions);
+>  
+> @@ -4079,7 +4077,7 @@ EXPORT_SYMBOL(pci_request_selected_regions);
+>   * pci_request_selected_regions_exclusive - Request regions exclusively
+>   * @pdev: PCI device to request regions from
+>   * @bars: bit mask of BARs to request
+> - * @res_name: name to be associated with the requests
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+> @@ -4089,9 +4087,9 @@ EXPORT_SYMBOL(pci_request_selected_regions);
+>   * DEPRECATED! If you want managed cleanup, use the pcim_* functions instead.
+>   */
+>  int pci_request_selected_regions_exclusive(struct pci_dev *pdev, int bars,
+> -					   const char *res_name)
+> +					   const char *name)
+>  {
+> -	return __pci_request_selected_regions(pdev, bars, res_name,
+> +	return __pci_request_selected_regions(pdev, bars, name,
+>  			IORESOURCE_EXCLUSIVE);
+>  }
+>  EXPORT_SYMBOL(pci_request_selected_regions_exclusive);
+> @@ -4114,12 +4112,11 @@ EXPORT_SYMBOL(pci_release_regions);
+>  /**
+>   * pci_request_regions - Reserve PCI I/O and memory resources
+>   * @pdev: PCI device whose resources are to be reserved
+> - * @res_name: Name to be associated with resource.
+> + * @name: Name of the resource requestor
+>   *
+> - * Mark all PCI regions associated with PCI device @pdev as
+> - * being reserved by owner @res_name.  Do not access any
+> - * address inside the PCI regions unless this call returns
+> - * successfully.
+> + * Mark all PCI regions associated with PCI device @pdev as being reserved by
+> + * owner @name. Do not access any address inside the PCI regions unless this
+> + * call returns successfully.
+>   *
+>   * Returns 0 on success, or %EBUSY on error.  A warning
+>   * message is also printed on failure.
+> @@ -4129,22 +4126,22 @@ EXPORT_SYMBOL(pci_release_regions);
+>   * when pcim_enable_device() has been called in advance. This hybrid feature is
+>   * DEPRECATED! If you want managed cleanup, use the pcim_* functions instead.
+>   */
+> -int pci_request_regions(struct pci_dev *pdev, const char *res_name)
+> +int pci_request_regions(struct pci_dev *pdev, const char *name)
+>  {
+>  	return pci_request_selected_regions(pdev,
+> -			((1 << PCI_STD_NUM_BARS) - 1), res_name);
+> +			((1 << PCI_STD_NUM_BARS) - 1), name);
+>  }
+>  EXPORT_SYMBOL(pci_request_regions);
+>  
+>  /**
+>   * pci_request_regions_exclusive - Reserve PCI I/O and memory resources
+>   * @pdev: PCI device whose resources are to be reserved
+> - * @res_name: Name to be associated with resource.
+> + * @name: Name of the resource requestor
+>   *
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+>   * Mark all PCI regions associated with PCI device @pdev as being reserved
+> - * by owner @res_name.  Do not access any address inside the PCI regions
+> + * by owner @name. Do not access any address inside the PCI regions
+>   * unless this call returns successfully.
+>   *
+>   * pci_request_regions_exclusive() will mark the region so that /dev/mem
+> @@ -4158,10 +4155,10 @@ EXPORT_SYMBOL(pci_request_regions);
+>   * when pcim_enable_device() has been called in advance. This hybrid feature is
+>   * DEPRECATED! If you want managed cleanup, use the pcim_* functions instead.
+>   */
+> -int pci_request_regions_exclusive(struct pci_dev *pdev, const char *res_name)
+> +int pci_request_regions_exclusive(struct pci_dev *pdev, const char *name)
+>  {
+>  	return pci_request_selected_regions_exclusive(pdev,
+> -				((1 << PCI_STD_NUM_BARS) - 1), res_name);
+> +				((1 << PCI_STD_NUM_BARS) - 1), name);
+>  }
+>  EXPORT_SYMBOL(pci_request_regions_exclusive);
+>  
+> -- 
+> 2.47.0
+> 
 
