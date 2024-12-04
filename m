@@ -1,296 +1,111 @@
-Return-Path: <linux-kernel+bounces-431633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C249E3FBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2479E3FC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:33:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8C8282959
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E205282B06
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB3520C49C;
-	Wed,  4 Dec 2024 16:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6800C20C473;
+	Wed,  4 Dec 2024 16:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="c63XBgaF"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q/+2DcYx"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D185F156C6A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C7420CCC0
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733329974; cv=none; b=bfQ1CVKgyU52MAtDLvD1gwWs8Vsr+HP+LlU1zCsjvoP0vngoBrmzOwB9QgHlSLFtGi4sRdtaqcLN+zmZsqOW2+TKOuIBhmo82owU2LUVybX/XoNuEak126SEQxr6eAqhMk6r89YmUlBYn+JvlKQEKFIFk1l8OIg24F894qjXXP8=
+	t=1733330010; cv=none; b=jj8MAkdDvEs53AUAmdDxI9I+0iVKW45thhR0O/WviTArvfYOyFWuPV7F1CJge6PqZ+V0Y6q9H5CcghGGu/KixeWgpVLpURvovjD4B1fPNEtoskmD80xg7wb9wZrE0bsz6QuzDM8R2xFwYMoZ9n5utRwsgMQ9mICPli4jUYxzgcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733329974; c=relaxed/simple;
-	bh=Z0dYTEMwvs7EPeBramaT98wi9z6hwRDhzo523x4GzXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lfYTLbyFKlKJibYcl11lpJtyxQ3f5cj3gAftPKD2H1CqJ3l3uNK0RJKNGCZYEXYRw/wXW6sfSHbORH3+fgSG/SVT81PaQkN4339uvymgqWp2ul7ub6Bhoy0UkEIy8Qe6dm5XhpFFLCFpuugwpyJTxPR8j3la8J9OK/9F+c4L7UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=c63XBgaF; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso2476a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:32:52 -0800 (PST)
+	s=arc-20240116; t=1733330010; c=relaxed/simple;
+	bh=jjpAsfnDViEPTArEMDoLsQjV/xeaagtYm84LbRevTPk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Ib+LnzhrdDW8VdqQNAkHviIKSGm6t0cyDu07e3brm9wsH3akWZ4dqWfDtUImaww09DDP2Jew3XeF00Jjiv3LfKMrz/HWhqkbDjdylGBR+3vn1lDVxjHo+47bWv/JDrL6DlgbnK8UWKpcmDCBEkPxZ+HkZm7G33NxUrXDsLMYMLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q/+2DcYx; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7253bc4d25eso24239b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:33:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1733329972; x=1733934772; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B9F2gbv4yEGv6FWimwcogNz/DAberMpNHKWgDCnbd2w=;
-        b=c63XBgaFWVjjICt1zdzR96hDRI7LWCGhDji9iAEFLGpRvbo87nWUc0Vy9k16wczuCQ
-         B0jbr3o8laT/pdzxHbyEfz1m2zIZJS1N6UedFrvcF2LV6kAVMLJWoSRh8z94/VVPsaVo
-         VgJQYpxtapRHZhbhROqd4/4oorsuR032rEuB0=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733330007; x=1733934807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hb5hc3qgWT9L6cng9NISv31Ehv7llzw2Vl8uDpnsua4=;
+        b=Q/+2DcYxxT6g/pM9QwL+1fSTK1kRbq1P6IgWb/Rv+dPmn7PBTZZjF3+VTyhrbLSn0H
+         kv3aeHSGxOfcDPYlTwx3THE3tTAGEp9cEdccq6kfHDz/2g6lYP1jD40nb3U+5EM+NkIs
+         H5prj+UuDenOoB4vMGAOvvw3ANcHudneUU+Rq74Rz2mgJovQO8vHVzMYal/RaEXcg0sA
+         QpZHI79qxQBaEks5wnJYTju1CMpK5eJX3Hwug62bNLANPnKpQ9qnc/2VXiFucODz0wCN
+         2NPwPwRWdVw2ElxTrtXfpCm8kJhGkG9hrhYGiJKc90tSMha3djazlEQmYr0b0IOLbvGl
+         JyAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733329972; x=1733934772;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B9F2gbv4yEGv6FWimwcogNz/DAberMpNHKWgDCnbd2w=;
-        b=tYn6V90r8LhyUEZg/jYhVa7ev/pKn6Tn5uPhorj0UrPDZm8fbJVQp+nygPq+oMurmw
-         S6BMvrUjncFFXKWgrNW04kCWo8aMEbZG9tLk6eIQl0RjAv+cXeLAmX/PoTZ+PUpKYFvl
-         szLBCOzbmv8NeQKdCZ+mXvS14umt/32b2aZpssp4U26KEAjxPALsAaTcKuZSccH7ZxLE
-         DSXSu4vuquyy01x1rye4VA8jPUVCk23BG40Ezx5vCdPxh3bdOcQpOmK5tlQNilfMHiGH
-         QEExLN5yOpCJIvW4EK0jmZGVhMN0wE/CEfBcG8meVrYDHVrdaM45a7228dMiD+utvqFD
-         bvzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXojb0xeb6k8SR27zN3teMdaDsVwyXLBHo8xS5JeQ5MYzMxfh8twQOpbeaKQXkYMS0twXmvW92Y4uTAPgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmk4OSxZFvfe3v044sp+kg92IlrFbpXv6eda2yO/Cq/QoInbS/
-	IUnTP5yybrkJwZxkpNKpInmI0e/yDGau4KCwPFGQ3oUul7JcvV9R9ECZIgt7r9k=
-X-Gm-Gg: ASbGncuWDuszdtgT8LfMAAMr6IBobdxhi7jtDIbCJJMq3ITIolOghEIGXMa1QsP9czE
-	mIIJvzYZlO3lqyVeTGYK6IZypTDNmWmWppcIljH9tpHglmO2JIMJ3LA9En+TPSjwjEPl282Ley1
-	pRPBxfrd5FLVw7ubG0sb7BcPzk6SfBxX2O/drkD25KNtrdB04PnIalTqxEulX75gtcnQwH08RrQ
-	JZUR/cxDalaU53ChpLE42aaLyGFBu+07/i3SDfzaxx6Tw0HgW6yN8LMgg==
-X-Google-Smtp-Source: AGHT+IH+E1gXaxMcRBNlIPPX1i+yJ6kT0s/1DKSFVWFhZ1hgmYUfBlH8N4Ve1euLnBgvSAii6npH/w==
-X-Received: by 2002:a17:902:f64d:b0:215:8fd3:d1b6 with SMTP id d9443c01a7336-215be6fca4fmr115273835ad.23.1733329970689;
-        Wed, 04 Dec 2024 08:32:50 -0800 (PST)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215884744e6sm60591775ad.174.2024.12.04.08.32.48
+        d=1e100.net; s=20230601; t=1733330007; x=1733934807;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hb5hc3qgWT9L6cng9NISv31Ehv7llzw2Vl8uDpnsua4=;
+        b=TN0bvR0I3JWXtrhdbpI6iofhZSZ00FYV0Amp+tildaOgXe21a8hVpVrTYqs5pnXGNx
+         8EhJWTIrcgkd7WcjflMf/wyeqAHQ6T89G8DzbKXIpY42T9rGybOy56v+Adj33I1nfsNp
+         c6nVMUjk8/992D/WxszDwN7kGZZ2vQsNBaYnw66/PnQ5iX3NuqIC4C9AO6tbpXieTWbR
+         SZJU2Gx7WApf7ESLvaU+/is+Gvc7AefwPyuPr6guQ51XTdRtX8DiqHhLiOkhqyuogYG6
+         daOBJEygR4HKrpoyUoP3IlqG4tH8RsON1UgxHVBBXxdfeUbABLKQXGPR7G2149vWtQnD
+         y8sA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+PwuT1SgrgIw1CJULH4guzDbZWTdIwBkJuPUxM7QtAjXpXsLyrKlsnPir0QBV4Qr7RpI1f0HkIGxi2H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCC9m+xp3qct5PTS7wxtcwd7qyNRe7Y66/uFTswmROPc7j2kHu
+	VpSE8zXhpmI1zGawX2ciV4+ZtdWJThEAP0PUYjQYkFpMbK1U0qEsFBNUDIYbRAA=
+X-Gm-Gg: ASbGnct/ltuzgk51Bp/Vtq5vmYeMmPIFXp3UdjD219h3zK65SCo3aV3+eU+vyZGA0NF
+	M6nQaA9RPbtA7UkOCWt0fNSBzi8EQFbQfnZpjunnwxVgzyEeMWKYDtutKEk9AlokM1YZ3WDcHXp
+	vu7aD3Fcmry+LZv6uVigllA7A0eREWLRSL3giqgmpphl+EtzEoM3mNp/lblMX5cDY9SFzrtCXre
+	Y0VfnSVybRMTusmG5GoNdqWzNlE5A==
+X-Google-Smtp-Source: AGHT+IGEY5dtfqqu7yQqDHuO3mHKg1f9S+1DRwm5m5EOLxdsx+PQqoK1BhMnJkgc7n3v5DxDmYv9oQ==
+X-Received: by 2002:a05:6a00:cc3:b0:725:4915:c0f with SMTP id d2e1a72fcca58-7259d6008e4mr10467b3a.11.1733330007187;
+        Wed, 04 Dec 2024 08:33:27 -0800 (PST)
+Received: from [127.0.0.1] ([2620:10d:c090:600::1:a7a9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254184952csm12955492b3a.185.2024.12.04.08.33.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:32:49 -0800 (PST)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: pabeni@redhat.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	mkarsten@uwaterloo.ca,
-	stfomichev@gmail.com,
-	Joe Damato <jdamato@fastly.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list),
-	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
-Subject: [PATCH net-next v2] selftests: net: cleanup busy_poller.c
-Date: Wed,  4 Dec 2024 16:32:39 +0000
-Message-Id: <20241204163239.294123-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 04 Dec 2024 08:33:26 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+ Boqun Feng <boqun.feng@gmail.com>, 
+ =?utf-8?q?Beno=C3=AEt_du_Garreau?= <benoit@dugarreau.fr>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241204-rnull_in_place-v1-1-efe3eafac9fb@dugarreau.fr>
+References: <20241204-rnull_in_place-v1-1-efe3eafac9fb@dugarreau.fr>
+Subject: Re: [PATCH] block: rnull: Initialize the module in place
+Message-Id: <173333000587.511414.15268819552143079818.b4-ty@kernel.dk>
+Date: Wed, 04 Dec 2024 09:33:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.3-dev-86319
 
-Fix various integer type conversions by using strtoull and a temporary
-variable which is bounds checked before being casted into the
-appropriate cfg_* variable for use by the test program.
 
-While here:
-  - free the strdup'd cfg string for overall hygenie.
-  - initialize napi_id = 0 in setup_queue to avoid warnings on some
-    compilers.
+On Wed, 04 Dec 2024 09:38:39 +0100, Benoît du Garreau wrote:
+> Using `InPlaceModule` avoids an allocation and an indirection.
+> 
+> 
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- v2:
-   - initialize napi_id to 0 in setup_queue to avoid clang warning as
-     suggested by Stanislav. Tested with clang 10.0.0 and 18.1.8
+Applied, thanks!
 
- tools/testing/selftests/net/busy_poller.c | 88 +++++++++++++----------
- 1 file changed, 50 insertions(+), 38 deletions(-)
+[1/1] block: rnull: Initialize the module in place
+      commit: c018ec9dd144dd29b4a664bf69e486f14bb4ee87
 
-diff --git a/tools/testing/selftests/net/busy_poller.c b/tools/testing/selftests/net/busy_poller.c
-index 99b0e8c17fca..04c7ff577bb8 100644
---- a/tools/testing/selftests/net/busy_poller.c
-+++ b/tools/testing/selftests/net/busy_poller.c
-@@ -54,16 +54,16 @@ struct epoll_params {
- #define EPIOCGPARAMS _IOR(EPOLL_IOC_TYPE, 0x02, struct epoll_params)
- #endif
- 
--static uint32_t cfg_port = 8000;
-+static uint16_t cfg_port = 8000;
- static struct in_addr cfg_bind_addr = { .s_addr = INADDR_ANY };
- static char *cfg_outfile;
- static int cfg_max_events = 8;
--static int cfg_ifindex;
-+static uint32_t cfg_ifindex;
- 
- /* busy poll params */
- static uint32_t cfg_busy_poll_usecs;
--static uint32_t cfg_busy_poll_budget;
--static uint32_t cfg_prefer_busy_poll;
-+static uint16_t cfg_busy_poll_budget;
-+static uint8_t cfg_prefer_busy_poll;
- 
- /* IRQ params */
- static uint32_t cfg_defer_hard_irqs;
-@@ -79,6 +79,7 @@ static void usage(const char *filepath)
- 
- static void parse_opts(int argc, char **argv)
- {
-+	unsigned long long tmp;
- 	int ret;
- 	int c;
- 
-@@ -86,31 +87,40 @@ static void parse_opts(int argc, char **argv)
- 		usage(argv[0]);
- 
- 	while ((c = getopt(argc, argv, "p:m:b:u:P:g:o:d:r:s:i:")) != -1) {
-+		/* most options take integer values, except o and b, so reduce
-+		 * code duplication a bit for the common case by calling
-+		 * strtoull here and leave bounds checking and casting per
-+		 * option below.
-+		 */
-+		if (c != 'o' && c != 'b')
-+			tmp = strtoull(optarg, NULL, 0);
-+
- 		switch (c) {
- 		case 'u':
--			cfg_busy_poll_usecs = strtoul(optarg, NULL, 0);
--			if (cfg_busy_poll_usecs == ULONG_MAX ||
--			    cfg_busy_poll_usecs > UINT32_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT32_MAX)
- 				error(1, ERANGE, "busy_poll_usecs too large");
-+
-+			cfg_busy_poll_usecs = (uint32_t)tmp;
- 			break;
- 		case 'P':
--			cfg_prefer_busy_poll = strtoul(optarg, NULL, 0);
--			if (cfg_prefer_busy_poll == ULONG_MAX ||
--			    cfg_prefer_busy_poll > 1)
-+			if (tmp == ULLONG_MAX || tmp > 1)
- 				error(1, ERANGE,
- 				      "prefer busy poll should be 0 or 1");
-+
-+			cfg_prefer_busy_poll = (uint8_t)tmp;
- 			break;
- 		case 'g':
--			cfg_busy_poll_budget = strtoul(optarg, NULL, 0);
--			if (cfg_busy_poll_budget == ULONG_MAX ||
--			    cfg_busy_poll_budget > UINT16_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT16_MAX)
- 				error(1, ERANGE,
- 				      "busy poll budget must be [0, UINT16_MAX]");
-+
-+			cfg_busy_poll_budget = (uint16_t)tmp;
- 			break;
- 		case 'p':
--			cfg_port = strtoul(optarg, NULL, 0);
--			if (cfg_port > UINT16_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT16_MAX)
- 				error(1, ERANGE, "port must be <= 65535");
-+
-+			cfg_port = (uint16_t)tmp;
- 			break;
- 		case 'b':
- 			ret = inet_aton(optarg, &cfg_bind_addr);
-@@ -124,41 +134,39 @@ static void parse_opts(int argc, char **argv)
- 				error(1, 0, "outfile invalid");
- 			break;
- 		case 'm':
--			cfg_max_events = strtol(optarg, NULL, 0);
--
--			if (cfg_max_events == LONG_MIN ||
--			    cfg_max_events == LONG_MAX ||
--			    cfg_max_events <= 0)
-+			if (tmp == ULLONG_MAX || tmp > INT_MAX)
- 				error(1, ERANGE,
--				      "max events must be > 0 and < LONG_MAX");
-+				      "max events must be > 0 and <= INT_MAX");
-+
-+			cfg_max_events = (int)tmp;
- 			break;
- 		case 'd':
--			cfg_defer_hard_irqs = strtoul(optarg, NULL, 0);
--
--			if (cfg_defer_hard_irqs == ULONG_MAX ||
--			    cfg_defer_hard_irqs > INT32_MAX)
-+			if (tmp == ULLONG_MAX || tmp > INT32_MAX)
- 				error(1, ERANGE,
- 				      "defer_hard_irqs must be <= INT32_MAX");
-+
-+			cfg_defer_hard_irqs = (uint32_t)tmp;
- 			break;
- 		case 'r':
--			cfg_gro_flush_timeout = strtoull(optarg, NULL, 0);
--
--			if (cfg_gro_flush_timeout == ULLONG_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT64_MAX)
- 				error(1, ERANGE,
--				      "gro_flush_timeout must be < ULLONG_MAX");
-+				      "gro_flush_timeout must be < UINT64_MAX");
-+
-+			cfg_gro_flush_timeout = (uint64_t)tmp;
- 			break;
- 		case 's':
--			cfg_irq_suspend_timeout = strtoull(optarg, NULL, 0);
--
--			if (cfg_irq_suspend_timeout == ULLONG_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT64_MAX)
- 				error(1, ERANGE,
- 				      "irq_suspend_timeout must be < ULLONG_MAX");
-+
-+			cfg_irq_suspend_timeout = (uint64_t)tmp;
- 			break;
- 		case 'i':
--			cfg_ifindex = strtoul(optarg, NULL, 0);
--			if (cfg_ifindex == ULONG_MAX)
-+			if (tmp == ULLONG_MAX || tmp > INT_MAX)
- 				error(1, ERANGE,
--				      "ifindex must be < ULONG_MAX");
-+				      "ifindex must be <= INT_MAX");
-+
-+			cfg_ifindex = (int)tmp;
- 			break;
- 		}
- 	}
-@@ -215,7 +223,7 @@ static void setup_queue(void)
- 	struct netdev_napi_set_req *set_req = NULL;
- 	struct ynl_sock *ys;
- 	struct ynl_error yerr;
--	uint32_t napi_id;
-+	uint32_t napi_id = 0;
- 
- 	ys = ynl_sock_create(&ynl_netdev_family, &yerr);
- 	if (!ys)
-@@ -277,8 +285,8 @@ static void run_poller(void)
- 	 * here
- 	 */
- 	epoll_params.busy_poll_usecs = cfg_busy_poll_usecs;
--	epoll_params.busy_poll_budget = (uint16_t)cfg_busy_poll_budget;
--	epoll_params.prefer_busy_poll = (uint8_t)cfg_prefer_busy_poll;
-+	epoll_params.busy_poll_budget = cfg_busy_poll_budget;
-+	epoll_params.prefer_busy_poll = cfg_prefer_busy_poll;
- 	epoll_params.__pad = 0;
- 
- 	val = 1;
-@@ -342,5 +350,9 @@ int main(int argc, char *argv[])
- 	parse_opts(argc, argv);
- 	setup_queue();
- 	run_poller();
-+
-+	if (cfg_outfile)
-+		free(cfg_outfile);
-+
- 	return 0;
- }
-
-base-commit: e8e7be7d212dc2bc83b8151e51088666a6c42092
+Best regards,
 -- 
-2.25.1
+Jens Axboe
+
+
 
 
