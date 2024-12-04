@@ -1,82 +1,120 @@
-Return-Path: <linux-kernel+bounces-432018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4868F9E43D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:54:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDBB9E43D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:55:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF00164CB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:54:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B66165CF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6565E1C3C15;
-	Wed,  4 Dec 2024 18:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOflF9cV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E981B4130;
+	Wed,  4 Dec 2024 18:55:00 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25AD1C3C12
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9139E23919E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338396; cv=none; b=UkGPq7FkJgvX2ezdfa7ggY2RHbFtYn1a2w0QnT2h+nWm3zFkLEj/fwypfCGNrgwlB+4VyW65BpaJteSxG+7mCa1uodX5RtfAPyUwRHvcmcCYnySAsQYL8ahLcwrdH+DFb/mT5RvMJXAkMWPDsERHoVS6O+bZl4+1j3tTngCatK0=
+	t=1733338500; cv=none; b=Qp5b998IOTcq1UgbPQxETsLvWjgOLJFm/t0FF0V+D/VU/2e2tRa7ubZwIfekZn5ALXEpsND/2A/dIBBBCxV99hylJKC5DT6loj+rC0A/G3TqwWhKyn9YGL5CC+f/50NJ0lluJLeOZMOa62TZejQn+W1lm2/m6iuHm1PjVG6wF34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338396; c=relaxed/simple;
-	bh=Ujt5pXo/M9j58m43ipqiDLz9NGXJ1W4lvwVxvN0LqYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQ/pbgHeah/Ry/ReSL+et0wAw8bsWvwRXrNWBzA9Wa2VvtjrzYsMrmV0TxQ+WNS9PRUpZk2fmRFodOMWLI49cJmayi4UXv5Y7RbZotrvPPp9mxpKKm1AmN+J0tyHKgapPDbW7pSIyuSikDzHaKTjOALmtiA43QhHjpv66UVm+Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOflF9cV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22756C4CECD;
-	Wed,  4 Dec 2024 18:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733338396;
-	bh=Ujt5pXo/M9j58m43ipqiDLz9NGXJ1W4lvwVxvN0LqYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UOflF9cVT2Jg10vVRrLEee8glrszX4XWFc6CxQ5fQRM/iGwnI4qAbjK16KZAVaCz8
-	 tVwIglFfQ2N9dRWU0a49/HE0Q7Ob9sA8cn+dUj37ATYNnDPUUXU/5vW7UwyxrPxpfO
-	 NJ91mjqOuPjJIV7mHobjm5Er+6JYaXT3UIRs0pckILybQEF2DVSKOpxCvK/UYlgJx7
-	 RATuYeB0rwzQ7aGZtdbpyuNLGgPI0mBUr3Kh7GhlWkXNYXWEpRWsbiOTrkscaISA+m
-	 4ohUGuqgEycrdvPuBA/Bj4GN/Ok4zZg9pWzs9aaXTkYUoPo7sPbcHnJKL5lOOlF+XK
-	 u3Dxq9Y7Yjx1Q==
-Date: Wed, 4 Dec 2024 08:53:15 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Yury Norov <yury.norov@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] sched_ext: Introduce per-NUMA idle cpumasks
-Message-ID: <Z1ClG6qOvesfyGSU@slm.duckdns.org>
-References: <20241203154917.123419-1-arighi@nvidia.com>
- <20241203154917.123419-3-arighi@nvidia.com>
- <Z0-cf7gUzV8jIWIX@slm.duckdns.org>
- <Z1AVx-yUY_37uMCb@gpd3>
+	s=arc-20240116; t=1733338500; c=relaxed/simple;
+	bh=LKozLljYC5dwM4f9mxbC4dRaR9C7foO3ChfzLSA4OII=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=MYTAuCpPSy5J43ApWtrLiQRZr24CAVoUAcD0Qrq1O3wZpOHII5xkMg3Vydzvd+VzlqhUF3gEKmjMb08jW42m4SAp71vx/1KjjIS2xeEqzMxqD3pxn4r5VC84aHXLx8dNzXx7NoBHIWNAmfNkerMaX3qUWY36b4MuNmzTA9SKqAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-319-leywlU3sMBaz14PRQ0B5Ew-1; Wed, 04 Dec 2024 18:54:56 +0000
+X-MC-Unique: leywlU3sMBaz14PRQ0B5Ew-1
+X-Mimecast-MFC-AGG-ID: leywlU3sMBaz14PRQ0B5Ew
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
+ 2024 18:54:16 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 4 Dec 2024 18:54:16 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, Martin Uecker
+	<Martin.Uecker@med.uni-goettingen.de>
+CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 05/10] minmax: simplify __clamp_once() by using
+ is_const_false()
+Thread-Topic: [PATCH 05/10] minmax: simplify __clamp_once() by using
+ is_const_false()
+Thread-Index: AQHbROFQNBaBI/FNyUSmwK0ugw/OHbLWccOg
+Date: Wed, 4 Dec 2024 18:54:16 +0000
+Message-ID: <8b8262389bd6484586007d749132346f@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-5-4e4cbaecc216@wanadoo.fr>
+In-Reply-To: <20241203-is_constexpr-refactor-v1-5-4e4cbaecc216@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1AVx-yUY_37uMCb@gpd3>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 9rgp0hhbK0qUxoCL5nIULWd1FAltOOAD0V2jodHuB6A_1733338494
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Hello,
+RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
+DQo+IEluIF9fY2xhbXBfb25jZSgpLA0KPiANCj4gICBfX2J1aWx0aW5fY2hvb3NlX2V4cHIoX19p
+c19jb25zdGV4cHIoKGxvKSA+IChoaSkpLCAobG8pIDw9IChoaSksIHRydWUpDQo+IA0KPiBpcyBl
+cXVpdmFsZW50IHRvOg0KPiANCj4gICAhaXNfY29uc3RfZmFsc2UoKGxvKSA8PSAoaGkpKQ0KPiAN
+Cj4gQXBwbHkgaXNfY29uc3RfZmFsc2UoKSB0byBzaW1wbGlmeSBfX2NsYW1wX29uY2UoKS4NCg0K
+VGhlcmUgaXMgYWxyZWFkeSBhIHBhdGNoICdmb3IgbmV4dCcgdGhhdCBjaGFuZ2VzIGl0IHVzZSBC
+VUlMRF9CVUdfT05fTVNHKCkNCmFuZCBzdGF0aWNhbGx5X3RydWUoKS4NCg0KSXQgaGFzIGZvdW5k
+IHNvbWUgJ2ludGVyZXN0aW5nJyBjb2RlLg0KDQoJRGF2aWQNCg0KPiANCj4gU2lnbmVkLW9mZi1i
+eTogVmluY2VudCBNYWlsaG9sIDxtYWlsaG9sLnZpbmNlbnRAd2FuYWRvby5mcj4NCj4gLS0tDQo+
+ICBpbmNsdWRlL2xpbnV4L21pbm1heC5oIHwgMyArLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
+c2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
+bnV4L21pbm1heC5oIGIvaW5jbHVkZS9saW51eC9taW5tYXguaA0KPiBpbmRleCA5ODAwOGRkOTIx
+NTNkYjEwYzY3MjE1NWJjYTkzMjAxZmZhYmVlOTk0Li40MzFiZjc2YWM0NjBhMTFhMmU0YWYyM2Fj
+ZDkwYzBkMjZlOTljODYyIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21pbm1heC5oDQo+
+ICsrKyBiL2luY2x1ZGUvbGludXgvbWlubWF4LmgNCj4gQEAgLTExMSw4ICsxMTEsNyBAQA0KPiAg
+CV9fYXV0b190eXBlIHV2YWwgPSAodmFsKTsJCQkJCQlcDQo+ICAJX19hdXRvX3R5cGUgdWxvID0g
+KGxvKTsJCQkJCQkJXA0KPiAgCV9fYXV0b190eXBlIHVoaSA9IChoaSk7CQkJCQkJCVwNCj4gLQlz
+dGF0aWNfYXNzZXJ0KF9fYnVpbHRpbl9jaG9vc2VfZXhwcihfX2lzX2NvbnN0ZXhwcigobG8pID4g
+KGhpKSksIAlcDQo+IC0JCQkobG8pIDw9IChoaSksIHRydWUpLAkJCQkJXA0KPiArCXN0YXRpY19h
+c3NlcnQoIWlzX2NvbnN0X2ZhbHNlKChsbykgPD0gKGhpKSksCQkJCVwNCj4gIAkJImNsYW1wKCkg
+bG93IGxpbWl0ICIgI2xvICIgZ3JlYXRlciB0aGFuIGhpZ2ggbGltaXQgIiAjaGkpOwlcDQo+ICAJ
+QlVJTERfQlVHX09OX01TRyghX190eXBlc19vazModmFsLGxvLGhpLHV2YWwsdWxvLHVoaSksCQkJ
+XA0KPiAgCQkiY2xhbXAoIiN2YWwiLCAiI2xvIiwgIiNoaSIpIHNpZ25lZG5lc3MgZXJyb3IiKTsJ
+CVwNCj4gDQo+IC0tDQo+IDIuNDUuMg0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
+aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
+DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-On Wed, Dec 04, 2024 at 09:41:43AM +0100, Andrea Righi wrote:
-...
-> I like the idea of introducing a flag. The default should be flattened
-> cpumask, so everything remains the same, and if a scheduler explicitly
-> enables SCX_OPS_NUMA_IDLE_MASK (suggestions for the name?) we can switch
-> to the NUMA-aware idle logic.
-
-I think it generally works better to use "node" instead of "numa" for these
-interfaces. That's more common and matches the interface functions that need
-to be used and exposed, so maybe sth like SCX_OPS_BUILTIN_IDLE_PER_NODE or
-SCX_OPS_NODE_BUILTIN_IDLE?
-
-Thanks.
-
--- 
-tejun
 
