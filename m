@@ -1,176 +1,135 @@
-Return-Path: <linux-kernel+bounces-431904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47D49E4284
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:56:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 686369E4285
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80713169AD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:56:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30A8161729
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43AE213229;
-	Wed,  4 Dec 2024 17:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F77D213242;
+	Wed,  4 Dec 2024 17:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RjBCpCuq"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVBThe/w"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16ED212B32;
-	Wed,  4 Dec 2024 17:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D1720D4E4
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332811; cv=none; b=b/xsP5ZJA0XNj6Q4f4/5L6mYPHBRXm3ZGJV29HeAzmF2G+jRpp7GaAmapUP4ZgHglGdMsx0YwOZ3yM0Ux9NAYMBkdrDoRYeLtcuJ0wlWQNL1n5jddapK9L4p0LI/yQYPxQ2Z1pXJWKKhksDYeWnxkpm+ZihjOKgiEpS8uS6qCa0=
+	t=1733332870; cv=none; b=cBWuUstHOD1g+SaSlgdPZNMOaicXB4w1aeSxhdYMYwy4qDuDKN7ec3P+Bx2xypDZ7uXMdHBG0wAoLMsSmxFjnFEqaJ94xlv/5nsamvZ9/4qYdRNAFBpoHh+YElmhtGXoK+P/cG9SVjFO/LeYgC6zlX7HzNzPW2LPKROXfr+5zaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332811; c=relaxed/simple;
-	bh=rrzwTMHt3x8E/1ni+TFWF6p3v6qRtGpQPz3NJv2LAGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qu25FmWGye6bGo6jNjFQhaU8pcl5Auep5LZCZWTNkiM2JCOjG3xAv9wKftXAlf88CHnYF1Ia5TbaXpwAlw86PRHkFxdgkXWVsH4lMRmnzRMjJT7nXN6dOvlrDDG9GE8i58jYgYHjbxOKJXM/+EERG42DK7Py6Q93IKvoHQin7dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RjBCpCuq; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D641D1BF205;
-	Wed,  4 Dec 2024 17:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733332807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+sUuv8WEBnWh2ry91oVX4FPFYh0jD4hLU1SV5Zjdf0o=;
-	b=RjBCpCuqNMZ9JPWMndgv5J5tWRFxHNPzl7ZEFBt7aJFqdElZahUrRDFuj29QvRBah+zQzJ
-	cZ9bjab0lXEE8uCCbsFk6/tacET3gBMdeTaIHkiYQoXo6YfMHpjbNct+ob3hrdd8zXhSjL
-	uyC2xjzp/wqSkF9po5Uai/V8MYL6q/gCXaQ7v/MZCpcTY+tUdH7F/TaNDQmptw6oKjxs86
-	GjH2IrPqqRYPEAJE506Va7tJuwxZrwsSg74wrLZlApqcKaExcSg/bsEa1J3KXEK2hsDDMG
-	Bcej963yznHk0mPE6DVAdZAOZ0jFpaVAwkcl46aQRFoXmSwBY95Txk/l1EXicA==
-Date: Wed, 4 Dec 2024 18:20:04 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wolfram Sang <wsa@kernel.org>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, Tomi Valkeinen
- <tomi.valkeinen+renesas@ideasonboard.com>, Romain Gantois
- <romain.gantois@bootlin.com>, Matti Vaittinen
- <Matti.Vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v2 2/3] i2c: atr: Allow unmapped addresses from nested
- ATRs
-Message-ID: <20241204182004.7c317177@booty>
-In-Reply-To: <fba09c57-cf13-4f50-8fb2-874ae6f6d310@gmail.com>
-References: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
-	<20241122-i2c-atr-fixes-v2-2-0acd325b6916@ideasonboard.com>
-	<20241126091610.05e2d7c7@booty>
-	<b954c7b7-1094-48f9-afd9-00e386cd2443@ideasonboard.com>
-	<20241127131931.19af84c2@booty>
-	<30732dbb-21e6-4075-84b1-544fc6e6abce@ideasonboard.com>
-	<20241129125340.0e2c57d9@booty>
-	<9bae963f-037a-46e1-abf6-f2ec464c4cf8@ideasonboard.com>
-	<20241203103932.3cd412bc@booty>
-	<fba09c57-cf13-4f50-8fb2-874ae6f6d310@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733332870; c=relaxed/simple;
+	bh=cS4i0U6cm/rszccFiZBNCF5t6wXp4Gy6L1mmeeVxTLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXFOXGRaD6tzlgtM/CH6nN6HUaUCJiO0YnXlkPj24rfoSDosQ44QUpPUO0nccQREKBCWvdqcA8WVKWxEhtFNLRwMhwcxP3rqoOueT40dv7NHLi1oismGttRPbAGy1UlrylYTEElDblNtDNLTVlYeGs3xRj8Etzl2iwDMvdFl9ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CVBThe/w; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de8ecb39bso46644e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:21:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733332867; x=1733937667; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CwUi8SmsPb5Vycsa9GB+I0BWedaEfg/jRhZVV6qa67w=;
+        b=CVBThe/wFYiiF4xr5/DzIJxa8qCYtzwYoZgfE8E27JgRqP7KxhwxFgzsweU4OPYr5Z
+         m+b0kwFPSXpaklLcxAi/dReIHBYD9unZsuprrWSp2oBnpkyXVm2mY4u9DXsGc1B/iBe7
+         tQE3cORTNB29jbrdglWB9VGJeQbUdYU0Kdf0iQorbnLy3NDd1Fx5235qtaaeroihLlXU
+         PlFzV8koM41ZmAiAQwtJxzTFPc5vRQON4XA/IDjawHAUuxwRShmEiwbCcDMySxMGYL4e
+         ZvOdUtq6z+D4XwZa3dw7vLRjUft6oP0zskdTiZBbdnVA5tZ7jKNs+oc+rlx8Uyd5Wd/j
+         2Ymw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733332867; x=1733937667;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CwUi8SmsPb5Vycsa9GB+I0BWedaEfg/jRhZVV6qa67w=;
+        b=u+yjYSTghI2wRLO4evwU1qMhQ1liUfLnoZkVUhZ0b0c0TAQnKxhV3sATcUUVs5GcZM
+         sjpyMvVsDm5Sn8UfsJ5y2Aho8inBhZ87OZlfYtRgbkZhMr8OP3eFjFXdF0nLpIX+emzt
+         gSiX1gEP6rE2a/nSPqbBWrq9Y2xAwtX3jVyUgdhIiEhmwPBoapu74wK6WMgHz5ulZ1Yv
+         rZnxgLIXcr2XhFDnjgHrGyGwxbmnfTpJzHlCjkXeWkwoZBO+OzxGRNLdM926giCYQ3Sl
+         KYWOdrTRP86ITjR7S3tF/GPoxIJKJiPgnew2brkU94/Rk3NXF435UkP598iOwPwLDSQU
+         aaMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmzZUbs9MK54iWWLgHKjgJW89A1mZ4fBHatSR5j3xxxPlauluQAcyqY9E3Dv1ig8seafw4kB810O4YV4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9jdEfht73wLDPKpl/mwJuOJchyMamIulC4+DTSjvmanAGvw8R
+	RzgYI0nc9Q1OOfbF5gI8JsToLrp3uHCLP5kMfbOUk4e80pP2gk06VYQsUvCxR6w=
+X-Gm-Gg: ASbGncsTzNwggaIYYIkQs/rXgTKC59p/LiO3CIzBbXmeSnpQwSiPZV9amSMCP6f+d9n
+	FO3qj7mNa7RQ2B8O3aCCYgY1vOiCPeP83TE8W6JzwufQyPGDsyMw70L8LbgrMwEYlN3NhMSMijD
+	nGJ6YTyb/V6o36AvmidcEVXxHIbiUtCJcbE4+TGyE6jKlb1gYsGwC6RAGdkwQGqALVmDpZIqxPh
+	PJIMWJ5YI6SuFeBbJPTJGriv5LIO/PZAepWOX1fvWrl1a+4HRAfLHNxD5nqABJ5g4nK4a2biA==
+X-Google-Smtp-Source: AGHT+IEPTiihAPUsJWXirfrgqA0sgpTCOG2Fx4MskWfdIdP1ollzTCwt1fpOL8Ol16tbpJQQ/vIs4w==
+X-Received: by 2002:a05:6512:4028:b0:53e:1b94:727d with SMTP id 2adb3069b0e04-53e1b947326mr3303792e87.10.1733332867234;
+        Wed, 04 Dec 2024 09:21:07 -0800 (PST)
+Received: from localhost (hdeb.n1.ips.mtn.co.ug. [41.210.141.235])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d55b1sm755789866b.72.2024.12.04.09.21.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 09:21:06 -0800 (PST)
+Date: Wed, 4 Dec 2024 20:21:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Marcello Carla' <marcello.carla@gmx.com>
+Subject: Re: [PATCH 3/4 v2] staging: gpib: Fix erroneous removal of blank
+ before newline
+Message-ID: <1012388b-f316-47a3-a98f-0f40dc74948e@stanley.mountain>
+References: <20241204170443.28333-1-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204170443.28333-1-dpenkler@gmail.com>
 
-Hello Cosmin, Tomi,
-
-On Tue, 3 Dec 2024 12:35:29 +0200
-Cosmin Tanislav <demonsingur@gmail.com> wrote:
-
-> On 12/3/24 11:39 AM, Luca Ceresoli wrote:
-> > Hello Tomi,
-> > 
-> > On Fri, 29 Nov 2024 15:31:45 +0200
-> > Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
-> >   
-> >> On 29/11/2024 13:53, Luca Ceresoli wrote:
-> >>  
-> >>>> So strictly speaking it's not an ATR, but this achieves the same.  
-> >>>
-> >>> Thanks for the extensive and very useful explanation. I had completely
-> >>> missed the GMSL serder and their different I2C handling, apologies.
-> >>>
-> >>> So, the "parent ATR" is the GMSL deser, which is not an ATR but
-> >>> implementing it using i2c-atr makes the implementation cleaner. That
-> >>> makes sense.  
-> >>
-> >> Right.
-> >>
-> >> But, honestly, I can't make my mind if I like the use of ATR here or not =).  
-> > 
-> > Hehe, indeed, hardware designers use a lot of fantasy in stretching the
-> > I2C standard to its limits, perhaps more than actually needed.
-> >   
-> >> So it's not an ATR, but I'm not quite sure what it is. It's not just
-> >> that we need to change the addresses of the serializers, we need to do
-> >> that in particular way, enabling one port at a time to do the change.
-> >>
-> >> If we forget about the init time hurdles, and consider the situation
-> >> after the serializers are been set up and all ports have been enabled,
-> >> we have:
-> >>
-> >> There's the main i2c bus, on which we have the deserializer. The
-> >> deserializer acts as a i2c repeater (for any transaction that's not
-> >> directed to the deser), sending the messages to all serializers. The
-> >> serializers catch transactions directed at the ser, and everything else
-> >> goes through ATR and to the remote bus.
-> >>
-> >> Do we have something that represents such a "i2c repeater"? I guess we
-> >> could just have an i2c bus, created by the deser, and all the sers would
-> >> be on that bus. So we'd somehow do the initial address change first,
-> >> then set up the i2c bus, and the serializer i2c clients would be added
-> >> to that bus.  
-> > 
-> > So you think about another thing, like i2c-repeater, in addition to
-> > i2c-mux and i2c-atr?
-> >   
+On Wed, Dec 04, 2024 at 06:04:43PM +0100, Dave Penkler wrote:
+> The original commit removed the blanks before the newline
+> in the protocol string constants to satisfy checkpatch.pl
+> This broke the driver since it relies on the correct length
+> of the string constants including the blank.
+> For example the original
+>   #define USB_GPIB_SET_LINES   "\nIBDC \n"
+> became
+>   #define USB_GPIB_SET_LINES   "\nIBDC\n"
+> which broke the driver.
 > 
-> Since most of the functionality needed (besides allowing pass-through
-> transfers for unmapped I2C addresses) can be achieved already using I2C
-> ATR, I think we should make use of it.
-
-If it allows code reuse, then it makes sense.
-
-> > Well, I think it would make sense, as it would generalize a feature
-> > that might be used by other chips. However at the moment we do have a
-> > working driver for the GMSL deser, and so I don't see the benefit of
-> > extracting the i2c-repeater functionality to a separate file, unless
-> > there are drivers for other chips being implemented: this would motivate
-> > extracting common features to a shared file. IOW, I'd not generalize
-> > something with a single user.
-> >   
+> The solution is to replace original blanks in protocol constants
+> with "."
+> e.g.:
+>   #define USB_GPIB_SET_LINES   "\nIBDC.\n"
 > 
-> We have GMSL drivers for 6 new chips that make use of the I2C ATR, and
-> we want to send these upstream. Adding pass-through support for the I2C
-> ATR is one of the only things keeping us back, and it's the solution
-> that makes the most sense to me.
 
-I see, so I understand the aim of this patch. As it was presented
-initially, in a "fixes" series and without any mention to new GMSL
-drivers, it didn't make sense to me. I think it would be ideal to send
-it in the same series as the GMSL driver(s) using it, otherwise there
-is no reason to want this change. Also it should not be presented as a
-fix, because it is not: it is changing the ATR functionality in order
-to extend it to new chips. Finally, documenting the oddities (the deser
-being implemented using i2c-atr even though it is not an ATR, in the
-first place) wouldbe very useful in the commit message and/or cover
-letter.
+Let me help you write the commit message.
 
-Best regards,
-Luca
+    The USB_GPIB_SET_LINES string used to be: "\nIBDC \n" but when we
+    were merging this code into the upstream kernel we deleted the space
+    character before the newline to make checkpatch happy.  That turned
+    out to be a mistake.
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+    The "\nIBDC" part of the string is a command that we pass to the
+    firmware and the next character is u8 value.  It gets set in
+    set_control_line().
+
+	msg[leng - 2] = value ? (retval & ~line) : retval | line;
+
+    Imagine the parameter was supposed to be 8.
+      Old: "\nIBDC8\n"
+      New: "\nIBD8\n"
+
+    The firmware doesn't recognize IBD as a valid command and [whatever
+    starts beeping and sets the computer on fire].
+
+    Put a . where the parameter is supposed to go which fixes the driver
+    and makes checkpatch happy.  Same thing with the other defines.
+
+regards,
+dan carpenter
+
 
