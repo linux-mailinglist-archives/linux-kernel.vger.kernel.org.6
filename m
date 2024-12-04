@@ -1,183 +1,251 @@
-Return-Path: <linux-kernel+bounces-430623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD45E9E33A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:46:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FD69E33AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:47:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 671C5164B90
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37CC283B5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28548188006;
-	Wed,  4 Dec 2024 06:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C73218756A;
+	Wed,  4 Dec 2024 06:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W3FHgm4a"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MnrUSuNQ"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010070.outbound.protection.outlook.com [52.101.69.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B7A183CC2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 06:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733294783; cv=none; b=GhjM2oGH8U1wwrHAvqnboZno2ssMoS9vy0lU72HbK6LVqNiYtcxIXKuhRMfe1yDHV0sQHZLJlJD7MuYwDT1+raiEUh9uk043zbDZ6rtba62TicKHQqgujFn4iTPXDxQbzezzxHTx91OjIJlHaSS+FFoIJbDHK58GONCY8wXvT8I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733294783; c=relaxed/simple;
-	bh=zwYDImrZs15aV8zEx0o5xD0LCFWwlvzYATVfdWzhG5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rHXM7NW9cHdMwqR4eFOZjAnwebNp4YK7tEFKxaNN0BYsBh7NBizjZkns6JYhOq6W5+Blfw2nrL7FFY3ORwAScIiE1giZgu0O5NWW9RDdv6EWKISLHif3e/QDr/LA4xmH/QpowAGEdhX370e26gCqXsort18wbMBqNsHyrvVamY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W3FHgm4a; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434941aac88so5508925e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 22:46:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733294780; x=1733899580; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nKLCwyYRyRhRV+7HHjXl1CRS1Do8/otxgiGgDTGtFOg=;
-        b=W3FHgm4a5xHR79ORhqQDX6bCoOVytNbYmjW82AOwZJhXQVfCUfKqsJgtlx1q79HXMH
-         PhWIYAW+pVgoo5bf5jN/OfhHGQLIC9sYYyvy6JXeM94o3nEDflJG47EeY10Njremgu/4
-         1+JUTnXbmMAl3Ge7Q5/crizqS9wAW5+ZtK/5acGW+42sK2Iq1qMYsIwmZNSjNQgPNmjw
-         U3CLme3005Y6OEXqknJpYVEUn6qcWh/HErNepZtobYe5mJPhJGpwg0n1CwRQwO1VtZs5
-         zY794rV1GYK2rtJv8FfD9lFPY2dSSE+dtWeseUrpE7O+dosiWpEihPUbitSOG3B+WbKX
-         73mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733294780; x=1733899580;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nKLCwyYRyRhRV+7HHjXl1CRS1Do8/otxgiGgDTGtFOg=;
-        b=fNuFk+Dwmk5rWlQPFq0wvOVA0YXbzszc1dBDggGCz7eyU3NokLA+gDfrtoPlPq2NzP
-         x2rb2SgP+A0fydlentJVuohHo36O6IfX/99CvEnuQtHZUOBTDCES1mQ6NylRLxaSl6Y9
-         0WjnpHHt50ftYObZqwNf9pPU4UIwRqsgRNGVfGuGdRFPLv+bg/13ESRochKyr41GFsO/
-         SdG662Hv85njUA6Y4o/qWCFzqCDeu1IASgH6O9mUqPYVqlUROO0BaVFc/eUSbMusTLVl
-         wkhow7Z0A8OkVPbiJT34HMt3OYituInWoiCIQs2T0RDzMIhRzvm9gaADpHDItK0k4rBN
-         ZTtA==
-X-Gm-Message-State: AOJu0Yzc3EzeuZYJpz8iFmYC3SHhkisd/q1hQuF7Sn8E5h70ZXOQPJZF
-	LsI/Nb1LlnaCZrHVethI2kg+WZ3DCyyXpABJZFuWC6iyCgbaCsfk0LjOUjHrEcA=
-X-Gm-Gg: ASbGnctB8TdqlZDms2MGmZjYzCUjQFUhdibPZCjSgPplI0e7/igXrfEvmbyxQnXgDgu
-	p9q2QSgEUOsXW3JgxSv6St6G9+NIpFbWa6zwoTb+YUZv7qhaM3kP6p08Cufhie4Nhn5wn78A14T
-	mzKCXDfDjAh5fJa/DZO5g5jNAfslXoAQnwg7DnIrmJfYZqrBaNNeOWHU43bbLPsyXHAc/ZWu42O
-	t3CHPE+J13atuZZ8y4U46wRe5RsZYNMio+YPnZRFycL0+ywp/mtTg==
-X-Google-Smtp-Source: AGHT+IGYH4zeaZiE7s4YcdQPS+jXDgKkEuUNU8+eF5sMaKEAwGSy6gVFnffZH3wiZ30aAyYxGMCatg==
-X-Received: by 2002:a5d:47cb:0:b0:382:4b5e:5244 with SMTP id ffacd0b85a97d-385fd3f2432mr1531946f8f.7.1733294779809;
-        Tue, 03 Dec 2024 22:46:19 -0800 (PST)
-Received: from [10.202.32.28] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2155da906f2sm70317925ad.87.2024.12.03.22.46.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 22:46:19 -0800 (PST)
-Message-ID: <79b86b7b-8a65-49b8-aa33-bb73de47ad37@suse.com>
-Date: Wed, 4 Dec 2024 14:46:15 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4B6184;
+	Wed,  4 Dec 2024 06:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733294833; cv=fail; b=BmeS6/0ym1XXf8FUGFIEzarGKdaBDsRy9iWkVpeB7igOPiYA1v9c/REBUO6k+mp7EMwhLUj1GTxkIJsDOYgkJ7mO4DJluWlt6sWtLjOVzMpfDE5ocQnBhY/XaF2Borj33WtGiIZPN0xKM1yW3C+hL47+WR5o+ObTSMD6zgGy3TQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733294833; c=relaxed/simple;
+	bh=i7z9o6oAMcQuYNMmOssXslteGWbZxOq7ojJxuMDwYkk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SJD2S6rQNE2q06nr9hGngjXo98WrjIT/Q/84Z4DIN5JqXd5ZRdieNOjksfkxYdVoCe2lCuv6i5dChWBJewnwWHepWscZyFoutK7Vt5j6oY2SFmIq74ilieIB9N4PhjwjvfaxkdH9U5MhEjXFk/2w9XSpT4xhO5zf2SxwRUfxSGc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MnrUSuNQ; arc=fail smtp.client-ip=52.101.69.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MOX0dJukIjItBG6bzW9jdpFh67gLbjpKFrUo3kU5C/sYP0mjJTpATtSMBrV9QYcVbDn0Gwy3uGfHxoBGZsSOw89w/q46KNk7iBqvY7jNkdPq7rvro3corHsdECn8YHPjuq0yb4dDodYxxAUZs/rd1no46V5rZGleE+j+cafXQnhEp3616ITp9WbQHUuZIP7df7rddT5TtjVaqBdyzcEi0vlpSzf/FLi6idgAS+iGY6+Wv/wYM46Vw66cljP2yQnfqWUV0EdjEhth7er+/GagGz1n7TXKWhhVbOGwo8Yw09wsJ0vRkoTNcc3QMD4tr5VoO2rPvilxu88SXL4uYTuWXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CeFYT0J52Rerp9fow2PXWfkBhAnZIOmXkbFeJfyyRJY=;
+ b=UjKFNXF1ju//9K+mc9Aw4XMW78j3CZg6HNzfOibgGchB9goXIaQYmM4vMmUCQyo2ZiXotewDu6S+wIpKcJHfjuLIfcBWifSWKSHSi9u87b/9arnacRhC/bRJ1NR3AzZGvBkn1oMEA4IB9dNz2mUUWk2YxoKsBgu6SMLRVm8FTlm1lwQjxf/uj73AV446EeNT4sb+nYVA39E7cB4DrItKBeMgaY2VtcovLPXxrI8Yo8SEFR5E4mE1TQd+j3QctpZvAJo/d93UOmcfPosEWsSMeaO9xQoc5fjJs7n3nbLQgouZOD63mvnW7T+QO9SPz3yff0gxSZZYX10vEj/p4xXRgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CeFYT0J52Rerp9fow2PXWfkBhAnZIOmXkbFeJfyyRJY=;
+ b=MnrUSuNQR/eLkNGSmpjUPBuredYKfBDoEh5+6i9IocDwrgM+mGpXPYYcek/bdlNtmrsLnySyb14oJPD/jUXSf3xOIyd+/GDnwE36+QvVwkpwtnWRKU4xv+udO+5OnHLHF2+Gxl/JNCslROtRkIgkCgs68lt4y7p//Ihfa/c9eI6uSrGokXfzFGF5vCove3GVq7Ps13YqWLxLrjZNMyoMQBgycJGl6CWtDtOFlxOFoeQ3l6q9BGEauEcHoCsWamu6VJmyYzsL7deNVLTJYuuWSbz0DJL15dV08eTWCITikzDjjZpmdd/0tOonAsTqIwXiGLyRyryItkpD5rSA0VdeVw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PAXPR04MB8349.eurprd04.prod.outlook.com (2603:10a6:102:1bd::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Wed, 4 Dec
+ 2024 06:47:08 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%6]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
+ 06:47:08 +0000
+Message-ID: <34f14647-1822-4965-9c75-4b745bf39941@nxp.com>
+Date: Wed, 4 Dec 2024 14:47:42 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "tomm.merciai@gmail.com" <tomm.merciai@gmail.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
+ <834a2690-ca06-4a8b-9a81-c4981074f95c@nxp.com>
+ <TY3PR01MB113464084E6020F0B138ABD2886372@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <TY3PR01MB113464084E6020F0B138ABD2886372@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR06CA0243.apcprd06.prod.outlook.com
+ (2603:1096:4:ac::27) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ocfs2: Revert "ocfs2: fix the la space leak when
- unmounting an ocfs2 volume"
-To: Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- gregkh@linuxfoundation.org, Heming Zhao <heing.zhao@suse.com>,
- stable@vger.kernel.org
-References: <20241204033243.8273-1-heming.zhao@suse.com>
- <20241204033243.8273-2-heming.zhao@suse.com>
- <6c3e1f5a-916c-4959-a505-d3d3917e5c9c@linux.alibaba.com>
-Content-Language: en-US
-From: Heming Zhao <heming.zhao@suse.com>
-In-Reply-To: <6c3e1f5a-916c-4959-a505-d3d3917e5c9c@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAXPR04MB8349:EE_
+X-MS-Office365-Filtering-Correlation-Id: d68a5334-2d3f-447c-7830-08dd142f78a9
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?U1hTMHg5QnplV2R6Z3lYclRWdGJlczRFVVRGbURGMXFPdTIzZnJ6elJncXYx?=
+ =?utf-8?B?RHJOeGZEclE1UXJCaVU3MUtoVFZkeSsvSkkzZlpmM3pEMWd2bG15d0pWTnFl?=
+ =?utf-8?B?SGRqRkJDZTl3SWF1d0pxZkJyK2orRS9rRU1oMGdidGlBaUJUSm5xbjJTdGVR?=
+ =?utf-8?B?b3VaMlJEZjN5ZHRPUjk0Sk4yMVlaYnp5eDdCOVd3TnN0UVNyOFdaN1UzNlNj?=
+ =?utf-8?B?aU5CZUVMOWg5cEtjQmtWa1VGZXBNQnZFVlNvSytpbjlxUzBOUTRqREJxSkV3?=
+ =?utf-8?B?QzA2b3FyYXlma01FRndmMGhNMG9WSFZTcXBWOTd0NEpoYzFKQ081NHNtODBU?=
+ =?utf-8?B?UHpQRGFMTWluUXNmR09BUUxXV1hlQkNuclJaMzNUU2dWQmdoaXZBVU5xbkI3?=
+ =?utf-8?B?ejQzZXllMGxHVmJvNmU5UGRIeG5EZkpyT1puUjdPeVRTUVhpdWVnaVRMWmZn?=
+ =?utf-8?B?MUNPNVExdTlYYlZIV014cHgxdE16T2J1cWNoWjlXeFUwN2hiWUlwQ3JJQ2tm?=
+ =?utf-8?B?bHFDbnFQTHFPWUVPZnNhNllRZ1NkNy8zanZiUG1JQ1Q2SEc3WlBGQlBzU2RO?=
+ =?utf-8?B?SjhydVlnUFg2UWRYNnFiYVdOMFBqb0VpOE4yTk4xcFVhZUtDdVZNSlFCTTRa?=
+ =?utf-8?B?Um83aEVML3NnRmt2clJZamFEeGxKeE1oRCtFM1pnRjdwYUZZb1Jqa0ZUUHBk?=
+ =?utf-8?B?K0hFSWsxTE9ld2k3aW5PN3dVMWZDU1VGZVYrSXhKYm85STdOZk9vZDRad2dO?=
+ =?utf-8?B?MVd6YklOeEZRSSttdGgzTDRFTERrbGlPVCtzd3JFRUl6UEdTSThkaU5MQ0J5?=
+ =?utf-8?B?djBjcWh0QnlvYnEwVnArL1BBcFY3QURLMkxYZlBPMmhDUkdxSDZSVWdRR3B2?=
+ =?utf-8?B?Mm5kSGJZbDJvL1NDeU8xUlh0d2F0YklYZGUwOVk1VnptY2dXQ0xyM2k1U2tq?=
+ =?utf-8?B?Y3FncGRzYnV5bS9UeDVXS2RUN0E2aHA5U3IvMGdpRnFmQWpiekExWExhbi82?=
+ =?utf-8?B?SjNQNHhjVU9DOEVjUUtNNUNLSUphRFJISm5nVUZ6YTc1MUsxbjdJRlFnQnBL?=
+ =?utf-8?B?TU85UWlxaWVEVUJSUWZsRjFBVUo5M3JYWFVsNWRaelBYanVQN3gybEpQVTZt?=
+ =?utf-8?B?QUcvLzIrLzY0OEVlWUVIZG5nUWcyeDVFMVBDUlV4VURJV0FEd2VRNVg1bGJr?=
+ =?utf-8?B?TUNKdDVWanA1OG9oV0kxR2F1ZWJDcCtmWWQwdTdmOENLTzExMHZaQzMwL09t?=
+ =?utf-8?B?NXVpNUd0QTRVMXVNZWhWL3BqVFAwcU5nQmdicnN4eVp0OTVXQVV4ZHJBTW8v?=
+ =?utf-8?B?R2hhSFBIT0pDSEFkd0NaZFQ4ZHVjVGtGaTlHWjM1Y0RrT1JraHB0WlpkS2Vt?=
+ =?utf-8?B?V3p4b3FzMVI4N0dtbUpOVGZmQWVrRWJZMmFsZ3V0azBSVWFZRU5BdDRYKzl5?=
+ =?utf-8?B?dUF4cDBSWkttdEdJTkZaak9vVjJpT0VmOTVFSndmdHJpWmNsRW1IdFdOSWE3?=
+ =?utf-8?B?S1g5Y0d0RGdtVEpVYUlLQzNCN0dodjBPcXVJaFZ3TUtqclJOOGo5K1hCcXBo?=
+ =?utf-8?B?dHFvRFRCSkwzejhWY1Bqa1phOUFUb1IzK3lLTUpDbnhJRzJxRmk0WkpTTC9G?=
+ =?utf-8?B?bjQ2eVNZM3J5czZVNGtZNyt3ZFI1cTArclBIMzZ2VmZhejVDM2JYaEVxK1JR?=
+ =?utf-8?B?NlRLOXFFZEc3ZGp6cVdQRkxZSW5va0IwcEg1a1hYQUZDS2U5T1B0dlJHeWJ3?=
+ =?utf-8?B?bld1NXl0YnRNM3Z3S2tDK0VEbnhad2p3MWtnR3kwSUs2T09zbFVNbWYxdWJM?=
+ =?utf-8?B?ZEQ2LzRNWmRpaUcyWmtsQT09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?TFlUZmFnenQ5bjAweDdmYXdXUmRTcVZZclBkTjZiWGVVdit1T1ZXT0FvYUxi?=
+ =?utf-8?B?L09GMGdnejdQSkt6dDFYSkZidk14STlvaG1YOEV4VUJHbzFxL0d1ZENnc2Fr?=
+ =?utf-8?B?cWhhd0p2aXQxN1NWUVZnMU1vWHRLUmsrMWdxK0RXRTZ0S3ZnM0Eza1BpU3N4?=
+ =?utf-8?B?enJzQVZ3cXRWOUhRWW16OC9FdmpraVRRZEVDN0hyU05TazVqaXhoUG55UzNO?=
+ =?utf-8?B?dTB1OTVtUHZ0YisvZDlNNHRxRWIvVlNSR1dtcFBLMUZwdm1STmJDbzIva2tO?=
+ =?utf-8?B?eHk1ZHJxcWVpd0UvQ3RpaDBxejZScXZFLzExZlBndmE3K2NFRVJlc2d1dWdM?=
+ =?utf-8?B?djh2bFVLUjRtcTJkNW1EdWZSVm9VNXl6RWlwdDFwSE5ZTW9Lc3hCSERjSmVp?=
+ =?utf-8?B?RldJTGUyVi85Qkw2Z3o0UFlnNVF6T25zcmJKN2NSNE1JNHdaS0FoVmM0blRB?=
+ =?utf-8?B?UVpnT0U0RmlKY1dvUGhuUkx4SkhLejFOaXRneFZKZm5CanhxM1cxRC83clhL?=
+ =?utf-8?B?K2RhV3F4ck5xUTdQU1FSWWljcTh2RTJNT21lRnN6WVVZcExZOG1ZWVJBUnhR?=
+ =?utf-8?B?dnBLenAyMnNWSmIrdU9veDQyT0FTdkVjRndRdFBoMzNxZ0phMUpYM1ZGV3Ev?=
+ =?utf-8?B?NGJrRXlIUDR6L3BtZTVxV2d6MjlEVFhndnI2ZXRWUWNLZytwcW95bzZqdXg3?=
+ =?utf-8?B?MGJWQjVKOTdXb29adFpMM2VaMzE0dGRZbnQyYTRrSVZMR2VkWmJhdWhMREpL?=
+ =?utf-8?B?OGg4dWNZcXdYbFNtQXFxb1ZKNFRoUElzQ1FjRlpxb2lnME14RVlEdlRRTmM3?=
+ =?utf-8?B?NmkzNDJhSkhpRjlXMHRKbitTUjNFZ1FpRWE1cUcvZlRoZ3Z2SmtDOUhYU3l2?=
+ =?utf-8?B?dTdDMzhYRHpjRzJBSUsrc0dEQ1JhSjlhUEJZRkJvWHMvUmtJaFZ5ZlgrWmhl?=
+ =?utf-8?B?RDhMYjFoS3VhTFI0bGFEV1NIMktGcmhEcW10eVFJQzQ5czNLdGhjRzI4Qlho?=
+ =?utf-8?B?K1k3bzZDSGlMMW9vejA2WWM4T08yY3lpRGRDNXZQdlQvN2dDdnNiYytmTmxL?=
+ =?utf-8?B?NlN3dlYza1lWTlZnam1mVXgrQitDYUlYQmpHZzZjZGxBV0FWMkdaQ3FuZ3Jp?=
+ =?utf-8?B?UDk3eC9BZ25qUkVkSm9oYzFTRUVUaFZRd3F0YXpMa0w2RVowY3A5bTVhODhi?=
+ =?utf-8?B?YTloTmYvVm5RUWQ2aTZ4MWdTSEJVWE12VSt0ZUpPaXBlR090NkN6SnhDN2Rv?=
+ =?utf-8?B?M1lWcDJhRGJqUFJmN0tEcklkN0pGOE5kVlNwNlBuK0Jkajk4V3NZK0hLU0Rz?=
+ =?utf-8?B?YVFkWUhScmFzM0NEdWk2aGtua3BhdUdnTEVYVjhkdGFqTE9TVS9Eb3QwM3JU?=
+ =?utf-8?B?RUNjTzViWnUvMHV1aVcrNStFWFhnaTQ2VVlNakF4NXZpWVN5R0tvbGpDZG5G?=
+ =?utf-8?B?TGZiR0R6cFJ0d0VCck5VWG9pMFYza0xjTFJsR3VPRjFRU3dwbDRvZnVRUkJt?=
+ =?utf-8?B?dzRyNVhqQlcxZUU3aWI5d2w1YzkzNCt3VkZTSVhFd0VNcjZPdk5mdXk4L3Qw?=
+ =?utf-8?B?QXc2Q2k2YW10Y0ZIazNqL0pkUjZPWE1malJ4TEEvNEx2dXlnbFd1S1FJbWsy?=
+ =?utf-8?B?MTRkQnRIRGVDWlFoQXRpY3VHNVRIVnhmNGVjR2laYjdUTERNNGlCS016SzVM?=
+ =?utf-8?B?K280S0tYTlZZSXduZzczNHlpZXVIN2cvOWVrU1BYaEVocklLNFlZOVdodWc5?=
+ =?utf-8?B?RVN6WUFvWDBlbjF5LzkrWUVyelBDZ0N5dnNQTUMrdFdFeWRuSGJQL0NGUVNO?=
+ =?utf-8?B?SXNqdDM5MVNaTy81Yk15SzRHMGxhRkdJOWx4MG5IYTkwS2JQY1RqNHBDbG1F?=
+ =?utf-8?B?dGFZNXZHUVZBQXpjNGl2cTFqOUVWME1reENkcWtmZmtEVXJjd2t0QmptRGQ3?=
+ =?utf-8?B?c3NoUklXN3ZHSFpSSXpvTFpRRW9mRDdJQWhDUW1mU3lXVkpHSjBQR2NpNmM2?=
+ =?utf-8?B?ZTA4S0ZWTVRMTnVIYWdyczVGaUlLWjRsMTZrMTRzMWI3L2ZIdFJ3ektNS0lE?=
+ =?utf-8?B?WU9pbkJHQzVzMFNBWWZBRjA2YlFtOCt2Y2ErK1NXTURVZGpaQzdQQ0lxOWpF?=
+ =?utf-8?Q?hCaf4pHEvavtL6xSJPOesj+kd?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d68a5334-2d3f-447c-7830-08dd142f78a9
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 06:47:07.9790
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pULeasGAhGzg7zFTc0rIRmSm9TENGHqjq3/hhuEO9mXtg/ST7r4mikiCf1Eb8wpJF/fYx4CxZhjuVsADawzQFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8349
 
-On 12/4/24 11:47, Joseph Qi wrote:
+On 12/04/2024, Biju Das wrote:
+> Hi Liu Ying,
+
+Hi Biju,
+
 > 
-> 
-> On 12/4/24 11:32 AM, Heming Zhao wrote:
->> This reverts commit dfe6c5692fb5 ("ocfs2: fix the la space leak when
->> unmounting an ocfs2 volume").
+>> -----Original Message-----
+>> From: Liu Ying <victor.liu@nxp.com>
+>> Sent: 04 December 2024 03:34
+>> To: tomm.merciai@gmail.com
+>> Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
 >>
->> In commit dfe6c5692fb5, the commit log stating "This bug has existed
->> since the initial OCFS2 code." is incorrect. The correct introduction
->> commit is 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()").
+>> On 12/04/2024, tomm.merciai@gmail.com wrote:
+>>> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>>>
+>>> Introduce it6263_is_input_bus_fmt_valid() and refactor the
+>>> it6263_bridge_atomic_get_input_bus_fmts() function to support VESA
+>>> format by selecting the LVDS input format based on the LVDS data
+>>> mapping and thereby support both JEIDA and VESA input formats.
 >>
+>> ite,it6263.yaml says IT6263 supports vesa-24 and vesa-30, while this patch actually only adds vesa-24
+>> support.  So, to be more specific, the patch subject and commit message should reflect this rather
+>> than claim "Support VESA input format".
+>>
+>>>
+>>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>>
+>> Can you please send this patch with your Renesas email address instead of Gmail email address?
+>> Otherwise, add a Signed-off-by tag with your Gmail email address.
 > 
-> Could you please elaborate more how it happens?
-> And it seems no difference with the new version. So we may submit a
-> standalone revert patch to those backported stable kernels (< 6.10).
+> If I am correct, you can clearly see the Renesas email address after subject.
 
-commit log from patch [2/2] should be revised.
-change: This bug has existed since the initial OCFS2 code.
-to    : This bug was introduced by commit 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
+Yes.
 
-----
-See below for the details of patch [1/2].
+> So, the procedure followed by Tommaso is correct.
 
-following is "the code before commit 30dd3478c3cd7" + "commit dfe6c5692fb525e".
+No, I think it's wrong. We don't know whether the person(s)
+behind the two Email addresses are the same Tommaso.
+Likely it's a person from two different domains - still kind
+of two people.
+AFAIK, sending other's patch needs to add sender's SoB tag.
 
-    static int ocfs2_sync_local_to_main()
-    {
-    	... ...
-  1  	while ((bit_off = ocfs2_find_next_zero_bit(bitmap, left, start))
-  2  	       != -1) {
-  3  		if ((bit_off < left) && (bit_off == start)) {
-  4  			count++;
-  5  			start++;
-  6  			continue;
-  7  		}
-  8  		if (count) {
-  9  			blkno = la_start_blk +
-10   				ocfs2_clusters_to_blocks(osb->sb,
-11   							 start - count);
-12
-13   			trace_ocfs2_sync_local_to_main_free();
-14
-15   			status = ocfs2_release_clusters(handle,
-16   							main_bm_inode,
-17   							main_bm_bh, blkno,
-18   							count);
-19   			if (status < 0) {
-20   				mlog_errno(status);
-21   				goto bail;
-22   			}
-23   		}
-24   		if (bit_off >= left)
-25   			break;
-26   		count = 1;
-27   		start = bit_off + 1;
-28   	}
-29
-30 	/* clear the contiguous bits until the end boundary */
-31 	if (count) {
-32 		blkno = la_start_blk +
-33 			ocfs2_clusters_to_blocks(osb->sb,
-34 					start - count);
-35
-36 		trace_ocfs2_sync_local_to_main_free();
-37
-38 		status = ocfs2_release_clusters(handle,
-39 				main_bm_inode,
-40 				main_bm_bh, blkno,
-41 				count);
-42 		if (status < 0)
-43 			mlog_errno(status);
-44  	}
-    	... ...
-    }
+> 
+> You can use gmail account for send patch, but you just need to add From tag and SoB tag
+> after subject with company address.
 
-bug flow:
-1. the left:10000, start:0, bit_off:9000, and there are zeros from 9000 to the end of bitmap.
-2. when 'start' is 9999, code runs to line 3, where bit_off is 10000 (the 'left' value), it doesn't trigger line 3.
-3. code runs to line 8 (where 'count' is 9999), this area releases 9999 bytes of space to main_bm.
-4. code runs to line 24, triggering "bit_off == left" and 'break' the loop. at this time, the 'count' still retains its old value 9999.
-5. code runs to line 31, this area code releases space to main_bm for the same gd again.
+Again, we don't know sender and author are the same
+person if their Email addresses are different.
 
-kernel will report the following likely error:
-OCFS2: ERROR (device dm-0): ocfs2_block_group_clear_bits: Group descriptor # 349184 has bit count 15872 but claims 19871 are freed. num_bits 7878
+> 
+> Please shout if anyone think this procedure is wrong.
+> 
+> <snippet>
+> Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
+> 
+> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> 
+> Introduce it6263_is_input_bus_fmt_valid() and refactor the
+> </snippet>
+> 
+> 
+> Cheers,
+> Biju
 
-thanks,
-Heming
+-- 
+Regards,
+Liu Ying
+
 
