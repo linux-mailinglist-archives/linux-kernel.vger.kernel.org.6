@@ -1,78 +1,73 @@
-Return-Path: <linux-kernel+bounces-431398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20F69E3CDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:34:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BBA9E3CE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:35:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA31C168D2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F152842EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9D8209F5B;
-	Wed,  4 Dec 2024 14:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E35820A5F3;
+	Wed,  4 Dec 2024 14:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="peACJXDp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AEC1FCF72;
-	Wed,  4 Dec 2024 14:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F56D20899C;
+	Wed,  4 Dec 2024 14:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733322836; cv=none; b=D4KnhWCKGqlVmxGvOdn4myzw+ikacQYVaA1SvwZkZv0jSMUV0vhPNH29B4n0FhsI7Lphi9VPARhvPjv+gqfDbEhEDrpbcQmSwSTx9KInJ+aOaalb9rnAEOhuTpBlrgos7c+VyCuMrYaXSnELUaASLWK6OBR+ZICOslJSjsoQhWQ=
+	t=1733322934; cv=none; b=HX2p31R8d6URQmPY2D8Ef6j7wuiXBfFUOF9MabbkHaAaQmUjzUCi4goGxN2riGteHP5DNRIQYlhM8JnH9JGn6aLZYIxX/RK/Wz7xTGc11P5CNsbFPHS/UAYH1dGpznUq5NrU3cjwSfJwhaawFArH0+p4MzIbvlBeSqmVunBFW7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733322836; c=relaxed/simple;
-	bh=e+EeB1yI2myFGufwmJebA0r2Pa27k1BvLSbPOEKQS/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l0/t+lLVd+Xds6XHyWBMkngPRmN7xIxqA1QWZbjOpAn6YroxYjjrMpUhinZpL9+6pdNkPfnIftPIeOft13jzO1mZClIOrCWh7SaJxlmtlpO6qTNoHmOnt1ZMEi0uZNPeJNgQ3Y5tT4p9elkXZIJsH0GaldvgJkoCLPDjaLDsp30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A39FC4CECD;
-	Wed,  4 Dec 2024 14:33:53 +0000 (UTC)
-Date: Wed, 4 Dec 2024 09:33:56 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Joel Fernandes <joel@joelfernandes.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, Paul Burton
- <paulburton@kernel.org>
-Subject: Re: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
-Message-ID: <20241204093356.2d578657@gandalf.local.home>
-In-Reply-To: <60749a43-17ad-4491-a13f-a2db7b6cb00c@paulmck-laptop>
-References: <20241003181629.36209057@gandalf.local.home>
-	<bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net>
-	<20241203155542.462b1b21@gandalf.local.home>
-	<ee401848-f7a1-4877-b896-36bec32ca985@roeck-us.net>
-	<20241203220153.3f81f12b@gandalf.local.home>
-	<60749a43-17ad-4491-a13f-a2db7b6cb00c@paulmck-laptop>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733322934; c=relaxed/simple;
+	bh=F2smxZWyr0/EIfcKu7b4h+VrKo0qmCw2IDJihZE1uBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j8BKuuGKL/wS2BsUC8pkf/eq9fa2il2311XK5aS5fEiVCV+WXVIqCxcMz2VdhGmJ8McBI/NMAEHSfW3AP+VsGvgNBY4kZv5VCOQ2dVzbJzCuozWtFaVkkqGLgOx+7v8p03KmNlLDuj1jHviBzPRPnWfhDbXoVtOs/v7F5DPSqQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=peACJXDp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6023FC4CECD;
+	Wed,  4 Dec 2024 14:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733322934;
+	bh=F2smxZWyr0/EIfcKu7b4h+VrKo0qmCw2IDJihZE1uBs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=peACJXDpsmGkEFCaMw9buw+22RXIKEtLixThUQmHKYW/51y06hR9KFIvEk93bOya0
+	 OftgXIcXcC6PlwvH4ymjEhFwZ7Z9HhWmm/OKj3Ns2zmgMhrBeeUeKwQs4oqlh1KgkI
+	 k0oiRN3AKQYCL0FIA3q/txH0vmBVNwPnsTwNXvoNv2DOXtOJvFU/La0cK4d/cQcsxd
+	 2qGdgL/Kl9XiKGVEf2+Z7fIqaWlv/cuBYyiY73fhjyOXY3fCCmrf0r8jhm08m+Kbm5
+	 7u+Ho0KNeusE3JvVxHVfZclUzAYDlhVdD986Fy6w7I6mzBwQ0t+nAYrDYg+YdE8ort
+	 /YcrxsZdMn9Tg==
+Date: Wed, 4 Dec 2024 15:35:28 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] i2c: keba: drop check because i2c_unregister_device() is
+ NULL safe
+Message-ID: <srqatdqnnb3ltlkovpm7mnrae3y3ml6x77uglovt3ipgx7pzms@elxdkswt74cq>
+References: <20241202082658.9673-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202082658.9673-1-wsa+renesas@sang-engineering.com>
 
-On Tue, 3 Dec 2024 21:01:59 -0800
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
+Hi Wolfram,
 
-> > Paul?  
+On Mon, Dec 02, 2024 at 09:26:58AM +0100, Wolfram Sang wrote:
+> No need to check the argument of i2c_unregister_device() because the
+> function itself does it.
 > 
-> Looks plausible to me, though I don't understand why the introduction
-> of trace() doesn't permit removal of the corresponding current code.
-> (Or did I miss a previous patch that did just that?)
-> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-I removed the trace_*_rcuidle() code, but this file still used it. I didn't
-realize that removing the trace_*_rcuidle() in this file would break other
-architectures.
+merged to i2c/i2c-host.
 
-This patch is a work around to not need to re-introduce the
-trace_*_rcuidle() code.
-
--- Steve
+Thanks,
+Andi
 
