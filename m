@@ -1,77 +1,54 @@
-Return-Path: <linux-kernel+bounces-431457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3681B9E3D88
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:01:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F569E3D8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:02:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF5F1641AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6292B281364
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6462B20B1E0;
-	Wed,  4 Dec 2024 15:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D4B20B208;
+	Wed,  4 Dec 2024 15:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oZOwjBa8"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lBUUgytG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F381B21BA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B820B1E0;
+	Wed,  4 Dec 2024 15:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324479; cv=none; b=ka5tlnJJjduHj7l8nplSqqzXnTSSLyNqT3OV9bcNH4CI4nvv6Ss9JGeE2bxldpbgTC7ND4II1zep8GV8dxwS8sJWh3G1UtcaHa85SjJ9jppuiC68icP68iSrilMz1xYLQFxL0kWDPtdnT0gYF+eL1/Zs+fPZVKvRzQhIPjTjzp4=
+	t=1733324523; cv=none; b=lET2fis3zaFDiKwzGbbdtWOM1otqJUSaaYKgzph8dQk8osmNSNPrKQWuXSf1J8OS9okMTDfT/uuDR5LOK5cF4QqnDUDglPW4zgVAQtWgIJcqLz//49LmSaf4mSx4mpsuKNQjsPtVCsBKaG+IprmnUPs/NoqZqiAB+x3e+lqTNsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324479; c=relaxed/simple;
-	bh=6kjyngAnwpH6ls7V5d24AxdLuqf0alE2vR0sSf2qLag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R0F6zzPz8uKSNYjrzhr6IjBagJdqyycqGemlPr0PpNhVy0ilQrf4i9tX3+FlzLFDa6OgMLnzx611+21D3hC6qLxYNzHhvEld8IihDNiLSutCBazuBTDvBZwnIB111/H5cVNPWFH/GxRV7FY+/mhCBTtOhCSKX8eZwREasR7LaVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oZOwjBa8; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3ea45abb4e1so2899131b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:01:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733324476; x=1733929276; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GU+LWkcgTUBKRbXJUWBk2tKb9KisMQLrnXNhHENNNSA=;
-        b=oZOwjBa8S60GkP4U6jrZzpAVCnA+kwjtjpBs4hI0yIn1GFIAU9SzZ3sGTWKfdHLHf+
-         /qI/MrZ7I85W5qq6XYssaEjlcbvUpf5Y775Jz/tg3ee3vXuC8juCpfbRxxLTnz21OU9+
-         Q9MlRYcGi8aSvqvLhNwUokJBJC3VLQgdv1CotSTZfm4CU+nj+OOPKG2fnbpjGJ8Iu+uL
-         qQ+bjwk31nyflF1rERRjkSaX+NssQaO+FEaux7w1m2W2K9/82xjiyPkgLphv5obAeUIz
-         lTY63XsFnb+OLRL3Ur6lhs1W9RTEMiPh224I0TNznaX65rCbQk2t+xP7r6CZ9jbNF8Rs
-         UkmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733324476; x=1733929276;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GU+LWkcgTUBKRbXJUWBk2tKb9KisMQLrnXNhHENNNSA=;
-        b=F0/9/2h1shSrdJ/FIzKfF3CcHhfKIr06N48F2XT6jnXj85MUlgmmGJzk6a/LyF/L3d
-         jRlAnc7SD9zU3vyQZJ5sifficeDTXt3HjPoHttPNq8LEcFLX1sgUr878wG59g/gUsskB
-         f3s64jARhOaNdqN2LsVEEQnZtLMKcp9wqmEmL7w81t2MLYP/dNBD2RqshXZ6S+WG02bq
-         87udFPswl46ZPhVWcCDUEvq+u6fHVT+JdMnCrBOwIUYjRwSXXgHLalsAdues8KuJx/ge
-         ld2dEz4ar3S69buBKPa/JQ1nG33hA8Eosv6QYmCcbCgUb6/aRxlvkpHSJ0/e42jEF6Z4
-         093w==
-X-Forwarded-Encrypted: i=1; AJvYcCUPuc4JmuYVgZ87P54SzsEVoR2naFdxOeL/yUJHt630iG+KCSpA5AkW7q6bWmQ+cJJqcLMAmF2PUZEyQjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVI+oGFvbXGzT97DMhj80Cfzb/ehSNFZW7ybL32fc/GwelDCN9
-	E8ntybAS/tASP8r1o9T/geUkfEepUYE0Z79AWrZBQzVM4UdpwNGJwnvkgSaZ5FQ=
-X-Gm-Gg: ASbGncs8g58zB3lHAKPBfQhnbKEIa3+qvRcMGSwbGIFvF+W+rlQ2idIim7GuNcjhIHe
-	5j4+Ep7iM3bmjDdymn81n9Sc+Ot/a7VtZ+xr3luKFLqWiBisZJ/d9B4NlhQcyvotwfRz9Xf+pVe
-	CwCqRBM0JK/TK4qnDOgF7/ZDSnB3OUjTaDzEXQ050p2wwiKu/sZpyjTH23H0/1bGghZ2dxTXD0n
-	ficvqB29mEy0jc7vjmMjbQSrCM41jYTIFb6L0Bk1LFgDvOl
-X-Google-Smtp-Source: AGHT+IFKmmrKt72kBSqpTqcbtxEF3R5Y2zboMiL6UtgHDWZL9dVc3fUYJ+oRiHg2rky5L2PB5/7ppw==
-X-Received: by 2002:a05:6808:219f:b0:3ea:4ec7:79cc with SMTP id 5614622812f47-3eae4ec7d31mr7289593b6e.3.1733324475602;
-        Wed, 04 Dec 2024 07:01:15 -0800 (PST)
-Received: from [172.20.2.46] ([130.250.255.163])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea860d92dcsm3375114b6e.24.2024.12.04.07.01.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 07:01:14 -0800 (PST)
-Message-ID: <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
-Date: Wed, 4 Dec 2024 08:01:13 -0700
+	s=arc-20240116; t=1733324523; c=relaxed/simple;
+	bh=7jcAdzZx2lqQzNAE8QFFcDHmNk++zheRlOY5LIlRKRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j86B9T84OB3t2oC+9Bnk+OvQPTN2ftP4wYhqMBf2bC02eISTF4clhRDEUEfCAcTPse/Mf82pU3LLu9DmqS0n1iygqaKHS/ViWn/Rup1yaOystocyJH7lXSzDgx7KV2wTPVMHZHfPLUI3eJO/rYVS/5CyX92uXXc/x8fAP3RqUGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lBUUgytG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733324519;
+	bh=7jcAdzZx2lqQzNAE8QFFcDHmNk++zheRlOY5LIlRKRw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lBUUgytGP51L3LiEeqXIUAZMK/wpp1ibsYPessz78EjYcd5woYyokmkZotqEqt7aA
+	 PoURH5dI9Xweu2fNwYOzmKYUggYFJ9Tj7mTEa0hp9Ik24SVdj+ghAxCVtkdCULcT66
+	 t+uB6uSQGLyRscDtSX+6+4PaQw8W8XnowXC5XVUNei6ldUTAqF8M3hcKdsnhThcKXe
+	 CDyqp393rZ2CvS+Ts158aduOLGMxYWJXN24CuiDgzRLX3V1aT3KwUPRLftUnl++Q1X
+	 OymoJRqGfs1fQkrGyE5Gokltjj3a4MpTIDsW6nwJnrb5GB0WQjAE38Q2NX18k3k7Gs
+	 rr3QRbx64tGxA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 148A117E3775;
+	Wed,  4 Dec 2024 16:01:58 +0100 (CET)
+Message-ID: <272b76ed-0ccc-46f2-8c43-92c047f2f0d3@collabora.com>
+Date: Wed, 4 Dec 2024 16:01:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,88 +56,203 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in
- sys_io_uring_register
-To: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+Subject: Re: [PATCH v1 2/7] dt-bindings: display: mediatek: Add binding for
+ MT8195 HDMI-TX v2
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "simona@ffwll.ch" <simona@ffwll.ch>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>
+References: <20241120124512.134278-1-angelogioacchino.delregno@collabora.com>
+ <20241120124512.134278-3-angelogioacchino.delregno@collabora.com>
+ <721896498fe9a5ba5a942fe837deb90d461b5090.camel@mediatek.com>
+ <3d5f7106-6425-420c-abac-39feed11c95c@collabora.com>
+ <4b1eb13d027717abaaaf4ee7aa927239ba314572.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <67505f88.050a0220.17bd51.0069.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <4b1eb13d027717abaaaf4ee7aa927239ba314572.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 12/4/24 6:56 AM, syzbot wrote:
-> Hello,
+Il 29/11/24 03:51, CK Hu (胡俊光) ha scritto:
+> On Thu, 2024-11-28 at 11:32 +0100, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until you have verified the sender or the content.
+>>
+>>
+>> Il 28/11/24 07:02, CK Hu (胡俊光) ha scritto:
+>>> Hi, Angelo:
+>>>
+>>> On Wed, 2024-11-20 at 13:45 +0100, AngeloGioacchino Del Regno wrote:
+>>>> External email : Please do not click links or open attachments until you have verified the sender or the content.
+>>>>
+>>>>
+>>>> Add a binding for the HDMI TX v2 Encoder found in MediaTek MT8195
+>>>> and MT8188 SoCs.
+>>>>
+>>>> This fully supports the HDMI Specification 2.0b, hence it provides
+>>>> support for 3D-HDMI, Polarity inversion, up to 16 bits Deep Color,
+>>>> color spaces including RGB444, YCBCR420/422/444 (ITU601/ITU709) and
+>>>> xvYCC, with output resolutions up to 3840x2160p@60Hz.
+>>>>
+>>>> Moreover, it also supports HDCP 1.4 and 2.3, Variable Refresh Rate
+>>>> (VRR) and Consumer Electronics Control (CEC).
+>>>>
+>>>> This IP also includes support for HDMI Audio, including IEC60958
+>>>> and IEC61937 SPDIF, 8-channel PCM, DSD, and other lossless audio
+>>>> according to HDMI 2.0.
+>>>>
+>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> ---
+>>>>    .../mediatek/mediatek,mt8195-hdmi.yaml        | 150 ++++++++++++++++++
+>>>>    1 file changed, 150 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..273a8871461e
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>>>> @@ -0,0 +1,150 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: https://urldefense.com/v3/__http://devicetree.org/schemas/display/mediatek/mediatek,mt8195-hdmi.yaml*__;Iw!!CTRNKA9wMg0ARbw!lu0D_C3TwQ2-02jWYABnMIQ8vEoUwP0O4gbQndJnPUMpdi6wXdAHra9ivCfB7zoelDI7qsS20YdRlmP4bEKAABletXFX$
+>>>> +$schema: https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!lu0D_C3TwQ2-02jWYABnMIQ8vEoUwP0O4gbQndJnPUMpdi6wXdAHra9ivCfB7zoelDI7qsS20YdRlmP4bEKAAFlnY-KY$
+>>>> +
+>>>> +title: MediaTek HDMI-TX v2 Encoder
+>>>> +
+>>>> +maintainers:
+>>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> +  - CK Hu <ck.hu@mediatek.com>
+>>>> +
+>>>> +description: |
+>>>> +  The MediaTek HDMI-TX v2 encoder can generate HDMI format data based on
+>>>> +  the HDMI Specification 2.0b.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - mediatek,mt8188-hdmi-tx
+>>>> +      - mediatek,mt8195-hdmi-tx
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    items:
+>>>> +      - description: HDMI APB clock
+>>>> +      - description: HDCP top clock
+>>>> +      - description: HDCP reference clock
+>>>> +      - description: VPP HDMI Split clock
+>>>
+>>> I would like to know more about HDMI v2.
+>>> Would you map each v2 clock to v1 clock?
+>>> If one clock has no mapping, is it a new feature that v1 does not has?
+>>>
+>>
+>> The HDMIv2 HW block seems to be almost completely different from the v1, and
+>> it is also interconnected in a different way compared to MT8173 (the path goes
+>> through VPP1, while the v1 is just direct to DPI/MMSYS).
+>>
+>> The v1 block had specific clocks for the audio (i2s, I believe) and for the SPDIF,
+>> and I have no idea how v1 does HDCP, but I don't see any specific clock for that.
+>>
+>> The v2 block is clocked from the HDCP clock, the (apb) bus has its own clock, and
+>> the video out needs the vpp split clock.
+>>
+>> It's just different, and we can't shove the v2 binding inside of the v1 one, but
+>> even if we could, since the v2 block is *that much* different from v1, it'd be a
+>> mistake to do so.
+>>
+>> Since the binding describes hardware, and since this v2 HW is *very* different
+>> from v1, it needs a new binding document, that is true even if you find a way to
+>> get the clocks to match (which is not possible, anyway).
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    c245a7a79602 Add linux-next specific files for 20241203
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=10ae840f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=092bbab7da235a02a03a
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a448df980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cca330580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/8cc90a2ea120/disk-c245a7a7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/0f6b1a1a0541/vmlinux-c245a7a7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9fa3eac09ddc/bzImage-c245a7a7.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-> BUG: KASAN: null-ptr-deref in atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
-> BUG: KASAN: null-ptr-deref in put_cred_many include/linux/cred.h:255 [inline]
-> BUG: KASAN: null-ptr-deref in put_cred include/linux/cred.h:269 [inline]
-> BUG: KASAN: null-ptr-deref in io_unregister_personality io_uring/register.c:82 [inline]
-> BUG: KASAN: null-ptr-deref in __io_uring_register io_uring/register.c:698 [inline]
-> BUG: KASAN: null-ptr-deref in __do_sys_io_uring_register io_uring/register.c:902 [inline]
-> BUG: KASAN: null-ptr-deref in __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
-> Write of size 8 at addr 0000000000000406 by task syz-executor274/5828
-> 
-> CPU: 1 UID: 0 PID: 5828 Comm: syz-executor274 Not tainted 6.13.0-rc1-next-20241203-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_report+0xe8/0x550 mm/kasan/report.c:492
->  kasan_report+0x143/0x180 mm/kasan/report.c:602
->  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
->  atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
->  put_cred_many include/linux/cred.h:255 [inline]
->  put_cred include/linux/cred.h:269 [inline]
->  io_unregister_personality io_uring/register.c:82 [inline]
->  __io_uring_register io_uring/register.c:698 [inline]
->  __do_sys_io_uring_register io_uring/register.c:902 [inline]
->  __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f65bbcb03a9
-> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffe8fac7478 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-> RAX: ffffffffffffffda RBX: 000000000000371d RCX: 00007f65bbcb03a9
-> RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
-> RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00007ffe8fac7648 R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
-> ==================================================================
 
-Not sure what's going on with -next, but this looks like nonsense - we
-store a valid pointer in the xarry, and then attempt to delete an
-invalid index which then returns a totally garbage pointer!? I'll check
-what is in -next, but this very much does not look like an io_uring
-issue.
+Hey. Sorry about the late reply, it's been quite busy days here :-)
 
--- 
-Jens Axboe
+> v2 indeed is very different from v1, so it's not necessary to merge binding document.
+> I would like to have more information about the difference in binding document,
+> so that we could clearly understand that v1 and v2 are so different.
+> 
+
+Sounds reasonable.
+
+> I think pixel clock is important for HDMI hardware, but I do not see it in HDMI v2.
+> It is better has some documentation about why pixel clock disappear in HDMI v2.
+
+Right. I'll write it in the PHY description.
+
+   phys:
+     maxItems: 1
+     description:
+        The HDMI TX PHY, clocking TMDS and pixel to this controller
+
+> 
+> I've some 'WHY' about v2.
+> Why no audio clock in v2?
+
+It's clocked by the HDCP CGs...
+
+> Audio control part is moved out of HDMI block?
+> 
+> For HDCP, maybe v1 driver has not implement it so forget to add it in binding document.
+> So just skip the HDCP.
+
+...and the controller needs HDCP clocks for register access, so these are
+main clocks and cannot be skipped.
+
+> 
+> The four clock in v2 does not exist in v1, so what is the function of each one?
+> If possible, ask MediaTek staff for more information.
+
+I'll try to ask to shove more information in this binding, let's see.
+
+Cheers,
+Angelo
+
+> 
+> Regards,
+> CK
+> 
+>>
+>> Cheers,
+>> Angelo
+>>
+>>> Regards,
+>>> CK
+>>>
+>>>> +
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: bus
+>>>> +      - const: hdcp
+>>>> +      - const: hdcp24m
+>>>> +      - const: hdmi-split
+>>>> +
+>>>>
+>>>> --
+>>>> 2.47.0
+>>>>
+>>
+>>
+
+
 
