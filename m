@@ -1,157 +1,124 @@
-Return-Path: <linux-kernel+bounces-432145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 270E59E4666
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:15:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B59FC9E4663
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C68EB169FBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:15:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909F1169C08
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2471917EE;
-	Wed,  4 Dec 2024 21:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773D91917D7;
+	Wed,  4 Dec 2024 21:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Rw2UNFh6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NBM0o1S1"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6Iv8K+J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFED1944F;
-	Wed,  4 Dec 2024 21:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FDD239186;
+	Wed,  4 Dec 2024 21:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733346899; cv=none; b=DV7KJWhG1e7GsG7IPRyfQFDovRuwm6EB6KVS0OM5a5I6ybXeVYwrNoszq660BSFBr7FL9l1rvuTcWht2bx+hQdqUoqor3q6O2WnBbcqRd52xAiu1uZfaTMhw5oEFYq0UcsHlCCeL1XNF97mV3H7M//vs8RonKaC3dguHZNMxE7Y=
+	t=1733346886; cv=none; b=RKc8DYQSuy4+UnWfd7tAR2ZZOmo9pudKJLH7jX4MBcR2rmTcHGSmhU9+YGUg1E8cEuqYZx1Vw6/jAwlUiHs0BGuZpooAZBA/LVOWmeunN9bfdbjG3JXG9p6ocnE685Ato81WpPiQsbUAH50wkpWiUhh/CD+dkpNcN2ZG9/nPKpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733346899; c=relaxed/simple;
-	bh=rbwkvmyO46CY+gzggxI7A3oUWGLx+T+juEN5TbOEtbw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Q2orsX9ASYqdUALmWN/H4bgQkwuo8gxo1vZnZ1UFNma+NWqf8KOIK7mhjaWlDY1J5JX6LTK3XgAY9hhq2v0uEcsxXMacOjRrKZGqHfaTJe9dfBR5wavKXPD4VQmE36iEp1OG/JRF6v6HEN/XPDjysZAezzVVDMIfe7Zrq9KunpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Rw2UNFh6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NBM0o1S1; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 8094C25401C4;
-	Wed,  4 Dec 2024 16:14:56 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 16:14:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733346896;
-	 x=1733433296; bh=LF8iUI8zmIoSB/UxxJx2/rXwczmvG0EFZRWKcV8LpEc=; b=
-	Rw2UNFh6IIeoijXWKy15u7/LOcHPRNMWBPMh8RZ5Xkrp+IPp5ag0Ww+CF2MTuEDF
-	44XFyJkyRUeQnp+AjtuZ3kyqEHom5bXaE4f1rcxSKZUX2l39ywSdOgO1o0dH9WOA
-	FiWdl13jVXhjb+bJ84IZ38fTTcMDruk+rvSU+54mZe4jDzbHr9q3xrrHA96dpgTi
-	FHNeG5UHDUcfASoGonabcEsh1Nt8dup1c+CluXMwlp57rB+Watw87tgdMjT2fLfU
-	A5rooIGYxxLtlRZrbyeczcyU3v+apsMERggH8itP+b5kGQ1zBa/4AsADjXJ6wNci
-	bdUrU93prH+Mxj+15hUcBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733346896; x=
-	1733433296; bh=LF8iUI8zmIoSB/UxxJx2/rXwczmvG0EFZRWKcV8LpEc=; b=N
-	BM0o1S1dTWKdphVy3sW2axvDp2IhnO1uJDR/+oT8Mebn41HPxrFKIrlZ4oWxINnV
-	UHitdMAUtOsH/GewtiUs32zVn+0Ik0dC15kAv0OIFFOwlTBdcHfS2eaf46KedqdF
-	Zz/wDshNT2s+Sglg0RPSrdjzPBBWox1WAn1mTqZD7Vwh1qHP6vcUckOg3TOj0ugv
-	QiakdsZdY4n9Si2/BnvfZKoREGxuDLrCZ4dGh2ikgku4itwnRHaxqJ46doTqpzcj
-	QbImJEI3InfJpqSvD7Z/OANHKjA5hbhRvWD+n/RsRJYbBoVNR4re07kA/w3VoDA3
-	MOxycI089WnVaPYf9wrlA==
-X-ME-Sender: <xms:T8ZQZ6xPqRFKFYNpHTmwgMvBqpYsVSwotgeVq_RCzVH_nAnj5udxEQ>
-    <xme:T8ZQZ2SQMYWcEUXHFUiXZhhZQ9nsGvEdLMnBjauLOXQ3YipltGZu_kTQAOk_cHkxi
-    ZswSP-Ujki8RZjIRw0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgddugedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudej
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopegrnhguhidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepsghrghgvrhhsthesghhmrghilhdrtghomhdprhgtphhtthhopegtihhmihhnrg
-    hghhhisehgnhhuuggurdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdr
-    tghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpth
-    htoheprghnugihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:T8ZQZ8WqZAml3Yv-vejuW-qPq_1UZ_5fsQCvgchXSpDE4NzVSyO0QA>
-    <xmx:T8ZQZwggyfktWj-ZmBNFybSO5XqrCoPbjAXIDsqUyqPna8dWXJdJ-w>
-    <xmx:T8ZQZ8CXDcGoZzGN4nk9Ypq4g1G0vpM4REaI1iNlq6KNtByu5D8IhA>
-    <xmx:T8ZQZxK5Bk8GwSpxuQml_q2pFAPyUn7ErsxK-1aMAzU8DujZ-M28Aw>
-    <xmx:UMZQZ2ydIhi2LYwxf4_p8Cwv6d9mSGWJXwBBkI_4_Aamjg3Rqqf5Cy43>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 419CC2220073; Wed,  4 Dec 2024 16:14:55 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733346886; c=relaxed/simple;
+	bh=v8j3BUCG88ijthg2mICcvqP+ZMewN+fTTSM8Zj9u2sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nw1gxKofMLViRAiSAEP5+ux7M9k5J+ZoAlUFdB8MRpyj+dBkfDXtvHoMvmJT8Fy3vuhFcaPtLWPlRN9se+P86a9J5H9ocEoVVpDvP8sH4fmzTAaF52EeM8wFkx2fYo+nJo6e63RAT3FKZklUwaO2iADu5itmXhdW0QlHV8XQMtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6Iv8K+J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C79AEC4CECD;
+	Wed,  4 Dec 2024 21:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733346886;
+	bh=v8j3BUCG88ijthg2mICcvqP+ZMewN+fTTSM8Zj9u2sI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C6Iv8K+JNDAJ0uGpvWu0kZoHvBvoyUwgZx31Eu8iVQdpBNmjvqob2j5z5y5/pjT3z
+	 ZjHKcNuKr2ygXvwvYo79P5xsiaDG8bx95yv/cYRB5h1484jW9xTORD/rQL2UkIVHHo
+	 nuUqPI2P58XFz0/CxUEPUaP0PL95Ysz/9qFshh5vzSLidmtdZxkr/m6zhuvQr1K0DQ
+	 CYW3kmunNlno/XrT+ZINfJmNr9lqbseQnl74jtPE6TFt6/gauxz+mUKYfciqvhKoat
+	 aOgdMGF62mZxyA48i20q+KypQQo0QrYSA2SM4KMR2DeHm+w0DHhC2NnauqlECqNQO+
+	 511sbfEnFKpBQ==
+Date: Wed, 4 Dec 2024 18:14:42 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf script python: Improve physical mem type
+ resolution
+Message-ID: <Z1DGQp_ahnYFcF6J@x1>
+References: <20241119180130.19160-1-irogers@google.com>
+ <9fe0616a-edfa-4e51-9649-f19fb1d44821@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Dec 2024 22:14:33 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andy.shevchenko@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, "Brian Gerst" <brgerst@gmail.com>,
- "Arnd Bergmann" <arnd@kernel.org>, linux-kernel@vger.kernel.org,
- x86@kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
- "Sean Christopherson" <seanjc@google.com>,
- "Davide Ciminaghi" <ciminaghi@gnudd.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
-Message-Id: <dccca669-7981-4f36-a701-0692c6b5c958@app.fastmail.com>
-In-Reply-To: 
- <CAHp75VfyBLTnY1kReQ-ALngWqPoyLaHhsmT1shR_UzpL8sK1UA@mail.gmail.com>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-6-arnd@kernel.org>
- <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com>
- <A0F192E7-EFD2-4DD4-8E84-764BF7210C6A@zytor.com>
- <13308b89-53d1-4977-970f-81b34f40f070@app.fastmail.com>
- <CAHp75VfyBLTnY1kReQ-ALngWqPoyLaHhsmT1shR_UzpL8sK1UA@mail.gmail.com>
-Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9fe0616a-edfa-4e51-9649-f19fb1d44821@linux.intel.com>
 
-On Wed, Dec 4, 2024, at 19:37, Andy Shevchenko wrote:
-> On Wed, Dec 4, 2024 at 6:57=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> w=
-rote:
->> On Wed, Dec 4, 2024, at 17:37, H. Peter Anvin wrote:
->> > On December 4, 2024 5:29:17 AM PST, Brian Gerst <brgerst@gmail.com>=
- wrote:
->> >>>
->> >>> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOT=
-LB.
->> >>> PAE mode is still required to get access to the 'NX' bit on Atom
->> >>> 'Pentium M' and 'Core Duo' CPUs.
->> >
->> > By the way, there are 64-bit machines which require swiotlb.
->>
->> What I meant to write here was that CONFIG_X86_PAE no longer
->> needs to select PHYS_ADDR_T_64BIT and SWIOTLB. I ended up
->> splitting that change out to patch 06/11 with a better explanation,
->> so the sentence above is just wrong now and I've removed it
->> in my local copy now.
->>
->> Obviously 64-bit kernels still generally need swiotlb.
->
-> Theoretically swiotlb can be useful on 32-bit machines as well for the
-> DMA controllers that have < 32-bit mask. Dunno if swiotlb was designed
-> to run on 32-bit machines at all.
+On Tue, Nov 19, 2024 at 03:05:41PM -0500, Liang, Kan wrote:
+> On 2024-11-19 1:01 p.m., Ian Rogers wrote:
+> > After:
+> > ```
+> > Event: mem_inst_retired.any:P
+> > Memory type                                    count  percentage
+> > ----------------------------------------  ----------  ----------
+> > 100000000-105f7fffff : System RAM               9460        90.5
+> >   841400000-8416599ff : Kernel data               45         0.4
+> >   840800000-8412a6fff : Kernel rodata             19         0.2
+> >   841ebe000-8423fffff : Kernel bss                12         0.1
+> > 0-fff : Reserved                                 998         9.5
+> > ```
 
-Right, that is a possibility. However those machines would
-currently be broken on kernels without X86_PAE, since they
-don't select swiotlb.
+> > The code has been updated to python 3 with type hints and resolving
+> > issues reported by mypy and pylint. Tabs are swapped to spaces as
+> > preferred in PEP8, because most lines of code were modified (of this
+> > small file) and this makes pylint significantly less noisy.
+ 
+> Thanks Ian. A very nice improvement!
+ 
+> Acked-by: Kan Liang <kan.liang@linux.intel.com>
 
-If anyone does rely on the current behavior of X86_PAE to support
-broken DMA devices, it's probably best to fix it in a different
-way.
+Thanks, tested on a:
 
-      Arnd
+  root@number:/tmp# grep -m1 "model name" /proc/cpuinfo 
+  model name	: Intel(R) Core(TM) i7-14700K
+  root@number:/tmp#
+
+and applied to perf-tools-next:
+
+      root@number:/tmp# perf script mem-phys-addr -a find /
+      <SNIP>
+      /bin
+      /lib
+      /lib64
+      /sbin
+      Warning:
+      744 out of order events recorded.
+      Event: cpu_core/mem_inst_retired.all_loads/P
+      Memory type                                    count  percentage
+      ----------------------------------------  ----------  ----------
+      100000000-8bfbfffff : System RAM              364561        76.5
+        621400000-6223a6fff : Kernel rodata          10474         2.2
+        622400000-62283d4bf : Kernel data             4828         1.0
+        623304000-6237fffff : Kernel bss              1063         0.2
+        620000000-6213fffff : Kernel code               98         0.0
+      0-fff : Reserved                              111480        23.4
+      100000-2b0ca017 : System RAM                     337         0.1
+      2fbad000-30d92fff : System RAM                    44         0.0
+      2c79d000-2fbabfff : System RAM                    30         0.0
+      30d94000-316d5fff : System RAM                    16         0.0
+      2b131a58-2c71dfff : System RAM                     7         0.0
+      root@number:/tmp#
+
+- Arnaldo
 
