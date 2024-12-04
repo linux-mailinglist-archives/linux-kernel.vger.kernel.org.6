@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-431415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128799E3E65
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:35:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBC19E3E1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2732DB3A13F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:46:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA3FDB3B924
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115E420C461;
-	Wed,  4 Dec 2024 14:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE4420D515;
+	Wed,  4 Dec 2024 14:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PKkmeevQ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jpCk6NWM"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB23520ADE3;
-	Wed,  4 Dec 2024 14:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4320ADE3;
+	Wed,  4 Dec 2024 14:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323512; cv=none; b=QV7Y+6qtjj1t4Wdm1SugW5di/VUi5Iw1kU+f+k5iWcU33fSLa7jQRj2x4Xp59T9OYLNDgF100urT2YX+VbX/V4MBKHLjcBMkAWErz4d8ujyBEVc9/xdLWE1wOI9xMSVW89JVK81LCMGaMZTeC5cKRuYT5rtC7s1uOxHpJ/EgI+A=
+	t=1733323518; cv=none; b=Sq3Cux0y/KtDfkwkeoqUXvV08KyfbjHHpLLEM5WjUg0TcVGdjkN7TZoeQZkUZGfvDzDFEUDNTwMh6eKJf4Mn7Fq6SXF9EypdRypSmUXfjiI2dAksZTgVkmcMvZquqNSxBqqmTkCtYfncZXSu4QgfbF2WPSM2sW7tcHq7Uy7FljQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323512; c=relaxed/simple;
-	bh=ZjvHZkc5inY+pRASyJgpQhjoZd37S6DxzdVDTHf6W+I=;
+	s=arc-20240116; t=1733323518; c=relaxed/simple;
+	bh=jFx9gWmGgDxkJf7XaOJt5hNRO++Y2BmhGXL5v1zE70w=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PVH7jV3qgnhT8yQwdWlq03wnqpoFOp71EKUYrX3h2bW49gMBw0WdVJrwTzVN9ixXISFn2ydVHE5TBifkliMGMOfL2+uiESvYGjqDte1bhiP53zqER8+TUusvoo2FgH0O+0rNVKdhJaZrU/zBWjqPro3zbbXGqKoLXJ6yfuJjCvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PKkmeevQ; arc=none smtp.client-ip=217.70.183.193
+	 In-Reply-To:To:Cc; b=CpSg59nd5Im8FE8F3ajIp4YjwqO0DdtpU9YWZIWczv8VYgYy3UN7XDdJQRdQiGo0IlKuqZXb2vVQjyFGKQIAoY7CCkRKBIE9ouWQ9jdyfBMymmBtljT63QgwbzsOlETMYSE2fmW7D+ojpdXovpC4A8cxN3RLjvAscbFY7fUhZgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jpCk6NWM; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 31B82240008;
-	Wed,  4 Dec 2024 14:45:06 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2CF31240007;
+	Wed,  4 Dec 2024 14:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733323508;
+	t=1733323514;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uMy6XiHeL00a21AbpVvnbAktcJJ0pCxX4TSIpkEjL+M=;
-	b=PKkmeevQYDm6OoSuXeVAgtJrFaFnPsrB0i8h2xa/KiQROdqvHfLkmtM1/zTP6qvfgE1T4M
-	WlMK/kUrn3CVIBjt2R6OR6aetZcOfvVFDkFrzPDN6eO5hxEg3VEtLTNrkF00dj3+qgijoB
-	1CktsGWQaTm+B2QyumOIdTFy86LD5koJApeKgsFTVDyrcAy1WBkC7cK2P0QFhP7lvRzBXJ
-	Neozive5coTsdkR9A+nXe/QyDSnxoGeeQsbJjTOHSsW4DnSxbBlpQ18VCjBDGJtu8eFiOH
-	ZwInT7+ixlp+dIfyGLbuEgkdMvW+GWstHRnirNofumrH8IVTAUazQP3F9V8z2Q==
+	bh=ujuBVPIY7WdvMp1aoMcrWlVYuZNElEJ0tgmIpRd1T44=;
+	b=jpCk6NWMiaSu77w2w0FMi/v6lzy+FJAPAqn776QpQWxVDM1qS18s0F2X/b7neYs0jgsuHI
+	jV9OKLEcLKcTI85EynKaUji+ywFfPNjoDVVM/9LM9IhxYTUkh8I1otCh/PNvi2GvUBGW94
+	p1lo79hjvfVteGX1+6JPsSjf4i5nyH5AeV/c82OG9l1gqAEygffPhYQc/jCo88G65YYQfo
+	rD6hPROjnE5RSEFyj8rtC2OhWlqri/keCwaChrl3SQ9RRgSQlXqa1Z1K24dhLMyJJgOf0o
+	LdnpLtMWA/vI6R71RGcvhTNC652K4gqsitpxVZtg1a+pZV5vgQR/NoGC0uy6VA==
 From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 04 Dec 2024 15:44:43 +0100
-Subject: [PATCH net-next v20 2/6] net: Make net_hwtstamp_validate
- accessible
+Date: Wed, 04 Dec 2024 15:44:47 +0100
+Subject: [PATCH net-next v20 6/6] netlink: specs: Enhance tsinfo netlink
+ attributes and add a tsconfig set command
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-feature_ptp_netnext-v20-2-9bd99dc8a867@bootlin.com>
+Message-Id: <20241204-feature_ptp_netnext-v20-6-9bd99dc8a867@bootlin.com>
 References: <20241204-feature_ptp_netnext-v20-0-9bd99dc8a867@bootlin.com>
 In-Reply-To: <20241204-feature_ptp_netnext-v20-0-9bd99dc8a867@bootlin.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>, 
@@ -89,49 +89,247 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.1
 X-GND-Sasl: kory.maincent@bootlin.com
 
-Make the net_hwtstamp_validate function accessible in prevision to use
-it from ethtool to validate the hwtstamp configuration before setting it.
+Add new attributed to tsinfo allowing to get the tsinfo from a phc provider
+(composed by a phc index and a phc qualifier) on a netdevice's link.
+Add simultaneously a tsconfig command to be able to get and set hwtstamp
+configuration for a specified phc provider.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Here is few examples:
+./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema
+             --dump tsinfo-get
+             --json '{"header":{"dev-name":"eth0"}}'
+[{'header': {'dev-index': 3, 'dev-name': 'eth0'},
+  'hwtst-provider': {'index': 0, 'qualifier': 0},
+  'phc-index': 0,
+  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
+                                  {'index': 2, 'name': 'some'}]},
+                 'nomask': True,
+                 'size': 16},
+  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
+                                    {'index': 2, 'name': 'hardware-receive'},
+                                    {'index': 6,
+                                     'name': 'hardware-raw-clock'}]},
+                   'nomask': True,
+                   'size': 17},
+  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
+                                {'index': 1, 'name': 'on'}]},
+               'nomask': True,
+               'size': 4}},
+ {'header': {'dev-index': 3, 'dev-name': 'eth0'},
+  'hwtst-provider': {'index': 2, 'qualifier': 0},
+  'phc-index': 2,
+  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
+                                  {'index': 1, 'name': 'all'}]},
+                 'nomask': True,
+                 'size': 16},
+  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
+                                    {'index': 1, 'name': 'software-transmit'},
+                                    {'index': 2, 'name': 'hardware-receive'},
+                                    {'index': 3, 'name': 'software-receive'},
+                                    {'index': 4,
+                                     'name': 'software-system-clock'},
+                                    {'index': 6,
+                                     'name': 'hardware-raw-clock'}]},
+                   'nomask': True,
+                   'size': 17},
+  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
+                                {'index': 1, 'name': 'on'},
+                                {'index': 2, 'name': 'onestep-sync'}]},
+               'nomask': True,
+               'size': 4}}]
+
+./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-get
+             --json '{"header":{"dev-name":"eth0"},
+                      "hwtst-provider":{"index":0, "qualifier":0 }
+}'
+{'header': {'dev-index': 3, 'dev-name': 'eth0'},
+ 'hwtst-provider': {'index': 0, 'qualifier': 0},
+ 'phc-index': 0,
+ 'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
+                                 {'index': 2, 'name': 'some'}]},
+                'nomask': True,
+                'size': 16},
+ 'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
+                                   {'index': 2, 'name': 'hardware-receive'},
+                                   {'index': 6, 'name': 'hardware-raw-clock'}]},
+                  'nomask': True,
+                  'size': 17},
+ 'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
+                               {'index': 1, 'name': 'on'}]},
+              'nomask': True,
+              'size': 4}}
+
+./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-set
+             --json '{"header":{"dev-name":"eth0"},
+                      "hwtst-provider":{"index":2, "qualifier":0}}'
+None
+./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-get
+	     --json '{"header":{"dev-name":"eth0"}}'
+{'header': {'dev-index': 3, 'dev-name': 'eth0'},
+ 'hwtstamp-flags': 1,
+ 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
+ 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
+                'nomask': True,
+                'size': 16},
+ 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
+              'nomask': True,
+              'size': 4}}
+
+ ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-set
+	      --json '{"header":{"dev-name":"eth0"},
+		       "hwtstamp-provider":{"index":1, "qualifier":0 },
+		       "rx-filters":{"bits": {"bit": {"name":"ptpv2-l4-event"}},
+				     "nomask": 1},
+		       "tx-types":{"bits": {"bit": {"name":"on"}},
+				   "nomask": 1}}'
+{'header': {'dev-index': 3, 'dev-name': 'eth0'},
+ 'hwtstamp-flags': 1,
+ 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
+ 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
+                'nomask': True,
+                'size': 16},
+ 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
+              'nomask': True,
+              'size': 4}}
+
 Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
-
-Change in v8:
+Changes in v8:
 - New patch
 
-Change in v10:
-- Remove export symbol as ethtool can't be built as a module.
-- Move the declaration to net/core/dev.h instead of netdevice.h
----
- net/core/dev.h       | 1 +
- net/core/dev_ioctl.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Changes in v10:
+- Add ghwtstamp attributes
+- Add tsinfo ntf command
 
-diff --git a/net/core/dev.h b/net/core/dev.h
-index 357543cbde65..aa91eed55a40 100644
---- a/net/core/dev.h
-+++ b/net/core/dev.h
-@@ -312,5 +312,6 @@ int dev_set_hwtstamp_phylib(struct net_device *dev,
- 			    struct netlink_ext_ack *extack);
- int dev_get_hwtstamp_phylib(struct net_device *dev,
- 			    struct kernel_hwtstamp_config *cfg);
-+int net_hwtstamp_validate(const struct kernel_hwtstamp_config *cfg);
+Changes in v11:
+- Add examples in the commit message.
+
+Changes in v13:
+- Replace shorter name by real name.
+- Fix an issue reported by "make -C tools/net/ynl" on the namings.
+
+Changes in v16:
+- Move to tsconfig command to get and set hwtstamp configuration.
+
+Changes in v18:
+- Add a tsconfig-set reply command description
+
+Changes in v19:
+- Remove notification.
+---
+ Documentation/netlink/specs/ethtool.yaml | 66 ++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
+index 93369f0eb816..71de2601c3da 100644
+--- a/Documentation/netlink/specs/ethtool.yaml
++++ b/Documentation/netlink/specs/ethtool.yaml
+@@ -637,6 +637,15 @@ attribute-sets:
+       -
+         name: tx-err
+         type: uint
++  -
++    name: ts-hwtstamp-provider
++    attributes:
++      -
++        name: index
++        type: u32
++      -
++        name: qualifier
++        type: u32
+   -
+     name: tsinfo
+     attributes:
+@@ -663,6 +672,10 @@ attribute-sets:
+         name: stats
+         type: nest
+         nested-attributes: ts-stat
++      -
++        name: hwtstamp-provider
++        type: nest
++        nested-attributes: ts-hwtstamp-provider
+   -
+     name: cable-result
+     attributes:
+@@ -1137,6 +1150,28 @@ attribute-sets:
+       -
+         name: downstream-sfp-name
+         type: string
++  -
++    name: tsconfig
++    attributes:
++      -
++        name: header
++        type: nest
++        nested-attributes: header
++      -
++        name: hwtstamp-provider
++        type: nest
++        nested-attributes: ts-hwtstamp-provider
++      -
++        name: tx-types
++        type: nest
++        nested-attributes: bitset
++      -
++        name: rx-filters
++        type: nest
++        nested-attributes: bitset
++      -
++        name: hwtstamp-flags
++        type: u32
  
- #endif
-diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
-index 67cf68817f23..1f09930fca26 100644
---- a/net/core/dev_ioctl.c
-+++ b/net/core/dev_ioctl.c
-@@ -184,7 +184,7 @@ static int dev_ifsioc_locked(struct net *net, struct ifreq *ifr, unsigned int cm
- 	return err;
- }
- 
--static int net_hwtstamp_validate(const struct kernel_hwtstamp_config *cfg)
-+int net_hwtstamp_validate(const struct kernel_hwtstamp_config *cfg)
- {
- 	enum hwtstamp_tx_types tx_type;
- 	enum hwtstamp_rx_filters rx_filter;
+ operations:
+   enum-model: directional
+@@ -1578,6 +1613,7 @@ operations:
+         request:
+           attributes:
+             - header
++            - hwtstamp-provider
+         reply:
+           attributes:
+             - header
+@@ -1586,6 +1622,7 @@ operations:
+             - rx-filters
+             - phc-index
+             - stats
++            - hwtstamp-provider
+       dump: *tsinfo-get-op
+     -
+       name: cable-test-act
+@@ -1960,3 +1997,32 @@ operations:
+       name: phy-ntf
+       doc: Notification for change in PHY devices.
+       notify: phy-get
++    -
++      name: tsconfig-get
++      doc: Get hwtstamp config.
++
++      attribute-set: tsconfig
++
++      do: &tsconfig-get-op
++        request:
++          attributes:
++            - header
++        reply:
++          attributes: &tsconfig
++            - header
++            - hwtstamp-provider
++            - tx-types
++            - rx-filters
++            - hwtstamp-flags
++      dump: *tsconfig-get-op
++    -
++      name: tsconfig-set
++      doc: Set hwtstamp config.
++
++      attribute-set: tsconfig
++
++      do:
++        request:
++          attributes: *tsconfig
++        reply:
++          attributes: *tsconfig
 
 -- 
 2.34.1
