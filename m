@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-430800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AD29E35B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:43:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD6A9E361E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:03:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC7C165433
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:43:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCF3BB2FB68
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36481AFB36;
-	Wed,  4 Dec 2024 08:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1848A1A9B5D;
+	Wed,  4 Dec 2024 08:41:57 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3ED11993B5
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD64197A9F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733301717; cv=none; b=M2oMQyMQdZuer5E6wRk3KsWqZSwcDywuNKxlvmCQi6Varwh/n5HOVf3ZjTqC23p3L/5dMAXAbJoA35nduTU4MA+MTTB7gOGsypQoRFmiyZjWdOaAIh5O+/haW6xLGrO89r7Cnb/bMYwzV434i2E3S0Uditc/+mOYcN1PXkKuVUQ=
+	t=1733301715; cv=none; b=hz7hwMsBO8yRF2B41PjG/8n+WMi/TkkOexjqD3LXDZM3muaAQFhn1VSAkeHGQnWnVntUQbR5HqYPgETSPq3yfWavdBlMyHjgtKAClVv5KIiVzn/3l7q/akI6mMC/Xk6wMt0pLMvBHlRSZ+amgNtIeI467pBJwrk50H3YSk+D5rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733301717; c=relaxed/simple;
-	bh=tdkHBcEapTwKYjqUaT8sVvPrVWe64ljbQEL1ykZhKxw=;
+	s=arc-20240116; t=1733301715; c=relaxed/simple;
+	bh=u33syiicEIaonuoBeEib0kONlZukMcsn71SdeVu9Azo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QdKDxAEdxm5m8B9WwdHIcNACnKjo9JrneieN0mhozWjTVIvwRiFqKYQcG4hKqISH6CXYMkX1VySwcRgr/h5+M2L1jwwbxGjWpi2oHF7KmkaAp8cpm4sBNuUL8fSw9JDCZBqWNZTXWLweLd2i/VrXlEakuJnB+IjNkDzapVyfVOA=
+	 MIME-Version; b=ovK89g4YoKJrLe+k6ga7x4lHXJIBwHq88nEJgpCIDMoNGhA/xaG/SVOQeIN6AEd+2NldmY6vfjSvzgPDmEi2aFYFgznaqksINY/wlFkQzAWpLWf6n2bD3S/dJjp71P6hxkMerwlatosfbxomAw50ZofoDPGkq/8wysKDtwq7MeM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx7-0001I5-46; Wed, 04 Dec 2024 09:41:45 +0100
+	id 1tIkx7-0001I7-46; Wed, 04 Dec 2024 09:41:45 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx5-001cUI-0n;
+	id 1tIkx5-001cUL-0z;
 	Wed, 04 Dec 2024 09:41:44 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx5-004ptf-32;
+	id 1tIkx5-004ptq-36;
 	Wed, 04 Dec 2024 09:41:43 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -57,9 +57,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	netdev@vger.kernel.org,
 	UNGLinuxDriver@microchip.com,
 	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v2 07/10] net: usb: lan78xx: Add error handling to lan78xx_init_ltm
-Date: Wed,  4 Dec 2024 09:41:39 +0100
-Message-Id: <20241204084142.1152696-8-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v2 08/10] net: usb: lan78xx: Add error handling to set_rx_max_frame_length and set_mtu
+Date: Wed,  4 Dec 2024 09:41:40 +0100
+Message-Id: <20241204084142.1152696-9-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241204084142.1152696-1-o.rempel@pengutronix.de>
 References: <20241204084142.1152696-1-o.rempel@pengutronix.de>
@@ -75,113 +75,78 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Convert `lan78xx_init_ltm` to return error codes and handle errors
-properly.  Previously, errors during the LTM initialization process were
-not propagated, potentially leading to undetected issues. This patch
-ensures:
+Improve error handling in `lan78xx_set_rx_max_frame_length` by:
+- Checking return values from register read/write operations and
+  propagating errors.
+- Exiting immediately on failure to ensure proper error reporting.
 
-- Errors in `lan78xx_read_reg` and `lan78xx_write_reg` are checked and
-  handled.
-- Errors are logged with detailed messages using `%pe` for clarity.
-- The function exits immediately on error, returning the error code.
+In `lan78xx_change_mtu`, log errors when changing MTU fails, using `%pe`
+for clear error representation.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/net/usb/lan78xx.c | 50 ++++++++++++++++++++++++++++++---------
- 1 file changed, 39 insertions(+), 11 deletions(-)
+ drivers/net/usb/lan78xx.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 29f6e1a36e20..33cda7f3dd12 100644
+index 33cda7f3dd12..2d16c1fc850e 100644
 --- a/drivers/net/usb/lan78xx.c
 +++ b/drivers/net/usb/lan78xx.c
-@@ -2807,13 +2807,16 @@ static int lan78xx_vlan_rx_kill_vid(struct net_device *netdev,
- 	return 0;
- }
+@@ -2599,27 +2599,36 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
  
--static void lan78xx_init_ltm(struct lan78xx_net *dev)
-+static int lan78xx_init_ltm(struct lan78xx_net *dev)
+ static int lan78xx_set_rx_max_frame_length(struct lan78xx_net *dev, int size)
  {
-+	u32 regs[6] = { 0 };
- 	int ret;
- 	u32 buf;
--	u32 regs[6] = { 0 };
+-	u32 buf;
+ 	bool rxenabled;
++	u32 buf;
++	int ret;
  
- 	ret = lan78xx_read_reg(dev, USB_CFG1, &buf);
-+	if (ret < 0)
-+		goto init_ltm_failed;
-+
- 	if (buf & USB_CFG1_LTM_ENABLE_) {
- 		u8 temp[2];
- 		/* Get values from EEPROM first */
-@@ -2824,7 +2827,7 @@ static void lan78xx_init_ltm(struct lan78xx_net *dev)
- 							      24,
- 							      (u8 *)regs);
- 				if (ret < 0)
--					return;
-+					return ret;
- 			}
- 		} else if (lan78xx_read_otp(dev, 0x3F, 2, temp) == 0) {
- 			if (temp[0] == 24) {
-@@ -2833,17 +2836,40 @@ static void lan78xx_init_ltm(struct lan78xx_net *dev)
- 							   24,
- 							   (u8 *)regs);
- 				if (ret < 0)
--					return;
-+					return ret;
- 			}
- 		}
- 	}
- 
--	lan78xx_write_reg(dev, LTM_BELT_IDLE0, regs[0]);
--	lan78xx_write_reg(dev, LTM_BELT_IDLE1, regs[1]);
--	lan78xx_write_reg(dev, LTM_BELT_ACT0, regs[2]);
--	lan78xx_write_reg(dev, LTM_BELT_ACT1, regs[3]);
--	lan78xx_write_reg(dev, LTM_INACTIVE0, regs[4]);
--	lan78xx_write_reg(dev, LTM_INACTIVE1, regs[5]);
-+	ret = lan78xx_write_reg(dev, LTM_BELT_IDLE0, regs[0]);
-+	if (ret < 0)
-+		goto init_ltm_failed;
-+
-+	ret = lan78xx_write_reg(dev, LTM_BELT_IDLE1, regs[1]);
-+	if (ret < 0)
-+		goto init_ltm_failed;
-+
-+	ret = lan78xx_write_reg(dev, LTM_BELT_ACT0, regs[2]);
-+	if (ret < 0)
-+		goto init_ltm_failed;
-+
-+	ret = lan78xx_write_reg(dev, LTM_BELT_ACT1, regs[3]);
-+	if (ret < 0)
-+		goto init_ltm_failed;
-+
-+	ret = lan78xx_write_reg(dev, LTM_INACTIVE0, regs[4]);
-+	if (ret < 0)
-+		goto init_ltm_failed;
-+
-+	ret = lan78xx_write_reg(dev, LTM_INACTIVE1, regs[5]);
-+	if (ret < 0)
-+		goto init_ltm_failed;
-+
-+	return 0;
-+
-+init_ltm_failed:
-+	netdev_err(dev->net, "Failed to init LTM with error %pe\n", ERR_PTR(ret));
-+	return ret;
- }
- 
- static int lan78xx_urb_config_init(struct lan78xx_net *dev)
-@@ -2939,7 +2965,9 @@ static int lan78xx_reset(struct lan78xx_net *dev)
- 		return ret;
- 
- 	/* Init LTM */
--	lan78xx_init_ltm(dev);
-+	ret = lan78xx_init_ltm(dev);
+-	lan78xx_read_reg(dev, MAC_RX, &buf);
++	ret = lan78xx_read_reg(dev, MAC_RX, &buf);
 +	if (ret < 0)
 +		return ret;
  
- 	ret = lan78xx_write_reg(dev, BURST_CAP, dev->burst_cap);
- 	if (ret < 0)
+ 	rxenabled = ((buf & MAC_RX_RXEN_) != 0);
+ 
+ 	if (rxenabled) {
+ 		buf &= ~MAC_RX_RXEN_;
+-		lan78xx_write_reg(dev, MAC_RX, buf);
++		ret = lan78xx_write_reg(dev, MAC_RX, buf);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	/* add 4 to size for FCS */
+ 	buf &= ~MAC_RX_MAX_SIZE_MASK_;
+ 	buf |= (((size + 4) << MAC_RX_MAX_SIZE_SHIFT_) & MAC_RX_MAX_SIZE_MASK_);
+ 
+-	lan78xx_write_reg(dev, MAC_RX, buf);
++	ret = lan78xx_write_reg(dev, MAC_RX, buf);
++	if (ret < 0)
++		return ret;
+ 
+ 	if (rxenabled) {
+ 		buf |= MAC_RX_RXEN_;
+-		lan78xx_write_reg(dev, MAC_RX, buf);
++		ret = lan78xx_write_reg(dev, MAC_RX, buf);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	return 0;
+@@ -2685,7 +2694,10 @@ static int lan78xx_change_mtu(struct net_device *netdev, int new_mtu)
+ 		return ret;
+ 
+ 	ret = lan78xx_set_rx_max_frame_length(dev, max_frame_len);
+-	if (!ret)
++	if (ret < 0)
++		netdev_err(dev->net, "MTU changed to %d from %d failed with %pe\n",
++			   new_mtu, netdev->mtu, ERR_PTR(ret));
++	else
+ 		WRITE_ONCE(netdev->mtu, new_mtu);
+ 
+ 	usb_autopm_put_interface(dev->intf);
 -- 
 2.39.5
 
