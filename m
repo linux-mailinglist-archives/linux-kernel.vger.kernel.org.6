@@ -1,164 +1,157 @@
-Return-Path: <linux-kernel+bounces-431121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319559E3933
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:48:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B537A9E3934
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:48:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6857284734
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9650168C31
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657491B4136;
-	Wed,  4 Dec 2024 11:48:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EA71B395F;
+	Wed,  4 Dec 2024 11:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Eiabl8mJ"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF421B218A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8919C1B393A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733312910; cv=none; b=BdpsKS2Qr0ee8ckemAL5kEbWva8FZCBLXDZStwqCdLL/R3vicZ7JGEg9RmD0FWuMngrra49OqBKPfEdkS0Hb7Tth6+L92eK190e/CIleemRZXT1nymfWsrbEqv5FrVEqj0xPWU5U+mJ1umJfpNXsIaixp0SVahPfvaP67ctKJkQ=
+	t=1733312914; cv=none; b=XGjF/U1mFzuVYkUtv0cIfSZ4wxBBK8Cd/bg08MWg6JEuVJ6gsgUDBR9bjjVi7DWcSPUO4W/FOGbVkp0d/9q3xckYXg71veoAUUknrLA3UVrYhIIj1TZSErzYsRpweT+raSoh8tkU7a9K/GtRxDZn2T0RSb1ME9Q42YGVuzbMAEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733312910; c=relaxed/simple;
-	bh=m+ghy4Awkew6QPTuHp5SbuCCh6zgaq/e1ev+fd2Nmio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F994IRkiGttus76WHuPftnTpyJF1QgFNTTQXUI7+eXWFxTVyV9WJiEp4kcJ7H1DPRVDXuHucN6WjxvgzvjsKjNuM/kDmEpKymZym/pn55R70rBwOn+PUOF7ZnXXF09+SjRhEhsmhM1j0RP5tueLW/YZrpyap2+ERMIm9bMQk1LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tInrQ-0005g7-3X; Wed, 04 Dec 2024 12:48:04 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tInrO-001ds8-2w;
-	Wed, 04 Dec 2024 12:48:03 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 4635A38565C;
-	Wed, 04 Dec 2024 11:48:03 +0000 (UTC)
-Date: Wed, 4 Dec 2024 12:48:02 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, imx@lists.linux.dev, 
-	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH v4 3/3] can: flexcan: add NXP S32G2/S32G3 SoC support
-Message-ID: <20241204-fantastic-rare-civet-8d24ec-mkl@pengutronix.de>
-References: <20241204074916.880466-1-ciprianmarian.costea@oss.nxp.com>
- <20241204074916.880466-4-ciprianmarian.costea@oss.nxp.com>
- <20241204-chipmunk-of-unmatched-research-e89301-mkl@pengutronix.de>
- <1147e8d9-b6e1-4290-9cfa-888d93f185e9@oss.nxp.com>
+	s=arc-20240116; t=1733312914; c=relaxed/simple;
+	bh=4r0p1BOG67VHgM5UWaGYXDCZt5TDFsUUNnk5813gz2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H/zCKQVunqimReZS8/4qK+jhIEd1brMQIJfTrwQ9Mybp2RfKNfIq4mh5SJIpkRnZeF6PeRjhf2sZDSxXX9x2Shc0fAmSw+WmrmKjpRx9Lj1gPl8LoP6UyLb4UKSpBuijD87kmibiZ6O3X2eKyf/cpXhFJxXCgL3Bpo5XIvXGmSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Eiabl8mJ; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B6E76E0008;
+	Wed,  4 Dec 2024 11:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733312909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4r0p1BOG67VHgM5UWaGYXDCZt5TDFsUUNnk5813gz2I=;
+	b=Eiabl8mJKkEzMn4lRypudyvJL3uHutZ8oEfKKPGAyx51LgiSZQTIltEvf0jgR67PaN91CO
+	/QJwkCYCNGm5oqbcYbhyohTXDzdB3bhdyVplJjqB2y+bgtXfAKxGkyttQnUBLdx5C6txnS
+	qDkK1416ESTJ8C+k/KHZh6c61jx67tUV0bBVVmly4a4kLJM5+4vXfiYRuqCtFIK50Acjku
+	YBOmORcZvt9AWJestLyYVmtmg0Z4Xk88zqjt5uE8DInFFKhseAgqKdQwlu9hxBRPbr6xIU
+	DZ3cPOELCvE4l0P4C8QzU8IND77C12kqGDi4Itr8PPt7qeeSovLjnVVnligoLA==
+Date: Wed, 4 Dec 2024 12:48:26 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Francesco <francesco.dolcini@toradex.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley
+ <conor@kernel.org>, =?UTF-8?Q?Herv=C3=A9?= Codina
+ <herve.codina@bootlin.com>
+Subject: Re: [PATCH v3] driver core: fw_devlink: Stop trying to optimize
+ cycle detection logic
+Message-ID: <20241204124826.2e055091@booty>
+In-Reply-To: <20241030171009.1853340-1-saravanak@google.com>
+References: <20241030171009.1853340-1-saravanak@google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wkzoli5onnal3nbj"
-Content-Disposition: inline
-In-Reply-To: <1147e8d9-b6e1-4290-9cfa-888d93f185e9@oss.nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---wkzoli5onnal3nbj
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 3/3] can: flexcan: add NXP S32G2/S32G3 SoC support
-MIME-Version: 1.0
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 04.12.2024 13:38:51, Ciprian Marian Costea wrote:
-> > Unrelated to this patch, but I want to extend the "FLEXCAN hardware
-> > feature flags" table in "flexcan.h". Can you provide the needed
-> > information?
-> >=20
+Hello Saravana,
+
++Cc. DT maintainers, Herv=C3=A9
+
+On Wed, 30 Oct 2024 10:10:07 -0700
+Saravana Kannan <saravanak@google.com> wrote:
+
+> In attempting to optimize fw_devlink runtime, I introduced numerous cycle
+> detection bugs by foregoing cycle detection logic under specific
+> conditions. Each fix has further narrowed the conditions for optimization.
 >=20
-> I would say the following S32G related information could be added:
+> It's time to give up on these optimization attempts and just run the cycle
+> detection logic every time fw_devlink tries to create a device link.
 >=20
-> > > /* FLEXCAN hardware feature flags
-> > >   *
-> > >   * Below is some version info we got:
-> > >   *    SOC   Version   IP-Version  Glitch- [TR]WRN_INT IRQ Err Memory=
- err RTR rece-   FD Mode     MB
-> > >   *                                Filter? connected?  Passive detect=
-ion  ption in MB Supported?
-> > >   * MCF5441X FlexCAN2  ?               no       yes        no       n=
-o        no           no     16
-> > >   *    MX25  FlexCAN2  03.00.00.00     no        no        no       n=
-o        no           no     64
-> > >   *    MX28  FlexCAN2  03.00.04.00    yes       yes        no       n=
-o        no           no     64
-> > >   *    MX35  FlexCAN2  03.00.00.00     no        no        no       n=
-o        no           no     64
-> > >   *    MX53  FlexCAN2  03.00.00.00    yes        no        no       n=
-o        no           no     64
-> > >   *    MX6s  FlexCAN3  10.00.12.00    yes       yes        no       n=
-o       yes           no     64
-> > >   *    MX8QM FlexCAN3  03.00.23.00    yes       yes        no       n=
-o       yes          yes     64
-> > >   *    MX8MP FlexCAN3  03.00.17.01    yes       yes        no      ye=
-s       yes          yes     64
-> > >   *    VF610 FlexCAN3  ?               no       yes        no      ye=
-s       yes?          no     64
-> > >   *  LS1021A FlexCAN2  03.00.04.00     no       yes        no       n=
-o       yes           no     64
-> > >   *  LX2160A FlexCAN3  03.00.23.00     no       yes        no      ye=
-s       yes          yes     64
->       *  S32G2/S32G3 FlexCAN3 03.00.39.00  no       yes        no      ye=
-s       yes          yes    128
-> > >   *
-> > >   * Some SOCs do not have the RX_WARN & TX_WARN interrupt line connec=
-ted.
-> > >   */
+> The specific bug report that triggered this fix involved a supplier fwnode
+> that never gets a device created for it. Instead, the supplier fwnode is
+> represented by the device that corresponds to an ancestor fwnode.
 >=20
-> Would you like me to send another version of this patchset with above
-> information included ?
+> In this case, fw_devlink didn't do any cycle detection because the cycle
+> detection logic is only run when a device link is created between the
+> devices that correspond to the actual consumer and supplier fwnodes.
+>=20
+> With this change, fw_devlink will run cycle detection logic even when
+> creating SYNC_STATE_ONLY proxy device links from a device that is an
+> ancestor of a consumer fwnode.
+>=20
+> Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d276@=
+ideasonboard.com/
+> Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of overl=
+apping cycles")
+> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 
-No. Once we have Krzysztof's ACK for the DT binding changes, I'll take
-this series.
+After rebasing my work for the hotplug connector driver using device
+tree overlays [0] on v6.13-rc1 I started getting these OF errors on
+overlay removal:
 
-I think we'll make that a separate patch and maybe add more information.
+OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
+node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
+ector/devices/panel-dsi-lvds
+OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
+node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
+ector/devices/backlight-addon
+OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
+node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
+ector/devices/battery-charger
+OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
+node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
+ector/devices/regulator-addon-5v0-sys
+OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_=
+node_put() unbalanced - destroy cset entry: attach overlay node /addon-conn=
+ector/devices/regulator-addon-3v3-sys
 
-regards,
-Marc
+...and many more. Exactly one per each device in the overlay 'devices'
+node, each implemented by a platform driver.
+
+Bisecting found this patch is triggering these error messages, which
+in fact disappear by reverting it.
+
+I looked at the differences in dmesg and /sys/class/devlink/ in the
+"good" and "bad" cases, and found almost no differences. The only
+relevant difference is in cycle detection for the panel node, which was
+expected, but nothing about all the other nodes like regulators.
+
+Enabling debug messages in core.c also does not show significant
+changes between the two cases, even though it's hard to be sure given
+the verbosity of the log and the reordering of messages.
+
+I suspect the new version of the cycle removal code is missing an
+of_node_get() somewhere, but that is not directly visible in the patch
+diff itself.
+
+Any clues?
+
+[0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-0-bc4dfee61b=
+e6@bootlin.com/
 
 --=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---wkzoli5onnal3nbj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdQQXAACgkQKDiiPnot
-vG/cWwf7BsY4qQ2B0RNVdnEdOrirNIF8mOdtvMlQ4y5MgRz1ZrOiKflW/+nnZfYQ
-vQ3UV23BhNhyWh28rZDzmFzbEQ4DzlGFSFchrc7ZPizyJ5nQkwWql2/CdSbtRD4r
-hg+EdFSZ7OJ9V1odYciU+bIXH8iFOMizYPFBIPG9XKTv5e4AwOMbU7m2yuN58q/F
-k6oEDwpdgPG2f+PVSRsDEyBR/REhea6V62ZI9lFwrQJlPs2t65k8ePP6izP6b0Xd
-Jndx2sIxWBtjUSZyrtWdSFlsYiSYL9ruU2yFQ/YuaRoq4HBeoZaXtcA5yaDrU/lk
-y5rpEt4pMPPM0Qk/bljCwcFIjV9mCw==
-=PhJv
------END PGP SIGNATURE-----
-
---wkzoli5onnal3nbj--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
