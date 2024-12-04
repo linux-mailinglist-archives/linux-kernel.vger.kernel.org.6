@@ -1,140 +1,168 @@
-Return-Path: <linux-kernel+bounces-431391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3045F9E3CB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:29:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B698D9E3CB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:29:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B28282E22
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466FD16818E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4EC204F7A;
-	Wed,  4 Dec 2024 14:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FX6SENef"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A594209F51;
+	Wed,  4 Dec 2024 14:29:26 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97D4189F56
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E83203704
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733322564; cv=none; b=jUPJWauNayKcI8mYe31tZO98DkZA81fM03L1Kc8prLA7+768TNCpFhyTTCApkk8YJqbOPyEy3xUjtWrAN8WIPNd8Vif07VbOyyv7NLdqf1RPT2Od2Z9ZESGySCvWFvh3vMKtbAGx18K2997mKGDW3R3vwvMhsePHztFFJfjlD74=
+	t=1733322566; cv=none; b=liptCIZCUBACW4PWJZM3YsCrrP80fM6ru1YKw9ADAoVpn5ozbXFzGdBEaZWOksKajUGwkQW/eGyWfGzorlzwXKOMM6VCQAfirh68pcshXlTMM+HhQJW0fUQ0vKA+fXJ+4WhdNtpHs6gMroSCE7OgW1HcQ7gCzFwB0deUeao8R/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733322564; c=relaxed/simple;
-	bh=3KwgxaP6FkpVeQa7wijeTQe8jb/qdggPnZ0hr39vUF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ccd+l3ggMdrmyJGVeRm8h1tChV8+fqftgTNz+78oH1Lqx2NZdltQ85kJKoGPqQESjKU140OPoGJa4ArJeLF8FHJWp99IveDKyi2ds4BVfBefp89aw8pH8rKbfH3j+VoxEQ+n1w4RXCPevmxYlAw6PxTlVjsWeVXB9PjZP9HmIQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FX6SENef; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ef524fda21so63112747b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:29:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733322562; x=1733927362; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3KwgxaP6FkpVeQa7wijeTQe8jb/qdggPnZ0hr39vUF4=;
-        b=FX6SENefi4Nf1vTpV27pI4E6ZIO4k9ma1+vsj9Dm91Ls/xf1JliHUqWNzUF1xPypuZ
-         aNg69vkvJYOLHah7PuiYyHoQrPWH5QaJf5Fqw6zaKtt/Jo3N/si7ZpcQQ+tHyzh1aBnm
-         6nZjjI8BbEK8EZocvmUjpKnj5HvODqqxhrc04lzk7CwpX2c0ofM8//u3MpzatYWZJ3ke
-         IMHhzGjMNF/iVrRHWrSaPDz/IAA+eZPg+5I45IIvnRjtBkuR8UlaJpTgQ3np/SJ2LDXS
-         shYa+07hicU3d99RSOhYgiytEJlImJqTZDOPawHQxUOb2Uh3T8hFuP2vWTMh57sd+naS
-         SCag==
+	s=arc-20240116; t=1733322566; c=relaxed/simple;
+	bh=LBwJ6bbAn80WcRPQJQHQ6y5sHV7eCBHAdt1sUqOU46E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KUop+oRaOH+0wdZvmlF7TZS1cA2Z63FM1E3DBd9rQ6z9JZXmUvNG+KdXCepb5A9/0G72vY2XI6P9YFVQaA71I3WC3u3FB3gUQwAzM6leoMItgFdXd9Ljk7kM0LOiwQaM+HNPClEQh6gfZZjW5QjPQaIlq+9GK3GGMeDdQ0erBK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a794990ef3so9102865ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:29:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733322562; x=1733927362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3KwgxaP6FkpVeQa7wijeTQe8jb/qdggPnZ0hr39vUF4=;
-        b=AOmsLIJlMhJ5BF5RkeySO7CrH9t99DDBTp8LSQiStkif+hxoSlcMT8PgvdCiAxm3Te
-         tw2u1NbXw6hD9AJ4VxbJ/Gye4SnhSUJ3mPhVBTNNNSaaALis+jQqUkp3XfoU21CIB1EU
-         HscWbnpXZOSDci8gVuP4tuSKP5IVxW0EH0EAbQxXVS061h9cN7njALndr4towTeHski4
-         C6saiwrnbY7Dy68UVoSXErB874EoFSbQx0CulmbGpqcCLEDjm/yNTqkv33SzuSx/fHc3
-         fdOW0Vjth51WyorMN5Tiq/fJR3dO/jzl7+0Na5LLGqyfQPTbbaX03NhzOQni/Rms5IJv
-         NMoQ==
-X-Gm-Message-State: AOJu0Yw+lTA+HFdydupUpJuUhL4PFE0mEvJxzAM75RTivKd6lWsCUD5p
-	68LDd+FWTsXl1/8cEloF7VaR6EnEI9kNxMKrHTDBM2n/NpToELzIxu/Zzije2/eO28mrgGU7eu5
-	OT6hRznRazjSfwQZRQiFCB1LwdEgdDsfNxdmlew==
-X-Gm-Gg: ASbGncuyHRp/4jPjv67l10PHPeG/WQer3fBqZZ5rjgr8GQz650SHEWFir96ZHWfslUW
-	CYcirPud8V+AOJ4MA5LIt2J/+zwJeIw==
-X-Google-Smtp-Source: AGHT+IECLKVIlaO9LpFlpnhg3iVWERPQO26qkt8DgDJbDpaMcgWnOwIIFCN7yPb5xUaGHc4umafT0ZZYEPzoxyTvdHM=
-X-Received: by 2002:a05:6902:1505:b0:e39:80b9:3344 with SMTP id
- 3f1490d57ef6-e39d39ec8d0mr6282859276.3.1733322561825; Wed, 04 Dec 2024
- 06:29:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733322563; x=1733927363;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lps44A56g0pBgvkO1wGgc43RH5tdrqdgb7gfd2Q29F0=;
+        b=Iv2mhMKxKy8UGzw5HUMVXvRF6yxrMXfGhB3Eq5eqrcFEdQjx5OOnbmi5m9Xum3+TaW
+         O/LCibJ/VJQbqyBOLc+eBye4uAUjrpCIOCZXCmchyz+xqch+mmCthWG4XX+NanF3L1w+
+         qAPnCtqGmFJmduhVI2N/DuW3NkUvKTSo2Wj8OP2YVFEyxqQ5m7D9JgANB60mOBzJcyZI
+         zdT2D79uoiUe8KHdX+iUBfiYOD54Tp8CAs1AOpS6vnpYRP4ivFgl0zxqlqV8uvTED3oe
+         Bnz9wcSqDrM7srL5wSsgUXvD3t7D6xrC31jAKigMUtfEo3JyCQzZD2EsAbMeaP0R7Qim
+         pYIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwk+UbROfJyO10uVQkqNfn2TiBHakL+DKqUUzFnHixyHBMi9OnlfeRxdkK6Q67Qo5kXbMuin9ricA4FM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyETU8yTa6WuI5XW0T1+6h8qJUQhHtsfrJY//PvTHrlSKeM5Kl8
+	c1YoTf8WUKmo+PHpUf7M7fDnCyScmmKBRWMH6iwAWatMITPtbT0mTJVhMRKIApJC/sjReN34GDx
+	7do4tXh1Z7J1fa3/FYTEMn1AxsL/E/3hxbTTGfcu9FdCegw8Buhm92UQ=
+X-Google-Smtp-Source: AGHT+IFgTcMnqnLEchm6AYwwlMmWF4Isq8kow0RtCBzKXE7/a4W57FGYAcZ5duqwr3yHAHmI484RZkACbVkF70/zKndsj9DHWhvU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204102904.1863796-1-arnd@kernel.org> <20241204102904.1863796-16-arnd@kernel.org>
-In-Reply-To: <20241204102904.1863796-16-arnd@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 4 Dec 2024 15:29:09 +0100
-Message-ID: <CACRpkdahQhj5u9ATghszi-N2OYhFbvHF_W_eAMDAU+vhmvdrJA@mail.gmail.com>
-Subject: Re: [PATCH 15/15] ARM: mark footbridge as deprecated
-To: Arnd Bergmann <arnd@kernel.org>, Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>, Aaro Koskinen <aaro.koskinen@iki.fi>, Andrew Lunn <andrew@lunn.ch>, 
-	Ard Biesheuvel <ardb@kernel.org>, Daniel Mack <daniel@zonque.org>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Ralph Siemsen <ralph.siemsen@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Russell King <linux@armlinux.org.uk>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>
+X-Received: by 2002:a92:cda4:0:b0:3a7:ca83:3f9 with SMTP id
+ e9e14a558f8ab-3a7f9c1b5ddmr68369045ab.4.1733322563630; Wed, 04 Dec 2024
+ 06:29:23 -0800 (PST)
+Date: Wed, 04 Dec 2024 06:29:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67506743.050a0220.17bd51.006e.GAE@google.com>
+Subject: [syzbot] [net?] BUG: unable to handle kernel paging request in
+ dst_dev_put (2)
+From: syzbot <syzbot+9911f8283beca191268b@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 4, 2024 at 11:30=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
-te:
+Hello,
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Along with RiscPC and SA1100, these are the last remaining Intel StrongAR=
-M
-> machines. The Corel NetWinder used to be particular popular in the late
-> 1990s, but was discontinued during the bankruptcy of rebel.com in 2001.
-> The other machine is the DEC (later Intel) EBSA285 evaluation board that
-> was made in small numbers in 1997 for software developers.
+syzbot found the following issue on:
 
-IIRC David Rusling at DEC was sending this board out to interested
-developers.
+HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch 'iommu/arm/smmu'..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=114ca75f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dfe1e340fbee3d16
+dashboard link: https://syzkaller.appspot.com/bug?extid=9911f8283beca191268b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
-> The footbridge/netwinder platform was the main target for the first Debia=
-n
-> 2.0 "Hamm" release on the Arm architecture back in 1998, but was dropped
-> in Debian 6.0 "Squeeze" in 2011, which only supported ARMv4T and higher
-> with the EABI based ports as ARMv4 hardware had fallen already out of
-> use by that time.
->
-> Link: http://netwinder.org/
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Ralph Siemsen <ralph.siemsen@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I am booting it occasionally, last time to test my KCFI patches.
-But admittedly that is only to test it for other SA110 users. I remember
-that Christoph had problems consolidating the DMA used in this
-machine as well so it is standing in the way of useful work.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/354fe38e2935/disk-7b1d1d4c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f12e0b1ef3fd/vmlinux-7b1d1d4c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/291dbc519bb3/Image-7b1d1d4c.gz.xz
 
-Apart from Ralph and me I know Marc Z has been known to boot
-this machine, so paging him as well.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9911f8283beca191268b@syzkaller.appspotmail.com
 
-My machine is using an OABI RedHat MontaVista Hard Hat
-derivative but the default userspace doesn't even have a /sys
-directory so it's quite dated. I have a minimal homebrew
-busybox userspace that I actually use for tests, admittedly
-built with an OpenWrt compiler using the --fix-v4bx trick.
+Unable to handle kernel paging request at virtual address dfff800000000000
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[dfff800000000000] address between user and kernel address ranges
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-syzkaller-g7b1d1d4cfac0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : dst_dev_put+0x2c/0x2bc net/core/dst.c:146
+lr : dst_dev_put+0x28/0x2bc net/core/dst.c:145
+sp : ffff8000979379a0
+x29: ffff8000979379a0 x28: ffffffffffffffff x27: ffff80008f16a000
+x26: 1ffff00011e2d466 x25: dfff800000000000 x24: dfff800000000000
+x23: 0000000000000000 x22: dfff800000000000 x21: ffff80008f821110
+x20: 00007dfe9b881038 x19: 0000000000000002 x18: ffff0001b364a9a8
+x17: 0000000000000040 x16: ffff800080585eb0 x15: 0000000000000001
+x14: 1fffe0001df07cc3 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001df07cc4 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c19e5ac0 x7 : ffff8000832ff164 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff800089f54340
+x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000002
+Call trace:
+ dst_dev_put+0x2c/0x2bc net/core/dst.c:146 (P)
+ dst_dev_put+0x28/0x2bc net/core/dst.c:145 (L)
+ rt_fibinfo_free_cpus net/ipv4/fib_semantics.c:206 [inline]
+ fib_nh_common_release+0x1f4/0x440 net/ipv4/fib_semantics.c:217
+ fib6_nh_release+0x3a0/0x40c net/ipv6/route.c:3668
+ fib6_info_destroy_rcu+0xc8/0x214 net/ipv6/ip6_fib.c:177
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0x898/0x1b5c kernel/rcu/tree.c:2823
+ rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2840
+ handle_softirqs+0x2e0/0xbf8 kernel/softirq.c:554
+ run_ksoftirqd+0x70/0xc0 kernel/softirq.c:949
+ smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
+ kthread+0x288/0x310 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+Code: aa0003f3 f2fbfff6 97a314b2 d343fe77 (38766ae8) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	aa0003f3 	mov	x19, x0
+   4:	f2fbfff6 	movk	x22, #0xdfff, lsl #48
+   8:	97a314b2 	bl	0xfffffffffe8c52d0
+   c:	d343fe77 	lsr	x23, x19, #3
+* 10:	38766ae8 	ldrb	w8, [x23, x22] <-- trapping instruction
 
-So from my point of view this system is on life support:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yours,
-Linus Walleij
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
