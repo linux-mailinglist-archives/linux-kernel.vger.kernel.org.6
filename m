@@ -1,338 +1,216 @@
-Return-Path: <linux-kernel+bounces-430613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9BA9E338C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:30:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BDA09E338E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:32:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F616283D3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B839283EF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAE6187858;
-	Wed,  4 Dec 2024 06:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7A3188010;
+	Wed,  4 Dec 2024 06:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="NPppGEpK"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fTcOZYze"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A87143888
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 06:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A467C143888
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 06:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733293849; cv=none; b=M5cp3LLQrDwPfZKyRvxnynqn75lnQUDlUDbu94Dr7cyqZS1mn0wB/1NS/6zUvkzQ7M3EfjyzFll5phNpzX97nKdPyzjpxd30Lo6D0funAvpR3CuHn+id4Um3mZUtAObPkpfc4IIx+k1nfmnBmrvwEj2j3Ei0Cnu0cElAja7HMW0=
+	t=1733293926; cv=none; b=bP+5+4iUhBGQEGGQtIvNH7BF1wvXEdIbwABc8MmC5HitAiqDO/0nvaNfRAcvhQ3LUUFiSg67UgWwRsFdQ25kls3yQi+iwcoM+UdJZE8tTxEj8arPaTOHaoLCT3IQwEwWzH6yYrgMt4l6tQ4wTYiomZ91nwLGblMBecGW8jZnkHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733293849; c=relaxed/simple;
-	bh=u8/FhKS6syL2h6vpp19qkb8ugo62/NjIFJc/lxA1Q2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZvQap0FIrWEntkuZJaVusy8WxkNyfjWldPu6PVpCkj/4tgIUMYRlFite6IxqpPSlH5ipoeYCOFSCu7NJqH6kQ1n4KYoIeDo0offx+pu8zvJ7ZMEdEkYPsk0VxSNCTvm9nyacGlas3YXU0H7q38spJUK/m5f0ZtHZr2huhQHFcN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=NPppGEpK; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0DEB73F1CE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 06:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733293843;
-	bh=Vu4AWTTF9NWZIyLPtlOp2MAWisE9ji+w1i+PTwK1h7E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=NPppGEpKp/TpkMNPQRqE0T+VnrpgmQtdx97Cl8TtWhuzJoWYOAPnRcQGImRGZ7mr5
-	 dZp67K9Dt3lUpGT75FXO2odokmf6/WGBZs4pvDXqcOjS/6Jr2T1hRPa4X/DRSjFSN7
-	 YmqJ3nEwdiuPLBSkd3Ey/tgIcFnMo8C5ITCAuvkgRIxxSyzNJVUHEk26wW2HGE0Tlw
-	 QkuGklL6Ql3j3RwvywJtUPTup1E+w4jPK4Z7u/Mzbxd46QllGubX6X7J+vlUqSDoo4
-	 RWHe90cGE9Ck/+T47/bd8TkTfDoNskR0Cr1CmIaesqgaS8rQvMaOTqswfT70yJ86pG
-	 dW/tdebZeqE0Q==
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e27c5949so2766268f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 22:30:43 -0800 (PST)
+	s=arc-20240116; t=1733293926; c=relaxed/simple;
+	bh=vXd51GbwJKXNLwv2nLkHDc5hOuj5aMRgYYIQavovp0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pqnmMmD9VjcoTLJ19e4GsqSBcDvK/D2c58fnqTc4HTtNzM69olp9gYCheAUHomPMeCRyl+MnfJWbpvrtZE5uK4+nsv0K1j35N5Hj4shwD+ieFZtoEoKKTJ9rHVySi/VhmaKmdSRh5YJSx5Aw44Cjni1GihJwHZKVKd92I9xh3UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fTcOZYze; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-724e14b90cfso6391102b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 22:32:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733293924; x=1733898724; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GBDbYslVLF6reDpDFL+cIdoA50QWCfJ+6RlDjehcuiI=;
+        b=fTcOZYzegUv1z/sVgY+NNeZDnCzvh8yCPVKf4emzp3VNz9ZBIb0i6Vu0Dl8/rkIZ4I
+         mlBbrJOHRunWn1muyq3SaH2m51racR5YSwumEqYOuai60Hma1Ui+bixuSzf84qPvhdsa
+         h6cfIjrEebVQ2W5qWBNaRV0zbjnUMPp1viiAA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733293842; x=1733898642;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vu4AWTTF9NWZIyLPtlOp2MAWisE9ji+w1i+PTwK1h7E=;
-        b=gBh0LRhbwE52G4W5aU4qmYA+HdNC8bNtLUi9tepuEr43wzbmftpUfPfRrdNS7+P5kh
-         FA+8k6cqGaip+4uViNeO/XNbuoZED89scS/CU5chJASIsWe9f+t6Zm06a5NyQlWAmb9R
-         dWcmtHvhME/G8SqQr3p8IS0FS0cIQ8JqIpfxDvavf2Gmh2zfnuX2gOHRcoWlj9rjZ4mu
-         LON28ttrTLfjF41sXuLC6xibYsHuxv6CcfikpFwDhuwIKronmKMjRzwFPlg1aFeVqxTo
-         yK1B3/dXFL8r6cXjYWRSa2G4g46T/HsB+65CReY5Z7UdrAYZFyoalNn0sV7/ItJw1ZVk
-         Kbhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVboObf5dsTmyzOPIpMdt22qn0ALYRvUgJzVSnVAzBdcAAzBpt+MQq8tH1zOSA5FtcBg+c6LoK63GEEcwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4mk7Pz3uS0hXYV5O/FTip2M9AQsD9ztRw6boNn1UtYx58EAaN
-	hh5MDX7qzI1vf1rYF8R+IjV0OTjtbXOt8Fp7MciJZA5W7rdonedfAbFVGDXtcsVCICG6zAkIzGz
-	foav0tuYyaGScHdG+GQ82WMp8L806YTaWrvAtyfrwpSuoS22X4hSZtyxGDMUgQNgZuS/Dm3P/D2
-	mpHPmlKRpYP5IJWI5uifBcBq9zmEmLBizRTYPmGnt/kaBJHt6n8jA0
-X-Gm-Gg: ASbGnct0/YsnOQdDjhWUnuBrtbQ9pdqv+jTPgQQ/hkNlt7Enfa9tDq1SWxsLWtB3LOQ
-	zYxbDAfYG7OvsJwGHtK9MTxRW5RLkhX6U
-X-Received: by 2002:a05:6000:2b0d:b0:385:e9c0:c069 with SMTP id ffacd0b85a97d-385fd433373mr3201327f8f.57.1733293842510;
-        Tue, 03 Dec 2024 22:30:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFgKkV5ER1fJMeaNPt9eXdid2Bgy53nhFydaMsm5HpgMyJxVgBYK7Sk/f/FxzBOxkqpnahXd9nHs6aTfHvCS8o=
-X-Received: by 2002:a05:6000:2b0d:b0:385:e9c0:c069 with SMTP id
- ffacd0b85a97d-385fd433373mr3201311f8f.57.1733293842135; Tue, 03 Dec 2024
- 22:30:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733293924; x=1733898724;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GBDbYslVLF6reDpDFL+cIdoA50QWCfJ+6RlDjehcuiI=;
+        b=uS/AgFpz21Ico13GL08QfqxYDIiZxbjAc7X/BHerUeeyP+42NoHWnNotqfcj5jPS5k
+         4y80UdnEaAKNNFNJUx71Vej8aeqRIY3RNHEn1x5pB8uGwAYrOfJDewhdldZAsH0+3TeG
+         BOdiBQnbMjhQzJY3iJt4rbESZgd3MhysVmHnYe/hI9O0c7UBs0S4ncvKfm71DG6cK+c8
+         Gim234FEQ6jlviN9jGR5O+yx1t6sFYAbeQdc8DnRPkKCh2aGNFcUvzDH2LM4n3t/yGeQ
+         GeGSZrmeab3NMFwHpHqJhYyqPwP/EUoz23GbCL2XIU7Leeb2I52Ynf3eY5w9ASSw4yX3
+         k9rg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpCe1NKt38tLVefRbdSERFGDz5lY9gTtRzmBroMIF+qFIITzErP5gI4mSZppN66GziPUIpslOLuJqJ2Ug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmCVsnbAFe/r/rYa3PFHYvPY1JOYUGrGFQyO2fwsVpXBz8wNNX
+	jrZMI9beI6rw3Mtpt06al00HTzHJRDwuyVuvAqYI7PZQ0jSr81nO+INgF+UGcg==
+X-Gm-Gg: ASbGncvB7Th1OonnORWmlHeGNMb6frRJPjQhpET/6BwKq6sC/0Bm0dD/0ZvwZmXLehq
+	3cC9o85EtgaclS4d4aSgpWQwlIolbenhZH5NsJTJ0L+XorG8TRMd1pIOE2+TruOkDw+n5Ml6afQ
+	khNNcpzgzg9lrYbo4WXIap2Xm6J2x9SrVvrpx+PHlu5/XJ5irKafTnf22rOR9cg7B1oq0scwdju
+	1HgxHfF5fGFMdUsSvYEdpxO3Zd4+5L6DmM1Ns/lKuBhNMjgKA==
+X-Google-Smtp-Source: AGHT+IFgoqrZKvhFYx8F4ky/jD8rqqc8po02xr+Nfsr12XAUBQRr/9Y1O4Z/TTuXQPv0BeKfWTRnsA==
+X-Received: by 2002:a05:6a00:1952:b0:724:e160:7f19 with SMTP id d2e1a72fcca58-7257fcbc278mr6472126b3a.22.1733293923946;
+        Tue, 03 Dec 2024 22:32:03 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:f520:3e:d9a1:1de])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7258b2e79d3sm917423b3a.67.2024.12.03.22.32.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 22:32:03 -0800 (PST)
+Date: Wed, 4 Dec 2024 15:31:58 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCHv6 2/3] media: venus: sync with threaded IRQ during inst
+ destruction
+Message-ID: <20241204063158.GG886051@google.com>
+References: <20241025165656.778282-1-senozhatsky@chromium.org>
+ <20241025165656.778282-3-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202023041.492547-1-en-wei.wu@canonical.com> <CABBYNZLBGSKp_ew1Zk5YXrpsdue4aHObfavNcQQ8KOCymt7Eww@mail.gmail.com>
-In-Reply-To: <CABBYNZLBGSKp_ew1Zk5YXrpsdue4aHObfavNcQQ8KOCymt7Eww@mail.gmail.com>
-From: En-Wei WU <en-wei.wu@canonical.com>
-Date: Wed, 4 Dec 2024 14:30:31 +0800
-Message-ID: <CAMqyJG0n5evc5-BAyT+R5+Sq15VJoqoEo2uhH6bjAd_Y5egiQQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Bluetooth: btusb: avoid NULL pointer dereference in skb_dequeue()
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, quic_tjiang@quicinc.com, 
-	kuan-ying.lee@canonical.com, anthony.wong@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025165656.778282-3-senozhatsky@chromium.org>
 
-On Tue, 3 Dec 2024 at 05:23, Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi En-Wei,
->
-> On Sun, Dec 1, 2024 at 9:30=E2=80=AFPM En-Wei Wu <en-wei.wu@canonical.com=
-> wrote:
-> >
-> > The WCN7851 (0489:e0f3) Bluetooth controller supports firmware crash du=
-mp
-> > collection through devcoredump. During this process, the crash dump dat=
-a
-> > is queued to a dump queue as skb for further processing.
-> >
-> > A NULL pointer dereference occurs in skb_dequeue() when processing the
-> > dump queue due to improper return value handling:
-> >
-> > [ 93.672166] Bluetooth: hci0: ACL memdump size(589824)
-> >
-> > [ 93.672475] BUG: kernel NULL pointer dereference, address: 00000000000=
-00008
-> > [ 93.672517] Workqueue: hci0 hci_devcd_rx [bluetooth]
-> > [ 93.672598] RIP: 0010:skb_dequeue+0x50/0x80
-> >
-> > The issue stems from handle_dump_pkt_qca() returning the wrong value on
-> > success. It currently returns the value from hci_devcd_init() (0 on
-> > success), but callers expect > 0 to indicate successful dump handling.
-> > This causes hci_recv_frame() to free the skb while it's still queued fo=
-r
-> > dump processing, leading to the NULL pointer dereference when
-> > hci_devcd_rx() tries to dequeue it.
-> >
-> > Fix this by:
-> >
-> > 1. Extracting dump packet detection into new is_dump_pkt_qca() function
-> > 2. Making handle_dump_pkt_qca() return 0 on success and negative errno
-> >    on failure, consistent with other kernel interfaces
-> >
-> > This prevents premature skb freeing by ensuring proper handling of
-> > dump packets.
-> >
-> > Fixes: 20981ce2d5a5 ("Bluetooth: btusb: Add WCN6855 devcoredump support=
-")
-> > Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
-> > ---
-> > changes in v2:
-> > - Fix typo in the title
-> > - Re-flow a line in the commit message to fit 72 characters
-> > - Add a blank line before btusb_recv_acl_qca()
-> >
-> > drivers/bluetooth/btusb.c | 76 ++++++++++++++++++++++++---------------
-> >  1 file changed, 48 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> > index 279fe6c115fa..741be218610e 100644
-> > --- a/drivers/bluetooth/btusb.c
-> > +++ b/drivers/bluetooth/btusb.c
-> > @@ -2930,22 +2930,16 @@ static void btusb_coredump_qca(struct hci_dev *=
-hdev)
-> >                 bt_dev_err(hdev, "%s: triggle crash failed (%d)", __fun=
-c__, err);
-> >  }
-> >
-> > -/*
-> > - * =3D=3D0: not a dump pkt.
-> > - * < 0: fails to handle a dump pkt
-> > - * > 0: otherwise.
-> > - */
-> > +/* Return: 0 on success, negative errno on failure. */
-> >  static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *s=
-kb)
-> >  {
-> > -       int ret =3D 1;
-> > +       int ret =3D 0;
-> >         u8 pkt_type;
-> >         u8 *sk_ptr;
-> >         unsigned int sk_len;
-> >         u16 seqno;
-> >         u32 dump_size;
-> >
-> > -       struct hci_event_hdr *event_hdr;
-> > -       struct hci_acl_hdr *acl_hdr;
-> >         struct qca_dump_hdr *dump_hdr;
-> >         struct btusb_data *btdata =3D hci_get_drvdata(hdev);
-> >         struct usb_device *udev =3D btdata->udev;
-> > @@ -2955,30 +2949,14 @@ static int handle_dump_pkt_qca(struct hci_dev *=
-hdev, struct sk_buff *skb)
-> >         sk_len =3D skb->len;
-> >
-> >         if (pkt_type =3D=3D HCI_ACLDATA_PKT) {
-> > -               acl_hdr =3D hci_acl_hdr(skb);
-> > -               if (le16_to_cpu(acl_hdr->handle) !=3D QCA_MEMDUMP_ACL_H=
-ANDLE)
-> > -                       return 0;
-> >                 sk_ptr +=3D HCI_ACL_HDR_SIZE;
-> >                 sk_len -=3D HCI_ACL_HDR_SIZE;
->
-> I know this is in the original code, but this is totally unsafe, we
-> can't go accessing the skb->data pointer without validating it has
-> this size, not to mention it is a little odd, to say the least, to
-> encode a dump event into a an ACL data packet, but then again it was
-> in the original code so I assume the firmware really does weird things
-> like this.
->
-> Anyway if we know for sure this is a dump packet it shall be possible
-> to use the likes of skb_pull_data and stop doing unsafe access like
-> this.
->
-> > -               event_hdr =3D (struct hci_event_hdr *)sk_ptr;
-> > -       } else {
-> > -               event_hdr =3D hci_event_hdr(skb);
-> >         }
-> >
-> > -       if ((event_hdr->evt !=3D HCI_VENDOR_PKT)
-> > -               || (event_hdr->plen !=3D (sk_len - HCI_EVENT_HDR_SIZE))=
-)
-> > -               return 0;
-> > -
-> >         sk_ptr +=3D HCI_EVENT_HDR_SIZE;
-> >         sk_len -=3D HCI_EVENT_HDR_SIZE;
->
-> Ditto, just use skb_pull_data.
->
-> >         dump_hdr =3D (struct qca_dump_hdr *)sk_ptr;
-> > -       if ((sk_len < offsetof(struct qca_dump_hdr, data))
-> > -               || (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS)
-> > -           || (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
-> > -               return 0;
-> > -
-> > -       /*it is dump pkt now*/
-> >         seqno =3D le16_to_cpu(dump_hdr->seqno);
-> >         if (seqno =3D=3D 0) {
-> >                 set_bit(BTUSB_HW_SSR_ACTIVE, &btdata->flags);
-> > @@ -3052,17 +3030,59 @@ static int handle_dump_pkt_qca(struct hci_dev *=
-hdev, struct sk_buff *skb)
-> >         return ret;
-> >  }
-> >
-> > +/* Return: true if packet is a dump packet, false otherwise. */
-> > +static bool is_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
-> > +{
-> > +       u8 pkt_type;
-> > +       u8 *sk_ptr;
-> > +       unsigned int sk_len;
-> > +
-> > +       struct hci_event_hdr *event_hdr;
-> > +       struct hci_acl_hdr *acl_hdr;
-> > +       struct qca_dump_hdr *dump_hdr;
-> > +
-> > +       pkt_type =3D hci_skb_pkt_type(skb);
-> > +       sk_ptr =3D skb->data;
-> > +       sk_len =3D skb->len;
-> > +
-> > +       if (pkt_type =3D=3D HCI_ACLDATA_PKT) {
-> > +               acl_hdr =3D hci_acl_hdr(skb);
-> > +               if (le16_to_cpu(acl_hdr->handle) !=3D QCA_MEMDUMP_ACL_H=
-ANDLE)
-> > +                       return false;
-> > +               sk_ptr +=3D HCI_ACL_HDR_SIZE;
-> > +               sk_len -=3D HCI_ACL_HDR_SIZE;
-> > +               event_hdr =3D (struct hci_event_hdr *)sk_ptr;
->
-> At this point we can actually use skb_pull_data as well since I don't
-> think the stack is supposed to process data packets with
-> QCA_MEMDUMP_ACL_HANDLE as handle.
->
-> > +       } else {
-> > +               event_hdr =3D hci_event_hdr(skb);
-> > +       }
-> > +
-> > +       if ((event_hdr->evt !=3D HCI_VENDOR_PKT)
-> > +               || (event_hdr->plen !=3D (sk_len - HCI_EVENT_HDR_SIZE))=
-)
-> > +               return false;
-> > +
-> > +       sk_ptr +=3D HCI_EVENT_HDR_SIZE;
-> > +       sk_len -=3D HCI_EVENT_HDR_SIZE;
->
-> Unsafe access, sk_len might loop around as well.
->
-> > +       dump_hdr =3D (struct qca_dump_hdr *)sk_ptr;
-> > +       if ((sk_len < offsetof(struct qca_dump_hdr, data))
-> > +               || (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS)
-> > +           || (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
-> > +               return false;
-> > +
-> > +       return true;
->
-> This should probably be places in a qca specific portion, also this is
-> not very efficient, so I wonder if we should have some means for
-> driver to register handles for its vendor events like this, so driver
-> don't have to go pick the packet appart to detect that it is not
-> really meant for the Bluetooth stack to process.
->
-Agree, I think maybe we can go over that in the future.
+On (24/10/26 01:56), Sergey Senozhatsky wrote:
+> BUG: KASAN: slab-use-after-free in vb2_queue_error+0x80/0x90
+> Call trace:
+> dump_backtrace+0x1c4/0x1f8
+> show_stack+0x38/0x60
+> dump_stack_lvl+0x168/0x1f0
+> print_report+0x170/0x4c8
+> kasan_report+0x94/0xd0
+> __asan_report_load2_noabort+0x20/0x30
+> vb2_queue_error+0x80/0x90
+> venus_helper_vb2_queue_error+0x54/0x78
+> venc_event_notify+0xec/0x158
+> hfi_event_notify+0x878/0xd20
+> hfi_process_msg_packet+0x27c/0x4e0
+> venus_isr_thread+0x258/0x6e8
+> hfi_isr_thread+0x70/0x90
+> venus_isr_thread+0x34/0x50
+> irq_thread_fn+0x88/0x130
+> irq_thread+0x160/0x2c0
+> kthread+0x294/0x328
+> ret_from_fork+0x10/0x20
+> 
+> Allocated by task 20291:
+> kasan_set_track+0x4c/0x80
+> kasan_save_alloc_info+0x28/0x38
+> __kasan_kmalloc+0x84/0xa0
+> kmalloc_trace+0x7c/0x98
+> v4l2_m2m_ctx_init+0x74/0x280
+> venc_open+0x444/0x6d0
+> v4l2_open+0x19c/0x2a0
+> chrdev_open+0x374/0x3f0
+> do_dentry_open+0x710/0x10a8
+> vfs_open+0x88/0xa8
+> path_openat+0x1e6c/0x2700
+> do_filp_open+0x1a4/0x2e0
+> do_sys_openat2+0xe8/0x508
+> do_sys_open+0x15c/0x1a0
+> __arm64_sys_openat+0xa8/0xc8
+> invoke_syscall+0xdc/0x270
+> el0_svc_common+0x1ec/0x250
+> do_el0_svc+0x54/0x70
+> el0_svc+0x50/0xe8
+> el0t_64_sync_handler+0x48/0x120
+> el0t_64_sync+0x1a8/0x1b0
+> 
+> Freed by task 20291:
+>  kasan_set_track+0x4c/0x80
+>  kasan_save_free_info+0x3c/0x60
+>  ____kasan_slab_free+0x124/0x1a0
+>  __kasan_slab_free+0x18/0x28
+>  __kmem_cache_free+0x134/0x300
+>  kfree+0xc8/0x1a8
+>  v4l2_m2m_ctx_release+0x44/0x60
+>  venc_close+0x78/0x130 [venus_enc]
+>  v4l2_release+0x20c/0x2f8
+>  __fput+0x328/0x7f0
+>  ____fput+0x2c/0x48
+>  task_work_run+0x1e0/0x280
+>  get_signal+0xfb8/0x1190
+>  do_notify_resume+0x34c/0x16a8
+>  el0_svc+0x9c/0xe8
+>  el0t_64_sync_handler+0x48/0x120
+>  el0t_64_sync+0x1a8/0x1b0
 
-> > +}
-> > +
-> >  static int btusb_recv_acl_qca(struct hci_dev *hdev, struct sk_buff *sk=
-b)
-> >  {
-> > -       if (handle_dump_pkt_qca(hdev, skb))
-> > -               return 0;
-> > +       if (is_dump_pkt_qca(hdev, skb))
-> > +               return handle_dump_pkt_qca(hdev, skb);
->
-> This should be something like btqca_recv_acl, etc.
->
-For the new helper is_dump_pkt_qca(), I think it's suitable to be
-moved into a vendor specific file (btqca.c) like you said.
+[..]
 
-But I'm wondering if we should do the same thing to
-btusb_recv_acl_qca()/btusb_recv_event_qca(), because they are meant to
-be only used in the btusb.c.
+> @@ -1750,10 +1750,20 @@ static int vdec_close(struct file *file)
+>  	vdec_pm_get(inst);
+>  
+>  	cancel_work_sync(&inst->delayed_process_work);
+> +	/*
+> +	 * First, remove the inst from the ->instances list, so that
+> +	 * to_instance() will return NULL.
+> +	 */
+> +	hfi_session_destroy(inst);
+> +	/*
+> +	 * Second, make sure we don't have IRQ/IRQ-thread currently running
+> +	 * or pending execution, which would race with the inst destruction.
+> +	 */
+> +	synchronize_irq(inst->core->irq);
+> +
+>  	v4l2_m2m_ctx_release(inst->m2m_ctx);
+>  	v4l2_m2m_release(inst->m2m_dev);
+>  	ida_destroy(&inst->dpb_ids);
+> -	hfi_session_destroy(inst);
+>  	v4l2_fh_del(&inst->fh);
+>  	v4l2_fh_exit(&inst->fh);
+>  	vdec_ctrl_deinit(inst);
 
-> >         return hci_recv_frame(hdev, skb);
-> >  }
-> >
-> >  static int btusb_recv_evt_qca(struct hci_dev *hdev, struct sk_buff *sk=
-b)
-> >  {
-> > -       if (handle_dump_pkt_qca(hdev, skb))
-> > -               return 0;
-> > +       if (is_dump_pkt_qca(hdev, skb))
-> > +               return handle_dump_pkt_qca(hdev, skb);
->
-> Ditto, also since there is a clear difference between event vs ACL
-> packet I don't think it should be calling the same helper function to
-> detect if it is a dump packet or not.
->
-> >         return hci_recv_frame(hdev, skb);
-> >  }
-> >
-> > --
-> > 2.43.0
-> >
->
->
-> --
-> Luiz Augusto von Dentz
-Best regards,
-En-Wei.
+Sorry about the news, I got a regression report this morning and the reporter
+points at this patch as the culprit.  It sees that under some circumstances
+at close() there are still multiple pending requests, so hfi_session_destroy()
+performed as the first step (in order to close race condition with
+instance destruction) makes it impossible to finish some of those pending
+requests ("no valid instance", which was the whole point).
+
+v4l2_m2m_ctx_release() expects to be called before hfi_session_destroy(),
+but this leaves us with half destroyed instance on the instances list.
+Not sure what to do about it.  Would it be safe (?) to call synchronize_irq()
+at the very start and then keep the old destruction order (which looks a
+little unsafe) like something below *.  Or is there something missing in the
+driver and there is a way to make sure we don't have any pending
+jobs/requests at close()?
+
+
+* something below
+---
+        /*
+         * Make sure we don't have IRQ/IRQ-thread currently running
+         * or pending execution, which would race with the inst destruction.
+         */
+        synchronize_irq(inst->core->irq);
+        /*
+         * Now wait for jobs to be dequeued. Note this will free m2m ctx.
+         */
+        v4l2_m2m_ctx_release(inst->m2m_ctx);
+        v4l2_m2m_release(inst->m2m_dev);
+        hfi_session_destroy(inst);
+        v4l2_fh_del(&inst->fh);
+        v4l2_fh_exit(&inst->fh);
+        v4l2_ctrl_handler_free(&inst->ctrl_handler);
+
+        mutex_destroy(&inst->lock);
+        mutex_destroy(&inst->ctx_q_lock);
 
