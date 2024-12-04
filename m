@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-431456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417E69E3D85
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:01:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3681B9E3D88
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F57E163CE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF5F1641AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686ED20B1F7;
-	Wed,  4 Dec 2024 15:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6462B20B1E0;
+	Wed,  4 Dec 2024 15:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQjJmUaT"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oZOwjBa8"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B771B21BA;
-	Wed,  4 Dec 2024 15:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F381B21BA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324463; cv=none; b=WXcSQZWsJaGzidihEf/LzZAQkdBB9UVA+kB/6xbd+E+GjDzOtk6+gmZGib8Uykjw5R20OrsmyosP7LOSmruvflrQz0SmzNieJMht25tKlga55EyBQwo3bJUfHvd5fORy25psRtB1ku8gDn44OWqt4qewa681c+u2IDn7vVrFqTg=
+	t=1733324479; cv=none; b=ka5tlnJJjduHj7l8nplSqqzXnTSSLyNqT3OV9bcNH4CI4nvv6Ss9JGeE2bxldpbgTC7ND4II1zep8GV8dxwS8sJWh3G1UtcaHa85SjJ9jppuiC68icP68iSrilMz1xYLQFxL0kWDPtdnT0gYF+eL1/Zs+fPZVKvRzQhIPjTjzp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324463; c=relaxed/simple;
-	bh=WGya6tZYlOrAb1I6ImJYl0uIMnBGiv4hsZiyCqgd15Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D4wmt3VluOcy2XeO5+FuuNh0b7V41tvECbqtPyyxGcdIylQFfsqLuwKS4YbQ22hEEe/QnWow9S9fd5ynllbJ4sj+w6NKY1776QkCUuH+E6HBm/3e6OHkkiUnlspnXMQpfTxP3DwhHAxvpEofPDfdKRgOgsDogsHZ7SehWFf58iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQjJmUaT; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53df1d1b726so8336402e87.0;
-        Wed, 04 Dec 2024 07:01:01 -0800 (PST)
+	s=arc-20240116; t=1733324479; c=relaxed/simple;
+	bh=6kjyngAnwpH6ls7V5d24AxdLuqf0alE2vR0sSf2qLag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=R0F6zzPz8uKSNYjrzhr6IjBagJdqyycqGemlPr0PpNhVy0ilQrf4i9tX3+FlzLFDa6OgMLnzx611+21D3hC6qLxYNzHhvEld8IihDNiLSutCBazuBTDvBZwnIB111/H5cVNPWFH/GxRV7FY+/mhCBTtOhCSKX8eZwREasR7LaVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oZOwjBa8; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3ea45abb4e1so2899131b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:01:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733324460; x=1733929260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XAYfoe7YxaLLp79KiNTGPQN0mL7BqRD1Ol2OVwMDpXw=;
-        b=ZQjJmUaTjT1qc/z4MaajOA6nHGADChEszAlyenw+GfXM/hZ5SADwd2+VQqcr61IWLf
-         O7fOTnlbiAsndIIhLWV6O4RiqG7Baem2XFJeGpX15LMxYwoU/FiSG6SJ3vrRYnHNmm9r
-         QJphtXjOaB+7gN763tCChfwZDRKqUClCp6kYP9o4cuB8O9tT8QW8d1FF++CRYQ0TWCq5
-         wcyoSb6AnTFOmxUoGNR34HhO+2cY6gyc66HtJVMvs34AkXm8KT0y6Rd8u00DccDUC+eI
-         kq6Q8SjBPzNg186ELAEHW9G3smN+0Ye4V0dDhDvS+zXUawGJEXckeDfZHxRR+e9aJkXi
-         N88w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733324476; x=1733929276; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GU+LWkcgTUBKRbXJUWBk2tKb9KisMQLrnXNhHENNNSA=;
+        b=oZOwjBa8S60GkP4U6jrZzpAVCnA+kwjtjpBs4hI0yIn1GFIAU9SzZ3sGTWKfdHLHf+
+         /qI/MrZ7I85W5qq6XYssaEjlcbvUpf5Y775Jz/tg3ee3vXuC8juCpfbRxxLTnz21OU9+
+         Q9MlRYcGi8aSvqvLhNwUokJBJC3VLQgdv1CotSTZfm4CU+nj+OOPKG2fnbpjGJ8Iu+uL
+         qQ+bjwk31nyflF1rERRjkSaX+NssQaO+FEaux7w1m2W2K9/82xjiyPkgLphv5obAeUIz
+         lTY63XsFnb+OLRL3Ur6lhs1W9RTEMiPh224I0TNznaX65rCbQk2t+xP7r6CZ9jbNF8Rs
+         UkmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733324460; x=1733929260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XAYfoe7YxaLLp79KiNTGPQN0mL7BqRD1Ol2OVwMDpXw=;
-        b=k1w9vphDL72Pf1IUXUrE7Sf11otx24w2VYD8QLzKZz8M7S5OKfOb0mKTQacj40/P/J
-         cs7TXlXNP4SlRJB3h2JBZANKFivZmAtjo9Jbihk8sOfZvnDF53wZW7eteJHKR1j9XdIT
-         f2tRo+UsDMU0hT+nVYnj0eqdkSVKX0xZDFOIaKgMIUuPn9lo+i/545ToQ5BGleWNti66
-         HdINiLmOaPBNFW7VvTEaCkPYZpbv/xUcZJjAiYbIFz2LnyDN0WVrNLNUZU+4BpeXCaaF
-         +a9/S/dMY6+Y8cosP1AG6X/kjdIcydPbXzrwqU5XJRTSDRMdNjACA2b3doVn6IwE2Nze
-         Ozjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTk5rbjn1QqaY4q12Twd0Wo47jsVPCJLZnlHh/hNIW+DRJLQ17frMBQip4LzUAcoajRl0=@vger.kernel.org, AJvYcCXMJHacLmyc3AZmXSxXfJo4V5kM57qD2uf9mJGRQut8A4Fjr0XeYz3BRBAKI69dI+kOSG5YLy67XbiobeFN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6GPgUnk8wxu5N/YorXmWbBpeioWQq/I/4eujxpadtELaWXPNS
-	JOmzMJxWq8JNrJxKimbOclx1rn2R8/go0V7If7+3yynK0ibC+jNrzQUOyPTvo7jkotJuO3ha2UP
-	Se2H1ITWJbLvFJw3uDVORc/CZlQ==
-X-Gm-Gg: ASbGncsswIkQ+Td/xs6+BYcszwlZJc/Dt/KSysIZCrrYa11r6vHnFjSDVPl8bi8Q/ym
-	pA21ua2vzuoRy3Jhq5e6j2mhGHBFNo8KmfbWFIqnxCQ+FHg==
-X-Google-Smtp-Source: AGHT+IE9yu189cldcYdGXhKzLCVnldkK7OU6Uyyi6xPi54jzRMCQIhG/ltnwFk0bt4xIPAue41I5qib7x2Abr7wU3HA=
-X-Received: by 2002:a05:6512:3f0e:b0:539:905c:15ab with SMTP id
- 2adb3069b0e04-53e12a01745mr4625177e87.32.1733324459590; Wed, 04 Dec 2024
- 07:00:59 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733324476; x=1733929276;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GU+LWkcgTUBKRbXJUWBk2tKb9KisMQLrnXNhHENNNSA=;
+        b=F0/9/2h1shSrdJ/FIzKfF3CcHhfKIr06N48F2XT6jnXj85MUlgmmGJzk6a/LyF/L3d
+         jRlAnc7SD9zU3vyQZJ5sifficeDTXt3HjPoHttPNq8LEcFLX1sgUr878wG59g/gUsskB
+         f3s64jARhOaNdqN2LsVEEQnZtLMKcp9wqmEmL7w81t2MLYP/dNBD2RqshXZ6S+WG02bq
+         87udFPswl46ZPhVWcCDUEvq+u6fHVT+JdMnCrBOwIUYjRwSXXgHLalsAdues8KuJx/ge
+         ld2dEz4ar3S69buBKPa/JQ1nG33hA8Eosv6QYmCcbCgUb6/aRxlvkpHSJ0/e42jEF6Z4
+         093w==
+X-Forwarded-Encrypted: i=1; AJvYcCUPuc4JmuYVgZ87P54SzsEVoR2naFdxOeL/yUJHt630iG+KCSpA5AkW7q6bWmQ+cJJqcLMAmF2PUZEyQjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVI+oGFvbXGzT97DMhj80Cfzb/ehSNFZW7ybL32fc/GwelDCN9
+	E8ntybAS/tASP8r1o9T/geUkfEepUYE0Z79AWrZBQzVM4UdpwNGJwnvkgSaZ5FQ=
+X-Gm-Gg: ASbGncs8g58zB3lHAKPBfQhnbKEIa3+qvRcMGSwbGIFvF+W+rlQ2idIim7GuNcjhIHe
+	5j4+Ep7iM3bmjDdymn81n9Sc+Ot/a7VtZ+xr3luKFLqWiBisZJ/d9B4NlhQcyvotwfRz9Xf+pVe
+	CwCqRBM0JK/TK4qnDOgF7/ZDSnB3OUjTaDzEXQ050p2wwiKu/sZpyjTH23H0/1bGghZ2dxTXD0n
+	ficvqB29mEy0jc7vjmMjbQSrCM41jYTIFb6L0Bk1LFgDvOl
+X-Google-Smtp-Source: AGHT+IFKmmrKt72kBSqpTqcbtxEF3R5Y2zboMiL6UtgHDWZL9dVc3fUYJ+oRiHg2rky5L2PB5/7ppw==
+X-Received: by 2002:a05:6808:219f:b0:3ea:4ec7:79cc with SMTP id 5614622812f47-3eae4ec7d31mr7289593b6e.3.1733324475602;
+        Wed, 04 Dec 2024 07:01:15 -0800 (PST)
+Received: from [172.20.2.46] ([130.250.255.163])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea860d92dcsm3375114b6e.24.2024.12.04.07.01.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 07:01:14 -0800 (PST)
+Message-ID: <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
+Date: Wed, 4 Dec 2024 08:01:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-6-arnd@kernel.org>
- <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com>
- <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com> <CAMzpN2gTUks3K3Hvwq3MEVBCN-9HHTLM4+FNdHkuQOmgX0Tfjg@mail.gmail.com>
-In-Reply-To: <CAMzpN2gTUks3K3Hvwq3MEVBCN-9HHTLM4+FNdHkuQOmgX0Tfjg@mail.gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 4 Dec 2024 10:00:48 -0500
-Message-ID: <CAMzpN2iAWnq_RNaoCHYLD0bh2HskZjXWD+RGPmpDigvWtOXekA@mail.gmail.com>
-Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Sean Christopherson <seanjc@google.com>, 
-	Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in
+ sys_io_uring_register
+To: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 4, 2024 at 9:02=E2=80=AFAM Brian Gerst <brgerst@gmail.com> wrot=
-e:
->
-> On Wed, Dec 4, 2024 at 8:43=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrot=
-e:
-> >
-> > On Wed, Dec 4, 2024, at 14:29, Brian Gerst wrote:
-> > > On Wed, Dec 4, 2024 at 5:34=E2=80=AFAM Arnd Bergmann <arnd@kernel.org=
-> wrote:
-> > >>
-> > >>  - In the early days of x86-64 hardware, there was sometimes the nee=
-d
-> > >>    to run a 32-bit kernel to work around bugs in the hardware driver=
-s,
-> > >>    or in the syscall emulation for 32-bit userspace. This likely sti=
-ll
-> > >>    works but there should never be a need for this any more.
-> > >>
-> > >> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOTLB.
-> > >> PAE mode is still required to get access to the 'NX' bit on Atom
-> > >> 'Pentium M' and 'Core Duo' CPUs.
-> > >
-> > > 8GB of memory is still useful for 32-bit guest VMs.
-> >
-> > Can you give some more background on this?
-> >
-> > It's clear that one can run a virtual machine this way and it
-> > currently works, but are you able to construct a case where this
-> > is a good idea, compared to running the same userspace with a
-> > 64-bit kernel?
-> >
-> > From what I can tell, any practical workload that requires
-> > 8GB of total RAM will likely run into either the lowmem
-> > limits or into virtual addressig limits, in addition to the
-> > problems of 32-bit kernels being generally worse than 64-bit
-> > ones in terms of performance, features and testing.
->
-> I use a 32-bit VM to test 32-bit kernel builds.  I haven't benchmarked
-> kernel builds with 4GB/8GB yet, but logically more memory would be
-> better for caching files.
->
->
-> Brian Gerst
+On 12/4/24 6:56 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    c245a7a79602 Add linux-next specific files for 20241203
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=10ae840f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=092bbab7da235a02a03a
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a448df980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cca330580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/8cc90a2ea120/disk-c245a7a7.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/0f6b1a1a0541/vmlinux-c245a7a7.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9fa3eac09ddc/bzImage-c245a7a7.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+> BUG: KASAN: null-ptr-deref in atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
+> BUG: KASAN: null-ptr-deref in put_cred_many include/linux/cred.h:255 [inline]
+> BUG: KASAN: null-ptr-deref in put_cred include/linux/cred.h:269 [inline]
+> BUG: KASAN: null-ptr-deref in io_unregister_personality io_uring/register.c:82 [inline]
+> BUG: KASAN: null-ptr-deref in __io_uring_register io_uring/register.c:698 [inline]
+> BUG: KASAN: null-ptr-deref in __do_sys_io_uring_register io_uring/register.c:902 [inline]
+> BUG: KASAN: null-ptr-deref in __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
+> Write of size 8 at addr 0000000000000406 by task syz-executor274/5828
+> 
+> CPU: 1 UID: 0 PID: 5828 Comm: syz-executor274 Not tainted 6.13.0-rc1-next-20241203-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_report+0xe8/0x550 mm/kasan/report.c:492
+>  kasan_report+0x143/0x180 mm/kasan/report.c:602
+>  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+>  atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
+>  put_cred_many include/linux/cred.h:255 [inline]
+>  put_cred include/linux/cred.h:269 [inline]
+>  io_unregister_personality io_uring/register.c:82 [inline]
+>  __io_uring_register io_uring/register.c:698 [inline]
+>  __do_sys_io_uring_register io_uring/register.c:902 [inline]
+>  __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f65bbcb03a9
+> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffe8fac7478 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+> RAX: ffffffffffffffda RBX: 000000000000371d RCX: 00007f65bbcb03a9
+> RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
+> RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> R13: 00007ffe8fac7648 R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> ==================================================================
 
-After verifying, I only had the VM set to 4GB and CONFIG_HIGHMEM64G
-was not set.  So I have no issue with this.
+Not sure what's going on with -next, but this looks like nonsense - we
+store a valid pointer in the xarry, and then attempt to delete an
+invalid index which then returns a totally garbage pointer!? I'll check
+what is in -next, but this very much does not look like an io_uring
+issue.
 
-
-Brian Gerst
+-- 
+Jens Axboe
 
