@@ -1,188 +1,236 @@
-Return-Path: <linux-kernel+bounces-431953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4CE9E4311
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:12:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACBC9E4318
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:14:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC165161CB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECED616371A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3132391A5;
-	Wed,  4 Dec 2024 18:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A85723919B;
+	Wed,  4 Dec 2024 18:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TJ94HYKu"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="o/a38iOH"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2084.outbound.protection.outlook.com [40.107.94.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E515239180
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733335921; cv=none; b=SsdgAyqa/EdEo13BA4VeACnec2Lej+GwINJpjIq4XpTp9BDAHcSyZlmb6MEzinYQ8zXcYdtTRoP8Pa0JNDjmUeaL/4H1n+QWAnahGc1mD9laFXKJiutYfHbGJOH46lF4cOOxnnFnXoVZgbBkgV71T+e0JYr8UQL98QA7B5yfFHM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733335921; c=relaxed/simple;
-	bh=v+jzv8rPT2WHY9B4GsJV0qYrOODUfu3q72gGtG6Qe4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jk4/1ieLP9HkEdTiF6SiWLiyZG65hMfJrJXSBu/6nvLGc7kfNgSQDylYt0uTZiz6gdErlG+eHpL0iEE+4D9+GNwlOwddvHxw5hunhcdU/RtFL8VoTL4LkqYLcakNYac84LHfXk71y6/NrD4LpfXSeFvVRcyxRLiV8sJhU/QsRog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TJ94HYKu; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53e1be0ec84so107900e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 10:11:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733335917; x=1733940717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K7xszK3WQnOZZ7Fj6nqT0zzAPzoP0+KMKEdCaulS0QI=;
-        b=TJ94HYKuCMaRmsnWblYxt9ZxU/ujd0aLJXb/BPCNwj4Fleh7sk1QpYjHa1OA9lNSA1
-         FmkNvG4xj5jUbVkAJYxCsZ53HDy0/7vR7VYI/p8ffy1A1qC06YW9f7VSMYMH2EwWiKKR
-         jy/Xxj/CKBPM8/TKQJkDuTOcnEwt/4PAZsVtU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733335917; x=1733940717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K7xszK3WQnOZZ7Fj6nqT0zzAPzoP0+KMKEdCaulS0QI=;
-        b=rYjbIqw684dU4KxelwoP4jw/2EcQmnTa2B3z+R0D+hUm3pYxUCkVZh+97nDeTRy87S
-         c29rNBlhFf32gXQNU9PfciBHsQfIjUD6ZmqiAVSFoPPJOTQdXfvn9uBymun4/bDewqPr
-         khE1BZZQRaRG1E1sVeVGKUJ2z8OFtTQ5rji7YVgkMQXP6iAYxw/GrLHrz8UTDV/jE9Dg
-         WdHKIfgc5zygVyXV81DUWE7ozCNohGwxd6d6XZx1gWnQS3VTGWyKoZH8XINHZ0oiiPuv
-         fmuQqd3RCKxX4rEZk01w+5eP7zO57CeGW/TVg5GLF5cKLLPsCIYuMZ1vWpkDzilMPT4M
-         dAhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzVPU+hZgpZychZEKxLMjOSvYsW834DZQWIexs114NB92ibzotJTED6ZCiL0qx0mR0s75aVmWFG2wXqg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQendEwXOmFeuxofTbRrC3mYSBtodRzlYmAToe96ZJiOksDY4c
-	QbA6nBK5B1M6ycbFYCEPf+ofp9UUVR9Ds0K0zlKZKVNN77cpsCfsBBBlqZr34W/stJ/G9PFzYoc
-	ntUvy
-X-Gm-Gg: ASbGncso11JTjEvj2HEjSmdCcbbNU8CpVgBYYkFF5kX8MA6r/EhTnzZ/4gkJ//xUp4s
-	wp4XPokXM37bLBs4I/xGBoQMqJ7GbIHlHI5gCeXD1PtQTsSeSf8Ys2/js9V7q+2+UChWJ/RE+Hr
-	OkNm+ckjuQrSBqvmWZbE0/VBZPC2eBBHVQyXVWLhFpCnG3WlIlFjyOSyVOVCaqOKIyqO7ZTJk/n
-	QnP/JiEls15UNvfImIR96v3ce9VlmS/LxiX+p9AzAb5vBT/QjQw68fMucDRGvm9P4ITJ3Wh34Vt
-	34pv8qIVUSIwVw==
-X-Google-Smtp-Source: AGHT+IENvpTWOp/Np/CZRSlt5GLJmQXtt+4R0H+K9IVXFG38MgqDBubZOvfEcROkxBMmdG9bzN4bIA==
-X-Received: by 2002:a05:6512:3989:b0:53d:ed45:45b3 with SMTP id 2adb3069b0e04-53e129fdc40mr4391453e87.16.1733335916668;
-        Wed, 04 Dec 2024 10:11:56 -0800 (PST)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e1fcfef52sm173840e87.277.2024.12.04.10.11.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 10:11:55 -0800 (PST)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53e1be0ec84so107846e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 10:11:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXW3hSprVDVIn0qWJ779qkvbBKkoIdC/XofkFc/sqldMcCWlUiH6Jzo/TJ8PiifK1s3DkY6pZ6J9iruPRU=@vger.kernel.org
-X-Received: by 2002:a05:6512:2395:b0:53d:e6c3:368c with SMTP id
- 2adb3069b0e04-53e12a0595emr4365550e87.32.1733335915171; Wed, 04 Dec 2024
- 10:11:55 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FCD239180;
+	Wed,  4 Dec 2024 18:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733336044; cv=fail; b=Rugb90fIfeavrmrN4gEYAW6ULt2ftB9TYR/glo+ar9OkPj/EOma92rzw92v5yo9akDWzFE2/X0fvBBxSnoKtE9GXryu1Hc0jhLzmBaKLgrinF0pvupz69h49tF2xbVkWWJASfLewjUsWrpHaIXoqJ/Pt4CEcK3hscmLFyzXgB3w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733336044; c=relaxed/simple;
+	bh=c5ACqlbgC7zu6SjTpMzH2b+UIadP6NmcXqINmfwGW4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A7bvX07udEtf9g2GY75rAhurBUZ+tcp1kDaCfSD6fpicRPw9zVbRSiRsV2RSdBokAHbWA2pdOAlodmlzZAvBlSv2OFg+B5wajnyJbDg46CW31+Dtdoq80upb9al6NmDbtFFCj0gnqzec6PqSA20LMxQ0KNYpVJBQMouoY0zFyYQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=o/a38iOH; arc=fail smtp.client-ip=40.107.94.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EouwS47uryqbZPyY1Rh728R9/yRVw9d78vesc+MtzpJLSS8JbStQ+10R10Imh1DixoCWzMuvDHLdtGQkgzqtqPVDPKAgzG3sD0nZ+6Y40dYYlreZg4XpK1VtgVY0d/f1Hzi3qv04MfSgnwJPdWWqu0zLSAmMiT7OXI3m8kt0pnBJWwr92p7Em/IE8+be25Jy1VZXMuQb/gw0lpo/aNDiaAeXAk4bpLiUFat0v/dPtkBLpI6OEBkuD63tpGWuSRBJNqERj4UAa3o5zCk1lylNQzgRo6T8qStG0XQx50v+5NvaP83iatacikLyYEalDi6OTc7irIBH8wLUI5wh5IS2eQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0CmM66vtSqxOjR2yHWqd/ep1yiaZIO+/6NMkmo35A1U=;
+ b=Dw6dvoEIKLJAjKfwJ4oVlvvGYdjMl4zea7L6v0sMwS9ytKhPmB8K/s2L7tikh4GZvj/YwhQmuSIb6QQ4E6xOOrEX2fYPjOERsjqXBZzalHLg0sV/xqT+uOT2UO9AejuPjN6VoH2LC4ab5E0tLKBagaGWfMwsoWYH4hCealG1C8Yb1xhQ4FvJwi7d/IZlBPgb9wuIMRS/FrI+h2rJ31ftWiCi9Ty0RUI2s/LamRDQ4v5SvkHxUXrMOglFhf7NfHDwA4W+bw33qPYbyzVojV31Zr9NHcdLkyk8H/kMiuJ79bkJHcwI+MCaHXXl7Gfr3OSQZwOxKvf0DzZeoL337zx6+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0CmM66vtSqxOjR2yHWqd/ep1yiaZIO+/6NMkmo35A1U=;
+ b=o/a38iOHthiJRnowAmIYwBwFPFxmQIymZmjHe28VM6j0zAjlJAYvjeeyLX7LgNfWg1e/R2/fg/tnCK7cLEuGewmhJDjYOI/L4vp0VUXX7U/agn169+E8xTA07jZvhOoNHrLWbIQ+IKlWVsuZY3U15ln2eud4j6iCUXvewqzEj1e4NdCm7x2ETEmXZLS/qqfQJCVpVquY5qyfy0GjrM662juiAHjP4l5tlJlzyNkTwxBiBLz4+7jM4cw9same0PJMlg+60j7G+G9d8ou0eJ6whci63vTeqs1wLmAUfFuAI1llpQJ9bVWbY/rOkPAAjQ6Twberf1iusn5sGBu2lKF05w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ CY5PR12MB6550.namprd12.prod.outlook.com (2603:10b6:930:42::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.19; Wed, 4 Dec 2024 18:14:00 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%7]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
+ 18:14:00 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, John Hubbard <jhubbard@nvidia.com>,
+ "Huang, Ying" <ying.huang@intel.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Alexander Potapenko <glider@google.com>, Kees Cook <keescook@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH] mm: avoid zeroing user movable page twice with
+ init_on_alloc=1
+Date: Wed, 04 Dec 2024 13:13:57 -0500
+X-Mailer: MailMate (1.14r6065)
+Message-ID: <2390F919-D502-4428-B8CE-5154D30112C4@nvidia.com>
+In-Reply-To: <b2142993-e77f-4998-ba87-0d51629c0f6d@suse.cz>
+References: <20241011150304.709590-1-ziy@nvidia.com>
+ <CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com>
+ <DAFE2913-0B32-484F-83BE-080C60362DB8@nvidia.com>
+ <f64f8a9e-fda8-4f7a-85a2-0113de2feb6c@suse.cz>
+ <9942C08D-C188-461C-B731-F08DE294CD2B@nvidia.com>
+ <Z1CDbrrTn6RgNmYn@casper.infradead.org>
+ <09B2AB6A-B122-4287-B97E-F800E511097E@nvidia.com>
+ <b2142993-e77f-4998-ba87-0d51629c0f6d@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL0PR02CA0060.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::37) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127105709.4014302-1-treapking@chromium.org>
- <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
- <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
- <CAD=FV=XuResyZK1ke1NtaGREfwm_3MB-u5t6vw459kYPt0LZwQ@mail.gmail.com>
- <Z0-4umP9TnNAbJXO@google.com> <CAEXTbpeeZVwCYWR0wzX8QMYJ7okj=zmziwt9Nvtu2kzA4iMCmA@mail.gmail.com>
-In-Reply-To: <CAEXTbpeeZVwCYWR0wzX8QMYJ7okj=zmziwt9Nvtu2kzA4iMCmA@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 4 Dec 2024 10:11:43 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Vrv6cJVMpm-vUQTG5p-k6Td1KFKvX6epDfiOzUOAON+w@mail.gmail.com>
-Message-ID: <CAD=FV=Vrv6cJVMpm-vUQTG5p-k6Td1KFKvX6epDfiOzUOAON+w@mail.gmail.com>
-Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
- from 10s to 5s
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CY5PR12MB6550:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa1ffdff-e9d6-4121-41f3-08dd148f6d0b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NDZWU09ON3Rrd0thZFA4dlZWcGRtVEdwMERsQTl4YVVIS2dZRm9XcGVmYVhT?=
+ =?utf-8?B?SEVqQWwrOUlyTmFBZklqZ3BSU01Wc3ZHRjhXbEpHU1A1S0ExbEFDVkRqeUZE?=
+ =?utf-8?B?YUdXRkp4Y0lrZGFGWlRiN2gwQ2Z1K1RUZzVOVG1QcHFXR3pSeUpmeEdISVRy?=
+ =?utf-8?B?cDhubmZtbmN0NW9ydFVrSVNNM3NmOTc5MWtwQnZ0UmE1clZOMUhrdTZuVVpD?=
+ =?utf-8?B?WGx0Sm0vV2FzMXA3b3N1OUxWdFVldktST2dYVXFJb0tFMHNGT0x1K1htMGdt?=
+ =?utf-8?B?SjlnV2U5MmFxY3RuUHVZQitTQWgrWGlqZ0NmYVZaTnAyR3U1VHdxUHBVMFNp?=
+ =?utf-8?B?S3lCcWp4eEdGVityeTBacHR0bFI1UzVPMXg4Y3dUd3Jsb29QeUZFeVZ1V1hH?=
+ =?utf-8?B?L0EwY3N1aUZ1NXAvMmtDNDR4NkZVSThCNHRKQmhoNCtlbEt0MDc1dUl4cHQ2?=
+ =?utf-8?B?N0NFVEJWZGVlY3I4OC9LZnJSNGg2UTVLa0FiV3l2aVRJcjFKeFc2d3A1RXp2?=
+ =?utf-8?B?SC82d1RZeFZic2pReEx3UVNkREFKT2VYVVh5QWczMUpiRDJrUHJtdjJDZnRO?=
+ =?utf-8?B?L1RqNjl4Tk12andFR2FHOXFGb1BhQVlkbzdXVWJHSStBWG00SzJ6TVFWbTRs?=
+ =?utf-8?B?NTFVMy9lc1EzSVBIR1RFWWd0ZHdzNFlHNzlOQStqaEdHcnArTk5zbmxYMEZV?=
+ =?utf-8?B?ckdCRGVaaWZaSkpNTWE4SU9La2RBcTdnbUVJeHlrTmtYcnprcjh2MTVFSnBN?=
+ =?utf-8?B?M0xPU1VrM2pvSnpYUEIycnd4UEw1QVB0cWkycDlRMTNIT1dJU0Jocm55NkFF?=
+ =?utf-8?B?N0Y2QmJjV0FkRmtPUzNFWmlsNmd1TVlQNmRMOGtvdkhFY1BxT1ZyRzZUUWRR?=
+ =?utf-8?B?MnQvNE9WZVdUWHZxdGI2TmtvNGtmbyszYUJuSXBOVEdlUTdHR0dSU3N5RXVZ?=
+ =?utf-8?B?eFNSbCtlS08vVjhpOUFSdWVqaVhXK1RQS3k1UzR5aHVrVXdNWDBkdFViZEJo?=
+ =?utf-8?B?enFJNmRFN05RWm1HTC8xQ05YUGdPQ0J6dFE3K0dnNm1JZEZIOVFnRGRvZStt?=
+ =?utf-8?B?WTIydC9PNDVmNUZ3T3I3M0srS3R4YU02Rjh0YmtlOGtDYnI2SXoybC80ZDVa?=
+ =?utf-8?B?enJ5WVR3UjRjWFozT0FnNDAvZnRFb1B3cjNaVDRHMXpUNnJHTmZpVzluK3hv?=
+ =?utf-8?B?ZlJlRWM4QVBtQlJ4eEVQZ0hvbGRKM2xCQ1Y2SXU5MHpCU3RpcmxxZHhIYng1?=
+ =?utf-8?B?ZGVwbmd2c0FPcDJRZkVFMTRKRXhITldOeEFCQXlyM3pVMkd0dkZnU0p3UjFI?=
+ =?utf-8?B?VHpZbjRENFdVVEt5Z0ZOT2NuL2lOcEVjRHpOSk5COE9wQzh4VjFZUUFrdWgr?=
+ =?utf-8?B?TXBpZUcyT2tqRE5mTTJKVnVYK2hQQk5jTC92WENVRTVMU3JmT2E3SlNlWkV1?=
+ =?utf-8?B?U3RQa0dLc0xtbE1QT0YrblRHeXY3NytCYU1FRzU3YUpTTVNqOHY1VU56Z1pL?=
+ =?utf-8?B?dDNDcTJyYzRhSWNGQit0dDkxR1JqL2tvMWUwb1h3RVpjSmFyQmg2dWpmUzcr?=
+ =?utf-8?B?SzluWDJQWkx5eHhmem5lWjM3blY1aUJtaGdQcVhidDBCZ3ZtdEJ0QlpZdFo0?=
+ =?utf-8?B?ZzNPTm1QWlBRODlwaC9xSUlLSG9HajhESVhBU1p3c0tuTXA3cFQ5cW1tMGh6?=
+ =?utf-8?B?OWg0U3RnUjhUQlE1U3UwUTUxSUhBczR3dkQwQlQ2M1hOWG1jZWJPOTY2S1FM?=
+ =?utf-8?B?T3NiazFJc0tyUHJ4WW1RTmtDRy9LNnhCcXRxem91c2kwSnI0YXZISFZGcWdl?=
+ =?utf-8?B?Q21kUVI4eTdraEhGN2EzZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a3ZIa0FMM3lmK2Nid1R0MXp3cXNQbTIyUjA5M3FwekNjMkpBTmdvbVdwNjcy?=
+ =?utf-8?B?K2tqdkk4MWw5Q1crb3pVcjhZWC9ENVh3aHZ5ZVZnWVBEUU5DTDJpbW1ESnh5?=
+ =?utf-8?B?Q01SNG4vb0M3bkhyekpBcHk0WFVsSlYxUEc4Q2xwMkhiOXI2U0czMkFzOFV3?=
+ =?utf-8?B?QXpKa0VHQlNPVWN1UTUyTWtnek8yS2xkUUNncHdsQnY4cEN1Y3Rpa01sYVRy?=
+ =?utf-8?B?OWVRWmVtUlNoL2dCd29wMnM0YUUrVFZ5Z0xyUUNmSG5UZXdvMGJXbVpXR2pi?=
+ =?utf-8?B?b3RYMmYxUzhScFVMZHdhVGNXK3c4UnFoS0RSenVtZVUrZjJKM201bFZ3QVVY?=
+ =?utf-8?B?dEIyZWI2RW9XT3RhTXJqcm5YNWFDMHF3czdoSGdIK0RSVHJVdlR2Wk1zYzFY?=
+ =?utf-8?B?WDAzclJLQmxVOWorMG1aRjl4WGxNVkVWS0lVbHFjRUd5dUQrOEptVHJReWNa?=
+ =?utf-8?B?UmpTOUxsSU1LKzBJZlpSRFJhNTNWOFlqbHdZNUJ0RTVLS095ZmFQL1lGWlB1?=
+ =?utf-8?B?YzZrVXFMenlWakhQOWVmNlpsSXlnSHMwUDJZWWRQaVRXc3JrSDdpUXpwYlFm?=
+ =?utf-8?B?WkZITjI3Qy8yQmx5NEYzS1R2U1lqN0pYUmJRM2g4bUpsdURlNWhDQlZkTklz?=
+ =?utf-8?B?VVQrQnRBZjEvUXQ5Wm9IYWhiRUgxWUdGVDJhTFN4S0NnWDhUakR0NE5ncHdp?=
+ =?utf-8?B?MXdVVlRZVWlOODRJNERSOVNDUjVCOWNJcFFpYWRtcHFoeHlmRnYzU1F2eWdy?=
+ =?utf-8?B?bi9sUmdPamlsZjd6ckRHaDJtcEJMZlE3SDB2bjFyZ1NjcXcrNkhOd1hoeWlh?=
+ =?utf-8?B?UnlPVXVNTFNmb24zbGNFUlZNc1N5OXhDcCtYV0pOSDl1RFJhL0taK3ZtTThp?=
+ =?utf-8?B?NWVXSURtRUEwQ0JDRnVqTVZKSHZCKzY1dWFDRkpkZ2hpN2ttY3E0ekl6Y01V?=
+ =?utf-8?B?bzR3aFRkUDJGWmtZZmRZWTBTNDNyNHZJSzVndXAwcjZYQS9NY2NGUU5VZmtr?=
+ =?utf-8?B?dVNPZXZWcHNpRXZQcEFvWjhWR1JiSzFzY3ZWTkcvNkNiUjVCdzdwLzArMXQ4?=
+ =?utf-8?B?cTl4bzlCNU5rTWN3S3lsZENMZTB4OVA1K1hrSHpXQnRiRXhEU2xkbzhQYSt0?=
+ =?utf-8?B?RkdWVGpiZUJNODdaK0h6OWlqWUVuWXV6Y0ZldnFjNncvTjNaZnlwd1hRMXpx?=
+ =?utf-8?B?L2JFTlZkQUF0a1RTa21ZWnJGY3prWjA5bnNHczZUR1g5bXl3NlVaR1dxM3dW?=
+ =?utf-8?B?Q0hFQkZPa1ZvYURmZTIwOW1wSGt6TlUvdVVCWjNwcmJER0dTdXB0cFpaLzJ2?=
+ =?utf-8?B?S29EZWpHamczMzFEdi9aLzlzWjZCODRaQkpQQk1JZis5WjAzdCtxM2Ryc0tN?=
+ =?utf-8?B?UG8xdGQ1OVdzUGdEQkJFTVJoYldWNE8wa1hBQ05CMVhVWm9BOXRVUzR6QWdi?=
+ =?utf-8?B?UnBwbGFLNGIzQmZNSnFUYzhDS0F4QmVVd0hqeGFHT3NnbUNXK3Mydm5zem5H?=
+ =?utf-8?B?Q3RSaW8vNDdTbk93Q3RMMGFOdG8rQ0w4V2lSc3UvZFZsa1pFaThiMVg5bXBC?=
+ =?utf-8?B?bkZPd1grNisyRVJoZkdTdnN6UTJaUGVJU2o3VFU4ZXlsK3QwR2xLSGxYd29R?=
+ =?utf-8?B?TjllRzJzYjJuMmFZbFd4KzhiMmZwYWV3bEMycGpia2VuRVI3VlJMTUIyN2dX?=
+ =?utf-8?B?Ky92bjN2VG9ib0l0N1NqWGdVdmFJaHdYTTRkSElWbW9oWjBLOEovaHNUYjla?=
+ =?utf-8?B?NVo2dmxPSHNPTG5Iblg0Y2pNKzlacFJqRTQ4LzZSOWNsL1JablBSdkdnZWdE?=
+ =?utf-8?B?UDA3VW9SS0RUbjg1bVBqRXlza1BQYUdFT3ZpV2pxeE5TU2JrMTRTQUNtMHRi?=
+ =?utf-8?B?cGRYZVZScmg4b0V2T252YzJ6YkhWdjM0OFZzSDM4alZONUl4N1k5U295NFZS?=
+ =?utf-8?B?K3ZGN0VDYWk2UU91ZE9ZVlBZNStlS3ZRanRTK0hhNnZjMXkySm0vMThHQzNR?=
+ =?utf-8?B?dDdmUklYbzl1SFpreFhnZldmZUVROWE3S2lQT2ZRaGdZMG8wVGlGcFJCMFRO?=
+ =?utf-8?B?SzUwVEsxM2wwR3ZUUWttdFI5djFncDlXOTJPcWhZQnNzUG9MWlBpZk13T0JV?=
+ =?utf-8?Q?lTEAoBrWX2L46FffdqHzSQdtR?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa1ffdff-e9d6-4121-41f3-08dd148f6d0b
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 18:13:59.9983
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nk1obsVc5uEh7GIqP+DpEkP3fEaBNFR9I8Zs6Mi7l8KR2CMOTRl9yrulPX8D+4+g
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6550
 
-Hi,
+On 4 Dec 2024, at 12:46, Vlastimil Babka wrote:
 
-On Wed, Dec 4, 2024 at 5:45=E2=80=AFAM Pin-yen Lin <treapking@chromium.org>=
- wrote:
+> On 12/4/24 18:33, Zi Yan wrote:
+>> On 4 Dec 2024, at 11:29, Matthew Wilcox wrote:
+>>
+>>> On Wed, Dec 04, 2024 at 11:16:51AM -0500, Zi Yan wrote:
+>>>>> So maybe the clearing done as part of page allocator isn't enough here.
+>>>>>
+>>>> Basically, mips needs to flush data cache if kmap address is aliased to
+>>>
+>>> People use "aliased" in contronym ways.  Do you mean "has a
+>>> non-congruent alias" or "has a congruent alias"?
+>>>
+>>>> userspace address. This means when mips has THP on, the patch below
+>>>> is not enough to fix the issue.
+>>>>
+>>>> In post_alloc_hook(), it does not make sense to pass userspace address
+>>>> in to determine whether to flush dcache or not.
+>>>>
+>>>> One way to fix it is to add something like arch_userpage_post_alloc()
+>>>> to flush dcache if kmap address is aliased to userspace address.
+>>>> But my questions are that
+>>>> 1) if kmap address will always be the same for two separate kmap_local() calls,
+>>>
+>>> No.  It just takes the next address in the stack.
+>>
+>> Hmm, if kmap_local() gives different addresses, wouldn’t init_on_alloc be
+>> causing issues before my patch? In the page allocator, the page is zeroed
+>> from one kmap address without flush, then clear_user_highpage() clears
+>> it again with another kmap address with flush. After returning to userspace,
+>> the user application works on the page but when the cache line used by
+>> init_on_alloc is written back (with 0s) at eviction, user data is corrupted.
+>> Am I missing anything? Or all arch with cache aliasing never enables
+>> init_on_alloc?
 >
-> > > >  Can you try testing (and gather timing numbers) when
-> > > > suspending soon after initiating scans? It's hard to judge what the
-> > > > lower limit of this timeout should really be without any numbers, j=
-ust
-> > > > like it's hard to judge whether your 10 second watchdog is reasonab=
-le.
-> > >
-> > > Pin-yen: is this something you could gather?
->
-> I tried entering suspend right after wifi scans, and the time spent in
-> mwifiex_enable_hs() is always around 100ms. It seems initiating
-> suspend does not increase the execution time for mwifiex_enable_hs(),
-> so I think the driver is capable of interrupting a scan.
-> > >
-> > >
-> > > > Also, for the record, since we might have to field regression repor=
-ts
-> > > > for other systems: what hardware (chip variant, FW version) are you
-> > > > seeing problems on?
-> > >
-> > > Pin-yen: I'm assuming you'll provide this.
->
-> From the debugfs entry:
->
-> driver_name =3D "mwifiex"
-> driver_version =3D mwifiex 1.0 (15.68.19.p54)
-> verext =3D w8897o-B0, RF87XX, FP68, 15.68.19.p54
->
-> The compatible string of the DT is "marvell,sd8897".
-> >
-> > I'll leave it up to y'all (Doug and Pin-Yen) whether you want to provid=
-e
-> > the above to provide a little more confidence, or if you want to
-> > reconsider your use of CONFIG_DPM_WATCHDOG_TIMEOUT.
->
-> It looks okay to me to decrease the timeout here given that scanning
-> doesn't seem to affect the suspend time. What's your thought, Doug?
+> Maybe the arch also defines some hooks like arch_kmap_local_post_unmap() ?
 
-I think Brian is right and that we should change how we're using the
-DPM watchdog, but IMO that doesn't mean that we couldn't also change
-this timeout.
+But this does not solve the possible init_on_alloc issue, since init_on_alloc
+is done in mm/page_alloc.c without userspace address and has no knowledge of
+whether the zeroed page will be used in userspace nor the cache line will
+be the same as the userspace page cache line. If dcache is flushed
+unconditionally for kmap_local, that could degrade performance.
 
-If nothing else, you'd want to post a v2 of your patch containing a
-summary of the info you've gathered so it's recorded with the patch.
+> As for the fix, could it rely on e.g. __HAVE_ARCH_COPY_USER_HIGHPAGE instead
+> of CONFIG_MIPS? That affects more arches, I don't know if we broke only mips
+> or others too.
 
-Maybe what makes the most sense, though, is to put our money where our
-mouth is and land some sort of patch in the ChromeOS tree and then
-report back to upstream in a month when we have data about it. If
-things look good in the field then presumably that would give some
-confidence for upstream to be willing to land the patch?
-
-Probably about the best data we could gather would be to break the
-existing timeout into two halves. You could wait half the time, then
-print a warning, and then wait the other half the time. We could even
-land that change _without_ changing the timeout to 5 seconds. Then if
-we ever see the warning print but then the suspend succeeds we know
-that there are cases where waiting longer would have helped. If we
-made that a WARN_ON() our existing infrastructure would help us gather
-that info...
-
-...so I guess summarizing my rambling, a good plan would be:
-
-1. Change the ChromeOS DPM watchdog timeout to 15 seconds to avoid the
-problem for now.
-
-2. Land a patch to do a WARN_ON() in mwifiex if we take 5 seconds.
-Actually, you could (probably) send this upstream and land it
-FROMLIST?
-
-3. Wait ~1-2 months and see if we ever see the WARN_ON() trigger but
-then things succeed after 10 seconds. If this never happens then send
-a v2 patch changing the timeout to 5 seconds with details in the
-commit message.
-
-4. In the background, see if we can convince folks to make the DPM
-Watchdog less panicky.
+Yes, this is much better, since this issue affects any arch with cache aliasing.
+Let me update my fix. Thanks.
 
 
--Doug
+Best Regards,
+Yan, Zi
 
