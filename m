@@ -1,166 +1,143 @@
-Return-Path: <linux-kernel+bounces-431325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169299E3BFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:02:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13BC9E3BFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:02:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA583285450
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76DEE280D01
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED0E1CEADF;
-	Wed,  4 Dec 2024 14:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77B81F9EAB;
+	Wed,  4 Dec 2024 14:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XY0ZHjh3"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xtcCIGnQ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DA21F7084
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEDC1B86CC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320936; cv=none; b=JnsIQYho9jpDV+RwgSrsVKuaCQgsO2aWRF4MQajHD6/5g8r7hqMPZSn2hRlqDFHDuakhv+NDGLgk0BsWyPQ1HxgaO9Dhq1xLWfddSaA6z9mUjZki72Yfh7ypT9faLGS6CDaUOB74v1UzLHZD9fr6pOHbyeKW//DHuRf+0ltPjAI=
+	t=1733320938; cv=none; b=ZNBohd6fvuxuJt3s75PaOUu/nxlIMTIs8JZhis8j46s+Z73HEf4B+7hzzeRgVH96ykTBW+jQpwOeiIDy5N4ABLTjyix2cZe77jFVbbY4NEIc8jPNh9oYnaQkuuggMECAvNci8efqLBWrQ4EsctCo1oqpdiiQJ3Dz5kS9rMK0x6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320936; c=relaxed/simple;
-	bh=rzqLa6jGCD8QycjIJPd2Pg08jy/GBFipnIUKcz2Soy8=;
+	s=arc-20240116; t=1733320938; c=relaxed/simple;
+	bh=EF6Gt+T6W7BZkopuI+DSu4Amz2QuoavNBsIjJLhIag0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ls6IC2Eq3rUP547PpI60yWUra8OnmbYMI9J5984iRjUsSx1gMMNN5VF+kUcrjNudHWDhgYVP+0v+XTsS3SLQNbsGoJFRjs2M/f90krn/liy3VOyYjtVCQrngYvm1ldiZJNa05QV0D32k8qNS4ONDLz5ExHRXTsDz23Az8L2+WgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XY0ZHjh3; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53df67d6659so10814719e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:02:14 -0800 (PST)
+	 To:Cc:Content-Type; b=PU+pDOSsNCWfO8lfVYibZ2jDfbnGgOrtUn4Hw+GLZOtYsmCqzIuHrDy7gfxJivBJPYw9hp6QFUcVIQ48TimEsAc/jDMoKuQ+HyeuFwTb9pl0UPoB08uKsu67jDSEybawa678QOmT5OGMG12z1jpNwf8gQP4cLDJKnHbaA17tbGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xtcCIGnQ; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53de7321675so7336749e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:02:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733320933; x=1733925733; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733320935; x=1733925735; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rzqLa6jGCD8QycjIJPd2Pg08jy/GBFipnIUKcz2Soy8=;
-        b=XY0ZHjh3ieUNSti5KFaTnM+8AD7tTJS3wyULhNd81JmoA0oQeSxCsCMKNEjnDZVA+E
-         FG/gPDEuMUYHmHOqK8KYOxX80aY0Dd+rnQK5sjfawPxR0g4hDMJD2b8f6UXtv+jL0oP8
-         dQVC9e5fxgIWON0FiEhZt493j3n+6ZyBNtfb4DaSlM4IOmWOaf1FhfAgrPJ30Qa6gKmN
-         dwBWYBMGsj4U8FvMCyqUOcpA8EhoNAq6wVv6lv8D8cOMS3BLxj27kwHL/O9gmszuKyJJ
-         453bcDUU/Jsjqlddn0WETMQu6ESk86ikEY+pxoWaOC4vJk6YHb5pLV6lZdyv4d9rgZ7D
-         M/ow==
+        bh=yqP87WCiN6ncxgmgpniBE1T1mI3RT4GMjwb4A1C8J6c=;
+        b=xtcCIGnQ9CYcxGWexOBUEEJxxhAe/eAXRx2/6DQS7N/TT7h4qnNhNKsPzGD073yPTh
+         NBk2Yhr1MMuuRK6uAUkNnCB5fK2SrCXxg0T1N9uy3lPdzOiv6K4tVJ87ptvYbfDzFWqi
+         lV5GsQPKAhkt+1QTBrZTomopWxOr84/lfOyyq/XMVRYa8E1jykHPz7Bk3lmRxd6BWY/t
+         sJQ3oHI89DzsIBHnkfg8Ql+AuI2VnxW5FukOpF/RcohA9i5zJBGpNaI2G42rSVuaQQqj
+         JJlvucWJXiyK0IW6/bAccaS5OUJ6d0TbPc/q8KT72FMHC/0jpirJPpxchJA17GCE67F/
+         nWvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733320933; x=1733925733;
+        d=1e100.net; s=20230601; t=1733320935; x=1733925735;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rzqLa6jGCD8QycjIJPd2Pg08jy/GBFipnIUKcz2Soy8=;
-        b=fbw08RtHdnCH4KWdaWLluxOzdX6xjl+l21zPI/aUy7Q16Gt3P64TvlwHQptRrquiV1
-         Zk+Qjr/2UjcnuZpxJaHOKX6siyhpDOKb0PMaKnDC3fseYLWXqGvuelu1NdQnKbv9J4XC
-         oQBhLE3us9EEg51HSncuBvtyw4BkmyPQCJHEp4dMdl6fFEVHzqpSxAAJ0VqDUDXDl2Bp
-         c/FBVF3ZZ4w43mhsafsZOn7DvmWZClWMi+mdXEZVidv1tNvNFpKQhRt7DmL09xOvDQ0b
-         1aV/ByYHB9t+3U/7Ol0+uW8ujxIc+Taa+AawqBrGFYzwh5OHQdVvCftjq6e29bEx6hVM
-         dfwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKDro1bhoCo9OX+zIV+UPnHIvr3puAhdV2W3mDkEFUO+ESN9TqO9y/s6SNliR01YshUT+kGV6jWkCj6n0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+Qhz0sNb0e4L0cp3S5s0ELAIlgZHIPls9r5fGVbn3/c0ivmjo
-	gQNdVmoqCrvg6lmGtbYbPmQj0Jk1x4WIEfO7njjpyHTaggsoJFv+wCF/Fk+veySYKSZq59mYz4J
-	iEqIi5JbWVo2puTv5jxm2bN3R8Tg=
-X-Gm-Gg: ASbGnctbwAavEtZnMbI/o415W52j52tMP2RVMj3RZZyUexEgxvDgmN3gUaYxZtEuo1f
-	kEtOrhArYhw5CJ5BnmJ7BlyA4EWW8N4rP/CkLWbPwmWfbvA9Ai7fo3mOz6fcdDSmO
-X-Google-Smtp-Source: AGHT+IG5T5Cs8JlNQpX9NGevIU0NaW5AfdtFmwSwovLMNYsQSOMeXR+EDuBUprx2oFfcxsjk0scugsoVpHS5QKOxq5M=
-X-Received: by 2002:a05:6512:138a:b0:53d:e5c0:b9bf with SMTP id
- 2adb3069b0e04-53e12a3935cmr5453848e87.52.1733320932363; Wed, 04 Dec 2024
- 06:02:12 -0800 (PST)
+        bh=yqP87WCiN6ncxgmgpniBE1T1mI3RT4GMjwb4A1C8J6c=;
+        b=F8KL7laYOQXLSARBaTPBapWK7nUXSl4pVcFR5weCd/gkCbDkvJlExmdqNqro1lcjKv
+         LvcCkey57eUFJc0p78RknDLAyYoPEl7TdpqaHCxr/nSM6Ky0L+l0QaR734f0mL4z/f2Z
+         YCN7TGne/v0Fxa+fMvkK0YmSQG4k1GeedUI4rvHOISG4D45DebkqiRnIkE1fH6e552Lv
+         gL1Mn3l1/1YkDG8rxfBufYnvOloq2igWJpccVBSPqFm9rWEMAeJOJd7nSVHvIBp/C99H
+         BORtCM+cGG4P58md1SW1Pn+hgPWY9u3SGShoNVwQDnYnBulywDrVdBrlTa6BK9KSwOuo
+         kLNQ==
+X-Gm-Message-State: AOJu0YzoNYhvP0/5vBjoey0qWBObbWeesDRkIYhGinLBZi7vJ6sFyuhq
+	OisiFrhHJfHI9kepGRXX3MrsCjqKrzIq5+8hfptnqMyOth/G9wWnXcaGEy9lhOvaOeTSVKRPxFN
+	7DDJuiadZFP8eOZgHHKBofOzK9+SoJCynYUNRqg==
+X-Gm-Gg: ASbGncvTPBABBh8cf54uOcvV4WWqZ9Y0aZTF9elZglbuwrQh+bTGtiGc/WYdHbYNIwz
+	eSqOBAE/+3W2a3VfPe6CzJAgt3ZrRBQ==
+X-Google-Smtp-Source: AGHT+IF42JEDDralS/q7GAyf8ShLhuPw9fjRPS3IF1nVPtKZCVFYhoqWECbNYFk03ea8B3Fz+6drL1O/4aVN2nZ4eJw=
+X-Received: by 2002:a05:6512:1256:b0:53d:cb91:2f3e with SMTP id
+ 2adb3069b0e04-53e129f36c8mr4029043e87.22.1733320934341; Wed, 04 Dec 2024
+ 06:02:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902072136.578720-1-alexs@kernel.org> <0a10e61b-f0e6-4423-996c-7884c93af65f@gmail.com>
- <66d8bd3e.170a0220.18832.0206@mx.google.com> <674e1324.170a0220.377d6f.b6ed@mx.google.com>
- <8f87ec15-9aaf-47bc-9255-5a6ee721552e@gmail.com>
-In-Reply-To: <8f87ec15-9aaf-47bc-9255-5a6ee721552e@gmail.com>
-From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Date: Wed, 4 Dec 2024 23:01:59 +0900
-Message-ID: <CAB=+i9TitqVxLBy2PP7sKSx6WQ5F9nOaGhKqXPAk4PLUK49VLA@mail.gmail.com>
-Subject: Re: [PATCH v7 00/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
-To: Alex Shi <seakeel@gmail.com>
-Cc: Vishal Moola <vishal.moola@gmail.com>, alexs@kernel.org, 
-	Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, minchan@kernel.org, willy@infradead.org, 
-	senozhatsky@chromium.org, david@redhat.com, 
-	Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+References: <20241204102904.1863796-1-arnd@kernel.org> <20241204102904.1863796-4-arnd@kernel.org>
+In-Reply-To: <20241204102904.1863796-4-arnd@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 4 Dec 2024 15:02:03 +0100
+Message-ID: <CACRpkdYws_rfGPe--xj8d4Gu1pON=_T2sSAoTi3=sMz7wpSFHQ@mail.gmail.com>
+Subject: Re: [PATCH 03/15] ARM: rework ARM11 CPU selection logic
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Arnd Bergmann <arnd@arndb.de>, Aaro Koskinen <aaro.koskinen@iki.fi>, Andrew Lunn <andrew@lunn.ch>, 
+	Ard Biesheuvel <ardb@kernel.org>, Daniel Mack <daniel@zonque.org>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Ralph Siemsen <ralph.siemsen@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 3, 2024 at 10:58=E2=80=AFPM Alex Shi <seakeel@gmail.com> wrote:
->
->
->
-> On 12/3/24 04:05, Vishal Moola wrote:
-> > On Wed, Sep 04, 2024 at 01:04:11PM -0700, Vishal Moola wrote:
-> >> On Wed, Sep 04, 2024 at 02:54:14PM +0800, Alex Shi wrote:
-> >>>
-> >>>
-> >>> On 9/2/24 3:21 PM, alexs@kernel.org wrote:
-> >>>> From: Alex Shi <alexs@kernel.org>
-> >>>>
-> >>> ...
-> >>>
-> >>>>
-> >>>> This patchset abstracts the memory descriptor used in zsmalloc by zs=
-wap/zram.
-> >>>> The descriptor still overlays the struct page; nothing has changed
-> >>>> in that regard. What this patchset accomplishes is the use of folios=
- in
-> >>>> to save some code size, and the introduction of a new concept, zpdes=
-c.
-> >>>> This patchset is just an initial step; it does not bias the potentia=
-l
-> >>>> changes to kmem_alloc or larger zspage modifications.
-> >>>>
-> >>> ...
-> >>>>
-> >>>> Thanks a lot for comments and suggestion from Yosry, Yoo, Sergey, Wi=
-lly
-> >>>> and Vishal!
-> >>>>
-> >>>
-> >>> This patchset could save 6.3% code size, and it's a nice abstract of =
-zsmalloc
-> >>> memory usage.
-> >>> Is there any more comments, or mind to give a reviewed-by?
-> >>
-> >> Please CC me on future versions. Most of the zsmalloc conversions seem
-> >> ok, but I'd hold off on further iterations of the descriptor patches u=
-ntil
-> >> the maintainers decide on what/how this descriptor will be used
-> >> (i.e. our end goals).
-> >
-> > I apologize for leaving this in limbo for this long. This patchset is a
-> > prerequisite to shrinking struct page, so we should get this memdesc in=
-.
-> >
-> > I think it's safe to assume (since we've heard no definitive goal from
-> > the maintainers) that in our memdesc world we want zsmalloc + zspage to=
- be
-> > similar to how it currently looks today.
-> >
-> > Would you like to rebase this on the current mm-unstable? I'll re-revie=
-w
-> > it in case anything changed (and can then give you my reviewed-by).
-> Hi, Vishal,
->
-> Thanks a lot for the review and kindness, I will try to do the rebase in =
-this weekend.
+On Wed, Dec 4, 2024 at 11:29=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
+te:
 
-For your information, there is a patch series (not merged yet)
-invalidating the assumption
-that zsmalloc always allocates order-0 pages [1].
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Support for SMP on ARM1136r0 has been broken for a while, and nobody
+> is working on fixing it. I had a plan to change ARMv6 support to no
+> longer coexist in a common kernel with ARMv7 CPUs but instead ARMv5 and
+> below. This would have addressed the problem, but after a recent mailing
+> list discussion, we concluded that an easier approach is to just forbid
+> ARM1136r0 CPU support on SMP-enabled kernels.
+>
+> This mainly affects users of the Nokia N800/N810 tablets using an
+> OMAP2420 SoC, which is the only commercial product with an ARM1136r0
+> that is still supported by the kernel.
+>
+> The other machines that are still in the same hardware catogory are:
+>
+>  - TI OMAP2420 H4 reference board
+>  - TI OMAP2430 SDP software development platform
+>  - Freescale/NXP i.MX31 Lite Development Kit
+>  - Buglabs i.MX31 Bug 1.x prototype
+>  - Arm Integrator/AP with CM1136JF-S core module
+>
+> To my knowledge, none of these have any actual users aside from
+> reference boards being used more easily test the platforms.
+>
+> There are also a few ARM1136r1 machines, which implement the
+> ARMv6K SMP support (barriers, atomics and TLS):
+>
+>  - Eukrea CPUIMX35 reference platform
+>  - Freescale/NXP i.MX35 Product Development Kit
+>  - ARM Integrator/CP/IM-LT3 with ARM1136J Core Tile
 
-I'm sorry I wasn't able to dedicate more time to this project this year.
-Thank you for pushing this forward, Alex!
+I can't test that, I doubt anyone can. I think this support can
+be simply deleted unless there is some QEMU support or
+so.
 
-[1] https://lore.kernel.org/linux-mm/20241121222521.83458-1-21cnbao@gmail.c=
-om/
+>  - ARM Realview/EB with ARM1136J Core Tile
 
-Best,
-Hyeonggon
+I will check if I have this one, otherwise this can probably go
+as well.
+
+>  arch/arm/mach-versatile/Kconfig | 10 +++++-----
+
+For Versatile:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
