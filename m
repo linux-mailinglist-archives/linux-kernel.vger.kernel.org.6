@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-430913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5009E371A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:03:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81779E371D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:03:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A64D161C6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E93328A5F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5707D1AF4EF;
-	Wed,  4 Dec 2024 10:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877EE1B2186;
+	Wed,  4 Dec 2024 10:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FCxDLHga"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OXBCL0gp"
+Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729D51AC435
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2A81AF0A4
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733306503; cv=none; b=DDUulzKtlDxNP81QEDFn+zgANJKb/g4iwMgj86h4x3a9YTyfZDihtwO1rxAacGNSburM3NFmvcFqgGapamZmbebMhaRw6qJRloot/8MDjUNctGeeCyu6Ni6vYB4GXDHhRlHzftBXmGHBy4pg//M9abNJ5SO3Xa6FGvPkoMLOt5o=
+	t=1733306505; cv=none; b=hyp1s6EyymFmCTUmRsE8rPKUf3aRQJy624h35wYxaw5TiF6fRQvba1kpIXstcJTfCb80LO/eT3AssjQysk/jCybbFktwGfkQ5YBt9CrgAF49bi3GXPywoAqe3PARinX7jRhkSgKSQ4fg1//gE/dZS1MyH9GZ5paPqJzzSrJnLCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733306503; c=relaxed/simple;
-	bh=8VrY87kaZE6gJKUjQ5DzijJJdpboYwfqA0a67+e3vOE=;
+	s=arc-20240116; t=1733306505; c=relaxed/simple;
+	bh=z7cObjJ0P5i5PgvcZ+UzJLzGhCGsFnm5xBbnMdhHuI4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LS11GyxayE1FIkuDHsWD1Ks8Zqc3801GnSP7nWpPl2zCKltIp9uktq0Bnh055Hr9lhFMPrb3ow2H3QhJd4xXvVIIxdthRxBV/l0oz0KcIBRU7NPqOOfexlkJzlQpsrCSfMfZ7IWkhzRUjAXNAqFOZLPRuJHx9iJLU3a6etKXf2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FCxDLHga; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version:Content-Type; b=QY6kBmqsAhTTKoHhtqJn+w1Uf9MTTSVcT+bA8VMvR1yAEkYzvgJYRNhPQKmUtoBKGSYxbFOpdSSpckK6oGuLPUpy7QPNmdIb6dGr+mopDwwTPCOyE3G6HknhzptQdSGS91YI7QYZZy+vNX1QjJ3nI/fIVHdfy17TTIiHcZH456c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OXBCL0gp; arc=none smtp.client-ip=209.85.221.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e3621518so3471798f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:01:41 -0800 (PST)
+Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-385f4a4093eso2186475f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:01:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733306500; x=1733911300; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733306501; x=1733911301; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uwD75of58f/xbTaahHqt3gTZtblT5HhO4XUnFYljnPE=;
-        b=FCxDLHgaDua5vaGT53PaKKtQkIZm8PSSHN0EYcx73a0V2Vm6QDKRp+2JTM3lnCDamK
-         KhY9pbM82KIfiUQ8cS5NfgbMGdN6V4PpNjG++eWdHPOe3L3NAP3Sd3baXa6jeTxhOHCx
-         8JjsWQpyU0rLWyNTtd99O6fUPX5m/ZTUbRW5hyzQX9pWkkeFUmT7/r2ga+hfNrNfgcYh
-         sKlPybdH6+ZJ8SStXodxwilLtWd32MCFARvpvGhSsGbe7yjFBeWJrCFzOQf3JRHszh90
-         65CQ+U5NTO5zn17BNDQ9jyvgkzCf7ghbqsBMLWbFJuqg6pzv7V5oWctPEbv0ok3R4CjH
-         PzFw==
+        bh=0osI88+EL8Ir2uRVL1vR/sVTdCXha1R4tnCQw66w72w=;
+        b=OXBCL0gpzjpfLR8P+aG2F4d7WL2TMajCMBr/V3KsOAG3M8pbIVV8tm0MySF7pPBdx2
+         Thg5uvrCirVnRCLc8RTMYhl7KyprUTR5fN5SrewtZSfR+gC/pi35HTnaDlctKaioP0ZY
+         INw0IIVnulQ5uAudShZ1FWqVWslS6ILm6N0/J3cy71kS4Xq/PjBzLFgZm7lksKfdOlha
+         KOSzMS54rXPz+ScireKBTYok2Dl5JxqigW0Fnbg/ZPPlay0G11maYUvfBxdS2fiDpYPv
+         BiuBjJP2akvtKPktkavvZliacFHZMDv1MzPjYWKLTWNTVzrv+QS9sil3FgNPvKNwDDVL
+         of1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733306500; x=1733911300;
+        d=1e100.net; s=20230601; t=1733306501; x=1733911301;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uwD75of58f/xbTaahHqt3gTZtblT5HhO4XUnFYljnPE=;
-        b=S6HDyY4KVlKYVi6cXCtjqEy1uQmNj1Nkuas3K+ZIWCD4osOMTzqbgu1TAmW9/m4cs+
-         21ICShpT5gEOgHl3g+gVmCOedPGvHVUrtQwA1/T6sywsVu4RwslfskX+Ki1aIXExtG2j
-         VEuKKj6uNVuMVevgieylAFR8fiZzYL7/81miwd5wT5RAbDOEOReW0VYMP3BiC7vOY5x/
-         KgpX0dutMXFJiWjmrogrT+f5uNcAmHaJ64gLiJ0Qlk8ijr7iiYAqdTUAJJHiTv+zOMdM
-         m6ipPjEnpSPnH/ZPTxtHTuzcmphbj6JnbPYljes6HW/fDww1/ZgDaCKfS9Rs+braUZHZ
-         tF6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXauYWWXNk1W9nRq3koZ084+zqWkn2SE5/cyOjHhBJ/TehOqMvyNCagHafAVZI6lJRM5nffdGur74mBhEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2ENAhtFBNHrWNAkSgos7DUMKOby1uW04QrjsxgSrQUF7XUo9s
-	u0MUDj+df3jeNBYrVmvXzro13CXdvRJN4ZAyIZinfieFPUenJkR8wjNrEF+gnKY=
-X-Gm-Gg: ASbGncvt/aZcPZ8N9bHN3RkAHuwV+jxf+/zCrDhUDZOR9jBpbtpTBvM1hNXVOd5iQR0
-	uTzYfw4I7nYsbxPtjjQ1EZ6qGClR7XeCb/QCWn0ZAScdbGXqTZe7O1VG3bkj4jG1erAjIGX7+sk
-	hZIhI9Tg9siF0qA1dmNCvCMvU8KgWAjvgpSomT/mA3dNDdX/PRoT7TMZIsPMu/DV3Wvz3jMqSr3
-	enerEbJN2d9nxSGj5lgeh6pHkD7404yScAGYdRhX364yRp9Q4iO+UspHFwOy23C2ng6pZpFmaIo
-	B6Cq
-X-Google-Smtp-Source: AGHT+IG/YvLq7nYqCEITmZdzn/4d8y+5k/oTP3J9cmazuQsqONwHRLmailN0uzFyh6kEOQRKDYEURA==
-X-Received: by 2002:a05:6000:785:b0:385:eda9:a8eb with SMTP id ffacd0b85a97d-385fd40ad81mr4464842f8f.29.1733306499872;
-        Wed, 04 Dec 2024 02:01:39 -0800 (PST)
+        bh=0osI88+EL8Ir2uRVL1vR/sVTdCXha1R4tnCQw66w72w=;
+        b=QyEyqKsYRDfnFZwVPzpFrDPom9cGmguDlgvmuJBFcdiqZwclLDQa6fwKGdsa45zT2q
+         cEGJLqNq/nuZn7qrh3nHWUt+aBTRGrj7/xtTpmdQ+PxTeGglP2q6aEzWnrHYPhSuLY+C
+         X7urzU7B2RYBFCgsUFsC9H/wqDXR4HBsYOGy3zVU0NwPXLMNDKhhHg4UhrsZGdiBGWAf
+         /wI6RCa8BeQihYvnTCdViHdZnctfVE5jQ8rYzg9BnTV/B03t5ue5y8DSEUNTzmD6r6J5
+         BQQIJ4oV7nFErEJQf7MH8DUSuDJ2M4xi3inPisZFAZH6aVtvCEeH1CXUCT0l7UiCpkVf
+         tsRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsoBgLe4cSj9uf9ujI86ZxQbTagQVnDjkPGb2ue3SF5G3gfV1hsDbJjeklqTO0Awy3rT5YdmcQyJK061M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/KUE9j1XZr+COu7sxidu1Bq+wEzV0Eu1BYMu2g6FRLl3QWFbk
+	JfhGtCdIRYFxXYEkFSN60L/QOrNIV+14E4MN2yXvElRN7ewm/LO4dXlMGfnLKh8=
+X-Gm-Gg: ASbGncvha3zs9kjfdMaJNqV6exFccrMRCAegUTNsM7YX18Zqd9EEB4fvkkD8onQKeyv
+	aLzDxNYvK6r5dZns1syjH8oY7V9F3s2zFULukTs8rzJIx3qk4JPpmrGP+E+x8lU6SiMA0CN7nwJ
+	noWyRv4rL/gZIm+SNhqVfEdko5UrvR6Zep2Jp2B7TZoSCMeruhu0CfOSewEK5Suu6a6zCYW1K6w
+	LEg0ybwlEis+qSleHPgsOJPhcv0v68xEr1PG4AIL03fIc64l91lirAsGlm0gHfpKRxk+jRvqpqZ
+	t1o2
+X-Google-Smtp-Source: AGHT+IG8t8AZXtxlaeWRrueqJ99ZpThtNNMUSTKR1p6c+AsIJcP/BhfG79U39WiCin0b3LiMLsAPQg==
+X-Received: by 2002:a05:6000:4604:b0:385:faaa:9d1d with SMTP id ffacd0b85a97d-385fd3f15camr5276803f8f.35.1733306501268;
+        Wed, 04 Dec 2024 02:01:41 -0800 (PST)
 Received: from localhost (p5dc6838f.dip0.t-ipconnect.de. [93.198.131.143])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385df63255bsm15109376f8f.86.2024.12.04.02.01.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ef3824dcsm9269843f8f.23.2024.12.04.02.01.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 02:01:39 -0800 (PST)
+        Wed, 04 Dec 2024 02:01:40 -0800 (PST)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Matthias Maennich <maennich@google.com>,
 	Jonathan Corbet <corbet@lwn.net>
@@ -78,9 +78,9 @@ Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Masahiro Yamada <masahiroy@kernel.org>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] doc: module: Fix documented type of namespace
-Date: Wed,  4 Dec 2024 11:01:10 +0100
-Message-ID:  <6fe15069c01b31aaa68c6224bec2df9f4a449858.1733305665.git.ukleinek@kernel.org>
+Subject: [PATCH 2/2] doc: module: DEFAULT_SYMBOL_NAMESPACE must be defined before #includes
+Date: Wed,  4 Dec 2024 11:01:11 +0100
+Message-ID:  <3dd7ff6fa0a636de86e091286016be8c90e03631.1733305665.git.ukleinek@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1733305665.git.ukleinek@kernel.org>
 References: <cover.1733305665.git.ukleinek@kernel.org>
@@ -91,34 +91,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1311; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=8VrY87kaZE6gJKUjQ5DzijJJdpboYwfqA0a67+e3vOE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnUCh0ZpDGC2l2mL7F4uGQckIRiKDkafyoMwrdo NZYgRpM0gaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ1AodAAKCRCPgPtYfRL+ TtHTB/9nnQ3O59ERJh1bSIYOdK5mXU+swmbA+4bbbosuyd34OnvVQDEyKr7ZDIQVopEN3VNwQIO gL+sYTAP/0G3i7kszC24prQFd1bx2j3oVhjOp5nyUYdDuak7R5tx//lgfdx2F8dzprDBZ4CgNOp Z38JnXIyCp/zWAIQ311DpcqDZbsNxFzIBGf36ApwPLSWUW59oh9N7Qh9nwZlSvOjyAB1i/HmDej E2Rn1XiRVuwSOrgouzervkSPPlm74LIf0iKMQeg7iHIziqUhDhOJl0hU5CA55wy3LBzKXjWikKD 9HW92qeqpt+CtO5nHcnCEh0yi9yhm+uLO3fKhcez4nSFaubM
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1199; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=z7cObjJ0P5i5PgvcZ+UzJLzGhCGsFnm5xBbnMdhHuI4=; b=owGbwMvMwMXY3/A7olbonx/jabUkhvQAjXIlXvFjLf9d/Kpqt0sdW3PMbZ3Rap3zjB5zLDz/y j1//fJ0J6MxCwMjF4OsmCKLfeOaTKsqucjOtf8uwwxiZQKZwsDFKQATWdHG/lesNP7j3SP2tk9O 7yjO8Ez1SxTP5iiPvi/8xnZL9ZPoC+UfprkHSj999a6j5PSLMwkCDAVHN9+5aDw3vc72r7aSS9N Vh/2NCY9P+mqEXFkU7v1dahPXzA+XZa3mljd1L/Pqec+x6qJye3ZaRrxlaqn1I6EHt5jNtPOmvL lc/fWEbOPifawWPvfD78bNU+mN2SX54nzXBVspvznvDn2TfWfK41jU8cn7T3DEtb13C1qU1Jw/z jcVZw300te1ujov8Z6lVK3v3CN71yR6Ze2e7tizaFeXaG1m8pkQvVXz2HOtXnor7f8nJN2i+SqC c1Nl04z508KEFcPjtQ27lW9xXQ213+Zptuet/qwFOX91AQ==
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Since commit cdd30ebb1b9f ("module: Convert symbol namespace to string
-literal") the namespace has to be a string. Fix accordingly.
+The definition of EXPORT_SYMBOL et al depends on
+DEFAULT_SYMBOL_NAMESPACE. So DEFAULT_SYMBOL_NAMESPACE must already be
+available when <linux/export.h> is parsed.
 
+Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Link: https://lore.kernel.org/linux-i2c/Z09bp9uMzwXRLXuF@smile.fi.intel.com/
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- Documentation/core-api/symbol-namespaces.rst | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ Documentation/core-api/symbol-namespaces.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
-index 27a9cccc792c..a08a3448cbad 100644
+index a08a3448cbad..d63e4245a9f5 100644
 --- a/Documentation/core-api/symbol-namespaces.rst
 +++ b/Documentation/core-api/symbol-namespaces.rst
-@@ -41,9 +41,8 @@ entries.
- In addition to the macros EXPORT_SYMBOL() and EXPORT_SYMBOL_GPL(), that allow
- exporting of kernel symbols to the kernel symbol table, variants of these are
- available to export symbols into a certain namespace: EXPORT_SYMBOL_NS() and
--EXPORT_SYMBOL_NS_GPL(). They take one additional argument: the namespace.
--Please note that due to macro expansion that argument needs to be a
--preprocessor symbol. E.g. to export the symbol ``usb_stor_suspend`` into the
-+EXPORT_SYMBOL_NS_GPL(). They take one additional argument: the namespace as a
-+C-string. E.g. to export the symbol ``usb_stor_suspend`` into the
- namespace ``USB_STORAGE``, use::
+@@ -80,8 +80,8 @@ unit as preprocessor statement. The above example would then read::
+ 	#undef  DEFAULT_SYMBOL_NAMESPACE
+ 	#define DEFAULT_SYMBOL_NAMESPACE "USB_COMMON"
  
- 	EXPORT_SYMBOL_NS(usb_stor_suspend, "USB_STORAGE");
+-within the corresponding compilation unit before any EXPORT_SYMBOL macro is
+-used.
++within the corresponding compilation unit before the #include for
++<linux/export.h>.
+ 
+ 3. How to use Symbols exported in Namespaces
+ ============================================
 -- 
 2.45.2
 
