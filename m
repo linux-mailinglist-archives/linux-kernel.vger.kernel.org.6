@@ -1,174 +1,116 @@
-Return-Path: <linux-kernel+bounces-431164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F93C9E39C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:22:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0319E3A19
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57FD3285FCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:22:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B7D2860B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2516B1B85CA;
-	Wed,  4 Dec 2024 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iv1N7JLk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB4A1B652B;
+	Wed,  4 Dec 2024 12:39:04 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CDF1B415E;
-	Wed,  4 Dec 2024 12:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32BD1AF0BE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733314932; cv=none; b=T9aPrGx7lkiAFzhyxzx3Gsp8YrCDqN94ImOhEZBPiD0L5sAZsxuAtpxnI7leWhzAdmKkP9IwL18YTPl/XiBaLs3wBccErOhUIpMUw4ojVSjy39HerS4D9pn7a6jga8OZ6RrzStvQofaeffQbKlW0PdKsNXVxEe8g8n9P2RTraa8=
+	t=1733315944; cv=none; b=uT+Pow0ULdwjbLFnijHC4yqio7xTw1N4e21GC81ydv/meo0egO1H2oSsZOEN4B7qNR7vsdZxzG2bhoCB46L8+Z5YP9KUyVb5zadURq2n3RLvxk2w3qv67MkgGNOsPkpBfZRpi1llM4wvaEMMySichZCIpL1SEZ5PL9qauOLZgAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733314932; c=relaxed/simple;
-	bh=tjr1M7MkQ0S2HPXGlwpING1TuiC6eFQWfJLpc6ksvG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l8FlMGKKbWn05nblZueKt+YmUxXJ933/JxE1LrgzHq0gUDL217tHYnQqVYtJGPAIJb+OikkYoEE4j2TCj0uyEUwVB11N3/TqtnH0yP1APa+uDqkKtRXcF2qfOSV9gSj5NXHXXFe2X/XBguC9hwSk2hKjUljKUZHisjjagGzmskQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iv1N7JLk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E44EDC4CEE2;
-	Wed,  4 Dec 2024 12:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733314931;
-	bh=tjr1M7MkQ0S2HPXGlwpING1TuiC6eFQWfJLpc6ksvG4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iv1N7JLk1vqTGr0DsJB/X/R0S+Latl5026ItxHYFjH9X6WH4fE9ldhyVMPSu72cF8
-	 QVYdjWoOupeUOMbn1C4Mu/gNqku/imioPex3qhr2vYmKCWwHCHqleAxkt83B9lYlgJ
-	 MjEZbapCbE8xpzMwo+2Lx/Jr8qDMc/H1YPkeUdQI1byc4KOCLZG7AwEMVfAjaWQhxd
-	 bFspyR5JP5lqmA9bukcewmSlLy2UnPeXgKjRsOQiY5kJ+2Zbkw5rdvjvhWg/FKp/zh
-	 6guO30I7JpuvXz5aMu/fqhotKV1TPzzyp6jry2hTJwlzK2HiV7BjScNABiyjqrl3pD
-	 nlYcoAsksy7NA==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2689e7a941fso3411423fac.3;
-        Wed, 04 Dec 2024 04:22:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU2/J3lK+d/Koj7PULk9ycIdGdEExNkQ+AgA6QxmgBtPlLmWMlTmEM6NH9uJF6mUG9QnVwj4hW/ogJgbd8=@vger.kernel.org, AJvYcCU3zUnFqO6dPTA4RAG755MYQuAqyar9ViyzkZMYtbWbfqhBqG13okeqHN77zPPCQVW3140lfP0MAfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA/lDsrnTxenrWQZC+rVQ4SDCuWX0KhAHvuq0hw/mFTuSETxR8
-	bfzqbwKa9HGenmIH3cOoTsPKoetj9jMT27vzFpiAsmyZ05XavHzkjujj+/hYG4eK5AcShN6XOlY
-	GI3jit7bwG4dXIIMWM+oJqPNC5oM=
-X-Google-Smtp-Source: AGHT+IERIngqodiQUKumdns0sgwYfBGFnnGJz/Q7vcS7j43S3kf6FXOgyEPZgrNo2Zav3OpogvXLOI35ZnvKullWCIc=
-X-Received: by 2002:a05:6871:150:b0:29e:719b:7837 with SMTP id
- 586e51a60fabf-29e88664fdbmr3978287fac.13.1733314931192; Wed, 04 Dec 2024
- 04:22:11 -0800 (PST)
+	s=arc-20240116; t=1733315944; c=relaxed/simple;
+	bh=EYR5MRHTsk50WKWmNlRMIJvq34xsRxeBylR9R0tzyxI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eCMkb23vpQQIb1fS8bSdfATT9Vb1AHgRwaikRHkcEcCxV+V57vFibcpbgVaKTx5wBSJGF6MwXyPEElHmPKnIx31D9Q5YHUUbDq53mn5pgE9SUxTmjSvKRYQy9XUDizto+6dZX7EXOeFisn3d5GkJI0F3IoxqlzRcDXDgZQHaaig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4Y3GrZ3BkfzYkxX8;
+	Wed,  4 Dec 2024 20:23:10 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Dec
+ 2024 20:23:19 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Dec
+ 2024 20:23:19 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, wangzijie <wangzijie1@honor.com>
+Subject: [f2fs-dev] f2fs-tools: Check and fix inline xattr inplace
+Date: Wed, 4 Dec 2024 20:23:17 +0800
+Message-ID: <20241204122317.3042137-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com>
- <20241114220921.2529905-3-saravanak@google.com> <CAJZ5v0jPO24JR5um0gv5U5AwiR_RHx37x6DisG-nUxaZt9gfGA@mail.gmail.com>
- <CAJZ5v0iLq9L5nMp13BrBmbWavFs1ZEAtJ-WeyRzv3D2GXPNuag@mail.gmail.com>
- <CAGETcx-9XSdXcuGQFSoS-mMPwp=UJ3_FfTJ1Cx+9jddyjYTKEg@mail.gmail.com>
- <CAJZ5v0iWCWdjP9Gku2uV0Qz-Hp6ZEHDspaPVzHPPzHfvyREeWA@mail.gmail.com> <CAGETcx_5oRA-kTzU7WtWSV2=Bp0cKcT=2kPa0+ZkwkHTA+rwOQ@mail.gmail.com>
-In-Reply-To: <CAGETcx_5oRA-kTzU7WtWSV2=Bp0cKcT=2kPa0+ZkwkHTA+rwOQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 4 Dec 2024 13:21:57 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g9A1pZ5FjPAjdLY5ybNmefnBVVMJM7h3czW38p1fTfqQ@mail.gmail.com>
-Message-ID: <CAJZ5v0g9A1pZ5FjPAjdLY5ybNmefnBVVMJM7h3czW38p1fTfqQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/5] PM: sleep: Remove unnecessary mutex lock when
- waiting on parent
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut <marex@denx.de>, 
-	Bird@google.com, Tim <Tim.Bird@sony.com>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
+ (10.68.31.243)
 
-On Tue, Dec 3, 2024 at 12:28=E2=80=AFAM Saravana Kannan <saravanak@google.c=
-om> wrote:
->
-> On Mon, Dec 2, 2024 at 1:15=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
-> >
-> > On Mon, Dec 2, 2024 at 9:46=E2=80=AFPM Saravana Kannan <saravanak@googl=
-e.com> wrote:
-> > >
-> > > On Mon, Dec 2, 2024 at 12:16=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
-nel.org> wrote:
-> > > >
-> > > > On Mon, Dec 2, 2024 at 9:11=E2=80=AFPM Rafael J. Wysocki <rafael@ke=
-rnel.org> wrote:
-> > > > >
-> > > > > Sorry for the delay.
-> > > > >
-> > > > > On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravan=
-ak@google.com> wrote:
-> > > > > >
-> > > > > > Locking is not needed to do get_device(dev->parent). We either =
-get a NULL
-> > > > > > (if the parent was cleared) or the actual parent. Also, when a =
-device is
-> > > > > > deleted (device_del()) and removed from the dpm_list, its compl=
-etion
-> > > > > > variable is also complete_all()-ed. So, we don't have to worry =
-about
-> > > > > > waiting indefinitely on a deleted parent device.
-> > > > >
-> > > > > The device_pm_initialized(dev) check before get_device(dev->paren=
-t)
-> > > > > doesn't make sense without the locking and that's the whole point=
- of
-> > > > > it.
-> > > >
-> > > > Hmm, not really.
-> > > >
-> > > > How is the parent prevented from going away in get_device() right
-> > > > after the initial dev check without the locking?
-> > >
-> > > Not sure what you mean by "go away"? But get_device() is going to kee=
-p
-> > > a non-zero refcount on the parent so that struct doesn't get freed.
-> >
-> > That's after it has returned.
-> >
-> > There is nothing to prevent dev from being freed in get_device()
-> > itself before the kobject_get(&dev->kobj) call.
-> >
-> > So when get_device() is called, there needs to be an active ref on the
-> > device already or something else to prevent the target device object
-> > from being freed.
-> >
-> > In this particular case it is the lock along with the
-> > device_pm_initialized(dev) check on the child.
->
-> Ugh... my head hurts whenever I think about get_device(). Yeah, I
-> think you are right.
->
-> Hmm... I wanted to have this function be replaced by a call to a
-> generic helper function dpm_for_each_superior() in the next patch. But
-> that helper function could be called from places where the dpm_list
-> lock is held. Also, I was planning on making it even more generic (not
-> specific to dpm) in the future. So, depending on dpm_list lock didn't
-> make sense.
->
-> Any other ideas on how I could do this without grabbing the dpm_list mute=
-x?
+When we check inode which just has inline xattr data, we copy
+inline xattr data from inode, check it(maybe fix it) and copy
+it again to inode. We can check and fix xattr inplace for this
+kind of inode to reduce memcpy times.
 
-You don't need to replace the existing function with a new helper.
+Signed-off-by: wangzijie <wangzijie1@honor.com>
+---
+ fsck/fsck.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-Just add the helper, use it going forward and drop the old function in
-a separate patch when there are no more users of it.
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index aa3fb97..fd8b082 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -840,11 +840,18 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
+ 	struct f2fs_xattr_entry *ent;
+ 	__u32 xattr_size = XATTR_SIZE(&inode->i);
+ 	bool need_fix = false;
++	bool has_xattr_node = false;
++	nid_t xnid = le32_to_cpu(inode->i.i_xattr_nid);
+ 
+ 	if (xattr_size == 0)
+ 		return 0;
+ 
+-	xattr = read_all_xattrs(sbi, inode, false);
++	if (xattr_size <= inline_xattr_size(&inode->i) && !xnid)
++		xattr = inline_xattr_addr(&inode->i);
++	else {
++		xattr = read_all_xattrs(sbi, inode, false);
++		has_xattr_node = true;
++	}
+ 	ASSERT(xattr);
+ 
+ 	last_base_addr = (void *)xattr + xattr_size;
+@@ -867,12 +874,15 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
+ 	}
+ 	if (need_fix && c.fix_on) {
+ 		memset(ent, 0, (u8 *)last_base_addr - (u8 *)ent);
+-		write_all_xattrs(sbi, inode, xattr_size, xattr);
++		if (has_xattr_node) {
++			write_all_xattrs(sbi, inode, xattr_size, xattr);
++			free(xattr);
++		}
+ 		FIX_MSG("[0x%x] nullify wrong xattr entries", nid);
+-		free(xattr);
+ 		return 1;
+ 	}
+-	free(xattr);
++	if (has_xattr_node)
++		free(xattr);
+ 	return 0;
+ }
+ 
+-- 
+2.25.1
 
-> Actually, with the rewrite and at the end of this series, we don't
-> have to worry about this race because each device's suspend/resume is
-> only started after all the dependencies are done. So, if the parent
-> deletes a child and itself, the child device's suspend wouldn't have
-> been triggered at all.
->
-> So, another option is to just squash the series and call it a day.
-
-No, no.  This is complicated enough and the code is super-sensitive.
-
-I think that you need to split the changes even more.
-
-> Or add a comment to the commit text that this adds a race that's fixed by
-> the time we get to the end of the series.
-
-That would create a bisection trap, so not really.
 
