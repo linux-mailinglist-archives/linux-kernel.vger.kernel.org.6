@@ -1,245 +1,205 @@
-Return-Path: <linux-kernel+bounces-430545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922259E3296
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:11:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327649E328F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530E728441D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD58B2414B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB8817D354;
-	Wed,  4 Dec 2024 04:11:41 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31A21684AE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 04:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E59D178378;
+	Wed,  4 Dec 2024 04:08:13 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFA415098F;
+	Wed,  4 Dec 2024 04:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733285501; cv=none; b=e6aMPGmhScllxGP5mRnttjb+4kTUSURSLGdgp1cpPq8N61WuVmC1ZtBwqxmhaMx6pNLFGzWjmmVLgyKVys5G2YoQ9IJ/AzSTWJxfsk9O/E69lfj4DG2j5Y2cxNW+FAxO/IZfPmDdzBu+5g6vulh8P+4j93fL0/6aCzHQAJbeDH0=
+	t=1733285293; cv=none; b=FyDN/T+A/ArbVY+InCxLHhGjpB/mFv2gMqldIBxwbX5uSmRc+WB5uojl6OkP7tsMl0qaPXdWeFrxE4ubmnmyZ9myR7dFhV9wbOY9TduYdSgxUvG7PvDyECd4IYuM97Zh6lfR08xRmRU1ErtfZZM16zgyc9TBC6K7r92mwXFWTTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733285501; c=relaxed/simple;
-	bh=DnvxCW0uQgGc63ke0HSvipOoeq/+vHSA2+7Jepqthwc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nnTtivPIIl2orMNRJYPXEQrShD/tr5cuednzNAQtZO2jJpaPJtKSZvvAWDxTYuZiocnutU6h7ZqkC7NrBThBMRXbEo6UUsDc+OcyyN38ZHuTNYF6VNZhab630Ro2DT/bAVV89b3Y4HINRcdU2MXv9ALXnkNb6YdtDSBV8NvZf7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y33x52kzDz4f3jqb
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:11:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 594461A058E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:11:35 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgBnQ8Bt1k9nusICDg--.38617S4;
-	Wed, 04 Dec 2024 12:11:35 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	mhocko@suse.com,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	yuzhao@google.com,
-	david@redhat.com,
-	willy@infradead.org,
-	ryan.roberts@arm.com,
-	baohua@kernel.org,
-	21cnbao@gmail.com,
-	wangkefeng.wang@huawei.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com,
-	xieym_ict@hotmail.com
-Subject: [RFC PATCH v3 2/2] mm: vmscan: retry folios written back while isolated
-Date: Wed,  4 Dec 2024 04:01:58 +0000
-Message-Id: <20241204040158.2768519-3-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204040158.2768519-1-chenridong@huaweicloud.com>
-References: <20241204040158.2768519-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1733285293; c=relaxed/simple;
+	bh=0Rpc7llVEiAcCOfdXSEaBpkfJ8u8QDAIAV9PHFagg88=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=EwUMOuss/AT+T0WTq+CYtA6cFcgzX43uaP+JwIR3HEy/QYHprb/qPSsf/h1vqnTHlUmUrYU5mOHqtJ/ALlqx+n18I5354HrqvbNPkBpDZxvvjGQuQTp/TgSxiZ6p+a0FpU9cQrvKvhE/q1KTkyZgElcTneBver2lKb45mXp9Ljk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8DxDeOn1U9nVmVQAA--.24041S3;
+	Wed, 04 Dec 2024 12:08:07 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMAxjkek1U9n9AR1AA--.58910S3;
+	Wed, 04 Dec 2024 12:08:07 +0800 (CST)
+Subject: Re: [RFC 1/5] LoongArch: KVM: Add vmid support for stage2 MMU
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241113031727.2815628-1-maobibo@loongson.cn>
+ <20241113031727.2815628-2-maobibo@loongson.cn>
+ <CAAhV-H5PoitK=a_snYA=PjDoZxWT5QcbrJfnMe3DJGXN=J0tZA@mail.gmail.com>
+From: bibo mao <maobibo@loongson.cn>
+Message-ID: <6fa4fc4c-22f7-7e9c-4571-14dce6b36f4d@loongson.cn>
+Date: Wed, 4 Dec 2024 12:07:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CAAhV-H5PoitK=a_snYA=PjDoZxWT5QcbrJfnMe3DJGXN=J0tZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBnQ8Bt1k9nusICDg--.38617S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFyfKrWxGrWftr13tw47Jwb_yoW7tw45pF
-	W3Wasrtw48Jr13tr43CF1DWFyFkrW8Xry8JFya9FW2y3W3Wr429FyDC34Yqr4UJrykAFyx
-	JFZrAr95Wa1DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-	0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-	JVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxV
-	WUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWbyZU
-	UUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-CM-TRANSID:qMiowMAxjkek1U9n9AR1AA--.58910S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWw18WFWfKF15JFy3Ww4kuFX_yoW7Jr1DpF
+	yDAF4kWr48Kr1kAa4qq3s5Wr4UX3yDKw1aga1xAFyFyr12qr1UJrykCryDuFy5Jw4rAF4I
+	vF9Yya9FvF4Ut3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU82g
+	43UUUUU==
 
-From: Chen Ridong <chenridong@huawei.com>
 
-An issue was found with the following testing step:
-1. Compile with CONFIG_TRANSPARENT_HUGEPAGE=y, CONFIG_LRU_GEN_ENABLED=n.
-2. Mount memcg v1, and create memcg named test_memcg and set
-   usage_in_bytes=2.1G, memsw.usage_in_bytes=3G.
-3. Use file as swap, and create a 1G swap.
-4. Allocate 2.2G anon memory in test_memcg.
 
-It was found that:
+On 2024/12/3 上午10:46, Huacai Chen wrote:
+> Hi, Bibo,
+> 
+> On Wed, Nov 13, 2024 at 11:17 AM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> LoongArch KVM hypervisor supports two-level MMU, vpid index is used
+>> for stage1 MMU and vmid index is used for stage2 MMU.
+>>
+>> On 3A5000, vmid must be the same with vpid. On 3A6000 platform vmid
+>> may separate from vpid. If vcpu migrate to different physical CPUs,
+>> vpid need change however vmid can keep the same with old value. Also
+>> vmid index of the while VM machine on physical CPU the same, all vCPUs
+>> on the VM can share the same vmid index on one physical CPU.
+>>
+>> Here vmid index is added and it keeps the same with vpid still.
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/include/asm/kvm_host.h | 3 +++
+>>   arch/loongarch/kernel/asm-offsets.c   | 1 +
+>>   arch/loongarch/kvm/main.c             | 1 +
+>>   arch/loongarch/kvm/switch.S           | 5 ++---
+>>   arch/loongarch/kvm/tlb.c              | 5 ++++-
+>>   5 files changed, 11 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+>> index d6bb72424027..6151c7c470d5 100644
+>> --- a/arch/loongarch/include/asm/kvm_host.h
+>> +++ b/arch/loongarch/include/asm/kvm_host.h
+>> @@ -166,6 +166,9 @@ struct kvm_vcpu_arch {
+>>          unsigned long host_tp;
+>>          unsigned long host_pgd;
+>>
+>> +       /* vmid info for guest VM */
+>> +       unsigned long vmid;
+> vmid is a member of kvm_vcpu_arch, no of kvm_arch?
+As patch 3, there is such line
++       vcpu->arch.vmid = vcpu->kvm->arch.vmid[cpu] & vpid_mask;
 
-cat memory.usage_in_bytes
-2144940032
-cat memory.memsw.usage_in_bytes
-2255056896
+It is the same. Adding a member in kvm_vcpu_arch is easy to
+access kvm_vcpu_arch data structure in kvm context switch assemble
+code. When switching to VM, vmid should be set. And vmid should be zero 
+when resume to host.
+ >> -       csrrd           t1, LOONGARCH_CSR_GSTAT
+ >> -       bstrpick.w      t1, t1, CSR_GSTAT_GID_SHIFT_END, 
+CSR_GSTAT_GID_SHIFT
+ >> +       /* Set VMID for gpa --> hpa mapping */
+ >> +       ld.d            t1, a2, KVM_ARCH_VMID
+ >>          csrrd           t0, LOONGARCH_CSR_GTLBC
+ >>          bstrins.w       t0, t1, CSR_GTLBC_TGID_SHIFT_END, 
+CSR_GTLBC_TGID_SHIFT
 
-free -h
-              total        used        free
-Mem:           31Gi       2.1Gi        27Gi
-Swap:         1.0Gi       618Mi       405Mi
+> 
+>> +
+>>          /* Host CSRs are used when handling exits from guest */
+>>          unsigned long badi;
+>>          unsigned long badv;
+>> diff --git a/arch/loongarch/kernel/asm-offsets.c b/arch/loongarch/kernel/asm-offsets.c
+>> index bee9f7a3108f..4e9a9311afd3 100644
+>> --- a/arch/loongarch/kernel/asm-offsets.c
+>> +++ b/arch/loongarch/kernel/asm-offsets.c
+>> @@ -307,6 +307,7 @@ static void __used output_kvm_defines(void)
+>>          OFFSET(KVM_ARCH_HSP, kvm_vcpu_arch, host_sp);
+>>          OFFSET(KVM_ARCH_HTP, kvm_vcpu_arch, host_tp);
+>>          OFFSET(KVM_ARCH_HPGD, kvm_vcpu_arch, host_pgd);
+>> +       OFFSET(KVM_ARCH_VMID, kvm_vcpu_arch, vmid);
+>>          OFFSET(KVM_ARCH_HANDLE_EXIT, kvm_vcpu_arch, handle_exit);
+>>          OFFSET(KVM_ARCH_HEENTRY, kvm_vcpu_arch, host_eentry);
+>>          OFFSET(KVM_ARCH_GEENTRY, kvm_vcpu_arch, guest_eentry);
+>> diff --git a/arch/loongarch/kvm/main.c b/arch/loongarch/kvm/main.c
+>> index 27e9b94c0a0b..8c16bff80053 100644
+>> --- a/arch/loongarch/kvm/main.c
+>> +++ b/arch/loongarch/kvm/main.c
+>> @@ -212,6 +212,7 @@ static void kvm_update_vpid(struct kvm_vcpu *vcpu, int cpu)
+>>
+>>          context->vpid_cache = vpid;
+>>          vcpu->arch.vpid = vpid;
+> I think vpid should also be:
+>             vcpu->arch.vpid = vpid & vpid_mask;
+yes, vpid should be similar with vmid. Will modify it in next round.
 
-As shown above, the test_memcg used about 100M swap, but 600M+ swap memory
-was used, which means that 500M may be wasted because other memcgs can not
-use these swap memory.
-
-It can be explained as follows:
-1. When entering shrink_inactive_list, it isolates folios from lru from
-   tail to head. If it just takes folioN from lru(make it simple).
-
-   inactive lru: folio1<->folio2<->folio3...<->folioN-1
-   isolated list: folioN
-
-2. In shrink_page_list function, if folioN is THP(2M), it may be splited
-   and added to swap cache folio by folio. After adding to swap cache,
-   it will submit io to writeback folio to swap, which is asynchronous.
-   When shrink_page_list is finished, the isolated folios list will be
-   moved back to the head of inactive lru. The inactive lru may just look
-   like this, with 512 filioes have been move to the head of inactive lru.
-
-   folioN512<->folioN511<->...filioN1<->folio1<->folio2...<->folioN-1
-
-   It committed io from folioN1 to folioN512, the later folios committed
-   was added to head of the 'ret_folios' in the shrink_page_list function.
-   As a result, the order was shown as folioN512->folioN511->...->folioN1.
-
-3. When folio writeback io is completed, the folio may be rotated to tail
-   of the lru one by one. It's assumed that filioN1,filioN2, ...,filioN512
-   are completed in order(commit io in this order), and they are rotated to
-   the tail of the LRU in order (filioN1<->...folioN511<->folioN512).
-   Therefore, those folios that are tail of the lru will be reclaimed as
-   soon as possible.
-
-   folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
-
-4. However, shrink_page_list and folio writeback are asynchronous. If THP
-   is splited, shrink_page_list loops at least 512 times, which means that
-   shrink_page_list is not completed but some folios writeback have been
-   completed, and this may lead to failure to rotate these folios to the
-   tail of lru. The lru may look likes as below:
-
-   folioN50<->folioN49<->...filioN1<->folio1<->folio2...<->folioN-1<->
-   folioN51<->folioN52<->...folioN511<->folioN512
-
-   Although those folios (N1-N50) have been finished writing back, they
-   are still at the head of the lru. This is because their writeback_end
-   occurred while it were still looping in shrink_folio_list(), causing
-   folio_end_writeback()'s folio_rotate_reclaimable() to fail in moving
-   these folios, which are not in the LRU but still in the 'folio_list',
-   to the tail of the LRU.
-   When isolating folios from lru, it scans from tail to head, so it is
-   difficult to scan those folios again.
-
-This issue is fixed when CONFIG_LRU_GEN_ENABLED is enabled with the
-commit 359a5e1416ca ("mm: multi-gen LRU: retry folios written back while
-isolated"). This issue should be fixed for active/inactive lru in the
-same way.
-
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- mm/vmscan.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index af1ff76f83e7..1f0d194f8b2f 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1949,6 +1949,25 @@ static int current_may_throttle(void)
- 	return !(current->flags & PF_LOCAL_THROTTLE);
- }
- 
-+static inline void acc_reclaimed_stat(struct reclaim_stat *stat,
-+		struct reclaim_stat *curr)
-+{
-+	int i;
-+
-+	stat->nr_dirty += curr->nr_dirty;
-+	stat->nr_unqueued_dirty += curr->nr_unqueued_dirty;
-+	stat->nr_congested += curr->nr_congested;
-+	stat->nr_writeback += curr->nr_writeback;
-+	stat->nr_immediate += curr->nr_immediate;
-+	stat->nr_pageout += curr->nr_pageout;
-+	stat->nr_ref_keep += curr->nr_ref_keep;
-+	stat->nr_unmap_fail += curr->nr_unmap_fail;
-+	stat->nr_lazyfree_fail += curr->nr_lazyfree_fail;
-+	stat->nr_demoted += curr->nr_demoted;
-+	for (i = 0; i < ANON_AND_FILE; i++)
-+		stat->nr_activate[i] = curr->nr_activate[i];
-+}
-+
- /*
-  * shrink_inactive_list() is a helper for shrink_node().  It returns the number
-  * of reclaimed pages
-@@ -1958,14 +1977,16 @@ static unsigned long shrink_inactive_list(unsigned long nr_to_scan,
- 		enum lru_list lru)
- {
- 	LIST_HEAD(folio_list);
-+	LIST_HEAD(clean_list);
- 	unsigned long nr_scanned;
- 	unsigned int nr_reclaimed = 0;
- 	unsigned long nr_taken;
--	struct reclaim_stat stat;
-+	struct reclaim_stat stat, curr;
- 	bool file = is_file_lru(lru);
- 	enum vm_event_item item;
- 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
- 	bool stalled = false;
-+	bool skip_retry = false;
- 
- 	while (unlikely(too_many_isolated(pgdat, file, sc))) {
- 		if (stalled)
-@@ -1999,10 +2020,20 @@ static unsigned long shrink_inactive_list(unsigned long nr_to_scan,
- 	if (nr_taken == 0)
- 		return 0;
- 
--	nr_reclaimed = shrink_folio_list(&folio_list, pgdat, sc, &stat, false);
-+	memset(&stat, 0, sizeof(stat));
-+retry:
-+	nr_reclaimed += shrink_folio_list(&folio_list, pgdat, sc, &curr, false);
-+	find_folios_written_back(&folio_list, &clean_list, skip_retry);
-+	acc_reclaimed_stat(&stat, &curr);
- 
- 	spin_lock_irq(&lruvec->lru_lock);
- 	move_folios_to_lru(lruvec, &folio_list);
-+	if (!list_empty(&clean_list)) {
-+		list_splice_init(&clean_list, &folio_list);
-+		skip_retry = true;
-+		spin_unlock_irq(&lruvec->lru_lock);
-+		goto retry;
-+	}
- 
- 	__mod_lruvec_state(lruvec, PGDEMOTE_KSWAPD + reclaimer_offset(),
- 					stat.nr_demoted);
--- 
-2.34.1
+Regards
+Bibo Mao
+> 
+> Huacai
+> 
+>> +       vcpu->arch.vmid = vcpu->arch.vpid & vpid_mask;
+>>   }
+>>
+>>   void kvm_check_vpid(struct kvm_vcpu *vcpu)
+>> diff --git a/arch/loongarch/kvm/switch.S b/arch/loongarch/kvm/switch.S
+>> index 0c292f818492..2774343f64d3 100644
+>> --- a/arch/loongarch/kvm/switch.S
+>> +++ b/arch/loongarch/kvm/switch.S
+>> @@ -72,9 +72,8 @@
+>>          ldx.d   t0, t1, t0
+>>          csrwr   t0, LOONGARCH_CSR_PGDL
+>>
+>> -       /* Mix GID and RID */
+>> -       csrrd           t1, LOONGARCH_CSR_GSTAT
+>> -       bstrpick.w      t1, t1, CSR_GSTAT_GID_SHIFT_END, CSR_GSTAT_GID_SHIFT
+>> +       /* Set VMID for gpa --> hpa mapping */
+>> +       ld.d            t1, a2, KVM_ARCH_VMID
+>>          csrrd           t0, LOONGARCH_CSR_GTLBC
+>>          bstrins.w       t0, t1, CSR_GTLBC_TGID_SHIFT_END, CSR_GTLBC_TGID_SHIFT
+>>          csrwr           t0, LOONGARCH_CSR_GTLBC
+>> diff --git a/arch/loongarch/kvm/tlb.c b/arch/loongarch/kvm/tlb.c
+>> index ebdbe9264e9c..38daf936021d 100644
+>> --- a/arch/loongarch/kvm/tlb.c
+>> +++ b/arch/loongarch/kvm/tlb.c
+>> @@ -23,7 +23,10 @@ void kvm_flush_tlb_all(void)
+>>
+>>   void kvm_flush_tlb_gpa(struct kvm_vcpu *vcpu, unsigned long gpa)
+>>   {
+>> +       unsigned int vmid;
+>> +
+>>          lockdep_assert_irqs_disabled();
+>>          gpa &= (PAGE_MASK << 1);
+>> -       invtlb(INVTLB_GID_ADDR, read_csr_gstat() & CSR_GSTAT_GID, gpa);
+>> +       vmid = (vcpu->arch.vmid << CSR_GSTAT_GID_SHIFT) & CSR_GSTAT_GID;
+>> +       invtlb(INVTLB_GID_ADDR, vmid, gpa);
+>>   }
+>> --
+>> 2.39.3
+>>
 
 
