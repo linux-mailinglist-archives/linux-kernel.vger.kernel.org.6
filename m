@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-430839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D209B9E3660
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:22:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B66F9E3631
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43A56B2454C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C912826DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69133199E80;
-	Wed,  4 Dec 2024 09:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE76A19AA5A;
+	Wed,  4 Dec 2024 09:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wC/dx5wa"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fZ6TNfcg"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FD82500C8
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 09:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C81C19068E;
+	Wed,  4 Dec 2024 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733303487; cv=none; b=JqegxXnKAznc8eUFz5BNCpbZtjMLf2Gz1783c60xE0uDr5PsL29W48dSXXZLT2JtZLv1EBjqQpZq2fXUAC3ju1Gum/SRfqeh5v5n3OL/rEQlNMKyLenp7GjHJceYqm0bAf3b53MiOsxgLf5IeaaIHbAR5IgxGz4XCdAT6cXUl+8=
+	t=1733303332; cv=none; b=llBmjLrKxnz7Q3fuNZeQlvP8K3DeE6mKucbnZ3TDxF0wFXQzfJXJmsNoE++r1nlgJqUZ4iWJb9zbSMxHWf7yYS/mkbo58yDxcv5civFDCQWaOIEUMexMdg7hQt7ycCVD1ptbT8CosAa6YPglBKufkqmcvThcNvEyo7pY4nUPSks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733303487; c=relaxed/simple;
-	bh=uFPwSyG/JkzLTxtxg6Ctl7HEGoRQFQHwizIpQcLBeGo=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UNtBc/oylLbpzueR93peKoJGv4k4KhBAhaz3WDpSMQzTBwU1rjaar52LD4bUueh9tzHbDd52kUrk7/nmrhF4LFryq80x8J1F/yiYujTrIVPF3pnahdE3nwQFF5q+Sp/BYZFRma+qWxJnP01pLq7NLJa3FL1yB6BQcz6kwMNJDRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wC/dx5wa; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B44c1Wx023405;
-	Wed, 4 Dec 2024 10:11:12 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	uFPwSyG/JkzLTxtxg6Ctl7HEGoRQFQHwizIpQcLBeGo=; b=wC/dx5waZTaQVQVx
-	P1ZdaQ53FkYiRrK60dYaSGPqr+pNS+s+mSG4azAWTFgyEtORXiOfjcfRHFZfWAy3
-	2kpeOJ4C3/TnjaikF5i5Cj5IyGrvGO8LbLYVBs+MvWQ6OvLjVryoEH1BzN6la63f
-	fgtOZMezUKdXqqZt8a9WF9mucXUyWJbW4AaO2CiN7zgCE67S9paNOVEHrxIyjJkZ
-	an+QGcGPx09Oo1MMN1Rsb5ZXUeVqxNzbzLibJlms7n0vYTW0FwGUjiMTrqxqp/BJ
-	y+VtxKs7/LqiJJBUn/ahdLhZro9+PQTn8GWFL2JRqbN3u6ne8ynM6Mg7v/G9d0FW
-	juQRug==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 437tfghah5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 10:11:12 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A8D1C40065;
-	Wed,  4 Dec 2024 10:09:38 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D33962AA42A;
-	Wed,  4 Dec 2024 10:08:03 +0100 (CET)
-Received: from [192.168.8.15] (10.48.87.33) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 4 Dec
- 2024 10:08:03 +0100
-Message-ID: <0ac673bbbb63450fefbbdef15ae9bb8fb790589e.camel@foss.st.com>
-Subject: Re: [PATCH] irqchip: STM32MP_EXTI should not default to y when
- compile-testing
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner
-	<tglx@linutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>
-Date: Wed, 4 Dec 2024 10:08:00 +0100
-In-Reply-To: <ef5ec063b23522058f92087e072419ea233acfe9.1733243115.git.geert+renesas@glider.be>
-References: <ef5ec063b23522058f92087e072419ea233acfe9.1733243115.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1733303332; c=relaxed/simple;
+	bh=KzEazuozwzNQCKTS1PLyozmJsnY2CM2aKlSSLs5lkhM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W0GMFPFm2GXgvQLraNL7zsiHNTby6GMslK+rDUfgoh9fNSH9puBDZmfe0QYhMSRm1XlhgwllP4aRHRwj6UjDuKRrCOB2dE4IMirNaGS2ld97Tg7l9kxnJ9qS5uGIH0QINvke1TCTsfbrHGrJljfCt7NYKYRP5AC9IF8eKJm0hHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fZ6TNfcg; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 86EF320002;
+	Wed,  4 Dec 2024 09:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733303327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aBoNT22bjOCCH26k5KlABL0rZ5aFoWyBOOtQ5GiVdgE=;
+	b=fZ6TNfcgsKAfXWizpuvYO/VCeUpqVxLoLZU0h80AsSTwqITeBbhUdPjLlXQoRTMhTD83WZ
+	BMDO62sEiMIn92tgFQAaZOkJxlNlDDpGzkk6+e+BPQ7J6eWpGcmwWASDrdwBNmoZV0+0nu
+	SA3mA9Y1v0+JhDqxImGDJbJeSLQ5no9AOHm88gX9w7kWEAuF3Wg5oX/Y8Rs+tiY8n2LKiZ
+	NvDWh4ejpPUPPGSulUjafKPYkRXWNvDtX4JyheQYSYRuvkgiIE0Xh3Is60T+sPjTRV8P/o
+	46IVd9CX6nsK+ETjvRUGXahr6FZf6Pmti9v3gWkaaN1FH/UMEgnTV96oaKUdxQ==
+Message-ID: <6e47e420-84c4-4539-ba54-5e1e939a37a5@bootlin.com>
+Date: Wed, 4 Dec 2024 10:08:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+User-Agent: Mozilla Thunderbird
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4: use ti,j7200-padconf
+ compatible
+To: Francesco Dolcini <francesco@dolcini.it>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, u-kumar1@ti.com
+Cc: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gregory.clement@bootlin.com, thomas.petazzoni@bootlin.com,
+ richard.genoud@bootlin.com
+References: <20241113-j784s4-s2r-pinctrl-v1-1-19aeb62739bc@bootlin.com>
+ <20241119190106.GA70080@francesco-nb>
+Content-Language: en-US
+In-Reply-To: <20241119190106.GA70080@francesco-nb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Tue, 2024-12-03 at 17:27 +0100, Geert Uytterhoeven wrote:
-> Merely enabling compile-testing should not enable additional
-> functionality.
->=20
-> Fixes: 0be58e0553812fcb ("irqchip/stm32mp-exti: Allow building as module"=
-)
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 11/19/24 20:01, Francesco Dolcini wrote:
+> Hello Thomas and TI folks,
+> 
+> On Wed, Nov 13, 2024 at 11:43:05AM +0100, Thomas Richard wrote:
+>> Like on j7200, pinctrl contexts shall be saved and restored during
+>> suspend-to-ram.
+>>
+>> So use ti,j7200-padconf compatible.
+>>
+>> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+>> ---
+>> Use ti,j7200-padconf compatible to save and restore pinctrl contexts during
+>> suspend-to-ram.
+>> ---
+>>  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi       |  6 +++---
+>>  arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi | 12 ++++++------
+> 
+> Do j784s4 supports any kind of low power mode and/or suspend to ram? My
+> understanding was that this was not supported, but maybe there is some
+> details that was lost when I was told this information.
 
+Hello Francesco,
 
-Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+We are working on suspend-to-ram support for j7200 and j784s4.
+During suspend-to-ram the SoC is fully powered-off (thanks to the PMIC
+which powers off all the power rails except the DDR which is in
+self-refresh), like on j7200.
+Please let me know if you want more details.
 
-Thanks!
-Antonio
+Regards,
+
+Thomas
 
