@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-430551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D419E32A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:27:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21219168706
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:27:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F8916EB54;
-	Wed,  4 Dec 2024 04:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CfqFAy1k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFA29E32AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:38:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE99219E4;
-	Wed,  4 Dec 2024 04:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DFFAB23EE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:38:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C81E17557C;
+	Wed,  4 Dec 2024 04:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lUm+2gP1"
+Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA79A41C85;
+	Wed,  4 Dec 2024 04:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733286464; cv=none; b=E2NVL4C93NqDFKH+tN4DAUCN7GftpLt5syJMVSmuQfZvODt5qGeEQchg8TPeQcqsHiBmsHmcwoa+09z/xubfi6BWbLGkuz3Ri6EQvS9YggMnLT6tMsxEmpPnbpXWL2VVt/GAb4ajkqAXek0Zm52fN0TNhPu440iCcOulRhWPI8w=
+	t=1733287075; cv=none; b=fChxFtLNXwZYmJGyWJk3SgKhrqHxoA8UK9IXH5h7a2L/TZcl2WBpI7tCKXM2CT4s9eb4r1CPJgVGikgNTRW8n8GVrJeV8BLROZuHPgzsejsuA/geysFzNuAoxS9i7iwNYQXn8GB3AXB7QtEYt5+vGSvm7pwBLUz/XQare6i323Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733286464; c=relaxed/simple;
-	bh=s0E3gcq3e6cneHEa28ew8UWbRCJ77LQjBy4rKqIhalM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tfCr9o4imPags8PNIQqNpG8XUEK3Kv3XC+my8S1IAEkBpZes5gqaRPlmi3rYPQiqreMlSnNIqhZqsyyOSUnQoKiHGDUm0StaAvl/DhmNxHDbn2aAywcYpieMaDLNyVw9FF3xMFvoUlVIebsuSYuzb1XXfiCvYkEqX8bT2xnIAus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CfqFAy1k; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733286463; x=1764822463;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=s0E3gcq3e6cneHEa28ew8UWbRCJ77LQjBy4rKqIhalM=;
-  b=CfqFAy1kUNC25yO9IYYtXfIgNKdqkWpVtMrgCJI0gIN9foCGye7blJaq
-   QdT2o7lnad1h/mEpKsTuox81fdqPyYoGVjE6G+YKGcOonDRQeARaWSjey
-   yIXNiq0yJMtPwytDJZWyspdc/DLMZgw5qE3v75FDrauOeIR3p7A3514fh
-   NqaW2wQhQ4UO7T5x4bG7W6srbDUoLAiBD05hLxUZESBb7fUm3XeS2xE8q
-   xnudDiaLyBygBIDb8JreDyY0qpVjZobVmhfSmMBrDkEsP5hetWF8czcgX
-   +c90YKm5Yx/0u6/jdai3yrI1/xxora+RXqLwriBjwT5Vp8npexceocY3m
-   g==;
-X-CSE-ConnectionGUID: O0gCT30sSxSZzz2TTI9oVw==
-X-CSE-MsgGUID: mHXO/tnGQTaJgjOCaNfSgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="44196054"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="44196054"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 20:27:42 -0800
-X-CSE-ConnectionGUID: GNeRPHi7Ro6aYZQf33DG4g==
-X-CSE-MsgGUID: VwKyph+eRS2iBB2CaT/B+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93988426"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 20:27:35 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tIgz6-00000003dvG-1beY;
-	Wed, 04 Dec 2024 06:27:32 +0200
-Date: Wed, 4 Dec 2024 06:27:32 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Yu-Hsian Yang <j2anfernee@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
-	dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
-	marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
-	mitrutzceclan@gmail.com, tgamblin@baylibre.com,
-	matteomartelli3@gmail.com, alisadariana@gmail.com,
-	gstols@baylibre.com, thomas.bonnefille@bootlin.com,
-	ramona.nechita@analog.com, mike.looijmans@topic.nl,
-	chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
-	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: adc: add Nuvoton NCT720x ADC driver
-Message-ID: <Z0_aNIrNvLxqcRHv@smile.fi.intel.com>
-References: <20241203091540.3695650-1-j2anfernee@gmail.com>
- <20241203091540.3695650-3-j2anfernee@gmail.com>
- <Z08MkR40fjfW3MXZ@smile.fi.intel.com>
- <CA+4VgcJW=9rtuqr3VZbfA8QxgYAR+KvfAHdf_0xv4XLQtVVQJw@mail.gmail.com>
+	s=arc-20240116; t=1733287075; c=relaxed/simple;
+	bh=KVaE46aHebdCh6WZ9W4YES3U6O7EbJ4RLpIJXCR51X0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BVq8ax2ha0YfoUKi/tCtLGVlyq1Rn86Vo0Xs5Tf+Sv4DsZi/vXF1YFtrVzHbXY0dayUpdFanXMTt0+W2b7tAKblFhM3CwrsS/GQUzmLQqHk8Wc8TfVw7ULCSfRKSiUtmDQ8hQL6+hcwPr93PWT2t7AIrm3BDO0WWe+l7NrFgg+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lUm+2gP1; arc=none smtp.client-ip=193.252.22.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from mail-ej1-f49.google.com ([209.85.218.49])
+	by smtp.orange.fr with ESMTPSA
+	id Ih93tvZCrLhLoIh93tPDae; Wed, 04 Dec 2024 05:37:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733287069;
+	bh=K0YcF5eBl3Z11+dKfpTGFzHX2+zdqIzQuZXVH2EgLzY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=lUm+2gP1XxmDOD/LyukD+yOciYXGCF8ew4ME+OIKlJrSkUZCGRrz7vJVcy5UGncS6
+	 pdjRk9d3rZ/crJ+mf2joE75Jl2Jkp5qrZIa46hQ0bdXdvjoI2vOOMU4ei1h7N+98zE
+	 eQjf5yUlhb04cuEcRoMroivgel217zXK6Y22DA3TWEqC8BuBb4BbaEmmAh1NViDMcq
+	 i/yk57L7vsWrs4rdprmNWcXttneEGFH7XzcOcPvBpyYgY142oijskD69bVWn/HE7PI
+	 5TqNdbL4NOHHHRM/riAJLukC2q2ov0re+QaqVKXOYd1+vCvnu4Me0dVfglyHt5B4ok
+	 MB2cF5tmeomlQ==
+X-ME-Helo: mail-ej1-f49.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 04 Dec 2024 05:37:49 +0100
+X-ME-IP: 209.85.218.49
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa549d9dffdso1005130366b.2;
+        Tue, 03 Dec 2024 20:37:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV4eNQxzeWQ3vsWT20h+lgCRlG1pCiESTQbsCQKQF2SLPNLbtr5m3qCFf8zJ6jBwjcAVZwivzYJeiE=@vger.kernel.org, AJvYcCXe/R6ZZjXzBl3aqblCWtnTrq8XgUpmTFTQS1WXFHYLJusaRmjeFU1NOQo2wzzcjvTJptU+F9i9Xh+6EKjU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXuZ82DoBAJ8Y+xEF3Cm2Oc3xU/wSVkCcANoBRRTMuq5ul9n0O
+	xYFX7wYQ9Mp9EhmeJxKg8v/QIHjcRhAdVhrxK9S2CY7aye48CwsCyVDBokgnXsoR1Oph+VihK9W
+	jb34TUL5RVleEYOnkn/AgRn1PTCk=
+X-Google-Smtp-Source: AGHT+IHcBOtplu5vcO94r/xRZCoJTOHel8JRhuKlEs+VKsq8ZPQd0iWFLejRKIealVsnlL0S/aZeCDYmgY5iNzmogOU=
+X-Received: by 2002:a17:907:7d94:b0:a99:fc3d:7c76 with SMTP id
+ a640c23a62f3a-aa5f7f007e6mr472251266b.37.1733287069264; Tue, 03 Dec 2024
+ 20:37:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+4VgcJW=9rtuqr3VZbfA8QxgYAR+KvfAHdf_0xv4XLQtVVQJw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241203231337.182391-1-rosenp@gmail.com>
+In-Reply-To: <20241203231337.182391-1-rosenp@gmail.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Wed, 4 Dec 2024 13:37:38 +0900
+X-Gmail-Original-Message-ID: <CAMZ6Rq+ykc4xNbGC52cgjw6uLFXZKwkeGDWk=19=nZMnvq_L+A@mail.gmail.com>
+Message-ID: <CAMZ6Rq+ykc4xNbGC52cgjw6uLFXZKwkeGDWk=19=nZMnvq_L+A@mail.gmail.com>
+Subject: Re: [PATCH] net: simplify resource acquisition + ioremap
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	maxime.chevallier@bootlin.com, Madalin Bucur <madalin.bucur@nxp.com>, 
+	Sean Anderson <sean.anderson@seco.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Dec 04, 2024 at 11:20:20AM +0800, Yu-Hsian Yang wrote:
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> 於 2024年12月3日 週二 下午9:50寫道：
-> > On Tue, Dec 03, 2024 at 05:15:40PM +0800, Eason Yang wrote:
+Hi Rosen,
 
-...
+Thanks for the patch!
 
-> > Second, why do you need two regmaps? How debugfs is supposed to work on the
-> > registers that are 16-bit if you access them via 8-bit regmap and vice versa?
-> >
-> > Can't you simply use bulk reads/writes when it makes sense and drop 16-bit
-> > regmap completely?
-> 
-> Read VIN info can use word read or byte read, and other registers
-> should use byte read.
-> 
-> For a reviewer's comment, If the i2c controller allows word read then the
-> right thing is to always use it.
+On Wed. 4 Dec. 2024 at 08:13, Rosen Penev <rosenp@gmail.com> wrote:
+> get resource + request_mem_region + ioremap can all be done by a single
+> function.
+>
+> Replace them with devm_platform_get_and_ioremap_resource or\
+> devm_platform_ioremap_resource where res is not used.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/can/sja1000/sja1000_platform.c | 15 ++--------
 
-But how does this differ to bulk read of two sequential 8-bit offsets?
-And if there is a difference, shouldn't this be addressed on regmap level for
-all? Like testing for the supported flags and access registers based on the
-controller capability and user request.
+For the can driver only:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr> # sja1000_platform.c
 
-
+>  drivers/net/ethernet/freescale/fman/fman.c | 35 +++++-----------------
+>  drivers/net/ethernet/lantiq_etop.c         | 25 ++--------------
+>  drivers/net/mdio/mdio-octeon.c             | 25 +++-------------
+>  4 files changed, 17 insertions(+), 83 deletions(-)
 
