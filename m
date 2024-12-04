@@ -1,93 +1,138 @@
-Return-Path: <linux-kernel+bounces-431244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDEC29E3B46
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:30:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D30B69E3B4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF82AB3001F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:17:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0FBEB2732E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC341BE871;
-	Wed,  4 Dec 2024 13:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4DA1C1F19;
+	Wed,  4 Dec 2024 13:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WTf39HWb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UtAAFB7I"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BfDeEpBP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3572C1B87E2;
-	Wed,  4 Dec 2024 13:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD0F1714B3;
+	Wed,  4 Dec 2024 13:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733318214; cv=none; b=B1grxbminUpBBHY8rImEuL+8bpVd0BC4scFx3xQ0Zy5kddGY9swu1fggS/umtg+sbLlFWC2ZLes3QR+IWcvplE077IBsX2m/LHk/6U+Y13CHKN5+yIvHo1ffk6krPVzyhPlvujZCV1mwsqOzudy+12EUBQFBaonvMwDE6LvDLGU=
+	t=1733318258; cv=none; b=tSgt+fvZTh2Jikjm4bs7RzcFb+JISI9wDXibm2XLTeBG7MXbtYX6vzdbLgy/bv28K0U/C5twhIois0ftNk4EJjLlmKyOLBY3t/ryCAmkmPpDbFAhE+p90DWfRW2TF/Nqfx+tJgoXlW5ReeL0muMFLG7kGTrVsAyO3589uqlRpIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733318214; c=relaxed/simple;
-	bh=c1OFIdWzHLxtGH4EHRQQjuiUkrmewW70tsRBbBB9sxM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=swuNvihMT41buIYs/P7RG+JiPv+NYnMAhBb1cUQSECNPfrlLzjg/Avrul6IFzQh+EY3ysgDUr7/OGdeqCI/OE0dCXfDtveaTJLMFC+qZreWf0T9G9BFyYrTmEFANsZ4rgA3MsNOgf3uxj9/fkp4fFzPyPKasqUKuD47MRvxxpUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WTf39HWb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UtAAFB7I; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733318211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c1OFIdWzHLxtGH4EHRQQjuiUkrmewW70tsRBbBB9sxM=;
-	b=WTf39HWbPJFRM1Tx1C48bChXNL3E/zGE+PWZSPqiL8F9GXQA81CnxFB61pJW8sN+OfnD7s
-	kLlUgYSQKuUXbXs+ssmzIaM8lsVi5DBC1K5F9cgSXCobmiwoQeuCMoMdasVfpkENBOjtWL
-	Uk2G9Zq6QKbr6Njgp8K5sb0Q8U/mpzl5NJL/afisTyUp3PsRYjR0o+KKGTk9KQ53m0zgIv
-	4xMtQWBM1IMyBZXPN8gSgJdRs2IW1BwStc8chwJiI7lfc8d+EITFkyjv7K5PrnxfbaOE6A
-	xFiwH0kdtM7I8ke47c8tMmQgQdJIvlTqKO/nwkSkhFXcEzFY/OEOS/Wl94SA4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733318211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c1OFIdWzHLxtGH4EHRQQjuiUkrmewW70tsRBbBB9sxM=;
-	b=UtAAFB7IaCZ/Fv2LmIGfarhRvzoLr2BnhwJDKg9Fh5ozlTnnKtCeF0f+3VqaOS09n0Cq6z
-	h9MrkZUW2Qz60HBQ==
-To: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Sean Christopherson
- <seanjc@google.com>, Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini
- <pbonzini@redhat.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH 03/11] x86: Kconfig.cpu: split out 64-bit atom
-In-Reply-To: <20241204103042.1904639-4-arnd@kernel.org>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-4-arnd@kernel.org>
-Date: Wed, 04 Dec 2024 14:16:50 +0100
-Message-ID: <87ed2nsi4d.ffs@tglx>
+	s=arc-20240116; t=1733318258; c=relaxed/simple;
+	bh=t5F97VFmF8zyFkQKD0vWH58yCQmKA1NuBLL5guq/ubI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DZzLWUhj7Rsmp2zTcZc4AqfxJ16rZRpTzPQwdP5JUg9y+RQqtVFnb3FIK+NM6yORIhiBSrheQc+ogjXOlxcz4BSmlhJU67GxLU12OWrvJGJitSnUWYY6kGrrPMHwWUs5PEoY+RmDMpeau4QDOPn0jBHsrJat9R30TGJq7f/xATM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BfDeEpBP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4736hq005920;
+	Wed, 4 Dec 2024 13:17:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/1Vf+utvjq/tYYUU/+P1f1
+	B9AGXc7QPnOlMiNpeWPf0=; b=BfDeEpBPx6dpvO4wi5dhp7F8VeCk5zrD4PC0Jk
+	zBYa+NBn5H17dK5jODaP1pbCzNed3LnLAyuGBFw4DXfSsp0bK17OzniLhiAK8at7
+	ssusrR1XlQNi09+Q/HfaslMfbEChODjisTV6kJwiS7nlsNsFygtDXSkyF2QHRtBb
+	jhBX3KYhYZ+YwOdwyGXhb4gBmVXYJbidqDkEuAgJVsKuVLNdEOixV+6PPho2mRUP
+	Yr4zuBbZJ2OlBIg6w9b5+6H7O6dMPZ57qZY+gen4owLQ7o78Z23HTMWLpS1eXHAQ
+	HJI5KD+/MBIHmQlIrdwkD23ykJrZsVsMtlX29eJP6cHOLU0w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w3ema8b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 13:17:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4DHRYk004241
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 13:17:27 GMT
+Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Dec 2024 05:17:22 -0800
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+        <quic_anubhavg@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v4 0/4] Enable Bluetooth on qcs6490-rb3gen2 board
+Date: Wed, 4 Dec 2024 18:47:02 +0530
+Message-ID: <20241204131706.20791-1-quic_janathot@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: m5IPExlosNicp98XAt3cAMycDvOMJHeY
+X-Proofpoint-ORIG-GUID: m5IPExlosNicp98XAt3cAMycDvOMJHeY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
+ spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412040102
 
-On Wed, Dec 04 2024 at 11:30, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Both 32-bit and 64-bit builds allow optimizing using "-march=atom", but
-> this is somewhat suboptimal, as gcc and clang use this option to refer
-> to the original in-order "Bonnell" microarchitecture used in the early
-> "Diamondville" and "Silverthorne" processors that were mostly 32-bit only.
->
-> The later 22nm "Silvermont" architecture saw a significant redesign to
-> an out-of-order architecture that is reflected in the -mtune=silvermont
-> flag in the compilers, and all of these are 64-bit capable.
+- Patch 1/4 Add description of the PMU of the WCN6750 module.
+- Patch 2/4 add and enable BT node for qcs6490-rb3gen board.
+- Patch 3/4 use the power sequencer for wcn6750.
+- Patch 4/4 add support for the WCN6750 PMU.
 
-In theory. There are quite some crippled variants of silvermont which
-are 32-bit only (either fused or at least officially not-supported to
-run 64-bit)...
+----
+Changes from v3:
+* Defined the PMU node and used the its output to power up BT
+* Used power sequencer for wcn wcn6750 module
+* Split the patch to multiple as per subtree
+* Add description of the PMU of the WCN6750 module
+* Include separate UART state node for sleep pin configuarion
+* Link to v3: https://lore.kernel.org/linux-arm-msm/20241022104600.3228-1-quic_janathot@quicinc.com/
+Changes from v2:
+* Sorted nodes alphabetically
+* Link to v2: https://lore.kernel.org/linux-arm-msm/20241010105107.30118-1-quic_janathot@quicinc.com/
+Changes from v1:
+* Corrected the board name in subject
+* Link to v1: https://lore.kernel.org/linux-arm-msm/20241009111436.23473-1-quic_janathot@quicinc.com/
+Janaki Ramaiah Thota (4):
+  regulator:·dt-bindings:·qcom,qca6390-pmu:·document wcn6750-pmu
+  arm64: dts: qcom: qcs6490-rb3gen: add and enable BT node
+  Bluetooth: hci_qca: use the power sequencer for wcn6750
+  power: sequencing: qcom-wcn: add support for the WCN6750 PMU
+
+ .../bindings/regulator/qcom,qca6390-pmu.yaml  |  27 +++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 165 +++++++++++++++++-
+ drivers/bluetooth/hci_qca.c                   |   2 +-
+ drivers/power/sequencing/pwrseq-qcom-wcn.c    |  22 +++
+ 4 files changed, 214 insertions(+), 2 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
 
