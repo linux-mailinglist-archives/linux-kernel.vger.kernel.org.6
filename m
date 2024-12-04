@@ -1,157 +1,215 @@
-Return-Path: <linux-kernel+bounces-431076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069709E38AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:22:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E190B1646D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:22:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEBA1B3928;
-	Wed,  4 Dec 2024 11:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ei10aPZ0"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FD29E3949
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:53:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E981B2183;
-	Wed,  4 Dec 2024 11:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D9DB30428
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:23:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D011F1AF0BE;
+	Wed,  4 Dec 2024 11:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QEvGvegX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD221AF0D5
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733311365; cv=none; b=elW3pNo1kIw2M70viUhUYQ94NJDYHqMDBWb1iqAroiV5EVtt8d190nB60ZeJuS6cWTczXq8LE0+dNqh6lCOxSWbO/Mi1IHY3c77mjGn3zw4GBlci0co9oGyMl8G/TXx01ips7+A+HMNjFD1reFGQ+u9SSFZsp+I2hLnPR+j3dmA=
+	t=1733311387; cv=none; b=qU+4i2uNF6eSgFnJtiZNo1vYmFQSB01d47anM1TX+LvCINZGRruOF5kiDS6WZFTa1Q8PxWnYnom5O8/H2dhGL9oLo/MBf7aSOMvZvogUo7jwmusuZLboypqR5Jr9GLUTcXVONAIBEbx4ET29TUlxNMvhVRbAPibh9LUSwo5M3mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733311365; c=relaxed/simple;
-	bh=9d/ORHNg1wahJ2ReZ3N3CrEOxHe+jLThSxHWdKfob68=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sBAmMrwLRVdObqjAO+a8h3aZSQ5t1QKX5t1fZ9FADbOsh6lVJoLdAKlWFG2c23BKQedO2jSuy6WPaMbqVU60jNveIX3NvKLwXfHeOr4+owv1ub0+gRaMzv7O13OF45Dpiv+sz0I3MSDdEGS5aeSAwkMqM2PwDVPcDh0kb55ghYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ei10aPZ0; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B45bkis002005;
-	Wed, 4 Dec 2024 11:21:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=8TXxPCu7CbB/wPbZa
-	hVtAWP9y7IfzK6UIQ0ThrYc1FU=; b=ei10aPZ0W0EFNt4f5FDC7rDqcNZXS9d28
-	LN+C3t6zjjtLQyEX+OnungMDRQCgdgDyejRGtRx57LK06HsLk0sAI4A4XRk49Op5
-	op67h3mE1r1lxePPagj/i4p6OmthsWwawJVGkzl6vwUZTr7eIuAVRDBpdy6kMKOO
-	oy1oxVjHR8IYwLQEhDN/x2WLjgh3MDetZYiqUVPncqjlBD0Kf3hkg51hu2qwsSQj
-	+WxQaeAlAPAE2V7u/l+y3UWxGbTsnUcU34eeW9xovJmny6XuQFN+BVwAVTgVm4OH
-	P0MGXWRBhtjT/76pYV1J6JLG4HDP2Fhiee2vo6zqC9EdZYCbr3Fsg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437r4pqba4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 11:21:58 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B4BLvqT025901;
-	Wed, 4 Dec 2024 11:21:57 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437r4pqba2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 11:21:57 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B47PMD1005218;
-	Wed, 4 Dec 2024 11:21:56 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43a2kxk981-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 11:21:56 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B4BLqqN33751558
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Dec 2024 11:21:53 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D0B9620040;
-	Wed,  4 Dec 2024 11:21:52 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 222D320043;
-	Wed,  4 Dec 2024 11:21:52 +0000 (GMT)
-Received: from IBM-PW0CRK36.ibm.com (unknown [9.171.34.7])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  4 Dec 2024 11:21:52 +0000 (GMT)
-From: Tobias Huschle <huschle@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, linux-s390@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sshegde@linux.ibm.com
-Subject: [RFC PATCH 2/2] s390/topology: Add initial implementation for selection of parked CPUs
-Date: Wed,  4 Dec 2024 12:21:49 +0100
-Message-Id: <20241204112149.25872-3-huschle@linux.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204112149.25872-1-huschle@linux.ibm.com>
-References: <20241204112149.25872-1-huschle@linux.ibm.com>
+	s=arc-20240116; t=1733311387; c=relaxed/simple;
+	bh=Lm5PIHzRjou6UpwctHmF45CdibJIcEp58ZTJhFUoYJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9hqQj2V7lwRI+vxqNWZnc1MBq0+GEaegVa7hYRc91yTclbvca1JHWZgxTQkuO8CnBdRDMYeXiT+F5oBhz4KawY7zpbuNf8Ha3D+tJFWQuOvde1UhFbTzCQwZh2FdobtrI/rjMjBHpkx9I0DQv4Jf04c+T5otsMQ8FHMCOsYXco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QEvGvegX; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733311385; x=1764847385;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Lm5PIHzRjou6UpwctHmF45CdibJIcEp58ZTJhFUoYJ8=;
+  b=QEvGvegXVnooDzYtxWREHaFOPQh4aIWMTwaJam/5SAgiGGSSWUugU29t
+   DYLSP/O2bqMc7ywpSGDM/vN8gZpQcfoB7gz/5qWjcnv+i/+zjoUTKrhev
+   omt5KVq4Sd5duDwWeGIh3HwIfKPoKnBl/j1Tc02My0mWexmf00nI5rsKc
+   0vv1MFQfPGcaNr0a6xO49D+F9j2j24ORkkq6Qk0NlF4RiTLlgetwZtOdC
+   PcPu0YJYLRRBvBND6LlMqpeWyNauZ/LzTvkxrURZy97AeQBd4+4JWwEdb
+   g1h2eblKKkVcW5RU1HaTl6cPoXE6chqRwIi3AEjr43b2sIolY5fIKS19/
+   Q==;
+X-CSE-ConnectionGUID: LsiCxHTXRdGUOd3IGd0VBg==
+X-CSE-MsgGUID: nFRz0EAwR3S/v9jartJgtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="51104508"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="51104508"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 03:23:05 -0800
+X-CSE-ConnectionGUID: hNc4TBZaQeKSTPMtboscnw==
+X-CSE-MsgGUID: UJSjbqqeSUeL+IVFxnc6Pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="98726046"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 04 Dec 2024 03:23:03 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tInTA-0002wT-1c;
+	Wed, 04 Dec 2024 11:23:00 +0000
+Date: Wed, 4 Dec 2024 19:22:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Paul Benoit <paul@os.amperecomputing.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Paul Benoit <paul@os.amperecomputing.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] firmware: smccc: Support optional Arm SMC SOC_ID name
+Message-ID: <202412041926.d2p2hcQe-lkp@intel.com>
+References: <20241203212854.5565-1-paul@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ai3BELS_AXObsiID58AEPu0QlJwGpV0y
-X-Proofpoint-ORIG-GUID: keLr_KqCpiQ-luBGJMQ9oUvmxrqS6eqe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 clxscore=1011 phishscore=0 malwarescore=0
- suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=929 adultscore=0
- lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412040086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203212854.5565-1-paul@os.amperecomputing.com>
 
-In this simplified example, vertical low CPUs are parked generally. 
-This will later be adjusted by making the parked state dependent 
-on the overall utilization on the underlying hypervisor.
+Hi Paul,
 
-Vertical lows are always bound to the highest CPU IDs. This implies that
-the three types of vertically polarized CPUs are always clustered by ID.
-This has the following implications:
-- There can be scheduler domains consisting of only vertical highs
-- There can be scheduler domains consisting of only vertical lows
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
----
- arch/s390/include/asm/topology.h | 3 +++
- arch/s390/kernel/topology.c      | 5 +++++
- 2 files changed, 8 insertions(+)
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on linus/master v6.13-rc1 next-20241203]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/arch/s390/include/asm/topology.h b/arch/s390/include/asm/topology.h
-index cef06bffad80..e86afeccde35 100644
---- a/arch/s390/include/asm/topology.h
-+++ b/arch/s390/include/asm/topology.h
-@@ -99,6 +99,9 @@ static inline int numa_node_id(void)
- 
- #endif /* CONFIG_NUMA */
- 
-+#define arch_cpu_parked cpu_parked
-+int cpu_parked(int cpu);
-+
- #include <asm-generic/topology.h>
- 
- #endif /* _ASM_S390_TOPOLOGY_H */
-diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
-index 4f9c301a705b..1032b65da574 100644
---- a/arch/s390/kernel/topology.c
-+++ b/arch/s390/kernel/topology.c
-@@ -299,6 +299,11 @@ void store_topology(struct sysinfo_15_1_x *info)
- 	stsi(info, 15, 1, topology_mnest_limit());
- }
- 
-+int cpu_parked(int cpu)
-+{
-+	return smp_cpu_get_polarization(cpu) == POLARIZATION_VL;
-+}
-+
- static void __arch_update_dedicated_flag(void *arg)
- {
- 	if (topology_cpu_dedicated(smp_processor_id()))
+url:    https://github.com/intel-lab-lkp/linux/commits/Paul-Benoit/firmware-smccc-Support-optional-Arm-SMC-SOC_ID-name/20241204-124243
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20241203212854.5565-1-paul%40os.amperecomputing.com
+patch subject: [PATCH v2] firmware: smccc: Support optional Arm SMC SOC_ID name
+config: arm-sp7021_defconfig (https://download.01.org/0day-ci/archive/20241204/202412041926.d2p2hcQe-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412041926.d2p2hcQe-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412041926.d2p2hcQe-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/firmware/smccc/soc_id.c: In function 'str_fragment_from_reg':
+>> drivers/firmware/smccc/soc_id.c:109:23: warning: right shift count >= width of type [-Wshift-count-overflow]
+     109 |         dst[4] = (reg >> 32) & 0xff;
+         |                       ^~
+   drivers/firmware/smccc/soc_id.c:110:23: warning: right shift count >= width of type [-Wshift-count-overflow]
+     110 |         dst[5] = (reg >> 40) & 0xff;
+         |                       ^~
+   drivers/firmware/smccc/soc_id.c:111:23: warning: right shift count >= width of type [-Wshift-count-overflow]
+     111 |         dst[6] = (reg >> 48) & 0xff;
+         |                       ^~
+   drivers/firmware/smccc/soc_id.c:112:23: warning: right shift count >= width of type [-Wshift-count-overflow]
+     112 |         dst[7] = (reg >> 56) & 0xff;
+         |                       ^~
+   drivers/firmware/smccc/soc_id.c: At top level:
+>> drivers/firmware/smccc/soc_id.c:37:29: warning: 'smccc_soc_id_name' defined but not used [-Wunused-variable]
+      37 | static char __ro_after_init smccc_soc_id_name[136] = "";
+         |                             ^~~~~~~~~~~~~~~~~
+
+
+vim +109 drivers/firmware/smccc/soc_id.c
+
+    36	
+  > 37	static char __ro_after_init smccc_soc_id_name[136] = "";
+    38	
+    39	static int __init smccc_soc_init(void)
+    40	{
+    41		int soc_id_rev, soc_id_version;
+    42		static char soc_id_str[20], soc_id_rev_str[12];
+    43		static char soc_id_jep106_id_str[12];
+    44	
+    45		if (arm_smccc_get_version() < ARM_SMCCC_VERSION_1_2)
+    46			return 0;
+    47	
+    48		soc_id_version = arm_smccc_get_soc_id_version();
+    49		if (soc_id_version == SMCCC_RET_NOT_SUPPORTED) {
+    50			pr_info("ARCH_SOC_ID not implemented, skipping ....\n");
+    51			return 0;
+    52		}
+    53	
+    54		if (soc_id_version < 0) {
+    55			pr_err("Invalid SoC Version: %x\n", soc_id_version);
+    56			return -EINVAL;
+    57		}
+    58	
+    59		soc_id_rev = arm_smccc_get_soc_id_revision();
+    60		if (soc_id_rev < 0) {
+    61			pr_err("Invalid SoC Revision: %x\n", soc_id_rev);
+    62			return -EINVAL;
+    63		}
+    64	
+    65		soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+    66		if (!soc_dev_attr)
+    67			return -ENOMEM;
+    68	
+    69		sprintf(soc_id_rev_str, "0x%08x", soc_id_rev);
+    70		sprintf(soc_id_jep106_id_str, "jep106:%02x%02x",
+    71			JEP106_BANK_CONT_CODE(soc_id_version),
+    72			JEP106_ID_CODE(soc_id_version));
+    73		sprintf(soc_id_str, "%s:%04x", soc_id_jep106_id_str,
+    74			IMP_DEF_SOC_ID(soc_id_version));
+    75	
+    76		soc_dev_attr->soc_id = soc_id_str;
+    77		soc_dev_attr->revision = soc_id_rev_str;
+    78		soc_dev_attr->family = soc_id_jep106_id_str;
+    79		soc_dev_attr->machine = smccc_soc_name_init();
+    80	
+    81		soc_dev = soc_device_register(soc_dev_attr);
+    82		if (IS_ERR(soc_dev)) {
+    83			kfree(soc_dev_attr);
+    84			return PTR_ERR(soc_dev);
+    85		}
+    86	
+    87		pr_info("ID = %s Revision = %s\n", soc_dev_attr->soc_id,
+    88			soc_dev_attr->revision);
+    89	
+    90		return 0;
+    91	}
+    92	module_init(smccc_soc_init);
+    93	
+    94	static void __exit smccc_soc_exit(void)
+    95	{
+    96		if (soc_dev)
+    97			soc_device_unregister(soc_dev);
+    98		kfree(soc_dev_attr);
+    99	}
+   100	module_exit(smccc_soc_exit);
+   101	
+   102	
+   103	static inline void str_fragment_from_reg(char *dst, unsigned long reg)
+   104	{
+   105		dst[0] = (reg >> 0)  & 0xff;
+   106		dst[1] = (reg >> 8)  & 0xff;
+   107		dst[2] = (reg >> 16) & 0xff;
+   108		dst[3] = (reg >> 24) & 0xff;
+ > 109		dst[4] = (reg >> 32) & 0xff;
+   110		dst[5] = (reg >> 40) & 0xff;
+   111		dst[6] = (reg >> 48) & 0xff;
+   112		dst[7] = (reg >> 56) & 0xff;
+   113	}
+   114	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
