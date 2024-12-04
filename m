@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-430442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CFD9E30E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:44:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C779E30A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:08:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86DC7B27C12
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8663B26B1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BF415E97;
-	Wed,  4 Dec 2024 01:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DE9848C;
+	Wed,  4 Dec 2024 01:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="OxiKsdGR"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0C38Fejy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB37EADA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 01:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAA746E;
+	Wed,  4 Dec 2024 01:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733276659; cv=none; b=VLhqspLbUoEJFRVwUlDLqQxRjhViwrKgcJyACeasYZjXdK6x5Y1AWW0291NImU6EdVO9HHTvXLzBydxXAhsi4IMolkefXukuBQPzs7ACNQUVTIwaXYM/O3ziAGElm1kTGNj26Z6s4KvNF22S/JGU037922ZoxKLbgQpmwUu3ClI=
+	t=1733274498; cv=none; b=ocXZdXdSibFV7ptr9QVSX89UHGbGjkRFge36aINqjWmpFT/h97vxEAHkT4cPdahmUrViGsGPnPavtoGnco0yin5a8s8nrSF7qggzMT9LWI1MdFPAzmvPFCUSMz59xRrjWZum8LdtoPq+pEhmT3V+pj7MQHmCLob88+6mabaf21A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733276659; c=relaxed/simple;
-	bh=9ATB26R3EPNus6n5U0BfNxhU4kzcdtkH64IP+0I3SsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ul+KqNuBjQEzObav0JkI5VPyo+57BZ1kFkfTOz4VKsTZmwxiVWQBObiqrbixI1lksBTo3+V28fgCqvHKZqkoEtDK6RiIJNP2jhEEmL83MTnCVKiJJJD+eXOfjbyr1Nzx2+NmOBSrqfZE3Ggo0k46Qo8Odg+coBzIajMWFCbwBj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=OxiKsdGR; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id AED348940F;
-	Wed,  4 Dec 2024 02:44:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1733276654;
-	bh=vY9kPGS0RdiXB0OHZCmI9kH/oWg2qyslJ/GlqgoS874=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OxiKsdGRxNS7Xdu0tMCPtS62mOtLM/7/zbKsln5bTnZxcCAxW4IyRydn6ckF5zToI
-	 2knwzr4uqjZctkqgfqG2/XdrW4teL8Yd8c16CFXDRjf6t5PlX9oK9oAHAtdnexaJQJ
-	 P1rpf4NgH6zDZom1Gkf0pI6G2PkzuU+SkJs/V7Zfflf7kY7yEAJQJf01Ed4FwjiNDU
-	 vQYsUY8CHQIsDSULugkcFEBnAwsh2/6m1BKQT/OCg93ykB0j1nRGqlFyA89S3F4+GS
-	 2rJieYBhNc99vWOLe01jqNFhSckRQyvWSwM1f9FBlKmGlJZy6n8MijvCDFehud213r
-	 5ZfrvtJrc0mbg==
-Message-ID: <b86666cc-da63-405d-9036-96cb4e69dafb@denx.de>
-Date: Wed, 4 Dec 2024 00:40:44 +0100
+	s=arc-20240116; t=1733274498; c=relaxed/simple;
+	bh=TuK+zEY04Pna6GnArvAcVVhsaISvVxq23m/8Ez9++yA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Mlbk1H+rse7NqlXCW3/cBS8+6nI8rA6pz8jhC1GDxOw00TBsOK7c/SlIhBl/Fk8iqb8zuV6Tv10usP1pfRXcRhCaOfj1sb6NEiMmRbRFn+kkpJ5JcFsVnscKu3r0fIgRDLfxdU5Ghz7iCCBvz0JzDtWUo3+rkA9hWYutZVgfF6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0C38Fejy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 769BBC4CEDC;
+	Wed,  4 Dec 2024 01:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1733274498;
+	bh=TuK+zEY04Pna6GnArvAcVVhsaISvVxq23m/8Ez9++yA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=0C38FejyFWntdFzurye3Ptv78WQkibel8t059iY353tBNabNrhDptyQ80YkxDqQDG
+	 Mq8lv+iEW00ZWlBg9911g3qDE64P7mVWyihvClRXZl6aS9wkrXgVx372F99Ixxpn0H
+	 ispIKjuxzfy0Ko6MyZPXPMa1nyxVhFfFN3Q7I91w=
+Date: Tue, 3 Dec 2024 17:08:16 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: <jiang.kun2@zte.com.cn>
+Cc: <bsingharora@gmail.com>, <david@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-doc@vger.kernel.org>, <wang.yong12@zte.com.cn>,
+ <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
+ <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
+ <ye.xingchen@zte.com.cn>, <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
+Subject: Re: [PATCH linux next] delayacct: add delay max to record delay
+ peak
+Message-Id: <20241203170816.3fe81941fe1866ca1672eba8@linux-foundation.org>
+In-Reply-To: <20241203164848805CS62CQPQWG9GLdQj2_BxS@zte.com.cn>
+References: <20241203164848805CS62CQPQWG9GLdQj2_BxS@zte.com.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-To: Nikolaus Voss <nv@vosn.de>
-Cc: Liu Ying <victor.liu@oss.nxp.com>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Fabio Estevam <festevam@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nikolaus.voss@haag-streit.com, miquel.raynal@bootlin.com
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
- <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
- <000b34cdd1591c82265ce1f9848828d1@vosn.de>
- <2c950130-84b4-4a81-84a2-b5e08af43616@oss.nxp.com>
- <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
- <808d4092a9e97b95480d47c1bd84d930@vosn.de>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <808d4092a9e97b95480d47c1bd84d930@vosn.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-On 12/3/24 8:20 AM, Nikolaus Voss wrote:
-> On 03.12.2024 04:12, Marek Vasut wrote:
->> On 12/3/24 3:22 AM, Liu Ying wrote:
->>
->> [...]
->>
->>>>> I doubt that pixel clock tree cannot find appropriate division ratios
->>>>> for some pixel clock rates, especially for dual-link LVDS on i.MX8MP
->>>>> and i.MX93 platforms, because PLL clock rate should be 7x faster than
->>>>> pixel clock rate and 2x faster than "ldb" clock rate so that the 3.5
->>>>> folder between "ldb" clock and pixel clock can be met. That means the
->>>>> PLL clock rate needs to be explicitly set first for this case.
->>>>>
->>>>> Can you assign the PLL clock rate in DT to satisfy the "ldb" and pixel
->>>>> clock rates like the below commit does, if you use a LVDS panel?
->>>>>
->>>>> 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
->>>>> frequency to 506.8 MHz")
->>>>
->>>> I probably could. The point of my patch is you don't have to know in
->>>> advance which LVDS panel is connected, and you don't have to calculate
->>>> the base PLL clock by hand and store it in the device tree.
->>>>
->>>> In my test system, I have three different LVDS panels with EDID EEPROM,
->>>> none of which worked with the stock driver, but all work with this
->>>> patch.
->>>> With slightly adapted pixel clocks though.
->>>
->>> If each of the three LVDS panels has only one display mode, you may
->>> assign the PLL clock rates in DT overlays for the panels.
->> I temporarily agree.
->>
->> I also currently use DTOs for various panels including their PLL
->> setting, but in the end, I think/hope the work of Miquel and co. is
->> going to make that PLL setting part unnecessary.
+On Tue, 3 Dec 2024 16:48:48 +0800 (CST) <jiang.kun2@zte.com.cn> wrote:
+
+> From: Wang Yaxin <wang.yaxin@zte.com.cn>
 > 
-> That is exactly what my patch is about. I want to use one DT for all
-> panels
+> Introduce the use cases of delay max, which can help quickly detect
+> potential abnormal delays in the system and record the types and
+> specific details of delay spikes.
+>   
+> Problem
+> ========
+> Delay accounting can track the average delay of processes to show
+> system workload. However, when a process experiences a significant
+> delay, maybe a delay spike, which adversely affects performance,
+> getdelays can only display the average system delay over a period
+> of time. Yet, average delay is unhelpful for diagnosing delay peak.
+> It is not even possible to determine which type of delay has spiked,
+> as this information might be masked by the average delay.
+> 
+> Solution
+> =========
+> the 'delay max' can display delay peak since the system's startup,
+> which can record potential abnormal delays over time, including
+> the type of delay and the maximum delay. This is helpful for
+> quickly identifying crash caused by delay.
 
-Right
+Seems sensible, and the implementation is straightforward.  I'll queue
+it for testing and review.
 
-> and store the panel's timing in EDID EEPROM.
-Oh, that is a new one. Does the EDID EEPROM store the entirety of 
-'struct display_timing {}' somehow , or is that a custom format ?
+>  include/linux/delayacct.h      |  7 ++++
+>  include/linux/sched.h          |  3 ++
+>  include/uapi/linux/taskstats.h |  9 ++++++
+>  kernel/delayacct.c             | 35 ++++++++++++++------
+>  kernel/sched/stats.h           |  5 ++-
+>  tools/accounting/getdelays.c   | 59 ++++++++++++++++++++--------------
+
+Please prepare a v2 which includes an update to
+Documentation/accounting/delay-accounting.rst.
+
+> 
+> ...
+>
+> --- a/kernel/delayacct.c
+> +++ b/kernel/delayacct.c
+> @@ -95,7 +95,7 @@ void __delayacct_tsk_init(struct task_struct *tsk)
+>   * Finish delay accounting for a statistic using its timestamps (@start),
+>   * accumalator (@total) and @count
+
+And I wouldn't be offended if v2 fixed that spelling error!  "accumulator".
+
+
 
