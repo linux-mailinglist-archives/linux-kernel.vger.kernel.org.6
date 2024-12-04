@@ -1,239 +1,274 @@
-Return-Path: <linux-kernel+bounces-430473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D8E9E3158
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1569E3159
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6AE2874DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0C92874EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1503D1459EA;
-	Wed,  4 Dec 2024 02:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E392E62B;
+	Wed,  4 Dec 2024 02:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aLHq6++H"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zjh0yc4u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BF68172A;
-	Wed,  4 Dec 2024 02:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108BD17BCA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 02:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733278723; cv=none; b=i3XxJjFdBL0QrNX4lMpUD/jdHG+crRK9drE9Clr3u14ui2ltIvnYAAPH0SVKKE3d0WLL1asXeLVmgR0YKkOvADdAiZ0s9UE9wyUfv/DuBgifoia5mF2sVG3aJeMCcUB5shLGwbj3XnhMkMACcbIyiaoaMLiGTZxLF9q6A+kaI8U=
+	t=1733278775; cv=none; b=IIHa0qrBXy1asucgP99l/Pe27JBF9S+OIgVE3bwtT9SB09Tv+x+LM5cotEj6GwvFfp1dwUJwDXywFK7+yOw4sMcW7nXRDexoPAxnaY6ASsGy4a/D15YSe0HcHwaIoLAbf+k3tNjH0gUO0eVLK+EDCT6bGRQAqdIU/zu3NxsQBCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733278723; c=relaxed/simple;
-	bh=+kEMO7rGw+KeheCipiC3trpAyN0T9xh2czyl3i+Q6KU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NjivLJG8OlFDxPq8DfU6IZUo4Op5YsjE61+6hkK7c3O8K8/J8lAGRhw24l+1VTW33gaSDj0x2KfHM/84R2aXovTEWoQVn7Du8OmTQpyftb9pPNFEw+z2lABbgpwLZ4++tziKcml68IzHw18rLlO4GV5NlCfMBvBB62j5HviDilA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aLHq6++H; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3E6nEA032117;
-	Wed, 4 Dec 2024 02:18:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2AB+M/PmUMKeW8e1s13hUrW6/+2lZdTuq/nO5hGHVCo=; b=aLHq6++H/eL2l1Nj
-	EBYNwW36AwGo6g3R7caPLDNgWFXIDgd7fIMFxPpi2eaRH8zThfk+VaY1CJlTLJCB
-	EGUUp1LYIEqmJ+zJO1JMtODaMAu+ep66Pcktk8PhFQAllFgMou6oxgP+N9uV7/wQ
-	fHD5AftoKr5HjibYQjplG+cBQHhf9yt2mCzxb/f/3CYHepUceBXIBpRh5HSiyLU3
-	NEO3zddvlTdmNusiWjkY08WGA8jrXRIRjXkmVp/Zw2+baxmRUFpR658y04iBlwWg
-	NlDr2oHYDFrs/7wHttBejpe1+e+2FGVnN36T0OrY7Qp2OyXo97MwS0WaK4BArsBC
-	iyCucQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3faspay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 02:18:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B42ISvJ003944
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 02:18:28 GMT
-Received: from [10.216.45.237] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 18:18:19 -0800
-Message-ID: <0a6110c3-0e20-6afb-b266-952ef9c1ff1e@quicinc.com>
-Date: Wed, 4 Dec 2024 07:48:15 +0530
+	s=arc-20240116; t=1733278775; c=relaxed/simple;
+	bh=wi11SfWz/6zS0Pk8E1VA7e+kzU8B4OpUzH1KkaB3P5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wb4Ol6Zq/lExp4CQkiRAoDpfSDPTl5ORsGFxLvpQgaPzv8d6YF4cFPJLuC4lmvxDHA9QguKrSwt3P9fUPfSuNoChmX9J7HVqIbmp6TD/Z9CdMUYRm2Kva6V/GZTgRU+6tHEKJ0fphqIjXaoUbRGYbH1gfr477g1syMCQFXKPn44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zjh0yc4u; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733278773; x=1764814773;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wi11SfWz/6zS0Pk8E1VA7e+kzU8B4OpUzH1KkaB3P5Q=;
+  b=Zjh0yc4uVdTsZowgKCm8/S3pUJ+f+Pz9+Ap1NUUkqx3i8ESExjvzqkOh
+   WZaPVTuAzfbiei0zYoRe3USGpOTKggGEVm1rb7INPPcyLr3RXo7dpZqzs
+   0zIKW0tXwHt2SeFiI92ksPxesND9pNrYU/x7v542gBfuNCg4ker/CJTUd
+   zdjO82Ps12LJ9c25zPEZqdChlPbDC+PM63wnFzhwhkW6WSONJiH1siX2V
+   Kz2RvqkNNasLR2Obs/8QQnbqDxi8MRM5wiXKnPR1UX1Ke0SH76SOKRGJw
+   JMb3o7AiWsinnIv4VBT8tASJaSxrkK4ImmF5Y2FCbC6FlQshI0V+6lLZX
+   w==;
+X-CSE-ConnectionGUID: /yiXXV5ZSkOM/C0KkLAkSA==
+X-CSE-MsgGUID: 2x6REq8VQ6yzoZfPacSRZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="37297149"
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="37297149"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 18:19:32 -0800
+X-CSE-ConnectionGUID: Lx09kYhrSfWTNj65jol4ZQ==
+X-CSE-MsgGUID: +nfuBq5CRMK2hzdFGzfaSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="124451647"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 03 Dec 2024 18:19:30 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIez6-0000Sz-1z;
+	Wed, 04 Dec 2024 02:19:26 +0000
+Date: Wed, 4 Dec 2024 10:18:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Penkler <dpenkler@gmail.com>, gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux@roeck-us.net,
+	Dave Penkler <dpenkler@gmail.com>
+Subject: Re: [PATCH v3] staging: gpib: Fix i386 build issue
+Message-ID: <202412040913.WApPUuyd-lkp@intel.com>
+References: <20241203084116.2228-1-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 3/3] PCI: qcom: Enable ECAM feature based on config size
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <cros-qcom-dts-watchers@chromium.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_vpernami@quicinc.com>,
-        <quic_mrana@quicinc.com>, <mmareddy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <20241117-ecam-v1-0-6059faf38d07@quicinc.com>
- <20241117-ecam-v1-3-6059faf38d07@quicinc.com>
- <20241202165349.iwaqfugyewyq6or2@thinkpad>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241202165349.iwaqfugyewyq6or2@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qY7M8vChkdIhR9aJVau0QweJSASVktbH
-X-Proofpoint-GUID: qY7M8vChkdIhR9aJVau0QweJSASVktbH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- spamscore=0 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040018
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203084116.2228-1-dpenkler@gmail.com>
 
+Hi Dave,
 
+kernel test robot noticed the following build warnings:
 
-On 12/2/2024 10:23 PM, Manivannan Sadhasivam wrote:
-> On Sun, Nov 17, 2024 at 03:30:20AM +0530, Krishna chaitanya chundru wrote:
->> Enable the ECAM feature if the config space size is equal to size required
->> to represent number of buses in the bus range property.
->>
-> 
-> Please move this change to DWC core.
-> 
->> The ELBI registers falls after the DBI space, so use the cfg win returned
->> from the ecam init to map these regions instead of doing the ioremap again.
->> ELBI starts at offset 0xf20 from dbi.
->>
->> On bus 0, we have only the root complex. Any access other than that should
->> not go out of the link and should return all F's. Since the IATU is
->> configured for bus 1 onwards, block the transactions for bus 0:0:1 to
->> 0:31:7 (i.e., from dbi_base + 4KB to dbi_base + 1MB) from going outside the
->> link through ecam blocker through parf registers.
->>
->> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-qcom.c | 104 +++++++++++++++++++++++++++++++--
->>   1 file changed, 100 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->> index ef44a82be058..266de2aa3a71 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -61,6 +61,17 @@
->>   #define PARF_DBI_BASE_ADDR_V2_HI		0x354
->>   #define PARF_SLV_ADDR_SPACE_SIZE_V2		0x358
->>   #define PARF_SLV_ADDR_SPACE_SIZE_V2_HI		0x35c
->> +#define PARF_BLOCK_SLV_AXI_WR_BASE		0x360
->> +#define PARF_BLOCK_SLV_AXI_WR_BASE_HI		0x364
->> +#define PARF_BLOCK_SLV_AXI_WR_LIMIT		0x368
->> +#define PARF_BLOCK_SLV_AXI_WR_LIMIT_HI		0x36c
->> +#define PARF_BLOCK_SLV_AXI_RD_BASE		0x370
->> +#define PARF_BLOCK_SLV_AXI_RD_BASE_HI		0x374
->> +#define PARF_BLOCK_SLV_AXI_RD_LIMIT		0x378
->> +#define PARF_BLOCK_SLV_AXI_RD_LIMIT_HI		0x37c
->> +#define PARF_ECAM_BASE				0x380
->> +#define PARF_ECAM_BASE_HI			0x384
->> +
->>   #define PARF_NO_SNOOP_OVERIDE			0x3d4
->>   #define PARF_ATU_BASE_ADDR			0x634
->>   #define PARF_ATU_BASE_ADDR_HI			0x638
->> @@ -68,6 +79,8 @@
->>   #define PARF_BDF_TO_SID_TABLE_N			0x2000
->>   #define PARF_BDF_TO_SID_CFG			0x2c00
->>   
->> +#define ELBI_OFFSET				0xf20
->> +
->>   /* ELBI registers */
->>   #define ELBI_SYS_CTRL				0x04
->>   
->> @@ -84,6 +97,7 @@
->>   
->>   /* PARF_SYS_CTRL register fields */
->>   #define MAC_PHY_POWERDOWN_IN_P2_D_MUX_EN	BIT(29)
->> +#define PCIE_ECAM_BLOCKER_EN			BIT(26)
->>   #define MST_WAKEUP_EN				BIT(13)
->>   #define SLV_WAKEUP_EN				BIT(12)
->>   #define MSTR_ACLK_CGC_DIS			BIT(10)
->> @@ -293,15 +307,68 @@ static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
->>   	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
->>   }
->>   
->> +static int qcom_pci_config_ecam_blocker(struct dw_pcie_rp *pp)
-> 
-> 'config_ecam_blocker' is one of the use of this function, not the only one. So
-> use something like, 'qcom_pci_config_ecam()'.
-> 
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->> +	u64 addr, addr_end;
->> +	u32 val;
->> +
->> +	/* Set the ECAM base */
->> +	writel(lower_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE);
->> +	writel(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
->> +
->> +	/*
->> +	 * On bus 0, we have only the root complex. Any access other than that
->> +	 * should not go out of the link and should return all F's. Since the
->> +	 * IATU is configured for bus 1 onwards, block the transactions for
->> +	 * bus 0:0:1 to 0:31:7 (i.e from dbi_base + 4kb to dbi_base + 1MB) from
-> 
-> s/"for bus 0:0:1 to 0:31:7"/"starting from 0:0.1 to 0:31:7"
-> 
->> +	 * going outside the link.
->> +	 */
->> +	addr = pci->dbi_phys_addr + SZ_4K;
->> +	writel(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE);
->> +	writel(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE_HI);
->> +
->> +	writel(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE);
->> +	writel(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE_HI);
->> +
->> +	addr_end = pci->dbi_phys_addr + SZ_1M - 1;
->> +
->> +	writel(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT);
->> +	writel(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT_HI);
->> +
->> +	writel(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT);
->> +	writel(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT_HI);
->> +
->> +	val = readl(pcie->parf + PARF_SYS_CTRL);
->> +	val |= PCIE_ECAM_BLOCKER_EN;
->> +	writel(val, pcie->parf + PARF_SYS_CTRL);
->> +	return 0;
->> +}
->> +
->> +static int qcom_pcie_ecam_init(struct dw_pcie *pci, struct pci_config_window *cfg)
->> +{
->> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->> +
->> +	pcie->elbi = pci->dbi_base + ELBI_OFFSET;
-> 
-> Can't you derive this offset from DT?
-> 
-> - Mani
-instread of macro & dt In the next patch we will read a parf register
-which will give the offset value from dbi, PARF_SLV_DBI_ELBI (0x1C001B4)
+[auto build test WARNING on staging/staging-testing]
 
-- Krishna Chaitanya.
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Penkler/staging-gpib-Fix-i386-build-issue/20241203-164356
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20241203084116.2228-1-dpenkler%40gmail.com
+patch subject: [PATCH v3] staging: gpib: Fix i386 build issue
+config: i386-randconfig-061-20241203 (https://download.01.org/0day-ci/archive/20241204/202412040913.WApPUuyd-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412040913.WApPUuyd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412040913.WApPUuyd-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1019:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1020:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1021:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1022:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1023:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1024:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1025:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1026:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1027:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1028:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1029:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1030:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1031:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1032:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1033:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1034:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1038:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1039:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1040:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1041:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1042:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1043:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1044:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1045:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1046:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1047:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1048:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1049:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1050:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1051:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1052:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1053:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1054:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1055:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1056:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1057:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1058:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1059:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1060:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1061:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1062:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1066:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1067:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1068:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1069:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1070:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1071:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1072:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1073:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1074:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1075:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1076:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1077:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1078:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1079:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1080:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1081:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1082:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1083:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1084:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1085:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1086:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1087:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1088:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1089:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1090:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1094:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1095:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1096:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1097:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1098:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1099:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1100:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1101:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1102:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1103:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1104:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1105:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1106:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1107:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1108:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1109:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1110:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1111:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1112:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1113:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1114:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1115:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1116:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1117:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1118:1: sparse: sparse: obsolete struct initializer, use C99 syntax
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:897:18: sparse: sparse: symbol 'ni_pci_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:925:18: sparse: sparse: symbol 'ni_pci_accel_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:953:18: sparse: sparse: symbol 'ni_isa_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:981:18: sparse: sparse: symbol 'ni_nat4882_isa_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1009:18: sparse: sparse: symbol 'ni_nec_isa_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1037:18: sparse: sparse: symbol 'ni_isa_accel_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1065:18: sparse: sparse: symbol 'ni_nat4882_isa_accel_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1093:18: sparse: sparse: symbol 'ni_nec_isa_accel_interface' was not declared. Should it be static?
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1423:31: sparse: sparse: Using plain integer as NULL pointer
+>> drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1443:26: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *iobase @@     got void [noderef] __iomem * @@
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1443:26: sparse:     expected void *iobase
+   drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1443:26: sparse:     got void [noderef] __iomem *
+
+vim +1443 drivers/staging/gpib/tnt4882/tnt4882_gpib.c
+
+  1396	
+  1397	static int ni_isa_attach_common(gpib_board_t *board, const gpib_board_config_t *config,
+  1398					enum nec7210_chipset chipset)
+  1399	{
+  1400		struct tnt4882_priv *tnt_priv;
+  1401		struct nec7210_priv *nec_priv;
+  1402		int isr_flags = 0;
+  1403		resource_size_t iobase;
+  1404		unsigned long ibbase;
+  1405		int irq;
+  1406	
+  1407		board->status = 0;
+  1408	
+  1409		if (tnt4882_allocate_private(board))
+  1410			return -ENOMEM;
+  1411		tnt_priv = board->private_data;
+  1412		tnt_priv->io_writeb = outb_wrapper;
+  1413		tnt_priv->io_readb = inb_wrapper;
+  1414		tnt_priv->io_writew = outw_wrapper;
+  1415		tnt_priv->io_readw = inw_wrapper;
+  1416		nec_priv = &tnt_priv->nec7210_priv;
+  1417		nec_priv->type = chipset;
+  1418		nec_priv->read_byte = nec7210_locking_ioport_read_byte;
+  1419		nec_priv->write_byte = nec7210_locking_ioport_write_byte;
+  1420		nec_priv->offset = atgpib_reg_offset;
+  1421	
+  1422		// look for plug-n-play board
+  1423		if (config->ibbase == 0) {
+  1424			struct pnp_dev *dev;
+  1425			int retval;
+  1426	
+  1427			retval = ni_isapnp_find(&dev);
+  1428			if (retval < 0)
+  1429				return retval;
+  1430			tnt_priv->pnp_dev = dev;
+  1431			iobase = pnp_port_start(dev, 0);
+  1432			irq = pnp_irq(dev, 0);
+  1433		} else {
+  1434			ibbase = (unsigned long)config->ibbase;
+  1435			iobase = ibbase;
+  1436			irq = config->ibirq;
+  1437		}
+  1438		// allocate ioports
+  1439		if (!request_region(iobase, atgpib_iosize, "atgpib")) {
+  1440			pr_err("tnt4882: failed to allocate ioports\n");
+  1441			return -1;
+  1442		}
+> 1443		nec_priv->iobase = ioremap(iobase, pnp_port_len(tnt_priv->pnp_dev, 0));
+  1444	
+  1445		// get irq
+  1446		if (request_irq(irq, tnt4882_interrupt, isr_flags, "atgpib", board)) {
+  1447			pr_err("gpib: can't request IRQ %d\n", irq);
+  1448			return -1;
+  1449		}
+  1450		tnt_priv->irq = irq;
+  1451	
+  1452		tnt4882_init(tnt_priv, board);
+  1453	
+  1454		return 0;
+  1455	}
+  1456	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
