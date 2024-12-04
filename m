@@ -1,121 +1,155 @@
-Return-Path: <linux-kernel+bounces-431472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5CA29E3E6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:36:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E8D9E3E59
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B652CB2B390
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:06:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD901B3849D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6866F20C47B;
-	Wed,  4 Dec 2024 15:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAC617E00B;
+	Wed,  4 Dec 2024 15:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7pvPyRr"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nYZ/tOLM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C35720ADDD;
-	Wed,  4 Dec 2024 15:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238541B21BA;
+	Wed,  4 Dec 2024 15:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324697; cv=none; b=aZD3wx89aMiyPRfS6gCQSYoEyfe2VsOSaw+2b+LHcrv5EjBpvcVGrNk4zwC9RyMDjfL5leb1lbxelimRyxy5hCMP8PpVZucMONXbgOamhT/dsuT8EnrzJYPK1on5+SrnSZaRzpNbTUbh5K8U/wXUppQhrMq2u4uPi0lSZ3g8SC0=
+	t=1733324809; cv=none; b=a8gLtV2KRSHysxCUcqeGn0eyBkJx2XoH++JyycLQhdEeXjTS5e5hTPWbj8t96pkau3IKC/pZDJCB+k4VR6UpQlgEtHQLZAScLAbv/IIFiHdxDfYVlATxhrb4GxVDqg72wXCGPZ5A2egtewrlSroERl5oGlb1/LshDloJ4vRZs6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324697; c=relaxed/simple;
-	bh=hewadqbWLJKRts95eOYXdwWNooML3XA7/3FBG/3C6lg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZttceMr9Cl5J6yp7vOkA17PHUubHvIzaIpZWgOyKM1plmd0JPCmsZRcftx2zP/UrIwC6Av2ucg2OTySGsuWiSZ+9qu5dBnfCPCjCVCIXyv68E0cgqDCQDZTWmy0s8Ty55wtm0JYS3xQrsRQFQNN5nT6cEpZ2a4wWt2BVtVngGjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7pvPyRr; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a1833367so6400285e9.1;
-        Wed, 04 Dec 2024 07:04:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733324694; x=1733929494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EA+h0saep05HaBgoBiILoVwh5Jsa3eA0cCo7gYVbZ2A=;
-        b=R7pvPyRrIUbSB/5kgooy2b5aBCjVY0DwgUSJCvVTDU6K8jATal5gN6ul9V4OdaPVrd
-         vLxTq2ZuYUI0SL8Qe5YsAuVwVPvesSQ6/tM+dOBV02v8k8fCiZFNrxkJCXpEgWHXb9v+
-         nue2kuFm0kLc9bhgDuWnY0FILN22JU1l4/53IFRAPNSltdmCMb6I0PAhmaOzpmkP03Fg
-         D/QXISpTPdPMMD/keri/h6q9rzwKFBGJtEHCcantVX/0xQf7MnQeFnSZ1OePnLGvqmte
-         xWmyLU+8pbcmBEKeY6a2k+72BkvFz0BFYnOk+Yh4+8IYZ2nir33nhuH89NtTmF7qJzlz
-         966A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733324694; x=1733929494;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EA+h0saep05HaBgoBiILoVwh5Jsa3eA0cCo7gYVbZ2A=;
-        b=uSLajtFj7BgsT0TkwoIhWsvUv43H36od8Hvd2FrYpuYqiF6b76gW4KX/6oQ2RqkEiI
-         NZNu8/LWeUUwzhMVgD14UXNS2q65DcrGP1u2ln+VkfJG89RoXIOq/yvlPO/bvizXbUkw
-         qXkBo7Xaezxf8xBOJUj2V+2nmhC8fC16eUcJuwEBJKtuenBNPIKprEK8GHNL5OLE1ed+
-         meA016dyvc2w8PbwZMnkklZbWgQj+WnJg4rQbLOX34fAkIkCE4vuiAjw0pLedzDL0MLK
-         OHRKbKof+TrXaapFPNTt7zGo18Lt7u2+0tmg4DWsR9xxzdqlohDRLcVOpxYnLieIb5h1
-         bi2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUhSbMpqzO7hmrJ2NIkolyc7mMGR+ILeQ7g4g/YpoC4qPYl9qzDPzjItJGlI/b0BVVDlJIdXd7Au7FXVg==@vger.kernel.org, AJvYcCVJ6koNaLoPv9TbHeu9OQ5g7TZILGDaPTtTMMEZ4hE61L59Mh6ZaVPyzFBzj7NEXQ5ryC77x4pfVfSbxlqkTBY0mJJ2@vger.kernel.org, AJvYcCWocS+p/HBu6vy39TmRsqqzb0McPgorJkJSz0oA0MLnUxDPfBerKUonbabmdwSJNAF2wgmjjbUF4gEF9ElN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQi8ffZ5U67Iyat/4HFBp1mn0DUr/35lVzqMS4xWOh0ba7wZ8P
-	9J80fd/068TtPx9RqxKKc/dd6+tLtJCeSOQ3xQSSdMwDiG0gQJGs
-X-Gm-Gg: ASbGnctzC6Is0Q/j1u5ZR/pD7ZMDWqf+hsshFElQHa2+zkm6HN2oEJCuN9QtC0wPdQA
-	CKQXVcfGU7Epzv4x7xhU0hlAFvJMbTJrB7KhTYfIcc78qR9zGVSbNjs9Z89HZ4yjvfbyLgFUmF3
-	ry9oWFsecsDKrT8zc6HIRLRC7lJ0K7PtkX7csmOQRUWoqCClcmdvE4VEIvj7YtTSStyi2MOhYD7
-	8OlXRfH39A+JyV1ie4iRjx4iXLMumGVgQWfV2XdxH+cy7nDae4=
-X-Google-Smtp-Source: AGHT+IG9QX67ZxBd606G3QR1uTGV5YwZCnPF29rocVK9K7/R3gYKV4ItXJrojh7qMPNmn18OgiE1Zg==
-X-Received: by 2002:a05:600c:458e:b0:431:4a82:97f2 with SMTP id 5b1f17b1804b1-434afb944bbmr222608275e9.6.1733324691930;
-        Wed, 04 Dec 2024 07:04:51 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273b1dsm27157315e9.15.2024.12.04.07.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 07:04:51 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	linux-block@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] blktrace: remove redundant return at end of function
-Date: Wed,  4 Dec 2024 15:04:50 +0000
-Message-Id: <20241204150450.399005-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1733324809; c=relaxed/simple;
+	bh=HI19w34WI6cqPU47FjTARhORcgDBSvzCxSsLVKHwJwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FQys/plU2iAAtzqKmDUrwBsHpqF6lMzndueL78KaqitcsYYM1uUVolvEGhn9r3KE9JQGjErR3mpDrTo95CqzoIiY0xNZPX3Kls8KlEb29cLfPJ0W/wbbIsgvHsqO/h6wBcl0ss2zW7dnppwik/dn7vutKe9+EjP4vDsqM7F9T/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nYZ/tOLM; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733324807; x=1764860807;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=HI19w34WI6cqPU47FjTARhORcgDBSvzCxSsLVKHwJwg=;
+  b=nYZ/tOLMac++tX9iPyUHX/O1ddoKyfRPU26l6fYveU+zB2/AJ/zVt/aJ
+   t+EY9RA/y17CYZY/1juIxyGGLVDvHFxfvkwyXGzh3EIheSAvgRXJe6pRi
+   J/EMYVAFy11S19KW+Rg0dVL1xGj9OeSR+Mxbwowam+RgEh4zmyuCRC+19
+   TF+Y7Hoo80hqJ66cl/vO896IbQ6rrXZkdhkC7dAiKkF0OhvimyoAJLytY
+   obDbYoIRbO1yQdiN5AWWrWQ6m37t4mm1AyOCsQjjZpcGi7jG6PGmza9sZ
+   kEolOAwEuNvNzx7hTy0BIvhn4nGgKbgdJvquTpFz4jsBfkjfxSuqqNSxR
+   w==;
+X-CSE-ConnectionGUID: s5LYzpsCQ2qgOd4hkkSnRA==
+X-CSE-MsgGUID: hS+RVtmBTgK4C6CDcmuyVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="37256142"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="37256142"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:06:46 -0800
+X-CSE-ConnectionGUID: zIWZrCt/SZSobVFE+XV57g==
+X-CSE-MsgGUID: 8A+/0/u/Sz6SzFvqDI6B0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="93471508"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.223.226]) ([10.124.223.226])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:05:14 -0800
+Message-ID: <e45dbc7c-5506-4343-b6b1-ba610e5088af@intel.com>
+Date: Wed, 4 Dec 2024 07:05:14 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/4] SRF: Fix offline CPU preventing pc6 entry
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, peterz@infradead.org,
+ dave.hansen@linux.intel.com, gautham.shenoy@amd.com, tglx@linutronix.de,
+ len.brown@intel.com, artem.bityutskiy@linux.intel.com
+References: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-A recent change added return 0 before an existing return statement
-at the end of function blk_trace_setup. The final return is now
-redundant, so remove it.
+On 12/4/24 06:08, Patryk Wlazlyn wrote:
+> Changes since v7:
+>   * Doing the s/mwait_play_dead/mwait_play_dead_cpuid_hint/
+>           and s/mwait_play_dead_with_hint/mwait_play_dead/
+> 
+>     as suggested by Gautham. It was a left-over from previous patches.
+>     The function(s) got renamed in the patches and I forgot to update
+>     the changelog accordingly for patch 4/4.
+> 
+> Patryk Wlazlyn (4):
+>   x86/smp: Allow calling mwait_play_dead with an arbitrary hint
+>   ACPI: processor_idle: Add FFH state handling
+>   intel_idle: Provide the default enter_dead() handler
+>   x86/smp native_play_dead: Prefer cpuidle_play_dead() over
+>     mwait_play_dead()
+> 
+>  arch/x86/include/asm/smp.h    |  3 +++
+>  arch/x86/kernel/acpi/cstate.c | 10 ++++++++
+>  arch/x86/kernel/smpboot.c     | 46 ++++-------------------------------
+>  drivers/acpi/processor_idle.c |  2 ++
+>  drivers/idle/intel_idle.c     | 18 ++++++++++++--
+>  include/acpi/processor.h      |  5 ++++
+>  6 files changed, 41 insertions(+), 43 deletions(-)
 
-Fixes: 64d124798244 ("blktrace: move copy_[to|from]_user() out of ->debugfs_lock")
+Hey Patryk,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- kernel/trace/blktrace.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 18c81e6aa496..3679a6d18934 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -639,8 +639,6 @@ int blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- 		return -EFAULT;
- 	}
- 	return 0;
--
--	return ret;
- }
- EXPORT_SYMBOL_GPL(blk_trace_setup);
- 
--- 
-2.39.5
-
+I know this series is up to v8 and we all know what it's about. But it
+would be much appreciated in the future if you could send along a cover
+letter. It's important and really does help reviewers dive into a series
+more efficiently.
 
