@@ -1,83 +1,133 @@
-Return-Path: <linux-kernel+bounces-430408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1B19E3095
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:01:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07F59E309C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0027F282891
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:01:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A341B25B59
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56B34A06;
-	Wed,  4 Dec 2024 01:00:59 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143CBFC08;
+	Wed,  4 Dec 2024 01:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eeRnuw8w"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12CD63D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 01:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B7BBA2D;
+	Wed,  4 Dec 2024 01:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733274059; cv=none; b=B1+uC0n9kLtPrYz1UFrK4B3ltpZ1dgPPJ7Snacmz5yUz2tJRn88AwO64eGn9u+Hd6H8Zb95PW4yHmYa8C1XW/sdZHcca8No6YMJI3msjrkkVbRLuzc2huRggiBoOCD1FQFqOAOe4wRVpMCpHpTM8hOgdDZp3VapBVocmGJ8Qd+U=
+	t=1733274074; cv=none; b=sfqt1+dDuHgtNc5j1kjY7B5cCb7Ir7wqNZcOOKAiocBjwLEBHHHPUMKo1lxANmRyvhygSRwiieR3RZuCuSMDUwThQ20PLmLsNZGf9ZXj0VU91rF4MoazMLOBkRXGD5RL7BHnjK0TZXRl1R26Wx/fasBU4jZ71zSFbM7o11XDctA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733274059; c=relaxed/simple;
-	bh=/lQLdECaRezrUJgMaHGlGz3SW6AauzJ2QRxRn74zMJ8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FISmaLnXwFYVl2W8XQ874ML3h6DqyGRpZJznhEbG9v6orDL7Ia3GiOa0rfAV1zbDO9iyE9KlbrvHgC/PWOfPE5t8iBWYbxEFAxo7zTkbevQc8RJ56lyd72AE1S4UK/HuCebPQCJurZzh49XN4tWq/5+jvV5Gn5CQ16bIF6KT+H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tIdkI-00000000590-1zBW;
-	Tue, 03 Dec 2024 20:00:02 -0500
-Message-ID: <e63226d5a0e3e2c942202972c099617aee999c1a.camel@surriel.com>
-Subject: Re: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use
- it in nmi_shootdown_cpus()
-From: Rik van Riel <riel@surriel.com>
-To: Waiman Long <longman@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>,  Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>
-Date: Tue, 03 Dec 2024 20:00:02 -0500
-In-Reply-To: <20241203150732.182065-1-longman@redhat.com>
-References: <20241203150732.182065-1-longman@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1733274074; c=relaxed/simple;
+	bh=Hzl8DN+o51/qaLp8AD41FS/ysNvwP/zYvaAZCXYJ9qE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gqCp6O1fbYlzWePfWRxGhV7tmlhPQiZJ3XjZ5uLS27bBiCziJ4V5m4NBCvV9FJQ4U5HO+lsbOhQVe6iY0h+WrLI37Hsld/Odh1VglJGFdqnILGB9VCQirVRgzq7DFmDU1sDUta+2nuoNfr/a2+UnhXhDUFMJLZLobiGrBujAL68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eeRnuw8w; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3HKxKn017944;
+	Wed, 4 Dec 2024 01:01:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+x0MzlGg5qJKvxLqim39PFmDlyz7QqBnshG523g4NTY=; b=eeRnuw8wZ/EbPbY/
+	gGd4xMCXL9ZlNB7vs6OMf5yajWPijZ4pqBY5GxCaHY2ab85dLBMJJdDw2nelHTuL
+	NUlMIQry05luKi15Yvsqd9e9AMkKEYeOXk+Jw7ZrYAM+ueBP7JAG8c2yp5rLum8U
+	ku6ePr+kutjgXgJM7pmtYBjSRn3UMBX6Hn73dfRG4ii0ucw8Q9Qhfy8uK3kDjwhy
+	GTzW5s0FqmWRUycgSc8z6M3kIlphc6U202iqWm1scGHa5RcBWVPAxkdVPE1kqkit
+	6f8gIn3x59LsyLZYNzeMSunaJJqa77vpQK8JhEBjiB9Tp1h0YEgF/pQLsAajSM9u
+	zpXhAg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tsthsjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 01:01:05 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4114jr024202
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 01:01:04 GMT
+Received: from [10.4.85.39] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 17:01:01 -0800
+Message-ID: <e9c048b1-6027-46a5-afc3-d8a964a0fdce@quicinc.com>
+Date: Wed, 4 Dec 2024 12:00:58 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] arm64: dts: qcom: sm8650: add support for QTEE
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+ <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-9-f502ef01e016@quicinc.com>
+ <11038b0c-e9f7-46ce-bd7f-2d763db230cb@kernel.org>
+From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+In-Reply-To: <11038b0c-e9f7-46ce-bd7f-2d763db230cb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wxQHQWHbhpBqwGRmWWJnZO0zdztZN8h9
+X-Proofpoint-GUID: wxQHQWHbhpBqwGRmWWJnZO0zdztZN8h9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=922 mlxscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1011
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040007
 
-On Tue, 2024-12-03 at 10:07 -0500, Waiman Long wrote:
->=20
-> Another way to fix this problem while allowing panic() calls from
-> NMI context is by adding a new emergency NMI handler to the nmi_desc
-> structure and provide a new set_emergency_nmi_handler() helper to
-> atomically set crash_nmi_callback() in any context. The new emergency
-> handler will be invoked first before other handlers in the linked
-> list. That will eliminate the need to take any lock and serve the
-> panic
-> in NMI use case.
->=20
-> Signed-off-by: Waiman Long <longman@redhat.com>
 
-I've seen that panic come by a number of times, but
-never came up with a good fix.
 
-Your idea certainly looks like it should work, and
-avoid all the issues along the way.
+On 12/3/2024 6:59 PM, Krzysztof Kozlowski wrote:
+> On 03/12/2024 05:19, Amirreza Zarrabi wrote:
+>> Add qcom_tee node.
+> 
+> Why? "What" we see from the diff. Stop repeating subjects, but say
+> something useful. This applies to all your patches.
+> 
+> Anyway, your driver and binding say that this is just a fake node used
+> purely to instantiate the Linux driver. Drop the patch.
+> 
 
-Acked-by: Rik van Riel <riel@surriel.com>
+Hi Krzysztof,
 
---=20
-All Rights Reversed.
+Thank you so much for your comments. I totally understand.
+I'll remove the fake node.
+
+Best Regards,
+Amir
+
+> 
+> Best regards,
+> Krzysztof
 
