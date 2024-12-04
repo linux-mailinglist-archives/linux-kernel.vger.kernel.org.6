@@ -1,198 +1,136 @@
-Return-Path: <linux-kernel+bounces-432177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E069E46E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:38:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BE19E46EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:38:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0851880199
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:38:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD09195B37;
+	Wed,  4 Dec 2024 21:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZrllgIX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8078228329B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:38:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84E1207E13;
-	Wed,  4 Dec 2024 21:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLYbAuyo"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C88C20767C;
-	Wed,  4 Dec 2024 21:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBF91922D7;
+	Wed,  4 Dec 2024 21:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733348128; cv=none; b=XRE3N5zDuuLSCr91xRy7+1MeuMhGjufES7gzF7KZ5fy+rEdYqqybms/jFy7wqJ/We9GllHHC8qoJjYGOmGVtpByIVFKx6aimFK+8dxXK+pGOPklDbUQhaSc36FGa27lctBLh3hbsHPngF4OFF2L7rymfBQlN5YbkZsC5bEA6F8k=
+	t=1733348196; cv=none; b=XqKzF7nqgWsPvAXCJmjGMAyz36sBnJElLuN64wcx0YMsOzP+hUlIvxr9txkKPjzKL+84wqeeG5TFjg04RqDXcG9RPPVO7ro4aYPh+Bp4jvXjq2wHFfzI/V63ZtURZrk7D94vY3whwSxakthBx3+Qk0ULgVDUA7C8PwhA0zZJ9j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733348128; c=relaxed/simple;
-	bh=2tHzmSguC9B88sWflOmx2hAs+IwmerQrL2ci2kCVlbc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hAphVaTBQpppsvm2B7sTbh6RHsPtu76ErdhxVc5ztLeGog74FYn5KQyKwic+XcLI7Hkxw4XF8S+3p3CwXPKwiTbFZBNkgbhcyZHIpQsObf4FY+sboA4RClx3pnfp17/aXcZ+Azn3B07HpANp5xvlfE2jHx3fgBOHXQ649YnzOEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLYbAuyo; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so28659466b.1;
-        Wed, 04 Dec 2024 13:35:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733348124; x=1733952924; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yxgQfg2BOAQCHKqqupwnI8lgxyjM2FrMmQmc5aOhDZM=;
-        b=JLYbAuyow1f7o3FHUSQOGFpNEf6OSSVmfHiSylJf6d5mQd+5SnDa4e8q6+cUP8xTrj
-         9d9crOgTRG6r9JIXtPwiIL67HVQoQxaW2u235MAQqQiJAMuh1qZUIMyiFNW3NFZv4gB6
-         tRVmYaaA1ta+N/Vf0rIAVf9DwsQRJuEJ3T7qg9clkldiBbkncB1ljVXYRMvlo/u2FLCZ
-         LIbEd37STlFzx9t/+Nr5w2D3BLvHAc30gOayRtVTrm8YiYcu1duhuTVFMbiJA3qNy8y9
-         VgqIUDXgtHV77H+IcC6h5B9QJI+eIJgMNB74SMblLEF03XnH4QeEYqqORWBcYZ1PQYG7
-         MDvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733348124; x=1733952924;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yxgQfg2BOAQCHKqqupwnI8lgxyjM2FrMmQmc5aOhDZM=;
-        b=UpeoDDKfOGW+d5oNRz7YQcftNkuMasV1cMDIIWbgXaiiXutKn/8hfldpLEwCs0gWWv
-         4DEqwgOfUKcUFOJa6ciJswK3MsGDXR9l3DvtXfWqL9ATj5POmSxOuzzsRRz6E0sFgowv
-         JMh0pawQmhN7RlPa+DjQ4nUyDoNSebWscx0nZmRFiEcqdmAHSCD/PaXxD9ENjdcqtFY1
-         OSZd+PQYMiJHxNb+24RrsMLmrM8AWHD0NfDA79/prmXh9+5Suz/9fcLW30l9xbpAkcwf
-         B/7I/JM2vKoSglLo0wJvxHxUNtwNekHXbDYhBtEA3L9LvH/r0ONjPyot2Irh3oAG4Cuy
-         Nohw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOaYLIJcFHnUygNbKmeFGZkVy0YARH9C5Fe1/hywZpyKgPcip25U8snCyfDmd2wnWMG4TJCgY/Tf9VqfXl@vger.kernel.org, AJvYcCUR0MLJdQgJqB30jTX3w2adncajcb0WBXADfJKOkd0vzvLl03vhZe9y4egVrOSDAUKpiMwvP9M5UF2B@vger.kernel.org, AJvYcCUxa7gONAdkeKJyT835LEPoP0i/qVzUP0uS32/NQMv5tCwmPt2Ks3lr5Puc9IE6fLEM/h/CmmoLo/IXnLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPZwDPfL+xTsU8CVmG7c7j5i8jEhqksatQ/eFH/2ctXIMgI4/l
-	te4EJnYIJrds/ZXSrEa4ApXIkoCgmiegINzWEc/0Si9l2uiWZYoLL+sfsA==
-X-Gm-Gg: ASbGnctEWsXn5H9CT3e1t1uC99iab/bXW3meVnIeogAN+JmGbUVXpjug/eDJfsU9/mb
-	eRx/4D6Fd/o5jV/85vqNSJrUhviwBTR/Zku9g+pKIKp6ZaEbwwQ254jDBjag4IBT3quatIS0YfW
-	wpraYjjgVlMJLE4IxlArrmEPnpGEBA48WyOmYmQBgrlrHAj9PjsInUngVrezBTi6GpIfFSPXqLZ
-	kAfQntc/nKcdef8l1hVqnTtdJRN6yrmKi1ay36eGRmcEKXg
-X-Google-Smtp-Source: AGHT+IH6mG9xi/70k6iJ4wp2PEjv/SLud4unNTG9xLbEgrvPdO0recQ1Sim7i3L2L47S1NWkk+2mYw==
-X-Received: by 2002:a05:6402:26d6:b0:5d0:8225:aa19 with SMTP id 4fb4d7f45d1cf-5d10cb4e6f4mr11331230a12.2.1733348124368;
-        Wed, 04 Dec 2024 13:35:24 -0800 (PST)
-Received: from [127.0.1.1] ([46.53.242.72])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa62601b5ddsm4506966b.118.2024.12.04.13.35.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 13:35:24 -0800 (PST)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Thu, 05 Dec 2024 00:35:01 +0300
-Subject: [PATCH v7 14/14] arm64: dts: qcom: sdm845-starqltechn: add modem
- support
+	s=arc-20240116; t=1733348196; c=relaxed/simple;
+	bh=jlmY/d16hd2yWGESz2d7BSfN+1MNllSvrARNdqx6DgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WbwCJeDuz2uAg+RlVqKE+tkYBlTGchFaRI9tUSsXuixnAJxhijW4uUUvBGZ1JfGRuxERICyA/JcfQpIu0tlorwVp3OXUqO34lX2RLxpgRkKkyHDWkr33MZoCuEZZnYMABAJcEK91zgVAL5Kr6Z/z+lJ9sFhhQcL7dQJ/LqT2U50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZrllgIX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D631DC4CECD;
+	Wed,  4 Dec 2024 21:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733348194;
+	bh=jlmY/d16hd2yWGESz2d7BSfN+1MNllSvrARNdqx6DgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nZrllgIX/Vem/uL/kq3DDs8xYZdu654Fi063fFBOj4ZsSRtkzbmSbxT3V75Vs3ccu
+	 lweZO86ljseuuqIcXmSK0D50Q/ZbaZ8Xw4TEjDd3dqdnmZjakCRc8z5vhNHXiFRgCA
+	 6M0PBUC3m/uiBT7gwJYeZGBnuPqsrHDeUim1QgTaz6OhkZT8CCvDJKHg9gAGzpGFcC
+	 XdPpLrJUmrdwALFGZIc4ZTlOXWgJosJRLmEeYaesAJCQznOOQgJNUL9sGQZC9ALolo
+	 nOcWezv49+yDjXfbi9LJx2RzLOJ0nRJgIj/Mav4/H0Cs6v36QkEy2mqgENCSO8rqYy
+	 1oAzHQvG4+l5w==
+Date: Wed, 4 Dec 2024 13:36:32 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Nick Terrell <terrelln@fb.com>, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bpftool: Fix failure with static linkage
+Message-ID: <Z1DLYCha0-o1RWkF@google.com>
+References: <20241204213059.2792453-1-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241205-starqltechn_integration_upstream-v7-14-84f9a3547803@gmail.com>
-References: <20241205-starqltechn_integration_upstream-v7-0-84f9a3547803@gmail.com>
-In-Reply-To: <20241205-starqltechn_integration_upstream-v7-0-84f9a3547803@gmail.com>
-To: cros-qcom-dts-watchers@chromium.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- Dzmitry Sankouski <dsankouski@gmail.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733348104; l=2190;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=2tHzmSguC9B88sWflOmx2hAs+IwmerQrL2ci2kCVlbc=;
- b=q2wZX3JTiwbyE2T0qQQbPRWF/TcfHXn33BTKtXaRAQF62LHBipGA48X+qNaNrBIeJ/jHS0Utt
- JYDZG1Osu9ICk+CPnxhmmQFdDhvlUfkLXkvSretPAZ+oI4OpwXXU+Pj
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241204213059.2792453-1-leo.yan@arm.com>
 
-Add support for modem and ipa(IP Accelerator).
-Add spss reserved memory node.
+Hi Leo,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
-Changes in v6:
-- refactor: s/starqltechn/sdm845-starqltechn in subject.
----
- arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+On Wed, Dec 04, 2024 at 09:30:59PM +0000, Leo Yan wrote:
+> When building perf with static linkage:
+> 
+>   make O=/build LDFLAGS="-static" -C tools/perf VF=1 DEBUG=1
+>   ...
+>   LINK    /build/util/bpf_skel/.tmp/bootstrap/bpftool
+>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_compress':
+>   (.text+0x113): undefined reference to `ZSTD_createCCtx'
+>   /usr/bin/ld: (.text+0x2a9): undefined reference to `ZSTD_compressStream2'
+>   /usr/bin/ld: (.text+0x2b4): undefined reference to `ZSTD_isError'
+>   /usr/bin/ld: (.text+0x2db): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x5a0): undefined reference to `ZSTD_compressStream2'
+>   /usr/bin/ld: (.text+0x5ab): undefined reference to `ZSTD_isError'
+>   /usr/bin/ld: (.text+0x6b9): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x835): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x86f): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x91b): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0xa12): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress':
+>   (.text+0xbfc): undefined reference to `ZSTD_decompress'
+>   /usr/bin/ld: (.text+0xc04): undefined reference to `ZSTD_isError'
+>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress_elf':
+>   (.text+0xd45): undefined reference to `ZSTD_decompress'
+>   /usr/bin/ld: (.text+0xd4d): undefined reference to `ZSTD_isError'
+>   collect2: error: ld returned 1 exit status
+> 
+> Building bpftool with static linkage also fails with the same errors:
+> 
+>   make O=/build -C tools/bpf/bpftool/ V=1
+> 
+> To fix the issue, explicitly link libzstd.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-index 15997cb88576..4583d071409d 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-@@ -19,6 +19,8 @@
- #include "pm8998.dtsi"
- #include "sdm845-wcd9340.dtsi"
- 
-+/delete-node/ &rmtfs_mem;
-+/delete-node/ &spss_mem;
- /delete-node/ &adsp_mem;
- /delete-node/ &slpi_mem;
- 
-@@ -106,15 +108,39 @@ memory@a1300000 {
- 			pmsg-size = <0x40000>;
- 		};
- 
-+		/*
-+		 * It seems like reserving the old rmtfs_mem region is also needed to prevent
-+		 * random crashes which are most likely modem related, more testing needed.
-+		 */
-+		removed_region: removed-region@88f00000 {
-+			reg = <0 0x88f00000 0 0x1c00000>;
-+			no-map;
-+		};
-+
- 		slpi_mem: slpi@96700000 {
- 			reg = <0 0x96700000 0 0xf00000>;
- 			no-map;
- 		};
- 
-+		spss_mem: spss@97700000 {
-+			reg = <0 0x97700000 0 0x100000>;
-+			no-map;
-+		};
-+
- 		adsp_mem: memory@97800000 {
- 			reg = <0 0x97800000 0 0x2000000>;
- 			no-map;
- 		};
-+
-+		rmtfs_mem: rmtfs-mem@fde00000 {
-+			compatible = "qcom,rmtfs-mem";
-+			reg = <0 0xfde00000 0 0x202000>;
-+			qcom,use-guard-pages;
-+			no-map;
-+
-+			qcom,client-id = <1>;
-+			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
-+		};
- 	};
- 
- 	i2c21 {
-@@ -860,6 +886,19 @@ dai@5 {
- 	};
- };
- 
-+&mss_pil {
-+	firmware-name = "qcom/sdm845/starqltechn/mba.mbn",
-+			"qcom/sdm845/starqltechn/modem.mbn";
-+	status = "okay";
-+};
-+
-+&ipa {
-+	qcom,gsi-loader = "self";
-+	memory-region = <&ipa_fw_mem>;
-+	firmware-name = "qcom/sdm845/starqltechn/ipa_fws.mbn";
-+	status = "okay";
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
+I was about to report exactly the same. :)
 
--- 
-2.39.5
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
 
+Tested-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
+> ---
+>  tools/bpf/bpftool/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
+> index a4263dfb5e03..65b2671941e0 100644
+> --- a/tools/bpf/bpftool/Makefile
+> +++ b/tools/bpf/bpftool/Makefile
+> @@ -130,8 +130,8 @@ include $(FEATURES_DUMP)
+>  endif
+>  endif
+>  
+> -LIBS = $(LIBBPF) -lelf -lz
+> -LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz
+> +LIBS = $(LIBBPF) -lelf -lz -lzstd
+> +LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz -lzstd
+>  ifeq ($(feature-libcap), 1)
+>  CFLAGS += -DUSE_LIBCAP
+>  LIBS += -lcap
+> -- 
+> 2.34.1
+> 
 
