@@ -1,337 +1,275 @@
-Return-Path: <linux-kernel+bounces-431420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBC19E3E1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:22:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C789E3DFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA3FDB3B924
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:47:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60E6AB3F327
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE4420D515;
-	Wed,  4 Dec 2024 14:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A60A20C483;
+	Wed,  4 Dec 2024 14:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jpCk6NWM"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZPQyRcpI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4320ADE3;
-	Wed,  4 Dec 2024 14:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F96E20C473
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323518; cv=none; b=Sq3Cux0y/KtDfkwkeoqUXvV08KyfbjHHpLLEM5WjUg0TcVGdjkN7TZoeQZkUZGfvDzDFEUDNTwMh6eKJf4Mn7Fq6SXF9EypdRypSmUXfjiI2dAksZTgVkmcMvZquqNSxBqqmTkCtYfncZXSu4QgfbF2WPSM2sW7tcHq7Uy7FljQ=
+	t=1733323806; cv=none; b=aVtdBsKqvrPuHZeU/jyVWBTMeSj3tDVk9MgX09hXveQi2zmXL4Fygb0CFfnSEhS01IBa73QHO1S9rYZpDJJG9Yb+Q5/5mxAKzcvRZOWaTwLaUiL9aJmuuMiA1iDWiMXjHWqA9wf/5TqXUxifN0sa8byBLMpRZo2JN7HeEyXO2Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323518; c=relaxed/simple;
-	bh=jFx9gWmGgDxkJf7XaOJt5hNRO++Y2BmhGXL5v1zE70w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CpSg59nd5Im8FE8F3ajIp4YjwqO0DdtpU9YWZIWczv8VYgYy3UN7XDdJQRdQiGo0IlKuqZXb2vVQjyFGKQIAoY7CCkRKBIE9ouWQ9jdyfBMymmBtljT63QgwbzsOlETMYSE2fmW7D+ojpdXovpC4A8cxN3RLjvAscbFY7fUhZgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jpCk6NWM; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2CF31240007;
-	Wed,  4 Dec 2024 14:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733323514;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ujuBVPIY7WdvMp1aoMcrWlVYuZNElEJ0tgmIpRd1T44=;
-	b=jpCk6NWMiaSu77w2w0FMi/v6lzy+FJAPAqn776QpQWxVDM1qS18s0F2X/b7neYs0jgsuHI
-	jV9OKLEcLKcTI85EynKaUji+ywFfPNjoDVVM/9LM9IhxYTUkh8I1otCh/PNvi2GvUBGW94
-	p1lo79hjvfVteGX1+6JPsSjf4i5nyH5AeV/c82OG9l1gqAEygffPhYQc/jCo88G65YYQfo
-	rD6hPROjnE5RSEFyj8rtC2OhWlqri/keCwaChrl3SQ9RRgSQlXqa1Z1K24dhLMyJJgOf0o
-	LdnpLtMWA/vI6R71RGcvhTNC652K4gqsitpxVZtg1a+pZV5vgQR/NoGC0uy6VA==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 04 Dec 2024 15:44:47 +0100
-Subject: [PATCH net-next v20 6/6] netlink: specs: Enhance tsinfo netlink
- attributes and add a tsconfig set command
+	s=arc-20240116; t=1733323806; c=relaxed/simple;
+	bh=AExhUXemyDCEBVHNt2DkO+Z+mtl17tHAzGSlmKB5PX8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Kn1ACiOVJCdcvtkvQ17/BQisIVEE8aybR2ccxtPu/IwbvM0UbLIhwrObzRslELI4O+jHy22ugkaPF3oactSr0uwwE8c2JTwj11A3PE9fyItSm5tBT5Ucj4/Hscn1nEZi6Hq1vptTfecUe+/kSZ9TCT72gmsBBu4wva2uzLX70pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZPQyRcpI; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733323805; x=1764859805;
+  h=date:from:to:cc:subject:message-id;
+  bh=AExhUXemyDCEBVHNt2DkO+Z+mtl17tHAzGSlmKB5PX8=;
+  b=ZPQyRcpIFU9WFZu6v9Q8ntAGtwNEnHVHVUPB8JuIo6v9TfPrTgnoGxNM
+   BXEvCUCYWT/ngq8fr09wSEVr2ZQmk3PyrOAA07KK3rL0qh3qudZLp9JNx
+   +nRr5k6xSuKbkeE+7cYFjWxrTI5BP6YGeXnxCVJOIl5v4MxwLPNd47xVR
+   yd1VyWYhjwYjcWdTdCqItaWnNUhBBInCkF7eNDJrHjJW5qGzEVACdWIbX
+   kMqE1yPT5T4Xf8LnchhesjB9LP7c+NsLXgMq6WM0XyNllKa5F1GrdlRyQ
+   w+EbKxoR+/4HBbeILTmKyh7+g8mdEMYtWaQPWUMJWdpDUB2DZeiiU9FPC
+   Q==;
+X-CSE-ConnectionGUID: 8XO54krSRqCKP2TEC5x6RA==
+X-CSE-MsgGUID: 6jlyfiSdR7+JOCzLICFeew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="36436491"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="36436491"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:50:02 -0800
+X-CSE-ConnectionGUID: Xj7OyOUeTo6WjyrerfouLw==
+X-CSE-MsgGUID: 6pG0t7ArTWSzKUUbnGdd0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="124718287"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 04 Dec 2024 06:50:01 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIqhS-00039W-1u;
+	Wed, 04 Dec 2024 14:49:58 +0000
+Date: Wed, 04 Dec 2024 22:46:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/core] BUILD SUCCESS
+ eca51ce01d4956ab4b8f06bb55c031f4913fffcb
+Message-ID: <202412042235.M4dJrwlJ-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-feature_ptp_netnext-v20-6-9bd99dc8a867@bootlin.com>
-References: <20241204-feature_ptp_netnext-v20-0-9bd99dc8a867@bootlin.com>
-In-Reply-To: <20241204-feature_ptp_netnext-v20-0-9bd99dc8a867@bootlin.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
- Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
- Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
- donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
- Willem de Bruijn <willemb@google.com>, 
- Shannon Nelson <shannon.nelson@amd.com>, 
- Alexandra Winter <wintera@linux.ibm.com>, 
- Kory Maincent <kory.maincent@bootlin.com>, 
- Jacob Keller <jacob.e.keller@intel.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: kory.maincent@bootlin.com
 
-Add new attributed to tsinfo allowing to get the tsinfo from a phc provider
-(composed by a phc index and a phc qualifier) on a netdevice's link.
-Add simultaneously a tsconfig command to be able to get and set hwtstamp
-configuration for a specified phc provider.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+branch HEAD: eca51ce01d4956ab4b8f06bb55c031f4913fffcb  perf: Map pages in advance
 
-Here is few examples:
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema
-             --dump tsinfo-get
-             --json '{"header":{"dev-name":"eth0"}}'
-[{'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 0, 'qualifier': 0},
-  'phc-index': 0,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 2, 'name': 'some'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'}]},
-               'nomask': True,
-               'size': 4}},
- {'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 2, 'qualifier': 0},
-  'phc-index': 2,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 1, 'name': 'all'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 1, 'name': 'software-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 3, 'name': 'software-receive'},
-                                    {'index': 4,
-                                     'name': 'software-system-clock'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'},
-                                {'index': 2, 'name': 'onestep-sync'}]},
-               'nomask': True,
-               'size': 4}}]
+elapsed time: 727m
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-get
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":0, "qualifier":0 }
-}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtst-provider': {'index': 0, 'qualifier': 0},
- 'phc-index': 0,
- 'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                 {'index': 2, 'name': 'some'}]},
-                'nomask': True,
-                'size': 16},
- 'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                   {'index': 2, 'name': 'hardware-receive'},
-                                   {'index': 6, 'name': 'hardware-raw-clock'}]},
-                  'nomask': True,
-                  'size': 17},
- 'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                               {'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+configs tested: 183
+configs skipped: 7
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-set
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":2, "qualifier":0}}'
-None
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-get
-	     --json '{"header":{"dev-name":"eth0"}}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtstamp-flags': 1,
- 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
- 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
-                'nomask': True,
-                'size': 16},
- 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
- ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-set
-	      --json '{"header":{"dev-name":"eth0"},
-		       "hwtstamp-provider":{"index":1, "qualifier":0 },
-		       "rx-filters":{"bits": {"bit": {"name":"ptpv2-l4-event"}},
-				     "nomask": 1},
-		       "tx-types":{"bits": {"bit": {"name":"on"}},
-				   "nomask": 1}}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtstamp-flags': 1,
- 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
- 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
-                'nomask': True,
-                'size': 16},
- 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+tested configs:
+alpha                            alldefconfig    gcc-14.2.0
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                      axs103_smp_defconfig    gcc-14.2.0
+arc                 nsimosci_hs_smp_defconfig    clang-20
+arc                            randconfig-001    clang-20
+arc                   randconfig-001-20241204    clang-14
+arc                            randconfig-002    clang-20
+arc                   randconfig-002-20241204    clang-14
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                       aspeed_g4_defconfig    clang-20
+arm                         at91_dt_defconfig    clang-20
+arm                          ep93xx_defconfig    gcc-14.2.0
+arm                       imx_v6_v7_defconfig    clang-20
+arm                          ixp4xx_defconfig    gcc-14.2.0
+arm                        keystone_defconfig    gcc-14.2.0
+arm                         lpc18xx_defconfig    clang-20
+arm                          moxart_defconfig    gcc-14.2.0
+arm                        mvebu_v5_defconfig    gcc-14.2.0
+arm                          pxa3xx_defconfig    clang-15
+arm                          pxa3xx_defconfig    gcc-14.2.0
+arm                            qcom_defconfig    clang-15
+arm                            qcom_defconfig    clang-20
+arm                            randconfig-001    clang-20
+arm                   randconfig-001-20241204    clang-14
+arm                            randconfig-002    clang-20
+arm                   randconfig-002-20241204    clang-14
+arm                            randconfig-003    clang-20
+arm                   randconfig-003-20241204    clang-14
+arm                            randconfig-004    clang-20
+arm                   randconfig-004-20241204    clang-14
+arm                             rpc_defconfig    gcc-14.2.0
+arm                        shmobile_defconfig    clang-18
+arm                        shmobile_defconfig    gcc-14.2.0
+arm                          sp7021_defconfig    clang-20
+arm                           spitz_defconfig    gcc-14.2.0
+arm                         wpcm450_defconfig    clang-20
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                          randconfig-001    clang-20
+arm64                 randconfig-001-20241204    clang-14
+arm64                          randconfig-002    clang-20
+arm64                 randconfig-002-20241204    clang-14
+arm64                          randconfig-003    clang-20
+arm64                 randconfig-003-20241204    clang-14
+arm64                          randconfig-004    clang-20
+arm64                 randconfig-004-20241204    clang-14
+csky                             alldefconfig    clang-20
+csky                              allnoconfig    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+i386                 buildonly-randconfig-001    gcc-12
+i386        buildonly-randconfig-001-20241204    gcc-12
+i386                 buildonly-randconfig-002    gcc-12
+i386        buildonly-randconfig-002-20241204    gcc-12
+i386                 buildonly-randconfig-003    gcc-12
+i386        buildonly-randconfig-003-20241204    gcc-12
+i386                 buildonly-randconfig-004    gcc-12
+i386        buildonly-randconfig-004-20241204    gcc-12
+i386                 buildonly-randconfig-005    gcc-12
+i386        buildonly-randconfig-005-20241204    gcc-12
+i386                 buildonly-randconfig-006    gcc-12
+i386        buildonly-randconfig-006-20241204    gcc-12
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch                 loongson3_defconfig    clang-18
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                          atari_defconfig    clang-18
+m68k                          atari_defconfig    gcc-14.2.0
+m68k                       bvme6000_defconfig    gcc-14.2.0
+m68k                        m5407c3_defconfig    gcc-14.2.0
+m68k                            q40_defconfig    clang-15
+microblaze                       alldefconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                          ath25_defconfig    clang-20
+mips                          ath79_defconfig    gcc-14.2.0
+mips                      bmips_stb_defconfig    clang-18
+mips                           ci20_defconfig    clang-18
+mips                          eyeq5_defconfig    gcc-14.2.0
+mips                          eyeq6_defconfig    clang-20
+mips                          eyeq6_defconfig    gcc-14.2.0
+mips                           ip22_defconfig    clang-15
+mips                           ip22_defconfig    gcc-14.2.0
+mips                           ip28_defconfig    gcc-14.2.0
+mips                           ip32_defconfig    gcc-14.2.0
+mips                           jazz_defconfig    clang-20
+mips                     loongson1b_defconfig    clang-15
+mips                          rb532_defconfig    clang-18
+mips                         rt305x_defconfig    clang-20
+mips                        vocore2_defconfig    clang-15
+mips                           xway_defconfig    clang-20
+nios2                         10m50_defconfig    gcc-14.2.0
+nios2                         3c120_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+openrisc                         alldefconfig    gcc-14.2.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                       virt_defconfig    clang-20
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.2.0
+parisc                generic-64bit_defconfig    clang-15
+powerpc                    adder875_defconfig    clang-15
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                        fsp2_defconfig    clang-15
+powerpc                     kmeter1_defconfig    gcc-14.2.0
+powerpc                 linkstation_defconfig    clang-20
+powerpc                 linkstation_defconfig    gcc-14.2.0
+powerpc                   motionpro_defconfig    clang-18
+powerpc                   motionpro_defconfig    gcc-14.2.0
+powerpc                     mpc5200_defconfig    clang-14
+powerpc                 mpc8313_rdb_defconfig    clang-20
+powerpc                 mpc8315_rdb_defconfig    clang-15
+powerpc                  mpc866_ads_defconfig    clang-20
+powerpc                      pmac32_defconfig    gcc-14.2.0
+powerpc                     ppa8548_defconfig    clang-20
+powerpc                     skiroot_defconfig    gcc-14.2.0
+powerpc                  storcenter_defconfig    clang-15
+powerpc                     stx_gp3_defconfig    clang-20
+powerpc                     tqm5200_defconfig    gcc-14.2.0
+powerpc                      tqm8xx_defconfig    clang-20
+powerpc                         wii_defconfig    gcc-14.2.0
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+riscv                    nommu_k210_defconfig    clang-20
+s390                             alldefconfig    gcc-14.2.0
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                ecovec24-romimage_defconfig    clang-20
+sh                ecovec24-romimage_defconfig    gcc-14.2.0
+sh                         ecovec24_defconfig    gcc-14.2.0
+sh                            hp6xx_defconfig    gcc-14.2.0
+sh                          landisk_defconfig    clang-20
+sh                          rsk7264_defconfig    gcc-14.2.0
+sh                          sdk7780_defconfig    gcc-14.2.0
+sh                          sdk7786_defconfig    clang-20
+sh                           se7343_defconfig    clang-20
+sh                           se7619_defconfig    gcc-14.2.0
+sh                           se7712_defconfig    gcc-14.2.0
+sh                           se7722_defconfig    gcc-14.2.0
+sh                           se7751_defconfig    clang-20
+sh                           se7780_defconfig    gcc-14.2.0
+sh                   secureedge5410_defconfig    clang-20
+sh                     sh7710voipgw_defconfig    gcc-14.2.0
+sh                        sh7757lcr_defconfig    gcc-14.2.0
+sh                            shmin_defconfig    clang-20
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                       sparc32_defconfig    gcc-14.2.0
+sparc                       sparc64_defconfig    clang-15
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                             i386_defconfig    gcc-14.2.0
+um                           x86_64_defconfig    gcc-14.2.0
+x86_64      buildonly-randconfig-001-20241204    clang-19
+x86_64      buildonly-randconfig-002-20241204    clang-19
+x86_64      buildonly-randconfig-003-20241204    clang-19
+x86_64      buildonly-randconfig-004-20241204    clang-19
+x86_64      buildonly-randconfig-005-20241204    clang-19
+x86_64      buildonly-randconfig-006-20241204    clang-19
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                  nommu_kc705_defconfig    clang-20
+xtensa                    smp_lx200_defconfig    gcc-14.2.0
+xtensa                         virt_defconfig    gcc-14.2.0
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
-Changes in v8:
-- New patch
-
-Changes in v10:
-- Add ghwtstamp attributes
-- Add tsinfo ntf command
-
-Changes in v11:
-- Add examples in the commit message.
-
-Changes in v13:
-- Replace shorter name by real name.
-- Fix an issue reported by "make -C tools/net/ynl" on the namings.
-
-Changes in v16:
-- Move to tsconfig command to get and set hwtstamp configuration.
-
-Changes in v18:
-- Add a tsconfig-set reply command description
-
-Changes in v19:
-- Remove notification.
----
- Documentation/netlink/specs/ethtool.yaml | 66 ++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
-
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index 93369f0eb816..71de2601c3da 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -637,6 +637,15 @@ attribute-sets:
-       -
-         name: tx-err
-         type: uint
-+  -
-+    name: ts-hwtstamp-provider
-+    attributes:
-+      -
-+        name: index
-+        type: u32
-+      -
-+        name: qualifier
-+        type: u32
-   -
-     name: tsinfo
-     attributes:
-@@ -663,6 +672,10 @@ attribute-sets:
-         name: stats
-         type: nest
-         nested-attributes: ts-stat
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: ts-hwtstamp-provider
-   -
-     name: cable-result
-     attributes:
-@@ -1137,6 +1150,28 @@ attribute-sets:
-       -
-         name: downstream-sfp-name
-         type: string
-+  -
-+    name: tsconfig
-+    attributes:
-+      -
-+        name: header
-+        type: nest
-+        nested-attributes: header
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: ts-hwtstamp-provider
-+      -
-+        name: tx-types
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: rx-filters
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: hwtstamp-flags
-+        type: u32
- 
- operations:
-   enum-model: directional
-@@ -1578,6 +1613,7 @@ operations:
-         request:
-           attributes:
-             - header
-+            - hwtstamp-provider
-         reply:
-           attributes:
-             - header
-@@ -1586,6 +1622,7 @@ operations:
-             - rx-filters
-             - phc-index
-             - stats
-+            - hwtstamp-provider
-       dump: *tsinfo-get-op
-     -
-       name: cable-test-act
-@@ -1960,3 +1997,32 @@ operations:
-       name: phy-ntf
-       doc: Notification for change in PHY devices.
-       notify: phy-get
-+    -
-+      name: tsconfig-get
-+      doc: Get hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do: &tsconfig-get-op
-+        request:
-+          attributes:
-+            - header
-+        reply:
-+          attributes: &tsconfig
-+            - header
-+            - hwtstamp-provider
-+            - tx-types
-+            - rx-filters
-+            - hwtstamp-flags
-+      dump: *tsconfig-get-op
-+    -
-+      name: tsconfig-set
-+      doc: Set hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do:
-+        request:
-+          attributes: *tsconfig
-+        reply:
-+          attributes: *tsconfig
-
--- 
-2.34.1
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
