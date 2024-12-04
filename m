@@ -1,337 +1,281 @@
-Return-Path: <linux-kernel+bounces-430753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1D69E3503
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:12:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 765E69E359A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C1D282D1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:12:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67FE1B27961
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4C7187858;
-	Wed,  4 Dec 2024 08:11:56 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2918C930;
+	Wed,  4 Dec 2024 08:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="P/Db4UJr"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011069.outbound.protection.outlook.com [40.107.74.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EA418DF73
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4F21FA4;
+	Wed,  4 Dec 2024 08:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733299916; cv=fail; b=ugDYTTga+9v5I7QfaCH4Dz+P2/dMGuLSAjo7Y37k90+QPGYUas0p0ZN1CyVuA2WJIV83jeRflEWKT5XLUETyvSv0HJ+2mdFIfct9sJuNhDRqfyuDvMhGwK3cPgQ56cQPIACj6p7b6pLNqIARSll7Y5KHS78OwC79jwb6wVb50y8=
+	t=1733299911; cv=fail; b=D29OCpu+4XBOzE7G5A8U1F9t54jDxmu10ZuoLkyiulde1BQ/dEoZ6HVd/Qn15LSSi/RWmgSoqkkEzd4BSdMktCY/bvmqPFtw4v1szu3FAFNbo7VDHo1ZEkCWSeDFaia7ruEWkEIcNNOBWmEsN+1vYkWhzdbBNkrLs6+Jegyl+hs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733299916; c=relaxed/simple;
-	bh=6YZpI/DJsKh3EUbmMSsi98LrjochmVVQU+s8P42MvJM=;
-	h=Message-ID:Date:To:Cc:From:Subject:Content-Type:MIME-Version; b=rDL/n+FzUzgmlnGDWuM2o9ReowgdZKWPNIfNB/mwossMdwOrjyJeNT7Pb1TuASC2Bo58QGAmHk2n9NGqiHDSKMA3HvUl1LXxP3Z8/0ExAod9/U/b8YISGY1A6mzc29jXBuV+NFGGjv8wb9+lHGxtcSn81s5KeOGmvmJhOv+bpDU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B45jhtB016158;
-	Wed, 4 Dec 2024 00:11:17 -0800
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2041.outbound.protection.outlook.com [104.47.51.41])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 437xv7v9mq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 00:11:17 -0800 (PST)
+	s=arc-20240116; t=1733299911; c=relaxed/simple;
+	bh=+7KeSa4UFEirjXvkHImRvDMzWCm9CdiQxnBBpKRW0Xs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=la4GtmKGsU1Fh4ny56ZoMbGp4evlRvn5rAkJmelW9sME4K0KNKBQx7vjkPheG8KZu2rnDnBe4/KM5bzrZiWCwB6DI3NPBBn0FIZqmQ0Z32cBO7uUp2q/R8aEJyI7YQx+AHLdHzx6AFArUaCfccanveXxTpkgnsUoKADLGIqV/vk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=P/Db4UJr; arc=fail smtp.client-ip=40.107.74.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OSQEr1kTMABQh1tMhF95QHWQKVZfqhLM0ThvBkgeMZtUPz1rVjh9XUzi637FQTtVGrYjPtS4iD83cyyEJJGJeIrcmEiIii6jvaaZxvlppIP2mqsv3CCfd7QLnN+OCj0lLMK34R3cX+vAVG6lE/T0KDAyFkuHe0qrHhBwLXzYfN2rPBYmVkrAnuC5bRhzwi//GdEAS2OaC1GsMjFeCjq/jmeWwji6DuerdpfDFQ9Yw/B50ABTCW9suBoeVi9lOpKeEVmfcMKtOMmrkMKKarn5ho1Nc+G7JHUuWUXthOSCiwXpHbKZncR7Z+ccbtayEFII9MGMQ6eDLndvH7BzfcKbKg==
+ b=TTNvl7cgL+p0ASUzh0vN+7abULWeWnEwT5yy3nzXUVPEGpOhKXCD4dvyXB4GohwrFCc9iN5IwNqmk2G/C0I4m1Koe9mZu6f+cB5YG1jLtmL2aWkXu6lMsbYK7XombuHAA6iQeMV9OLiP0fe5pr/InlZ5PZb4zLQb/ZfL1JiXhkg93J8X28LOqBYpvth7jJE/COhwtQ2wA8Nj7HFuNFtUdibNKbBx0QoR9BFz67wdNHP94fRz/Ba44Efjwgg2Bv/MqEB7ODRq8ifU2UWPRDLDOPHI44u7P8Fr3dyMLClXCjd4c9cgMaHf3n84MxcwHCwCG0LH24LEs6FncLTdOvu3+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kAijzlo6fZfHuX2jNkp6T2qcY6IYUzyGH2FWRTqjHrM=;
- b=c7Yy+4dJG/Zb751bnuBTvvpQdiuDif8oqUm67mgpKBynA5obJ0JehcihrHWqR3MT6BRoGUk6mSi7pqx4iVs/eCisLpBS+DNNpQ5LWJxbjfYRks3xeJFR6oRbuLT6hYJK06pd34Pta31SxE3mCz8pwMJGv/So1xe3e0RyVZQEPEQ52ppA+lzOS5mQn0zJiAR20wJkH655/iJK8yTRC8d//3PnudFum+Z3H50Ql34dnyINj/fRE4/xsKe7GbELoef9Rh2wUGoBvdmsZSLjmbmEPyrK4LBqvmMEyBcEqKkf/ASCV4+y52PfJzca2VyHYx9Rr4dyG7KqpVD0kVxWMFVHOg==
+ bh=nXUwsbelDeKBYmQvYYZgPcUxZ62Bfx2O24nhAoz1Z6w=;
+ b=ZWN4pREmnI8I5350j4dPz1z46vJy9uOkliupyVumUkbn4/cw+pKg2l8HuWyzT5EBg7sZDe7e2on+Fh0wCgGM3beApwOEzMxjpX+Czz4x7VICPio8OQb+BkM0GccBJ3JAc4kIawhMk3BipFoinvQ5Tbz5SACDdJNqUsFqZz7MpmjAuhMQz35b63j18sLPYHozui89X0ggpYhu5eO1w7P++gkYGBcCo1MLnPcac7fXAefz335Gb0xRWoK/66xbwTmJprhKJRGvgJvp+7hGeTGcdtTLyfjXHyh2t5WHdU1Lnq8gZm6zjkdP1noA1lYWL30Yfr8coHrE3Y5YaejtA9p2RA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from CO1PR11MB5009.namprd11.prod.outlook.com (2603:10b6:303:9e::11)
- by MW3PR11MB4634.namprd11.prod.outlook.com (2603:10b6:303:54::16) with
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nXUwsbelDeKBYmQvYYZgPcUxZ62Bfx2O24nhAoz1Z6w=;
+ b=P/Db4UJrCFsyX65xlPLVi2rdMh/S/6ynL/yORbPAKqPfj4Xds3EOUxPu0Vw9b4XUbpFCrwXZgeg72PqHAsGo1ft9Z4U2cPc96hCwp21wj5L1U0i+iX/Aedg+GxPSDjw/T/U0s84XLspL5DJyd2G/SOR3whcHc+AuyBxqe6zzRQI=
+Received: from OS0PR01MB6465.jpnprd01.prod.outlook.com (2603:1096:604:107::7)
+ by OS7PR01MB11955.jpnprd01.prod.outlook.com (2603:1096:604:23e::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Wed, 4 Dec
- 2024 08:11:14 +0000
-Received: from CO1PR11MB5009.namprd11.prod.outlook.com
- ([fe80::b03a:b02:c24e:b976]) by CO1PR11MB5009.namprd11.prod.outlook.com
- ([fe80::b03a:b02:c24e:b976%6]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
- 08:11:14 +0000
-Message-ID: <b10f3774-5542-41f6-8c9b-f9fc6decd4da@windriver.com>
-Date: Wed, 4 Dec 2024 16:11:08 +0800
-User-Agent: Mozilla Thunderbird
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Wed, 4 Dec
+ 2024 08:11:45 +0000
+Received: from OS0PR01MB6465.jpnprd01.prod.outlook.com
+ ([fe80::480d:bef:79a9:5a5c]) by OS0PR01MB6465.jpnprd01.prod.outlook.com
+ ([fe80::480d:bef:79a9:5a5c%6]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
+ 08:11:44 +0000
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: "tomm.merciai@gmail.com" <tomm.merciai@gmail.com>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Liu Ying <victor.liu@nxp.com>, Andrzej Hajda
+	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert
+ Foss <rfoss@kernel.org>, laurent.pinchart
+	<laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] drm/bridge: ite-it6263: Support VESA input format
+Thread-Topic: [PATCH] drm/bridge: ite-it6263: Support VESA input format
+Thread-Index: AQHbRafh9R2bJWOrXUufuBB1mAqj0LLVvDiw
+Date: Wed, 4 Dec 2024 08:11:44 +0000
+Message-ID:
+ <OS0PR01MB6465F75E3277651A01A70483E0372@OS0PR01MB6465.jpnprd01.prod.outlook.com>
+References: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To: "tony.luck@intel.com" <tony.luck@intel.com>,
-        "bp@alien8.de"
- <bp@alien8.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "He, Zhe" <Zhe.He@windriver.com>
-From: "Yu, Mingli" <mingli.yu@windriver.com>
-Subject: [QUESTION] Why there is additional info print when run "mce-inject
- uncorrect_error"
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYAPR01CA0227.jpnprd01.prod.outlook.com
- (2603:1096:404:11e::23) To CO1PR11MB5009.namprd11.prod.outlook.com
- (2603:10b6:303:9e::11)
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB6465:EE_|OS7PR01MB11955:EE_
+x-ms-office365-filtering-correlation-id: 361cfcb7-e2b1-4398-6230-08dd143b4af0
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|1800799024|376014|7053199007|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?JeVZzo77R+Q8kJqono3kj+rK31H+59N7bnPK0YFqGiHbF/Wm9WKLdG031NcM?=
+ =?us-ascii?Q?htIOHOn53KktySAdygoUTv62JDdNkgWiKI5LLAZRRT79WIfQGDGkGxhRdiEw?=
+ =?us-ascii?Q?j2j8mf/wJyTkqPDDeXEKPJfUbsSgJDqPFa5ZLbd6zwrwffcz109m5wvqhodK?=
+ =?us-ascii?Q?KT7pswWNLKM0beUjowFl9OgDCtn7qJ2w876OrYQWsKCDVlsOisfhD4+0AAtY?=
+ =?us-ascii?Q?HGNSqBBuxAJ278+vg0iERTT4GhOZxZ8g9loawXILGe8vROw2KbUGXOrzh3MV?=
+ =?us-ascii?Q?caY29vnSf3pXk6IGkjTF7CB9Ltbi3ykeOwviY7D6hLVODFYSFfZ5ljUCIwFI?=
+ =?us-ascii?Q?6hgnVcFa8CxAxBUkSOzNSypcupo3ETI7WMYWqIBRR8hEeI2RlRsW2W7vwgm5?=
+ =?us-ascii?Q?OVJhrTJvDdd/1AHYExLDpC5l5/PjJmkPmkLDjIIr74uvRTuoHIEuSmC/VeoL?=
+ =?us-ascii?Q?KvJtWq18gAT1GU9x28gUvcIDZ1p4TbpsK/MNq7LBUmrikc6Rs/6Du46MrlaD?=
+ =?us-ascii?Q?NTTc3X7XmICniz3v1YOlmaXDKqdnQ1A6hSskkLAm1NeaJhNpV+KQ6PvAL7as?=
+ =?us-ascii?Q?WuMnJNxKx7XSQDk7954cC+ZmiLaVhMqU6glAayOwBi1cLplF8bKZkQTb4tAu?=
+ =?us-ascii?Q?7bZs637L8+NHX8TN4p598nxKz3Rz6A+HbIzGdv0rMHQswy7KK0z+STwm9fv2?=
+ =?us-ascii?Q?09p5PtG/9ZtK7LIiETIQOZhVtcG+sXNYa7hwP2JT3e9JPr/gcw9JBZvudBRo?=
+ =?us-ascii?Q?jgEeFBy/uABsbAOQ2jG0omA1ENnSn/gciYLwL1SAhl3sy9gIsJRlHjK0A/97?=
+ =?us-ascii?Q?KEv0uiAAL+vtHYtECEZw+gwT3NFUYtDxjjz/9NxyILGU0HUUL7eJ4hWb45KC?=
+ =?us-ascii?Q?m1gHLMnsb8LmmBP2Vu/mERSfFBpZZki5KAfwtxFhVsQIU0JdL4wqyljDPFUK?=
+ =?us-ascii?Q?yml9EieG+C9g6noXuIAcUpBCIdrIDGPZtvj+s80M1RL4b5mRfAH6JMm93UZ1?=
+ =?us-ascii?Q?EPdq6nMUFbJq3D50DcjysmqOswrMhzAHOg5LUAT2Y+T3NmWAOFV53CaTrogQ?=
+ =?us-ascii?Q?evvje28DoTtM49kCl6VaTo57HymTHMIgX3yuPGZHdM6xl/yCJVCCZxRUUMNP?=
+ =?us-ascii?Q?HtSMwH6aByRn1bNWrOgk1pdNZSkCoRTGw7CYp53MliQXQj+P2CRSFPfpzXGg?=
+ =?us-ascii?Q?UYzpjA4a1jGzTUyZtopEhOwC2lRWMtWsI3xFJBzrgqhs6mdUsupbefglFGlM?=
+ =?us-ascii?Q?hCkkFhih/vfubInRpO7xesz+dCYU6AXpZx8dULg8r3jVepCPzG055TvJvgy/?=
+ =?us-ascii?Q?F5O/6ggnFPi4pu52I9KXJe9qZsOQznbwUNWcXNWKhSIQMxjDPGgVjJdDboaF?=
+ =?us-ascii?Q?es/n/6lA4hP/LBDpCi4oOrZKlSbEfp/go4zPvtNQBeMpvNVxKQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6465.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?AvSpKSo+OAELjWm33OsQSdDhq3k4tdArC/W0wJjHJdc2eeCECjD+XecpizEB?=
+ =?us-ascii?Q?9K4/175SDI+w68f8hvX1/n61sD5qheUXW/xGSbOEAv/mUw43r+zMBY1yLA6d?=
+ =?us-ascii?Q?Ytx/JIAtD8VZ3xxSSA8FPxH71jVDAJUTC00guLuYp1vtbLWdzUWrgYNSxD7Q?=
+ =?us-ascii?Q?89cS6Z/T1phrG7jkFlxPB3lnPF2HKu8I31sGn+tAKlHzR+PkZwIIeSe75g5t?=
+ =?us-ascii?Q?dS/WvCwI+X8ooHOyFuBfSy72h6Mr9lAJFzkcaBmxM1FuhDalwWvemnUgfuei?=
+ =?us-ascii?Q?WsWwEZShhqHcJDfk30pk1dJlx/TkXxZx2QTRA8fpM6rf9OLsEicYpMyBxpCR?=
+ =?us-ascii?Q?Yv4EY/AsiawMSRfFoLHsgIM+Sqq4y7l/gnqLRUNxnVSgrcTBP98nqHGP5010?=
+ =?us-ascii?Q?aguv1xH376lfTxQyj70sUxvk2iHojlcsokBA8x5arK/uYYxPBevyu4bWHIvf?=
+ =?us-ascii?Q?Ux3XOWJYVTMADofszp9wkyHODZHIJdtUzq/w8pLxmvPdXQc1jH4jL976gVhP?=
+ =?us-ascii?Q?rntxo/AIRaP79AQ1SyHN0rVecfRGC0kQODUEJbhrIWkyNnB/Qf3bLuA5T7hr?=
+ =?us-ascii?Q?tjXuHSIwPFNi8xW/e8QbydJhBaxKEcK/ILAEDfyLPHph4eFV9505/Q78Ceaf?=
+ =?us-ascii?Q?CCXySFxO9MDfFCRO5zaFjdBPjf0zmfBM/ZnHpLWO4J9IhvLea/mGs9ZH4ytD?=
+ =?us-ascii?Q?iQW/PC68ffweB/JxoFTRJaOS5UQCJOF/MMXNyPKcHquJZjk3ll9x0eKyzgj8?=
+ =?us-ascii?Q?jIguXfj3gUn+ChUC9G/IOdDI9YgBtpSqmvjc0KkApIeLBAgSkFI9OwFnkLT8?=
+ =?us-ascii?Q?8S13ngqRRhbO11AQ/Fv4On+thufz0dj/bH3+wP+RJMMOBkh4XMI1vmFjKjjn?=
+ =?us-ascii?Q?oFxlM8bE2qghAG+sm7XiWv6fqYnP9j/rwSMfhctjjY0Z7oerxQs2ofrd/GkZ?=
+ =?us-ascii?Q?dig9P0dbO7JXhS7V4/+HJhcj2s3eGQKbSTsW9+T7xZAn0FH+n3GaiNk1gY7v?=
+ =?us-ascii?Q?j9tYeBMFVjeuKsKEmt7pNPTpMsY8P3782IgfJPQjIF0+vo0krza+ohq/bNQr?=
+ =?us-ascii?Q?QXRPtO54bu1oME9fRQzzMlLHgXnIp7LTPzsLVVRddvClWjmBiNCmFZuYQx9M?=
+ =?us-ascii?Q?jWKRb6M5mqFNVYaU9od83Ohr+Xi3QCSBr9y0I4j3JVZahPRl0rBi/NjqIlrq?=
+ =?us-ascii?Q?yxFhRXpJt5kdSnty1ESngNT9NowNjOk/TN8Kob74ry+p+PhjHtqtw8v5DIIu?=
+ =?us-ascii?Q?AjS+Lncc6J3yuB0tNvVi+slPlcRK+6gnKrzmO4YEAb8+1xdqjaF4yBhj0rWJ?=
+ =?us-ascii?Q?mj83o9DR+EarBQQIMAd4Dg1XU3NwIn9EM7YsYtFrMfB+BaKxmzoCUXC3jt9J?=
+ =?us-ascii?Q?6r18oxiaHGdRqSaxgrLS00Gzbf7bASdlvhZfdQfZ4gA2o3EFbi6q0vQdZHDE?=
+ =?us-ascii?Q?QGB5JZPlrSHxwZapp4T7l9AYSFd/UKMigG1DU6R93gHs/XHmW/e0gQeLYf7i?=
+ =?us-ascii?Q?OEaJb+URcMH8mT0x4ozifakYQ3kszG5N/zMRECTAOpbln1PvjQAmZ6vJBxBt?=
+ =?us-ascii?Q?e5bjhAGK3E1jY4C7XUXwnIYyXdHqDAeRbUMuBup6QCdxX1bNn8PIHypV1XL3?=
+ =?us-ascii?Q?nQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5009:EE_|MW3PR11MB4634:EE_
-X-MS-Office365-Filtering-Correlation-Id: 602b8563-766d-490c-e2ee-08dd143b38d7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TFBidEtrbzVGSmNZOVNKeStsdExSL2RLbVovS1poSDlNY1NMc2dGT3NBVlR2?=
- =?utf-8?B?M0tweHBiM1BZNG1YSG8rNUNNZzRFaVE2UVFlR3dsY0ZHQlB4QmgxNWg4Zjhk?=
- =?utf-8?B?Ly9aeVEwSFNlbS82ZzgzR2ZYeFd6WjBuODc2NzhNOHpsZE1CTWpzNnRVYnRO?=
- =?utf-8?B?Zzhqc1daYmgwUTQxM0h2T0VVcDc4UnJzbVNOem1UWncvZTlyeDMzMWl2Z0xy?=
- =?utf-8?B?R1hZaThuSU5hSWluWnArWG1sN3BqR0FrR1p3RG4wd2xRK0NaNGJWU0F3a2hJ?=
- =?utf-8?B?ellNNUZiVUFnTUJYVk5BbFdtdlcvRHFLdDF6UDBlMDFLVDZveUgxR0lLQ2p0?=
- =?utf-8?B?VytBSlFod3lqSnQyUkZpeWpSZlVCUGxDa0J2aC9VWnJmR0hGbGxBUDFtODFy?=
- =?utf-8?B?SVlVbG4zLzdYd2FhdHZEMFgzUXVHNDFtTE5HWUtnWUY3ZzlXV3J4K2dKOXhy?=
- =?utf-8?B?ZHl5MkM3WkEraGtuYlpYRnZxSFg4ZVRINkJFa2tTU1NuaFBYVExHM1BVU2Iy?=
- =?utf-8?B?bVZhZEZNOEhVd05XS29GdGNURHRLOUgwK0pNVG5lclI5OC9tbk5xTnRtUUxl?=
- =?utf-8?B?Wmd0UWUveUovbmRycFA0dE13SHhmVlo1ZW50aU1SejFaSVJoQXIyOXRUZTM1?=
- =?utf-8?B?ZjZ0OWRKQzdWSUozV1kvajU0dU1iYk4xQUtTazBvdmVSOGN5bXdsRnBDMmJS?=
- =?utf-8?B?b2RCRW9OazBpZlNDWWtWZThVVXZkTlNwWDc1TVdZOGhyRE9ZTzRPZktSY1ps?=
- =?utf-8?B?U25FTW1EQ1lwa2NqSkhmMXkyMnd5SjVDTGhMNjFzUzg3WW1RdldPWEc2bGJ0?=
- =?utf-8?B?R2FzMFJOMXhmL1hDRkI2Wkc4QWNocndGS0VLWXhpUURWYUZBMERLQUNFUitk?=
- =?utf-8?B?M0FtczBWREYzaFlJRTFoeVFsZWpGdVBhb0ZNTFhud0tCM1YxRjJTNTdPcTFI?=
- =?utf-8?B?V05nanlOSFRCK2VRZnR5TVo3ZENpMkpOSXhTNXRjUTNpcUhPQ1duZlR0OG5T?=
- =?utf-8?B?bFZSNXNwVExFWTF6cVpjVExvamJjZDg5RUlQdjFIRE00Z0ZNb1ZCaUFZazRC?=
- =?utf-8?B?K3A4OVdWSmRzUnc5Qi9jZTIvRHNQOUYrNnUwQkl5QXI3S3JPRm1YZmlhdW90?=
- =?utf-8?B?MUxqcjBqL1c3bFZ5Q2d1cS9YcEpCaSsydHRPaWRabWEzVWw0Wis5OVhBWWpJ?=
- =?utf-8?B?Qkg1eTkvRHZMUG1oTHhsL2c4WDIzY1ZRT1k5VFZYajZJVGZzNE0rc1RsbEJ0?=
- =?utf-8?B?d1hHUlNrUTFzOEdUMkw2aGpxZGFzTUpLQmRTeFFBeDR4YzZzaWViclorWjRX?=
- =?utf-8?B?UiswMDVTbFRrUmRYSXVoS1FVVFZadlQxc0VLdnFQUXRySDJjOVRaMkJBNlFU?=
- =?utf-8?B?MUsrUmo1Z1RKU012R1pVc1FLU1pmN0pRanRxbVlWc0ZhMG5IMGlPQ3h5NWUy?=
- =?utf-8?B?c1hZRUdUSFVqV3BTUWxKVnFialgyTnFCcGduY1dqVEdncEFFZzc5WlM3TzNY?=
- =?utf-8?B?cGd6UFBYaUpIUk9paHJ0ZTZRN0g4VVJ2ZG1HVm80MHhMMHpEL1lra3NKak82?=
- =?utf-8?B?ZTV4cFNKZXRmNlgxaTh1UkY0WDl1anFJd2xqeHF0eGQvbzZVczdpdjIycHlH?=
- =?utf-8?B?TFVhZ2Q1bjdWVjEyUUxNelk5SHpTWlhVK3cxc0phdVZWQng4Y3NXUVRGUHJq?=
- =?utf-8?B?OTJ6SEZEMzBmalBzcmVwVS9WRmo1REErNnhkQzFzUEtSUWJyTHFuWEhLREVn?=
- =?utf-8?B?WEk4UEI2SUMvWUNJVm5NL2ltU3EwKzZTck91YjJuamRGcForZW94ZFVoTjM0?=
- =?utf-8?B?ZHJ5emlvS3kwSkpFNEdIdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5009.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eWE4YVlwVUdhTWI2azZ5cnptZzVlOGkzbkFpUnpBenhLODlhTmFWSkM3T3Rp?=
- =?utf-8?B?c1drSGZNSWFtbXJZNWZMc3M4ZlYrMVkrc2o4ejVrZDVxNXFKekhsR2tYVWlk?=
- =?utf-8?B?OVBPSWVJZDRleElPSVd0cUo3WHV2TG1lNThZKy8zVnhMeDdOTWVqT0NkNjRU?=
- =?utf-8?B?QXZNK2l5cFA2QWE1SDVnMGlqQ21vQjI0V050akNzN0lJZ1RReWtNMHpNcnNl?=
- =?utf-8?B?TXRtMEpxWmdkcy8xWnpVR2VON1NhU3pGM0crMW9tdmV5UlJCK0JONExXZ2Vu?=
- =?utf-8?B?Nlg5RHRZNUZIS1cwMVZ5ZlR6NVhpdm5NRnFoTExKdE1SdHpMdU9Bc25ZVlJP?=
- =?utf-8?B?RmU2ejVMREVVMkVmL2RUUHRBa1V2YWk5NVhVTGlqR3lrcUJxS1dWeWZSZjdF?=
- =?utf-8?B?c2ZTKzdMMklKbXNjNlZSZWRZbXl3aXQzVkVlZDltYWpPVHZldGExUktMbHUz?=
- =?utf-8?B?cE5qTCt3QWttK2hkdGE2cWVhckJGL1BEd2sxdm5EdThDOUZnNFFpWVUzRTFT?=
- =?utf-8?B?bzlnQkZQNDVLa29lK0lvVjVWR0g0Sk85Y1Q1K3BDUGxRMTB4MlNRcUo1QmZn?=
- =?utf-8?B?d2NMM0k3SUZCYmd4MzJ2ZUpJWm9INnJHa1E5djg5UDhUQndqRGRCWjhKVjFl?=
- =?utf-8?B?RVptNWdXS1hjRnJpOWhVWEFJRzRuV1FQWmIrdG51eUo0T0RkbytQczdaREdI?=
- =?utf-8?B?TndTbGN1azIwWVlGK2JDM1hTUVk1VHdISEY2aVBoTVRtV0t3WGY0eE1EZGJR?=
- =?utf-8?B?N3Z4L1pBanZob29zOXNSc1Mwbzh6NHFZb3RNeUEvWXhhdkowbC9wL3dZZ1hx?=
- =?utf-8?B?aTJwRFkxSkV6UGdiTXh0MnYwQzlwSXk5OEhIZ0lMK2ZQRk9Jc0RWcWxVTkEr?=
- =?utf-8?B?RXRkTUgwS1owNFc4b01VOGFXUnJWaFhYaTM4SnpMU0NMSW5CakpJbmcwaCtv?=
- =?utf-8?B?SHZ0RkhjWlRtWkdHdndmSFoyZFdvMXI4dHVSNWszN05ZS1lnTkVzRzVzcGVv?=
- =?utf-8?B?aU5yNnVQKzU1eml6Y21Jek44SDk5TkxGT1dyQVdENGthNzJlRSsrNnFmS0d4?=
- =?utf-8?B?a3NrNUpCbGRmZUIzK3hyMk9MQ09QTVN0WHJ4UDZMN1ROVXJJOGFsQ1VXTzlp?=
- =?utf-8?B?NHhmMEV5U3dRZGU2VEJqMGREY050SEJ4aXNRdGl1NkxTcWkyUXB1cENNcjdP?=
- =?utf-8?B?endSdCtuWW5sb1BzbURYM2VqS21rdGxzODIxQ3B3ZmgxUG1yUGRubElIRGFT?=
- =?utf-8?B?RTFCVlk4M1BnbzFtQ0E2dVNrQ1NTY2FFVEJQdktKeE5KbVJEbnBTa0NCUlpS?=
- =?utf-8?B?cFdVQm1jN1lNaGFxTFZXbUVnblpLOVVnbVJjZGxCOCtFaGZFOWFxd2l1QTFJ?=
- =?utf-8?B?ckduNEdvVEhzSUY1R01qcWl6d0dmcUJISXBxb2x2N3VOVldtYjZEYloyOHlp?=
- =?utf-8?B?ODJiQ0VpRlhOZ3FrN0tJbENGQ2pmeVRJd0QyNVJYSUIyTW4zQ0xQMHBweEo5?=
- =?utf-8?B?U3FrbmVYVzNSQkZGTTNzRFlGUU1rNzcwSFgzVXJKTFViT3lYdnJ6a1ZSU3ZO?=
- =?utf-8?B?TlJQMmdQRy90NHZsSGZPanVPd1g0WEIxSVNMSWFOU3NldkdSV3NjbjZmUS9R?=
- =?utf-8?B?ay9BTHhzUHFqWStZYkVMbmRjWFpwV2lVQkV2WkdTcUh4NWJabDZjbDZRSm9t?=
- =?utf-8?B?UDBpUTVqVGFOQzJQNllQaVQ4RHdHTEZuUHdrYjJEeTVGVTNDVyt6a0hwWlUr?=
- =?utf-8?B?UUJJalJEOHNQb0wyM1UyZGQ3elFzY0hGN3JCRy9UeVFOY29YeWRPNFNNOXZI?=
- =?utf-8?B?VGMxaFlqTGM2RjNwSENvTzM4amRRZWxwNTdnTFZGZFRPendyeVNqNDBoMDR6?=
- =?utf-8?B?cTNjbEZmREJja2diM2Z6N01Kckdoc0h4YmFHaXoyOEZUQUZ6M1ZPTjNOcStn?=
- =?utf-8?B?NjVGNmhMZG91TEFYS2dEMHJQOU82WHNIZld3VHhQZFAwSzNHSzJCOEFWYjFI?=
- =?utf-8?B?SFg0ZnVYVWZucXJyNERkcmFlcXFkdmo5L1RiWXU4bUR5bEZuOXJ2cytya2U0?=
- =?utf-8?B?ZVBVYnc2MWJkWkpZcVlkVTV3dklneThFN0FRQTZzdW5JSjVrRm15dXRuRVZn?=
- =?utf-8?Q?NWo+JgLWgC1X2dQ/Ls/gZSAOy?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 602b8563-766d-490c-e2ee-08dd143b38d7
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5009.namprd11.prod.outlook.com
+X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 08:11:14.6943
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6465.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 361cfcb7-e2b1-4398-6230-08dd143b4af0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2024 08:11:44.9117
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 27HRIJpvfLbO1rur4w2tJS+C6UjKGwgVEbLlK8810TVq0/q2rtXcsW1pcEQmIC+rkmbf/qmLQ6LaCpa4Xt347A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4634
-X-Proofpoint-GUID: 4RbVO2NL7e7IqQPBQHm69GF-TCyqN1u3
-X-Authority-Analysis: v=2.4 cv=RpA/LDmK c=1 sm=1 tr=0 ts=67500ea5 cx=c_pps a=6H1ifQWhBrriiShMtbI+RA==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=bRTqI5nwn0kA:10
- a=P_w0lqFH_8aCQdc8d4MA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 4RbVO2NL7e7IqQPBQHm69GF-TCyqN1u3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-04_05,2024-12-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0 adultscore=0
- phishscore=0 mlxlogscore=976 clxscore=1011 suspectscore=0
- priorityscore=1501 mlxscore=0 classifier=spam authscore=0 adjust=0
- reason=mlx scancount=1 engine=8.21.0-2411120000
- definitions=main-2412040062
-
-Hello,
-
-Have noticed some additonal info which seems unrelated to mce when run 
-"mce-inject uncorrect_error" though add "quiet" option to the boot 
-paramter. Confusing about why there is additional info unrelated to mce 
-printed. And the additional info gone after add "selinux=0 enforcing=0" 
-to the boot paramter. Don't understand why "selinux=0 enforcing=0" 
-affect the additional info printed. Could you help to explain more? Many 
-thanks!
-
-# cat uncorrect_error
-# this should just kill the process
-CPU 0 BANK 1
-STATUS UNCORRECTED
-ADDR 0x1234
-
-# mce-inject uncorrect_error
-intel_rapl_common: Found RAPL domain package
-intel_rapl_common: Found RAPL domain core
-intel_rapl_common: Found RAPL domain dram
-[00] BAD 00 ff ff ff ff ff ff 00 04 92 19 02 01 01 01 01
-[00] BAD 15 12 01 03 6d 00 00 96 ef ee 91 a3 54 4c 99 26
-[00] BAD ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[00] BAD ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[00] BAD ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[00] BAD ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[00] BAD ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[00] BAD ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-fbcon: astdrmfb (fb0) is primary device
-Console: switching to colour frame buffer device 128x48
-ast 0000:06:00.0: [drm] fb0: astdrmfb frame buffer device
-cfg80211: Loading compiled-in X.509 certificates for regulatory database
-cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-cfg80211: Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
-8021q: 802.1Q VLAN Support v1.8
-8021q: adding VLAN 0 to HW filter on device eth0
-8021q: adding VLAN 0 to HW filter on device eth1
-8021q: adding VLAN 0 to HW filter on device eth2
-8021q: adding VLAN 0 to HW filter on device eth3
-pps pps0: new PPS source ptp4
-ixgbe 0000:07:00.0: registered PHC device on eth4
-8021q: adding VLAN 0 to HW filter on device eth4
-pps pps1: new PPS source ptp5
-ixgbe 0000:07:00.1: registered PHC device on eth5
-8021q: adding VLAN 0 to HW filter on device eth5
-pps pps2: new PPS source ptp6
-ixgbe 0000:08:00.0: registered PHC device on eth6
-8021q: adding VLAN 0 to HW filter on device eth6
-pps pps3: new PPS source ptp7
-ixgbe 0000:08:00.1: registered PHC device on eth7
-8021q: adding VLAN 0 to HW filter on device eth7
-bridge: filtering via arp/ip/ip6tables is no longer available by 
-default. Update your scripts to load br_netfilter if you need this.
-igb 0000:04:00.1 eth1: igb: eth1 NIC Link is Up 1000 Mbps Full Duplex, 
-Flow Control: RX/TX
-IPv6: ADDRCONF(NETDEV_CHANGE): eth1: link becomes ready
-igb 0000:04:00.2 eth2: igb: eth2 NIC Link is Up 1000 Mbps Full Duplex, 
-Flow Control: RX/TX
-IPv6: ADDRCONF(NETDEV_CHANGE): eth2: link becomes ready
-igb 0000:04:00.3 eth3: igb: eth3 NIC Link is Up 1000 Mbps Full Duplex, 
-Flow Control: RX/TX
-IPv6: ADDRCONF(NETDEV_CHANGE): eth3: link becomes ready
-mce: CMCI storm subsided: switching to interrupt mode
-mce: Triggering MCE exception on CPU 0
-CPU: 0 PID: 1727 Comm: mce-inject Not tainted 
-5.15.169-rt76-yocto-preempt-rt #1
-Hardware name: Supermicro SYS-E300-9A-16CN8TP/A2SDi-16C-TP8F, BIOS 1.4 
-01/29/2021
-Call Trace:
-<TASK>
-dump_stack_lvl+0x38/0x4d
-dump_stack+0x10/0x16
-panic+0xaa/0x2ed
-mce_panic+0x27d/0x29d
-mce_timed_out+0x80/0xa2
-do_machine_check+0x29b/0x684
-raise_exception.constprop.0+0x61/0xa0
-raise_local.isra.0+0x67/0xfc
-mce_inject_raise.cold+0x26c/0x331
-blocking_notifier_call_chain+0x68/0x90
-mce_chrdev_write+0xc2/0x110
-vfs_write+0xc7/0x300
-ksys_write+0x6d/0xf0
-__x64_sys_write+0x19/0x20
-x64_sys_call+0x47c/0x1fa0
-do_syscall_64+0x3d/0x90
-entry_SYSCALL_64_after_hwframe+0x6c/0xd6
-RIP: 0033:0x7fb4274c728f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 69 ad f8 ff 48 8b 54 24 
-18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 
-f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 bc ad f8 ff 48
-RSP: 002b:00007fb4273c6d70 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000558b0c4ffd40 RCX: 00007fb4274c728f
-RDX: 0000000000000058 RSI: 0000558b0c4f84a0 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ffd77a1bf4f
-R10: 0000000000000008 R11: 0000000000000293 R12: 00007fb4273c7640
-R13: 0000000000000000 R14: 00007fb427455820 R15: 0000000000000000
-</TASK>
-Kernel Offset: 0x2c400000 from 0xffffffff81000000 (relocation range: 
-0xffffffff80000000-0xffffffffbfffffff)
-Rebooting in 30 seconds..
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gxLrN4KImtv13u7ryEQWKtFi21amSqo5qrYh2iTL/Xdkq1R56M3Q8YMb5z4TbPNYNsKPp/Ck3G40ipev833i15HCVYtGTp3M+059JhJ3H9305Fazye3stpRWfPGrFSGg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11955
 
 
-When add "selinux=0 enforcing=0" to the boot paramter and then run 
-"mce-inject uncorrect_error" and there is no additional info printed as 
-below.
 
-# mce-inject uncorrect_error
-mce: CMCI storm subsided: switching to interrupt mode
-mce: Triggering MCE exception on CPU 0
-CPU: 0 PID: 1727 Comm: mce-inject Not tainted 
-5.15.169-rt76-yocto-preempt-rt #1
-Hardware name: Supermicro SYS-E300-9A-16CN8TP/A2SDi-16C-TP8F, BIOS 1.4 
-01/29/2021
-Call Trace:
-<TASK>
-dump_stack_lvl+0x38/0x4d
-dump_stack+0x10/0x16
-panic+0xaa/0x2ed
-mce_panic+0x27d/0x29d
-mce_timed_out+0x80/0xa2
-do_machine_check+0x29b/0x684
-raise_exception.constprop.0+0x61/0xa0
-raise_local.isra.0+0x67/0xfc
-mce_inject_raise.cold+0x26c/0x331
-blocking_notifier_call_chain+0x68/0x90
-mce_chrdev_write+0xc2/0x110
-vfs_write+0xc7/0x300
-ksys_write+0x6d/0xf0
-__x64_sys_write+0x19/0x20
-x64_sys_call+0x47c/0x1fa0
-do_syscall_64+0x3d/0x90
-entry_SYSCALL_64_after_hwframe+0x6c/0xd6
-RIP: 0033:0x7fb4274c728f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 69 ad f8 ff 48 8b 54 24 
-18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 
-f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 bc ad f8 ff 48
-RSP: 002b:00007fb4273c6d70 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000558b0c4ffd40 RCX: 00007fb4274c728f
-RDX: 0000000000000058 RSI: 0000558b0c4f84a0 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ffd77a1bf4f
-R10: 0000000000000008 R11: 0000000000000293 R12: 00007fb4273c7640
-R13: 0000000000000000 R14: 00007fb427455820 R15: 0000000000000000
-</TASK>
-Kernel Offset: 0x2c400000 from 0xffffffff81000000 (relocation range: 
-0xffffffff80000000-0xffffffffbfffffff)
-Rebooting in 30 seconds..
+-----Original Message-----
+From: tomm.merciai@gmail.com <tomm.merciai@gmail.com>
+Sent: Tuesday, December 3, 2024 6:21 PM
+To: tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org; dri-devel@lists.freedesktop.org; Bij=
+u Das <biju.das.jz@bp.renesas.com>; Tommaso Merciai <tommaso.merciai.xr@bp.=
+renesas.com>; Liu Ying <victor.liu@nxp.com>; Andrzej Hajda <andrzej.hajda@i=
+ntel.com>; Neil Armstrong <neil.armstrong@linaro.org>; Robert Foss <rfoss@k=
+ernel.org>; laurent.pinchart <laurent.pinchart@ideasonboard.com>; Jonas Kar=
+lman <jonas@kwiboo.se>; Jernej Skrabec <jernej.skrabec@gmail.com>; Maarten =
+Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kerne=
+l.org>; Thomas Zimmermann <tzimmermann@suse.de>; David Airlie <airlied@gmai=
+l.com>; Simona Vetter <simona@ffwll.ch>; linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bridge: ite-it6263: Support VESA input format
 
-Thanks,
-Mingli
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
+Introduce it6263_is_input_bus_fmt_valid() and refactor the
+it6263_bridge_atomic_get_input_bus_fmts() function to support VESA format b=
+y selecting the LVDS input format based on the LVDS data mapping and thereb=
+y support both JEIDA and VESA input formats.
+
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+---
+ drivers/gpu/drm/bridge/ite-it6263.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/i=
+te-it6263.c
+index cbabd4e20d3e..83d1db29157a 100644
+--- a/drivers/gpu/drm/bridge/ite-it6263.c
++++ b/drivers/gpu/drm/bridge/ite-it6263.c
+@@ -48,6 +48,7 @@
+ #define  REG_COL_DEP                   GENMASK(1, 0)
+ #define  BIT8                          FIELD_PREP(REG_COL_DEP, 1)
+ #define  OUT_MAP                       BIT(4)
++#define  VESA                          BIT(4)
+ #define  JEIDA                         0
+ #define  REG_DESSC_ENB                 BIT(6)
+ #define  DMODE                         BIT(7)
+@@ -428,12 +429,30 @@ static inline void it6263_lvds_reset(struct it6263 *i=
+t)
+        fsleep(10000);
+ }
+
++static bool it6263_is_input_bus_fmt_valid(u32 input_fmt) {
++       switch (input_fmt) {
++       case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
++       case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
++               return true;
++       }
++       return false;
++}
++
+ static inline void it6263_lvds_set_interface(struct it6263 *it)  {
++       u8 fmt;
++
+        /* color depth */
+        regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, REG_COL_DEP, BIT8);
++
++       if (it->lvds_data_mapping =3D=3D MEDIA_BUS_FMT_RGB888_1X7X4_SPWG)
++               fmt =3D VESA;
++       else
++               fmt =3D JEIDA;
++
+        /* output mapping */
+-       regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, OUT_MAP, JEIDA);
++       regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, OUT_MAP, fmt);
+
+        if (it->lvds_dual_link) {
+                regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, DMODE, DISO=
+); @@ -714,14 +733,14 @@ it6263_bridge_atomic_get_input_bus_fmts(struct drm=
+_bridge *bridge,
+
+        *num_input_fmts =3D 0;
+
+-       if (it->lvds_data_mapping !=3D MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA)
++       if (!it6263_is_input_bus_fmt_valid(it->lvds_data_mapping))
+                return NULL;
+
+        input_fmts =3D kmalloc(sizeof(*input_fmts), GFP_KERNEL);
+        if (!input_fmts)
+                return NULL;
+
+-       input_fmts[0] =3D MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
++       input_fmts[0] =3D it->lvds_data_mapping;
+        *num_input_fmts =3D 1;
+
+        return input_fmts;
+--
+2.34.1
+
+Acked-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+________________________________
+
+Renesas Electronics Europe GmbH
+Registered Office: Arcadiastrasse 10
+DE-40472 Duesseldorf
+Commercial Registry: Duesseldorf, HRB 3708
+Managing Director: Carsten Jauch
+VAT-No.: DE 14978647
+Tax-ID-No: 105/5839/1793
+
+Legal Disclaimer: This e-mail communication (and any attachment/s) is confi=
+dential and contains proprietary information, some or all of which may be l=
+egally privileged. It is intended solely for the use of the individual or e=
+ntity to which it is addressed. Access to this email by anyone else is unau=
+thorized. If you are not the intended recipient, any disclosure, copying, d=
+istribution or any action taken or omitted to be taken in reliance on it, i=
+s prohibited and may be unlawful.
 
