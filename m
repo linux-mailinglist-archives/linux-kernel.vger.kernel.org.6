@@ -1,76 +1,53 @@
-Return-Path: <linux-kernel+bounces-431096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDFD9E38DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:33:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AFC0165DE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:33:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162B01B3929;
-	Wed,  4 Dec 2024 11:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jf6XkKmj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493A89E38EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:35:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99A91AC884;
-	Wed,  4 Dec 2024 11:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76984B32E7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:33:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5741B2EEB;
+	Wed,  4 Dec 2024 11:33:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7EA1B0F36;
+	Wed,  4 Dec 2024 11:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733312032; cv=none; b=THqMcuV7Tz/SgpZStykgxBTgPaboKR7NKsyEgLQM7+vAvT/kBSZ6I0feQvp5K1w6EsiEWy1hUEfU1dagTmUEB3d003YIzgrtvS8ezlR7+HJd/B3aILJAitR+DOSrmAhBhBdUyHJe8x+smInOiCHc+GrQt6PvLsvLjofPGkS0Zcw=
+	t=1733311989; cv=none; b=WXbVUev2NPE4y1FCJ5YiPvQiP6xfVXVFtfP+Atb+zEWd5bIfsPXxstrt2+Mcq0xM7sOI4m/lokURLZKDCc9SOCaBZb/Pe6vRaFRq4ieq+RsF98YXNqUm9xkylHUmH3GA5ErqYP2SrYgQscNjI6/TiTWuCXMNR2HY0CAd4c5ap6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733312032; c=relaxed/simple;
-	bh=icNQ1hK/KEU+ydk3SKlmtjZgJ3jM4g14xAoPkqOL7KQ=;
+	s=arc-20240116; t=1733311989; c=relaxed/simple;
+	bh=4WTW9FUmZwSnNbESxNLpj77cDzjJTxm2vPyChPJTCXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4JdzWfy6Yci453d/QACMYbUn/dZM8qQGbMO38jTD88QfIBJDyrBU41AF6uTZNh3Q5/uzLTQVRNqNJ+e6kOfxzpKtwtwfqZ7dROeABb0EovxMF9UKfqJFhcnKdFtYVsF1rc1ec2DPGGZQvkj06vY3CijZu5qX+uE+l/1vPB0fNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jf6XkKmj; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733312030; x=1764848030;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=icNQ1hK/KEU+ydk3SKlmtjZgJ3jM4g14xAoPkqOL7KQ=;
-  b=Jf6XkKmjX+UtWZz64oqL9eQsq02ZVEgMztXCJKxtq/3SKiDKQdKFtA9t
-   jNbiWl3KX0LP3RE4rChmZPeo+MFyy5ppfCYilh9nwmDj5PkJlWdFN+6Vj
-   VGyAFIj9hwkebh2WA61aqjwbWhesXkuAbfXJ/z7UryRlCWgckU1FncEgk
-   tux3kzFiOGCJT/+duMUt6YOauonUlI5MUcj6Sru6YE2Wu54d+K9myMu85
-   TYR5Io26GSOwVE50Pvo69qA5i56vmbI2Pi/tDTteaBtsw3JGr2yL6B/xQ
-   XwXDgyDxHxVtAVt7z/rn7Ks6+u0LjKjctcktjUKGj2Pwcm4T+3K4y0VXS
-   Q==;
-X-CSE-ConnectionGUID: /3x/V5POQKO59+qFpacYCA==
-X-CSE-MsgGUID: K88dkSLESuKwlduDSpfkdA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="21155299"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="21155299"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 03:33:50 -0800
-X-CSE-ConnectionGUID: q+vr65RRTaSzksH6y/BXFQ==
-X-CSE-MsgGUID: TgHUJz4/SpCVjX0z0bEIKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="98766291"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 04 Dec 2024 03:33:47 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIndZ-0002xZ-0a;
-	Wed, 04 Dec 2024 11:33:45 +0000
-Date: Wed, 4 Dec 2024 19:32:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Peter Rosin <peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v1 3/4] iio: afe: rescale: Re-use generic struct s32_fract
-Message-ID: <202412041908.UaZf89I0-lkp@intel.com>
-References: <20241204013620.862943-4-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfGCd3gr3Sr8DQqE9/V0aO7Ob27vh4ryoMoT+vyFzdj4tR0By3IFH3DjXxcA6DZozacjIorc7i0Fn9xd3YZ12VNATGXMOxeCJd/LyqxUIkVQnSYMJEFaxqJh+DxRvsqiAzZuqQAo73q6F7MosbOMbm93jlrmkBMaGhA5iYt3kew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC120FEC;
+	Wed,  4 Dec 2024 03:33:33 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.37])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F9C33F71E;
+	Wed,  4 Dec 2024 03:33:04 -0800 (PST)
+Date: Wed, 4 Dec 2024 11:33:02 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/6] arm64/sme: Flush foreign register state in
+ do_sme_acc()
+Message-ID: <Z1A97pR+un1Trtyg@e133380.arm.com>
+References: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
+ <20241203-arm64-sme-reenable-v1-1-d853479d1b77@kernel.org>
+ <Z08khk6Mg6+T6VV9@e133380.arm.com>
+ <9365be76-8da6-47ce-b88e-dfa244b9e5b7@sirena.org.uk>
+ <Z085GKS8jzEhcZdW@e133380.arm.com>
+ <44d67835-1e43-47cc-9a18-c279c885dcec@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,83 +56,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204013620.862943-4-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <44d67835-1e43-47cc-9a18-c279c885dcec@sirena.org.uk>
 
-Hi Andy,
+On Tue, Dec 03, 2024 at 05:24:39PM +0000, Mark Brown wrote:
+> On Tue, Dec 03, 2024 at 05:00:08PM +0000, Dave Martin wrote:
+> > On Tue, Dec 03, 2024 at 04:00:45PM +0000, Mark Brown wrote:
 
-kernel test robot noticed the following build errors:
+[...]
 
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on linus/master v6.13-rc1 next-20241203]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> We know that the only bit of register state which is not up to date at
+> this point is the SME vector length, we don't configure that for tasks
+> that do not have SME.  SVCR is always configured since we have to exit
+> streaming mode for FPSIMD and SVE to work properly so we know it's
+> already 0, all the other SME specific state is gated by controls in
+> SVCR.
+> 
+> > fpsimd_flush_task_state() means that we do the necessary work when re-
+> > entering userspace, but is there a problem with simply marking all the
+> > FPSIMD/vector state as stale?  If FPSR or FPCR is dirty for example, it
+> > now looks like they won't get written back to thread struct if there is
+> > a context switch before current re-enters userspace?
+> 
+> > Maybe the other flags distinguish these cases -- I haven't fully got my
+> > head around it.
+> 
+> We are doing fpsimd_flush_task_state() in the TIF_FOREIGN_FPSTATE case
+> so we know there is no dirty state in the registers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/iio-afe-rescale-Don-t-use-for-booleans/20241204-124353
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20241204013620.862943-4-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v1 3/4] iio: afe: rescale: Re-use generic struct s32_fract
-config: arm-randconfig-003 (https://download.01.org/0day-ci/archive/20241204/202412041908.UaZf89I0-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412041908.UaZf89I0-lkp@intel.com/reproduce)
+Ah, that wasn't obvious from the diff context, but you're right.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412041908.UaZf89I0-lkp@intel.com/
+I was confused by the fpsimd_bind_task_to_cpu() call; I forgot that
+there are reasons to call this even when TIF_FOREIGN_FPSTATE is clear.
+Perhaps it would be worth splitting some of those uses up, but it would
+need some thinking about.  Doesn't really belong in this series anyway.
 
-All errors (new ones prefixed by >>):
+> > (Actually, the ARM ARM says (IMHTLZ) that toggling PSTATE.SM by any
+> > means causes FPSR to become 0x800009f.  I'm not sure where that fits in
+> > -- do we handle that anywhere?  I guess the "soft" SM toggling via
+> 
+> Urgh, not seen that one - that needs handling in the signal entry path
+> and ptrace.  That will have been defined while the feature was being
+> implemented.  It's not relevant here though since we are in the SME
+> access trap, we might be trapping due to a SMSTART or equivalent
+> operation but that SMSTART has not yet run at the point where we return
+> to userspace.
+> 
+> > ptrace, signal delivery or maybe exec, ought to set this?  Not sure how
+> > that interacts with the expected behaviour of the fenv(3) API...  Hmm.
+> > I see no corresponding statement about FPCR.)
+> 
+> Fun.  I'm not sure how the ABI is defined there by libc.
 
->> drivers/iio/test/iio-test-rescale.c:655:10: error: no member named 'numerator' in 'struct rescale'
-     655 |         rescale.numerator = t->numerator;
-         |         ~~~~~~~ ^
->> drivers/iio/test/iio-test-rescale.c:656:10: error: no member named 'denominator' in 'struct rescale'
-     656 |         rescale.denominator = t->denominator;
-         |         ~~~~~~~ ^
-   drivers/iio/test/iio-test-rescale.c:684:10: error: no member named 'numerator' in 'struct rescale'
-     684 |         rescale.numerator = t->numerator;
-         |         ~~~~~~~ ^
-   drivers/iio/test/iio-test-rescale.c:685:10: error: no member named 'denominator' in 'struct rescale'
-     685 |         rescale.denominator = t->denominator;
-         |         ~~~~~~~ ^
-   4 errors generated.
+I guess this should be left as-is, for now.  There's an argument for
+sanitising FPCR/FPSR on signal delivery, but neither signal(7) nor
+fenv(3) give any clue about the expected behaviour...
 
+For ptrace, the user has the opportunity to specify exactly what they
+want to happen to all the registers, so I suppose it's best to stick to
+the current model and require the tracer to specify all changes
+explicitly rather than add new magic ptrace behaviour.
 
-vim +655 drivers/iio/test/iio-test-rescale.c
+Not relevant for this series, in any case.
 
-8e74a48d17d509 Liam Beguin 2022-02-12  645  
-8e74a48d17d509 Liam Beguin 2022-02-12  646  static void iio_rescale_test_scale(struct kunit *test)
-8e74a48d17d509 Liam Beguin 2022-02-12  647  {
-8e74a48d17d509 Liam Beguin 2022-02-12  648  	struct rescale_tc_data *t = (struct rescale_tc_data *)test->param_value;
-8e74a48d17d509 Liam Beguin 2022-02-12  649  	char *buff = kunit_kmalloc(test, PAGE_SIZE, GFP_KERNEL);
-8e74a48d17d509 Liam Beguin 2022-02-12  650  	struct rescale rescale;
-8e74a48d17d509 Liam Beguin 2022-02-12  651  	int values[2];
-8e74a48d17d509 Liam Beguin 2022-02-12  652  	int rel_ppm;
-8e74a48d17d509 Liam Beguin 2022-02-12  653  	int ret;
-8e74a48d17d509 Liam Beguin 2022-02-12  654  
-8e74a48d17d509 Liam Beguin 2022-02-12 @655  	rescale.numerator = t->numerator;
-8e74a48d17d509 Liam Beguin 2022-02-12 @656  	rescale.denominator = t->denominator;
-8e74a48d17d509 Liam Beguin 2022-02-12  657  	rescale.offset = t->offset;
-8e74a48d17d509 Liam Beguin 2022-02-12  658  	values[0] = t->schan_val;
-8e74a48d17d509 Liam Beguin 2022-02-12  659  	values[1] = t->schan_val2;
-8e74a48d17d509 Liam Beguin 2022-02-12  660  
-8e74a48d17d509 Liam Beguin 2022-02-12  661  	ret = rescale_process_scale(&rescale, t->schan_scale_type,
-8e74a48d17d509 Liam Beguin 2022-02-12  662  				    &values[0], &values[1]);
-8e74a48d17d509 Liam Beguin 2022-02-12  663  
-8e74a48d17d509 Liam Beguin 2022-02-12  664  	ret = iio_format_value(buff, ret, 2, values);
-8e74a48d17d509 Liam Beguin 2022-02-12  665  	KUNIT_EXPECT_EQ(test, (int)strlen(buff), ret);
-8e74a48d17d509 Liam Beguin 2022-02-12  666  
-8e74a48d17d509 Liam Beguin 2022-02-12  667  	rel_ppm = iio_test_relative_error_ppm(buff, t->expected);
-8e74a48d17d509 Liam Beguin 2022-02-12  668  	KUNIT_EXPECT_GE_MSG(test, rel_ppm, 0, "failed to compute ppm\n");
-8e74a48d17d509 Liam Beguin 2022-02-12  669  
-8e74a48d17d509 Liam Beguin 2022-02-12  670  	KUNIT_EXPECT_EQ_MSG(test, rel_ppm, 0,
-8e74a48d17d509 Liam Beguin 2022-02-12  671  			    "\t    real=%s"
-8e74a48d17d509 Liam Beguin 2022-02-12  672  			    "\texpected=%s\n",
-8e74a48d17d509 Liam Beguin 2022-02-12  673  			    buff, t->expected);
-8e74a48d17d509 Liam Beguin 2022-02-12  674  }
-8e74a48d17d509 Liam Beguin 2022-02-12  675  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers
+---Dave
 
