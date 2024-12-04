@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-430977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6C09E37B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:39:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B913169721
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:39:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9E21B0F33;
-	Wed,  4 Dec 2024 10:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gb4OpaKS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D779E37BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:40:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1948A18BC1D;
-	Wed,  4 Dec 2024 10:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064B028319B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:40:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF0C19259E;
+	Wed,  4 Dec 2024 10:40:49 +0000 (UTC)
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FC02B9B7
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308695; cv=none; b=kaGZcpPEunpGDjpwIAIFYqnSgTXImIbl2VRV4ZtzA/ruHBzP94nDi2dRbCNr5cbdDV4jZyrgartdC6Zit/3bxziXhdda120DL6qyu6Yai/DIomgXbtF99UkPhPP5TnOn0E8drWmHgYFNvunV4JEcibU0zrR2uD62tzcm0h+1P3Q=
+	t=1733308848; cv=none; b=EVymfW4hojSV/UNzI8uK/lBpUj561Tw4biGFEIgFdE7RIx2ZMysHHqn3T+ZUDSO/MDs5UAubdRmLqsK6W3vy0fFazFLsIfDSWwKLo0X3MH3bfq+QFF4aosQZ84SAhQVnY8kEhxAiF7GUFK5A9ALPV4Y9b2NVWSN9d3WGm5QUdYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733308695; c=relaxed/simple;
-	bh=N/k3rERiS1On8WLXIwKHDcu4wUhEl9hIFGK1Jt8oq6M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aoYqqwoDPKsPzboKCjuGwGu/FEkW3guO6zQVcEuId30Ip2QguseMrLRXNZvkpST6nmXhgF50TSwdnvze17DE0a8q66EeGCy0hC0ZWrZivZordZsSR6ZI25jzgUz+9tC8z0RBARUm0r4NEWRjdktxYt8jeYbVN3UkM6lN9jgsBUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gb4OpaKS; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733308693; x=1764844693;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=N/k3rERiS1On8WLXIwKHDcu4wUhEl9hIFGK1Jt8oq6M=;
-  b=gb4OpaKS5aQk6BWhohH0m5qk6FRkLODYrmhC8fZQqcFI3A5IUC6TNSms
-   gcSYRUJoMhEw6hFgRNr3iXBn4PL/wWsrVrbWS6X42zuCZeBtLlmEz+HgC
-   NHdBD2SCWWxiO8rPVbMaovYFTvioc0YFzD0IS/NBwBtgv5/BBfztZzbfV
-   CmMERgMTTcOQWmVXg0kO4bxg7uyKymoKE1jJyE8WYf/7PJorcZu+8DPqh
-   HJDEwbwnwXPYvwMAII1VFA2XGZ/qbjQIJPcgyA353Gso49iRjcg1dcVNb
-   Kcg6yqVYssPN26q8bOBs9lfr8yys5KEKGZOqClTjTs6ErxN7b+SenHjeI
-   g==;
-X-CSE-ConnectionGUID: C1I1Ey6fTUGz9xWkaO/Q8Q==
-X-CSE-MsgGUID: nA08e1jXRa+VxL5V4CfmDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="37345828"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="37345828"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 02:38:13 -0800
-X-CSE-ConnectionGUID: 04vnykFUT6+yxgKKcpk1Mg==
-X-CSE-MsgGUID: 8xTtb98bRveW8Hc5OEIA6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93913698"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.205])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 02:38:09 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Matthias Maennich
- <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Masahiro Yamada
- <masahiroy@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Greg
- KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/2] doc: module: Fix documented type of namespace
-In-Reply-To: <6fe15069c01b31aaa68c6224bec2df9f4a449858.1733305665.git.ukleinek@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1733305665.git.ukleinek@kernel.org>
- <6fe15069c01b31aaa68c6224bec2df9f4a449858.1733305665.git.ukleinek@kernel.org>
-Date: Wed, 04 Dec 2024 12:38:06 +0200
-Message-ID: <87mshb3f8x.fsf@intel.com>
+	s=arc-20240116; t=1733308848; c=relaxed/simple;
+	bh=m6y3L4J784yjmc2BvW5DfbxDOz46J/Z/iGRgu30t3l8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Afw7XWLpAHRMNlze1vGYFRAIVkaC2M4nsUizW9KcJSCdCBJSOsFaqUIhcaO7i8gxgXl3wO2xgTa9BYC6AJuJ2QnwJ9/yuMxHDOwVNBc1lc5aYfP5Q/5Y0NpYph6c/i2mVIgQ56bpiQrJRn9I3ivD1/PkXrIQYmTJeDMZyKJb9Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: from mail.steuer-voss.de (localhost [127.0.0.1])
+	by mail.steuer-voss.de (Postfix) with ESMTP id DD917267;
+	Wed,  4 Dec 2024 11:40:37 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Date: Wed, 04 Dec 2024 11:40:37 +0100
+From: Nikolaus Voss <nv@vosn.de>
+To: Marek Vasut <marex@denx.de>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, Liu Ying
+ <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Fabio
+ Estevam <festevam@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ miquel.raynal@bootlin.com, nikolaus.voss@haag-streit.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+In-Reply-To: <2d7f8afc-119a-4080-93be-bf3daf017e5e@denx.de>
+References: <20241203191111.47B56F7@mail.steuer-voss.de>
+ <2d7f8afc-119a-4080-93be-bf3daf017e5e@denx.de>
+User-Agent: Roundcube Webmail/1.5.0
+Message-ID: <abcc89936f44fd884b9c5da65ea64c42@vosn.de>
+X-Sender: nv@vosn.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 04 Dec 2024, Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> w=
-rote:
-> Since commit cdd30ebb1b9f ("module: Convert symbol namespace to string
-> literal") the namespace has to be a string. Fix accordingly.
+Hi Marek,
 
-Interesting. Using preprocessor symbols inherently restricted the
-namespace syntax to that of C identifiers.
+On 03.12.2024 21:15, Marek Vasut wrote:
+> On 12/3/24 8:09 PM, Nikolaus Voss wrote:
+>> LDB clock has to be a fixed multiple of the pixel clock.
+>> As LDB and pixel clock are derived from different clock sources
+> 
+> Can you please share the content of /sys/kernel/debug/clk/clk_summary ?
 
-Is it now okay to use any syntax for the namespaces from now on? Should
-the document have some recommendations for naming namespaces?
+Sure. Without my patch:
 
-BR,
-Jani.
+     video_pll1_ref_sel               1       1        0        24000000  
+   0          0     50000      Y      deviceless                      
+no_connection_id
+        video_pll1                    1       1        0        
+1039500000  0          0     50000      Y         deviceless             
+          no_connection_id
+           video_pll1_bypass          1       1        0        
+1039500000  0          0     50000      Y            deviceless          
+             no_connection_id
+              video_pll1_out          2       2        0        
+1039500000  0          0     50000      Y               deviceless       
+                no_connection_id
+                 media_ldb            1       1        0        346500000 
+   0          0     50000      Y                  
+32ec0000.blk-ctrl:bridge@5c     ldb
+                                                                          
+                                                  deviceless              
+         no_connection_id
+                    media_ldb_root_clk 0       0        0        
+346500000   0          0     50000      Y                     deviceless 
+                      no_connection_id
+                 media_disp2_pix      1       1        0        51975000  
+   0          0     50000      Y                  deviceless              
+         no_connection_id
+                    media_disp2_pix_root_clk 1       1        0        
+51975000    0          0     50000      Y                     
+32e90000.display-controller     pix
 
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
->  Documentation/core-api/symbol-namespaces.rst | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation=
-/core-api/symbol-namespaces.rst
-> index 27a9cccc792c..a08a3448cbad 100644
-> --- a/Documentation/core-api/symbol-namespaces.rst
-> +++ b/Documentation/core-api/symbol-namespaces.rst
-> @@ -41,9 +41,8 @@ entries.
->  In addition to the macros EXPORT_SYMBOL() and EXPORT_SYMBOL_GPL(), that =
-allow
->  exporting of kernel symbols to the kernel symbol table, variants of thes=
-e are
->  available to export symbols into a certain namespace: EXPORT_SYMBOL_NS()=
- and
-> -EXPORT_SYMBOL_NS_GPL(). They take one additional argument: the namespace.
-> -Please note that due to macro expansion that argument needs to be a
-> -preprocessor symbol. E.g. to export the symbol ``usb_stor_suspend`` into=
- the
-> +EXPORT_SYMBOL_NS_GPL(). They take one additional argument: the namespace=
- as a
-> +C-string. E.g. to export the symbol ``usb_stor_suspend`` into the
->  namespace ``USB_STORAGE``, use::
->=20=20
->  	EXPORT_SYMBOL_NS(usb_stor_suspend, "USB_STORAGE");
+Here 346500000 (media_ldb) != 7 * 51975000 (media_disp2_pix)
+   -> distorted panel image (if any).
+The requested panel pixel clock from EDID is 51200000.
 
---=20
-Jani Nikula, Intel
+This is the same with my patch:
+
+     video_pll1_ref_sel               1       1        0        24000000  
+   0          0     50000      Y      deviceless                      
+no_connection_id
+        video_pll1                    1       1        0        
+1039500000  0          0     50000      Y         deviceless             
+          no_connection_id
+           video_pll1_bypass          1       1        0        
+1039500000  0          0     50000      Y            deviceless          
+             no_connection_id
+              video_pll1_out          2       2        0        
+1039500000  0          0     50000      Y               deviceless       
+                no_connection_id
+                 media_ldb            1       1        0        346500000 
+   0          0     50000      Y                  
+32ec0000.blk-ctrl:bridge@5c     ldb
+                                                                          
+                                                  deviceless              
+         no_connection_id
+                    media_ldb_root_clk 0       0        0        
+346500000   0          0     50000      Y                     deviceless 
+                      no_connection_id
+                 media_disp2_pix      1       1        0        49500000  
+   0          0     50000      Y                  deviceless              
+         no_connection_id
+                    media_disp2_pix_root_clk 1       1        0        
+49500000    0          0     50000      Y                     
+32e90000.display-controller     pix
+
+So, here 346500000 (media_ldb) = 7 * 49500000 (media_disp2_pix).
+   -> stable panel image, but pixel clock reduced to 49.5 MHz from 
+requested 51.2 MHz.
+
+My conclusion: The clock source is the same, nevertheless the
+ldb/pixel clock constraint cannot be satisfied without either
+modifying the pll clock or the pixel clock.
+
+-- 
+Nikolaus Voss
 
