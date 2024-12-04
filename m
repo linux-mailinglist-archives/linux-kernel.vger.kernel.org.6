@@ -1,656 +1,314 @@
-Return-Path: <linux-kernel+bounces-431128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0CF9E3967
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:01:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42CA9E39D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBF07B35DBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:53:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3C0DB36D97
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7841B87F4;
-	Wed,  4 Dec 2024 11:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F79A1BD014;
+	Wed,  4 Dec 2024 11:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1Em91+m1"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2086.outbound.protection.outlook.com [40.107.94.86])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WjnHGXgv"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BBA1B85F6;
-	Wed,  4 Dec 2024 11:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733313141; cv=fail; b=kGEeNwkf1RBAGjAp1sKGxUQGwXOhBTJfcFNVliF5Y9TtMCHdCpiU5UZIeM/8NTeNgMJXxlZy0Gj7yLJHrEoUJd66G/hOmmTjQbHr/BKcUqqwtfhv1i6zCRqHYEak7wRLHO57bLlx2xwrftWjhwXS9ymmLQHho1pAQLh5X4ZOacY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733313141; c=relaxed/simple;
-	bh=PKOjslHMmhUvyTMOVfbpOPTZVvqLwqSxJAX2f8eD0ZU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HT4RZrdj5mXW4ViNRA4uNIba655SL033iP+4Kn97iyS+RE048m+q5T6OcrcDMs6X4jFbZ8QCV9rQNnGbwLAwKoneEsoVTcJGj+aTxp8lUgP5ZvIAsHmhdXSMSgybpU0ayh6bIdzLgreavTgoFN5vWwN2zver1xb38OgXGKkN1do=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1Em91+m1; arc=fail smtp.client-ip=40.107.94.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tAfC6oGF5uXEbm/X0pOSaGItObERcXlC+uWUrIfSpJwhF479ZmiQiu8T+Bmzo/Y2SJV+SRAGG9hMAIqcNxmrwtfUHgt3CKq95D840AyFf4Hg7YpnU5JcwWCMJqBvBX/xwyZj77GXTZa1jp/ablRZQt5Ow3TsAwA+gXFq1uXFyZ/5bKkg7fdlYPs+x7q9MD4xupRaMTXWgBQVXXCI7xiAwA5Q0t4NAHJ2phbntKi6sreZrdibj6p5I3LPYHmjYhCp/nojepmqbxEmvrY9NrjPEh9iOwK+S5ebrKJo/Pcv/qYFAiUOTqM/EPHDORr7VLZafitS0pSW/MgSfLXtPMqjdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kDb771ujN2T69dABfNvHxC7RBB38ogxrD2HzaH4PtIk=;
- b=TuId875qZE1Qfd/Z7LlyAJvq7yQoSHfQdJ5v7diQK/oePmyupzQQnQa3H6GhqVIeB9UOjLPnK/GxXkpPSS7KuhYRcussMLAV/laSc4sWrm7x0yfZwGPtM7yyPKCryKSd/K4NZaxHucKnvxffYzYPfxTAhZfK367iOK9qAHJlVw6AZI+izZSUy3Fg7swWry6mglM7c+MuV8I/XY4yacvRlqvjSSy2TGMUowVMmWLvcqTZpn3Hk72Usj0j2sGPLGDUfY4iu6MWfWNw7y+cXAYRH0avoRvcBj4lY6I4qG0dCr3boBFCQR79iIka+Mwh5Ik+sKQ9YRN8izhcgwDuY/iXoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kDb771ujN2T69dABfNvHxC7RBB38ogxrD2HzaH4PtIk=;
- b=1Em91+m1Gu4JYPuAdqYqQyyCAGhbyApYfJ/LQjFILpu5nSCEwKfo8KrqxbgnVhsxU+t5FPvRLJdcSwxfSzXKM97Lm33toZ1FzVgN0uns2vh4kpiNeLkEb1mLJ25+77rvAUjlW1dS4Z+ckVs4lWJXFGA48agL4UwXji0AaCojZ7c=
-Received: from BN1PR14CA0023.namprd14.prod.outlook.com (2603:10b6:408:e3::28)
- by DM4PR12MB6279.namprd12.prod.outlook.com (2603:10b6:8:a3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Wed, 4 Dec
- 2024 11:52:14 +0000
-Received: from BN3PEPF0000B069.namprd21.prod.outlook.com
- (2603:10b6:408:e3:cafe::d5) by BN1PR14CA0023.outlook.office365.com
- (2603:10b6:408:e3::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.19 via Frontend Transport; Wed,
- 4 Dec 2024 11:52:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN3PEPF0000B069.mail.protection.outlook.com (10.167.243.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8251.1 via Frontend Transport; Wed, 4 Dec 2024 11:52:13 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
- 2024 05:52:10 -0600
-Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 4 Dec 2024 05:52:07 -0600
-From: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <gustavo.pimentel@synopsys.com>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <jingoohan1@gmail.com>,
-	<michal.simek@amd.com>, <bharat.kumar.gogada@amd.com>, Thippeswamy Havalige
-	<thippeswamy.havalige@amd.com>
-Subject: [PATCH v3 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-Date: Wed, 4 Dec 2024 17:20:26 +0530
-Message-ID: <20241204115026.3014272-4-thippeswamy.havalige@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204115026.3014272-1-thippeswamy.havalige@amd.com>
-References: <20241204115026.3014272-1-thippeswamy.havalige@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4251B87CB
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733313143; cv=none; b=K0xRAsYwruKDRHtRVK4lc+7TLexvyRfLSp7KzxOcOwDmwwAqf/PVq24El7OOLBocNshmREuNJXCfz/7aBw8v1EA4GdC4th/UedOrFjD1JnXlW0xmr53Rrs+DCsL2OF9nZWDAvgBdnfrYLIvWBCQ0QR1xY6ZamVY6bHpmBDdmM+E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733313143; c=relaxed/simple;
+	bh=CIofiUsYCGpNa7cWh3pB+qNMgIaoHUpTpJnVFk41bGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EftbPnTK4hQpJIeu30Xwd56O71HcWWVfLUFRnG8MxC7bhgpH/pyKry/Iwknxpry7gkWpw4MkBf2R+4bJ+FSYquJC2uRdaIigfJp1ZPxviPk0wiDfzOPnweKfgxnczu2gGaDCo4amCnEdkH16fSSTtWvNwULlwPvssp4nBdQkKX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WjnHGXgv; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HIbgZ8M4VUwx16Itnl0GWvmhFxKtIaZrdC7iSE7Pb+E=; b=WjnHGXgvwDNmUk+O+kx9qc5z+P
+	v7rN+6dzHXsf4A5KV1ORQ+3RzHg0O+Zuur0UKhsUjp0REhm9Csp0g10u5HaJIIxR/NTNLJ0IuiK/h
+	HnbyHp9ypqRxHyw8NZKyKol8J4WThHmfvluwIMM15dSY1QNg9kitpJjAPBEqwBtTC38LsFv4mYc3E
+	qGLR515j/tQx4fghjbHewanDCzawOxRK7njVu9Tf0UEgaHrcQb8ibhp1xStzhKB5Ww9sqQKqjknfT
+	XhjSoZCfGnPD43fHseONa/qA526GVh2JAQCQvszlW9/hKNp6IJ8vBqBzvaRuBWUD+V78+r+Tc6YQ7
+	znFQgCrA==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tInvH-00GUoZ-Uo; Wed, 04 Dec 2024 12:52:04 +0100
+Message-ID: <b665c18e-e3df-4d62-9ed5-c923fa6dced4@igalia.com>
+Date: Wed, 4 Dec 2024 08:51:57 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm/v3d: Add DRM_IOCTL_V3D_PERFMON_SET_GLOBAL
+To: Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Melissa Wen <mwen@igalia.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: kernel-dev@igalia.com, Christian Gmeiner <cgmeiner@igalia.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241202140615.74802-1-christian.gmeiner@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20241202140615.74802-1-christian.gmeiner@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: thippeswamy.havalige@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B069:EE_|DM4PR12MB6279:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ed6c35d-5fd0-4afc-6064-08dd145a181a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?639MVNyk7rQj3z02tFmQ6dX7A27BXDlMbVG6L4FdqUTtmQXdTX+yfm5509Ih?=
- =?us-ascii?Q?DTi9PakXTmwzLCyDIeA+860+hppmdLcv3Db8akl6/noKAve227WgyYUxo7lV?=
- =?us-ascii?Q?C+AcSODp2PcplxdHETqC+TPfydtdsEUfdtCC3SZEuMNbAAmxpMIuLD0haBwe?=
- =?us-ascii?Q?8RPuiOJKk6X/W7EL56cfLngid+hJrAkNt9ZS0Wb6FpVk6ETC9/W4+R/o1sgz?=
- =?us-ascii?Q?altSBRgf9uqsUN7kXw5oITSq2kCWhp6w9Kmks1XG9wZF8RpO0wSeFl+ctPp1?=
- =?us-ascii?Q?+6PLBvuVFO1aC1XP168VWMEj20QmbqpxiWhmrK+B5crwsOeyvuLqnbR0g4pN?=
- =?us-ascii?Q?RRFDfLuBIM4yJ6kqGnMuH6Ssd6TAYtLCl7/ByyBYKUOpqtkrdAms2ryVCR34?=
- =?us-ascii?Q?pheRlCTEf2z8OfuGg/LieOLTK1dZSlvtqmz2sS6RdVOb0T7DfHeQExe9AeSW?=
- =?us-ascii?Q?yl+xz+Kw439xFyOFbZbEA9ru6SgDT9K1z+kZk9vkH2JHA/NPgO9YQ+ry6/4I?=
- =?us-ascii?Q?s/kT8PEk/8ehEyX7q2BfEjs65foJTM0PSvi2/ctoMR8GjarWPC56Vh7zO3It?=
- =?us-ascii?Q?Lu5SugGce0QYP/o3UavzDTTMzVfbTA5viq96qwZlwvj2ojRy5qB8M6iFhLQv?=
- =?us-ascii?Q?BGeQG9w/AJadHI3UR9h3GS7aJd/mzFQS/l1I8scl1EnD+TigMrMXc/P0RpWO?=
- =?us-ascii?Q?1cHgT1YR2ZJ8W7ls8RzrCeaGxhJFQq/gCH+1Ty8drolX7fWx3k/l6ro1XHmJ?=
- =?us-ascii?Q?pLu20/eCTBGcgiMUnh5tZ/e8RmyGe8gZtxdCAFsczM3OjWYQ9KLjf4E1+v4X?=
- =?us-ascii?Q?nZo1cdVvMMHeu6xz3+XnzeNKQIF4JvpQ/VzZMZERwkVLBO1l7dWTeDDnG5/j?=
- =?us-ascii?Q?Cr3fnaX6niIACW7CM9DbKAOSSUiOPqrOJWe+DwrvWDtc8W85+roBqOUfmGV3?=
- =?us-ascii?Q?xa1xHoG367/xA2JcvTjZiOi9CXaO3VxjiAh7EwZvbZ4rzV2ogjNdKbn0u+zf?=
- =?us-ascii?Q?nZSVmNplNoV3hUChNGBMkhMFuLbttzbPy15JZiOyteZdWuSPhaPxVCJhm5L1?=
- =?us-ascii?Q?okLvqhI8oX74n/1pLfpdAvH7tf7t+TDPToRqp6jCz5fHIYZ0OgEidevX9H7y?=
- =?us-ascii?Q?sNqrvdpHpfDWHsUMvvcXEgq5Eqi0F0vzA5XDwVaO8UKy7z4PyJrRdhjn+KCn?=
- =?us-ascii?Q?E3vkOEco7Ia4R3fbWCbg7w7AWahd9tMdVSKjh3N2Cn5JCasCWF0CmGAKg+n/?=
- =?us-ascii?Q?6VFyFOG2p9Fo3898rVph7bqxNCG/MAqv95/o8UhepqrpS0oOG27PRAIQmTlq?=
- =?us-ascii?Q?2zWJSRIqxBZYv8p51Vq1V14R6Cr+aAfpPGYsaBpPmYN1/5SEOHObr+avxbsS?=
- =?us-ascii?Q?XOtdU3iPNC7Lsy0Og3gbu427S3AJeu0q4rEzvle74g+whATrlKn4ZibkPqkJ?=
- =?us-ascii?Q?eqQclkuIxsTynGay8VMCEXc/b9L58BUc?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 11:52:13.9691
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ed6c35d-5fd0-4afc-6064-08dd145a181a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B069.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6279
 
-Add support for AMD MDB(Multimedia DMA Bridge) IP core as Root Port.
+On 02/12/24 11:06, Christian Gmeiner wrote:
+> From: Christian Gmeiner <cgmeiner@igalia.com>
+> 
+> Add a new ioctl, DRM_IOCTL_V3D_PERFMON_SET_GLOBAL, to allow
+> configuration of a global performance monitor (perfmon).
+> Use the global perfmon for all jobs to ensure consistent
+> performance tracking across submissions. This feature is
+> needed to implement a Perfetto datasources in user-space.
+> 
+> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
 
-The Versal2 devices include MDB Module. The integrated block for MDB along
-with the integrated bridge can function as PCIe Root Port controller at
-Gen5 32-Gb/s operation per lane.
+Applied to misc/kernel.git (drm-misc-next).
 
-Bridge supports error and legacy interrupts and are handled using platform
-specific interrupt line in Versal2.
+I had to make a small adjustment in the UAPI documentation, just to make
+it conformant to the kernel-doc rules. Nothing big, so I did the
+adjustment before applying it.
 
-Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
----
-changes in v2:
--------------
-- Update Gen5 speed in the patch description.
-- Modify Kconfig file.
-- Update string _leg_ to intx.
-- Get platform structure through automic variables.
-- Remove _rp_ in function.
-Changes in v3:
---------------
--None.
----
- drivers/pci/controller/dwc/Kconfig        |  10 +
- drivers/pci/controller/dwc/Makefile       |   1 +
- drivers/pci/controller/dwc/pcie-amd-mdb.c | 439 ++++++++++++++++++++++
- 3 files changed, 450 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-amd-mdb.c
+Best Regards,
+- Maíra
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index b6d6778b0698..30d0a3eadf1d 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -27,6 +27,16 @@ config PCIE_AL
- 	  required only for DT-based platforms. ACPI platforms with the
- 	  Annapurna Labs PCIe controller don't need to enable this.
- 
-+config PCIE_AMD_MDB
-+	bool "AMD PCIe controller (host mode)"
-+	depends on OF || COMPILE_TEST
-+	depends on PCI && PCI_MSI
-+	select PCIE_DW_HOST
-+	help
-+	  Say Y here to enable PCIe controller support on AMD SoCs. The
-+	  PCIe controller is based on DesignWare Hardware and uses AMD
-+	  hardware wrappers.
-+
- config PCI_MESON
- 	tristate "Amlogic Meson PCIe controller"
- 	default m if ARCH_MESON
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index a8308d9ea986..ae27eda6ec5e 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_PCIE_DW) += pcie-designware.o
- obj-$(CONFIG_PCIE_DW_HOST) += pcie-designware-host.o
- obj-$(CONFIG_PCIE_DW_EP) += pcie-designware-ep.o
- obj-$(CONFIG_PCIE_DW_PLAT) += pcie-designware-plat.o
-+obj-$(CONFIG_PCIE_AMD_MDB) += pcie-amd-mdb.o
- obj-$(CONFIG_PCIE_BT1) += pcie-bt1.o
- obj-$(CONFIG_PCI_DRA7XX) += pci-dra7xx.o
- obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
-diff --git a/drivers/pci/controller/dwc/pcie-amd-mdb.c b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-new file mode 100644
-index 000000000000..3947aad13ea0
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-@@ -0,0 +1,439 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe host controller driver for AMD MDB PCIe Bridge
-+ *
-+ * Copyright (C) 2024-2025, Advanced Micro Devices, Inc.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/gpio.h>
-+#include <linux/interrupt.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of_device.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
-+#include <linux/resource.h>
-+#include <linux/types.h>
-+
-+#include "pcie-designware.h"
-+
-+#define AMD_MDB_TLP_IR_STATUS_MISC		0x4C0
-+#define AMD_MDB_TLP_IR_MASK_MISC		0x4C4
-+#define AMD_MDB_TLP_IR_ENABLE_MISC		0x4C8
-+
-+#define AMD_MDB_PCIE_IDRN_SHIFT			16
-+
-+/* Interrupt registers definitions */
-+#define AMD_MDB_PCIE_INTR_CMPL_TIMEOUT		15
-+#define AMD_MDB_PCIE_INTR_PM_PME_RCVD		24
-+#define AMD_MDB_PCIE_INTR_PME_TO_ACK_RCVD	25
-+#define AMD_MDB_PCIE_INTR_MISC_CORRECTABLE	26
-+#define AMD_MDB_PCIE_INTR_NONFATAL		27
-+#define AMD_MDB_PCIE_INTR_FATAL			28
-+
-+#define IMR(x) BIT(AMD_MDB_PCIE_INTR_ ##x)
-+#define AMD_MDB_PCIE_IMR_ALL_MASK			\
-+	(						\
-+		IMR(CMPL_TIMEOUT)	|		\
-+		IMR(PM_PME_RCVD)	|		\
-+		IMR(PME_TO_ACK_RCVD)	|		\
-+		IMR(MISC_CORRECTABLE)	|		\
-+		IMR(NONFATAL)		|		\
-+		IMR(FATAL)				\
-+	)
-+
-+/**
-+ * struct amd_mdb_pcie - PCIe port information
-+ * @pci: DesignWare PCIe controller structure
-+ * @mdb_base: MDB System Level Control and Status Register(SLCR) Base
-+ * @intx_domain: Legacy IRQ domain pointer
-+ * @mdb_domain: MDB IRQ domain pointer
-+ */
-+struct amd_mdb_pcie {
-+	struct dw_pcie			pci;
-+	void __iomem			*mdb_base;
-+	struct irq_domain		*intx_domain;
-+	struct irq_domain		*mdb_domain;
-+};
-+
-+static const struct dw_pcie_host_ops amd_mdb_pcie_host_ops = {
-+};
-+
-+static inline u32 pcie_read(struct amd_mdb_pcie *pcie, u32 reg)
-+{
-+	return readl_relaxed(pcie->mdb_base + reg);
-+}
-+
-+static inline void pcie_write(struct amd_mdb_pcie *pcie,
-+			      u32 val, u32 reg)
-+{
-+	writel_relaxed(val, pcie->mdb_base + reg);
-+}
-+
-+static void amd_mdb_mask_intx_irq(struct irq_data *data)
-+{
-+	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(data);
-+	struct dw_pcie *pci = &pcie->pci;
-+	struct dw_pcie_rp *port = &pci->pp;
-+	unsigned long flags;
-+	u32 mask, val;
-+
-+	mask = BIT(data->hwirq + AMD_MDB_PCIE_IDRN_SHIFT);
-+	raw_spin_lock_irqsave(&port->lock, flags);
-+
-+	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-+	pcie_write(pcie, (val & (~mask)), AMD_MDB_TLP_IR_STATUS_MISC);
-+
-+	raw_spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+static void amd_mdb_unmask_intx_irq(struct irq_data *data)
-+{
-+	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(data);
-+	struct dw_pcie *pci = &pcie->pci;
-+	struct dw_pcie_rp *port = &pci->pp;
-+	unsigned long flags;
-+	u32 mask;
-+	u32 val;
-+
-+	mask = BIT(data->hwirq + AMD_MDB_PCIE_IDRN_SHIFT);
-+	raw_spin_lock_irqsave(&port->lock, flags);
-+
-+	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-+	pcie_write(pcie, (val | mask), AMD_MDB_TLP_IR_STATUS_MISC);
-+
-+	raw_spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+static struct irq_chip amd_mdb_intx_irq_chip = {
-+	.name		= "INTx",
-+	.irq_mask	= amd_mdb_mask_intx_irq,
-+	.irq_unmask	= amd_mdb_unmask_intx_irq,
-+};
-+
-+/**
-+ * amd_mdb_pcie_intx_map - Set the handler for the INTx and mark IRQ
-+ * as valid
-+ * @domain: IRQ domain
-+ * @irq: Virtual IRQ number
-+ * @hwirq: HW interrupt number
-+ *
-+ * Return: Always returns 0.
-+ */
-+static int amd_mdb_pcie_intx_map(struct irq_domain *domain,
-+				 unsigned int irq, irq_hw_number_t hwirq)
-+{
-+	irq_set_chip_and_handler(irq, &amd_mdb_intx_irq_chip,
-+				 handle_level_irq);
-+	irq_set_chip_data(irq, domain->host_data);
-+	irq_set_status_flags(irq, IRQ_LEVEL);
-+
-+	return 0;
-+}
-+
-+/* INTx IRQ Domain operations */
-+static const struct irq_domain_ops amd_intx_domain_ops = {
-+	.map = amd_mdb_pcie_intx_map,
-+};
-+
-+/**
-+ * amd_mdb_pcie_init_port - Initialize hardware
-+ * @pcie: PCIe port information
-+ * @pdev: platform device
-+ */
-+static int amd_mdb_pcie_init_port(struct amd_mdb_pcie *pcie,
-+				  struct platform_device *pdev)
-+{
-+	int val;
-+
-+	/* Disable all TLP Interrupts */
-+	pcie_write(pcie, pcie_read(pcie, AMD_MDB_TLP_IR_ENABLE_MISC) &
-+		   ~AMD_MDB_PCIE_IMR_ALL_MASK,
-+		   AMD_MDB_TLP_IR_ENABLE_MISC);
-+
-+	/* Clear pending TLP interrupts */
-+	pcie_write(pcie, pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC) &
-+		   AMD_MDB_PCIE_IMR_ALL_MASK,
-+		   AMD_MDB_TLP_IR_STATUS_MISC);
-+
-+	/* Enable all TLP Interrupts */
-+	val = pcie_read(pcie, AMD_MDB_TLP_IR_ENABLE_MISC);
-+	pcie_write(pcie, (val | AMD_MDB_PCIE_IMR_ALL_MASK),
-+		   AMD_MDB_TLP_IR_ENABLE_MISC);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t amd_mdb_pcie_event_flow(int irq, void *args)
-+{
-+	struct amd_mdb_pcie *pcie = args;
-+	unsigned long val;
-+	int i;
-+
-+	val =  pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-+	val &= ~pcie_read(pcie, AMD_MDB_TLP_IR_MASK_MISC);
-+	for_each_set_bit(i, &val, 32)
-+		generic_handle_domain_irq(pcie->mdb_domain, i);
-+	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+#define _IC(x, s)[AMD_MDB_PCIE_INTR_ ## x] = { __stringify(x), s }
-+
-+static const struct {
-+	const char	*sym;
-+	const char	*str;
-+} intr_cause[32] = {
-+	_IC(CMPL_TIMEOUT,	"completion timeout"),
-+	_IC(PM_PME_RCVD,	"PM_PME message received"),
-+	_IC(PME_TO_ACK_RCVD,	"PME_TO_ACK message received"),
-+	_IC(MISC_CORRECTABLE,	"Correctable error message"),
-+	_IC(NONFATAL,		"Non fatal error message"),
-+	_IC(FATAL,		"Fatal error message"),
-+};
-+
-+static void amd_mdb_mask_event_irq(struct irq_data *d)
-+{
-+	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(d);
-+	struct dw_pcie *pci = &pcie->pci;
-+	struct dw_pcie_rp *port = &pci->pp;
-+	u32 val;
-+
-+	raw_spin_lock(&port->lock);
-+	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-+	val &= ~BIT(d->hwirq);
-+	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
-+	raw_spin_unlock(&port->lock);
-+}
-+
-+static void amd_mdb_unmask_event_irq(struct irq_data *d)
-+{
-+	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(d);
-+	struct dw_pcie *pci = &pcie->pci;
-+	struct dw_pcie_rp *port = &pci->pp;
-+	u32 val;
-+
-+	raw_spin_lock(&port->lock);
-+	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-+	val |= BIT(d->hwirq);
-+	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
-+	raw_spin_unlock(&port->lock);
-+}
-+
-+static struct irq_chip amd_mdb_event_irq_chip = {
-+	.name		= "RC-Event",
-+	.irq_mask	= amd_mdb_mask_event_irq,
-+	.irq_unmask	= amd_mdb_unmask_event_irq,
-+};
-+
-+static int amd_mdb_pcie_event_map(struct irq_domain *domain,
-+				  unsigned int irq, irq_hw_number_t hwirq)
-+{
-+	irq_set_chip_and_handler(irq, &amd_mdb_event_irq_chip,
-+				 handle_level_irq);
-+	irq_set_chip_data(irq, domain->host_data);
-+	irq_set_status_flags(irq, IRQ_LEVEL);
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops event_domain_ops = {
-+	.map = amd_mdb_pcie_event_map,
-+};
-+
-+static void amd_mdb_pcie_free_irq_domains(struct amd_mdb_pcie *pcie)
-+{
-+	if (pcie->intx_domain) {
-+		irq_domain_remove(pcie->intx_domain);
-+		pcie->intx_domain = NULL;
-+	}
-+
-+	if (pcie->mdb_domain) {
-+		irq_domain_remove(pcie->mdb_domain);
-+		pcie->mdb_domain = NULL;
-+	}
-+}
-+
-+/**
-+ * amd_mdb_pcie_init_irq_domains - Initialize IRQ domain
-+ * @pcie: PCIe port information
-+ * @pdev: platform device
-+ * Return: '0' on success and error value on failure
-+ */
-+static int amd_mdb_pcie_init_irq_domains(struct amd_mdb_pcie *pcie,
-+					 struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = &pcie->pci;
-+	struct dw_pcie_rp *pp = &pci->pp;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct device_node *pcie_intc_node;
-+
-+	/* Setup INTx */
-+	pcie_intc_node = of_get_next_child(node, NULL);
-+	if (!pcie_intc_node) {
-+		dev_err(dev, "No PCIe Intc node found\n");
-+		return -EINVAL;
-+	}
-+
-+	pcie->mdb_domain = irq_domain_add_linear(pcie_intc_node, 32,
-+						 &event_domain_ops,
-+					       pcie);
-+	if (!pcie->mdb_domain)
-+		goto out;
-+
-+	irq_domain_update_bus_token(pcie->mdb_domain, DOMAIN_BUS_NEXUS);
-+
-+	pcie->intx_domain = irq_domain_add_linear(pcie_intc_node, PCI_NUM_INTX,
-+						  &amd_intx_domain_ops, pcie);
-+	if (!pcie->intx_domain)
-+		goto mdb_out;
-+
-+	irq_domain_update_bus_token(pcie->intx_domain, DOMAIN_BUS_WIRED);
-+
-+	of_node_put(pcie_intc_node);
-+	raw_spin_lock_init(&pp->lock);
-+
-+	return 0;
-+mdb_out:
-+	amd_mdb_pcie_free_irq_domains(pcie);
-+out:
-+	of_node_put(pcie_intc_node);
-+	dev_err(dev, "Failed to allocate IRQ domains\n");
-+
-+	return -ENOMEM;
-+}
-+
-+static irqreturn_t amd_mdb_pcie_intr_handler(int irq, void *args)
-+{
-+	struct amd_mdb_pcie *pcie = args;
-+	struct device *dev;
-+	struct irq_data *d;
-+
-+	dev = pcie->pci.dev;
-+
-+	d = irq_domain_get_irq_data(pcie->mdb_domain, irq);
-+	if (intr_cause[d->hwirq].str)
-+		dev_warn(dev, "%s\n", intr_cause[d->hwirq].str);
-+	else
-+		dev_warn(dev, "Unknown IRQ %ld\n", d->hwirq);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int amd_mdb_setup_irq(struct amd_mdb_pcie *pcie,
-+			     struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = &pcie->pci;
-+	struct dw_pcie_rp *pp = &pci->pp;
-+	struct device *dev = &pdev->dev;
-+	int i, irq, err;
-+
-+	pp->irq = platform_get_irq(pdev, 0);
-+	if (pp->irq < 0)
-+		return pp->irq;
-+
-+	for (i = 0; i < ARRAY_SIZE(intr_cause); i++) {
-+		if (!intr_cause[i].str)
-+			continue;
-+		irq = irq_create_mapping(pcie->mdb_domain, i);
-+		if (!irq) {
-+			dev_err(dev, "Failed to map mdb domain interrupt\n");
-+			return -ENXIO;
-+		}
-+		err = devm_request_irq(dev, irq, amd_mdb_pcie_intr_handler,
-+				       IRQF_SHARED | IRQF_NO_THREAD,
-+				       intr_cause[i].sym, pcie);
-+		if (err) {
-+			dev_err(dev, "Failed to request IRQ %d\n", irq);
-+			return err;
-+		}
-+	}
-+
-+	/* Plug the main event chained handler */
-+	err = devm_request_irq(dev, pp->irq, amd_mdb_pcie_event_flow,
-+			       IRQF_SHARED | IRQF_NO_THREAD, "pcie_irq", pcie);
-+	if (err) {
-+		dev_err(dev, "Failed to request event IRQ %d\n", pp->irq);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
-+				 struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = &pcie->pci;
-+	struct dw_pcie_rp *pp = &pci->pp;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	pcie->mdb_base = devm_platform_ioremap_resource_byname(pdev, "mdb_pcie_slcr");
-+	if (IS_ERR(pcie->mdb_base))
-+		return PTR_ERR(pcie->mdb_base);
-+
-+	ret = amd_mdb_pcie_init_irq_domains(pcie, pdev);
-+	if (ret)
-+		return ret;
-+
-+	amd_mdb_pcie_init_port(pcie, pdev);
-+
-+	ret = amd_mdb_setup_irq(pcie, pdev);
-+	if (ret) {
-+		dev_err(dev, "Failed to set up interrupts\n");
-+		goto out;
-+	}
-+
-+	pp->ops = &amd_mdb_pcie_host_ops;
-+
-+	ret = dw_pcie_host_init(pp);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize host\n");
-+		goto out;
-+	}
-+
-+	return 0;
-+
-+out:
-+	amd_mdb_pcie_free_irq_domains(pcie);
-+	return ret;
-+}
-+
-+static int amd_mdb_pcie_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct amd_mdb_pcie *pcie;
-+	struct dw_pcie *pci;
-+
-+	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-+	if (!pcie)
-+		return -ENOMEM;
-+
-+	pci = &pcie->pci;
-+	pci->dev = dev;
-+
-+	platform_set_drvdata(pdev, pcie);
-+
-+	return amd_mdb_add_pcie_port(pcie, pdev);
-+}
-+
-+static const struct of_device_id amd_mdb_pcie_of_match[] = {
-+	{
-+		.compatible = "amd,versal2-mdb-host",
-+	},
-+	{},
-+};
-+
-+static struct platform_driver amd_mdb_pcie_driver = {
-+	.driver = {
-+		.name	= "amd-mdb-pcie",
-+		.of_match_table = amd_mdb_pcie_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = amd_mdb_pcie_probe,
-+};
-+builtin_platform_driver(amd_mdb_pcie_driver);
--- 
-2.34.1
+> ---
+> Changes in v4:
+> - Rebased on drm-misc-next.
+> - Factored out a small change as separate patch.
+> - Fixed some grammar mistakes: s/job/jobs.
+> 
+> Changes in v3:
+> - Reworked commit message.
+> - Refined some code comments.
+> - Added missing v3d_perfmon_stop(..) call to v3d_perfmon_destroy_ioctl(..).
+> 
+> Changes in v2:
+> - Reworked commit message.
+> - Removed num_perfmon counter for tracking perfmon allocations.
+> - Allowing allocation of perfmons when the global perfmon is active.
+> - Return -EAGAIN for submissions with a per job perfmon if the global perfmon is active.
+> ---
+>   drivers/gpu/drm/v3d/v3d_drv.c     |  1 +
+>   drivers/gpu/drm/v3d/v3d_drv.h     |  8 +++++++
+>   drivers/gpu/drm/v3d/v3d_perfmon.c | 37 +++++++++++++++++++++++++++++++
+>   drivers/gpu/drm/v3d/v3d_sched.c   | 14 +++++++++---
+>   drivers/gpu/drm/v3d/v3d_submit.c  | 10 +++++++++
+>   include/uapi/drm/v3d_drm.h        | 15 +++++++++++++
+>   6 files changed, 82 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+> index fb35c5c3f1a7..8e5cacfa38d3 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.c
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
+> @@ -224,6 +224,7 @@ static const struct drm_ioctl_desc v3d_drm_ioctls[] = {
+>   	DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_VALUES, v3d_perfmon_get_values_ioctl, DRM_RENDER_ALLOW),
+>   	DRM_IOCTL_DEF_DRV(V3D_SUBMIT_CPU, v3d_submit_cpu_ioctl, DRM_RENDER_ALLOW | DRM_AUTH),
+>   	DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_COUNTER, v3d_perfmon_get_counter_ioctl, DRM_RENDER_ALLOW),
+> +	DRM_IOCTL_DEF_DRV(V3D_PERFMON_SET_GLOBAL, v3d_perfmon_set_global_ioctl, DRM_RENDER_ALLOW),
+>   };
+> 
+>   static const struct drm_driver v3d_drm_driver = {
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index de73eefff9ac..dc1cfe2e14be 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -183,6 +183,12 @@ struct v3d_dev {
+>   		u32 num_allocated;
+>   		u32 pages_allocated;
+>   	} bo_stats;
+> +
+> +	/* To support a performance analysis tool in user space, we require
+> +	 * a single, globally configured performance monitor (perfmon) for
+> +	 * all jobs.
+> +	 */
+> +	struct v3d_perfmon *global_perfmon;
+>   };
+> 
+>   static inline struct v3d_dev *
+> @@ -594,6 +600,8 @@ int v3d_perfmon_get_values_ioctl(struct drm_device *dev, void *data,
+>   				 struct drm_file *file_priv);
+>   int v3d_perfmon_get_counter_ioctl(struct drm_device *dev, void *data,
+>   				  struct drm_file *file_priv);
+> +int v3d_perfmon_set_global_ioctl(struct drm_device *dev, void *data,
+> +				 struct drm_file *file_priv);
+> 
+>   /* v3d_sysfs.c */
+>   int v3d_sysfs_init(struct device *dev);
+> diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
+> index b4c3708ea781..a1429b9684e0 100644
+> --- a/drivers/gpu/drm/v3d/v3d_perfmon.c
+> +++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
+> @@ -313,6 +313,9 @@ static int v3d_perfmon_idr_del(int id, void *elem, void *data)
+>   	if (perfmon == v3d->active_perfmon)
+>   		v3d_perfmon_stop(v3d, perfmon, false);
+> 
+> +	/* If the global perfmon is being destroyed, set it to NULL */
+> +	cmpxchg(&v3d->global_perfmon, perfmon, NULL);
+> +
+>   	v3d_perfmon_put(perfmon);
+> 
+>   	return 0;
+> @@ -398,6 +401,9 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
+>   	if (perfmon == v3d->active_perfmon)
+>   		v3d_perfmon_stop(v3d, perfmon, false);
+> 
+> +	/* If the global perfmon is being destroyed, set it to NULL */
+> +	cmpxchg(&v3d->global_perfmon, perfmon, NULL);
+> +
+>   	v3d_perfmon_put(perfmon);
+> 
+>   	return 0;
+> @@ -457,3 +463,34 @@ int v3d_perfmon_get_counter_ioctl(struct drm_device *dev, void *data,
+> 
+>   	return 0;
+>   }
+> +
+> +int v3d_perfmon_set_global_ioctl(struct drm_device *dev, void *data,
+> +				 struct drm_file *file_priv)
+> +{
+> +	struct v3d_file_priv *v3d_priv = file_priv->driver_priv;
+> +	struct drm_v3d_perfmon_set_global *req = data;
+> +	struct v3d_dev *v3d = to_v3d_dev(dev);
+> +	struct v3d_perfmon *perfmon;
+> +
+> +	if (req->flags & ~DRM_V3D_PERFMON_CLEAR_GLOBAL)
+> +		return -EINVAL;
+> +
+> +	perfmon = v3d_perfmon_find(v3d_priv, req->id);
+> +	if (!perfmon)
+> +		return -EINVAL;
+> +
+> +	/* If the request is to clear the global performance monitor */
+> +	if (req->flags & DRM_V3D_PERFMON_CLEAR_GLOBAL) {
+> +		if (!v3d->global_perfmon)
+> +			return -EINVAL;
+> +
+> +		xchg(&v3d->global_perfmon, NULL);
+> +
+> +		return 0;
+> +	}
+> +
+> +	if (cmpxchg(&v3d->global_perfmon, NULL, perfmon))
+> +		return -EBUSY;
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/gpu/drm/v3d/v3d_sched.c b/drivers/gpu/drm/v3d/v3d_sched.c
+> index 99ac4995b5a1..a6c3760da6ed 100644
+> --- a/drivers/gpu/drm/v3d/v3d_sched.c
+> +++ b/drivers/gpu/drm/v3d/v3d_sched.c
+> @@ -120,11 +120,19 @@ v3d_cpu_job_free(struct drm_sched_job *sched_job)
+>   static void
+>   v3d_switch_perfmon(struct v3d_dev *v3d, struct v3d_job *job)
+>   {
+> -	if (job->perfmon != v3d->active_perfmon)
+> +	struct v3d_perfmon *perfmon = v3d->global_perfmon;
+> +
+> +	if (!perfmon)
+> +		perfmon = job->perfmon;
+> +
+> +	if (perfmon == v3d->active_perfmon)
+> +		return;
+> +
+> +	if (perfmon != v3d->active_perfmon)
+>   		v3d_perfmon_stop(v3d, v3d->active_perfmon, true);
+> 
+> -	if (job->perfmon && v3d->active_perfmon != job->perfmon)
+> -		v3d_perfmon_start(v3d, job->perfmon);
+> +	if (perfmon && v3d->active_perfmon != perfmon)
+> +		v3d_perfmon_start(v3d, perfmon);
+>   }
+> 
+>   static void
+> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
+> index d607aa9c4ec2..9e439c9f0a93 100644
+> --- a/drivers/gpu/drm/v3d/v3d_submit.c
+> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
+> @@ -981,6 +981,11 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+>   		goto fail;
+> 
+>   	if (args->perfmon_id) {
+> +		if (v3d->global_perfmon) {
+> +			ret = -EAGAIN;
+> +			goto fail_perfmon;
+> +		}
+> +
+>   		render->base.perfmon = v3d_perfmon_find(v3d_priv,
+>   							args->perfmon_id);
+> 
+> @@ -1196,6 +1201,11 @@ v3d_submit_csd_ioctl(struct drm_device *dev, void *data,
+>   		goto fail;
+> 
+>   	if (args->perfmon_id) {
+> +		if (v3d->global_perfmon) {
+> +			ret = -EAGAIN;
+> +			goto fail_perfmon;
+> +		}
+> +
+>   		job->base.perfmon = v3d_perfmon_find(v3d_priv,
+>   						     args->perfmon_id);
+>   		if (!job->base.perfmon) {
+> diff --git a/include/uapi/drm/v3d_drm.h b/include/uapi/drm/v3d_drm.h
+> index 2376c73abca1..97b1faf04fc4 100644
+> --- a/include/uapi/drm/v3d_drm.h
+> +++ b/include/uapi/drm/v3d_drm.h
+> @@ -43,6 +43,7 @@ extern "C" {
+>   #define DRM_V3D_PERFMON_GET_VALUES                0x0a
+>   #define DRM_V3D_SUBMIT_CPU                        0x0b
+>   #define DRM_V3D_PERFMON_GET_COUNTER               0x0c
+> +#define DRM_V3D_PERFMON_SET_GLOBAL                0x0d
+> 
+>   #define DRM_IOCTL_V3D_SUBMIT_CL           DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_SUBMIT_CL, struct drm_v3d_submit_cl)
+>   #define DRM_IOCTL_V3D_WAIT_BO             DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_WAIT_BO, struct drm_v3d_wait_bo)
+> @@ -61,6 +62,8 @@ extern "C" {
+>   #define DRM_IOCTL_V3D_SUBMIT_CPU          DRM_IOW(DRM_COMMAND_BASE + DRM_V3D_SUBMIT_CPU, struct drm_v3d_submit_cpu)
+>   #define DRM_IOCTL_V3D_PERFMON_GET_COUNTER DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_PERFMON_GET_COUNTER, \
+>   						   struct drm_v3d_perfmon_get_counter)
+> +#define DRM_IOCTL_V3D_PERFMON_SET_GLOBAL  DRM_IOW(DRM_COMMAND_BASE + DRM_V3D_PERFMON_SET_GLOBAL, \
+> +						   struct drm_v3d_perfmon_set_global)
+> 
+>   #define DRM_V3D_SUBMIT_CL_FLUSH_CACHE             0x01
+>   #define DRM_V3D_SUBMIT_EXTENSION		  0x02
+> @@ -766,6 +769,18 @@ struct drm_v3d_perfmon_get_counter {
+>   	__u8 reserved[7];
+>   };
+> 
+> +#define DRM_V3D_PERFMON_CLEAR_GLOBAL    0x0001
+> +
+> +/**
+> + * struct drm_v3d_perfmon_set_global - ioctl to define a global performance
+> + * monitor that is used for all jobs. If a global performance monitor is
+> + * defined, jobs with a self-defined performance monitor are not allowed.
+> + */
+> +struct drm_v3d_perfmon_set_global {
+> +	__u32 flags;
+> +	__u32 id;
+> +};
+> +
+>   #if defined(__cplusplus)
+>   }
+>   #endif
+> --
+> 2.47.1
+> 
 
 
