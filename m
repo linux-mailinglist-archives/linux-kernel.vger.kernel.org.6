@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-430775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661359E356E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:31:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718429E3573
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:32:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3432C168004
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C4C28165D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E2A194C92;
-	Wed,  4 Dec 2024 08:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221F7194A43;
+	Wed,  4 Dec 2024 08:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="SDAJlXbc"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MQHNxcjU"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B2E192D70
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB6D18DF64
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733301103; cv=none; b=b5GvNY3M+RrGkVGjZfxJqHG4Ms14Fn/gwQUZni8/4IBWon7OnfpXi9wuwXiU6JQsGs3bOLF5Ay0t1CcU0AAOIN4UM/qJWKUFu4ZwQzWmHBjcEyOer0fDw7ftKdH0YUvXLaw76WwmR9fs+3W17lhKoNhruNXmya4R3YPX5FyVaFQ=
+	t=1733301146; cv=none; b=UDMITeWtrAUF+YpjALqrtU3WEFITBc5Ji8a2riVQXnEasJKlPYW99LH1tPWD/rKpq2ALxeCBa12Bh4Qck82DelxUAigNO3YmVImPAJSHi0BJ5H9HqSWnVwjPhWawyeR/l2rKdDmuMGf9Wtme8CH+bS5uRg/p4Rm3u0/fQEVA368=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733301103; c=relaxed/simple;
-	bh=xabGMu3fdt5kFURE8R2vOsZrTXZ3kgYgaYfP0f8Lock=;
+	s=arc-20240116; t=1733301146; c=relaxed/simple;
+	bh=zbB+QFCztPKtbAPO66u/b7Q6li5azbG20sPo396qa0c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uHjEl8lAA6zQvYPyoJly80mCETKC3Kz4NM5oTkOk4p80vPHaOBk2GQIMBBPgVcKbg8QeylmYBLWItDPDD8AUlSeT10LwEYkFdro/r/m4gQ8aviZai9CsQlQJoCPCrraS4KvWa8IyRWgmK3oQLoAf3sXyi6/atMR+naGxSgmyiQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=SDAJlXbc; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434aafd68e9so53465425e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 00:31:40 -0800 (PST)
+	 In-Reply-To:Content-Type; b=Cu/bXh83GjKKXnKfo612sNFxOKJwHc3udQfGda+EMZbhiQYw2LkTHiTqVNHg0Lyo8nEv1MIrXk2+UIfnAO+b8ImdbEgeVDizoQNnRM/fPwkZLDFtY0FbTUEitb5wD2ZeHQDbqDcTaU/jDsfyc7lJw8rcK5YRyGlAW95cAHNhcDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MQHNxcjU; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215513ea198so4814025ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 00:32:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733301099; x=1733905899; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1733301143; x=1733905943; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GuEPwyIkCadZaJxdWvgGbzvWeURHvA2orRW9IhLBR4k=;
-        b=SDAJlXbc+dFNvAZtCEL9z4dO7tpL1NCIZbOIMTllgcn+Hwx9qKKFR3MICdDaB7bOwf
-         pO/4C10NFE7PdQillzmvinuobHqVhIoVjmqfwPD2lsIW9GHKmEb12ZUCaejQDVk1c8tL
-         93ilif2dimOKq5EgwBXMsGHqCZjPdYJGLC91roJR//vrsZX7LtJ7bAkXSusmh4i4QI4Q
-         C4jQ2sjcNvYMsAntI4UN16oJaVBGP00bTrS8SUcstQvlhgeb3EuU/gMbhYSS0Rf3ZKxn
-         MWo9tCtk0N6mFFMsteUj/0NdjyPfWB8FmHwF+bIlqSTQ57CuUy1o0Kj8j/8geIMbdCiM
-         bf7Q==
+        bh=bnMW2t5LKUBnNbekkAf4LMt1K0EpQnTIYhACyHeiDCM=;
+        b=MQHNxcjUcvcZf1hlA4AYvCZaLIuFky9vHwf5GB5JqJLbgdlYpmNGDfDzmqxGChUQJ5
+         QF8t+tviUyF7k9B/BdOgByEMrYIcJ7mZsoTm/WqxPbPb9EF2oF4NFa7pCMYK8ScwOkGB
+         HWIKsdRkJOxKDcKkPddKfdmNheM1OC6wOSxyFNuW3gVThAzh2fmtdtbovgGSeDMuzHIV
+         WA+lxQuX+n8YLZc279Vtst/cW2Wq5FmgQuPVPBnPkbPf5fAh0bEP9EBazVeL5VPg8GtZ
+         7UHJOyl4Qju6TX7+K7fbaW/zzfL7H8LNZNEuXj4ckm9oeIW2SZD9D9d6Bc/KsqzKqj9T
+         SMdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733301099; x=1733905899;
+        d=1e100.net; s=20230601; t=1733301143; x=1733905943;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GuEPwyIkCadZaJxdWvgGbzvWeURHvA2orRW9IhLBR4k=;
-        b=I1kUDK5XYeE77KiroUEEm/UiPi9tiOiPZ6bTom9hremYaqRbynhnqZSn9y3iil+PDE
-         ZFtKQrjO9xDRKYEThNrjzdI8hghjWYW5DrNxxS4pLifgMZATSd0mWVON/wxWpX1aPxDc
-         6tUBIB5DkAlTENhTX44RsmrFTJH41wtMXnjhuk5M7tIrLIm1nHomh7OYZXg4r80rF4+Y
-         CelWm3jIRaKYbcg+RxFRY+mgL6yY1+Y8H5FTStxDS8h+/1Xv2CLsWvGdLs7vGXAV5iDx
-         T/n5lZLzigzUxmGM4bEBy7lYgPi1VFntenYwnDkF2ZRd2wVHK9gs4tqTMy+JYFQVH0bQ
-         YLuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTm2afO63rXvzVuh/p+P+QtWKtkVN3LBvit3N7LcUL6lqosbV8pyuDzl5wCQbHgLyd3Crtk9WvfKbqQWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxRUM6HcZaLN7vrPv5GuEnvHjn1Oqb9dq9AmzXy/c3fcH2rFaR
-	1dOt+nr3kj4qP0qIapDFipR1RfksUNbm7ns2uwNh+OMyrbiDqp85p01jXqI1ERqbAfUGWmYxIjW
-	d
-X-Gm-Gg: ASbGncseIuAWSIvzQ+pbL9MUK0gs6OoxPpGKTPQ8/B3Azdzj3r41M79WV4YD2kzAos0
-	LL/h1UpHsdZUdYrCwug3EjNa197RCAGzbk68kOF3PhLAfGThNs1aIMUL3cwi7c65Dj2LYQRtZs1
-	xzZG2cAf1mDQBR0k26SkNnkYYBSZX+hJF5gq+nFJUYsJfh9LEjmNYbpRu3YGY0lSilTFpqYhyNU
-	p04E6kRt59Y9HVtNn940EmF9fHbvdAiesnXNjKKXV3LSWd3qJerQIVBu1g=
-X-Google-Smtp-Source: AGHT+IHQNqpt+GIB9xF7p8MXDoapzcemzg5VBTJ4EDGzEYyaHfuVToI8Mqv94RLzyinN5pW25vh12w==
-X-Received: by 2002:a05:600c:5117:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-434d0a1d63dmr53758325e9.30.1733301098852;
-        Wed, 04 Dec 2024 00:31:38 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52723b6sm16489015e9.6.2024.12.04.00.31.37
+        bh=bnMW2t5LKUBnNbekkAf4LMt1K0EpQnTIYhACyHeiDCM=;
+        b=ueE1gnVy7tvuXh3F5UNvVqcCl4s1h5G/IaTVSeGf0W4/GN3eyQdNPVeIXGXunajD4D
+         o9r9fLNPpPy9cdyKmbG5TelotoQ0ZBB3fd2SOMkpWAtVTJsAcm+demGStED+DJlxCE9I
+         XTWvl2hu5YVBLDJiDcuLmqIiI7P75O7LL7QlQ4wkjBoGptxWJ4MSYXP76Rl+YL5UPDkb
+         LZmNUx7pKh6XPpGDYGduHSzaBZfxhUKLACgpSvP1dkZEfl/I0UTZZ6UlEylYsn5ponvh
+         OHI9++aVshek+fT4JvONn2Z+X6hOE6QnonELuyEWi+HKg2sTdQIv3kX94Addersa5dGA
+         BibQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwbP69wqScNdyu3ag4MvHp9b+PK9bM0EJvVFQkPdtuQR1ggf/FiyzjVS80TF0r0l9PSxMl9LxzjWrZRII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrYQdp1mAZSE2v80bIaO9YZotjbwmilIXBWHwad5fnzIYoFLbA
+	Sr2EhGBn7UbPNy96BkciiTJ2p734oUKprnrRcrS4BUsl67JMfG9XQo5b8Bb5KB0=
+X-Gm-Gg: ASbGncvBolvPUcaQyt915TRem3U70WJF/WXdE9UZEdJ4JuGn2k3kFc1cw65KbnumWFK
+	XVIDDuqmWBeL8xcLEppV4TZJGFzSNtnvKPeoDTcYsx4gkTiFgncboXEUGAZ9MV+c/UgjAuWLzQg
+	xFnsBPvv/MBsbufHJXje2EdF/1Jt22QpTcBHWL/YhAZRELuHGmKNweUUrvMMUxF0phpKmYFuEPT
+	0ei2ilNMeC7HbxD4fz2axgYAtJTYdZNsTidSIEG1oaZadnrDf6TI0Qojs3JD1M=
+X-Google-Smtp-Source: AGHT+IHOFXcLhAtgSKDz+uz5SjVYmgxi/mOoWfkRQ9WH7HYuhwNGn8YTjGrK+dNdYXbF9hcNvFh6FA==
+X-Received: by 2002:a17:902:ccc5:b0:215:9d48:46f9 with SMTP id d9443c01a7336-2159d484a42mr160179695ad.21.1733301142748;
+        Wed, 04 Dec 2024 00:32:22 -0800 (PST)
+Received: from [10.255.194.25] ([139.177.225.238])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7259114e1b3sm675874b3a.25.2024.12.04.00.32.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 00:31:38 -0800 (PST)
-Message-ID: <e05191b0-eb3b-472f-bd8f-9d9a28100d0a@tuxon.dev>
-Date: Wed, 4 Dec 2024 10:31:36 +0200
+        Wed, 04 Dec 2024 00:32:22 -0800 (PST)
+Message-ID: <4d6adb42-81cf-4a8b-a8c5-4b322564430c@bytedance.com>
+Date: Wed, 4 Dec 2024 16:32:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,101 +79,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/14] iio: adc: rzg2l_adc: Enable runtime PM autosuspend
- support
+Subject: Re: [External] Re: [RFC 03/12] perf event action: Add parsing const
+ integer expr support
 Content-Language: en-US
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
- <20241203111314.2420473-8-claudiu.beznea.uj@bp.renesas.com>
- <20241203200046.0dfb784a@jic23-huawei>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20241203200046.0dfb784a@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ james.clark@arm.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241128133553.823722-1-yangjihong@bytedance.com>
+ <20241128133553.823722-4-yangjihong@bytedance.com> <Z0jRvSlEZveQFVh7@x1>
+From: Yang Jihong <yangjihong@bytedance.com>
+In-Reply-To: <Z0jRvSlEZveQFVh7@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, Jonathan,
+Hello,
 
-On 03.12.2024 22:00, Jonathan Cameron wrote:
-> On Tue,  3 Dec 2024 13:13:07 +0200
-> Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> 
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 11/29/24 04:25, Arnaldo Carvalho de Melo wrote:
+> On Thu, Nov 28, 2024 at 09:35:44PM +0800, Yang Jihong wrote:
+>> Support parsing of constant integer expression.
 >>
->> Enable runtime PM autosuspend support for the rzg2l_adc driver. With this
->> change, consecutive conversion requests will no longer cause the device to
->> be runtime-enabled/disabled after each request. Instead, the device will
->> transition based on the delay configured by the user.
->>
->> This approach reduces the frequency of hardware register access during
->> runtime PM suspend/resume cycles, thereby saving CPU cycles. The default
->> autosuspend delay is set to zero to maintain the previous driver behavior.
-> 
-> Unless you have a weird user who is polling slow enough to not trigger
-> autosuspend with a non zero period, but is still saving power I'm not convinced
-> anyone will notice if you just enable this for a sensible autosuspend delay.
-> There will of course be a small increase in power usage for each read but
-> hopefully that is trivial.
-> 
-> So I'd not go with a default of 0, though what value makes sense depends
-> on the likely usecase + how much power is saved by going to sleep.
-> 
-> If you really want to keep 0 I don't mind that much, just seems odd!
-
-I agree with you. I chose it like this as I got internal request (on other
-drivers enabling autosuspend support) to keep the previous behavior in place.
-
-Thank you for your review,
-Claudiu
-
-> 
-> Jonathan
-> 
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
 >> ---
->>  drivers/iio/adc/rzg2l_adc.c | 9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>   tools/perf/util/parse-action.c | 52 ++++++++++++++++++++++++++++++++++
+>>   tools/perf/util/parse-action.h |  1 +
+>>   tools/perf/util/parse-action.l | 19 +++++++++++++
+>>   tools/perf/util/parse-action.y | 13 ++++++++-
+>>   4 files changed, 84 insertions(+), 1 deletion(-)
 >>
->> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
->> index eed2944bd98d..fda8b42ded81 100644
->> --- a/drivers/iio/adc/rzg2l_adc.c
->> +++ b/drivers/iio/adc/rzg2l_adc.c
->> @@ -207,7 +207,8 @@ static int rzg2l_adc_conversion(struct iio_dev *indio_dev, struct rzg2l_adc *adc
->>  	rzg2l_adc_start_stop(adc, false);
->>  
->>  rpm_put:
->> -	pm_runtime_put_sync(dev);
->> +	pm_runtime_mark_last_busy(dev);
->> +	pm_runtime_put_autosuspend(dev);
->>  	return ret;
->>  }
->>  
->> @@ -372,7 +373,8 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
->>  	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
->>  
->>  exit_hw_init:
->> -	pm_runtime_put_sync(dev);
->> +	pm_runtime_mark_last_busy(dev);
->> +	pm_runtime_put_autosuspend(dev);
->>  	return ret;
->>  }
->>  
->> @@ -412,6 +414,9 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
->>  		return PTR_ERR(adc->presetn);
->>  	}
->>  
->> +	/* Default 0 for power saving. Can be overridden via sysfs. */
->> +	pm_runtime_set_autosuspend_delay(dev, 0);
->> +	pm_runtime_use_autosuspend(dev);
->>  	ret = devm_pm_runtime_enable(dev);
->>  	if (ret)
->>  		return ret;
+>> diff --git a/tools/perf/util/parse-action.c b/tools/perf/util/parse-action.c
+>> index 391546bf3d73..3b10cf9f99b3 100644
+>> --- a/tools/perf/util/parse-action.c
+>> +++ b/tools/perf/util/parse-action.c
+>> @@ -7,6 +7,7 @@
+>>    *
+>>    * Supported expressions:
+>>    *   - constant:
+>> + *     - integer
 > 
+> And now there are alignment differences and no : ?
+This indicates that integer expression is a subclass of constant 
+expression, so integer is indented inside constant.
+> 
+>>    */
+>>   
+>>   #include "util/debug.h"
+>> @@ -118,7 +119,58 @@ void event_actions__free(void)
+>>   	(void)event_actions__for_each_expr_safe(do_action_free, NULL, false);
+>>   }
+>>   
+>> +static int expr_const_int_new(struct evtact_expr *expr, void *data, int size)
+>> +{
+>> +	if (data == NULL ||
+>> +	    (size != sizeof(int)
+>> +	     && size != sizeof(long) && size != sizeof(long long))) {
+> 
+> && should be at the end of the previous line, just like you did with the
+> || at the end of the first line
+Okay, will fix in next version.
+
+Thanks,
+Yang
 
