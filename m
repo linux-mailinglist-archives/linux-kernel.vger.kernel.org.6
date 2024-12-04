@@ -1,164 +1,176 @@
-Return-Path: <linux-kernel+bounces-430378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967049E3031
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:56:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7EF9E3034
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F704B2842A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8CA7281768
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6149920C010;
-	Tue,  3 Dec 2024 23:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC3A1B392D;
+	Wed,  4 Dec 2024 00:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAJ2wTuX"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K2MZ+iJn"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAC720B7ED;
-	Tue,  3 Dec 2024 23:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C561B0F33
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733270154; cv=none; b=Se1hzcw3ddZ9+ZclNjp0Mv+heizMNIm22/KBGCn+MI8sr4uCJ4+h7vMEuP3rqZBVJC+F66lWY1K7DypSMRhIE8Fwr4nNF056YoSNXt6ZgVYFlaIBvsaaKZBQmTptAvvbYYB8UV52xWVBgXAsgpbA3TaUGbyB9uyWGAox66GV1uw=
+	t=1733270414; cv=none; b=ofsxu4hONB67siu7Yeizhd+eoYDIGftL25JlEf6h3BDvviI13sgJtW6udg5EDZjFvbM6HDnQo+PfYjUejVD4cIs95EK4XkcABAlduxC7jLy/V9IHqpoLU60m1lUZl4pqn76yG9BUXI078o0PM8Zsb4OI1xqNL3q2nj4kg68m7uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733270154; c=relaxed/simple;
-	bh=ZJy+O9wAN5psXY5U1XwM4rfLbaZm+Ldb/OiSmxBOm5Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l1hwkLX5nPF8GjdXxf1yR6KowcWJIOIsJPzq3rzS21EQKPuFNWuhNIb/i81kHXJDYYu7yb7HRl4M6iX4uQEluWtUA3uUvyA0kALWQTLgCg5vHnDY3VP/CTVgI1PisWqfPYjdNAOqUWgbFCIR3GTmsWdIkNjf2RikPAk+98F9KV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAJ2wTuX; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a8640763so51453245e9.1;
-        Tue, 03 Dec 2024 15:55:52 -0800 (PST)
+	s=arc-20240116; t=1733270414; c=relaxed/simple;
+	bh=4C3zy/3Xtoq5FHcNAlmFgia243qYTIlXnb/820E1Fi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AlQkHS7QE8qa4T6rp03UTRXFTmZXRQSjW+8KgBMV3kRJRBQX6VMCrhPXPpzJAUSz1HLfC8wEDYz0K/O84F8x9oaIfezVih+B89Jnv/WGvVCP20Nci+CAH4w6RLsNIJPZAUfLt44AlNTGJ3h5WpG5raBtVmO8/6MgWrICeiqVzjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K2MZ+iJn; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a77980fe3aso1431565ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 16:00:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733270151; x=1733874951; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M4mvtSDDIU4b4TfX3DZsirgFj9Aga5ZvWdRIoTLMLpA=;
-        b=MAJ2wTuX9Bw4ZCUOT08S9CfjFvI7jy0y6TORDj/JeCosfZdzeYPhC1n4a1JN+W9rhg
-         GejE7D4/408c62DaBopqEjOnLy2C5F04RH8b+0zL3v1nUB+Zpa8RtzG7W0vlfM4UgTCs
-         C+x/6X23rB2RH1wLkxlK1QC1CJlkC5AScpodb7/v5/5B0JaDk9n92eoNh8RInbBP+ynF
-         5M8RdB3wkQVgev2kF5RIxU0kJHW6s2ZgyA8PKCbdp5/+d5ndiD1sRCU2//RVfDYP2wyW
-         0+4dfyLN6UNLFN+nluL+mbjEyc65ImSJx4WF3c9GWjFabV8gls5Ak/H+Uc323XgnYH7H
-         mggg==
+        d=linuxfoundation.org; s=google; t=1733270412; x=1733875212; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mc1ZGS9lQ0b/EeRQlcxev0IXuC4T041+iJYm/1vazoI=;
+        b=K2MZ+iJndRFX05a5zRFim9M4zrplqvZS2TK1lgpy05mEXtMav+hZrnkK5osr2kRlhi
+         K2yiP0whlO/JzKBbQplaVBBrbMJ/XpAXvjkl0dtdiA5qIjmEp8ItZFXkOtM+C0YYj+HM
+         2Oq5soZm5SJYzPJ9joz7D5req07bNT1Y2+krM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733270151; x=1733874951;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M4mvtSDDIU4b4TfX3DZsirgFj9Aga5ZvWdRIoTLMLpA=;
-        b=osAw37iFHhHEDuGNMxek5cUnX8n0MrJwXtmsQ7UcspNw9HAPlZ0JzzznbJGHVtKQm9
-         UFargjDq5gn41Qjj4c5sxpfrfjDj/UZZIbADXEdEwb/3PQAloT8aimhCZK0rjIZiIUhd
-         wVrGpkWKnZhVV8eZJuvBDx3z+QkuZhq0KlHAXBjiiYCuztpjcn4xRRGMvYixkOeKjOqM
-         vtGMvXyNI9kOg0U4ZV4nyqvt+lZGirGFvRO6KTFETqyrOiOGC5t8U54qrq9RT9giJ8s2
-         mMeq5SkRPNieangNV4NeAc74M7RT7H92kUgb9xuAgnfILCOL+wt6T8tljAaOX7mN0LgZ
-         eg9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUgjnjC7EGTO8CNP6cPANtfEwxCZAq/6DNCpRzHMhSlx4lLiF+s1p/m7ljUtAmAPp3zwQVMZWVMG/QEACSg@vger.kernel.org, AJvYcCVwulWuslu1zfu3GjZTcP0Kud+i7koQ4NeUwCZvatPWX+hfaPywDv0Gvs+Qr2OpgyMMJmtU3DtH@vger.kernel.org, AJvYcCW8nbOTU9PQ0Sok+jLlyI1re/mEYdCiPZZnZZMMBhn0df69laja5xkpZISyn4s1tQ/3XxHUO2fVuxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzorrX5pPzu75ERvbwP/mrKs3cBIOpXG6RZ2oC1f6SCp6byTpOA
-	01FHAP+65yJed+hmLzjazpyhOWMIPW0VRHczuq22/RWfW8ZOy3oi
-X-Gm-Gg: ASbGncuCtfbQhUzUTkynjOu1HPrIAiYP7t2TAFzBux7Jwe3XboVNG9ABHKzoplmIjZ2
-	FiWFjMXKjfqCIyzjms79ZuMcwTx0qRf6tSU6hltBY8nEHVKwvLKEliEgZnyU0RLwH8IVhBkYES0
-	oBcqNgbsM4Rpa/u0lH6TUyUBX1cd97W9iGI1kMxbwet2MVGbnnrEfjPtQeAL4sBoPgmNgbd8C7n
-	oOIWvlrDtBEOoqqECbQY0Mcnf+xMVUBubJWjXM+I4LKkebfdGxMT4fh77HibYYI4vDGdqTMUP27
-	x/ndrcmcJZfOrNRY8mKiH9AT+AgkybggMXNCHZpu7Ei9zVQUGox5KSCFM5PFjgbIeMzlKIBP
-X-Google-Smtp-Source: AGHT+IH1PEiLlez5u7cIOYP8lz3vPaYwfOqcP2PsVBS+elkdoDcUfrfRJh98/H8DHZijEK/fHVThVA==
-X-Received: by 2002:a05:600c:19c8:b0:431:5d89:646e with SMTP id 5b1f17b1804b1-434d2268fb8mr28531065e9.32.1733270151033;
-        Tue, 03 Dec 2024 15:55:51 -0800 (PST)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-5e3a-77ab-7b2b-a993.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:5e3a:77ab:7b2b:a993])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527e287sm3871025e9.12.2024.12.03.15.55.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 15:55:50 -0800 (PST)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 04 Dec 2024 00:55:32 +0100
-Subject: [PATCH v2 2/2] iio: light: as73211: fix channel handling in
- only-color triggered buffer
+        d=1e100.net; s=20230601; t=1733270412; x=1733875212;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mc1ZGS9lQ0b/EeRQlcxev0IXuC4T041+iJYm/1vazoI=;
+        b=qu7q3W4oP87wbbGizH11nZtBV7y6yoetGnkeKDL2aNOO8VOVhE5j2/wwtpoSMhqgOG
+         uCOtyyk8t7TpC/+kdlXoceMG8yBy0VI2+iy9IX2kVTUJNmSGZKuNRUzZGIUnIuhQl74o
+         rXbEmu272bZWkBtB5ion7KDGr5Rd2w2RMoUdWam2voxpVsU3d7d3M/z5ePZ4E6stdoe5
+         pAtydBAiBqZv/IQnHi1BZEymESPBaJT3/8JuJTezREWTxTeS+NtwqsgpqKBgyDoa2G1T
+         5FBWEde1I4mXdHUyKLdW3VQtBoxLGwRWa501GKzQap1DeR8O/eSKh4KGHF/e32+WkpgX
+         ldyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVb4Xo42qKbutKc+VBMR2/Hyg4mrjycgDaK28HSxgiaJXRKO3PqcLCH7AeiKwRCXkqJ7MkRieUHdJl3POs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU1jMwDv4xB7AByuDfqVgZoM/uBQTHxlovfWjGsI5YKbALYL1P
+	XXhax8ICwA6tKNw+/CR7ZnF21G84LGkzjL+gqxC5a5Tps5JIDp3nupt30Yemy2I=
+X-Gm-Gg: ASbGncvaxTDBB9TVwxp3SXAHYAqOnaSoDO6BBsoOLsbtnXacvc7IxXmKrtBuqZOOqfB
+	wTZQjtunsWu6Z2KyWTeRNg/fz4NP+BMv5NIEC/Eaiwm9J8bWatFGUeHJ+JQqXqrkfQjR3D6ox29
+	EEz4qz2/tdKV6vVWx+kOjDYd6NpIOy8tumhqTPfokMm1bb9RnUAyEG49xnSPxyEBWqLTB2E2y23
+	KSXAQQCPNtk5dd5JU7WVkEdFzA4KQFJMps0yYpoDGQTBNs6IPB+9YKeWZsY0g==
+X-Google-Smtp-Source: AGHT+IEgl8XCJT5Pb5WmR2bg9AoPfQLC2H0rmjg7RtKpc6R4ckuWbh6gosnC/HaecwtdaxRcwGAf2A==
+X-Received: by 2002:a05:6e02:1c24:b0:3a7:ccb2:e438 with SMTP id e9e14a558f8ab-3a7f9d82b53mr35356965ab.11.1733270411617;
+        Tue, 03 Dec 2024 16:00:11 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a7dd1c55d8sm23394655ab.64.2024.12.03.16.00.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 16:00:11 -0800 (PST)
+Message-ID: <e8e6824c-61d4-48f9-8547-628bbbd3063a@linuxfoundation.org>
+Date: Tue, 3 Dec 2024 17:00:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-iio_memset_scan_holes-v2-2-3f941592a76d@gmail.com>
-References: <20241204-iio_memset_scan_holes-v2-0-3f941592a76d@gmail.com>
-In-Reply-To: <20241204-iio_memset_scan_holes-v2-0-3f941592a76d@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Antoni Pokusinski <apokusinski01@gmail.com>, 
- Francesco Dolcini <francesco@dolcini.it>, 
- =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
- Christian Eggers <ceggers@arri.de>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
- Francesco Dolcini <francesco.dolcini@toradex.com>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733270145; l=1997;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=ZJy+O9wAN5psXY5U1XwM4rfLbaZm+Ldb/OiSmxBOm5Q=;
- b=uFVC5j35izd0O5MfAM25DtBA7BXdzdXbkXuLcJnrugXPOUgrTNuZVmd3u6QAMlKiLCbJqnyWp
- mqIZfQ9qRSXB3rqy22JPT8RcpKTKvrJb6G7lAlO45SboLHuuJLxea9G
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: lsm: Refactor
+ `flags_overset_lsm_set_self_attr` test
+To: Paul Moore <paul@paul-moore.com>
+Cc: Amit Vadhavana <av2082000@gmail.com>, jmorris@namei.org,
+ serge@hallyn.com, casey@schaufler-ca.com, shuah@kernel.org,
+ ricardo@marliere.net, linux-kernel-mentees@lists.linux.dev,
+ linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241112182810.24761-1-av2082000@gmail.com>
+ <52cc8e51-9e85-465b-8ee3-63a7a0a42951@linuxfoundation.org>
+ <CAHC9VhTJERn54qNDDOwNrJ09VWrmq5Qn+sPQV__LyeEUgSi5pw@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CAHC9VhTJERn54qNDDOwNrJ09VWrmq5Qn+sPQV__LyeEUgSi5pw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The channel index is off by one unit if AS73211_SCAN_MASK_ALL is not
-set (optimized path for color channel readings), and it must be shifted
-instead of leaving an empty channel for the temperature when it is off.
+On 11/26/24 20:38, Paul Moore wrote:
+> On Thu, Nov 14, 2024 at 11:25 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>> On 11/12/24 11:28, Amit Vadhavana wrote:
+>>> - Remove unnecessary `tctx` variable, use `ctx` directly.
+>>> - Simplified code with no functional changes.
+>>>
+>>
+>> I would rephrase the short to simply say Remove unused variable,
+>> as refactor implies more extensive changes than what this patch
+>> is actually doing.
+>>
+>> Please write complete sentences instead of bullet points in the
+>> change log.
+>>
+>> How did you find this problem? Do include the details on how
+>> in the change log.
+>>
+>>> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
+>>> ---
+>>>    tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 7 +++----
+>>>    1 file changed, 3 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+>>> index 66dec47e3ca3..732e89fe99c0 100644
+>>> --- a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+>>> +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+>>> @@ -56,16 +56,15 @@ TEST(flags_zero_lsm_set_self_attr)
+>>>    TEST(flags_overset_lsm_set_self_attr)
+>>>    {
+>>>        const long page_size = sysconf(_SC_PAGESIZE);
+>>> -     char *ctx = calloc(page_size, 1);
+>>> +     struct lsm_ctx *ctx = calloc(page_size, 1);
+>>
+>> Why not name this tctx and avoid changes to the ASSERT_EQs
+>> below?
+>>
+>>>        __u32 size = page_size;
+>>> -     struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
+>>>
+>>>        ASSERT_NE(NULL, ctx);
+>>>        if (attr_lsm_count()) {
+>>> -             ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, tctx, &size,
+>>> +             ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size,
+>>>                                               0));
+>>>        }
+>>> -     ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, tctx,
+>>> +     ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, ctx,
+>>>                                        size, 0));
+>>>
+>>>        free(ctx);
+>>
+>> You have to change this tctx for sure.
+>>
+>> With these changes:
+>>
+>> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+>>
+>> Paul, James,
+>>
+>> Please do let me know if you would me to take this through
+>> kselftest tree.
+> 
+> Amit has already posted a v2 with the requested changes, but I wanted
+> to get back to you on this even if this patch is outdated ... Shuah,
+> what is your preference for things like this?  My general policy is
+> that patches only affecting one subsystem tree should be taken by the
+> associated subsystem to minimize merge headaches and other ugliness,
+> however, the kselftest is an interesting subsystem in that it relies
+> so heavily on others that I'm not sure my policy makes as much sense
+> here :)
+> 
 
-Once the channel index is fixed, the uninitialized channel must be set
-to zero to avoid pushing uninitialized data.
+kselftest patches usually go through subsystem trees because of the
+merge problems you mentioned. I take them through kselftest tree
+if subsystem maintainers want me to. Some do and I pick them up.
 
-Cc: stable@vger.kernel.org
-Fixes: 403e5586b52e ("iio: light: as73211: New driver")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/iio/light/as73211.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+I pick up patches if I don't see response from subsystem maintainers.
 
-diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
-index be0068081ebb..2d45dfeda406 100644
---- a/drivers/iio/light/as73211.c
-+++ b/drivers/iio/light/as73211.c
-@@ -672,9 +672,12 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
- 
- 		/* AS73211 starts reading at address 2 */
- 		ret = i2c_master_recv(data->client,
--				(char *)&scan.chan[1], 3 * sizeof(scan.chan[1]));
-+				(char *)&scan.chan[0], 3 * sizeof(scan.chan[0]));
- 		if (ret < 0)
- 			goto done;
-+
-+		/* Avoid pushing uninitialized data */
-+		scan.chan[3] = 0;
- 	}
- 
- 	if (data_result) {
-@@ -682,9 +685,15 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
- 		 * Saturate all channels (in case of overflows). Temperature channel
- 		 * is not affected by overflows.
- 		 */
--		scan.chan[1] = cpu_to_le16(U16_MAX);
--		scan.chan[2] = cpu_to_le16(U16_MAX);
--		scan.chan[3] = cpu_to_le16(U16_MAX);
-+		if (*indio_dev->active_scan_mask == AS73211_SCAN_MASK_ALL) {
-+			scan.chan[1] = cpu_to_le16(U16_MAX);
-+			scan.chan[2] = cpu_to_le16(U16_MAX);
-+			scan.chan[3] = cpu_to_le16(U16_MAX);
-+		} else {
-+			scan.chan[0] = cpu_to_le16(U16_MAX);
-+			scan.chan[1] = cpu_to_le16(U16_MAX);
-+			scan.chan[2] = cpu_to_le16(U16_MAX);
-+		}
- 	}
- 
- 	iio_push_to_buffers_with_timestamp(indio_dev, &scan, iio_get_time_ns(indio_dev));
-
--- 
-2.43.0
-
+thanks,
+-- Shuah
 
