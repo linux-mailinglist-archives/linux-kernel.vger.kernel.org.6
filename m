@@ -1,126 +1,174 @@
-Return-Path: <linux-kernel+bounces-432181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8938A9E46FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:39:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FF39E46FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F38518801E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10EE716775F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF58C1F5403;
-	Wed,  4 Dec 2024 21:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C5C1DF748;
+	Wed,  4 Dec 2024 21:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FwcU3EnA"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaLa6SN8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38203191F9C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 21:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73A192D83;
+	Wed,  4 Dec 2024 21:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733348311; cv=none; b=BcHmUtgdtAYDZXStDlxPJoiLReNtPIY5Q4CGzVb8AVJknN31KpzFRpZcXLCkWy1081CHPzNO5fjwCH3X/iwPBdAqUoV+tkg/LRlHPljeeiPKHsXksmM7I3KxbtjCoN1ISRMkQxepXkS4gLHNF2eTfQKATnKuHaABzKjHRtsCx68=
+	t=1733348307; cv=none; b=Ll9rLe1RVTpr8zV3UnaaVaBjGwU2xoWsv2SVy1Vd0yI3JLvKPe6dsYNujdKnM9z7xqr3dBTgW9v7wGYmcGegEZmgdDeYBKseU4aNUodvxaMo3sYe4gZPT3ygr3y4YSMjVdPp3A1+8yeTebikIwc+tam4FK8i+rC/doP3Zo6IqtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733348311; c=relaxed/simple;
-	bh=PEf0TIVTGAtIoNHi4r/UatjwkdUVK11dFXmdPoci8T8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMtJme1lcr5tnKyI2dJQDb5CWnkp77L0nE81fW3vIdzHxP/n70MaUfkr4EA9yNiG2Eu5BxCzRFo9f5JKctFc4YvIro+KGhFPGkCyOlPWjxvsifkMRzWurRn8Jd1MCqZg8GyjaIphemdnuJ8ys69rj2J6PQUawtB0Jt57QmWp1IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FwcU3EnA; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=relu
-	rSGfk4UWvf/m26HwWLUB2BXRcYs4tnMyP0GrJrE=; b=FwcU3EnAmLIiolpfr866
-	3SeCzWrSjjYN9SFg/cE7Whjs1cF/tvVrTb0pdqr3axQUNFWJb6aInJxy81VE9hdI
-	G/Cgltsk9tP1DQd+o1H6dEPtf1/heToaF+HHkcf3axKi0s1YNk3ou7AeZfoN3w7q
-	E0wG6iPz9afAMD+UbisjcZz5RT8Ije+C5MPg/WuZRynWOWxuIQywcEh8BX5qZf8L
-	WY7fzojQN+n6CiUkxmWm/S+WVy38Sf6f1p2p4yJxSMMu1ZbVI4RjIWAHcXkeQVu1
-	7c260z+B1J8WzGbogsNGJbVeGsJQ3RvG4M8BXbL9gZvDTpJaMiNHe+W5Qbt2QHmg
-	sQ==
-Received: (qmail 3704914 invoked from network); 4 Dec 2024 22:38:18 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Dec 2024 22:38:18 +0100
-X-UD-Smtp-Session: l3s3148p1@lmeYmXgoFpEujnvc
-Date: Wed, 4 Dec 2024 22:38:17 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	geert+renesas@glider.be, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	lethal@linux-sh.org, g.liakhovetski@gmx.de, groeck@chromium.org,
-	mka@chromium.org, ulrich.hecht+renesas@gmail.com,
-	ysato@users.sourceforge.jp, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH RFT 0/6] serial: sh-sci: Fixes for earlycon and
- keep_bootcon
-Message-ID: <Z1DLyQdzUzJzRUJJ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Claudiu <claudiu.beznea@tuxon.dev>, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, geert+renesas@glider.be,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lethal@linux-sh.org,
-	g.liakhovetski@gmx.de, groeck@chromium.org, mka@chromium.org,
-	ulrich.hecht+renesas@gmail.com, ysato@users.sourceforge.jp,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241204155806.3781200-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1733348307; c=relaxed/simple;
+	bh=l7yTTVmUjjV/VqhMA+V6zq/8SizxCbJ3CpajJl/oHWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=telj18vnG3E9wedUB3ev4URfqMArmropHB47mquHmjacfOS9ZFOzkx0jWM7FwqvIyOKjCVjvEJG/C3vNxR1wSmrVCq2AgIQSB+xDRY34PTaT0q35rJsVe8okFqB5b2srSsddOwA2J8OZOw6y90Lrsz03yHYQCwzhz8jjbkz6hMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaLa6SN8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB3FAC4CED1;
+	Wed,  4 Dec 2024 21:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733348307;
+	bh=l7yTTVmUjjV/VqhMA+V6zq/8SizxCbJ3CpajJl/oHWU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=DaLa6SN8BM+PWpWbnGgM/0/tA6qmf5zQSGmYTk7AUVcBGNBDoBy+gM5Js4eAUiQHL
+	 P9Uumhwjzqj/Le/bOyXm1WPqjrGe0vDFv3i2W4Rov71hgR8R+qkoR63ur3eX4Z8GCr
+	 BHp9uTH30RGNibOtI24PG4Kulnajp0w5Q8OZzSxhaUyuF3GsWG7DXKm70V13xLQ9S7
+	 FzF6D9besA9lacQI/SZXJ1LUqa++mmoph5kRWV3MUw8SVYz+R31qH+ySWuhZvGewuZ
+	 JD9XB5K0NUWrcKkgbzvlarO7SnfhzGIYyOCKEH0Fw9SY6nXmIhW89Td9tkUeCAzh5J
+	 iURygTF4RlJnw==
+Date: Wed, 4 Dec 2024 15:38:25 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 1/6] driver core: Introduce
+ device_{add,remove}_of_node()
+Message-ID: <20241204213825.GA3016970@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DeUx3klT7io+wydR"
-Content-Disposition: inline
-In-Reply-To: <20241204155806.3781200-1-claudiu.beznea.uj@bp.renesas.com>
-
-
---DeUx3klT7io+wydR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241202131522.142268-2-herve.codina@bootlin.com>
 
-Hi Claudiu,
+[cc->to Greg, Rafael]
 
-> in the following scenarios:
->=20
-> 1/ "earlycon keep_bootcon" were present in bootargs
-> 2/ only "earlycon" was present in bootargs
-> 3/ none of the "earlycon" or "earlycon keep_bootcon" were present in
->    bootargs
-=2E..
-> Please give it a try on your devices as well.
+On Mon, Dec 02, 2024 at 02:15:13PM +0100, Herve Codina wrote:
+> An of_node can be set to a device using device_set_node().
+> This function cannot prevent any of_node and/or fwnode overwrites.
+> 
+> When adding an of_node on an already present device, the following
+> operations need to be done:
+> - Attach the of_node if no of_node were already attached
+> - Attach the of_node as a fwnode if no fwnode were already attached
+> 
+> This is the purpose of device_add_of_node().
+> device_remove_of_node() reverts the operations done by
+> device_add_of_node().
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  drivers/base/core.c    | 52 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/device.h |  2 ++
 
-Will happily do so. Is there something to look for? Except for "it
-works"?
+I suppose this series would go via the PCI tree since the bulk of the
+changes are there.  If so, I would look for an ack from the driver
+core folks (Greg, Rafael).
 
-Happy hacking,
-
-   Wolfram
-
-
---DeUx3klT7io+wydR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdQy8UACgkQFA3kzBSg
-KbYIVQ//SkakjiEEA2dKMMQiuQ9f8TlGspKLHvZDLHL55jSr0JipzU83BgdSR8DJ
-0N97uZ8tVroQk2/AxYqtxeiPpyAGTTIJR38MyPGqknURfm1EF5AB/mEXk63cCEns
-TvN24BOu5GbVj0Nexpt3MMpQPJAOhib9Pp4pAnqrtrUgGym7TdA3+8WwMBQWnfmy
-g15WVsofR+R77UI8VWCx/1LJy2q0O+SJqcmufdVAKKHfkEJMOZePuejKMAqRxjxm
-bNCre46iYU8T4rfgiJp9ZiaVG1lcdQwgxk/UONbnvCT0ul5QRGfyIIDd+oGScAFX
-d3XoGaf3nP08d/oElK5GFKW24NNfigDM9G560r8D6HDt1Uxc1FOMXOVOrvBHOfFa
-kON2ZeV7cCrUZl/3gOeiQT0W2NUSlC6BlcCl7ReJnNBDCs+0zsgDJdeYA0ql7jaw
-4wgV6QKul4yKyfh6fROvgFTpU/weMLtUcdyay7O7lN04H/yGJvAee8Oo7qCLBzGx
-Vr8HS8D3Wqjh88qwIdZJ7JIKpkyhAMRXCEWwKdMXNw51RryWDuCoGk1chmnbkeQN
-NqxI4L7Ha5XtiuQNXqB5guaJwQjLZxOIQxCbg6OrQnIzE4LngzQOUzSWPIoe2oH4
-bPE9vYF17VtGOhrgzqERQl/J3DPzas9AVU6h3qtkC1S4tKj3Srg=
-=4Gxl
------END PGP SIGNATURE-----
-
---DeUx3klT7io+wydR--
+>  2 files changed, 54 insertions(+)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 8b056306f04e..3953c5ab7316 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -5216,6 +5216,58 @@ void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode)
+>  }
+>  EXPORT_SYMBOL_GPL(set_secondary_fwnode);
+>  
+> +/**
+> + * device_remove_of_node - Remove an of_node from a device
+> + * @dev: device whose device-tree node is being removed
+> + */
+> +void device_remove_of_node(struct device *dev)
+> +{
+> +	dev = get_device(dev);
+> +	if (!dev)
+> +		return;
+> +
+> +	if (!dev->of_node)
+> +		goto end;
+> +
+> +	if (dev->fwnode == of_fwnode_handle(dev->of_node))
+> +		dev->fwnode = NULL;
+> +
+> +	of_node_put(dev->of_node);
+> +	dev->of_node = NULL;
+> +
+> +end:
+> +	put_device(dev);
+> +}
+> +EXPORT_SYMBOL_GPL(device_remove_of_node);
+> +
+> +/**
+> + * device_add_of_node - Add an of_node to an existing device
+> + * @dev: device whose device-tree node is being added
+> + * @of_node: of_node to add
+> + */
+> +void device_add_of_node(struct device *dev, struct device_node *of_node)
+> +{
+> +	if (!of_node)
+> +		return;
+> +
+> +	dev = get_device(dev);
+> +	if (!dev)
+> +		return;
+> +
+> +	if (WARN(dev->of_node, "%s: Cannot replace node %pOF with %pOF\n",
+> +		 dev_name(dev), dev->of_node, of_node))
+> +		goto end;
+> +
+> +	dev->of_node = of_node_get(of_node);
+> +
+> +	if (!dev->fwnode)
+> +		dev->fwnode = of_fwnode_handle(of_node);
+> +
+> +end:
+> +	put_device(dev);
+> +}
+> +EXPORT_SYMBOL_GPL(device_add_of_node);
+> +
+>  /**
+>   * device_set_of_node_from_dev - reuse device-tree node of another device
+>   * @dev: device whose device-tree node is being set
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 667cb6db9019..ef4c0f3c41cd 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1149,6 +1149,8 @@ int device_online(struct device *dev);
+>  void set_primary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
+>  void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
+>  void device_set_node(struct device *dev, struct fwnode_handle *fwnode);
+> +void device_add_of_node(struct device *dev, struct device_node *of_node);
+> +void device_remove_of_node(struct device *dev);
+>  void device_set_of_node_from_dev(struct device *dev, const struct device *dev2);
+>  
+>  static inline struct device_node *dev_of_node(struct device *dev)
+> -- 
+> 2.47.0
+> 
 
