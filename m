@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-431095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 493A89E38EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:35:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6226C9E38E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:34:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25FD71662CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:34:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540871B393E;
+	Wed,  4 Dec 2024 11:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ajhtGZZ/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76984B32E7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:33:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5741B2EEB;
-	Wed,  4 Dec 2024 11:33:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7EA1B0F36;
-	Wed,  4 Dec 2024 11:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544651AE863;
+	Wed,  4 Dec 2024 11:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733311989; cv=none; b=WXbVUev2NPE4y1FCJ5YiPvQiP6xfVXVFtfP+Atb+zEWd5bIfsPXxstrt2+Mcq0xM7sOI4m/lokURLZKDCc9SOCaBZb/Pe6vRaFRq4ieq+RsF98YXNqUm9xkylHUmH3GA5ErqYP2SrYgQscNjI6/TiTWuCXMNR2HY0CAd4c5ap6I=
+	t=1733312062; cv=none; b=l9WbBZiN7+L8ZhoWBrAHFKKDJEhDc0SLHe3h6ejXlmyt+DN6A5/92tA4Sf8QyQVTz3w672E2n2YEaJWRm0Xw0cjpICJY/gwFC7bs/ZFk6mN6gS2j3Z3F42CTnSmwBvqzAjmsKFEqujO+WMsRfdsl+wu342Q/VmCCrp3rfnSgIpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733311989; c=relaxed/simple;
-	bh=4WTW9FUmZwSnNbESxNLpj77cDzjJTxm2vPyChPJTCXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfGCd3gr3Sr8DQqE9/V0aO7Ob27vh4ryoMoT+vyFzdj4tR0By3IFH3DjXxcA6DZozacjIorc7i0Fn9xd3YZ12VNATGXMOxeCJd/LyqxUIkVQnSYMJEFaxqJh+DxRvsqiAzZuqQAo73q6F7MosbOMbm93jlrmkBMaGhA5iYt3kew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC120FEC;
-	Wed,  4 Dec 2024 03:33:33 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.37])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F9C33F71E;
-	Wed,  4 Dec 2024 03:33:04 -0800 (PST)
-Date: Wed, 4 Dec 2024 11:33:02 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/6] arm64/sme: Flush foreign register state in
- do_sme_acc()
-Message-ID: <Z1A97pR+un1Trtyg@e133380.arm.com>
-References: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
- <20241203-arm64-sme-reenable-v1-1-d853479d1b77@kernel.org>
- <Z08khk6Mg6+T6VV9@e133380.arm.com>
- <9365be76-8da6-47ce-b88e-dfa244b9e5b7@sirena.org.uk>
- <Z085GKS8jzEhcZdW@e133380.arm.com>
- <44d67835-1e43-47cc-9a18-c279c885dcec@sirena.org.uk>
+	s=arc-20240116; t=1733312062; c=relaxed/simple;
+	bh=cvwsTS1vuvkeERAv/DMzFpbBYJZuxhT0B9Q1Haruk7I=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GO3BsWtTyXJWvSde+49Z88nxRlBVxLn65M1+WolwsfR5hWDrlB2WdqpbfP07bFeG63aZTxF779cIJ7vx8wpYPYdRwa9nqe93AVSfzP5I2YOaXTsuimeoGCPCe+Wgu6tvcvsZ9bo5gyvhUAisE65BAt8rSS5GB03XyOBzKqwqHwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ajhtGZZ/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4771Ne028017;
+	Wed, 4 Dec 2024 11:34:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=n8FzvXPu/r1w5IB0fnY3Eb
+	oOn0VyN99tXURnZCbiJME=; b=ajhtGZZ/ZZRd4WEU7fjXfTJqdOB8KPXZxWkbqg
+	JFhslDAKYFnxkikmKChhAYdRGdqJ5y5DrJifxgTuk2gaKtYjR5OBk/Ptg+XAk83L
+	Nw9CHrJqMHOOEaXXiVmutEwKNptLtmNB7iLISLlJna2y11toFy9em6G9NIkgH3hU
+	IPCUUgcAkgeO7V+2bL0UYm/I+vsrnju0Y05O2j9ExyZ+KUviJxFPfaFeqQn8wb9N
+	+WtepOMsI1k7jBNuyafCizRj0ZVnpSLbNQ/4PFh7V9wklRpxy/d59yYQCdEW2UfV
+	fn3EzFWgotoEjpjAPtRExLd91g/JUq0Z3+QlX/HoqM7dSDxg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vcem6p4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 11:34:05 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4BY43s025568
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 11:34:04 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Dec 2024 03:33:58 -0800
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <vkoul@kernel.org>, <kishon@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <p.zabel@pengutronix.de>,
+        <quic_nsekar@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>
+Subject: [PATCH v2 0/6] Add PCIe support for Qualcomm IPQ5332
+Date: Wed, 4 Dec 2024 17:03:23 +0530
+Message-ID: <20241204113329.3195627-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44d67835-1e43-47cc-9a18-c279c885dcec@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ICLesSqubqArBsr7fqycsN6rPZ2JpE2B
+X-Proofpoint-ORIG-GUID: ICLesSqubqArBsr7fqycsN6rPZ2JpE2B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=810 adultscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040090
 
-On Tue, Dec 03, 2024 at 05:24:39PM +0000, Mark Brown wrote:
-> On Tue, Dec 03, 2024 at 05:00:08PM +0000, Dave Martin wrote:
-> > On Tue, Dec 03, 2024 at 04:00:45PM +0000, Mark Brown wrote:
+Patch series adds support for enabling the PCIe controller and
+UNIPHY found on Qualcomm IPQ5332 platform. PCIe0 is Gen3 X1 and
+PCIe1 is Gen3 X2 are added.
 
-[...]
+v2: Combined [1] & [2]
+	- take the phy driver related changes from [1]
+	- drop IPQ5018 related changes
+    Address review comments from [1] & [2] for the patches included in v2
+    Please see individual patches for the differences between v1 and v2
 
-> We know that the only bit of register state which is not up to date at
-> this point is the SME vector length, we don't configure that for tasks
-> that do not have SME.  SVCR is always configured since we have to exit
-> streaming mode for FPSIMD and SVE to work properly so we know it's
-> already 0, all the other SME specific state is gated by controls in
-> SVCR.
-> 
-> > fpsimd_flush_task_state() means that we do the necessary work when re-
-> > entering userspace, but is there a problem with simply marking all the
-> > FPSIMD/vector state as stale?  If FPSR or FPCR is dirty for example, it
-> > now looks like they won't get written back to thread struct if there is
-> > a context switch before current re-enters userspace?
-> 
-> > Maybe the other flags distinguish these cases -- I haven't fully got my
-> > head around it.
-> 
-> We are doing fpsimd_flush_task_state() in the TIF_FOREIGN_FPSTATE case
-> so we know there is no dirty state in the registers.
+    1. https://lore.kernel.org/all/20231003120846.28626-1-quic_nsekar@quicinc.com/
+    2. https://lore.kernel.org/linux-arm-msm/20231214062847.2215542-1-quic_ipkumar@quicinc.com/
 
-Ah, that wasn't obvious from the diff context, but you're right.
+v1: https://lore.kernel.org/linux-arm-msm/20231214062847.2215542-1-quic_ipkumar@quicinc.com/
 
-I was confused by the fpsimd_bind_task_to_cpu() call; I forgot that
-there are reasons to call this even when TIF_FOREIGN_FPSTATE is clear.
-Perhaps it would be worth splitting some of those uses up, but it would
-need some thinking about.  Doesn't really belong in this series anyway.
+Nitheesh Sekar (2):
+  dt-bindings: phy: qcom,uniphy-pcie: Document PCIe uniphy
+  phy: qcom: Introduce PCIe UNIPHY 28LP driver
 
-> > (Actually, the ARM ARM says (IMHTLZ) that toggling PSTATE.SM by any
-> > means causes FPSR to become 0x800009f.  I'm not sure where that fits in
-> > -- do we handle that anywhere?  I guess the "soft" SM toggling via
-> 
-> Urgh, not seen that one - that needs handling in the signal entry path
-> and ptrace.  That will have been defined while the feature was being
-> implemented.  It's not relevant here though since we are in the SME
-> access trap, we might be trapping due to a SMSTART or equivalent
-> operation but that SMSTART has not yet run at the point where we return
-> to userspace.
-> 
-> > ptrace, signal delivery or maybe exec, ought to set this?  Not sure how
-> > that interacts with the expected behaviour of the fenv(3) API...  Hmm.
-> > I see no corresponding statement about FPCR.)
-> 
-> Fun.  I'm not sure how the ABI is defined there by libc.
+Praveenkumar I (4):
+  dt-bindings: PCI: qcom: Add IPQ5332 SoC
+  pci: qcom: Add support for IPQ5332
+  arm64: dts: qcom: ipq5332: Add PCIe related nodes
+  arm64: dts: qcom: ipq5332: Enable PCIe phys and controllers
 
-I guess this should be left as-is, for now.  There's an argument for
-sanitising FPCR/FPSR on signal delivery, but neither signal(7) nor
-fenv(3) give any clue about the expected behaviour...
+ .../devicetree/bindings/pci/qcom,pcie.yaml    |   4 +
+ .../bindings/phy/qcom,uniphy-pcie.yaml        |  82 +++++
+ arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts   |  74 +++++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         | 214 +++++++++++-
+ drivers/pci/controller/dwc/pcie-qcom.c        |   1 +
+ drivers/phy/qualcomm/Kconfig                  |  12 +
+ drivers/phy/qualcomm/Makefile                 |   1 +
+ .../phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c  | 307 ++++++++++++++++++
+ 8 files changed, 693 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c
 
-For ptrace, the user has the opportunity to specify exactly what they
-want to happen to all the registers, so I suppose it's best to stick to
-the current model and require the tracer to specify all changes
-explicitly rather than add new magic ptrace behaviour.
 
-Not relevant for this series, in any case.
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+-- 
+2.34.1
 
-Cheers
----Dave
 
