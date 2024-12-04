@@ -1,140 +1,426 @@
-Return-Path: <linux-kernel+bounces-431941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06659E42EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:08:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E0E9E42F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:08:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4D52874DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 009E11661E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1C81C3BFB;
-	Wed,  4 Dec 2024 18:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158A01F03E0;
+	Wed,  4 Dec 2024 18:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4mC2dhz"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rrwb2jTN"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15EB1B81B2;
-	Wed,  4 Dec 2024 18:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8A21F03D2
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733335356; cv=none; b=WaP9qfNpTPMUNi6hDQlmQRcWb/ddRQuxF5Uzo7zy/t51xOknJyfaOKwRqDfcl8nSgsNFdMC5zqXzHppqGOa4MWp7OSTbDToUN4Q0IOgc0og/bSYKMXEKHTu6xEztfpWqqXB/xYijEJvIeRJ0MPPN/dqY6Nx1D0O/OdoMc8+4L5w=
+	t=1733335365; cv=none; b=cFa2YEvQzUlQS6L65XhAWg2ODU68s+sCiDbkXuQE+hwHq8kwZCK4r2z5Tw/oYinRt3IE62skVuyVxkx4NPw77QrcDzZOUVl5AYUrc/GACFxfc6bqlovSx5/4snrQWBdYaOy7NK6cs7TIYX8dpGU0Zkjv300xFB8oVUnp5r8VltM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733335356; c=relaxed/simple;
-	bh=EWlGeWIZlGf9L/T7F3lAx08YDAcTTUnCbhcrX18fs7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b6rfbqJIttM8DnjAY6jFz3SDZNSu6q4ee7ZYfOhHP7OyBZzLWiqfN2c28Vgr+STTrgcalgVYBQTBa26WSnaXOWGsaCv2JybDrYmh1CDERlgEVAg4oNQuyZqu358xCIGmeGkz3Mhp7KlNwytKOl3ihT7LROV6IoSJYw3q3gYGpI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4mC2dhz; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso40611a12.3;
-        Wed, 04 Dec 2024 10:02:34 -0800 (PST)
+	s=arc-20240116; t=1733335365; c=relaxed/simple;
+	bh=08n36W/CMnCDfr62bUaB+P/NXZKNqgjlOHf6GtLMtoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfSIo2wNsgIPSVnpt/SrVV7vrSdG0vVzlVLcNO7UwPLrZyZl8+cB5097/vMvhE1Wf/Z58XMdQgXkr3tk4rntAUgOusgzdz5oBvhiHHALCRsxzpNQDrQ+pcVL9i7njhvILJfTkBQxNqOCXzhNzhsNAatrY2h3B2P7jp9XuxV/Qx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rrwb2jTN; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-725958d5ee0so96184b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 10:02:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733335354; x=1733940154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7V53GFvkYgl3GGn7NQiYaXdsYVvKlvlq6z/L7Et1GuE=;
-        b=c4mC2dhzix4yYqLOwA4Oe12TzeJiiiG9I0iAiwVRtiJGtH1zTKg5BHAVpzrW8voNOm
-         cQhX0IjWdRz52doJXc+ZfJSBlMF+0zxSxHF4pB49s2nsAwCaiKVA8AEJ9CcSM7SsmwXE
-         Pb+k1LqfM8rnOaLik+toPwYq+9YuRCQx+ew2YIwcI10Wwc2FAtkJPvlPaKw86FW9l2Al
-         ILyftEtZ9VckbNama/D0XYNMGKTNP+FBUEtBbHj/tyxpN4deeolMt99CspaM40TQkZAU
-         9VH1zc8RKbM5cxRwDr9IJqfLNGZgFgYx8pvU0BeQsXVF0vVFGK9yTwkMXsjAH8yU3Vsk
-         46QA==
+        d=linaro.org; s=google; t=1733335362; x=1733940162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PeBuKTAzT5t/xg0HOfB6aMdefP/YbNUMgGL/5kx9O2s=;
+        b=Rrwb2jTN1zDfPDslIuMer6x6fUBuRsJWUgY7sOycFdbNaGBm6u1rrBkyOfRVeOv4wZ
+         qimIkIQbtBgOIvhDLqXpbYrhIC4rd5Z9I/1st59GGfG8rn2LrAFjJzMA2F6FRF4GQNma
+         GeULyVACUC5DgaQQPpsu8/d/RNIJZn5ONSIWfso8Wcf3SrDkW0snEeTHgoGjsIDtuVj2
+         RJOspcVMTppQ2jXhU3rGAPxxGTZzE3qUikxTZQjB6v+lTBxbHLIW8jMIG6D9UfODwMAL
+         /yDJXTLvZvYNThD2mmYgdg/TUNwh0TQ9mbC5ggbkOUuz6x0Woy/9X/jJSOXQvxPufRFV
+         EeHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733335354; x=1733940154;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7V53GFvkYgl3GGn7NQiYaXdsYVvKlvlq6z/L7Et1GuE=;
-        b=sCBPbiyKqbyQwWFHoLhXSo5n4CVoblzEq3o3G+VqWsQkbZK9Ah6u+aTDLvGUzHCmxx
-         ACfc9XFCy58WjYkq07AYJpedumxzzmK9PVo/rscD9asq4SIPcOSGwzu2nRvx3/CLhVsG
-         FJU0R8HUsbm/XKuCGSy3SEd19UL6U7Pqpf7QLLc4XfJb3jVzGd4wmzIhgsOYVZIxzdj8
-         mCSV1XOs7T5t/IWeeVYYI0snqy/ZC8i2cEWdHuRZJF79IByv1DVBxb9oB4jrtG2D8VUL
-         T95oRKooLQKEqYtd2h/WFeFHZTnOo1EDrU0+UeIpnd7j7nLJ6e+EDuOlbibHqmuTD7m6
-         pOAg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8XY44m76YQKKHpQSap/RMnp7LJJNIEXiAcP29rkj8UH7NIvKICTE72bgFOZg2yNaCsy6fjgzPg2VA7w==@vger.kernel.org, AJvYcCX0Xfkt7lyzkqGOOP5ZcVzl3Jd15wElk4IKBIuT9YMYnS5/NYFvxjGKrl0KJL/HIxSlWpx9BLK0@vger.kernel.org, AJvYcCXjN1fqZxT9fwaRajhExXtKGMvhsRvnxDaRRQZ74z5H3cSF/wuG5UnUTCU7AZmEuSd7f9reujtUJYqpe8Qv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWHMVVFyd0j82EH2txHKonmzM6VoJmOYEwltmYY9xDzbbYlCBS
-	mGZSvWcSMp2Xvs2scz2bZMA10Ck3vG4rp4bS6meWtllhyopd2B+5
-X-Gm-Gg: ASbGnct1FuCUerMnYOya1eq+/QffbThsXwCn/Z2Kz50ZV1VDVAfiWG73Zo+jmD+FZ00
-	tUKeqI2/BMij/MlWiKmlFKtNzhTeQ8CzrXa0BoYEextSO+W63upLV7KIeySJIGYM8RmWE2UMPsq
-	ebT2xfCTjTqwIkXwsUbc3Bdz2SeXI44MfzeG+lundiiICOA69Af5tbzRfqc/L1y07E4NYitgr7P
-	hdkkZGUdnifjwnDD7wKEjynRntUd8/Z8zcHZHdPxrz6xfYUj61Yh/XzEqmkp6g9S2StfB8=
-X-Google-Smtp-Source: AGHT+IGfGswqHPS+sVCVBRyy6YYEmMkEmFcHRdeKF8fO4AaC3KytnZpu1qaS+nFgVW1qeM0JFQPoRQ==
-X-Received: by 2002:a05:6a21:330b:b0:1e0:d837:c929 with SMTP id adf61e73a8af0-1e16bdd32cemr8217439637.9.1733335353855;
-        Wed, 04 Dec 2024 10:02:33 -0800 (PST)
-Received: from KASONG-MC4.tencent.com ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7258947b48fsm2064736b3a.47.2024.12.04.10.02.31
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 04 Dec 2024 10:02:33 -0800 (PST)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>,
-	Desheng Wu <deshengwu@tencent.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/2] zram: refuse to use zero sized block device as backing device
-Date: Thu,  5 Dec 2024 02:02:23 +0800
-Message-ID: <20241204180224.31069-2-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241204180224.31069-1-ryncsn@gmail.com>
-References: <20241204180224.31069-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+        d=1e100.net; s=20230601; t=1733335362; x=1733940162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PeBuKTAzT5t/xg0HOfB6aMdefP/YbNUMgGL/5kx9O2s=;
+        b=hr68krIiacxaa/3bBcDO+rc8Gr9JCkBm+K07YFA/rIOc+yg9x8HOsXerHE4OG58Czh
+         SHlh93UsAOE/XxQpQ0MMI7a5r92EC0+vNesy/WJm3mzjpIVpz9iXCWD89rDQ53iXFMsa
+         mwz0WFtse4Fwla0iA+sUSgbWhGJhhY4qwBJrgJJ5IJU3xcEX1Z01Xn+yJHkOKEo4vXZ9
+         3uwLCq3lEEGaLguVo33vRPB9cldjuvrrcKZRlnV78zbz6VbGQSa2cAGmPRL+ErMoeNCZ
+         52eLrCB9nPJ5qxw+2wg+r14TUsU2KlAKIJ32K83QFpvtjDG5rukY7dTW1QdgCONT94nQ
+         Snow==
+X-Forwarded-Encrypted: i=1; AJvYcCVgYargvf3trNYfyjcbSaeU+6Cs2uD5r2Vb1+WPdc2s1ssbnVPNxnrkMDBOKFHfgVD80gVba2VbzTiU+90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwjIP/ZdWPE1wB5PbwEdUdq1CIe8OHJmCFO+XDQuaWSx2Cj1M0
+	rbAlBQOsyuuv9raVcl2afIDEMi/Pl1Njt031NqLR/JpL5x6xnNtg+gSK99KMiww=
+X-Gm-Gg: ASbGnctrjEF2eik10xLANIzqRIHShIijMtnlE03wLcx4fAMVRJwpmCtjtEz/rzwnofk
+	Rj/mHvOybTucRKOisHYWgpKplKgTGDeuqKTMXUh3+EAhxZmuteQ3hqCaM3DOd009CTW16MPlSz+
+	wYEbB3IuWvyFK5f5bROZwDH6jQC7FEJMqPl5zR92V2jjDLnbULUEKTfIyczmAxEHcozroXbAzHk
+	iY9oWR++Afg1BDsTBLuom5TdtLlPiNzKiLE4ADRODtPM608rIZvDA==
+X-Google-Smtp-Source: AGHT+IGz/ZtmC4PnERHkalD6CvmzPb7Tp2woBDFzd1PcOy0yfXwbSkND0GchAL+Kghl7UNvinfrk8Q==
+X-Received: by 2002:a05:6a00:180a:b0:725:1d37:ebff with SMTP id d2e1a72fcca58-7257fcd968dmr10230325b3a.22.1733335361978;
+        Wed, 04 Dec 2024 10:02:41 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:cb58:bf7f:6102:4f57])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7259470e2c9sm1282202b3a.190.2024.12.04.10.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 10:02:41 -0800 (PST)
+Date: Wed, 4 Dec 2024 11:02:38 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	kernel test robot <lkp@intel.com>, linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v15 4/8] remoteproc: Rename load() operation to
+ load_segments() in rproc_ops struct
+Message-ID: <Z1CZPhu1T2opd906@p14s>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-5-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128084219.2159197-5-arnaud.pouliquen@foss.st.com>
 
-From: Kairui Song <kasong@tencent.com>
+On Thu, Nov 28, 2024 at 09:42:11AM +0100, Arnaud Pouliquen wrote:
+> With the introduction of the load_fw() operation in the rproc_ops
+> structure, we need to clarify the difference in the use of the load()
+> and load_fw() ops.
+> 
+> The legacy load() is dedicated to loading the ELF segments into memory.
+> Rename this to a more explicit name: load_segments().
 
-Setting a zero sized block device as backing device is pointless, and
-one can easily create a recursive loop by setting the uninitialized
-ZRAM device itself as its own backing device by (zram0 is uninitialized):
+This is introducing more code churn than is worth it.  Please enhance the usage
+comment for ->load() as part of the previous patch and drop this one.
 
-    echo /dev/zram0 > /sys/block/zram0/backing_dev
+I am done reviewing this set.
 
-It's definitely a wrong config, and the module will pin itself,
-kernel should refuse doing so in the first place.
+Thanks,
+Mathieu
 
-By refusing to use zero sized device we avoided misuse cases
-including this one above.
-
-Fixes: 013bf95a83ec ("zram: add interface to specif backing device")
-Reported-by: Desheng Wu <deshengwu@tencent.com>
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: stable@vger.kernel.org
----
- drivers/block/zram/zram_drv.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 0ca6d55c9917..dd48df5b97c8 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -614,6 +614,12 @@ static ssize_t backing_dev_store(struct device *dev,
- 	}
- 
- 	nr_pages = i_size_read(inode) >> PAGE_SHIFT;
-+	/* Refuse to use zero sized device (also prevents self reference) */
-+	if (!nr_pages) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
- 	bitmap_sz = BITS_TO_LONGS(nr_pages) * sizeof(long);
- 	bitmap = kvzalloc(bitmap_sz, GFP_KERNEL);
- 	if (!bitmap) {
--- 
-2.47.0
-
+> 
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> Update vs version V14:
+> Fix: Rename missing load() to load_segments() in drivers/remoteproc/pru_rproc.c.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202411281332.Ra70nJAW-lkp@intel.com/
+> 
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c       | 2 +-
+>  drivers/remoteproc/imx_rproc.c           | 2 +-
+>  drivers/remoteproc/meson_mx_ao_arc.c     | 2 +-
+>  drivers/remoteproc/mtk_scp.c             | 2 +-
+>  drivers/remoteproc/pru_rproc.c           | 2 +-
+>  drivers/remoteproc/qcom_q6v5_adsp.c      | 2 +-
+>  drivers/remoteproc/qcom_q6v5_mss.c       | 2 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c       | 4 ++--
+>  drivers/remoteproc/qcom_q6v5_wcss.c      | 4 ++--
+>  drivers/remoteproc/qcom_wcnss.c          | 2 +-
+>  drivers/remoteproc/rcar_rproc.c          | 2 +-
+>  drivers/remoteproc/remoteproc_core.c     | 4 ++--
+>  drivers/remoteproc/remoteproc_internal.h | 4 ++--
+>  drivers/remoteproc/st_remoteproc.c       | 2 +-
+>  drivers/remoteproc/st_slim_rproc.c       | 2 +-
+>  drivers/remoteproc/stm32_rproc.c         | 2 +-
+>  drivers/remoteproc/xlnx_r5_remoteproc.c  | 2 +-
+>  include/linux/remoteproc.h               | 4 ++--
+>  18 files changed, 23 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index 376187ad5754..a4a85fbce907 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -934,7 +934,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+>  	.start		= imx_dsp_rproc_start,
+>  	.stop		= imx_dsp_rproc_stop,
+>  	.kick		= imx_dsp_rproc_kick,
+> -	.load		= imx_dsp_rproc_elf_load_segments,
+> +	.load_segments	= imx_dsp_rproc_elf_load_segments,
+>  	.parse_fw	= imx_dsp_rproc_parse_fw,
+>  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+>  	.sanity_check	= rproc_elf_sanity_check,
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 800015ff7ff9..f45b3207f7e9 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -681,7 +681,7 @@ static const struct rproc_ops imx_rproc_ops = {
+>  	.stop		= imx_rproc_stop,
+>  	.kick		= imx_rproc_kick,
+>  	.da_to_va       = imx_rproc_da_to_va,
+> -	.load		= rproc_elf_load_segments,
+> +	.load_segments	= rproc_elf_load_segments,
+>  	.parse_fw	= imx_rproc_parse_fw,
+>  	.find_loaded_rsc_table = imx_rproc_elf_find_loaded_rsc_table,
+>  	.get_loaded_rsc_table = imx_rproc_get_loaded_rsc_table,
+> diff --git a/drivers/remoteproc/meson_mx_ao_arc.c b/drivers/remoteproc/meson_mx_ao_arc.c
+> index f6744b538323..a1c8c0929ce3 100644
+> --- a/drivers/remoteproc/meson_mx_ao_arc.c
+> +++ b/drivers/remoteproc/meson_mx_ao_arc.c
+> @@ -137,7 +137,7 @@ static struct rproc_ops meson_mx_ao_arc_rproc_ops = {
+>  	.stop		= meson_mx_ao_arc_rproc_stop,
+>  	.da_to_va	= meson_mx_ao_arc_rproc_da_to_va,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+> -	.load		= rproc_elf_load_segments,
+> +	.load_segments	= rproc_elf_load_segments,
+>  	.sanity_check	= rproc_elf_sanity_check,
+>  };
+>  
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index e744c07507ee..4e9a8bf3bc6e 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -924,7 +924,7 @@ static int scp_stop(struct rproc *rproc)
+>  static const struct rproc_ops scp_ops = {
+>  	.start		= scp_start,
+>  	.stop		= scp_stop,
+> -	.load		= scp_load,
+> +	.load_segments	= scp_load,
+>  	.da_to_va	= scp_da_to_va,
+>  	.parse_fw	= scp_parse_fw,
+>  	.sanity_check	= rproc_elf_sanity_check,
+> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> index 327f0c7ee3d6..0b2bf2574f74 100644
+> --- a/drivers/remoteproc/pru_rproc.c
+> +++ b/drivers/remoteproc/pru_rproc.c
+> @@ -1015,7 +1015,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	}
+>  	/* use a custom load function to deal with PRU-specific quirks */
+> -	rproc->ops->load = pru_rproc_load_elf_segments;
+> +	rproc->ops->load_segments = pru_rproc_load_elf_segments;
+>  
+>  	/* use a custom parse function to deal with PRU-specific resources */
+>  	rproc->ops->parse_fw = pru_rproc_parse_fw;
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 572dcb0f055b..aa9896930bcf 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -527,7 +527,7 @@ static const struct rproc_ops adsp_ops = {
+>  	.stop = adsp_stop,
+>  	.da_to_va = adsp_da_to_va,
+>  	.parse_fw = adsp_parse_firmware,
+> -	.load = adsp_load,
+> +	.load_segments = adsp_load,
+>  	.panic = adsp_panic,
+>  };
+>  
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 2a42215ce8e0..a8beac1deabe 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1687,7 +1687,7 @@ static const struct rproc_ops q6v5_ops = {
+>  	.start = q6v5_start,
+>  	.stop = q6v5_stop,
+>  	.parse_fw = qcom_q6v5_register_dump_segments,
+> -	.load = q6v5_load,
+> +	.load_segments = q6v5_load,
+>  	.panic = q6v5_panic,
+>  };
+>  
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index ef82835e98a4..9b269ce390c1 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -436,7 +436,7 @@ static const struct rproc_ops adsp_ops = {
+>  	.stop = adsp_stop,
+>  	.da_to_va = adsp_da_to_va,
+>  	.parse_fw = qcom_register_dump_segments,
+> -	.load = adsp_load,
+> +	.load_segments = adsp_load,
+>  	.panic = adsp_panic,
+>  };
+>  
+> @@ -446,7 +446,7 @@ static const struct rproc_ops adsp_minidump_ops = {
+>  	.stop = adsp_stop,
+>  	.da_to_va = adsp_da_to_va,
+>  	.parse_fw = qcom_register_dump_segments,
+> -	.load = adsp_load,
+> +	.load_segments = adsp_load,
+>  	.panic = adsp_panic,
+>  	.coredump = adsp_minidump,
+>  };
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+> index e913dabae992..44b5736dc8b9 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -771,7 +771,7 @@ static const struct rproc_ops q6v5_wcss_ipq8074_ops = {
+>  	.start = q6v5_wcss_start,
+>  	.stop = q6v5_wcss_stop,
+>  	.da_to_va = q6v5_wcss_da_to_va,
+> -	.load = q6v5_wcss_load,
+> +	.load_segments = q6v5_wcss_load,
+>  	.get_boot_addr = rproc_elf_get_boot_addr,
+>  };
+>  
+> @@ -779,7 +779,7 @@ static const struct rproc_ops q6v5_wcss_qcs404_ops = {
+>  	.start = q6v5_qcs404_wcss_start,
+>  	.stop = q6v5_wcss_stop,
+>  	.da_to_va = q6v5_wcss_da_to_va,
+> -	.load = q6v5_wcss_load,
+> +	.load_segments = q6v5_wcss_load,
+>  	.get_boot_addr = rproc_elf_get_boot_addr,
+>  	.parse_fw = qcom_register_dump_segments,
+>  };
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index a7bb9da27029..42102bc4c458 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -335,7 +335,7 @@ static const struct rproc_ops wcnss_ops = {
+>  	.stop = wcnss_stop,
+>  	.da_to_va = wcnss_da_to_va,
+>  	.parse_fw = qcom_register_dump_segments,
+> -	.load = wcnss_load,
+> +	.load_segments = wcnss_load,
+>  };
+>  
+>  static irqreturn_t wcnss_wdog_interrupt(int irq, void *dev)
+> diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
+> index cc17e8421f65..e36778fec072 100644
+> --- a/drivers/remoteproc/rcar_rproc.c
+> +++ b/drivers/remoteproc/rcar_rproc.c
+> @@ -142,7 +142,7 @@ static struct rproc_ops rcar_rproc_ops = {
+>  	.prepare	= rcar_rproc_prepare,
+>  	.start		= rcar_rproc_start,
+>  	.stop		= rcar_rproc_stop,
+> -	.load		= rproc_elf_load_segments,
+> +	.load_segments	= rproc_elf_load_segments,
+>  	.parse_fw	= rcar_rproc_parse_fw,
+>  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+>  	.sanity_check	= rproc_elf_sanity_check,
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 8df4b2c59bb6..e4ad024efcda 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2485,11 +2485,11 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+>  	if (!rproc->ops->coredump)
+>  		rproc->ops->coredump = rproc_coredump;
+>  
+> -	if (rproc->ops->load || rproc->ops->load_fw)
+> +	if (rproc->ops->load_segments || rproc->ops->load_fw)
+>  		return 0;
+>  
+>  	/* Default to ELF loader if no load function is specified */
+> -	rproc->ops->load = rproc_elf_load_segments;
+> +	rproc->ops->load_segments = rproc_elf_load_segments;
+>  	rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+>  	rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+>  	rproc->ops->sanity_check = rproc_elf_sanity_check;
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 2104ca449178..b898494600cf 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -167,8 +167,8 @@ u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  static inline
+>  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->load)
+> -		return rproc->ops->load(rproc, fw);
+> +	if (rproc->ops->load_segments)
+> +		return rproc->ops->load_segments(rproc, fw);
+>  
+>  	return -EINVAL;
+>  }
+> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+> index 1340be9d0110..8d6b75e91531 100644
+> --- a/drivers/remoteproc/st_remoteproc.c
+> +++ b/drivers/remoteproc/st_remoteproc.c
+> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
+>  	.start			= st_rproc_start,
+>  	.stop			= st_rproc_stop,
+>  	.parse_fw		= st_rproc_parse_fw,
+> -	.load			= rproc_elf_load_segments,
+> +	.load_segments		= rproc_elf_load_segments,
+>  	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
+>  	.sanity_check		= rproc_elf_sanity_check,
+>  	.get_boot_addr		= rproc_elf_get_boot_addr,
+> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+> index 5412beb0a692..0f91d8f1e7c7 100644
+> --- a/drivers/remoteproc/st_slim_rproc.c
+> +++ b/drivers/remoteproc/st_slim_rproc.c
+> @@ -201,7 +201,7 @@ static const struct rproc_ops slim_rproc_ops = {
+>  	.stop		= slim_rproc_stop,
+>  	.da_to_va       = slim_rproc_da_to_va,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+> -	.load		= rproc_elf_load_segments,
+> +	.load_segments	= rproc_elf_load_segments,
+>  	.sanity_check	= rproc_elf_sanity_check,
+>  };
+>  
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 8c7f7950b80e..7e8ffd9fcc57 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -667,7 +667,7 @@ static const struct rproc_ops st_rproc_ops = {
+>  	.attach		= stm32_rproc_attach,
+>  	.detach		= stm32_rproc_detach,
+>  	.kick		= stm32_rproc_kick,
+> -	.load		= rproc_elf_load_segments,
+> +	.load_segments	= rproc_elf_load_segments,
+>  	.parse_fw	= stm32_rproc_parse_fw,
+>  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+>  	.get_loaded_rsc_table = stm32_rproc_get_loaded_rsc_table,
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 5aeedeaf3c41..59cfba0a02e7 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -864,7 +864,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>  	.unprepare	= zynqmp_r5_rproc_unprepare,
+>  	.start		= zynqmp_r5_rproc_start,
+>  	.stop		= zynqmp_r5_rproc_stop,
+> -	.load		= rproc_elf_load_segments,
+> +	.load_segments	= rproc_elf_load_segments,
+>  	.parse_fw	= zynqmp_r5_parse_fw,
+>  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+>  	.sanity_check	= rproc_elf_sanity_check,
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index ba6fd560f7ba..55c20424a99f 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -374,7 +374,7 @@ enum rsc_handling_status {
+>   * @find_loaded_rsc_table: find the loaded resource table from firmware image
+>   * @get_loaded_rsc_table: get resource table installed in memory
+>   *			  by external entity
+> - * @load:		load firmware to memory, where the remote processor
+> + * @load_segments:	load firmware ELF segment to memory, where the remote processor
+>   *			expects to find it
+>   * @sanity_check:	sanity check the fw image
+>   * @get_boot_addr:	get boot address to entry point specified in firmware
+> @@ -402,7 +402,7 @@ struct rproc_ops {
+>  				struct rproc *rproc, const struct firmware *fw);
+>  	struct resource_table *(*get_loaded_rsc_table)(
+>  				struct rproc *rproc, size_t *size);
+> -	int (*load)(struct rproc *rproc, const struct firmware *fw);
+> +	int (*load_segments)(struct rproc *rproc, const struct firmware *fw);
+>  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+>  	unsigned long (*panic)(struct rproc *rproc);
+> -- 
+> 2.25.1
+> 
 
