@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-430784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE989E358C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:36:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833899E3598
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38564284F5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:36:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34447B30232
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B1E194C77;
-	Wed,  4 Dec 2024 08:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB97E1957E9;
+	Wed,  4 Dec 2024 08:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTBfmq30"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kk4LsECm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B394194A65;
-	Wed,  4 Dec 2024 08:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BC0194147;
+	Wed,  4 Dec 2024 08:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733301372; cv=none; b=svm7OReZkimjmvBqgt86GZHxOvQUIxHCSbNNYQ2muYlBhnHN60i8ChNBLbYJaC/Vr4LtmoPQhqu/zLpKHLvadM/1+zhpnX5gXBK3VepjI7GwirFpuMGIEhEU2ngb/pKVjzK/OcA/6F9UJ7afEPthLAU4gG/vthUqu8FW4OQTJ0s=
+	t=1733301395; cv=none; b=RUOEfDsgWWVEYDAZuvybZNMJROjODMypRJwwDToAgW/fEXBtsThyMuyw3OqErO7ant6gXuK1IIsSXAfpDyVZzqlBg7Iq0n7WM2iiPYd/EbYbRldO544Mk5EUYZjnx/tMR4EbXdqbMJihf5Jo6+oOw90W0jO0y0ZmTWYOZSC7eH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733301372; c=relaxed/simple;
-	bh=JWq/BGvkJk1GK8sFxZgwWJnaeKD4x2uHKRtWIOrvvJA=;
+	s=arc-20240116; t=1733301395; c=relaxed/simple;
+	bh=Lzg2IJdgrqJ0bc56IrwRYCpZJmAH3MXcmHZA/SIW1Bs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFjDdPrHIcVmLmkuzPVY583jq0AMuMAWRYKdpMzsHRqfuJSpBnpmPeJyxyOM5EhhgkC7BHMrMbfPCtbe4YiMmRoRGh3hovBut5YB73XStRM/4c5PeLPW5UG3c0WUEKrzHxDZyRbLVEcWBe8S975ZsRz1Ll073xtLQ8q8Sqc6Adc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTBfmq30; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E188C4CED1;
-	Wed,  4 Dec 2024 08:36:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qpNdkV5GsXfcU0g+0JCFmI2rInp4xlX7+N/TlX3gYu4e1QpTPPdxvwb5pAtADTopVYh1c+JeY+OGOKU+p04r1vNxKgxxWaVXfA0wmZAq1cjgrPRfEN6RAJmtOy7ziP9JgNYcLedMDwmgtAIbA1IpOqnEL0DHUr4koJ8NG2PHVj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kk4LsECm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E13C4CED1;
+	Wed,  4 Dec 2024 08:36:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733301371;
-	bh=JWq/BGvkJk1GK8sFxZgwWJnaeKD4x2uHKRtWIOrvvJA=;
+	s=k20201202; t=1733301394;
+	bh=Lzg2IJdgrqJ0bc56IrwRYCpZJmAH3MXcmHZA/SIW1Bs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sTBfmq30FV+yv6D6qxx5+g49rCUcXNB+muo4iirc0b60cx2+yK6Ct7MFtF5qgpN9W
-	 p5UH6vKUhwvs5XhLF0eHazQ29WG69FP5lk5viku+3wEyrR34A03I4o6U5SuAlJez+Q
-	 maTf63n61b+Jq6J7VC9LXNeIdRTZcDf1r9eY3DjPN9nHhs89UTIQ7GuF3u/b6qv7ES
-	 u5aB95NtHEAYXH48ZzLuEszqC9nax+AbRgj13xTHH3EOuTD/U8xSidRHWeGImT4ZzZ
-	 JenzgCuaut10ssMm9qSGeKH9qvTzkaAJIegGe3PQrp2pG4oDd/CaSheehbquu02sel
-	 CrUXij4gWaRnw==
-Date: Wed, 4 Dec 2024 09:36:08 +0100
+	b=Kk4LsECmm9KFg5qhkcFAmMs5CnXcU9vNp39v7bWtcoOHKG/AS+oSjr3A++e4rYPXW
+	 dl8i/nfmmSH2GBfOslr/Rc79Ecny8TccybhgWs0NftakbkYHKkp/6h6VH/LEQ8t7/V
+	 G+x5EDqmaxoS1sR8nLzykf8uYdRDp+34Wu9WgXyh3926zWvJtOjnYKXx9VORgAhDXx
+	 uZymS/GzLp6Vtoe3uxrgPkym7VvOVuL3y1fq3dBJUugaC4vsjZNa6Iluc4L2cT7X7v
+	 +01a3lbiOMSuDcsbBxAGobjyZFepwHMG3WQtu5B3/hAqZqSdUArVNGHR3BGkX6hmdG
+	 RQFVlPubAjlMg==
+Date: Wed, 4 Dec 2024 09:36:31 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Andrew Davis <afd@ti.com>
 Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
 	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
 	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: soc: ti: ti,j721e-system-controller:
- Add PCIe ctrl property
-Message-ID: <kno3z5nszu4437kvon5nxmxv6qzhjagdjti2guljowmmvkbskr@6falbmmpidki>
+Subject: Re: [PATCH 4/4] dt-bindings: soc: ti: ti,j721e-system-controller:
+ Add MAC efuse property
+Message-ID: <f34b7uedhfvsebtluy4wca3l7u5rl2iwfmwbsfjjyvqizv3zk3@fsfjn5ezpeke>
 References: <20241203173113.90009-1-afd@ti.com>
- <20241203173113.90009-3-afd@ti.com>
+ <20241203173113.90009-4-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,10 +60,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241203173113.90009-3-afd@ti.com>
+In-Reply-To: <20241203173113.90009-4-afd@ti.com>
 
-On Tue, Dec 03, 2024 at 11:31:12AM -0600, Andrew Davis wrote:
-> Add a pattern property for pcie-ctrl which can be part of this controller.
+On Tue, Dec 03, 2024 at 11:31:13AM -0600, Andrew Davis wrote:
+> Add a pattern property for MAC efuse which can be part of this controller.
 > 
 > Signed-off-by: Andrew Davis <afd@ti.com>
 > ---
@@ -71,22 +71,20 @@ On Tue, Dec 03, 2024 at 11:31:12AM -0600, Andrew Davis wrote:
 >  1 file changed, 6 insertions(+)
 > 
 > diff --git a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-> index 9ba9cb100ab30..ead0679b30e3f 100644
+> index ead0679b30e3f..fbaae3d1bef60 100644
 > --- a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
 > +++ b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-> @@ -74,6 +74,12 @@ patternProperties:
+> @@ -80,6 +80,12 @@ patternProperties:
 >      description:
->        This is the ICSSG control region.
+>        This is the PCIe control region.
 >  
-> +  "^pcie-ctrl@[0-9a-f]+$":
+> +  "^ethernet-mac-syscon@[0-9a-f]+$":
 > +    type: object
 > +    $ref: /schemas/mfd/syscon.yaml#
 > +    description:
-> +      This is the PCIe control region.
+> +      This is the Ethernet MAC efuse region.
 
-This device (parent) is a syscon already. There is no sub-block
-representation, because what would be next? Third child with a node per
-each register?
+Actually considering my comment on the previous patch - drop.
 
 Best regards,
 Krzysztof
