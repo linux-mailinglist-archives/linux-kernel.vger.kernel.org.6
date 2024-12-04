@@ -1,211 +1,171 @@
-Return-Path: <linux-kernel+bounces-432089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51499E4631
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:00:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA20E9E4611
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A9BBA49BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91184B2EBBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE501F03FE;
-	Wed,  4 Dec 2024 19:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F021DF267;
+	Wed,  4 Dec 2024 19:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CPPIFP2/"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hwlDPSc0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="s0VFqvmF"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1BC1F03FF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCE618BBB4;
+	Wed,  4 Dec 2024 19:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733341111; cv=none; b=dyC8x36mljUc493EhwMCgnbDM1CyvQF45+k1T1m9CmIsiRrA6+t67qHUx2n/ZZ8+/nt6761NZWIzoWJcEgb9s8EpTlcQaJmcjzvpwFcLub6bEIo9j/ZOZSxGlV8+OB9hul6/i2dNr9YoghTBzW14PGeFG3d/0KLtsYcype8rMZM=
+	t=1733341454; cv=none; b=j3CsKwo8dhCDUb9zW94Ft/Q0TsPdheGs8NTHpiKe9SixGdOk29hMWlFpGggmTDsf8/s/gTI0/DAXFn4gHMFtRF2ctX1Gp/MXpYgaEsEnMqNjZlxxb0bILDbGMOELA3MqN2igDunpkxPwmRKldosvquGc8L14ErZHTc30RJSelp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733341111; c=relaxed/simple;
-	bh=YQT4drBY7tScD1DUIq0hp7zQqqa+RMUYBdm9PfSPvGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+SX1JW47fcPeZXgHpFB84Y39LgwKEqPk+j/XgLaXaLBACjEoOvpakuP9Pt5GXfdgQkWkdrcXd9BX0tapMkkFIbNspDApyaFxCAsVVQdD8mLcAz2Kdsszc+QQz7o0YpqXFF+wa6k21Ojlk0LighCtuLTUfppRQVAyUURCAxH2Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CPPIFP2/; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee51f8c47dso139629a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:38:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733341109; x=1733945909; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pEkYOP8DWRCVJGmJ8XdCFkWDl0dAyfXQuWbp6O8DcxU=;
-        b=CPPIFP2/+cxYLrC0N/Zf4Pb6Ku9HUUZRmbnZ66PUR8fWI0hTof9Ef65vYboKUm2ulH
-         wt+h3255dmzj5YE4NeGy0cYUYQWUwUfDb/JtIhJy873w+42TcQv8n4cpiN9opfFZCYCx
-         EPbCScz0DMqNxOmdrAiX3n0eAEMNGnJm2rZTY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733341109; x=1733945909;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pEkYOP8DWRCVJGmJ8XdCFkWDl0dAyfXQuWbp6O8DcxU=;
-        b=W5IbYN3TtUK4mAyHiHJETJasRCP/YvlmVSqbwLIgTrsatTOF7a0IUxNxR+L7TwJfY3
-         xJo4sbWZnnQjUd3Bs73WOHJ501Z2Ah8r5JJ1yMGc8mfAn4LP9txJ1LWzinnxnvgYRZRG
-         J5JxbF9NUNZLkNM8qnnN686s/A/emmWh1UjqFD9M1KBJ42A6FbwQUqNxBGhV4VcMGmyE
-         Nq6sXRiS7E1fRZptEGOZp/afM5d9CCplxCB9ir4v4maf0k4aaxeDPCVo/umgAlaAHDXo
-         U2HMLw7Eq1/Zcuf2DPUU5IHE9c/0VTJc03aXHlEKNNOcbM/gci/DHc6KtmnF4d74ZTKK
-         mRHA==
-X-Gm-Message-State: AOJu0YweAQv3SY6Wfzmzw/oXCXaQnSF1grUiR8NIyPklwiB+hw5IKnyg
-	mNjvqOev1OiRX1Xk8Gm1UVKKLf1wAkINdnXNbTATjN4R/Cx3HDfJl4qGwuQPHg==
-X-Gm-Gg: ASbGnctqueW2Pee69B4KOrRZ1ELohAX0y5tQwbMlcDdoUwInsI0OTuNZ4umNtyF8T4B
-	GsVDcbv7IML1FVmE8YHFDGYeoI+ITTTLlPs7IVRwEECdK+zmiVHKRHEc8TTCiK/P5wJXMZAbhv3
-	NisELegAthUPWCloQaeP3fAgKpwWN/yaGl1SdSJFzVlzBrG2CgQ3mRar2bcfpinPxGQEmZ4LnXN
-	vq3ZBZ78x/39cc129eW+OXWIuOzsFdxuofL8rUPze9n30E1XbWmk9TJaCL8FQgncxvoJSvvr1gK
-	sjACSmEmCSCt
-X-Google-Smtp-Source: AGHT+IFNB0C42TjAbUDS23zWcK1xjIKXEKMvRIoan0OfO+4kulipHTZoHnQzUMSLAmc8D4LMu5IPuQ==
-X-Received: by 2002:a17:90b:2547:b0:2ee:f22a:61dd with SMTP id 98e67ed59e1d1-2ef01274f35mr9109441a91.32.1733341109636;
-        Wed, 04 Dec 2024 11:38:29 -0800 (PST)
-Received: from localhost ([2a00:79e0:2e14:7:8ab8:57a6:96ad:47f7])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ef27066dc4sm1805536a91.48.2024.12.04.11.38.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 11:38:29 -0800 (PST)
-Date: Wed, 4 Dec 2024 11:38:27 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, kees@kernel.org, nathan@kernel.org,
-	yury.norov@gmail.com, linux@weissschuh.net, gjoyce@ibm.com,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] cpumask: work around false-postive stringop-overread
- errors
-Message-ID: <Z1Cvs1xNSDQRJ1Ri@google.com>
-References: <20241112124127.1666300-1-nilay@linux.ibm.com>
+	s=arc-20240116; t=1733341454; c=relaxed/simple;
+	bh=9JZlTQUmVyWIc5Juw9KaWD5uEDIQ0ihP6yNvbkiRcrc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=NITQiv39jbBrfIBYGs4z2s4tKoVKg1JGeUVmMw3Wkq3Oc+RtmocOVL6oCrapMGeMg4oDFADUeBb7C2/Wce3wr6IC09mYsYKLbl+6SKOlztXPurgwDj1uEhEtv6nHa00nSaUA/w8ejdqVWEWdvkgIs7dAvdQPA5DriKWbjkjT4u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hwlDPSc0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=s0VFqvmF; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D4C8A2540134;
+	Wed,  4 Dec 2024 14:44:10 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 14:44:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733341450;
+	 x=1733427850; bh=EEShQR326Q35qKfWScIGB4OH/vhPY1mnipsA5wuW348=; b=
+	hwlDPSc0rvzNpZzrTYWC60TzGbdku3NKzOhXxi5qKbHrzNH1uGfnv56fgc21rdJL
+	y5u2EM55QEPrZcWXqGh1/MCXKh5IWn7syUWl6F5wTxSq3p6DitP5YGI4GwZojONZ
+	f//lPJu53VSpV+VkVA77aiGVXCoMXPcnLYqKcT1TiAnhSKGW2o9XTDVRIEv6iwjp
+	i4SF6muIDU/xCsDLQKw89CO7jgTfgC+t1CoMmyFXUzCnUlTXt4sdwGNTHRHNz5gp
+	wqqQcPbXKA6XkqQdMy9022jMpqkXUDEKzR0WwaWYyyN2sqvWjKmUdxN1pnTSKVS+
+	bwHprqvsl3U4bqbx7sJuFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733341450; x=
+	1733427850; bh=EEShQR326Q35qKfWScIGB4OH/vhPY1mnipsA5wuW348=; b=s
+	0VFqvmFo9z0D1+k7pV4kWTIaDPIec9JqOlFhhRBMWx965EPN7yQTYcRjqvT7g0dB
+	v4MBPz8qrAo15FndMI0Z5TBgzCZCoAXs2fHbqBcQtKZVkTHjKXlWQQ2jmxXDNg2q
+	IufTOeXQQXFBcJ3HHMYUfn8nfTPI8n/7ICNDU8SneNybArJOmwkadZZfHOsN82qJ
+	3rdDoxordPGLOn3emEtM2QkgGEDhcb8+sL5PpvblXy9OWGR1PYvQBErW9yA1QbkX
+	hlORScw8AJkv2oDqC/kL9khp2aKfVKZW5k9OI/Jen+G5160YK/WVZQdZtrUUePBV
+	yF4fKAKLlJWzjNseoCqtA==
+X-ME-Sender: <xms:CbFQZ6S-STxiOch9IRji7jVLfiwi7yrDOQmtVC404LvFxkskODvWaQ>
+    <xme:CbFQZ_yf0ytiW_PtxECETAskHeehuzX1nRquHfYHS36ZcTwfufy19KH3oIsKuZRFJ
+    mDl5pXDhuutC-yX9h0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgdduvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
+    gtphhtthhopegtihhmihhnrghghhhisehgnhhuuggurdgtohhmpdhrtghpthhtohepshgv
+    rghnjhgtsehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgrug
+    gvrggurdhorhhgpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghp
+    thhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
+X-ME-Proxy: <xmx:CbFQZ33eh8ZYfsPql2FP_KP8PxE7kchxDt2_9qO_eDw_HU7IbY8Rog>
+    <xmx:CbFQZ2B13V_ZclRqtDBy2qHQWTH_QB7bI2Qd0BakBm9IE9ene8_3XQ>
+    <xmx:CbFQZzj-gnk_gxccY5q9MQJ73y6CpI1qA56dPCHLr387FjvIXToMyA>
+    <xmx:CbFQZyoqs9lDR5286bu_EP54yVcL4Wemx5rlWoGFT3d88xpE967IpA>
+    <xmx:CrFQZz7UfHW9QtIHtpALIsC7FVq8sbLR9JgoDLIt799Fc5vCnPfFhyTq>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7F7912220072; Wed,  4 Dec 2024 14:44:09 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Wed, 04 Dec 2024 20:43:35 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Andy Shevchenko" <andy@kernel.org>,
+ "Matthew Wilcox" <willy@infradead.org>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Davide Ciminaghi" <ciminaghi@gnudd.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
+Message-Id: <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
+In-Reply-To: 
+ <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-10-arnd@kernel.org>
+ <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com>
+Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241112124127.1666300-1-nilay@linux.ibm.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nilay,
+On Wed, Dec 4, 2024, at 19:10, Linus Torvalds wrote:
+> "On second thought , let=E2=80=99s not go to x86-64 microarchitectural
+> levels. =E2=80=98Tis a silly place"
 
-I see you didn't CC the maintainers for this file. You might consider
-looking through:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-And:
+Fair enough. I'll just make it use -march=3Dx86_64 to override
+the compiler default then.
 
-$ scripts/get_maintainer.pl -f kernel/padata.c
-Steffen Klassert <steffen.klassert@secunet.com> (maintainer:PADATA PARALLEL EXECUTION MECHANISM)
-Daniel Jordan <daniel.m.jordan@oracle.com> (maintainer:PADATA PARALLEL EXECUTION MECHANISM)
-linux-crypto@vger.kernel.org (open list:PADATA PARALLEL EXECUTION MECHANISM)
-linux-kernel@vger.kernel.org (open list:PADATA PARALLEL EXECUTION MECHANISM)
+> On Wed, 4 Dec 2024 at 02:31, Arnd Bergmann <arnd@kernel.org> wrote:
+>>
+>> To allow reliably building a kernel for either the oldest x86-64
+>> CPUs or a more recent level, add three separate options for
+>> v1, v2 and v3 of the architecture as defined by gcc and clang
+>> and make them all turn on CONFIG_GENERIC_CPU.
+>
+> The whole "v2", "v3", "v4" etc naming seems to be some crazy glibc
+> artifact and is stupid and needs to die.
+>
+> It has no relevance to anything. Please do *not* introduce that
+> mind-fart into the kernel sources.
+>
+> I have no idea who came up with the "microarchitecture levels"
+> garbage, but as far as I can tell, it's entirely unofficial, and it's
+> a completely broken model.
 
-I'll leave the full contents intact below for their sake, with a few
-inline comments as well:
+I agree that both the name and the concept are broken.
+My idea was based on how distros (Red Hat Enterprise Linux
+at least) already use the same levels for making userspace
+require newer CPUs, so using the same flag for the kernel
+makes some sense.
 
-On Tue, Nov 12, 2024 at 06:11:24PM +0530, Nilay Shroff wrote:
-> While building the powerpc code using gcc 13, I came across following
-> errors generated for kernel/padata.c file:
-> 
->   CC      kernel/padata.o
-> In file included from ./include/linux/string.h:390,
->                  from ./arch/powerpc/include/asm/paca.h:16,
->                  from ./arch/powerpc/include/asm/current.h:13,
->                  from ./include/linux/thread_info.h:23,
->                  from ./include/asm-generic/preempt.h:5,
->                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
->                  from ./include/linux/preempt.h:79,
->                  from ./include/linux/spinlock.h:56,
->                  from ./include/linux/swait.h:7,
->                  from ./include/linux/completion.h:12,
->                  from kernel/padata.c:14:
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> 
-> Apparentrly, above errors only menifests with GCC 13.x and config option
-> CONFIG_FORTIFY_SOURCE. Furthermore, if I use gcc 11.x or gcc 12.x then I
-> don't encounter above errors. Prima facie, these erros appear to be false-
-> positive. Brian informed me that currently some efforts are underway by
-> GCC developers to emit more verbose information when GCC detects string
-> overflow errors and that might help to further narrow down the root cause
-> of this error. So for now, silence these errors using -Wno-stringop-
-> overread gcc option while building kernel/padata.c file until we find the
-> root cause.
+Making a point about the levels being stupid is a useful
+goal as well.
 
-You might consider running this paragraph through a spelling checker if you submit a
-v2.
+> There is a very real model for microarchitectural features, and it's
+> the CPUID bits. Trying to linearize those bits is technically wrong,
+> since these things simply aren't some kind of linear progression.
+>
+> And worse, it's a "simplification" that literally adds complexity. Now
+> instead of asking "does this CPU support the cmpxchgb16 instruction?",
+> the question instead becomes one of "what the hell does 'v3' mean
+> again?"
 
-> Link: https://lore.kernel.org/all/7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com/
-> Cc: briannorris@chromium.org
-> Cc: kees@kernel.org
-> Cc: nathan@kernel.org
-> Cc: yury.norov@gmail.com
-> Cc: linux@weissschuh.net
-> Cc: gjoyce@ibm.com
-> Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
-> ---
->  kernel/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/Makefile b/kernel/Makefile
-> index 87866b037fbe..e5adba7a30f1 100644
-> --- a/kernel/Makefile
-> +++ b/kernel/Makefile
-> @@ -120,6 +120,7 @@ obj-$(CONFIG_CFI_CLANG) += cfi.o
->  obj-$(CONFIG_PERF_EVENTS) += events/
->  
->  obj-$(CONFIG_USER_RETURN_NOTIFIER) += user-return-notifier.o
-> +CFLAGS_padata.o += $(call cc-disable-warning, stringop-overread)
+I guess the other side of it is that the current selection
+between pentium4/core2/k8/bonnell/generic is not much better,
+given that in practice nobody has any of the
+pentium4/core2/k8/bonnell variants any more.
 
-Personally, I'd recommend a comment here, noting that these warnings
-seem to produce false positives on GCC 13+. But otherwise, this seems OK
-to me:
+A more radical solution would be to just drop the entire
+menu for 64-bit kernels and always default to "-march=3Dx86_64
+-mtune=3Dgeneric" and 64 byte L1 cachelines.
 
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-
->  obj-$(CONFIG_PADATA) += padata.o
->  obj-$(CONFIG_JUMP_LABEL) += jump_label.o
->  obj-$(CONFIG_CONTEXT_TRACKING) += context_tracking.o
-> -- 
-> 2.45.2
-> 
+      Arnd
 
