@@ -1,334 +1,172 @@
-Return-Path: <linux-kernel+bounces-430648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6D29E3411
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:25:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816E69E3426
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:31:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72635167EB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:24:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5377B235A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258E018C930;
-	Wed,  4 Dec 2024 07:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606CE18A6C1;
+	Wed,  4 Dec 2024 07:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sj/XXw08"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="QFQokjf7";
+	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="pDac4oAL"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260E8188015
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733297090; cv=none; b=Xo4n5sVGG7LVfoC750DdWZH22G79GXiorpm4HVJsZ5GzeHDlZpJpG8XyBkLPxWtWAamDdaBUmTGfeZgsdFsgu2FpN0xYfGuc1pQC0WjMlwnUMLuhZxE/Dkya/5jWoo74ndBFxvF35b+sVPOb3N24kKUfE4EKrohMrNp/uhu03GQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733297090; c=relaxed/simple;
-	bh=Zd6OM8mfIHwQekpkQRNZQXKHnnK+oph2sfEB9l/vHwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ky5Qb38LlAjJO6GOb1qwKqV3a+kFj6Yy1gtli/Hg8gSO8vP0xwhBtNybQxQoe+jtf3aY5nKgbMsKmPpt0wOsUSok2eBhkvZa8Z0deCR3vTo2JC1owm+h2LCSLiqqeDShCgHA5t+ENZ7GCyesdVqdEJbqHGNfk6XZ2FKYSRN/QpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sj/XXw08; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385eaecc213so258510f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 23:24:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733297085; x=1733901885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7HALTGcIVNAPzHCr/BGJOOtFQkHmcHLgf3NzrBrnCw=;
-        b=sj/XXw08LyQrnY9jqn2BrnlUWQKWjAPv998YN8g0Y9XlZXKmH+nIImbWwPisYoGMf0
-         ZgZyTUZWYSr7Higjk4ZBcOc/kQs3UQnrqEj3JOpumaQOfm3B7F2fOYgyip786ZImOw/P
-         jLIRLIOKeKmfkVXe+BKA66UhkKFA8E8rkV1yFgRI5Bwka/MMXWN1Lo2/mUNUXHe5ImMd
-         uQAlAVOv6SIxApN+OddTz7Xt+Ajy6NK9Gg+ULUZoNVbytQbDuY0jPy6oLK8Ou5hq4djb
-         XkRJUohDCP7rM6ZBwCa3bLG/CtM7ptLiYD/rfCROBmGdHQWlYLPBz8iLwBbH2gsU2YR6
-         xRFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733297085; x=1733901885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q7HALTGcIVNAPzHCr/BGJOOtFQkHmcHLgf3NzrBrnCw=;
-        b=K35pc0Lo/dB0CGxChqe8/rP386kGFHCw33vsH5qKPb6PiqqV8+mkYnsiEC8TVmsvge
-         PMV6q2zstGFi33Q+4iZrRf7Ir4gjZucDaTv+/NFC5HK/tNbw8WYU2P2hozq+dY8i9Ug4
-         JH0I3xJ+StKnoK+izaV5jhg5+HwnWobQ4aPCIgibaTZ5C2GyW5IIErZfz5D8I6DxbLZc
-         DEfNKRRv1vQPLA2IYDv4mMBNXuGyTXgnSc5TLXCWVOxlGfvrwealqIHJ+HweCIkU+Mcl
-         /4T8Xl81eQ2pBLMOjyVHA3uUQWqaS7AGqmjIu+GH5Qr1ePalGE+PGMLPtBl596YjMoQk
-         rY/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW2tSdeZ4EG0FsS4NLMZwcpw5xyUPoaRb8+RQH8mDN/45bTSyoWZKWa4Qzcm2OXiVLNT3dr8hh0DLlgjhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9Qmf+TY6zJ1Czi6ZxJwwhhfnPMjxVlEG6241SYNljB+7/YVdC
-	5tjEYYe2s5c/qM0hKQ6RiJYTLGWKEJvs5YIQlktzC955wRmPbKblDsFAqwW/N7U=
-X-Gm-Gg: ASbGncuq74QM6QvVPLiM1sMUKe3AwPlMrjkvn1B/qt9EcQ19vl/7JrmTYJ7HPLN6kiw
-	Z6ghs+sQK1pD2+kYMu3LZSjkHvtDWkp+Nqo/x9tIq+SHo71TXnL3661aVA8JYUMrWnK43e1wDTY
-	YDreoCNgMCcEUvcnpvnMTUPK3EQroGO3dpouSwgnV+s2SCJLXeZ1PY+4CK0qhrT+E/MgD8iO99R
-	IUD5OWhMoxAxO0Pr/7EUsysBQZvHdY+aywE/7ArsbW4p8l7Ev2oogo=
-X-Google-Smtp-Source: AGHT+IHZjJV3X8DRwpZM2LIoO92mMGlR//mHmz04yaqsi0BXvmxHIJLtu+q3X/2NMlr6oqVbQxPx4A==
-X-Received: by 2002:a5d:64e6:0:b0:385:dedb:a15b with SMTP id ffacd0b85a97d-385fd9ac147mr4271554f8f.24.1733297085485;
-        Tue, 03 Dec 2024 23:24:45 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a410sm17723351f8f.46.2024.12.03.23.24.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 23:24:44 -0800 (PST)
-Date: Wed, 4 Dec 2024 10:24:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	linux-arch@vger.kernel.org, netdev@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Nadav Amit <nadav.amit@gmail.com>, Brian Gerst <brgerst@gmail.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 0/6] Enable strict percpu address space checks
-Message-ID: <5b8d0dee-8fb6-45af-ba6c-7f74aff9a4b8@stanley.mountain>
-References: <20241126172332.112212-1-ubizjak@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DDD848C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.161
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733297458; cv=pass; b=Y0iZlgOYmPZU86V+RkYXImdRqXgjDsnPJBBUmK12wnwhbqpK0sLMAkU3gH3yGj622Ut5osljH37YgF4PisyiqaqO+iuScpCt1RgZI4xVZ78rZO2tCbRWz98ygSB99sLEVv9VWqqjij/QXQ6ZDyh9+Qq99NcZYLRTUHlnooJ2rPo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733297458; c=relaxed/simple;
+	bh=lT0tCdrCGqK25uoxSeYyHMV4miVl9/zjxIxfiGpXRdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zxvia6xCoh2N01W8RyjHZ3obwQxNlLSIArosgfWl+4STA+/cH0svjh5IXRV0p3yWthxSy4OUKGMtmPX+jpMXoArf40TAly2PY9lGXQOFGPeDSh8A4tz2rB/bwIyHm0kHFgRLTgWwZIZGWHHZaFwT3ThOLnoORcnGE8/zpjs1lig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=QFQokjf7; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=pDac4oAL; arc=pass smtp.client-ip=81.169.146.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
+ARC-Seal: i=1; a=rsa-sha256; t=1733297268; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=DW+Ixa3XQxtFxQfckZJV97A9gxX7U1xrO7Qh11l17QsQpXEL5809FG4grREDbp91Wd
+    AHl6BQB+GimvuXaAfQRPC86hbw158Fbix1yk+WUVQJ6OiPcqzNXt0/CZCcwnH3g0v893
+    hcU57Bedo/hgJmec5lBvhq5XoscbsrPHqVSjeHeE53XIPZXa4o+OeFeLdurN918ni2lF
+    fJSGr5bLjZRPj3KYY2gfFfp8rthgDJ+XkkhiouIN5oue8UNTLh5FZTClvhMxMy3fLo2i
+    vM61nXznsTnKAoTOwNcwf5iYn4O/XwUu+Frulrwmh79nXfCQ14+W90PdsA5cTtDYJBME
+    RQfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733297268;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=7QTF0rM+w5EQbe0dkyUe0EzmXHLlCV/ymZQZNrVKoto=;
+    b=AZySPL+UH1afjVxjYrO+xin6wVfi8z5SctW/Dk7eVxnG34ynmiXI4aP6UUZJw7slEI
+    VgvWtAX/h6UnJnGIW3/ae49uZO+eL02dHPrc5TvrayF8TqsuVP3AmbpxiQ6Jr3kxaxtA
+    w40gwdNm9o8vM754f6TIpTyl3A7di5qQ3pShzq4aei9CERwt8z3lcOZV1KpluFy3H0AR
+    /jo96/tCi9eMB2SNDj3pbFmCq+ItPFwoE6mQSEW+KymFE8oRuLKXW1wBX5XDfIIeuda4
+    HXrE8JYWDcV417NY2KyXgRh04QNE0bd5Md2ciibi7SCBlae6Vvn9ycIrNulAGRPZDJa8
+    4MRw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733297268;
+    s=strato-dkim-0002; d=outer-limits.org;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=7QTF0rM+w5EQbe0dkyUe0EzmXHLlCV/ymZQZNrVKoto=;
+    b=QFQokjf7U6HgALX84BrA/qhbM1YOMUP3OSMvIgqsBzSCj2ACkmP880wtCZTCAa8SxQ
+    kFz7GpagWtoYKH0ctFM6hWNc9/Nzqp5o/MaBUUhXeKAoaVsNClRyDWrIe4VD6sqhYeIA
+    QDr8mJIMsiNLm4PKDU6vqR00XAlbwfs27p0J7iH0Ci0bYRxDoXhrW6T4n1QK2QtM2sVx
+    RAxYlalY7VTywW/U0g+v3tmIjcP614ARydN5FXNucj+o2oMmgtx1/1Y5X3Ut85QlJb1r
+    6o0KEwxdoeyc82xErKBAf+xuO+w/ye3/+zXUoPfF4THbLqvN3ELVBckj8+4Z/CIElNqQ
+    Otkw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733297268;
+    s=strato-dkim-0003; d=outer-limits.org;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=7QTF0rM+w5EQbe0dkyUe0EzmXHLlCV/ymZQZNrVKoto=;
+    b=pDac4oALLSCJWwi2Zc4IMR1V0n1zxBNs0rdh1Uqkl3kq2KLWgXavwjx5lu3zHNwjVl
+    dtv55yj5hQs1ZDXj6FCg==
+X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBFXdk5Zv9blcw/Guou9tnmlcuycxXU9rVIojJAYOMzGkPFeCwPebw=="
+Received: from [IPV6:2a02:8429:5895:8b01:5ea:3d78:a142:af08]
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id Ja0a030B47RmQWc
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 4 Dec 2024 08:27:48 +0100 (CET)
+Message-ID: <8d674373-0f30-4d0b-aac7-53eb38c81513@outer-limits.org>
+Date: Wed, 4 Dec 2024 08:27:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126172332.112212-1-ubizjak@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm: Remove IO memcpy for Big-Endian
+To: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>
+References: <20241203083838.3260036-1-jvetter@outer-limits.org>
+ <609b026d-d54c-4a11-b7df-6ef0ac315f25@app.fastmail.com>
+Content-Language: en-US
+From: Julian Vetter <julian@outer-limits.org>
+In-Reply-To: <609b026d-d54c-4a11-b7df-6ef0ac315f25@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 06:21:17PM +0100, Uros Bizjak wrote:
-> This patchset enables strict percpu address space checks via x86 named 
-> address space qualifiers. Percpu variables are declared in
-> __seg_gs/__seg_fs named AS and kept named AS qualified until they
-> are dereferenced via percpu accessor. This approach enables various
-> compiler checks for cross-namespace variable assignments.
+
+
+On 03.12.24 11:08, Arnd Bergmann wrote:
+> On Tue, Dec 3, 2024, at 09:38, Julian Vetter wrote:
+>> From: Julian Vetter <julian@outer-limits.org>
+>>
+>> Recently a new IO memcpy was added in libs/iomem_copy.c. So, remove the
+>> byte-wise IO memcpy operations used in ARM big endian builds and fall
+>> back to the new generic implementation. It will be slightly faster,
+>> because it uses machine word accesses if the memory is aligned and falls
+>> back to byte-wise accesses if its not.
+>>
+>> Signed-off-by: Julian Vetter <julian@outer-limits.org>
+>> ---
+>>   arch/arm/include/asm/io.h | 11 ----------
+>>   arch/arm/kernel/io.c      | 46 ---------------------------------------
+>>   2 files changed, 57 deletions(-)
 > 
-> Please note that current version of sparse doesn't know anything about
-> __typeof_unqual__() operator. Avoid the usage of __typeof_unqual__()
-> when sparse checking is active to prevent sparse errors with unknowing
-> keyword.
 
-I don't think it would be super hard to add support to Sparse.  The only places
-where typeof and typeof_unqual are different is that you have to mask away the
-qualifiers in examine_typeof()?
+Hello Arnd,
+first, sorry, that I messed up my sender email while sending the patch.
 
-I would take over Sparse maintainership but I'm far too sloppy to do it.  We
-should get Greg to take over, he likes abandoned projects.  ;)
+> I'm not sure if this is safe on all platforms. Big-endian arm
+> is extremely rare in practice, and in comes in multiple variants
+> that behave slightly differently:
+> 
+> - On modern ARMv7 the byte-invariant big-endian "BE8" mode
+>    generally well-behaved and works as one would expect it to.
+> 
+> - There is one ARMv5 "BE32" based platform, the ixp4xx, which
+>    works differently, and this in turn allows multiple configurations
+>    for its buses where a byte-swap is performed in the PCI
+>    controller.
+> 
+> When the little-endian I/O string operations got optimized to
+> calling the word-based helpers in commit 7ddfe625cbc1 ("ARM:
+> optimize memset_io()/memcpy_fromio()/memcpy_toio()"), Russell
+> intentionally left the big-endian versions alone, which I think
+> was done for the case of PCI on ixp4xx, but could have been
+> out of general caution.
+> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- ast-inspect.c |  1 +
- ctags.c       |  1 +
- dissect.c     |  1 +
- evaluate.c    |  3 ++-
- parse.c       | 24 +++++++++++++++++++++---
- show-parse.c  |  1 +
- symbol.c      | 17 ++++++++++++++++-
- symbol.h      |  1 +
- 8 files changed, 44 insertions(+), 5 deletions(-)
+Wow, thank you for the explanation!
 
-diff --git a/ast-inspect.c b/ast-inspect.c
-index b510cd9b1d2c..e940a93a411e 100644
---- a/ast-inspect.c
-+++ b/ast-inspect.c
-@@ -110,6 +110,7 @@ static const char *symbol_type_name(enum type type)
- 		[SYM_UNION] = "SYM_UNION",
- 		[SYM_ENUM] = "SYM_ENUM",
- 		[SYM_TYPEOF] = "SYM_TYPEOF",
-+		[SYM_TYPEOF_UNQUAL] = "SYM_TYPEOF_UNQUAL",
- 		[SYM_BITFIELD] = "SYM_BITFIELD",
- 		[SYM_LABEL] = "SYM_LABEL",
- 		[SYM_RESTRICT] = "SYM_RESTRICT",
-diff --git a/ctags.c b/ctags.c
-index aa5f9718d847..afdc42b77b98 100644
---- a/ctags.c
-+++ b/ctags.c
-@@ -151,6 +151,7 @@ static void examine_symbol(struct symbol *sym)
- 		sym->kind = 'e';
- 	case SYM_PTR:
- 	case SYM_TYPEOF:
-+	case SYM_TYPEOF_UNQUAL:
- 	case SYM_BITFIELD:
- 	case SYM_FN:
- 	case SYM_ARRAY:
-diff --git a/dissect.c b/dissect.c
-index 300d5ca99c97..9419c5931fbb 100644
---- a/dissect.c
-+++ b/dissect.c
-@@ -212,6 +212,7 @@ static void examine_sym_node(struct symbol *node, struct symbol *parent)
- 	while ((base = node->ctype.base_type) != NULL)
- 		switch (base->type) {
- 		case SYM_TYPEOF:
-+		case SYM_TYPEOF_UNQUAL:
- 			node->ctype.base_type =
- 				do_expression(U_VOID, base->initializer);
- 			break;
-diff --git a/evaluate.c b/evaluate.c
-index fe716f631987..85a6447ba3ce 100644
---- a/evaluate.c
-+++ b/evaluate.c
-@@ -358,7 +358,8 @@ static inline int classify_type(struct symbol *type, struct symbol **base)
- 	};
- 	if (type->type == SYM_NODE)
- 		type = type->ctype.base_type;
--	if (type->type == SYM_TYPEOF) {
-+	if (type->type == SYM_TYPEOF ||
-+	    type->type == SYM_TYPEOF_UNQUAL) {
- 		type = examine_symbol_type(type);
- 		if (type->type == SYM_NODE)
- 			type = type->ctype.base_type;
-diff --git a/parse.c b/parse.c
-index f868bf63a0f5..95894bf5e54d 100644
---- a/parse.c
-+++ b/parse.c
-@@ -54,7 +54,7 @@ static struct token *handle_attributes(struct token *token, struct decl_state *c
- typedef struct token *declarator_t(struct token *, struct symbol *, struct decl_state *);
- static declarator_t
- 	struct_specifier, union_specifier, enum_specifier,
--	attribute_specifier, typeof_specifier,
-+	attribute_specifier, typeof_specifier, typeof_unqual_specifier,
- 	storage_specifier, thread_specifier;
- static declarator_t generic_qualifier;
- static declarator_t autotype_specifier;
-@@ -196,6 +196,13 @@ static struct symbol_op typeof_op = {
- 	.set = Set_S|Set_T,
- };
- 
-+static struct symbol_op typeof_unqual_op = {
-+	.type = KW_SPECIFIER,
-+	.declarator = typeof_unqual_specifier,
-+	.test = Set_Any,
-+	.set = Set_S|Set_T,
-+};
-+
- static struct symbol_op autotype_op = {
- 	.type = KW_SPECIFIER,
- 	.declarator = autotype_specifier,
-@@ -480,6 +487,7 @@ static struct init_keyword {
- 	/* Typedef ... */
- 	N("typedef",		&typedef_op,	.mods = MOD_USERTYPE),
- 	A("typeof",		&typeof_op),
-+	A("typeof_unqual",	&typeof_unqual_op),
- 	N("__auto_type",	&autotype_op),
- 
- 	/* Type qualifiers */
-@@ -1052,7 +1060,7 @@ static struct token *enum_specifier(struct token *token, struct symbol *sym, str
- 	return ret;
- }
- 
--static struct token *typeof_specifier(struct token *token, struct symbol *sym, struct decl_state *ctx)
-+static struct token *typeof_specifier_helper(struct token *token, struct symbol *sym, struct decl_state *ctx, bool qual)
- {
- 
- 	if (!match_op(token, '(')) {
-@@ -1065,7 +1073,7 @@ static struct token *typeof_specifier(struct token *token, struct symbol *sym, s
- 		ctx->ctype.base_type = sym->ctype.base_type;
- 		apply_ctype(token->pos, &ctx->ctype, &sym->ctype);
- 	} else {
--		struct symbol *typeof_sym = alloc_symbol(token->pos, SYM_TYPEOF);
-+		struct symbol *typeof_sym = alloc_symbol(token->pos, qual? SYM_TYPEOF : SYM_TYPEOF_UNQUAL);
- 		token = parse_expression(token->next, &typeof_sym->initializer);
- 
- 		typeof_sym->endpos = token->pos;
-@@ -1078,6 +1086,16 @@ static struct token *typeof_specifier(struct token *token, struct symbol *sym, s
- 	return expect(token, ')', "after typeof");
- }
- 
-+static struct token *typeof_specifier(struct token *token, struct symbol *sym, struct decl_state *ctx)
-+{
-+	return typeof_specifier_helper(token, sym, ctx, true);
-+}
-+
-+static struct token *typeof_unqual_specifier(struct token *token, struct symbol *sym, struct decl_state *ctx)
-+{
-+	return typeof_specifier_helper(token, sym, ctx, false);
-+}
-+
- static struct token *autotype_specifier(struct token *token, struct symbol *sym, struct decl_state *ctx)
- {
- 	ctx->ctype.base_type = &autotype_ctype;
-diff --git a/show-parse.c b/show-parse.c
-index e2fc18bb4b3d..ceb6b3cb6f82 100644
---- a/show-parse.c
-+++ b/show-parse.c
-@@ -59,6 +59,7 @@ static void do_debug_symbol(struct symbol *sym, int indent)
- 		[SYM_UNION] = "unin",
- 		[SYM_ENUM] = "enum",
- 		[SYM_TYPEOF] = "tpof",
-+		[SYM_TYPEOF_UNQUAL] = "tpof_unqual",
- 		[SYM_BITFIELD] = "bitf",
- 		[SYM_LABEL] = "labl",
- 		[SYM_RESTRICT] = "rstr",
-diff --git a/symbol.c b/symbol.c
-index 91352a3a447b..7060acb666d9 100644
---- a/symbol.c
-+++ b/symbol.c
-@@ -541,7 +541,7 @@ static struct symbol *examine_pointer_type(struct symbol *sym)
- 	return sym;
- }
- 
--static struct symbol *examine_typeof(struct symbol *sym)
-+static struct symbol *examine_typeof_helper(struct symbol *sym, bool qual)
- {
- 	struct symbol *base = evaluate_expression(sym->initializer);
- 	unsigned long mod = 0;
-@@ -550,6 +550,8 @@ static struct symbol *examine_typeof(struct symbol *sym)
- 		base = &bad_ctype;
- 	if (base->type == SYM_NODE) {
- 		mod |= base->ctype.modifiers & MOD_TYPEOF;
-+		if (!qual)
-+			mod &= ~MOD_QUALIFIER;
- 		base = base->ctype.base_type;
- 	}
- 	if (base->type == SYM_BITFIELD)
-@@ -560,6 +562,16 @@ static struct symbol *examine_typeof(struct symbol *sym)
- 	return examine_node_type(sym);
- }
- 
-+static struct symbol *examine_typeof(struct symbol *sym)
-+{
-+	return examine_typeof_helper(sym, true);
-+}
-+
-+static struct symbol *examine_typeof_unqual(struct symbol *sym)
-+{
-+	return examine_typeof_helper(sym, false);
-+}
-+
- /*
-  * Fill in type size and alignment information for
-  * regular SYM_TYPE things.
-@@ -595,6 +607,8 @@ struct symbol *examine_symbol_type(struct symbol * sym)
- 		return sym;
- 	case SYM_TYPEOF:
- 		return examine_typeof(sym);
-+	case SYM_TYPEOF_UNQUAL:
-+		return examine_typeof_unqual(sym);
- 	case SYM_PREPROCESSOR:
- 		sparse_error(sym->pos, "ctype on preprocessor command? (%s)", show_ident(sym->ident));
- 		return NULL;
-@@ -628,6 +642,7 @@ const char* get_type_name(enum type type)
- 	[SYM_UNION] = "union",
- 	[SYM_ENUM] = "enum",
- 	[SYM_TYPEOF] = "typeof",
-+	[SYM_TYPEOF_UNQUAL] = "typeof_unqual",
- 	[SYM_BITFIELD] = "bitfield",
- 	[SYM_LABEL] = "label",
- 	[SYM_RESTRICT] = "restrict",
-diff --git a/symbol.h b/symbol.h
-index 88130c15d4bd..3552d4391621 100644
---- a/symbol.h
-+++ b/symbol.h
-@@ -65,6 +65,7 @@ enum type {
- 	SYM_UNION,
- 	SYM_ENUM,
- 	SYM_TYPEOF,
-+	SYM_TYPEOF_UNQUAL,
- 	SYM_BITFIELD,
- 	SYM_LABEL,
- 	SYM_RESTRICT,
--- 
-2.45.2
+> Before we apply your patch, I think the minimum would be to
+> have Linus Walleij try it out on an an ixp4xx with a driver
+> that uses these functions. Maybe Russell remembers the exact
+> constraints that led to using byte access for big-endian
+> mmio string operations, and whether the new lib/iomem_copy.c
+> version causes problems.
+> 
+> I also looked at the little-endian arm32 version, and
+> it seems that here the generic code would work fine, but
+> the custom variant is likely much faster when both the
+> source and destination buffers are aligned, as it can
+> do larger MMIO transactions using ldm/stm instructions,
+> though the generic version would be a bit better if the
+> in-memory buffer is unaligned.
+> We could get the best of both by implementing optimized
+> arm32 versions __iowrite32_copy()/__ioread32_copy and
+> using those in the generic memcpy_{from,to}io.
+> 
+
+ok, then I will wait for now, to see if it works with the current 
+version. If not, I will have a look at using the 
+__iowrite32_copy/__ioread32_copy functions.
+
+>         Arnd
 
 
