@@ -1,217 +1,153 @@
-Return-Path: <linux-kernel+bounces-431165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FB09E39D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:27:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2B99E39EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:28:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8551B28602D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7AC164B8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B791B87EB;
-	Wed,  4 Dec 2024 12:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7440C1D90B6;
+	Wed,  4 Dec 2024 12:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gBRDL8BD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lykWTuxI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95D81B6CFF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5301CD1E0;
+	Wed,  4 Dec 2024 12:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733315226; cv=none; b=goZneRUF9d07jLeXkfvWFnT2t8PJ6IlHrh8hswDxiyzJzgDFSXZGLF12QEnyctGTTSQShLoeFIFvQJ/aUXRQfm0cnB2aS7zFv9FOq5DlFBgIT0/AZxF1xRbK6pB/7p5qDJsGMdPW1laaU9txxsy2WBEPWYaBlEzLDQ05g7GA9qA=
+	t=1733315236; cv=none; b=aLTy/i24E/T5/jmOCOx8WxhmS4Sm8dQLYlggzGY33sbRfGyGWqlY46llAOMihRRk4uX8STov95x0FesURQFEX7d8NGqpVkBv0PpSbuak+rzY4S0dLCaoJXmnLlD+mGFDDJn3qqqx9uuyiqBvi9pCRB6GvafAqd9STXA7Et3cO80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733315226; c=relaxed/simple;
-	bh=9U+1S5c6QBIEs2jEVkouqNjE862gZHRZMYIqjSXUYvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYYnqXDI4Y66Nb1G71gb3imgLeV+Q99YiFDbYBPrV4l2K1/0lpv3wfhCsVmS6Jn1ajcsSKCzJmeriY4J+vPBmXjlY9OdsTUu+G4q9Ni9R3ra1NEoZaNssB/HNI4TkUuKF4t1l9uXERVMVzLk20G0OeofKmvE3l6BMRSxMR+8NvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gBRDL8BD; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733315225; x=1764851225;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9U+1S5c6QBIEs2jEVkouqNjE862gZHRZMYIqjSXUYvA=;
-  b=gBRDL8BDmDFiH+VRu5myTEmopyd6gf6ehlKoe0mX+uK8RROFlyLjKXMH
-   K56xt3ocNlT/KY3h4gVnDwLn5iILNnMeFO/v5hPbdq33O2JQ9sWBQix2k
-   4nAMO498H9fdshCAVAgWbhfufYzH36mM6SpwTx6FueQoBkYJ2gYiHna/2
-   hnHJYbUXuJg5ovQyV9eLAXlG8TnXxYEDqSbwoNKYysHxy5yUZvhIMDor2
-   Q88gkwEiU2CiPsxwTCTiUA828o781SH/PKZagAKGv71RVtEfei97gcnph
-   UHW985u9ReK/ErZr0SMzsEDEdMk1uN/rn6pP5EWwRyGq8CniormoxAj9r
-   g==;
-X-CSE-ConnectionGUID: MIK3e7IWTpS4ssvIQQdrWw==
-X-CSE-MsgGUID: NxAb3eSzQSCIkQUwi/5TsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="44954199"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="44954199"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 04:27:03 -0800
-X-CSE-ConnectionGUID: BQCuPqjHREGCWw4bnGZW4g==
-X-CSE-MsgGUID: mll3T9a/QYe7tkeqDGCKDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93614814"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 04 Dec 2024 04:27:00 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIoT3-00030p-35;
-	Wed, 04 Dec 2024 12:26:57 +0000
-Date: Wed, 4 Dec 2024 20:26:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Paul Benoit <paul@os.amperecomputing.com>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Paul Benoit <paul@os.amperecomputing.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] firmware: smccc: Support optional Arm SMC SOC_ID name
-Message-ID: <202412042020.U9EEV8mE-lkp@intel.com>
-References: <20241203212854.5565-1-paul@os.amperecomputing.com>
+	s=arc-20240116; t=1733315236; c=relaxed/simple;
+	bh=8kJH1aCPRzLi27KAgWkroEiNcQgrobWypSWXyYNueFs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cesblzR4M4uD6uDsK2eOZFbTH80bALvqlTGAYq0Ak7mfSxxqNJJkjYH632sItcp9RIrMcEV61cTwQ4mDxIQ+ed2Ou8w2eS9l3E7BToQD9+hmGZ80wRM+DZ67vJL5Try+pUSaRY9EPAn2Xq6dPiXZATX/j5z+UshoBanERpGmeBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lykWTuxI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2DA7EC4CED1;
+	Wed,  4 Dec 2024 12:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733315236;
+	bh=8kJH1aCPRzLi27KAgWkroEiNcQgrobWypSWXyYNueFs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=lykWTuxIaxvoRSuw39sMaoz+9f2uF9IE4JrYG6dQKAC54NGynW3m8qwsxdPdpT5Ff
+	 unB+zc62PgEQbyPs9h9huqKnbhz3uBpFKoZL41Ho8f2kvBB1fnZojtcEvjB5u8N9wt
+	 2oiAPSW6Lxf+gNO9JNGDRwdWQxCCBeAAP34nK6cAHvr0q3G/bF/hqn/ejJhekbClHU
+	 bAav/UbnkLlLC2BxXGWOYVOBFrc691i4z6etppWwxGhLefp0wKubl+OC5UmugP9oPF
+	 xPx7pYTt+HzyWn+qWqq2aJBAm5S0C7RRrnywgAIXj/MglD5mscBCjSB9zfSCcKcqqx
+	 3s02wP5O1kFJQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E568E7716E;
+	Wed,  4 Dec 2024 12:27:16 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
+Subject: [PATCH v6 0/3] Asus vivobook s15 improvements
+Date: Wed, 04 Dec 2024 13:26:36 +0100
+Message-Id: <20241204-asus_qcom_display-v6-0-91079cd8234e@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203212854.5565-1-paul@os.amperecomputing.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHxKUGcC/4XQ24rCQAwG4FeRud5Zksyh1ivfYxFJ25ntgFrtu
+ EWRvvtGEXRpYW8Cf8h8IXNTOfQpZLVa3FQfhpRTd5DgPxaqbvnwHXRqJCsCsojoNeefvD3V3X7
+ bpHzc8VXXwcVYUGmMBSXvjn2I6fIwvzaS25TPXX99rBjw3n1qZGa0ATXopeMyxpIsMK/b7rznt
+ PuUKXX3BvrXIDEYqhiXrvAyNzXMu2HnDCMGAFUFmQpLgqlh3w03Z1gxPLJtGL0c46eGexlS5gw
+ nRoDGFI7kmzH+NcZx/AUMDKlwxAEAAA==
+X-Change-ID: 20241116-asus_qcom_display-ce5ff7293340
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Maud Spierings <maud_spierings@hotmail.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733315235; l=2711;
+ i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
+ bh=8kJH1aCPRzLi27KAgWkroEiNcQgrobWypSWXyYNueFs=;
+ b=U4kuwkINKUwXE0oYU7Wjb8/6ZPzy7nW045W7R+OL4f20Rqy5N2mz8IAZBCOBGlXZ9qcjTH73M
+ 7d7Nt7TmS6lC/kU27qv5tTz9HkcJ+YH0mbYWvTr2XME4TW+rNx39wQl
+X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
+ pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
+X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
+ with auth_id=273
+X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
+Reply-To: maud_spierings@hotmail.com
 
-Hi Paul,
+Improves several parts of the devicetree:
+1. The eDP panel bindings
+2. Add a lid switch
+3. Add bluetooth and describe wlan (depends on [1])
 
-kernel test robot noticed the following build warnings:
+A big part of the bluetooth/wifi patch was copied from [1] as it is
+mostly boiler plate regulator definitions
+[1]: https://lore.kernel.org/all/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org/
 
-[auto build test WARNING on soc/for-next]
-[also build test WARNING on linus/master v6.13-rc1 next-20241203]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+---
+I seem to get a warning that the pci17cb vendor is undocumented (wlan)
+I can find this compatible in
+Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+But pci17cb doesn't really seem like a vendor name to me, I have ignored
+this warning for now.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Paul-Benoit/firmware-smccc-Support-optional-Arm-SMC-SOC_ID-name/20241204-124243
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20241203212854.5565-1-paul%40os.amperecomputing.com
-patch subject: [PATCH v2] firmware: smccc: Support optional Arm SMC SOC_ID name
-config: arm-qcom_defconfig (https://download.01.org/0day-ci/archive/20241204/202412042020.U9EEV8mE-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412042020.U9EEV8mE-lkp@intel.com/reproduce)
+Changes in v6:
+- Use the proper define for the pmic-gpio drive-strength in the panel
+  driver patch
+- Add a comment about the voltage to the pmic-gpio power-source in the
+  panel driver patch
+- Remove the alias for the not (yet) existing debug uart in the bt/wifi
+  patch
+- Remove output-low from the bt_en gpio in the bt/wifi patch
+- Add wcn- prefix to the bt-en and wlan-en gpio node names in the
+  bt/wifi patch
+- Link to v5: https://lore.kernel.org/r/20241202-asus_qcom_display-v5-0-e0d3752ff71f@hotmail.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412042020.U9EEV8mE-lkp@intel.com/
+Changes in v5:
+- Fix the pinctrl-# definition in the wcn7850-pmu node in the
+  bluetooth/wifi patch
+- Link to v4: https://lore.kernel.org/r/20241125-asus_qcom_display-v4-0-61a4da162406@hotmail.com
 
-All warnings (new ones prefixed by >>):
+Changes in v4:
+- Fixed the pin parameters for the backlight enable pin
+- Fixed the wcn_sw_en drive-strength, this was not in the acpi table I
+  checked.
+- Fixed the ordering of several nodes in the bluetooth/wifi patch
+- Link to v3: https://lore.kernel.org/r/20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com
 
->> drivers/firmware/smccc/soc_id.c:109:16: warning: shift count >= width of type [-Wshift-count-overflow]
-     109 |         dst[4] = (reg >> 32) & 0xff;
-         |                       ^  ~~
-   drivers/firmware/smccc/soc_id.c:110:16: warning: shift count >= width of type [-Wshift-count-overflow]
-     110 |         dst[5] = (reg >> 40) & 0xff;
-         |                       ^  ~~
-   drivers/firmware/smccc/soc_id.c:111:16: warning: shift count >= width of type [-Wshift-count-overflow]
-     111 |         dst[6] = (reg >> 48) & 0xff;
-         |                       ^  ~~
-   drivers/firmware/smccc/soc_id.c:112:16: warning: shift count >= width of type [-Wshift-count-overflow]
-     112 |         dst[7] = (reg >> 56) & 0xff;
-         |                       ^  ~~
->> drivers/firmware/smccc/soc_id.c:37:29: warning: unused variable 'smccc_soc_id_name' [-Wunused-variable]
-      37 | static char __ro_after_init smccc_soc_id_name[136] = "";
-         |                             ^~~~~~~~~~~~~~~~~
-   drivers/firmware/smccc/soc_id.c:103:20: warning: unused function 'str_fragment_from_reg' [-Wunused-function]
-     103 | static inline void str_fragment_from_reg(char *dst, unsigned long reg)
-         |                    ^~~~~~~~~~~~~~~~~~~~~
-   6 warnings generated.
+Changes in v3:
+- Fixed commit message formatting (line wrapping)
+- Fixed bad indentation (lid switch pinctrl)
+- Fixed bluetooth addition and added wifi description
+- Link to v2: https://lore.kernel.org/r/20241123-asus_qcom_display-v2-0-a0bff8576024@hotmail.com
 
+Changes in v2:
+- Add missing gpiokeys include in the lid switch patch
+- Add depends on for the bluetooth patch
+- Link to v1: https://lore.kernel.org/r/20241123-asus_qcom_display-v1-0-85a9ff9240aa@hotmail.com
 
-vim +109 drivers/firmware/smccc/soc_id.c
+---
+Maud Spierings (3):
+      arm64: dts: qcom: x1e80100-vivobook-s15: Use the samsung,atna33xc20 panel driver
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add lid switch
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add bluetooth
 
-    36	
-  > 37	static char __ro_after_init smccc_soc_id_name[136] = "";
-    38	
-    39	static int __init smccc_soc_init(void)
-    40	{
-    41		int soc_id_rev, soc_id_version;
-    42		static char soc_id_str[20], soc_id_rev_str[12];
-    43		static char soc_id_jep106_id_str[12];
-    44	
-    45		if (arm_smccc_get_version() < ARM_SMCCC_VERSION_1_2)
-    46			return 0;
-    47	
-    48		soc_id_version = arm_smccc_get_soc_id_version();
-    49		if (soc_id_version == SMCCC_RET_NOT_SUPPORTED) {
-    50			pr_info("ARCH_SOC_ID not implemented, skipping ....\n");
-    51			return 0;
-    52		}
-    53	
-    54		if (soc_id_version < 0) {
-    55			pr_err("Invalid SoC Version: %x\n", soc_id_version);
-    56			return -EINVAL;
-    57		}
-    58	
-    59		soc_id_rev = arm_smccc_get_soc_id_revision();
-    60		if (soc_id_rev < 0) {
-    61			pr_err("Invalid SoC Revision: %x\n", soc_id_rev);
-    62			return -EINVAL;
-    63		}
-    64	
-    65		soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-    66		if (!soc_dev_attr)
-    67			return -ENOMEM;
-    68	
-    69		sprintf(soc_id_rev_str, "0x%08x", soc_id_rev);
-    70		sprintf(soc_id_jep106_id_str, "jep106:%02x%02x",
-    71			JEP106_BANK_CONT_CODE(soc_id_version),
-    72			JEP106_ID_CODE(soc_id_version));
-    73		sprintf(soc_id_str, "%s:%04x", soc_id_jep106_id_str,
-    74			IMP_DEF_SOC_ID(soc_id_version));
-    75	
-    76		soc_dev_attr->soc_id = soc_id_str;
-    77		soc_dev_attr->revision = soc_id_rev_str;
-    78		soc_dev_attr->family = soc_id_jep106_id_str;
-    79		soc_dev_attr->machine = smccc_soc_name_init();
-    80	
-    81		soc_dev = soc_device_register(soc_dev_attr);
-    82		if (IS_ERR(soc_dev)) {
-    83			kfree(soc_dev_attr);
-    84			return PTR_ERR(soc_dev);
-    85		}
-    86	
-    87		pr_info("ID = %s Revision = %s\n", soc_dev_attr->soc_id,
-    88			soc_dev_attr->revision);
-    89	
-    90		return 0;
-    91	}
-    92	module_init(smccc_soc_init);
-    93	
-    94	static void __exit smccc_soc_exit(void)
-    95	{
-    96		if (soc_dev)
-    97			soc_device_unregister(soc_dev);
-    98		kfree(soc_dev_attr);
-    99	}
-   100	module_exit(smccc_soc_exit);
-   101	
-   102	
-   103	static inline void str_fragment_from_reg(char *dst, unsigned long reg)
-   104	{
-   105		dst[0] = (reg >> 0)  & 0xff;
-   106		dst[1] = (reg >> 8)  & 0xff;
-   107		dst[2] = (reg >> 16) & 0xff;
-   108		dst[3] = (reg >> 24) & 0xff;
- > 109		dst[4] = (reg >> 32) & 0xff;
- > 110		dst[5] = (reg >> 40) & 0xff;
-   111		dst[6] = (reg >> 48) & 0xff;
-   112		dst[7] = (reg >> 56) & 0xff;
-   113	}
-   114	
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 201 ++++++++++++++++++++-
+ 1 file changed, 200 insertions(+), 1 deletion(-)
+---
+base-commit: 9115d6b2d6bdbd14c1fda449a2a1653f7ad40dce
+change-id: 20241116-asus_qcom_display-ce5ff7293340
 
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Maud Spierings <maud_spierings@hotmail.com>
+
+
 
