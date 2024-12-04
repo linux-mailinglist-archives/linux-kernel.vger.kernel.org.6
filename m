@@ -1,92 +1,119 @@
-Return-Path: <linux-kernel+bounces-430988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B4E9E37E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:50:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852C49E37E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FA7BB2FEAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:48:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B9B3281687
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F8E1B0F16;
-	Wed,  4 Dec 2024 10:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F58F1B0F0E;
+	Wed,  4 Dec 2024 10:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmoigJ5g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bIGbbruY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4BE187555;
-	Wed,  4 Dec 2024 10:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5277318FDB1;
+	Wed,  4 Dec 2024 10:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733309317; cv=none; b=WPs1d600iDYW31OUwyfxSqC1FsJQe4AcSiVLhqLzKNzD0qPhFAIYQt+50S2z0Ct+bqxGShuShmz1Sp6QNKR90B+PizrD6okh5KEMpMPIOjYKsQcnd7qqJyPK7GSmSUDBB1FbMgzWASJfKmbWikDo/jhDF+kBVs6A2XxuyFUq5kU=
+	t=1733309451; cv=none; b=DjsoQspwIa1BmMxXuM+CpFFHCwmszkILfF0fRgPPIIkIpLT7Jkm53yjLKrwPT+j6vSMwDhvtOVrz5QrzKGnUwPTpiivSvqnYqbiqy8TIClPSiqtkBuTG3igaQyFh4YN3FDldagWOql/n5/AnVlZAlFYLgS8DSZprZ3vDR4rs5sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733309317; c=relaxed/simple;
-	bh=lPT5H7D7YN3MfncgvivZr/u25OyzzMmy1rZ9Kz4FsGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OuJOLvhlIQjZMnqnlGusfPREbBJKLjYo+P7wO2Dz4E8VQ07pdwxq8ba9+Sl3G3WjpR7vQWaf8Zs6cywALNuc5d4NT3GTqpNCN/4BiIa93OyDwomPdg4273k3wJEezUiQD/QMfFCeChDfgJV/HyR8z8a1/Jk5BuyVrYeMtu5xNYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmoigJ5g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0F2C4CED1;
-	Wed,  4 Dec 2024 10:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733309316;
-	bh=lPT5H7D7YN3MfncgvivZr/u25OyzzMmy1rZ9Kz4FsGw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cmoigJ5gupatu5Wch9WDLNQZTv9eG6w9qMcUdRQ4YR3qgjmJOItwZ8WE+MW7UiFBW
-	 UMA7bHB8mm4VoTXyEFcQYgOC39T4xu2i2pyY94/P5DpRp6w4UCQGyipUGJyHTrw4q5
-	 yeH9GzqukU5s71S10e1hmyhusGzLqOSP1isOfrx8IYsTvq+qz8nBKlmRiHpUaLpO6u
-	 PjP/ANTQ2Z4IOjQU4QATMv8MMSVNtq8YZyvRptXomNkefaQ43caUql9cJG7h5GrtwZ
-	 dtMNBRwsC8Y0fMs6E+9TlasP24b9/B1zDkvbk22AnsD/2wvf7TU5IVKqAZTjEVRkhm
-	 QVD4/RrOnK2cg==
-From: Christian Brauner <brauner@kernel.org>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: Fix typo in pnode.c
-Date: Wed,  4 Dec 2024 11:48:08 +0100
-Message-ID: <20241204-silbentrennung-wehrlos-53b670b31caa@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241204081218.12141-1-zhujun2@cmss.chinamobile.com>
-References: <20241204081218.12141-1-zhujun2@cmss.chinamobile.com>
+	s=arc-20240116; t=1733309451; c=relaxed/simple;
+	bh=D5OnpVRS3SoGY0Tsf0LDlllwyF9hqDzqXBR3lfpMU3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QL7/vWoGjqnY5vKjCRSB7KaO/KNxwGre3v0jn8Y64/cbuP+yep9FM+PavRHqloOUx2RQFTkcdMVX73HdrhnVmkGPBXWd/wiEwwL6LKSGccvtGcIbdR3r3Xvj1DAwdc8zNwVO0NUQqXWQ746RzVg7CNKTGcC/OsojgehN1N5h3Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bIGbbruY; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733309448; x=1764845448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D5OnpVRS3SoGY0Tsf0LDlllwyF9hqDzqXBR3lfpMU3c=;
+  b=bIGbbruYygsI8WHDobTzWJEZLlGXYPHmIEd6Q+e4ki+2UZ8GzVHb4Qol
+   +OEHce2dv85Nx8O9KqlHuo2NFyFDtKvGnFgbY3GTpC5bXCmsuKrGwx4D2
+   R2CBLkcLbyqoMI49zXlSD1w9oUMg1YXbeyDbN6A332GPM/buaZyzvADcG
+   wVppE7ln0T7V1q/1IJRigoAbc1M6UeXoMttOwm2MpMln045TsL3xzrUut
+   R8w/7HZIEsYh4RFPORV9gEHs9A+PIbESb0EKrYsFYXqf93R1PL+2Hancn
+   wnpJCG91FtoVhWkP+XMR1OBlhF7un5KC9u0WwyFIIfU4YJb6XfeYFVXDt
+   g==;
+X-CSE-ConnectionGUID: 9KF3dIQqR8qLpIj5asuZTw==
+X-CSE-MsgGUID: pJ8LDwuHQp68NVe74N9mfA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="58973720"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="58973720"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 02:50:47 -0800
+X-CSE-ConnectionGUID: R/BCqj1nTRSojydC6w45jw==
+X-CSE-MsgGUID: Lwn72vJCQq2UN8E1p1qzGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="93623169"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 04 Dec 2024 02:50:45 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tImxZ-0002tl-2R;
+	Wed, 04 Dec 2024 10:50:28 +0000
+Date: Wed, 4 Dec 2024 18:48:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org,
+	Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Subject: Re: [PATCH v3 2/2] arch: m68k: Add STACKTRACE support
+Message-ID: <202412041842.wqwewnMc-lkp@intel.com>
+References: <20241203-add-m68k-tracing-support-v3-2-4de93f6cae55@yoseli.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=910; i=brauner@kernel.org; h=from:subject:message-id; bh=lPT5H7D7YN3MfncgvivZr/u25OyzzMmy1rZ9Kz4FsGw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQHGNdNKtp5OJmD/WCA665iZiv/T1rmJ1bMVzJMrFx+W 6X7co94RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwES27WRkWGs/8Xh1+eUFGd8W bXQ/t1vkssmBosc7Yu4vSlZ8/dZDQ57hn0YER87T2UI6Tae3cb3s3f9tQ+Py8BP8b05GLJFSWG4 XyQgA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203-add-m68k-tracing-support-v3-2-4de93f6cae55@yoseli.org>
 
-On Wed, 04 Dec 2024 00:12:18 -0800, Zhu Jun wrote:
-> The word 'accross' is wrong, so fix it.
-> 
-> 
+Hi Jean-Michel,
 
-Applied with additional fixes in that comment.
+kernel test robot noticed the following build errors:
 
----
+[auto build test ERROR on e70140ba0d2b1a30467d4af6bcfe761327b9ec95]
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jean-Michel-Hautbois/m68k-Add-tracirqs/20241204-121927
+base:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+patch link:    https://lore.kernel.org/r/20241203-add-m68k-tracing-support-v3-2-4de93f6cae55%40yoseli.org
+patch subject: [PATCH v3 2/2] arch: m68k: Add STACKTRACE support
+config: m68k-allnoconfig (https://download.01.org/0day-ci/archive/20241204/202412041842.wqwewnMc-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412041842.wqwewnMc-lkp@intel.com/reproduce)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412041842.wqwewnMc-lkp@intel.com/
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+All errors (new ones prefixed by >>):
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+>> arch/m68k/kernel/stacktrace.c:40:44: error: unknown type name 'stack_trace_consume_fn'
+      40 | void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
+         |                                            ^~~~~~~~~~~~~~~~~~~~~~
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
 
-[1/1] fs: Fix typo in pnode.c
-      https://git.kernel.org/vfs/vfs/c/4a11d534d9ae
+vim +/stack_trace_consume_fn +40 arch/m68k/kernel/stacktrace.c
+
+    39	
+  > 40	void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
