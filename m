@@ -1,120 +1,112 @@
-Return-Path: <linux-kernel+bounces-432019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDBB9E43D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 477339E43D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B66165CF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF840167021
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E981B4130;
-	Wed,  4 Dec 2024 18:55:00 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED231C3BE2;
+	Wed,  4 Dec 2024 18:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTR/dz+S"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9139E23919E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A4323919E;
+	Wed,  4 Dec 2024 18:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338500; cv=none; b=Qp5b998IOTcq1UgbPQxETsLvWjgOLJFm/t0FF0V+D/VU/2e2tRa7ubZwIfekZn5ALXEpsND/2A/dIBBBCxV99hylJKC5DT6loj+rC0A/G3TqwWhKyn9YGL5CC+f/50NJ0lluJLeOZMOa62TZejQn+W1lm2/m6iuHm1PjVG6wF34=
+	t=1733338555; cv=none; b=J8bZM9ATt/jTkK8ewXLzRzfy26M1lRSdcHa2HR6tAaUImqhsUr+KIseSKifwRPY6kCk0flk7qscc2KtTUZTkGHYB9y3wj2zP4ASDr+MbhfxBQN8d2Do65HADgDDSCqJOR6cpYVDPQDxrc+f/BikSpDTsRZV6Gb2um8bfZaTpsj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338500; c=relaxed/simple;
-	bh=LKozLljYC5dwM4f9mxbC4dRaR9C7foO3ChfzLSA4OII=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=MYTAuCpPSy5J43ApWtrLiQRZr24CAVoUAcD0Qrq1O3wZpOHII5xkMg3Vydzvd+VzlqhUF3gEKmjMb08jW42m4SAp71vx/1KjjIS2xeEqzMxqD3pxn4r5VC84aHXLx8dNzXx7NoBHIWNAmfNkerMaX3qUWY36b4MuNmzTA9SKqAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-319-leywlU3sMBaz14PRQ0B5Ew-1; Wed, 04 Dec 2024 18:54:56 +0000
-X-MC-Unique: leywlU3sMBaz14PRQ0B5Ew-1
-X-Mimecast-MFC-AGG-ID: leywlU3sMBaz14PRQ0B5Ew
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
- 2024 18:54:16 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 4 Dec 2024 18:54:16 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, Martin Uecker
-	<Martin.Uecker@med.uni-goettingen.de>
-CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 05/10] minmax: simplify __clamp_once() by using
- is_const_false()
-Thread-Topic: [PATCH 05/10] minmax: simplify __clamp_once() by using
- is_const_false()
-Thread-Index: AQHbROFQNBaBI/FNyUSmwK0ugw/OHbLWccOg
-Date: Wed, 4 Dec 2024 18:54:16 +0000
-Message-ID: <8b8262389bd6484586007d749132346f@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-5-4e4cbaecc216@wanadoo.fr>
-In-Reply-To: <20241203-is_constexpr-refactor-v1-5-4e4cbaecc216@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733338555; c=relaxed/simple;
+	bh=rrCSpxSMBTZkXH4OKCZMhZd+9JuXhbVBPB5EXdOtRYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lu2crVlled+zupJTqtvIG//Ogw7DWSAfVnQH2jNbaJGVLG0SqM2Xd1r9OX23wRuB8g66K2TLcqrGZDX1HWm6z25grfSRmydPqkXiVqz0VvYHPNP6MuydwUlSPsz7il+6hbdq/Y5S9rOAeDJ6bDtJYzr1KrHaKHAX9jkqKSR9k0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTR/dz+S; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffc016f301so333671fa.1;
+        Wed, 04 Dec 2024 10:55:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733338552; x=1733943352; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0vCv00u3o9o7cLmyk3lOENhk5E/DDECo95HGyRPd6SM=;
+        b=aTR/dz+S16QI5b814OKWGN19jKFmT8Wn5wBeX00EMJasNp67m7FBL1K+5BqxnwGWGJ
+         GyeJEfV1XCN9wcUqVqquRPuJ4sJEvFvKLp5lrltqt7RTmoEzPYLitEN2vyszWq6y6Wj/
+         +83fT6VsSd4jpejEn6nRmKrknwDb5hniMi2JJDIv+pX7cljpplH9X2012CM9kAkzItsf
+         gIypOPqLPEozzQue/XBOmI2eZNOqChJAhViqMkdonK0//ID9UiyjVbEEZsf9nOrSwZkX
+         Xsia1kHxuIJNsJssop9nUpUwHYZnFyK7Dn6l4cTzThdsmqCeLh+1PJG/1u3bGSAdIjjX
+         uFnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733338552; x=1733943352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0vCv00u3o9o7cLmyk3lOENhk5E/DDECo95HGyRPd6SM=;
+        b=gPYcEeV2jV2T47KnOZL2QVgrynYSaY1yiAGMh3g7/YsoLYeoG3jjG/jFEpHEE9sC1R
+         LYzY05vkAgbwe+pSCQULU5tAtAqiZ1VpUeRBDGwXKm/WMGLTgWevotb++4tlN/EiOEur
+         ddSmUp4295CEPPIk4ERyzBPOswcwYBRP6iuj69QzW3zp8wCigf/sTCqvdfqzOenEsW1R
+         W9lNhS/nsZjB2q+z6sGLwIRSJfEgsEHjNC67aqZhHVh8flK5CSA4bwxrbdI7sfK0/W80
+         lilwQxtcXaOTCBNyY2OqNlRPwoBnz0BquuPwPoyqHC7iyWUIhmq3cOx8UUjeE5LtnyEr
+         0fvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHDEriwiUVB2NC6phtV0Vc+LPHzoabZTSqODfWhQJVstI/f8jNfkKL3pC25VYsvpcSqoT+BWPsfW1Dv2/5@vger.kernel.org, AJvYcCXOpd9BuQeFQIG71uBqJjAxwfBXmn5EhsbDGN6EjXG8PhODyUYhs+OPrzoVaUs4qR7zKtT6pxT94g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYOBT3EsqE+/3d/2SaRg24Z3zDtsZw8w140tNKEGhjGezs0Px6
+	5vYlIK2yOQgBwFBCSOWnt2PX/IE/hqYaLCckZ0z6kt6La1aAIlzXk8rYhaVRaW9OZA1OUO+zce0
+	C9xzal8bquCLvO5IfiOrQ+kMU68I=
+X-Gm-Gg: ASbGncvH98iGm5N0IMu8MXzbKMVSeb8m0JMcpkGcJ8DLWoxwG9H2fUSB4QzHElDc9ss
+	JviEXYqvU+8ZvfQreojP64QVL+PjzlKmx/PozAvjhaRANiqwpUAB0dIRPPW8ynzrH
+X-Google-Smtp-Source: AGHT+IFqGahxJn1hPUTzrqUH9EcK5HRL6a82LgSuzvC0Q2shkiWUtCEH3yHpMFMEbD5qdiffwxWQxpjrczcakalOxSI=
+X-Received: by 2002:a2e:a9a6:0:b0:300:1aa5:4938 with SMTP id
+ 38308e7fff4ca-3001aa556a7mr12345711fa.18.1733338551906; Wed, 04 Dec 2024
+ 10:55:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9rgp0hhbK0qUxoCL5nIULWd1FAltOOAD0V2jodHuB6A_1733338494
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <67505f88.050a0220.17bd51.0069.GAE@google.com> <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
+ <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk> <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
+ <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk> <Z1CCbyZVOXQRDz_2@casper.infradead.org>
+ <CAJ-ks9k5BZ1eSezMZX2oRT8JbNDra1-PoFa+dWnboW_kT4d11A@mail.gmail.com>
+ <CAJ-ks9mfswrDNPjbakUsEtCTY-GbEoOGkOCrfAymDbDvUFgz5g@mail.gmail.com> <Z1Ckrl-gC3HpPj0W@casper.infradead.org>
+In-Reply-To: <Z1Ckrl-gC3HpPj0W@casper.infradead.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 4 Dec 2024 13:55:15 -0500
+Message-ID: <CAJ-ks9my1amcMNsc7nTE4opeOC=YA46=2_6M9X4T-a=mm7_Nkw@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in sys_io_uring_register
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, 
+	syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
-DQo+IEluIF9fY2xhbXBfb25jZSgpLA0KPiANCj4gICBfX2J1aWx0aW5fY2hvb3NlX2V4cHIoX19p
-c19jb25zdGV4cHIoKGxvKSA+IChoaSkpLCAobG8pIDw9IChoaSksIHRydWUpDQo+IA0KPiBpcyBl
-cXVpdmFsZW50IHRvOg0KPiANCj4gICAhaXNfY29uc3RfZmFsc2UoKGxvKSA8PSAoaGkpKQ0KPiAN
-Cj4gQXBwbHkgaXNfY29uc3RfZmFsc2UoKSB0byBzaW1wbGlmeSBfX2NsYW1wX29uY2UoKS4NCg0K
-VGhlcmUgaXMgYWxyZWFkeSBhIHBhdGNoICdmb3IgbmV4dCcgdGhhdCBjaGFuZ2VzIGl0IHVzZSBC
-VUlMRF9CVUdfT05fTVNHKCkNCmFuZCBzdGF0aWNhbGx5X3RydWUoKS4NCg0KSXQgaGFzIGZvdW5k
-IHNvbWUgJ2ludGVyZXN0aW5nJyBjb2RlLg0KDQoJRGF2aWQNCg0KPiANCj4gU2lnbmVkLW9mZi1i
-eTogVmluY2VudCBNYWlsaG9sIDxtYWlsaG9sLnZpbmNlbnRAd2FuYWRvby5mcj4NCj4gLS0tDQo+
-ICBpbmNsdWRlL2xpbnV4L21pbm1heC5oIHwgMyArLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
-c2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
-bnV4L21pbm1heC5oIGIvaW5jbHVkZS9saW51eC9taW5tYXguaA0KPiBpbmRleCA5ODAwOGRkOTIx
-NTNkYjEwYzY3MjE1NWJjYTkzMjAxZmZhYmVlOTk0Li40MzFiZjc2YWM0NjBhMTFhMmU0YWYyM2Fj
-ZDkwYzBkMjZlOTljODYyIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21pbm1heC5oDQo+
-ICsrKyBiL2luY2x1ZGUvbGludXgvbWlubWF4LmgNCj4gQEAgLTExMSw4ICsxMTEsNyBAQA0KPiAg
-CV9fYXV0b190eXBlIHV2YWwgPSAodmFsKTsJCQkJCQlcDQo+ICAJX19hdXRvX3R5cGUgdWxvID0g
-KGxvKTsJCQkJCQkJXA0KPiAgCV9fYXV0b190eXBlIHVoaSA9IChoaSk7CQkJCQkJCVwNCj4gLQlz
-dGF0aWNfYXNzZXJ0KF9fYnVpbHRpbl9jaG9vc2VfZXhwcihfX2lzX2NvbnN0ZXhwcigobG8pID4g
-KGhpKSksIAlcDQo+IC0JCQkobG8pIDw9IChoaSksIHRydWUpLAkJCQkJXA0KPiArCXN0YXRpY19h
-c3NlcnQoIWlzX2NvbnN0X2ZhbHNlKChsbykgPD0gKGhpKSksCQkJCVwNCj4gIAkJImNsYW1wKCkg
-bG93IGxpbWl0ICIgI2xvICIgZ3JlYXRlciB0aGFuIGhpZ2ggbGltaXQgIiAjaGkpOwlcDQo+ICAJ
-QlVJTERfQlVHX09OX01TRyghX190eXBlc19vazModmFsLGxvLGhpLHV2YWwsdWxvLHVoaSksCQkJ
-XA0KPiAgCQkiY2xhbXAoIiN2YWwiLCAiI2xvIiwgIiNoaSIpIHNpZ25lZG5lc3MgZXJyb3IiKTsJ
-CVwNCj4gDQo+IC0tDQo+IDIuNDUuMg0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
-aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
-DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed, Dec 4, 2024 at 1:51=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+>
+> On Wed, Dec 04, 2024 at 01:39:37PM -0500, Tamir Duberstein wrote:
+> > > I thought I did, but when I ran it again just now, this test did catc=
+h
+> > > it. So there is coverage.
+> >
+> > Matthew, would you consider a patch that migrates the xarray tests to k=
+unit?
+>
+> how would that help?  it's already a kernel module as well as being a
+> userspace testsuite.  kunit just seemed to add useless boilerplate last
+> tie i looked.
 
+The primary benefit is integration with kunit.py that presents nicer
+human-readable output compared to the existing machinery. It does add
+some boilerplate (~120 loc out of ~2300).
 
