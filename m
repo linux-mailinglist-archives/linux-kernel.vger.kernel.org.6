@@ -1,116 +1,171 @@
-Return-Path: <linux-kernel+bounces-431180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0319E3A19
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:39:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5059E39DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B7D2860B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5412861AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB4A1B652B;
-	Wed,  4 Dec 2024 12:39:04 +0000 (UTC)
-Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768A11BD014;
+	Wed,  4 Dec 2024 12:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="aDx0LVkM"
+Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32BD1AF0BE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710F21B87E3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733315944; cv=none; b=uT+Pow0ULdwjbLFnijHC4yqio7xTw1N4e21GC81ydv/meo0egO1H2oSsZOEN4B7qNR7vsdZxzG2bhoCB46L8+Z5YP9KUyVb5zadURq2n3RLvxk2w3qv67MkgGNOsPkpBfZRpi1llM4wvaEMMySichZCIpL1SEZ5PL9qauOLZgAw=
+	t=1733315228; cv=none; b=t/6QGD4JmUWQBRdbkBZfpPPR6HA2WFyklvqCiOpO4HsubyXBT5ETgeRkiLHBYUL+Bstl5TnicN4kKLYiB8kpp8XukkgRqlf9uWpdVjj2R5pZzh1P/hyZBiITe7FzfVpCvVXEA9m45B6YUg/0vUe8oZj4RlhF3FToSjbvhd/cgbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733315944; c=relaxed/simple;
-	bh=EYR5MRHTsk50WKWmNlRMIJvq34xsRxeBylR9R0tzyxI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eCMkb23vpQQIb1fS8bSdfATT9Vb1AHgRwaikRHkcEcCxV+V57vFibcpbgVaKTx5wBSJGF6MwXyPEElHmPKnIx31D9Q5YHUUbDq53mn5pgE9SUxTmjSvKRYQy9XUDizto+6dZX7EXOeFisn3d5GkJI0F3IoxqlzRcDXDgZQHaaig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4Y3GrZ3BkfzYkxX8;
-	Wed,  4 Dec 2024 20:23:10 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Dec
- 2024 20:23:19 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Dec
- 2024 20:23:19 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<bintian.wang@honor.com>, wangzijie <wangzijie1@honor.com>
-Subject: [f2fs-dev] f2fs-tools: Check and fix inline xattr inplace
-Date: Wed, 4 Dec 2024 20:23:17 +0800
-Message-ID: <20241204122317.3042137-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733315228; c=relaxed/simple;
+	bh=b3cKO8E37kdGEfPQBy2NupErjAuGZ0w9V7NN+3pjucc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kGWZGh2TzoA6kUdyWGHQGUNCTSwDi6vZ33ukhZCljb8m4CXoxuh1guMuLq7dWO0wHZ5zPXBmeM2bvOirdrIeHR8LtezTebGx++P10uBcmnKMuLF+kUZ0+q7Tk9evLT7LNDXuQCfL+JKGxn/W5Hkb0wvCAjB5aW8nu01YJAGC/A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=aDx0LVkM; arc=none smtp.client-ip=17.58.6.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733315226;
+	bh=tDbYa+5DWmHdZ9lmVLNA7xMZvJoZ/PCpc6Zau1xliNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=aDx0LVkMUXFI75QpCfQtwEzziTl2NnjdGJ/9Nl6EjkD9AoNOPkj0pNJDmDS0yOxmo
+	 cFAXLbMOmPcOl5uunRBBrqBVYZF5ppxfVoWTl3S1fXUPYvDXVgmxgrfgiOzuzDhljR
+	 JXz5mSklSuuNIhx7A4INyoL4v8SXD0un9r9AkY3EWP5hUjq0cVMBNRe3UAI+WH+UEp
+	 aQcXPRWXKjSKZb3dQybv2/fEczrg8mOY6isUSLdmtOWnHvZ0W1/xlosR4mnRECds2h
+	 6Ay6kSNLijQWwdsoHl1pqn9BntMizpWoDbFHr5J8zkhSqKMjCSXP0KeQ2EZIN5IQ7P
+	 WHMoRxUFUJF5Q==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id B793434BA6BD;
+	Wed,  4 Dec 2024 12:26:37 +0000 (UTC)
+Message-ID: <235ce0a9-1db1-4558-817b-6f92f22be5ab@icloud.com>
+Date: Wed, 4 Dec 2024 20:26:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+ Mike Christie <michael.christie@oracle.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nilesh Javali <njavali@marvell.com>,
+ Manish Rangankar <mrangankar@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>,
+ Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
+ linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
+ linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+ <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
+ <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
+ <2024120320-manual-jockey-dfd1@gregkh>
+ <b9885785-d4d4-4c72-b425-3dc552651d7e@icloud.com>
+ <8eb7c0c54b280b8eb72f82032ede802c001ab087.camel@HansenPartnership.com>
+ <8fb887a0-3634-4e07-9f0d-d8d7c72ca802@t-8ch.de>
+ <f5ea7e17-5550-4658-8f4c-1c51827c7627@icloud.com>
+ <108c63c753f2f637a72c2e105ac138f80d4b0859.camel@HansenPartnership.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <108c63c753f2f637a72c2e105ac138f80d4b0859.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
- (10.68.31.243)
+X-Proofpoint-ORIG-GUID: Ptou9-aUclkqdkvBrep0JqLqpE5OAxzN
+X-Proofpoint-GUID: Ptou9-aUclkqdkvBrep0JqLqpE5OAxzN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-04_09,2024-12-04_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 malwarescore=0 bulkscore=0 mlxscore=0
+ spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412040096
 
-When we check inode which just has inline xattr data, we copy
-inline xattr data from inode, check it(maybe fix it) and copy
-it again to inode. We can check and fix xattr inplace for this
-kind of inode to reduce memcpy times.
+On 2024/12/3 23:34, James Bottomley wrote:
+>>> This also enables an incremental migration.
+>> change the API prototype from:
+>> device_find_child(..., void *data_0, int (*match)(struct device *dev,
+>> void *data));
+>>
+>> to:
+>> device_find_child(..., const void *data_0, int (*match)(struct device
+>> *dev, const void *data));
+>>
+>> For @data_0,  void * -> const void * is okay.
+>> but for @match, the problem is function pointer type incompatibility.
+>>
+>> there are two solutions base on discussions.
+>>
+>> 1) squashing likewise Greg mentioned.
+>>    Do all of the "prep work" first, and then
+>>    do the const change at the very end, all at once.
+>>
+>> 2)  as changing platform_driver's remove() prototype.
+>> Commit: e70140ba0d2b ("Get rid of 'remove_new' relic from platform
+>> driver struct")
+>>
+>>  introduce extra device_find_child_new() which is constified  -> use
+>> *_new() replace ALL device_find_child() instances one by one -> 
+>> remove device_find_child() -> rename *_new() to device_find_child()
+>> once.
+> Why bother with the last step, which churns the entire code base again?
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
- fsck/fsck.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+keep the good API name device_find_child().
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index aa3fb97..fd8b082 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -840,11 +840,18 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
- 	struct f2fs_xattr_entry *ent;
- 	__u32 xattr_size = XATTR_SIZE(&inode->i);
- 	bool need_fix = false;
-+	bool has_xattr_node = false;
-+	nid_t xnid = le32_to_cpu(inode->i.i_xattr_nid);
- 
- 	if (xattr_size == 0)
- 		return 0;
- 
--	xattr = read_all_xattrs(sbi, inode, false);
-+	if (xattr_size <= inline_xattr_size(&inode->i) && !xnid)
-+		xattr = inline_xattr_addr(&inode->i);
-+	else {
-+		xattr = read_all_xattrs(sbi, inode, false);
-+		has_xattr_node = true;
-+	}
- 	ASSERT(xattr);
- 
- 	last_base_addr = (void *)xattr + xattr_size;
-@@ -867,12 +874,15 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
- 	}
- 	if (need_fix && c.fix_on) {
- 		memset(ent, 0, (u8 *)last_base_addr - (u8 *)ent);
--		write_all_xattrs(sbi, inode, xattr_size, xattr);
-+		if (has_xattr_node) {
-+			write_all_xattrs(sbi, inode, xattr_size, xattr);
-+			free(xattr);
-+		}
- 		FIX_MSG("[0x%x] nullify wrong xattr entries", nid);
--		free(xattr);
- 		return 1;
- 	}
--	free(xattr);
-+	if (has_xattr_node)
-+		free(xattr);
- 	return 0;
- }
- 
--- 
-2.25.1
+> Why not call the new function device_find_child_const() and simply keep
+> it (it's descriptive of its function).  That way you can have a patch
+> series without merging and at the end simply remove the old function.
+
+device_find_child is a good name for the API, 'find' already means const.
 
 
