@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-431689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3A89E4389
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:40:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF4F9E439F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 229EEB62831
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:02:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CAAB62CCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D69217F38;
-	Wed,  4 Dec 2024 16:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AA3218588;
+	Wed,  4 Dec 2024 16:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUEUWiO9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sH0xiY0W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E86821767D;
-	Wed,  4 Dec 2024 16:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B62217658;
+	Wed,  4 Dec 2024 16:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331511; cv=none; b=rdXe4xMS8gZLb/UmtwUEGgAkNMxam8OnkWld1eJ5Tuv3qt5yWjJhCpd3D5nKDKFebwzoEH18ZOb67blmSAghbK5yfKKynqRNxVkUsyyQLuuTMJ9l5xFco9vdKYVtIDzdrVD79RhDVmvnJSihxW5F7z8tru65g+rBlskogPCzdqs=
+	t=1733331513; cv=none; b=hQuOspK7v8XuOsop2YjGEq5zs5cGcuseca8dXJ6/s7tU3FLLGWMAxuVYQe6ngwe99BKnykZ+1DC1jn7Y5fEYiPafSzVJ97xEQYa7nOQViYnR2QW/IiB5QnJGfv/w/hs7RCRD6L3QfNAlwvttVgXPJvnHwwTieE0wXeSxgDKU/Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331511; c=relaxed/simple;
-	bh=vj4xuSl0a78ioYTZvBCPNYu++sqzDjCITwySP4nkO9U=;
+	s=arc-20240116; t=1733331513; c=relaxed/simple;
+	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hztHj12sXsSRP3ckcxomOVC80U/Z+yimeMbXB9+T8r5ytaUYaAFHX2MED2eQo1AsTQD5qBBWLWDl0N9jNq1VrnY9Q9es219xErhawwEFc4gEcwxOUqhDcnbiHyaJDwg21PNuGrzMPE3tyErsIUP4GZRucvM0XO5P/YfPZqcENus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUEUWiO9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF892C4CECD;
-	Wed,  4 Dec 2024 16:58:29 +0000 (UTC)
+	 MIME-Version; b=L5zmxD+SIvRCNW2ZSVvsAPJ4QBCWYgVTZBLfoljbOGF/TVAIc4X6tuQsK2nD73N+PkcGDzAlY/M7F2cytoPXgZu+ije2+kM34i+Qg4tdliqQvEk4cO9WmTyp5vRO7Qz/SirNyAHsWRsGG6/Msfe9NnsgDD78HcDMQY1s+XC/TkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sH0xiY0W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813BFC4CED1;
+	Wed,  4 Dec 2024 16:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331510;
-	bh=vj4xuSl0a78ioYTZvBCPNYu++sqzDjCITwySP4nkO9U=;
+	s=k20201202; t=1733331512;
+	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TUEUWiO95PH/lHJqA4QfPvIS9cnNjqZx+1vv0gBXxmJdk93j0VD0eDdgWlsGOVKQn
-	 eA3ZOC8cTNwIBFu5n5RqpMPMKh8jWEo0J/rdbg0jt1MLk5H4G82hptCA/LkjgY13/p
-	 Fe1rhrNR917nXc0jiDDqPG3gGHbSGmW7oXVtvdN/UoJZ4ml/Zmm7llIiE06+343dRQ
-	 0anBwAvFeRH1aQDV6JrspbHfr+xUevsxWFTwMzJYUUZxgfmjKf2UVCfWLJxC9yRew3
-	 MQuLxQr9YQvASZVPPfYgaHcmofs8nwVGX4YHuejyoozHvObWXpZAvJWUs4rB334T3N
-	 c0giBqaL5Cd6w==
+	b=sH0xiY0W1Yc7+8mc620UJfEutvD6C61j22Z+jtSy8y41B2tTLlS51wOhLh0ddOnLF
+	 XHheBlFeZR9j5gWeuyfG+U0GqFvyHwomnIEHBwPvd/+YhgpZYXFbUAzsAZ+7/ZhyqD
+	 GSvOkNCmwI0bYc0KlM0c1xwgk8TKx2iRHLT8CpnfctavSCaR2SQW11WHOh+hE2ngaG
+	 kP/eJP/jfPTlmvCx4uPnK0YKSNjg36UDlywRCndVyy33uZb2e0UpvgP6Bl7gVvv33w
+	 GpAx6iWeMytrg21+BryYWVtZNmFcbzbAJrqgT+xuSaNlaLb3fQtsbuZ4X47QQZv9Ya
+	 bdcFtHSv92Lug==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Justin Tee <justin.tee@broadcom.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	james.smart@broadcom.com,
-	dick.kennedy@broadcom.com,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 19/36] scsi: lpfc: Prevent NDLP reference count underflow in dev_loss_tmo callback
-Date: Wed,  4 Dec 2024 10:45:35 -0500
-Message-ID: <20241204154626.2211476-19-sashal@kernel.org>
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 20/36] clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+Date: Wed,  4 Dec 2024 10:45:36 -0500
+Message-ID: <20241204154626.2211476-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -67,101 +67,117 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Justin Tee <justin.tee@broadcom.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-[ Upstream commit 4281f44ea8bfedd25938a0031bebba1473ece9ad ]
+[ Upstream commit aec8c0e28ce4a1f89fd82fcc06a5cc73147e9817 ]
 
-Current dev_loss_tmo handling checks whether there has been a previous
-call to unregister with SCSI transport.  If so, the NDLP kref count is
-decremented a second time in dev_loss_tmo as the final kref release.
-However, this can sometimes result in a reference count underflow if
-there is also a race to unregister with NVMe transport as well.  Add a
-check for NVMe transport registration before decrementing the final
-kref.  If NVMe transport is still registered, then the NVMe transport
-unregistration is designated as the final kref decrement.
+Generally SDCC clocks use clk_rcg2_floor_ops, however on SAR2130P
+platform it's recommended to use rcg2_shared_ops for all Root Clock
+Generators to park them instead of disabling. Implement a mix of those,
+clk_rcg2_shared_floor_ops.
 
-Signed-off-by: Justin Tee <justin.tee@broadcom.com>
-Link: https://lore.kernel.org/r/20241031223219.152342-8-justintee8345@gmail.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Link: https://lore.kernel.org/r/20241027-sar2130p-clocks-v5-6-ecad2a1432ba@linaro.org
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_hbadisc.c | 36 +++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ drivers/clk/qcom/clk-rcg.h  |  1 +
+ drivers/clk/qcom/clk-rcg2.c | 48 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 44 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 9241075f72fa4..6e8d8a96c54fb 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -155,6 +155,7 @@ lpfc_dev_loss_tmo_callbk(struct fc_rport *rport)
- 	struct lpfc_hba   *phba;
- 	struct lpfc_work_evt *evtp;
- 	unsigned long iflags;
-+	bool nvme_reg = false;
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 8e0f3372dc7a8..80f1f4fcd52a6 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
+ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
++extern const struct clk_ops clk_rcg2_shared_floor_ops;
+ extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
+ extern const struct clk_ops clk_dp_ops;
  
- 	ndlp = ((struct lpfc_rport_data *)rport->dd_data)->pnode;
- 	if (!ndlp)
-@@ -177,38 +178,49 @@ lpfc_dev_loss_tmo_callbk(struct fc_rport *rport)
- 	/* Don't schedule a worker thread event if the vport is going down. */
- 	if (test_bit(FC_UNLOADING, &vport->load_flag) ||
- 	    !test_bit(HBA_SETUP, &phba->hba_flag)) {
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index bf26c5448f006..bf6406f5279a4 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1186,15 +1186,23 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct freq_tbl *f)
+ 	return clk_rcg2_clear_force_enable(hw);
+ }
+ 
+-static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+-				    unsigned long parent_rate)
++static int __clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long parent_rate,
++				      enum freq_policy policy)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const struct freq_tbl *f;
+ 
+-	f = qcom_find_freq(rcg->freq_tbl, rate);
+-	if (!f)
++	switch (policy) {
++	case FLOOR:
++		f = qcom_find_freq_floor(rcg->freq_tbl, rate);
++		break;
++	case CEIL:
++		f = qcom_find_freq(rcg->freq_tbl, rate);
++		break;
++	default:
+ 		return -EINVAL;
++	}
+ 
+ 	/*
+ 	 * In case clock is disabled, update the M, N and D registers, cache
+@@ -1207,10 +1215,28 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return clk_rcg2_shared_force_enable_clear(hw, f);
+ }
+ 
++static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
++}
 +
- 		spin_lock_irqsave(&ndlp->lock, iflags);
- 		ndlp->rport = NULL;
- 
-+		if (ndlp->fc4_xpt_flags & NVME_XPT_REGD)
-+			nvme_reg = true;
+ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
+ 		unsigned long rate, unsigned long parent_rate, u8 index)
+ {
+-	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
++}
 +
- 		/* The scsi_transport is done with the rport so lpfc cannot
--		 * call to unregister. Remove the scsi transport reference
--		 * and clean up the SCSI transport node details.
-+		 * call to unregister.
- 		 */
--		if (ndlp->fc4_xpt_flags & (NLP_XPT_REGD | SCSI_XPT_REGD)) {
-+		if (ndlp->fc4_xpt_flags & SCSI_XPT_REGD) {
- 			ndlp->fc4_xpt_flags &= ~SCSI_XPT_REGD;
- 
--			/* NVME transport-registered rports need the
--			 * NLP_XPT_REGD flag to complete an unregister.
-+			/* If NLP_XPT_REGD was cleared in lpfc_nlp_unreg_node,
-+			 * unregister calls were made to the scsi and nvme
-+			 * transports and refcnt was already decremented. Clear
-+			 * the NLP_XPT_REGD flag only if the NVME Rport is
-+			 * confirmed unregistered.
- 			 */
--			if (!(ndlp->fc4_xpt_flags & NVME_XPT_REGD))
-+			if (!nvme_reg && ndlp->fc4_xpt_flags & NLP_XPT_REGD) {
- 				ndlp->fc4_xpt_flags &= ~NLP_XPT_REGD;
-+				spin_unlock_irqrestore(&ndlp->lock, iflags);
-+				lpfc_nlp_put(ndlp); /* may free ndlp */
-+			} else {
-+				spin_unlock_irqrestore(&ndlp->lock, iflags);
-+			}
-+		} else {
- 			spin_unlock_irqrestore(&ndlp->lock, iflags);
--			lpfc_nlp_put(ndlp);
--			spin_lock_irqsave(&ndlp->lock, iflags);
- 		}
- 
-+		spin_lock_irqsave(&ndlp->lock, iflags);
++static int clk_rcg2_shared_set_floor_rate(struct clk_hw *hw, unsigned long rate,
++					  unsigned long parent_rate)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
++}
 +
- 		/* Only 1 thread can drop the initial node reference.  If
- 		 * another thread has set NLP_DROPPED, this thread is done.
- 		 */
--		if (!(ndlp->fc4_xpt_flags & NVME_XPT_REGD) &&
--		    !(ndlp->nlp_flag & NLP_DROPPED)) {
--			ndlp->nlp_flag |= NLP_DROPPED;
-+		if (nvme_reg || (ndlp->nlp_flag & NLP_DROPPED)) {
- 			spin_unlock_irqrestore(&ndlp->lock, iflags);
--			lpfc_nlp_put(ndlp);
- 			return;
- 		}
++static int clk_rcg2_shared_set_floor_rate_and_parent(struct clk_hw *hw,
++		unsigned long rate, unsigned long parent_rate, u8 index)
++{
++	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
+ }
  
-+		ndlp->nlp_flag |= NLP_DROPPED;
- 		spin_unlock_irqrestore(&ndlp->lock, iflags);
-+		lpfc_nlp_put(ndlp);
- 		return;
- 	}
+ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+@@ -1348,6 +1374,18 @@ const struct clk_ops clk_rcg2_shared_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
  
++const struct clk_ops clk_rcg2_shared_floor_ops = {
++	.enable = clk_rcg2_shared_enable,
++	.disable = clk_rcg2_shared_disable,
++	.get_parent = clk_rcg2_shared_get_parent,
++	.set_parent = clk_rcg2_shared_set_parent,
++	.recalc_rate = clk_rcg2_shared_recalc_rate,
++	.determine_rate = clk_rcg2_determine_floor_rate,
++	.set_rate = clk_rcg2_shared_set_floor_rate,
++	.set_rate_and_parent = clk_rcg2_shared_set_floor_rate_and_parent,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_shared_floor_ops);
++
+ static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
 -- 
 2.43.0
 
