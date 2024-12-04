@@ -1,136 +1,189 @@
-Return-Path: <linux-kernel+bounces-432178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BE19E46EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:38:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0851880199
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:38:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD09195B37;
-	Wed,  4 Dec 2024 21:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZrllgIX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792619E4704
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:40:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBF91922D7;
-	Wed,  4 Dec 2024 21:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733348196; cv=none; b=XqKzF7nqgWsPvAXCJmjGMAyz36sBnJElLuN64wcx0YMsOzP+hUlIvxr9txkKPjzKL+84wqeeG5TFjg04RqDXcG9RPPVO7ro4aYPh+Bp4jvXjq2wHFfzI/V63ZtURZrk7D94vY3whwSxakthBx3+Qk0ULgVDUA7C8PwhA0zZJ9j0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733348196; c=relaxed/simple;
-	bh=jlmY/d16hd2yWGESz2d7BSfN+1MNllSvrARNdqx6DgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbwCJeDuz2uAg+RlVqKE+tkYBlTGchFaRI9tUSsXuixnAJxhijW4uUUvBGZ1JfGRuxERICyA/JcfQpIu0tlorwVp3OXUqO34lX2RLxpgRkKkyHDWkr33MZoCuEZZnYMABAJcEK91zgVAL5Kr6Z/z+lJ9sFhhQcL7dQJ/LqT2U50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZrllgIX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D631DC4CECD;
-	Wed,  4 Dec 2024 21:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733348194;
-	bh=jlmY/d16hd2yWGESz2d7BSfN+1MNllSvrARNdqx6DgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nZrllgIX/Vem/uL/kq3DDs8xYZdu654Fi063fFBOj4ZsSRtkzbmSbxT3V75Vs3ccu
-	 lweZO86ljseuuqIcXmSK0D50Q/ZbaZ8Xw4TEjDd3dqdnmZjakCRc8z5vhNHXiFRgCA
-	 6M0PBUC3m/uiBT7gwJYeZGBnuPqsrHDeUim1QgTaz6OhkZT8CCvDJKHg9gAGzpGFcC
-	 XdPpLrJUmrdwALFGZIc4ZTlOXWgJosJRLmEeYaesAJCQznOOQgJNUL9sGQZC9ALolo
-	 nOcWezv49+yDjXfbi9LJx2RzLOJ0nRJgIj/Mav4/H0Cs6v36QkEy2mqgENCSO8rqYy
-	 1oAzHQvG4+l5w==
-Date: Wed, 4 Dec 2024 13:36:32 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Nick Terrell <terrelln@fb.com>, bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bpftool: Fix failure with static linkage
-Message-ID: <Z1DLYCha0-o1RWkF@google.com>
-References: <20241204213059.2792453-1-leo.yan@arm.com>
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FDAE280F1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:40:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF78A202C4A;
+	Wed,  4 Dec 2024 21:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NqGXDwtd"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2061.outbound.protection.outlook.com [40.107.94.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391D71F7090
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 21:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733348329; cv=fail; b=L4u5uKaCjhvRLc03c/+PZKMTDTAmLihv5zrsXJ16m1Fo1E6JFyK2KA749qC0u33GX2pKBcSNSq8f2aCn2o1F8+6lgzLUrS95S3B0YBsYkeG9I9D+B2m+NkXWnPdhlLFlRjg//OPxdVE7e1KNO5rLciLhWDlU3HaY3i04Xtb+IWk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733348329; c=relaxed/simple;
+	bh=+smzOGlVScOED0aQe/0uFJQ9CEd42qRpUW2W+dfXiMo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pb3pV24YMG5WhjeVqihwgmFu4WreKiTh/xTjc+Ay4HH5vNFkSmyjacqTgrMlKJQc+c97JMvKuk5GYpmKf7P5p9llrjQn9JTCOT84NkmavGRqJkcN0xWKlllf4N8LN73BHiJG3HDYG8vZvFolCthl9XdJjSQQReCqPI82s33NwWg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NqGXDwtd; arc=fail smtp.client-ip=40.107.94.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wq2tdM5lZjPyPviiXwYGHDSZZO7fA9iSoxO1cvKDkuKf6WPvDgHCpLARrqWivd/fbxNSzOZhYVIOFZwtk77LoeZQghCB02jxiZmznDTmJZ/vVlgRb9YvDe4w9SkeoB422YRAp0Wat1P9D0f1BTsDyG94fCqIFaTjXrc0lwnUF8pezyAhk6zgHOywLSTL/ThA3dpBkr/TODXyv2sdMLgYINgJouz4CwDhB7va0UX/jp2EChZRlvphPd46UgJfeSbuXDawQeenVkIYP03I6pl3VU+F3HZXrfOAHJWUZxymOP2VrpQL8WnuA7uWP39ztBW/uqZUHEbfjYZhrqtWd5P05w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XQ8IElNrgwbwMsqwEJZEe6YDJjq3BASUrbM5iRKhpUk=;
+ b=klacXsj9sU1NxkU4Iui77oPPqH80rbmJWQkeUTMylHlTb1SO4u6jmNX6vZ6DtEbfAG6WG2DsGhnaEeJ+9mbTxKF4gwin3zvSYaXZS+7F3x7yDgmLXw/jzNum97T/Gf9UJQCQ1kjcxEE0mth7kx8NXMhTC0G8dO2H0M2VANR6m8oi0vnRzqj7whhzq40MNjcAttXbm955TbicFVytmbXl7oPLEiPHZDRQ3jVov9lEUoTPVq/FHY1zteQ35qv5oM5jxytPVUvscVA8LA6QTVSIdqofXqBXmuVwPvUGW7qJkcq/DaWa+DYwfhXvrKIoYXs3FR7e4b4Iw0jVNZyqUpgvEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XQ8IElNrgwbwMsqwEJZEe6YDJjq3BASUrbM5iRKhpUk=;
+ b=NqGXDwtdbZAzc75//oADm11lc3wCLQv/idAYsFaZgxvlSaKa7FU9ACwomVInVEgifS2Au8qRHuL3hGFdcaNLRtvAVFzLeBTbsifeFKbx+fB0dCA3Qd4DG9GZvx4+/RfQvt2+3Q+CQiS5AHPQE6e899RLg2tRSNduwlezu8HHJHs=
+Received: from CH0PR03CA0267.namprd03.prod.outlook.com (2603:10b6:610:e5::32)
+ by MW5PR12MB5651.namprd12.prod.outlook.com (2603:10b6:303:19f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Wed, 4 Dec
+ 2024 21:38:39 +0000
+Received: from CH1PEPF0000AD81.namprd04.prod.outlook.com
+ (2603:10b6:610:e5:cafe::69) by CH0PR03CA0267.outlook.office365.com
+ (2603:10b6:610:e5::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.19 via Frontend Transport; Wed,
+ 4 Dec 2024 21:38:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CH1PEPF0000AD81.mail.protection.outlook.com (10.167.244.89) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Wed, 4 Dec 2024 21:38:38 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
+ 2024 15:38:38 -0600
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
+ 2024 15:38:37 -0600
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 4 Dec 2024 15:38:37 -0600
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
+	<king.tam@amd.com>, <mario.limonciello@amd.com>
+Subject: [PATCH V1 0/7] AMD NPU driver improvements
+Date: Wed, 4 Dec 2024 13:37:22 -0800
+Message-ID: <20241204213729.3113941-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241204213059.2792453-1-leo.yan@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD81:EE_|MW5PR12MB5651:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6dbfb2e-8cc5-481c-68c8-08dd14ac03c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IjQNmBHD7RllID5pNkwvsZ3Vc+g3O5GaceHxtehVCcaiN9WiZVcav3Is9scP?=
+ =?us-ascii?Q?eyIl6ciVR3y2BgXrymHOCgJ5Xfzlze8mm+fNq8tAcaNuMYYo6LvmJqIUQLUM?=
+ =?us-ascii?Q?U8fpUs8V0c4gytosAmTflEJ8JhyCezkVq+vnnoRxbkDA1SlS2uXd0khs5Znz?=
+ =?us-ascii?Q?pOajVgLRtcXhUTIz5JkYw6DH4GHfG0cN80C6V6+GvQ7idCcECpzl30x7hLvZ?=
+ =?us-ascii?Q?Vcw017QydtyS/rgccd2y5fjErfM87Xqhj2wS48+B9TMlwVwPy2XOk+k68OZT?=
+ =?us-ascii?Q?EjKbmy6txbjdNBJ1W+QCVqpesi9yWiRpV1RxBrC+CK64gJYwspUCmhUFHrnh?=
+ =?us-ascii?Q?vuEIbcXiNhD539S1ksXoTW0vVlz9qm7V8+C27w3ITY+XeLwlIctK4jAQR+sL?=
+ =?us-ascii?Q?j7ozItD1W+2xKx6NaQIHXUO8LQ/ixXdZUTcI9FHnXHFU8DiCeTKbxGKcm6Cl?=
+ =?us-ascii?Q?iXKZ65f7+Gfde08VwGWmJp+yTBnxkNtgR/+PE+b2w3iNnBhNkY3gpOuBf/uZ?=
+ =?us-ascii?Q?aKVxWcSCE5ysEKzBVBufD7PYysAixgPMwVogY1rl6lACzHOqHgGguZZweeKY?=
+ =?us-ascii?Q?1NoEbf37j8ZEhYBJS3KAFS5O6iffavFdaNE8CCj8z6Rj9GF28mkfA14E/r4O?=
+ =?us-ascii?Q?7kn3ewcG0WbSfeWJ93zYsUPssEcD2yOGlDevlAtxHmbypycLIcSwF2vH3rXs?=
+ =?us-ascii?Q?HafXv0NVhm6+Owt9iF1x6PttawI9YgYYJWCoZKBpJuLsVX7GWOkaNTUBa3AJ?=
+ =?us-ascii?Q?PtEN6YtCJkmJaucm+oVP4Q3TDKaY14ZFzmWXay7uwuXa7ADY7xzCf6zb1z9b?=
+ =?us-ascii?Q?HNiy5ngww2wvOd/NNUiLStk0QpQnC7J+5gf8OP5JY7s9uddqlnbD6zMli+45?=
+ =?us-ascii?Q?A5Y0GbxPANnkAme0R/TTO4N5COulFlwmC7gxjgYbeI3elHg9JeM5iXNqqb6v?=
+ =?us-ascii?Q?0/87xfVeMAZ3sDwXfdvOW3rS55A8LzyFy2ogj3WQm8sx5z0UE5as1pWyOW6l?=
+ =?us-ascii?Q?rvNgtox5DpNy0JItojcy1y0uu97Uvt4ryqGLqflY2i81xp0l0pE4GZz3IgjE?=
+ =?us-ascii?Q?3WQHPLoVeXEo69bHy3yw0RBoTCmZJ52chQm5K3eWWOQwdDQSnpne35zKllRZ?=
+ =?us-ascii?Q?iPe+/myUP+7bNLyCF4ddxJmKO73uhZlJ8/NSomhvVKOU5LwnvFPT/m3cGofe?=
+ =?us-ascii?Q?/8KZnS0oy5ZZggE7eUxMgE7r1tD1EPeMz98F1Pu0UMgzi7EYcMh3yfQu3EKr?=
+ =?us-ascii?Q?+/WJNW3uCSA9FKuhwoKBfjQ3ls0UCZrKIeTIcO/ppq7+oK6hmjaGBE2OCj0D?=
+ =?us-ascii?Q?Ili4wazHrpDytRTD0CXW7xYs2zPIxHiYl4sSiR9836ZmSoTncJND7uyjl6bA?=
+ =?us-ascii?Q?nQEyI5LFCabk9BjusCEAM3qmgZiXwGJYvo4FmJQS4fyXnB4PWm8ulLHv2bDv?=
+ =?us-ascii?Q?XcLejh7dbBAPJgD/x2kGOBv5e+ILsP36?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 21:38:38.6249
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6dbfb2e-8cc5-481c-68c8-08dd14ac03c8
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD81.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5651
 
-Hi Leo,
+Add recent improvements and bug fixes for amdxdna driver (depends on [1])
+1. Support recent hardware and firmware.
+2. Replace idr APIs with xarray.
+3. Fix the bugs been found.
 
-On Wed, Dec 04, 2024 at 09:30:59PM +0000, Leo Yan wrote:
-> When building perf with static linkage:
-> 
->   make O=/build LDFLAGS="-static" -C tools/perf VF=1 DEBUG=1
->   ...
->   LINK    /build/util/bpf_skel/.tmp/bootstrap/bpftool
->   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_compress':
->   (.text+0x113): undefined reference to `ZSTD_createCCtx'
->   /usr/bin/ld: (.text+0x2a9): undefined reference to `ZSTD_compressStream2'
->   /usr/bin/ld: (.text+0x2b4): undefined reference to `ZSTD_isError'
->   /usr/bin/ld: (.text+0x2db): undefined reference to `ZSTD_freeCCtx'
->   /usr/bin/ld: (.text+0x5a0): undefined reference to `ZSTD_compressStream2'
->   /usr/bin/ld: (.text+0x5ab): undefined reference to `ZSTD_isError'
->   /usr/bin/ld: (.text+0x6b9): undefined reference to `ZSTD_freeCCtx'
->   /usr/bin/ld: (.text+0x835): undefined reference to `ZSTD_freeCCtx'
->   /usr/bin/ld: (.text+0x86f): undefined reference to `ZSTD_freeCCtx'
->   /usr/bin/ld: (.text+0x91b): undefined reference to `ZSTD_freeCCtx'
->   /usr/bin/ld: (.text+0xa12): undefined reference to `ZSTD_freeCCtx'
->   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress':
->   (.text+0xbfc): undefined reference to `ZSTD_decompress'
->   /usr/bin/ld: (.text+0xc04): undefined reference to `ZSTD_isError'
->   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress_elf':
->   (.text+0xd45): undefined reference to `ZSTD_decompress'
->   /usr/bin/ld: (.text+0xd4d): undefined reference to `ZSTD_isError'
->   collect2: error: ld returned 1 exit status
-> 
-> Building bpftool with static linkage also fails with the same errors:
-> 
->   make O=/build -C tools/bpf/bpftool/ V=1
-> 
-> To fix the issue, explicitly link libzstd.
+[1]: https://lore.kernel.org/all/20241118172942.2014541-1-lizhi.hou@amd.com/
 
-I was about to report exactly the same. :)
+Lizhi Hou (7):
+  accel/amdxdna: Add device status for aie2 devices
+  accel/amdxdna: Replace mmput with mmput_async to avoid dead lock
+  accel/amdxdna: Add RyzenAI-npu6 support
+  accel/amdxdna: Replace idr api with xarray
+  accel/amdxdna: Add query firmware version
+  accel/amdxdna: Enhance power management settings
+  accel/amdxdna: Read firmware interface version from registers
 
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
+ drivers/accel/amdxdna/Makefile          |   4 +-
+ drivers/accel/amdxdna/TODO              |   2 -
+ drivers/accel/amdxdna/aie2_ctx.c        |  12 +-
+ drivers/accel/amdxdna/aie2_message.c    |  37 +---
+ drivers/accel/amdxdna/aie2_pci.c        | 252 +++++++++++++++++++-----
+ drivers/accel/amdxdna/aie2_pci.h        |  68 +++++--
+ drivers/accel/amdxdna/aie2_pm.c         | 108 ++++++++++
+ drivers/accel/amdxdna/aie2_smu.c        |  85 ++++----
+ drivers/accel/amdxdna/aie2_solver.c     |  59 +++++-
+ drivers/accel/amdxdna/aie2_solver.h     |   1 +
+ drivers/accel/amdxdna/amdxdna_ctx.c     |  46 ++---
+ drivers/accel/amdxdna/amdxdna_mailbox.c |  59 ++----
+ drivers/accel/amdxdna/amdxdna_pci_drv.c |  23 ++-
+ drivers/accel/amdxdna/amdxdna_pci_drv.h |   8 +-
+ drivers/accel/amdxdna/npu1_regs.c       |  31 ++-
+ drivers/accel/amdxdna/npu2_regs.c       |  17 +-
+ drivers/accel/amdxdna/npu4_regs.c       |  34 +++-
+ drivers/accel/amdxdna/npu5_regs.c       |  17 +-
+ drivers/accel/amdxdna/npu6_regs.c       | 114 +++++++++++
+ include/uapi/drm/amdxdna_accel.h        |  70 +++++++
+ 20 files changed, 804 insertions(+), 243 deletions(-)
+ create mode 100644 drivers/accel/amdxdna/aie2_pm.c
+ create mode 100644 drivers/accel/amdxdna/npu6_regs.c
 
-Tested-by: Namhyung Kim <namhyung@kernel.org>
+-- 
+2.34.1
 
-Thanks,
-Namhyung
-
-> ---
->  tools/bpf/bpftool/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
-> index a4263dfb5e03..65b2671941e0 100644
-> --- a/tools/bpf/bpftool/Makefile
-> +++ b/tools/bpf/bpftool/Makefile
-> @@ -130,8 +130,8 @@ include $(FEATURES_DUMP)
->  endif
->  endif
->  
-> -LIBS = $(LIBBPF) -lelf -lz
-> -LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz
-> +LIBS = $(LIBBPF) -lelf -lz -lzstd
-> +LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz -lzstd
->  ifeq ($(feature-libcap), 1)
->  CFLAGS += -DUSE_LIBCAP
->  LIBS += -lcap
-> -- 
-> 2.34.1
-> 
 
