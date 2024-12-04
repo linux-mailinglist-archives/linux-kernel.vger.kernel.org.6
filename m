@@ -1,135 +1,100 @@
-Return-Path: <linux-kernel+bounces-431455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2A99E3DF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:14:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BAE9E3E62
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0707FB44BA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18721B449B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C2420C022;
-	Wed,  4 Dec 2024 15:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392DD207A20;
+	Wed,  4 Dec 2024 15:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lVAS6+BA"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo7UBX96"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED2C20C00F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D21FC7C6;
+	Wed,  4 Dec 2024 15:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324411; cv=none; b=OH/F2AY1CllHnBOkXBPjdcoGqiz+kLdO4ai6cSHU64OiFCi+mEG5f0CHf9/t8AXF630zv9iNuAR7f4J8FVWHcluqN3Y4OQRAbSMj9Q3oz1jgOUwL2g7oPoVxUlhsCyI8pFAxfRwOoS5ILETcsW7uVdtf3CIkrZB5ojhvjHrku7c=
+	t=1733324406; cv=none; b=W0hykD/yZLXAiC2eSjXVkhrk8OnspYHOkJa8+pPhqdTbfxfcDcGL/ry2mhzAFnjOh2yOAWTSvHHXKX86DMCbEYzSje1S9rAwML3ugTv373abXGrdYC4EsP9ewPkG7dkV0fl1rAM5+ZOhBn3rVU7rPOo9+nwenMzaFcaKwsIcZJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324411; c=relaxed/simple;
-	bh=OmedF/kc7VLNX4vobufGbdHgkXfgzLJYRlZwn32nfxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pT0BBn8EkIPOb/16rjRAWmZYWf1xGmL+9QfI0hkJDWo7u6MylAX4TAoSFuq/qsHDkMmm7p/GX20EyPUqj0C+e0tlNzFl+XS02wtZMRgRi2iF76I6IgZBGfmp8rR8JPNpt7KYoOVL3GR2nfiRRmofJ/54tMVZf8aXVK5rG1kPzfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lVAS6+BA; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53de880c77eso8120988e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:00:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733324407; x=1733929207; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Z8SsfJIMZ6wbDGLFC2pyak5YjkCzmlnT64gSuKBGIU=;
-        b=lVAS6+BAl7rFA2dNyAbmuc5Uv3LmVbxQHtM3QlXDHXoiuJTrjpd9ZMtYq1g4JhUyfa
-         ICc8ugknVovRuM+0u4hb12DZ88oqEfK5OkeC2wI69wbMPbEt2K4mV00yjO+DQXq+G49T
-         43diXNHGUvrVpsrJ32im/fmxwVAoLMzuyW/lo2wDgndNN1EUgFKR8iLe7QAM+qC/s+7W
-         SHPdGv9Ub7lKEI0URj6LFkjSvXyrgWJiwBLkfuWzkE1szPRwFW1oRZ6/kROgovrj6OPe
-         vC8C9tQaTnCFqbjWlwhp6jr5F2L1uHX+SBVjp2QyCyAtVapvJsNDM+VudbqHGuLv8xJO
-         beVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733324407; x=1733929207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Z8SsfJIMZ6wbDGLFC2pyak5YjkCzmlnT64gSuKBGIU=;
-        b=Kltf5xWbj05UtCgiOTbetEiEnVPC2T5ZcLaB4c/+G3BY03zZvx8z9F6KKLqGkdGxu6
-         CLYoW30qMlaVn5oOC9XAAhzVYdm/cDTSu2e/UopW9s9Sxj/iTru7cfEI/2cjRqzilrNN
-         9DVhHkF/aKqiQlDZIIXGCH5792DKwStvChM7E4oMUMC+jz6scXbH3/QnZVOW5gnr5CvU
-         QtYX8Q0vrc5ToZORJug8gtG/+LjF11gXNSuDKDkCEJ8OAKJ+QRiwx50QdX3N/5YNW1F3
-         H7qdKjilkCMZIAmwhT2n4NqCeJvcdJE9AK6NOeiZXLEpkrZL9kNOTGSz61dU2rL5LIen
-         zFHg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4RcrT5MD2C9Wws+0MNOqjB/TmtpB1r3dAsq/R+56lgdhvbTuvvYufkRYohEDC+GHxks1xRswHJJUZ3PU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK6GQXY3SKmuQeX2E4OnmmmkpBQcFmxltcKQHyrcronk9b5Q++
-	SFIxMSSzEbec5I3cK6mmCTRVW8xwl1OjfomlXCpku0+2Kgoy/F45MOfBMsVvkcyMI/oRDVCEm4z
-	H5eejgNZ6upDrSgIkXN0qmOGLhWg5yDjb9l1m5rMrk6M+mepFBgw=
-X-Gm-Gg: ASbGncsXavNuLB3P1efeIiTfIV4f4p3cuR9YsxyiN6vcCsgHBy8sURBwlBm5XF3r/A+
-	R+Qfjvez3mNADfcFJHVqlIzb3INw1PA==
-X-Google-Smtp-Source: AGHT+IHT8ot8EDFntaLIs72pipJWUq+cKx2vj1L2uGRfDd/p23/CZ604435wdZoBy3VHdRA1oxNIm06ieh8Uc9hFCWQ=
-X-Received: by 2002:a05:6512:31d4:b0:53d:e57e:dd4a with SMTP id
- 2adb3069b0e04-53e129f2a38mr4263497e87.22.1733324406989; Wed, 04 Dec 2024
- 07:00:06 -0800 (PST)
+	s=arc-20240116; t=1733324406; c=relaxed/simple;
+	bh=Xkir4c9pjGx9lAg+oTZfmHXzCTXKE5W+j5Z+hVglI5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxreK6aSVvFe9ieq1mghL0jbE5zQ721Bm2awHK1R9GyEeZqkKbQ+t7U3Gnj0mzlAPwFQwUXgvYs4wZJ5NWLm4ydkoqD1vQ9rQ12BcimhIVAcYivZVcM4iTHvKqgvtKgQbq9VdBUlzQj6nM6b6WDYoMjUmW/aWxcD5jIzIpc9Q8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo7UBX96; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2D0C4CECD;
+	Wed,  4 Dec 2024 15:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733324406;
+	bh=Xkir4c9pjGx9lAg+oTZfmHXzCTXKE5W+j5Z+hVglI5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xo7UBX96c7oKyl5E7KZcIqRE76ZpMiwsKs9EejxH5cyzudDkdN2RgIxHNYgVOCGeR
+	 Un7WeqtDYPR+ent/Qye4fBDcANa89ae7Jwi9pCTkxKvUG78wYnU39RZFNXM5v291j+
+	 kP5oy3MCx3gyc76zqPHUGcsftsfru/0fRn0OovMuDQwycZNOxAmuy+gr4TQofL9hO1
+	 AqaCT5Lyqsi2G438+RBbuqGBP+b7LCjUIIaHk6BDPgE+cS/BMwPt+nm2h1ABRgzrvS
+	 eRdArIuyT0HD2z/klQB+q0oiyfaZzXXXADi+1urK3OvrxVBJr+YvsYTvagAIStKabl
+	 IRL7E2IWq/B6g==
+Date: Wed, 4 Dec 2024 09:00:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Roy Luo <royluo@google.com>, kernel-team@android.com,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] dt-bindings: phy: samsung,usb3-drd-phy: align to
+ universal style
+Message-ID: <20241204150004.GA217165-robh@kernel.org>
+References: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
+ <20241203-gs101-phy-lanes-orientation-phy-v2-1-40dcf1b7670d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203083838.3260036-1-jvetter@outer-limits.org> <609b026d-d54c-4a11-b7df-6ef0ac315f25@app.fastmail.com>
-In-Reply-To: <609b026d-d54c-4a11-b7df-6ef0ac315f25@app.fastmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 4 Dec 2024 15:59:56 +0100
-Message-ID: <CACRpkdZZ0vrYT1-76SBa0XN00p33sRTmpT1JPLjvBuyGD_yu0Q@mail.gmail.com>
-Subject: Re: [PATCH] arm: Remove IO memcpy for Big-Endian
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Julian Vetter <jvetter@outer-limits.org>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Julian Vetter <julian@outer-limits.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241203-gs101-phy-lanes-orientation-phy-v2-1-40dcf1b7670d@linaro.org>
 
-On Tue, Dec 3, 2024 at 11:08=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote=
-:
+On Tue, Dec 03, 2024 at 12:13:49PM +0000, André Draszik wrote:
+> In [1], Rob pointed out that we should really be separating properties
+> with blank lines in between, which is universal style. Only where
+> properties are booleans, empty lines are not required.
 
-> - There is one ARMv5 "BE32" based platform, the ixp4xx, which
->   works differently, and this in turn allows multiple configurations
->   for its buses where a byte-swap is performed in the PCI
->   controller.
+In the subject, just say 'add blank lines between DT properties'. 
+'universal style' could be anything.
 
-Actually it affects all memory-mapped I/O. E.g.
-drivers/irqchip/irq-ixp4xx.c
-for this reason IXP4xx drivers that are not PCI usually
-use __raw_readl() and __raw_writel() to let the bus
-do its thing.
+> 
+> Do so.
+> 
+> Link: https://lore.kernel.org/all/20240711212359.GA3023490-robh@kernel.org/ [1]
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> 
+> ---
+> v2:
+> * collect tags
+> ---
+>  .../devicetree/bindings/phy/samsung,usb3-drd-phy.yaml     | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-IXP4xx PCI drivers are however *not* doing this, because
-PCI is (IIUC) specified to be little-endian, and the hardware
-deals with this. (Except for the PCI host driver itself, using
-__raw accesses.)
-
-> Before we apply your patch, I think the minimum would be to
-> have Linus Walleij try it out on an an ixp4xx with a driver
-> that uses these functions.
-
-I applied the patch, compiled v6.13-rc1 HEAD for the
-Linksys NSLU2 (oldest system there is! also a classic!)
-
-+ Boots cleanly
-+ Mounts root - this is on a USB drive which is on a
-   PCI-attached USB controller, so PCI is tested
-+ Reaches userspace and console
-+ Gets network and IP address
-+ LuCI web user inteface works (browsed to web server on device)
-+ Dropbear SSH login works fine
-
-Tested-by: Linus Walleij <linus.walleij@linaro.org>
-
-I doubt any IXP4xx driver uses ioread/iowrite. The
-MTD driver does not for example, because of other weirdness
-with address swizzling (drivers/mtd/maps/physmap-ixp4xx.c)
-For similar reasons drivers/ata/pata_ixp4xx_cf.c is
-using readw/writew exclusively.
-
-It also looks like a good idea:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Your,
-Linus Walleij
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
