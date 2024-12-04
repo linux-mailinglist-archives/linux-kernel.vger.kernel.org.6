@@ -1,132 +1,247 @@
-Return-Path: <linux-kernel+bounces-431209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530DD9E3A70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:54:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF0C9E3A71
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:55:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B361CB2CA8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF027165CBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0111BD4E5;
-	Wed,  4 Dec 2024 12:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC681B87C9;
+	Wed,  4 Dec 2024 12:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1RkJDXr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dQo4ssTx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541061B414D;
-	Wed,  4 Dec 2024 12:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754181AF0CD
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733316828; cv=none; b=HRKGcp4QbnDpd0PqBqfOK80sbgT3RuM2cWtHMckOoDpN1aP48WPf3zLQp2xDRnU1pz552RLQpp3utT2wv8q3UJXeAK/9F5eab427K0uP2xBT+cMgzzRckUzQYkwTx0A4oWe7M4hChSc8uVmo4YfY/3kwO1ra7xG2Ogskzu/DFwE=
+	t=1733316893; cv=none; b=hfenpM3Dn8LkDE4bdmi8orFuErgQN81e1VPYu7TCYK2xWXSVTYL3zEs768b2ZM81G+YSGq5ip/k7hJ8yzmkiU3sWP/i8W+T/dDrAD76t0vhdvzhRY0MGAxqf3jdFfuWfcxviohcPJePd6xGD3Air2tXl+TIbWhNmDD3WBT3MrOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733316828; c=relaxed/simple;
-	bh=oEO4RDbiJAB3b6nfe/PZkZK9xDFRKh94CQJ7ErxhGQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eG4M6Uz6M0NOtEr9d8wI7tmGWNVjdTZ4Pb3LTYtngkxxQHNLzVQRMQuSeJKYGkfpRLcsI6dHdyauem0Zo+AmaOumSHmDDLLH3yQYccFNcQHwprB5jRpP2c/wAOcdD78dY/YkprqqFbRnHTevmNwoYwBSGe9u/UOnLDOApxjOsko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1RkJDXr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D26E6C4AF0C;
-	Wed,  4 Dec 2024 12:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733316827;
-	bh=oEO4RDbiJAB3b6nfe/PZkZK9xDFRKh94CQJ7ErxhGQQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k1RkJDXrL1aHiJBXLPi5Nr7HcBHMd0Glytdy47JBJJIf0nC3BT6Ir+ohJpLhgz30P
-	 EI2JpCfEocrAZSeOFTJwcUK9IQCT0x+l7iGh897NqbLcKwYAycYX4NMw9BochAq9li
-	 DdSB6BdkftSOc878k/zPugEZ3DZac6lA0jmysVve0UQihNWwCGifJRiZMmQO8arQ3Y
-	 Xrpm27BxMFqDr0pnatB7ujqCu9yEbkDiDwRA392fk77bFU5QVjax+SYr1wnXq6Ug7w
-	 BliA6hETaqYK9jhh/ojpWHDTgNhzBc6zKf8HCO+dkR9uTmvXm8fP0hLK8VYtyyyBfX
-	 T/XNZe/QwVYpQ==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-29e842cb9b4so1420880fac.2;
-        Wed, 04 Dec 2024 04:53:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVM7TlRJDUa+zFcBC+HbFgWyZhA+Ye2jjiC5+7DKDzVlQ/17PVUSY7/JzRr2VLeanYa/DsQvG0s1tZ0Nsw=@vger.kernel.org, AJvYcCWWtv4iEEioCjEEInxfqYP7AywCst2Jr3fwSggIyEvWvW36rUkp5kLst2W989Cj4Y3fuZOZozgEc6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU24e7Aa/12oYnmtj+HzcBLfU5KrEkVhggoupdhSBRLPy09pQn
-	nCyfmUwQakg9CMGA/zrydDcU4qnm+W1hOyjVc15M7N08O6QsUY5ycD7SrfFoM/ksK7Lw7ehdNx+
-	RllMYlrlNcZ/gXDXVs2tIeXBNH3M=
-X-Google-Smtp-Source: AGHT+IFnwtEvxI5AB8DYMsjKvZo4g8APN9r0qLnARkZSQLDhVQEAdpw7mxNBTkWOhpaBe0MRz6LFjx1sprRSYtn7h3s=
-X-Received: by 2002:a05:6870:e2cb:b0:29e:5c94:5afd with SMTP id
- 586e51a60fabf-29e885a949fmr6209762fac.1.1733316827098; Wed, 04 Dec 2024
- 04:53:47 -0800 (PST)
+	s=arc-20240116; t=1733316893; c=relaxed/simple;
+	bh=0zbsmpMAssyLsVVURUESxkxvV3Okxt9izdw3A4a2nWs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rftq/KnSEil6OdJyXA/Jn4Q450JOTGqr4g84eJcJMFUTyTejmmJdvnVp6HWdwsFCmnMyS1jIX0Jhc9/8SDSD2+kt9zJoQMputO/a1/hJNxD33G7dkJ6c5MiNG9ffrsVenUBkKQmtGYRDm/UJECg9aK0sTJRVCruL3ytvpRHoDEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dQo4ssTx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733316890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MB2MAmGSlUi5YLf0fUp0VNgn+MFysC4aDDm3o00zI78=;
+	b=dQo4ssTxIMyeopv1YcD3KVbQGNNDW3P4KZYdCNxbig923f15xWFwztyquizyZ94zgoSqIa
+	3S+SdmXIZpkbLPOHz27GUV8fnaK36y+NfMpPtyQuHZHl0A6JpD90TzuCx4uQt9L7owuZhY
+	lT68kMjUzHBw4OpyoQo7wQjLBePg3Z8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-662-1L2h5LsWMY2N2FcF4eP8hQ-1; Wed, 04 Dec 2024 07:54:49 -0500
+X-MC-Unique: 1L2h5LsWMY2N2FcF4eP8hQ-1
+X-Mimecast-MFC-AGG-ID: 1L2h5LsWMY2N2FcF4eP8hQ
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43498af79a6so4979325e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 04:54:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733316888; x=1733921688;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MB2MAmGSlUi5YLf0fUp0VNgn+MFysC4aDDm3o00zI78=;
+        b=bHdQMsu/y+VAt9T2+lA3m/pA3yUJYPmIXBoRSqVBmDt7y1GHwSSOUqcUsIRSPHxCMQ
+         gi7lUErgF16zMXIeyLlPfiWo/abnXr3hm9pxaxW68BQQm6HYFxpTVMwVm/vtu59k76rD
+         sG61op8RT4iamKu9x3t/s/UGQNtsDUPPLuqAAAUg0ERWf1olBL4ek2dVoH3AJyBOraai
+         70y3mZFOB2G9zlfhijSWWQ+n7HnB2tAcb4dfi3acFBxUNtQaQGrqR8SzyM5aqlitRH4a
+         TMIH4/HRbgMZHLr2HSr3J0IpFx6iwr3861O90guxvn39UTdmmhemClcnpnUkkKMYlIEk
+         LhFw==
+X-Gm-Message-State: AOJu0YyyoAJGhs14KZ7yOacQWkOA8hYCPgDObBVRcPXeXW8/s6A0Upf2
+	jeU3yGx6PuV5d4RKuq+CGEmtt/2TmiQ5gRVNZ8c3wqyjsVflyoOSoiE449+yRfbRT1Z5oAsDvza
+	u5U8Da6jt8PXtkY+NJ3pL0YMTgEyRKyjM9e8X3Dm3b9wsdAQXC/COwfpu4OC1wJOrmHobAgEIRS
+	0kjuIeixLz+MFgCaVrqwgMRLFFs45c0lwIa/sas7gzi3U7
+X-Gm-Gg: ASbGncv2ZwNKLCTBWB0eYFZ3pBAeSd9JX18mL3KeUAOLUTNipj2B83e9eh7j8jz/khx
+	Nq5GsarRc/00G4FwrKoGNEeWsn14qsVoSoXicS1TDOkNd4MFuOkdU0RdFxtHc1JIrB10xcW+ZCb
+	LlQpJCtvdzVTOtvpXInlmT7qhgMpA+4l08/hcVvQTMPCOBHcZTT6Yu3oPOuDAQDw1FZ2bf52weq
+	v/3SthYNWBn8Q8m5Qt603yNuUTeOgUkg0HLlOMhLLH/kTuW62QukjLc6Yracir0ajwsQifemM9S
+	Yn/zRco4MVUWXk1sSFEfu9EzThSiO1qltVo=
+X-Received: by 2002:a05:600c:6c8a:b0:434:8e8a:d4ec with SMTP id 5b1f17b1804b1-434afc3b6e1mr245982375e9.13.1733316888291;
+        Wed, 04 Dec 2024 04:54:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHjMr0hScnPOMMpphAyax2V0MFBHZqym1YHIjea01hMzMXczx6opOHdnARaXNIvDZGqHVvbtg==
+X-Received: by 2002:a05:600c:6c8a:b0:434:8e8a:d4ec with SMTP id 5b1f17b1804b1-434afc3b6e1mr245981785e9.13.1733316887744;
+        Wed, 04 Dec 2024 04:54:47 -0800 (PST)
+Received: from localhost (p200300cbc70be10038d68aa111b0a20a.dip0.t-ipconnect.de. [2003:cb:c70b:e100:38d6:8aa1:11b0:a20a])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-434d52c0bc7sm23514855e9.35.2024.12.04.04.54.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 04:54:46 -0800 (PST)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	linux-s390@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org,
+	David Hildenbrand <david@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Baoquan He <bhe@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 00/12] fs/proc/vmcore: kdump support for virtio-mem on s390
+Date: Wed,  4 Dec 2024 13:54:31 +0100
+Message-ID: <20241204125444.1734652-1-david@redhat.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com> <20241114220921.2529905-2-saravanak@google.com>
-In-Reply-To: <20241114220921.2529905-2-saravanak@google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 4 Dec 2024 13:53:36 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB-MGkd7sVg@mail.gmail.com>
-Message-ID: <CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB-MGkd7sVg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] PM: sleep: Fix runtime PM issue in dpm_resume()
-To: Saravana Kannan <saravanak@google.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Segall <bsegall@google.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Trim CC list.
+The only "different than everything else" thing about virtio-mem on s390
+is kdump: The crash (2nd) kernel allocates+prepares the elfcore hdr
+during fs_init()->vmcore_init()->elfcorehdr_alloc(). Consequently, the
+kdump kernel must detect memory ranges of the crashed kernel to
+include via PT_LOAD in the vmcore.
 
-On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravanak@google.=
-com> wrote:
->
-> Some devices might have their is_suspended flag set to false. In these
-> cases, dpm_resume() should skip doing anything for those devices.
+On other architectures, all RAM regions (boot + hotplugged) can easily be
+observed on the old (to crash) kernel (e.g., using /proc/iomem) to create
+the elfcore hdr.
 
-Not really.  This is particularly untrue for devices with
-power.direct_complete set that have power.is_suspended clear.
+On s390, information about "ordinary" memory (heh, "storage") can be
+obtained by querying the hypervisor/ultravisor via SCLP/diag260, and
+that information is stored early during boot in the "physmem" memblock
+data structure.
 
-> However, runtime PM enable and a few others steps are done before
-> checking for this flag. Fix it so that we do things in the right order.
+But virtio-mem memory is always detected by as device driver, which is
+usually build as a module. So in the crash kernel, this memory can only be
+properly detected once the virtio-mem driver started up.
 
-I don't see the bug this is fixing, but I can see bugs introduced by it.
+The virtio-mem driver already supports the "kdump mode", where it won't
+hotplug any memory but instead queries the device to implement the
+pfn_is_ram() callback, to avoid reading unplugged memory holes when reading
+the vmcore.
 
-I think that you want power.is_suspended to be checked before waiting
-for the superiors.  Fair enough, since for devices with
-power.is_suspended clear, there should be no superiors to wait for, so
-the two checks can be done in any order and checking
-power.is_suspended first would be less overhead.  And that's it
-AFAICS.
+With this series, if the virtio-mem driver is included in the kdump
+initrd -- which dracut already takes care of under Fedora/RHEL -- it will
+now detect the device RAM ranges on s390 once it probes the devices, to add
+them to the vmcore using the same callback mechanism we already have for
+pfn_is_ram().
 
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  drivers/base/power/main.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 4a67e83300e1..86e51b9fefab 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -913,6 +913,9 @@ static void device_resume(struct device *dev, pm_mess=
-age_t state, bool async)
->         if (dev->power.syscore)
->                 goto Complete;
->
-> +       if (!dev->power.is_suspended)
-> +               goto Unlock;
-> +
->         if (dev->power.direct_complete) {
->                 /* Match the pm_runtime_disable() in __device_suspend(). =
-*/
->                 pm_runtime_enable(dev);
-> @@ -931,9 +934,6 @@ static void device_resume(struct device *dev, pm_mess=
-age_t state, bool async)
->          */
->         dev->power.is_prepared =3D false;
->
-> -       if (!dev->power.is_suspended)
-> -               goto Unlock;
-> -
->         if (dev->pm_domain) {
->                 info =3D "power domain ";
->                 callback =3D pm_op(&dev->pm_domain->ops, state);
-> --
-> 2.47.0.338.g60cca15819-goog
->
+To add these device RAM ranges to the vmcore ("patch the vmcore"), we will
+add new PT_LOAD entries that describe these memory ranges, and update
+all offsets vmcore size so it is all consistent.
+
+My testing when creating+analyzing crash dumps with hotplugged virtio-mem
+memory (incl. holes) did not reveal any surprises.
+
+Patch #1 -- #7 are vmcore preparations and cleanups
+Patch #8 adds the infrastructure for drivers to report device RAM
+Patch #9 + #10 are virtio-mem preparations
+Patch #11 implements virtio-mem support to report device RAM
+Patch #12 activates it for s390, implementing a new function to fill
+          PT_LOAD entry for device RAM
+
+v1 -> v2:
+* "fs/proc/vmcore: convert vmcore_cb_lock into vmcore_mutex"
+ -> Extend patch description
+* "fs/proc/vmcore: replace vmcoredd_mutex by vmcore_mutex"
+ -> Extend patch description
+* "fs/proc/vmcore: disallow vmcore modifications while the vmcore is open"
+ -> Disallow modifications only if it is currently open, but warn if it
+    was already open and got closed again.
+ -> Track vmcore_open vs. vmcore_opened
+ -> Extend patch description
+* "fs/proc/vmcore: prefix all pr_* with "vmcore:""
+ -> Added
+* "fs/proc/vmcore: move vmcore definitions out if kcore.h"
+ -> Call it "vmcore_range"
+ -> Place vmcoredd_node into vmcore.c
+ -> Adjust patch subject + description
+* "fs/proc/vmcore: factor out allocating a vmcore range and adding it to a
+   list"
+ -> Adjust to "vmcore_range"
+* "fs/proc/vmcore: factor out freeing a list of vmcore ranges"
+ -> Adjust to "vmcore_range"
+* "fs/proc/vmcore: introduce PROC_VMCORE_DEVICE_RAM to detect device RAM
+   ranges in 2nd kernel"
+ -> Drop PROVIDE_PROC_VMCORE_DEVICE_RAM for now
+ -> Simplify Kconfig a bit
+ -> Drop "Kdump:" from warnings/errors
+ -> Perform Elf64 check first
+ -> Add regions also if the vmcore was opened, but got closed again. But
+    warn in any case, because it is unexpected.
+ -> Adjust patch description
+* "virtio-mem: support CONFIG_PROC_VMCORE_DEVICE_RAM"
+ -> "depends on VIRTIO_MEM" for PROC_VMCORE_DEVICE_RAM
+
+
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: "Eugenio Pérez" <eperezma@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Thomas Huth <thuth@redhat.com>
+Cc: Cornelia Huck <cohuck@redhat.com>
+Cc: Janosch Frank <frankja@linux.ibm.com>
+Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: Eric Farman <farman@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+
+David Hildenbrand (12):
+  fs/proc/vmcore: convert vmcore_cb_lock into vmcore_mutex
+  fs/proc/vmcore: replace vmcoredd_mutex by vmcore_mutex
+  fs/proc/vmcore: disallow vmcore modifications while the vmcore is open
+  fs/proc/vmcore: prefix all pr_* with "vmcore:"
+  fs/proc/vmcore: move vmcore definitions out of kcore.h
+  fs/proc/vmcore: factor out allocating a vmcore range and adding it to
+    a list
+  fs/proc/vmcore: factor out freeing a list of vmcore ranges
+  fs/proc/vmcore: introduce PROC_VMCORE_DEVICE_RAM to detect device RAM
+    ranges in 2nd kernel
+  virtio-mem: mark device ready before registering callbacks in kdump
+    mode
+  virtio-mem: remember usable region size
+  virtio-mem: support CONFIG_PROC_VMCORE_DEVICE_RAM
+  s390/kdump: virtio-mem kdump support (CONFIG_PROC_VMCORE_DEVICE_RAM)
+
+ arch/s390/Kconfig             |   1 +
+ arch/s390/kernel/crash_dump.c |  39 ++++-
+ drivers/virtio/virtio_mem.c   | 103 ++++++++++++-
+ fs/proc/Kconfig               |  19 +++
+ fs/proc/vmcore.c              | 283 ++++++++++++++++++++++++++--------
+ include/linux/crash_dump.h    |  41 +++++
+ include/linux/kcore.h         |  13 --
+ 7 files changed, 407 insertions(+), 92 deletions(-)
+
+
+base-commit: feffde684ac29a3b7aec82d2df850fbdbdee55e4
+-- 
+2.47.1
+
 
