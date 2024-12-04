@@ -1,142 +1,186 @@
-Return-Path: <linux-kernel+bounces-431818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7559E44E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:40:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301C29E45B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7890B3DA5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA48DBA59DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDB821C194;
-	Wed,  4 Dec 2024 17:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z03Hk1+3"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AC420E00F;
-	Wed,  4 Dec 2024 17:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D85C227B90;
+	Wed,  4 Dec 2024 17:05:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA13621D5BF;
+	Wed,  4 Dec 2024 17:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331857; cv=none; b=Q2jDyUWf62Qj2qGOZFGXnA+0SF4zWUV3VyH6WNjJLg1ivdH8EJGHb3VljKQTBIFNNcqaRLMfJtJB58sO1dQQYL3yftFYRA8yuBPomke6RsFwmgsZSuENKo66ApWnkjy2PmaZokpBlzYOO97OF865S2FiA71RFYhsKEneWCp/YeI=
+	t=1733331952; cv=none; b=RVdLvML/4iuZ+D6efJuS6RhM2dwZe9qCYWnNDMw88ym9sNoRCNwAC1UkgruY6WZ6Dm7q98ULFO+nfavp7pYYo/lYjk3PSdQLIp5nD/IGZeE+m/dReTXQfgQP2KXCpfNezSKXzCjXtDigWe15v20lMVYb+Yxvr1aggAJGtGOSmzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331857; c=relaxed/simple;
-	bh=L5U4dSkV1I3cWCusRE3BIyX9nk34hT5kxbJWlQQq/1E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=GE3/6PX6XfNhvG0FSJD5EIb483KWOdjqtduDst6IEzXP23WfPfenZwJAlyypDRAk+QlkfOJzocXM/hkSDShaoIZ9sautxlEcT0bvKEN+JraSEV8QQ9E6pvTykjqEoEkhDwua4Lj049G0FbrDEexbViK/LEW0Qw8vthuZjGgdvVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z03Hk1+3; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 254E2FF808;
-	Wed,  4 Dec 2024 17:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733331851;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mN4X2mfRbhmCIAyp/AA6+Xam0Nv0+ZB04jq9dio6qPc=;
-	b=Z03Hk1+3HTvSePlLeXZJeyZVuM1IupIBCse5Hc0lL7dv7IICVwl/w0x7sHvLL9I6gXO84H
-	Y8c6R/6ojaDquwVcHfArTcXDRox6Awc6fyT+pJxqmZojatficEWjltAmRtrI6FylhVTsZV
-	/GTrSkg7AQK4qBTHhJ9cfKTNmv4iG7ly/KZz/YGBy4bQotaugMw4Jl/CochHdV/fD99GWf
-	rPpknOmjjEv35LL9F1m1Vpxb8Lu+JWdRSnWNYcgsj+DAAMEAGfFUmPfc425h+zlI9i+w+z
-	xcTfPy4K4DeUaWflUA9ukblZDdSEE0L/oB58DqEWfNJBLq0UomyIKUmwcHNcaQ==
+	s=arc-20240116; t=1733331952; c=relaxed/simple;
+	bh=mpFZGbRrr9pVX1ORwf0kmi2JYrm8OZvYLsm98fDvXRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ww4Aj4+Et5c8vpjMUHFXBSYqoe0LCyAQd99TfbSQ/+NLuiW+TPFjDx9AJC5XqrserWMeqvEdNkRifThweSlklqI7+093sSMMsI0o0UUzzokOCveGeN+MmTAsu4i0/eO9ROi0VmyHxxapjgWywaOXqf97R99O+QmUBrXCV3+MCnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2DE41063;
+	Wed,  4 Dec 2024 09:06:16 -0800 (PST)
+Received: from [10.1.31.170] (XHFQ2J9959.cambridge.arm.com [10.1.31.170])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2440C3F71E;
+	Wed,  4 Dec 2024 09:05:47 -0800 (PST)
+Message-ID: <500d1007-56f5-43cb-be9d-4a39fccc6e53@arm.com>
+Date: Wed, 4 Dec 2024 17:05:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
+ anonymous_thp
+To: Wenchao Hao <haowenchao22@gmail.com>, David Hildenbrand
+ <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
+ Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20241203134949.2588947-1-haowenchao22@gmail.com>
+ <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
+ <f2d58d57-df38-42eb-a00c-a993ca7299ba@arm.com>
+ <31158c3e-bf1b-47e8-a41b-0417c538b62e@gmail.com>
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <31158c3e-bf1b-47e8-a41b-0417c538b62e@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 04 Dec 2024 18:04:10 +0100
-Message-Id: <D632UZERSM8I.1O3J7O9QZ64EV@bootlin.com>
-Cc: <oe-kbuild-all@lists.linux.dev>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-mips@vger.kernel.org>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o_Lebrun?=
- <theo.lebrun@bootlin.com>, "Srinivas Kandagatla"
- <srinivas.kandagatla@linaro.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Nicolas Saenz Julienne" <nsaenz@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-To: "kernel test robot" <lkp@intel.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye EyeQ5
- NVMEM
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241203-rmem-v1-5-24f4970cf14e@bootlin.com>
- <202412041522.01H5Kj6F-lkp@intel.com>
-In-Reply-To: <202412041522.01H5Kj6F-lkp@intel.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On Wed Dec 4, 2024 at 8:58 AM CET, kernel test robot wrote:
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on 40384c840ea1944d7c5a392e8975ed088ecf0b37]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/dt-bin=
-dings-nvmem-rmem-Add-mobileye-eyeq5-bootloader-config/20241204-103417
-> base:   40384c840ea1944d7c5a392e8975ed088ecf0b37
-> patch link:    https://lore.kernel.org/r/20241203-rmem-v1-5-24f4970cf14e%=
-40bootlin.com
-> patch subject: [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye E=
-yeQ5 NVMEM
-> config: arm-randconfig-002 (https://download.01.org/0day-ci/archive/20241=
-204/202412041522.01H5Kj6F-lkp@intel.com/config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20241204/202412041522.01H5Kj6F-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202412041522.01H5Kj6F-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->    drivers/nvmem/rmem.c: In function 'rmem_eyeq5_checksum':
->    drivers/nvmem/rmem.c:66:9: error: cleanup argument not a function
->       66 |         void *buf __free(kfree) =3D NULL;
->          |         ^~~~
->    drivers/nvmem/rmem.c:97:15: error: implicit declaration of function 'k=
-malloc'; did you mean 'mm_alloc'? [-Wimplicit-function-declaration]
->       97 |         buf =3D kmalloc(header.size, GFP_KERNEL);
->          |               ^~~~~~~
->          |               mm_alloc
-> >> drivers/nvmem/rmem.c:97:13: error: assignment to 'void *' from 'int' m=
-akes pointer from integer without a cast [-Wint-conversion]
->       97 |         buf =3D kmalloc(header.size, GFP_KERNEL);
->          |             ^
+On 04/12/2024 14:40, Wenchao Hao wrote:
+> On 2024/12/3 22:42, Ryan Roberts wrote:
+>> On 03/12/2024 14:17, David Hildenbrand wrote:
+>>> On 03.12.24 14:49, Wenchao Hao wrote:
+>>>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
+>>>> each VMA, but it does not include large pages smaller than PMD size.
+>>>>
+>>>> This patch adds the statistics of anonymous huge pages allocated by
+>>>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
+>>>>
+>>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+>>>> ---
+>>>>   fs/proc/task_mmu.c | 6 ++++++
+>>>>   1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>> index 38a5a3e9cba2..b655011627d8 100644
+>>>> --- a/fs/proc/task_mmu.c
+>>>> +++ b/fs/proc/task_mmu.c
+>>>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss,
+>>>> struct page *page,
+>>>>           if (!folio_test_swapbacked(folio) && !dirty &&
+>>>>               !folio_test_dirty(folio))
+>>>>               mss->lazyfree += size;
+>>>> +
+>>>> +        /*
+>>>> +         * Count large pages smaller than PMD size to anonymous_thp
+>>>> +         */
+>>>> +        if (!compound && PageHead(page) && folio_order(folio))
+>>>> +            mss->anonymous_thp += folio_size(folio);
+>>>>       }
+>>>>         if (folio_test_ksm(folio))
+>>>
+>>>
+>>> I think we decided to leave this (and /proc/meminfo) be one of the last
+>>> interfaces where this is only concerned with PMD-sized ones:
+>>>
+>>> Documentation/admin-guide/mm/transhuge.rst:
+>>>
+>>> The number of PMD-sized anonymous transparent huge pages currently used by the
+>>> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
+>>> To identify what applications are using PMD-sized anonymous transparent huge
+>>> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
+>>> fields for each mapping. (Note that AnonHugePages only applies to traditional
+>>> PMD-sized THP for historical reasons and should have been called
+>>> AnonHugePmdMapped).
+>>>
+>>
+>> Agreed. If you need per-process metrics for mTHP, we have a python script at
+>> tools/mm/thpmaps which does a fairly good job of parsing pagemap. --help gives
+>> you all the options.
+>>
+> 
+> I tried this tool, and it is very powerful and practical IMO.
+> However, thereare two disadvantages:
+> 
+> - This tool is heavily dependent on Python and Python libraries.
+>   After installing several libraries with the pip command, I was able to
+>   get it running.
 
-Will fix with the following.
-V2 incoming in a few days to avoid spam.
+I think numpy is the only package it uses which is not in the standard library?
+What other libraries did you need to install?
 
-	diff --git a/drivers/nvmem/rmem.c b/drivers/nvmem/rmem.c
-	index 04796f4fa8ae..1f0caf1d2dc1 100644
-	--- a/drivers/nvmem/rmem.c
-	+++ b/drivers/nvmem/rmem.c
-	@@ -9,6 +9,7 @@
-	 #include <linux/nvmem-provider.h>
-	 #include <linux/of_reserved_mem.h>
-	 #include <linux/platform_device.h>
-	+#include <linux/slab.h>
+>   In practice, the environment we need to analyze may be a mobile or
+>   embedded environment, where it is very difficult to deploy these
+>   libraries.
 
-	 struct rmem {
-	        struct device *dev;
+Yes, I agree that's a problem, especially for Android. The script has proven
+useful to me for debugging in a traditional Linux distro environment though.
 
-Regards,
+> - It seems that this tool only counts file-backed large pages? During
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+No; the tool counts file-backed and anon memory. But it reports it in separate
+counters. See `thpmaps --help` for full details.
+
+>   the actual test, I mapped a region of anonymous pages and mapped it
+>   as large pages, but the tool did not display those large pages.
+>   Below is my test file(mTHP related sysfs interface is set to "always"
+>   to make sure using large pages):
+
+Which mTHP sizes did you enable? Depending on your value of SIZE and which mTHP
+sizes are enabled, you may not have a correctly aligned region in p. So mTHP
+would not be allocated. Best to over-allocate then explicitly align p to the
+mTHP size, then fault it in.
+
+> 
+> int main()
+> {
+>         int i;
+>         char *c;
+>         unsigned long *p;
+> 
+>         p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+What is SIZE here?
+
+>         if (!p) {
+>                 perror("fail to get memory");
+>                 exit(-1);
+>         }
+> 
+>         c = (unsigned char *)p;
+> 
+>         for (i = 0; i < SIZE / 8; i += 8)
+>                 *(p + i) = 0xffff + i;
+
+Err... what's your intent here? I think you're writting to 1 in every 8 longs?
+Probably just write to the first byte of every page.
+
+Thanks,
+Ryan
+
+> 
+>         while (1)
+>                 sleep(10);
+> 
+>         return 0;
+> }
+> 
+> Thanks,
+> wenchao
+> 
 
 
