@@ -1,151 +1,121 @@
-Return-Path: <linux-kernel+bounces-431465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B347F9E3E4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:28:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CA29E3E6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:36:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B51A9B45F89
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:04:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B652CB2B390
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57C920C49E;
-	Wed,  4 Dec 2024 15:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6866F20C47B;
+	Wed,  4 Dec 2024 15:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LHRmde/G"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7pvPyRr"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCFD20B815;
-	Wed,  4 Dec 2024 15:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C35720ADDD;
+	Wed,  4 Dec 2024 15:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324623; cv=none; b=qgQ41lqyiEkTv2HMXlegaIveTr9KnX8kmzPBFJ263la3L78xIvdklL3FzAlfNqhPAwsjZxKSUGVRdUIF4opSzeqX1dgpnsXjTAik6RfVbOHNdbwFe12dHcZqZqUpPqohO3QwHR621pfYZgi5vdjZZTkVME1Jnrg/poO888Mm1+4=
+	t=1733324697; cv=none; b=aZD3wx89aMiyPRfS6gCQSYoEyfe2VsOSaw+2b+LHcrv5EjBpvcVGrNk4zwC9RyMDjfL5leb1lbxelimRyxy5hCMP8PpVZucMONXbgOamhT/dsuT8EnrzJYPK1on5+SrnSZaRzpNbTUbh5K8U/wXUppQhrMq2u4uPi0lSZ3g8SC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324623; c=relaxed/simple;
-	bh=qUpwcFctgaSbcmltm9vm1oWGHxZFJkRvyZBwZHKDWbo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IoHHcgC4XXpPX7IOWUD311J5e12v1VuNLbTomZwWInr0c+e8Yfq8aBwa2RH/ZuPs0ttGX9qGBp7KaRHmamSORGYv0b+lF0RapZ61NVTnfLSMQU469r14KtB3I6nIRvh0g2RV27cKIvzBfapd+jP/99eo+5NL9RVziMrykFfWr/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LHRmde/G; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B45d6Vw010056;
-	Wed, 4 Dec 2024 15:03:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=zTeBrV8sFGk
-	ExL1TodO3azPzB/azrJKb1LMySxLeY4w=; b=LHRmde/GIQNVH/UmEhwY2pmWv4Y
-	K2u6JehwQ7tnvJq+QzuTp07E6jzD6LXFdPrVmhLIomrv41l/0+wNLlD4+Fw7BWWf
-	4CbVk3OHPI/5eqk3JpqRMN8cX/JPirJIU224EifJPboLmHhWAx1M5cn8AgfXXJ/U
-	U/vcbQQXOG1VuUnL4PlWSoaMsiSe1do5AmVcT5m8lzEnq3nqJHNi2LDS/rQY46nq
-	XozSgFcNRWrRnKWatqxx41mxYFF8G0Z7cuddDqm0SC9VrY5AaYyPnNFsDz7hulpg
-	MlLb+22r5tDOgEno9TfXqgpsJITM0v87wIslmA7G3sAOsfR7ok2+mwBaS/A==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a4by3ap9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 15:03:35 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4F3WOn025780;
-	Wed, 4 Dec 2024 15:03:32 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 437uskx4ty-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 15:03:32 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4B4F3WB8025774;
-	Wed, 4 Dec 2024 15:03:32 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4B4F3VeR025773
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 15:03:32 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
-	id 52CF4540; Wed,  4 Dec 2024 20:33:31 +0530 (+0530)
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        broonie@kernel.or, andersson@kernel.org, konradybcio@kernel.org,
-        johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Subject: [PATCH v1 2/7] spi: dt-bindings: Document DT properties for QUP firmware loading
-Date: Wed,  4 Dec 2024 20:33:21 +0530
-Message-Id: <20241204150326.1470749-3-quic_vdadhani@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
+	s=arc-20240116; t=1733324697; c=relaxed/simple;
+	bh=hewadqbWLJKRts95eOYXdwWNooML3XA7/3FBG/3C6lg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZttceMr9Cl5J6yp7vOkA17PHUubHvIzaIpZWgOyKM1plmd0JPCmsZRcftx2zP/UrIwC6Av2ucg2OTySGsuWiSZ+9qu5dBnfCPCjCVCIXyv68E0cgqDCQDZTWmy0s8Ty55wtm0JYS3xQrsRQFQNN5nT6cEpZ2a4wWt2BVtVngGjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7pvPyRr; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a1833367so6400285e9.1;
+        Wed, 04 Dec 2024 07:04:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733324694; x=1733929494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EA+h0saep05HaBgoBiILoVwh5Jsa3eA0cCo7gYVbZ2A=;
+        b=R7pvPyRrIUbSB/5kgooy2b5aBCjVY0DwgUSJCvVTDU6K8jATal5gN6ul9V4OdaPVrd
+         vLxTq2ZuYUI0SL8Qe5YsAuVwVPvesSQ6/tM+dOBV02v8k8fCiZFNrxkJCXpEgWHXb9v+
+         nue2kuFm0kLc9bhgDuWnY0FILN22JU1l4/53IFRAPNSltdmCMb6I0PAhmaOzpmkP03Fg
+         D/QXISpTPdPMMD/keri/h6q9rzwKFBGJtEHCcantVX/0xQf7MnQeFnSZ1OePnLGvqmte
+         xWmyLU+8pbcmBEKeY6a2k+72BkvFz0BFYnOk+Yh4+8IYZ2nir33nhuH89NtTmF7qJzlz
+         966A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733324694; x=1733929494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EA+h0saep05HaBgoBiILoVwh5Jsa3eA0cCo7gYVbZ2A=;
+        b=uSLajtFj7BgsT0TkwoIhWsvUv43H36od8Hvd2FrYpuYqiF6b76gW4KX/6oQ2RqkEiI
+         NZNu8/LWeUUwzhMVgD14UXNS2q65DcrGP1u2ln+VkfJG89RoXIOq/yvlPO/bvizXbUkw
+         qXkBo7Xaezxf8xBOJUj2V+2nmhC8fC16eUcJuwEBJKtuenBNPIKprEK8GHNL5OLE1ed+
+         meA016dyvc2w8PbwZMnkklZbWgQj+WnJg4rQbLOX34fAkIkCE4vuiAjw0pLedzDL0MLK
+         OHRKbKof+TrXaapFPNTt7zGo18Lt7u2+0tmg4DWsR9xxzdqlohDRLcVOpxYnLieIb5h1
+         bi2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUhSbMpqzO7hmrJ2NIkolyc7mMGR+ILeQ7g4g/YpoC4qPYl9qzDPzjItJGlI/b0BVVDlJIdXd7Au7FXVg==@vger.kernel.org, AJvYcCVJ6koNaLoPv9TbHeu9OQ5g7TZILGDaPTtTMMEZ4hE61L59Mh6ZaVPyzFBzj7NEXQ5ryC77x4pfVfSbxlqkTBY0mJJ2@vger.kernel.org, AJvYcCWocS+p/HBu6vy39TmRsqqzb0McPgorJkJSz0oA0MLnUxDPfBerKUonbabmdwSJNAF2wgmjjbUF4gEF9ElN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQi8ffZ5U67Iyat/4HFBp1mn0DUr/35lVzqMS4xWOh0ba7wZ8P
+	9J80fd/068TtPx9RqxKKc/dd6+tLtJCeSOQ3xQSSdMwDiG0gQJGs
+X-Gm-Gg: ASbGnctzC6Is0Q/j1u5ZR/pD7ZMDWqf+hsshFElQHa2+zkm6HN2oEJCuN9QtC0wPdQA
+	CKQXVcfGU7Epzv4x7xhU0hlAFvJMbTJrB7KhTYfIcc78qR9zGVSbNjs9Z89HZ4yjvfbyLgFUmF3
+	ry9oWFsecsDKrT8zc6HIRLRC7lJ0K7PtkX7csmOQRUWoqCClcmdvE4VEIvj7YtTSStyi2MOhYD7
+	8OlXRfH39A+JyV1ie4iRjx4iXLMumGVgQWfV2XdxH+cy7nDae4=
+X-Google-Smtp-Source: AGHT+IG9QX67ZxBd606G3QR1uTGV5YwZCnPF29rocVK9K7/R3gYKV4ItXJrojh7qMPNmn18OgiE1Zg==
+X-Received: by 2002:a05:600c:458e:b0:431:4a82:97f2 with SMTP id 5b1f17b1804b1-434afb944bbmr222608275e9.6.1733324691930;
+        Wed, 04 Dec 2024 07:04:51 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273b1dsm27157315e9.15.2024.12.04.07.04.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 07:04:51 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	linux-block@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] blktrace: remove redundant return at end of function
+Date: Wed,  4 Dec 2024 15:04:50 +0000
+Message-Id: <20241204150450.399005-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -qds7HOjfrudXOD0BDa90wdtXFvl8IPo
-X-Proofpoint-ORIG-GUID: -qds7HOjfrudXOD0BDa90wdtXFvl8IPo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
- impostorscore=0 suspectscore=0 adultscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040115
 
-Document the 'qcom,load-firmware' and 'qcom,xfer-mode' properties to
-support SE(Serial Engine) firmware loading from the protocol driver and
-to select the data transfer mode, either GPI DMA (Generic Packet Interface)
-or non-GPI mode (PIO/CPU DMA).
+A recent change added return 0 before an existing return statement
+at the end of function blk_trace_setup. The final return is now
+redundant, so remove it.
 
-SPI controller can operate in one of two modes based on the
-'qcom,xfer-mode' property, and the firmware is loaded accordingly.
+Fixes: 64d124798244 ("blktrace: move copy_[to|from]_user() out of ->debugfs_lock")
 
-Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- .../devicetree/bindings/spi/qcom,spi-geni-qcom.yaml   | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ kernel/trace/blktrace.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-index 2e20ca313ec1..7038981f54ff 100644
---- a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-+++ b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-@@ -66,6 +66,15 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index 18c81e6aa496..3679a6d18934 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -639,8 +639,6 @@ int blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+ 		return -EFAULT;
+ 	}
+ 	return 0;
+-
+-	return ret;
+ }
+ EXPORT_SYMBOL_GPL(blk_trace_setup);
  
-+  qcom,load-firmware:
-+    type: boolean
-+    description: Optional property to load SE (serial engine) Firmware from protocol driver.
-+
-+  qcom,xfer-mode:
-+    description: Value 1,2 and 3 represents FIFO, CPU DMA and GSI DMA mode respectively.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 3]
-+
- required:
-   - compatible
-   - clocks
-@@ -97,6 +106,8 @@ examples:
-         interconnects = <&qup_virt MASTER_QUP_CORE_0 0 &qup_virt SLAVE_QUP_CORE_0 0>,
-                         <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_QUP_0 0>;
-         interconnect-names = "qup-core", "qup-config";
-+        qcom,load-firmware;
-+        qcom,xfer-mode = <1>;
-     };
- 
-   - |
 -- 
-2.34.1
+2.39.5
 
 
