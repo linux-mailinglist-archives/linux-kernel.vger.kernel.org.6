@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-430422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B56C9E30C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:27:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B549E30C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:29:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535D916400F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:29:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A600944F;
+	Wed,  4 Dec 2024 01:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OZE7XoPY"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41D4B25327
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:27:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECF6BE4A;
-	Wed,  4 Dec 2024 01:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNqz7lh3"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B54C8F;
-	Wed,  4 Dec 2024 01:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221744C8F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 01:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733275655; cv=none; b=GAbli/c6/4VZ+IbOc+mFb88ZunQhFlEAmkTTUaEMdWPGTGj+paVQUVAR+9kbohURy2OHgrhnQXNefwv/Vyns9FSyUtEeU6jhVXo5l0TmDprrgEuoFuXIoR+T2mIr7+dFIPt3hR8hdYaUAtC7Lpeovw6YlPC5ZpZGQiOYZQxNvQs=
+	t=1733275738; cv=none; b=m4HgnTqN5lUPsPmzrJg1OO9um/+j3HaDOtO7sg66Q6hwj8YoEsCnGMU7J9KDEXW9JrA8WWfSUC/PaAJLL/DhxGB1hVgIwUB/3cbT5pld1oZZbFx1+nZkFdFMRStbuS/3ERWkZy498DJ5Sb3xwCh0i9var2yZF5Fp5p/JRYkaWBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733275655; c=relaxed/simple;
-	bh=pgZt2M+Pwhjrmzxt+QO2q5ObG9qhyr231Wbd5HX4CQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DJQhXKslUGcrsQaUjkDeu2fhxvzGC7qgrNcxJ2q1BxRfgUxNN/IklZxPPhlBDfomr+7UANKZtb4DbqC8Vjdu0Tzr1BYypR49PLz+eVpsVYI3wQimz2C/hn7yaL9QR4myxyBU3sGqltfBDsWclgykx+9V1wrR2NGuiI77lTPwRLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNqz7lh3; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e9f8dec3daso49662687b3.0;
-        Tue, 03 Dec 2024 17:27:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733275653; x=1733880453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=50u1RJmER8i7s9/SprHkL8TRwZkGr9nPZOt7IMSKd/Q=;
-        b=lNqz7lh3X4MXNngl+F0glsiODhBZPI6b4eDibbaE7mIPlQa3sn9EyL/PLpWnKXA/aC
-         klRMvTwQQS4H9pozCRdCbveLhHz0tqWuoIjGONzySKaxV6qMMdkiM6Y9j1DkeRb+eCiP
-         Q+nf0WnMs1o+BXzR+dxZ4rfp9X/1Y5VfcScC7MUEfkKzCBjItJocq2mxHfBjGAN731PT
-         4ylP6QfRW9GSWKw9GlFyJaJc31QOR7VxLq16UDRF2OFKiEMStXBdNfjgWcsUfsN7kfKR
-         wmfEBpq4AcYd3xeEqLnER7hxjAfFuySJBZXggumvPd8K70MJ8kbKdnp6pqbq7cx14ewn
-         dhZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733275653; x=1733880453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=50u1RJmER8i7s9/SprHkL8TRwZkGr9nPZOt7IMSKd/Q=;
-        b=YFW+NOFL/ovk6WdjvcQtKxZR0J1I8z/nrGVn8f7dFQ8/HjbLMpDK5xtcEb7Tiw7IT0
-         Ud/RBsLus36njIHsmUC85MHz7HUNm+Zfd4tCmw7XaIW1rfIsM9Y7xOIRM2XJWbW51RC5
-         OwWKvP2DUFd+rDTkrPgbGsOJZduSHnCHosxzcsCiwKda5DbXZqpBwfjVIpvMgdrRtbBi
-         VEXj06Ya/JTVCbaF7q8270h55jevRMo/T77Vx8/36SFYboe4tydnC07kGQYjLhf2LNkU
-         rgBSEu0f+AeO8eNm6Y96VFTOgS/fNU3UBtvSjqsUrc5CJbNr7AD3wUWXDnE65XAQ8XBY
-         ssfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeI8/0R+8VxXCqsUbpptBmvOTScFoSIRs7vcfzr/Dsck1vW0cfDYd9pGncQICzHBfwZ0SeIo7UL3B1hPHX@vger.kernel.org, AJvYcCX/0Jb8AeoHIoSL9htZrUwPISKeDyosdSUekb39I5ExFlk51n65itwtNpuzaJ524YQxfvfS1hWbPRNg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRVf5HkKLIUnX7/prwbnPF0H7ikqKPzqB9pBicjH9ygN8maDcD
-	dFLKZoXCSvtEPtwQlZAuUlhwY3Fl+NVU2XY1cRzgGiSwiUgTjwkx/ACiJaNPYxwT7LEnT7WBEut
-	tRVeIrhdFuVn96wIhgH4uj87BZx0=
-X-Gm-Gg: ASbGncuvsgeOFIJfe7Fvmxjr+i1JxEkQD2FnSIY9o9eeyqLBpxEGdtNHXzCAkbTrP4u
-	kXo4Ndulh1RdxFaJim2psAUT7JRA6yfCvYSM0cXSNSSLF
-X-Google-Smtp-Source: AGHT+IGrd/NkggySgngjjRAWLRFHYhjYZYjpO5V3Ph17rxzb/RIMEJRHh6MZW7V/BkdjtwKB1NIeF84yZ7lgyc0QtuA=
-X-Received: by 2002:a05:690c:d89:b0:6ef:8c41:def8 with SMTP id
- 00721157ae682-6efad311464mr68861377b3.38.1733275653265; Tue, 03 Dec 2024
- 17:27:33 -0800 (PST)
+	s=arc-20240116; t=1733275738; c=relaxed/simple;
+	bh=c5gxksJxTzBBWxJgkNTyO5SymFjrOsgsg8QEUJeRaJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bv0tO5hrijNsBHLyMImGTAgt4uqDR8Aws5Ib4UDuysbPC1CquzUwkn5ntid2ZuLPbONz0m+3+6WjyNer8qTGOan5vTwqyQmQxaAwF8JW9qPRRKu7jLdoGxUIjSPfJdBjCiVNiMKuJOZDENEx7mKyFK8hUMSoRQV0eeEDGlE8PG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OZE7XoPY; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AmUIqiI2M/tQXMvBiDNVB58dDvwacpQ7qi0yse8EQpE=; b=OZE7XoPYhvMG5391ZSbkyUmpZu
+	VGBvdYCCy8YVSvuHaJs2SLWhO+eGsuvHRC1IqXHS5CTtPlFCkGmc7cdxuY/Ucs134rjBah+zyM/gb
+	YEECK6bGCFKsRFKfd3PZA2AOp9j/K3AjCXPYWPCFYG46YZPqCWrKp9idJ4oNzCmwOSBf5o9/98Erq
+	Yr8ifWRpY7bcJBV1P2MroSeoEaA7Fx3PGly2UU1GMWSzVSmC+OVp9g0owZMgYOZJLrYa2bmwLeEBe
+	zN3RIzzP0zTgu/mHhe3Xh6urjDxB5sPVMKSkJVEENHBrBWJOOSTRLtyWQQ9+jgcIWwOxr9M3Dbr+0
+	NA2NKV1w==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tIeBo-00GHiQ-Ou; Wed, 04 Dec 2024 02:28:29 +0100
+Message-ID: <853dc59e-d83d-49ea-8a2e-1f519234ec0a@igalia.com>
+Date: Wed, 4 Dec 2024 10:28:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203233717.185016-1-rosenp@gmail.com> <560369d3-e37c-4c44-86df-a0b81c899f9a@lunn.ch>
-In-Reply-To: <560369d3-e37c-4c44-86df-a0b81c899f9a@lunn.ch>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 3 Dec 2024 17:27:22 -0800
-Message-ID: <CAKxU2N8gVqUKmD0hj_rXwJEOL8KStNHm+O23Sww-yVT5cp2yWQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: armada-3720-gl-mv1000: use nvmem-layout
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-arm-kernel@lists.infradead.org, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] sched_ext: Implement scx_rq_clock_update/stale()
+To: Tejun Heo <tj@kernel.org>
+Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org
+References: <20241203142802.36305-1-changwoo@igalia.com>
+ <20241203142802.36305-2-changwoo@igalia.com>
+ <Z0-S2vvHF0kiEKHi@slm.duckdns.org>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <Z0-S2vvHF0kiEKHi@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 3, 2024 at 3:44=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Tue, Dec 03, 2024 at 03:37:17PM -0800, Rosen Penev wrote:
-> > nvmem-layout is a more flexible replacement for nvmem-cells.
->
-> Do you have this reference board? How did you test this patch?
-Only compile time tested.
+Hello,
 
-2cc3b37f5b6df8189d55d0e812d9658ce256dfec marks nvmem-cells as legacy
-and most dts files have already been converted.
+On 24. 12. 4. 08:23, Tejun Heo wrote:
+> Hello,
+> 
+> On Tue, Dec 03, 2024 at 11:27:58PM +0900, Changwoo Min wrote:
+> ...
+>> @@ -2505,19 +2538,6 @@ extern const struct sched_class rt_sched_class;
+>>   extern const struct sched_class fair_sched_class;
+>>   extern const struct sched_class idle_sched_class;
+>>   
+>> -#ifdef CONFIG_SCHED_CLASS_EXT
+>> -extern const struct sched_class ext_sched_class;
+>> -
+>> -DECLARE_STATIC_KEY_FALSE(__scx_ops_enabled);	/* SCX BPF scheduler loaded */
+>> -DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+>> -
+>> -#define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
+>> -#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
+>> -#else /* !CONFIG_SCHED_CLASS_EXT */
+>> -#define scx_enabled()		false
+>> -#define scx_switched_all()	false
+>> -#endif /* !CONFIG_SCHED_CLASS_EXT */
+> 
+> Can you please separate out code relocations into a separate patch? Here,
+> it's on the smaller side but patches are difficult to read when they're
+> mixed up.
 
-This is not a crazy API change that would break anything.
+Thanks for the comment! I will separate the code relocation out
+in the next version.
 
->
->         Andrew
+Regards,
+Changwoo Min
 
