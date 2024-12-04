@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-430944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402EC9E3773
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:30:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88689E37BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:41:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CCFD168835
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:30:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F08CB2F324
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050EE1B3930;
-	Wed,  4 Dec 2024 10:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E92C1B412E;
+	Wed,  4 Dec 2024 10:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lliecmit"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URqp8wVv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F8D1B21AB
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6BE1B3945
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308198; cv=none; b=SxywyXXQUhH80DNRhwlXlQKszYQA6EqNB+MsZu0S22e/oAU5beWh1xixyTbkO7ehyGVG/ppOQYjEyhRFJjx97tHky44oXeS+ZNB/NU9o5MF8oQTUhGPNuwYS1iNJ4QF1dJ+GKC8lGxHnTaYFpnyV00RqPGundcxXN57aUnz/nZU=
+	t=1733308202; cv=none; b=H4k3aV+ywAdyFlKmmP85v3+IECX+ovqdMLXPJdFLjoEbaWdSasSA6bu3x2wP74wHnuhRQ8z17IZuQdsYoHRd+2Wg2XrqKqWABD0bwkE0bA7SOBmw8/Ow/F3/f58Omy4ZCwlh3V6bBD9qJjLVG62aTXh4CvNFb3DPa6Hv5sNdE1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733308198; c=relaxed/simple;
-	bh=8LBdUUpx/FRHg8VDxMOB3poMFcg37/aar7nw5/8IvY4=;
+	s=arc-20240116; t=1733308202; c=relaxed/simple;
+	bh=Ig2MTPjDp9GtEzGfz9dtsom3kAntHGBlM9IrrVuvXdc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UVWoFBSXnlPZVyVGp7dQs9FL0q8xce3wx8PT3he0VKgv//4myR2K5ocuI7+OP8q5AkeuOA3SuIx7KeN2JS8wQL5HiihbFLO8Zn1tDjbdNvJW6VfRVufDA9LQ8+dEKDX3wR4RbTAT1GpZKPstoBAF6ryXGkktqmnCmkWU4Dq5Jqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lliecmit; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1588C4CED6;
-	Wed,  4 Dec 2024 10:29:53 +0000 (UTC)
+	 MIME-Version; b=P6uJoHXHOPywYV1J+BA5jzO0EsMH/vEEBTWs+tyZbuUudAlJpUli0h1G2vVQmRwS9cFExHUVngV9vZER3M5JqjrclE0KHtphxrxRGZzauRnwWjLWCkVqVr2Uvgqcb/vPgDFX7+CGriMQ9mb/1ivlzdFOE5dOPSCc9yaZ6Zf88ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URqp8wVv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF21C4CEE0;
+	Wed,  4 Dec 2024 10:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733308197;
-	bh=8LBdUUpx/FRHg8VDxMOB3poMFcg37/aar7nw5/8IvY4=;
+	s=k20201202; t=1733308202;
+	bh=Ig2MTPjDp9GtEzGfz9dtsom3kAntHGBlM9IrrVuvXdc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lliecmitigPo/h/BYBh44zrRAsn86P8Za2KThMCS+8Q3nk6O7p9m3s1HQullUA5QI
-	 H1eFE4+ef3TyQQ/9f4RKNuxBuDWw4UvC1CRJaIySmEKHb7iAx//VdCjV4PkJ8/JtKn
-	 ZRN4Ri/fE4liCTzHKzcuVIZYkC98foP4hD9XWWNndedHcoJeJIgZozhuvKv6oBJ0mU
-	 2NRV2QQyFSeJcZpWpYb8tTh4iGbeNL8saXbOq9vElyV/GhiFTf0mYgS7CJolKMPTnx
-	 9gv47JylwWbJv25Mad5+I1Q+mHjMIo7buuFtjWoHoy/U3SgBBb5qJkPlgOsucTxfVF
-	 wYSOEeWYtN58w==
+	b=URqp8wVvZcoXJOlb/brM0MYh2hDT0FQYKcI+tyDyEkX7B5AEVaUhkpxyxUH8PjAsU
+	 R+BvTnMECQZx+QrYvVo0GaJYlbAYilUNZyLDbYbFTbvuQifMkHQpEWhc9lO2mXuz4X
+	 DqEtNOsZFbrHZZTt5s2ulDbYLr6qcUxUjr8RyzSzzMBBH8Bx/3/s+wJKonYvYwlrym
+	 Mb3O43atYmd0f9TswTPfSd2L4aGiyG78Ji3rJ3aNOGThevGlecIpjyHB+FBYSq3qgx
+	 /x96F1ZCFwgJbF1cTzk8dcFLx4cwUySoK0ffkfWEFy2MzqHw+wVOWb2rpp9KI0I7bw
+	 C2sY3lnRm0OfQ==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -60,9 +60,9 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Russell King <linux@armlinux.org.uk>,
 	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
 	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 06/15] ARM: update DEPRECATED_PARAM_STRUCT removal timeline
-Date: Wed,  4 Dec 2024 11:28:55 +0100
-Message-Id: <20241204102904.1863796-7-arnd@kernel.org>
+Subject: [PATCH 07/15] ARM: s3c64xx: extend deprecation schedule
+Date: Wed,  4 Dec 2024 11:28:56 +0100
+Message-Id: <20241204102904.1863796-8-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241204102904.1863796-1-arnd@kernel.org>
 References: <20241204102904.1863796-1-arnd@kernel.org>
@@ -76,38 +76,48 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-This configuration option is for the older boot method that preceeded
-ATAGS. This was scheduled for removal back in 2001, but the removal
-never happened, presumably because nobody cared enough to actually do it,
-not because there are any users left.
+Mark Brown is still using this machine for regular work, so it should
+not be removed as originally scheduled.
 
-Add "(DEPRECATED)' to the Kconfig line and update the timeline so we can
-remove it next year along with the other options that are not scheduled
-for that timeframe.
+Give the platform another year, with the option to extend it further
+based on the state of ATAGS support next year.
 
+I expect that we end up removing all of s3c64xx when either Mark has
+moved his test setup to other hardware, or when all other ATAGS based
+machines are getting removed.
+
+Cc: Mark Brown <broonie@kernel.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-s3c/Kconfig.s3c64xx | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 2167f71f184b..5278764162f8 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1411,11 +1411,11 @@ config ATAGS
- 	  it is either converted to DT or removed.
- 
- config DEPRECATED_PARAM_STRUCT
--	bool "Provide old way to pass kernel parameters"
-+	bool "Provide old way to pass kernel parameters (DEPRECATED)"
- 	depends on ATAGS
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index 8f40af063ad6..3120a40ef102 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -23,10 +23,17 @@ menuconfig ARCH_S3C64XX
  	help
- 	  This was deprecated in 2001 and announced to live on for 5 years.
--	  Some old boot loaders still use this way.
-+	  It is now scheduled for removal in early 2025.
+ 	  Samsung S3C64XX series based systems
  
- # Compressed boot loader in ROM.  Yes, we really want to ask about
- # TEXT and BSS so we preserve their values in the config files.
+-	  The platform is deprecated and scheduled for removal. Please reach to
+-	  the maintainers of the platform and linux-samsung-soc@vger.kernel.org if
+-	  you still use it.
+-	  Without such feedback, the platform will be removed after 2024.
++	  The use of ATAGS based board files is on its way out, and
++	  the only remaining S3C64xx machine in the kernel (Wolfson
++	  Cragganmore 6410) relies on this, without any realistic way
++	  to migrate it to devicetree.
++
++	  Support for S3C64XX will be kept until the 2025 LTS kernel
++	  release and may be removed in early 2026.
++
++	  Please reach out to the maintainers of the platform and
++	  linux-samsung-soc@vger.kernel.org if you use any additional
++	  s3c64xx machines based on devicetree.
+ 
+ if ARCH_S3C64XX
+ 
 -- 
 2.39.5
 
