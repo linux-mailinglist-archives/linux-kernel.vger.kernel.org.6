@@ -1,157 +1,176 @@
-Return-Path: <linux-kernel+bounces-430517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E139E3205
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 038349E3206
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B07828487C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACEB6285835
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0543714A4FF;
-	Wed,  4 Dec 2024 03:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8412914A4E9;
+	Wed,  4 Dec 2024 03:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ihbdj/p3"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="psvfS0t2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A6617BA1;
-	Wed,  4 Dec 2024 03:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7C5137923;
+	Wed,  4 Dec 2024 03:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733282460; cv=none; b=BMJJlLjrvXMHVjn0zDe1C+PB9DcUtdaaoiFXrpt83bNHf3fiLSPlOTM6uoaZmU9r9GL6iQmnz2oCbwB1s2gPXiUhg+e6gjeOdrITZr7j4jSNChg3b+71IUcw2nc+ZgiDVzW/WPktFDNOI0U+jYMt8Se1tYxDqaM+ImOmNOdooDk=
+	t=1733282500; cv=none; b=EaMiEKKL9DDpdzwDg9u24dkSG+8Z+sr3ca4ahoYmD8ZTrJT118Fr5/JAjp9EXwrDnlQ5YQyVoNmqhp0yl/pBX4tX2wlNIaqk5oELqTaWuxXbdmuV4kPYhAsLp92jp1taRwp97FFerDTTsDxi0BaoYLgkMquieqgBgQZtFnIzYmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733282460; c=relaxed/simple;
-	bh=xFiJD3eDhYrPQHtnKlD8TkcwxwRmE2OmsefHI750AS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AhFkJmzMZzbG9t5oK8FQndxCuXff76l/f3msF3j2qWdRuY7bw6gT8hJvQLljnzCXiFle4XCEebBEUfuNttLVDN0+PdwVIpUL1WM236wgYIpJchO+t/FOyoczwT++J6qUZHyvBDKmu46FlSZEJ7PkIUU8LCET8+2ZXa2sLe7RWkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ihbdj/p3; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9ec267b879so1038482566b.2;
-        Tue, 03 Dec 2024 19:20:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733282457; x=1733887257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y04cA3TO1YirE/koG9dsISeizBY/CnfgH65djkwX2Bk=;
-        b=Ihbdj/p37YTVFZ6A8ZMvwRBI4LhuFzSMu55Z/6MWvBNtfxbSydNk92luFdg9QxgZpj
-         g4Fe2wPRgAxZcFugiSjaLa6BTqlSzIH6GwY/31IZTyRN9kzy/cFnlrKeE6nQfj6exOGX
-         2sATQXgO2fzrAiywelfaxR4UnVgkJ+tc1N77AyyqBWh4CoJuu3eqLxUULCJolsJjqO93
-         4j5XM3/8SOTEeRLQgsR6zEilgqzRtMK5XU/wq8SLUm4tY1agkJcdUvrqX1ZrAz+sZ+z4
-         jI5nbCqlbyHJ9Pgr0jXpn2pjWhlhOmzbHMzJpAt2l7vhRhpXf3wcWTDBEtmwhBujcuCd
-         DbBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733282457; x=1733887257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y04cA3TO1YirE/koG9dsISeizBY/CnfgH65djkwX2Bk=;
-        b=JWLQ19ZxrDR8EDegXYv2V0plr4zApAd2yWHXemzd8TewDAVT2tTrurn/Mkk1m1ru8E
-         XQSdYAaTdunuR+qRp1uPSNIxdy2X6/ODArrc1Gs+VonkrrVuEkNk7htnIZgC3gvNZzu2
-         HnC51r5UaPeLazqZAKarcKEUELO5+W1+5sjEr7Xy3lMo9ZtLOE+C5rDwkrcFev9dHMzC
-         KtY9YaVbEuxb5ETAUDekd6G5cyMnQ5GHeDzfGc+sB7qI8CN6wJEg9D+zLzXC0UoxBX2X
-         BSgZ2sdYKXX0nFof+77o/CNJdOcHt4TNZnINPp6holCFFw4GzXO6ZG9Uqo7djGiEOM4F
-         +JMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0h0jzvgEbeUbeg9HgTNtSh7FgS5Hnn2P+rux9xbuWqlhXySykmCgVCFKwZgIpllNsZQrMWr+rAbq/R7Sk@vger.kernel.org, AJvYcCUfPZmsC8ctwYjjfC9ORqVLRqE/gvK7rmtBcX5796LXscHeoAxO2v4tLEgsSuXWCHJOxjlR6lSeFY1e@vger.kernel.org, AJvYcCXAJKPwwqeT9Aw5rAZgQTA6xVj2rPibRjWDJfiKMJ2CVX8KLPG0LCTSn8M9ykXu1UTJjpyC+E8LLzIa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1SvMabUnIb4KcO1+SkNyjqO42QV92Hu+Z4+FU1x4y1wLVSnpc
-	ZpFy9ldOTJDm/E4P+3RxDDucvJH1pKbBvfweM6Hdxy7bG2a8ivezwbpI+2GhYMHbDKrRAaisY3E
-	TPpTwZERPTMFAbEh1LdPXTx8chVg=
-X-Gm-Gg: ASbGncuyrKk2MqoTFBBPh5jJKADWu5b46p9n+g1DR9sDstZ5LMiBDb1Wlg2L9Juycg4
-	GOByT0TZiYjvAtFpdft3Q4jh035PMX8o=
-X-Google-Smtp-Source: AGHT+IGwe/oix06krX2fuoZe1ERy+q9naY8xqOUcm7s53LomcongR2PQFcGeSdVl85Uok60HVU/VrIr7KREYgLQOuhE=
-X-Received: by 2002:a17:906:32ce:b0:aa5:1d68:1ec8 with SMTP id
- a640c23a62f3a-aa5f7cce55cmr446672366b.7.1733282457090; Tue, 03 Dec 2024
- 19:20:57 -0800 (PST)
+	s=arc-20240116; t=1733282500; c=relaxed/simple;
+	bh=R1rYM2+btzLoRyaLqa8NnWh6A5XuxBP6Bo1o8rlyhDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lXbzT2pHk3HI1AIzTKfoEXcE2c8BkNRYb3WYkWkCiJZLffU1t9AVVYJaOAUvTbMeeKrC/drCx6nabNoTtj7Z10u70ee4qnxIb9/65HzAEQ8z3r2cRwq5IaK3/qZ7HXTH4VG+o3UkbNX0j6r14OQGB3bhJevyRpOCs7OIlazoTvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=psvfS0t2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B42B3Pi027317;
+	Wed, 4 Dec 2024 03:21:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MO1jtcavQq6rrUrV5M1EUuLowd7a36/BNJFDEa0zfUw=; b=psvfS0t2/0uwmLNx
+	WHKVnEKJ7JkcGc2WcTBtQ/VCDfSwudDzXRH9r/wRdfWaov0XcG7zmv3njXiaSlxP
+	84NKK04SmarAQ/jXPJi5g/3iqOF9NUCfv5y9/6f1hbEQaMH9lomOVhJUyi74yOH+
+	yfCaemUgfhAu/EshvkttYbf3oLp2St3HJNfyD8Og2lloEE8NO1Xz+bAqbqjKPNh7
+	g9vV6Ss/A+Md2LgcwYUGty+/iKi1GehB82U3DLtXp0aYA0S3RUISZ/P1ccnCg5X6
+	RypVBdKk30cZIO5/Mn5rZU/sOk52UH6BrQOaelNqA9CG3h4J77+aPwUdEvtR79lX
+	Q0bCIQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a1g5j50h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 03:21:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B43LUIu027530
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 03:21:30 GMT
+Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 19:21:28 -0800
+Message-ID: <1b09c2c9-53bd-4960-b09c-7468f506b0a3@quicinc.com>
+Date: Wed, 4 Dec 2024 11:21:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203091540.3695650-1-j2anfernee@gmail.com>
- <20241203091540.3695650-3-j2anfernee@gmail.com> <Z08MkR40fjfW3MXZ@smile.fi.intel.com>
-In-Reply-To: <Z08MkR40fjfW3MXZ@smile.fi.intel.com>
-From: Yu-Hsian Yang <j2anfernee@gmail.com>
-Date: Wed, 4 Dec 2024 11:20:20 +0800
-Message-ID: <CA+4VgcJW=9rtuqr3VZbfA8QxgYAR+KvfAHdf_0xv4XLQtVVQJw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: add Nuvoton NCT720x ADC driver
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com, 
-	javier.carrasco.cruz@gmail.com, marcelo.schmitt@analog.com, 
-	olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com, 
-	matteomartelli3@gmail.com, alisadariana@gmail.com, gstols@baylibre.com, 
-	thomas.bonnefille@bootlin.com, ramona.nechita@analog.com, 
-	mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com, 
-	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Dear Andy Shevchenko,
-
-Thank you for your comment.
-
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
-12=E6=9C=883=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=889:50=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> On Tue, Dec 03, 2024 at 05:15:40PM +0800, Eason Yang wrote:
-> > Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
-> >
-> > NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up =
-to
-> > 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins fo=
-r
-> > independent alarm signals, and the all threshold values could be set fo=
-r
-> > system protection without any timing delay. It also supports reset inpu=
-t
-> > RSTIN# to recover system from a fault condition.
-> >
-> > Currently, only single-edge mode conversion and threshold events suppor=
-t.
->
-> Please, get rid of explicit castings where the are not needed or implied,=
- like
->
->         u16 foo;
->         ...
->         foo =3D (u16)bar;
->
-> you have a lot of this in the code.
->
-
-We would  get rid of explicit castings in all codes.
-
-> Second, why do you need two regmaps? How debugfs is supposed to work on t=
-he
-> registers that are 16-bit if you access them via 8-bit regmap and vice ve=
-rsa?
->
-> Can't you simply use bulk reads/writes when it makes sense and drop 16-bi=
-t
-> regmap completely?
->
->
-
-Read VIN info can use word read or byte read, and other registers
-should use byte read.
-
-For a reviewer's comment,
-If the i2c controller allows word read
-then the right thing is to always use it.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
+ are supported
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <quic_cjhuang@quicinc.com>, <vbenes@redhat.com>
+References: <99359cc4-2279-4a8a-80a1-d5475fd5208d@quicinc.com>
+ <20241203163359.129185-1-jtornosm@redhat.com>
+Content-Language: en-US
+From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
+In-Reply-To: <20241203163359.129185-1-jtornosm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: G_pActyAXx1r8Dyf8-IPWNo5HT00sR8f
+X-Proofpoint-ORIG-GUID: G_pActyAXx1r8Dyf8-IPWNo5HT00sR8f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 clxscore=1011 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040026
 
 
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+
+On 12/4/2024 12:33 AM, Jose Ignacio Tornos Martinez wrote:
+>> And you want setup sta + sap + sap, right?
+> Your proposed interface combination fails as well for me if I am just
+> setting 2APs.
+>> When up the second sap will meet error? Could you pls share the error
+>> logs?
+> This is the log that is appearing:
+> [   61.909165] 8021q: 802.1Q VLAN Support v1.8
+> [   62.227530] ath11k_pci 0000:01:00.0: failed to create vdev 3, reached max vdev limit 3
+> It is appearing after configuring both APs when only one AP is up and when
+> both are down (see my previous 'iw dev' outputs).
+> 
+>> I'm not very sure if you add all interface with managed type, and do
+>> "ifconfig xxx up" before running hostapd.
+> Yes, I am setting the link up before running hostapd.
+>> You can try add second and third interface with
+>> "iw dev xx interface add xx type __ap".
+> And yes, I am doing like that for both APs.
+Pls try add interface with type __ap or directly use hostapd up the ap 
+interfaces that will re-type managed to ap.
+
+> Please, take into account that everything is working with the old interface
+> configuration and when it is set with the parameter (no error log), but it
+> is not working for me with your interface combination.
+f019f4dff2e4 ("wifi: ath11k: support 2 station interfaces") update about 
+interface combination limits.
+
+If chip support DBS, station interfaces max is 2 that why you can't up 
+the 3rd managed type interface. You better add interface with ap type.
+
+> Have you tried with 2.4GHz band?
+> 
+2.4GHz works fine also.
+sh-5.1# iw dev
+phy#0
+         Interface wlan2
+                 ifindex 6
+                 wdev 0x3
+                 addr 12:03:7f:21:84:11
+                 ssid QSoftAP2
+                 type AP
+                 channel 6 (2437 MHz), width: 20 MHz, center1: 2437 MHz
+                 txpower 5.00 dBm
+                 multicast TXQ:
+                         qsz-byt qsz-pkt flows   drops   marks   overlmt 
+hashcol tx-bytes        tx-packets
+                         0       0       0       0       0       0 
+0       0               0
+         Interface wlan1
+                 ifindex 5
+                 wdev 0x2
+                 addr 02:03:7f:21:84:11
+                 ssid QSoftAP1
+                 type AP
+                 channel 6 (2437 MHz), width: 20 MHz, center1: 2437 MHz
+                 txpower 18.00 dBm
+                 multicast TXQ:
+                         qsz-byt qsz-pkt flows   drops   marks   overlmt 
+hashcol tx-bytes        tx-packets
+                         0       0       0       0       0       0 
+0       0               0
+         Interface wlan0
+                 ifindex 4
+                 wdev 0x1
+                 addr 00:03:7f:21:84:11
+                 type managed
+                 txpower 5.00 dBm
+                 multicast TXQ:
+                         qsz-byt qsz-pkt flows   drops   marks   overlmt 
+hashcol tx-bytes        tx-packets
+                         0       0       0       0       0       0 
+0       0               0
+
+> Thanks
+> 
+> Best regards
+> Jose Ignacio
+> 
+
 
