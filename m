@@ -1,187 +1,110 @@
-Return-Path: <linux-kernel+bounces-431471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283F49E3DB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:06:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6769E3DBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:06:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45C7164AFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:06:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CCE8B2FA4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2BB20C016;
-	Wed,  4 Dec 2024 15:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5785C1FF7B8;
+	Wed,  4 Dec 2024 14:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gK1HbRaP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF2820B7E0;
-	Wed,  4 Dec 2024 15:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05B61F668A;
+	Wed,  4 Dec 2024 14:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324653; cv=none; b=HjXRgV0QH3xZ5pr0Rl38XNdtyswbOm0qKKRnsegtQ7MTZ+t4vkCH85osVahInQa69aFuuYZZCLEqWmzg2O6NjBwj99/CxGLhFlGsj1pk8rJN84I9KZ6RZ8NfD83aYEVWFubHwToktsJ7ehQRD4+7zTSwBFRbWKjCygx7UT7GPKg=
+	t=1733322225; cv=none; b=Z8F0xsGd6WE36+zb1NkoMMSxcUr9sPJenxI7TKB9yTj2vxJVtqXTHiyfxDtthB+LLYwAWNBTKtQLqQ5WAf3NFVmV2SUri3wtKVCpUfphhHylOYMxF+43PpicwHCuT1iD4N8KCQ0KHQGExu3lbe4AHXXKhUwMcWVJxJFUqV7U8N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324653; c=relaxed/simple;
-	bh=L1/USE0+lkG3io4fQUeuoZjFcccCvhDD/C55n8bbZcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tJ1cmrdhDE6MOqJGLWeH6OxwDRlAIC99lSXr1WaZBJmfucRTMmwvm0BJSTbGwAhobAYro2+vKqY78TzykystOQ8rC4+6K3PY9cpvpazgT+SZyglAf0eFYxdafxDcZAbPpws7sjywsZkihakWdfBPNXlFKNnQblLu9VMyEL4wZdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 476C9C4CECD;
-	Wed,  4 Dec 2024 15:04:12 +0000 (UTC)
-Date: Wed, 4 Dec 2024 10:04:14 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] tracing: Fix archs that still call tracepoints without RCU
- watching
-Message-ID: <20241204100414.4d3e06d0@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733322225; c=relaxed/simple;
+	bh=WVBFh1vbH/dM9nPHYzn4lnHAc1WN0C29gdBv6iLRnts=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dffDSt55uq/Ud+9H5/Yvf/EuNGEzvHVWdW7bw87wOoMJBjJTFat5Jq/4SI0AIKQzO//NK3Ut1UBkbL4hxDSZJk/zvwkBT0F/jRRtnBqR6tCbOnaFsl6+SR25CqOuqvMOS575B2TRKYppLf27ehEf7wXZOD8QG58/65exydN+xlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gK1HbRaP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD2BC4CED1;
+	Wed,  4 Dec 2024 14:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733322225;
+	bh=WVBFh1vbH/dM9nPHYzn4lnHAc1WN0C29gdBv6iLRnts=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gK1HbRaPKfIBX+5m0ezzw1zxFBPhle9IGDv+ipb3FG+RH79fAvoHiL3TS8yRuPUjR
+	 1pyLEUiQX7uqaDZLodUzoSnvj5JG4F/oEgiinMkDmCag8llYIEuVJgpiDJYsUBvycG
+	 GtdoNFmoWo3jNEqNK+imdLKPNVfX4bdsnHWpB4G65Gu8iFbpgEt1sP8YHAaU/gZLcD
+	 YIXgtSODgc2dJXhVKqm+30efV3/v6ZcBa6MsouzsbEai7pGLBnJKNujtohJlv5dQiN
+	 fOf7nGyDakCK+jLWF4HM+V1fgrs0hq9GWfmn0APcOZpXXDwJfzgqQWvhk0CPv5N+ba
+	 j0Bq54KqlHILA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-29e52a97a90so2025606fac.0;
+        Wed, 04 Dec 2024 06:23:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVMXdtI8vkgPUfw3M1Jn4YZgT63K6rpu/GSYGyl+05FhYqwTFEmzwfZaLJezj2fnYmDM0gd9tKw0Bq5cLM=@vger.kernel.org, AJvYcCVhxzB8vhSldzwY0+PDSTSnwUQDMgT0A9EYqXQ8PfBpN7OG89+Ym/dLvWFNhAoU/vjbcyfZ7Pwyttk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNEO+Yqb3dg3C3DE8tjuCi8gt4QgUvRNz2ExUMRpgbVDBsCO1M
+	CdFPsENZ4tNv9qv4NrLmTjt7j0lrB+V5vDDyZBG8NGTwl7abFWm3zHHmdi2DFITS0IGrneMqxsm
+	vNmNrwNNasoWWes5VaRHuLS6Uu6c=
+X-Google-Smtp-Source: AGHT+IHx3168Bsx73/kFton9Y52aMk0Ng5C67FNvzZqARZejbGLyps3tRfCafZQ0x/p+ts3B/bRIJgWTU8lVSMLdc+E=
+X-Received: by 2002:a05:6871:3586:b0:296:e6d9:a2e1 with SMTP id
+ 586e51a60fabf-29e886638a7mr5172338fac.11.1733322224526; Wed, 04 Dec 2024
+ 06:23:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <2787627.mvXUDI8C0e@rjwysocki.net> <2024120450-makeshift-haggler-625c@gregkh>
+ <CAJZ5v0hyi_2KL-h_+CbCSsZcQXEP3BspBxCbhzmfX2KydSfRKQ@mail.gmail.com> <2024120404-work-confider-88f5@gregkh>
+In-Reply-To: <2024120404-work-confider-88f5@gregkh>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 4 Dec 2024 15:23:33 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gFAKi7P6HqopkPDo=U3H8-4r3AcKUrY4jYRgO=rzPDdg@mail.gmail.com>
+Message-ID: <CAJZ5v0gFAKi7P6HqopkPDo=U3H8-4r3AcKUrY4jYRgO=rzPDdg@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: sleep: Update stale comment in device_resume()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Dec 4, 2024 at 3:20=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Dec 04, 2024 at 03:16:05PM +0100, Rafael J. Wysocki wrote:
+> > On Wed, Dec 4, 2024 at 2:12=E2=80=AFPM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Wed, Dec 04, 2024 at 02:02:04PM +0100, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > There is no function called __device_suspend() any more and it is s=
+till
+> > > > mentioned in a comment in device_resume(), so update that comment.
+> > > >
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >  drivers/base/power/main.c |    2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > Index: linux-pm/drivers/base/power/main.c
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >
+> > > Are you not using git?  This looks like the old cvs output :)
+> >
+> > I use git, but for patch generation I prefer quilt which has produced
+> > this patch.
+>
+> From my .quiltrc:
+>         QUILT_REFRESH_ARGS=3D"--diffstat --strip-trailing-whitespace --no=
+-timestamps --no-index --sort -p1 -p ab"
+>
+> makes it almost look like the git output :)
 
-Tracepoints require having RCU "watching" as it uses RCU to do updates to
-the tracepoints. There are some cases that would call a tracepoint when
-RCU was not "watching". This was usually in the idle path where RCU has
-"shutdown". For the few locations that had tracepoints without RCU
-watching, there was an trace_*_rcuidle() variant that could be used. This
-used SRCU for protection.
-
-There are tracepoints that trace when interrupts and preemption are
-enabled and disabled. In some architectures, these tracepoints are called
-in a path where RCU is not watching. When x86 and arm64 removed these
-locations, it was incorrectly assumed that it would be safe to remove the
-trace_*_rcuidle() variant and also remove the SRCU logic, as it made the
-code more complex and harder to implement new tracepoint features (like
-faultable tracepoints and tracepoints in rust).
-
-Instead of bringing back the trace_*_rcuidle(), as it will not be trivial
-to do as new code has already been added depending on its removal, add a
-workaround to the one file that still requires it (trace_preemptirq.c). If
-the architecture does not define CONFIG_ARCH_WANTS_NO_INSTR, then check if
-the code is in the idle path, and if so, call ct_irq_enter/exit() which
-will enable RCU around the tracepoint.
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Fixes: 48bcda684823 ("tracing: Remove definition of trace_*_rcuidle()")
-Closes: https://lore.kernel.org/all/bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net/
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_preemptirq.c | 43 ++++++++++++++++++++++++++++-----
- 1 file changed, 37 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index 5c03633316a6..0c42b15c3800 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -10,11 +10,42 @@
- #include <linux/module.h>
- #include <linux/ftrace.h>
- #include <linux/kprobes.h>
-+#include <linux/hardirq.h>
- #include "trace.h"
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/preemptirq.h>
- 
-+/*
-+ * Use regular trace points on architectures that implement noinstr
-+ * tooling: these calls will only happen with RCU enabled, which can
-+ * use a regular tracepoint.
-+ *
-+ * On older architectures, RCU may not be watching in idle. In that
-+ * case, wake up RCU to watch while calling the tracepoint. These
-+ * aren't NMI-safe - so exclude NMI contexts:
-+ */
-+#ifdef CONFIG_ARCH_WANTS_NO_INSTR
-+#define trace(point, args)	trace_##point(args)
-+#else
-+#define trace(point, args)					\
-+	do {							\
-+		if (trace_##point##_enabled()) {		\
-+			bool exit_rcu = false;			\
-+			if (in_nmi())				\
-+				break;				\
-+			if (!IS_ENABLED(CONFIG_TINY_RCU) &&	\
-+			    is_idle_task(current)) {		\
-+				ct_irq_enter();			\
-+				exit_rcu = true;		\
-+			}					\
-+			trace_##point(args);			\
-+			if (exit_rcu)				\
-+				ct_irq_exit();			\
-+		}						\
-+	} while (0)
-+#endif
-+
- #ifdef CONFIG_TRACE_IRQFLAGS
- /* Per-cpu variable to prevent redundant calls when IRQs already off */
- static DEFINE_PER_CPU(int, tracing_irq_cpu);
-@@ -28,7 +59,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
- void trace_hardirqs_on_prepare(void)
- {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
-+		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -39,7 +70,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
- void trace_hardirqs_on(void)
- {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
-+		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -61,7 +92,7 @@ void trace_hardirqs_off_finish(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
-+		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
- 	}
- 
- }
-@@ -75,7 +106,7 @@ void trace_hardirqs_off(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
-+		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
- 	}
- }
- EXPORT_SYMBOL(trace_hardirqs_off);
-@@ -86,13 +117,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
- 
- void trace_preempt_on(unsigned long a0, unsigned long a1)
- {
--	trace_preempt_enable(a0, a1);
-+	trace(preempt_enable, TP_ARGS(a0, a1));
- 	tracer_preempt_on(a0, a1);
- }
- 
- void trace_preempt_off(unsigned long a0, unsigned long a1)
- {
--	trace_preempt_disable(a0, a1);
-+	trace(preempt_disable, TP_ARGS(a0, a1));
- 	tracer_preempt_off(a0, a1);
- }
- #endif
--- 
-2.45.2
-
+Good to know, thanks for the hint!
 
