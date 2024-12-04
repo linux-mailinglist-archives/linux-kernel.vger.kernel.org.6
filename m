@@ -1,132 +1,308 @@
-Return-Path: <linux-kernel+bounces-430920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1F19E3737
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4420A9E3743
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:11:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E7A281664
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C7B282628
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0771AA1DF;
-	Wed,  4 Dec 2024 10:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F821ADFF7;
+	Wed,  4 Dec 2024 10:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SQ8oa7oY"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EtuoIiIb"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2547618A6BC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F005D1AB528
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733306988; cv=none; b=aY0JiuSdng7VOpXsc210R+9gxk0lNKrKOwfho3uDEm81I35a+Tq6HzZZUYt57ooczecmnAKROngUwoaTwfy47Q60ZIX8VL2W7zsqmBMhHAKFkm1o2VkmfGKObqds+VDqCeOHjNtFeiX7a0W1evvDoEZTqWcv107Zod/gzGgtfGA=
+	t=1733307093; cv=none; b=FOG70SIZAmn6F5IyLOz0u1z2I1UbmVup9kYKQlYTozodt/PilClTcjHlMcX0IMnJfnfabb4RUafy5uijcf+/GXxsnMCCP5+zymar/zAc0wLmzy1dM2xEMXqPSuIWmdZzguQrL2YhjJnRRqAgR5EUhaFMV/pFJvI6lDp9lqz1yaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733306988; c=relaxed/simple;
-	bh=BMQwoaYseFJ8zeLch2xIJKZwOwqQ/RVh74KuCupqhhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETATsDNUhgBmWzdZkxZiCGsBh9fl6w2DyxYFUhWOgMXIknvj2eghUJZB4N4jIhhcGfQ02EGVkjHU56ycOGBnEJX1hTecSKCZxFLaPN98Uyf/xjKC14d2w/VuiDY7ZoL8hC4IwTsioLrWYU+mm+HzNztksBJlSHXe9NdM4+ajFXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SQ8oa7oY; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53de556ecdaso6712523e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:09:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733306985; x=1733911785; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GG/C0igHoeNKj2mH68ClLF3Ygx5izj48/Bea3x0gsc=;
-        b=SQ8oa7oYZi5/XnZWCzqe/pqdSvKEtDPM9ZVAeqbKbk0ydq0syhOsXVzd99XlEJBRCP
-         qFhthVZ2OFSFplEPKTR171an6xEPhm3ws5Z+xxHQEaaitvao3zK6pST7VeX/tyhW175Q
-         ERSo/manyr87A51YFzB0Z8QYaYNy3OqTHEhI+5P51nUNrW2+rQ74mEFYPZuAFZ59Tks/
-         hg+ZilgJVjUM8Eu7rLSW0HMuWwonnYGbR4gT3Ux6W0Wqrf3qetFua2s1EilOaLxR0siP
-         6wUq0ShlHLMtlrpvqjCCx8uV5e9UwQX3wz8BvuOlj9AZ2To2Ul71luXzJOcJ1F1//nyC
-         ZpIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733306985; x=1733911785;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6GG/C0igHoeNKj2mH68ClLF3Ygx5izj48/Bea3x0gsc=;
-        b=TN2nQ+KFifwdEeEQsMcZyqj7PRBTglW/uKF2vjM/EFA83HmMz/UATLjEiSmIVAR5oM
-         Gf/TDQSY2Vx1ipPlgtOxpG5IEU4tgiannQiNsaKA+HILkG4gsI/VhoewtMA3h1MUdl7o
-         6gK9NeTBrs1NWXPmbtRy0yY4je7OVqO81/SNPgA85PQpP2wB43iZHmSx3RZnTOkXznfA
-         WNDUaJXQPhjig7YYC8m+JwVI/vnYATjht4R/FlWT6iBivgpsg8Nc7PR7gjB8bFdV0ONY
-         7PnC1OKEd5hRLoSI1SvejWGhI82lDZnjHttVOh8QIZJmREq61rM+NEruswI+H/qrujP1
-         3k3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNEjoNFT6ZjslAgzyIIlPIXL2HreWCd8cVjEHpGsGY0nB4S75TevH8ks3jAvRoCz+VWEYpk3DKF2HjssQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznfUIs9K9tWvAxPLhQsS/EoXfneKfD3B6XuHzaGYilSEBa7Itz
-	LOpKcSvZrH4rpmGonC9eZ6dhN2DFo+kZfFmFsu4NqiQ9c481eSyWeVnCbmVE02M=
-X-Gm-Gg: ASbGnctygtYm1SrMxyaDzhARrQmNB16JoRvRp+p+mg9BU1DiJzLwnpzmAYeLKG5mnv6
-	k9t4Nziqz9wJ44WbzglDee7O95mSsIWKGIySzTe9JpMn+YtJfcKT0EEEQJCHX7dF6B3bLaMFjJA
-	JlNLS88HZpbQdwqqUErAtf+EUlWwo7m5NLO5UEYqx2HZAHDHQyJxmjxX0sMaphRWBim3EtyMXs4
-	ohG9WE9kwvUCVdrCDQLJPy15Usulef5+fdF0zDMLhJjap+3R1nrTM9Z2qEYsiMvbqxdP/CO3Dcq
-	2QH4k/Z/RdgR0IUFPw5fwBzr9MAcSw==
-X-Google-Smtp-Source: AGHT+IFeChx3JdkEVrSx44qmoT8HCpAzvLzptFBGVf0Lu16LK9AmpqVP6+Unh/3j2hROlEszt0kJ2A==
-X-Received: by 2002:a05:6512:224d:b0:53d:f82a:deb8 with SMTP id 2adb3069b0e04-53e129fdd73mr3741737e87.14.1733306985190;
-        Wed, 04 Dec 2024 02:09:45 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e14f97649sm495602e87.146.2024.12.04.02.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 02:09:44 -0800 (PST)
-Date: Wed, 4 Dec 2024 12:09:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: display: msm: dp-controller: document
- clock parents better
-Message-ID: <pxi2nf4h34xtkickkkuwh4svvhbtsutuz5u3ukzgfgd5rzzcps@g4gct5zuc6kj>
-References: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
- <20241202-dp_mst_bindings-v1-2-9a9a43b0624a@quicinc.com>
- <bfa857c2-cd74-4fe2-a88c-3b35a58710b0@kernel.org>
- <gpqrugcsyhz32bvip5mgjtcservhral2o5b6c5nz4ocwbjw5uo@eypv4x6jyrdr>
- <hqe2pipkcnxftoq5mvdk36xmkj3ybr3oto6eghimq75rqlncsm@v45smglhedy7>
+	s=arc-20240116; t=1733307093; c=relaxed/simple;
+	bh=cd8J5vW/fp2sgShONVWxTpMQ9WZEJZIAF9Ttsji4fQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=uZCy5RWjHuKpRfOnK9gElpHwDcQmjXFqm68MmplXs/DSwPthLnE2tu/inOyzLJtqFoqruK+fYOkxk1EETJ5ANkqGxIIljPeS/ub5KhNYDMWxV/RNlrxy4sZqcP/CaiLwQc9gqy9HYqBwp4/lCfGCoHJyIQyJfksoFVSUTP1x66Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EtuoIiIb; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241204101129euoutp01b990e940fa47c9141d34466743c32a06~N8Z00f6Ny1175711757euoutp01c
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:11:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241204101129euoutp01b990e940fa47c9141d34466743c32a06~N8Z00f6Ny1175711757euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733307089;
+	bh=EuqndAqdKmSf/8miGqIK4IlylxV/hAtKHgomM2ekQI8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=EtuoIiIbzEqQ8wkOHLVPpRNuS5W/VZRes35ei/vkIPze8hssoCOj3yMgplxVkeO3g
+	 eZ9FzTdhXEdEJ9X5QKKK4aNPXKVsjam6kxIiNJA84xQ/8bo/9B+ewFOaQG7/pCcO2I
+	 3uHWtRDQ1GE3pGmIwlFc8+46pBe3/HIsTVrTyMps=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241204101128eucas1p25ef8b2a4716d2cb3bee6e1f1b8884e1b~N8Z0JlD4D0619706197eucas1p2v;
+	Wed,  4 Dec 2024 10:11:28 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 82.E8.20397.0DA20576; Wed,  4
+	Dec 2024 10:11:28 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241204101127eucas1p179dcc956b027a7b919043a4c65c04a71~N8ZzvXPbA1897018970eucas1p1-;
+	Wed,  4 Dec 2024 10:11:27 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241204101127eusmtrp1e121421c025121a497c41359c15ff375~N8ZzueqwA2729527295eusmtrp1j;
+	Wed,  4 Dec 2024 10:11:27 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-f6-67502ad0bd06
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id E5.B6.19654.FCA20576; Wed,  4
+	Dec 2024 10:11:27 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241204101126eusmtip2a89da49f3dc9db1702403a20dc33d885~N8Zyb6hBh1974719747eusmtip2t;
+	Wed,  4 Dec 2024 10:11:26 +0000 (GMT)
+Message-ID: <07bfb02a-1df3-4a03-83bb-d7edc540739d@samsung.com>
+Date: Wed, 4 Dec 2024 11:11:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <hqe2pipkcnxftoq5mvdk36xmkj3ybr3oto6eghimq75rqlncsm@v45smglhedy7>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 05/14] dt-bindings: clock: thead,th1520: Add
+ support for Video Output subsystem
+To: Krzysztof Kozlowski <krzk@kernel.org>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	frank.binns@imgtec.com, matt.coster@imgtec.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+	airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
+	jszhang@kernel.org, m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <f21ffd12-167b-4d10-9017-33041ec322b0@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTVxzeub2999JavC06TpgLoXFugsNNxJxMQ+ZeuYlZBnMZGS7DZr0W
+	x8u0wDaECdIRxGp0SJidAiKTBocMKOVRXitIKUVaYTwm5eEGhJIyZCApI7JRL278933f7/H9
+	vpND8STNhB91MiGJVSbI4qSEADd0rthetQeGK15bbhejrqESDNWuakn0U3Mvhoo6evlorE+P
+	oV8fzxPozpSdRDPNmTga1F0nUVZnJYGc2jEC2Ww/k2hBM8ZH/Y3XCLR4oQMgw6KaQBUdoyS6
+	sVCLo9L6RoCyz93io/vd7yJnv4aHsrVb0T9N9SRaG6zC0Q9/tpJI77rMR+aKSKRuvYK/+SIz
+	P/wtybicTpxpz1kimeblYpxp0I6SjKahBzDV5ecIxjHYRDCFlghm/LwZY2pKzzDqik6MmW8Z
+	IJiL+nLA9GUNkUyN9XS4OEpwSM7GnUxhlXvDjgtisqbt+Km2kK/qa6v4GeBSYC7woiC9Hy5l
+	DpO5QEBJaB2AroLCDbIE4MTZIowjiwCevTjAezbS/uPfBFcoA3DlyV3AkTkAF7vKgKdLRIfB
+	343FuAfj9E5oHGnjcboYWq5OPtW30/5w/MH3pAf70HHwF9co7lm0jb6CQ3dJ89MBHl0HYFeP
+	iMO+8MGk5yYviqD3wYmyIr4He62b1ebPAq7HH9bNXeN5FkHaIoDuhzfWHah18g60OQ9xEXzg
+	rFlPcngHtOZpcA4nwonavzZipsEGjXkDH4SOXk9kan3/bljZuJeTD8Mus25juzccnhNzF3jD
+	7wwFPE4WwZxsCde9C+ZrLvxn2qszYJeAVLvpUbSbMmo3ZdH+71sM8HLgyyar4hWsKiSB/TJY
+	JYtXJScogj9PjK8G6z/cumZ+XA90swvBJoBRwAQgxZNuE0WUfqCQiOSyr1NZZWK0MjmOVZnA
+	CxQu9RW9JPdnJbRClsTGsuwpVvmsilFefhnYpy8nNR3ufiXeaG7zTXFuXziin//M+/33hvIi
+	R1SpX8TsUDe99caJOrZyfE0+ZSRZvFSxJ+25rGkiShPijj4TkGlUTOYIhEF+W3QR/eYnzzta
+	9kdbRjJK7E3qkunIb65+VFghf9t1TOe4n71TEXrb5ZcSJAw4feKow+pzQBy69chq2prwetZI
+	0L3qsYf5q5/MpEf+MWOuOX4719Rd128LNMFoiyLAfmyg0tJVmGEIe3SULmrfc15YYre7w5Me
+	fVzQmmeo0t05cAs7aFjuaEmyzsTs/m2qLN2ZvhJap5zKDupQm/uGVnsCqA/FKNUWuyWANd7r
+	dcndVNTdEeHNfbGXpbgqRvZ6IE+pkv0Ldt9DKVAEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPKsWRmVeSWpSXmKPExsVy+t/xe7rntQLSDV73G1qcuL6IyWLr71ns
+	Fmv2nmOymH/kHKvFvUtbmCyufH3PZrHu6QV2ixd7G1ksrq2Yy27RfGw9m8XLWffYLM6f38Bu
+	8bHnHqvF5V1z2Cw+9x5htNj2uYXNYu2Ru+wWCz9uZbFYsmMXo0Vb5zJWi4unXC1eXu5htmib
+	xW/xf88Odot/1zayWMx+t5/dYsubiawWx9eGW7Tsn8LiIOvx/kYru8ebly9ZPA53fGH32Ptt
+	AYvHzll32T16dp5h9Ni0qpPN4861PWwe804GetzvPs7ksXlJvUfL2mNMHu/3XWXz6NuyitHj
+	UvN1do/Np6sDBKP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLL
+	Uov07RL0MpqfXWApOGBcsWPrRtYGxglaXYycHBICJhKHl/5iA7GFBJYySvS8zIaIy0hc637J
+	AmELS/y51gVV85pR4tI+KRCbV8BO4tHuBWA1LAIqErtvH2CGiAtKnJz5BCwuKiAvcf/WDHYQ
+	W1ggR+Lgm7tAcS4OEYEpLBKrH/1jBnGYBbYzSmyYOZURxBES+Mso8bR1Btg6ZgFxiVtP5jOB
+	2GwCRhIPls9nBbE5gVZvnfoKqIEDqEZdYv08IYhyeYntb+cwT2AUmoXkkFlIJs1C6JiFpGMB
+	I8sqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwJS17djPLTsYV776qHeIkYmD8RCjBAezkghv
+	4BL/dCHelMTKqtSi/Pii0pzU4kOMpsDAmMgsJZqcD0yaeSXxhmYGpoYmZpYGppZmxkrivGxX
+	zqcJCaQnlqRmp6YWpBbB9DFxcEo1MPFc+e8Xvi17e2vg2X9VbB/ykletedhqbrw5aLNl19Y4
+	K7PM+tkreyWiYhjq74fs/OHE91y0cI7L5GitmCy2ojdPZk+dr9C2in/dTJGlNcKO+RymD5PD
+	5780+MBybvsHjzeVaSfcytMPbZs0927DgSTxz4f3/Fp17Kg1262iyTzOa22FZjsppW6aYhrZ
+	fYTTST4pLOP+p6743JQrH7IYMnbfnrTmwfFd97wkG2V3CURtXLesOOLPtD8xrddVdPrOBAau
+	ki34Yym+bsfCGUsVMgy00+XfFa3T2y0k+SBl+yTjk32CFzlCE7kU3LJmnlmSKcedM+uzZbA4
+	s3hOgMpjB/sSFpPvIcfY+66fDvzIoMRSnJFoqMVcVJwIADEy7ZviAwAA
+X-CMS-MailID: 20241204101127eucas1p179dcc956b027a7b919043a4c65c04a71
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7
+References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
+	<CGME20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7@eucas1p1.samsung.com>
+	<20241203134137.2114847-6-m.wilczynski@samsung.com>
+	<f21ffd12-167b-4d10-9017-33041ec322b0@kernel.org>
 
-On Wed, Dec 04, 2024 at 09:02:18AM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Dec 03, 2024 at 03:41:48PM +0200, Dmitry Baryshkov wrote:
-> > On Tue, Dec 03, 2024 at 09:01:31AM +0100, Krzysztof Kozlowski wrote:
-> > > On 03/12/2024 04:31, Abhinav Kumar wrote:
-> > > > Document the assigned-clock-parents better for the DP controller node
-> > > > to indicate its functionality better.
-> > > 
-> > > 
-> > > You change the clocks entirely, not "document". I would say that's an
-> > > ABI break if it really is a Linux requirement. You could avoid any
-> > > problems by just dropping the property from binding.
-> > 
-> > But if you take a look at the existing usage, the proposed change
-> > matches the behaviour. So, I'd say, it's really a change that makes
-> > documentation follow the actual hardware.
+
+
+On 12/3/24 16:45, Krzysztof Kozlowski wrote:
+> On 03/12/2024 14:41, Michal Wilczynski wrote:
+>> The device tree bindings for the T-Head TH1520 SoC clocks currently
+>> support only the Application Processor (AP) subsystem. This commit
+>> extends the bindings to include the Video Output (VO) subsystem clocks.
+>>
+>> Update the YAML schema to define the VO subsystem clocks, allowing the
+>> clock driver to configure and manage these clocks appropriately. This
+>> addition is necessary to enable the proper operation of the video output
+>> features on the TH1520 SoC.
+>>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  .../bindings/clock/thead,th1520-clk-ap.yaml   | 31 +++++++++++++++----
+>>  1 file changed, 25 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>> index 4a0806af2bf9..5a8f1041f766 100644
+>> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>> @@ -4,11 +4,13 @@
+>>  $id: https://protect2.fireeye.com/v1/url?k=f595e769-941ef222-f5946c26-74fe485fb305-6d0b73471bbfc1a2&q=1&e=6b918e4d-d81f-4b44-8516-776d7b4f9dae&u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Fthead%2Cth1520-clk-ap.yaml%23
+>>  $schema: https://protect2.fireeye.com/v1/url?k=5b94114b-3a1f0400-5b959a04-74fe485fb305-0e2c50f5c24cf3e9&q=1&e=6b918e4d-d81f-4b44-8516-776d7b4f9dae&u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+>>  
+>> -title: T-HEAD TH1520 AP sub-system clock controller
+>> +title: T-HEAD TH1520 sub-systems clock controller
+>>  
+>>  description: |
+>> -  The T-HEAD TH1520 AP sub-system clock controller configures the
+>> -  CPU, DPU, GMAC and TEE PLLs.
+>> +  The T-HEAD TH1520 sub-systems clock controller configures the
+>> +  CPU, DPU, GMAC and TEE PLLs for the AP subsystem. For the VO
+>> +  subsystem clock gates can be configured for the HDMI, MIPI and
+>> +  the GPU.
+>>  
+>>    SoC reference manual
+>>    https://protect2.fireeye.com/v1/url?k=cceb6120-ad60746b-cceaea6f-74fe485fb305-b294b70f1b52a5ab&q=1&e=6b918e4d-d81f-4b44-8516-776d7b4f9dae&u=https%3A%2F%2Fopenbeagle.org%2Fbeaglev-ahead%2Fbeaglev-ahead%2F-%2Fblob%2Fmain%2Fdocs%2FTH1520%2520System%2520User%2520Manual.pdf
+>> @@ -20,7 +22,9 @@ maintainers:
+>>  
+>>  properties:
+>>    compatible:
+>> -    const: thead,th1520-clk-ap
+>> +    enum:
+>> +      - thead,th1520-clk-ap
+>> +      - thead,th1520-clk-vo
+>>  
+>>    reg:
+>>      maxItems: 1
+>> @@ -29,6 +33,17 @@ properties:
+>>      items:
+>>        - description: main oscillator (24MHz)
+>>  
+>> +  thead,vosys-regmap:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description: |
+>> +      Phandle to a syscon node representing the shared register
+>> +      space of the VO (Video Output) subsystem. This register space
+>> +      includes both clock control registers and other control
+>> +      registers used for operations like resetting the GPU. Since
 > 
-> First, this should be in the commit msg, instead of "document better to
-> indicate functionality better".
 > 
-> Second, what is the point of documenting it in the first place if you
-> can change it and changing has no impact? So maybe just drop?
+> It seems you wanted to implement reset controller...
 
-So, do you suggest setting both of the property descriptions to true? Or
-dropping them completely and using unevaluatedProperties instead of
-additionalProperties?
+Thank you for your feedback.
 
--- 
-With best wishes
-Dmitry
+I understand your concern about the reset controller. In the TH1520 SoC,
+the GPU doesn't have its own reset controller. Instead, its reset is
+managed through the power domain's registers as part of the power-up
+sequence.
+
+According to the Video Image Processing Manual 1.4.1 [1], the GPU
+requires the following steps to power up:
+
+1) Enable the GPU clock gate.
+2) After 32 core clock cycles, release the GPU soft reset
+
+Since these steps are closely tied to power management, I implemented
+the reset functionality within the power-domain driver.
+
+Because the GPU doesn't support the resets property, introducing a reset
+controller wouldn't align with the existing device tree well.
+
+[1] - https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20Video%20Image%20Processing%20User%20Manual.pdf
+> 
+>> +      these registers reside in the same address space, access to
+>> +      them is coordinated through a shared syscon regmap provided by
+>> +      the specified syscon node.
+> 
+> Drop last sentence. syscon regmap is a Linux term, not hardware one.
+> 
+> Anyway, this needs to be constrained per variant.
+> 
+>> +
+>>    "#clock-cells":
+>>      const: 1
+>>      description:
+>> @@ -36,8 +51,6 @@ properties:
+>>  
+>>  required:
+>>    - compatible
+>> -  - reg
+> 
+> No, that's a clear NAK. You claim you have no address space but in the
+> same time you have address space via regmap.
+
+I see your concern. The VOSYS subsystem's address space includes
+registers for various components, such as clock gates and reset
+controls, which are scattered throughout the address space as specified
+in the manual 4.4.1 [2]. Initially, I attempted to use a shared syscon
+regmap for access, but I realize this might not be the best approach.
+
+To address this, I'll specify the 'reg' property in each node to define
+the address ranges explicitly fragmenting the address space for the VOSYS
+manually.
+
+vosys_clk: clock-controller@ffef528050 {
+	compatible = "thead,th1520-clk-vo";
+	reg = <0xff 0xef528050 0x0 0x8>;
+	#clock-cells = <1>;
+};
+
+pd: power-domain@ffef528000 {
+	compatible = "thead,th1520-pd";
+	reg = <0xff 0xef528000 0x0 0x8>;
+	#power-domain-cells = <1>;
+};
+
+I would be happy to proceed like this if that's okay.
+
+[2] - https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+
+> 
+>> -  - clocks
+> 
+> Nope, not explained, unless you wanted to make it different per variants.
+> 
+>>    - "#clock-cells"
+>>  
+>>  additionalProperties: false
+>> @@ -51,3 +64,9 @@ examples:
+>>          clocks = <&osc>;
+>>          #clock-cells = <1>;
+>>      };
+>> +
+>> +    clock-controller-vo {
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://protect2.fireeye.com/v1/url?k=1e9cac96-7f17b9dd-1e9d27d9-74fe485fb305-f0538482114df941&q=1&e=6b918e4d-d81f-4b44-8516-776d7b4f9dae&u=https%3A%2F%2Fdevicetree-specification.readthedocs.io%2Fen%2Flatest%2Fchapter2-devicetree-basics.html%23generic-names-recommendation
+> 
+> 
+>> +        compatible = "thead,th1520-clk-vo";
+>> +        thead,vosys-regmap = <&vosys_regmap>;
+> 
+> That's a "reg" property. Do not encode address space as something else.
+> 
+> 
+>> +        #clock-cells = <1>;
+>> +    };
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
