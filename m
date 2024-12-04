@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-431207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B616C9E3A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:53:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530DD9E3A70
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C941280E11
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:53:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B361CB2CA8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416CB1C1F12;
-	Wed,  4 Dec 2024 12:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0111BD4E5;
+	Wed,  4 Dec 2024 12:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMeGr35B"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1RkJDXr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8CC1B983E;
-	Wed,  4 Dec 2024 12:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541061B414D;
+	Wed,  4 Dec 2024 12:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733316797; cv=none; b=IC0UE5stDpI+2q/po3d+nRdt0rN5Rs2ym6dInv9KGxQ2drGdlN1agx/XME2lhsOlwEIUaszINT+TNNsB9fZKkRqpV32KJgn6Fey2adoVq7L55C6DC7CIqNz+1W5/gTTlsdtbLtV0CJgrsflDJy/GvDha1zfhFfq8KIX3AdSRxb4=
+	t=1733316828; cv=none; b=HRKGcp4QbnDpd0PqBqfOK80sbgT3RuM2cWtHMckOoDpN1aP48WPf3zLQp2xDRnU1pz552RLQpp3utT2wv8q3UJXeAK/9F5eab427K0uP2xBT+cMgzzRckUzQYkwTx0A4oWe7M4hChSc8uVmo4YfY/3kwO1ra7xG2Ogskzu/DFwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733316797; c=relaxed/simple;
-	bh=4KB7IhX41Jdx7R0pUSh4XrjrTpiCnCVaZJyu8gjdkpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dckPkZIHYlbXMI7ol2GJcLrLXt0LwGCfs1TqmmfUVz4r0QyT1RSMjzzqNdYcOvr61nb+KSyZZU7dmz0XqujkQWDaAe8EN/5DjJR5zn+WQN0TLAoSwBAETkbOIpJuAW3k5R5BAfh0+eivRwdV9xZSvgV5dgbD3eZk1ywjlNvmSRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMeGr35B; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a742481aso55859685e9.3;
-        Wed, 04 Dec 2024 04:53:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733316794; x=1733921594; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S2aCUMfq9PreWWxmmta62wgfEIacoacSv9wLVfG0EG4=;
-        b=HMeGr35BHm4xrFK031+WpJUM/Tqqaj8cv23XNuTykB3/GHkgUgE7iHD2JE2Zclp547
-         sFK6aGVnNcDcqiWEJh+Y9wtEEr1s4E+UCW32DXBRvn8vdr0pTSgPq9239WumoJAmTJHx
-         OcMA1ZlarQLSlx9ThIugGidCDV5Dmp3F1Fc8QvWnM8PL4W3f11uvf0NJXNPtHCfQTXyu
-         cykTDlrqLh4TgMIXNn9Ok0MfqyZlxVXPPRcYT5znR25ptSWP+A5CeHx8OcD9bwlQG4pl
-         hMBfXBMe4MM4dRiZpoe2zPNXYrStsdxSfTyswW9uQ7hc3yexIleRyIXqhz8d+XS0qMPG
-         LK1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733316794; x=1733921594;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S2aCUMfq9PreWWxmmta62wgfEIacoacSv9wLVfG0EG4=;
-        b=iIvYRVxeLnr84KOeyEwX+6CgJ76bpAI61p9rU12TZAqHzV5CBJzWiANyNmjuEcUkSv
-         Ieyl9o0HAEsjVc8ccgZN4X3m5kwwzRZ9CEMWqyVrAniMx0GWNCZToO3oswQEet0Ix9Aw
-         qHSUq30vv/A3sp8DESsfe2E39umNGiatXHwAtOGdmEZdS0sTV05OHtOH/kWNpkhga0Bf
-         wFck3JA1IZnPmUYxVmrz6Bkcy51v+dpFk+5cO5lsr2tSLXvpFoeaV9D4d5XoEGpFPlJ4
-         zXzAqa8EyBJ2iRswvayT+YjJkzXhkuBYPOBOZ96tt2LT56hJ7A+ZmNJyRi1eJpxS/LkI
-         vzIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTp5hDxH7+sQ+w6H9kqwEhNzJxKRC7WcVcjhl+2qNyDQfHaVrUmXyze9MaD2SYASY3Bl3gZOaJY8V7jw==@vger.kernel.org, AJvYcCWK94TUoKFDyZsj4EXGd0NBBCtk3bFaV02dY48xXw+vAJTPnMU+XPoIqluoSxvX2HChjs+x634r@vger.kernel.org, AJvYcCWVdqwpSHiVTp6gE0AiHTUqJ+pRNJdEGTIZglZOmxvE0TtPG4ZELNN5lf9R8fBSWyjtSbOeOhLxQvotaS2q@vger.kernel.org, AJvYcCWfiSv3JCxJBgYpVMQ2PTJzvbnUEJ5Kno861G2QEOHKbaLdKidFwVio/8hHShqtH7IqxSvyOgBPhcnx/+Z34w0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfqUd1VakuPrdss3tV8JStSyKo+gOJcEYbl1He6sunJApPdqor
-	A15xykJ7JLjyy8+2cHwSnxfIk4s2a0hS68mAt3I16e6yMazEu0wnN5TN0w==
-X-Gm-Gg: ASbGncsJOtgRveQOBthWRlsci5MnFkl3aTIopIKWPOMnGRJQBNZryUpUmpOZNNiFagZ
-	KxmXgwixKpPpJIHCzr1oc/GDt+cceGGSTUuX2m23UBPY0y74Jmr/M2Jqx+1Q2NDF2uY9/mWSzjr
-	hZce1fzc4MLeFWIQKbcJk+fp1QFsNx2WyOGWz2EkzbO+BrWSrSH/NAtV8HQFbwr+4tIvJdhvom+
-	3JXyhSpe0boS6sj+GXCezkoH2O0zsZVXU0rFHwIAD/eg8USic+gnIi4Tb7uxtEb3V604QI=
-X-Google-Smtp-Source: AGHT+IEAjhyCi0OQTbfcNqIUsFj4yLHAHGPEiHTTUIeK2/a5ydVX5KehPnGynnnKDQWpIUjUjZeADQ==
-X-Received: by 2002:a05:600c:3ba1:b0:434:9dfe:20e6 with SMTP id 5b1f17b1804b1-434d4102563mr30395095e9.23.1733316793815;
-        Wed, 04 Dec 2024 04:53:13 -0800 (PST)
-Received: from [172.27.34.104] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280b60sm23327285e9.25.2024.12.04.04.53.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 04:53:13 -0800 (PST)
-Message-ID: <f334a5d0-3eb1-44ea-860d-b0a5235a973c@gmail.com>
-Date: Wed, 4 Dec 2024 14:53:09 +0200
+	s=arc-20240116; t=1733316828; c=relaxed/simple;
+	bh=oEO4RDbiJAB3b6nfe/PZkZK9xDFRKh94CQJ7ErxhGQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eG4M6Uz6M0NOtEr9d8wI7tmGWNVjdTZ4Pb3LTYtngkxxQHNLzVQRMQuSeJKYGkfpRLcsI6dHdyauem0Zo+AmaOumSHmDDLLH3yQYccFNcQHwprB5jRpP2c/wAOcdD78dY/YkprqqFbRnHTevmNwoYwBSGe9u/UOnLDOApxjOsko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1RkJDXr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D26E6C4AF0C;
+	Wed,  4 Dec 2024 12:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733316827;
+	bh=oEO4RDbiJAB3b6nfe/PZkZK9xDFRKh94CQJ7ErxhGQQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=k1RkJDXrL1aHiJBXLPi5Nr7HcBHMd0Glytdy47JBJJIf0nC3BT6Ir+ohJpLhgz30P
+	 EI2JpCfEocrAZSeOFTJwcUK9IQCT0x+l7iGh897NqbLcKwYAycYX4NMw9BochAq9li
+	 DdSB6BdkftSOc878k/zPugEZ3DZac6lA0jmysVve0UQihNWwCGifJRiZMmQO8arQ3Y
+	 Xrpm27BxMFqDr0pnatB7ujqCu9yEbkDiDwRA392fk77bFU5QVjax+SYr1wnXq6Ug7w
+	 BliA6hETaqYK9jhh/ojpWHDTgNhzBc6zKf8HCO+dkR9uTmvXm8fP0hLK8VYtyyyBfX
+	 T/XNZe/QwVYpQ==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-29e842cb9b4so1420880fac.2;
+        Wed, 04 Dec 2024 04:53:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVM7TlRJDUa+zFcBC+HbFgWyZhA+Ye2jjiC5+7DKDzVlQ/17PVUSY7/JzRr2VLeanYa/DsQvG0s1tZ0Nsw=@vger.kernel.org, AJvYcCWWtv4iEEioCjEEInxfqYP7AywCst2Jr3fwSggIyEvWvW36rUkp5kLst2W989Cj4Y3fuZOZozgEc6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU24e7Aa/12oYnmtj+HzcBLfU5KrEkVhggoupdhSBRLPy09pQn
+	nCyfmUwQakg9CMGA/zrydDcU4qnm+W1hOyjVc15M7N08O6QsUY5ycD7SrfFoM/ksK7Lw7ehdNx+
+	RllMYlrlNcZ/gXDXVs2tIeXBNH3M=
+X-Google-Smtp-Source: AGHT+IFnwtEvxI5AB8DYMsjKvZo4g8APN9r0qLnARkZSQLDhVQEAdpw7mxNBTkWOhpaBe0MRz6LFjx1sprRSYtn7h3s=
+X-Received: by 2002:a05:6870:e2cb:b0:29e:5c94:5afd with SMTP id
+ 586e51a60fabf-29e885a949fmr6209762fac.1.1733316827098; Wed, 04 Dec 2024
+ 04:53:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 net] net/mlx5: DR, prevent potential error pointer
- dereference
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Yevgeny Kliteynik <kliteyn@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <07477254-e179-43e2-b1b3-3b9db4674195@stanley.mountain>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <07477254-e179-43e2-b1b3-3b9db4674195@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241114220921.2529905-1-saravanak@google.com> <20241114220921.2529905-2-saravanak@google.com>
+In-Reply-To: <20241114220921.2529905-2-saravanak@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 4 Dec 2024 13:53:36 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB-MGkd7sVg@mail.gmail.com>
+Message-ID: <CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB-MGkd7sVg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] PM: sleep: Fix runtime PM issue in dpm_resume()
+To: Saravana Kannan <saravanak@google.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Segall <bsegall@google.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Trim CC list.
 
+On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravanak@google.=
+com> wrote:
+>
+> Some devices might have their is_suspended flag set to false. In these
+> cases, dpm_resume() should skip doing anything for those devices.
 
-On 04/12/2024 14:06, Dan Carpenter wrote:
-> The dr_domain_add_vport_cap() function generally returns NULL on error
-> but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
-> retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
-> and if it's and -ENOMEM then the error pointer is propogated back and
-> eventually dereferenced in dr_ste_v0_build_src_gvmi_qpn_tag().
-> 
-> Fixes: 11a45def2e19 ("net/mlx5: DR, Add support for SF vports")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Not really.  This is particularly untrue for devices with
+power.direct_complete set that have power.is_suspended clear.
+
+> However, runtime PM enable and a few others steps are done before
+> checking for this flag. Fix it so that we do things in the right order.
+
+I don't see the bug this is fixing, but I can see bugs introduced by it.
+
+I think that you want power.is_suspended to be checked before waiting
+for the superiors.  Fair enough, since for devices with
+power.is_suspended clear, there should be no superiors to wait for, so
+the two checks can be done in any order and checking
+power.is_suspended first would be less overhead.  And that's it
+AFAICS.
+
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 > ---
-> v2: fix typo in commit message
-> v3: better style
-> 
->   .../net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c  | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-> index 3d74109f8230..49f22cad92bf 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-> @@ -297,7 +297,9 @@ dr_domain_add_vport_cap(struct mlx5dr_domain *dmn, u16 vport)
->   	if (ret) {
->   		mlx5dr_dbg(dmn, "Couldn't insert new vport into xarray (%d)\n", ret);
->   		kvfree(vport_caps);
-> -		return ERR_PTR(ret);
-> +		if (ret == -EBUSY)
-> +			return ERR_PTR(-EBUSY);
-> +		return NULL;
->   	}
->   
->   	return vport_caps;
-
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-
-Thanks.
+>  drivers/base/power/main.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 4a67e83300e1..86e51b9fefab 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -913,6 +913,9 @@ static void device_resume(struct device *dev, pm_mess=
+age_t state, bool async)
+>         if (dev->power.syscore)
+>                 goto Complete;
+>
+> +       if (!dev->power.is_suspended)
+> +               goto Unlock;
+> +
+>         if (dev->power.direct_complete) {
+>                 /* Match the pm_runtime_disable() in __device_suspend(). =
+*/
+>                 pm_runtime_enable(dev);
+> @@ -931,9 +934,6 @@ static void device_resume(struct device *dev, pm_mess=
+age_t state, bool async)
+>          */
+>         dev->power.is_prepared =3D false;
+>
+> -       if (!dev->power.is_suspended)
+> -               goto Unlock;
+> -
+>         if (dev->pm_domain) {
+>                 info =3D "power domain ";
+>                 callback =3D pm_op(&dev->pm_domain->ops, state);
+> --
+> 2.47.0.338.g60cca15819-goog
+>
 
