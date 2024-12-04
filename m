@@ -1,136 +1,134 @@
-Return-Path: <linux-kernel+bounces-431527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206859E3E86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:42:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF17B9E3E73
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AA428346B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C780281391
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A73020C478;
-	Wed,  4 Dec 2024 15:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC9320C02E;
+	Wed,  4 Dec 2024 15:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nusfCG3X"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORN7kT1K"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160AA20B816;
-	Wed,  4 Dec 2024 15:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E6182D9;
+	Wed,  4 Dec 2024 15:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326933; cv=none; b=MGTupTDWq29vn7th8j/oBEQ4lOpn4TgEjIWRUWoc2aCrzlovVmw2A4FDDAaysz3lsyMjoQIFlyGYwinHFwpohRjnSwv85+mj4b3+uypcF9SVfGdrX7N89oWEaEeKoT3haoRMDYmChhgZbTQ1KcDk3cUnZQbG0K6nh4nG+3X0rnc=
+	t=1733326670; cv=none; b=CmRGa3IWWyeCjvY+FgdXzjuz7jja5m20/LAF6PF3JRqpdcn9xcVdeFZQ/G/o9tVLap2n8EAW7nZbxYm85E/uJVavBB6kEMMc5Arew0K33gXynTKMB02m0WZcPzJ1v29bbNmBcpJb43EB54dtHuFx1tMP6cToWa6zTpcmz0Tq09U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326933; c=relaxed/simple;
-	bh=bnmAm1jUiG8QXJyizFgCwu3PvdmDTJ36Tvtsyi2/MGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=grIueSs33DKRIM19/yhAyopan2NdRf9eJNIHMeJ8MVxLqSisZnmpi7rZzBfF3/W4YutFcME+oxzOaDeu2uYc83ar7PgRIhjKWaHCBI8oQSxXbvyPIUG3OXk8/0cqDF92Qg6RTAYC1tucelVSP69tr8UYzFIjOjptGi0QhkCi++A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nusfCG3X; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Y3M7x37nBz9sry;
-	Wed,  4 Dec 2024 16:36:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1733326605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vEbiDca7zp0P6QUlbgj1AObVHCUUIBhvErhOW/G7qOA=;
-	b=nusfCG3XW4GE0jLvDBNVvKMcqFnRfue+dvUhLx5lcON4bL8Zokmj1mbdE6KDijuiKdDbx3
-	arJTxXvnw1TnBh21WwsBQMMzxP569K2EdmHlkTei9/4nEqPNSDNKxkWvsUAVo87wKTiHGS
-	lUrrepgxAfHxKYZ1EicD7s7vyvW1Rq1ANJljZTkaREU53O41DpxUKm9IoNfRYJCrpoCF8k
-	z0He0BtS/HxFZTSwW3rpB/yto9OlPvQNaqByGVLU0/5zdH4QYpjVEDU/E8YxGrLpz5ZtEP
-	31L/qIIumrRwcXe6cGJraVVIJ0Wgq8RnPN2pt1DARerj1v5y6RTUXwsXgdYJ/w==
-Message-ID: <6c037258-4263-426d-beb2-e6a0697be3ab@mailbox.org>
-Date: Wed, 4 Dec 2024 16:36:40 +0100
+	s=arc-20240116; t=1733326670; c=relaxed/simple;
+	bh=mz9WS0Cz66il0FOJLswE8qNx2ZxttVVFvXfHD5UQR8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WuileKFWcDoSFk9xKhIZs6NNzi1ZXo7kUm3TJSL0nPKJEo1R/YdhkrQ3yqXHGe7nlWC/PRtaVutvCRB1Y9WpV3eampUiir63iPu/rhzap6mtfs/ZWuy8Tw7rxwdNpOR63ASfOp08zQql389Ug1pt9pW90vxGqBCmvkuHULqcdJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORN7kT1K; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7259a26ad10so322578b3a.1;
+        Wed, 04 Dec 2024 07:37:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733326668; x=1733931468; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XePlx1QIgk8VgfmNUtG3QcTLLTBW/dlI16JoLuecilM=;
+        b=ORN7kT1KWze8RsKgL84Y/QlKiCIRUjdigDmQO3uU5jzHs3yUKkSgbPJEpfH5149vjv
+         /NYwpFZuzUaBDlWihTbbWmM8BC7ShPLSzjzf6l6fyEsxC7tQ9PJGTP28WOwuivNz4baI
+         Ltpvl/XsJCMFSYB0sJxaydiz+v+7tRje8Omd1sjnKrZ4M1TdSrD0/NCU3OHBrhf8rek5
+         1QULALxOj0S2TiyV9LL3jQ4Z3y2ATm9SQw1WW1uiwfyIUD2abg0H2TrYiDrsTyLmu9qU
+         IzYhaEkR74B9YfkAsAGPXIcmA6zulMq8UfrpttBVwn3+A3sNxzL4oE3XZccDCUEeJBl/
+         HvOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733326668; x=1733931468;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XePlx1QIgk8VgfmNUtG3QcTLLTBW/dlI16JoLuecilM=;
+        b=GMASNOLDpJpaTEQCJ/TvZnWLOMfbrahuBuI7EfDPOOuN+KXluaEKFiYJ/eZqGq+stt
+         W1Qwoy35uXxYsqpqHBvE/2EWaYN66kyllnki+DoGXNl06hafllPACahd/q7kJYxZL7Uy
+         fJIsRSXpBp0qcOTSJ/LtXZU09xMUY5d08AmUNsPOClbNkTflejkLiqRZbIeIDsiIX8Pq
+         g5f7QeUo9kMNyWn07VlWTRK/Russ+4yOv0zPWubFxQuC4Ye2BohIHMf+lFX9urCywyyR
+         m+RMSHQW2opYC9azkHiqLWZShbdVgTCNvB0RYlW4zIaeForuW5gW5holnqHLk58ZuoYS
+         +CUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMIc3/FHXRpLYerInsCrWN+rCMBdmfmYw8bxnVgpZ8YkOK24p3p93UWuqPZGlFDtMo6jBrV4ozpnLtCgU+@vger.kernel.org, AJvYcCWsYvWhXHtGebE+vHNbYyrhNDTE/wwb9MqdGGSOL0fdVLcxmFQHd+dnkfqMmzt1hVK71RTEbfIpHPiFQriePyuc@vger.kernel.org, AJvYcCXK/sB8FegHGDx0/oVRBtqaKKQ+tUsiclC5sQocS1EFZqWFfiqxa3CzjipN0PDoEPutoJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcdOIx4yPcNJ9u2zxSVQoWAy2dTmLCIhmrPcy17p3E8CN9d/Jm
+	G5jLkvwbijBv8RBfq9MJqJcnEoew5laNbJJ2uzg60WaSEUjZzFM=
+X-Gm-Gg: ASbGncvZ7yMvTLoc1Nk2Rri+DK50B8it+ZgwLajcZ/Pu0VjvAS7BANbJ57HmGWfb1ku
+	bPoksMOdBQazAMJpaxQYuLJu+GrW47gmNQQYXjhnV22WJ0Bl5B6PLotNXjhAnhWCWUI1svQ9ACN
+	HH6JwdaEtFuMb/tgbWZ0nD+mFx6gwTACsLlAKYtX9GrR6NTADVtL4+4qYZmv9xw9WKSmraA9ZoD
+	kLWGzIXpwQSin9Axn/+SQQ8I4K21FRDffGW2X3BZSddSiIRqA==
+X-Google-Smtp-Source: AGHT+IHjF9fLaaJKo31QaNdNnOQRJjOkOHR5MDxMG4OGqUKVLDH9AL+hXQbnVZj1eNfsz8H3gzx7uw==
+X-Received: by 2002:a05:6a00:7185:b0:725:9253:62c8 with SMTP id d2e1a72fcca58-72592536489mr2372552b3a.2.1733326668425;
+        Wed, 04 Dec 2024 07:37:48 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c324943sm10091109a12.48.2024.12.04.07.37.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 07:37:47 -0800 (PST)
+Date: Wed, 4 Dec 2024 07:37:47 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Marco Leogrande <leogrande@google.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>,
+	willemb@google.com, zhuyifei@google.com, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] tools/testing/selftests/bpf/test_tc_tunnel.sh:
+ Fix wait for server bind
+Message-ID: <Z1B3S2Yh3v069n7e@mini-arch>
+References: <20241202204530.1143448-1-leogrande@google.com>
+ <Z05NhvyagBbHs8Gq@mini-arch>
+ <CAD1qLz0UwaFsk3ZnQ9e5RG1XvJ2i=7FJhtf_9AB6KVZ1fbEh3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
-Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Sean Christopherson <seanjc@google.com>,
- Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>,
- kvm@vger.kernel.org
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-10-arnd@kernel.org>
-From: Tor Vic <torvic9@mailbox.org>
-In-Reply-To: <20241204103042.1904639-10-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 4e9m7dwkykgcxtqczw8zqyhhwrynqgzr
-X-MBO-RS-ID: 2b3f8d057a29b455e8d
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD1qLz0UwaFsk3ZnQ9e5RG1XvJ2i=7FJhtf_9AB6KVZ1fbEh3w@mail.gmail.com>
 
-
-
-On 12/4/24 11:30, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 12/03, Marco Leogrande wrote:
+> On Mon, Dec 2, 2024 at 4:15 PM Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> > Do you see this failing in your CI or in the BPF CI?
 > 
-> Building an x86-64 kernel with CONFIG_GENERIC_CPU is documented to
-> run on all CPUs, but the Makefile does not actually pass an -march=
-> argument, instead relying on the default that was used to configure
-> the toolchain.
+> I see this failing in our internal CI, in around 1% to 2% of the CI runs.
 > 
-> In many cases, gcc will be configured to -march=x86-64 or -march=k8
-> for maximum compatibility, but in other cases a distribution default
-> may be either raised to a more recent ISA, or set to -march=native
-> to build for the CPU used for compilation. This still works in the
-> case of building a custom kernel for the local machine.
+> > It seems ok
+> > to add wait_for_port here, but the likelihood of the issue seems
+> > minuscule. There is a bunch of ip/tc/etc calls between this
+> > server_listen and the next client_connect (and I'd be surprised to hear
+> > that netcat is still not listening by the time we reach next
+> > client_connect).
 > 
-> The point where it breaks down is building a kernel for another
-> machine that is older the the default target. Changing the default
-> to -march=x86-64 would make it work reliable, but possibly produce
-> worse code on distros that intentionally default to a newer ISA.
+> I'm surprised as well, and I've not found a good correlation with the
+> root cause of the delayed server start, besides generic "slowness".
 > 
-> To allow reliably building a kernel for either the oldest x86-64
-> CPUs or a more recent level, add three separate options for
-> v1, v2 and v3 of the architecture as defined by gcc and clang
-> and make them all turn on CONFIG_GENERIC_CPU. Based on this it
-> should be possible to change runtime feature detection into
-> build-time detection for things like cmpxchg16b, or possibly
-> gate features that are only available on older architectures.
-> 
+> You also make a good point - by calling wait_for_port this early we
+> "waste" the opportunity to run the other ip commands in parallel in
+> the meantime.
+> I had considered moving this wait down, just before the next
+> client_connect, but I concluded it might be less readable since it
+> would be so distant from the server_listen it pairs with. But I can
+> make that change if it seems better.
 
-Hi Arnd,
+Thanks for the details, let's keep as is.
 
-Similar but not identical changes have been proposed in the past several 
-times like e.g. in 1, 2 and likely even more often.
-
-Your solution seems to be much cleaner, I like it.
-
-That said, on my Skylake platform, there is no difference between 
--march=x86-64 and -march=x86-64-v3 in terms of kernel binary size or 
-performance.
-I think Boris also said that these settings make no real difference on 
-code generation.
-
-Other settings might make a small difference (numbers are from 2023):
-   -generic:       85.089.784 bytes
-   -core2:         85.139.932 bytes
-   -march=skylake: 85.017.808 bytes
-
-----
-[1] 
-https://lore.kernel.org/all/4_u6ZNYPbaK36xkLt8ApRhiRTyWp_-NExHCH_tTFO_fanDglEmcbfowmiB505heI4md2AuR9hS-VSkf4s90sXb5--AnNTOwvPaTmcgzRYSY=@proton.me/
-
-[2] 
-https://lore.kernel.org/all/20230707105601.133221-1-dimitri.ledkov@canonical.com/
-
-
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
