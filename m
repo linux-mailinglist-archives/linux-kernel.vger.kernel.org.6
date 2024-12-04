@@ -1,598 +1,169 @@
-Return-Path: <linux-kernel+bounces-431650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B739E4167
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:25:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A469E433A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 648E2B2BBCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:41:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67356B2E83E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5735820DD53;
-	Wed,  4 Dec 2024 16:41:04 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CD720CCEB;
+	Wed,  4 Dec 2024 16:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AzGw0k57"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0259120D4FC;
-	Wed,  4 Dec 2024 16:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9488F20C473
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330463; cv=none; b=QY8uxap9KJp+IOYvBOWAhG3JNKMuQFSni8t60OkqKJjlSrkF6snuXcj0llnMeOpiqfyo2ALcRnxKJMpFCR5o379C4GiLh56Kcwe2YiJ+fZXY8o1UtSNvDFN33yeKk2HIP1J5RH8V00IgipuHVA5BfcYztoFRyf1pPHqpzbtlXVQ=
+	t=1733331022; cv=none; b=pErNT48dnXVb80tzk0WWysCLrGZPKqQ16jUHJYzZA0RcEfggnuIyw27du6vzy9v2m/c1MmkJuYAT43DScfSxyg8+bQOfd4XuGW2EIoAp8cZxzKO2P7pQcmfz3sRIvDoWygnVPYYUAJAPaFK2QMOKpw99bTHg4QwJJ3VyTEkuOJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330463; c=relaxed/simple;
-	bh=G+FEqjsvSdAMfldd5nI9dWrnpQcLblC/mjCfA25OZkQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tw71bfbla89OU5oOjVTTP4CWQ1O7bxidxM+l7IZF1UB0Nle9/V5xKMuJ3lOJVe2OhYsSPdgjkaII8Vg0qO7YxXj1zlmRXs3ONdu8B3Wor9zGG4VqbRZUKw5QJHLlKRsaiW1ML7dJ/AH+VzDo0YVAwZq64uFzyoxmw7Nqp4H7YZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfddb70965so8728420a12.0;
-        Wed, 04 Dec 2024 08:41:00 -0800 (PST)
+	s=arc-20240116; t=1733331022; c=relaxed/simple;
+	bh=d5JXng/rH+AlgdezfxEVPJAE2HYdoyLwl/eNJIOiK6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b63VGSkXKvwGJDnhZSEsl+uwERXTQDGROd0XsE9IqbvUGAVkiDmf76VPVU37ZePA/dLV7pYiX13MegL+ACnV0puZisb/tBaUNps/Ot5WUEVM1HrEKVtYjOwQi3/GjanmTSEzG87p8IRNreDglE4YjafiAQc0ZYi8BJJUh+R0wD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AzGw0k57; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa531a70416so453939566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:50:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733331019; x=1733935819; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AmuAP6kL2PgtMtMb788SmKyfSh/8+gR/zM5UDhGblwo=;
+        b=AzGw0k57m8qS6IYUWC0MhKbZWHScYQR3LGfQhM9zumUPtxr5PYE2iZyIpEuxquZMjD
+         EL9o5WCX37GljKHgDce6tbWsTKR0/cIjrVsMT72unqF7qtFxNQEeFmouvmg92PlNngAV
+         AAi7GUlfv1Gh3h882kb1nMd47FG9wXm/t1Ox3vHRyL0bW7xCKBdO1ARFxcCJNrGQbl/5
+         X9j5zIuWVp5UtZHL9rm+K4GZhFtpKFTtTSo/CXv9rMCS7hD0BN+ces61lxDwXGZeu/2Y
+         5y0SBVJjx6RD6Lh9s/u0TcyawsZulp/1EpyZ9ZwPxmi7AmUMNT9Hp9iBeP0WqebdCGgA
+         UAnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733330459; x=1733935259;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EED6edYc58ZoUVFAXfO05i/aquvxfhSgMV2Jzs4zP+M=;
-        b=eYu+yZVFUb2cZW5ht2wl0qIpatd4DAR0ZjgJ5Rif+Re8KWpgCPE80NpZblCrpPp+2f
-         mKiMJkr0pUg8i+UtyXWQsAInYm0lOQAe9//agHrLLUQjT5tZgSsvWJ6Ys31WhkQW/pC8
-         CaVp2rgFISbYXk+noAe7Un3vnHNWul06AfHz70dByBY3t4+om1P7d6DeBCVHwOffD3I3
-         p8ziL3ZVqD12uQkgU2Iet6DcQQUModSNH0cxsS5xJZsvWpJCu0Oin4zgbMKnYHuQlQ5A
-         4wgG30AAvihq20Dq06/bAdkGgzJZdO6OYF7WBel/T0aVdAHp0iNjf/oc8UVXTJvjuEvK
-         nkKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMKWb9TmiOEg2BsPuYxEkt9E8kTg09uZwwfHkiT/7JCzwZusesQpI1eUHKkHBZUPFz6392mJbT+Jqna+lPHl71@vger.kernel.org, AJvYcCXeF0aX3wNT/tnLn1duLGinCamgC7yAFkGi/TmmNhc/7GrYHsfAKoVD6aSAs0G1ji+k0lFcc5KWxqN2egM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtTHET5zFbjLs025C8JWeKa9Mwm3xKPV4rM5NUoBeJ08tqGQCZ
-	eD1yjl9+lrkC6ZRWD5k9ozD9dyolrT6LaR+hnH14wgOuo/uqDy8AVjeTAg==
-X-Gm-Gg: ASbGncup8OvcE8sFqPPM6zl2URayW+lwfI4gsPjmN2Ofi9atKjXokk4jsyES+DOH2EB
-	WcCFvIrl4o0H5Foqupft1oqInpxPtz7ix1+XHrHmsy171IEgvEwynxuRKSAzJUE5IRioCP6cTXH
-	Rf7eA65tEDHAV4C29APFadNQSKQmJvohwxBQ3EhYe2yxthAmXyiMwy6uDb51xBL+vg386PvP/ma
-	nOoUTLgNwpRVN8Tq9u+6Xy901OclkIjJHv66Lr0t45PYc4UwJdLce+eRXtQ2QsHfGeAVnUaqz1w
-	h5g=
-X-Google-Smtp-Source: AGHT+IF1XvdKZE+Lf6LpH7ElP1PAKYpJv6ya+RmcbgwMyuj9BYlOc1/lAv3dkqRnu0MNk71XAgMsIQ==
-X-Received: by 2002:a05:6402:26c1:b0:5d0:e3fa:17dd with SMTP id 4fb4d7f45d1cf-5d10cb800e1mr7094272a12.22.1733330459081;
-        Wed, 04 Dec 2024 08:40:59 -0800 (PST)
-Received: from localhost (fwdproxy-lla-126.fbsv.net. [2a03:2880:30ff:7e::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0c7a2a0c6sm5411002a12.26.2024.12.04.08.40.58
+        d=1e100.net; s=20230601; t=1733331019; x=1733935819;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AmuAP6kL2PgtMtMb788SmKyfSh/8+gR/zM5UDhGblwo=;
+        b=cmTDJTWhl2U2uos1u92LWF4qdq7CgPvoPSMShmEt4spaCn7I+ctcle0EN/ewaeXdQk
+         ICsk4UcPPAUP0GprqujyABchbChdoR7UbbDx4TYitAGssyg0Y7l/r1qUSj57dMKpjHAa
+         oxTR/B7fBZa44LvlGy+IBeFceGwu6LXjdI0JyWnIf5MR8pW5Bo2rX5AP9SqK3u+3eyet
+         YlzcHNm1XsKzNUNbEHLQnHv1m9ypvKRC9j3IS0OgdUOfBey7YxldzEI503hYpJwrm5cV
+         OdQeg01nkDxwjDS620zW8ZBViICQt43p52N7sRWPSWlI7QvbY8cG+GXAivDZjhv6QuEv
+         diWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlddXdKDqzx2KuxIX+1L8Cmiq7GD5DR03nG7SXFYa+u4xtuIllWms8YXuU1i5EIrJlxcqEPriInFhZrZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMdxvObALX4vBhOsyyh2KHUblWl9ig6+lwR9bQ7NhBhbATAF8d
+	Zq88jMoNjhTk4E7cYPyHwbViBNdz6/A8P1NTu+x+y3jPt07tGmhsHUiGgT3ReNQ=
+X-Gm-Gg: ASbGncuxLCPZukZ123rvwpVMF7pbJ74Vwd8C0ld8NZRyZOw2bzlsLUPuwCsggGFxu7e
+	uu+UXLuWiuWyb71w4Y4gUI0BwqFmh2kW3clP8jr3M8I1huZsikMlkzisEQeX6rgbPHqFoDAbRdU
+	M98JKMs6ni3/T0eYqAwe+OsRDw9hxg46hbUTuaAUGLT6U/tFVRGveZ9PSALhfWn88k53BWtz06b
+	vD2erRvc1Hlb9cUoRvAxjVw+UeCcckn8bp9sfw+5A5nQGkS3wC2FFyDMNIUKCnzXG/vIDkUKQ==
+X-Google-Smtp-Source: AGHT+IHqX/+Zty5Ma/Nlh51kwKlztyLyx7whsZ+rNdU0Yc8VNs6fPYsusfPcia/ZhLlLrEDpUtW9gA==
+X-Received: by 2002:a05:6402:34d5:b0:5d0:e9b7:170c with SMTP id 4fb4d7f45d1cf-5d10cb5c39fmr7475475a12.18.1733331018931;
+        Wed, 04 Dec 2024 08:50:18 -0800 (PST)
+Received: from localhost (hdeb.n1.ips.mtn.co.ug. [41.210.141.235])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63a2sm749122666b.113.2024.12.04.08.50.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:40:58 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 04 Dec 2024 08:40:43 -0800
-Subject: [PATCH net-next 2/4] netconsole: selftest: Split the helpers from
- the selftest
+        Wed, 04 Dec 2024 08:50:18 -0800 (PST)
+Date: Wed, 4 Dec 2024 19:50:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: David Laight <David.Laight@aculab.com>, Tejun Heo <tj@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	linux-block <linux-block@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: s390: block/blk-iocost.c:1101:11: error: call to
+ '__compiletime_assert_557' declared with 'error' attribute: clamp() low
+ limit 1 greater than high limit active
+Message-ID: <c795c090-430a-45a6-88b2-94033d50dea2@stanley.mountain>
+References: <CA+G9fYsD7mw13wredcZn0L-KBA3yeoVSTuxnss-AEWMN3ha0cA@mail.gmail.com>
+ <5ffa868f-cbf0-42ae-ae10-5c39b0de05e7@stanley.mountain>
+ <7920126775c74fa5915afbeedcfe2058@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-netcons_overflow_test-v1-2-a85a8d0ace21@debian.org>
-References: <20241204-netcons_overflow_test-v1-0-a85a8d0ace21@debian.org>
-In-Reply-To: <20241204-netcons_overflow_test-v1-0-a85a8d0ace21@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15025; i=leitao@debian.org;
- h=from:subject:message-id; bh=G+FEqjsvSdAMfldd5nI9dWrnpQcLblC/mjCfA25OZkQ=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnUIYVb7KdwjKK47u5OEDr6GHsJKdt9JdrHO/S+
- c259S6rlRqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ1CGFQAKCRA1o5Of/Hh3
- bR64D/wMd4nODf3XQuYzhcS/zbYYtspIoXNfXh25aq7XpHCtMBtwsx44DMwmtFft7eJf9GnNfuE
- nOy9ruQ+0UFHK79n7xCcWhwHnFcCur+DktdeaqyYYn1rFIKRh7PWD+NnGicCV+fKFftl5OHuYOA
- YkBGYtnOVO6DNzzzDPvXpH3ZHNMg59uy2RrKEDoXxfFvXunN0MJDv5CCPJtzfrTdVY6Iy9gFVSa
- iD4Gj2WpidU5Euxon3djyGx8oPX3hP0zHKtAJdk0FMVFOAJMHcTjC8+Vrar8yYDIcXXtQ2uUO3i
- GBHg/8xLVsjtC/lSzdXofNbnXPN5BphX8S4d43vHIFoAcVxTh4Bs8jZ5RjuMvHfXF9KMQfOVGoO
- wpug67CJScOzDHSuSZMA7TxO+mrc53ueoLc5Y7VtbAEKroPaIgcGdZTNPUkv20ycKfgZvIh7TbZ
- fZf6Sv4Nu3SgMgVZf44DSLCyQN2o6iqaOpOFf/WpF1V63UvWmQYSUddXRQYCWfdPx6J1QEWmzUe
- 4pjX4nIZOUsoIxsGE2lQPsvOxEPNewslEwzTo6A2NBhEf+858RsZd/jcRt6NtlG1NSLOglxSF62
- BnNN2K8086l35M5MWZGEYwxpKOGXuadgMZ3sa4Vs1QEn2B5eSL3XRhgizWX1KnWXO2dNC59VQ2J
- DYU30CKCwz5ulHg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7920126775c74fa5915afbeedcfe2058@AcuMS.aculab.com>
 
-Split helper functions from the netconsole basic test into a separate
-library file to enable reuse across different netconsole tests. This
-change only moves the existing helper functions to lib/sh/lib_netcons.sh
-while preserving the same test functionality.
+Tejun probably reads everything to linux-block, but let's CC him explicitly.
 
-The helpers provide common functions for:
-- Setting up network namespaces and interfaces
-- Managing netconsole dynamic targets
-- Setting user data
-- Handling test dependencies
-- Cleanup operations
+block/blk-iocost.c
+  2222                          TRACE_IOCG_PATH(iocg_idle, iocg, now,
+  2223                                          atomic64_read(&iocg->active_period),
+  2224                                          atomic64_read(&ioc->cur_period), vtime);
+  2225                          __propagate_weights(iocg, 0, 0, false, now);
+                                                          ^
+Why is "active" zero?  __propagate_weights() does a clamp() to 1 as minimum and
+we've added new build time asserts so this breaks the build.
 
-Do not make any change in the code, other than the mechanical
-separation.
+  2226                          list_del_init(&iocg->active_list);
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- MAINTAINERS                                        |   1 +
- .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 225 +++++++++++++++++++++
- .../testing/selftests/drivers/net/netcons_basic.sh | 218 +-------------------
- 3 files changed, 227 insertions(+), 217 deletions(-)
+The other way to solve this would be to something stupid like:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0456a33ef65792bacb5d305a6384d245844fb743..8af5c9a28e68c4b6a785e2e6b82db20b3cf59822 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16091,6 +16091,7 @@ M:	Breno Leitao <leitao@debian.org>
- S:	Maintained
- F:	Documentation/networking/netconsole.rst
- F:	drivers/net/netconsole.c
-+F:	tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
- F:	tools/testing/selftests/drivers/net/netcons_basic.sh
- 
- NETDEVSIM
-diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-new file mode 100644
-index 0000000000000000000000000000000000000000..fdd45a3468f17449eeb66d9a808b7a3b2107e47c
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-@@ -0,0 +1,225 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# This file contains functions and helpers to support the netconsole
-+# selftests
-+#
-+# Author: Breno Leitao <leitao@debian.org>
-+
-+set -euo pipefail
-+
-+LIBDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-+
-+SRCIF="" # to be populated later
-+SRCIP=192.0.2.1
-+DSTIF="" # to be populated later
-+DSTIP=192.0.2.2
-+
-+PORT="6666"
-+MSG="netconsole selftest"
-+USERDATA_KEY="key"
-+USERDATA_VALUE="value"
-+TARGET=$(mktemp -u netcons_XXXXX)
-+DEFAULT_PRINTK_VALUES=$(cat /proc/sys/kernel/printk)
-+NETCONS_CONFIGFS="/sys/kernel/config/netconsole"
-+NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
-+KEY_PATH="${NETCONS_PATH}/userdata/${USERDATA_KEY}"
-+# NAMESPACE will be populated by setup_ns with a random value
-+NAMESPACE=""
-+
-+# IDs for netdevsim
-+NSIM_DEV_1_ID=$((256 + RANDOM % 256))
-+NSIM_DEV_2_ID=$((512 + RANDOM % 256))
-+NSIM_DEV_SYS_NEW="/sys/bus/netdevsim/new_device"
-+
-+# Used to create and delete namespaces
-+source "${LIBDIR}"/../../../../net/lib.sh
-+source "${LIBDIR}"/../../../../net/net_helper.sh
-+
-+# Create netdevsim interfaces
-+create_ifaces() {
-+
-+	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_NEW"
-+	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_NEW"
-+	udevadm settle 2> /dev/null || true
-+
-+	local NSIM1=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_1_ID"
-+	local NSIM2=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_2_ID"
-+
-+	# These are global variables
-+	SRCIF=$(find "$NSIM1"/net -maxdepth 1 -type d ! \
-+		-path "$NSIM1"/net -exec basename {} \;)
-+	DSTIF=$(find "$NSIM2"/net -maxdepth 1 -type d ! \
-+		-path "$NSIM2"/net -exec basename {} \;)
-+}
-+
-+link_ifaces() {
-+	local NSIM_DEV_SYS_LINK="/sys/bus/netdevsim/link_device"
-+	local SRCIF_IFIDX=$(cat /sys/class/net/"$SRCIF"/ifindex)
-+	local DSTIF_IFIDX=$(cat /sys/class/net/"$DSTIF"/ifindex)
-+
-+	exec {NAMESPACE_FD}</var/run/netns/"${NAMESPACE}"
-+	exec {INITNS_FD}</proc/self/ns/net
-+
-+	# Bind the dst interface to namespace
-+	ip link set "${DSTIF}" netns "${NAMESPACE}"
-+
-+	# Linking one device to the other one (on the other namespace}
-+	if ! echo "${INITNS_FD}:$SRCIF_IFIDX $NAMESPACE_FD:$DSTIF_IFIDX"  > $NSIM_DEV_SYS_LINK
-+	then
-+		echo "linking netdevsim1 with netdevsim2 should succeed"
-+		cleanup
-+		exit "${ksft_skip}"
-+	fi
-+}
-+
-+function configure_ip() {
-+	# Configure the IPs for both interfaces
-+	ip netns exec "${NAMESPACE}" ip addr add "${DSTIP}"/24 dev "${DSTIF}"
-+	ip netns exec "${NAMESPACE}" ip link set "${DSTIF}" up
-+
-+	ip addr add "${SRCIP}"/24 dev "${SRCIF}"
-+	ip link set "${SRCIF}" up
-+}
-+
-+function set_network() {
-+	# setup_ns function is coming from lib.sh
-+	setup_ns NAMESPACE
-+
-+	# Create both interfaces, and assign the destination to a different
-+	# namespace
-+	create_ifaces
-+
-+	# Link both interfaces back to back
-+	link_ifaces
-+
-+	configure_ip
-+}
-+
-+function create_dynamic_target() {
-+	DSTMAC=$(ip netns exec "${NAMESPACE}" \
-+		 ip link show "${DSTIF}" | awk '/ether/ {print $2}')
-+
-+	# Create a dynamic target
-+	mkdir "${NETCONS_PATH}"
-+
-+	echo "${DSTIP}" > "${NETCONS_PATH}"/remote_ip
-+	echo "${SRCIP}" > "${NETCONS_PATH}"/local_ip
-+	echo "${DSTMAC}" > "${NETCONS_PATH}"/remote_mac
-+	echo "${SRCIF}" > "${NETCONS_PATH}"/dev_name
-+
-+	echo 1 > "${NETCONS_PATH}"/enabled
-+}
-+
-+function cleanup() {
-+	local NSIM_DEV_SYS_DEL="/sys/bus/netdevsim/del_device"
-+
-+	# delete netconsole dynamic reconfiguration
-+	echo 0 > "${NETCONS_PATH}"/enabled
-+	# Remove key
-+	rmdir "${KEY_PATH}"
-+	# Remove the configfs entry
-+	rmdir "${NETCONS_PATH}"
-+
-+	# Delete netdevsim devices
-+	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_DEL"
-+	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_DEL"
-+
-+	# this is coming from lib.sh
-+	cleanup_all_ns
-+
-+	# Restoring printk configurations
-+	echo "${DEFAULT_PRINTK_VALUES}" > /proc/sys/kernel/printk
-+}
-+
-+function set_user_data() {
-+	if [[ ! -d "${NETCONS_PATH}""/userdata" ]]
-+	then
-+		echo "Userdata path not available in ${NETCONS_PATH}/userdata"
-+		exit "${ksft_skip}"
-+	fi
-+
-+	mkdir -p "${KEY_PATH}"
-+	VALUE_PATH="${KEY_PATH}""/value"
-+	echo "${USERDATA_VALUE}" > "${VALUE_PATH}"
-+}
-+
-+function listen_port_and_save_to() {
-+	local OUTPUT=${1}
-+	# Just wait for 2 seconds
-+	timeout 2 ip netns exec "${NAMESPACE}" \
-+		socat UDP-LISTEN:"${PORT}",fork "${OUTPUT}"
-+}
-+
-+function validate_result() {
-+	local TMPFILENAME="$1"
-+
-+	# TMPFILENAME will contain something like:
-+	# 6.11.1-0_fbk0_rc13_509_g30d75cea12f7,13,1822,115075213798,-;netconsole selftest: netcons_gtJHM
-+	#  key=value
-+
-+	# Check if the file exists
-+	if [ ! -f "$TMPFILENAME" ]; then
-+		echo "FAIL: File was not generated." >&2
-+		exit "${ksft_fail}"
-+	fi
-+
-+	if ! grep -q "${MSG}" "${TMPFILENAME}"; then
-+		echo "FAIL: ${MSG} not found in ${TMPFILENAME}" >&2
-+		cat "${TMPFILENAME}" >&2
-+		exit "${ksft_fail}"
-+	fi
-+
-+	if ! grep -q "${USERDATA_KEY}=${USERDATA_VALUE}" "${TMPFILENAME}"; then
-+		echo "FAIL: ${USERDATA_KEY}=${USERDATA_VALUE} not found in ${TMPFILENAME}" >&2
-+		cat "${TMPFILENAME}" >&2
-+		exit "${ksft_fail}"
-+	fi
-+
-+	# Delete the file once it is validated, otherwise keep it
-+	# for debugging purposes
-+	rm "${TMPFILENAME}"
-+	exit "${ksft_pass}"
-+}
-+
-+function check_for_dependencies() {
-+	if [ "$(id -u)" -ne 0 ]; then
-+		echo "This test must be run as root" >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	if ! which socat > /dev/null ; then
-+		echo "SKIP: socat(1) is not available" >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	if ! which ip > /dev/null ; then
-+		echo "SKIP: ip(1) is not available" >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	if ! which udevadm > /dev/null ; then
-+		echo "SKIP: udevadm(1) is not available" >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	if [ ! -f "${NSIM_DEV_SYS_NEW}" ]; then
-+		echo "SKIP: file ${NSIM_DEV_SYS_NEW} does not exist. Check if CONFIG_NETDEVSIM is enabled" >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	if [ ! -d "${NETCONS_CONFIGFS}" ]; then
-+		echo "SKIP: directory ${NETCONS_CONFIGFS} does not exist. Check if NETCONSOLE_DYNAMIC is enabled" >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	if ip link show "${DSTIF}" 2> /dev/null; then
-+		echo "SKIP: interface ${DSTIF} exists in the system. Not overwriting it." >&2
-+		exit "${ksft_skip}"
-+	fi
-+
-+	if ip addr list | grep -E "inet.*(${SRCIP}|${DSTIP})" 2> /dev/null; then
-+		echo "SKIP: IPs already in use. Skipping it" >&2
-+		exit "${ksft_skip}"
-+	fi
-+}
-diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
-index b175f4d966e5056ddb62e335f212c03e55f50fb0..fe765da498e845d7be1fd09551363224d40ded65 100755
---- a/tools/testing/selftests/drivers/net/netcons_basic.sh
-+++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
-@@ -18,224 +18,8 @@ set -euo pipefail
- 
- SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
- 
--# Simple script to test dynamic targets in netconsole
--SRCIF="" # to be populated later
--SRCIP=192.0.2.1
--DSTIF="" # to be populated later
--DSTIP=192.0.2.2
-+source "${SCRIPTDIR}"/lib/sh/lib_netcons.sh
- 
--PORT="6666"
--MSG="netconsole selftest"
--USERDATA_KEY="key"
--USERDATA_VALUE="value"
--TARGET=$(mktemp -u netcons_XXXXX)
--DEFAULT_PRINTK_VALUES=$(cat /proc/sys/kernel/printk)
--NETCONS_CONFIGFS="/sys/kernel/config/netconsole"
--NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
--KEY_PATH="${NETCONS_PATH}/userdata/${USERDATA_KEY}"
--# NAMESPACE will be populated by setup_ns with a random value
--NAMESPACE=""
--
--# IDs for netdevsim
--NSIM_DEV_1_ID=$((256 + RANDOM % 256))
--NSIM_DEV_2_ID=$((512 + RANDOM % 256))
--NSIM_DEV_SYS_NEW="/sys/bus/netdevsim/new_device"
--
--# Used to create and delete namespaces
--source "${SCRIPTDIR}"/../../net/lib.sh
--source "${SCRIPTDIR}"/../../net/net_helper.sh
--
--# Create netdevsim interfaces
--create_ifaces() {
--
--	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_NEW"
--	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_NEW"
--	udevadm settle 2> /dev/null || true
--
--	local NSIM1=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_1_ID"
--	local NSIM2=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_2_ID"
--
--	# These are global variables
--	SRCIF=$(find "$NSIM1"/net -maxdepth 1 -type d ! \
--		-path "$NSIM1"/net -exec basename {} \;)
--	DSTIF=$(find "$NSIM2"/net -maxdepth 1 -type d ! \
--		-path "$NSIM2"/net -exec basename {} \;)
--}
--
--link_ifaces() {
--	local NSIM_DEV_SYS_LINK="/sys/bus/netdevsim/link_device"
--	local SRCIF_IFIDX=$(cat /sys/class/net/"$SRCIF"/ifindex)
--	local DSTIF_IFIDX=$(cat /sys/class/net/"$DSTIF"/ifindex)
--
--	exec {NAMESPACE_FD}</var/run/netns/"${NAMESPACE}"
--	exec {INITNS_FD}</proc/self/ns/net
--
--	# Bind the dst interface to namespace
--	ip link set "${DSTIF}" netns "${NAMESPACE}"
--
--	# Linking one device to the other one (on the other namespace}
--	if ! echo "${INITNS_FD}:$SRCIF_IFIDX $NAMESPACE_FD:$DSTIF_IFIDX"  > $NSIM_DEV_SYS_LINK
--	then
--		echo "linking netdevsim1 with netdevsim2 should succeed"
--		cleanup
--		exit "${ksft_skip}"
--	fi
--}
--
--function configure_ip() {
--	# Configure the IPs for both interfaces
--	ip netns exec "${NAMESPACE}" ip addr add "${DSTIP}"/24 dev "${DSTIF}"
--	ip netns exec "${NAMESPACE}" ip link set "${DSTIF}" up
--
--	ip addr add "${SRCIP}"/24 dev "${SRCIF}"
--	ip link set "${SRCIF}" up
--}
--
--function set_network() {
--	# setup_ns function is coming from lib.sh
--	setup_ns NAMESPACE
--
--	# Create both interfaces, and assign the destination to a different
--	# namespace
--	create_ifaces
--
--	# Link both interfaces back to back
--	link_ifaces
--
--	configure_ip
--}
--
--function create_dynamic_target() {
--	DSTMAC=$(ip netns exec "${NAMESPACE}" \
--		 ip link show "${DSTIF}" | awk '/ether/ {print $2}')
--
--	# Create a dynamic target
--	mkdir "${NETCONS_PATH}"
--
--	echo "${DSTIP}" > "${NETCONS_PATH}"/remote_ip
--	echo "${SRCIP}" > "${NETCONS_PATH}"/local_ip
--	echo "${DSTMAC}" > "${NETCONS_PATH}"/remote_mac
--	echo "${SRCIF}" > "${NETCONS_PATH}"/dev_name
--
--	echo 1 > "${NETCONS_PATH}"/enabled
--}
--
--function cleanup() {
--	local NSIM_DEV_SYS_DEL="/sys/bus/netdevsim/del_device"
--
--	# delete netconsole dynamic reconfiguration
--	echo 0 > "${NETCONS_PATH}"/enabled
--	# Remove key
--	rmdir "${KEY_PATH}"
--	# Remove the configfs entry
--	rmdir "${NETCONS_PATH}"
--
--	# Delete netdevsim devices
--	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_DEL"
--	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_DEL"
--
--	# this is coming from lib.sh
--	cleanup_all_ns
--
--	# Restoring printk configurations
--	echo "${DEFAULT_PRINTK_VALUES}" > /proc/sys/kernel/printk
--}
--
--function set_user_data() {
--	if [[ ! -d "${NETCONS_PATH}""/userdata" ]]
--	then
--		echo "Userdata path not available in ${NETCONS_PATH}/userdata"
--		exit "${ksft_skip}"
--	fi
--
--	mkdir -p "${KEY_PATH}"
--	VALUE_PATH="${KEY_PATH}""/value"
--	echo "${USERDATA_VALUE}" > "${VALUE_PATH}"
--}
--
--function listen_port_and_save_to() {
--	local OUTPUT=${1}
--	# Just wait for 2 seconds
--	timeout 2 ip netns exec "${NAMESPACE}" \
--		socat UDP-LISTEN:"${PORT}",fork "${OUTPUT}"
--}
--
--function validate_result() {
--	local TMPFILENAME="$1"
--
--	# TMPFILENAME will contain something like:
--	# 6.11.1-0_fbk0_rc13_509_g30d75cea12f7,13,1822,115075213798,-;netconsole selftest: netcons_gtJHM
--	#  key=value
--
--	# Check if the file exists
--	if [ ! -f "$TMPFILENAME" ]; then
--		echo "FAIL: File was not generated." >&2
--		exit "${ksft_fail}"
--	fi
--
--	if ! grep -q "${MSG}" "${TMPFILENAME}"; then
--		echo "FAIL: ${MSG} not found in ${TMPFILENAME}" >&2
--		cat "${TMPFILENAME}" >&2
--		exit "${ksft_fail}"
--	fi
--
--	if ! grep -q "${USERDATA_KEY}=${USERDATA_VALUE}" "${TMPFILENAME}"; then
--		echo "FAIL: ${USERDATA_KEY}=${USERDATA_VALUE} not found in ${TMPFILENAME}" >&2
--		cat "${TMPFILENAME}" >&2
--		exit "${ksft_fail}"
--	fi
--
--	# Delete the file once it is validated, otherwise keep it
--	# for debugging purposes
--	rm "${TMPFILENAME}"
--	exit "${ksft_pass}"
--}
--
--function check_for_dependencies() {
--	if [ "$(id -u)" -ne 0 ]; then
--		echo "This test must be run as root" >&2
--		exit "${ksft_skip}"
--	fi
--
--	if ! which socat > /dev/null ; then
--		echo "SKIP: socat(1) is not available" >&2
--		exit "${ksft_skip}"
--	fi
--
--	if ! which ip > /dev/null ; then
--		echo "SKIP: ip(1) is not available" >&2
--		exit "${ksft_skip}"
--	fi
--
--	if ! which udevadm > /dev/null ; then
--		echo "SKIP: udevadm(1) is not available" >&2
--		exit "${ksft_skip}"
--	fi
--
--	if [ ! -f "${NSIM_DEV_SYS_NEW}" ]; then
--		echo "SKIP: file ${NSIM_DEV_SYS_NEW} does not exist. Check if CONFIG_NETDEVSIM is enabled" >&2
--		exit "${ksft_skip}"
--	fi
--
--	if [ ! -d "${NETCONS_CONFIGFS}" ]; then
--		echo "SKIP: directory ${NETCONS_CONFIGFS} does not exist. Check if NETCONSOLE_DYNAMIC is enabled" >&2
--		exit "${ksft_skip}"
--	fi
--
--	if ip link show "${DSTIF}" 2> /dev/null; then
--		echo "SKIP: interface ${DSTIF} exists in the system. Not overwriting it." >&2
--		exit "${ksft_skip}"
--	fi
--
--	if ip addr list | grep -E "inet.*(${SRCIP}|${DSTIP})" 2> /dev/null; then
--		echo "SKIP: IPs already in use. Skipping it" >&2
--		exit "${ksft_skip}"
--	fi
--}
--
--# ========== #
--# Start here #
--# ========== #
- modprobe netdevsim 2> /dev/null || true
- modprobe netconsole 2> /dev/null || true
- 
+diff --git a/block/blk-iocost.c b/block/blk-iocost.c
+index 384aa15e8260..551edd2f661f 100644
+--- a/block/blk-iocost.c
++++ b/block/blk-iocost.c
+@@ -1094,7 +1094,7 @@ static void __propagate_weights(struct ioc_gq *iocg, u32 active, u32 inuse,
+         * @active. An active internal node's inuse is solely determined by the
+         * inuse to active ratio of its children regardless of @inuse.
+         */
+-       if (list_empty(&iocg->active_list) && iocg->child_active_sum) {
++       if ((list_empty(&iocg->active_list) && iocg->child_active_sum) || active == 0) {
+                inuse = DIV64_U64_ROUND_UP(active * iocg->child_inuse_sum,
+                                           iocg->child_active_sum);
+        } else {
 
--- 
-2.43.5
+But that seems really stupid.
 
+regards,
+dan carpenter
+
+On Wed, Dec 04, 2024 at 04:11:33PM +0000, David Laight wrote:
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> > Sent: 04 December 2024 14:39
+> > 
+> > Let's add David to the Cc list because he's the expert on clamp().
+> 
+> The traceback info misses the important point.
+> I can't see the 'inlined from line 2225' message.
+> 
+> We have (line 1084):
+> static void __propagate_weights(struct ioc_gq *iocg, u32 active, u32 inuse,
+> 				bool save, struct ioc_now *now)
+> followed by:
+> 		inuse = clamp_t(u32, inuse, 1, active);
+> 
+> But line 2225 has:
+> 	__propagate_weights(iocg, 0, 0, false, now);
+> 
+> With aggressive inlining the compiler sees 'active == 0'
+> and the lo > hi test correctly triggers.
+> 
+> The previous version only verified 'lo <= hi' if it was a constant
+> integer expression - which it isn't here.
+> 
+> No idea what the code is trying to do, nor what value it expects
+> clamp(val, 1, 0) to generate - likely to be 0 or 1 depending on
+> the order of the comparisons.
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
