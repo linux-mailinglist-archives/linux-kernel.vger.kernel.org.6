@@ -1,168 +1,126 @@
-Return-Path: <linux-kernel+bounces-431392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B698D9E3CB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:29:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E879E3D8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:01:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466FD16818E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9DC8B2F5E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A594209F51;
-	Wed,  4 Dec 2024 14:29:26 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA02203704;
+	Wed,  4 Dec 2024 14:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8/IVmwW"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E83203704
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB7819D886
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733322566; cv=none; b=liptCIZCUBACW4PWJZM3YsCrrP80fM6ru1YKw9ADAoVpn5ozbXFzGdBEaZWOksKajUGwkQW/eGyWfGzorlzwXKOMM6VCQAfirh68pcshXlTMM+HhQJW0fUQ0vKA+fXJ+4WhdNtpHs6gMroSCE7OgW1HcQ7gCzFwB0deUeao8R/Y=
+	t=1733322613; cv=none; b=kHErmEFGhEZtlze/BYZokuBFKaU0JrnCqciX6NOd5ssXMmAGiqG7AmdFvrR7BESp4SShkBVqQFw+hQFDESS2dd7fITThKE2ybVyA60B/JZLkZOqOcG+xJg2LR0VcYtp9E6haOd4tSsmHep3CUzHUTq3bupuquHN+TPOEiCQOFfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733322566; c=relaxed/simple;
-	bh=LBwJ6bbAn80WcRPQJQHQ6y5sHV7eCBHAdt1sUqOU46E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KUop+oRaOH+0wdZvmlF7TZS1cA2Z63FM1E3DBd9rQ6z9JZXmUvNG+KdXCepb5A9/0G72vY2XI6P9YFVQaA71I3WC3u3FB3gUQwAzM6leoMItgFdXd9Ljk7kM0LOiwQaM+HNPClEQh6gfZZjW5QjPQaIlq+9GK3GGMeDdQ0erBK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a794990ef3so9102865ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:29:24 -0800 (PST)
+	s=arc-20240116; t=1733322613; c=relaxed/simple;
+	bh=cB7fVxOQPIehFKip7mjs5gj6FEEO8SQpSSyrgPHGkKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sNHBnWgt7Y+Bkvy3BGbQEz6S+JmAR5QQZgPQDlwK+eJvDL22Zn/F4Wc1P5a+O0gsx/DN0lPQHJwejgA2t878xqZGDeFSZ9wIKvqgw0Qbe7SsOXX/v66N7UL8Hrci/UE/LA8WiNZe1kkJiaI3aLsIqv3mNrJT5Sq/DjpoVBt8SeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8/IVmwW; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-46677ef6910so45472211cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:30:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733322611; x=1733927411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l4ORUpe0pVZmQmvkw1nu+aTOjOaP1O5zfh0k3pgSPzo=;
+        b=e8/IVmwW8BWoItz4/rBatFAEqlF9xYae4souYNr0bqruN+jeT6jKXF4zmOvPdKRNHh
+         T+IR0wdUdKC4l7dCHOEcpYgaAjgmRaIb6nrM46KpQLqt5FAzuKK9HcfXp89CEOTmKYoQ
+         QATSnPvfdW7fqKOSVIiFeYnZDRtqqbeBKmqIryZwdDKvE8YFsH7ND9dwpKfaw5wjlsY1
+         wT+CWOVHoQQ+aeLQlbAJ+/sWX3QLXB1ocRrEngyuwnEaqwZTIjOw8aBgQQJB8BHJBVf1
+         mEmJheDRsN6b82qtl4dRa+Mtt2afDoat8ePZEp68Y+Ukk4gpy8OD2z/OzaNH1QRxteXR
+         dJng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733322563; x=1733927363;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lps44A56g0pBgvkO1wGgc43RH5tdrqdgb7gfd2Q29F0=;
-        b=Iv2mhMKxKy8UGzw5HUMVXvRF6yxrMXfGhB3Eq5eqrcFEdQjx5OOnbmi5m9Xum3+TaW
-         O/LCibJ/VJQbqyBOLc+eBye4uAUjrpCIOCZXCmchyz+xqch+mmCthWG4XX+NanF3L1w+
-         qAPnCtqGmFJmduhVI2N/DuW3NkUvKTSo2Wj8OP2YVFEyxqQ5m7D9JgANB60mOBzJcyZI
-         zdT2D79uoiUe8KHdX+iUBfiYOD54Tp8CAs1AOpS6vnpYRP4ivFgl0zxqlqV8uvTED3oe
-         Bnz9wcSqDrM7srL5wSsgUXvD3t7D6xrC31jAKigMUtfEo3JyCQzZD2EsAbMeaP0R7Qim
-         pYIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwk+UbROfJyO10uVQkqNfn2TiBHakL+DKqUUzFnHixyHBMi9OnlfeRxdkK6Q67Qo5kXbMuin9ricA4FM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyETU8yTa6WuI5XW0T1+6h8qJUQhHtsfrJY//PvTHrlSKeM5Kl8
-	c1YoTf8WUKmo+PHpUf7M7fDnCyScmmKBRWMH6iwAWatMITPtbT0mTJVhMRKIApJC/sjReN34GDx
-	7do4tXh1Z7J1fa3/FYTEMn1AxsL/E/3hxbTTGfcu9FdCegw8Buhm92UQ=
-X-Google-Smtp-Source: AGHT+IFgTcMnqnLEchm6AYwwlMmWF4Isq8kow0RtCBzKXE7/a4W57FGYAcZ5duqwr3yHAHmI484RZkACbVkF70/zKndsj9DHWhvU
+        d=1e100.net; s=20230601; t=1733322611; x=1733927411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l4ORUpe0pVZmQmvkw1nu+aTOjOaP1O5zfh0k3pgSPzo=;
+        b=gjU6CPzbJp50/7yOqB7K0gz48Khom+++dXiVWcG/Y8AzutHDlJlQawkSmQfO8mIX+1
+         KMBS7rJqTFP2hrbmD+rDjkkFJ7+LuDR9+JvmbyHqM9zNQ3gsw8Mu2HOxP/imoWqibbeP
+         +jS/5Xgkax5LKjrH+gz3nAJzf0T0/w2EfDVBGvGvdddnSZk8+S4jGLgfEZxax7nNDdLn
+         OvpkSccJG4cW7aYW76Ju9DNDq6iL+fIujNv34DZnOZtFnkJlAxqIGsbHuxomZD9beuPY
+         9hxTB5Fkxij7Rxulbyy1hp93jZq5y7Pk0R3wYPKsjcfB2WVn5OApCCNnJ0/FxikdnwpP
+         Th+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWUTtw04qmbRF2BjrmSiDVBsQcoEIJPp++c2zqpOV9eF14wYAEfmJM5PLLokPlRxIMnPZj7bWxBNP9W6Hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO3tJdee8XIVJ2Ew9YGfuyP76ymUazruD0DVRo9+UcEtQThrbe
+	f53LnF83o7+8evJcB6W62AbuxD03bcTMqkkySIi5vpNJutbhCcc+lKzS6PvM3JWS5QUnGCf2mii
+	82If/yRhi5IuNfSqLJHj5o6AgT5UECsplLZQ=
+X-Gm-Gg: ASbGncvsT1GpFgbx2FAq1TErXvoINW54SX4bxgD+s/kwD1lfqz2TfXV45HfuyInS4Ds
+	i7U3nn9dzcsMH995Graucl2FP5gbdSIg=
+X-Google-Smtp-Source: AGHT+IFz9AqjuEgEtpGhSGQOZnrxRUdrncSun9IdkUiaSxXNrzlUhCJKBQf8IWnzX9RSbBxpI0ATkHRWJCCRT5JjEU8=
+X-Received: by 2002:a05:622a:1801:b0:463:60a9:74c0 with SMTP id
+ d75a77b69052e-4670c09df44mr91467951cf.14.1733322611045; Wed, 04 Dec 2024
+ 06:30:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda4:0:b0:3a7:ca83:3f9 with SMTP id
- e9e14a558f8ab-3a7f9c1b5ddmr68369045ab.4.1733322563630; Wed, 04 Dec 2024
- 06:29:23 -0800 (PST)
-Date: Wed, 04 Dec 2024 06:29:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67506743.050a0220.17bd51.006e.GAE@google.com>
-Subject: [syzbot] [net?] BUG: unable to handle kernel paging request in
- dst_dev_put (2)
-From: syzbot <syzbot+9911f8283beca191268b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20241202194107.105119-1-afd@ti.com> <20241202194107.105119-5-afd@ti.com>
+In-Reply-To: <20241202194107.105119-5-afd@ti.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 4 Dec 2024 17:30:00 +0300
+Message-ID: <CABjd4YxYjX2bHSBMmPxH-5muQL5TG_ATS8B0+vCdNKJARke6BQ@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] ARM: vt8500: Switch to new sys-off handler API
+To: Andrew Davis <afd@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Andre Przywara <andre.przywara@arm.com>, 
+	Russell King <linux@armlinux.org.uk>, Daniel Mack <daniel@zonque.org>, 
+	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Stefano Stabellini <sstabellini@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	xen-devel@lists.xenproject.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Andrew,
 
-syzbot found the following issue on:
+On Mon, Dec 2, 2024 at 10:41=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
+>
+> Kernel now supports chained power-off handlers. Use
+> register_platform_power_off() that registers a platform level power-off
+> handler. Legacy pm_power_off() will be removed once all drivers and archs
+> are converted to the new sys-off API.
+>
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
+>  arch/arm/mach-vt8500/vt8500.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-vt8500/vt8500.c b/arch/arm/mach-vt8500/vt8500.=
+c
+> index 0ab40087ae1cc..1d294255d7083 100644
+> --- a/arch/arm/mach-vt8500/vt8500.c
+> +++ b/arch/arm/mach-vt8500/vt8500.c
+> @@ -141,7 +141,7 @@ static void __init vt8500_init(void)
+>                         pr_err("%s:ioremap(power_off) failed\n", __func__=
+);
+>         }
+>         if (pmc_base)
+> -               pm_power_off =3D &vt8500_power_off;
+> +               register_platform_power_off(vt8500_power_off);
 
-HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch 'iommu/arm/smmu'..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=114ca75f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dfe1e340fbee3d16
-dashboard link: https://syzkaller.appspot.com/bug?extid=9911f8283beca191268b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+This really calls for a separate tiny driver under drivers/power to
+remove the legacy single-register remapping higher up in this
+function... Pending that:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Acked-by: Alexey Charkov <alchark@gmail.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/354fe38e2935/disk-7b1d1d4c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f12e0b1ef3fd/vmlinux-7b1d1d4c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/291dbc519bb3/Image-7b1d1d4c.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9911f8283beca191268b@syzkaller.appspotmail.com
-
-Unable to handle kernel paging request at virtual address dfff800000000000
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-Mem abort info:
-  ESR = 0x0000000096000005
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x05: level 1 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[dfff800000000000] address between user and kernel address ranges
-Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : dst_dev_put+0x2c/0x2bc net/core/dst.c:146
-lr : dst_dev_put+0x28/0x2bc net/core/dst.c:145
-sp : ffff8000979379a0
-x29: ffff8000979379a0 x28: ffffffffffffffff x27: ffff80008f16a000
-x26: 1ffff00011e2d466 x25: dfff800000000000 x24: dfff800000000000
-x23: 0000000000000000 x22: dfff800000000000 x21: ffff80008f821110
-x20: 00007dfe9b881038 x19: 0000000000000002 x18: ffff0001b364a9a8
-x17: 0000000000000040 x16: ffff800080585eb0 x15: 0000000000000001
-x14: 1fffe0001df07cc3 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001df07cc4 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000c19e5ac0 x7 : ffff8000832ff164 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff800089f54340
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000002
-Call trace:
- dst_dev_put+0x2c/0x2bc net/core/dst.c:146 (P)
- dst_dev_put+0x28/0x2bc net/core/dst.c:145 (L)
- rt_fibinfo_free_cpus net/ipv4/fib_semantics.c:206 [inline]
- fib_nh_common_release+0x1f4/0x440 net/ipv4/fib_semantics.c:217
- fib6_nh_release+0x3a0/0x40c net/ipv6/route.c:3668
- fib6_info_destroy_rcu+0xc8/0x214 net/ipv6/ip6_fib.c:177
- rcu_do_batch kernel/rcu/tree.c:2567 [inline]
- rcu_core+0x898/0x1b5c kernel/rcu/tree.c:2823
- rcu_core_si+0x10/0x1c kernel/rcu/tree.c:2840
- handle_softirqs+0x2e0/0xbf8 kernel/softirq.c:554
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:949
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-Code: aa0003f3 f2fbfff6 97a314b2 d343fe77 (38766ae8) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	aa0003f3 	mov	x19, x0
-   4:	f2fbfff6 	movk	x22, #0xdfff, lsl #48
-   8:	97a314b2 	bl	0xfffffffffe8c52d0
-   c:	d343fe77 	lsr	x23, x19, #3
-* 10:	38766ae8 	ldrb	w8, [x23, x22] <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best regards,
+Alexey
 
