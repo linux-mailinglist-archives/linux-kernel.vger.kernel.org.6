@@ -1,117 +1,195 @@
-Return-Path: <linux-kernel+bounces-431505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED099E3F75
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:17:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95D39E3E4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089AAB28E7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1BF2842ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B1620C01A;
-	Wed,  4 Dec 2024 15:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381EC20C038;
+	Wed,  4 Dec 2024 15:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="DxMgR2v5"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XBN3Dvh9"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5D423BB;
-	Wed,  4 Dec 2024 15:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60361F6691;
+	Wed,  4 Dec 2024 15:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326092; cv=none; b=VXcNIwqlhMn1qls6X+k0cDyOShC2S7h5p/aY+d0p5yso5ngUFjYt6nGLt+P1LLtHcJEBN1qyGTxkgcCr3n/9I80JnR80OU4oPDqCVwijbNQ1kjxNHJhA7qR4C9Ygtk8qV2uEgIaQxL7kvPeSajSyxrAWxZ+eQCSHv2buIlRxObM=
+	t=1733326142; cv=none; b=MJ37Bq+K2EoC+y2wocx9J3iaT/HqUy5ztP4awMGGvB8AUrEqXa59LX0KQG0P8n+GM8F+8vsd51trn2Eux9epxzOtGSJfiVZ4mxWYG3KNsAIVEWR7DTLzSEKEuClDJ/HLTVqyaHsnd9NVM4OOCLQx0vWno8gQ7dwoaCoj3sc2Lt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326092; c=relaxed/simple;
-	bh=pjjfQePfOyiXfU23/6F9LerYYHMnwqmdZzt83UCtIxE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=H+lKf8mVGu+c6Wf0Ym2PGt2kuoLtSCIM08ZiieMmj9Qx4wDrNOM76fzulZcimErDQEKnHp9VlC7LWFuCAZdfQGlZEBQM0DJmB6oymeb/Zm0ODW3uZgji1QxE2G5ATp2458Va+FHbpW4O1IZYtrLyjJXJjm4qN4nya6pyHVhjqBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=DxMgR2v5; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1733326072; x=1733930872; i=frank-w@public-files.de;
-	bh=pjjfQePfOyiXfU23/6F9LerYYHMnwqmdZzt83UCtIxE=;
-	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
-	 References:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=DxMgR2v5Nu8K+l4ugF2setlK9SY+S1YLY0EX31fX8E4ocdFP6bkhZu2/rM8Ogkc7
-	 c50vHSQJt2BB3LWFzlsZ/3s6JT7BMVMXFqMFIfo4sXDPKoG5WJuIxfSIxbodSzNds
-	 FdAwaTt4yEfPo5mzeuw6NWcF6MdwjLaX7cbptsKXIauDTn++jvktgCqzGQOQAPo4v
-	 eYON6ptShgRLTSoLPGqs03F8oyKq+mB3AwAsDv63++3rAWPCiz6gP15g9LEkuZ25n
-	 UiPfgMmme8qdtU212Xs8aDMX9MZz9gITBszFiDk3QJTVb6IXYtwgh6FW+pLcvdfkl
-	 m7l7ACdWWYR3/qkP3A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [127.0.0.1] ([194.15.87.121]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M89Gt-1tFGmi3scV-0065xH; Wed, 04
- Dec 2024 16:27:52 +0100
-Date: Wed, 04 Dec 2024 16:27:50 +0100
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Rob Herring <robh@kernel.org>, Frank Wunderlich <linux@fw-web.de>
-CC: Linus Walleij <linus.walleij@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sean Wang <sean.wang@kernel.org>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v5 3/5] dt-bindings: pinctrl: add binding for MT7988 SoC
-User-Agent: K-9 Mail for Android
-Reply-to: frank-w@public-files.de
-In-Reply-To: <20241204144341.GA191772-robh@kernel.org>
-References: <20241202110045.22084-1-linux@fw-web.de> <20241202110045.22084-4-linux@fw-web.de> <20241204144341.GA191772-robh@kernel.org>
-Message-ID: <52A93441-8BF5-412A-8BE1-F662A4BE8BE0@public-files.de>
+	s=arc-20240116; t=1733326142; c=relaxed/simple;
+	bh=Ss+expM6saY+gSY9Iv5h5d/6VRY6Zdb3acL6fZcd8pU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abJa3L/e8olQ89FgKcTOYtkKkU91hAVj+s+ALRDODAV2aDt1ihPtfQkocl3pVMzKffI8QDpLd1aShQwnE8RO3OBUxi/o8J8YBwfLHgVvLphnDPVywjDm3rFlZeYVQEK6xPtcHyV3skp1zCymRiceHtZVWsV2rDNdzSw48aA75HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=XBN3Dvh9; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ud7LgqC9FIm4olXNgj+eEchylXiRAiy0eCFGI5c+ZPc=; b=XBN3Dvh9hrCC0+B0aT9p52Y5/K
+	PmQub6bb3ECukcTxAHFJ24kCL+JL0CSRjjLAD+ShEUaKBdo0K9X3t4cWql5KeUQegDeEhdQj76GvQ
+	lYD/s7cyjfRYqOgwCX6eH8ONKf9OO1HVfTy7Ng5XdfZ5pubgJh3UXntzFch1lJQT2dY2nM0SoGWQS
+	cyaG2/+yU+wTRMi/JC4Rj0/mh5swdagJlZdJtYNVIbFnqNPpksHP3tpHWIyV/lJC94oBNn14N01/k
+	BcY2ZkfS7yv/0TKZNWK7K5Am6EIrtU/W1ApdW1OgC8eaAR+VkaJZh8s77Sy1hxMyED4MlCE1nK/Lu
+	Qm6YR1tg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46558)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tIrIo-0003VI-21;
+	Wed, 04 Dec 2024 15:28:35 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tIrIl-0005dp-0L;
+	Wed, 04 Dec 2024 15:28:31 +0000
+Date: Wed, 4 Dec 2024 15:28:30 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Lei Wei <quic_leiwei@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
+	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
+	john@phrozen.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH net-next v2 3/5] net: pcs: qcom-ipq9574: Add PCS
+ instantiation and phylink operations
+Message-ID: <Z1B1HuvxsjuMxtt0@shell.armlinux.org.uk>
+References: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
+ <20241204-ipq_pcs_rc1-v2-3-26155f5364a1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kpFFKleEuGcdJHmJZilFO693NLkTAOjN7Dy30NGmeEjUA55Vptu
- QBH5J7IWTtURuj92DBQ2660+XQtrK7kfRWDWNreJvNhqC39TH/Io+xhQJKOi3SMQgRjKbbE
- WTu8FV5vZVyOk73fuXPF7swyETD9G6luYQUddUExPbcCDelFKuNxW03GbS1kx/Jbx+mqAnr
- ukw4fv3x0Y9MvFAIuYtSw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Dy8xoDf5gfM=;WVivEMm620DfJ0o/7Vy0T8yMHy2
- KZvWF4noSwYtFh3ihcvRp76VL/lWTgkwj3G4xl+xeKkeTIgMgMndk73Gvx3HrZHTCKvn6y6kF
- 7s+P+6sIj3JFxbGoB7NovdcDaYRCY0MOofn4oSAIC0trjx/NT6erOEbUY1nAYkgA3nskCV5zM
- 6c3GZm9xmiHAfB+3e2fpVIxZj3ysX4hN4WXMqyMIdVfz8JBwJHLfxqSzAyN2SNoQdjGK9/m+l
- SVZtZ8fM5Kkqz2Qxbl2TCvl5Oj5bvk1GcuGIURkuseJL1e5PQUnU9Bxa4BPuCD1nlXOyq0J/Z
- HRsGbGX8ogPrfQGqpYyatS1Vq+oLHnqYwLCCSLI4NFjILeWRMcMtI4WI2HrEdRP/4u2SX06lT
- o6izjdgJALZcLJ0H/kE/JI6Bd67omLeWhjTxF0D4umcDutjilMFpetkc26/BVrQJHPl9APIRA
- yLa4oj5J/28LdYlhCQgPBOCLxM5I2lcOv0M5KObC86U8SgCjaGJvFYspALYmhLkq9y3sZV4u/
- LnBN9JBWrkArg8OSDVDd3AJzREeUqlT4i5Rry7E+UQ9HoCZGhN9lIvwsTKCCrMrn9Vn4ldQHK
- D1Wfr/E7sqt747C6B4x+oPMPYoYTEulhs46CSoWL3JYju2GF+BdpneT8Xednw7iEtnvNLRE5U
- B8CCrdqEn1uoWT9Ia4xnzxbCi9oXtos9kMc23LCLHosmi3G2dbfTdOOXfx3jFVxhcgb2qrhgp
- IsLm5/JYTT4PjSbDHIZpSzBQaPvIpsmkrnA9Dg4lxGdo3xF7JDfNPihvSmT0uslXb1Jou0vTJ
- NOmSoAuRth/WTt7nkjeyNb1IzlhsyvDHMVfbA2Uq+VtN8+r6imRnhetbXpnOzE+VisBfa/oTO
- JQ3qmjPUgAZEZBc5wA1vW3lYc2xS1YaR5XxmxYlvb4EboQSSXJAXkSLNhPNuw56krNG9Ae/mf
- tSrNG1drUs8IymUycvsVH6zbFKb6NbAKvNAy6z4j5jmVwjVSrh7OnGIn8yUahu6enT7hTqb6j
- OynjWGUJRnW/+ERwgYF+KIpoFhHurQ12eZ7bghBtleCBY9DERazQmmoKnWDsaexhuOMiEsYAJ
- n5sb1qPH8yJipObVfC4Mjbro8igKhp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204-ipq_pcs_rc1-v2-3-26155f5364a1@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Am 4=2E Dezember 2024 15:43:41 MEZ schrieb Rob Herring <robh@kernel=2Eorg>:
->On Mon, Dec 02, 2024 at 12:00:37PM +0100, Frank Wunderlich wrote:
->> From: Frank Wunderlich <frank-w@public-files=2Ede>
->> changes in v5 (so not adding RB from Rob given in v4):
->> - do not use MTK_DRIVE_8mA in example
->> - add _0 functions for pwm
->
->Minor enough to keep my R-by, but if I review it again I can always find=
-=20
->more=2E :)
+On Wed, Dec 04, 2024 at 10:43:55PM +0800, Lei Wei wrote:
+> +static int ipq_pcs_enable(struct phylink_pcs *pcs)
+> +{
+> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+> +	int index = qpcs_mii->index;
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(qpcs_mii->rx_clk);
+> +	if (ret) {
+> +		dev_err(qpcs->dev, "Failed to enable MII %d RX clock\n", index);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(qpcs_mii->tx_clk);
+> +	if (ret) {
+> +		dev_err(qpcs->dev, "Failed to enable MII %d TX clock\n", index);
+> +		clk_disable_unprepare(qpcs_mii->rx_clk);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void ipq_pcs_disable(struct phylink_pcs *pcs)
+> +{
+> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+> +
+> +	if (__clk_is_enabled(qpcs_mii->rx_clk))
+> +		clk_disable_unprepare(qpcs_mii->rx_clk);
+> +
+> +	if (__clk_is_enabled(qpcs_mii->tx_clk))
+> +		clk_disable_unprepare(qpcs_mii->tx_clk);
 
-Sorry for the additional work now=2E=2E=2Ethought changes are enough to no=
-t add the RB=2E=2E=2Eok, doc says "substantially" changes for dropping the =
-given tags=2E
-Imho it can make the "code" better :) I will fix the issues reporter in ne=
-xt version but wait a bit for the other parts to get reviewed=2E
+Why do you need the __clk_is_enabled() calls here? Phylink should be
+calling pcs_enable() once when the PCS when starting to use the PCS,
+and then pcs_disable() when it stops using it - it won't call
+pcs_disable() without a preceeding call to pcs_enable().
 
-regards Frank
+Are you seeing something different?
+
+> +static void ipq_pcs_get_state(struct phylink_pcs *pcs,
+> +			      struct phylink_link_state *state)
+> +{
+> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+> +	int index = qpcs_mii->index;
+> +
+> +	switch (state->interface) {
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +	case PHY_INTERFACE_MODE_QSGMII:
+> +		ipq_pcs_get_state_sgmii(qpcs, index, state);
+> +		break;
+> +	default:
+> +		break;
+...
+> +static int ipq_pcs_config(struct phylink_pcs *pcs,
+> +			  unsigned int neg_mode,
+> +			  phy_interface_t interface,
+> +			  const unsigned long *advertising,
+> +			  bool permit)
+> +{
+> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+> +	int index = qpcs_mii->index;
+> +
+> +	switch (interface) {
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +	case PHY_INTERFACE_MODE_QSGMII:
+> +		return ipq_pcs_config_sgmii(qpcs, index, neg_mode, interface);
+> +	default:
+> +		dev_err(qpcs->dev,
+> +			"Unsupported interface %s\n", phy_modes(interface));
+> +		return -EOPNOTSUPP;
+> +	};
+> +}
+> +
+> +static void ipq_pcs_link_up(struct phylink_pcs *pcs,
+> +			    unsigned int neg_mode,
+> +			    phy_interface_t interface,
+> +			    int speed, int duplex)
+> +{
+> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+> +	int index = qpcs_mii->index;
+> +	int ret;
+> +
+> +	switch (interface) {
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +	case PHY_INTERFACE_MODE_QSGMII:
+> +		ret = ipq_pcs_link_up_config_sgmii(qpcs, index,
+> +						   neg_mode, speed);
+> +		break;
+> +	default:
+> +		dev_err(qpcs->dev,
+> +			"Unsupported interface %s\n", phy_modes(interface));
+> +		return;
+> +	}
+
+So you only support SGMII and QSGMII. Rather than checking this in every
+method implementation, instead provide a .pcs_validate method that
+returns an error for unsupported interfaces please.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
