@@ -1,217 +1,221 @@
-Return-Path: <linux-kernel+bounces-431615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB009E3FB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:32:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB99C9E3F7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54339B34670
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977CB281FDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C57020C479;
-	Wed,  4 Dec 2024 16:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A2A20C482;
+	Wed,  4 Dec 2024 16:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ob7VnvlD"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b="DG/FjBkf"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2053.outbound.protection.outlook.com [40.107.22.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F7920C49C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733329052; cv=none; b=G/rlCMixHuUh4k9jn/ln9TJde+m0lwcmEVJFFgF1jbWWj3j8i8Gq36VjJyBamtzrZk/QfWv7Ds+9Pf9vV+ypt2FM5vbNT2OY2yWBZvNxnpw0pi7111KHZhtVNMry3Z2nev+lJvNoxhKH4xrrjLD2/m1Oiqj85DMFxF6Ht7Bmwe8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733329052; c=relaxed/simple;
-	bh=D5RMggkvqJJmWAdaEJyPdYP42ngAHaPJpovKkrzHOGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JpZMd6eUCs0xDxmYUW2EkcOl8tF6p2rCF5Ky9JnrI5N/Wr5u2u3IHkzc855oQ7fwVLHOgHdIboDWWGM+iiz1WD0MnQcEkyhMjO/EgsmrJ00pNzGNCmRk+5JuNwTdnvrYRL8vf3Ac9KM+lBORAe8cr9G30Fkh+BXIEVtvQlGer8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ob7VnvlD; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fc41dab8e3so4878561a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:17:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733329049; x=1733933849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7P77MNq1S8T3SEsRBGWK6l0nmeNklLB0BoCdpmJrXTs=;
-        b=Ob7VnvlDtFaEXoowqsNhRQIlw/R197G2+XFnRP6SylWh1VSbpu5a/gBS1W1RoGOREf
-         llA0ZwUwt9z/4OeNMe1B/NtBDETYdfoLrR0JBHJw5iye+hEaQDn+TXzfAA+K4NvyHkL9
-         VidkYpe+BKYSoPZOqNqx42f4WA6WnWJj//ftB5S4ZfH2QssjtmBatk4iLfW5TW7fS5mD
-         Rs9/vsMZI0i9qSFlRCm7yFy2Jnd1SVwoDqovwGqhjjSpRZu3UKvTPmDaRHvtGAsazcR/
-         cllTi2fREyXkhPRuvGNU1y1TyygHJDOKM3ZwYXpytsXNoZPctKRbbTP0WaaoYDCyeDSR
-         9QAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733329049; x=1733933849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7P77MNq1S8T3SEsRBGWK6l0nmeNklLB0BoCdpmJrXTs=;
-        b=tZz6p7eldWT2voh6LD6vojZX960fGvJsRYwfriVR9SoniDnPMlmiFhca2V5tHr0qEH
-         i1R4s40/VSWtLCmirxkr7/D9JKTKQbYtoelf+tt1OBghx7tBSwyStO9G3JaorTwVS1d1
-         s7hFa0frD9GVJYyaYW/YIjd2ju3PiVGN5pGqwbyfM0uOUYmZcT0RUof1gk9EiAyLSZcl
-         ixEUkdSHYWx801p0wlSR7A1kwXYrjviTqAkw4nhjTVRxcWq0d//m/zWY1DLyWso/5q85
-         oyp9NZGWg5V6+eW/6RrwggzWetRcGMrnayKIx4RcDl5LcogWOlhgf/S8vGHs4FyHtu68
-         D7DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3/N2yJ9/Ynn10cBF3gUWqSw6fxVLKZNUZ1pdg+1K8K9me8DHdxphSWzXMGudigiX5RoPKzRIo7CHX7hc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY/FTgDIV/U+OynoZzDD542eSrjd0SeuSmKThrKtl2UaQ7sm0n
-	E8SaIyfMtyu2dwqSIAGqKVr3uSEX4YIVRaa++NK/Sqnj5X7xS3/QYJG9WkHS5Z8MuOPY13pfeNP
-	C
-X-Gm-Gg: ASbGncvGlDcBYuv/1klvVx9jBD36sVJmyteBomE5bGy2a9lZ0hjc5TvIQvTsi53TbqT
-	MeA1NmBcwAVKy6kkN3ilKkerceiJmq0hJWgnHWpFwNWbPRAbVggF26LPqNm5h9ALaEQo1uSFjLi
-	LJ2h3KEZHTEcqzkQ39ASX/6IXeW4FAUnB6pLm4RFvYTeR5XBEpUFHYmkQSDWjwgvZRjgRTVw0P9
-	Qr1khYOvz2M73V4qWQRNcL4PdMhmqHgk97XoOD5gT9+tZ8cuSXOnvI7Fw==
-X-Google-Smtp-Source: AGHT+IGgWZB5/OqY8yzRC8nRVwrcmLa7enXp1lQBRR/0rQCRJOCO3r9s0TzV9wTD1kGRvgJ0HTuaOw==
-X-Received: by 2002:a05:6a20:9185:b0:1e0:bf98:42dc with SMTP id adf61e73a8af0-1e1653f3c8amr9318189637.28.1733329048856;
-        Wed, 04 Dec 2024 08:17:28 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:a7a9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176148csm12558612b3a.19.2024.12.04.08.17.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 08:17:28 -0800 (PST)
-Message-ID: <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk>
-Date: Wed, 4 Dec 2024 09:17:27 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306854A28;
+	Wed,  4 Dec 2024 16:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733329260; cv=fail; b=CJYM/uh8XdU7KnYhrJebcOVcjsz60VjaurZxs8BhhTo+dGj4jBk4juL6yboMTxKiPVeiD2WK6oPvgYD/Lz+xoPrFq2vjx1nyiVBrwwkABBWgHnsVg8D/aePJarS7PT/jyLspbe8rxySekbw9Xrb/sQ3xllZCrNSBSe8eLAdxgDk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733329260; c=relaxed/simple;
+	bh=8B9EeDhlGgulLSOJNs0biohFZNnR5MxLuQw+VVPmixo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AsLlbm2d0SK+9l8AzNJsL8lDplAAefo6OlTy9wqTY88hdpGQahuIpYkl245u41B4M5tqVXThmG8GAk49VMk/AMCaTNp3/lNeNGdX4nIXmBuMUjYqtjkBkvWrROa+ObvG8vM2vU0TIqH7PFTIlu5n4qWY3A2iaBlZ+YwdPUElHvk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de; spf=pass smtp.mailfrom=arri.de; dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b=DG/FjBkf; arc=fail smtp.client-ip=40.107.22.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arri.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UdaYZki66sY0JxueMz9fH7EBEWNyrc9GmLHnRjbmIA2buzW7NMltiLuTexf1MAgTyelqDoIqYSoEIl0S6AFhpCNGficVXqW+IEk8jbzaChAjUngId7GFDGUzbK+V550QC46ikqLafbWeeVMSXZjw/60zV3fo7QfNqzjnhFaL4k0hZB0dbpmzky1tE2eYQgKecawOvyPe+CiWA7YanxLLsHd5o8IK+++AdKYkwiOsHlcgHoi6tJ/zXEBZUXt7Q078c17wfxvljPXnmovoXP51HWN6fMX1SNbzXtVJ69qzxusXA/ho2yyBDmpWluLmRjty4WagrGqwD3Q9ZqzOnsIyQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6mj5AUZ5/5mEiAJN1vWWyeHbUrRVL8aElZd+RfBYe7A=;
+ b=xTn7kynTsry3OpE/5CsxG8AXLYTachQua/Ear3ICL+dmuHWNTF3CjF3RkYAAbCqRGj2sI0zL/1fSANEQodnrOzme0SLJmuemnBaKM+WlGZ7MVvC2WFiOrhK0j9WQHPXGymlTTfoY1x+MPeew9jCFZcAel1JpPUPU9LZhrSYnexIkyPwMpHOP8VG4R2sI9G/EnFDsbisMUG3HzVP8GZEHebzNsTdFvPDqMAv/SoJODyh4kbWW/4LFMFNzxnJGAkJRkdBUxqfg0g5tydc9pxpr7azpVaKq3UYTAkAZeB2FGOg4t2+W4i6tGQF04+6QET6kV8rvXh8vltiuLmyG5hx2yQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 217.111.95.7) smtp.rcpttodomain=kernel.org smtp.mailfrom=arri.de; dmarc=fail
+ (p=none sp=none pct=100) action=none header.from=arri.de; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arri.de; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6mj5AUZ5/5mEiAJN1vWWyeHbUrRVL8aElZd+RfBYe7A=;
+ b=DG/FjBkfzzBiexQqc2AnL8OHO/vsRbvOcE8akLEgxWG7skI8jlTHYBlzE8Vl3u4o8NzVG7mXEYf7a2ux+haDYBe4EjIgHjSjsr2YQLBBnz+GYFhySOGceydYaec9/l3cSBMT0FG7Hpcy3dulIXy+stx8vxLy57by0skQl6EMlfY=
+Received: from DU2PR04CA0232.eurprd04.prod.outlook.com (2603:10a6:10:2b1::27)
+ by VI1PR0701MB6752.eurprd07.prod.outlook.com (2603:10a6:800:19c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Wed, 4 Dec
+ 2024 16:20:49 +0000
+Received: from DB5PEPF00014B9D.eurprd02.prod.outlook.com
+ (2603:10a6:10:2b1:cafe::a6) by DU2PR04CA0232.outlook.office365.com
+ (2603:10a6:10:2b1::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.19 via Frontend Transport; Wed,
+ 4 Dec 2024 16:20:48 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 217.111.95.7)
+ smtp.mailfrom=arri.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=arri.de;
+Received-SPF: Fail (protection.outlook.com: domain of arri.de does not
+ designate 217.111.95.7 as permitted sender) receiver=protection.outlook.com;
+ client-ip=217.111.95.7; helo=mta.arri.de;
+Received: from mta.arri.de (217.111.95.7) by
+ DB5PEPF00014B9D.mail.protection.outlook.com (10.167.8.164) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8230.7 via Frontend Transport; Wed, 4 Dec 2024 16:20:48 +0000
+Received: from n9w6sw14.localnet (10.30.4.231) by mta.arri.de (10.10.18.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.38; Wed, 4 Dec
+ 2024 17:20:48 +0100
+From: Christian Eggers <ceggers@arri.de>
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Antoni Pokusinski <apokusinski01@gmail.com>, Francesco Dolcini
+	<francesco@dolcini.it>, =?ISO-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?=
+	<jpaulo.silvagoncalves@gmail.com>, Javier Carrasco
+	<javier.carrasco.cruz@gmail.com>
+CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	=?ISO-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>, Javier Carrasco
+	<javier.carrasco.cruz@gmail.com>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] iio: light: as73211: fix channel handling in only-color
+ triggered buffer
+Date: Wed, 4 Dec 2024 17:20:47 +0100
+Message-ID: <3614353.dWV9SEqChM@n9w6sw14>
+Organization: Arnold & Richter Cine Technik GmbH & Co. Betriebs KG
+In-Reply-To: <20241204-iio_memset_scan_holes-v2-2-3f941592a76d@gmail.com>
+References: <20241204-iio_memset_scan_holes-v2-0-3f941592a76d@gmail.com>
+ <20241204-iio_memset_scan_holes-v2-2-3f941592a76d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in
- sys_io_uring_register
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <67505f88.050a0220.17bd51.0069.GAE@google.com>
- <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
- <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk>
- <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B9D:EE_|VI1PR0701MB6752:EE_
+X-MS-Office365-Filtering-Correlation-Id: 20ca7325-8817-4c7a-6811-08dd147f9d23
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iCZ5GFXuJpsyJLd19Icv/qKz9IP8qcS7hTelduGRy1Tv2wYuevsv2IaGzn8f?=
+ =?us-ascii?Q?6SOJfUy7XTCMnaE1AEkhF3MfK0XSgU3XQAz9OQNBgqFxRGSWOfUusSMmsda/?=
+ =?us-ascii?Q?bryif7vOswm9SCZA6O8xhoAUfU61JGJ4RzhceLfzgWLpCPjZ9VyjCi1bYCyd?=
+ =?us-ascii?Q?AVgs3o0ZlHH2SkuMbeeZqEysdgO0jH/V69fnuejI2vqfZeVQ1IOcNr5nXR87?=
+ =?us-ascii?Q?irgF5rjr00rFy3cuOudkBRilYeFic2ydvYE7ObYM2XACHd2FcUSknbs4LFoO?=
+ =?us-ascii?Q?TgopqiUgEbm3+VJs+930rl8N0tJXfn+ycu4/apVu3+yIj+G5Lvlv8Ptjud31?=
+ =?us-ascii?Q?2D+4Jt+Yk0oPkCWt81W0/L1ChKDsESgx4M6Lc4EG5Xoi5+TtO2CiSHrZy4Mv?=
+ =?us-ascii?Q?eGwPr9vCZ63fxdaS0kQXBjsPEa5GJQ9O8QkyySMmufqEwysPIW24kGHpSeVx?=
+ =?us-ascii?Q?9vjebq+tDMkYKZ1Rq1DE8JVJ+RbY9t20SCs5Wa7nw8ACMePrU2m7cWkcpfBt?=
+ =?us-ascii?Q?eAW1uPeh7fWFFpJgyfVv04SOh/+x0U+ILXHeZ6Uw5wFMwzQrEVHXN7C3L/an?=
+ =?us-ascii?Q?PhiY7CLdn98/xoKABcqGmn2EAPWoLULLfVy6nuh87KwuYuXE7QkxBbVeZnhV?=
+ =?us-ascii?Q?xnM2KBtQzTs16I3pa++yaony9Mc9TY7h62WTdqMoxtLT//oV1QbSSYax9Z/6?=
+ =?us-ascii?Q?zHl7swNlUFkC0j3n0LV2oYFpNEdvV01j3y2hqr051RXnsr8scSVzZITTnEcs?=
+ =?us-ascii?Q?sdAV/tcxhSdRM4AopBxJwiYGokLR1/Vgeg0aRBv/3iAEp4+TXZZgqcVulbz/?=
+ =?us-ascii?Q?B8jcxuwhIoUU4X8wTjovDZMqOCgD/Zd7tfLITtskScoQxoow7EFYO69A1KNu?=
+ =?us-ascii?Q?Y5pnbPUaNRDeFCet1xAU2P9k0xVmCAh39R6AbwJEIgPBacQ1Tj1Wtc8k/uJW?=
+ =?us-ascii?Q?lol6GD2w082nG6KtwLG68bG8ZFwltk5CkWZKakoj5UNAG6TS0dMI9z6uPScY?=
+ =?us-ascii?Q?7wKPEsdrfKiWJrSBTaEf+W7wYjONXVvzT0z+zS6rToLkBIDwC5HlEijzHvCU?=
+ =?us-ascii?Q?osPaFkPtRVLQLrF9Eb2tI8RgqhlSNUHbEWKrL+lW+mFmh6CeoMFLnouOXF5P?=
+ =?us-ascii?Q?1WNqKWk6HTjefe/2cVarAD+Uw8nDFJoyP4+c6OLbUEjnYBgkWwbKvXiLhlzX?=
+ =?us-ascii?Q?lAKE3ID1FvTEnueefVBbiFkYKXTA5mMUV+oaDPOFrjH4hbk91Z/JzNl19Hb4?=
+ =?us-ascii?Q?HtnMPVw5Rnfpwuj9Lkpc4d6Tdotwi41bknW6uBFWYzgPgyQd1OXgy8jdG9Ed?=
+ =?us-ascii?Q?7tqckCLvVwgXw3u57Hub8o6bI97hW33JdQ/6myuBBYx0kjujJyRnq1C75np1?=
+ =?us-ascii?Q?Zi/qrayTmW909Zuzebhzuyq7x8mWGfLoEzn7y2KJPVxN65XWe079oRyeYQ1b?=
+ =?us-ascii?Q?Xcg1b6vHZJLaSywd0nsLmdalPzqoCNH8?=
+X-Forefront-Antispam-Report:
+	CIP:217.111.95.7;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mta.arri.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arri.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 16:20:48.5442
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20ca7325-8817-4c7a-6811-08dd147f9d23
+X-MS-Exchange-CrossTenant-Id: e6a73a5a-614d-4c51-b3e3-53b660a9433a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e6a73a5a-614d-4c51-b3e3-53b660a9433a;Ip=[217.111.95.7];Helo=[mta.arri.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B9D.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0701MB6752
 
-On 12/4/24 8:21 AM, Tamir Duberstein wrote:
-> On Wed, Dec 4, 2024 at 10:10?AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 12/4/24 8:01 AM, Jens Axboe wrote:
->>> On 12/4/24 6:56 AM, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following issue on:
->>>>
->>>> HEAD commit:    c245a7a79602 Add linux-next specific files for 20241203
->>>> git tree:       linux-next
->>>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=10ae840f980000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=092bbab7da235a02a03a
->>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a448df980000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cca330580000
->>>>
->>>> Downloadable assets:
->>>> disk image: https://storage.googleapis.com/syzbot-assets/8cc90a2ea120/disk-c245a7a7.raw.xz
->>>> vmlinux: https://storage.googleapis.com/syzbot-assets/0f6b1a1a0541/vmlinux-c245a7a7.xz
->>>> kernel image: https://storage.googleapis.com/syzbot-assets/9fa3eac09ddc/bzImage-c245a7a7.xz
->>>>
->>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>>> Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
->>>>
->>>> ==================================================================
->>>> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
->>>> BUG: KASAN: null-ptr-deref in atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
->>>> BUG: KASAN: null-ptr-deref in put_cred_many include/linux/cred.h:255 [inline]
->>>> BUG: KASAN: null-ptr-deref in put_cred include/linux/cred.h:269 [inline]
->>>> BUG: KASAN: null-ptr-deref in io_unregister_personality io_uring/register.c:82 [inline]
->>>> BUG: KASAN: null-ptr-deref in __io_uring_register io_uring/register.c:698 [inline]
->>>> BUG: KASAN: null-ptr-deref in __do_sys_io_uring_register io_uring/register.c:902 [inline]
->>>> BUG: KASAN: null-ptr-deref in __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
->>>> Write of size 8 at addr 0000000000000406 by task syz-executor274/5828
->>>>
->>>> CPU: 1 UID: 0 PID: 5828 Comm: syz-executor274 Not tainted 6.13.0-rc1-next-20241203-syzkaller #0
->>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
->>>> Call Trace:
->>>>  <TASK>
->>>>  __dump_stack lib/dump_stack.c:94 [inline]
->>>>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->>>>  print_report+0xe8/0x550 mm/kasan/report.c:492
->>>>  kasan_report+0x143/0x180 mm/kasan/report.c:602
->>>>  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->>>>  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
->>>>  atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
->>>>  put_cred_many include/linux/cred.h:255 [inline]
->>>>  put_cred include/linux/cred.h:269 [inline]
->>>>  io_unregister_personality io_uring/register.c:82 [inline]
->>>>  __io_uring_register io_uring/register.c:698 [inline]
->>>>  __do_sys_io_uring_register io_uring/register.c:902 [inline]
->>>>  __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
->>>>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>>>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>> RIP: 0033:0x7f65bbcb03a9
->>>> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
->>>> RSP: 002b:00007ffe8fac7478 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
->>>> RAX: ffffffffffffffda RBX: 000000000000371d RCX: 00007f65bbcb03a9
->>>> RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
->>>> RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
->>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
->>>> R13: 00007ffe8fac7648 R14: 0000000000000001 R15: 0000000000000001
->>>>  </TASK>
->>>> ==================================================================
->>>
->>> Not sure what's going on with -next, but this looks like nonsense - we
->>> store a valid pointer in the xarry, and then attempt to delete an
->>> invalid index which then returns a totally garbage pointer!? I'll check
->>> what is in -next, but this very much does not look like an io_uring
->>> issue.
->>
->> Took a quick look, and it's this patch:
->>
->> commit d2e88c71bdb07f1e5ccffbcc80d747ccd6144b75
->> Author: Tamir Duberstein <tamird@gmail.com>
->> Date:   Tue Nov 12 14:25:37 2024 -0500
->>
->>     xarray: extract helper from __xa_{insert,cmpxchg}
->>
->> in the current -next tree. Adding a few folks who might be interested.
->>
->> --
->> Jens Axboe
+On Wednesday, 4 December 2024, 00:55:32 CET, Javier Carrasco wrote:
+> The channel index is off by one unit if AS73211_SCAN_MASK_ALL is not
+> set (optimized path for color channel readings), and it must be shifted
+> instead of leaving an empty channel for the temperature when it is off.
 > 
-> Yep, looks broken. I believe the missing bit is
+> Once the channel index is fixed, the uninitialized channel must be set
+> to zero to avoid pushing uninitialized data.
 > 
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index 2af86bede3c1..5da8d18899a1 100644
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -1509,7 +1509,7 @@ static void *xas_result(struct xa_state *xas, void *curr)
->  void *__xa_erase(struct xarray *xa, unsigned long index)
->  {
->   XA_STATE(xas, xa, index);
-> - return xas_result(&xas, xas_store(&xas, NULL));
-> + return xas_result(&xas, xa_zero_to_null(xas_store(&xas, NULL)));
->  }
->  EXPORT_SYMBOL(__xa_erase);
+> Cc: stable@vger.kernel.org
+> Fixes: 403e5586b52e ("iio: light: as73211: New driver")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  drivers/iio/light/as73211.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 > 
-> This would explain deletion of a reserved entry returning
-> `XA_ZERO_ENTRY` rather than `NULL`.
+> diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
+> index be0068081ebb..2d45dfeda406 100644
+> --- a/drivers/iio/light/as73211.c
+> +++ b/drivers/iio/light/as73211.c
+> @@ -672,9 +672,12 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
+>  
+>  		/* AS73211 starts reading at address 2 */
+>  		ret = i2c_master_recv(data->client,
+> -				(char *)&scan.chan[1], 3 * sizeof(scan.chan[1]));
+> +				(char *)&scan.chan[0], 3 * sizeof(scan.chan[0]));
+>  		if (ret < 0)
+>  			goto done;
+> +
+> +		/* Avoid pushing uninitialized data */
+> +		scan.chan[3] = 0;
+>  	}
+>  
+>  	if (data_result) {
+> @@ -682,9 +685,15 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
+>  		 * Saturate all channels (in case of overflows). Temperature channel
+>  		 * is not affected by overflows.
+>  		 */
+> -		scan.chan[1] = cpu_to_le16(U16_MAX);
+> -		scan.chan[2] = cpu_to_le16(U16_MAX);
+> -		scan.chan[3] = cpu_to_le16(U16_MAX);
+> +		if (*indio_dev->active_scan_mask == AS73211_SCAN_MASK_ALL) {
+> +			scan.chan[1] = cpu_to_le16(U16_MAX);
+> +			scan.chan[2] = cpu_to_le16(U16_MAX);
+> +			scan.chan[3] = cpu_to_le16(U16_MAX);
+> +		} else {
+> +			scan.chan[0] = cpu_to_le16(U16_MAX);
+> +			scan.chan[1] = cpu_to_le16(U16_MAX);
+> +			scan.chan[2] = cpu_to_le16(U16_MAX);
+> +		}
+>  	}
+>  
+>  	iio_push_to_buffers_with_timestamp(indio_dev, &scan, iio_get_time_ns(indio_dev));
+> 
+> 
 
-Yep this works.
+With this change, having only X, Y and Z in the scan_mask (without the
+temperature channel) works fine.
 
-> My apologies for this breakage. Should I send a new version? A new
-> "fixes" patch?
+But it looks that there is still another problem if a single color channel
+(e.g. X) is omitted from the scan mask (which probably wouldn't make much
+sense in practice).  If I am right, the layout of scan.chan[] is also wrong for
+that case, so e.g. if omitting X, the application will get the X values where
+it expects the temperature value (which isn't read from the hardware at all).
 
-Since it seems quite drastically broken, and since it looks like Andrew
-is holding it, seems like the best course of action would be to have it
-folded with the existing patch.
+Does it make sense to write a follow-up patch for this? I fear that taking all
+possible combinations into account could make the driver more complicated than
+necessary.  Or is there a good example how to handle such combinations?
 
--- 
-Jens Axboe
+
+Tested-by: Christian Eggers <ceggers@arri.de>
+
+
+
+
 
