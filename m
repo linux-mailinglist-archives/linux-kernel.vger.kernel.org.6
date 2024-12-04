@@ -1,169 +1,204 @@
-Return-Path: <linux-kernel+bounces-431660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A469E433A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:22:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AD19E40B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67356B2E83E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:50:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46D5CB36E86
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CD720CCEB;
-	Wed,  4 Dec 2024 16:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D5820CCED;
+	Wed,  4 Dec 2024 16:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AzGw0k57"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="OtiORDSQ"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9488F20C473
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCA81E519;
+	Wed,  4 Dec 2024 16:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331022; cv=none; b=pErNT48dnXVb80tzk0WWysCLrGZPKqQ16jUHJYzZA0RcEfggnuIyw27du6vzy9v2m/c1MmkJuYAT43DScfSxyg8+bQOfd4XuGW2EIoAp8cZxzKO2P7pQcmfz3sRIvDoWygnVPYYUAJAPaFK2QMOKpw99bTHg4QwJJ3VyTEkuOJQ=
+	t=1733331246; cv=none; b=QZdJP/3k79o3Yx1EAgGJ53nS1ViWOC7IPF51gG3YPZ0jTAsEaUDKUnmBtG2VOXvX1ujgbb43nU6oPuceUQy1txqsYqjPCKM20yQmWSaJfDP0Ggox5dLLruhmzRJiXFVnzHnh6kI4cc8r0QQjZWfde1EThve3InN3bFowgvlLLPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331022; c=relaxed/simple;
-	bh=d5JXng/rH+AlgdezfxEVPJAE2HYdoyLwl/eNJIOiK6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b63VGSkXKvwGJDnhZSEsl+uwERXTQDGROd0XsE9IqbvUGAVkiDmf76VPVU37ZePA/dLV7pYiX13MegL+ACnV0puZisb/tBaUNps/Ot5WUEVM1HrEKVtYjOwQi3/GjanmTSEzG87p8IRNreDglE4YjafiAQc0ZYi8BJJUh+R0wD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AzGw0k57; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa531a70416so453939566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733331019; x=1733935819; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AmuAP6kL2PgtMtMb788SmKyfSh/8+gR/zM5UDhGblwo=;
-        b=AzGw0k57m8qS6IYUWC0MhKbZWHScYQR3LGfQhM9zumUPtxr5PYE2iZyIpEuxquZMjD
-         EL9o5WCX37GljKHgDce6tbWsTKR0/cIjrVsMT72unqF7qtFxNQEeFmouvmg92PlNngAV
-         AAi7GUlfv1Gh3h882kb1nMd47FG9wXm/t1Ox3vHRyL0bW7xCKBdO1ARFxcCJNrGQbl/5
-         X9j5zIuWVp5UtZHL9rm+K4GZhFtpKFTtTSo/CXv9rMCS7hD0BN+ces61lxDwXGZeu/2Y
-         5y0SBVJjx6RD6Lh9s/u0TcyawsZulp/1EpyZ9ZwPxmi7AmUMNT9Hp9iBeP0WqebdCGgA
-         UAnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733331019; x=1733935819;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AmuAP6kL2PgtMtMb788SmKyfSh/8+gR/zM5UDhGblwo=;
-        b=cmTDJTWhl2U2uos1u92LWF4qdq7CgPvoPSMShmEt4spaCn7I+ctcle0EN/ewaeXdQk
-         ICsk4UcPPAUP0GprqujyABchbChdoR7UbbDx4TYitAGssyg0Y7l/r1qUSj57dMKpjHAa
-         oxTR/B7fBZa44LvlGy+IBeFceGwu6LXjdI0JyWnIf5MR8pW5Bo2rX5AP9SqK3u+3eyet
-         YlzcHNm1XsKzNUNbEHLQnHv1m9ypvKRC9j3IS0OgdUOfBey7YxldzEI503hYpJwrm5cV
-         OdQeg01nkDxwjDS620zW8ZBViICQt43p52N7sRWPSWlI7QvbY8cG+GXAivDZjhv6QuEv
-         diWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlddXdKDqzx2KuxIX+1L8Cmiq7GD5DR03nG7SXFYa+u4xtuIllWms8YXuU1i5EIrJlxcqEPriInFhZrZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMdxvObALX4vBhOsyyh2KHUblWl9ig6+lwR9bQ7NhBhbATAF8d
-	Zq88jMoNjhTk4E7cYPyHwbViBNdz6/A8P1NTu+x+y3jPt07tGmhsHUiGgT3ReNQ=
-X-Gm-Gg: ASbGncuxLCPZukZ123rvwpVMF7pbJ74Vwd8C0ld8NZRyZOw2bzlsLUPuwCsggGFxu7e
-	uu+UXLuWiuWyb71w4Y4gUI0BwqFmh2kW3clP8jr3M8I1huZsikMlkzisEQeX6rgbPHqFoDAbRdU
-	M98JKMs6ni3/T0eYqAwe+OsRDw9hxg46hbUTuaAUGLT6U/tFVRGveZ9PSALhfWn88k53BWtz06b
-	vD2erRvc1Hlb9cUoRvAxjVw+UeCcckn8bp9sfw+5A5nQGkS3wC2FFyDMNIUKCnzXG/vIDkUKQ==
-X-Google-Smtp-Source: AGHT+IHqX/+Zty5Ma/Nlh51kwKlztyLyx7whsZ+rNdU0Yc8VNs6fPYsusfPcia/ZhLlLrEDpUtW9gA==
-X-Received: by 2002:a05:6402:34d5:b0:5d0:e9b7:170c with SMTP id 4fb4d7f45d1cf-5d10cb5c39fmr7475475a12.18.1733331018931;
-        Wed, 04 Dec 2024 08:50:18 -0800 (PST)
-Received: from localhost (hdeb.n1.ips.mtn.co.ug. [41.210.141.235])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63a2sm749122666b.113.2024.12.04.08.50.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:50:18 -0800 (PST)
-Date: Wed, 4 Dec 2024 19:50:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Laight <David.Laight@aculab.com>, Tejun Heo <tj@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	clang-built-linux <llvm@lists.linux.dev>,
-	linux-block <linux-block@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: s390: block/blk-iocost.c:1101:11: error: call to
- '__compiletime_assert_557' declared with 'error' attribute: clamp() low
- limit 1 greater than high limit active
-Message-ID: <c795c090-430a-45a6-88b2-94033d50dea2@stanley.mountain>
-References: <CA+G9fYsD7mw13wredcZn0L-KBA3yeoVSTuxnss-AEWMN3ha0cA@mail.gmail.com>
- <5ffa868f-cbf0-42ae-ae10-5c39b0de05e7@stanley.mountain>
- <7920126775c74fa5915afbeedcfe2058@AcuMS.aculab.com>
+	s=arc-20240116; t=1733331246; c=relaxed/simple;
+	bh=e2bE1gMZRJN1ciwkvkaR9ANnZMaK8Y5vwF1qpUwSV18=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dx8pXJHUIP31L0oclE6liD5gRwOrZNhz2Uo6ro6le5Vj9UZ9fh1xTpXIqLGEZZAd9OoZ9dIgwa9DM40KJ5l9d4TCnANzTrw0XYbgx78yFFrYn6zE9vUAmr9z525EZH1Psc7y+y3nZfzdcYBfEFfijZGEfnJ22mHDR2QsiF7TiY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=OtiORDSQ; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1733331200; x=1733936000; i=parker@finest.io;
+	bh=uEGlJe4Bxvq2OHTVxLPMc+APrj2QmcCgizfZ45v1DZc=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=OtiORDSQ8S6w37NRH56VRSCd0cTq6VmBcplAa7Gr39JvCDlmJyuM6lY5WoKnq/fe
+	 8GtiSf0tZQ1QLobs3u5hXTNxwxd8QWU6WKctZtyHiN2LdOl/MgwBiDo8p1kZlqN9H
+	 hWOdZdWqGbTZjI00E3FczvmMT+x5NYCxAgO/hMGV2cWQpsWEWIKUsZIihwz3nb2j/
+	 oEs4fe1gZpzaF3oK3ThOClQu3WOVfx/IaB29LORJfZSdhdD9TU9jsEEPZapp4Fthy
+	 J/ytHfbs3wKtSgRYsN+ATlC1DFni0o8uKIVMtbwF6NcJT4gjqH1+dV8xiHubjRtY0
+	 Zlplrj90wNGtscrBRg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0MeQHZ-1t15bD0w63-00MNLo; Wed, 04 Dec 2024 17:53:20 +0100
+Date: Wed, 4 Dec 2024 11:53:17 -0500
+From: Parker Newman <parker@finest.io>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
+ from device tree
+Message-ID: <20241204115317.008f497c.parker@finest.io>
+In-Reply-To: <mpgilwqb5zg5kb4n7r6zwbhy4uutdh6rq5s2yc6ndhcj6gqgri@qkfr4qwjj3ym>
+References: <cover.1731685185.git.pnewman@connecttech.com>
+	<f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
+	<ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
+	<20241115135940.5f898781.parker@finest.io>
+	<bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
+	<20241118084400.35f4697a.parker@finest.io>
+	<984a8471-7e49-4549-9d8a-48e1a29950f6@lunn.ch>
+	<20241119131336.371af397.parker@finest.io>
+	<f00bccd3-62d5-46a9-b448-051894267c7a@lunn.ch>
+	<20241119144729.72e048a5.parker@finest.io>
+	<mpgilwqb5zg5kb4n7r6zwbhy4uutdh6rq5s2yc6ndhcj6gqgri@qkfr4qwjj3ym>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7920126775c74fa5915afbeedcfe2058@AcuMS.aculab.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2blSxbCR+yhs7uQqwCDAGl8YVMbUYXlFl2S+vj7UoTf7mx/o3/0
+ cVfef/xPPbcAmmGZKCxA5219hwxj7zniR8sS22Xc3Xbp7A13Qx+l8bhI3xk+BuvS6yTVQqx
+ 3rIB0xJVNf7VE2+YX2oc/bOGwKGpbXNLPBXPSyloSYE5GIaRSjVblAuPZ0wLQN81nTmTamP
+ zGtrJCDhCP43c/+iSDIJg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VHLldsp8lP4=;qDrO+hlZavqr0m0PZUgQCQN7L7x
+ OkLC7CJic9SAE4vZjfIWlNuBl/yLUXuuolv7XTNZEbg126/CEFnIXMLGLVj6/HXMmIjY+o8U8
+ m2kvxNkShFHsZzVmIkLxXHUt6fiHRYVdmAHgAH8WtmVW6AsemzztV2bdIb1Za6HRl+XWCfP9q
+ xMbKfqSGyWpdQk/se9G2lGoqe8/hHL5gRYoiTMzJyo/jsGzjqW6gs9W2ojeF1uH987ELN0qqJ
+ cpwqvehuCb3qYgPRB1PnzD0ChJdCEVAglRmktl7q6qktmSunidefr0YaqbE5U/cJ6BSRaNQiI
+ HZ7J/z2qiQmUkp3wFfyY7GLw84+elwNbVwq1hq/3m5EtlbFUeypNKB7xBX9Xym+gUKshPcMWI
+ WSkLGyPm2SOG9cxpNkNKc/DTghchEnLj4smaChMuXlDWRAplm/4TGa4JrZI2E8bsBzxzD3npk
+ D7HaJ5xyiXZ9hea1xvXVPnqFujpcjiSHsLxHiA65CIfMAwvS4qxlc7VDr3bDkk2kLehIIJzl9
+ eaS+/0b97KVFZOG6KaTxHnA8SjVxU1U7ENSdWFIbI4xoLd3s+Dzma0tU6V9IyJQajIyGlBXuV
+ VbfMODpOLGkU7g0ZUiK6J4PYqWgG9Q5tbTMn8CVhKUCmXF0DXgRw//6zGrfM8+Q7aeKlUjRNO
+ DfLhsI90y3TqhZ93xbyzYc1p8dYZJTAgH1LezOrJc640tZ+BlB6D0qvLBixZQqV+Wlkh3NqLu
+ M3NDOoycnH+jrl5KHKtJ1agh/Ij3EkKa7OWwDLjbq+lsd/3qLh+sGFGwPGMBkLNUbGUDjlrFr
+ bHtjIlcqa1+ionooviwWUVbrSH/jxelWZZFhqFyJR6nnzlzELGirxmbjUrYV7xjPA2lu3c7jk
+ wp6taO+BsZZHWXQQbZCuvG+qpxWpIsBwQepNFGAhWpWSu3ywmwUjyRTbLxam6Ki4famPQ8mS9
+ B1qXrh+gMTfwtY3WhYLlCtv4Wn/CkC9epjsE0Qxy+Vhqp3wHrDkAcQLfd5j521jRiV4bHYC/+
+ jxrGHLowUbqlDEVOT06LqVVRKlh7PRPG+/siH+2
 
-Tejun probably reads everything to linux-block, but let's CC him explicitly.
+On Wed, 4 Dec 2024 17:23:53 +0100
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
-block/blk-iocost.c
-  2222                          TRACE_IOCG_PATH(iocg_idle, iocg, now,
-  2223                                          atomic64_read(&iocg->active_period),
-  2224                                          atomic64_read(&ioc->cur_period), vtime);
-  2225                          __propagate_weights(iocg, 0, 0, false, now);
-                                                          ^
-Why is "active" zero?  __propagate_weights() does a clamp() to 1 as minimum and
-we've added new build time asserts so this breaks the build.
+> On Tue, Nov 19, 2024 at 02:47:29PM -0500, Parker Newman wrote:
+> > On Tue, 19 Nov 2024 20:18:00 +0100
+> > Andrew Lunn <andrew@lunn.ch> wrote:
+> >
+> > > > I think there is some confusion here. I will try to summarize:
+> > > > - Ihe iommu is supported by the Tegra SOC.
+> > > > - The way the mgbe driver is written the iommu DT property is REQU=
+IRED.
+> > >
+> > > If it is required, please also include a patch to
+> > > nvidia,tegra234-mgbe.yaml and make iommus required.
+> > >
+> >
+> > I will add this when I submit a v2 of the patch.
+> >
+> > > > - "iommus" is a SOC DT property and is defined in tegra234.dtsi.
+> > > > - The mgbe device tree nodes in tegra234.dtsi DO have the iommus p=
+roperty.
+> > > > - There are no device tree changes required to to make this patch =
+work.
+> > > > - This patch works fine with existing device trees.
+> > > >
+> > > > I will add the fallback however in case there is changes made to t=
+he iommu
+> > > > subsystem in the future.
+> > >
+> > > I would suggest you make iommus a required property and run the test=
+s
+> > > over the existing .dts files.
+> > >
+> > > I looked at the history of tegra234.dtsi. The ethernet nodes were
+> > > added in:
+> > >
+> > > 610cdf3186bc604961bf04851e300deefd318038
+> > > Author: Thierry Reding <treding@nvidia.com>
+> > > Date:   Thu Jul 7 09:48:15 2022 +0200
+> > >
+> > >     arm64: tegra: Add MGBE nodes on Tegra234
+> > >
+> > > and the iommus property is present. So the requires is safe.
+> > >
+> > > Please expand the commit message. It is clear from all the questions
+> > > and backwards and forwards, it does not provide enough details.
+> > >
+> >
+> > I will add more details when I submit V2.
+> >
+> > > I just have one open issue. The code has been like this for over 2
+> > > years. Why has it only now started crashing?
+> > >
+> >
+> > It is rare for Nvidia Jetson users to use the mainline kernel. Nvidia
+> > provides a custom kernel package with many out of tree drivers includi=
+ng a
+> > driver for the mgbe controllers.
+> >
+> > Also, while the Orin AGX SOC (tegra234) has 4 instances of the mgbe co=
+ntroller,
+> > the Nvidia Orin AGX devkit only uses mgbe0. Connect Tech has carrier b=
+oards
+> > that use 2 or more of the mgbe controllers which is why we found the b=
+ug.
+>
+> Correct. Also, this was a really stupid thing that I overlooked. I don't
+> recall the exact circumstances, but I vaguely recall there had been
+> discussions about adding the tegra_dev_iommu_get_stream_id() helper
+> (that this patch uses) around the time that this driver was created. In
+> the midst of all of this I likely forgot to update the driver after the
+> discussions had settled.
+>
+> Anyway, I agree with the conclusion that we don't need a compatibility
+> fallback for this, both because it would be actively wrong to do it and
+> we've had the required IOMMU properties in device tree since the start,
+> so there can't be any regressions caused by this.
+>
+> I don't think it's necessary to make the iommus property required,
+> though, because there's technically no requirement for these devices to
+> be attached to an IOMMU. They usually are, and it's better if they are,
+> but they should be able to work correctly without an IOMMU.
+>
+Thanks for confirming from the Nvidia side! I wasn't sure if they would
+work without the iommu. That said, if you did NOT want to use the iommu
+and removed the iommu DT property then the probe will fail after my patch.
+Would we not need a guard around the writes to MGBE_WRAP_AXI_ASID0_CTRL as=
+ well?
 
-  2226                          list_del_init(&iocg->active_list);
+Thanks,
+Parker
 
-The other way to solve this would be to something stupid like:
+> Thanks, and apologies for dropping the ball on this,
+> Thierry
 
-diff --git a/block/blk-iocost.c b/block/blk-iocost.c
-index 384aa15e8260..551edd2f661f 100644
---- a/block/blk-iocost.c
-+++ b/block/blk-iocost.c
-@@ -1094,7 +1094,7 @@ static void __propagate_weights(struct ioc_gq *iocg, u32 active, u32 inuse,
-         * @active. An active internal node's inuse is solely determined by the
-         * inuse to active ratio of its children regardless of @inuse.
-         */
--       if (list_empty(&iocg->active_list) && iocg->child_active_sum) {
-+       if ((list_empty(&iocg->active_list) && iocg->child_active_sum) || active == 0) {
-                inuse = DIV64_U64_ROUND_UP(active * iocg->child_inuse_sum,
-                                           iocg->child_active_sum);
-        } else {
-
-But that seems really stupid.
-
-regards,
-dan carpenter
-
-On Wed, Dec 04, 2024 at 04:11:33PM +0000, David Laight wrote:
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> > Sent: 04 December 2024 14:39
-> > 
-> > Let's add David to the Cc list because he's the expert on clamp().
-> 
-> The traceback info misses the important point.
-> I can't see the 'inlined from line 2225' message.
-> 
-> We have (line 1084):
-> static void __propagate_weights(struct ioc_gq *iocg, u32 active, u32 inuse,
-> 				bool save, struct ioc_now *now)
-> followed by:
-> 		inuse = clamp_t(u32, inuse, 1, active);
-> 
-> But line 2225 has:
-> 	__propagate_weights(iocg, 0, 0, false, now);
-> 
-> With aggressive inlining the compiler sees 'active == 0'
-> and the lo > hi test correctly triggers.
-> 
-> The previous version only verified 'lo <= hi' if it was a constant
-> integer expression - which it isn't here.
-> 
-> No idea what the code is trying to do, nor what value it expects
-> clamp(val, 1, 0) to generate - likely to be 0 or 1 depending on
-> the order of the comparisons.
-> 
-> 	David
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
 
