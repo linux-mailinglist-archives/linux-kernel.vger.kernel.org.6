@@ -1,237 +1,253 @@
-Return-Path: <linux-kernel+bounces-430717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9739E34AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:58:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3159E9E34C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:01:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F91B2850D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45F44163B52
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26EE1F8ACE;
-	Wed,  4 Dec 2024 07:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="W1y3dDai"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2060.outbound.protection.outlook.com [40.107.103.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3A319049A;
+	Wed,  4 Dec 2024 07:50:27 +0000 (UTC)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D2E1F7070;
-	Wed,  4 Dec 2024 07:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733298576; cv=fail; b=Oc31Cza6JgLWGmh6bbGPv5J+BsgBGM4EErfSR7bZJg/touoKoWqyW4Dqs20K37mJv1YR5DqAumwj47jzwg+WyURlpOS7++77kCaGUao6AcHfv6qb4Eq6m0eQbnrharXRztcFM4rn16b1BGqA/AXv39ioe7msMxo1IwcJc55NEy4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733298576; c=relaxed/simple;
-	bh=z7sgzUHJzovVRjZcaYrA+17RJo1kqu7VsOOZWWx1Ykc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n14mKMakIBayme5cH5cBYW6rK+ipCXH3491/J7sNrttgAqjVdYeaZUdihgkMtmrCPFe9y5uMbLOzEBpHwF/DgifvPlcRr/g6hZtxFhBiGPCfYJqnfxd1NDJdni8qQyB26Zs4MDs4BCCYG47wrHJWgtQXxf1/K+3WRpAdVX+BhOE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=W1y3dDai; arc=fail smtp.client-ip=40.107.103.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jox82fmJI7F03/3mMk5Io75FUPGweCBUU0xct2fNOMQyduRjQD5djsFI/Q6vLQSO9pbAkYGd+HeCJ8jr3v8WHYEUP7h0rI9CLRJac5BhyH+D5l2H2XFa6YF/oMsQrbGvhvCw1MbQc4NM5CBkbWfXot0kSq8wET3jf8hUu2H/fNs8dkcnnn0xqGygfgpl63oDZOhdp9viprVTMKsSnkX6r9J9gs0/fsnMdozQoHFTW40q93jK3D11Da8Mw3MywN9RpyVqtb2OPO6yn0pZHMajtv4ZkzWSnpKhpMURUZSq20tea1o8AVsb99iPx+ZqaIIkD/Ttkdd8nEN+AP8KzubHwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ifRbbYsxVD/S/XeUi1nthARbnHnUTln9zsV7Ng5LIrM=;
- b=ZkN/xoxSTUbB0hxYm7negwS6wSMQdj4t9GLlTpKMWEUQxLvrhn3tvpDlo/sAHPFORhcjH060TX06hpG5QUInXygTh6/NKmVSxsossl6LRc8XrjHhg3PMNxmB3Qcsb1wwcHfxuiX1+IieX3aHuPKF38FRjlakSpH7QYVUBoMR6dUne368BwkqEBQhnxNYWH6zAkAZhq08aBofYaDcUSczfXzvNOjocHOD51XmXQxgMq/7pZvZSMhULLBJ2j7wMwEZGRSX2FDdL5IE19klPaO6ttHX02gk0GNnm+jXJGf+Ak2OI8Emq1VkSVXncQNBDRTX338Nx6tO0ziGULhdtBLmqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ifRbbYsxVD/S/XeUi1nthARbnHnUTln9zsV7Ng5LIrM=;
- b=W1y3dDaiLl7OdsqVmGDtYTTtbGq/1PoMyYcivY/vurQ5jZUbK03Bspsia0dWE+TRehLIhToG0QFFI3+47C+jA5aOsTCdjrZQ+40cNnTYD+/R96iWHezcjDPgABy1lBQitRooMaqburPBMtUM/txJaaX4D9zC7x0uGIP6Yvz9Ym3elauMGwRQaI/2Vutd/LsrtMTK8QU2Gsqf5iEnxlS3GYKQNoVChsH1O+QayvqC3XQmQnXM/W+pQmrY4PE+8NT9moDM2WzC0cTj4byGyFyRp7wDVv609+5odM/yT6HhxMZb5vqZTckIqifNAoBhoVPASYPu+jy6RNef1XgiewwmMw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
- by PA1PR04MB10769.eurprd04.prod.outlook.com (2603:10a6:102:488::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Wed, 4 Dec
- 2024 07:49:25 +0000
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd%6]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
- 07:49:25 +0000
-From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	NXP S32 Linux <s32@nxp.com>,
-	imx@lists.linux.dev,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Subject: [PATCH v4 3/3] can: flexcan: add NXP S32G2/S32G3 SoC support
-Date: Wed,  4 Dec 2024 09:49:15 +0200
-Message-ID: <20241204074916.880466-4-ciprianmarian.costea@oss.nxp.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241204074916.880466-1-ciprianmarian.costea@oss.nxp.com>
-References: <20241204074916.880466-1-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS4P191CA0005.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d5::15) To DU0PR04MB9251.eurprd04.prod.outlook.com
- (2603:10a6:10:352::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0336119992C;
+	Wed,  4 Dec 2024 07:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733298626; cv=none; b=WbyMs6+uBE1wgIGv8xxdAMFHC4/VvrpQnUE6j2O22EPd1IzTWk+v4iy012UCwQvhYs6DbpS/u0+Jt7Az4i8pZ63lBhqm+Xe6Uk5NgrHsoVosH5v67Sxw8rNUu1eysNYXOSFeoApSU0kuJ5r1X2q56IWISBQbc5jC+j6oGWwUeUs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733298626; c=relaxed/simple;
+	bh=24BPxbAHaOsdPbN2q/MSLmquC0QCEOYzuCN5qeAyt4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dELiPgMkHJEMk/NfXCJcvCckpBN27rrcr/la/6wduy45e37Ufml7jTAZSxs4NvT8ZUveuRRnORI6PbgWgLMw5eOWmcLZvFP3kqwcSqzJ7MYrsMV183ZI+yOyTywXPgWJaMokV/deQ/whpMr15ZqrfkeIpkfjEEPRUZI0YXi1Yn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-85ba9c6eecdso637011241.3;
+        Tue, 03 Dec 2024 23:50:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733298622; x=1733903422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GAc/Z0g+Y8N+a3vrMkKX5hyw1r5JDjIVFxXD5SaEmo8=;
+        b=c1H4hwrgn/YwkXcrRA2pakSCpcCyjS8+uTn5Lm1IWdi3N/TWm2apzc8PCAwC8zz6L5
+         lmXIOoPKoAhtNJt36FVzvmYPZMNUEAgGBgsl+5WzFai6QbkSuKJT53h9JefAW8DkDf2f
+         S8Q96PChscnvFqG4EQNERJJOknYxbz63I5B4X9D/2p/I2nHmjAbxYM8d2+y3l8KyC4Mv
+         q1VCSCJiwMQE18Eszl+D59pDq6xC9Rcomyf14z5vN23uM1HBw7/gM3fLZruzqEY/3WeP
+         YFsfGFxxTvyo0EpbGys1EH3W6E8gSTE4YJMuA5TrRf/CH2eVjwdnEjPmIGDbjxKwFNPi
+         ZRkw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0N7cpoyMDoYrcX3UgjTSGc7bJW69pPtmRyEsZm0CQACjf8m7ReihTEVWlHX70jpY0TQHQjfcWsIp3Oe8=@vger.kernel.org, AJvYcCUdFh0towYT2UE2yw6CXmOHxqY42J4COsirf/4n3h6W+awZ4JZ0E77akM6PQhnIWBRJwzYamJOLJpmk9A==@vger.kernel.org, AJvYcCWE2jws1uZd3q1kZFhuVuk6tNowCbkkAFTxOKiZbyD5er1o7K4P8OktEZOj09kUZyHrqm4ribkIKQILRdIx26LoHUcA@vger.kernel.org, AJvYcCWXpU/jaPhI5/Pj4Dl+m2xy/randV3tfa5KPrvIc1TqglylMn50dLV19LP3IUZfQ1yah+4B2wEf4klUCp2ZEvj/j2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD7NnrcEXcCrnpmC7XfFQa6O1msMQqFoEj+BjVYuWTeqQfIcOC
+	6csU7KlbXwgOfU6JPzcSSda9HzvtN1NWkjSlQQjaNBmwqyOQY1GmFmoWXEft
+X-Gm-Gg: ASbGnctQiGbx84CNYO3TA9bKkQ9YapgmlmBpQHoohOawt4dOuPZsHyHrWMcz8uZttP3
+	jJr6O7a+GCoGvej963Q9WM0I5YkNjU3duCDmG42NnI3rwFJ0f9NCiaskbkrR+kqenYgANChyFf9
+	qDhZNo/NvZ941UmCTa7Mxo4QdD8fzlMMeL/SvN0NDz0jUTBwF1u1QMPEJcGveriZ4cL9aZuciB+
+	NLX1RwGX6FAReTyXzUMzs8e5D/ok+ot0ZA8DDjwlI9l0PBN4LQHjGZkragK29vCnY0FMbCQ9TWB
+	VmL/o4Ui+BSW
+X-Google-Smtp-Source: AGHT+IGvXZN6NZ6DCUjVgSjGgOwL6hxcoN/Isc5o4V5nvCkZpRIPRAw8CcCX7KNSIMX6GFZ9E0YgGQ==
+X-Received: by 2002:a05:6102:943:b0:4af:605:ebc0 with SMTP id ada2fe7eead31-4af973acbcfmr7961248137.22.1733298622414;
+        Tue, 03 Dec 2024 23:50:22 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af590e5540sm2351844137.8.2024.12.03.23.50.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 23:50:21 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-85ba9c6eecdso636996241.3;
+        Tue, 03 Dec 2024 23:50:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX5BhlOH3sGy2gK+Bu0gVSvUVa8LyCtOdyOJW2jntI1T+aN+f4Zjz/ispKh8B+sOPs6t1+IQwVUjxrtKT63iqvIapq/@vger.kernel.org, AJvYcCXJIUiLR16bT/TasVUVP3LqHAxY4QAsLbL2WYVfKRHoXm/fMUfriCoja9UkKfJ8NjtzpfWQUhjxTbOV2uY=@vger.kernel.org, AJvYcCXgloqvl8W6cIt8yUHT8XwL/jkcJSi8+ZDbIpqyB5P3VKupbMPaFzkc8ScUHC8WWdorLzBCN34l8BsFtoOXnJMSQ8I=@vger.kernel.org, AJvYcCXvg2phjjO8+U2l+w1mUgB1MX7Adoc3AB9S7gMguz3zMUYGQ8nc3877FvqEBVsbVu3WaclawURlJLKc0g==@vger.kernel.org
+X-Received: by 2002:a05:6102:358b:b0:4af:5eb5:843f with SMTP id
+ ada2fe7eead31-4af9726c842mr6165984137.15.1733298621087; Tue, 03 Dec 2024
+ 23:50:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|PA1PR04MB10769:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71b6ed5c-30d9-4e60-1b70-08dd14382c79
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T2FyTFhscTIwczNjZXlZRDJXdjBCSDFXdGJmWGN0REdHWTJ2bGtXaTA3QVkv?=
- =?utf-8?B?YzdIWVdSNjRaYUdXZms4ZkJSODdYWW5MS3dNenhCcXo5TjBQSCt1bkVodHM2?=
- =?utf-8?B?WWQ1Z0ZPMUpZVGg0ZDZBU0haVDlIL1AvaHZBRVBTQkdrYUdyY2NDaGg1Mzc4?=
- =?utf-8?B?OUlSdEZ2QjdzUFFVK1VHc3RvcVF1alJObzRWZXpqOUpZa1V6WTcxaGNaNDBK?=
- =?utf-8?B?SmlkZzhSUngzamJNNk9NY1dzNWdheU9xakNLMUpUZkwvZ3o0RHZVdEtGNHpR?=
- =?utf-8?B?bkhpL0JwbGpuMmI2aTkvdG1NZklxbDNrOCt3NmM3bFFvL3BQQzlUdUJYTnJI?=
- =?utf-8?B?VS9NaXV4Z3Jic1JabU9nVk1EUkltcUExS1FpSG9LTlpaRmVJdE0xRXhCL2px?=
- =?utf-8?B?R3V0NU8zVTNHZGxMYmVZYjlpQzBtb1VLdU9PeXhNb2w4blhRSTVONXVCbkpD?=
- =?utf-8?B?WlhCWFVTVkZSMjlkbTRVZWtMR21sRnNtYkF3clBWMnAya2dWZkJmVTNaUlRX?=
- =?utf-8?B?bzNaRzc5QS9kVTQ0N0tsbU1GcjVEdjlsM3RLQ2IxOFR1a0J0cjUyaWg5Zmhy?=
- =?utf-8?B?ejQ0Y2Q2bGgvdTBmRVZNSFBEbDVuL0pyeGZoSjRPbSt6T0p0L2l0cGFvUm9E?=
- =?utf-8?B?NUphbUhmN3QzTEsrMFhKM2xKN2MxS0JnSWdvRy9qWm94UFZobDBLQXdlK1V0?=
- =?utf-8?B?Sm80YS9leENSTDIybWhVWVBqQ1RXSE5Wc0s4bWdZblpKN0hSY3VFTXMzSW5F?=
- =?utf-8?B?OURGWEcrZHQ3YzRXeUMrTVBtMmxSME5BSmNMVUN1UW9nR29rNGJncTFZVEdW?=
- =?utf-8?B?MThFNVNqZ3dFeXc5UjF1bnNwNm1xeksyTVpvS1Mya1NUanhGcUpzcjVkSHlm?=
- =?utf-8?B?T2hwUSttNko3OUZDVnFoZ3JUcGt3dTFKbFc1WHV1c2xkcTMzdDRPTjdIdmxm?=
- =?utf-8?B?eXpZNE9IN2d1ek1XaC90YTVMRmhNMXZPYVVZRjVmTUptRDFQQ1FBR3VMRno4?=
- =?utf-8?B?WXg5QjFobXV5R3plS1ZSZ1hGOUw2WFdBbzdVUmhyUmhVbFVrdUt0YUNSdmhE?=
- =?utf-8?B?R3RQbk13dU4xcmN0M3c1aU5IVSsyOFMwNDlKQWJwckx1bjgwalBZQkRmREU1?=
- =?utf-8?B?eUJqbFhUcGtFQnpDT3BQcHBBT0NYL2NoRTBMenNOTXZFaHBlcmRqQ0RxTTRj?=
- =?utf-8?B?NVJxMDA2OEJ1Z2tPa1krVk9DZDU5MEswOVlEclloTHJPRm9mc3RsUDBDcmdF?=
- =?utf-8?B?SWVQRFB6OHRaSlhTcWhhK3ZGaC9UZzh5STVVRzJQYmZIeHFZMWNTV2xpQ1NJ?=
- =?utf-8?B?TmEzSWtkOStTUFdFYVJqajVUeHkrdXZLYzNKUFk1K2RvTWpsNm9mSjF6b3p2?=
- =?utf-8?B?czZydHFMUVJOa2NXRVdONms3SWRKaDVSQ0xnTlNRWGh0b1NleVRqdWlyODdJ?=
- =?utf-8?B?V3p6RWdwNUhIcDJKZit4cHhMSWpsMjZFbzdHWE5Jdk5sUzBLOTFyUWdqa2U0?=
- =?utf-8?B?VFRpS2RrRThxM3pqQzVjK0g5LzVCRHprb3U3MHg4RzhMdzhZWEhiU0tORnBw?=
- =?utf-8?B?QjQ4S1V3SFR3UTAyNUtBK1c0VlYvaVhnRXhDNGcwN1R0SXU2WXBOSUMwSHB0?=
- =?utf-8?B?ZXovNjVBNzllTjIrNm9jVEt5VWowOHJKYklWejFEWGkydzdISDNTWjhVeVVk?=
- =?utf-8?B?ekNiNjdnMlYyemhVd3gwSFpYRFhUbUdHS2dQRk9nRkl6YnRrN1ltNmNtdTBi?=
- =?utf-8?B?Nnh5S0t4K2krZXB5VDI3eGhsOTNYcytRYkVLTzRIRlBWS1crSG4xWGx2NDJO?=
- =?utf-8?B?OWN0c2pxWk0zMndsakFBUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?blJ0K3FmbGZlZGpWOU1sTWpjeXVrRm1ONnpBaHZKZys4TDZDcEoyVnp5VG52?=
- =?utf-8?B?SjRFKzlCVU43NlhHeStzc1lTRTRRK0ZRNWJqT3FtVk9sZVIxV01HK1NjTjk0?=
- =?utf-8?B?NllIbGV3MGZjRVV3c251UjB3OERzNDRrTnR3Y0JZSzdJeUJtQVB6SnBEbEZr?=
- =?utf-8?B?Qk9xOHA3TnREcDZ1VlYzK0txSksxMEkwT1VYYysra1NWczdBTnNNSmF6NG9w?=
- =?utf-8?B?YXRRQm4xVC8xWUtwbkNWRng0eWlyS2hmTFI3dHVibno4MGRnSm0zdzZJa3da?=
- =?utf-8?B?SXFpVFBYRDVENFNjdmJiVnpSNytmM25Dbkx3VWF0SlpjZ1B3aU1LVXA5aW1O?=
- =?utf-8?B?NmlmM2ZINTdxNUk3dVlSN3FpY3JQMit1UWJ4bkdiejhqVXlFSWZ4eXB1Nktp?=
- =?utf-8?B?Qjl0UWhYVGx2NXhXMUJNWjFibDZseU5pYXpzSXc0czlqeDBnalpJQnorK1JY?=
- =?utf-8?B?MzZXb3M3OFE5Zm0wMXZSSDZNaFlqMVhuL0ZrU0ZWbk8xZkNmWjhtWkloYVhh?=
- =?utf-8?B?enhKL0o5clJvRWJtenp6TFJ0RUpxVmZuSFlCMjlLbGcwczBCandqMjEwazFJ?=
- =?utf-8?B?TVRjeG5sT0NUckFCWThMd3ljcFRWSU9nUGZjQWRrT3BjWkFDWThlU2JBVUU0?=
- =?utf-8?B?TUs5U1Z3bkRVRmFHdzJuTW1CWExBckl5VlEvZk5ldUNyWFh2b3E4UlN4b0VT?=
- =?utf-8?B?TisvbGRZa2E4RUZ6dDB5MXk5UU9rTGthRndNb3huSnNpZldMOEduNE9vTVpT?=
- =?utf-8?B?SHlPUHpleHM1cllUTFZMMmtjVnFzakJOVzlGZlp4Nnoydml1d2hFSlNtbDJq?=
- =?utf-8?B?ZlpoZTF2dVREMzg3N3BFU1UwV2hGRlJ4MEhLUHd6NkdKUEZQVno5QkFoaW5R?=
- =?utf-8?B?MS9qVm1la3FrQW5yTnVHb1lHS1dTRzBMVmpSSlRVdElCMW1Oako0UDk2ZWR3?=
- =?utf-8?B?ZHpxd3JjdHhCV0ZHWmNDYmhGTU5lanFOb1lrb05Wa3RwS0dOYXNHZTJYVXRY?=
- =?utf-8?B?YUM4eEs5bThTNUNRNFdKdTI3aGwvaFpnMmd2OW14ekxRb0FrM0M4b0trMTA0?=
- =?utf-8?B?VkMrdW9PVE9tZDVKNzVhVjJLRFA3UDlDLzM3Njc5a2dXa29LSEIvbFBjakN3?=
- =?utf-8?B?MFhmSHFPQWlyelJ5SWFsS0Z1cUoreldzSmRLRk5zTmVqNEtlbk1aaGhRUHRW?=
- =?utf-8?B?cEliQUx4RUpVMlZwbGs4VVQ1N3pQVGl6UkVaUHJpeC95MU5rcU9OS29DQWNw?=
- =?utf-8?B?Q2JIakZIbnd6VExSNEhmbmhORmdiK2NoOTRDRGZBK1V0Y09GclhxOENDU1dw?=
- =?utf-8?B?T3BDNUF1dkhMSklXcUVCdHM5L0E0THRSVUFMNG01RGFEVjJXRDFYTUlTQ1J0?=
- =?utf-8?B?OWVPdEZScXpPSzhuaTdFU2VwUHI3ZkIwTW51TmYxbnlpZkZyT2QyeVBUemFR?=
- =?utf-8?B?cFYzdDE5UnZHMmpOZ2k5TlpuankvK003TmZxVkhtUXhxREFrWlhOY1hZU2NX?=
- =?utf-8?B?Q1dKeC9MdUZTN3VoTnJlUkdvQVJQV1R3NE9BVTFNUFljbXZjMGJnSjFOQ25T?=
- =?utf-8?B?SThmQWtSQS9VVmFwNTU0d3MrZHhoMmJhQThkUHV3cTRFZGRpN3hja2Y4N2VT?=
- =?utf-8?B?czF4K0xUR2RtL0ZUVHhjSzhBQ0VEWHh5a2dScTBZcVFkc0sxN0NjWWFRbE1M?=
- =?utf-8?B?MEY4N1hpSmY3M0lWOUh0djZxUWhraWlpNUNLRWJPWlk3SjBWV1JIbmRNcHp3?=
- =?utf-8?B?UERSQzVJSzJVNlVxZ0toanJELzN4UnFLWHRjNldDSXhoNlh2UjRBejJ4b3A5?=
- =?utf-8?B?UG9RVXppalFoTkZ6U1I0ZDdTOXNNQ1cvTUhocy9Eb1FtOXZqZWlUTHAweXlD?=
- =?utf-8?B?WlgwTmpKRUhFL2dyRk5aWWZNZWd3azM0eUhkODBxNnozMzJ3WU9hOTNJVytC?=
- =?utf-8?B?MHBtS212MytUSmMxUHNTaUlJS3VuVHdDcDArV2d5bElUZWd3YnM5dG1PWDJu?=
- =?utf-8?B?TDAyWHk1Zk04KzV4Y2pyQ3RVOXptVk9teHptT3ZyUTZmR1gzb0dUZkM1TW9t?=
- =?utf-8?B?THZocTFzMDdnRE9rNlh5c2tZNjU0emVaVjRMZ0JQUzJUQ0FSZG1ZS2plbyta?=
- =?utf-8?B?WkU0T2pEekIyTms4UEhQeko3WlNKaW95NXVXQjMzM3Rqa0s0N3E5Vzg0RUhp?=
- =?utf-8?B?YVE9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71b6ed5c-30d9-4e60-1b70-08dd14382c79
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 07:49:25.4905
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AKS6x5FgqJy1+YNMf08NF51oqBJhCybBoWtudXYZUhZc+jy/rM18LgWuldh2qvdoJcd96e2Mair9KShlqd/qum/NQzlYSnjmOmeyHTwpnWg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10769
+References: <20241003181629.36209057@gandalf.local.home> <bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net>
+ <20241203155542.462b1b21@gandalf.local.home> <ee401848-f7a1-4877-b896-36bec32ca985@roeck-us.net>
+ <20241203220153.3f81f12b@gandalf.local.home>
+In-Reply-To: <20241203220153.3f81f12b@gandalf.local.home>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Dec 2024 08:50:09 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWKDbBwUg=YcAPX-ES3+GWpm2ZmFZMczOhEFepfWdB0UQ@mail.gmail.com>
+Message-ID: <CAMuHMdWKDbBwUg=YcAPX-ES3+GWpm2ZmFZMczOhEFepfWdB0UQ@mail.gmail.com>
+Subject: Re: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+	Paul Burton <paulburton@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Hi Steven,
 
-Add device type data for S32G2/S32G3 SoC.
+On Wed, Dec 4, 2024 at 4:31=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
+ wrote:
+> On Tue, 3 Dec 2024 17:48:33 -0800
+> Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> > Hmm. If you say so. Note that powerpc has the same or a similar problem=
+.
+> >
+> > [    0.142039][    T0] RCU not watching for tracepoint
+> > [    0.142488][    T0]
+> > [    0.142659][    T0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [    0.142755][    T0] WARNING: suspicious RCU usage
+> > [    0.142914][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> > [    0.143082][    T0] -----------------------------
+> > [    0.143178][    T0] kernel/notifier.c:586 notify_die called but RCU =
+thinks we're quiescent!
+> >
+> >
+> > [    0.152733][    T0] RCU not watching for tracepoint
+> > [    0.152770][    T0]
+> > [    0.152995][    T0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [    0.153092][    T0] WARNING: suspicious RCU usage
+> > [    0.153187][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> > [    0.153301][    T0] -----------------------------
+> > [    0.153394][    T0] include/linux/rcupdate.h:850 rcu_read_lock() use=
+d illegally while idle!
+> >
+> > [    0.165396][    T0] RCU not watching for tracepoint
+> > [    0.165540][    T0]
+> > [    0.165712][    T0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [    0.165811][    T0] WARNING: suspicious RCU usage
+> > [    0.165909][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> > [    0.166026][    T0] -----------------------------
+> > [    0.166122][    T0] include/linux/rcupdate.h:878 rcu_read_unlock() u=
+sed illegally while idle!
+> >
+> > and many more.
+>
+> Grumble. It's just that one file. I wonder if we could just do a hack lik=
+e
+> this?
 
-FlexCAN module from S32G2/S32G3 is similar with i.MX SoCs, but interrupt
-management is different.
+Thanks, this fixes the issue during ARM s2ram, so
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On S32G2/S32G3 SoC, there are separate interrupts for state change, bus
-errors, Mailboxes 0-7 and Mailboxes 8-127 respectively.
-In order to handle this FlexCAN hardware particularity, first reuse the
-'FLEXCAN_QUIRK_NR_IRQ_3' quirk provided by mcf5441x's irq handling
-support. Secondly, use the newly introduced
-'FLEXCAN_QUIRK_SECONDARY_MB_IRQ' quirk which handles the case where two
-separate mailbox ranges are controlled by independent hardware interrupt
-lines.
+> --- a/kernel/trace/trace_preemptirq.c
+> +++ b/kernel/trace/trace_preemptirq.c
+> @@ -10,11 +10,42 @@
+>  #include <linux/module.h>
+>  #include <linux/ftrace.h>
+>  #include <linux/kprobes.h>
+> +#include <linux/hardirq.h>
+>  #include "trace.h"
+>
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/preemptirq.h>
+>
+> +/*
+> + * Use regular trace points on architectures that implement noinstr
+> + * tooling: these calls will only happen with RCU enabled, which can
+> + * use a regular tracepoint.
+> + *
+> + * On older architectures, RCU may not be watching in idle. In that
+> + * case, wake up RCU to watch while calling the tracepoint. These
+> + * aren't NMI-safe - so exclude NMI contexts:
+> + */
+> +#ifdef CONFIG_ARCH_WANTS_NO_INSTR
+> +#define trace(point, args)     trace_##point(args)
+> +#else
+> +#define trace(point, args)                                     \
+> +       do {                                                    \
+> +               if (trace_##point##_enabled()) {                \
+> +                       bool exit_rcu =3D false;                  \
+> +                       if (in_nmi())                           \
+> +                               break;                          \
+> +                       if (!IS_ENABLED(CONFIG_TINY_RCU) &&     \
+> +                           is_idle_task(current)) {            \
+> +                               ct_irq_enter();                 \
+> +                               exit_rcu =3D true;                \
+> +                       }                                       \
+> +                       trace_##point(args);                    \
+> +                       if (exit_rcu)                           \
+> +                               ct_irq_exit();                  \
+> +               }                                               \
+> +       } while (0)
+> +#endif
+> +
+>  #ifdef CONFIG_TRACE_IRQFLAGS
+>  /* Per-cpu variable to prevent redundant calls when IRQs already off */
+>  static DEFINE_PER_CPU(int, tracing_irq_cpu);
+> @@ -28,7 +59,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+>  void trace_hardirqs_on_prepare(void)
+>  {
+>         if (this_cpu_read(tracing_irq_cpu)) {
+> -               trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+> +               trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>                 tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+>                 this_cpu_write(tracing_irq_cpu, 0);
+>         }
+> @@ -39,7 +70,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
+>  void trace_hardirqs_on(void)
+>  {
+>         if (this_cpu_read(tracing_irq_cpu)) {
+> -               trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+> +               trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>                 tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+>                 this_cpu_write(tracing_irq_cpu, 0);
+>         }
+> @@ -61,7 +92,7 @@ void trace_hardirqs_off_finish(void)
+>         if (!this_cpu_read(tracing_irq_cpu)) {
+>                 this_cpu_write(tracing_irq_cpu, 1);
+>                 tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+> -               trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+> +               trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>         }
+>
+>  }
+> @@ -75,7 +106,7 @@ void trace_hardirqs_off(void)
+>         if (!this_cpu_read(tracing_irq_cpu)) {
+>                 this_cpu_write(tracing_irq_cpu, 1);
+>                 tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+> -               trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+> +               trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>         }
+>  }
+>  EXPORT_SYMBOL(trace_hardirqs_off);
+> @@ -86,13 +117,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
+>
+>  void trace_preempt_on(unsigned long a0, unsigned long a1)
+>  {
+> -       trace_preempt_enable(a0, a1);
+> +       trace(preempt_enable, TP_ARGS(a0, a1));
+>         tracer_preempt_on(a0, a1);
+>  }
+>
+>  void trace_preempt_off(unsigned long a0, unsigned long a1)
+>  {
+> -       trace_preempt_disable(a0, a1);
+> +       trace(preempt_disable, TP_ARGS(a0, a1));
+>         tracer_preempt_off(a0, a1);
+>  }
+>  #endif
 
-Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
----
- drivers/net/can/flexcan/flexcan-core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/flexcan/flexcan-core.c
-index 3ae54305bf33..282297c55502 100644
---- a/drivers/net/can/flexcan/flexcan-core.c
-+++ b/drivers/net/can/flexcan/flexcan-core.c
-@@ -386,6 +386,16 @@ static const struct flexcan_devtype_data fsl_lx2160a_r1_devtype_data = {
- 		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR,
- };
- 
-+static const struct flexcan_devtype_data nxp_s32g2_devtype_data = {
-+	.quirks = FLEXCAN_QUIRK_DISABLE_RXFG | FLEXCAN_QUIRK_ENABLE_EACEN_RRS |
-+		FLEXCAN_QUIRK_DISABLE_MECR | FLEXCAN_QUIRK_BROKEN_PERR_STATE |
-+		FLEXCAN_QUIRK_USE_RX_MAILBOX | FLEXCAN_QUIRK_SUPPORT_FD |
-+		FLEXCAN_QUIRK_SUPPORT_ECC | FLEXCAN_QUIRK_NR_IRQ_3 |
-+		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX |
-+		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR |
-+		FLEXCAN_QUIRK_SECONDARY_MB_IRQ,
-+};
-+
- static const struct can_bittiming_const flexcan_bittiming_const = {
- 	.name = DRV_NAME,
- 	.tseg1_min = 4,
-@@ -2055,6 +2065,7 @@ static const struct of_device_id flexcan_of_match[] = {
- 	{ .compatible = "fsl,vf610-flexcan", .data = &fsl_vf610_devtype_data, },
- 	{ .compatible = "fsl,ls1021ar2-flexcan", .data = &fsl_ls1021a_r2_devtype_data, },
- 	{ .compatible = "fsl,lx2160ar1-flexcan", .data = &fsl_lx2160a_r1_devtype_data, },
-+	{ .compatible = "nxp,s32g2-flexcan", .data = &nxp_s32g2_devtype_data, },
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, flexcan_of_match);
--- 
-2.45.2
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
