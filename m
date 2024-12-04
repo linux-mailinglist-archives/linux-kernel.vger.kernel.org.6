@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-431711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8139E40A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:08:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 635D89E43DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E98C28159D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:08:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3EC8B62CC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A7820FA91;
-	Wed,  4 Dec 2024 16:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BFE1C3C14;
+	Wed,  4 Dec 2024 16:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghFfU2aQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzE6EYH3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F047420E33A;
-	Wed,  4 Dec 2024 16:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DACD1C3C0A;
+	Wed,  4 Dec 2024 16:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331586; cv=none; b=kodb8t+d62rObQkwHktPjNk0hJtkhuD3lq7KOZSrpRsCGnMe5gFXAvnTZ38b4b21GlzkfYMq0xKgYMR0tgQg1cGYwDmq1e6AjrCll6JGrxbSygrEkZYQgKpsnBLFluM0zzim+Ith8FIRK/cY8VT4DlcGeCEnZDSTaEU3Rk0QH58=
+	t=1733331593; cv=none; b=dFaehcb3ewtZ5J5gf6B3CXL57EEbqHdMusKw2RJMck1+ZHdbNu4bKK8rmCIslJs2uDPPMMXtmtODs8gLq/gUOclN4spPyovnuz9dKDzQnstVANcFeQdhQ0kLrX9vPamih/r4bjWIpYDcnzbaN9k7s5nWNSa9ViuXFaBrwU1eN8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331586; c=relaxed/simple;
-	bh=2GzttSpa/kaeonSAGg1jQW/Lt5L31GNe3I0m2S2UGNA=;
+	s=arc-20240116; t=1733331593; c=relaxed/simple;
+	bh=uSo708ym+6IUE3v7hcIVVLbdQwAsdo/NWdqhzGsHD1Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibGog0YC40ol2ea2YPhy4BPPuMDE6R/1kyqVvLZOxRADPH8+RVL17igLTbNzNbYAZZWIW9wEwmPrAQ3q32e8yHnI9P8fpNk1dpJOCa8ioAjrsH7Joeqp8ySJ9tpLWI23aaNlDAXz983pfbUIdgWzIjTZhpidi2H4kJJ5u4oLhHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghFfU2aQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F72C4CECD;
-	Wed,  4 Dec 2024 16:59:44 +0000 (UTC)
+	 MIME-Version; b=Kep2VoarB/0v4AUlYb764/u78MXFLP6fTqMRKVj2ijzA/9xvZKqEs9UKsz3/Tv7J5z0lj+V7zMVoDchNx1oyDOz5wlTaxE8qIZZSFlJxKNxbh3qa1hwu1Wu7Cdi0AZNpL+beS/3bCA13VTwFwpYlUyTDtmPfwRXQOemTMtlMyUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzE6EYH3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D738C4CECD;
+	Wed,  4 Dec 2024 16:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331585;
-	bh=2GzttSpa/kaeonSAGg1jQW/Lt5L31GNe3I0m2S2UGNA=;
+	s=k20201202; t=1733331593;
+	bh=uSo708ym+6IUE3v7hcIVVLbdQwAsdo/NWdqhzGsHD1Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ghFfU2aQWktgIaQmwYt8mtc8HWigGdJF5j6lGA3Sqynnbc25xLWoCBcbnLV5OB5v4
-	 Eedm9BgZc34ubYKYPQOypqGkLZ/B4I59bVenh4E6mM5aIzHhovebsHQqoeeG+iu/dD
-	 IqVD6/BEPB0kJj6yz0jP60cuG8A2AnhjDy0CXQ2wYS/0rDMPyBbbtZqA5tt0GEL19V
-	 Or7BIaKclgUTIN0hMTlkmJKm+scezDtv9yQgMgmdnahr0WZIKc1RWWWVv1qlqr0dH2
-	 Ub9GwszTiH2zaZOLXwMZEtWUxkkxV+9Kzlbg7vi0Ted9Un0CGKwBo3zLQrsRQ+Gx4l
-	 k7oDti1+djdaA==
+	b=IzE6EYH3aMFd095kYvc544hZ+YiIYlqjbupn+4W8Niceepkc60tQrXhLaVGhCjI4W
+	 1P5vHjdZL8j7lFMk6UgK7JOL5mNGRQiovMtw2Js4Fyh+nrZ/Ty5WmwC7pqjxhXjTn0
+	 6DcP/5XP7UwVRqtKOjt/sbKYFFqV68Tp+XTYiyVTASHXS39XJ0mCHO82feNAYGHhG+
+	 4Q7JQEWpFTs48+SeYLz6ymWQ486FMaGg7olu6ufiVczVFmVyTc/APSGwIC+S91OtcI
+	 8VuHd/fHnF4ok/DaWODGLw/h98NvgpwAu1We2T+ZWpRKesLHsCzzw4cdHii1Bz+g9k
+	 YPtuWunQwtdZQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
+Cc: Tomas Glozar <tglozar@redhat.com>,
+	Attila Fazekas <afazekas@redhat.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Sasha Levin <sashal@kernel.org>,
+	bristot@kernel.org,
+	jkacur@redhat.com,
+	ezulian@redhat.com,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 04/33] tracing: Use atomic64_inc_return() in trace_clock_counter()
-Date: Wed,  4 Dec 2024 10:47:17 -0500
-Message-ID: <20241204154817.2212455-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.11 06/33] rtla/timerlat: Make timerlat_top_cpu->*_count unsigned long long
+Date: Wed,  4 Dec 2024 10:47:19 -0500
+Message-ID: <20241204154817.2212455-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154817.2212455-1-sashal@kernel.org>
 References: <20241204154817.2212455-1-sashal@kernel.org>
@@ -66,36 +68,70 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.11.10
 Content-Transfer-Encoding: 8bit
 
-From: Uros Bizjak <ubizjak@gmail.com>
+From: Tomas Glozar <tglozar@redhat.com>
 
-[ Upstream commit eb887c4567d1b0e7684c026fe7df44afa96589e6 ]
+[ Upstream commit 4eba4723c5254ba8251ecb7094a5078d5c300646 ]
 
-Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-to use optimized implementation and ease register pressure around
-the primitive for targets that implement optimized variant.
+Most fields of struct timerlat_top_cpu are unsigned long long, but the
+fields {irq,thread,user}_count are int (32-bit signed).
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20241007085651.48544-1-ubizjak@gmail.com
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+This leads to overflow when tracing on a large number of CPUs for a long
+enough time:
+$ rtla timerlat top -a20 -c 1-127 -d 12h
+...
+  0 12:00:00   |          IRQ Timer Latency (us)        |         Thread Timer Latency (us)
+CPU COUNT      |      cur       min       avg       max |      cur       min       avg       max
+ 1 #43200096  |        0         0         1         2 |        3         2         6        12
+...
+127 #43200096  |        0         0         1         2 |        3         2         5        11
+ALL #119144 e4 |                  0         5         4 |                  2        28        16
+
+The average latency should be 0-1 for IRQ and 5-6 for thread, but is
+reported as 5 and 28, about 4 to 5 times more, due to the count
+overflowing when summed over all CPUs: 43200096 * 127 = 5486412192,
+however, 1191444898 (= 5486412192 mod MAX_INT) is reported instead, as
+seen on the last line of the output, and the averages are thus ~4.6
+times higher than they should be (5486412192 / 1191444898 = ~4.6).
+
+Fix the issue by changing {irq,thread,user}_count fields to unsigned
+long long, similarly to other fields in struct timerlat_top_cpu and to
+the count variable in timerlat_top_print_sum.
+
+Link: https://lore.kernel.org/20241011121015.2868751-1-tglozar@redhat.com
+Reported-by: Attila Fazekas <afazekas@redhat.com>
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_clock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/tracing/rtla/src/timerlat_top.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace_clock.c b/kernel/trace/trace_clock.c
-index 4702efb00ff21..4cb2ebc439be6 100644
---- a/kernel/trace/trace_clock.c
-+++ b/kernel/trace/trace_clock.c
-@@ -154,5 +154,5 @@ static atomic64_t trace_counter;
-  */
- u64 notrace trace_clock_counter(void)
- {
--	return atomic64_add_return(1, &trace_counter);
-+	return atomic64_inc_return(&trace_counter);
- }
+diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+index 210b0f533534a..ee7c291fc9bb3 100644
+--- a/tools/tracing/rtla/src/timerlat_top.c
++++ b/tools/tracing/rtla/src/timerlat_top.c
+@@ -54,9 +54,9 @@ struct timerlat_top_params {
+ };
+ 
+ struct timerlat_top_cpu {
+-	int			irq_count;
+-	int			thread_count;
+-	int			user_count;
++	unsigned long long	irq_count;
++	unsigned long long	thread_count;
++	unsigned long long	user_count;
+ 
+ 	unsigned long long	cur_irq;
+ 	unsigned long long	min_irq;
+@@ -280,7 +280,7 @@ static void timerlat_top_print(struct osnoise_tool *top, int cpu)
+ 	/*
+ 	 * Unless trace is being lost, IRQ counter is always the max.
+ 	 */
+-	trace_seq_printf(s, "%3d #%-9d |", cpu, cpu_data->irq_count);
++	trace_seq_printf(s, "%3d #%-9llu |", cpu, cpu_data->irq_count);
+ 
+ 	if (!cpu_data->irq_count) {
+ 		trace_seq_printf(s, "%s %s %s %s |", no_value, no_value, no_value, no_value);
 -- 
 2.43.0
 
