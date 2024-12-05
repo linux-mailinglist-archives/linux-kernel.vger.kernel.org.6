@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-433464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7529E58B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:42:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4159E58B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2EB28306F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:42:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675DC28270C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB921A448;
-	Thu,  5 Dec 2024 14:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4602421A458;
+	Thu,  5 Dec 2024 14:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NYtoJWLb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Il4NKSTc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epkT98bP"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27E0217725;
-	Thu,  5 Dec 2024 14:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22530217725;
+	Thu,  5 Dec 2024 14:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733409759; cv=none; b=BwCvn3APTB4Yv3TEAqhClH/0DZluK6BjsK4N6mRSe34JQgU02CXH/w3pMT8v8Ic53aIN+vsmkGNtjagfexWrDN2ZGRlAkMjFD8kV3tpDsHhrd8/XHUhxCAU3ZIqYNtS8zL0za9RYyCFuMqCPIKNQTPZHUF8t3vFqqhHA/lm813Y=
+	t=1733409837; cv=none; b=df3SVUDGm26MLUzroaTgvpQyGmphO8Xcw6WVSSVyJEdXtaz7pxmd+PfVBgImkSlw4Ig+T4GkKgkeBWyDdWgj2rHIO+Z0K9jp4Pm6eOrMvP+MvVLrH/asPXFnRfCC6n+AuQUHcicRunHEdZNcybYbZFty+AGS+KJQ4ga6VpAeXh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733409759; c=relaxed/simple;
-	bh=JbXfuVd+fgDIx1VcgZ0yI4CxBVFSrRBnZXM4EOLbq9M=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=C/ROl/2rhdL8oOvVWKht8FNP7wpgNEUwmN1J/WNm9csgLQTyg8t+f73vSS93MBNe3FjYlzI0e+GGaJ4yjTLux4ClURGVRs+So79OZ8U27451GW/0K+5dsJWn4+1BjsCrGBofB+yYzNl5xZwMjaNlGNgYOZTfoEr8hv9/kjlxHOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NYtoJWLb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Il4NKSTc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 05 Dec 2024 14:42:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733409751;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oglFsZpt4nXaTaf2fMRwK/fuQATAzkdtHz/yhIZldYs=;
-	b=NYtoJWLbkYXxJ6Axo2j4MiztR5IoickPC7LDGT2n9SMlIKOZru3BZsFd3+Ax+4fZnpM08w
-	LljO8uZDzfHwmpRNZPgUvV38V604PgeKl801p13fDMQ4MdoAdTMSHhAyLiEegZDZmHw3n/
-	wCFHUs0rf6IzM66OfhEH38+ptzCZhVjRFDpdiaBZSzAEOdarYQ2fhHRpLk7DufagClPNf1
-	DWkTdPk1EJHPdKpXxuH1pth6qdasHsG0IURubRLLjPsX/0yK2TeGNB0TJbOkbtg2xYtAwR
-	kAl6fk7YhPkEIrfXedYFiMJeZORP0spHozjtAsKrWx/Hd58P2Aq6L5KXKLaScQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733409751;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oglFsZpt4nXaTaf2fMRwK/fuQATAzkdtHz/yhIZldYs=;
-	b=Il4NKSTcOMJpRqNj844baTYen6JOM6+RCGIpV/mPGU19qkRMQ15SJVEg4L8o7OCIZ8AkqM
-	3RzhueGHrAwcQ4DQ==
-From: "tip-bot2 for Mathieu Desnoyers" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] smp/scf: Evaluate local cond_func() before IPI
- side-effects
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@surriel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241203163558.3455535-1-mathieu.desnoyers@efficios.com>
-References: <20241203163558.3455535-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1733409837; c=relaxed/simple;
+	bh=zqyWVW0Ah870Tx8aiC9OabF19suR5RYgkjxlpVelWJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H1VU2lPlSAfqVkhMkEKjj/7nW/FJjG2adDYQYE8UulBUTh69o1MdtcMKFkLjd62O6o/tyKoBdVHN/1RicUMX6eOjEdJWPaDA6HOP7j1mblKkv3WqudUqhx6UNMszivIjHTKqKYj7xgkEIag2ep/GpMhfgogxVmI7qftUJD+/7iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epkT98bP; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d0d3dd3097so1558711a12.0;
+        Thu, 05 Dec 2024 06:43:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733409834; x=1734014634; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iTHLCrP6PQfSoGLasbB1lKEfOxQRigWWYHIwjLkZHQY=;
+        b=epkT98bPrwTHDQilgZLDsJTEUcTV7H/S0zgiyg9sNeDMbVmt7nc+cUzSLiS8Q8lRWk
+         qF2DRJdbq2gw3/7H81Szfxu4nX5BMlqnkaYwpZ31bJEhjcBcbkrTcUJRfTPRC4N5fhoK
+         jPVuBKJqqXgIv3MODj402BqeH0ZOQnpoWiH4bxvzFVJjCOswvekXzLwNzz/37qXAOiOy
+         +5WyjAVoP46tdUoIIjiqB70s3VRXpjUGhQjqeLzTjkvAReNi2T+QvW6uh0/8wsBU++F7
+         FmiLAV7/HD8smOT6izkuDqETu9znB8vufSQCmKa5SW5sk89eoQDvhk6BwT+Er7mzUOyD
+         FobQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733409834; x=1734014634;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iTHLCrP6PQfSoGLasbB1lKEfOxQRigWWYHIwjLkZHQY=;
+        b=bfJ/0zXbiOao9Rgeu3DtgVHjir4ets8zzA738fxpzCqyVVdFKNu9Uo67/WUpqmMZ3k
+         gpNsdnwza53tSdF8XRUIoELmOE+Wox0blAsFTTm1pcdQ33lucCnNuN6V5HvJJNLDfU6p
+         Z0noV4x1mW61sMZugrS0+l1x/t7P5TBLEMKtv3sQfgLaQoTs/NVrpzYmSNKT9QN7oIMY
+         g4eYR9O+kd38aZMf/qfCCrzuoz7rGt6HGJGKKVhBPTpdKjCdJJH/dRUghu84oEBD+ns0
+         Z5dUYv7UxoPW4M6gg1ZaYTHqGbJcFZrDnkj31n2fCCFMlTOfxtDD0CgfggKpuMU+dXj8
+         BSsw==
+X-Forwarded-Encrypted: i=1; AJvYcCURILGAtIVffqIsza7GTNEU5XNBU13Xf7dqBxl2IbzKWfpSstnzkwa8w1c1re1n6+fXR1dKYRbEOgGs8hK6@vger.kernel.org, AJvYcCXKq/kiMCt5usKvn1rJQr802x0nGqtBHpCc/EGf3DR4D/1hv14uuIc8AMNvLtAfgkhvaLeA99ctYq/91x61@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBMexLl+uLnq1clA7Q1z3jP0uG1n11Umg6dQA+QefmbwK76j2I
+	nABO+Ab2mLrZVtNvg2LBA9T492aUBAg7Ws2cdpbFeosSqpVBSlReynDY9uqNg0GdW98lLI4YKWW
+	xbkJDJsW1lSGWuAZhtZQWeVdz420=
+X-Gm-Gg: ASbGncucs1+3LYPzyHU1ju5HwZGfjEHSthpe6PTqcbcNA1/45wAp1dZiwF70OTmxTDf
+	G6KqG5PNZdckaPKH4eIzcu/xFuoSnTw==
+X-Google-Smtp-Source: AGHT+IE/Y3zRB25vcI/ImwUoISM2FjLOb4IOpg92EWzfpP4MF78wQGXCoFqhErXtWgLWUASnNPm9OeTW4J94vICuSSY=
+X-Received: by 2002:a05:6402:2351:b0:5cf:ab23:1f07 with SMTP id
+ 4fb4d7f45d1cf-5d113cc7a3amr8306133a12.15.1733409834224; Thu, 05 Dec 2024
+ 06:43:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173340975062.412.259675542832546880.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com> <20241205141850.GS3387508@ZenIV>
+In-Reply-To: <20241205141850.GS3387508@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 5 Dec 2024 15:43:41 +0100
+Message-ID: <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: paulmck@kernel.org, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
+	edumazet@google.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the locking/core branch of tip:
+On Thu, Dec 5, 2024 at 3:18=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
+> >  void fd_install(unsigned int fd, struct file *file)
+> >  {
+> > -     struct files_struct *files =3D current->files;
+> > +     struct files_struct *files;
+> >       struct fdtable *fdt;
+> >
+> >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
+> >               return;
+> >
+> > +     /*
+> > +      * Synchronized with expand_fdtable(), see that routine for an
+> > +      * explanation.
+> > +      */
+> >       rcu_read_lock_sched();
+> > +     files =3D READ_ONCE(current->files);
+>
+> What are you trying to do with that READ_ONCE()?  current->files
+> itself is *not* changed by any of that code; current->files->fdtab is.
 
-Commit-ID:     63a48181fbcddefe5fb4c6618938bb64c543945b
-Gitweb:        https://git.kernel.org/tip/63a48181fbcddefe5fb4c6618938bb64c543945b
-Author:        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-AuthorDate:    Tue, 03 Dec 2024 11:35:58 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 05 Dec 2024 14:25:28 +01:00
+To my understanding this is the idiomatic way of spelling out the
+non-existent in Linux smp_consume_load, for the resize_in_progress
+flag.
 
-smp/scf: Evaluate local cond_func() before IPI side-effects
+Anyway to elaborate I'm gunning for a setup where the code is
+semantically equivalent to having a lock around the work.
+Pretend ->resize_lock exists, then:
+fd_install:
+files =3D current->files;
+read_lock(files->resize_lock);
+fdt =3D rcu_dereference_sched(files->fdt);
+rcu_assign_pointer(fdt->fd[fd], file);
+read_unlock(files->resize_lock);
 
-In smp_call_function_many_cond(), the local cond_func() is evaluated
-after triggering the remote CPU IPIs.
+expand_fdtable:
+write_lock(files->resize_lock);
+[snip]
+rcu_assign_pointer(files->fdt, new_fdt);
+write_unlock(files->resize_lock);
 
-If cond_func() depends on loading shared state updated by other CPU's
-IPI handlers func(), then triggering execution of remote CPUs IPI before
-evaluating cond_func() may have unexpected consequences.
+Except rcu_read_lock_sched + appropriately fenced resize_in_progress +
+synchronize_rcu do it.
 
-One example scenario is evaluating a jiffies delay in cond_func(), which
-is updated by func() in the IPI handlers. This situation can prevent
-execution of periodic cleanup code on the local CPU.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Rik van Riel <riel@surriel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20241203163558.3455535-1-mathieu.desnoyers@efficios.com
----
- kernel/smp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 27dc31a..f104c8e 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -815,7 +815,8 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
- 	WARN_ON_ONCE(!in_task());
- 
- 	/* Check if we need local execution. */
--	if ((scf_flags & SCF_RUN_LOCAL) && cpumask_test_cpu(this_cpu, mask))
-+	if ((scf_flags & SCF_RUN_LOCAL) && cpumask_test_cpu(this_cpu, mask) &&
-+	    (!cond_func || cond_func(this_cpu, info)))
- 		run_local = true;
- 
- 	/* Check if we need remote execution, i.e., any CPU excluding this one. */
-@@ -868,7 +869,7 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
- 			send_call_function_ipi_mask(cfd->cpumask_ipi);
- 	}
- 
--	if (run_local && (!cond_func || cond_func(this_cpu, info))) {
-+	if (run_local) {
- 		unsigned long flags;
- 
- 		local_irq_save(flags);
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
