@@ -1,208 +1,163 @@
-Return-Path: <linux-kernel+bounces-433482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E4B9E5900
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC389E5907
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0023F168E92
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8866C1691D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A394721C191;
-	Thu,  5 Dec 2024 14:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9F121C9E2;
+	Thu,  5 Dec 2024 14:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XroGXx9l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sULmI7pi"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2040.outbound.protection.outlook.com [40.107.244.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03074218853;
-	Thu,  5 Dec 2024 14:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733410702; cv=none; b=goLR5EhodcIpYcSWsppeicai2tcCGlteILz0CfmTM1cmy6qsmqCQPVrtBEAlFxTcEIADFwfhVisWlyA+X7N2aFw/QQF9qDQRyMHwrv9LFpxn6eRi8NjEej4jTgpgCjnOxcpacxxKZAkNw+wLzjNl/rve7jVsKwiCII/yQkLlhkQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733410702; c=relaxed/simple;
-	bh=UqrgiOwKrQRuBt063enFRtDuN5GoS9kInSGmW2OytGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fiFNaFpYmg6b7x1650A8E1vivwHjuZIIinfEJobSD45rUwak0k9o9nXJsqDJFi28iPG/JX26gEuwpLgOsSm0HSnWigg6sM12ALClKGzKBpz7J+R6AhUZBWFJdW7SxUcuJoX8kQNRrbL3dEqcZLX9T6FtALENDEUFUmDzivG2pVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XroGXx9l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B1BDC4CEDC;
-	Thu,  5 Dec 2024 14:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733410701;
-	bh=UqrgiOwKrQRuBt063enFRtDuN5GoS9kInSGmW2OytGY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XroGXx9leBpCCBGlKuPRd4D1Tpz+lkPE8qZnUFozqMMJQizV8cW3RB0pampPYHnvV
-	 7RHv/u2vdQMR4Z7d1l2hu4RDIta5hJlCAMG+s5d271BtXv4bUDOq55GH4TudQtph4+
-	 +FwztL2BmpwpduC/ce1rx5BeSxfGOzULslVciGnE4WkT7mBw/DgmuOB/Ri7zbTKClx
-	 osXcaQ3ztJkvePrwLiq2iTFA1Ba8BGXu2+lLQEhPlAgPb0bKRaPRDhbvMNoAHiqLHn
-	 eUPPJct4cbL9ALFcH/xnaNPNI5/xRP/Umh8wNCEmhcwWrs8O3J3AQk298GvPHv9/b/
-	 XTzhUNipK/qYQ==
-Date: Thu, 5 Dec 2024 15:58:16 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paulmck@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, edumazet@google.com, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-Message-ID: <20241205-kursgewinn-balsam-a3e8bfd1e7d4@brauner>
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF255218853;
+	Thu,  5 Dec 2024 14:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733410770; cv=fail; b=aAWi8Od5aaSmR42o0FRAfTwdGQOnPro78CAT0qZl+tTwx/YSq1qtIRbsk53k9nj6lZ+vOrfZTxZtiCgKHDCFIlNReug8yHBGFOx0wWEhGNrpM4PfPXXjjIjEjGTUjEEfWSQQ0lBFWjWg4ejlzZF8hsrtazNvf2nkIVAHrhMTAZ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733410770; c=relaxed/simple;
+	bh=Wm8a8iYs8mugx9s4X9EgjsYB1UgK+Bn9Hgs/7Q7l0jo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ULjxff+BcuapOT85TQjnBOi8M/M9nFwEGCSp1+N/sbFvrwL/Ju7QuXM21L1fLbFTw3bmnpvM421LJhEiIbuZ3IZsWorHklHLXHfvPz37hSnL7DTEbjDtv/5t9rFNDT4JNR4xcSLQVCYBl19w8IvFRW3KvYUiX8sj/XMZI9IIooA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sULmI7pi; arc=fail smtp.client-ip=40.107.244.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q7X7ShzXsfgexYW4Ng0q61nZIfnpEoc4bKP45roh+A/v8Vp3y2ACXwjU1oiFgV5aE3Rgw3eNYcqOAVgAnkSovTt/3vX/OoCXh4cvZhBzH32XGcYCwadOXpMYUBeGDLyQdotyXpntOxBewkjmHPp25KVKe2MkNXMjpMc3ssdlmG2ElOZlkI6DTn8TUhXno11dK5cuezGnCSsAhGcpX4WuaHnPJc8txhoaxo62fLuIixLR8B7pw08gn4088yNGzupowzJVKleYx9okCPFaKxu7LsJ2FdGvjxYycZcaCl1kdIGPcZRmnbgfI7edNdYql57NpG2UnwdXzJsQwsHMTdQfng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iaiYb8wdFwSILgp/Qv3FWlA/4qKoedxZ/sXwKHNLR2E=;
+ b=NFKVWjwS0+YMgD3H3nqpoTNbyBtCoETUA8tgUfeZMtDyLMFjZNwOeISPz1fIYqeobl4/r1FkFpy8Pno9Gl4LFaEtWZgAqNUef6c2nHsrm0r5ko5XU6QMvtxSUF5Bq2H8zKrWYGJgv7aDqvgaPzQCmTAVG/WO92NpSu08F6ViuFGXBaIXsVuLguzdSaDV0zJYRC80DvwVwwm4ckxz63mOUfHDsT+HBhfRMQUuoWagSLU3AiAi9Mzk39Idv7pJaMLiaeuNsyqRQptbvF7Ft4AuYdOOEEKfmVoMwpcJlnEi9VARMAreFPNvn3kNf3cpu6bw5gEAnLwCoVnUaCbSRXr6qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iaiYb8wdFwSILgp/Qv3FWlA/4qKoedxZ/sXwKHNLR2E=;
+ b=sULmI7piQNCuxSqpczBm/EoV7yxwj5X4A+0A8oogu36f0Mff19NIhsovwyzPAjsTGmm7dXL1eETQryCFQqzEBlZY17765qNWH2YJoRc0si+tHRAh/l/LLQR/TTBUtTHeg+sIf6w0d3ja1XxlDCSbO+mHmUHE6Gi2venIcdpsJwbq1E4RxLmuBzHAG9dQyyE80jkcAW19CVlcQxB9afB8xbZEBXOwLHiDIX+kKwdBdbV995w7Bj5v8EN4+aNq5tOR9YoyTP2JRo+Ao1qqquxPuqVTdxQAffC+GiixcpGCFE1RkafoWAZiN/W5oI9sMSuhc+KtfPzQpdwwqrasNC1KHg==
+Received: from SJ0PR13CA0210.namprd13.prod.outlook.com (2603:10b6:a03:2c3::35)
+ by SJ1PR12MB6172.namprd12.prod.outlook.com (2603:10b6:a03:459::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
+ 2024 14:59:20 +0000
+Received: from SJ1PEPF000023D9.namprd21.prod.outlook.com
+ (2603:10b6:a03:2c3:cafe::64) by SJ0PR13CA0210.outlook.office365.com
+ (2603:10b6:a03:2c3::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Thu, 5
+ Dec 2024 14:59:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF000023D9.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.1 via Frontend Transport; Thu, 5 Dec 2024 14:59:20 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 5 Dec 2024
+ 06:59:08 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 5 Dec 2024 06:59:07 -0800
+Received: from 13db4e1-lcedt.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 5 Dec 2024 06:59:04 -0800
+From: Mohan Kumar D <mkumard@nvidia.com>
+To: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <spujar@nvidia.com>,
+	<dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mohan Kumar D
+	<mkumard@nvidia.com>
+Subject: [PATCH 0/2] Add Tegra ADMA channel page support
+Date: Thu, 5 Dec 2024 20:28:57 +0530
+Message-ID: <20241205145859.2331691-1-mkumard@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241205120332.1578562-1-mjguzik@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D9:EE_|SJ1PR12MB6172:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e56f578-9261-4622-ded1-08dd153d6637
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7iHWrjnpjovxwlex5eVOlj4MzI+0OhCz6DQhDluGdiRJod0jruZn8ihfSxh1?=
+ =?us-ascii?Q?F6djixG3euc8zksn+WoH5SzmFCXTLMdtgvHRJ+Cy2xavbXeRi+aDTkcsanEg?=
+ =?us-ascii?Q?R39ZrolpqvMhK8mIXxN1j+YP6wRZVUJemFnjREBCcywbmCAfaohDwqRfSUKu?=
+ =?us-ascii?Q?UbVjtd8NYWwllDj4ih6PPKs4fn+C4PUfZaKUKotx8FfR0q57+vfEjrFdqgG+?=
+ =?us-ascii?Q?rx3w3K1fLj1lv6eAmejYm5DoR+NK5I3OlYv3r1E/WbxCqDOgGsQStS7YP3WV?=
+ =?us-ascii?Q?JV6XXaBq/q4BQCwxO6GMvAwWXf2FjwOU/6yYD2bESN5vcIytYn65ml1i+rxl?=
+ =?us-ascii?Q?cGJUWsErU9pJZMms4gRwhh4YifsQzv2mIogGRgMN9ARsoGsJmST4VxyFWGjN?=
+ =?us-ascii?Q?OMT/l9Na1c4S/ofYcfU7ywFsg/TzoQ+UTx5yH15+Ct9qKxwQYfNtciyEITcz?=
+ =?us-ascii?Q?3o0KMI64cjbcSIS5QQr6SAoVADzRWMmivd7JNM92z2bGQDFdWTKAb0FjQs4O?=
+ =?us-ascii?Q?eiWPztKud0kA6FJ8pvG1/RvhLIR9TKWB9EYmxYzT0hXLpIze8hN8i0agDkYU?=
+ =?us-ascii?Q?aeWKu1oLU3PMUJ1EXALMkLdwIyCQnqJEXeNDpaiwArAB4MeyG3yGGt939IUL?=
+ =?us-ascii?Q?3pf5oOVUdsLrn9zODtA0HDRCBpxs3yfXaQAkMtMFcUqURh0i2Xs0nVYNvh1l?=
+ =?us-ascii?Q?Ji9vFDIiaGSmDZc+ULEI362h+FIUwzHgnudFbcyOJchzXr8V6yvcHKVFH6UI?=
+ =?us-ascii?Q?8HueF3OztfqCWZegXVzbPvpM201CXbx7tuvLLyKBwqinUHqO5GC4hqOXfWRR?=
+ =?us-ascii?Q?ys+y3czFTLN1uI9OQ11HcTmkJz71NiW9jjfCHf80/XED35taOVNGCy1y0lAT?=
+ =?us-ascii?Q?rmN1zIRbGjt1nsRj3IA1zVWxDs10EW2aD/w6eVIYx+OQcKWeVftcTZggi/0u?=
+ =?us-ascii?Q?Y96u6US/s4Lx3va49anHvqlG+HqA7aebK2Bg4eRa8GA045TPG/3P9yH0LUX5?=
+ =?us-ascii?Q?gHT3ErBzKivwpXqy1j4iOsvEVcp5g3WBpVPXExV3z3z3NM/Xtq6tU0pJ3aFB?=
+ =?us-ascii?Q?v2n77w0DW/taWJyOLj8MASIq5a4kupbdmbZ69GOMYaOPgUoYihVImkaLtGVC?=
+ =?us-ascii?Q?UfGwehgHDw6wcB+W58CV3HBxDkCybpAmNMIuG32RGwqLuieyHXIYUFCF4KiA?=
+ =?us-ascii?Q?a0NYLSbLj3uxIFVsZl3VBlRWRFM8MIzQ9YV8M3TI+LTasMg5B4NRIobswQA6?=
+ =?us-ascii?Q?HyK50rQSmVMi7IuyHG89OdD1xkbih6vMYeBPzCui3c71cC2qWYQGwcJbAUby?=
+ =?us-ascii?Q?H64ckPjjB/L0WksN/1/bvM2JetPsYhJlsBRPY5KMi7d0gzSdMtb74n/VMVkA?=
+ =?us-ascii?Q?MF2Hj37B9G6G7xHwkP5gxjXJB1m7mHPt+8Tz93k6Y4NFAEFpOGkKHezMHdgw?=
+ =?us-ascii?Q?z7atQUQPbWYXCjSI/VUMes0w/nS23MTK?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 14:59:20.8291
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e56f578-9261-4622-ded1-08dd153d6637
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D9.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6172
 
-On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
-> See the added commentary for reasoning.
-> 
-> ->resize_in_progress handling is moved inside of expand_fdtable() for
-> clarity.
-> 
-> Whacks an actual fence on arm64.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
-> 
-> To my reading of commentary above synchronize_rcu() this works fine(tm)
-> and there is even other code relying on the same idea (percpu rwsems
-> (see percpu_down_read for example), maybe there is more).
-> 
-> However, given that barriers like to be tricky and I know about squat of
-> RCU internals, I refer to Paul here.
-> 
-> Paul, does this work? If not, any trivial tweaks to make it so?
-> 
-> I mean smp_rmb looks dodgeable, at worst I made a mistake somewhere and
-> the specific patch does not work.
-> 
->  fs/file.c | 50 +++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 39 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 019fb9acf91b..d065a24980da 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -233,28 +233,54 @@ static int expand_fdtable(struct files_struct *files, unsigned int nr)
->  	__acquires(files->file_lock)
->  {
->  	struct fdtable *new_fdt, *cur_fdt;
-> +	int err = 0;
->  
-> +	BUG_ON(files->resize_in_progress);
+Multiple ADMA Channel page hardware support has been added from
+TEGRA186 and onwards. Add channel page handling support in the tegra
+adma driver
 
-I think this BUG_ON() here is a bit unnecessary.
 
-> +	files->resize_in_progress = true;
+Mohan Kumar D (2):
+  dt-bindings: dma: Support channel page to nvidia,tegra210-adma
+  dmaengine: tegra210-adma: Support channel page
 
-Minor: Why move that into expand_fdtable()? Having
-files->resize_in_progress in here doesn't add much more clarity than
-just having it set around expand_fdtable() in the caller.
+ .../bindings/dma/nvidia,tegra210-adma.yaml    | 19 +++-
+ drivers/dma/tegra210-adma.c                   | 86 ++++++++++++++++---
+ 2 files changed, 94 insertions(+), 11 deletions(-)
 
-Leaving it there also makes the patch smaller and clearer to follow as
-you neither need the additional err nor the goto.
+-- 
+2.25.1
 
->  	spin_unlock(&files->file_lock);
->  	new_fdt = alloc_fdtable(nr + 1);
->  
-> -	/* make sure all fd_install() have seen resize_in_progress
-> -	 * or have finished their rcu_read_lock_sched() section.
-> +	/*
-> +	 * Synchronize against the lockless fd_install().
-> +	 *
-> +	 * All work in that routine is enclosed with RCU sched section.
-> +	 *
-> +	 * We published ->resize_in_progress = true with the unlock above,
-> +	 * which makes new arrivals bail to locked operation.
-> +	 *
-> +	 * Now we only need to wait for CPUs which did not observe the flag to
-> +	 * leave and make sure their store to the fd table got published.
-> +	 *
-> +	 * We do it with synchronize_rcu(), which both waits for all sections to
-> +	 * finish (taking care of the first part) and guarantees all CPUs issued a
-> +	 * full fence (taking care of the second part).
-> +	 *
-> +	 * Note we know there is nobody to wait for if we are dealing with a
-> +	 * single-threaded process.
->  	 */
->  	if (atomic_read(&files->count) > 1)
->  		synchronize_rcu();
->  
->  	spin_lock(&files->file_lock);
-> -	if (IS_ERR(new_fdt))
-> -		return PTR_ERR(new_fdt);
-> +	if (IS_ERR(new_fdt)) {
-> +		err = PTR_ERR(new_fdt);
-> +		goto out;
-> +	}
->  	cur_fdt = files_fdtable(files);
->  	BUG_ON(nr < cur_fdt->max_fds);
->  	copy_fdtable(new_fdt, cur_fdt);
->  	rcu_assign_pointer(files->fdt, new_fdt);
->  	if (cur_fdt != &files->fdtab)
->  		call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
-> -	/* coupled with smp_rmb() in fd_install() */
-> +
-> +	/*
-> +	 * Publish everything before we unset ->resize_in_progress, see above
-> +	 * for an explanation.
-> +	 */
->  	smp_wmb();
-> -	return 0;
-> +out:
-> +	files->resize_in_progress = false;
-> +	return err;
->  }
->  
->  /*
-> @@ -290,9 +316,7 @@ static int expand_files(struct files_struct *files, unsigned int nr)
->  		return -EMFILE;
->  
->  	/* All good, so we try */
-> -	files->resize_in_progress = true;
->  	error = expand_fdtable(files, nr);
-> -	files->resize_in_progress = false;
->  
->  	wake_up_all(&files->resize_wait);
->  	return error;
-> @@ -629,13 +653,18 @@ EXPORT_SYMBOL(put_unused_fd);
->  
->  void fd_install(unsigned int fd, struct file *file)
->  {
-> -	struct files_struct *files = current->files;
-> +	struct files_struct *files;
->  	struct fdtable *fdt;
->  
->  	if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
->  		return;
->  
-> +	/*
-> +	 * Synchronized with expand_fdtable(), see that routine for an
-> +	 * explanation.
-> +	 */
->  	rcu_read_lock_sched();
-> +	files = READ_ONCE(current->files);
->  
->  	if (unlikely(files->resize_in_progress)) {
->  		rcu_read_unlock_sched();
-> @@ -646,8 +675,7 @@ void fd_install(unsigned int fd, struct file *file)
->  		spin_unlock(&files->file_lock);
->  		return;
->  	}
-> -	/* coupled with smp_wmb() in expand_fdtable() */
-> -	smp_rmb();
-> +
->  	fdt = rcu_dereference_sched(files->fdt);
->  	BUG_ON(fdt->fd[fd] != NULL);
->  	rcu_assign_pointer(fdt->fd[fd], file);
-> -- 
-> 2.43.0
-> 
 
