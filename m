@@ -1,167 +1,196 @@
-Return-Path: <linux-kernel+bounces-433623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EDB9E5ABD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:07:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14A59E5AC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A659188383D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:07:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8277C163896
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC9021CA1E;
-	Thu,  5 Dec 2024 16:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2279021CA0E;
+	Thu,  5 Dec 2024 16:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b="KssXXnKL"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wHaIcIXu"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB9C19342F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A440917E473;
+	Thu,  5 Dec 2024 16:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733414853; cv=none; b=e04r61inGz5/Q5LhvdapTL92d0V0tmT+1z+uikdm1gRAKDllDjW/i7M5ezSlaWF/k7QzpzjvNWGDU2Z/otCl6r0DPQEkJ9bEkU1BvN/E/qbpMI/VsV2Nfl6mylrbqRYMR2uIj+7LknRZ4eemzCG4pUa+5AojDu8Vx/8yiNf2Qyg=
+	t=1733414914; cv=none; b=rnLtkflmJdyYEmKyWaZb0FOvn+vxQ/gML+Z45r8w3Aju4M6ybgap30XcO9Q9kYo0HlbPXZzkRauSPPB7uHuJCaKo9Ms7eLRyB4MFJ+YveVQw8rXsnNQtCgJByFcW8RB9ebruqovilgXJIXOnp4gvGWXUYN06EW+dMmzq8w5fjq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733414853; c=relaxed/simple;
-	bh=KOckcNe8W3RQKx65UzBFy6XStXAxVc8nCNjDX8cXNw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O8vc5KCl3ozvqa0l8YFaE0A43bQzZYzwf2zwcrCk7O+h8KC3M2SWkKdjOMu+9tBsxM8wHg1NQqLtWQ/q2LjHEYQu8ceYGpfrOfkrBY+ihW+qo6S+n88ZLpXCTHOfiLHiKT7ReV6a4aacmw4GNOz6CnTkNsSBXcwFoJf9Ojk/Bbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com; spf=pass smtp.mailfrom=cornersoftsolutions.com; dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b=KssXXnKL; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cornersoftsolutions.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so331260fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:07:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cornersoftsolutions.com; s=google; t=1733414851; x=1734019651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KOckcNe8W3RQKx65UzBFy6XStXAxVc8nCNjDX8cXNw0=;
-        b=KssXXnKLjSzDbkwDi6QArPLrpHMWryNsr44YocM3Djj7WjuPgnFEqHG3srma7I6SY9
-         Tp8nOrHwRgaPnegnVODTpNBjJgoDc/kqWcG9j3bfKem4uEORtABqgMRiTLS1CQMcqrQB
-         BMVKw4kTvbTuCRwc2TkePE2i1+O8FtmxzCTMJKsD/aA58oWK7sa6uGXNyL+3GnkcRz5Z
-         jkPVLkNpamltrB95eX2/hOnsUXqI25KCLqfBfB+oKSPQzWNdOZTjbZHnFgSC6oQSdFfg
-         RLdUwRPFmVQ/4BPYCx9xReHRqkRREvGLmnpttkKPPXsTDX8p1mYYjVe2VwxfixnxbPDj
-         l04Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733414851; x=1734019651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KOckcNe8W3RQKx65UzBFy6XStXAxVc8nCNjDX8cXNw0=;
-        b=lLr5AkIyv6/ej++dZUKqGMUh3Ok6eY0KQAF/Drg5z77S+Nw4usIj65hWPzfa4KH0kT
-         GtdQkL/tENynCF15AxeIFzC5oI3vAT1hv+0KiVAnorZucrMkHrlxGZyGygEHR6D488RW
-         OGwQRwuw/OBUkioRuBrldTQbz41ffyKEyFKt30ayeDlf6W1KcH6ZwSHNMJF7nDXTjKtO
-         Pe23BddSeCcRf/TEqP23IAWLeaEuN74x3NvUQOl9gRTu5eFXzQ6lQVgZtElmCyKoPNWa
-         RRtMQKL2IVthaM2m7q1XRiB7nDUbiisAKpgkMbi5tQ/twybFM1V48npNSN2l3lm/2sRm
-         qpWg==
-X-Gm-Message-State: AOJu0YwNzA7bIvdzTltgCPWPEWqRxcoVRkHbfmif01wo6Y/IK22fmdhy
-	5/yZ7K65luhLf2gQ/Hs1fiRb66yn3CwMf76tCtfeISQYQ7Xra6c/+m7U7Nd3rE/B06DP8U4WI7x
-	B/UAp52GYe4hESwaNHS44fLPyntEB5TppnTfCyg==
-X-Gm-Gg: ASbGncsIShrqfZozn8bTnd89kZ1QbY2ziW5QCq+1y6edkx4aOGQXdaEe9t3xzcQjn/0
-	1vBVWAs1nWQdbOsasv7aUQUXxKlV/4usK
-X-Google-Smtp-Source: AGHT+IFc4uqMYZT0SxPqLKcDtYnZCPI05fbA21AsNVCAy81bsUwRL7Rs+7Wfd6hN5qQc+lT4SQo91gDOIfd4QY1CTs0=
-X-Received: by 2002:a05:6871:4b83:b0:29d:c832:840d with SMTP id
- 586e51a60fabf-29e8890d522mr10222701fac.35.1733414850886; Thu, 05 Dec 2024
- 08:07:30 -0800 (PST)
+	s=arc-20240116; t=1733414914; c=relaxed/simple;
+	bh=laiIJD9x59dMaPoXu8TfoBIpHF70Qyx8qxXjOIXVd8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s4NG7oSAMdIYZyJYAk2QuRzElgSj9zbpHljTVmQsITR7xE/rzRe97kQri48ycIKZQdI6BtBc44jbx10W7W05W03Lg5VHD1Z7Dnb2wma+ouxkOUG978Bz5CDM8Vz0zIx8r7vcsC0sqHjKIxQy4ID2RdrKVQf9XFGy2gcust+qkWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wHaIcIXu; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D925C7E2;
+	Thu,  5 Dec 2024 17:07:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733414880;
+	bh=laiIJD9x59dMaPoXu8TfoBIpHF70Qyx8qxXjOIXVd8g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=wHaIcIXuZBA59Omydk/Jq9R+iNDX86ayihxZwyXk6bzh65jagTE9P2/3EHMGVmWtu
+	 goo7MOud7sCYM4R91IxqFOsRxb/rg20uiHeRPeHBz4onm5/CH1wEPg25+dkUlTEdhu
+	 OWSVHuo26j3I+JukYWftfzcZaFRWKNO51ibat1c0=
+Message-ID: <98b43276-2a68-4ba9-999a-c738b8f7654f@ideasonboard.com>
+Date: Thu, 5 Dec 2024 18:08:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADRqkYAaCYvo3ybGdKO1F_y9jFEcwTBxZzRN-Av-adq_4fVu6g@mail.gmail.com>
- <d53538ea-f846-4a6a-bc14-22ec7ee57e53@kernel.org>
-In-Reply-To: <d53538ea-f846-4a6a-bc14-22ec7ee57e53@kernel.org>
-From: Ken Sloat <ksloat@cornersoftsolutions.com>
-Date: Thu, 5 Dec 2024 11:07:20 -0500
-Message-ID: <CADRqkYDnDNL_H2CzxjsPOdM++iYp-9Ak3PVFBw2qcjR_M=GeBA@mail.gmail.com>
-Subject: Re: [PATCH v1] dt-bindings: dma: st-stm32-dmamux: Add description for
- dma-cell values
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	dmaengine@vger.kernel.org, alexandre.torgue@foss.st.com, 
-	mcoquelin.stm32@gmail.com, conor+dt@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, vkoul@kernel.org, amelie.delaunay@foss.st.com, 
-	Ken Sloat <ksloat@cornersoftsolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/10] drm/rcar-du: Write DPTSR only if there are more
+ than one crtc
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-clk@vger.kernel.org,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+References: <20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com>
+ <20241205-rcar-gh-dsi-v2-2-42471851df86@ideasonboard.com>
+ <CAMuHMdVHRWbeQ8UF-xsKuxUNwHc5_kVwSgrTfOkwFFG5vG7fwA@mail.gmail.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <CAMuHMdVHRWbeQ8UF-xsKuxUNwHc5_kVwSgrTfOkwFFG5vG7fwA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+Hi,
 
-Thanks for reviewing
+On 05/12/2024 16:16, Geert Uytterhoeven wrote:
+> Hi Tomi,
+> 
+> CC Jacopo
+> 
+> On Thu, Dec 5, 2024 at 2:45 PM Tomi Valkeinen
+> <tomi.valkeinen@ideasonboard.com> wrote:
+>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>
+>> Currently the driver always writes DPTSR when setting up the hardware.
+>> However, the register is only meaningful when there are more than one
+>> crtc, and the only SoC with one crtc, V3M, does not have the register
+>> mentioned in its documentation.
+> 
+> R-Car V3H/V3H_2, too.
 
-On Thu, Dec 5, 2024 at 10:59=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 05/12/2024 16:32, Ken Sloat wrote:
-> > The dma-cell values for the stm32-dmamux are used to craft the DMA spec
-> > for the actual controller. These values are currently undocumented
-> > leaving the user to reverse engineer the driver in order to determine
-> > their meaning. Add a basic description, while avoiding duplicating
-> > information by pointing the user to the associated DMA docs that
-> > describe the fields in depth.
-> >
-> > Signed-off-by: Ken Sloat <ksloat@cornersoftsolutions.com>
-> > ---
-> > .../bindings/dma/stm32/st,stm32-dmamux.yaml | 11 +++++++++++
-> > 1 file changed, 11 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamu=
-x.yaml
-> > b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-> > index f26c914a3a9a..aa2e52027ee6 100644
-> > --- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-> > +++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-> > @@ -15,6 +15,17 @@ allOf:
-> > properties:
-> > "#dma-cells":
-> > const: 3
->
-> Your patch is corrupted. Please use git send-email or b4 or b4+relay.
+Right... I was looking at the number of outputs, not the number of crtcs 
+when going through the SoCs.
 
-Sorry about that, I will do that. I will wait for any additional
-comments and then re-submit.
+> 
+>>
+>> So move the write behind a condition.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 12 +++++++-----
+>>   1 file changed, 7 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+>> index 2ccd2581f544..0fbf6abbde6e 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+>> @@ -185,11 +185,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+>>                  dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
+>>          rcar_du_group_write(rgrp, DORCR, dorcr);
+>>
+>> -       /* Apply planes to CRTCs association. */
+>> -       mutex_lock(&rgrp->lock);
+>> -       rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
+>> -                           rgrp->dptsr_planes);
+>> -       mutex_unlock(&rgrp->lock);
+>> +       if (rgrp->num_crtcs > 1) {
+>> +               /* Apply planes to CRTCs association. */
+>> +               mutex_lock(&rgrp->lock);
+>> +               rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
+>> +                                   rgrp->dptsr_planes);
+>> +               mutex_unlock(&rgrp->lock);
+>> +       }
+> 
+> This is per group, not per DU, right?
+> The second group on R-Car M3-W/M3-W+ has a single channel, hence no
+> DPTSR2 register.
+> The second group on R-Car M3-N has a single channel, but it's actually
+> the second physical channel in the group, and thus does have DPTSR2.
 
->
-> > + description: |
-> > + Should be set to <3> with each cell representing the following:
->
-> Drop this part, const says this.
+That logic does make sense. So that would be if (rgrp->channels_mask & 
+BIT(1)) then write DPTSR? And probably add a comment in the code about this.
 
-Ok
+> And apparently we had this discussion before...
+> https://lore.kernel.org/all/CAMuHMdXxf4oePnyLvp84OhSa+wdehCNJBXnhjYO7-1VxpBJ7eQ@mail.gmail.com
 
->
-> > + 1. The mux input number/line for the request
-> > + 2. Bitfield representing DMA channel configuration that is passed
-> > + to the real DMA controller
-> > + 3. Bitfield representing device dependent DMA features passed to
-> > + the real DMA controller
-> > +
-> > + For bitfield definitions of cells 2 and 3, see the associated
-> > + bindings doc for the actual DMA controller the mux is connected
->
-> This does not sound right. This is the binding for DMA controller, so
-> you are saying "please look at itself". I suggest to drop this as well.
->
+Somehow I hadn't even realized Jacopo had sent these before...
 
-While logically it is the DMA controller, this doc is specifically for
-the mux - the DMA controller has its own driver and binding docs in
-Documentation/devicetree/bindings/dma/stm32/st,stm32-dma.yaml
+  Tomi
 
-I can reference st,stm32-dma.yaml directly, but I was unsure if this
-mux IP was used with another DMA controller from ST on a different
-SoC.
-
-What do you suggest here?
-
->
-> Best regards,
-> Krzysztof
-
---=20
-Sincerely,
-Ken Sloat
 
