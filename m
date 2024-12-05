@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-432444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034F19E4B4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E079E4B51
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F09188158C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:40:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D55C18814EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF2AFC0A;
-	Thu,  5 Dec 2024 00:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63577FBF6;
+	Thu,  5 Dec 2024 00:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2VeiSE+"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyHbQy4F"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B7D23918B;
-	Thu,  5 Dec 2024 00:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E073611185;
+	Thu,  5 Dec 2024 00:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733359249; cv=none; b=ctVeIO8yK+e4Bg+L/yYnN3eTmPevSO+Q7URENXDMceo5821Qc6ANIXhjzP96Ep0jBrqDYSVJLd1ZfkycxFlfU6hXhD0YP4Omqw/QXQfp51O6BpiPuCIgJjxWqvsc3Rkx5W8dEVUqspU0xRoeP1apXLlyRvMIe8OWakO3tS4MwpM=
+	t=1733359269; cv=none; b=CwHYCquFCHgKv/yTjG9yzqVx/8UYJ9CisIztiLtbuPHjCfAHomsxRj3AfGWZ19GOJ2/PZCY//eakUyq8nFNRTDzF87c8HSvcC9/Fd2XNpfC0HVEZ4IVNg+DrhHZW6AYlICDoERi1oU/dF2Iwldg3tYXNwKf4yVnruLOuuXb/tOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733359249; c=relaxed/simple;
-	bh=kPSO1E/lLVtN6yh+rrWnGkXwFSNkrrG+jVBuQloc4cI=;
+	s=arc-20240116; t=1733359269; c=relaxed/simple;
+	bh=UccVoGu94NgUgMYRUgrC/+FtNNEsujhaYb2fbha/f5E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AVZpPqiNS22xzWpJKIuva7KmELq0OuxxnkdSupINqaZfNsEesKUnpcectBm9pkKfekZqeb9Bey0cTCpQ+Qe08Y2ZP3fn2NoCLwj0tGnFkaUdE0OA6vpefu5vUeDEgzfONAcTo+ASBk7A6oIJpE4F4rRXOyg2RDA0c3RrUw+23HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2VeiSE+; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=RWeVZ0R6ZnQqOnn2P704grmeb0CHPjk/9tR+2UPESfldvkW/49iO3hL5pinrMCLLeOoraEmNgWj/b1Y2SxtyXm2huyT0MrZmOCElqUp4t4Y8kiax+7DE+UbiHTpQ3V2j2Xpgn1UvcftIYT2tJgsFEJQUrNcKB8toQGKrmFFfbxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyHbQy4F; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-724f0f6300aso456437b3a.2;
-        Wed, 04 Dec 2024 16:40:48 -0800 (PST)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fc41dab8e3so323859a12.3;
+        Wed, 04 Dec 2024 16:41:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733359248; x=1733964048; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733359267; x=1733964067; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W0t/W1hlV7cvper6FsrFCx1e0KVtudw1c2F0t95m3C0=;
-        b=S2VeiSE+SDZUebVR8lDYbg4s4C+g66P6kLtNKdbzHVcpkWSiVnQ9F6+rW2AG7P0aam
-         Ltxd7Iz+6Z+U3IHQXtv/gIQrLgy8RbVjH3rnqFXrphAWGZXHDjQ6D/F71Kj6nXy0+3Sl
-         P+hwGN9eh/4uBkp5LmkrtAX+cuJGfcG46iwwZRcuFRWB8EXElMeFD6uP3V5J6IsVojcq
-         PKLnb3tPOHhoTxatKvA1Maqt7fTcT7Yq6EWVhyqWNfbFsnQK38KV0Jm//aC9MUWpnYOi
-         e0q/wel0JKgpFbEdx7viOEwJYbbP9n0UljrUQR5XBJ0c3Dc1D8TI0S3ka/iM64gDDWDT
-         w5UQ==
+        bh=65OcLr4FPhGXkdHEMtCl+2bLn6t3Nrnc5J+Fw6WgdjQ=;
+        b=hyHbQy4FeMQ3npNJe+jtCct3+3xoHZCNS8rUysF87oa4hsSNcdLbDRb1ohIGHP5VL/
+         cKcmPO6fff6b8kpQV/kqpobRJfpnTE/AzdBM3mzmyb5J6dLfERF+6GnQBs/qAl/CEISC
+         6I4bPEnkBIf5MoAf87VNRe9uzxdG/goCaAxZcAG7eshzpaS+oo+HMv8d43rHJVzGCYz2
+         Y0hSmdeoyBGj1g+NIwSiRwHeebBA2GyJI4ImvtaaS5arUqQgIEYee8EkLjYU4/JlxOFK
+         gGleACzJcYy9sYgxYMOMVLFJ8ykn7QsaRAFdgWWnBN10aog82s8aVzfvulu2y1ocDmni
+         c7sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733359248; x=1733964048;
+        d=1e100.net; s=20230601; t=1733359267; x=1733964067;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W0t/W1hlV7cvper6FsrFCx1e0KVtudw1c2F0t95m3C0=;
-        b=KeHCeccwHSOlNUNfVvjeXn+5TUubAghZQt7PqA8hy12XiTn/QEhVpka5cNS4dhoJ8Y
-         l9ifCkzOOX+8ZEKl8XZgxIBMOdiXErfwNZVoOLjLTs5ZxNwYiWNvNBINzqCKVpE7S1LB
-         qh27sQcbN5ypIJMCM9XZqRoXeeTCkNGVLXfISA52aHkGhEex/gpc2e1tY5f2M82I6pKC
-         vxMm06sBfe6lQpuxPdzOVxT0vuCXEh3dV0qtMcdtZeIQWScjy4xeJqmLBF+hqDshJbnW
-         nTn9cyU8FQlmozJV8uJguf69t2e9rsDB3I5WB7bdUzYjWLFt/8uTEru/d2sOIXfeF2zz
-         cJSA==
-X-Forwarded-Encrypted: i=1; AJvYcCV23/ZSxLq2TaX1leHhBhFB15inKuakgV71e6WwIA2i1bbiJCh9goqc9qWpaErwcUYxMGjp+F+gVlPPzD4=@vger.kernel.org, AJvYcCXYFza+AOxsrT6kLltUMi8w+l86NM6hv3P2DPcDCfIGvern4DAycij+tde6jJQ1szywansCQNo0kM/HprQnLm2f2IW1DA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpAw32Pt+kATkCOACPBsIlwiUizJeczZ4V2IRgC7rehaVBuJ6y
-	ifCyfwW0ZdVJVB+jA0pXmF/8ub8KY/YpVE3TLu9pXVdw/PTQclP8
-X-Gm-Gg: ASbGncsc9Nf5rUOpEEVKSHFeUIJmHLAU3S7vJ4rjmsV5cSCnHI7te6KaRUAGVocW73B
-	T1UFevaX3u5c2y8igapL6nFjTVo4A5M8A0DnAyW2+s5LfnHnGHt4A68Ot262mTrCaU8c/fdbruf
-	vTs89NBlYTq6AZ/g8f1WX+vZ0QHuuZQCeb4AsYaoQfTkBrPZ6jsVwWKshfWlhOekNAk6cY7zAMo
-	OtvYWBQjGCfmfis1Rs6h+gvu4xORL3yxPW4zrYvUAmUPiMyTjVh5z1Kd/0V935wTnV/uVTNA4Z9
-	WU0OpFM6fFdSw+HsYYg=
-X-Google-Smtp-Source: AGHT+IEDFvqC395HWoYIlU7UqoUVGWpXGJ1nTH0OWh/4JFA6a2gVPJex9Pl8pZYd31foDETfkKCiBw==
-X-Received: by 2002:a05:6a00:3c88:b0:725:973f:9d53 with SMTP id d2e1a72fcca58-725973fa0b5mr3891300b3a.15.1733359247613;
-        Wed, 04 Dec 2024 16:40:47 -0800 (PST)
+        bh=65OcLr4FPhGXkdHEMtCl+2bLn6t3Nrnc5J+Fw6WgdjQ=;
+        b=trQF1fk5G129XzQsT4j38F5vYyb57eYJm1V9/wAHKfMaUgkgz7xEcL2BMmF5JL3Zyt
+         jyiH99YEtysHQyMG7NdIn9bIjbNgS0woN8x4PQ3G+8wgEPf0JHiBDJ1qYI2E4DnouYn8
+         vFlkoQdhMqRG7v+EpmmSms4aDMnvkusYTx/kZi6PUr/fwfSxUYDGTIJddVVEZntaxu9g
+         FzL72vUuYyagJbiB7uAsxfYd+HKSzwYwChTwNyxivr8jEHugigCsBJipKi7OUSrZFTWf
+         4JS4bpeP8VmaNajo2EtJcEKub85Ly3wyjj0Em0Podo9tn3PTfC1kktP4txowzRLJ6teB
+         jMHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgFnFSsbUp+6L/OECSaw0j0RWiyVgUSFvXuKRkoPrxffLJgh58eTh8sKRQZjw+CW/k0F1i9Q4I/d+8Wi1Fzh6/xs0B1g==@vger.kernel.org, AJvYcCWAmTq4UT6OxwE8jvXtNT0hNgHeEp4IrVjTTft4+PYlKx3l3UrFqqCXFjoVXjhwYe0GcpAI6P753Jf5j40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD8/FiI2ahnR9LkDVrfgF18dn4JJbjQ0YRjMFNbg1eLtciWmjN
+	2diziRTJImRTKI70ARamm4YypkZotlnOkTJ+8T6jVGGTSsJFQCxblQPXeDBi
+X-Gm-Gg: ASbGncs6gcUPInC+img/okWTFEaXH6jVM2lV705379A7n+K8hxOdWsF96CBOg6Vqv2v
+	yxCpjVv6oKgq7ONiztfdcU+shurvXXBPTcRMgJVrIyMehXe+mUYLFSixqJiwftUInqhZrTjk/26
+	iPycpLoHdQlmhjR3dAysTaGeDz0FsSvAbtH8cZSWQUuTiVK/X51Hyr0k/CMad82okIFB6aqKE6f
+	NNeOmPHEgxYPpo/CAxDWP75zUhJJZwu+QzEnQdRXO+y1YVos/18OJ7e51qLacjAG7qGFytG5nU9
+	5J2Mw4F4dLZDzzKSKTw=
+X-Google-Smtp-Source: AGHT+IHzx1P9kzseo/UwCY38/Rcz2V5O2hA1TN0uUl8YRb5ST4Us535wNDltWa/UcX/gg1SJ6lbtOg==
+X-Received: by 2002:a05:6a20:6a04:b0:1e0:dc7b:4ee9 with SMTP id adf61e73a8af0-1e1653a2a4cmr10496896637.8.1733359267078;
+        Wed, 04 Dec 2024 16:41:07 -0800 (PST)
 Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29c5719sm104068b3a.27.2024.12.04.16.40.45
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2cc5482sm94414b3a.171.2024.12.04.16.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 16:40:47 -0800 (PST)
+        Wed, 04 Dec 2024 16:41:06 -0800 (PST)
 From: Kurt Borja <kuurtb@gmail.com>
 To: kuurtb@gmail.com
 Cc: Dell.Client.Kernel@dell.com,
@@ -80,9 +80,9 @@ Cc: Dell.Client.Kernel@dell.com,
 	mario.limonciello@amd.com,
 	platform-driver-x86@vger.kernel.org,
 	w_armin@gmx.de
-Subject: [RFC PATCH 06/21] alienware-wmi: Add state container and alienfx_probe()
-Date: Wed,  4 Dec 2024 21:40:38 -0300
-Message-ID: <20241205004037.2185104-2-kuurtb@gmail.com>
+Subject: [RFC PATCH 07/21] alienware-wmi: Migrate to state container pattern
+Date: Wed,  4 Dec 2024 21:40:53 -0300
+Message-ID: <20241205004052.2185242-2-kuurtb@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
 References: <20241205002733.2183537-3-kuurtb@gmail.com>
@@ -94,73 +94,273 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a state container and initialize it on the new alienfx_probe().
+Migrate all led control functions to use the platform_device state
+container.
+
+Additionally move the led_classdev registration to the platform driver
+probe and make it device managed.
+
+Drop alienware_zone_init() and alienware_zone_exit() because it's no
+longer needed.
 
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/dell/alienware-wmi.c | 35 +++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/platform/x86/dell/alienware-wmi.c | 123 +++++++++-------------
+ 1 file changed, 47 insertions(+), 76 deletions(-)
 
 diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index fa7bbbb07b86..ea848937b579 100644
+index ea848937b579..e5e4a7b4e9ca 100644
 --- a/drivers/platform/x86/dell/alienware-wmi.c
 +++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -409,6 +409,14 @@ struct wmax_u32_args {
- 	u8 arg3;
+@@ -376,11 +376,6 @@ struct color_platform {
+ 	u8 red;
+ } __packed;
+ 
+-struct platform_zone {
+-	u8 location;
+-	struct color_platform colors;
+-};
+-
+ struct wmax_brightness_args {
+ 	u32 led_mask;
+ 	u32 percentage;
+@@ -418,13 +413,10 @@ struct alienfx_priv {
  };
  
-+struct alienfx_priv {
-+	struct platform_device *pdev;
-+	struct led_classdev global_led;
-+	struct color_platform colors[4];
-+	u8 global_brightness;
-+	u8 lighting_control_state;
-+};
-+
  static struct platform_device *platform_device;
- static struct platform_zone *zone_data;
+-static struct platform_zone *zone_data;
  static struct platform_profile_handler pp_handler;
-@@ -1121,6 +1129,32 @@ static void remove_thermal_profile(void)
- /*
-  * Platform Driver
-  */
-+static int alienfx_probe(struct platform_device *pdev)
-+{
-+	struct alienfx_priv *priv;
-+	struct led_classdev *leds;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->pdev = pdev;
-+
-+	if (interface == WMAX)
-+		priv->lighting_control_state = WMAX_RUNNING;
-+	else if (interface == LEGACY)
-+		priv->lighting_control_state = LEGACY_RUNNING;
-+
-+	leds = &priv->global_led;
-+	leds->name = "alienware::global_brightness";
-+	leds->brightness_set = global_led_set;
-+	leds->brightness_get = global_led_get;
-+	leds->max_brightness = 0x0F;
-+
-+	priv->global_brightness = priv->global_led.max_brightness;
-+
-+	return 0;
-+}
-+
- static const struct attribute_group *alienfx_groups[] = {
- 	&zone_attribute_group,
- 	&hdmi_attribute_group,
-@@ -1134,6 +1168,7 @@ static struct platform_driver platform_driver = {
- 		.name = "alienware-wmi",
- 		.dev_groups = alienfx_groups,
- 	},
-+	.probe = alienfx_probe,
- };
+ static enum wmax_thermal_mode supported_thermal_profiles[PLATFORM_PROFILE_LAST];
  
- static int __init alienware_wmi_init(void)
+ static u8 interface;
+-static u8 lighting_control_state;
+-static u8 global_brightness;
+ 
+ /*
+  * Helpers used for zone control
+@@ -456,7 +448,7 @@ static int parse_rgb(const char *buf, struct color_platform *colors)
+ /*
+  * Individual RGB zone control
+  */
+-static int alienware_update_led(struct platform_zone *zone)
++static int alienware_update_led(struct alienfx_priv *priv, u8 location)
+ {
+ 	int method_id;
+ 	acpi_status status;
+@@ -465,25 +457,25 @@ static int alienware_update_led(struct platform_zone *zone)
+ 	struct legacy_led_args legacy_args;
+ 	struct wmax_led_args wmax_basic_args;
+ 	if (interface == WMAX) {
+-		wmax_basic_args.led_mask = 1 << zone->location;
+-		wmax_basic_args.colors = zone->colors;
+-		wmax_basic_args.state = lighting_control_state;
++		wmax_basic_args.led_mask = 1 << location;
++		wmax_basic_args.colors = priv->colors[location];
++		wmax_basic_args.state = priv->lighting_control_state;
+ 		guid = WMAX_CONTROL_GUID;
+ 		method_id = WMAX_METHOD_ZONE_CONTROL;
+ 
+ 		input.length = sizeof(wmax_basic_args);
+ 		input.pointer = &wmax_basic_args;
+ 	} else {
+-		legacy_args.colors = zone->colors;
+-		legacy_args.brightness = global_brightness;
++		legacy_args.colors = priv->colors[location];
++		legacy_args.brightness = priv->global_brightness;
+ 		legacy_args.state = 0;
+-		if (lighting_control_state == LEGACY_BOOTING ||
+-		    lighting_control_state == LEGACY_SUSPEND) {
++		if (priv->lighting_control_state == LEGACY_BOOTING ||
++		    priv->lighting_control_state == LEGACY_SUSPEND) {
+ 			guid = LEGACY_POWER_CONTROL_GUID;
+-			legacy_args.state = lighting_control_state;
++			legacy_args.state = priv->lighting_control_state;
+ 		} else
+ 			guid = LEGACY_CONTROL_GUID;
+-		method_id = zone->location + 1;
++		method_id = location + 1;
+ 
+ 		input.length = sizeof(legacy_args);
+ 		input.pointer = &legacy_args;
+@@ -499,24 +491,33 @@ static int alienware_update_led(struct platform_zone *zone)
+ static ssize_t zone_show(struct device *dev, struct device_attribute *attr,
+ 			 char *buf, u8 location)
+ {
+-	struct platform_zone *target_zone;
+-	target_zone = &zone_data[location];
++	struct alienfx_priv *priv;
++	struct color_platform *colors;
++
++	priv = dev_get_drvdata(dev);
++	colors = &priv->colors[location];
++
+ 	return sprintf(buf, "red: %d, green: %d, blue: %d\n",
+-		       target_zone->colors.red,
+-		       target_zone->colors.green, target_zone->colors.blue);
++		       colors->red, colors->green, colors->blue);
+ 
+ }
+ 
+ static ssize_t zone_set(struct device *dev, struct device_attribute *attr,
+ 			const char *buf, size_t count, u8 location)
+ {
+-	struct platform_zone *target_zone;
++	struct alienfx_priv *priv;
++	struct color_platform *colors;
+ 	int ret;
+-	target_zone = &zone_data[location];
+-	ret = parse_rgb(buf, &target_zone->colors);
++
++	priv = dev_get_drvdata(dev);
++
++	colors = &priv->colors[location];
++	ret = parse_rgb(buf, colors);
+ 	if (ret)
+ 		return ret;
+-	ret = alienware_update_led(target_zone);
++
++	ret = alienware_update_led(priv, location);
++
+ 	return ret ? ret : count;
+ }
+ 
+@@ -553,9 +554,13 @@ static ssize_t lighting_control_state_show(struct device *dev,
+ 					   struct device_attribute *attr,
+ 					   char *buf)
+ {
+-	if (lighting_control_state == LEGACY_BOOTING)
++	struct alienfx_priv *priv;
++
++	priv = dev_get_drvdata(dev);
++
++	if (priv->lighting_control_state == LEGACY_BOOTING)
+ 		return sysfs_emit(buf, "[booting] running suspend\n");
+-	else if (lighting_control_state == LEGACY_SUSPEND)
++	else if (priv->lighting_control_state == LEGACY_SUSPEND)
+ 		return sysfs_emit(buf, "booting running [suspend]\n");
+ 	return sysfs_emit(buf, "booting [running] suspend\n");
+ }
+@@ -564,8 +569,11 @@ static ssize_t lighting_control_state_store(struct device *dev,
+ 					    struct device_attribute *attr,
+ 					    const char *buf, size_t count)
+ {
++	struct alienfx_priv *priv;
+ 	u8 val;
+ 
++	priv = dev_get_drvdata(dev);
++
+ 	if (strcmp(buf, "booting\n") == 0)
+ 		val = LEGACY_BOOTING;
+ 	else if (strcmp(buf, "suspend\n") == 0)
+@@ -575,9 +583,9 @@ static ssize_t lighting_control_state_store(struct device *dev,
+ 	else
+ 		val = WMAX_RUNNING;
+ 
+-	lighting_control_state = val;
++	priv->lighting_control_state = val;
+ 	pr_debug("alienware-wmi: updated control state to %d\n",
+-		 lighting_control_state);
++		 priv->lighting_control_state);
+ 
+ 	return count;
+ }
+@@ -634,55 +642,26 @@ static int wmax_brightness(int brightness)
+ static void global_led_set(struct led_classdev *led_cdev,
+ 			   enum led_brightness brightness)
+ {
++	struct alienfx_priv *priv;
+ 	int ret;
+-	global_brightness = brightness;
++
++	priv = container_of(led_cdev, struct alienfx_priv, global_led);
++	priv->global_brightness = brightness;
+ 	if (interface == WMAX)
+ 		ret = wmax_brightness(brightness);
+ 	else
+-		ret = alienware_update_led(&zone_data[0]);
++		ret = alienware_update_led(priv, 0);
+ 	if (ret)
+ 		pr_err("LED brightness update failed\n");
+ }
+ 
+ static enum led_brightness global_led_get(struct led_classdev *led_cdev)
+ {
+-	return global_brightness;
+-}
+-
+-static struct led_classdev global_led = {
+-	.brightness_set = global_led_set,
+-	.brightness_get = global_led_get,
+-	.name = "alienware::global_brightness",
+-};
+-
+-static int alienware_zone_init(struct platform_device *dev)
+-{
+-	u8 zone;
+-
+-	if (interface == WMAX) {
+-		lighting_control_state = WMAX_RUNNING;
+-	} else if (interface == LEGACY) {
+-		lighting_control_state = LEGACY_RUNNING;
+-	}
+-	global_led.max_brightness = 0x0F;
+-	global_brightness = global_led.max_brightness;
+-
+-	zone_data =
+-	    kcalloc(quirks->num_zones, sizeof(struct platform_zone),
+-		    GFP_KERNEL);
+-	if (!zone_data)
+-		return -ENOMEM;
+-
+-	for (zone = 0; zone < 4; zone++)
+-		zone_data[zone].location = zone;
++	struct alienfx_priv *priv;
+ 
+-	return led_classdev_register(&dev->dev, &global_led);
+-}
++	priv = container_of(led_cdev, struct alienfx_priv, global_led);
+ 
+-static void alienware_zone_exit(struct platform_device *dev)
+-{
+-	led_classdev_unregister(&global_led);
+-	kfree(zone_data);
++	return priv->global_brightness;
+ }
+ 
+ static acpi_status alienware_wmax_command(void *in_args, size_t in_size,
+@@ -1152,7 +1131,7 @@ static int alienfx_probe(struct platform_device *pdev)
+ 
+ 	priv->global_brightness = priv->global_led.max_brightness;
+ 
+-	return 0;
++	return devm_led_classdev_register(&pdev->dev, &priv->global_led);
+ }
+ 
+ static const struct attribute_group *alienfx_groups[] = {
+@@ -1216,15 +1195,8 @@ static int __init alienware_wmi_init(void)
+ 			goto fail_prep_thermal_profile;
+ 	}
+ 
+-	ret = alienware_zone_init(platform_device);
+-	if (ret)
+-		goto fail_prep_zones;
+-
+ 	return 0;
+ 
+-fail_prep_zones:
+-	alienware_zone_exit(platform_device);
+-	remove_thermal_profile();
+ fail_prep_thermal_profile:
+ 	platform_device_del(platform_device);
+ fail_platform_device2:
+@@ -1239,7 +1211,6 @@ module_init(alienware_wmi_init);
+ 
+ static void __exit alienware_wmi_exit(void)
+ {
+-	alienware_zone_exit(platform_device);
+ 	remove_thermal_profile();
+ 	platform_device_unregister(platform_device);
+ 	platform_driver_unregister(&platform_driver);
 -- 
 2.47.1
 
