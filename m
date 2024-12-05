@@ -1,199 +1,210 @@
-Return-Path: <linux-kernel+bounces-433950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803C09E5F36
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:01:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105C318854DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:01:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97A422B8BB;
-	Thu,  5 Dec 2024 20:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDFqA/bH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F0DB9E5F41
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:06:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163A62EB1F;
-	Thu,  5 Dec 2024 20:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8C42834AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:06:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C7422F387;
+	Thu,  5 Dec 2024 20:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="TTp7zXUL"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E93122D4F7;
+	Thu,  5 Dec 2024 20:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733428868; cv=none; b=ftCCmRFXUPT+FusP6qlvC/63MCLtvQ1usy3cprBrbQPpAUfTt6mUJDnixqKMqXk5m0G0gkhW4Qsd3qLSl5vcjrYtcYd+1PF2fKzmEEljHLSql7cCvXasI47xREPETdlhNBYccIqQ7nFxE3jhxjZP1PUAvjataOMiPyavT6CqdkU=
+	t=1733429162; cv=none; b=bbHqoZLYTHfxXMFKgP3ir96sL1nS+wvKypgb+cmAY4pAQqvsf6/Qchi8dpudfJ5PTaU9cylSzOQil9lIIhVVerCUwSUdVEsMe39J1FkcQ/aeyAckqy6VsTBBu4DyQpB3H5BbEKPP+5qVqN4LcKwros1oRXX8ryw9opuBveczUcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733428868; c=relaxed/simple;
-	bh=OhkwOeu9XnLmPUB+pIA/JrXoeOZMruEMRrO3YTd2x2E=;
+	s=arc-20240116; t=1733429162; c=relaxed/simple;
+	bh=6O79edKEb4GROwGT6JZk8xHtDN2CVYHr2a+2azD6wUs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XuvQKXCFKTnQ8i5YDq2Fcq+w+t42D+koC7FrVLcQSL9ZsZoPdjcuZpNi/YBJHSRRbzeIfRY0fh4GkSjH3I3AdwAcPNlloKZHPNWS/54bjr+NDR5isanFs8tysjAuV0aoP7/wPTKWfcTojTyr2jIwCRIMIYoruivffJ4EOXMSiuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDFqA/bH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7942AC4CEDC;
-	Thu,  5 Dec 2024 20:01:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733428867;
-	bh=OhkwOeu9XnLmPUB+pIA/JrXoeOZMruEMRrO3YTd2x2E=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=uDFqA/bHGhTHZkFwo0GffmHLmiciYOOdE5yUCmeDlCW8obefOmyuAbOrKGIkzgwrN
-	 INJfecKPw3KcOErzDRsWuR8cT0Ykx9xiGCMAtO+eXuXhrzU27twEfRpB5coCHYlNlV
-	 yLk9SqqLzHTugUkubyhSewKMjmeVg6ivkM317f5wLqblPCJgvNHhDcTRUEHLiUe+hU
-	 Qco2EJsjX68eZMv68WmxWItyz+nIr9gDYtGZ2esPMYTWbY8YpiEfLnPe+U5Anm0SHc
-	 9J1iTHZLMKsySXlsmYZyRraWzOqgFNYKCPNr11hyKPlyCjXSEkk2C2/VokF6pJ5vn7
-	 QEKKMvSbrx9GQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C8A4CCE0774; Thu,  5 Dec 2024 12:01:06 -0800 (PST)
-Date: Thu, 5 Dec 2024 12:01:06 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	edumazet@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-Message-ID: <5a5bda20-f53f-40fe-96ab-a5ae4b39a746@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com>
- <20241205141850.GS3387508@ZenIV>
- <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
- <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
- <CAGudoHGRaJZWM5s7s7bxXrDFyTEaZd1zEJOPX15yAdqEYr07eA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YniCS8WJLRu8WIfMWzkOu5Jp3szRu9wD1EfETj8wucaSML2mW2rtkwMWe84sHeLdkwJ1qNJStLPLxjVlsb+9+vEBtJf9ybljjJ+8WOlg2uKDt6FmlVK56IfXnRza35RaV+J2mzYYp/joLfM9WPt3z5NGd4MKia2ewMbb158BidQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=TTp7zXUL; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5K35HG006806;
+	Thu, 5 Dec 2024 20:05:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps0720; bh=FB2pybYxR/ua/8GwkHyNXMBbIt
+	OCCjVb1LKr1v+2g8A=; b=TTp7zXULVeDbxSdeDOtnprkM+R11sd/xLJH+A6JnTI
+	dhaZJB6+4OYdr2Fi5iADt91ni3DMdHgSuGQylsDUg5oKxeAFJZb1V6cgmh7ywkeG
+	8Tm76POeRmbjkxcVS++UREas7OPWh0QMlcRsI/SWyLXzZ6vvo/qGZ9Fu68t3OgWu
+	bWciZRJEBdOFahhDjEvMUAOEazUMArZJff6cd8g0ivBYDw1s0yazV2ecPS/Q3zp9
+	G26nKFTFbhMxEaY3DVlukNkiw9vRLDB040NjEiuEptTV/tAhdzbWLy1hw+D9Z0CO
+	czHkTvEWnn6GHDjPGNqQ4smUtr8Xx1izmztcYBcrWA0g==
+Received: from p1lg14878.it.hpe.com ([16.230.97.204])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 43bjvar0k7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 20:05:44 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 7BF4B2D84B;
+	Thu,  5 Dec 2024 20:05:38 +0000 (UTC)
+Received: from DESKTOP-V47QP3F. (unknown [16.231.227.36])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id AF941813DD6;
+	Thu,  5 Dec 2024 20:05:37 +0000 (UTC)
+Date: Thu, 5 Dec 2024 14:05:36 -0600
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: bp@alien8.de, james.morse@arm.com, mchehab@kernel.org, rric@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
+Message-ID: <Z1IHkBlm_0p-0-c3@hpe.com>
+References: <20241205165954.7957-1-kyle.meyer@hpe.com>
+ <Z1H7U9-O2LdAoa5r@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHGRaJZWM5s7s7bxXrDFyTEaZd1zEJOPX15yAdqEYr07eA@mail.gmail.com>
+In-Reply-To: <Z1H7U9-O2LdAoa5r@agluck-desk3>
+X-Proofpoint-GUID: jwm1n_Lo41bfoCt46MrY-9xkGDQkozJI
+X-Proofpoint-ORIG-GUID: jwm1n_Lo41bfoCt46MrY-9xkGDQkozJI
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ mlxscore=0 phishscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050149
 
-On Thu, Dec 05, 2024 at 08:03:24PM +0100, Mateusz Guzik wrote:
-> On Thu, Dec 5, 2024 at 7:41 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Thu, Dec 05, 2024 at 03:43:41PM +0100, Mateusz Guzik wrote:
-> > > On Thu, Dec 5, 2024 at 3:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > >
-> > > > On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
-> > > > >  void fd_install(unsigned int fd, struct file *file)
-> > > > >  {
-> > > > > -     struct files_struct *files = current->files;
-> > > > > +     struct files_struct *files;
-> > > > >       struct fdtable *fdt;
-> > > > >
-> > > > >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
-> > > > >               return;
-> > > > >
-> > > > > +     /*
-> > > > > +      * Synchronized with expand_fdtable(), see that routine for an
-> > > > > +      * explanation.
-> > > > > +      */
-> > > > >       rcu_read_lock_sched();
-> > > > > +     files = READ_ONCE(current->files);
-> > > >
-> > > > What are you trying to do with that READ_ONCE()?  current->files
-> > > > itself is *not* changed by any of that code; current->files->fdtab is.
-> > >
-> > > To my understanding this is the idiomatic way of spelling out the
-> > > non-existent in Linux smp_consume_load, for the resize_in_progress
-> > > flag.
-> >
-> > In Linus, "smp_consume_load()" is named rcu_dereference().
+On Thu, Dec 05, 2024 at 11:13:23AM -0800, Luck, Tony wrote:
+> On Thu, Dec 05, 2024 at 10:59:54AM -0600, Kyle Meyer wrote:
+> > The 3-bit source IDs in PCI configuration space registers are limited to
+> > 8 unique IDs, and each ID is local to a clump (UPI/QPI domain).
 > 
-> ok
+> Is there any better name than "clump"?
 
-And rcu_dereference(), and for that matter memory_order_consume, only
-orders the load of the pointer against subsequent dereferences of that
-same pointer against dereferences of that same pointer preceding the
-store of that pointer.
+Yes, a UPI/QPI domain.
 
-	T1				T2
-	a: p->a = 1;			d: q = rcu_dereference(gp);
-	b: r1 = p->b;			e: r2 = p->a;
-	c: rcu_assign_pointer(gp, p);	f: p->b = 42;
-
-Here, if (and only if!) T2's load into q gets the value stored by
-T1, then T1's statements e and f are guaranteed to happen after T2's
-statements a and b.  In your patch, I do not see this pattern for the
-files->resize_in_progress flag.
-
-> > > Anyway to elaborate I'm gunning for a setup where the code is
-> > > semantically equivalent to having a lock around the work.
-> >
-> > Except that rcu_read_lock_sched() provides mutual-exclusion guarantees
-> > only with later RCU grace periods, such as those implemented by
-> > synchronize_rcu().
+> > Source IDs can not be used to map devices to sockets on systems with
+> > multiple clumps because each clump has identical repeating source IDs.
+> > 
+> > Get package IDs instead of source IDs on systems with multiple clumps
+> > and use package/source IDs to name IMC information structures.
 > 
-> To my understanding the pre-case is already with the flag set upfront
-> and waiting for everyone to finish (which is already taking place in
-> stock code) + looking at it within the section.
+> What would happen if you just assumed the system had clumps and you
+> always used package/source? Would that change EDAC naming for
+> existing systems? That would be less complexity for the driver.
 
-I freely confess that I do not understand the purpose of assigning to
-files->resize_in_progress both before (pre-existing) and within (added)
-expand_fdtable().  If the assignments before and after the call to
-expand_fdtable() and the checks were under that lock, that could work,
-but removing that lockless check might have performance and scalability
-consequences.
-
-> > > Pretend ->resize_lock exists, then:
-> > > fd_install:
-> > > files = current->files;
-> > > read_lock(files->resize_lock);
-> > > fdt = rcu_dereference_sched(files->fdt);
-> > > rcu_assign_pointer(fdt->fd[fd], file);
-> > > read_unlock(files->resize_lock);
-> > >
-> > > expand_fdtable:
-> > > write_lock(files->resize_lock);
-> > > [snip]
-> > > rcu_assign_pointer(files->fdt, new_fdt);
-> > > write_unlock(files->resize_lock);
-> > >
-> > > Except rcu_read_lock_sched + appropriately fenced resize_in_progress +
-> > > synchronize_rcu do it.
-> >
-> > OK, good, you did get the grace-period part of the puzzle.
-> >
-> > Howver, please keep in mind that synchronize_rcu() has significant
-> > latency by design.  There is a tradeoff between CPU consumption and
-> > latency, and synchronize_rcu() therefore has latencies ranging upwards of
-> > several milliseconds (not microseconds or nanoseconds).  I would be very
-> > surprised if expand_fdtable() users would be happy with such a long delay.
+That works if NUMA is enabled. skx_get_pkg_id() uses NUMA information to
+determine the package ID.
+ 
+> > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+> > ---
+> >  drivers/edac/i10nm_base.c | 21 +++++++++-------
+> >  drivers/edac/skx_base.c   | 19 ++++++++------
+> >  drivers/edac/skx_common.c | 52 +++++++++++++++++++++++++++++++++------
+> >  drivers/edac/skx_common.h |  5 ++--
+> >  4 files changed, 71 insertions(+), 26 deletions(-)
+> > 
+> > diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
+> > index 51556c72a967..59384677d025 100644
+> > --- a/drivers/edac/i10nm_base.c
+> > +++ b/drivers/edac/i10nm_base.c
+> > @@ -1010,7 +1010,7 @@ static struct notifier_block i10nm_mce_dec = {
+> >  
+> >  static int __init i10nm_init(void)
+> >  {
+> > -	u8 mc = 0, src_id = 0, node_id = 0;
+> > +	u8 mc = 0, src_id = 0;
+> >  	const struct x86_cpu_id *id;
+> >  	struct res_config *cfg;
+> >  	const char *owner;
+> > @@ -1018,6 +1018,7 @@ static int __init i10nm_init(void)
+> >  	int rc, i, off[3] = {0xd0, 0xc8, 0xcc};
+> >  	u64 tolm, tohm;
+> >  	int imc_num;
+> > +	int dup_src_ids = 0;
+> >  
+> >  	edac_dbg(2, "\n");
+> >  
+> > @@ -1065,24 +1066,26 @@ static int __init i10nm_init(void)
+> >  
+> >  	imc_num = res_cfg->ddr_imc_num + res_cfg->hbm_imc_num;
+> >  
+> > -	list_for_each_entry(d, i10nm_edac_list, list) {
+> > -		rc = skx_get_src_id(d, 0xf8, &src_id);
+> > -		if (rc < 0)
+> > -			goto fail;
+> > +	rc = dup_src_ids = skx_check_dup_src_ids(0xf8);
 > 
-> The call is already there since 2015 and I only know of one case where
-> someone took an issue with it (and it could have been sorted out with
-> dup2 upfront to grow the table to the desired size). Amusingly I see
-> you patched it in 2018 from synchronize_sched to synchronize_rcu.
-> Bottom line though is that I'm not *adding* it. latency here. :)
-
-Are you saying that the smp_rmb() is unnecessary?  It doesn't seem like
-you are saying that, because otherwise your patch could simply remove
-it without additional code changes.  On the other hand, if it is a key
-component of the synchronization, I don't see how that smp_rmb() can be
-removed while still preserving that synchronization without adding another
-synchronize_rcu() to that function to compensate.
-
-Now, it might be that you are somehow cleverly reusing the pre-existing
-synchronize_rcu(), but I am not immediately seeing how this would work.
-
-And no, I do not recall making that particular change back in the
-day, only that I did change all the calls to synchronize_sched() to
-synchronize_rcu().  Please accept my apologies for my having failed
-to meet your expectations.  And do not be too surprised if others have
-similar expectations of you at some point in the future.  ;-)
-
-> So assuming the above can be ignored, do you confirm the patch works
-> (even if it needs some cosmetic changes)?
+> Checkpatch complains about this: "multiple assignments should be
+> avoided"
 > 
-> The entirety of the patch is about removing smp_rmb in fd_install with
-> small code rearrangement, while relying on the machinery which is
-> already there.
+> > +	if (rc < 0)
+> > +		goto fail;
+> >  
+> > -		rc = skx_get_node_id(d, &node_id);
+> > +	list_for_each_entry(d, i10nm_edac_list, list) {
+> > +		if (dup_src_ids)
+> > +			rc = skx_get_pkg_id(d, &src_id);
+> > +		else
+> > +			rc = skx_get_src_id(d, 0xf8, &src_id);
+> >  		if (rc < 0)
+> >  			goto fail;
+> >  
+> > -		edac_dbg(2, "src_id = %d node_id = %d\n", src_id, node_id);
+> > +		edac_dbg(2, "src_id = %d\n", src_id);
+> >  		for (i = 0; i < imc_num; i++) {
+> >  			if (!d->imc[i].mdev)
+> >  				continue;
+> >  
+> >  			d->imc[i].mc  = mc++;
+> >  			d->imc[i].lmc = i;
+> > -			d->imc[i].src_id  = src_id;
+> > -			d->imc[i].node_id = node_id;
+> > +			d->imc[i].src_id = src_id;
+> >  			if (d->imc[i].hbm_mc) {
+> >  				d->imc[i].chan_mmio_sz = cfg->hbm_chan_mmio_sz;
+> >  				d->imc[i].num_channels = cfg->hbm_chan_num;
+> > diff --git a/drivers/edac/skx_base.c b/drivers/edac/skx_base.c
+> > index 14cfd394b469..189b8c5a1bda 100644
+> > --- a/drivers/edac/skx_base.c
+> > +++ b/drivers/edac/skx_base.c
+> > @@ -600,8 +600,9 @@ static int __init skx_init(void)
+> >  	const struct munit *m;
+> >  	const char *owner;
+> >  	int rc = 0, i, off[3] = {0xd0, 0xd4, 0xd8};
+> > -	u8 mc = 0, src_id, node_id;
+> > +	u8 mc = 0, src_id;
+> >  	struct skx_dev *d;
+> > +	int dup_src_ids = 0;
+> >  
+> >  	edac_dbg(2, "\n");
+> >  
+> > @@ -646,19 +647,23 @@ static int __init skx_init(void)
+> >  		}
+> >  	}
+> >  
+> > +	rc = dup_src_ids = skx_check_dup_src_ids(0xf0);
+> 
+> Checkpatch complains about this: "multiple assignments should be
+> avoided"
 
-The code to be synchronized is fairly small.  So why don't you
-create a litmus test and ask herd7?  Please see tools/memory-model for
-documentation and other example litmus tests.  This tool does the moral
-equivalent of a full state-space search of the litmus tests, telling you
-whether your "exists" condition is always, sometimes, or never satisfied.
+That's strange, my scripts/checkpatch.pl didn't complain. I'll avoid that going
+forward.
 
-							Thnax, Paul
+Thanks,
+Kyle Meyer
 
