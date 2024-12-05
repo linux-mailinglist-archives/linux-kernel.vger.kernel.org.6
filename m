@@ -1,155 +1,155 @@
-Return-Path: <linux-kernel+bounces-433254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9369E559F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:37:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910F39E559C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD64C16A94A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E7D1882ACB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46DD214A60;
-	Thu,  5 Dec 2024 12:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345DC217F3F;
+	Thu,  5 Dec 2024 12:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xuHLzA05"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oBL2+fFJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FF2217721
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE9F1D9A7E;
+	Thu,  5 Dec 2024 12:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733402216; cv=none; b=Mb7zMTXWDk15840huJ4SK9j9koom5LEFnAgpOuLGPr69WhSqbuauibQXNXjVoatXXxjVooF/GKhaUsRG9Da399tEIQsUd/58vPFzeGaYnx2CUkRvvoMtsUKOhuFT7uen73Svq5f2o3b5FAhEikS96dWB3Lvn4Eca1KLIP0pA8pU=
+	t=1733402183; cv=none; b=O+RHILsbqDViwcGHR70hiS/vPGWPyUovLXlDKgkZVrQW0j9+H/4EyozAuPzfxaTkO7BOZUzBK4qVO0XDQOPmPiMTB4U66TJm4XAaYNFttF4OpN0X4lZ2bpYqKtn5bMEEy25HGu3HFm0m2x6U+bQdt6J28Ol0hyJo/XHiHzdlFx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733402216; c=relaxed/simple;
-	bh=7iQZviBWsipCWsckJ1L2w9D6utBoX7XmVaFR1kH1NlM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PdlIIxzzT4erQ0ZAJYYpayEuEOi59wr7v6T6fwnfg7oUdNWaYnyIEpcCzDUmcsqZ3V2iP0mOpCtTczFpMY8eio+eOph9deaghZBc9ySatoNwo7FYgUIusOJshgbo31Sa7FZ/MZLprlffsiGqlPho2b3nlreIqmXTVSCw2tOhbuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xuHLzA05; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-385d7f6dff1so538663f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:36:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733402211; x=1734007011; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vd2e/+7e53PEmvCulx9h5rdqdJTtvKXM/ReO3/927u8=;
-        b=xuHLzA05P8WkAyqP51U0dAe/HKz9MZDK0M3bXeD1Js6GMNjA2YjpUnwkk/RT41EIHY
-         8LSEt6sE4Cr5juL58Elq4B+xiR8E6c4uXX8TCUm/6zXwOyzUl4MjmyHi9EhPwus1FGzx
-         N364NxEoC42jj4/db/xjUDEc3rSOJIkgk4WoZqSoy7wV4VfSvZCRxe1yjx7cxjELAHqW
-         OSDOr16e5YSK1HApY29pRkcwjdDYx8bg+Im6pKtGnA5uJWNvaloovrwPKySSzIciLHlA
-         3RUbH9dMJ6++sZ5PjBcnR8+XMfDBd/14EtmY2/6b+/cYtdNLDLhAQe9eTeQGYtupfrx6
-         xv6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733402211; x=1734007011;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vd2e/+7e53PEmvCulx9h5rdqdJTtvKXM/ReO3/927u8=;
-        b=JSKmMoGiBHO0RnDVKdXd/NXezi2x29GqNK7m9aeo2tFvHLMWAgoAD373Nw0UxMI0jG
-         eN1caNW6HfSeX4re+tFAN8QPODoTZWHbSsIuoDEBNEZeSUBg7qgSKmxjkB65LBZH4U2x
-         gTeCzTzo2vGe1wJbpT5HZJ/5nm5mHPPyEgF80n2P72Nlxcj/9zw+D8vQe+9/flN+lW5X
-         h2Q+thKHLB2c/iJWJ7a6NOQsyYHhGYUXUErtyEaWUZBadaAjB6HicTFIAX0yPIGP+apd
-         sv3bOLj8idyLLYrn2ld8L7xTJ9S5MMtdhj9f729pvqLQwHaDaLOiiDnnlj3+3jiUtNtD
-         tOkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYpR34T4gOSfS4LFaK+zUR0ugzPshW6m9fuqJISodrLBg/J3gvFfhXAlxS3bGoLyXQcHYoguRP2VzxUhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPy2nULu9lVo50BtSFpGCIf8AhLWFBAKSC6YFoMlAK+J03FST8
-	fOvCJQaVm3ODuuwBKz7f5ML7IogrPWZmRxC3z3k4ROxoIfevo+gXQKMoQiKlyRtI7HOdpjVTA50
-	Drw8KWZlaY76Vzw==
-X-Google-Smtp-Source: AGHT+IFStT3/JjmB+ZduzLED9m5mcG/6ApdoyjMwuoRZ3NBOmr/f6c52FU11sp9uLvVjDAHF+X0r73Z9cmx8MnQ=
-X-Received: from wmbhi24.prod.google.com ([2002:a05:600c:5358:b0:434:9939:10da])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1a87:b0:385:e4a7:df0a with SMTP id ffacd0b85a97d-385fd436393mr7502559f8f.54.1733402211456;
- Thu, 05 Dec 2024 04:36:51 -0800 (PST)
-Date: Thu, 05 Dec 2024 12:35:51 +0000
+	s=arc-20240116; t=1733402183; c=relaxed/simple;
+	bh=te7Fq4Bo3HG2cZ3InWv7OJj4fVdLIRE8o0P8loWm+X0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o0XMXWwgcXXcuvKzRxpHEa00ayARzUtMxQD6v7VxwH/Y07LD54/up18vU9sfM31aEEhnBV9C9qUJANnAVEObzeHnBB9IWp8g37vowdsz9O2pq7qwREmuikDwaTkbdIOc5As+rqjeeR602BFiKuET4bYTwmYiuGDfCxLGo+j9S8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oBL2+fFJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733402179;
+	bh=te7Fq4Bo3HG2cZ3InWv7OJj4fVdLIRE8o0P8loWm+X0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oBL2+fFJd7Uue7s+sKucSheC+bCKoHl/qx4RzhjKclRVRd1npg9MpzC3TgYxh69r0
+	 Q3X8VV2vqYcOUMh/KwpnLaCNWRvVmTNlUqIgAbHM0GAtHuazRSnVNDnKYR1xsrSZQR
+	 tCf+CpVzMffcpmhxGRcAekrGP6xc1MbNEukU3SoDjLJ2wsosEbLW2x04VlUFWlyqua
+	 pmyHaGZGV2UyROHl4NfynSLi4R+o4N2TwDQjusAFI3sIp1v2zZBBALrxsD2xgwQg09
+	 8u9QqC6fr9CKERkKZPDZTjAZdMTt07MZYRjrGR5p4lW5UvkHrYPIRz/06bn7qONJRP
+	 mDOc4ZokWgniQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 054A617E366D;
+	Thu,  5 Dec 2024 13:36:18 +0100 (CET)
+Message-ID: <f2862790-f613-4583-bec5-302e06c77d8d@collabora.com>
+Date: Thu, 5 Dec 2024 13:36:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIACeeUWcC/x3MQQqAIBBA0avErBtQqYiuEi3MmWwgKrQiEO+et
- HyL/xNEDsIRhipB4EeiHHuBritwq909o1AxGGUabVSL/raBMF523hjpcMiLpa7XhpSboWRn4EX efzlOOX//X3clYgAAAA==
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2238; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=7iQZviBWsipCWsckJ1L2w9D6utBoX7XmVaFR1kH1NlM=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnUZ4ptyh0m08QFCk2CLCvc6ekmeolvC6xwJJmk
- zJyrwSRTHWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1GeKQAKCRAEWL7uWMY5
- RohGD/9hgHc0FMDO7Bk0Ysves93jeDpXLwhJe5VEfErnuksTCYpblaUxw+xokgWFpQEEHlXs+3z
- wwgc8tMZL4AC3b6OrIQ/kR5sFKKMievvs3kHrHAFnDfDjjEbry+llhUNuhQc/Tk3ZMg1ko39Ica
- lGWpMDJYPzlo175jqz8kotzQGcwPR3HtiOrqM0aZCJDrb7N63O9pl1B7/bnQoFSv3IwmfLrR+Zp
- AmlO7uSbfdLCP7DXtBz8D4QMBpHnFnDl5HYsmNotRyV4yy39VIBkhvjbMkXiz9N72sutjmmI4tt
- fVOp25hNU4r6CfhkdprQJutbzqSiZgUgrETOIhS4XhLMeNg11hh3XbdiYxYrTaIM+WcDu1ZANE9
- jQ5NhZYGsjQ3wmmksy5dahx4s89V98iFVZFbFCknA6ayth9QNIWzy5AM3g7u8cuc2ZrZbgHzVIv
- zI/r4cTiDUYYtKeanAI4NfUJjZ7cctbBabFAeo6nbC4hIJmFY4hxuVHPAlaeQ6DRNqfdDWRCmk8
- 5TAih+8oevM/nDOt2QnavabGy01XIWlw83g2WguxFDBZbD7i3bmQJsjpzY0gFLd7H3d6rt9IMUV
- p8K84SyAsgbOwoNnxbj2qfJaOKw6qZTB0lANW0tjyFbOYzIs+hEivCZoda9g1pzG9eW5R4hydVY c6H3yHRRt1IY54Q==
-X-Mailer: b4 0.13.0
-Message-ID: <20241205-guard-stable-doc-v1-1-a3f8249cf4d4@google.com>
-Subject: [PATCH] rust: sync: document that Guard is not a stable lock guard
-From: Alice Ryhl <aliceryhl@google.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/15] drm/mediatek: mtk_hdmi: Split driver and add
+ common probe function
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, ck.hu@mediatek.com,
+ jitao.shi@mediatek.com, jie.qiu@mediatek.com, junzhi.zhao@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+References: <20241205114518.53527-1-angelogioacchino.delregno@collabora.com>
+ <20241205114518.53527-13-angelogioacchino.delregno@collabora.com>
+ <olxtqto5mbgofxg4iqjvsmpxxzz6zoj7pbwmoeklhfjiavqfvv@dyveek7hgtki>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <olxtqto5mbgofxg4iqjvsmpxxzz6zoj7pbwmoeklhfjiavqfvv@dyveek7hgtki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Most locks in the linux kernel are stable, which means that holding the
-lock is sufficient to keep the value from being freed. For example, this
-means that if you acquire a lock on a refcounted value during rcu, then
-you do not need to acquire a refcount to keep it alive past
-rcu_read_unlock().
+Il 05/12/24 13:29, Dmitry Baryshkov ha scritto:
+> On Thu, Dec 05, 2024 at 12:45:14PM +0100, AngeloGioacchino Del Regno wrote:
+>> In preparation for adding a new driver for the HDMI TX v2 IP,
+>> split out the functions that will be common between the already
+>> present mtk_hdmi (v1) driver and the new one.
+>>
+>> Since the probe flow for both drivers is 90% similar, add a common
+>> probe function that will be called from each driver's .probe()
+>> callback, avoiding lots of code duplication.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/Kconfig           |  11 +-
+>>   drivers/gpu/drm/mediatek/Makefile          |   1 +
+>>   drivers/gpu/drm/mediatek/mtk_hdmi.c        | 724 +++------------------
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 425 ++++++++++++
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_common.h | 203 ++++++
+>>   5 files changed, 729 insertions(+), 635 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.c
+>>   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.h
+>>
+>> @@ -1026,19 +812,12 @@ static int mtk_hdmi_setup_vendor_specific_infoframe(struct mtk_hdmi *hdmi,
+>>   	return 0;
+>>   }
+>>   
+>> -static int mtk_hdmi_output_init(struct mtk_hdmi *hdmi)
+>> +static void mtk_hdmi_send_infoframe(struct mtk_hdmi *hdmi, u8 *buffer_spd, size_t bufsz_spd,
+>> +				    u8 *buffer_avi, size_t bufsz_avi,
+>> +				    struct drm_display_mode *mode)
+>>   {
+>> -	struct hdmi_audio_param *aud_param = &hdmi->aud_param;
+>> -
+>> -	hdmi->csp = HDMI_COLORSPACE_RGB;
+>> -	aud_param->aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
+>> -	aud_param->aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
+>> -	aud_param->aud_input_type = HDMI_AUD_INPUT_I2S;
+>> -	aud_param->aud_i2s_fmt = HDMI_I2S_MODE_I2S_24BIT;
+>> -	aud_param->aud_mclk = HDMI_AUD_MCLK_128FS;
+>> -	aud_param->aud_input_chan_type = HDMI_AUD_CHAN_TYPE_2_0;
+>> -
+>> -	return 0;
+>> +	mtk_hdmi_setup_avi_infoframe(hdmi, buffer_avi, bufsz_avi, mode);
+>> +	mtk_hdmi_setup_spd_infoframe(hdmi, buffer_spd, bufsz_spd, "mediatek", "On-chip HDMI");
+> 
+> Please use the HDMI Connector framework instead of handling everything
+> on your own.
+> 
 
-However, the Rust `Guard` type is written in a way where it cannot be
-used with this pattern. One reason for this is the existence of the
-`do_unlocked` method that is used with `Condvar`. The method allows you
-to unlock the lock, run some code, and then reacquire the lock. This
-operation is not okay if the lock itself is what keeps the value alive,
-as it could be freed right after the unlock call.
+Dmitry, my plan is to get the MediaTek HDMIv2 driver upstreamed *with* using
+the HDMI helpers - this commit is only splitting the old HDMI v1 driver in
+common parts and v1 handling.
 
-If we want to support stable locks, we'll need a different guard type
-that does not have a `do_unlocked` operation.
+This "handling everything on my own" is something that was already present
+into the old v1 driver, I am *not adding* this code, but *moving it around*.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/sync/lock.rs | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+I cannot migrate the v1 driver to the HDMI helpers right now because in this
+moment I have no way to test that and I don't want to break any functionality.
 
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index 41dcddac69e2..7eab46d4060a 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -159,6 +159,17 @@ pub fn try_lock(&self) -> Option<Guard<'_, T, B>> {
- /// Allows mutual exclusion primitives that implement the [`Backend`] trait to automatically unlock
- /// when a guard goes out of scope. It also provides a safe and convenient way to access the data
- /// protected by the lock.
-+///
-+/// This guard may be released and reacquired with [`do_unlocked`]. Note that this implies that
-+/// this `Guard` type is _not_ stable, that is, holding this lock is not sufficient to keep the
-+/// underlying [`Lock`] alive. That must be done by some other mechanism such as a refcount or
-+/// ownership.
-+///
-+/// # Invariants
-+///
-+/// This `Guard` owns the lock as defined by the [`Backend`] trait.
-+///
-+/// [`do_unlocked`]: Guard::do_unlocked
- #[must_use = "the lock unlocks immediately when the guard is unused"]
- pub struct Guard<'a, T: ?Sized, B: Backend> {
-     pub(crate) lock: &'a Lock<T, B>,
+If you check patch 15, you'll see that I am indeed using all of the helper
+goodies - but for now only on the new driver, and not on the old one.
 
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241205-guard-stable-doc-efad6812d0cb
+I do plan to migrate the v1 driver to the new helpers as well, but I would
+(please) really prefer to do that only after the v2 driver is upstreamed.
 
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+Is that okay for you?
+
+Cheers,
+Angelo
+
+>>   }
+>>   
+>>   static void mtk_hdmi_audio_enable(struct mtk_hdmi *hdmi)
+> 
+
+
 
 
