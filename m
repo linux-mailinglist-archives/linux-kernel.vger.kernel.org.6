@@ -1,137 +1,207 @@
-Return-Path: <linux-kernel+bounces-433830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB689E5DA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:49:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E08DF9E5DA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61453165B7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9B7165E79
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EF4229B1B;
-	Thu,  5 Dec 2024 17:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FZXEghZN"
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6A3227B9A;
+	Thu,  5 Dec 2024 17:48:30 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5549B225796;
-	Thu,  5 Dec 2024 17:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B265822577B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420914; cv=none; b=UqEV0n7fg9AJvRYy72r/iYpgd63hoGOuNVXTAHVDCWNcMObPEOXmA7ubwBLdcfHTWBfwk0p0rha1+15PyPjSJCNpJTC0UqDTlfr8jZ7Vkq7yA/JtH2QCjXR767bcFvLV1HFvfQFoKSiADQ0I6fHJNn8VR/GwaRDaTgy0rT6qEGQ=
+	t=1733420910; cv=none; b=QDDiWPPIOGVdFNI/Ws0e9gcLGTgi42Jvik7phuH7CwFmQJamAUNJBleGjYPIqKb75HidHBqTXTFCEXChppsz1Aq4v3DcINnkdt/WCOWD5w96a7GQgxF+OXssIebJA5HNExw7EX+O/3w7bUOkVp7c9BeDgIJhwdfJUEwDA6a1zxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420914; c=relaxed/simple;
-	bh=91fE6MXNHvHfTG8mh42aiRrYkN/U3yVGkH6W8pDMPgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvog0xULo013BtzV1N7eYoWAx5Ro2ypqWjyvl6EyIVscKmIN/dqJ8lw4RvhomJdo5e9UIE5Q+Je0E42J6NXlVp3lCHZ9vif88FXNES3wlIZahzCsfCunD4tKByz+cQuvzp09FEj8PJT6YBu8JmSFFk8eUq0bv9UcRFfK7cK8Fz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FZXEghZN; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y421P2SvXzsD9;
-	Thu,  5 Dec 2024 18:48:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1733420905;
-	bh=hi8ArFvU5BqDG4ro/0Wsd51wN4Jn9lVCsIY7xuWXd78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FZXEghZNBtryfZ3By/HdncgyfMjMG6/IaRrt2aBigqjpfhCNpFUd6XYRogo64//U5
-	 eJf58QkPnXAFRQyM9ddrm1fZlwvD0JGAUPqJiD1Htq5+dY2jtQaTdOg30X2zv7/z8h
-	 +mwr1hKKufgXPBvsjArOPk5itV9+b7tcdWmXjwKA=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y421H5gBtzG4R;
-	Thu,  5 Dec 2024 18:48:19 +0100 (CET)
-Date: Thu, 5 Dec 2024 18:48:17 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>
-Cc: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v22 0/8] Script execution control (was O_MAYEXEC)
-Message-ID: <20241205.ohw5cohsee8A@digikod.net>
-References: <20241205160925.230119-1-mic@digikod.net>
+	s=arc-20240116; t=1733420910; c=relaxed/simple;
+	bh=jKJaUzc7Q2siYZjc6/SsnwWJq8cwB+WZDnbLWj9XuqI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m4zK0hbqh1ewTHoOUrb4nxHd37a6xxtTaJV77uiztBqCQqMcsM16fozRmfAzE7sNXP8BXM00Od61ttJoMF16FIp4KFiGeDhr0HKff5cJaCxpmxgOWNDnpxqgekVvpw/qfNJrhJzuvdK7gkfsG0RxFDW4iq6UGfyaR0aWSb10Wdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso22145525ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:48:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733420906; x=1734025706;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JCiTiXYqWNNwhIPIBBgITq4kwye1QvnR7vCtkwlzAg0=;
+        b=jRSgF2NXIvyhTTsLOEDQ4as7WAEHj9zvNYK58Ud3XGI0Nez6QUX+VaSX8H+ouK6suj
+         zf7dcCK/jvjBVHHaEOGQCIhPaOOv4LhXmxXG6YuiQNCjotzW/ZXCM9FISd9QLQ1LYDOb
+         5SL+K/q1afP/thbu/nGE4+5PF08mzICPj/Zrk0DtMXfLM9HOAHoc8NVnElaVS6W5MP8m
+         65SEz0EHx38LRpKKyzL4Tw83XtznKkKYxsvmKpoOhBi02UNoFwEWsq/HRoRFUGUeg+om
+         XSycU6LgR1Z0M4hZG1j9Ge1YAhso5wUBsdrTBk561o9ExnUdbycgBuj9wW790r9jKu56
+         7JOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFASo4nCIyNZQAb42q0W7IHHnLVf1eh7BOwJvM5XZdLkbiYxpGsZ9tK2bwuWaK09D0M/SmsK/3MherDno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnxP5Wn9KhKtEE+Z8euN5K3f4h7+m4ZABAnzLI/9UuxoPEUwWU
+	369mEyAG9RxAVO3i9EeViIpjysv7oe89cIg9HbUXhObiS6P9rjjQbSzxL6PFGuilXVhnJEYWTY3
+	gI9vQSMRPiYiiIFn9DgyAjqN1cXGUibrlblZHwUBs7p1X2wVDwstfykU=
+X-Google-Smtp-Source: AGHT+IGXUT71MVLjpr6Etx8JynFsUg0ESuSnn3CKBCgOdDQ55gg//Q6DeXFNFM3BA8UILtYdHoc/05CRd1ksnhP9mgVPuVK5Xs9E
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241205160925.230119-1-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+X-Received: by 2002:a05:6e02:12ea:b0:3a7:4826:b057 with SMTP id
+ e9e14a558f8ab-3a811e2f7femr2193935ab.21.1733420905894; Thu, 05 Dec 2024
+ 09:48:25 -0800 (PST)
+Date: Thu, 05 Dec 2024 09:48:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6751e769.050a0220.b4160.01df.GAE@google.com>
+Subject: [syzbot] [cgroups?] general protection fault in __cgroup_rstat_lock
+From: syzbot <syzbot+31eb4d4e7d9bc1fc1312@syzkaller.appspotmail.com>
+To: cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
+	mkoutny@suse.com, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 05:09:17PM +0100, Mickaël Salaün wrote:
-> Hi,
-> 
-> The goal of this patch series is to be able to ensure that direct file
-> execution (e.g. ./script.sh) and indirect file execution (e.g. sh
-> script.sh) lead to the same result, especially from a security point of
-> view.
-> 
-> The main changes from the previous version are the IMA patch to properly
-> log access check requests with audit, removal of audit change, an
-> extended documentation for tailored distros, a rebase on v6.13-rc1, and
-> some minor cosmetic changes.
-> 
-> The current status is summarized in this article:
-> https://lwn.net/Articles/982085/
-> I also gave a talk at LPC last month:
-> https://lpc.events/event/18/contributions/1692/
-> And here is a proof of concept for Python (for now, for the previous
-> version: v19): https://github.com/zooba/spython/pull/12
-> 
-> Kees, would you like to take this series in your tree?
+Hello,
 
-> 
-> Previous versions
-> -----------------
-> 
+syzbot found the following issue on:
 
-v21: https://lore.kernel.org/r/20241112191858.162021-1-mic@digikod.net
+HEAD commit:    932fc2f19b74 Merge branch 'irq-save-restore'
+git tree:       bpf-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14fd6330580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=31eb4d4e7d9bc1fc1312
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161cdfc0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12dfc8df980000
 
-> v20: https://lore.kernel.org/r/20241011184422.977903-1-mic@digikod.net
-> v19: https://lore.kernel.org/r/20240704190137.696169-1-mic@digikod.net
-> v18: https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
-> v17: https://lore.kernel.org/r/20211115185304.198460-1-mic@digikod.net
-> v16: https://lore.kernel.org/r/20211110190626.257017-1-mic@digikod.net
-> v15: https://lore.kernel.org/r/20211012192410.2356090-1-mic@digikod.net
-> v14: https://lore.kernel.org/r/20211008104840.1733385-1-mic@digikod.net
-> v13: https://lore.kernel.org/r/20211007182321.872075-1-mic@digikod.net
-> v12: https://lore.kernel.org/r/20201203173118.379271-1-mic@digikod.net
-> v11: https://lore.kernel.org/r/20201019164932.1430614-1-mic@digikod.net
-> v10: https://lore.kernel.org/r/20200924153228.387737-1-mic@digikod.net
-> v9: https://lore.kernel.org/r/20200910164612.114215-1-mic@digikod.net
-> v8: https://lore.kernel.org/r/20200908075956.1069018-1-mic@digikod.net
-> v7: https://lore.kernel.org/r/20200723171227.446711-1-mic@digikod.net
-> v6: https://lore.kernel.org/r/20200714181638.45751-1-mic@digikod.net
-> v5: https://lore.kernel.org/r/20200505153156.925111-1-mic@digikod.net
-> v4: https://lore.kernel.org/r/20200430132320.699508-1-mic@digikod.net
-> v3: https://lore.kernel.org/r/20200428175129.634352-1-mic@digikod.net
-> v2: https://lore.kernel.org/r/20190906152455.22757-1-mic@digikod.net
-> v1: https://lore.kernel.org/r/20181212081712.32347-1-mic@digikod.net
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/afd76657938b/disk-932fc2f1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5ab299e9b5df/vmlinux-932fc2f1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6617519fa7b9/bzImage-932fc2f1.xz
+
+Bisection is inconclusive: the first bad commit could be any of:
+
+42d9e8b7ccdd Merge tag 'powerpc-6.13-1' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=121e8020580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+31eb4d4e7d9bc1fc1312@syzkaller.appspotmail.com
+
+RBP: 0000000000000001 R08: 00007ffee33edd87 R09: 00007fe28ebf71e7
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffee33ee00c
+R13: 00007ffee33ee030 R14: 00007ffee33ee070 R15: 0000000000000001
+ </TASK>
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 UID: 0 PID: 5842 Comm: syz-executor126 Not tainted 6.13.0-rc1-syzkaller-00032-g932fc2f19b74 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:do_perf_trace_cgroup_rstat include/trace/events/cgroup.h:207 [inline]
+RIP: 0010:perf_trace_cgroup_rstat+0x2b2/0x580 include/trace/events/cgroup.h:207
+Code: 8d 98 58 04 00 00 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 fc 0c 75 00 48 8b 1b 48 83 c3 0c 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 0f 85 d5 01 00 00 44 8b 2b 49 8d 5f 08 48 89
+RSP: 0018:ffffc90003837a80 EFLAGS: 00010003
+RAX: 0000000000000001 RBX: 000000000000000c RCX: ffff8880345ada00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8880b8737768
+RBP: ffffc90003837b70 R08: ffffffff81a90e9b R09: 1ffffffff20328d6
+R10: dffffc0000000000 R11: fffffbfff20328d7 R12: ffff8880b87376e0
+R13: 1ffff92000706f5c R14: dffffc0000000000 R15: ffffe8ffffd30be8
+FS:  000055558b3013c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000050c CR3: 00000000329de000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ trace_cgroup_rstat_locked include/trace/events/cgroup.h:242 [inline]
+ __cgroup_rstat_lock+0x3e1/0x590 kernel/cgroup/rstat.c:292
+ cgroup_rstat_flush+0x30/0x50 kernel/cgroup/rstat.c:353
+ cgroup_rstat_exit+0x27/0x1e0 kernel/cgroup/rstat.c:411
+ cgroup_create kernel/cgroup/cgroup.c:5782 [inline]
+ cgroup_mkdir+0x53a/0xd60 kernel/cgroup/cgroup.c:5831
+ kernfs_iop_mkdir+0x253/0x3f0 fs/kernfs/dir.c:1246
+ vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4311
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4334
+ __do_sys_mkdir fs/namei.c:4354 [inline]
+ __se_sys_mkdir fs/namei.c:4352 [inline]
+ __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4352
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe28eba7a19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffee33edfe8 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fe28eba7a19
+RDX: 0000000000000000 RSI: d0939199c36b4d28 RDI: 0000000020000000
+RBP: 0000000000000001 R08: 00007ffee33edd87 R09: 00007fe28ebf71e7
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffee33ee00c
+R13: 00007ffee33ee030 R14: 00007ffee33ee070 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:do_perf_trace_cgroup_rstat include/trace/events/cgroup.h:207 [inline]
+RIP: 0010:perf_trace_cgroup_rstat+0x2b2/0x580 include/trace/events/cgroup.h:207
+Code: 8d 98 58 04 00 00 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 fc 0c 75 00 48 8b 1b 48 83 c3 0c 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 0f 85 d5 01 00 00 44 8b 2b 49 8d 5f 08 48 89
+RSP: 0018:ffffc90003837a80 EFLAGS: 00010003
+RAX: 0000000000000001 RBX: 000000000000000c RCX: ffff8880345ada00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8880b8737768
+RBP: ffffc90003837b70 R08: ffffffff81a90e9b R09: 1ffffffff20328d6
+R10: dffffc0000000000 R11: fffffbfff20328d7 R12: ffff8880b87376e0
+R13: 1ffff92000706f5c R14: dffffc0000000000 R15: ffffe8ffffd30be8
+FS:  000055558b3013c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000050c CR3: 00000000329de000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	8d 98 58 04 00 00    	lea    0x458(%rax),%ebx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 fc 0c 75 00       	call   0x750d18
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 0c          	add    $0xc,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 30       	movzbl (%rax,%r14,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 d5 01 00 00    	jne    0x20c
+  37:	44 8b 2b             	mov    (%rbx),%r13d
+  3a:	49 8d 5f 08          	lea    0x8(%r15),%rbx
+  3e:	48                   	rex.W
+  3f:	89                   	.byte 0x89
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
