@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-432439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571119E4B45
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:39:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA309E4B47
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A92167454
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3476B1674CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDA0F513;
-	Thu,  5 Dec 2024 00:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB70EAD7;
+	Thu,  5 Dec 2024 00:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfrKmPVY"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I86WDNOh"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1D210E9;
-	Thu,  5 Dec 2024 00:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB1C10E9;
+	Thu,  5 Dec 2024 00:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733359143; cv=none; b=cfhvmL/K3pbLhDQNYWtB8MLj22PKwJpics1EBWsbZvBfye6FSIk36TibXaSOI9ISbgINxd0f0hWJ7YMy2WsNWmJWLq2gVvG2U0P8u50ZWHGExX0S4cFNTLEJWYT0Rzs9EaMy2+HI9AtQ/kWQiQx+0OxepS8ZtGgINDITcBnPgiU=
+	t=1733359174; cv=none; b=XyplJubREUD4UdSu0wrTc94daarXHaxP/T/KwEADygOEyakcxDrcVzGyaK0fgsmGJU6aWZYFy4HkiyveuJm90gYqZIvwHdZRh7STgXplcB/rbsBVIa5rTM2UrcMwKWnhhkmUPmQOgC1WmqNnGZbM4don+C9RGTuuzFihqQVIryQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733359143; c=relaxed/simple;
-	bh=I5yT5GXn4XWD061Xb2RH/thnz8ewCQmNGoquSyoEgk0=;
+	s=arc-20240116; t=1733359174; c=relaxed/simple;
+	bh=oiDLwOSIfBhfscSAX3ujLATZAD80iLz59OcKQdAipdA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hGA3cGhZERBy0ioeUxY02YVg18iMyWCzpZkPn28A1L2saTsxtaAlDzjQJmuLYklO2Tq4+zM5qNRJ1BayhFDASxYCadP1B6cFOxB22BUVcpWIzRRVE0gRfUjpSZ1+MORqRqkXmU53O6h4FSIrFXEYpjNIC/f+EEPsfK+9ttStFis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfrKmPVY; arc=none smtp.client-ip=209.85.214.174
+	 MIME-Version; b=OFmJr2UbIHISVE8MRv9rmEmJZpGeSik01QFEyv2jCLUyqgFFp+DjAKYJPFHv8IjCFrFrCgjKjB4vAIf3YGrTfWfcwFfI/8VVYFIWob00PcA13hMnL9vopPqoKMVR6+mq8Xq3h8gODAVw1osFlhUYHW55Vw64PnjFqXzjEWAh+8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I86WDNOh; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-215936688aeso2809455ad.1;
-        Wed, 04 Dec 2024 16:39:01 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-215a0390925so3637015ad.0;
+        Wed, 04 Dec 2024 16:39:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733359141; x=1733963941; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733359172; x=1733963972; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5r0gHAwegXuzSmSEhFIyVewwYq6F+Oy8I87chR6WA6Q=;
-        b=bfrKmPVYq/F77lDEMfTct9lswd8t8+uosWkF8etawTu4LAm9GLRZwXQiBShA1p605h
-         NxcKZQ7s4rm1rlizDHnqhnMi0HH7dzy+6UdFWFFXzKQ++rTbMRFtNvySsvNnICJHgsnJ
-         QGgPD6npB9WnHl5L+Qo/J4e5oPZxhQygSzhsRevmPiMwjotDuQ4vNZrn2vy+0xZdn967
-         G59LdJiSsqrezQE+9VkAbkSscq4DEPMtSGOmqgzpZBCyqINc+AoCh64ynvud8xj3YTcr
-         Oqb1MvovyvPQtlQKay/YQ6PpwmbtvkZ8NffSgnupfmS5qLSRqRbqSysmGkOQ5WjTkXCL
-         o9rg==
+        bh=Chv20732mrKM1AkOSSld1MdFCLH0yzZTS/nsjg0l/bI=;
+        b=I86WDNOh5zMSuUqgqoykMGSz6aAcyPfxpEWmlGueCyUs+WS4eyZlEYQdyAcgp8hPjW
+         kQHKCQkscoucd4eGcyhDVy1vab5TrG6TB0CwbEALKljzjI67VVGQzxzltXjDKTAyYPfx
+         no5d+wp3tIZJAfgxi/bCOGka4h8gNBPwSoR3qBBRpb+lYmIFuvi7uTWFCX/GAvIzMWZ0
+         5NPLhciBHxoQs6/weaxnmDw0yGxBaWpBoxaTbNXtXdGBW884f92AaC2Bia69z8cuU2P1
+         /+H0W3ucY4aF8EgGs1g4SPYRHQLUBYhJQy7cz9nZUT0yrWYFRUPTQ3qoYlTPYNfXGp07
+         v87A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733359141; x=1733963941;
+        d=1e100.net; s=20230601; t=1733359172; x=1733963972;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5r0gHAwegXuzSmSEhFIyVewwYq6F+Oy8I87chR6WA6Q=;
-        b=WtnpqYKCQCmFuhma68DiP5WPdPUCMiBIcqL/eKoKrN5rTH5EgUbObZ/OToZHX+TUb2
-         9vTXYloi/JFYMQkxxCsL0uGfVtTlGg1dTcE/Fs56/4f7MPad4/RT06nJuzFeBSOmezRM
-         GlgyzHGDZMuCEZxZQITxXwcMX1MVKZFbHnfNVjYnZ0G1SJCvplIyVltUaps0CzV6NPiE
-         SK/Hno0RvdSjXN6U0N3SCx0tfzJZ9/6/2LjfFhgymzO7qLCBaiHvOqx7gQfxkM7JAjyc
-         pjjhhy6NRIGq1wa8hbmxgF/DadNbh2ROB1NxFZiH4YDsKqjjTbrd5UP/OtEWVwJ03KSf
-         6kJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVuu6DU69z3l0FM/0UzpFeGlLNKoGEDSEa2f+hmxgbxt15zxX2YyF1/s6qwOGnY9TJB/d8wl6so5oTlxI=@vger.kernel.org, AJvYcCVPvXs1QyPyArvRFV7kwogmT1aV5lsTh8Edihy8sfwji1kwxSy6GMs99kAfe7LxpcMCWSV92iZDxqzEwlQUiUb1sqpmLg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyedEejDo/o82P/o9gnvMeUYoSY7c4HEz9lbNMgyrHtFAtT52t8
-	UN9ekhdAbZsT0i7CYQhddBZGXOQaCYr5nyYiye8oFShDtIV9zlFY
-X-Gm-Gg: ASbGncsM+OQn4BDeN8Nlt5vYl3UPkKuvPCCTbIREp+lmcU/3bLLe374/2T3fWxh79DA
-	eXerSh0cMsN/aOhzYYKhtF8gnuiTOmgRtApyp/lrNL66j1gAdUuA6JhBNrKihdaGtHZ+93HBO36
-	JMHp1wAJKCUvg+SX7p753zuE7BqD9j/qz+BhoQg11ZuvkiFsw+jnFtUvQQGJmSBZkSUxeVo+aal
-	Ejt0NrmLC6Si/WYpT9Iy3ERAlEH1QOJlWywivJBDNBrXgCEranGiEe9REGgQ7LTPqlyVv9v8Miv
-	tMLriLzjmD2sBstSVsE=
-X-Google-Smtp-Source: AGHT+IE2Z+B1Krso6luH/4yPviboZj8IyJo+B/qcwzXb5cbk6ZRxRibM3UAtpOStFwEEtdmotg2skw==
-X-Received: by 2002:a17:903:188:b0:215:b9a7:5274 with SMTP id d9443c01a7336-215d0050befmr100072295ad.26.1733359141346;
-        Wed, 04 Dec 2024 16:39:01 -0800 (PST)
+        bh=Chv20732mrKM1AkOSSld1MdFCLH0yzZTS/nsjg0l/bI=;
+        b=Pi69oFQD65NvLCCh+67jIKBw4TSdRx2od8B27t/zoEk/yeomqMMXO5MIA2Rv+AghMi
+         zBflQ5goxt3mCI2Jx5bSjvuJkwSG+3sgKd1X/6mS08jnCK9U54WtWudX4eaaGdJbwwc0
+         vXx9TtD+OeSHDD9I+ZrEaJufBklPPsvZ+hYa54ea59hC67Im2Vc+6wjH6y5B/n1R+Rjx
+         ycYas8nq/43MsOSfILaVhxPG4NLYigEkKsDS7qMlJji21Gh0n2oWBY5d2HqjRKOcVwX/
+         S4FwSH+q79eq2mMeGuX58hckAlMR0QJv4B4GDZcZJUCqCxHRo9jUIYOPUZakz7xZ1V4q
+         DvVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfSdJsBivy7qnW3XtFfsGH5HKrZoRlyAv8aKhM9P8whU/Xs5YdpkejSUyfFG8TJ8pe6U6pTJ0eBh9Q3OE/WZvlWIfsA==@vger.kernel.org, AJvYcCXSZz9Bi8S1s4hcba01bQXQ/XbaESSPQS7xadOo6qFwoPry5e9MtquLUmuT+KuhjyxX3M5XjAPKltMpm6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLDNmZjmqGtMAM9AFcsC4I3ifx6zgBehbsz1VvfYqASTpc8eNO
+	sbJL1RwHhd3/w3vE93W3Fp14vVA9XKVvAtolrHia9Rrxf/UexD/i
+X-Gm-Gg: ASbGncv216FUH62WnV3hRDO3kseGnJLcB7hm2hrjRy+9pRajl//2KjLs1jf9HoWYWcX
+	cOO2fSEYsfyO2aWwqJPzrr0r8VeqRvTGZm3FD6cxhP0fn/d1vIfAIeumxA6dY7ds/CRV10Nzqhh
+	VoHVMmg9XBqx2Gw+KaTGq3ieZgTjxbgp2RmWCNjAHXCDK+AwF50N50zX/ruwk/KUKGVoQzZ+u64
+	WfuXaHKBMWNnkS45WgZn3Uv1UeDMqr16dlCmD46ZxkEi9tx/HfugoGFaPI+zVh/RaZvIySh7diQ
+	3XyiHQpoCAusjdwKRtc=
+X-Google-Smtp-Source: AGHT+IE/YU3Qk1wNo1krwWt1NDU/wozjOIm2pvdy4P0U/qbQkmBfa0fvehY2lP0ZeEqOduOpX2Ve5Q==
+X-Received: by 2002:a17:903:41ce:b0:215:5ea2:654b with SMTP id d9443c01a7336-215bd1b4981mr123623045ad.1.1733359172069;
+        Wed, 04 Dec 2024 16:39:32 -0800 (PST)
 Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f68c2asm1265395ad.283.2024.12.04.16.38.58
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f09167sm1285225ad.200.2024.12.04.16.39.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 16:39:01 -0800 (PST)
+        Wed, 04 Dec 2024 16:39:31 -0800 (PST)
 From: Kurt Borja <kuurtb@gmail.com>
 To: kuurtb@gmail.com
 Cc: Dell.Client.Kernel@dell.com,
@@ -80,9 +80,9 @@ Cc: Dell.Client.Kernel@dell.com,
 	mario.limonciello@amd.com,
 	platform-driver-x86@vger.kernel.org,
 	w_armin@gmx.de
-Subject: [RFC PATCH 02/21] alienware-wmi: Move Lighting Control State
-Date: Wed,  4 Dec 2024 21:38:36 -0300
-Message-ID: <20241205003835.2184510-2-kuurtb@gmail.com>
+Subject: [RFC PATCH 03/21] alienware-wmi: Remove unnecessary check at module exit
+Date: Wed,  4 Dec 2024 21:39:07 -0300
+Message-ID: <20241205003906.2184657-2-kuurtb@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
 References: <20241205002733.2183537-3-kuurtb@gmail.com>
@@ -94,112 +94,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Place Lighting Control State logic next to other attributes of the same
-sysfs group.
+Module initialization fails if platform device fails to register so it's
+always not NULL at exit.
 
-While at it, rename:
-
-store_control_state()	-> lighting_control_state_store()
-show_control_state()	-> lighting_control_state_show()
-
-And use DEVICE_ATTR_RW() instead of DEVICE_ATTR().
-
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/dell/alienware-wmi.c | 73 ++++++++++++-----------
- 1 file changed, 38 insertions(+), 35 deletions(-)
+ drivers/platform/x86/dell/alienware-wmi.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index b3a73fc43b3c..b1ac0e393180 100644
+index b1ac0e393180..115b3aa5637b 100644
 --- a/drivers/platform/x86/dell/alienware-wmi.c
 +++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -545,6 +545,44 @@ static ssize_t zone_set(struct device *dev, struct device_attribute *attr,
- 	return ret ? ret : count;
+@@ -1258,13 +1258,11 @@ module_init(alienware_wmi_init);
+ 
+ static void __exit alienware_wmi_exit(void)
+ {
+-	if (platform_device) {
+-		alienware_zone_exit(platform_device);
+-		remove_hdmi(platform_device);
+-		remove_thermal_profile();
+-		platform_device_unregister(platform_device);
+-		platform_driver_unregister(&platform_driver);
+-	}
++	alienware_zone_exit(platform_device);
++	remove_hdmi(platform_device);
++	remove_thermal_profile();
++	platform_device_unregister(platform_device);
++	platform_driver_unregister(&platform_driver);
  }
  
-+/*
-+ * Lighting control state device attribute (Global)
-+ */
-+static ssize_t lighting_control_state_show(struct device *dev,
-+					   struct device_attribute *attr,
-+					   char *buf)
-+{
-+	if (lighting_control_state == LEGACY_BOOTING)
-+		return sysfs_emit(buf, "[booting] running suspend\n");
-+	else if (lighting_control_state == LEGACY_SUSPEND)
-+		return sysfs_emit(buf, "booting running [suspend]\n");
-+	return sysfs_emit(buf, "booting [running] suspend\n");
-+}
-+
-+static ssize_t lighting_control_state_store(struct device *dev,
-+					    struct device_attribute *attr,
-+					    const char *buf, size_t count)
-+{
-+	u8 val;
-+
-+	if (strcmp(buf, "booting\n") == 0)
-+		val = LEGACY_BOOTING;
-+	else if (strcmp(buf, "suspend\n") == 0)
-+		val = LEGACY_SUSPEND;
-+	else if (interface == LEGACY)
-+		val = LEGACY_RUNNING;
-+	else
-+		val = WMAX_RUNNING;
-+
-+	lighting_control_state = val;
-+	pr_debug("alienware-wmi: updated control state to %d\n",
-+		 lighting_control_state);
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(lighting_control_state);
-+
- /*
-  * LED Brightness (Global)
-  */
-@@ -589,41 +627,6 @@ static struct led_classdev global_led = {
- 	.name = "alienware::global_brightness",
- };
- 
--/*
-- * Lighting control state device attribute (Global)
-- */
--static ssize_t show_control_state(struct device *dev,
--				  struct device_attribute *attr, char *buf)
--{
--	if (lighting_control_state == LEGACY_BOOTING)
--		return sysfs_emit(buf, "[booting] running suspend\n");
--	else if (lighting_control_state == LEGACY_SUSPEND)
--		return sysfs_emit(buf, "booting running [suspend]\n");
--	return sysfs_emit(buf, "booting [running] suspend\n");
--}
--
--static ssize_t store_control_state(struct device *dev,
--				   struct device_attribute *attr,
--				   const char *buf, size_t count)
--{
--	long unsigned int val;
--	if (strcmp(buf, "booting\n") == 0)
--		val = LEGACY_BOOTING;
--	else if (strcmp(buf, "suspend\n") == 0)
--		val = LEGACY_SUSPEND;
--	else if (interface == LEGACY)
--		val = LEGACY_RUNNING;
--	else
--		val = WMAX_RUNNING;
--	lighting_control_state = val;
--	pr_debug("alienware-wmi: updated control state to %d\n",
--		 lighting_control_state);
--	return count;
--}
--
--static DEVICE_ATTR(lighting_control_state, 0644, show_control_state,
--		   store_control_state);
--
- static int alienware_zone_init(struct platform_device *dev)
- {
- 	u8 zone;
+ module_exit(alienware_wmi_exit);
 -- 
 2.47.1
 
