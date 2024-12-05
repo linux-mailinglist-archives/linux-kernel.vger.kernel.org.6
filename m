@@ -1,89 +1,98 @@
-Return-Path: <linux-kernel+bounces-433526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0339E598D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:16:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12DF9E5994
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCBD416272D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:16:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE5C1882656
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C7621A453;
-	Thu,  5 Dec 2024 15:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033231DB346;
+	Thu,  5 Dec 2024 15:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RE6haTGh"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GmN9FxfQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8880B1B0F22
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5327E12CDA5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733411788; cv=none; b=O9DzvOYFZ9DAoD5RD5pejWWa5BBOSL7fA4b9IU98pF07FF+p/EkhbzT7RxyGifj6lbrM8qlEfT64oGUOB/8bx5cMbed5+m7dOwjKRBuS3zF8QENV+wDHAQpVDk4DKcjPbeaoGFO5RK62o+nYHrarIJj3ctFdSCFyUpMt5JPE5eM=
+	t=1733411889; cv=none; b=vGXV8lUkYDzydyhW3A4RV5g/NPUoGRjfLMMb9sl3mfgNpoI9Uh3NH+LO0NGi5tpEO79Z2px2ipapynfiWGKGF7MWuaBA4NyPyxLB7+QmJufvlFkEZjsxiOmMAUnOo23NrihGtiSLwZH+PnLuF8B4DgHfbbFofNoRycIhJAIcgw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733411788; c=relaxed/simple;
-	bh=iM77qGeIh8E11wSG/JuOvn32bq1eD8WN4o1Kl4395UQ=;
+	s=arc-20240116; t=1733411889; c=relaxed/simple;
+	bh=ubhbPtzBn8syqYBtLvmidYf4WZHhwRkbUJb61pjNjr0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7uCCutjctJXJ3/9XFg3K2ysq1XL7fqycU9b3+vGTISMYVm1A5Qxd2Yw2GOIMuxw4SUmWDwwaPRiq+qvqv+vm8je4Vb3fh+tOrMF8adRBzv+PlQ4KSKOnbEsYrDh4R8v0p0bxkT4gu3QMx0vWHYrUIlb4HWgfxMD1P8KHGvgYC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RE6haTGh; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a45f05feso11860235e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:16:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733411784; x=1734016584; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NNGzfvQhuEu1gaOMEO/yBEPHJg32agZ5235X4zgBXpI=;
-        b=RE6haTGhV3liX7qr+Q2NMrC2oFdxqq9RKmqpf2zZh0pPGIzqXzmJy8g9WD4zw3DQ1z
-         6E7t2pA1ZvUaVnZZ89wXDo1y1VK+Ad8lSA/WFi/7HtapicB+I05jxZOOg4z1aaYZhetu
-         xsjMdy9x7TbgXd4L1JFh8Sr5JYOoRQC0wj4tUfcs5LncisLZumh9VrdvlgNsrUAfVYDD
-         jY9UIIQkyomwR0i4ORe1C1Bgp3ilrITy2iXa++uxipk9U5sb0IgdINPs+mVm9XWkPxFY
-         TK7zBeFrUZ/5u85HAf+F2sr8VqEMe8ao2VNc83OK4Qzp+Rohvesodde8sL6u0WxOACHU
-         pezA==
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9vZeAcgov95Jcf5h+mgX1x43elixljY4llZNqv19vsawuG/7S2ecs8p9xa/ONpnAmh/jaPc1tdDEgbBVJlZExUREdy9RW19ATrMIcKUt1vGfgxrXW06KmURnqBc6sk8RbNYEFZQRgl2pypDRdjignV1fTGaBTZ9OpBw5zutLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GmN9FxfQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733411886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JdSji3NGlMnQ1jXsJVZOGl9L1qIEshri+ASXsE86GnI=;
+	b=GmN9FxfQm1JfosRvoSDYZcB9VG1jayfOd1ZhqgCPiHpsentq1NtgK6u0e7ha3rkkbheUwF
+	82/wBOoV9R/uhK1gXELoJskaYJwaR/QuKPMUrgA79kUz2ZD4MzN2qh2rpLAZpXqqcFLc2x
+	HGWvHdr6I1dhDPJlA86e9hkleX9zSEQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-124-g_qbkgFXN-Szm7EVU55SCA-1; Thu, 05 Dec 2024 10:18:05 -0500
+X-MC-Unique: g_qbkgFXN-Szm7EVU55SCA-1
+X-Mimecast-MFC-AGG-ID: g_qbkgFXN-Szm7EVU55SCA
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385f0829430so744206f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:18:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733411784; x=1734016584;
+        d=1e100.net; s=20230601; t=1733411884; x=1734016684;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NNGzfvQhuEu1gaOMEO/yBEPHJg32agZ5235X4zgBXpI=;
-        b=EvkTKrBXYT1es0XC0faI/Y3t7STHuWrOt0vL0yfwNegGYuLf6YrEnjixLrPN18mzjz
-         pcBWjdy0miAcryvZrWqSScDIiTbQRu20z7c/vhILgRRFUD5M/VMypa6FgWvb4+E9VWL/
-         Yxeob4rbX+Xs0364DlIJrITk6muWIpI6oBD51xmjfnjBAKOS8XMoC+vyNfCb2ziXVrpR
-         ROqIchZLl63zJhEvZFcP/oymwl+8Ipbt9dyvmssSXGdFxCW2u+2uYR4zsmDEnSpNXI5X
-         ZjjzDOB8E5K+4NYxBMTglYyALXsGt0uQpLcl8JGvNHEOrL6fD4NRxSzY8iCeokSBdU4O
-         X7sg==
-X-Gm-Message-State: AOJu0Yy9gNda3JrHzeBmBrQQy+spgctqD7W1f2Eq61X2GhT4voXvxH1n
-	Bdf8ZGpbmEXwP+XAYdWJ6IMIrDha0Ii4aa3+4TO2VfeCbsjE+feoFuvjBWzxheU=
-X-Gm-Gg: ASbGncv3N3Bo+YkpjhqgqFedr71rAYuFJHDrRaDDZcVe92RIOaAGRzLLv3S58n7AGti
-	omHXPXsSd+pCxKt7UybCet3AfbLm6Rn6bMEXzaVrIDt6L5tSjZm2kvlS3VyjGhBQOC/aj3f+98C
-	QTgzXSqEQXwLtJrJwBDRyp6rQpy2eEi34gdPrHG5nwGBCaM4i7ZbRrzQ79RlH5vbaYwx/B6U+B6
-	e+Cj7mF5QuVHH5LtBlxsn1rUEieTzHFkIq6R7IqycdQsqhI1WCbZLE=
-X-Google-Smtp-Source: AGHT+IFSHLZmIu9wSayLDq7ycBQ+roAuUKEE2td9KEmSdlWo6X+wsBQeahWHpQwNkTLYxu/aVfztNQ==
-X-Received: by 2002:a05:600c:1989:b0:431:6083:cd30 with SMTP id 5b1f17b1804b1-434d09b2a75mr103448145e9.6.1733411783803;
-        Thu, 05 Dec 2024 07:16:23 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f59d651sm2179270f8f.44.2024.12.05.07.16.22
+        bh=JdSji3NGlMnQ1jXsJVZOGl9L1qIEshri+ASXsE86GnI=;
+        b=oFgZRcfxq6xVIPgAYwh4uXoHYmy+76P45Uu0CE3owAImZSivD3QPPTe85CgTGw3coH
+         zHL7HU2cwAzWIOoxdi/YNZ4fEWoMfeYksbnWFlJy5zRyu17PDi1IBkngPtPepJpzmXjZ
+         Fsv3opK8gKBLUdF7YwbpKLfhgsRolYxtGQeWpJcul/s71BS5/R8yWVhe1zqbbtc9dS4e
+         QL9g174ATnmWrfBSrqGmSjJsiWoDAJK5+8eE35Yh0rYRnYfhzqi+VPPQHwmI8r1rUQfb
+         l1yjHjfqfz0O1qyWt+MMI8fM+xzv7CYK4hP/cNFsLNYjWxO7GEB35Fi+0yZFsr0oUMXF
+         3bjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9j3MwME4XAW/uVKBHynl1bk9GMMhlPc+UD22aGkjo2deksEn23dUOlZZa5E8HLRNYpVgR5Y0ymQkYqDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM9vMXUWFJ+zzgy2M/+D4k7//rx7Phc0wfMGU3McZsiYMd/T2Z
+	sjW1yxvPbnZde2rJk59r67RI4GilAQgekmld30WoAQzEj/gH8k1yAosQDCEEVFwg8PVMkOcZMs3
+	xbeIDkt0uGROtEcTjzMR4n2/9zdrigT05oOrBpm33V34DlBpZvqYb/STJ2g9i+g==
+X-Gm-Gg: ASbGncs3dosS/dWTCG+UQ8zwRhrmvvi2saCIZSPzH2mEwMfiNFZc9KELGgcHy9xcV8U
+	MY8y039svGNM483OvgVvMO7IDMscW1o92pEcmID2BQRicg4ENb2Ln+8RT5ZqdBgBalg8hwUh4si
+	stqeyicH7A1u02FmPlq1c9g3ezCPxAjY4zD10o2MRpqZ+fNsteiKQ3obZm6UWE4faBcxgIajuYj
+	m4kXNFuWZXHl4kj7FxiBPA5Myss9IFDH0GEQT0=
+X-Received: by 2002:a5d:6d03:0:b0:37d:4833:38f5 with SMTP id ffacd0b85a97d-385fd3f2c0emr10797897f8f.30.1733411883957;
+        Thu, 05 Dec 2024 07:18:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGYWGJEpkIfFGXIzPlV7ZnY+sjcPxgdHQ0cw9usI/E0FiDiz746U+r28+u6h6camWH6r8h8KA==
+X-Received: by 2002:a5d:6d03:0:b0:37d:4833:38f5 with SMTP id ffacd0b85a97d-385fd3f2c0emr10797856f8f.30.1733411883555;
+        Thu, 05 Dec 2024 07:18:03 -0800 (PST)
+Received: from redhat.com ([2.55.188.248])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e96c2fsm104968066b.62.2024.12.05.07.18.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 07:16:23 -0800 (PST)
-Date: Thu, 5 Dec 2024 18:16:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	David Laight <David.Laight@aculab.com>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	netfilter-devel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Johannes Berg <johannes.berg@intel.com>, toke@kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>, kernel@jfarr.cc, kees@kernel.org
-Subject: Re: arm64: include/linux/compiler_types.h:542:38: error: call to
- '__compiletime_assert_1050' declared with attribute error: clamp() low limit
- min greater than high limit max_avail
-Message-ID: <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain>
-References: <CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com>
+        Thu, 05 Dec 2024 07:18:02 -0800 (PST)
+Date: Thu, 5 Dec 2024 10:17:59 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: virtualization@lists.linux.dev, jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/7] virtio_net: correct
+ netdev_tx_reset_queue() invocation point
+Message-ID: <20241205101611-mutt-send-email-mst@kernel.org>
+References: <20241204050724.307544-1-koichiro.den@canonical.com>
+ <20241204050724.307544-2-koichiro.den@canonical.com>
+ <20241205052729-mutt-send-email-mst@kernel.org>
+ <nmjiptygbpqfcveclpzmpgczd3geir72kkczqixfucpgrl3g7u@6dzpd7qijvdm>
+ <cv7ph7yna6d5a37k7hoxplyzrbmrdxrcjd67nrttevsta3r54h@35ztxhqaczqd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,86 +101,232 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com>
+In-Reply-To: <cv7ph7yna6d5a37k7hoxplyzrbmrdxrcjd67nrttevsta3r54h@35ztxhqaczqd>
 
-Add David to the CC list.
+On Thu, Dec 05, 2024 at 10:16:35PM +0900, Koichiro Den wrote:
+> On Thu, Dec 05, 2024 at 09:43:38PM +0900, Koichiro Den wrote:
+> > On Thu, Dec 05, 2024 at 05:33:36AM -0500, Michael S. Tsirkin wrote:
+> > > On Wed, Dec 04, 2024 at 02:07:18PM +0900, Koichiro Den wrote:
+> > > > When virtnet_close is followed by virtnet_open, some TX completions can
+> > > > possibly remain unconsumed, until they are finally processed during the
+> > > > first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
+> > > > [1].
+> > > 
+> > > 
+> > > So it's a bugfix. Why net-next not net?
+> > 
+> > I was mistaken (I just read netdev-FAQ again). I'll resend to net, with
+> > adjustments reflecting your feedback.
+> > 
+> > > 
+> > > > Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
+> > > > before RX napi enable") was not sufficient to eliminate all BQL crash
+> > > > cases for virtio-net.
+> > > > 
+> > > > This issue can be reproduced with the latest net-next master by running:
+> > > > `while :; do ip l set DEV down; ip l set DEV up; done` under heavy network
+> > > > TX load from inside the machine.
+> > > > 
+> > > > netdev_tx_reset_queue() can actually be dropped from virtnet_open path;
+> > > > the device is not stopped in any case. For BQL core part, it's just like
+> > > > traffic nearly ceases to exist for some period. For stall detector added
+> > > > to BQL, even if virtnet_close could somehow lead to some TX completions
+> > > > delayed for long, followed by virtnet_open, we can just take it as stall
+> > > > as mentioned in commit 6025b9135f7a ("net: dqs: add NIC stall detector
+> > > > based on BQL"). Note also that users can still reset stall_max via sysfs.
+> > > > 
+> > > > So, drop netdev_tx_reset_queue() from virtnet_enable_queue_pair(). This
+> > > > eliminates the BQL crashes. Note that netdev_tx_reset_queue() is now
+> > > > explicitly required in freeze/restore path, so this patch adds it to
+> > > > free_unused_bufs().
+> > > 
+> > > I don't much like that free_unused_bufs now has this side effect.
+> > > I think would be better to just add a loop in virtnet_restore.
+> > > Or if you want to keep it there, pls rename the function
+> > > to hint it does more.
+> > 
+> > It makes sense. I would go for the former. Thanks.
+> 
+> Hmm, as Jacob pointed out in v1
+> (https://lore.kernel.org/all/20241202181445.0da50076@kernel.org/),
+> it looks better to follow the rule of thumb.
 
-regards,
-dan carpenter
+OK then. I'm fine with keeping your code as is, just a squash,
+and add a comment
 
-On Thu, Dec 05, 2024 at 08:15:13PM +0530, Naresh Kamboju wrote:
-> The arm64 build started failing from Linux next-20241203 tag with gcc-8
-> due to following build warnings / errors.
+	/*
+	 * Rule of thumb is netdev_tx_reset_queue() should follow any
+	 * skb freeing not followed by netdev_tx_completed_queue()
+	 */
+
+> Taking both suggestions
+> from Jacob and you, adding a loop to remove_vq_common(), just after
+> free_unused_bufs(), seems more fitting now, like this:
 > 
-> First seen on Linux next-20241203 tag
-> GOOD: Linux next-20241128 tag
-> BAD: Linux next-20241203 tag and next-20241205 tag
+>      static void remove_vq_common(struct virtnet_info *vi)
+>      {
+>     +       int i;
+>     +
+>             virtio_reset_device(vi->vdev);
+>     
+>             /* Free unused buffers in both send and recv, if any. */
+>             free_unused_bufs(vi);
+>     
+>     +       /* Tx unused buffers flushed, so reset BQL counter */
+>     +       for (i = 0; i < vi->max_queue_pairs; i++)
+>     +               netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, i));
+>     +
+>             free_receive_bufs(vi);
 > 
-> * arm64, build
->   - gcc-8-defconfig
->   - gcc-8-defconfig-40bc7ee5
+> What do you think?
 > 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Thanks,
 > 
-> Build log:
-> ===========
-> net/netfilter/ipvs/ip_vs_conn.c: In function 'ip_vs_conn_init':
-> include/linux/compiler_types.h:542:38: error: call to
-> '__compiletime_assert_1050' declared with attribute error: clamp() low
-> limit min greater than high limit max_avail
->   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->                                       ^
-> include/linux/compiler_types.h:523:4: note: in definition of macro
-> '__compiletime_assert'
->     prefix ## suffix();    \
->     ^~~~~~
-> include/linux/compiler_types.h:542:2: note: in expansion of macro
-> '_compiletime_assert'
->   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->   ^~~~~~~~~~~~~~~~~~~
-> include/linux/build_bug.h:39:37: note: in expansion of macro
-> 'compiletime_assert'
->  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->                                      ^~~~~~~~~~~~~~~~~~
-> include/linux/minmax.h:188:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
->   BUILD_BUG_ON_MSG(statically_true(ulo > uhi),    \
->   ^~~~~~~~~~~~~~~~
-> include/linux/minmax.h:195:2: note: in expansion of macro '__clamp_once'
->   __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_),
-> __UNIQUE_ID(h_))
->   ^~~~~~~~~~~~
-> include/linux/minmax.h:206:28: note: in expansion of macro '__careful_clamp'
->  #define clamp(val, lo, hi) __careful_clamp(__auto_type, val, lo, hi)
->                             ^~~~~~~~~~~~~~~
-> net/netfilter/ipvs/ip_vs_conn.c:1498:8: note: in expansion of macro 'clamp'
->   max = clamp(max, min, max_avail);
->         ^~~~~
+> -Koichiro Den
 > 
-> Links:
-> ---
-> - https://storage.tuxsuite.com/public/linaro/lkft/builds/2pjAOE9K3Dz9gRywrldKTyaXQoT/
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241203/testrun/26189105/suite/build/test/gcc-8-defconfig/log
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241203/testrun/26189105/suite/build/test/gcc-8-defconfig/details/
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241203/testrun/26189105/suite/build/test/gcc-8-defconfig/history/
-> 
-> Steps to reproduce:
-> ------------
-> # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
-> --kconfig defconfig
-> 
-> metadata:
-> ----
->   git describe: next-20241203
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   git sha: c245a7a79602ccbee780c004c1e4abcda66aec32
->   kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2pjAOE9K3Dz9gRywrldKTyaXQoT/config
->   build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2pjAOE9K3Dz9gRywrldKTyaXQoT/
->   toolchain: gcc-8
->   config: gcc-8-defconfig
->   arch: arm64
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+> > 
+> > > 
+> > > 
+> > > > 
+> > > > [1]:
+> > > > ------------[ cut here ]------------
+> > > > kernel BUG at lib/dynamic_queue_limits.c:99!
+> > > > Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> > > > CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
+> > > > Tainted: [N]=TEST
+> > > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
+> > > > BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> > > > RIP: 0010:dql_completed+0x26b/0x290
+> > > > Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
+> > > > 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
+> > > > d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
+> > > > RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
+> > > > RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
+> > > > RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
+> > > > RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
+> > > > R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
+> > > > R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
+> > > > FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
+> > > > knlGS:0000000000000000
+> > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
+> > > > PKRU: 55555554
+> > > > Call Trace:
+> > > >  <IRQ>
+> > > >  ? die+0x32/0x80
+> > > >  ? do_trap+0xd9/0x100
+> > > >  ? dql_completed+0x26b/0x290
+> > > >  ? dql_completed+0x26b/0x290
+> > > >  ? do_error_trap+0x6d/0xb0
+> > > >  ? dql_completed+0x26b/0x290
+> > > >  ? exc_invalid_op+0x4c/0x60
+> > > >  ? dql_completed+0x26b/0x290
+> > > >  ? asm_exc_invalid_op+0x16/0x20
+> > > >  ? dql_completed+0x26b/0x290
+> > > >  __free_old_xmit+0xff/0x170 [virtio_net]
+> > > >  free_old_xmit+0x54/0xc0 [virtio_net]
+> > > >  virtnet_poll+0xf4/0xe30 [virtio_net]
+> > > >  ? __update_load_avg_cfs_rq+0x264/0x2d0
+> > > >  ? update_curr+0x35/0x260
+> > > >  ? reweight_entity+0x1be/0x260
+> > > >  __napi_poll.constprop.0+0x28/0x1c0
+> > > >  net_rx_action+0x329/0x420
+> > > >  ? enqueue_hrtimer+0x35/0x90
+> > > >  ? trace_hardirqs_on+0x1d/0x80
+> > > >  ? kvm_sched_clock_read+0xd/0x20
+> > > >  ? sched_clock+0xc/0x30
+> > > >  ? kvm_sched_clock_read+0xd/0x20
+> > > >  ? sched_clock+0xc/0x30
+> > > >  ? sched_clock_cpu+0xd/0x1a0
+> > > >  handle_softirqs+0x138/0x3e0
+> > > >  do_softirq.part.0+0x89/0xc0
+> > > >  </IRQ>
+> > > >  <TASK>
+> > > >  __local_bh_enable_ip+0xa7/0xb0
+> > > >  virtnet_open+0xc8/0x310 [virtio_net]
+> > > >  __dev_open+0xfa/0x1b0
+> > > >  __dev_change_flags+0x1de/0x250
+> > > >  dev_change_flags+0x22/0x60
+> > > >  do_setlink.isra.0+0x2df/0x10b0
+> > > >  ? rtnetlink_rcv_msg+0x34f/0x3f0
+> > > >  ? netlink_rcv_skb+0x54/0x100
+> > > >  ? netlink_unicast+0x23e/0x390
+> > > >  ? netlink_sendmsg+0x21e/0x490
+> > > >  ? ____sys_sendmsg+0x31b/0x350
+> > > >  ? avc_has_perm_noaudit+0x67/0xf0
+> > > >  ? cred_has_capability.isra.0+0x75/0x110
+> > > >  ? __nla_validate_parse+0x5f/0xee0
+> > > >  ? __pfx___probestub_irq_enable+0x3/0x10
+> > > >  ? __create_object+0x5e/0x90
+> > > >  ? security_capable+0x3b/0x70
+> > > >  rtnl_newlink+0x784/0xaf0
+> > > >  ? avc_has_perm_noaudit+0x67/0xf0
+> > > >  ? cred_has_capability.isra.0+0x75/0x110
+> > > >  ? stack_depot_save_flags+0x24/0x6d0
+> > > >  ? __pfx_rtnl_newlink+0x10/0x10
+> > > >  rtnetlink_rcv_msg+0x34f/0x3f0
+> > > >  ? do_syscall_64+0x6c/0x180
+> > > >  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > >  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+> > > >  netlink_rcv_skb+0x54/0x100
+> > > >  netlink_unicast+0x23e/0x390
+> > > >  netlink_sendmsg+0x21e/0x490
+> > > >  ____sys_sendmsg+0x31b/0x350
+> > > >  ? copy_msghdr_from_user+0x6d/0xa0
+> > > >  ___sys_sendmsg+0x86/0xd0
+> > > >  ? __pte_offset_map+0x17/0x160
+> > > >  ? preempt_count_add+0x69/0xa0
+> > > >  ? __call_rcu_common.constprop.0+0x147/0x610
+> > > >  ? preempt_count_add+0x69/0xa0
+> > > >  ? preempt_count_add+0x69/0xa0
+> > > >  ? _raw_spin_trylock+0x13/0x60
+> > > >  ? trace_hardirqs_on+0x1d/0x80
+> > > >  __sys_sendmsg+0x66/0xc0
+> > > >  do_syscall_64+0x6c/0x180
+> > > >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > > RIP: 0033:0x7f41defe5b34
+> > > > Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
+> > > > f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
+> > > > f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+> > > > RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+> > > > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
+> > > > RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
+> > > > RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
+> > > > R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
+> > > > R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
+> > > >  </TASK>
+> > > > [...]
+> > > > ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+> > > > 
+> > > > Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
+> > > > Cc: <stable@vger.kernel.org> # v6.11+
+> > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > > > ---
+> > > >  drivers/net/virtio_net.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > > index 64c87bb48a41..48ce8b3881b6 100644
+> > > > --- a/drivers/net/virtio_net.c
+> > > > +++ b/drivers/net/virtio_net.c
+> > > > @@ -3054,7 +3054,6 @@ static int virtnet_enable_queue_pair(struct virtnet_info *vi, int qp_index)
+> > > >  	if (err < 0)
+> > > >  		goto err_xdp_reg_mem_model;
+> > > >  
+> > > > -	netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, qp_index));
+> > > >  	virtnet_napi_enable(vi->rq[qp_index].vq, &vi->rq[qp_index].napi);
+> > > >  	virtnet_napi_tx_enable(vi, vi->sq[qp_index].vq, &vi->sq[qp_index].napi);
+> > > >  
+> > > > @@ -6243,6 +6242,7 @@ static void free_unused_bufs(struct virtnet_info *vi)
+> > > >  		struct virtqueue *vq = vi->sq[i].vq;
+> > > >  		while ((buf = virtqueue_detach_unused_buf(vq)) != NULL)
+> > > >  			virtnet_sq_free_unused_buf(vq, buf);
+> > > > +		netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, i));
+> > > >  		cond_resched();
+> > > >  	}
+> > > >  
+> > > > -- 
+> > > > 2.43.0
+> > > 
+
 
