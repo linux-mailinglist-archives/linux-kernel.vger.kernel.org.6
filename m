@@ -1,122 +1,119 @@
-Return-Path: <linux-kernel+bounces-434059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016509E610C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:06:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0929E610E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB33D18856BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23B9169945
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FC01D4340;
-	Thu,  5 Dec 2024 23:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72001CF7A1;
+	Thu,  5 Dec 2024 23:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="035i0Ejl"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cZEf0Ahq"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1591C3C0A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E261C3C0A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733439961; cv=none; b=b24MDFsXqTBStjjbeXA9t6dh0QWiF01H97t8+m1k9iKnYyyEmheUeJ5F2cj+kXPXyQnRdVYshevyTvzxG9SPtbS41gkaimYvB+XvKsraJTJAATvb74NmcQHE1wNdE0zOUhD47dXMapCZZicaL9OH+uK4qqx67nlQu3p2v4vveFM=
+	t=1733439967; cv=none; b=SWw6gfYajgOkV1S19ujxtk+Pp8fOMoJYxAcQ6e1t1kBt82NdN/ZYXasb4F4QEJbN93EsbVx0p3X/Crhm4zN5S7Niu6XNgvP17wrI0dUmKGT2h6CVH3zHf2J3nflsNT3mj4R9U+eunczrXezurRMY5MzeLPr4IKW/Q/eLJPxkReo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733439961; c=relaxed/simple;
-	bh=KtxXe4kgB0BnW3MsFzYn465Cqu75ZgmvR8VczHsk0ts=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XrBc+hCDnIfWxiw9JBmYlaU4NADO3TnVa8Lme8KiT44P7Mqxq6xd5noMsaqjXaojxnElmjmwNEykgs6mQk0vqp+wy0Kw3soE2JCfEWGnx9n6Mo8+DBGqe4D0UOmqKBfRao8TgUu3ZhDizI3UYczuVBM2akwB7PkD3FtM6hvEpsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=035i0Ejl; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-215b13e9ccbso14521765ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:05:59 -0800 (PST)
+	s=arc-20240116; t=1733439967; c=relaxed/simple;
+	bh=RSRtkP+Fl4Fu1wv2TYijQ4+N4uCrLGYJmNgMQkiMtOo=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=tPLtp1pH+GvvdC2dnHJmth/wq3zAa4HNUdCO7lEl/ZJqcsWMppilbJw6RJaVBmK53RO6Jnrx8A4uJgVDuQQ4NGlHVRyGrtUQZ+OkBdZvVBZ704Qq+odKpHHK+szK/g4N/gJAbdv1gHh2/cCK1B0YIA4QP2QQgTJuSNDx64FuU4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cZEf0Ahq; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-46679337c24so11134001cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:06:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733439958; x=1734044758; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JF86DSQKrbpE7zkN2nZ2brMlp1Djxw82gJt7o2CQPAc=;
-        b=035i0EjlumNK2kL3E73CEI22yu/W3Cz+/ySlvV5hxJbhYCOgWW9u52L25pH4xHOElp
-         DMc1vnF3jDAKd08M9sUEU/pLHYHIwfVxi1ICfyhq4mSjojGIZ344IT8x7l6tblc7ASxX
-         cT0sz2k/id7+3R2u1I8gPgCPDfDKUa6FBTCdgNuHgto2SBSloQSWCBg80IVofiZwii+y
-         gDDnrAwv9/ud4gjlJZ08D0d3CIEtcVe7qeB7fc1ORMCuK7NOGOFNUYyfYRv3kslhAihU
-         AQan1aaDS9oDNO8ujM+qrWv/AqL7JCcVREnNjgx6EPMnVFI6OUPYe69MgKe9A/mFuV7R
-         gFjw==
+        d=paul-moore.com; s=google; t=1733439964; x=1734044764; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gB2wprHKOPR1C3FlWr0JxgyEJMDu3YBCaXKrSKkj2to=;
+        b=cZEf0AhqaHnk1Bs5gZ4/uADCelK11qH12xO+5Eco7i+9xeNmjmY58s3OC7ujlqAjPZ
+         wnifc1OYOM2uv2MyHx0VQmbcas/hdu1AQBa1Rndceqn45F/uIcOvkDOg2QnKEnWZHZff
+         /wAyzlJS84dVFoWcBtrRBRCYLw2FEzwkLM9MwNJtqJhG8XpgUZw3zpoKjQJFmok2z7CH
+         yUYokBliUjnGwM/4JUXVZrXO63/TabhUlNfYIz4lYFmOiv3Fvt3RMIMMl/mbE8Moybu3
+         mGtFVKQWrHkqBL5wKFsW7Gz2zqk9VVoeOZ4BHlvoMLYCHoT6ivEUlAoyQya6I/cQgFBU
+         mw7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733439958; x=1734044758;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JF86DSQKrbpE7zkN2nZ2brMlp1Djxw82gJt7o2CQPAc=;
-        b=bY4YWu4Wza2JFTfVn29tKDwxV4QsCgStzUhsGsHm2dFpVH9p+OkEGL2NO1tLVbXPZs
-         WWLqu7Ld7wXVDDBTlODiys37QyFImsEV6hDMpPpTiMn4ntmHAbCEzbDrle189Oa2Xf4S
-         MZz1/RtIOe2mlM3jarXg/cmO6dfXz0mEYOZX58wMbH6H7TxvISPHyRdRlqHq+DXZSXnU
-         HDqGijfti39vSNX5IBJcRBQaDOyOL38imEQzC09hRpyDdiTe5ayPOQO0gtAAbgOoyKca
-         +kxppc3GI65hVHrSCbBg2/qba1FrS5M7S7HeWkanytX4ckFiiWFgG+6FqlAp1Q8zwwVH
-         +7Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+nug6BjtVNYKCHn86r27IicOu2sQlrQNO9WJ8v5KTgp7H/r5+vxhO/hlvjRHlo8qKhL1cm71DEMjDZ2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4gB60YCjgrdQJhUQpR0qNvGYQ6zMWwN4YJd+VYg7/NAhn2V66
-	cKfXVpx9xB9zcLlVh5eadixwiyawa+EXCbRDCv7szZj2LobwKXpzZikH9/jnAcc=
-X-Gm-Gg: ASbGnct6cwpNE0lHUU2ndXhKFV+n4Q9+KfEd/eE0z1a+mWPi9rbf7WCDHlTQGqKE0SX
-	nmYJk/FCs2ceBiANkXG0fzxlLpREF2Dy/zFwTFxxfGrqaK5R/s4EoYWzn78qbDbypgQbsN4DjyV
-	hPh7BVsEtq7BflHFiykmNN0XIFzs+Xn42l17UhktPmk/9U6YAV/73IjhpGkH7WZTab8H0iPPByE
-	i+Iv3fjATPmRaRzaIvlRzoPAdaqBqr/TeuBD2PjbZq5ZnLt
-X-Google-Smtp-Source: AGHT+IH2vKnwRVJfKJzkSGh5FdTz/wRZJhZsXQWgmQ3KNajlOo7D+P5OBQ8tqAAXIc8fvqH0d73N5g==
-X-Received: by 2002:a17:903:1103:b0:215:acb3:3786 with SMTP id d9443c01a7336-21614d445d7mr8493235ad.19.1733439958591;
-        Thu, 05 Dec 2024 15:05:58 -0800 (PST)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9df9sm17546475ad.148.2024.12.05.15.05.58
+        d=1e100.net; s=20230601; t=1733439964; x=1734044764;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gB2wprHKOPR1C3FlWr0JxgyEJMDu3YBCaXKrSKkj2to=;
+        b=jyR8QIFkAnBseZPjbGfVQErm3M4qA8NwKSfHq1jrL4jBwsaDIlkuV4FAM/NxDaxelG
+         JegrqBLqwGKLIKsHu/LC0Pc9SZoMkKpIiboJh80TkyvqMDan6pvsbspgeJ04kgNzxdLZ
+         eNrpHuukGeEXzYWREPyH62u4+kNJZB9DDgDM5cGrlDFeOeWSSatYeDegJx/JHsz56Bgi
+         zUPFwgUELURClUuU1vo7+7naFyBPGUWrDGoXSCvO+a0SjAyUk/6FX3j6G2RGnP3j7F/W
+         LrOKNHNuB7+Jp3gEupcX7xQCaNIi7h0nAjsR+IQLdsWs3ERNOFObKJ+X8sVtFiaQAgTa
+         LgOA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6mwG0r6OXF8lDvJEGO6msIPQ4lMOgOnCbNInEADOFwV9rQrGpMhOqg3cp4FYQGBJW49yU3sy2i9Pzr8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsvyafxtFSkdMDpeWlZo/+Py46d2ZWD+ohkjllzeBpBKqW7Km/
+	2k9Wj64ejWjdJo992reTdjAHeG53XmFUDNj9esUHKdwY8tR89Y9EnCRV2V4t7w==
+X-Gm-Gg: ASbGncv99d7xycg1mdEyvTK6FKHnddL1X1U4VDi/n54+JdQ1S5YNRsgPFQwIW/5eDx8
+	/lu/sO6FdiDrSOzIRYGAuKt9jIyJHfs03q29cCBNFi0R7macka8rpxJS0yLFPHF73Kcjtu+y7jp
+	3zpZLotMhlrKfyo3FTV/TeTvNMDXa5KzbWy/c8h0BMCfI8TjI0wNjuF4xMxWYqHLZLPSosdvFl5
+	CIGJxWcRGdSriwfdLGcb6JKF0/2GJUqwN106NSVpTqf
+X-Google-Smtp-Source: AGHT+IH//YJCxBh1r9M6L58qveosoEAxtWbi0tzDXcNc0u1qOZiSVBYlKljByQTou9Gs7CfnatzY8w==
+X-Received: by 2002:ac8:5955:0:b0:460:996b:2896 with SMTP id d75a77b69052e-46734f48cf2mr12049091cf.45.1733439963780;
+        Thu, 05 Dec 2024 15:06:03 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4672978dd14sm13184221cf.54.2024.12.05.15.06.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 15:05:58 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Andreas Kemnade <akemnade@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Andreas Kemnade
- <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>, Conor Dooley
- <conor+dt@kernel.org>, linux-omap@vger.kernel.org,
-  devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 0/2] ARM: ti/omap: gta04: properly specify GTA04
- touchscreen properties
-In-Reply-To: <20241205204413.2466775-1-akemnade@kernel.org>
-References: <20241205204413.2466775-1-akemnade@kernel.org>
-Date: Thu, 05 Dec 2024 15:05:57 -0800
-Message-ID: <7hldwthgru.fsf@baylibre.com>
+        Thu, 05 Dec 2024 15:06:03 -0800 (PST)
+Date: Thu, 05 Dec 2024 18:06:02 -0500
+Message-ID: <70abed262882f79e63e747ef56a0379c@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] audit/audit-pr-20241205
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-Dmitry,
+Linus,
 
-akemnade@kernel.org writes:
+A minor audit patch that shuffles some code slightly to workaround a GCC
+bug affecting a number of people.  The GCC folks have been able to
+reproduce the problem and are discussing solutions (see the bug report
+link in the commit), but since the workaround is trivial let's do that
+in the kernel so we can unblock people who are hitting this.
 
-> From: Andreas Kemnade <akemnade@kernel.org>
->
-> Specify touchscreen in a way that no userspace configuration is needed.
->
-> Note: if the devicetree patch is in without the input patch, things
-> will be broken in a different way.
+Paul
 
-Due to this dependency, I can queue this driver patch in my tree along
-with the DT patch so things go in together.  Let me know your
-preference.
+--
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
-Kevin
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
+are available in the Git repository at:
 
-> Andreas Kemnade (2):
->   Input: tsc2007 - accept standard properties
->   ARM: dts: ti/omap: omap3-gta04: use proper touchscreen properties
->
->  arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi | 6 ++++--
->  drivers/input/touchscreen/tsc2007.h        | 2 ++
->  drivers/input/touchscreen/tsc2007_core.c   | 5 ++---
->  3 files changed, 8 insertions(+), 5 deletions(-)
->
-> -- 
-> 2.39.2
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+    tags/audit-pr-20241205
+
+for you to fetch changes up to d9381508ea2b590aff46d28d432d20bfef1ba64c:
+
+  audit: workaround a GCC bug triggered by task comm changes
+    (2024-12-04 22:57:46 -0500)
+
+----------------------------------------------------------------
+audit/stable-6.13 PR 20241205
+----------------------------------------------------------------
+
+Yafang shao (1):
+      audit: workaround a GCC bug triggered by task comm changes
+
+ kernel/auditsc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--
+paul-moore.com
 
