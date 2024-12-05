@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-433228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0359C9E555D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:26:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2709E555F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7441883E7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289E6166B17
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1812185A2;
-	Thu,  5 Dec 2024 12:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5F9218597;
+	Thu,  5 Dec 2024 12:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mZvngHyG"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.46])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CG/svNwH"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A1B217F41;
-	Thu,  5 Dec 2024 12:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493E1218823;
+	Thu,  5 Dec 2024 12:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401599; cv=none; b=u8GgbYyIk1l8akDZNVvP1Xc2hRVQyVYYrMNoWP1jptIAp9YLBnDSIihiZ8tf2omnv0H71OcbysynQNCpgZH6eUzidFa1q/8Zopn9vrNAb80NX5r8B1olbsH+GtmsNIELmVwWkqekequVndfOPh5UQzm7eYAjWp3uzqlvO/u+DsE=
+	t=1733401603; cv=none; b=Oo/wpY8+jzmxcsfdeqFBKMGPDZ1HCih47l4FufXZSF1LNqunEmSTYJkcOTQGd0O/SB3lwq69zk0I9SONnpqMZdBKrIV17UaoMW6nNBrcIFP030Cp0Q5uLPXAwY/EBwMOZVL8qSIxJQt4iT/5rKexDNpurP+dCBbircNrb9rqQTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401599; c=relaxed/simple;
-	bh=rqYjDz2ndWToCkMOGlekbv3N/pUHqvPe5KnfdFYe5VM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=brweD1AB3youW3El+681FJdKT304CGoyJTPGqhk64AN53wDqEx347D596nB/nol1DpZ1ycRF5Q3jCgYHPlqqrqpiDc2UCVAYrvs4HW8sBIp/qRMfXaCuX3QxwVotrug2RrkuV8/VJavacrDaGKLck+1ONmbUw1fFwUFdj3Lg4ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mZvngHyG; arc=none smtp.client-ip=43.163.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1733401589; bh=VmJ9Y01rlwA2K6RfLHocoulXFC2JDlQaFE30T46B3fk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=mZvngHyGk521xHb7KIz7Il5QY0bbxrRxr+PGjnGjNrPEdunzZmQ/G0d3+INMbFxSp
-	 Wttb9IGCdAsblhDFCZsvICKw0x+ycRBLrpBBLZeLKTFJriJIZb7+28Wd158k2GMS0n
-	 vPWEwNxPKm2r839jglqwtK7RSs5XtidMuIRJYtqY=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 69B2CAF4; Thu, 05 Dec 2024 20:26:27 +0800
-X-QQ-mid: xmsmtpt1733401587tme26c0gb
-Message-ID: <tencent_F4C3B4644C977CF77226C95362E373897105@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J23W8T+v+r228Gxj0k3JeiQ3Y9Htxzq/rSHkgbuRGC3tbz7zsYWo
-	 th9W1sXLexZEwCMABylqN23mMhRvNbfwpyFZPlsspTiAu23RtMMnH/l8aJJ2pWKNMIjbxs2/K9yQ
-	 4H3mQUuW95EVn+7TawwLZnJFxgsnw5rpdVtCK10G2829fbC2RT86xAQJJxxfH4vpxS0gAbzkXVyr
-	 iq2zzzdm4t32KGZyOFlnTgj15Zlhfb6uLaQFQZn/aBQNqMW98V9j13W0NHYll73rAIO2OYA1bJ4e
-	 sX7JpoU3E9qgzA+zqywjFxzcCK9RBA7jFyEh8BlZxl+nYlN5Qug/7LhWLXSnMwZXmt8hZbmPAsMH
-	 oktsOZaSSH3Y/TBj3bHs1Lrltyd9tpX+5yXb0YPFBFlIf4Obu/JIgM/LoXLhuvVRr3FVdHE7ax8M
-	 0P2yrB8oMQmytgBL3yt4aOy2I3Zxem++XsPQWQd731Y/BDECZXppLd3NcjNM+DF1qsbsF40qxHAh
-	 FDMN+Vs6Rb0sGDHsA2WLG5rDZivL9omVrjPmpmPlytlBeSMP1Y22W5yxQcdxg6Wr+e6t3r4LkV0n
-	 FL2sBJmCraZcubg0cosvjt5LpTty03NuZwadzl2B6t4todNZcSoOtohwt2S31K67MxQ513G1+tuk
-	 RFM0WeBtDhM4AY8S/AF7RGE2M4TTAlhpLeJH+4uMUGMeiO41YZuqnbj6CrhM80eoLjysng1xJKgk
-	 hcNbjVuIaKHBog94zca/4TXx8hOiDOAF8iEdW6wMAUj3VXrMSgHaepAqniFGsmeQCM+WNI9Ch5Be
-	 sewsrYqf2XmKJE0uTbonY3z8Z2U5lz6jI8AZ/LyRTKAuxh2rQ52R1Bg0TP5nVPFyFO8LubM2IVny
-	 t0AYnE8saqSFHHQhvO8t5b6Q23F9wBmQ==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-Cc: konishi.ryusuke@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-nilfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] nilfs2: drop the inode which has been removed
-Date: Thu,  5 Dec 2024 20:26:28 +0800
-X-OQ-MSGID: <20241205122627.1066297-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <673e20ae.050a0220.3c9d61.0163.GAE@google.com>
-References: <673e20ae.050a0220.3c9d61.0163.GAE@google.com>
+	s=arc-20240116; t=1733401603; c=relaxed/simple;
+	bh=9c8Iav8aUNsHauiM1yyCeZeaUEqfzZZUSJNr9VK+H8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kNAq/ysbjaKGQotH8w2d5b97n25b0ZhdAfZnQDEZDTfpxpFWVTgKaRP/q3k1Lf3/w1F9Ol2ITd2tnjOLZuF36WM1YpUUbN47Ir5DTjyMYAFFBK6A352zp81hw+E/zSMEKPY5gJZ4qaeH+WprhIMjNifR7MrfT7cAAvkvV+f+tvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CG/svNwH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733401599;
+	bh=9c8Iav8aUNsHauiM1yyCeZeaUEqfzZZUSJNr9VK+H8Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CG/svNwH8wKMZSECj0iDL44zQ9ywjg3SwpciUSnm3FrLTCK2Dg2azBak8u47LGZqa
+	 wY3wGDg6vH1dyYLkdJCH+dRUJmZmIFgubfgGoWsypJb1NsR0eCM1WIFb6Vf6+LZFpU
+	 3iadb1F9akZu2fI2PMhe50qwOCrgErodAJ4JWeVRaU3nEgNWKznNAhAtFWq7FQqffl
+	 U0lEGhW9kQpSGgmcln1dZ3kNDhNv2iBjXvHdDiA0dA+dMZFcTma4xB9w2pEQyviOXU
+	 gR+r5b6Z0K/GYbz4myLvTOv6fZZj8WtH6qanJtCk02vJ87tdlQeHIKo3OSAxIG51w2
+	 AOI0W0cRXWuvg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1521417E35D8;
+	Thu,  5 Dec 2024 13:26:39 +0100 (CET)
+Message-ID: <6792791b-035c-4b50-809a-c561bfe21c1d@collabora.com>
+Date: Thu, 5 Dec 2024 13:26:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8516: add keypad node
+To: Val Packett <val@packett.cool>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Fabien Parent <fparent@baylibre.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241204190524.21862-1-val@packett.cool>
+ <20241204190524.21862-6-val@packett.cool>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241204190524.21862-6-val@packett.cool>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot reported a WARNING in nilfs_rmdir. [1]
+Il 04/12/24 20:05, Val Packett ha scritto:
+> Add a keypad matrix node for the MT8516/MT8167 SoC.
+> 
+> Signed-off-by: Val Packett <val@packett.cool>
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8516.dtsi | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8516.dtsi b/arch/arm64/boot/dts/mediatek/mt8516.dtsi
+> index e30623ebac0e..3beb9f74ec79 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8516.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8516.dtsi
+> @@ -220,6 +220,16 @@ timer: timer@10008000 {
+>   			clock-names = "clk13m", "bus";
+>   		};
+>   
+> +		keypad: keypad@10002000 {
+> +			compatible = "mediatek,mt6779-keypad";
 
-The inode is used twice by the same task to unmount and remove directories
-".nilfs" and "file0", it trigger warning in nilfs_rmdir.
+Noupe, you have to add your SoC to the compatible list... both here and in the
+binding for mediatek.mt6779-keypad.yaml
 
-Avoid to this issue, check i_size and i_nlink in nilfs_iget(), if they are
-both 0, it means that this inode has been removed, and iput is executed to
-reclaim it.
+compatible = "mediatek,mt8516-keypad", "mediatek,mt6779-keypad"
 
-[1]
-WARNING: CPU: 1 PID: 5824 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
-Modules linked in:
-CPU: 1 UID: 0 PID: 5824 Comm: syz-executor223 Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
-Code: bb 70 07 00 00 be 08 00 00 00 e8 57 0b e6 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 4c 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
-RSP: 0018:ffffc900037f7c70 EFLAGS: 00010293
-RAX: ffffffff822124a3 RBX: 1ffff1100e7ae034 RCX: ffff88807cf53c00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff82212423 R09: 1ffff1100f8ba8ee
-R10: dffffc0000000000 R11: ffffed100f8ba8ef R12: ffff888073d701a0
-R13: 1ffff1100e79f5c4 R14: ffff888073d70158 R15: dffffc0000000000
-FS:  0000555558d1e480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555558d37878 CR3: 000000007d920000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nilfs_rmdir+0x1b0/0x250 fs/nilfs2/namei.c:342
- vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
- do_rmdir+0x3b5/0x580 fs/namei.c:4453
- __do_sys_rmdir fs/namei.c:4472 [inline]
- __se_sys_rmdir fs/namei.c:4470 [inline]
- __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+for the binding, it's just a simple addition to an enum, nothing else.
 
-Reported-and-tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/nilfs2/inode.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Cheers,
+Angelo
 
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index cf9ba481ae37..254a5e46f8ea 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -544,8 +544,15 @@ struct inode *nilfs_iget(struct super_block *sb, struct nilfs_root *root,
- 	inode = nilfs_iget_locked(sb, root, ino);
- 	if (unlikely(!inode))
- 		return ERR_PTR(-ENOMEM);
--	if (!(inode->i_state & I_NEW))
-+
-+	if (!(inode->i_state & I_NEW)) {
-+		if (!inode->i_size && !inode->i_nlink) {
-+			make_bad_inode(inode);
-+			iput(inode);
-+			return ERR_PTR(-EIO);
-+		}
- 		return inode;
-+	}
- 
- 	err = __nilfs_read_inode(sb, root, ino, inode);
- 	if (unlikely(err)) {
--- 
-2.47.0
+> +			reg = <0 0x10002000 0 0x1000>;
+> +			wakeup-source;
+> +			interrupts = <GIC_SPI 149 IRQ_TYPE_EDGE_FALLING>;
+> +			clocks = <&clk26m>;
+> +			clock-names = "kpd";
+> +			status = "disabled";
+> +		};
+> +
+>   		syscfg_pctl: syscfg-pctl@10005000 {
+>   			compatible = "syscon";
+>   			reg = <0 0x10005000 0 0x1000>;
+
+
 
 
