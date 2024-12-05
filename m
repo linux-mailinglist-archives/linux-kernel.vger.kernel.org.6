@@ -1,225 +1,146 @@
-Return-Path: <linux-kernel+bounces-433505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099409E5953
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:06:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC219E5954
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B980A283C96
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67F7B284FF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6845464A;
-	Thu,  5 Dec 2024 15:06:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A2221C177;
+	Thu,  5 Dec 2024 15:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="LpUB63CH"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF461BE49
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D3C218AC2
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733411165; cv=none; b=TTGzxIs54AL4NA+Yq4pVcVsOb4DL9j6v+NOnB2R6IJgS53+n9WHEbYTBR/vyNx8I85ezdspBYLK+zyaXXDQ9/6UNDyWaXxKY+DFLHOGkgvbQnW4wY5iHhaZk4defgEWQ/id1oPbLg5Ji45cr5NfNfUQbWSAsPUJaD/3gAYDhlJM=
+	t=1733411179; cv=none; b=iXryqJbM7bX4o827ruG0bgyTHmHYgukXCIhnR9LQNeTqupq10B8fwZxhxdcJ5ekCjmXfE4sL10Zy3FtC+yqY2vlDM5Ld44KZsXHzF6niLCdoCvWfNMVMO49NwjmPpZRO5Y8WSr8rc7kvCAivOA4QCSx++NyIu8FhzpA6koMwMu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733411165; c=relaxed/simple;
-	bh=dhN1gC22X5/0iv+DMZwRKR+T2whu63tXeyXq2r0V2EM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ged10ZbIR6nliebyVOVXNFgxB7Xn1CQCeFoLCb7iZ69Sd44aTUf+u7UAHovgubxjlJh9NEk9PVUaQOs78qNzaGm+0UUHfCFijk8gM7T2ZBlRWNudNkWS6tQ56qXYVINKoltppWPLaefhGK0ZZ69h2rs/oB/mJq5ZwL7Ax4Sbxzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7c8259214so10953575ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:06:03 -0800 (PST)
+	s=arc-20240116; t=1733411179; c=relaxed/simple;
+	bh=Qzir4cDqPRP4uUW2o+bZZjYGkwQV4zqZ/0NH7WgT0Hs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oc0Wy9++UX6RDVdckGW4hPhLiCbr86sencMxIxP41dqInhXK24Fv0+w4Q+qTjuJdV5McK/8skE3hcWagf1In7/mNaeSlba8LwNPbFQkLwPP6wE+Ar72Sd9AQUT3UMGNd/py+2nvxTuY/sZNIv0sUmhPIgy44OZGAQBeTgTJrO48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=LpUB63CH; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4669eecd88dso6993511cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1733411176; x=1734015976; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OqFlGhtdoPqBAsBXUfK8GHOXS7I6sc2ExEvs4W8qdcs=;
+        b=LpUB63CHePfNhu7LMSRJoypvIjGDXxcCPCa8wejwug23BKfQhRso4hTggL9CKB9+3C
+         Cp/IWj//v4RXev7DbZehoKO2U4LKdlsR+jMebhIptDcJ5NJ4pMzqn+PWVdK7JxzYbtln
+         dK+kgeEYej5kdEDeFd7GRmRm3dI5/8i+wWGaxWbupewwku9nW/qwYmWHOLuGzVbw1SDu
+         5UAt5/80kViLmIs5DRNhc2z6k/A9a+k7ks6gOxcqVFEqs9NOMfYeuZKG/Tyfl1q4zocP
+         HTHvkDLCGOCQkLrsWDjpDJhlsQdFktYAU8a96gZbtusa68JBerXtAh6x9hxDGzl4LTGh
+         TzFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733411163; x=1734015963;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Re6twGQKbzPibj9a86dJejPe/KGviKP+TgwXBRnz1BY=;
-        b=WFwJrbzOtsAhprwD5Jn+81XVMSY3oc3l8MQLjUJj6AkVxCAXpznGx2E1TsbXRwrbbe
-         w18dOgbn7huRMm5YsVb11+S0PRyPGV1SevVxkl9ToEXlT32mktCsbqxQak0G3oXQ2/eS
-         YjSadbErvTj5CYMDjx2D9LCS8Sj1V1sU/DVy+0hQ8sLQB/fK3uss8KpuRfkepP8GAIa9
-         0lnoxfAaaxpBdIkZh7jKatIrX63xfuvOw7/kSWX+cvGFzmvypQrrL9/XCMjgVj1gE5fN
-         xZf3qIq8JoFB6Nvdo/9/qrYaBoO5oLJWeatainGwdB9G3ug9nV2jQR9LUasioVyivHg6
-         tNbw==
-X-Gm-Message-State: AOJu0YypVyXFpGP4tz7quV+mL74Jo7CZB5fzsQCWGflEhnrWCvMnFvnU
-	pit7lQBkTbibIFaIfpc9ZmmccPZBLwP5NTs3zppGEnk/Ft9O07eHmG1ipoGpAkmnXrypWZ0dH/d
-	EX8TAGOUXM8yWr1OxsnWbZCCou7R8GIfWeomuDpQ9tg4JUqc4NrCEHvI=
-X-Google-Smtp-Source: AGHT+IE1sRmpAIcbmJ7zh2pGG2x6VIi3cJwtnDb4bHCdwk0g/738186QAHWD/311J4AKQDIQP9hO4nHN/rqDKQ+/izUlro6LB0lf
+        d=1e100.net; s=20230601; t=1733411176; x=1734015976;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OqFlGhtdoPqBAsBXUfK8GHOXS7I6sc2ExEvs4W8qdcs=;
+        b=qmgOiiybFLqt8VG3OPYKZsQ38esb6dFAogCl0qEBVvTx1LwRvZMB5OX3mEbZjtvL9w
+         DCED5pg9yLIuaAJ1ZXSwJoemB4D2t1lpuQwBrCQU7XLE3H5o3ZAq2PtRGX72E7GcrfZd
+         VF+a2wqtzWkpMA4bw5R1zuvI1DlYnXSlWiri2u0dyv8k4CR9xqr294uPnjKJ3GctopAK
+         Xm6jvUOnzDAA9qEvMKS+uMPA9HwkKbuIgwFt6FG7btnHnCvAF6k3IdFXl7NaNSywUOMO
+         IbqXwVpK1rfFnrK2AO5gy29fAY+RLFELOcCqvmF1//ZaEdVNFfIkw2xbnAnTX9kU8hQf
+         OQXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRwCGHdTAZblZmWmMTXiDrEyxw+JUoRyk81duBGKkJ6CBYbuQRSv2YbBAcQnJIA6wK/Y3e9HWdAymP+TY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk/swqdwFir3Yzrb90gjkbC0yZ+DJbws4IBylc8HRodn6ylvSF
+	Umk8zHuzDbmT9WyUyGsfCsXqnfRn+7YR6kFnJZU2HAaaoKC4WparRwZwNyxEPg==
+X-Gm-Gg: ASbGncsof6BEpqetnb1z4OibxZUsrBpdxLBQMhlmda2HWNdjCAIAIxS/Yxieh2+id8a
+	D+hrSFKt8ErUQLmuL7XSwoDaouPCXaG9l5Ff5jFMZibs/WM1/KFtaRVi8b21s0U0RRu6/sjEEPx
+	qfgghLr24tICXYFS+hRmg25hCHXOuY7Y8gkX2p7ch9/EfOIbHrj+UVvMNf6bvSNacpFClEn2NRl
+	S3WlTRK1XfyAr2p4lXLzlrdYlbPuxtxorXjOEOSYQGdcxUX8EQ=
+X-Google-Smtp-Source: AGHT+IELmQdNT+1hsoXFGPSm28f9agdhcrSIwOgp6I2ewJudqY4XKJvMxXYV2ThqzvhMJRi9RwHfOQ==
+X-Received: by 2002:ad4:5d43:0:b0:6d8:7fe2:8b1e with SMTP id 6a1803df08f44-6d8b7455674mr157979416d6.48.1733411175790;
+        Thu, 05 Dec 2024 07:06:15 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::d4d1])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6b5a9e7d6sm67378685a.119.2024.12.05.07.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 07:06:15 -0800 (PST)
+Date: Thu, 5 Dec 2024 10:06:11 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: gregkh@linuxfoundation.org, mathias.nyman@linux.intel.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Wayne Chang <waynec@nvidia.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] USB: core: Disable LPM only for non-suspended ports
+Message-ID: <a9f767eb-2196-4273-ba1a-19b07ccdafd8@rowland.harvard.edu>
+References: <20241205091215.41348-1-kaihengf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c22:b0:3a6:b445:dc92 with SMTP id
- e9e14a558f8ab-3a7f9a46b66mr137177915ab.10.1733411162923; Thu, 05 Dec 2024
- 07:06:02 -0800 (PST)
-Date: Thu, 05 Dec 2024 07:06:02 -0800
-In-Reply-To: <D63U54UUGORX.2CRU0YBACQARS@getstate.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6751c15a.050a0220.b4160.01d7.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in mgmt_remove_adv_monitor_sync
-From: syzbot <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, mazin@getstate.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205091215.41348-1-kaihengf@nvidia.com>
 
-Hello,
+On Thu, Dec 05, 2024 at 05:12:15PM +0800, Kai-Heng Feng wrote:
+> There's USB error when tegra board is shutting down:
+> [  180.919315] usb 2-3: Failed to set U1 timeout to 0x0,error code -113
+> [  180.919995] usb 2-3: Failed to set U1 timeout to 0xa,error code -113
+> [  180.920512] usb 2-3: Failed to set U2 timeout to 0x4,error code -113
+> [  186.157172] tegra-xusb 3610000.usb: xHCI host controller not responding, assume dead
+> [  186.157858] tegra-xusb 3610000.usb: HC died; cleaning up
+> [  186.317280] tegra-xusb 3610000.usb: Timeout while waiting for evaluate context command
+> 
+> The issue is caused by disabling LPM on already suspended ports.
+> 
+> For USB2 LPM, the LPM is already disabled during port suspend. For USB3
+> LPM, port won't transit to U1/U2 when it's already suspended in U3,
+> hence disabling LPM is only needed for ports that are not suspended.
+> 
+> Cc: Wayne Chang <waynec@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Fixes: d920a2ed8620 ("usb: Disable USB3 LPM at shutdown")
+> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
+> ---
+> v2:
+>  Add "Cc: stable@vger.kernel.org"
+> 
+>  drivers/usb/core/port.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
+> index e7da2fca11a4..d50b9e004e76 100644
+> --- a/drivers/usb/core/port.c
+> +++ b/drivers/usb/core/port.c
+> @@ -452,10 +452,11 @@ static int usb_port_runtime_suspend(struct device *dev)
+>  static void usb_port_shutdown(struct device *dev)
+>  {
+>  	struct usb_port *port_dev = to_usb_port(dev);
+> +	struct usb_device *udev = port_dev->child;
+>  
+> -	if (port_dev->child) {
+> -		usb_disable_usb2_hardware_lpm(port_dev->child);
+> -		usb_unlocked_disable_lpm(port_dev->child);
+> +	if (udev && !pm_runtime_suspended(&udev->dev)) {
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in mgmt_remove_adv_monitor_sync
+Instead of testing !pm_runtime_suspended(&udev->dev), it would be better 
+to test udev->port_is_suspended.  This field records the actual status 
+of the device's upstream port, whereas in some circumstances 
+pm_runtime_suspended() will return true when the port is in U0.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in mgmt_remove_adv_monitor_sync+0x3a/0xd0 net/bluetooth/mgmt.c:5543
-Read of size 8 at addr ffff8881436c0818 by task kworker/u9:5/6563
+Alan Stern
 
-CPU: 0 UID: 0 PID: 6563 Comm: kworker/u9:5 Not tainted 6.13.0-rc1-syzkaller-00025-gfeffde684ac2-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: hci0 hci_cmd_sync_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:489
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- mgmt_remove_adv_monitor_sync+0x3a/0xd0 net/bluetooth/mgmt.c:5543
- hci_cmd_sync_work+0x22b/0x400 net/bluetooth/hci_sync.c:332
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 13021:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __kmalloc_cache_noprof+0x243/0x390 mm/slub.c:4314
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- mgmt_pending_new+0x65/0x250 net/bluetooth/mgmt_util.c:269
- mgmt_pending_add+0x36/0x120 net/bluetooth/mgmt_util.c:296
- remove_adv_monitor+0x102/0x1b0 net/bluetooth/mgmt.c:5568
- hci_mgmt_cmd+0xc47/0x11d0 net/bluetooth/hci_sock.c:1712
- hci_sock_sendmsg+0x7b8/0x11c0 net/bluetooth/hci_sock.c:1832
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1147
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xaeb/0xd30 fs/read_write.c:679
- ksys_write+0x18f/0x2b0 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 13016:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2338 [inline]
- slab_free mm/slub.c:4598 [inline]
- kfree+0x196/0x430 mm/slub.c:4746
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- __mgmt_power_off+0x183/0x430 net/bluetooth/mgmt.c:9550
- hci_dev_close_sync+0x6d0/0x11c0 net/bluetooth/hci_sync.c:5211
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1209
- sock_ioctl+0x626/0x8e0 net/socket.c:1328
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8881436c0800
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 24 bytes inside of
- freed 96-byte region [ffff8881436c0800, ffff8881436c0860)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1436c0
-flags: 0x57ff00000000000(node=1|zone=2|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 057ff00000000000 ffff88801ac41280 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 3191687099, free_ts 3027828675
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2408
- allocate_slab+0x5a/0x2f0 mm/slub.c:2574
- new_slab mm/slub.c:2627 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
- __slab_alloc+0x58/0xa0 mm/slub.c:3905
- __slab_alloc_node mm/slub.c:3980 [inline]
- slab_alloc_node mm/slub.c:4141 [inline]
- __kmalloc_cache_noprof+0x27b/0x390 mm/slub.c:4309
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- acpi_ut_evaluate_object+0x108/0x4a0 drivers/acpi/acpica/uteval.c:50
- acpi_ut_execute_HID+0xbf/0x3f0 drivers/acpi/acpica/utids.c:45
- acpi_get_object_info+0x328/0x1220 drivers/acpi/acpica/nsxfname.c:288
- acpi_set_pnp_ids drivers/acpi/scan.c:1410 [inline]
- acpi_init_device_object+0xbeb/0x31a0 drivers/acpi/scan.c:1829
- acpi_add_single_object+0x106/0x1e00 drivers/acpi/scan.c:1880
- acpi_bus_check_add+0x32b/0x980 drivers/acpi/scan.c:2181
- acpi_ns_walk_namespace+0x294/0x4f0
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0xdef/0x1130 mm/page_alloc.c:2657
- discard_slab mm/slub.c:2673 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3142
- put_cpu_partial+0x17c/0x250 mm/slub.c:3217
- __slab_free+0x2ea/0x3d0 mm/slub.c:4468
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_remove_cache+0x15d/0x180 mm/kasan/quarantine.c:378
- kmem_cache_shrink+0xd/0x20 mm/slab_common.c:563
- acpi_os_purge_cache+0x15/0x20 drivers/acpi/osl.c:1585
- acpi_purge_cached_objects+0x3d/0xc0 drivers/acpi/acpica/utxface.c:237
- acpi_initialize_objects+0x2e/0xa0 drivers/acpi/acpica/utxfinit.c:250
- acpi_bus_init+0xda/0xbc0 drivers/acpi/bus.c:1367
- acpi_init+0xb4/0x240 drivers/acpi/bus.c:1454
- do_one_initcall+0x248/0x870 init/main.c:1266
- do_initcall_level+0x157/0x210 init/main.c:1328
- do_initcalls+0x3f/0x80 init/main.c:1344
- kernel_init_freeable+0x435/0x5d0 init/main.c:1577
-
-Memory state around the buggy address:
- ffff8881436c0700: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
- ffff8881436c0780: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
->ffff8881436c0800: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                            ^
- ffff8881436c0880: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
- ffff8881436c0900: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
-==================================================================
-
-
-Tested on:
-
-commit:         feffde68 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17861330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=479aff51bb361ef5aa18
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11b090f8580000
-
+> +		usb_disable_usb2_hardware_lpm(udev);
+> +		usb_unlocked_disable_lpm(udev);
+>  	}
+>  }
+>  
+> -- 
+> 2.47.0
 
