@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-433168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400BA9E54B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:56:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6229E54B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50E2282A28
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DC42815F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F773214A67;
-	Thu,  5 Dec 2024 11:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E13214A6E;
+	Thu,  5 Dec 2024 11:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gSaokD6p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSCGyNrj"
 Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6802144CA
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 11:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB6D212B19;
+	Thu,  5 Dec 2024 11:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733399799; cv=none; b=WXdGVFaOmV3hwyNAbqKTeRZshxyhtpcbXTS9JpDYmchPaSzOpGSEgawJmaRbKhGx1o5IucddsvyumT3lBPlNHoqcMi5zaNmcCULt8mCuEhou+SK1hb290n6+Yr92uvCb3aplrIItN/pSww54j3QdO84PMr2cgHX/tpa1ACX45QY=
+	t=1733399863; cv=none; b=B70DfhGh863IqhJ4kkKJm9ntOKCju+X/d3GibcJO7QwMoiSKDl52qPPuRk506ZTfGXtTa+CWKqvlIppNsqyNUAnh8XQjKmcoTY27qUe0FxaFJ9T4tJS9jAQQeXgoRL179sVK4U7J1CqhLsIHKmxkxn0NVLrybfMf5zT/dryO0XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733399799; c=relaxed/simple;
-	bh=jsU/m7SEIIFDJmhyxSYaMTRswrSMMAnmayMJmhdd64M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E0+uUhYQ8xzOWVblxiQjHCGBa1whHP0hSPTtgTlXxfsxpmKo6CJ61oJ1CeGS8GoZvqfqHlJSsM21AHvVZ7jkGAXsWt2/c2W0K+qbxSyK2cUpROHscDHk425hn0EbB1t4oSD4kEUhoQb9LIwU71I+oTwk6slqqYa7gZ+XFR9xg3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gSaokD6p; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa628d7046eso85434866b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 03:56:36 -0800 (PST)
+	s=arc-20240116; t=1733399863; c=relaxed/simple;
+	bh=XFUbX/YZsggW3Lj2pO1KVc1XwRkwRE4Aixa8DIpVws8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pGOywji4T0YP0sYaqDRM5ZM8jqH1zU7Bt4bzmbUqKzJ2wuVIWHgWB2AQeJQDKMB50j5tkVZ/L7TZh74QA9vZRz6e1QsqYRcZuw4q+F8a35wE3/29CZOg/+ZVQtaiGJpR8zkbfRCVtV35Dt8U2NWeL4Eq65puoCgg2sHm+FdP+hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSCGyNrj; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so130073466b.1;
+        Thu, 05 Dec 2024 03:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733399795; x=1734004595; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cs9RMDRe4jTFPEvDmtH/eSMnjvvfZudpLPQ72QFuTUQ=;
-        b=gSaokD6plYvYPl0qYwYlXhoCs6MaskOz3po8/8lSMP0x37ixBX8teAApM4ujyuNtLr
-         bmglAfIJ6ScmL03PxbSECkeog94hJKn+1z15y4Ejopom2bSdC+POUBubxF4jCcVVECkk
-         zxD9DroYCHiAonPqmc0xj6AzevTjy6TEoSDtrppBmB7fjpssgiJeBwhqmb5eWPVYeb98
-         V8sq9m72/LWtIIJ6BDnEgqr7fpBipOFxG9inrGdG0Bt5skiTxGkJUtmsUsqZfDjC2A8o
-         VVaQVqVXkMPfM6tHGdEyArKXm4xikoL727azGr7mfe3Ni8Y0Ih2sJpPbDlJnaaDaIjyr
-         2lGw==
+        d=gmail.com; s=20230601; t=1733399859; x=1734004659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KHqFbmX+c3US0UItNKn2A73h3t1bWaRXaMWTZM0i8F8=;
+        b=NSCGyNrjUts5rNAcFKR9aYuHdj+Fs4shdJNS3EbQ0QMEeKvn5GHhuo9cLis7qqBhJ6
+         lyBXe1w1duZyWsNsr2QlEUcPnZu/AclqhFbtDDJcXy09sbQr+4X7Iw07jfIANrKUsatx
+         TTked6sYdI9rhH/HJIpSqkxzg7qDjkuWzIOsczCKYFlJeTGIb5IP3NxIs4eiIv5Nvuiv
+         1khgUBI9UoUcWP9hawVwnMWnmweF2NW/bazxd+jTPfHekp4eL6g0LaMNlBZmtWEoqDu7
+         zFy+ZYDm2SA287SCQIj7fAFEChW2jC1wNOtTO25zT0vJY/x67K0ad+yLKegdeQ7ZKToL
+         DNKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733399795; x=1734004595;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cs9RMDRe4jTFPEvDmtH/eSMnjvvfZudpLPQ72QFuTUQ=;
-        b=B5eKCuXMiVb26+cC2aOI0ZwdZcCyjEG2LJ3YYSHBn3qQ1ewEvMPHmrIDGEU9XRkOzL
-         U9XrmGDYCYKYsC/RncxMeaqTMU150Wtv2FSm9J00WCSpkeCPrDt2aWq8ctFw7l/9xs+q
-         ONOMael0XfOsyIvThoLy5ZQILKAfg6ZXCkdwx5AZJMD0b+Gm7QAh/ghhfhCVoA4sY7p6
-         48eQ45tMpEMFTqRN4nYk5ajiyVz+QvafBavuBxndH6+wZowUXoltMLMSnK2e5Cvpdeuj
-         5SvdcL60xlFdW0tJoTo3s01Dfl8k72dSrthr47ImR/0sMaCisgCgHndsjLCPzh9TTVsL
-         L3Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCWh5uCj2++dYiSG9EHK9sV/exJOYwx/HAwBenaYM1PkyvRpt9c8ZwI97ICVyDAZbsvLxep3zH3jcpdc/VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJduh0otVruviahDswU/l6aUDQymEDZQkLlkownj/4LYkhey4O
-	H+pgQVMIZNXiIdr7K1o9/XRAaqZCXdqJ4NAlB5lrGlokmK40STT/QxpsA1M4aQA=
-X-Gm-Gg: ASbGncvDpwYhb9lYSnQ41PaeayjINVcegni+Qm5N2Wk2cf3C9cHjdnhK5v8dUf7TBAu
-	U74Blq0HIMggFg+EThutbmPNyg1WqDJ/HUlV3GQFS3S3LinC4+tGD7HApy+Mm0DPPuvW8jahaYD
-	My5He9bHjFhKT73KyWqa3Ts3l2ju8nQuctMr+ZPr5UFclYpJTLTd+clniSaV/nZzen7wPIiD3y4
-	VqM+rx/SzZsBC76RrRuEPQxAoj3k3b8ojc9t1UCzsxdq2CM7Gly+hRuvDl7/sc=
-X-Google-Smtp-Source: AGHT+IEWGiuqCz5p22sJv4oUuBbuzMg9J4wgAEUTDCD4f1ma8OOcOH3epiuHrkUATGhdMfNL7flyUQ==
-X-Received: by 2002:a17:906:23e1:b0:aa6:312c:5abe with SMTP id a640c23a62f3a-aa6312c5c99mr28100666b.58.1733399795552;
-        Thu, 05 Dec 2024 03:56:35 -0800 (PST)
-Received: from [192.168.0.62] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa626088e8fsm81659766b.139.2024.12.05.03.56.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 03:56:35 -0800 (PST)
-Message-ID: <2cb5940b-3779-4450-a213-fa766df7f406@linaro.org>
-Date: Thu, 5 Dec 2024 11:56:33 +0000
+        d=1e100.net; s=20230601; t=1733399859; x=1734004659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KHqFbmX+c3US0UItNKn2A73h3t1bWaRXaMWTZM0i8F8=;
+        b=iZF/TMMKGdVMe6oQFOeHuAQpTYfhIhR+C73gjJELNhFdtyN0Z7paSJsoi/7ng7rAFm
+         VKwsTkFq9kYG/LGHRmcIxMNE0FTC1/CIeGTqxIDj90P6LC5W0k3atzGf8pS2YxgER2+8
+         HYHLKrKUV9VLBakLoHHYMcDt3rvYP38GB1ap7jKSNJR7uhHF9JHmhN+7KdU8DNPJUvRn
+         hqinb9cKPEv8oN0vAJYKb7YJNJ39UUHDiHfTCfHehJ7pAvz/gxdua62bbImZ1VbxGGUV
+         jo0tHxtKZWq0nrl0HSEhN9hwqFpVq/7WDbKCpdLW5YlMi1rJ/XRrF4m6OBkZcorJeJOo
+         jvdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhncMAEzzvspz/K5GvzzksmTvVYXaXPijLxfE8D2PyCANOuizko7UCU6u01hFPksjVpi2TaNe5fqtnfiBW@vger.kernel.org, AJvYcCV2S59lSMxVGKtfOqIcN42fY87w2XFF7MAQvmLa/fYx2Jdx/5Btl4ibrw95VetDAn4mQUANoAsyPFu1feAD@vger.kernel.org, AJvYcCXD7YMr8bGFbkHNfzfl74Jua9JATnznNg5bhy/LUZFPWfMk7ojxWXGAz6KMqatp5iq1g1DaypW2W8fK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYk4Jge3adv5fPW/VWqVzoS6S5m+bxIs/YMzitgSFeLNcvqbw9
+	6RSaMus/EkhDfgfziLbsDMi1B4Iit/pDmGzf2zYbYkAOdqMiTgeyWieTL2iXL8JYIXi1qmuS6bC
+	IRkLWIgzWuDzKuHcSdSda7WhYuuw=
+X-Gm-Gg: ASbGncvkKKhxaYUcApe/CS/7o9KDgTalh6Dtisc3GVdvyxLaOSvDKqMOhfEl0yBAEnm
+	i5QHfIgV2Ru2VYTaQl+MxkExOPtBrMAU=
+X-Google-Smtp-Source: AGHT+IFtSaplePUPTfu2b1qsmyJ35bqUssMpJaodaFJv+wLRQVvbm9L+aDyCbbZud1nyfYd6OmNtABo73+XJa8y0VQc=
+X-Received: by 2002:a05:6402:3511:b0:5d0:ccce:34b2 with SMTP id
+ 4fb4d7f45d1cf-5d10cb99fcfmr14494613a12.29.1733399859160; Thu, 05 Dec 2024
+ 03:57:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/5] media: dt-bindings: Add qcom,sc7280-camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
- will@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241204100003.300123-1-quic_vikramsa@quicinc.com>
- <20241204100003.300123-2-quic_vikramsa@quicinc.com>
- <oko5qqysmxhicqzkwhkz54wvsmt64ba3cd37zkcy55ee77owbk@5z3zetfr2ejx>
- <eaffa633-c3a4-4924-8ba7-694b18bf92ee@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <eaffa633-c3a4-4924-8ba7-694b18bf92ee@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org> <Z1D2BE2S6FLJ0tTk@infradead.org>
+In-Reply-To: <Z1D2BE2S6FLJ0tTk@infradead.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 5 Dec 2024 12:57:28 +0100
+Message-ID: <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export operations
+ as only supporting file handles
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Erin Shepherd <erin.shepherd@e43.eu>, Chuck Lever <chuck.lever@oracle.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, stable <stable@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/12/2024 10:59, Vikram Sharma wrote:
-> Hi Krzysztof,
-> 
-> Thanks for your "Reviewed-by"
-> 
-> +        camss@acb3000 {
-> 
-> If there is going to be resend, then node name: isp
-> 
-> Sure, we will change node-name from camss to isp or camera (As its a 
-> part of generic names recommendation as per the shared link.)
-> If there is a resend. or we will address this as a followup.
-> 
-> So
-> 
-> - camss@acb3000 {
-> + camera@acb3000 {
-> 
-> Best Regards,
-> Vikram
+On Thu, Dec 5, 2024 at 1:38=E2=80=AFAM Christoph Hellwig <hch@infradead.org=
+> wrote:
+>
+> On Sun, Dec 01, 2024 at 02:12:24PM +0100, Christian Brauner wrote:
+> > Hey,
+> >
+> > Some filesystems like kernfs and pidfs support file handles as a
+> > convenience to enable the use of name_to_handle_at(2) and
+> > open_by_handle_at(2) but don't want to and cannot be reliably exported.
+> > Add a flag that allows them to mark their export operations accordingly
+> > and make NFS check for its presence.
+> >
+> > @Amir, I'll reorder the patches such that this series comes prior to th=
+e
+> > pidfs file handle series. Doing it that way will mean that there's neve=
+r
+> > a state where pidfs supports file handles while also being exportable.
+> > It's probably not a big deal but it's definitely cleaner. It also means
+> > the last patch in this series to mark pidfs as non-exportable can be
+> > dropped. Instead pidfs export operations will be marked as
+> > non-exportable in the patch that they are added in.
+>
+> Can you please invert the polarity?  Marking something as not supporting
+> is always awkward.  Clearly marking it as supporting something (and
+> writing down in detail what is required for that) is much better, even
+> it might cause a little more churn initially.
+>
 
-Please no top-posting.
-https://subspace.kernel.org/etiquette.html
+Churn would be a bit annoying, but I guess it makes sense.
+I agree with Christian that it should be done as cleanup to allow for
+easier backport.
 
-Shouldn't that be isp@0xaddress ?
+Please suggest a name for this opt-in flag.
+EXPORT_OP_NFS_EXPORT???
 
-If you are making this change, please remember to do it in both the 
-example and the dts.
-
----
-bod
+Thanks,
+Amir.
 
