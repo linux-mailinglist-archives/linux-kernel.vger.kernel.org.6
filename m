@@ -1,143 +1,322 @@
-Return-Path: <linux-kernel+bounces-432561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774109E4CF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:01:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B84C9E4CF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA97188198E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A133018819A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8499A187FE4;
-	Thu,  5 Dec 2024 04:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ioqNXH8l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E48F188733;
+	Thu,  5 Dec 2024 04:03:30 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0C4C83
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 04:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0A04C83
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 04:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733371309; cv=none; b=np+OkWcBcR6YlVVez7vAooXRRRt6MtwxYSwm0aS0+fSeZ1blsZkilmN1rR/kx1vrotCuLleomdeT3ug0OA49drY4v7LnTRF64z5XHt0X1Dh5SWtk222mlJtXyFUvVsT+koAxVoBzQOmfEPdGjufAAGsc0OgcFQIwvxtq3lcRVa4=
+	t=1733371409; cv=none; b=PvEqDYi518qJ6BxJO4ZHYxUBvvBedoKLu7ZOsjKPHEwxoYvdM3+W0xJz+KpQY8bDJuQ3TA16OwqZOs3cqagolPJvqcJpX0zk0zZXzMEnhzXBXgK4oTRyHGn0Dgi3rZpXcywti08DQOlIGGmpHplBTegk2sklk6l3pJTq7oNcvOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733371309; c=relaxed/simple;
-	bh=NJbUNp5KQdiOm4hLOSMPKNgf9oVFfsN/R/DVEqOAt4A=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OqBg8bOBBMtJ/5TkumuPex4dh31yx4bhhn1i34qLfcEbQtLS3Zbr0b5PuIcRtL5rblmzkv0DUsSJTF77mfZYy6A5Jb1naGRlRra68UubK2X9qTEK2/jdMp7Jr2qjWHW/s5/MYL2W4qtFUs6p3+HBcIGprmnRSLJYH++VXkYNNbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ioqNXH8l; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733371307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l1c0RZJqAUSQmqGb0lWra/RcE0Rl+ptIUXcMQZ+qpsY=;
-	b=ioqNXH8lNHlFuRs7sarh1JaqdmzwFgovHQRsdv8HE0EU7ICm6XBKH8eizU2HB5YflrwAtW
-	GgM1dIePIOuekZJZhtmShq1t3WGUBJf/UrBAhPXUMRO7rbsIUvjWYLmK4VveBhMs/dA0yo
-	0iB7L8+UCRRnSH1r6pDhpMRY0LfB5Z8=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-6-CkPdfihdMFyR-CE_QDOhDA-1; Wed, 04 Dec 2024 23:01:46 -0500
-X-MC-Unique: CkPdfihdMFyR-CE_QDOhDA-1
-X-Mimecast-MFC-AGG-ID: CkPdfihdMFyR-CE_QDOhDA
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4667c1c3181so6326901cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 20:01:46 -0800 (PST)
+	s=arc-20240116; t=1733371409; c=relaxed/simple;
+	bh=B0UPE7YGd7Ngfk7Yvttlp5aIzUFGcYLfdxETEY4G5qU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lqR7hitWogurkVVs+/GuKxnihdYNfbK8oQeJ8iuA5fnWHUhzqOnFtOAfx5lFBSvgz4BFO5VylDDeA/bN/mncPxnMei4/7gKbc1Voo9QTeWFYPaDjGLThxoEq+N1FK3k7phqb7iWJVpXQOAS58W4hqVcstTRb2m27CzNEa0BMgZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a76690f813so5035535ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 20:03:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733371305; x=1733976105;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l1c0RZJqAUSQmqGb0lWra/RcE0Rl+ptIUXcMQZ+qpsY=;
-        b=CxtKIC2GKsrEPsKRBn4h4WuOZkbZhxSHS3YnIG3xsNSu1+CKsxsVN4ZPs72fp3OWDK
-         Xk01qluRuAgpK/hYdfZxYEh45GliqrYcSFLG7A3Z3fKM3UV2N7EZ29mLHlronztz2QCf
-         1TGjvTZNzRiv6UGhTD+p3KcgLL7dGi+lXslG4tABX3PhjhklGCfxZrrE+TTKzKpihca6
-         5W+tNnbwbWRMEXtOMn7N4vnmKmB2UYvwc4MNeNn+inApiUeJMTJyzNJsWLmlM2W4x9mV
-         xSTduIl19Nf6HS7bXPXJMPEJlcKymhqRUmctO0yUoKakaKhC/JObstCkpcrRqbB0nSki
-         7DGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV07FMg5sCS/kM511eSfnZkafFtOE4ip6v45/3IPww4cOfGSiOAwk5QEwqWXjNnAy+lmhA6sbtlgALI5Lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQgX82kby0L4wuimUqEZ6C1jQF50hbJHEzRmru9UGAWsfgVh0w
-	67FKlqIQ7slcx5YUsPYIBnWqQolqog8HjYJ+jP6Xyp/qS4pAtDhUaWnOQDdC0r7KIw3XmkCRmLr
-	4R6mn9TfULdATIRbTiGobRUTZhPloPmK4Iq2SYJak4OZIK96pNCS8blW6zf/nmlKIXDzh6A==
-X-Gm-Gg: ASbGncvQKG/BsdTVaGf0dYPYqEU0vRhLan8NAN1daoedxCmAfwOtOxxNMs2fGqwFa0R
-	F3w2K2v1vLWvfSB1of7qo66JRoRP8uP4gYhBLHu6FL/X40xdrCcL/vGR6cBBrdnj/c46Hh8flE7
-	OUPeWdKpfGfLPvqID6hhQV52dH/RdEL3Q4XmxLnyaDQwPdBUSnINRZsVz8UBZpBuwJOVlli7LTT
-	qJ01NIiWPTKgNmwzc38lsrsL9DRvz54P7VN4IiI/vxHQrDLhi7k82fd5R20KdEcLrhm+NvfROMJ
-	cu1pFcjvbDHvQ3lPUg==
-X-Received: by 2002:a05:622a:90d:b0:462:f690:d202 with SMTP id d75a77b69052e-4670c740353mr151953391cf.40.1733371305287;
-        Wed, 04 Dec 2024 20:01:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHTO04TadCpLGsnXjyPaAoa0bQwSNmqGFDIihAPgRWooYKIuNHkvO9280L1/e33+/9eM7hb8w==
-X-Received: by 2002:a05:622a:90d:b0:462:f690:d202 with SMTP id d75a77b69052e-4670c740353mr151953231cf.40.1733371305002;
-        Wed, 04 Dec 2024 20:01:45 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296fcb20sm3542411cf.47.2024.12.04.20.01.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 20:01:44 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <9765a61a-e832-4491-af02-97b8736411ef@redhat.com>
-Date: Wed, 4 Dec 2024 23:01:38 -0500
+        d=1e100.net; s=20230601; t=1733371406; x=1733976206;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OmPMIvGUcaEEXWOl+xY0Ue7t7j0C3yIAMWikuEG04iQ=;
+        b=SQzfeSc4P/Opoq8Rtco227OKjyWzpyF1K6jiUAYD2ZywrBI2QNBc+zupzFz2YN0DqI
+         hgrRcHLAa6H9bnjf1J0vaNv4prWsYchuGzQWDRFulZbqaivbfFgHf6p/tw+ynfEI1bpC
+         paH+ShUgFihCd/mMSpz5ul3SIkOVAvSr+KK22DdvKVwh0JMXnn6oy215Wl21/zWS+Cv8
+         lmekclCDNUD+ljP6YkBx6pp8BrWwaclkoVU7hWKY+UpPILlTJrF6y/felpBguNzJKOxF
+         zVNxCrWPZcY2TrL/tRgAXXQxkdtTG7Gj1fwaSGc0/Tz0Lcg29f8tEq7l8Ev8nOnXw9fM
+         aC6A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/FqoZlg+Vbu3WMIQW6oJv3h2X7LXXf9Emac35ODDNTJF34YTw5Ay8eO4fQCWJnnqAmqqLU+gAONOkr7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCahvyMQJedXHcCqxfk/D6pmjPZDSlWUpZ8t7mWuZ1n4jVlc5y
+	qwrOxt0RTLKvWXk1QvXEchy9WzQ8NN8IwlMb1U+d5lJiu9xF0g+X1W1s/x8noAqyWgt/1n84vAO
+	wk1ulIONOOUgkHmVVBSMV+drBiQNwGoI/ppB/ynmPzPpxBDoVG5puqPk=
+X-Google-Smtp-Source: AGHT+IEHaBQ9uVYQVaRC9NA1c6zszP4aXA22I2iVLzc0Ijn+UzAEB3i1kiiODas+CHvIuip6LvsP5CmdDuldtIkcH3lLl9xqBsFh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use it
- in nmi_shootdown_cpus()
-To: Thomas Gleixner <tglx@linutronix.de>, Waiman Long <llong@redhat.com>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-References: <20241203150732.182065-1-longman@redhat.com> <87h67jsif0.ffs@tglx>
- <7aa93137-4b5e-474f-a99c-47acffdf71a3@redhat.com> <87zflbqqar.ffs@tglx>
- <59b254dc-acf6-4114-b6b4-a7ae517bfa06@redhat.com>
-Content-Language: en-US
-In-Reply-To: <59b254dc-acf6-4114-b6b4-a7ae517bfa06@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c24f:0:b0:3a7:c5ff:e5e2 with SMTP id
+ e9e14a558f8ab-3a7f99b1233mr119494585ab.0.1733371405925; Wed, 04 Dec 2024
+ 20:03:25 -0800 (PST)
+Date: Wed, 04 Dec 2024 20:03:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6751260d.050a0220.17bd51.0085.GAE@google.com>
+Subject: [syzbot] [btrfs?] possible deadlock in __btrfs_commit_inode_delayed_items
+From: syzbot <syzbot+71d80f05e434f9bfaaec@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=111705e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
+dashboard link: https://syzkaller.appspot.com/bug?extid=71d80f05e434f9bfaaec
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+71d80f05e434f9bfaaec@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-next-20241128-syzkaller #0 Not tainted
+------------------------------------------------------
+kworker/u8:12/6861 is trying to acquire lock:
+ffff88803171b3b8 (btrfs-tree-01){++++}-{4:4}, at: btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
+
+but task is already holding lock:
+ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:830 [inline]
+ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: __btrfs_commit_inode_delayed_items+0x1c4/0x24a0 fs/btrfs/delayed-inode.c:1126
+
+which lock already depends on the new lock.
 
 
-On 12/4/24 2:28 PM, Waiman Long wrote:
->
-> On 12/4/24 1:03 PM, Thomas Gleixner wrote:
->> On Wed, Dec 04 2024 at 12:23, Waiman Long wrote:
->>> On 12/4/24 8:10 AM, Thomas Gleixner wrote:
->>>> On Tue, Dec 03 2024 at 10:07, Waiman Long wrote:
->>>>> +    /*
->>>>> +     * Call the emergency handler first, if set
->>>>> +     * Emergency handler is not traced or checked by 
->>>>> nmi_check_duration().
->>>>> +     */
->>>>> +    ehandler = READ_ONCE(desc->emerg_handler);
->>>>> +    if (ehandler)
->>>>> +        handled = ehandler(type, regs);
->>>> Shouldn't this just stop processing right here?
->>> Yes in the case of crash_nmi_callback(). I suppose it is a no-return
->>> call. As the emergency handler is supposed to be a general mechanism in
->>> design, I don't want to make too many assumptions of what will happen
->>> when the handler is invoked.
->> I'm not convinced that this should be used as a general mechanism. It's
->> for emergency situations and that's where it stops. If the thing
->> returns, it's a bug IMO.
->
-> OK, I am fine with that. I will put a BUG_ON() after that in the next 
-> version.
+the existing dependency chain (in reverse order) is:
 
-Actually, crash_nmi_callback() can return in the case of the crashing 
-CPUs, though all the other CPUs will not return once called. So I 
-believe the current form is correct. I will update the comment to 
-reflect that.
+-> #4 (&delayed_node->mutex){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
+       btrfs_evict_inode+0x752/0x1080 fs/btrfs/inode.c:5374
+       evict+0x4e8/0x9a0 fs/inode.c:796
+       dispose_list fs/inode.c:845 [inline]
+       prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
+       super_cache_scan+0x38c/0x4b0 fs/super.c:223
+       do_shrink_slab+0x72d/0x1160 mm/shrinker.c:437
+       shrink_slab_memcg mm/shrinker.c:550 [inline]
+       shrink_slab+0x878/0x14d0 mm/shrinker.c:628
+       shrink_one+0x43b/0x850 mm/vmscan.c:4836
+       shrink_many mm/vmscan.c:4897 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+       shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+       kswapd_shrink_node mm/vmscan.c:6785 [inline]
+       balance_pgdat mm/vmscan.c:6977 [inline]
+       kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Cheers,
-Longman
+-> #3 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __fs_reclaim_acquire mm/page_alloc.c:3887 [inline]
+       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3901
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4055 [inline]
+       slab_alloc_node mm/slub.c:4133 [inline]
+       __kmalloc_cache_noprof+0x41/0x390 mm/slub.c:4309
+       kmalloc_noprof include/linux/slab.h:901 [inline]
+       kzalloc_noprof include/linux/slab.h:1037 [inline]
+       kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
+       loop_set_size drivers/block/loop.c:233 [inline]
+       loop_set_status+0x5f0/0x8f0 drivers/block/loop.c:1285
+       lo_ioctl+0xcbc/0x1f50
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+-> #2 (&q->q_usage_counter(io)#17){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
+       __submit_bio+0x2c6/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       btrfs_submit_chunk fs/btrfs/bio.c:745 [inline]
+       btrfs_submit_bbio+0xf93/0x18e0 fs/btrfs/bio.c:773
+       read_extent_buffer_pages+0x65a/0x910 fs/btrfs/extent_io.c:3558
+       btrfs_read_extent_buffer+0xd9/0x770 fs/btrfs/disk-io.c:229
+       read_block_for_search+0x79e/0xbb0 fs/btrfs/ctree.c:1619
+       btrfs_search_slot+0x121b/0x3150 fs/btrfs/ctree.c:2236
+       btrfs_init_root_free_objectid+0x148/0x330 fs/btrfs/disk-io.c:4837
+       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
+       btrfs_get_root_ref+0x5d7/0xc30 fs/btrfs/disk-io.c:1364
+       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
+       open_ctree+0x2470/0x2a30 fs/btrfs/disk-io.c:3532
+       btrfs_fill_super fs/btrfs/super.c:972 [inline]
+       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
+       btrfs_get_tree+0x1274/0x1a10 fs/btrfs/super.c:2105
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       fc_mount+0x1b/0xb0 fs/namespace.c:1231
+       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
+       btrfs_get_tree+0x65b/0x1a10 fs/btrfs/super.c:2106
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (btrfs-tree-00){++++}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1649
+       btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
+       btrfs_tree_read_lock fs/btrfs/locking.h:178 [inline]
+       read_block_for_search+0x718/0xbb0 fs/btrfs/ctree.c:1613
+       btrfs_search_slot+0x121b/0x3150 fs/btrfs/ctree.c:2236
+       btrfs_init_root_free_objectid+0x148/0x330 fs/btrfs/disk-io.c:4837
+       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
+       btrfs_get_root_ref+0x5d7/0xc30 fs/btrfs/disk-io.c:1364
+       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
+       open_ctree+0x2470/0x2a30 fs/btrfs/disk-io.c:3532
+       btrfs_fill_super fs/btrfs/super.c:972 [inline]
+       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
+       btrfs_get_tree+0x1274/0x1a10 fs/btrfs/super.c:2105
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       fc_mount+0x1b/0xb0 fs/namespace.c:1231
+       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
+       btrfs_get_tree+0x65b/0x1a10 fs/btrfs/super.c:2106
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (btrfs-tree-01){++++}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1649
+       btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
+       btrfs_tree_read_lock fs/btrfs/locking.h:178 [inline]
+       btrfs_read_lock_root_node+0x3f/0xd0 fs/btrfs/locking.c:267
+       btrfs_search_slot_get_root fs/btrfs/ctree.c:1790 [inline]
+       btrfs_search_slot+0x4f7/0x3150 fs/btrfs/ctree.c:2112
+       btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4350
+       btrfs_insert_delayed_item fs/btrfs/delayed-inode.c:758 [inline]
+       btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:836 [inline]
+       __btrfs_commit_inode_delayed_items+0xd5d/0x24a0 fs/btrfs/delayed-inode.c:1126
+       __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+       flush_space+0x24a/0xcf0 fs/btrfs/space-info.c:775
+       btrfs_async_reclaim_metadata_space+0x113/0x350 fs/btrfs/space-info.c:1105
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  btrfs-tree-01 --> fs_reclaim --> &delayed_node->mutex
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&delayed_node->mutex);
+                               lock(fs_reclaim);
+                               lock(&delayed_node->mutex);
+  rlock(btrfs-tree-01);
+
+ *** DEADLOCK ***
+
+5 locks held by kworker/u8:12/6861:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
+ #1: ffffc9000369fd00 ((work_completion)(&fs_info->async_reclaim_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc9000369fd00 ((work_completion)(&fs_info->async_reclaim_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
+ #2: ffff888034ba2470 (btrfs_trans_num_writers){++++}-{0:0}, at: join_transaction+0x405/0xda0 fs/btrfs/transaction.c:288
+ #3: ffff888034ba2498 (btrfs_trans_num_extwriters){++++}-{0:0}, at: join_transaction+0x405/0xda0 fs/btrfs/transaction.c:288
+ #4: ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:830 [inline]
+ #4: ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: __btrfs_commit_inode_delayed_items+0x1c4/0x24a0 fs/btrfs/delayed-inode.c:1126
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6861 Comm: kworker/u8:12 Not tainted 6.12.0-next-20241128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events_unbound btrfs_async_reclaim_metadata_space
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1649
+ btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
+ btrfs_tree_read_lock fs/btrfs/locking.h:178 [inline]
+ btrfs_read_lock_root_node+0x3f/0xd0 fs/btrfs/locking.c:267
+ btrfs_search_slot_get_root fs/btrfs/ctree.c:1790 [inline]
+ btrfs_search_slot+0x4f7/0x3150 fs/btrfs/ctree.c:2112
+ btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4350
+ btrfs_insert_delayed_item fs/btrfs/delayed-inode.c:758 [inline]
+ btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:836 [inline]
+ __btrfs_commit_inode_delayed_items+0xd5d/0x24a0 fs/btrfs/delayed-inode.c:1126
+ __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+ flush_space+0x24a/0xcf0 fs/btrfs/space-info.c:775
+ btrfs_async_reclaim_metadata_space+0x113/0x350 fs/btrfs/space-info.c:1105
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
