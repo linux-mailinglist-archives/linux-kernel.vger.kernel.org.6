@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-432578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A12D9E4D33
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:14:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB7B9E4D3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:20:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3DA41880A55
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:14:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA38280FD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ACF194AE2;
-	Thu,  5 Dec 2024 05:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07CB196D9D;
+	Thu,  5 Dec 2024 05:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQmwUZPP"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gcZbSuxP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C8218FC74;
-	Thu,  5 Dec 2024 05:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBDC11187;
+	Thu,  5 Dec 2024 05:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733375670; cv=none; b=jmsTS0Ceu3BxyXx4pDKMj8J4Tq66BIh31XzGYRZ++kE9kwELPA/2YHHCr+ReGFy3JnwQ6YTf9YJ+PY2eSGSa77ru3hb/4XSIw2TBSPBgy0j2qFS99pTsDL8h//wi+PYi2oHv5cDnMwJKfl6wHRMouqJ6kkjSulTnpyY52w3YTwk=
+	t=1733376007; cv=none; b=mCAzETT9YP09bO4EQNVgpUmsGYHxX7Anyiq6C7aIWZh17GaE+56RZi3rK7eXqETXBgXaGpMfkxq+Vt1rCkWaBni2txWg0t1vYOFIcZgph4AtittKQDvgdttdHqjC4EWtMCp1mVfFPetHQTtTpKltmJ5oICk+yIdKFM+0oXi2KDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733375670; c=relaxed/simple;
-	bh=0v8WWRMuzt6FX0RhGjXlqLu6ssQtFHNHoGbnrfzaxIo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YWI2MZwTg46anEMKNnKNMKkoIWCVMQlhmIS+OgO7OEkcZZsNa6AYWbqej9nRVkZBy41FMy2WjTjHyv6F2564Qq3uDLm8jMq+ix8Dtnlf7p5WTJFlMBMyp7E3x9WUGc34z1NAwuWsFbuG9uKNfYT+WZFwQr+cu8nEmq7C9J4Ak4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQmwUZPP; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4667931f14bso7396591cf.2;
-        Wed, 04 Dec 2024 21:14:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733375668; x=1733980468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqIsEszztQaofpg7Apmowpob1qU+kHY4W1kZzuvfgdE=;
-        b=aQmwUZPPNkyeMHl4N8JQs87avGSDR+QhGmIrRkUh6WckGAZhbuADJ02Sj/6bJpP2W3
-         2F4iPKMPtkEi0AuXCkl0TD2CEjuE1gQXEy00lBX6rdPPvg4cg/tP1stY38R8uRsncycg
-         q13bj1YElq3aE/dqn3AC70H8JGz4q0fAZpql2OT+W2qkkISB4YZhnfPikgT2dK3H5ylo
-         d5x4ioBPyAbVC5+R0p60ZZijrtt49Wk01l0A8zGS1CFv5CNEQQxHSS40/QFUF05v2R+6
-         la3mX6o35JJg2zQMdhy+ImGq1si51dBT9HTEAYVJQBu+VyUPNaEeZJwjcqY3QPx5+7US
-         qb7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733375668; x=1733980468;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zqIsEszztQaofpg7Apmowpob1qU+kHY4W1kZzuvfgdE=;
-        b=tOcxE6DyVk+4qrehaccsDABX0zpLkksmjX6H7QFIB1QwGhfA2CAWxLwUturcXW6asT
-         xS80TmRfqjk3qoQ7zFMZZ4rR04VY0rhGDQkCDnopQMqAk+6BQUNYfOz580vEbXTm+PRb
-         s8BgS1bgn/cvhTiwesiywTRwDar3TrKI4hPkoHYlyico66nSO7uiWBE/kJai78cdvSk5
-         jmEUAArHW6VdtxknOCWnpfpx93OBHiK/Ncs6hUBA94qNBHyVuefPz7kDKIuQCYCtPy36
-         /nmei32tj4+eptpZns6KUnER7Oe68MxErICLQjYxKXvA9bbxvJ0/4Fos5LTYhJx/OyjH
-         TAhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4a4m6+xwm/WspNLX6hmXo7GgxPoV5zQlgAHt9e3mAjjPsyrMzDXhdbe70NmWFJnRjh9v8HWMMDQ6vjvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn1VjgKfjLThH5w946Nahy3HiKWVpVAbQtn7rtU4xaippcRaXh
-	XfYZyupsqCUj4V3wrNWCOaCZayvBPzIXR3WBxCcyNRjAPe+Qz7r/
-X-Gm-Gg: ASbGncsHrfwXI7ipLwI9WN31Y43sbR+TctCtQ2p2b6hT0WgK/p1MkdhUv2sIuayRCrE
-	Bzj2+7pY+DunvTKI0nzWd6q/DMan3WMEKjx4/hKKPnJs2pn0tzbP/a84y7ekczUCYpzoZ8Wx3WI
-	xlxCRGvtp9aH9/jGRJmPoO/ypHA1XHeWmP8DXlUr+ftxwJ93YdX/LGsaJyMLRbnatng9/5pJxRn
-	OAcaELeIaUYWwGFvXyk7Sw0Hr8SjqSFbf4R2xgWE+ANF+//VwbI5WTYHShJJQ==
-X-Google-Smtp-Source: AGHT+IHzGOaqKMeldKYNCc7I7mqnuoEWuHAjvkW6hiehdx/v3xwHIV4vK2uaIYyHVBgVn+HHe4JCfw==
-X-Received: by 2002:a05:622a:1992:b0:463:5bd4:59b8 with SMTP id d75a77b69052e-4670c712e88mr150275551cf.40.1733375667946;
-        Wed, 04 Dec 2024 21:14:27 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467297c239dsm4041821cf.77.2024.12.04.21.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 21:14:26 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: fabrice.gasnier@foss.st.com,
-	ukleinek@kernel.org,
-	coquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	thierry.reding@gmail.com,
-	lee@kernel.org
-Cc: linux-pwm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] pwm: stm32-lp: Add check for clk_enable()
-Date: Thu,  5 Dec 2024 00:17:46 -0500
-Message-Id: <20241205051746.2465490-1-zmw12306@gmail.com>
+	s=arc-20240116; t=1733376007; c=relaxed/simple;
+	bh=HQb7j+/16kk489X/223nxBvP8Rc4zUskXGT8RCaT5Ds=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B36eDlQgEQVFag+38L4RsOhSmiN9s7Cga3ZjlyUH7IvZqrkDG7GfwmaJ/S3j7TasEbk0oHO3PQ8rcGogHE5pP57wdmd7GZOikFHBIeOkgvaNU2UWQbgW0OjmU6OaN6nB8FKwkBTaSCt8XsJbE7J7tEhAOa3nDXL91TJE/B2Lhi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gcZbSuxP; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733376005; x=1764912005;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HQb7j+/16kk489X/223nxBvP8Rc4zUskXGT8RCaT5Ds=;
+  b=gcZbSuxPULu6z9AKPo0FwJGKH931r407v3GT81t2+RO+KGxDPgX+vm5o
+   irvU8ZKSrkfJAUz0JINy/pF9yWrHOg1cC6h3IY+GKidW6hUBi9Egy0vkc
+   FY88ss1TkUBWZfA4r2kveEyi6Nv36/r3DKU0U3dL9hzRA17e2RvqYteFN
+   1xrl4UvM2wDD5kccIWJyGMdW8LkbuHJ07JTOVGu2Pet0dnczkCxfeWHYq
+   f4isH9bsOkhw6yI/kRKZt4f1Kcf1AnlXFzaox1XJ14i/8qFSkbxFiD/jE
+   pHuBCuwkC2VgrCAhUarLVQfd4p3s7uA0yNcsPK0UujEfMT78e54+lCzeT
+   w==;
+X-CSE-ConnectionGUID: Vdy3xPWIRBW1xp5/NjGdSg==
+X-CSE-MsgGUID: TpH85J4MS6yUKKHAdrLE7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33552350"
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="33552350"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 21:20:04 -0800
+X-CSE-ConnectionGUID: +dqvxwhLQ3Gvv0O2KLAyeg==
+X-CSE-MsgGUID: j4mmzRkpQkao/L9oJ5oDsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="94170928"
+Received: from p12ill20yoongsia.png.intel.com ([10.88.227.28])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Dec 2024 21:20:00 -0800
+From: Song Yoong Siang <yoong.siang.song@intel.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 1/1] selftests/bpf: Enable Tx hwtstamp in xdp_hw_metadata
+Date: Thu,  5 Dec 2024 13:19:36 +0800
+Message-Id: <20241205051936.3156307-1-yoong.siang.song@intel.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -93,39 +90,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add check for the return value of clk_enable() to catch the potential
-error.
+Currently, user needs to manually enable transmit hardware timestamp
+feature of certain Ethernet drivers, e.g. stmmac and igc drivers, through
+following command after running the xdp_hw_metadata app.
 
-Fixes: e70a540b4e02 ("pwm: Add STM32 LPTimer PWM driver")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+sudo hwstamp_ctl -i eth0 -t 1
+
+To simplify the step test of xdp_hw_metadata, set tx_type to HWTSTAMP_TX_ON
+to enable hardware timestamping for all outgoing packets, so that user no
+longer need to execute hwstamp_ctl command.
+
+Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 ---
- drivers/pwm/pwm-stm32-lp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+v1: https://patchwork.kernel.org/project/netdevbpf/patch/20241204115715.3148412-1-yoong.siang.song@intel.com/
 
-diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
-index 989731256f50..4abef304417d 100644
---- a/drivers/pwm/pwm-stm32-lp.c
-+++ b/drivers/pwm/pwm-stm32-lp.c
-@@ -163,12 +163,16 @@ static int stm32_pwm_lp_get_state(struct pwm_chip *chip,
- 	unsigned long rate = clk_get_rate(priv->clk);
- 	u32 val, presc, prd;
- 	u64 tmp;
-+	int ret;
+v1->v2 changelog:
+ - Add detail in commit msg on why HWTSTAMP_TX_ON is needed (Stanislav).
+ - Separate the patch into two, current one submit to bpf-next,
+   another one submit to bpf.
+---
+ tools/testing/selftests/bpf/xdp_hw_metadata.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/bpf/xdp_hw_metadata.c b/tools/testing/selftests/bpf/xdp_hw_metadata.c
+index 06266aad2f99..96c65500f4b4 100644
+--- a/tools/testing/selftests/bpf/xdp_hw_metadata.c
++++ b/tools/testing/selftests/bpf/xdp_hw_metadata.c
+@@ -551,6 +551,7 @@ static void hwtstamp_enable(const char *ifname)
+ {
+ 	struct hwtstamp_config cfg = {
+ 		.rx_filter = HWTSTAMP_FILTER_ALL,
++		.tx_type = HWTSTAMP_TX_ON,
+ 	};
  
- 	regmap_read(priv->regmap, STM32_LPTIM_CR, &val);
- 	state->enabled = !!FIELD_GET(STM32_LPTIM_ENABLE, val);
- 	/* Keep PWM counter clock refcount in sync with PWM initial state */
--	if (state->enabled)
--		clk_enable(priv->clk);
-+	if (state->enabled) {
-+		ret = clk_enable(priv->clk);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	regmap_read(priv->regmap, STM32_LPTIM_CFGR, &val);
- 	presc = FIELD_GET(STM32_LPTIM_PRESC, val);
+ 	hwtstamp_ioctl(SIOCGHWTSTAMP, ifname, &saved_hwtstamp_cfg);
 -- 
 2.34.1
 
