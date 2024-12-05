@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-433307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78049E5641
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:12:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8C99E5653
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:16:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654CF1882EE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7DB3284D9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F92218840;
-	Thu,  5 Dec 2024 13:12:29 +0000 (UTC)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3959218EA6;
+	Thu,  5 Dec 2024 13:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="MjPupEdG"
+Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DB9E56C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 13:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A74C1DF745
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 13:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733404349; cv=none; b=SatyLdq60mTZ4eqR94EHvcPifEm/FXqmqkkZSDKGjuqHP09XTrlMCT5ViSax74UK8jsq3esV0F/7sIQwVETxYLgfXGmjtaAlApuMoPqOfK+pPZsZG9r9PvFKwQr2rbauYiLtu8PlXnsbnUkLzad5aHYuVS+8UbQLeabK3XpidxI=
+	t=1733404588; cv=none; b=o++GwV4x0uJU9PjainjAyxGwZQU+e31gr97rO/VXVIRUBLEd+5+U9wQ8VWFTkBvZdOWZfgiEbvcXDz/q58NruEkYKsVVZDx1zKev1G4eQzdp76Q/LmZztqly+u3Tq2OJPHtIW3ZoI0ijK4XovIIbRqw1JJNDruke5wfQZONREGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733404349; c=relaxed/simple;
-	bh=nOcg4iRaymGOlbDC9XoflRZruyos6h6RydTL57ZXlzg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BzAtFirMdgHWuM1uPUJlJ2DZPeQUWPzTG8k3wIs2OdOzToQ1TTvSHPle/iOOvGgXTohSaNc2iY+csu99rL/YRWcd1LD2wuJDP4xrVDdrqOjVSnRTEbdbFhPDSkrbsq1ZlmhaAqg2AefKhUu1j2zH8st1PSNCVgXLfA9G82yDEak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b16a:6561:fa1:2b32])
-	by andre.telenet-ops.be with cmsmtp
-	id l1CR2D0053EEtj2011CRSz; Thu, 05 Dec 2024 14:12:25 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tJBea-000LQB-4j;
-	Thu, 05 Dec 2024 14:12:24 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tJBea-00EQVx-Qi;
-	Thu, 05 Dec 2024 14:12:24 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Savoir-faire Linux Inc ." <kernel@savoirfairelinux.com>,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] irqchip/ts4800: Replace seq_printf() by seq_puts()
-Date: Thu,  5 Dec 2024 14:12:23 +0100
-Message-Id: <1ba5692126804f9e1ff062ac24939b24030b4f72.1733403985.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733404588; c=relaxed/simple;
+	bh=tn4WSJdpVgE9M2OBdZCoiMZKyp3FTNFC8afvj7cJt8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JJRVj5RXWCFHJnS784Uv3PNiUhZU0scJEwM/sh7xDpUe6cVXRw4Q+/VCs49djhavDxYPuectei9TTzVDjn13HbvZxdXpHE8gFJEgdH89YWoZtL2UHsD4RWhQtceFbrVopKdPhbxqj7QEDWgVtNNNJIdG0a/HP61VvNIshXeexE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=MjPupEdG; arc=none smtp.client-ip=17.58.6.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733404584;
+	bh=DV2DLIPPHvXQjlEWI+ismKBgnjP6WxidLPVJKGZHkhg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=MjPupEdG3LXOunytThOaHzAK+bVhMpwfidC4n4MdvWKwaw8FV9EPV38plq0FTVN0C
+	 xl5AJriUjHfG5OmhTjUfel+BiaQmCJ2o11t+HqLNUWEQy+m6PrJy5nTRDH5pAAFr3F
+	 J4kdsm/wsRNS1dCZBzSVcqt6FSBCyESPY4vVf8wVpfRnxrXl+Z7US8BNL1A1OPWxLK
+	 2GRk6Q02wvLPjNllCH4Kvi6WwRClOdscINadBncjANCtZiOXEyTZMT5H3N1gTMvQCq
+	 3a3ozKHsj1VnZvyfYLPMLSg23wNQ6MfFLBXVef/l3ga5iNw4NVuLybECqVK+bdE1jb
+	 2YeT4c6Wiec4A==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id 5F7A7500292;
+	Thu,  5 Dec 2024 13:16:16 +0000 (UTC)
+Message-ID: <d4d49b0c-7766-4f06-b098-ceee54ceeefb@icloud.com>
+Date: Thu, 5 Dec 2024 21:16:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/11] driver core: Constify API device_find_child()
+ then adapt for various usages
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
+ linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
+ netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
+ <20241205-const_dfc_done-v3-4-1611f1486b5a@quicinc.com>
+ <h4pndknfwvck5yjnbs5rdmrxkqeksfxldwj4qbjqyvdzs5cjbf@i4afsjsg3obw>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <h4pndknfwvck5yjnbs5rdmrxkqeksfxldwj4qbjqyvdzs5cjbf@i4afsjsg3obw>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: LL8r5U1rSRzQLinnfL26afznvBJlVJho
+X-Proofpoint-GUID: LL8r5U1rSRzQLinnfL26afznvBJlVJho
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-05_11,2024-12-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1015
+ malwarescore=0 adultscore=0 suspectscore=0 phishscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412050096
 
-Simplify "seq_printf(p, "%s", ...)" to "seq_puts(p, ...)".
+On 2024/12/5 18:41, Uwe Kleine-König wrote:
+> On Thu, Dec 05, 2024 at 08:10:13AM +0800, Zijun Hu wrote:
+>> diff --git a/arch/sparc/kernel/vio.c b/arch/sparc/kernel/vio.c
+>> index 07933d75ac815160a2580dce39fde7653a9502e1..1a1a9d6b8f2e8dfedefafde846315a06a167fbfb 100644
+>> --- a/arch/sparc/kernel/vio.c
+>> +++ b/arch/sparc/kernel/vio.c
+>> @@ -419,13 +419,13 @@ struct vio_remove_node_data {
+>>  	u64 node;
+>>  };
+>>  
+>> -static int vio_md_node_match(struct device *dev, void *arg)
+>> +static int vio_md_node_match(struct device *dev, const void *arg)
+>>  {
+>>  	struct vio_dev *vdev = to_vio_dev(dev);
+>> -	struct vio_remove_node_data *node_data;
+>> +	const struct vio_remove_node_data *node_data;
+>>  	u64 node;
+>>  
+>> -	node_data = (struct vio_remove_node_data *)arg;
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- drivers/irqchip/irq-ts4800.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+existing code has such cast
+>> +	node_data = (const struct vio_remove_node_data *)arg;
+>
+i just follow existing code here.
 
-diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
-index cc219f28d317fed1..960c343d5781130b 100644
---- a/drivers/irqchip/irq-ts4800.c
-+++ b/drivers/irqchip/irq-ts4800.c
-@@ -52,7 +52,7 @@ static void ts4800_irq_print_chip(struct irq_data *d, struct seq_file *p)
- {
- 	struct ts4800_irq_data *data = irq_data_get_irq_chip_data(d);
- 
--	seq_printf(p, "%s", dev_name(&data->pdev->dev));
-+	seq_puts(p, dev_name(&data->pdev->dev));
- }
- 
- static const struct irq_chip ts4800_chip = {
--- 
-2.34.1
+> You can just drop the cast here. But maybe that is better be done i a
+> separate change.
+> 
+
+agree, removing such casts may be another topic.
+
+>>  	node = vio_vdev_node(node_data->hp, vdev);
+>>  
+> 
+> Best regards
+> Uwe
 
 
