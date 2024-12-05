@@ -1,70 +1,60 @@
-Return-Path: <linux-kernel+bounces-433793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415349E5D1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:28:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15BB3165CC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:28:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44405224B1D;
-	Thu,  5 Dec 2024 17:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="mc5ZDm6E"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5FE9E5D8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:43:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A84B218AAB;
-	Thu,  5 Dec 2024 17:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733419707; cv=none; b=aLqEzedcxM8++fYB+AzQVb5HXNN+hXAexYcjQkAJpaFWo+GsSdpZrRU5sqv5BLBokGVClQYcJb8iHQCBaocbZHa7en3nsJYbPUwkS+a6S8yHVoRGMStP5oVH2ujkwSM3PVt97jwthgR50J1ev058BnijrDYG3FcXbJMiPvncMY0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733419707; c=relaxed/simple;
-	bh=wPPo0g4fxDEgFUaSl2mauHZ4iYZc3o4TT1v8WNrTVAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bIKsM4zlsymNbL8piHM6UpFYX51zXbtrd4hwUC/N8zBTU5zGMPK5lyZKIjj08G2q+Y2N4WWGDzz1EUbcSxgWELTzBvdy/6iSxgRXykwZo+wx3avOkPZupqBk76zGUqoYj1zuiw2Kv39yzXHi8Jq4YiWLJPq71Y6vk4B7SbFKP0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=mc5ZDm6E; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5GwbxX008297;
-	Thu, 5 Dec 2024 17:00:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pps0720; bh=g4nBMB2P6jlcgfvUcApUSO9goh7Wa8tZE+pJS
-	hCD/4M=; b=mc5ZDm6EZbc7Y/1cvhH2BJxl553h1J96jLlZi1LIiUmWBO1hwYtMN
-	nxyzyaTq+TbvS5ORT137o9ebTvBf6hQ3kBk0OOpaB1OX29DGPDPUoyaa1PXhfKYV
-	A10HTKsL113tRRnJ2JHaLukk0bCcnqvFziT5A4JB6yUD6J/+HEPjw1iJXJUFDmcd
-	1Ayv6f2H6wKenuJEtgWJgWuXmSnUdaraOYO6tEKKCekyvoOQbX6gGkvBsF35jVik
-	moGEWyLhoT6NDkjNSzdHWa30pGcJhKAO6cBgJ+D6vhjKfUc89TG66UPT7o68mdhl
-	6rPMjTiK7/2B6mvH7W7PhtWb4spjowWPw==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 43bg5m80x7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 17:00:51 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6916128548A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:43:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F50224B04;
+	Thu,  5 Dec 2024 17:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="UoKgMQCK"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 1F309806B7C;
-	Thu,  5 Dec 2024 17:00:51 +0000 (UTC)
-Received: from cat.eag.rdlabs.hpecorp.net (unknown [16.231.227.39])
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTP id C767281298D;
-	Thu,  5 Dec 2024 17:00:50 +0000 (UTC)
-Received: by cat.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-	id C4F0AB490D; Thu,  5 Dec 2024 11:00:49 -0600 (CST)
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: tony.luck@intel.com, bp@alien8.de, james.morse@arm.com, mchehab@kernel.org,
-        rric@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
-Date: Thu,  5 Dec 2024 10:59:54 -0600
-Message-Id: <20241205165954.7957-1-kyle.meyer@hpe.com>
-X-Mailer: git-send-email 2.35.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D112EB1F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733420627; cv=none; b=ZuFGqIAwqZnRnrKrqtDKlvnf04r78gFcidRQU+pWSCnHjHB+84mXYp+HqRJz5KvAlmgLZL/Fn80irkSjWhZVQJ5MIQZ4hZ6FAZoPt35nlyJFr+AOtNbB8FTSERCLe5g+aDWn0kdM9w6frNaF/vdVCjq1qxcoJ3kWM+yJlfdzz2U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733420627; c=relaxed/simple;
+	bh=77dDWmhz9+vNNVwfh+cDg6E6bZYQGGhWOkzcSD89/no=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZmCaZClPeiZBpEKlMG2BLEbZVy5DvwzJCnONoOIgU2G5YdqAxAyNlLIT4dLweuomg445xml/K/fiXCvsnLETFO0gcZn4QrvpBOfDKcyKXmc/p5k0otcwoTwObsyHLO9WHDgNC3r7k0RHoAsxVpyZhAHISyZli2JZ6halM9s+akY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=UoKgMQCK; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20241205170322a7db41e085103b262e
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 05 Dec 2024 18:03:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=ziJSG6ctVi3hXuBtO97gjLaanzOcTvctskZW8qKtFqg=;
+ b=UoKgMQCK3OZnoNoxk1GJ3f5UMqi0wKd5Hgy8yFKdTqcvOeGom2RqUa9OhYb9YHhH/JYK8J
+ Ylhg5cCoSgtYoEnn/xC0Ucs+AEliU14rPmumoJizbabCyteDhx0FzLQSYs+e6c7gjNsEkhwi
+ KqiGfTN21mGjeUOVzBT6RzWxDCjjfbld3kIZ60KCZX1HGfqwb6Ymou+DamEhygZHCPk+gv+b
+ QpkNSXuTBD2ijFCTQZbgPLh8s5h9q/7vmrHAKm70ggGDrZz3Ie3NMklk/bL0sXIe3WqbqkR3
+ g1LQdlHHlrfBNtYT4yi5sRggJT5SsfAYJjG3rhWgOenG1K+U26ggMYwg==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: Marco Elver <elver@google.com>,
+	linux-kernel@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Adrian Freihofer <adrian.freihofer@siemens.com>
+Subject: [PATCH] locking/spinlock/debug: Fix data-race in do_raw_write_lock
+Date: Thu,  5 Dec 2024 18:01:29 +0100
+Message-ID: <20241205170143.4105094-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,234 +62,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: i_NFms050yxzQ7EyI385ecErI3lOcPz9
-X-Proofpoint-ORIG-GUID: i_NFms050yxzQ7EyI385ecErI3lOcPz9
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 spamscore=0
- malwarescore=0 adultscore=0 mlxscore=0 impostorscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050124
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-The 3-bit source IDs in PCI configuration space registers are limited to
-8 unique IDs, and each ID is local to a clump (UPI/QPI domain).
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Source IDs can not be used to map devices to sockets on systems with
-multiple clumps because each clump has identical repeating source IDs.
+KCSAN reports:
 
-Get package IDs instead of source IDs on systems with multiple clumps
-and use package/source IDs to name IMC information structures.
+BUG: KCSAN: data-race in do_raw_write_lock / do_raw_write_lock
 
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+write (marked) to 0xffff800009cf504c of 4 bytes by task 1102 on cpu 1:
+ do_raw_write_lock+0x120/0x204
+ _raw_write_lock_irq
+ do_exit
+ call_usermodehelper_exec_async
+ ret_from_fork
+
+read to 0xffff800009cf504c of 4 bytes by task 1103 on cpu 0:
+ do_raw_write_lock+0x88/0x204
+ _raw_write_lock_irq
+ do_exit
+ call_usermodehelper_exec_async
+ ret_from_fork
+
+value changed: 0xffffffff -> 0x00000001
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 1103 Comm: kworker/u4:1 6.1.111
+
+Commit 1a365e822372 ("locking/spinlock/debug: Fix various data races") has
+adressed most of these races, but seems to be not consistent/not complete.
+
+From do_raw_write_lock() only debug_write_lock_after() part has been
+converted to WRITE_ONCE(), but not debug_write_lock_before() part.
+Do it now.
+
+Fixes: 1a365e822372 ("locking/spinlock/debug: Fix various data races")
+Reported-by: Adrian Freihofer <adrian.freihofer@siemens.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 ---
- drivers/edac/i10nm_base.c | 21 +++++++++-------
- drivers/edac/skx_base.c   | 19 ++++++++------
- drivers/edac/skx_common.c | 52 +++++++++++++++++++++++++++++++++------
- drivers/edac/skx_common.h |  5 ++--
- 4 files changed, 71 insertions(+), 26 deletions(-)
+There are still some inconsistencies remaining IMO:
+- lock->magic is sometimes accessed with READ_ONCE() even though it's only
+being plain-written;
+- debug_spin_unlock() and debug_write_unlock() both do WRITE_ONCE() on
+lock->owner and lock->owner_cpu, but examine them with plain read accesses.
 
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
-index 51556c72a967..59384677d025 100644
---- a/drivers/edac/i10nm_base.c
-+++ b/drivers/edac/i10nm_base.c
-@@ -1010,7 +1010,7 @@ static struct notifier_block i10nm_mce_dec = {
- 
- static int __init i10nm_init(void)
+ kernel/locking/spinlock_debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
+index 87b03d2e41dbb..2338b3adfb55f 100644
+--- a/kernel/locking/spinlock_debug.c
++++ b/kernel/locking/spinlock_debug.c
+@@ -184,8 +184,8 @@ void do_raw_read_unlock(rwlock_t *lock)
+ static inline void debug_write_lock_before(rwlock_t *lock)
  {
--	u8 mc = 0, src_id = 0, node_id = 0;
-+	u8 mc = 0, src_id = 0;
- 	const struct x86_cpu_id *id;
- 	struct res_config *cfg;
- 	const char *owner;
-@@ -1018,6 +1018,7 @@ static int __init i10nm_init(void)
- 	int rc, i, off[3] = {0xd0, 0xc8, 0xcc};
- 	u64 tolm, tohm;
- 	int imc_num;
-+	int dup_src_ids = 0;
- 
- 	edac_dbg(2, "\n");
- 
-@@ -1065,24 +1066,26 @@ static int __init i10nm_init(void)
- 
- 	imc_num = res_cfg->ddr_imc_num + res_cfg->hbm_imc_num;
- 
--	list_for_each_entry(d, i10nm_edac_list, list) {
--		rc = skx_get_src_id(d, 0xf8, &src_id);
--		if (rc < 0)
--			goto fail;
-+	rc = dup_src_ids = skx_check_dup_src_ids(0xf8);
-+	if (rc < 0)
-+		goto fail;
- 
--		rc = skx_get_node_id(d, &node_id);
-+	list_for_each_entry(d, i10nm_edac_list, list) {
-+		if (dup_src_ids)
-+			rc = skx_get_pkg_id(d, &src_id);
-+		else
-+			rc = skx_get_src_id(d, 0xf8, &src_id);
- 		if (rc < 0)
- 			goto fail;
- 
--		edac_dbg(2, "src_id = %d node_id = %d\n", src_id, node_id);
-+		edac_dbg(2, "src_id = %d\n", src_id);
- 		for (i = 0; i < imc_num; i++) {
- 			if (!d->imc[i].mdev)
- 				continue;
- 
- 			d->imc[i].mc  = mc++;
- 			d->imc[i].lmc = i;
--			d->imc[i].src_id  = src_id;
--			d->imc[i].node_id = node_id;
-+			d->imc[i].src_id = src_id;
- 			if (d->imc[i].hbm_mc) {
- 				d->imc[i].chan_mmio_sz = cfg->hbm_chan_mmio_sz;
- 				d->imc[i].num_channels = cfg->hbm_chan_num;
-diff --git a/drivers/edac/skx_base.c b/drivers/edac/skx_base.c
-index 14cfd394b469..189b8c5a1bda 100644
---- a/drivers/edac/skx_base.c
-+++ b/drivers/edac/skx_base.c
-@@ -600,8 +600,9 @@ static int __init skx_init(void)
- 	const struct munit *m;
- 	const char *owner;
- 	int rc = 0, i, off[3] = {0xd0, 0xd4, 0xd8};
--	u8 mc = 0, src_id, node_id;
-+	u8 mc = 0, src_id;
- 	struct skx_dev *d;
-+	int dup_src_ids = 0;
- 
- 	edac_dbg(2, "\n");
- 
-@@ -646,19 +647,23 @@ static int __init skx_init(void)
- 		}
- 	}
- 
-+	rc = dup_src_ids = skx_check_dup_src_ids(0xf0);
-+	if (rc < 0)
-+		goto fail;
-+
- 	list_for_each_entry(d, skx_edac_list, list) {
--		rc = skx_get_src_id(d, 0xf0, &src_id);
--		if (rc < 0)
--			goto fail;
--		rc = skx_get_node_id(d, &node_id);
-+		if (dup_src_ids)
-+			rc = skx_get_pkg_id(d, &src_id);
-+		else
-+			rc = skx_get_src_id(d, 0xf0, &src_id);
- 		if (rc < 0)
- 			goto fail;
--		edac_dbg(2, "src_id=%d node_id=%d\n", src_id, node_id);
-+
-+		edac_dbg(2, "src_id = %d\n", src_id);
- 		for (i = 0; i < SKX_NUM_IMC; i++) {
- 			d->imc[i].mc = mc++;
- 			d->imc[i].lmc = i;
- 			d->imc[i].src_id = src_id;
--			d->imc[i].node_id = node_id;
- 			rc = skx_register_mci(&d->imc[i], d->imc[i].chan[0].cdev,
- 					      "Skylake Socket", EDAC_MOD_STR,
- 					      skx_get_dimm_config, cfg);
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index 6cf17af7d911..56fec7310f40 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -235,19 +235,55 @@ int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
+ 	RWLOCK_BUG_ON(lock->magic != RWLOCK_MAGIC, lock, "bad magic");
+-	RWLOCK_BUG_ON(lock->owner == current, lock, "recursion");
+-	RWLOCK_BUG_ON(lock->owner_cpu == raw_smp_processor_id(),
++	RWLOCK_BUG_ON(READ_ONCE(lock->owner) == current, lock, "recursion");
++	RWLOCK_BUG_ON(READ_ONCE(lock->owner_cpu) == raw_smp_processor_id(),
+ 							lock, "cpu recursion");
  }
- EXPORT_SYMBOL_GPL(skx_get_src_id);
- 
--int skx_get_node_id(struct skx_dev *d, u8 *id)
-+int skx_check_dup_src_ids(int off)
- {
--	u32 reg;
-+	u8 id;
-+	struct skx_dev *d;
-+	int rc;
-+	DECLARE_BITMAP(id_map, 8);
- 
--	if (pci_read_config_dword(d->util_all, 0xf4, &reg)) {
--		skx_printk(KERN_ERR, "Failed to read node id\n");
--		return -ENODEV;
-+	bitmap_zero(id_map, 8);
-+
-+	/*
-+	 * The 3-bit source IDs in PCI configuration space registers are limited
-+	 * to 8 unique IDs, and each ID is local to a clump (UPI/QPI domain).
-+	 */
-+	list_for_each_entry(d, &dev_edac_list, list) {
-+		rc = skx_get_src_id(d, off, &id);
-+		if (rc < 0)
-+			return rc;
-+
-+		if (test_bit(id, id_map))
-+			return 1;
-+
-+		set_bit(id, id_map);
- 	}
- 
--	*id = GET_BITFIELD(reg, 0, 2);
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(skx_get_node_id);
-+EXPORT_SYMBOL_GPL(skx_check_dup_src_ids);
-+
-+int skx_get_pkg_id(struct skx_dev *d, u8 *id)
-+{
-+	int node;
-+	int cpu;
-+
-+	node = pcibus_to_node(d->util_all->bus);
-+	if (numa_valid_node(node)) {
-+		for_each_cpu(cpu, cpumask_of_pcibus(d->util_all->bus)) {
-+			struct cpuinfo_x86 *c = &cpu_data(cpu);
-+
-+			if (c->initialized && cpu_to_node(cpu) == node) {
-+				*id = c->topo.pkg_id;
-+				return 0;
-+			}
-+		}
-+	}
-+
-+	skx_printk(KERN_ERR, "Failed to get package ID from NUMA information\n");
-+	return -ENODEV;
-+}
-+EXPORT_SYMBOL_GPL(skx_get_pkg_id);
- 
- static int get_width(u32 mtr)
- {
-@@ -507,7 +543,7 @@ int skx_register_mci(struct skx_imc *imc, struct pci_dev *pdev,
- 	pvt->imc = imc;
- 
- 	mci->ctl_name = kasprintf(GFP_KERNEL, "%s#%d IMC#%d", ctl_name,
--				  imc->node_id, imc->lmc);
-+				  imc->src_id, imc->lmc);
- 	if (!mci->ctl_name) {
- 		rc = -ENOMEM;
- 		goto fail0;
-diff --git a/drivers/edac/skx_common.h b/drivers/edac/skx_common.h
-index 54bba8a62f72..0f06d45c9b3e 100644
---- a/drivers/edac/skx_common.h
-+++ b/drivers/edac/skx_common.h
-@@ -103,7 +103,7 @@ struct skx_dev {
- 		bool hbm_mc;
- 		u8 mc;	/* system wide mc# */
- 		u8 lmc;	/* socket relative mc# */
--		u8 src_id, node_id;
-+		u8 src_id;
- 		struct skx_channel {
- 			struct pci_dev	*cdev;
- 			struct pci_dev	*edev;
-@@ -244,7 +244,8 @@ void skx_set_mem_cfg(bool mem_cfg_2lm);
- void skx_set_res_cfg(struct res_config *cfg);
- 
- int skx_get_src_id(struct skx_dev *d, int off, u8 *id);
--int skx_get_node_id(struct skx_dev *d, u8 *id);
-+int skx_check_dup_src_ids(int off);
-+int skx_get_pkg_id(struct skx_dev *d, u8 *id);
- 
- int skx_get_all_bus_mappings(struct res_config *cfg, struct list_head **list);
  
 -- 
 2.47.1
