@@ -1,103 +1,105 @@
-Return-Path: <linux-kernel+bounces-432732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DC69E4F88
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:16:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEC29E4F8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:17:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4FF286CE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB623162A7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C351B2186;
-	Thu,  5 Dec 2024 08:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9925C1D2785;
+	Thu,  5 Dec 2024 08:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIKVnjdg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L61V3IR+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687482391BC;
-	Thu,  5 Dec 2024 08:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A492391BC;
+	Thu,  5 Dec 2024 08:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733386612; cv=none; b=p3nJedMZnqEyvqm1z7JdrWLy7M/lkVPJTuMCZVkfwgv9Vx+POVDBuz8sD8i0IfsqRxxOycmxZtBTTu12v3R7MgosQzTXBUdGXxoP53SaxqfOkLWWEAwM8SuezPefAvUiD8oyeHYOWGRabLsuWeJY+Z3cvm4SwhTdBJ0o8Q2gm2I=
+	t=1733386647; cv=none; b=g/cHNNhliLdYgA6QwO9Pzp/skoUft1pwIzQC956RJJTW9iiRsYhBlS9AcLf99llCVEsm0iLzCCLLnYlYrnYT0UaD4aqH7AzRaq04P8ThzVHrRaelKYbKkpakxx8bTY1+FKbLD4X7/g2MP9ZlOhKIU7MoaPpZFfeI/ug1wf4JuXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733386612; c=relaxed/simple;
-	bh=v5YMVBLFaNQyG3N8yGkbXOj72cn8bq1dBgHNk+/bZkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oDpeUqk0GBT3ocochk9WJhgnTRomsdscEr3w/O0M9zK+BGe0OmUXIsV6ZU37qGSakvUIvZbBuVtuqtz2GsTO7j6X4H8SRT7YFNLQtQIHC+w0nd5Fa5LLR9jpc8xMxKqxKUu2JqZCy9hSKILI5bEZnaAHgXQJ8/ryTuUMhmwG4K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIKVnjdg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BDCBC4CED1;
-	Thu,  5 Dec 2024 08:16:51 +0000 (UTC)
+	s=arc-20240116; t=1733386647; c=relaxed/simple;
+	bh=ni+p7YrZWyil+4dN5QnPHPpHckV7kcNYl1xVZiVxSvo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Q7qylyd6f026VB7W8t0LbhIgdG/1AIVALLZ36VaRyoSjqQsQSX/7Uhfmz3ZBGvsDh7viUM2sHsDpcTCZBttidwpPPUOPhqiCxhYiagVFPYnxN+Bf6LWrROPAyD2tmwN7Je9u4U2UgM3Nvdd13dMM7iRb5oynEKepia7NwxECUzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L61V3IR+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47AA5C4CED1;
+	Thu,  5 Dec 2024 08:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733386612;
-	bh=v5YMVBLFaNQyG3N8yGkbXOj72cn8bq1dBgHNk+/bZkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AIKVnjdgpYOAF4L/6FlAtcAhJFHh4xev7UfxqA2l+ZnfHiqERX+6EzaroIgUXXCpU
-	 Dua6HfKGySb7XskcQ8aLXSe2HsTJWmL1JhBadbTlhsH4xyADdIzeS3CcvZq3kKGdMt
-	 f9ajM0l9i42fm5iQrRT1UI31re78agJ6VtmKlKw4qAZNzdTiIQSnF21wK9TSoXr2gd
-	 lBmmQ6rhA67MZfxWmIaFiw+S3pP7xk6T/kMPRYw4Y+WDzEi2lSMMV7qvcy7q4HgWLc
-	 4vC75sqN1clPjRixrDBcO+9ZtGPtFYySgGJhgpQeMYGlYrAjj9NgnzLC7XIMLIRipk
-	 HNeCNmNKMhyOg==
-Date: Thu, 5 Dec 2024 09:16:49 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	James Cowgill <james.cowgill@blaize.com>, Matt Redfearn <matt.redfearn@blaize.com>, 
-	Neil Jones <neil.jones@blaize.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev
-Subject: Re: [PATCH v5 6/6] MAINTAINER: Add entry for Blaize SoC
-Message-ID: <h5awakp52e6pxnnfrclhtlhhs3i66twvmqwlf5vmnfwk2xhbwr@marp6wti72ti>
-References: <20241204-blaize-blzp1600_init_board_support-v5-0-b642bcc49307@blaize.com>
- <20241204-blaize-blzp1600_init_board_support-v5-6-b642bcc49307@blaize.com>
+	s=k20201202; t=1733386646;
+	bh=ni+p7YrZWyil+4dN5QnPHPpHckV7kcNYl1xVZiVxSvo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=L61V3IR+SxQz6YJuQbV+OFHLfzXVf65wr1piDng2DNpemcjcOYvfwaY8eiERFSUYH
+	 qxpUX4HLlArJOqsJDurHU5AL2aSX42hkSEPk50Ikrb9Fu280RzH5p1ChoD7JU0R82O
+	 Y3i8FLvuUuLHJcSZWEyT47xe2JVARA1VZHxSIwTFbWofM58IyQmU/u2tYHJlUxongj
+	 yc3X7UoT42WoR4ZVA752nyGrZo166MyqECgSNdkU11D+m3eJq8kvKd10yH0vSER0OV
+	 Aw/LmvJEmBGGu9rL4HHilm73mhM1TkunO+tJUhk/Dvd0cIbUM2dYHlUbyscy9K/3mr
+	 KHG6gbrB/UBTQ==
+Date: Thu, 05 Dec 2024 02:17:24 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241204-blaize-blzp1600_init_board_support-v5-6-b642bcc49307@blaize.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: davem@davemloft.net, andrew+netdev@lunn.ch, netdev@vger.kernel.org, 
+ pabeni@redhat.com, kuba@kernel.org, conor+dt@kernel.org, 
+ p.zabel@pengutronix.de, linux-kernel@vger.kernel.org, krzk+dt@kernel.org, 
+ edumazet@google.com, devicetree@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+In-Reply-To: <20241205072048.1397570-2-jacky_chou@aspeedtech.com>
+References: <20241205072048.1397570-1-jacky_chou@aspeedtech.com>
+ <20241205072048.1397570-2-jacky_chou@aspeedtech.com>
+Message-Id: <173338664470.2288815.2371095841901159008.robh@kernel.org>
+Subject: Re: [PATCH net-next v4 1/7] dt-bindings: net: ftgmac100: support
+ for AST2700
 
-On Wed, Dec 04, 2024 at 04:05:29PM +0000, Nikolaos Pasaloukos wrote:
-> Add MAINTAINERS entry for Blaize SoC platform with a list of
-> maintainers.
+
+On Thu, 05 Dec 2024 15:20:42 +0800, Jacky Chou wrote:
+> The AST2700 is the 7th generation SoC from Aspeed.
+> Add compatible support and resets property for AST2700 in
+> yaml.
 > 
-> Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  MAINTAINERS | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  .../bindings/net/faraday,ftgmac100.yaml         | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 273a84483b74543b510de7b08804bbd1f6514358..43846a23f9d990ae9fe066e65ed2bdd36376e327 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2238,6 +2238,15 @@ F:	arch/arm64/boot/dts/bitmain/
->  F:	drivers/clk/clk-bm1880.c
->  F:	drivers/pinctrl/pinctrl-bm1880.c
->  
-> +ARM/BLAIZE ARCHITECTURE
-> +M:	James Cowgill <james.cowgill@blaize.com>
-> +M:	Matt Redfearn <matt.redfearn@blaize.com>
-> +M:	Neil Jones <neil.jones@blaize.com>
-> +M:	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
 
-Just to be clear: this is list of active maintainers, so all above are
-supposed to perform reviews or maintainer duties. This is not
-credits/managers/I-need-to-please-someone list.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-With the assumption these are active maintainers:
+yamllint warnings/errors:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml: then:properties:resets: {'maxItems': 1, 'items': [{'description': 'MAC IP reset for AST2700'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
 
-They should also ack it to confirm they understand the burden.
+doc reference errors (make refcheckdocs):
 
-Best regards,
-Krzysztof
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241205072048.1397570-2-jacky_chou@aspeedtech.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
