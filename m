@@ -1,105 +1,139 @@
-Return-Path: <linux-kernel+bounces-433292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1409E5610
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:00:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D92B9E5353
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:06:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E22288119
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95911684B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EB921A42D;
-	Thu,  5 Dec 2024 12:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C962F1DD0E7;
+	Thu,  5 Dec 2024 11:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TgWTzXUW"
-Received: from mail-m12796.qiye.163.com (mail-m12796.qiye.163.com [115.236.127.96])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="KViapaAx"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC74F218ACA;
-	Thu,  5 Dec 2024 12:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.96
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733403542; cv=none; b=OSMG8A50eaR3AZmojf3EhB2LVqeQgmro3YJvoHehD8diwDMmL+VaG6m6BAq8zonyUF6oHtJvVqllfzp6AHcTowf9EL/0MZdCoKIqJnOx8xapNWzKHlECuP8Uews+gYSlSO36/x1HrItebMT/G4fnomuDyb2i8a+zvQpAOv2/G7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733403542; c=relaxed/simple;
-	bh=sDabB6yRsc/ZhrL31a5xwV72EldOXfsBu6FBgKi9BuI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SYgyEolytz4/TOsvCpJlbDN76wwt1WGaNNi+IqLouNDhZBjJGpuZhsRmsH+1r+9Tbe2gek/GqEvG21a8IPhIUbYWeWmhAMKrZAK3AfN4ZPNLRAs5hXUCpp2NJMQdrXixaZZu2/zt8waVvNNxYoIXk0k+tnIp3A9wzH5Nf5/RAI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TgWTzXUW; arc=none smtp.client-ip=115.236.127.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4cf7c984;
-	Thu, 5 Dec 2024 18:36:34 +0800 (GMT+08:00)
-From: Kever Yang <kever.yang@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Andy Yan <andyshrk@163.com>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Tim Lunn <tim@feathertop.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] dt-bindings: arm: rockchip: Add rk3576 evb1 board
-Date: Thu,  5 Dec 2024 18:36:22 +0800
-Message-Id: <20241205103623.878181-6-kever.yang@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241205103623.878181-1-kever.yang@rock-chips.com>
-References: <20241205103623.878181-1-kever.yang@rock-chips.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29561DED74;
+	Thu,  5 Dec 2024 11:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733396769; cv=pass; b=tsB8VrJMKV9A0L7QB/6eAofmZTJcisFLUMcP7NZzB0QLCxmZtWvKaUbcfpy5ZpAXBjHj9ZJe/JGdGkgwhua4Dc6X1E3bCrpQ7cAoO3wAcMK6148pcIGTKl49RCDpQw9L+1kaNod/Caym9J+awtQk730NiJVaRT42f7jiVeCiNjA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733396769; c=relaxed/simple;
+	bh=IXx/oU+QcESCCwz770HGNR30hBuagnf5VX8nXcXOBsA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rCs7IxUWOP6AiCrKpz5FdznsFdgWB8iUj2HSsRNiVzc2uzdH8+nl7nMd+Y4fQV0nDR6ThHMiT2uYSQPkKBsAfnLkaz+hPSzAXezZrnjfjtlBjJIsKuh08QdueyYypQ38aLY8QCyCK8+RfRoeC4u1j3r/wz4q+5ZyFzvQfPsnuhI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=KViapaAx; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733396726; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=e/vvx+4EI8ma1BqbazfaFXL8muTv2shgaw+WCATmI7u8+rcK3p41W3vImhjdE1OODgg0JjAagt8Ry3pzJ4/xaQNBAJkEIBnav+Au2+uXlpxsz3061TbbmMOJPWR75xRBAUuxl++e7YWsixodTPrZx8fCedbap3eRCS2+vJYERY8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733396726; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zyAQUEXTKqnKv3dXt1Tbhihbg4GZs6imcvRqEyArecE=; 
+	b=bHHa72zpMklvKcM3dcP5notYVE93V4rZ5b9rWHggWvD/DfUSzquLsVaHmk3j6imTNCmvoZw7tpdt/v8MnlGZl0DSFzBveRDl3MUs5rE3MTW1iyWwdGb6p4V2CRMxsjCDqE5kfZb37kPECpvEWsg9iri/eZkX6hrb39zQSUEqATA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733396726;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=zyAQUEXTKqnKv3dXt1Tbhihbg4GZs6imcvRqEyArecE=;
+	b=KViapaAxeZVaR1STt2JJlmbet0YIJmzL0Y+g9YAgsvXnMPwoQ8x+57+6hr34OnLr
+	bHNW1ThI9r6pRkmSQ0c1UERX0JYErc6559/xvMFeauhFLd3lzyK4A9EUVNGDj/Vt2jp
+	IaJycDKDwUDfdP6j9A+mKJiHlyz7I5ankDVq5TJQ=
+Received: by mx.zohomail.com with SMTPS id 1733396724917488.63465424619517;
+	Thu, 5 Dec 2024 03:05:24 -0800 (PST)
+Message-ID: <f27909d7-345b-4375-aa76-06eaa012b2a0@collabora.com>
+Date: Thu, 5 Dec 2024 16:05:23 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkwZSlYZSkgZHh1LHU4dTEJWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93966493a703afkunm4cf7c984
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MQw6Cjo5NDIhCQ1PHyMvCxov
-	Q0oaFElVSlVKTEhISEJPQkJOT09MVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFCSks3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=TgWTzXUWw2q2NR1exdJuZumgkZ5NCMH3DmjXnsIeD1vSiO+bRplQxnzbj4Xye0Ab0ww/JQx6xD8H/IovZDX17PhM21YM+wj7UDiELScbGeZ7oOOJ6QZKQVPdsnBjKrIoiw8wYWMKeg3YZq4S+Ww0JqXctphCF4VqS1/sDzGQuRM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=NGkIEb4D9Pp+P1b6BLNVuyfPuE9svwhu6wtxLA9nH2s=;
-	h=date:mime-version:subject:message-id:from;
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.11 000/817] 6.11.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241203143955.605130076@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Add device tree documentation for rk3576-evb1-v10.
+On 12/3/24 7:32 PM, Greg Kroah-Hartman wrote:
+> -----------
+> Note, this is will probably be the last 6.11.y kernel to be released.
+> Please move to the 6.12.y branch at this time.
+> -----------
+> 
+> This is the start of the stable review cycle for the 6.11.11 release.
+> There are 817 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 05 Dec 2024 14:36:47 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
----
+OVERVIEW
 
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+        Builds: 14 passed, 0 failed
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 45ee4bf7c80c..b2681a45867b 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -1016,6 +1016,11 @@ properties:
-           - const: rockchip,rk3568-evb1-v10
-           - const: rockchip,rk3568
- 
-+      - description: Rockchip RK3576 Evaluation board
-+        items:
-+          - const: rockchip,rk3576-evb1-v10
-+          - const: rockchip,rk3576
-+
-       - description: Rockchip RK3588 Evaluation board
-         items:
-           - const: rockchip,rk3588-evb1-v10
--- 
-2.25.1
+    Boot tests: 0 passed, 0 failed
 
+    CI systems: broonie
+
+REVISION
+
+    Commit
+        name: v6.11.10-818-g57f39ce086c9
+        hash: 57f39ce086c9b727df2d92ea7ab7cc80e89d7ed2
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+
+
+BUILDS
+
+    No build failures found
+
+
+BOOT TESTS
+
+    No boot failures found
+
+See complete and up-to-date report at:
+
+    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=57f39ce086c9b727df2d92ea7ab7cc80e89d7ed2&var-patchset_hash=
+
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
