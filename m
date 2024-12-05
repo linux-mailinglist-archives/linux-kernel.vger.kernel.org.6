@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-433804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1219E5D40
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:35:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3CDE16264B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:35:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7952E225785;
-	Thu,  5 Dec 2024 17:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HwxXKHoA"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656E79E5D4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:35:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A6C21A42B;
-	Thu,  5 Dec 2024 17:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197B028260D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:35:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0868B226EF3;
+	Thu,  5 Dec 2024 17:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="osaoXBUG"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB4F225768;
+	Thu,  5 Dec 2024 17:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420110; cv=none; b=X8qE5gCYVKfAy/lcjrUI+HxBisAcUn3xnW3vlTnG2pWQhflRU8kZ0wEIDeFrowqhOglfmiMOA9XYPVu4bd7H1CGdiwSjWO21qasHnfbZfPuqX47PeCYKv5ZuCzzmd6qHLkcPU+1EP7UnSu0vumqrsme5LQSiSvJ4pb+e9gtJNto=
+	t=1733420142; cv=none; b=ci2GCWyaYkgimgLXLfrR+Ysn7Da/L8j3RfUNyzjNHk4cqRZliGmYl+C6ZpAD8bI1wplHUFhJUt3/bvyMjr3rBpYHazPFPeU+LCEm8hBfHvyIfTe/C36DVkSy2YeNwQXmU1cyVhOoGsIKOad60505eTDbSkQN3TIvGDwf0JjIuSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420110; c=relaxed/simple;
-	bh=WQlqs2b3gZl3ijVpbkx65Dbf+b3YV9hOMw6FMzNRzgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJOQ5Ool1nCb68nSeZ5j79DJpxVMWEG6ZcKZNbJyrabdoXcJIcFwGeDAtAJIPhs/qVXAihpTxn/lkZDiiloIZBklxqrpPIU2yFQ9TSePGbRB7WT2O40XtJ+S5xhqRTFod2lHq7zRtTQKeQiS2brcKaTofDHUvu5+D7wtE8gUpTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HwxXKHoA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 69D762B3;
-	Thu,  5 Dec 2024 18:34:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733420076;
-	bh=WQlqs2b3gZl3ijVpbkx65Dbf+b3YV9hOMw6FMzNRzgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HwxXKHoA0W9slXiSRGl9gxsQ5iE6RURj3g8O/5xRzQf8G9ONWEojrYL9F/Hu/8ENF
-	 TY7+GZUP0Ko9zxewaSg4d5BMTZxVJ6YzUO91Qf5Xzj09CbWKWTnhxJqMv77YcPdnZB
-	 jHpTeH3QNsGTCpJf54wqRxMeyA8R8q4KIeTy0Z/g=
-Date: Thu, 5 Dec 2024 19:34:52 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v2 02/10] drm/rcar-du: Write DPTSR only if there are more
- than one crtc
-Message-ID: <20241205173452.GA21014@pendragon.ideasonboard.com>
-References: <20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com>
- <20241205-rcar-gh-dsi-v2-2-42471851df86@ideasonboard.com>
- <CAMuHMdVHRWbeQ8UF-xsKuxUNwHc5_kVwSgrTfOkwFFG5vG7fwA@mail.gmail.com>
- <98b43276-2a68-4ba9-999a-c738b8f7654f@ideasonboard.com>
+	s=arc-20240116; t=1733420142; c=relaxed/simple;
+	bh=68WNMR27/Jh6Vy7PvAle7AaTWkBct2qgXVk12kHAaEY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uvRMqxu1HUONNWwKW4NyzS7TRNa+H0XEX5Npy4RYuLunN3PrL/DeRdd3UOrw3SXeen9rH4TFczpfiAW/9kbuvi2P97uC/6mfzobj9Gc03qtzp0729UUpG4sgr6p8WO8aSig8bTGIp580nF7VFg6MvNNORkaYT6+Rg7jzLPZauME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=osaoXBUG; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733420137;
+	bh=68WNMR27/Jh6Vy7PvAle7AaTWkBct2qgXVk12kHAaEY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=osaoXBUGfRb46luXfjCGTPlnbK7q0cEYSDeeHPKe6F5/8fT1bXolzVbZEr743sp7n
+	 OYCOlxC/xSo+G3OjW0YG7pLTN295Pga9v2NcIMjRFaP+ZC6R3UrV8BOWJePkDk1HGc
+	 yOQXl/blyJageLhTjzhHwYNhUOVSru+iMXlM/kHE=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/4] sysfs: constify bin_attribute argument of
+ sysfs_bin_attr_simple_read()
+Date: Thu, 05 Dec 2024 18:35:12 +0100
+Message-Id: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <98b43276-2a68-4ba9-999a-c738b8f7654f@ideasonboard.com>
+X-B4-Tracking: v=1; b=H4sIAFDkUWcC/x3MwQpAQBAA0F/RnE3ZSSm/IondWaZY2tlE8u82x
+ 3d5DyhHYYW2eCDyKSp7yDBlAXYZw8woLhuootoYItRbvaLdgyacJAxjShFVtmNlbGzl3ETeekO
+ QhyOyl+vfu/59P/HJDYRtAAAA
+X-Change-ID: 20241122-sysfs-const-bin_attr-simple-7c0ddb2fcf12
+To: Michael Ellerman <mpe@ellerman.id.au>, 
+ Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+ Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Armin Wolf <W_Armin@gmx.de>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-modules@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ bpf@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733420137; l=1170;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=68WNMR27/Jh6Vy7PvAle7AaTWkBct2qgXVk12kHAaEY=;
+ b=T+PbqYnqnoXWLbF5FULrGKTEWzZ8sXpbVXoqId9h5bVMynN1gxzdjACjy9czZW5+/hfIaiOMY
+ 927yDeHmNmiBbYl7QYj+NHuMWTZRXQl9ozjUUHoyQqHpqA28sdx295H
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Thu, Dec 05, 2024 at 06:08:24PM +0200, Tomi Valkeinen wrote:
-> On 05/12/2024 16:16, Geert Uytterhoeven wrote:
-> > Hi Tomi,
-> > 
-> > CC Jacopo
-> > 
-> > On Thu, Dec 5, 2024 at 2:45 PM Tomi Valkeinen wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Currently the driver always writes DPTSR when setting up the hardware.
-> >> However, the register is only meaningful when there are more than one
-> >> crtc, and the only SoC with one crtc, V3M, does not have the register
-> >> mentioned in its documentation.
-> > 
-> > R-Car V3H/V3H_2, too.
-> 
-> Right... I was looking at the number of outputs, not the number of crtcs 
-> when going through the SoCs.
-> 
-> >> So move the write behind a condition.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >> ---
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 12 +++++++-----
-> >>   1 file changed, 7 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> index 2ccd2581f544..0fbf6abbde6e 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> @@ -185,11 +185,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> >>                  dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
-> >>          rcar_du_group_write(rgrp, DORCR, dorcr);
-> >>
-> >> -       /* Apply planes to CRTCs association. */
-> >> -       mutex_lock(&rgrp->lock);
-> >> -       rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> -                           rgrp->dptsr_planes);
-> >> -       mutex_unlock(&rgrp->lock);
-> >> +       if (rgrp->num_crtcs > 1) {
-> >> +               /* Apply planes to CRTCs association. */
-> >> +               mutex_lock(&rgrp->lock);
-> >> +               rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> +                                   rgrp->dptsr_planes);
-> >> +               mutex_unlock(&rgrp->lock);
-> >> +       }
-> > 
-> > This is per group, not per DU, right?
-> > The second group on R-Car M3-W/M3-W+ has a single channel, hence no
-> > DPTSR2 register.
-> > The second group on R-Car M3-N has a single channel, but it's actually
-> > the second physical channel in the group, and thus does have DPTSR2.
-> 
-> That logic does make sense. So that would be if (rgrp->channels_mask & 
-> BIT(1)) then write DPTSR? And probably add a comment in the code about this.
-> 
-> > And apparently we had this discussion before...
-> > https://lore.kernel.org/all/CAMuHMdXxf4oePnyLvp84OhSa+wdehCNJBXnhjYO7-1VxpBJ7eQ@mail.gmail.com
-> 
-> Somehow I hadn't even realized Jacopo had sent these before...
+Most users use this function through the BIN_ATTR_SIMPLE* macros,
+they can handle the switch transparently.
 
-Oops...
+This series is meant to be merged through the driver core tree.
 
-I'll let Jacopo and you decide who will send an updated patch.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (4):
+      sysfs: constify bin_attribute argument of sysfs_bin_attr_simple_read()
+      platform/x86: wmi-bmof: Switch to sysfs_bin_attr_simple_read()
+      btf: Switch vmlinux BTF attribute to sysfs_bin_attr_simple_read()
+      btf: Switch module BTF attribute to sysfs_bin_attr_simple_read()
 
+ arch/powerpc/platforms/powernv/opal.c |  2 +-
+ drivers/platform/x86/wmi-bmof.c       | 12 ++----------
+ fs/sysfs/file.c                       |  2 +-
+ include/linux/sysfs.h                 |  4 ++--
+ kernel/bpf/btf.c                      | 15 ++-------------
+ kernel/bpf/sysfs_btf.c                | 12 ++----------
+ kernel/module/sysfs.c                 |  2 +-
+ 7 files changed, 11 insertions(+), 38 deletions(-)
+---
+base-commit: feffde684ac29a3b7aec82d2df850fbdbdee55e4
+change-id: 20241122-sysfs-const-bin_attr-simple-7c0ddb2fcf12
+
+Best regards,
 -- 
-Regards,
+Thomas Weißschuh <linux@weissschuh.net>
 
-Laurent Pinchart
 
