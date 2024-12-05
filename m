@@ -1,172 +1,129 @@
-Return-Path: <linux-kernel+bounces-432923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBA99E51DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:14:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BFD9E51E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:15:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 917E1282F10
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:14:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7824B167E3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7321DD543;
-	Thu,  5 Dec 2024 10:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE411DF73A;
+	Thu,  5 Dec 2024 10:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EwaRXCfa"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E741DC18F;
-	Thu,  5 Dec 2024 10:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8Ny08zT"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C009E1DF25F;
+	Thu,  5 Dec 2024 10:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733393673; cv=none; b=kT9wC66AXF72o7fAJKoWkEzgdsYzVaiOPHGJLC2MAsrvllaLr1d7ZX6FKDXnGZ6/+bDTfidJWfHxr8QUhPlR81Myj6lxto8WOs5YtrkdncVKfcScfxV5UKgpX7IaSQuj/3weXFEc3WPDWnv97G0EXmk6N1l9nuo0r7MiBAgb7Bo=
+	t=1733393731; cv=none; b=Amtv4qppLL+x/pCdtqKmoF4eMZD49Qq3Ydyi+SFOIHJ6uZ4LL9kk+2i/40k2oxoR77G7jJkHbAowkI6MAnmgwMPKaQ7q2DdHsukw+wGDAGI8Ht44eSv8K71UW1XYt+9Ki+aDFPMAXdNTWSDE7BllYHNeu2LrLIOhN3IfZVsBX+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733393673; c=relaxed/simple;
-	bh=vc8tSJVclWUgVciwCbm9ORQlrRn2jqrHpZ134R7FF/g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VR+91uoKUXCJa/p2M6Xb7nF3J/KxfJ3X0g3pUANVkyVtTtc9iRNk5ogeQxtiLPMN3wEThJ+KRRUYXcppuL1oFTAvUVK+gdChXgIavQwVLFHiboY6DxacCdarX4X/k6iyxH2TQ8pq5wYGbGRM4lDBKf04s9Of3KvdbBqn4RR9p8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EwaRXCfa; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=m6StHegZ6tGvbNYqRNSd5greVP+REzoM4PjmghzBUrE=;
-	b=EwaRXCfaQIpm6bMHSUFx5qY2kHXpSYUXlvZY9lTlx8uvYLgqN8+akK6MiqWUvL
-	CGY/rJvyEWix8gPhQidmH692VQHa1jsKI+ld6w8FmI0EmDPcNUJqK5gwJMlkX+8X
-	8/LnyUUe1I0kHppFICDZKWCqU9QMMZgn7Kvbg/JKEJmZo=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3vzjffFFnLkzFAg--.22554S2;
-	Thu, 05 Dec 2024 18:13:52 +0800 (CST)
-From: MoYuanhao <moyuanhao3676@163.com>
-To: matttbe@kernel.org,
-	edumazet@google.com
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	geliang@kernel.org,
-	horms@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martineau@kernel.org,
-	moyuanhao3676@163.com,
-	mptcp@lists.linux.dev,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net-next] tcp: Check space before adding MPTCP options
-Date: Thu,  5 Dec 2024 18:13:51 +0800
-Message-Id: <20241205101351.34818-1-moyuanhao3676@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <0f07b584-1013-4932-b155-cc0883ca7061@kernel.org>
-References: <0f07b584-1013-4932-b155-cc0883ca7061@kernel.org>
+	s=arc-20240116; t=1733393731; c=relaxed/simple;
+	bh=YIH+i4hon9OeIABlByObQcoJuEqAEQRyrmg//TWxt9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=giBrfj+pew0SoZD73Mf2eIUlpGjqEHTVIXwEct+GKNQ3rSFf/TZRVdfQUo0yCqu8mz0EnWVblvIvMpzk+XyenNC4Pvua6IK3aj4vgFCSZvh5j6/dd+a9NmJhCrHX24A+zrZoPEj28x9dG4SQjUgND84PC6zl+BueTVU1iSQgMdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8Ny08zT; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53df80eeeedso804688e87.2;
+        Thu, 05 Dec 2024 02:15:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733393727; x=1733998527; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4Bla2k6xsSNv8Akp73rgxD6m3gZJB5hhrIHZs9PXF0E=;
+        b=M8Ny08zTeuERAor2n+7yf3B/RuAYaDAcIz/Dw3MKgxSpQaF+UXoJWsVS6zQi+LAu2j
+         CL8EEARiIRz9eW9AVK/eKAXzDSLxbS/fOr4FehDF1p4weoWKXwZ5t5X4ILzY6YDgW/B+
+         xCxBHBwxHfD14Fii2E5WjEPIxS22+xAkoHxeU95RtU9LnkYD986Lt6B5Z9Fj3X9JTuPV
+         qO4zhTQyyPFsoka6c14P3SECVu6hrvrJSb7F/LN6k35/M2CHpB+G4EBV0//29zgXMyfr
+         y3Z6Ii/AMCQKui9Ml9BmjKfiNuV6jpSoS1vy7p4RvhOfdv+2vQ1kxi7YjXbE8Q+CJlfV
+         W0UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733393727; x=1733998527;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Bla2k6xsSNv8Akp73rgxD6m3gZJB5hhrIHZs9PXF0E=;
+        b=Dqt2egCz4ofcb4DIQY3spzxPC/srNLBKSKx/HLY+cgkaP5M6f/joNnmx8BAXU+xNdQ
+         deAF8z+naD7uUINKGjhtO1R7KoA3/oAdFOP2SoEwsDKVs8GcbFPv9q2BrneU1YudNpBd
+         zoAzob6wLk3qWvm0rpJ36r63PusarLIBD43+6RdX0//cinxrbeOMgbd381flje9Ja+9W
+         ycdhIIiYm8PQnyObUAzq5tqKvme1c+ZfEMVVf8O+zWHtGAheFXiLs+0n9aOlWy7eAzpy
+         IvkBVjdmQwh+xr3TcFccGbv/MeY9QetdLtjb3d9PPcmiaW8KcdJ7Ci14uqqh8PDnStvY
+         BLCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYLGtE5WRcaWcgG5p+ReJbEM3GbBEGIC7fgWf1uwhwEW+BrnIGc+PoMq1bgswP5XDkGA0a8/jdQ74qnM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvWBzEQg5BumXsAj3sxzv5F2tUtCWmVS7WKwc5LkDQHEbLO+z/
+	mpd9H11HUy+57LmK13s4JnORpHaosFVrpNo6YJkA8LoojKVAlfNJ
+X-Gm-Gg: ASbGncvLuNyZ5UMbslcoagJdf+4NXFT/3RqINejOQ96qHvjmylH32ahcMHxyAggmkO8
+	a6pRFSK1vS9CsQ9gM9iEPRt0tbeZgqmZ9LMt1E/LlNETB1IBw8wARvFUMeb2fU3O23smASurJ1D
+	f7gvuCu/cavb0UPHth1p+9+ZvLYB4HZXGCgpl1hTl7ELqc6DnQgn0ORcte3SPzuzN/Xj68+0sE8
+	5rx1KBCBADqsw5zmOpR09gccEwkaT1j13wnx1qm4CbmaxKGHsDKrHvt7NsN0MRoFf5YE91KtAsl
+	2uVvw/atkJVuDLewuUSG
+X-Google-Smtp-Source: AGHT+IHp7Dxl+Jd/Hyw9W2xFaZ4ccKDM4H/1DrGPwTqKtAYK+lO/In2P/+jMlCzQXYJqAI5hPFajMQ==
+X-Received: by 2002:a05:6512:3ba8:b0:53d:a4f9:6141 with SMTP id 2adb3069b0e04-53e129ff45fmr3925636e87.14.1733393726909;
+        Thu, 05 Dec 2024 02:15:26 -0800 (PST)
+Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229ba814sm189644e87.120.2024.12.05.02.15.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 02:15:25 -0800 (PST)
+Message-ID: <c3e1def7-0ab8-4fc3-8b37-257a29c1235f@gmail.com>
+Date: Thu, 5 Dec 2024 12:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] rust: add dma coherent allocator abstraction.
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Wedson Almeida Filho <wedsonaf@google.com>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+References: <20241203170752.1834271-1-abdiel.janulgue@gmail.com>
+ <20241203170752.1834271-3-abdiel.janulgue@gmail.com>
+ <AFCEFEB8-3FB1-44E2-A31E-93863E11BF87@collabora.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <AFCEFEB8-3FB1-44E2-A31E-93863E11BF87@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgD3vzjffFFnLkzFAg--.22554S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXF1Utw47JF1UtF1DZFyDGFg_yoWrJrWUpr
-	yUKFsYkr4kJ348Gr4IqF1vyr1Fva1rGrWDXw15Ww12y3s0gFyI9ryIyr4Y9F97Wr48Jw1j
-	vr4UZ34fWa1UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JU4MKAUUUUU=
-X-CM-SenderInfo: 5pr13t5qkd0jqwxwqiywtou0bp/1tbiNgSsfmdRe0AlkAAAsY
 
-Hi Matt and Eric,
 
->Hi MoYuanhao,
+On 04/12/2024 21:08, Daniel Almeida wrote:
 
->On 05/12/2024 08:54, Eric Dumazet wrote:
->> On Thu, Dec 5, 2024 at 8:31 AM Mo Yuanhao <moyuanhao3676@163.com> wrote:
->>>
->>> 在 2024/12/4 19:01, Matthieu Baerts 写道:
->>>> Hi MoYuanhao,
->>>>
->>>> +Cc MPTCP mailing list.
->>>>
->>>> (Please cc the MPTCP list next time)
->>>>
->>>> On 04/12/2024 09:58, MoYuanhao wrote:
->>>>> Ensure enough space before adding MPTCP options in tcp_syn_options()
->>>>> Added a check to verify sufficient remaining space
->>>>> before inserting MPTCP options in SYN packets.
->>>>> This prevents issues when space is insufficient.
->>>>
->>>> Thank you for this patch. I'm surprised we all missed this check, but
->>>> yes it is missing.
->>>>
->>>> As mentioned by Eric in his previous email, please add a 'Fixes' tag.
->>>> For bug-fixes, you should also Cc stable and target 'net', not 'net-next':
->>>>
->>>> Fixes: cec37a6e41aa ("mptcp: Handle MP_CAPABLE options for outgoing
->>>> connections")
->>>> Cc: stable@vger.kernel.org
->>>>
->>>>
->>>> Regarding the code, it looks OK to me, as we did exactly that with
->>>> mptcp_synack_options(). In mptcp_established_options(), we pass
->>>> 'remaining' because many MPTCP options can be set, but not here. So I
->>>> guess that's fine to keep the code like that, especially for the 'net' tree.
->>>>
->>>>
->>>> Also, and linked to Eric's email, did you have an issue with that, or is
->>>> it to prevent issues in the future?
->>>>
->>>>
->>>> One last thing, please don’t repost your patches within one 24h period, see:
->>>>
->>>>    https://docs.kernel.org/process/maintainer-netdev.html
->>>>
->>>>
->>>> Because the code is OK to me, and the same patch has already been sent
->>>> twice to the netdev ML within a few hours, I'm going to apply this patch
->>>> in our MPTCP tree with the suggested modifications. Later on, we will
->>>> send it for inclusion in the net tree.
->>>>
->>>> pw-bot: awaiting-upstream
->>>>
->>>> (Not sure this pw-bot instruction will work as no net/mptcp/* files have
->>>> been modified)
->>>>
->>>> Cheers,
->>>> Matt
->>> Hi Matt,
->>>
->>> Thank you for your feedback!
->>>
->>> I have made the suggested updates to the patch (version 2):
->>>
->>> I’ve added the Fixes tag and Cc'd the stable@vger.kernel.org list.
->>> The target branch has been adjusted to net as per your suggestion.
->>> I will make sure to Cc the MPTCP list in future submissions.
->>>
->>> Regarding your question, this patch was created to prevent potential
->>> issues related to insufficient space for MPTCP options in the future. I
->>> didn't encounter a specific issue, but it seemed like a necessary
->>> safeguard to ensure robustness when handling SYN packets with MPTCP options.
->>>
->>> Additionally, I have made further optimizations to the patch, which are
->>> included in the attached version. I believe it would be more elegant to
->>> introduce a new function, mptcp_set_option(), similar to
->>> mptcp_set_option_cond(), to handle MPTCP options.
->>>
->>> This is my first time replying to a message in a Linux mailing list, so
->>> if there are any formatting issues or mistakes, please point them out
->>> and I will make sure to correct them in future submissions.
->>>
->>> Thanks again for your review and suggestions. Looking forward to seeing
->>> the patch applied to the MPTCP tree and later inclusion in the net tree.
->> 
->> We usually do not refactor for a patch targeting a net tree.
->
->Indeed, I agree with Eric. Even if the code looks good, more lines have
->been modified, maybe more risks, but also harder to backport to stable.
+>>
+> 
+> 
+> By the way, I tested this using a slightly modified version of the sample Rust platform driver
+> from Danilo’s v3 submission. It’s working as intended :)
+> 
+> With the change above, you can add:
 
-Thank you for your guidance. I agree with your points, and using the patch from version 1 seems safer.
+Will do. Thanks for the review!
 
-Best regards,
+Regards,
+Abdiel
 
-MoYuanhao
+> 
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> 
+> — Daniel
+> 
 
 
