@@ -1,126 +1,83 @@
-Return-Path: <linux-kernel+bounces-433297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724CF9E5621
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E88A9E5626
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:03:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C6216C51B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:01:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C84165877
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A499A218EAB;
-	Thu,  5 Dec 2024 13:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258A621A429;
+	Thu,  5 Dec 2024 13:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvzljZLX"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="MNLk/03x"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1BF218E83;
-	Thu,  5 Dec 2024 12:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38A8217725;
+	Thu,  5 Dec 2024 13:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733403600; cv=none; b=PGl+LhG2vdJwiNcWA8e7PSx3YnbJOPtITDoYp5cxkbWXiyKw5J0P9dMfkAwIsvKSmy85rwRyhodRVQYP8vYdNilJjFSlYs42GrLZ6syG1ig3p+cEjnOiPpEupfHKHeHInD98iX3cFynN9rTxHjLPnpHgvtCSZfLIgFLOnnzZkHU=
+	t=1733403629; cv=none; b=CZMC77mHG9q7Td90Kv6PaiNWYsGCNKwS/B5xZ1xmQ4T567P8uw20OaYZi8KjzvSQ0I57GkYurDSzdmrmrtZAZTsiCiJMVKYimXKCz0m5kESniwAV2lUi/7+fJuTl5GgoIZJSxYaH8nnGyFR+afi2eAEJHWyN0I370x4h5L28HXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733403600; c=relaxed/simple;
-	bh=3OLFaKBgiFhJWCsDnLEuwFuf20ClzJ0AMK/6ux9BfP4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FwS7fvAbLrhjwG+oXenPSbMbxMVEP5w5PMgLhxTIMhsieTS70YqyQvhuq5co6UySMEcLY8qPFKNXfFUshtEd+6rQAqBvQcBjB4Gaq3hJ5bSbjk0oJqtqBA1MuhLLZTTyzjUkTzGARnNwlydVnJdhXReiHFvV75XDcisfNtqUWj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvzljZLX; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8dd1so1398288a12.2;
-        Thu, 05 Dec 2024 04:59:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733403597; x=1734008397; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gj8VFVjPSZEkv+oUvBeuosT9Pxl2p7BzaNCPNYLTVfQ=;
-        b=CvzljZLXWMIQuLduEiaHgmdBBsYlvs+EqCCvVlmwOux2wk/Pc82ZETup+iqSKqjr7k
-         HbTBU4j8KGCFXigT6wK+PvQ30yErQu0RKh41GViO5YEyM12EMmI0vtr2oin3svNCt5bt
-         bqqu+N9s/9Q3vjzrpwEnyOi4jd6KKgy1SlAFkYcN4DaujyUJ9WEL3YM5vIQj/9NXrFsu
-         1IFuIH+C5jGit3h2NqlrT+l3kSE1CZuN3fb0G3sYdAPjfzYlDUnJjDjkksMKDhR8KBGC
-         FNbfDBAXILk4layEi3/enLl0i7NP9mw9tU3C4yelygcPGNNjOoFYJ7Q7p8+nXl38nO3m
-         HD9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733403597; x=1734008397;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gj8VFVjPSZEkv+oUvBeuosT9Pxl2p7BzaNCPNYLTVfQ=;
-        b=weKOQH4jvnEaIzUa6F8rejb1KjzRzHrK/7GGytw6/doiGtICHhyeqsTmLGOWb+Q5Ve
-         khslEiQ/QdTLMd9Y6XROit1rqEdlBaN0WcNVKw9zugDtBSN+sGlw12ro2oo3X0WthoSV
-         EbuIj3rRI2PhTX8E9+W+nrl1rUp6YQsPJO4en+u8I22y21x9GAsiV8TuwNHcb33J/yJg
-         67mMVbfn74K69wUf3F+a4HyLd4334/jJTLr5/oiUWcIbmdoa0eR1zDaUGly1ecD35EFJ
-         baZpvSfadKIQmEzlLpGdoJ8sO++UdKofukYPN/Dj8NzVcyM8SbXZnsAVxaIG61Kz2bF5
-         8ovg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdV5Mvd3aOGym0tCeBiNE+1iMqCiUKRb/O0H1LiUVgRcvBzvApKuBrZ6y0ohAqC/uMvHSX42nSlMe/fjVJiMo=@vger.kernel.org, AJvYcCXfeWMZbCC9zGnXfacIV9u5UfrqRgjMjOltlh2t9jELXfoTeVgseKlRAgpD19jzlQx2+mGARxATIEylfB4P@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGVHjXxwpmx09y3zEhibpYCnqnqmPEBnTzAc0/pN15HHr9ZA0H
-	5N3uAPNd3cw7AQpz4UyoqP3OhZGA5ojqnDdEzENGjYd1LKwoY1KC
-X-Gm-Gg: ASbGncupKz9gGotuXf71nRph5zZ74wm0QrJRphetfsgl9nIZ/E74sY+j2cnTaJEiBaC
-	xPDvB54rqgYpOxIbnfG/uUzVz6o4WIk2XmlLIUH/hEYiAOn6moOhblhaDwttSKsSrqs+xLnDX+l
-	MQuFk50GposaSJneFCD+cqj6O/KGwQkaWtpTwnkrS7BSpnniDVg+WlxhW/8TKx1pFhIl2im9BXw
-	PwRsDGACT3J7LKgcM1IsX53xE0KyWyyf/9qFDAWwSWR6d5Kuh+pVs9/PF2HjkJblgdKlbzY7GpD
-	QYtsSV551pjwraT4iHareLzAw9rkRkNlwg==
-X-Google-Smtp-Source: AGHT+IEF+6FFvVmIuxk1MISOcv5BF4xk0eVILKN9vM5sXj6JFuPJooKQkMvDCoXx5Oq1Cpz44ra8Kw==
-X-Received: by 2002:a17:906:9a95:b0:aa6:c55:739a with SMTP id a640c23a62f3a-aa60c5574a7mr571964266b.50.1733403596420;
-        Thu, 05 Dec 2024 04:59:56 -0800 (PST)
-Received: from [155.185.125.95] (wifi-125-dhcprange-125-95.wifi.unimo.it. [155.185.125.95])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4dc95sm88774466b.38.2024.12.05.04.59.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 04:59:56 -0800 (PST)
-Message-ID: <ad78ad62-ebd2-40d7-8a6d-623ae947584c@gmail.com>
-Date: Thu, 5 Dec 2024 13:59:55 +0100
+	s=arc-20240116; t=1733403629; c=relaxed/simple;
+	bh=or95HAQ/MJEZQzO5GHrb+zYtt7NQX+MZZfZkhYMzDyU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lniUcfbKafkDsgRY1xiEzEa0xEW/y/1xvi875eNURKjaB0OaGVlWJggOdPjLufgByI26vUfLeZornUqSuo6JeVYp3bIjT67krxBEF+wueCT5T/BSZ+hMx1TWQAwMWp7t1RgVGh+BOq9oHvtG0b52Ww6dMlxR1xht/8tNqhvt5ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=MNLk/03x; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=or95HAQ/MJEZQzO5GHrb+zYtt7NQX+MZZfZkhYMzDyU=;
+	t=1733403628; x=1734613228; b=MNLk/03x+H1512ZmVRLmFMwbmf5tJ2YCQSasC3/dYxIonFN
+	QkQjbI/DhmDu7fcjJW4ncACHx35fVQ4fEBhj9G1kBa/JWUj7WLHrxx+Nr+HPzWNsCD27adc6/ju1H
+	3zeFQ+Ii4gvbPjJo/WVg22r/rCk/2KRD0weIYAgWDMrA7E93xXk4Zn9d6xGHMsmBkV+RaGyLt4qLe
+	oLmXBL3WJHpmBrv7tbFw7toeG3w3NgQ0fBId60vTrCaTdKipnEk4jKUK77iT7nCf7t8XseGgIIoio
+	2JVuf/Zj6GwPnw5at2EqaHjQMcVatHvvd+M7JPcz+UHGdUZotWCwHStiozZr0B8A==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tJBSx-0000000B8ss-1Pvh;
+	Thu, 05 Dec 2024 14:00:23 +0100
+Message-ID: <d421f8067ea54bcfc38a9b021ebda13515145c45.camel@sipsolutions.net>
+Subject: Re: [PATCH v2] wifi: mac80211: re-order unassigning channel in
+ activate links
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Aditya Kumar Singh <quic_adisi@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 05 Dec 2024 14:00:22 +0100
+In-Reply-To: <d0acd2178504d76770e9267ef6e7f5c04b50eab3.camel@sipsolutions.net>
+References: <20241205-unassign_activate_links-v2-1-ba3f0a2bb4a4@quicinc.com>
+	 <d0acd2178504d76770e9267ef6e7f5c04b50eab3.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Sergio Callegari <sergio.callegari@gmail.com>
-Subject: Re: [REGRESSION] bluetooth: mt7921: Crash on Resume From Suspend And
- Hibernate
-To: jglotzer@gmail.com
-Cc: Aaron.Hou@mediatek.com, Chris.Lu@mediatek.com, Deren.Wu@mediatek.com,
- Hao.Qin@mediatek.com, Sean.Wang@mediatek.com, johan.hedberg@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, luiz.dentz@gmail.com,
- marc.payne@mdpsys.co.uk, marcel@holtmann.org, regressions@leemhuis.info,
- regressions@lists.linux.dev, steve.lee@mediatek.com, tiwai@suse.de
-References: <20241127231432.8112-1-jglotzer@gmail.com>
-Content-Language: it, en-US-large
-In-Reply-To: <20241127231432.8112-1-jglotzer@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-John Glotzer <jglotzer@gmail.com> wrote
+On Thu, 2024-12-05 at 12:43 +0100, Johannes Berg wrote:
+> >=20
+> > Therefore, re-order the logic so that stations are handled first and th=
+en
+> > channel is unassigned.
+> >=20
+>=20
+> This causes memory leaks in my tests with iwlwifi.
+>=20
 
-> In following the related email threads it seems that this particular email thread has
-> not had any activity since 10/21/2024. Now the focus seems to be on firmware download which
-> in my admittedly non-expert opinion seems to be not clearly related.
+And also firmware crashes because the station is removed while it's
+still being used.
 
-Since then, it has become apparent that
-
-- The issue affects many laptops that fail to resume from hibernation 
-with recent kernels. It is not just about wifi/bt mt7922 combos attached 
-via USB, but also and most important those attached via PCIe, e.g.
-
-MEDIATEK Corp. MT7922 802.11ax PCI Express Wireless Network Adapter
-
-- The new firmware (241106...) does not seem to solve the issue on all 
-the affected systems.
-
-- it is relatively easy to script actions to kill BT before 
-sleep/hibernation and unkill it after resume, but they are suboptimal. 
-Users will typically set them up after multiple failures to resume, 
-which often means after data loss.
-
-Would it be possible to (at least temporarily) revert the changes 
-occurred from 6.10 to 6.11 that triggered this problem?
-
-Sergio
-
+johannes
 
