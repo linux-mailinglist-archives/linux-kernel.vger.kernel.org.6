@@ -1,162 +1,120 @@
-Return-Path: <linux-kernel+bounces-433539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D7E9E59BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:32:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 944A19E59BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:32:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5350016B0B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550C6282A69
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293FC21C19F;
-	Thu,  5 Dec 2024 15:32:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B656E1DA10C;
-	Thu,  5 Dec 2024 15:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC2521C18D;
+	Thu,  5 Dec 2024 15:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b="Xu36Xfcp"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597AF21882B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733412729; cv=none; b=a4jStvM9ZBeCwOOWLkWZiCqH2Ujqu4xQ5RGlCRdp5VjzMATFYV23101JLqU7L/5IgW7P+MSYkWwn4G3nkWz53/VsRA/MGg5fQPmsaCiUlkMh38GP8yROiMBpk09dgO3KIviDrOCwpvoxIQUXoorw7u1ZPkz9B4l5OtYEQvFxHVY=
+	t=1733412752; cv=none; b=g7ysi02pZNNRA5MmnJ/JkfE/j4nXfwYyW5utJ7RyT6Ybs7eSCrBDPem3Sti2RDAKJUUgpspLuZhFcpG9NjSM9Ni4U1VgzBSwtymvn697az4P40YpjcTRsSlgD8RbE2jPJbnU+KMA7ovVwVx9e0jvBmN8Y2+NKEq7Xfle/2hTuwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733412729; c=relaxed/simple;
-	bh=fNGRTFyLlHhgN4Pb4CFh4ptW94/MwZGUclyDetcRdgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dutw9xUalKxPkhE/ZPNvsQPc1KX6VBD8gBZ3Z8JzK5/eVjiWGr6RdwjlTxtPzXdg9hA/MdBt525OwBmDTs07FF6K9IL0pdZcaqzyGmCLqvQLzGFUG6VDDSugn3OtQIsjWk+05Cawye/w9b7hCwjn8SP7d3Z+hWWzd3R3tMGPqAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 025411063;
-	Thu,  5 Dec 2024 07:32:35 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CB383F71E;
-	Thu,  5 Dec 2024 07:32:05 -0800 (PST)
-Date: Thu, 5 Dec 2024 15:32:02 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>, <andersson@kernel.org>,
-	<konrad.dybcio@linaro.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
-	<quic_kshivnan@quicinc.com>, <arm-scmi@vger.kernel.org>
-Subject: Re: [PATCH V5 1/2] firmware: arm_scmi: Add QCOM Generic Vendor
- Protocol documentation
-Message-ID: <Z1HHciQfWL-l79YR@bogus>
-References: <20241115011515.1313447-1-quic_sibis@quicinc.com>
- <20241115011515.1313447-2-quic_sibis@quicinc.com>
- <Z1BBirNWH1eaSKtr@pluto>
- <73a16eb4-e590-92db-ee24-cc4f42a9de01@quicinc.com>
+	s=arc-20240116; t=1733412752; c=relaxed/simple;
+	bh=RbLc9FFR8wF5vdi7GcDZl88v758ckVMZlXxdmckY0ts=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Jn6bcmqIfskKUwgba4p5K3IxtDYBeRN51fm+XDEBkot8MHmGv/VHWjiE+9RMKXnnO2jeTM4hb5hjjUFFERnlHjgFjUFDpW63l0ddzYkUIDu7rjAfVhkdCYmVg/DBgQyH0oRXfrgtu9dXeWUcIogDuIM1g+/uYf2wQ+ldzxlcn4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com; spf=pass smtp.mailfrom=cornersoftsolutions.com; dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b=Xu36Xfcp; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cornersoftsolutions.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-29e71d653fbso586341fac.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:32:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cornersoftsolutions.com; s=google; t=1733412749; x=1734017549; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mSVWv3kzGyP7Ixr3DcJKWQ/Cs0NKKVxGUdtaJxvtNOU=;
+        b=Xu36XfcpVRRV/h73WFcs2W1seMy/Plmi46O0rOsIZdXEqEX8eiejQMtMZWBMoVD+5M
+         4HsR+/rN3KDMauytsqMFzo+aAipi1guI/Qyqm/2zaBICtkqAX45FF7690UqzUQDlbqQE
+         Svy+iH7nUS8ezrBLnU/2+h/Z1BHd3Z8Ejp5MStzvcODrFd0MRKsl7zlEcLPPIU3K0/AI
+         IjM8goce/YBwxGnXmOm/HPT9T2bzLXp/CvbtadwWDS5Hf9KsSpEfFvtFEU9ZtpaSPHNz
+         0DTotzdCmMV+THSpvouedwhve+0b64cnzYEcOiln51hT/7cLxsO+Q1e9/Hki7NHYnoHH
+         qxTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733412749; x=1734017549;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mSVWv3kzGyP7Ixr3DcJKWQ/Cs0NKKVxGUdtaJxvtNOU=;
+        b=jhBxgNsMeOieYHJ2hHLUx6xBHrbk2EBMEByp5Tdqnx4u2A9gb+JlIdlDhxUs1Af2O5
+         IeJEH/1acc2NrghfNXE2ydh1K+OT3aVr2xAgiEr//dXzmA0BxQVgln7naCNbmyaKa12w
+         0v4K38gGREQWoLOgWuOuRH7vl9Bml+uG8Peh5aAp0mHhF0iUwm+HPNXIAKsrG6vWCs0R
+         jxzM0uNLVmOFPH5cC15B4xpEKXjWKS41PAoeIcIkJR9mGG0elzC5AKruKKqBFLDrbkGt
+         p5wUUIzpNtLKkTGPYCymvZTdYcPXQ5xOzhWkV5T54qxHbrovl6pQLaEwFxJV3HEWfWMb
+         fjUA==
+X-Gm-Message-State: AOJu0YxNgL0Ow9zaoTzP7uUR2uvPuwCVOpi+tvEhWVGC9t+iJHHD69PR
+	ed66KBRBXlR+vDS0pjnpMd4rgtqgvVlpJnT+Yk3hJk96Vd7VVHOoDstqD+dIm8cT6kX6DZ+2K1z
+	QNZJe+IVPbsaPP+K18pdafP1JH+LdtZwZg3C995rBbkW1ySIx7iS12A==
+X-Gm-Gg: ASbGnctfNmJ2ndr0Jr0PUNRPnOLaQITxbGNkNRXLX7DfIyxhCnVWwmsEoKUlFcE0TZ0
+	OaKgLbl3A8zCW6FobHB1E5eTXq8lFpyYf
+X-Google-Smtp-Source: AGHT+IEXh3wkarBLzAyKqYC0kT/Y8r28C1neLlKp6rQpRD5NvnZVxaGgz+SOmihpuXwnZlzhFMNga5hrHKjeRZiwzUg=
+X-Received: by 2002:a05:6871:606:b0:296:ee2e:a23c with SMTP id
+ 586e51a60fabf-29e88560c9bmr11677702fac.5.1733412749132; Thu, 05 Dec 2024
+ 07:32:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <73a16eb4-e590-92db-ee24-cc4f42a9de01@quicinc.com>
+From: Ken Sloat <ksloat@cornersoftsolutions.com>
+Date: Thu, 5 Dec 2024 10:32:17 -0500
+Message-ID: <CADRqkYAaCYvo3ybGdKO1F_y9jFEcwTBxZzRN-Av-adq_4fVu6g@mail.gmail.com>
+Subject: [PATCH v1] dt-bindings: dma: st-stm32-dmamux: Add description for
+ dma-cell values
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	dmaengine@vger.kernel.org, alexandre.torgue@foss.st.com, 
+	mcoquelin.stm32@gmail.com, conor+dt@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, vkoul@kernel.org, amelie.delaunay@foss.st.com
+Cc: Ken Sloat <ksloat@cornersoftsolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 04:37:28PM +0530, Sibi Sankar wrote:
-> 
-> 
-> On 12/4/24 17:18, Cristian Marussi wrote:
-> > On Fri, Nov 15, 2024 at 06:45:14AM +0530, Sibi Sankar wrote:
-> > > Add QCOM System Control Management Interface (SCMI) Generic Vendor
-> > > Extensions Protocol documentation.
-> > > 
-> > > Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> > > ---
-> > > 
-> > > v4:
-> > > * Update the protol attributes doc with more information. [Cristian]
-> > > 
-> > >   .../arm_scmi/vendors/qcom/qcom_generic.rst    | 211 ++++++++++++++++++
-> > >   1 file changed, 211 insertions(+)
-> > >   create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
-> > > 
-> > > diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
-> > > new file mode 100644
-> > > index 000000000000..141bc932e30f
-> > > --- /dev/null
-> > > +++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
-> > > @@ -0,0 +1,211 @@
-> > > +.. SPDX-License-Identifier: GPL-2.0
-> > > +.. include:: <isonum.txt>
-> > > +
-> > > +===============================================================================
-> > > +QCOM System Control and Management Interface(SCMI) Vendor Protocols Extension
-> > > +===============================================================================
-> > > +
-> > > +:Copyright: |copy| 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > +
-> > > +:Author: Sibi Sankar <quic_sibis@quicinc.com>
-> > > +
-> > > +SCMI_GENERIC: System Control and Management Interface QCOM Generic Vendor Protocol
-> > > +==================================================================================
-> > > +
-> > > +This protocol is intended as a generic way of exposing a number of Qualcomm
-> > > +SoC specific features through a mixture of pre-determined algorithm string and
-> > > +param_id pairs hosted on the SCMI controller. It implements an interface compliant
-> > > +with the Arm SCMI Specification with additional vendor specific commands as
-> > > +detailed below.
-> > > +
-> > > +Commands:
-> > > +_________
-> > > +
-> > > +PROTOCOL_VERSION
-> > > +~~~~~~~~~~~~~~~~
-> > > +
-> > > +message_id: 0x0
-> > > +protocol_id: 0x80
-> > > +
-> > > ++---------------+--------------------------------------------------------------+
-> > > +|Return values                                                                 |
-> > > ++---------------+--------------------------------------------------------------+
-> > > +|Name           |Description                                                   |
-> > > ++---------------+--------------------------------------------------------------+
-> > > +|int32 status   |See ARM SCMI Specification for status code definitions.       |
-> > > ++---------------+--------------------------------------------------------------+
-> > > +|uint32 version |For this revision of the specification, this value must be    |
-> > > +|               |0x10000.                                                      |
-> > > ++---------------+--------------------------------------------------------------+
-> > > +
-> > > +PROTOCOL_ATTRIBUTES
-> > > +~~~~~~~~~~~~~~~~~~~
-> > > +
-> > > +message_id: 0x1
-> > > +protocol_id: 0x80
-> > > +
-> > > ++---------------+--------------------------------------------------------------+
-> > > +|Return values                                                                 |
-> > > ++------------------+-----------------------------------------------------------+
-> > > +|Name              |Description                                                |
-> > > ++------------------+-----------------------------------------------------------+
-> > > +|int32 status      |See ARM SCMI Specification for status code definitions.    |
-> > > ++------------------+-----------------------------------------------------------+
-> > > +|uint32 attributes |Bits[31:16] Reserved, must be to 0.                        |
-> > > +|                  |Bits[15:8] Number of agents in the system                  |
-> > > +|                  |Bits[7:0] Number of vendor protocols in the system         |
-> > > ++------------------+-----------------------------------------------------------+
-> > 
-> > Thanks of clarifing this....may I ask why number of agents is reported
-> > here too given that it is already exposed by Base protocol ?
-> > 
-> > Not really arguing about this so much, but you will end up having to maintain this
-> > on 2 different protocols fw side...or are they not 'agents' in the SCMI meaning ?
-> > 
-> > Anyway, I'm fine with it, even though you dont seem to use this
-> > anywhere.
-> 
-> We don't use it anywhere and it looks like it was just put together
-> so that this protocol is compliant to the spec :|
+The dma-cell values for the stm32-dmamux are used to craft the DMA spec
+for the actual controller. These values are currently undocumented
+leaving the user to reverse engineer the driver in order to determine
+their meaning. Add a basic description, while avoiding duplicating
+information by pointing the user to the associated DMA docs that
+describe the fields in depth.
 
-Interesting, I need to dig and check if that is needed to be compliant.
-Even if it is required, please add a text to say it must match what std.
-BASE protocol response(IOW it just can't be random here as you don't use
-it anymore). We may decide to match and warn if required at all.
+Signed-off-by: Ken Sloat <ksloat@cornersoftsolutions.com>
+---
+.../bindings/dma/stm32/st,stm32-dmamux.yaml | 11 +++++++++++
+1 file changed, 11 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
+b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
+index f26c914a3a9a..aa2e52027ee6 100644
+--- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
++++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
+@@ -15,6 +15,17 @@ allOf:
+properties:
+"#dma-cells":
+const: 3
++ description: |
++ Should be set to <3> with each cell representing the following:
++ 1. The mux input number/line for the request
++ 2. Bitfield representing DMA channel configuration that is passed
++ to the real DMA controller
++ 3. Bitfield representing device dependent DMA features passed to
++ the real DMA controller
++
++ For bitfield definitions of cells 2 and 3, see the associated
++ bindings doc for the actual DMA controller the mux is connected
++ to.
+compatible:
+const: st,stm32h7-dmamux
 -- 
-Regards,
-Sudeep
+2.34.1
 
