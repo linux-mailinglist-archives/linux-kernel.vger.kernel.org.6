@@ -1,129 +1,263 @@
-Return-Path: <linux-kernel+bounces-433826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15FF99E5D96
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:46:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8949E5D98
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2351161EAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:46:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D7D165C51
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE48225783;
-	Thu,  5 Dec 2024 17:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ratMgJlh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E142922576B;
+	Thu,  5 Dec 2024 17:46:44 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCE7218E98;
-	Thu,  5 Dec 2024 17:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7786B218E98;
+	Thu,  5 Dec 2024 17:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420757; cv=none; b=gy218RT0SD9mnwGEr7jMN3QcXulCw34djWS8P0nKZI89urePx2PjZxKsRdqbrItqnOqY/iIV2gJDdyfI6TBzuKHsEXzVeYUSx1Lok0VoUuHqr2efyJ/f0S8wzErN9057ErLTK564VOMV6KWzOtfcvd0Vb6E5TxGrC4g35f/o6mc=
+	t=1733420804; cv=none; b=Lmdx5WKvWW/rd2RpxzNo450RS5CQ1KwuMQJTMNbdKsZr6OjoSVz8U3HSBMLcCgfpEZk/BzDWRQh1zuOCtlRP9jsYuUk/3845vyVTMo8NoRWg3fDqV3Tne3HcYI2bX9P2JFF0DO7KT4x9eFUHM0xKKqffW8hDVU60yAVHZvjRQIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420757; c=relaxed/simple;
-	bh=nGiGDxSwpX5NzSRcfmeq622cRq3f8dYXZA6kZrnrbhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBsR1BbwPBYxWa3RagcSwE+mQQjhBomAYDx9U8zmJmSXYo/6waPkt0WZPnwbgndslaXYiibIoBUZ3i6Ri8QsiW2FMPF4kUfbZW3NyTbrYKqOtjaSY4FwqJ+Z1TBNf4N2DxijWtdJdAeyz2RnEaQF9rhZpervamQ+RKKGjxWIft4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ratMgJlh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B403C4CED1;
-	Thu,  5 Dec 2024 17:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733420756;
-	bh=nGiGDxSwpX5NzSRcfmeq622cRq3f8dYXZA6kZrnrbhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ratMgJlhiLrVN4gLH4jqRX6FLHacP6HUeCoyVzobNhZrk+Tmwu+W5TTshdmFwm2TC
-	 ha1i/hpxidOgqtCCFgUJCgsUxF3+ZKqZTl8eyA8C4NbZO9+nStt4GJjYfTxJrmusUT
-	 L3mb1vSqbFm4miSRUXGUhxyay4C6ig20Jn7kZAN7KGK6YqKifAXxMHn0j2mcjx7o8T
-	 ljfmhcZ4oMiNP/BqChgJwp+t0xDB9uwPR+c90iT9dP2O9GsFWboZYWovb4dohMe6G7
-	 T9/34pWNuRYQlEOFrlurSc1mgqbdmOQyVmIlZ/OnN8OtZF17YsXnpk+Ht+LEQ/8BYt
-	 4vc3JBlPTfkqg==
-Date: Thu, 5 Dec 2024 17:45:52 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Aubin Constans <aubin.constans@microchip.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mmc: atmel,hsmci: Convert to json schema
-Message-ID: <20241205-trickster-rebate-d5e64bc29992@spud>
-References: <20241205-hsmci-v1-1-5a25e622dfed@microchip.com>
+	s=arc-20240116; t=1733420804; c=relaxed/simple;
+	bh=1GB7GH1J9M+3yZmb5D+sIaRJ5z6tUwPPtG6cgVQchio=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BUvmIqpPib/4IUJFGYN/VSIoSAsiVJbkzM8/MFVRFVn393vrNH7+jTSK+z0cId9YGrM70KtZMRmx2AdJOFn2Ng/2mUB+xYT/U8GmINqKM7x/T5933U8Z1+F/GSzRI+ZxPWADDAOCYiA8niT1wVlkkcRZGN6bdNwAoHB0gLt+W5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A19C4CED1;
+	Thu,  5 Dec 2024 17:46:39 +0000 (UTC)
+Date: Thu, 5 Dec 2024 12:46:45 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+Cc: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+ <gourry@gourry.net>, <nehagholkar@meta.com>, <abhishekd@meta.com>,
+ <david@redhat.com>, <ying.huang@intel.com>, <nphamcs@gmail.com>,
+ <akpm@linux-foundation.org>, <hannes@cmpxchg.org>, <feng.tang@intel.com>,
+ <kbusch@meta.com>, <bharata@amd.com>, <Hasan.Maruf@amd.com>,
+ <sj@kernel.org>, <willy@infradead.org>, <kirill.shutemov@linux.intel.com>,
+ <mgorman@techsingularity.net>, <vbabka@suse.cz>, <hughd@google.com>,
+ <rientjes@google.com>, <shy828301@gmail.com>, <Liam.Howlett@Oracle.com>,
+ <peterz@infradead.org>, <mingo@redhat.com>, "Masami Hiramatsu"
+ <mhiramat@kernel.org>, <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH V0 09/10] trace/kmmscand: Add tracing of scanning
+ and migration
+Message-ID: <20241205124645.0d56ea57@gandalf.local.home>
+In-Reply-To: <20241201153818.2633616-10-raghavendra.kt@amd.com>
+References: <20241201153818.2633616-1-raghavendra.kt@amd.com>
+	<20241201153818.2633616-10-raghavendra.kt@amd.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a1zPdUEOUiPmOEQF"
-Content-Disposition: inline
-In-Reply-To: <20241205-hsmci-v1-1-5a25e622dfed@microchip.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun, 1 Dec 2024 15:38:17 +0000
+Raghavendra K T <raghavendra.kt@amd.com> wrote:
 
---a1zPdUEOUiPmOEQF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Dec 05, 2024 at 03:27:02PM +0530, Dharma Balasubiramani wrote:
-
-> +patternProperties:
-> +  "^slot@[0-9]+$":
-> +    type: object
-> +    description: A slot node representing an MMC, SD, or SDIO slot.
+> Add tracing support to track
+>  - start and end of scanning.
+>  - migration.
+> 
+> CC: Steven Rostedt <rostedt@goodmis.org>
+> CC: Masami Hiramatsu <mhiramat@kernel.org>
+> CC: linux-trace-kernel@vger.kernel.org
+> 
+> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+> ---
+>  include/trace/events/kmem.h | 99 +++++++++++++++++++++++++++++++++++++
+>  mm/kmmscand.c               | 12 ++++-
+>  2 files changed, 110 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
+> index b37eb0a7060f..80978d85300d 100644
+> --- a/include/trace/events/kmem.h
+> +++ b/include/trace/events/kmem.h
+> @@ -9,6 +9,105 @@
+>  #include <linux/tracepoint.h>
+>  #include <trace/events/mmflags.h>
+>  
+> +TRACE_EVENT(kmem_mm_enter,
 > +
-> +    allOf:
-> +      - $ref: mmc-controller.yaml
+> +	TP_PROTO(struct task_struct *t,
+> +		 struct mm_struct *mm),
 > +
-> +    properties:
-> +      reg:
-> +        description: Slot ID.
-> +        minimum: 0
+> +	TP_ARGS(t, mm),
 > +
-> +      bus-width:
-> +        description: Number of data lines connected to the controller.
-> +        enum: [1, 4, 8]
+> +	TP_STRUCT__entry(
+> +		__array(	char, comm, TASK_COMM_LEN	)
+
+Is there a reason to record "comm"? There's other ways to retrieve it than
+to always write it to the ring buffer.
+
+> +		__field(	struct mm_struct *, mm		)
+> +	),
 > +
-> +      cd-gpios:
-> +        description: GPIO used for card detection.
+> +	TP_fast_assign(
+> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
+> +		__entry->mm = mm;
+> +	),
 > +
-> +      cd-inverted:
-> +        type: boolean
-
-This type conflicts with mmc-controller.yaml, it's a flag there.
-
-> +        description: Inverts the value of the card detection GPIO.
+> +	TP_printk("kmmscand: mm_enter comm =%s mm=%p", __entry->comm, __entry->mm)
+> +);
 > +
-> +      wp-gpios:
-> +        description: GPIO used for write protection.
+> +TRACE_EVENT(kmem_scan_mm_start,
 > +
-> +    required:
-> +      - reg
-> +      - bus-width
+> +	TP_PROTO(struct task_struct *t,
+> +		 struct mm_struct *mm),
 > +
-> +    unevaluatedProperties: false
+> +	TP_ARGS(t, mm),
+> +
+> +	TP_STRUCT__entry(
+> +		__array(	char, comm, TASK_COMM_LEN	)
+> +		__field(	struct mm_struct *, mm		)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
+> +		__entry->mm = mm;
+> +	),
+> +
+> +	TP_printk("kmmscand: scan_mm_start comm =%s mm=%p", __entry->comm, __entry->mm)
 
-Do you mean additionalProperties: false here? You listed properties
-contained in mmc-controller.yaml which makes it seem like you're
-restricting to this subset rather than allowing all properties - but you
-need additionalProperties: false to do that.
+No need to write the event name into the TP_printk(). That's redundant.
 
---a1zPdUEOUiPmOEQF
-Content-Type: application/pgp-signature; name="signature.asc"
+Also, the above two events are pretty much identical. Please use
+DECLARE_EVENT_CLASS().
 
------BEGIN PGP SIGNATURE-----
+> +);
+> +
+> +TRACE_EVENT(kmem_scan_mm_end,
+> +
+> +	TP_PROTO(struct task_struct *t,
+> +		 struct mm_struct *mm,
+> +		 unsigned long start,
+> +		 unsigned long total,
+> +		 unsigned long scan_size,
+> +		 unsigned long scan_period),
+> +
+> +	TP_ARGS(t, mm, start, total, scan_period, scan_size),
+> +
+> +	TP_STRUCT__entry(
+> +		__array(	char, comm, TASK_COMM_LEN	)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1HmzwAKCRB4tDGHoIJi
-0mIMAPwKQdE3NtmqK62QK0fY/gffw/1Vv38EcC2tMQW4KwioowD/SFG716kAPybn
-xXpMRahY+A5Yq84OK3/ptAMO/gvGOg0=
-=1UUd
------END PGP SIGNATURE-----
+Again, why comm?
 
---a1zPdUEOUiPmOEQF--
+> +		__field(	struct mm_struct *, mm		)
+> +		__field(	unsigned long,   start		)
+> +		__field(	unsigned long,   total		)
+> +		__field(	unsigned long,   scan_period	)
+> +		__field(	unsigned long,   scan_size	)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
+> +		__entry->mm = mm;
+> +		__entry->start = start;
+> +		__entry->total = total;
+> +		__entry->scan_period = scan_period;
+> +		__entry->scan_size = scan_size;
+> +	),
+> +
+> +	TP_printk("kmmscand: scan_mm_end comm =%s mm=%p, start = %ld, total = %ld, scan_period = %ld, scan_size = %ld",
+> +			__entry->comm, __entry->mm, __entry->start,
+> +			__entry->total, __entry->scan_period, __entry->scan_size)
+> +);
+> +
+> +TRACE_EVENT(kmem_scan_mm_migrate,
+> +
+> +	TP_PROTO(struct task_struct *t,
+> +		 struct mm_struct *mm,
+> +		 int rc),
+> +
+> +	TP_ARGS(t, mm, rc),
+> +
+> +	TP_STRUCT__entry(
+> +		__array(	char, comm, TASK_COMM_LEN	)
+> +		__field(	struct mm_struct *, mm		)
+> +		__field(	int,   rc			)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
+> +		__entry->mm = mm;
+> +		__entry->rc = rc;
+> +	),
+> +
+> +	TP_printk("kmmscand: scan_mm_migrate comm =%s mm=%p rc=%d", __entry->comm,
+> +			__entry->mm, __entry->rc)
+> +);
+> +
+> +
+>  TRACE_EVENT(kmem_cache_alloc,
+>  
+>  	TP_PROTO(unsigned long call_site,
+> diff --git a/mm/kmmscand.c b/mm/kmmscand.c
+> index 682c0523c0b4..70f588a210dd 100644
+> --- a/mm/kmmscand.c
+> +++ b/mm/kmmscand.c
+> @@ -668,8 +668,10 @@ static void kmmscand_migrate_folio(void)
+>  			WRITE_ONCE(kmmscand_cur_migrate_mm, info->mm);
+>  			spin_unlock(&kmmscand_migrate_lock);
+>  
+> -			if (info->mm)
+> +			if (info->mm) {
+>  				ret = kmmscand_promote_folio(info);
+> +				trace_kmem_scan_mm_migrate(info->mm->owner, info->mm, ret);
+> +			}
+>  
+>  			/* TBD: encode migrated count here, currently assume folio_nr_pages */
+>  			if (!ret)
+> @@ -828,6 +830,9 @@ static unsigned long kmmscand_scan_mm_slot(void)
+>  		goto outerloop;
+>  	}
+>  
+> +	if (mm->owner)
+> +		trace_kmem_scan_mm_start(mm->owner, mm);
+> +
+>  	now = jiffies;
+>  	/*
+>  	 * Dont scan if :
+> @@ -868,6 +873,10 @@ static unsigned long kmmscand_scan_mm_slot(void)
+>  
+>  	update_mmslot_info = true;
+>  
+> +	if (mm->owner)
+> +		trace_kmem_scan_mm_end(mm->owner, mm, address, total,
+> +					mm_slot_scan_period, mm_slot_scan_size);
+
+Please do not add conditions that is used just for calling a tracepoint.
+That takes away the "nop" of the function. You can either use
+TRACE_EVENT_CONDITION() or DEFINE_EVENT_CONDITION(), or you can hard code
+it here:
+
+	if (trace_kmem_scan_mm_end_enabled()) {
+		if (mm->owner)
+			trace_kmem_scan_mm_end(mm->owner, mm, address, total,
+						mm_slot_scan_period, mm_slot_scan_size);
+	}
+
+But since it is a single condition, I would prefer the *_CONDITION() macros
+above.
+
+-- Steve
+
+> +
+>  	count_kmmscand_mm_scans();
+>  
+>  outerloop:
+> @@ -1020,6 +1029,7 @@ void __kmmscand_enter(struct mm_struct *mm)
+>  	spin_unlock(&kmmscand_mm_lock);
+>  
+>  	mmgrab(mm);
+> +	trace_kmem_mm_enter(mm->owner, mm);
+>  	if (wakeup)
+>  		wake_up_interruptible(&kmmscand_wait);
+>  }
+
 
