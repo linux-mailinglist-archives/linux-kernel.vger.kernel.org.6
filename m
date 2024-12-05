@@ -1,246 +1,165 @@
-Return-Path: <linux-kernel+bounces-432831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E62A9E50C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:10:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4691C9E50BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B43316A831
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1808B1882FE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C0E1F7086;
-	Thu,  5 Dec 2024 09:06:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7821B1DA602;
+	Thu,  5 Dec 2024 09:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CKpzL5Ir"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5A71E00BE
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98B21D89F7
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733389588; cv=none; b=hm3vSraHpfGRt7A339dtFPRZvdP/BTuggAScfCN0BqntMTNz3Ul0nZ88G9jae8TrP3J+9C9FYyv/xg7VkPKwo0g2NIKVvYhA6goYFKSe2Wa3X58eAGPhxO/fa4BVjGODIDnERFkf/DLWk5BxuT8jkLo0bcSrT4QWVT0/TAH231c=
+	t=1733389583; cv=none; b=fotN1FN4Dzt9HNTMvb02gkjAnjCpdHh0w7V5nqMq0S2kI6RoXPVo/a/3Icii9WgypuVEPh/Aqk3JatK1onnrrP2Eq9vki9oYdKCNbPRejCx8u6vYIJPopVhfyV57hPSer6Pb5IMhlM8hln9aAmn8+ouYRlehQg1GzBx3IDH2/5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733389588; c=relaxed/simple;
-	bh=0WFk74EjB5BReqyGSQPdVJxhNKrDOunizJQoJsX5EiU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=txt+ruSUGSWvcCiSjgz56MSzBfnMakNTuIgFqVOzmTPgi9hDSczwWoWxQaz0HiCx7TAhJP1nGuJseh2m8a0PTYOwz3D1cS3Ep5DLQuNs49nzrsOvI7zUnl3eOX3ynoJymXxd32ZHA8F+CR57yPnyxx2wdbv/hzhTYaEs8RuODic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1tJ7oW-0004Ks-QO; Thu, 05 Dec 2024 10:06:24 +0100
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Thu, 05 Dec 2024 10:06:06 +0100
-Subject: [PATCH v3 6/6] arm64: dts: agilex5: initial support for Arrow
- AXE5-Eagle
+	s=arc-20240116; t=1733389583; c=relaxed/simple;
+	bh=5XQ1HXYwbTTZdTWh2utJMKfmU8iPPThgBP2pbSMhge4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N1QvNJfdO5RhQ09hdP+ngx2ljzcpTHIQQWMFuwpD9Q0nBhMiJUSkvqR0jH9E8GTDs6haiCHV3umnn9SsECSnZ/G3RiKKdMgqGEERC4CZ7xC5v3naOXEKl5cTBYTMPdUHjuDCjsW1Qvr99rIM0ajlNqXHqB309BdWaDe9iKeZe00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CKpzL5Ir; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a1639637so7359965e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:06:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733389580; x=1733994380; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2t7W4OrRjFhEWmecg84hD7xOx3YqRZ5sVEwAFgCNS2o=;
+        b=CKpzL5IrX0eIk0XVzZ8UGfVYS83tv0biAwoyaTHfbfYUYxGJiS5xbMGxd6R/prvi2q
+         FKps1xaqQYTLemjXnz1/cg9KBvdAPKiFSbl9I0FU2cFb1O87Xrqn4hOz706YYuGg94c2
+         WmaZr1SVx343iBUPWVkkAnqB6kAJD+OHQG5N2nutrZaqPsGLg/ZCTs3NE5fdwMPVCRJp
+         wgGb2levSUdUpFSwEJlhRrRC8NFcUS+8nYm6NgcZZJt2nAGCp1Hgq5JF1Hg5D3srXcao
+         kz3gy1W/FjqXLxS95y4SyNs2FbP1pBJt2FY69Im0rNGwT1oQRM9pbCndHFT6ucDZqoSi
+         /atw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733389580; x=1733994380;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2t7W4OrRjFhEWmecg84hD7xOx3YqRZ5sVEwAFgCNS2o=;
+        b=uIIdp8+u8FZwMcMNvySogvUPw13q7fAGMXiMfL2qnfEn7mCmhTYD+tg43GqbsQxmSH
+         7YO1kHEH7ys7Qh1nbFLVJUQPq+40N+Q3wyUo/DS5JhxuIuYffB3IQbQVhYW7N4zxr5oG
+         HlcvssXdSSDpoVbIUzaWvNQN1xOc288bZuCBA0E3iau8tZIzvEWBfs3CxhIdFgg48DOd
+         LCAomdW4sd9Xn/XBqcpz8lfVjWjZArNz8rlGv3J8oKpPIK+Dk5NGpU1SzRd7KcWM0bfS
+         ig4q0Lbny9ZYTcVaAAg1cxo0F3pb0HWUw0T6U3VnrXLoWUA0fxiNlMeNWnLPqxp3XHAO
+         ffvA==
+X-Gm-Message-State: AOJu0YyQ8Wef/50cQg0Ivk4jMkHAR/IJD0uCnb6SgPVbzEav+dKgA7fG
+	P5peD8LHVsjGGgj8EbRaxalWuHuFg6ZOYsQIX2syKoSBtYz6sIap5ctVE+g9Z/h8PflCCmF4dxx
+	0
+X-Gm-Gg: ASbGnctIe89sY9hYU8wxJdkSbbnNPwIpqTZgULpVp8r1yB0saMz4uekmBtP/q+hNyCm
+	cVyXgrrzVMKamL5epXfu6b9cU5yMS+yXQMbpS7UyWy1JmA7jUE8dMvN2YsA/E/DIpNKib4/uRsj
+	grIbw63sdg43HsmOZShD+Py8Jn0J/AdPu1dBlMvx4GJoj6ehxegN9BWdqigv+e5DtKg/0kztO4w
+	SDAzdiO/a6Tz49j/kpkqlE04AXWoWucwuWRy8voT/4989stZcjd3VY9gEM+GOJMNshktVDmigg=
+X-Google-Smtp-Source: AGHT+IE1W5whVS1H/s6P2CDbG6g4KdyVwl+f7pWy6cAjeTZPQLXiw15uiJrpsamNn8FKlX2vxkufWw==
+X-Received: by 2002:a05:600c:3b24:b0:431:3933:1d30 with SMTP id 5b1f17b1804b1-434d346df9amr69721745e9.5.1733389579936;
+        Thu, 05 Dec 2024 01:06:19 -0800 (PST)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.217.62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113508sm16760695e9.35.2024.12.05.01.06.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 01:06:19 -0800 (PST)
+Message-ID: <62539c75-8f4e-4e12-bcb4-55c46cdf646d@suse.com>
+Date: Thu, 5 Dec 2024 11:06:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241205-v6-12-topic-socfpga-agilex5-v3-6-2a8cdf73f50a@pengutronix.de>
-References: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
-In-Reply-To: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
-To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 08/23] x86/virt/tdx: Use all system memory when
+ initializing TDX module as TDX memory
+To: Mike Rapoport <rppt@kernel.org>, Kai Huang <kai.huang@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+ dave.hansen@intel.com, kirill.shutemov@linux.intel.com,
+ peterz@infradead.org, tony.luck@intel.com, tglx@linutronix.de, bp@alien8.de,
+ mingo@redhat.com, hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
+ rafael@kernel.org, david@redhat.com, dan.j.williams@intel.com,
+ len.brown@intel.com, ak@linux.intel.com, isaku.yamahata@intel.com,
+ ying.huang@intel.com, chao.gao@intel.com,
+ sathyanarayanan.kuppuswamy@linux.intel.com, bagasdotme@gmail.com,
+ sagis@google.com, imammedo@redhat.com
+References: <cover.1699527082.git.kai.huang@intel.com>
+ <87e19d1931e33bfaece5b79602cfbd517df891f1.1699527082.git.kai.huang@intel.com>
+ <Z1Fc8g47vfpz9EVW@kernel.org>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <Z1Fc8g47vfpz9EVW@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The Arrow AXE5-Eagle is an Intel Agilex5 SoCFPGA based board with:
 
-   - 1x PCIe Gen4.0 edge connector
-   - 4-port USB HUB
-   - 2x 1Gb Ethernet
-   - microSD
-   - HDMI output
-   - 2x 10Gb SFP+ cages
 
-As most devices aren't supported mainline yet, this is only the initial
-support for the board.
+On 5.12.24 г. 9:57 ч., Mike Rapoport wrote:
+> Hi,
+> 
+> I've been auditing for_each_mem_pfn_range() users and it's usage in TDX is
+> dubious for me.
+> 
+> On Fri, Nov 10, 2023 at 12:55:45AM +1300, Kai Huang wrote:
+>>
+>> As TDX-usable memory is a fixed configuration, take a snapshot of the
+>> memory configuration from memblocks at the time of module initialization
+>> (memblocks are modified on memory hotplug).  This snapshot is used to
+> 
+> AFAUI this could happen long after free_initmem() which discards all
+> memblock data on x86.
+ > >> enable TDX support for *this* memory configuration only.  Use a memory
+>> hotplug notifier to ensure that no other RAM can be added outside of
+>> this configuration.
+>   
+> ...
+> 
+>> +/*
+>> + * Ensure that all memblock memory regions are convertible to TDX
+>> + * memory.  Once this has been established, stash the memblock
+>> + * ranges off in a secondary structure because memblock is modified
+>> + * in memory hotplug while TDX memory regions are fixed.
+>> + */
+>> +static int build_tdx_memlist(struct list_head *tmb_list)
+>> +{
+>> +	unsigned long start_pfn, end_pfn;
+>> +	int i, ret;
+>> +
+>> +	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, NULL) {
+> 
+> Unles ARCH_KEEP_MEMBLOCK is defined this won't work after free_initmem()
 
-Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/intel/Makefile                 |   1 +
- .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 140 +++++++++++++++++++++
- 2 files changed, 141 insertions(+)
+TDX_HOST actually selects ARCH_KEEP_MEMBLOCK:
 
-diff --git a/arch/arm64/boot/dts/intel/Makefile b/arch/arm64/boot/dts/intel/Makefile
-index d39cfb723f5b6674a821dfdafb21b12668bb1e0e..3e87d548c532b1a9e38f4489c037c5c4db3a50b8 100644
---- a/arch/arm64/boot/dts/intel/Makefile
-+++ b/arch/arm64/boot/dts/intel/Makefile
-@@ -3,5 +3,6 @@ dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += socfpga_agilex_n6000.dtb \
- 				socfpga_agilex_socdk.dtb \
- 				socfpga_agilex_socdk_nand.dtb \
- 				socfpga_agilex5_socdk.dtb \
-+				socfpga_agilex5_axe5_eagle.dtb \
- 				socfpga_n5x_socdk.dtb
- dtb-$(CONFIG_ARCH_KEEMBAY) += keembay-evm.dtb
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..c0f6870e7b40a53ca0d685b4109ff24e1409bb0e
---- /dev/null
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
-@@ -0,0 +1,140 @@
-+// SPDX-License-Identifier:     GPL-2.0
-+/*
-+ * Copyright (C) 2024, Arrow Electronics, Inc.
-+ */
-+#include "socfpga_agilex5.dtsi"
-+
-+/ {
-+	model = "SoCFPGA Agilex5 Arrow AXE5-Eagle";
-+	compatible = "arrow,socfpga-agilex5-axe5-eagle", "intel,socfpga-agilex5";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-0 {
-+			label = "hps_led0";
-+			gpios = <&porta 6 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-1 {
-+			label = "hps_led1";
-+			gpios = <&porta 7 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-0 {
-+			label = "hps_sw0";
-+			gpios = <&porta 10 0>;
-+			linux,input-type = <5>;	/* EV_SW */
-+			linux,code = <0x0>;
-+		};
-+
-+		key-1 {
-+			label = "hps_sw1";
-+			gpios = <&porta 1 0>;
-+			linux,input-type = <5>;	/* EV_SW */
-+			linux,code = <0x0>;
-+		};
-+
-+		key-2 {
-+			label = "hps_pb0";
-+			gpios = <&porta 8 1>;
-+			linux,code = <187>;		/* KEY_F17 */
-+		};
-+
-+		key-3 {
-+			label = "hps_pb1";
-+			gpios = <&porta 9 1>;
-+			linux,code = <188>;		/* KEY_F18 */
-+		};
-+	};
-+
-+	vdd: regulator-vdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-supply";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_3_3: regulator-vdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-supply";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+};
-+
-+&gmac2 {
-+	status = "okay";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&emac2_phy0>;
-+
-+	mdio0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "snps,dwmac-mdio";
-+		emac2_phy0: ethernet-phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&gpio0 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9544";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x70>;
-+		status = "okay";
-+	};
-+};
-+
-+&osc1 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&qspi {
-+	status = "okay";
-+
-+	flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "micron,mt25qu02g", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <100000000>;
-+
-+		m25p,fast-read;
-+		cdns,read-delay = <2>;
-+		cdns,tshsl-ns = <50>;
-+		cdns,tsd2d-ns = <50>;
-+		cdns,tchsh-ns = <4>;
-+		cdns,tslch-ns = <4>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+   6 config INTEL_TDX_HOST 
 
--- 
-2.46.0
+    5         bool "Intel Trust Domain Extensions (TDX) host support" 
+
+    4         depends on CPU_SUP_INTEL 
+
+    3         depends on X86_64 
+
+    2         depends on KVM_INTEL 
+
+    1         depends on X86_X2APIC 
+
+1980         select ARCH_KEEP_MEMBLOCK 
+
+    1         depends on CONTIG_ALLOC 
+
+    2         depends on !KEXEC_CORE 
+
+    3         depends on X86_MCE
+
+
+<snip>
 
 
