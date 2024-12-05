@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-433095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9A79E53D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CE59E536F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205F1286FF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:25:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2125C281171
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED01F207E17;
-	Thu,  5 Dec 2024 11:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C061DDC16;
+	Thu,  5 Dec 2024 11:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="TzuCPCUr"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gdlpBoF8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03071F668E;
-	Thu,  5 Dec 2024 11:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3BE18DF6E;
+	Thu,  5 Dec 2024 11:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733397820; cv=none; b=h7ZPsKjw8BgLW4Rc4TLiJiTdNiMBGnf2AQ7SaQGDQcV/6pbr/hOaTX5HYdIsbLQqHBYZnFLgQXjBbh+/Yr1n4PXzFHV7iQV+KG4TYfPQnCt8hKU1IDUNyD3xLQPY1p+wShpoF+aqJgDzM6RUCxCBHJibn7ZwzleMByLt5Ij+iSs=
+	t=1733397056; cv=none; b=QIwzGygy3UBqURtcPZYr2OtY+hti6exAG6nXUN3zDX6MaUvcVvhto6NGUKg54k6jeSgZDcHy0ZzdHf/fu7LwN4weR3C7ul8o+o1EBBhq7hAnqzYujrjzP3Q5OWGGE8xsZi0C9/PecDKKmbxZH2AiJJuycqtCSDDTiASVoMWlv9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733397820; c=relaxed/simple;
-	bh=ljlY1k2q+/fI6CNwKjeSaqRz8l+fZjDVuE0tsdt1VjQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=nkCiWtCVZdp9DkoyrzhkdMXqCgY94FSo9hLXxebAnNH9RJbTO9ASJku8AdxOLDtZJ+rKPjZ1HUubSPPZGg2w2PyP+ZXNG3XeJ0RhdqAxE/2fT1U+c4tgZU1OF09sEVVGi1cHTnHC2Yi1M1w5cZdJleyuptlti0cofR2X3QA7/Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=TzuCPCUr; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1733397808;
-	bh=CWlEUFJ9FSB6B95LIRTbSG1ozUjX+vZQxlDLRuOMo8c=;
-	h=From:To:Cc:Subject:Date;
-	b=TzuCPCUrfQybGa53hGLcCPm+CKT46VdrKjcI3WFNy8Jtc3i98nZCK8iEyg51IIlrm
-	 6efJYdYK+sqjwXgMnFz2UDZ5BXB4tNNl9/vI6Vkh0LClJHkNrg8JGRuLITfLWjbuUd
-	 cDxbAcOapNxyw9Hv5FQ5hGrm6Loedio4ajdCTXbw=
-Received: from NUC11-F41.. ([39.156.73.10])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 2B13D4E0; Thu, 05 Dec 2024 19:10:49 +0800
-X-QQ-mid: xmsmtpt1733397049ts0bwkeoh
-Message-ID: <tencent_F62A51AFF6A38188D70664421F5934974008@qq.com>
-X-QQ-XMAILINFO: M/NR0wiIuy70mzeAOdqisJZc4qoxlPnWZNFd2f5QhD8shWaBqSNIuRhBFcf9n1
-	 DFvucvxiS3L1heCnwq/eqHSIs3+kKMrr58fpj/Pcmqhig/2/S21JIbSfguzD3jAqYzWDoRPcCB02
-	 c79cobqbFI7aJy9aQbynAgz9BsxDGeAn992BujD9X9VSotZl7DPB2B7KyY0qp3avUd2nEUHcgBDt
-	 FD4iytXR3kO9pL9wgMR44RpuUyGQpccYTcKK7R99UkuqmqMN1vDY6VnJZNzlWzU8vQDYmuWqjVQw
-	 7XRDjE8WzWFlmnVWWNWv436q+z0c2jFbOIS9gH7iHexXYX8IDzWS/SYZXUWJp3/PdtR/Iw1B9/QL
-	 1IVkEs4bdlpddwwjocE7I3Vh2ckG9WVyouimCVIiiPVek9MpvxL6QUqVXRS6D9VeXp3k6GR3CzlU
-	 zyI3zF2bWJ1dLaYKTmX87lsyINjTS/hcs/+ih3iJ7pR7N2WwxI71hMGtftAKvIezFQEpyKPrpy3I
-	 E8VPGvRksNWOpwVNvXUb1Temc0vHGPUe6f58jLHvxB86bDp826ufOwaHRPUJTMpcT9i0hVjEP/0x
-	 vObvTmQGvboOZ9Hy2zEz2KaligV9TGW/s69y186xj6zUZXtTdp/mR+/CXUTbQdhuVwFOQir82RGp
-	 jnKO09icfNXWsqDdmbEf7Iis0o2HD0MUcGiPMndsziPFh9O/qFI2HTiAMsOZLkWcDN3nFIuW0vqe
-	 SI3cxe8nD/gjoc0PrlLnxsucUc4PO8dJ6xF/zig5/0amy9oGxs8+4zBJyyp040YC6nZqXi74znKl
-	 WNyTaZr3Ezap+PZqbdHDUaiP3X05rR7ZAw1yUnytUalgM920Th94qKsBYq3hawS5eO+AXmYNGJWZ
-	 dDk34PWR9MtfmSeG5ULW/DDd4ZYSvtLP8m4uaAWCnJ1cQ89FL1v9Lyk1auK22DXsrBbZPjO/yR4z
-	 x/0I+mZyLBJyvoj0rRbSaEnFudpeFe
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Rong Tao <rtoax@foxmail.com>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	rongtao@cestc.cn
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [TOOLING] (bpftool)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH bpf-next v2] bpftool: Fix gen object segfault
-Date: Thu,  5 Dec 2024 19:10:35 +0800
-X-OQ-MSGID: <20241205111036.278172-1-rtoax@foxmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733397056; c=relaxed/simple;
+	bh=kb/2Mt8EUGXgFsWvSiXqRIjyzMwKbUYeOPB3f6pe2nw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G/lZ/1hGxyBz23+zRACHsplKHnfn5+gkHK8U6FMJk6Fyvy5llbEFlnHtDW4LR+u94cY4NE0PG5t9RjTxfrCfCnJ9FU7SIckph5B8xjfI/elmUoFCsMv49u3JPvRB3llVVj+J05BypZprakpsmV7EAPY7QsvOolSZ51/Nd9OAO14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gdlpBoF8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57heSV005920;
+	Thu, 5 Dec 2024 11:10:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dH6Nc8qSBHFcLSjD+BCzYNw6b/7zxQKMdpGyGFMU2Og=; b=gdlpBoF8C5+eqCp7
+	CNcFKqjvbBOmy+CPIvKnimf6K63jr+UDdBgVN4PoBNZt8MpFv2ufBoMHwStbhVY/
+	wwSwu3Du6isoY6igIZ2Z93fI4z/8/nssq7R2fUKVIfhRmIT/hd+TdB/WYtDRlZUb
+	Bq3CBFaJMxi02EbG0IiZjsdchrS57GQ1Eb56LNtMT0V5zKNwxb7x0hiQOp6G3ASz
+	Ic6jUeG58af1L0VVYYN6cfLHlvIRIphiVPLcX3rvRg2Wca6U3ULMidZueCoS/9pY
+	obvCg8L+eyYdqHTO1gFxxsM2MgChAoUG7B6nfm46dSFOX7oTmqTBlstNz3PhCQAf
+	EVZC6A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w3eqaw2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 11:10:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5BAkF5015572
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 11:10:47 GMT
+Received: from [10.216.3.193] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 03:10:45 -0800
+Message-ID: <ec6cb28c-ec3e-4695-b0da-97c452127d5e@quicinc.com>
+Date: Thu, 5 Dec 2024 16:40:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: mac80211: re-order unassigning channel in activate
+ links
+To: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Johannes Berg
+	<johannes@sipsolutions.net>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241205-unassign_activate_links-v1-1-84097a1abdeb@quicinc.com>
+ <65d22960ca6e47e19cf7c1c6a60dd72a@realtek.com>
+Content-Language: en-US
+From: Aditya Kumar Singh <quic_adisi@quicinc.com>
+In-Reply-To: <65d22960ca6e47e19cf7c1c6a60dd72a@realtek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 49iXbVkRfX_sDXyshYRWoK7eeYVlNkyN
+X-Proofpoint-ORIG-GUID: 49iXbVkRfX_sDXyshYRWoK7eeYVlNkyN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 priorityscore=1501 mlxlogscore=936
+ spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412050080
 
-From: Rong Tao <rongtao@cestc.cn>
+On 12/5/24 14:08, Zong-Zhe Yang wrote:
+> Could you also update the description of ieee80211_set_active_links() (include/net/mac80211.h) to align the changes?
+> I think it would be like:
+> 
+>    change_vif_links(0x11)
+>    assign_vif_chanctx(link_id=4)
+>    change_sta_links(0x11) for each affected STA (the AP)
+>    [...]
+>    change_sta_links(0x10) for each affected STA (the AP)
+>    unassign_vif_chanctx(link_id=0)
+>    change_vif_links(0x10)
 
-If the input file and output file are the same, the input file is cleared
-due to opening, resulting in a NULL pointer access by libbpf.
+Good point! I will do it in next version, thanks for pointing it out.
 
-    $ bpftool gen object prog.o prog.o
-    libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
-    Segmentation fault
-
-    (gdb) bt
-    #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
-    #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized out>, opts=<optimized out>) at linker.c:453
-    #2  0x000000000040c235 in do_object ()
-    #3  0x00000000004021d7 in main ()
-    (gdb) frame 0
-    #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
-    1296		Elf64_Sym *sym = symtab->data->d_buf;
-
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
-v1: https://lore.kernel.org/lkml/tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com/
----
- tools/bpf/bpftool/gen.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index 5a4d3240689e..506d205138db 100644
---- a/tools/bpf/bpftool/gen.c
-+++ b/tools/bpf/bpftool/gen.c
-@@ -1879,6 +1879,8 @@ static int do_object(int argc, char **argv)
- 	struct bpf_linker *linker;
- 	const char *output_file, *file;
- 	int err = 0;
-+	int argc_cpy = argc;
-+	char **argv_cpy = argv;
- 
- 	if (!REQ_ARGS(2)) {
- 		usage();
-@@ -1887,6 +1889,14 @@ static int do_object(int argc, char **argv)
- 
- 	output_file = GET_ARG();
- 
-+	/* Ensure we don't overwrite any input file */
-+	while (argc_cpy--) {
-+		if (!strcmp(output_file, *argv_cpy++)) {
-+			p_err("Input and output files cannot be the same");
-+			goto out;
-+		}
-+	}
-+
- 	linker = bpf_linker__new(output_file, NULL);
- 	if (!linker) {
- 		p_err("failed to create BPF linker instance");
 -- 
-2.47.1
-
+Aditya
 
