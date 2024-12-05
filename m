@@ -1,119 +1,156 @@
-Return-Path: <linux-kernel+bounces-432951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCC29E5242
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:28:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4895E9E5246
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE6A1882462
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E91166AAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D351D79BB;
-	Thu,  5 Dec 2024 10:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19371D63C4;
+	Thu,  5 Dec 2024 10:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTiUcC1Y"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SLBv/eDm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2891D5CCC;
-	Thu,  5 Dec 2024 10:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483D51D5CE3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394517; cv=none; b=fSuUokKDQeVXEmX14DvE/bWTRrAU3q1E2pNCSH4VcevDDMKGmqCk73yID2OLdnakcrO/H36qD2xFCoYUZXEhjxOmiZgjPNeKYEZh3WCQrFWVKiVvyeDEeuMOFKPHRVJLN3KU9EUMssn9k7MSUH3RMTqzkPJqXKz8/7JEoBdi6Kg=
+	t=1733394561; cv=none; b=Xa1JwN0nVMu7X9xf0KQDI7qLdX6Iui/Ibae5t+4IjkHH7mZ23UsnSonJHeWuYuVtFvZZiz0Vtay/E36KmaUS3Y1Pyber0AsRyuomBUlhh8QXBqOFIof0Um53I4AzgSjzIIZJ4YfHRBY7YtfB+8bec1RrRtMmtZdpYZkYvbBSYsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394517; c=relaxed/simple;
-	bh=OQeiJ+NE9OwpTFtGSQ4jKHeHGdZbhTpl87XQ0ZGeGUc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RbbfHZrdNwn/mpZbjLQR4TrUa/byU0pBwvmZGhDRvBXLMbdDiwmc1we+Y91dlR8koyr95WU2cuFVb9fssoBuHjxjWmmWxbTmQs3SW5/xoYQ5417BMZ/0ayHGAo3WaUVwj7O17Mj7tpEPWjJN1NjjhJ/Q2io+hQys4Ng9e6QCoUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTiUcC1Y; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4349fb56260so4767425e9.3;
-        Thu, 05 Dec 2024 02:28:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733394514; x=1733999314; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KdOKJy0aTwi4bBTPR9itNWI3r8b6MmxdtvpvxZTZOg0=;
-        b=WTiUcC1YRqRvdJ+TrnWIjAz9HZmvI86p1XXLqZjq2bLdw4cTIbB5WOSPvoXV8egCKW
-         J0us4o6KAcRUJbW9OveqMyG2K4M9FxN3oBjudFp4D5qs4xrgKDcaEpYbdlDX0zAN3LtF
-         3K6g/zFM0bb0NTkhF0t+fOxmdPkNNsID1SXKKRgcgpr0DQrX4vMYmHo/VmWPoO9w76W7
-         WNPHG2/c49JH5cX0uVs63n8ad4VVom0udpvSCOsMrQCTt3mjl6FXq+aFouYV0erjPjQq
-         rkGnj8KmvzutJLWAwvuNubaY9gSEKSN9Zly/HIa87VQ/Aon4dqlNA/DJtUrVPoo6tRhZ
-         /N3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733394514; x=1733999314;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KdOKJy0aTwi4bBTPR9itNWI3r8b6MmxdtvpvxZTZOg0=;
-        b=AtXjhOtuWVlrLG6s9HUoC7NioRHRqFDJpZtdFBO4TZlPoz8S2VlSQ1VgnT1yVL/iGM
-         tve64AfsMa5OGM5lwcyk6UjNe4s6VDuWvrPt2DAzdZDlsO49E4n0KfbjK8o0oeNwkFam
-         AxSlL69AcYAWFT0JIv2JboL6f9chFKfUKrtsuQqj0npOuj+Kt0I1TqAYwe1gyXYb1WmE
-         KloSXyhE/0LiaAg4XEyM9aqWfy1d01SRhgtWM88p+3MvHOMjvIcJAXSX5HgyU4l7fL85
-         /G0KKL06QN4ZYYtZBGIEBf2lk5o6/SF6o2IgOf2YFijvDHxWQz6VgsMWgXWFP9Vi82Zl
-         unng==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ8n780vn9Y3zT2HeKFT/4AsI+71rdQTMh45unHRSN1MEPLxDCEx9YJg4CH3lBpbvsbT8aSZZ5KOeO5Dw=@vger.kernel.org, AJvYcCXYVI3Lnw3Hl7KOCYT+4RIW+VGVGYWXiKHrFvARe4rNVWGonNUNEf3sfRdCR7vPYsRbLsepeOyIAepbI7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4QtRbPyDHP17ml+nw7+5L0VsRvJqi2Ceg3cF3L1vmGfKWkwje
-	oPJ7c7JhBhtateb45ydxaS2cG9X113hnaVHfJMpFQ0WQo1tTGcu/
-X-Gm-Gg: ASbGnctDFkWYv2Bsc1C7JKLQkAxLZjoHL/o79kiPO/08XT0bonAYOhLdB6UtbD/LSAf
-	zl/TmgEV0GoMq8zMTDvCNCEFfxhTEJjD2BjveoXTK+fVFb2qa2IlNigBm5M+DiZkj2sZ0Ld0iL2
-	hAmPw8wp0DxRbSPefHznqblOhrcuJQxCH4nqT7i94HARCGRmlVxmmgM068DwmD/31ApoD1DGiaY
-	JGQpfyUFQOm+Tf6QgayugNOe85ifkKHowipaVAOmtX7ZrsVDiM=
-X-Google-Smtp-Source: AGHT+IF88i/cdTFhU0Lhv+NRvnU86WK2W1nOMi5pE6FZDNViUiJqkQ5sP2KjxOfupteC9U1bQqunNQ==
-X-Received: by 2002:a05:6000:1885:b0:385:f1f2:13ae with SMTP id ffacd0b85a97d-385fd437640mr7658681f8f.41.1733394514006;
-        Thu, 05 Dec 2024 02:28:34 -0800 (PST)
-Received: from localhost ([194.120.133.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861d0f75b4sm1629523f8f.0.2024.12.05.02.28.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 02:28:33 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kailang Yang <kailang@realtek.com>,
-	Stefan Binding <sbinding@opensource.cirrus.com>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	Joshua Grisham <josh@joshuagrisham.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ALSA: hda/realtek: Fix spelling mistake "Firelfy" -> "Firefly"
-Date: Thu,  5 Dec 2024 10:28:33 +0000
-Message-Id: <20241205102833.476190-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1733394561; c=relaxed/simple;
+	bh=ckoXV8Prl50yqnQscf2+2cQw4ett0hPrVvf/PZvKTTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hIgweuFpKWX7fsSvpeJFt7bk5fdGYOd35v8OUx2k7il+8/wK5IzbtWw/SxlhTKxqFi4cfLHEPBAhKOu3H9KBejWkn6yV3IBKE+nkzK+Dm1rOLrMtAz5xjOvAMZDGvuQt5rS5M2LgmelJqk3l+KSy5RTMvRVa/ghaHYli+MeMUQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SLBv/eDm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733394558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+S9yWB2Q2Ddgi8hcXxZfGZkEo9PsHmW3vje2XLGt+RY=;
+	b=SLBv/eDm5xfkk2kEfr88mT2EfKDUIviHg4cYATXaiySmByxJ4mYKacUTuDBGULIY1hory7
+	NOz9WwZ8POqmz2wGbHHFGwd+/n3rBFSPIWT+b8zmMonKR8iCGQMEPRgdYx5Sa900MitMxN
+	0wNhjenx/tRlkyQsSorCBX3HrGgCC6g=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-473-sxWkNQCgOMSuIBUsFbyaGg-1; Thu,
+ 05 Dec 2024 05:29:15 -0500
+X-MC-Unique: sxWkNQCgOMSuIBUsFbyaGg-1
+X-Mimecast-MFC-AGG-ID: sxWkNQCgOMSuIBUsFbyaGg
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E039193EF56;
+	Thu,  5 Dec 2024 10:29:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.213])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 780751954200;
+	Thu,  5 Dec 2024 10:29:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  5 Dec 2024 11:28:50 +0100 (CET)
+Date: Thu, 5 Dec 2024 11:28:41 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Lai, Yi" <yi1.lai@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
+Message-ID: <20241205102840.GB8673@redhat.com>
+References: <ZyJUzhzHGDu5CLdi@localhost.localdomain>
+ <20241107144617.MjCWysud@linutronix.de>
+ <Zy4OFlxoRK2jM5zo@localhost.localdomain>
+ <20241108190835.GA11231@redhat.com>
+ <Zy6QHHakztIXvudC@pavilion.home>
+ <20241111120857.5cWFpNkJ@linutronix.de>
+ <20241204134826.GA923@redhat.com>
+ <Z1DxqJlGM_I8irVQ@pavilion.home>
+ <20241205092015.GA8673@redhat.com>
+ <Z1F6_cC4bRvcN56T@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1F6_cC4bRvcN56T@pavilion.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-There is a spelling mistake in a literal string in the alc269_fixup_tbl
-quirk table. Fix it.
+On 12/05, Frederic Weisbecker wrote:
+>
+> Le Thu, Dec 05, 2024 at 10:20:16AM +0100, Oleg Nesterov a écrit :
+>
+> > > Looking at task_work, it seems that most enqueues happen to the current task.
+> > > AFAICT, only io_uring() does remote enqueue. Would it make sense to have a light
+> > > version of task_work that is only ever used by current? This would be a very
+> > > simple flavour with easy queue and cancellation without locking/atomics/RmW
+> > > operations.
+> >
+> > Perhaps, but we also need to avoid the races with task_work_cancel() from
+> > another task. I mean, if a task T does task_work_add_light(work), it can race
+> > with task_work_cancel(T, ...) which can change T->task_works on another CPU.
+>
+> I was thinking about two different lists.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK... but this needs more thinking/discussion.
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index e675f09aa795..17392b21d5bf 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10527,7 +10527,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8d91, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8d92, "HP ZBook Firefly 16 G12", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8e18, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
--	SND_PCI_QUIRK(0x103c, 0x8e19, "HP ZBook Firelfy 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8e19, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8e1a, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
--- 
-2.39.5
+> Another alternative is to maintain another head that points to the
+> head of the executing list. This way we can have task_work_cancel_current()
+> that completely cancels the work. That was my initial proposal here and it
+> avoids the lock/xchg for each work:
+>
+> https://lore.kernel.org/all/Zx-B0wK3xqRQsCOS@localhost.localdomain/
+
+Thanks... Heh, I thought about something like this too ;) Although I thought
+that we need a bit more to implement task_work_cancel_sync(). But this is
+another story.
+
+> > Hmm. I just noticed that task_work_run() needs a simple fix:
+> >
+> > 	--- x/kernel/task_work.c
+> > 	+++ x/kernel/task_work.c
+> > 	@@ -235,7 +235,7 @@
+> > 			raw_spin_unlock_irq(&task->pi_lock);
+> >
+> > 			do {
+> > 	-			next = work->next;
+> > 	+			next = READ_ONCE(work->next);
+> > 				work->func(work);
+> > 				work = next;
+> > 				cond_resched();
+> >
+> > Perhaps it makes sense before the patch from Sebastian even if that patch
+> > removes this do/while loop ?
+>
+> Hmm, can work->next be modified concurrently here?
+
+work->func(work) can, say, do kfree(work) or do another task_work_add(X, work).
+
+Oleg.
 
 
