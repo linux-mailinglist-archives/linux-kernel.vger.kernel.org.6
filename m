@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-433780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6998C9E5CEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:20:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8AC9E5CF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:20:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9B5916335D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:20:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36DE224B1A;
+	Thu,  5 Dec 2024 17:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rftU0Zqt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F85282136
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:20:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864D9224AF6;
-	Thu,  5 Dec 2024 17:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XdSRUXZV"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E8622259A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E22218847;
+	Thu,  5 Dec 2024 17:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733419214; cv=none; b=G5nXCHbAkVkSjgM0v2a7n54Q4sO8d+MNSRCNedPSPf3shDS7M1s1cIx+/3pUES+ki05xzqucMGrzCj6Sb/C7ia/ZxR+0mneVz3ao4OiYyNl4KI3NgoeCeoK46ukFjmeJIrMfMYlmrQuQQT9w4ZM7VQGApLnifJNgBktRg3pDUtk=
+	t=1733419224; cv=none; b=KCaTJlYoOWiE+Mz504WXyCMOJYIDBuGtB/dBFm5c1w/M+2pM6TdxpxZyMAdzHF6FYcZUp83A+rBHflqzQhJdgXjr7vAitjv1Stw3h1c9vBTMTJL4RLv3W/zJq+d369c140a8TkjVmxT7DISQ9t7IaYmGN55Y7zFnZYppd4fJV3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733419214; c=relaxed/simple;
-	bh=nRt9BZ3wOGi04HMdMerr9WY8ojlxeowCuGzxx41P1zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cv96vr2UTxteudDlYI3tFaXSukPiFvoPaIUBaQm21+zc2VIbcxkThFOw7sVkIDHHPxigggePi737wIK4dl/k1vMpPiqxFFvCw6qy5BA2plEsRnoewxfyfiJ+X1rhGqlqqb8wlNQ7ztZchde95ulRgPCzl1Anx+8D3IVm2kqwBeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XdSRUXZV; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d0b85c5574so172570a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:20:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733419211; x=1734024011; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u7yig2Aaj1cF+uoOcuOTHwfQCd/qo7BAxwYpQ38Ftu4=;
-        b=XdSRUXZV70nrseHo170qgv7g1FceiGj8DYeBT8JoFCorPcX+jcXEoqVN+nOWhr2JjC
-         cPKjXKJ5f4DRmz8fNU8+0dAV9LUmIzHycm5e4h/ZywR2qpimNkTFws/jpPzPJ3+vITqs
-         8HgmCVHjAmAbMVMqRbv40xeIgZOKAVMSzCtxvgAgD/LONvxnnZcIkKcU6IwtlDxfKkbS
-         7G7Mq4TXb2AVj7rlG+X4gw+UmfXZwISxjTTuPZ4sPlHf0wc0yYmkbt8ukPvNyzJk6vHt
-         31pMA09WE3yzcwtzQPnoqwcm2j35hMGTWvfoqT9KYMM17j2J1nMt/b9S0dELY5kqHQ6J
-         zbrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733419211; x=1734024011;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u7yig2Aaj1cF+uoOcuOTHwfQCd/qo7BAxwYpQ38Ftu4=;
-        b=a1kuOJkw4jEY5z5bXtLHCUWxRjk8ZVj0hfYakNtstWxsBkQCB2Po/EVKLXteB+bBdz
-         QMHtw7cEquO6Y7FRkZjXDlO9s1XWpEfBpxqm1JseBmitaJMwczEKOuPrB426qLnWr3Nz
-         rbRSjMlQRl+Y0KpUBWSpid5mOgktUFfX9V7MR6xBV4/vEiEMcCq+MSM0eR8Giqd40sym
-         59bQYzOcC2+3H083O8fQelo+B0dAFTHaV6fwdlS5N3EqEY5eiRDd17ZuKsy6dqRfD9+P
-         jtA4x9hEMXWrAZhzVD5SHe0v6ciFtLYgqcmR1wKg1xi3WDkuuAHJcxo3IVRiHOhm82dg
-         1+TA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5NzYKUSofgYrxkjPxhFRxjNjblkTmXbg8hgE8IZqTsjNyby2BPyhmpiH5dWpxCIjfPO41tjFr4vMwsjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwARpHFpyLRGq59kg8fh9CUqIDJN27hS6D/4tROWX5OeY8lXKNv
-	i7Nw0IS/Nyg5dCJHBmngujD9arqibs2+Hn92YAQvj6MD1/o055T2YZ266yZGq0Q=
-X-Gm-Gg: ASbGncsVQFnD5q8cA8ZfbiHwn31L44vMgsM0801PPLLKGOH3v2gK9ffKnior1h4iaJ8
-	7jTmY81UEbeMakWLcKTlD6q7Dno9VGH9/k8hg9e4YF0wfxCNridnA/QJU+nCPJI/DdL+aCMZLWj
-	df/FPLU1FVfjpL1wpy+59Un8fj7hl+YfVHRsL0f74rYxqNVeRppy58DG988KaKZJz3FNf4C08FV
-	9CghRs2F7OFGTZCBCZDGkxj8YqDkSFG2M4UQbUrXz20Jy0Hq+3sFAZme2XtsnrxyQmYuuT787cN
-	S2HzcezE2GAGJA+3eJr65cRoMvEOs5y9FzyOr7Cq87CpSgIlEFzr4PQ=
-X-Google-Smtp-Source: AGHT+IHQT5uO2ud1UQt44xQIYeAthB46apVlg4D3uRW41UHhyYXuzbyoQSLWZQMImKqi2K1w5Bh/HA==
-X-Received: by 2002:a17:907:2d09:b0:aa6:2eb3:40ea with SMTP id a640c23a62f3a-aa62eb34bc8mr78820866b.11.1733419211129;
-        Thu, 05 Dec 2024 09:20:11 -0800 (PST)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625eedcb9sm118859266b.89.2024.12.05.09.20.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 09:20:10 -0800 (PST)
-Date: Thu, 5 Dec 2024 18:20:08 +0100
-From: Petr Tesarik <ptesarik@suse.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Ard Biesheuvel <ardb@kernel.org>, Catalin
- Marinas <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>,
- Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-Message-ID: <20241205182008.2b36476a@mordecai.tesarici.cz>
-In-Reply-To: <aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
-	<20241017142752.17f2c816@mordecai.tesarici.cz>
-	<aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1733419224; c=relaxed/simple;
+	bh=J4RkZ5QcEl8BbbxZ0oiUNZ6PyUOhfVv0KK0hpYX0QHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=X5DdSjJ47xwfpQqXuXpqDpSLZ22uVWr3HAcI7EAQqxkNivaE6MO/q90hP7lFMqIK6TOnQJWk+Yx8GqWH3QRD18m6lqPG4u+C7oUJQkq5or6PkqnI3mHzmWsg8nfkE9xpAp4s1BEAZ+vreJitPCmaOwEctWRHOSTwz/rnss2Xruo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rftU0Zqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3FD3C4CED1;
+	Thu,  5 Dec 2024 17:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733419223;
+	bh=J4RkZ5QcEl8BbbxZ0oiUNZ6PyUOhfVv0KK0hpYX0QHI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=rftU0Zqtc9rZbHZ3b72ZLSyJ+U1EXcTYa5W6E7+3oB48oYixbQ6rPv41EdATIKyPA
+	 eceinoMbrJOg2T+pWNemssUo+s2q2FALIGGfuMiyZNOHhkdFw42D/2FcopxvVKJXC4
+	 8lL5dr+LSh7aWZZMYTtFB1nvFOS2f0GurLvUb8wNkB3SgOa9p9Oon25AEz+X5Ne/6/
+	 xM5wD4MOqGx00Q37pa0Htl/wWXrID9mZszE8JWqVlDzqZi6uG1Iq2vjVQkZ+o9AQgp
+	 rjypv9377pYhtbLIceudyFqTvMInGom0gyAtzceg/vyPdXLTTEgFh7GD03QzOZK6yd
+	 e0wjh2DmCu4BQ==
+Date: Thu, 5 Dec 2024 11:20:22 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+	p.zabel@pengutronix.de, cassel@kernel.org,
+	quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
+ bindings
+Message-ID: <20241205172022.GA3053765@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <569904ad-2b70-4a58-98fe-4f24e1089e17@foss.st.com>
 
-Hi Ryan,
+[cc->to: Rob for RC/RP separation conversation]
 
-On Thu, 17 Oct 2024 13:32:43 +0100
-Ryan Roberts <ryan.roberts@arm.com> wrote:
+On Thu, Dec 05, 2024 at 02:41:26PM +0100, Christian Bruel wrote:
+> On 12/3/24 23:25, Bjorn Helgaas wrote:
+> > On Tue, Nov 26, 2024 at 04:51:15PM +0100, Christian Bruel wrote:
+> > > Document the bindings for STM32MP25 PCIe Controller configured in
+> > > root complex mode.
+> > > 
+> > > Supports 4 legacy interrupts and MSI interrupts from the ARM
+> > > GICv2m controller.
 
-> On 17/10/2024 13:27, Petr Tesarik wrote:
-> > On Mon, 14 Oct 2024 11:55:11 +0100
-> > Ryan Roberts <ryan.roberts@arm.com> wrote:
-> >  =20
-> >> [...]
-> >> The series is arranged as follows:
-> >>
-> >>   - patch 1:	   Add macros required for converting non-arch code to su=
-pport
-> >>   		   boot-time page size selection
-> >>   - patches 2-36:  Remove PAGE_SIZE compile-time constant assumption f=
-rom all
-> >>   		   non-arch code =20
-> >=20
-> > I have just tried to recompile the openSUSE kernel with these patches
-> > applied, and I'm running into this:
-> >=20
-> >   CC      arch/arm64/hyperv/hv_core.o
-> > In file included from ../arch/arm64/hyperv/hv_core.c:14:0:
-> > ../include/linux/hyperv.h:158:5: error: variably modified =E2=80=98rese=
-rved2=E2=80=99 at file scope
-> >   u8 reserved2[PAGE_SIZE - 68];
-> >      ^~~~~~~~~
-> >=20
-> > It looks like one more place which needs a patch, right? =20
->=20
-> As mentioned in the cover letter, so far I've only converted enough to ge=
-t the
-> defconfig *image* building (i.e. no modules). If you are compiling a diff=
-erent
-> config or compiling the modules for defconfig, you will likely run into t=
-hese
-> types of issues.
->=20
-> That said, I do have some patches to fix Hyper-V, which Michael Kelley wa=
-s kind
-> enough to send me.
->=20
-> I understand that Suse might be able to help with wider performance testi=
-ng - if
-> that's the reason you are trying to compile, you could send me your confi=
-g and
-> I'll start working on fixing up other drivers?
+> > > +  wake-gpios:
+> > > +    description: GPIO controlled connection to WAKE# input signal
+> > 
+> > I'm not a hardware guy, but this sounds like a GPIO that *reads*
+> > WAKE#, not controls it.
+> 
+> Rephrasing as
+> "GPIO used as WAKE# input signal" (output for the endpoint bindings)
 
-This project was de-prioritised for some time, but I have just returned
-to it, and one of our test systems uses a Mellanox 5 NIC, which did not bui=
-ld.
+Perfect, that makes a lot of sense.
 
-If you still have time to work on your patch series, please, can you
-look into enabling MLX5_CORE_EN?
+> > > +    pcie@48400000 {
+> > > +        compatible = "st,stm32mp25-pcie-rc";
+> > > +        device_type = "pci";
+> > > +        num-lanes = <1>;
+> > 
+> > num-lanes applies to a Root Port, not to a Root Complex.  I know most
+> > bindings conflate Root Ports with the Root Complex, maybe because many
+> > of these controllers only support a single Root Port?
+> > 
+> > But are we ever going to separate these out?  I assume someday
+> > controllers will support multiple Root Ports and/or additional devices
+> > on the root bus, like RCiEPs, RCECs, etc., and we'll need per-RP phys,
+> > max-link-speed, num-lanes, reset-gpios, etc.
+> > 
+> > Seems like it would be to our benefit to split out the Root Ports when
+> > we can, even if the current hardware only supports one, so we can
+> > start untangling the code and data structures.
+> 
+> OK. and we support only 1 lane anyway, so drop it.
 
-Oh, and have you rebased the series to 6.12 yet?
+Makes sense.  What about phys, resets, etc?  I'm pretty sure a PHY
+would be a per-Root Port thing, and some resets and wakeup signals
+also.
 
-Petr T
+For new drivers, I think we should start adding Root Port stanzas to
+specifically associate those things with the Root Port, e.g.,
+something like this?
+
+  pcie@48400000 {
+    compatible = "st,stm32mp25-pcie-rc";
+
+    pcie@0,0 {
+      reg = <0x0000 0 0 0 0>;
+      phys = <&combophy PHY_TYPE_PCIE>;
+      phy-names = "pcie-phy";
+    };
+  };
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml?id=v6.12#n111
+is one binding that does this, others include apple,pcie.yaml,
+brcm,stb-pcie.yaml, hisilicon,kirin-pcie.yaml.
+
+Bjorn
 
