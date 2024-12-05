@@ -1,77 +1,87 @@
-Return-Path: <linux-kernel+bounces-432559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58FE9E4CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:59:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774109E4CF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:01:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA97188198E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:01:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8499A187FE4;
+	Thu,  5 Dec 2024 04:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ioqNXH8l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A00287436
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:59:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CFA1922D4;
-	Thu,  5 Dec 2024 03:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MxvsfHJF"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F2E1917EE
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 03:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0C4C83
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 04:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733371171; cv=none; b=S5RXPGTXlvjP46P02i2fJJAhaifWzIwcaN2LWJM/yNmeIwIgq3Ah2V1kWinmNzLAR+8IuEfbQ6qr8MX+7pyiVhN0drYd7zZPwOyre0tNqifjRvHyooj763crZGly2ANAuZUxRfXISgXvpaVPEs8EPs4tZB9p1q19iqHqrWHXir8=
+	t=1733371309; cv=none; b=np+OkWcBcR6YlVVez7vAooXRRRt6MtwxYSwm0aS0+fSeZ1blsZkilmN1rR/kx1vrotCuLleomdeT3ug0OA49drY4v7LnTRF64z5XHt0X1Dh5SWtk222mlJtXyFUvVsT+koAxVoBzQOmfEPdGjufAAGsc0OgcFQIwvxtq3lcRVa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733371171; c=relaxed/simple;
-	bh=I05OyK3KNpgpDr4PIRlliY+mK8Xs+DiFCUODSZKeiRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OOE4nkMf+agGT0DB4/QAZoCzh2rigzb53j9ojwHhaXYebXGE40wpa+vm5d7cKFg/i7VN/anMQy0PA5mkFANFHs+9fPTI2P3q3HzkX0bWUntHCOVIhqLMEtbyRr3cPw0n28pkrURNDXh4T0oGVVsaoB0irirxmkay9vz1c/oRcDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MxvsfHJF; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-215b0582aaeso3169065ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 19:59:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733371169; x=1733975969; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xhB/vC8+9l+LSkpwcpFHyYm+bgXUrU8fCpH1bzC2dVw=;
-        b=MxvsfHJFSl71lIILKNhK6Q4Ehgpd2KB2WrjLvhZzTQ0OZPL7A+LmwFGLv4cZyLP8vm
-         lzuq1thoL6f+s0cueAJN3yhceLEQNEVruw2e3RRGF8VVK5oaBnHKPyvsEpACHr7pnDe+
-         b7Qjr9JreKpHJNBJyTIOwbLQlrpAVPnfFEh/SX0/vqz8pXtUuShdzWy9xaVnXDJpiyuX
-         5rVy+NmA9pi7TjAsCJgUfkAEmm5rA7kKPQZ0BC29EPe+FWucYjvSZd88N4DQaik/pztc
-         90hirx6JeW3mylGsmxvubQn+Pkr0La43LqUPLd0fS6HfPWxv0RgNY6lEI9Q2503ty0lP
-         E7Tw==
+	s=arc-20240116; t=1733371309; c=relaxed/simple;
+	bh=NJbUNp5KQdiOm4hLOSMPKNgf9oVFfsN/R/DVEqOAt4A=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OqBg8bOBBMtJ/5TkumuPex4dh31yx4bhhn1i34qLfcEbQtLS3Zbr0b5PuIcRtL5rblmzkv0DUsSJTF77mfZYy6A5Jb1naGRlRra68UubK2X9qTEK2/jdMp7Jr2qjWHW/s5/MYL2W4qtFUs6p3+HBcIGprmnRSLJYH++VXkYNNbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ioqNXH8l; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733371307;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l1c0RZJqAUSQmqGb0lWra/RcE0Rl+ptIUXcMQZ+qpsY=;
+	b=ioqNXH8lNHlFuRs7sarh1JaqdmzwFgovHQRsdv8HE0EU7ICm6XBKH8eizU2HB5YflrwAtW
+	GgM1dIePIOuekZJZhtmShq1t3WGUBJf/UrBAhPXUMRO7rbsIUvjWYLmK4VveBhMs/dA0yo
+	0iB7L8+UCRRnSH1r6pDhpMRY0LfB5Z8=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-CkPdfihdMFyR-CE_QDOhDA-1; Wed, 04 Dec 2024 23:01:46 -0500
+X-MC-Unique: CkPdfihdMFyR-CE_QDOhDA-1
+X-Mimecast-MFC-AGG-ID: CkPdfihdMFyR-CE_QDOhDA
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4667c1c3181so6326901cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 20:01:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733371169; x=1733975969;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733371305; x=1733976105;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xhB/vC8+9l+LSkpwcpFHyYm+bgXUrU8fCpH1bzC2dVw=;
-        b=cFyX4HTdJxtgArk7xu6aVfTMN78U4BJp2xY3eu3obcYG5Xg6LwIwvLnIYSW5MBoQPD
-         FBqNElnfxUO1P2jXZt6oo6nveMZBkaX5xSU8W1/NdfJX+amSxeAF2mqdFaVqWOZykeZE
-         RIT5BYbI20nMCC4kqeVWIkI/vV6k5b7DEPeoutBbXQKxsX8B/wPcYccpHWd4D0uxqSoL
-         VgkqcvLPY+frWfI9HQwTzliPYNJMKt2mudHZsC3dnbyEbFJUHcRqWYaH/gj4dPXnrMdH
-         euJ2G3vcIoQlmU7mh26lwUxxncapRIz74qixPox3KSyBx3MNiKU8059IUjUOMmYkcJ37
-         5C8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXKPQDJvzwwbldEF4uwuGj7QGnjm7gkj/hAYMqDzSA9OMpo9C4M8tDthUex75cRQSQ/XZBLjyTMusshqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3MhLHPdt3OGnUup4HiuxNWFEQekJjYq4kTXzaMAQW77nBb9Us
-	p69nkkTYEZ4d4V9P3cEl3od7xWWspCuCObetesVWF9Y5ibPF6CvNsD5gMM/F7BY=
-X-Gm-Gg: ASbGncvI5VbNJRfRojHJ4l9qU2RpJ9ecr0ZHG4fCMhaXyAwJ+PGmj8/inn5oRXobQhy
-	sRW4t0QhpFAARCUgQugODJnCFvPXL1+MfZt4aRsLDzVSUKrCr2ohTNfspQDENqM5ButZA2KGR5M
-	e9yF6h4/Q2gNT2kDk7231fTmKArkCBsk90bOk+FtxWKPP6JYkEa4lbRuX1+MmDw6geZYGxkfw79
-	Lbw8i24dUXJJm9ErSzKFJerFqJu/z2IZA3BmXvS4rWfCJKv+0N+OxOb1xT0v2siCN9mwbSzCg==
-X-Google-Smtp-Source: AGHT+IFfg0OCwWEMRYUiPQizPXRO2o7YEs0wKqKtPO7zo8D7aVRbDJ7EbHqqYSl0XTUs+TZh4jOOVw==
-X-Received: by 2002:a17:902:e743:b0:215:4a4e:9286 with SMTP id d9443c01a7336-215bd0e66b0mr128507385ad.26.1733371169518;
-        Wed, 04 Dec 2024 19:59:29 -0800 (PST)
-Received: from [10.84.148.23] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f29b4csm3059085ad.245.2024.12.04.19.59.22
+        bh=l1c0RZJqAUSQmqGb0lWra/RcE0Rl+ptIUXcMQZ+qpsY=;
+        b=CxtKIC2GKsrEPsKRBn4h4WuOZkbZhxSHS3YnIG3xsNSu1+CKsxsVN4ZPs72fp3OWDK
+         Xk01qluRuAgpK/hYdfZxYEh45GliqrYcSFLG7A3Z3fKM3UV2N7EZ29mLHlronztz2QCf
+         1TGjvTZNzRiv6UGhTD+p3KcgLL7dGi+lXslG4tABX3PhjhklGCfxZrrE+TTKzKpihca6
+         5W+tNnbwbWRMEXtOMn7N4vnmKmB2UYvwc4MNeNn+inApiUeJMTJyzNJsWLmlM2W4x9mV
+         xSTduIl19Nf6HS7bXPXJMPEJlcKymhqRUmctO0yUoKakaKhC/JObstCkpcrRqbB0nSki
+         7DGg==
+X-Forwarded-Encrypted: i=1; AJvYcCV07FMg5sCS/kM511eSfnZkafFtOE4ip6v45/3IPww4cOfGSiOAwk5QEwqWXjNnAy+lmhA6sbtlgALI5Lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQgX82kby0L4wuimUqEZ6C1jQF50hbJHEzRmru9UGAWsfgVh0w
+	67FKlqIQ7slcx5YUsPYIBnWqQolqog8HjYJ+jP6Xyp/qS4pAtDhUaWnOQDdC0r7KIw3XmkCRmLr
+	4R6mn9TfULdATIRbTiGobRUTZhPloPmK4Iq2SYJak4OZIK96pNCS8blW6zf/nmlKIXDzh6A==
+X-Gm-Gg: ASbGncvQKG/BsdTVaGf0dYPYqEU0vRhLan8NAN1daoedxCmAfwOtOxxNMs2fGqwFa0R
+	F3w2K2v1vLWvfSB1of7qo66JRoRP8uP4gYhBLHu6FL/X40xdrCcL/vGR6cBBrdnj/c46Hh8flE7
+	OUPeWdKpfGfLPvqID6hhQV52dH/RdEL3Q4XmxLnyaDQwPdBUSnINRZsVz8UBZpBuwJOVlli7LTT
+	qJ01NIiWPTKgNmwzc38lsrsL9DRvz54P7VN4IiI/vxHQrDLhi7k82fd5R20KdEcLrhm+NvfROMJ
+	cu1pFcjvbDHvQ3lPUg==
+X-Received: by 2002:a05:622a:90d:b0:462:f690:d202 with SMTP id d75a77b69052e-4670c740353mr151953391cf.40.1733371305287;
+        Wed, 04 Dec 2024 20:01:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHTO04TadCpLGsnXjyPaAoa0bQwSNmqGFDIihAPgRWooYKIuNHkvO9280L1/e33+/9eM7hb8w==
+X-Received: by 2002:a05:622a:90d:b0:462:f690:d202 with SMTP id d75a77b69052e-4670c740353mr151953231cf.40.1733371305002;
+        Wed, 04 Dec 2024 20:01:45 -0800 (PST)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296fcb20sm3542411cf.47.2024.12.04.20.01.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 19:59:29 -0800 (PST)
-Message-ID: <4d3f1078-0938-4920-9a09-805a54643419@bytedance.com>
-Date: Thu, 5 Dec 2024 11:59:21 +0800
+        Wed, 04 Dec 2024 20:01:44 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <9765a61a-e832-4491-af02-97b8736411ef@redhat.com>
+Date: Wed, 4 Dec 2024 23:01:38 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,51 +89,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/11] synchronously scan and reclaim empty user PTE
- pages
+Subject: Re: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use it
+ in nmi_shootdown_cpus()
+To: Thomas Gleixner <tglx@linutronix.de>, Waiman Long <llong@redhat.com>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <20241203150732.182065-1-longman@redhat.com> <87h67jsif0.ffs@tglx>
+ <7aa93137-4b5e-474f-a99c-47acffdf71a3@redhat.com> <87zflbqqar.ffs@tglx>
+ <59b254dc-acf6-4114-b6b4-a7ae517bfa06@redhat.com>
 Content-Language: en-US
-To: Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org,
- muchun.song@linux.dev, vbabka@kernel.org, peterx@redhat.com,
- mgorman@suse.de, catalin.marinas@arm.com, will@kernel.org,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- x86@kernel.org, lorenzo.stoakes@oracle.com, zokeefe@google.com,
- rientjes@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1733305182.git.zhengqi.arch@bytedance.com>
- <20241204144918.b08dbdd99903d3e18a27eb44@linux-foundation.org>
- <CAG48ez19udcgNARKsizFbbnO6ATFGTSX2KEd2D5aC2Wnxy+Jwg@mail.gmail.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <CAG48ez19udcgNARKsizFbbnO6ATFGTSX2KEd2D5aC2Wnxy+Jwg@mail.gmail.com>
+In-Reply-To: <59b254dc-acf6-4114-b6b4-a7ae517bfa06@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
+On 12/4/24 2:28 PM, Waiman Long wrote:
+>
+> On 12/4/24 1:03 PM, Thomas Gleixner wrote:
+>> On Wed, Dec 04 2024 at 12:23, Waiman Long wrote:
+>>> On 12/4/24 8:10 AM, Thomas Gleixner wrote:
+>>>> On Tue, Dec 03 2024 at 10:07, Waiman Long wrote:
+>>>>> +    /*
+>>>>> +     * Call the emergency handler first, if set
+>>>>> +     * Emergency handler is not traced or checked by 
+>>>>> nmi_check_duration().
+>>>>> +     */
+>>>>> +    ehandler = READ_ONCE(desc->emerg_handler);
+>>>>> +    if (ehandler)
+>>>>> +        handled = ehandler(type, regs);
+>>>> Shouldn't this just stop processing right here?
+>>> Yes in the case of crash_nmi_callback(). I suppose it is a no-return
+>>> call. As the emergency handler is supposed to be a general mechanism in
+>>> design, I don't want to make too many assumptions of what will happen
+>>> when the handler is invoked.
+>> I'm not convinced that this should be used as a general mechanism. It's
+>> for emergency situations and that's where it stops. If the thing
+>> returns, it's a bug IMO.
+>
+> OK, I am fine with that. I will put a BUG_ON() after that in the next 
+> version.
 
-On 2024/12/5 06:56, Jann Horn wrote:
-> On Wed, Dec 4, 2024 at 11:49 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->> On Wed,  4 Dec 2024 19:09:40 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->>> But this is not enough to free the empty PTE page table pages in paths other
->>> that munmap and exit_mmap path, because IPI cannot be synchronized with
->>> rcu_read_lock() in pte_offset_map{_lock}(). So we should let single table also
->>> be freed by RCU like batch table freeing.
->>>
->>> As a first step, we supported this feature on x86_64 and selectd the newly
->>> introduced CONFIG_ARCH_SUPPORTS_PT_RECLAIM.
->>>
->>> For other cases such as madvise(MADV_FREE), consider scanning and freeing empty
->>> PTE pages asynchronously in the future.
->>
->> Handling MADV_FREE sounds fairly straightforward?
-> 
-> AFAIU MADV_FREE usually doesn't immediately clear PTEs (except if they
-> are swap/hwpoison/... PTEs). So the easy thing to do would be to check
-> whether the page table has become empty within madvise(), but I think
-> the most likely case would be that PTEs still remain (and will be
-> asynchronously zapped later when memory pressure causes reclaim, or
-> something like that).
-> 
-> So I don't see an easy path to doing it for MADV_FREE.
+Actually, crash_nmi_callback() can return in the case of the crashing 
+CPUs, though all the other CPUs will not return once called. So I 
+believe the current form is correct. I will update the comment to 
+reflect that.
 
-+1. Thanks for helping explain!
+Cheers,
+Longman
 
 
