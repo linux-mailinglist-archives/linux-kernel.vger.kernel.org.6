@@ -1,173 +1,189 @@
-Return-Path: <linux-kernel+bounces-432706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA25A9E4F0B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:00:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246089E4F2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4998F18819D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:00:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C6B81881E78
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27EF1C303E;
-	Thu,  5 Dec 2024 08:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25741D0488;
+	Thu,  5 Dec 2024 08:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVlXlbqH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgRMFmRm"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C121C3C15
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AAD1CEEB4;
+	Thu,  5 Dec 2024 08:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733385606; cv=none; b=PozqLubbK8u5N9FDsoXDX/6AY8D/CLhrdgBTpmUICC6xaO4mXKIjIMjuOBRFwgjfvZVXHCqDa1gCGvQbJjqlfI32a6bNZBacrkUopwOJ+zK0WmIPFn16EfkaiiWQmp72epfjgn6Oyr5F0/r/Plv4WbMHZJz6O6bPMdm09qgACJI=
+	t=1733385770; cv=none; b=CBDoPlbMBV6wbj/KHnaDlTSDfxnFEqGDAPS2bWhwFk6QO4QsC7OPjE1y42Wy//Do45FhfPRCxJ/bgACE1LoFYs+lTJ2e9glDfSuyiGjCeVAwueDzAsMnpdR+7hjGwzeAiJ1uoKzkLBTgLYTv5VEr6eoonbgi8S86cqSVP8vVszA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733385606; c=relaxed/simple;
-	bh=q7ysq63iGMnUWGArTOv4L3H5qVOaDhKU0OUZpTni/Xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G4MXKmxMBtmDU/sk24eFpSLrwwOHx0Nb0laAmkHSIga6ICtQXQwYAUwOTw6mtO4mnO5Sj8/AlPxNuwYXIUqbmJBbFQm+8pUa6BgFoZDXyQnLsCFHj2zVs4I0eF87iNDvuUqhcR9EOFj0xXhBNZ/qZvnOjNQqyqrFwU4hUVDJ0HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVlXlbqH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 820FBC4CED1;
-	Thu,  5 Dec 2024 08:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733385605;
-	bh=q7ysq63iGMnUWGArTOv4L3H5qVOaDhKU0OUZpTni/Xg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jVlXlbqH6PR+Y396UgJAD97rcUiSCOmuBQtf1jEZvS3SAIn00BDsYr88FpVpPIZHt
-	 7mmi0arZ61XfJVSxN9nPdsGuztCxaS9OvLcDEG0ddlTNxf50eNfexvTbBGrvG1QvmM
-	 lvi3rO2j0X3iCPj0+Gpbl9iz2wokXZcOD8rg3IL6Im0MgbJdbYgQ5m92RHGwBgNI+E
-	 TyJMqg/SlcodLQCcpUziYZB9cYaqNBltsr0SVpunycEDlchCIZLF0WddiMxKcFAV7+
-	 oDB5Jmqm6mYDMq7odpIghOm31cR/8XBkh9bhdYXfKvD7/ftn43aQFS2gDNB5C8JJTG
-	 IuG6/oD8ktDjQ==
-Date: Thu, 5 Dec 2024 08:59:59 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v5 13/16] acpi/ghes: better name the offset of the
- hardware error firmware
-Message-ID: <20241205085959.2223d079@foz.lan>
-In-Reply-To: <20241204173759.6f02561a@imammedo.users.ipa.redhat.com>
-References: <cover.1733297707.git.mchehab+huawei@kernel.org>
-	<20b003136d8c008fd54e8d40c806f13867336e13.1733297707.git.mchehab+huawei@kernel.org>
-	<20241204173759.6f02561a@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733385770; c=relaxed/simple;
+	bh=DcmPtCHdaiYgYTo7ALXMKlBmcv717TQc+18nf9VkoLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=krtvGZfJNAKLPa5IQhxtOUNZBoHjVV4Ys917F1Y+DWn3Thstb3ps0Ho5VJxCRQxROWw08H9NyHgy/K+UUN7Wmdkg+zZiidMhuKR28fjZyvXZ34Z/hyJRbwNmObnIvYs8em7IZhwIVzQSSFNRVPoTQYSfX3vM1uITP40f9Hn0z+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgRMFmRm; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a10588f3so3756695e9.1;
+        Thu, 05 Dec 2024 00:02:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733385766; x=1733990566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2poFn90IvIGBtzG2EWAUZGpuEmS5DRhKZhsmpRGoplA=;
+        b=PgRMFmRm2SsntQrqto7hB2XGjQW/A3ZJDLskk/LpPsgb5mw8/MH+LURJFctEcZbqia
+         ceMPto1UYcYBmYN14NrpxocWnVhom/iqDiNdL6STPmvf26jIc0ZXoIYhMC2iyFLWMazF
+         q2MIIk8HhIKnEWZ7ueSKszfCDbofFv4yGYJqMQPbmAA6idOSUAXv8gVqrCNH16Ii0zv0
+         3RrEfQlmOdmJBMVvP0wg9AwPK196KUqQQ+TRtTwto9L/SbI4NkCiitiqibU9CD8oqbSp
+         8Lg+J9weLfvSNetjk1v9Tru1JIUEC9r14Lj1J3DwbVF6P37ZPzymi172adI1aYGUTx4z
+         TpXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733385766; x=1733990566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2poFn90IvIGBtzG2EWAUZGpuEmS5DRhKZhsmpRGoplA=;
+        b=XE51qgyv9NY0sHWrqtrmUV+iVBiICsENysOKtCtv13fGXx28Y9vl1JGszNv6McAFYT
+         k6RiNrLIKA/4kPN4LmzP//3g9gDRLAbhL5JU8iY1L+PqXwGmuryuf6I58bs5fe9unuXz
+         xKlxNayU/C9s2Xws5NhX09N7BEraVIqAPG0kX67nVkgGBrrYNFMp/eSnsZ0eCBTYqZ/d
+         h4ZKNpvvMloQEDRkbkTiGu1w42KvF8v8oHDGe3spglDI2FOtIacbgP3uamrKhRpBWMRm
+         98p+uKo0YH2lPJEFWkwUQkY1LEMQNtQRryEgCPj+zbypnGBGjBF3dUfOQeNQWzPvWZkA
+         6soA==
+X-Forwarded-Encrypted: i=1; AJvYcCXO26+dvFcVMMw50Ii8YERNvvSIfeHYMRuRXgC5tZx7xMdhnOmKT6K6oIG8D+dhEqGwmqHeNG/U+b9q7t8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpvo4yxaXv4duj23xV3REUBgCS/EkUNAGxttRNUM3S+/Q5ZXdJ
+	AsAQ50LwjJMu8Ssf8U3N9WdamWpQG4OiM/AII2+k5JyMP6L8i/c3
+X-Gm-Gg: ASbGnctwzrW/CSVTIE3yLwcsQMwfQ0B0UXZQeBu8RJ300R2K1KBjf9HShovYjdr+DoS
+	v1F2wtJRBxGBazxhrR4cdSQoSW96AH20rNDjKrQC0Ia6Ugpvh9QBROGv7ivd2ICf5v+J3tC/Ld0
+	62VZTyus5uiXNkn4gPA8la1DuvsB/zoxWPeerYWqY9AxP9V5KQ0pOUtUWxWRrjYA2sqXv6RnX9N
+	/v1yHduQax+xnZpwUYwuRzc8MB8lcomtY6A9ctnSw5aot46chmHFcsZqfXvpLv8PnSlmR1jj5cu
+	FuFkAN6UnxBpydiFzclia8LNqgELC9Vd+lLbhTCSyAXE+g==
+X-Google-Smtp-Source: AGHT+IEpIcsbkEUIxoJSGurHGX79hiCXl10cyrZAo8yPKXdRyxTQFUbRSJ2mng7AM2ZpzwvZtyJ6KQ==
+X-Received: by 2002:a05:600c:358e:b0:431:5187:28dd with SMTP id 5b1f17b1804b1-434d3fe3393mr48299055e9.28.1733385766264;
+        Thu, 05 Dec 2024 00:02:46 -0800 (PST)
+Received: from tom-desktop.station (net-188-217-53-234.cust.vodafonedsl.it. [188.217.53.234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527395csm51843075e9.17.2024.12.05.00.02.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 00:02:45 -0800 (PST)
+From: tomm.merciai@gmail.com
+X-Google-Original-From: tommaso.merciai.xr@bp.renesas.com
+To: tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	biju.das.jz@bp.renesas.com,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Liu Ying <victor.liu@nxp.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/bridge: ite-it6263: Support VESA-24 input format
+Date: Thu,  5 Dec 2024 09:02:10 +0100
+Message-Id: <20241205080210.1285385-1-tommaso.merciai.xr@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Em Wed, 4 Dec 2024 17:37:59 +0100
-Igor Mammedov <imammedo@redhat.com> escreveu:
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-> On Wed,  4 Dec 2024 08:41:21 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > The hardware error firmware is where HEST error structures are  
->       ^^^^^^^^^^^^^^^^^^^^^^^ I can't parse this, suspect you've meant something else here
-> 
-> > stored. Those can be GHESv2, but they can also be other types.
-> > 
-> > Better name the location of the hardware error.
-> > 
-> > No functional changes.
+Introduce it6263_is_input_bus_fmt_valid() and refactor the
+it6263_bridge_atomic_get_input_bus_fmts() function to support VESA-24
+format by selecting the LVDS input format based on the LVDS data mapping
+and thereby support both JEIDA-24 and VESA-24 input formats.
 
-I meant this fw_cfg file:
-#define ACPI_HW_ERROR_FW_CFG_FILE           "etc/hardware_errors"
-#define ACPI_HW_ERROR_ADDR_FW_CFG_FILE      "etc/hardware_errors_addr"
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+---
+Changes since v1:
+ - Inline it6263_is_input_bus_fmt_valid() as suggested by LYing
+ - Fixed it6263_is_input_bus_fmt_valid() param from u32 to int as suggested by LYing
+ - Fixed commit msg as suggested by LYing
+ - Fixed commit body as suggested by LYing
+ - Collected DBaryshkov tag
 
-What about changing description to:
+ drivers/gpu/drm/bridge/ite-it6263.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
-	The etc/hardware_errors fw_cfg file is where the HEST error
-	source structures are stored. Those can be GHESv2, but they can also
-	be other types.
+diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
+index cbabd4e20d3e..3fc5c6795487 100644
+--- a/drivers/gpu/drm/bridge/ite-it6263.c
++++ b/drivers/gpu/drm/bridge/ite-it6263.c
+@@ -48,6 +48,7 @@
+ #define  REG_COL_DEP			GENMASK(1, 0)
+ #define  BIT8				FIELD_PREP(REG_COL_DEP, 1)
+ #define  OUT_MAP			BIT(4)
++#define  VESA				BIT(4)
+ #define  JEIDA				0
+ #define  REG_DESSC_ENB			BIT(6)
+ #define  DMODE				BIT(7)
+@@ -428,12 +429,30 @@ static inline void it6263_lvds_reset(struct it6263 *it)
+ 	fsleep(10000);
+ }
+ 
++static inline bool it6263_is_input_bus_fmt_valid(int input_fmt)
++{
++	switch (input_fmt) {
++	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
++	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
++		return true;
++	}
++	return false;
++}
++
+ static inline void it6263_lvds_set_interface(struct it6263 *it)
+ {
++	u8 fmt;
++
+ 	/* color depth */
+ 	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, REG_COL_DEP, BIT8);
++
++	if (it->lvds_data_mapping == MEDIA_BUS_FMT_RGB888_1X7X4_SPWG)
++		fmt = VESA;
++	else
++		fmt = JEIDA;
++
+ 	/* output mapping */
+-	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, OUT_MAP, JEIDA);
++	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, OUT_MAP, fmt);
+ 
+ 	if (it->lvds_dual_link) {
+ 		regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, DMODE, DISO);
+@@ -714,14 +733,14 @@ it6263_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+ 
+ 	*num_input_fmts = 0;
+ 
+-	if (it->lvds_data_mapping != MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA)
++	if (!it6263_is_input_bus_fmt_valid(it->lvds_data_mapping))
+ 		return NULL;
+ 
+ 	input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
+ 	if (!input_fmts)
+ 		return NULL;
+ 
+-	input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
++	input_fmts[0] = it->lvds_data_mapping;
+ 	*num_input_fmts = 1;
+ 
+ 	return input_fmts;
+-- 
+2.34.1
 
-	For more details about error source structure, see:
-	https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#acpi-error-source
-
-	Better name the address variable from ghes_error_le to hw_error_le
-	to better reflect that.
-
-	No functional changes.
-
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> > ---
-> >  hw/acpi/generic_event_device.c | 4 ++--
-> >  hw/acpi/ghes.c                 | 4 ++--
-> >  include/hw/acpi/ghes.h         | 2 +-
-> >  3 files changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> > index 663d9cb09380..17baf36132a8 100644
-> > --- a/hw/acpi/generic_event_device.c
-> > +++ b/hw/acpi/generic_event_device.c
-> > @@ -364,7 +364,7 @@ static const VMStateDescription vmstate_ghes = {
-> >      .version_id = 1,
-> >      .minimum_version_id = 1,
-> >      .fields = (const VMStateField[]) {
-> > -        VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
-> > +        VMSTATE_UINT64(hw_error_le, AcpiGhesState),
-> >          VMSTATE_END_OF_LIST()
-> >      },
-> >  };
-> > @@ -372,7 +372,7 @@ static const VMStateDescription vmstate_ghes = {
-> >  static bool ghes_needed(void *opaque)
-> >  {
-> >      AcpiGedState *s = opaque;
-> > -    return s->ghes_state.ghes_addr_le;
-> > +    return s->ghes_state.hw_error_le;
-> >  }
-> >  
-> >  static const VMStateDescription vmstate_ghes_state = {
-> > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > index 52c2b69d3664..90d76b9c2d8c 100644
-> > --- a/hw/acpi/ghes.c
-> > +++ b/hw/acpi/ghes.c
-> > @@ -359,7 +359,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-> >  
-> >      /* Create a read-write fw_cfg file for Address */
-> >      fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
-> > -        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
-> > +        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
-> >  
-> >      ags->present = true;
-> >  }
-> > @@ -385,7 +385,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-> >      }
-> >      ags = &acpi_ged_state->ghes_state;
-> >  
-> > -    start_addr = le64_to_cpu(ags->ghes_addr_le);
-> > +    start_addr = le64_to_cpu(ags->hw_error_le);
-> >  
-> >      start_addr += source_id * sizeof(uint64_t);
-> >  
-> > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> > index 21666a4bcc8b..39619a2457cb 100644
-> > --- a/include/hw/acpi/ghes.h
-> > +++ b/include/hw/acpi/ghes.h
-> > @@ -65,7 +65,7 @@ enum {
-> >  };
-> >  
-> >  typedef struct AcpiGhesState {
-> > -    uint64_t ghes_addr_le;
-> > +    uint64_t hw_error_le;
-> >      bool present; /* True if GHES is present at all on this board */
-> >  } AcpiGhesState;
-> >    
-> 
-
-
-
-Thanks,
-Mauro
 
