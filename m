@@ -1,156 +1,153 @@
-Return-Path: <linux-kernel+bounces-432953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4895E9E5246
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF5B9E5249
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E91166AAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92561654C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19371D63C4;
-	Thu,  5 Dec 2024 10:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236901D63C7;
+	Thu,  5 Dec 2024 10:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SLBv/eDm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fmpZEejG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483D51D5CE3
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D81A1D5AC9;
+	Thu,  5 Dec 2024 10:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394561; cv=none; b=Xa1JwN0nVMu7X9xf0KQDI7qLdX6Iui/Ibae5t+4IjkHH7mZ23UsnSonJHeWuYuVtFvZZiz0Vtay/E36KmaUS3Y1Pyber0AsRyuomBUlhh8QXBqOFIof0Um53I4AzgSjzIIZJ4YfHRBY7YtfB+8bec1RrRtMmtZdpYZkYvbBSYsE=
+	t=1733394599; cv=none; b=twNJI2lvmCyKPmZ/cV+y5lfw3NRXfk2SS85ng3Qyrumm6xKEUHGyjPZy/NmvcXXlZBl/Pfpg5i2u2KPxoyMbck588Yyi7/nhl4v/EbYL2mqsa3qEWFcgMvPmTEzsfVcMfRqBn0lJwil4IgnUAB58p6Gd2omC85jvkVwezPg9M4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394561; c=relaxed/simple;
-	bh=ckoXV8Prl50yqnQscf2+2cQw4ett0hPrVvf/PZvKTTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIgweuFpKWX7fsSvpeJFt7bk5fdGYOd35v8OUx2k7il+8/wK5IzbtWw/SxlhTKxqFi4cfLHEPBAhKOu3H9KBejWkn6yV3IBKE+nkzK+Dm1rOLrMtAz5xjOvAMZDGvuQt5rS5M2LgmelJqk3l+KSy5RTMvRVa/ghaHYli+MeMUQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SLBv/eDm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733394558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+S9yWB2Q2Ddgi8hcXxZfGZkEo9PsHmW3vje2XLGt+RY=;
-	b=SLBv/eDm5xfkk2kEfr88mT2EfKDUIviHg4cYATXaiySmByxJ4mYKacUTuDBGULIY1hory7
-	NOz9WwZ8POqmz2wGbHHFGwd+/n3rBFSPIWT+b8zmMonKR8iCGQMEPRgdYx5Sa900MitMxN
-	0wNhjenx/tRlkyQsSorCBX3HrGgCC6g=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-473-sxWkNQCgOMSuIBUsFbyaGg-1; Thu,
- 05 Dec 2024 05:29:15 -0500
-X-MC-Unique: sxWkNQCgOMSuIBUsFbyaGg-1
-X-Mimecast-MFC-AGG-ID: sxWkNQCgOMSuIBUsFbyaGg
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E039193EF56;
-	Thu,  5 Dec 2024 10:29:12 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.213])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 780751954200;
-	Thu,  5 Dec 2024 10:29:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  5 Dec 2024 11:28:50 +0100 (CET)
-Date: Thu, 5 Dec 2024 11:28:41 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Lai, Yi" <yi1.lai@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
-Message-ID: <20241205102840.GB8673@redhat.com>
-References: <ZyJUzhzHGDu5CLdi@localhost.localdomain>
- <20241107144617.MjCWysud@linutronix.de>
- <Zy4OFlxoRK2jM5zo@localhost.localdomain>
- <20241108190835.GA11231@redhat.com>
- <Zy6QHHakztIXvudC@pavilion.home>
- <20241111120857.5cWFpNkJ@linutronix.de>
- <20241204134826.GA923@redhat.com>
- <Z1DxqJlGM_I8irVQ@pavilion.home>
- <20241205092015.GA8673@redhat.com>
- <Z1F6_cC4bRvcN56T@pavilion.home>
+	s=arc-20240116; t=1733394599; c=relaxed/simple;
+	bh=QHDM0wNinR00LodXRJjv7/LI1YF1zZjdx17O0E+assg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WFvj6aY7T/W+l5dYPKu5UO0yU5/XNLS/XXtUjtyaBdswJKGV7JLlO0cZ525DMHMRMCzG4JuOgNGDJIe6zr8qkZWZYco5wmJ62qOUAjgRqur+T6KYXCcyUOp1X6upt8ipOoxRkIrWHIZrn8U+GE4c0AmpfTbK+SFBr9/vyg2UqqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fmpZEejG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B59x9lq031441;
+	Thu, 5 Dec 2024 10:29:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wq1H4m+TvIZrKAm720V3ELgWHc9sgwnhrbPpxtdoHEk=; b=fmpZEejG3/D7/8JB
+	IJjRABkH35du9Lhy0R/qb/c5Yi7YqqeEGBsMXbdRjVWcQmATNNDNRtfTOAakPQ4k
+	CS5mYBXfi5bRTTMk9H3KkSiBHJeZXd5YolbGuh1nb3LyaZoz4v8+64Cc7TH4j5Zw
+	a4p5SCosos82PIkX82mIRrUAR6jSa51OLraZvle1rPVx25+Tf2hr3r6PzycTNJLD
+	1tGSxuFwH91Couo+QK890SiM0f+xH1uqueIL6p6g77kA1LbToLJoZ17pV1Pv1dOY
+	UDpZEGE49f09N0+DqyuIEcGnvndFIkDsQdgEkIEGeB2GRHKunHkwKKaZEDN9jLeT
+	LZHYMA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba140308-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 10:29:14 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5ATDjT016102
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 10:29:13 GMT
+Received: from [10.214.66.218] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 02:29:09 -0800
+Message-ID: <a47a11be-377f-489f-a4dd-fd9b4ddc1a98@quicinc.com>
+Date: Thu, 5 Dec 2024 15:59:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1F6_cC4bRvcN56T@pavilion.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] qcom: llcc/edac: Correct interrupt enable register
+ configuration
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <manivannan.sadhasivam@linaro.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+        <james.morse@arm.com>, <mchehab@kernel.org>, <rric@kernel.org>,
+        <andy.gross@linaro.org>, <vnkgutta@codeaurora.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241119064608.12326-1-quic_kbajaj@quicinc.com>
+ <zkqjyuem3ykeona7p7n6ejkndaxrnpfxjbk33nkzqjjyktoqpw@3b77c4jjdqhd>
+Content-Language: en-US
+From: Komal Bajaj <quic_kbajaj@quicinc.com>
+In-Reply-To: <zkqjyuem3ykeona7p7n6ejkndaxrnpfxjbk33nkzqjjyktoqpw@3b77c4jjdqhd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QL8mNsrzWj-b6NqZe4aW7CL1bxx54ciD
+X-Proofpoint-ORIG-GUID: QL8mNsrzWj-b6NqZe4aW7CL1bxx54ciD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050074
 
-On 12/05, Frederic Weisbecker wrote:
->
-> Le Thu, Dec 05, 2024 at 10:20:16AM +0100, Oleg Nesterov a écrit :
->
-> > > Looking at task_work, it seems that most enqueues happen to the current task.
-> > > AFAICT, only io_uring() does remote enqueue. Would it make sense to have a light
-> > > version of task_work that is only ever used by current? This would be a very
-> > > simple flavour with easy queue and cancellation without locking/atomics/RmW
-> > > operations.
-> >
-> > Perhaps, but we also need to avoid the races with task_work_cancel() from
-> > another task. I mean, if a task T does task_work_add_light(work), it can race
-> > with task_work_cancel(T, ...) which can change T->task_works on another CPU.
->
-> I was thinking about two different lists.
 
-OK... but this needs more thinking/discussion.
+On 11/20/2024 5:29 PM, Dmitry Baryshkov wrote:
+> On Tue, Nov 19, 2024 at 12:16:08PM +0530, Komal Bajaj wrote:
+>> The previous implementation incorrectly configured the cmn_interrupt_2_enable
+>> register for interrupt handling. Using cmn_interrupt_2_enable to configure Tag,
+>> Data RAM ECC interrupts would lead to issues like double handling of the
+>> interrupts (EL1 and EL3) as cmn_interrupt_2_enable is meant to be configured
+>> for interrupts which needs to be handled by EL3.
+> This reads as if it was possible to write EL3-related register from EL1.
+> Is it true?
 
-> Another alternative is to maintain another head that points to the
-> head of the executing list. This way we can have task_work_cancel_current()
-> that completely cancels the work. That was my initial proposal here and it
-> avoids the lock/xchg for each work:
->
-> https://lore.kernel.org/all/Zx-B0wK3xqRQsCOS@localhost.localdomain/
 
-Thanks... Heh, I thought about something like this too ;) Although I thought
-that we need a bit more to implement task_work_cancel_sync(). But this is
-another story.
+Both EL1 and EL3 can access the LLCC "cmn_interrupt_2_enable" register, 
+but configuring the register from both
+EL1 & EL3 shouldn't be done as the register is meant to be configured 
+from EL3. There was a bug in HPG which was
+fixed recently on not to configure the register from EL1.
 
-> > Hmm. I just noticed that task_work_run() needs a simple fix:
-> >
-> > 	--- x/kernel/task_work.c
-> > 	+++ x/kernel/task_work.c
-> > 	@@ -235,7 +235,7 @@
-> > 			raw_spin_unlock_irq(&task->pi_lock);
-> >
-> > 			do {
-> > 	-			next = work->next;
-> > 	+			next = READ_ONCE(work->next);
-> > 				work->func(work);
-> > 				work = next;
-> > 				cond_resched();
-> >
-> > Perhaps it makes sense before the patch from Sebastian even if that patch
-> > removes this do/while loop ?
->
-> Hmm, can work->next be modified concurrently here?
+Thanks
+Komal
 
-work->func(work) can, say, do kfree(work) or do another task_work_add(X, work).
 
-Oleg.
-
+>> EL1 LLCC EDAC driver needs to use cmn_interrupt_0_enable register to
+>> configure Tag, Data RAM ECC interrupts instead of cmn_interrupt_2_enable.
+>>
+>> Fixes: 27450653f1db ("drivers: edac: Add EDAC driver support for QCOM SoCs")
+>> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+>> ---
+>>   drivers/edac/qcom_edac.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
+>> index a9a8ba067007..0fd7a777fe7d 100644
+>> --- a/drivers/edac/qcom_edac.c
+>> +++ b/drivers/edac/qcom_edac.c
+>> @@ -95,7 +95,7 @@ static int qcom_llcc_core_setup(struct llcc_drv_data *drv, struct regmap *llcc_b
+>>   	 * Configure interrupt enable registers such that Tag, Data RAM related
+>>   	 * interrupts are propagated to interrupt controller for servicing
+>>   	 */
+>> -	ret = regmap_update_bits(llcc_bcast_regmap, drv->edac_reg_offset->cmn_interrupt_2_enable,
+>> +	ret = regmap_update_bits(llcc_bcast_regmap, drv->edac_reg_offset->cmn_interrupt_0_enable,
+>>   				 TRP0_INTERRUPT_ENABLE,
+>>   				 TRP0_INTERRUPT_ENABLE);
+>>   	if (ret)
+>> @@ -113,7 +113,7 @@ static int qcom_llcc_core_setup(struct llcc_drv_data *drv, struct regmap *llcc_b
+>>   	if (ret)
+>>   		return ret;
+>>
+>> -	ret = regmap_update_bits(llcc_bcast_regmap, drv->edac_reg_offset->cmn_interrupt_2_enable,
+>> +	ret = regmap_update_bits(llcc_bcast_regmap, drv->edac_reg_offset->cmn_interrupt_0_enable,
+>>   				 DRP0_INTERRUPT_ENABLE,
+>>   				 DRP0_INTERRUPT_ENABLE);
+>>   	if (ret)
+>> --
+>> 2.46.0
+>>
 
