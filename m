@@ -1,131 +1,204 @@
-Return-Path: <linux-kernel+bounces-433824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5FE9E5D8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:43:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610609E5C89
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:07:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6916128548A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458491883B5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F50224B04;
-	Thu,  5 Dec 2024 17:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EE0225783;
+	Thu,  5 Dec 2024 17:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="UoKgMQCK"
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RrAAvaGU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D112EB1F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D2722259B;
+	Thu,  5 Dec 2024 17:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420627; cv=none; b=ZuFGqIAwqZnRnrKrqtDKlvnf04r78gFcidRQU+pWSCnHjHB+84mXYp+HqRJz5KvAlmgLZL/Fn80irkSjWhZVQJ5MIQZ4hZ6FAZoPt35nlyJFr+AOtNbB8FTSERCLe5g+aDWn0kdM9w6frNaF/vdVCjq1qxcoJ3kWM+yJlfdzz2U=
+	t=1733418398; cv=none; b=tf5dN63nLqIznbNvqT9Nm+laN0PjpGfJjkgnl4QztGgYKUHYaPqS4K6ne/HR3rRXoAuFZVZBs3eFZgkPJK1xrWE4OJ3IU/fHpcJP8Xd1oPPASojP4a0OzwJyp0sW5p4Y61J+9fNmzBpK7Ch/Lf9SfLWbXg7LyY3Tf42/EBmXXQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420627; c=relaxed/simple;
-	bh=77dDWmhz9+vNNVwfh+cDg6E6bZYQGGhWOkzcSD89/no=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZmCaZClPeiZBpEKlMG2BLEbZVy5DvwzJCnONoOIgU2G5YdqAxAyNlLIT4dLweuomg445xml/K/fiXCvsnLETFO0gcZn4QrvpBOfDKcyKXmc/p5k0otcwoTwObsyHLO9WHDgNC3r7k0RHoAsxVpyZhAHISyZli2JZ6halM9s+akY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=UoKgMQCK; arc=none smtp.client-ip=185.136.64.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20241205170322a7db41e085103b262e
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 05 Dec 2024 18:03:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=ziJSG6ctVi3hXuBtO97gjLaanzOcTvctskZW8qKtFqg=;
- b=UoKgMQCK3OZnoNoxk1GJ3f5UMqi0wKd5Hgy8yFKdTqcvOeGom2RqUa9OhYb9YHhH/JYK8J
- Ylhg5cCoSgtYoEnn/xC0Ucs+AEliU14rPmumoJizbabCyteDhx0FzLQSYs+e6c7gjNsEkhwi
- KqiGfTN21mGjeUOVzBT6RzWxDCjjfbld3kIZ60KCZX1HGfqwb6Ymou+DamEhygZHCPk+gv+b
- QpkNSXuTBD2ijFCTQZbgPLh8s5h9q/7vmrHAKm70ggGDrZz3Ie3NMklk/bL0sXIe3WqbqkR3
- g1LQdlHHlrfBNtYT4yi5sRggJT5SsfAYJjG3rhWgOenG1K+U26ggMYwg==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: Marco Elver <elver@google.com>,
-	linux-kernel@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Adrian Freihofer <adrian.freihofer@siemens.com>
-Subject: [PATCH] locking/spinlock/debug: Fix data-race in do_raw_write_lock
-Date: Thu,  5 Dec 2024 18:01:29 +0100
-Message-ID: <20241205170143.4105094-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1733418398; c=relaxed/simple;
+	bh=shBj+vqb6exQqGtA2rEDAtQw/ecNpbcK9w/KM3VRP+s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iStS0PH7Z0YY8DISlgHRbZ3TH6Ch+GmKNtDNAvEWVtgicMgXrbqWfYqJvTQ4QxQcDkMFthedupZV/4LWlqHfVBcj6Ye+5CHj6PlsHVCNIv7DMvPcwqXXlqna/r0+tvAU8p9gZJPr72g9GG/Csm6xQ+N+UlZpa0lS6XsA1qpBu0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RrAAvaGU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5Bt6e1026783;
+	Thu, 5 Dec 2024 17:06:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=zuj9CsNSIWFldchSZDMW1Em6YSOoPdTR2mTakIbFA5Q=; b=Rr
+	AAvaGUu9emgFG2yCuXVYkmVlURm9wns3Jb7oyyGXEkXePGeX37oLZ6psaj5pv5Aq
+	EebMwyerLuHHYurcQyr+yUd76SdvhIVtgBUpksQ+QfqfQ4arAvHz+/+3NQLT9SeK
+	TNPl+B3gHPzhTotfON+FN1EkZQgNioswFqVV3WOKQDX4cK7LOBztntcNPosWT+wt
+	sCY4c3w10kDG+3vhndnMK11pVzpsEV8QTBMHeGQyqCHPlxDKP0AmU0oll67tz0CA
+	TRuaQVePWaibFmjomaJmCtbCDs4xHX3GS69ekPEOi2Apm7+Y3VfVQ4Fa4g+YICgx
+	Xd1YRL2CQQx4SwEfURzQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm0uqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 17:06:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5H6X3r006534
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 17:06:33 GMT
+Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Dec 2024 09:06:31 -0800
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+Subject: [PATCH v4] dmaengine: qcom: gpi: Add GPI immediate DMA support for SPI protocol
+Date: Thu, 5 Dec 2024 22:36:11 +0530
+Message-ID: <20241205170611.18566-1-quic_jseerapu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EgvDt0YIYZKtDQg1Bz0SAxI9jtUx-Rh0
+X-Proofpoint-ORIG-GUID: EgvDt0YIYZKtDQg1Bz0SAxI9jtUx-Rh0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050125
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+The DMA TRE(Transfer ring element) buffer contains the DMA
+buffer address. Accessing data from this address can cause
+significant delays in SPI transfers, which can be mitigated to
+some extent by utilizing immediate DMA support.
 
-KCSAN reports:
+QCOM GPI DMA hardware supports an immediate DMA feature for data
+up to 8 bytes, storing the data directly in the DMA TRE buffer
+instead of the DMA buffer address. This enhancement enables faster
+SPI data transfers.
 
-BUG: KCSAN: data-race in do_raw_write_lock / do_raw_write_lock
+This optimization reduces the average transfer time from 25 us to
+16 us for a single SPI transfer of 8 bytes length, with a clock
+frequency of 50 MHz.
 
-write (marked) to 0xffff800009cf504c of 4 bytes by task 1102 on cpu 1:
- do_raw_write_lock+0x120/0x204
- _raw_write_lock_irq
- do_exit
- call_usermodehelper_exec_async
- ret_from_fork
-
-read to 0xffff800009cf504c of 4 bytes by task 1103 on cpu 0:
- do_raw_write_lock+0x88/0x204
- _raw_write_lock_irq
- do_exit
- call_usermodehelper_exec_async
- ret_from_fork
-
-value changed: 0xffffffff -> 0x00000001
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 1103 Comm: kworker/u4:1 6.1.111
-
-Commit 1a365e822372 ("locking/spinlock/debug: Fix various data races") has
-adressed most of these races, but seems to be not consistent/not complete.
-
-From do_raw_write_lock() only debug_write_lock_after() part has been
-converted to WRITE_ONCE(), but not debug_write_lock_before() part.
-Do it now.
-
-Fixes: 1a365e822372 ("locking/spinlock/debug: Fix various data races")
-Reported-by: Adrian Freihofer <adrian.freihofer@siemens.com>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
 ---
-There are still some inconsistencies remaining IMO:
-- lock->magic is sometimes accessed with READ_ONCE() even though it's only
-being plain-written;
-- debug_spin_unlock() and debug_write_unlock() both do WRITE_ONCE() on
-lock->owner and lock->owner_cpu, but examine them with plain read accesses.
 
- kernel/locking/spinlock_debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v3 -> v4:
+   - Instead using extra variable(immediate_dma) for Immediate dma
+     condition check, made it to inlined.
+   - Removed the extra brackets around Immediate dma condition check.
 
-diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
-index 87b03d2e41dbb..2338b3adfb55f 100644
---- a/kernel/locking/spinlock_debug.c
-+++ b/kernel/locking/spinlock_debug.c
-@@ -184,8 +184,8 @@ void do_raw_read_unlock(rwlock_t *lock)
- static inline void debug_write_lock_before(rwlock_t *lock)
- {
- 	RWLOCK_BUG_ON(lock->magic != RWLOCK_MAGIC, lock, "bad magic");
--	RWLOCK_BUG_ON(lock->owner == current, lock, "recursion");
--	RWLOCK_BUG_ON(lock->owner_cpu == raw_smp_processor_id(),
-+	RWLOCK_BUG_ON(READ_ONCE(lock->owner) == current, lock, "recursion");
-+	RWLOCK_BUG_ON(READ_ONCE(lock->owner_cpu) == raw_smp_processor_id(),
- 							lock, "cpu recursion");
- }
+   Link to v3:
+	https://lore.kernel.org/lkml/20241204122059.24239-1-quic_jseerapu@quicinc.com/ 
+
+v2 -> v3:
+   - When to enable Immediate DMA support, control is moved to GPI driver
+     from SPI driver.
+   - Optimizations are done in GPI driver related to immediate dma changes.
+   - Removed the immediate dma supported changes in qcom-gpi-dma.h file
+     and handled in GPI driver.
+
+   Link to v2:
+	https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
+	https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
+
+v1 -> v2:
+   - Separated the patches to dmaengine and spi subsystems
+   - Removed the changes which are not required for this feature from
+     qcom-gpi-dma.h file.
+   - Removed the type conversions used in gpi_create_spi_tre.
+
+   Link to v1:
+	https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
+
+ drivers/dma/qcom/gpi.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+index 52a7c8f2498f..9d4fc760bbe6 100644
+--- a/drivers/dma/qcom/gpi.c
++++ b/drivers/dma/qcom/gpi.c
+@@ -27,6 +27,7 @@
+ #define TRE_FLAGS_IEOT		BIT(9)
+ #define TRE_FLAGS_BEI		BIT(10)
+ #define TRE_FLAGS_LINK		BIT(11)
++#define TRE_FLAGS_IMMEDIATE_DMA	BIT(16)
+ #define TRE_FLAGS_TYPE		GENMASK(23, 16)
  
+ /* SPI CONFIG0 WD0 */
+@@ -64,6 +65,7 @@
+ 
+ /* DMA TRE */
+ #define TRE_DMA_LEN		GENMASK(23, 0)
++#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
+ 
+ /* Register offsets from gpi-top */
+ #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
+@@ -1711,6 +1713,7 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+ 	dma_addr_t address;
+ 	struct gpi_tre *tre;
+ 	unsigned int i;
++	int len;
+ 
+ 	/* first create config tre if applicable */
+ 	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+@@ -1763,14 +1766,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+ 	tre_idx++;
+ 
+ 	address = sg_dma_address(sgl);
+-	tre->dword[0] = lower_32_bits(address);
+-	tre->dword[1] = upper_32_bits(address);
++	len = sg_dma_len(sgl);
+ 
+-	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
++	/* Support Immediate dma for write transfers for data length up to 8 bytes */
++	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0])) {
++		/*
++		 * For Immediate dma, data length may not always be length of 8 bytes,
++		 * it can be length less than 8, hence initialize both dword's with 0
++		 */
++		tre->dword[0] = 0;
++		tre->dword[1] = 0;
++		memcpy(&tre->dword[0], sg_virt(sgl), len);
++
++		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
++	} else {
++		tre->dword[0] = lower_32_bits(address);
++		tre->dword[1] = upper_32_bits(address);
++
++		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
++	}
+ 
+ 	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+-	if (direction == DMA_MEM_TO_DEV)
+-		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
++	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV &&
++					 len <= 2 * sizeof(tre->dword[0]),
++					 TRE_FLAGS_IMMEDIATE_DMA);
++	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV,
++					 TRE_FLAGS_IEOT);
+ 
+ 	for (i = 0; i < tre_idx; i++)
+ 		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
 -- 
-2.47.1
+2.17.1
 
 
