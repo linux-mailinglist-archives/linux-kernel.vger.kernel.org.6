@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-433025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743759E5303
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:53:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82399E530A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:54:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DC5287814
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415231882829
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290031DB94F;
-	Thu,  5 Dec 2024 10:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1431D8E01;
+	Thu,  5 Dec 2024 10:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yq/jr4EJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1MSiodC3"
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754621DA60C;
-	Thu,  5 Dec 2024 10:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B18199FA4;
+	Thu,  5 Dec 2024 10:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733396001; cv=none; b=SkGva4fCRbnK+3sqKcBaofQO3zliqzLS4mUBEAfoe2XX9tAsbN/IyFeMLSZZOFnTWlujCfDBHq1ft22T5jHFMnJMEV9/obiLt+wvFe2lAxCNGWQvXFB9LO4gBs/pxno5gZ2K5hyjeNjIbqmBXYb4a7yfk56C2DAr7ftUk7H7Ysc=
+	t=1733396013; cv=none; b=mN3JKXxeFePCz1BY0KExO5X+TaWTYmsn3F/zWC9mWmSoqlAVhR8/gr03CFOqW7V6kHRyCuzNC049V5GTvXYowT2jL4HJZmlNQ9nbjXcUxdZZPLY/zs4YZOIV5sFDNXfXUzit/pC7PlLBrrSne+aAtzVbjjBD80pfIgzJN204/AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733396001; c=relaxed/simple;
-	bh=IFQCT/71vDZWwVkDuN7CYbIjKP67ulnwIBjAeTNpINE=;
+	s=arc-20240116; t=1733396013; c=relaxed/simple;
+	bh=V7TDcfBuyky5UsKZRbY/kdI8U0JTK2PgSkZNRMtSVHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjERvhWm6zZb04xhHp6IAABbz0CR4ugi03XGdDB0HA0iR+8Ma7zmLQtEc4bP6oGRoQ2QWwRlC+MbA5V8BBon/L9ZB53ZtfzfTZ2QudS+lBO7Z+x14mXmotKSb2mXxcGzEX6HB9+dKLx1o0TtXIE5KXo4zRBVPUgDehm8eB6eGEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yq/jr4EJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082BDC4CED1;
-	Thu,  5 Dec 2024 10:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733396001;
-	bh=IFQCT/71vDZWwVkDuN7CYbIjKP67ulnwIBjAeTNpINE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDTbXp/W3i9ObvsfxauokqWvB5vIl8bRjOi9DJFLzydxxJwbNXyyrPcuAB8UQLykFIHK1mPk6Ldl17CuO5UIdA99LMEfLpNb6zWrBO6iI0XFf41wzW5475t5QufkRzltU8KsdXuNBvnkCH2gvKKIDFTfU7Eb9263dZ267k1mazE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1MSiodC3; arc=none smtp.client-ip=84.16.66.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3rpZ4r0CznS;
+	Thu,  5 Dec 2024 11:53:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733396006;
+	bh=cTdGME8xOveDjt/A541FRkracaMRa2kD7BqhDnfiQ5E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yq/jr4EJYZ/lZkHKEKf+QQ0JGXsoGogFusR7s0ZvNrzHI/hPiEic4TrX/7+v3eQHI
-	 iXRmL66NA2KKUEDzNY+iKgltF0WEQ8+NhmspqV5mFBXMVS34xoBPHtvO9nnEEOfr6K
-	 CmEL33VgQ8Knv9JLNpWZzRFbJRfKcGa3OpT+e8KAGA12TwrPWkTHXNYcZd0hU2dacu
-	 UbQ5jZTjcXjybhoHwzKH9zYpX11aMdZyLTL+T113otC7JMN4mRbpw1j+6kFSlyEA+J
-	 aveGg3O3j+/v3TeuMr8oKY5HptUMyE8q+y3k+P2kIAgU28eVKzs/GC9W54wVP+9n1K
-	 6tnVCqkpPQUhg==
-Date: Thu, 5 Dec 2024 11:53:16 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
-	Erin Shepherd <erin.shepherd@e43.eu>, Chuck Lever <chuck.lever@oracle.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	stable <stable@kernel.org>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <20241205-waghalsige-hetzjagd-b271c6c2efea@brauner>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <Z1D2BE2S6FLJ0tTk@infradead.org>
+	b=1MSiodC3yO84x9ruBw8LRr0ArJoSuCIdfqGZ4KKWrBW6uX4L3hoeQqPpWoYwYiCI5
+	 WUuQSLzxs8bbIGUmpy2smurAVkuSf4NEVuqCp0nabu1d7yqINrdz0Dt7V+dCD6OfnA
+	 tmgo9xHpaRvxHHKsOsPkrKOlB2Vn4EOJaVmHuWQY=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3rpZ0PF3zK3H;
+	Thu,  5 Dec 2024 11:53:25 +0100 (CET)
+Date: Thu, 5 Dec 2024 11:53:26 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	roberto.sassu@huawei.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, audit@vger.kernel.org
+Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+Message-ID: <20241205.fien4aet3Jae@digikod.net>
+References: <20241203233424.287880-1-zohar@linux.ibm.com>
+ <c1c61f20-a4ee-437f-840b-2433345e74b6@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,31 +61,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z1D2BE2S6FLJ0tTk@infradead.org>
+In-Reply-To: <c1c61f20-a4ee-437f-840b-2433345e74b6@linux.ibm.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Dec 04, 2024 at 04:38:28PM -0800, Christoph Hellwig wrote:
-> On Sun, Dec 01, 2024 at 02:12:24PM +0100, Christian Brauner wrote:
-> > Hey,
-> > 
-> > Some filesystems like kernfs and pidfs support file handles as a
-> > convenience to enable the use of name_to_handle_at(2) and
-> > open_by_handle_at(2) but don't want to and cannot be reliably exported.
-> > Add a flag that allows them to mark their export operations accordingly
-> > and make NFS check for its presence.
-> > 
-> > @Amir, I'll reorder the patches such that this series comes prior to the
-> > pidfs file handle series. Doing it that way will mean that there's never
-> > a state where pidfs supports file handles while also being exportable.
-> > It's probably not a big deal but it's definitely cleaner. It also means
-> > the last patch in this series to mark pidfs as non-exportable can be
-> > dropped. Instead pidfs export operations will be marked as
-> > non-exportable in the patch that they are added in.
+On Wed, Dec 04, 2024 at 02:01:02PM -0500, Stefan Berger wrote:
 > 
-> Can you please invert the polarity?  Marking something as not supporting
-> is always awkward.  Clearly marking it as supporting something (and
-> writing down in detail what is required for that) is much better, even
-> it might cause a little more churn initially.
+> 
+> On 12/3/24 6:34 PM, Mimi Zohar wrote:
+> > Like direct file execution (e.g. ./script.sh), indirect file exection
+> 
+> typo: execution
+> 
+> > (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> 
+> If I understand the underlying patches correctly then 'sh script.sh' would
+> be evaluated with execveat(AT_CHECK) but this requires the execute flag to
+> be set. To maintain backwards compatibility  sh cannot assume that script.sh
+> has the execute flag set since it doesn't need today:
+> 
+> $ echo 'echo hi' > foo.sh
+> $ sh foo.sh
+> hi
+> 
+> the same is true for python:
+> 
+> $ echo 'print("hi")' > foo.py
+> $ python foo.py
+> hi
+> 
+> I am not sure which interpreters are going to be able to take advantage of
+> this or whether they will behave differently if the x bit is set versus when
+> it is not set...?
 
-Fine by me but let's do that as a cleanup on top, please. Especially
-because we need to backport this to stable.
+This is a valid concern handled with two new securebits.  See the
+related patch series and documentation:
+https://lore.kernel.org/all/20241112191858.162021-3-mic@digikod.net/
 
