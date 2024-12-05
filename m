@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-432826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4691C9E50BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:09:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66509E50EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:13:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1808B1882FE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910D028C768
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7821B1DA602;
-	Thu,  5 Dec 2024 09:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8451B1DB95D;
+	Thu,  5 Dec 2024 09:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CKpzL5Ir"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QH3tFh7l"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98B21D89F7
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31ECB1D54FE;
+	Thu,  5 Dec 2024 09:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733389583; cv=none; b=fotN1FN4Dzt9HNTMvb02gkjAnjCpdHh0w7V5nqMq0S2kI6RoXPVo/a/3Icii9WgypuVEPh/Aqk3JatK1onnrrP2Eq9vki9oYdKCNbPRejCx8u6vYIJPopVhfyV57hPSer6Pb5IMhlM8hln9aAmn8+ouYRlehQg1GzBx3IDH2/5I=
+	t=1733389882; cv=none; b=ReN9CfLNWHwpQwY83xbH5JBr0pJIU2la6gQJF2UKeHvJQnCWJkcmM4fD0RLxl9iBbu9ktl4O68zMY7o3S/DHSHNnSyUQ0o0EdVtSNMy7GKLy4byxOzQyJUAq9Crvft1tzWWWVsMkoj7dlntmgC9tj4/CgdlpHrkuVc6sFNYB8Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733389583; c=relaxed/simple;
-	bh=5XQ1HXYwbTTZdTWh2utJMKfmU8iPPThgBP2pbSMhge4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N1QvNJfdO5RhQ09hdP+ngx2ljzcpTHIQQWMFuwpD9Q0nBhMiJUSkvqR0jH9E8GTDs6haiCHV3umnn9SsECSnZ/G3RiKKdMgqGEERC4CZ7xC5v3naOXEKl5cTBYTMPdUHjuDCjsW1Qvr99rIM0ajlNqXHqB309BdWaDe9iKeZe00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CKpzL5Ir; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a1639637so7359965e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:06:21 -0800 (PST)
+	s=arc-20240116; t=1733389882; c=relaxed/simple;
+	bh=gbRvMBWecchVXZQINpiNcELmH4AXFji5mB9ZcmAb+ck=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gIH3ipX1fjda/MgM1Me+whLmk6Toc9Ugp8z+jLr8dZmDi0eXdDNB5cFzkaHygK38ilHHk1L7L6KhgMf/ek6MeNRGIr8Y2kVnjxgPX7wFYPBTjBIXcJwD3ymDX2JMQ4d9+Du76jqagMkNGzNSXuF6MmpBa9zv0AIqwgIrV0XfIgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QH3tFh7l; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffa8df8850so6275501fa.3;
+        Thu, 05 Dec 2024 01:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733389580; x=1733994380; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2t7W4OrRjFhEWmecg84hD7xOx3YqRZ5sVEwAFgCNS2o=;
-        b=CKpzL5IrX0eIk0XVzZ8UGfVYS83tv0biAwoyaTHfbfYUYxGJiS5xbMGxd6R/prvi2q
-         FKps1xaqQYTLemjXnz1/cg9KBvdAPKiFSbl9I0FU2cFb1O87Xrqn4hOz706YYuGg94c2
-         WmaZr1SVx343iBUPWVkkAnqB6kAJD+OHQG5N2nutrZaqPsGLg/ZCTs3NE5fdwMPVCRJp
-         wgGb2levSUdUpFSwEJlhRrRC8NFcUS+8nYm6NgcZZJt2nAGCp1Hgq5JF1Hg5D3srXcao
-         kz3gy1W/FjqXLxS95y4SyNs2FbP1pBJt2FY69Im0rNGwT1oQRM9pbCndHFT6ucDZqoSi
-         /atw==
+        d=gmail.com; s=20230601; t=1733389879; x=1733994679; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g70770pHl/BwAdcq7mSKVqhSUdxEsRQhDHwPhr+/2R0=;
+        b=QH3tFh7ldvanhIEUWz/nccMcwYxYZMG7K7cC7rncbcO2mblyaqipTz4TKFwqz9Xczl
+         2KsoCgIV0BIiWC3AjfbM9/2bK1GKQpcYCQo6IR4ah9T103LKnhvpOEkM8mdsMH1ib8Ee
+         FRFa22qecYF+sSQKik3+ZbFwHqkitqq2EwkDJFrT7sGYWoTHGMwQ6G29CZQtmHvEnrzE
+         h79ydj49UL51yjZuXESNIaOLYZIMlaAFGevPQ+Jw3Rh56XovYOZsR/MZ8nn1QWc6NsDP
+         CKsvnH3/DvsELyYXQLNduZ7ZW9sYwAo3g/JcdKYMu0vNam0MkNzFcoGye8Le/730Fubg
+         L0vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733389580; x=1733994380;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733389879; x=1733994679;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2t7W4OrRjFhEWmecg84hD7xOx3YqRZ5sVEwAFgCNS2o=;
-        b=uIIdp8+u8FZwMcMNvySogvUPw13q7fAGMXiMfL2qnfEn7mCmhTYD+tg43GqbsQxmSH
-         7YO1kHEH7ys7Qh1nbFLVJUQPq+40N+Q3wyUo/DS5JhxuIuYffB3IQbQVhYW7N4zxr5oG
-         HlcvssXdSSDpoVbIUzaWvNQN1xOc288bZuCBA0E3iau8tZIzvEWBfs3CxhIdFgg48DOd
-         LCAomdW4sd9Xn/XBqcpz8lfVjWjZArNz8rlGv3J8oKpPIK+Dk5NGpU1SzRd7KcWM0bfS
-         ig4q0Lbny9ZYTcVaAAg1cxo0F3pb0HWUw0T6U3VnrXLoWUA0fxiNlMeNWnLPqxp3XHAO
-         ffvA==
-X-Gm-Message-State: AOJu0YyQ8Wef/50cQg0Ivk4jMkHAR/IJD0uCnb6SgPVbzEav+dKgA7fG
-	P5peD8LHVsjGGgj8EbRaxalWuHuFg6ZOYsQIX2syKoSBtYz6sIap5ctVE+g9Z/h8PflCCmF4dxx
-	0
-X-Gm-Gg: ASbGnctIe89sY9hYU8wxJdkSbbnNPwIpqTZgULpVp8r1yB0saMz4uekmBtP/q+hNyCm
-	cVyXgrrzVMKamL5epXfu6b9cU5yMS+yXQMbpS7UyWy1JmA7jUE8dMvN2YsA/E/DIpNKib4/uRsj
-	grIbw63sdg43HsmOZShD+Py8Jn0J/AdPu1dBlMvx4GJoj6ehxegN9BWdqigv+e5DtKg/0kztO4w
-	SDAzdiO/a6Tz49j/kpkqlE04AXWoWucwuWRy8voT/4989stZcjd3VY9gEM+GOJMNshktVDmigg=
-X-Google-Smtp-Source: AGHT+IE1W5whVS1H/s6P2CDbG6g4KdyVwl+f7pWy6cAjeTZPQLXiw15uiJrpsamNn8FKlX2vxkufWw==
-X-Received: by 2002:a05:600c:3b24:b0:431:3933:1d30 with SMTP id 5b1f17b1804b1-434d346df9amr69721745e9.5.1733389579936;
-        Thu, 05 Dec 2024 01:06:19 -0800 (PST)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.217.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113508sm16760695e9.35.2024.12.05.01.06.18
+        bh=g70770pHl/BwAdcq7mSKVqhSUdxEsRQhDHwPhr+/2R0=;
+        b=vV9SaLdau/DTKsMMjpRRLRBuWvoF3rwDJh0g2AClhx/i3ohleQ4b038MYkez6oSObY
+         YxVM6j/87OEI2CkLH4abr3UnVabkW6eIaEY41/hHFavh9mP5tMLFKbtjdc9yf9W0TAM1
+         kXal45/Tm74yfSJfaqod49p4JrUJdH9i4LGESdCRtKKh60StXBOP85syEAzc1OgkeSgy
+         4qGSpUTBag2cpy55XC4cfmmfTs/30vt/uZYY1kRlvoDW/XKnp3Ypa58Df31YKHYzu3H4
+         YKCxo7PWrj3wtr4uLa7PiFT+8UNZUs2fuF8i0g2266+PIoxZjFhj36tzlPDvV2h+2B2+
+         yarQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbv/amBAVbhPtjYnHJ/4MR/UfoysmdizpGc3SBtan2CBEAEqD4H41jeEfi5h+NZRccBHoC6se+R8SU@vger.kernel.org, AJvYcCXjJ7DbZ4jTGxDXWHLO33SYLat3nHhXqt2vh2mCpKPH7YyCBgOWGG4zebKrwFSY19FHMXcvsuSlEXv4GcfR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjk3KvMf+Ix6L/m0nlsD9AMx5H6GTmyzFH6cNufijY2r49SIN1
+	BT5zNmJ/vWbXrcijIoiNN2fHK8SBTctK/xEDVhoU+QoWiK5U0QVy
+X-Gm-Gg: ASbGnctjkZRY0FO1zwjRPOimr4Fil29JNXtEVpvTlM4WK7bhjSJY3bCTPp4rk5VeZBJ
+	BnZZ7wcKcr+4Lr/km7rsXHtdDN7rbQmsvmHixbgXvxWxaaUl/bWSc4zE1zld334BQQxR33LX0+L
+	0LhlIm1h9L1Jwrk9AZ+ikSbgekCAkjRkPHAwvuv2cd2eSHX6xbr/wxcuoyaa4J7vTdRX4feS6wk
+	cncahtI3VnzOPhCN8iflIm5azUxoz4t2C/a/v7ZOVixU7rJJmDmOg==
+X-Google-Smtp-Source: AGHT+IFZ6+YRR3jm0gV75fejVmMXL5MRbl//2N9aoRFrmHGjZdJU9MYPNc36DsVVHcoZY+7LCJrMXw==
+X-Received: by 2002:a2e:8e84:0:b0:300:18fc:8e55 with SMTP id 38308e7fff4ca-30018fc906cmr21853361fa.2.1733389879024;
+        Thu, 05 Dec 2024 01:11:19 -0800 (PST)
+Received: from [192.168.0.107] ([91.90.219.38])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020da1182sm1586511fa.35.2024.12.05.01.11.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 01:06:19 -0800 (PST)
-Message-ID: <62539c75-8f4e-4e12-bcb4-55c46cdf646d@suse.com>
-Date: Thu, 5 Dec 2024 11:06:17 +0200
+        Thu, 05 Dec 2024 01:11:18 -0800 (PST)
+Message-ID: <6c8e60a1-820b-4818-ad68-9b042533f4f9@gmail.com>
+Date: Thu, 5 Dec 2024 14:06:27 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,87 +79,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 08/23] x86/virt/tdx: Use all system memory when
- initializing TDX module as TDX memory
-To: Mike Rapoport <rppt@kernel.org>, Kai Huang <kai.huang@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
- dave.hansen@intel.com, kirill.shutemov@linux.intel.com,
- peterz@infradead.org, tony.luck@intel.com, tglx@linutronix.de, bp@alien8.de,
- mingo@redhat.com, hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
- rafael@kernel.org, david@redhat.com, dan.j.williams@intel.com,
- len.brown@intel.com, ak@linux.intel.com, isaku.yamahata@intel.com,
- ying.huang@intel.com, chao.gao@intel.com,
- sathyanarayanan.kuppuswamy@linux.intel.com, bagasdotme@gmail.com,
- sagis@google.com, imammedo@redhat.com
-References: <cover.1699527082.git.kai.huang@intel.com>
- <87e19d1931e33bfaece5b79602cfbd517df891f1.1699527082.git.kai.huang@intel.com>
- <Z1Fc8g47vfpz9EVW@kernel.org>
-From: Nikolay Borisov <nik.borisov@suse.com>
+From: Dmitry Yashin <dmt.yashin@gmail.com>
+Subject: Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2
+ controller
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ quentin.schulz@cherry.de, Dmitry Yashin <dmt.yashin@gmail.com>
+References: <20241203165450.1501219-1-heiko@sntech.de>
 Content-Language: en-US
-In-Reply-To: <Z1Fc8g47vfpz9EVW@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241203165450.1501219-1-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hello Heiko,
 
+On 03.12.24 21:54, Heiko Stuebner wrote:
+> This series adds a bridge and glue driver for the DSI2 controller found
+> in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
+>
+> As the manual states:
+> The Display Serial Interface 2 (DSI-2) is part of a group of communication
+> protocols defined by the MIPI Alliance. The MIPI DSI-2 Host Controller is
+> a digital core that implements all protocol functions defined in the
+> MIPI DSI-2 Specification.
+>
+>
+> While the driver structure is very similar to the previous DSI controller,
+> the programming model of the core is quite different, with a completely
+> new register set.
+>
+> Another notable difference is that the phy interface is variable now too
+> in its width and some other settings.
 
-On 5.12.24 г. 9:57 ч., Mike Rapoport wrote:
-> Hi,
-> 
-> I've been auditing for_each_mem_pfn_range() users and it's usage in TDX is
-> dubious for me.
-> 
-> On Fri, Nov 10, 2023 at 12:55:45AM +1300, Kai Huang wrote:
->>
->> As TDX-usable memory is a fixed configuration, take a snapshot of the
->> memory configuration from memblocks at the time of module initialization
->> (memblocks are modified on memory hotplug).  This snapshot is used to
-> 
-> AFAUI this could happen long after free_initmem() which discards all
-> memblock data on x86.
- > >> enable TDX support for *this* memory configuration only.  Use a memory
->> hotplug notifier to ensure that no other RAM can be added outside of
->> this configuration.
->   
-> ...
-> 
->> +/*
->> + * Ensure that all memblock memory regions are convertible to TDX
->> + * memory.  Once this has been established, stash the memblock
->> + * ranges off in a secondary structure because memblock is modified
->> + * in memory hotplug while TDX memory regions are fixed.
->> + */
->> +static int build_tdx_memlist(struct list_head *tmb_list)
->> +{
->> +	unsigned long start_pfn, end_pfn;
->> +	int i, ret;
->> +
->> +	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, NULL) {
-> 
-> Unles ARCH_KEEP_MEMBLOCK is defined this won't work after free_initmem()
+Thanks for the series. I was able to get output on my Radxa's Rock 5B
+(dsi1) + Radxa's 10FHD Display setup. Works smoothly with multiple DE's,
+rotation and display on/off.
 
-TDX_HOST actually selects ARCH_KEEP_MEMBLOCK:
+Tested-by: Dmitry Yashin <dmt.yashin@gmail.com>
 
-   6 config INTEL_TDX_HOST 
-
-    5         bool "Intel Trust Domain Extensions (TDX) host support" 
-
-    4         depends on CPU_SUP_INTEL 
-
-    3         depends on X86_64 
-
-    2         depends on KVM_INTEL 
-
-    1         depends on X86_X2APIC 
-
-1980         select ARCH_KEEP_MEMBLOCK 
-
-    1         depends on CONTIG_ALLOC 
-
-    2         depends on !KEXEC_CORE 
-
-    3         depends on X86_MCE
-
-
-<snip>
+-- 
+Thanks,
+Dmitry
 
 
