@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-433296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27609E5620
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:02:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724CF9E5621
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F0F188551B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:01:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C6216C51B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B88218E92;
-	Thu,  5 Dec 2024 12:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A499A218EAB;
+	Thu,  5 Dec 2024 13:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oYN0ZAhy"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvzljZLX"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9137A218ACD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1BF218E83;
+	Thu,  5 Dec 2024 12:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733403568; cv=none; b=Ujm7WtAdTbXpr2VYK3JlvJIn4Vx/V9wFyRS+0sJqHkpbSMZVT+OMugVf8ESPqfLHYL8aY9sTbswyBDPqnkFrmZoWAy+4pN6gXb6d1bi5zk/3JLx56FL+RAAGC1CcYzOcr5k/EdvE6C8OUF1mvSAYrEn5UrsnrqfxzQtDUkhPDFE=
+	t=1733403600; cv=none; b=PGl+LhG2vdJwiNcWA8e7PSx3YnbJOPtITDoYp5cxkbWXiyKw5J0P9dMfkAwIsvKSmy85rwRyhodRVQYP8vYdNilJjFSlYs42GrLZ6syG1ig3p+cEjnOiPpEupfHKHeHInD98iX3cFynN9rTxHjLPnpHgvtCSZfLIgFLOnnzZkHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733403568; c=relaxed/simple;
-	bh=ebx+GgY3hNlUc59VsaJ6hQUiwXrTKNYfGaLlqqc/Vzk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U/pz/RF9qoxvUXx3LgHa04nvwM/+jZATIzJYu56qOnB0CU5HDmxoZOlYHp007HXJ2NGgEynh+LsGvcopDFselT2e561GUbDBISCt9xqzsp7t3ygQFSB6KN4KON7t3KkmU801j0qi9nostcBSdgy21w/hRgaY/JqiVmseTF8fppQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oYN0ZAhy; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-51536a46e3dso927663e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:59:25 -0800 (PST)
+	s=arc-20240116; t=1733403600; c=relaxed/simple;
+	bh=3OLFaKBgiFhJWCsDnLEuwFuf20ClzJ0AMK/6ux9BfP4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FwS7fvAbLrhjwG+oXenPSbMbxMVEP5w5PMgLhxTIMhsieTS70YqyQvhuq5co6UySMEcLY8qPFKNXfFUshtEd+6rQAqBvQcBjB4Gaq3hJ5bSbjk0oJqtqBA1MuhLLZTTyzjUkTzGARnNwlydVnJdhXReiHFvV75XDcisfNtqUWj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvzljZLX; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8dd1so1398288a12.2;
+        Thu, 05 Dec 2024 04:59:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733403564; x=1734008364; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VwfcoPBjO/Q1HvZfrTkBp1X4/TXkK2jPxvYFzVie8mc=;
-        b=oYN0ZAhyWAadi65bgqyi3OBNDykGmEXE99qDKNiXZI1VX8Y5rimkX4KiQ9HdsOuJ+R
-         rXj3K54cS8AqR/jWx9puxmFWsPiL+VsrOjDeU36+P1/RgKtH7bCMvRzVWY20+R16Gtit
-         4R2xuhmd+aurIh9p/brDxFj2LjSlcX3LLMLbc=
+        d=gmail.com; s=20230601; t=1733403597; x=1734008397; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gj8VFVjPSZEkv+oUvBeuosT9Pxl2p7BzaNCPNYLTVfQ=;
+        b=CvzljZLXWMIQuLduEiaHgmdBBsYlvs+EqCCvVlmwOux2wk/Pc82ZETup+iqSKqjr7k
+         HbTBU4j8KGCFXigT6wK+PvQ30yErQu0RKh41GViO5YEyM12EMmI0vtr2oin3svNCt5bt
+         bqqu+N9s/9Q3vjzrpwEnyOi4jd6KKgy1SlAFkYcN4DaujyUJ9WEL3YM5vIQj/9NXrFsu
+         1IFuIH+C5jGit3h2NqlrT+l3kSE1CZuN3fb0G3sYdAPjfzYlDUnJjDjkksMKDhR8KBGC
+         FNbfDBAXILk4layEi3/enLl0i7NP9mw9tU3C4yelygcPGNNjOoFYJ7Q7p8+nXl38nO3m
+         HD9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733403564; x=1734008364;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VwfcoPBjO/Q1HvZfrTkBp1X4/TXkK2jPxvYFzVie8mc=;
-        b=N6QcLyJQdcBz6vzHxvi5nLEaCDWLtJWATsrkiVunCgBhefLlxP37WTPV/cS023khpy
-         d5P0bunRnpoPiH69gMI4Nk+bNfGABBRXcFV/dfo2S0jkJuT6Z7P3YAG2JiyRv8MOqUul
-         e1qk0vHGtgx+VBcD1E7tMiE8/UbUO/ueSfIN3WxjPShE4NLuzHJDaVktWUwyhPaeeC4L
-         njwh5VhhowIYDC4yTK0LUJe3dDjEbVF3bki3rqMMvpk8f9avgsnr126xLTa+rnkr28Kq
-         TqP6jK1cXp9Ce8VA+nLZjcfiiXtXrYOxJPVb20KJZueOORO3qytVD7WRhbXxT6eYWsU+
-         /9vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlkSG4+oxHOiRadNWah02E+wvZVlchmt0+YAzMHAkNR1yOiiE5pdQf1evtiEH/2sVogUNbvtIMLKoa4aI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4qrR+xaAdb7FITSzhr/47TpcxoUPaDxRfKMcp1qCu8pKuogQY
-	MuXrnYD1SlRWiKKJAH0Nf7aqAFZcPRC//QWVNklNTV2Wi7bjFpZsYfxQCfaPCw==
-X-Gm-Gg: ASbGncvHNJoe5WuoLZbcLE68k39YOu0LBTDRQDzSE4rStr9j/142dTIPTqte1icn54K
-	1Y1aQCZjdfYMnhzeqcRrvEsMSmlXFmdxq6bU/Xs+cB5+4qdKqvZYjcJjdfGIcnZ56mx3tIP4dP/
-	QBs9ygLASd5Rh244qSSmg8KKSZRtCUwbM5Ia5MO6wXxjDFbkEQ+ShgI635RnSERTObk/HfRf37g
-	uS/Wg6yCxEEWFmkskU/XTvQhBKbHfZrSUYHJXITRjyI5eSpjayLtxOfgOSOsFUdY4SPe4QMQiD5
-	vOm5fXrIP/a3meTrX+HVJZYm
-X-Google-Smtp-Source: AGHT+IHRLV21fZ2rD9jYQl6Ini+eOswxWXzZy6lQU7eAzpT6Z49VS53HCUoS496Q7JbrKuLSk5piYQ==
-X-Received: by 2002:a05:6122:4a:b0:515:43ff:6ed8 with SMTP id 71dfb90a1353d-515e6fee69fmr2528809e0c.5.1733403564563;
-        Thu, 05 Dec 2024 04:59:24 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eacb5775sm119244e0c.0.2024.12.05.04.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 04:59:23 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 05 Dec 2024 12:59:20 +0000
-Subject: [PATCH] iio: hid-sensor-prox: Merge information from different
- channels
+        d=1e100.net; s=20230601; t=1733403597; x=1734008397;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gj8VFVjPSZEkv+oUvBeuosT9Pxl2p7BzaNCPNYLTVfQ=;
+        b=weKOQH4jvnEaIzUa6F8rejb1KjzRzHrK/7GGytw6/doiGtICHhyeqsTmLGOWb+Q5Ve
+         khslEiQ/QdTLMd9Y6XROit1rqEdlBaN0WcNVKw9zugDtBSN+sGlw12ro2oo3X0WthoSV
+         EbuIj3rRI2PhTX8E9+W+nrl1rUp6YQsPJO4en+u8I22y21x9GAsiV8TuwNHcb33J/yJg
+         67mMVbfn74K69wUf3F+a4HyLd4334/jJTLr5/oiUWcIbmdoa0eR1zDaUGly1ecD35EFJ
+         baZpvSfadKIQmEzlLpGdoJ8sO++UdKofukYPN/Dj8NzVcyM8SbXZnsAVxaIG61Kz2bF5
+         8ovg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdV5Mvd3aOGym0tCeBiNE+1iMqCiUKRb/O0H1LiUVgRcvBzvApKuBrZ6y0ohAqC/uMvHSX42nSlMe/fjVJiMo=@vger.kernel.org, AJvYcCXfeWMZbCC9zGnXfacIV9u5UfrqRgjMjOltlh2t9jELXfoTeVgseKlRAgpD19jzlQx2+mGARxATIEylfB4P@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGVHjXxwpmx09y3zEhibpYCnqnqmPEBnTzAc0/pN15HHr9ZA0H
+	5N3uAPNd3cw7AQpz4UyoqP3OhZGA5ojqnDdEzENGjYd1LKwoY1KC
+X-Gm-Gg: ASbGncupKz9gGotuXf71nRph5zZ74wm0QrJRphetfsgl9nIZ/E74sY+j2cnTaJEiBaC
+	xPDvB54rqgYpOxIbnfG/uUzVz6o4WIk2XmlLIUH/hEYiAOn6moOhblhaDwttSKsSrqs+xLnDX+l
+	MQuFk50GposaSJneFCD+cqj6O/KGwQkaWtpTwnkrS7BSpnniDVg+WlxhW/8TKx1pFhIl2im9BXw
+	PwRsDGACT3J7LKgcM1IsX53xE0KyWyyf/9qFDAWwSWR6d5Kuh+pVs9/PF2HjkJblgdKlbzY7GpD
+	QYtsSV551pjwraT4iHareLzAw9rkRkNlwg==
+X-Google-Smtp-Source: AGHT+IEF+6FFvVmIuxk1MISOcv5BF4xk0eVILKN9vM5sXj6JFuPJooKQkMvDCoXx5Oq1Cpz44ra8Kw==
+X-Received: by 2002:a17:906:9a95:b0:aa6:c55:739a with SMTP id a640c23a62f3a-aa60c5574a7mr571964266b.50.1733403596420;
+        Thu, 05 Dec 2024 04:59:56 -0800 (PST)
+Received: from [155.185.125.95] (wifi-125-dhcprange-125-95.wifi.unimo.it. [155.185.125.95])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4dc95sm88774466b.38.2024.12.05.04.59.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 04:59:56 -0800 (PST)
+Message-ID: <ad78ad62-ebd2-40d7-8a6d-623ae947584c@gmail.com>
+Date: Thu, 5 Dec 2024 13:59:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Sergio Callegari <sergio.callegari@gmail.com>
+Subject: Re: [REGRESSION] bluetooth: mt7921: Crash on Resume From Suspend And
+ Hibernate
+To: jglotzer@gmail.com
+Cc: Aaron.Hou@mediatek.com, Chris.Lu@mediatek.com, Deren.Wu@mediatek.com,
+ Hao.Qin@mediatek.com, Sean.Wang@mediatek.com, johan.hedberg@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, luiz.dentz@gmail.com,
+ marc.payne@mdpsys.co.uk, marcel@holtmann.org, regressions@leemhuis.info,
+ regressions@lists.linux.dev, steve.lee@mediatek.com, tiwai@suse.de
+References: <20241127231432.8112-1-jglotzer@gmail.com>
+Content-Language: it, en-US-large
+In-Reply-To: <20241127231432.8112-1-jglotzer@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241205-fix-hid-sensor-v1-1-9b789f39c220@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAKejUWcC/x2MywqAIBAAf0X23IKPKOxXokPolnvRcCEC6d+Tj
- gMz00CoMgksqkGlm4VL7mAGBSHt+STk2BmstqOx2uHBDyaOKJSlVJwsGT97ClE76NFVqRv/cN3
- e9wNNr+8gYAAAAA==
-To: Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-The device only provides a single scale, frequency and hysteresis for
-all the channels. Fix the info_mask_* to match the reality of the
-device.
+John Glotzer <jglotzer@gmail.com> wrote
 
-Without this patch:
-in_attention_scale
-in_attention_hysteresis
-in_attention_input
-in_attention_offset
-in_attention_sampling_frequency
-in_proximity_scale
-in_proximity_sampling_frequency
-in_proximity_offset
-in_proximity0_raw
-in_proximity_hysteresis
+> In following the related email threads it seems that this particular email thread has
+> not had any activity since 10/21/2024. Now the focus seems to be on firmware download which
+> in my admittedly non-expert opinion seems to be not clearly related.
 
-With this patch:
-hysteresis
-scale
-sampling_frequency
-in_attention_input
-in_attention_offset
-in_proximity0_offset
-in_proximity0_raw
+Since then, it has become apparent that
 
-Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more channels")
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/iio/light/hid-sensor-prox.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+- The issue affects many laptops that fail to resume from hibernation 
+with recent kernels. It is not just about wifi/bt mt7922 combos attached 
+via USB, but also and most important those attached via PCIe, e.g.
 
-diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
-index e8e7b2999b4c..f21d2da4c7f9 100644
---- a/drivers/iio/light/hid-sensor-prox.c
-+++ b/drivers/iio/light/hid-sensor-prox.c
-@@ -49,9 +49,11 @@ static const u32 prox_sensitivity_addresses[] = {
- #define PROX_CHANNEL(_is_proximity, _channel) \
- 	{\
- 		.type = _is_proximity ? IIO_PROXIMITY : IIO_ATTENTION,\
--		.info_mask_separate = _is_proximity ? BIT(IIO_CHAN_INFO_RAW) :\
--				      BIT(IIO_CHAN_INFO_PROCESSED),\
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |\
-+		.info_mask_separate = \
-+		(_is_proximity ? BIT(IIO_CHAN_INFO_RAW) :\
-+				BIT(IIO_CHAN_INFO_PROCESSED)) |\
-+		BIT(IIO_CHAN_INFO_OFFSET),\
-+		.info_mask_shared_by_all = \
- 		BIT(IIO_CHAN_INFO_SCALE) |\
- 		BIT(IIO_CHAN_INFO_SAMP_FREQ) |\
- 		BIT(IIO_CHAN_INFO_HYSTERESIS),\
+MEDIATEK Corp. MT7922 802.11ax PCI Express Wireless Network Adapter
 
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241203-fix-hid-sensor-62e1979ecd03
+- The new firmware (241106...) does not seem to solve the issue on all 
+the affected systems.
 
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+- it is relatively easy to script actions to kill BT before 
+sleep/hibernation and unkill it after resume, but they are suboptimal. 
+Users will typically set them up after multiple failures to resume, 
+which often means after data loss.
+
+Would it be possible to (at least temporarily) revert the changes 
+occurred from 6.10 to 6.11 that triggered this problem?
+
+Sergio
 
 
