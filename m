@@ -1,124 +1,78 @@
-Return-Path: <linux-kernel+bounces-433849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94EDB9E5DE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:04:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0F09E5DE4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705951885280
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:04:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 861DF16D3E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF2A227B80;
-	Thu,  5 Dec 2024 18:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9D6227BAA;
+	Thu,  5 Dec 2024 18:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3+JdWhe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+BYOYBW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180461922FB;
-	Thu,  5 Dec 2024 18:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F6E227B92;
+	Thu,  5 Dec 2024 18:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733421845; cv=none; b=Pm1SSRjQ8/X9YGTU613EWMadCb+MZYvgKcXfXZ+dEgk/UiAmBdT9DT15mQ86/RSJRAzch9sSdOEBht87QNaoLuPqS1GTlKuhV+u32SweA4C14wyi3LfxsT7StV+r7TqiZsOB/tefW3UyuIUnaEhnFOOoKIY3vQj7RbaHf0jTlqE=
+	t=1733421846; cv=none; b=GDgU9IBit2suO6ZRVrQyckV5qMECZqag2a7YKlZ4blV+Zc1wG0/TmsK7zSNICCc+uOW/IWYi+FEagdY6OO4ZCTCo42adj5rLnO5WdfQaPDQcvPGWXw6juAMwt8pOfHn7MDqYP++0+M4RAJWockPV4WEx8nxiW2i471HXlQioOdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733421845; c=relaxed/simple;
-	bh=4hKXmeo2QAswokpLmKjxilzAKe8Ymm1godEgGWglAsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VUOQYFtxUvR+NMJ+eDiy70nwwgmuxHwX81FocroFxFDR2Z52NOIZRsjAdvap0XvyphjB3wO73Cqsf5ltiYIOmyCIGKQnEkAE9bYmijalU7tPusHRV+oWi6tK6rqVp/RkjnClV/ewug+PwtppRRm6cbhFsqKKcdjgowpPZvug0zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3+JdWhe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4ECC4CEEA;
-	Thu,  5 Dec 2024 18:04:04 +0000 (UTC)
+	s=arc-20240116; t=1733421846; c=relaxed/simple;
+	bh=Tc1K0cGBA87seGcnVccWvJN/6iYvMywul7HFh3GlU/Q=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=s+jk0v2F0WSgLe2jogjyZOPGHUj1WmsKd8wWDYAP/80bfpVRePX6tBVt/z4h3X3afeDtYCGKCO1L3TzttDwfNUE2eLbjHYDhLimhnt4dpq9mrK4zjrdWU6pE1Pv5J4F5+4u0ZaCbh4Qq9cXg32tCkdAmwcD3CzKa3qbJumcr1sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+BYOYBW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB6D7C4CEDF;
+	Thu,  5 Dec 2024 18:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733421844;
-	bh=4hKXmeo2QAswokpLmKjxilzAKe8Ymm1godEgGWglAsg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=s3+JdWhepFNQK7oC3N4HHeBfDaBOu3ejfoauQoTEkHsTtiGYY7L9y3kGolx8smyAe
-	 qTvqVtW1mHTq+IgmbAGDr4ppQnYoeqWwxPW7M8zE7CTk7ZIibgupv8CsQ5CVgnqA17
-	 +tKIj3jrRlZER2JrBHmbS2MDmhPATvH+vWnVb50pzcfWs3zvio/+UDsVknl3qWHmUh
-	 gBBmbujjvP1Basb2ptycOuIVuIr7GaSf/YsmYyehdcuheH1DkqHKWVUMpPW/T1mAZy
-	 3lMDmeUTiYWJeYZ4RN5AHxzroBL2Va1AlBN2yAZghNlr+Adeq198PGtNpase4PYiuy
-	 F6yBPqhzcXjaw==
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e39779a268bso1389564276.1;
-        Thu, 05 Dec 2024 10:04:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMOijCTjLOJAnSgOkVKKayvsgwzYl+OWhk4/yN4utR5OK+Zf2B8XJU0hALVy+C+tb80aFYmqioYS42Uh5Y@vger.kernel.org, AJvYcCUsZCvOlMUVpeoVXVeGjeVoTputtxpaqQS3AajHj7ak6jvaEi9ITkO70qSWr9ecNmLi3hM/YhmSGbq/bZADuxQ=@vger.kernel.org, AJvYcCVZItE1a2AM+Fc8u3VOVj6SaVtK2TOXtPP9ArqNXIpRmfmYxtr0o3ImF8MIA1PCM3KDrsTFyDQRph7b@vger.kernel.org, AJvYcCX3EPmtxzBvg2cpHFTGlyBEFFhvM32WPhVLXwNVNfRmGM6ymnKDp4G/83zmn2SkgQ2Xtiy0UD74JZ6K@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxoE5aA1IJymJTEQlnqT2s60Zdkc3vyPfHXwoCNu2S2APFJDqJ
-	995o0C0Im4CXoj/SSoWinSsFVS+lvjNAQYIzhPWXYVcF8u2Qkdi6ShOxCnZIfZmDoySQzxxARnj
-	PV0r0UYUx/3JHZC1N4s4ObhmE3w==
-X-Google-Smtp-Source: AGHT+IFsWbuyFC0xdJvNwlNttO6yOetIWR+HbWMrxqTLlO5vtCqRzBs0/Ntdi9D7d17+ieU38U/ZVt62znLLQBIjCTs=
-X-Received: by 2002:a25:b784:0:b0:e38:2a3b:ea58 with SMTP id
- 3f1490d57ef6-e39f23d100dmr3886681276.20.1733421843375; Thu, 05 Dec 2024
- 10:04:03 -0800 (PST)
+	s=k20201202; t=1733421845;
+	bh=Tc1K0cGBA87seGcnVccWvJN/6iYvMywul7HFh3GlU/Q=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=X+BYOYBWRlK9/5LVwN2OcvtUPi9P7kId/E32mR7ZYK5Q7NB81RgZPiRi8ZNAZ89rT
+	 hF3+h5d9OqiCU8MATXHaLLrQY3JizSH2cKF/aw/YNtsS3XY3sB6WTnNIUgHXqpN9Ok
+	 kD6FxyJnIBeXbZ1IEZPjdtePHcUkDO+Pf50LY2qx5fM9JccOigmpMeSvPDbiNaiYEM
+	 50vXCtHTdDRFmfJ65Z8iD2kPaSG4Wme2WvnhC9paoTHtcLtv2SDSaC9cQhCvg91lSK
+	 Ka8dWx62nxXnEm7A766XZh2EM1jcQ7UoCEPXgz6MJjcOlLRenioU+3D0TVmlTlSh1q
+	 OdlW7imYNbbJw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE46D380A951;
+	Thu,  5 Dec 2024 18:04:21 +0000 (UTC)
+Subject: Re: [GIT PULL] platform-drivers-x86 for v6.13-2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <pdx86-pr-20241204141206-1813515751@linux.intel.com>
+References: <pdx86-pr-20241204141206-1813515751@linux.intel.com>
+X-PR-Tracked-List-Id: <platform-driver-x86.vger.kernel.org>
+X-PR-Tracked-Message-Id: <pdx86-pr-20241204141206-1813515751@linux.intel.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.13-2
+X-PR-Tracked-Commit-Id: e9fba20c29e27dc99e55e1c550573a114561bf8c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0769a8f69ebc4603d5c068112b7caf2f2187a1e6
+Message-Id: <173342186032.2011200.14942856430930016979.pr-tracker-bot@kernel.org>
+Date: Thu, 05 Dec 2024 18:04:20 +0000
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241205141533.111830-1-dakr@kernel.org> <20241205141533.111830-14-dakr@kernel.org>
- <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com>
-In-Reply-To: <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 5 Dec 2024 12:03:52 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJn=bAF4OYVJNDmiyCNQTAte4wmLhpo0Ca5Pv_oGTg73g@mail.gmail.com>
-Message-ID: <CAL_JsqJn=bAF4OYVJNDmiyCNQTAte4wmLhpo0Ca5Pv_oGTg73g@mail.gmail.com>
-Subject: Re: [PATCH v4 13/13] samples: rust: add Rust platform sample driver
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
-	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
-	lyude@redhat.com, daniel.almeida@collabora.com, saravanak@google.com, 
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org, 
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 5, 2024 at 11:09=E2=80=AFAM Dirk Behme <dirk.behme@gmail.com> w=
-rote:
->
-> Hi Danilo,
->
-> On 05.12.24 15:14, Danilo Krummrich wrote:
-> > Add a sample Rust platform driver illustrating the usage of the platfor=
-m
-> > bus abstractions.
-> >
-> > This driver probes through either a match of device / driver name or a
-> > match within the OF ID table.
-> >
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->
-> Not a review comment, but a question/proposal:
->
-> What do you think to convert the platform sample into an example/test?
-> And drop it in samples/rust then? Like [1] below?
->
-> We would have (a) a complete example in the documentation and (b) some
-> (KUnit) test coverage and (c) have one patch less in the series and
-> (d) one file less to maintain long term.
+The pull request you sent on Wed, 04 Dec 2024 14:12:06 +0200:
 
-I think that's going to become unwieldy when/if we add properties,
-iomem, and every other thing a driver can call in probe.
+> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.13-2
 
-OTOH, the need for the sample will quickly diminish once there are
-real drivers using this stuff.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0769a8f69ebc4603d5c068112b7caf2f2187a1e6
 
-> I think to remember that it was mentioned somewhere that a
-> documentation example / KUnit test is preferred over samples/rust (?).
+Thank you!
 
-Really? I've only figured out how you build and run the samples. I
-started looking into how to do the documentation kunit stuff and still
-haven't figured it out. I'm sure it is "easy", but it's not as easy as
-the samples and yet another thing to go learn with the rust stuff. For
-example, just ensuring it builds is more than just "compile the
-kernel". We already have so many steps for submitting things upstream
-and rust is just adding more on top.
-
-Rob
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
