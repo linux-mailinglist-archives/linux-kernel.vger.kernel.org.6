@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-433907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB619E5EA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:10:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7CF9E5EA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:12:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E205E18824B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB3C283418
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8D0225788;
-	Thu,  5 Dec 2024 19:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C328226EDC;
+	Thu,  5 Dec 2024 19:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pQYDzPsS"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AoNbTV3S"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB17B218AAB
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 19:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CDD2EB1F;
+	Thu,  5 Dec 2024 19:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733425840; cv=none; b=Kj4i5D7AbyNBzqwVSXznk24YWqwFVaiIkNAAw/4bvV1UiFjOkOX3R3sWiVOUbrSAfwQr68H52S7KWyXq8nFxGVYRh9gQArJMJUbqVS9qcBJs8GbQ9VtEEm5+SGXRzeuvZzT9vm430w/Wpmude4P5WsP2jRv6aQMt8j3u1LBCD8o=
+	t=1733425967; cv=none; b=cgKyzsi0XRcnveKXzzwhGsIfMeaRX69++MhgXscXsz7y5ZB7DRaW7qnQ6lNMx1AVOooFF7vcoTGnfTb5qWkLAQZf8pz3PvSe3dCDQvvef/llshMm+ysLi9wFPwdiGKgZqbXgtcd5t4SY1pzVBkyz3H7q9/Uw5Hwp1ydlMKDGanA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733425840; c=relaxed/simple;
-	bh=0JOKcMjrSG6aj6AIJO2JxGS5M9AVOqmJUhLj4Yqo7Pg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DvgCrI6wkJolA6vdrDULBqXUw26Qe69tttJYxBfAkU0In/VhjIEtY+ZoLOyKsUyTQuCUF97ZVd+kvhdGLZqTQgMRXvrp3JGbF1Q7QBqB0SGYwN91n0igWvemINFMfxPkyxQJe900OAvS82we1RFba+uheXtzA1J0CKEo2oBKLtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pQYDzPsS; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53e0844ee50so1409735e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 11:10:38 -0800 (PST)
+	s=arc-20240116; t=1733425967; c=relaxed/simple;
+	bh=wZfSdvwU1UByTI8n8u554FKtKmevPut0vYAxxQ5Up9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKkkLpnDQVIQH6e3nT4w1rG5Gil2LjSXWQw9qKyIHNPROV2icmt4AoMOPqN0G39ibruKUDlg+7sG3vftQqaRVnRBmS8mz8Duq1/4bSXhxSNlbfnbp+4Ox2uowfVj6PqGBZ0UeiCFWbsuieQh6LDkTBCU33JNAQWPQRZ0CnvsOv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AoNbTV3S; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so13166245e9.0;
+        Thu, 05 Dec 2024 11:12:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733425837; x=1734030637; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OQVG1tQuHt3SHcx2mPIxH4KYBUQ1F6QooRs+6KQiv2g=;
-        b=pQYDzPsS6rEGj/XsMdsewEGb2U4mJ0hbUCXLxVBqhAMIazYKHZ4+WoWdODioAgm2WB
-         KUmp4sTapfWiMXP9FNy6h6n+3oFNe5sdYZcrmARK/ZFT+7pTDwtPuyiFR1YmuO8c2Csn
-         MsLFVLzrkwWbUYNDDI/IAG/oyFteC1wZOSI1wdE2Y1VIxcp1GVLJWG+pZNx7IYH0wY0c
-         sX1R4Up61fYe6FCwJIjN+bIkoNuSDBsMoS5oYBCLKiADM8NJtW5dw7Qce7lUwTPDTEhh
-         qH083DBluvPb/6M0uwQ4fLdS88m3XfpBhIKJiHA1FX14uuoQVoX5GN3b2xO7vQPeWpI9
-         tc8A==
+        d=gmail.com; s=20230601; t=1733425964; x=1734030764; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RpdGZqjzUu9BvHVskpaiGe/S0V9Oz2iYcvsm/X4DJVI=;
+        b=AoNbTV3S2OuKMdMkwe4dGiwMDViHE3sDKZEU/R2TFoNubMexrRZmdnb/Sc3l2CbgqX
+         KjOOmZB3izpNgrbXDdc0MZNEst9ILN4mda1snHDy77xaLRFs8p1JDWfqE/IZVFPQk5ik
+         OKKVAdvUIomIKc1bSUAH/EYOLLbbMG4agFjA+fK1RgkXi4eDxSYhDbo/rHUrGJEFM1qM
+         LOLBhbe9ut/NHYzU0JJFEovFT2+tBVIVGyiAUI2M0W+J+CkqwBmlpXC00+qv+rfF5ZQK
+         RSASPzov3BaMfKvFXkUn5+1+NAVnWvBZMHEGR/GP7enMvRpzuyT1/sob/Tk2A7cgQ29c
+         10Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733425837; x=1734030637;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OQVG1tQuHt3SHcx2mPIxH4KYBUQ1F6QooRs+6KQiv2g=;
-        b=QYC2t3Dwfy6o/KkIXRvq1GpMwoS84h794XRFQXsaVGc33r/olw3NsPduxEIBuL9+5j
-         OX0q/O0AjLsp64r52eQTIIorqh1zOWNPvso9WU4aFRHlo1wMJmpTsIkt8FEjtggTfNvS
-         bweTWJz6PwH1jDrzDorKdBGr1zIbfguBd4OChvcWMua1oaUSUY0OGgOMsQSJ/TcJ4QC9
-         pBUUK7bTZj4wS5MyT3CgZ+QtzblDFNLb43R/fBydy8awILzu8vjtzJ6G/PPDrTkNxuia
-         OT1UudXQbL7BRWMibg2/2PEouoojQgCB1/FGOwUGDJbtr2hUki1MzVm6jPyHug9ruZA8
-         j15A==
-X-Forwarded-Encrypted: i=1; AJvYcCVEbkdNCLVIMYn2DV4Z35jeSKN0kkN9EQ4wwgOVnAdhf+6104H1m4yRLzBsNuyfG0Wa7TyRX3s+LceTgqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJfABNNMqpnYgOr7Pu0o2pqgiSpYi3vatCUBgFdW16uo9hJ9CT
-	izwwwZRc1TlvOnPKDDlVKut9zIrwpcgfasWU2GH+jq/z8babGFh2nvwrV+3C4jI=
-X-Gm-Gg: ASbGncubfvU27q4GMHYMxVyNGujZLzq9uAyc09a+zQK7WDAia4BtlGfueLMuhhZeQcB
-	dwZuw2fPtSnGxuQSYETKST3iX9RiqZ53EuOnrmYHxJwIqsoAbgIXBY8jnGVyyk2arTXKdS2vpXI
-	vd8OP74si+ea5oTQf08GCCH38DmnH2kCtGekYUlRQZLJuYsEvHi6d8Hb+8vw+iK1kgb2TuctE+M
-	vy+kxxKYXXpEIWur99JXe9NVRM4MlPlIuif2xkcH1MAkHeSCJUBcQp0aCab4/bmY+QkesuWcdYn
-	KFhSigfO05GTCuFzzg==
-X-Google-Smtp-Source: AGHT+IHUNLqaLQBuYan1ZGoMqkshI2yl9UY4KpKLMA9S8dD5jZebO/X3lWSvz99JLzTn4lGzisOwhw==
-X-Received: by 2002:a05:6512:3c99:b0:53d:ab21:4e17 with SMTP id 2adb3069b0e04-53e2c2f0135mr21836e87.55.1733425836767;
-        Thu, 05 Dec 2024 11:10:36 -0800 (PST)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e2294738fsm314252e87.52.2024.12.05.11.10.34
+        d=1e100.net; s=20230601; t=1733425964; x=1734030764;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RpdGZqjzUu9BvHVskpaiGe/S0V9Oz2iYcvsm/X4DJVI=;
+        b=UisAhId+1/7ljkJ+G7jJ9y/b8nkNOuOUY7q4ndvz/rkBi4GlM6PeC/7oe/oUicl+a9
+         bklSlK0NNzYxs5iyoWpwMZybNjkDXqcW5kusymyw1UZYPWz9LkG5xT/VpHMKvO+rPEsl
+         T2MThvFHi7lsjrOiNeFq6rTK1vwZb9B7kloaxzdjNoiTOIyhx9smaJVwD3HjwValNMBO
+         I1hA/SPaFWOIOyjuTtV49Jj9LwEzDQ009AM7Yswh7FLMPDJsBay71bCdDdjWCYV3cH9/
+         fZ29RuLXNDivIJ139aeWOuQOzAyNWyMSoZfV4YwnDoMEHqKGqgCPVobfhbwgtvMNy/uT
+         0I6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVgOSOjkvoLsmLwuLtYigiWSLUhBvae6Z7VrD2j79UtvMySe5BVTOC53ReTloQvd4uLdYgnEAQAq7mDcyei@vger.kernel.org, AJvYcCWwAuZhFIhgmimjml1hY0/2VfYehrInyYf4nHDK1yiBOPpdfu1g826SDN257NHaCiunni/NoOJE4rKtJ/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJAtzHMrms2nZC58g3rzJXlk68UFjEKUjJdb9lZMqgEtu5Hx70
+	5D7It1Sii2ZhuL0ovQjxbjaITI6GRKYRhkyGCvO6hHZ/3MCR60xS
+X-Gm-Gg: ASbGnctaw3H974IrGO43es+y2kn9DIBXxcje50qIcyYczF9hVlhitLwM4sjAtYzi8Ri
+	/9IhIxvWe+7y145x18jDybx/7E1tALA90SAj2IJORQ5I0omB4gTdnyjctTgPl4LzQAsXNUOwCPw
+	auB04Se3itf6MUwBYAENtKGuDFzw80GTb/33clGSyXJnqLcpO6sJRYJccutm5eNCsHeYuBltXr0
+	gug4yaaZlaAA6/R2X5PgPq+lfU90Gonwz04vXUiDK0rBew2n2i7yZtHSL0ryHBtJ3j5SqLMeaus
+	g9jbBBFNcpGzBg==
+X-Google-Smtp-Source: AGHT+IFW6PAVPpZKULlCWiqDvfytW/VZ5XrFf4R7JIE8Xut++K0HLnO62IP5mhljlyasKXRnvZemrw==
+X-Received: by 2002:a05:600c:4f87:b0:434:a7e3:db50 with SMTP id 5b1f17b1804b1-434dded6701mr3386895e9.21.1733425964256;
+        Thu, 05 Dec 2024 11:12:44 -0800 (PST)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526ac03sm73042155e9.4.2024.12.05.11.12.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 11:10:35 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v5 00/10] drm/display: hdmi: add drm_hdmi_connector_mode_valid()
-Date: Thu,  5 Dec 2024 21:10:31 +0200
-Message-ID: <173342582161.2533869.11795486713615996638.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241130-hdmi-mode-valid-v5-0-742644ec3b1f@linaro.org>
-References: <20241130-hdmi-mode-valid-v5-0-742644ec3b1f@linaro.org>
+        Thu, 05 Dec 2024 11:12:43 -0800 (PST)
+Date: Thu, 5 Dec 2024 19:12:42 +0000
+From: Stafford Horne <shorne@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: Re: [PATCH] tty: serial: Work around warning backtrace in
+ serial8250_set_defaults
+Message-ID: <Z1H7Kp2xF_TCSxyS@antec>
+References: <20241205143033.2695333-1-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205143033.2695333-1-linux@roeck-us.net>
 
-On Sat, 30 Nov 2024 03:52:25 +0200, Dmitry Baryshkov wrote:
-> Several HDMI drivers have common code pice in the .mode_valid function
-> that validates RGB / 8bpc rate using the TMDS char rate callbacks.
+On Thu, Dec 05, 2024 at 06:30:33AM -0800, Guenter Roeck wrote:
+> Commit 7c7e6c8924e7 ("tty: serial: handle HAS_IOPORT dependencies")
+> triggers warning backtraces on a number of platforms which don't support
+> IO ports.
 > 
-> Move this code piece to the common helper and remove the need to perform
-> this check manually. In case of DRM_BRIDGE_OP_HDMI bridges, they can
-> skip the check in favour of performing it in drm_bridge_connector.
+> WARNING: CPU: 0 PID: 0 at drivers/tty/serial/8250/8250_port.c:470 serial8250_set_defaults+0x148/0x1d8
+> Unsupported UART type 0
 > 
-> [...]
+> The problem is seen because serial8250_set_defaults() is called for
+> all members of the serial8250_ports[] array even if that array is
+> not initialized.
+> 
+> Work around the problem by only displaying the warning if the port
+> type is not 0 (UPIO_PORT) or if iobase is set for the port.
+> 
+> Fixes: 7c7e6c8924e7 ("tty: serial: handle HAS_IOPORT dependencies")
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> A complete fix will require a sequence of patches, which will have to be
+> tested thoroughly and is thus not 6.13 material. This patch doesn't fix
+> the underlying problem, but it is good enough for 6.13, or at least not
+> worse than 6.12, while at the same time avoiding the warning backtrace.
 
-Applied to drm-misc-next, thanks!
+This works on OpenRISC where I was seeing the issue.  Has someone comitted to
+work on the root cause?
 
-[01/10] drm/tests: hdmi: handle empty modes in find_preferred_mode()
-        commit: d3314efd6ebf335a3682b1d6b1b81cdab3d8254a
-[02/10] drm/tests: hdmi: rename connector creation function
-        commit: 67d31cd02c8dfb3d006dba62a854e6758cf7a0e4
-[03/10] drm/tests: hdmi: return meaningful value from set_connector_edid()
-        commit: a8403be6eea91e4f5d8ad5dbc463dd08339eaece
-[04/10] drm/display: hdmi: add generic mode_valid helper
-        commit: 47368ab437fdd1b5118644659a97a6e5dab45248
-[05/10] drm/sun4i: use drm_hdmi_connector_mode_valid()
-        commit: ae048fc4f96d716a2ef326bd6e894694057c078c
-[06/10] drm/vc4: use drm_hdmi_connector_mode_valid()
-        commit: d4581ae8695863b21f9b739dddce8159f3068ca3
-[07/10] drm/display: bridge_connector: use drm_bridge_connector_mode_valid()
-        commit: 54d7b7f9d637a53ba19d117eb9b01619bb1704ed
-[08/10] drm/bridge: lontium-lt9611: drop TMDS char rate check in mode_valid
-        commit: efda6551aa866b80dcb5a94158d805c560fc4f1c
-[09/10] drm/bridge: dw-hdmi-qp: replace mode_valid with tmds_char_rate
-        commit: 2d7202c6f38d14260a3998a2aa249a53415a24f5
-[10/10] drm/sun4i: use drm_atomic_helper_connector_hdmi_check()
-        commit: 84e541b1e58e04d808e1bb13ef566ffbe87aa89b
+Tested-by: Stafford Horne <shorne@gmail.com>
 
-Best regards,
--- 
-With best wishes
-Dmitry
-
+>  drivers/tty/serial/8250/8250_port.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> index 4d63d80e78a9..649e74e9b52f 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -467,7 +467,8 @@ static void set_io_from_upio(struct uart_port *p)
+>  		break;
+>  #endif
+>  	default:
+> -		WARN(1, "Unsupported UART type %x\n", p->iotype);
+> +		WARN(p->iotype != UPIO_PORT || p->iobase,
+> +		     "Unsupported UART type %x\n", p->iotype);
+>  		p->serial_in = no_serial_in;
+>  		p->serial_out = no_serial_out;
+>  	}
+> -- 
+> 2.45.2
+> 
+> 
 
