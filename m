@@ -1,134 +1,229 @@
-Return-Path: <linux-kernel+bounces-433571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33689E59ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:40:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370819E59F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8BE416DAB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D972518814DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1F021C9FE;
-	Thu,  5 Dec 2024 15:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1352A21D582;
+	Thu,  5 Dec 2024 15:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p89gLn4p"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="UoqO9PPk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="jglWqUKt"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2848E21C9FB
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C85D21A425;
+	Thu,  5 Dec 2024 15:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733413141; cv=none; b=qHT23FO0mQeDXFQSMVEvFVtyhL1BCUXr5vqlY/mB3nhaK5q1l2tmMgpe7yYhmHvgwz0Gga92jD57BBSRLcskW123voXsmWy9LBhYZ3r3E86WpoEL4NFA4n1Day0lyrDgGltctAIq555Jn2zWRFp471kXlNoi7RgrT6M+hfeS504=
+	t=1733413184; cv=none; b=tbHjXHOFHXpZSCvGpgtKHqayDVqozlNZBmyCrGfYMS/EC0mmHjEHCxrJa3OWz75abOoJWDdUfRV3g10y/+G/eL8nYGyW9XNllZBX/nHjKPJ7xFpd7hgBho9wk5B0GWid48PzaDGldjRwjMCd5GQBrcc2cQyCLj8qd+3RCgsOKkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733413141; c=relaxed/simple;
-	bh=eMLU40m6yyS+3MA74EptfLALTcQsAs0BQkogJ4+fbCE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OW2sPjkTljnRk44tSxGrghMiKwIm7b8Mg8rFthMno/xSWuXjIcYeDy1trGGvB42ItxXrAzDMMg0keSct76kcA2BiiUJLevH+lzKY6faiH9PcGgzGFVkuPSsZ0yIVhW9bq8nUlatftMUDCaehBYT/r2xu6CWfd4Y/+Mk/1nWr/K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--peternewman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p89gLn4p; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--peternewman.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4349cbf726cso6877555e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:38:59 -0800 (PST)
+	s=arc-20240116; t=1733413184; c=relaxed/simple;
+	bh=5+7hECp5xkP8gbtm0wMjU8SewxcsbplPrOFyu+3WZMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YvJ7oRyi1f0Dusyx7sYGUMLt41AHlBg/6dvKEVr5v6c+qeKmKwj2FYrMfTWfrBpEVEkLkQgE/3vIDcHFLdiNMDWTu5msqI+PUY/jg3PdIp4l5Fv1VldmuHKWSNenfk0uBAQNjcRCt2GE4B49vDuCMFKgzgVdTVdrINSXg6C0Azo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=UoqO9PPk; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=jglWqUKt reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733413138; x=1734017938; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MP2YmTkp08hVldxtV+ae1BU9J2EZ8GxsjUzKwg9nivU=;
-        b=p89gLn4pNcPHi1zloAamJnOHsxthFfU4orwY1+ydYSy22MT0n9Z59LtYvMAdT1PZEf
-         EPkpl+g773lejm9/un0KmQWiE2WvOXtqyZMmO9untrD0y8nfG5vcSPtsM8qa+eB3pw1h
-         7jYWaTfUss7b6kUJT9DdnInJdNQx/pHhi0Q08T5kL0nYhaJw0WZe0gSPRjhfpVbwrCjv
-         UBlBBPvJ6FEvtbgBeIfgQFwbq7+XaXzmuWDeMaIvVh/o5MUPbhJUqYRf4vFsca1vS/yu
-         akPvPIogBpWeSnFc/C+EjFjI57+s8XyVTN204St6AxVUObtOhQ1JkFBzVSeScrNNgJqj
-         Eq5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733413138; x=1734017938;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MP2YmTkp08hVldxtV+ae1BU9J2EZ8GxsjUzKwg9nivU=;
-        b=Vy+Tj4im1QD4wp0ILsW1jgD67mkihafVh4Auk31WZhIxC/74PxI40mz6WnrTwALzvm
-         bp6c3de/t0RWyc0KGJ0EbvRnMZjrj+VWeIeor5F91+NYQG44CUOk2p712uDdmzrDrjR+
-         5hTgVt4ce17kmRt679PnKZ3dcAceF/Bfn6fohcQzb+97lhTS28AFdsTRp1Xj022zSls2
-         vJ2GG93siDkPt1epMgjsC16TVna/fxJYQ4eEIc6Fnl1RJcAjqjud2wdlBQXbNR6Iyljv
-         yFLSYSw3zilMYBofwodmJmkh1wj4c6wGGUrEr8p/OBM/ckP6uHNMK2R7AoSif6XOaWFm
-         N82Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVabZdR17qLoxS/1KO/VqCRakKu5uLJsztlvr673QfdyugXVdOTmw/fv5BjBbQVSXLPshpK0R970SIpgdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIm8jrUiRIRkiA73WJsWbKMT+TtWJ7hYcaDQjznnrTuBXFp877
-	fm9tR9hk2qPHeO2uQcodnVOuraDm2+Kbxvk3jVzz69F6gco8v8FhuI8i0ji/38of+9SjKejL9v8
-	vvuteAvuX/w8yqQjVs9UNdw==
-X-Google-Smtp-Source: AGHT+IEoqrP2g6h/KJaUaK1Q1DA58gB9rvHOePiYVQTXzTK975dcoE0Qo/s8PP/JcMhCdACbrqLc1V04PJctLxPEtg==
-X-Received: from wmsn4.prod.google.com ([2002:a05:600c:3b84:b0:431:21be:a0dd])
- (user=peternewman job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3c93:b0:434:9e46:5bc with SMTP id 5b1f17b1804b1-434d09bf04dmr106904535e9.10.1733413138543;
- Thu, 05 Dec 2024 07:38:58 -0800 (PST)
-Date: Thu,  5 Dec 2024 16:38:45 +0100
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1733413180; x=1764949180;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=bITlpbaxJZ/ELoBexWwZ37dzybUATEmdzTJTeCJOdUs=;
+  b=UoqO9PPklD4wNdll1vza8hu2Cawu/GNqhhOoI2CfB+T4+9ctNbBReK/n
+   hciYpqUa4LsYcB1ArOtFhmNOi78TFLv0LePrGt8IqYRX8/W3Uo2mG6cmh
+   rpmbXQRmWs5IIMC3Pa21OcjkczE8pXX53B0OyLZh1AqfODxLx7k9Pseki
+   yOiIXcVF4B+E3SYT+4xaLPeVwM5ltkjU5pzJi72p83CBteAEGWQPGKZQB
+   7OKMQT+liX2UIFmrzoWhebJgcAujKn6ixk6lGxQeTYzAvE97f8CDUuR4M
+   3dPIsxGzhlrr2emkapTBh9a+1ErWfyP30mZ9wx0YqcdplNOFJn/C4f9tq
+   w==;
+X-CSE-ConnectionGUID: QIQQHHRvSUCxCFxzGq0uLg==
+X-CSE-MsgGUID: lciEpNtRTu+EqC5iYhRfKA==
+X-IronPort-AV: E=Sophos;i="6.12,210,1728943200"; 
+   d="scan'208";a="40435594"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 05 Dec 2024 16:39:37 +0100
+X-CheckPoint: {6751C939-10-F5DC7025-F79421CB}
+X-MAIL-CPID: D7BACB0F9DFF492E6B3DFE2FE5CB2D96_0
+X-Control-Analysis: str=0001.0A682F28.6751C93A.0019,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A1D60160A43;
+	Thu,  5 Dec 2024 16:39:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1733413173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bITlpbaxJZ/ELoBexWwZ37dzybUATEmdzTJTeCJOdUs=;
+	b=jglWqUKtPxsplmsR67CkjKnm3GPFeNYZ+33ZpbMDegN2VzbsUsSNStUMqWq7f/NAamdhvz
+	ys19VGl9kakyogCFGseboz6ZPnonF1lhFtEVpLxcK1SvVLCbhGgVO0i8igUPUJ+gyn7syu
+	e5NPqbOjafNf9UroaitX+VbIYEQarWaYOAsDWEWpP2HKsrVKVPf4hjbNLmIHfyRJQ3Z4Dh
+	IuVgmLi8a2IN/pI1Us8rRht0xzd+qW4qRKNsslp2X2AVTD/mxk9ADpvGbDpXqGtS7jcfk1
+	kKF2ZX8T/aeyLGjQIiTx06a/tlO0O91Lpr64iyLW4glg8fxPkfTBnENVxwdQTA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] media: i2c: imx290: Limit analogue gain according to module
+Date: Thu, 05 Dec 2024 16:39:30 +0100
+Message-ID: <2214258.irdbgypaU6@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <CAPY8ntCeYOtBhEKCcygsT-aAHJ8rxo5qP0NdjE9DMJmHCxZzsA@mail.gmail.com>
+References: <20241120-media-imx290-imx462-v2-0-7e562cf191d8@raspberrypi.com> <4950196.GXAFRqVoOG@steina-w> <CAPY8ntCeYOtBhEKCcygsT-aAHJ8rxo5qP0NdjE9DMJmHCxZzsA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241205153845.394714-1-peternewman@google.com>
-Subject: [PATCH v2] x86/resctrl: Disallow mongroup rename on MPAM
-From: Peter Newman <peternewman@google.com>
-To: Reinette Chatre <reinette.chatre@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Babu Moger <babu.moger@amd.com>, James Morse <james.morse@arm.com>, 
-	Shaopeng Tan <tan.shaopeng@fujitsu.com>, Tony Luck <tony.luck@intel.com>, 
-	linux-kernel@vger.kernel.org, eranian@google.com, 
-	Peter Newman <peternewman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Moving a monitoring group to a different parent control assumes that the
-monitors will not be impacted. This is not the case on MPAM where the
-PMG is an extension of the PARTID.
+Hi Dave,
 
-Detect this situation by requiring the change in CLOSID not to affect
-the result of resctrl_arch_rmid_idx_encode(), otherwise return
--EOPNOTSUPP.
+Am Donnerstag, 5. Dezember 2024, 16:37:01 CET schrieb Dave Stevenson:
+> Hi Alexander
+>=20
+> On Thu, 5 Dec 2024 at 15:22, Alexander Stein
+> <alexander.stein@ew.tq-group.com> wrote:
+> >
+> > Hi Dave,
+> >
+> > Am Mittwoch, 20. November 2024, 20:17:03 CET schrieb Dave Stevenson:
+> > > The imx327 only supports up to 29.4dB of analogue gain, vs
+> > > the imx290 going up to 30dB. Both are in 0.3dB steps.
+> >
+> > While I agree for 30dB on imx290, my (maybe outdated) Rev0.2 datasheet =
+says
+> > up to 27dB in 0.3dB steps.
+>=20
+> For IMX327, I have revision E17Z06B93 2019/03/25.
+>=20
+> The revision control section for Rev0.3 lists
+> Page 1: "Correction: Max analog gain 27dB - 29.4dB"
+> Page 74: "Correction: Max Gain 69dB -> 71.4dB"
+>=20
+> The graph in "Gain Adjustment Function" (page 74) also shows values
+> above 27dB as being purely analogue gain. Certainly 0x62 is red for
+> analogue, which would be a gain of 29.4dB. The next dot is 0x64 (30dB)
+> and blue, so we have to trust the text for 0x63 being 29.4dB analogue
+> and 0.3dB digital gain.
+>=20
+> So I'm happy that the limit is 29.4dB.
 
-Signed-off-by: Peter Newman <peternewman@google.com>
----
-v1->v2:
- - separated out from earlier series
- - fixed capitalization in error message
+Okay, this is a newer datasheet. So assume this is correct.
 
-[v1] https://lore.kernel.org/lkml/20240325172707.73966-4-peternewman@google.com/
+Thanks for clarification.
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
----
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Best regards,
+Alexander
 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index d906a1cd84917..8c77496b090cd 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -3888,6 +3888,19 @@ static int rdtgroup_rename(struct kernfs_node *kn,
- 		goto out;
- 	}
- 
-+	/*
-+	 * If changing the CLOSID impacts the RMID, this operation is not
-+	 * supported.
-+	 */
-+	if (resctrl_arch_rmid_idx_encode(rdtgrp->mon.parent->closid,
-+					 rdtgrp->mon.rmid) !=
-+	    resctrl_arch_rmid_idx_encode(new_prdtgrp->closid,
-+					 rdtgrp->mon.rmid)) {
-+		rdt_last_cmd_puts("Changing parent control group not supported\n");
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
- 	/*
- 	 * If the MON group is monitoring CPUs, the CPUs must be assigned to the
- 	 * current parent CTRL_MON group and therefore cannot be assigned to
 
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
--- 
-2.47.0.338.g60cca15819-goog
+>   Dave
+>=20
+> > Despite that this change looks good.
+> >
+> > Best regards,
+> > Alexander
+> >
+> > > As we now have model specific config, fix this mismatch,
+> > > and delete the comment referencing it.
+> > >
+> > > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > ---
+> > >  drivers/media/i2c/imx290.c | 12 ++++++------
+> > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> > > index ee698c99001d..da654deb444a 100644
+> > > --- a/drivers/media/i2c/imx290.c
+> > > +++ b/drivers/media/i2c/imx290.c
+> > > @@ -176,6 +176,7 @@ struct imx290_model_info {
+> > >       enum imx290_colour_variant colour_variant;
+> > >       const struct cci_reg_sequence *init_regs;
+> > >       size_t init_regs_num;
+> > > +     unsigned int max_analog_gain;
+> > >       const char *name;
+> > >  };
+> > >
+> > > @@ -876,14 +877,10 @@ static int imx290_ctrl_init(struct imx290 *imx2=
+90)
+> > >        * up to 72.0dB (240) add further digital gain. Limit the range=
+ to
+> > >        * analog gain only, support for digital gain can be added sepa=
+rately
+> > >        * if needed.
+> > > -      *
+> > > -      * The IMX327 and IMX462 are largely compatible with the IMX290=
+, but
+> > > -      * have an analog gain range of 0.0dB to 29.4dB and 42dB of dig=
+ital
+> > > -      * gain. When support for those sensors gets added to the drive=
+r, the
+> > > -      * gain control should be adjusted accordingly.
+> > >        */
+> > >       v4l2_ctrl_new_std(&imx290->ctrls, &imx290_ctrl_ops,
+> > > -                       V4L2_CID_ANALOGUE_GAIN, 0, 100, 1, 0);
+> > > +                       V4L2_CID_ANALOGUE_GAIN, 0,
+> > > +                       imx290->model->max_analog_gain, 1, 0);
+> > >
+> > >       /*
+> > >        * Correct range will be determined through imx290_ctrl_update =
+setting
+> > > @@ -1441,18 +1438,21 @@ static const struct imx290_model_info imx290_=
+models[] =3D {
+> > >               .colour_variant =3D IMX290_VARIANT_COLOUR,
+> > >               .init_regs =3D imx290_global_init_settings_290,
+> > >               .init_regs_num =3D ARRAY_SIZE(imx290_global_init_settin=
+gs_290),
+> > > +             .max_analog_gain =3D 100,
+> > >               .name =3D "imx290",
+> > >       },
+> > >       [IMX290_MODEL_IMX290LLR] =3D {
+> > >               .colour_variant =3D IMX290_VARIANT_MONO,
+> > >               .init_regs =3D imx290_global_init_settings_290,
+> > >               .init_regs_num =3D ARRAY_SIZE(imx290_global_init_settin=
+gs_290),
+> > > +             .max_analog_gain =3D 100,
+> > >               .name =3D "imx290",
+> > >       },
+> > >       [IMX290_MODEL_IMX327LQR] =3D {
+> > >               .colour_variant =3D IMX290_VARIANT_COLOUR,
+> > >               .init_regs =3D imx290_global_init_settings_327,
+> > >               .init_regs_num =3D ARRAY_SIZE(imx290_global_init_settin=
+gs_327),
+> > > +             .max_analog_gain =3D 98,
+> > >               .name =3D "imx327",
+> > >       },
+> > >  };
+> > >
+> > >
+> >
+> >
+> > --
+> > TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+> > Amtsgericht M=FCnchen, HRB 105018
+> > Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+> > http://www.tq-group.com/
+> >
+> >
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
