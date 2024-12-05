@@ -1,242 +1,196 @@
-Return-Path: <linux-kernel+bounces-433957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739659E5F50
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:15:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2E59E5F5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:20:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7DD1884903
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23645280F45
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7C21A76D2;
-	Thu,  5 Dec 2024 20:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EC21A76A4;
+	Thu,  5 Dec 2024 20:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxIypQJI"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cFytW+dI"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2058.outbound.protection.outlook.com [40.107.244.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C68A193;
-	Thu,  5 Dec 2024 20:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733429731; cv=none; b=c2e2byGCiZXf+JWfxpTSHRoAnJtEwV9J5qlK5in4ZKkILj1lvAzY5jjWT0XDS3ZLwwzV+E280fTXQn6WDDCRTaLA0wkAcEK9YV+TqenqtzuCrtOOAKSbKAD6d6VhGQWpuVB2a2C/95qojouDqWZ43Aju/sHw4Ymr0o1QKiLUy2g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733429731; c=relaxed/simple;
-	bh=ETmomcGJZ6M7hfG150AP73WVEB6pwR+tUEid5iG9mTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sT+oovlNDPGSmxn60i7HeTCpIRmq4NdJFhTiXpx0tNYVQ/2c72r4T4v6o56mKnCNPyC9frOtHbdDjMaW+DA6Eu3SO/k+15b/jYXwpIFdjUc0QKUU36n1AJ70IBnR3verpAF/Az5fVkevf6BLvXa9L66Gga5yKawPC/M32bCYh4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxIypQJI; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so204656566b.1;
-        Thu, 05 Dec 2024 12:15:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733429727; x=1734034527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6op1dKhn8YhOS0CwEaru1rUThYWcZr6wiyWvxx+pgTw=;
-        b=fxIypQJIgHWKVvbkT5nsOTVRR6CTbZRQQBE4THE2pSIk1/6zodTf2ZH56ODRNVu6j9
-         IF6UwbVhcPYAj1Oof1HcSsD7f+tGE+LrWIQJFW0kaa2j30kWXQ+ZYFcu9/nrg/6wdajJ
-         0BNTUL36iiEizBy6xh17wfW/So/u72HaAhQw05Xbizf0AU5n3EuROwfSh12DvGJ+hK6S
-         oNbplqU9RL/4e0p5/bb7yMtHSoQQOKYpRGT92CV5/rWzRXDlPXRl9beAJfXn845+tLEP
-         TYP5CUkYp0KTF0dHciqEj3fmfBZc6MzH/6+ppZgV69CVu7IDBYqK4snMvv2BvuzS0IU9
-         ksbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733429727; x=1734034527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6op1dKhn8YhOS0CwEaru1rUThYWcZr6wiyWvxx+pgTw=;
-        b=aQVOI8ArM8cSLXNaQApTy4yW9Atq3Pg43uEi7YV3aX5IKkY5Ui2lv9tKU2skgzrj1p
-         jh0EQ25YtM0Q9yzJRWdpNsKsgq+lVAlBDWAeb8p6khenvnwQyaLQKjC+A89/ancv72g6
-         QLf1FVDjphR5FClOYvBdSXRMjrB1bVYuEHf+hINPMdFq2O/3hJ3pnaYLMSmSjAVPkkbh
-         XUAPXwt5h3QPlKrqT2YwGyoIvcSCleZJ8idVqQ6B670SWN420unNNWucJia9t5bhi0mO
-         a1OkJ8wRH3dxTViEISMCKYlqGFMTfZgNd54zZUN0WLqFoK/F4BF7qszIA9vjrVwRAw4f
-         Z2hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVR6BtBMjVHkWjZ/JMdk72TVP4n0BbkYgYw0HihBeJLlXLFZN98uU254pO350gr+xcB9o8IPxNIVkPU53Ld@vger.kernel.org, AJvYcCXKF862865eUdyxehjcMT2a5arOxmRmYpLc+DDAjb23tnfoFwS9j19Uk81ajPVh3R0rIH1xYmf/yPElnqmz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyaez8lzQR05J0DprU4ABLgdamrv3iqfDq2df50/42pw5XyXrWb
-	eHerqo2oe2kAmYWFT4DwKOhnSiHU7ieBHtkaarE5BG7v6T8NeSKrmQsjsXsb7J0WYQ52AVng8eW
-	qIc52LB5ITxME/SHb31XVAylbwck=
-X-Gm-Gg: ASbGnctFqjlUzrWt6cyVV57Ie8YJfY/qiE7I5u+pVuu2/T5pjMQGR2ZvW/nmZTQ9k6F
-	jZgZtKD7M/Vl3Y5j6OTyPclLG6ZPQiMerqw==
-X-Google-Smtp-Source: AGHT+IEHTTEf/K5pm0y5Abjbs1ZmK6EfVod6CtwoyiRuZ4H0zpUQiu1AGIkChm/7uZL5+t4toa4xq5uR4IDcXuxg9YU=
-X-Received: by 2002:a05:6402:4005:b0:5d3:ba42:e9e3 with SMTP id
- 4fb4d7f45d1cf-5d3be680ec5mr1062727a12.13.1733429726329; Thu, 05 Dec 2024
- 12:15:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AB7193
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 20:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733429995; cv=fail; b=q4QT3KxCoAtW0V5bukSGWNlPqF1MMGOkFBsghI+8bu97cEB7A/QUU7CP/W8MzEXIrWezlrcXPBG32+ZjXqJMgh1/bVzR9CSn6yYdGQCat+R2FJWvOdQpt3DNxZE5HgPECtyGrVhzU+cv45LcqgcDJJotIc8UxfgbhxVhRa3nh10=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733429995; c=relaxed/simple;
+	bh=s92x3F54zJQurxpN25MRyEXXITAYETD1bjO7vmP+jrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S7vCNVcaGlw/k2b/T+c5D0g1G+TgBKI2KKPLDKduqEXSFF855Mt2/+9+hbum2t6LY8tjlOAKvvExPTX0CTKtvrr1FT3Id9VGI44fq7CCJoLtwYCwCeLQf35aNiPPo3jV5n1Vm9ogKwgKUQVj8YwYWKEWmSvIY+kLBU/I8faPqQI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cFytW+dI; arc=fail smtp.client-ip=40.107.244.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pQdrE2WdP7OIkjtiwNQVpb/OJvb3jnFpxZPruFVM5V9V59sKyS7vCWnxXzgB195yE9Hom44UT2BtYloOy+Saje7tI9ggs/SEEnlIJvu+NwpWy4e2cwc+Vi07K21hg3f8xVifwRoUn5FcSM2vk02RVg1r/yJRguA49QiNE3E/zh8rjyCiWf4/uBvMEhfDRahrB4/4T50LL0dGvzNzGiOdX2MTxjR7q67NpBLLlDHkloHrz/i8n9fBaZTzlv8XLNb3rA1Rx0S2UCqR0ePLc3eml/tMCsfd3cboABs0/XlyRZvqbtmIoEhzuLAgmVMdch1AoIYwHUq7YiDQiJDQ6o+q4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X6zUfCDw41NNpbHPmzbUDyvlwiQRB4ukS9/Z6rcq9Qc=;
+ b=sX7NA1xmnlqpkW8ZAItAHhnF16LofQu6pZbMy4qhqu76wy3nQtF9FVpoUMvb7H41fesTfDDiABC/D/pWU5Ew+lGVDQ116pxsfqBiXf6YOAr6kJvjEX3uF11Rzv2dVXgGNvLXBXh7ui3woVd2dN8TH/mWjJ9OKJmlNl9XO4PLcuLahc8U++0aPWVzuEFssS0Ti5o4uw+pDnXR6L5DNwwgkfZYM9XW5Fu7ov1WvU95QRkAvqZsE7yZm2/E9qcP6vzZuvs5QJFwFJug7irtt7X6cGCiHsgL+Aa1IzNl2FXqwgCmtrX0EwD5W4BSg2Un6shtqzHigeNgw9P4Hc/YeWU8Mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X6zUfCDw41NNpbHPmzbUDyvlwiQRB4ukS9/Z6rcq9Qc=;
+ b=cFytW+dI/OdBw35ICDZxSOWutkdOm3DtT3PJ2+CxxClvlngiKMyJa8GDzmH96xioHV8ewmX3+mCfpNteEGWI19rNRKZLaV8Za+jc7NCfEqyje7YvLQicz0RhWGhmiwa4Hj0IA/uWnS0nWDJ7ZPU8N/wBZbw3zvkJUPJpojAPRM0=
+Received: from PH7P220CA0088.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32c::32)
+ by PH7PR12MB5901.namprd12.prod.outlook.com (2603:10b6:510:1d5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
+ 2024 20:19:50 +0000
+Received: from CY4PEPF0000E9D1.namprd03.prod.outlook.com
+ (2603:10b6:510:32c:cafe::4) by PH7P220CA0088.outlook.office365.com
+ (2603:10b6:510:32c::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.18 via Frontend Transport; Thu,
+ 5 Dec 2024 20:19:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CY4PEPF0000E9D1.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Thu, 5 Dec 2024 20:19:49 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Dec
+ 2024 14:19:48 -0600
+Received: from [172.25.146.163] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 5 Dec 2024 14:19:48 -0600
+Message-ID: <dae94ec2-79fd-43bd-a862-d06824fdf9ed@amd.com>
+Date: Thu, 5 Dec 2024 15:19:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com> <20241205141850.GS3387508@ZenIV>
- <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
- <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop> <CAGudoHGRaJZWM5s7s7bxXrDFyTEaZd1zEJOPX15yAdqEYr07eA@mail.gmail.com>
- <5a5bda20-f53f-40fe-96ab-a5ae4b39a746@paulmck-laptop>
-In-Reply-To: <5a5bda20-f53f-40fe-96ab-a5ae4b39a746@paulmck-laptop>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 5 Dec 2024 21:15:14 +0100
-Message-ID: <CAGudoHEU_Qkg=SwuFvv=C3cJqDwA_YPxJmwjRWMbgVGdybCMYw@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-To: paulmck@kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
-	edumazet@google.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] xen/acpi: upload power and performance related
+ data from a PVH dom0
+To: Penny Zheng <Penny.Zheng@amd.com>, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>
+CC: Ray Huang <Ray.Huang@amd.com>, Xenia Ragiadakou
+	<Xenia.Ragiadakou@amd.com>, <xen-devel@lists.xenproject.org>,
+	<linux-kernel@vger.kernel.org>, Roger Pau Monne <roger.pau@citrix.com>
+References: <20241205054252.471761-1-Penny.Zheng@amd.com>
+ <20241205054252.471761-2-Penny.Zheng@amd.com>
+Content-Language: en-US
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <20241205054252.471761-2-Penny.Zheng@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D1:EE_|PH7PR12MB5901:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d3cfb9d-b9ba-4bc9-be8c-08dd156a2bb0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cXBldGdPMVhWTFVjUFNJeGtCc25vaTE4dmxmNU1Gbkx4N09OK0pTdnRCTmZ2?=
+ =?utf-8?B?OEk4cHh6cEJjUjNrQ0xaRDQ0OE5aeGZlQTEwNjd1Z1RqMmpna3l1MnlCZEVG?=
+ =?utf-8?B?RmZJVkpoZ1ZoMDR2ZjFkNGVoa3VXWmEvcGlmTmpiMFhrYXM4ZG9QbU1Gc2I5?=
+ =?utf-8?B?dEV0UmpNQlo1eWJKRHFJK1NHV0JvaVFycytjdWQ2NFlzZkFpVEJ6OUJja3V4?=
+ =?utf-8?B?dEk0dXlDNTRuaHZSTldWOWtVZmtYK3M0K1Uwb0twK3lkUUp2RWo2TVdxTXRS?=
+ =?utf-8?B?WjJLcUhrYnVqNy8rU0NKMEVwMEpXNUxLMkM5cGdEOGwrTXlCeWUvci80c0c4?=
+ =?utf-8?B?RnppTlJzSjFTaE42OHlONmFlSzN4UWU4b2xWcmNEZUJRT01uRndxWnNOUlJK?=
+ =?utf-8?B?K3U0THdLVFFqSlA2Z0k2UzRQYVY5WngrcDAydjg4K01pU0lEbFZLakUwd1Zq?=
+ =?utf-8?B?RTNVU1l6TlcvalZPcndmWWl4ODBwS2JRMUlzN1I2Wmhac21kd05tcGVGQkNv?=
+ =?utf-8?B?a09OY2cxQlJrb3IrelYwNVplOHBGT1ltZDhJTVBOVkh4QytNRUl3S1NpVUN1?=
+ =?utf-8?B?dzEzb1NTcXJzNkhVVGEydm5mM0J2ZmcxSW9ITTgvQ3NMNW5LTEFGNTVkK3U1?=
+ =?utf-8?B?QVFBdTA4cThzUDE0c3liajY2cDVuMVNnQVl2MmlGNmNFYTgyeUU3RVJJYzJM?=
+ =?utf-8?B?NkpGV2swRkxSK0hlTFdEajdhOXY0Q1ZubGtXU3ZYN3VmVGpJTVV2a2pKT0tk?=
+ =?utf-8?B?NzJmRUJrKzdKbm1iS0h5K1JlVWJ4a2Q3aFlaVEFUbXZYeldBK3d6aXVYKzVj?=
+ =?utf-8?B?ZWNFVWJlOXhQNERHNWZPYVFWU2FwQTVwYVJwM2VHaDNxNmpseVVHbjZZcVY4?=
+ =?utf-8?B?UjVYK25SRFk0ZmduQ0E3RlpscmowdjJJVHpDaXRGaXpMVFRwUHc4SDR1aXVK?=
+ =?utf-8?B?Y3JPT1lNSjJOa1FxbWhXc01qRkxHbUxNUjBQdWEvVjdmZENqQjRacXFUc2Vy?=
+ =?utf-8?B?YUsyejVkdDdMVTUyOWNaTSsrNDNYVCt0ekJaN2Ewc24wK3psUTVxZVdHemo1?=
+ =?utf-8?B?S0dISWxBNUpJNG9Md3NUdW16WTdvNjlTZVY3eDJJdVlBRDhLV09tcWp2VzVo?=
+ =?utf-8?B?YVlUNmJpZFZacWdVTTZLRWNhSEZnb3VwTmp6MkQ3TDZkQXJoRnhoMmJYNzN6?=
+ =?utf-8?B?aUNWWmI3MHdtdUJkbStsWG1Fdm4zc0hYaWVFcTJDU0k3cWt5RUJQeFYweXFB?=
+ =?utf-8?B?alA1UXZVbS84VGZEZDZILzlCb0dFN3luUWtQN05UTHoxeXlKMkJUVHZLTmh2?=
+ =?utf-8?B?MmhJN1U3eUN4VzBobFdUR1Z3UFVabTNzSm8xU01BRjhFbGNzaEF4Uy9HOWdI?=
+ =?utf-8?B?TTlES1djN0RORlJDNjJJT1drRU9kNW9WV2VQaHdnTTJOa2owNDBtRVhjdUZk?=
+ =?utf-8?B?UUpOSEdvNGpRUS90ZVFPSmRCaFFmOU9Ickpyd1hDdE1jOWtBMzl1WDhQcXBU?=
+ =?utf-8?B?RnZYYitzR3F4WkEzZ3VIaVBwQkxtZitocnJWUW5JYnZvNUlVUHBrcC9BYlkv?=
+ =?utf-8?B?b3Zobm42Mm5vR0NSZm91QXF6Ti9OZG9NTHJ3OXlHR3ZDZ1Q5cnhEY0d5V0k1?=
+ =?utf-8?B?ZGtjTTYxdUxEZmVwOWxBNU1JMUprbEdqcTRSaENEK2VGZE45TWV2VDNram9o?=
+ =?utf-8?B?VFIvRm4rY096SFQvS0d4cmlNZlF1MVgwRVAvOHhHUk5aVDc2STN2ZzQvWHdD?=
+ =?utf-8?B?a281VDJzanBKRzEwaVVYU2FWcFpzd25MYXNIRnFKaWNHK2crOWxtUi8xTlRZ?=
+ =?utf-8?B?Wkh5MGpCWno0d0w5eGdGb2pLeWMvblZRazduZko0bUp1YWQ3ZXNMd2dzREVQ?=
+ =?utf-8?B?cHVmMWQ1M1JjeGJWMXdqZk1GVWlQQkQwQkxRelZ1R2J2ZEliWG44MjJUZGNX?=
+ =?utf-8?Q?VOR3QbMsd6jKHSDcibzrisMOiB5L/MIY?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 20:19:49.8479
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d3cfb9d-b9ba-4bc9-be8c-08dd156a2bb0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D1.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5901
 
-On Thu, Dec 5, 2024 at 9:01=E2=80=AFPM Paul E. McKenney <paulmck@kernel.org=
-> wrote:
->
-> On Thu, Dec 05, 2024 at 08:03:24PM +0100, Mateusz Guzik wrote:
-> > On Thu, Dec 5, 2024 at 7:41=E2=80=AFPM Paul E. McKenney <paulmck@kernel=
-.org> wrote:
-> > >
-> > > On Thu, Dec 05, 2024 at 03:43:41PM +0100, Mateusz Guzik wrote:
-> > > > On Thu, Dec 5, 2024 at 3:18=E2=80=AFPM Al Viro <viro@zeniv.linux.or=
-g.uk> wrote:
-> > > > >
-> > > > > On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
-> > > > > >  void fd_install(unsigned int fd, struct file *file)
-> > > > > >  {
-> > > > > > -     struct files_struct *files =3D current->files;
-> > > > > > +     struct files_struct *files;
-> > > > > >       struct fdtable *fdt;
-> > > > > >
-> > > > > >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
-> > > > > >               return;
-> > > > > >
-> > > > > > +     /*
-> > > > > > +      * Synchronized with expand_fdtable(), see that routine f=
-or an
-> > > > > > +      * explanation.
-> > > > > > +      */
-> > > > > >       rcu_read_lock_sched();
-> > > > > > +     files =3D READ_ONCE(current->files);
-> > > > >
-> > > > > What are you trying to do with that READ_ONCE()?  current->files
-> > > > > itself is *not* changed by any of that code; current->files->fdta=
-b is.
-> > > >
-> > > > To my understanding this is the idiomatic way of spelling out the
-> > > > non-existent in Linux smp_consume_load, for the resize_in_progress
-> > > > flag.
-> > >
-> > > In Linus, "smp_consume_load()" is named rcu_dereference().
-> >
-> > ok
->
-> And rcu_dereference(), and for that matter memory_order_consume, only
-> orders the load of the pointer against subsequent dereferences of that
-> same pointer against dereferences of that same pointer preceding the
-> store of that pointer.
->
->         T1                              T2
->         a: p->a =3D 1;                    d: q =3D rcu_dereference(gp);
->         b: r1 =3D p->b;                   e: r2 =3D p->a;
->         c: rcu_assign_pointer(gp, p);   f: p->b =3D 42;
->
-> Here, if (and only if!) T2's load into q gets the value stored by
-> T1, then T1's statements e and f are guaranteed to happen after T2's
-> statements a and b.  In your patch, I do not see this pattern for the
-> files->resize_in_progress flag.
->
-> > > > Anyway to elaborate I'm gunning for a setup where the code is
-> > > > semantically equivalent to having a lock around the work.
-> > >
-> > > Except that rcu_read_lock_sched() provides mutual-exclusion guarantee=
-s
-> > > only with later RCU grace periods, such as those implemented by
-> > > synchronize_rcu().
-> >
-> > To my understanding the pre-case is already with the flag set upfront
-> > and waiting for everyone to finish (which is already taking place in
-> > stock code) + looking at it within the section.
->
-> I freely confess that I do not understand the purpose of assigning to
-> files->resize_in_progress both before (pre-existing) and within (added)
-> expand_fdtable().  If the assignments before and after the call to
-> expand_fdtable() and the checks were under that lock, that could work,
-> but removing that lockless check might have performance and scalability
-> consequences.
->
-> > > > Pretend ->resize_lock exists, then:
-> > > > fd_install:
-> > > > files =3D current->files;
-> > > > read_lock(files->resize_lock);
-> > > > fdt =3D rcu_dereference_sched(files->fdt);
-> > > > rcu_assign_pointer(fdt->fd[fd], file);
-> > > > read_unlock(files->resize_lock);
-> > > >
-> > > > expand_fdtable:
-> > > > write_lock(files->resize_lock);
-> > > > [snip]
-> > > > rcu_assign_pointer(files->fdt, new_fdt);
-> > > > write_unlock(files->resize_lock);
-> > > >
-> > > > Except rcu_read_lock_sched + appropriately fenced resize_in_progres=
-s +
-> > > > synchronize_rcu do it.
-> > >
-> > > OK, good, you did get the grace-period part of the puzzle.
-> > >
-> > > Howver, please keep in mind that synchronize_rcu() has significant
-> > > latency by design.  There is a tradeoff between CPU consumption and
-> > > latency, and synchronize_rcu() therefore has latencies ranging upward=
-s of
-> > > several milliseconds (not microseconds or nanoseconds).  I would be v=
-ery
-> > > surprised if expand_fdtable() users would be happy with such a long d=
-elay.
-> >
-> > The call is already there since 2015 and I only know of one case where
-> > someone took an issue with it (and it could have been sorted out with
-> > dup2 upfront to grow the table to the desired size). Amusingly I see
-> > you patched it in 2018 from synchronize_sched to synchronize_rcu.
-> > Bottom line though is that I'm not *adding* it. latency here. :)
->
-> Are you saying that the smp_rmb() is unnecessary?  It doesn't seem like
-> you are saying that, because otherwise your patch could simply remove
-> it without additional code changes.  On the other hand, if it is a key
-> component of the synchronization, I don't see how that smp_rmb() can be
-> removed while still preserving that synchronization without adding anothe=
-r
-> synchronize_rcu() to that function to compensate.
->
-> Now, it might be that you are somehow cleverly reusing the pre-existing
-> synchronize_rcu(), but I am not immediately seeing how this would work.
->
-> And no, I do not recall making that particular change back in the
-> day, only that I did change all the calls to synchronize_sched() to
-> synchronize_rcu().  Please accept my apologies for my having failed
-> to meet your expectations.  And do not be too surprised if others have
-> similar expectations of you at some point in the future.  ;-)
->
-> > So assuming the above can be ignored, do you confirm the patch works
-> > (even if it needs some cosmetic changes)?
-> >
-> > The entirety of the patch is about removing smp_rmb in fd_install with
-> > small code rearrangement, while relying on the machinery which is
-> > already there.
->
-> The code to be synchronized is fairly small.  So why don't you
-> create a litmus test and ask herd7?  Please see tools/memory-model for
-> documentation and other example litmus tests.  This tool does the moral
-> equivalent of a full state-space search of the litmus tests, telling you
-> whether your "exists" condition is always, sometimes, or never satisfied.
->
+On 2024-12-05 00:42, Penny Zheng wrote:
+> From: Roger Pau Monne <roger.pau@citrix.com>
+> 
+> When running as a PVH dom0 the ACPI MADT is crafted by Xen in order to
+> report the correct numbers of vCPUs that dom0 has, so the host MADT is
+> not provided to dom0.  This creates issues when parsing the power and
+> performance related data from ACPI dynamic tables, as the ACPI
+> Processor UIDs found on the dynamic code are likely to not match the
+> ones crafted by Xen in the dom0 MADT.
+> 
+> Xen would rely on Linux having filled at least the power and
+> performance related data of the vCPUs on the system, and would clone
+> that information in order to setup the remaining pCPUs on the system
+> if dom0 vCPUs < pCPUs.  However when running as PVH dom0 it's likely
+> that none of dom0 CPUs will have the power and performance data
+> filled, and hence the Xen ACPI Processor driver needs to fetch that
+> information by itself.
+> 
+> In order to do so correctly, introduce a new helper to fetch the _CST
+> data without taking into account the system capabilities from the
+> CPUID output, as the capabilities reported to dom0 in CPUID might be
+> different from the ones on the host.
+> 
+> Note that the newly introduced code will only fetch the _CST, _PSS,
+> _PPC and _PCT from a single CPU, and clone that information for all the
+> other Processors.  This won't work on an heterogeneous system with
+> Processors having different power and performance related data between
+> them.
+> 
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
 
-I think there is quite a degree of talking past each other in this thread.
+Hi Penny,
 
-I was not aware of herd7. Testing the thing with it sounds like a plan
-to get out of it, so I'm going to do it and get back to you in a day
-or two. Worst case the patch is a bust, best case the fence is already
-of no use.
+I think you should add your SoB since you are submitting on behalf of 
+Roger and me.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Thanks,
+Jason
 
