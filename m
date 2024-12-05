@@ -1,155 +1,152 @@
-Return-Path: <linux-kernel+bounces-433288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9959E560D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:59:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16119E560A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:59:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E726716BB3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C02D288857
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B17218EB2;
-	Thu,  5 Dec 2024 12:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991A8218E92;
+	Thu,  5 Dec 2024 12:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaExnFKq"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oZMcMhai"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA11218AD6;
-	Thu,  5 Dec 2024 12:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF3D218ACA;
+	Thu,  5 Dec 2024 12:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733403474; cv=none; b=RQ/DBFCrG7iVYcONQFMnkdktDYgDz+dvcd2vgjuiVLDMihSrzZTdnbamsFPydxXMAAYv3+sH7KYBQdrQmWYf23wWrfl0Igu9dua3FnVBHSZpu+S8HjA/XJWnBLDc2dtpfXuNV5RAPYYXM7FtYf4UbO3vGbVRc75iivSXexwIasQ=
+	t=1733403532; cv=none; b=gE8YplaciEENrcbEBSNBBx5qFRGbNz31ZWGI9qbW3YaaPLPkJ90YAUfoZXiohbjHEC+Dj681vTOlEL+S+aM5KJT/guVNj+ILn+ENM4WSBtfCMdiPx44+XyoPUL8sM0JEysZtQmZ8Xs/p+MxGPBGl5PwpLF0f7/MkXyH2OmLBVgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733403474; c=relaxed/simple;
-	bh=f+QEjMwweGWb49Ggbwkzil84HB1C760r4oPZtgJQjZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIuiKfjgYmQeDgyJfjH0E6UycAPFJXuyvtsaB9kMwg5vOUSE+1bOfoWtjb9bI9JdW8+exYLISa5Q7kEtanP6HC2y2LkY4MkGnvyu/f34TykhJH9P5WHACOlB20Glajj2jX0TmWy5sNEtMXG9ptin2WcWNFnGYWVwuLXXuTLp8Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaExnFKq; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-724e1742d0dso785151b3a.0;
-        Thu, 05 Dec 2024 04:57:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733403473; x=1734008273; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aq3iziI69mktbCsrs1z3hU/Pmx1Y+cqw3p/KFX5yIX8=;
-        b=gaExnFKqmx41JQ2vsR+PWbybk4EO/FJEUEhCQWRSogrPK62F8ei4r9WWsShfhEzrNC
-         JSsRhZj3AH0QFS55dgoY458WqijLnE1FjAYU42x5JW5Z5o/dIwLzUg39RzCNZsP8bCg7
-         NHHuNGNyo0nFXpQ/qbGgiWgFJ8zYZJ5W9v9pJ4kjCtFFJzTzifkq6sWiZH5OEgBrvMAN
-         0bhX07EGnM5fTWAmM4cFHbuBaW0cCvWapK/r1gKPE+AvoLgv2+JH2+FXlkiKIYpttD7M
-         U005CxuQRLrqMzFidoBnaGOE0gARGEbuY9nGQAR/a2fjriWl09eYjIAmKMSqdQ7kOnNo
-         tL6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733403473; x=1734008273;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aq3iziI69mktbCsrs1z3hU/Pmx1Y+cqw3p/KFX5yIX8=;
-        b=Nmi3fZla4qpKb5QqvM78GNm+rvAr4nB20CXPWkftwySfSq7Oztp9oblGkXCUGWmNVL
-         p0uiTiI85V5PrH23lTnrdiTlotu6rro25LGGfx8Asj5XNrRhT8j6hgEfTf12xt7oDMv+
-         v0BWEpFmvfErfYq7QVo/vzymalMdbC7uh1ltTe7TsqIbiLbBrPTQboFWndICnq3l12MT
-         DFp5K6cc+ce7UZzvgg+vAwqJ8+90hal6UvIU9jB99zYkc5m62RxckSiJm2uHmifzngqy
-         6Zn9byiap4YyupIL4oZCNAU5XrAYZ3aWjTwv9LJ/9iFrca/061izw4xZkn4kkhRXZTSb
-         t1Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdeFx5E7oT+MiJWrw4Yd1keFSXQ39rNAj+hYLDTeqBN+DLUey5PHIhgSv6eRI/1UMVEkwQrs3KEcuUzjQ=@vger.kernel.org, AJvYcCVqiG783vGFZWShvPVjemhg+3aKl85uRKav2I7xf2jB3mx/IMYepaOYLM+BLXLBKMpUXNUICB6jF369pvsCsdTJJDPWCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8fYCB+0S9mYqHgy+f2z+2JE1hszY41OO24vMDJyaPv2PxPBnq
-	gS83RFrbTKpsWwA+9yc27AlnYN9AsK3FFFjTCoz97m5m0DkLjq1+
-X-Gm-Gg: ASbGncvOdEx0mdokLUWtk+ttPfSEcn/jT5BkyVNIBaPZeI/T63n+B+WaOyvVNWEWgMk
-	64OYgVT9GamC+ykb9h9RwtFVKggva37L6H2JPAeXkNSzgdYfvzT7hDW0Fy1clfg3fceQRPgMlBX
-	hhQoEtTmNwLHBOYh2nHiL2pvIRQyh+hR3nLr+6XqT+Iui5P7hE81NjpywXKSwQWxfcGMUVgpQZK
-	oy/MIBdoUX5Hpb7lr4c2vxhKzuqTa1AI+s3UzMpu2QJLZmx3dL7rxMrJHnvMB8cWOrmykZbzXw6
-	4JrglaVK
-X-Google-Smtp-Source: AGHT+IGBMI/1XFytpCT83hNDKxJvPXVWv9gw3oX70liuFLqY2Zi5tkqhmBixwKK42uqCLlJjF1lYZQ==
-X-Received: by 2002:a05:6a00:cd3:b0:725:a78c:6c31 with SMTP id d2e1a72fcca58-725a78c6d15mr2604680b3a.3.1733403472646;
-        Thu, 05 Dec 2024 04:57:52 -0800 (PST)
-Received: from alphacentauri (host111.181-10-101.telecom.net.ar. [181.10.101.111])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2cc6eadsm1201242b3a.188.2024.12.05.04.57.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 04:57:52 -0800 (PST)
-Date: Thu, 5 Dec 2024 09:57:48 -0300
-From: Kurt Borja <kuurtb@gmail.com>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Dell.Client.Kernel@dell.com, Hans de Goede <hdegoede@redhat.com>, 
-	LKML <linux-kernel@vger.kernel.org>, mario.limonciello@amd.com, platform-driver-x86@vger.kernel.org, 
-	w_armin@gmx.de
-Subject: Re: [RFC PATCH 19/21] platform-x86: Rename alienare-wmi
-Message-ID: <qkffthwqi5lumtx4mnhqff3cpxcfem5kbo3m2geajbpjxg6yj3@po7v5x7ixrhw>
-References: <20241205002733.2183537-3-kuurtb@gmail.com>
- <20241205004709.2186969-2-kuurtb@gmail.com>
- <41ea44ee-fa2d-5e06-1080-5bb61fee1352@linux.intel.com>
+	s=arc-20240116; t=1733403532; c=relaxed/simple;
+	bh=kSmpCKQlwXxgLW3Gn7DKNIbnNLX6Wrv+XfsTsQZ+jVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q9TlZ7EgbXc6wBwbo4leOp6II9jeWhf2cF2mKa4ZrWLApuUkbVtEGig/p5g3a/5pjVYOgrx8w/KvRyvFUXEpOjZzkNXuaOWv6tP6BEgBUElVFTkBiOkGL7ZSo+VIZYaUaHNbtcqBd8O+4a9ndAK3s1QAScCJ05Obn74xsRrPuFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oZMcMhai; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BmpwE026044;
+	Thu, 5 Dec 2024 12:58:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wgtya74jr3fwO8Z5Wb9rXbJo7gjO4bNxMH8VWgYYMQk=; b=oZMcMhaiYn/3eFfi
+	M4VsH1m2vhpcc6sPw1fAr/TB/dnAwns7i9k6+3tpNRJYm62eeyRjrF5yJCkGZ0Sn
+	NQKXQpc7v20UoMAYT7Ng/8O6B6Q5ennkmHB91mg+GfsdxiYWnCgiEmW9RRsJo2y5
+	Pwg7SvgfChEce2bvHB4PnpNjeYwKpp5okrWztQRbEBtKECc6XFrHuqcLXd6BW5rw
+	MjIFyOQBz2zPFy2oSWDAcf+7rx8RQGVPx/Eeygcme6yCfIp9Ki5lHRp8JMFamruD
+	0YfBoSY/vDAVyQOo1LWXpunjLOGeNxPrWfScc0shp299Wrp3fKOnVPTNDtFX6WlH
+	mpVwtg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9q232-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 12:58:38 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5CwaDi008832
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 12:58:36 GMT
+Received: from [10.204.66.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 04:58:28 -0800
+Message-ID: <dbc5e54e-97ef-4d88-a2bd-a6493527c0dc@quicinc.com>
+Date: Thu, 5 Dec 2024 18:28:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/5] media: dt-bindings: Add qcom,sc7280-camss
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: <rfoss@kernel.org>, <todor.too@gmail.com>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <akapatra@quicinc.com>, <hariramp@quicinc.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20241204100003.300123-1-quic_vikramsa@quicinc.com>
+ <20241204100003.300123-2-quic_vikramsa@quicinc.com>
+ <oko5qqysmxhicqzkwhkz54wvsmt64ba3cd37zkcy55ee77owbk@5z3zetfr2ejx>
+ <eaffa633-c3a4-4924-8ba7-694b18bf92ee@quicinc.com>
+ <2cb5940b-3779-4450-a213-fa766df7f406@linaro.org>
+Content-Language: en-US
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+In-Reply-To: <2cb5940b-3779-4450-a213-fa766df7f406@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <41ea44ee-fa2d-5e06-1080-5bb61fee1352@linux.intel.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FrAt9i5wYfoytjkDfEz-v4cDQJXgCMal
+X-Proofpoint-GUID: FrAt9i5wYfoytjkDfEz-v4cDQJXgCMal
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=650 phishscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050094
 
-On Thu, Dec 05, 2024 at 01:16:59PM +0200, Ilpo J�rvinen wrote:
-> On Wed, 4 Dec 2024, Kurt Borja wrote:
-> 
-> > In order to eventually split the module:
-> > 
-> > Rename alienware-wmi.c -> alienware-wmi-base.c
-> > 
-> > And modify MAINTAINERS accordingly.
-> > 
-> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> > ---
-> >  MAINTAINERS                                                    | 3 ++-
-> >  drivers/platform/x86/dell/Makefile                             | 1 +
-> >  .../x86/dell/{alienware-wmi.c => alienware-wmi-base.c}         | 0
-> >  3 files changed, 3 insertions(+), 1 deletion(-)
-> >  rename drivers/platform/x86/dell/{alienware-wmi.c => alienware-wmi-base.c} (100%)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 3809931b9240..a4d02074dd91 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -787,7 +787,8 @@ ALIENWARE WMI DRIVER
-> >  L:	Dell.Client.Kernel@dell.com
-> >  S:	Maintained
-> >  F:	Documentation/wmi/devices/alienware-wmi.rst
-> > -F:	drivers/platform/x86/dell/alienware-wmi.c
-> > +F:	drivers/platform/x86/dell/alienware-wmi-*
-> > +F:	drivers/platform/x86/dell/alienware-wmi.*
-> 
-> Why not F: drivers/platform/x86/dell/alienware-wmi*
 
-Of course, my bad!
+On 12/5/2024 5:26 PM, Bryan O'Donoghue wrote:
+> On 05/12/2024 10:59, Vikram Sharma wrote:
+>> Hi Krzysztof,
+>>
+>> Thanks for your "Reviewed-by"
+>>
+>> +        camss@acb3000 {
+>>
+>> If there is going to be resend, then node name: isp
+>>
+>> Sure, we will change node-name from camss to isp or camera (As its a 
+>> part of generic names recommendation as per the shared link.)
+>> If there is a resend. or we will address this as a followup.
+>>
+>> So
+>>
+>> - camss@acb3000 {
+>> + camera@acb3000 {
+>>
+>> Best Regards,
+>> Vikram
+>
+> Please no top-posting.
+> https://subspace.kernel.org/etiquette.html
+>
+> Shouldn't that be isp@0xaddress ?
 
-> 
-> ?
-> 
-> >  ALLEGRO DVT VIDEO IP CORE DRIVER
-> >  M:	Michael Tretter <m.tretter@pengutronix.de>
-> > diff --git a/drivers/platform/x86/dell/Makefile b/drivers/platform/x86/dell/Makefile
-> > index 79d60f1bf4c1..5e7496aeb070 100644
-> > --- a/drivers/platform/x86/dell/Makefile
-> > +++ b/drivers/platform/x86/dell/Makefile
-> > @@ -5,6 +5,7 @@
-> >  #
-> >  
-> >  obj-$(CONFIG_ALIENWARE_WMI)		+= alienware-wmi.o
-> > +alienware-wmi-objs			:= alienware-wmi-base.o
-> >  obj-$(CONFIG_DCDBAS)			+= dcdbas.o
-> >  obj-$(CONFIG_DELL_LAPTOP)		+= dell-laptop.o
-> >  obj-$(CONFIG_DELL_RBTN)			+= dell-rbtn.o
-> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi-base.c
-> > similarity index 100%
-> > rename from drivers/platform/x86/dell/alienware-wmi.c
-> > rename to drivers/platform/x86/dell/alienware-wmi-base.c
-> > 
-> 
-> -- 
->  i.
-> 
+ACK.
+
+- camss@acb3000 {
++ isp@acb3000 {
+
+In both YAML and DTS. If we post V8.
+
+>
+> If you are making this change, please remember to do it in both the 
+> example and the dts.
+Understood. Will avoid this.
+>
+> ---
+> bod
+
+
+Best Regards,
+Vikram
+
 
