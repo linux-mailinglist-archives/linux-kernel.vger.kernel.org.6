@@ -1,78 +1,92 @@
-Return-Path: <linux-kernel+bounces-432483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF19B9E4BE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:37:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B520A9E4BEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAB7F18816E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:37:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444C81881989
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EA11865E3;
-	Thu,  5 Dec 2024 01:36:56 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF2E149C64;
+	Thu,  5 Dec 2024 01:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="jNyoix/H"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30E813AA5D;
-	Thu,  5 Dec 2024 01:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734837DA82
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 01:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733362615; cv=none; b=VOzOG3gCF4O07j8rMvwJ8/SWmjpKNcCzEftfuZY3CHILppAdhO16IrsB8BRe+nN/TkE1arQlJbyLUzEPFiul/i2JIY4txoiOq8OE1Tj4Rn+sQI+AIfQ4NkoeAxDLnas+scazctmnP1aviX4Y05kvaJeB7NT23JLHZmScg3+WQ8c=
+	t=1733362940; cv=none; b=JzF8enmfFyeGecsJb2Qjwjhads2EZGte6T554GjIjKp1VKEI66hvz4ywHU4Dw9uA8h0kLabnthFeqKE1Bq7ECPpgvM4tAnueOBEulgxIvXhu9udb+Zsxts1OC6d3RFICyrjDS7dB6sjvtbKEyAtv6RjPy8nTRxevxNwowu6wAjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733362615; c=relaxed/simple;
-	bh=BnnC0Z3WdW7APYQau/oHACoQWtKHZrH8nAtM7eeTYtU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QUk5/1RcyBrWGtXoVElKPaFGwZxQayPFmLRL+0lB84dXJLRI4Iz5uHve722vMeQc9dT+sTOIG8qI2HsgEGwKuPStvKDUVq2kZQo9G+Oh1EiAApkyB13nwtXSu2Ltyc0QPzIGyQ+6+mwIl5rg4fiaxBno6262v7fmFGA1s1mxJWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79999C4CEDD;
-	Thu,  5 Dec 2024 01:36:55 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 730C610604B0; Thu, 05 Dec 2024 02:36:52 +0100 (CET)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241202-sysfs-const-bin_attr-psy-v1-0-f846430b8b66@weissschuh.net>
-References: <20241202-sysfs-const-bin_attr-psy-v1-0-f846430b8b66@weissschuh.net>
-Subject: Re: [PATCH 0/4] power: supply: constify 'struct bin_attribute'
-Message-Id: <173336261240.1429662.9452532103348993626.b4-ty@collabora.com>
-Date: Thu, 05 Dec 2024 02:36:52 +0100
+	s=arc-20240116; t=1733362940; c=relaxed/simple;
+	bh=0BURu8DvwFOVPGca6YN7y1NRJgZQgXvPSCN4SHA3hnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiqKa5ObyH6PNrcau+5ylB0yiPotcx1uXHAIQUK+qlmxKr/XR6PkzAtFhmfn5EtMfhEk1G7A2tf14WsRwezAaa6pBs1zT4W6bn7W2WRKxXoqYjX1A4p9ImXMuKAFr0p+Fv/grH3kZzgsuVPz+XcEdq461WihRm+GBhm6lTDkGjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=jNyoix/H; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id D44BB2003BE;
+	Thu,  5 Dec 2024 02:42:07 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=jNyoix/H;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=eDKcusopXquKmHVKHd5VSYJMro9KedZVGC8QmPsjNLU=; b=jNyoix/H9aypJ6ZtgZ8JTjafWR
+	n4d5Rd9Un3IbPtwBry1m5IxJMEUUTE2PrkxecTvkqErekdnThFkyqQDc7DDEv8HuXPRxxbbyyvlHF
+	vbl9mFHGv50mqCQ5OMvjmGX2HIQ2P0LgH1BayeMAY6NsN9QSJBTOzcKrVFXVK3g9gH2w=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tJ0sZ-001Hrx-09;
+	Thu, 05 Dec 2024 02:42:07 +0100
+Date: Thu, 5 Dec 2024 02:42:06 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Guillaume Morin <guillaume@morinfr.org>, linux-kernel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Eric Hagberg <ehagberg@janestreet.com>
+Subject: Re: [PATCH v1] hugetlb: support FOLL_FORCE|FOLL_WRITE
+Message-ID: <Z1EE7gIlaSI3V4SY@bender.morinfr.org>
+References: <Z1Ce6j5WiBE3kaGf@bender.morinfr.org>
+ <202412050840.umPPa7cK-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202412050840.umPPa7cK-lkp@intel.com>
 
-
-On Mon, 02 Dec 2024 20:02:18 +0100, Thomas Weißschuh wrote:
-> The sysfs core now allows instances of 'struct bin_attribute' to be
-> moved into read-only memory. Make use of that to protect them against
-> accidental or malicious modifications.
+On 05 Dec  8:39, kernel test robot wrote:
+> All errors (new ones prefixed by >>):
 > 
-> The usage of read_new/write_new/bin_attrs_new is a transition mechanism
-> and will be reverted after the transition is complete.
-> 
-> [...]
+>    mm/gup.c: In function 'can_follow_write_pud':
+> >> mm/gup.c:665:48: error: implicit declaration of function 'pud_soft_dirty'; did you mean 'pmd_soft_dirty'? [-Werror=implicit-function-declaration]
+>      665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
+>          |                                                ^~~~~~~~~~~~~~
+>          |                                                pmd_soft_dirty
+>    cc1: some warnings being treated as errors
 
-Applied, thanks!
+David, how do you recommend I deal with this?
 
-[1/4] power: supply: ds2760: constify 'struct bin_attribute'
-      commit: fc197588917bb05252115c9e76f3d34d30600249
-[2/4] power: supply: ds2780: constify 'struct bin_attribute'
-      commit: 9aae72fe40f06872ae20c0cdb545ea5ecc840842
-[3/4] power: supply: ds2781: constify 'struct bin_attribute'
-      commit: 8159fcb12862f826a26964d8b814ad33e69ba4de
-[4/4] power: supply: olpc_battery: constify 'struct bin_attribute'
-      commit: dc509d8be38ffe4ff6d752bdb7913718318e83cd
+There is no prototype for pud_soft_dirty() in include/linux/pgtable.h
+if CONFIG_HAVE_ARCH_SOFT_DIRTY is not set. Should I just add one?
 
-Best regards,
 -- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
-
+Guillaume Morin <guillaume@morinfr.org>
 
