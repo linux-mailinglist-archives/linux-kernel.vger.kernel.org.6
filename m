@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-432968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3659E5282
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:38:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDD99E5283
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D905316722F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820E1165979
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3A1D63EE;
-	Thu,  5 Dec 2024 10:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D641D3566;
+	Thu,  5 Dec 2024 10:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TwZW65zS"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PXVINP7Q"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2191D3566
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665B61D8A10
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395061; cv=none; b=K+SXfnPR2+5k914K3x6LcjmP1zxlXLZhlW7UfYSHuZSS/zk5YPlnyr2DTMehrA496q0R+SKT1JidyciEww3Q9QaurBHUnZzFkj/Fq1MlQFNbPCO3WR6Vni0pD7NPIuQy7pwh5MOQt2YNkS51IDWYa7eltbgfJ8cwzw+36pH2zRs=
+	t=1733395065; cv=none; b=De1Jq5UQ2059kv5+qYPBLwsm7bdGw+6TbTCbJyfBFWKP+mernff9w3n2Y1/5nYqVKwyOdKRLmuTnpynrDikNjAy+pAK2Jcn7n6bkv3WAqqv44F3TIZebIo44z3bxaJi6igVS/4c9IIZYpR73cK+Vox+btNc7k86HI+1ukihxWJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395061; c=relaxed/simple;
-	bh=KdZD41tgx6Qr1c/gRskjjZMoJZN3uukBytOi/4j5RuE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AFSu2JAHtTLOFHekpamfXY1Bibq4jdEQDDElRBrQGHCPT4qy4FrlJHUncdpYNS3F/w5hlq/M7cgWpr3EazrTzCJotf85JXu/Sdnb3+dFU0QG+Hk0+L7QnEypxREgDrYBvY9XlBE4nraNin/ogdTHRceISNbjO0++az0LT6LnKVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TwZW65zS; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1733395065; c=relaxed/simple;
+	bh=VRSm+emlI6QfoAPRbJgRjmp46JAY59uZbRFEaBrLwsg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lyAxWDG1WfBRi0i0NguzgIH/2aRlCsW5zJ6Ir1EFPv+dMk6CTfFDrgwpuIKkmVl4q/6wjx7ayrOSJcQHlx7p0A+BQzW0dqsSCxhKFVdzOmjSKkMu5aGvBxOYLHt+2Ai3owynqzYm+KibcTKFuIt1/0jruubHIY8El84sGgfe+Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PXVINP7Q; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7251d20e7f2so784069b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:37:39 -0800 (PST)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7253bc4d25eso622037b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733395059; x=1733999859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mx3bO1dHXrQFEcxzN7b+pxSxnpvefYStWIHaUWrn/y4=;
-        b=TwZW65zS8DQ8KyF886jAXurpc9T5e9ibSiyHGmqP04/+a38fVgmf7A4jM2tFjo3lHv
-         23D7+pMw/1Gvy4nYcVgqu6Ad7ntkO2BGDI/YTtjYkReVHxNv8WDELXrZATb4mr+Y6iPL
-         p/I2gKgAxxHIVdY9uUNMkcv2oOl660okaDhJbwU35QxudVQeU1EQrU5IqiFOrETRG/iC
-         O4bbyYXPf/C+7IIrHvMaQtqFthC1d7fUSJYN75VN8e1BtAUFoQ+nLKUyBcfaOzZeGxv3
-         9naSTJO/2myND4GAUBf6T0UZykVFyO8uw0a/3OoTUv4vHfQWdziDiR/0rLFMVNdJcLfN
-         TckQ==
+        d=bytedance.com; s=google; t=1733395063; x=1733999863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KWkBqx6Qlg0tee9JR/yzxG5KwDs2r7O63kRKnpevvpY=;
+        b=PXVINP7Qut5lCZhkp2VINt6enIOWgvXal2F9nHzo4vw3BGZTN5nzjlHTB3/6TLQqEX
+         q413nYYF8pWXIkLBKeOHemN3mjn7tsUH1/6lHU49NRjwDfGopkX14TiRK7omHgLM2aHr
+         5sW2lAO9h5itmGudrmCjv+K0u/lVTX4b4ksvUKU4CxY0b2LLDU0oJwt/Uv13SxCzu7t+
+         8wbtvSy8BiKZoe3ZteS1KhTpoJKxGXM7Nmnwk+TdzIkmVZHYzaU24JjNG2YjiC2/9vYZ
+         sXqz1EDqod2zRl/Oj+Tqk+96Djibuelbg2mrF0i7LmTBWeIxlWUU1UnoBb+9YgSR/HD3
+         fy+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395059; x=1733999859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mx3bO1dHXrQFEcxzN7b+pxSxnpvefYStWIHaUWrn/y4=;
-        b=DogNzfFBq5NSd7SrUqezdVM9sTiZ2TMMeKfpZnzIvfHUrLC5F6CmQE18295U3iXZwU
-         cc4APYdBRzcaFqGlqLyTpLGwMg+QRZnl3lflKIDiByExfbvB9GiN+V0DjdYs1OlER2bU
-         VIHvSXS5PdZvh+0ZW+A0inomjQDdvoOWiMGs08LqnJ2oap03To9JqwiqQNIioVOPojxS
-         M4ocFd2Mmlqb1VEw96/ZVU88hknckhWasg3PLJuB/dRVpP0JWEpE+zbcQK7O5zw5Ofoc
-         eK1jXTdKoO5/aJbwcN/WL2+GbYKTuTRRMNasitqynxJDDc0gLEfIjk5166akTtZjI36Q
-         oeZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsxJeD5//bwwJ2dPVH3tRqBhVXcxsjWzwaXcajGWc9N6cx199oLEkmbkaDVmBqaCAxOSfMnhgjzFPC4YA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUn86858r0eo4l4m7z8SeJ61KBCi7vSJ5JIpDiK4zuf6ADHNVz
-	+yzyp/Yf3kTy8XgAaiydcRot9zh2eB8otIsGfnIkPeB+96CmTvZW4QdBtT/NGeo=
-X-Gm-Gg: ASbGncv0ZdJyVxV3IFgO4S4kGVd5/mxMm1qq8BtCpKSoWkEDGSz3D02HjqJi0W2HDaj
-	/YXRCYkMlypd6WFv1jwPTHh8Zbbrbf1DXsGvaVlM3x9NHnAg8tlau+GvVoQQnFiIOfi2XoXXXJB
-	6RS8T4Xn497csSqKFMgQ4I0RhKbbKystFbxKEe9AtITpWsORJuUhqndGyJS4FTHl2hYMCmNyZcv
-	Ip4gW7B5LCJDoula/mzlZJVICrhGZM3j410UEW/NAXi9Frx8BA82Tvj5ZeIDJrBtFt/qcOiDS7D
-	6nYJ651v7mfh72q0wxe6pww7gGfIkIST
-X-Google-Smtp-Source: AGHT+IHiqAXBvE3gLjiFeE5je7PXQUYt1a4jU3QlzDyqkveJzS+AyvksHc49kSByBz2ufFXcaypagw==
-X-Received: by 2002:a05:6a00:92a3:b0:71e:79a9:ec47 with SMTP id d2e1a72fcca58-7257fa5708fmr12300993b3a.6.1733395058729;
-        Thu, 05 Dec 2024 02:37:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733395063; x=1733999863;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KWkBqx6Qlg0tee9JR/yzxG5KwDs2r7O63kRKnpevvpY=;
+        b=FtjN+ivlnj6ofey1WP5B5KKhMl5t2c54REeM3UexyRZf0nV1is+E6iUaAqqQh0Qnyx
+         U6fzHeUm1o8/Lu5uq2zTOaRqTkUM25aCXBqhyiRM5s5fokmHfK1K+a0sgQOGR/oLaooi
+         2//qAiiOBA8znscEDPjReGDw6MWEPwnUhtHVX0EWBcapFxs4KHFRvuEWDH696VySnG2/
+         wD57cjNQXv/+JPBKSo5CC1qOSlS6/rPlLoTFAvIpRaGsPaXyZmrKhev4EybXS09tirOL
+         LmRpxosa5lrQnrTNt0eZVQ+ftLI/hcITTn7cxJDHAgIC6am/xTrBM6aTATirebpTnI2I
+         Fpuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfsCR4zbNKLbuconWnFsiWAKAttg7NxNzYEaHlS5OqdmTrzEYlgAAzeH9xsmvKvBwi7N38m94PTlzsP8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx63rY9KJ4WhnYx7b+neh5eqGouwrgjC5Y/1AgC3qxPHg0MvX2+
+	I38PG6TXoVNJ2xK9IsylK1W7Ixc4FBCCId2Jm7eSQisAKKWXiGau9tUXLLFxJ0o=
+X-Gm-Gg: ASbGncsTfKgjyP+kN61EPsHFRxpmejqWo5H295sClvZkRDr2SvLJxa1k4Ac1/kAVmSt
+	+GHfDWK1gfZZ9aHdJGOv+sTwpYwTw3URb771HgBMfNtKDrgBVU9kv5f84O3ssfDlMJWNbuNVTmA
+	+XvTzjvUuAWWN7T1tGo53rP/AAio6navOGAlXTMbtIdF63UKVgF2WJHYyfCMFtu0VoG9blhU2+9
+	fyIbaSSUUw8GkA+Dyk7V5dfe1tE+sCJwB+MOcs7fxzmWIpqQJFEMyJ9eHDtQMvALbJFm+/8YL2M
+	/vMdks/SM7KE7Xn4WzAtUHA0tNQS0tul
+X-Google-Smtp-Source: AGHT+IEvp+5QW/iv1/V1tpDVHfeo0s8LNYsKCxdjWx85NP0irBg++mJLHUVM5oudhxdOyXEvXSVVbg==
+X-Received: by 2002:a17:902:e00c:b0:215:7136:f7e3 with SMTP id d9443c01a7336-215f3ce4f83mr33803375ad.19.1733395062764;
+        Thu, 05 Dec 2024 02:37:42 -0800 (PST)
 Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156f048csm886826a12.39.2024.12.05.02.37.34
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156f048csm886826a12.39.2024.12.05.02.37.39
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 05 Dec 2024 02:37:38 -0800 (PST)
+        Thu, 05 Dec 2024 02:37:42 -0800 (PST)
 From: Xu Lu <luxu.kernel@bytedance.com>
 To: paul.walmsley@sifive.com,
 	palmer@dabbelt.com,
@@ -82,10 +84,12 @@ Cc: xieyongji@bytedance.com,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [RFC PATCH v2 00/21] riscv: Introduce 64K base page
-Date: Thu,  5 Dec 2024 18:37:08 +0800
-Message-Id: <20241205103729.14798-1-luxu.kernel@bytedance.com>
+Subject: [RFC PATCH v2 01/21] riscv: mm: Distinguish hardware base page and software base page
+Date: Thu,  5 Dec 2024 18:37:09 +0800
+Message-Id: <20241205103729.14798-2-luxu.kernel@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241205103729.14798-1-luxu.kernel@bytedance.com>
+References: <20241205103729.14798-1-luxu.kernel@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,99 +98,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series attempts to break through the limitation of MMU and
-supports larger base page on RISC-V, which only supports 4K page size
-now. The key idea is to always manage and allocate memory at a
-granularity of 64K and use SVNAPOT to accelerate address translation.
-This is the second version and the detailed introduction can be found
-in [1].
+The key idea to implement larger base page based on MMU that only
+supports 4K page is to decouple the MMU page from the software page in
+view of kernel mm. In contrary to software page, we denote the MMU page
+as hardware page.
 
-Changes from v1:
-- Rebase on v6.12.
+To decouple these two kinds of pages, we should manage, allocate and map
+memory at a granularity of software page, which is exactly what existing
+mm code does. The page table operations, however, should configure page
+table entries at a granularity of hardware page, which is the
+responsibility of arch code.
 
-- Adjust the page table entry shift to reduce page table memory usage.
-    For example, in SV39, the traditional va behaves as:
+This commit introduces the concept of hardware base page for RISCV.
 
-    ----------------------------------------------
-    | pgd index | pmd index | pte index | offset |
-    ----------------------------------------------
-    | 38     30 | 29     21 | 20     12 | 11   0 |
-    ----------------------------------------------
+Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+---
+ arch/riscv/Kconfig                    | 10 ++++++++++
+ arch/riscv/include/asm/page.h         |  7 +++++++
+ arch/riscv/include/asm/pgtable-32.h   |  5 +++--
+ arch/riscv/include/asm/pgtable-64.h   |  5 +++--
+ arch/riscv/include/asm/pgtable-bits.h |  3 ++-
+ arch/riscv/include/asm/pgtable.h      |  1 +
+ 6 files changed, 26 insertions(+), 5 deletions(-)
 
-    When we choose 64K as basic software page, va now behaves as:
-
-    ----------------------------------------------
-    | pgd index | pmd index | pte index | offset |
-    ----------------------------------------------
-    | 38     34 | 33     25 | 24     16 | 15   0 |
-    ----------------------------------------------
-
-- Fix some bugs in v1.
-
-Thanks in advance for comments.
-
-[1] https://lwn.net/Articles/952722/
-
-Xu Lu (21):
-  riscv: mm: Distinguish hardware base page and software base page
-  riscv: mm: Configure satp with hw page pfn
-  riscv: mm: Reimplement page table entry structures
-  riscv: mm: Reimplement page table entry constructor function
-  riscv: mm: Reimplement conversion functions between page table entry
-  riscv: mm: Avoid pte constructor during pte conversion
-  riscv: mm: Reimplement page table entry get function
-  riscv: mm: Reimplement page table entry atomic get function
-  riscv: mm: Replace READ_ONCE with atomic pte get function
-  riscv: mm: Reimplement PTE A/D bit check function
-  riscv: mm: Reimplement mk_huge_pte function
-  riscv: mm: Reimplement tlb flush function
-  riscv: mm: Adjust PGDIR/P4D/PUD/PMD_SHIFT
-  riscv: mm: Only apply svnapot region bigger than software page
-  riscv: mm: Adjust FIX_BTMAPS_SLOTS for variable PAGE_SIZE
-  riscv: mm: Adjust FIX_FDT_SIZE for variable PMD_SIZE
-  riscv: mm: Apply Svnapot for base page mapping if possible
-  riscv: Kconfig: Introduce 64K page size
-  riscv: Kconfig: Adjust mmap rnd bits for 64K Page
-  riscv: mm: Adjust address space layout and init page table for 64K
-    Page
-  riscv: mm: Update EXEC_PAGESIZE for 64K Page
-
- arch/riscv/Kconfig                    |  34 +-
- arch/riscv/include/asm/fixmap.h       |   3 +-
- arch/riscv/include/asm/hugetlb.h      |   5 +
- arch/riscv/include/asm/page.h         |  56 ++-
- arch/riscv/include/asm/pgtable-32.h   |  12 +-
- arch/riscv/include/asm/pgtable-64.h   | 128 ++++--
- arch/riscv/include/asm/pgtable-bits.h |   3 +-
- arch/riscv/include/asm/pgtable.h      | 564 +++++++++++++++++++++++---
- arch/riscv/include/asm/tlbflush.h     |  26 +-
- arch/riscv/include/uapi/asm/param.h   |  24 ++
- arch/riscv/kernel/head.S              |   4 +-
- arch/riscv/kernel/hibernate.c         |  21 +-
- arch/riscv/mm/context.c               |   7 +-
- arch/riscv/mm/fault.c                 |  15 +-
- arch/riscv/mm/hugetlbpage.c           |  30 +-
- arch/riscv/mm/init.c                  |  45 +-
- arch/riscv/mm/kasan_init.c            |   7 +-
- arch/riscv/mm/pgtable.c               | 111 ++++-
- arch/riscv/mm/tlbflush.c              |  31 +-
- arch/s390/include/asm/hugetlb.h       |   2 +-
- include/asm-generic/hugetlb.h         |   5 +-
- include/linux/pgtable.h               |  21 +
- kernel/events/core.c                  |   6 +-
- mm/debug_vm_pgtable.c                 |   6 +-
- mm/gup.c                              |  10 +-
- mm/hmm.c                              |   2 +-
- mm/hugetlb.c                          |   4 +-
- mm/mapping_dirty_helpers.c            |   2 +-
- mm/memory.c                           |   4 +-
- mm/mprotect.c                         |   2 +-
- mm/ptdump.c                           |   8 +-
- mm/sparse-vmemmap.c                   |   2 +-
- mm/vmscan.c                           |   2 +-
- 33 files changed, 1029 insertions(+), 173 deletions(-)
- create mode 100644 arch/riscv/include/uapi/asm/param.h
-
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index fa8f2da87a0a..2c0cb175a92a 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -289,6 +289,16 @@ config PAGE_OFFSET
+ 	default 0xc0000000 if 32BIT
+ 	default 0xff60000000000000 if 64BIT
+ 
++config RISCV_HW_PAGE_SHIFT
++	int
++	default 12
++
++config RISCV_USE_SW_PAGE
++	bool
++	depends on 64BIT
++	depends on RISCV_HW_PAGE_SHIFT != PAGE_SHIFT
++	default n
++
+ config KASAN_SHADOW_OFFSET
+ 	hex
+ 	depends on KASAN_GENERIC
+diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+index 32d308a3355f..7c581a3e057b 100644
+--- a/arch/riscv/include/asm/page.h
++++ b/arch/riscv/include/asm/page.h
+@@ -12,6 +12,10 @@
+ #include <linux/pfn.h>
+ #include <linux/const.h>
+ 
++#define HW_PAGE_SHIFT	CONFIG_RISCV_HW_PAGE_SHIFT
++#define HW_PAGE_SIZE	(_AC(1, UL) << HW_PAGE_SHIFT)
++#define HW_PAGE_MASK	(~(HW_PAGE_SIZE - 1))
++
+ #define PAGE_SHIFT	CONFIG_PAGE_SHIFT
+ #define PAGE_SIZE	(_AC(1, UL) << PAGE_SHIFT)
+ #define PAGE_MASK	(~(PAGE_SIZE - 1))
+@@ -185,6 +189,9 @@ extern phys_addr_t __phys_addr_symbol(unsigned long x);
+ #define __pa(x)		__virt_to_phys((unsigned long)(x))
+ #define __va(x)		((void *)__pa_to_va_nodebug((phys_addr_t)(x)))
+ 
++#define pfn_to_hwpfn(pfn)	(pfn << (PAGE_SHIFT - HW_PAGE_SHIFT))
++#define hwpfn_to_pfn(hwpfn)	(hwpfn >> (PAGE_SHIFT - HW_PAGE_SHIFT))
++
+ #define phys_to_pfn(phys)	(PFN_DOWN(phys))
+ #define pfn_to_phys(pfn)	(PFN_PHYS(pfn))
+ 
+diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
+index 00f3369570a8..159a668c3dd8 100644
+--- a/arch/riscv/include/asm/pgtable-32.h
++++ b/arch/riscv/include/asm/pgtable-32.h
+@@ -20,9 +20,10 @@
+ /*
+  * rv32 PTE format:
+  * | XLEN-1  10 | 9             8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0
+- *       PFN      reserved for SW   D   A   G   U   X   W   R   V
++ *     HW_PFN     reserved for SW   D   A   G   U   X   W   R   V
+  */
+-#define _PAGE_PFN_MASK  GENMASK(31, 10)
++#define _PAGE_HW_PFN_MASK	GENMASK(31, 10)
++#define _PAGE_PFN_MASK		GENMASK(31, (10 + PAGE_SHIFT - HW_PAGE_SHIFT))
+ 
+ #define _PAGE_NOCACHE		0
+ #define _PAGE_IO		0
+diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
+index 0897dd99ab8d..963aa4be9eed 100644
+--- a/arch/riscv/include/asm/pgtable-64.h
++++ b/arch/riscv/include/asm/pgtable-64.h
+@@ -72,9 +72,10 @@ typedef struct {
+ /*
+  * rv64 PTE format:
+  * | 63 | 62 61 | 60 54 | 53  10 | 9             8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0
+- *   N      MT     RSV    PFN      reserved for SW   D   A   G   U   X   W   R   V
++ *   N      MT     RSV    HW_PFN   reserved for SW   D   A   G   U   X   W   R   V
+  */
+-#define _PAGE_PFN_MASK  GENMASK(53, 10)
++#define _PAGE_HW_PFN_MASK	GENMASK(53, 10)
++#define _PAGE_PFN_MASK		GENMASK(53, (10 + PAGE_SHIFT - HW_PAGE_SHIFT))
+ 
+ /*
+  * [63] Svnapot definitions:
+diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+index a8f5205cea54..e5bb6a805505 100644
+--- a/arch/riscv/include/asm/pgtable-bits.h
++++ b/arch/riscv/include/asm/pgtable-bits.h
+@@ -31,7 +31,8 @@
+ /* Used for swap PTEs only. */
+ #define _PAGE_SWP_EXCLUSIVE _PAGE_ACCESSED
+ 
+-#define _PAGE_PFN_SHIFT 10
++#define _PAGE_HWPFN_SHIFT	10
++#define _PAGE_PFN_SHIFT		(_PAGE_HWPFN_SHIFT + (PAGE_SHIFT - HW_PAGE_SHIFT))
+ 
+ /*
+  * when all of R/W/X are zero, the PTE is a pointer to the next level
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index e79f15293492..9d6d0ff86c76 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -114,6 +114,7 @@
+ #include <linux/mm_types.h>
+ #include <asm/compat.h>
+ 
++#define __page_val_to_hwpfn(_val)  (((_val) & _PAGE_HW_PFN_MASK) >> _PAGE_HWPFN_SHIFT)
+ #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_PFN_SHIFT)
+ 
+ #ifdef CONFIG_64BIT
 -- 
 2.20.1
 
