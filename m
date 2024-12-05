@@ -1,138 +1,88 @@
-Return-Path: <linux-kernel+bounces-433440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55C79E5870
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:25:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2D99E5875
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DCD168BCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35F31884D94
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F5021A448;
-	Thu,  5 Dec 2024 14:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BndZfGOT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E44421C169;
+	Thu,  5 Dec 2024 14:25:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6333217F50;
-	Thu,  5 Dec 2024 14:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB4021A42A;
+	Thu,  5 Dec 2024 14:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733408712; cv=none; b=PRaWt4ccFEve6uvmGKnYEsJG5QkxOW0mMyavKksGGJZIzE6AgvYUcLziWiYE3LcjYsserweyEIdrR8KbgYT9dtsiEZBEz/xCFxz3R36RWUU5ETmFfC4Cb/qbAjpeMmFBkOyw4euWMkibeJ9UxZLpNcTNV0cco1qWQbkagJEGo4E=
+	t=1733408742; cv=none; b=s915L7OuxhlHfNTeFcm9IOmiiJ8CzG1Nj516uNi9mztLYCikiaG1oxqR2MAIib5IqAzgtAuYt/b9Z7EX6Kg39lPQ73vZMzHV/jEkj+an+UKG9urIn/oAa815beCgognX33wWBO5lPBf+8Od4/D7QL8gDLa0LFNUc+nrjZK20sQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733408712; c=relaxed/simple;
-	bh=leV5BYpOnvUuYFa1i48CRpajjVd2mDT4XFYu9CqImc4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SB/2GBV7i1w76mn2X0ePiSzvdsLzU/Mx0yeKImNtQ5UdLZcknRddRo4Aj9iHqHlmRS6otr1qQkyKMZZpIIxyhCxsdCYhBsK9RIr5MSf4DGLRp7gRGqfYu/bE2kdMZbP5PGnRDZwHHd3M5r8Ha3P0eP6XLR6zmbB8iP2DNjfFMdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BndZfGOT; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733408711; x=1764944711;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=leV5BYpOnvUuYFa1i48CRpajjVd2mDT4XFYu9CqImc4=;
-  b=BndZfGOTkGfdnxc8S076oojDKQv3uqMBaluTBZCcSYs91rVuTdYQlppl
-   ZUwOSHK584eUmlVYWkqdd5cw423tjeNpDKLNzHz6xS8tGxyW//MZFLU29
-   KzE8sYDu62S5lKRq+MfjI72V5sQOjKme4jwRKE7XtnSRzHGEgZYD1zF+5
-   DxllzPdu1XtZzxe1h5wZFE9uGNmD/7f8HNCWVjEsrSIKGOdxkOmwwT1Mk
-   EKY4hexx24TTa9sN8Yq8ZQeeZE8txiVjf6+c3SuaCjTkIUbH60JK4/6Io
-   ik+RNiTKFqAYjzRp30ZOlIFM7OlSKmPYoG6vF4T+DIYRBKabdLHOFD26U
-   w==;
-X-CSE-ConnectionGUID: dpwqmfjSSje9j2DgRaY6ng==
-X-CSE-MsgGUID: oW0YeinXT466d11XC6SgxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="21308974"
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="21308974"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:25:10 -0800
-X-CSE-ConnectionGUID: tqlsjyFPTpqAZ1+Y9jMdJA==
-X-CSE-MsgGUID: vaxjqjwKSXSHSDwkOzWAPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="94302806"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:25:02 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 5 Dec 2024 16:24:59 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v9 19/22] ACPI: platform_profile: Notify class device
- from platform_profile_notify()
-In-Reply-To: <20241202055031.8038-20-mario.limonciello@amd.com>
-Message-ID: <99d8a69d-2d61-28c3-7dd4-273b24d32727@linux.intel.com>
-References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-20-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733408742; c=relaxed/simple;
+	bh=58z5nr6BGX7FwFy2WQAc/WgeN7t4W80pnYi8oOtO4Kc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=T8rzkAZnk4c7JdaUWpMrRNrIHTd2sB+hKZaHmSWYvvx8uCco5VQNHw2+YTdWhoPOOVXXPpC33SXB7i6jTy4gv8MOs1mnPmrZ58hkeLzPw/fsHgaSmbOteSGLIYfOYHVAGyp3b7aWfaPMwkiyJSfNovtusTI78NAJ/i08t86AjBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B082CC4CED1;
+	Thu,  5 Dec 2024 14:25:41 +0000 (UTC)
+Received: from wens.tw (localhost [127.0.0.1])
+	by wens.tw (Postfix) with ESMTP id EB4315FB49;
+	Thu,  5 Dec 2024 22:25:38 +0800 (CST)
+From: Chen-Yu Tsai <wens@csie.org>
+To: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Cs=C3=B3k=C3=A1s=2C_Bence?= <csokas.bence@prolan.hu>
+Cc: Mesih Kilinc <mesihkilinc@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>
+In-Reply-To: <20241123123900.2656837-1-csokas.bence@prolan.hu>
+References: <20241123123900.2656837-1-csokas.bence@prolan.hu>
+Subject: Re: [PATCH v6 0/3] Add support for codec of F1C100s
+Message-Id: <173340873895.1777403.9265230616081178067.b4-ty@csie.org>
+Date: Thu, 05 Dec 2024 22:25:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-611836726-1733408699=:932"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Sat, 23 Nov 2024 13:38:55 +0100, Csókás, Bence wrote:
+> Support for Allwinner F1C100s/200s series audio was
+> submitted in 2018 as an RFC series, but was not merged,
+> despite having only minor errors. However, this is
+> essential for having audio on these SoCs.
+> This series was forward-ported/rebased to the best of
+> my abilities, on top of Linus' tree as of now:
+> commit 28eb75e178d3 ("Merge tag 'drm-next-2024-11-21' of https://gitlab.freedesktop.org/drm/kernel")
+> 
+> [...]
 
---8323328-611836726-1733408699=:932
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Applied to dt-for-6.14 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
 
-On Sun, 1 Dec 2024, Mario Limonciello wrote:
+[1/5] ASoC: sun4i-codec: Add DMA Max Burst field
+      (no commit info)
+[2/5] dt-bindings: sound: Add Allwinner suniv F1C100s Audio Codec
+      (no commit info)
+[3/5] ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
+      (no commit info)
+[4/5] ARM: dts: suniv: f1c100s: Add support for Audio Codec
+      commit: 95b570f7ded1e921eb3fd256d0a70b294f31bd0c
+[5/5] ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
+      commit: 20296f8baa25839585b9060079946f7333a5c5aa
 
-> When a driver has called platform_profile_notify() both the legacy sysfs
-> interface and the class device should be notified as userspace may listen
-> to either.
->=20
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v8:
->  * notify only one dev
-> ---
->  drivers/acpi/platform_profile.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
-ile.c
-> index 16746d9b9aa7c..289b5d43638ae 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -401,6 +401,9 @@ void platform_profile_notify(struct platform_profile_=
-handler *pprof)
->  {
->  =09if (!cur_profile)
->  =09=09return;
-> +=09scoped_cond_guard(mutex_intr, return, &profile_lock) {
-> +=09=09_notify_class_profile(pprof->class_dev, NULL);
-> +=09}
->  =09sysfs_notify(acpi_kobj, NULL, "platform_profile");
->  }
->  EXPORT_SYMBOL_GPL(platform_profile_notify);
+Best regards,
+-- 
+Chen-Yu Tsai <wens@csie.org>
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
---8323328-611836726-1733408699=:932--
 
