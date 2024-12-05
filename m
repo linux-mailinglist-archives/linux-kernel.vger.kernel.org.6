@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-432593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED8B9E4D5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:47:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1540B9E4D6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882BB282892
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37A12856BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B642D194A66;
-	Thu,  5 Dec 2024 05:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E173912CDA5;
+	Thu,  5 Dec 2024 05:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEq2FCse"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="P4yRei9p"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16128EAC5;
-	Thu,  5 Dec 2024 05:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7DC15DBB3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 05:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733377627; cv=none; b=i+NAt13eD3/ULY0HMQToLzEm6CHpRSONWMr82WY365Yp00ABj+4eMRngNRB0V2cWCxkcJdua6EFC2CqHvCzetpLOu5Tqbgqcb6YQlpFu8JRKEEqdQ3No/TY+gOJDNlNy8suxwSYzj9vssrSXKXrTsVFhcwWWaNtLpGpsNUdVTBg=
+	t=1733377922; cv=none; b=YUbXhlIISNmAI+iI/QFH991ME0mSBPNs6puH0SdHCn8bHZA8zAghnD9RbIswkTOmyYkFN+yIVVOwdRDEjY/9/fbOeawTriHq52HMBO9oAfysZVtzi3X9kXmgT5XnDO8Lopw5/SYzx923VPObnArWpvcO2vhTDeauWOAAgnyqtNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733377627; c=relaxed/simple;
-	bh=Br/k2viK1u/+hung3i5Uw32rL4YHFiHzUgWg/j96zuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/BIslc+UuWpuMHBY7OtOe0NfKbCgOnsn1zRBI8Afaja+m1OMP9gEvB/se+bd7rL3+gBq2In6kKFExC7+O4Ddo7Lr1bTW67wWvJbHC7rHw/EiCZfjcX8eclA9GO64NjO/QMwT7xUcGu6J77Y+z9zeEoTx9ZauF3O4KHocknYQJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEq2FCse; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9862C4CED6;
-	Thu,  5 Dec 2024 05:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733377626;
-	bh=Br/k2viK1u/+hung3i5Uw32rL4YHFiHzUgWg/j96zuA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tEq2FCseVKyNzS9AMXilL632NLi9ovlfX67rKXYMnCAhXOIQRknFKVdP+6muHjsJ3
-	 QGfqQIoImkS+nNn8Yv5BFvqGXWPr3uGnW4CT7CfsBI25CVEH0xadeAMZSK05ha823e
-	 9nR60DTyZW+uPLYV2qRXylQGP8UXR+zDVfzm8O+Npit9c12tGk8wLsqHNIOz8+T6Ki
-	 /Y8hqzrmEOk2y0/NHTHI0sZFXI6RAX94yppUQ5+2si3msOIUtTl+c5QZ0aNSuW6tEv
-	 GpqBEZ8CnbV3OLr6bDIQ8e98/b/UMFEVN7//goSsIj9VBukc/1HxJ308bHQz9FmRJh
-	 tSzrXj2rViL7Q==
-Date: Wed, 4 Dec 2024 21:47:04 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-	maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com,
-	kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com,
-	hbathini@linux.ibm.com
-Subject: Re: [PATCH v1] perf test expr: Fix system_tsc_freq for only x86
-Message-ID: <Z1E-WHWSPAezVF4f@google.com>
-References: <20241205022305.158202-1-irogers@google.com>
+	s=arc-20240116; t=1733377922; c=relaxed/simple;
+	bh=BhMhSsWYj7UUiSSyfoFi0ExJT5aD3I1Sr5suZGDHQVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GrPiuci7ZuZ7pCtfnSbj0lEbb7Jah3CuDO1w9w3ApKeYjOjyvy2bex2hblpESMSjTlu8YFWtrybrb2jGbrCwTrldVnmiVuCUJW1Uh1Tg182u6pUzRhUq2ZCwythoTCF+UUpS+SYWh7psJSeyHX1TTzAScSWKOYDcsYR4K95ONEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=P4yRei9p; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1733377916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8Fs7cVjM2GkxZPaD8/jJEr7h5lNPnqaZgEf0tlU2kIs=;
+	b=P4yRei9pALuG9iwghPWGCTE2QQjnpSAk+xlNuXF/tmhZvlIG4hOxYxv3fBmzJh39gpzlsH
+	TVOgAuGEij5xfLad5DaLiI0LC53metQoyyEKkpsIDplZsZ3QC2/BNPMXGAPLjht+MzNNzu
+	pR0pIkcZ95j3UTH0/mmZUJmF0AA+pQcWCRuafwVR25w+KVnfVhbHtdM99FU6WWVN3oIVWm
+	MVVI7fX/MSHYfPoVv9lbTw1Bsn+Z3TR6fMVN9aCn32Vc/j5j0n+umtrIBB35zRdFhp73zs
+	ws56384hHJcc9jIPvL3RvW/y6bX3WCAmDMelRq5HT4F0qKk1BXnRDNIpb58m1A==
+From: Val Packett <val@packett.cool>
+To: 
+Cc: Val Packett <val@packett.cool>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] clk: rockchip: add clock ID for CIF0/1 on RK3066
+Date: Thu,  5 Dec 2024 02:50:46 -0300
+Message-ID: <20241205055122.11613-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241205022305.158202-1-irogers@google.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Ian,
+RK3066 does have two "CIF" video capture interface blocks, add their
+corresponding clock IDs so that they could be used.
 
-On Wed, Dec 04, 2024 at 06:23:05PM -0800, Ian Rogers wrote:
-> The refactoring of tool PMU events to have a PMU then adding the expr
-> literals to the tool PMU made it so that the literal system_tsc_freq
-> was only supported on x86. Update the test expectations to match -
-> namely the parsing is x86 specific and only yields a non-zero value on
-> Intel.
-> 
-> Fixes: 609aa2667f67 ("perf tool_pmu: Switch to standard pmu functions and json descriptions")
-> Reported-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> Closes: https://lore.kernel.org/linux-perf-users/20241022140156.98854-1-atrajeev@linux.vnet.ibm.com/
-> Co-developed-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> Signed-off-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Val Packett <val@packett.cool>
+---
+ drivers/clk/rockchip/clk-rk3188.c             | 4 ++--
+ include/dt-bindings/clock/rk3188-cru-common.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-It failed on my VM.
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 684233e72105..81e94b338d0f 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -344,7 +344,7 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 
+ 	GATE(0, "pclkin_cif0", "ext_cif0", 0,
+ 			RK2928_CLKGATE_CON(3), 3, GFLAGS),
+-	INVERTER(0, "pclk_cif0", "pclkin_cif0",
++	INVERTER(PCLK_CIF0, "pclk_cif0", "pclkin_cif0",
+ 			RK2928_CLKSEL_CON(30), 8, IFLAGS),
+ 
+ 	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
+@@ -602,7 +602,7 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
+ 
+ 	GATE(0, "pclkin_cif1", "ext_cif1", 0,
+ 			RK2928_CLKGATE_CON(3), 4, GFLAGS),
+-	INVERTER(0, "pclk_cif1", "pclkin_cif1",
++	INVERTER(PCLK_CIF1, "pclk_cif1", "pclkin_cif1",
+ 			RK2928_CLKSEL_CON(30), 12, IFLAGS),
+ 
+ 	COMPOSITE(0, "aclk_gpu_src", mux_pll_src_cpll_gpll_p, 0,
+diff --git a/include/dt-bindings/clock/rk3188-cru-common.h b/include/dt-bindings/clock/rk3188-cru-common.h
+index 01e14ab252a7..dd988cc9d582 100644
+--- a/include/dt-bindings/clock/rk3188-cru-common.h
++++ b/include/dt-bindings/clock/rk3188-cru-common.h
+@@ -103,6 +103,8 @@
+ #define PCLK_PERI		351
+ #define PCLK_DDRUPCTL		352
+ #define PCLK_PUBL		353
++#define PCLK_CIF0		354
++#define PCLK_CIF1		355
+ 
+ /* hclk gates */
+ #define HCLK_SDMMC		448
+-- 
+2.47.1
 
-  root@arm64-vm:~/build# ./perf test -v 7
-  --- start ---
-  test child forked, pid 2096
-  Using CPUID 0x00000000000f0510
-  division by zero
-  syntax error
-  Unrecognized literal '#system_tsc_freq'FAILED tests/expr.c:253 #system_tsc_freq == 0
-  ---- end(-1) ----
-    7: Simple expression parser                                        : FAILED!
-
-> ---
->  tools/perf/tests/expr.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/perf/tests/expr.c b/tools/perf/tests/expr.c
-> index 41ff1affdfcd..726cf8d4da28 100644
-> --- a/tools/perf/tests/expr.c
-> +++ b/tools/perf/tests/expr.c
-> @@ -75,14 +75,12 @@ static int test__expr(struct test_suite *t __maybe_unused, int subtest __maybe_u
->  	double val, num_cpus_online, num_cpus, num_cores, num_dies, num_packages;
->  	int ret;
->  	struct expr_parse_ctx *ctx;
-> -	bool is_intel = false;
->  	char strcmp_cpuid_buf[256];
->  	struct perf_cpu cpu = {-1};
->  	char *cpuid = get_cpuid_allow_env_override(cpu);
->  	char *escaped_cpuid1, *escaped_cpuid2;
->  
->  	TEST_ASSERT_VAL("get_cpuid", cpuid);
-> -	is_intel = strstr(cpuid, "Intel") != NULL;
->  
->  	TEST_ASSERT_EQUAL("ids_union", test_ids_union(), 0);
->  
-> @@ -245,12 +243,19 @@ static int test__expr(struct test_suite *t __maybe_unused, int subtest __maybe_u
->  	if (num_dies) // Some platforms do not have CPU die support, for example s390
->  		TEST_ASSERT_VAL("#num_dies >= #num_packages", num_dies >= num_packages);
->  
-> -	TEST_ASSERT_VAL("#system_tsc_freq", expr__parse(&val, ctx, "#system_tsc_freq") == 0);
-> -	if (is_intel)
-> -		TEST_ASSERT_VAL("#system_tsc_freq > 0", val > 0);
-> -	else
-> -		TEST_ASSERT_VAL("#system_tsc_freq == 0", fpclassify(val) == FP_ZERO);
->  
-> +	if (expr__parse(&val, ctx, "#system_tsc_freq") == 0) {
-> +		bool is_intel = strstr(cpuid, "Intel") != NULL;
-> +
-> +		if (is_intel)
-> +			TEST_ASSERT_VAL("#system_tsc_freq > 0", val > 0);
-
-Also Sasha reported that some (Intel?) guest machine doesn't have TSC
-frequency.
-
-Thanks,
-Namhyung
-
-
-> +		else
-> +			TEST_ASSERT_VAL("#system_tsc_freq == 0", fpclassify(val) == FP_ZERO);
-> +	} else {
-> +#if defined(__i386__) || defined(__x86_64__)
-> +		TEST_ASSERT_VAL("#system_tsc_freq unsupported", 0);
-> +#endif
-> +	}
->  	/*
->  	 * Source count returns the number of events aggregating in a leader
->  	 * event including the leader. Check parsing yields an id.
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
 
