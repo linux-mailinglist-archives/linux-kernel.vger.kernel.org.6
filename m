@@ -1,335 +1,227 @@
-Return-Path: <linux-kernel+bounces-432491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06AE09E4C17
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:02:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2309E4C19
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:04:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919BD2858E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D170E1881624
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2727E105;
-	Thu,  5 Dec 2024 02:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="Gtg08DYj"
-Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2B9130A7D;
+	Thu,  5 Dec 2024 02:03:55 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C96F16F0E8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBD841C69;
+	Thu,  5 Dec 2024 02:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733364158; cv=none; b=IHRlefRfiaj/jjj8QA8dOsClNBCKGbhMgV5lnc6fTGu9JRfccbt7UfMJhWDr7q+KkwSKtH7Z+GA1YtWd/EFBznhPiMt+pY8LTYcSY+2enkQo0fNoc1LG/X80JosV7ZtfOJLCISYTFztY/w4K0vmJOUjd6mD9/ocDr71oTG8Y9Y4=
+	t=1733364234; cv=none; b=bMD22NgbqsDtBFE+cWgxgHbGKFdtc4yx07JHqz5ulCuYSuSISVKGo5RQlz9qefur/ShiJTTAgHNvbMqBN+5KrZqNYFIUHH6DoWq7wU69AuFZO+5+anuipG1vtWtCLGzYJP1WrENmFzVUsbHw9DKw5bXVAvj+E70vzJ07OYYLmgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733364158; c=relaxed/simple;
-	bh=crDd3cXECCI9K3K7ksxOvx9AbAXgrYush9vrHX9zpkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AcD19eLPcKN5WPsdLMFPnF/naupnD/xa4gN3AfT/6Jhl9TxMdMBdKxv8e1/eEY4KNkltS/trsIJAPyDS48RWHEXUDy5YVt4G88ebVAl8cGtUM1VRTpoGiaVqu/yJqZhWuLZR8BarwzAuXmvTlLqb02bZ4ELFmS2XWnJkaNGHN9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=Gtg08DYj; arc=none smtp.client-ip=212.27.42.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
-Received: from bender.morinfr.org (unknown [82.66.66.112])
-	by smtp2-g21.free.fr (Postfix) with ESMTPS id 373742003AE;
-	Thu,  5 Dec 2024 03:02:27 +0100 (CET)
-Authentication-Results: smtp2-g21.free.fr;
-	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=Gtg08DYj;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
-	; s=20170427; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=9LaaY0KgqG6gEYu65lafSSzzEHTNh8g9U9JnsLTnezU=; b=Gtg08DYjOeZ/8rHAHZnEAZ6THc
-	WUC6iTeB3S3yudJ29wJU/e99aSqrMVNc8KcDEiSQkElmdvAn4lbZmN9jVevHveV1CA9BITzj77iwa
-	J+NXfxDqISgY2nhkT1N0avSbrm8uTjgOqwbOv/Tt1Icb1YUQck0WmuwM66uECxa54cIc=;
-Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
-	(envelope-from <guillaume@morinfr.org>)
-	id 1tJ1CE-001IaL-1U;
-	Thu, 05 Dec 2024 03:02:26 +0100
-Date: Thu, 5 Dec 2024 03:02:26 +0100
-From: Guillaume Morin <guillaume@morinfr.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-	Eric Hagberg <ehagberg@janestreet.com>
-Subject: [PATCH v3] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
-Message-ID: <Z1EJssqd93w2erMZ@bender.morinfr.org>
+	s=arc-20240116; t=1733364234; c=relaxed/simple;
+	bh=GvOwOZEqvRgYu2PVU0Jj/cD9X7xmD7tDJ1JGk+fLUj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XcIa63qM0DxxynUSE2m44yNR2kXBH5HkiJUqQirklgxy2GVZGIbcNgYQx8xmj3J3Q/8vkVQ/JkZSpIEM30tIOBRBgd2BHzmS+VyNAXPBOxHZUS3Pmz0i1K1IFU9YCS5Q3banXMY1wkAyzH2wSifVzlDtPisIwJUPqBUAox0fX9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:82e7:cf5d:dfd9:50ef] (helo=fangorn)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tJ1D3-0000000065H-2LoB;
+	Wed, 04 Dec 2024 21:03:17 -0500
+Date: Wed, 4 Dec 2024 21:03:16 -0500
+From: Rik van Riel <riel@surriel.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, Ingo Molnar
+ <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Mel
+ Gorman <mgorman@suse.de>
+Subject: [PATCH v4] x86,mm: only trim the mm_cpumask once a second
+Message-ID: <20241204210316.612ee573@fangorn>
+In-Reply-To: <43835b8c-53cd-428f-a46f-554bfa5c2cdd@efficios.com>
+References: <202411282207.6bd28eae-lkp@intel.com>
+	<20241202194358.59089122@fangorn>
+	<Z1BV7NG/Qp0BNw3Y@xsang-OptiPlex-9020>
+	<20241204115634.28964c62@fangorn>
+	<43835b8c-53cd-428f-a46f-554bfa5c2cdd@efficios.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+Sender: riel@surriel.com
 
+On Wed, 4 Dec 2024 15:19:46 -0500
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-Eric reported that PTRACE_POKETEXT fails when applications use hugetlb
-for mapping text using huge pages. Before commit 1d8d14641fd9
-("mm/hugetlb: support write-faults in shared mappings"), PTRACE_POKETEXT
-worked by accident, but it was buggy and silently ended up mapping pages
-writable into the page tables even though VM_WRITE was not set.
+> AFAIU this should_trim_cpumask can be called from many cpus
+> concurrently for a given mm, so we'd want READ_ONCE/WRITE_ONCE
+> on the next_trim_cpumask.
 
-In general, FOLL_FORCE|FOLL_WRITE does currently not work with hugetlb.
-Let's implement FOLL_FORCE|FOLL_WRITE properly for hugetlb, such that
-what used to work in the past by accident now properly works, allowing
-applications using hugetlb for text etc. to get properly debugged.
+Here is v4, which is identical to v3 except for READ_ONCE/WRITE_ONCE.
 
-This change might also be required to implement uprobes support for
-hugetlb [1].
+Looking forward to the test bot results, since the hardware I have
+available does not seem to behave in quite the same way :)
 
-[1] https://lore.kernel.org/lkml/ZiK50qob9yl5e0Xz@bender.morinfr.org/
+---8<---
 
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Eric Hagberg <ehagberg@janestreet.com>
-Signed-off-by: Guillaume Morin <guillaume@morinfr.org>
+=46rom 49af9b203e971d00c87b2d020f48602936870576 Mon Sep 17 00:00:00 2001
+From: Rik van Riel <riel@fb.com>
+Date: Mon, 2 Dec 2024 09:57:31 -0800
+Subject: [PATCH] x86,mm: only trim the mm_cpumask once a second
+
+Setting and clearing CPU bits in the mm_cpumask is only ever done
+by the CPU itself, from the context switch code or the TLB flush
+code.
+
+Synchronization is handled by switch_mm_irqs_off blocking interrupts.
+
+Sending TLB flush IPIs to CPUs that are in the mm_cpumask, but no
+longer running the program causes a regression in the will-it-scale
+tlbflush2 test. This test is contrived, but a large regression here
+might cause a small regression in some real world workload.
+
+Instead of always sending IPIs to CPUs that are in the mm_cpumask,
+but no longer running the program, send these IPIs only once a second.
+
+The rest of the time we can skip over CPUs where the loaded_mm is
+different from the target mm.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Reported-by: kernel test roboto <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202411282207.6bd28eae-lkp@intel.com/
 ---
- Changes in v2:
-  - Improved commit message
- Changes in v3:
-  - Fix potential unitialized mem access in follow_huge_pud
-  - define pud_soft_dirty when soft dirty is not enabled
+ arch/x86/include/asm/mmu.h         |  2 ++
+ arch/x86/include/asm/mmu_context.h |  1 +
+ arch/x86/include/asm/tlbflush.h    |  1 +
+ arch/x86/mm/tlb.c                  | 35 +++++++++++++++++++++++++++---
+ 4 files changed, 36 insertions(+), 3 deletions(-)
 
- include/linux/pgtable.h |  5 +++
- mm/gup.c                | 99 +++++++++++++++++++++--------------------
- mm/hugetlb.c            | 20 +++++----
- 3 files changed, 66 insertions(+), 58 deletions(-)
-
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index adef9d6e9b1b..9335d7c82d20 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1422,6 +1422,11 @@ static inline int pmd_soft_dirty(pmd_t pmd)
- 	return 0;
- }
- 
-+static inline int pud_soft_dirty(pud_t pud)
-+{
-+	return 0;
-+}
+diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+index ce4677b8b735..3b496cdcb74b 100644
+--- a/arch/x86/include/asm/mmu.h
++++ b/arch/x86/include/asm/mmu.h
+@@ -37,6 +37,8 @@ typedef struct {
+ 	 */
+ 	atomic64_t tlb_gen;
+=20
++	unsigned long next_trim_cpumask;
 +
- static inline pte_t pte_mksoft_dirty(pte_t pte)
+ #ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 	struct rw_semaphore	ldt_usr_sem;
+ 	struct ldt_struct	*ldt;
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_=
+context.h
+index 2886cb668d7f..795fdd53bd0a 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -151,6 +151,7 @@ static inline int init_new_context(struct task_struct *=
+tsk,
+=20
+ 	mm->context.ctx_id =3D atomic64_inc_return(&last_mm_ctx_id);
+ 	atomic64_set(&mm->context.tlb_gen, 0);
++	mm->context.next_trim_cpumask =3D jiffies + HZ;
+=20
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflus=
+h.h
+index 69e79fff41b8..02fc2aa06e9e 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -222,6 +222,7 @@ struct flush_tlb_info {
+ 	unsigned int		initiating_cpu;
+ 	u8			stride_shift;
+ 	u8			freed_tables;
++	u8			trim_cpumask;
+ };
+=20
+ void flush_tlb_local(void);
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 1aac4fa90d3d..0507a6773a37 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -892,9 +892,36 @@ static void flush_tlb_func(void *info)
+ 			nr_invalidate);
+ }
+=20
+-static bool tlb_is_not_lazy(int cpu, void *data)
++static bool should_flush_tlb(int cpu, void *data)
  {
- 	return pte;
-diff --git a/mm/gup.c b/mm/gup.c
-index 746070a1d8bf..cc3eae458013 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -587,6 +587,33 @@ static struct folio *try_grab_folio_fast(struct page *page, int refs,
- }
- #endif	/* CONFIG_HAVE_GUP_FAST */
- 
-+/* Common code for can_follow_write_* */
-+static inline bool can_follow_write_common(struct page *page,
-+		struct vm_area_struct *vma, unsigned int flags)
-+{
-+	/* Maybe FOLL_FORCE is set to override it? */
-+	if (!(flags & FOLL_FORCE))
+-	return !per_cpu(cpu_tlbstate_shared.is_lazy, cpu);
++	struct flush_tlb_info *info =3D data;
++
++	/* Lazy TLB will get flushed at the next context switch. */
++	if (per_cpu(cpu_tlbstate_shared.is_lazy, cpu))
 +		return false;
 +
-+	/* But FOLL_FORCE has no effect on shared mappings */
-+	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
-+		return false;
-+
-+	/* ... or read-only private ones */
-+	if (!(vma->vm_flags & VM_MAYWRITE))
-+		return false;
-+
-+	/* ... or already writable ones that just need to take a write fault */
-+	if (vma->vm_flags & VM_WRITE)
-+		return false;
-+
-+	/*
-+	 * See can_change_pte_writable(): we broke COW and could map the page
-+	 * writable if we have an exclusive anonymous page ...
-+	 */
-+	return page && PageAnon(page) && PageAnonExclusive(page);
-+}
-+
- static struct page *no_page_table(struct vm_area_struct *vma,
- 				  unsigned int flags, unsigned long address)
- {
-@@ -613,6 +640,22 @@ static struct page *no_page_table(struct vm_area_struct *vma,
- }
- 
- #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
-+/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
-+static inline bool can_follow_write_pud(pud_t pud, struct page *page,
-+					struct vm_area_struct *vma,
-+					unsigned int flags)
-+{
-+	/* If the pud is writable, we can write to the page. */
-+	if (pud_write(pud))
++	/* No mm means kernel memory flush. */
++	if (!info->mm)
 +		return true;
 +
-+	if (!can_follow_write_common(page, vma, flags))
-+		return false;
++	/* The target mm is loaded, and the CPU is not lazy. */
++	if (per_cpu(cpu_tlbstate.loaded_mm, cpu) =3D=3D info->mm)
++		return true;
 +
-+	/* ... and a write-fault isn't required for other reasons. */
-+	return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
++	/* In cpumask, but not the loaded mm? Periodically remove by flushing. */
++	if (info->trim_cpumask)
++		return true;
++
++	return false;
 +}
 +
- static struct page *follow_huge_pud(struct vm_area_struct *vma,
- 				    unsigned long addr, pud_t *pudp,
- 				    int flags, struct follow_page_context *ctx)
-@@ -625,13 +668,16 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
- 
- 	assert_spin_locked(pud_lockptr(mm, pudp));
- 
--	if ((flags & FOLL_WRITE) && !pud_write(pud))
-+	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
-+	page = pfn_to_page(pfn);
-+
-+	if ((flags & FOLL_WRITE) &&
-+	    !can_follow_write_pud(pud, page, vma, flags))
- 		return NULL;
- 
- 	if (!pud_present(pud))
- 		return NULL;
- 
--	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
- 
- 	if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD) &&
- 	    pud_devmap(pud)) {
-@@ -653,8 +699,6 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
- 			return ERR_PTR(-EFAULT);
- 	}
- 
--	page = pfn_to_page(pfn);
--
- 	if (!pud_devmap(pud) && !pud_write(pud) &&
- 	    gup_must_unshare(vma, flags, page))
- 		return ERR_PTR(-EMLINK);
-@@ -677,27 +721,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
- 	if (pmd_write(pmd))
- 		return true;
- 
--	/* Maybe FOLL_FORCE is set to override it? */
--	if (!(flags & FOLL_FORCE))
--		return false;
--
--	/* But FOLL_FORCE has no effect on shared mappings */
--	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
--		return false;
--
--	/* ... or read-only private ones */
--	if (!(vma->vm_flags & VM_MAYWRITE))
--		return false;
--
--	/* ... or already writable ones that just need to take a write fault */
--	if (vma->vm_flags & VM_WRITE)
--		return false;
--
--	/*
--	 * See can_change_pte_writable(): we broke COW and could map the page
--	 * writable if we have an exclusive anonymous page ...
--	 */
--	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
-+	if (!can_follow_write_common(page, vma, flags))
- 		return false;
- 
- 	/* ... and a write-fault isn't required for other reasons. */
-@@ -798,27 +822,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
- 	if (pte_write(pte))
- 		return true;
- 
--	/* Maybe FOLL_FORCE is set to override it? */
--	if (!(flags & FOLL_FORCE))
--		return false;
--
--	/* But FOLL_FORCE has no effect on shared mappings */
--	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
--		return false;
--
--	/* ... or read-only private ones */
--	if (!(vma->vm_flags & VM_MAYWRITE))
--		return false;
--
--	/* ... or already writable ones that just need to take a write fault */
--	if (vma->vm_flags & VM_WRITE)
--		return false;
--
--	/*
--	 * See can_change_pte_writable(): we broke COW and could map the page
--	 * writable if we have an exclusive anonymous page ...
--	 */
--	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
-+	if (!can_follow_write_common(page, vma, flags))
- 		return false;
- 
- 	/* ... and a write-fault isn't required for other reasons. */
-@@ -1285,9 +1289,6 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
- 		if (!(vm_flags & VM_WRITE) || (vm_flags & VM_SHADOW_STACK)) {
- 			if (!(gup_flags & FOLL_FORCE))
- 				return -EFAULT;
--			/* hugetlb does not support FOLL_FORCE|FOLL_WRITE. */
--			if (is_vm_hugetlb_page(vma))
--				return -EFAULT;
- 			/*
- 			 * We used to let the write,force case do COW in a
- 			 * VM_MAYWRITE VM_SHARED !VM_WRITE vma, so ptrace could
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ea2ed8e301ef..52517b7ce308 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5169,6 +5169,13 @@ static void set_huge_ptep_writable(struct vm_area_struct *vma,
- 		update_mmu_cache(vma, address, ptep);
- }
- 
-+static void set_huge_ptep_maybe_writable(struct vm_area_struct *vma,
-+					 unsigned long address, pte_t *ptep)
++static bool should_trim_cpumask(struct mm_struct *mm)
 +{
-+	if (vma->vm_flags & VM_WRITE)
-+		set_huge_ptep_writable(vma, address, ptep);
-+}
-+
- bool is_hugetlb_entry_migration(pte_t pte)
- {
- 	swp_entry_t swp;
-@@ -5802,13 +5809,6 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
- 	if (!unshare && huge_pte_uffd_wp(pte))
- 		return 0;
- 
--	/*
--	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
--	 * PTE mapped R/O such as maybe_mkwrite() would do.
--	 */
--	if (WARN_ON_ONCE(!unshare && !(vma->vm_flags & VM_WRITE)))
--		return VM_FAULT_SIGSEGV;
--
- 	/* Let's take out MAP_SHARED mappings first. */
- 	if (vma->vm_flags & VM_MAYSHARE) {
- 		set_huge_ptep_writable(vma, vmf->address, vmf->pte);
-@@ -5837,7 +5837,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
- 			SetPageAnonExclusive(&old_folio->page);
- 		}
- 		if (likely(!unshare))
--			set_huge_ptep_writable(vma, vmf->address, vmf->pte);
-+			set_huge_ptep_maybe_writable(vma, vmf->address,
-+						     vmf->pte);
- 
- 		delayacct_wpcopy_end();
- 		return 0;
-@@ -5943,7 +5944,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
- 	spin_lock(vmf->ptl);
- 	vmf->pte = hugetlb_walk(vma, vmf->address, huge_page_size(h));
- 	if (likely(vmf->pte && pte_same(huge_ptep_get(mm, vmf->address, vmf->pte), pte))) {
--		pte_t newpte = make_huge_pte(vma, &new_folio->page, !unshare);
-+		const bool writable = !unshare && (vma->vm_flags & VM_WRITE);
-+		pte_t newpte = make_huge_pte(vma, &new_folio->page, writable);
- 
- 		/* Break COW or unshare */
- 		huge_ptep_clear_flush(vma, vmf->address, vmf->pte);
--- 
-2.39.1
++	if (time_after(jiffies, READ_ONCE(mm->context.next_trim_cpumask))) {
++		WRITE_ONCE(mm->context.next_trim_cpumask, jiffies + HZ);
++		return true;
++	}
++	return false;
+ }
+=20
+ DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared=
+);
+@@ -928,7 +955,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cp=
+umask *cpumask,
+ 	if (info->freed_tables)
+ 		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
+ 	else
+-		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func,
++		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
+ 				(void *)info, 1, cpumask);
+ }
+=20
+@@ -979,6 +1006,7 @@ static struct flush_tlb_info *get_flush_tlb_info(struc=
+t mm_struct *mm,
+ 	info->freed_tables	=3D freed_tables;
+ 	info->new_tlb_gen	=3D new_tlb_gen;
+ 	info->initiating_cpu	=3D smp_processor_id();
++	info->trim_cpumask	=3D 0;
+=20
+ 	return info;
+ }
+@@ -1021,6 +1049,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigne=
+d long start,
+ 	 * flush_tlb_func_local() directly in this case.
+ 	 */
+ 	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids) {
++		info->trim_cpumask =3D should_trim_cpumask(mm);
+ 		flush_tlb_multi(mm_cpumask(mm), info);
+ 	} else if (mm =3D=3D this_cpu_read(cpu_tlbstate.loaded_mm)) {
+ 		lockdep_assert_irqs_enabled();
+--=20
+2.47.0
 
--- 
-Guillaume Morin <guillaume@morinfr.org>
+
+
 
