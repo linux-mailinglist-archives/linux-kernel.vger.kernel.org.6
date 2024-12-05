@@ -1,322 +1,147 @@
-Return-Path: <linux-kernel+bounces-432562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B84C9E4CF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:03:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBAAD9E4CFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:16:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A133018819A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF972855D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E48F188733;
-	Thu,  5 Dec 2024 04:03:30 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F1017F4F6;
+	Thu,  5 Dec 2024 04:16:21 +0000 (UTC)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0A04C83
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 04:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6C5179A3;
+	Thu,  5 Dec 2024 04:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733371409; cv=none; b=PvEqDYi518qJ6BxJO4ZHYxUBvvBedoKLu7ZOsjKPHEwxoYvdM3+W0xJz+KpQY8bDJuQ3TA16OwqZOs3cqagolPJvqcJpX0zk0zZXzMEnhzXBXgK4oTRyHGn0Dgi3rZpXcywti08DQOlIGGmpHplBTegk2sklk6l3pJTq7oNcvOk=
+	t=1733372181; cv=none; b=tou5JXTQCyC+P4ifO1wdTMkJGXF/E15QlailwDm/P2PpS6O3bzqP+gthwUg+D861TOi8/0opGBS+MN5sQ1/MjC1r8F+TnTtxKpwSW67j6s8fV6XQTB4w7G+OWEgo7mVQyXpynoP5JEE8QJEp+EFw8xBzJB+jAB8dQblDDO3t9vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733371409; c=relaxed/simple;
-	bh=B0UPE7YGd7Ngfk7Yvttlp5aIzUFGcYLfdxETEY4G5qU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lqR7hitWogurkVVs+/GuKxnihdYNfbK8oQeJ8iuA5fnWHUhzqOnFtOAfx5lFBSvgz4BFO5VylDDeA/bN/mncPxnMei4/7gKbc1Voo9QTeWFYPaDjGLThxoEq+N1FK3k7phqb7iWJVpXQOAS58W4hqVcstTRb2m27CzNEa0BMgZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a76690f813so5035535ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 20:03:26 -0800 (PST)
+	s=arc-20240116; t=1733372181; c=relaxed/simple;
+	bh=KSxHh4MX6DMW5Fj4irqntnsdy4M8bKuHYO0r/f9HTP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sceYx+4ufV6+S9S7uxM27n5TEn4S0OtCMwu4+4GwCOHNUe9LF/44joaJhgmofaYyy9LYFBY9pH2YoDa+gH1G1NZCdD8xL5wMgD4nXf5E6Nin+/GbW4k4NS5qzspOZc/h29eeSuPyhOhhWowyqQI6u1R6UYOeMNsjsK6QzBuWCxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffc86948dcso4036441fa.2;
+        Wed, 04 Dec 2024 20:16:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733371406; x=1733976206;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1733372175; x=1733976975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OmPMIvGUcaEEXWOl+xY0Ue7t7j0C3yIAMWikuEG04iQ=;
-        b=SQzfeSc4P/Opoq8Rtco227OKjyWzpyF1K6jiUAYD2ZywrBI2QNBc+zupzFz2YN0DqI
-         hgrRcHLAa6H9bnjf1J0vaNv4prWsYchuGzQWDRFulZbqaivbfFgHf6p/tw+ynfEI1bpC
-         paH+ShUgFihCd/mMSpz5ul3SIkOVAvSr+KK22DdvKVwh0JMXnn6oy215Wl21/zWS+Cv8
-         lmekclCDNUD+ljP6YkBx6pp8BrWwaclkoVU7hWKY+UpPILlTJrF6y/felpBguNzJKOxF
-         zVNxCrWPZcY2TrL/tRgAXXQxkdtTG7Gj1fwaSGc0/Tz0Lcg29f8tEq7l8Ev8nOnXw9fM
-         aC6A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/FqoZlg+Vbu3WMIQW6oJv3h2X7LXXf9Emac35ODDNTJF34YTw5Ay8eO4fQCWJnnqAmqqLU+gAONOkr7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCahvyMQJedXHcCqxfk/D6pmjPZDSlWUpZ8t7mWuZ1n4jVlc5y
-	qwrOxt0RTLKvWXk1QvXEchy9WzQ8NN8IwlMb1U+d5lJiu9xF0g+X1W1s/x8noAqyWgt/1n84vAO
-	wk1ulIONOOUgkHmVVBSMV+drBiQNwGoI/ppB/ynmPzPpxBDoVG5puqPk=
-X-Google-Smtp-Source: AGHT+IEHaBQ9uVYQVaRC9NA1c6zszP4aXA22I2iVLzc0Ijn+UzAEB3i1kiiODas+CHvIuip6LvsP5CmdDuldtIkcH3lLl9xqBsFh
+        bh=piW9kHZgsyQb9cy9HU5rDPdSyIGIWO93TJJ1y0kDyvc=;
+        b=CDJ8LkFnN5DsZhgoQScBHlfR45g+BNn55FzSAOXp3OMG3zKrFdVGtWQk/LkGczxNwh
+         onkhqU1kGb8NkYC6o37RvoiXf2kF2B3CuNCh70hLSIqHxw0eaiNN+Ga3yJPeuMwxNK6S
+         H/aviTIdAktBEcKKe7fpIFlAw7DU/9g85UpZLX/intkWv/eGKiHB0h4WMMv2qoKZpFAR
+         SaEBcolPBrq9Kdi9mkhdZfiDgTaIV1kbkP83q4yD5Q1rcZe0pDlLGl8jd+TaVbWKYNac
+         Y6Yt4kSXh/LxP7Y39JwGaWIxxmDAYJItXoQlpwZSd3HVYJW0bK94c306VwmSsWK5HgN+
+         4o6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWZZpMi9sqFPK+L5IQSARB5D3MKyghU0HYHoNdKfFmQKnQRmfw6NNJqd0BJTzSbBt+E1OUuVOsE7vmUA1kX@vger.kernel.org, AJvYcCWzRTFcxqEF8iZAFQHcNdCpEAe94Z5ROXjBwRwxzxztjQ2LkkVljCVCO7LTdhf+gGt+oDhjZWHaQRVy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEdl2hKyRwa/a8MsX35UCw6CKfBJBsjRI7QXnRHZ/qzWCKVrl4
+	YVpX878BcM7KQpjVPbZZ1Qvvsf/+tSgrbSfBdBaDw8LU1340AgR3EFzU2Ke+
+X-Gm-Gg: ASbGncucJWQhO849ayfJSNc65WpVXgPsjTqBda4QYYphSKMvtbTIafvbG/ZPGTK01G8
+	xjQo6idmqtAmAhA5ENkIVrdMe6LVav4sJlns7oYoCpv1zFmGeZ5ISSKKl13VPDoUfQkF2xaS0N3
+	chPFg09vjyieywLlv7Qw/OQ08pF8/zgM98qf5Hq8f/jsMo201GSHtBYofo16nM2LiDw51tkZ2HI
+	iCd9p8YuuIo5jPgshN2ylBKA2boG6nrbBBWpS4gsd1AXuqps+nUbSzGACzjWFXC1DfDoN57GAjq
+	YUiPmag=
+X-Google-Smtp-Source: AGHT+IGG0dbk1TcuyB8uyB7a2be7Mt9mKtY5/tCmhTGcBCEMT47mdVzYUeNFsdLBVsQTyE3wx2nErg==
+X-Received: by 2002:a05:651c:1614:b0:2fb:5a7e:5072 with SMTP id 38308e7fff4ca-30009cb184fmr59300201fa.34.1733372174591;
+        Wed, 04 Dec 2024 20:16:14 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020e58200sm910531fa.113.2024.12.04.20.16.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 20:16:14 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3000b64fbe9so3752191fa.1;
+        Wed, 04 Dec 2024 20:16:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWeeEDOHnDB00ylPwlhuYJWzB+X0e1FHwcyDqDCIYbPjGIXnWBmkIqzSUoG1anlX2GIPeVjyoda/X5M@vger.kernel.org, AJvYcCXnbbsEnU7U0snFMQycgrRfYvkPx+IKoNKkmvTpaRT3KpJ/4fjeMjuJ6UBFPp448bpKJ/2WMjqPc4bLfoZY@vger.kernel.org
+X-Received: by 2002:a05:651c:1501:b0:300:1889:6340 with SMTP id
+ 38308e7fff4ca-30018896590mr21262461fa.13.1733372174094; Wed, 04 Dec 2024
+ 20:16:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24f:0:b0:3a7:c5ff:e5e2 with SMTP id
- e9e14a558f8ab-3a7f99b1233mr119494585ab.0.1733371405925; Wed, 04 Dec 2024
- 20:03:25 -0800 (PST)
-Date: Wed, 04 Dec 2024 20:03:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6751260d.050a0220.17bd51.0085.GAE@google.com>
-Subject: [syzbot] [btrfs?] possible deadlock in __btrfs_commit_inode_delayed_items
-From: syzbot <syzbot+71d80f05e434f9bfaaec@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241203203824.23306-1-simons.philippe@gmail.com>
+In-Reply-To: <20241203203824.23306-1-simons.philippe@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 5 Dec 2024 12:16:00 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67Uv3SVQSqox85qt_05aVvX0oCynNRoaN9BA1Nha3eo8w@mail.gmail.com>
+Message-ID: <CAGb2v67Uv3SVQSqox85qt_05aVvX0oCynNRoaN9BA1Nha3eo8w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: allwinner: h616: rg35xx add missing regulator-ramp-delay
+To: Philippe Simons <simons.philippe@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
+	Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Dec 4, 2024 at 4:38=E2=80=AFAM Philippe Simons
+<simons.philippe@gmail.com> wrote:
+>
+> AXP datasheet says that ramp delay is 15.625 us/step,
+> which is 10mV in our case.
 
-syzbot found the following issue on:
+(CC-ing Mark for knowledge on regulators)
 
-HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=111705e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=71d80f05e434f9bfaaec
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+If this is the property of the PMIC, it probably belongs in the driver,
+in "regulator_desc.ramp_delay".
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+71d80f05e434f9bfaaec@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-next-20241128-syzkaller #0 Not tainted
-------------------------------------------------------
-kworker/u8:12/6861 is trying to acquire lock:
-ffff88803171b3b8 (btrfs-tree-01){++++}-{4:4}, at: btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
-
-but task is already holding lock:
-ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:830 [inline]
-ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: __btrfs_commit_inode_delayed_items+0x1c4/0x24a0 fs/btrfs/delayed-inode.c:1126
-
-which lock already depends on the new lock.
+The "regulator-ramp-delay" in the DT can be used to override this
+if the board has excessive ramp delay due to other design reasons.
 
 
-the existing dependency chain (in reverse order) is:
+ChenYu
 
--> #4 (&delayed_node->mutex){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
-       btrfs_evict_inode+0x752/0x1080 fs/btrfs/inode.c:5374
-       evict+0x4e8/0x9a0 fs/inode.c:796
-       dispose_list fs/inode.c:845 [inline]
-       prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
-       super_cache_scan+0x38c/0x4b0 fs/super.c:223
-       do_shrink_slab+0x72d/0x1160 mm/shrinker.c:437
-       shrink_slab_memcg mm/shrinker.c:550 [inline]
-       shrink_slab+0x878/0x14d0 mm/shrinker.c:628
-       shrink_one+0x43b/0x850 mm/vmscan.c:4836
-       shrink_many mm/vmscan.c:4897 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4975 [inline]
-       shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
-       kswapd_shrink_node mm/vmscan.c:6785 [inline]
-       balance_pgdat mm/vmscan.c:6977 [inline]
-       kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #3 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __fs_reclaim_acquire mm/page_alloc.c:3887 [inline]
-       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3901
-       might_alloc include/linux/sched/mm.h:318 [inline]
-       slab_pre_alloc_hook mm/slub.c:4055 [inline]
-       slab_alloc_node mm/slub.c:4133 [inline]
-       __kmalloc_cache_noprof+0x41/0x390 mm/slub.c:4309
-       kmalloc_noprof include/linux/slab.h:901 [inline]
-       kzalloc_noprof include/linux/slab.h:1037 [inline]
-       kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
-       loop_set_size drivers/block/loop.c:233 [inline]
-       loop_set_status+0x5f0/0x8f0 drivers/block/loop.c:1285
-       lo_ioctl+0xcbc/0x1f50
-       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&q->q_usage_counter(io)#17){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
-       __submit_bio+0x2c6/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       btrfs_submit_chunk fs/btrfs/bio.c:745 [inline]
-       btrfs_submit_bbio+0xf93/0x18e0 fs/btrfs/bio.c:773
-       read_extent_buffer_pages+0x65a/0x910 fs/btrfs/extent_io.c:3558
-       btrfs_read_extent_buffer+0xd9/0x770 fs/btrfs/disk-io.c:229
-       read_block_for_search+0x79e/0xbb0 fs/btrfs/ctree.c:1619
-       btrfs_search_slot+0x121b/0x3150 fs/btrfs/ctree.c:2236
-       btrfs_init_root_free_objectid+0x148/0x330 fs/btrfs/disk-io.c:4837
-       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
-       btrfs_get_root_ref+0x5d7/0xc30 fs/btrfs/disk-io.c:1364
-       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
-       open_ctree+0x2470/0x2a30 fs/btrfs/disk-io.c:3532
-       btrfs_fill_super fs/btrfs/super.c:972 [inline]
-       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
-       btrfs_get_tree+0x1274/0x1a10 fs/btrfs/super.c:2105
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       fc_mount+0x1b/0xb0 fs/namespace.c:1231
-       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
-       btrfs_get_tree+0x65b/0x1a10 fs/btrfs/super.c:2106
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (btrfs-tree-00){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1649
-       btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
-       btrfs_tree_read_lock fs/btrfs/locking.h:178 [inline]
-       read_block_for_search+0x718/0xbb0 fs/btrfs/ctree.c:1613
-       btrfs_search_slot+0x121b/0x3150 fs/btrfs/ctree.c:2236
-       btrfs_init_root_free_objectid+0x148/0x330 fs/btrfs/disk-io.c:4837
-       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
-       btrfs_get_root_ref+0x5d7/0xc30 fs/btrfs/disk-io.c:1364
-       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
-       open_ctree+0x2470/0x2a30 fs/btrfs/disk-io.c:3532
-       btrfs_fill_super fs/btrfs/super.c:972 [inline]
-       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
-       btrfs_get_tree+0x1274/0x1a10 fs/btrfs/super.c:2105
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       fc_mount+0x1b/0xb0 fs/namespace.c:1231
-       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
-       btrfs_get_tree+0x65b/0x1a10 fs/btrfs/super.c:2106
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (btrfs-tree-01){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1649
-       btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
-       btrfs_tree_read_lock fs/btrfs/locking.h:178 [inline]
-       btrfs_read_lock_root_node+0x3f/0xd0 fs/btrfs/locking.c:267
-       btrfs_search_slot_get_root fs/btrfs/ctree.c:1790 [inline]
-       btrfs_search_slot+0x4f7/0x3150 fs/btrfs/ctree.c:2112
-       btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4350
-       btrfs_insert_delayed_item fs/btrfs/delayed-inode.c:758 [inline]
-       btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:836 [inline]
-       __btrfs_commit_inode_delayed_items+0xd5d/0x24a0 fs/btrfs/delayed-inode.c:1126
-       __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
-       flush_space+0x24a/0xcf0 fs/btrfs/space-info.c:775
-       btrfs_async_reclaim_metadata_space+0x113/0x350 fs/btrfs/space-info.c:1105
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  btrfs-tree-01 --> fs_reclaim --> &delayed_node->mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&delayed_node->mutex);
-                               lock(fs_reclaim);
-                               lock(&delayed_node->mutex);
-  rlock(btrfs-tree-01);
-
- *** DEADLOCK ***
-
-5 locks held by kworker/u8:12/6861:
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
- #1: ffffc9000369fd00 ((work_completion)(&fs_info->async_reclaim_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000369fd00 ((work_completion)(&fs_info->async_reclaim_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
- #2: ffff888034ba2470 (btrfs_trans_num_writers){++++}-{0:0}, at: join_transaction+0x405/0xda0 fs/btrfs/transaction.c:288
- #3: ffff888034ba2498 (btrfs_trans_num_extwriters){++++}-{0:0}, at: join_transaction+0x405/0xda0 fs/btrfs/transaction.c:288
- #4: ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:830 [inline]
- #4: ffff888071adc860 (&delayed_node->mutex){+.+.}-{4:4}, at: __btrfs_commit_inode_delayed_items+0x1c4/0x24a0 fs/btrfs/delayed-inode.c:1126
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6861 Comm: kworker/u8:12 Not tainted 6.12.0-next-20241128-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_unbound btrfs_async_reclaim_metadata_space
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1649
- btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
- btrfs_tree_read_lock fs/btrfs/locking.h:178 [inline]
- btrfs_read_lock_root_node+0x3f/0xd0 fs/btrfs/locking.c:267
- btrfs_search_slot_get_root fs/btrfs/ctree.c:1790 [inline]
- btrfs_search_slot+0x4f7/0x3150 fs/btrfs/ctree.c:2112
- btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4350
- btrfs_insert_delayed_item fs/btrfs/delayed-inode.c:758 [inline]
- btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:836 [inline]
- __btrfs_commit_inode_delayed_items+0xd5d/0x24a0 fs/btrfs/delayed-inode.c:1126
- __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
- flush_space+0x24a/0xcf0 fs/btrfs/space-info.c:775
- btrfs_async_reclaim_metadata_space+0x113/0x350 fs/btrfs/space-info.c:1105
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> add missing regulator-ramp-delay to dcdc regulators accordingly
+>
+> Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
+> ---
+>  .../boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dts    | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-20=
+24.dts b/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dts
+> index 80ccab7b5..b6e76a804 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-2024.dts
+> @@ -238,6 +238,7 @@ reg_dcdc1: dcdc1 {
+>                                 regulator-always-on;
+>                                 regulator-min-microvolt =3D <900000>;
+>                                 regulator-max-microvolt =3D <1160000>;
+> +                               regulator-ramp-delay =3D <640>;
+>                                 regulator-name =3D "vdd-cpu";
+>                         };
+>
+> @@ -245,6 +246,7 @@ reg_dcdc2: dcdc2 {
+>                                 regulator-always-on;
+>                                 regulator-min-microvolt =3D <940000>;
+>                                 regulator-max-microvolt =3D <940000>;
+> +                               regulator-ramp-delay =3D <640>;
+>                                 regulator-name =3D "vdd-gpu-sys";
+>                         };
+>
+> @@ -252,6 +254,7 @@ reg_dcdc3: dcdc3 {
+>                                 regulator-always-on;
+>                                 regulator-min-microvolt =3D <1100000>;
+>                                 regulator-max-microvolt =3D <1100000>;
+> +                               regulator-ramp-delay =3D <640>;
+>                                 regulator-name =3D "vdd-dram";
+>                         };
+>
+> --
+> 2.47.1
+>
 
