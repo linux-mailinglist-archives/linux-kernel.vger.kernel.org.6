@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-432687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7FC9E4EC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:37:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F569E4EC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:38:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D471650FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:37:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0589D281FA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26861B3949;
-	Thu,  5 Dec 2024 07:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987121B412A;
+	Thu,  5 Dec 2024 07:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fdoimh7a"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pTNj3tHf"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8721B1D65;
-	Thu,  5 Dec 2024 07:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A259419FA7C;
+	Thu,  5 Dec 2024 07:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733384208; cv=none; b=oPL0Ta7YM3vO16cOolPQ6jgJrZyU1XMEM9Zqz7AWddlFsvUDa/Jydj5BpMt1p/lWxJMk40lavvocB+EsaaZ613EsknPkLD/DKq/FXb0aySAlbO7KqKGTC0nGQkqdxWEto3NdDrkWCF0XItQepqKXOh21arPHFTcBmIohOGRd56w=
+	t=1733384287; cv=none; b=XmXLAgq2OVWZJN1Z1ebX7UJcLAHMJKyHqm48bHsUHgRLI4VZTtxnHhZCbduH5Cn+5eTic1mJzmlooAbQISECEXFAPdY210NJvHW1+GZ14TaXECksHLdxVjmOoRPc7Xo7cGMY6GvlrIfb06O30+qSrUjhpu/N4zC/FKfCn/ehdgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733384208; c=relaxed/simple;
-	bh=bv5VA+Cju/JsKSTeQi9eqs6SdGH8tjxntLJPWxrPhSA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TFAdys9AKy3TC4Fysi/Cl9TAeRsorxFWuapseH7JlEKEAZXlTfqUSpxR/U0AQJpeW0Fjh4TwbRszZCokLXfJj/P+/BfAw3Z9AU4av0CRlfjwuGvqlHfSmGP3WySICBtf3rkGmEw/unzTYLaDd6C1CTUWM0jm9uaBHVoXgdxEVxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fdoimh7a; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffe2700e91so4828001fa.2;
-        Wed, 04 Dec 2024 23:36:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733384204; x=1733989004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6uJgGFu4A4xX1u6Opk5GLS5w5FpXRFEhH+tkFsox2WY=;
-        b=Fdoimh7ajUgxb7vy/vk8zVwrRvpxTl7yePqSTx9Oz/vc/lIczJWnMs18Ictv20fnV5
-         o9G7ho19lcq9JCKjpCM46bbC7SDGMYj0Ju7j5sO9gCVbU0qq5VcswyOaNMa3ntiYCvS6
-         5m9Lqr2ly1W5zBrsJXbFkKqbE5cRyAucR8W7+wvBBId+DYTSU2oj5cJjXTrBOV3cqjAv
-         2E9F08/6R49xLPdUv9Ux8MmiEiAO1vis3q2BMa63Oc8xvb1Zu82EQsjrYUM6o8rWbeFR
-         eEWYZZoNSrw2k0siSTAQOCWc8k0XeEFRg/owc3w9R338RLACb06VCeg1Fm904WF9UJ5Z
-         jg0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733384204; x=1733989004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6uJgGFu4A4xX1u6Opk5GLS5w5FpXRFEhH+tkFsox2WY=;
-        b=HBbuVbsE/V8qC1azkaO37SawidiU0CN29f+XHbJ/Zu1SthfIe2fylRaHrRAQ+/VdXz
-         9Lc9c1V7tamniqkGYqr7Lt+VjwOMPpIj8XTDq0LJJZOHElexj+5xnm8G6GP7pkjBzakp
-         1CY6MahTnLHdwZCJPZxVo7pR7wb3UVu2OKkm09N5CficRClWowwlI6frSdTH001brLk0
-         W90xMPNQPZrj3jzz2asLck4RXAOhfWUlHNTejwmrDDpoGZq2RzO3TBgpw2uOu2oBmHpB
-         11uIIr2iut8dCx7eprE/d1q+Ecs68ecGzq53VD3ik3qM88IJl7NHWOJj4m18JZEE/vfR
-         TDFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9msXQqhJjYni7ujVkRf5E3OwEpItylCq18Z5b1C7czV3hxkzFD4eGhrqAHeSv+n6Mcr0=@vger.kernel.org, AJvYcCWvDT0FFsLQCrP5o6fPGekeMV9LX7yzhkAJ8Tq/280/oVz5Taut6dhWggF0gF8xwNOa5tBjXDeRA4O+jePT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhMRU76bfIxmrRXHUDXzQBYufsStbUJRZZ9MsebAisovzO2IeO
-	J+Kk15Bw8o+b3IDGIcEv7zSOj9QMrDGvRqVt7QQNtp/m9+ZdNQsW1eRrGXrpvtPlq65pnLiKHKa
-	rljJ0l+S7qE02FNl58AxOu5+nefU=
-X-Gm-Gg: ASbGncs6iDDzNN36dAddlwTz874/7slylNzx3uhanRsn/4KZzKeAlCCKmRJk5NZMa98
-	H1xABTs//xoPt6lBUpXEd5La+8sFtZik=
-X-Google-Smtp-Source: AGHT+IEFMj92jqFqXsdeLuswrg7iDuNWpUsTnXe48DLQx8qptEQPnpVAuFFRYKQFTS+vhOOxqF7TyE166c1MM8QpnQ4=
-X-Received: by 2002:a2e:bc83:0:b0:2fb:955e:5c17 with SMTP id
- 38308e7fff4ca-30009cc52cfmr39878681fa.40.1733384204322; Wed, 04 Dec 2024
- 23:36:44 -0800 (PST)
+	s=arc-20240116; t=1733384287; c=relaxed/simple;
+	bh=CJRa21fhkfOQ3WDvy2H2fJtex0WENeCMl38u7O1ybd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ETNCkyd7e13znSc3yo6IEmJACQPs0bzpoKT95Pz/EE4PyPZuNz79ZppY/LizJcK2OOgxoI88kIqsnSxF7+k0grBPMr0tbl3pYVaZQa88FoaZVTjW91GamfMkKz/lbVDo9LeizL5t28PEJHdsps2iGiDLkRk4PhivOyLZvC8po8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pTNj3tHf; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 63D5860006;
+	Thu,  5 Dec 2024 07:37:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733384277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y6SLLPVCdmdeOlZVKpMCSyV7RHMVrGvEcykzTA5du14=;
+	b=pTNj3tHfzN0aJG83f8B4KfAgU/Tx/BvJQ/KrUUNF4Y6ySQdwOG4EaIsUc88vkVCytGXbg3
+	DAHwZ16XitRnnKLYpOexMNTFxMNMXHvvseQ88h/c37wo/jDn/1oglqi+8EggsUIwzAuBJN
+	o++e3tIZiS8WpKFXxB1vZc/EpGbGC1nlVaYwu3D62cRUTktcLP7ae00H3S+xFsMAeGZVyF
+	JpVEz3eIXC6SwVQhLTrn2LWwAFai1RM097CbkdWHE42iHwJ6xc7hy66wqBUmrE30BDNjEp
+	UttztGb1BIvmtCcu+Clubo3gHcBxqmpQWnsbUu3M6q0PyQ2Y2PrzTs3MgwmSCQ==
+Date: Thu, 5 Dec 2024 08:37:55 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
+ <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou
+ <lizhi.hou@amd.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 6/6] PCI: of: Create device-tree PCI host bridge node
+Message-ID: <20241205083755.1d0e0b3e@bootlin.com>
+In-Reply-To: <20241204214852.GA3017210@bhelgaas>
+References: <20241202131522.142268-7-herve.codina@bootlin.com>
+	<20241204214852.GA3017210@bhelgaas>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115171712.427535-1-laura.nao@collabora.com> <20241204155305.444280-1-laura.nao@collabora.com>
-In-Reply-To: <20241204155305.444280-1-laura.nao@collabora.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 5 Dec 2024 08:36:33 +0100
-Message-ID: <CAFULd4a+GjfN5EgPM-utJNfwo5vQ9Sq+uqXJ62eP9ed7bBJ50w@mail.gmail.com>
-Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on next
-To: Laura Nao <laura.nao@collabora.com>
-Cc: alan.maguire@oracle.com, bpf@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, kernel@collabora.com, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Wed, Dec 4, 2024 at 4:52=E2=80=AFPM Laura Nao <laura.nao@collabora.com> =
-wrote:
->
-> On 11/15/24 18:17, Laura Nao wrote:
-> > I managed to reproduce the issue locally and I've uploaded the vmlinux[=
-1]
-> > (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of th=
-e
-> > modules[3] and its btf data[4] extracted with:
-> >
-> > bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko > cros_kbd_l=
-ed_backlight.ko.raw
-> >
-> > Looking again at the logs[5], I've noticed the following is reported:
-> >
-> > [    0.415885] BPF:    type_id=3D115803 offset=3D177920 size=3D1152
-> > [    0.416029] BPF:
-> > [    0.416083] BPF: Invalid offset
-> > [    0.416165] BPF:
-> >
-> > There are two different definitions of rcu_data in '.data..percpu', one
-> > is a struct and the other is an integer:
-> >
-> > type_id=3D115801 offset=3D177920 size=3D1152 (VAR 'rcu_data')
-> > type_id=3D115803 offset=3D177920 size=3D1152 (VAR 'rcu_data')
-> >
-> > [115801] VAR 'rcu_data' type_id=3D115572, linkage=3Dstatic
-> > [115803] VAR 'rcu_data' type_id=3D1, linkage=3Dstatic
-> >
-> > [115572] STRUCT 'rcu_data' size=3D1152 vlen=3D69
-> > [1] INT 'long unsigned int' size=3D8 bits_offset=3D0 nr_bits=3D64 encod=
-ing=3D(none)
-> >
-> > I assume that's not expected, correct?
-> >
-> > I'll dig a bit deeper and report back if I can find anything else.
->
-> I ran a bisection, and it appears the culprit commit is:
-> https://lore.kernel.org/all/20241021080856.48746-2-ubizjak@gmail.com/
->
-> Hi Uros, do you have any suggestions or insights on resolving this issue?
+Hi Bjorn,
 
-There is a stray ";" at the end of the #define, perhaps this makes a differ=
-ence:
+On Wed, 4 Dec 2024 15:48:52 -0600
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-+#define PERCPU_PTR(__p) \
-+ (typeof(*(__p)) __force __kernel *)(__p);
-+
+> On Mon, Dec 02, 2024 at 02:15:18PM +0100, Herve Codina wrote:
+> > PCI devices device-tree nodes can be already created. This was
+> > introduced by commit 407d1a51921e ("PCI: Create device tree node for
+> > bridge").
+> > 
+> > In order to have device-tree nodes related to PCI devices attached on
+> > their PCI root bus (the PCI bus handled by the PCI host bridge), a PCI
+> > root bus device-tree node is needed. This root bus node will be used as
+> > the parent node of the first level devices scanned on the bus. On
+> > device-tree based systems, this PCI root bus device tree node is set to
+> > the node of the related PCI host bridge. The PCI host bridge node is
+> > available in the device-tree used to describe the hardware passed at
+> > boot.
+> > 
+> > On non device-tree based system (such as ACPI), a device-tree node for
+> > the PCI host bridge or for the root bus do not exist. Indeed, the PCI
+> > host bridge is not described in a device-tree used at boot simply
+> > because no device-tree are passed at boot.  
+> 
+> s/do not exist/does not exist/
 
-and SHIFT_PERCPU_PTR macro now expands to:
+Will be fix in the next iteration.
 
-RELOC_HIDE((typeof(*(p)) __force __kernel *)(p);, (offset))
+> 
+> > +void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
+> > +{
+> > +	struct device_node *np = NULL;
+> > +	struct of_changeset *cset;
+> > +	const char *name;
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * If there is already a device-tree node linked to the PCI bus handled
+> > +	 * by this bridge (i.e. the PCI root bus), nothing to do.
+> > +	 */
+> > +	if (pci_bus_to_OF_node(bridge->bus))
+> > +		return;
+> > +
+> > +	/* The root bus has no node. Check that the host bridge has no node too */
+> > +	if (bridge->dev.of_node) {
+> > +		pr_err("PCI host bridge of_node already set");  
+> 
+> Can we use dev_err() here?
 
-A follow-up patch in the series changes PERCPU_PTR macro to:
+Yes indeed.
+Will be change in the next iteration.
 
-#define PERCPU_PTR(__p) \
-({ \
-unsigned long __pcpu_ptr =3D (__force unsigned long)(__p); \
-(typeof(*(__p)) __force __kernel *)(__pcpu_ptr); \
-})
-
-so this should again correctly cast the value.
-
-Uros.
+Best regards,
+Hervé
 
