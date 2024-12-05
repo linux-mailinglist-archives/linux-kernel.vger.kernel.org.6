@@ -1,210 +1,387 @@
-Return-Path: <linux-kernel+bounces-433875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07F69E5E36
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:24:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238149E5E3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F67C1696F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99FEA18841B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D22A229B07;
-	Thu,  5 Dec 2024 18:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8156F229B15;
+	Thu,  5 Dec 2024 18:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGGfBYP5"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="iEtQFEgM"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C08221461;
-	Thu,  5 Dec 2024 18:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178DC226EF2
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733423037; cv=none; b=W7iX+118kWBaU3GaGJgXjQZDATSMIMolzWk5gkKhBDuHTLf05ZWRIMYrlm0FRwyDVR9oJrnBQ2jbdG0fDG4YkR2km1kFKw/Q4gqjOt/hCFfEupcTs4MS87j1C+uR3pNWlqbbfAEbspmXQwiS0PLXzzQa2Y2moY5pI6o0CnWVczw=
+	t=1733423188; cv=none; b=gqaDVS3glKHc6w67PyOIzrqFClMilkUMQRIkfjkjXT9mxNSpcfjIRzEJJ/g8T7xoAR8ujf4pCSjHyGFjvHCENmO6mBNgH+VeGj/b5tWJ1e23lKq24sWjr2XjMnWZtnuQ2I2RCJTUYceL74hxbzEWejI9+67svQZgr/uLtiA7xc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733423037; c=relaxed/simple;
-	bh=7MIvOXpQRwWgNGJBKXXgJfGLLuz2ziCk05E11zLyLBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hrv8I46QoPl3EdhCEiFbW6uZwbXTVYUMaX/DYEBNt9rNe8muHsJBomKcSBm2D1KpqDgIlPUiaUowfiESge4aJCiscGaCigBUvbYiq3EzIPqYTnHwm29hp8DJtVla+50tVLac6Sa9QtxrI1nqxmWDEwljO1GmrLMPTaUrCuwavoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGGfBYP5; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fd21e4aa2eso324271a12.2;
-        Thu, 05 Dec 2024 10:23:54 -0800 (PST)
+	s=arc-20240116; t=1733423188; c=relaxed/simple;
+	bh=wk27eiNdndTw/DCukQ1VVEZg8ceGapZ8EAnmy3rhvA0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MdMIg09qbSqk5Rvm+ewszqgnr2ZTT2N83qFYjpbOs2dnZPruai2d9m08hgk7Oq88/NiojUr1ZdX9zx3tnyMYwXY3l/ZdRB60m0msz2zCkzDDYYQ3biQmMY3UGbdeuKvjWH6EFrhgp9SfWh0kzRFZyvPDWDw7uGVsG9AkKefSU+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=iEtQFEgM; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6d8c7349401so8448556d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 10:26:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733423034; x=1734027834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1733423184; x=1734027984; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V6vYqS8Uyw6PERcNHV3WQMwZ3bQaTaY3sWZxipW8AOs=;
-        b=TGGfBYP5XfX8+1k2/Dr4qCUPxFwSyPE135RbvnWci8NIz1vfDVMb3qC1stw6SE8X2x
-         F9KwuxJMu3dCxDg+GvecYHhpQfrXGMpUyuvVR5McDeGR75viYHA9ABq0JVu7u1Avwwkz
-         jBBDfITOD2E2kDDvKwan4X5AeCIT/AvnnEiqlvmk8NWmco6BYGCykLNUMjew3rb1y/Y5
-         yHminiU4I5ct/j3FCaVpeBdsT3tgMyuLnWq0PprZdDikI90ldkYbDNHnxYt3NE2Yi7Uq
-         GIpSuWO0g2rFY3N0XavuLp2hMrb/lgIGua7IiiykR7bDp+v3ObzXYfFwWoTfXvslP4J3
-         EjPQ==
+        bh=PoUO6pQ0vn1+CceIy9BstLi27T2zXhzpZrFaciePhSA=;
+        b=iEtQFEgM/DkoYSYnz7Sgjun/iYQtqSHbLvIjQATDBx56nskMkA4hLO9ANikUlulK0b
+         nWf1YpUSLVB32P8+R79DYtdtr8CUA0qBxgVdpOMSbmhf3FsKGJCPEp/zvEWABIcVMEzf
+         XjsWHoTCMnArRTTc25Z5nDhgI+CoqJ0f68ehjEe2VvOo4JYgVxLtarQ30nBrqOGn+yng
+         2RYuNje9lOtQzCcuGfPuOZBDWwm0M3GRiUk8CKqv+nVBFeJm1/ZeCHFKI9T+J5EwtlLV
+         UQKWd0byaFTkeMCVtjZ7mfvqEMKqNRnYqiA7AlqSq6t4MYaOG5fv4iGFIMlht17cGzEx
+         XOdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733423034; x=1734027834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V6vYqS8Uyw6PERcNHV3WQMwZ3bQaTaY3sWZxipW8AOs=;
-        b=ZH+cRIgU5LdaLrJlEIivSPBZ3Km1mT10nmHCs4Cj6DtKRzzjXu6W7pKbHIc1bGH1KH
-         tG0TjaIhCvncMF5Se9TE94+u4+qaycQ5nxKvtutSSB74I3BjUIPuWaWmNkO0ylhuO7Tq
-         wVBVZ0MyTLepzTry363oNuS6KZMNHMiptCmJXWofwtWUGXH2Y0byMCPTFMzUv66Pe7j/
-         0lQz2K8VbL2qxim9ydVkK/FFV5rK/tZvvPwDIXZOaJLx1Iy8Ma7DwRsvJKKzUiaCFuMv
-         oSrnot6hMXdL6PSvGVu87AM75lA/IL/HssOEwEcDcoJCU6Jyw1ES4vCyBoU1L7DOmqE7
-         JoSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNn53yWwQVwkzj4NSHLi9hOdHQNJUjdfJdbmMz+7yviFaOgXBZEM+LdtlupLDfOdYsGoGuE3pRDJUZyj5IAy+nq5AV@vger.kernel.org, AJvYcCV9Akgat/pMTCmq5ppiEc0vur7HyGDpE7nV7DyW7Yq0n8hRvzvpC4pyvqGfgmXK/+qLXUc=@vger.kernel.org, AJvYcCWAqgPLI1J1Orgn1dGAHtpO6gMKYDILF834iKW5tbQsQaTyCU5eXV85ZV/K4UHGWWuofifSAHNAD6S4dso2@vger.kernel.org, AJvYcCWwPYnY/PU6JWm7SDxv2R/FtKUUyngykjY+tEnTPREjWbWVZLA8Tyfqo9eXx1Rcv4P5aVEBVG0S8Ltkl+I8ZVCljg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXdQLYfJoJ75Flao2sBQs8qVbNgCOL7xuDOBbhvAnO0lZEiH4S
-	61xOBJvR7kqcPjyJ+apNrmURJDkka2Yt+wPn/XqSsZ42xZZrcyqOM47FTgQgM25vN9xYeGaKhoi
-	DZfn9Kr2z8mlXTGwyKAxzxMBhBV4=
-X-Gm-Gg: ASbGncttcis3LjJljm9AEBfABXWUGcnx8BPpr77xgdiOEjoKKRhTShk7bubf9+G/VHn
-	RT6PdOJ/zG9OYU9ojXNkLoy2W6VKoCLd8F66McLo0UwmmZTA=
-X-Google-Smtp-Source: AGHT+IG02vwYnNGUnRdTtdLBBLBjtBWHIEK/29fwZCfadVa3BPrhggnUUP4hwsu2IUQT6N/MVYql0aoQrx3C2F9Pu5o=
-X-Received: by 2002:a17:90b:520b:b0:2ee:b6c5:1def with SMTP id
- 98e67ed59e1d1-2ef6955f713mr269512a91.8.1733423034015; Thu, 05 Dec 2024
- 10:23:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733423184; x=1734027984;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PoUO6pQ0vn1+CceIy9BstLi27T2zXhzpZrFaciePhSA=;
+        b=eCyqJcu1YL0K7+9KyPMPByeIPI6awcJOSA8+xkNvdst/XSL77rbmR83Q/wlEXudM/E
+         c3r2eX5rHG0aGU5dQjfy4PAHAoOoDu3XA+ZrIO7MR7MsB2EB4ue8gx3qmElWWxJY7mdo
+         3ASacpGalkjStkkDPXdY+GpXL8JNbXJ/zgS5GaXytrZkXZkTcOWu3SO69MWq+GraEYmA
+         ZTh/w+3MZAg/nypE44nURazpbcab6nXsb83ozMj8iRrcs7rKkEBr3SS3t64ewLeXG6Fg
+         wsdyvvvwTSXfBNb8FXEEReiL+uGgdo02Jq2bDMfuVBx+eQpZ/FhNvJ97/L5BNAqopqQI
+         RkXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2gHUuYBE5MRcn9VTbw9jJcicxK1Y+P4lnKncC9xwfQC/VURlbmKnDsad7DdG4IMG4WlAZzey8as+mHss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP+lUB+Fwfm1Lpc/71HbThzHFJI4U3yJEfaPMdP+8KHoywwtLx
+	BjS42rEzqNdEwbskOMt8Zjtn9GUho3YQSrflJCmA2xZMuR6LxHO0lVsFx82I1HU=
+X-Gm-Gg: ASbGncs0qv5ZRHa/zNvDSZIErKB4LeTTCkUwEq/TCkEKIYcTlqCoK2/4xUXHuWrwXDg
+	p7f35rglK4qpYZEPC6rTOO1h7QEx+wLR4NoMbV5PXXJRR5YA0SwRp994FxewVna0LXx5EVDmLoN
+	8c4X7RO9xpgwHXb/Ev0e1AJsCcMmsEZiHtJ3hKIsdIEaOIHBmd9h/A4773LQlQmMCuu+Ff1Duzn
+	4c9A5QHfoo7NhTxLOdh1vowWmkoh3+z01buHGkqr6MrNLxOKHU=
+X-Google-Smtp-Source: AGHT+IF7C9Gtarg7lsRgFlLYcqYfSdzEnblrvPPksqXAjwHiA/qI3nTSUHdTXLYCfa+90Cswhii26g==
+X-Received: by 2002:a05:6214:27eb:b0:6d4:2fee:c27b with SMTP id 6a1803df08f44-6d8b7395fddmr140735286d6.27.1733423183998;
+        Thu, 05 Dec 2024 10:26:23 -0800 (PST)
+Received: from nicolas-tpx395.localdomain ([2606:6d00:15:862e::7a9])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da6b54b6sm9020216d6.62.2024.12.05.10.26.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 10:26:23 -0800 (PST)
+Message-ID: <cf7b66d0671e223263a7d33b6e519850a5ff2fb5.camel@ndufresne.ca>
+Subject: Re: [PATCH] media: allegro-dvt: Moving the current driver to
+ subdirectory
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Michael Tretter <m.tretter@pengutronix.de>, Yassine Ouaissa	
+ <yassine.ouaissa@allegrodvt.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Pengutronix Kernel Team	 <kernel@pengutronix.de>,
+ Michal Simek <michal.simek@amd.com>, Hans Verkuil	 <hverkuil@xs4all.nl>,
+ Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>,  Gaosheng Cui <cuigaosheng1@huawei.com>,
+ Uwe Kleine-K??nig <u.kleine-koenig@baylibre.com>, Ricardo Ribalda	
+ <ribalda@chromium.org>, open list <linux-kernel@vger.kernel.org>, "open
+ list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)"	 <linux-media@vger.kernel.org>,
+ "moderated list:ARM/ZYNQ ARCHITECTURE"	
+ <linux-arm-kernel@lists.infradead.org>
+Date: Thu, 05 Dec 2024 13:26:22 -0500
+In-Reply-To: <Z1FrT3gBWE5VgMOS@pengutronix.de>
+References: <20241202102654.40472-1-yassine.ouaissa@allegrodvt.com>
+	 <Z02SLI05JhNDtXFn@pengutronix.de>
+	 <abshbp4blqxasxvf4ibumtfqcr7hytehmhzs2yag3nfpbcl47x@ndjg7al4iysk>
+	 <Z1CC_PQF8hCzmPoQ@pengutronix.de>
+	 <46tabetrggwplddtssags6eyjcd6x7znaquerjg3z5a63ykle4@z5fqzikwv2o4>
+	 <Z1FrT3gBWE5VgMOS@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022073141.3291245-1-liaochang1@huawei.com> <CAEf4BzY-0Eu27jyT_s2kRO1UuUPOkE9_SRrBOqu2gJfmxsv+3A@mail.gmail.com>
-In-Reply-To: <CAEf4BzY-0Eu27jyT_s2kRO1UuUPOkE9_SRrBOqu2gJfmxsv+3A@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 5 Dec 2024 10:23:42 -0800
-Message-ID: <CAEf4BzaRzHFs-gyC5FGsbh4EX4=-QP4_i7A5ts++-J0JPaOb1g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] uprobes: Improve scalability by reducing the
- contention on siglock
-To: Liao Chang <liaochang1@huawei.com>
-Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 6:07=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Tue, Oct 22, 2024 at 12:42=E2=80=AFAM Liao Chang <liaochang1@huawei.co=
-m> wrote:
-> >
-> > The profiling result of BPF selftest on ARM64 platform reveals the
-> > significant contention on the current->sighand->siglock is the
-> > scalability bottleneck. The reason is also very straightforward that al=
-l
-> > producer threads of benchmark have to contend the spinlock mentioned to
-> > resume the TIF_SIGPENDING bit in thread_info that might be removed in
-> > uprobe_deny_signal().
-> >
-> > The contention on current->sighand->siglock is unnecessary, this series
-> > remove them thoroughly. I've use the script developed by Andrii in [1]
-> > to run benchmark. The CPU used was Kunpeng916 (Hi1616), 4 NUMA nodes,
-> > 64 cores@2.4GHz running the kernel on next tree + the optimization in
-> > [2] for get_xol_insn_slot().
-> >
-> > before-opt
-> > ----------
-> > uprobe-nop      ( 1 cpus):    0.907 =C2=B1 0.003M/s  (  0.907M/s/cpu)
-> > uprobe-nop      ( 2 cpus):    1.676 =C2=B1 0.008M/s  (  0.838M/s/cpu)
-> > uprobe-nop      ( 4 cpus):    3.210 =C2=B1 0.003M/s  (  0.802M/s/cpu)
-> > uprobe-nop      ( 8 cpus):    4.457 =C2=B1 0.003M/s  (  0.557M/s/cpu)
-> > uprobe-nop      (16 cpus):    3.724 =C2=B1 0.011M/s  (  0.233M/s/cpu)
-> > uprobe-nop      (32 cpus):    2.761 =C2=B1 0.003M/s  (  0.086M/s/cpu)
-> > uprobe-nop      (64 cpus):    1.293 =C2=B1 0.015M/s  (  0.020M/s/cpu)
-> >
-> > uprobe-push     ( 1 cpus):    0.883 =C2=B1 0.001M/s  (  0.883M/s/cpu)
-> > uprobe-push     ( 2 cpus):    1.642 =C2=B1 0.005M/s  (  0.821M/s/cpu)
-> > uprobe-push     ( 4 cpus):    3.086 =C2=B1 0.002M/s  (  0.771M/s/cpu)
-> > uprobe-push     ( 8 cpus):    3.390 =C2=B1 0.003M/s  (  0.424M/s/cpu)
-> > uprobe-push     (16 cpus):    2.652 =C2=B1 0.005M/s  (  0.166M/s/cpu)
-> > uprobe-push     (32 cpus):    2.713 =C2=B1 0.005M/s  (  0.085M/s/cpu)
-> > uprobe-push     (64 cpus):    1.313 =C2=B1 0.009M/s  (  0.021M/s/cpu)
-> >
-> > uprobe-ret      ( 1 cpus):    1.774 =C2=B1 0.000M/s  (  1.774M/s/cpu)
-> > uprobe-ret      ( 2 cpus):    3.350 =C2=B1 0.001M/s  (  1.675M/s/cpu)
-> > uprobe-ret      ( 4 cpus):    6.604 =C2=B1 0.000M/s  (  1.651M/s/cpu)
-> > uprobe-ret      ( 8 cpus):    6.706 =C2=B1 0.005M/s  (  0.838M/s/cpu)
-> > uprobe-ret      (16 cpus):    5.231 =C2=B1 0.001M/s  (  0.327M/s/cpu)
-> > uprobe-ret      (32 cpus):    5.743 =C2=B1 0.003M/s  (  0.179M/s/cpu)
-> > uprobe-ret      (64 cpus):    4.726 =C2=B1 0.016M/s  (  0.074M/s/cpu)
-> >
-> > after-opt
-> > ---------
-> > uprobe-nop      ( 1 cpus):    0.985 =C2=B1 0.002M/s  (  0.985M/s/cpu)
-> > uprobe-nop      ( 2 cpus):    1.773 =C2=B1 0.005M/s  (  0.887M/s/cpu)
-> > uprobe-nop      ( 4 cpus):    3.304 =C2=B1 0.001M/s  (  0.826M/s/cpu)
-> > uprobe-nop      ( 8 cpus):    5.328 =C2=B1 0.002M/s  (  0.666M/s/cpu)
-> > uprobe-nop      (16 cpus):    6.475 =C2=B1 0.002M/s  (  0.405M/s/cpu)
-> > uprobe-nop      (32 cpus):    4.831 =C2=B1 0.082M/s  (  0.151M/s/cpu)
-> > uprobe-nop      (64 cpus):    2.564 =C2=B1 0.053M/s  (  0.040M/s/cpu)
-> >
-> > uprobe-push     ( 1 cpus):    0.964 =C2=B1 0.001M/s  (  0.964M/s/cpu)
-> > uprobe-push     ( 2 cpus):    1.766 =C2=B1 0.002M/s  (  0.883M/s/cpu)
-> > uprobe-push     ( 4 cpus):    3.290 =C2=B1 0.009M/s  (  0.823M/s/cpu)
-> > uprobe-push     ( 8 cpus):    4.670 =C2=B1 0.002M/s  (  0.584M/s/cpu)
-> > uprobe-push     (16 cpus):    5.197 =C2=B1 0.004M/s  (  0.325M/s/cpu)
-> > uprobe-push     (32 cpus):    5.068 =C2=B1 0.161M/s  (  0.158M/s/cpu)
-> > uprobe-push     (64 cpus):    2.605 =C2=B1 0.026M/s  (  0.041M/s/cpu)
-> >
-> > uprobe-ret      ( 1 cpus):    1.833 =C2=B1 0.001M/s  (  1.833M/s/cpu)
-> > uprobe-ret      ( 2 cpus):    3.384 =C2=B1 0.003M/s  (  1.692M/s/cpu)
-> > uprobe-ret      ( 4 cpus):    6.677 =C2=B1 0.004M/s  (  1.669M/s/cpu)
-> > uprobe-ret      ( 8 cpus):    6.854 =C2=B1 0.005M/s  (  0.857M/s/cpu)
-> > uprobe-ret      (16 cpus):    6.508 =C2=B1 0.006M/s  (  0.407M/s/cpu)
-> > uprobe-ret      (32 cpus):    5.793 =C2=B1 0.009M/s  (  0.181M/s/cpu)
-> > uprobe-ret      (64 cpus):    4.743 =C2=B1 0.016M/s  (  0.074M/s/cpu)
-> >
-> > Above benchmark results demonstrates a obivious improvement in the
-> > scalability of trig-uprobe-nop and trig-uprobe-push, the peak throughpu=
-t
-> > of which are from 4.5M/s to 6.4M/s and 3.3M/s to 5.1M/s individually.
-> >
-> > v4->v3:
-> > 1. Rebase v3 [3] to the lateset tip/perf/core.
-> > 2. Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 3. Acked-by: Oleg Nesterov <oleg@redhat.com>
-> >
-> > v3->v2:
-> > Renaming the flag in [2/2], s/deny_signal/signal_denied/g.
-> >
-> > v2->v1:
-> > Oleg pointed out the _DENY_SIGNAL will be replaced by _ACK upon the
-> > completion of singlestep which leads to handle_singlestep() has no
-> > chance to restore the removed TIF_SIGPENDING [3] and some case in
-> > question. So this revision proposes to use a flag in uprobe_task to
-> > track the denied TIF_SIGPENDING instead of new UPROBE_SSTEP state.
-> >
-> > [1] https://lore.kernel.org/all/20240731214256.3588718-1-andrii@kernel.=
-org
-> > [2] https://lore.kernel.org/all/20240727094405.1362496-1-liaochang1@hua=
-wei.com
-> > [3] https://lore.kernel.org/all/20240815014629.2685155-1-liaochang1@hua=
-wei.com/
-> >
-> > Liao Chang (2):
-> >   uprobes: Remove redundant spinlock in uprobe_deny_signal()
-> >   uprobes: Remove the spinlock within handle_singlestep()
-> >
-> >  include/linux/uprobes.h |  1 +
-> >  kernel/events/uprobes.c | 10 +++++-----
-> >  2 files changed, 6 insertions(+), 5 deletions(-)
-> >
-> > --
-> > 2.34.1
-> >
->
-> This patch set has been ready for a long while, can we please apply it
-> to perf/core as well? Thank you!
+Hi Yassine,
 
-Liao,
+Le jeudi 05 d=C3=A9cembre 2024 =C3=A0 09:58 +0100, Michael Tretter a =C3=A9=
+crit=C2=A0:
+> Hi Yassine,
+>=20
+> On Thu, 05 Dec 2024 08:11:48 +0000, Yassine Ouaissa wrote:
+> > On 04.12.2024 17:27, Michael Tretter wrote:
+> > > On Wed, 04 Dec 2024 14:44:31 +0000, Yassine Ouaissa wrote:
+> > > > On 02.12.2024 11:55, Michael Tretter wrote:
+> > > > > On Mon, 02 Dec 2024 11:26:38 +0100, Yassine Ouaissa wrote:
+> > > > > What kind of conflicts do you encounter or expect? It's kind of
+> > > > > surprising that your driver would conflict with anything in the e=
+xisting
+> > > > > driver.
+> > > >=20
+> > > > The current "NOT allegro" driver support only the ZynqMP (ex : ZCU1=
+06/ZCU104 ).
+> > > > And the upcoming driver, has support for many platforms.
+> > >=20
+> > > What are the supported platforms of the new driver? Does your driver
+> > > support ZynqMP, too?
+> > >=20
+> > The upcoming driver is not using the ZynqMP, it can be used by other
+> > clients including Xilinx.
+> > > If there are enough similarities between the encoders, I'd happily
+> > > replace parts of the current driver with functionality of the upcomin=
+g
+> > > driver or reuse the infrastructure of the new driver.
+> > >=20
+> >=20
+> > For now, we do have only the decoder (stateful). the encoder is "in
+> > progress". We prefer to have a separate driver core for each platform.
+>=20
+> Thanks! I'd like to wait until I've seen your patches before agreeing to
+> move the driver to a subdirectory. Maybe even include this patch as the
+> first patch in your series to give a full picture of the new structure.
 
-This patch set doesn't apply cleanly to perf/core anymore, can you
-please rebase one more time and resend? Thanks!
+I wonder if both you have the same definition of "platform". For me it soun=
+ded
+like "a driver per SoC" and that is a big no no.
+
+For stateful codec, what differentiate them is the interface with the firmw=
+are
+and state machine used to driver them. If these are incompatible with the
+generation of design on ZynqMP 104/106, then splitting the driver is the wa=
+y to
+go, even if the new interface could endup on older SoC through a firmware
+update.
+
+This is pretty much the direction taken by Qualcomm while moving from Venus
+interface to Iris interface, and on some SoC (platform), this is just a fir=
+mware
+swap and different compatible in the DT.
+
+Nicolas
+
+p.s. Yassine, its fine to state that your driver will be "pre-sillicon" tes=
+ted,
+that helps remove the confusion. Looking forward seeing some code of course=
+,
+that will also help, from there, Michael will better judge if there is an
+overlap or not. Mid-ground solution exist, like creating allegro-common.ko.
+
+>=20
+> Michael
+>=20
+> > > >=20
+> > > > > I'd like to see how you plan to integrate your driver, what it lo=
+oks
+> > > > > like and what conflicts with the existing driver actually occur. =
+Without
+> > > > > that information I don't see the point in moving the driver to a
+> > > > > sub-directory.
+> > > >=20
+> > > > The upcoming driver is not using the parsing, conversion inside of =
+the
+> > > > driver. Actually the new Gen of ALLEGRO IP does that.
+> > >=20
+> > > Sorry, I don't understand what you mean by parsing and conversion. Do
+> > > you mean the mailbox messages or the NAL units?
+> > >=20
+> > > Can you point me to some repository with your upcoming driver? I'd
+> > > really like to know what's coming up to have an informed discussion h=
+ow
+> > > to structure the directory.
+> > >=20
+> > > Michael
+> > >=20
+> >=20
+> > Yassine
+> > > > > >=20
+> > > > > > Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+> > > > > > ---
+> > > > > >  MAINTAINERS                                               | 2 =
++-
+> > > > > >  drivers/media/platform/allegro-dvt/Kconfig                | 4 =
+++--
+> > > > > >  drivers/media/platform/allegro-dvt/Makefile               | 8 =
+++------
+> > > > > >  drivers/media/platform/allegro-dvt/zynqmp/Makefile        | 6 =
+++++++
+> > > > > >  .../media/platform/allegro-dvt/{ =3D> zynqmp}/nal-h264.c    | =
+0
+> > > > > >  .../media/platform/allegro-dvt/{ =3D> zynqmp}/nal-h264.h    | =
+0
+> > > > > >  .../media/platform/allegro-dvt/{ =3D> zynqmp}/nal-hevc.c    | =
+0
+> > > > > >  .../media/platform/allegro-dvt/{ =3D> zynqmp}/nal-hevc.h    | =
+0
+> > > > > >  .../media/platform/allegro-dvt/{ =3D> zynqmp}/nal-rbsp.c    | =
+0
+> > > > > >  .../media/platform/allegro-dvt/{ =3D> zynqmp}/nal-rbsp.h    | =
+0
+> > > > > >  .../{allegro-core.c =3D> zynqmp/zynqmp-allegro-core.c}      | =
+2 +-
+> > > > > >  .../{allegro-mail.c =3D> zynqmp/zynqmp-allegro-mail.c}      | =
+2 +-
+> > > > > >  .../{allegro-mail.h =3D> zynqmp/zynqmp-allegro-mail.h}      | =
+0
+> > > > > >  13 files changed, 13 insertions(+), 11 deletions(-)
+> > > > > >  create mode 100644 drivers/media/platform/allegro-dvt/zynqmp/M=
+akefile
+> > > > > >  rename drivers/media/platform/allegro-dvt/{ =3D> zynqmp}/nal-h=
+264.c (100%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{ =3D> zynqmp}/nal-h=
+264.h (100%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{ =3D> zynqmp}/nal-h=
+evc.c (100%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{ =3D> zynqmp}/nal-h=
+evc.h (100%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{ =3D> zynqmp}/nal-r=
+bsp.c (100%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{ =3D> zynqmp}/nal-r=
+bsp.h (100%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{allegro-core.c =3D>=
+ zynqmp/zynqmp-allegro-core.c} (99%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{allegro-mail.c =3D>=
+ zynqmp/zynqmp-allegro-mail.c} (99%)
+> > > > > >  rename drivers/media/platform/allegro-dvt/{allegro-mail.h =3D>=
+ zynqmp/zynqmp-allegro-mail.h} (100%)
+> > > > > >=20
+> > > > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > > > index 7292e4a1ddb8..d79efe6f8992 100644
+> > > > > > --- a/MAINTAINERS
+> > > > > > +++ b/MAINTAINERS
+> > > > > > @@ -795,7 +795,7 @@ R:	Pengutronix Kernel Team <kernel@pengutro=
+nix.de>
+> > > > > >  L:	linux-media@vger.kernel.org
+> > > > > >  S:	Maintained
+> > > > > >  F:	Documentation/devicetree/bindings/media/allegro,al5e.yaml
+> > > > > > -F:	drivers/media/platform/allegro-dvt/
+> > > > > > +F:	drivers/media/platform/allegro-dvt/zynqmp
+> > > > > >=20
+> > > > > >  ALLIED VISION ALVIUM CAMERA DRIVER
+> > > > > >  M:	Tommaso Merciai <tomm.merciai@gmail.com>
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/Kconfig b/drive=
+rs/media/platform/allegro-dvt/Kconfig
+> > > > > > index 2182e1277568..9bc7e99788b8 100644
+> > > > > > --- a/drivers/media/platform/allegro-dvt/Kconfig
+> > > > > > +++ b/drivers/media/platform/allegro-dvt/Kconfig
+> > > > > > @@ -2,8 +2,8 @@
+> > > > > >=20
+> > > > > >  comment "Allegro DVT media platform drivers"
+> > > > > >=20
+> > > > > > -config VIDEO_ALLEGRO_DVT
+> > > > > > -	tristate "Allegro DVT Video IP Core"
+> > > > > > +config VIDEO_ZYNQMP_ALLEGRO_DVT
+> > > > > > +	tristate "Allegro DVT Video IP Core for ZynqMP"
+> > > > > >  	depends on V4L_MEM2MEM_DRIVERS
+> > > > > >  	depends on VIDEO_DEV
+> > > > > >  	depends on ARCH_ZYNQMP || COMPILE_TEST
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/Makefile b/driv=
+ers/media/platform/allegro-dvt/Makefile
+> > > > > > index 66108a303774..04727c5f7ef4 100644
+> > > > > > --- a/drivers/media/platform/allegro-dvt/Makefile
+> > > > > > +++ b/drivers/media/platform/allegro-dvt/Makefile
+> > > > > > @@ -1,6 +1,2 @@
+> > > > > > -# SPDX-License-Identifier: GPL-2.0
+> > > > > > -
+> > > > > > -allegro-objs :=3D allegro-core.o allegro-mail.o
+> > > > > > -allegro-objs +=3D nal-rbsp.o nal-h264.o nal-hevc.o
+> > > > > > -
+> > > > > > -obj-$(CONFIG_VIDEO_ALLEGRO_DVT) +=3D allegro.o
+> > > > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > > > +obj-y +=3D zynqmp/
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/zynqmp/Makefile=
+ b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..a8ddb9cf93a8
+> > > > > > --- /dev/null
+> > > > > > +++ b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
+> > > > > > @@ -0,0 +1,6 @@
+> > > > > > +# SPDX-License-Identifier: GPL-2.0
+> > > > > > +
+> > > > > > +zynqmp-allegro-objs :=3D zynqmp-allegro-core.o zynqmp-allegro-=
+mail.o
+> > > > > > +zynqmp-allegro-objs +=3D nal-rbsp.o nal-h264.o nal-hevc.o
+> > > > > > +
+> > > > > > +obj-$(CONFIG_VIDEO_ZYNQMP_ALLEGRO_DVT) +=3D zynqmp-allegro.o
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/nal-h264.c b/dr=
+ivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
+> > > > > > similarity index 100%
+> > > > > > rename from drivers/media/platform/allegro-dvt/nal-h264.c
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/nal-h264.h b/dr=
+ivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
+> > > > > > similarity index 100%
+> > > > > > rename from drivers/media/platform/allegro-dvt/nal-h264.h
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.c b/dr=
+ivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
+> > > > > > similarity index 100%
+> > > > > > rename from drivers/media/platform/allegro-dvt/nal-hevc.c
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h b/dr=
+ivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
+> > > > > > similarity index 100%
+> > > > > > rename from drivers/media/platform/allegro-dvt/nal-hevc.h
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.c b/dr=
+ivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
+> > > > > > similarity index 100%
+> > > > > > rename from drivers/media/platform/allegro-dvt/nal-rbsp.c
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.h b/dr=
+ivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
+> > > > > > similarity index 100%
+> > > > > > rename from drivers/media/platform/allegro-dvt/nal-rbsp.h
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c =
+b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
+> > > > > > similarity index 99%
+> > > > > > rename from drivers/media/platform/allegro-dvt/allegro-core.c
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-alle=
+gro-core.c
+> > > > > > index e491399afcc9..8895d7755987 100644
+> > > > > > --- a/drivers/media/platform/allegro-dvt/allegro-core.c
+> > > > > > +++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-=
+core.c
+> > > > > > @@ -31,7 +31,7 @@
+> > > > > >  #include <media/videobuf2-dma-contig.h>
+> > > > > >  #include <media/videobuf2-v4l2.h>
+> > > > > >=20
+> > > > > > -#include "allegro-mail.h"
+> > > > > > +#include "zynqmp-allegro-mail.h"
+> > > > > >  #include "nal-h264.h"
+> > > > > >  #include "nal-hevc.h"
+> > > > > >=20
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.c =
+b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
+> > > > > > similarity index 99%
+> > > > > > rename from drivers/media/platform/allegro-dvt/allegro-mail.c
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-alle=
+gro-mail.c
+> > > > > > index aadc947a77ae..88a98f9e5d00 100644
+> > > > > > --- a/drivers/media/platform/allegro-dvt/allegro-mail.c
+> > > > > > +++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-=
+mail.c
+> > > > > > @@ -12,7 +12,7 @@
+> > > > > >  #include <linux/string.h>
+> > > > > >  #include <linux/videodev2.h>
+> > > > > >=20
+> > > > > > -#include "allegro-mail.h"
+> > > > > > +#include "zynqmp-allegro-mail.h"
+> > > > > >=20
+> > > > > >  const char *msg_type_name(enum mcu_msg_type type)
+> > > > > >  {
+> > > > > > diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.h =
+b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.h
+> > > > > > similarity index 100%
+> > > > > > rename from drivers/media/platform/allegro-dvt/allegro-mail.h
+> > > > > > rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-alle=
+gro-mail.h
+> > > > > > --
+> > > > > > 2.30.2
+> > > > > >=20
+> > > > > >=20
+>=20
+
 
