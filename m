@@ -1,164 +1,244 @@
-Return-Path: <linux-kernel+bounces-432661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2045B9E4E4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:28:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4D49E4E59
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E074916273A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 277181881B2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9ED1B0F22;
-	Thu,  5 Dec 2024 07:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65A719D062;
+	Thu,  5 Dec 2024 07:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWT2MG99"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2c6Aox6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30C3193;
-	Thu,  5 Dec 2024 07:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62402193064
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733383723; cv=none; b=mok3KseYx45k6rZhS01hVbFytk77EfqQX8nqHRyj1HFilCqxmIootsXhDUtDjOb2qbAFsp9rUpOQbfMr+4bEoVR6K1mmjLHL9zgxaSu05xhloNnO5LHZVq4HVGnqrDcD2pDiVYwiFFrlbuh0Zvk5UANF6U5VhcsPr5gQdmGiQH8=
+	t=1733383845; cv=none; b=eQP7aSsDY/NQ1M762yNZxLjiqk9YpmOx4oJ35oOixXmoNaEu84q2lxax5sAG3cHJBl0RCiTvdfVpRrzBO34KPXjJL0ore+9MuGzhYobImoeJKvYeJjS9M3TqPD8dByYqJMvyV2LNLUkrthrtkAuu05wNwovPYb1clX3mnsZVbdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733383723; c=relaxed/simple;
-	bh=d9RVmBnjc+7Rz3EcXgbJd1R8pcShtevZX/vVfoCaVQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y6xmbgrzZIKUYjjWmVCrevV4vpW1bn402MpKnMnLsjyrxWAbmBT7T5zabNWWJ7iXWhcGp4toxVHWpZ5hoxMP8mwDjwLpPgED9j3VR/9wgll4WdK3WisLKA2vYHtPujSa61PmK+Y2r0v075OEg3zVggBLbal7uKe0OWQ7W4Twp1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWT2MG99; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAF0C4CED1;
-	Thu,  5 Dec 2024 07:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733383723;
-	bh=d9RVmBnjc+7Rz3EcXgbJd1R8pcShtevZX/vVfoCaVQU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TWT2MG99jaEORtLsTyEL3B9M/HfBcFMyu2Bev/rYVVZCVc6ioluM1uxEhxbTGBdJu
-	 +MFp2D9GDPlS/S58wskAkM0Fg0LDVM3e7hjxlEjx7mbqf+ORRlg/J/xlwmHXBkXjn8
-	 CZRFnAsyvbI0CL84iO4OoH1EXf/WDJGUhCNDSsfQ1YcOD4YrcK15BWYUUDJxRdN0Sa
-	 8KaAZnE/oAy6cWdLIqFWqoLx2r7UcRw0/cbVFqwPIK8RfKgZVQSFmQepxQhvmbHBqW
-	 Hyxho/G7aVGP6z2ujouWY/iBGV+4m/infSyrmY/++9sJ9lnoiVr31Q8+JA7KHhNCeN
-	 vhmoY2TLiGnfg==
-Message-ID: <2842aa7b-e369-4c80-b651-a3a9b09d17ff@kernel.org>
-Date: Thu, 5 Dec 2024 08:28:32 +0100
+	s=arc-20240116; t=1733383845; c=relaxed/simple;
+	bh=NqD5sF58CDTkWGLmdQtoA41Xrp3VVW6IOdv4y3n/a+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YWsHPUr3OJcd05WAC/PcGnwNqb49z+eLvdZQsk0k9ctOBlvoKR4hcmrw2U8MZ11ioACR9R6L77iJbaRpgyjliH0N0isS8YW4hl4JfL6+E4Wx5d/0ByAxb86ywV8DG3eP+IlViY9IZQdYid5G8zHA5ERffQ4HbngQZ4eYHljYYAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2c6Aox6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733383842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uglk1RW530eU09b0FpjEe0R39b8xto8c48s2s/SUfbY=;
+	b=A2c6Aox6u1dr/kxbIkaB/YU9NpBaVmrm8g1rk3/wrMtIdiK0aIhc3Tc8/BoHKnS5hmpVX+
+	bFPIS7TW5cIKwJD18kaS3FCFD4l1nAw7zEnI+dEI/48QhWeV8C+MS7vkHoAlaTqNWUVM2A
+	E/pJuSt8OeuOb+gysa4ciQP/lJw4ssg=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-509-qzhgyS9fOeCbzKSJKtt_BA-1; Thu, 05 Dec 2024 02:30:41 -0500
+X-MC-Unique: qzhgyS9fOeCbzKSJKtt_BA-1
+X-Mimecast-MFC-AGG-ID: qzhgyS9fOeCbzKSJKtt_BA
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ee31227b58so657517a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:30:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733383839; x=1733988639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uglk1RW530eU09b0FpjEe0R39b8xto8c48s2s/SUfbY=;
+        b=FXrGkSR4gsInDN0xER//qaHsUdQN9P/tR6xsETtY/L+3wm8B8SKnlDddZjxV15gBES
+         2EZ0eKcNDwBNNL+Sofphb481VLPvQ+Hyv/yiMCXyZH/GXqFVOJ9n/60j9FWDPYVDVpRo
+         UQiu2yvK8OKCoCd4BUvtdB1X0G9qOJ3Ak9IYjiPGAN3jaJ14dcwkzShBqXM0z+nCS2kQ
+         s2vG2A1KBa90HLcK6GUmw/Ho26wmLE82KekSfD5MXDvbdeKTD4ODtmQdnoRnqngIRiCo
+         ysDWXR62v36EBIBPzpZWQLvidtUA6vMel/TjhdVOSvQrptjJf+jM/DYnGoCOft6iAide
+         BjdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAF5HQ1M9be9rp7T9emrJ693SCgK9HELTUCJrOT0bbJb/9PmcLq8kqf7aZ421g7Zey9iGVI1KUbLbVGpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+AjtTnug4fkjPPeZjS9CNmRxcpTurpsGQtsZq/7Luj3wl2q6x
+	1d4PfsNCzNWbUJmepEwDuN5nGAJbBRxCx7Id8VGgIim7zJrMQxYD/n15QqxBrb8VkyHXwtqZRi7
+	hVN9gDNOa+2f7pHfYFJKqkFsb3mhCdBQvjlmjfFV+hEH862au3ZCLea39hUZvNEwWiQNaPbTCMn
+	mDj2n0ir8ttLENwrwjGaC+Zp6+LtPwgfLryFsdxyouW/OHdSk=
+X-Gm-Gg: ASbGnctiECaN8dW9LXTZGOQwam3ctHuk5Zkjvzk6aFB7EBpvgW/hunX5oVWvon1hHRZ
+	f7qkOByCnukxYgsGz016zt4V/Xyx5YUzx
+X-Received: by 2002:a17:90b:4d8a:b0:2ea:3f34:f194 with SMTP id 98e67ed59e1d1-2ef011fb9ccmr13255018a91.10.1733383839396;
+        Wed, 04 Dec 2024 23:30:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFMMwL1bTc4PoqKqF8izVq/aJ/lbpuCSSTuhCaNG73vAilLr4eVAuuBIyxLEccKN5ycgYejTdQgAEKMCqurazQ=
+X-Received: by 2002:a17:90b:4d8a:b0:2ea:3f34:f194 with SMTP id
+ 98e67ed59e1d1-2ef011fb9ccmr13254989a91.10.1733383838970; Wed, 04 Dec 2024
+ 23:30:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 05/14] dt-bindings: clock: thead,th1520: Add
- support for Video Output subsystem
-To: Stephen Boyd <sboyd@kernel.org>,
- Michal Wilczynski <m.wilczynski@samsung.com>, airlied@gmail.com,
- aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com,
- frank.binns@imgtec.com, guoren@kernel.org, jassisinghbrar@gmail.com,
- jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com,
- maarten.lankhorst@linux.intel.com, matt.coster@imgtec.com,
- mripard@kernel.org, mturquette@baylibre.com, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, simona@ffwll.ch,
- tzimmermann@suse.de, ulf.hansson@linaro.org, wefu@redhat.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
- <CGME20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7@eucas1p1.samsung.com>
- <20241203134137.2114847-6-m.wilczynski@samsung.com>
- <f21ffd12-167b-4d10-9017-33041ec322b0@kernel.org>
- <07bfb02a-1df3-4a03-83bb-d7edc540739d@samsung.com>
- <1b05b11b2a8287c0ff4b6bdd079988c7.sboyd@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1b05b11b2a8287c0ff4b6bdd079988c7.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241204050724.307544-1-koichiro.den@canonical.com> <20241204050724.307544-2-koichiro.den@canonical.com>
+In-Reply-To: <20241204050724.307544-2-koichiro.den@canonical.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 5 Dec 2024 15:30:27 +0800
+Message-ID: <CACGkMEstoBomsuV+hvAbG-2JH8irKcwhG0eq2JhCK-ax1RNY+g@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 1/7] virtio_net: correct netdev_tx_reset_queue()
+ invocation point
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: virtualization@lists.linux.dev, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
+	eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/12/2024 21:21, Stephen Boyd wrote:
->>> No, that's a clear NAK. You claim you have no address space but in the
->>> same time you have address space via regmap.
->>
->> I see your concern. The VOSYS subsystem's address space includes
->> registers for various components, such as clock gates and reset
->> controls, which are scattered throughout the address space as specified
->> in the manual 4.4.1 [2]. Initially, I attempted to use a shared syscon
->> regmap for access, but I realize this might not be the best approach.
->>
->> To address this, I'll specify the 'reg' property in each node to define
->> the address ranges explicitly fragmenting the address space for the VOSYS
->> manually.
->>
->> vosys_clk: clock-controller@ffef528050 {
->>         compatible = "thead,th1520-clk-vo";
->>         reg = <0xff 0xef528050 0x0 0x8>;
->>         #clock-cells = <1>;
->> };
->>
->> pd: power-domain@ffef528000 {
->>         compatible = "thead,th1520-pd";
->>         reg = <0xff 0xef528000 0x0 0x8>;
->>         #power-domain-cells = <1>;
->> };
-> 
-> You should have one node:
-> 
->     clock-controller@ffef528000 {
->       compatible = "thead,th1520-vo";
->       reg = <0xff 0xef528050 0x0 0x1a04>;
+On Wed, Dec 4, 2024 at 1:08=E2=80=AFPM Koichiro Den <koichiro.den@canonical=
+.com> wrote:
+>
+> When virtnet_close is followed by virtnet_open, some TX completions can
+> possibly remain unconsumed, until they are finally processed during the
+> first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
+> [1]. Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
+> before RX napi enable") was not sufficient to eliminate all BQL crash
+> cases for virtio-net.
+>
+> This issue can be reproduced with the latest net-next master by running:
+> `while :; do ip l set DEV down; ip l set DEV up; done` under heavy networ=
+k
+> TX load from inside the machine.
+>
+> netdev_tx_reset_queue() can actually be dropped from virtnet_open path;
+> the device is not stopped in any case. For BQL core part, it's just like
+> traffic nearly ceases to exist for some period. For stall detector added
+> to BQL, even if virtnet_close could somehow lead to some TX completions
+> delayed for long, followed by virtnet_open, we can just take it as stall
+> as mentioned in commit 6025b9135f7a ("net: dqs: add NIC stall detector
+> based on BQL"). Note also that users can still reset stall_max via sysfs.
+>
+> So, drop netdev_tx_reset_queue() from virtnet_enable_queue_pair(). This
+> eliminates the BQL crashes. Note that netdev_tx_reset_queue() is now
+> explicitly required in freeze/restore path, so this patch adds it to
+> free_unused_bufs().
+>
+> [1]:
+> ------------[ cut here ]------------
+> kernel BUG at lib/dynamic_queue_limits.c:99!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
+> Tainted: [N]=3DTEST
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
+> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> RIP: 0010:dql_completed+0x26b/0x290
+> Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
+> 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
+> d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
+> RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
+> RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
+> RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
+> RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
+> R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
+> FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
+> PKRU: 55555554
+> Call Trace:
+>  <IRQ>
+>  ? die+0x32/0x80
+>  ? do_trap+0xd9/0x100
+>  ? dql_completed+0x26b/0x290
+>  ? dql_completed+0x26b/0x290
+>  ? do_error_trap+0x6d/0xb0
+>  ? dql_completed+0x26b/0x290
+>  ? exc_invalid_op+0x4c/0x60
+>  ? dql_completed+0x26b/0x290
+>  ? asm_exc_invalid_op+0x16/0x20
+>  ? dql_completed+0x26b/0x290
+>  __free_old_xmit+0xff/0x170 [virtio_net]
+>  free_old_xmit+0x54/0xc0 [virtio_net]
+>  virtnet_poll+0xf4/0xe30 [virtio_net]
+>  ? __update_load_avg_cfs_rq+0x264/0x2d0
+>  ? update_curr+0x35/0x260
+>  ? reweight_entity+0x1be/0x260
+>  __napi_poll.constprop.0+0x28/0x1c0
+>  net_rx_action+0x329/0x420
+>  ? enqueue_hrtimer+0x35/0x90
+>  ? trace_hardirqs_on+0x1d/0x80
+>  ? kvm_sched_clock_read+0xd/0x20
+>  ? sched_clock+0xc/0x30
+>  ? kvm_sched_clock_read+0xd/0x20
+>  ? sched_clock+0xc/0x30
+>  ? sched_clock_cpu+0xd/0x1a0
+>  handle_softirqs+0x138/0x3e0
+>  do_softirq.part.0+0x89/0xc0
+>  </IRQ>
+>  <TASK>
+>  __local_bh_enable_ip+0xa7/0xb0
+>  virtnet_open+0xc8/0x310 [virtio_net]
+>  __dev_open+0xfa/0x1b0
+>  __dev_change_flags+0x1de/0x250
+>  dev_change_flags+0x22/0x60
+>  do_setlink.isra.0+0x2df/0x10b0
+>  ? rtnetlink_rcv_msg+0x34f/0x3f0
+>  ? netlink_rcv_skb+0x54/0x100
+>  ? netlink_unicast+0x23e/0x390
+>  ? netlink_sendmsg+0x21e/0x490
+>  ? ____sys_sendmsg+0x31b/0x350
+>  ? avc_has_perm_noaudit+0x67/0xf0
+>  ? cred_has_capability.isra.0+0x75/0x110
+>  ? __nla_validate_parse+0x5f/0xee0
+>  ? __pfx___probestub_irq_enable+0x3/0x10
+>  ? __create_object+0x5e/0x90
+>  ? security_capable+0x3b/0x70
+>  rtnl_newlink+0x784/0xaf0
+>  ? avc_has_perm_noaudit+0x67/0xf0
+>  ? cred_has_capability.isra.0+0x75/0x110
+>  ? stack_depot_save_flags+0x24/0x6d0
+>  ? __pfx_rtnl_newlink+0x10/0x10
+>  rtnetlink_rcv_msg+0x34f/0x3f0
+>  ? do_syscall_64+0x6c/0x180
+>  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+>  netlink_rcv_skb+0x54/0x100
+>  netlink_unicast+0x23e/0x390
+>  netlink_sendmsg+0x21e/0x490
+>  ____sys_sendmsg+0x31b/0x350
+>  ? copy_msghdr_from_user+0x6d/0xa0
+>  ___sys_sendmsg+0x86/0xd0
+>  ? __pte_offset_map+0x17/0x160
+>  ? preempt_count_add+0x69/0xa0
+>  ? __call_rcu_common.constprop.0+0x147/0x610
+>  ? preempt_count_add+0x69/0xa0
+>  ? preempt_count_add+0x69/0xa0
+>  ? _raw_spin_trylock+0x13/0x60
+>  ? trace_hardirqs_on+0x1d/0x80
+>  __sys_sendmsg+0x66/0xc0
+>  do_syscall_64+0x6c/0x180
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f41defe5b34
+> Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
+> f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
+> f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+> RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
+> RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
+> RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
+> R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
+> R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
+>  </TASK>
+> [...]
+> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>
+> Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
+> Cc: <stable@vger.kernel.org> # v6.11+
+> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> ---
 
-Yes, obviously, but probably entire block:
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-<0xff 0xef528000 0x0 0x1000>;
+Thanks
 
->       #clock-cells = <1>;
->       #power-domain-cells = <1>;
->     };
-
-
-Best regards,
-Krzysztof
 
