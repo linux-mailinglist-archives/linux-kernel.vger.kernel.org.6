@@ -1,179 +1,171 @@
-Return-Path: <linux-kernel+bounces-433794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04BD39E5D20
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:30:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558619E5D27
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:31:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36F1281D1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84BE18831B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C83226ED6;
-	Thu,  5 Dec 2024 17:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5B222578C;
+	Thu,  5 Dec 2024 17:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LmpzgA3p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UUh+1U07"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7622F225781
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D3D221465
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733419816; cv=none; b=T76l9355UiRiKDvneWiLOd/f7GaNDR1yeT0PYc1d0/rScl9gBg/+xsjgpExDcSJr09Zpw4N8sQOSA+TAdmI1bDGLqHhmW0DgA+dJKPvqIkVyzk+VuaG1V6ZsSPJd6BIabbUC3ihOIDeFhJyeGQmAcNqyDzCIsAsjH56RPL+4AJk=
+	t=1733419880; cv=none; b=bIPmnsXUKkzdyNi+9/7hjfqk8eDZD6H4r99yVenXH6KN5y3qCCOPraZ5fbHTjMe2MHxKHJ6gHn1+21LiE90R2aIcOMt++B6bNyWio15oZ9Hi4SPBPzC2jnQ4iqRlOCA2kEeIJLkRSjGxiyghZ9aY89pbFH2mNmuTiaaV+x4VPQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733419816; c=relaxed/simple;
-	bh=oRA1uXnvpsmjJQDCBwr+QMnYjfUCn926pHr/Oj5VxTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QTDoxICBdj0ErezNlELuwfENhoiM8HUVIwjeI5j9zU9UY+zScLwGVEEmCRM/mcKIWpoXOCa/0lz8Yy+ovspKtvznEjtto4QjzuxstZ9FePJdwNem/ahXAiE+JGt3wzado9T5x9TIHlHEtHMCNRhuHChgQOQd55KigXG85V3nXP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LmpzgA3p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BodIM029278
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 17:30:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AaqtZOlfrn0s5WOa1v+zVEs6LfsFYydrC3W6W40E/bI=; b=LmpzgA3pcNpMy9CB
-	VYfrvB4ziiUIsaFs8JBWG9lYuCr7+OwNUciD5v0+/eezBK+gojEkd3HIrm9zaKv6
-	MXDnun4k4pl3frdE1wtTMNevPdyio6F0HBDykcdjGMQai96Nw6zwLG8P2nsBA1kR
-	PbGZz9Xuy17upHmQHlHiuypX1fbpiS5kPPIjZOlwJO/1VH8O41pbHUwx6RkjrFcj
-	j625YK4XgCUppXvS14a2dTo3Jjmwph0tBzX3n/e7Gof9FqhQ7cSugDvxEQjqgS6S
-	pz9rT990eBnVrEbb/dl0FliNRMJifYdhAXbSSWe4zw34qboPVPZFOx82ZkQ9kLON
-	lwZHmA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnj0ya9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 17:30:14 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4668a6d41a5so3226031cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:30:14 -0800 (PST)
+	s=arc-20240116; t=1733419880; c=relaxed/simple;
+	bh=DILMSC318MaffnuHHC5DfCokTzeEKw4jXbmCZwGyZkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jBWd4p2HGVCnv/WX2guT+iIUMbQUp/LvfLg4Us9EpY993j4t6LuA/fl5ZeZCZesYCWIXh0Qx9wJz4n3VSA/EZkTPeNCdh6HS4Q3GsBAOcI0d3tPg4kmJu1nrJ33LSMFxUf39vv8kYjkkaBep2/x/lEoYV2qS1hrALCehCuSjgA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UUh+1U07; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa625782fb1so15426066b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:31:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733419877; x=1734024677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R8/7vE5e555OKJe6AuucX4ms/VrPrCkBrD8lqWS8nyE=;
+        b=UUh+1U07MMi3/JH4QZx/liKwAVqzDwCnxcIJYpW+2AoHCXvHkcO9p86b5UkxhQjmje
+         TClZss28J6XP6PLtVRj2EYsqaW+Ddb3qovvVH5ues8N4U9NlHIeTHow6oy42PDrUD46O
+         p3RrFZjxoVVp0M/AQBpLflX2gwgGwhqTEvOeOuDGFzQMKag3+0/tXDFlLDmvS9UajV1/
+         Pfb/PgV3F4oV7ZRMKFpVEDTw9/qQuOvqAb8A6Vadfxdv25YMWNnk9WmqwLeiqZAg2adr
+         755Iu/dijAa9EtHWnHPbYE5mw7z5JQsO7k53zwB+bajQNO9vcykb+C5tN1pG8F5FCGoG
+         ijuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733419813; x=1734024613;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AaqtZOlfrn0s5WOa1v+zVEs6LfsFYydrC3W6W40E/bI=;
-        b=MRxdEbHzhFmdLdtiEDE9AWBVae/n2Cx6M71lnmr9i4zrPcH7hKSgUG5meUFNV4AIp6
-         8KJKuwXUAq2b7p9Qd+gzkRaJdzXLRbgmDICkNO/6BMCsxtxwNyWbX19U4uTfCZLsz6fC
-         16sTpf1SfdY536/fB7KjJYAQy0iJeAyVNSWAvvxHLXT5tH9a2BY554iYSd3DbKjAIdAq
-         gyFv/RXykP5DX2Tv04chQe6cwcfn/fuDmqbiyGMaVrWMv0d+sTFG9NxTYjDWQe9tZW9o
-         47F1Lpq6sQUaxe7bTGvZdT9kPunW7TDSHZNtAex7+1QXAJvTtEwQrf2M2v8Y7ucnrtU+
-         9ARQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUt7Z+O1L1vQmZb6fliFuwLYgcrQKDNaXoX1t4jI/KHrrBdGfJ3CdyjBttO0FU3FQZOe9rGUzTfHebJUY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH9b96CljdTBQaS3/8YQ2B77jPoK3ZR/Ofjz9/HoBwtIz2Fwvf
-	THn6SzD+0YLABlx8RCBv8/2kb99r07ltv7b/STtuqBfENOtXxwJWJ1gKewAou64FsJKTTsNn15V
-	4v9AbN1BxmyVU5/t0ZeAJxNNzWin/1IOJynxqN4s26u28mjMzWIX0cOY1MzJAEsM=
-X-Gm-Gg: ASbGncvIZo+CIKOGFB0DI0FLjIvsL4AAS9ExDYeOja9LItekYRYY5OB5v03128LeiWN
-	kJSY1mgjbkihkXvFMIIHRmsg9JECC5Hs/wMOGBiqzt/V5pR8i+8TO/iqUYXrwTXxGZBhxGaFAmM
-	Yd7c/w9XuOkh2YfH+LieuPYeV8in7GMk+W3GWJKKuaBW0zi5VT5t0ZD2/WBtOrlh5RCLaEzNUbL
-	nIMiXI2B8pwqTgzy3lzcqW3VA7pnK4TYfcezfYFVDryyWSMhkVB3+wJ318xkrnNNbn6oooG3Cqm
-	ExHAgfYZRjs2w0zb8UeueQRXX1vFA54=
-X-Received: by 2002:ac8:7f07:0:b0:458:2619:45b4 with SMTP id d75a77b69052e-46734ce0fe0mr100361cf.7.1733419813367;
-        Thu, 05 Dec 2024 09:30:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHVXY2uZ+6FfU3SZe7AmGKYUL4OMFBVbnlBIZtVhOo7V9MP+Fxh/D8gWbwDaEuRWz8DmAjjtw==
-X-Received: by 2002:ac8:7f07:0:b0:458:2619:45b4 with SMTP id d75a77b69052e-46734ce0fe0mr99491cf.7.1733419812145;
-        Thu, 05 Dec 2024 09:30:12 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c799181sm1074740a12.70.2024.12.05.09.30.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 09:30:10 -0800 (PST)
-Message-ID: <249fb0aa-5624-41cb-8a3b-c2e54dba87df@oss.qualcomm.com>
-Date: Thu, 5 Dec 2024 18:30:09 +0100
+        d=1e100.net; s=20230601; t=1733419877; x=1734024677;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R8/7vE5e555OKJe6AuucX4ms/VrPrCkBrD8lqWS8nyE=;
+        b=CzGGcfpNNCThMFqrFuv8nFpAdq6mtteM2Czxi4xYVaZndsRBN6sO2HQYh3rInOBckO
+         UYpmYGlx2e9dATwRYpVaFoG+eCHmchsTJpAPC5/IUG4wI/qYxXfcbY7mqk6TeA4cQ/mf
+         TNMRSd62qVSH4E1/fDFS/BOMdyPJrgW8G1h/QSFF+PuYmobIbXDypJBULXEOEzJDNgON
+         B6u2Gje/2IedSzOHnlXAvk88S/a3RV7C9owFJwNxC6J7zvw7m1xx7JVP+X2Q20zTvmkZ
+         QGmqFYxaFqLEHnuKcMEJzSoeoIf+RvP6dwe6fRlaPPG7jcxjbck0wCnAFfbW9PyzY6cw
+         2sgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFmTcwonj5cemJ29QDmCHUx6UP4Or7XsIGpuoD2bvQHG+nZUCY7z0epWnvQeB7Jeb3Z9Y2GmYmDon5BYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/AR7Zlmr3utrux5d+hIhe+MOPcHS+dUanYRnkj0QEFDEVuWEo
+	+mXHOHKwBc2k0G6WY5LrOfN7F0mT11N51qiq0EINmugoBbfP4tf9eXlM8C0S47c=
+X-Gm-Gg: ASbGncs8sr1TCPJuH1Vmbrz3FFEibSMiZ20/vbUSGsrL2OnS2yrgattUKlPBdTNPJpH
+	WGptpfmiaCv2LJPyaPRv/aUhoh5SYIfxT/D7zlmGoW+k60d3kdXbWXLyXD8Iwf/3jHY7e75Hssg
+	4EX1cO8CUjGT1VfsY8dlZD+GIOXPX9iN6o3qujNoy1wZbmog9zcjs+0/lZNmKU179i79QvsCIAi
+	JN7LsvNxFNGQd8aHjucEZ/zcXkeAQaNuI6zsth1+BONHqRsYwwRSbOGEAh2SbLrbAHXuIFoxD9l
+	P/ZwbU4xodlzEuwnPoiYuz4/nBrre5BT2kP6ep5jb+wCBq/LNz/J96U=
+X-Google-Smtp-Source: AGHT+IEQzkKEFiKDujFpgpYYDhLmEPZqC0BMq0BFtfN8uz6jk0DSODmsmsMeP94l0aJ80mpV+tmi8g==
+X-Received: by 2002:a17:907:72cb:b0:a99:482c:b2c6 with SMTP id a640c23a62f3a-aa5f7dab976mr469405966b.8.1733419876349;
+        Thu, 05 Dec 2024 09:31:16 -0800 (PST)
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e92a13sm120705466b.52.2024.12.05.09.31.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 09:31:16 -0800 (PST)
+Date: Thu, 5 Dec 2024 18:31:11 +0100
+From: Petr Tesarik <ptesarik@suse.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>, Valentin Schneider
+ <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+ bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Wanpeng Li <wanpengli@tencent.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>, Frederic Weisbecker
+ <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Neeraj
+ Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
+ <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
+ <lstoakes@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
+ <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Ard Biesheuvel <ardb@kernel.org>, Nicholas
+ Piggin <npiggin@gmail.com>, Juerg Haefliger
+ <juerg.haefliger@canonical.com>, Nicolas Saenz Julienne
+ <nsaenz@kernel.org>, "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>, Nadav Amit <namit@vmware.com>, Dan
+ Carpenter <error27@gmail.com>, Chuang Wang <nashuiliang@gmail.com>, Yang
+ Jihong <yangjihong1@huawei.com>, Petr Mladek <pmladek@suse.com>, "Jason A.
+ Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>, Julian Pidancet
+ <julian.pidancet@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+ Dionna Glaze <dionnaglaze@google.com>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <linux@weissschuh.net>, Juri Lelli <juri.lelli@redhat.com>, Marcelo Tosatti
+ <mtosatti@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Daniel Wagner
+ <dwagner@suse.de>
+Subject: Re: [RFC PATCH v3 13/15] context_tracking,x86: Add infrastructure
+ to defer kernel TLBI
+Message-ID: <20241205183111.12dc16b3@mordecai.tesarici.cz>
+In-Reply-To: <20241121153016.GL39245@noisy.programming.kicks-ass.net>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+	<20241119153502.41361-14-vschneid@redhat.com>
+	<20241120152216.GM19989@noisy.programming.kicks-ass.net>
+	<20241120153221.GM38972@noisy.programming.kicks-ass.net>
+	<xhsmhldxdhl7b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	<20241121111221.GE24774@noisy.programming.kicks-ass.net>
+	<4b562cd0-7500-4b3a-8f5c-e6acfea2896e@intel.com>
+	<20241121153016.GL39245@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: ipq5424: configure spi0 node for
- rdp466
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
-        linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, konradybcio@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20241122124505.1688436-1-quic_mmanikan@quicinc.com>
- <20241122124505.1688436-5-quic_mmanikan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241122124505.1688436-5-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: N032u4_wPSuPrVZXSL5VMAEcn03GZ1IC
-X-Proofpoint-ORIG-GUID: N032u4_wPSuPrVZXSL5VMAEcn03GZ1IC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 mlxscore=0 phishscore=0 impostorscore=0
- malwarescore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050128
 
-On 22.11.2024 1:45 PM, Manikanta Mylavarapu wrote:
-> Enable the SPI0 node and configure the associated gpio pins.
+On Thu, 21 Nov 2024 16:30:16 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Thu, Nov 21, 2024 at 07:07:44AM -0800, Dave Hansen wrote:
+> > On 11/21/24 03:12, Peter Zijlstra wrote:  
+> > >> I see e.g. ds_clear_cea() clears PTEs that can have the _PAGE_GLOBAL flag,
+> > >> and it correctly uses the non-deferrable flush_tlb_kernel_range().  
+> > > 
+> > > I always forget what we use global pages for, dhansen might know, but
+> > > let me try and have a look.
+> > > 
+> > > I *think* we only have GLOBAL on kernel text, and that only sometimes.  
+> > 
+> > I think you're remembering how _PAGE_GLOBAL gets used when KPTI is in play.  
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 45 +++++++++++++++++++++
->  1 file changed, 45 insertions(+)
+> Yah, I suppose I am. That was the last time I had a good look at this
+> stuff :-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> index d4d31026a026..6256216ca764 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> @@ -23,6 +23,36 @@ &sleep_clk {
->  };
->  
->  &tlmm {
-> +	spi0_default_state: spi0-default-state {
-> +		clk-pins {
-> +			pins = "gpio6";
-> +			function = "spi0_clk";
-> +			drive-strength = <8>;
-> +			bias-pull-down;
-> +		};
-> +
-> +		cs-pins {
-> +			pins = "gpio7";
-> +			function = "spi0_cs";
-> +			drive-strength = <8>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		miso-pins {
-> +			pins = "gpio8";
-> +			function = "spi0_miso";
-> +			drive-strength = <8>;
-> +			bias-pull-down;
-> +		};
-> +
-> +		mosi-pins {
-> +			pins = "gpio9";
-> +			function = "spi0_mosi";
-> +			drive-strength = <8>;
-> +			bias-pull-down;
-> +		};
-> +	};
-> +
->  	sdc_default_state: sdc-default-state {
->  		clk-pins {
->  			pins = "gpio5";
-> @@ -57,3 +87,18 @@ &xo_board {
->  	clock-frequency = <24000000>;
->  };
->  
-> +&qupv3 {
-> +	spi0: spi@1a90000 {
+> > Ignoring KPTI for a sec... We use _PAGE_GLOBAL for all kernel mappings.
+> > Before PCIDs, global mappings let the kernel TLB entries live across CR3
+> > writes. When PCIDs are in play, global mappings let two different ASIDs
+> > share TLB entries.  
+> 
+> Hurmph.. bah. That means we do need that horrible CR4 dance :/
 
-&spi0 {
-	pinctrl-0 = <..
-	...
-};
+In general, yes.
 
-KonraD
+But I wonder what exactly was the original scenario encountered by
+Valentin. I mean, if TLB entry invalidations were necessary to sync
+changes to kernel text after flipping a static branch, then it might be
+less overhead to make a list of affected pages and call INVLPG on them.
+
+AFAIK there is currently no such IPI function for doing that, but if we
+could add one. If the list of invalidated global pages is reasonably
+short, of course.
+
+Valentin, do you happen to know?
+
+Petr T
 
