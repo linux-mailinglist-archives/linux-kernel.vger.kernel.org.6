@@ -1,133 +1,107 @@
-Return-Path: <linux-kernel+bounces-433195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E389E54FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F719E54FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09ACF166967
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CCF16B514
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAF1217F54;
-	Thu,  5 Dec 2024 12:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4200217F29;
+	Thu,  5 Dec 2024 12:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="r+XJP+7Q"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="L7WwuRrx"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A981421773D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA7121772E;
+	Thu,  5 Dec 2024 12:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400384; cv=none; b=Pt7YGHwZW8QorKjYUnTAOSjcVvAcZ7aAcU0+kWm7GUZujkZTxe1rH0Mx8aJmKmYahA8Ju5RNvboKancySFuWFNCo5LXjoBLWLQF/r+LSHCFK3mxyWmCvxkfQub3Re/QMpogxOIwWJ/3XrW00I6AJnqIT/kCxxuz9AFoD12vBclw=
+	t=1733400420; cv=none; b=TSZbs7h6h6qKnmVX3oRCmz8BWuJsag/6gzZHCskkWsF9m+Aioj3v5epwiHJ8fuUniOMqU7hf+JWzCyxEumBggL9efsLg9afef0PolHRALprX1fBDs2h1/v3EtX6KHnkUXqkMQQUgK2ZRa38jI5gyPCudIhoINg9XRFkPYnnXOBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400384; c=relaxed/simple;
-	bh=Bn5nh3l4ebh5/olUofQ4qdBb2ptYnUXgTMoMswxG7Xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jvqsLy3sUfHtiTniup4y43e/HsR8MHrdWmMO/34+C6bKzx+iD5AZPNFE4aGzWh9BchM9Xn/P3G5aXxAUeeR+ymbKAeXy02lfrS8N1mk6HroyECI5FAz9LItCR0Y1itBWHTF4pFT4izS0xuxgbD5QWfBbc4XP8kS9t/jRneybVcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=r+XJP+7Q; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a2033562so8464945e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:06:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733400380; x=1734005180; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZUEfRaEMpC37FH4e73tDnuIDcsomn+OI0n1MlB9szUo=;
-        b=r+XJP+7QXzi2npInt0NWAwuYM2oUIaBnB6FjrkJYZvmRk31ygCtrV7k/BeeJUO4EfC
-         rXixwztz7T7Y8nFZvY6d+RlzvAVtw/B8TIfyIk5KbkfHFf5uBdzr7zr+F88N8XiauQwJ
-         RQioPk5T7pptwxQTQBn2blsxdiutb1oyffqqNgGhFwhpYmmdnwAllBZyMf9kt1U9OsS3
-         DS1E/oNP9WAdmDwwlgIeLi0m5PCpz4enbYlQpkepTWIbF36ApTD04Y100NbvqbzeRRpp
-         LZcREr+70eRGJie6ToPLPM2VpbqnyetpuFThN7Vt6Cfmoax4qKr3hnQ5blcXR5s98kGk
-         7Vcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733400380; x=1734005180;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZUEfRaEMpC37FH4e73tDnuIDcsomn+OI0n1MlB9szUo=;
-        b=UnvO5tLwOmc/0roFJllhNwHTH+zSwSlf76y0bTFeUqjlHfrsle8ssjFhbk0XKEh1ZD
-         0CcbjadizXb8kuetYdIURoQFF2AsPm7HiMSskFL+UY4c9LENQlqsuxs2Uoh5A0YIFhMd
-         EH0FvfRsVqG12goqewl34b8uEf+VMzOfv9yW+REzsQ9dtVVc6HGaF6hn9yhXXU2jgYSU
-         fiWfFM79E4QNs5OyNR+Lro/sGLwLGe5c8liZm0hEhaChBqZ5oYzf8K6/EcYV8yev7HHa
-         1b84Vj+dXY+1dJ+0PKq4/ceKmTnkFtMnnEkihq4xBfE9ZE/VmJ788M3OyDgwRnKURFbm
-         4LIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV83Uaz6cZk0TW/yz98Iiyryg/AvhUdrVhxKGcHyxgvWv5wuR5cgRWbYzz8s+tlFEfPGnGISyaCBFpAed8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKN0so2ax5J1ACrn4xV+cVklARlVhUB/aX7h2Cit+CQCeceLC8
-	x1JEI+7xKILrlRcC2kwl7QgiJazlFN1m7ddNGpsXv3S1yTgnG89yADcaPECAWvQ=
-X-Gm-Gg: ASbGnctywLQH+PrLHsPC55wHV4Jnwm7/qgOPn5Unn39U7aMzponvZkoFfQB5+Kv7fNx
-	j+AIWr5nkpqLVGiYMUcMafz+8EMjS84RPLM2Xb41n2nk+DMIgXIx0jHJbuNOeIb7SjFJjSvahMa
-	MR0piDMIjf2KfANOEHgrxwr3nl2ngIMN3afUYd+jfOMa8Jzh6ukFv5qvJQTmX2RGLn+JsHBB+it
-	f5tXcZUWK7sW4sWgodnTHPFj3w986IKpcxn8XGuTDZ4o+c5
-X-Google-Smtp-Source: AGHT+IF+ZQJT8y1BDmiiQQKVW9pOPfo74S02/fDg2OSwbblovWA/gnmYx8QoRpzq3stAqcTA8YOZ3A==
-X-Received: by 2002:a5d:5f45:0:b0:385:fa26:f0d8 with SMTP id ffacd0b85a97d-385fd3f20b9mr7586700f8f.8.1733400379667;
-        Thu, 05 Dec 2024 04:06:19 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:c2c8:33f:e860])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113508sm21934095e9.35.2024.12.05.04.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 04:06:19 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andrew Davis <afd@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: [PATCH v2 2/2] gpio: omap: save two lines by using devm_clk_get_prepared()
-Date: Thu,  5 Dec 2024 13:06:10 +0100
-Message-ID: <20241205120610.40644-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241205120610.40644-1-brgl@bgdev.pl>
-References: <20241205120610.40644-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1733400420; c=relaxed/simple;
+	bh=xX0Aik4SOLFTwMZuxb3lrcgb4axgzJ9TEpW7q3u8JdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7XbIPx+Pc12OWHoFiH0yH5FafIBUmfeAfUcwDI4aPWxQUJh8Fo2Fg1RxZPgNxOdyD1PfgJv5tCJZb2t1b7O3E9H6mqt6jyhnvTZFYmWrarNW9+DF8udjEm8x/w1si7OOTlBldnEM6GAifXq9HPS57chvJmf858+StDqeqKxm/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=L7WwuRrx; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=eBlrQvHGQKgw3f0hUAy1Tn1aB3Z0FysLF4SCWm+DmMA=; b=L7WwuRrxnVVePXoGkHYV2dckCy
+	me76cq9PzZve4IXx72VykMPBlw2MloWtD+Jt56Mhl40WL3PaQrZzY9BCmbcvdwiqbvcdNZCXSGrDa
+	zkVGoUTiT/1pKUPkCepa0bvYmLkxLtFlJ31EXwM7mMTdp3rty4GJg9YDFZNPy5YzaLtZ6PRRrPeMQ
+	A3cJvF7y0RjtcJsSRJO88c1RbIcoSn6Iq2A5GJk3eWwssJJrnT86GhEyMoRO644cmGGnuogRGxqmy
+	eZUM+qAJ17rfI+0Zf8PhlP5D2FA2N52i2QMDLVmm7PGd5uFg9Q4CuZMGUq0cHKlgDnEeyiZs4lbbc
+	4MsC1LWg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37060)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tJAd9-0004kg-2F;
+	Thu, 05 Dec 2024 12:06:52 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tJAd8-0006Wq-1H;
+	Thu, 05 Dec 2024 12:06:50 +0000
+Date: Thu, 5 Dec 2024 12:06:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 3/7] phy: replace bitwise flag definitions
+ with BIT() macro
+Message-ID: <Z1GXWtZbJMgUq9zk@shell.armlinux.org.uk>
+References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
+ <20241203075622.2452169-4-o.rempel@pengutronix.de>
+ <Z1GWSwtWrUKPZBU7@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1GWSwtWrUKPZBU7@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Dec 05, 2024 at 12:02:19PM +0000, Russell King (Oracle) wrote:
+> On Tue, Dec 03, 2024 at 08:56:17AM +0100, Oleksij Rempel wrote:
+> > Convert the PHY flag definitions to use the BIT() macro instead of
+> > hexadecimal values. This improves readability and maintainability.
+> 
+> Maybe only readability. One can argue that changing them introduces the
+> possibility of conflicts when porting patches which adds maintenance
+> burden.
 
-We can drop the else branch if we get the clock already prepared using
-the relevant helper.
+Thinking a bit more about this, we can do much better to improve
+readability. The question that stands out right now is "but what
+are these flags used for?" and their definition doesn't make any
+hint.
 
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-omap.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+The PHY_* constants are for struct phy_driver.flags, and I think
+this needs to be documented. I think that's a much more important
+detail here that would massively improve readability way beyond
+simply changing them to be defined in terms of BIT().
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 54c4bfdccf568..57d299d5d0b16 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1449,13 +1449,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	if (bank->dbck_flag) {
--		bank->dbck = devm_clk_get(dev, "dbclk");
-+		bank->dbck = devm_clk_get_prepared(dev, "dbclk");
- 		if (IS_ERR(bank->dbck)) {
- 			dev_err(dev,
- 				"Could not get gpio dbck. Disable debounce\n");
- 			bank->dbck_flag = false;
--		} else {
--			clk_prepare(bank->dbck);
- 		}
- 	}
- 
 -- 
-2.45.2
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
