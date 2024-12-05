@@ -1,614 +1,182 @@
-Return-Path: <linux-kernel+bounces-433284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56C19E55FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EC69E5601
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1151418843E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 240FA1882EB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4020921A458;
-	Thu,  5 Dec 2024 12:57:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C6521A42E;
+	Thu,  5 Dec 2024 12:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v+5Z/ibo"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C39218E92
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53732219A81
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733403422; cv=none; b=roOT3/ZBl7GDbcyQVZIhnazuY15ggD1kQou8E7PWjCsg1kPtA+55uvZOgjU2OwzO5y1kk9h7rD28Ln8ek8jUdpfK6fXPyf57kyPQhizPFFJJLGz19EG0Tt62r/uPesQPAHoswLVO4osddmSfYENtczve9z52gohRnAylq+01yS8=
+	t=1733403423; cv=none; b=ca5aPdwlBY6Lnt/jLJnfrAuLsukLtKeEXcLoI9o1Ztib+dvWN20XfG8to8d1n1fkyu1/b0val+reg228Tpnll/Nh2u4n6gr9VXqsBa3BwQa47CcZb890ePGmfZrQ/Wnm4OQAYPL91PeJMKQcL3PaVguxLTp40+2HppL9tHwaA8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733403422; c=relaxed/simple;
-	bh=Pv1y2rUk4D7YIRTWWFsMKM9CRt6p2zuOxY5NCh5B+JA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PmYLlkbWBiHZZkXSZsAoKRDZIjup8w1gevvCLQNZrF2CrVwJdC9CmMOMfecCaWLxkeVpe5uBrwTD415QtxCnz7Sj/zHeeHWPuhN/y9c0+k1Cz/RJS+VhpYSj1kQ6E/APhoyRMJvor+u2xoGz9VG/cVZeQ3Eap+bJykLeee2jBK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tJBPP-0006PL-Ix; Thu, 05 Dec 2024 13:56:43 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tJBPN-001pLM-0g;
-	Thu, 05 Dec 2024 13:56:41 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tJBPN-005GFB-2t;
-	Thu, 05 Dec 2024 13:56:41 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Roan van Dijk <roan@protonic.nl>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v1 5/5] arm: dts: stm32: Add Priva E-Measuringbox devicetree
-Date: Thu,  5 Dec 2024 13:56:40 +0100
-Message-Id: <20241205125640.1253996-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241205125640.1253996-1-o.rempel@pengutronix.de>
-References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1733403423; c=relaxed/simple;
+	bh=lrmVwp9MTTP8vf6Seft4g9nKq4y4c+Dk4Abh6s3Sokg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQOERoVWju0Lr6qNdgdt9/IDiGweN9Z9jdZwkDSqlaCvKDJFVChd6ff5YlCuUleS9p+jgId5LYTsORUwLyKTW6FcElXxjRZquX5v7nvhS9Ow6/GhOMJmdAXms2Wc/xAalNxr2uFZOEC5LsEEOcu+CU1pWnMHqLR7IqH3GSO1sP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v+5Z/ibo; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so818055e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:57:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733403419; x=1734008219; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s2Jxa49+lF4JxHiGnW6UzqLVnsE/QayBWcQoJh8S91E=;
+        b=v+5Z/iboTEnMu4ZRCBjn46GCA/C6PN1VsWvwD4LQxSH4PRc1OBn0uRE9IV9TKLyvDO
+         /nqksHIt3a9bn6PznbBHMCHp/xynveqxAPOAWfGp86h8fp8uYAaGYVviL99nDt8he3fv
+         ZOkEl5kt6z9mIIbaWGjMiggF7CU2iA++HHGknKJr6A2TCcKuXlf3ExrjrnSnmNMGyfVI
+         LVAYhewyndkpypiMlzY0ZeQyVSdyY5KBMod69/9v+nexoSdyYEcibUarBpgrkJ91wUzr
+         8GrEJ3Ii8MWUq/3gHpdYfsqHvdmVPfhfZW2/WAqGmlKeVCNYUBGAYyCw1ttVHopkLID8
+         dDJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733403419; x=1734008219;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s2Jxa49+lF4JxHiGnW6UzqLVnsE/QayBWcQoJh8S91E=;
+        b=o7t9ZZhOgwNo/Sjam/snrCgx2U5CRWE6zBljCMhV64p83dxMQMGc8esBDmyk5/R9c5
+         HSTifKNxiZwm6jRJADa52Menw5cijXF2rbYr5TpX2hsebBiSDNGWj1GC1ab5/0puGl2l
+         RpZS6muu5uHuqmCW/p9Itd7VjvfAtA+JolDpODzX+rXiBapiiSwrf9Pel9KG9W1oibFM
+         MxJyFJzPNhL2D635T6a2SfnTxvFJXdDJLJUtcSlUK8FMPIL0mS5L0JBNSk7eW5n9P90M
+         NpaglVY3nZtaHxudPRijlfxFoxWvQfLrDbaqKKZYeyltw2X+wwQCW8GPGF+TCw7w0x9e
+         HQrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKI+9z0xc1HUGWcxntzrzv7T32WqxzH2a00CzkgLg28rC2LRtYLV5YDLZmA+53aQRyyl+cnm0JzEGIMOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcvT0aAwPvzVzgsxlcJvmrDvaB7tKTKbT0Q5RACqfVvvEs4bhg
+	ZbXAh25H2BiSt7gKb7BL4B9lAv6fPtAg9FjeavvQ5f7/K63mD/M7Wl5yLWX/Has=
+X-Gm-Gg: ASbGncvW9UvwIa5qStbjrFD83Kd02XdCbwj6FH3CF6cZ2i6PfnJsVSQqNrTMaN3FgHh
+	VpvNZ+IzGp8nQoQDuFSC1pMbXWUH3U88aAnBBAp1JjwP7wwEc8zZs6d7jj5ZIGw2WIPGP44n3wd
+	cVD+el+V7TMc3rJsV0hJkhhxsU2Lfuq2hwcjAFNxJqvheF/c511I/QYr35pKc/jCnSvK/tQV6+a
+	E3/ivRcsYQLhgOGeQ08hA2gcBDvJPX90s7rXSwx2yxJHgpFD4uzjohPAXp55NilgKFaX/9mU75y
+	92u1hyTcf3LxqUbgd9TbN9tBVhQCFQ==
+X-Google-Smtp-Source: AGHT+IFxozV5yADLSZdT2aZmMAmC3YLc8oyR/mmxvGNOEAUjKfoe1x86CuOyh23J/0TyZbHiXn/ilw==
+X-Received: by 2002:ac2:51d3:0:b0:53e:1c3d:d0c5 with SMTP id 2adb3069b0e04-53e1c3dd10cmr3218316e87.28.1733403419364;
+        Thu, 05 Dec 2024 04:56:59 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229751fcsm237413e87.87.2024.12.05.04.56.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 04:56:58 -0800 (PST)
+Date: Thu, 5 Dec 2024 14:56:57 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, ck.hu@mediatek.com, jitao.shi@mediatek.com, jie.qiu@mediatek.com, 
+	junzhi.zhao@mediatek.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 12/15] drm/mediatek: mtk_hdmi: Split driver and add
+ common probe function
+Message-ID: <uhcl2ypz3xmari73xl3l4klu2ucfkfkuj7bt3dz35hfmuzvvkj@5odvmmhivl54>
+References: <20241205114518.53527-1-angelogioacchino.delregno@collabora.com>
+ <20241205114518.53527-13-angelogioacchino.delregno@collabora.com>
+ <olxtqto5mbgofxg4iqjvsmpxxzz6zoj7pbwmoeklhfjiavqfvv@dyveek7hgtki>
+ <f2862790-f613-4583-bec5-302e06c77d8d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2862790-f613-4583-bec5-302e06c77d8d@collabora.com>
 
-From: Roan van Dijk <roan@protonic.nl>
+On Thu, Dec 05, 2024 at 01:36:18PM +0100, AngeloGioacchino Del Regno wrote:
+> Il 05/12/24 13:29, Dmitry Baryshkov ha scritto:
+> > On Thu, Dec 05, 2024 at 12:45:14PM +0100, AngeloGioacchino Del Regno wrote:
+> > > In preparation for adding a new driver for the HDMI TX v2 IP,
+> > > split out the functions that will be common between the already
+> > > present mtk_hdmi (v1) driver and the new one.
+> > > 
+> > > Since the probe flow for both drivers is 90% similar, add a common
+> > > probe function that will be called from each driver's .probe()
+> > > callback, avoiding lots of code duplication.
+> > > 
+> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > ---
+> > >   drivers/gpu/drm/mediatek/Kconfig           |  11 +-
+> > >   drivers/gpu/drm/mediatek/Makefile          |   1 +
+> > >   drivers/gpu/drm/mediatek/mtk_hdmi.c        | 724 +++------------------
+> > >   drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 425 ++++++++++++
+> > >   drivers/gpu/drm/mediatek/mtk_hdmi_common.h | 203 ++++++
+> > >   5 files changed, 729 insertions(+), 635 deletions(-)
+> > >   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.c
+> > >   create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_common.h
+> > > 
+> > > @@ -1026,19 +812,12 @@ static int mtk_hdmi_setup_vendor_specific_infoframe(struct mtk_hdmi *hdmi,
+> > >   	return 0;
+> > >   }
+> > > -static int mtk_hdmi_output_init(struct mtk_hdmi *hdmi)
+> > > +static void mtk_hdmi_send_infoframe(struct mtk_hdmi *hdmi, u8 *buffer_spd, size_t bufsz_spd,
+> > > +				    u8 *buffer_avi, size_t bufsz_avi,
+> > > +				    struct drm_display_mode *mode)
+> > >   {
+> > > -	struct hdmi_audio_param *aud_param = &hdmi->aud_param;
+> > > -
+> > > -	hdmi->csp = HDMI_COLORSPACE_RGB;
+> > > -	aud_param->aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
+> > > -	aud_param->aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
+> > > -	aud_param->aud_input_type = HDMI_AUD_INPUT_I2S;
+> > > -	aud_param->aud_i2s_fmt = HDMI_I2S_MODE_I2S_24BIT;
+> > > -	aud_param->aud_mclk = HDMI_AUD_MCLK_128FS;
+> > > -	aud_param->aud_input_chan_type = HDMI_AUD_CHAN_TYPE_2_0;
+> > > -
+> > > -	return 0;
+> > > +	mtk_hdmi_setup_avi_infoframe(hdmi, buffer_avi, bufsz_avi, mode);
+> > > +	mtk_hdmi_setup_spd_infoframe(hdmi, buffer_spd, bufsz_spd, "mediatek", "On-chip HDMI");
+> > 
+> > Please use the HDMI Connector framework instead of handling everything
+> > on your own.
+> > 
+> 
+> Dmitry, my plan is to get the MediaTek HDMIv2 driver upstreamed *with* using
+> the HDMI helpers - this commit is only splitting the old HDMI v1 driver in
+> common parts and v1 handling.
+> 
+> This "handling everything on my own" is something that was already present
+> into the old v1 driver, I am *not adding* this code, but *moving it around*.
+> 
+> I cannot migrate the v1 driver to the HDMI helpers right now because in this
+> moment I have no way to test that and I don't want to break any functionality.
+> 
+> If you check patch 15, you'll see that I am indeed using all of the helper
+> goodies - but for now only on the new driver, and not on the old one.
+> 
+> I do plan to migrate the v1 driver to the new helpers as well, but I would
+> (please) really prefer to do that only after the v2 driver is upstreamed.
+> 
+> Is that okay for you?
 
-Introduce the devicetree for the Priva E-Measuringbox board
-(stm32mp133c-prihmb), based on the STM32MP133 SoC.
+Yes, I've sent this comment before seeing the last patches.
 
-Signed-off-by: Roan van Dijk <roan@protonic.nl>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/boot/dts/st/Makefile               |   1 +
- arch/arm/boot/dts/st/stm32mp133c-prihmb.dts | 496 ++++++++++++++++++++
- 2 files changed, 497 insertions(+)
- create mode 100644 arch/arm/boot/dts/st/stm32mp133c-prihmb.dts
+> 
+> Cheers,
+> Angelo
+> 
+> > >   }
+> > >   static void mtk_hdmi_audio_enable(struct mtk_hdmi *hdmi)
+> > 
+> 
+> 
+> 
 
-diff --git a/arch/arm/boot/dts/st/Makefile b/arch/arm/boot/dts/st/Makefile
-index eab3a9bd435f..c4c01415fa85 100644
---- a/arch/arm/boot/dts/st/Makefile
-+++ b/arch/arm/boot/dts/st/Makefile
-@@ -29,6 +29,7 @@ dtb-$(CONFIG_ARCH_STM32) += \
- 	stm32h743i-eval.dtb \
- 	stm32h743i-disco.dtb \
- 	stm32h750i-art-pi.dtb \
-+	stm32mp133c-prihmb.dtb \
- 	stm32mp135f-dhcor-dhsbc.dtb \
- 	stm32mp135f-dk.dtb \
- 	stm32mp151a-prtt1a.dtb \
-diff --git a/arch/arm/boot/dts/st/stm32mp133c-prihmb.dts b/arch/arm/boot/dts/st/stm32mp133c-prihmb.dts
-new file mode 100644
-index 000000000000..663b6de1b814
---- /dev/null
-+++ b/arch/arm/boot/dts/st/stm32mp133c-prihmb.dts
-@@ -0,0 +1,496 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/regulator/st,stm32mp13-regulator.h>
-+#include "stm32mp133.dtsi"
-+#include "stm32mp13xc.dtsi"
-+#include "stm32mp13-pinctrl.dtsi"
-+
-+/ {
-+	model = "Priva E-Measuringbox board";
-+	compatible = "pri,prihmb", "st,stm32mp133";
-+
-+	aliases {
-+		ethernet0 = &ethernet1;
-+		mdio-gpio0 = &mdio0;
-+		mmc0 = &sdmmc1;
-+		mmc1 = &sdmmc2;
-+		serial0 = &uart4;
-+		serial1 = &usart6;
-+		serial2 = &uart7;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	counter-0 {
-+		compatible = "interrupt-counter";
-+		gpios = <&gpioa 11 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		autorepeat;
-+
-+		button-reset {
-+			label = "reset-button";
-+			linux,code = <BTN_1>;
-+			gpios = <&gpioi 7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-blue {
-+			function = LED_FUNCTION_HEARTBEAT;
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&gpioa 14 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "off";
-+		};
-+	};
-+
-+	led-controller-0 {
-+		compatible = "pwm-leds-multicolor";
-+
-+		multi-led {
-+			color = <LED_COLOR_ID_RGB>;
-+			function = LED_FUNCTION_STATUS;
-+			max-brightness = <255>;
-+
-+			led-red {
-+				active-low;
-+				color = <LED_COLOR_ID_RED>;
-+				pwms = <&pwm2 2 1000000 1>;
-+			};
-+
-+			led-green {
-+				active-low;
-+				color = <LED_COLOR_ID_GREEN>;
-+				pwms = <&pwm1 1 1000000 1>;
-+			};
-+
-+			led-blue {
-+				active-low;
-+				color = <LED_COLOR_ID_BLUE>;
-+				pwms = <&pwm1 2 1000000 1>;
-+			};
-+		};
-+	};
-+
-+	led-controller-1 {
-+		compatible = "pwm-leds-multicolor";
-+
-+		multi-led {
-+			color = <LED_COLOR_ID_RGB>;
-+			function = LED_FUNCTION_STATUS;
-+			max-brightness = <255>;
-+
-+			led-red {
-+				active-low;
-+				color = <LED_COLOR_ID_RED>;
-+				pwms = <&pwm1 0 1000000 1>;
-+			};
-+
-+			led-green {
-+				active-low;
-+				color = <LED_COLOR_ID_GREEN>;
-+				pwms = <&pwm2 0 1000000 1>;
-+			};
-+
-+			led-blue {
-+				active-low;
-+				color = <LED_COLOR_ID_BLUE>;
-+				pwms = <&pwm2 1 1000000 1>;
-+			};
-+		};
-+	};
-+
-+	/* DP83TD510E PHYs have max MDC rate of 1.75MHz. Since we can't reduce
-+	 * stmmac MDC clock without reducing system bus rate, we need to use
-+	 * gpio based MDIO bus.
-+	 */
-+	mdio0: mdio {
-+		compatible = "virtual,mdio-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		gpios = <&gpiog 2 GPIO_ACTIVE_HIGH
-+			 &gpioa 2 GPIO_ACTIVE_HIGH>;
-+
-+		/* TI DP83TD510E */
-+		phy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-id2000.0181";
-+			reg = <0>;
-+			interrupts-extended = <&gpioa 4 IRQ_TYPE_LEVEL_LOW>;
-+			reset-gpios = <&gpioa 3 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <10>;
-+			reset-deassert-us = <35>;
-+		};
-+	};
-+
-+	memory@c0000000 {
-+		device_type = "memory";
-+		reg = <0xc0000000 0x10000000>;
-+	};
-+
-+	reg_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		optee@ce000000 {
-+			reg = <0xce000000 0x02000000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&adc_1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&adc_1_pins_a>;
-+	vdda-supply = <&reg_3v3>;
-+	vref-supply = <&reg_3v3>;
-+	status = "okay";
-+};
-+
-+&adc1 {
-+	status = "okay";
-+
-+	channel@0 { /* Fan current PC0*/
-+		reg = <0>;
-+		st,min-sample-time-ns = <10000>;  /* 10µs sampling time */
-+	};
-+	channel@11 { /* Fan voltage */
-+		reg = <11>;
-+		st,min-sample-time-ns = <10000>;  /* 10µs sampling time */
-+	};
-+	channel@15 { /* Supply voltage */
-+		reg = <15>;
-+		st,min-sample-time-ns = <10000>;  /* 10µs sampling time */
-+	};
-+};
-+
-+&dts {
-+	status = "okay";
-+};
-+
-+&ethernet1 {
-+	status = "okay";
-+	pinctrl-0 = <&ethernet1_rmii_pins_a>;
-+	pinctrl-1 = <&ethernet1_rmii_sleep_pins_a>;
-+	pinctrl-names = "default", "sleep";
-+	phy-mode = "rmii";
-+	phy-handle = <&phy0>;
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&i2c1_pins_a>;
-+	pinctrl-1 = <&i2c1_sleep_pins_a>;
-+	clock-frequency = <100000>;
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	status = "okay";
-+
-+	board-sensor@48 {
-+		compatible = "ti,tmp1075";
-+		reg = <0x48>;
-+		vs-supply = <&reg_3v3>;
-+	};
-+};
-+
-+&{i2c1_pins_a/pins} {
-+	pinmux = <STM32_PINMUX('D', 3, AF5)>, /* I2C1_SCL */
-+		 <STM32_PINMUX('B', 8, AF4)>; /* I2C1_SDA */
-+	bias-disable;
-+	drive-open-drain;
-+	slew-rate = <0>;
-+};
-+
-+&{i2c1_sleep_pins_a/pins} {
-+	pinmux = <STM32_PINMUX('D', 3, ANALOG)>, /* I2C1_SCL */
-+		 <STM32_PINMUX('B', 8, ANALOG)>; /* I2C1_SDA */
-+};
-+
-+&iwdg2 {
-+	timeout-sec = <32>;
-+	status = "okay";
-+};
-+
-+/* SD card without Card-detect */
-+&sdmmc1 {
-+	pinctrl-names = "default", "opendrain", "sleep";
-+	pinctrl-0 = <&sdmmc1_b4_pins_a &sdmmc1_clk_pins_a>;
-+	pinctrl-1 = <&sdmmc1_b4_od_pins_a &sdmmc1_clk_pins_a>;
-+	pinctrl-2 = <&sdmmc1_b4_sleep_pins_a>;
-+	broken-cd;
-+	no-sdio;
-+	no-1-8-v;
-+	st,neg-edge;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_3v3>;
-+	status = "okay";
-+};
-+
-+/* EMMC */
-+&sdmmc2 {
-+	pinctrl-names = "default", "opendrain", "sleep";
-+	pinctrl-0 = <&sdmmc2_b4_pins_a &sdmmc2_d47_pins_a &sdmmc2_clk_pins_a>;
-+	pinctrl-1 = <&sdmmc2_b4_od_pins_a &sdmmc2_d47_pins_a &sdmmc2_clk_pins_a>;
-+	pinctrl-2 = <&sdmmc2_b4_sleep_pins_a &sdmmc2_d47_sleep_pins_a>;
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+	no-1-8-v;
-+	st,neg-edge;
-+	mmc-ddr-3_3v;
-+	bus-width = <8>;
-+	vmmc-supply = <&reg_3v3>;
-+	status = "okay";
-+};
-+
-+&timers1 {
-+	status = "okay";
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+
-+	pwm1: pwm {
-+		pinctrl-0 = <&pwm1_pins_a>;
-+		pinctrl-1 = <&pwm1_sleep_pins_a>;
-+		pinctrl-names = "default", "sleep";
-+		status = "okay";
-+	};
-+};
-+
-+&timers4 {
-+	status = "okay";
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+
-+	pwm2: pwm {
-+		pinctrl-0 = <&pwm4_pins_a>;
-+		pinctrl-1 = <&pwm4_sleep_pins_a>;
-+		pinctrl-names = "default", "sleep";
-+		status = "okay";
-+	};
-+};
-+
-+/* Fan PWM */
-+&timers5 {
-+	status = "okay";
-+
-+	pwm3: pwm {
-+		pinctrl-0 = <&pwm5_pins_a>;
-+		pinctrl-1 = <&pwm5_sleep_pins_a>;
-+		pinctrl-names = "default", "sleep";
-+		status = "okay";
-+	};
-+};
-+
-+&timers2 {
-+	status = "okay";
-+
-+	timer@1 {
-+		status = "okay";
-+	};
-+};
-+
-+&uart4 {
-+	pinctrl-names = "default", "sleep", "idle";
-+	pinctrl-0 = <&uart4_pins_a>;
-+	pinctrl-1 = <&uart4_sleep_pins_a>;
-+	pinctrl-2 = <&uart4_idle_pins_a>;
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	status = "okay";
-+};
-+
-+&uart7 {
-+	pinctrl-names = "default", "sleep", "idle";
-+	pinctrl-0 = <&uart7_pins_a>;
-+	pinctrl-1 = <&uart7_sleep_pins_a>;
-+	pinctrl-2 = <&uart7_idle_pins_a>;
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	status = "okay";
-+};
-+
-+&usart6 {
-+	pinctrl-names = "default", "sleep", "idle";
-+	pinctrl-0 = <&usart6_pins_a>;
-+	pinctrl-1 = <&usart6_sleep_pins_a>;
-+	pinctrl-2 = <&usart6_idle_pins_a>;
-+	linux,rs485-enabled-at-boot-time;
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	adc_1_pins_a: adc1-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('C', 0, ANALOG)>, /* ADC1 in0 */
-+				 <STM32_PINMUX('C', 2, ANALOG)>, /* ADC1 in15 */
-+				 <STM32_PINMUX('F', 13, ANALOG)>; /* ADC1 in11 */
-+		};
-+	};
-+
-+	ethernet1_rmii_pins_a: rmii-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('G', 13, AF11)>, /* ETH1_RMII_TXD0 */
-+				 <STM32_PINMUX('G', 14, AF11)>, /* ETH1_RMII_TXD1 */
-+				 <STM32_PINMUX('B', 11, AF11)>, /* ETH1_RMII_TX_EN */
-+				 <STM32_PINMUX('A', 1, AF11)>;   /* ETH1_RMII_REF_CLK */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <2>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('C', 4, AF11)>,  /* ETH1_RMII_RXD0 */
-+				 <STM32_PINMUX('C', 5, AF11)>,  /* ETH1_RMII_RXD1 */
-+				 <STM32_PINMUX('A', 7, AF11)>;  /* ETH1_RMII_CRS_DV */
-+			bias-disable;
-+		};
-+	};
-+
-+	ethernet1_rmii_sleep_pins_a: rmii-sleep-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('G', 13, ANALOG)>, /* ETH1_RMII_TXD0 */
-+				 <STM32_PINMUX('G', 14, ANALOG)>, /* ETH1_RMII_TXD1 */
-+				 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH1_RMII_TX_EN */
-+				 <STM32_PINMUX('C', 4, ANALOG)>,  /* ETH1_RMII_RXD0 */
-+				 <STM32_PINMUX('C', 5, ANALOG)>,  /* ETH1_RMII_RXD1 */
-+				 <STM32_PINMUX('A', 1, ANALOG)>,  /* ETH1_RMII_REF_CLK */
-+				 <STM32_PINMUX('A', 7, ANALOG)>;  /* ETH1_RMII_CRS_DV */
-+		};
-+	};
-+
-+	pwm1_pins_a: pwm1-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('E', 9, AF1)>, /* TIM1_CH1 */
-+				 <STM32_PINMUX('E', 11, AF1)>, /* TIM1_CH2 */
-+				 <STM32_PINMUX('E', 13, AF1)>; /* TIM1_CH3 */
-+			bias-pull-down;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	pwm1_sleep_pins_a: pwm1-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('E', 9, ANALOG)>, /* TIM1_CH1 */
-+				 <STM32_PINMUX('E', 11, ANALOG)>, /* TIM1_CH2 */
-+				 <STM32_PINMUX('E', 13, ANALOG)>; /* TIM1_CH3 */
-+		};
-+	};
-+
-+	pwm4_pins_a: pwm4-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('D', 12, AF2)>, /* TIM4_CH1 */
-+				 <STM32_PINMUX('B', 7, AF2)>, /* TIM4_CH2 */
-+				 <STM32_PINMUX('D', 14, AF2)>; /* TIM4_CH3 */
-+			bias-pull-down;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	pwm4_sleep_pins_a: pwm4-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('D', 12, ANALOG)>, /* TIM4_CH1 */
-+				 <STM32_PINMUX('B', 7, ANALOG)>, /* TIM4_CH2 */
-+				 <STM32_PINMUX('D', 14, ANALOG)>; /* TIM4_CH3 */
-+		};
-+	};
-+	pwm5_pins_a: pwm5-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A', 0, AF2)>; /* TIM5_CH1 */
-+		};
-+	};
-+
-+	pwm5_sleep_pins_a: pwm5-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A', 0, ANALOG)>; /* TIM5_CH1 */
-+		};
-+	};
-+
-+	uart7_pins_a: uart7-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('E', 8, AF7)>; /* UART_TX */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('E', 10, AF7)>; /* UART7_RX */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	uart7_idle_pins_a: uart7-idle-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('E', 8, ANALOG)>; /* UART7_TX */
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('E', 10, AF7)>; /* UART7_RX */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	uart7_sleep_pins_a: uart7-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('E', 8, ANALOG)>, /* UART7_TX */
-+				 <STM32_PINMUX('E', 10, ANALOG)>; /* UART7_RX */
-+		};
-+	};
-+
-+	usart6_pins_a: usart6-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('F', 8, AF7)>, /* USART6_TX */
-+				 <STM32_PINMUX('F', 10, AF7)>; /* USART6_DE */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('H', 11, AF7)>; /* USART6_RX */
-+			bias-disable;
-+		};
-+	};
-+
-+	usart6_idle_pins_a: usart6-idle-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('F', 8, ANALOG)>; /* USART6_TX */
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('F', 10, AF7)>; /* USART6_DE */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+		pins3 {
-+			pinmux = <STM32_PINMUX('H', 11, AF7)>; /* USART6_RX */
-+			bias-disable;
-+		};
-+	};
-+
-+	usart6_sleep_pins_a: usart6-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('F', 8, ANALOG)>, /* USART6_TX */
-+				 <STM32_PINMUX('F', 10, ANALOG)>, /* USART6_DE */
-+				 <STM32_PINMUX('H', 11, ANALOG)>; /* USART6_RX */
-+		};
-+	};
-+};
 -- 
-2.39.5
-
+With best wishes
+Dmitry
 
