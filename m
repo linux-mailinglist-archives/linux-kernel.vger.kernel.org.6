@@ -1,138 +1,158 @@
-Return-Path: <linux-kernel+bounces-432913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5529C9E51EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:17:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039099E51EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:17:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07571673C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D4E2841BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A1020B219;
-	Thu,  5 Dec 2024 09:59:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA36820ADD2;
-	Thu,  5 Dec 2024 09:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134FD212B3E;
+	Thu,  5 Dec 2024 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPfJlDCw"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55953212B2F;
+	Thu,  5 Dec 2024 10:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733392753; cv=none; b=RmsI47Tf9EYSo3rVemv4T88bS824pDLNFNIRonss2atTWKYcYvASXMOZERxBYU+ZyQq+zR0YHmS/QY2dT8usAHuwBJIcw/b6idW4gqbnHnsH5fmDexh3tZksuWIeVPGJdrXgqulyZiyfoWIdUQNluLE+Pbm3QEzYqKn3Wvi+8+k=
+	t=1733392889; cv=none; b=ctXpWybNkDSNRCgTrvTTwJhYCbleuiTf7kkyGLce9RRa0EqkaC/ogvTQ3J1te064mC9zTd/ngcQZXm1WwEIjCVbwwXKL/Bg41CwIK/mzEqIt4kGY+YzKgGrERhVAvlrfOttXDMiUkXTw57ANqg+sgIWNovHrvg8aACC/CQatWHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733392753; c=relaxed/simple;
-	bh=H/OuEMnsAyLfA919I/SNsIvUApAWXvOYm38Ic1B9zaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmPEX4fx/3V87Xj/p2xnkJLvhcs7hTjxlDKmwVXhd0l9wXapYiBdMGiErCHveoOZIogVTQIxm29rebauw2Hb1rZZO7b5PVGKw+bHqyVKd7sPA25oReNgueKVf9RJQq46+BXY6hgURaWBsLPU70Buu5DlnWhrNKX0iqn2iftwzBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC77BFEC;
-	Thu,  5 Dec 2024 01:59:37 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 338E03F5A1;
-	Thu,  5 Dec 2024 01:59:08 -0800 (PST)
-Date: Thu, 5 Dec 2024 09:59:05 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Liviu Dudau <liviu.dudau@arm.com>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH] arm64: dts: fvp: Update bus-range property
-Message-ID: <Z1F5aeNT-0KFOVHf@bogus>
-References: <20241128152543.1821878-1-aneesh.kumar@kernel.org>
- <Z1CwGaAh714XfILz@e110455-lin.cambridge.arm.com>
+	s=arc-20240116; t=1733392889; c=relaxed/simple;
+	bh=v21otZvzUkNay7ZFsI1Y15KNxaF2kIaTH+hEyosvgLo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SIAf3K9ADb6Bnkk7wSd7AL7BXbTgySyutGegag7cb/U/uiPlW9Ro7i7uxYCHPWTxox5LhyX/6llL0XHNxwLvV8qjXxmXTMGYNJEqE9xvV/nziv2rkr9h9+ZUNZ6JvjFFQk/I+yJ2qwhEwcTk9v+aWhCIx4wH5DZvSMOlsPbZqdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPfJlDCw; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa5500f7a75so100929266b.0;
+        Thu, 05 Dec 2024 02:01:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733392885; x=1733997685; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=b6DpBiLftEN8D+gl9wRNAAKrPJWYeb4y6zIoZbJxWJY=;
+        b=iPfJlDCw/cHatRfKL+VKcDgwyaMz6CcIMxSP/1sL8sd3RSO1qN7zhEMsRc7qmq2WHv
+         Gbo4w26eRUyaMxUyEsxPTKDjCBoz97WQLYLG8WRWdYhckNa6MfDkon4VHyvo7fL6wsyF
+         Cf1WPXHaKaZANKrhclNm5Bt+Cpb5JEqN7iZB68Mk/my9C591pUIdpKlk3k5MjC0NyKkD
+         GqBimONyotDlAFLfrU7Un5XcOtG9s8dAj6H2CgpgdSlotR7vTf6N6ykUnYU/pnZOn/qU
+         3HFzIGZ4iklDU3PJb9/ybhV/w9M1Lv2sepV6ROfmd9TBKuN/oI5a+MrxXu+Oks4ZoSkf
+         75ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733392885; x=1733997685;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b6DpBiLftEN8D+gl9wRNAAKrPJWYeb4y6zIoZbJxWJY=;
+        b=s1fST8oFf8jxv578S+P1dvjIwKvmf7iktW84Qz0/TDg0A4UPs2JeMuGjqNERQ+V680
+         jBQ8T1YS/O+StoTJ8NeKkKvkxsKH47P2uaNPQh+vvj3FGPyg0j4OtKv+rZoNxjsF+Thg
+         fhBuLsetQJjMtoyZ0SzhBzagS5uSrPWfJZ4b/l5mqpz/AxhAJkjcZ9fndszZSL9lmo7q
+         FPps8HVCA1RYDjzG0+QFoFRUG+lDHvyDHoehfS0IKPoDluO7IwMzR+tiw2coYycS6JYE
+         MbniiZDXrmISgTHbllMbaK64SVHsxuGVqP2GwWuRi5wAHdYt1PxUUAVcrysNAisaLUO+
+         oLPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXA4Mi6StOqr4UWP+ZyJDPw0SOinfAMdL9t9CGrcNSxqEhVNS46zLeT3eKVnzOhbhwy5M=@vger.kernel.org, AJvYcCWrPHqqyUsGelLWXHX8Y2nz1h1vxe/csM+vKO31vSmEk1GGxQIG+Pw20VBa+9jv96UDJgxnz9/lshxkWyRV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXncTbvrSnEdNsZkhOQhJs2grZKIWPP5wV4K0EPpncIUNcfaZx
+	t8ya66EsoyDhfzInofSFD8joM88+WL2fKNUT6swTlsJE6xtHexfH
+X-Gm-Gg: ASbGncs9VdAH4VPDM7vh8++JQX6/f3OK21QD906HoURIKnbhMQpk5EghnVVX5DtqdzW
+	oG/lRuCCINh979SY1LTHseFcKfV0Xpm5NENcDC7AQlJ1HDI4m/6KKf/mAgvPhpTboaVhlVklqsN
+	9KFQwcUhWOjil7zA74DpaEFDWkz8c+dE1aI24mbLnYFOCC4ade+zpBuiEBopxm9zJnVHqhBIKPE
+	j4Ydxpa11kanCpH7CFicnMTfPPi7dRGsOHssSZ1GI8+Cx3Jmfzn0OiSP8X/xSNfJNIBvgMUZyIs
+	F/GpjcZUVDJiOaqE5BdgMQg=
+X-Google-Smtp-Source: AGHT+IG2gW4KauIAqc9H7+S/c1RnImhk15kwQEK5S81eH+MUP7TMqxZDW5jHMC2Ra3qDuj0UirKvug==
+X-Received: by 2002:a17:906:2929:b0:aa5:427e:6af6 with SMTP id a640c23a62f3a-aa5f7cac468mr695125366b.3.1733392884726;
+        Thu, 05 Dec 2024 02:01:24 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4dbacsm68854666b.16.2024.12.05.02.01.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 02:01:24 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 5 Dec 2024 11:01:22 +0100
+To: Laura Nao <laura.nao@collabora.com>
+Cc: alan.maguire@oracle.com, bpf@vger.kernel.org,
+	chrome-platform@lists.linux.dev, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on next
+Message-ID: <Z1F58qzclMgeEMcC@krava>
+References: <90b3b613-8665-425b-8132-5b9ac86ab616@oracle.com>
+ <20241113093703.9936-1-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z1CwGaAh714XfILz@e110455-lin.cambridge.arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241113093703.9936-1-laura.nao@collabora.com>
 
-On Wed, Dec 04, 2024 at 07:40:09PM +0000, Liviu Dudau wrote:
-> On Thu, Nov 28, 2024 at 08:55:43PM +0530, Aneesh Kumar K.V (Arm) wrote:
-> > These days, the Fixed Virtual Platforms(FVP) Base RevC model supports
-> > more PCI devices. Update the max bus number so that Linux can enumerate
-> > them correctly. Without this, the kernel throws the below error while
-> > booting with the default hierarchy
-> > 
-> > pci_bus 0000:01: busn_res: [bus 01] end is updated to 01
-> > pci_bus 0000:02: busn_res: can not insert [bus 02-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
-> > pci_bus 0000:02: busn_res: [bus 02-01] end is updated to 02
-> > pci_bus 0000:02: busn_res: can not insert [bus 02] under [bus 00-01] (conflicts with (null) [bus 00-01])
-> > pci_bus 0000:03: busn_res: can not insert [bus 03-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
-> > pci_bus 0000:03: busn_res: [bus 03-01] end is updated to 03
-> > pci_bus 0000:03: busn_res: can not insert [bus 03] under [bus 00-01] (conflicts with (null) [bus 00-01])
-> > pci_bus 0000:04: busn_res: can not insert [bus 04-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
-> > pci_bus 0000:04: busn_res: [bus 04-01] end is updated to 04
-> > pci_bus 0000:04: busn_res: can not insert [bus 04] under [bus 00-01] (conflicts with (null) [bus 00-01])
-> > pci 0000:00:01.0: BAR 14: assigned [mem 0x50000000-0x500fffff]
-> > 
-> > The change is using 0xff as max bus nr because the ECAM window is 256MB in size.
-> > 
-> > pci-host-generic 40000000.pci: ECAM at [mem 0x40000000-0x4fffffff] for [bus 00-01]
-> > 
-> > lspci output with and without the change
-> > without fix:
-> > 00:00.0 Host bridge: ARM Device 00ba (rev 01)
-> > 00:01.0 PCI bridge: ARM Device 0def
-> > 00:02.0 PCI bridge: ARM Device 0def
-> > 00:03.0 PCI bridge: ARM Device 0def
-> > 00:04.0 PCI bridge: ARM Device 0def
-> > 00:1e.0 Unassigned class [ff00]: ARM Device ff80
-> > 00:1e.1 Unassigned class [ff00]: ARM Device ff80
-> > 00:1f.0 SATA controller: Device 0abc:aced (rev 01)
-> > 01:00.0 SATA controller: Device 0abc:aced (rev 01)
-> > 
-> > with fix:
-> > 00:00.0 Host bridge: ARM Device 00ba (rev 01)
-> > 00:01.0 PCI bridge: ARM Device 0def
-> > 00:02.0 PCI bridge: ARM Device 0def
-> > 00:03.0 PCI bridge: ARM Device 0def
-> > 00:04.0 PCI bridge: ARM Device 0def
-> > 00:1e.0 Unassigned class [ff00]: ARM Device ff80
-> > 00:1e.1 Unassigned class [ff00]: ARM Device ff80
-> > 00:1f.0 SATA controller: Device 0abc:aced (rev 01)
-> > 01:00.0 SATA controller: Device 0abc:aced (rev 01)
-> > 02:00.0 Unassigned class [ff00]: ARM Device ff80
-> > 02:00.4 Unassigned class [ff00]: ARM Device ff80
-> > 03:00.0 PCI bridge: ARM Device 0def
-> > 04:00.0 PCI bridge: ARM Device 0def
-> > 04:01.0 PCI bridge: ARM Device 0def
-> > 04:02.0 PCI bridge: ARM Device 0def
-> > 05:00.0 SATA controller: Device 0abc:aced (rev 01)
-> > 06:00.0 Unassigned class [ff00]: ARM Device ff80
-> > 06:00.7 Unassigned class [ff00]: ARM Device ff80
-> > 07:00.0 Unassigned class [ff00]: ARM Device ff80
-> > 07:00.3 Unassigned class [ff00]: ARM Device ff80
-> > 08:00.0 Unassigned class [ff00]: ARM Device ff80
-> > 08:00.1 Unassigned class [ff00]: ARM Device ff80
-> > 
-> > Cc: Liviu Dudau <liviu.dudau@arm.com>
-> > Cc: Sudeep Holla <sudeep.holla@arm.com>
-> > Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> > Cc: Conor Dooley <conor+dt@kernel.org>
-> > Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+On Wed, Nov 13, 2024 at 10:37:03AM +0100, Laura Nao wrote:
+> Hi Alan,
 > 
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> On 11/7/24 16:05, Alan Maguire wrote:
+> > Thanks for the report! Judging from the config, you're seeing this with
+> > pahole v1.24. I have seen issues like this in the past where during a
+> > kernel build, module BTF has been built against vmlinux BTF, and then
+> > something later re-triggers vmlinux BTF generation. If that re-triggered
+> > vmlinux BTF does not use the same type ids for types, this can result in
+> > mismatch errors as above since modules are referring to out-of-date type
+> > ids in vmlinux. That's just a preliminary guess though, we'll
+> > need more info to help get to the bottom of this.
+> > 
+> > A few suggestions to help debug this:
+> > 
+> > - if you have build logs, check BTF generation of vmlinux. Did it in
+> > fact happen twice perhaps? Even better if, if kernel CI saves logs, feel
+> > free to send a pointer and I'll take a look.
 > 
-> Sudeep, can you please take this patch through your tree?
->
+> Thanks for the pointers!
+> 
+> From what I can tell in the logs, the BTF generation of vmlinux only 
+> occurred once. The automated build process in KernelCI generally involves 
+> building the kernel first, followed by the modules and other artifacts 
+> (such as the kselftest archive). 
+> The full build log can be downloaded by selecting 'build_log' from 
+> the dropdown menu at the top of this page:
+> 
+> https://kernelci-api.westus3.cloudapp.azure.com/viewer?node_id=6732f41d58937056c61734ab
+> 
+> I do see some warnings reported in the logs though:
+> 
+> WARN: resolve_btfids: unresolved symbol bpf_lsm_task_getsecid_obj
+> WARN: resolve_btfids: unresolved symbol bpf_lsm_current_getsecid_subj
 
-I have already queued and must be in -next, just didn't get to a point to
-respond as applied yet. I will update with your tags. Thanks!
+hi,
+this is fixed in bpf/master already:
+  8618f5ffba4d bpf, lsm: Remove getlsmprop hooks BTF IDs
 
--- 
-Regards,
-Sudeep
+I can't reproduce this as well, will check the logs you posted
+
+jirka
+
+> 
+> > - can you post the vmlinux (stripped of DWARF data if possible to limit
+> > size) and one of the failing modules somewhere so we can analyze?
+> > - Failing that,
+> > bpftool btf dump file /path/2/vmlinux_from_build > vmlinux.raw
+> > and upload of the vmlinux.raw and one of the failing module .kos would help.
+> > 
+> 
+> Currently, KernelCI only retains the bzImage, not the vmlinux binary. The 
+> bzImage can be downloaded from the same link mentioned above by selecting 
+> 'kernel' from the dropdown menu (modules can also be downloaded the same
+> way). I’ll try to replicate the build on my end and share the vmlinux 
+> with DWARF data stripped for convenience.
+> 
+> Thanks,
+> 
+> Laura
+> 
+> 
 
