@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-433017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2959E52F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF209E52EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9E61660B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B252E167E22
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4863B1DB92A;
-	Thu,  5 Dec 2024 10:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6651D63C1;
+	Thu,  5 Dec 2024 10:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PqTXtOY3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MMoKJ5qX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA021D8E01
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157342391A1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395863; cv=none; b=RZyCKT4wSoJUxXORlZToKItVC2T6TUuJgIZgvs8o3LwjEC6n2UPZ3SRl/0V/5BBZwWmqzu1CpIyMr0VAO8WFCzjxu+VkeY42Kg8VdswHFOXftIDTB5Hhnt3l6BnCwIp167J6OGlP4KzaD6pdBTIy7/+luqb1eTzmNTRhHjgqet0=
+	t=1733395830; cv=none; b=leheXSjWIWZ0P/bRlyyuo1YmG6KUvBzFIQI5DA6DJt3O8gAcsDKr4p9U7/mqFFCxwtoKMkQJRKoo2KTI6Ez1zin7haesDtSfrnmf+3M4Q3N88J/rySUjiTLttO0amQ5D2EJEI/RgClrQuuMu+QWak7+BPAzD5Us9ao6KFnlUTHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395863; c=relaxed/simple;
-	bh=DbO052KE/Uk1t0rWP5RDwZigDbWazHUaobXRIHNrGxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EPabaxwMKhVFhHQiAu3uoU02UiE2rv8YA2blNqtJWq97PGkf3/Bs6O/MFYVXVzBDoSbnCS3ktSlgfQzj+ZbKmKxRQPLfe3zCyUWGtlZWGC+xo1kDbXjSY09ha8cfDTUvjjaqpYWdZTF19hJ63mjVf7EKeBm4KmrmPBNZ2zi2zhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PqTXtOY3; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733395861; x=1764931861;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=DbO052KE/Uk1t0rWP5RDwZigDbWazHUaobXRIHNrGxM=;
-  b=PqTXtOY3JtSDXjKISqfhIqfgM2NEfb5cUE7iVMfrZbN+thdu++RCRbP6
-   dK9ErPhOdwGNhKfWPkRL6HQtBUyVX/UsLWAtI1OqwEZyzx16+PRPqWpNy
-   qbx2byps6k5syJHVhzsQtGaO5wQZDXQjm6uQCDxlroaEgOA2nBxC+AuD2
-   c4VJAlHIbyfllWR0mg5C/J+lGYdgb6ATl5/qeqf+kDT5SkMx+uHRnpAPm
-   coWWnyaTGqu9tmNwiWcQs/zaPiI7YkuYWkEKHlPRIGVWAf5o20Wh6mJTb
-   BE1Y2APK1bAmO14PzDAYO7ydTGP970ip1UKJWtHdlQOLxemCPEGkHDPaK
-   Q==;
-X-CSE-ConnectionGUID: znQ95UUURQO1FzkSoLmwmg==
-X-CSE-MsgGUID: wLJeZ5RqTtaeWl/FaqXEAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="51237736"
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="51237736"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 02:50:59 -0800
-X-CSE-ConnectionGUID: GEu/vHquSGKzyTU2H8uanA==
-X-CSE-MsgGUID: XrliNH0sRkaIjIxiixQA0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="124878501"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 05 Dec 2024 02:50:58 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJ9Rf-00045p-33;
-	Thu, 05 Dec 2024 10:50:55 +0000
-Date: Thu, 5 Dec 2024 18:49:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: arch/x86/kernel/apic/apic.c:2168: warning: Function parameter or
- member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
-Message-ID: <202412051816.oA5fqwk9-lkp@intel.com>
+	s=arc-20240116; t=1733395830; c=relaxed/simple;
+	bh=GAoOlPofgMBqWfJujDwo+YFQ72CJ4IjJ0WUUmmHruTA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=IE4wVGlzCbSObgAdV6cdfXg1Z/iS+LUjXbjFHI6GxjEN9Wdg2s2vhOSFWqs7J/YOm9kaY2IGhUwpgXkNAhV+UrtcQ6UMSBSMl01rQYRyGIycBmd8cxjP/rdSOuLdL0FKJA/+nWdIPkLR4zGAc6gntzZVv+vZ02GNz5I0TK2QQDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MMoKJ5qX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733395828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycHOMnBh816FhbuXVET66ivDaiNe7YcgyDVzdCppbeA=;
+	b=MMoKJ5qXjFJQ23Gfj8ZzrU/6mTCBEAi9534GKWBxdpHa9LkmnYbEbscZmCrDW/llfnzU3s
+	QyrBzVP0c4W1iBZrENOWhyNsIYgEQGbULCHQlSd8PXn86G1FES950eSkwOm4UMbAuer5s4
+	c+Ai2Aju/4upatwouwGmCGhfx5eBUWA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-379-cgDIirxSN7KzzoulNzp7YA-1; Thu,
+ 05 Dec 2024 05:50:23 -0500
+X-MC-Unique: cgDIirxSN7KzzoulNzp7YA-1
+X-Mimecast-MFC-AGG-ID: cgDIirxSN7KzzoulNzp7YA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EE7CC1955F68;
+	Thu,  5 Dec 2024 10:50:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6B9F71956052;
+	Thu,  5 Dec 2024 10:50:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <35033e7d707b4c68ae125820230d3cd3@AcuMS.aculab.com>
+References: <35033e7d707b4c68ae125820230d3cd3@AcuMS.aculab.com> <20241202143057.378147-1-dhowells@redhat.com> <20241202143057.378147-3-dhowells@redhat.com>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: dhowells@redhat.com,
+    "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Yunsheng Lin <linyunsheng@huawei.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    "Eric
+ Dumazet" <edumazet@google.com>,
+    Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+    "linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 02/37] rxrpc: Use umin() and umax() rather than min_t()/max_t() where possible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1760514.1733395814.1@warthog.procyon.org.uk>
+Date: Thu, 05 Dec 2024 10:50:14 +0000
+Message-ID: <1760515.1733395814@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   feffde684ac29a3b7aec82d2df850fbdbdee55e4
-commit: f8542a55499a69a859c84866b66f0df43933e563 x86/apic: Turn on static calls
-date:   1 year, 4 months ago
-config: x86_64-randconfig-076-20240105 (https://download.01.org/0day-ci/archive/20241205/202412051816.oA5fqwk9-lkp@intel.com/config)
-compiler: ClangBuiltLinux clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412051816.oA5fqwk9-lkp@intel.com/reproduce)
+David Laight <David.Laight@ACULAB.COM> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412051816.oA5fqwk9-lkp@intel.com/
+> > Use umin() and umax() rather than min_t()/max_t() where the type specified
+> > is an unsigned type.
+> 
+> You are also changing some max() to umax().
 
-All warnings (new ones prefixed by >>):
+Good point.  If I have to respin my patches again, I'll update that.
 
->> arch/x86/kernel/apic/apic.c:2168: warning: Function parameter or member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
->> arch/x86/kernel/apic/apic.c:2168: warning: expecting prototype for spurious_interrupt(). Prototype was for DEFINE_IDTENTRY_IRQ() instead
+> Presumably they have always passed the type check so max() is fine.
+> And max(foo, 1) would have required that 'foo' be 'signed int' and could
+> potentially be negative when max(-1, 1) will be 1 but umax(-1, 1) is
+> undefined.
 
+There have been cases like this:
 
-vim +2168 arch/x86/kernel/apic/apic.c
+	unsigned long timeout;
+	...
+	timeout = max(timeout, 1);
 
-c4d58cbd158dc9 arch/x86/kernel/apic_64.c   Thomas Gleixner 2007-10-12  2157  
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2158  /**
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2159   * spurious_interrupt - Catch all for interrupts raised on unused vectors
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2160   * @regs:	Pointer to pt_regs on stack
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2161   * @vector:	The vector number
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2162   *
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2163   * This is invoked from ASM entry code to catch all interrupts which
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2164   * trigger on an entry which is routed to the common_spurious idtentry
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2165   * point.
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2166   */
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2167  DEFINE_IDTENTRY_IRQ(spurious_interrupt)
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10 @2168  {
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2169  	handle_spurious_interrupt(vector);
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2170  }
-3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2171  
+where the macro would complain because it thought "timeout" and "1" were
+different sizes, so "1UL" had to be used.  Using umax() deals with that issue.
 
-:::::: The code at line 2168 was first introduced by commit
-:::::: 3c5e0267ec3e6ed7d3f1793273cbf0beb4f86a74 x86/apic: Split out spurious handling code
+David
 
-:::::: TO: Thomas Gleixner <tglx@linutronix.de>
-:::::: CC: Thomas Gleixner <tglx@linutronix.de>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
