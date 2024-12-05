@@ -1,249 +1,135 @@
-Return-Path: <linux-kernel+bounces-433987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0225E9E5FDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:15:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2FB9E5FDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:16:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DBDB286729
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1AF164F8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F491BD012;
-	Thu,  5 Dec 2024 21:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E161BD012;
+	Thu,  5 Dec 2024 21:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RGSODj+M"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nsyK1tiW"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE2D1C303A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 21:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4922E192D69
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 21:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733433312; cv=none; b=cBbBeeJjE80RAZBE2XZ4sftbVdxgZ3tiF1TEcOPEalwuNHbImlV+EnVFlEqfy3rxG9FOgikVxGzP6tMAzkk2Erj1xxaY4sEXBuFxAcEtMFUiwU/JDzSaR1bmwgD+Eyil+ovpm4CZM6svVpZUKHUWhvUuKTh6NAfGfbwf3lNNEkw=
+	t=1733433397; cv=none; b=TnefP6GJtfaO0aGpacGydjUtmSIunbU9S/s5jMfDyiJbqVrTxjyk4AmdV3HIHC/aobzB048zjSQmcMtOAclgKm87dinJ9gQGeK21OOUcV+LkBL/ArL3ohKSYvWJRN3oNFS9ycvJYsXYWcKrRTY0KaK3XMeUMCiyMWRWMXUrUpi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733433312; c=relaxed/simple;
-	bh=h3cshb4rCdaW6s7WqmDad6l3SlGpjsv59lMl5HHGEQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTozYb7XwdepFPPwoiAYrwxcPnKjngHZu+Qfb1MO5AgHHPqvCTOric+3Sr3iQAPGc6iRKrc1XyCs6SIhejoYZ9tuqchyj8OccY13RU0GTvrDN7vq6eWlVs5uoVJc9jhtbv3V4BJtbp+AnfPo8FKkheFngVus1wVQOFAbq3LgMgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RGSODj+M; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215810fff52so15517245ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 13:15:10 -0800 (PST)
+	s=arc-20240116; t=1733433397; c=relaxed/simple;
+	bh=vGGgM0GnyJCtyw6Kg3r8djHZ/md9FSIpwU6Prq00dW8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=js4D1WwKWchBXK2JqzmJ6OzaUDpVoEDvVdNokrJgDUFvk9VTpydI5mF1HHpL41gfj4G/NX/udx+oe9dbrnQB7r/sXJ8+6XElRtCnYeLr0cO8jsI6ogExQuNAqUPyqCGf/SXP2/6fkvkQTudi8NwMtqOHpz3EezSSR0Tn8wpVfYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nsyK1tiW; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2eebfd6d065so1604688a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 13:16:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1733433310; x=1734038110; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iMNOQ/LbvkZ3RF8xsPDD/T0btfy12YyJO+FcJtUBr1I=;
-        b=RGSODj+MxXsXe7fNQ4NdjdmlFWo+q5p2g2XJJv/hlQWs61GvxWZtbiS4FphcnfVaNU
-         6834g7g/SR0NR42VP7f2uMSr6ba/j1L8VwSa4b6i1P2honLSrKu1ay7+eQJ4BGWfiLqT
-         MpCC7zRgfmcEdos1+CAEIoAU7pZh1ujAeAGqOKG/vNy8uHKFfFS01kcrUWLf22UlrImS
-         kCOIBE0mYhL13VfCDLILEPoSFl0FwAS30mOis7mHz3grNDxGSrCeaRUUoxba/MWeHh5O
-         Mwud2Itahm3zDHAQ9RQY4w0t9H0LhtyvlBL1WCZrxsY+bTR0FWQkBya4spPmW3RmcPLp
-         lL2A==
+        d=google.com; s=20230601; t=1733433395; x=1734038195; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9gfuhq9D5CBFs4gTUaju4fePCaFnk6ZxoXmZYmnlTMI=;
+        b=nsyK1tiWu649r6k6k+DwM7g83XYGuSPJCYGmRvXvZJ5KWLAD/xc32lYyMNEa7CtnvN
+         DUV9dNMHgiTnwP7XcQbxL8PCuz47V9sidIB+wyvQKZFF5ERJ/pwJY0CCL+H7ug62guyl
+         iMvyQJC+VlGSMi5fJYWdH8GzbOqEzqk3oziBh7ueDAiczMgyWCBo92N1u9MIaNO1vBYt
+         q0ss4FAe3VZoYatKqU2sr8vqXXzLPJKpX9PCKiFcmUtpYIyJ199vX2ToHdbv9tJhBmv0
+         H0Kg9PljBm3zE/OPafJtbNGQypREcLQw3l/f0F2U3ZQ8RKi7ww7rzuTovKvvuZXpDIa+
+         tdJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733433310; x=1734038110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iMNOQ/LbvkZ3RF8xsPDD/T0btfy12YyJO+FcJtUBr1I=;
-        b=StXJpx84FD4cZgJr61KbeNKZJKTbkeMsclBFceCm8Ugnau7EvKrNQa1hUNm1h7uw+5
-         ty2k5xTUmPgGRp/1RE0IPyzGegBQVkNo7JYJEXsRoMpEhFijv29d9nIlzuTL1e0cs87c
-         1F1gbyYGFqRqt+XypbN5wuPeFvjWQ8FFm2J/YpxUdVmgDTJpzBj3iuWYjft09p0W2M9q
-         eEobSpujTt5bYjYdvpqdTwH6lSWDL7Y9W8TVjwzC48+/hT88KoOAukHy6dagMeF1FMmn
-         gYlc9R+g2B5PWahOmuJdN2F99zxItuSyBisPHsGtDnycFt4wbprOVrGpo6XCiF7nWlb6
-         z6yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVw3+tI/oL+MEjh4Av3qS2TzWg/mAZDI6fBPBR8HMQHbz1FpwANPCAk0hjJaLHS275hbJhYVSnPCfWZIRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTb2L5ZvyMHYXBCdrD96CkYYrnRpO2EJxtHfo+AP2mewcNTPHE
-	7RYIqkPiyBl9gTHRPglJt8TuTuueZM8ZWOg9n1JjqRmeHXOHIKv2oyoSoEGC3cw=
-X-Gm-Gg: ASbGncvr6N44wj70u7c173CRJcALU6Odx4Am/aRi9tp8bMy6kWWtR1uJxXVax2WjwsY
-	1s+fuPKRww7i0BgezUTKALuTnqK6J2pRj8VHfBYeFBHwtkHWNar7c8k+l5sIUTugZ9UAZnLRAuU
-	zx/6N2uK8yACs3vS9t6h5fwImQEZdCHhE45jYCDlOr6+yMSVZ64X2ODx9n67R2CO+ZiFP1BWBvN
-	k4S7BTvHX6N7Y1Zmjd7Qctr5Y1kmCfI9M0DEDPilVjTNSwev+eaz8vJTqxukUUJYuawyT3qvSUq
-	8XcSeT1bfbzVyQ+fhiAkCes=
-X-Google-Smtp-Source: AGHT+IE8OGm5O/X2/YMeH3EW08/gwIAqgtqX1jLcQ9PDg4MrtkF2WjvetNDK/FH/k5cKpV5Zgvy7rg==
-X-Received: by 2002:a17:902:c40a:b0:211:ce91:63ea with SMTP id d9443c01a7336-21614d35675mr5837985ad.15.1733433309420;
-        Thu, 05 Dec 2024 13:15:09 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e67244sm16836875ad.86.2024.12.05.13.15.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 13:15:08 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tJJBh-000000076LC-3Vyp;
-	Fri, 06 Dec 2024 08:15:05 +1100
-Date: Fri, 6 Dec 2024 08:15:05 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, hch@lst.de, ritesh.list@gmail.com,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
-Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
-Message-ID: <Z1IX2dFida3coOxe@dread.disaster.area>
-References: <20241204154344.3034362-1-john.g.garry@oracle.com>
- <20241204154344.3034362-2-john.g.garry@oracle.com>
- <Z1C9IfLgB_jDCF18@dread.disaster.area>
- <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
+        d=1e100.net; s=20230601; t=1733433395; x=1734038195;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9gfuhq9D5CBFs4gTUaju4fePCaFnk6ZxoXmZYmnlTMI=;
+        b=eKxjoXkij8gkjQ350yCUvZxcY6rV6LYgv5XD3KztNVMzGIUsQ2MK72tGOTBZsyAT3/
+         YNHKTBZ6CrGt0l8HL5USdZkHWgToUXIyGbZnmgucbnuAkhh6z570ps8lP+KaMmKq9LEz
+         RJfglf7gISsK6tNYnlPWRtYxg5xEtPIwaajBAyW7leWZDpjhGO2SGI7AF15aZ7VMTgKD
+         0HFrUBc5FswRMoa00RDKYYeKC2dgZexNd6+a5/UxDv09M0/vksXxi0j0jc/xVvZoI3gp
+         lNFf9H7RHfnOa2702gji02GQu5jkcTNw2bZ4CTYb3BjVhT3A3plHA4Jql21qay1tquNx
+         up4g==
+X-Gm-Message-State: AOJu0YyEoVzoVZCG03H04A09lmwt4p/qES7mbs3jjfJLrkDwaroh345+
+	1gfsqz68eK+sSjAOgRwunXEAPCfyk+T5W7uKlRdHrihq9CUltjiEEY+tB4rKeIfi0DK4FjjRM6H
+	FHGtSBnfCFR5ZTnSqTBjPtCkdNRYL4PFwNkCaOK9+tbmNfdI6BVOTG7g5tEfj9wLW7jq7fWXsYx
+	4BjH9mdu/YUGArYxoX9JS3GV2o9f3HmffF2OjXuq3elP95
+X-Google-Smtp-Source: AGHT+IGXhxNDlGUCq2Ye5eKkHlsyF6zNMLSYjESrA6IVrrq9cQ+92LXQrlxFg702sQv2opg5OjKhlxRGZzw+
+X-Received: from pjbhl7.prod.google.com ([2002:a17:90b:1347:b0:2ea:adc3:8daa])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:dfc4:b0:2ee:8c98:a965
+ with SMTP id 98e67ed59e1d1-2ef6ab271a0mr743808a91.34.1733433395478; Thu, 05
+ Dec 2024 13:16:35 -0800 (PST)
+Date: Thu,  5 Dec 2024 13:16:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241205211632.1181715-1-jstultz@google.com>
+Subject: [RFC][PATCH] sched: deadline: Remove unnecessary goto label in pick_earliest_pushable_dl_task
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Wanpeng Li <wanpeng.li@linux.intel.com>, 
+	Todd Kjos <tkjos@google.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 10:52:50AM +0000, John Garry wrote:
-> On 04/12/2024 20:35, Dave Chinner wrote:
-> > On Wed, Dec 04, 2024 at 03:43:41PM +0000, John Garry wrote:
-> > > From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-> > > 
-> > > Filesystems like ext4 can submit writes in multiples of blocksizes.
-> > > But we still can't allow the writes to be split into multiple BIOs. Hence
-> > > let's check if the iomap_length() is same as iter->len or not.
-> > > 
-> > > It is the responsibility of userspace to ensure that a write does not span
-> > > mixed unwritten and mapped extents (which would lead to multiple BIOs).
-> > 
-> > How is "userspace" supposed to do this?
-> 
-> If an atomic write spans mixed unwritten and mapped extents, then it should
-> manually zero the unwritten extents beforehand.
-> 
-> > 
-> > No existing utility in userspace is aware of atomic write limits or
-> > rtextsize configs, so how does "userspace" ensure everything is
-> > laid out in a manner compatible with atomic writes?
-> > 
-> > e.g. restoring a backup (or other disaster recovery procedures) is
-> > going to have to lay the files out correctly for atomic writes.
-> > backup tools often sparsify the data set and so what gets restored
-> > will not have the same layout as the original data set...
-> 
-> I am happy to support whatever is needed to make atomic writes work over
-> mixed extents if that is really an expected use case and it is a pain for an
-> application writer/admin to deal with this (by manually zeroing extents).
-> 
-> JFYI, I did originally support the extent pre-zeroing for this. That was to
-> support a real-life scenario which we saw where we were attempting atomic
-> writes over mixed extents. The mixed extents were coming from userspace
-> punching holes and then attempting an atomic write over that space. However
-> that was using an early experimental and buggy forcealign; it was buggy as
-> it did not handle punching holes properly - it punched out single blocks and
-> not only full alloc units.
-> 
-> > 
-> > Where's the documentation that outlines all the restrictions on
-> > userspace behaviour to prevent this sort of problem being triggered?
-> 
-> I would provide a man page update.
+Commit 8b5e770ed7c0 ("sched/deadline: Optimize pull_dl_task()")
+added an odd goto label that seems to be unnecssary, given its
+called unconditionally from the bottom of a while loop and the
+label is at the top.
 
-I think, at this point, we need an better way of documenting all the
-atomic write stuff in one place. Not just the user interface and
-what is expected of userspace, but also all the things the
-filesystems need to do to ensure atomic writes work correctly. I was
-thinking that a document somewhere in the Documentation/ directory,
-rather than random pieces of information splattered across random man pages
-would be a much better way of explaining all this.
+Thus, clean it up and remove the label/goto.
 
-Don't get me wrong - man pages explaining the programmatic API are
-necessary, but there's a whole lot more to understanding and making
-effective use of atomic writes than what has been added to the man
-pages so far.
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Wanpeng Li <wanpeng.li@linux.intel.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: kernel-team@android.com
+Fixes: 8b5e770ed7c0 ("sched/deadline: Optimize pull_dl_task()")
+Reported-by: Todd Kjos <tkjos@google.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+ kernel/sched/deadline.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> > Common operations such as truncate, hole punch,
-> 
-> So how would punch hole be a problem? The atomic write unit max is limited
-> by the alloc unit, and we can only punch out full alloc units.
-
-I was under the impression that this was a feature of the
-force-align code, not a feature of atomic writes. i.e. force-align
-is what ensures the BMBT aligns correctly with the underlying
-extents.
-
-Or did I miss the fact that some of the force-align semantics bleed
-back into the original atomic write patch set?
-
-> > buffered writes,
-> > reflinks, etc will trip over this, so application developers, users
-> > and admins really need to know what they should be doing to avoid
-> > stepping on this landmine...
-> 
-> If this is not a real-life scenario which we expect to see, then I don't see
-> why we would add the complexity to the kernel for this.
-
-I gave you one above - restoring a data set as a result of disaster
-recovery. 
-
-> My motivation for atomic writes support is to support atomically writing
-> large database internal page size. If the database only writes at a fixed
-> internal page size, then we should not see mixed mappings.
-
-Yup, that's the problem here. Once atomic writes are supported by
-the kernel and userspace, all sorts of applications are going to
-start using them for in all sorts of ways you didn't think of.
-
-> But you see potential problems elsewhere ..
-
-That's my job as a senior engineer with 20+ years of experience in
-filesystems and storage related applications. I see far because I
-stand on the shoulders of giants - I don't try to be a giant myself.
-
-Other people become giants by implementing ground-breaking features
-(e.g. like atomic writes), but without the people who can see far
-enough ahead just adding features ends up with an incoherent mess of
-special interest niche features rather than a neatly integrated set
-of widely usable generic features.
-
-e.g. look at MySQL's use of fallocate(hole punch) for transparent
-data compression - nobody had forseen that hole punching would be
-used like this, but it's a massive win for the applications which
-store bulk compressible data in the database even though it does bad
-things to the filesystem.
-
-Spend some time looking outside the proprietary database application
-box and think a little harder about the implications of atomic write
-functionality.  i.e. what happens when we have ubiquitous support
-for guaranteeing only the old or the new data will be seen after
-a crash *without the need for using fsync*.
-
-Think about the implications of that for a minute - for any full
-file overwrite up to the hardware atomic limits, we won't need fsync
-to guarantee the integrity of overwritten data anymore. We only need
-a mechanism to flush the journal and device caches once all the data
-has been written (e.g. syncfs)...
-
-Want to overwrite a bunch of small files safely?  Atomic write the
-new data, then syncfs(). There's no need to run fdatasync after each
-write to ensure individual files are not corrupted if we crash in
-the middle of the operation. Indeed, atomic writes actually provide
-better overwrite integrity semantics that fdatasync as it will be
-all or nothing. fdatasync does not provide that guarantee if we
-crash during the fdatasync operation.
-
-Further, with COW data filesystems like XFS, btrfs and bcachefs, we
-can emulate atomic writes for any size larger than what the hardware
-supports.
-
-At this point we actually provide app developers with what they've
-been repeatedly asking kernel filesystem engineers to provide them
-for the past 20 years: a way of overwriting arbitrary file data
-safely without needing an expensive fdatasync operation on every
-file that gets modified.
-
-Put simply: atomic writes have a huge potential to fundamentally
-change the way applications interact with Linux filesystems and to
-make it *much* simpler for applications to safely overwrite user
-data.  Hence there is an imperitive here to make the foundational
-support for this technology solid and robust because atomic writes
-are going to be with us for the next few decades...
-
--Dave.
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index d9d5a702f1a61..566a05efa4e57 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2501,8 +2501,6 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
+ 		return NULL;
+ 
+ 	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
+-
+-next_node:
+ 	if (next_node) {
+ 		p = __node_2_pdl(next_node);
+ 
+@@ -2510,7 +2508,6 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
+ 			return p;
+ 
+ 		next_node = rb_next(next_node);
+-		goto next_node;
+ 	}
+ 
+ 	return NULL;
 -- 
-Dave Chinner
-david@fromorbit.com
+2.47.0.338.g60cca15819-goog
+
 
