@@ -1,101 +1,168 @@
-Return-Path: <linux-kernel+bounces-433395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FF19E57E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:53:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD049E57D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:51:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DB92840E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152BE162458
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293D7219A6A;
-	Thu,  5 Dec 2024 13:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA280219A93;
+	Thu,  5 Dec 2024 13:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2TJ3bdqC"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uFPgp+9y"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A15218AD1;
-	Thu,  5 Dec 2024 13:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B451DED77;
+	Thu,  5 Dec 2024 13:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733406830; cv=none; b=pxhXTplKAFcb98jO6mcWuRN8Xq9ouUaDjP85YrXQimlxuFf94pcV4ETZbsPHhXb4eAHYve22+vTNh/lxV4knaTWhKCXIZcZEg+Pcyj1G+hlQ4h3HS420Mx7PDzDuWp5bZp+NdbMIT7E7YZaJEJIt/p1uRBItLBBlr5ltPnOAd7Q=
+	t=1733406643; cv=none; b=i+ZotKmDLZWv6ZNWDEJl9Web2Gtl1pSZZ0BOvl19XKRd4VaOVR1PYTuKg1RxsPyyR4dYZ4IVGJaUpVGLNJlSog0Qf8TxUSyDIQwYkkZAmkaN9QaA/3qXWzLA14WQUdYS/4v+4NEJfVipTA8qmBgb+cSIRRQAhDccxSOni8BTdg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733406830; c=relaxed/simple;
-	bh=87CtAFswNqX8OzkNCWJ31kn/Mx2fGShPdAZ4M+NEuFw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MZKKFFpbiQCaBXOdUbUv6iN4PVQnGFltY7lsXLVaEQ8Aou94J3fRomYgdTlIKJ7bYjA6HyPepO5qbSdbY2W0c0F5yQ1Ih9b47fJZlGUFLzKyA3DB19nv+qiCI4Ebhog7H4N8gaS+l79/5AwCEbvVoMl98dVhv40vkzbjmC7SJoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2TJ3bdqC; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733406829; x=1764942829;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=87CtAFswNqX8OzkNCWJ31kn/Mx2fGShPdAZ4M+NEuFw=;
-  b=2TJ3bdqCBv6uXDBBAoOeKMMm8YYe1Wz5sATbOKeC2hHwcdh4RRAMdSQQ
-   ZN/0dpWtOodaBIH7SW8I1oQEix113tKIxhx4E3ULLlku3kDxV4kE0hhjv
-   etXfqlpBT0cyiQyCDrjLAu8rzGSWUX4njIze02ESu3krGnyvzH9ywCnUY
-   u3f4S/xsXL3l0+yWUtsroZk9Ew09kKU+I6KjBe79CqjTpuRAdiEI/ZJ8V
-   m1N3CcKqCdltD3p+U/Ic1C6QWWQ+Dd7ImPurIXbs0fzxN+DyJ6waS0GM0
-   haf8ammsraqK+KrmwOdkLhtIEVX+5NwiPsInF3kB+kd38+g69sE/as2JD
-   g==;
-X-CSE-ConnectionGUID: 51PJrYFFSXOalleqFAFaug==
-X-CSE-MsgGUID: wcojJ4enTFaRZGWKLDsWqQ==
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="35177635"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Dec 2024 06:53:48 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 5 Dec 2024 06:53:24 -0700
-Received: from che-dk-ungapp03lx.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 5 Dec 2024 06:53:22 -0700
-From: Rengarajan S <rengarajan.s@microchip.com>
-To: <vaibhaavram.tl@microchip.com>, <kumaravel.thiagarajan@microchip.com>,
-	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <unglinuxdriver@microchip.com>
-CC: <rengarajan.s@microchip.com>
-Subject: [PATCH v1 char-misc-next] misc: microchip: pci1xxxx: Add push-pull drive support for GPIO
-Date: Thu, 5 Dec 2024 19:19:56 +0530
-Message-ID: <20241205134956.1493091-1-rengarajan.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733406643; c=relaxed/simple;
+	bh=/5U1JU+ZMcLZxBZLpU1heNzEVTQDQXMJGFSCxWjhMt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXqdX5DwMpnKpMlLUjh2cV0hFvBFdTT1Of8MjfzTQdMtG95dMt1vFFVkBFQRJ5HxCFV6riSwMb9ULa8hdBpaH6knGwV9CQzLkGRfFaPDR9OCC6MJ4UELwpQsVXNVK0NhjYwB0uEYpPWKLKbP8YdzTUGAE7wM2gV+XsDRk2O4dtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uFPgp+9y; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:dd5a:60c0:2d2a:9a5a:1723])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1F5653E;
+	Thu,  5 Dec 2024 14:50:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733406611;
+	bh=/5U1JU+ZMcLZxBZLpU1heNzEVTQDQXMJGFSCxWjhMt0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uFPgp+9yFOLbTvxh9ZQ6cdC6swc7G3CNoqm3Ric9OaQjsXZWycMdmrZJvdpbsjTku
+	 N5mlPQ1mJUpL/VfMHAVBs86vi6kU+2ZMdA4YFL/r38mfeSRF8iqC6uH76LmvAd4YR5
+	 fGbiKLlXRDO7uViwEJiaIBZgS9z3B64zLc6fqwwc=
+Date: Thu, 5 Dec 2024 19:20:34 +0530
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 00/15] media: i2c: ds90ub9xx: Misc fixes and
+ improvements
+Message-ID: <rvcaonzaforq3dknypihqec3hpgtw4lqyla47u3psawis5rwe4@iruuxpsgx2lf>
+References: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fbaov25vsrbawpjb"
+Content-Disposition: inline
+In-Reply-To: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
 
-Add support to configure GPIO pins for push-pull drive mode.
 
-Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
----
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 3 +++
- 1 file changed, 3 insertions(+)
+--fbaov25vsrbawpjb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/15] media: i2c: ds90ub9xx: Misc fixes and
+ improvements
+MIME-Version: 1.0
 
-diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-index e616e3ec2b42..97c7dbe43377 100644
---- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-+++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-@@ -147,6 +147,9 @@ static int pci1xxxx_gpio_set_config(struct gpio_chip *gpio, unsigned int offset,
- 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
- 		pci1xxx_assign_bit(priv->reg_base, OPENDRAIN_OFFSET(offset), (offset % 32), true);
- 		break;
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		pci1xxx_assign_bit(priv->reg_base, OPENDRAIN_OFFSET(offset), (offset % 32), false);
-+		break;
- 	default:
- 		ret = -EOPNOTSUPP;
- 		break;
--- 
-2.25.1
+Hi Tomi,
 
+On Dec 04, 2024 at 13:05:14 +0200, Tomi Valkeinen wrote:
+> This series fixes various small issues in the drivers, and adds a few
+> things (a couple of pixel formats and a debugging feature).
+>=20
+> It also takes a few steps in adding more i2c read/write error handlings
+> to the drivers, but covers only the easy places.
+>=20
+> Adding error handling to all reads/writes needs more thinking, perhaps
+> adding a "ret" parameter to the calls, similar to the cci_* functions,
+> or perhaps adding helpers for writing multiple registers from a given
+> table. Also, in some places rolling back from an error will require
+> work.
+>=20
+
+With the minor comment addressed, for the series:
+
+Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
+
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
+> Changes in v3:
+> - Include bitfield.h for FIELD_PREP()
+> - Cc stable for relevant fixes
+> - Link to v2: https://lore.kernel.org/r/20241108-ub9xx-fixes-v2-0-c7db3b2=
+ad89f@ideasonboard.com
+>=20
+> Changes in v2:
+> - Address comments from Andy
+> - Add two new patches:
+> 	- media: i2c: ds90ub960: Fix shadowing of local variables
+> 	- media: i2c: ds90ub960: Use HZ_PER_MHZ
+> - Link to v1: https://lore.kernel.org/r/20241004-ub9xx-fixes-v1-0-e30a463=
+3c786@ideasonboard.com
+>=20
+> ---
+> Tomi Valkeinen (15):
+>       media: i2c: ds90ub9x3: Fix extra fwnode_handle_put()
+>       media: i2c: ds90ub960: Fix UB9702 refclk register access
+>       media: i2c: ds90ub960: Fix use of non-existing registers on UB9702
+>       media: i2c: ds90ub960: Fix logging SP & EQ status only for UB9702
+>       media: i2c: ds90ub960: Fix UB9702 VC map
+>       media: i2c: ds90ub960: Use HZ_PER_MHZ
+>       media: i2c: ds90ub960: Add support for I2C_RX_ID
+>       media: i2c: ds90ub960: Add RGB24, RAW8 and RAW10 formats
+>       media: i2c: ds90ub953: Clear CRC errors in ub953_log_status()
+>       media: i2c: ds90ub960: Drop unused indirect block define
+>       media: i2c: ds90ub960: Reduce sleep in ub960_rxport_wait_locks()
+>       media: i2c: ds90ub960: Handle errors in ub960_log_status_ub960_sp_e=
+q()
+>       media: i2c: ds90ub913: Add error handling to ub913_hw_init()
+>       media: i2c: ds90ub953: Add error handling for i2c reads/writes
+>       media: i2c: ds90ub960: Fix shadowing of local variables
+>=20
+>  drivers/media/i2c/ds90ub913.c |  26 ++++--
+>  drivers/media/i2c/ds90ub953.c |  56 +++++++++----
+>  drivers/media/i2c/ds90ub960.c | 186 ++++++++++++++++++++++++++++--------=
+------
+>  3 files changed, 187 insertions(+), 81 deletions(-)
+> ---
+> base-commit: adc218676eef25575469234709c2d87185ca223a
+> change-id: 20241004-ub9xx-fixes-bba80dc48627
+>=20
+> Best regards,
+> --=20
+> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>=20
+
+--=20
+Thanks,
+Jai
+
+--fbaov25vsrbawpjb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmdRr6oACgkQQ96R+SSa
+cUWnNw/+K53qqAin/fIWO9ZmwASPmXYW25XsXNteeOQ0WiZgREFeqcC0+12DE6TS
+b1zwK6ZoQKbVwvQLn/y4uk0vQIaXL3195F7RTsC7sgGi3msMS/gv9cfj96bnmpEi
+iW5iDA1GTRxKcWgjB8i+XyaLEpxeyt3bYdiPUSvbS+yTn6Bwaei30QwXzoZy9vaL
+R4OiNm2ZmhWBJAJ8p7SIDR/PapTxAca1QViUT4cSHzjUe42tlgoFZu4MZfh6w9H+
+5rjqTpC5mTUwoCO4wgHD3J1k0a1KcjF3Oz+umfPZ24dW6JaUXEkaVxIYBqCRCUSk
+ZaT9xEmCHSSBinODt91YWmvf2W3WjuozxGgrQvBtEpihyRsePrJ554JiJr/P/OcS
+s4asVTTM04hT+qfONNITdlP87kbzI0kxr2qOI21hweeRUAffLzWPFeDRhQqx2lC6
+z7UkAUOI9at9lcPED+GMzGJ96RT7EnjgzmbTpRRue9hm526J8I8QIaPp0AOWhzGk
+MPgZ8wx/vrsjtrW1teIQwZHsBlm6fq/ITsPqSUXkNRdv44LgKYLeEkHnPwYpeBFf
+xo+Obo9xMU4g3lXJhE2ixCKG1qnwmosUwPZzgogFIYx1eX2Uk+JnAMltQXTSD93g
+0mc56i/RLwjk36b9hZfdT392ng8FSHc7e0QYFL6lIWUJEiQ0cHI=
+=KjYM
+-----END PGP SIGNATURE-----
+
+--fbaov25vsrbawpjb--
 
