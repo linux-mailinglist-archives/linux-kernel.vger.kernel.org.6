@@ -1,161 +1,81 @@
-Return-Path: <linux-kernel+bounces-432948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFC69E5239
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:27:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0FD9E523F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:27:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DF41882ABA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:27:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1541D8E07;
+	Thu,  5 Dec 2024 10:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q27Aej/Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C72C283A4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:27:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555741D6187;
-	Thu,  5 Dec 2024 10:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JofWgZfK"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C828B1D5ACD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416F61D6DA1;
+	Thu,  5 Dec 2024 10:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394439; cv=none; b=TOHNpzywl8auZSEqtFALxLHBa74ehViZBglETST703Ea0sR7c9hBQ67lPCmuSukQBLT4zhtFGvM1EjTYGjJQcxPaRBvc2pmPCzZ5ERDXhVevQfpBweCog59TLaGtqxFtUzquSVHG2UELm55jxlI2x1AhR5c/ZnRiMLcs1LYM6RI=
+	t=1733394442; cv=none; b=tW0HTv8PZJaZUOCYUZAI9T49UbcSrwL/yAsvWl0C00hZ03Qv4nQfgNCRdmTaNbWbYSfQGqljQ1B3UhZp/Rwx3pJYyH+AABpNlLY33GUaVpqbN6wbmDrkkxKj88PRiep6wAUcXJypSoUYPOnuh/L+YtruuSR57cdi4aoQ/dIuRxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394439; c=relaxed/simple;
-	bh=8q46dqRV1v2ND/3kJc778fBE2wfFmek/CR405bLPtMc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQWJ3ObA9FRHQAbdfm4OLbBAqBuP9IfRpg8HpKPq4SQRWhoY2zGNN+yF9rUg8mkDhawxFlj5vyYRDQ0O8u1JNJ5dIdS6AjjHa0UJilMrHLYw/rqb3MPVcDi9/kGXycQtWkPgN46mFVdq2qRerjzO19ACt3OJpFKp7BQ2+U3mmz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JofWgZfK; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffc016f301so6056961fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:27:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733394435; x=1733999235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kWr2sPdmT358XoDKa9V480ufmwo78bf7Tj2jfcCUPKQ=;
-        b=JofWgZfKJr/hMvKcIYz1asdNoppYTpgCstHlvRTRmAsIdRmkvoNUUXKuL6sziGiLfv
-         KSnUvmXpULP/UT1w9wfxFw5HtCHW49Sw8EGzRt8HDOWhwXaFcn4Tpzb4Wz6Q6JZTugds
-         rQ0Fh5x7/5XwZw9JFIvYseRJRM8rm7ifdSOBHeKWvoitWq/DxqqSqVOC2B6cLSVHMWCZ
-         SIycHzQmuLvfqQILRRkJi77BhYWO75ydVxAIFfb9HvSEfBhl74FIlBbpysvnG2iAVgvV
-         +SccNVaRWPtpoDYxx1Z2lpGuw5v7tH85GLhhVGV8cwIYFcK9tJoRSE2M7rO02Y4u9RTi
-         7aVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733394435; x=1733999235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kWr2sPdmT358XoDKa9V480ufmwo78bf7Tj2jfcCUPKQ=;
-        b=POsVvMizPQLx25Vs6pRT0mSMipXlzVyF6X828PB7hmXRo5OuJqVcEhpJwrbCJZljQl
-         KFsPteKwY/t31/61yKWwiD2s1KVc056g6gm0cYmwrasOn9+77oA2hunOuEFPFvp9IN+U
-         41Av5rbhhhcwkV/BHFIc9W+NAn6L5wSy2MTvmsrO1NRo0fSotFpybM/IlgxvcECknq3X
-         geZ0o7MTntwsfFRJtVv6tvG1pyxrW8oZpHtyyf5+4hJ13CjMhWK7i94w75PXsyX4TKiT
-         WL1cDTRN304fUjuz1etohDzuT/U6vF5IQwLLVQyAWrjp2kNiKy0855lwlXjwdPR8GySZ
-         A7dA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEwJELJU61xescOJMs+FFk/FPy2CiaMaZjR6k/6Lu0gKg52EUJ06kN/jEaHTw9h0r+sK0Q3sPjSV0acIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznBZNGNy+AqHUSqGILYFi9AxrtXNcnBiqfryT2cRvPh7X19bUW
-	Ql5v4I3MmG9g4tnnbOFiwEtqzFhtofVC2uLZzXr++Xs5FT0vGZvKsphM/T4S2gz7LgsdbfX3AAf
-	crihY6WhnBLvpQgavfJhYCZRw6e8j1Ts0FsqM6w==
-X-Gm-Gg: ASbGncvBlV4uAWKQ409fqXu36xiQMGnvACwLfHaaEQMqbkWmtrz5hqKEimMtdwErjYE
-	jKm7mAG2EudoByyRBbKweui1BriRuAp6rrEoTeQYN57D+4AdEoY8g3xYNLGz5Ew==
-X-Google-Smtp-Source: AGHT+IGUNiZ2Zr0AGmSGs2mdBuCRnV4lKq45/HGJjBiaJ21c71eSWgLHkCTxlmAm2wmJM4o2z+eKzX5aHRxBC7VjXr8=
-X-Received: by 2002:a05:6512:39d2:b0:53d:cefe:ffbd with SMTP id
- 2adb3069b0e04-53e12a34417mr5547500e87.55.1733394434644; Thu, 05 Dec 2024
- 02:27:14 -0800 (PST)
+	s=arc-20240116; t=1733394442; c=relaxed/simple;
+	bh=idntvcQkf9t2f3WP3Hgoo58PIvf60jANTZQdagcW+D8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYmnidSiD7h6D/vkAiyUZ5OfsMTDGskcCRqZZyoh7nkWuJuVIrV6zaj5y+pAXWzJiAzDechYi2fncZDbHPke/HzMTLHBWZe7F2J1ajeoYb4Mx84sLd+DoquZqkHDc5GKuVngyK5dzSw8i6LOrScyCo4YcJkgjVonk9WneJ9zGeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q27Aej/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D68B8C4CED1;
+	Thu,  5 Dec 2024 10:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733394441;
+	bh=idntvcQkf9t2f3WP3Hgoo58PIvf60jANTZQdagcW+D8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q27Aej/YrhV9v+KqLBBz18KCX6GlXr8FfkOLKLHacs0FC3o/ibVNVO0b8gA26ZJPQ
+	 kSC30TvCeRaIVj4r8Uxnt0QygL8gPF1JUMdubN9H1K2wyv2hAoQS8ocjhqONfm3+YH
+	 DtB15FnOjLBerzfFQ4HLNyRXqW4F4T+jJU3MRuXlPoLqM9884l5DeOMjrXSZppjsPN
+	 fgpUKcer9/cC6XZ92qgBoPXfa9dfthDgiZ67BUdcPuh1WQvMeb5UNy1nIyRS6eCZKh
+	 tIZkqcw+tBM6fgtkOMHlo8puL6Q4UfwZHzZFegI/JhmiNH3ADz5t1FADeTEH8NXqub
+	 RA1QtcC+7kKwQ==
+Date: Thu, 5 Dec 2024 11:27:17 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: gcc-ipq5424: remove
+ apss_dbg clock macro
+Message-ID: <vatyg3nkpillhyknyqe62myhmkp3nfbqwtltjcwfy2qhf4ez6j@iohbquyw6zsc>
+References: <20241205064037.1960323-1-quic_mmanikan@quicinc.com>
+ <20241205064037.1960323-2-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203164143.29852-1-brgl@bgdev.pl> <213de4bc-3706-4bb0-a827-06c63bfe0294@ti.com>
- <CAMRc=Md_u3YmseW5kV5VH4F99_0P=tc4pWty_fB3dVfv_JDxWQ@mail.gmail.com> <37f90519-48e9-4caa-80c6-9f6ae61aae0a@ti.com>
-In-Reply-To: <37f90519-48e9-4caa-80c6-9f6ae61aae0a@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Dec 2024 11:27:03 +0100
-Message-ID: <CAMRc=MdMiYE6xmmPqvZcx7MRjzppWkdWerxTiqn6Z9kmiUruwg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: omap: allow building the module with COMPILE_TEST=y
-To: Andrew Davis <afd@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, 
-	Kevin Hilman <khilman@kernel.org>, Alexander Sverdlin <alexander.sverdlin@siemens.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241205064037.1960323-2-quic_mmanikan@quicinc.com>
 
-On Tue, Dec 3, 2024 at 10:54=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
+On Thu, Dec 05, 2024 at 12:10:36PM +0530, Manikanta Mylavarapu wrote:
+> Since gcc_apss_dbg_clk has no consumers, the linux kernel will turn it
+> off. This causes a kernel crash because this clock is access protected
+> by trust zone. Therefore remove the gcc_apss_dbg_clk macro.
+> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+>  include/dt-bindings/clock/qcom,ipq5424-gcc.h | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> On 12/3/24 2:36 PM, Bartosz Golaszewski wrote:
-> > On Tue, Dec 3, 2024 at 7:41=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
-> >>
-> >> On 12/3/24 10:41 AM, Bartosz Golaszewski wrote:
-> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>
-> >>> For better build coverage, allow building the gpio-omap driver with
-> >>> COMPILE_TEST Kconfig option enabled.
-> >>>
-> >>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>> ---
-> >>>    drivers/gpio/Kconfig | 2 +-
-> >>>    1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> >>> index 56fee58e281e7..fb923ccd79028 100644
-> >>> --- a/drivers/gpio/Kconfig
-> >>> +++ b/drivers/gpio/Kconfig
-> >>> @@ -530,7 +530,7 @@ config GPIO_OCTEON
-> >>>    config GPIO_OMAP
-> >>>        tristate "TI OMAP GPIO support" if ARCH_OMAP2PLUS || COMPILE_T=
-EST
-> >>>        default y if ARCH_OMAP
-> >>> -     depends on ARM
-> >>> +     depends on ARM || COMPILE_TEST
-> >>
-> >> Why do we have this depends on ARM at all? It already has that conditi=
-on
-> >> above on ARCH_OMAP2PLUS which limits to ARM outside of compile testing=
-.
-> >>
-> >> And anything that selects ARCH_OMAP2PLUS also selects ARCH_OMAP, so we
-> >> could just do this:
-> >>
-> >
-> > I agree we can drop that bit.
-> >
-> >> --- a/drivers/gpio/Kconfig
-> >> +++ b/drivers/gpio/Kconfig
-> >> @@ -528,9 +528,9 @@ config GPIO_OCTEON
-> >>             family of SOCs.
-> >>
-> >>    config GPIO_OMAP
-> >> -       tristate "TI OMAP GPIO support" if ARCH_OMAP2PLUS || COMPILE_T=
-EST
-> >> -       default y if ARCH_OMAP
-> >> -       depends on ARM
-> >> +       tristate "TI OMAP GPIO support"
-> >> +       default y
-> >> +       depends on ARCH_OMAP2PLUS || COMPILE_TEST
-> >
-> > This would default to y with COMPILE_TEST. We definitely don't want
-> > that. IMO it should be:
-> >
-> > tristate "TI OMAP GPIO support"
-> > depends on ARCH_OMAP2PLUS || COMPILE_TEST
-> > default y if ARCH_OMAP2PLUS
-> >
->
-> Looks good to me
->
-> Andrew
 
-Nah, this is incorrect, it doesn't build gpio-omap for
-omap1_defconfig. I has to depend on ARCH_OMAP under which all omap
-platforms fall and they all use this driver.
+You did not even build your patches... This fails to compile.
 
-Bart
+Best regards,
+Krzysztof
+
 
