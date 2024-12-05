@@ -1,215 +1,157 @@
-Return-Path: <linux-kernel+bounces-432643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026749E4E14
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:18:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5080B9E4E18
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4332188161B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A9D1881642
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6B11B0F02;
-	Thu,  5 Dec 2024 07:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8C91A8F8B;
+	Thu,  5 Dec 2024 07:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WZmXwyDx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1RzOLloa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WZmXwyDx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1RzOLloa"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOodXTJR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA32D1AF0CA;
-	Thu,  5 Dec 2024 07:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B6F2391AB;
+	Thu,  5 Dec 2024 07:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733383077; cv=none; b=ajdW6hT2hZ9+DjYxgeMz2RRqYZl53f0sf0HH/4NjtcDU9mQ8DMx9KYFMgjw7ff49B9v+5ctMbFLX0csE3CfkgatWxlCiyfXFo++gAM09uQXJC0aAalfiyVOImn/ThsmAskU4jIUWAcrAKfxah4aWX6Zl3SodcUjUaD1WH8dcg3I=
+	t=1733383159; cv=none; b=ILvyh+3c04xPi8Brwm2eC5PWVYWoppj2J1G41YyYUMqD8eXI6BDdglfJUBtqN2pgiIiUqWfQRMqm37GMoRpxzqKTNKza993gFhxzMe6wl8cfsX9UntI4U679+nIbJ0XLPY9fP+sQKMRiVF+2EJtOhDfliAVAWAj+MqVR7D1rUK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733383077; c=relaxed/simple;
-	bh=SsPbjv/HRX3XeUDyRp3ofVV+M7CM3ragOxDLii5KcVc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rW91Q7YNrEAr+hdw6fwwpoJpnuYav9xSFfh+SJ5beurxers1FH0boEvozx1gRJ8BZw07xXBH6ZEWyWzJ7Rr2uBpn+VH1ZYx99flm3o9QV66SSmPGi4KcOUM0qI78UyYkRamL/Vpjo7ZPLvuyQUdMNmKW7vm/Sdw0xHYtQIuBuzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WZmXwyDx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1RzOLloa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WZmXwyDx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1RzOLloa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A67FB211F1;
-	Thu,  5 Dec 2024 07:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733383073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
-	b=WZmXwyDxko0FGSOl4PZkeSWZIs3QSfGxIZjrPCeZTnYTOVOcXHJroI4pvrzXycMLBOrsfy
-	9Yvn4gSSLRhLnTbRX3pgkhJ3kaZy1qd0ujrFBKE2n7lKjCVHrGIbTG604T2ZZuEd/PPOES
-	WHa7fMYBDUeHWfZWuvpkutyoPJbTuwQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733383073;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
-	b=1RzOLloamMWeZx52/0jUJJj98XuOThho8G6bStvXw42LYlc0eCGTz+DvUuVc28UellOerd
-	apju6X2xI9WAshAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733383073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
-	b=WZmXwyDxko0FGSOl4PZkeSWZIs3QSfGxIZjrPCeZTnYTOVOcXHJroI4pvrzXycMLBOrsfy
-	9Yvn4gSSLRhLnTbRX3pgkhJ3kaZy1qd0ujrFBKE2n7lKjCVHrGIbTG604T2ZZuEd/PPOES
-	WHa7fMYBDUeHWfZWuvpkutyoPJbTuwQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733383073;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
-	b=1RzOLloamMWeZx52/0jUJJj98XuOThho8G6bStvXw42LYlc0eCGTz+DvUuVc28UellOerd
-	apju6X2xI9WAshAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D6D2132EB;
-	Thu,  5 Dec 2024 07:17:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7eJhGaFTUWeRWgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 05 Dec 2024 07:17:53 +0000
-Date: Thu, 05 Dec 2024 08:17:53 +0100
-Message-ID: <87plm6vbry.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH 2/2] sound: usb: format: don't warn that raw DSD is unsupported
-In-Reply-To: <20241204151954.658897-2-adrian.ratiu@collabora.com>
-References: <20241204151954.658897-1-adrian.ratiu@collabora.com>
-	<20241204151954.658897-2-adrian.ratiu@collabora.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1733383159; c=relaxed/simple;
+	bh=YhQa/Ahbqqo1MzvJ5iZ47+nHNgHY+pg+hLM7s+GXQfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VpODz947JwlRjUfNHgUOFg1OxB1Od0+lPCIyMNDG4aAzs3vjGWcc594I/2Q3Ocnq7sV4GQS/P+to3NFgbqxzEgD8IO8UeLDyKaqB+U3eXiubOson7Ct8TgmTWVIDeduvKMoN4cB//VBkoQ2z3SXfvuf4rzcw9Q4iym91juasm8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOodXTJR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBAEAC4CED1;
+	Thu,  5 Dec 2024 07:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733383157;
+	bh=YhQa/Ahbqqo1MzvJ5iZ47+nHNgHY+pg+hLM7s+GXQfM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vOodXTJRjENzGZmW4dN6QDMBe1SIhoLaGR6QHpAXpaOvkzXJhbB6WxcRCIli2XsTV
+	 sOC5zOnxmwOPtIrjovbUFHkRY5JYGC3JQIENyewC5ONw7xPpLGS6MP6u6+98CB24+t
+	 vzkmv57JNipMiZYj5jodWj8IEnWak3uur8zNtGULwAkNTIYwhCbdkDnZp7Ez94Vvnz
+	 jPUzGjfdZZSCNre0MKcRbaIlNRVx+2+BKWaY5DAPQEpJIe3dkaZGd5rIez0hALNyrz
+	 5nHUm0G2b2Vbr+jZdRKJYKCDHGITb4EfsvbxIf3lJKp/WZFhaYotgzDASe6JZ1MjH8
+	 yRM2UhceK97jg==
+Message-ID: <88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
+Date: Thu, 5 Dec 2024 08:19:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
+To: =?UTF-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
+Cc: 'Guenter Roeck' <linux@roeck-us.net>, 'Rob Herring' <robh@kernel.org>,
+ 'Krzysztof Kozlowski' <krzk+dt@kernel.org>,
+ 'Conor Dooley' <conor+dt@kernel.org>, 'Alim Akhtar'
+ <alim.akhtar@samsung.com>, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20241021063903.793166-1-trunixs.kim@samsung.com>
+ <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
+ <20241021063903.793166-4-trunixs.kim@samsung.com>
+ <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
+ <20241107103331.GA4818@www.linux-watchdog.org>
+ <589c40e1-6a1c-4ef7-b0d8-b761b132578a@kernel.org>
+ <20241107113325.GA5284@www.linux-watchdog.org>
+ <c487babb-84a5-4e47-a58f-75fec55cbabb@kernel.org>
+ <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 04 Dec 2024 16:19:54 +0100,
-Adrian Ratiu wrote:
+On 05/12/2024 01:28, 김태완 wrote:
+> Hi Krzysztof,
 > 
-> UAC 2 & 3 DAC's set bit 31 of the format to signal support for a
-> RAW_DATA type, typically used for DSD playback.
+>> On 07/11/2024 12:33, Wim Van Sebroeck wrote:
+>>>>> Seems like you are having a hard day.
+>>>>> The 3 patches are dropped. I presume that you will take them all
+>> through your tree then?
+>>>>
+>>>> I meant only this one patch, not entire patchset. The bindings and
+>>>> watchdog driver are for you. I commented only about this patch here -
+>> DTS.
+>>>>
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>> I added the first two patches again. Even when it sounds more logical to
+>> me to keep the 3 together.
+>>
+>> Thank you.
+>>
+>>> But that's a never ending discussion, so we won't go into that :-).
+>>
+>> DTS is hardware description independent from Linux, therefore always goes
+>> separate way than Linux drivers.
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> This is correctly tested by (format & UAC*_FORMAT_TYPE_I_RAW_DATA),
-> fp->dsd_raw = true; and call snd_usb_interface_dsd_format_quirks(),
-> however a confusing and unnecessary message gets printed because
-> the bit is not properly tested in the last "unsupported" if test.
+> I found that the first two patches have been added to the linux-next git, 
+> but the last patch has not yet been reviewed.
 > 
-> For example:
-> 
-> usb 7-1: new high-speed USB device number 5 using xhci_hcd
-> usb 7-1: New USB device found, idVendor=262a, idProduct=9302, bcdDevice=0.01
-> usb 7-1: New USB device strings: Mfr=1, Product=2, SerialNumber=6
-> usb 7-1: Product: TC44C
-> usb 7-1: Manufacturer: TC44C
-> usb 7-1: SerialNumber: 5000000001
-> hid-generic 0003:262A:9302.001E: No inputs registered, leaving
-> hid-generic 0003:262A:9302.001E: hidraw6: USB HID v1.00 Device [DDHIFI TC44C] on usb-0000:08:00.3-1/input0
-> usb 7-1: 2:4 : unsupported format bits 0x100000000
-> 
-> This last "unsupported format" is actually wrong: we know the
-> format is a RAW_DATA which we assume is DSD, so there is no need
-> to print the confusing message.
-> 
-> Thus we update the condition to take into account bit 31 for DSD
-> (notice the "format <<= 1;" line above).
-> 
-> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> I would appreciate it if you could take a look at this patch.
 
-IMO, it's better to clear the already checked format bit instead, as
-there are two distinct bits depending on the protocol.
-That is, something like:
-
---- a/sound/usb/format.c
-+++ b/sound/usb/format.c
-@@ -54,6 +54,7 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
- 
- 		if (format & UAC2_FORMAT_TYPE_I_RAW_DATA) {
- 			pcm_formats |= SNDRV_PCM_FMTBIT_SPECIAL;
-+			format &= ~UAC2_FORMAT_TYPE_I_RAW_DATA;
- 			/* flag potentially raw DSD capable altsettings */
- 			fp->dsd_raw = true;
- 		}
-@@ -67,8 +68,10 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
- 		sample_width = as->bBitResolution;
- 		sample_bytes = as->bSubslotSize;
- 
--		if (format & UAC3_FORMAT_TYPE_I_RAW_DATA)
-+		if (format & UAC3_FORMAT_TYPE_I_RAW_DATA) {
- 			pcm_formats |= SNDRV_PCM_FMTBIT_SPECIAL;
-+			format &= ~UAC3_FORMAT_TYPE_I_RAW_DATA;
-+		}
- 
- 		format <<= 1;
- 		break;
-
-
-thanks,
-
-Takashi
-
-
-> ---
->  sound/usb/format.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/usb/format.c b/sound/usb/format.c
-> index 0cbf1d4fbe6e..fe2e0580e296 100644
-> --- a/sound/usb/format.c
-> +++ b/sound/usb/format.c
-> @@ -142,7 +142,7 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
->  		pcm_formats |= SNDRV_PCM_FMTBIT_A_LAW;
->  	if (format & BIT(UAC_FORMAT_TYPE_I_MULAW))
->  		pcm_formats |= SNDRV_PCM_FMTBIT_MU_LAW;
-> -	if (format & ~0x3f) {
-> +	if (format & ~0x10000003F) {
->  		usb_audio_info(chip,
->  			 "%u:%d : unsupported format bits %#llx\n",
->  			 fp->iface, fp->altsetting, format);
-> -- 
-> 2.45.2
-> 
+Since this patch was applied, I dropped from my queue. I don't have it
+in my inbox anymore. Please rebase, resolve any comments and resend.
+Best regards,
+Krzysztof
 
