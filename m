@@ -1,168 +1,188 @@
-Return-Path: <linux-kernel+bounces-432734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3A59E4F8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:19:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA6C9E4F95
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C139D1881320
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7CB164FA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3640B1D1730;
-	Thu,  5 Dec 2024 08:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ed/a/koE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9EC1D1730;
+	Thu,  5 Dec 2024 08:19:45 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC222391BC;
-	Thu,  5 Dec 2024 08:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF02194A43;
+	Thu,  5 Dec 2024 08:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733386756; cv=none; b=WHmNBKx4cXjlrYjUjNIK3qVeALLgQoH2klAspJyUlfiBh1YmSNPtlMCjFZm0EgyL7YlelfkWBiKfVaDaT7W7hdRiKbeVbky/AEqT01ZMxeb52oZQkdstQuK6/VvuorshGR7Ct0QXYRvxJj1LrYpoUDNolDgdRhtWAw5cVBaclps=
+	t=1733386785; cv=none; b=NSBvrFR8YpNm8Qzfyncf27U1aKLe5EwRgWJHgpwIr17Z/6fn7SgwpQDD4pgGMoO9wPvVM2eLnKSdEvOqTwsovP1FaSvIuEiuzDqLSGswcVDf/bacWi/Tf77m5+X6z2sDk5GvjCvwNrehc/5rSRn/s06aq21gsUWiTmT5H9qEqAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733386756; c=relaxed/simple;
-	bh=JhiphLgWiCNfU2elVpuwBoY3t+FHsdzdxyELcgnhNNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fMEOLLWrBURuLHb6YYk2mcQKBCOHjobwZA4gOVDsZw41X6n1Fy0j0cLrEI22EbOfJRYKLVzyf909VdIvp/7dgBcTZvJk/FUB4BttSvyO9IG6y2hyAiNn0jUdhiBeFA0RIeDn8B620qiYGrZLurmq85WlGf7+FtpTUsA2DG9fjXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ed/a/koE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74755C4CED1;
-	Thu,  5 Dec 2024 08:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733386756;
-	bh=JhiphLgWiCNfU2elVpuwBoY3t+FHsdzdxyELcgnhNNI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ed/a/koEM7nuMGLarG44D9RLXHxcLryGUfOLiuP8BxrlWBK0XjjxHncEkZatuuVYx
-	 XXdUUf2pd/V9Ed2JvRSa51z9g/lbDlPltAkIMKDe9/irTfAhrGCdDynO7BbogtGq4b
-	 d97z8ebzyBTzL/yezLGrvM5z5eAYlQDsOJG8boLGcl5+hBjd7SZjOkJkZv/Eu4kU+S
-	 BC2UFVhMu9aoXdQeyx8etMdljW7rIeGopkry93cs0rIZL1AWDUe/wiWTOyjqoPZbny
-	 +Ccbq54CF5gcgoq1HA+vXvVPSy6wZt+jMMH8bSpA2am0pRI2ilEdPjDdmIfk7y00k6
-	 CR/cMzP+9QVhA==
-Date: Thu, 5 Dec 2024 09:19:09 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Peter Maydell <peter.maydell@linaro.org>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
- qemu-devel@nongnu.org
-Subject: Re: [PATCH v5 10/16] acpi/ghes: better name GHES memory error
- function
-Message-ID: <20241205091909.66f803c5@foz.lan>
-In-Reply-To: <20241204174025.52e3756a@imammedo.users.ipa.redhat.com>
-References: <cover.1733297707.git.mchehab+huawei@kernel.org>
-	<1f16080ef9848dacb207ffdbb2716b1c928d8fad.1733297707.git.mchehab+huawei@kernel.org>
-	<20241204174025.52e3756a@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733386785; c=relaxed/simple;
+	bh=z4VF1DfxTuTvepvJLfhUZ5kZWxEqBij7/UOzaZn9R2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RvNHTC2MD0xYlDgYZxZj/fmkBTYVmqOxAmYdK/VMj7TB9/330BrUSxYMyI8zbDCK5OfxFu6jMkgm/Ochk2Q0vyiWQ/iEpIxPkRkk7dTM8c+9dv2zYx+O4UNPi+m7Fvv+VCi38nMVsdD2h7IJt8LUSV+OeTueo3Ykka9a8xBYViI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4afa4094708so152334137.0;
+        Thu, 05 Dec 2024 00:19:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733386780; x=1733991580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TymhtJQJLO1d2er5Qpo5wpVgQe9RLPvK7Re/NeMOgM8=;
+        b=EGHzNRLsZo79vBioMNR+drcptTTDrL9JFnJu5/9GXgfPWVDgcovSAVuGB+hQzEG2HS
+         Bk1hXWIZmZMR4LGjAAoNPXGcdSaGrJoHelrI870w7XE7LBrDi3tjtfasP76RaEAR7sPA
+         VsmLECBGFo3djKFhrgw7/NGXBgHfXDyax5mgCDl8qvWHEkWXbPA+AUsDVg/dIor7m4hq
+         Q9zFpQH3qQdipAgZPn8lp07216gWyKs1wcni5+E0SDiUiqTYinl66QW+bs/OUmZ8K/hN
+         jyzrXnH4wf9aIUD45YUbZBi85hReM90GpO/fDbRKLFd+rn/Q5CSOsXbQGKoJsMDpJmzf
+         U7TA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuU1iOVDhuu97DNno2Y6Y07rHszFnTwaVo21M4IhRRtdhN1EZEpdfSH99H9Bj4P0B3r/Gah83zm4P0maA=@vger.kernel.org, AJvYcCXplEDIHEkmelzZR3F0QVvxRi3ID4bRTWpZ47Yn0mXJGPGk1GO0QBhbp5Jb5gMoyUq/tiUt6Ziae2/Lug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS5yp0TLlY8LC8+yQh+PTkBrQ1CBwparTY8zDltDQnf0s56Y03
+	BNEZPIYOsoVMwzZFKqbMOdNuwuPuEvyaqnaR1jS1nKUey6o4Smg73uxAYpg7
+X-Gm-Gg: ASbGncuAyLwW24XNpb4O7no5YGN54jpvhW9nIg9DtkE9Jz64HESHYmg+Q8+SIAP+iOQ
+	dsQXTrg18YQp6sVys6SctrJIuyKQIbSsllNP3EQTQlnzdOyLUZdWkZl48MBgCw2BImP0HtcxVcQ
+	cj19PRiv7+vtz80G5XSxVY0jdxK+nrNUoi0s+hkj9+1eedMs9Z9v+4VGrSdtZcEbgb2UXxVIi3q
+	7IbYrmSjI5h4ciCf4FyFZBGOJgctXbSUnFb/ynPqEFNcu7FfMHjL4AoDEdvTIjw3M5m6QdAMIrr
+	5gEoVA0J3s7J
+X-Google-Smtp-Source: AGHT+IGzdaPzp74umM20fxzWrRWwHdaUZ7ur1fJz6xT6CX/rzxu42VK6CIPtiSBq9urhnDpx22+qFw==
+X-Received: by 2002:a05:6102:5113:b0:4af:59a2:8425 with SMTP id ada2fe7eead31-4afa52f0755mr9472439137.26.1733386780629;
+        Thu, 05 Dec 2024 00:19:40 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2ba8b1f9sm121544241.19.2024.12.05.00.19.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 00:19:39 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-85b92397fe2so147608241.3;
+        Thu, 05 Dec 2024 00:19:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVUnOj3LOUmmzupONUubH7bksHBF3zTC1pKXXeh9H/WBmUwAiV++/BQUFhHeYfGDJd2IWVqx+Ukg5A8edc=@vger.kernel.org, AJvYcCVq/JlhnCwkxVVmIb0M1UOaz7gIhLl7ISx25kGpJ2vYa2/23kBfxW7ZzqEOWPO9Jeo/jFbmk6IQlSyGrw==@vger.kernel.org
+X-Received: by 2002:a05:6102:358c:b0:4af:ad73:ffd7 with SMTP id
+ ada2fe7eead31-4afad741481mr5868855137.7.1733386778916; Thu, 05 Dec 2024
+ 00:19:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241011150304.709590-1-ziy@nvidia.com> <CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com>
+ <DAFE2913-0B32-484F-83BE-080C60362DB8@nvidia.com> <f64f8a9e-fda8-4f7a-85a2-0113de2feb6c@suse.cz>
+ <9942C08D-C188-461C-B731-F08DE294CD2B@nvidia.com> <Z1CDbrrTn6RgNmYn@casper.infradead.org>
+ <B65776A4-D434-4D9F-9C42-1C45DAE5A72A@nvidia.com>
+In-Reply-To: <B65776A4-D434-4D9F-9C42-1C45DAE5A72A@nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Dec 2024 09:19:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV1hkwajxDWk6AWj_QR_qPkEni0u=tnQWdt1-M83NE0ig@mail.gmail.com>
+Message-ID: <CAMuHMdV1hkwajxDWk6AWj_QR_qPkEni0u=tnQWdt1-M83NE0ig@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid zeroing user movable page twice with init_on_alloc=1
+To: Zi Yan <ziy@nvidia.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+	John Hubbard <jhubbard@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko <glider@google.com>, 
+	Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 4 Dec 2024 17:40:25 +0100
-Igor Mammedov <imammedo@redhat.com> escreveu:
+Hi Zi,
 
-> On Wed,  4 Dec 2024 08:41:18 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > The current function used to generate GHES data is specific for
-> > memory errors. Give a better name for it, as we now have a generic
-> > function as well.
-> > 
-> > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
-> 
-> not that it matters but for FYI
-> Sign off of author goes 1st and then after it other tags
-> that were added later
+On Wed, Dec 4, 2024 at 5:58=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+> On 4 Dec 2024, at 11:29, Matthew Wilcox wrote:
+> > On Wed, Dec 04, 2024 at 11:16:51AM -0500, Zi Yan wrote:
+> >>> So maybe the clearing done as part of page allocator isn't enough her=
+e.
+> >>>
+> >> Basically, mips needs to flush data cache if kmap address is aliased t=
+o
+> >
+> > People use "aliased" in contronym ways.  Do you mean "has a
+> > non-congruent alias" or "has a congruent alias"?
+>
+> I mean if kmap address goes into a different cache line than userspace
+> address, a cache flush is needed to make sure data is visible to
+> userspace.
+>
+> >
+> >> userspace address. This means when mips has THP on, the patch below
+> >> is not enough to fix the issue.
+> >>
+> >> In post_alloc_hook(), it does not make sense to pass userspace address
+> >> in to determine whether to flush dcache or not.
+> >>
+> >> One way to fix it is to add something like arch_userpage_post_alloc()
+> >> to flush dcache if kmap address is aliased to userspace address.
+> >> But my questions are that
+> >> 1) if kmap address will always be the same for two separate kmap_local=
+() calls,
+> >
+> > No.  It just takes the next address in the stack.
+>
+> So this fix will not work, since it is possible that first kmap and secon=
+d
+> kmap have different pages_do_alias() return values.
+>
+> Another way would be to make a special case for mips, like below.
+> But that looks ugly, let me think about it more.
+>
+> diff --git a/arch/mips/include/asm/page.h b/arch/mips/include/asm/page.h
+> index bc3e3484c1bf..ef3c6f0b9159 100644
+> --- a/arch/mips/include/asm/page.h
+> +++ b/arch/mips/include/asm/page.h
+> @@ -95,6 +95,19 @@ struct vm_area_struct;
+>  extern void copy_user_highpage(struct page *to, struct page *from,
+>         unsigned long vaddr, struct vm_area_struct *vma);
+>
+> +struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
+> +                                  unsigned long vaddr)
+> + {
+> +       struct folio *folio;
+> +
+> +       folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
+> +       if (folio)
+> +               clear_user_highpage(&folio->page, vaddr);
+> +
+> +       return folio;
+> + }
+> +#define vma_alloc_zeroed_movable_folio vma_alloc_zeroed_movable_folio
+> +
+>  #define __HAVE_ARCH_COPY_USER_HIGHPAGE
+>
+>  /*
+> diff --git a/mm/internal.h b/mm/internal.h
+> index cb8d8e8e3ffa..d513fa683aa3 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1287,7 +1287,8 @@ void touch_pmd(struct vm_area_struct *vma, unsigned=
+ long addr,
+>
+>  static inline bool alloc_zeroed(void)
+>  {
+> -       return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
+> +       return !IS_ENABLED(CONFIG_MIPS) &&
+> +               static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
+>                         &init_on_alloc);
+>  }
 
-Yes, that's what I usually do, when I'm using my developer's hat. 
-Placing reviews before SoB is what I do with my maintainer's hat
-at the Kernel :-)
+After adding a missing static inline, #include <linux/gfp.h>, and still
+getting compile failures, I gave up...
 
-I'll address it for the next (and hopefully final) version.
+Gr{oetje,eeting}s,
 
-> 
-> > ---
-> >  hw/acpi/ghes-stub.c    | 2 +-
-> >  hw/acpi/ghes.c         | 2 +-
-> >  include/hw/acpi/ghes.h | 4 ++--
-> >  target/arm/kvm.c       | 2 +-
-> >  4 files changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/hw/acpi/ghes-stub.c b/hw/acpi/ghes-stub.c
-> > index 2b64cbd2819a..7cec1812dad9 100644
-> > --- a/hw/acpi/ghes-stub.c
-> > +++ b/hw/acpi/ghes-stub.c
-> > @@ -11,7 +11,7 @@
-> >  #include "qemu/osdep.h"
-> >  #include "hw/acpi/ghes.h"
-> >  
-> > -int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
-> > +int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
-> >  {
-> >      return -1;
-> >  }
-> > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > index 4b5332f8c667..414a4a1ee00e 100644
-> > --- a/hw/acpi/ghes.c
-> > +++ b/hw/acpi/ghes.c
-> > @@ -415,7 +415,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-> >      return;
-> >  }
-> >  
-> > -int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
-> > +int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
-> >  {
-> >      /* Memory Error Section Type */
-> >      const uint8_t guid[] =
-> > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> > index 8859346af51a..21666a4bcc8b 100644
-> > --- a/include/hw/acpi/ghes.h
-> > +++ b/include/hw/acpi/ghes.h
-> > @@ -74,15 +74,15 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
-> >                       const char *oem_id, const char *oem_table_id);
-> >  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
-> >                            GArray *hardware_errors);
-> > +int acpi_ghes_memory_errors(uint16_t source_id, uint64_t error_physical_addr);
-> >  void ghes_record_cper_errors(const void *cper, size_t len,
-> >                               uint16_t source_id, Error **errp);
-> > -int acpi_ghes_record_errors(uint16_t source_id, uint64_t error_physical_addr);
-> >  
-> >  /**
-> >   * acpi_ghes_present: Report whether ACPI GHES table is present
-> >   *
-> >   * Returns: true if the system has an ACPI GHES table and it is
-> > - * safe to call acpi_ghes_record_errors() to record a memory error.
-> > + * safe to call acpi_ghes_memory_errors() to record a memory error.
-> >   */
-> >  bool acpi_ghes_present(void);
-> >  #endif
-> > diff --git a/target/arm/kvm.c b/target/arm/kvm.c
-> > index 7b6812c0de2e..b4260467f8b9 100644
-> > --- a/target/arm/kvm.c
-> > +++ b/target/arm/kvm.c
-> > @@ -2387,7 +2387,7 @@ void kvm_arch_on_sigbus_vcpu(CPUState *c, int code, void *addr)
-> >               */
-> >              if (code == BUS_MCEERR_AR) {
-> >                  kvm_cpu_synchronize_state(c);
-> > -                if (!acpi_ghes_record_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
-> > +                if (!acpi_ghes_memory_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
-> >                      kvm_inject_arm_sea(c);
-> >                  } else {
-> >                      error_report("failed to record the error");  
-> 
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
-Thanks,
-Mauro
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
