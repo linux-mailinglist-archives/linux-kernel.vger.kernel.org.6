@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-433207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0175A9E5522
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:13:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A209E551A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:13:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0926285BDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B779A18837D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF31217F50;
-	Thu,  5 Dec 2024 12:13:17 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F7C217F26;
+	Thu,  5 Dec 2024 12:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYqMUl9A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EA8217718
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD22212B33;
+	Thu,  5 Dec 2024 12:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400796; cv=none; b=WiN61IJiz3qo7EyrkxLq3QIjbBmKgRudNeZ61vPuYW2RvScQy91t+3JyhVCwTLf9WeOsRYF3TigMVtU6+cxaSVBzF6MK4Xtw+sNUntukzA7BBQs8RAgANDc3KSdHO3wl0St8XmOnmm+lIX0NgzoNzW68mnOZQ5iF0FkxaWrtRcg=
+	t=1733400773; cv=none; b=mTjsw//pZgqjEIyYgksob/IMF8LUPaA4jWYgpYFrI4qhPdReU6jJLA1bCbkUBJN+suSDRRy6N1HqY0Eh6afxxLq0UDj5dFuF0u+9ewkBAF7qpXqm+t3jnkmheejSC2tuB/hC23Ykh/PFeR9A9jkPD5xBe/6Zc1qHf6q/iHHVwOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400796; c=relaxed/simple;
-	bh=1J4ztAGkR97mu0rXS7CUisVilusU/16YhOa82w/ptss=;
+	s=arc-20240116; t=1733400773; c=relaxed/simple;
+	bh=5pIpWgALCksfBcP+JSYhp1PXA9kKAYqrDMxMw/x6eeU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K+SQSm7fqGAKsF+T6pX/Q7oOgvmc/PA0Z+f5zwSmce6lNvZQyQcJt2dG/FWPoG9p+xhUq+Dh9e/HhhcGKf8FzlwbrbilT+Fca6x1v8N0mLp/M91TdeiHxMjeCfYsK2KTZhdU0nNpZvanIdUvVnU3W8jwReN+Bshl6eO6G2I1moc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tJAik-0008Hm-P7; Thu, 05 Dec 2024 13:12:38 +0100
-Message-ID: <4218cdae-07ee-433c-8a68-bb07885e43ab@pengutronix.de>
-Date: Thu, 5 Dec 2024 13:12:33 +0100
+	 In-Reply-To:Content-Type; b=GXe9InyyFJxVX5gst5aC3Gu4vak/hz3fQQHK1RlhhPZ+oI4AxOTSBUqpFi8jB7xHKsWIhMEMQSGaFBW7vpsDsscoRCqvu15nxgySXXyg9M+5bRQRPAxmStX83Ss2Qch/aC8xinPX9H3ja0uw4lpyQ4xe9kgehUJ8004U0B7w8ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYqMUl9A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DE68C4CEDC;
+	Thu,  5 Dec 2024 12:12:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733400773;
+	bh=5pIpWgALCksfBcP+JSYhp1PXA9kKAYqrDMxMw/x6eeU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EYqMUl9AZlkrWyE9JWIVDoCBpjv96wFSLalVU7s7gBPA2v9oNUfntzBuraykrWK/o
+	 sXpUpdnbmL7nTmChty93IHsRi3/hCLCCj+f7uKHkK7JYYflKSFAe/amV3a4E773iCR
+	 +nWBcTvx+2FMt8qEPxFbOBBMEsBryvuDVg9rXtgJrbJJQioIJqIXl/819D1HKfIw0N
+	 uTU8P8eBCAnNFwk66nLsfNnhBnZsiJdwk0qwmnEtqUBgmDnY5MebMtoh/4Vuj025f7
+	 GZeFMCKaN+qjSs/s2prkO/bO3QcVWAMlAdH+Ok4DNjVK7elVuThxVh/qCVyPFGGjtt
+	 X/WqbOlDPByew==
+Message-ID: <6999aff2-5889-4786-9395-28d9ce40f6c0@kernel.org>
+Date: Thu, 5 Dec 2024 13:12:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,166 +49,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Co-existence of GPT and fixed partitions (Was: Re: [PATCH v6 5/6]
- block: add support for partition table defined in OF)
-To: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>,
- INAGAKI Hiroshi <musashino.open@gmail.com>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Ming Lei <ming.lei@redhat.com>, Li Lingfeng <lilingfeng3@huawei.com>,
- Christian Heusel <christian@heusel.eu>, Avri Altman <avri.altman@wdc.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Riyan Dhiman <riyandhiman14@gmail.com>,
- Mikko Rapeli <mikko.rapeli@linaro.org>,
- Jorge Ramirez-Ortiz <jorge@foundries.io>, Li Zhijian
- <lizhijian@fujitsu.com>,
- Dominique Martinet <dominique.martinet@atmark-techno.com>,
- Jens Wiklander <jens.wiklander@linaro.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com,
- Christoph Hellwig <hch@infradead.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Christoph Hellwig <hch@lst.de>
-References: <20241002221306.4403-1-ansuelsmth@gmail.com>
- <20241002221306.4403-6-ansuelsmth@gmail.com>
- <5e9a80d6-6c89-478e-99c9-584647661f5e@pengutronix.de>
- <CA+_ehUwa69Qa96yy0=K9AiCEJbaZt9oGCRf5gJDh-0_14shbtA@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] MAINTAINER: Add entry for Blaize SoC
+To: Matt Redfearn <matt.redfearn@blaize.com>,
+ Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, James Cowgill
+ <james.cowgill@blaize.com>, Neil Jones <neil.jones@blaize.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev
+References: <20241204-blaize-blzp1600_init_board_support-v5-0-b642bcc49307@blaize.com>
+ <20241204-blaize-blzp1600_init_board_support-v5-6-b642bcc49307@blaize.com>
+ <h5awakp52e6pxnnfrclhtlhhs3i66twvmqwlf5vmnfwk2xhbwr@marp6wti72ti>
+ <ac96f306-e5ea-4514-b25d-18b44777d3e6@blaize.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <CA+_ehUwa69Qa96yy0=K9AiCEJbaZt9oGCRf5gJDh-0_14shbtA@mail.gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <ac96f306-e5ea-4514-b25d-18b44777d3e6@blaize.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello Christian,
-
-Thanks for the prompt response.
-
-On 05.12.24 12:54, Christian Marangi (Ansuel) wrote:
->> How common are these? I never worked with a system that didn't use MBR
->> or GPT for the user partition.
+On 05/12/2024 12:22, Matt Redfearn wrote:
 >>
-> 
-> On router devices this is the approach for Mediatek and Airoha and also
-> other vendor for anything that have an eMMC.
-
-Good to know. Thanks.
-
->> barebox has for many years supported defining fixed partitions on SD/MMC
->> nodes and it's used heavily to define e.g. the location of the barebox
->> environment. Many who do so, do this either before the first partition
->> of the MBR/GPT or overlay the fixed partition to be identical to
->> an existing MBR/GPT partition.
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >>
->> barebox also by default copies all fixed partitions it is aware of
->> into the kernel DT, so if the kernel now stops parsing GPT/MBR when
->> a fixed partition node is defined, this would break compatibility of
->> existing barebox-booting systems with new kernels.
->>
+>> They should also ack it to confirm they understand the burden.
 > 
-> I'm not following... is that a downstream thing? Also fixed-partition
-> in DT for SD/MMC were never supported, why the partition was
-> copied in DT? Userspace tools made use of them?
-
-The kernel isn't modified, but the barebox-state utility can parse the
-fixed partitions in the DT and map it via udev to a block device partition
-(if one exists) or to a block device + offset.
-
->> If I understand correctly, it's possible to have both partitions-boot1 and
->> a GPT on the user area with your patch, right?
->>
+> Acked-by: Matt Redfearn <matt.redfearn@blaize.com>
 > 
-> No, this array works by, first is found WIN. If OF_PARTITION is enabled
-> and an OF partition is declared in DT, then efi partition parse is skipped.
-
-Yes, but Boot partitions and the user area are different block devices,
-so it should be possible to use OF partition for the boot partitions
-and GPT for the user area, right?
-
->> So this only leaves the matter of dealing with both fixed-partitions and
->> GPT for the same device node.
->>
 > 
-> The logic is applied to skip exactly this scenario. GPT partition can
-> be edited at
-> runtime and change, DT is more deterministic. It's one or the other.
-> 
-> If downstream someone have GPT then OF_PARTITION should not
-> be used at all... Eventually downstream for this special approach, an additional
-> downstream patch can be added that define a special property in the node to
-> disable OF parsing. (it's a 3 line patch and since everything is downstream it
-> really doesn't matter)
+> A question about process: should Niko resend V5 with all of the acks?
 
-As mentioned, the kernel itself isn't patched, but there was an implicit
-assumption that MBR/GPT parsing would continue to work, even when a fixed
-partition node is specified...
+Normally not, here however after finished review expectation was to send
+it to soc tree (I think Arnd described the process).
 
->> What are the thoughts on this? An easy way out would be to make of_partition
->> come later than efi_partition/mbr_partition, but I think it would be
->> nice if the kernel could consume partition info out of both of_partition
->> and efi_partition as long they don't collide.
->>
-> 
-> The 2 thing would conflicts and would introduce so much complexity it might
-> be not worth at all. Also you would have situation where someone declare
-> OF partition in the space where the GPT partition table is located, adding
-> the possibility of corrupting it.
-
-If we go this way, the implementation should of course refuse creating partitions
-that conflict. The barebox implementation allows partitions only in the
-unpartitioned space or to be identical to an existing GPT partition.
-
-But I agree, this needs to be thought through thoroughly to determine how
-it should interact with  runtime repartitioning.
-
-> Again would love more explanation of your case because by the looks of it,
-> you use GPT for partition parsing and just overload the DT with the additional
-> info maybe for userspace usage. (and that case can be handled by just keeping
-> OF_PARTITION disabled or adding a little downstream patch)
-
-Yes, keeping OF_PARTITION disabled would be required to not break barebox
-users that made use of the non-upstream binding.
-
-I wonder though, if something can be done to reconcile Linux and barebox'
-view of this and allow in the future enabling both Linux OF_PARTITION
-and barebox OF partition fixups.
-
-> Or you are telling me you had a downstream patch that declares additional
-> partition in addition to a disk with a GPT partition table?
-> If that's the case, I'm confused of why the additional partition can't
-> be declared
-> directly in GPT.
-
-Many of the older boards supported by barebox used to place the barebox image
-and the environment prior to the first partition in the unpartitioned area.
-
-To still be able to access them, fixed partitions were used and the rest
-of the system was described by MBR/GPT partitions.
-
-This was partially made necessary by BootROMs having strange expectations
-of where the bootloader needs to be placed, which partially overlapped
-the MBR/GPT itself, making it difficult to define a partition for the bootloader.
-
-For newer boards, it's more common to place the bootloader in a GPT partition
-now. barebox has no DT binding for generically describing such a GPT partition
-though, so boards may create a fixed-partition "alias" and use that.
-
-Cheers,
-Ahmad 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Best regards,
+Krzysztof
 
