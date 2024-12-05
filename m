@@ -1,141 +1,162 @@
-Return-Path: <linux-kernel+bounces-433858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B549E5E0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:10:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21AF4188406A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:10:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF61227B90;
-	Thu,  5 Dec 2024 18:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VibwJzOw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DBA9E5E11
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:12:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF25B226EF2
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1419F286F76
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:12:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B406227B96;
+	Thu,  5 Dec 2024 18:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="UbaugdLO"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BE422579F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733422215; cv=none; b=WFbPdu1vDJDAqFD9zAhgIOjToC4SuAX0fPH+4QM3Zr/Pvu2t1kYkjeG2pM1TZKtHkzy8/oJJFiI7+L6aXM8f1wtU9LZ6yWZOQl9HnQ9ZNMfmcZy1HeIv9Wv+jlsw9doslKzYLsLsF1d6Z1brKoNSmrHfPC9ve79r5EHKzqpubSg=
+	t=1733422315; cv=none; b=dyMP5qLuIx4PVeI0EMI+ZyKt4UXqVttEBiCsIsJNaAsxKLe90gANzL4Zq3SerriSNQij+808DFnzwb5N7PGRoNzWOctH0rW0WlwNsUTNHbTTKy6TbWfEEdkUCUlku6frdBRMHCyGX/Kj8WAUyhQYFLOL6VKA7cHdabHvJtdokFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733422215; c=relaxed/simple;
-	bh=pPJRJECa0YcMKOgmhyp3TFmJtWt/ActoHU1JbLeqf70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H2tqDo0wsF/6PN5s62sgNvKeKJfnKBrcRJq6k7HM8ZG54SZkzRSILSRKC4liTxuQGSVWWWWEMnEmz1eGbGrw0Y7PCTyQfwZSs/alh5F0d+Cz263t4rr5djOpMGppPsCp27g9shW2zDpT2Cv3hAfkYWlJbgO1u7/QOPrFS6HfhM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VibwJzOw; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733422214; x=1764958214;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pPJRJECa0YcMKOgmhyp3TFmJtWt/ActoHU1JbLeqf70=;
-  b=VibwJzOwpX3zGKlDFyOa4yX+2nRcMmpABO5CmpUhszu5tcZCMCyAMqrk
-   7TynuNu7f6giTgAp1Pua62ygmpAxUkWAmLRLBdwiHcdn5x7FqE1ctOiOc
-   4GQMuCiRJK5B1vK1eNmHIxnKo0JaBwirfkfEHBsuv3Du51udcY/K2VuG5
-   rPl/3X0knT6c5iXVUrTZUMvSFEImckUZCk5tOEXupXA6WFN9YwHET9dKx
-   P+hQ/OvpWMzLAbnZ4WjLrbMzxUVegC5rKDktF8NnyYn3bQmIE/ES6sj8l
-   pXYBOEP0OZbmdyw26nCVK+QMxWm2toEdPgU3VVT/MWO4+KXEjZNa6Q0JU
-   g==;
-X-CSE-ConnectionGUID: EnNh+6EcSbeYssrQ4RZx8g==
-X-CSE-MsgGUID: lYSrb1VcS0mOBF+ufXObPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="51294517"
-X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
-   d="scan'208";a="51294517"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 10:10:12 -0800
-X-CSE-ConnectionGUID: hepPyyv7Tba3Yh6XYnc9Bg==
-X-CSE-MsgGUID: HNtr12iYTcucQIn3aIRsVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
-   d="scan'208";a="131591025"
-Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.220.98]) ([10.124.220.98])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 10:10:11 -0800
-Message-ID: <0efe8492-e0da-4d97-8a6c-9cfe718f2d63@intel.com>
-Date: Thu, 5 Dec 2024 10:10:10 -0800
+	s=arc-20240116; t=1733422315; c=relaxed/simple;
+	bh=1ZxSWeTtz1xYfbYIhQuSzJz0Yo0FouTjzbyq21H8PSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0aFR6hN3jA/zqgp1rrQsbsyI+LpoXGYiAVrIEdaL2vpYlC9npvXY+r5Z3D2IOxYJ9FN1g5a5yweDPC2WhPqRPUxPb4vNTBNSo/8ZLI2w3gUhMYHGS00P+avFk9dZoANYhdTuneOEzUxyYpU/JPaiiajjL0zLDSR8ah8vPi8i5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=UbaugdLO; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7250c199602so1331790b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 10:11:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1733422313; x=1734027113; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2MUjUIXHE2bJtGuB7BkRXXqw/hOym15VxRARXET8bls=;
+        b=UbaugdLO0GYyPYUpIpeUbCugGBhx78w4t0eFOH+35kSTeUT3G/fSmhCjsotEO8pTLe
+         KYx8fCY8vE6ApGefxzuBGmw+xA7N/slUQbL5ZzX77qAFHneruHGoPRfD9NQYRv8Htrxx
+         K1sY9RnPRfycJ+lZXwndSPbfw6sEVp/mQ2f7lWj3K/LIAaYKcx+SOGx/jveNs3jwPMod
+         sNmdyfH1ZrfvBq6uphs3GiToIhfvQua1aKrK7IyPx2Lqo262kp+Pavyji9OqMkV2Omhn
+         n8g60wwZtHLRapyqy5g/kZ4tKBUufh7BjfXEw91C+QXrXFkqSSYwuirwCwDAq2IRQiYi
+         +rmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733422313; x=1734027113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MUjUIXHE2bJtGuB7BkRXXqw/hOym15VxRARXET8bls=;
+        b=piJ4e2zxAhAypB5r9Mue/kB/AghKN0clvrc4Gwzz1M+dr3v6Ym/2js5v51Lwp/fKGV
+         3zLN6N49tC+5XxE2zs3LkXbXec+LVA3iPRlo9oLgd4oRCIsFs9BOQRZb7oJvHaQZeyMV
+         s9i85bxqaQSqeACRbwI5cQK0wC/O8PNb226msZa021i1aYQA/NUP1U9P4ZwaCFeZuh96
+         GQG4P1zAf5qptbBHQ5LxgD/OpB2rwYclXxNTYRUbfYj+zek8Q3kElCCqgva7kamqBRHS
+         rjGuGcHBiQ+XWfRNuEg/sQ24DrMu3oV5zcS/cIIjS+aMbcZ643PlEBmGKpkYo3EIHMxd
+         3SkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvK7ypQg3SsbnEjKKKhCXrwfkUENoJnSp9Gbac0PswxVNssygjO7PCdgWfFgcngRHAOMUhsWniE0LzDBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqE9gV+ICfVc6udUBgxNMMIcvO02hWP2NMsNofCv1uOfzw2nY+
+	7F2HUv5+7Tq1U65Ti/3w5vSWn3iHO/qIs4NGjJyZq88Zh+J+ZvQpINWoEFkM6xY=
+X-Gm-Gg: ASbGncua8LmpwSTKjlRfyBh4Sp+ms/jdUh4n3gGUSvu/Gc/BKGvWIsdzY+V4LTd78rl
+	x7P6Isjk//fLAf03WInIfNLtspF5S1XbarX0d4DA3VFXrWDfGvTlyXvF4qQ3yLZQZWmRfHtpHhF
+	qtC9DGIuUl0Vkn3YU1+a7s/cirq6isiHufTooZCRmarcDEQiyxmFMu31xi4INn/pEMPAIrbjjOx
+	IN36/F/r9HP6GHDAsNHwGWUf+9F8Tk=
+X-Google-Smtp-Source: AGHT+IH9Qxre7SaXJmwLVox5H0UwU/C+KDg/si4WFNP6RN/USaZJmdrSMdvHNGZqEVGV0+rIUHI/aw==
+X-Received: by 2002:a17:90b:5448:b0:2ef:2d9f:8e58 with SMTP id 98e67ed59e1d1-2ef6ab29c49mr113446a91.34.1733422313419;
+        Thu, 05 Dec 2024 10:11:53 -0800 (PST)
+Received: from x1 ([192.210.17.121])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef26ffb6f5sm3584572a91.6.2024.12.05.10.11.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 10:11:53 -0800 (PST)
+Date: Thu, 5 Dec 2024 10:11:50 -0800
+From: Drew Fustini <drew@pdp7.com>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: bigunclemax@gmail.com, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] riscv: dts: thead: Fix TH1520 emmc and shdci clock
+ rate
+Message-ID: <Z1Hs5smgFV4C6c90@x1>
+References: <20241204111424.263055-1-bigunclemax@gmail.com>
+ <CAJM55Z-YAMtRN=K5KxCH1+++Xw4uMM_c49z8tGzi3snU+-KrYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 8.1/9] x86/virt/tdx: Reduce TDMR's reserved areas by
- using CMRs to find memory holes
-To: Kai Huang <kai.huang@intel.com>, kirill.shutemov@linux.intel.com,
- tglx@linutronix.de, bp@alien8.de, peterz@infradead.org, mingo@redhat.com,
- hpa@zytor.com, dan.j.williams@intel.com, seanjc@google.com,
- pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com,
- isaku.yamahata@intel.com, adrian.hunter@intel.com, nik.borisov@suse.com
-References: <23bb421e9bf5443a823e163fb2d899760d9f14a3.1731498635.git.kai.huang@intel.com>
- <20241205124005.92615-1-kai.huang@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241205124005.92615-1-kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJM55Z-YAMtRN=K5KxCH1+++Xw4uMM_c49z8tGzi3snU+-KrYA@mail.gmail.com>
 
-On 12/5/24 04:40, Kai Huang wrote:
-> A TDX module initialization failure was reported on a Emerald Rapids
-> platform [*]:
+On Wed, Dec 04, 2024 at 03:19:28PM +0000, Emil Renner Berthing wrote:
+> bigunclemax@ wrote:
+> > From: Maksim Kiselev <bigunclemax@gmail.com>
+> >
+> > In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
+> > is 198Mhz.
+> >
+> > But changing from fixed-clock to CLK_EMMC_SDIO leads to increasing input
+> > clock from 198Mhz to 792Mhz. Because the CLK_EMMC_SDIO is actually 792Mhz.
+> >
+> > Therefore calculation of output SDCLK is incorrect now.
+> > The mmc driver sets the divisor to 4 times larger than it should be
+> > and emmc/sd works 4 times slower.
+> >
+> > This can be confirmed with fio test:
+> > Sequential read of emmc with fixed 198Mz clock:
+> > READ: bw=289MiB/s (303MB/s)
+> >
+> > Sequential read with CLK_EMMC_SDIO clock:
+> > READ: bw=82.6MiB/s (86.6MB/s)
+> >
+> > Let's fix this issue by providing fixed-factor-clock that divides
+> > CLK_EMMC_SDIO by 4 for emmc/sd nodes.
 > 
->   virt/tdx: initialization failed: TDMR [0x0, 0x80000000): reserved areas exhausted.
->   virt/tdx: module initialization failed (-28)
+> Thanks for finding this bug!
+> 
+> However, this feels like a work-around for a bug in the clock driver, and even
+> if there is a fixed factor divider somewhere this should probably be modelled
+> by the clock driver. Did you look into the documentation[1] and try to figure
+> out where eMMC clock comes from and where the /4 is missing?
+> 
+> There is also a vendor tree somewhere with a much more complete clock driver.
+> Drew do you remember where it is? Maybe it's worth looking at how that driver
+> models the eMMC clocks.
 
-There's a *LOT* of changelog here, but I'm not sure how much of it is
-actually relevant to the problem at hand. I also think it's wrong to to
-present the problem as one of being too fine-grained.
+Sorry for the delay, I'm travelling until tomorrow.
 
-Could you please rework the changelog and the comments to make this more
-succinct?
+Maksim, thanks for finding this issue and sending a patch.
+
+That is a good point about checking the thead vendor kernel. I normally
+look at revy's thead-kernel repo [1] which is 5.10. revy also has a 6.6
+lts branch in th1520-linux-kernel [2].
+
+https://github.com/revyos/thead-kernel/tree/lpi4a/drivers/clk/thead
+
+
+Looking at line 454 in drivers/clk/thead/clk-light-fm.c [3]:
+
+  clks[EMMC_SDIO_REF_CLK] =
+  thead_light_clk_fixed_factor("emmc_sdio_ref_clk",
+                               "video_pll_foutpostdiv", 1, 4)
+                               /* Note: base clk is div 4 to 198M*/
+
+Which derives from line 373:
+
+  clks[VIDEO_PLL_FOUTPOSTDIV] =
+  thead_clk_fixed("video_pll_foutpostdiv", 792000000);
+
+Thanks,
+Drew
+
+[1] https://github.com/revyos/thead-kernel
+[2] https://github.com/revyos/th1520-linux-kernel
+[3] https://github.com/revyos/thead-kernel/blob/lpi4a/drivers/clk/thead/clk-light-fm.c
 
