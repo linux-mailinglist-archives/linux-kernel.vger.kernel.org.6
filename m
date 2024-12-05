@@ -1,196 +1,185 @@
-Return-Path: <linux-kernel+bounces-434022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11519E603E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:49:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D499E6046
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:54:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624FB284D34
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72DA71885284
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F207E1CC89D;
-	Thu,  5 Dec 2024 21:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3EA1CD1ED;
+	Thu,  5 Dec 2024 21:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Lr0R/22v"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxzyS2gb"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A9F1AD9F9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 21:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B8819DF66;
+	Thu,  5 Dec 2024 21:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733435383; cv=none; b=FToMVRJtdFkGhlvyrMX+swNF82VDpK8rfWfqmLUZnqXrUXJfqytKl7O54HV5dtBxA/T2upAv1/BTlRl/hsJrfHM9VDm++geYYNJPxEkVlgKWC9n00OIHXvn632TLCrGAjdJixOaF+wM2LU6pDLTlzYBmiakvz3M1KDJvH5yKd4c=
+	t=1733435658; cv=none; b=QjLdljK/XDTkA6EP/pI8XNNDDsaCfjn185KM37tJtVab4GQg+3h33unW2dMWmtQOZB8JAak9kEPUNL9G+JGmsbGlf6BtiQUtepUCkJV6IZTJjqS/Sg6RFeqfdmLHdL9fSm94Mjpe4gLLWOdlSsMF1RBjYAYlE2akfYpJR4ETQWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733435383; c=relaxed/simple;
-	bh=8FnRi21KlrzOAiYqaiv4ehq3t7YDIRIjKXA+qmcuaUE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DsKsicRE0/Wm2v11C9OB84OHv9sYNjSQbJDVIHgHWKMlZen3oru7ySvwaHqWfz2vEiXGL4twf/VNk2P2TFe8jY/tiKQzQLRkrJRfgMSpBJ6n2UVvM/MjUwbk4vVH6jrabkzmJKFIQZFwxn8CKHlJInqEY3g88IsKND4Iyjij8WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Lr0R/22v; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21578cfad81so12504835ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 13:49:40 -0800 (PST)
+	s=arc-20240116; t=1733435658; c=relaxed/simple;
+	bh=nqJuzIrwMW5efGJQY+rjr3zhGCylhDL02Nxt5lOUV9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qME5qX0SwGT8NpFvAC3XsGXdaxXk74lXzSu0MjajICCaUSOwDrRvfn2QOxz5cLci4gW+T0udgZlsvEEvZBu68Mp/YE6wlIYOK+q062Q6r9ZNDr9BGrHP3YcRhZkTUHtsOQg1CjlciLPP9jlfxxQUeFzyhLjtu4sxHwkdgZF9GTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxzyS2gb; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4afa53874beso408328137.3;
+        Thu, 05 Dec 2024 13:54:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733435380; x=1734040180; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ylsolAa24KJioSknE/TsKey3hUL/pRTv+tYnTAIOBOU=;
-        b=Lr0R/22vtsW0zJLXjpi7Nh0FyoBYgopUY4T1UGRy2rBMubgYwIxWlHNrOHCMg3aq/k
-         6kZtr1UXMtWgArRBQRgny5+YtD8xGWknTBFe9raPzhYlFlU61NY6PEIWnaVt16bwsKD8
-         oZU4teDzB8aRSS4n2NR1jjkAmsL9OJkUewFOYmGw1cqS25zG176wBS8D+MzVIE3pT0tf
-         E8m4JQVrmtJkKx0MCelgVM4N2lSWA6yzVRpPnZpLBcCDHKgLxoGeCtKfA44znj8I4acm
-         9brlUWb8UdA3dl4ew20vOyaEBbp0AdWb7zXlrm/4DwsoXC2WmWtuaf8d9NUusxNcXOLA
-         hIdA==
+        d=gmail.com; s=20230601; t=1733435656; x=1734040456; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kDiiTJmCz6vEI9PMP7OwaS997HsKHRlfObbXCwvBhbg=;
+        b=RxzyS2gbWL3nP7+LfMaCP5j2LTJXSnetwbOlNYblNZLYyo3sBZd3hkXKBKxNL+2YVl
+         LOhMcqa2MEh6lx8HyImKEVxXBntPoj/7KISnEHL1PZpFUNMIg30dorYaR4pZmTIh3RQl
+         Zr/fyONUqyZOjJ3ULv9aqMuz+R8Z+F6WbaE2qCBLPAecZhwRrKeku6ZeRDV07c6hR7gc
+         YJoUPrKdiGBsSbrLm5BV+nO+4dlcpdePfn+6G7WNkGoFqzzqQRou+348cpfSDm0MtRnx
+         hA+9cIj7B5QQ5cNZk8iN8vSBNMhGDPHu8QmRWaOyvxNlxavdO4Az5PCnrEKkLfTtLmux
+         ByXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733435380; x=1734040180;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1733435656; x=1734040456;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ylsolAa24KJioSknE/TsKey3hUL/pRTv+tYnTAIOBOU=;
-        b=vynr9Tmv/xEmVTM+/OYDYMDAVTkZJ4AMgh4O+AkxeA71zQWPz73U+v3/SAQW0ImXaQ
-         hIYnpEfcdmlZnLwgfodW4eAPjgzG3WVpExvr6kko+Xc5FFLfTB49E95b80KucTVV4KNW
-         cpwMUgg7o7RKBAW4n1znVj6EMWZiuzOU4iQ90AA02gzM+83U3gt9WA0gm6iw386r1EoE
-         zuqTrYFRADMhTrTZrvpRpoj73Nv41u5X+ebhL2MB6fXHVxwvjJilyKsXCudoL/O6qjAK
-         NeW4sCaQ50S8dWGZiDo1zQPX1IQqI/Mk+7E8v6oYjwKa2cZQKNkt77mQ6a0Cx/9wCwUs
-         xpfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVz1ZJI/bEMDX5tUZh4x0oMBbFjhVp6v/qTAhAtErETzUss1/DE3R8hEsAh0Rkyg8JaRLvpnjFX0b26MDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRGXN17Aply5InIOYGBaud6qyQz5LhRWnffhH1DJXRPdcabXty
-	JsFIRHCp4O5MK1BZW6DV7imTCYTd5S7X6b/tzA30/K3ldSH9bFr8x/ypY2vHmS0=
-X-Gm-Gg: ASbGncuDLTg2OPz2GQBl8jAQLlBItptR3x2DIJNbC+g2lDNnJg8YmImmQokJu+/EdX7
-	ShrSQgFR9jJyHyHmxriu23xGstT+NeSrqIbrczF3amd+XF75K8P5D9lfaca/uOxiBpKuwgpoKpC
-	VdFKxTbjb9bVwrtpq0ayGqMEmlePukUd/EYgQ/MB/VOUgCc5b2gm3+iVqFqYnatGNs0VAyM+8Ua
-	dWkW5hsITJRCr07goHGXns4GcWz4sxt88NdSdq8mYE1sIXxqCYmo2vpnCGirkKXaA==
-X-Google-Smtp-Source: AGHT+IFTb2VVc0pKxcp/N8wkyZ083cyONyg4oc637ROCo07u90M4wR/yDH/PPfe8ZbpGqnrUUyfdNA==
-X-Received: by 2002:a17:902:d4ca:b0:215:96bc:b670 with SMTP id d9443c01a7336-21614d3ac68mr5579825ad.18.1733435379862;
-        Thu, 05 Dec 2024 13:49:39 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9dafsm16496085ad.120.2024.12.05.13.49.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 13:49:38 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Thu, 05 Dec 2024 13:49:31 -0800
-Subject: [PATCH v4] riscv: selftests: Fix warnings pointer masking test
+        bh=kDiiTJmCz6vEI9PMP7OwaS997HsKHRlfObbXCwvBhbg=;
+        b=V8tj7GPVshrecDCr+w0tDpg390UWyom24rhPck6v2ENwgjRC8EVAe+SICZiaUFaNIX
+         IoOFPfS+HAiIkl67pZ6LMaRU54am0LafGpfXMAIp0DDRPkkkPliyy4WGHQ/iz0QmyY4P
+         Rz251HGhCzs/fYjTMtF2TVCVj9PTTY/BSE8/L0deG9ykbTIMCV8HZ+9MJ5bpUGX5vD8t
+         CO+FC4wegHDVh+Mi8Q504XAusSjM6JxfGiCIyoYuh5ZVe7DVsgPXSdO2bjDVCoTitv5v
+         v8z4RywVsOGV/Yvte5drPPOEzs9KewXGqIIOCqENs+VCkmfsM7CKR8l5ftV5kPvRMl4D
+         Hqcg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3AsbjSOc+BpVlLZ2V7n25qji2ACV2vIDpjMmv7U+qYea9RsvH/IJdtKJCaQjoKjhtQ1IvKfbfTpW3Ejw=@vger.kernel.org, AJvYcCX/Q+omsTWaVfqC1az5WHATGRVGmjMJlyErTaYsTkBxSgeR5SHoTu+9EKcBV0gQL3exdWGyqk4DcFOpSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW15cK03toIoYzDugPOPRZSrP9Xgj+9vvvNwM3c37L/JXWo6Dg
+	TkcXDdw8fn4iQxLF76iIIonk6pqvTyuYjVvNk3uVXuPBvuPNiJ4E4Ay+HpeL4lB0weTwephegNP
+	cbW5s4tjzKxSt95+STQIPHPg+8w0=
+X-Gm-Gg: ASbGnctps6shBk94uJ6dlfHB8yqIFFoH0ATKjTa5kxqYvqlLpLlKf/uCil3tuYC4xIR
+	uByZk5STtdzPjYfrA+TbxnuPqRKFvBwo=
+X-Google-Smtp-Source: AGHT+IEL529gtlN+1pRDS7o3I7j8QO6j12BV7TXdg7JFlhhJIA8ROCknDCKBwmLo1FVr21QYijUlItg9XxCJsIPWrS0=
+X-Received: by 2002:a05:6102:2ad4:b0:4af:48a5:1ac1 with SMTP id
+ ada2fe7eead31-4afca7438d0mr1604472137.0.1733435656148; Thu, 05 Dec 2024
+ 13:54:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241205-fix_warnings_pointer_masking_tests-v4-1-0c77eb725486@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAOofUmcC/5XNQQrCMBQE0KtI1kaSNKmtK+8hUtL4ox8xKfklK
- qV3N7oScaHLGZg3EyNICMQ2i4klyEgYQwl6uWDuZMMROB5KZkooLZXQ3OOtu9oUMBypGyKGEVJ
- 3sXQuRTcCjcSrphagfWW0almBhgRl9TrZ7Us+IY0x3V+fWT7bv/gsueRgJbR1bRys7TZhjoTBr
- Vy8sOdDVv+rqqiy98IZ0Rpvmi9q9a6an9SqqMapphe+rbU4fKjzPD8AG0LWz4MBAAA=
-To: Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3049; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=8FnRi21KlrzOAiYqaiv4ehq3t7YDIRIjKXA+qmcuaUE=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3qQ/JtKlok/ngWsEnDPXCFRfe2C1zl5v6oHFxLMZS1EJ
- md/yEjsKGVhEONgkBVTZOG51sDceke/7Kho2QSYOaxMIEMYuDgFYCL5RQx/xVd1fP3e1uLwcYuO
- oUAil+CKPN/D6+qKZ7NY3vhl4hSmzPBPT8vkr5TN5waVDWVTp9ZNZ5h/Z+ZCTuPjs+wUJnvabDz
- KDQA=
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+References: <20241113211614.518439-1-karprzy7@gmail.com> <486d5734-aa02-4a5e-b2ee-fdbba65179a3@kernel.org>
+ <20241119145622.2f1f0342@akair> <5d6ccb9f-a8f1-45eb-b54a-cd66e637a2cc@kernel.org>
+ <20241126230647.68b20fcf@akair>
+In-Reply-To: <20241126230647.68b20fcf@akair>
+From: Karol P <karprzy7@gmail.com>
+Date: Thu, 5 Dec 2024 22:54:05 +0100
+Message-ID: <CAKwoAfrvqUxPat9a+4LjRKYx2LZ=n6Q2H+ir3KYkBBj+Rv_HWQ@mail.gmail.com>
+Subject: Re: [PATCH] mfd: omap-usb-tll: check clk_prepare return code
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Roger Quadros <rogerq@kernel.org>, aaro.koskinen@iki.fi, khilman@baylibre.com, 
+	tony@atomide.com, lee@kernel.org, linux-omap@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-When compiling the pointer masking tests with -Wall this warning
-is present:
+On Tue, 26 Nov 2024 at 23:06, Andreas Kemnade <andreas@kemnade.info> wrote:
+>
+> Am Tue, 19 Nov 2024 16:16:42 +0200
+> schrieb Roger Quadros <rogerq@kernel.org>:
+>
+> > On 19/11/2024 15:56, Andreas Kemnade wrote:
+> > > Am Tue, 19 Nov 2024 15:10:23 +0200
+> > > schrieb Roger Quadros <rogerq@kernel.org>:
+> > >
+> > >> Hi,
+> > >>
+> > >> On 13/11/2024 23:16, Karol Przybylski wrote:
+> > >>> clk_prepare() is called in usbtll_omap_probe to fill clk array.
+> > >>> Return code is not checked, leaving possible error condition unhandled.
+> > >>>
+> > >>> Added variable to hold return value from clk_prepare() and dev_dbg statement
+> > >>> when it's not successful.
+> > >>>
+> > >>> Found in coverity scan, CID 1594680
+> > >>>
+> > >>> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> > >>> ---
+> > >>>  drivers/mfd/omap-usb-tll.c | 11 +++++++----
+> > >>>  1 file changed, 7 insertions(+), 4 deletions(-)
+> > >>>
+> > >>> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+> > >>> index 0f7fdb99c809..2e9319ee1b74 100644
+> > >>> --- a/drivers/mfd/omap-usb-tll.c
+> > >>> +++ b/drivers/mfd/omap-usb-tll.c
+> > >>> @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> > >>>   struct device                           *dev =  &pdev->dev;
+> > >>>   struct usbtll_omap                      *tll;
+> > >>>   void __iomem                            *base;
+> > >>> - int                                     i, nch, ver;
+> > >>> + int                                     i, nch, ver, err;
+> > >>>
+> > >>>   dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+> > >>>
+> > >>> @@ -248,10 +248,13 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> > >>>                                   "usb_tll_hs_usb_ch%d_clk", i);
+> > >>>           tll->ch_clk[i] = clk_get(dev, clkname);
+> > >>>
+> > >>> -         if (IS_ERR(tll->ch_clk[i]))
+> > >>> +         if (IS_ERR(tll->ch_clk[i])) {
+> > >>>                   dev_dbg(dev, "can't get clock : %s\n", clkname);
+> > >
+> > > if you want dev_err() later, then why not here?
+> >
+> > Because clk is optional. If it is not there then we should not complain.
+> > But if it is there then it needs to be enabled successfully.
+> >
+> I guess you mean *prepared*, the clock is enabled later (with error
+> checking). But your reasoning makes sense.
+>
+> > >
+> > >>> -         else
+> > >>> -                 clk_prepare(tll->ch_clk[i]);
+> > >>> +         } else {
+> > >>> +                 err = clk_prepare(tll->ch_clk[i]);
+> > >>> +                 if (err)
+> > >>> +                         dev_dbg(dev, "clock prepare error for: %s\n", clkname);
+> > >>
+> > >> dev_err()?
+> > >>
+> > > So why do you want a different return handling here? (I doubt there is
+> > > any clock having a real prepare() involved here)
+> > >
+> > > As said in an earlier incarnation of this patch, the real question is
+> > > whether having partial clocks available is a valid operating scenario.
+> > > If yes, then the error should be ignored. If no, then bailing out early
+> > > is a good idea.
+> >
+> > In the DT binding, clocks is optional. So if it doesn't exist it is not
+> > an error condition.
+> >
+> > >
+> > > clk_prepare() errors are catched by failing clk_enable() later,
+> > > ch_clk[i] is checked later, too.
+> > >
+> > >> I think we should return the error in this case.
+> > >> (after unpreparing the prepared clocks and clk_put())
+> > >>
+> > > and pm_runtime_put_sync(dev)
+>
+> which can probably be done before dealing with the clocks. It is only
+> needed for the register access.
 
-pointer_masking.c: In function ‘test_tagged_addr_abi_sysctl’:
-pointer_masking.c:203:9: warning: ignoring return value of ‘pwrite’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  203 |         pwrite(fd, &value, 1, 0); |
-      ^~~~~~~~~~~~~~~~~~~~~~~~ pointer_masking.c:208:9: warning:
-ignoring return value of ‘pwrite’ declared with attribute
-‘warn_unused_result’ [-Wunused-result]
-  208 |         pwrite(fd, &value, 1, 0);
+I'm fairly new to this subsystem and I'm trying to understand the
+conclusion. In the end, we should add dev_err() here after
+clk_prepare() with appropriate handling?
 
-I came across this on riscv64-linux-gnu-gcc (Ubuntu
-11.4.0-1ubuntu1~22.04).
+>
+> Regards,
+> Andreas
 
-Fix this by checking that the number of bytes written equal the expected
-number of bytes written.
-
-Fixes: 7470b5afd150 ("riscv: selftests: Add a pointer masking test")
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
-Changes in v4:
-- Skip sysctl_enabled test if first pwrite failed
-- Link to v3: https://lore.kernel.org/r/20241205-fix_warnings_pointer_masking_tests-v3-1-5c28b0f9640d@rivosinc.com
-
-Changes in v3:
-- Fix sysctl enabled test case (Drew/Alex)
-- Move pwrite err condition into goto (Drew)
-- Link to v2: https://lore.kernel.org/r/20241204-fix_warnings_pointer_masking_tests-v2-1-1bf0c5095f58@rivosinc.com
-
-Changes in v2:
-- I had ret != 2 for testing, I changed it to be ret != 1.
-- Link to v1: https://lore.kernel.org/r/20241204-fix_warnings_pointer_masking_tests-v1-1-ea1e9665ce7a@rivosinc.com
----
- tools/testing/selftests/riscv/abi/pointer_masking.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/riscv/abi/pointer_masking.c b/tools/testing/selftests/riscv/abi/pointer_masking.c
-index dee41b7ee3e3..759445d5f265 100644
---- a/tools/testing/selftests/riscv/abi/pointer_masking.c
-+++ b/tools/testing/selftests/riscv/abi/pointer_masking.c
-@@ -189,6 +189,8 @@ static void test_tagged_addr_abi_sysctl(void)
- {
- 	char value;
- 	int fd;
-+	int ret;
-+	char *err_pwrite_msg = "failed to write to /proc/sys/abi/tagged_addr_disabled\n";
- 
- 	ksft_print_msg("Testing tagged address ABI sysctl\n");
- 
-@@ -200,18 +202,32 @@ static void test_tagged_addr_abi_sysctl(void)
- 	}
- 
- 	value = '1';
--	pwrite(fd, &value, 1, 0);
-+	ret = pwrite(fd, &value, 1, 0);
-+	if (ret != 1) {
-+		ksft_test_result_skip(err_pwrite_msg);
-+		goto err_pwrite;
-+	}
-+
- 	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == -EINVAL,
- 			 "sysctl disabled\n");
- 
- 	value = '0';
--	pwrite(fd, &value, 1, 0);
-+	ret = pwrite(fd, &value, 1, 0);
-+	if (ret != 1)
-+		goto err_pwrite;
-+
- 	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == 0,
- 			 "sysctl enabled\n");
- 
- 	set_tagged_addr_ctrl(0, false);
- 
- 	close(fd);
-+
-+	return;
-+
-+err_pwrite:
-+	close(fd);
-+	ksft_test_result_fail(err_pwrite_msg);
- }
- 
- static void test_tagged_addr_abi_pmlen(int pmlen)
-
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241204-fix_warnings_pointer_masking_tests-3860e4f35429
--- 
-- Charlie
-
+Best regards,
+Karol
 
