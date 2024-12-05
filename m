@@ -1,225 +1,289 @@
-Return-Path: <linux-kernel+bounces-432864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F849E5132
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:22:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C399E5131
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:22:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A682287F7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79C54160741
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0EA1D619F;
-	Thu,  5 Dec 2024 09:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N0zyIGzh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7D31D5ACD;
+	Thu,  5 Dec 2024 09:22:26 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B92F1D514B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5571D5149
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733390547; cv=none; b=UP43CUTAqU1bNAdIBFEhZolfKOkVz8LNlG13yQlUq2O+FTrBubAWCqLRlY6hLtxla1e0vZNE14q6bnXZRhO4ofVk5cIbUgYUI322qbf0hiU7botHE3jMr13AoC45qNKa8JIZPLQwXxGxSILZ+Jtum/UV4dz/2NAyY+nP1aYtUH4=
+	t=1733390545; cv=none; b=hNiMOk2I3tWZ1cNLvvxJ7H0ZdbOBSdypmsSEMSau1fhObF+Dtoz2exoEY6LkRmKATIX40XD7J4sJigZ6brrCEbRb6YF2I8Pxjn19iPbdqS2bjQJQ5b9oyZkayyFeiptBmX3rTwqwryiiRYf3/9/4LyPGngXwjh81aIFwt8tqPpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733390547; c=relaxed/simple;
-	bh=3rzigxSwbvWo7S8K8raXtPYFCQaJ22o4ySbtaaE/20M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sCmaMTLVP+yqaemQLYCbm38IszkO2gbT4YWdduACSzfSfanDhuBXM/t4WS0aDuYdmA3f7NhdyfWtZMTeGh/MVb5T+OnvU+mu/X0B/fzb33WR3xxVi/R2H6Nnzu2zw8+kUTa8I26OiMS9QXUbOHiT4yGJXREsvjccDq8V+f4ZosE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N0zyIGzh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733390543;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dGhsvxIAa/RUDZNcykbYv+PGXT3hSqjfx5KJygYAroU=;
-	b=N0zyIGzh6Bv10cMKqFb58RKAbYcnQXJItTMwmk1kFGnFKRoyreXjoqgkAoN9uF8/JJrlrr
-	2z+gxP/tvT/B1g7mbjvPW+t7HdHUReUbjal01TadyiAfBonVm+XRVxyo17FWu94rUeuiSO
-	qike88VaX44PI5pSSEEJO4opBubj9V8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-310-Es10tabtNUqaIpM1BhillQ-1; Thu, 05 Dec 2024 04:22:22 -0500
-X-MC-Unique: Es10tabtNUqaIpM1BhillQ-1
-X-Mimecast-MFC-AGG-ID: Es10tabtNUqaIpM1BhillQ
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-434a104896cso6189535e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:22:22 -0800 (PST)
+	s=arc-20240116; t=1733390545; c=relaxed/simple;
+	bh=SmJNovRLTsLjhiKYfN39AmtFOzCx7KjE0te1DW8Dcmk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hjIo6aZBb49io3ZasddhK4Fus93KNu/ymGMXQ57G0o/otqMLJuDrwSus67liwjUc/e+cSBBFRpGrfpDYofoAnYCASdYhms2pxpu7MbIIGII4ZyldK/BmWLAqy5Q3yU6VPhO+1tZPp0v221bKhxTc67JGwG04wXRjVAg97LThf3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7d87dfd9bso8416525ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:22:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733390541; x=1733995341;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dGhsvxIAa/RUDZNcykbYv+PGXT3hSqjfx5KJygYAroU=;
-        b=T4MOULhMC4Esl/RUt5SgLuiByhUvZUUuS1mSDAUgtVPPakYp2yb2VK6hR0Jy4Jh8W7
-         nykX0fFhSNFziYNAoGCX8fBo0FykI/5vX5lASAlwMKUfq+EJHe7lql5VO/0st783cNy2
-         e57VQTD2M375CTF8NFp+o1IObTZqnN2WrGIm2nODabqynoB6deHX3fsWZZUcD5uMR8L2
-         avKDEz2PMZaOXJ5musNdQScmLDPV9z51KFRRyPPOvEGQTg/0tXBiE0l6Jqm3z49BfLn0
-         EKErqct5MgJM1zHfU0mk5Fd9UsfzU++r4N3Td74s9tLpyD47cRj2fu2pw3cCkgxS5YlF
-         Aizw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTEcYXtOXUDa/8ESrycCzCzB0hj7ZHJj8fUX2o7nitwQ/29g9V69t/IeMGEpVNGpFRONnm35FDbsX3Xsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz43UHQo2PC2okQwlCl/ExO7LwROzLmdJLptjPZ5uAeiAx59iVZ
-	OYEIWrCVKYr84JSPCW+pkzXexim7UNT7CJDwLM4fsUZ1xU5G8zZmSPn05klsYkC0mA1CiE+jLqZ
-	P4ZopZY9AmAhK0KkEk5WmGT1XTBTPiQ7eEMi0ZNLYL9Q7encb8e9kVBSXf/bgsA==
-X-Gm-Gg: ASbGncsq/cQgeUukVFYqWj3M+W8Q/cjkboZLVtifQmz2FQqXJhqPQFYYt5mz4VGHrhP
-	6qmb1Fyce/ASpEsViQTAwUgmcdmys147ELE1ANxZfiCCTL7798yOA1CLqeLuucfjUdbi9P4e8PO
-	tOuPtSG+Xg1x1RA+eSf9yC1uY4K7LbRnmyqOy6w3lWgy9avjOGFnndrF0JSxeqb1Iza31dj/u8j
-	br6ET6N2I5fcRJJ4gU2YFNVusnHGCnBc0IxcXRm3IlH3rtETBfMPkVrwS+QiaP83Wj+MczCu4zT
-	aGzUhY9MRsWh4lqazZZFjw==
-X-Received: by 2002:a05:600c:4ecf:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-434d0a14eb7mr95742375e9.30.1733390541405;
-        Thu, 05 Dec 2024 01:22:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFT4EGxhQ2he7SyDsdfd8Wk6mjcV8wUeXsFxJYCRu67z9LwO9sq7p4sNrm4N4vKaCBEjHCYOQ==
-X-Received: by 2002:a05:600c:4ecf:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-434d0a14eb7mr95742175e9.30.1733390541030;
-        Thu, 05 Dec 2024 01:22:21 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52723fasm53651195e9.10.2024.12.05.01.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 01:22:20 -0800 (PST)
-Date: Thu, 5 Dec 2024 10:22:19 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v5 13/16] acpi/ghes: better name the offset of the
- hardware error firmware
-Message-ID: <20241205102219.274e3d27@imammedo.users.ipa.redhat.com>
-In-Reply-To: <20241205085959.2223d079@foz.lan>
-References: <cover.1733297707.git.mchehab+huawei@kernel.org>
-	<20b003136d8c008fd54e8d40c806f13867336e13.1733297707.git.mchehab+huawei@kernel.org>
-	<20241204173759.6f02561a@imammedo.users.ipa.redhat.com>
-	<20241205085959.2223d079@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1733390543; x=1733995343;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3OA2+yQRetYYzq/Y3/OKLhUDtYjSyb6+PCtrKpCQJjo=;
+        b=UOIG7rNd0rH9f/6kXc+tupGQUhY6zEK0fN5ZKxHJmHpgvewXWT/e2Uz8sdjzNYomXR
+         jAvt7toB4Fed+fyN7Me/2m6d9g+jVV1C1HkOvrzxj0tp85rzl61N8pS7GavmW/HE1a8B
+         Mslnd890jwxFxC9YZRBNpOAeVRbqsSZrQN6gv5A1yeMbQr0qSwMCE9Nsb5yft4Vnhgrv
+         OVPvaRWjKhrC2Yb32wrZY77U01dzBNB8kTLU/Pk0kRo81QDXNR+Q5Ulk+lUsJLDYv62v
+         Xa/c6zFVRCzM23mCDCwoWqv+kOULM4DiV9f+wVv3chiqnkt6ZEnVXXNcvcN8IwqQNrb+
+         GUTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7ZQSi1rq+oZ4drDYLW+wJwuMgyiFIr1+RMJAq4p1dDhpen85YlRtkXfcFx/ARvel28l1+5u/+VkbJSiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBH3dQJ1GOm8hobFD9te9hwiRJUyz+7cAYEfyerU3xSfCA6tNT
+	yTrc+FqDQcLzz66pVQ1r0knflmiZDk+0OUn/F0N2Biht6/Lt6ZPtr3+I7LJVPrD4Mxa9jEdZnH0
+	4JqT8i7fhZNZ9s4Jh5KNH1AXuRRj8wK4iw2/qL9iZvuTbUAsZc/CkdSU=
+X-Google-Smtp-Source: AGHT+IG+5VTsoXWh4ELsfn4ooKxMjdPbqAacQUCouWvGvr6gh/6SFGxjaTcA5IyUF3dYQBeqzNO6OsCbMA5hi7L+YSBLw1/94prW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1529:b0:3a7:81c6:be7e with SMTP id
+ e9e14a558f8ab-3a7f9a55b85mr128391545ab.13.1733390543234; Thu, 05 Dec 2024
+ 01:22:23 -0800 (PST)
+Date: Thu, 05 Dec 2024 01:22:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675170cf.050a0220.17bd51.0095.GAE@google.com>
+Subject: [syzbot] [wireless?] KASAN: slab-use-after-free Read in ath9k_hif_request_firmware
+From: syzbot <syzbot+50122cbc2874b1eb25b0@syzkaller.appspotmail.com>
+To: kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, toke@toke.dk
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 5 Dec 2024 08:59:59 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+Hello,
 
-> Em Wed, 4 Dec 2024 17:37:59 +0100
-> Igor Mammedov <imammedo@redhat.com> escreveu:
-> 
-> > On Wed,  4 Dec 2024 08:41:21 +0100
-> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> >   
-> > > The hardware error firmware is where HEST error structures are    
-> >       ^^^^^^^^^^^^^^^^^^^^^^^ I can't parse this, suspect you've meant something else here
-> >   
-> > > stored. Those can be GHESv2, but they can also be other types.
-> > > 
-> > > Better name the location of the hardware error.
-> > > 
-> > > No functional changes.  
-> 
-> I meant this fw_cfg file:
-> #define ACPI_HW_ERROR_FW_CFG_FILE           "etc/hardware_errors"
-> #define ACPI_HW_ERROR_ADDR_FW_CFG_FILE      "etc/hardware_errors_addr"
-> 
-> What about changing description to:
-> 
-> 	The etc/hardware_errors fw_cfg file is where the HEST error
-> 	source structures are stored. Those can be GHESv2, but they can also
-> 	be other types.
+syzbot found the following issue on:
 
-As I understand it, etc/hardware_errors is a blob
-for '18.3.2.7.1. Generic Error Data' with some extra fields
-to accommodate GHESv2 handling (i.e. err addr indirection and ack reg).
+HEAD commit:    2ba9f676d0a2 Merge tag 'drm-next-2024-11-29' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=169900df980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7903df3280dd39ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=50122cbc2874b1eb25b0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-While error sources are described in HEST (and only GHES ones would
-reference  etc/hardware_errors via error status addr/read ack register addr)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> 
-> 	For more details about error source structure, see:
-> 	https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#acpi-error-source
-> 
-> 	Better name the address variable from ghes_error_le to hw_error_le
-> 	to better reflect that.
-> 
-> 	No functional changes.
-> 
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> > > ---
-> > >  hw/acpi/generic_event_device.c | 4 ++--
-> > >  hw/acpi/ghes.c                 | 4 ++--
-> > >  include/hw/acpi/ghes.h         | 2 +-
-> > >  3 files changed, 5 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> > > index 663d9cb09380..17baf36132a8 100644
-> > > --- a/hw/acpi/generic_event_device.c
-> > > +++ b/hw/acpi/generic_event_device.c
-> > > @@ -364,7 +364,7 @@ static const VMStateDescription vmstate_ghes = {
-> > >      .version_id = 1,
-> > >      .minimum_version_id = 1,
-> > >      .fields = (const VMStateField[]) {
-> > > -        VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
-> > > +        VMSTATE_UINT64(hw_error_le, AcpiGhesState),
-> > >          VMSTATE_END_OF_LIST()
-> > >      },
-> > >  };
-> > > @@ -372,7 +372,7 @@ static const VMStateDescription vmstate_ghes = {
-> > >  static bool ghes_needed(void *opaque)
-> > >  {
-> > >      AcpiGedState *s = opaque;
-> > > -    return s->ghes_state.ghes_addr_le;
-> > > +    return s->ghes_state.hw_error_le;
-> > >  }
-> > >  
-> > >  static const VMStateDescription vmstate_ghes_state = {
-> > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > > index 52c2b69d3664..90d76b9c2d8c 100644
-> > > --- a/hw/acpi/ghes.c
-> > > +++ b/hw/acpi/ghes.c
-> > > @@ -359,7 +359,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-> > >  
-> > >      /* Create a read-write fw_cfg file for Address */
-> > >      fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
-> > > -        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
-> > > +        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
-> > >  
-> > >      ags->present = true;
-> > >  }
-> > > @@ -385,7 +385,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-> > >      }
-> > >      ags = &acpi_ged_state->ghes_state;
-> > >  
-> > > -    start_addr = le64_to_cpu(ags->ghes_addr_le);
-> > > +    start_addr = le64_to_cpu(ags->hw_error_le);
-> > >  
-> > >      start_addr += source_id * sizeof(uint64_t);
-> > >  
-> > > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> > > index 21666a4bcc8b..39619a2457cb 100644
-> > > --- a/include/hw/acpi/ghes.h
-> > > +++ b/include/hw/acpi/ghes.h
-> > > @@ -65,7 +65,7 @@ enum {
-> > >  };
-> > >  
-> > >  typedef struct AcpiGhesState {
-> > > -    uint64_t ghes_addr_le;
-> > > +    uint64_t hw_error_le;
-> > >      bool present; /* True if GHES is present at all on this board */
-> > >  } AcpiGhesState;
-> > >      
-> >   
-> 
-> 
-> 
-> Thanks,
-> Mauro
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7db3160fdff0/disk-2ba9f676.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b3dcf97efe59/vmlinux-2ba9f676.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7ee688dbbadf/bzImage-2ba9f676.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+50122cbc2874b1eb25b0@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in ath9k_hif_request_firmware+0x390/0x4e0
+Read of size 8 at addr ffff888011969000 by task kworker/1:4/5889
+
+CPU: 1 UID: 0 PID: 5889 Comm: kworker/1:4 Not tainted 6.12.0-syzkaller-11677-g2ba9f676d0a2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events request_firmware_work_func
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:489
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ ath9k_hif_request_firmware+0x390/0x4e0
+ ath9k_hif_usb_firmware_cb+0x2ad/0x4b0 drivers/net/wireless/ath/ath9k/hif_usb.c:1247
+ request_firmware_work_func+0x1a4/0x280 drivers/base/firmware_loader/main.c:1196
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 51:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x243/0x390 mm/slub.c:4314
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ ath9k_hif_usb_probe+0x439/0xb80 drivers/net/wireless/ath/ath9k/hif_usb.c:1379
+ usb_probe_interface+0x641/0xbb0 drivers/usb/core/driver.c:396
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+ __device_attach+0x333/0x520 drivers/base/dd.c:1030
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+ device_add+0x856/0xbf0 drivers/base/core.c:3665
+ usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+ usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:291
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+ __device_attach+0x333/0x520 drivers/base/dd.c:1030
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+ device_add+0x856/0xbf0 drivers/base/core.c:3665
+ usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Freed by task 51:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2338 [inline]
+ slab_free mm/slub.c:4598 [inline]
+ kfree+0x196/0x430 mm/slub.c:4746
+ ath9k_hif_usb_disconnect+0x1c6/0x250 drivers/net/wireless/ath/ath9k/hif_usb.c:1452
+ usb_unbind_interface+0x25b/0x940 drivers/usb/core/driver.c:458
+ device_remove drivers/base/dd.c:569 [inline]
+ __device_release_driver drivers/base/dd.c:1273 [inline]
+ device_release_driver_internal+0x503/0x7c0 drivers/base/dd.c:1296
+ bus_remove_device+0x34f/0x420 drivers/base/bus.c:576
+ device_del+0x57a/0x9b0 drivers/base/core.c:3854
+ usb_disable_device+0x3bf/0x850 drivers/usb/core/message.c:1418
+ usb_disconnect+0x340/0x950 drivers/usb/core/hub.c:2304
+ hub_port_connect drivers/usb/core/hub.c:5361 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x1ebc/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff888011969000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 0 bytes inside of
+ freed 2048-byte region [ffff888011969000, ffff888011969800)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11968
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801ac42000 ffffea00009b7a00 dead000000000002
+raw: 0000000000000000 0000000000080008 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801ac42000 ffffea00009b7a00 dead000000000002
+head: 0000000000000000 0000000000080008 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0000465a01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 10158, tgid 10158 (syz-executor), ts 275172754099, free_ts 275034504886
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x140 mm/slub.c:2408
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2574
+ new_slab mm/slub.c:2627 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
+ __slab_alloc+0x58/0xa0 mm/slub.c:3905
+ __slab_alloc_node mm/slub.c:3980 [inline]
+ slab_alloc_node mm/slub.c:4141 [inline]
+ __kmalloc_cache_noprof+0x27b/0x390 mm/slub.c:4309
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ ip_fib_net_init net/ipv4/fib_frontend.c:1556 [inline]
+ fib_net_init+0x13d/0x360 net/ipv4/fib_frontend.c:1615
+ ops_init+0x31e/0x590 net/core/net_namespace.c:138
+ setup_net+0x287/0x9e0 net/core/net_namespace.c:362
+ copy_net_ns+0x33f/0x570 net/core/net_namespace.c:500
+ create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
+ unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
+ ksys_unshare+0x57d/0xa70 kernel/fork.c:3334
+page last free pid 5936 tgid 5936 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0xdef/0x1130 mm/page_alloc.c:2657
+ discard_slab mm/slub.c:2673 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3142
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3217
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4468
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4104 [inline]
+ slab_alloc_node mm/slub.c:4153 [inline]
+ __kmalloc_cache_noprof+0x1d9/0x390 mm/slub.c:4309
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ nsim_fib6_rt_create drivers/net/netdevsim/fib.c:547 [inline]
+ nsim_fib6_rt_insert drivers/net/netdevsim/fib.c:752 [inline]
+ nsim_fib6_event drivers/net/netdevsim/fib.c:856 [inline]
+ nsim_fib_event drivers/net/netdevsim/fib.c:889 [inline]
+ nsim_fib_event_work+0x19c5/0x4130 drivers/net/netdevsim/fib.c:1493
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff888011968f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888011968f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888011969000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888011969080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888011969100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
