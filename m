@@ -1,54 +1,70 @@
-Return-Path: <linux-kernel+bounces-433388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1B59E57CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:50:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F02B18817DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:50:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B542218EB7;
-	Thu,  5 Dec 2024 13:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMCgNNpF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FF19E57E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:53:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46181DED77;
-	Thu,  5 Dec 2024 13:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DB92840E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:53:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293D7219A6A;
+	Thu,  5 Dec 2024 13:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2TJ3bdqC"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A15218AD1;
+	Thu,  5 Dec 2024 13:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733406637; cv=none; b=kas1y0ti0OACqz47zulLv8wTQxkcRCO2dexgtiNevSmJIm57xAgPynX6nEZhb6mXV9sZO+ArtiE0zL4iQnfGPiL2q7+un2zb/KTh9zrdbOTlsIv2rnZdzj7mpd2ppBvqjWO8h4PmelHmAKOII/KGOKD2V5BUBhyyUZa0GwuEg8Q=
+	t=1733406830; cv=none; b=pxhXTplKAFcb98jO6mcWuRN8Xq9ouUaDjP85YrXQimlxuFf94pcV4ETZbsPHhXb4eAHYve22+vTNh/lxV4knaTWhKCXIZcZEg+Pcyj1G+hlQ4h3HS420Mx7PDzDuWp5bZp+NdbMIT7E7YZaJEJIt/p1uRBItLBBlr5ltPnOAd7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733406637; c=relaxed/simple;
-	bh=aZtiKxlbwI3iz4Q7oXu1l34TtwwPSR1EgAsfbUW9HaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X3t+5d36GIW0UvHkhN2Cc6wbpnxOnszs/3d0y5fKh80ueup/hLj7K0CeEp18rdpaist1mTyYiBi69OU+wbpDNTdeAYVBM5OvldpzFC7GDZ4nWlBNPZ6L8tO3Cvn3oiSdUMAkPrKObYGrvsDMVrey3FOqgq+o/bAHEXzNgLKoHEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMCgNNpF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8133C4CEDC;
-	Thu,  5 Dec 2024 13:50:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733406637;
-	bh=aZtiKxlbwI3iz4Q7oXu1l34TtwwPSR1EgAsfbUW9HaI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cMCgNNpF/1S+t6cbLbV4+Tr3jZ5dVX6rOUd2bovtIA/FEst2gAuhoD/fs7U+I5/c/
-	 3bShZmrtYZsi09DFhghrgPk2A3jRv9BmapkKyxLDMwHnuC1xqk4xi7JSv9Fw/Ndv43
-	 E6FHgZAeIsnDydG6c82WkJYR7OPoHLgwN6849GhIXxJZz/foSAhS67WPWx1aO87D8j
-	 2gFEU7j6JIkoJwuGx6F1HEIXUwiRr2kx3IxK4gIErjKE8xT9bmEhGaGFmzPbXD0KSK
-	 0m/k3q8uCdgbBVo8gk2tCBDbmPNwatIkQOk0hmchDR+1vSty90Px31AQ3J2revoDRE
-	 ysgs0GuxT5ILg==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Sean Hefty <shefty@nvidia.com>,
-	Vlad Dumitrescu <vdumitrescu@nvidia.com>
-Subject: [PATCH rdma-next 0/9] Rework retry algorithm used when sending MADs
-Date: Thu,  5 Dec 2024 15:49:30 +0200
-Message-ID: <cover.1733405453.git.leon@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733406830; c=relaxed/simple;
+	bh=87CtAFswNqX8OzkNCWJ31kn/Mx2fGShPdAZ4M+NEuFw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MZKKFFpbiQCaBXOdUbUv6iN4PVQnGFltY7lsXLVaEQ8Aou94J3fRomYgdTlIKJ7bYjA6HyPepO5qbSdbY2W0c0F5yQ1Ih9b47fJZlGUFLzKyA3DB19nv+qiCI4Ebhog7H4N8gaS+l79/5AwCEbvVoMl98dVhv40vkzbjmC7SJoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2TJ3bdqC; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733406829; x=1764942829;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=87CtAFswNqX8OzkNCWJ31kn/Mx2fGShPdAZ4M+NEuFw=;
+  b=2TJ3bdqCBv6uXDBBAoOeKMMm8YYe1Wz5sATbOKeC2hHwcdh4RRAMdSQQ
+   ZN/0dpWtOodaBIH7SW8I1oQEix113tKIxhx4E3ULLlku3kDxV4kE0hhjv
+   etXfqlpBT0cyiQyCDrjLAu8rzGSWUX4njIze02ESu3krGnyvzH9ywCnUY
+   u3f4S/xsXL3l0+yWUtsroZk9Ew09kKU+I6KjBe79CqjTpuRAdiEI/ZJ8V
+   m1N3CcKqCdltD3p+U/Ic1C6QWWQ+Dd7ImPurIXbs0fzxN+DyJ6waS0GM0
+   haf8ammsraqK+KrmwOdkLhtIEVX+5NwiPsInF3kB+kd38+g69sE/as2JD
+   g==;
+X-CSE-ConnectionGUID: 51PJrYFFSXOalleqFAFaug==
+X-CSE-MsgGUID: wcojJ4enTFaRZGWKLDsWqQ==
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="35177635"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Dec 2024 06:53:48 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 5 Dec 2024 06:53:24 -0700
+Received: from che-dk-ungapp03lx.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 5 Dec 2024 06:53:22 -0700
+From: Rengarajan S <rengarajan.s@microchip.com>
+To: <vaibhaavram.tl@microchip.com>, <kumaravel.thiagarajan@microchip.com>,
+	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <unglinuxdriver@microchip.com>
+CC: <rengarajan.s@microchip.com>
+Subject: [PATCH v1 char-misc-next] misc: microchip: pci1xxxx: Add push-pull drive support for GPIO
+Date: Thu, 5 Dec 2024 19:19:56 +0530
+Message-ID: <20241205134956.1493091-1-rengarajan.s@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,88 +72,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From Vlad,
+Add support to configure GPIO pins for push-pull drive mode.
 
-This series aims to improve behaviour of a MAD sender under congestion
-and/or receiver overload.  We've seen significant drops in goodput when
-MAD receivers are overloaded.  This typically happens with SA requests,
-which are served by a single node (SM), but can also happen with CM.
+Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
+---
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Patch 7 introduces the main change: exponential backoff.  This new retry
-algorithm is applied to all MADs, except RMPP and OPA.  To avoid
-reductions in recovery speed under transient failures, the exponential
-backoff algorithm only engages after a certain number of linear timeouts
-is experienced.  The backoff algorithm resets to beginning after a CM
-MRA, assuming the remote is not longer overloaded.
-
-Because a trade-off between speed of recovery under transient failure
-and reducing load from unnecessary retries under persistent failure must
-be made, and this trade-off depends on the network scale, patch 8 makes
-mad-linear-timeouts configurable.
-
-Patch 1 makes CM MRA apply only once, to prevent entering an excessive
-delay condition, even when the receiver is likely no longer overloaded.
-
-The exponential backoff algorithm (a) increases the time until a send
-MAD reaches the final timeout, and (b) makes it hard to predict by
-callers.  Since certain callers appear to care about this, Patch 2
-introduces a new option, deadline, which can be used to enforce when
-the final timeout is reached.  SA, UMAD and CM are updated to use this
-new parameter (patches 3, 5, 6).
-
-Patch 3 also solves a related issue in SA, which configures the MAD
-layer with extremely aggressive retry intervals, in certain cases.
-Because the current aggressive retry was introduced to solve another
-issue, patch 4 makes sa-min-timeout configurable.
-
-Patch 9 resolves another related issue in CM, which uses a retry
-interval that is way too high for (low latency) RDMA networks.
-
-In summary:
-  1) IB/mad: Apply timeout modification (CM MRA) only once
-  2) IB/mad: Add deadline for send MADs
-  3) RDMA/sa_query: Enforce min retry interval and deadline
-  4) RDMA/nldev: Add sa-min-timeout management attribute
-  5) IB/umad: Set deadline when sending non-RMPP MADs
-  6) IB/cm: Set deadline when sending MADs
-  7) IB/mad: Exponential backoff when retrying sends
-  8) RDMA/nldev: Add mad-linear-timeouts management attribute
-  9) IB/cma: Lower response timeout to roughly 1s
-
-Two tunables will be added to RDMA tool (iproute2), under the
-'management' namespace as follow-up:
-
-  mad-linear-timeouts
-  sa-min-timeout
-
-Thanks
-
-Vlad Dumitrescu (9):
-  IB/mad: Apply timeout modification (CM MRA) only once
-  IB/mad: Add deadline for send MADs
-  RDMA/sa_query: Enforce min retry interval and deadline
-  RDMA/nldev: Add sa-min-timeout management attribute
-  IB/umad: Set deadline when sending non-RMPP MADs
-  IB/cm: Set deadline when sending MADs
-  IB/mad: Exponential backoff when retrying sends
-  RDMA/nldev: Add mad-linear-timeouts management attribute
-  IB/cma: Lower response timeout to roughly 1s
-
- drivers/infiniband/core/cm.c        |  13 +++
- drivers/infiniband/core/cma.c       |   2 +-
- drivers/infiniband/core/core_priv.h |   4 +
- drivers/infiniband/core/mad.c       | 141 ++++++++++++++++++++++++++--
- drivers/infiniband/core/mad_priv.h  |   8 ++
- drivers/infiniband/core/nldev.c     | 133 ++++++++++++++++++++++++++
- drivers/infiniband/core/sa_query.c  |  81 +++++++++++++---
- drivers/infiniband/core/user_mad.c  |   8 ++
- include/rdma/ib_mad.h               |  29 ++++++
- include/uapi/rdma/ib_user_mad.h     |  12 ++-
- include/uapi/rdma/rdma_netlink.h    |   7 ++
- 11 files changed, 416 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
+index e616e3ec2b42..97c7dbe43377 100644
+--- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
++++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
+@@ -147,6 +147,9 @@ static int pci1xxxx_gpio_set_config(struct gpio_chip *gpio, unsigned int offset,
+ 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+ 		pci1xxx_assign_bit(priv->reg_base, OPENDRAIN_OFFSET(offset), (offset % 32), true);
+ 		break;
++	case PIN_CONFIG_DRIVE_PUSH_PULL:
++		pci1xxx_assign_bit(priv->reg_base, OPENDRAIN_OFFSET(offset), (offset % 32), false);
++		break;
+ 	default:
+ 		ret = -EOPNOTSUPP;
+ 		break;
 -- 
-2.47.0
+2.25.1
 
 
