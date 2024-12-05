@@ -1,137 +1,127 @@
-Return-Path: <linux-kernel+bounces-433013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9729E52EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:49:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2959E52F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFC801883D9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9E61660B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BD71DC04A;
-	Thu,  5 Dec 2024 10:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4863B1DB92A;
+	Thu,  5 Dec 2024 10:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PF9Y9Fod"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PqTXtOY3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E374D1D7E35
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA021D8E01
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395729; cv=none; b=YG0nkhyWXfSRcopKlcTDzlJhX8dGESPsweNp8Nlq2lqezedOjC4/y53M13Wyj6MjVgitjUafvdA2P90Bm/zP2V7TjeAbON2hlIn0oujX6hDcBN5+kRtkZKH4h3fLr/K3m3LIeAsCtZcUO2B3IAcaH6dgov11ZHvIOhUW3iwKOw4=
+	t=1733395863; cv=none; b=RZyCKT4wSoJUxXORlZToKItVC2T6TUuJgIZgvs8o3LwjEC6n2UPZ3SRl/0V/5BBZwWmqzu1CpIyMr0VAO8WFCzjxu+VkeY42Kg8VdswHFOXftIDTB5Hhnt3l6BnCwIp167J6OGlP4KzaD6pdBTIy7/+luqb1eTzmNTRhHjgqet0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395729; c=relaxed/simple;
-	bh=vzXQjICMuoPOyTM60OHH8vNdn2RJrSYEWLd6HwtWudw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lz+Shr/gbGSPd3mxER5JNPsv0qIGnHt5+x3WkVWDNFYd9MUlAl36R8xZU2gmJLnPBGAeNsk/+7ybuYzK+W3r9ukJXYryWor/Dr0mYCrQ/z9sJBwoYSpK9v+MLMzjjyKdF0XbKyVZEjRUerlZ16qPao48mzkjO6HMfWpFggftoBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PF9Y9Fod; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385e5b43350so28330f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:48:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733395726; x=1734000526; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C+AL33YYB9tp8ze1zSblC79yxMnHDSWw4amoRXEM9yc=;
-        b=PF9Y9FodSMHplDd4dMJgsLmdXjs2nlrRLm+vpS6E7r2D5KkoAiGABCLAosmOYUxdaZ
-         3a7uySBpeSANuYTVcQw+n6qiZQJN0eqnAo+1xoELRQXwAfeCiTlWOU+H036JoMdVaXAN
-         KIXNSuqgGQmL9CLmXLQyN2ZJtNEenxsbyUTy8PNCDaP9CrCtamBhWe5AN7yi1+V5MwkF
-         B3ftO9wiSe11VM9xD1pxp8lfWtft/ER72E+kn3Lkn2TY2wMCepH0GZiiqZUdSQUHB8NK
-         83+B58uk9q19lznSdEeWQ4nIaUKrudepDYfmNnXnlGW1kJbMG8I9/+PyspcIV0f0Z6dT
-         cZEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395726; x=1734000526;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C+AL33YYB9tp8ze1zSblC79yxMnHDSWw4amoRXEM9yc=;
-        b=pxDo++yrkDmmcaz0IeBicoL+SDRvL9peSz5vbK7wL6TpJvYuIuiD8wINFUG6EeWOyQ
-         170vKc02+dB6RoAI8hs4xQ2ezdV0kWeCvrgN2j1ikznQpUi2s8QICwciLUipCZf0H76z
-         rHn8Fskx9jPFhTW4k0/JTftCECmoe8p7PvMb73EK/xUJFH+fuWRUsO0YmT39U67zdlPX
-         /YAWDB0Iy72s7qGYYEA4iz9OCoO65mi0Phe77TEbL1K046PFHeqWpkXMVAqGx34fs6YA
-         L2fuoUNJw6f8L6JWTviqaPt3KWIJAAXMIwNCAxicXQYCx0EI8iA9xPP5Xg2vj7XjuLbg
-         vPFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAnpCJhjjU/4P6p0RhMYp9MPefBEP8EiWDc5kKYnUVWCIo0UlWj+UFtlc7P+WKV68M5IIuhqZkERFWs10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySVaB/rHniIzGP0wCxCxxF4mv6E9qp2Uhsw3nX78kqZ6fci61r
-	EugG1fjnaxgoaGYfBGH3NLsHPtwXs0rq8zUlpu+/FAJCqAjoteZURQMQ6a4IT5w=
-X-Gm-Gg: ASbGncumaAH5PbdbmmzHl3KUIx4pYowIRgF40/fuTdq+Kp6SllO1nGxwq5bpOxd79ww
-	13M3qplnc8TzYyxAQwG+1i6a+tdr3QWJht8TppHc2nnKeNSL4d0SBBArfA8z50sn9Hd7ZLaudYk
-	Qq2AF6PdozDreqDXQP2Ayx66tDa9BdnwWQ2nzUQtDzDGrANT0Yxvox8UOj0bNGjm4QtQJ8VTq1k
-	TRr+gyrHjApk23BtODgFj5O1ZL3e2lLcX/ovcil7U3bPHBSVJUZp/66MUmMohYS
-X-Google-Smtp-Source: AGHT+IGZYAkOMvEL8MelgV6Xeu7o3AlbkP/lwHtkE2elo0pACurI3cxRhl7VprMICDBndNqUFWtCTg==
-X-Received: by 2002:a05:6000:1846:b0:385:e374:bee with SMTP id ffacd0b85a97d-385fd3c9b4cmr2918870f8f.4.1733395726268;
-        Thu, 05 Dec 2024 02:48:46 -0800 (PST)
-Received: from localhost.localdomain ([114.254.73.201])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef4600d14fsm1081629a91.45.2024.12.05.02.48.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 02:48:45 -0800 (PST)
-From: Heming Zhao <heming.zhao@suse.com>
-To: joseph.qi@linux.alibaba.com,
-	ocfs2-devel@lists.linux.dev
-Cc: Heming Zhao <heming.zhao@suse.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ocfs2: fix the space leak in LA when releasing LA
-Date: Thu,  5 Dec 2024 18:48:33 +0800
-Message-ID: <20241205104835.18223-3-heming.zhao@suse.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241205104835.18223-1-heming.zhao@suse.com>
-References: <20241205104835.18223-1-heming.zhao@suse.com>
+	s=arc-20240116; t=1733395863; c=relaxed/simple;
+	bh=DbO052KE/Uk1t0rWP5RDwZigDbWazHUaobXRIHNrGxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EPabaxwMKhVFhHQiAu3uoU02UiE2rv8YA2blNqtJWq97PGkf3/Bs6O/MFYVXVzBDoSbnCS3ktSlgfQzj+ZbKmKxRQPLfe3zCyUWGtlZWGC+xo1kDbXjSY09ha8cfDTUvjjaqpYWdZTF19hJ63mjVf7EKeBm4KmrmPBNZ2zi2zhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PqTXtOY3; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733395861; x=1764931861;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DbO052KE/Uk1t0rWP5RDwZigDbWazHUaobXRIHNrGxM=;
+  b=PqTXtOY3JtSDXjKISqfhIqfgM2NEfb5cUE7iVMfrZbN+thdu++RCRbP6
+   dK9ErPhOdwGNhKfWPkRL6HQtBUyVX/UsLWAtI1OqwEZyzx16+PRPqWpNy
+   qbx2byps6k5syJHVhzsQtGaO5wQZDXQjm6uQCDxlroaEgOA2nBxC+AuD2
+   c4VJAlHIbyfllWR0mg5C/J+lGYdgb6ATl5/qeqf+kDT5SkMx+uHRnpAPm
+   coWWnyaTGqu9tmNwiWcQs/zaPiI7YkuYWkEKHlPRIGVWAf5o20Wh6mJTb
+   BE1Y2APK1bAmO14PzDAYO7ydTGP970ip1UKJWtHdlQOLxemCPEGkHDPaK
+   Q==;
+X-CSE-ConnectionGUID: znQ95UUURQO1FzkSoLmwmg==
+X-CSE-MsgGUID: wLJeZ5RqTtaeWl/FaqXEAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="51237736"
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="51237736"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 02:50:59 -0800
+X-CSE-ConnectionGUID: GEu/vHquSGKzyTU2H8uanA==
+X-CSE-MsgGUID: XrliNH0sRkaIjIxiixQA0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="124878501"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 05 Dec 2024 02:50:58 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJ9Rf-00045p-33;
+	Thu, 05 Dec 2024 10:50:55 +0000
+Date: Thu, 5 Dec 2024 18:49:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: arch/x86/kernel/apic/apic.c:2168: warning: Function parameter or
+ member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
+Message-ID: <202412051816.oA5fqwk9-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
-introduced an issue, the ocfs2_sync_local_to_main() ignores the last
-contiguous free bits, which causes an OCFS2 volume to lose the last free
-clusters of LA window during the release routine.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   feffde684ac29a3b7aec82d2df850fbdbdee55e4
+commit: f8542a55499a69a859c84866b66f0df43933e563 x86/apic: Turn on static calls
+date:   1 year, 4 months ago
+config: x86_64-randconfig-076-20240105 (https://download.01.org/0day-ci/archive/20241205/202412051816.oA5fqwk9-lkp@intel.com/config)
+compiler: ClangBuiltLinux clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412051816.oA5fqwk9-lkp@intel.com/reproduce)
 
-Please note, because commit dfe6c5692fb5 ("ocfs2: fix the la space leak
-when unmounting an ocfs2 volume") was reverted, this commit is a
-replacement fix for commit dfe6c5692fb5.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412051816.oA5fqwk9-lkp@intel.com/
 
-Fixes: 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
-Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-Suggested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
----
- fs/ocfs2/localalloc.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+All warnings (new ones prefixed by >>):
 
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index 5df34561c551..d1aa04a5af1b 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -971,9 +971,9 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
- 	start = count = 0;
- 	left = le32_to_cpu(alloc->id1.bitmap1.i_total);
- 
--	while ((bit_off = ocfs2_find_next_zero_bit(bitmap, left, start)) <
--	       left) {
--		if (bit_off == start) {
-+	while (1) {
-+		bit_off = ocfs2_find_next_zero_bit(bitmap, left, start);
-+		if ((bit_off < left) && (bit_off == start)) {
- 			count++;
- 			start++;
- 			continue;
-@@ -998,6 +998,8 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
- 			}
- 		}
- 
-+		if (bit_off >= left)
-+			break;
- 		count = 1;
- 		start = bit_off + 1;
- 	}
+>> arch/x86/kernel/apic/apic.c:2168: warning: Function parameter or member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
+>> arch/x86/kernel/apic/apic.c:2168: warning: expecting prototype for spurious_interrupt(). Prototype was for DEFINE_IDTENTRY_IRQ() instead
+
+
+vim +2168 arch/x86/kernel/apic/apic.c
+
+c4d58cbd158dc9 arch/x86/kernel/apic_64.c   Thomas Gleixner 2007-10-12  2157  
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2158  /**
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2159   * spurious_interrupt - Catch all for interrupts raised on unused vectors
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2160   * @regs:	Pointer to pt_regs on stack
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2161   * @vector:	The vector number
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2162   *
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2163   * This is invoked from ASM entry code to catch all interrupts which
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2164   * trigger on an entry which is routed to the common_spurious idtentry
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2165   * point.
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2166   */
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2167  DEFINE_IDTENTRY_IRQ(spurious_interrupt)
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10 @2168  {
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2169  	handle_spurious_interrupt(vector);
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2170  }
+3c5e0267ec3e6e arch/x86/kernel/apic/apic.c Thomas Gleixner 2021-02-10  2171  
+
+:::::: The code at line 2168 was first introduced by commit
+:::::: 3c5e0267ec3e6ed7d3f1793273cbf0beb4f86a74 x86/apic: Split out spurious handling code
+
+:::::: TO: Thomas Gleixner <tglx@linutronix.de>
+:::::: CC: Thomas Gleixner <tglx@linutronix.de>
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
