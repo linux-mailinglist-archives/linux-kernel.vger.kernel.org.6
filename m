@@ -1,140 +1,144 @@
-Return-Path: <linux-kernel+bounces-432965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75AA9E5270
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:36:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D41049E526E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:35:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06BAA167171
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:36:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FBFC284D79
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A531D6DB7;
-	Thu,  5 Dec 2024 10:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2721D6DB7;
+	Thu,  5 Dec 2024 10:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNoUn/qm"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWI5jfSS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7081A8F90;
-	Thu,  5 Dec 2024 10:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2D318FC83;
+	Thu,  5 Dec 2024 10:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394959; cv=none; b=WnSL7DHBV744rkJcLRQPWyCpZDhvZthARlxk3LFdJc71aW28jYogrjU4DN6/q4FIDoF9fOH5F9qFLF8tSRwMGKLjnaq+3hfYhhxHH39DM9vH1F1zyls/Ouey/tC/0xKEev2gKkQ2q8F6C6avmppg05eChC5W8YZS96dFPlH+Bz0=
+	t=1733394949; cv=none; b=rZwXhme77PMb0xSJwTOyRC1mQRQHVAX32r6rG658YTfm/8BVHippOvpmgLM2/sU8q245rZyIgwYmdT0OH66+XEmc0lCYsdSYhdd6MAHkKgVr1YmBcNx2RjYOtiqTykAbBrGRxjXgFi2iZxDb0pvJcJxB9sx6yjVLkCFM0gYRIxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394959; c=relaxed/simple;
-	bh=7IXKdskA+LLIPp8jR5IiT8OqfYI64uIJlxwsBYx/fLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CFrSPXzhTWiE5eHJz0gXoaKDmgWkUCh4EycEixUVueekOmKZHeTwz11Tltp0KLKxslqgvwnXKvR12364clH7a2P02dm8QF255pnkP2wUOx6G6R6cU0+7XSkULGXDLBXyQ1gtHQniMBXu5sgozJDehoik54d1xy2x7UYNM1Z4wUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNoUn/qm; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so6098321fa.3;
-        Thu, 05 Dec 2024 02:35:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733394955; x=1733999755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sGBlXjWXX6UA1pnUb6eFZF67zXS/U/rRQY47JDY/d7M=;
-        b=VNoUn/qmBYayJ2DR+JKMU4G/7lOYLIb/37/g2Hxlki0HkcIWYA0RZQ2c6FxMRO+8Y8
-         GoFME80pUDeSGg1BSILpIXneQyqk0XPJ0zMAmVJDh2UsJXHgB+a/JnGRCYqvAaaFmkVB
-         ScB5Atcu+LmXbf0zD51AT5dROoT2qu7o5qusqRFppGLa3hGa2tU2P7W1oaMC1BfhceMV
-         OhdLmpyeU0J1TzHWHxAv75AQ4YAMn/elUcGaMo9T16HM/2WioTxnx86gJTGyoEwrtiN2
-         DvbKXdxcr9sR1BSfBYqMle30TIicDNqnUnT2fRGX+ftLpM1aRs447V//fnfa1E282S+V
-         Ku8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733394955; x=1733999755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sGBlXjWXX6UA1pnUb6eFZF67zXS/U/rRQY47JDY/d7M=;
-        b=pZBT45kseOBnjGIaU65b64qJUYmMIYR29mfkcYSS69Re94Y/iUnAg/XE8cp7iFxHwG
-         D3JL2yxmtVVrDwy/h98Nb3T79fv0eHhvdLqgDxswKco8NaN+lJsY9kuC8Zn4QV+IboDh
-         8ziJMGd4FIUDCPo16lxcm3urSrO449mPVQmOediIsE1XI+dGdMx9pJcUklQzlf5CWasT
-         CZwdDw3IpdTRS4dPIT1jCNY5GePqVi1OCLnCDFucNoiZOsDN8GeSoazF+Vh5rcLxLuv1
-         /tfzw6vdk9XuEd64ivToYBv7vn2jlu3xJSTyB3IsqESH3WcnGYvreI+LsjUGW4wGhjTM
-         eOVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsrB9fZq7ciIRfVjc5FdwJC9zlAXcPEYdk94VgzWR/ClZiQyRFn5CCNX/bSvNLAjjFJq0=@vger.kernel.org, AJvYcCWQZGv+QOPPcGPtn5CDMeLaQRfwFqTfrMaAsecjLHtDefhzh5mxQgIfB4zODGrsMx3Vi6d03aJILgAFvsUs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUMZU2zn1RV+ZzIdofYy2tabZjw3AN4+sT5nCef70l/9BbTL0M
-	Ij+Ttg1ZyJfhfj+tkREKe1+ih3cFg5nuiZ5Kj4kdV+Zre07W4am4hpsFe1+oKnDcClSn45aDV8F
-	PwL56Em3799G26IsFOnbSQxd6ATA=
-X-Gm-Gg: ASbGncvznxO5+mVXgBg0tM8WRNVlun9qIIhx6A09xMOqv6v4DFnc6VDQ3rus5emaQYR
-	qcPhHCMjieUh/EIpT1Kj24aiqWvDORqk=
-X-Google-Smtp-Source: AGHT+IF9hnQNVk6ZpYzIQHDzAkhYHiH62b9JV3oF6rG0cJLloFhfMCIv2naxMshN7F04Gzkb9fWAIsCQyME/4ARi2mw=
-X-Received: by 2002:a2e:a554:0:b0:2ff:c99f:dcea with SMTP id
- 38308e7fff4ca-30009caa60bmr70105361fa.34.1733394955215; Thu, 05 Dec 2024
- 02:35:55 -0800 (PST)
+	s=arc-20240116; t=1733394949; c=relaxed/simple;
+	bh=zvwx3dNMbF1OGEZ/wX/0dBuD40qhT1nOo1XKS+LNxVw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=m6mrfIsXS+nzflkfPhXd6dhvWjZllr4dYvzsF4VwwC8o0tCQc+sGzb0a70GL4sOq9V9byOhdDRRRt1ZIHmWgpNtzOG+wF2orXnMoqNjDsx2xNTm5XEaUiIsnbd+GjpkyHbstqMG79cUfABPR8KB4/TOaVMjvcLkhMxgc0tXVpZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWI5jfSS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D87C4CED1;
+	Thu,  5 Dec 2024 10:35:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733394948;
+	bh=zvwx3dNMbF1OGEZ/wX/0dBuD40qhT1nOo1XKS+LNxVw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=nWI5jfSS9Q0rD+jRCWevdh2IgcROcB8DWDo3U/YVYumrEG5UbO2tUpCQ+RYjov8UH
+	 IBPqiSmaNTMFBZLn1t8BLUEMSlQRXls8VlODx7FABjQLl9HZ9E3HJoixFVF2NCeCqd
+	 FlrXcaZ+KyONsk2FtXgZp4aRjCUummri/tH5JCCtSt/ZcDO/RAjoy7GyhJO6JeI3w1
+	 AenYLMxRnZGBlr8iGFkVLKq7epAO9yNBQBPLShGoXLYMPe+uZITwdMjd/yI0ocs/pC
+	 +4fVnCh5bgqPvC4ln+sVQSqfbVvd4IpFz/QIpxtPsvvuRN8Ak+T17tNQv7aecR14uc
+	 f7HH+V8oYeHnw==
+Message-ID: <171072ed-c35f-430e-a8c0-5cf718efed0c@kernel.org>
+Date: Thu, 5 Dec 2024 11:35:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115171712.427535-1-laura.nao@collabora.com>
- <20241204155305.444280-1-laura.nao@collabora.com> <Z1GBXHM1M4-Ws9Br@krava>
-In-Reply-To: <Z1GBXHM1M4-Ws9Br@krava>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 5 Dec 2024 11:35:43 +0100
-Message-ID: <CAFULd4YMoOmKUb+_rqdMv=Nu=8UNSdxe9EtN+R4kHB4Ag7cGpA@mail.gmail.com>
-Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on next
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Laura Nao <laura.nao@collabora.com>, alan.maguire@oracle.com, bpf@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, kernel@collabora.com, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?UTF-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
+Cc: 'Guenter Roeck' <linux@roeck-us.net>, 'Rob Herring' <robh@kernel.org>,
+ 'Krzysztof Kozlowski' <krzk+dt@kernel.org>,
+ 'Conor Dooley' <conor+dt@kernel.org>, 'Alim Akhtar'
+ <alim.akhtar@samsung.com>, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20241021063903.793166-1-trunixs.kim@samsung.com>
+ <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
+ <20241021063903.793166-4-trunixs.kim@samsung.com>
+ <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
+ <20241107103331.GA4818@www.linux-watchdog.org>
+ <589c40e1-6a1c-4ef7-b0d8-b761b132578a@kernel.org>
+ <20241107113325.GA5284@www.linux-watchdog.org>
+ <c487babb-84a5-4e47-a58f-75fec55cbabb@kernel.org>
+ <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
+ <88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 5, 2024 at 11:33=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Wed, Dec 04, 2024 at 04:53:05PM +0100, Laura Nao wrote:
-> > On 11/15/24 18:17, Laura Nao wrote:
-> > > I managed to reproduce the issue locally and I've uploaded the vmlinu=
-x[1]
-> > > (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of =
-the
-> > > modules[3] and its btf data[4] extracted with:
-> > >
-> > > bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko > cros_kbd=
-_led_backlight.ko.raw
-> > >
-> > > Looking again at the logs[5], I've noticed the following is reported:
-> > >
-> > > [    0.415885] BPF:          type_id=3D115803 offset=3D177920 size=3D=
-1152
-> > > [    0.416029] BPF:
-> > > [    0.416083] BPF: Invalid offset
-> > > [    0.416165] BPF:
-> > >
-> > > There are two different definitions of rcu_data in '.data..percpu', o=
-ne
-> > > is a struct and the other is an integer:
-> > >
-> > > type_id=3D115801 offset=3D177920 size=3D1152 (VAR 'rcu_data')
-> > > type_id=3D115803 offset=3D177920 size=3D1152 (VAR 'rcu_data')
-> > >
-> > > [115801] VAR 'rcu_data' type_id=3D115572, linkage=3Dstatic
-> > > [115803] VAR 'rcu_data' type_id=3D1, linkage=3Dstatic
-> > >
-> > > [115572] STRUCT 'rcu_data' size=3D1152 vlen=3D69
-> > > [1] INT 'long unsigned int' size=3D8 bits_offset=3D0 nr_bits=3D64 enc=
-oding=3D(none)
-> > >
-> > > I assume that's not expected, correct?
-> > >
-> > > I'll dig a bit deeper and report back if I can find anything else.
-> >
-> > I ran a bisection, and it appears the culprit commit is:
-> > https://lore.kernel.org/all/20241021080856.48746-2-ubizjak@gmail.com/
->
-> which tree are you using, I can't see this in linu-next ?
+On 05/12/2024 08:19, Krzysztof Kozlowski wrote:
+>>>> But that's a never ending discussion, so we won't go into that :-).
+>>>
+>>> DTS is hardware description independent from Linux, therefore always goes
+>>> separate way than Linux drivers.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>
+>> I found that the first two patches have been added to the linux-next git, 
+>> but the last patch has not yet been reviewed.
+>>
+>> I would appreciate it if you could take a look at this patch.
+> 
+> Since this patch was applied, I dropped from my queue. I don't have it
+> in my inbox anymore. Please rebase, resolve any comments and resend.
 
-The offending commit is now part of linus tree:
+I found it in my inbox and tried to apply but it fails:
+error: patch failed: arch/arm64/boot/dts/exynos/exynosautov920.dtsi:172
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D001217defda86d0d6a5a9e6cf77a6b813857e7e3
 
-Uros.
+please rebase and resend.
+
+Best regards,
+Krzysztof
 
