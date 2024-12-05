@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-433719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C773E9E5C27
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:52:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810A79E5B89
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432EE18848AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:51:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D93163652
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8A9226EC0;
-	Thu,  5 Dec 2024 16:50:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB7822144B;
+	Thu,  5 Dec 2024 16:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxiowLmv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33C4226EC1;
-	Thu,  5 Dec 2024 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92CA1DD87C;
+	Thu,  5 Dec 2024 16:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733417452; cv=none; b=MYeAo52kFjFJlg6IzSvxkOZFcUPpa32Oz1YKkSg7YdhkxlGtu3O2isRlzUV78Z2GcfbCrYv+OgXQsR5ysgE87BFxs21ysQ2pZ5V4WyHYM2tQO+nToTl7D5NPV0q7SfwVKyOGA+Wm1ypBzjwuQLJKBz5/Dty6fkPd/MIrYUwFpYY=
+	t=1733416501; cv=none; b=OQ25EgCFWxpibx9URhhq7/T+7Hu7+oS9Z7K0MJyKFpYiFi7ZcUHp3XkDJSKRjPPGXtuTD4AePj+1emWmO1PaUbrSGGtH4NKiEWX0YHdSNTCxK53dXK7b1XDl4qv9hX3OKpM743h2k8Dp8o1/UrkpyLic6xOQgjSP+Q/JSaEG8hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733417452; c=relaxed/simple;
-	bh=MzsLOHp7yqamHtBjlY0//l7fYt9alEw4xvhKnqwpJSA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CXQP50KOBkouVPAH6uP5Kfzhyr9iQVFvERhtQtBdU2c0zaRVyNGh48htEMR6Xg8a6ZK/597l1xqxPf/5iqr8FQ4Vc0TTip07mTfEpAhbj98phcZA7qrVds5tjv/iZd8MNz9EiwD1A/2if2KHxBQgLfc+hkfjzpH42E74ZHzEl28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id A6D2B1615AF;
-	Thu,  5 Dec 2024 16:33:39 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf01.hostedemail.com (Postfix) with ESMTPA id AE1426000F;
-	Thu,  5 Dec 2024 16:33:20 +0000 (UTC)
-Message-ID: <b0e9c31f81a368375541d16dbc88783f614ede6d.camel@perches.com>
-Subject: Re: [PATCH 1/3] checkpatch: Update reference to include/asm-<arch>
-From: Joe Perches <joe@perches.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Oleg Nesterov	
- <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Yury Norov	
- <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Andy
- Whitcroft <apw@canonical.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn	 <lukas.bulwahn@gmail.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
- Schier <nicolas@fjasle.eu>
-Cc: linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Date: Thu, 05 Dec 2024 08:33:34 -0800
-In-Reply-To: <2c4a75726a976d117055055b68a31c40dcab044e.1733404444.git.geert+renesas@glider.be>
-References: <cover.1733404444.git.geert+renesas@glider.be>
-	 <2c4a75726a976d117055055b68a31c40dcab044e.1733404444.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1733416501; c=relaxed/simple;
+	bh=LkDpp24EoiR1aaZseVHVH5cOld710oeNG3SsznlyDe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+USzetN5rvx3elZMVH1mz/R6I8d/yzRDmXgSMZL2wv3YKpVqWlNMtDgoIEQriqBx56zu+SmhZGcglr+XRH/t3X4VxlKuk8YJ0tG9EaCbUBciOO3m3p4efQR8fYq0D9+KLTTohFed3pH3Ww0CsSHsou9ArVWYU4a/w382H5plgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxiowLmv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8AEAC4CED1;
+	Thu,  5 Dec 2024 16:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733416501;
+	bh=LkDpp24EoiR1aaZseVHVH5cOld710oeNG3SsznlyDe8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CxiowLmv4WHmU6hQTOxS+kbaE3DMEPuPd3YB6mjoAZHUb6JMIdypYx9bmODcxOVQ0
+	 ZI3VLZBHJpsdPK/j7Py8X6nI9HhPel0UmVy1dVsrDzR1pETOr/WvEfUY2LL3s8VFj/
+	 WuyF2V4KktszFMjRJGsw6Jg0Orx5DlrpTG8avTJNnrKxRedUbGGdNUM1+3WxdNXHPT
+	 I1I/T52MRhTurbduGnmIys4Bfcr4mintTbWKpU/iC7gmFxRq3UgVgIFg8kamkrWhJ4
+	 7qMYvbOXsvpOJZiXPwbLtQsPtP9/XjqTmKPuHgTzpVfXbEhE6XGbEmrh+M2oFezs6P
+	 IHuE47eYHMGkQ==
+Date: Thu, 5 Dec 2024 16:34:55 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hkelam@marvell.com
+Subject: Re: [PATCH V4 RESEND net-next 4/7] net: hibmcge: Add register dump
+ supported in this module
+Message-ID: <20241205163455.GD2581@kernel.org>
+References: <20241203150131.3139399-1-shaojijie@huawei.com>
+ <20241203150131.3139399-5-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: AE1426000F
-X-Rspamd-Server: rspamout05
-X-Stat-Signature: weqz4yxs4rsngq31x84j563afb4cz9gr
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+iMORYG7c95cEvLW/2KGmp8+SUheDXAY0=
-X-HE-Tag: 1733416400-712928
-X-HE-Meta: U2FsdGVkX1/GrCFAVV1JCrdbvojW2peO21Wb4xE8Ls27bAQ65RvSuEMjGsVPAXyW7MQlWXnwLov7Ti/84i/FpUH64Gw6IDjLmriSHPYQcsNg+sDFqF7Qg1xNxflh8fS6Xn3s3D2A4Ek2XT6VQ9slbDhWhXblyARqXcs7Er2ZPNHB90HG6MKPTjjdNfq3xc3wM3o69kJZDluoEKVbHx5lGwS8hD78DEekrWh27Vq3dlcpjhycZCsDyuTc/MTcwfhRML89zzXWDs8xpH35ewGSv+R3Iw4/RjzpRpAksavpg2dIIvSVv/VVTiocHTr772iE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203150131.3139399-5-shaojijie@huawei.com>
 
-On Thu, 2024-12-05 at 14:20 +0100, Geert Uytterhoeven wrote:
-> "include/asm-<arch>" was replaced by "arch/<arch>/include/asm" a long
-> time ago.
+On Tue, Dec 03, 2024 at 11:01:28PM +0800, Jijie Shao wrote:
+> The dump register is an effective way to analyze problems.
+> 
+> To ensure code flexibility, each register contains the type,
+> offset, and value information. The ethtool does the pretty print
+> based on these information.
+> 
+> The driver can dynamically add or delete registers that need to be dumped
+> in the future because information such as type and offset is contained.
+> ethtool always can do pretty print.
+> 
+> With the ethtool of a specific version,
+> the following effects are achieved:
+> [root@localhost sjj]# ./ethtool -d enp131s0f1
+> [SPEC] VALID                    [0x0000]: 0x00000001
+> [SPEC] EVENT_REQ                [0x0004]: 0x00000000
+> [SPEC] MAC_ID                   [0x0008]: 0x00000002
+> [SPEC] PHY_ADDR                 [0x000c]: 0x00000002
+> [SPEC] MAC_ADDR_L               [0x0010]: 0x00000808
+> [SPEC] MAC_ADDR_H               [0x0014]: 0x08080802
+> [SPEC] UC_MAX_NUM               [0x0018]: 0x00000004
+> [SPEC] MAX_MTU                  [0x0028]: 0x00000fc2
+> [SPEC] MIN_MTU                  [0x002c]: 0x00000100
+> [SPEC] TX_FIFO_NUM              [0x0030]: 0x00000040
+> [SPEC] RX_FIFO_NUM              [0x0034]: 0x0000007f
+> [SPEC] VLAN_LAYERS              [0x0038]: 0x00000002
+> [MDIO] COMMAND_REG              [0x0000]: 0x0000185f
+> [MDIO] ADDR_REG                 [0x0004]: 0x00000000
+> [MDIO] WDATA_REG                [0x0008]: 0x0000a000
+> [MDIO] RDATA_REG                [0x000c]: 0x00000000
+> [MDIO] STA_REG                  [0x0010]: 0x00000000
+> [GMAC] DUPLEX_TYPE              [0x0008]: 0x00000001
+> [GMAC] FD_FC_TYPE               [0x000c]: 0x00008808
+> [GMAC] FC_TX_TIMER              [0x001c]: 0x000000ff
+> [GMAC] FD_FC_ADDR_LOW           [0x0020]: 0xc2000001
+> [GMAC] FD_FC_ADDR_HIGH          [0x0024]: 0x00000180
+> [GMAC] MAX_FRM_SIZE             [0x003c]: 0x000005f6
+> [GMAC] PORT_MODE                [0x0040]: 0x00000002
+> [GMAC] PORT_EN                  [0x0044]: 0x00000006
+> ...
+> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Thanks.
-
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  scripts/checkpatch.pl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 9eed3683ad76caff..dbb9c3c6fe30f906 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -2875,7 +2875,7 @@ sub process {
-> =20
->  			if ($realfile =3D~ m@^include/asm/@) {
->  				ERROR("MODIFIED_INCLUDE_ASM",
-> -				      "do not modify files in include/asm, change architecture speci=
-fic files in include/asm-<architecture>\n" . "$here$rawline\n");
-> +				      "do not modify files in include/asm, change architecture speci=
-fic files in arch/<architecture>/include/asm\n" . "$here$rawline\n");
->  			}
->  			$found_file =3D 1;
->  		}
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
