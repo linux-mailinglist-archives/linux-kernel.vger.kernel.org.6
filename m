@@ -1,112 +1,150 @@
-Return-Path: <linux-kernel+bounces-432501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AED09E4C35
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:18:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18AE71881B08
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:18:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0CC176AC8;
-	Thu,  5 Dec 2024 02:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TrjJj9mk"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA6B9E4C38
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:23:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76C317E015;
-	Thu,  5 Dec 2024 02:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1793B285F6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:23:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118DB80BEC;
+	Thu,  5 Dec 2024 02:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lu9vF1eb"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07BA22EE5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733365075; cv=none; b=e+bvrpRDzYto3w/ksJ7HdNwGuurFph6p2qudvYgsd3fFNQiCQjVgISr/9Qgt60/2p5D6leUFWYJ54Emwso5DOf7kkmbstIXA+RA2mi44gItivaxfs47YTGj2/5LrKDeCuWzIitOdD9mc2mvOWMtpYzRMyZZcZdqVzmKO5wS13wE=
+	t=1733365393; cv=none; b=HruMAvD+rvmXV31zkceXkV4S9wf8pDyR7XizYHJsOGB3JY9E0k665n2gC5DBjh8su6A2yCDegMRXbfZts8uTJ7D00akpnISozYG6a52EjKjHpx26eHIEGq40UqQMHGex/CmHHlH6JCE8kum8PEB7ciM8Okfqw2R8yM5LM/JX/SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733365075; c=relaxed/simple;
-	bh=I4QD7Y8cx4lnDe/uxq4YTREyJn+oSqI+X/zUrpWDT9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jDnuT9kAxqj2rsFAbPJOJT+0vY1+pBoNwwZa8VeXevtp/DiEUCtmDqPdDRVNeqDvbNB9m7ZZJn+OscU8NYXXC3X+T/3P5ar2z49Tkjl+O2J9zvKMQ3A5Eahs6+QLlfwVODg277e4syvC54eFU3GujFkku/u2iEPGUcZF7aeNjR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TrjJj9mk; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B51BpDU030160;
-	Thu, 5 Dec 2024 02:17:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=rYrDbCNmBdDzx499aoGxgj3z42b/6peKzLPB1hlTzME=; b=
-	TrjJj9mkdCv6RmLYmveLGGFOPkariJVo8L6cg7RvPlKfkwBqPceTRMpCDgT3GYoL
-	lOVfCqbaRSCTnGllfn5s5kpdw/5PFA54B1z7z3qZMG4mmWb50axbz5rETV9bxhmC
-	0m5arZmC8Tq2QezDhoI7f8jG24tDRPHuOEpWH/AqGf9b4dpNJwg1ArZiy0TbCzzo
-	sTBK9+PLcb74QIsi3nIcr6sEuFiXy2lRq1m6+vJSdntro+1A0FQDBeYF5Yni+UzP
-	onslLVWEkDmuGQ904IBJS9iTi8EUGhLXgSjRjaiN8VxEdmpqWpcTa4lvF3jZVLaJ
-	vozSjA+oNZQgIsGL/X7Dxw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437tas9sth-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Dec 2024 02:17:46 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B50EBQT001368;
-	Thu, 5 Dec 2024 02:17:45 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 437s5a8u8y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Dec 2024 02:17:45 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4B52HbvU018742;
-	Thu, 5 Dec 2024 02:17:44 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 437s5a8u3n-6;
-	Thu, 05 Dec 2024 02:17:44 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: dgilbert@interlog.com, Suraj Sonawane <surajsonawane0215@gmail.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com
-Subject: Re: [PATCH] scsi: sg: fix slab-use-after-free Read in sg_release
-Date: Wed,  4 Dec 2024 21:17:05 -0500
-Message-ID: <173336487634.2765947.1842407236657188629.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241120125944.88095-1-surajsonawane0215@gmail.com>
-References: <20241120125944.88095-1-surajsonawane0215@gmail.com>
+	s=arc-20240116; t=1733365393; c=relaxed/simple;
+	bh=dUoPXWx5g/C05ns4181AszXXKtfKrw24jER/MqQIQeA=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=p3QwuS0f71ZOTrDkguGiKjX+j6V2os/G5PS5QxWxxYIBfSUy4hsfawNyoByeLtrcl2qSDkJV6oHA6bMtNiqkd/48GNxrMFf2A3hHEaSBT6RW8qH/27BXtxkbkWCoMgRYdXqUtO8qb7Cgwfsn/w3ryf08jntCcaJWEkLkcUUAZbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lu9vF1eb; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ef85037f3bso16739037b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 18:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733365391; x=1733970191; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Jcq8s/qJvxHm0kGrnwNvGixVnYCeqYmFdkAzf/e/ncg=;
+        b=lu9vF1ebjmOtcDAuD/Nfyeoh411tYQwzgOXVlxhaQi/HqPvVJZVLMPYd08ZNmZDemg
+         S6n+PtAgdTBdnaTdfJZYCzytAj6p4aCRLR9DW2MERGcgRu5ZXK1yfdeY/49HzOF8Rxcy
+         NFfH7dlhCZTpWxHy4DSf1Np6fKZhYSfRWy3bZDIKnpWZm6Ah3ZxlPAQbv0EZx/vrrnqd
+         MeenRiVE/L5CxwebsgZNboykt0enCQmml8MFoW9hK4dGYYK7S7Cd6MJP0IVjsg3gaWV6
+         gMKeBavi/MAT6m4sziFZqKEk95yrFDLDL+QCipGzUJxjk4FVRlJV6jZICO2QcYmf0wxq
+         JpGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733365391; x=1733970191;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jcq8s/qJvxHm0kGrnwNvGixVnYCeqYmFdkAzf/e/ncg=;
+        b=DoeQ6hAVOyJuN+uX9zUkQwsVkTh5KA6Rs+fOMMyOfXEy4l23TjPLk6gDmlo4EsaKO/
+         ZVXCrbC2XQwerUqitX1C/oM+kN4js0pxaVZaxdDLzJ0FYjpJWaUOmyyZrEWtyT4Q/UHj
+         qJuCbkse4mHuOG/OBGX9HTO6kQn7/tyj/JwPlSDXuOTlmmLCTtyAowdRjxVZcnjjW446
+         WlOzUTx92DcGECawhdsAsxA2MgfWQIF9D3GMD4YBzvTN/n2HavejnSqmnZzk0clvfLpb
+         TR95+vbOG9tFNVJYMnnRlgjGqgeAgTgPRILaSsf7GDDDLAy0RX2qjwrW2FZxg51TFuyc
+         KkMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxlx8cOjyLtflzmbyPJD30Y3f29HVqVSg3POwtV0jyIStIF7ygnnsXkoakBZSdzZx3T25v7i4hKj8uAno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT51JYVytFOalgjH1JaRcYQg7rAOdgmwBeJ5G9/Qv5JHjnxaxm
+	lNCdUsJcE7KK/8UNJH0qyAtSe/7quXXwGDxjjr15rWOZk6p3hfK72cgoHSs+OLBFcYnGrRTBzrF
+	lWGuugw==
+X-Google-Smtp-Source: AGHT+IEiDc6wp/vOXpk+5qGCYbvmQ6wGcBzRlLrmQKrhyAXvCyjL7Lbc+BIS2p/Piw0LSEa9N89HM31ntAR1
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8733:728b:3b2b:932])
+ (user=irogers job=sendgmr) by 2002:a25:aa6c:0:b0:e38:81f0:8c23 with SMTP id
+ 3f1490d57ef6-e39f2459342mr2847276.6.1733365390932; Wed, 04 Dec 2024 18:23:10
+ -0800 (PST)
+Date: Wed,  4 Dec 2024 18:23:05 -0800
+Message-Id: <20241205022305.158202-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-04_21,2024-12-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=674
- bulkscore=0 phishscore=0 malwarescore=0 mlxscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412050017
-X-Proofpoint-GUID: a8lZcI86tvSyOCptG2W5LPOuwzlxzh6a
-X-Proofpoint-ORIG-GUID: a8lZcI86tvSyOCptG2W5LPOuwzlxzh6a
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Subject: [PATCH v1] perf test expr: Fix system_tsc_freq for only x86
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com, maddy@linux.ibm.com, 
+	atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com, 
+	hbathini@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 20 Nov 2024 18:29:44 +0530, Suraj Sonawane wrote:
+The refactoring of tool PMU events to have a PMU then adding the expr
+literals to the tool PMU made it so that the literal system_tsc_freq
+was only supported on x86. Update the test expectations to match -
+namely the parsing is x86 specific and only yields a non-zero value on
+Intel.
 
-> Fix a use-after-free bug in `sg_release`,
-> detected by syzbot with KASAN:
-> 
-> BUG: KASAN: slab-use-after-free in lock_release+0x151/0xa30
-> kernel/locking/lockdep.c:5838
-> __mutex_unlock_slowpath+0xe2/0x750 kernel/locking/mutex.c:912
-> sg_release+0x1f4/0x2e0 drivers/scsi/sg.c:407
-> 
-> [...]
+Fixes: 609aa2667f67 ("perf tool_pmu: Switch to standard pmu functions and json descriptions")
+Reported-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Closes: https://lore.kernel.org/linux-perf-users/20241022140156.98854-1-atrajeev@linux.vnet.ibm.com/
+Co-developed-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/tests/expr.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-Applied to 6.13/scsi-fixes, thanks!
-
-[1/1] scsi: sg: fix slab-use-after-free Read in sg_release
-      https://git.kernel.org/mkp/scsi/c/f10593ad9bc3
-
+diff --git a/tools/perf/tests/expr.c b/tools/perf/tests/expr.c
+index 41ff1affdfcd..726cf8d4da28 100644
+--- a/tools/perf/tests/expr.c
++++ b/tools/perf/tests/expr.c
+@@ -75,14 +75,12 @@ static int test__expr(struct test_suite *t __maybe_unused, int subtest __maybe_u
+ 	double val, num_cpus_online, num_cpus, num_cores, num_dies, num_packages;
+ 	int ret;
+ 	struct expr_parse_ctx *ctx;
+-	bool is_intel = false;
+ 	char strcmp_cpuid_buf[256];
+ 	struct perf_cpu cpu = {-1};
+ 	char *cpuid = get_cpuid_allow_env_override(cpu);
+ 	char *escaped_cpuid1, *escaped_cpuid2;
+ 
+ 	TEST_ASSERT_VAL("get_cpuid", cpuid);
+-	is_intel = strstr(cpuid, "Intel") != NULL;
+ 
+ 	TEST_ASSERT_EQUAL("ids_union", test_ids_union(), 0);
+ 
+@@ -245,12 +243,19 @@ static int test__expr(struct test_suite *t __maybe_unused, int subtest __maybe_u
+ 	if (num_dies) // Some platforms do not have CPU die support, for example s390
+ 		TEST_ASSERT_VAL("#num_dies >= #num_packages", num_dies >= num_packages);
+ 
+-	TEST_ASSERT_VAL("#system_tsc_freq", expr__parse(&val, ctx, "#system_tsc_freq") == 0);
+-	if (is_intel)
+-		TEST_ASSERT_VAL("#system_tsc_freq > 0", val > 0);
+-	else
+-		TEST_ASSERT_VAL("#system_tsc_freq == 0", fpclassify(val) == FP_ZERO);
+ 
++	if (expr__parse(&val, ctx, "#system_tsc_freq") == 0) {
++		bool is_intel = strstr(cpuid, "Intel") != NULL;
++
++		if (is_intel)
++			TEST_ASSERT_VAL("#system_tsc_freq > 0", val > 0);
++		else
++			TEST_ASSERT_VAL("#system_tsc_freq == 0", fpclassify(val) == FP_ZERO);
++	} else {
++#if defined(__i386__) || defined(__x86_64__)
++		TEST_ASSERT_VAL("#system_tsc_freq unsupported", 0);
++#endif
++	}
+ 	/*
+ 	 * Source count returns the number of events aggregating in a leader
+ 	 * event including the leader. Check parsing yields an id.
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.47.0.338.g60cca15819-goog
+
 
