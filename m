@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-435234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6249E74D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:46:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074EB9E77CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A03116CBCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2251887BC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EC2207E10;
-	Fri,  6 Dec 2024 15:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D974D1FFC64;
+	Fri,  6 Dec 2024 18:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYSBpqJv"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YCQCq662"
+Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA6020B807
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 15:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949A82206A5;
+	Fri,  6 Dec 2024 18:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733499960; cv=none; b=OjZapCDQD0U1mjh/hGm0d0dATq4mpaCe35Qvtq/FPj0Huc3jYyUrmo/+PXJaRhZU6eNqli5sv0p0UmUzVE019tDBuSxpMs6MvmZ+ye79nvegwjgdcN2jU58QTD9v1C6Qnm/IF1E0rUsqPHDIi1t8lgh4IDtrB9nECV7LGgL0ozo=
+	t=1733508215; cv=none; b=asBeNJaD3nmUAmHn9zGIdXdlvLfb7bTXfVEqopeq3JWpthUhOKVpg+fxUUl6OWox6/OBUKdb2jYnPANcCkVSlVPDrmF2TEHIQTrrBxmv0Bbv5te1K8JpGrgiy9ZJzDZYwiv3oeEHY6lLI8yjVMmJjD+mJonO87vV2Etvbzuy8h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733499960; c=relaxed/simple;
-	bh=27PSvdCY38KZly9ooE4QVDVTEKXezCWQDV2U/I31X0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kQZcmjcFiLRdtXKLr93Ys3hOeobVJTf3HvUPa+YBEYEtOfuGDmHyLB6sSmVtPQ5WPD2dAA7eLc3/alv/gq8mjwBZUbmCiMA1m7IQPsOB4mvJPGJ8STzu/MOtHSu4q8y0qN3NqoDxnoQ2J6eTMs6y3EJAwS4maLSF6SW2QirMB7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYSBpqJv; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-843e9db3e65so81119339f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 07:45:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733499957; x=1734104757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8pcXmUZCuBPhhv9UOmrEGOEpDu8UHlHBCzJTdy/kxlo=;
-        b=LYSBpqJvYabpEslom3vOfQUwRJ/LrO/Qp6AO3bJwcBJkyr0t1IfAuPEQiJy5PPZeo3
-         vlGayQ940GX2VGFdCYXI5qbDnf3aWOFksf6EwaMMwzcR34Cjfn5Yul25Q3xzx2iiBg0x
-         u0u5e+LrFVlV9U4RRbeA/LysRjPVX729Aai8bZGB7hYoOhvg9j/hsbN65pmzOp5ROi2M
-         hcQ6lbbNIUuUxwjL+GHBE8toJNSUXwNN8FTgKgTSEUble3y4W3H+iktwem036p99gVDP
-         ED0nnkgIKUemSWctx0t0RRydrXrRI4mrLp8d7k4Q/t5noFhZ4XRGqwj1cU9gXR4ndrv/
-         dzcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733499957; x=1734104757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8pcXmUZCuBPhhv9UOmrEGOEpDu8UHlHBCzJTdy/kxlo=;
-        b=NopjVywmelZb/RQj9/QHwkhqjHfSUwqlg+3kKnQjj34Vrz6BjQABbjiCqntXGmoDA+
-         YG7LoS/lDn1NB8QFhkvy7XtKJTcB7hL/bhO93YgaH6DmNwWyAgIghNQdSVWczvaGsAvO
-         6JMruF8TOaukf/bwkc+cfav/eaV7Atp2Yx6VUjZ3tPDYBEiSs3EXXoAY0/KtrT8PCMmz
-         82dTc37dPYfaeGxZOYDrEYZwMhLeJN3U5JaVkZWLTCjhfxGoJCZlGTcrpqORIG2TyUhb
-         L/PHljyGoBfRyP1XM8Ag0yPPeac/wlbES9Uivec/T/9Sj6Qqnt2yo9XurmchhQm+++g4
-         GEiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPDWSPksRDihu+eH2PxcIwRpLPqQ20aF2hAJ8z8n34GAelGqt7RqO6zNwST4kTRsW/joKvehjPsyvG0NA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu13RRlD3GDoWLAhVT4E6vlNCpV/FK3zRmbGRDrLKi6T5+3A7C
-	o9dt7jkIRsuvQN7qgPvVZn6ln2G8cjUQQRBmjFZWviAmVaCgTQWG
-X-Gm-Gg: ASbGncv2vt7ugrNQ4g14XP+W0Tl6dGxlCQ6g/NoG9RJEJzv2TldYkFgG+0KgXHzkZPW
-	Y1FMBBtGJXM5x0xqyWy2SFwrC2Xl11SJVLxFfkVJ6cg3U58b0abuzvqQpQRuvjpHcGxxXZXTcK9
-	eAL4fOf0AjZZAPGK0YQyLUGoug0PWZaDl4TPb3K08SYsqajHWF7Sy9y6Hhs2uuw6p7QPJeWLOKt
-	sKyp01WAc5KBeAc5tphdB1ge3CvkT6X/H4MUXDyOYUEy2+5i4Yc9Sivc4K8uJKbR7JJ9EsTUkKq
-X-Google-Smtp-Source: AGHT+IE2Uyiif0c307/vCY2Q92x95kblOc8RLzdvEsU/fgTYE7ZZRpnEaivdJZIwndEDSW8vWdJ6cw==
-X-Received: by 2002:a6b:7013:0:b0:83a:943d:a280 with SMTP id ca18e2360f4ac-8447104de28mr752499339f.1.1733499957480;
-        Fri, 06 Dec 2024 07:45:57 -0800 (PST)
-Received: from inspiron7620plus.lan ([172.59.229.198])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e286107f16sm871317173.21.2024.12.06.07.45.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 07:45:57 -0800 (PST)
-From: Guy Chronister <guyc.linux.patches@gmail.com>
-To: maarten.lankhorst@linux.intel.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	airlied@gmail.com,
-	Guy Chronister <guyc.linux.patches@gmail.com>
-Subject: [PATCH] drm:panel-orientation-quirks Added DeckHD support to panel orientation quirks for Steam Deck This commit introduces a new quirk to handle specific orientation issues for DeckHD panels on the Steam Deck. The quirk ensures the correct display orientation for these panels, enhancing the user experience on Steam Deck devices. Tested on my Steam Deck to ensure reliability. Feedback and further testing are welcome.
-Date: Fri,  6 Dec 2024 15:45:54 -0600
-Message-ID: <20241206214554.219-1-guyc.linux.patches@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733508215; c=relaxed/simple;
+	bh=NZeAZdy0kgd/dGmfPWI7u/7Zhfjo+XjptjUslO06J9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PV6nW5UHDUifLMBR3OgLwiowL0/0h3PhHL4dCFdG64/Sx9iA1kNbHfqXE4t90sBD7vCQeQoZgzuz2FndAjlNfJrUYMFtEVjPqPrlTHinKWK3iXXx4l5CmZ7/2cqLbv8syukZKH4/yr5u+Tq6iBbaGqjuy/c1GBxeR8rOAulNSXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YCQCq662; arc=none smtp.client-ip=193.252.22.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from mail-ej1-f41.google.com ([209.85.218.41])
+	by smtp.orange.fr with ESMTPSA
+	id JcfntEXK6e9OfJcfntbkT0; Fri, 06 Dec 2024 19:03:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733508207;
+	bh=fohnIjaGXi4erexWkQR0Ki8fkQHzJ2JQlgx+0ILcUhI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=YCQCq662pdnFysbh0EGT79rxoiTNBao7eWDodm4DbyarUJOOW/Oq5R8vlGEUlTGWg
+	 GJvUzXM2+vwIrsAQs/whADbZ715Y/lJ4eQfkdpexzgVq4omEU8GdgLJH8rLIJ1tLXZ
+	 tPv9zKtRHOfWLiWN4yqBJy31WxZPrgMqR7cKn3TDqjYc/0uNe64TSQgC+xaRnD+SHj
+	 1iZ4ixFPOloeuK2pcL62uFc2zMlHwIpruW7q6CiVWk7hZvmBZJQT8BDFHCkDqu59TI
+	 D1YLsbIQXHdQmX7ZMp96BSDPAAdOQ+stwh8pRK9St7nLkMtN32jbT0pqITbBT6YUu8
+	 tVZGBwcKGBOGQ==
+X-ME-Helo: mail-ej1-f41.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 06 Dec 2024 19:03:27 +0100
+X-ME-IP: 209.85.218.41
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so329715766b.3;
+        Fri, 06 Dec 2024 10:03:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWt3OfrAJKxDha9UL7vBANM5DT9vxkANTZSz6R+fy+wwasMzS984cRdSrMaf/e9GSmPtKuyYle/Ef+YRltH@vger.kernel.org, AJvYcCX4kRyVfSDvCq8tRHyjhpgdGmTq2vhrXUYeIH5q+zSzZ0oUBVJ+9ElXC5YkQR5ra4HIqWtHF1mgXS6vc5YzbVI=@vger.kernel.org, AJvYcCXaaux7tfs22+2+oujXkD3UamvMiYaSALBk1KPb1hp0I/ERaCl3eFIAr79NoKkuYVlp4MIbx6Iqc8cmLWvE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq5tH3Nclzj7EwEeJAZpHBRu/TrwMaDrDdZ+BU9xerjjrM7UyJ
+	hRC0nw20XoSsuNeXqlASDn3bezM3oEDoMFLI32XzRwwuTL5s0N8ZMWDDwPE9IdRAhZPn9SlfN0P
+	CcPQRjVIybsyn60vAxzMVJAdwqEc=
+X-Google-Smtp-Source: AGHT+IF7fNOJRtWBE8J5EkTB8RHD/J+PNwJHWESTQDWwz7k7Xwis6ssZjGPrSAnluvbW+xerUjreaR05tr055MdLvCI=
+X-Received: by 2002:a05:6000:1a88:b0:385:df73:2f42 with SMTP id
+ ffacd0b85a97d-385fd3f2e65mr9440939f8f.32.1733412345020; Thu, 05 Dec 2024
+ 07:25:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-1-4e4cbaecc216@wanadoo.fr> <e115a4245e5342a994a7e596cc6357fa@AcuMS.aculab.com>
+In-Reply-To: <e115a4245e5342a994a7e596cc6357fa@AcuMS.aculab.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Fri, 6 Dec 2024 00:25:34 +0900
+X-Gmail-Original-Message-ID: <CAMZ6Rq+n0vG9zObF-kY-Xo+iP_Y3P8A6_nEfB8F=UhqeQBepRw@mail.gmail.com>
+Message-ID: <CAMZ6Rq+n0vG9zObF-kY-Xo+iP_Y3P8A6_nEfB8F=UhqeQBepRw@mail.gmail.com>
+Subject: Re: [PATCH 01/10] compiler.h: add statically_false()
+To: David Laight <David.Laight@aculab.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Guy Chronister <guyc.linux.patches@gmail.com>
----
- drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Thu. 5 Dec 2024 at 03:30, David Laight <David.Laight@aculab.com> wrote:
+> From: Vincent Mailhol
+> > Sent: 02 December 2024 17:33
+> >
+> > From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> >
+> > For completion, add statically_false() which is the equivalent of
+> > statically_true() except that it will return true only if the input is
+> > known to be false at compile time.
+>
+> This is pretty much pointless.
+> It is just as easy to invert the condition at the call site.
 
-diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-index 3f2e2b851cbc..c412273799cb 100644
---- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-@@ -456,6 +456,13 @@ static const struct dmi_system_id orientation_data[] = {
- 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galaxy Book 10.6"),
- 		},
- 		.driver_data = (void *)&lcd1280x1920_rightside_up,
-+	}, {	/* Valve Steam Deck (Jupiter) with DeckHD */
-+		.matches = {
-+		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Jupiter"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
-+		},
-+		.driver_data = (void *)&lcd1200x1920_rightside_up,
- 	}, {	/* Valve Steam Deck (Jupiter) */
- 		.matches = {
- 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
--- 
-2.45.2
+To start with, I will argue that:
 
+  statically_false(foo)
+
+is more pretty than
+
+  statically_true(!(foo))
+
+In addition, the simple negation !(foo) only works if foo is a
+boolean. If it is an integer, you would get the -Wint-in-bool-context
+warning. Thus you would have to write:
+
+  statically_true((foo) == 0)
+
+Anyone using this in a global header basically does not know what type
+of argument they are getting. So, the (foo) == 0 trick is a must. But
+because it is ugly, better to encapsulate it once for all. The
+statically_false() is just cleaner and less error prone.
+
+That said, I am not strongly opposed to removing statically_false(),
+but in that case, I would also remove is_const_false(). For me, these
+come as a pair, either we have both or we have none. Only having one
+of these looked unbalanced.
+
+
+Yours sincerely,
+Vincent Mailhol
 
