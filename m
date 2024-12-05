@@ -1,116 +1,148 @@
-Return-Path: <linux-kernel+bounces-433227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377999E555B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:26:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0359C9E555D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:26:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7441883E7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:26:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1812185A2;
+	Thu,  5 Dec 2024 12:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mZvngHyG"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E7A282527
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:26:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA6F2185A6;
-	Thu,  5 Dec 2024 12:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ovzJOKz9"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DCD217F59
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A1B217F41;
+	Thu,  5 Dec 2024 12:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401559; cv=none; b=RpH6TVyuJWWMOXwnTH2EhULIxlmAI2Etay9BSIjm5pTZAd9WiKXzsZwwzepOKksYRAlqEn0/GKmXvGogItVoSqSiZmfvgLf2tYyTt6axZ7gy7j8T6R1/oMU8O67HGyqy/Hm0U9V2D3mDwtGyN/lXcxZR505H9c1kx+sMRy8DJN0=
+	t=1733401599; cv=none; b=u8GgbYyIk1l8akDZNVvP1Xc2hRVQyVYYrMNoWP1jptIAp9YLBnDSIihiZ8tf2omnv0H71OcbysynQNCpgZH6eUzidFa1q/8Zopn9vrNAb80NX5r8B1olbsH+GtmsNIELmVwWkqekequVndfOPh5UQzm7eYAjWp3uzqlvO/u+DsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401559; c=relaxed/simple;
-	bh=mQZqp4IFUTYgczPMKBs3aU2VcYTyt6nLnQ+NhQNlXVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjrmYXqHVwEyVMtUfifsLPSslNQbA6b4CixQAQDgXhwqGvsPz1guoAnafPhuuV6AzNwShSGhTllX1I2vO19gezpAHkCLDepNYCzmhW7nCIRf3bhb5LCHyqfhbl3PCdxWoCGJe0UTpy75x0t7oSDcVMj6+ylfgBHDtOoa15yJMQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ovzJOKz9; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e2c52c21so675424f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:25:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1733401556; x=1734006356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mQZqp4IFUTYgczPMKBs3aU2VcYTyt6nLnQ+NhQNlXVo=;
-        b=ovzJOKz9bxxAmoeOWwuCj7BsR6xS0rrTsKg6fQ5hYt/Q1Kn8hxEVg8xVW6i9bxKlWZ
-         qsUsIpSIBeAGVjBOnGNN0lWyW5JchqDWbPu+HggtGY0eAlxNMj3JU+Y8v/kUJwO3e948
-         B/onjjvFNL14bDQrySlhRigZn2nyfVYkwVmVSCHWoCtxEyAS/jj9GrkX23/kWW42dFUb
-         8Qv57FEBHVaecs6kFzvAKyPWRvhm+8AC45tE45jymMMyT9mwqJTkLovFpubruAhNPLc3
-         /PsIsoVvUD+6/ff+HsaKSQDmZnDHZ1uPJ/C7oDUWOxOLP5DspjcqQCs0w+4hTVTNO7gl
-         ccuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733401556; x=1734006356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQZqp4IFUTYgczPMKBs3aU2VcYTyt6nLnQ+NhQNlXVo=;
-        b=uWFrOTsZwgbZzgFs+ZN9vItbJjrGXdoOZyJpIt4Xl6pgfJ++7w8UIklRMvNWIOaZ22
-         kW9WeLvdlHtkIW+sF8LmLQAgmpZd0KXxrY5DIUm5RZzzsBAo+Bes1kfSyNOz35s893Z5
-         XQ8rlIoyTGO2eY9w1/Dpr75hi+lpCAUQLemMLqzXp3YMy1+0LzCnU2WqvmRNh4m9Bi5/
-         Mipgg4y9cCwzaXpOQXzCTRMFdtaJF/vpiXOlojB6o2koCs5Sz3q343xji2YvcQ9wtzQZ
-         N3U4/huuIEeGqE2yxCRLrawdviYqTcz2/ostbmYFCr7oi85+/L7dSVTFyKMcOkfA/Rs+
-         spMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWy8I/E/UOvC/jFcqtaX4kXGhrUb62nyxcSP2OXtiYQtfhYPj8zQoFUbBY4HxXGI37k8fxG2hwf/OGyWdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweAJlDUjWs6EG20kiduTTfgC83A3/eITSwVFvelPFxvfs0C3RB
-	mc2qJrEnYiK7/b690A3jPgLLEhYywhyS7SkzUvqiOGajd6iXA6Y0Fg6zry9u3w0=
-X-Gm-Gg: ASbGncvoiYhnH5YxEq4VDo26ykGjKAshsp1xqave0kNo9P+SFF2FCJ/VVltJ6kTERDf
-	qJPNY22zofQPsR6A40kP4nUlYqfNfID5BvKHn+jPMzY+hEbotR5hPe6zPMgA2WBtQAA/6AUTp61
-	LzyjsLZ2hTwIGhkBTjuLL9bW7UoMsjY83wRtsmHk0x+cs3PVNTwhZ8uZ9UahUiZXGxm8J8KMWS5
-	EsKBKu87MpiQyW1TUBVGionY/xPgWCPWHZigviO4w49cEoigZFPq7kscvsqZAsOCcCts5vhqD6T
-	Gf9S8h0x2rXuQT12WcSwW8QPFVWfDT/KxtY=
-X-Google-Smtp-Source: AGHT+IFgQ9iwN0Qu0vgSQZlMRT0k8B5zzY1On7I2CUzL6GWVsYOhBeCvU1TBPvS2cUARk11eBLePLQ==
-X-Received: by 2002:a05:6000:2805:b0:382:5aae:87ac with SMTP id ffacd0b85a97d-385fd421c84mr5534768f8f.32.1733401556000;
-        Thu, 05 Dec 2024 04:25:56 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861ecf403asm1883695f8f.1.2024.12.05.04.25.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 04:25:55 -0800 (PST)
-Date: Thu, 5 Dec 2024 13:25:54 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Charlie Jenkins <charlie@rivosinc.com>, Shuah Khan <shuah@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Palmer Dabbelt <palmer@rivosinc.com>
-Subject: Re: [PATCH v2] riscv: selftests: Fix warnings pointer masking test
-Message-ID: <20241205-09606b57e757527a56425fa7@orel>
-References: <20241204-fix_warnings_pointer_masking_tests-v2-1-1bf0c5095f58@rivosinc.com>
- <20241205-45c00adab2636bf26ce05f70@orel>
- <14125726-bb00-4de4-87f6-6655b0ffae58@ghiti.fr>
+	s=arc-20240116; t=1733401599; c=relaxed/simple;
+	bh=rqYjDz2ndWToCkMOGlekbv3N/pUHqvPe5KnfdFYe5VM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=brweD1AB3youW3El+681FJdKT304CGoyJTPGqhk64AN53wDqEx347D596nB/nol1DpZ1ycRF5Q3jCgYHPlqqrqpiDc2UCVAYrvs4HW8sBIp/qRMfXaCuX3QxwVotrug2RrkuV8/VJavacrDaGKLck+1ONmbUw1fFwUFdj3Lg4ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mZvngHyG; arc=none smtp.client-ip=43.163.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1733401589; bh=VmJ9Y01rlwA2K6RfLHocoulXFC2JDlQaFE30T46B3fk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=mZvngHyGk521xHb7KIz7Il5QY0bbxrRxr+PGjnGjNrPEdunzZmQ/G0d3+INMbFxSp
+	 Wttb9IGCdAsblhDFCZsvICKw0x+ycRBLrpBBLZeLKTFJriJIZb7+28Wd158k2GMS0n
+	 vPWEwNxPKm2r839jglqwtK7RSs5XtidMuIRJYtqY=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 69B2CAF4; Thu, 05 Dec 2024 20:26:27 +0800
+X-QQ-mid: xmsmtpt1733401587tme26c0gb
+Message-ID: <tencent_F4C3B4644C977CF77226C95362E373897105@qq.com>
+X-QQ-XMAILINFO: NyTsQ4JOu2J23W8T+v+r228Gxj0k3JeiQ3Y9Htxzq/rSHkgbuRGC3tbz7zsYWo
+	 th9W1sXLexZEwCMABylqN23mMhRvNbfwpyFZPlsspTiAu23RtMMnH/l8aJJ2pWKNMIjbxs2/K9yQ
+	 4H3mQUuW95EVn+7TawwLZnJFxgsnw5rpdVtCK10G2829fbC2RT86xAQJJxxfH4vpxS0gAbzkXVyr
+	 iq2zzzdm4t32KGZyOFlnTgj15Zlhfb6uLaQFQZn/aBQNqMW98V9j13W0NHYll73rAIO2OYA1bJ4e
+	 sX7JpoU3E9qgzA+zqywjFxzcCK9RBA7jFyEh8BlZxl+nYlN5Qug/7LhWLXSnMwZXmt8hZbmPAsMH
+	 oktsOZaSSH3Y/TBj3bHs1Lrltyd9tpX+5yXb0YPFBFlIf4Obu/JIgM/LoXLhuvVRr3FVdHE7ax8M
+	 0P2yrB8oMQmytgBL3yt4aOy2I3Zxem++XsPQWQd731Y/BDECZXppLd3NcjNM+DF1qsbsF40qxHAh
+	 FDMN+Vs6Rb0sGDHsA2WLG5rDZivL9omVrjPmpmPlytlBeSMP1Y22W5yxQcdxg6Wr+e6t3r4LkV0n
+	 FL2sBJmCraZcubg0cosvjt5LpTty03NuZwadzl2B6t4todNZcSoOtohwt2S31K67MxQ513G1+tuk
+	 RFM0WeBtDhM4AY8S/AF7RGE2M4TTAlhpLeJH+4uMUGMeiO41YZuqnbj6CrhM80eoLjysng1xJKgk
+	 hcNbjVuIaKHBog94zca/4TXx8hOiDOAF8iEdW6wMAUj3VXrMSgHaepAqniFGsmeQCM+WNI9Ch5Be
+	 sewsrYqf2XmKJE0uTbonY3z8Z2U5lz6jI8AZ/LyRTKAuxh2rQ52R1Bg0TP5nVPFyFO8LubM2IVny
+	 t0AYnE8saqSFHHQhvO8t5b6Q23F9wBmQ==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
+Cc: konishi.ryusuke@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-nilfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] nilfs2: drop the inode which has been removed
+Date: Thu,  5 Dec 2024 20:26:28 +0800
+X-OQ-MSGID: <20241205122627.1066297-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <673e20ae.050a0220.3c9d61.0163.GAE@google.com>
+References: <673e20ae.050a0220.3c9d61.0163.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14125726-bb00-4de4-87f6-6655b0ffae58@ghiti.fr>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 05, 2024 at 12:15:16PM +0100, Alexandre Ghiti wrote:
-...
-> Your mails often end up in my junk folder, am I the only one? Any idea what
-> could be wrong?
->
+syzbot reported a WARNING in nilfs_rmdir. [1]
 
-I'm constantly pulling legitimate mails out of Spam, usually ones from
-@google.com, which I heard was because spam filters, including gmail's
-spam filters, assume those are made up addresses... Frequently I pull out
-Samuel's messages, at least when he posts to the opensbi list. Ventana
-uses gmail, so I've tried adding anybody who goes to spam, and shouldn't,
-to my gmail contacts, but that doesn't help...
+The inode is used twice by the same task to unmount and remove directories
+".nilfs" and "file0", it trigger warning in nilfs_rmdir.
 
-Anyway, I don't know why my messages go to your Spam folder either. Do
-you see anything weird in their formatting or headers? Maybe try adding
-me to some contact list which your spam filters hopefully use when
-deciding what's spam.
+Avoid to this issue, check i_size and i_nlink in nilfs_iget(), if they are
+both 0, it means that this inode has been removed, and iput is executed to
+reclaim it.
 
-Thanks,
-drew
+[1]
+WARNING: CPU: 1 PID: 5824 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
+Modules linked in:
+CPU: 1 UID: 0 PID: 5824 Comm: syz-executor223 Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
+Code: bb 70 07 00 00 be 08 00 00 00 e8 57 0b e6 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 4c 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
+RSP: 0018:ffffc900037f7c70 EFLAGS: 00010293
+RAX: ffffffff822124a3 RBX: 1ffff1100e7ae034 RCX: ffff88807cf53c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff82212423 R09: 1ffff1100f8ba8ee
+R10: dffffc0000000000 R11: ffffed100f8ba8ef R12: ffff888073d701a0
+R13: 1ffff1100e79f5c4 R14: ffff888073d70158 R15: dffffc0000000000
+FS:  0000555558d1e480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555558d37878 CR3: 000000007d920000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ nilfs_rmdir+0x1b0/0x250 fs/nilfs2/namei.c:342
+ vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
+ do_rmdir+0x3b5/0x580 fs/namei.c:4453
+ __do_sys_rmdir fs/namei.c:4472 [inline]
+ __se_sys_rmdir fs/namei.c:4470 [inline]
+ __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Reported-and-tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/nilfs2/inode.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index cf9ba481ae37..254a5e46f8ea 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -544,8 +544,15 @@ struct inode *nilfs_iget(struct super_block *sb, struct nilfs_root *root,
+ 	inode = nilfs_iget_locked(sb, root, ino);
+ 	if (unlikely(!inode))
+ 		return ERR_PTR(-ENOMEM);
+-	if (!(inode->i_state & I_NEW))
++
++	if (!(inode->i_state & I_NEW)) {
++		if (!inode->i_size && !inode->i_nlink) {
++			make_bad_inode(inode);
++			iput(inode);
++			return ERR_PTR(-EIO);
++		}
+ 		return inode;
++	}
+ 
+ 	err = __nilfs_read_inode(sb, root, ino, inode);
+ 	if (unlikely(err)) {
+-- 
+2.47.0
+
 
