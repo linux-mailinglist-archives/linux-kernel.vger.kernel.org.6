@@ -1,487 +1,555 @@
-Return-Path: <linux-kernel+bounces-432746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE099E4FBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:30:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7483188182C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:30:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656D91D3564;
-	Thu,  5 Dec 2024 08:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OHdJNiBT";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="x1wierAT"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465239E4FBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:30:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1474C2F56;
-	Thu,  5 Dec 2024 08:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733387418; cv=fail; b=ulhEmenWUcQd3NWNsf51P1xdNgd6p68BWcun+2XjKJj8GFymgYB6bc/iJzyTmXLYN98uUpF0iVboMERhTReWUKwMJov0izcotMKV8rWb0zPPsSyD0uTJLLDSc6fGT0h2G8GK7ACYtIFaL9+bx67JOTDiO6Ww3U9DaKIRfQsadQE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733387418; c=relaxed/simple;
-	bh=t9CuG/EfLcpjT9onamthpGfDF9+QCCJ7TdcYvlWJYBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tNTdEldeX06FytBQPxCotuZFciCGyujOrInQt5b23mOpYl7RZtny/r/izkWDCkL99LY3Ovq1DYgtSq6Tq6tMc0F1UjJeJcargCH3UUuIEbbwhfBaJ4y7Y/oW7Q6VOMVT1lmhkC4da5T4rx1OeiPoskEmFza2IpmXuw8QgN+Fmn8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OHdJNiBT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=x1wierAT; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57Mnpg008507;
-	Thu, 5 Dec 2024 08:29:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=YP1TNWtjmbUfq0Je
-	6H9jtL0QmWtWMskAktzq2we6bwc=; b=OHdJNiBTBnFvbrkSVHE4Vg2caiVsgNAV
-	fb4SQ9RoH0aGOzcwO5lGOyiBR+wTjTW9kJwvetWPIRdvsljED0IUAzYHUvYE8BPr
-	0dW+geyrWnBqwQMBJDA0ZrV4nkLmzBrKIC42CoOzr1eSTm+yebTjncmgI0N2rVj1
-	IPMzlcIUt0Kcp7oh8RMCjO1u0GlnOm8YBzzFwi6t36CBDHHmUap8/XNIjrXZU+P+
-	fXpoIIQSDSCkrS6nr5/vjrKDkW0dfvvC8UV+73t8Hq01BhZR/42CeaTTpoOzX6jy
-	gD/QDvOH0IQp8OiuIWGbDa+3oCRSPSlRNy9gQHwGlodPi12mqNX8sg==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437s4ca9qg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Dec 2024 08:29:57 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57tnNK040054;
-	Thu, 5 Dec 2024 08:29:56 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2170.outbound.protection.outlook.com [104.47.59.170])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43836wh1fp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Dec 2024 08:29:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AF2MrHIIA6ElAaF+8ZswW5ks1E1YAwmRL2LLrkjPNt4zKy/PsAgtT8q5WXhZNq8UuaFuVq60smRM6ooPvQxm3eX3WG/SukAWPDMDqdBCpeU0sXOcu/7AMt8EUVo4PQiTXSUs7gpQqH5OWhlrU+ma2bgO2aHNiOB3j/V4vu90syKiA0c3S5aCPUKcEMkPM4hqZHGjzT3hl+Acz5E8djd4uckFQxTV/Kxux4sepm0nPcrLO80BRrLVTghnaLxCAMOkFaCaVDMvkzB2Hbz+73hArZEQxO5WC6VLda0W1/CrLX6UORIX9Ohyr8/F0bm66Mfvz3fIndU1dARpYn/XpDQWyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YP1TNWtjmbUfq0Je6H9jtL0QmWtWMskAktzq2we6bwc=;
- b=mFlUCsGQN8IJE9dBZm9nqz5rl/emtEoBe9ibOWwqeC/QPBX8dZ+tQhPb0ihqinjkxckGX9ZoDIw3NmD+OX2zC/lRvkmLI3qrIf8PiggQ8w64NzX9pQk43RMX9kjXKBxxNcu9WqEyb7Q1bnqKl+jZSHBKnyhUBSN5n/6NxbfrH7/NHg8vZDulOU7Q2SXtBKmUh+zjX5VyKvypU9lAs8WHHKB0BfkP/eBIn4Sa6mYEdrosXJYdtABjALmzOrMV85g0CE3eFTTYqTXPXFxFBtuCFmr1mb0WzuZzbjOpiZRJrD8+3/dLddY7n4DCzE3Fxnm0DLKBiQySguwm/Jdb7qi+6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YP1TNWtjmbUfq0Je6H9jtL0QmWtWMskAktzq2we6bwc=;
- b=x1wierATvcz4XBEu1HGZy4f4fq/n9idnsFdnaR6A27RMFd9pLixmbslsypUE9JWMgsq1KRMHrM43WclURZN2vSp/TO+8ozpy637+Bi/1Cjj9gJ+12D0GygI7fvU9dROMH40Cr6JoBlYMnVHoimtdjohvMfEqEwCKVcR1jviAyOk=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by SJ0PR10MB4557.namprd10.prod.outlook.com (2603:10b6:a03:2d4::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.20; Thu, 5 Dec
- 2024 08:29:53 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
- 08:29:53 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>, Yi Lai <yi1.lai@linux.intel.com>
-Subject: [PATCH v3] perf: map pages in advance
-Date: Thu,  5 Dec 2024 08:29:48 +0000
-Message-ID: <20241205082948.56212-1-lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.47.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0277.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37a::8) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01922282C06
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:30:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912001D3564;
+	Thu,  5 Dec 2024 08:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x0AY/nm2"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524E51E517;
+	Thu,  5 Dec 2024 08:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733387449; cv=none; b=HHhm0kfc+wu1be8iCC4HUtWHGU6zUU1+tp5YSaqM/qA7MSlszDXtghf6YKt+6VuMSB2mdKRmUGIdUSuacwRS4IqgqNk4D2QPXZ7iM4qJU1Le1To7S2UtkUwhlKv8nluGX2C8HsTep7LBJ++8Skl6J/1O+dEkw4zkj/MJV6L1e4M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733387449; c=relaxed/simple;
+	bh=7IqJ9v2zSQH5mRkCQdMwTEhOBAKam4bfRrVxtk94KA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HSd8NNjz2O4XUzdilbOp9H/O7t4AvDFPIEzsC3U8tSKDF37iePgZTvQmqJdHWtiGzai1SIlZDzV2B4dxeGrqKPfD7lKoMQc9ANiokGZwAyf/qGD0f2D+l9KHQnwqjRL0kzMVST+pHItUKUZkBQE8NSBX+SS0FsOp2U06eHAE9bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x0AY/nm2; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B58UTR9101707;
+	Thu, 5 Dec 2024 02:30:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733387429;
+	bh=+2RDehCeAqy1Sa/dz+VRMEOHtTzxxo24zkp59yr3MJ0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=x0AY/nm2q+CKavp2sG848X8Qv5czPlK3qa9G8LvU2XAVOYUmSobcj160J4gW1J334
+	 1o4Mh3A0M4X0QK0+5B4jLmWXtN3rFYel2VhOsB+EZRa//exBM3uI1maCYlCFPdJBGY
+	 qKaDUmw2o9XmFEtWzERmxAyTw8nU/4aUu9b03jvc=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B58UTWi107459
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 5 Dec 2024 02:30:29 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 5
+ Dec 2024 02:30:29 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 5 Dec 2024 02:30:29 -0600
+Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B58UOum075586;
+	Thu, 5 Dec 2024 02:30:25 -0600
+Message-ID: <d0457446-2b45-44ed-91d4-8839e1626180@ti.com>
+Date: Thu, 5 Dec 2024 14:00:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|SJ0PR10MB4557:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3352d2e8-68e1-43d7-0e78-08dd1506fe2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yEfVMibh2+9I3IkFGmrRGp/iZAJOr/VyP3HkBFto/dT3xxa35JHz+ILdu7yM?=
- =?us-ascii?Q?4BnN8WLadTvos+i5wE0ke1aHeBsaBj3bUDNkJLc6VYh96obK42p0OH35vgqK?=
- =?us-ascii?Q?/Bsmu8EDDugBvYFXQAhy48+Vb+ihM9DWXaCh5UMXIRJAYdv+UWgdkFqko66Z?=
- =?us-ascii?Q?iuRnbu/5JIwyqh5xZU5TQS6ww4ekqHCfC3fxKSUDToGuvX3o2QlshuHMbTH6?=
- =?us-ascii?Q?2UkUKG4LTrCC+UsqpDYvMKeFUG6YXX5tM9VOkxJwgyBsQ6Kg/iJfb1vM+K1U?=
- =?us-ascii?Q?YLMmgNQ2nzQG7TcLGS1UpA+jDCAQwR0pXXSJft1lvWcb3UyrZZFIPzQmraa9?=
- =?us-ascii?Q?HwyRPl/gaDvmKstsV2d77P4W1xumBU7Wmut8gOp+9t42A6xWuhlKmffl8Can?=
- =?us-ascii?Q?y4kyA35dyGIp0l/c/tecgy6nXXDSa7K9Vh8IszeNiYBw3+2K7ewSq9NZq4p0?=
- =?us-ascii?Q?KXPd8Nhd353yBjEKpZTml6Bd2WBUivtghjIXqssQJjP8ckVjDecasofukEwb?=
- =?us-ascii?Q?oEWHvwtogGEoXasjebuGtEoNvwMKlORwQM4YmYkG06Too6XIQFPiFUgU3cxI?=
- =?us-ascii?Q?VMTXsm6xRwjkx4YnZIF9lPumuC7xkpvRp102455ohVN8AEhTIrD0nICv2Yu2?=
- =?us-ascii?Q?ETkEJUPciwPIXJf4lZcPylHUYvsZUEVAtgBcYOhTVy6DZf33z6fQ1xMXzTpf?=
- =?us-ascii?Q?saI8jvjPEhsPxBimJVnsZlvqfGQDpPq81zeSM1zQXyVhy+cKh3UPA5ePno3p?=
- =?us-ascii?Q?jaZFpBBH+58LVKW/UMyJMO4WCMBy0XlPeyuwXSkhU13apmQfBBUdGxbzQuJB?=
- =?us-ascii?Q?Xb+wEBzsWN5NBKbnZYjTWF24h84rlHI8r0W7Pm5ECcgy209jBsEWHppieafW?=
- =?us-ascii?Q?1OIRf5284TBeTCIwR8o2uk561X22oH7IzaahctT48HmhULIWW7VEQpLPGMoL?=
- =?us-ascii?Q?riS9bf26fYRBRn/SIM/X7mNI+213LAVEboTCjHF970tL36EBmPuqpYkqHjsr?=
- =?us-ascii?Q?5Wir6R48/yWa0fbjSBoPiS5qgpDyjDN+o9+QdztTXem74inED4nMkcedhFRS?=
- =?us-ascii?Q?j+tufCmHVNYL8tl5GezbVzIATWn3MO5mC5IScGBMs0RF1qzb2ZXPjAQUBiyg?=
- =?us-ascii?Q?SXN77miiQTLWQ2Kh8FhECFrHoTs0Go1ab3DssdmqkXCbD30RQX4uQ1Xwut0P?=
- =?us-ascii?Q?UUgFbfN1FZD1+7z7zEJn7LaK4UNeOKnhRwxZ1fRBHdB6sNyHl6fFy25LeAwI?=
- =?us-ascii?Q?2lP5d/M080s/IzDDU+78sxSilZHkZUHIocL+IKZ2JU8Jatz4njhjEfNoMGn3?=
- =?us-ascii?Q?jDp3DfRHWvjZ/jvEUGIgu1y0BzfCRSg6IfEkaF9Y5s2mS7FpAGFhr6dfVuzr?=
- =?us-ascii?Q?Pxr00DI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YdDvWf37WA224RlM3sDiN+9bvd6eMX9L6BwLtuYoK5KKQNxGX302EUm3tK6P?=
- =?us-ascii?Q?TNPCmNwckr88PLzMqH0QvM2HRLPgEvfivciEAezWbxMdqHUya/4wdz7O0n9k?=
- =?us-ascii?Q?6wKwmS0stD5VLVShy17isc6Jn14d7YhHHRLBAg0MZ+SPKU4y7XigV0nG5e7i?=
- =?us-ascii?Q?VxA4vkDCdo4z6Qy8OcxgLbqW0HRwfmqMc3vgmEmjQx5ebiolp7vxRtkShDR1?=
- =?us-ascii?Q?Wn2uy7vi7RgLhP9oTKTKloJ2Ky6P8k80RQIs+bwsLnxkd7wzKUpNY60mU0Ds?=
- =?us-ascii?Q?Txd6tzVGPaLnFfnb/CVc0ekHknQtV5+rkrsL6/y72msql528wm4qfsm8zQ8Z?=
- =?us-ascii?Q?YficKRy35IAIoXgDHIM3EprIkuxc3/4Jw8Uc1ThjbIIYTiJiugyDmi/roLqL?=
- =?us-ascii?Q?qipS8OGPnm9PDfwdrccLReSivFXQu5Vl+ts8GA6Vvt7q67Li7Jz2aT+BMP3T?=
- =?us-ascii?Q?Hctz7NZZXr4NQnXT+I6YFwBXK0Q2MuHZliCwzws0UVLicYzLDwssJsC8sMeR?=
- =?us-ascii?Q?O2lUQ2QRxV4lAklHfFMmP3gUMPJmW79EHslZjUFiyap4gug9YloHkg6jMW2k?=
- =?us-ascii?Q?Q7pdcqmOV/E9xXpnAskW7Th0wAVKGUV7MYrF7m3x/TSoPdMsd4ry9Kq81PU8?=
- =?us-ascii?Q?pwdbouBD8Q2k4npdnScrF9ADkgQbG3qyeryciz5Cc6WVV2JW+R8nfuZdEaZw?=
- =?us-ascii?Q?KDWhrzi3EiSv+GJjupEMJVU/UutnGqvw8eoiJr8aFwGL+M19m+vQnHWE+7kZ?=
- =?us-ascii?Q?f4gJkJCieEWe8jUscjNPbtzgDKF7FJ0KugwiaOyK51pTufwNuPyw8XuEmpdk?=
- =?us-ascii?Q?ufN9ju27XxwZNXb1f673gn/Qwv89mjsR9tOALGC6VHx0gkKKNIez3WLmDktx?=
- =?us-ascii?Q?p9Sopm53wPhwA/nMe9LVRakvJbg4bmpvcCMbbNWLdARUQrklWgY0gNPl+Kbp?=
- =?us-ascii?Q?zdqwMAoRk2Fj02vRAAKGNIIp1YgxB+pPO+eyVFq1i9X+VJ4cD7y9a/qgdQIm?=
- =?us-ascii?Q?pOUSASDtI5maVINg2r8aN1cWIe0nYsZyG7P7yDxl3fG/+7OMkl8KfyaSSR+N?=
- =?us-ascii?Q?A7H8WIcg8XHS0hFB4dkM4xaT2Mq79i+cosYMqq5hGtiLIMkzJhIf+9oefn7i?=
- =?us-ascii?Q?Bc3IC4FPmHZNQaMwd/JgYoE8xYLFr/2rRDtxcexeump7q2HbdCk5rvRwaMdY?=
- =?us-ascii?Q?IFJMeSlEG4EeBU75tHfwdKpa/W02CkUnqNKDZ8MfpcLjYqiK8ZNcw73GIthD?=
- =?us-ascii?Q?XpoYOC9/lHnp5EZwjRXHlXgv4ht/TClK/FzI8mHK84cgfJPr7c8W4gxaNiN7?=
- =?us-ascii?Q?MNjh7nIuX6inHhaQDpffr6u7v3yaVP7mJDYsxuHHd0uaZqgpP0Sz9qp8znpZ?=
- =?us-ascii?Q?PIQUAG9dnkMW+pR34mRaED+QP0uoj5iaoreR9M59v97Ig53brGNwRvUUTe12?=
- =?us-ascii?Q?4K8bQOo2zqCrgx82k7no0Cy7zfiqB9ovEseCRVq/007XxzNM5NVGMyOvVJm2?=
- =?us-ascii?Q?HuiQvMAj7adUNgrG5RU90NwAhfcXRQNNSs7E+2IvwDcnmVvF2nUtwUQwaK9S?=
- =?us-ascii?Q?+RtNGFfKJHXP0n5we3SHtIxnTwq1MQHcaC2SXoAGFA8OOc6fne0rPFUSswEs?=
- =?us-ascii?Q?dQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	upDxritWIvrXEdcv/Za16RgfRv6zsxToFxj2Qa3ZG2+2vHkrzO3+xW3u89SCve1DC9aNv/nGzbRG35Cb9UsXnNSPsDDjSjg8ikyF5OAXPpUQQNRKw+RIDnQ+/nA+6M/8V6uCLT4QDo4srnMlhgAq+EZDrmIJLfw05smR+H0UDIz+4zOkRQQsijCU3UDpYFggxP6OxPwOma7OKsLw//l62BsX71VfuPzbHBvZ3loQ659T7V+Yw9sXAi3SNbue9i1TUpbJ1kaYlEsEev+lCHNG6NRQTd3mj7FrZ6jHzJ/2L9EG3XkJFuypxswUSh/jhEmPGagb1sjHRS8KBtwAJgxZ2BMPEIVxWcCFxGtnL4s6zNaUTi8K4AMy6hpsUhjc3jQUu7Pe0ea9voMaTCbtUpdoA9imq+zw9UzMeFQJzUDwn0GY8ko/g/W1OrtVpb1oJIUAiO1KREK5jfDwe44Q99ZP5pbJOyLhuso7jgvFXS/4rDnG2gC4Q8bbKXwawBlB0pykqpEHsk4zz3fc9Zxf1jW55Y+Z9QwyrD5R+A0UNUcHw5Slbj+ct/0D5yKsbf2c25/nqQG2GonGMThPy/Gl/Mg/f9psNwxyufRXcoWytH+WAUM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3352d2e8-68e1-43d7-0e78-08dd1506fe2e
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 08:29:53.6201
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oMaj3bc+oK1NLlS6OKqK54hYPSnTQYE2O7jHYIsXKG2VGifHuFww24pEEPxYBqYVEBRIPEp7K7Pejltxt4szN3mSw4l27Rpsk86OZMwjPos=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4557
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-05_06,2024-12-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412050062
-X-Proofpoint-ORIG-GUID: c1zY07whoY3EZRxHP_gS00dlEzXTFkxw
-X-Proofpoint-GUID: c1zY07whoY3EZRxHP_gS00dlEzXTFkxw
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 1/2] net: ti: icssg-prueth: Fix firmware load
+ sequence.
+To: <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        <javier.carrasco.cruz@gmail.com>, <diogo.ivo@siemens.com>,
+        <horms@kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <danishanwar@ti.com>
+References: <20241205082447.777463-1-m-malladi@ti.com>
+Content-Language: en-US
+From: Meghana Malladi <m-malladi@ti.com>
+In-Reply-To: <20241205082447.777463-1-m-malladi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-We are adjusting struct page to make it smaller, removing unneeded fields
-which correctly belong to struct folio.
+Hi All,
 
-Two of those fields are page->index and page->mapping. Perf is currently
-making use of both of these. This is unnecessary. This patch eliminates
-this.
+Apologies for this mishap (incorrect patch series). Please ignore this 
+patch.
 
-Perf establishes its own internally controlled memory-mapped pages using
-vm_ops hooks. The first page in the mapping is the read/write user control
-page, and the rest of the mapping consists of read-only pages.
-
-The VMA is backed by kernel memory either from the buddy allocator or
-vmalloc depending on configuration. It is intended to be mapped read/write,
-but because it has a page_mkwrite() hook, vma_wants_writenotify() indicates
-that it should be mapped read-only.
-
-When a write fault occurs, the provided page_mkwrite() hook,
-perf_mmap_fault() (doing double duty handing faults as well) uses the
-vmf->pgoff field to determine if this is the first page, allowing for the
-desired read/write first page, read-only rest mapping.
-
-For this to work the implementation has to carefully work around faulting
-logic. When a page is write-faulted, the fault() hook is called first, then
-its page_mkwrite() hook is called (to allow for dirty tracking in file
-systems).
-
-On fault we set the folio's mapping in perf_mmap_fault(), this is because
-when do_page_mkwrite() is subsequently invoked, it treats a missing mapping
-as an indicator that the fault should be retried.
-
-We also set the folio's index so, given the folio is being treated as faux
-user memory, it correctly references its offset within the VMA.
-
-This explains why the mapping and index fields are used - but it's not
-necessary.
-
-We preallocate pages when perf_mmap() is called for the first time via
-rb_alloc(), and further allocate auxiliary pages via rb_aux_alloc() as
-needed if the mapping requires it.
-
-This allocation is done in the f_ops->mmap() hook provided in perf_mmap(),
-and so we can instead simply map all the memory right away here - there's
-no point in handling (read) page faults when we don't demand page nor need
-to be notified about them (perf does not).
-
-This patch therefore changes this logic to map everything when the mmap()
-hook is called, establishing a PFN map. It implements vm_ops->pfn_mkwrite()
-to provide the required read/write vs. read-only behaviour, which does not
-require the previously implemented workarounds.
-
-While it is not ideal to use a VM_PFNMAP here, doing anything else will
-result in the page_mkwrite() hook need to be provided, which requires the
-same page->mapping hack this patch seeks to undo.
-
-It will also result in the pages being treated as folios and placed on the
-rmap, which really does not make sense for these mappings.
-
-Semantically it makes sense to establish this as some kind of special
-mapping, as the pages are managed by perf and are not strictly user pages,
-but currently the only means by which we can do so functionally while
-maintaining the required R/W and R/O behaviour is a PFN map.
-
-There should be no change to actual functionality as a result of this
-change.
-
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
-v3:
-* Fix issue raised by syzbot where it's possible that ret == 0 and rb ==
-  NULL, leading to a null pointer deref in perf_mmap_(). Thanks to Yi Lai
-  for reporting.
-* Fix typos in commit message and correct prose.
-
-v2:
-* nommu fixup.
-* Add comment explaining why we are using a VM_PFNMAP as suggested by
-  David H.
-https://lore.kernel.org/all/20241129153134.82755-1-lorenzo.stoakes@oracle.com/
-
-v1:
-https://lore.kernel.org/all/20241128113714.492474-1-lorenzo.stoakes@oracle.com/
-
- kernel/events/core.c        | 118 +++++++++++++++++++++++++-----------
- kernel/events/ring_buffer.c |  19 +-----
- 2 files changed, 82 insertions(+), 55 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5d4a54f50826..000d2fe0b3cf 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6284,41 +6284,6 @@ void perf_event_update_userpage(struct perf_event *event)
- }
- EXPORT_SYMBOL_GPL(perf_event_update_userpage);
-
--static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
--{
--	struct perf_event *event = vmf->vma->vm_file->private_data;
--	struct perf_buffer *rb;
--	vm_fault_t ret = VM_FAULT_SIGBUS;
--
--	if (vmf->flags & FAULT_FLAG_MKWRITE) {
--		if (vmf->pgoff == 0)
--			ret = 0;
--		return ret;
--	}
--
--	rcu_read_lock();
--	rb = rcu_dereference(event->rb);
--	if (!rb)
--		goto unlock;
--
--	if (vmf->pgoff && (vmf->flags & FAULT_FLAG_WRITE))
--		goto unlock;
--
--	vmf->page = perf_mmap_to_page(rb, vmf->pgoff);
--	if (!vmf->page)
--		goto unlock;
--
--	get_page(vmf->page);
--	vmf->page->mapping = vmf->vma->vm_file->f_mapping;
--	vmf->page->index   = vmf->pgoff;
--
--	ret = 0;
--unlock:
--	rcu_read_unlock();
--
--	return ret;
--}
--
- static void ring_buffer_attach(struct perf_event *event,
- 			       struct perf_buffer *rb)
- {
-@@ -6558,13 +6523,87 @@ static void perf_mmap_close(struct vm_area_struct *vma)
- 	ring_buffer_put(rb); /* could be last */
- }
-
-+static vm_fault_t perf_mmap_pfn_mkwrite(struct vm_fault *vmf)
-+{
-+	/* The first page is the user control page, others are read-only. */
-+	return vmf->pgoff == 0 ? 0 : VM_FAULT_SIGBUS;
-+}
-+
- static const struct vm_operations_struct perf_mmap_vmops = {
- 	.open		= perf_mmap_open,
- 	.close		= perf_mmap_close, /* non mergeable */
--	.fault		= perf_mmap_fault,
--	.page_mkwrite	= perf_mmap_fault,
-+	.pfn_mkwrite	= perf_mmap_pfn_mkwrite,
- };
-
-+static int map_range(struct perf_buffer *rb, struct vm_area_struct *vma)
-+{
-+	unsigned long nr_pages = vma_pages(vma);
-+	int err = 0;
-+	unsigned long pgoff;
-+
-+	/*
-+	 * We map this as a VM_PFNMAP VMA.
-+	 *
-+	 * This is not ideal as this is designed broadly for mappings of PFNs
-+	 * referencing memory-mapped I/O ranges or non-system RAM i.e. for which
-+	 * !pfn_valid(pfn).
-+	 *
-+	 * We are mapping kernel-allocated memory (memory we manage ourselves)
-+	 * which would more ideally be mapped using vm_insert_page() or a
-+	 * similar mechanism, that is as a VM_MIXEDMAP mapping.
-+	 *
-+	 * However this won't work here, because:
-+	 *
-+	 * 1. It uses vma->vm_page_prot, but this field has not been completely
-+	 *    setup at the point of the f_op->mmp() hook, so we are unable to
-+	 *    indicate that this should be mapped CoW in order that the
-+	 *    mkwrite() hook can be invoked to make the first page R/W and the
-+	 *    rest R/O as desired.
-+	 *
-+	 * 2. Anything other than a VM_PFNMAP of valid PFNs will result in
-+	 *    vm_normal_page() returning a struct page * pointer, which means
-+	 *    vm_ops->page_mkwrite() will be invoked rather than
-+	 *    vm_ops->pfn_mkwrite(), and this means we have to set page->mapping
-+	 *    to work around retry logic in the fault handler, however this
-+	 *    field is no longer allowed to be used within struct page.
-+	 *
-+	 * 3. Having a struct page * made available in the fault logic also
-+	 *    means that the page gets put on the rmap and becomes
-+	 *    inappropriately accessible and subject to map and ref counting.
-+	 *
-+	 * Ideally we would have a mechanism that could explicitly express our
-+	 * desires, but this is not currently the case, so we instead use
-+	 * VM_PFNMAP.
-+	 *
-+	 * We manage the lifetime of these mappings with internal refcounts (see
-+	 * perf_mmap_open() and perf_mmap_close()) so we ensure the lifetime of
-+	 * this mapping is maintained correctly.
-+	 */
-+	for (pgoff = 0; pgoff < nr_pages; pgoff++) {
-+		unsigned long va = vma->vm_start + PAGE_SIZE * pgoff;
-+		struct page *page = perf_mmap_to_page(rb, pgoff);
-+
-+		if (page == NULL) {
-+			err = -EINVAL;
-+			break;
-+		}
-+
-+		/* Map readonly, perf_mmap_pfn_mkwrite() called on write fault. */
-+		err = remap_pfn_range(vma, va, page_to_pfn(page), PAGE_SIZE,
-+				      vm_get_page_prot(vma->vm_flags & ~VM_SHARED));
-+		if (err)
-+			break;
-+	}
-+
-+#ifdef CONFIG_MMU
-+	/* Clear any partial mappings on error. */
-+	if (err)
-+		zap_page_range_single(vma, vma->vm_start, nr_pages * PAGE_SIZE, NULL);
-+#endif
-+
-+	return err;
-+}
-+
- static int perf_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct perf_event *event = file->private_data;
-@@ -6689,6 +6728,8 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
- 			goto again;
- 		}
-
-+		/* We need the rb to map pages. */
-+		rb = event->rb;
- 		goto unlock;
- 	}
-
-@@ -6783,6 +6824,9 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
- 	vm_flags_set(vma, VM_DONTCOPY | VM_DONTEXPAND | VM_DONTDUMP);
- 	vma->vm_ops = &perf_mmap_vmops;
-
-+	if (!ret)
-+		ret = map_range(rb, vma);
-+
- 	if (event->pmu->event_mapped)
- 		event->pmu->event_mapped(event, vma->vm_mm);
-
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 4f46f688d0d4..180509132d4b 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -643,7 +643,6 @@ static void rb_free_aux_page(struct perf_buffer *rb, int idx)
- 	struct page *page = virt_to_page(rb->aux_pages[idx]);
-
- 	ClearPagePrivate(page);
--	page->mapping = NULL;
- 	__free_page(page);
- }
-
-@@ -819,7 +818,6 @@ static void perf_mmap_free_page(void *addr)
- {
- 	struct page *page = virt_to_page(addr);
-
--	page->mapping = NULL;
- 	__free_page(page);
- }
-
-@@ -890,28 +888,13 @@ __perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
- 	return vmalloc_to_page((void *)rb->user_page + pgoff * PAGE_SIZE);
- }
-
--static void perf_mmap_unmark_page(void *addr)
--{
--	struct page *page = vmalloc_to_page(addr);
--
--	page->mapping = NULL;
--}
--
- static void rb_free_work(struct work_struct *work)
- {
- 	struct perf_buffer *rb;
--	void *base;
--	int i, nr;
-
- 	rb = container_of(work, struct perf_buffer, work);
--	nr = data_page_nr(rb);
--
--	base = rb->user_page;
--	/* The '<=' counts in the user page. */
--	for (i = 0; i <= nr; i++)
--		perf_mmap_unmark_page(base + (i * PAGE_SIZE));
-
--	vfree(base);
-+	vfree(rb->user_page);
- 	kfree(rb);
- }
-
---
-2.47.1
+On 05/12/24 13:54, Meghana Malladi wrote:
+> From: MD Danish Anwar <danishanwar@ti.com>
+> 
+> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
+> and SLICE1. Currently whenever any ICSSG interface comes up we load the
+> respective firmwares to PRU cores and whenever interface goes down, we
+> stop the resective cores. Due to this, when SLICE0 goes down while
+> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
+> stopped. This results in clock jump for SLICE1 interface as the timesync
+> related operations are no longer running.
+> 
+> As there are interdependencies between SLICE0 and SLICE1 firmwares,
+> fix this by running both PRU0 and PRU1 firmwares as long as at least 1
+> ICSSG interface is up. Add new flag in prueth struct to check if all
+> firmwares are running.
+> 
+> Use emacs_initialized as reference count to load the firmwares for the
+> first and last interface up/down. Moving init_emac_mode and fw_offload_mode
+> API outside of icssg_config to icssg_common_start API as they need
+> to be called only once per firmware boot.
+> 
+> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+> ---
+> 
+> Hi all,
+> 
+> This patch is based on net-next tagged next-20241128.
+> v2:https://lore.kernel.org/all/20241128122931.2494446-2-m-malladi@ti.com/
+> 
+> * Changes since v2 (v3-v2):
+> - error handling in caller function of prueth_emac_common_start()
+> - Use prus_running flag check before stopping the firmwares
+> Both suggested by Roger Quadros <rogerq@kernel.org>
+> 
+>   drivers/net/ethernet/ti/icssg/icssg_config.c |  45 ++++--
+>   drivers/net/ethernet/ti/icssg/icssg_config.h |   1 +
+>   drivers/net/ethernet/ti/icssg/icssg_prueth.c | 157 ++++++++++++-------
+>   drivers/net/ethernet/ti/icssg/icssg_prueth.h |   5 +
+>   4 files changed, 140 insertions(+), 68 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> index 5d2491c2943a..342150756cf7 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> @@ -397,7 +397,7 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
+>   	return 0;
+>   }
+>   
+> -static void icssg_init_emac_mode(struct prueth *prueth)
+> +void icssg_init_emac_mode(struct prueth *prueth)
+>   {
+>   	/* When the device is configured as a bridge and it is being brought
+>   	 * back to the emac mode, the host mac address has to be set as 0.
+> @@ -406,9 +406,6 @@ static void icssg_init_emac_mode(struct prueth *prueth)
+>   	int i;
+>   	u8 mac[ETH_ALEN] = { 0 };
+>   
+> -	if (prueth->emacs_initialized)
+> -		return;
+> -
+>   	/* Set VLAN TABLE address base */
+>   	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
+>   			   addr <<  SMEM_VLAN_OFFSET);
+> @@ -423,15 +420,13 @@ static void icssg_init_emac_mode(struct prueth *prueth)
+>   	/* Clear host MAC address */
+>   	icssg_class_set_host_mac_addr(prueth->miig_rt, mac);
+>   }
+> +EXPORT_SYMBOL_GPL(icssg_init_emac_mode);
+>   
+> -static void icssg_init_fw_offload_mode(struct prueth *prueth)
+> +void icssg_init_fw_offload_mode(struct prueth *prueth)
+>   {
+>   	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
+>   	int i;
+>   
+> -	if (prueth->emacs_initialized)
+> -		return;
+> -
+>   	/* Set VLAN TABLE address base */
+>   	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
+>   			   addr <<  SMEM_VLAN_OFFSET);
+> @@ -448,6 +443,7 @@ static void icssg_init_fw_offload_mode(struct prueth *prueth)
+>   		icssg_class_set_host_mac_addr(prueth->miig_rt, prueth->hw_bridge_dev->dev_addr);
+>   	icssg_set_pvid(prueth, prueth->default_vlan, PRUETH_PORT_HOST);
+>   }
+> +EXPORT_SYMBOL_GPL(icssg_init_fw_offload_mode);
+>   
+>   int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
+>   {
+> @@ -455,11 +451,6 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
+>   	struct icssg_flow_cfg __iomem *flow_cfg;
+>   	int ret;
+>   
+> -	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+> -		icssg_init_fw_offload_mode(prueth);
+> -	else
+> -		icssg_init_emac_mode(prueth);
+> -
+>   	memset_io(config, 0, TAS_GATE_MASK_LIST0);
+>   	icssg_miig_queues_init(prueth, slice);
+>   
+> @@ -786,3 +777,31 @@ void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port)
+>   		writel(pvid, prueth->shram.va + EMAC_ICSSG_SWITCH_PORT0_DEFAULT_VLAN_OFFSET);
+>   }
+>   EXPORT_SYMBOL_GPL(icssg_set_pvid);
+> +
+> +int emac_fdb_flow_id_updated(struct prueth_emac *emac)
+> +{
+> +	struct mgmt_cmd_rsp fdb_cmd_rsp = { 0 };
+> +	int slice = prueth_emac_slice(emac);
+> +	struct mgmt_cmd fdb_cmd = { 0 };
+> +	int ret = 0;
+> +
+> +	fdb_cmd.header = ICSSG_FW_MGMT_CMD_HEADER;
+> +	fdb_cmd.type   = ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW;
+> +	fdb_cmd.seqnum = ++(emac->prueth->icssg_hwcmdseq);
+> +	fdb_cmd.param  = 0;
+> +
+> +	fdb_cmd.param |= (slice << 4);
+> +	fdb_cmd.cmd_args[0] = 0;
+> +
+> +	ret = icssg_send_fdb_msg(emac, &fdb_cmd, &fdb_cmd_rsp);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	WARN_ON(fdb_cmd.seqnum != fdb_cmd_rsp.seqnum);
+> +	if (fdb_cmd_rsp.status == 1)
+> +		return 0;
+> +
+> +	return -EINVAL;
+> +}
+> +EXPORT_SYMBOL_GPL(emac_fdb_flow_id_updated);
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
+> index 92c2deaa3068..c884e9fa099e 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
+> @@ -55,6 +55,7 @@ struct icssg_rxq_ctx {
+>   #define ICSSG_FW_MGMT_FDB_CMD_TYPE	0x03
+>   #define ICSSG_FW_MGMT_CMD_TYPE		0x04
+>   #define ICSSG_FW_MGMT_PKT		0x80000000
+> +#define ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW	0x05
+>   
+>   struct icssg_r30_cmd {
+>   	u32 cmd[4];
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> index c568c84a032b..2e22e793b01a 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> @@ -164,11 +164,11 @@ static struct icssg_firmwares icssg_emac_firmwares[] = {
+>   	}
+>   };
+>   
+> -static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+> +static int prueth_emac_start(struct prueth *prueth, int slice)
+>   {
+>   	struct icssg_firmwares *firmwares;
+>   	struct device *dev = prueth->dev;
+> -	int slice, ret;
+> +	int ret;
+>   
+>   	if (prueth->is_switch_mode)
+>   		firmwares = icssg_switch_firmwares;
+> @@ -177,16 +177,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>   	else
+>   		firmwares = icssg_emac_firmwares;
+>   
+> -	slice = prueth_emac_slice(emac);
+> -	if (slice < 0) {
+> -		netdev_err(emac->ndev, "invalid port\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	ret = icssg_config(prueth, emac, slice);
+> -	if (ret)
+> -		return ret;
+> -
+>   	ret = rproc_set_firmware(prueth->pru[slice], firmwares[slice].pru);
+>   	ret = rproc_boot(prueth->pru[slice]);
+>   	if (ret) {
+> @@ -208,7 +198,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>   		goto halt_rtu;
+>   	}
+>   
+> -	emac->fw_running = 1;
+>   	return 0;
+>   
+>   halt_rtu:
+> @@ -220,6 +209,80 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>   	return ret;
+>   }
+>   
+> +static int prueth_emac_common_start(struct prueth *prueth)
+> +{
+> +	struct prueth_emac *emac;
+> +	int ret = 0;
+> +	int slice;
+> +
+> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
+> +		return -EINVAL;
+> +
+> +	/* clear SMEM and MSMC settings for all slices */
+> +	memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
+> +	memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
+> +
+> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
+> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
+> +
+> +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+> +		icssg_init_fw_offload_mode(prueth);
+> +	else
+> +		icssg_init_emac_mode(prueth);
+> +
+> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
+> +		emac = prueth->emac[slice];
+> +		if (emac) {
+> +			ret |= icssg_config(prueth, emac, slice);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +		ret |= prueth_emac_start(prueth, slice);
+> +	}
+> +	if (!ret)
+> +		prueth->prus_running = 1;
+> +	else
+> +		return ret;
+> +
+> +	emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
+> +	       prueth->emac[ICSS_SLICE1];
+> +	ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
+> +			    emac, IEP_DEFAULT_CYCLE_TIME_NS);
+> +	if (ret) {
+> +		dev_err(prueth->dev, "Failed to initialize IEP module\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int prueth_emac_common_stop(struct prueth *prueth)
+> +{
+> +	struct prueth_emac *emac;
+> +	int slice;
+> +
+> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
+> +		return -EINVAL;
+> +
+> +	icssg_class_disable(prueth->miig_rt, ICSS_SLICE0);
+> +	icssg_class_disable(prueth->miig_rt, ICSS_SLICE1);
+> +
+> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
+> +		if (prueth->prus_running) {
+> +			rproc_shutdown(prueth->txpru[slice]);
+> +			rproc_shutdown(prueth->rtu[slice]);
+> +			rproc_shutdown(prueth->pru[slice]);
+> +		}
+> +	}
+> +	prueth->prus_running = 0;
+> +
+> +	emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
+> +	       prueth->emac[ICSS_SLICE1];
+> +	icss_iep_exit(emac->iep);
+> +
+> +	return 0;
+> +}
+> +
+>   /* called back by PHY layer if there is change in link state of hw port*/
+>   static void emac_adjust_link(struct net_device *ndev)
+>   {
+> @@ -369,12 +432,13 @@ static void prueth_iep_settime(void *clockops_data, u64 ns)
+>   {
+>   	struct icssg_setclock_desc __iomem *sc_descp;
+>   	struct prueth_emac *emac = clockops_data;
+> +	struct prueth *prueth = emac->prueth;
+>   	struct icssg_setclock_desc sc_desc;
+>   	u64 cyclecount;
+>   	u32 cycletime;
+>   	int timeout;
+>   
+> -	if (!emac->fw_running)
+> +	if (!prueth->prus_running)
+>   		return;
+>   
+>   	sc_descp = emac->prueth->shram.va + TIMESYNC_FW_WC_SETCLOCK_DESC_OFFSET;
+> @@ -543,23 +607,17 @@ static int emac_ndo_open(struct net_device *ndev)
+>   {
+>   	struct prueth_emac *emac = netdev_priv(ndev);
+>   	int ret, i, num_data_chn = emac->tx_ch_num;
+> +	struct icssg_flow_cfg __iomem *flow_cfg;
+>   	struct prueth *prueth = emac->prueth;
+>   	int slice = prueth_emac_slice(emac);
+>   	struct device *dev = prueth->dev;
+>   	int max_rx_flows;
+>   	int rx_flow;
+>   
+> -	/* clear SMEM and MSMC settings for all slices */
+> -	if (!prueth->emacs_initialized) {
+> -		memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
+> -		memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
+> -	}
+> -
+>   	/* set h/w MAC as user might have re-configured */
+>   	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
+>   
+>   	icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
+> -	icssg_class_default(prueth->miig_rt, slice, 0, false);
+>   	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
+>   
+>   	/* Notify the stack of the actual queue counts. */
+> @@ -597,18 +655,23 @@ static int emac_ndo_open(struct net_device *ndev)
+>   		goto cleanup_napi;
+>   	}
+>   
+> -	/* reset and start PRU firmware */
+> -	ret = prueth_emac_start(prueth, emac);
+> -	if (ret)
+> -		goto free_rx_irq;
+> +	if (!prueth->emacs_initialized) {
+> +		ret = prueth_emac_common_start(prueth);
+> +		if (ret)
+> +			goto stop;
+> +	}
+>   
+> -	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
+> +	flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
+> +	writew(emac->rx_flow_id_base, &flow_cfg->rx_base_flow);
+> +	ret = emac_fdb_flow_id_updated(emac);
+>   
+> -	if (!prueth->emacs_initialized) {
+> -		ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
+> -				    emac, IEP_DEFAULT_CYCLE_TIME_NS);
+> +	if (ret) {
+> +		netdev_err(ndev, "Failed to update Rx Flow ID %d", ret);
+> +		goto stop;
+>   	}
+>   
+> +	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
+> +
+>   	ret = request_threaded_irq(emac->tx_ts_irq, NULL, prueth_tx_ts_irq,
+>   				   IRQF_ONESHOT, dev_name(dev), emac);
+>   	if (ret)
+> @@ -653,8 +716,7 @@ static int emac_ndo_open(struct net_device *ndev)
+>   free_tx_ts_irq:
+>   	free_irq(emac->tx_ts_irq, emac);
+>   stop:
+> -	prueth_emac_stop(emac);
+> -free_rx_irq:
+> +	prueth_emac_common_stop(prueth);
+>   	free_irq(emac->rx_chns.irq[rx_flow], emac);
+>   cleanup_napi:
+>   	prueth_ndev_del_tx_napi(emac, emac->tx_ch_num);
+> @@ -689,8 +751,6 @@ static int emac_ndo_stop(struct net_device *ndev)
+>   	if (ndev->phydev)
+>   		phy_stop(ndev->phydev);
+>   
+> -	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
+> -
+>   	if (emac->prueth->is_hsr_offload_mode)
+>   		__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
+>   	else
+> @@ -728,11 +788,9 @@ static int emac_ndo_stop(struct net_device *ndev)
+>   	/* Destroying the queued work in ndo_stop() */
+>   	cancel_delayed_work_sync(&emac->stats_work);
+>   
+> -	if (prueth->emacs_initialized == 1)
+> -		icss_iep_exit(emac->iep);
+> -
+>   	/* stop PRUs */
+> -	prueth_emac_stop(emac);
+> +	if (prueth->emacs_initialized == 1)
+> +		prueth_emac_common_stop(prueth);
+>   
+>   	free_irq(emac->tx_ts_irq, emac);
+>   
+> @@ -1069,16 +1127,10 @@ static void prueth_emac_restart(struct prueth *prueth)
+>   	icssg_set_port_state(emac1, ICSSG_EMAC_PORT_DISABLE);
+>   
+>   	/* Stop both pru cores for both PRUeth ports*/
+> -	prueth_emac_stop(emac0);
+> -	prueth->emacs_initialized--;
+> -	prueth_emac_stop(emac1);
+> -	prueth->emacs_initialized--;
+> +	prueth_emac_common_stop(prueth);
+>   
+>   	/* Start both pru cores for both PRUeth ports */
+> -	prueth_emac_start(prueth, emac0);
+> -	prueth->emacs_initialized++;
+> -	prueth_emac_start(prueth, emac1);
+> -	prueth->emacs_initialized++;
+> +	prueth_emac_common_start(prueth);
+>   
+>   	/* Enable forwarding for both PRUeth ports */
+>   	icssg_set_port_state(emac0, ICSSG_EMAC_PORT_FORWARD);
+> @@ -1413,13 +1465,10 @@ static int prueth_probe(struct platform_device *pdev)
+>   		prueth->pa_stats = NULL;
+>   	}
+>   
+> -	if (eth0_node) {
+> +	if (eth0_node || eth1_node) {
+>   		ret = prueth_get_cores(prueth, ICSS_SLICE0, false);
+>   		if (ret)
+>   			goto put_cores;
+> -	}
+> -
+> -	if (eth1_node) {
+>   		ret = prueth_get_cores(prueth, ICSS_SLICE1, false);
+>   		if (ret)
+>   			goto put_cores;
+> @@ -1618,14 +1667,12 @@ static int prueth_probe(struct platform_device *pdev)
+>   	pruss_put(prueth->pruss);
+>   
+>   put_cores:
+> -	if (eth1_node) {
+> -		prueth_put_cores(prueth, ICSS_SLICE1);
+> -		of_node_put(eth1_node);
+> -	}
+> -
+> -	if (eth0_node) {
+> +	if (eth0_node || eth1_node) {
+>   		prueth_put_cores(prueth, ICSS_SLICE0);
+>   		of_node_put(eth0_node);
+> +
+> +		prueth_put_cores(prueth, ICSS_SLICE1);
+> +		of_node_put(eth1_node);
+>   	}
+>   
+>   	return ret;
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> index f5c1d473e9f9..b30f2e9a73d8 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> @@ -257,6 +257,7 @@ struct icssg_firmwares {
+>    * @is_switchmode_supported: indicates platform support for switch mode
+>    * @switch_id: ID for mapping switch ports to bridge
+>    * @default_vlan: Default VLAN for host
+> + * @prus_running: flag to indicate if all pru cores are running
+>    */
+>   struct prueth {
+>   	struct device *dev;
+> @@ -298,6 +299,7 @@ struct prueth {
+>   	int default_vlan;
+>   	/** @vtbl_lock: Lock for vtbl in shared memory */
+>   	spinlock_t vtbl_lock;
+> +	bool prus_running;
+>   };
+>   
+>   struct emac_tx_ts_response {
+> @@ -361,6 +363,8 @@ int icssg_set_port_state(struct prueth_emac *emac,
+>   			 enum icssg_port_state_cmd state);
+>   void icssg_config_set_speed(struct prueth_emac *emac);
+>   void icssg_config_half_duplex(struct prueth_emac *emac);
+> +void icssg_init_emac_mode(struct prueth *prueth);
+> +void icssg_init_fw_offload_mode(struct prueth *prueth);
+>   
+>   /* Buffer queue helpers */
+>   int icssg_queue_pop(struct prueth *prueth, u8 queue);
+> @@ -377,6 +381,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
+>   		       u8 untag_mask, bool add);
+>   u16 icssg_get_pvid(struct prueth_emac *emac);
+>   void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port);
+> +int emac_fdb_flow_id_updated(struct prueth_emac *emac);
+>   #define prueth_napi_to_tx_chn(pnapi) \
+>   	container_of(pnapi, struct prueth_tx_chn, napi_tx)
+>   
 
