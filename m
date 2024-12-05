@@ -1,65 +1,59 @@
-Return-Path: <linux-kernel+bounces-432851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484C69E5107
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857549E5104
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F951881327
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:17:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4531D5AA5;
+	Thu,  5 Dec 2024 09:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzB5qkJd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 046AB288051
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:17:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CC02391A8;
-	Thu,  5 Dec 2024 09:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="J2idr4gt"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8541D2B13;
-	Thu,  5 Dec 2024 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EC216F27E;
+	Thu,  5 Dec 2024 09:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733390242; cv=none; b=i8ExLO8NAiQYJBVxV5sLpNs3O6rbzsPDEkCOgZtK+nAD/n6zPBuMxv3qlbfh6MrRHpb/cZVLTvT6j/jSP7JQxBeKcJOtrWRIcSFJ7mwdOgVCdN0sLvuIHvB8cTXOG/qyaiPee7/uXl8dW1oezSFZqztdUZqesDvejs7u+Tcr8Vo=
+	t=1733390230; cv=none; b=gg+suQz5BybIdQbPU0Q3wb+pgGSsEJdTTZaoafQ9Jsv1umY1L7Wo8DTrvwsFCn4n6GDxUmL0CjLW1No+7oXxWl9ej6u5Wi+mb+pJfFxGJvdRCe4ULO7Z1Ea1Eax8nQLhdcD7b++YSjGu5IstO5WOxumaALrMvjoUaF16fRdwkLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733390242; c=relaxed/simple;
-	bh=tPbYOTF0CMXSd8R3/KFtKpsnVD4vSkeYcnRwY9b3Bqk=;
+	s=arc-20240116; t=1733390230; c=relaxed/simple;
+	bh=JHek0a2TakNZpEL0wL+V7chN+ME3JjHLfMqxI21Bc3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEbozIdFPoJNHXSJbO7ShGUgQe13HFCukzlaCwbljqcb9uqEj5cob1jvKW5aImo4WWGhbr6O4Cz1swRqBwKjcZueyKR5yrqa/umv7U78cESDIRVHkhYemlX2fNMguQdzJNKxFiR2+hyZ2wYSYaTyO4KWzBF+nG2mWZEL7xx/bnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=J2idr4gt; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 6414214C1E1;
-	Thu,  5 Dec 2024 10:17:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1733390231;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J/rxV/5nRAVBGnps3J5CvAOT0C7Js4XrLtzupeueFGE=;
-	b=J2idr4gtMfr1K17lm8FmlNmnVmxv2EX2n+4SN5Sd7zjTykC50lSpDzpBF25eyDcx1YTAsm
-	raaYkyF+kVlpJvNybYPN2+7yMuziWGT3GBYYu33nac9i9ZTk+iI0j682xFgfBBVVmLEOEO
-	DXY9cev6CwJG4a9otsDuRUJjXHrr+Xvu/KyIzq8oxVPZ0d0UlpOYHKMoEuoYC/5YTOZwsF
-	LMG2zeL0t9UlPJqXYK0ZN3FGNJBQrQIkv4+m3/EHZtKpy6+WzGlj6dG3taL8DGZzql5CHq
-	WUSe6WUvF8nCJ4fzqmhMC7dqUfk9chVk8PKvFAOu2wqUTE6l4eBdYCR5JCEOaQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 19df8861;
-	Thu, 5 Dec 2024 09:17:06 +0000 (UTC)
-Date: Thu, 5 Dec 2024 18:16:51 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: usbnet: restore usb%d name exception for local
- mac addresses
-Message-ID: <Z1Fvg7mJv0elnuPL@codewreck.org>
-References: <20241203130457.904325-1-asmadeus@codewreck.org>
- <5b93b521-4cc8-47d3-844a-33cf6477a016@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/UCKzWUxtvQW1/jolB3JhUgsNQpZ9pQkQDPpTKXWw4zXhVWaTJbYoC95P+FV9fqlbr4UbKmUGcqfUkFnVUL0GJpsllPJVfbQd0fc3MdU9fZ5qRFHlcJoTZKf36vv/IlhnJBVTXJRCI6o3ccpBw95hUCYNGJkdz8BTrScr6WvOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzB5qkJd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B480C4CED1;
+	Thu,  5 Dec 2024 09:17:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733390229;
+	bh=JHek0a2TakNZpEL0wL+V7chN+ME3JjHLfMqxI21Bc3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tzB5qkJditdWcFm2kaBh9gFQqRyVVRZcNaciQS1exfjFuexBqaOwcrBZ2xNWB1zxy
+	 hyTr0P4niEdVDAhL8eV7FW6eUtgLCErMymsF9Cp5U0vlqOq+6PR0pWaHQLE6+mVjEj
+	 rJ6gF/7fh+geGiseLod9mNxSLbWr9Esf874xUpzu6qmWMjzPGFUUe2Eeh9kUeAfPlZ
+	 VyByaqRQ2bANqfnLofceIz5XbMOEw9J73MDLWFe4SiqqPouDi4kOrl1IhkcgTknh8Y
+	 eEUks+PmxlXmnbcRMMhOoJzQmTP/Mu3xnOoSl8t6JeOfDNGfaZ/aEoKyzPwALFCZIa
+	 2mqSmXTbp6yZg==
+Date: Thu, 5 Dec 2024 09:17:04 +0000
+From: Lee Jones <lee@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/2] samples: rust: Provide example using the new Rust
+ MiscDevice abstraction
+Message-ID: <20241205091704.GF7451@google.com>
+References: <20241204174627.1151288-1-lee@kernel.org>
+ <2024120427-scurvy-fidgety-06fc@gregkh>
+ <20241205084101.GE7451@google.com>
+ <2024120543-bauble-semicolon-639d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,68 +62,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5b93b521-4cc8-47d3-844a-33cf6477a016@lunn.ch>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024120543-bauble-semicolon-639d@gregkh>
 
-Andrew Lunn wrote on Tue, Dec 03, 2024 at 09:47:57PM +0100:
-> On Tue, Dec 03, 2024 at 10:04:55PM +0900, Dominique Martinet wrote:
-> > From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+On Thu, 05 Dec 2024, Greg KH wrote:
+
+> On Thu, Dec 05, 2024 at 08:41:01AM +0000, Lee Jones wrote:
+> > On Wed, 04 Dec 2024, Greg KH wrote:
 > > 
-> > The previous commit assumed that local addresses always came from the
-> > kernel, but some devices hand out local mac addresses so we ended up
-> > with point-to-point devices with a mac set by the driver, renaming to
-> > eth%d when they used to be named usb%d.
+> > > On Wed, Dec 04, 2024 at 05:46:24PM +0000, Lee Jones wrote:
+> > > > This sample driver demonstrates the following basic operations:
+> > > > 
+> > > > * Register a Misc Device
+> > > > * Create /dev/rust-misc-device
+> > > > * Open the aforementioned character device
+> > > > * Operate on the character device via a simple ioctl()
+> > > > * Close the character device
+> > > > 
+> > > > Signed-off-by: Lee Jones <lee@kernel.org>
+> > > > ---
+> > > >  samples/rust/Kconfig             | 10 ++++
+> > > >  samples/rust/Makefile            |  1 +
+> > > >  samples/rust/rust_misc_device.rs | 84 ++++++++++++++++++++++++++++++++
+> > > >  3 files changed, 95 insertions(+)
+> > > >  create mode 100644 samples/rust/rust_misc_device.rs
+> > > > 
+> > > > diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> > > > index b0f74a81c8f9..df384e679901 100644
+> > > > --- a/samples/rust/Kconfig
+> > > > +++ b/samples/rust/Kconfig
+> > > > @@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
+> > > >  
+> > > >  	  If unsure, say N.
+> > > >  
+> > > > +config SAMPLE_RUST_MISC_DEVICE
+> > > > +	tristate "Misc device"
+> > > > +	help
+> > > > +	  This option builds the Rust misc device.
+> > > > +
+> > > > +	  To compile this as a module, choose M here:
+> > > > +	  the module will be called rust_misc_device.
+> > > > +
+> > > > +	  If unsure, say N.
+> > > > +
+> > > >  config SAMPLE_RUST_PRINT
+> > > >  	tristate "Printing macros"
+> > > >  	help
+> > > > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> > > > index c1a5c1655395..ad4b97a98580 100644
+> > > > --- a/samples/rust/Makefile
+> > > > +++ b/samples/rust/Makefile
+> > > > @@ -2,6 +2,7 @@
+> > > >  ccflags-y += -I$(src)				# needed for trace events
+> > > >  
+> > > >  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+> > > > +obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+> > > >  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+> > > >  
+> > > >  rust_print-y := rust_print_main.o rust_print_events.o
+> > > > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+> > > > new file mode 100644
+> > > > index 000000000000..5f1b69569ef7
+> > > > --- /dev/null
+> > > > +++ b/samples/rust/rust_misc_device.rs
+> > > > @@ -0,0 +1,84 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > 
+> > > Nit, you forgot a copyright line here :)
 > > 
-> > Userspace should not rely on device name, but for the sake of stability
-> > restore the local mac address check portion of the naming exception:
-> > point to point devices which either have no mac set by the driver or
-> > have a local mac handed out by the driver will keep the usb%d name.
+> > I can add one, but none of the other drivers in this directory has one.
 > 
-> Are you saying the OTP or NVMEM has a locally administered MAC address
-> stored in it?
+> I think the copyright owner of this file will appreciate that.  In fact,
+> I think it might be required by them :)
 
-I'm afraid so... (At least the Gemalto^W Cinterion^W Thales^W Telit
-ELS31-J we use on a couple of boards seem to do that, it's soldered on
-our boards so I can't swap it out easily to confirm but the mac address
-is stable accross reboots)
+I think you're right.  Probably just an oversight from the original.
 
-The good news is that after having been sold at least 4 times it's been
-made EOL now, so in another 12-ish years I'll probably be able to ignore
-this particular problem :)
+> > > Anyway, other than the copyright, this looks good to me.
+> > > 
+> > > Although we should get the "validate the data" rust patch set in here
+> > > soon, so we don't have to go and fix up all users of the miscdev rust
+> > > api at once.  Maybe I'll dig that series up over the holiday break if
+> > > someone doesn't beat me to it.
+> > 
+> > What needs doing?  Do you have a link?
+> 
+> https://lore.kernel.org/r/20240925205244.873020-1-benno.lossin@proton.me
+> 
+> But in thinking about it more, this isn't going to work well with misc
+> devices as the data is coming from userspace, which already goes through
+> the user slice code.  Unless userslice should be marking the data as
+> untrusted?  I think that needs to happen as well.
 
+Not too relevant here I think.  The data coming in is just a single int
+that is used as-is rather than any kind of index into memory.
 
-> Is there a mechanism to change it?
-
-Looking at some confidential documentation I found on our file server
-there seems to be an usb function that contains the mac address and
-various ethernet statistics, but it's not clear to me if it's actually
-writable or even how to actually use it in practice and it was certainly
-not designed with being modified in mind.
-
-(I suspect there should be some vendor AT command that would allow
-overriding the setting somewhere but I can't find that either)
-
-OTOH, just changing the mac locally (ip link set usb0 addr
-02:12:34:56:78:90) works and dhcp gets me a new IP, so it's not like
-overriding it is a problem either.
-(interestingly putting the old mac back gets me the old IP back, so
-there's a real dhcp server with leases behind this and I suspect I
-could just bridge this out and it'd work as expected...) 
-
-
-> The point about locally administered MAC addresses is that they are
-> locally administered.
-
-Honest question here our of curiosity, my reading of a few random pages
-on the internet is that it would be acceptable for the modem to randomly
-generate it?
-(under the assumption that e.g. a reset would clear it and get me a new
-mac)
-
-Or does it have to be assigned as late as possible, e.g. we'd want linux
-to be generating it in this case?
-
-
-Thanks,
 -- 
-Dominique
+Lee Jones [李琼斯]
 
