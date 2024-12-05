@@ -1,127 +1,151 @@
-Return-Path: <linux-kernel+bounces-433969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBE09E5FA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:46:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57935188565B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:46:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DAE1B6D02;
-	Thu,  5 Dec 2024 20:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="S5upHDpT"
-Received: from mail-m1283.netease.com (mail-m1283.netease.com [103.209.128.3])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0F79E5ED0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:35:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5542919FA7C;
-	Thu,  5 Dec 2024 20:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.209.128.3
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E36281634
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:35:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBC222B8D6;
+	Thu,  5 Dec 2024 19:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="a8Z+qwPi"
+Received: from out.smtpout.orange.fr (out-16.smtpout.orange.fr [193.252.22.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E2D1E492;
+	Thu,  5 Dec 2024 19:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733431599; cv=none; b=Gcdo07fURr7eRGg0yhscERo/Ci+ukdCsirTvUpLi02HaIKyNYIf9ccuV4igHxmIQ59D8fBgGNOKtb2P/HSOM41Qrcs1HzKNgk4BF+NjtNNo4XfPi+GapHWE/twqWGSC7Ag6zTPVKuWyuc33/StsDf/hgbv/0+/pAzvGifKIUjLM=
+	t=1733427304; cv=none; b=dKZGGFGxYL96d16TIwhNlSYa8gXRZnrJjCQPNcLZ9HJ3rJgNtwPSVQLVm3EnUGTslmE9pr08EX6TvI4ArfGBUNguTguKgWM1ggCrfIkbYV2WBU/Mz0E0dm14XZg1Mj+rwPl0z4wqRquC+0if6po6oOzScaGWQ2uzRXPRtokAfPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733431599; c=relaxed/simple;
-	bh=4ErLQ722a7JIAf30dOrV195n7CS1oo2AvUfuRBCfIn0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kNEhkCfG+2JDUh2I+ZfEPV3mROnaUpy7ZslSGMODvfedRIYRcWgWWyXaUBDQf7MRf7YZvBKZ/VNgD7ohsWuk2JOk6fl6q1HQzEu5BibvN/9VW6VOYSHtHtW0UkRQg6hpKcrpYaf9Se4OKRtXAX4qtL3Uzer6E8VnoysgsuryGSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=S5upHDpT; arc=none smtp.client-ip=103.209.128.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4cf7c977;
-	Thu, 5 Dec 2024 18:36:32 +0800 (GMT+08:00)
-From: Kever Yang <kever.yang@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Andy Yan <andyshrk@163.com>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Tim Lunn <tim@feathertop.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] dt-bindings: arm: rockchip: Sort for rk3568 evb
-Date: Thu,  5 Dec 2024 18:36:21 +0800
-Message-Id: <20241205103623.878181-5-kever.yang@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241205103623.878181-1-kever.yang@rock-chips.com>
-References: <20241205103623.878181-1-kever.yang@rock-chips.com>
+	s=arc-20240116; t=1733427304; c=relaxed/simple;
+	bh=l03ckjiHPorjA8gus97LZ3ryPn3/bYJ9+uD0vBgzyho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DYN1UWXrfdxGhxVUPfcRr6k9e6eEIBn+hDzwOW7NlsVeeAXKLattkfiiYpblUzLHApLt+tnggPRqWUyrKBIfdeQ4iiKJSVeLgPZ9m5TNqPWCEyrbFxWErKFvalh//JZlXa1te4lq8IUXxzYKlw+Exth1lG3zE+VU125ntW5t0pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=a8Z+qwPi; arc=none smtp.client-ip=193.252.22.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from mail-lj1-f181.google.com ([209.85.208.181])
+	by smtp.orange.fr with ESMTPSA
+	id JHbktUI5D60jWJHbkt0ASm; Thu, 05 Dec 2024 20:33:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733427233;
+	bh=L5clrau1lRtsXlazqJvRaiJm9ebUB3H7RT0weXhH8So=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=a8Z+qwPiCiUyFdFAjZ1p/4rRaY16/Mhttd3Jwv3NDVPTMVQiQ8vw/PR6bJg9dMGts
+	 XyKQLyjKXy4tB1A/sIQ34zX50ia+zK4DTKTZG4oCRWdgxDm6ib41J3iyoJwaQRgSNT
+	 V/Etv+Zx3xOFpMK58TR3IUJLtC8HPwa3kMSNgYbUO7lGQ2Z07V+aDRn5FgdIjMsncQ
+	 Xwua+rxuPaRoeoqH2uVYOmHP2sDb9MRMDUD3NXnj0FqbTy6+UIGELMB8KsIqBjy0zK
+	 +q6vIISskryaz2OVnhHBnYJD9/OaeEReN5bGS6YjrwPheuRl92596NmII9BFKNTzCR
+	 Z/4L19/bzYfUw==
+X-ME-Helo: mail-lj1-f181.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 05 Dec 2024 20:33:53 +0100
+X-ME-IP: 209.85.208.181
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30020d33d05so10578061fa.0;
+        Thu, 05 Dec 2024 11:33:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUOpZUTVCDcEmm86kZK1AJDk+hw2e0wEDJ2hhGu2qGXIcQJZ73LSNj5b4GUHtcm3eJsOm3GttmtcRLkbFi94Qc=@vger.kernel.org, AJvYcCWaKB8h9Ed0X82GP3Hp2pdwbWQ/RuQOrfy2jp1yCFCfgAOgnGoDs8TLVe56DsohktJaYqnY5R4iIjo2J16i@vger.kernel.org, AJvYcCXLOqVRTPtWeUIR0iBR7Vfeg2EHyGdy3VkvBbBq4x0oyORfGS+YawlxedqbjJkXL54gESW6RJflVWe4ez/w@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiqmIpceFFgzMYxQ70DXNVhxaurS22eqRaujhLxqE6Wygv2wph
+	qm6FynMw2YoA61j5m0SF8u+/8k+NB4KIouqjEPkiS9KXSQiSbEAbObf6vnTGiy7bN/wYbTS/CKE
+	vkh2QNp9Po/ujhLcYGcmj8LH7wng=
+X-Google-Smtp-Source: AGHT+IH7WYy/8Hc8H+vVCwhqalxjzlWUoqcEyoqkjWQBBxloHACrRQF+5k7EKnQaTMOmRJCyI12iNEP09nDvxOtT4aY=
+X-Received: by 2002:a05:6402:358f:b0:5d0:fc12:79e3 with SMTP id
+ 4fb4d7f45d1cf-5d125063c34mr3565576a12.15.1733414047033; Thu, 05 Dec 2024
+ 07:54:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkIeGlZNQ0IYGklLQ0tNTx1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9396648e1403afkunm4cf7c977
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MyI6GSo4TzIePw1LHywBCykR
-	Ak5PCwhVSlVKTEhISEJPQkJIQ05OVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKTU1NNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=S5upHDpTU/ytg2ZlCKDCMoQAetXPJF6TcZAkkGFif//dAvtIVarzK+2j5cZq6PpLKQqi/FjIdoNsG4wWrGLegMzmzmsAb3oldnH3ZE+IsnkWfcfcLW7ljNI4jTTFwy/McjhqR5FJB6Jiv/2yLjfkw4xR9z1dTUsngrZHrUwdn4Q=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=PfQq9WN+stZDbpqU1A9I4SjMJ3Y//2WoaZdCqaDns9Q=;
-	h=date:mime-version:subject:message-id:from;
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-6-4e4cbaecc216@wanadoo.fr> <ad4482cc835543578862051431f5174f@AcuMS.aculab.com>
+In-Reply-To: <ad4482cc835543578862051431f5174f@AcuMS.aculab.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Fri, 6 Dec 2024 00:53:56 +0900
+X-Gmail-Original-Message-ID: <CAMZ6RqJMXKaa_xDcyweGwb+FqvANrpvrkRvnjh6_s-J1ApVmaA@mail.gmail.com>
+Message-ID: <CAMZ6RqJMXKaa_xDcyweGwb+FqvANrpvrkRvnjh6_s-J1ApVmaA@mail.gmail.com>
+Subject: Re: [PATCH 06/10] fortify: replace __is_constexpr() by is_const() in strlen()
+To: David Laight <David.Laight@aculab.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The info for rk3568 should before rk3588.
+On Thu. 5 Dec. 2024 at 03:58, David Laight <David.Laight@aculab.com> wrote:
+> From: Vincent Mailhol
+> > Sent: 02 December 2024 17:33
+> >
+> > From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> >
+> > is_const() is a one to one replacement of __is_constexpr(). Do the
+> > replacement so that __is_constexpr() can be removed.
+> >
+> > Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> > ---
+> >  include/linux/fortify-string.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+> > index 0d99bf11d260a3482bbe46e35c7553c0ccfb8b94..e3f2f772c5439ef71eb4a904b4ce27956bc69743 100644
+> > --- a/include/linux/fortify-string.h
+> > +++ b/include/linux/fortify-string.h
+> > @@ -254,8 +254,8 @@ __FORTIFY_INLINE __kernel_size_t strnlen(const char * const POS p, __kernel_size
+> >   * Returns number of characters in @p (NOT including the final NUL).
+> >   *
+> >   */
+> > -#define strlen(p)                                                    \
+> > -     __builtin_choose_expr(__is_constexpr(__builtin_strlen(p)),      \
+> > +#define strlen(p)                                            \
+> > +     __builtin_choose_expr(is_const(__builtin_strlen(p)),    \
+> >               __builtin_strlen(p), __fortify_strlen(p))
+>
+> I'm sure Linus suggested a way of doing that without replicating
+> the __builtin_strlen().
+>
+> Indeed it may be valid to do:
+>         len = __builtin_strlen(p);
+>         __builtin_constant_p(len) ? len : __fortify_strlen(p);
 
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
----
+Then, wouldn't it be better for strlen() to be an inline function
+instead of a macro?
 
- .../devicetree/bindings/arm/rockchip.yaml     | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+  __FORTIFY_INLINE __kernel_size_t strlen(const char *p)
+  {
+          __kernel_size_t ret = __builtin_strlen(p);
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 753199a12923..45ee4bf7c80c 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -1006,6 +1006,16 @@ properties:
-           - const: rockchip,rk3399-sapphire-excavator
-           - const: rockchip,rk3399
- 
-+      - description: Rockchip RK3566 BOX Evaluation Demo board
-+        items:
-+          - const: rockchip,rk3566-box-demo
-+          - const: rockchip,rk3566
-+
-+      - description: Rockchip RK3568 Evaluation board
-+        items:
-+          - const: rockchip,rk3568-evb1-v10
-+          - const: rockchip,rk3568
-+
-       - description: Rockchip RK3588 Evaluation board
-         items:
-           - const: rockchip,rk3588-evb1-v10
-@@ -1099,16 +1109,6 @@ properties:
-           - const: zkmagic,a95x-z2
-           - const: rockchip,rk3318
- 
--      - description: Rockchip RK3566 BOX Evaluation Demo board
--        items:
--          - const: rockchip,rk3566-box-demo
--          - const: rockchip,rk3566
--
--      - description: Rockchip RK3568 Evaluation board
--        items:
--          - const: rockchip,rk3568-evb1-v10
--          - const: rockchip,rk3568
--
-       - description: Sinovoip RK3308 Banana Pi P2 Pro
-         items:
-           - const: sinovoip,rk3308-bpi-p2pro
--- 
-2.25.1
+          if (__builtin_constant_p(ret))
+                  return ret;
+          return __fortify_strlen(p);
+  }
 
+I tested it and it worked on an allyesconfig. So if I receive no
+objections, strlen() will become an inline function in v2.
+
+
+Yours sincerely,
+Vincent Mailhol
 
