@@ -1,160 +1,111 @@
-Return-Path: <linux-kernel+bounces-432780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362D29E503F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:51:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E0E9E5042
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:52:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 209E518821D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:52:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DD21D0E26;
+	Thu,  5 Dec 2024 08:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gpEfni1c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59FB28193C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:51:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F7A1D47C1;
-	Thu,  5 Dec 2024 08:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZigRGVxg"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABD71D3566
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592F21C2323
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733388707; cv=none; b=YTZlV9jM1L1GwV3b6ZGAW+VOGHC2mRTZ0VCzWEz35UDcT2tflHyRilq0+kFwI7RFF0YJPhcotjsuirTK7uIkvhGOqxNik2LH8e0AkNXJ2l5V5jGcETGOjxYHIpWLPmaxaZvUz7mTe4tnRWpxTpNgK/Qvgzpijwla0IbGOJq2h1M=
+	t=1733388750; cv=none; b=rZ+v4XfoYRmKwnERx5i6xrbcDm3zpzuxpapeiI9fN/3QM5pxODwJ9C7io8Et3NYZVvYfdcqjxPYaaNwMQR4nJ8Djiq8C0VaWOGDnzYxs+F/tXmAItEDJmxmzNNMBDoODByY/C39YAFjUi1amfkDKqF0+qxzvGZcuvBBF8oItgEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733388707; c=relaxed/simple;
-	bh=fiqkj+GRvZeuFOzolqiFGreSPgcdv0TDsi5dd2Towps=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=cpWAKA+x4Bxvehv7yn6UNeo6qQ1+hJRsOzMyO4HFIqCHSph/szL7r3cRiBFNBOLfykozbvQd9Q/pHTy/yaz8CLik1JvU1Xxt+RFg73CT09He/hYTgxCjkZiFY4qbh96WDzkCB3zHPXvfnHdf5rpqLtziQH7ARd42X10MBbe+jHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZigRGVxg; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385de9f789cso470011f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 00:51:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733388704; x=1733993504; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bu+BjISWLkOjToTmmpDVh9uIKwI+akwDpSA5Z73Jrm4=;
-        b=ZigRGVxggyVTIVSZqINO1vdP34ggLGFkV9u7KMUIeTdeXZoW2BZlnIgsFhbl/kSAAf
-         USWscXPqzXmunwlKidYk4SWuDx1FjSHdRgLU8YYngUNJOgBnUWXnP+35b1vkr8BrAj7C
-         IdZqXctQzTyFwPpa1FC2RkArIqWsnF1Oky/SbFsl4fmL8e60a89jPjQoM4cC6mltHBrG
-         YIeE0kzr4k3q72KMzOvIM6Xdl8gWOV3fVSsMQU963ygBOvGR3WzJVMhd71T0Gps6Uaij
-         Sz8o/B0acJSJC3ad7kOIsTDsr9Q3/JJpWb9sGsjHE3mQQNUCNy1FV+NXeDdwR+J4MRXT
-         oBPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733388704; x=1733993504;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bu+BjISWLkOjToTmmpDVh9uIKwI+akwDpSA5Z73Jrm4=;
-        b=AuYuIsjrHrM5gfS0On30xKh1A3ZOUhpdlRxyEi76opOenTMxEPhvSyaDDuKUkKkj9i
-         x+g6Kzhf9Wl7u/Ea0q0wP4cpj/IQuBAz52h7ldrkHoSRR+EETFnr34rUuFWZmV8+0lap
-         SeMMVntmeRELu798yPSzfxcu6GTYtthqVnCCwXRBCLhXzkHEl8TUqmZQ+T6ZG9dffX+1
-         NDuMiix5kNi/pVdJVsfkrXxNnBfIcNoYsro9u8HlCn26SjQPzWFkqyAYdSTm8g/EG9Ri
-         /E9A0gb5Mb98oOnGRL+rexKIzF4LTIy4gjvSvH4+kiBoro6eFbj1wmxXsCJIU3uLdLCg
-         XWgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgn+CnBVRwzJOqLfMP1TyTnlTbrlBAoiXzgpMIoIREA1yAJUbjVru93DRhBvi7Q8HGafskOu7cWrYsVPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzcc4xiPHXu0ZAa+sAg1oxKxhM3w/oIBt9tv5LdmUvDotC56uJ8
-	RLcHcsp8XFcrRRiP9jZtVRkm0H4lYSO0vsezqZM48l+/YltOjI1tX5mSvsBpWpg=
-X-Gm-Gg: ASbGnctbEvbnu6GRhQ3YaTUTXzKB/f1eDUQ7e/+HpSSlbLcWqZuJo41kHHNTsLFfyY1
-	6Y4e87IdQ9niDAX62ml96q4WUCdThixAXD/77sCVpOMYjEcHmRcfRpB8vj+90rIngp+g6RlFTDL
-	OdCv8PMKPtkINRVTPNEYjSQuzH/3rQwY1LR3qEYDegYj0zf4jxPEsQTvzZryQEV2sevoFqq1u6N
-	ntit1HQwy2u0+KfmwZZiKRZx7bRGFMhMZgAv190+26T/6/74UYiZnGPqIA=
-X-Google-Smtp-Source: AGHT+IEOpwQyKT2ZzfkreqlTf5liiEt9p2jfLaHmcGM387ZkeDSElvomTcEaXCXFcRKTLDZIbgydFg==
-X-Received: by 2002:a05:6000:1446:b0:385:ee3f:5cc6 with SMTP id ffacd0b85a97d-385fd4395c7mr6706652f8f.58.1733388703231;
-        Thu, 05 Dec 2024 00:51:43 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621fbbe50sm1326046f8f.99.2024.12.05.00.51.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 00:51:42 -0800 (PST)
-Message-ID: <1d8ea5f9-deb1-4236-ad64-d29a69a44aa2@tuxon.dev>
-Date: Thu, 5 Dec 2024 10:51:41 +0200
+	s=arc-20240116; t=1733388750; c=relaxed/simple;
+	bh=g62pkvCUBWzMNtuIunTVP3PllBdhURw+gpEUkoF6f0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rw6FDJtTlW74BxiMZzYooTz64yTkIMDm02GoJ61mIRO4nGkU5rWotQLapYdmpMpVx+bOmOR8u2aUHoN57c1c2eiZZ8GipK2gQru/KOa5B0sCG1tFYStxoCo0hY1hjfPm7VK8qxIjWm/vJJA+/wRMv1TMiGxlxg/+x/JbxOQpxbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gpEfni1c; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733388745;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0SHiuhau4MQj9NvLl55cWuaRJpWQzDVP/XF/moI9fhs=;
+	b=gpEfni1cdSuXztmJbymxT2SYkUw8s/lnvWBCAF5XCZnlSyCZmY1p0mVR345lkEdIrf/ImY
+	tc33hfJYUf7nAj+6I2CaFarS9td+zGGOFLuU/uOpsnW+TRVTvew9ojb9iP69J8CGNgNWGL
+	Vl4WAQCis2k6GboiPKE2a0uAkrqzofE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-4xB9CSX2Oz6TQYDG2slVfw-1; Thu,
+ 05 Dec 2024 03:52:24 -0500
+X-MC-Unique: 4xB9CSX2Oz6TQYDG2slVfw-1
+X-Mimecast-MFC-AGG-ID: 4xB9CSX2Oz6TQYDG2slVfw
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 84B4F1956048;
+	Thu,  5 Dec 2024 08:52:22 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.22.64.94])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 53AAC1956052;
+	Thu,  5 Dec 2024 08:52:19 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Oscar Salvador <osalvador@suse.de>,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v1 0/2] mm: don't use __GFP_HARDWALL when migrating remote pages
+Date: Thu,  5 Dec 2024 09:52:15 +0100
+Message-ID: <20241205085217.2086353-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT 0/6] serial: sh-sci: Fixes for earlycon and
- keep_bootcon
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, geert+renesas@glider.be,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lethal@linux-sh.org,
- g.liakhovetski@gmx.de, groeck@chromium.org, mka@chromium.org,
- ulrich.hecht+renesas@gmail.com, ysato@users.sourceforge.jp,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241204155806.3781200-1-claudiu.beznea.uj@bp.renesas.com>
- <Z1DLyQdzUzJzRUJJ@shikoro> <b6c7b4d3-021c-4a4b-9e91-316603b348c1@tuxon.dev>
-In-Reply-To: <b6c7b4d3-021c-4a4b-9e91-316603b348c1@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi, Wolfram,
+Sending this via the RH SMTP first, because IT doesn't see any obvious
+problems why the mails shouldn't be reaching linux-mm, so let's see if
+the problems are gone now. If this doesn't work, I'll resend them
+using the known-working gmail SMTP. Sorry already for the noise ...
 
-On 05.12.2024 10:39, Claudiu Beznea wrote:
-> Hi, Wolfram,
-> 
-> On 04.12.2024 23:38, Wolfram Sang wrote:
->> Hi Claudiu,
->>
->>> in the following scenarios:
->>>
->>> 1/ "earlycon keep_bootcon" were present in bootargs
->>> 2/ only "earlycon" was present in bootargs
->>> 3/ none of the "earlycon" or "earlycon keep_bootcon" were present in
->>>    bootargs
->> ...
->>> Please give it a try on your devices as well.
->>
->> Will happily do so. Is there something to look for? Except for "it
->> works"?
+---
 
-Sorry, I noticed I missed to provide a clear answer your question: if boot
-works for this scenarios we should be OK.
+__GFP_HARDWALL means that we will be respecting the cpuset of the caller
+when allocating a page. However, when we are migrating remote allocations
+(pages allocated from other context), the cpuset of the current context
+is irrelevant.
 
-> 
-> As this code touches the earlycon functionality, of interest are the 3
-> cases highlighted above:
-> 
-> 1/ "earlycon keep_bootcon" are both present in bootargs
-> 2/ only "earlycon" is present in bootargs
-> 3/ none of the "earlycon" or "earlycon keep_bootcon" are present in
->    bootargs
-> 
-> One other thing, that I was currently able to test only on RZ/G3S, is to
-> see how it behaves when the debug serial is described in DT with an alias
-> other than zero. E.g., on [1] the debug serial alias on RZ/G3S was changed
-> from 0 to 3. With the new alias (3) there were issues that I've tried to
-> fix with this series.
+For memory offlining + alloc_contig_*(), this is rather obvious. There
+might be other such page migration users, let's start with the obvious
+ones.
 
-If you can also check:
-- it boots in this case and
-- the serial device with alias zero and the debug serial are both working
-  (tx, rx are working) after boot
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Zi Yan <ziy@nvidia.com>
 
-then we can declare it OK as well.
+David Hildenbrand (2):
+  mm/page_alloc: don't use __GFP_HARDWALL when migrating pages via
+    alloc_contig*()
+  mm/memory_hotplug: don't use __GFP_HARDWALL when migrating pages via
+    memory offlining
 
-Thank you,
-Claudiu
+ mm/memory_hotplug.c | 2 +-
+ mm/page_alloc.c     | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-> 
-> Thank you for checking it,
-> Claudiu
-> 
-> [1]
-> https://lore.kernel.org/all/20241115134401.3893008-6-claudiu.beznea.uj@bp.renesas.com/
-> 
->>
->> Happy hacking,
->>
->>    Wolfram
->>
+-- 
+2.47.1
+
 
