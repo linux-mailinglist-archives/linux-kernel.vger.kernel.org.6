@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-433627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C564E9E5ACD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:09:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18A016379A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:09:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC9117E473;
-	Thu,  5 Dec 2024 16:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZpDheFUQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D6F9E5B08
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:12:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB8F1CD2B;
-	Thu,  5 Dec 2024 16:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0266281171
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:12:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB7F22144B;
+	Thu,  5 Dec 2024 16:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YcE9ZlYJ"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D2721CA18
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733414981; cv=none; b=JCt4lZ34yHfVxQceYZDzssdVW94iTSD4YDEKYydHEfYd3aNQZ4NQ/+gT0itu8LTjFpBsSAmzDS3CXi/GWoFQHel+ROTfs56XGJLk1pXjIWV5bnwwjdowFP9yNIZ/E8BzDp2WpjWFyJi9SsBjQUeNxVfP6n7/V5KA2fNr76cF03o=
+	t=1733415082; cv=none; b=VqIP87R4tGYAbZQQ8oultyeESegSccm+bFycyXPWlxbRwEnMxsNfsSnE9UtD7OGip/MrmJ1ZvY8gx17BEhhYvzf4Z0zIEwBFY9dQBVypE34SBVNgHSrrUbaVE3/M/0QUYdsBHGbzEX6C00HyLGXWy2omH+7t+tpfjcGwzRbjaHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733414981; c=relaxed/simple;
-	bh=BI10j7N0jmfF33MEnsfZwYICaNRriKAkr2hC+nrTV4M=;
+	s=arc-20240116; t=1733415082; c=relaxed/simple;
+	bh=4cvbUpYGVqBA+5ai/iSMN03QRJijrW6a/ORs1SZ3FJo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kanru5st0xr85/HT660dqELS1uuOvLnqizsODNOpF5VXeIhZMfN3phhsYkMAUrqaUT5Hqa4A0ymksCQQ0re8x5xeg7jJvLTRy58InI2sDNIcurKOLXW1Y14wyR6IxYQ/ii1gMBMunkTlyXNFI0dEoSMZzrIj+A9bZ8mRHnH1aUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZpDheFUQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 471FBC4CED1;
-	Thu,  5 Dec 2024 16:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733414981;
-	bh=BI10j7N0jmfF33MEnsfZwYICaNRriKAkr2hC+nrTV4M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZpDheFUQFZF1KsFrDt3raluPbU97o/WPag0C1znA7lmuGlahxo5PQ/0XWo7wtJ9rV
-	 MhRBeg94WgoGDeDyIptBRu8GcGRIWy/lbhHcOM8LB+A7C0NrNov1KE+S47pChZ8kkg
-	 IJ7MGNo9vniAqWfkTRQaafQRwsYNvH1jwTjI9gzrOHiQ/lX7DH3ORLlOcyiYbkHYnb
-	 l6N6/oopErvt+Y9kyNPLqtI4xRK/whEuxSfqscEakwsaJ5W7wTwt77sWPyRrjiZxqy
-	 oLU8UOaGLT8fpwJlgJVpl2y8xICDRZBdI5KEZEVmq6l4meSK4zHGch2RFX7qyisyJr
-	 DbcqWCrTQwXpg==
-Message-ID: <28d1bb46-ab18-42da-9ca2-ff498c888d66@kernel.org>
-Date: Thu, 5 Dec 2024 17:09:35 +0100
+	 In-Reply-To:Content-Type; b=h0dzHdeyV+GW4Blh7nhw7aQrpeUlIVFKFAzzE1xVqtT+8t9VLf+mjLA+LT1HgtoT0IEU0oBEMLpbS/lLqFXY+a/BUw4ydM0in/rkf2ablgo+MEmZcCTTZEImrOYv47vu1vSp+txbr9+CV1OoEvDWCuV8p5djui7hwDmUrOc3rys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YcE9ZlYJ; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3002c324e7eso2562331fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:11:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733415078; x=1734019878; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3vAx1ky+XubxvxkSqpCsICGxY0icdOX0ReI1Rb+eWgA=;
+        b=YcE9ZlYJ0sHi+Mev5UheCnJwg1rEeLJMovhxUPe79Y/1EEybZKPKLQWA4k306pEqhw
+         uLWo5AcK8+SnO1NVr2Qbinzi0dLGX4IjBWcO/Iytr8aABhvmCcyNXasFgYCRbo72ALCF
+         +ZnSLYWGc3lTgeQF68uznDyYUgUUc5d3wHeugrBbNGeUZioeLbt5+8357mC/uh+iVDog
+         NuZEGtKAgAA5OAWcvxQ2VhmQRdPSFpTJm/750zgkaWGzgE9+m7ZhmLTNe6X7O+ciCcGZ
+         qQ3RcekS+b/QkOXlGzAzMP2FINg+dAADhhIfEcSWjwHSsL8mMKQBmuWey5ij/hWQxJo0
+         xVGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733415078; x=1734019878;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3vAx1ky+XubxvxkSqpCsICGxY0icdOX0ReI1Rb+eWgA=;
+        b=jKn21gVFQXLF9xdOwEAzd8itHxx16A2Fm9EzPGNmS894iVl2SnqBnTy3KJk2giJ79m
+         L9LeVBSeTz2fBciEIrmD6BoHTNxM0RkjThrpKLpjPEEOgFEnKtKqe+KF2CdYLlHEX1O/
+         Rz3hBtTKh7yNXNriCm0AB5LfBP5/yzEuZLvfmw3f4+DlRpoT9yEle65EEjQOm2tD00qf
+         uEGNYg7Y8AYH5ozPxE65F3BVRWtYyKs0Ol0HGHEM06wFAqu8VVxNL0fkxQX1cwe7Ktmd
+         ymaXpSZsctpaMddlzbbZRB+02xnv6kDJCqvyPIw6dxbxhZOdbL2uQTwf++CCwBXONnsy
+         CGrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhTMhf6Tigc4wMd8KGqP5UuZAAT+Z/GEvEBxOGwoHOh7hxrPSSjEAS2cwIhJXW3fTImvANM8cBKRVfl/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8hY0AuJMGx/xSSPFcyPVJCWNAzunOwK+VmOi3l/p34vCJrTKT
+	VtHSOLWU0DXT4n3nwQeoEGEiYMdEsY1pw5gpCFy6EzlVLXgGM6+6NNSgOCnPhAx2pNcoX4afpOQ
+	F
+X-Gm-Gg: ASbGncsPgHoqD+H810bqDVl4VKCb/LENe1xCql67zYB0lnYX8DN+4IoGa6hx1gOQvpn
+	TIFHsXB7qjxIXtEXoalfgkA+wtnMAgA0vYfbBmrHL7wKtKpYnYfKqv3481GXyX0p2LX9c4TUvg+
+	6O6xs5ZKrWPANsorPq80cckgDRXAN6/kj5fw4cLGA+uR4HtN8m4IkDO/Nruh6eoA9F83qWERKUy
+	l8BBCPFSGgkYT4tsL0VdDJnzDo/7EUoictFcbY8aVs8y1jvvWxZHhFPxD0S5po=
+X-Google-Smtp-Source: AGHT+IGa6a28W61iyTDan8zO3enSWPo6CBbm0HhVWYO80g9pqx5TBN734XHJ16y+KxOFW8ykpVAjnw==
+X-Received: by 2002:a05:651c:1614:b0:2fb:5a7e:5072 with SMTP id 38308e7fff4ca-30009cb184fmr75615231fa.34.1733415078119;
+        Thu, 05 Dec 2024 08:11:18 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0da461sm28223735e9.20.2024.12.05.08.11.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 08:11:17 -0800 (PST)
+Message-ID: <0909a2b2-089d-41f3-82e6-f0e05682ce27@linaro.org>
+Date: Thu, 5 Dec 2024 16:11:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,92 +80,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: dma: st-stm32-dmamux: Add description for
- dma-cell values
-To: Ken Sloat <ksloat@cornersoftsolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- dmaengine@vger.kernel.org, alexandre.torgue@foss.st.com,
- mcoquelin.stm32@gmail.com, conor+dt@kernel.org, krzk+dt@kernel.org,
- robh@kernel.org, vkoul@kernel.org, amelie.delaunay@foss.st.com
-References: <CADRqkYAaCYvo3ybGdKO1F_y9jFEcwTBxZzRN-Av-adq_4fVu6g@mail.gmail.com>
- <d53538ea-f846-4a6a-bc14-22ec7ee57e53@kernel.org>
- <CADRqkYDnDNL_H2CzxjsPOdM++iYp-9Ak3PVFBw2qcjR_M=GeBA@mail.gmail.com>
+Subject: Re: [PATCH 11/16] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20241205155538.250743-1-quic_depengs@quicinc.com>
+ <20241205155538.250743-12-quic_depengs@quicinc.com>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CADRqkYDnDNL_H2CzxjsPOdM++iYp-9Ak3PVFBw2qcjR_M=GeBA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241205155538.250743-12-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 05/12/2024 17:07, Ken Sloat wrote:
->>> + 1. The mux input number/line for the request
->>> + 2. Bitfield representing DMA channel configuration that is passed
->>> + to the real DMA controller
->>> + 3. Bitfield representing device dependent DMA features passed to
->>> + the real DMA controller
->>> +
->>> + For bitfield definitions of cells 2 and 3, see the associated
->>> + bindings doc for the actual DMA controller the mux is connected
->>
->> This does not sound right. This is the binding for DMA controller, so
->> you are saying "please look at itself". I suggest to drop this as well.
->>
-> 
-> While logically it is the DMA controller, this doc is specifically for
-> the mux - the DMA controller has its own driver and binding docs in
-> Documentation/devicetree/bindings/dma/stm32/st,stm32-dma.yaml
-> 
-> I can reference st,stm32-dma.yaml directly, but I was unsure if this
-> mux IP was used with another DMA controller from ST on a different
-> SoC.
-> 
-> What do you suggest here?
+On 05/12/2024 15:55, Depeng Shao wrote:
+> +            iommus = <&apps_smmu 0x800 0x20>;
 
-Thanks for explanation, I think it is fine.
+This iommu list looks a bit spartan.
 
-Best regards,
-Krzysztof
+Here's what I have for X1E:
+
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/commit/9686eaf9557c386a2525d6668da6fe24ffd518c4#5b6ff684e5292a4c0b51f6a38631777fafae7561_4749_4874
+
+Could you double check this list ?
+
+---
+bod
 
