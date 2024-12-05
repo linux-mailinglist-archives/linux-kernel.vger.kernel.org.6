@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-433573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64609E59F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:42:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDEE9E5A37
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:49:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AFC11881EB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:49:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E1621D580;
+	Thu,  5 Dec 2024 15:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tu9yZa6v"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EFEB285B14
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:42:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CEA21CA0F;
-	Thu,  5 Dec 2024 15:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="bRy0lif+"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A34218E99
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685F2217735;
+	Thu,  5 Dec 2024 15:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733413365; cv=none; b=KTTdayVYJC6bSAan0oqIRjD4cF/jDIMJhMSZZFMr7hJBaE9QQVwG9McEkC4jjpomJ09po5KZVNa/O4CmpnSVWsHf9nO7wwXXo/oeDPsLKrvNr1yGE/ubiS6bbBnf0l10zm18/RdfXMGFDlCps9O6eZqYGdnCdFYVr5aPX2kJox0=
+	t=1733413790; cv=none; b=JYFwySHQUyaZbPKWw9wrQVi66oQ22ZrKb+0M+3Cad5tCfVc11EBY1I0daKVJUHUbiHGv6p/i/vhRDNyOKcVpIQpxsej6pQ3dw1fRSkoGyY2zKDShiWRCUkUZ3O1kxVnHB0wpkHB1cR+tSUh0BLpqe3UutXsWMs+LL0SwojRD0BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733413365; c=relaxed/simple;
-	bh=QooC3WdeOAD0e0lYcAEtRhgjyLoS+4sHCp6vodx3A7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gd00aU7HYdgP3P1TeplETfPaySEjjNdb4/IegxVhyQpAP2LspKZt2KblFzCYgt5I0FteKjOR2zDsMKweGlms3a8rMScCVptyvO3RNhCgRlNNz5yugDGNut2PfLDt9pjVP8G7i9m30s/KItVw9mlDlzy3S5oE0hZ7+q0EWaTi5YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=bRy0lif+; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa539d2b4b2so215426666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:42:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733413362; x=1734018162; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QooC3WdeOAD0e0lYcAEtRhgjyLoS+4sHCp6vodx3A7s=;
-        b=bRy0lif+SnNj2nq40HgFJekJuJU+SvFrX+Cy2J3Q00z9vUhCAWBo0Ja6jN3E9h28lN
-         SkArcnss03+gQ5oH3ii89Plmsd0xNar+sOK7w3uL1FH/nHS6XSO/FPbTB7tnpJKh+Ghp
-         rG8JkLiAhXbCXMIeh4Y/zlnK6MhpOla0e/mnEEnJ0Fi0mEwtUSAiXjWFu92/uBT3OiF6
-         SehkBwdB3F6hbwFtDLFoqV9k6trUiWlHogzrGCzfXKqhu9PF4odTyICeg8/QfIFpXnXd
-         q8KXvDR1blpVlw7EiicMKLLVP2odDO1TjQ8JEc/9cK+QnUFyoRIcpLl1cxiG0+47zExC
-         f2xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733413362; x=1734018162;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QooC3WdeOAD0e0lYcAEtRhgjyLoS+4sHCp6vodx3A7s=;
-        b=Dkj5mukYympyzajZH5Dg2i52oNvqBr27r8To1lrZ0DSTZ+K1KJmk21EeuHJ6p2abR6
-         uaSXkF2Me/+wI7yDAcWNqy75QXucUVDZzA4odOXIQ5hRCMsAXn/zUVDwfKULL8ETSVjK
-         svMOUS1CXB7quIqm6BcsU+oMOJO2zBWS3phs6HCQLtGmv9BP/DQfDBxxZnHhSWZWz1R4
-         UV/4lumZtSa0pfkmQMOrf465LJjafydNK4KSeoD3qC31/nkyWm1Fp8OcL3t3o2s/F8oS
-         UUUz7RpEm51cnvcm/D0L8MqRutxNsg6vyOMvNOjpFRabDVH+tOa9xynB/iFIEeNSbWzl
-         kZpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/wHpuG/W8O4qvlD9juLWzIJ0lVFqx/wMex3mfzZtifv6R6gbAM6y4jT6FCJ1kJ0QcKXOxbqyrqk9TTSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8hTds/81QQwZ175IwmJVHPHzWMd6c3vvseawfBxx80H9/cGuT
-	2Rdb3+JzF+OzCeZVY4LxEUoucbHX0bABtxkl32o+GGt+TsDQUVyoVwfn7kC5kXqQ48kcGxSLOXT
-	ysj9CdqVDRWpNYtvfpkRRQRv07fIq3FJmvsd3Jg==
-X-Gm-Gg: ASbGncvsWXM3efWraCCbAKYR5ZQ5oSlHyKqw9Fp+Wl6U6Gi68ify7bYwRGdLW2SbNHL
-	92PMAZ/c/iAYAH/aiw+XkLWHAOzjdRHAHS9/DEoF7cfLWFpTlsy+0rOj2BML2
-X-Google-Smtp-Source: AGHT+IFRIZj39BqksGePaUik7a+kIHoLqLeLpwrOobFeFWewSYsxmbm4qW2oqzvnqze4KT6xrlgNWJQIXaK21ap6IUY=
-X-Received: by 2002:a17:907:1c21:b0:a9e:b08f:867e with SMTP id
- a640c23a62f3a-aa62188ef0bmr348632966b.16.1733413361757; Thu, 05 Dec 2024
- 07:42:41 -0800 (PST)
+	s=arc-20240116; t=1733413790; c=relaxed/simple;
+	bh=5Y+c4NHFD6cgzhHRlErjUw+WUmpChw84padaTrK+qWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JQ8lOIuyrcxryEEc+8kZmjjIkIO2ocvUzlTurDScNS0+piTVEAKum2W5yKzYKBtvz2YINxgz5b4mjNkbjVWThO3HFQbTsQ5h0W15L4GkDSHWjVapKcafqSyulBntXNJAU0bj06cSrKPVBULqs66plNZ41UofixEhjUQlHv9gWVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tu9yZa6v; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5Cp9La010713;
+	Thu, 5 Dec 2024 15:44:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=uvOX/k
+	j0bum17cJw1LcCJxvsbQYNRZs9luwHtHlOAbo=; b=tu9yZa6v1TgZSzNl8wCRbc
+	T7QdCyPuJouGt6QLkeBpFeaN3injwium7tmKJ9AowwRpQrdE41jXehK/Qm4HhknO
+	lnQPliWWC9lj7HZM+hQwMXefPuynlsj3HkBVerGzARjWj1VrqTajVdlFCHMeVoIf
+	ErRfnaOpR8Ra/ae7kqNB+kc09TUpQ+3EDVnWwX1+6Hrh31oo9wq6ctolQeAybvxl
+	XYqvCnuo++1lthxIG77sX2frxNVLZQrZiLMK74lOrjzRZB5CMg8jDxpPamAdEzdS
+	zb2hvGF+RRD+ig306vTx5sbnjDAqHiJQIZr/PpS4QJ/jyc5FQp7vY3nX14HS+sRg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43b24rbsqs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 15:44:27 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BlFZc007467;
+	Thu, 5 Dec 2024 15:44:26 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 438f8jtcye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 15:44:26 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5FiP7c50135712
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Dec 2024 15:44:25 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7C27258058;
+	Thu,  5 Dec 2024 15:44:25 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4CCBB5805B;
+	Thu,  5 Dec 2024 15:44:24 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Dec 2024 15:44:24 +0000 (GMT)
+Message-ID: <2a449edc-a642-4e6b-a55f-2eb03e5b15ce@linux.ibm.com>
+Date: Thu, 5 Dec 2024 10:44:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127212027.2704515-1-max.kellermann@ionos.com>
- <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
- <CAKPOu+8qjHsPFFkVGu+V-ew7jQFNVz8G83Vj-11iB_Q9Z+YB5Q@mail.gmail.com>
- <CAKPOu+-rrmGWGzTKZ9i671tHuu0GgaCQTJjP5WPc7LOFhDSNZg@mail.gmail.com>
- <CAOi1vP-SSyTtLJ1_YVCxQeesY35TPxud8T=Wiw8Fk7QWEpu7jw@mail.gmail.com>
- <CAO8a2SiTOJkNs2y5C7fEkkGyYRmqjzUKMcnTEYXGU350U2fPzQ@mail.gmail.com>
- <CAKPOu+98G8YSBP8Nsj9WG3f5+HhVFE4Z5bTcgKrtTjrEwYtWRw@mail.gmail.com>
- <CAKPOu+9K314xvSn0TbY-L0oJ3CviVo=K2-=yxGPTUNEcBh3mbQ@mail.gmail.com>
- <CAO8a2Sgjw4AuhEDT8_0w--gFOqTLT2ajTLwozwC+b5_Hm=478w@mail.gmail.com>
- <CAKPOu+-UaSsfdmJhTMEiudCWkDf8KU7pQz0rt1eNfeqS2ERvZw@mail.gmail.com>
- <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com> <CAKPOu+-CpzPaY28MH9Og=mZTYmu99MUFTs+ezDZvud0HVb9PAw@mail.gmail.com>
-In-Reply-To: <CAKPOu+-CpzPaY28MH9Og=mZTYmu99MUFTs+ezDZvud0HVb9PAw@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Thu, 5 Dec 2024 16:42:30 +0100
-Message-ID: <CAKPOu+9D4AozS0SPJEm0bNh8Y8WmQ-mYQeC39bMNefi8+KYErA@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Alex Markuze <amarkuze@redhat.com>, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
+        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        audit@vger.kernel.org
+References: <20241203233424.287880-1-zohar@linux.ibm.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20241203233424.287880-1-zohar@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tx5W64ZXXLFvZsf-j4fPoGFnWV7eEydM
+X-Proofpoint-ORIG-GUID: tx5W64ZXXLFvZsf-j4fPoGFnWV7eEydM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1011 mlxscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=776 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050112
 
-On Thu, Dec 5, 2024 at 4:37=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
-.com> wrote:
-> btw. Alex's patch
-> (https://github.com/ceph/ceph-client/commit/2a802a906f9c89f8ae4)
-> introduces another memory leak
 
-Sorry, that was wrong. The "break" only exits the inner "while" loop.
-I got confused by nested loops.
+
+On 12/3/24 6:34 PM, Mimi Zohar wrote:
+> Like direct file execution (e.g. ./script.sh), indirect file exection
+> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> the new security_bprm_creds_for_exec() hook to measure and verify the
+> indirect file's integrity.  Unlike direct file execution, indirect file
+> execution is optionally enforced by the interpreter.
+> 
+> Differentiate kernel and userspace enforced integrity audit messages.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+
 
