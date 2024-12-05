@@ -1,191 +1,154 @@
-Return-Path: <linux-kernel+bounces-432623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CBA9E4DDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:00:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E2C9E4DE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BEF82822E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:00:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87863282FE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D231A8F77;
-	Thu,  5 Dec 2024 06:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554A31A8F72;
+	Thu,  5 Dec 2024 07:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Iv9q2Qxm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c+dQx9O+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBA441C92;
-	Thu,  5 Dec 2024 06:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BB32F56;
+	Thu,  5 Dec 2024 07:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733381996; cv=none; b=Xd/SiITIO7hXDYiOaksBX3ibUEB4qmmhkyK72dYW3ijWybiCvzfJC97vTXUj56aAIeWbs3JCt9QEdRdd55wfHjU7j3UDFLjr2/e82AG7ia33/AY7h6g1lYIinTYQzIX7bAMGo8MhMqX4yRAmbl3OIm8glZq34uOPRa8nI5F3PK8=
+	t=1733382047; cv=none; b=gYYSAmyLcrGTlXEM+BNgcxpuqQx63BxEiCA+oehtIwCK6xW8MJmUAMlG63mH3tKt+RPfAd5eMVpZ7vOrfkfjshdLyEfw3QHL0A5mzxvjORUKcvW4X/hOZwOhaC+FyQfp6DSRwFyErEiB+8hsHxUKIFyJdx9vr2tu/b3FKmchhGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733381996; c=relaxed/simple;
-	bh=JQYPwugyUj9jKvmbjblvHsew22Ptk9It2ss44YppIgI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=l1tpOnD9JXTt7QznDP244ERHAPz3Irm/eAg8SNgKi/0XFTLFRNCqK6XOlRgUg1QusYnPuBKOStvOHH2SIqP3az0Qm4a0zsrrlgr9YXlrldl01RzBb38MXzK7Ca1wl1mJYf0zlnav1hCyFiIaRkrgTwBUqfnNdQUyFmAT8IT1p1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Iv9q2Qxm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4NP5Nl025869;
-	Thu, 5 Dec 2024 06:59:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+okP/dHU+CdjRsXfg1HtzK
-	0pejk+R0Bah+ClpjfRk8o=; b=Iv9q2Qxm3qMrqD8bTD2V1CiIfOiJgimFwOCnZY
-	mkw7blKzIbO/lWzIKV6qJ5MjkqMA+hbrQBhc7kpA8N1xCkglG15/CIfbdjNbO73T
-	uyUYp/GbjO1LrvLKAZ19fgRVY1D4KsGhnfXu31q0d7iLPFxtgDtNw5LqdO2ZvMIm
-	yiorvuwOit1kd7zDv/b5kCq5MNMSbyT2TRvL15Lk8m1htNqAEejoeI0wnE6zrAHW
-	cmTW7CB6Rzzz+s1wsQoxqqTZDh7oCmhROuxyRNec0L5QAEVQcdVeEjBwXKHf7RUz
-	xTC/bo+xVdECLFV2MewL5iBsUNSlk2InWeFDTKd+aQnDBzzw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9p3dp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 06:59:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B56xnTb029686
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 06:59:49 GMT
-Received: from hu-adisi-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 4 Dec 2024 22:59:47 -0800
-From: Aditya Kumar Singh <quic_adisi@quicinc.com>
-Date: Thu, 5 Dec 2024 12:29:29 +0530
-Subject: [PATCH] wifi: mac80211: re-order unassigning channel in activate
- links
+	s=arc-20240116; t=1733382047; c=relaxed/simple;
+	bh=aMm7FPbcneILDvmgciZe4j8OA9WEOczTdT+do9Vm7ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJhf+4vwDvS76PuT0afBLbFp9+1q+HTgRCnGzLzbSlVfZXtHJiunEg9zB+ZomJ+OJhO8dp3ekY/DA3ahYyHf0TFm60vXHK/jWGaXvPvPNY/hv2z1cqI/z9jHpnqBEl62AGUVNyV0kfkDqOuw69GH+JpXxNwoHNof6bN2ImgX2j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c+dQx9O+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A904C4CED1;
+	Thu,  5 Dec 2024 07:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733382047;
+	bh=aMm7FPbcneILDvmgciZe4j8OA9WEOczTdT+do9Vm7ws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c+dQx9O+jWE8UFSlk+gUaUL/n8AncQMRlmV50VYzb250gr9j5ycr61Ni3OjSXrX0x
+	 mpJY3NLqasK5axM+6gvTqThZaYcaE6zvU/aSYasHmEPaOl18VARPuN4YD708f6YCsn
+	 /u3I0+O0lu7+C4PoTn3EbAj/0RcvqK85NXdim/mk=
+Date: Thu, 5 Dec 2024 08:00:44 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 1/6] driver core: Introduce
+ device_{add,remove}_of_node()
+Message-ID: <2024120537-varying-chain-7d1e@gregkh>
+References: <20241202131522.142268-2-herve.codina@bootlin.com>
+ <20241204213825.GA3016970@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241205-unassign_activate_links-v1-1-84097a1abdeb@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFBPUWcC/x3MQQqDMBBA0avIrA1oMKbxKiIy1akdKtOSUSkE7
- 25w+Rb/J1CKTApdkSDSwcpfyajLAqY3ykKG52ywlW1qWzmzC6ryIiNOGx+40biyfNS06HzzcOE
- Zgodc/yK9+H+f++E8L49fX89pAAAA
-X-Change-ID: 20241205-unassign_activate_links-6a574859b997
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Aditya
- Kumar Singh" <quic_adisi@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BSOHpOIE2j23DLCTSClGVHCk3_5NPvX2
-X-Proofpoint-GUID: BSOHpOIE2j23DLCTSClGVHCk3_5NPvX2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204213825.GA3016970@bhelgaas>
 
-The current flow in _ieee80211_set_active_links() during link removal
-does not align with the operational requirements of drivers that groups
-multiple hardware under a single wiphy. These drivers (e.g ath12k) rely on
-channel information to determine the appropriate hardware for each link.
+On Wed, Dec 04, 2024 at 03:38:25PM -0600, Bjorn Helgaas wrote:
+> [cc->to Greg, Rafael]
+> 
+> On Mon, Dec 02, 2024 at 02:15:13PM +0100, Herve Codina wrote:
+> > An of_node can be set to a device using device_set_node().
+> > This function cannot prevent any of_node and/or fwnode overwrites.
+> > 
+> > When adding an of_node on an already present device, the following
+> > operations need to be done:
+> > - Attach the of_node if no of_node were already attached
+> > - Attach the of_node as a fwnode if no fwnode were already attached
+> > 
+> > This is the purpose of device_add_of_node().
+> > device_remove_of_node() reverts the operations done by
+> > device_add_of_node().
+> > 
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  drivers/base/core.c    | 52 ++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/device.h |  2 ++
+> 
+> I suppose this series would go via the PCI tree since the bulk of the
+> changes are there.  If so, I would look for an ack from the driver
+> core folks (Greg, Rafael).
+> 
+> >  2 files changed, 54 insertions(+)
+> > 
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index 8b056306f04e..3953c5ab7316 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -5216,6 +5216,58 @@ void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode)
+> >  }
+> >  EXPORT_SYMBOL_GPL(set_secondary_fwnode);
+> >  
+> > +/**
+> > + * device_remove_of_node - Remove an of_node from a device
+> > + * @dev: device whose device-tree node is being removed
+> > + */
+> > +void device_remove_of_node(struct device *dev)
+> > +{
+> > +	dev = get_device(dev);
+> > +	if (!dev)
+> > +		return;
+> > +
+> > +	if (!dev->of_node)
+> > +		goto end;
+> > +
+> > +	if (dev->fwnode == of_fwnode_handle(dev->of_node))
+> > +		dev->fwnode = NULL;
+> > +
+> > +	of_node_put(dev->of_node);
+> > +	dev->of_node = NULL;
+> > +
+> > +end:
+> > +	put_device(dev);
+> > +}
+> > +EXPORT_SYMBOL_GPL(device_remove_of_node);
+> > +
+> > +/**
+> > + * device_add_of_node - Add an of_node to an existing device
+> > + * @dev: device whose device-tree node is being added
+> > + * @of_node: of_node to add
+> > + */
+> > +void device_add_of_node(struct device *dev, struct device_node *of_node)
+> > +{
+> > +	if (!of_node)
+> > +		return;
+> > +
+> > +	dev = get_device(dev);
+> > +	if (!dev)
+> > +		return;
+> > +
+> > +	if (WARN(dev->of_node, "%s: Cannot replace node %pOF with %pOF\n",
+> > +		 dev_name(dev), dev->of_node, of_node))
+> > +		goto end;
 
-Now, during the link removal process, the channel is first unassigned from
-the links via a call to __ieee80211_link_release_channel(). After this, the
-state of all connected stations is updated via drv_change_sta_links().
-This is followed by handling keys in the links, and finally, removing the
-link by calling drv_change_vif_links().
+Please do not reboot machines that have panic-on-warn for something that
+you can properly handle and recover from (like this.)  Just print out a
+message and continue on, or better yet, return an error if this didn't
+work properly.
 
-For above mentioned drivers (such as ath12k), with the above flow, once the
-channel is unassigned from the link, the link would be deleted at the
-driver and firmware level. However, at this point, the station still exist,
-leading to failures in deactivating the links.
+thanks,
 
-Additionally, if we consider the link addition flow [1], channels are first
-assigned, and then stations are created. So conversely, during removal,
-ideally, the station should be removed first, and then the channel should
-be unassigned.
-
-Therefore, re-order the logic so that stations are handled first and then
-channel is unassigned.
-
-[1]: https://lore.kernel.org/linux-wireless/20241001085034.2745669-1-quic_adisi@quicinc.com/
-
-Signed-off-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
----
- net/mac80211/link.c | 44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/net/mac80211/link.c b/net/mac80211/link.c
-index 58a76bcd6ae68670fbbe7fa7d07540c04ff996f8..3c46d2b2ee254fab324d57f4d0fbe94ace76d89d 100644
---- a/net/mac80211/link.c
-+++ b/net/mac80211/link.c
-@@ -367,28 +367,6 @@ static int _ieee80211_set_active_links(struct ieee80211_sub_if_data *sdata,
- 		}
- 	}
- 
--	for_each_set_bit(link_id, &rem, IEEE80211_MLD_MAX_NUM_LINKS) {
--		struct ieee80211_link_data *link;
--
--		link = sdata_dereference(sdata->link[link_id], sdata);
--
--		ieee80211_teardown_tdls_peers(link);
--
--		__ieee80211_link_release_channel(link, true);
--
--		/*
--		 * If CSA is (still) active while the link is deactivated,
--		 * just schedule the channel switch work for the time we
--		 * had previously calculated, and we'll take the process
--		 * from there.
--		 */
--		if (link->conf->csa_active)
--			wiphy_delayed_work_queue(local->hw.wiphy,
--						 &link->u.mgd.csa.switch_work,
--						 link->u.mgd.csa.time -
--						 jiffies);
--	}
--
- 	for_each_set_bit(link_id, &add, IEEE80211_MLD_MAX_NUM_LINKS) {
- 		struct ieee80211_link_data *link;
- 
-@@ -458,6 +436,28 @@ static int _ieee80211_set_active_links(struct ieee80211_sub_if_data *sdata,
- 		__ieee80211_sta_recalc_aggregates(sta, active_links);
- 	}
- 
-+	for_each_set_bit(link_id, &rem, IEEE80211_MLD_MAX_NUM_LINKS) {
-+		struct ieee80211_link_data *link;
-+
-+		link = sdata_dereference(sdata->link[link_id], sdata);
-+
-+		ieee80211_teardown_tdls_peers(link);
-+
-+		__ieee80211_link_release_channel(link, true);
-+
-+		/*
-+		 * If CSA is (still) active while the link is deactivated,
-+		 * just schedule the channel switch work for the time we
-+		 * had previously calculated, and we'll take the process
-+		 * from there.
-+		 */
-+		if (link->conf->csa_active)
-+			wiphy_delayed_work_queue(local->hw.wiphy,
-+						 &link->u.mgd.csa.switch_work,
-+						 link->u.mgd.csa.time -
-+						 jiffies);
-+	}
-+
- 	for_each_set_bit(link_id, &add, IEEE80211_MLD_MAX_NUM_LINKS) {
- 		struct ieee80211_link_data *link;
- 
-
----
-base-commit: b81e0211e9c70be9eb70924e4e29698bfbbbc03a
-change-id: 20241205-unassign_activate_links-6a574859b997
-
+greg k-h
 
