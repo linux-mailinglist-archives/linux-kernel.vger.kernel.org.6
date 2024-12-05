@@ -1,174 +1,167 @@
-Return-Path: <linux-kernel+bounces-433895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F419E5E78
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:50:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26A49E5E79
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:52:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68961884B83
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774A1282113
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E8B22D4DD;
-	Thu,  5 Dec 2024 18:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E640F22D4CB;
+	Thu,  5 Dec 2024 18:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmZ3jAlZ"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIxUMeUP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537ED218EBC;
-	Thu,  5 Dec 2024 18:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708A818C034
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733424645; cv=none; b=T/EdoKUx1r+J/bUbkiNMRKu9YxEPlLC1Scx/FDNiKQFFgn3/JobZ3XXBxELW0B7HdoOii4SPE2qlvR0h6C5CKKGCwTBTno4udKKh0bnLCaphtZPQ9vaKcT/St3/nn2azTsssEf2gQnIncZ+on9LiV5G+hol6Ej+hakgZTONGjO8=
+	t=1733424750; cv=none; b=LNYUPbBCflqSrHeaM3RQ+w/MRF6YJBUPb6I5Ty6wlMbGhcRdjTwbU2eYbVkb8C4RYZtleRmfh4sV2gEB6/vjlfyLF+/IwMYZJagxn4vCU1+LR/FtgyjWS3eKQgqClBdtmydc1ERnpxsCMyNZ2IVwfuWUhzEr5IUn78AGtLSu7hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733424645; c=relaxed/simple;
-	bh=JWDj8QlLbidNrhEz6lafRDRkIXsUvesuWlCtZKS2h0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFc3PPBtp4pfaSD5tMx8S6SVr//3iMS4kAHA7up89hjNIFRSg9Ap8kmxUGg/sO2fDpKcpLZZi4YBMXbmgK818BA8n8FnUAaUrP8yEZ9M8nPuQik6RCupiw0db3VpXoCx9+gNkUCdQ1EF6OCkHUz90oj7daCUkjN0nnNv1xZ5BvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JmZ3jAlZ; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d0cdff12b4so172765a12.1;
-        Thu, 05 Dec 2024 10:50:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733424641; x=1734029441; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xuL0vSwcp+HMpPwWDWVKgActioYscbfUsEOUicYp0kE=;
-        b=JmZ3jAlZaxndoWTHGQxz2EAZxg8diDf1gzwWwn16WF6Jhy54RbQVswoYlG4+AcyYGS
-         6Xu8TfQRYDbyQXXkFlYf2BMPlBakjtXo6E+3kpWQT96njYu8EADuj3CRlUG52P7uH3NL
-         WP508hc3+P4ViGlJmTUK4ekBos7zQzBCoLspx0sTLB8mY6/6N8qYc7VBsBpmFgcEejD9
-         0VgNnr8rIAOhV1jAHrej180jQZeTLbsq2Hij6Vlewfp3sYig2PCHb63XegPJmemmiKfQ
-         B9VUdF0k77dqFRN9RBMQOkdaqVHvTHwDuworb7vfHyLTtTfjZOJtuk3jmwyDVrINHK+V
-         8GhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733424641; x=1734029441;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xuL0vSwcp+HMpPwWDWVKgActioYscbfUsEOUicYp0kE=;
-        b=KhmiOjz6jVblghoN88NMqx6a+H1fpO4enaA7em7JZ/UCq29WLAb4rOJO5bll6Kyakd
-         cxXvPpuZlRBXppEbvB4U/33SJ7UssD6l/sFY39M4rjwxsq7NggNcwBN7mo8+2r68Ggjs
-         mXSgObFmik+vUJgBDbMBDQ6lrhEam43oR7cgAiQGjT1LOg3xCLl90xEBGZVMMPcsKgUW
-         FcJtI3wGHXQ3RfKM5g79IfigNUnvr8/T8ffuiJMbRnCC4OEldVhpn8gHqHp7fJhukFNy
-         4qq07WREb9QHQ+cHADbDzhTSb8T0mOCkJNk73HAMclLToUVscrVW0Mg+lgQMLKN5patr
-         i4sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNzIvzNbBUDYnYAbG5iNxMSOUrqSP3K7ifApqAFCQNfal1UcvNJeLKBRbudapFK5xPajH1PR0pzhtG@vger.kernel.org, AJvYcCWndcC+8gbO1W90Hl63oq4i6xM7TImNhQ+93CBIvrk9r50a/qFdsoidOzEkeMjohppjg1iuT34z@vger.kernel.org, AJvYcCXV9mWgv/IEjc8tomkr5jvXdqgPVvGM3r0JvsGbTIBrGc1TUtf23DHSxUCNnlQ08v0TcrzGFgfIEE/RGk34@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEWUQt7QPKBA5p8HApnrhkyYA7/cA+h1n4ZrHe43bqAHq6AAlm
-	qxHjaB0lkegub92VF+1V/jDbpYQqB4FDyVg0WCCGGovrCraQOpkmgFIEUw==
-X-Gm-Gg: ASbGnctktWZxuU4rQV/x71iwhko1BGP4FbBrfHDxJwmLxExAjczxySyAcShkKZZE5+3
-	5rjtN4Jy3sDdMihyufiC7O2eLynb9knLcUiVO/si9UtRv/PEIZ9StJfWKepMpwrkaShTsRWLg7f
-	YgJHIVFMl6BJwiikHKvKCI3O+LWNxr8zTUsx4Ud43ZDmvOQkvI9ev430ECzZpqlfTLc28TMW3qV
-	MaRSUY2pdFcyP8Mheor9TceYU35X5TaCiYwIck=
-X-Google-Smtp-Source: AGHT+IHXBo4XbdE1KRXT45i7tcr0tQbymXLsF4fYU2CO5TAKnlDgiYLqOd3ZY8+xqizacESzgmiQQg==
-X-Received: by 2002:a17:906:db03:b0:aa5:3b5c:f638 with SMTP id a640c23a62f3a-aa5f7ccc944mr453434466b.1.1733424640392;
-        Thu, 05 Dec 2024 10:50:40 -0800 (PST)
-Received: from skbuf ([188.25.135.117])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e972c1sm126626266b.76.2024.12.05.10.50.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 10:50:39 -0800 (PST)
-Date: Thu, 5 Dec 2024 20:50:37 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <20241205185037.g6cqejgad5jamj7r@skbuf>
-References: <20241205145142.29278-1-ansuelsmth@gmail.com>
- <20241205145142.29278-4-ansuelsmth@gmail.com>
- <20241205162759.pm3iz42bhdsvukfm@skbuf>
- <20241205145142.29278-1-ansuelsmth@gmail.com>
- <20241205145142.29278-4-ansuelsmth@gmail.com>
- <20241205162759.pm3iz42bhdsvukfm@skbuf>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <20241205180539.6t5iz2m3wjjwyxp3@skbuf>
- <6751f125.5d0a0220.255b79.7be0@mx.google.com>
+	s=arc-20240116; t=1733424750; c=relaxed/simple;
+	bh=l/aDO4IrCDD1jgJitpkzmkkhO1BeEVsbZ673Y07xHBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sL0+i7rQ/IA3IuAFs+cj9jbmVJzoK6cf6ZhG5J082lY6qoR042n+YWaBninpZ2YH0o7+gNMJwc11azHTMaa+BwmHJdLkNxsH8CbVT5A+0qUFVibAVSx0xtepz7VgS9pVMmyu3RzL5Nnd1WAJcw9IFYRoX/zRPveHZlVe+DmkS5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIxUMeUP; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733424748; x=1764960748;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=l/aDO4IrCDD1jgJitpkzmkkhO1BeEVsbZ673Y07xHBg=;
+  b=KIxUMeUPfGj+6AMywlyfYdela8CaQCwsy/mEtICrIseK5+JNEAKxPbkU
+   QGB1oknlrsIv/foUaWhIz59WVDDleI8XNFZXPV7aY7wSy93ZyUi9JCAvM
+   DCqmwo4srhc+7lZNoc2L4ZDn/jh4Kukb5DEPuHfGIw0rQabQ8ClPqhqyk
+   QPWSIQI4T9yvQEjuo2dJCWCgwTGji4sSMsp5/2CwNAQtV/Q9vjGmfSmem
+   /Qk2oZizIP9GZJNLnKNMN5r4NnlQhU2ZrxUQ1EgaCx+Jo/xAOV8fHjfO5
+   pK8GtAxo8Gc4jmYHxNhvr1a53zvwC3CeR0Q1OJKQHNGN4MFfXwLv1b1Yx
+   A==;
+X-CSE-ConnectionGUID: mtGEcl+HRISHBlaYq4gfFQ==
+X-CSE-MsgGUID: k8vLhi6LSFyS5y0BrblCDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="44425980"
+X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
+   d="scan'208";a="44425980"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 10:52:26 -0800
+X-CSE-ConnectionGUID: hgJixa3hRde6dU6inf3fqg==
+X-CSE-MsgGUID: kMRGM0CMSduZ1oINGDyJUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
+   d="scan'208";a="94621790"
+Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.220.98]) ([10.124.220.98])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 10:52:26 -0800
+Message-ID: <24b8d4a0-36c3-4404-98aa-7d8e2c67ac95@intel.com>
+Date: Thu, 5 Dec 2024 10:52:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6751f125.5d0a0220.255b79.7be0@mx.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Grab mm lock before grabbing pt lock
+To: Maksym Planeta <maksym@exostellar.io>, Juergen Gross <jgross@suse.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20241204103516.3309112-1-maksym@exostellar.io>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241204103516.3309112-1-maksym@exostellar.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 07:29:53PM +0100, Christian Marangi wrote:
-> Ohhhh ok, wasn't clear to me the MFD driver had to be placed in the mdio
-> node.
-> 
-> To make it clear this would be an implementation.
-> 
-> mdio_bus: mdio-bus {
-> 	#address-cells = <1>;
-> 	#size-cells = <0>;
-> 
-> 	...
-> 
-> 	mfd@1 {
-> 		compatible = "airoha,an8855-mfd";
-> 		reg = <1>;
-> 
-> 		nvmem_node {
-> 			...
-> 		};
-> 
-> 		switch_node {
-> 			...
-> 		};
-> 	};
-> };
+On 12/4/24 02:35, Maksym Planeta wrote:
+> Function xen_pin_page calls xen_pte_lock, which in turn grab page
+> table lock (ptlock). When locking, xen_pte_lock expect mm->page_table_lock
+> to be held before grabbing ptlock, but this does not happen when pinning
+> is caused by xen_mm_pin_all.
 
-I mean, I did mention Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
-in my initial reply, which has an example with exactly this layout...
+In changelogs, please indicate functions with parenthesis like this:
+func().  It makes it easier to tell what is a function versus a variable
+or other text.
 
-> The difficulties I found (and maybe is very easy to solve and I'm
-> missing something here) is that switch and internal PHY port have the
-> same address and conflicts.
-> 
-> Switch will be at address 1 (or 2 3 4 5... every port can access switch
-> register with page 0x4)
-> 
-> DSA port 0 will be at address 1, that is already occupied by the switch.
-> 
-> Defining the DSA port node on the host MDIO bus works correctly for
-> every port but for port 0 (the one at address 1), the kernel complains
-> and is not init. (as it does conflict with the switch that is at the
-> same address) (can't remember the exact warning)
+The use of init_mm here in the preexisting code is a _bit_ fishy because
+these pgds *HAVE* an mm and yet xen_mm_pin_all() passes in '&init_mm'
+for them. That's relevant here because locking 'init_mm' obviously
+doesn't do any good for other mm's.
 
-Can any of these MDIO addresses (switch or ports) be changed through registers?
+I have the _feeling_ it's just a big hack and this code throws caution
+tot the wind because of:
 
-I guess the non-hack solution would be to permit MDIO buses to have
-#size-cells = 1, and MDIO devices to acquire a range of the address
-space, rather than just one address. Though take this with a grain of
-salt, I have a lot more to learn.
+>  * Expected to be called in stop_machine() ("equivalent to taking
+>  * every spinlock in the system"), so the locking doesn't really
+>  * matter all that much.
 
-If neither of those are options, in principle the hack with just
-selecting, randomly, one of the N internal PHY addresses as the central
-MDIO address should work equally fine regardless of whether we are
-talking about the DSA switch's MDIO address here, or the MFD device's
-MDIO address.
+So the patch here kinda doubles down on the hack and continues the theme
+because "locking doesn't really matter all that much."
 
-With MFD you still have the option of creating a fake MDIO controller
-child device, which has mdio-parent-bus = <&host_bus>, and redirecting
-all user port phy-handles to children of this bus. Since all regmap I/O
-of this fake MDIO bus goes to the MFD driver, you can implement there
-your hacks with page switching etc etc, and it should be equally safe.
+If so, it's not super satisfying, but it is consistent with the existing
+code.
+
+> This commit addresses lockdep warning below, which shows up when
+> suspending a Xen VM.
+
+If the comment I quote above is right, this is a _harmless_ warning
+because nothing else can race here and the locking that gets added is
+useless anyway, right? You seem to agree because there's no cc:stable@
+or Fixes: tags.
+
+Either way, I'm hesitant to add incorrect-in-any-other-context and
+uncommented locking just to shut up lockdep. Is there no better way?
+
+If not, can we comment it at least, please, so nobody else tries to
+duplicate the locking?
 
