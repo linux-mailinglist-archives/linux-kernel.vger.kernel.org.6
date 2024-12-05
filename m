@@ -1,105 +1,168 @@
-Return-Path: <linux-kernel+bounces-432733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEC29E4F8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:17:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3A59E4F8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB623162A7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C139D1881320
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9925C1D2785;
-	Thu,  5 Dec 2024 08:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3640B1D1730;
+	Thu,  5 Dec 2024 08:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L61V3IR+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ed/a/koE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A492391BC;
-	Thu,  5 Dec 2024 08:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC222391BC;
+	Thu,  5 Dec 2024 08:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733386647; cv=none; b=g/cHNNhliLdYgA6QwO9Pzp/skoUft1pwIzQC956RJJTW9iiRsYhBlS9AcLf99llCVEsm0iLzCCLLnYlYrnYT0UaD4aqH7AzRaq04P8ThzVHrRaelKYbKkpakxx8bTY1+FKbLD4X7/g2MP9ZlOhKIU7MoaPpZFfeI/ug1wf4JuXc=
+	t=1733386756; cv=none; b=WHmNBKx4cXjlrYjUjNIK3qVeALLgQoH2klAspJyUlfiBh1YmSNPtlMCjFZm0EgyL7YlelfkWBiKfVaDaT7W7hdRiKbeVbky/AEqT01ZMxeb52oZQkdstQuK6/VvuorshGR7Ct0QXYRvxJj1LrYpoUDNolDgdRhtWAw5cVBaclps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733386647; c=relaxed/simple;
-	bh=ni+p7YrZWyil+4dN5QnPHPpHckV7kcNYl1xVZiVxSvo=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Q7qylyd6f026VB7W8t0LbhIgdG/1AIVALLZ36VaRyoSjqQsQSX/7Uhfmz3ZBGvsDh7viUM2sHsDpcTCZBttidwpPPUOPhqiCxhYiagVFPYnxN+Bf6LWrROPAyD2tmwN7Je9u4U2UgM3Nvdd13dMM7iRb5oynEKepia7NwxECUzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L61V3IR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47AA5C4CED1;
-	Thu,  5 Dec 2024 08:17:26 +0000 (UTC)
+	s=arc-20240116; t=1733386756; c=relaxed/simple;
+	bh=JhiphLgWiCNfU2elVpuwBoY3t+FHsdzdxyELcgnhNNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fMEOLLWrBURuLHb6YYk2mcQKBCOHjobwZA4gOVDsZw41X6n1Fy0j0cLrEI22EbOfJRYKLVzyf909VdIvp/7dgBcTZvJk/FUB4BttSvyO9IG6y2hyAiNn0jUdhiBeFA0RIeDn8B620qiYGrZLurmq85WlGf7+FtpTUsA2DG9fjXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ed/a/koE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74755C4CED1;
+	Thu,  5 Dec 2024 08:19:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733386646;
-	bh=ni+p7YrZWyil+4dN5QnPHPpHckV7kcNYl1xVZiVxSvo=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=L61V3IR+SxQz6YJuQbV+OFHLfzXVf65wr1piDng2DNpemcjcOYvfwaY8eiERFSUYH
-	 qxpUX4HLlArJOqsJDurHU5AL2aSX42hkSEPk50Ikrb9Fu280RzH5p1ChoD7JU0R82O
-	 Y3i8FLvuUuLHJcSZWEyT47xe2JVARA1VZHxSIwTFbWofM58IyQmU/u2tYHJlUxongj
-	 yc3X7UoT42WoR4ZVA752nyGrZo166MyqECgSNdkU11D+m3eJq8kvKd10yH0vSER0OV
-	 Aw/LmvJEmBGGu9rL4HHilm73mhM1TkunO+tJUhk/Dvd0cIbUM2dYHlUbyscy9K/3mr
-	 KHG6gbrB/UBTQ==
-Date: Thu, 05 Dec 2024 02:17:24 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733386756;
+	bh=JhiphLgWiCNfU2elVpuwBoY3t+FHsdzdxyELcgnhNNI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ed/a/koEM7nuMGLarG44D9RLXHxcLryGUfOLiuP8BxrlWBK0XjjxHncEkZatuuVYx
+	 XXdUUf2pd/V9Ed2JvRSa51z9g/lbDlPltAkIMKDe9/irTfAhrGCdDynO7BbogtGq4b
+	 d97z8ebzyBTzL/yezLGrvM5z5eAYlQDsOJG8boLGcl5+hBjd7SZjOkJkZv/Eu4kU+S
+	 BC2UFVhMu9aoXdQeyx8etMdljW7rIeGopkry93cs0rIZL1AWDUe/wiWTOyjqoPZbny
+	 +Ccbq54CF5gcgoq1HA+vXvVPSy6wZt+jMMH8bSpA2am0pRI2ilEdPjDdmIfk7y00k6
+	 CR/cMzP+9QVhA==
+Date: Thu, 5 Dec 2024 09:19:09 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Peter Maydell <peter.maydell@linaro.org>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
+ qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 10/16] acpi/ghes: better name GHES memory error
+ function
+Message-ID: <20241205091909.66f803c5@foz.lan>
+In-Reply-To: <20241204174025.52e3756a@imammedo.users.ipa.redhat.com>
+References: <cover.1733297707.git.mchehab+huawei@kernel.org>
+	<1f16080ef9848dacb207ffdbb2716b1c928d8fad.1733297707.git.mchehab+huawei@kernel.org>
+	<20241204174025.52e3756a@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: davem@davemloft.net, andrew+netdev@lunn.ch, netdev@vger.kernel.org, 
- pabeni@redhat.com, kuba@kernel.org, conor+dt@kernel.org, 
- p.zabel@pengutronix.de, linux-kernel@vger.kernel.org, krzk+dt@kernel.org, 
- edumazet@google.com, devicetree@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-In-Reply-To: <20241205072048.1397570-2-jacky_chou@aspeedtech.com>
-References: <20241205072048.1397570-1-jacky_chou@aspeedtech.com>
- <20241205072048.1397570-2-jacky_chou@aspeedtech.com>
-Message-Id: <173338664470.2288815.2371095841901159008.robh@kernel.org>
-Subject: Re: [PATCH net-next v4 1/7] dt-bindings: net: ftgmac100: support
- for AST2700
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Em Wed, 4 Dec 2024 17:40:25 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-On Thu, 05 Dec 2024 15:20:42 +0800, Jacky Chou wrote:
-> The AST2700 is the 7th generation SoC from Aspeed.
-> Add compatible support and resets property for AST2700 in
-> yaml.
+> On Wed,  4 Dec 2024 08:41:18 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 > 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  .../bindings/net/faraday,ftgmac100.yaml         | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+> > The current function used to generate GHES data is specific for
+> > memory errors. Give a better name for it, as we now have a generic
+> > function as well.
+> > 
+> > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
+> 
+> not that it matters but for FYI
+> Sign off of author goes 1st and then after it other tags
+> that were added later
+
+Yes, that's what I usually do, when I'm using my developer's hat. 
+Placing reviews before SoB is what I do with my maintainer's hat
+at the Kernel :-)
+
+I'll address it for the next (and hopefully final) version.
+
+> 
+> > ---
+> >  hw/acpi/ghes-stub.c    | 2 +-
+> >  hw/acpi/ghes.c         | 2 +-
+> >  include/hw/acpi/ghes.h | 4 ++--
+> >  target/arm/kvm.c       | 2 +-
+> >  4 files changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/hw/acpi/ghes-stub.c b/hw/acpi/ghes-stub.c
+> > index 2b64cbd2819a..7cec1812dad9 100644
+> > --- a/hw/acpi/ghes-stub.c
+> > +++ b/hw/acpi/ghes-stub.c
+> > @@ -11,7 +11,7 @@
+> >  #include "qemu/osdep.h"
+> >  #include "hw/acpi/ghes.h"
+> >  
+> > -int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+> > +int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
+> >  {
+> >      return -1;
+> >  }
+> > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> > index 4b5332f8c667..414a4a1ee00e 100644
+> > --- a/hw/acpi/ghes.c
+> > +++ b/hw/acpi/ghes.c
+> > @@ -415,7 +415,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+> >      return;
+> >  }
+> >  
+> > -int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+> > +int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
+> >  {
+> >      /* Memory Error Section Type */
+> >      const uint8_t guid[] =
+> > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> > index 8859346af51a..21666a4bcc8b 100644
+> > --- a/include/hw/acpi/ghes.h
+> > +++ b/include/hw/acpi/ghes.h
+> > @@ -74,15 +74,15 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+> >                       const char *oem_id, const char *oem_table_id);
+> >  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+> >                            GArray *hardware_errors);
+> > +int acpi_ghes_memory_errors(uint16_t source_id, uint64_t error_physical_addr);
+> >  void ghes_record_cper_errors(const void *cper, size_t len,
+> >                               uint16_t source_id, Error **errp);
+> > -int acpi_ghes_record_errors(uint16_t source_id, uint64_t error_physical_addr);
+> >  
+> >  /**
+> >   * acpi_ghes_present: Report whether ACPI GHES table is present
+> >   *
+> >   * Returns: true if the system has an ACPI GHES table and it is
+> > - * safe to call acpi_ghes_record_errors() to record a memory error.
+> > + * safe to call acpi_ghes_memory_errors() to record a memory error.
+> >   */
+> >  bool acpi_ghes_present(void);
+> >  #endif
+> > diff --git a/target/arm/kvm.c b/target/arm/kvm.c
+> > index 7b6812c0de2e..b4260467f8b9 100644
+> > --- a/target/arm/kvm.c
+> > +++ b/target/arm/kvm.c
+> > @@ -2387,7 +2387,7 @@ void kvm_arch_on_sigbus_vcpu(CPUState *c, int code, void *addr)
+> >               */
+> >              if (code == BUS_MCEERR_AR) {
+> >                  kvm_cpu_synchronize_state(c);
+> > -                if (!acpi_ghes_record_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
+> > +                if (!acpi_ghes_memory_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
+> >                      kvm_inject_arm_sea(c);
+> >                  } else {
+> >                      error_report("failed to record the error");  
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
 
-yamllint warnings/errors:
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml: then:properties:resets: {'maxItems': 1, 'items': [{'description': 'MAC IP reset for AST2700'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241205072048.1397570-2-jacky_chou@aspeedtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks,
+Mauro
 
