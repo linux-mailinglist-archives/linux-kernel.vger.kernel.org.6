@@ -1,266 +1,306 @@
-Return-Path: <linux-kernel+bounces-432420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0658E9E4B03
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:18:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541BE9E4B04
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:18:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2332C161C00
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:18:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D290A3208;
+	Thu,  5 Dec 2024 00:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hJLyFsKO"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2043.outbound.protection.outlook.com [40.107.94.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0826280EA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:18:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D99CBA33;
-	Thu,  5 Dec 2024 00:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrRFyyx0"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECCB391;
-	Thu,  5 Dec 2024 00:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733357905; cv=none; b=kq4sT4eRbJOCHm06XSmxX/MEBYipIU2s4QpFXaUBkPpnkVSwTP2KJJb3su23eLMKydULyTgTPZF/MXWLFEpx+m4PsE++pNIS/nwaIi0aYE3Te6F8pDuZEy99yQOYACwAYc1Aj5OWqD62gj/pYm+Qn+7y7zrFmVmosFVgIGk0ZPU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733357905; c=relaxed/simple;
-	bh=/U8qXy1M4Q4S9yJGPJ32y/rKMzq/gUFbI6KKXJEp9f4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFpRDPEiUnV9Hr4RndWGh5SeGB9EmsQiwDYu16Sd5hURKh92osz5ns/kJ43Outj7luWhHrJE3BZcRpY83tdNKA8e7s6XO9sejGaj0zVkUjB/dYZRm3DuR9uJ54jVjbYDXTRIcZXN/MWHwbekC0p3t0lzs1dafdMCKOn6TKjpdLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrRFyyx0; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d0cd67766aso305262a12.2;
-        Wed, 04 Dec 2024 16:18:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733357902; x=1733962702; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UTarhtG6QhsBczFzHEEIraRnC7fwbRetkRpuFiI3llM=;
-        b=FrRFyyx0DnRJumDEBfuJz4sHK27Qj7Bezw2pmRm1pxmFFEod9h1ZbNy4jR9erf9ois
-         QUJRLn6PWBbLmWqrVe4sf0ttSKltHNFkbPekuR/0iae1Xq7y7+6dG1Yc/GCSAnyMhRe7
-         YLWFBCa32NaRS6WinLpBRfZSaTTBhbmaM5M2K0dGfGhO9yn4iZuc6ZeMyszpfdM8DgyA
-         INbR5ap9AZVFCIMFhme7ui/Kh1a42sVSHKEyRKnFMtJ7dShZTCePRibDDNquWwIWBm3v
-         Tf4//6DlmCiQlI/c1lMlh5aqlViEioWFoBkrFyHMKnvSAxzjD4Zh6CLpJ2329YeuLUxN
-         150g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733357902; x=1733962702;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UTarhtG6QhsBczFzHEEIraRnC7fwbRetkRpuFiI3llM=;
-        b=f5Ic4HIc+n9U+S944PpEIg89iFXpq5I+i6daFSlr68MF2FBaHQeo9wc+YIewlpArfp
-         NuAC5ZIyA4o2GugDK9ju3++6lee8HbAZZ8d01lYeL3RXtAlNHspxO8h1+9+E3iyhheMq
-         nLVTFflehyoRgxLTcaOuZMuP+ntcmkR5QVDHwZG0RaIT3dHFBYoOg8ThpqCmL1emPCBB
-         UTYmayOVfJTwCwza4fPykBPYoimsSeCkEZ4hmLXEboQjByHE/AVdDY/67pWJvoax6S0N
-         RyEyB6Yj3NSLSea+q9uCe0CBiO9okmaY/wOaHL+NkLIM/cmT1oEF3DLEKMm4nRW2fAkw
-         /k3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV9b9+1Nx1e4oV14FhLV/diAjiOHMfqfYm4o73DpdFYauGj3+xKCwY1TsYucxBY22y4aCOXag9bO6ut4//p@vger.kernel.org, AJvYcCVcQLSd6aUP4mx5rWN9rsD/kkeVn8z5ulQ8mVbGtm6uKmym2H1Ipfl5hBhTWFyRgyXvXeeTJmoJ7wlfl7fI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn+oXmJAzBmI9AnllHASIlXZu9Vq+EDGT/CRODb+CArx6KhfJh
-	H3eOGbriijuYwQNhUMvuDHYCVxTIVry5rl/UuI3EmQiTWxBtyWC1
-X-Gm-Gg: ASbGncsdHshiiia4jgP8oODBI+QxD/iP/Jf7nY449js285enfHdiNWLfss35fRikjij
-	u5kOn2U6ahWMl//y14Ht35afDRn30dFeiFXL4DGlsHXrVpCOGushCI5vmtjYOogOrfh1dbau5EH
-	TqIEE6Zz7ZieY0/co3Urt5Yw903aVtY9HIaTc0iEdxXAkISP6rouGOdeiunhoqZBJ+lbrT8dNB/
-	ZN04N3EjMkpz/5q+2sJ5rpfbVKzfT2KNU73RR4zjHeIR85ihA==
-X-Google-Smtp-Source: AGHT+IGOxY0n5S9c6n6c0AB0cBoetyxBwtV/KCtKq2kw2LsDGbLYSOjIytcCwsKgi4Po9m/7Ngarhw==
-X-Received: by 2002:a05:6402:510e:b0:5d0:8606:9ba1 with SMTP id 4fb4d7f45d1cf-5d10cb82718mr7579671a12.24.1733357901839;
-        Wed, 04 Dec 2024 16:18:21 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b608c8dsm118497a12.48.2024.12.04.16.18.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Dec 2024 16:18:20 -0800 (PST)
-Date: Thu, 5 Dec 2024 00:18:19 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] mm: abstract get_arg_page() stack expansion and mmap
- read lock
-Message-ID: <20241205001819.derfguaft7oummr6@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
- <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EC118052
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733357929; cv=fail; b=R9cadE/7TQNji+qXaSNuZws4A4CsVxBmZAezGj0a+WoZB7scdEjiZzqjm5yGCsY3yDtZE5LQf4gcY85WqJUI+xw4eslGMTiQzpqlQ13R54dwnqU5XNyTY7hYzIUCuHAGxuc+ZJM2/CLPG/W9uPnAtPF6K1rsYbQnbVFMvZZ9bCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733357929; c=relaxed/simple;
+	bh=HFbVhJUTfMdW55sFFrXOU7+9DEYAr8/HcBVrfyW1Ra8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=T+rL5Psm7O9I/9QiGdeHZWvu4sFZI3kluETZZgWo0WN6duuFjgSXltFrWqRJG21nUPQPgsxKVsaoghvUTD6rn/oyrxOZNd64yTbyIdmMyxk/tNWPPlm+KjLOsMG/JcrFK1zBodv043404rMdKL5fsHCELUlAPQALxtFNMq4HGVA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hJLyFsKO; arc=fail smtp.client-ip=40.107.94.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yf3zyCgtWV+gWCXxoQLzg/l9fOr8hQijr3uqNQNnCAsVnpDpNkY0gqplcE8mFuNRJow62Tw37s4w7n6zEE/DG/+kuE6tmJM0MNP1vDzMo6LOCg48cQd8aKeYPxKWMYVA4qTpICsssIlAyOI42ZvuNECPMcn7EigmH6nx27rhkqj2lvtSB+SvuCHED1oL2my0on6ThFPVmc8+KJNcqfxWM9t94/URCDlGObihtC8G2dLu81YQd6F8Yr94lIRHCIJrYmkZvwwCgIxiExwo8dSO7gs73vpRHU1HAQC1PLqyHt+c33Sdq0iPO9r+TR6rt51XBn4DJDX66A5U61WTTjEt2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xKT069lVMAQRzU9nsKMLPA6gzsjFGeFA8wtuDb6+7+k=;
+ b=FTjrcA62eG0YgHNegSKk+7FdZ0ECDyz4TH1SAh+LmdBQ9SnT/lVXn6dMkAxnwlPGPhIXmaKPetZlHbZEvnkEymvU5aVsYOxmGpWVkIZuLwB0Y2ICpaw3pSAjhfX5OSiFVYwQzQbr+0JXqN1m1bKlWQLyA33eczwCyQ23Wls5xglSeLMocnjgUV+guGn9hGoM0C9EFDO+6YCfOiNHwVxEZjIG5IUNn8Jjim25UtgRAWwYEK8MysJV+VUcWgAzUFO4foSh9bkD+6AV+tmrPFsqj+7sZcrNevltWWZ8DR0+Yx0E+T8DV/7vb7tltZi1Dgt0pDRNGh7uuFeBQ6DkOZ4CXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xKT069lVMAQRzU9nsKMLPA6gzsjFGeFA8wtuDb6+7+k=;
+ b=hJLyFsKOSzjauKusfsh+mzVHyUd6owE//cELFANy7NBP+yZSqsoxX1x35rwVhXjqwrL67+YtMkYUrGH9hDclky5qRyBKYCMrTei25vozG0TgM43bgnZYl114ZyWSOIUkexvHGgm/b0CO6Ppj41O1cXowHb5nvEgBpHfoaMLHqcA+w4PXEsdm0eS4PJRCy2tFbNHkIoSvo1/aUQqH3Co1ss1RqF3EcP2cECT0eNUEblqrI3wU8qn71HgbtWbes8CmazVHwFq2HHlm1i4+mkM2q46SvvVYP2V0sPXpGnqp4uPHB1VuuYPVy4uIMc7rnOTQ9/GCetX9l7ZeMviX+0oLFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL4PR12MB9478.namprd12.prod.outlook.com (2603:10b6:208:58e::9)
+ by IA1PR12MB7589.namprd12.prod.outlook.com (2603:10b6:208:42b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
+ 2024 00:18:44 +0000
+Received: from BL4PR12MB9478.namprd12.prod.outlook.com
+ ([fe80::b90:212f:996:6eb9]) by BL4PR12MB9478.namprd12.prod.outlook.com
+ ([fe80::b90:212f:996:6eb9%6]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
+ 00:18:43 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: linux-mm@kvack.org,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	Hugh Dickins <hughd@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Yu Zhao <yuzhao@google.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH RESEND v3 0/9] Buddy allocator like folio split
+Date: Wed,  4 Dec 2024 19:18:30 -0500
+Message-ID: <20241205001839.2582020-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BN0PR04CA0072.namprd04.prod.outlook.com
+ (2603:10b6:408:ea::17) To BL4PR12MB9478.namprd12.prod.outlook.com
+ (2603:10b6:208:58e::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR12MB9478:EE_|IA1PR12MB7589:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a181ec1-ed6b-48c8-51a1-08dd14c260c2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?H7fu5s/yKE7pvQzQLNo8UOUnSJmN00E227XYceQrXQkTrLx6Q0tfkvjXbp6b?=
+ =?us-ascii?Q?blWLc/1f40VQRY12giN8S+mrP/w/TN86Geky4eC3z2xNk0IcuxIHpPziQ6Ga?=
+ =?us-ascii?Q?g+0RO8/A3WVEXRtEOLQKUhkLg4dEBOteC77X1qMWh8g0nXKuJbZFIgYQhYYa?=
+ =?us-ascii?Q?Yt7F5mlN5j1I6CrMDbSD31YFXIuJ+AU6a+h4hhGxEVYEnavThPAEAkqYTCBf?=
+ =?us-ascii?Q?y6dTKRZ+eloT/iSxrqKD0d1EY/87h6WNsUyZX16EOZhrTTW8ebURuHe1Xmfl?=
+ =?us-ascii?Q?00DufcSjrtLymjHPXWqQfDkmvuzmgvEM9or5ZdTx2EQBlEMWKFS4K9ZSTMwJ?=
+ =?us-ascii?Q?aCWwAHCvwYKVY/N6sjmVmTKSZZVfaO7smduma1AofSpySCvfEPeuWpR2G7or?=
+ =?us-ascii?Q?GYycfETCXPQ03+VY+zh9MZGabuEfbUdWffe3cml0vWjR39ivPhAnHK9eta9L?=
+ =?us-ascii?Q?xr9asVfiNpp5RGVK53f+rT57wJUD5e2MjLjzJHEUX4DeHs2KiSFC75Dd1mkm?=
+ =?us-ascii?Q?xL36GxxyabO2syGp5uIpadRPHu3E6HmVlrG6rwO1i1J+f0V/MlacoGdkrmio?=
+ =?us-ascii?Q?kZAopAFDuen3rep8QffqNjZwJZ7vzb2dvTACq4nD+x6tiWNB3xCxYNkDT2uM?=
+ =?us-ascii?Q?Xf7ZZZvDy/39e5RzIVgkLx7TjUWUt2qwxpISezC4aPuhvZi+H8w75085PUOe?=
+ =?us-ascii?Q?yYq2MqN9sWRvSAhBxKLiVg0CuY05z8QHLlHhJsLHrVay0z7arL1N9gsH9W3+?=
+ =?us-ascii?Q?bnRLBnSX4cazKr3cvEyaq9IW/X9s6BMgCCFKBL8OtSHoVYFdON+sj8mx0omL?=
+ =?us-ascii?Q?m9ndYzgyjalviGfNeLOMs+xYnvx6urtDjQSTw/AQNv/FBwBl6MARJzNNakxJ?=
+ =?us-ascii?Q?f9Wy1GZFvgw4k5iRPkTBoUrGdTb5urivuDMfoKHd8Ly9MaRUMPz/LaYy6v5k?=
+ =?us-ascii?Q?fFgGysNYErQH9/ihECwmMDQ5Be0/YsAxMClNwsz9hFHW5Ob3stvt91ESq8fH?=
+ =?us-ascii?Q?XEYF9oxScvqBGVI5QQdPJjp7JgtLHoqIzF1lvW34FJbiZNFvgi5wDh8ZqvzA?=
+ =?us-ascii?Q?JNCzGjK9WzbWvVX/HsUnI02mBmRuYCA+AWve9mkYmBAUvlwZkQzry5ZVK1+1?=
+ =?us-ascii?Q?BEqneG7Zm9Pty4AzUH4TtGFSHcvau9aGgkcaQPDtwSSqrAzn+Kv6TNwtIJaS?=
+ =?us-ascii?Q?pIu2f5Kl2rsv+3hAtExthu30BkFCyU1R0yDHrnvc42cNQzpiL7QvvU28sT8D?=
+ =?us-ascii?Q?yn/v+B5Im2Gxp6R+dXVIp+t5jERxDAFX5md9wySCOl/HlO46qsqtHa5qz585?=
+ =?us-ascii?Q?mJXMMFHBvS0ZQEd2SLVZ/iQx4yQr/c5EExsGrsmFlH2xV1DSuZGzh74xge+3?=
+ =?us-ascii?Q?bxDUQv8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR12MB9478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mE9mpiIyZt7xqL1ONiA4L6gdEKuJ+yIabfaXceZsLlNFTzwnW2Eyh+EeBBe4?=
+ =?us-ascii?Q?3nlqTLcFLEFmiTqXsMPUdaFDcqZIDdpaMUEuo4XTV+9lFZibLaq/JCpqoijq?=
+ =?us-ascii?Q?PkK8UzkA6sxMfAwmP2gR0ZkED3MDFwVnojS0gVmEDgV81MqC68DzKUgea4W8?=
+ =?us-ascii?Q?g7ezP3yiH2oVpVsJ7D0D1WScKbkVBzIXgZQfAsPhjaUjyIhArftsaq01fNqW?=
+ =?us-ascii?Q?3kzCMU6BR3ZVIZTdP+fMBIJmZSgQlwwVZytHB6yWVqEzJweIuCcIRIK69wZ6?=
+ =?us-ascii?Q?n5adfXO0dgdLJlUkfvBkQEKpkfNkhK5TsVd1uq7RETJLNyB/2PtnOfZCFRgN?=
+ =?us-ascii?Q?RLZ3qoGJbw1DV8F4akgEmq2K4mnvNrhNRbEPpG2HwRSiWKAW73MBTC0rzjUT?=
+ =?us-ascii?Q?lQiGFeN4J2hIC5z5WljRA9vfa5rpQSM4xVxq5xIndjnHjxfjkJXM4PA1XDqy?=
+ =?us-ascii?Q?2599nioQbway+4kOumPokpg1M0fMaoBrfI1G081aGjpuOplHP3W+L2uIOnih?=
+ =?us-ascii?Q?9kRtEzSEYDY093kb+qqKMAd9azcECXHLedfZS/oV7gHgukOpm55n0kfKdSg0?=
+ =?us-ascii?Q?mNz4NUsliC2isHWQ+sZuRhyoFICPhG+Fwx3oVi5tyi58CfKD/tmsMLi3SRGt?=
+ =?us-ascii?Q?8Xktt7n3t+va3r31KqYHlMi/I9bjzhBNWWZ/0tB4zOaUQdfnljO1UiPB4jsG?=
+ =?us-ascii?Q?of9BQlrAHrcJh8/8UwlyjV0wf19F//0nZSFw/0oBpgYXFMBEmQTEFQODD1fU?=
+ =?us-ascii?Q?GxF9SVPBAQfFYrPE2xzNSR4B9O22SlC0+M/4sSf3ompYZw2sQCNX18Tg8yJG?=
+ =?us-ascii?Q?oBkQxpLZPoselhX4KqBshtNQWc9NInhqklQU9WIPzeuLUlQ88Jjoga83OxCx?=
+ =?us-ascii?Q?XeQYp4SQvB5Z4mvHYeCQ3lpmZepfddn3SrZcHg+jgMDbv6NeWoEmhdzaCBgb?=
+ =?us-ascii?Q?LV6Dj8P51Ul6vQRgH+1aovfqzZpjkqrcXVoLBcuzm2D1dFhxSUug+QUgabzD?=
+ =?us-ascii?Q?7YJMNrjltJI7ZEs6IOPv2i+RXB40QNmciqkjztys6Fhrdqsh99UvYJF9AYZK?=
+ =?us-ascii?Q?J4mc9fuI9/EIkfE6rgdcBTvdhlCG9kcXqCc1QoknEXgL1nIP3qdukeJAHHoF?=
+ =?us-ascii?Q?XBeiB2kxGvZyCZdQiXl7kHkw3CK+dLN+nUc4QlDdt6Ic3NMEzHX7fsJlM3si?=
+ =?us-ascii?Q?Ezim7cc/E9Ysz7WgeFKZEsrxwBXPCLoTDKOfM3RwAascMeS+W0VyNMB2AwY5?=
+ =?us-ascii?Q?RVcmr/33bJrHIfqaf70+zx8ZckHernqRGf+UCEAjnlNyWGEDD2eNE1iINqOx?=
+ =?us-ascii?Q?pGoHdDWqi7X7mOfzUwJF7H1j0WIzFv/s2vz2oVj53jWHEj6tzhhjJuertERo?=
+ =?us-ascii?Q?fyNMSVGKuZL1N8ST6sQfNDujpknAzGtFnjbNC0S6Bd3Ho1wvkSRPB/vQk8t2?=
+ =?us-ascii?Q?Jbbdu4R0WEbTdSM+dkD3f3+elr82Ti5JCYgkX0GTOQbMRcc57Dwnbo+eEdyF?=
+ =?us-ascii?Q?Dlj6JOHDLGOGvVn01Xx9f5yRyNpGc4Q96ToKoBwTJAY6Agq6cOFlYVf0953y?=
+ =?us-ascii?Q?V0KqdCgH3AbXt5q+5t3Xr143PpI9cBSg45fsiRfW?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a181ec1-ed6b-48c8-51a1-08dd14c260c2
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR12MB9478.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 00:18:43.7150
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /bpgDIyJJvUnOlpOMdpozpo7UkyRsl+M5ntNZoBnJca/BlEkUItxaR1aOU0LAzGs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7589
 
-On Tue, Dec 03, 2024 at 06:05:10PM +0000, Lorenzo Stoakes wrote:
->Right now fs/exec.c invokes expand_downwards(), an otherwise internal
->implementation detail of the VMA logic in order to ensure that an arg page
->can be obtained by get_user_pages_remote().
->
->In order to be able to move the stack expansion logic into mm/vma.c in
->order to make it available to userland testing we need to find an
+Hi all
 
-Looks the second "in order" is not necessary.
+This patchset adds a new buddy allocator like large folio split to the total
+number of resulting folios, the amount of memory needed for multi-index xarray
+split, and keep more large folios after a split. It is on top of
+linux-next-20241204 and just a resend of v3.
 
-Not a native speaker, just my personal feeling.
+Instead of duplicating existing split_huge_page*() code, __folio_split()
+is introduced as the shared backend code for both
+split_huge_page_to_list_to_order() and folio_split(). __folio_split()
+can support both uniform split and buddy allocator like split. All
+existing split_huge_page*() users can be gradually converted to use
+folio_split() if possible. In this patchset, I converted
+truncate_inode_partial_folio() to use folio_split().
 
->alternative approach here.
->
->We do so by providing the mmap_read_lock_maybe_expand() function which also
->helpfully documents what get_arg_page() is doing here and adds an
->additional check against VM_GROWSDOWN to make explicit that the stack
->expansion logic is only invoked when the VMA is indeed a downward-growing
->stack.
->
->This allows expand_downwards() to become a static function.
->
->Importantly, the VMA referenced by mmap_read_maybe_expand() must NOT be
->currently user-visible in any way, that is place within an rmap or VMA
->tree. It must be a newly allocated VMA.
->
->This is the case when exec invokes this function.
->
->Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->---
-> fs/exec.c          | 14 +++---------
-> include/linux/mm.h |  5 ++---
-> mm/mmap.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++-
-> 3 files changed, 58 insertions(+), 15 deletions(-)
->
->diff --git a/fs/exec.c b/fs/exec.c
->index 98cb7ba9983c..1e1f79c514de 100644
->--- a/fs/exec.c
->+++ b/fs/exec.c
->@@ -205,18 +205,10 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
-> 	/*
-> 	 * Avoid relying on expanding the stack down in GUP (which
-> 	 * does not work for STACK_GROWSUP anyway), and just do it
->-	 * by hand ahead of time.
->+	 * ahead of time.
-> 	 */
->-	if (write && pos < vma->vm_start) {
->-		mmap_write_lock(mm);
->-		ret = expand_downwards(vma, pos);
->-		if (unlikely(ret < 0)) {
->-			mmap_write_unlock(mm);
->-			return NULL;
->-		}
->-		mmap_write_downgrade(mm);
->-	} else
->-		mmap_read_lock(mm);
->+	if (!mmap_read_lock_maybe_expand(mm, vma, pos, write))
->+		return NULL;
-> 
-> 	/*
-> 	 * We are doing an exec().  'current' is the process
->diff --git a/include/linux/mm.h b/include/linux/mm.h
->index 4eb8e62d5c67..48312a934454 100644
->--- a/include/linux/mm.h
->+++ b/include/linux/mm.h
->@@ -3313,6 +3313,8 @@ extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admi
-> extern int insert_vm_struct(struct mm_struct *, struct vm_area_struct *);
-> extern void exit_mmap(struct mm_struct *);
-> int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift);
->+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
->+				 unsigned long addr, bool write);
-> 
-> static inline int check_data_rlimit(unsigned long rlim,
-> 				    unsigned long new,
->@@ -3426,9 +3428,6 @@ extern unsigned long stack_guard_gap;
-> int expand_stack_locked(struct vm_area_struct *vma, unsigned long address);
-> struct vm_area_struct *expand_stack(struct mm_struct * mm, unsigned long addr);
-> 
->-/* CONFIG_STACK_GROWSUP still needs to grow downwards at some places */
->-int expand_downwards(struct vm_area_struct *vma, unsigned long address);
->-
-> /* Look up the first VMA which satisfies  addr < vm_end,  NULL if none. */
-> extern struct vm_area_struct * find_vma(struct mm_struct * mm, unsigned long addr);
-> extern struct vm_area_struct * find_vma_prev(struct mm_struct * mm, unsigned long addr,
->diff --git a/mm/mmap.c b/mm/mmap.c
->index f053de1d6fae..4df38d3717ff 100644
->--- a/mm/mmap.c
->+++ b/mm/mmap.c
->@@ -1009,7 +1009,7 @@ static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
->  * vma is the first one with address < vma->vm_start.  Have to extend vma.
->  * mmap_lock held for writing.
->  */
->-int expand_downwards(struct vm_area_struct *vma, unsigned long address)
->+static int expand_downwards(struct vm_area_struct *vma, unsigned long address)
-> {
-> 	struct mm_struct *mm = vma->vm_mm;
-> 	struct vm_area_struct *prev;
->@@ -1940,3 +1940,55 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
-> 	/* Shrink the vma to just the new range */
-> 	return vma_shrink(&vmi, vma, new_start, new_end, vma->vm_pgoff);
-> }
->+
->+#ifdef CONFIG_MMU
->+/*
->+ * Obtain a read lock on mm->mmap_lock, if the specified address is below the
->+ * start of the VMA, the intent is to perform a write, and it is a
->+ * downward-growing stack, then attempt to expand the stack to contain it.
->+ *
->+ * This function is intended only for obtaining an argument page from an ELF
->+ * image, and is almost certainly NOT what you want to use for any other
->+ * purpose.
->+ *
->+ * IMPORTANT - VMA fields are accessed without an mmap lock being held, so the
->+ * VMA referenced must not be linked in any user-visible tree, i.e. it must be a
->+ * new VMA being mapped.
->+ *
->+ * The function assumes that addr is either contained within the VMA or below
->+ * it, and makes no attempt to validate this value beyond that.
->+ *
->+ * Returns true if the read lock was obtained and a stack was perhaps expanded,
->+ * false if the stack expansion failed.
->+ *
->+ * On stack expansion the function temporarily acquires an mmap write lock
->+ * before downgrading it.
->+ */
->+bool mmap_read_lock_maybe_expand(struct mm_struct *mm,
->+				 struct vm_area_struct *new_vma,
->+				 unsigned long addr, bool write)
->+{
->+	if (!write || addr >= new_vma->vm_start) {
->+		mmap_read_lock(mm);
->+		return true;
->+	}
->+
->+	if (!(new_vma->vm_flags & VM_GROWSDOWN))
->+		return false;
->+
+THP tests in selftesting passed for split_huge_page*() runs and I also
+tested folio_split() for anon large folio, pagecache folio, and
+truncate.
 
-In expand_downwards() we have this checked.
+Changelog
+===
+From V2[3]:
+1. Incorporated all the feedback from Kirill[4].
+2. Used GFP_NOWAIT for xas_nomem().
+3. Tested the code path when xas_nomem() fails.
+4. Added selftests for folio_split().
+5. Fixed no THP config build error.
 
-Maybe we just leave this done in one place is enough?
+From V1[2]:
+1. Split the original patch 1 into multiple ones for easy review (per
+   Kirill).
+2. Added xas_destroy() to avoid memory leak.
+3. Fixed nr_dropped not used error (per kernel test robot).
+4. Added proper error handling when xas_nomem() fails to allocate memory
+   for xas_split() during buddy allocator like split.
 
->+	mmap_write_lock(mm);
->+	if (expand_downwards(new_vma, addr)) {
->+		mmap_write_unlock(mm);
->+		return false;
->+	}
->+
->+	mmap_write_downgrade(mm);
->+	return true;
->+}
->+#else
->+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
->+				 unsigned long addr, bool write)
->+{
->+	return false;
->+}
->+#endif
->-- 
->2.47.1
->
+From RFC[1]:
+1. Merged backend code of split_huge_page_to_list_to_order() and
+   folio_split(). The same code is used for both uniform split and buddy
+   allocator like split.
+2. Use xas_nomem() instead of xas_split_alloc() for folio_split().
+3. folio_split() now leaves the first after-split folio unlocked,
+   instead of the one containing the given page, since
+   the caller of truncate_inode_partial_folio() locks and unlocks the
+   first folio.
+4. Extended split_huge_page debugfs to use folio_split().
+5. Added truncate_inode_partial_folio() as first user of folio_split().
+
+
+Design
+===
+
+folio_split() splits a large folio in the same way as buddy allocator
+splits a large free page for allocation. The purpose is to minimize the
+number of folios after the split. For example, if user wants to free the
+3rd subpage in a order-9 folio, folio_split() will split the order-9 folio
+as:
+O-0, O-0, O-0, O-0, O-2, O-3, O-4, O-5, O-6, O-7, O-8 if it is anon
+O-1,      O-0, O-0, O-2, O-3, O-4, O-5, O-6, O-7, O-9 if it is pagecache
+Since anon folio does not support order-1 yet.
+
+The split process is similar to existing approach:
+1. Unmap all page mappings (split PMD mappings if exist);
+2. Split meta data like memcg, page owner, page alloc tag;
+3. Copy meta data in struct folio to sub pages, but instead of spliting
+   the whole folio into multiple smaller ones with the same order in a
+   shot, this approach splits the folio iteratively. Taking the example
+   above, this approach first splits the original order-9 into two order-8,
+   then splits left part of order-8 to two order-7 and so on;
+4. Post-process split folios, like write mapping->i_pages for pagecache,
+   adjust folio refcounts, add split folios to corresponding list;
+5. Remap split folios
+6. Unlock split folios.
+
+
+__folio_split_without_mapping() and __split_folio_to_order() replace
+__split_huge_page() and __split_huge_page_tail() respectively.
+__folio_split_without_mapping() uses different approaches to perform
+uniform split and buddy allocator like split:
+1. uniform split: one single call to __split_folio_to_order() is used to
+   uniformly split the given folio. All resulting folios are put back to
+   the list after split. The folio containing the given page is left to
+   caller to unlock and others are unlocked.
+
+2. buddy allocator like split: old_order - new_order calls to
+   __split_folio_to_order() are used to split the given folio at order N to
+   order N-1. After each call, the target folio is changed to the one
+   containing the page, which is given via folio_split() parameters.
+   After each call, folios not containing the page are put back to the list.
+   The folio containing the page is put back to the list when its order
+   is new_order. All folios are unlocked except the first folio, which
+   is left to caller to unlock.
+
+
+Patch Overview
+===
+1. Patch 1 added __folio_split_without_mapping() and
+   __split_folio_to_order() to prepare for moving to new backend split
+   code.
+
+2. Patch 2 replaced __split_huge_page() with
+   __folio_split_without_mapping() in split_huge_page_to_list_to_order().
+
+3. Patch 3 added new folio_split().
+
+4. Patch 4 removed __split_huge_page() and __split_huge_page_tail().
+
+5. Patch 5 added a new in_folio_offset to split_huge_page debugfs for
+   folio_split() test.
+
+6. Patch 6 used folio_split() for truncate operation.
+
+7. Patch 7-9 fixed split_huge_page selftests and added folio_split()
+   tests.
+
+
+Any comments and/or suggestions are welcome. Thanks.
+
+[1] https://lore.kernel.org/linux-mm/20241008223748.555845-1-ziy@nvidia.com/
+[2] https://lore.kernel.org/linux-mm/20241028180932.1319265-1-ziy@nvidia.com/
+[3] https://lore.kernel.org/linux-mm/20241101150357.1752726-1-ziy@nvidia.com/
+[4] https://lore.kernel.org/linux-mm/e6ppwz5t4p4kvir6eqzoto4y5fmdjdxdyvxvtw43ncly4l4ogr@7ruqsay6i2h2/
+
+*** BLURB HERE ***
+
+Zi Yan (9):
+  mm/huge_memory: add two new (not yet used) functions for folio_split()
+  mm/huge_memory: move folio split common code to __folio_split()
+  mm/huge_memory: add buddy allocator like folio_split()
+  mm/huge_memory: remove the old, unused __split_huge_page()
+  mm/huge_memory: add folio_split() to debugfs testing interface.
+  mm/truncate: use folio_split() for truncate operation.
+  selftests/mm: use selftests framework to print test result.
+  selftests/mm: add tests for splitting pmd THPs to all lower orders.
+  selftests/mm: add tests for folio_split(), buddy allocator like split.
+
+ include/linux/huge_mm.h                       |  18 +
+ mm/huge_memory.c                              | 693 ++++++++++++------
+ mm/truncate.c                                 |   5 +-
+ .../selftests/mm/split_huge_page_test.c       |  70 +-
+ 4 files changed, 511 insertions(+), 275 deletions(-)
 
 -- 
-Wei Yang
-Help you, Help me
+2.45.2
+
 
