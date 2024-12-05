@@ -1,148 +1,148 @@
-Return-Path: <linux-kernel+bounces-433789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13889E5D0B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:26:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FFC9E5D13
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:27:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4514816CC94
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BEF281E02
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36C9226EC5;
-	Thu,  5 Dec 2024 17:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C3922577D;
+	Thu,  5 Dec 2024 17:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lEASM+yB"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c6HWnIL8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7639D2EB1F;
-	Thu,  5 Dec 2024 17:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62BE224AFC
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733419570; cv=none; b=pJzRSQ/k3jiEYy2LDfYr15T+CIaBLfO64VLLD74WUMF5oE7aa3xz9gorKi+LBE3uaIC2HqNLIlR7kPV4VKmLCNyNkyqiGwffWxyPRUX+143v39YKnMdzTOKApo5MOj4KVC2aeUrqG1ARaRTDQSuzF75mTXrpDsakvXYcKQ9LhRQ=
+	t=1733419650; cv=none; b=O/6+3473aayDoIe9WyAaubZuBtWHQoNVypXAZnjDQu5a3VlDi7XtbJyjMZXMatdED7jtjzWgqGhATa/PKzOwMn+QPIPh0+H81SaIwR1Q/Oi8RnLoFUWsau29/maLnYzXzI6TEk6VqsCB3IudpR1pLNmR+tuz0/J2DsXDNSu3UUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733419570; c=relaxed/simple;
-	bh=P5ccLN6eWJniFJTYGSj3ZMEMZKKSoNechfgI1QFAHSg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpM/JQCX5SFpxPlryzi+Cl4BXDuqzFPHNRCx8aKTtWEGprF96g8Z4a6tmU5YAshF36KDINjhQzkg+OnwUbDoK7HRsPh6aZOSehX7lV0Goy69sV/9fl9OtQnos1+0PTN9hV/vRhIz4FPB0l/eGIGjuIJFdY54+FB0qEo9H50Q0rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lEASM+yB; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a1833367so7653585e9.1;
-        Thu, 05 Dec 2024 09:26:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733419567; x=1734024367; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=O5mhDTiQCniX4dOvULwv2bY5E40qxNFbSX0TtTudBO0=;
-        b=lEASM+yB38pSz9a5T/RIVsbK36Tu9Ip41yma15QSaljKIr2M+Dzot8v3BDsve+o3/3
-         pNEdAgUNn9Jcu3VX+VEHPq3lZQFerzKDGYRWWmTT+G24D7s1Wb/afyWerg25d3yD1lkr
-         fuKxUX1/sqkT6MfF/PyUSVtCpczWl/ZPwAocarYKYXVZhoK8c8mU44hGfmHqYWmpzgna
-         6OrfCLDfAv3pPg4K3LxtR15gAt9D0qnwyYQ4f5ZYOZ/6kBqvb+NKVInx7ewcCE+WhV2U
-         hdjwtEfYIW3g3PjjveSz7bW7jo2xI37BEo09KdMOz8ELEsG1RWF+VBm48u+5jEYCIsfg
-         nahw==
+	s=arc-20240116; t=1733419650; c=relaxed/simple;
+	bh=fF2LhtfF45ILB8O3xln5CQMo1Ph6TXBGzfylj3dTqI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R8GLZKPxxxEPMJleInFdnFY1senmREGmUXGAcZTp+v1EK7KALYpOoUpd22K3l0L3H9dvtK4RoAStPMUYNOh6lff6EmnQuTArd2NisOwdjQKs7ciB69PxwT75yo2IhB0+QLWqkRBoDPNojfws67JD2n1aGs/Wm4R0UCh0yHIdNxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c6HWnIL8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BorIJ027697
+	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 17:27:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fj1DwXHWgW6cIws9PIYZhpFQWc7IBvxR8/G4nwNPL70=; b=c6HWnIL8lwL49g5q
+	MuxA763cZ+2VCknfeNDQKVHyOQ3+P2VaVoOaQnMh8BWFIOpBRwYs1uAjHtLYpYig
+	gHOfFOHnC9mCkB2jccPXAkYxFKH7K3tT4m+ZyWRLMScLJ8B6OzckmgoqPAxsnFz4
+	67mxhCMUH7J9kVgtPeKwRP2ZfDjgPokd8uW1LqgkxGmfuD4C6q4riq8jfdtYufYR
+	A7Sj5t43/pu8M8Imu2W2j6O4yn5t1XL23+UN2TCgNr+MUojHX52dBPL3rgfnS0Bs
+	QywoxgsJdHLPW2SvpOpy1DIMWAa/QD6NbsqlhSKEwzDHzEEtclaFZKWXogyRH2vM
+	bu8UMA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnmgxgu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 17:27:27 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-46680667b3aso2798271cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:27:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733419567; x=1734024367;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O5mhDTiQCniX4dOvULwv2bY5E40qxNFbSX0TtTudBO0=;
-        b=udGi9jjUpPn1fFdUk1Wb8JLLkOXakRSAOnT0oAsZ9/iTdDnAoHOTmoKfkMQW29tf/s
-         jh2RabYhwE5nrm1tJfy52tTUB3EJ7LIxqvDX31jAbUpAUFybO2BiI91gHXz/1Ggo9Kv8
-         EzREn+RrkNokzbLnmftEvhj/FfracXLTsYUXl/APk7Hz5YjQKuaSsOwbfoCm5710bwVy
-         fmu35P59nhurNQUrJXdjtxp+J7pkVNCWL2Ki1Q01O0PBdsbS1hYpO7MYgq/t5mErQm8f
-         FxNRUSUs5HGWSSEP77xtmZve3HZXr1S7xoRB9bgckMHo8sNu1pwzvSYCfvZlcIlxjHe2
-         jgyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaf56GdAFOIax+tEQ+VM7DYrlG2a6m3h+Sk1vRQH6+H/YhNgDzEKfNaPd2lFCSlWZYnMJZwnXw2kLk1X31@vger.kernel.org, AJvYcCVbAUlGNIwmEdG78eQtUrhMV69nETcbAztro7oeNOHcy741mjLFsprJnYNSgg8P4uqFowyIdtmq@vger.kernel.org, AJvYcCXu5mMO2L0xg1BYCB5qCMdkRE27/G9vhCJPvLO1SXe2a1nbM5lcgfXnjN94cB+uXuXlVWl19yF9hvFT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp0iyRGmgS8X8dn1RE8r/nHqnoKjJJZ8Ke7ZsdmheBnQR8UpcB
-	1ge5fozOWqxV+l3lLnbA23/vIX6zDw+95SBYG7vxYNOX3GBu8IEw
-X-Gm-Gg: ASbGncvH6MKbc6t2eVIvZWfdk6kIx4+p29OJaX3Wd8oyvjoPXsFTeqKUKYrU51q9rek
-	EdEXS1KXYU/DchyYvBVEreUGicGoZtWrCZjtgRDpvU0a/J+BgdTBPQhtZT3J35khVao6i9h4c1Z
-	b4hHXZtXMWKNhrwpyIJxTDbX5l2mRlSvRN4NC/DTKj5somtWgELrSSZCZNdzYgQdVrogL51Cqcq
-	Eh9HtgtnQwqri9cwD+aSV7ryw/5srQlBO5lE0YQUE22lX+j0Y6qCZHODolBkHcGH4ntwPx1sefz
-	VloxHQ==
-X-Google-Smtp-Source: AGHT+IGWBr7m/eK/LTokHoFmkVp6cSV6bU7ybbZzYTsPTC5V+3f3UIT5XgVkJ22lghZ4+yW3kvJwBg==
-X-Received: by 2002:a05:600c:1906:b0:431:7ccd:ff8a with SMTP id 5b1f17b1804b1-434ddee0503mr1062795e9.14.1733419566414;
-        Thu, 05 Dec 2024 09:26:06 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526b577sm68800725e9.3.2024.12.05.09.26.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 09:26:05 -0800 (PST)
-Message-ID: <6751e22d.050a0220.3435c6.57de@mx.google.com>
-X-Google-Original-Message-ID: <Z1HiKXfpdluKA0_w@Ansuel-XPS.>
-Date: Thu, 5 Dec 2024 18:26:01 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-References: <20241205145142.29278-1-ansuelsmth@gmail.com>
- <20241205145142.29278-4-ansuelsmth@gmail.com>
- <20241205170629.ww7qcvgbqdf5ipcj@skbuf>
+        d=1e100.net; s=20230601; t=1733419647; x=1734024447;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fj1DwXHWgW6cIws9PIYZhpFQWc7IBvxR8/G4nwNPL70=;
+        b=HwsW4sAka2koPwcboJmASl7Ik5XbcIEJ14KhrsZlOxus01U8zR5IMSy9+U0wumlcro
+         fp8NqbbyhGjjLCillGk5GjrcGitmWuMm08+HwmVRvkwIwpvNrbNgNINKqrHN+fIo6HXE
+         hAAPXRzR5LFoYoTrXQ/uRqTZpeXSgbMIKUfXoJ23B2pc/uIaiKYB3d9zRm6jZLPrNX9Q
+         6EV5GeYUWimT3kYMI/Z0jfGz+rW2b+7VPwO7X0YyUKioZtY4Mg5VxDc8RR3Zed7vidPn
+         nYOl0jImGlZwe7C3cRYv4W8KxCqIEbi3a+Di3zemx1cmw/tNDOq1qWBpU4WurB7ZobXx
+         5tjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmm58rKNLYvXlgEtSXWuCTQIIA38rFtLNEMfhRT5u0EBQqQYQuAEfzlO5wMLajhRXDr2uX6WlLPwzRaZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZDgkLrnzef4uILI7DlMm64t9vZZn/moeJqMI1fzImesexhlw5
+	5c+c55w8J5OoBUOj9KnXvyAPT5qDwW0/fLwasFTf6XtNtE+xPVZkoIaaxh29lACy9OlJ/d+/ry+
+	MKdTEndbdCKFTxl4fHIkq5bRNfCB4P3hs1FnYeT3cN5ztxgukhJE7DBk0xOB+YYg=
+X-Gm-Gg: ASbGncsOlAp2MHxvLwjkUuEgLKyGcOLQatD7WzJb0uNiidMKee1Ofwftlyvk4DfND1p
+	JPsNkPZ2MDZWeankAUu7ScGmsMUCIB+7CNdBcex27qN44ePw1qeZsYJ2xBDdAXDwg8C0KAyy6/B
+	J5oIozXXS4uQtaOrc+gbzQCtPGINKPRU1OEo1x7CPeBrzXvwP8bKOWac4VaOH5YqDXKXL3YgWHK
+	8Q0GSQmlNIYlBWbeoX4TvpsJMedpoIyvOOPGWzEQXf+B55Ii7U8YzfecYx5gglHQGzvHrTxo529
+	K2EirZS+qVrLtxjkXlDRIh9kmBx59Bc=
+X-Received: by 2002:a05:622a:cf:b0:461:4467:14bb with SMTP id d75a77b69052e-46734ca2a7fmr95091cf.2.1733419646867;
+        Thu, 05 Dec 2024 09:27:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE9jw9d6QQQ742d1X4H1GTd0gJ/jXukZyEhfsj2yNb2yqqSlyALEbJIukWb/H2Gua4FXrmiPw==
+X-Received: by 2002:a05:622a:cf:b0:461:4467:14bb with SMTP id d75a77b69052e-46734ca2a7fmr94721cf.2.1733419646416;
+        Thu, 05 Dec 2024 09:27:26 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b608faesm1042160a12.44.2024.12.05.09.27.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 09:27:24 -0800 (PST)
+Message-ID: <3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com>
+Date: Thu, 5 Dec 2024 18:27:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205170629.ww7qcvgbqdf5ipcj@skbuf>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
+ definition
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+        Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-4-54075d75f654@linaro.org>
+ <02dd5593-38ba-4344-aa64-0913eca45808@oss.qualcomm.com>
+ <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
+ <90fc1097-d353-4b6a-bcbf-81f8a8e24390@nexus-software.ie>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <90fc1097-d353-4b6a-bcbf-81f8a8e24390@nexus-software.ie>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 3rA2ItFt-7QqVru-0v2wKPwrQe54Pz1K
+X-Proofpoint-GUID: 3rA2ItFt-7QqVru-0v2wKPwrQe54Pz1K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=905 priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050128
 
-On Thu, Dec 05, 2024 at 07:06:29PM +0200, Vladimir Oltean wrote:
-> On Thu, Dec 05, 2024 at 03:51:33PM +0100, Christian Marangi wrote:
-> > +	.port_fdb_add = an8855_port_fdb_add,
-> > +	.port_fdb_del = an8855_port_fdb_del,
-> > +	.port_fdb_dump = an8855_port_fdb_dump,
-> > +	.port_mdb_add = an8855_port_mdb_add,
-> > +	.port_mdb_del = an8855_port_mdb_del,
+On 2.12.2024 4:30 PM, Bryan O'Donoghue wrote:
+> On 02/12/2024 15:02, Dmitry Baryshkov wrote:
+>>>> +            clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+>>> This clock is not registered with the CCF
+>> Isn't that be going to be handled by the CCF on its own (like orphans,
+>> etc)?
 > 
-> Please handle the "struct dsa_db" argument of these functions, so that
-> you can turn on ds->fdb_isolation. It is likely that instead of a single
-> AN8855_FID_BRIDGED, there needs to be a unique FID allocated for each
-> VLAN-unaware bridge in order for their FDBs to be isolated from each
-> other, and so that the same MAC address could live under both bridges.
+> For refence this is always-on ATM.
+> 
+> drivers/clk/qcom/gcc-x1e80100.c:    qcom_branch_set_clk_en(regmap, 0x26004); /* GCC_CAMERA_AHB_CLK */
 
-Mh ok, I hoped we could first have the base DSA driver merged before
-starting to applying these kind of feature.
+Okay let's keep it asis and call this a Linux impl detail
 
-Concept looks handy, ideally I can just assign one ID for each port
-like:
-port 1 -> FIB 1
-port 2 -> FIB 1
-port 3 -> FIB 2
-
-Question:
-Ports of the same bridge should have the same FIB?
-
-What I need to check is how the switch handle this for learning. Does
-the switch correctly create FDB entry with the right FIB? If that's not
-the case then I think assisted_learning is needed and HW Learn can't be
-used?
-
-(I still need to check if I can assign a default FIB for a port...
-Currently the STP register are 2 bit for each FIB id, so 16 different
-FIB are possible)
-
-Also do we have a script for selft tests? I remember there was one back
-in the days for fdb isolation?
-
--- 
-	Ansuel
+Konrad
 
