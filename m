@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-432486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005C49E4BE7
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A67A9E4BE6
 	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:37:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3B01881605
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442D2285466
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B3E185955;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7212D185B5F;
 	Thu,  5 Dec 2024 01:36:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F8E1422AB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19CE13774B;
 	Thu,  5 Dec 2024 01:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733362615; cv=none; b=OknzCGzBrYI9fpBMM+/BdcKgZ+JE7W5ou4Df1eBKV91rHF82QQLqnqyIC0mLxmYCYT4/PrY1HBYWR1NiIXPV87YGAU9Pse6CWPxAdlQrIvJiJsr5iWnsyj/hFhSQA5YNmyMq9H+KrSdvo7Tgx566HBWZgr35JlivCDe+CJNLfAU=
+	t=1733362615; cv=none; b=KKIrN5fVaPlekEjQ7vdXb+42sRUTZJ1w+2q1jjKyx0JghFb5ERniHWfPuVtoU6K5RohZijj63qyq8x89CAQBgGCzyLmNYS/uBTuXIQRaZ6XAWjy/T3pr6tXbGRJyai8LnzZBn56P36VX2WsWL2Y/TrJjsBefEIuWNE8tirqvq2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733362615; c=relaxed/simple;
-	bh=1Mjv9d0/DHrepgcPmPzR0ts/ogXRlZNwutiizS2SQ8s=;
+	bh=8tssuylfPLPmr02Q+MVs43IA9KdONYdAu9ILMHx2j2k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JR+FYdoUPRV9VgXC8ehZPgJjGW8FjHIYpN/q13pxK84jKJel0PIDuuCjxhJh6bRf6PrlX9hTsm6PyKnCYDzQhfpFcjShWJ2pqsMMUb3sSbfVZ/K19BinFLMszROpiCO+DbaZfFaHVJRyi1JGHObwyW4zBbadTM0lmuYgX4wJPDY=
+	 MIME-Version:Content-Type; b=QUH/CXuPxlHwXC6Z3ICmiliF2AMZPtN4lqX1vW594OoylExbmW402ImqWsd/TG+IL4E1FsRFYLj0PyVGu44+Smkyjqpr7TyHR4LYdtTPx/C9kBSEAQ2CbXzuTxo1TpWcqSBWwQRqDHc36/dCEfAWP5FSkImkF2Mfd2laB+QS7zw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BDBDC4CEE0;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7174AC4CED2;
 	Thu,  5 Dec 2024 01:36:55 +0000 (UTC)
 Received: by mercury (Postfix, from userid 1000)
-	id 94C2D1060503; Thu, 05 Dec 2024 02:36:52 +0100 (CET)
+	id 825781060501; Thu, 05 Dec 2024 02:36:52 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Cs=C3=B3k=C3=A1s=2C_Bence?= <csokas.bence@prolan.hu>
-Cc: Samuel Holland <samuel@sholland.org>, 
- Sebastian Reichel <sre@kernel.org>
-In-Reply-To: <20241119180741.2237692-1-csokas.bence@prolan.hu>
-References: <20241119180741.2237692-1-csokas.bence@prolan.hu>
-Subject: Re: (subset) [PATCH v5 1/8] power: ip5xxx_power: Use regmap_field
- API
-Message-Id: <173336261259.1429662.11543418848764178684.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ Thomas Antoine <t.antoine@uclouvain.be>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241203-max1720x-charge-full-prop-v1-1-b02776b43f17@liebherr.com>
+References: <20241203-max1720x-charge-full-prop-v1-1-b02776b43f17@liebherr.com>
+Subject: Re: [PATCH] power: supply: max1720x: add charge full property
+Message-Id: <173336261251.1429662.11650897169804550042.b4-ty@collabora.com>
 Date: Thu, 05 Dec 2024 02:36:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,25 +50,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 19 Nov 2024 19:07:33 +0100, Csókás, Bence wrote:
-> The IP53xx series [1] has a much different register
-> layout than the 51xx/52xx [2] currently supported
-> by this driver. To accommodate supporting the former,
-> refactor the code to use the flexible regmap_field API.
+On Tue, 03 Dec 2024 09:04:36 +0100, Dimitri Fedrau wrote:
+> Charge full holds the calculated full capacity of the cell based on all
+> inputs from the ModelGauge m5 algorithm including empty compensation. A
+> new full-capacity value is calculated continuously as application
+> conditions change.
 > 
-> [1] https://sharvielectronics.com/wp-content/uploads/2021/07/IP5306-I2C-registers.pdf
-> [2] https://www.windworkshop.cn/wp-content/uploads/2022/04/IP5209-IP5109-IP5207-IP5108-I2C-registers.pdf
 > 
-> [...]
 
 Applied, thanks!
 
-[8/8] power: ip5xxx_power: Add support for IP5306
-      commit: 39f3bd9c9a27d526858da153090376decdf7bfea
+[1/1] power: supply: max1720x: add charge full property
+      commit: dc90aa3a72e624a3eb30e61d47c4c501006dfb8b
 
 Best regards,
 -- 
