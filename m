@@ -1,374 +1,258 @@
-Return-Path: <linux-kernel+bounces-434085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4699E6172
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:40:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546889E6178
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C307616A471
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780E91884ADA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4702A1D63EE;
-	Thu,  5 Dec 2024 23:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4504F1D63F0;
+	Thu,  5 Dec 2024 23:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dNh/J5Tr"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y0Xg0REN"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ED649627
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733441988; cv=pass; b=eugYEpYcje6peG6n/HF3eNnocjjqltpT0WA80Tvl/J3Np/Vn8D1ynahj68JedD9bhCZfazh6XQMtSRMnW27OPDF/uQIgTU0Dko5hLxloZ/dUfLknVIH15Td1xQme4yvZv9pntvjB/zE7WbTRzfpeLT9uu8I5aBpW/OYv330MHz0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733441988; c=relaxed/simple;
-	bh=F3i31gE9pRJb39cltRgpiE0G5gadwuqc4kkLi1ABFoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b5d+iTvhmUUpnsb+CGH6etu9rubSKwQZLeR4/Aineuz9XGKG4O1ga1OqHD1JpYrCdmWk4lX3y66lTMal80IEgJaUSCYUlJgBVJq3Dut4H7WY+5oglczlTG7Vqp+WmTutM7JV5xCHdDLDi1QQ6YoOK9ovojtIaAcyyidgkO033aE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dNh/J5Tr; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733441966; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=f2yNdc+HU0iXZna2u7pzZIPqu+jYOea+Ifh33BI/Hn0LgyoZbpEZxXpwnhA471mdQF6+9jFaIM1slEnDv8x/xFA5gbXx/yt0sDZH4rwxy9z0xRnozmYuISAQTgGy1L9BXurV5J58egaswdZcx8LoCNKG/IuTsPbcV2/JUbG68J0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733441966; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LwH3yBZ1S7OJ5jglHEJqbUIEUEgBGwuJ/IW60uvY/lM=; 
-	b=Gq0nb1foPsZCmPp1su/DYmi2ZR4AkJskiH/E2tOpCSVcHK9yfBSLuVK+S/JEu/RGqejcTH7qUD6YCvZepuwppBndmLZtSfmgDJ2vlDSgsB9NUgXhae/k/NTRCeYdJcj+HzShhtykBb+KYD3/Xa+BEChs7drrj60IHISjka0o2oE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733441966;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=LwH3yBZ1S7OJ5jglHEJqbUIEUEgBGwuJ/IW60uvY/lM=;
-	b=dNh/J5TrmyY0U/y/stR8P08Pkwb5Aly+9r3MuTtZfxAlXC7D93wtN8hy+BFOFcd6
-	Gk1mD+9XNew14yxQTqsmpKyTofSFVH7oGaoB3Ot31ci3SuBhxChEiGQDMdRZywHN9Lh
-	ZV8YNhEDlfY9PHPhQ2adxmPBhhcoyuulas8cFD6o=
-Received: by mx.zohomail.com with SMTPS id 173344196396898.49331682214711;
-	Thu, 5 Dec 2024 15:39:23 -0800 (PST)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: kernel@collabora.com,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] drm/panthor: Expose size of driver internal BO's over fdinfo
-Date: Thu,  5 Dec 2024 23:39:07 +0000
-Message-ID: <20241205233915.2180630-1-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6301D54D6
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733442005; cv=none; b=sxO3KtjEbpcHfHvKEooDKPWDpk4gZpNXZ9uN+/LI7nZPbBJHt5IMdnq+duPFC0TkTm8YPiSDs53vCjJ/k+Qk93v4X6iMq0Bt8OsrzI2vmHSKarvIYlHIxQd8RFPeS8QCz2yGL3zUGyeDq/EQuemdTbb+fuKD/hoxDeANowkHpmI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733442005; c=relaxed/simple;
+	bh=xsaP4U5pHbcH6lrCPxKA+1Tf417cCvTSpwmt6Uxm9hU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tulb4fLDpTOb29Rw391ZuJJ8iG/pg/NkxabDXfpd0oLYRzUsrPgpmozD3JspVqNz79YrOcvzkrpKY2y/N6aF/ObExZKr7tegNdvtdrB4inpS5MJpgQPvzaIViHKARbX0/DN/Rnbu1KRECDUmulYUxGMjbBd+m9qebAXEoKXqdLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y0Xg0REN; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d3bbb0f09dso518154a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:40:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733442002; x=1734046802; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L+MB5DA5Lyb0OmXYuKKW+jJvk7Dw23YqpgDd8tDMcjU=;
+        b=y0Xg0RENpO9gdXRlFMP0r1FC7Y9/x4d2OObcDEbL4a04PAq6kiN6NFxOn5QgTnLh/z
+         jVcp4unpMJZZ5J5JGDiPhgcrMrurFcyluGV4rpR4olLU10fo1mLzw+SQZibSzF4+BX/6
+         0bH8G8S5x2JZ1m5srCjS9xGGH5Pkd9S2qiVSj0ggicqkn9pm9XD2HZzDAPvXjDAdjyhk
+         q5dyehYuqMWDyX91rsqr59YSzY4LchbLJWfmIZ0eGRXvWCW0uYaAxz6EjI9LQMe1oUil
+         LH6nP2OznVyWW+VzIcfcTK5FwMWRc/ZYiDWA0MC6vh8l5+RY4TYL8OMlkuzL1nh9b1RI
+         l5fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733442002; x=1734046802;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+MB5DA5Lyb0OmXYuKKW+jJvk7Dw23YqpgDd8tDMcjU=;
+        b=aIi8QgKtut9Beg59J2KYjydpCU8USuaA1uMSKpPgIKIpfd0rsVA095t6ssZ08s+0JR
+         xwppLDgSBkDyfhxeanJQT5uVPrQPkXoUc6dhb9YGsw8CarYojHULOyluHKUdnHJTAK+5
+         C8xikU8o+o1sx/O9tF6Ew5eArWL0twheFLzDhrbUl7Ado+LRUKeGqmhpSJgU7KjraCNc
+         Pkdl/XBRkiOa2681WsZdq+sPJdJziLVsrw9OsmTcAUzNl1JPdVytPGDfzqZrTPtQw+Pt
+         KZ1PFin5HxGmGpVDmkN1WHHRevy29G5Ion6fkkbA82JS4NznBW+eSRKiCqKXXeJGzrHC
+         BRNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbaj7Ao2Nsu0XyCL1mfIew3iWmagsNyX8ePSCs0Xg06gzE95AVyusGm9aMEeLbSU4QDKoDyV84MPgks/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwovRN2wTe3Cr7ydmToK8XIqXeA7d1DDEJKu+0g60/KQXO8SQH1
+	PcIaUIX9N7qn4wm2XLZ/sLuWIerh4Hx+rQ0ND43AD6rtil64SASmv6NP2D0ZK5chXIGNuzm69Ug
+	IGcIR+e2xlpm8gev42oHLV4ibR4IXNLVKvDBD
+X-Gm-Gg: ASbGncvZ9qyu18oJs+j+LQf5cWWECBkdjvefEdL7zMuxm/eJYxO0gxAx7TTOCBFkiiv
+	7yUjtvvV1p08+nl2BAoIIxpH04LNqVfX0c+wF6S6jbWTHwD4dJwgHHU7j62sPbyY=
+X-Google-Smtp-Source: AGHT+IG0eJwol/pjrqooOab5q8PwKWmOD6RpXYtIUF7nN9ABJjk70oRCP9el2KO875OhTIaI5aGYBKKVTIFg4+EW1Cg=
+X-Received: by 2002:a05:6402:4497:b0:5d3:bc56:3b24 with SMTP id
+ 4fb4d7f45d1cf-5d3be65a58bmr639866a12.4.1733442001551; Thu, 05 Dec 2024
+ 15:40:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241112184455.855133-1-ojeda@kernel.org>
+In-Reply-To: <20241112184455.855133-1-ojeda@kernel.org>
+From: "Hong, Yifan" <elsk@google.com>
+Date: Thu, 5 Dec 2024 15:39:25 -0800
+Message-ID: <CAABy=s1u75ywAECbkCmGfyt+Yp5khnF0UVcezA-_BEDWUVrHkw@mail.gmail.com>
+Subject: Re: [PATCH v3] kbuild: rust: add PROCMACROLDFLAGS
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	linux-kbuild@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This will display the sizes of kenrel BO's bound to an open file, which are
-otherwise not exposed to UM through a handle.
+On Tue, Nov 12, 2024 at 10:45=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wr=
+ote:
+>
+> From: HONG Yifan <elsk@google.com>
+>
+> These are flags to be passed when linking proc macros for the Rust
+> toolchain. If unset, it defaults to $(KBUILD_HOSTLDFLAGS).
+>
+> This is needed because the list of flags to link hostprogs is not
+> necessarily the same as the list of flags used to link libmacros.so.
+> When we build proc macros, we need the latter, not the former (e.g. when
+> using a Rust compiler binary linked to a different C library than host
+> programs).
+>
+> To distinguish between the two, introduce this new variable to stand
+> out from KBUILD_HOSTLDFLAGS used to link other host progs.
+>
+> Signed-off-by: HONG Yifan <elsk@google.com>
+> Link: https://lore.kernel.org/r/20241017210430.2401398-2-elsk@google.com
+> [ v3:
+>
+>   - `export`ed the variable. Otherwise it would not be visible in
+>     `rust/Makefile`.
+>
+>   - Removed "additional" from the documentation and commit message,
+>     since this actually replaces the other flags, unlike other cases.
+>
+>   - Added example of use case to documentation and commit message.
+>     Thanks Alice for the details on what Google needs!
+>
+>   - Instead of `HOSTLDFLAGS`, used `KBUILD_HOSTLDFLAGS` as the fallback
+>     to preserve the previous behavior as much as possible, as discussed
+>     with Alice/Yifan. Thus moved the variable down too (currently we
+>     do not modify `KBUILD_HOSTLDFLAGS` elsewhere) and avoided
+>     mentioning `HOSTLDFLAGS` directly in the documentation.
+>
+>   - Fixed documentation header formatting.
+>
+>   - Reworded slightly.
+>
+>          - Miguel ]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+> Masahiro: if Kbuild wants to pick this up, that is great. Otherwise, I am=
+ happy
+> picking this up early next cycle, if you give an `Acked-by` since this is
+> changing the interface for Kbuild users given we are introducing a new
+> environment variable. Thanks!
+>
+> Note that the `or` means if the string is empty, we will use the default =
+rather
+> than nothing. I didn't change that from Yifan's version, but maybe we wan=
+t to do
+> otherwise. Users can still provide e.g. an empty space to avoid any flag.
 
-The sizes recorded are as follows:
- - Per group: suspend buffer, protm-suspend buffer, syncobjcs
- - Per queue: ringbuffer, profiling slots, firmware interface
- - For all heaps in all heap pools across all VM's bound to an open file,
- record size of all heap chuks, and for each pool the gpu_context BO too.
+I am not sure if I understand the implications here.
+https://www.gnu.org/software/make/manual/html_node/Conditional-Functions.ht=
+ml
+says:
 
-This does not record the size of FW regions, as these aren't bound to a
-specific open file and remain active through the whole life of the driver.
+The or function provides a =E2=80=9Cshort-circuiting=E2=80=9D OR operation.=
+ Each
+argument is expanded, in order. If an argument expands to a non-empty
+string the processing stops and the result of the expansion is that
+string. If, after all arguments are expanded, all of them are false
+(empty), then the result of the expansion is the empty string.
 
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_drv.c   | 14 +++++++++-
- drivers/gpu/drm/panthor/panthor_heap.c  | 26 ++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_heap.h  |  2 ++
- drivers/gpu/drm/panthor/panthor_mmu.c   | 35 +++++++++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_mmu.h   |  4 +++
- drivers/gpu/drm/panthor/panthor_sched.c | 26 ++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_sched.h |  4 +++
- 7 files changed, 110 insertions(+), 1 deletion(-)
+I am assuming that this means:
+- If PROCMACROLDFLAGS is not empty, KBUILD_PROCMACROLDFLAGS evaluates
+to PROCMACROLDFLAGS
+- Otherwise if KBUILD_HOSTLDFLAGS is not empty,
+KBUILD_PROCMACROLDFLAGS evaluates to KBUILD_HOSTLDFLAGS
+- Otherwise KBUILD_PROCMACROLDFLAGS is set to empty.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index ac7e53f6e3f0..94f1d5f16e35 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -876,7 +876,7 @@ static int panthor_ioctl_vm_create(struct drm_device *ddev, void *data,
- 	if (!drm_dev_enter(ddev, &cookie))
- 		return -ENODEV;
- 
--	ret = panthor_vm_pool_create_vm(ptdev, pfile->vms,  args);
-+	ret = panthor_vm_pool_create_vm(ptdev, pfile->vms, args);
- 	if (ret >= 0) {
- 		args->id = ret;
- 		ret = 0;
-@@ -1457,12 +1457,24 @@ static void panthor_gpu_show_fdinfo(struct panthor_device *ptdev,
- 	drm_printf(p, "drm-curfreq-panthor:\t%lu Hz\n", ptdev->current_frequency);
- }
- 
-+static void panthor_show_internal_memory_stats(struct drm_printer *p, struct drm_file *file)
-+{
-+	struct panthor_file *pfile = file->driver_priv;
-+	struct drm_memory_stats status = {0};
-+
-+	panthor_group_internal_sizes(pfile, &status);
-+	panthor_vm_heaps_size(pfile, &status);
-+
-+	drm_print_memory_stats(p, &status, DRM_GEM_OBJECT_RESIDENT, "internal");
-+}
-+
- static void panthor_show_fdinfo(struct drm_printer *p, struct drm_file *file)
- {
- 	struct drm_device *dev = file->minor->dev;
- 	struct panthor_device *ptdev = container_of(dev, struct panthor_device, base);
- 
- 	panthor_gpu_show_fdinfo(ptdev, file->driver_priv, p);
-+	panthor_show_internal_memory_stats(p, file);
- 
- 	drm_show_memory_stats(p, file);
- }
-diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
-index 3796a9eb22af..e4464c5e93ef 100644
---- a/drivers/gpu/drm/panthor/panthor_heap.c
-+++ b/drivers/gpu/drm/panthor/panthor_heap.c
-@@ -603,3 +603,29 @@ void panthor_heap_pool_destroy(struct panthor_heap_pool *pool)
- 
- 	panthor_heap_pool_put(pool);
- }
-+
-+/**
-+ * panthor_heap_pool_size() - Calculate size of all chunks across all heaps in a pool
-+ * @pool: Pool whose total chunk size to calculate.
-+ *
-+ * This function adds the size of all heap chunks across all heaps in the
-+ * argument pool. It also adds the size of the gpu contexts kernel bo.
-+ * It is meant to be used by fdinfo for displaying the size of internal
-+ * driver BO's that aren't exposed to userspace through a GEM handle.
-+ *
-+ */
-+size_t panthor_heap_pool_size(struct panthor_heap_pool *pool)
-+{
-+	struct panthor_heap *heap;
-+	unsigned long i;
-+	size_t size = 0;
-+
-+	down_write(&pool->lock);
-+	xa_for_each(&pool->xa, i, heap)
-+		size += heap->chunk_size * heap->chunk_count;
-+	up_write(&pool->lock);
-+
-+	size += pool->gpu_contexts->obj->size;
-+
-+	return size;
-+}
-diff --git a/drivers/gpu/drm/panthor/panthor_heap.h b/drivers/gpu/drm/panthor/panthor_heap.h
-index 25a5f2bba445..e3358d4e8edb 100644
---- a/drivers/gpu/drm/panthor/panthor_heap.h
-+++ b/drivers/gpu/drm/panthor/panthor_heap.h
-@@ -27,6 +27,8 @@ struct panthor_heap_pool *
- panthor_heap_pool_get(struct panthor_heap_pool *pool);
- void panthor_heap_pool_put(struct panthor_heap_pool *pool);
- 
-+size_t panthor_heap_pool_size(struct panthor_heap_pool *pool);
-+
- int panthor_heap_grow(struct panthor_heap_pool *pool,
- 		      u64 heap_gpu_va,
- 		      u32 renderpasses_in_flight,
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 7ba8470a7543..e2f27a1667c3 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -1937,6 +1937,41 @@ struct panthor_heap_pool *panthor_vm_get_heap_pool(struct panthor_vm *vm, bool c
- 	return pool;
- }
- 
-+/**
-+ * panthor_vm_heaps_size() - Calculate size of all heap chunks across all
-+ * heaps over all the heap pools in a VM
-+ * @pfile: File.
-+ * @status: Memory status to be updated.
-+ *
-+ * Calculate all heap chunk sizes in all heap pools bound to a VM. If the VM
-+ * is active, record the size as active as well.
-+ */
-+void panthor_vm_heaps_size(struct panthor_file *pfile, struct drm_memory_stats *status)
-+{
-+	struct panthor_vm *vm;
-+	unsigned long i;
-+
-+	if (!pfile->vms)
-+		return;
-+
-+	xa_for_each(&pfile->vms->xa, i, vm) {
-+		size_t size;
-+
-+		mutex_lock(&vm->heaps.lock);
-+		if (!vm->heaps.pool) {
-+			mutex_unlock(&vm->heaps.lock);
-+			continue;
-+		}
-+		size = panthor_heap_pool_size(vm->heaps.pool);
-+		mutex_unlock(&vm->heaps.lock);
-+
-+		status->resident += size;
-+		status->private += size;
-+		if (vm->as.id >= 0)
-+			status->active += size;
-+	}
-+}
-+
- static u64 mair_to_memattr(u64 mair, bool coherent)
- {
- 	u64 memattr = 0;
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
-index 8d21e83d8aba..25f7aea39ed9 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.h
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.h
-@@ -5,10 +5,12 @@
- #ifndef __PANTHOR_MMU_H__
- #define __PANTHOR_MMU_H__
- 
-+#include <linux/types.h>
- #include <linux/dma-resv.h>
- 
- struct drm_exec;
- struct drm_sched_job;
-+struct drm_memory_stats;
- struct panthor_gem_object;
- struct panthor_heap_pool;
- struct panthor_vm;
-@@ -37,6 +39,8 @@ int panthor_vm_flush_all(struct panthor_vm *vm);
- struct panthor_heap_pool *
- panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
- 
-+void panthor_vm_heaps_size(struct panthor_file *pfile, struct drm_memory_stats *status);
-+
- struct panthor_vm *panthor_vm_get(struct panthor_vm *vm);
- void panthor_vm_put(struct panthor_vm *vm);
- struct panthor_vm *panthor_vm_create(struct panthor_device *ptdev, bool for_mcu,
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index ef4bec7ff9c7..6a4d5f63c86b 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -582,6 +582,9 @@ struct panthor_group {
- 	/** @queues: Queues owned by this group. */
- 	struct panthor_queue *queues[MAX_CS_PER_CSG];
- 
-+	/** @bo_sizes: Aggregate size of internal kernel BO's held by the group. */
-+	size_t kbo_sizes;
-+
- 	/**
- 	 * @csg_id: ID of the FW group slot.
- 	 *
-@@ -3305,6 +3308,7 @@ group_create_queue(struct panthor_group *group,
- 		ret = PTR_ERR(queue->ringbuf);
- 		goto err_free_queue;
- 	}
-+	group->kbo_sizes += queue->ringbuf->obj->size;
- 
- 	ret = panthor_kernel_bo_vmap(queue->ringbuf);
- 	if (ret)
-@@ -3319,6 +3323,7 @@ group_create_queue(struct panthor_group *group,
- 		ret = PTR_ERR(queue->iface.mem);
- 		goto err_free_queue;
- 	}
-+	group->kbo_sizes += queue->iface.mem->obj->size;
- 
- 	queue->profiling.slot_count =
- 		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
-@@ -3336,6 +3341,7 @@ group_create_queue(struct panthor_group *group,
- 		ret = PTR_ERR(queue->profiling.slots);
- 		goto err_free_queue;
- 	}
-+	group->kbo_sizes += queue->profiling.slots->obj->size;
- 
- 	ret = panthor_kernel_bo_vmap(queue->profiling.slots);
- 	if (ret)
-@@ -3433,6 +3439,7 @@ int panthor_group_create(struct panthor_file *pfile,
- 		group->suspend_buf = NULL;
- 		goto err_put_group;
- 	}
-+	group->kbo_sizes += group->suspend_buf->obj->size;
- 
- 	suspend_size = csg_iface->control->protm_suspend_size;
- 	group->protm_suspend_buf = panthor_fw_alloc_suspend_buf_mem(ptdev, suspend_size);
-@@ -3441,6 +3448,7 @@ int panthor_group_create(struct panthor_file *pfile,
- 		group->protm_suspend_buf = NULL;
- 		goto err_put_group;
- 	}
-+	group->kbo_sizes += group->protm_suspend_buf->obj->size;
- 
- 	group->syncobjs = panthor_kernel_bo_create(ptdev, group->vm,
- 						   group_args->queues.count *
-@@ -3453,6 +3461,7 @@ int panthor_group_create(struct panthor_file *pfile,
- 		ret = PTR_ERR(group->syncobjs);
- 		goto err_put_group;
- 	}
-+	group->kbo_sizes += group->syncobjs->obj->size;
- 
- 	ret = panthor_kernel_bo_vmap(group->syncobjs);
- 	if (ret)
-@@ -3606,6 +3615,23 @@ void panthor_group_pool_destroy(struct panthor_file *pfile)
- 	pfile->groups = NULL;
- }
- 
-+void panthor_group_internal_sizes(struct panthor_file *pfile, struct drm_memory_stats *status)
-+{
-+	struct panthor_group_pool *gpool = pfile->groups;
-+	struct panthor_group *group;
-+	unsigned long i;
-+
-+	if (IS_ERR_OR_NULL(gpool))
-+		return;
-+
-+	xa_for_each(&gpool->xa, i, group) {
-+		status->resident += group->kbo_sizes;
-+		status->private += group->kbo_sizes;
-+		if (group->csg_id >= 0)
-+			status->active += group->kbo_sizes;
-+	}
-+}
-+
- static void job_release(struct kref *ref)
- {
- 	struct panthor_job *job = container_of(ref, struct panthor_job, refcount);
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
-index 5ae6b4bde7c5..e17c56a40d9c 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.h
-+++ b/drivers/gpu/drm/panthor/panthor_sched.h
-@@ -4,11 +4,14 @@
- #ifndef __PANTHOR_SCHED_H__
- #define __PANTHOR_SCHED_H__
- 
-+#include <linux/types.h>
-+
- struct drm_exec;
- struct dma_fence;
- struct drm_file;
- struct drm_gem_object;
- struct drm_sched_job;
-+struct drm_memory_stats;
- struct drm_panthor_group_create;
- struct drm_panthor_queue_create;
- struct drm_panthor_group_get_state;
-@@ -36,6 +39,7 @@ void panthor_job_update_resvs(struct drm_exec *exec, struct drm_sched_job *job);
- 
- int panthor_group_pool_create(struct panthor_file *pfile);
- void panthor_group_pool_destroy(struct panthor_file *pfile);
-+void panthor_group_internal_sizes(struct panthor_file *pfile, struct drm_memory_stats *status);
- 
- int panthor_sched_init(struct panthor_device *ptdev);
- void panthor_sched_unplug(struct panthor_device *ptdev);
--- 
-2.47.0
+What do you mean by "use the default"?
 
+
+>
+> Yifan/Alice: please double-check the changes. Thanks!
+>
+> v3: see changes above.
+> v2: https://lore.kernel.org/rust-for-linux/20241017210430.2401398-2-elsk@=
+google.com/
+> v1: https://lore.kernel.org/rust-for-linux/20241017200138.2390077-2-elsk@=
+google.com/
+>
+>  Documentation/kbuild/kbuild.rst | 11 +++++++++++
+>  Makefile                        |  3 ++-
+>  rust/Makefile                   |  2 +-
+>  3 files changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuil=
+d.rst
+> index 1796b3eba37b..9cb876ccc363 100644
+> --- a/Documentation/kbuild/kbuild.rst
+> +++ b/Documentation/kbuild/kbuild.rst
+> @@ -91,6 +91,17 @@ HOSTRUSTFLAGS
+>  -------------
+>  Additional flags to be passed to $(HOSTRUSTC) when building host program=
+s.
+>
+> +PROCMACROLDFLAGS
+> +----------------
+> +Flags to be passed when linking Rust proc macros. Since proc macros are =
+loaded
+> +by rustc at build time, they must be linked in a way that is compatible =
+with
+> +the rustc toolchain being used.
+> +
+> +For instance, it can be useful when rustc uses a different C library tha=
+n
+> +the one the user wants to use for host programs.
+> +
+> +If unset, it defaults to the flags passed when linking host programs.
+> +
+>  HOSTLDFLAGS
+>  -----------
+>  Additional flags to be passed when linking host programs.
+> diff --git a/Makefile b/Makefile
+> index a9e723cb0596..3efb001bada5 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -471,6 +471,7 @@ KBUILD_HOSTRUSTFLAGS :=3D $(rust_common_flags) -O -Cs=
+trip=3Ddebuginfo \
+>                         -Zallow-features=3D $(HOSTRUSTFLAGS)
+>  KBUILD_HOSTLDFLAGS  :=3D $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
+>  KBUILD_HOSTLDLIBS   :=3D $(HOST_LFS_LIBS) $(HOSTLDLIBS)
+> +KBUILD_PROCMACROLDFLAGS :=3D $(or $(PROCMACROLDFLAGS),$(KBUILD_HOSTLDFLA=
+GS))
+>
+>  # Make variables (CC, etc...)
+>  CPP            =3D $(CC) -E
+> @@ -595,7 +596,7 @@ export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
+>  export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX=
+ YACC AWK INSTALLKERNEL
+>  export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
+>  export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD
+> -export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS LDFLAGS_=
+MODULE
+> +export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_P=
+ROCMACROLDFLAGS LDFLAGS_MODULE
+>  export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS
+>
+>  export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS KBUILD_L=
+DFLAGS
+> diff --git a/rust/Makefile b/rust/Makefile
+> index f349e7b067ea..9f55c470aa2c 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -344,7 +344,7 @@ quiet_cmd_rustc_procmacro =3D $(RUSTC_OR_CLIPPY_QUIET=
+) P $@
+>        cmd_rustc_procmacro =3D \
+>         $(RUSTC_OR_CLIPPY) $(rust_common_flags) \
+>                 -Clinker-flavor=3Dgcc -Clinker=3D$(HOSTCC) \
+> -               -Clink-args=3D'$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
+> +               -Clink-args=3D'$(call escsq,$(KBUILD_PROCMACROLDFLAGS))' =
+\
+>                 --emit=3Ddep-info=3D$(depfile) --emit=3Dlink=3D$@ --exter=
+n proc_macro \
+>                 --crate-type proc-macro \
+>                 --crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
+>
+> base-commit: d072acda4862f095ec9056979b654cc06a22cc68
+> --
+> 2.47.0
 
