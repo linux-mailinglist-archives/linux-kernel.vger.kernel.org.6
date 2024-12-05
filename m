@@ -1,191 +1,235 @@
-Return-Path: <linux-kernel+bounces-433533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38AF9E59A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:24:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A5D9E59AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DDD8188506A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B7018852F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B7B21C9E0;
-	Thu,  5 Dec 2024 15:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tfIkMmFr"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17460218AA3
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF0421C9FB;
+	Thu,  5 Dec 2024 15:27:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBE016F8F5;
+	Thu,  5 Dec 2024 15:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733412247; cv=none; b=ej0hXRxX1PfvzqNJ1EENB7P1nofhBsrm4IRmcUu7Pa1zyavdwZWnapjhQamWEfPMu8MtTtYd5tIRubLK58C1kPhx150rtrSg1SpzehY9/7npK2DJvosHRxhY5J5zyzl2TTfS2z5ABo0OiNYSDtGw0dj4GGf+o75vvorN2mjrdKw=
+	t=1733412446; cv=none; b=NzgETwXj7YglCyS/IntrguUsPbAta5Rax+uOzxU42x4ng2RikaYDNH81gQ7k3ZPE3xVkJ6++2urDadPsW6a0heVVbNSiS7QFn1Pc2OD4kBcjvilemt/1KlIVdwF4W+20NV0/vhuJOymKqggSfE8Y/jGQE3rTqCRH7PlAp6vSY1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733412247; c=relaxed/simple;
-	bh=LSC/jgyiVOrbbgktq3eRgmmvGdLPsyKU+lKVt6o5sZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jvQqhOrVnVY+7cuC319NbOH3mVgSiBgLB494Q+PBCPyApOlTLIsfLmkW98pwX+bzgpGpSKK927mVs4y6dRAFiHtEbjMG8BUyH6TTgD3JQcA65Cznl+XOLDlwIk4fXG5AvdAY6KdzcuIg5N0MCjmeJmxSw5fRw/V+rJ8LG0AbkfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tfIkMmFr; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385de1a5d6cso51551f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:24:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733412244; x=1734017044; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TeU21f2/gzBOxQVVYAFoJs6zNxfWr5ZjMAtgv/QGkUY=;
-        b=tfIkMmFrjICRlVnGgL2fSSWbBhsGw+DHtwZdHR3dXfhpmlt2KwuKM031h9D7nJaJPf
-         hBrtwq3TUy1QxXmfagCnh3zfJCzuTTy4iN2RE5fcjToSg9USnja3mmmLwpy/KRdOJjEE
-         A5PPtbE9EIoJlCEY+DEtVQ82JQmYRskE+ZkFw9Kw2BEZMGlZU497X/etTcwcR5TdjF3d
-         tz345dA/Z4u83WQ4nXXal/CyJMQGp3RFAc+XMZSpZ3jEAqlPIEhb4omkPf9WKodESATm
-         WPGXaY5DPgaDOIn+kDVzHNBbtgyihamHw8/eBY6WpVaO5hYjVRfahvoHzkAtP7Mtxpkr
-         qcHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733412244; x=1734017044;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TeU21f2/gzBOxQVVYAFoJs6zNxfWr5ZjMAtgv/QGkUY=;
-        b=DbzaQ14SMEPSfnIv5whyPCf+jQ2Xd904JXjmPDiouvyASbxRo0C9aXcEwrDF45Z/BM
-         rMb7scg7/VbgRdaE0wLcACQ2Nm+LcFn/722CNqV7Ef0mO1TulVB9h4LuXGnfUKZl4tC5
-         4TDNdjcAa7Nd6e6voOZp0qHyaJRXHy8XOqLHHUMeiYx/TYBQt78A0tKhIkbfEVkt5rq2
-         YgPceAHvl+ZYn0cV5PPt8KcFxGaw1LJfkLt05em5bZmcVMsJ6FBHLRQzIWGfnsTK3tXz
-         QmukT6YkPVUIizg+YKef1H/9q3bIRdVJBJBA6UOjruWtiSHrPevIRiVQHY8Sa9OggSwR
-         SEgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzbtqVDu5klNSCjcfqC3fyXTsXynnGl3ra/UHFezk9OQXJ2N6n5aAhZMN09HA1v0LLFNa+8PafUIbqU9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIvRxpgCNBRKNXof9wMMiDYxO9jwA5rsfrFZc62AFM3MASEu7c
-	cpLjAH94oLn5yqNsy4z4G6UbhuEs/tHyRqfA4ozfGAC8lukJCSViuWFwc9RgwaE=
-X-Gm-Gg: ASbGncu3cMv7tgXfHESuLI0wLIIhV3/2YsciMSAcbDuhqxuqmxqqW6WTfHAlZC604ID
-	eqWnIURoKa9tAu0G6Vg3k1YLZ5/ApzShX6Bk7lc5B88XuSHzwQBIC+ZZautUozc6X4iq2+Nif+x
-	rO3yIpoPNXzaRf3L85orOARyK+EXqZanX4h3AhNn311Jn6AE6Z4khcRxtOyl4fxilsJcREoL+7f
-	kgFNM2xAO/t4LNzc1TcLrJs/sMbZKvy6WM2DsDNn9PeEPxOrLYCkl8qYR03+UFTcrkPOA==
-X-Google-Smtp-Source: AGHT+IHLXWIJves++ZMhfFZ9YnRFSus0l3v1nMxTqppBY8H9rgds0EQOScsxeweq65UPC5yR6ftVxA==
-X-Received: by 2002:a05:6000:1787:b0:385:f479:ef46 with SMTP id ffacd0b85a97d-385fd42316bmr3426787f8f.13.1733412244461;
-        Thu, 05 Dec 2024 07:24:04 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c12a4sm64628455e9.30.2024.12.05.07.24.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 07:24:03 -0800 (PST)
-Message-ID: <97d7b661-8b9b-4c56-aa85-3833718f4e01@linaro.org>
-Date: Thu, 5 Dec 2024 16:24:01 +0100
+	s=arc-20240116; t=1733412446; c=relaxed/simple;
+	bh=J0H+X3H5wdZ7DGBbIMIYrC4sHcriNQKSC2EVNNyNskY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOpZ0GXMKq9jWaG/Dre51uZeigFkI3NxUsVlAQLZItjiuJ3xXYBa9OMzv802dh3ECfPufJqGJV+BgnaO7Ej8TMvkYiDz9dF+hk/3LbK3TNiuTZx0ELYvgM4zI/4Gdo5KxV5V08o6MDx978H8qvKUqLAG/6TYA8lIr/KPuiAr/SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 635C31063;
+	Thu,  5 Dec 2024 07:27:50 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 958453F71E;
+	Thu,  5 Dec 2024 07:27:20 -0800 (PST)
+Date: Thu, 5 Dec 2024 15:27:18 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: <cristian.marussi@arm.com>, <andersson@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, <konrad.dybcio@linaro.org>,
+	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
+	<quic_kshivnan@quicinc.com>, <conor+dt@kernel.org>,
+	<arm-scmi@vger.kernel.org>
+Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
+ SCMI Generic Extension
+Message-ID: <Z1HGVhi5xebqc4d4@bogus>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <20241007061023.1978380-2-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: rockchip: increase gmac rx_delay on
- rk3399-puma
-To: Jakob Unterwurzacher <jakobunt@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Quentin Schulz <quentin.schulz@cherry.de>,
- Iskander Amara <iskander.amara@theobroma-systems.com>,
- Sasha Levin <sashal@kernel.org>,
- Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>,
- Vahe Grigoryan <vahe.grigoryan@theobroma-systems.com>,
- Klaus Goger <klaus.goger@theobroma-systems.com>
-Cc: stable@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241205151827.282130-1-jakob.unterwurzacher@cherry.de>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20241205151827.282130-1-jakob.unterwurzacher@cherry.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007061023.1978380-2-quic_sibis@quicinc.com>
 
-On 05/12/2024 16:18, Jakob Unterwurzacher wrote:
-> During mass manufacturing, we noticed the mmc_rx_crc_error counter,
-> as reported by "ethtool -S eth0 | grep mmc_rx_crc_error", to increase
-> above zero during nuttcp speedtests. Most of the time, this did not
-> affect the achieved speed, but it prompted this investigation.
+On Mon, Oct 07, 2024 at 11:40:19AM +0530, Sibi Sankar wrote:
+> Document the various memory buses that can be monitored and scaled by
+> the memory latency governor hosted by the QCOM SCMI Generic Extension
+> Protocol v1.0.
 > 
-> Cycling through the rx_delay range on six boards (see table below) of
-> various ages shows that there is a large good region from 0x12 to 0x35
-> where we see zero crc errors on all tested boards.
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
 > 
-> The old rx_delay value (0x10) seems to have always been on the edge for
-> the KSZ9031RNX that is usually placed on Puma.
+> v3:
+> * Restructure the bindings to mimic IMX [Christian]
 > 
-> Choose "rx_delay = 0x23" to put us smack in the middle of the good
-> region. This works fine as well with the KSZ9131RNX PHY that was used
-> for a small number of boards during the COVID chip shortages.
+>  .../bindings/firmware/arm,scmi.yaml           |   1 +
+>  .../bindings/firmware/qcom,scmi-memlat.yaml   | 246 ++++++++++++++++++
+>  .../dt-bindings/firmware/qcom,scmi-memlat.h   |  22 ++
+>  3 files changed, 269 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
+>  create mode 100644 include/dt-bindings/firmware/qcom,scmi-memlat.h
 > 
-> 	Board S/N        PHY        rx_delay good region
-> 	---------        ---        --------------------
-> 	Puma TT0069903   KSZ9031RNX 0x11 0x35
-> 	Puma TT0157733   KSZ9031RNX 0x11 0x35
-> 	Puma TT0681551   KSZ9031RNX 0x12 0x37
-> 	Puma TT0681156   KSZ9031RNX 0x10 0x38
-> 	Puma 17496030079 KSZ9031RNX 0x10 0x37 (Puma v1.2 from 2017)
-> 	Puma TT0681720   KSZ9131RNX 0x02 0x39 (alternative PHY used in very few boards)
-> 
-> 	Intersection of good regions = 0x12 0x35
-> 	Middle of good region = 0x23
-> 
-> Relates-to: PUMA-111
+> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> index 54d7d11bfed4..1d405f429168 100644
+> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> @@ -24,6 +24,7 @@ description: |
+>  
+>  anyOf:
+>    - $ref: /schemas/firmware/nxp,imx95-scmi.yaml
+> +  - $ref: /schemas/firmware/qcom,scmi-memlat.yaml
+>  
+>  properties:
+>    $nodename:
+> diff --git a/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
+> new file mode 100644
+> index 000000000000..0e8ea6dacd6a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
+> @@ -0,0 +1,246 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/firmware/qcom,scmi-memlat.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SCMI Memory Bus nodes
+> +
+> +maintainers:
+> +  - Sibi Sankar <quic_sibis@quicinc.com>
+> +
+> +description:
+> +  This binding describes the various memory buses that can be monitored and scaled
+> +  by memory latency governor running on the CPU Control Processor (SCMI controller).
+> +
+> +properties:
+> +  protocol@80:
+> +    $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        const: 0x80
+> +
+> +    patternProperties:
+> +      '^memory-[0-9]$':
+> +        type: object
+> +        unevaluatedProperties: false
+> +        description:
+> +          The list of all memory buses that can be monitored and scaled by the
+> +          memory latency governor running on the SCMI controller.
+> +
+> +        properties:
+> +          qcom,memory-type:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1, 2]
+> +            description: |
+> +              Memory Bus Identifier
+> +              0 = QCOM_MEM_TYPE_DDR
+> +              1 = QCOM_MEM_TYPE_LLCC
+> +              2 = QCOM_MEM_TYPE_DDR_QOS
+> +
+> +          freq-table-hz:
+> +            items:
+> +              items:
+> +                - description: Minimum frequency of the memory bus in Hz
+> +                - description: Maximum frequency of the memory bus in Hz
+> +
+> +        patternProperties:
+> +          '^monitor-[0-9]$':
+> +            type: object
+> +            unevaluatedProperties: false
+> +            description:
+> +              The list of all monitors detecting the memory latency bound workloads using
+> +              various counters.
+> +
+> +            properties:
+> +              qcom,compute-type:
+> +                description:
+> +                  Monitors of type compute perform bus dvfs based on a rudimentary CPU
+> +                  frequency to memory frequency map.
+> +                type: boolean
+> +
+> +              qcom,ipm-ceil:
+> +                $ref: /schemas/types.yaml#/definitions/uint32
+> +                description:
+> +                  Monitors having this property perform bus dvfs based on the same
+> +                  rudimentary table but the scaling is performed only if the calculated
+> +                  IPM (Instruction Per Misses) exceeds the given ceiling.
+> +
+> +              cpus:
+> +                $ref: /schemas/types.yaml#/definitions/phandle-array
+> +                description:
+> +                  Should be a list of phandles to CPU nodes (as described in
+> +                  Documentation/devicetree/bindings/arm/cpus.yaml).
 
-Drop 3rd party tags.
+And what exactly this list of cpu phandles represent here ?
 
-Also you you CC-ed an address, which suggests you do not work on
-mainline kernel or you do not use get_maintainers.pl/b4/patman.
-Regardless of the reason, process needs improvement: please rebase and
-always work on mainline or start using mentioned tools tools, so correct
-addresses will be used.
+> +
+> +              operating-points-v2: true
 
+Can you elaborate why the protocol can't add a command to fetch this from
+the firmware to avoid any possible mismatch between the DT and firmware.
 
-Best regards,
-Krzysztof
+> +              opp-table:
+> +                type: object
+> +
+> +            required:
+> +              - cpus
+> +              - operating-points-v2
+> +
+> +            oneOf:
+> +              - required: [ 'qcom,compute-type' ]
+> +              - required: [ 'qcom,ipm-ceil' ]
+> +
+> +        required:
+> +          - qcom,memory-type
+> +          - freq-table-hz
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/firmware/qcom,scmi-memlat.h>
+> +
+> +    firmware {
+> +        scmi {
+> +            compatible = "arm,scmi";
+> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
+> +            mbox-names = "tx", "rx";
+> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            protocol@80 {
+> +                reg = <0x80>;
+> +
+> +                memory-0 {
+
+I am not sure if it is just me, but I find this binding hard to understand.
+Hence I thought I will look and the example and get better understanding
+instead.
+
+So these monitors are numbered ? If there were any meaningful name it would
+have been slightly better but irrespective of that I find it hard as why
+the communication with firmware is not based on index and why they are not
+part of the bindings though I see indices used in the driver.
+
+> +                    qcom,memory-type = <QCOM_MEM_TYPE_DDR>;
+
+Also I see that the type can be easily derived from the index, care to
+elaborate why the firmware expects it to be sent, if not why is that
+information needed here in the DT ?
+
+-- 
+Regards,
+Sudeep
 
