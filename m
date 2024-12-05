@@ -1,85 +1,153 @@
-Return-Path: <linux-kernel+bounces-432934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94039E520B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:22:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 559C19E520F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F534167889
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36133161537
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726281D61A4;
-	Thu,  5 Dec 2024 10:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53A31D63C7;
+	Thu,  5 Dec 2024 10:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m5Q0Boa0"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RbOi1SVT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783161D461B;
-	Thu,  5 Dec 2024 10:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805C55FEE4;
+	Thu,  5 Dec 2024 10:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394139; cv=none; b=ClU+aqzWe9EF51VAOksEd3wMBf9Zu7ConMLml1Sq5v+LoU+TuseOB1q734aViqjUzdKE3D9MyHTDU5/ZY/1FuhPbfkHxJS1Kfz4e+vVki5PnY1wPzSOg5p+3DKh0AR7pwnzqDxwEBRF9XT1v3UngtV5ing9MY5bymucv+wXm2RI=
+	t=1733394187; cv=none; b=gxki+FHoeRouRSSBJvdeXruSON7q9begwZDZ6pRMwBsWVVGW9EuXNWcvfkKTz53IPyBRK3rBq4QPev76zZTc+6/CRV92I6LVDMtGXpXH4QQvWVNh89Znca+gLyG3yjMU/ssxQ+KGNwLUazUd3r3bk1YScTFt273AXxM7gr1nPOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394139; c=relaxed/simple;
-	bh=uWVQ/v+7+PpcMMQalZl/ZZIHqM8C8QG5E8x7U8XrtwM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=c4o188COiabE/iN51WFVH/JkmY9rlyxz/WYI1SG2Vbb0qmjZ04+G4cCnDkj+XJTUmQWwWeifNBn5WCy3kOuFlYV9g0xfmxKWtliLCbj8GuYshzYyNODm2R4WxFUp9b0EtGezSkj/Ggv1TG8LXi6QIOb8DlUQzTiRc4wXD9GX09c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m5Q0Boa0; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9E7822000E;
-	Thu,  5 Dec 2024 10:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733394130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uWVQ/v+7+PpcMMQalZl/ZZIHqM8C8QG5E8x7U8XrtwM=;
-	b=m5Q0Boa0AKcnlqjAkyujMXhcHPjQZKn54uFHD8d/bVh58AuEwXuESPejvIb1oNmgDd/1/p
-	zBUPiTuVSuEEpI/U1XNNv4z98cLHEgkVwzWLoEnZC+UtqRvQ+j8NWBJKf2oATFxQQ5Vq5k
-	UM+SFu6lfWrl3sWBjr8lPiJoR94q1VsCNzNx7hYVEj3Zt+FRBE+ywZFXakZu+UHmk6+lon
-	6JKmqAUmWLcGGTDecZngNEyCb6Nwa2NcYtyvFjaRX0n2pWChAC9wDVNW1BMZjrzy7ITV2N
-	bAsowrMktSem93DIVIUWK5YFGku6gWun7gsGxtu1DwaE+hm59kzblfHjcUjkRg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: niravkumar.l.rabara@intel.com
-Cc: devicetree@vger.kernel.org,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] dt-bindings: mtd: cadence: convert
- cadence-nand-controller.txt to yaml
-In-Reply-To: <20241205053350.434370-1-niravkumar.l.rabara@intel.com>
-	(niravkumar l. rabara's message of "Thu, 5 Dec 2024 13:33:50 +0800")
-References: <20241205053350.434370-1-niravkumar.l.rabara@intel.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 05 Dec 2024 11:22:09 +0100
-Message-ID: <87mshawhta.fsf@bootlin.com>
+	s=arc-20240116; t=1733394187; c=relaxed/simple;
+	bh=WccIYwDYM9SWBN69RLZEtv6E73AY7u/PTpfwUMY99Fk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FNZkvyCmaLR6l+YgRnWNqsgpx3lRRecxaWVOQNuhZWJ1HZi6voWmNx/5FV+iW0mGlW9jmXnzo6jpsFFhrB5VWgvoOCAMrpoxDmimY40yAgb4fML/zv1DMLkoKDlHY0TNhUAGm6hHuUQIyX/+AdWXhl2F4E1CUSknazJiL+0VJnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RbOi1SVT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B59wlf1031112;
+	Thu, 5 Dec 2024 10:22:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iaxWwGQE6c2BaUOvsTxoIb
+	fSwyfIpmZaTYOZ/cpg+mE=; b=RbOi1SVTR/9E4lVXiMI4P/9mkI3erkmAcoboUD
+	AbrMahRzC9T5qJKt7VaVcWSSGPlRJL07ypwfEdv3mXWBewa6hmpp3m60qgFlAnvA
+	jkK7YBx6UxJ3mZdWnj2EL0tQ5ISiiK7OQDOFPHDehnOEX9uev6+e910fruJ5ozqB
+	Z1DkN3IcbOJCKZgOKdfOHjGsexhq4Z4ZZEuQdKvXxlc4sHVTRTTMC400iQ54ieig
+	2xvzjfsqJ1wAMr2C2Ru4bbG0oqySzA1W9QvRUUnCReYaxAgi1P5qj2GUgOG+2aZv
+	2N2eYbdMP5Yyhz/HC5C6I1NNifdxubPykHg5LfsuV6ybeTyA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba14028a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 10:22:59 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5AMwp3006133
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 10:22:58 GMT
+Received: from bt-iot-sh01-lnx.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Dec 2024 02:22:53 -0800
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao <quic_rjliao@quicinc.com>
+CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
+        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
+        <quic_mohamull@quicinc.com>
+Subject: [PATCH v3 0/3] Expand firmware-name property to load specific
+Date: Thu, 5 Dec 2024 18:22:10 +0800
+Message-ID: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: X7oMcMIkN_w0gcz8S5pPo1pOHlpjEeg1
+X-Proofpoint-ORIG-GUID: X7oMcMIkN_w0gcz8S5pPo1pOHlpjEeg1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050073
 
-On 05/12/2024 at 13:33:50 +08, niravkumar.l.rabara@intel.com wrote:
+Expand the firmware-name property to specify the names of NVM and
+rampatch firmware to load.
 
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
->
-> Convert cadence-nand-controller.txt to yaml format.
-> Update cadence-nand-controller.txt to cdns,hp-nfc.yaml in MAINTAINER file.
->
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+This update will support loading specific firmware (nvm and rampatch)
+for certain chips, like the QCA6698 Bluetooth chip, which shares the
+same IP core as the WCN6855 but has different RF components and RAM
+sizes, requiring new firmware files.
 
-Looks good to me, but I'll wait for binding maintainers ack ofc.
+Different connectivity boards may be attached to the same platform. For
+example, QCA6698-based boards can support either a two-antenna or
+three-antenna solution, both of which work on the sa8775p-ride platform.
+Due to differences in connectivity boards and variations in RF
+performance from different foundries, different NVM configurations are
+used based on the board ID.
 
-Thanks,
-Miqu=C3=A8l
+So In firmware-name, if the NVM file has an extension, the NVM file will
+be used. Otherwise, the system will first try the .bNN (board ID) file,
+and if that fails, it will fall back to the .bin file.
+
+Possible configurations:
+firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
+firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+firmware-name = "QCA6698/hpnv21.bin";
+
+---
+v3:
+  1.Expand firmware-name property to specify the nvm and rampatch to
+  load.
+  2.Change the driver to support two items in firmware-name and choose
+  the NVM file according to board id if there is no extension in NVM
+  file.
+  3.Update the dts file to idendify the firmware for QCA6698.
+---
+
+Cheng Jiang (3):
+  dt-bindings: net: bluetooth: qca: Expand firmware-name property
+  Bluetooth: qca: Expand firmware-name to load specific nvm and rampatch
+  arm64: dts: qcom: sa8775p-ride: Add firmware-name in BT node
+
+ .../net/bluetooth/qualcomm-bluetooth.yaml     |   2 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi    |   1 +
+ drivers/bluetooth/btqca.c                     | 154 +++++++++++++-----
+ drivers/bluetooth/btqca.h                     |   5 +-
+ drivers/bluetooth/hci_qca.c                   |  21 ++-
+ 5 files changed, 137 insertions(+), 46 deletions(-)
+
+
+base-commit: c245a7a79602ccbee780c004c1e4abcda66aec32
+-- 
+2.25.1
+
 
