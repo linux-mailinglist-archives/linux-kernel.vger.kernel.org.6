@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-433866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CCF9E5E24
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:18:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA289E5E28
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:19:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF53316C21F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:18:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640D718825D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0665B22579A;
-	Thu,  5 Dec 2024 18:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E6A226EEF;
+	Thu,  5 Dec 2024 18:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bpR0qJXd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7EtO0shr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aCaVSzU5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577A21C199
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4575B21C199;
+	Thu,  5 Dec 2024 18:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733422679; cv=none; b=CKzxhwAhy2PCfspALD17ZgH4QfEUBXi09U8NkEidmqgKyQ7hzaJr44chc/MYTRL4qHzbsOTCFdGaqDqvXiSTcmjYnoinFFVNx2xicELHI+/eKjDXAK0zrqDyGwqW76NPGxVIVo3S3Q18PQpsVFC1XI5mLeksrtvfPBTD++ZgoXE=
+	t=1733422791; cv=none; b=H9QLjxC4yftfISlqeyheHDRKbMOaaBEVPkO7V++KEXaJji0+kbQ2WH/YuWdFgmCbHeFwirgVB63W1zcb4cxX8P7Bwk4O8qofruiEgx/Zis6GYVMVKMja79to3EOqrMlR0j2F2Uj90SKPtr1x6PjMfX2ImmnDEJOAKo7BtWZaeVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733422679; c=relaxed/simple;
-	bh=Sbz1HdnWrG52mn7fk/0C4b7W6Hgys09QDVvlLZc3OK4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hfLY6iLQ3rOuUpfLfzz1L9KhkYbp5JE97ES4EL6RBCw3NU9onv63Ngdnajo5MVL7N73DbaOxwtx5jkB7aCdcLE4GcRHfXhtWv1ctUITQ2gXavpdbIRkwUuU9kKPFnniRHm8zpQpwVzHCBrXizpwQkgdre0YP7ev/u93wHSG0TQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bpR0qJXd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7EtO0shr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733422676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tMe9HmKVw+cCN0/uJAO9hlVMWTEHr4VX4xPDeEyVzNc=;
-	b=bpR0qJXdfzFbRg58jngBW4yjAk9bGyV9NrHvf/JBq+AFZdD9adK5DZhvjKyFIVySdgPHPu
-	yIhdQHGNpRju91MCozgBzLf1npOKLgajpgGGBRTyQB4Bigm8pYaQheksnVIsD4oR3CUhaf
-	WE1kvJ00mkDPDyQ9p+KERKjIAStp4nBtY+8vhS0gxJ9o2HQZXAuMOdMiHEiNBomEGWbJe6
-	5iB23wefb+Fiqz8lpgx5cllPeE8TsVSOjxvr3cpT+Ov7aeS+9hZR/dB1vhxMG8KLo46lI1
-	knPBgnAmSbU+XMbvg34ROoXv+EqL1lpJkASrLCeJxZqRbdJufpw2McckolDMXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733422676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tMe9HmKVw+cCN0/uJAO9hlVMWTEHr4VX4xPDeEyVzNc=;
-	b=7EtO0shrfMHJMF23jRgSahPmuaRkzNrNRhI6a4T9prQ1zEmNZxeFDi+NgRPjzH+XtoGo+/
-	Ka8pWQQABwFlhnDg==
-To: Waiman Long <llong@redhat.com>, Waiman Long <llong@redhat.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>
-Subject: Re: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use
- it in nmi_shootdown_cpus()
-In-Reply-To: <1166fd72-8a4a-489f-9de5-7c06b70b0ad4@redhat.com>
-References: <20241203150732.182065-1-longman@redhat.com>
- <87h67jsif0.ffs@tglx> <7aa93137-4b5e-474f-a99c-47acffdf71a3@redhat.com>
- <87zflbqqar.ffs@tglx> <59b254dc-acf6-4114-b6b4-a7ae517bfa06@redhat.com>
- <9765a61a-e832-4491-af02-97b8736411ef@redhat.com> <87r06mqnnv.ffs@tglx>
- <1166fd72-8a4a-489f-9de5-7c06b70b0ad4@redhat.com>
-Date: Thu, 05 Dec 2024 19:17:55 +0100
-Message-ID: <87ikryq9ik.ffs@tglx>
+	s=arc-20240116; t=1733422791; c=relaxed/simple;
+	bh=Jb0FZs/6tEaSe6N/baRH3pNDpZvG73bWsNNPlA5VQPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=puUdkcZpjOkeAF4toqb/mXxOYs+rklQL7NOSs/98lKkj+Q4TlMVxTGHpx6n4++Akp9bsmbDEPWQu2mYhsXHspxw8H4IKXWaeTorGyW9RAWEZBCiUOxFvV9rFKkNPXyDQteGZFo2ox5WDZBqTN2W6FCTM4LyoIIZZj4C3YMiSBfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aCaVSzU5; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733422790; x=1764958790;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Jb0FZs/6tEaSe6N/baRH3pNDpZvG73bWsNNPlA5VQPI=;
+  b=aCaVSzU5fMcIP+lbwtmxAllL0+JBkfpmHK1RaLJ8a4aU1vcJB/0dvTMS
+   oaYKRF74IzVW1tTe+dwj5E45nc6nV9K7vSPJ2YuKHhoPLhoYOuTAmA2Et
+   lOARNTk+xzUyHroj6KL/uI897wTO4h7SCkr1FWEgKqCYOM82+83Cc6Nn7
+   SGnBrmeIpcE+MzFOxi3o8ubVkSyg0XFXjDyKdly60LHYTxWVmN2HPvbK2
+   CQ20Aw+mqZFSil5Gu5cnUMn8XQLXewRfg4sth9DlmWFThKlNXCQXzmf5E
+   mejb+yfL/ti2eSYOvP+K6f2UZ1Tmk6pqXHu24bp0Dd3JLmOcFMA+4Myep
+   A==;
+X-CSE-ConnectionGUID: OxteymY0RZOb5Zn4bzyBGQ==
+X-CSE-MsgGUID: gHSeP4OiTOGbJqaeoDbS7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33493331"
+X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
+   d="scan'208";a="33493331"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 10:19:49 -0800
+X-CSE-ConnectionGUID: wc7u1Gk1Qrac1rsF7uxroA==
+X-CSE-MsgGUID: /wWG80sCSbGD7P2h7U57+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
+   d="scan'208";a="93989388"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.157])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 10:19:48 -0800
+Date: Thu, 5 Dec 2024 10:19:46 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: Li Ming <ming.li@zohomail.com>
+Cc: kobayashi.da-06@fujitsu.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] cxl/pci: Check dport->regs.rcd_pcie_cap availability
+ before accessing
+Message-ID: <Z1HuwuKf7CYu-7K8@aschofie-mobl2.lan>
+References: <20241129132825.569237-1-ming.li@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129132825.569237-1-ming.li@zohomail.com>
 
-On Thu, Dec 05 2024 at 08:22, Waiman Long wrote:
-> On 12/5/24 8:12 AM, Thomas Gleixner wrote:
->>> Actually, crash_nmi_callback() can return in the case of the crashing
->>> CPUs, though all the other CPUs will not return once called. So I
->>> believe the current form is correct. I will update the comment to
->>> reflect that.
->> Why would you continue servicing the NMI on a CPU which just crashed?
->
-> According to crash_nmi_callback(),
->
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Don't do anything if =
-this handler is invoked on crashing cpu.
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Otherwise, system wil=
-l completely hang. Crashing cpu can get
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * an NMI if system was =
-initially booted with nmi_watchdog=20
-> parameter.
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cpu =3D=3D crashing_cpu)
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return NMI_HANDLED;
->
-> The crashing CPU still has work to do after shutting down other CPUs. It=
-=20
-> can't wait there forever without completing other crashing actions. The=20
-> only thing I can see we can do is to return immediately without=20
-> servicing other less important nmi handlers in the list.
+On Fri, Nov 29, 2024 at 09:28:25PM +0800, Li Ming wrote:
+> RCD Upstream Port's PCI Express Capability is a component registers
+> block stored in RCD Upstream Port RCRB. CXL PCI driver helps to map it
+> during the RCD probing, but mapping failure is allowed for component
+> registers blocks in CXL PCI driver.
+> 
+> dport->regs.rcd_pcie_cap is used to store the virtual address of the RCD
+> Upstream Port's PCI Express Capability, add a dport->regs.rcd_pcie_cap
+> checking in rcd_pcie_cap_emit() just in case user accesses a invalid
+> address via RCD sysfs.
 
-I understand that, but in case that the crashed CPU receives an NMI and
-sees that the emergency handler is set, shouldn't it stop the NMI
-processing instead of trying to go through perf and what not when the
-system is already in a fragile state. i.e.:
+I traced this enough to convince myself that dport cannot be NULL if
+cxl_mem_find_port() succeeds. So, LGTM -
 
-       if (emergemcy_handler) {
-          emergency_handler();
-          return;
-       }
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
-Thanks,
-
-        tglx
+> 
+> Fixes: c5eaec79fa43 ("cxl/pci: Add sysfs attribute for CXL 1.1 device link status")
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> ---
+>  drivers/cxl/pci.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index b2cb81f6d9e7..e53b1c95a248 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -836,6 +836,9 @@ static ssize_t rcd_pcie_cap_emit(struct device *dev, u16 offset, char *buf, size
+>  	if (!root_dev)
+>  		return -ENXIO;
+>  
+> +	if (!dport->regs.rcd_pcie_cap)
+> +		return -ENXIO;
+> +
+>  	guard(device)(root_dev);
+>  	if (!root_dev->driver)
+>  		return -ENXIO;
+> -- 
+> 2.34.1
+> 
 
