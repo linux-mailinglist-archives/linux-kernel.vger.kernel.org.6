@@ -1,138 +1,256 @@
-Return-Path: <linux-kernel+bounces-432952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0199E5245
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:29:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C663166937
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:29:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929F11D63E2;
-	Thu,  5 Dec 2024 10:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pK01OT9q"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2A99E5240
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:28:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E545FEE4;
-	Thu,  5 Dec 2024 10:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE68283FC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:28:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A5F1D61A4;
+	Thu,  5 Dec 2024 10:28:30 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E631D5AD1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394537; cv=none; b=rIVRsomBcm6tycv3qERKKoZJ1CiQKcjz9/9MqDNriWZjfREJ82pRRcLu4pSRVR2KXZnuGIn3k0QkZGf4UvmGECkCbERJ+3NqkR5N1hkxK4vVzF5HJV1oSgcNKG8ViNn1j4mmZktVvoivYh7Sh2OdfRgSmtLtmi/VRw4sw5vPELE=
+	t=1733394509; cv=none; b=OGzaP6XhYR0537ZDhgdAyBwb3qhj+3xwi4kBqKRDHku+ic/pyJjqQbPRAHlY3GF5tv+3CK+3ZOvAlQUCFztiBNoQbGOvs4jGow5Y+NvOlTtgf+HM6aNq3sfLkyE8qaqS3ROSqyNi/sU/9BJ9rlg0Hh9wwH8ha/Hdy579lHp21tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394537; c=relaxed/simple;
-	bh=5sirFvSvWHyYrxAbp8x9gAt+L5MkI/vP8NYp0eHOX70=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Bm4VchotIbU1RKKwqnjBzoYvU2sURzT+2hcVNmTEJxNA37TWVOaij4TqScBvk6/DpOEfleKkwm2H4Qr55IOEe2sTRWuLuzgqfqEo1MHZ3VSHOdH7CdE6ICtPC850yhD9RHgnTXz5MYF7tKMgYwY9KXcQKBJcl7Ja+EoLHKCcytg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pK01OT9q; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57Wnhg031188;
-	Thu, 5 Dec 2024 10:28:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gWPgj79tm0v1wD578aDgh7
-	HHrmCnR1PmBKm5+R3gC50=; b=pK01OT9qy0xhdnI+57klIFzAK7QBPAiqapLYDP
-	H7L49v6UbjVjn/b7Yhd3ZH8+xgyIKqXZn2XFXyjgsUtNqusAu2XbKVOchw/bP2aF
-	3t8J+bdCnNFNhFXIfCNJFdLsXMbN5tzLu7J3eYP96rDoXX2FDa+dltel9y8ndptV
-	395hvF2AH9GtLLun4EOhW9pN7clS7UFVt6RRNtpwpHhyZUhXEWw5YDHw21R8JEGo
-	G4/IY8TBGdnzMDkupSXeMYGmNjvipIiC8t6Fel+oBNMrJoL3qZniAh7z0nThNQ51
-	8EGIzLDNcWzHyaDIb86msQC+gAaa2STp7t9AnyVnCPt4A3GA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w90y7pa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 10:28:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5ASoMT016244
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 10:28:50 GMT
-Received: from congzhan2-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Dec 2024 02:28:46 -0800
-From: Cong Zhang <quic_congzhan@quicinc.com>
-Date: Thu, 5 Dec 2024 18:28:13 +0800
-Subject: [PATCH v2] arm64: dts: qcom: sdx75: Correct IRQ number of EL2
- non-secure physical timer
+	s=arc-20240116; t=1733394509; c=relaxed/simple;
+	bh=ORoh/JBIeL4xUw8V6YZ0B4jqJHmp6i0zSTjhSv4hdFY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mn3dodud7Em1Uv0syIt8wg3iQAQJt03BtXRI5m4RoJVZZFW9Bn4Z1rO8fdfgnJNcqyri2ELGGj6rwQVI1ICCYfc0ypdULLU0iRfShbV4bYYn+byKeQzcHFyhfuamisHNBOUcvwxU2hnggbVO4NsqJg5R/qAj5XsRvywuTcjqRSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so16344575ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:28:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733394506; x=1733999306;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o8KbNEV/lPNOeyeMlgzjF4k2zcfrT5xclIxTCtjGuUQ=;
+        b=b4YGnScE0V7eDShkK6IDUZPDL0PHb0ki+3RRWOeidCiOC95WsrvorR4/2u2TpH6/gb
+         F2wG/BV+I6kejdGu9PTvfJRaVhqVKgILWu7Lnh7PXf20zLPwYBJf7jBUNT3UNecu55df
+         C2AuHoJ7tBEakWPYwL44cWk/pX9/ReA2RbwGPCvzj725ekIjyrsnzEp6f+8ArSlF0Lzk
+         DY+83FZEvl1PzwWAg6uTWKvotZyMy2fZGA4wmzXBkKHa4cDs9gDp91xLfVGRn7F4l92Y
+         NgYFHJk3EtdPAY7NzSysUmNxz6HqleqOVnUTAUJSC2MXMvjjnmvkFh1TCWGONGNfiG1t
+         iaYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiYwguylzGwagSe2bV0YNpyl6hSruuO7CBNuvqwWcM/UeyJdIyiYquxYammMeYvzizWVi96srywaSO2Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUd/3HkHSYcQru39gNG1h3HB4Xa0iBzNaB5hBJo3PFFKhYaq8Y
+	lQsyZTgR5aXwkcBOEXsKXZdr+8CfiZW2aYNFLaDG2koF/KZgqrLZhCIKIrnSnJ8fy6gVlIPi3Kc
+	Y05DPOYBanE6gR8hcFb6ZJ3SmLCVcArUdS8vO0d9zIpQqUP8RUpJsNVM=
+X-Google-Smtp-Source: AGHT+IGElam6A8Bqaw0H97kGC36yyRWIC/j2lkZCveXRK0BFGDny2FxgTCQKQmIfZW2XlWRDQS0lljzAVD89OesvVCGMhvbAfRC7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241205-correct_timer_irq-v2-1-7db282a5e475@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIADyAUWcC/52Ou26DQBBFf8XaOmOxDxbjyv9hWRY7O2tGCaw9E
- BTL4t8NNGlSpTzFPfe81EDCNKjj7qWEJh449wuYj53CtulvBBwXVqYwTpuiBMwihON15I7kyvK
- AWJFP6NBrH9Wyuwsl/tmc58vCSXIHYyvU/Jq0qf4wTRo0IDlb1MGXZYinxzcj97jH3K3qlocxy
- 3Orncx6oJwha2oboaliBBdsDQeyHlwZdLI6HUKhT58kPX3ts9zUWjTZbfrvkss8z2/ADROeOgE
- AAA==
-X-Change-ID: 20241205-correct_timer_irq-d7e6fc4c616d
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Cong Zhang
-	<quic_congzhan@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733394526; l=1202;
- i=quic_congzhan@quicinc.com; s=20241126; h=from:subject:message-id;
- bh=5sirFvSvWHyYrxAbp8x9gAt+L5MkI/vP8NYp0eHOX70=;
- b=6zBSJkjUzNklKTtLFSvMzejn8k7/I27w/zxcmhLaJ5AZv7S9Z21+oKgAagxb7oWM0zSW1sM9e
- EgzRO8SKqmODFu836dT+RmsgC84daixo0Xn2+4vne/Z2ORQ5PgieEqt
-X-Developer-Key: i=quic_congzhan@quicinc.com; a=ed25519;
- pk=EAdxxOpkixn8jyG0MRQXsIFtZX7PytBUry7L44VBHIo=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: J3sz_tP9VQZmUR004azu_nkLZ25vVXRD
-X-Proofpoint-GUID: J3sz_tP9VQZmUR004azu_nkLZ25vVXRD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=586 bulkscore=0
- impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
- spamscore=0 clxscore=1011 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050074
+X-Received: by 2002:a05:6e02:184a:b0:3a7:70a4:6872 with SMTP id
+ e9e14a558f8ab-3a7f9a3b564mr119264425ab.9.1733394506086; Thu, 05 Dec 2024
+ 02:28:26 -0800 (PST)
+Date: Thu, 05 Dec 2024 02:28:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6751804a.050a0220.17bd51.009a.GAE@google.com>
+Subject: [syzbot] [v9fs?] INFO: task hung in v9fs_evict_inode
+From: syzbot <syzbot+56bd5818697f0f93fdd9@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-The INTID of EL2 non-secure physical timer is 26. In linux, the IRQ
-number has a fixed 16 offset for PPIs. Therefore, the linux IRQ number
-of EL2 non-secure physical timer should be 10 (26 - 16).
+Hello,
 
-Signed-off-by: Cong Zhang <quic_congzhan@quicinc.com>
+syzbot found the following issue on:
+
+HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=159927c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
+dashboard link: https://syzkaller.appspot.com/bug?extid=56bd5818697f0f93fdd9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c765e8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+56bd5818697f0f93fdd9@syzkaller.appspotmail.com
+
+INFO: task syz-executor:5928 blocked for more than 143 seconds.
+      Not tainted 6.12.0-next-20241128-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:20080 pid:5928  tgid:5928  ppid:1      flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5369 [inline]
+ __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
+ __schedule_loop kernel/sched/core.c:6833 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6848
+ netfs_wait_for_outstanding_io include/linux/netfs.h:558 [inline]
+ v9fs_evict_inode+0x171/0x360 fs/9p/vfs_inode.c:348
+ evict+0x4e8/0x9a0 fs/inode.c:796
+ __dentry_kill+0x20d/0x630 fs/dcache.c:625
+ dput+0x19f/0x2b0 fs/dcache.c:867
+ shrink_dcache_for_umount+0xb4/0x180 fs/dcache.c:1577
+ generic_shutdown_super+0x6a/0x2d0 fs/super.c:620
+ kill_anon_super+0x3b/0x70 fs/super.c:1237
+ v9fs_kill_super+0x4c/0x90 fs/9p/vfs_super.c:193
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8a37781b77
+RSP: 002b:00007ffe40eae1a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f8a37781b77
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffe40eae260
+RBP: 00007ffe40eae260 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe40eaf2e0
+R13: 00007f8a377f3824 R14: 000000000003f13f R15: 00007ffe40eaf320
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/u8:1/12:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937b20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937b20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937b20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6744
+2 locks held by kworker/u8:8/3481:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
+ #1: ffffc9000cdb7d00 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc9000cdb7d00 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
+2 locks held by getty/5584:
+ #0: ffff88814e3000a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900032eb2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+1 lock held by syz-executor/5928:
+ #0: ffff8880352ee0e0 (&type->s_umount_key#51){+.+.}-{4:4}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff8880352ee0e0 (&type->s_umount_key#51){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff8880352ee0e0 (&type->s_umount_key#51){+.+.}-{4:4}, at: deactivate_super+0xb5/0xf0 fs/super.c:505
+1 lock held by syz.5.407/7698:
+1 lock held by syz.3.408/7704:
+1 lock held by syz.4.409/7705:
+1 lock held by syz.0.410/7711:
+1 lock held by syz.2.411/7714:
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-next-20241128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
+ watchdog+0xff6/0x1040 kernel/hung_task.c:397
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 7698 Comm: syz.5.407 Not tainted 6.12.0-next-20241128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:check_preemption_disabled+0x2/0x120 lib/smp_processor_id.c:13
+Code: 8d 5f 8c 48 c7 c6 80 8d 5f 8c eb 1c 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 41 57 <41> 56 41 54 53 48 83 ec 10 65 48 8b 04 25 28 00 00 00 48 89 44 24
+RSP: 0018:ffffc9000478ee90 EFLAGS: 00000283
+RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffffffff817aaec4
+RDX: 0000000000000000 RSI: ffffffff8c5f8d80 RDI: ffffffff8c5f8d40
+RBP: ffffc9000478f008 R08: ffffffff90199eb7 R09: 1ffffffff20333d6
+R10: dffffc0000000000 R11: fffffbfff20333d7 R12: 1ffff920008f1de0
+R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f71caed9d58 CR3: 0000000065d88000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+ rcu_is_watching+0x15/0xb0 kernel/rcu/tree.c:737
+ trace_lock_acquire include/trace/events/lock.h:24 [inline]
+ lock_acquire+0xe3/0x550 kernel/locking/lockdep.c:5820
+ rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ page_ext_get+0x3d/0x2a0 mm/page_ext.c:525
+ __page_table_check_zero+0xb1/0x350 mm/page_table_check.c:148
+ page_table_check_free include/linux/page_table_check.h:41 [inline]
+ free_pages_prepare mm/page_alloc.c:1128 [inline]
+ free_unref_folios+0xf76/0x1a90 mm/page_alloc.c:2740
+ folios_put_refs+0x76c/0x860 mm/swap.c:962
+ folio_batch_release include/linux/pagevec.h:101 [inline]
+ shmem_undo_range+0x64c/0x1cf0 mm/shmem.c:1040
+ shmem_truncate_range mm/shmem.c:1152 [inline]
+ shmem_evict_inode+0x29b/0xa80 mm/shmem.c:1280
+ evict+0x4e8/0x9a0 fs/inode.c:796
+ __dentry_kill+0x20d/0x630 fs/dcache.c:625
+ dput+0x19f/0x2b0 fs/dcache.c:867
+ __fput+0x5ba/0xa50 fs/file_table.c:458
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ exit_task_work include/linux/task_work.h:43 [inline]
+ do_exit+0xa2f/0x28e0 kernel/exit.c:938
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1087
+ get_signal+0x16b2/0x1750 kernel/signal.c:3016
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xce/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fefa3180849
+Code: Unable to access opcode bytes at 0x7fefa318081f.
+RSP: 002b:00007fefa3eb0058 EFLAGS: 00000246 ORIG_RAX: 000000000000012b
+RAX: 0000000000010106 RBX: 00007fefa3346080 RCX: 00007fefa3180849
+RDX: 0000000000010106 RSI: 00000000200000c0 RDI: 0000000000000008
+RBP: 00007fefa31f3986 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fefa3346080 R15: 00007ffc05aa9138
+ </TASK>
+
+
 ---
- arch/arm64/boot/dts/qcom/sdx75.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdx75.dtsi b/arch/arm64/boot/dts/qcom/sdx75.dtsi
-index 5f7e59ecf1ca6298cb252ee0654bc7eaeefbd303..b0775173278f3eed0f301b40dfba0f2680d7b0d0 100644
---- a/arch/arm64/boot/dts/qcom/sdx75.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdx75.dtsi
-@@ -1548,6 +1548,6 @@ timer {
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
-base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
-change-id: 20241205-correct_timer_irq-d7e6fc4c616d
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-Cong Zhang <quic_congzhan@quicinc.com>
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
