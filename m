@@ -1,175 +1,116 @@
-Return-Path: <linux-kernel+bounces-433714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8B39E5C11
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:50:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433369E5C18
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:51:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6893B167CC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:51:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA560225762;
+	Thu,  5 Dec 2024 16:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Clce7oIH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA2528F99F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:50:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E1F22257F;
-	Thu,  5 Dec 2024 16:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AuU1ZM0b"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8F521D588
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392BB221463;
+	Thu,  5 Dec 2024 16:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733417393; cv=none; b=XOd13dgJNxMb2wN01OVyEfm/6b239td6ZSTRFAYmWVVgavFhxZpoP73ZNYzuSHeNtUZH5OpZFsM9TztSt3/5Hej0o08jqZq5Mz8LddTCNDWbzRN/kqMdoBzOvkKxPDsJ3Jna4XRrVDJ8STnpkxleHv4KNvxNIJOPfZxj5WtITOM=
+	t=1733417449; cv=none; b=Yl+fC/QnkiN9257FRDCL3u8HEDwOV6i+OuO2l8G8wgzaMs8HfCoeJ/3vDR/355JsXJEjQhflpS43tjArVKfpGsH2aXhIXKgdV6+1akrIL5GE8sn64lsA8RnKRXwneKxoS9tM1Qqpq8YXQYutSGBoHrhzucHaG5q8+uKeTqQzWR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733417393; c=relaxed/simple;
-	bh=wvcGp5YJl0HfkWrsMAG+o9ANiEZLKm9ke1EVz3mOeN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQyNcRNputjP0F+jF8fYPT2dThZfwKV00252nMtu3vnEIapUxb0g2GJYFSAXh9lidDUfMRGzntiMHeaKSNy5iD6cEZRdl1M8+yAo4DdCH7hGipZ2u/0LEbvUkxlmdzAu5JwFLEc9bQ5fI33pxaCEAs5OCfeyZiO/PczGvkU2HsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AuU1ZM0b; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-215666ea06aso19091995ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:49:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733417392; x=1734022192; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LW3nVyGBjPmC7MmiF6/pZIPadVScmOhCq1HNc7aFXXo=;
-        b=AuU1ZM0b0J/sYQQgQCEcYMRSsVyhrBE/+pwK5QjC65P1TL+imiGyaHj81OV/5kYmlQ
-         EDJ9avlF2lS0+NVQAwickYbOq4xApZCe6YDHAN4F8FgyBUWAgvvY73nXbYHLKAivDKpp
-         tXNeocWW5MwlXo8kjmV2E7v/epv7QclfqphLy0BPPB/A0rIskskiDAJOpvef9zBlmYm3
-         DsSYbvsCkoJRjvHclOFBZK6QQyXCg3xPwIcw3/e/sxveYiSDvA1hJOXZ7TlBd91rVdMq
-         6ZiLjEfmEBVRZWk7zra2lp8bkFtTV8+gqY6/La+MxyN8eT39hLBHN65tcJVgh3LKNV+s
-         HMBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733417392; x=1734022192;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LW3nVyGBjPmC7MmiF6/pZIPadVScmOhCq1HNc7aFXXo=;
-        b=QST1aM7wF9Biztiwrgl8HbaiR7e9bmfhCSEJdEOOnR2fRVaCn/3I23GUasTcNdO7ha
-         /Dchu0CxUWvCmogcL19q6SLaZdcHXiD//8kCw/kPIa1u2UkcTmVbckp9feSHYtiNjvm9
-         yKWpevETo1gSsfblWxtF3DEK5wzeyi4bZ3UyYIV3w0zJ3Dcba82DbmV6l6xKu1V+cKt7
-         LN+vKvUim46lMpX80Nzt7DzUDhHTDpTIes5OTXX3pjfYkoKMRGGxFsXpphJxvCG1vBtA
-         BCYW9UcHbQKudPGSS+hUO3JoDboaqsVR5o1Vj7BJ46HeaUPJz32ez04arPouumG2n+fL
-         0Epw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0wv14RfY6rm8OmWZGc48ZiatjCztAt9MQpruVw7PdPbKDFvs4ESUrunye4DFvNQWOHBvnCgGle8c70VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ7N6oaaP/K8KfnqQ/eeAP/NjRjEvOnLYkeRJah2xrIur5ZiWu
-	JrMWCaFdMg73vIRyLXnRDR4FkwAxX7+RqxFqa6XWxlNttgnPBCmVAR2wWBesGQ==
-X-Gm-Gg: ASbGncvGxnbqhzy4SLIVTdhRhTdBn3kpUjQMTVySCT7K6bBY5plYfGwNB0begb/4czO
-	GnKl0HH7AKJboeUMjKcmvnb8d6WHdVwS1o+OMsYjXz56m2qNRgdWCGof6mfHO9/80B3+pjcErpB
-	wGHEltAeLVXkHD9tHvy/uc4RLIUxIyFFD596CMmhXEVacwyGVQKlkqJ+TEWWcMYgezIrPH+FYXj
-	lOjUX5RHMw4qrQozRBmGZAAhqL5XqbEPHFP9bW1HqYJaEPEzCwZaw==
-X-Google-Smtp-Source: AGHT+IHnNtX3tMSLvvzcJDM8mmCSzkinGh0IAdf8rfXDHhivEiWh9ktaKhpLNJyQ3rzbGBSrdnX5wg==
-X-Received: by 2002:a17:902:d2cc:b0:215:9d48:46f9 with SMTP id d9443c01a7336-215f3ce4f10mr59397415ad.21.1733417391540;
-        Thu, 05 Dec 2024 08:49:51 -0800 (PST)
-Received: from google.com ([2620:15c:2d3:205:a344:96ad:4260:dcb0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f26ff2sm14609405ad.227.2024.12.05.08.49.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 08:49:50 -0800 (PST)
-Date: Thu, 5 Dec 2024 08:49:41 -0800
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: Kees Cook <kees@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Michael Chan <michael.chan@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Potnuri Bharat Teja <bharat@chelsio.com>,
-	Christian Benvenuti <benve@cisco.com>,
-	Satish Kharat <satishkh@cisco.com>,
-	Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	cferris@google.com, android-llvm-dev@google.com
-Subject: Re: [PATCH v2 1/2][next] UAPI: ethtool: Use __struct_group() in
- struct ethtool_link_settings
-Message-ID: <Z1HZpe3WE5As8UAz@google.com>
-References: <cover.1730238285.git.gustavoars@kernel.org>
- <9e9fb0bd72e5ba1e916acbb4995b1e358b86a689.1730238285.git.gustavoars@kernel.org>
- <20241109100213.262a2fa0@kernel.org>
- <d4f0830f-d384-487a-8442-ca0c603d502b@embeddedor.com>
- <55d62419-3a0c-4f26-a260-06cf2dc44ec1@embeddedor.com>
- <202411151215.B56D49E36@keescook>
+	s=arc-20240116; t=1733417449; c=relaxed/simple;
+	bh=eRPnmWYSQhSAftRfnhYQ4HXep5ZbnD5fgGUew/TmFlk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RxYnQN+a0UNOeoIc4RYsgeLgixuYspFJfOC7L4OiDhvtcO+HPF52F0jdXEPOdH3PnuDNreSjtK8ISFLxpb98yIqm5Sypv0HBiLQckIgw0qhdpb7rSXDNB5E9/nUxzprcHriw3HEOV/ZGwrz98lf0VSceDu7/n66/F4U/V1z+O4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Clce7oIH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B4C7FC4CED1;
+	Thu,  5 Dec 2024 16:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733417448;
+	bh=eRPnmWYSQhSAftRfnhYQ4HXep5ZbnD5fgGUew/TmFlk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Clce7oIHQ8D58lkYxmHINUg+XNNoK/LhpP0LOOuhTb0Bxa44m+4NL5+0mFWvgkl2V
+	 rKNJozgLbbJtE+XvoWzSx7xBW+XrMYQHUKNdT/Dqi4oi+uSCpE+tdSyml1p+CT1NLr
+	 RA40iYXECF8WqKXnbLU6gQMS9x8cf7ouJA01YuhFG7FhxqomIhQu6XqheVjMfbIOMU
+	 +609M9hPhPFKilP3gRd78Qzc0aNkaJEOH+9bTl/OdAdrc2a0tOa66RewpEIvl7poe6
+	 c50dx9ebUyXD54lr2Jz7jLjQfQisxGkZQe7A3WV/y/Tqmf0KVoOpwJwC+lnFST61lx
+	 XTeeELDtC0L9A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FF3E77170;
+	Thu,  5 Dec 2024 16:50:48 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH 0/2] cpufreq: qcom: Clock provider fixes
+Date: Thu, 05 Dec 2024 22:20:27 +0530
+Message-Id: <20241205-qcom-cpufreq-clk-fix-v1-0-de46c82e0fe5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202411151215.B56D49E36@keescook>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANPZUWcC/x2MSQqAMBDAviJzdqAWN/yKeKjtVAe3LiiC+HeLx
+ wSSByIFpghd9kCgiyMfe4Iiz0DPap8I2SQGKWRZSFGh18eG2p02kEe9Lmj5RlULO1pjmrEtIaU
+ uUNL/th/e9wNM/J98ZgAAAA==
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johan Hovold <johan+linaro@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1286;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=eRPnmWYSQhSAftRfnhYQ4HXep5ZbnD5fgGUew/TmFlk=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnUdnlN4Zr7BQSl7WojL2S8I1Hp6T7Kvw8mk7HT
+ 09RtBftfCWJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ1HZ5QAKCRBVnxHm/pHO
+ 9aA/CACJ/g/EEk/bHPAxG0CiFqR6jDDHBhVCpzWWDbQv+5L+cQDLw5GmgiiZ/sYzcHS3+pXS09p
+ cDdXyDqQjZaN+up+agDGQc9EPzSuaE6I1PWoNJ/eyeR3UjB5/x7eBBAwmJdVTo4chS7AdYUv18V
+ ghz7NBoCQvqFXKmEf2r3RbHn/D0lI9kTpxfs7SepHAqzifg8bHYq1gw+XWbYazjgzM8OBGAKb1c
+ CUnWjysjDfvL/ilLiJgONqPH00Wzh6JBeZ5jtIovE+uwW0DTHSTEBbwegIWKIUMsx3Vyxh8bR4F
+ NtA+Eqgc0IEKyNYa+NAYPmAstOnOjVPV91gWFt7/jw5OuL+A
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-On Fri, Nov 15, 2024 at 12:38:55PM -0800, Kees Cook wrote:
-> On Tue, Nov 12, 2024 at 07:08:32PM -0600, Gustavo A. R. Silva wrote:
-> > 
-> > 
-> > On 11/11/24 16:22, Gustavo A. R. Silva wrote:
-> > > 
-> > > 
-> > > On 09/11/24 12:02, Jakub Kicinski wrote:
-> > > > On Tue, 29 Oct 2024 15:55:35 -0600 Gustavo A. R. Silva wrote:
-> > > > > Use the `__struct_group()` helper to create a new tagged
-> > > > > `struct ethtool_link_settings_hdr`. This structure groups together
-> > > > > all the members of the flexible `struct ethtool_link_settings`
-> > > > > except the flexible array. As a result, the array is effectively
-> > > > > separated from the rest of the members without modifying the memory
-> > > > > layout of the flexible structure.
-> > > > > 
-> > > > > This new tagged struct will be used to fix problematic declarations
-> > > > > of middle-flex-arrays in composite structs[1].
-> > > > 
-> > > > Possibly a very noob question, but I'm updating a C++ library with
-> > > > new headers and I think this makes it no longer compile.
-> > > > 
-> > > > $ cat > /tmp/t.cpp<<EOF
-> > > > extern "C" {
-> > > > #include "include/uapi/linux/ethtool.h"
-> > > > }
-> > > > int func() { return 0; }
-> > > > EOF
-> > > > 
-> > > > $ g++ /tmp/t.cpp -I../linux -o /dev/null -c -W -Wall -O2
-> > > > In file included from /usr/include/linux/posix_types.h:5,
-> > > >                   from /usr/include/linux/types.h:9,
-> > > >                   from ../linux/include/uapi/linux/ethtool.h:18,
-> > > >                   from /tmp/t.cpp:2:
-> > > > ../linux/include/uapi/linux/ethtool.h:2515:24: error: ‘struct
-> > > > ethtool_link_settings::<unnamed union>::ethtool_link_settings_hdr’
-> > > > invalid; an anonymous union may only have public non-static data
-> > > > members [-fpermissive]
-> > > >   2515 |         __struct_group(ethtool_link_settings_hdr, hdr, /* no attrs */,
-> > > >        |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > 
-> > > > 
-> > 
-> > This seems to work with Clang:
-> > 
-> > $ clang++-18 -fms-extensions /tmp/t.cpp -I../linux -o /dev/null -c -W -Wall -O2
-> > 
-> > However, `-fms-extensions` doesn't seem to work for this case with GCC:
-> > 
-> > https://godbolt.org/z/1shsPhz3s
-> 
-> Hm, we can't break UAPI even for C++, so even if we had compiler options
-> that would make it work, it's really unfriendly to userspace to make all
-> the projects there suddenly start needing to use it.
-> 
-> I think this means we just can't use tagged struct groups in UAPI. :(
-> 
-> I have what I think is a much simpler solution. Sending it now...
+Hi,
 
-What was the follow up?
+This series has a couple of fixes for the Qcom CPUFreq clock provider.
+Patch 1 fixes an issue where incorrect rate might be reported if LMh IRQ is not
+available for a platform (issue identified based on code inspection). Patch 2
+fixes a regression reported for v6.13-rc1 [1]. The regression was triggered by
+commit 25f1c96a0e84 ("clk: Fix invalid execution of clk_set_rate"), which fixed
+the behavior of the clk_set_rate() API. Even though the commit got reverted now,
+patch 2 fixes the issue in the clock provider code.
 
-cferris@ is reporting something similar for linux/uapi/linux/pkt_cls.h in the
-structure tc_u32_sel definition, found while updating the kernel headers in
-Android. Maybe that file/definition needs the same follow up?
+This series is tested on Qcom RB5 development board.
 
-~Nick
+[1] https://lore.kernel.org/all/20241202100621.29209-1-johan+linaro@kernel.org
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (2):
+      cpufreq: qcom: Fix qcom_cpufreq_hw_recalc_rate() to query LUT if LMh IRQ is not available
+      cpufreq: qcom: Implement clk_ops::determine_rate() for qcom_cpufreq* clocks
+
+ drivers/cpufreq/qcom-cpufreq-hw.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241205-qcom-cpufreq-clk-fix-a60fbfdd7b84
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+
 
