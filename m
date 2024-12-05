@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-433886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B6D9E5E5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51DF79E5E5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 227D216BA12
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E4A163676
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4835F22B8C5;
-	Thu,  5 Dec 2024 18:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E1222B8D6;
+	Thu,  5 Dec 2024 18:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KwtyzGiO"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9DgpFgZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0122B8AC
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0344221461;
+	Thu,  5 Dec 2024 18:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733423877; cv=none; b=HeRnNi0Ti7moKNrSVYHFQsgfgS87tDE8613Kx8U1lwIHwDskFMXAsoGY3/jQ4lnO9OiNFOC+RKn9nL8Mb1ZC9CzU+PZbfdHXCn2CsxGG+AXjxo7AgQqdDKKo/WK1/yeHbQs3qXmDnvmgaC1SpfVlJsgjgXwcwzkChK27jXSdkhM=
+	t=1733424081; cv=none; b=CUBh378js2UwpS2wET5WFe5hx8w4knXmCPwnENItIeE6xs3K6A5cBABSC9Zdf0Fs7lg/QKmKnQ7zCUDOtc2TGRnskrkBVPtgg8DibfIBbw5JUCKsNj5ia176hSnBnpTc+NsuLvCClQKIWSbenm8uzt4wC018v/EnRRRA/hXKTeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733423877; c=relaxed/simple;
-	bh=vN3BWRw+eI3i/QzJldo2ZEVO3gIiBZxxYptlzxCGdeM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PcQjFpGBkfJiOA1g/hiGIaxqR5wRmIqsADfnplK/GFniZ8crtwBSHG0ntAeQPx+vUkPhnTuDW9pjco262lp7JemkcgIZ5rDICkkNfCasing1R3qQYwgbif12Gf/OLOc0tRaoMB2hyiWJZPpQJCebtetPJblSp4Owbo1f+MBsjAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KwtyzGiO; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-84192e4788dso38944439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 10:37:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733423875; x=1734028675; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jyZhhKDY3E0EY6FDWGYO/ik4qxnDvdOzeYmBAuvuaY4=;
-        b=KwtyzGiOzOzLyWzVEynEY/3eqBiVQ6GqRlwpTf1TCuVOhCwROxzJhMT3JIw/mGCin5
-         E69NuxRNRFwe7pFxKVxtLrzqiZuP/Zlz76hM0m3wuynou8pot6BsUWZ5Lc+t5BTQfZnz
-         AS/mLuurI4krJ46gjAnJqCqufL9vpGojr8A1E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733423875; x=1734028675;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jyZhhKDY3E0EY6FDWGYO/ik4qxnDvdOzeYmBAuvuaY4=;
-        b=G6Dm1jtAI+LTjszutOaWlQfXOIszI9849Y2cnE9K4A5F8AVM2VfbKAGtHKwmdtSWnK
-         RU0W5LAY718qe9VOo46VwUD8xyX5LU5CCFBCvVc9vEcXCXqIMfXvV6btTtBrBvHe3Qs4
-         3lPRhFqKOX5kr+/9FiGUjcsKsl2nCSqxvL/sPICSK6C2qEb2tuSjVetuDZCdaoAr6RIT
-         eNyecREP+9LXAgN0S45NTFXXgojo0xjrPEGp1tJfOa0BLJjBhc0x1hp7oLDEIgZwHEU+
-         vOx7JzpUmRbQ7rPn79Lx4m8ffWn7iPdf6iN3wf6a7e3o4GQ3cKIn3N4q0OUDcbtRWUJG
-         OFRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWPUdJpfMl+shOBM6S/ocImGbQSwmODZP/acxaS4RU0O93mZGZWNdqugd313f6sy3/xJdtyR+tni7hTH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQDihUch9R4VK4s6J99AF5HpVlw+vhFzLmkG1CrbMzRjX2ieWa
-	Iu8/+TWwXPNxXGQmDiBzm5l6fowB2Hqo5FSMJduw02OsBS9uAcuKKZEwpCVF3YA=
-X-Gm-Gg: ASbGncsiXmO6IKvpUc6+MNKnTLbET56ck0xZyHzTT38dZk6g17ky4yaq7wRnPZTk9PB
-	XuIPHz07ldtvKCZwnkumy36NFPS9SZJG4GDarMT25AiYh5gurnvdQNHUUsyL6g9/6zYe1xUuxQj
-	7/CPR9HgF8otjJuQKqNr+OV2+1sLo1nxVnUweQFME1n1XAqSBlk2DaNg1m/+pZKNu6d+KY2vvZg
-	D24JAOF/ekp/zgmW2eivcjP1qy1RbhQa7LITMloXj4PUOJ3aIJLnf2S5HwLhA==
-X-Google-Smtp-Source: AGHT+IGNp1BhKQFk7jXV5cSwne9kxOaVyjPT2p0T4mOEWWVHYoOi2qb9PiCzJIQMXrZY6vl8TtFCeA==
-X-Received: by 2002:a05:6602:6b0f:b0:803:5e55:ecb2 with SMTP id ca18e2360f4ac-8447e0fc2b4mr59163639f.0.1733423875125;
-        Thu, 05 Dec 2024 10:37:55 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e286108491sm405387173.30.2024.12.05.10.37.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 10:37:54 -0800 (PST)
-Message-ID: <a0816bb6-fc78-433a-9cb4-7c16f06d3675@linuxfoundation.org>
-Date: Thu, 5 Dec 2024 11:37:53 -0700
+	s=arc-20240116; t=1733424081; c=relaxed/simple;
+	bh=0YBNkypV8E/T1JTlxwqRN6rbYdmmeKiFzaa+dqxPaCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rcuae/JRzOXTjbBn/faBUXdYevuwP0QROWK689L4Yuc65XV4HbwNsdfYeqfYozT8RdvzWylCXyyf0Rux0guhvdt5PUNcaYx8wyBMXwYzFhsHYWS+KyfiDZemtp+5dwNEAtrg4PLNih0w8Ssvzdjjtj8LnAi2NevJELfls9Ik35c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9DgpFgZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C01EC4CEDC;
+	Thu,  5 Dec 2024 18:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733424079;
+	bh=0YBNkypV8E/T1JTlxwqRN6rbYdmmeKiFzaa+dqxPaCE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=B9DgpFgZP2hg4PfSRiHH1z8WrSNl2SoVqunygTgEQk68hwNvKX9BgLjYy50x8ePwq
+	 Fjnru7HmOxwrIb9KlP11fdaTMRIyG3awLRQ6HMfVWqyA3d4aJB8CzgK+Mb56JgrMKb
+	 FCCdD9Yg0WK4l+aW5C+P3qdscwyY04GQVwOtUKeovfzuniZpQbKHGQh0edVYXAdxXD
+	 Nmgov/FjslB2NT8PcAIvp9q0kWVII6So1sf3Jrkev7n6S/qS1V1RHD6Xm/0oopVyQD
+	 0GAn6+H+MZTBm751kZPnM379dsjqUNm/1/pxlomNQiJG85grd8EINfJW0ICYnlMGJR
+	 55PP54tjAFqzg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C2EDFCE08E1; Thu,  5 Dec 2024 10:41:17 -0800 (PST)
+Date: Thu, 5 Dec 2024 10:41:17 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	edumazet@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+Message-ID: <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com>
+ <20241205141850.GS3387508@ZenIV>
+ <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Modify the watchdog selftest for execution in
- non-interactive environments
-To: Laura Nao <laura.nao@collabora.com>, shuah@kernel.org
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20241119150127.152830-1-laura.nao@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241119150127.152830-1-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
 
-On 11/19/24 08:01, Laura Nao wrote:
-> This series is a follow-up to v1[1], aimed at making the watchdog selftest
-> more suitable for CI environments. Currently, in non-interactive setups,
-> the watchdog kselftest can only run with oneshot parameters, preventing the
-> testing of the WDIOC_KEEPALIVE ioctl since the ping loop is only
-> interrupted by SIGINT.
+On Thu, Dec 05, 2024 at 03:43:41PM +0100, Mateusz Guzik wrote:
+> On Thu, Dec 5, 2024 at 3:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
+> > >  void fd_install(unsigned int fd, struct file *file)
+> > >  {
+> > > -     struct files_struct *files = current->files;
+> > > +     struct files_struct *files;
+> > >       struct fdtable *fdt;
+> > >
+> > >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
+> > >               return;
+> > >
+> > > +     /*
+> > > +      * Synchronized with expand_fdtable(), see that routine for an
+> > > +      * explanation.
+> > > +      */
+> > >       rcu_read_lock_sched();
+> > > +     files = READ_ONCE(current->files);
+> >
+> > What are you trying to do with that READ_ONCE()?  current->files
+> > itself is *not* changed by any of that code; current->files->fdtab is.
 > 
-> The first patch adds a new -c option to limit the number of watchdog pings,
-> allowing the test to be optionally finite. The second patch updates the
-> test output to conform to KTAP.
-> 
-> The default behavior remains unchanged: without the -c option, the
-> keep_alive() loop continues indefinitely until interrupted by SIGINT.
-> 
-> [1] https://lore.kernel.org/all/20240506111359.224579-1-laura.nao@collabora.com/
-> 
-> Changes in v2:
-> - The keep_alive() loop remains infinite by default
-> - Introduced keep_alive_res variable to track the WDIOC_KEEPALIVE ioctl return code for user reporting
-> 
-> Laura Nao (2):
->    selftests/watchdog: add -c option to limit the ping loop
->    selftests/watchdog: convert the test output to KTAP format
+> To my understanding this is the idiomatic way of spelling out the
+> non-existent in Linux smp_consume_load, for the resize_in_progress
+> flag.
 
-I think we discussed this conversion before and I still don't see
-the need for this especially this patch converts every single
-print() into ktap which isn't necessary.
+In Linus, "smp_consume_load()" is named rcu_dereference().
 
+> Anyway to elaborate I'm gunning for a setup where the code is
+> semantically equivalent to having a lock around the work.
+
+Except that rcu_read_lock_sched() provides mutual-exclusion guarantees
+only with later RCU grace periods, such as those implemented by
+synchronize_rcu().
+
+> Pretend ->resize_lock exists, then:
+> fd_install:
+> files = current->files;
+> read_lock(files->resize_lock);
+> fdt = rcu_dereference_sched(files->fdt);
+> rcu_assign_pointer(fdt->fd[fd], file);
+> read_unlock(files->resize_lock);
 > 
->   .../selftests/watchdog/watchdog-test.c        | 169 +++++++++++-------
->   1 file changed, 103 insertions(+), 66 deletions(-)
+> expand_fdtable:
+> write_lock(files->resize_lock);
+> [snip]
+> rcu_assign_pointer(files->fdt, new_fdt);
+> write_unlock(files->resize_lock);
 > 
+> Except rcu_read_lock_sched + appropriately fenced resize_in_progress +
+> synchronize_rcu do it.
 
-These don't apply on 6.13 or 6.12 - rebase and resend after
-making changes to address comments on individual patches.
+OK, good, you did get the grace-period part of the puzzle.
 
-thanks,
--- Shuah
+Howver, please keep in mind that synchronize_rcu() has significant
+latency by design.  There is a tradeoff between CPU consumption and
+latency, and synchronize_rcu() therefore has latencies ranging upwards of
+several milliseconds (not microseconds or nanoseconds).  I would be very
+surprised if expand_fdtable() users would be happy with such a long delay.
+Or are you using some trick to hide this delay?
 
