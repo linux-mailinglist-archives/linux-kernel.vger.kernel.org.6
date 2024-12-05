@@ -1,62 +1,67 @@
-Return-Path: <linux-kernel+bounces-432999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7659E52D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:46:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292E09E52C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:45:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4EA1883724
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE21E284A58
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8B51DACAF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA93A1DB94F;
 	Thu,  5 Dec 2024 10:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="adT0bqqf"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NJnHShKW"
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B371A8F90
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7991D4600;
+	Thu,  5 Dec 2024 10:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395417; cv=none; b=HSPWadZKsxnNOMWZt1gYWpKRWcaaPhPAxG94UTkUTcUpaI9qKp/FdQbGpTrDcQ3yIWfxGudrLNNpMmC+KkacL0w2OEQLRl27e+2uOMGbUyEuhmVBgDjoK7VKxmOFglQPiY13ZLmSQiPi2hgIWU88Lc+qLq4ZyyAWzJ8pLuK36ig=
+	t=1733395418; cv=none; b=UcKh+TDF7UUE6H2mykR35Od35r6AZbC1qv6TdXc1mFs8WrXXMg91KhvfbRJOHR8Y5AtDQV42oBXzixhU/lVKc7/1MJJpJk/+fRzzoDofK2fVcBQ2fWiTWsq8Fcg3rruDAdBXZCGKxPtuCqOWTpHXBIiRhO86jFxJuUql89086eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395417; c=relaxed/simple;
-	bh=0J46msOTtINQyWl85h4mLdFl6n3LTJtMAgrqyDHHEV0=;
+	s=arc-20240116; t=1733395418; c=relaxed/simple;
+	bh=0TzKSVsNu5M/UvdOeCNcMXOT8dIKIS/jDUqyfqKg3eY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fgl9r4uO2bomQszwoygFzERG5OsStCAwEEXt51Y44jkUVzYeaJgKi6eEg0xPG8pZTbfaOsd8Hn7tC24reKw0HMRgLU4088a2o/lLIKNoBq+spBPNeuKJs/b9CYhe/ofQSQtZValrg9X7szhNTIWmdwta8AXbZs2pjJfG/C2j8Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=adT0bqqf; arc=none smtp.client-ip=217.70.183.199
+	 MIME-Version:Content-Type; b=W5uM0bTeWJsrSXd+XuA5SfCDj7ExsrN5litl6siKuGDVoTP2HALBypAyOFo3AC/JJ3dD6MZ4FWX9YZKi9Ydb89JaO4dXn8rB6UmbOl/u29su4lG3CHDZChkupd1fXJSjW0RcrwU4mHs+JXwzs21VGNLoutTwUdvm3CWQrNAyPPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NJnHShKW; arc=none smtp.client-ip=217.70.183.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2862DFF804;
-	Thu,  5 Dec 2024 10:43:32 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 92C6EFF80C;
+	Thu,  5 Dec 2024 10:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733395413;
+	t=1733395414;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m/neGO5Y8BfT1iCWWi0dB/xELDJS6gvdEM2M7lIFYIM=;
-	b=adT0bqqf8s1X5wQYJ3GBojglkRsOD/HSIzN+k4zjZ9h5oFXPLlVrbVBze8/0U6iePLmass
-	xCfOFyUr3V/Lt6u7UAsqi7h+KTkEmFGdxdxZkLQmE4+6nC9ThxIDHQERLE7GawyUGuxBOQ
-	xhtdk18snDYDgnNG4frhUfepqqpP+LJNCHIYNj4r8Ukewer3a3ESC5djp/CCpQzzI3PRG3
-	lbp1dtEQHdhtTu5eH110p9zfALvXAbRp/P0Qv/cqCJgzSdJgUql2Q3elMpqHgAd1OUWEk7
-	Lo4LY1IkrluY3NFIrCz8LcgHzjysq0i9HEr+Iy6SD3ICynUIpnzOCxwIEhGEfQ==
+	bh=tVOU/hBtES9NqNMn3b9b53d5oMMBwDCM8MS0sfrPHxw=;
+	b=NJnHShKWQUPjsX2QhlM5RDC+Jzxsy8E7DP7gbzzy10uiSf8zLJzRgetftuIys0UKY5J3/z
+	dZWX9tr5Ds/Wu8zUUSUTAIIGSpdwLF2mrHkqpInaACBaJCF7/pDxTfR00uHY4a+epFiWKI
+	n18wVl8zCnBtflYJW/vJvYMwUOP/OmzQcVnqMAPbvI5iCIXz75fjvBb8GdFzARHOVBj86m
+	zpfcoA5iQUn6ElWHAr4IjGQf2rl8GrRvtUbNYBeDcb+1j1dR37ufXae52mw3NwvlW/oOwh
+	ma/3ujT1hBMvn7nnVZiscRbdLoXa4pYSkWvzaAvSSBNJFlydFY1B0v9aihF+Ow==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Bohdan Chubuk <chbgdn@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: spinand: add support for FORESEE F35SQA001G
-Date: Thu,  5 Dec 2024 11:43:24 +0100
-Message-ID: <173339519115.766262.10964911797107048383.b4-ty@bootlin.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] mtd: rawnand: fix double free in atmel_pmecc_create_user()
+Date: Thu,  5 Dec 2024 11:43:25 +0100
+Message-ID: <173339519112.766262.17129619892556491178.b4-ty@bootlin.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241110205048.1751377-1-chbgdn@gmail.com>
-References: <20241110205048.1751377-1-chbgdn@gmail.com>
+In-Reply-To: <7d809e5f-32e1-4438-9cc6-3167f27dd239@stanley.mountain>
+References: <7d809e5f-32e1-4438-9cc6-3167f27dd239@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,20 +72,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Sun, 10 Nov 2024 22:50:47 +0200, Bohdan Chubuk wrote:
-> Add support for FORESEE F35SQA001G SPI NAND.
+On Wed, 23 Oct 2024 11:40:56 +0300, Dan Carpenter wrote:
+> The "user" pointer was converted from being allocated with kzalloc() to
+> being allocated by devm_kzalloc().  Calling kfree(user) will lead to a
+> double free.
 > 
-> Similar to F35SQA002G, but differs in capacity.
-> Datasheet:
->   -  https://cdn.ozdisan.com/ETicaret_Dosya/704795_871495.pdf
 > 
-> Tested on Xiaomi AX3000T flashed with OpenWRT.
-> 
-> [...]
 
-Applied to nand/next, thanks!
+Applied to mtd/fixes, thanks!
 
-[1/1] mtd: spinand: add support for FORESEE F35SQA001G
+[1/1] mtd: rawnand: fix double free in atmel_pmecc_create_user()
 
 Patche(s) will be available within hours on:
 mtd/linux.git
