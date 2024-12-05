@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-433215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DD69E5536
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:16:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE25F1883AAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:16:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95287218E90;
-	Thu,  5 Dec 2024 12:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TmBQ7r1p"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5B39E5531
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:16:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272EC218AD1;
-	Thu,  5 Dec 2024 12:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9DD22854F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:16:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3252218AC9;
+	Thu,  5 Dec 2024 12:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vMSimtEa"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DA62185AB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400931; cv=none; b=jN1kZ4JKkYZb896EAsqkulamEuVG3D9ciNACD03zHLR6L2wIlx/Zh+mZzS26AlrbfhUSfuw371gQBhR3ic4VpHFGTWrMZIH04YSROaVrm6czDKD6az7Zm6ozUjJCA+S35aHrbWPbq807nUagnL8OMpAGneBptkUxYgc9fF5MN9o=
+	t=1733400930; cv=none; b=TtU2Q2PMvfJbKg6bRySzqehqigFlrFHke7QYx+CRYw+2czYSWU9kgi61jmyJekj6xZE+mmGsvJsX/3TzxG3ssZ0Ah3FLoOANLkGcp2yJnJagCHW8Oi9JBBWwp8Tt65A/RkL5TWTMrrKVr/VqwLdzYXyS3FVSzSEIFS4WOuKuNO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400931; c=relaxed/simple;
-	bh=/29uYNfB4jsLibyobe2nNI/2TzDkendtERkhqweYv+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZewc7zVw9bh9pCIF4owCXoaUB53GA1HM92PddlJjjRibafIoB/hngifnfeVsOAEBvd31sdnWu0K4yIDOaMpyBJOG6Lbt7kYZy1OSBa2ZsOy1SWj0BQn47pZTYG4Ouxrpa9fuoCepWi9THNQrN1OCHNIEzSs5ex4kckWVp5jEXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=TmBQ7r1p; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=c2uRpWQzrgsevOGntiKGOMAAWqRJBifNOKZIBOx/xX0=; b=TmBQ7r1pewYBgLyGRI3YeehQf3
-	8XCeKdAYF++k8YWHUnLn0LFIFBOOVKPeOaaJtK8b1ZkiZ+GVvLUZZvlzGlUOG2uKwubbDfS5ehoqB
-	n/slnEBsqCHkDn20CrQ0DC+734SXz1s795git2wBOl16lJ4NU5MRuJ3kHwjHVqblHHJ0nW7Yj1HMv
-	VU8DxCz5npDfHRH30WNphV5WM9UXY3h3fw/nfZQJLM+Jq1Ns7rvSGZTgMolmBdnqECwgrL5K4qqwm
-	QF+R0jF4a9zP9ZQlwrTVz+5Y9nwxVRfgpkOcQxQH3Euy4etYXvjPwGDlIwdbJPXXpg4cW65339uTt
-	Y6oPUmHw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40184)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tJAlL-0004m7-04;
-	Thu, 05 Dec 2024 12:15:19 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tJAlJ-0006Y7-1G;
-	Thu, 05 Dec 2024 12:15:17 +0000
-Date: Thu, 5 Dec 2024 12:15:17 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v1 6/7] phy: dp83td510: add statistics support
-Message-ID: <Z1GZVf7R9AYeRJAF@shell.armlinux.org.uk>
-References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
- <20241203075622.2452169-7-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1733400930; c=relaxed/simple;
+	bh=UW+ZUpvfcfWDTZpunCNNZkPbNxjdzo6HcjHvWihi3WE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MXLHttXn+arjTYIRZszfFzVa0GtiiijK5HO7hdCT+RjvaCtHjF1QlWxQgd2RzjuCebHKrmir5yfaSeCRCIB+a7QeP727ANFLxCzHwIUoruwp2o4gG2AQSsQXMJtG40k/YBlPDD63L1R588Tk5i07psC0+08S9UeDjNLwfs3ch3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vMSimtEa; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385dfb168cbso441182f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:15:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733400926; x=1734005726; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gY4jyriOEKZyLnJE0vGxHVVOzKfqLgdZoGmwsUcarbc=;
+        b=vMSimtEahX+HpsJkMIq4mf0f0e6nAYRsHN62OJ9yvgsQYYrSHt+Dp11wonNLx2d7P6
+         tafKXoplo2EsvG8Pz4BkcZA5vrvXzaFkN7Oc+9Wlzi0DlZEKi4sEhBSIjqjpSu6OtFp8
+         SWnVNmiTsNHOL/GKavEyCeEuW/Qd+kkva3qgJn2tIB+EhT39kCoCBou8MuV9mPX93u6k
+         l3ULPMZUnW0g+qVto4Al64ckomTPO+r9PuWMbIf3srWe/Mtxw/0kC1Kty7gwD84SVn2j
+         92Z0ugXe8zm2XeucSjA7Zs9LYWevz66PSELrPINdbBtrcwtUAZto/zsg6+j/X9Q4CgJ4
+         azOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733400926; x=1734005726;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gY4jyriOEKZyLnJE0vGxHVVOzKfqLgdZoGmwsUcarbc=;
+        b=eIXrE1DDJlwLcSYj7ekkuqYV85WnemH36PHFDduzWshLf4NoOpS/VGB9MwSQ63UY7k
+         DzrjoMDWDQbK0CFWWXl7JEVzivGS5+Rd5baWSDLul2mR1nivbaPydNRyEemYMRtCg4Y4
+         7u7D0cMAbuaLxGgEM0Ablhs6h1M1AsC84+y9LwMOWZ+0znhJlzLuiP/n6qRHgYEN4vRT
+         TWH7aPzfPnQicRco2Y3SjAt8frKJsuS5Mp5hfJRghxl0ikGJtDg9MkLeTAisbrUDaWar
+         G8derI4FVjVv2UDK9y6Ki6HaxL7ZMEjLk/bU+EoavWC9XaPSB1NVWuOrVcJgJvR/b92I
+         5YYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhki50jKzxCQEQ/+FAmD5pLriWIz5jzbfoY0VCQXd0jqBIKHELF64D0OMpCTmm3TiTon0F9WFkFqdXlxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgrLHy1Nt6CJcfQi+qu10L8+9VnOl7hB+vjrly5l6v6IXb1d6t
+	vZpqOo4JeCv3Ld87eAGF7hZIDPbbpFHYgVWldGOSZV32WDVfPOKhs349s6gPRLc=
+X-Gm-Gg: ASbGnctkh9LMiUEC117cyo4BXDPwjuCnag1sJdQXuSgCBd9ixskpcur5MQwDIEQjXiY
+	8iwXErrzr9qiRrENRXylMb6cYQlA7asVArrkvHl53V/arsNU48ll7B8zBwDzuMyoNbcJd0azyqA
+	gmZQWs6JF57F4BWx6uloqsKuUlS0t0W3Q6DK0yUeLqbjuRNPPUhuTvhPgvzxBYJFD+kEBb03wuc
+	1JAqjPNsNMuI+GUWNrvSHacadYpP+u3EARFHF6Fhec7u1jK
+X-Google-Smtp-Source: AGHT+IFneey2lxrLoI9OQR9skYI1bQ3FNZ3tGvEDNgPi29bYBpl/TJVAwIwu1ozM/FxFCYlhT/a/9w==
+X-Received: by 2002:a5d:6dae:0:b0:385:e1a8:e2a1 with SMTP id ffacd0b85a97d-385fd3c59a7mr8953328f8f.3.1733400925677;
+        Thu, 05 Dec 2024 04:15:25 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:c2c8:33f:e860])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621909748sm1766386f8f.67.2024.12.05.04.15.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 04:15:25 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	Rosen Penev <rosenp@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: twl4030: use gpiochip_get_data
+Date: Thu,  5 Dec 2024 13:15:23 +0100
+Message-ID: <173340091124.42145.941891093245304888.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241203233354.184404-1-rosenp@gmail.com>
+References: <20241203233354.184404-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203075622.2452169-7-o.rempel@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 08:56:20AM +0100, Oleksij Rempel wrote:
-> Add support for reporting PHY statistics in the DP83TD510 driver. This
-> includes cumulative tracking of transmit/receive packet counts, and
-> error counts. Implemented functions to update and provide statistics via
-> ethtool, with optional polling support enabled through `PHY_POLL_STATS`.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Tue, 03 Dec 2024 15:33:54 -0800, Rosen Penev wrote:
+> We can pass the pointer in probe to gpiochip_add_data instead of using
+> dev_get_drvdata.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  drivers/net/phy/dp83td510.c | 98 ++++++++++++++++++++++++++++++++++++-
->  1 file changed, 97 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-> index 92aa3a2b9744..08d61a6a8c61 100644
-> --- a/drivers/net/phy/dp83td510.c
-> +++ b/drivers/net/phy/dp83td510.c
-> @@ -34,6 +34,24 @@
->  #define DP83TD510E_CTRL_HW_RESET		BIT(15)
->  #define DP83TD510E_CTRL_SW_RESET		BIT(14)
->  
-> +#define DP83TD510E_PKT_STAT_1			0x12b
-> +#define DP83TD510E_TX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
-> +
-> +#define DP83TD510E_PKT_STAT_2			0x12c
-> +#define DP83TD510E_TX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
-> +
-> +#define DP83TD510E_PKT_STAT_3			0x12d
-> +#define DP83TD510E_TX_ERR_PKT_CNT_MASK		GENMASK(15, 0)
-> +
-> +#define DP83TD510E_PKT_STAT_4			0x12e
-> +#define DP83TD510E_RX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
-> +
-> +#define DP83TD510E_PKT_STAT_5			0x12f
-> +#define DP83TD510E_RX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
-> +
-> +#define DP83TD510E_PKT_STAT_6			0x130
-> +#define DP83TD510E_RX_ERR_PKT_CNT_MASK		GENMASK(15, 0)
 
-I'm not sure I like this pattern of _MASK here. Why not call these
-registers e.g. DP83TD510E_RX_PKT_CNT_31_16 ? Given that the full
-register value is used, I don't see the need for _MASK and the
-FIELD_GET()s, which just add extra complexity to the code and
-reduce readability.
+Indeed, looks much nicer.
 
+Applied, thanks!
+
+[1/1] gpio: twl4030: use gpiochip_get_data
+      commit: 26a4dedc5f3cdb6e2de79371f57d12e5119f03c1
+
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
