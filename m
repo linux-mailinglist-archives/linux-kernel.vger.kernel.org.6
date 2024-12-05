@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-433643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006B59E5B16
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:14:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1B29E5B1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:15:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F070C16638A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7D818854BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4648421D5B0;
-	Thu,  5 Dec 2024 16:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F343221465;
+	Thu,  5 Dec 2024 16:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hTrWLkPg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w3lwyvht"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A68F17E473
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5221C221473
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733415257; cv=none; b=IbMRzreaBgVHEKRe/7NhlRXyxiiG6uGXTWvBxKxWlCLS3MI9Kx8MdaN5PpqqctGMEZIlXCZMNLfmINQ1EpQsFVaonXcSd/UtutxLpfrlKpYo7ze+Ab2hOYM8K4IUF0ATVVGRRXOJ+kVPTck3n5rgSKeiZ8juYdRgBqj97IupCjM=
+	t=1733415320; cv=none; b=hoDsb3nZU1UNv19lVDH0uWr8orwFEt7VHxlBPD19u82Av8JP81iRAX/UGk00iysANbUt2FgCRE9Fh34dBvntGYS3FjTSaDHJmobORBmmpa8SgvE+1OaC4YtHh8py2r49sRXGu2UsEBjjZcldEGwyA0m2gi8eAqyl/bXDhoBvGvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733415257; c=relaxed/simple;
-	bh=ZKhJq1G1m3Gl7Z0eYkGg5228J41LE41NQmhmVxlYvs8=;
+	s=arc-20240116; t=1733415320; c=relaxed/simple;
+	bh=+3gG4uJcVlIlPvsLI7IW3b/75AREOrmUQVixXgnblsQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T48fDolak0yIb9pJGEMI6CjiU8CzbAgV2QrVvHizkk+BZTu6FoyyJX6mqVLq/cXY1vQTQ8cUX6Vr6cIRONyWZjGa2WliZPBEX2eaAvLRNGkpIx3iTqZ401a3MGx0MeASA9alLY1AyjOeUyvIyUJmXAz/jMe1Os/CR0bKYd1xnqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hTrWLkPg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5EW4o4015937
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 16:14:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Q4bHhpGj4Iq/Q6Yy51YAdnpy2vhl7koPdty55UVbqnk=; b=hTrWLkPgl7Q7Kyhn
-	nS2PioFKEwr8lscowNnp0SRIo6MpV4D8Oq2YeCTTMYx9AU26ShlXxfUyk+lO9zR3
-	TI0TY+3E270sXnlEmJEB5dgBRtYjBQMNba9xSHg5ma3lYambwtmxmY6e1TzLIRcw
-	5GzXGeqWrodsvWJCCukd4NnZf0LqhBrWxo7HQhBKewepqQ4MY2hbUPRreRoHqba9
-	3Wfz1eyEO2rzaD6nzZbl5RFOxn6PlcN1WUTClH0QWM9CnmUMtdZS70+VYscbPS4H
-	M4l2N2tfE6nOw3fcdlUO+9CrV+U+Jld+3gLOiB/XrLCgVSvElqTAupLXrK8+S34N
-	UpNmEw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43be1709qv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:14:14 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b67127ab77so6408885a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:14:14 -0800 (PST)
+	 In-Reply-To:Content-Type; b=ZMIBsBO3/uotD9jnlplOZvyvglK7urxOxckGfn4L2Q4Nkfk5vwASq6TovWylKeeRzAOgPLp+GHeYyyoN48waUy2H7RrUofB+3B//0T+97B9b3ABgH3UgKw6kmwYU8qqAMXMTzLSWeuYP7BrrZAWu9NNCtKrPP3OzoCyo+MFTnFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w3lwyvht; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a14d6bf4so11543665e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:15:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733415317; x=1734020117; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+4sz3zUp9yAyBKceZM/QXuubslWEL7HdKcdLFSmW0E=;
+        b=w3lwyvhtO1pjEyuF7+RCa07bfIDjKpD0CrUI38Hlab/rZnqp6e5LTBu6WY74hOwJ5+
+         ep0fp7rarwiDxyod8Q/c1K73vijnVZ9EJSVPdfWD9xtxBObEOy8l16MFeddgsmwkLgz8
+         BEtkm2I4hfsO3/7XSAs2Ki5C9EzkxfyACz1zsTrbk/GscfOhjItB5MQ2EnI70/LphnXL
+         83xxN+3YbRVT0Vqdq0dtvHcI16vcdseBn07pm0xXXMh+iLj/5JivyRmIEeOQkdzIqlYT
+         mwYDe5gojD18uTHE8E7pxoO+mDCh9Pu6ZwT8ArWkD5KW0iYdXZ0uMwl2ddDIosXtb7+G
+         nSyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733415254; x=1734020054;
+        d=1e100.net; s=20230601; t=1733415317; x=1734020117;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4bHhpGj4Iq/Q6Yy51YAdnpy2vhl7koPdty55UVbqnk=;
-        b=h0iwVTrhKwg7QXgTfgFqn5YYxBrOf7taItmpuRB5KXI4Ca7LAM4JLK/wlV5ehtP1Ii
-         8vkRHBIeUmNJsuMtBP2iq1j7I6V/QcwORAVdaeemb7JB1TOQKQGc4r13SUjbGieHxuUD
-         0ugVy5SfcWLA01qlUA6cy2sUxe1yjLnLPzQ4HpNRmH18r1LT8OHyXJSUwO5Lo7Gvq7T8
-         23anPVDv7LbtOzWP2vQeEo1Ug5V4RWy0Fl95P7SiiA8CH3iSg9Gb1GmYOIex4TITWmEJ
-         tCAWWHMN53OK1yMRGo9nYwrFWJNoJSY5WAGIgJIKEpeKG3PKkvbNc2PzuteX7fKa+/Ri
-         OZpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUy6CkAGcS5eu3xV/35Gbj1+16fzu1oqdv4WM8nwAcCHTCejg/sByQTqBHAkCyKQfduLV1EF8zKqr47eeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV8LOsR2eEvt3xysB+wzU8jCpcYK1zV3qMwXmsMwp21VN5S8f8
-	L8fmhO090moImy0jaT0HPs9IdOt85wrKQjvlwyLdYhb5Mkd+++tihBWUacqWtem+iFVwveE2a6H
-	+n9F15XYnJldFPE1lHFfa5ZyivVaCU79mnc3tCOqdZUGQXNxB/wE4A6uZXSFVHY4=
-X-Gm-Gg: ASbGncts13CN49bbBFuzqXnZxG0kedbSofgIG+bUpJ3pquDZHYkLGL70376jiFxjL9v
-	QJcAHTlPl6LkdzQle9cIeUb71ljn54lhS2noi2DF8TkcGi/caTIKSv17Q7nQwrBRTjV7uYK3TGW
-	3hTYVKWhNvGv6DWLrR1Os9X+0zbCgpbmTzM6o8ukEJ4GLxqchq0mRLqWnAR4QmDF8PzQhIN2cOe
-	hqGDCWvZSt4Lcj3YY4LhWBmipd3YDPSdl/nHyGNlHphGAxs5xF0sxYdjr2vzpju2WEceFHdjWRF
-	O3f6I9zV95DfGDZGrpiLdwBvM6iJru0=
-X-Received: by 2002:a05:620a:190e:b0:7b6:7133:b8a4 with SMTP id af79cd13be357-7b6a5da87c1mr511872685a.6.1733415253851;
-        Thu, 05 Dec 2024 08:14:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEeo8EnFlUDSRNwZoxgA8xXU7dReO+EiMtdKYMbSBAGgB52JxGgHU4GzGQnWeFhnhZ4jTPfpg==
-X-Received: by 2002:a05:620a:190e:b0:7b6:7133:b8a4 with SMTP id af79cd13be357-7b6a5da87c1mr511870685a.6.1733415253525;
-        Thu, 05 Dec 2024 08:14:13 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260a3660sm110733466b.167.2024.12.05.08.14.11
+        bh=Z+4sz3zUp9yAyBKceZM/QXuubslWEL7HdKcdLFSmW0E=;
+        b=wSYMlDWfL0f/cn4F9Jc8PXGApUtmKrYrd37O+peytMIx3MoYK6eOKDks6vK+hiJGns
+         3TxbZpmK6KXXvJdZ05xcyWrpQk6RRqCTAboaqTLMqMZF+jyHrtEPpsvCXvk1WSziFOYV
+         S+oYT3dzFze3OdjqI/r48OuaQ3s7v6Fdln0LwzwU6T/ODqP2yGC0+5AKX5TITLggzPs/
+         OgmCXipJHger2jBwZk4dcnc4GOPBXv2/dqhzT5bDUKaxYOIlpWLFBnusaM3E8hb0TmHP
+         WKoqDq4L8TkE1jf1uvE+8tPuPOd5hmP8CAUDrer4nqt04zaz+7rGBMZhCT9IFmmyHiJT
+         E9XA==
+X-Forwarded-Encrypted: i=1; AJvYcCXv7tm0pXCNgxjn69te4z2p0eL1DLWaj9kA5A1u6ml8P5CIa08b7Mm/aAD6eYHyYHxS4l2Oz//WtlZx+WA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtAviDzToAbvPkp55p16d13xPlsKKI0zQTXxHKKUv+bGnyw1b8
+	UQ3nA6RzKV0uAuhJZwukzHyYt2x8X2T0gimxPR1/Y4XoGny6jGASSo62AY1qTWE=
+X-Gm-Gg: ASbGnctT8DD21M9821uIlJWt8RuJFM6tmp80oHCeKX7TJoEuZqClDdl68gnm7CSZ9Xg
+	AzT5Apgkzja+YlvVvlKuu1RMIAYoM4eb3VGrCmiEo/GhLOWyCY170p19kP4Fqw4gyqjb1sSr0EP
+	ynvc93YVYwr4Y4gglPphraEtIOeZT7kCJALkNF+/sBaK0fxbAIAApMamstJcDc94YrZe+iSD6xM
+	is3Vxe3eMqP/53xJfLYa02GjiH4xbMXT8LT9Jodt9+mWKqRiwjhEtzFarA4uiQ=
+X-Google-Smtp-Source: AGHT+IGn7Hvj07Cs0jWrqjLNAu3oDpw3AlP4WiWdrNwS4OjjHvXSuA/a+BBjhbpaScxT9yE28vtaZg==
+X-Received: by 2002:a05:600c:3550:b0:42c:b1ee:4b04 with SMTP id 5b1f17b1804b1-434d0a0ece4mr77886305e9.28.1733415316729;
+        Thu, 05 Dec 2024 08:15:16 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0d26a3sm28879855e9.1.2024.12.05.08.15.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 08:14:13 -0800 (PST)
-Message-ID: <6d7204a5-a007-4637-8d42-0fad6ede6d4d@oss.qualcomm.com>
-Date: Thu, 5 Dec 2024 17:14:10 +0100
+        Thu, 05 Dec 2024 08:15:16 -0800 (PST)
+Message-ID: <85166c63-1e8f-4f80-abb7-5426383b4641@linaro.org>
+Date: Thu, 5 Dec 2024 16:15:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,45 +79,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] arm64: dts: qcom: sm8750: Add pmic dtsi
-To: Melody Olvera <quic_molvera@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241204-sm8750_master_dt-v3-0-4d5a8269950b@quicinc.com>
- <20241204-sm8750_master_dt-v3-5-4d5a8269950b@quicinc.com>
+Subject: Re: [PATCH 14/16] media: qcom: camss: csiphy-3ph: Add Gen2 v2.1.2
+ two-phase MIPI CSI-2 DPHY support
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241205155538.250743-1-quic_depengs@quicinc.com>
+ <20241205155538.250743-15-quic_depengs@quicinc.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241204-sm8750_master_dt-v3-5-4d5a8269950b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241205155538.250743-15-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: bUMX8V6JvcXhlPEaaTU3CsBzqaPA8mth
-X-Proofpoint-ORIG-GUID: bUMX8V6JvcXhlPEaaTU3CsBzqaPA8mth
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=784 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050117
 
-On 5.12.2024 12:18 AM, Melody Olvera wrote:
-> Add pmic dtsi file for SM8750 SoC describing the pmics and
-> their thermal zones.
-> 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
+On 05/12/2024 15:55, Depeng Shao wrote:
+> +	{0x0E90, 0x0f, 0x00, CSIPHY_DEFAULT_PARAMS},
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Please uppercase your hex.
 
-Konrad
+---
+bod
 
