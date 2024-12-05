@@ -1,142 +1,199 @@
-Return-Path: <linux-kernel+bounces-433444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DD39E5879
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F06A9E587C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6593916ACF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:27:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B827A16B3AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D198218AB4;
-	Thu,  5 Dec 2024 14:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B84921C16E;
+	Thu,  5 Dec 2024 14:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b="YFjEehpm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dY3r6MBv"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NVXB7XDD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E3A17579
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 14:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB3F21C162;
+	Thu,  5 Dec 2024 14:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733408829; cv=none; b=KoirzE/d1mX/FZFPV7rcLJPzuLH3U1hjvuV9gJW1JFwGx4/khWa9fZOMw8nFdQ8X33q6Xjn3FkvrpwTuz5XPH+mu+6nZp9VvPs2owGfL8ETtsRLTMJ1sGuDVTSa5A7zcYVebvct+wbi+yD7/M5LtPrUcrLbmvVUcSFJekXvKpoo=
+	t=1733408836; cv=none; b=RNjamaMA41KhCZ0SHjwvLNE+hSo6ajclAQTk+GlVYmT2mt3rV8OvjKpG8fHe2T18c+tqxF5BI1DtEtv053+M/FAulVGfaFKl9r4ATV+uxTB7e9jUAQN0/4/nD7OgTZ77oLs+HCMQ9bsS9sFpkF1oNHRtz/AlbESUxIqd3z/6mE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733408829; c=relaxed/simple;
-	bh=vbuWrBi3xlmgnCoEMbdJm96eoqTA+mDaV197R1S3r2I=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=S4WncVhbUlBe712qqHBit+gTKToI7NHznlOH2y1LGYvhh/4jrX02u6TxEgbGmuc32SKoQKLPChkHXjVe5jJyAWDl6gF5JV3OgfVlqd/rrL3UctMg6ImbzkUZtC9d/LZSlbZTNTyK/qJR6SE1SmkolNP0SEI3dkWazgw8bphuE8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev; spf=pass smtp.mailfrom=getstate.dev; dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b=YFjEehpm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dY3r6MBv; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getstate.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 15E7C13820C9;
-	Thu,  5 Dec 2024 09:27:05 -0500 (EST)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-08.internal (MEProxy); Thu, 05 Dec 2024 09:27:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=getstate.dev; h=
-	cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1733408825; x=1733495225; bh=vbuWrBi3xl
-	mgnCoEMbdJm96eoqTA+mDaV197R1S3r2I=; b=YFjEehpmdak6duqJfs4RblmBFR
-	H7ClFwAvufVmBsFTIk3gDQlqBnmkToHPsVndFySaob7ytjeV/oeSaGzzVKXLqoAT
-	s2awbwqxbUsA3t7BfHDi5AmMKJf90jXAMEmRxR7RBd0CST/ztZXi282xbZ10xUpK
-	Hqi/kJ6o1qQMYfiSXRrP1VR14iKXmclQkBYuSw03TjoyBIPU1P+QMZ/quNpJAIkP
-	Jjlkfaez9Fg20XIIoeMua5vvALIs99SIGZZspx+e7326QxbvYnMqGeZp9wc6/9PE
-	PTPdOaZq0TPZFinib/mo54G0m3/G6E/x8rPEU/vkbDxR37PVjcMEGj6ABFUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733408825; x=1733495225; bh=vbuWrBi3xlmgnCoEMbdJm96eoqTA+mDaV19
-	7R1S3r2I=; b=dY3r6MBvXGHGmMVKxRTfnYQnjTxkrm16Bja+D1saiFmuJ432rZO
-	AtB2Jjx+g3Vnb4G9wYOJ/0PPDBkI3J8IHie05B5ddSH6UEXqXIWLXORT5ztHwLhx
-	6IDCP1KPAK5D6KCRvvpA2RU7NoNjsuOWHIG7bpbmdL8GtDy6LgCLfNEWKg+3IQcO
-	YpwAvCqQTOus5/xfpvTPr00CcwRG8G/5ysiBNjQpJpVcWJksHfHdWGnzziKzVRUk
-	QyU12nAyYrGe3yIGpbDZ1y/GH4kHdkwGr5k0kMujUuI272gL6z4Pcxavw7LZ6XrT
-	/w0WrI5M0kjfHH4rXG5NYoFZulg+lhrM4mQ==
-X-ME-Sender: <xms:OLhRZ58m5NWTvcqgyAwOsJxUvDnfV3j1mrIZLF5SNkEoebccDd9udQ>
-    <xme:OLhRZ9tnYdF96FJ9c1kyenusFkNV-QHX8vJWkXDEOK18bw4SlUk43KubuzdoATXq7
-    CwKbNdvSX74yeJYyrw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgdeifecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepofgtggffkf
-    fuhffvofhfjgesmhdtreerredtjeenucfhrhhomhepfdforgiiihhnucetlhhhrgguuggr
-    ugdfuceomhgriihinhesghgvthhsthgrthgvrdguvghvqeenucggtffrrghtthgvrhhnpe
-    ekgffgtefgjeehffeiveelveegfedtheekueffffelleeffeeitdettedugfffvdenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepmhgriihinhesghgvthhsthgrthgvrdguvghvpdhnsggp
-    rhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshiiikhgrlh
-    hlvghrqdgsuhhgshesghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtohepshih
-    iigsohhtodegjeelrghffhehudgssgefieduvghfhegrrgdukeesshihiihkrghllhgvrh
-    drrghpphhsphhothhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:OLhRZ3BSDEkMOYvQ-iB5aA9v8jAaf8Uh7ZBbQB0PgI30Yalwp0vDxA>
-    <xmx:OLhRZ9clc5BFF0Rw9oAnscwHmrG0IjQFwcgc0VqisRsE82nZeu_u6w>
-    <xmx:OLhRZ-MKfoW3BnBw0wLIc0wEnTy5VA3pM5BT_RldOJehJgZCZFR9_Q>
-    <xmx:OLhRZ_kwnXjVqTpwTjHIPVYyDfIpq6Os67yFTBM-m-Lo904rsQR2tw>
-    <xmx:ObhRZ3ZxnMrcXNdgJTqMSlE83p-KGZInd8dcZ3OvLm294K8ij6n31-Xl>
-Feedback-ID: i0ed1493d:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BC1441C20067; Thu,  5 Dec 2024 09:27:04 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-Content-Type: multipart/mixed;
- boundary=e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9
+	s=arc-20240116; t=1733408836; c=relaxed/simple;
+	bh=TdHrru6HrKZsTuRgJP9+R3FgVkJlN0Fu+Onr/uxNQxk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gU97qG+vw4M9jC3kl/wd9Ql9qAZHo+J5VfYUoXTCkR+32HAyAn9QiMP44Z476QotEW54wD7/V2H68SsuLa2vbl19N7Ry28GP4NeGUarClC6sJNAlGM0+uiaEne8dDYkOHrUKLhxSjZFe4JvHVJsxglRapX9khokqzPL/1M450Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NVXB7XDD; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733408835; x=1764944835;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=TdHrru6HrKZsTuRgJP9+R3FgVkJlN0Fu+Onr/uxNQxk=;
+  b=NVXB7XDDl7qQ5jK4j9og68EvRdP+r/71giOL8wizPIwDXWYyLpWurR+I
+   UCC6RB/dUDVu9f+mPDCOTo+K7WxSJBH/KCjO+I74h8m9Lx2jXWlj8ybx6
+   kRH/NvRg4kBqA4F0MrFC31unQz0txbV3iG7P4ib733T1upyOxJFkOlr9I
+   BOQdxWtkQPv79AVcf1bGBMyL+7ZQVEaMlbcD2ACZg/F3E1nWIPtjSTYX/
+   yKn7NicbOF9V+sdB/tF1DvVeKWKWpwfsvtyid1PzyzoBCGtCnGYJwjC1a
+   /i7BwL9pDVAMiMLq/7shbrsjVlpsTmgSxWwJOB6DP8jOKVxTKDK0376zz
+   A==;
+X-CSE-ConnectionGUID: U4KzeGOpTIGb2z9nHTd84A==
+X-CSE-MsgGUID: 04oOsGjhSB+7SJUlj0XXng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="56200568"
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="56200568"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:27:14 -0800
+X-CSE-ConnectionGUID: aUWcbiuCTYaljaysBIO2jQ==
+X-CSE-MsgGUID: WjzM/8UlQFSQUkyU6nM6RA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="93937382"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:27:07 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 5 Dec 2024 16:27:03 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v9 20/22] ACPI: platform_profile: Allow multiple
+ handlers
+In-Reply-To: <20241202055031.8038-21-mario.limonciello@amd.com>
+Message-ID: <e1653608-4073-3f2a-c8c9-9718320d071a@linux.intel.com>
+References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-21-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 05 Dec 2024 17:26:56 +0300
-Message-Id: <D63U54UUGORX.2CRU0YBACQARS@getstate.dev>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- mgmt_remove_adv_monitor_sync
-From: "Mazin Alhaddad" <mazin@getstate.dev>
-To: "syzbot" <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>,
- <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-X-Mailer: aerc 0.18.2
-References: <D63TE6HWP7IF.2VGLGANFA6OGW@getstate.dev>
- <6751b43b.050a0220.b4160.01d5.GAE@google.com>
-In-Reply-To: <6751b43b.050a0220.b4160.01d5.GAE@google.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-629362536-1733408823=:932"
 
---e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9
-Content-Type: multipart/alternative;
- boundary=e0a970c926e37a078c7f1681e4b2bb4b799bf20abc69110f923dc9798f2c
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---e0a970c926e37a078c7f1681e4b2bb4b799bf20abc69110f923dc9798f2c
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-Content-Type: text/plain; charset=UTF-8
+--8323328-629362536-1733408823=:932
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
- master
+On Sun, 1 Dec 2024, Mario Limonciello wrote:
 
---e0a970c926e37a078c7f1681e4b2bb4b799bf20abc69110f923dc9798f2c--
+> Multiple drivers may attempt to register platform profile handlers,
+> but only one may be registered and the behavior is non-deterministic
+> for which one wins.  It's mostly controlled by probing order.
+>=20
+> This can be problematic if one driver changes CPU settings and another
+> driver notifies the EC for changing fan curves.
+>=20
+> Modify the ACPI platform profile handler to let multiple drivers
+> register platform profile handlers and abstract this detail from userspac=
+e.
+>=20
+> To avoid undefined behaviors only offer profiles that are commonly
+> advertised across multiple handlers.
+>=20
+> If any problems occur when changing profiles for any driver, then the
+> drivers that were already changed remain changed and the legacy sysfs
+> handler will report 'custom'.
+>=20
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+>=20
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
+ile.c
+> index 289b5d43638ae..2e38aa410b3ad 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -10,7 +10,6 @@
+>  #include <linux/platform_profile.h>
+>  #include <linux/sysfs.h>
+> =20
+> -static struct platform_profile_handler *cur_profile;
+>  static DEFINE_MUTEX(profile_lock);
+> =20
+>  static const char * const profile_names[] =3D {
+> @@ -399,8 +398,6 @@ static const struct attribute_group platform_profile_=
+group =3D {
+> =20
+>  void platform_profile_notify(struct platform_profile_handler *pprof)
+>  {
+> -=09if (!cur_profile)
+> -=09=09return;
+>  =09scoped_cond_guard(mutex_intr, return, &profile_lock) {
+>  =09=09_notify_class_profile(pprof->class_dev, NULL);
+>  =09}
+> @@ -463,9 +460,6 @@ int platform_profile_register(struct platform_profile=
+_handler *pprof)
+>  =09}
+> =20
+>  =09guard(mutex)(&profile_lock);
+> -=09/* We can only have one active profile */
+> -=09if (cur_profile)
+> -=09=09return -EEXIST;
+> =20
+>  =09/* create class interface for individual handler */
+>  =09pprof->minor =3D ida_alloc(&platform_profile_ida, GFP_KERNEL);
+> @@ -481,8 +475,6 @@ int platform_profile_register(struct platform_profile=
+_handler *pprof)
+> =20
+>  =09sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> =20
+> -=09cur_profile =3D pprof;
+> -
+>  =09err =3D sysfs_update_group(acpi_kobj, &platform_profile_group);
+>  =09if (err)
+>  =09=09goto cleanup_cur;
+> @@ -490,7 +482,6 @@ int platform_profile_register(struct platform_profile=
+_handler *pprof)
+>  =09return 0;
+> =20
+>  cleanup_cur:
+> -=09cur_profile =3D NULL;
+>  =09device_unregister(pprof->class_dev);
+> =20
+>  cleanup_ida:
+> @@ -505,8 +496,6 @@ int platform_profile_remove(struct platform_profile_h=
+andler *pprof)
+>  =09int id;
+>  =09guard(mutex)(&profile_lock);
+> =20
+> -=09cur_profile =3D NULL;
+> -
+>  =09id =3D pprof->minor;
+>  =09device_unregister(pprof->class_dev);
+>  =09ida_free(&platform_profile_ida, id);
+>=20
 
---e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=0001-TEST.patch
-Content-Type: text/plain; charset=utf-8; name=0001-TEST.patch
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-RnJvbSAzMjliZmRiYjRmMDk2OTYxNzMwZGZjMWU3NmRmNzliZWVlMTlmOGY4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXppbiBBbEhhZGRhZCA8bWF6aW5AZ2V0c3RhdGUuZGV2PgpE
-YXRlOiBUaHUsIDUgRGVjIDIwMjQgMTY6MDA6MDMgKzAzMDAKU3ViamVjdDogW1BBVENIXSBURVNU
-CgotLS0KIG5ldC9ibHVldG9vdGgvaGNpX3N5bmMuYyB8IDUgKysrLS0KIDEgZmlsZSBjaGFuZ2Vk
-LCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvbmV0L2JsdWV0
-b290aC9oY2lfc3luYy5jIGIvbmV0L2JsdWV0b290aC9oY2lfc3luYy5jCmluZGV4IGM4NmY0ZTQy
-ZS4uYWE1YWEzZmVkIDEwMDY0NAotLS0gYS9uZXQvYmx1ZXRvb3RoL2hjaV9zeW5jLmMKKysrIGIv
-bmV0L2JsdWV0b290aC9oY2lfc3luYy5jCkBAIC01MTk3LDYgKzUxOTcsOSBAQCBpbnQgaGNpX2Rl
-dl9jbG9zZV9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQogCSAqLwogCWRyYWluX3dvcmtxdWV1
-ZShoZGV2LT53b3JrcXVldWUpOwogCisJLyogZmx1c2ggY21kICB3b3JrICovCisJZmx1c2hfd29y
-aygmaGRldi0+Y21kX3dvcmspOworCiAJaGNpX2Rldl9sb2NrKGhkZXYpOwogCiAJaGNpX2Rpc2Nv
-dmVyeV9zZXRfc3RhdGUoaGRldiwgRElTQ09WRVJZX1NUT1BQRUQpOwpAQCAtNTIzNCw4ICs1MjM3
-LDYgQEAgaW50IGhjaV9kZXZfY2xvc2Vfc3luYyhzdHJ1Y3QgaGNpX2RldiAqaGRldikKIAkJY2xl
-YXJfYml0KEhDSV9JTklULCAmaGRldi0+ZmxhZ3MpOwogCX0KIAotCS8qIGZsdXNoIGNtZCAgd29y
-ayAqLwotCWZsdXNoX3dvcmsoJmhkZXYtPmNtZF93b3JrKTsKIAogCS8qIERyb3AgcXVldWVzICov
-CiAJc2tiX3F1ZXVlX3B1cmdlKCZoZGV2LT5yeF9xKTsKLS0gCjIuNDYuMAoK
---e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9--
+--=20
+ i.
+
+--8323328-629362536-1733408823=:932--
 
