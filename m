@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-433052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E899E5368
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:10:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA7C164882
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:10:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508B21DDC03;
-	Thu,  5 Dec 2024 11:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JM7uDiJn"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E07F9E536C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:10:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020DA1DB92E
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 11:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A04228147C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:10:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F261DED74;
+	Thu,  5 Dec 2024 11:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPO3cKKP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D14B1DD0C7;
+	Thu,  5 Dec 2024 11:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733397007; cv=none; b=XPEVQcNyKLuy5WtHZQi/wi6FXv4oQ2jbYDA6g+BeUl+OaKmTpAHZzsFQz53cmo0vWGriaXjoii9WjMP5mmyPVmbHC1LDnXo7Z6L4U/4q/KfJmMo0w0oRj2EqpkKk2gsG8O/4k/6DFkIZ4GOBgUHEzIcc74HY0VeUmE0YZ4KgaDo=
+	t=1733397019; cv=none; b=qHGMoAdUNMaa9lxa417wZu+lQ6qsuvshwm9sdyFGoVKBqydwmVzWlOUiyGDesNeZRzQkzmRn1cYBd9i7e0IrAqhh5KCAWOCfyH9v9Xtlnxtbod6NWHE32/PihE5CsLZxtnl2M1ddVkuHxjz9o6pxYFGrA2sTFXatnow+vTXAIkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733397007; c=relaxed/simple;
-	bh=CBk15y+1bosoiqQS4z+r5vbsAgsLzPYuG8w/fSH88vo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EBWC8WFM7jIcZVhXqxotVoND65Z1dK4QcO/ZfhS1SHb3o8Xhmu0UoDY9AhOhhSVY0HV4Aah56ahZyBsxWpSemJB3WJRYgkYY84SDtS+5OVIYAg10WPjJfe0OpDGZRkPEBNQtT7QxsbmRSmsd9yZ1Pkc8FtbWxoJ7hZob6VLxIfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JM7uDiJn; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733397002; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=O4Cy8bh2P+MEfj7/h17yeYf2vJikGyZup4YjTbGEAac=;
-	b=JM7uDiJnGiyWjG1aASyLJjL14hc/YOHh1mL5YnvZQoHfh/+E7n8/OzbInUyeL6F5pQYYsXwvIC8PmreKSnYtUfUinTTgS2GpHh4neICr/XaYLnELbiNjhhwXDwDpYMCfT3hjltgQqkOs0QYWhdYpXFYAvEDG0cmdYMvWXuuEhEA=
-Received: from 30.221.131.123(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WKt170B_1733397001 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 05 Dec 2024 19:10:02 +0800
-Message-ID: <2a72a270-e551-4529-b900-c955cd378ef8@linux.alibaba.com>
-Date: Thu, 5 Dec 2024 19:10:01 +0800
+	s=arc-20240116; t=1733397019; c=relaxed/simple;
+	bh=i90CknQg+VPzlddK+0B4sQpYQFC/5UYP4mum2Dngnms=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=uz5GMcyRiQYTbJXeGYHPdn3cgX9Vchv3gpoLS71x+F4Kuenmh9qvbfHk1zvJY0ZLvj1nUKAjTFCSa/5DbGdqa/0rvT8Q9KyQFXIHQ1bhFf1HOsRp3/AI+Nso5Y8o8UuFgrRYhKW2Ma53rKxyUUnMxWQVpdRtcVY6pZNyg+CrBsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPO3cKKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78EFC4CED1;
+	Thu,  5 Dec 2024 11:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733397017;
+	bh=i90CknQg+VPzlddK+0B4sQpYQFC/5UYP4mum2Dngnms=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=vPO3cKKPB/dLcHcik30htLZZpUGrRmJyOdKiRPuTsmCJD9GlnbhIAI+JIzfAA/LmX
+	 OX8U3NISGIRS25sW0hEbYD/9CtRRe+TzIEZPXCxEPXvyDq5t6mOZc3rTUwl2h9wfAO
+	 7o9wV8/xCVfLBeEQKzYtsZMGKoOEaWn5HlFd+uowkj0qlpaxCWV6nacmeGqqu2OrfT
+	 PK8+vnLkqlH6HoixCRABcwcQhfL1FtYLiIxJxfJ69LARy/aXxBXZSLHj/Ch2Yo64Qb
+	 0gC9wyFMp+EEXUfyD/BkQiMrVJHLxumOhwHUxX6TOsz+0YpJ2bb4yYa7py9CwCCNuG
+	 lWJXJOY4/ZGtQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE291380A94D;
+	Thu,  5 Dec 2024 11:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ocfs2: fix the space leak in LA when releasing LA
-To: Heming Zhao <heming.zhao@suse.com>, ocfs2-devel@lists.linux.dev,
- akpm <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20241205104835.18223-1-heming.zhao@suse.com>
- <20241205104835.18223-3-heming.zhao@suse.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20241205104835.18223-3-heming.zhao@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net :mana :Request a V2 response version for
+ MANA_QUERY_GF_STAT
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173339703253.1552278.3279028556184368012.git-patchwork-notify@kernel.org>
+Date: Thu, 05 Dec 2024 11:10:32 +0000
+References: <1733291300-12593-1-git-send-email-shradhagupta@linux.microsoft.com>
+In-Reply-To: <1733291300-12593-1-git-send-email-shradhagupta@linux.microsoft.com>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ longli@microsoft.com, kotaranov@microsoft.com,
+ schakrabarti@linux.microsoft.com, erick.archer@outlook.com,
+ shradhagupta@microsoft.com, stable@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-On 12/5/24 6:48 PM, Heming Zhao wrote:
-> Commit 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
-> introduced an issue, the ocfs2_sync_local_to_main() ignores the last
-> contiguous free bits, which causes an OCFS2 volume to lose the last free
-> clusters of LA window during the release routine.
+On Tue,  3 Dec 2024 21:48:20 -0800 you wrote:
+> The current requested response version(V1) for MANA_QUERY_GF_STAT query
+> results in STATISTICS_FLAGS_TX_ERRORS_GDMA_ERROR value being set to
+> 0 always.
+> In order to get the correct value for this counter we request the response
+> version to be V2.
 > 
-> Please note, because commit dfe6c5692fb5 ("ocfs2: fix the la space leak
-> when unmounting an ocfs2 volume") was reverted, this commit is a
-> replacement fix for commit dfe6c5692fb5.
+> Cc: stable@vger.kernel.org
+> Fixes: e1df5202e879 ("net :mana :Add remaining GDMA stats for MANA to ethtool")
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 > 
-> Fixes: 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
-> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-> Suggested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> [...]
 
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/localalloc.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-> index 5df34561c551..d1aa04a5af1b 100644
-> --- a/fs/ocfs2/localalloc.c
-> +++ b/fs/ocfs2/localalloc.c
-> @@ -971,9 +971,9 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
->  	start = count = 0;
->  	left = le32_to_cpu(alloc->id1.bitmap1.i_total);
->  
-> -	while ((bit_off = ocfs2_find_next_zero_bit(bitmap, left, start)) <
-> -	       left) {
-> -		if (bit_off == start) {
-> +	while (1) {
-> +		bit_off = ocfs2_find_next_zero_bit(bitmap, left, start);
-> +		if ((bit_off < left) && (bit_off == start)) {
->  			count++;
->  			start++;
->  			continue;
-> @@ -998,6 +998,8 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
->  			}
->  		}
->  
-> +		if (bit_off >= left)
-> +			break;
->  		count = 1;
->  		start = bit_off + 1;
->  	}
+Here is the summary with links:
+  - [net] net :mana :Request a V2 response version for MANA_QUERY_GF_STAT
+    https://git.kernel.org/netdev/net/c/31f1b55d5d7e
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
