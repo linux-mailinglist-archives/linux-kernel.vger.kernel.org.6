@@ -1,145 +1,130 @@
-Return-Path: <linux-kernel+bounces-433511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB729E5961
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:09:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B4F9E5963
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:09:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670712850C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7E1163AA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C921621A42B;
-	Thu,  5 Dec 2024 15:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6351C1B0F22;
+	Thu,  5 Dec 2024 15:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Uxa2Bdeq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="DJRRMfH0"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="pTr+GQVS"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD8221C17A;
-	Thu,  5 Dec 2024 15:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4429A218EB8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733411336; cv=none; b=dRZ0vXn4xqoBMTVC0S4NQKO4ehJN4x/FmePnh9hGtckFzVoU9VjZq/A8oFL63/g8nrkxoCWQUCC9hYy5F9U7NUORFWIW63hHbY/RcRRTXbJufrHEuunFkOfAyQh1H9ZAlJgQz6/KCchYA5OCCChfO0fdL2a81VzybeJAC3mZ8p4=
+	t=1733411391; cv=none; b=JQgMjz/zzp73SwurB01p+JOIklIarUp8Y7ilemomXB+iqj72evrE62vaBslWtVORAh8JNgdjLIi3p/T8iys1TEnyIaoG5+m5gUD6kIgc0ED0Bj/8uxkG1oTKxsH/qocyJkiAQlWfOnNz1YNd5TxskakUq1xUSlh6La6kGxMCWn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733411336; c=relaxed/simple;
-	bh=wUItljh0wOLzIOQydlmjVTP6wmRh+MNoE9QFAebbE4E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YmIQMqU0+FU+FyhEk87i+eXE4c6U6Gmw5cOdK+K9Ceqc/23KqkHocdKBHJ7NzUe2TE+Ik3fGhIJq16uyfrySmdb2WTS6nkBiWM2ceEcIN4/jGfPwb3X+1e/vlmWB7g2idLjNiHrj+OmncV2/9yQwt+aysBX5NYxFpHn3tEPC9OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Uxa2Bdeq; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=DJRRMfH0 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1733411391; c=relaxed/simple;
+	bh=kuDwn5MNGL8adcYkNgcDkUlwY1RIiGi86ZN+oVM7n88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Et4NjXJH8CbawyDwQh52Jf6uCm2VDUX7WN8eLrJczMuos/iOJpzfMIm979yL3cAFauhkbjHVi9c8HkVn3XDHcxMqA11e7zbgr/JrFS3bLVyXK+HzYKhwTDE0Gl72ldFoHrsA4Rf8qGDyivnjUMHyHwSBC1eAfd+A8OpVUQ9UAwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=pTr+GQVS; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d87ceb58a0so8425246d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:09:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733411333; x=1764947333;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=smbLgrckE25I2ak+4aah04Lb2EF2OUKb5fz0/VhJ75I=;
-  b=Uxa2Bdeq4pxrFy+g5DTP/PwQ7wFKt9R3K3BUWxBEywGr4hwGvJgnspOT
-   hVlpfqc/e5MFsTKyIV44hWr6STW3INURLyls/MO2CYi5i0fvEEHWZdSkT
-   NDEKMTGfgXSkaOSpo4HrFjBkNiBK/rWnI9C/gvFD4AK3ogj+rP+Zoa/P9
-   V/5pUOlinMAyAJ20K75zPMPsMzHL9SyeHBCs5d4HzoVgdEez98bfNXOm8
-   Zl5umSbP1B6857oa2+NI+6bvHhzD+vIZtgJvg+EGzifc2FXFwwRRgu5cV
-   bEbpkoIQhI1sl2ocKQ4XvxQsTNNGl9uvex1A4iZ8Wkgl+054ijbjnrp9e
-   w==;
-X-CSE-ConnectionGUID: Lq1MR0QGQ86NvTiQJl2PRw==
-X-CSE-MsgGUID: DbLBHJfeT9am2vHox1kHow==
-X-IronPort-AV: E=Sophos;i="6.12,210,1728943200"; 
-   d="scan'208";a="40434854"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 05 Dec 2024 16:07:43 +0100
-X-CheckPoint: {6751C1BF-25-D31EDE1A-D52D6119}
-X-MAIL-CPID: 24AF9B8854DF14342AD0D1FA9D6FBB27_5
-X-Control-Analysis: str=0001.0A682F18.6751C1BF.00B9,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CBF08163400;
-	Thu,  5 Dec 2024 16:07:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733411259;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=smbLgrckE25I2ak+4aah04Lb2EF2OUKb5fz0/VhJ75I=;
-	b=DJRRMfH0BmXxQ69J9qzYp6PivF8XSEGNBASYXXiYuJd/rZqoSRiRQc1vQVCVSCckroofek
-	2Y8KOGe+A5QoRIg027e2s+hwKjzUnPPUAS2W2OVOGhzDUoITPb6b+E+YMhWDPRSnQp/JzL
-	wEnsUQGdXNPEYScdC/+ckaEQneDO/ksHM18vHH+pEDGhxonL/64pnerxGivO5R39U7G5jp
-	xma5cK8UsJFf9aV79vD5hqmp95CZYM/c/gi8vRrq/XUZncy/ABR5sFa6ASBiRxb4bzCChz
-	OhtDoF/iHQqHvRqdUwXXWNO44K3DI/irQWT7Hrf7JE9d4vKVRyQTJSUkV0J7OQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>
-Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	linux@ew.tq-group.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH v2 2/2] arm64: dt: imx93-tqma9352-mba93xxla: enable Open Drain for MDIO
-Date: Thu,  5 Dec 2024 16:07:29 +0100
-Message-Id: <20241205150730.3132807-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241205150730.3132807-1-alexander.stein@ew.tq-group.com>
-References: <20241205150730.3132807-1-alexander.stein@ew.tq-group.com>
+        d=rowland.harvard.edu; s=google; t=1733411389; x=1734016189; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PQOjMRYvtbhFCrEpt4LKpQp+egpXGKfp+zEXaVand9M=;
+        b=pTr+GQVSEBdXCHfRc7MlFWfrTl3TaR42/zz/0KKrzLFfcX43Mo8/7iiylCN96BSKZl
+         o9ufFCDF/MoGlOAQWj/eD90WdDm+C/bNLlBaMMYoJjItJ770CoMUEke4fSmazmLvbjd+
+         PXCZC4Wc+Eil5WThzfLM/RSA/gcQaCxxtkIY45rgKGERPrf7kPVdCOppPztEUc2DMry4
+         LhH1w6msmU5QGDW+HN7kbR/w/ln3rkk/YicCjwS2GkSzGJnYJElp+XI8+ZCqLuaohgne
+         qj1qTOijcgorvoRyqm2xGUKynNMZPz1xhLWXNADC+GsXB+MCb1ZdY39CRT3Fgzonf70j
+         2HPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733411389; x=1734016189;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PQOjMRYvtbhFCrEpt4LKpQp+egpXGKfp+zEXaVand9M=;
+        b=T6B6vj6FS2YEDo8U0jny97ejY46bPYswsacCOgnjF4GUEM7kmEyDaIB7pY2csh+N2b
+         D85nVyK2feYLXWOY4RKrRfSfXfqDrQ7PRp7eUGw2e987Tg3Dr07t6k+o3z04uMHtH7HX
+         KFrwBE9QTkDy3hesp05+uWdJfzsIzU1h60j+eNqxpz/w3VrmGMu2T/nzoWf4OWHZtRpv
+         Zz0zbTV1qo9GzfmdhGQpBa8Elhu5kVIKPHlV/9a9M5CmbSZJjyVSzV9gEmAHoR6ef2T9
+         CeGL568iBqzEdG7gq38vqEMPIcOLVUSG/JUwl1TO6r+U4Tii7zyohJ3941GXjBpP9JNz
+         owbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVc0Zu47eLRoYrzoARJHylvZlnkVMWHYgC8J41Qv+dFsBHOmEHnknpYZ3MYIWXU4eQw3jK8I5DQ5zCg30k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2aeZhLSkHbEKDGhfH8XNMtVA1CAws7UynXkxUloh/rcewf7+D
+	GHEx2MOHE8MYB2FcNyWaxMRYEflOnA7RkzbOEfjswuEfoLYX03KIlDDI4I1KRw==
+X-Gm-Gg: ASbGncvkjXYLPlOwEDRCICWdWrnsXvgZ5GCmK6kyGpbAC920OQMR5btXHHedav9ywbs
+	YnpfGSjHX/aFeDhR/PyfDAliSRJGPo4V2YCimiT7KD5rgKtBZOudmwtEauHaOnhiLzBZSEV/k+w
+	q4LTrn5e1zXhsILfas9en2hHkP3Jki59QKCw9Uq+KnR5y+kIgqcVFQXK55KfE/CROJJ8bYJJrP9
+	R+l7+UnbediMLSz9eK7CBPMRv2Qu/51wd/VO9DS8T73bxIREus=
+X-Google-Smtp-Source: AGHT+IHhbf/pZzCcxgVHVLVyaXCHOzFn02c6Zf1CQlCRr1jsnO2iE7Rk8YDhgArk93K5vr5mhEnW9g==
+X-Received: by 2002:a05:6214:27e4:b0:6d8:8f14:2f5c with SMTP id 6a1803df08f44-6d8b73a6cb9mr151197666d6.23.1733411389235;
+        Thu, 05 Dec 2024 07:09:49 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::d4d1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da695c98sm7453136d6.33.2024.12.05.07.09.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 07:09:48 -0800 (PST)
+Date: Thu, 5 Dec 2024 10:09:46 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+	Saravana Kannan <saravanak@google.com>
+Subject: Re: [RFC/RFT PATCH] PM: sleep: Ignore device driver suspend()
+ callback return values
+Message-ID: <f6621a09-d5e4-4d3b-9b5c-55294c22030f@rowland.harvard.edu>
+References: <08f3bd66d7fc8e218bb6958777f342786b2c3705.1731554471.git.len.brown@intel.com>
+ <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com>
 
-From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+On Thu, Dec 05, 2024 at 12:55:08PM +0100, Rafael J. Wysocki wrote:
+> Expanded CC list.
+> 
+> On Thu, Nov 14, 2024 at 4:23 AM Len Brown <lenb@kernel.org> wrote:
+> >
+> > From: Len Brown <len.brown@intel.com>
+> >
+> > Drivers commonly return non-zero values from their suspend
+> > callbacks due to transient errors, not realizing that doing so
+> > aborts system-wide suspend.
+> >
+> > Log, but do not abort system suspend on non-zero return values
+> > from driver's .suspend/.suspend_noirq/.suspend_late callbacks.
+> >
+> > Both before and after this patch, the correct method for a
+> > device driver to abort system-wide suspend is to invoke
+> > pm_system_wakeup() during the suspend flow.
+> >
+> > Legacy behaviour can be restored by adding this line to your .config:
+> > CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT=y
+> >
+> > Signed-off-by: Len Brown <len.brown@intel.com>
+> > ---
 
-The board has a pull-up resistor for MDIO pin per PHY design guide.
-When MDIO is idle, it needs to be high and open drain is better
-to be used here for power saving.
+> 
+> I'm wondering if there are any opinions on this.
+> 
+> IMV, drivers returning errors from their suspend callbacks without a
+> sufficiently serious reason are kind of a problem.
 
-Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v2:
-* Update commit message
+There is a least one driver whose suspend callback returns an error if 
+the device is enabled for wakeup and a wakeup event occurs during the 
+suspend procedure.  We don't want to ignore those races.
 
- .../arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-index 0b4b3bb866d06..2e953a05c590e 100644
---- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-+++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-@@ -597,8 +597,8 @@ pinctrl_eqos: eqosgrp {
- 		fsl,pins = <
- 			/* PD | FSEL_2 | DSE X4 */
- 			MX93_PAD_ENET1_MDC__ENET_QOS_MDC			0x51e
--			/* SION | HYS | FSEL_2 | DSE X4 */
--			MX93_PAD_ENET1_MDIO__ENET_QOS_MDIO			0x4000111e
-+			/* SION | HYS | ODE | FSEL_2 | DSE X4 */
-+			MX93_PAD_ENET1_MDIO__ENET_QOS_MDIO			0x4000191e
- 			/* HYS | FSEL_0 | DSE no drive */
- 			MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0			0x1000
- 			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1			0x1000
-@@ -629,8 +629,8 @@ pinctrl_fec: fecgrp {
- 		fsl,pins = <
- 			/* PD | FSEL_2 | DSE X4 */
- 			MX93_PAD_ENET2_MDC__ENET1_MDC			0x51e
--			/* SION | HYS | FSEL_2 | DSE X4 */
--			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x4000111e
-+			/* SION | HYS | ODE | FSEL_2 | DSE X4 */
-+			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x4000191e
- 			/* HYS | FSEL_0 | DSE no drive */
- 			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x1000
- 			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x1000
--- 
-2.34.1
-
+Alan Stern
 
