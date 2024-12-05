@@ -1,104 +1,62 @@
-Return-Path: <linux-kernel+bounces-432998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B089E52CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:45:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7659E52D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:46:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB191882E3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4EA1883724
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59861207642;
-	Thu,  5 Dec 2024 10:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8B51DACAF;
+	Thu,  5 Dec 2024 10:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L7j8QVgD"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="adT0bqqf"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D49206F18
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B371A8F90
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395333; cv=none; b=diICN4GI5TuMRAJYQCpf+cLEhxcbqDlxXTNlRn29fI5cx4D4Wy8Ree/fRJl6y0CgZvR8g3XLFAOE/CdoWPfQx2s0NmnG9eE2FfODA8kBZ6UvANbxUeSfRkhfXetdwT+IHPrGNfVqTfU48BiJUmWnB0MHH4WZTIWbZE0GjaardXA=
+	t=1733395417; cv=none; b=HSPWadZKsxnNOMWZt1gYWpKRWcaaPhPAxG94UTkUTcUpaI9qKp/FdQbGpTrDcQ3yIWfxGudrLNNpMmC+KkacL0w2OEQLRl27e+2uOMGbUyEuhmVBgDjoK7VKxmOFglQPiY13ZLmSQiPi2hgIWU88Lc+qLq4ZyyAWzJ8pLuK36ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395333; c=relaxed/simple;
-	bh=lBjSO4XZQcFnEk/bAzX1s58M9esiJswkbspXoeJzI6s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OQwjewiixgU9EqkDbQNIxGjDgaM3irvKtZyg8znj7/9tE6Db2gf39oPojIDdHzEFLoUQVp6C1sxtJ023RshGtV/sollmG7QQQHmVlyp9fKDesQUIwOo1xh4B6oIIUCJ5r4wVG0tUFFuhQQZwruxuV7I3WkuBxJolYttOHlWkiBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L7j8QVgD; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38625aa01b3so16793f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:42:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733395330; x=1734000130; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FnoZGxzHG6LZDyvVjX+CssXgRHCJAKynJ1wSQcpNHJ0=;
-        b=L7j8QVgD4ePArRob4XZ4StNT6RNHNYc2feivBhj+XBFzzGbkDnbHBju+nZNkc9U7uc
-         5SuthXhG2KGt/HIRqRzaFb25EySmrsU2F+v5PiwEiuBo2OMhkAv+1iydzsLLrTQZkqyS
-         M8dMKMopfh6Xb5fFKHNqOmkG2Vz0UatQidUOha3Yr8fEmtPr8iCTU7FxYBum7K7La3mN
-         MAf5qGYyxQQ8HDQ8WEEvvxDDBSxiQx6k2+R/xJOWK0D5L/Iz9Ps06d2Y/zwsG9UXceLN
-         d19kNgmfVUFkCQ3U9KH2MmjtKmce/EKuYOtaZsxgiqknMoyChAzlNBOch9Itj1VaydyQ
-         WT1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395330; x=1734000130;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FnoZGxzHG6LZDyvVjX+CssXgRHCJAKynJ1wSQcpNHJ0=;
-        b=q2fV47alJhuDEX/6ONux6U5xp1sZV1GgTn5zK3C4K0N7yr92uNaiYtgB/6RmvToOpt
-         SyCa2CpEeDvefLZaIt0geTxlKdi20wll6tpttlN8QLb5QK4jvtcZgV73nEYups6vmlrq
-         guiawwrbEJ5F3mCRd/AzgH6IE1fPhpswhKDn+XxApg8WgJp/9ygD6Wtk0XgcAJxESMmy
-         57bV1McEtgESYrJEYmVTVFS8+AoL/wa5BXoCYyB2f65nxDIrKTYEd4o74o7wOFspAYFO
-         CAK4kljvcYg34CaXR7LF+lasZJ8NbLje2QUH5ZPyw4IH/3s4+JLCSrmaqxq0/p7g8CtD
-         yaOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNW95lvQGEXA4KzO9DS0eNRtCk2pRRdFCKORAuO26AM3zAib79m4O5ulDofJmJfsBM548zzBC9oT77ma4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4/LLqz9ZKAF5cE3eFuJzqaQ/9o1ifSLVcQpFcAZSyEpkAv4cJ
-	NiCI+6drTIPwSDoba68CqwQ/tNVq9uiLp5HjETxXPnB1LHBjqM3ex2usYoStyJQ=
-X-Gm-Gg: ASbGncuartPnOJPRNNepFRqMQIhNZpeEqXK3bAN2Ej2jfjE8zx41FqKS+3HMVrB6tbd
-	lVYevk2sPKC3yOzgUG3gNEoDWwfuJ/z0yRJB6tRuRswFf0hMzu224FpQPVmKn6WtPRWLirNsKqj
-	sae6AVj1Ftk/RNAuKL+msIpsPlkgMxTJl1Qfq5YsggFQFxzsMZWa8HacFFyucwvfLUvp53Nn/jf
-	imTi2HR+6vcS6SH/oOv+DPPOp2ORq2de3aoOS9gRfpR1ApdAc3CbcCTnphbKkSD7g==
-X-Google-Smtp-Source: AGHT+IGz3GjcyfBhQ5HlqLVmhmG7Qtmhnbj9BaPJEz/QzVaC6xVbnrbhQALk4UuX4nKmsjVBEJ+aKg==
-X-Received: by 2002:a5d:6d82:0:b0:385:e8e7:d0ac with SMTP id ffacd0b85a97d-385fde34d9bmr2947632f8f.13.1733395329824;
-        Thu, 05 Dec 2024 02:42:09 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861ecf406csm1662701f8f.3.2024.12.05.02.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 02:42:09 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Nicolin Chen <nicoleotsuka@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Adrien Grassein <adrien.grassein@gmail.com>, Adam Ford <aford173@gmail.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-mips@vger.kernel.org, alsa-devel@alsa-project.org, 
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-In-Reply-To: <cover.1727438777.git.geert+renesas@glider.be>
-References: <cover.1727438777.git.geert+renesas@glider.be>
-Subject: Re: (subset) [PATCH treewide 00/11] ASoC: Clean up
- {hp,mic}-det-gpio handling
-Message-Id: <173339532775.70936.4554643874403091214.b4-ty@linaro.org>
-Date: Thu, 05 Dec 2024 11:42:07 +0100
+	s=arc-20240116; t=1733395417; c=relaxed/simple;
+	bh=0J46msOTtINQyWl85h4mLdFl6n3LTJtMAgrqyDHHEV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fgl9r4uO2bomQszwoygFzERG5OsStCAwEEXt51Y44jkUVzYeaJgKi6eEg0xPG8pZTbfaOsd8Hn7tC24reKw0HMRgLU4088a2o/lLIKNoBq+spBPNeuKJs/b9CYhe/ofQSQtZValrg9X7szhNTIWmdwta8AXbZs2pjJfG/C2j8Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=adT0bqqf; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2862DFF804;
+	Thu,  5 Dec 2024 10:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733395413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m/neGO5Y8BfT1iCWWi0dB/xELDJS6gvdEM2M7lIFYIM=;
+	b=adT0bqqf8s1X5wQYJ3GBojglkRsOD/HSIzN+k4zjZ9h5oFXPLlVrbVBze8/0U6iePLmass
+	xCfOFyUr3V/Lt6u7UAsqi7h+KTkEmFGdxdxZkLQmE4+6nC9ThxIDHQERLE7GawyUGuxBOQ
+	xhtdk18snDYDgnNG4frhUfepqqpP+LJNCHIYNj4r8Ukewer3a3ESC5djp/CCpQzzI3PRG3
+	lbp1dtEQHdhtTu5eH110p9zfALvXAbRp/P0Qv/cqCJgzSdJgUql2Q3elMpqHgAd1OUWEk7
+	Lo4LY1IkrluY3NFIrCz8LcgHzjysq0i9HEr+Iy6SD3ICynUIpnzOCxwIEhGEfQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Bohdan Chubuk <chbgdn@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: spinand: add support for FORESEE F35SQA001G
+Date: Thu,  5 Dec 2024 11:43:24 +0100
+Message-ID: <173339519115.766262.10964911797107048383.b4-ty@bootlin.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241110205048.1751377-1-chbgdn@gmail.com>
+References: <20241110205048.1751377-1-chbgdn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,29 +64,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-
-On Fri, 27 Sep 2024 14:42:15 +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
+On Sun, 10 Nov 2024 22:50:47 +0200, Bohdan Chubuk wrote:
+> Add support for FORESEE F35SQA001G SPI NAND.
 > 
-> The "gpio" suffix for GPIO consumers was deprecated a while ago, in
-> favor of the "gpios" suffix.  However, there are still several users of
-> the "hp-det-gpio" and "mic-det-gpio" properties, in DT bindings,
-> drivers, and DT source files.
+> Similar to F35SQA002G, but differs in capacity.
+> Datasheet:
+>   -  https://cdn.ozdisan.com/ETicaret_Dosya/704795_871495.pdf
+> 
+> Tested on Xiaomi AX3000T flashed with OpenWRT.
 > 
 > [...]
 
-Applied, thanks!
+Applied to nand/next, thanks!
 
-[03/11] ARM: dts: marvell: mmp2-olpc-xo-1-75: Switch to {hp,mic}-det-gpios
-        https://git.kernel.org/krzk/linux-dt/c/62f95d8a4920706e94759a8f5e34677528530cf1
-[08/11] arm64: dts: uniphier: Switch to hp-det-gpios
-        https://git.kernel.org/krzk/linux-dt/c/751df73d825b3f7e6cad42ed333c28096635784d
+[1/1] mtd: spinand: add support for FORESEE F35SQA001G
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Patche(s) will be available within hours on:
+mtd/linux.git
 
+Kind regards,
+Miquèl
 
