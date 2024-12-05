@@ -1,126 +1,152 @@
-Return-Path: <linux-kernel+bounces-433920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF7A9E5EC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:27:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324E59E5EC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9051884F92
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1332916C4AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A801022D4FB;
-	Thu,  5 Dec 2024 19:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B920722D4F6;
+	Thu,  5 Dec 2024 19:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ROYskDul"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQCCAZPn"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37102225788
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 19:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E3C218EBC;
+	Thu,  5 Dec 2024 19:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733426817; cv=none; b=al1FPhHT15xbqAUsUDaCgGezPX5puGFSzm29l1veey8uHUYS3iRgk1Zo7WSroLkgcP4vO70AhP1aEgreRD/sohvDX69OgteIhBbv3vWZCV9agOEsE8IQ6mv/xJAlIQvWRPGWjgfrpDaeRFN8P3QwUDyy/HtKMNyBDoBLRNXARq0=
+	t=1733426985; cv=none; b=KFjCmS7mn18lXAitxIKOXwe97S1DFPKEt140159CmPpyA3f9XnuCBEtfdvMy9NJoU49Z71C3y9LQzkW6EnT9q2nckHQYlE9YwOp+WcHVHc9Jce7Bn/zYA95ilSlDmn5eC+HEzarJlocybQdn9I7NwJPoELXEuuvp+NOkwHfBIkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733426817; c=relaxed/simple;
-	bh=RKXhCMXvfJXkHiVgHUqpW4IGz6rcjdhtT4SjnmZZ6WU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OEBBxlnIQ266BG9V32/WaadBq1QfRv4jDUDFcHWA4OhIRgVzGmUad9vIazIcypTA96V2tv9ue3dCJlaU0Sc5ny2Vr+Or2/I2DOl647B1P/2UK1rR49Pwi4p1OsinsLfVrPmb97NlyvBUt+pKhh5o65uyCGbybL3IAFfYO8YSx8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ROYskDul; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d3bdccba49so253791a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 11:26:54 -0800 (PST)
+	s=arc-20240116; t=1733426985; c=relaxed/simple;
+	bh=3b1jXdg9etVi9JrSquOz+SPsW0MYcquNZqzByYhzOZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOR65obp9Snm+ghUYvG6rq67QF/0PszuSrbwaOdTluMo1UhzmNK+miLhpwMR6aba87N5byZ5fQl2jxuhPF9SFeLv88NCMcf9brQKA1W28SNP+E4INhTNOf2QNisdRpnHnIIplGLsmBKD2K/osW5pDUfXnVIOPokCZF63BEvN6A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQCCAZPn; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215b4681c94so11081925ad.0;
+        Thu, 05 Dec 2024 11:29:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733426813; x=1734031613; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XWh2Ea994aJGegiZF+JWYE2IVRgn2FJbG2ZX4otv3lI=;
-        b=ROYskDullIt2hHKGG3DZHwAoSdf9kqjXxSY5bAnxpibdvhzljEpWnmHRcB3FJBEaoh
-         UrLtt11Os6Kc1FwDC4RPMNBgxU/nHruhhbk8JxkxiCXxS6UiLcbLO7PEcu6WL4ffBSyP
-         Fz/Hkl0QfvyiBl/0TJ9ylds0vfwAIWWAHaPfM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733426813; x=1734031613;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1733426982; x=1734031782; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XWh2Ea994aJGegiZF+JWYE2IVRgn2FJbG2ZX4otv3lI=;
-        b=vRqNt8R0iK9nDYW1KzAmdh6Ri9oSAjC27GrVbwJNihxk6huEQc8F+VkHeRFFqUJmIT
-         FPG/iOtRR++d0XAvpSOf/nsKBaE927ZDiaJ9L8k7kjfOiVyUBKJ4wt+Y4hkKWAi4vP+d
-         A5XMnENQx1yj9MEoDDt2Rh12MH7fdiRZ35LOFOxE8UMA6j1fjpM4ZldinNTwtCGwWrwk
-         W4tM/ls6IxDBya70QfCf1U7wJ8pXk7IUzZBeB6DCkZxzjmyQ2Va5IEJzNmIg+oQrDOgk
-         aiueUGaEgi1jFDQC0CLCOPgZk5QhHWEvl9PMCc6R07ZF9wjAMWAYQcKMEkgu+R7IfeVF
-         YfbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtvQ/r9ODhHVoA3n4vqPvPAzpn50hT44fgcSm8NQULxCQYKhe9JloAC8tmRnXYOBnu4xCiucFzXgkfKao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmMCdLSYD53hUGu5KeaRO6ld7ZyhheXz4NchdTL9TKLkMnrZYW
-	X5AyetcymElAhnH2kEbUaYMRpxTrxfCvD3zUfuxvF0G0aRd19D8y8XzicwkCVmtmqmwVhlvfew/
-	SHYixIA==
-X-Gm-Gg: ASbGncvA41AjuFPGYP+pyrO5oXHsyQuzVm6/C89og106M8rfOvrwJakXKwPcfKf+kxm
-	Q+pd8cWNV0tM2BSfXkmKnrv0DTMGhWNMj0IvGF5Ygb3SWc6yxxYFcbWcbiAxXrwmJ4fYgFe3MZh
-	kDmK6myI00ZsCX7sKHH8CN+Gdu5rqZ2vM88gQjbLIfTKO5GFuTj2zGD0fz/+c4B/5VtHCgzOleY
-	qYXMB74FEoMzxZbZe6P8gi7pB7MDD85fS6fy8YkKvsYZZ+o7sHjLEI83+lpiEaiPveJ2zJ+rhxn
-	nWPTwPSeOQEwhnpOO8U6owIL
-X-Google-Smtp-Source: AGHT+IF3mgETUSe59D4Hi4r1BKjurvZiXzw99tRi+F/e37hnF1pnklW7AuGKN7rkDB5GgGvrPtqRng==
-X-Received: by 2002:a17:906:23ea:b0:aa6:2753:ba08 with SMTP id a640c23a62f3a-aa639fa4c53mr4808266b.6.1733426813296;
-        Thu, 05 Dec 2024 11:26:53 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260ebaefsm129939866b.197.2024.12.05.11.26.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 11:26:52 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so237740666b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 11:26:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWJW6po+uYsSEEBLicoritJSpuF40iCXq8f6y9qxwHG4NOCjcVHVZlZV0hyfY0RTQ6VmCNjfJ85Y85MnFI=@vger.kernel.org
-X-Received: by 2002:a17:906:310c:b0:aa6:2605:b9ec with SMTP id
- a640c23a62f3a-aa63a26904bmr3273666b.43.1733426812112; Thu, 05 Dec 2024
- 11:26:52 -0800 (PST)
+        bh=ot7+4CIO+9+UuMGzHA97VF17dz7xgujigYJmT7di5Hk=;
+        b=AQCCAZPnwEL8cwRLLWOb4cxxSov9yncL3daB2Cwa2MQDHRsCpzw8/dbuzS0CSqN/zb
+         8hi5X+JsH3alM0KcQ6ZplRl0m/s1oJWPlGl/2TKwE6OL+DdGGnyZWYvW+leTH+MEaIhP
+         zpVR9c2xZXG2ZrJyzYHTMlqcUBKpK+ddtDYFIloJ0ut3dHyDTnaU/YtoKSyu5hfs+jXv
+         bEuY8arcbzxhQIKRPLckLsvR3kNjx7qzXrwIdj/qEYaCClCXAyPBGdn8ck2pZ2vvKq1A
+         sWcvmtvVPxkJrA9W66ufS5ILs0NSfl5osbC/quWtS+nz+Ajpmp303zgfz6bMO9w54QcZ
+         o6Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733426982; x=1734031782;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ot7+4CIO+9+UuMGzHA97VF17dz7xgujigYJmT7di5Hk=;
+        b=ahJYUAxbD39wqd1tUHzap2pzwxX/jHlRSfwGRize6PoSq7CH0py0Z49q4N4e75AcSD
+         0WUKfgScYPaNxsTv/yVaKh/4FlUGcRZa3E091YnRcaMakkB7+UryjCZL2RbHQ3lVYDUF
+         Y4fIpMgLM6hoSj0jSnFWw9m1g8TRg7zbyVgwN/G13yowwSMcQS1sj6Sg6PTuZMbO8I7E
+         sTS1pPM5J2vHF0/OtvXpg+5IfQvL7PZZrwwzrhKdRfcjNnaTRam9Trf1HzpUr8zeQ1WE
+         9cCRDwB/Px/SJaY9/TF/eTXFgEopx+rP+Ik3WSTXFv+o/4KLlnLjAnJoQdj/7vHd3DMM
+         VQcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoKHdVBmjR5uzEgejXWymbGEaNcFy2dVebz40NT8uY8Wszdk2raALeCWC4lzZYOiY/FTcku9vOinx/X8Rh@vger.kernel.org, AJvYcCWRAZQ9bNqRSgGbDDen8049gVXZLcmwRnVkQRegM6BODYksS+2INb9Dwxr3p+0mx/qMq2in8Keqzqw9UG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ0V6rwzYNQOIsxKdm/5cP72uvTrY0NYZNouWKjecGoEJ3Mva+
+	9rCUHfizXKgkZy0lQOC6oli+oyu1DFFtv5ln48ovWYdFi3lc/r73
+X-Gm-Gg: ASbGncu/+0hhnBb7ncYEXFVC/uTOjlHtE04VT8ZgOdUsIOGr56CAYd7LahmnZXia7fC
+	2yHui+p3shLlntO6QayuSjVaI6L5GXXBtAvI6nKYfWFvfMph/VL2mzRaKBfhgHQ2EVYmtIzFeQf
+	wTdh1FfF3vvWfMpCtdFKwW0hGSpwM5N4bCMVITjaiguHXrMMHtb2sQ2Is7z+Pn3roBPj3j63HsB
+	wOBl+VGAfPhGivq+wYrqPpFd3IlUBtka1EvfjELkFYXQyIcjPu2af0r2+ofWGM=
+X-Google-Smtp-Source: AGHT+IGC+9ZIiMjAKZTczLRkM/BRbVrEIVmxp+GMW9Lt6mgf7SCBeOZSZlipYShhS/w1BrbEfbRYXg==
+X-Received: by 2002:a17:903:41cc:b0:211:eb00:63c3 with SMTP id d9443c01a7336-21614da9c0amr310145ad.42.1733426982566;
+        Thu, 05 Dec 2024 11:29:42 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9eb7sm16069395ad.143.2024.12.05.11.29.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 11:29:41 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 5 Dec 2024 11:29:40 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Stafford Horne <shorne@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: Re: [PATCH] tty: serial: Work around warning backtrace in
+ serial8250_set_defaults
+Message-ID: <16ca11d0-549e-449d-bc26-f0e11f2f057a@roeck-us.net>
+References: <20241205143033.2695333-1-linux@roeck-us.net>
+ <Z1H7Kp2xF_TCSxyS@antec>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com> <20241205141850.GS3387508@ZenIV>
- <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com> <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
-In-Reply-To: <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 5 Dec 2024 11:26:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjNb1G19p3efTsD9SmM3PzWdde1K2=nYb6OUgUdmmgS=g@mail.gmail.com>
-Message-ID: <CAHk-=wjNb1G19p3efTsD9SmM3PzWdde1K2=nYb6OUgUdmmgS=g@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-To: paulmck@kernel.org
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, edumazet@google.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1H7Kp2xF_TCSxyS@antec>
 
-On Thu, 5 Dec 2024 at 10:41, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> > To my understanding this is the idiomatic way of spelling out the
-> > non-existent in Linux smp_consume_load, for the resize_in_progress
-> > flag.
->
-> In Linus, "smp_consume_load()" is named rcu_dereference().
+On Thu, Dec 05, 2024 at 07:12:42PM +0000, Stafford Horne wrote:
+> On Thu, Dec 05, 2024 at 06:30:33AM -0800, Guenter Roeck wrote:
+> > Commit 7c7e6c8924e7 ("tty: serial: handle HAS_IOPORT dependencies")
+> > triggers warning backtraces on a number of platforms which don't support
+> > IO ports.
+> > 
+> > WARNING: CPU: 0 PID: 0 at drivers/tty/serial/8250/8250_port.c:470 serial8250_set_defaults+0x148/0x1d8
+> > Unsupported UART type 0
+> > 
+> > The problem is seen because serial8250_set_defaults() is called for
+> > all members of the serial8250_ports[] array even if that array is
+> > not initialized.
+> > 
+> > Work around the problem by only displaying the warning if the port
+> > type is not 0 (UPIO_PORT) or if iobase is set for the port.
+> > 
+> > Fixes: 7c7e6c8924e7 ("tty: serial: handle HAS_IOPORT dependencies")
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > ---
+> > A complete fix will require a sequence of patches, which will have to be
+> > tested thoroughly and is thus not 6.13 material. This patch doesn't fix
+> > the underlying problem, but it is good enough for 6.13, or at least not
+> > worse than 6.12, while at the same time avoiding the warning backtrace.
+> 
+> This works on OpenRISC where I was seeing the issue.  Has someone comitted to
+> work on the root cause?
+> 
+Yes, Arnd is working on it.
 
-Linux.
+Guenter
 
-But yes and no.
-
-It's worth making it really really clear that "rcu_dereference()" is
-*not* just a different name for some "smp_consume_load()" operation.
-
-Why? Because a true smp_consume_load() would work with any random kind
-of flags etc. And rcu_dereference() works only because it's a pointer,
-and there's an inherent data dependency to what the result points to.
-
-Paul obviously knows this, but let's make it very clear in this
-discussion, because if somebody decided "I want a smp_consume_load(),
-and I'll use rcu_dereference() to do that", the end result would
-simply not work for arbitrary data, like a flags field or something,
-where comparing it against a value will only result in a control
-dependency, not an actual data dependency.
-
-             Linus
+> Tested-by: Stafford Horne <shorne@gmail.com>
+> 
+> >  drivers/tty/serial/8250/8250_port.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> > index 4d63d80e78a9..649e74e9b52f 100644
+> > --- a/drivers/tty/serial/8250/8250_port.c
+> > +++ b/drivers/tty/serial/8250/8250_port.c
+> > @@ -467,7 +467,8 @@ static void set_io_from_upio(struct uart_port *p)
+> >  		break;
+> >  #endif
+> >  	default:
+> > -		WARN(1, "Unsupported UART type %x\n", p->iotype);
+> > +		WARN(p->iotype != UPIO_PORT || p->iobase,
+> > +		     "Unsupported UART type %x\n", p->iotype);
+> >  		p->serial_in = no_serial_in;
+> >  		p->serial_out = no_serial_out;
+> >  	}
+> > -- 
+> > 2.45.2
+> > 
+> > 
 
