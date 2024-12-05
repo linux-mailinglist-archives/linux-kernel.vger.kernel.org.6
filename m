@@ -1,274 +1,150 @@
-Return-Path: <linux-kernel+bounces-434000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFFE9E5FFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:21:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391869E5FFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:21:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C9F28119F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91079161FDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77B22309A4;
-	Thu,  5 Dec 2024 21:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7334E2309BF;
+	Thu,  5 Dec 2024 21:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="CpeGqdZt"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020089.outbound.protection.outlook.com [52.101.61.89])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GeoazlrO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAF822F396;
-	Thu,  5 Dec 2024 21:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733433567; cv=fail; b=szDJFRjKDL/RBpvjTUA3U38tXXuI1AxfrL6NfSnBrqdhjhjwOBFDrYQcvbPN9X09+7BvY5pAlFug8GL+Y1Cb1HPt9S11rMrQ+RChNCALHx3W+GdNpduPNaYTwcZBmpWzWgUna9gOO/Ra1Tw6cOkmOwjQYTZTH5Q41ehDtLZXNm0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733433567; c=relaxed/simple;
-	bh=mmzn35yj6XENSuxp//oSo65ebPMNziCMGYIxU9u/GyY=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iKnhp3CM7hO6wUiMyAbSaccM0AcYG77gJ8hKs4ik2UEsiXHCzWo0mc+VtP9YVA6ztu75b7qdwtI5MOldFSbtyRBQP3+MKrfFWU6QWCyJqlWMqCW3Mn6uK79S0O6o9sNwk5/JSkiR9D1sr7TEWTEXtX4rdrqiay4nHbeqe7Zr9K8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=CpeGqdZt; arc=fail smtp.client-ip=52.101.61.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gOdsBj2/c2VMF4x5k33nH68R4+odrvBQDYoqgWLzsuLe2lyoOC4uZ7QwbCJcQvRGBAI1O2fSCIK5djs/ubmJXtBCtWXaVDJwgPRHN7qSMHCi/bxffcFk3kb3sfQN5vgR4ZFToO1cNQS36yxeEhizGjHu9N56mqT7yHiutu77NN9VlJcEW4UhwwkC/TO1yJKu6qrnbC3/pLV1JGw9bFZumWTFYLt1N+PF9XJAgXiRrB2j4C5J1CuV00W6PpgTTyotEpDg17F5T98VxY1n/RSdUg14IVDCuBNSCvtlapXgii8+BxBM25oABBJTbm+kqJTezAUhPGYZvlLxp4mcYxqw+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=weo1G+zndL4DT+tGQW7rBSvQpZxgQHl1efYc7x6hcY8=;
- b=T0SiecdvnSBhfd9IyPn+jlllvxOMnafJS9olqT3ZkJC5Af7zTrlXJm+Ay5eoCVvssFY+4xgOs+iYgNNiJG0l44VwVDy9J8i8o/irAPcm3AObZ1BOibYk1SwpCJBhMfsZEtKaAmQd9i0rS3h2BqJAx14JkuVo+0T2+V1JpdRSIbIHeKNS4Yz9s06fwO+qReHZCgHnyrSLlHYlrGL2bQ/KGM72lHKZ6VU0fnV4EnpxxeTLUlD3p4ah7r6x7tu63MdBfrxTEvNptYB+tfIKDPnWU6TYV1myn5OYo0pZf6Mr4jRsGPIW3GFrNa3YC+2rBZSv/gdjGBPy8i5xi9Cdy376YQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=weo1G+zndL4DT+tGQW7rBSvQpZxgQHl1efYc7x6hcY8=;
- b=CpeGqdZtSzJ8JBD5pqTrhngEOtCyNAGznJYpngiA2AdTkBy7WKL4r4ZGkovdZ9/tHHfMDYjp0EauARaejckjkYyH+4O1ChTt5ppdRMStFm0/B/qTUVT/sIWOrwVC919FdclAeXoZdVaZKOb3+OQN8OX6YKERpasqpfK8ZGfMF3Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from SN7PR01MB7903.prod.exchangelabs.com (2603:10b6:806:34f::17) by
- DS7PR01MB7759.prod.exchangelabs.com (2603:10b6:8:7e::12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.9; Thu, 5 Dec 2024 21:19:19 +0000
-Received: from SN7PR01MB7903.prod.exchangelabs.com
- ([fe80::cf45:9855:a64e:382f]) by SN7PR01MB7903.prod.exchangelabs.com
- ([fe80::cf45:9855:a64e:382f%3]) with mapi id 15.20.8251.007; Thu, 5 Dec 2024
- 21:19:19 +0000
-From: Zaid Alali <zaidal@os.amperecomputing.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	james.morse@arm.com,
-	tony.luck@intel.com,
-	bp@alien8.de,
-	robert.moore@intel.com,
-	dan.j.williams@intel.com,
-	zaidal@os.amperecomputing.com,
-	Jonathan.Cameron@huawei.com,
-	Benjamin.Cheatham@amd.com,
-	Avadhut.Naik@amd.com,
-	viro@zeniv.linux.org.uk,
-	arnd@arndb.de,
-	ira.weiny@intel.com,
-	dave.jiang@intel.com,
-	sthanneeru.opensrc@micron.com,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	acpica-devel@lists.linux.dev
-Subject: [PATCH v2 9/9] ACPI: APEI: EINJ: Update the documentation for EINJv2 support
-Date: Thu,  5 Dec 2024 13:18:54 -0800
-Message-Id: <20241205211854.43215-10-zaidal@os.amperecomputing.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241205211854.43215-1-zaidal@os.amperecomputing.com>
-References: <20241205211854.43215-1-zaidal@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0126.namprd04.prod.outlook.com
- (2603:10b6:303:84::11) To SN7PR01MB7903.prod.exchangelabs.com
- (2603:10b6:806:34f::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79F323099A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 21:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733433570; cv=none; b=ooEwnfiWWa4x7KZryvlWQCslGN4AGjAY4bpym5sQtZQd+TAGlf7alo62DVZFs9EChqfW3kxL5CsbZUjxSAbA+Xo1mns5mCe+wGTku2O2M+ESaECRYZBk64gsICg4fjwwYy1OPPz3hwry3IhVQDurFRZpLvvAqM/ielegEyTNOhs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733433570; c=relaxed/simple;
+	bh=aJapw3WyYccafxnKr7q4m6K3gYLXIYlv3ohQbrLcTFc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Py/t1xQXUoFFaTOokSJXw+rOB/Vk7k2IE+zFV/e7OybfGcDWmXE5Juoj0g05bQ9lZ+exBrRtPrWY7ndom5iFsiXXk7DG0szEKTAzqUCyiTEVh9mi2LiVWGqylebmDsFYAu1cTAoydKw0FNyiRTy3OrmHdA62FqG/9TpwuH/4jE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GeoazlrO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaQNJ031128
+	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 21:19:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sQfISVsXdxQW6JtVPLqLwHHCBEV9bwyCTS/zkVZgSsM=; b=GeoazlrO4tScntBa
+	G8use33MVnlzfjS5aGV4MK+/4QRhple/OlwsiY32Ryv99Wht6jE4xZmHIXJ3zSJN
+	NqkeYTN9hGJddbtZRVQCOGzblSmxnBYrTVEeLJI50YHmMCoyMQHWHET4AcjztPd8
+	ed3EvpNTTGTgEupqIddYn9bg6gxybXALNef2Q70+l7zf8uJaM5YKPoGRs6cpVgfR
+	iGgCA9IM/AhGy89xoppugpISpXoXmzqmo2lQGTkeOvABOKTuwF86yeidCTjU/BRX
+	B5oGPaB/Cej1O5aG8LTbWnKQ1LyqhfywhdPP7fybEiFpwbnFY3f1QDQY8vMdnlZt
+	vlBKag==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43be1711rb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 21:19:26 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d88a5bb5e6so4088216d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 13:19:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733433566; x=1734038366;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sQfISVsXdxQW6JtVPLqLwHHCBEV9bwyCTS/zkVZgSsM=;
+        b=UenXURqUH009HAqnvOcoyU0N8bh6ulFDfOregByjgRlGsLz7goOkCMyNwzYJqvqjXW
+         BNaIXScLwihNAcbFAUuXZr6I88U0uwZtbLS4tCQKKO8Fnz7F0yY0AAbjHhS2je/+ZSkQ
+         JiZoMrTx7NbF95Vs7smUMo6t8nkORykBPJbkT4UfegDCdCuoo5KSv1xG3G9Z5Kz+GLC6
+         ZiNOJhyf29U2sH2Tm7qcEvhUMB+ebhV1utJoCvMoaa/ghgC0G+NU1e5g2rUkX+V7jT6s
+         zQQl+41GZWu1kHerzNqlxDsGGKzIEhwXyFIzrXRZUJcC3bF/7nGliqzS09iDUQlRg3/E
+         sRBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfB8ewn5iyU8xsYtSdFgxUhgdfEoFo3mnPIFB7GzqSVheU3xlP1Oa5SqcPyMVAwOed1cWUvGkOSilTpB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq1yZQWzDKzY3jfnyWA5UguSRUdAcRoXeGvMpmFOPHfpvJcNWI
+	2FUDPWEugSk+s7NWN0YybUVot3IxOGGtBbFU+MljMPHcI9b5FggflTJzJigfMKwYEyyeJXkVY7p
+	dtKAxZgO70SRBMUCAJB7f+RP7DqX2L4ms9dpRye8400u4oabJBPOlxmohZX2QBg0=
+X-Gm-Gg: ASbGncv8YbP0VCItwYn4GBaTH64/W7YAcTD6Q4ZpkqTxZkFYv6kcxF81dNLfTb90cQa
+	i8h7g8aq0EejYblzezzIbPHWnnyEbY8Nhfi5avgWDljKuh0mXxM8ie1MrP+96X+up4+nWJHZvmf
+	1VJyva1qyPRpt1d+vsyfpxwAhcQmuLAn2XGHtY2hs/iLSyr7raEpmfMtgWfPC308SaIQOfZLtvL
+	iNmpOj9DdnOQvLZSSAQ3SZC1LIM0TR7IgDbxyt49yVo4wR15vEigZx0Bts0lfXYYpPmki6V34qG
+	79sLn0Vul/jIsGnsMy+WDlBNiU+l33Q=
+X-Received: by 2002:a05:622a:178e:b0:466:8c48:7232 with SMTP id d75a77b69052e-46734c8eddcmr4700601cf.1.1733433565441;
+        Thu, 05 Dec 2024 13:19:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFAzTu5V9J+dNt0Zva5G7WWSe0sMoz64KA05UqDj/rEMMvGL2xQ+bWsjaqu65qlF8wRjNcpNw==
+X-Received: by 2002:a05:622a:178e:b0:466:8c48:7232 with SMTP id d75a77b69052e-46734c8eddcmr4700241cf.1.1733433564563;
+        Thu, 05 Dec 2024 13:19:24 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a48ab4sm1263345a12.27.2024.12.05.13.19.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 13:19:24 -0800 (PST)
+Message-ID: <d2f0b021-7b0c-4bd6-aad9-2619a91abdec@oss.qualcomm.com>
+Date: Thu, 5 Dec 2024 22:19:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR01MB7903:EE_|DS7PR01MB7759:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c0af457-df1d-4872-aeb0-08dd15727adf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BhSbyqmPrRyQ/OyusgW0WvZQbdN0IQlQA8C2dNGSA80kCUh26cdIhdVNIl/S?=
- =?us-ascii?Q?v/epyfn1ynVG0GN/9QnS1GhJoR1/25YvRPbZxoRsPq91it/L5A0GRxivV9gJ?=
- =?us-ascii?Q?DMK0cSmmz+iQ1kT6Lq+FNX26VrqcYXlvrMAbxM0SX2uttN7UGdsadzz0FuvA?=
- =?us-ascii?Q?KmJ0+DxXBnIPa01yyx72i5CNRYeuI6uQd4M/Oq8Ts/Qm1ADn7pVgSYcmHJAc?=
- =?us-ascii?Q?zwzYQJNwhxVp+pow+LdvBKXEx1SsDoJkRcwofBaX/ttLaxnHIg49rJ5cWZur?=
- =?us-ascii?Q?a1v2Qv3Bf8s/8SP/fEgAEpn7brB+zzHyEvREjzJh9/SBn+d8+QTLCcfmzPMr?=
- =?us-ascii?Q?JXNqlZRoe8lEz9Pxw6mnA3FZkBNzgxXPxVGEji9u99WRWor68hzM+K1fUOgU?=
- =?us-ascii?Q?azhXBsXXZxWWb6afvpQgR5P1CQGhSyUYYTB7529IexsSKaIYFgO9g0u5Z9l2?=
- =?us-ascii?Q?j8/oal6I1JRc6aMnI9sSTwExM53Pp7cYTBi0paEpdLR5HjDtTEDskJmfAzV6?=
- =?us-ascii?Q?WKKb/baPLdYdcw56d2Bisa2PauBcjh/oUmEf7grKXwoEq2v/DGtUUgl1wtlb?=
- =?us-ascii?Q?+Ji4JWW1EGdZuBBMkSPZ5KIP7Wyjf7ejP697wSBLKJU7+IggNjoIC8NA96mS?=
- =?us-ascii?Q?efj4aRVwWbw4jE26WIucAsB5icL5CJdRXDYMInNr5wQVxkaOqxkSSG0t1KEL?=
- =?us-ascii?Q?NZ/hxtMtCqsrLyYzLFVyKbBqdbOj7l7CV3YJ/odIeXy+kZLjTI5ZF1LE2j35?=
- =?us-ascii?Q?Oib6+pJQsQnHNXjLF8qnBXjsN2UQzljWDN6I0ha0BkWs01TjWGE6j9kNzHSC?=
- =?us-ascii?Q?J4nOFlMQKRN02bBgnq01jcTIO4skmc9925MbTb2M1cuAvSB2fUrfuHodJiW0?=
- =?us-ascii?Q?Um7QDb7CrFpZQQD5XSque83wKE/TBXyj5xgsyg7KRoklsx1kSBLGKc+or7Gy?=
- =?us-ascii?Q?rspm/V+j+QpcIijE3PnRmpZ3oSZI7DHd20nsElrmrxwVgz9i763anQRcbh4z?=
- =?us-ascii?Q?QjnT5+/KUcb51VWPFGTrSvhy0zUp91FaTkxHfEXZczXK+UAowUg1M3PNrFmU?=
- =?us-ascii?Q?UwOUuucknkqgEu5muvHP1dlFTlpFOrRl/elltERrhL4L/dB4+qo9iOWHzveI?=
- =?us-ascii?Q?dd9C8cGWGwS0+ibANEYmGrIpYBqbhX5jTBVydZtT+3Nr9ESKfu3fv50Fpz6N?=
- =?us-ascii?Q?UJLRHBHGK2fOSOKhw3bJ0Smfnea03apy20dAf8LJS3yRjAGLldmDFrG2nbgp?=
- =?us-ascii?Q?a+XkqnmyqZOSUd0BbojKA1cf08EudwXTVt8bTyrfM52IiNWg0+7kjJJKqlnQ?=
- =?us-ascii?Q?L/URqYmd57bXap+N4Bauksamo+Z+D8qU6G+LY5cUordlusB3LVtFOBkRysqW?=
- =?us-ascii?Q?JuvyluKZCr1fprZRu/0wpeWYD6I8?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR01MB7903.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?loi45oqvPHccguczQhr18iIyh8wYANwRZLP+ZthTwKZOEI5ato5PqKuTmlXh?=
- =?us-ascii?Q?8fRyi0A0bC2cT/TWCb3S/oYR6tHvFkKIWcVbIcYtlhm0KMzM5GSga3GX/C0b?=
- =?us-ascii?Q?pQqoejEu3el0uOOyhvqohBH8/er09rIcZuHa4xfqLJJRyGI78OJilF4TBILT?=
- =?us-ascii?Q?tctz5FHLIck3UXfuPsUeyxhprdpXemok5dtkxnZKCR4NhfHupiuKcYSu2Idl?=
- =?us-ascii?Q?t9EhyKroD1xwCIcubSAUH1H/PEzwcoTEBRfmH3y4ha64OO+F5OJHNrcYEdiC?=
- =?us-ascii?Q?cXTyW9MLsbSy6EMe6i8I7KAEigh247vR5ZHp7ehh0F/M6xyzdYL/TZ7NOnKR?=
- =?us-ascii?Q?uAwFKjdgVcoByzcA0uYCMyusHdLRe3iJtnvDzoH2UHlLPZ/pNursPET3Cn/A?=
- =?us-ascii?Q?QHCxvvMC7fJThzGjOw86xCxkk3l5vV+nBGgoFw2MyG9I12P8fWzV7Kksa4zU?=
- =?us-ascii?Q?ogSD8+WmJwDIIix8ORlPSeL773kbnxGOCKj42frwy7kCULmi2pC7GCjhYeP2?=
- =?us-ascii?Q?OPY52J6lN8St1sFAoamq44TZCNZbbEgikOFXR8Afe6FsIJQsuXQ0evIySBva?=
- =?us-ascii?Q?jum3sgpdfaB/FbzW+4ozmTzaMGV+ffswr5VpsazqXf7PiIXm1e7y5El6dwwP?=
- =?us-ascii?Q?RMHr8rsnlJ7e8btPEhu9n5ltrA5kIUpXhOJsA8h5OLzZ39+MVGonLU/bUpCr?=
- =?us-ascii?Q?jn68sfgIR/+hyVyE4WGnCYTCpUGh8rKj0V1stAkXDOAoBxUf1CQZ1b2qhT+1?=
- =?us-ascii?Q?PUDboYUqmH9PwSPHkKQD9WZaJ/CbIuyxwQcfu7f/ImTNpN8eHaY41Y3OfIDa?=
- =?us-ascii?Q?WTqihTZDFg+qz+MnR1DBs4c+UoPNi69XbbRwHsV244X3he2OkBKQz8LbcsDI?=
- =?us-ascii?Q?GSEhwDRb82RquUDlwX6D25azis88kaxy1hSpFyyOjqA3f5Bx/7Ye47/z1XHc?=
- =?us-ascii?Q?MGGegGncLfmMjuLSbHo3uzovTYbaODMw/biWyFDkCc0rxeUKNGelYAJ6/wWI?=
- =?us-ascii?Q?/LAS8kIi//8/GO5aNXMkNsRW0QhxzfJxlHlScrMeiJ28Sx6wtg5ZzXahRcA+?=
- =?us-ascii?Q?aqhEW3hHl1rvaIcpVHiNF7FWwK1Ej4+kfrjsmHFHmzWG5vZr8S1XYHg6eSpe?=
- =?us-ascii?Q?teIGLOXSNm9V3cu/1iYPYPnF1kjOJ06Hqsytkq74o3lkmK6HybtqVUgIkV4N?=
- =?us-ascii?Q?O3f7i/a35EfhipQz0px4Lc9IKMyLbnVlMMaf1RsCc6SzhNAi6xNcXrmFoGWS?=
- =?us-ascii?Q?pGpQOwX3QTqSxRT6txFgTvGUShSs5hPvfv7eK2pskKa91OBG2L4gbx+ucW/l?=
- =?us-ascii?Q?kTL0rQpqHK2yVoBdPigmBvEk7SjleBP6ft7puc6/zYbe0gxJ6EgI97czNYfW?=
- =?us-ascii?Q?MyB6FP2GWqjhEuEy+UglGwx+9vdGNYo4vHlRqy4Jv0g1xqVF7+KaJFHpLTY+?=
- =?us-ascii?Q?CkccsuYutOzQzO3LZkBPqrxydK65+oZv5NKNp6I730oINP1QJHpUJi2dCSvn?=
- =?us-ascii?Q?f5kgAM5aI9n7WtXpr3mt9HSz7nD/xNjeo4YZnWMw68dug7B9go7hYR74O3Ok?=
- =?us-ascii?Q?w4p0Av4xTQn3XdoBOdPq0uzoE1/xEw5Vhbg8G0f13op9HtD0+BdN2aAniPEZ?=
- =?us-ascii?Q?kGnhqMcj9aOPlHNec55fVx4=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c0af457-df1d-4872-aeb0-08dd15727adf
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR01MB7903.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 21:19:18.9554
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7+Q18Ie2ulPMbuyj983yDATDMxX+nt2vz+P+MAYF+Jur8K3GEoT8A6ng6qzIax4p0o6Jva0MWmwHXbcScsemZUwFVmdsi7Q4XDOFZzt7AJRTSILsF5feH/BcPoVsV34Z
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR01MB7759
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
+ definition for WDK2023
+To: jens.glathe@oldschoolsolutions.biz,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Kalle Valo <kvalo@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Merck Hung <merckhung@gmail.com>,
+        xlazom00@gmail.com
+References: <20241202-jg-blackrock-for-upstream-v9-0-385bb46ca122@oldschoolsolutions.biz>
+ <20241202-jg-blackrock-for-upstream-v9-3-385bb46ca122@oldschoolsolutions.biz>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241202-jg-blackrock-for-upstream-v9-3-385bb46ca122@oldschoolsolutions.biz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: mi8q8ryuKtGrspSfTCUdGtgI8y_U7UGL
+X-Proofpoint-ORIG-GUID: mi8q8ryuKtGrspSfTCUdGtgI8y_U7UGL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0 clxscore=1015
+ mlxlogscore=812 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050158
 
-Add documentation for the updated ACPI specs for EINJv2(1)(2)
+On 2.12.2024 8:59 PM, Jens Glathe via B4 Relay wrote:
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> 
+> Device tree for the Microsoft Windows Dev Kit 2023. This work
+> is based on the initial work of Merck Hung <merckhung@gmail.com>.
+> 
+> Original work: https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
+> 
+> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
+> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
+> 
+> Supported features:
+> - USB type-c and type-a ports
+> - minidp connector
+> - built-in r8152 Ethernet adapter
+> - PCIe devices
+> - nvme
+> - ath11k WiFi (WCN6855)
+> - WCN6855 Bluetooth
+> - A690 GPU
+> - ADSP and CDSP
+> - GPIO keys
+> - Audio definition (works via USB)
+> 
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> ---
 
-(1)https://bugzilla.tianocore.org/show_bug.cgi?id=4615
-(2)https://bugzilla.tianocore.org/attachment.cgi?id=1446
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
----
- .../firmware-guide/acpi/apei/einj.rst         | 41 ++++++++++++++++++-
- 1 file changed, 39 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/firmware-guide/acpi/apei/einj.rst b/Documentation/firmware-guide/acpi/apei/einj.rst
-index c52b9da08fa9..b1c0464f6002 100644
---- a/Documentation/firmware-guide/acpi/apei/einj.rst
-+++ b/Documentation/firmware-guide/acpi/apei/einj.rst
-@@ -59,6 +59,9 @@ The following files belong to it:
-   0x00000200        Platform Correctable
-   0x00000400        Platform Uncorrectable non-fatal
-   0x00000800        Platform Uncorrectable fatal
-+  V2_0x00000001     EINJV2 Processor Error
-+  V2_0x00000002     EINJV2 Memory Error
-+  V2_0x00000004     EINJV2 PCI Express Error
-   ================  ===================================
- 
-   The format of the file contents are as above, except present are only
-@@ -85,9 +88,11 @@ The following files belong to it:
-     Bit 0
-       Processor APIC field valid (see param3 below).
-     Bit 1
--      Memory address and mask valid (param1 and param2).
-+      Memory address and range valid (param1 and param2).
-     Bit 2
-       PCIe (seg,bus,dev,fn) valid (see param4 below).
-+    Bit 3
-+      EINJv2 extension structure is valid
- 
-   If set to zero, legacy behavior is mimicked where the type of
-   injection specifies just one bit set, and param1 is multiplexed.
-@@ -110,6 +115,7 @@ The following files belong to it:
-   Used when the 0x1 bit is set in "flags" to specify the APIC id
- 
- - param4
-+
-   Used when the 0x4 bit is set in "flags" to specify target PCIe device
- 
- - notrigger
-@@ -122,6 +128,18 @@ The following files belong to it:
-   this actually works depends on what operations the BIOS actually
-   includes in the trigger phase.
- 
-+- einjv2_component_count
-+
-+  The value from this file is used to set the "Component Array Count"
-+  field of EINJv2 Extension Structure.
-+
-+- einjv2_component_array
-+
-+  The contents of this file are used to set the "Component Array" field
-+  of the EINJv2 Extension Structure. The expected format is hex values
-+  for component id and syndrome separated by space, and multiple
-+  components are separated by new line.
-+
- CXL error types are supported from ACPI 6.5 onwards (given a CXL port
- is present). The EINJ user interface for CXL error types is at
- <debugfs mount point>/cxl. The following files belong to it:
-@@ -139,7 +157,6 @@ is present). The EINJ user interface for CXL error types is at
-   under <debugfs mount point>/apei/einj, while CXL 1.1/1.0 port injections
-   must use this file.
- 
--
- BIOS versions based on the ACPI 4.0 specification have limited options
- in controlling where the errors are injected. Your BIOS may support an
- extension (enabled with the param_extension=1 module parameter, or boot
-@@ -194,6 +211,26 @@ An error injection example::
-   # echo 0x8 > error_type			# Choose correctable memory error
-   # echo 1 > error_inject			# Inject now
- 
-+An EINJv2 error injection example::
-+
-+  # cd /sys/kernel/debug/apei/einj
-+  # cat available_error_type			# See which errors can be injected
-+  0x00000002	Processor Uncorrectable non-fatal
-+  0x00000008	Memory Correctable
-+  0x00000010	Memory Uncorrectable non-fatal
-+  0x00000001	EINJV2 Processor Error
-+  0x00000002	EINJV2 Memory Error
-+
-+  # echo 0x12345000 > param1			# Set memory address for injection
-+  # echo 0xfffffffffffff000 > param2		# Range - anywhere in this page
-+  # comp_arr="0x1 0x2				# Fill in the component array
-+    >0x1 0x4
-+    >0x2 0x4"
-+  # echo "$comp_arr" > einjv2_component_array
-+  # echo 0x2 > error_type			# Choose EINJv2 memory error
-+  # echo 0xa > flags				# set flags to indicate EINJv2
-+  # echo 1 > error_inject			# Inject now
-+
- You should see something like this in dmesg::
- 
-   [22715.830801] EDAC sbridge MC3: HANDLING MCE MEMORY ERROR
--- 
-2.34.1
-
+Konrad
 
