@@ -1,148 +1,312 @@
-Return-Path: <linux-kernel+bounces-432761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3453A9E4FEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:39:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4EA9E4FE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:39:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78301168AA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:39:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6CB1D45FE;
+	Thu,  5 Dec 2024 08:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0wOHvRv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB17D285001
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:39:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9121D47B5;
-	Thu,  5 Dec 2024 08:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="VlJoL1q8"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238F21D4339;
-	Thu,  5 Dec 2024 08:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B001E517;
+	Thu,  5 Dec 2024 08:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733387934; cv=none; b=OZxz8N1EPWj/tIofsnZN8RQ06DhcuQYbvr+/sZNJXk9FIYHMBhcI55FRD0+WzcTBdqH4H/WyFaMW/ctbf3TulJYjxvhOAngkav3jIVtKjtidJfKsyFK8wXWiscQZPEmMOso7zvm0zgrxNPAZeWAUGvRqcU3U007idIXvtFclH0Y=
+	t=1733387934; cv=none; b=A+SuOjoBCxR3N8eZ7jpqy+6h1FgqiL5blu2qLSQgzkKtsVtxRcNcLbDtEpNZciDZ35UYJu6li0g121SUgCR3uvqSza6ADkzOADG35tphBYtV1KaE6OSgfuoFkGZs1ApxYJW9KP2JDfk706S8VU8mDgGjTw8NXDm7J6Y8w26O1nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733387934; c=relaxed/simple;
-	bh=PAObXDiXmDWj70ESEgFGl1tLxCTLl4RM/SgAzyfuJbE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cA7aO0Pd+2AZkQXJBTFc8BiXxjL2eVig4+1rPFaB+wJLpdKtZLbage9TdsBODs3Z13C3BohlY5WPxKMTyR2v3psfI2OHrydC9a0Cw+oi0eEItaCV9iDMLxZcRmzp2ikgN9VMuIRdDWXLu9eLbLl4OZIYZjnmGpI1pnOmOzkYj8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=VlJoL1q8; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4B58cbNxB2684906, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1733387917; bh=PAObXDiXmDWj70ESEgFGl1tLxCTLl4RM/SgAzyfuJbE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=VlJoL1q8ZTk6O9d5R6UjmtoV+NB/XXTiRt+mT3xvPjfoKDyuZkGIYMirOtqKI6Jnp
-	 GIM1CZtJs/izmbEV4t5YdCS6JFTiB0ZbnY4KpbWf1NAbLn7EMPba3n6/PWocEzjgnh
-	 C9wG3H4RzeaK4MU3KrHh3vn+fhFbxAsJNv1FlmjIQ69kkJQPsd0/rvf8bt+JrCH3pq
-	 EvTCWRSII6Qvw6CV/hPQ1LuAbR2Kau8l+r2yYw5HVrYf5VkwMtWcI3sxd2v4+6nSAt
-	 fUVicuWYI0rXKE8Cb9zt3P739cFgMWBTSDO15dhdgK47ew6yOyaVgNj/QJlQGhbgLe
-	 OjZTMHhI4fVCA==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4B58cbNxB2684906
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Dec 2024 16:38:37 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 5 Dec 2024 16:38:37 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 5 Dec 2024 16:38:37 +0800
-Received: from RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f]) by
- RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f%2]) with mapi id
- 15.01.2507.035; Thu, 5 Dec 2024 16:38:37 +0800
-From: Zong-Zhe Yang <kevin_yang@realtek.com>
-To: Aditya Kumar Singh <quic_adisi@quicinc.com>,
-        Johannes Berg
-	<johannes@sipsolutions.net>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] wifi: mac80211: re-order unassigning channel in activate links
-Thread-Topic: [PATCH] wifi: mac80211: re-order unassigning channel in activate
- links
-Thread-Index: AQHbRuNSBxvPvyW8HE26pTx5nrDmYLLXTWQA
-Date: Thu, 5 Dec 2024 08:38:37 +0000
-Message-ID: <65d22960ca6e47e19cf7c1c6a60dd72a@realtek.com>
-References: <20241205-unassign_activate_links-v1-1-84097a1abdeb@quicinc.com>
-In-Reply-To: <20241205-unassign_activate_links-v1-1-84097a1abdeb@quicinc.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	bh=JVAEKgCjLZWv+v/1SKl7QI67l+o1nSWiq8HMELTmjy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLF5HHCv0GK8/ugd76xRQO9T/F3RPo8nfPRCUC7J2B0JBIL3G8/wMOe2s2khVRv/R1fn8uubO4eWHINU7bsvDqSXI1OHTClzke0HjLZy4+sGSJ4bYWk5Yq1BO1btc7wdXcM3gcnS/FnjkCCoy2CysZjYc48CxHefuVGhN6cCzUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0wOHvRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FBDDC4CED1;
+	Thu,  5 Dec 2024 08:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733387933;
+	bh=JVAEKgCjLZWv+v/1SKl7QI67l+o1nSWiq8HMELTmjy8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q0wOHvRv1pTkAod4h3nKsytdhQipbib4P7RUK3YjiiH+NPGLNJOMTLO4PZssniGMy
+	 kWePGJPtUrDVk50oL1zMujfGL5yLv/hx9dsoFdQ/JwidhD1mn6qQyJ/d02Lq9KbMBK
+	 aaw1u6U5BLVb8YFml/zTx5Vpew7IpZryl+iuYhOGfhgVhypng/+smVQmWL1CUtwhjs
+	 xdRi2Ru+U6fEbv/Prf0tVuj9zGZ8qaeAbsAXu5IHLJTH7/7x3L5csUdrg7ZcrbAYiW
+	 Yl3yUnyIwucQfm0WvN6L4pcTKOti7OIzlLFh8OdDf6NlDTG3ADVvXUSEcIQeT1xtuA
+	 XazzWsE5ZWSVg==
+Date: Thu, 5 Dec 2024 08:38:48 +0000
+From: Lee Jones <lee@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/2] sample: rust_misc_device: Demonstrate additional
+ get/set value functionality
+Message-ID: <20241205083848.GD7451@google.com>
+References: <20241204174627.1151288-1-lee@kernel.org>
+ <20241204174627.1151288-2-lee@kernel.org>
+ <2024120453-unfunded-oversight-5161@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024120453-unfunded-oversight-5161@gregkh>
 
-QWRpdHlhIEt1bWFyIFNpbmdoIDxxdWljX2FkaXNpQHF1aWNpbmMuY29tPiB3cm90ZToNCj4gDQo+
-IFsuLi5dDQo+IA0KPiAgbmV0L21hYzgwMjExL2xpbmsuYyB8IDQ0ICsrKysrKysrKysrKysrKysr
-KysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0
-aW9ucygrKSwgMjIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbmV0L21hYzgwMjEx
-L2xpbmsuYyBiL25ldC9tYWM4MDIxMS9saW5rLmMgaW5kZXgNCj4gNThhNzZiY2Q2YWU2ODY3MGZi
-YmU3ZmE3ZDA3NTQwYzA0ZmY5OTZmOC4uM2M0NmQyYjJlZTI1NGZhYjMyNGQ1N2Y0ZDBmYmU5NGFj
-ZTc2ZDgNCj4gOWQgMTAwNjQ0DQo+IC0tLSBhL25ldC9tYWM4MDIxMS9saW5rLmMNCj4gKysrIGIv
-bmV0L21hYzgwMjExL2xpbmsuYw0KPiBAQCAtMzY3LDI4ICszNjcsNiBAQCBzdGF0aWMgaW50IF9p
-ZWVlODAyMTFfc2V0X2FjdGl2ZV9saW5rcyhzdHJ1Y3QgaWVlZTgwMjExX3N1Yl9pZl9kYXRhDQo+
-ICpzZGF0YSwNCj4gICAgICAgICAgICAgICAgIH0NCj4gICAgICAgICB9DQo+IA0KPiAtICAgICAg
-IGZvcl9lYWNoX3NldF9iaXQobGlua19pZCwgJnJlbSwgSUVFRTgwMjExX01MRF9NQVhfTlVNX0xJ
-TktTKSB7DQo+IC0gICAgICAgICAgICAgICBzdHJ1Y3QgaWVlZTgwMjExX2xpbmtfZGF0YSAqbGlu
-azsNCj4gLQ0KPiAtICAgICAgICAgICAgICAgbGluayA9IHNkYXRhX2RlcmVmZXJlbmNlKHNkYXRh
-LT5saW5rW2xpbmtfaWRdLCBzZGF0YSk7DQo+IC0NCj4gLSAgICAgICAgICAgICAgIGllZWU4MDIx
-MV90ZWFyZG93bl90ZGxzX3BlZXJzKGxpbmspOw0KPiAtDQo+IC0gICAgICAgICAgICAgICBfX2ll
-ZWU4MDIxMV9saW5rX3JlbGVhc2VfY2hhbm5lbChsaW5rLCB0cnVlKTsNCj4gLQ0KPiAtICAgICAg
-ICAgICAgICAgLyoNCj4gLSAgICAgICAgICAgICAgICAqIElmIENTQSBpcyAoc3RpbGwpIGFjdGl2
-ZSB3aGlsZSB0aGUgbGluayBpcyBkZWFjdGl2YXRlZCwNCj4gLSAgICAgICAgICAgICAgICAqIGp1
-c3Qgc2NoZWR1bGUgdGhlIGNoYW5uZWwgc3dpdGNoIHdvcmsgZm9yIHRoZSB0aW1lIHdlDQo+IC0g
-ICAgICAgICAgICAgICAgKiBoYWQgcHJldmlvdXNseSBjYWxjdWxhdGVkLCBhbmQgd2UnbGwgdGFr
-ZSB0aGUgcHJvY2Vzcw0KPiAtICAgICAgICAgICAgICAgICogZnJvbSB0aGVyZS4NCj4gLSAgICAg
-ICAgICAgICAgICAqLw0KPiAtICAgICAgICAgICAgICAgaWYgKGxpbmstPmNvbmYtPmNzYV9hY3Rp
-dmUpDQo+IC0gICAgICAgICAgICAgICAgICAgICAgIHdpcGh5X2RlbGF5ZWRfd29ya19xdWV1ZShs
-b2NhbC0+aHcud2lwaHksDQo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAmbGluay0+dS5tZ2QuY3NhLnN3aXRjaF93b3JrLA0KPiAtICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGluay0+dS5tZ2QuY3NhLnRpbWUg
-LQ0KPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgamlm
-Zmllcyk7DQo+IC0gICAgICAgfQ0KPiAtDQo+ICAgICAgICAgZm9yX2VhY2hfc2V0X2JpdChsaW5r
-X2lkLCAmYWRkLCBJRUVFODAyMTFfTUxEX01BWF9OVU1fTElOS1MpIHsNCj4gICAgICAgICAgICAg
-ICAgIHN0cnVjdCBpZWVlODAyMTFfbGlua19kYXRhICpsaW5rOw0KPiANCj4gQEAgLTQ1OCw2ICs0
-MzYsMjggQEAgc3RhdGljIGludCBfaWVlZTgwMjExX3NldF9hY3RpdmVfbGlua3Moc3RydWN0IGll
-ZWU4MDIxMV9zdWJfaWZfZGF0YQ0KPiAqc2RhdGEsDQo+ICAgICAgICAgICAgICAgICBfX2llZWU4
-MDIxMV9zdGFfcmVjYWxjX2FnZ3JlZ2F0ZXMoc3RhLCBhY3RpdmVfbGlua3MpOw0KPiAgICAgICAg
-IH0NCj4gDQo+ICsgICAgICAgZm9yX2VhY2hfc2V0X2JpdChsaW5rX2lkLCAmcmVtLCBJRUVFODAy
-MTFfTUxEX01BWF9OVU1fTElOS1MpIHsNCj4gKyAgICAgICAgICAgICAgIHN0cnVjdCBpZWVlODAy
-MTFfbGlua19kYXRhICpsaW5rOw0KPiArDQo+ICsgICAgICAgICAgICAgICBsaW5rID0gc2RhdGFf
-ZGVyZWZlcmVuY2Uoc2RhdGEtPmxpbmtbbGlua19pZF0sIHNkYXRhKTsNCj4gKw0KPiArICAgICAg
-ICAgICAgICAgaWVlZTgwMjExX3RlYXJkb3duX3RkbHNfcGVlcnMobGluayk7DQo+ICsNCj4gKyAg
-ICAgICAgICAgICAgIF9faWVlZTgwMjExX2xpbmtfcmVsZWFzZV9jaGFubmVsKGxpbmssIHRydWUp
-Ow0KPiArDQo+ICsgICAgICAgICAgICAgICAvKg0KPiArICAgICAgICAgICAgICAgICogSWYgQ1NB
-IGlzIChzdGlsbCkgYWN0aXZlIHdoaWxlIHRoZSBsaW5rIGlzIGRlYWN0aXZhdGVkLA0KPiArICAg
-ICAgICAgICAgICAgICoganVzdCBzY2hlZHVsZSB0aGUgY2hhbm5lbCBzd2l0Y2ggd29yayBmb3Ig
-dGhlIHRpbWUgd2UNCj4gKyAgICAgICAgICAgICAgICAqIGhhZCBwcmV2aW91c2x5IGNhbGN1bGF0
-ZWQsIGFuZCB3ZSdsbCB0YWtlIHRoZSBwcm9jZXNzDQo+ICsgICAgICAgICAgICAgICAgKiBmcm9t
-IHRoZXJlLg0KPiArICAgICAgICAgICAgICAgICovDQo+ICsgICAgICAgICAgICAgICBpZiAobGlu
-ay0+Y29uZi0+Y3NhX2FjdGl2ZSkNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgd2lwaHlfZGVs
-YXllZF93b3JrX3F1ZXVlKGxvY2FsLT5ody53aXBoeSwNCj4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICZsaW5rLT51Lm1nZC5jc2Euc3dpdGNoX3dvcmss
-DQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsaW5r
-LT51Lm1nZC5jc2EudGltZSAtDQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBqaWZmaWVzKTsNCj4gKyAgICAgICB9DQo+ICsNCj4gICAgICAgICBmb3Jf
-ZWFjaF9zZXRfYml0KGxpbmtfaWQsICZhZGQsIElFRUU4MDIxMV9NTERfTUFYX05VTV9MSU5LUykg
-ew0KPiAgICAgICAgICAgICAgICAgc3RydWN0IGllZWU4MDIxMV9saW5rX2RhdGEgKmxpbms7DQo+
-IA0KDQpDb3VsZCB5b3UgYWxzbyB1cGRhdGUgdGhlIGRlc2NyaXB0aW9uIG9mIGllZWU4MDIxMV9z
-ZXRfYWN0aXZlX2xpbmtzKCkgKGluY2x1ZGUvbmV0L21hYzgwMjExLmgpIHRvIGFsaWduIHRoZSBj
-aGFuZ2VzPw0KSSB0aGluayBpdCB3b3VsZCBiZSBsaWtlOg0KDQogIGNoYW5nZV92aWZfbGlua3Mo
-MHgxMSkNCiAgYXNzaWduX3ZpZl9jaGFuY3R4KGxpbmtfaWQ9NCkNCiAgY2hhbmdlX3N0YV9saW5r
-cygweDExKSBmb3IgZWFjaCBhZmZlY3RlZCBTVEEgKHRoZSBBUCkNCiAgWy4uLl0NCiAgY2hhbmdl
-X3N0YV9saW5rcygweDEwKSBmb3IgZWFjaCBhZmZlY3RlZCBTVEEgKHRoZSBBUCkNCiAgdW5hc3Np
-Z25fdmlmX2NoYW5jdHgobGlua19pZD0wKQ0KICBjaGFuZ2VfdmlmX2xpbmtzKDB4MTApDQoNCg==
+On Wed, 04 Dec 2024, Greg KH wrote:
+
+> On Wed, Dec 04, 2024 at 05:46:25PM +0000, Lee Jones wrote:
+> > Expand the complexity of the sample driver by providing the ability to
+> > get and set an integer.  The value is protected by a mutex.
+> > 
+> > Here is a simple userspace program that fully exercises the sample
+> > driver's capabilities.
+> > 
+> > int main() {
+> >   int value, new_value;
+> >   int fd, ret;
+> > 
+> >   // Open the device file
+> >   printf("Opening /dev/rust-misc-device for reading and writing\n");
+> >   fd = open("/dev/rust-misc-device", O_RDWR);
+> >   if (fd < 0) {
+> >     perror("open");
+> >     return errno;
+> >   }
+> > 
+> >   // Make call into driver to say "hello"
+> >   printf("Calling Hello\n");
+> >   ret = ioctl(fd, RUST_MISC_DEV_HELLO, NULL);
+> >   if (ret < 0) {
+> >     perror("ioctl: Failed to call into Hello");
+> >     close(fd);
+> >     return errno;
+> >   }
+> > 
+> >   // Get initial value
+> >   printf("Fetching initial value\n");
+> >   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &value);
+> >   if (ret < 0) {
+> >     perror("ioctl: Failed to fetch the initial value");
+> >     close(fd);
+> >     return errno;
+> >   }
+> > 
+> >   value++;
+> > 
+> >   // Set value to something different
+> >   printf("Submitting new value (%d)\n", value);
+> >   ret = ioctl(fd, RUST_MISC_DEV_SET_VALUE, &value);
+> >   if (ret < 0) {
+> >     perror("ioctl: Failed to submit new value");
+> >     close(fd);
+> >     return errno;
+> >   }
+> > 
+> >   // Ensure new value was applied
+> >   printf("Fetching new value\n");
+> >   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &new_value);
+> >   if (ret < 0) {
+> >     perror("ioctl: Failed to fetch the new value");
+> >     close(fd);
+> >     return errno;
+> >   }
+> > 
+> >   if (value != new_value) {
+> >     printf("Failed: Committed and retrieved values are different (%d - %d)\n", value, new_value);
+> >     close(fd);
+> >     return -1;
+> >   }
+> > 
+> >   // Call the unsuccessful ioctl
+> >   printf("Attempting to call in to an non-existent IOCTL\n");
+> >   ret = ioctl(fd, RUST_MISC_DEV_FAIL, NULL);
+> >   if (ret < 0) {
+> >     perror("ioctl: Succeeded to fail - this was expected");
+> >   } else {
+> >     printf("ioctl: Failed to fail\n");
+> >     close(fd);
+> >     return -1;
+> >   }
+> > 
+> >   // Close the device file
+> >   printf("Closing /dev/rust-misc-device\n");
+> >   close(fd);
+> > 
+> >   printf("Success\n");
+> >   return 0;
+> > }
+> > 
+> > Signed-off-by: Lee Jones <lee@kernel.org>
+> > ---
+> >  samples/rust/rust_misc_device.rs | 82 ++++++++++++++++++++++++--------
+> >  1 file changed, 62 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+> > index 5f1b69569ef7..9c041497d881 100644
+> > --- a/samples/rust/rust_misc_device.rs
+> > +++ b/samples/rust/rust_misc_device.rs
+> > @@ -2,13 +2,20 @@
+> >  
+> >  //! Rust misc device sample.
+> >  
+> > +use core::pin::Pin;
+> > +
+> >  use kernel::{
+> >      c_str,
+> > -    ioctl::_IO,
+> > +    ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
+> >      miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+> > +    new_mutex,
+> >      prelude::*,
+> > +    sync::Mutex,
+> > +    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
+> >  };
+> >  
+> > +const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('R' as u32, 7);
+> > +const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('R' as u32, 8);
+> 
+> Shouldn't this be 'W'?
+
+No, I don't think so.
+
+'W' doesn't mean 'write'.  It's supposed to be a unique identifier:
+
+'W'   00-1F  linux/watchdog.h                                        conflict!
+'W'   00-1F  linux/wanrouter.h                                       conflict! (pre 3.9)
+'W'   00-3F  sound/asound.h                                          conflict!
+'W'   40-5F  drivers/pci/switch/switchtec.c
+'W'   60-61  linux/watch_queue.h
+
+'R' isn't registered for this either:
+
+'R'   00-1F  linux/random.h                                          conflict!
+'R'   01     linux/rfkill.h                                          conflict!
+'R'   20-2F  linux/trace_mmap.h
+'R'   C0-DF  net/bluetooth/rfcomm.h
+'R'   E0     uapi/linux/fsl_mc.h
+
+... but since this is just example code with no real purpose, I'm going
+to hold short of registering a unique identifier for it.
+
+> >  const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
+> >  
+> >  module! {
+> > @@ -40,45 +47,80 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
+> >      }
+> >  }
+> >  
+> > -struct RustMiscDevice;
+> > +struct Inner {
+> > +    value: i32,
+> > +}
+> >  
+> > -impl RustMiscDevice {
+> > -    fn new() -> Self {
+> > -        Self
+> > -    }
+> > +#[pin_data(PinnedDrop)]
+> > +struct RustMiscDevice {
+> > +    #[pin]
+> > +    inner: Mutex<Inner>,
+> >  }
+> >  
+> >  #[vtable]
+> >  impl MiscDevice for RustMiscDevice {
+> > -    type Ptr = KBox<Self>;
+> > +    type Ptr = Pin<KBox<Self>>;
+> >  
+> > -    fn open() -> Result<KBox<Self>> {
+> > +    fn open() -> Result<Pin<KBox<Self>>> {
+> >          pr_info!("Opening Rust Misc Device Sample\n");
+> >  
+> > -        Ok(KBox::new(RustMiscDevice::new(), GFP_KERNEL)?)
+> > +        KBox::try_pin_init(
+> > +            try_pin_init! {
+> > +                RustMiscDevice { inner <- new_mutex!( Inner{ value: 0_i32 } )}
+> > +            },
+> > +            GFP_KERNEL,
+> > +        )
+> >      }
+> >  
+> > -    fn ioctl(
+> > -        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
+> > -        cmd: u32,
+> > -        _arg: usize,
+> > -    ) -> Result<isize> {
+> > +    fn ioctl(device: Pin<&RustMiscDevice>, cmd: u32, arg: usize) -> Result<isize> {
+> >          pr_info!("IOCTLing Rust Misc Device Sample\n");
+> >  
+> > -        match cmd {
+> > -            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
+> > +        let size = _IOC_SIZE(cmd);
+> > +
+> > +        let _ = match cmd {
+> > +            RUST_MISC_DEV_GET_VALUE => device.get_value(UserSlice::new(arg, size).writer())?,
+> > +            RUST_MISC_DEV_SET_VALUE => device.set_value(UserSlice::new(arg, size).reader())?,
+> > +            RUST_MISC_DEV_HELLO => device.hello()?,
+> >              _ => {
+> > -                pr_err!("IOCTL not recognised: {}\n", cmd);
+> > +                pr_err!("-> IOCTL not recognised: {}\n", cmd);
+> >                  return Err(EINVAL);
+> 
+> Nit, wrong return value for an invalid ioctl, I missed that in patch 1,
+> sorry about that.
+
+Good shout, thanks.
+
+> >              }
+> > -        }
+> > +        };
+> >  
+> >          Ok(0)
+> >      }
+> >  }
+> >  
+> > -impl Drop for RustMiscDevice {
+> > -    fn drop(&mut self) {
+> > +#[pinned_drop]
+> > +impl PinnedDrop for RustMiscDevice {
+> > +    fn drop(self: Pin<&mut Self>) {
+> >          pr_info!("Exiting the Rust Misc Device Sample\n");
+> >      }
+> >  }
+> > +
+> > +impl RustMiscDevice {
+> > +    fn set_value(&self, mut reader: UserSliceReader) -> Result<isize> {
+> > +        let new_value = reader.read::<i32>()?;
+> > +        let mut guard = self.inner.lock();
+> > +
+> > +        pr_info!("-> Copying data from userspace (value: {})\n", new_value);
+> > +
+> > +        guard.value = new_value;
+> > +        Ok(0)
+> > +    }
+> > +
+> > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
+> > +        let guard = self.inner.lock();
+> > +
+> > +        pr_info!("-> Copying data to userspace (value: {})\n", &guard.value);
+> > +
+> > +        writer.write::<i32>(&guard.value)?;
+> 
+> What happens if it fails, shouldn't your pr_info() happen after this?
+
+If this fails, I need the line in the log to show where it failed.
+
+It says "copying" as in "attempting to copy", rather than "copied".
+
+-- 
+Lee Jones [李琼斯]
 
