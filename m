@@ -1,121 +1,207 @@
-Return-Path: <linux-kernel+bounces-432874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D25C9E5151
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:29:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7A19E5152
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7AC18805AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEA111640AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1DA1D61A5;
-	Thu,  5 Dec 2024 09:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405C21D3566;
+	Thu,  5 Dec 2024 09:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="deoroIp7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TxQKoG86"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B96F18E028;
-	Thu,  5 Dec 2024 09:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7BE18E028
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733390937; cv=none; b=QYuOEGbQGPZ6vm3/0VQ0sorxOfGLev4cl9twcyAgEA4bkZ8P3ZVDVPS3IYhTc10BS/QrRs7V45MrgcAnQ6F7fF+W2uU12lRiFQDKJ764w9BpRHa5gqgQVtWH1oxRy72RxmS+njA4W6EFO2qNfVP/lbcrHnTXtkM4BNUQISPRDBQ=
+	t=1733390973; cv=none; b=DJxpU0R0KlXgTy8L5Wn6JN5gL/l8BTwKkOp7wy0kA4prXD0yvZLp+mqGO80flf/o2lTgB8/ais8DvedZ3eFUuctvjVq3FzZtB9FW8EsYOLv5cOMucsc2vVXo6b+TUjt1uHyRtwkq9QnMIuYYHEG02rOXvHfLLPfLbX2+OI9qy5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733390937; c=relaxed/simple;
-	bh=tk3LIQCxFVT/6TzDXNiyaw+HXW8CetB5EIotosZrDiU=;
+	s=arc-20240116; t=1733390973; c=relaxed/simple;
+	bh=/d8DXBAOtnn+OLJZSSBLDnfwfD79hhythMRdp+dWoFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAhkU/7fnvR7Y+k073m1W52c/FIirdrZw+dxcRK6D5GgF4sSp/rV0NL7AcWsNhtWR/c4GKp9EZzSwhyCpsQgLoE+tPYuCekokBxfb7E3N4cnWgZ5/MSzL32WUAlBUH/eT2LDu0b8qzkwVkUvp71CWMXdDHFyr7ZKb4SfBgbqs08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=deoroIp7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF54DC4CED1;
-	Thu,  5 Dec 2024 09:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733390937;
-	bh=tk3LIQCxFVT/6TzDXNiyaw+HXW8CetB5EIotosZrDiU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=deoroIp76syUUWCBcHWlSyWz/IXwR8nslt0uhVaH1+Tr/cP7QSLQH8K0oWLd0f2h6
-	 Mgvm7ye55eoC6ZGhibIYQINNG1CVd1wY6/qf+Gnnokx8bBP6wxju6UKD2t2LsEnedA
-	 IwgnRppCwcayDDBzn4kOKbCSRgXgJ1D4cS1W1SsEmi/5snKptLoUX0Kw94fC/Dh8Ub
-	 LyzYAqEckn2JhRxiarldHJuxSseqKzG56CRDs5x4oGto1OR8+8kQNg2nYxRUJPz3/U
-	 o8NYgI+ZpZFvD8tzgiX/77VG/4UanJVFL6RIdcYtkutM9g9t7JYDesV4bc/FgdVEPL
-	 Em+7Q3mkLD+EQ==
-Date: Thu, 5 Dec 2024 10:28:54 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] dt-bindings: clock: qcom: Add SM8750 GCC
-Message-ID: <lgkjp7aocv2sij6tiectv5vm3yygcfnaguj4nomxu27scvtggu@uwzvgbvm44nn>
-References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
- <20241204-sm8750_master_clks-v3-5-1a8f31a53a86@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=swvCcquu/jdJICNykzzJmHmi+Focr34WIfqRZhbG0MjCPcEzD4YRuRNv1ZdaJsjE/LwBPYYpbS8sPtNa3J+SApZoHv/PXiA3yRemtyDJgTEemKpuR98CT/Tk2lD2UfR1/LC4+EmXQps0NUHyFDdXkAvaMBPx132T/6TROQg7+Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TxQKoG86; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733390970;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nD0fL9mfgvNn6M15PEytrZ+HfCY+plMFNeRxzCSq1x8=;
+	b=TxQKoG86U5e34R7oEZcsyPVRLl3jfJLm1lyPBjEmATl3tRftqLDjZ42nHU2LET1IGY6DE1
+	l3hwM8j3WAhy6DNATZmlyvynB+6166x6CFzKuGnkybjVTMWXfHnjkzB9l5aIMd+kYGCBtW
+	abTkP4Yu+LezlWKfmEoubbZC7u7Xfrs=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-414-ql6JYojoNYKZlxA9eo-AVA-1; Thu,
+ 05 Dec 2024 04:29:27 -0500
+X-MC-Unique: ql6JYojoNYKZlxA9eo-AVA-1
+X-Mimecast-MFC-AGG-ID: ql6JYojoNYKZlxA9eo-AVA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5175F195605E;
+	Thu,  5 Dec 2024 09:29:25 +0000 (UTC)
+Received: from fedora (unknown [10.72.112.212])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C814619560A2;
+	Thu,  5 Dec 2024 09:29:19 +0000 (UTC)
+Date: Thu, 5 Dec 2024 17:29:13 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Babu Moger <babu.moger@amd.com>, linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: resctrl mount fail on v6.13-rc1
+Message-ID: <Z1FyabRPB2UrR3UA@fedora>
+References: <Z04pz3AlvI4o0Mr8@agluck-desk3>
+ <868b451a-fdba-4b45-bff1-9ac1023080c8@intel.com>
+ <Z05xSqIeNeHh19MZ@agluck-desk3>
+ <e1dc44c7-94e4-4055-84d3-8fdd5c22d161@intel.com>
+ <542a0c87-935a-4b39-8210-22a7d46de6e5@intel.com>
+ <Z0_MHEoSNdiQvXNK@fedora>
+ <95e33677-66e7-458d-937d-e1b5842666d3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204-sm8750_master_clks-v3-5-1a8f31a53a86@quicinc.com>
+In-Reply-To: <95e33677-66e7-458d-937d-e1b5842666d3@intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Dec 04, 2024 at 11:37:17AM -0800, Melody Olvera wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
+On Wed, Dec 04, 2024 at 08:48:14AM -0800, Reinette Chatre wrote:
+> Hi Ming,
 > 
-> Add device tree bindings for the global clock controller on Qualcomm
-> SM8750 platform.
+> On 12/3/24 7:27 PM, Ming Lei wrote:
+> > On Mon, Dec 02, 2024 at 09:02:45PM -0800, Reinette Chatre wrote:
+> >>
+> >>
+> >> On 12/2/24 8:54 PM, Reinette Chatre wrote:
+> >>>
+> >>>
+> >>> On 12/2/24 6:47 PM, Luck, Tony wrote:
+> >>>> On Mon, Dec 02, 2024 at 02:26:48PM -0800, Reinette Chatre wrote:
+> >>>>> Hi Tony,
+> >>>>>
+> >>>>> On 12/2/24 1:42 PM, Luck, Tony wrote:
+> >>>>>> Anyone better a decoding lockdep dumps then me make sense of this?
+> >>>>>>
+> >>>>>> All I did was build v6.13-rc1 with (among others)
+> >>>>>>
+> >>>>>> CONFIG_PROVE_LOCKING=y
+> >>>>>> CONFIG_PROVE_RAW_LOCK_NESTING=y
+> >>>>>> CONFIG_PROVE_RCU=y
+> >>>>>>
+> >>>>>> and then mount the resctrl filesystem:
+> >>>>>>
+> >>>>>> $ sudo mount -t resctrl resctrl /sys/fs/resctrl
+> >>>>>>
+> >>>>>> There are only trivial changes to the resctrl code between
+> >>>>>> v6.12 (which works) and v6.13-rc1:
+> >>>>>>
+> >>>>>> $ git log --oneline v6.13-rc1 ^v6.12 -- arch/x86/kernel/cpu/resctrl
+> >>>>>> 5a4b3fbb4849 Merge tag 'x86_cache_for_v6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> >>>>>> 9bce6e94c4b3 x86/resctrl: Support Sub-NUMA cluster mode SNC6
+> >>>>>> 29eaa7958367 x86/resctrl: Slightly clean-up mbm_config_show()
+> >>>>>>
+> >>>>>> So something in kernfs? Or the way resctrl uses kernfs?
+> >>>>>
+> >>>>> I am not seeing this but that may be because I am not testing with
+> >>>>> selinux enabled. My test kernel has:
+> >>>>> # CONFIG_SECURITY_SELINUX is not set
+> >>>>>
+> >>>>> I am also not running with any btrfs filesystems. 
+> >>>>>
+> >>>>> Is this your usual setup in which you are seeing this the first time? Is it
+> >>>>> perhaps possible for you to bisect?
+> >>>>
+> >>>> Bisection says:
+> >>>>
+> >>>> $ git bisect bad
+> >>>> f1be1788a32e8fa63416ad4518bbd1a85a825c9d is the first bad commit
+> >>>> commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
+> >>>> Author: Ming Lei <ming.lei@redhat.com>
+> >>>> Date:   Fri Oct 25 08:37:20 2024 +0800
+> >>>>
+> >>>>     block: model freeze & enter queue as lock for supporting lockdep
+> >>>>
+> >>>
+> >>> Thank you very much Tony. Since you did not respond to the question about
+> >>> bisect I assumed that you would not do it. I ended up duplicating the bisect
+> >>> effort after getting an environment in which I can reproduce the issue. Doing so
+> >>> I am able to confirm the commit pointed to by bisect. 
+> >>> The commit cannot be reverted cleanly so I could not test v6.13-rc1 with it
+> >>> reverted.
+> >>>
+> > Gi> > Ming Lei: I'd be happy to help with testing if you do not have hardware with
+> >>> which you can reproduce the issue.
+> >>
+> >> One datapoint that I neglected to mention: btrfs does not seem to be required. The system
+> >> I tested on used ext4 filesystem resulting in trace below:
+> > 
+> > Hi Reinette and Tony,
+> > 
+> > The warning is triggered because the two subsystems are connected with
+> > &cpu_hotplug_lock.
+> > 
+> > rdt_get_tree():
+> > 	cpus_read_lock();
+> >     mutex_lock(&rdtgroup_mutex);
+> > 	...
+> > 
+> > blk_mq_realloc_hw_ctxs()
+> > 	mutex_lock(&q->sysfs_lock);
+> > 	...
+> > 	blk_mq_alloc_and_init_hctx()
+> > 		blk_mq_init_hctx
+> > 			cpuhp_state_add_instance_nocalls
+> > 				__cpuhp_state_add_instance
+> > 					cpus_read_lock();
+> > 
+> > Given cpus_read_lock() is often implied in cpuhp APIs, I feel rdt_get_tree()
+> > may re-order the two locks for avoiding the dependency.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
->  .../devicetree/bindings/clock/qcom,sm8750-gcc.yaml |  62 ++++++
->  include/dt-bindings/clock/qcom,sm8750-gcc.h        | 226 +++++++++++++++++++++
->  2 files changed, 288 insertions(+)
+> This is not possible for exactly the reason you provide ("cpus_read_lock() is
+> often implied in cpuhp APIs").
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..aab7039fd28db2f4e2a6b9b7a6340d17ad05156d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gcc.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller on SM8750
-> +
-> +maintainers:
-> +  - Taniya Das <quic_tdas@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module provides the clocks, resets and power
-> +  domains on SM8750
-> +
-> +  See also: include/dt-bindings/clock/qcom,sm8750-gcc.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8750-gcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board Always On XO source
-> +      - description: Sleep clock source
-> +      - description: PCIE 0 Pipe clock source
+> resctrl relies on hotplug state callbacks for its initialization. You can find
+> the callback setup in:
+> 
+> arch/x86/kernel/cpu/resctrl/core.c:
+> 
+> static int __init resctrl_late_init(void)
+> {
+> 
+> 	...
+> 	state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> 				  "x86/resctrl/cat:online:",
+> 				  resctrl_arch_online_cpu,
+> 				  resctrl_arch_offline_cpu);
+> 	...
+> }
+> 
+> Since resctrl code is called by the CPU hotplug subsystem with cpu_hotplug_lock
+> already held it is not possible for resctrl to change the lock ordering.
 
-Are you absolutely sure there is no PCIE 1 Pipe clock? List will only be
-able to grow at the end, breaking the order, if it turns out there is
-such clock input.
+OK, I see now, and thanks for the explanation.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I will try to figure out moving cpuhp_state_add_instance_nocalls out of
+q->sysfs_lock, and it should be fine in case that queue is live.
 
-Best regards,
-Krzysztof
+Thanks,
+Ming
 
 
