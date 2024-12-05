@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-432433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA909E4B27
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:30:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2269E4B35
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56800282A64
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:30:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7650F282A68
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F0F3D6B;
-	Thu,  5 Dec 2024 00:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06D1199BC;
+	Thu,  5 Dec 2024 00:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0b+XS6w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="NvUB+1Qn"
+Received: from pv50p00im-tydg10011801.me.com (pv50p00im-tydg10011801.me.com [17.58.6.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDCC653
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A66DDA8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733358639; cv=none; b=YD3aH6VRx/raHFZ3u1yDgiilTgLY4+0sJCJYpQlccwEWcf3H9ZIsVgrbc7g0ksaDqKdwxKLXeqdfg2xHfizSsZIcLds9UR7h0a2EsoQs5xAt0PqGtCWw+hOhYGPPqFDWBoscrzab5sZCnqY6h3ZlsV6PtCS/Chmr1wZA/9D3WRY=
+	t=1733358730; cv=none; b=jCB5XAK/5jEJDT0HW68Ltw9XtfGWNdo07gClgPJmu9nXq7+ZoC0Bab6GrABXnisT8qxqfBI54sCbEOQPRYi0wd+gRiJ/2z4hY8Jmk2Bj9SFd45t0iukfmFUKoIYU4/dUBtqLhuaM5QdbD+NXxfDJXJesTiFEhTv0PK6dmkQd1Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733358639; c=relaxed/simple;
-	bh=/2sfueJmjtuNFdSJDAv70/lV2GSeIQBqxjwAlB5dnHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzSQzNLvXbJzzY6/AVU44UQ0kO0GY61QxYYFR2kqFvse2PGNHgL2O1SrXDYbAt9r8/r2eIwp34Jb04b3POXAaf+qu6ILzyRbbiuztp7D+XL6+6o0uSSmo1HO+Ax1juG0Edts8L7hx37IS0KJ9QPJGCzLZdLfs+i9EJnb0zbkPn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0b+XS6w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA8FFC4CECD;
-	Thu,  5 Dec 2024 00:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733358638;
-	bh=/2sfueJmjtuNFdSJDAv70/lV2GSeIQBqxjwAlB5dnHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U0b+XS6wBGTJTdoUB+zX5yCYC80xQg8mG1JECA6jtd/ZXQyr+wkFKnJpWr4Exsl3q
-	 PKUXHtJajUBEY4qoOn2lhqNOARzwLDGjRy42ZnHfelm66fsXvnBWhMn7kn7XHhCR9u
-	 zis+5iQfSgyOY+qra3sg65bwGSzqxyPKuTkP/ABRbdkStCVZeRpNSyYSgAsc2094iQ
-	 0Dojw17kSxZ02gPDQGiuLSkb/0s1hhbmFmrLSoW/9qiE3SckHm30ckc58xbfU202eY
-	 PHb3cNAnXcUsNvTparem6jFHAsV+hk5RMSyvv4yYodMVAFENmD0zSeGU+TnTv/pMsY
-	 tO4BV4HgQsr8Q==
-Date: Wed, 4 Dec 2024 16:30:36 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Atharva Tiwari <evepolonium@gmail.com>
-Cc: atharvatiwari1101@outlook.in, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Aditya Gupta <adityag@linux.ibm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Eder Zulian <ezulian@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fix: add safety check for OPTION_END and refactor code
- for consistency
-Message-ID: <Z1D0LNfWcnPkWC3_@google.com>
-References: <20241129104401.5997-1-atharvatiwari1101@outlook.in>
+	s=arc-20240116; t=1733358730; c=relaxed/simple;
+	bh=jTnaUO4D/Q7MxZQscA3/XMdfWqggPPOxxvGW/7ZeXgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TMVr1/MJdSwhWQTCLqSIG5QDFIynE6YJiH7V6m6FH44ZRxwvDCDn/u53VskKbltDv7hI1Xh19cdwPHW3ZmzZPRcYZryF43ZAIkvq8R4amaios6lY2a/sau7eayp67seT5AHc8G5oYAVGoc4OErxUvgRkG39aI4bkuyvbx4/f2kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=NvUB+1Qn; arc=none smtp.client-ip=17.58.6.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733358727;
+	bh=cXKPzq1F5TX5/uxkKzMSB1NXoT3FhOuw3zI5BP+SzJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=NvUB+1QnWMYICgzWlemCLtbKtw0Tm9UBfjUIS4wXxNaGs9onuC2hnMzT/iYvnz07/
+	 HOJi6i+ZJu7u9TFjWv6p091BQybVr1dy2GK+s4Y1dBRyb01zFxvkpYzmKIcdYc+f+h
+	 EPlThxGXJ2V2jWHZoWnqU8CzaC/gBYpkJxrTxi6CAYmoJiqC5cfkokKhTuJPqzI01y
+	 SPAxLX9iaP6k8j/wWV+9x5JN+dMn3a4RipO7xV6ggbD4vgGWQxJbKf7T9HWef6iKb9
+	 MWAynZUufAflnI+7Qdg6sA6wGLflOnhzBW2AQHEIridePBX3xOYMQYs1ZNBMu+9K4s
+	 KuvLdIcO+3S3w==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-tydg10011801.me.com (Postfix) with ESMTPSA id 1971880021D;
+	Thu,  5 Dec 2024 00:32:00 +0000 (UTC)
+Message-ID: <18dd5368-d583-44f3-8dd4-74c669ef3bf9@icloud.com>
+Date: Thu, 5 Dec 2024 08:31:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241129104401.5997-1-atharvatiwari1101@outlook.in>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/11] driver core: Constify API device_find_child()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
+ linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
+ netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: RvRSqKy8ZqOUE5anLWfZCokK2N1USz-Y
+X-Proofpoint-ORIG-GUID: RvRSqKy8ZqOUE5anLWfZCokK2N1USz-Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-04_19,2024-12-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 mlxscore=0
+ bulkscore=0 malwarescore=0 mlxlogscore=919 clxscore=1015 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412050001
 
-Hello,
+On 2024/12/5 08:10, Zijun Hu wrote:
+> This patch series is to constify the following API:
 
-On Fri, Nov 29, 2024 at 04:13:53PM +0530, Atharva Tiwari wrote:
-> - Added a null check for 'o' before copying the last OPTION_END in options__order function to prevent potential uninitialized usage.
-> - Refactored the parse_long_opt function for improved readability by aligning function signature.
-> - Minor formatting fix to ensure consistency in the codebase.
-> - Updated the wrapper script for pseries architecture to handle 'notext' option in a more reliable way.
+This patch series is based on the lasted mainline commit
+Commit: feffde684ac2 ("Merge tag 'for-6.13-rc1-tag' of
+git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux")
+to avoid potential conflict as much as possible.
+
+> struct device *device_find_child(struct device *dev, void *data,
+> 		int (*match)(struct device *dev, void *data));
+> To :
+> struct device *device_find_child(struct device *dev, const void *data,
+> 				 device_match_t match);
+> typedef int (*device_match_t)(struct device *dev, const void *data);
 > 
-> Signed-off-by: Atharva Tiwari <atharvatiwari1101@outlook.in>
-> ---
->  arch/powerpc/boot/wrapper        |  1 +
->  tools/lib/subcmd/parse-options.c | 10 +++++-----
->  2 files changed, 6 insertions(+), 5 deletions(-)
+> Why to constify the API?
 > 
-> diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
-> index 1db60fe13802..d25ad8c622f4 100755
-> --- a/arch/powerpc/boot/wrapper
-> +++ b/arch/powerpc/boot/wrapper
-> @@ -267,6 +267,7 @@ pseries)
->      link_address='0x4000000'
->      if [ "$format" != "elf32ppc" ]; then
->  	link_address=
-> +	notext='-z notext'
-
-This is a completely differnt change and should be sent to powerpc devs
-separately.
-
-
->  	pie=-pie
->      fi
->      make_space=n
-> diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
-> index 555d617c1f50..f85b642bc9aa 100644
-> --- a/tools/lib/subcmd/parse-options.c
-> +++ b/tools/lib/subcmd/parse-options.c
-> @@ -360,8 +360,7 @@ static int parse_short_opt(struct parse_opt_ctx_t *p, const struct option *optio
->  	return -2;
->  }
->  
-> -static int parse_long_opt(struct parse_opt_ctx_t *p, const char *arg,
-> -                          const struct option *options)
-> +static int parse_long_opt(struct parse_opt_ctx_t *p, const char *arg, const struct option *options)
-
-Please don't change this unnecessarily.
-
-
->  {
->  	const char *arg_end = strchr(arg, '=');
->  	const struct option *abbrev_option = NULL, *ambiguous_option = NULL;
-> @@ -828,9 +827,10 @@ static struct option *options__order(const struct option *opts)
->  
->  		nr_parent = nr_opts;
->  	}
-> -	/* copy the last OPTION_END */
-> -	memcpy(&ordered[nr_opts], o, sizeof(*o));
-> -
-> +	/* Check whether o is  valid before using it to copy the last OPTION_END. */
-> +	if (o && o->type == OPTION_END) {
-> +		memcpy(&ordered[nr_opts], o, sizeof(*o));
-> +	}
-
-Do you any real problems with this?  I think the existing code assumes
-the last entry should be OPTION_END.  Otherwise it won't work well.
-
-Thanks,
-Namhyung
-
-
->  	/* sort each option group individually */
->  	for (opt = group = ordered; opt->type != OPTION_END; opt++) {
->  		if (opt->type == OPTION_GROUP) {
-> -- 
-> 2.43.-1
+> - Protect caller's match data @*data which is for comparison and lookup
+>   and the API does not actually need to modify @*data.
 > 
+> - Make the API's parameters (@match)() and @data have the same type as
+>   all of other device finding APIs (bus|class|driver)_find_device().
+> 
+> - All kinds of existing device matching functions can be directly taken
+>   as the API's argument, they were exported by driver core.
+> 
+> What to do?
+> 
+> - Patches [1/11, 3/11] prepare for constifying the API.
+> 
+> - Patch 4/11 constifies the API and adapt for its various subsystem usages.
+> 
+> - Remaining do cleanup for several usages with benefits brought above.
+
 
