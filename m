@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-433620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348D89E5AB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:06:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A719E5AB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:06:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B9E2811F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B241883428
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B254C21CA18;
-	Thu,  5 Dec 2024 16:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AA621C180;
+	Thu,  5 Dec 2024 16:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RbQ8cIof";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="suAw/MWx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NK4OrzcX"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FC11401C;
-	Thu,  5 Dec 2024 16:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDEA1401C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733414767; cv=none; b=BhN8dtbyMtsLTTFRvK4R95UCwRd7ofJf/wD99c0Yslm+YVB5ozdivxN1mf9D30VqbNJYExAOmOy4Y3qMlO6AxR7H4Tl8pNXcQ3kXCkADSbmkpuisan+F1kZ0sYzf82rFDVRs2kv/T4iO32oPAoIHQulT7+q8vl8GDFGNpz0ofFk=
+	t=1733414807; cv=none; b=jDrwJNVki8GbRsV/X4qOaXvYNGxuhw/CNQgg+YQekYy7d+k7YR/eQULZwlUyY/Z3A6J3CV7TvG6aLOx3N+G+MAsFX5c9kg3Sjy8DIww4RHhWQ/+1CtzyDpKnUzpOSM/5opkMRWTqTYK/i5fBGWUERXMYNDgYm29s5V6RRLwDo/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733414767; c=relaxed/simple;
-	bh=/Kdl7bzreorqvX/30Ilif6NOEDW/4fhFjMEfzhYix4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dpwBvOssp2bY/s30EIOpj3/yQnyDmjlbUzLnry6YLQXVp3xLwguTXhzcwjyQuyNwm3KGLpr4ssPhnYy8HHNYkF2SJTdw2M0V/ZG3AtJEV59jfzp98FmgmQHSoK6or9MlcQKiMqPvyF4YZuOAsRE5Y6lcTs8X2m2LY25bazueu5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RbQ8cIof; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=suAw/MWx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 5 Dec 2024 17:06:02 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733414764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=9p0B4zCa8Sp8P80zJI8PHN0Ymm/O7Rq7034IDOUSF7M=;
-	b=RbQ8cIofNTFOulEHQlvzlMSfuz5lfTe7y1N08piENuJAso4CB4KTP2+vdouIiApDNgT7Po
-	00LYy4vV0xzZIcrtldnpkzSLTDg1OXnkwGovx79T6PMbtm2uZOJG3fcZqYoZ5N3MA3HJvL
-	XEaZutXmH3Md6UByEkScNyNEqHppAtCUkc8TqmtX5GpJVVdOtNnNCGsnEwMvayNTGOkub/
-	5BYK1EKXwAvBVOI5gy7QBzE9v4Hzz8SVQVsp8m8UMfJFmIpc14KA5YUSis7hungLsgeF3s
-	IFCmFxwI9CBeFwnmYSQj4lHjmSkrGe8YkFOSk58U4b9KkIs7pZe5q4WWMPE8Ew==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733414764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=9p0B4zCa8Sp8P80zJI8PHN0Ymm/O7Rq7034IDOUSF7M=;
-	b=suAw/MWx1P7eIPNrbyhRrEXsPmNzpaEGmK1Bb0J6+MRB2KL1/IbSzp5w6F7vBL0BamgBG4
-	nJKe/dLwTkCVQSDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Cc: Ben Segall <bsegall@google.com>, Clark Williams <clrkwllms@kernel.org>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Luis Chamberlain <mcgrof@kernel.org>, Mel Gorman <mgorman@suse.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] preempt: Move PREEMPT_RT before PREEMPT in vermagic.
-Message-ID: <20241205160602.3lIAsJRT@linutronix.de>
+	s=arc-20240116; t=1733414807; c=relaxed/simple;
+	bh=A2DnTOze90pmj6g5vc3azSV/Ln9IgzLkSP0Xv7QklXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T9QO1IQNN26R4RbpA0dXRvMbygbJJxefzSgqBu/6V0Q33Ksc75wwGZBDpLnPamhdtJ6OIQFN+4cBxgiIK7F53ojOlRvdzyNUwo2peliQC9p73b6P+P7M//yFxFQdOLxC/8OKMesWIXv3gXPKZEvmOdU+hOpw3vUxjKSDIt9PXDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NK4OrzcX; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a7d9265e94so7269405ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:06:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1733414804; x=1734019604; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G7E/0K/5K1BjOut5mLlzCa+24O07aK8RA1Bdk2pEJFM=;
+        b=NK4OrzcXhegQ2guYPm8vkhfQ6ZnqrEEGeafEDW0Hy5rqNhvnm4ENDTIF9HkKheblf5
+         apjMe7CkhN4zFNg6BNlV1ACwu+vcqFMlThTNSlpN85rKe6R8q6232ni6jciOfFK6Vytt
+         Dee7afaB97MHYXC3qJkTlgg74pkp0rKZ9DIRA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733414804; x=1734019604;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G7E/0K/5K1BjOut5mLlzCa+24O07aK8RA1Bdk2pEJFM=;
+        b=j6UzQUDlOA6FbByhv5d4Be0hpyNajGAck7k8pNgbCEa/pzmQFFOnfmdWj7nKiMqOdG
+         MZnNstnlE7oPaVAlff0n7EmbFJ2LTNcW7IxfZbM+1PeTByML+bF8LpVTMuhhlb+VMge7
+         rDstOh6KcBloD5lrSKiX1IAD6ZgQvNXEfPxCgOPSz4kUEzwX4jEqoNzQJOgGwJt/TlUf
+         CBBwxqdS+0Rx60kVbU3DwmEq6e3UwjObcMoYedTdZOjgisyqf53ayUfqDrJWlbZ+bZdw
+         TFdsz9pPgDCMyl+vcvQJti2kS+H93FukzWM9DAuXXwrY9JGbrUXy4By9+y1SAk53KNB3
+         MGeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW24V1uAxCZCQFHGrjbO3CgjjW2e34qfsv1i63lajyhyCtXEbyXgvWxe21Hz9hRzhfYT1ksSkXZQVT7NTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbS0XDhYjRXJjxWFVK7JK4yyOkzHQbMN3sNXAa7l3ZKaN+BMBL
+	HyGoC72s2Aw0tyB8BlzB+HFVzbdlw+yLVlRx2NWGQtv4EOmUhLW+hXJIn/v/Hf4=
+X-Gm-Gg: ASbGncuF40NLDm70FCRz8dqz+6Rt3NrTWkzx8J1lby/hHep2rAzX7Wd9B81TKbi1UIB
+	PLHN1jolNgCSsomFhPGYgYU091D6OflN/S5xs7zJVIoNZVuKpryBzHtRfK4ciBZqpPfFoBwbqcO
+	JE6GKx352S8wavSda8TdTL/1XNDIW3IVxOGpc2sQ0GnHkACe0E6kUq9Tm/b64QuwRKRGnlQIDSC
+	jimquEYZUtCOBxGQ45Ad8SBoQWIBhkYOm9fcqFVuhkFigA/jVeW2IU/eutZAw==
+X-Google-Smtp-Source: AGHT+IECQoo3AU1H3Cux4NWyUqkEkqx386V5pN6kVl0r6Wn3PSuY9bnBffRQmWJX+QbbsEJHmnHHEA==
+X-Received: by 2002:a92:c56a:0:b0:3a7:dfe4:bd33 with SMTP id e9e14a558f8ab-3a7fecc82b3mr114487405ab.6.1733414804406;
+        Thu, 05 Dec 2024 08:06:44 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e286224210sm337614173.161.2024.12.05.08.06.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 08:06:43 -0800 (PST)
+Message-ID: <d9467ba5-ec01-4683-8078-d85574b2506c@linuxfoundation.org>
+Date: Thu, 5 Dec 2024 09:06:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/ftrace: adjust offset for kprobe syntax
+ error test
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Hari Bathini <hbathini@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, "Naveen N. Rao"
+ <naveen@kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241129202621.721159-1-hbathini@linux.ibm.com>
+ <20241202144111.75d1bb3b@gandalf.local.home>
+ <fa1e747f-1823-4d20-86c0-b85a3b959952@linuxfoundation.org>
+ <20241203202008.1f30a266@gandalf.local.home>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241203202008.1f30a266@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since the dynamic preemption has been enabled for PREEMPT_RT we have now
-CONFIG_PREEMPT and CONFIG_PREEMPT_RT set simultaneously. This affects
-the vermagic strings which comes now PREEMPT with PREEMPT_RT enabled.
+On 12/3/24 18:20, Steven Rostedt wrote:
+> On Tue, 3 Dec 2024 18:01:06 -0700
+> Shuah Khan <skhan@linuxfoundation.org> wrote:
+> 
+>> On 12/2/24 12:41, Steven Rostedt wrote:
+>>> On Sat, 30 Nov 2024 01:56:21 +0530
+>>> Hari Bathini <hbathini@linux.ibm.com> wrote:
+>>>    
+>>>> In 'NOFENTRY_ARGS' test case for syntax check, any offset X of
+>>>> `vfs_read+X` except function entry offset (0) fits the criterion,
+>>>> even if that offset is not at instruction boundary, as the parser
+>>>> comes before probing. But with "ENDBR64" instruction on x86, offset
+>>>> 4 is treated as function entry. So, X can't be 4 as well. Thus, 8
+>>>> was used as offset for the test case. On 64-bit powerpc though, any
+>>>> offset <= 16 can be considered function entry depending on build
+>>>> configuration (see arch_kprobe_on_func_entry() for implementation
+>>>> details). So, use `vfs_read+20` to accommodate that scenario too.
+>>>>
+>>>> Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>>> Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
+>>>
+>>> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>>>
+>>> Shuah,
+>>>
+>>> Can you take this through your tree?
+>>
+>> Yes I can take it. I do have question about whether this is
+>> a fix - sounds like it is from the change log.
+>>
+>> Clearly stating that it is a fix will help so it can be picked
+>> up for stables.
+> 
+> I would say it's a fix, as the test currently fails in certain scenarios
+> for powerpc.
+> 
+> You can add:
+> 
+> Fixes: 4231f30fcc34a ("selftests/ftrace: Add BTF arguments test cases")
+> 
 
-The PREEMPT_RT module usually can not be loaded on a PREEMPT kernel
-because some symbols are missing.
-However if the symbols are fine then it continues and it crashes later.
-The problem is that the struct module has a different layout and the
-num_exentries or init members are at a different position leading to a
-crash later on. This is not necessary caught by the size check in
-elf_validity_cache_index_mod() because the mem member has an alignment
-requirement of __module_memory_align which is big enough keep the total
-size unchanged. Therefore we should keep the string accurate instead of
-removing it.
+I applied this to linux-kselftest fixes - will send it up for rc2 or rc3
 
-Move the PREEMPT_RT check before the PREEMPT so that it takes precedence
-if both symbols are enabled.
-
-Fixes: 35772d627b55c ("sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/vermagic.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/vermagic.h b/include/linux/vermagic.h
-index a54046bf37e55..939ceabcaf06f 100644
---- a/include/linux/vermagic.h
-+++ b/include/linux/vermagic.h
-@@ -15,10 +15,10 @@
- #else
- #define MODULE_VERMAGIC_SMP ""
- #endif
--#ifdef CONFIG_PREEMPT_BUILD
--#define MODULE_VERMAGIC_PREEMPT "preempt "
--#elif defined(CONFIG_PREEMPT_RT)
-+#ifdef CONFIG_PREEMPT_RT
- #define MODULE_VERMAGIC_PREEMPT "preempt_rt "
-+#elif defined(CONFIG_PREEMPT_BUILD)
-+#define MODULE_VERMAGIC_PREEMPT "preempt "
- #else
- #define MODULE_VERMAGIC_PREEMPT ""
- #endif
--- 
-2.45.2
+thanks,
+-- Shuah
 
 
