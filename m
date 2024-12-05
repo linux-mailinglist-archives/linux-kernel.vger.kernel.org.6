@@ -1,85 +1,100 @@
-Return-Path: <linux-kernel+bounces-433773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF0A9E5CD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:17:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349F39E5CDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6033188519A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:17:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73AF116C7FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE987222572;
-	Thu,  5 Dec 2024 17:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B76D226ED9;
+	Thu,  5 Dec 2024 17:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BnH/cwnU"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgGKGSSq"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20015224B03
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5224224AF7;
+	Thu,  5 Dec 2024 17:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733419019; cv=none; b=jzK/x8mq3LLrJh1NVR5aexHsRwBSULxk2p0W+jXuv5wZiNjbvUwa1qBorMItowkqgWaf8EynJ1QIl8RrxqhwGK4W9d5qD1eh+hHP09Nypl3Lt0A9/YngM0QuqrS6NofCC0n1FkgR0wwvwaRzWo2sFZF9raRaKMbhAuKrR0jq6WA=
+	t=1733419049; cv=none; b=Tg3UQzDpIOeg+r5GujneatZ5YvC1cf/cB6Kc7Rh+R3larsBwPHj2tV6K/wrBcrfoWMXmlEC6EViiJo9jm3QzHfz34b/zFJjtFzobRaGqEvOz1y4dxOQSUMmmb0HxGVhorxryBHBSm+/ex2STpRb8+1tjG1Au3So9tyfvvYVmhUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733419019; c=relaxed/simple;
-	bh=bq3+bNN7RlTO3LzluOulsa1FFZoUNl4cRiM8pa4tVJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BgV/gWjYIXuTN7Tz4N2AQKsmY/3pcqrd4EEtxPUKZyvvGRDu+hXPlnfIZeLdmMIA8UDeBQzalXB43VRuADOWCbG48zx+dH1+d3hsy2quS09kH2F8DWYzaO2mxTBV2TfPBpc5KiPm/V2/ZRnMhw3+e++KwvN4BgG5dOc7vV6CNEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BnH/cwnU; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de771c5ebso1197571e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:16:56 -0800 (PST)
+	s=arc-20240116; t=1733419049; c=relaxed/simple;
+	bh=kRYEY1KRiU7EUBCY1eeoFd1xZYooU1OgACuow2eogX4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYevc1KIsU67lYJGYtfqnjG0mxtrNzIyLRmuMzltGiEzV2CjDcMzSamG1ya4eXBQEYmmrnGCF9IjLkNh+B6PE0YwxGpxC0lW47UbE7HYtGcDV32rkQdRbw8XcF716hpwRozUbI8E3rnGFQV2k4Z/Uojw5649G3fYO/UDBqcHSa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MgGKGSSq; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so1030403f8f.0;
+        Thu, 05 Dec 2024 09:17:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733419015; x=1734023815; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dk6qeu/c0aGQfq+iRGPsbk8IOsfqn1Rscd5YILluES4=;
-        b=BnH/cwnUIxgrOlQcrvIzL5k5FYyrzFXriVP9v6rT00mU3hmp3yoN1HOtshV03Y2G1r
-         vxCCMXQc52Uf8vaIfv74OzPs5LCSeu2tST7yr9PHTB0do1R0RB9JZ6hI/fe/CXB4BQPu
-         GSqGiOIkQsuCDrbVcJ3Ir2HRh/k+CXd0SuNo/rTIMhkwEz/nQfozUz8Z8lm818BvVyPc
-         IVUFMaRm89L95467XLACtZJVpBvWOS6W1nFL7eqPlUcub0rX3B8e9SkJxueZgGvJb+vx
-         Et0XkaqeYM1h9RoEXoBS2mrWVU6Vi4rYoIknb5Lx0MeaD4U+vddmEaC4eRVHW19ZCt8T
-         bbdA==
+        d=gmail.com; s=20230601; t=1733419044; x=1734023844; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SN1IUjCKosvwoMP78JjC9pNaPeczyqUZO6x+klQrhM8=;
+        b=MgGKGSSqDyOODt8w9RHFBJ2SI4/2eoayhwvJRUJI2SQXCQqkZ0W8LanoZR1s2rI1ZS
+         d/SiyCauvTPDFjVKUYKilHIPYYwBrSFb7kKjoQnSsn/PnnV1YzIlfVKLrQZ+9ln7pwOD
+         5MwbOV1LlEF9hNdS/PDCwYk782oyrW4fM3MONgXqTrhDiisXaxbz8aEFs3z3Ak15CxFB
+         ymzxWJyg7lJ84dAOAtTZbPrLREKK8Yz/bLbRpEmAdYEENAhC5wMqNBRce0lsn7k+3yoZ
+         VOVrrN2nKcqXDJGPpxW/EFU0VYOjBK3mLdXETuI4YRi/G0QvhVGRva2ZN73U/+ZSZ1dY
+         40rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733419015; x=1734023815;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1733419044; x=1734023844;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dk6qeu/c0aGQfq+iRGPsbk8IOsfqn1Rscd5YILluES4=;
-        b=rWfVh0JThzwIpAQo/s5g8voaZSg26OcEvMf0REegCn1aJ3xJvoxXVGDYlH0NabGekI
-         6vEHxR7QvWNM9+EZIxn9X/ONCf69DQ5jnGiAYPZvNyY1yT6FhkTAYAAzKZa6sLFJBnN4
-         pN1N34/mi+HUmPLxDrfGUpWjdXfFNbEXhi3UK2g9WOUE3SuVk9df+DawTZGOBUe8igXo
-         DOWf9ZSrAq7Jtp1DlOv+Nl3j54rPXgrZShgx87jZhwPOYep4WVR5SYg6PZDqdxkzwCK+
-         hG4/sbfR/7Hd+qbwEG90/vUB3ZZZbeRti8aupFkWRpcjAuxj5zBElXTLL55WZ1yh+hXE
-         yMJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnT9ewEonFocs1cDKmqSUrngPq2y07SGNWRiZzrxXZQApNjPX3j7QOHYpvacQGD5cjyM0ymmkdA6Am1Ck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWUpmdHaORuCkBFV65J8wwMoFap8jkNVT6G84xJ8J4U/+W0LXo
-	PS68zdeF2qjsKhgtY03f2pvoMiTbQCOWCSCTzNOQcfVtMKIe48+hcEUYEyoPxJ4=
-X-Gm-Gg: ASbGncsBcjpvMNzKPrfOlTQadYnrKXWKatkxyYHfVWIZyMNYn6Aqa7sr1z72XnDN5sn
-	P8enI594L5B/+dgjyVcrBbMF8C8oqzYHwt1L3Z3Gyt8MjCUX9sNmcb6IFF/agAmFslhZdKqdUTq
-	fKe6IKihAkak9W3m1l2H1QEaM8N1tVkjtwFXRYfQ6Gd+d+qOYnn/Ej/coxqMVzLM76OZ3k5++P8
-	cwaSu2TfbakuXORraLELVuevA0RiDSHtYeaPCa09boYfxB6WJn47j9Kl6yu5hpLg1fp9BD5BW9H
-	x2Sxtamr06QqqOc/qxbYr8W/7r2BMg==
-X-Google-Smtp-Source: AGHT+IEQVBkrgjioAw00LjhLtyaVjJhAuyebF7gUV1LhQmmwc8b638t447Vk/yLDEXbFDy5Y4yCjMA==
-X-Received: by 2002:a05:6512:4024:b0:53e:28ec:6000 with SMTP id 2adb3069b0e04-53e28ec6045mr525398e87.34.1733419014352;
-        Thu, 05 Dec 2024 09:16:54 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e22974fccsm295501e87.69.2024.12.05.09.16.51
+        bh=SN1IUjCKosvwoMP78JjC9pNaPeczyqUZO6x+klQrhM8=;
+        b=SGtdjdyWLE5KjWDYDFST4aWi++FfIlAk6aWwAgC6rqs00s2JfAOp7dFquKyjNEUx+9
+         /rUXFrsWiAAvqyFfjhNqsZ6RfkxY1t02Yev9AzGbX14GVwzTQh7DbIlvfAZYHF3RuhFe
+         trj+tlwvOea6x3w5b5gtDOP9sA5GIfiVj8xZj2mQ2aewj+ncITQ6V31vIx0HoMbjjyX+
+         GRzRrLohV/p2Yd6Wx4xMCoaYagXyHtkNZcRWtaTvaFSp6vIIvvHYXHKyS1bBDl/ypNWs
+         rXjg2YXTe8osgdbmJrBOTMoYd9cW1eQelpq02RNXMfJMtS2NUGr/iMKJQgoRCpgsWUhQ
+         /BZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSZc1TM2IcVtHauXns2UPsVZWu/ncT0wWIXs/uNP0e4fuEOKIoSU0EZsy6bczgLrAmZyl1CEK3@vger.kernel.org, AJvYcCVurWE568794bnNkYOTfxTng01Zo6QryeelTT3eUGvO81mtg0EvXcMN5n7UCciu0fU87g66IM0cxzfP@vger.kernel.org, AJvYcCWIPk7XzgcXr6/rpPWV9UcKA7UZRSCxmTT3e7qlZlLzEQ/8X1ViElgu6RrQAJ9lnhnF9UPpR/2mQaGIw9pF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIqz8tBpXYRVUFmIEM5ts58fqWubFyyKYS5SBDuNoA6Pg7ebCX
+	snl5HHiiYvSGTTptdWThgpi/Gi0Opz0JPXJUAJam1SuSj0umcHi5
+X-Gm-Gg: ASbGncsVlW4P3KBRGL8HvT06JUg1h4AGC03xw1ZJHHp3ZU/z5EzQS+sz3jXNBbdSGwN
+	dulMXNuTSsrUB577qlsvgR20/xJGzegL/LK6FfyukwtAj6Y9S8Ur0W5K9s+89MCfiCkMxFIAOlW
+	sWsG/uc4A0hryeZVJ47bxaZViiXlyB/AXQa5/Y3Wlp7EqQE30GgMQ1i9HQ2FM9QCn/Yz9Jghm4l
+	BH4Bdd+tkzmkRp87E/+xKoBdoTXXVWIwMJwWfnv3x2LERUzIV/4vwlDCPEjxlP16y1eojv24BQr
+	eMTVFg==
+X-Google-Smtp-Source: AGHT+IFGLdccQZZT6SK2+da//mSq/Cl9jdeyY32lqwWVf3M+gX0V6WTHyQEf5kO3jT5sbZpH2fuN1A==
+X-Received: by 2002:a05:6000:1faa:b0:385:f7d9:99f5 with SMTP id ffacd0b85a97d-385fd433612mr9315287f8f.51.1733419043842;
+        Thu, 05 Dec 2024 09:17:23 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a8591sm2443049f8f.36.2024.12.05.09.17.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 09:16:53 -0800 (PST)
-Date: Thu, 5 Dec 2024 19:16:50 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, quic_msavaliy@quicinc.com, 
-	quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v4] dmaengine: qcom: gpi: Add GPI immediate DMA support
- for SPI protocol
-Message-ID: <d74ibj74mrluovh3ylok3dyctf3r4iimoosegdair5acvpre6c@w5xfl6adtfto>
-References: <20241205170611.18566-1-quic_jseerapu@quicinc.com>
+        Thu, 05 Dec 2024 09:17:23 -0800 (PST)
+Message-ID: <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
+X-Google-Original-Message-ID: <Z1HgHu93YLoS_D4P@Ansuel-XPS.>
+Date: Thu, 5 Dec 2024 18:17:18 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
+ Gigabit DSA Switch driver
+References: <20241205145142.29278-1-ansuelsmth@gmail.com>
+ <20241205145142.29278-4-ansuelsmth@gmail.com>
+ <20241205162759.pm3iz42bhdsvukfm@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,131 +103,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205170611.18566-1-quic_jseerapu@quicinc.com>
+In-Reply-To: <20241205162759.pm3iz42bhdsvukfm@skbuf>
 
-On Thu, Dec 05, 2024 at 10:36:11PM +0530, Jyothi Kumar Seerapu wrote:
-> The DMA TRE(Transfer ring element) buffer contains the DMA
-> buffer address. Accessing data from this address can cause
-> significant delays in SPI transfers, which can be mitigated to
-> some extent by utilizing immediate DMA support.
+On Thu, Dec 05, 2024 at 06:27:59PM +0200, Vladimir Oltean wrote:
+> On Thu, Dec 05, 2024 at 03:51:33PM +0100, Christian Marangi wrote:
+> > +static int an8855_efuse_read(void *context, unsigned int offset,
+> > +			     void *val, size_t bytes)
+> > +{
+> > +	struct an8855_priv *priv = context;
+> > +
+> > +	return regmap_bulk_read(priv->regmap, AN8855_EFUSE_DATA0 + offset,
+> > +				val, bytes / sizeof(u32));
+> > +}
+> > +
+> > +static struct nvmem_config an8855_nvmem_config = {
+> > +	.name = "an8855-efuse",
+> > +	.size = AN8855_EFUSE_CELL * sizeof(u32),
+> > +	.stride = sizeof(u32),
+> > +	.word_size = sizeof(u32),
+> > +	.reg_read = an8855_efuse_read,
+> > +};
+> > +
+> > +static int an8855_sw_register_nvmem(struct an8855_priv *priv)
+> > +{
+> > +	struct nvmem_device *nvmem;
+> > +
+> > +	an8855_nvmem_config.priv = priv;
+> > +	an8855_nvmem_config.dev = priv->dev;
+> > +	nvmem = devm_nvmem_register(priv->dev, &an8855_nvmem_config);
+> > +	if (IS_ERR(nvmem))
+> > +		return PTR_ERR(nvmem);
+> > +
+> > +	return 0;
+> > +}
 > 
-> QCOM GPI DMA hardware supports an immediate DMA feature for data
-> up to 8 bytes, storing the data directly in the DMA TRE buffer
-> instead of the DMA buffer address. This enhancement enables faster
-> SPI data transfers.
+> At some point we should enforce the rule that new drivers for switch
+> SoCs with complex peripherals should use MFD and move all non-networking
+> peripherals to drivers handled by their respective subsystems.
 > 
-> This optimization reduces the average transfer time from 25 us to
-> 16 us for a single SPI transfer of 8 bytes length, with a clock
-> frequency of 50 MHz.
+> I don't have the expertise to review a nvmem driver, and the majority of
+> them are in drivers/nvmem, with a dedicated subsystem and maintainer.
+> In general I want to make sure it is clear that I don't encourage the
+> model where DSA owns the entire mdio_device.
 > 
-> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-> ---
+> What other peripherals are there on this SoC other than an MDIO bus and
+> an EFUSE? IRQCHIP, GPIOs, LED controller, sensors?
 > 
-> v3 -> v4:
->    - Instead using extra variable(immediate_dma) for Immediate dma
->      condition check, made it to inlined.
->    - Removed the extra brackets around Immediate dma condition check.
-> 
->    Link to v3:
-> 	https://lore.kernel.org/lkml/20241204122059.24239-1-quic_jseerapu@quicinc.com/ 
-> 
-> v2 -> v3:
->    - When to enable Immediate DMA support, control is moved to GPI driver
->      from SPI driver.
->    - Optimizations are done in GPI driver related to immediate dma changes.
->    - Removed the immediate dma supported changes in qcom-gpi-dma.h file
->      and handled in GPI driver.
-> 
->    Link to v2:
-> 	https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
-> 	https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
-> 
-> v1 -> v2:
->    - Separated the patches to dmaengine and spi subsystems
->    - Removed the changes which are not required for this feature from
->      qcom-gpi-dma.h file.
->    - Removed the type conversions used in gpi_create_spi_tre.
-> 
->    Link to v1:
-> 	https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
-> 
->  drivers/dma/qcom/gpi.c | 31 ++++++++++++++++++++++++++-----
->  1 file changed, 26 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-> index 52a7c8f2498f..9d4fc760bbe6 100644
-> --- a/drivers/dma/qcom/gpi.c
-> +++ b/drivers/dma/qcom/gpi.c
-> @@ -27,6 +27,7 @@
->  #define TRE_FLAGS_IEOT		BIT(9)
->  #define TRE_FLAGS_BEI		BIT(10)
->  #define TRE_FLAGS_LINK		BIT(11)
-> +#define TRE_FLAGS_IMMEDIATE_DMA	BIT(16)
->  #define TRE_FLAGS_TYPE		GENMASK(23, 16)
->  
->  /* SPI CONFIG0 WD0 */
-> @@ -64,6 +65,7 @@
->  
->  /* DMA TRE */
->  #define TRE_DMA_LEN		GENMASK(23, 0)
-> +#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
->  
->  /* Register offsets from gpi-top */
->  #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
-> @@ -1711,6 +1713,7 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
->  	dma_addr_t address;
->  	struct gpi_tre *tre;
->  	unsigned int i;
-> +	int len;
->  
->  	/* first create config tre if applicable */
->  	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
-> @@ -1763,14 +1766,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
->  	tre_idx++;
->  
->  	address = sg_dma_address(sgl);
-> -	tre->dword[0] = lower_32_bits(address);
-> -	tre->dword[1] = upper_32_bits(address);
-> +	len = sg_dma_len(sgl);
->  
-> -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
-> +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
-> +	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0])) {
-> +		/*
-> +		 * For Immediate dma, data length may not always be length of 8 bytes,
-> +		 * it can be length less than 8, hence initialize both dword's with 0
-> +		 */
-> +		tre->dword[0] = 0;
-> +		tre->dword[1] = 0;
-> +		memcpy(&tre->dword[0], sg_virt(sgl), len);
-> +
-> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
-> +	} else {
-> +		tre->dword[0] = lower_32_bits(address);
-> +		tre->dword[1] = upper_32_bits(address);
-> +
-> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
-> +	}
->  
->  	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
-> -	if (direction == DMA_MEM_TO_DEV)
-> -		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
-> +	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV &&
-> +					 len <= 2 * sizeof(tre->dword[0]),
-> +					 TRE_FLAGS_IMMEDIATE_DMA);
+> You can take a look at drivers/mfd/ocelot* and
+> Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml for an example on
+> how to use mfd for the top-level MDIO device, and DSA as just the driver
+> for the Ethernet switch component (which will be represented as a
+> platform_device).
 
-Don't repeat the condition, put it inside if.
+Hi Vladimir,
 
-> +	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV,
-> +					 TRE_FLAGS_IEOT);
->  
->  	for (i = 0; i < tre_idx; i++)
->  		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
-> -- 
-> 2.17.1
-> 
+I checked the examples and one problems that comes to me is how to model
+this if only MDIO is used as a comunication method. Ocelot have PCIE or
+SPI but this switch only comunicate with MDIO on his address. So where
+should I place the SoC or MFD node? In the switch root node?
+
+Also the big problem is how to model accessing the register with MDIO
+with an MFD implementation.
+
+Anyway just to make sure the Switch SoC doesn't expose an actualy MDIO
+bus, that is just to solve the problem with the Switch Address shared
+with one of the port. (Switch Address can be accessed by every switch
+port with a specific page set)
+
+But yes the problem is there... Function is not implemented but the
+switch have i2c interface, minimal CPU, GPIO and Timer in it.
+
+Happy to make the required changes, just very confused on how the final
+DT node structure.
 
 -- 
-With best wishes
-Dmitry
+	Ansuel
 
