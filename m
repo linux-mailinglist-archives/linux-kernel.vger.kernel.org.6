@@ -1,89 +1,138 @@
-Return-Path: <linux-kernel+bounces-432912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660C69E51F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:18:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5529C9E51EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451DF1881F88
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07571673C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690C2207E07;
-	Thu,  5 Dec 2024 09:59:08 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAB4207DF6
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A1020B219;
+	Thu,  5 Dec 2024 09:59:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA36820ADD2;
+	Thu,  5 Dec 2024 09:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733392748; cv=none; b=QJkTVeJ5MsPbf3TYw2YUtgmqBsxq0/8VBpRrPapTfyefDuvARU+qoA7Gseyw6VDJxzzfRPsktB0rLDoBmdKRcS1x9rLF2v7WQsrJgZx7czi405BB0vjH3O7nbkOH9DTSBM0WONUe+LaJq2x/OgUm53Of7GcXTbDPZKZkbiZtWaA=
+	t=1733392753; cv=none; b=RmsI47Tf9EYSo3rVemv4T88bS824pDLNFNIRonss2atTWKYcYvASXMOZERxBYU+ZyQq+zR0YHmS/QY2dT8usAHuwBJIcw/b6idW4gqbnHnsH5fmDexh3tZksuWIeVPGJdrXgqulyZiyfoWIdUQNluLE+Pbm3QEzYqKn3Wvi+8+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733392748; c=relaxed/simple;
-	bh=SgIHS645a0AYFH1ctRSGEAJTKS9pLtbEIGoGYT5Xrx0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IDvORc3TMgxMPCpD+V1rVEYBFb7/yt/5l35t+7WL6ofbH9nQIee4g/2Traxl9yeaz6mu1Nx/0AuCuKuFdwUMX//0JBs09/P26B1OjPJ466CRpUbcpcZYirSqxrVCL2OmLpmYBmCn54Azbuqu2DcyIYXkAK1kaqOFsy+rrtn1KT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-84181157edbso65424339f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:59:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733392743; x=1733997543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8lNUCqqMwNBH1sfFW4omgrn6scda2dAGbmRIbTAv4L0=;
-        b=fqB8yS+AbSk4LI9aNXn1qLv/gi9obrAyroDQjTEpUFS74YLyNCu6HWpSXO69mudq/1
-         F6IznBukz3ld4eX/XDmrr9H5sZX0grfHQD3YUxpJJqTeoqvz2jAvWaA49mgCPaSAREfr
-         +EPXr74gbGAJv6vcGsob9AfmAmm5QsR+/SHFX/yVnvP01Ph+oBAKYwv3Gs9BS0B6Ql1R
-         Rao2/YOzdvtjJww5J5TMmd/qWKrk9m0fi5N1+jYcMmvW2/A/uBUley0TtrzLCnH38Et4
-         3lNYSukvzaj3WWf03LAGhzIxwZ5ox3I1/bNbb2AaSxKW9E0jFhXoQO8TBXlZJp3fdnTN
-         N7Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGuY/jhUykj5Vj6nwuhI/T7+2V8VihDVivNC5Ya7zdeUKodBDpRhSCA4GQlYpr68VrG9JKQLZeyfGQaws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRaPmXThfvTM6uVf+tnI4O1eBBh1yRwYaSZIwmilF/cYsvLtl7
-	RwNbwElxsrhZDl8g8dnLtXnlpUztzsw5nLlf0edtP7r3qf2+5qvr8nUvHy99fYBbDFXSlDT+et7
-	593x2j0bOBlEI0YZrezsAyXJSlG6v2y9IoVLPkKqnc/06sJS7XVb8Wkw=
-X-Google-Smtp-Source: AGHT+IFavLHBVe3EenRxLgzvIaeEkVCw6c2tXhFegXn7cdD53cnvfTiRuE/EybIckxER921OESEtcxvmumxOeN/nu4vsVhRDpbeN
+	s=arc-20240116; t=1733392753; c=relaxed/simple;
+	bh=H/OuEMnsAyLfA919I/SNsIvUApAWXvOYm38Ic1B9zaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GmPEX4fx/3V87Xj/p2xnkJLvhcs7hTjxlDKmwVXhd0l9wXapYiBdMGiErCHveoOZIogVTQIxm29rebauw2Hb1rZZO7b5PVGKw+bHqyVKd7sPA25oReNgueKVf9RJQq46+BXY6hgURaWBsLPU70Buu5DlnWhrNKX0iqn2iftwzBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC77BFEC;
+	Thu,  5 Dec 2024 01:59:37 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 338E03F5A1;
+	Thu,  5 Dec 2024 01:59:08 -0800 (PST)
+Date: Thu, 5 Dec 2024 09:59:05 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH] arm64: dts: fvp: Update bus-range property
+Message-ID: <Z1F5aeNT-0KFOVHf@bogus>
+References: <20241128152543.1821878-1-aneesh.kumar@kernel.org>
+ <Z1CwGaAh714XfILz@e110455-lin.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54f:0:b0:3a7:8720:9de5 with SMTP id
- e9e14a558f8ab-3a7f9a36198mr111101565ab.1.1733392743713; Thu, 05 Dec 2024
- 01:59:03 -0800 (PST)
-Date: Thu, 05 Dec 2024 01:59:03 -0800
-In-Reply-To: <1757419.1733391531@warthog.procyon.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67517967.050a0220.17bd51.0099.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
-From: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, dhowells@redhat.com, jlayton@kernel.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ming.lei@redhat.com, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1CwGaAh714XfILz@e110455-lin.cambridge.arm.com>
 
-Hello,
+On Wed, Dec 04, 2024 at 07:40:09PM +0000, Liviu Dudau wrote:
+> On Thu, Nov 28, 2024 at 08:55:43PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> > These days, the Fixed Virtual Platforms(FVP) Base RevC model supports
+> > more PCI devices. Update the max bus number so that Linux can enumerate
+> > them correctly. Without this, the kernel throws the below error while
+> > booting with the default hierarchy
+> > 
+> > pci_bus 0000:01: busn_res: [bus 01] end is updated to 01
+> > pci_bus 0000:02: busn_res: can not insert [bus 02-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > pci_bus 0000:02: busn_res: [bus 02-01] end is updated to 02
+> > pci_bus 0000:02: busn_res: can not insert [bus 02] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > pci_bus 0000:03: busn_res: can not insert [bus 03-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > pci_bus 0000:03: busn_res: [bus 03-01] end is updated to 03
+> > pci_bus 0000:03: busn_res: can not insert [bus 03] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > pci_bus 0000:04: busn_res: can not insert [bus 04-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > pci_bus 0000:04: busn_res: [bus 04-01] end is updated to 04
+> > pci_bus 0000:04: busn_res: can not insert [bus 04] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > pci 0000:00:01.0: BAR 14: assigned [mem 0x50000000-0x500fffff]
+> > 
+> > The change is using 0xff as max bus nr because the ECAM window is 256MB in size.
+> > 
+> > pci-host-generic 40000000.pci: ECAM at [mem 0x40000000-0x4fffffff] for [bus 00-01]
+> > 
+> > lspci output with and without the change
+> > without fix:
+> > 00:00.0 Host bridge: ARM Device 00ba (rev 01)
+> > 00:01.0 PCI bridge: ARM Device 0def
+> > 00:02.0 PCI bridge: ARM Device 0def
+> > 00:03.0 PCI bridge: ARM Device 0def
+> > 00:04.0 PCI bridge: ARM Device 0def
+> > 00:1e.0 Unassigned class [ff00]: ARM Device ff80
+> > 00:1e.1 Unassigned class [ff00]: ARM Device ff80
+> > 00:1f.0 SATA controller: Device 0abc:aced (rev 01)
+> > 01:00.0 SATA controller: Device 0abc:aced (rev 01)
+> > 
+> > with fix:
+> > 00:00.0 Host bridge: ARM Device 00ba (rev 01)
+> > 00:01.0 PCI bridge: ARM Device 0def
+> > 00:02.0 PCI bridge: ARM Device 0def
+> > 00:03.0 PCI bridge: ARM Device 0def
+> > 00:04.0 PCI bridge: ARM Device 0def
+> > 00:1e.0 Unassigned class [ff00]: ARM Device ff80
+> > 00:1e.1 Unassigned class [ff00]: ARM Device ff80
+> > 00:1f.0 SATA controller: Device 0abc:aced (rev 01)
+> > 01:00.0 SATA controller: Device 0abc:aced (rev 01)
+> > 02:00.0 Unassigned class [ff00]: ARM Device ff80
+> > 02:00.4 Unassigned class [ff00]: ARM Device ff80
+> > 03:00.0 PCI bridge: ARM Device 0def
+> > 04:00.0 PCI bridge: ARM Device 0def
+> > 04:01.0 PCI bridge: ARM Device 0def
+> > 04:02.0 PCI bridge: ARM Device 0def
+> > 05:00.0 SATA controller: Device 0abc:aced (rev 01)
+> > 06:00.0 Unassigned class [ff00]: ARM Device ff80
+> > 06:00.7 Unassigned class [ff00]: ARM Device ff80
+> > 07:00.0 Unassigned class [ff00]: ARM Device ff80
+> > 07:00.3 Unassigned class [ff00]: ARM Device ff80
+> > 08:00.0 Unassigned class [ff00]: ARM Device ff80
+> > 08:00.1 Unassigned class [ff00]: ARM Device ff80
+> > 
+> > Cc: Liviu Dudau <liviu.dudau@arm.com>
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>
+> > Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> > Cc: Conor Dooley <conor+dt@kernel.org>
+> > Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> 
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> 
+> Sudeep, can you please take this patch through your tree?
+>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I have already queued and must be in -next, just didn't get to a point to
+respond as applied yet. I will update with your tags. Thanks!
 
-Reported-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
-Tested-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         c018ec9d block: rnull: Initialize the module in place
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-6.14/block
-console output: https://syzkaller.appspot.com/x/log.txt?x=159ca8df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58639d2215ba9a07
-dashboard link: https://syzkaller.appspot.com/bug?extid=404b4b745080b6210c6c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14b910f8580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Regards,
+Sudeep
 
