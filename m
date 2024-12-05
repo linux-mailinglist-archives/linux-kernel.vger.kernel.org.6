@@ -1,117 +1,199 @@
-Return-Path: <linux-kernel+bounces-433748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5959E5C86
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:06:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876509E5C8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:07:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10CD21883B05
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C19A2870F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49676224AFC;
-	Thu,  5 Dec 2024 17:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B35224AEF;
+	Thu,  5 Dec 2024 17:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TgRMLaLh"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gMg9obWh"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEE3218AD3;
-	Thu,  5 Dec 2024 17:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9792E218AD3;
+	Thu,  5 Dec 2024 17:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733418396; cv=none; b=o0HvxZjCXlxLdqvQciulbhVJTya5AcXcF6p1bxIStpqzFNGiuFIpi0s6l9rft5+UmXUBv1demYKKlAEpuICw1s93TJ3fCNMF9H2jC7D5YEcfnNjqndX05YYhds4ZSHeK/tR6hN9ju6iFYdP89L31E1FUM8hDp1kt0GzvUMsARmM=
+	t=1733418459; cv=none; b=Nz84DRxOJW4YD7jnMtRxOQtOD+904nsnJ44P/oHIMi2vkFzY8rYC5aCPeJk4lLqEA6UhJRviIZuriv1icM9SPDosifyNQUGL6jDfrolZ213e1Zb+kWRQLuBkPGjiwrAQ//ONIAuo89GfDfur2lrXQpwNp1saOXWeDffdAs4oevE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733418396; c=relaxed/simple;
-	bh=iPT5M0klK62MYU+wd2cp4IU14x9+Ef4oWIX3kmTIAto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UxbHos+YzT0pgtVd+R5pbfnYp0lAY72WKWc5rvJjdJcos6n5e0yE8mM6yMmXUGQI0lgXIymMxBBc42l1/u3+g4DSuZ+KZS12ZoZaFqaU7keLonbu6klDDpMqooHUUs2TaUtwLaKugFdBgDiCmQMBBB78re5Ee7mBN59Ap3BpTRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TgRMLaLh; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d0d81eff58so177761a12.0;
-        Thu, 05 Dec 2024 09:06:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733418393; x=1734023193; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjMs6gUjd0BG/RW8WnCIcN/BRNzXbUwn3T+OLY++VM8=;
-        b=TgRMLaLhOIh379PtsnLvA/oD4ZFISLefQn20q2Pqc+iDGd4kXGeC+f891ZXLzKNT1o
-         V7/uo0iqs3qw0RrMwrsZsruwIv2zWNCcmCCJSFlVurP/0d/q0H/Djuo/zUMJK4icNY9t
-         Jd5yI1nxbE8Ry9Wtc+S/1ENeYekis5KO2Zyy2lnrwjCNdcD/vV9Lkyxqgpaki/ZQTgX7
-         seJ2l2HrTMikyfqryOSfFUdFNoYRt/IjQMkp0ciVAJAezTJhTD6RNswNqJ7+/XV9Dx0u
-         xRkDyL1EW9LRBvLrbDjBtj8VegAab0NCKTrUO9Ku4jKqVRkKwrcHR68OzJkGvEtDnQTC
-         Nxyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733418393; x=1734023193;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vjMs6gUjd0BG/RW8WnCIcN/BRNzXbUwn3T+OLY++VM8=;
-        b=RSmYF7nIxQ47FVEUWwUvdts5vrQiSJ+sbTL6O+csAb6RlNQoKJJi8Ss/fcd3CYnmZY
-         qxirRc3j6b+WDzuyDR7CpPqf9aeVq3pKgMFycYUG3RN2sbCpwj+S9UoKNjXReh5dPQP7
-         FwIQqR/5YH6OEfd+MIeDBy0MI6H3CcUzRiJZou27ZMQUFjSOd8ZF/55XXISLVc1/aCAL
-         iQKZlsb3Dyj4q1KdMxHOLygKyHwouHuwd/9YQDJ1nd/FqcwhhEvEfvjffHOI5I2r5QP8
-         R9ZEAi+MjbPZ0cIV+0EUt/ILsRnZirfoVgmfq0xDEUzNdPjwBIYMr66+zij0XHThRJ9N
-         44bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH1PBCOliaWow7S2vHC89V9tF/YU/KvZ4rIl07WDwLYE3NHxRhjRVjsC2OkgA87Yjqyw9bJIFTClsZ@vger.kernel.org, AJvYcCVgHccQot2CsFfTPIuSt14kctKeLZA15NyxBkQD09pIvZbvbpgi9d4lVYJjlWj2njc7UrHc7CXU@vger.kernel.org, AJvYcCVzc6jTNSOuVUVAwn3KCk9vFsV8blLfWdrYg3v0nhLB5xCeoynrDa0yAKXB0lt7wLbWIhf11Q8qYh2xQyVi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5mNJNxKzKlgwCl7V4c9WVPE0JL9A5HuwLv8bf46hUuG10qexB
-	yUvyDsJWKuPvGXfnAN5Jo+TNZKXqRCkyZNXbKn57QgOf3du1BsL7
-X-Gm-Gg: ASbGncv3DiwDL9zegCJWTfbMfZWA7h4A7Hxr1JN11vXc3ZA2J8w2IVlBA9Vrp1O/zXy
-	NMN529iW1BsHIHpSmzQtz6gpvTPDDq2bsqxbXAVic+OWKCQ1xsS4cdO2aELmQnj2ODSj/iB6CRC
-	MyU4EMl+m5n8g79WV4/Sy2oWvXg48T/oqjoi94SnbEiXPV2FFxOpwnD763GSKAiTBjXl4sKjurf
-	x3XtFBVpqNbTTJWgPzk+Qbc0NZGfR2GYDyjE0A=
-X-Google-Smtp-Source: AGHT+IGVP0gMvyh1uwNQ7wahF1r0luVrywYn93gUAbNzVHLatXVRhr85Yq515hba/uh806NJI4WL+A==
-X-Received: by 2002:a17:907:2d8b:b0:a99:f388:6f49 with SMTP id a640c23a62f3a-aa5f7ece4c5mr459441866b.9.1733418393054;
-        Thu, 05 Dec 2024 09:06:33 -0800 (PST)
-Received: from skbuf ([188.25.135.117])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e972absm116213166b.70.2024.12.05.09.06.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 09:06:32 -0800 (PST)
-Date: Thu, 5 Dec 2024 19:06:29 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <20241205170629.ww7qcvgbqdf5ipcj@skbuf>
-References: <20241205145142.29278-1-ansuelsmth@gmail.com>
- <20241205145142.29278-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1733418459; c=relaxed/simple;
+	bh=E3N88pgbfcFNczdyyZIDRWIEzyj/imMXLOtvtzzfj5I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V4D83OiebWhcZlPQ6sSVxKRc1nFuzPv4ZezwCHPvMEFqXIFYUcsk7UrK0RIjPtKRhYvrxO0KlNiYHMq1a792QUUi5sBBDZPwtrOEN29rbUF5jqInDUVDpGu9gdxvWl/Tb0zzAOIQHYsj2DJYS0KPY+fRFABMr9T+7z0cq4X7yJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gMg9obWh; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733418454;
+	bh=E3N88pgbfcFNczdyyZIDRWIEzyj/imMXLOtvtzzfj5I=;
+	h=From:Date:Subject:To:Cc:From;
+	b=gMg9obWhZy2Hze5qDX2TxRvmJ3ZO2py+NRt8sMvfLrUksupPw/mWexk22inDUtNcW
+	 Dd/3O2Riue6i/GbcqdilnilBEYvUnP6OMj/R4aBjY/sK+7o+Y9hdbODZF0Eo5sQZGe
+	 MYHmXb0gkzIiQLrItT8E8KpiQ7W2LB2mgaJEq4vo=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Thu, 05 Dec 2024 18:07:31 +0100
+Subject: [PATCH] sysfs: constify macro BIN_ATTRIBUTE_GROUPS()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205145142.29278-4-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241205-sysfs-const-bin_attr-groups_macro-v1-1-ac5e855031e8@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIANLdUWcC/x3NQQ6CMBBA0auQWTtJqVLEqxhDapniLGjJTDUaw
+ t1tWL7N/xsoCZPCrdlA6MPKOVW0pwbCy6eZkKdqsMZeWms61J9GxZCTFnxyGn0pgrPk96rj4oN
+ kdNF5d566fjBXqJ1VKPL3eNwf+/4HPRR1D3MAAAA=
+X-Change-ID: 20241205-sysfs-const-bin_attr-groups_macro-6f6a63d57908
+To: Vineeth Vijayan <vneethv@linux.ibm.com>, 
+ Peter Oberparleiter <oberpar@linux.ibm.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733418454; l=4906;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=E3N88pgbfcFNczdyyZIDRWIEzyj/imMXLOtvtzzfj5I=;
+ b=v+ul19CBklTVDUy3JIyuDMl11glqTGxgWy0d6lIV29RyMzkcHe1OYz5oi1wy8knh7oEYiFW1x
+ 8ER6gtOEbQJALaVzaJ+kHsD+0MZGyd0So2PBAYZc0/smZD2gWU2IDId
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Thu, Dec 05, 2024 at 03:51:33PM +0100, Christian Marangi wrote:
-> +	.port_fdb_add = an8855_port_fdb_add,
-> +	.port_fdb_del = an8855_port_fdb_del,
-> +	.port_fdb_dump = an8855_port_fdb_dump,
-> +	.port_mdb_add = an8855_port_mdb_add,
-> +	.port_mdb_del = an8855_port_mdb_del,
+As there is only one in-tree user, avoid a transition phase and switch
+that user in the same commit. As there are some interdependencies
+between the constness of the different symbols in the s390 driver,
+covert the whole driver at once.
 
-Please handle the "struct dsa_db" argument of these functions, so that
-you can turn on ds->fdb_isolation. It is likely that instead of a single
-AN8855_FID_BRIDGED, there needs to be a unique FID allocated for each
-VLAN-unaware bridge in order for their FDBs to be isolated from each
-other, and so that the same MAC address could live under both bridges.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+This is intended to be merged through the driver core tree.
+---
+ drivers/s390/cio/chp.c | 28 ++++++++++++++--------------
+ include/linux/sysfs.h  |  2 +-
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/s390/cio/chp.c b/drivers/s390/cio/chp.c
+index cba2d048a96b3cb0cc79080ef4c771b0f7d5bc34..4a0b3f19bd8ef9780da6b4657fbda73171e8c22b 100644
+--- a/drivers/s390/cio/chp.c
++++ b/drivers/s390/cio/chp.c
+@@ -128,7 +128,7 @@ static int s390_vary_chpid(struct chp_id chpid, int on)
+  * Channel measurement related functions
+  */
+ static ssize_t measurement_chars_read(struct file *filp, struct kobject *kobj,
+-				      struct bin_attribute *bin_attr,
++				      const struct bin_attribute *bin_attr,
+ 				      char *buf, loff_t off, size_t count)
+ {
+ 	struct channel_path *chp;
+@@ -142,11 +142,11 @@ static ssize_t measurement_chars_read(struct file *filp, struct kobject *kobj,
+ 	return memory_read_from_buffer(buf, count, &off, &chp->cmg_chars,
+ 				       sizeof(chp->cmg_chars));
+ }
+-static BIN_ATTR_ADMIN_RO(measurement_chars, sizeof(struct cmg_chars));
++static const BIN_ATTR_ADMIN_RO(measurement_chars, sizeof(struct cmg_chars));
+ 
+ static ssize_t measurement_chars_full_read(struct file *filp,
+ 					   struct kobject *kobj,
+-					   struct bin_attribute *bin_attr,
++					   const struct bin_attribute *bin_attr,
+ 					   char *buf, loff_t off, size_t count)
+ {
+ 	struct channel_path *chp = to_channelpath(kobj_to_dev(kobj));
+@@ -196,22 +196,22 @@ static ssize_t chp_measurement_copy_block(void *buf, loff_t off, size_t count,
+ }
+ 
+ static ssize_t measurement_read(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
+ 				char *buf, loff_t off, size_t count)
+ {
+ 	return chp_measurement_copy_block(buf, off, count, kobj, false);
+ }
+-static BIN_ATTR_ADMIN_RO(measurement, sizeof(struct cmg_entry));
++static const BIN_ATTR_ADMIN_RO(measurement, sizeof(struct cmg_entry));
+ 
+ static ssize_t ext_measurement_read(struct file *filp, struct kobject *kobj,
+-				    struct bin_attribute *bin_attr,
++				    const struct bin_attribute *bin_attr,
+ 				    char *buf, loff_t off, size_t count)
+ {
+ 	return chp_measurement_copy_block(buf, off, count, kobj, true);
+ }
+-static BIN_ATTR_ADMIN_RO(ext_measurement, sizeof(struct cmg_ext_entry));
++static const BIN_ATTR_ADMIN_RO(ext_measurement, sizeof(struct cmg_ext_entry));
+ 
+-static struct bin_attribute *measurement_attrs[] = {
++static const struct bin_attribute *measurement_attrs[] = {
+ 	&bin_attr_measurement_chars,
+ 	&bin_attr_measurement_chars_full,
+ 	&bin_attr_measurement,
+@@ -435,7 +435,7 @@ static ssize_t speed_bps_show(struct device *dev,
+ static DEVICE_ATTR_RO(speed_bps);
+ 
+ static ssize_t util_string_read(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *attr, char *buf,
++				const struct bin_attribute *attr, char *buf,
+ 				loff_t off, size_t count)
+ {
+ 	struct channel_path *chp = to_channelpath(kobj_to_dev(kobj));
+@@ -448,10 +448,10 @@ static ssize_t util_string_read(struct file *filp, struct kobject *kobj,
+ 
+ 	return rc;
+ }
+-static BIN_ATTR_RO(util_string,
+-		   sizeof(((struct channel_path_desc_fmt3 *)0)->util_str));
++static const BIN_ATTR_RO(util_string,
++			 sizeof(((struct channel_path_desc_fmt3 *)0)->util_str));
+ 
+-static struct bin_attribute *chp_bin_attrs[] = {
++static const struct bin_attribute *const chp_bin_attrs[] = {
+ 	&bin_attr_util_string,
+ 	NULL,
+ };
+@@ -468,9 +468,9 @@ static struct attribute *chp_attrs[] = {
+ 	&dev_attr_speed_bps.attr,
+ 	NULL,
+ };
+-static struct attribute_group chp_attr_group = {
++static const struct attribute_group chp_attr_group = {
+ 	.attrs = chp_attrs,
+-	.bin_attrs = chp_bin_attrs,
++	.bin_attrs_new = chp_bin_attrs,
+ };
+ static const struct attribute_group *chp_attr_groups[] = {
+ 	&chp_attr_group,
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index 0f2fcd244523f050c5286f19d4fe1846506f9214..b4368377fac96734a5ee98209f9532b838953f07 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -293,7 +293,7 @@ __ATTRIBUTE_GROUPS(_name)
+ 
+ #define BIN_ATTRIBUTE_GROUPS(_name)				\
+ static const struct attribute_group _name##_group = {		\
+-	.bin_attrs = _name##_attrs,				\
++	.bin_attrs_new = _name##_attrs,				\
+ };								\
+ __ATTRIBUTE_GROUPS(_name)
+ 
+
+---
+base-commit: dabe889a826e866d71af72a890f2be07a660350c
+change-id: 20241205-sysfs-const-bin_attr-groups_macro-6f6a63d57908
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
