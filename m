@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-433557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBE39E59D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:36:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9732A9E59D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:36:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C831886930
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F63285784
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66060224B13;
-	Thu,  5 Dec 2024 15:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B24F229B00;
+	Thu,  5 Dec 2024 15:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lweXdCsw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kkTag37B"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C296221465
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804FC221470
 	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733412846; cv=none; b=FHgvonXTpp29POr8zIccbFv057yah12117Epa35PyajGZC/3Nq3Pxq6YyQcEQuDUY8iLscsQLTKsWG7XNVti57xxF4GtATjjzoRde91I+AHks8ne/1Su24AeICJUBIeFDKl+MFJXzi38l4tnCmhIBdQaZViZaTf3Qamh0b2BmHU=
+	t=1733412846; cv=none; b=drw28BROEUyXqsQXip+eOKwCzMSfwhmCsVYGQHgdebJkwof0nawicy5uPzPRSVFrPWWXc/1k0C7OGwSDO8ejAEzTrAm+9KtWrSzN3gQjd5PJ15jiFoKxF22YhpOGLzLDjXSRN8p4fp4PVAVp2GihqwdtXv5ZhgzFXFTmL604rjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733412846; c=relaxed/simple;
-	bh=FW6hMMPLyhwrarG5r0mql4WfDEvwbKU+qaIi/tENEuY=;
+	bh=h9T1Us79rG5zNlNiqErNkmovUuy+vDBk3u4+TWO3n5k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PNjFEHnpitSykxm4UZ1acpE2hz5Eg17kDJigv5gMoj+zkKoc/vzSRN6TlK6/cndQXcqid8hZrRbuki0gvFZuzQqhzOk1CCwjmRGy9cLPVfOmVwTCs07/icCVKxgqpPFm9hq6nD55gOcV7Wa1QxKNssIBSem2K7tuKMTikcf9nyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lweXdCsw; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=FJvcWqXGvW22RMKDwH0o0xejSZrcya7PoZY8pkAduNfAcNJQcM5i/swcFVPiDPEo+uEhh48jm6i1X9QHTNI9UZXPwt7ho5EyawY6diVQG+yctqUDODYNm0E9m4xnQIUDe3Y1RHtJUM8nH+z3d128Di6bdXudYExDpEq0NeQiYXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kkTag37B; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=0nLJBUlnC0lJdbTn9E+DJez294BNmSeUZNgs1SMEfHk=; b=lweXdCswCNPW2EfnfW6TaV1ko0
-	cTHHM8cRL4S4SDShxpwDTUd2ZRWm2VZRr8jJF8OcndyMxCxjLP3bzSjj6JJSnYF3S1JbGX+4/9sqg
-	s3i22oE03WbqTko+X1uLRLmvZFHmoDoAbXVdo+yytEeSgcBSVGnUwGSH3LbRIit1V0Mrvd57dK+KR
-	WXc0/YqYHciV5MsOCGBpXnX36zqpefrf+FVCLBbOWJFVS6+6OFWdztWsx4E2UzS5SMRKT8AspwfmB
-	sF1jrbEJf1MUTi/nDKGN/m8dkdKYLzyELfZO3EtgPpNToE7HgkIqCOIJJMdag35fVThsIbRmwZkmA
-	yyDoCFdw==;
+	bh=DHyuUfLXwZ8dNR2vFEDqrk7NrFvfuBvjwmzlKRQQKmc=; b=kkTag37Brihmz++oUOdAGFVxIE
+	T0NpDJA9yrf4Mt4Gik9Be1mUoqY4CWMFAZaMpIvHP22fByx4Do6ZXD3gq3d6nVa5+hUdVcOmjBSKh
+	tQD4iOCVccBvD+NuF8cZoY8fY1mDURbROHwIG3gMf9/J5jS2awjsmsyHvFhMqvLZupJryRprqB4hM
+	8s2VwdwOwhSqiLl9XUdw4FfB0c5zX2O9LSAeH2BH7wsnXND/utG1coqpzNdSs059qNaTEcG0msf72
+	WOpn4Q+o5EMaQPPY1tsW/LlkZX37uAZn+S8br4PB2cfuuPyCYdz5DWUpkPOYZG/T5g6K6XQbEcb5w
+	SsJAR+cQ==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tJDrM-0000000DDp0-1cQ3;
+	id 1tJDrM-0000000DDp1-1sRT;
 	Thu, 05 Dec 2024 15:33:45 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tJDrN-0000000DyLX-1p5X;
+	id 1tJDrN-0000000DyLb-1z0t;
 	Thu, 05 Dec 2024 15:33:45 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
@@ -65,9 +65,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: [PATCH v5 06/20] x86/kexec: Copy control page into place in machine_kexec_prepare()
-Date: Thu,  5 Dec 2024 15:05:12 +0000
-Message-ID: <20241205153343.3275139-7-dwmw2@infradead.org>
+Subject: [PATCH v5 07/20] x86/kexec: Invoke copy of relocate_kernel() instead of the original
+Date: Thu,  5 Dec 2024 15:05:13 +0000
+Message-ID: <20241205153343.3275139-8-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241205153343.3275139-1-dwmw2@infradead.org>
 References: <20241205153343.3275139-1-dwmw2@infradead.org>
@@ -83,49 +83,128 @@ X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-There's no need for this to wait until the actual machine_kexec() invocation;
-future changes will need to make the control page read-only and executable,
-so all writes should be completed before machine_kexec_prepare() returns.
+This currently calls set_memory_x() from machine_kexec_prepare() just
+like the 32-bit version does. That's actually a bit earlier than I'd
+like, as it leaves the page RWX all the time the image is even *loaded*.
+
+Subsequent commits will eliminate all the writes to the page between the
+point it's marked executable in machine_kexec_prepare() the time that
+relocate_kernel() is running and has switched to the identmap %cr3, so
+that it can be ROX. But that can't happen until it's moved to the .data
+section of the kernel, and *that* can't happen until we start executing
+the copy instead of executing it in place in the kernel .text. So break
+the circular dependency in those commits by letting it be RWX for now.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/kernel/machine_kexec_64.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ arch/x86/kernel/machine_kexec_64.c   | 30 ++++++++++++++++++++++------
+ arch/x86/kernel/relocate_kernel_64.S |  5 ++++-
+ 2 files changed, 28 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 7223c38a8708..3a4cbac1a0c6 100644
+index 3a4cbac1a0c6..9567347f7a9b 100644
 --- a/arch/x86/kernel/machine_kexec_64.c
 +++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -301,17 +301,16 @@ static void load_segments(void)
+@@ -157,7 +157,12 @@ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd,
+ 	pmd_t *pmd;
+ 	pte_t *pte;
  
- int machine_kexec_prepare(struct kimage *image)
- {
--	unsigned long control_page;
-+	void *control_page = page_address(image->control_code_page);
- 	int result;
+-	vaddr = (unsigned long)relocate_kernel;
++	/*
++	 * For the transition to the identity mapped page tables, the control
++	 * code page also needs to be mapped at the virtual address it starts
++	 * off running from.
++	 */
++	vaddr = (unsigned long)__va(control_page);
+ 	paddr = control_page;
+ 	pgd += pgd_index(vaddr);
+ 	if (!pgd_present(*pgd)) {
+@@ -311,11 +316,17 @@ int machine_kexec_prepare(struct kimage *image)
  
--	/* Calculate the offsets */
--	control_page = page_to_pfn(image->control_code_page) << PAGE_SHIFT;
--
- 	/* Setup the identity mapped 64bit page table */
--	result = init_pgtable(image, control_page);
-+	result = init_pgtable(image, __pa(control_page));
- 	if (result)
- 		return result;
+ 	__memcpy(control_page, relocate_kernel, KEXEC_CONTROL_CODE_MAX_SIZE);
  
-+	__memcpy(control_page, relocate_kernel, KEXEC_CONTROL_CODE_MAX_SIZE);
++	set_memory_x((unsigned long)control_page, 1);
 +
  	return 0;
  }
  
-@@ -363,7 +362,6 @@ void machine_kexec(struct kimage *image)
- 	}
+ void machine_kexec_cleanup(struct kimage *image)
+ {
++	void *control_page = page_address(image->control_code_page);
++
++	set_memory_nx((unsigned long)control_page, 1);
++
+ 	free_transition_pgtable(image);
+ }
  
- 	control_page = page_address(image->control_code_page);
--	__memcpy(control_page, relocate_kernel, KEXEC_CONTROL_CODE_MAX_SIZE);
+@@ -325,6 +336,11 @@ void machine_kexec_cleanup(struct kimage *image)
+  */
+ void machine_kexec(struct kimage *image)
+ {
++	unsigned long (*relocate_kernel_ptr)(unsigned long indirection_page,
++					     unsigned long page_list,
++					     unsigned long start_address,
++					     unsigned int preserve_context,
++					     unsigned int host_mem_enc_active);
+ 	unsigned long page_list[PAGES_NR];
+ 	unsigned int host_mem_enc_active;
+ 	int save_ftrace_enabled;
+@@ -371,6 +387,8 @@ void machine_kexec(struct kimage *image)
+ 		page_list[PA_SWAP_PAGE] = (page_to_pfn(image->swap_page)
+ 						<< PAGE_SHIFT);
  
- 	page_list[PA_CONTROL_PAGE] = virt_to_phys(control_page);
- 	page_list[VA_CONTROL_PAGE] = (unsigned long)control_page;
++	relocate_kernel_ptr = control_page;
++
+ 	/*
+ 	 * The segment registers are funny things, they have both a
+ 	 * visible and an invisible part.  Whenever the visible part is
+@@ -390,11 +408,11 @@ void machine_kexec(struct kimage *image)
+ 	native_gdt_invalidate();
+ 
+ 	/* now call it */
+-	image->start = relocate_kernel((unsigned long)image->head,
+-				       (unsigned long)page_list,
+-				       image->start,
+-				       image->preserve_context,
+-				       host_mem_enc_active);
++	image->start = relocate_kernel_ptr((unsigned long)image->head,
++					   (unsigned long)page_list,
++					   image->start,
++					   image->preserve_context,
++					   host_mem_enc_active);
+ 
+ #ifdef CONFIG_KEXEC_JUMP
+ 	if (image->preserve_context)
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index 50cc33f2ecb7..b48bd82843fd 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -39,6 +39,7 @@
+ #define CP_PA_TABLE_PAGE	DATA(0x20)
+ #define CP_PA_SWAP_PAGE		DATA(0x28)
+ #define CP_PA_BACKUP_PAGES_MAP	DATA(0x30)
++#define CP_VA_CONTROL_PAGE	DATA(0x38)
+ 
+ 	.text
+ 	.align PAGE_SIZE
+@@ -99,6 +100,7 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
+ 	movq	%r9, CP_PA_TABLE_PAGE(%r11)
+ 	movq	%r10, CP_PA_SWAP_PAGE(%r11)
+ 	movq	%rdi, CP_PA_BACKUP_PAGES_MAP(%r11)
++	movq	%r11, CP_VA_CONTROL_PAGE(%r11)
+ 
+ 	/* Save the preserve_context to %r11 as swap_pages clobbers %rcx. */
+ 	movq	%rcx, %r11
+@@ -235,7 +237,8 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	movq	%rax, %cr3
+ 	lea	PAGE_SIZE(%r8), %rsp
+ 	call	swap_pages
+-	movq	$virtual_mapped, %rax
++	movq	CP_VA_CONTROL_PAGE(%r8), %rax
++	addq	$(virtual_mapped - relocate_kernel), %rax
+ 	pushq	%rax
+ 	ANNOTATE_UNRET_SAFE
+ 	ret
 -- 
 2.47.0
 
