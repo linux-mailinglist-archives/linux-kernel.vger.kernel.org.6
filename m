@@ -1,606 +1,149 @@
-Return-Path: <linux-kernel+bounces-433852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3399E5DF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:05:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1FB9E5DF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CC216D49A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB84D16D268
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8845A227BAE;
-	Thu,  5 Dec 2024 18:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3006229B00;
+	Thu,  5 Dec 2024 18:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aqEArEnG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="SLgIBSPy"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A7D15E5A6;
-	Thu,  5 Dec 2024 18:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733421895; cv=none; b=K9yEjY8uYNv+siE46A0KdhAtrRaS7Mcjvry+sPJeIMAGV7vZPBcrprinOhJEPJiZA+Rv0eQehCiYwb7EiffU9WiwOBMkrg3UO4ZnQii1ZlxGVrtUTXfR0pqT1LloybhLKxRH3uzOVe2cwGUjjT5qZeDMO28LCAd+BGpYIwKHSaI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733421895; c=relaxed/simple;
-	bh=G90FdBeMIQHJai+DJeniOB7I1nuN36CoXanhJkEHyOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NwWI7eEXEZq70/K/Fz7YVZXtsb0FL/ZWj+jJY679f9bJQDPKsPP1YSXZIZnoOjlUCo9T7BvNYeXJp0CynWfUmz6UDGuaBC/ZgGfVJ1qaqr3HJ8sqoNqZ+MUUNpXiwm2H4zeRdhG1Bne3QAG4QtL5uoxEE88XHM2mcsI8/3P6zwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aqEArEnG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5ElQF9012690;
-	Thu, 5 Dec 2024 18:04:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7eRIiB
-	aC2/NJSVx6fPq7rzlPrkL1wtTVmAMBA3NWeL0=; b=aqEArEnGuFeufiH9H7gzHo
-	8e6nRsCij4idRce1vrCJIhRBXX6kE1MRYgfqs39UHvfIcizViBRkpXGrPUHQKJZb
-	mzMw6ZL5YqMDz3sYb6Vh/TIg0G66z0JsSsFJy6DS+/wx2s6L5RqpMMHa5SsKkwZ9
-	pWeKTPoRi7KOEx0DuFFsvpn7JpsrXrO41NoVVqnnRfhJ1AMrIvIpaGD+tVDHDNu3
-	e+n2/1mzwzEciLfsGJWl7ngLgaUK0B0nC54fiFUwm2EfeBELBk7t5QN+XbWogO2w
-	QsmWzI3fDvT8USvl9K9BRdoYH+QRuDyGaPW6vEy7RXPxF/hKp0l5d08qOlDSryag
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437s4jf2bb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 18:04:36 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B5I1Xw7028714;
-	Thu, 5 Dec 2024 18:04:36 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437s4jf2b5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 18:04:36 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5GoFSl023083;
-	Thu, 5 Dec 2024 18:04:35 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1na1cb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 18:04:34 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5I4WjK27591078
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Dec 2024 18:04:33 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D915A20040;
-	Thu,  5 Dec 2024 18:04:32 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7F4852004B;
-	Thu,  5 Dec 2024 18:04:26 +0000 (GMT)
-Received: from [9.39.27.71] (unknown [9.39.27.71])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Dec 2024 18:04:26 +0000 (GMT)
-Message-ID: <5f8584e4-d180-4f65-ab42-9b0348b703d5@linux.ibm.com>
-Date: Thu, 5 Dec 2024 23:34:24 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E52E227B81;
+	Thu,  5 Dec 2024 18:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733421903; cv=pass; b=dpguE5wlM1687FKgt24TdSrh6gx7SZiUaYlT9qesBPi20bUSqcETppiqhqwe7BP2vfCMz6xVFKJ7qnDy8YLG6mpdK4WMKy1lfr/dP50r+NssKmljyaPCr9dehxY8PEXM+fkeXx7hVkONSOjN+QKBjSrCAyxR0ITpCRbV2YJd8VU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733421903; c=relaxed/simple;
+	bh=tXsmplCWIfDU1nslWwIzWjXlT1Uhwo23G/KzmcVHbWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R5ukgC8PNyvV1ccMkKei37e5kxaz9n1B9tnvNK+vDSpZQAeQT8hkWiSXy1fWZugOyiMweniUT5mWgF92bQQdF9Yh9TQOr9aZDzl5a8sNnLRGkoWqqZif0a9GM+h5kxgDrasXeWG4aKqDpwYfIZS5XWryrzKxvNhhw0yp2P9pyNU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=SLgIBSPy; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733421881; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CD7IQ9sWFL7LplVEoEnc0NaZmOuF/y0rMnTPwHbvX/n0+Wy1kmwvi2g/Dmov9FV8tSDE6QihziJhYSLNZUJIGVhVNk2b0nR9aTGiX44aNWWKy1lrT+7YlppBJXhurBP2IwpVlv3dAli0nEGsKSGcrIq/cdZkDcSQs+HR0ntm0VY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733421881; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tXsmplCWIfDU1nslWwIzWjXlT1Uhwo23G/KzmcVHbWA=; 
+	b=AOBAnGEz+5pBuWHF1fr3zRWsZvFOUonvoDDj1zKnmNeTuEvDsb5rbbpXSSZbUM8mcJD2R8EgDMRCzkTyXAIH311txt422DYrmbHPLfSsLQ8S5H6XMuInc+HBX2skjSTMg/DQObGD7U+10Ndm+xtIQRcnxjQ8vPPUMUnSTNLX2ww=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733421881;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=tXsmplCWIfDU1nslWwIzWjXlT1Uhwo23G/KzmcVHbWA=;
+	b=SLgIBSPyZrlSRVdtdt8u5wyKkpez+z41A5lkHP/IjxRXWMXULNC2fPxqpO2qn4xh
+	Q69s3f7XeGip3ZO8f3afDchahlQ4n5yTM9V4p0A5MS/dHduVGpSKG9lBDjEoayEfSxa
+	Jxjg8ssPj3vD6lBlYGrC2szq5y5Kqo8Hp0T7Ceqk=
+Received: by mx.zohomail.com with SMTPS id 1733421877901470.7310984148362;
+	Thu, 5 Dec 2024 10:04:37 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id 563EF10604B0; Thu, 05 Dec 2024 19:04:32 +0100 (CET)
+Date: Thu, 5 Dec 2024 19:04:32 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org, 
+	cristian.ciocaltea@collabora.com, l.stach@pengutronix.de, andy.yan@rock-chips.com, 
+	hjc@rock-chips.com, algea.cao@rock-chips.com, kever.yang@rock-chips.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
+ for eDP mode
+Message-ID: <5ncdog66jtc4s7vxk2yt4jkknf2es3whvweuqmrxbot3azi5ge@t6s3xadkiasp>
+References: <20241127075157.856029-1-damon.ding@rock-chips.com>
+ <2131853.KlZ2vcFHjT@diego>
+ <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
+ <2886747.Y6S9NjorxK@diego>
+ <h4giob7bcrh7qmtepti6huym2llw4ujfmeff76vrgpahb5zy6x@dz6zghsifww5>
+ <2342f342-672c-447e-90d8-674b748af6a4@rock-chips.com>
+ <abzu2chif2g3urxoqbm3gbe6cciexbmqvn44qezrx4hgllfkkn@7bzi5jl3stqe>
+ <42035ebe-09b7-4005-912a-8ec72d5dabcc@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] sched/fair: introduce new scheduler group type
- group_parked
-To: Tobias Huschle <huschle@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, linux-s390@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20241204112149.25872-1-huschle@linux.ibm.com>
- <20241204112149.25872-2-huschle@linux.ibm.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20241204112149.25872-2-huschle@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: NM30V_Wo2qC9g26fwAMpIFAy4CehXfe0
-X-Proofpoint-ORIG-GUID: 5-anfkpRB6e3IRu6bxOwdXtDfucRDwva
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
- impostorscore=0 phishscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050132
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tgjajudtqqajoprm"
+Content-Disposition: inline
+In-Reply-To: <42035ebe-09b7-4005-912a-8ec72d5dabcc@rock-chips.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/233.339.97
+X-ZohoMailClient: External
 
 
+--tgjajudtqqajoprm
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
+ for eDP mode
+MIME-Version: 1.0
 
-On 12/4/24 16:51, Tobias Huschle wrote:
-> A parked CPU is considered to be flagged as unsuitable to process
-> workload at the moment, but might be become usable anytime. Depending on
-> the necessity for additional computation power and/or available capacity
-> of the underlying hardware.
-> 
-> A scheduler group is considered to be parked if it only contains parked
-> CPUs. A parked scheduler group is considered to be busier than another
-> if it runs more tasks than the other parked scheduler group.
-> 
-> Indicators whether a CPU should be parked depend on the underlying
-> hardware and must be considered to be architecture dependent.
-> Therefore the check whether a CPU is parked is architecture specific.
-> For architectures not relying on this feature, the check is a NOP.
-> 
-> This is more efficient and non-disruptive compared to CPU hotplug in
-> environments where such changes can be necessary on a frequent basis.
-> 
-> Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
-> ---
->   include/linux/sched/topology.h |  20 ++++++
->   kernel/sched/core.c            |  10 ++-
->   kernel/sched/fair.c            | 122 ++++++++++++++++++++++++++-------
->   3 files changed, 127 insertions(+), 25 deletions(-)
-> 
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index 4237daa5ac7a..cfe3c59bc329 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -270,6 +270,26 @@ unsigned long arch_scale_cpu_capacity(int cpu)
->   }
->   #endif
->   
-> +#ifndef arch_cpu_parked
-> +/**
-> + * arch_cpu_parked - Check if a given CPU is currently parked.
-> + *
-> + * A parked CPU cannot run any kind of workload since underlying
-> + * physical CPU should not be used at the moment .
-> + *
-> + * @cpu: the CPU in question.
-> + *
-> + * By default assume CPU is not parked
-> + *
-> + * Return: Parked state of CPU
-> + */
-> +static __always_inline
-> +unsigned long arch_cpu_parked(int cpu)
+Hello Damon,
 
-bool instead?
+On Thu, Dec 05, 2024 at 09:13:33AM +0800, Damon Ding wrote:
+> Firstly, the term "the HDMI and eDP dynamic switching" can be somewhat
+> misleading, because the eDP usually does not support hot plug. The RK3588
+> eDP is often used as DP, and it actually supports DP 1.2. Therefore, it is
+> better to use the "the HDMI and DP dynamic switching" description.
 
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->   #ifndef arch_scale_hw_pressure
->   static __always_inline
->   unsigned long arch_scale_hw_pressure(int cpu)
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 1dee3f5ef940..8f9aeb97c396 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2437,7 +2437,7 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
->   
->   	/* Non kernel threads are not allowed during either online or offline. */
->   	if (!(p->flags & PF_KTHREAD))
-> -		return cpu_active(cpu);
-> +		return !arch_cpu_parked(cpu) && cpu_active(cpu);
->   
->   	/* KTHREAD_IS_PER_CPU is always allowed. */
->   	if (kthread_is_per_cpu(p))
-> @@ -2447,6 +2447,10 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
->   	if (cpu_dying(cpu))
->   		return false;
->   
-> +	/* CPU should be avoided at the moment */
-> +	if (arch_cpu_parked(cpu))
-> +		return false;
-> +
->   	/* But are allowed during online. */
->   	return cpu_online(cpu);
->   }
-> @@ -3924,6 +3928,10 @@ static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
->   	if (task_on_scx(p))
->   		return false;
->   
-> +	/* The task should not be queued onto a parked CPU. */
-> +	if (arch_cpu_parked(cpu))
-> +		return false;
-> +
+The part unclear to me is how the dynamic switching is supposed to
+happen. Looking at the TRM the hotplug detect signals also seem to be
+shared between HDMI and eDP. Can the RK3588S EVB distinguish if HDMI
+or eDP has been plugged, or does this require some user interaction
+to set the right mode?
 
-When it comes here, likely cpu is not parked since wakeup path has those 
-checks.
+> Indeed, the devm_phy_get(dp->dev, "dp") and devm_of_phy_get_by_index() wi=
+ll
+> help to get the phy reference in .probe() or .bind().
+>=20
+> However, the phy_set_mode() may be still needed in the HDMI and DP dynamic
+> switching application scenarios. We need the enum phy_mode
+> PHY_MODE_DP/PHY_MODE_HDMI to differentiate the configuration processes in
+> .power_on(), .power_off() and .configure() of struct phy_ops, which will =
+be
+> called in conjunction with plugging in and unplugging an HDMI or DP cable.
 
->   	/*
->   	 * Do not complicate things with the async wake_list while the CPU is
->   	 * in hotplug state.
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 4283c818bbd1..fa1c19d285de 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7415,6 +7415,9 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
->   {
->   	int target = nr_cpumask_bits;
->   
-> +	if (arch_cpu_parked(target))
-> +		return prev_cpu;
-> +
->   	if (sched_feat(WA_IDLE))
->   		target = wake_affine_idle(this_cpu, prev_cpu, sync);
->   
-> @@ -7454,6 +7457,9 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
->   	for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
->   		struct rq *rq = cpu_rq(i);
->   
-> +		if (arch_cpu_parked(i))
-> +			continue;
-> +
->   		if (!sched_core_cookie_match(rq, p))
->   			continue;
->   
-> @@ -7546,10 +7552,14 @@ static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct tas
->   	return new_cpu;
->   }
->   
-> +static inline bool is_idle_cpu_allowed(int cpu)
-> +{
-> +	return !arch_cpu_parked(cpu) && (available_idle_cpu(cpu) || sched_idle_cpu(cpu));
-> +}
+I suppose you could fetch the PHY in power_on() and release it in
+power_off(). But using phy_set_mode() might indeed be better here.
 
-How about adding below code, it could simplify the code quite a bit. no? 
-sched_idle_rq also might need the same check though.
+-- Sebastian
 
-+++ b/kernel/sched/syscalls.c
-@@ -214,6 +214,9 @@ int idle_cpu(int cpu)
-                 return 0;
-  #endif
+--tgjajudtqqajoprm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-+       if (arch_cpu_parked(cpu))
-+               return 0;
-+
-         return 1;
-  }
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdR6ykACgkQ2O7X88g7
++pqINw/8CISqq7TtaVuYjbUOVbMUju+XZCYIgQ86pXkRiTB8jbo9FSE0v+9rD3B2
+oxzyPpwv6e3CW9hJHsPgmeUz+zqzwa+gzHDTtdyapfOhrDHbALNBaskJavvFxjAG
+rXs/kJaga35Z1AtGug6P//VQt5jOKx6VjBe51mQqphngJngD4gW2xr7Jh3zjSuJU
+uwx7QiMwxdT2ysmQkwddEXm5B8Wjn4NqmxehkLSQWF+gi9P0al9uuYua17vbz5OA
+sP3mpDYUsvPVUwPjYO+8c2eGuKFCIAwZBS01v1TtpjeEMCLqIZAAVcGpx1jwN2H/
+XIFLQaf06CvqvB4IqErNgoXfqVV/B/X0kCnHVEfu0AD8yrZ7sT7EVo/FtFF8/DtD
+yd7p3/+x+7z34LPUf6uhpjzyyko5gPZpFXILYSFACxhDO8ayX95PEQazQbmGnG0U
+pLanIRga3lIxoCaGXaFetBHOCeSiqWxBs9SPO7r3gWYQmBv15VPLhR4q+9lSjoFT
+O25niK3n7hgpuT40FfAcLgnftvycNIrTK9SWQbEeOKGH0G2Rq1rdk74zcgmlnQEM
+DjucMFzuoftYsJlq8HN2nPrwr7P07N6F0eFapyTH3xfGj3O1zbKroiosXZEFJDTo
+tl/VwfSg8bbGG/Zbc+/D+ZIvD+ovCWItkKoKJqB7j+lZJmbCzvc=
+=0mlA
+-----END PGP SIGNATURE-----
 
-> +
->   static inline int __select_idle_cpu(int cpu, struct task_struct *p)
->   {
-> -	if ((available_idle_cpu(cpu) || sched_idle_cpu(cpu)) &&
-> -	    sched_cpu_cookie_match(cpu_rq(cpu), p))
-> +	if (is_idle_cpu_allowed(cpu) && sched_cpu_cookie_match(cpu_rq(cpu), p))
->   		return cpu;
->   
->   	return -1;
-> @@ -7657,7 +7667,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
->   		 */
->   		if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
->   			continue;
-> -		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
-> +		if (is_idle_cpu_allowed(cpu))
->   			return cpu;
->   	}
->   
-> @@ -7779,7 +7789,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
->   	for_each_cpu_wrap(cpu, cpus, target) {
->   		unsigned long cpu_cap = capacity_of(cpu);
->   
-> -		if (!available_idle_cpu(cpu) && !sched_idle_cpu(cpu))
-> +		if (!is_idle_cpu_allowed(cpu))
->   			continue;
->   
->   		fits = util_fits_cpu(task_util, util_min, util_max, cpu);
-> @@ -7850,7 +7860,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->   	 */
->   	lockdep_assert_irqs_disabled();
->   
-> -	if ((available_idle_cpu(target) || sched_idle_cpu(target)) &&
-> +	if (is_idle_cpu_allowed(target) &&
->   	    asym_fits_cpu(task_util, util_min, util_max, target))
->   		return target;
->   
-> @@ -7858,7 +7868,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->   	 * If the previous CPU is cache affine and idle, don't be stupid:
->   	 */
->   	if (prev != target && cpus_share_cache(prev, target) &&
-> -	    (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
-> +		is_idle_cpu_allowed(prev) &&
->   	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
->   
->   		if (!static_branch_unlikely(&sched_cluster_active) ||
-> @@ -7890,7 +7900,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->   	if (recent_used_cpu != prev &&
->   	    recent_used_cpu != target &&
->   	    cpus_share_cache(recent_used_cpu, target) &&
-> -	    (available_idle_cpu(recent_used_cpu) || sched_idle_cpu(recent_used_cpu)) &&
-> +	    is_idle_cpu_allowed(recent_used_cpu) &&
->   	    cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
->   	    asym_fits_cpu(task_util, util_min, util_max, recent_used_cpu)) {
->   
-> @@ -9198,7 +9208,12 @@ enum group_type {
->   	 * The CPU is overloaded and can't provide expected CPU cycles to all
->   	 * tasks.
->   	 */
-> -	group_overloaded
-> +	group_overloaded,
-> +	/*
-> +	 * The CPU should be avoided as it can't provide expected CPU cycles
-> +	 * even for small amounts of workload.
-> +	 */
-> +	group_parked
->   };
->   
->   enum migration_type {
-> @@ -9498,7 +9513,7 @@ static int detach_tasks(struct lb_env *env)
->   	 * Source run queue has been emptied by another CPU, clear
->   	 * LBF_ALL_PINNED flag as we will not test any task.
->   	 */
-> -	if (env->src_rq->nr_running <= 1) {
-> +	if (env->src_rq->nr_running <= 1 && !arch_cpu_parked(env->src_cpu)) {
->   		env->flags &= ~LBF_ALL_PINNED;
->   		return 0;
->   	}
-> @@ -9511,7 +9526,7 @@ static int detach_tasks(struct lb_env *env)
->   		 * We don't want to steal all, otherwise we may be treated likewise,
->   		 * which could at worst lead to a livelock crash.
->   		 */
-> -		if (env->idle && env->src_rq->nr_running <= 1)
-> +		if (env->idle && env->src_rq->nr_running <= 1 && !arch_cpu_parked(env->src_cpu))
->   			break;
->   
->   		env->loop++;
-> @@ -9870,6 +9885,8 @@ struct sg_lb_stats {
->   	unsigned long group_runnable;		/* Total runnable time over the CPUs of the group */
->   	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
->   	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
-> +	unsigned int sum_nr_parked;
-> +	unsigned int parked_cpus;
-
-Can you please explain why you need two of these? Is it to identify the 
-group with most parked cpus?  maybe comments is needed.
-
->   	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
->   	unsigned int group_weight;
->   	enum group_type group_type;
-> @@ -10127,6 +10144,9 @@ group_type group_classify(unsigned int imbalance_pct,
->   			  struct sched_group *group,
->   			  struct sg_lb_stats *sgs)
->   {
-> +	if (sgs->parked_cpus)
-> +		return group_parked;
-> +
->   	if (group_is_overloaded(imbalance_pct, sgs))
->   		return group_overloaded;
->   
-> @@ -10328,10 +10348,15 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->   		sgs->nr_numa_running += rq->nr_numa_running;
->   		sgs->nr_preferred_running += rq->nr_preferred_running;
->   #endif
-> +
-> +		if (rq->cfs.h_nr_running) {
-> +			sgs->parked_cpus += arch_cpu_parked(i);
-> +			sgs->sum_nr_parked += arch_cpu_parked(i) * rq->cfs.h_nr_running;
-> +		}
->   		/*
->   		 * No need to call idle_cpu() if nr_running is not 0
->   		 */
-> -		if (!nr_running && idle_cpu(i)) {
-> +		if (!nr_running && idle_cpu(i) && !arch_cpu_parked(i)) {
->   			sgs->idle_cpus++;
->   			/* Idle cpu can't have misfit task */
->   			continue;
-> @@ -10355,7 +10380,14 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->   
->   	sgs->group_capacity = group->sgc->capacity;
->   
-> -	sgs->group_weight = group->group_weight;
-> +	sgs->group_weight = group->group_weight - sgs->parked_cpus;
-> +
-> +	/*
-> +	 * Only a subset of the group is parked, so the group itself has the
-> +	 * capability to potentially pull tasks
-> +	 */
-> +	if (sgs->parked_cpus < group->group_weight)
-> +		sgs->parked_cpus = 0;
-
-Say you had a group with 4 cpus and 2 were parked CPUs. Now the 
-group_weight will be 2 and it will be marked as parked. whereas if 1 CPU 
-is parked group will not be marked as parked. That seems wrong.
-
-instead mark it as parked and use the parked_cpus number to compare no?
-
->   
->   	/* Check if dst CPU is idle and preferred to this group */
->   	if (!local_group && env->idle && sgs->sum_h_nr_running &&
-> @@ -10422,6 +10454,8 @@ static bool update_sd_pick_busiest(struct lb_env *env,
->   	 */
->   
->   	switch (sgs->group_type) {
-> +	case group_parked:
-> +		return sgs->sum_nr_parked > busiest->sum_nr_parked;
->   	case group_overloaded:
->   		/* Select the overloaded group with highest avg_load. */
->   		return sgs->avg_load > busiest->avg_load;
-> @@ -10633,6 +10667,9 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
->   		nr_running = rq->nr_running - local;
->   		sgs->sum_nr_running += nr_running;
->   
-> +		sgs->parked_cpus += arch_cpu_parked(i);
-> +		sgs->sum_nr_parked += arch_cpu_parked(i) * rq->cfs.h_nr_running;
-> +
->   		/*
->   		 * No need to call idle_cpu_without() if nr_running is not 0
->   		 */
-> @@ -10649,7 +10686,14 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
->   
->   	sgs->group_capacity = group->sgc->capacity;
->   
-> -	sgs->group_weight = group->group_weight;
-> +	sgs->group_weight = group->group_weight - sgs->parked_cpus;
-> +
-> +	/*
-> +	 * Only a subset of the group is parked, so the group itself has the
-> +	 * capability to potentially pull tasks
-> +	 */
-> +	if (sgs->parked_cpus < group->group_weight)
-> +		sgs->parked_cpus = 0;
-
-same comment as above.
-
->   
->   	sgs->group_type = group_classify(sd->imbalance_pct, group, sgs);
->   
-> @@ -10680,6 +10724,8 @@ static bool update_pick_idlest(struct sched_group *idlest,
->   	 */
->   
->   	switch (sgs->group_type) {
-> +	case group_parked:
-> +		return false;
-
-Why not use the parked_cpus to compare?
-
->   	case group_overloaded:
->   	case group_fully_busy:
->   		/* Select the group with lowest avg_load. */
-> @@ -10730,7 +10776,7 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
->   	unsigned long imbalance;
->   	struct sg_lb_stats idlest_sgs = {
->   			.avg_load = UINT_MAX,
-> -			.group_type = group_overloaded,
-> +			.group_type = group_parked,
->   	};
->   
->   	do {
-> @@ -10788,6 +10834,8 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
->   		return idlest;
->   
->   	switch (local_sgs.group_type) {
-> +	case group_parked:
-> +		return idlest;
->   	case group_overloaded:
->   	case group_fully_busy:
->   
-> @@ -11039,6 +11087,12 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->   	local = &sds->local_stat;
->   	busiest = &sds->busiest_stat;
->   
-> +	if (busiest->group_type == group_parked) {
-> +		env->migration_type = migrate_task;
-> +		env->imbalance = busiest->sum_nr_parked;
-> +		return;
-> +	}
-> +
->   	if (busiest->group_type == group_misfit_task) {
->   		if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
->   			/* Set imbalance to allow misfit tasks to be balanced. */
-> @@ -11207,13 +11261,14 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->   /*
->    * Decision matrix according to the local and busiest group type:
->    *
-> - * busiest \ local has_spare fully_busy misfit asym imbalanced overloaded
-> - * has_spare        nr_idle   balanced   N/A    N/A  balanced   balanced
-> - * fully_busy       nr_idle   nr_idle    N/A    N/A  balanced   balanced
-> - * misfit_task      force     N/A        N/A    N/A  N/A        N/A
-> - * asym_packing     force     force      N/A    N/A  force      force
-> - * imbalanced       force     force      N/A    N/A  force      force
-> - * overloaded       force     force      N/A    N/A  force      avg_load
-> + * busiest \ local has_spare fully_busy misfit asym imbalanced overloaded parked
-> + * has_spare        nr_idle   balanced   N/A    N/A  balanced   balanced  balanced
-> + * fully_busy       nr_idle   nr_idle    N/A    N/A  balanced   balanced  balanced
-> + * misfit_task      force     N/A        N/A    N/A  N/A        N/A       N/A
-> + * asym_packing     force     force      N/A    N/A  force      force     balanced
-> + * imbalanced       force     force      N/A    N/A  force      force     balanced
-> + * overloaded       force     force      N/A    N/A  force      avg_load  balanced
-> + * parked           force     force      N/A    N/A  force      force     nr_tasks
-
-If i see the code below, if local is parked, it always goes to balanced. 
-how it is nr_tasks? am i reading this table wrong?
-
->    *
->    * N/A :      Not Applicable because already filtered while updating
->    *            statistics.
-> @@ -11222,6 +11277,8 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->    * avg_load : Only if imbalance is significant enough.
->    * nr_idle :  dst_cpu is not busy and the number of idle CPUs is quite
->    *            different in groups.
-> + * nr_task :  balancing can go either way depending on the number of running tasks
-> + *            per group
->    */
->   
->   /**
-> @@ -11252,6 +11309,13 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
->   		goto out_balanced;
->   
->   	busiest = &sds.busiest_stat;
-> +	local = &sds.local_stat;
-> +
-> +	if (local->group_type == group_parked)
-> +		goto out_balanced;
-> +
-> +	if (busiest->group_type == group_parked)
-> +		goto force_balance;
->   
->   	/* Misfit tasks should be dealt with regardless of the avg load */
->   	if (busiest->group_type == group_misfit_task)
-> @@ -11273,7 +11337,6 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
->   	if (busiest->group_type == group_imbalanced)
->   		goto force_balance;
->   
-> -	local = &sds.local_stat;
->   	/*
->   	 * If the local group is busier than the selected busiest group
->   	 * don't try and pull any tasks.
-> @@ -11386,6 +11449,8 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
->   		enum fbq_type rt;
->   
->   		rq = cpu_rq(i);
-> +		if (arch_cpu_parked(i) && rq->cfs.h_nr_running)
-> +			return rq;
->   		rt = fbq_classify_rq(rq);
->   
->   		/*
-> @@ -11556,6 +11621,9 @@ static int need_active_balance(struct lb_env *env)
->   {
->   	struct sched_domain *sd = env->sd;
->   
-> +	if (arch_cpu_parked(env->src_cpu) && !idle_cpu(env->src_cpu))
-> +		return 1;
-> +
->   	if (asym_active_balance(env))
->   		return 1;
->   
-> @@ -11589,6 +11657,9 @@ static int should_we_balance(struct lb_env *env)
->   	struct sched_group *sg = env->sd->groups;
->   	int cpu, idle_smt = -1;
->   
-> +	if (arch_cpu_parked(env->dst_cpu))
-> +		return 0;
-> +
->   	/*
->   	 * Ensure the balancing environment is consistent; can happen
->   	 * when the softirq triggers 'during' hotplug.
-> @@ -11612,7 +11683,7 @@ static int should_we_balance(struct lb_env *env)
->   	cpumask_copy(swb_cpus, group_balance_mask(sg));
->   	/* Try to find first idle CPU */
->   	for_each_cpu_and(cpu, swb_cpus, env->cpus) {
-> -		if (!idle_cpu(cpu))
-> +		if (!idle_cpu(cpu) || arch_cpu_parked(cpu))
->   			continue;
->   
->   		/*
-> @@ -11707,7 +11778,7 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
->   	ld_moved = 0;
->   	/* Clear this flag as soon as we find a pullable task */
->   	env.flags |= LBF_ALL_PINNED;
-> -	if (busiest->nr_running > 1) {
-> +	if (busiest->nr_running > 1 || arch_cpu_parked(busiest->cpu)) {
->   		/*
->   		 * Attempt to move tasks. If sched_balance_find_src_group has found
->   		 * an imbalance but busiest->nr_running <= 1, the group is
-> @@ -12721,6 +12792,9 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
->   
->   	update_misfit_status(NULL, this_rq);
->   
-> +	if (arch_cpu_parked(this_cpu))
-> +		return 0;
-> +
->   	/*
->   	 * There is a task waiting to run. No need to search for one.
->   	 * Return 0; the task will be enqueued when switching to idle.
-
+--tgjajudtqqajoprm--
 
