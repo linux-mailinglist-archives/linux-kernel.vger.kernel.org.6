@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-433263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C61E9E55B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:42:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0959E55BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:42:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CDF316A07C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8E518840BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93D0218E96;
-	Thu,  5 Dec 2024 12:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB2E218AA2;
+	Thu,  5 Dec 2024 12:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aOzgpfaY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PR7mcFND"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653C9218AD5;
-	Thu,  5 Dec 2024 12:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020C6218856
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733402488; cv=none; b=gqVYZF7s6zVSxGdfsF/wtXSR+5Z+BBctF/89daWoWJaZfRdhu5XEyRVGQEreb0VKcCAP4YDkDyeONs4CKKLwdIPjPOgI16zwnwEE43ZGZO0OaX0f4GF0kC5roqFfHORGXzAcjo4QUzQpDEDweu8xYjr0JiBQkfvoZZeF7AaAmNM=
+	t=1733402542; cv=none; b=mSVGzm+8xK0wTOJ6UtPmg4fAkVN7VlM/rKdbKgxnMc9RZ/3bwFaO9tv6jVjWd2E/JnJwM9+tgyJjQDEOGWlFtSTFls9keFNFNva3yxRRuvOGKvAUVTncf8exo2YM2FCwdtt/EMzRifp+zGrTjQgYLvqFpOU0Hh/ZXn6dHI8TJkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733402488; c=relaxed/simple;
-	bh=HO0wXGzhDvgrKBdJi7+/8nVYZ/pZQYioghULZD0qjqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iQES4Tp4fNRkslG9BdAT1IDcHBQ7g5CCOxGuJTNW2moM7SBpB9Aop1JKPSRBL/Q1WY+VD5iNon+zxeS3wPlv5FslPCVdkfP8c2qitnk+7u4ezEalaAiATjgot09uDMNBNjofO5ryiI4+XSj/Q1Le2jf3ZuHpCxMFXOJ4bWST+/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aOzgpfaY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733402484;
-	bh=HO0wXGzhDvgrKBdJi7+/8nVYZ/pZQYioghULZD0qjqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aOzgpfaY0TmEBk4soLcN6wXjvOIK/KhkM2yCNrY0T55tinTVZmWGVnzCruNUqUrRK
-	 VloxJi6n5F4lESgTIFAqIEVKP/pyK1wORtxVWe60RzpzCah+cA/h/avbuMD3ggk4gs
-	 QA7cKy5fG+YEe2NHFvFqfJh2ltiIe2FnvcjYOvoA/Yqo4RPtios+9XokGEdnu9A9V3
-	 FbiCTkQKgB0xj6Ijxd6e5vEiQxZe0nnMQdI9E+IuaW4CHnTWKNqf48NgsBP2yJwVPK
-	 H72H0ITEThfLkRK5emjJ1JX2R7kstw5LqBE7EFw2ElTfRkoz2O7zuWFOANE4ZImGLi
-	 Lb3Ky7+KGFHpw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0F6B017E369C;
-	Thu,  5 Dec 2024 13:41:23 +0100 (CET)
-Message-ID: <ef8db876-bd06-4d5d-96ff-c570beefaa9a@collabora.com>
-Date: Thu, 5 Dec 2024 13:41:23 +0100
+	s=arc-20240116; t=1733402542; c=relaxed/simple;
+	bh=0fiY4M0vGWLMh8YbXauFIoszgtuhrq4EiiJYaLf3Hqg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dd3v0Pe/sZ2py4AxMGJWkVYaJpCjwp1YNzJzpknNf3v1KQbdl2XCVx3AYOf/R0RTSBqMe7+P8/cYB/swvbwCKGALwR9KZaynnsHEg67dzSrsIXGJCXz9BDBJmLrIaMkF7Sur3HKQ1DPmAph7wYwXbhUc+9NTFNJR7w8SgsDIEdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PR7mcFND; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7250c199602so882204b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:42:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733402538; x=1734007338; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6NQXLm6bUu/CEoFLxo/tlhW2Htpw3ugwUZ4gmDFJzrU=;
+        b=PR7mcFNDc53k7sOADf/VyVLHXwCH14fEEUokMMjk5Yq+BBV8DTocE+Nnk/6NOzk7xL
+         khk3wFhcX+MKNw+i1BwQfGC6ICYrtrhnN770EYbRW6nxirWGaKkvXwNIA9YsgKtgSKt+
+         sfuSAteleCKhFw/eh4rBntFiErNvCDvW8nE9EYPzwQYJ1bhSnauVmgpQkT1t6r3LcUSQ
+         iqjFS3w+6dWP5agaXvJ7hCrPRT3muLpDeyHOYoE4VHvGMoLDH18VTGEgUbhWpfMYBivl
+         24ExW9v0g4JucHfFgH/tnMZO6244x/VbLhOKM1+5A4ahj5g0GqZNa7+CwLlxZfSDU2gn
+         f15g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733402538; x=1734007338;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6NQXLm6bUu/CEoFLxo/tlhW2Htpw3ugwUZ4gmDFJzrU=;
+        b=oB40tSCc7KMARnllg1iRePezN/2H/yF6XXI0L4d8WWLHEdyaU1NHeH9HOGPz4vwoie
+         8cfwCnOki7ReFNmZb/a1W5NtQCf2yfqy48hzjbqD2w32n7GkRIvIoMzGFRUNXSSZcW7d
+         6Ac4vDhp0H6VzeXshQxGRuHIWu5gq6gpyb4a2Ht+GIfL0otyGrBetmNznGv1EjOlgUds
+         aEXEm4wK5DK1fLiuhZ4nKOXjPjNrhuqn43qWgBxZ+W/2Svkq0Kvd+FZoJEXMa/F3YMFp
+         /OofKY9EDUjbtdOEy2CVr8uIWSexRz20wI8Kgt14aFxlNum5vd17C4Xx7qMnaW69V7S1
+         aosA==
+X-Gm-Message-State: AOJu0YxFwC5rn7DDUbzGN2Wb1qDnP57SWquCl33NSRxYQCEEOWuEinNk
+	UAXNEB7LVI7oVsj8f9nG/I7DC59lfZrmEouqeQ/i9mjJW/ntn0xw4aAtrciEHxU=
+X-Gm-Gg: ASbGncvLLdLljDK4Os6BOQFiFuj2UffXfztyW0eejluow3B30ajgTc4cM62FHnxN9vU
+	Rm2boVOFoL/rmtQCFSySaCV6hG8VE7yfYEuZx3SmqnJYm6Smn7pqqAIJhMRD7Hgq/uh38VzWoCE
+	gycLvtkM5sPr0kq4nXDP1s+4lS7WzJmFEscr+hfBh36vO31CwGGJixcG6RlUaEZ3ltyQKMb1cXZ
+	XuzDQktuHTRzeq4WboZB225fI69W/N15Svk938IEhnTKsv26ZT83CjlD16TGRi24h555WaR685u
+	v0lo
+X-Google-Smtp-Source: AGHT+IF6YcB3ZqTFaFRb8K55C3X6K6uZ1UigF52BXIYq/pmb7XH5aaUCXEOmlwZ3R/zgirg2yecLxQ==
+X-Received: by 2002:a05:6a00:815:b0:725:9dc7:4f8b with SMTP id d2e1a72fcca58-7259dc750e5mr4599823b3a.15.1733402538268;
+        Thu, 05 Dec 2024 04:42:18 -0800 (PST)
+Received: from ginger-caritas.no-ip.org ([180.158.118.126])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29c5bf5sm1184708b3a.20.2024.12.05.04.42.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 04:42:17 -0800 (PST)
+From: Huang Ying <huang.ying.caritas@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Huang Ying <huang.ying.caritas@gmail.com>
+Subject: [PATCH] mailmap: add entry for Ying Huang
+Date: Thu,  5 Dec 2024 20:42:01 +0800
+Message-Id: <20241205124201.529308-1-huang.ying.caritas@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add DSP
- properties
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Trevor Wu <trevor.wu@mediatek.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org
-References: <20241205-genio700-audio-output-v1-0-0e955c78c29e@collabora.com>
- <20241205-genio700-audio-output-v1-3-0e955c78c29e@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241205-genio700-audio-output-v1-3-0e955c78c29e@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 05/12/24 13:13, Nícolas F. R. A. Prado ha scritto:
-> Add the mediatek,adsp and mediatek,dai-link properties to allow
-> describing the DSP configuration in the sound card node, as is already
-> the case for other MediaTek SoCs.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->   .../devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml      | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-> index ffe9347b543f5c687433862a21ad534b8aace27e..1e282c34dbd99851d3959b641096968c0b2e71be 100644
-> --- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-> @@ -33,6 +33,16 @@ properties:
->       $ref: /schemas/types.yaml#/definitions/phandle
->       description: The phandle of MT8188 ASoC platform.
->   
-> +  mediatek,adsp:
+Map my old company email to my personal email.
 
-This is already upstream
+Signed-off-by: "Huang, Ying" <huang.ying.caritas@gmail.com>
+---
+ .mailmap | 1 +
+ 1 file changed, 1 insertion(+)
 
-https://lore.kernel.org/r/20241105091246.3944946-1-fshao@chromium.org
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: The phandle of MT8195 ADSP platform.
-> +
-> +  mediatek,dai-link:
-
-That shouldn't be needed.
-
-...so this patch can be dropped :-)
-
-Cheers,
-Angelo
-
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description:
-> +      A list of the desired dai-links in the sound card. Each entry is a
-> +      name defined in the machine driver.
-> +
->   patternProperties:
->     "^dai-link-[0-9]+$":
->       type: object
-> 
+diff --git a/.mailmap b/.mailmap
+index 5ff0e5d681e7..7efe43237ca8 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -735,6 +735,7 @@ Wolfram Sang <wsa@kernel.org> <w.sang@pengutronix.de>
+ Wolfram Sang <wsa@kernel.org> <wsa@the-dreams.de>
+ Yakir Yang <kuankuan.y@gmail.com> <ykk@rock-chips.com>
+ Yanteng Si <si.yanteng@linux.dev> <siyanteng@loongson.cn>
++Ying Huang <huang.ying.caritas@gmail.com> <ying.huang@intel.com>
+ Yusuke Goda <goda.yusuke@renesas.com>
+ Zack Rusin <zack.rusin@broadcom.com> <zackr@vmware.com>
+ Zhu Yanjun <zyjzyj2000@gmail.com> <yanjunz@nvidia.com>
+-- 
+2.39.5
 
 
