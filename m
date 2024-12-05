@@ -1,155 +1,171 @@
-Return-Path: <linux-kernel+bounces-432683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5CD9E4EB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:36:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EA99E4EB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:36:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB55A161AC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 879B7168C52
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892B01D47CE;
-	Thu,  5 Dec 2024 07:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56851B4157;
+	Thu,  5 Dec 2024 07:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Udkuqoi/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="evePA4qf"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB741B3949;
-	Thu,  5 Dec 2024 07:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413B31B2183;
+	Thu,  5 Dec 2024 07:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733384012; cv=none; b=PCsl5bmMal3WNZO7HkMshFaScqlyOKJ5YD2Z0K5bSfGOBfOgmcJK/lewBIGe33bz9r6QD9EMHb4G1s3by5nITX87ydKQ0NuueGxKkofkrOzG3KUodC7AwNmXNw0fxrEGNhU/5HlRQU2ckjiQsL3lvE93wwsBYzra+2JMG5cFFLA=
+	t=1733384026; cv=none; b=oSOI6BiEJ1dn97c3Hb3vEItGvvoauaRU11w44BuzzH98F07lBGZAtrwUEiR5PIscLBlRrx6OV9dkYiM13gM+uxz0W0NekFIa8CXzxUMwWraxuwoyRNOjQhombd8FS04sRzB5pA8f/XBbxmj2xv49rEFtjagOhIBOPNkQx4FP3ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733384012; c=relaxed/simple;
-	bh=N6b6G1hccUjy50KfZUwq8KJZvPbyplkKkBKQG+61mK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qjXP+FMfm1F9NB33iOWypg3mcDN/CT5IAPcel5wklsczX3qj7dumSuRHGOtCQmtnGL6u5GyM6OsnfUly2ImDAwYoWxOrZIkin2Oze09adhkSjvvH8SLfAZhV9DZnvC9QBWsR2QEaOgH2sHfv3f+MQQGoVSB3tTPXuSJitDMp+Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Udkuqoi/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58075C4CED1;
-	Thu,  5 Dec 2024 07:33:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733384012;
-	bh=N6b6G1hccUjy50KfZUwq8KJZvPbyplkKkBKQG+61mK4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Udkuqoi/TpU9taIdDluAHlQrGzg6PJ7ZcepZ46TL+2pOJv5/uDBzoNUi9AflB3bbL
-	 LI3Ty6ZLopqblld66CarHdx51UdnCkXemecjuzLG+y4oO2pNF57czqKCJhfVYP2jPN
-	 4aRzBbGGOhrPFWq78yJB6aN4uxBgxEu5Zu4Sth/XSkEFyw5vEwV+AMcGp6awb/AqhJ
-	 bXVvupEqNwl0TjfcDF9Xe62OwsNEfX9BZ6iwwp6xFdw/4DrRlV0uQlSrz+uwdIBl6l
-	 Vp30G1UFU6yrQvmow6p2bT7j4niPxYcg3Ea0VUGd0rkkE0NShtM4KrWAbyLuDDTIR1
-	 rilfwuA60BvwQ==
-Message-ID: <2ef59c6d-bef2-4763-9463-06116a2e7d04@kernel.org>
-Date: Thu, 5 Dec 2024 08:33:24 +0100
+	s=arc-20240116; t=1733384026; c=relaxed/simple;
+	bh=87LbHUmD8vW7XEbvvf9NdV0yo2rlymB3DHUQob2Qh8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iNEZ2UsnatA78PhFQGIXmh81ynhlkCiBQLtM3B7P9UoriV3IziP2YIwGCd4FHT/dsZTpU3A8fcNeSrWeS5qRR6NuFo62MHMqPc9kWjb2JKLaNjs2qgJlRzIR17LQWjFWm6XPK9vAWy049dYdLiIy7DmJyYhcAi15PnANixIoClU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=evePA4qf; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3094FC0002;
+	Thu,  5 Dec 2024 07:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733384015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GGrI+Mda77uDpcJ7B7OZ+Ds7WpsuDRUmfpo0RjF1ujY=;
+	b=evePA4qfARIFJRhDFl6Mm7xrDiNoqCrdWRLfhJOvd2YzI5VT4xBJqGFHdjQY89PUNIfywj
+	PUWJn/yr5G3xf9uFtL9oWZsYfhK3yGmlQucX8VdJcXxwi6GRF8XnIXVmqQgvGpkkFd2N0h
+	rGo9yHrAbzxmED2pIWMrDo73f3e3p9V7aI6mdbgiguQ4t7j/dS6uEnGwgO5u3L5nZRWPZS
+	xOB/ALvj93wJmJQZqrsRzklm4wXjTjmx1QzsW6xGPl+F3NhuHVfb9L+MPPZrS1+Du9o3GF
+	aJwBE9oBWIbSwRwz4GKQN5jY30izwMgpwhJLUj89Ac+6T7ISRBU1+vNjE0yKtA==
+Date: Thu, 5 Dec 2024 08:33:33 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
+ <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou
+ <lizhi.hou@amd.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 1/6] driver core: Introduce
+ device_{add,remove}_of_node()
+Message-ID: <20241205083333.3a4141b1@bootlin.com>
+In-Reply-To: <2024120537-varying-chain-7d1e@gregkh>
+References: <20241202131522.142268-2-herve.codina@bootlin.com>
+	<20241204213825.GA3016970@bhelgaas>
+	<2024120537-varying-chain-7d1e@gregkh>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: display: msm: dp-controller: document
- clock parents better
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Rob Clark
- <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
- <20241202-dp_mst_bindings-v1-2-9a9a43b0624a@quicinc.com>
- <bfa857c2-cd74-4fe2-a88c-3b35a58710b0@kernel.org>
- <gpqrugcsyhz32bvip5mgjtcservhral2o5b6c5nz4ocwbjw5uo@eypv4x6jyrdr>
- <hqe2pipkcnxftoq5mvdk36xmkj3ybr3oto6eghimq75rqlncsm@v45smglhedy7>
- <pxi2nf4h34xtkickkkuwh4svvhbtsutuz5u3ukzgfgd5rzzcps@g4gct5zuc6kj>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <pxi2nf4h34xtkickkkuwh4svvhbtsutuz5u3ukzgfgd5rzzcps@g4gct5zuc6kj>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On 04/12/2024 11:09, Dmitry Baryshkov wrote:
-> On Wed, Dec 04, 2024 at 09:02:18AM +0100, Krzysztof Kozlowski wrote:
->> On Tue, Dec 03, 2024 at 03:41:48PM +0200, Dmitry Baryshkov wrote:
->>> On Tue, Dec 03, 2024 at 09:01:31AM +0100, Krzysztof Kozlowski wrote:
->>>> On 03/12/2024 04:31, Abhinav Kumar wrote:
->>>>> Document the assigned-clock-parents better for the DP controller node
->>>>> to indicate its functionality better.
->>>>
->>>>
->>>> You change the clocks entirely, not "document". I would say that's an
->>>> ABI break if it really is a Linux requirement. You could avoid any
->>>> problems by just dropping the property from binding.
->>>
->>> But if you take a look at the existing usage, the proposed change
->>> matches the behaviour. So, I'd say, it's really a change that makes
->>> documentation follow the actual hardware.
->>
->> First, this should be in the commit msg, instead of "document better to
->> indicate functionality better".
->>
->> Second, what is the point of documenting it in the first place if you
->> can change it and changing has no impact? So maybe just drop?
+Hi Greg,
+
+On Thu, 5 Dec 2024 08:00:44 +0100
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> On Wed, Dec 04, 2024 at 03:38:25PM -0600, Bjorn Helgaas wrote:
+> > [cc->to Greg, Rafael]
+> > 
+> > On Mon, Dec 02, 2024 at 02:15:13PM +0100, Herve Codina wrote:  
+> > > An of_node can be set to a device using device_set_node().
+> > > This function cannot prevent any of_node and/or fwnode overwrites.
+> > > 
+> > > When adding an of_node on an already present device, the following
+> > > operations need to be done:
+> > > - Attach the of_node if no of_node were already attached
+> > > - Attach the of_node as a fwnode if no fwnode were already attached
+> > > 
+> > > This is the purpose of device_add_of_node().
+> > > device_remove_of_node() reverts the operations done by
+> > > device_add_of_node().
+> > > 
+> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > > ---
+> > >  drivers/base/core.c    | 52 ++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/device.h |  2 ++  
+> > 
+> > I suppose this series would go via the PCI tree since the bulk of the
+> > changes are there.  If so, I would look for an ack from the driver
+> > core folks (Greg, Rafael).
+> >   
+> > >  2 files changed, 54 insertions(+)
+> > > 
+> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > > index 8b056306f04e..3953c5ab7316 100644
+> > > --- a/drivers/base/core.c
+> > > +++ b/drivers/base/core.c
+> > > @@ -5216,6 +5216,58 @@ void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(set_secondary_fwnode);
+> > >  
+> > > +/**
+> > > + * device_remove_of_node - Remove an of_node from a device
+> > > + * @dev: device whose device-tree node is being removed
+> > > + */
+> > > +void device_remove_of_node(struct device *dev)
+> > > +{
+> > > +	dev = get_device(dev);
+> > > +	if (!dev)
+> > > +		return;
+> > > +
+> > > +	if (!dev->of_node)
+> > > +		goto end;
+> > > +
+> > > +	if (dev->fwnode == of_fwnode_handle(dev->of_node))
+> > > +		dev->fwnode = NULL;
+> > > +
+> > > +	of_node_put(dev->of_node);
+> > > +	dev->of_node = NULL;
+> > > +
+> > > +end:
+> > > +	put_device(dev);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(device_remove_of_node);
+> > > +
+> > > +/**
+> > > + * device_add_of_node - Add an of_node to an existing device
+> > > + * @dev: device whose device-tree node is being added
+> > > + * @of_node: of_node to add
+> > > + */
+> > > +void device_add_of_node(struct device *dev, struct device_node *of_node)
+> > > +{
+> > > +	if (!of_node)
+> > > +		return;
+> > > +
+> > > +	dev = get_device(dev);
+> > > +	if (!dev)
+> > > +		return;
+> > > +
+> > > +	if (WARN(dev->of_node, "%s: Cannot replace node %pOF with %pOF\n",
+> > > +		 dev_name(dev), dev->of_node, of_node))
+> > > +		goto end;  
 > 
-> So, do you suggest setting both of the property descriptions to true? Or
-> dropping them completely and using unevaluatedProperties instead of
-> additionalProperties?
+> Please do not reboot machines that have panic-on-warn for something that
+> you can properly handle and recover from (like this.)  Just print out a
+> message and continue on, or better yet, return an error if this didn't
+> work properly.
 > 
 
-Dropping them entirely, without any changes of additionalProperties.
-Unless this property was added due to limitation of dtschema?
+I will change to dev_warn() in the next iteration.
 
-
+Thanks for pointing this.
 Best regards,
-Krzysztof
+Hervé
 
