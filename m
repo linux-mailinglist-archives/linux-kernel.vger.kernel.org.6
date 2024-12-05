@@ -1,172 +1,116 @@
-Return-Path: <linux-kernel+bounces-433226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF59D9E5558
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:25:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4541883B68
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:25:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04D3218588;
-	Thu,  5 Dec 2024 12:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EP1p28uE"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 377999E555B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:26:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E96421882B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E7A282527
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:26:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA6F2185A6;
+	Thu,  5 Dec 2024 12:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ovzJOKz9"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DCD217F59
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401523; cv=none; b=bzt3HNG9emzZ4poCBuf7wWfxmT0eeElk4a4UeeA+rnTGUJSp/I18zwpE4DKo2stkbdCMcqfuOIOfmVp0/MSAVubZJgDktegAaMnyOV7iv0fHJpbMn/Bsr/LgCoSG3Z4qYIkdqJaVCnoxOSH02rv4tmPmeWq9LjJ9YGjv6Ri7s84=
+	t=1733401559; cv=none; b=RpH6TVyuJWWMOXwnTH2EhULIxlmAI2Etay9BSIjm5pTZAd9WiKXzsZwwzepOKksYRAlqEn0/GKmXvGogItVoSqSiZmfvgLf2tYyTt6axZ7gy7j8T6R1/oMU8O67HGyqy/Hm0U9V2D3mDwtGyN/lXcxZR505H9c1kx+sMRy8DJN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401523; c=relaxed/simple;
-	bh=WPXMlTZi12QvOahzFxlfj0ZntAWpM5vwwLRm2I9tu2E=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=EA8eIz912O5FPvDVNLtAqKvcgeoYrsK7OY2TitTAXpxS7VSt03rbZybVhEwMCYZ/E/i6bBTG7B+YHHCk8DexJs4iZqJNj8eYQhXiPijSelqzNPdvRZeIm3O/TjHtKh5wbrKIMRAfO6EaXaJkoLmklJs04PeZO8ahl875idSMN8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EP1p28uE; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241205122518epoutp03504a8b5ec4b1aa3587576ca39a1a0c10~OR39T0pqE2220722207epoutp03A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:25:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241205122518epoutp03504a8b5ec4b1aa3587576ca39a1a0c10~OR39T0pqE2220722207epoutp03A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733401518;
-	bh=WPXMlTZi12QvOahzFxlfj0ZntAWpM5vwwLRm2I9tu2E=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=EP1p28uEugGXbU++hClVaTxLLjdfTy+uFt6cLPfo/bz++b4/PSpA1XU9Qv8s66/ct
-	 mddRSPgXWAT6FyWmgdqeNenKJUrZEStG8ZrijVzoU4K2jqj+VHrRueG+YUO7r6v5vI
-	 fVF3yi84qD6uFhbumvkv10tKA2WrM6bRkiCOZZH4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241205122517epcas2p4ec38c7b502dbeae3929411f3f27e07a1~OR38LuJSv0892808928epcas2p48;
-	Thu,  5 Dec 2024 12:25:17 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.101]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y3trY1ZYSz4x9Pv; Thu,  5 Dec
-	2024 12:25:17 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6F.73.22094.DAB91576; Thu,  5 Dec 2024 21:25:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241205122516epcas2p40e6821cea8284c7be97e97c39786903d~OR37eqBAC1431414314epcas2p4Z;
-	Thu,  5 Dec 2024 12:25:16 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241205122516epsmtrp1cf56288ce90ef0b1e0d82733f72324e1~OR37dUsld1598715987epsmtrp1F;
-	Thu,  5 Dec 2024 12:25:16 +0000 (GMT)
-X-AuditID: b6c32a48-e7eec7000000564e-5a-67519badc2b1
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5E.31.33707.CAB91576; Thu,  5 Dec 2024 21:25:16 +0900 (KST)
-Received: from KORCO119526 (unknown [10.229.8.143]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241205122516epsmtip17e3ef31be9c4e9da5215bc7a78d99ca9~OR37PGvFj3180031800epsmtip1n;
-	Thu,  5 Dec 2024 12:25:16 +0000 (GMT)
-From: =?UTF-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: "'Guenter Roeck'" <linux@roeck-us.net>, "'Rob Herring'"
-	<robh@kernel.org>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>, "'Conor
- Dooley'" <conor+dt@kernel.org>, "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-	<linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <171072ed-c35f-430e-a8c0-5cf718efed0c@kernel.org>
-Subject: RE: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
-Date: Thu, 5 Dec 2024 21:25:16 +0900
-Message-ID: <000101db4710$bdac8310$39058930$@samsung.com>
+	s=arc-20240116; t=1733401559; c=relaxed/simple;
+	bh=mQZqp4IFUTYgczPMKBs3aU2VcYTyt6nLnQ+NhQNlXVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjrmYXqHVwEyVMtUfifsLPSslNQbA6b4CixQAQDgXhwqGvsPz1guoAnafPhuuV6AzNwShSGhTllX1I2vO19gezpAHkCLDepNYCzmhW7nCIRf3bhb5LCHyqfhbl3PCdxWoCGJe0UTpy75x0t7oSDcVMj6+ylfgBHDtOoa15yJMQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ovzJOKz9; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e2c52c21so675424f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:25:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1733401556; x=1734006356; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mQZqp4IFUTYgczPMKBs3aU2VcYTyt6nLnQ+NhQNlXVo=;
+        b=ovzJOKz9bxxAmoeOWwuCj7BsR6xS0rrTsKg6fQ5hYt/Q1Kn8hxEVg8xVW6i9bxKlWZ
+         qsUsIpSIBeAGVjBOnGNN0lWyW5JchqDWbPu+HggtGY0eAlxNMj3JU+Y8v/kUJwO3e948
+         B/onjjvFNL14bDQrySlhRigZn2nyfVYkwVmVSCHWoCtxEyAS/jj9GrkX23/kWW42dFUb
+         8Qv57FEBHVaecs6kFzvAKyPWRvhm+8AC45tE45jymMMyT9mwqJTkLovFpubruAhNPLc3
+         /PsIsoVvUD+6/ff+HsaKSQDmZnDHZ1uPJ/C7oDUWOxOLP5DspjcqQCs0w+4hTVTNO7gl
+         ccuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733401556; x=1734006356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mQZqp4IFUTYgczPMKBs3aU2VcYTyt6nLnQ+NhQNlXVo=;
+        b=uWFrOTsZwgbZzgFs+ZN9vItbJjrGXdoOZyJpIt4Xl6pgfJ++7w8UIklRMvNWIOaZ22
+         kW9WeLvdlHtkIW+sF8LmLQAgmpZd0KXxrY5DIUm5RZzzsBAo+Bes1kfSyNOz35s893Z5
+         XQ8rlIoyTGO2eY9w1/Dpr75hi+lpCAUQLemMLqzXp3YMy1+0LzCnU2WqvmRNh4m9Bi5/
+         Mipgg4y9cCwzaXpOQXzCTRMFdtaJF/vpiXOlojB6o2koCs5Sz3q343xji2YvcQ9wtzQZ
+         N3U4/huuIEeGqE2yxCRLrawdviYqTcz2/ostbmYFCr7oi85+/L7dSVTFyKMcOkfA/Rs+
+         spMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWy8I/E/UOvC/jFcqtaX4kXGhrUb62nyxcSP2OXtiYQtfhYPj8zQoFUbBY4HxXGI37k8fxG2hwf/OGyWdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweAJlDUjWs6EG20kiduTTfgC83A3/eITSwVFvelPFxvfs0C3RB
+	mc2qJrEnYiK7/b690A3jPgLLEhYywhyS7SkzUvqiOGajd6iXA6Y0Fg6zry9u3w0=
+X-Gm-Gg: ASbGncvoiYhnH5YxEq4VDo26ykGjKAshsp1xqave0kNo9P+SFF2FCJ/VVltJ6kTERDf
+	qJPNY22zofQPsR6A40kP4nUlYqfNfID5BvKHn+jPMzY+hEbotR5hPe6zPMgA2WBtQAA/6AUTp61
+	LzyjsLZ2hTwIGhkBTjuLL9bW7UoMsjY83wRtsmHk0x+cs3PVNTwhZ8uZ9UahUiZXGxm8J8KMWS5
+	EsKBKu87MpiQyW1TUBVGionY/xPgWCPWHZigviO4w49cEoigZFPq7kscvsqZAsOCcCts5vhqD6T
+	Gf9S8h0x2rXuQT12WcSwW8QPFVWfDT/KxtY=
+X-Google-Smtp-Source: AGHT+IFgQ9iwN0Qu0vgSQZlMRT0k8B5zzY1On7I2CUzL6GWVsYOhBeCvU1TBPvS2cUARk11eBLePLQ==
+X-Received: by 2002:a05:6000:2805:b0:382:5aae:87ac with SMTP id ffacd0b85a97d-385fd421c84mr5534768f8f.32.1733401556000;
+        Thu, 05 Dec 2024 04:25:56 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861ecf403asm1883695f8f.1.2024.12.05.04.25.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 04:25:55 -0800 (PST)
+Date: Thu, 5 Dec 2024 13:25:54 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Charlie Jenkins <charlie@rivosinc.com>, Shuah Khan <shuah@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Palmer Dabbelt <palmer@rivosinc.com>
+Subject: Re: [PATCH v2] riscv: selftests: Fix warnings pointer masking test
+Message-ID: <20241205-09606b57e757527a56425fa7@orel>
+References: <20241204-fix_warnings_pointer_masking_tests-v2-1-1bf0c5095f58@rivosinc.com>
+ <20241205-45c00adab2636bf26ce05f70@orel>
+ <14125726-bb00-4de4-87f6-6655b0ffae58@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMd16p+X2UldERt9X3UXGHKyeOT/gFfR1PzAhOyk7QBWm0aqwINNyvVAoah3z0BqLdGjwJ1Uc7oAYTj+0gB7mXbwQHAQo3Er7zbaRA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmqe7a2YHpBrN7OSwezNvGZrFm7zkm
-	i/lHzrFavJx1j83i/PkN7BabHl9jtbi8aw6bxYzz+5gsbqzbx27xZOEZJov/e3awO3B7bFrV
-	yeaxeUm9x87vDewefVtWMXp83iQXwBqVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGto
-	aWGupJCXmJtqq+TiE6DrlpkDdJmSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C8
-	QK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjcNMx9oJ+9oqF3a+ZGxivs3YxcnJICJhI9DTeYOli
-	5OIQEtjBKNG2aQ+U84lRorOrlRXOeTnrCjtMy5PGf0wQiZ2MEs/XzWWGcF4wSuzeexmon4OD
-	TcBCYlZfJkiDiICuxOYby8GamQVamSX2XhUDsTkF7CRubbvFBGILC/hIzN97jhnEZhFQkfg5
-	8RNYnFfAUuLz/F4WCFtQ4uTMJywQc+Qltr+dwwxxkILEz6fLWCF2lUnsmbyNCaJGRGJ2ZxvY
-	bRICazkkWjYsZYJocJH43PoW6hthiVfHt0DZUhIv+9ug7HyJlStPQNXXSNxr28UCYdtLLDrz
-	kx3kR2YBTYn1u/RBTAkBZYkjt6BO45PoOPyXHSLMK9HRJgRhqkpMXxYAMUNaYuKMtWwTGJVm
-	IflrFpK/ZiG5fxbCqgWMLKsYxVILinPTU4uNCkzgUZ2cn7uJEZxktTx2MM5++0HvECMTB+Mh
-	RgkOZiUR3sqwwHQh3pTEyqrUovz4otKc1OJDjKbAkJ7ILCWanA9M83kl8YYmlgYmZmaG5kam
-	BuZK4rz3WuemCAmkJ5akZqemFqQWwfQxcXBKNTDNErx57Fdjwtcjd3vcGeU8lE93yv9857Tj
-	Z+6PvT+il+rMnR/gcJ0p4JzNtXkmn+SfNnwUzBacIeCiqfqBfUvSpD6nk/kNHzbn1PW72oeV
-	snVdZEx45rzdefvc0rzNp9PrPsunrnm2UF1GtvP6t1a/C1L9LV8cFknkrSnZuuCWlafPtD33
-	s2/r7MzVayv0ibBUM5XKf6m/8E5d3uI98z4/ktHZd6I3edna2oy912Y4NbNktVo7a0mtr/PY
-	0nlANFDOYeXryV+OPBe5cfbh3CNzzzQsNmXXP7PY55HcG/WPdYy8GSblJWVPw2bO8FvHWOIa
-	F8vx4TfLjSlzu2+HXZQIXjbL9m+tsrFB2s/iWRVKLMUZiYZazEXFiQDqOH4HOwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSnO6a2YHpBk1bNC0ezNvGZrFm7zkm
-	i/lHzrFavJx1j83i/PkN7BabHl9jtbi8aw6bxYzz+5gsbqzbx27xZOEZJov/e3awO3B7bFrV
-	yeaxeUm9x87vDewefVtWMXp83iQXwBrFZZOSmpNZllqkb5fAlXG46Rh7QT97xcLu18wNjNdZ
-	uxg5OSQETCSeNP5j6mLk4hAS2M4o8XTFFXaIhLTEkd8v2CBsYYn7LUdYIYqeMUp8mXEaqIOD
-	g03AQmJWXyZIjYiArsTmG8vZQWqYBXqZJfbf3skM0XCcRWLjyUVMIFWcAnYSt7bdArOFBXwk
-	5u89xwxiswioSPyc+AkszitgKfF5fi8LhC0ocXLmEzCbWUBbovdhKyOELS+x/e0cZojrFCR+
-	Pl3GCnFFmcSeyduYIGpEJGZ3tjFPYBSehWTULCSjZiEZNQtJywJGllWMoqkFxbnpuckFhnrF
-	ibnFpXnpesn5uZsYwfGmFbSDcdn6v3qHGJk4GA8xSnAwK4nwVoYFpgvxpiRWVqUW5ccXleak
-	Fh9ilOZgURLnVc7pTBESSE8sSc1OTS1ILYLJMnFwSjUwhaTtZzB7dd9tU+nzeMZbrbPn+7hz
-	K3M1HPRx/RMg8mqOs3RQ2ZV8mXl79C8ebP1Wzvpt1bNlpceXcZmdiWuWVX+ksm6Oefglp/V/
-	PP+8efXjw7Iqp4hNHA/2xTRGcnBPWnXx6twQWYaJP/yNf85JDW7WDb17ZePa440PPBvV1tzf
-	W7P9LcfKGHW2jMTEc0IXYpUlC84tmXRGplzGnPP1x2XmH1feOr6pv6vj/hGWB+sDpommVVp1
-	Nj9U6S4T6Am8VrDURVF8a6z6vdWqT56xcVioLkxuPOF6VzhJSM6ozbzMcdXRS26X8qZ9VuPr
-	m/HbZqOm5+e5xznfngi7Z2flEjfz3cHLf2/oR+j9csuOVmIpzkg01GIuKk4EAMJ1jYQmAwAA
-X-CMS-MailID: 20241205122516epcas2p40e6821cea8284c7be97e97c39786903d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc
-References: <20241021063903.793166-1-trunixs.kim@samsung.com>
-	<CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
-	<20241021063903.793166-4-trunixs.kim@samsung.com>
-	<961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
-	<20241107103331.GA4818@www.linux-watchdog.org>
-	<589c40e1-6a1c-4ef7-b0d8-b761b132578a@kernel.org>
-	<20241107113325.GA5284@www.linux-watchdog.org>
-	<c487babb-84a5-4e47-a58f-75fec55cbabb@kernel.org>
-	<000201db46ac$8d7cfee0$a876fca0$@samsung.com>
-	<88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
-	<171072ed-c35f-430e-a8c0-5cf718efed0c@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14125726-bb00-4de4-87f6-6655b0ffae58@ghiti.fr>
 
-on 05/12/2024 12:25 UTC+09:00, Taewan Kim wrote:
->>>>> But that's a never ending discussion, so we won't go into that :-).
->>>>
->>>> DTS is hardware description independent from Linux, therefore always
->>>> goes separate way than Linux drivers.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>
->>> I found that the first two patches have been added to the linux-next
->>> git, but the last patch has not yet been reviewed.
->>>
->>> I would appreciate it if you could take a look at this patch.
->>
->> Since this patch was applied, I dropped from my queue. I don't have it
->> in my inbox anymore. Please rebase, resolve any comments and resend.
+On Thu, Dec 05, 2024 at 12:15:16PM +0100, Alexandre Ghiti wrote:
+...
+> Your mails often end up in my junk folder, am I the only one? Any idea what
+> could be wrong?
 >
->I found it in my inbox and tried to apply but it fails:
->error: patch failed: arch/arm64/boot/dts/exynos/exynosautov920.dtsi:172
->
->
->please rebase and resend.
 
-Thanks to your hard work, I will resend it after rebase.
+I'm constantly pulling legitimate mails out of Spam, usually ones from
+@google.com, which I heard was because spam filters, including gmail's
+spam filters, assume those are made up addresses... Frequently I pull out
+Samuel's messages, at least when he posts to the opensbi list. Ventana
+uses gmail, so I've tried adding anybody who goes to spam, and shouldn't,
+to my gmail contacts, but that doesn't help...
 
-Best regards,
-Taewan Kim
+Anyway, I don't know why my messages go to your Spam folder either. Do
+you see anything weird in their formatting or headers? Maybe try adding
+me to some contact list which your spam filters hopefully use when
+deciding what's spam.
 
+Thanks,
+drew
 
