@@ -1,172 +1,206 @@
-Return-Path: <linux-kernel+bounces-433234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2949E5569
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:28:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0403C9E5572
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200BA167D0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:27:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F62E16B2CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024CC218AA3;
-	Thu,  5 Dec 2024 12:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A88218853;
+	Thu,  5 Dec 2024 12:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Eamc60rF"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gv7jtrTJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ethZW9zV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83195217F5D;
-	Thu,  5 Dec 2024 12:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB5D218597;
+	Thu,  5 Dec 2024 12:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401625; cv=none; b=cYV4Zw5DD2vncHGso2Y0Swj5vR1nKk/qSGPZeQgOMeyEG7ib7q6tUqMR1aZzzhazWTARbPNodrH9ewszohvB/4J4uTsX1fkXuyaif8nHocYjzoOtCMAhU8OglvkpYzFfzDJfp6qD458Wm1GLel1TkOBeMDwS0l2Dn+GkjBI5F/w=
+	t=1733401694; cv=none; b=I2It9UlXe39zybShKnV4KLthank4IhqpqT4ulzrIyeZU6+BEqiuFFeUEw5fv6LryXBXswJh/PMGZ9ISjLyNpc3dytZINpTJ/wNewRcRs8pJF35llliCp6PToGdeSaN+aQ1pqw1ADMdFd85gtj4hvJBqsP55OVlwa1FluQO3IaoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401625; c=relaxed/simple;
-	bh=nrfocU40C1E7t1lw39FQ7R9127iSar+XPZLXnMOKwaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X/xFGyD8LK5rwFnUtrvSs7d+uzQdS6w9KzQ94WcRvfBOYJdoGC9TaxKx6lmHR82Eotzz2tXcVNUiB7gMmIPwxfQfMJkr5v9zr3FfwmdmfjRSCOISBBTslW1uz/UbpHdGZX6z2M/raXRXUbVEe3++zGKUAm1TYOwc5eQk+UitfXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Eamc60rF; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733401621;
-	bh=nrfocU40C1E7t1lw39FQ7R9127iSar+XPZLXnMOKwaw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Eamc60rFbmbDye+pCeVNeRdxskiQYCdcVUz7cFt9Gumvi659rxVMlH8OOewIuQXag
-	 HzO8IKY7g2qGJ7OhYB3Iew5Bg77qu6jp52MEh562r2kvFdiy3/CpoHW8XKL/qqv9Hb
-	 daOhbOIqkrHlbGGP4Em25pgi9o0OjrCA/0XvnU0v2YNa2pz59rbi+ehilOGXaXT2TD
-	 1eWOu1WMmRUwQCVpMOGQS1UVjLvlN9dRRHDrK85xzX7rGjES4yQGnAlBDYbtfl9m4L
-	 CdWGcQwsHC+d5JpLvdGFomyrQeZ4A4nkAVfVMs/5xa3X/8GD9ry/+WOHxXqcOU5f7n
-	 2hJqC1GBjS14Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6B8C617E366D;
-	Thu,  5 Dec 2024 13:27:01 +0100 (CET)
-Message-ID: <7bf536a5-30c1-43d8-9ea3-3aaea65c6b0a@collabora.com>
-Date: Thu, 5 Dec 2024 13:27:01 +0100
+	s=arc-20240116; t=1733401694; c=relaxed/simple;
+	bh=sLzru2pVdodM4w+/LxLNs710/62IGVRqbwWzukP9XwQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=B6uDmXkloBhIB6DDCWjuRFiSGW3ILrsjxR+H8MWwQu3edwAZHO/VfGxmH0CcI3b2epK5TnA/qB7mN16oRe9Ejcb3wDHNiz1YOsaK1kJbIaiW6gpk7bByuBwjE87zFxhOSnt6D3v6lSXm+ik6C2Lq/XLeHb0xITUiVjkXe1i34I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gv7jtrTJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ethZW9zV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 05 Dec 2024 12:28:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733401686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HvFVvWEeh7YxSzayaR+TuV2qDpZt0upSCecdM3J72lY=;
+	b=Gv7jtrTJM2LAT025Bdrj0TVXBys6p8Y9b4l2sJUYsb9Q3Niy6jUxNtQRPEwWXtoBgIl6gd
+	lr6a1nQl0vU9a8EH4NqpXvns7DX01++DYJrjIQuA+1a78z9Qxdp8T2Yf12Dz11yHNFITF2
+	mLOXz2lA8JL2rVQjlfzUCDh+w8G0zCcRGCviagMIwdFusM3SFpdlINPlyFzfuOCDwNBcm5
+	tOMpYhRJNB58vXOZMpjbTWkbtD8nBYd53WOoSdLThTohf4jQ8SP69tcdocqXdTXpuPa+Ry
+	nFx5EoUhjkaGIKoYTCKBCUAfnLj+a0S/G3YR3XjZiD4pYzK6aGM4ZXRh6+eVhA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733401686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HvFVvWEeh7YxSzayaR+TuV2qDpZt0upSCecdM3J72lY=;
+	b=ethZW9zVei8b0WD/NZ21ef05ORvqj7A+COfeuyyxTMuTkOIkpQoxwVeE5kK63uW61T5rt6
+	srlB7JUVwmENflDw==
+From: "tip-bot2 for David Woodhouse" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/mm: Add _PAGE_NOPTISHADOW bit to avoid updating
+ userspace page tables
+Cc: Dave Hansen <dave.hansen@intel.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Ingo Molnar <mingo@kernel.org>, stable@kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Rik van Riel <riel@surriel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <412c90a4df7aef077141d9f68d19cbe5602d6c6d.camel@infradead.org>
+References: <412c90a4df7aef077141d9f68d19cbe5602d6c6d.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] MT8516/MT8167 dtsi fixes
-To: Val Packett <val@packett.cool>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Fabien Parent <fparent@baylibre.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241204190524.21862-1-val@packett.cool>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241204190524.21862-1-val@packett.cool>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <173340168546.412.3607698464296519657.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-Il 04/12/24 20:05, Val Packett ha scritto:
-> Hi everyone,
-> 
-> I've been working on mainline bringup on an MT8167 tablet I found at a
-> junkyard sale (lenovo,tb7304f) for postmarketOS :3
-> 
-> This first series consists of basic device tree fixes for the MT8516
-> dtsi that the MT8167 one inherits from.
-> 
+The following commit has been merged into the x86/urgent branch of tip:
 
-...Yes, but I don't see any patch that is introducing your TB7304F device here.
+Commit-ID:     d0ceea662d459726487030237689835fcc0483e5
+Gitweb:        https://git.kernel.org/tip/d0ceea662d459726487030237689835fcc0483e5
+Author:        David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate:    Wed, 04 Dec 2024 11:27:14 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 05 Dec 2024 13:04:00 +01:00
 
-I strongly suggest you to also send one that achieves basic boot with UART console
-as a first step for upstreaming your board, and then go for incremental changes
-everytime you get a new feature working.
+x86/mm: Add _PAGE_NOPTISHADOW bit to avoid updating userspace page tables
 
-> The changes that follow add support for the MT6392 PMIC, and that's
-> mostly been implemented by Fabien Parent back in 2020 and not merged:
-> 
-> <https://patchwork.kernel.org/project/linux-arm-kernel/patch/20201027181157.862927-3-fparent@baylibre.com/>
-> <https://patchwork.kernel.org/project/linux-arm-kernel/patch/20201024200304.1427864-2-fparent@baylibre.com/>
-> 
-> but I have a couple changes on top of those patches (like adding the
-> missing mt6392_set_buck_vosel_reg). I'm wondering what the best way to
-> get this in would be, should I squash my changes and submit the "final"
-> patches with a Co-developed-by tag?
-> 
+The set_p4d() and set_pgd() functions (in 4-level or 5-level page table setups
+respectively) assume that the root page table is actually a 8KiB allocation,
+with the userspace root immediately after the kernel root page table (so that
+the former can enforce NX on on all the subordinate page tables, which are
+actually shared).
 
-Generally, if the patches are only simple additions, you could send the original
-patches without any author variation (and fixing that MT6392_IRQ_numbers enum
-in the original ones because lower case please!) and then your patches on top
-with your additions.
+However, users of the kernel_ident_mapping_init() code do not give it an 8KiB
+allocation for its PGD. Both swsusp_arch_resume() and acpi_mp_setup_reset()
+allocate only a single 4KiB page. The kexec code on x86_64 currently gets
+away with it purely by chance, because it allocates 8KiB for its "control
+code page" and then actually uses the first half for the PGD, then copies the
+actual trampoline code into the second half only after the identmap code has
+finished scribbling over it.
 
-Otherwise, if you're "changing a lot of stuff" it makes sense to grab authorship
-and add the Co-Developed-by... but I don't think you're changing much, honestly.
+Fix this by defining a _PAGE_NOPTISHADOW bit (which can use the same bit as
+_PAGE_SAVED_DIRTY since one is only for the PGD/P4D root and the other is
+exclusively for leaf PTEs.). This instructs __pti_set_user_pgtbl() not to
+write to the userspace 'shadow' PGD.
 
-Of course, you'll have to drop the TXT additions, as now they are YAML (where the
-YAML additions go to a separated dt-bindings patch!).
+Strictly, the _PAGE_NOPTISHADOW bit doesn't need to be written out to the
+actual page tables; since __pti_set_user_pgtbl() returns the value to be
+written to the kernel page table, it could be filtered out. But there seems
+to be no benefit to actually doing so.
 
-In the end, it's your choice - that's more or less a gist of how to do it.
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/412c90a4df7aef077141d9f68d19cbe5602d6c6d.camel@infradead.org
+Cc: stable@kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+---
+ arch/x86/include/asm/pgtable_types.h | 8 ++++++--
+ arch/x86/mm/ident_map.c              | 6 +++---
+ arch/x86/mm/pti.c                    | 2 +-
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
-> (Similar situation with DRM nodes, not merged due to "concerns about
-> the driver architecture" in 2021, now missing GCE/CMDQ mailbox props:
-> <https://lore.kernel.org/df4c57f9-115b-c4da-e656-e4bdec62c2d7@gmail.com/>)
-> 
-
-The upstream driver just gained support for configuring the display paths
-entirely in the devicetree as those are obviously device specific.
-
-You can make use of that for upstreaming your tablet after adding the display
-nodes (and bindings, if required) as if you go for the default configuration
-that's probably not going to work because it's for the pumpkin boards which
-will most probably have a different display pipeline compared to your board.
-
-> By the way, is anyone familiar with PSCI cpuidle/hot-unplug issues on
-> Mediatek Android devices from around this time? Specifically on this
-> tablet, I can't make the cores come back from suspend. I have
-> investigated local-timer-stop and arm,no-tick-in-suspend, Fabien pointed
-> me to the mediatek timer and its required clocks, but nothing helped.
-> Trying the psci_checker, I realized that it's not just suspend: they
-> do not come back from hot-unplug either. Initial CPU_ON on boot is fine,
-> but then after a CPU_OFF they do not actually come back when CPU_ON
-> supposedly turns them on. Now I can't help but notice that the only DTS
-> in mainline for a device that came with Android, mt6795-sony-xperia-m5,
-> does not have any cpuidle nodes in its SoC's dtsi either..
-> 
-
-I did have some issues with an older bootloader on the Xperia M5 smartphone
-and would even lock up at boot, because on the old firmwares the power
-domains for the CPUs are not managed automatically by FW.
-
-Before discovering that there was new FW (and this stuff is signed so you
-cannot cross-flash...) I did engineer a solution, but never upstreamed it
-because I did effectively lack time to clean it up and make it proper.
-
-This solution is not upstreamable, as it makes the mtk-pm-domains driver
-to be usable only as built-in and not as module anymore... so that would
-probably need a separated driver or something like that.
-
-Here's the (rather dirty, but working) code: 
-https://gitlab.collabora.com/google/chromeos-kernel/-/commit/ae8f7048aadac03037391a64d9d79ca5af7b7a77
-
-Cheers!
-Angelo
-
-> Val Packett (5):
->    arm64: dts: mediatek: mt8516: fix GICv2 range
->    arm64: dts: mediatek: mt8516: fix wdt irq type
->    arm64: dts: mediatek: mt8516: add i2c clock-div property
->    arm64: dts: mediatek: mt8516: reserve 192 KiB for TF-A
->    arm64: dts: mediatek: mt8516: add keypad node
-> 
->   arch/arm64/boot/dts/mediatek/mt8516.dtsi      | 21 +++++++++++++++----
->   .../boot/dts/mediatek/pumpkin-common.dtsi     |  2 --
->   2 files changed, 17 insertions(+), 6 deletions(-)
-> 
-
-
-
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 6f82e75..4b80453 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -36,10 +36,12 @@
+ #define _PAGE_BIT_DEVMAP	_PAGE_BIT_SOFTW4
+ 
+ #ifdef CONFIG_X86_64
+-#define _PAGE_BIT_SAVED_DIRTY	_PAGE_BIT_SOFTW5 /* Saved Dirty bit */
++#define _PAGE_BIT_SAVED_DIRTY	_PAGE_BIT_SOFTW5 /* Saved Dirty bit (leaf) */
++#define _PAGE_BIT_NOPTISHADOW	_PAGE_BIT_SOFTW5 /* No PTI shadow (root PGD) */
+ #else
+ /* Shared with _PAGE_BIT_UFFD_WP which is not supported on 32 bit */
+-#define _PAGE_BIT_SAVED_DIRTY	_PAGE_BIT_SOFTW2 /* Saved Dirty bit */
++#define _PAGE_BIT_SAVED_DIRTY	_PAGE_BIT_SOFTW2 /* Saved Dirty bit (leaf) */
++#define _PAGE_BIT_NOPTISHADOW	_PAGE_BIT_SOFTW2 /* No PTI shadow (root PGD) */
+ #endif
+ 
+ /* If _PAGE_BIT_PRESENT is clear, we use these: */
+@@ -139,6 +141,8 @@
+ 
+ #define _PAGE_PROTNONE	(_AT(pteval_t, 1) << _PAGE_BIT_PROTNONE)
+ 
++#define _PAGE_NOPTISHADOW (_AT(pteval_t, 1) << _PAGE_BIT_NOPTISHADOW)
++
+ /*
+  * Set of bits not changed in pte_modify.  The pte's
+  * protection key is treated like _PAGE_RW, for
+diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
+index 437e96f..5ab7bd2 100644
+--- a/arch/x86/mm/ident_map.c
++++ b/arch/x86/mm/ident_map.c
+@@ -174,7 +174,7 @@ static int ident_p4d_init(struct x86_mapping_info *info, p4d_t *p4d_page,
+ 		if (result)
+ 			return result;
+ 
+-		set_p4d(p4d, __p4d(__pa(pud) | info->kernpg_flag));
++		set_p4d(p4d, __p4d(__pa(pud) | info->kernpg_flag | _PAGE_NOPTISHADOW));
+ 	}
+ 
+ 	return 0;
+@@ -218,14 +218,14 @@ int kernel_ident_mapping_init(struct x86_mapping_info *info, pgd_t *pgd_page,
+ 		if (result)
+ 			return result;
+ 		if (pgtable_l5_enabled()) {
+-			set_pgd(pgd, __pgd(__pa(p4d) | info->kernpg_flag));
++			set_pgd(pgd, __pgd(__pa(p4d) | info->kernpg_flag | _PAGE_NOPTISHADOW));
+ 		} else {
+ 			/*
+ 			 * With p4d folded, pgd is equal to p4d.
+ 			 * The pgd entry has to point to the pud page table in this case.
+ 			 */
+ 			pud_t *pud = pud_offset(p4d, 0);
+-			set_pgd(pgd, __pgd(__pa(pud) | info->kernpg_flag));
++			set_pgd(pgd, __pgd(__pa(pud) | info->kernpg_flag | _PAGE_NOPTISHADOW));
+ 		}
+ 	}
+ 
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 851ec8f..5f0d579 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -132,7 +132,7 @@ pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+ 	 * Top-level entries added to init_mm's usermode pgd after boot
+ 	 * will not be automatically propagated to other mms.
+ 	 */
+-	if (!pgdp_maps_userspace(pgdp))
++	if (!pgdp_maps_userspace(pgdp) || (pgd.pgd & _PAGE_NOPTISHADOW))
+ 		return pgd;
+ 
+ 	/*
 
