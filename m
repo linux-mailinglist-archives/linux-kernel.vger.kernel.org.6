@@ -1,284 +1,147 @@
-Return-Path: <linux-kernel+bounces-433587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0E79E5A34
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:49:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04AAF9E5A3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09041882272
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB52167E31
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1871321C190;
-	Thu,  5 Dec 2024 15:49:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87A821D5AD;
+	Thu,  5 Dec 2024 15:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="KXNBQZTA"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1491DC04A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E637021C164
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733413764; cv=none; b=YXcyL7UVQj2ISkEUEHuJiD3oAuupmzuoPMMqzzzYQtJ0aPlbVi1+y77b9EjKyU6Khz9kE2duQeRrg9vR1FnVRZeMdxVHtaBfAtavpbkiOCfgB10s+IYvnZCzBtsHrBLI5j6uoyZ6Je94/9bRctyRaC4ayVwZQIAn0Dobybf1AEk=
+	t=1733413798; cv=none; b=ftdhxB3gncAMgIW1SGITB3qCCVg6cIGl9L56LdvdvF6XeIoyemOA2+rpZPcw5LBOxO4YNXtSZuXySFBSBs2y3uJibKPb42k5IV5D7t6UelK2JS3VnfYpx4q9o02ULrBxalAy1oI1H/XRaTazAsTOj5hHdCciLNLn7IT1UyF4z5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733413764; c=relaxed/simple;
-	bh=iKx07IznEWBnmScTsE7cdfcopaMvhPEX3UQC+HhzMqE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IwFLfD223CjIBh6zUpFAgIUYaxXx69IYR+YvKVU0yu727Iv4WtW7qQZNqMsccK+FTvwVelPaC4OYm+wQd2fIYkXoI/OYG29nsIQY4mQ/ksqPq+rLwSQTQ4Iv/MXZoMMO6562XWstFsvHcq2xClkmJW+nA6LtVaN7vWep9ZxEpPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1tJE6M-000118-0K; Thu, 05 Dec 2024 16:49:14 +0100
-Message-ID: <5c3ba47c578f8ccca572e1e628359393c8a4d68f.camel@pengutronix.de>
-Subject: Re: [PATCH v2] drm/etnaviv: add optional reset support
-From: Lucas Stach <l.stach@pengutronix.de>
-To: LECOINTRE Philippe <philippe.lecointre@thalesgroup.com>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, LENAIN Simon
- <simon.lenain@thalesgroup.com>,  BARBEAU Etienne
- <etienne.barbeau@thalesgroup.com>, LEJEUNE Sebastien
- <sebastien.lejeune@thalesgroup.com>
-Date: Thu, 05 Dec 2024 16:49:13 +0100
-In-Reply-To: <66770f0cadcf4728880efe3a2427f55d@thalesgroup.com>
-References: <dc139d10a4184d289c9ffd1d308c0db1@thalesgroup.com>
-	 <3416531c050e5f6717e478eb7fd8fd6c30c21dd4.camel@pengutronix.de>
-	 <66770f0cadcf4728880efe3a2427f55d@thalesgroup.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733413798; c=relaxed/simple;
+	bh=QJh0SocakRQFAItV+WIZs0QtfPK9Gb+2/saeLJIXm0U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NTEtrkGOH1QerOCH0GoleZtL9jJn+4MGXhj1ErAAqsQ/pk6NtFwyh1eIq9tpw4eOHClNFYQkPEUouEafD6BShzJqmjCIA5AjkxCcvm5HNtnTEVpDeZt6P5B2h1wx/0CQtabsIZWZ8cLp7Ver7YjLQOAHwjDwoozPomh3TwfukyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=KXNBQZTA; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so208108866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:49:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733413793; x=1734018593; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jwnaybcL2baNYeNlHgBi1xq+W7PQq1z/cLM7e155nn4=;
+        b=KXNBQZTAR8I08avEHQdxB7EMte+ZfpmY/g+DZQoQFq+XmRCrsIAvTHksMXhDjsAB4H
+         IloJ/Askvfysn9nr7sGRLr9Ci8zx9Ca/EWl21OLvmIOhujfDkPNjD0jlIaUUfYdkRFyq
+         3d4lOH7sqVuQZMcVzoZkirLl0rGX+tN3IP+rRFxejOOvBhLI2JrdLhadToW4WoVQvYUc
+         N5luOfQBg6joQMghHQPKjW/0HbYsQPNkmjQHjAnGhry5UUDbhGy6KVJ0aIUCEZvLet3a
+         GTkY41kx/NbLnuFIQUufuvom3b49BSbGir0FUUEsR8IPFajy+50BzdZwaOHUaX+QHbPk
+         aw8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733413793; x=1734018593;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jwnaybcL2baNYeNlHgBi1xq+W7PQq1z/cLM7e155nn4=;
+        b=iCHkfLeB44hFseBZrvuV64h/gz4fbMLq/T/3uPWFfk+P67ZsGRMxNJGwM+LakghXfw
+         ehFGDel/qDFaVV5/L7W9P4sM/aRS2iVw1ndRqshYR6rpGflwsaAE2fxk+v8Ol79QCPF5
+         MYomNYou9MNtNhtOsJ0CtdVwJdprHBTiMwC9aEUQeWCESZSO//GJT3r8z8QRMGFnp2ln
+         7av5FM6oyHtuktfS3LA8e5NzH9XEapjvuk0/PDxnpwgJqWQQr7cuMD6mM7wc9btMa9rj
+         tBSrOyqvlOm00joOAWJ9mkeaRhDPK2bxv35gHJWlc3nj1VXUlu7zuRLUyraPUJ+cE1ml
+         P6jA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwfILbOLKZBsQgXk7BLIWFvGZZJYh7re5X469PhgY6AksxIqKMFVQHo70bpzo6pObshY6idaly+H0676k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYt5uydEvg9+OmUPPutjurcWPSd45T/O/Nj23UUPeBtAcv+SoG
+	aGu5JxxGFsB1V2cP9H8C7NYuswUb3qeSJRI+ZNUD3khjOajImQWq5sLUHwSob4I=
+X-Gm-Gg: ASbGnct4ooon4OztxMGXYx5P+5onaKirekCczbDjnkxNNPn/MyNh05H/CYWBjmNAz/6
+	nnlOZZJ4c80IcuVcx8whzpdQE61YlqWCRmS15m8U8W9oVSV7Usf5R5VvctU1GAY8Ga9HnxKmHsX
+	T+9KSJPEAUWGEI8MXkGdCBIBp5PfhI91mfRUVJDTKFT68Dpu3CjLyGukbnnMdS0SXcmBJ2kO6d5
+	K3nwGJabJAkygKuN5P+qQaa/WPMytqrQdf47wOxoO4YZUjQAgsSvrHxQP5/vyFbLCtDPRiucu7C
+	Z/b+0VoN6Vv86Ya9rcAAptmsgxvmcWZGE2dbyX3bIr6GPVHVVg==
+X-Google-Smtp-Source: AGHT+IE2OSa7ZjCjHWl3RYhlRyZyKlZnSLP+x1YzEi8/mKnAl0lFCce0mHxT24btJrTigdztogh09Q==
+X-Received: by 2002:a17:907:9713:b0:aa5:c9f4:7bb9 with SMTP id a640c23a62f3a-aa60182367dmr1087692866b.35.1733413793311;
+        Thu, 05 Dec 2024 07:49:53 -0800 (PST)
+Received: from raven.intern.cm-ag (p200300dc6f2c8700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2c:8700:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e58dffsm107575866b.13.2024.12.05.07.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 07:49:53 -0800 (PST)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: amarkuze@redhat.com,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH v2] fs/ceph/file: fix memory leaks in __ceph_sync_read()
+Date: Thu,  5 Dec 2024 16:49:51 +0100
+Message-ID: <20241205154951.4163232-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
+References: <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, dem 05.12.2024 um 15:06 +0000 schrieb LECOINTRE
-Philippe:
-> Hi Lucas,
->=20
-> I am grateful to you for your answer as this is my first attempt to contr=
-ibute to the kernel.
->=20
-> > -----Message d'origine-----
-> > De=C2=A0: Lucas Stach <l.stach@pengutronix.de>
-> > Envoy=C3=A9=C2=A0: mardi 3 d=C3=A9cembre 2024 18:58
-> > =C3=80=C2=A0: LECOINTRE Philippe <philippe.lecointre@thalesgroup.com>; =
-Russell King
-> > <linux+etnaviv@armlinux.org.uk>; Christian Gmeiner
-> > <christian.gmeiner@gmail.com>
-> > Cc=C2=A0: David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll=
-.ch>;
-> > etnaviv@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-
-> > kernel@vger.kernel.org; LENAIN Simon <simon.lenain@thalesgroup.com>;
-> > BARBEAU Etienne <etienne.barbeau@thalesgroup.com>; LEJEUNE Sebastien
-> > <sebastien.lejeune@thalesgroup.com>
-> > Objet=C2=A0: Re: [PATCH v2] drm/etnaviv: add optional reset support
-> >=20
-> > Hi Philippe,
-> >=20
-> > Am Freitag, dem 08.11.2024 um 14:00 +0000 schrieb LECOINTRE Philippe:
-> > > Add optional reset support which is mentioned in vivante,gc.yaml to
-> > > allow the driver to work on SoCs whose reset signal is asserted by de=
-fault
-> > > Avoid enabling the interrupt until everything is ready
-> > >=20
-> > > Signed-off-by: Philippe Lecointre <philippe.lecointre@thalesgroup.com=
->
-> > > Reviewed-by: Simon Lenain <simon.lenain@thalesgroup.com>
-> > > ---
-> > > v2:
-> > > - Add missing include of irq.h
-> > > ---
-> > >  drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 30
-> > +++++++++++++++++++++++++++
-> > >  drivers/gpu/drm/etnaviv/etnaviv_gpu.h |  2 ++
-> > >  2 files changed, 32 insertions(+)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > > index 7c7f97793ddd..3e0c5dd9f74b 100644
-> > > --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > > +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> > > @@ -1,6 +1,7 @@
-> > >  // SPDX-License-Identifier: GPL-2.0
-> > >  /*
-> > >   * Copyright (C) 2015-2018 Etnaviv Project
-> > > + * Copyright (C) 2024 Thales
-> > >   */
-> > >=20
-> > >  #include <linux/clk.h>
-> > > @@ -8,11 +9,13 @@
-> > >  #include <linux/delay.h>
-> > >  #include <linux/dma-fence.h>
-> > >  #include <linux/dma-mapping.h>
-> > > +#include <linux/irq.h>
-> > >  #include <linux/mod_devicetable.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/pm_runtime.h>
-> > >  #include <linux/regulator/consumer.h>
-> > > +#include <linux/reset.h>
-> > >  #include <linux/thermal.h>
-> > >=20
-> > >  #include "etnaviv_cmdbuf.h"
-> > > @@ -1629,8 +1632,24 @@ static int etnaviv_gpu_clk_enable(struct
-> > etnaviv_gpu *gpu)
-> > >  	if (ret)
-> > >  		goto disable_clk_core;
-> > >=20
-> > > +	/* 32 core clock cycles (slowest clock) required before deassertion=
-. */
-> > > +	/* 1 microsecond might match all implementations */
-> > > +	usleep_range(1, 2);
-> > > +
-> > > +	ret =3D reset_control_deassert(gpu->rst);
-> > > +	if (ret)
-> > > +		goto disable_clk_shader;
-> > > +
-> > > +	/* 128 core clock cycles (slowest clock) required before any activi=
-ty on
-> > AHB. */
-> > > +	/* 1 microsecond might match all implementations */
-> > > +	usleep_range(1, 2);
-> >=20
-> > Mashing the reset handling into the clock handling is a bad idea. The
-> > clocks are en-/disabled during runtime PM handling. The etnaviv driver
-> > is written in a way that the GPU does not necessarily need to be reset
-> > during a runtime PM transition, which allow for faster startup times.
-> >=20
-> > The reset handling should really be its own separate function and would
-> > logically go into etnaviv_gpu_init() between the pm_runtime_get_sync()
-> > and etnaviv_hw_identify().
-> >=20
->=20
-> I will rework this part to match your feedback.
->=20
-> > > +
-> > > +	enable_irq(gpu->irq);
-> >=20
-> > Do you see any issues with the IRQ being enabled earlier? A GPU being
-> > held in reset should not be able to trigger a IRQ.
-> >=20
->=20
-> I intend to avoid situations where IRQ are triggered for some reason and =
-the GPU is not fully operational.
-> Such issues might appear considering the state of reset and clocks from i=
-nternal boot to kernel.
-> I assume this situation never appeared with SoCs that are using this driv=
-er at the moment.
-> But it appear on a SoC developed by an industrial partner, this lead to I=
-RQ spamming with AXI bus error in the console.
->=20
+In two `break` statements, the call to ceph_release_page_vector() was
+missing, leaking the allocation from ceph_alloc_page_vector().
 
-It's a bit odd that your system might allow a device in undefined state
-(clocked, but not properly reset) onto the bus, as this might lead to
-many other issues aside from the asserted IRQ. I guess it would also be
-a good idea to assert the reset as soon as you requested it in
-etnaviv_gpu_platform_probe().
+Instead of adding the missing ceph_release_page_vector() calls, the
+Ceph maintainers preferred to transfer page ownership to the
+`ceph_osd_request` by passing `own_pages=true` to
+osd_req_op_extent_osd_data_pages().  This requires postponing the
+ceph_osdc_put_request() call until after the block that accesses the
+`pages`.
 
-As we don't support shared IRQ lines for the GPU right now, it should
-be fine to request the IRQ with IRQF_NO_AUTOEN and then simply
-enable_irq() in etnaviv_gpu_init() after etnaviv_hw_reset(). This
-however should be a separate patch, so you end up with one patch adding
-the reset handling and one patch changing the IRQ enable flow.
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/file.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Regards,
-Lucas
-
-> > > +
-> > >  	return 0;
-> > >=20
-> > > +disable_clk_shader:
-> > > +	clk_disable_unprepare(gpu->clk_shader);
-> > >  disable_clk_core:
-> > >  	clk_disable_unprepare(gpu->clk_core);
-> > >  disable_clk_bus:
-> > > @@ -1643,6 +1662,8 @@ static int etnaviv_gpu_clk_enable(struct
-> > etnaviv_gpu *gpu)
-> > >=20
-> > >  static int etnaviv_gpu_clk_disable(struct etnaviv_gpu *gpu)
-> > >  {
-> > > +	disable_irq(gpu->irq);
-> > > +	reset_control_assert(gpu->rst);
-> > >  	clk_disable_unprepare(gpu->clk_shader);
-> > >  	clk_disable_unprepare(gpu->clk_core);
-> > >  	clk_disable_unprepare(gpu->clk_bus);
-> > > @@ -1876,6 +1897,9 @@ static int etnaviv_gpu_platform_probe(struct
-> > platform_device *pdev)
-> > >  	if (gpu->irq < 0)
-> > >  		return gpu->irq;
-> > >=20
-> > > +	/* Avoid enabling the interrupt until everything is ready */
-> > > +	irq_set_status_flags(gpu->irq, IRQ_NOAUTOEN);
-> > > +
-> > >  	err =3D devm_request_irq(&pdev->dev, gpu->irq, irq_handler, 0,
-> > >  			       dev_name(gpu->dev), gpu);
-> > >  	if (err) {
-> > > @@ -1883,6 +1907,12 @@ static int etnaviv_gpu_platform_probe(struct
-> > platform_device *pdev)
-> > >  		return err;
-> > >  	}
-> > >=20
-> > > +	/* Get Reset: */
-> > > +	gpu->rst =3D devm_reset_control_get_optional(&pdev->dev, NULL);
-> > > +	if (IS_ERR(gpu->rst))
-> > > +		return dev_err_probe(dev, PTR_ERR(gpu->rst),
-> > > +				     "failed to get reset\n");
-> > > +
-> > >  	/* Get Clocks: */
-> > >  	gpu->clk_reg =3D devm_clk_get_optional(&pdev->dev, "reg");
-> > >  	DBG("clk_reg: %p", gpu->clk_reg);
-> > > diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-> > b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-> > > index 31322195b9e4..8c181191755e 100644
-> > > --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-> > > +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-> > > @@ -1,6 +1,7 @@
-> > >  /* SPDX-License-Identifier: GPL-2.0 */
-> > >  /*
-> > >   * Copyright (C) 2015-2018 Etnaviv Project
-> > > + * Copyright (C) 2024 Thales
-> >=20
-> > I don't think adding a single member here does warrant a Copyright
-> > statement, in fact I would prefer them to not be touched at all.
-> > Authorship of individual changes to the driver a clearly attributable
-> > via the git history.
-> >=20
->=20
-> I add these Copyright while following the rules to contribute to an OSS p=
-roject from my company.
-> After clarifications with the legal department, I will remove these chang=
-es in my next revision.
->=20
-> Regards,
-> Philippe
->=20
-> > Regards,
-> > Lucas
-> > >   */
-> > >=20
-> > >  #ifndef __ETNAVIV_GPU_H__
-> > > @@ -157,6 +158,7 @@ struct etnaviv_gpu {
-> > >  	struct clk *clk_reg;
-> > >  	struct clk *clk_core;
-> > >  	struct clk *clk_shader;
-> > > +	struct reset_control *rst;
-> > >=20
-> > >  	unsigned int freq_scale;
-> > >  	unsigned int fe_waitcycles;
->=20
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 4b8d59ebda00..ce342a5d4b8b 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1127,7 +1127,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 
+ 		osd_req_op_extent_osd_data_pages(req, 0, pages, read_len,
+ 						 offset_in_page(read_off),
+-						 false, false);
++						 false, true);
+ 
+ 		op = &req->r_ops[0];
+ 		if (sparse) {
+@@ -1186,8 +1186,6 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 			ret = min_t(ssize_t, fret, len);
+ 		}
+ 
+-		ceph_osdc_put_request(req);
+-
+ 		/* Short read but not EOF? Zero out the remainder. */
+ 		if (ret >= 0 && ret < len && (off + ret < i_size)) {
+ 			int zlen = min(len - ret, i_size - off - ret);
+@@ -1221,7 +1219,8 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 				break;
+ 			}
+ 		}
+-		ceph_release_page_vector(pages, num_pages);
++
++		ceph_osdc_put_request(req);
+ 
+ 		if (ret < 0) {
+ 			if (ret == -EBLOCKLISTED)
+-- 
+2.45.2
 
 
