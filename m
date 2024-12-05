@@ -1,203 +1,292 @@
-Return-Path: <linux-kernel+bounces-432509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25599E4C50
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:34:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDB59E4C56
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F061881A49
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9D21881940
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DAF191F60;
-	Thu,  5 Dec 2024 02:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C816017C7B1;
+	Thu,  5 Dec 2024 02:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TnnrcNqs"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CK0CHahT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D04B18FDC5
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A78B4C96;
+	Thu,  5 Dec 2024 02:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733366035; cv=none; b=hVE6YwKKx31O2haNSYtHCqFjEgn6/PW2fllsBgs/r1sUJfSA51elg0ExgmEIu7xSn3IDdpeqjdgT++kDiriGURqN+3lCsS3220CmrOvNCG0rCzqAPCRkqsH+eRVme7vovXj7ykYf7+qcIRkjNgTV3s5+w3aE3HEqiq3JPi8tA50=
+	t=1733366153; cv=none; b=DGlnvp+am2dzx9AsveRZPBiHcA2KOnDoAxQ0yXJ5YP9jkr/PGH+dUmOnTaBsoqZ9louNquYWls03O3uNUXGC48Icb67OyfaUs2q3m2VGmVlUYxZNGoy8Vu/cZ5h0DeL4OAekxEuSzG3rYM4+X/CPL8DUL02stuFR+fYux6oHQiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733366035; c=relaxed/simple;
-	bh=YRQBf0W9frh8FEHOrg3W9F5a40CVpeTKHJworaSbgRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eqZig5YvIMG+QopY+9K+ctA/kpaG+uBMYS6imI0F5VtlPK75Xvp8/Xv6QJjcbWq0roDi+X+V4bo40Dc+jyqKonIQHCJtxUYNQ9REYw7b/LotQ1z9OcJhgiHRduSBknKU13Ed/+Bjp68AA87yE1gMdXLpGoZMxXLYXA+GoC7ocK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TnnrcNqs; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a83c6b01so2734695e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 18:33:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733366032; x=1733970832; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pbQg49fwfqiAPqum0vO3xu6S8El0T9nuKTumPVo3HTs=;
-        b=TnnrcNqsn93sKAISSgUaYd0yus1Q+fHfc2Mh40HZJOsOGHITxzmlaAJ0i2eg8ek2Hs
-         CCGcAy5ZHIHbZKxYpc+66mcBuNzh5so3b6a+pPyl5w4L/LciqjXBbdC44NvO0FUToNWm
-         4DJYDI5A39PfSIAsjWe27tnK6xNiOrnmCSGZJufq1TRab5It0k8h2eytrAsH8oz+OOJJ
-         wgxzHqUOZgZSQrprjAsOYojxw9encbZJfq3dFFYHosqwmMBL2TnE6WMOSpicKyssauQx
-         Kr1tYeEA5uGrPDIBzj0Yn+ypDUv/V41DQBOkAWus7CZQBXHoV3pd9UuwU74NwUGYoxb7
-         z9HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733366032; x=1733970832;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pbQg49fwfqiAPqum0vO3xu6S8El0T9nuKTumPVo3HTs=;
-        b=psgomMW/RdjI6Nli6hAxHE+EdBwuF8en/zQnbf6uvetDlwRnaBTx1ZRhpaGhj5bFgH
-         Cr/ZOlIxvF23Ti57gMPoYwkb91pvIvIA5gx/BClB+mpmrAVXDmONlkVQWFlaMzRXZCmm
-         XUxZWzgwwypuA1b1Pe5s0H+EtVZX+PQesvA34hHm0GuB6G9gXdUwZV1G0Bb231OjTTah
-         mARKPwc59YJ4KFhZazPYSSs121t2KspkIoMF6onOhxPsdhYJuk6cvwzvojUdJ/NUN4bT
-         JyDEMUHst11/MWkyiop0xCYb4g4e/CGGGnHmzgQ7dfZ7PMUVCJn2H/bRaBL47PMpbQsN
-         0ggg==
-X-Forwarded-Encrypted: i=1; AJvYcCU42MmztvE0buuFxi9VQZK4LmB/A31+R6sFxYRt9RW5O0zfbMqTzCOXxFGT9joOB6NZSGbYOEuRaN81LFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaO2FdTTLbeogJbR8vES89uGnHNNO/Wd9dgGwugwPJXWUyDoop
-	duykXO+MjYzMnzixiVpN4vBxscV/DnyH255oI0Tsc7XEvifGhEjh+RcAwTzRTEQ=
-X-Gm-Gg: ASbGncs8pLxvqq/gVBNFy3NfjbhnCkpXog9CFww5iygp3hFkDY9S4FuCXl2fYmAE3e8
-	YErDRIgYwJNQkQ8RfqyDEouGnYLmRCRku2z8B3arKiumMb8aIqHY0bgAyrx/k2OGTWSjBU4OJ3q
-	boDpe4s7WQ5LVFEntqi/qGGkanLbltWw1a5IRegspueHmWYPs3FKnFnN+8r5uPEtRQHj6lSQ0KR
-	JE+wbqrJp1E48iT3oOjA2DPX9C1o0LpP55mopFubvVSdXydxSEtiYZLKE5qy3S7Rwkl
-X-Google-Smtp-Source: AGHT+IEr04HIyGIAbnMgCxehAiEsQghxVfR78l+LYpgdbWvEFCUYjvf5mRhaEkf1BZj3PO52s5tGig==
-X-Received: by 2002:a05:600c:46ca:b0:432:d82d:6a6c with SMTP id 5b1f17b1804b1-434d0a1db91mr81932695e9.30.1733366031850;
-        Wed, 04 Dec 2024 18:33:51 -0800 (PST)
-Received: from localhost.localdomain ([2.222.231.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273440sm44444325e9.18.2024.12.04.18.33.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 18:33:50 -0800 (PST)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: broonie@kernel.org,
-	konradybcio@kernel.org,
-	andersson@kernel.org,
-	srinivas.kandagatla@linaro.org
-Cc: tiwai@suse.com,
-	lgirdwood@gmail.com,
-	perex@perex.cz,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dmitry.baryshkov@linaro.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] arm64: dts: qcom: sdm845-db845c: add i2s playback support via LS1 connector
-Date: Thu,  5 Dec 2024 02:33:44 +0000
-Message-ID: <20241205023344.2232529-4-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241205023344.2232529-1-alexey.klimov@linaro.org>
-References: <20241205023344.2232529-1-alexey.klimov@linaro.org>
+	s=arc-20240116; t=1733366153; c=relaxed/simple;
+	bh=bCFToNXOOk4QUCeXM2IFMAHFOjr+msvvvubD8bYPWQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rLNf/fG/ahjiT8Pq7oJxNVk1DIYNuTu3scD8CkxXnU/QBc5cJy40Ps+x9FvV3L9UEKGXsIOH7YOJCUHI5TYqiG6B/HclEr8fKEW4nAjGpaHHSW/w1vh2KgNo+rzcC8ak+SzV8aBBzdrQTXeWkk9GGzcRAIldTF/vxKoPKXDv2hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CK0CHahT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82E1C4CECD;
+	Thu,  5 Dec 2024 02:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733366152;
+	bh=bCFToNXOOk4QUCeXM2IFMAHFOjr+msvvvubD8bYPWQ0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CK0CHahTfR9D/E+og6RDoq06SHlrmaVVPgLE9utF54AclobpK8Mqa9VEhCFDiGJcz
+	 NKywClULEvdIBx45u8F5VsNXNMV6RkxCXi93BwLRyy4q4qLIAWV++/R2ksjbr/Xcfo
+	 cX5JzwlUD3GxptnsRFS734/SW3PNEerXWjBWoAmroXd7LBwE6h14P6tYofoT1WPlsx
+	 2L9CgkFyistKY4iIip5VaFWz22biThnTSlMFPBiDnUEOkmdpZ9prO28LPHiHSGNJ4R
+	 7s5LCv5MbYLuadtbEA48bntl0SPIgbanoa1XrdekkIM5yXzXjKsusbBX+wuZTdk+ir
+	 CPOspzOPstKnQ==
+Date: Wed, 4 Dec 2024 18:35:50 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com,
+ gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+ maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+ cmllamas@google.com, surenb@google.com, arnd@arndb.de,
+ masahiroy@kernel.org, bagasdotme@gmail.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, hridya@google.com, smoreland@google.com,
+ kernel-team@android.com
+Subject: Re: [PATCH net-next v8 2/2] binder: report txn errors via generic
+ netlink
+Message-ID: <20241204183550.6e9d703f@kernel.org>
+In-Reply-To: <20241113193239.2113577-3-dualli@chromium.org>
+References: <20241113193239.2113577-1-dualli@chromium.org>
+	<20241113193239.2113577-3-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-DB845c board (RB3 board) has i2s signals exported via the first low-speed
-connector and this is also required by 96boards specification. Enable
-playback support via this connector. Since this is specific only to DB845c
-board the pins configuration is also in this board-specific file only.
+On Wed, 13 Nov 2024 11:32:39 -0800 Li Li wrote:
+> +/**
+> + * binder_find_proc() - set binder report flags
+> + * @pid:	the target process
+> + */
+> +static struct binder_proc *binder_find_proc(int pid)
+> +{
+> +	struct binder_proc *proc;
+> +
+> +	mutex_lock(&binder_procs_lock);
+> +	hlist_for_each_entry(proc, &binder_procs, proc_node) {
+> +		if (proc->pid == pid) {
+> +			mutex_unlock(&binder_procs_lock);
+> +			return proc;
+> +		}
+> +	}
+> +	mutex_unlock(&binder_procs_lock);
+> +
+> +	return NULL;
+> +}
+> +
+> +/**
+> + * binder_genl_set_report() - set binder report flags
+> + * @context:	the binder context to set the flags
+> + * @pid:	the target process
+> + * @flags:	the flags to set
+> + *
+> + * If pid is 0, the flags are applied to the whole binder context.
+> + * Otherwise, the flags are applied to the specific process only.
+> + */
+> +static int binder_genl_set_report(struct binder_context *context, u32 pid,
+> +				  u32 flags)
+> +{
+> +	struct binder_proc *proc;
+> +
+> +	if (flags != (flags & (BINDER_GENL_FLAG_OVERRIDE
+> +			| BINDER_GENL_FLAG_FAILED
+> +			| BINDER_GENL_FLAG_DELAYED
+> +			| BINDER_GENL_FLAG_SPAM))) {
+> +		pr_err("Invalid binder report flags: %u\n", flags);
+> +		return -EINVAL;
 
-This playback output is fixed to 16bit, i2s format and 48 kHz and works
-with simple DACs.
+no need, netlink already checks that only bits from the flags are used:
 
-It was verified with the following commands:
-amixer -c0 cset iface=MIXER,name='SEC_MI2S_RX Audio Mixer MultiMedia3' 1
-SDL_AUDIODRIVER="alsa" AUDIODEV="hw:0,2" ffplay -autoexit test.mp3
+                                    vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
++	[BINDER_GENL_A_CMD_FLAGS] = NLA_POLICY_MASK(NLA_U32, 0xf),
 
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 43 +++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 2 deletions(-)
+> +	}
+> +
+> +	if (!pid) {
+> +		/* Set the global flags for the whole binder context */
+> +		context->report_flags = flags;
+> +	} else {
+> +		/* Set the per-process flags */
+> +		proc = binder_find_proc(pid);
+> +		if (!proc) {
+> +			pr_err("Invalid binder report pid %u\n", pid);
+> +			return -EINVAL;
+> +		}
+> +
+> +		proc->report_flags = flags;
+> +	}
+> +
+> +	return 0;
+> +}
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-index 1cc0f571e1f7..6ca719281788 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-@@ -707,12 +707,21 @@ led@5 {
- 	};
- };
- 
--/* QUAT I2S Uses 4 I2S SD Lines for audio on LT9611 HDMI Bridge */
- &q6afedai {
-+	/* QUAT I2S Uses 4 I2S SD Lines for audio on LT9611 HDMI Bridge */
- 	dai@22 {
- 		reg = <QUATERNARY_MI2S_RX>;
- 		qcom,sd-lines = <0 1 2 3>;
- 	};
-+
-+	/*
-+	 * Secondary I2S uses 1 I2S SD Line for audio playback on
-+	 * LT9611 HDMI Bridge
-+	 */
-+	dai@18 {
-+		reg = <SECONDARY_MI2S_RX>;
-+		qcom,sd-lines = <0>;
-+	};
- };
- 
- &q6asmdai {
-@@ -762,7 +771,8 @@ &sound {
- 			 &quat_mi2s_sd0_active
- 			 &quat_mi2s_sd1_active
- 			 &quat_mi2s_sd2_active
--			 &quat_mi2s_sd3_active>;
-+			 &quat_mi2s_sd3_active
-+			 &sec_mi2s_active>;
- 	pinctrl-names = "default";
- 	model = "DB845c";
- 	audio-routing =
-@@ -852,6 +862,17 @@ codec {
- 			sound-dai = <&wcd9340 1>;
- 		};
- 	};
-+
-+	i2s-sec-dai-link {
-+		link-name = "I2S LS1 Playback";
-+		cpu {
-+			sound-dai = <&q6afedai SECONDARY_MI2S_RX>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6routing>;
-+		};
-+	};
- };
- 
- &spi0 {
-@@ -994,6 +1015,24 @@ reset-n-pins {
- 		};
- 	};
- 
-+	sec_mi2s_active: sec-mi2s-active {
-+		clk-pins {
-+			/* sclk and ws */
-+			pins = "gpio80", "gpio81";
-+			function = "sec_mi2s";
-+			drive-strength = <8>;
-+			bias-disable;
-+			output-high;
-+		};
-+
-+		data-pins {
-+			pins = "gpio82", "gpio83";
-+			function = "sec_mi2s";
-+			drive-strength = <8>;
-+			bias-disable;
-+		};
-+	};
-+
- 	sdc2_default_state: sdc2-default-state {
- 		clk-pins {
- 			pins = "sdc2_clk";
--- 
-2.45.2
+> +static void binder_genl_send_report(struct binder_context *context, u32 err,
+> +				    u32 pid, u32 tid, u32 to_pid, u32 to_tid,
+> +				    u32 reply,
+> +				    struct binder_transaction_data *tr)
+> +{
+> +	int payload;
+> +	int ret;
+> +	struct sk_buff *skb;
+> +	void *hdr;
+> +
+> +	trace_binder_send_report(context->name, err, pid, tid, to_pid, to_tid,
+> +				 reply, tr);
+> +
+> +	payload = nla_total_size(strlen(context->name) + 1) +
+> +		  nla_total_size(sizeof(u32)) * (BINDER_GENL_A_REPORT_MAX - 1);
+> +	skb = genlmsg_new(payload + GENL_HDRLEN, GFP_KERNEL);
+
+ genlmsg_new() adds the GENL_HDRLEN already
+
+> +	if (!skb) {
+> +		pr_err("Failed to alloc binder genl message\n");
+> +		return;
+> +	}
+> +
+> +	hdr = genlmsg_put(skb, 0, atomic_inc_return(&context->report_seq),
+> +			  &binder_genl_nl_family, 0, BINDER_GENL_CMD_REPORT);
+> +	if (!hdr)
+> +		goto free_skb;
+> +
+> +	if (nla_put_string(skb, BINDER_GENL_A_REPORT_CONTEXT, context->name) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_ERR, err) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_FROM_PID, pid) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_FROM_TID, tid) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_TO_PID, to_pid) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_TO_TID, to_tid) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_REPLY, reply) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_FLAGS, tr->flags) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_CODE, tr->code) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_REPORT_DATA_SIZE, tr->data_size))
+> +		goto cancel_skb;
+> +
+> +	genlmsg_end(skb, hdr);
+> +
+> +	ret = genlmsg_unicast(&init_net, skb, context->report_portid);
+> +	if (ret < 0)
+> +		pr_err("Failed to send binder genl message to %d: %d\n",
+> +		       context->report_portid, ret);
+> +	return;
+> +
+> +cancel_skb:
+> +	pr_err("Failed to add report attributes to binder genl message\n");
+> +	genlmsg_cancel(skb, hdr);
+> +free_skb:
+> +	pr_err("Free binder genl report message on error\n");
+> +	nlmsg_free(skb);
+> +}
+
+> +/**
+> + * binder_genl_nl_set_doit() - .doit handler for BINDER_GENL_CMD_SET
+> + * @skb:	the metadata struct passed from netlink driver
+> + * @info:	the generic netlink struct passed from netlink driver
+> + *
+> + * Implements the .doit function to process binder genl commands.
+> + */
+> +int binder_genl_nl_set_doit(struct sk_buff *skb, struct genl_info *info)
+> +{
+> +	int payload;
+> +	int portid;
+> +	u32 pid;
+> +	u32 flags;
+> +	void *hdr;
+> +	struct binder_device *device;
+> +	struct binder_context *context = NULL;
+> +
+> +	if (GENL_REQ_ATTR_CHECK(info, BINDER_GENL_A_CMD_CONTEXT) ||
+> +	    GENL_REQ_ATTR_CHECK(info, BINDER_GENL_A_CMD_PID) ||
+> +	    GENL_REQ_ATTR_CHECK(info, BINDER_GENL_A_CMD_FLAGS))
+> +		return -EINVAL;
+> +
+> +	hlist_for_each_entry(device, &binder_devices, hlist) {
+> +		if (!nla_strcmp(info->attrs[BINDER_GENL_A_CMD_CONTEXT],
+> +				device->context.name)) {
+> +			context = &device->context;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!context) {
+> +		NL_SET_ERR_MSG(info->extack, "Unknown binder context\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	portid = nlmsg_hdr(skb)->nlmsg_pid;
+> +	pid = nla_get_u32(info->attrs[BINDER_GENL_A_CMD_PID]);
+> +	flags = nla_get_u32(info->attrs[BINDER_GENL_A_CMD_FLAGS]);
+> +
+> +	if (context->report_portid && context->report_portid != portid) {
+> +		NL_SET_ERR_MSG_FMT(info->extack,
+> +				   "No permission to set flags from %d\n",
+> +				   portid);
+> +		return -EPERM;
+> +	}
+> +
+> +	if (binder_genl_set_report(context, pid, flags) < 0) {
+> +		pr_err("Failed to set report flags %u for %u\n", flags, pid);
+> +		return -EINVAL;
+> +	}
+> +
+> +	payload = nla_total_size(sizeof(pid)) + nla_total_size(sizeof(flags));
+> +	skb = genlmsg_new(payload + GENL_HDRLEN, GFP_KERNEL);
+> +	if (!skb) {
+> +		pr_err("Failed to alloc binder genl reply message\n");
+> +		return -ENOMEM;
+
+no need for error messages on allocation failures, kernel will print an
+OOM report
+
+> +	}
+> +
+> +	hdr = genlmsg_iput(skb, info);
+> +	if (!hdr)
+> +		goto free_skb;
+> +
+> +	if (nla_put_string(skb, BINDER_GENL_A_CMD_CONTEXT, context->name) ||
+
+Have you counted strlen(context->name) to payload?
+TBH for small messages counting payload size is probably an overkill,
+you can use NLMSG_GOODSIZE as the size of the skb.
+
+> +	    nla_put_u32(skb, BINDER_GENL_A_CMD_PID, pid) ||
+> +	    nla_put_u32(skb, BINDER_GENL_A_CMD_FLAGS, flags))
+> +		goto cancel_skb;
+> +
+> +	genlmsg_end(skb, hdr);
+> +
+> +	if (genlmsg_reply(skb, info)) {
+> +		pr_err("Failed to send binder genl reply message\n");
+> +		return -EFAULT;
+> +	}
+> +
+> +	if (!context->report_portid)
+> +		context->report_portid = portid;
+
+Is there any locking required?
+
+> +	return 0;
+> +
+> +cancel_skb:
+> +	pr_err("Failed to add reply attributes to binder genl message\n");
+> +	genlmsg_cancel(skb, hdr);
+> +free_skb:
+> +	pr_err("Free binder genl reply message on error\n");
+> +	nlmsg_free(skb);
+> +	return -EMSGSIZE;
+> +}
 
 
