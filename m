@@ -1,202 +1,191 @@
-Return-Path: <linux-kernel+bounces-432902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1319E522D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:26:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C561D9E50AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:07:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083BA281AD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:26:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED8C1882AC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF5F1DA0E0;
-	Thu,  5 Dec 2024 09:51:38 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BE91DE4E4;
+	Thu,  5 Dec 2024 09:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pd3ksXdW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0A31D9598
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1C61DE8AC;
+	Thu,  5 Dec 2024 09:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733392297; cv=none; b=hL0/vbAKNa5HAeeyLxTxDfvNePAyfN8s4Drz4YWZDcpyRdlZlIHSGxKovDvyr6vIkqzZMVoobjAdHkF5HuzydCuUCifyVZdEmcdRH4Rk7P2xqRyRCewFC8SVbaBFvAORpb4XBsLce/FwNNQ6V+8lXv6r4LhfvU2RAAxmbv2wT04=
+	t=1733389483; cv=none; b=SD8xQGoB5Po1KZaA1sSFu2Lg8+a+h9zTyXSGfHRXnGwhF+mYMJ7ahGZsB56n3ZhyyfVj0OoYf4x+PQNdgnFaTh9TU4s+fPvaRvrJCXT9ce6+20yCsEUBMIZZJiL05ysNzfzLbMW8M3mw5U3IUV1BEq2d7dandPjcfvmKt7h65Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733392297; c=relaxed/simple;
-	bh=kLpngkEs/11Ak9OOYTNMERZLxTu+OUPrakNs9U6Nwlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bhOMqVe+TpLXjt71aHKNJUkdz8SgZCuR+BwGP4PJlEv/V17wMCob4bRvBFbACMdzV4H5uGB5N4SgLDvJgd9Yq/hzbpdOKmOQY6/LrER0sbVvwmKh0AX3q+hfaj/GlDk84/38jtS3O7Jztt283013FnX+U22xkUyDRwQpkJZBZYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tJ8Vy-0002HX-Gp; Thu, 05 Dec 2024 10:51:18 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tJ8Vv-001nkX-2w;
-	Thu, 05 Dec 2024 10:51:16 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 0C91C3860A2;
-	Thu, 05 Dec 2024 09:01:11 +0000 (UTC)
-Date: Thu, 5 Dec 2024 10:01:10 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de, linux-doc@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Simon Horman <horms@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v1 6/7] phy: dp83td510: add statistics support
-Message-ID: <20241205-satisfied-gerbil-of-cookies-471293-mkl@pengutronix.de>
-References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
- <20241203075622.2452169-7-o.rempel@pengutronix.de>
- <57a7b3bf-02fa-4b18-bb4b-b11245d3ebfb@intel.com>
+	s=arc-20240116; t=1733389483; c=relaxed/simple;
+	bh=kgBANOzb+Cgsph6petpYIaTtoNr7Xq3+VWt9lJcVBzs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XPx/Bwx+sWqsntPmTEIggWdY+QJmlbq8FI3VkaaP5S32Rr6ve6poLbYp2drx6iQJ2bjQ0wQxx+YgufOVU05VanBvZob7/Hv2IQB76Vv57F3lFRhoDFPUC+3UyDVm/SkS8WKeC7GBX5UNPA+7EskD5wv7lBrEjc9//+2NoTbbfss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pd3ksXdW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B55uG46032002;
+	Thu, 5 Dec 2024 09:04:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vt9LxIX51h8QvjMIh+Xq/Wsh+7C5FCdnQRgiUjwuqtc=; b=pd3ksXdWpBHUkloq
+	5p3QOy0KwlG8n/Ovit9wQStZsCN1LxKzLg9Ll1m6Yf3up1FCEFl5X2C9lLwALTst
+	nq6QUf6mFKCq8ONURn+KV5Ej2JfjLvYSpgeMQQ5Sz30XWurM+s8yvOxWXW2BhGK6
+	o2W7U7fnxrlsYSgR2t/3yxkAPcNVf5Ybb86c0B+3AvFQFkRYI7YqQdoPFITcnO/M
+	P0dshz2t7Xc+41LJxKTzJ17ir79A+Bg5ak9fsBhRB9KSV+tqFBUT9MEonWLcjrKw
+	cAN4gAc5nCJV1Qe7Z3zAuu0UuO9LjdvAnTE+NjVf8kQ+przwaqxTxgloq74ZF7hy
+	xE0chw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3fawvca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 09:04:23 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B594N7F002266
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 09:04:23 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 01:04:17 -0800
+Message-ID: <d1964ab8-ddcc-4e15-9c34-7a62a959037c@quicinc.com>
+Date: Thu, 5 Dec 2024 17:04:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="huwtbf5ra3bpiqrd"
-Content-Disposition: inline
-In-Reply-To: <57a7b3bf-02fa-4b18-bb4b-b11245d3ebfb@intel.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] drm/msm: mdss: Add QCS8300 support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Ritesh Kumar <quic_riteshk@quicinc.com>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <20241127-mdss_qcs8300-v1-3-29b2c3ee95b8@quicinc.com>
+ <nllulh3vskl3hm3hvjux4khxtanqj7cpoytodwkzphwn4ajmo7@g46rgnhp637b>
+ <4b4a7609-0d9e-4b52-9193-a79583419902@quicinc.com>
+ <CAA8EJprGLfa2H1VMAG7uYJOEUyf9aMbC9-V6Q_J-pDz4pGV1yQ@mail.gmail.com>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <CAA8EJprGLfa2H1VMAG7uYJOEUyf9aMbC9-V6Q_J-pDz4pGV1yQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GmlTl1JdR3r7VzviQjG7DZSxaXhWi2in
+X-Proofpoint-GUID: GmlTl1JdR3r7VzviQjG7DZSxaXhWi2in
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050064
 
 
---huwtbf5ra3bpiqrd
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next v1 6/7] phy: dp83td510: add statistics support
-MIME-Version: 1.0
 
-On 05.12.2024 09:43:34, Mateusz Polchlopek wrote:
->=20
->=20
-> On 12/3/2024 8:56 AM, Oleksij Rempel wrote:
-> > Add support for reporting PHY statistics in the DP83TD510 driver. This
-> > includes cumulative tracking of transmit/receive packet counts, and
-> > error counts. Implemented functions to update and provide statistics via
-> > ethtool, with optional polling support enabled through `PHY_POLL_STATS`.
-> >=20
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >   drivers/net/phy/dp83td510.c | 98 ++++++++++++++++++++++++++++++++++++-
-> >   1 file changed, 97 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-> > index 92aa3a2b9744..08d61a6a8c61 100644
-> > --- a/drivers/net/phy/dp83td510.c
-> > +++ b/drivers/net/phy/dp83td510.c
-> > @@ -34,6 +34,24 @@
-> >   #define DP83TD510E_CTRL_HW_RESET		BIT(15)
-> >   #define DP83TD510E_CTRL_SW_RESET		BIT(14)
-> > +#define DP83TD510E_PKT_STAT_1			0x12b
-> > +#define DP83TD510E_TX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
-> > +
-> > +#define DP83TD510E_PKT_STAT_2			0x12c
-> > +#define DP83TD510E_TX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
->=20
-> Shouldn't it be GENMASK(31, 16) ? If not then I think that macro
-> name is a little bit misleading
+On 2024/11/29 21:37, Dmitry Baryshkov wrote:
+> On Fri, 29 Nov 2024 at 11:56, Yongxing Mou <quic_yongmou@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 2024/11/27 21:46, Dmitry Baryshkov wrote:
+>>> On Wed, Nov 27, 2024 at 03:05:03PM +0800, Yongxing Mou wrote:
+>>>> Add Mobile Display Subsystem (MDSS) support for the QCS8300 platform.
+>>>
+>>> Please mention, why do you need it at all. I see that the UBWC swizzle
+>>> and HBB settings are different. Is this really the case? Is it because
+>>> of the different memory being used on those platforms?
+>>>
+>> Thanks, will modify the comment to add more information .QCS8300 UBWC
+>> setting is quite different with SA8775P,it use different memory,so their
+>> recommended configurations are not quite the same.this is really setting.
+> 
+> We had several cases where the platform should be using different HBB
+> if it uses different memory type. Is that the case here? If so, rather
+> than adding another compat entry please extend the msm_mdss to read
+> memory type and select HBB based on that. This will also fix several
+> TODO items in the driver.
+> 
+> As a side note, I see that your config has different ubwc_swizzle. If
+> that's actually different, then maybe you are right and there should
+> be a separate entry.
+> 
+yes,ubwc_swizzle is also different with sa8775p for there recommended 
+setting are different.
+>>>>
+>>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>>>> ---
+>>>>    drivers/gpu/drm/msm/msm_mdss.c | 11 +++++++++++
+>>>>    1 file changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
+>>>> index b7bd899ead44bf86998e7295bccb31a334fa6811..90d8fe469d3134ec73f386153509ac257d75930a 100644
+>>>> --- a/drivers/gpu/drm/msm/msm_mdss.c
+>>>> +++ b/drivers/gpu/drm/msm/msm_mdss.c
+>>>> @@ -568,6 +568,16 @@ static const struct msm_mdss_data qcm2290_data = {
+>>>>       .reg_bus_bw = 76800,
+>>>>    };
+>>>>
+>>>> +static const struct msm_mdss_data qcs8300_data = {
+>>>> +    .ubwc_enc_version = UBWC_4_0,
+>>>> +    .ubwc_dec_version = UBWC_4_0,
+>>>> +    .ubwc_swizzle = 6,
+>>>> +    .ubwc_static = 1,
+>>>> +    .highest_bank_bit = 3,
+>>>> +    .macrotile_mode = 1,
+>>>> +    .reg_bus_bw = 74000,
+>>>> +};
+>>>> +
+>>>>    static const struct msm_mdss_data sa8775p_data = {
+>>>>       .ubwc_enc_version = UBWC_4_0,
+>>>>       .ubwc_dec_version = UBWC_4_0,
+>>>> @@ -715,6 +725,7 @@ static const struct of_device_id mdss_dt_match[] = {
+>>>>       { .compatible = "qcom,mdss" },
+>>>>       { .compatible = "qcom,msm8998-mdss", .data = &msm8998_data },
+>>>>       { .compatible = "qcom,qcm2290-mdss", .data = &qcm2290_data },
+>>>> +    { .compatible = "qcom,qcs8300-mdss", .data = &qcs8300_data },
+>>>>       { .compatible = "qcom,sa8775p-mdss", .data = &sa8775p_data },
+>>>>       { .compatible = "qcom,sdm670-mdss", .data = &sdm670_data },
+>>>>       { .compatible = "qcom,sdm845-mdss", .data = &sdm845_data },
+>>>>
+>>>> --
+>>>> 2.34.1
+>>>>
+>>>
+>>
+> 
+> 
 
-Yes, the name may be a bit misleading...
-
-[...]
-
-> > + */
-> > +static int dp83td510_update_stats(struct phy_device *phydev)
-> > +{
-> > +	struct dp83td510_priv *priv =3D phydev->priv;
-> > +	u64 count;
-> > +	int ret;
-> > +
-> > +	/* DP83TD510E_PKT_STAT_1 to DP83TD510E_PKT_STAT_6 registers are clear=
-ed
-> > +	 * after reading them in a sequence. A reading of this register not in
-> > +	 * sequence will prevent them from being cleared.
-> > +	 */
-> > +	ret =3D phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_PKT_STAT_1);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	count =3D FIELD_GET(DP83TD510E_TX_PKT_CNT_15_0_MASK, ret);
-> > +
-> > +	ret =3D phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_PKT_STAT_2);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	count |=3D (u64)FIELD_GET(DP83TD510E_TX_PKT_CNT_31_16_MASK, ret) << 1=
-6;
->=20
-> Ah... here you do shift. I think it would be better to just define
->=20
-> #define DP83TD510E_TX_PKT_CNT_31_16_MASK	GENMASK(31, 16)
-
-No. This would not be the same.
-
-The current code takes the lower 16 bit of "ret" and shifts it left 16
-bits.
-
-As far as I understand the code DP83TD510E_PKT_STAT_1 contain the lower
-16 bits, while DP83TD510E_PKT_STAT_2 contain the upper 16 bits.
-
-DP83TD510E_PKT_STAT_1 gives 0x????aaaa
-DP83TD510E_PKT_STAT_2 gives 0x????bbbb
-
-count will be 0xbbbbaaaa
-
-This raises another question: Are these values latched?
-
-If not you can get funny results if DP83TD510E_PKT_STAT_1 rolls over. On
-unlatched MMIO busses you first read the upper part, then the lower,
-then the upper again and loop if the value of the upper part changed in
-between. Not sure how much overhead this means for the slow busses.
-
-Consult the doc of the chip if you can read both in one go and if the
-chip latches these values for that access mode.
-
-> instead of shifting, what do you think ?
-
-nope - If you don't want to shift, you can use a combination of
-FIELD_GET() (to extract the relevant 16 bits) and FIELD_PREP() to shift.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---huwtbf5ra3bpiqrd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdRa9MACgkQKDiiPnot
-vG9nNgf+JnQGbTtZczGIN42CtNQnPQcq46nWZz/ZEHcN4hOvqiglY29fCAPgZWIP
-9bgCBN+vIMNhpdRGxU5IXUCczQ8ydTLUdTRMZAhe9TCBB4T215IniLEGRo9f2+ip
-49ZhquMAFsA8zVzUQdKNVJZy2KruOTA7bpK1aoPaF7+i5crwnuy36ruKjOR1F7il
-OmiCqH2bkQH556J1wxYh/Dm4CX+jkoA//GMYPTeSDX2Prv5vWUdvumufnK3UnhBo
-bLVvf0mqMGqaATaP79mBKjZ+nLZGljElJGDJEDIJxGLZzrSy35IC6rxYwegN5Plt
-3jw1/Q7V32B7MyfAlsTisokhPQiGsg==
-=K6q3
------END PGP SIGNATURE-----
-
---huwtbf5ra3bpiqrd--
 
