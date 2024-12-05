@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-433012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ED09E52E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:48:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9729E52EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:49:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C39C728577D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:48:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFC801883D9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722AD1DB346;
-	Thu,  5 Dec 2024 10:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BD71DC04A;
+	Thu,  5 Dec 2024 10:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GZ+HBnpa"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PF9Y9Fod"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8597C1D88D7
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E374D1D7E35
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395727; cv=none; b=gLPTDGIX+LSYXkObWuwwsHvlxHPTddGiO4RUWJsoO3GLtNRi5+JSNS4UQ5LofkaWN5fpPy3PuYNQuRr+eZO9lWAS7mjwEauPGreB+dusbF3Z+v2mpemPYX09sYyetrBUpImLu6Rd7OuAy/rf2vAiW19laPEiggspTZ7J84roT6I=
+	t=1733395729; cv=none; b=YG0nkhyWXfSRcopKlcTDzlJhX8dGESPsweNp8Nlq2lqezedOjC4/y53M13Wyj6MjVgitjUafvdA2P90Bm/zP2V7TjeAbON2hlIn0oujX6hDcBN5+kRtkZKH4h3fLr/K3m3LIeAsCtZcUO2B3IAcaH6dgov11ZHvIOhUW3iwKOw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395727; c=relaxed/simple;
-	bh=MmgDZLSQtID9mT3Je11M6/sbF7asAJmRXqbPI1UO6rI=;
+	s=arc-20240116; t=1733395729; c=relaxed/simple;
+	bh=vzXQjICMuoPOyTM60OHH8vNdn2RJrSYEWLd6HwtWudw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MdTCsGL9UU5AB3kkGwEG6Ye6AaSFVTgtNsFyu3J2VbSLNdTLrZMmNRPljm1D5ij+yA0H7xVEnTHm+2rTAUqJQv6DEWooDaNWASAtF81/BO75Dg+O4TWYKdv3RwfEF6HQu3/jMmru6eD9AApYYrvYVgj3J1CAaZRv2NOIj894Z2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GZ+HBnpa; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version; b=Lz+Shr/gbGSPd3mxER5JNPsv0qIGnHt5+x3WkVWDNFYd9MUlAl36R8xZU2gmJLnPBGAeNsk/+7ybuYzK+W3r9ukJXYryWor/Dr0mYCrQ/z9sJBwoYSpK9v+MLMzjjyKdF0XbKyVZEjRUerlZ16qPao48mzkjO6HMfWpFggftoBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PF9Y9Fod; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385d987398cso98947f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:48:45 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385e5b43350so28330f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:48:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733395724; x=1734000524; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1733395726; x=1734000526; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tzuw/zLX0WQJcc9n8LmQ2bz/aCPLkYLRBmSSAzg1cgo=;
-        b=GZ+HBnpa4jJwfCeADhVf9huYax/jNmb80AIsTEwVDkdMLnWXpDQZwXET+vDrSvU8oq
-         5C6KVzEDgWhPqj4LKey6a26A5UPwwGhrKGuFaJKoMlNWFZ7QH4X5jzU1lES2crpftJuE
-         8NQv5VdT+Pv61RgIkNwyc89OOhin9ltZGaOsVb8ee8U/G7Z8uSTO2SgatJqvnNZbPAlA
-         M8B3qjnezDi9sUOrx/K2ugfkBeh4FD0u5w/wFplKL0GIBsaHudg9LnaCQUbERhzn2P29
-         vDlWE8Ha5IvWr6taG1V1SlAnSNRQDqK2V1LE1BJOFzGEMarZCKSSc6WAA4ZxKVA2Wkh5
-         VKiQ==
+        bh=C+AL33YYB9tp8ze1zSblC79yxMnHDSWw4amoRXEM9yc=;
+        b=PF9Y9FodSMHplDd4dMJgsLmdXjs2nlrRLm+vpS6E7r2D5KkoAiGABCLAosmOYUxdaZ
+         3a7uySBpeSANuYTVcQw+n6qiZQJN0eqnAo+1xoELRQXwAfeCiTlWOU+H036JoMdVaXAN
+         KIXNSuqgGQmL9CLmXLQyN2ZJtNEenxsbyUTy8PNCDaP9CrCtamBhWe5AN7yi1+V5MwkF
+         B3ftO9wiSe11VM9xD1pxp8lfWtft/ER72E+kn3Lkn2TY2wMCepH0GZiiqZUdSQUHB8NK
+         83+B58uk9q19lznSdEeWQ4nIaUKrudepDYfmNnXnlGW1kJbMG8I9/+PyspcIV0f0Z6dT
+         cZEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395724; x=1734000524;
+        d=1e100.net; s=20230601; t=1733395726; x=1734000526;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tzuw/zLX0WQJcc9n8LmQ2bz/aCPLkYLRBmSSAzg1cgo=;
-        b=i86ywCIS6c78y3yGAMNxpR5sl564I2iZjKbLsqbXHrN/iBjzGgo9AA2d32yUt7DqHT
-         LWDnwwCfa57DJ1GeMn7I1QRDJ5lq5yLB/VUysowIaPBo849klajMEIFYQUJnprLM0k2X
-         iZMrOQMEJDz3i0cUx8J00ZmV6Glq3oYOAyB+KuuiwJYe0jjbnGTlGuSPg4fV0+2ewrRN
-         52DTvHg75c1rynzv/9pJ4XgUlbSyDQ6rDDJfmEJhRC7ou0Qb/WR0jG72tZlIWe/Y+seG
-         lInA2lrIYeHC9uFwbC9rSWJeQvy3qDhkVwPO8awagrdd2cNcvnfk3gVTr2xjtJTnAM6v
-         BkTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWwsCe36cdnhEUkPNIpBkpOm0neR9abJRP/BWkWqsagQWQA6uc0kKWg/mc4+NSqqAvEWtqYSIfhStiids=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxKVsUMiYnAmZ5FhZoXW4ZdRV9xFIFDtd35SX25SE4wgUtyCAh
-	W/t+OziToTGp3B+9lDWMwVdyA4dq6GuSmXkMcyyGMinfDuFby1vK3WjTNui/mXA=
-X-Gm-Gg: ASbGncvw/DyqYuYcBbSkiMNfTaRn6nuY6iq/0cmt+j8CfN4M4loKNk+KIaeu9wGxgmU
-	LLr14LQUw4xHV7QbHAxqnxDOxO3j727gNASqoeyOCxENzn0opzI7P4NI0w8neLPMKB/0auDfaH4
-	3LkFMS2yz0M9H4JXf+2NpVRtyetMxlicmZpx6QZaGTXj4FCvNqIryUevWnoLjmA4NRzi/gi/81z
-	ImzAKYWVpJQPyRwXQFak5Tr7X8EdsowJMpFLMsF4WtwLYnmw5xtkxf1OHZ7isVl
-X-Google-Smtp-Source: AGHT+IGOivLgwrbcfAxI55SOIo7GYAysOTEQKhOrkf3R1BczYe6WFuJe7SnaKy0jMJc7mQC4v9gOSA==
-X-Received: by 2002:a5d:5988:0:b0:385:e30a:e0ee with SMTP id ffacd0b85a97d-385fd3f26c2mr3542670f8f.8.1733395723996;
-        Thu, 05 Dec 2024 02:48:43 -0800 (PST)
+        bh=C+AL33YYB9tp8ze1zSblC79yxMnHDSWw4amoRXEM9yc=;
+        b=pxDo++yrkDmmcaz0IeBicoL+SDRvL9peSz5vbK7wL6TpJvYuIuiD8wINFUG6EeWOyQ
+         170vKc02+dB6RoAI8hs4xQ2ezdV0kWeCvrgN2j1ikznQpUi2s8QICwciLUipCZf0H76z
+         rHn8Fskx9jPFhTW4k0/JTftCECmoe8p7PvMb73EK/xUJFH+fuWRUsO0YmT39U67zdlPX
+         /YAWDB0Iy72s7qGYYEA4iz9OCoO65mi0Phe77TEbL1K046PFHeqWpkXMVAqGx34fs6YA
+         L2fuoUNJw6f8L6JWTviqaPt3KWIJAAXMIwNCAxicXQYCx0EI8iA9xPP5Xg2vj7XjuLbg
+         vPFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAnpCJhjjU/4P6p0RhMYp9MPefBEP8EiWDc5kKYnUVWCIo0UlWj+UFtlc7P+WKV68M5IIuhqZkERFWs10=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySVaB/rHniIzGP0wCxCxxF4mv6E9qp2Uhsw3nX78kqZ6fci61r
+	EugG1fjnaxgoaGYfBGH3NLsHPtwXs0rq8zUlpu+/FAJCqAjoteZURQMQ6a4IT5w=
+X-Gm-Gg: ASbGncumaAH5PbdbmmzHl3KUIx4pYowIRgF40/fuTdq+Kp6SllO1nGxwq5bpOxd79ww
+	13M3qplnc8TzYyxAQwG+1i6a+tdr3QWJht8TppHc2nnKeNSL4d0SBBArfA8z50sn9Hd7ZLaudYk
+	Qq2AF6PdozDreqDXQP2Ayx66tDa9BdnwWQ2nzUQtDzDGrANT0Yxvox8UOj0bNGjm4QtQJ8VTq1k
+	TRr+gyrHjApk23BtODgFj5O1ZL3e2lLcX/ovcil7U3bPHBSVJUZp/66MUmMohYS
+X-Google-Smtp-Source: AGHT+IGZYAkOMvEL8MelgV6Xeu7o3AlbkP/lwHtkE2elo0pACurI3cxRhl7VprMICDBndNqUFWtCTg==
+X-Received: by 2002:a05:6000:1846:b0:385:e374:bee with SMTP id ffacd0b85a97d-385fd3c9b4cmr2918870f8f.4.1733395726268;
+        Thu, 05 Dec 2024 02:48:46 -0800 (PST)
 Received: from localhost.localdomain ([114.254.73.201])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef4600d14fsm1081629a91.45.2024.12.05.02.48.41
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef4600d14fsm1081629a91.45.2024.12.05.02.48.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 02:48:43 -0800 (PST)
+        Thu, 05 Dec 2024 02:48:45 -0800 (PST)
 From: Heming Zhao <heming.zhao@suse.com>
 To: joseph.qi@linux.alibaba.com,
 	ocfs2-devel@lists.linux.dev
 Cc: Heming Zhao <heming.zhao@suse.com>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2 1/2] ocfs2: Revert "ocfs2: fix the la space leak when unmounting an ocfs2 volume"
-Date: Thu,  5 Dec 2024 18:48:32 +0800
-Message-ID: <20241205104835.18223-2-heming.zhao@suse.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] ocfs2: fix the space leak in LA when releasing LA
+Date: Thu,  5 Dec 2024 18:48:33 +0800
+Message-ID: <20241205104835.18223-3-heming.zhao@suse.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241205104835.18223-1-heming.zhao@suse.com>
 References: <20241205104835.18223-1-heming.zhao@suse.com>
@@ -90,55 +89,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This reverts commit dfe6c5692fb5 ("ocfs2: fix the la space leak when
-unmounting an ocfs2 volume").
+Commit 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
+introduced an issue, the ocfs2_sync_local_to_main() ignores the last
+contiguous free bits, which causes an OCFS2 volume to lose the last free
+clusters of LA window during the release routine.
 
-In commit dfe6c5692fb5, the commit log "This bug has existed since the
-initial OCFS2 code." is wrong. The correct introduction commit is
-30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()").
+Please note, because commit dfe6c5692fb5 ("ocfs2: fix the la space leak
+when unmounting an ocfs2 volume") was reverted, this commit is a
+replacement fix for commit dfe6c5692fb5.
 
-The influence of commit dfe6c5692fb5 is that it provides a correct
-fix for the latest kernel. however, it shouldn't be pushed to stable
-branches. Let's use this commit to revert all branches that include
-dfe6c5692fb5 and use a new fix method to fix commit 30dd3478c3cd.
-
-Fixes: dfe6c5692fb5 ("ocfs2: fix the la space leak when unmounting an ocfs2 volume")
+Fixes: 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
 Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-Cc: <stable@vger.kernel.org>
+Suggested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 ---
- fs/ocfs2/localalloc.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+ fs/ocfs2/localalloc.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index 8ac42ea81a17..5df34561c551 100644
+index 5df34561c551..d1aa04a5af1b 100644
 --- a/fs/ocfs2/localalloc.c
 +++ b/fs/ocfs2/localalloc.c
-@@ -1002,25 +1002,6 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
+@@ -971,9 +971,9 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
+ 	start = count = 0;
+ 	left = le32_to_cpu(alloc->id1.bitmap1.i_total);
+ 
+-	while ((bit_off = ocfs2_find_next_zero_bit(bitmap, left, start)) <
+-	       left) {
+-		if (bit_off == start) {
++	while (1) {
++		bit_off = ocfs2_find_next_zero_bit(bitmap, left, start);
++		if ((bit_off < left) && (bit_off == start)) {
+ 			count++;
+ 			start++;
+ 			continue;
+@@ -998,6 +998,8 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
+ 			}
+ 		}
+ 
++		if (bit_off >= left)
++			break;
+ 		count = 1;
  		start = bit_off + 1;
  	}
- 
--	/* clear the contiguous bits until the end boundary */
--	if (count) {
--		blkno = la_start_blk +
--			ocfs2_clusters_to_blocks(osb->sb,
--					start - count);
--
--		trace_ocfs2_sync_local_to_main_free(
--				count, start - count,
--				(unsigned long long)la_start_blk,
--				(unsigned long long)blkno);
--
--		status = ocfs2_release_clusters(handle,
--				main_bm_inode,
--				main_bm_bh, blkno,
--				count);
--		if (status < 0)
--			mlog_errno(status);
--	}
--
- bail:
- 	if (status)
- 		mlog_errno(status);
 -- 
 2.43.0
 
