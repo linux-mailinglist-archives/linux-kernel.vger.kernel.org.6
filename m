@@ -1,135 +1,175 @@
-Return-Path: <linux-kernel+bounces-433119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188F39E540C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:35:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5571C9E540D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:35:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCD9928162D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9376167FE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEA01FBC9E;
-	Thu,  5 Dec 2024 11:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ED2202C30;
+	Thu,  5 Dec 2024 11:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="P5BD6y9O"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCP+vdC4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10621F541C;
-	Thu,  5 Dec 2024 11:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D591FAC34;
+	Thu,  5 Dec 2024 11:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733398507; cv=none; b=BRevZJzgy+OhYwGwhSSjkoWpb7Oew7Gnuoi4trXf0ob4UMKZNinpX4w6AcPewhVk7FJUTCyni+7+BH42iFj/CFWUdf0RmOE1rgGljYb23jd+rokxd0RhSYYXfh/sNTlh2d7Nb1CyvHbscWCm3nwbWxbcRWYatVeySbcjvC648nQ=
+	t=1733398529; cv=none; b=u4AG6fr068nrXnKLmmLcQyoyYcxIhIZD8ngwkVDTgWtD5cljl0qbD1PSMa9udKbieMayBMEZrbM8E4htXux/do2aJ7uLGM0tdkxYIjCmTYRqIQPIjS1hfi5w2UXiZlQzFwF0WSFHMZL9dHynkbtbG+eg043Bx/huQMOj3CYpvaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733398507; c=relaxed/simple;
-	bh=jx1QpmnWT+BvmW5j+2uyUoTHDLT73WQRHWfndk5Xs18=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fDScd3YkJRQJ3QV1OkK/xl4O0Dhq6yTO5cvq/HNPdOs2Mo312RosBF3WNKI/McTInEzWQVDTavdicXr+lofhPhme/Kn8OypYuVikZ5B5LDxMKrHTLeRKJqZbekvn/DvEPRj2ibrKInpidJTiZSfrB/ugC7gxaGD0l4vZ32qMEDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=P5BD6y9O; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B597xg0008313;
-	Thu, 5 Dec 2024 03:34:42 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	pfpt0220; bh=PyBiDkR+sGkaeC+WPOz41eBAz9Ruk1Y87rRuK8KNfsg=; b=P5B
-	D6y9Oea9Tb7g8r9AWBBILA3wY09JVV5qi2UNK/FQx9bvivnTR6zDreqxGFSjMLBg
-	H/Fc0uU7HasrodVVxpFndcMhxTPJ9SyvZvp5YsnlInD26qSYPUcDAHgA29TL50J1
-	7r4cRxXmVarTZa2FeZD7QL1w1RhafuadxzCMtQd+nHiQXCyeLWXuPnxtClePv36F
-	S8zt+tAKo/yrNj1F5duWfa4Jwt6CXzK5XiP4EHoDJcrchsSCfyrXqWzPoJgccU4B
-	dZTBK90dskx2VZ5+a+S0rE0bmHq8JW1HpvCl8KJwG7dqFtAkHJBV9SNusX0NeXTi
-	kVs2VgpOaBDZ6/Lrf7g==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 43b995r7uk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 03:34:41 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 5 Dec 2024 03:34:40 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 5 Dec 2024 03:34:40 -0800
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id DAA383F704A;
-	Thu,  5 Dec 2024 03:34:36 -0800 (PST)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <horms@kernel.org>, <andrew+netdev@lunn.ch>, <edumazet@google.com>,
-        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>
-Subject: [net v2 PATCH] octeontx2-af: Fix installation of PF multicast rule
-Date: Thu, 5 Dec 2024 17:04:35 +0530
-Message-ID: <20241205113435.10601-1-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1733398529; c=relaxed/simple;
+	bh=jvPCGrHqObr38SBHGilmOh0r7dHyawWF8/PKpw7i7wI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RiEhjIy+xxo57eo3RoHkhJJdidvh2l/eDDUD0lmqmB9WXb/Z6z4x3LloSWJsq8ZNmcZsiZu3e9IJmNQRdbj267mDZILUKUKAGk4Ta8VzuJpD5Mu9OdzjDNEUAZH5bE45+hDPFB2RwS5ksnHXV/xCI4QmckLNuC7Ws+Kl9YGdvdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCP+vdC4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 389CBC4CEDF;
+	Thu,  5 Dec 2024 11:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733398527;
+	bh=jvPCGrHqObr38SBHGilmOh0r7dHyawWF8/PKpw7i7wI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gCP+vdC4RQuVuKxQD/1sPzEN/A8BMURz+RF0p3pfcqGOPFfVe7jEgY0DGSRgKpEPt
+	 /x9xA+dyYuKs6zG7QfLFTzwok0IZclIwtb51WfiuHMN5lir1wwpbatqivgJTXzJOdL
+	 Aw/oN5m3q13qqW9eXIVBj5xphYKSMcnpezMJ3ILtHe2SNRqFDIRryQ48pEYHtZMcMz
+	 m/qeVKdl5YHw1UfdKosvc2nn6EGC8uYhG4GSKzwX8+bOBwO/8dsLiy7ooOu0ED/nCg
+	 z9rowWVy/sBf5Xl4WqIrNMrlvH6fNhoNdonGBPb/KfCGfOuauq33ZqVxZkrULBoZmQ
+	 D0yJhUW+S5lbg==
+Date: Thu, 5 Dec 2024 12:35:21 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jimmy Ostler <jtostler1@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Filipe Xavier <felipe_life@live.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: alloc: Add doctest for `ArrayLayout`
+Message-ID: <Z1GP-QPDFDjS6qLo@cassiopeiae>
+References: <20241205105627.992587-1-jtostler1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: iAo4c7KlL5sEesirEtwNwcHkjNfaPS3m
-X-Proofpoint-GUID: iAo4c7KlL5sEesirEtwNwcHkjNfaPS3m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
- definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205105627.992587-1-jtostler1@gmail.com>
 
-Due to target variable is being reassigned in npc_install_flow()
-function, PF multicast rules are not getting installed.
-This patch addresses the issue by fixing the "IF" condition
-checks when rules are installed by AF.
+Hi Jimmy,
 
-Fixes: 6c40ca957fe5 ("octeontx2-pf: Adds TC offload support").
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
----
+Thanks for the patch!
 
-v1-v2:
- -Restructured the code.
+On Thu, Dec 05, 2024 at 02:56:27AM -0800, Jimmy Ostler wrote:
+> Add a rustdoc example and Kunit test to the `ArrayLayout` struct's
+> `ArrayLayout::new()` function.
+> 
+> Add an implementation of `From<LayoutError> for Error` for the
+> `kernel::alloc::LayoutError`. This is necessary for the new test to
+> compile.
 
- .../ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Please split this into a separate patch.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-index da69e454662a..1b765045aa63 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-@@ -1452,23 +1452,21 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
- 	 * hence modify pcifunc accordingly.
- 	 */
- 
--	/* AF installing for a PF/VF */
--	if (!req->hdr.pcifunc)
-+	if (!req->hdr.pcifunc) {
-+		/* AF installing for a PF/VF */
- 		target = req->vf;
--
--	/* PF installing for its VF */
--	if (!from_vf && req->vf && !from_rep_dev) {
-+	} else if (!from_vf && req->vf && !from_rep_dev) {
-+		/* PF installing for its VF */
- 		target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
- 		pf_set_vfs_mac = req->default_rule &&
- 				(req->features & BIT_ULL(NPC_DMAC));
--	}
--
--	/* Representor device installing for a representee */
--	if (from_rep_dev && req->vf)
-+	} else if (from_rep_dev && req->vf) {
-+		/* Representor device installing for a representee */
- 		target = req->vf;
--	else
-+	} else {
- 		/* msg received from PF/VF */
- 		target = req->hdr.pcifunc;
-+	}
- 
- 	/* ignore chan_mask in case pf func is not AF, revisit later */
- 	if (!is_pffunc_af(req->hdr.pcifunc))
--- 
-2.25.1
+> 
+> Change the `From` implementation on `core::alloc::LayoutError` to avoid
+> collisions with `kernel::alloc::LayoutError`, and modify imports to
+> explicitly import `kernel::alloc::LayoutError` instead.
+> 
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1131
+> Signed-off-by: Jimmy Ostler <jtostler1@gmail.com>
+> ---
+> v1: https://lore.kernel.org/lkml/20241203051843.291729-1-jtostler1@gmail.com/T/#u
+> v1 -> v2 changes:
+> - Add third assert where length is smaller but still overflows
+> - Remove rustdoc markdown codeblock languge signifier
+> - Change tests to return results using `?` instead of panic
+> - Remove `#[derive(Debug)]` for `LayoutError`
+> - Add `From<LayoutError> for Error` implementation
+> ---
+>  rust/kernel/alloc/layout.rs | 19 +++++++++++++++++++
+>  rust/kernel/error.rs        | 13 ++++++++++---
+>  2 files changed, 29 insertions(+), 3 deletions(-)
+> 
+> diff --git a/rust/kernel/alloc/layout.rs b/rust/kernel/alloc/layout.rs
+> index 4b3cd7fdc816..0e053dcc7941 100644
+> --- a/rust/kernel/alloc/layout.rs
+> +++ b/rust/kernel/alloc/layout.rs
+> @@ -43,6 +43,25 @@ pub const fn empty() -> Self {
+>      /// # Errors
+>      ///
+>      /// When `len * size_of::<T>()` overflows or when `len * size_of::<T>() > isize::MAX`.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// # use kernel::alloc::layout::{ArrayLayout, LayoutError};
+> +    /// let layout = ArrayLayout::<i32>::new(15)?;
+> +    /// assert_eq!(layout.len(), 15);
+> +    ///
+> +    /// // Errors because `len * size_of::<T>()` overflows
+> +    /// let layout = ArrayLayout::<i32>::new(isize::MAX as usize);
+> +    /// assert!(layout.is_err());
+> +    ///
+> +    /// // Errors because `len * size_of::<i32>() > isize::MAX`,
+> +    /// // even though `len < isize::MAX`
+> +    /// let layout = ArrayLayout::<i32>::new(isize::MAX as usize / 2);
+> +    /// assert!(layout.is_err());
+> +    ///
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+>      pub const fn new(len: usize) -> Result<Self, LayoutError> {
+>          match len.checked_mul(core::mem::size_of::<T>()) {
+>              Some(size) if size <= ISIZE_MAX => {
+> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> index 52c502432447..ac8526140d7a 100644
+> --- a/rust/kernel/error.rs
+> +++ b/rust/kernel/error.rs
+> @@ -4,9 +4,10 @@
+>  //!
+>  //! C header: [`include/uapi/asm-generic/errno-base.h`](srctree/include/uapi/asm-generic/errno-base.h)
+>  
+> -use crate::{alloc::AllocError, str::CStr};
+> -
+> -use core::alloc::LayoutError;
+> +use crate::{
+> +    alloc::{layout::LayoutError, AllocError},
+> +    str::CStr,
+> +};
 
+I think this part of the change would be enough, since we don't make use of the
+`From` implementation of `core::alloc::LayoutError` anywhere.
+
+I think we can add it (again), once it's needed.
+
+>  
+>  use core::fmt;
+>  use core::num::NonZeroI32;
+> @@ -223,6 +224,12 @@ fn from(_: LayoutError) -> Error {
+>      }
+>  }
+>  
+> +impl From<core::alloc::LayoutError> for Error {
+> +    fn from(_: core::alloc::LayoutError) -> Error {
+> +        code::ENOMEM
+> +    }
+> +}
+> +
+>  impl From<core::fmt::Error> for Error {
+>      fn from(_: core::fmt::Error) -> Error {
+>          code::EINVAL
+> 
+> base-commit: 1dc707e647bc919834eff9636c8d00b78c782545
+> -- 
+> 2.47.1
+> 
 
