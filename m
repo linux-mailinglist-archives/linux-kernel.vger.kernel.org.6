@@ -1,152 +1,235 @@
-Return-Path: <linux-kernel+bounces-433984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23A29E5FD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:08:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45099E5FD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EA618823F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B971684ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA581CCB26;
-	Thu,  5 Dec 2024 21:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DFF1BE23F;
+	Thu,  5 Dec 2024 21:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="S3QFfenO"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kkVVTZA5"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2068.outbound.protection.outlook.com [40.107.241.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7921BC9E6;
-	Thu,  5 Dec 2024 21:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733432885; cv=none; b=SR2NXdbTkXZqfGyOhKKHPgYCbysWL2cEjjhTmgd+nBc7XpzCZKGc1Mi45Tx3Vybnt3vQUcBjTheoX7AT41FCAEWTXACKeHgAz+ZNUXAZsIi8n96rX4h2FM/sKJWKrTJdjj7ZVMFMs4kjMjvUQvZkcecKQn/gNjRYTWSgySi3Usc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733432885; c=relaxed/simple;
-	bh=tCUOmXVTpbr3ET1gv/NLvDF/lIGUV2cRX+9cn2TabeA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dTi+XOlOzwXR5HSUY+xJOZ3bQoXkrKHxfoC091YWdGKOHesVCoZdDrkKGu0kQdxGu5XmCl7dbAvvX94OyEygdWwiNXR6E/f+C6Ihc9oD6MBAk246oipPULe7FvuwlVTJwbclRW489/R9DfuFERq6IvjFZT7ce8kI94iOcUCHRik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=S3QFfenO; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5KSAa0025348;
-	Thu, 5 Dec 2024 21:07:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pps0720; bh=rQ/Sooz6gQjqta7E+P2ay5WmTnEqQNkXQ73GB
-	cBPjcU=; b=S3QFfenO2tlW7ZbEZkaqhSt3MZOD0F9/mprdGC1Z7ISf48jHEZvDe
-	/PTk05CPmiWYSLu/R1u4edDPWqCMQ51vNeujFJNWmYWjqq+SSDzm8OIuy9lFxEmS
-	mCftDd477jwgWr9/vpo2ThlPrsPOR68iu3teCnJBbRcde8rb3reGSss+c46iQLTX
-	hap+1vZJSjS7BobLP3NKKWpmnoKUOaMExsifU/oSTbKpHkcTyEQrsuNNCVlPWjmK
-	Sx2EoULH5ISFtEVdKsBxKfFmKf71JiVrH0eYWsqjOuMKPxK1Y88ot8mJqnv7OxRa
-	lEQnHF84oKOD1Sf0HlPXt4hxDxzjQxb3g==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 43bk82gaf0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 21:07:44 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 41186806B72;
-	Thu,  5 Dec 2024 21:07:42 +0000 (UTC)
-Received: from cat.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTP id 8448D80EA31;
-	Thu,  5 Dec 2024 21:07:41 +0000 (UTC)
-Received: by cat.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-	id 80903B4907; Thu,  5 Dec 2024 15:07:40 -0600 (CST)
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH v2] perf: Increase MAX_NR_CPUS to 4096
-Date: Thu,  5 Dec 2024 15:04:44 -0600
-Message-Id: <20241205210444.84894-1-kyle.meyer@hpe.com>
-X-Mailer: git-send-email 2.35.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFF71B412C;
+	Thu,  5 Dec 2024 21:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733432880; cv=fail; b=WvxpDPy0l2KnX8TJo0JfAcOLkM8wBc91QoSqIiZcVZjS9cUCjjBhJTlOXiEoBuzYcRus9ZdRBo21ZbdL/B3OCcOwLrcOsaRjxrtPhSqFZB6N1qbWlPT2BtavAYRcq1lE+9dk1cNr/aDY4tRBnyE0gZlAnPZYwaObWrJ6paOJHw8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733432880; c=relaxed/simple;
+	bh=HQe7kpJAU7L0+hiUTOpu033/mYHDHAjJsthKWEDAXG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dhB0jNeY0UNhRfVYKQdcxyqFr2B6LOJIH1xpnwnFzFqGd40/hClnUjKLoUE/h0XikYneVKbkps7CKawb6YyZD2CGojE8ST5H9AkYMISw6tK00G4b38ngBwZdoj8xWCg3jBeCbiLJZTiBZZPQ4ANN9HDyOIB0XpgoVhELw7qgK+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kkVVTZA5; arc=fail smtp.client-ip=40.107.241.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LIMymRAY0jS9bUbJDv3AIXGqAlMoNLzF/4p+nybzia9LfOl5XfCPM+HTDUv9rHkO6ZJKAmPlM82l9Z6ePehm4+gMcOUJ6QpTFZf5b/1Y5Xt1t8lo8Oc9ScCfGGqfL+tIcFGdqctSQqSLZr4NOxlBv8LZcEnphqqPgwYSYXNKdFEQzqp3734xi2GY6z6SkfEJ4MH+rs0PiWF5RB+ebMnQLSVLpTainFtywhQpOqQyChYdsWxhunSb7DbYeTM0VnDBJ4dEv3tQ9x4LrflewvoQA3XP5gU8w7pUPQsld81xFXFGftcLO99Q2iyuf/+Pm3ApVSS95OsPg7zW2vqh+wimCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cX9Fp3T/bHXaqQ+ENyiqPCZrUmaK1R0YaDrlF5QXQec=;
+ b=lPsZPryl4tSNV1TL/zsvaUT4lNg9oowwVP44AwXZiqScR3nDKQkDNB4FF6b7FphHKG4ftGBf8vzvp+j6sqVGrd1WwuFrzE47mAY+EUi6kmwZUHQ02FK9uAaegjCZCY/uOZQ+OtD863PPf0k5PDujOuI2d8c+ZZwcF/JoY8m+wshmuERauJThOIBVYvTlpt49BZFeak5KC8k6lQSp9qvGt0IUt3SmjSeLiCZccLl10zOVP/dooksdbgNSWJp0StF69MrkQSVgXdiLYHf/u7z0MNZBZ7+LrTEbj0qfHAJn/EYNw1jFTJtnB27rKKH9TYfXVwqvgsY4bU53uJYInWzLig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cX9Fp3T/bHXaqQ+ENyiqPCZrUmaK1R0YaDrlF5QXQec=;
+ b=kkVVTZA5LYNmdrfLkDH/ZCjinqhcOQZiou19ZFrlsjCPwbGmgMY6esVMVM3ENgqYqsrfv4n85iKB37mGRi0lyHJaZBYHBsNMH97uLasLqIpIug6qLX+eWmy5L/hrZDULodBUjWcoUW59mn5prVXh4jzzjwfQ845cEhFC8Bm7YCXV23qCivoJY+ixehtzox+EvH4I8G/k5cbML8m6pGcKpQzImUSjrtRBAfXHPPBJ1nrAayxLjnSrgrT8qpa1zqi6FSRmDbISQ72eGrBfn4HwC3Bnz97k6GFeDl8QMkM8B14SafuAV0fYnDHkUFHpilirG54GiHAlYSwqgUfn9EBhzA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS4PR04MB9410.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.18; Thu, 5 Dec
+ 2024 21:07:54 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
+ 21:07:54 +0000
+Date: Thu, 5 Dec 2024 16:07:44 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guido =?iso-8859-1?Q?G=FAnther?= <agx@sigxcpu.org>,
+	Robert Chiras <robert.chiras@nxp.com>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: display: nwl-dsi: Allow 'data-lanes'
+ property for port@1
+Message-ID: <Z1IWIFWQqvwCi1S+@lizhi-Precision-Tower-5810>
+References: <20241031194714.2398527-1-Frank.Li@nxp.com>
+ <20241104154059.GA203243-robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104154059.GA203243-robh@kernel.org>
+X-ClientProxiedBy: SJ0PR05CA0193.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::18) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: JiPcFjzpInRQd5PvI-m2IeWzsdkhMYbw
-X-Proofpoint-GUID: JiPcFjzpInRQd5PvI-m2IeWzsdkhMYbw
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- mlxscore=0 phishscore=0 clxscore=1011 suspectscore=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050157
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS4PR04MB9410:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f83e31e-913c-4ccc-93a9-08dd1570e27a
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|52116014|376014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?U2BmbMCFWEIQe8Fslbce39db204rszOMozAu2oKEeksJgc5iyXyRCCF438GX?=
+ =?us-ascii?Q?rbRyCUKM97FA1EdGnA/UQA81a7aOzJAjCCevXKnGKZ5wu2tlezy/1/OEj5SE?=
+ =?us-ascii?Q?Jr9a4CO7xiYOAEfDt2ej1cFl824MdAev0oXSyAUX4im9MSbDgOZzktZ8uGxt?=
+ =?us-ascii?Q?3U4Op5FlKcpf+lByWAz2VfjZrvYjFf88UVkLvKDl38hMetDHnS0fVYxbu9DE?=
+ =?us-ascii?Q?p/ppLeL9FKWe6Al/PyCVliRa+jZE6h96wCpGBhvAmQoXlML/acaJ9A5x2Z/h?=
+ =?us-ascii?Q?1/8CWsv/VvxyzjzCbehCBvUfze2aAHZOW0H9YzGLzo7tSUTH7Z2uSG3v51vb?=
+ =?us-ascii?Q?RjrC8ywv4l8kFiQhxADt7gWxHSHtcSNAivUgTOLxuYj7UqP/+C/nC/lJ4TrB?=
+ =?us-ascii?Q?vSDSsQHfory5IGU0qPbBdOvxhUOuS8EMq52FnuRHjd3RSVGIaAi6C8lIeJDX?=
+ =?us-ascii?Q?RKlUU0pmSn1J75ExcWfPcMqz5jlDEaygJvtNRT/6IxVucK7vz2futbfiGFUA?=
+ =?us-ascii?Q?atZkkqmFYKj6Ypg/U1vGzduo1eC3OnM4Vzg1xOlSgHecWg0DujzPgAC/yE51?=
+ =?us-ascii?Q?5P84lRel+KEznyZDvkOLqz7Q6q6Z1PqvicJsOAnFVTpj2ElpSHtAonhhEBbf?=
+ =?us-ascii?Q?xtn7pi5p+iwtKd+YG/tjyZsZOkRrCLDa0K4iLkaLb9b8KuxXsbvm3vUTpIUv?=
+ =?us-ascii?Q?hi7xvEAP5n9u1eK+faYp1js30Op+sAccwJbiRsFcGDrBeJ5FUjtrjSgZhmWC?=
+ =?us-ascii?Q?EoDdTHZhpq5gE04KzXI1SuyF9eE3Tu8vGlI0d4TpdrSGUeKf8YPQjnAGDcSq?=
+ =?us-ascii?Q?MvqqfPOC6AqAM2fF4nL1Yqj7N/Mpa77kCE58plru0YBfpTVvbDl6p2gU5AWn?=
+ =?us-ascii?Q?EgdNoSO51ANDOqevhfEowXkBajXO0rIyf/TG85N0/cCIn5QIxFMjR9C1Vo9K?=
+ =?us-ascii?Q?CQQE50m2T2yvzj4LUMpUORdwYB/kXfaOXhTLdiYmEa3Xx7dkNOg8w1WHYjqz?=
+ =?us-ascii?Q?KTjgBd9t3O6BKXnUGK25RfoSpIyWpwIyt+idT79RTbK+36ch4tisvPL8Rluy?=
+ =?us-ascii?Q?udh5W3PT4g7un7Zuim4aKN7pFI2mWJL/xvNDDYObcc1mfIVfawzyrWagva2x?=
+ =?us-ascii?Q?UAoi7YmbUC+1MnvyQv3jEg7g+PnAB3eCBPp/40XuYJwof/rgtodaesUXW65C?=
+ =?us-ascii?Q?XsYefRl1PCs9c8bHbj1N0J8meR2mrKTT3s0WOz/wKAEwOIohADNhn7aDmYh0?=
+ =?us-ascii?Q?GJZjbbI3tr5O4uDc9cexA6H4d1X3IO67J4K5if252oF0MOFMmVd97k/vdfi/?=
+ =?us-ascii?Q?FrvWrg7bzYsvC3z7l1tMU5VPaPHfqGtvD9srVlJQb2tzNNEk4uLnjn2DPoSO?=
+ =?us-ascii?Q?Lfg/bVRY11CFL8Jc+CmBhIzISYwFp1RmWFVlXuUtzrTxcLD+KA=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?deXHyoYAFN/cQiUAReo9W4VTQwWRBMm6woblSsn6iZGISRyJnm0oP/4isLd4?=
+ =?us-ascii?Q?Hhy7K+Avf5P1DAVAwcVNuZvnULlSYLsNo2Uez9U98TZx9RmcEtyGJ0dHtsoZ?=
+ =?us-ascii?Q?G8TI1VcL2EPvRIqfqq/eYxb8j5bKaxkSEWhuL+dBzdYwkZhuaKgAijpGHTDU?=
+ =?us-ascii?Q?C03afaVyd8m7j4Jq3sqOa1L0RFXQcluRr0qaq3Syvzh3f0k/wPJKE6Zdn3jA?=
+ =?us-ascii?Q?0Myqzg/VLzZXFhqNd6S++fMEKZsLx8ngOCeqQGTSmsICeoock/aTbF0ldUGZ?=
+ =?us-ascii?Q?6/6qGt/vBjzbfX8QvKLQDmet0B3gnnpYvPvke4sIQpvRMKXmIGwoy0NWfChq?=
+ =?us-ascii?Q?/l8Z4OkKgV1+/YLc9JX/5KaaQsB3K2ffRDB37vfxheTCqDYXWKgGKwxNuKm/?=
+ =?us-ascii?Q?94hV/soku2aMBpwl6TBbeieI3zAvSFpMmID4Ryu4Ed8MaE13TwO+MqKIoPw2?=
+ =?us-ascii?Q?lW5KCqYiclB/P9kYfizKf/k5TmHnviwcIZryUNZs9gKJHqSyM9ZuQNkEUAXN?=
+ =?us-ascii?Q?AFWx8WzGBFQJkclMdUsbWwHlLGNUga+EbUA/+QgC8KzIlbZ9sKGYR+ehkGR/?=
+ =?us-ascii?Q?XSoMDZRkGH39dcBqIxdk6eZXI2yFC35dctCfWaI6zUF/ohTUJRFniZF4jUs4?=
+ =?us-ascii?Q?kX+6JFr7x1dAflYsXMy+w+TC9Haf/OLVHO0Q+5OTCM7vjB90rvf8qkB0tV1c?=
+ =?us-ascii?Q?BMXs6O1HDq6aAOBOGcvOgMFwHpQpcqrQHJf6EHT2REMMBvQQnTd64qpdX25X?=
+ =?us-ascii?Q?37zTyUBSB5V3dAyb/tZtCW9h03QRrttcdO9G2Uy+mP/CkOCWhoAA/SkXEAdL?=
+ =?us-ascii?Q?vBgf56+RfPShHCpOAnCBwVNRerh3W1/DGVpb+VjZ7GVFV044U1ph3wuTC0P6?=
+ =?us-ascii?Q?Gq3Uf1ktcdFgBdXuusTb4Pwm6JzKhSLa4AyADboT58e7/5tM9dymyD2+xjMn?=
+ =?us-ascii?Q?5xz5ojemSEmqW2R2+L/x/o4isYQw8dZW0WvPqFPauS3fXQItlZbcQw0Zmsyv?=
+ =?us-ascii?Q?EX9D6MrcPAW7z8XdQNAxs8HBKzR5h16EZwnFl035KrvcrwBM7OXDKc/KpGAx?=
+ =?us-ascii?Q?sJBbiZvqtF6hk3iMJtc8siLMiwb7akqICk4WDnHlQMiBwJnHgb4rsgMSebEO?=
+ =?us-ascii?Q?sdPvcj8MQWh+xyIXDAPMLgddZZKGPV88yPq7m7KxTf1EKBqGoQYu4dluEles?=
+ =?us-ascii?Q?Vy1FTzXyHOvvhBNWoY2gjY1tCxtv2BuhF1ZA+i51hCKpdcKIxkur5x6ZxqU4?=
+ =?us-ascii?Q?Q2DuB2hqo++PgJDE/AIyrnCgOKML+A9508mg2q1KxRMx1TdXaCANJYDPjsXq?=
+ =?us-ascii?Q?yyNPnvyb6lx9ddX+AP9Vpmh2WL77wrNUZeHlVvtOigDuBGoGF1299w6LzM09?=
+ =?us-ascii?Q?SCVtfjkT8V5m4IEbzeGksp8oewKTe9pEgOLGnhE3IK4eLmdDMQsyF5syY0RA?=
+ =?us-ascii?Q?7nUsqdpiBQKJm1dcpH2faQb11BcI1+5IG0LrgLVMsqKJT06uCPIPUreC6xpu?=
+ =?us-ascii?Q?tl/v23IZBYl7R8LQvTQsa86PMOzn5kxBRdZfqZbd2zPwqqiB0gDWwxpbauq8?=
+ =?us-ascii?Q?qoqzHAbM+iMgSWEpouwl6V3BJBIpjgdMDj6DPzI3?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f83e31e-913c-4ccc-93a9-08dd1570e27a
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 21:07:54.2897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RrMeG6Z9w74BKNUnWthXMOscVvaD6NcBYPcCwse40EniTgV8ucQgi1mf3lCkz7Udzq+x18etVacGNXWNtNw7RA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9410
 
-Systems have surpassed 2048 CPUs. Increase MAX_NR_CPUS to 4096.
+On Mon, Nov 04, 2024 at 09:40:59AM -0600, Rob Herring wrote:
+> On Thu, Oct 31, 2024 at 03:47:14PM -0400, Frank Li wrote:
+> > Change $ref of port@1 from 'port' to 'port-base' and add 'endpoint'
+> > property referencing video-interfaces.yaml. Allow 'data-lanes' values
+> > 1, 2, 3, and 4 for port@1.
+>
+> Describe "why", not what the changes are. I can read the diff. Why is
+> the IP has a configurable number of lanes...
 
-Bitmaps declared with MAX_NR_CPUS bits will increase from 256B to 512B,
-cpus_runtime will increase from 81960B to 163880B, and max_entries will
-increase from 8192B to 16384B.
+How about
 
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
----
+"This controller support scalable data lanes from 1 to 4. Add the
+'data-lanes' property to configure the number of MIPI display panel lanes
+selected for boards."
 
-v1 -> v2:
-  * Increase MAX_NR_CPUS in tools/perf/util/bpf_skel/kwork_top.bpf.c, as
-    suggested by Ian Rogers.
-  * https://lore.kernel.org/all/20241205165118.153148-1-kyle.meyer@hpe.com/
+Frank
 
- tools/lib/perf/include/internal/cpumap.h | 2 +-
- tools/perf/perf.h                        | 2 +-
- tools/perf/util/bpf_skel/kwork_top.bpf.c | 4 +++-
- 3 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/include/internal/cpumap.h
-index 49649eb51ce4..3cf28522004e 100644
---- a/tools/lib/perf/include/internal/cpumap.h
-+++ b/tools/lib/perf/include/internal/cpumap.h
-@@ -22,7 +22,7 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
- };
- 
- #ifndef MAX_NR_CPUS
--#define MAX_NR_CPUS	2048
-+#define MAX_NR_CPUS	4096
- #endif
- 
- struct perf_cpu_map *perf_cpu_map__alloc(int nr_cpus);
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index c004dd4e65a3..3cb40965549f 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -3,7 +3,7 @@
- #define _PERF_PERF_H
- 
- #ifndef MAX_NR_CPUS
--#define MAX_NR_CPUS			2048
-+#define MAX_NR_CPUS			4096
- #endif
- 
- enum perf_affinity {
-diff --git a/tools/perf/util/bpf_skel/kwork_top.bpf.c b/tools/perf/util/bpf_skel/kwork_top.bpf.c
-index 594da91965a2..73e32e063030 100644
---- a/tools/perf/util/bpf_skel/kwork_top.bpf.c
-+++ b/tools/perf/util/bpf_skel/kwork_top.bpf.c
-@@ -18,7 +18,9 @@ enum kwork_class_type {
- };
- 
- #define MAX_ENTRIES     102400
--#define MAX_NR_CPUS     2048
-+#ifndef MAX_NR_CPUS
-+#define MAX_NR_CPUS     4096
-+#endif
- #define PF_KTHREAD      0x00200000
- #define MAX_COMMAND_LEN 16
- 
--- 
-2.35.3
-
+>
+> >
+> > Fix below CHECK_DTB warnings:
+> > arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx-lvds-tm070jvhg33.dtb:
+> >  dsi@30a00000: ports:port@1:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpected)
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  .../bindings/display/bridge/nwl-dsi.yaml       | 18 +++++++++++++++++-
+> >  1 file changed, 17 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
+> > index 350fb8f400f02..5952e6448ed47 100644
+> > --- a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
+> > +++ b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
+> > @@ -111,11 +111,27 @@ properties:
+> >          unevaluatedProperties: false
+> >
+> >        port@1:
+> > -        $ref: /schemas/graph.yaml#/properties/port
+> > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > +        unevaluatedProperties: false
+> >          description:
+> >            DSI output port node to the panel or the next bridge
+> >            in the chain
+> >
+> > +        properties:
+> > +          endpoint:
+> > +            $ref: /schemas/media/video-interfaces.yaml#
+> > +            unevaluatedProperties: false
+> > +
+> > +            properties:
+> > +              data-lanes:
+> > +                description: array of physical DSI data lane indexes.
+> > +                minItems: 1
+> > +                items:
+> > +                  - const: 1
+> > +                  - const: 2
+> > +                  - const: 3
+> > +                  - const: 4
+> > +
+> >      required:
+> >        - port@0
+> >        - port@1
+> > --
+> > 2.34.1
+> >
 
