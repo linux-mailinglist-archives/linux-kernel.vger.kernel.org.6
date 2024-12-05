@@ -1,141 +1,163 @@
-Return-Path: <linux-kernel+bounces-433848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4727C9E5DDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:02:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891939E5E62
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC79316D094
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:02:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569B5162587
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2770F226EFD;
-	Thu,  5 Dec 2024 18:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA53222B8D3;
+	Thu,  5 Dec 2024 18:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bK6pr/7o"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="mu08w1mU"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933AF227B9D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A94E221461;
+	Thu,  5 Dec 2024 18:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733421731; cv=none; b=UBtxUS4NifRUwsJOz3SXLDGvRBQ8/2pdwSVLZ3YrKowIsav/0nPZxhN4wyP/oOz0RJRZBw/v0PyfIRKzhG1GUuTsqMzhVaKw/3Qq7usVC426mVksdEGS9d4NvzFprEQAMWmYcl4q+sjndHo75oz3xFfOBpji93cW7ucImsBWE3k=
+	t=1733424256; cv=none; b=C5ESc6y1aZ49VFqCTCkz7VAhcPBnQeqmWQ21nW5wr76YxS0zAD0+2felkNToVPrAqJ42YzD9QBTRZjQCZQ9Wo/ATQ8cu3amsFXoNZHbRHk0yNP82oyrieJxdLvDRwkdIsn9q8Zn+T8J5tXLVdRYcwhREbnQ/b//msTGZyKXxfls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733421731; c=relaxed/simple;
-	bh=IUPkXPm8C/w63Brb8YlUvk50wh9QYwPKoutZ4V9uyMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sMytXwa/Rn4QSDFOUth4qM0idbKVYbT7/k7TfQIPtUVU9Tmjz+mRxwnVxneX5fdSww5DX1d2umoLewDzzUzTf2VMTwFWy8GhlW42HaM2/rzYVuOqVvC99NnBcZwa5oX3lg+ECo2j+IfVmdZqikfq+KzWm6eqtfEKA+enDAz8pj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bK6pr/7o; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so12516615e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 10:02:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733421727; x=1734026527; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0fwQWQ8p4fSiVsjGQYWImVyS0fCQtF0Xd9Qrli2C/FI=;
-        b=bK6pr/7o77tSMIAuzPNEQNk6I6ZlKh6qlR/HrC8JJqd5ByaPrRuuCrF4Jm6x72SWI5
-         YFuXgzHIoCtWYcz2itXPjFODig7WtCv1a1DYtiT89MGs/CGUPEXjjtISgIv22wkbvA/Z
-         k45MKjqh184LlNQdTwi1dSO3SXH4xyOrJVQWJQDzAkdisruHo74k16wqnkoh54kfsI3R
-         9cb57LUWhGeRPU5bYl8utRLhmb3ulRKKpkRNREMlqdKXdTYxc32w3CGZ0Mao228up2v/
-         Bjvlkfq6ge1WZSM7t+1W+pAUQ4KZlrnT/jRIuvH6eYrxEMyktNGIBLc3ycvm7Yybld+K
-         7eJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733421727; x=1734026527;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0fwQWQ8p4fSiVsjGQYWImVyS0fCQtF0Xd9Qrli2C/FI=;
-        b=BTEs8g36iaHW+r0cTlzSyFQafcvs7iLy8X16uNrcQfym086OXT37RBkKJvESrsd47U
-         TAbR4+KxK7Eyf4rzNLTiLF9m9a6+L7fpuapC9PO/5SO+VZh/f73Etk68nqMsglV+PQMA
-         zPXO0P8IUj+wFyh+/rewrGHTejQdwdY8rmgNWu2M/qnVHxzrlNJ9II6cFK6yP5MczZiM
-         8IdbLBlYIM0vWVfVwVyICJdg9F8qlEtxbEC08n2aPpOUmE3fO9dQckOF5fSzgVBTEKLE
-         ZpLIJb7GQiqmXXUCgqQHtqa35VNSqDuVMQIb65kXuEXhVXYl5rBObDOVRtwpoeD292dE
-         9Nzg==
-X-Gm-Message-State: AOJu0YzrQVM15upiUFO6zF9jivT+O/yPJBiJ0uCPx9sAYX0mrcZWpZ+z
-	82/t5oWrhN7vmGwmlZNc7B64CEA+H3402/fgV3vI7j6q2WsldvhoTBQDknmQ5DOEkPhHJx2gbIN
-	GIgA=
-X-Gm-Gg: ASbGnctPUxu2GLfoMDid71t227z22UDuWEkxQiPv9V53J11Qzi8vHSJn1VsaSn4Tydj
-	IWye9gEAil7UYPSfR1aJW+arLVD6acnbVb0w4j+fax2oK4SXIokR2r+E8AHGZoOSmqgtDkz49Cx
-	GgPM8X1QIINbxOinUM3wZ5ojlfqGnTW9EnvNaMp0KH5cxnj6QU8bPHQHz9KCbWw6MlP5fKMcdSd
-	lqhEY3uwk8ntyTqkemDNISpb9uBUIAb9agXTGeuGk6W+CRZh7xtajFIeYzc/qQdyJzII0Mj5faW
-	mAQeOGXl/kVheUyquVoAWyHXS8taAk2U
-X-Google-Smtp-Source: AGHT+IEF0Sy2Q+DDxTeCkIQlhde+ymelj1BdzVhOSZd3iGZysiBbmVwX72aWK/Yxm+/ZlbdpgcXp2g==
-X-Received: by 2002:a05:600c:5125:b0:42c:b5f1:44ff with SMTP id 5b1f17b1804b1-434dded663dmr2047465e9.24.1733421726692;
-        Thu, 05 Dec 2024 10:02:06 -0800 (PST)
-Received: from ta2.c.googlers.com.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386219098d3sm2618228f8f.70.2024.12.05.10.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 10:02:06 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	andre.draszik@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	peter.griffin@linaro.org,
-	javierm@redhat.com,
-	tzimmermann@suse.de,
-	daniel.lezcano@linaro.org,
-	vincent.guittot@linaro.org,
-	ulf.hansson@linaro.org,
-	arnd@arndb.de,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 4/4] arm64: defconfig: enable ACPM protocol and exynos mailbox
-Date: Thu,  5 Dec 2024 18:02:00 +0000
-Message-ID: <20241205180200.203146-5-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-In-Reply-To: <20241205180200.203146-1-tudor.ambarus@linaro.org>
-References: <20241205180200.203146-1-tudor.ambarus@linaro.org>
+	s=arc-20240116; t=1733424256; c=relaxed/simple;
+	bh=rhyRws2RvyWwmmlvymd4NvI6X/QYo5gUNBZJxdn0cr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jKEiypyrSfySoN5M+1qnBal+jlpNrWmc2Pwd/S2lXKoBLmB8i0diDEfgAw7eQXsCTEFNd0jcyRwbd9hToj0y6yP6DtoT7i0+6xywMKI/WehZMpcrTG5ylJ+0HO/ZtuCV6YBMRRQLN3Nm0DunlpT6wimY+iTKgwJWL5ofwK38NV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=mu08w1mU; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HhmRj017980;
+	Thu, 5 Dec 2024 18:02:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pps0720; bh=YE
+	A+a4VeBZqyZzyZ1JUkJu7XAw0Og0L1SG6vVFY10fs=; b=mu08w1mUyuJkNJWyGG
+	Shvl51kHQQF0MBCZQWbvqFaOwZv8FxyVGkSrws3SSLWO6dYMsegazV/H/WEnE7C1
+	IYXIVtRR5rtkVut3eFXFCJucyTPFC3g+ikNFqbVLr+iGotU3RUrg/y4F7677wLmU
+	gR8blKV4HlKsKTplQQmQj+zgBHKPfNi1v2B5NUjqsqEm4sORLbMnD9QXzcb0qWUj
+	pbQhwtyamoFFLrzYM3w2L/8UJT2KLs2utk3Jia6Nwo5KQSZl3DgRL5ONRNs1I1Tz
+	BIzx2BqUIh0KInDoO9yli1gK9mIu2AEbgyKYELluUZFJ6PIS7NAg4Q1d5R1yUioH
+	Kr/g==
+Received: from p1lg14880.it.hpe.com ([16.230.97.201])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 43bgtmr67p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 18:02:08 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 18E19801610;
+	Thu,  5 Dec 2024 18:02:08 +0000 (UTC)
+Received: from DESKTOP-V47QP3F. (unknown [16.231.227.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id E4AAA801092;
+	Thu,  5 Dec 2024 18:02:05 +0000 (UTC)
+Date: Thu, 5 Dec 2024 12:02:05 -0600
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: Ian Rogers <irogers@google.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: Increase MAX_NR_CPUS to 4096
+Message-ID: <Z1HqnTwKNvWucrEd@hpe.com>
+References: <20241205165118.153148-1-kyle.meyer@hpe.com>
+ <CAP-5=fXu2Ye22EAOp8jNEaVHmmNSx4gJXNL521ViH5x6w-bLBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXu2Ye22EAOp8jNEaVHmmNSx4gJXNL521ViH5x6w-bLBQ@mail.gmail.com>
+X-Proofpoint-GUID: xjQA8USmAoiHaT-vXbatMwMapcI6ijBd
+X-Proofpoint-ORIG-GUID: xjQA8USmAoiHaT-vXbatMwMapcI6ijBd
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 lowpriorityscore=0 spamscore=0
+ mlxscore=0 clxscore=1011 phishscore=0 bulkscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050131
 
-Enable the Samsung Exynos ACPM protocol and its transport layer, the
-exynos mailbox driver. Samsung exynos platforms implement ACPM to
-provide support for PMIC, clock frequency scaling, clock configuration
-and temperature sensors.
+On Thu, Dec 05, 2024 at 09:36:07AM -0800, Ian Rogers wrote:
+> On Thu, Dec 5, 2024 at 9:01 AM Kyle Meyer <kyle.meyer@hpe.com> wrote:
+> >
+> > Systems have surpassed 2048 CPUs. Increase MAX_NR_CPUS to 4096.
+> >
+> > Bitmaps declared with MAX_NR_CPUS bits will increase from 256B to 512B,
+> > and cpus_runtime will increase from 81960B to 163880B.
+> >
+> > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+> 
+> This is very interesting, thanks Kyle! Just noting, having the same
+> #define in many places is clearly error prone and there are other
+> redefinitions of this value:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/bpf_skel/kwork_top.bpf.c?h=perf-tools-next#n21
+> 
+> I wonder I can refactor `tools/lib/perf/cpumap.c` to get rid of that
+> constant as it is only used when parsing from a file/string.
+> 
+> Could the kwork developers perhaps look at their many uses? The other
+> uses in the tool may be removable too.
+> 
+> Wrt this change, perhaps bump
+> `tools/perf/util/bpf_skel/kwork_top.bpf.c` too and then we merge that
+> while trying to remove other uses.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Sure, that sounds good to me. I'll send a second version.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c62831e61586..91139b1cf813 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -262,6 +262,7 @@ CONFIG_IMX_SCU=y
- CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
- CONFIG_QCOM_QSEECOM=y
- CONFIG_QCOM_QSEECOM_UEFISECAPP=y
-+CONFIG_EXYNOS_ACPM_PROTOCOL=m
- CONFIG_GNSS=m
- CONFIG_GNSS_MTK_SERIAL=m
- CONFIG_MTD=y
-@@ -1378,6 +1379,7 @@ CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
- CONFIG_RENESAS_OSTM=y
- CONFIG_ARM_MHU=y
-+CONFIG_EXYNOS_MBOX=m
- CONFIG_IMX_MBOX=y
- CONFIG_OMAP2PLUS_MBOX=m
- CONFIG_PLATFORM_MHU=y
--- 
-2.47.0.338.g60cca15819-goog
+Thanks,
+Kyle Meyer
 
+> > ---
+> >
+> > Tested on a 32 socket Sapphire Rapids system with 3840 CPUs.
+> >
+> >  tools/lib/perf/include/internal/cpumap.h | 2 +-
+> >  tools/perf/perf.h                        | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/include/internal/cpumap.h
+> > index 49649eb51ce4..3cf28522004e 100644
+> > --- a/tools/lib/perf/include/internal/cpumap.h
+> > +++ b/tools/lib/perf/include/internal/cpumap.h
+> > @@ -22,7 +22,7 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
+> >  };
+> >
+> >  #ifndef MAX_NR_CPUS
+> > -#define MAX_NR_CPUS    2048
+> > +#define MAX_NR_CPUS    4096
+> >  #endif
+> >
+> >  struct perf_cpu_map *perf_cpu_map__alloc(int nr_cpus);
+> > diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+> > index c004dd4e65a3..3cb40965549f 100644
+> > --- a/tools/perf/perf.h
+> > +++ b/tools/perf/perf.h
+> > @@ -3,7 +3,7 @@
+> >  #define _PERF_PERF_H
+> >
+> >  #ifndef MAX_NR_CPUS
+> > -#define MAX_NR_CPUS                    2048
+> > +#define MAX_NR_CPUS                    4096
+> >  #endif
+> >
+> >  enum perf_affinity {
+> > --
+> > 2.47.1
+> >
 
