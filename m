@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-433066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA129E538B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 174239E53BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:24:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5EF169ADD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE9F16785F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5F61F03E7;
-	Thu,  5 Dec 2024 11:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC581F471E;
+	Thu,  5 Dec 2024 11:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iN2Guluy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTTGgsHA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566B31B0F1F;
-	Thu,  5 Dec 2024 11:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BF81E0E16;
+	Thu,  5 Dec 2024 11:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733397494; cv=none; b=Ps8g2zHhRW14cz3PyjcXTmO+tqajm3/KwiPxHWRi/3TatJNGO2fZ5dUtqDLzc64I9kI8pzhBSZzssDk6ctxiRS7XVaC9kRavAiwpB4mNQiwO97l2CZzHe74LMKu8rupFTYTOtM2L7vndnquaAHJ9O7EKidtTvQgfcK3bzOAr3DI=
+	t=1733397649; cv=none; b=oUbJCeEFGyC2dwsLAZdp6JINnezhsamqxdNSeO4sY7oJdQdYUW3wQye5+xhGOxOuyhWj66w/GryjfLKHb0xgDHeR7UTob1//6OtXpGZTHl0hF5av22Gw23U0xqfr2cmtIYcMNO+5QIOq77722R8Hu8Af3iZo7+KatQgF/lFdFu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733397494; c=relaxed/simple;
-	bh=03418Nmjp7L7uNRQ/VmAj+UPzNS51bahbk7mIDpWr7Q=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=d3AWyIHTyBV0V52sn30464gV3Xeho34CxYbHytWJB8m+cimMf1GaNShcB376c7KUHP9F9W5JxiAUjlMXu5G4jNzKgt26o1qFzm4nU+EqNaOfazhKplqXTu05e2PNnbAIY18c+Dmc08F8Jn+4uKgNrEttwZQVj3Ra+iuwbcj7alc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iN2Guluy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEAFC4CED1;
-	Thu,  5 Dec 2024 11:18:13 +0000 (UTC)
+	s=arc-20240116; t=1733397649; c=relaxed/simple;
+	bh=kShquW8D173tygDwcvyWix8E3OST3cSYanottycigGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ukYsOI8cYWZvy419TRKXKBPMze4Peap1aAmKaB0kR4cmJiSwnnrtIcY/Vj4MYxY/GdZhE0HG4ZeIOmXeegHYwip+qj5uY/npHjk4edL/WnVteAemxvrX/YZ2D7hzBXzwf2MEqI2ZXTxQ8OgnUnWxThhH17a/VhwWc3iaYhWlgsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTTGgsHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A81CFC4CED1;
+	Thu,  5 Dec 2024 11:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733397493;
-	bh=03418Nmjp7L7uNRQ/VmAj+UPzNS51bahbk7mIDpWr7Q=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=iN2GuluyByYZ/wLneFG9wJ5ByKuXB2FiMRkddeQp8mBIrvgrr9clb4Gh35KlxCuaZ
-	 FRBvZ95aXOkgVxS66s9CxGKYsNfkdExNH9J5l3/Hdg0mipMXKjp44wEV8Jiu9R0GVW
-	 iY6M5mejSUHPSjWzuX3e3evBzETE0tG1NfRYoFNr6M9JyLq2EHCUDzulqcXPs373UR
-	 Vc00/Xyl5bXBbRg0UFRJM8ooi3o4odpc8IhLzSzeOKhhtOVzfFjpQISzF73fUZ5zLw
-	 SYezLCysfB7ZfDH2NeHiKWcbS84LJo/YBrEjBoRea7gpcPhkYF1agyIjXNzZYepPQS
-	 aC6Pl4VmNV/IA==
-Date: Thu, 05 Dec 2024 05:18:12 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733397649;
+	bh=kShquW8D173tygDwcvyWix8E3OST3cSYanottycigGs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kTTGgsHAbzh3Xe5owtwUPIK8iGPD7RWdE3mZox/dCEdbM7mkFzqNjYiZkXaUizOor
+	 A7ywSV+6BbyjntXdy2Mj6BLBPx//DV//ryrGqRdKN4bGyVqYC7PY8LQTNnkSPTHnXf
+	 dKhyE3PCHTkqXRSukTXXDO8rlO1t46RZS5OBgZqLQ+y+wSm5uM3S3jDEzi77bF6KLi
+	 +5D2kBT3EW15FZsJjZtAvHEq9AcXK8AyUZUFvB/q5j0lIT7ZjW11xUrh/ds21KIo5w
+	 97DazKXF0HVGF6nSomE3DSXL3VdLys6Hdtp+4ymZucOGRHG2EWwDB8bej3Zs7BqSZM
+	 hUEK0wstxto1g==
+Message-ID: <e8d94128-ea41-4e72-83b4-9a6020aaca10@kernel.org>
+Date: Thu, 5 Dec 2024 11:20:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: quic_shuaz@quicinc.com, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-bluetooth@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, quic_jiaymao@quicinc.com, 
- Marcel Holtmann <marcel@holtmann.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, quic_zijuhu@quicinc.com, 
- Rocky Liao <quic_rjliao@quicinc.com>, devicetree@vger.kernel.org, 
- Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, quic_mohamull@quicinc.com, 
- linux-kernel@vger.kernel.org
-To: Cheng Jiang <quic_chejiang@quicinc.com>
-In-Reply-To: <20241205102213.1281865-2-quic_chejiang@quicinc.com>
-References: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
- <20241205102213.1281865-2-quic_chejiang@quicinc.com>
-Message-Id: <173339749198.2690453.6235486221062242906.robh@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: net: bluetooth: qca: Expand
- firmware-name property
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2] bpftool: Fix gen object segfault
+To: Rong Tao <rtoax@foxmail.com>, ast@kernel.org, daniel@iogearbox.net,
+ rongtao@cestc.cn
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ "open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <tencent_F62A51AFF6A38188D70664421F5934974008@qq.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <tencent_F62A51AFF6A38188D70664421F5934974008@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 05 Dec 2024 18:22:11 +0800, Cheng Jiang wrote:
-> Expand the firmware-name property to specify the names of NVM and
-> rampatch firmware to load. This update will support loading specific
-> firmware (nvm and rampatch) for certain chips, like the QCA6698
-> Bluetooth chip, which shares the same IP core as the WCN6855 but has
-> different RF components and RAM sizes, requiring new firmware files.
+On 05/12/2024 11:10, Rong Tao wrote:
+> From: Rong Tao <rongtao@cestc.cn>
 > 
-> We might use different connectivity boards on the same platform. For
-> example, QCA6698-based boards can support either a two-antenna or
-> three-antenna solution, both of which work on the sa8775p-ride platform.
-> Due to differences in connectivity boards and variations in RF
-> performance from different foundries, different NVM configurations are
-> used based on the board ID.
+> If the input file and output file are the same, the input file is cleared
+> due to opening, resulting in a NULL pointer access by libbpf.
 > 
-> So In firmware-name, if the NVM file has an extension, the NVM file will
-> be used. Otherwise, the system will first try the .bNN (board ID) file,
-> and if that fails, it will fall back to the .bin file.
+>     $ bpftool gen object prog.o prog.o
+>     libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
+>     Segmentation fault
 > 
-> Possible configurations:
-> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
-> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
-> firmware-name = "QCA6698/hpnv21.bin";
+>     (gdb) bt
+>     #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>     #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized out>, opts=<optimized out>) at linker.c:453
+>     #2  0x000000000040c235 in do_object ()
+>     #3  0x00000000004021d7 in main ()
+>     (gdb) frame 0
+>     #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>     1296		Elf64_Sym *sym = symtab->data->d_buf;
 > 
-> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> Signed-off-by: Rong Tao <rongtao@cestc.cn>
 > ---
->  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
->  1 file changed, 2 insertions(+)
+> v1: https://lore.kernel.org/lkml/tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com/
+> ---
+>  tools/bpf/bpftool/gen.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
+> diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
+> index 5a4d3240689e..506d205138db 100644
+> --- a/tools/bpf/bpftool/gen.c
+> +++ b/tools/bpf/bpftool/gen.c
+> @@ -1879,6 +1879,8 @@ static int do_object(int argc, char **argv)
+>  	struct bpf_linker *linker;
+>  	const char *output_file, *file;
+>  	int err = 0;
+> +	int argc_cpy = argc;
+> +	char **argv_cpy = argv;
 
-My bot found errors running 'make dt_binding_check' on your patch:
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml:106:5: [error] duplication of key "description" in mapping (key-duplicates)
+Oops sorry, argc_cpy and argv_cpy need to be initialised _after_ the
+call to GET_ARG() below, otherwise we always start comparing output_file
+with itself. Please test this code on your side, too :)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml:106:5: found duplicate key "description" with value "specify the name of rampatch firmware to load" (original value: "specify the name of nvm firmware to load")
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.example.dts'
-Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml:106:5: found duplicate key "description" with value "specify the name of rampatch firmware to load" (original value: "specify the name of nvm firmware to load")
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1506: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+pw-bot: cr
 
-doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241205102213.1281865-2-quic_chejiang@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+>  
+>  	if (!REQ_ARGS(2)) {
+>  		usage();
+> @@ -1887,6 +1889,14 @@ static int do_object(int argc, char **argv)
+>  
+>  	output_file = GET_ARG();
+>  
+> +	/* Ensure we don't overwrite any input file */
+> +	while (argc_cpy--) {
+> +		if (!strcmp(output_file, *argv_cpy++)) {
+> +			p_err("Input and output files cannot be the same");
+> +			goto out;
+> +		}
+> +	}
+> +
+>  	linker = bpf_linker__new(output_file, NULL);
+>  	if (!linker) {
+>  		p_err("failed to create BPF linker instance");
 
 
