@@ -1,159 +1,97 @@
-Return-Path: <linux-kernel+bounces-433709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948299E5C05
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:48:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2199E5C0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:49:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F32828F2C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A444D1887856
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA91238756;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE50238759;
 	Thu,  5 Dec 2024 16:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="k2bEv9n0"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="LJFRpxOh"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F376221C173;
-	Thu,  5 Dec 2024 16:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BDE224AFB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733417015; cv=none; b=YrD+1M+4Dqjd6n81Om40LpQlYU053kxUqY+LBm396BwQ78B+16C64iwzqz94JC+SpzVpi9BghcGLB95oZ++ngONmsRiukbvwqHGURkp/1ihsL+LNZuqbgDEj4oiZ6rJ36NrGB+aLxM1X3Os01IEB240XDS9VhOmWmffXl4ntges=
+	t=1733417014; cv=none; b=nz7wyHPzFdtNviUKBh0wlWA/QL4rT5IpyghTBaWPxVhlDPPD88RVzjF74XhWnMqN0NiSld/nkiS9OI68HHmAqvlMmH0RT9ItOGnQqr3CriaZCwgkUHdzBQi3BMBZnwfn/sevFxTZmssxw8cz09GOjWM3YIIJ46oJsr9tZTXKCsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733417015; c=relaxed/simple;
-	bh=oo5sW+MW4nkHExsWS/lMBTBrFs2o2QlXjU+7m1FUQTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCyiozfE5Q/9Kj9nLeKAsJiC8TDhRkmi03xEzwUWZLSLLbAHV9GFSCEcx5sUtNU/LtG0JazsXikTo9H9yzm6fsf2+1G6rySrTTjm/02JX/cXW92xWzV8Aw7ACPlkzLdIaAr6w1j4Ft+FLECbfFMjhEt9BwXGzEL1p7nAhUehsxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=k2bEv9n0; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CmjyrvnpPNwpDiDIROM0xyv/tcPaPUlc2In2NJ5co5A=; b=k2bEv9n0wBPLIU78/F7g50Cx7r
-	DBz85Y5fCgDKwAyLK6vSnWPRCpXkoUpGyUaHcL6LuL8xzRyRfuVpK4N/+sKHFjSKqk6qWQCNXljoR
-	2xsIEf/Jzc1FH3pCakKQNs73Qe6AQfrN4rBJgMaotnItza+9NFH0JAjMj6IJ/oMsP8icEuDya8scq
-	f8mFp/C97A3LReoe4eKXw+cZndWAYVcF+YlNj/WTbRGApvrSReVBcgzgsM1O1jg871QjfBQNy67lh
-	TGLLlEZsmkX/OdfpGATOOW6UEfH/a9yU/OnV14nJ1F98mR/DUPmX8XAfFZMv6iEFkx+lpr08V20tz
-	M2+MPcwQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59112)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tJEwo-00059f-1H;
-	Thu, 05 Dec 2024 16:43:26 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tJEwk-0006hf-2W;
-	Thu, 05 Dec 2024 16:43:22 +0000
-Date: Thu, 5 Dec 2024 16:43:22 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Furong Xu <0x1207@gmail.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unaligned DMA unmap for
- non-paged SKB data
-Message-ID: <Z1HYKh9eCwkYGlrA@shell.armlinux.org.uk>
-References: <20241205091830.3719609-1-0x1207@gmail.com>
+	s=arc-20240116; t=1733417014; c=relaxed/simple;
+	bh=AqQc5KyVBR3UCuZaACzhcUMOhUf+nWE6X6C1Uv6SlD8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=THjBb0jMZRqWynLUdWH8C6Hi2hbROYEHVHym5fUdSfwT8FxShlU+eWdU/O6hYOECdB8RgMPPr0eAQ9Ak+HJXjL+N6UDkqWzFgEE/4/uXgR9tZnyCt+yTXwGCeXWgSmtLLAhmoF/UV91R5J69XvBMHol9+iBzf3kjCIUVjEBhoSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=LJFRpxOh; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733417007;
+	bh=AqQc5KyVBR3UCuZaACzhcUMOhUf+nWE6X6C1Uv6SlD8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=LJFRpxOhrLTGqA3wuMsK7WdS3/2+a8PO2D+A+BEzFFInn4GhBiXPKvLfnKWo9m8cB
+	 Y743jtPGUpE0X6/5HAknxsQYaZejLe9TZ7OgLwonO+OV2Bwya5vVjNcBhY2mXKzyID
+	 Fi1n4PEUd71UhpHfv75TTL9oGSTXB/YCC3wY93Rk=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Thu, 05 Dec 2024 17:43:27 +0100
+Subject: [PATCH] MAINTAINERS: add include/linux/sysfs.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205091830.3719609-1-0x1207@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241205-sysfs-maintainers-v1-1-53694b690d67@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAC7YUWcC/x2MQQqAIBAAvyJ7TlCpqL4SHSzX2kMWbkQh/j3pM
+ Ic5zCRgjIQMg0gQ8SamIxTRlYBls2FFSa44GGVqbVQj+WXPcrcUrgJGls4r7DvbzlpbKN0Z0dP
+ zP8cp5w+fGB/0YwAAAA==
+X-Change-ID: 20241205-sysfs-maintainers-df0e98a6b11a
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733417007; l=768;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=AqQc5KyVBR3UCuZaACzhcUMOhUf+nWE6X6C1Uv6SlD8=;
+ b=Ip2cNESpWGf5dtKc4SyJ2/inayGMGiTVKCq+KpA8tDTJGAf44gdTlcE9Uh00uQ+Q4Ofepuq1R
+ inZo/mwpUPGA5UgLEl5PYZ2gR5GNO1tXGdg+kbvml+6/K1tI1w+uECF
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-I'm slightly disappointed to have my patch turned into a commit under
-someone else's authorship before I've had a chance to do that myself.
-Next time I won't send a patch out until I've done that.
+include/linux/sysfs.h is maintained as part of
+"DRIVER CORE, KOBJECT, DEBUGFS AND SYSFS.
 
-On Thu, Dec 05, 2024 at 05:18:30PM +0800, Furong Xu wrote:
-> Commit 66600fac7a98 ("net: stmmac: TSO: Fix unbalanced DMA map/unmap for
-> non-paged SKB data") assigns a wrong DMA buffer address that is added an
-> offset of proto_hdr_len to tx_q->tx_skbuff_dma[entry].buf on a certain
-> platform that the DMA AXI address width is configured to 40-bit/48-bit,
-> stmmac_tx_clean() will try to unmap this illegal DMA buffer address
-> and many crashes are reported: [1] [2].
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-This should mention that the DMA mapping API requires the cookie that is
-returned from dma_map_single() be passed in unaltered to
-dma_unmap_single(), and this driver does not do that when the DMA
-address width is greater than 32-bit.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e930c7a58b13d8bbe6bf133ba7b36aa24c2b5e0..59e60ce945f1d95a17b9b64bccdbc8eb1330952a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7029,6 +7029,7 @@ F:	include/linux/debugfs.h
+ F:	include/linux/fwnode.h
+ F:	include/linux/kobj*
+ F:	include/linux/property.h
++F:	include/linux/sysfs.h
+ F:	lib/kobj*
+ F:	rust/kernel/device.rs
+ 
 
-> 
-> This patch guarantees that DMA address is passed to stmmac_tx_clean()
-> unmodified and without offset.
-> 
-> [1] https://lore.kernel.org/all/d8112193-0386-4e14-b516-37c2d838171a@nvidia.com/
-> [2] https://lore.kernel.org/all/klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw/
-> 
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Reported-by: Thierry Reding <thierry.reding@gmail.com>
-> Suggested-by: Russell King (Oracle) <linux@armlinux.org.uk>
+---
+base-commit: feffde684ac29a3b7aec82d2df850fbdbdee55e4
+change-id: 20241205-sysfs-maintainers-df0e98a6b11a
 
-Please use rmk+kernel@armlinux.org.uk there.
-
-> Fixes: 66600fac7a98 ("net: stmmac: TSO: Fix unbalanced DMA map/unmap for non-paged SKB data")
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 9b262cdad60b..7227f8428b5e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -4192,8 +4192,8 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  	struct stmmac_txq_stats *txq_stats;
->  	struct stmmac_tx_queue *tx_q;
->  	u32 pay_len, mss, queue;
-> +	dma_addr_t tso_hdr, des;
->  	u8 proto_hdr_len, hdr;
-> -	dma_addr_t des;
->  	bool set_ic;
->  	int i;
->  
-> @@ -4279,6 +4279,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  			     DMA_TO_DEVICE);
->  	if (dma_mapping_error(priv->device, des))
->  		goto dma_map_err;
-> +	tso_hdr = des;
->  
->  	if (priv->dma_cap.addr64 <= 32) {
->  		first->des0 = cpu_to_le32(des);
-> @@ -4310,7 +4311,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  	 * this DMA buffer right after the DMA engine completely finishes the
->  	 * full buffer transmission.
->  	 */
-> -	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
-> +	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = tso_hdr;
->  	tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_headlen(skb);
->  	tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
->  	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
-> -- 
-> 2.34.1
-> 
-> 
-
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thomas Weißschuh <linux@weissschuh.net>
+
 
