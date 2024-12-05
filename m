@@ -1,210 +1,93 @@
-Return-Path: <linux-kernel+bounces-433250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939339E5597
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:35:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE2B9E5598
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:35:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CA4282A32
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEAC8164B43
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA19D217F3A;
-	Thu,  5 Dec 2024 12:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0DB2185B3;
+	Thu,  5 Dec 2024 12:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VouiHd6D"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="K1pz2Rxr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3C51D9A7E;
-	Thu,  5 Dec 2024 12:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27D1203718;
+	Thu,  5 Dec 2024 12:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733402117; cv=none; b=VjxpdXfGrHMb9lft9kv7tprmSnNZ/lJSgZz15Xj6gkgbIDolzOS4wRRc1mH1nV2dnpM63ylR64ZkLyZ0iHGmBnCl6AT1qEIaFokISAVzjrAweZlDfhD3xAF4+Xov31h8/0KKmiGdvZ2784H9KX+P88JF07C58SXWYhK+csHhciA=
+	t=1733402129; cv=none; b=FxuxZo+lEZg9bQqxcTx7/zJAhKUgtZ56xaUnxilK8cQRWGYg/IOh1GqX/WMhaThi/ZYOWD+gWc1LC9/y0zkCUZILky9Y8+BvTQlOLLYqSG/KjfJXz2IB7OgnJM+77PEdT1jwo/dTyVhc749aZegej7fkHKEsKed2vxVC0yswGtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733402117; c=relaxed/simple;
-	bh=zj6tJ578R9wh6dp3werHB9qDADY1T5Li+Nx+FU8aJw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TcTNIMxlWyf6lIsYSXIPxgpL09Gc+a3oBO2g/DrowzbBbYoFkbRmT+aRH4rIe0Y2LfKcqpInkM471Dg8XIyI0wW5uVYSlNozdxPwUEjJcFbO9rVt8zEAVoRrQdqCblMJPMsdAVqaBUI3OVKcFgakkRSESFyxUJX5trHu5pgy0nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VouiHd6D; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B592o98014509;
-	Thu, 5 Dec 2024 12:35:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=U2fIygBF4x6Pt+Rni7BztUXH/oPF
-	ROEK9PYbYqfJr3o=; b=VouiHd6DBxvn13XsWgBcqeoXQ1Tjhpc4CRcF8g/nx/i6
-	KCxsWIK5BpyXDb4ogNM8kWG5N+tXCjlfCcYFYJw8VRPrlRusHzIf9qnyayWWIQhT
-	R8VjUfJfjLpdS3jO9NeKCIVk5mDAPUH8xkF64baAHhVkJNanY9A97AVDnPMNkAwz
-	0qBc2lSLm5jJLpRhDU+LQE5YT/YC5xMZsweZaxCVod7bjkHoF50oqbLXJT9D4EBo
-	HoGeRDcvVkxMRLwVejbDrEdQgUC3cFZJiZgBfjT6rFtOBZudOQbyUwfJwPn7VAo0
-	JR//r5SD7KD6Ik0m0xDYIYQHaufGmFB7wsYjK+AEug==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxw9cf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 12:35:06 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B5CZ52q010806;
-	Thu, 5 Dec 2024 12:35:05 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxw9cc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 12:35:05 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BAT5j023634;
-	Thu, 5 Dec 2024 12:35:05 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1n8t5d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 12:35:04 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5CZ3rN20316524
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Dec 2024 12:35:03 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DAFDB20040;
-	Thu,  5 Dec 2024 12:35:02 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D504320049;
-	Thu,  5 Dec 2024 12:34:59 +0000 (GMT)
-Received: from li-c9696b4c-3419-11b2-a85c-f9edc3bf8a84.in.ibm.com (unknown [9.109.198.241])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Dec 2024 12:34:59 +0000 (GMT)
-From: Nilay Shroff <nilay@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Nilay Shroff <nilay@linux.ibm.com>, briannorris@chromium.org,
-        kees@kernel.org, nathan@kernel.org, yury.norov@gmail.com,
-        steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
-        linux-crypto@vger.kernel.org, linux@weissschuh.net, gjoyce@ibm.com
-Subject: [PATCHv2] cpumask: work around false-postive stringop-overread errors
-Date: Thu,  5 Dec 2024 18:04:09 +0530
-Message-ID: <20241205123413.309388-1-nilay@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733402129; c=relaxed/simple;
+	bh=sMA6Xych+cRnY38lt0wEi/0I/8ZE/i/cFqvtQMrF8SY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDJ9ZWwZLd8OgzIT4G3DS0uWUzRBdNislw6u723zUhv0XuSaREVfvrWGQMdLdpVmZRldo93lY+tmZ1i7eRs02Rq+6ecfhSNG4C+iT0Vaa014+mUn/OWKGHRV++q6P4p0xD5+rXgnWoyS2/fPQgsFG46K9pOoBa54XSC+9Us0H1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=K1pz2Rxr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85499C4CED1;
+	Thu,  5 Dec 2024 12:35:25 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="K1pz2Rxr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1733402124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sMA6Xych+cRnY38lt0wEi/0I/8ZE/i/cFqvtQMrF8SY=;
+	b=K1pz2Rxrrd/WpoVMeBb0VES7uL/oAWJCl+9N6IeSiR6iUKq00AJgFB/A2KcCAWyDxIm+Vi
+	TFY0/o7MuBBUE+z7Ied0NqLm4VdlUD4J01qjHlZIKp24PhraLE1i3SzDXC+9Fa0766Q0Wb
+	VQ3bQ06316UsklfmTSQASI/pmK2SC14=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3037247a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 5 Dec 2024 12:35:23 +0000 (UTC)
+Date: Thu, 5 Dec 2024 13:35:19 +0100
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Davide Ciminaghi <ciminaghi@gnudd.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	sultan@kerneltoast.com
+Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
+Message-ID: <Z1GdxrjBpn2Nu1vu@zx2c4.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-10-arnd@kernel.org>
+ <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com>
+ <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
+ <CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com>
+ <Z1FgxAWHKgyjOZIU@smile.fi.intel.com>
+ <74e8e9c6-8205-413a-97a4-aae32042c019@app.fastmail.com>
+ <Z1GLrISQEaXelzqu@smile.fi.intel.com>
+ <1f2ad273-f3a5-4d16-95a4-b8d960410917@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GcK8_Kxy7R5GmRzrur814ZPhoJ1XsabR
-X-Proofpoint-GUID: QSKJ51AB-5YuxaLZqJTASMV__SCsY58l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- mlxscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
- phishscore=0 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050090
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1f2ad273-f3a5-4d16-95a4-b8d960410917@app.fastmail.com>
 
-While building the powerpc code using gcc 13, I came across following
-errors generated for kernel/padata.c file:
+On Thu, Dec 05, 2024 at 12:58:22PM +0100, Arnd Bergmann wrote:
+> As I said earlier, I don't think we should offer the 'native'
+> option for 32-bit targets at all. For 64-bit, we either decide
+> it's a user error to enable -march=native, or change it to
+> -mtune=native to avoid the problem.
 
-  CC      kernel/padata.o
-In file included from ./include/linux/string.h:390,
-                 from ./arch/powerpc/include/asm/paca.h:16,
-                 from ./arch/powerpc/include/asm/current.h:13,
-                 from ./include/linux/thread_info.h:23,
-                 from ./include/asm-generic/preempt.h:5,
-                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
-                 from ./include/linux/preempt.h:79,
-                 from ./include/linux/spinlock.h:56,
-                 from ./include/linux/swait.h:7,
-                 from ./include/linux/completion.h:12,
-                 from kernel/padata.c:14:
-In function ‘bitmap_copy’,
-    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-  633 |         __underlying_##op(p, q, __fortify_size);                        \
-      |         ^~~~~~~~~~~~~
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-      |                          ^~~~~~~~~~~~~~~~~~~~
-./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-  259 |                 memcpy(dst, src, len);
-      |                 ^~~~~~
-kernel/padata.c: In function ‘__padata_set_cpumasks’:
-kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-  713 |                                  cpumask_var_t pcpumask,
-      |                                  ~~~~~~~~~~~~~~^~~~~~~~
-In function ‘bitmap_copy’,
-    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-  633 |         __underlying_##op(p, q, __fortify_size);                        \
-      |         ^~~~~~~~~~~~~
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-      |                          ^~~~~~~~~~~~~~~~~~~~
-./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-  259 |                 memcpy(dst, src, len);
-      |                 ^~~~~~
-kernel/padata.c: In function ‘__padata_set_cpumasks’:
-kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-  713 |                                  cpumask_var_t pcpumask,
-      |                                  ~~~~~~~~~~~~~~^~~~~~~~
+I've been building my laptop's kernel with -march=native for years, and
+I'd be happy if this capability were upstream.
 
-Apparently, above errors only manifests with GCC 13.x and config option
-CONFIG_FORTIFY_SOURCE. Furthermore, if I use gcc 11.x or gcc 12.x then I
-don't encounter above errors. Prima facie, these errors appear to be false-
-positive. Brian informed me that currently some efforts are underway by
-GCC developers to emit more verbose information when GCC detects string
-overflow errors and that might help to further narrow down the root cause
-of this error. So for now, silence these errors using -Wno-stringop-
-overread gcc option while building kernel/padata.c file until we find the
-root cause.
-
-Link: https://lore.kernel.org/all/7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com/
-Cc: briannorris@chromium.org
-Cc: kees@kernel.org
-Cc: nathan@kernel.org
-Cc: yury.norov@gmail.com
-Cc: steffen.klassert@secunet.com
-Cc: daniel.m.jordan@oracle.com
-Cc: linux-crypto@vger.kernel.org
-Cc: linux@weissschuh.net
-Cc: gjoyce@ibm.com
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
----
-Changes from v1:
-    - Fix spell error in the commit message (Brian Norris)
-    - Add commentary around change to note that changes are needed to
-      avoid false positive on gcc 13+ (Brian Norris)
-    - Add the kerenl/padata.c file maintainers (Brian Norris)     
----
-
- kernel/Makefile | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 87866b037fbe..03242d8870c7 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -120,6 +120,10 @@ obj-$(CONFIG_CFI_CLANG) += cfi.o
- obj-$(CONFIG_PERF_EVENTS) += events/
- 
- obj-$(CONFIG_USER_RETURN_NOTIFIER) += user-return-notifier.o
-+
-+# Silence the false positive stringop-overread errors on GCC 13+
-+CFLAGS_padata.o += $(call cc-disable-warning, stringop-overread)
-+
- obj-$(CONFIG_PADATA) += padata.o
- obj-$(CONFIG_JUMP_LABEL) += jump_label.o
- obj-$(CONFIG_CONTEXT_TRACKING) += context_tracking.o
--- 
-2.45.2
-
+Jason
 
