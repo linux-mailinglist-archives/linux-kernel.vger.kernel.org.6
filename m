@@ -1,221 +1,166 @@
-Return-Path: <linux-kernel+bounces-433673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E799E5B7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:31:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F1F9E5B7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:32:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5DD28657D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 521E1168A90
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BC61CD2B;
-	Thu,  5 Dec 2024 16:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F3C1D4332;
+	Thu,  5 Dec 2024 16:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Pi0bGds9"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2071.outbound.protection.outlook.com [40.92.21.71])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CjfHJBMF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E1914A8B;
-	Thu,  5 Dec 2024 16:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733416298; cv=fail; b=G5SefSjlbGZc1lQSBqmvp86BUT8tRIME8zBoPzi69v9Yvrur1OIYHI8S/lIrKbwVNUNnXduGqaNqmmcMuDOZxSXhg5vRa8vJ5WiK0Br8egdHXrOohTOhBYz/GQu0PNyVnsRw+35ala5PqfuZuKgxTRsS5QdpgRoobROtWQBT4ek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733416298; c=relaxed/simple;
-	bh=0Wii6W9kmDPQAW1oqeueJ6hSApEBouwZePjNEeYBRYo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DwY9ZweyxdUk8tHgVuZACjgtL///MKy8k7RWaAo2M+xnKj1/qdC2hAA7TG2Zg6uHtoDx4rA7ruzRoA6kdyZgFru3401dykRNjGFugF31HP9jrWqOV9l219sPyRgvViTBVn8pA9UYKDo1Ys/24740deUWr/G4Epoi9iPZCl3E1q8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Pi0bGds9; arc=fail smtp.client-ip=40.92.21.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=racGtdZgLYlDWe16GE1ftplA1R7NafFnpcU8UyRgBx9sFUishvftem2yMQSyUb53IpTuUv0nzxQ0O8wv8wpXF1ReOlZBsGLs5HaPAM68ehALd84J2D4SiU2rPblmaBlNKlJvGKyirEFmHuoeMUD5tF1SOq+IJi5Lm7VbM68sSYUCftIDTdLQZBawtV3A7hYyDCT5RexwhPM3mR1+Rfb3XLczU+UZtIuKsMCb+hw0jL83BkygU296hmh9vhOgPbt92fSHpsZBoFAr3VrNqJjZ3L8Kc42yaawjvAMXV20SfTRQYNCXvIlwScWtd+QIWlq8vkqWsIFY5wZioj/LlPLU5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=71G4DtRffbtKIMCwkj09Hibh2u3dRKdqbwTlUwANpKE=;
- b=GQO+qZoA+Ri983b5ild71u1CxJ+p4/JqooOQFyHbD85K6XHbbPegYs5nvRcDJQdTCHI9WwL3cKdlLHfDGqZtI3WbzlvBDSbkV5QwtudHwlMhFIqPRAKAsDCJfVduCiwGpvmfmoHV7KURrIzaO9jOygOaYmNjWx2y9Z97Bl9ZSJYGxfXTOBAH4W0Y80DduhlwhQllMz6iUpEjE/umYgKhNqfIIkylfusfooSKqiJqWKVPWZktnMH7m1PlF5rTOtOxaBk2nHPnuIE6fRuD0gF/w7IwSfWT3CmKolXVtVfPMozsEUGnoizk8+zpD6UaiZqUxtgZC5wCY3p3jKGD+oTAIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=71G4DtRffbtKIMCwkj09Hibh2u3dRKdqbwTlUwANpKE=;
- b=Pi0bGds9UcdoP85ZjmdzeQJmc9GbSUSMBEfXXGU4OLyNPeX7JOzCB8Mgt83ug7bxqn7XtWA3b9ESkQ40ccRC8iJAUAefFy5PrBzYUEPgGcJSvYNzLdoYBwYOpwrVCxB0pqCZL1Sn0Q754XDHUmkRRYXX4eleXSOuwpvMaCRUaoXBN7y0K8LvLUwWNA2nU6LNz94qKDfedxD9dFNQckPA41kYnKayuGsX7EBVoy4cnbziIGrQi7t5epOxPkg+Nq0+P54DWnUmDTvp0HyRXo4U8zBCfHieukD2GbH44GtkLjW1ffIhtOHJxVo4m6PBYQFK9xJA9zzDUKsetdzH7mHcgQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DM4PR02MB8982.namprd02.prod.outlook.com (2603:10b6:8:8a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Thu, 5 Dec
- 2024 16:31:33 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%7]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
- 16:31:33 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Starks
-	<jostarks@microsoft.com>, "jacob.pan@linux.microsoft.com"
-	<jacob.pan@linux.microsoft.com>, Easwar Hariharan
-	<eahariha@linux.microsoft.com>, Saurabh Singh Sengar
-	<ssengar@linux.microsoft.com>
-Subject: RE: [PATCH v3 2/2] Drivers: hv: vmbus: Log on missing offers if any
-Thread-Topic: [PATCH v3 2/2] Drivers: hv: vmbus: Log on missing offers if any
-Thread-Index: AQHbNaigs0+AhVSZKE2uEMRTuVGAgbLX+rIg
-Date: Thu, 5 Dec 2024 16:31:32 +0000
-Message-ID:
- <SN6PR02MB41579D449B5AEBD4E29F86ACD4302@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20241113084700.2940-1-namjain@linux.microsoft.com>
- <20241113084700.2940-3-namjain@linux.microsoft.com>
-In-Reply-To: <20241113084700.2940-3-namjain@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DM4PR02MB8982:EE_
-x-ms-office365-filtering-correlation-id: 3397885c-573c-4051-cf3c-08dd154a4798
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599003|461199028|8060799006|19110799003|15080799006|440099028|3412199025|102099032|56899033;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?Qo2cPvPaxjFYMdZHBp+TByJK/KK47kj5yhDOJVSZrzhQTSQH7cbp85fdD5Zs?=
- =?us-ascii?Q?H0DqJCanBQInlmgvtnj47OWrC4PBNicBLsLSKHi9wn1BbHNWuD96OxXGk+IP?=
- =?us-ascii?Q?8YE2g43u6uaHyTU0DHOal6g44WdJ7XLdJpb9niTLcZcDPFFY18ZTV7GDh4yl?=
- =?us-ascii?Q?d4izCmOhIfRZVSApv1a+XeJpkGT08m1SR6eM+HswZOq6Gj0IqhVLTnJjfPpi?=
- =?us-ascii?Q?tqf7cbQGE9No32hf1yJF7gL74M0o9bLYdPv4eJ7LW+zUVWrcsU7yuwWqtpFP?=
- =?us-ascii?Q?/7GVuwWlJFbmvPhWoSGM0IHSyCSS0V1PYnYEb+o251CL4TSPo6n+eDc0i7o0?=
- =?us-ascii?Q?mfPiIcdkd87SLibEDEwzwAJzYmMdhlbNn2NokDiUk3Y3fJfJbQpfrhuupNVW?=
- =?us-ascii?Q?6MJyV/JpjcH+WRPTNlfOndReFte3ba7vZjjpZu3zl2fqkGuWGBLpxxO3oXLU?=
- =?us-ascii?Q?9T8sgpMQIFfzuk3BvuFcCpN1wn2JaLzMG6eUqfCpUTGEcZ9ytBsxG0rcpA+L?=
- =?us-ascii?Q?2mMqZnKDemJHybP4R/WpXT8c6b4ypRO+hmEVtLliEHoWvLy8b4DTP9h1UNq9?=
- =?us-ascii?Q?oa8ryaw2IrNM8GZ3tKMxajIC0EliZYFEoxmdrIvTLedkAWAKu0Sw3TlTNCrx?=
- =?us-ascii?Q?Nr7RdG/ef24paQveCRIS2tSKhcBgSr2qU9ElmvJYW9M8ysdfAUt7ClASoJKC?=
- =?us-ascii?Q?m5P8fObc2p5dpf0qA1DqLsPQBLqv4hwSgbQh00lGnjhxI9QM+i2Ws9kWd5eR?=
- =?us-ascii?Q?8CK9Tkj/Slro+giPW9WEEF1TARhNfvVazBPdw/Qg1iJzhWiTkuABZ+I00/pW?=
- =?us-ascii?Q?0knncCpKeL02YFbB+iKbqAg2IuMr6Mv8C6cU4B7YZsI8nY/Ol9umTWuw2b5b?=
- =?us-ascii?Q?p7RS1DWXaCOyx9MB1fwnyPUYb9jCSt0LCXM+YwpXfTHH7qrayxKJ37warnMg?=
- =?us-ascii?Q?8rUAEeqReliO0YjoS7ItYZbKcSa43x9If4+WToejLHJDmlE1sTJAcL5SkRXP?=
- =?us-ascii?Q?hKMG?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?zlhYJHkb9j3f4UcE2wftFqKt4RdtLrri1GnwZ3RlIXoG6wpGFOe3ZZ63U1ki?=
- =?us-ascii?Q?OHyCWGZy/z2TjaWkE0ogM2fyMqr0zt9gno2nZOl12EncN8RaOxEhx6SbPfjF?=
- =?us-ascii?Q?oQgzEgtrl+zVNVtN7rLEEXamDSNMGhAm5qZw9fBIYZMfesac8Zy0+3G+FXFQ?=
- =?us-ascii?Q?rsL5iiLbEp1CNOw6oZjfcrtebFt5vrPv7IQEAbnFU6BqNyIYy6eOAnAHxq30?=
- =?us-ascii?Q?ha4lwuSh27c+R+WisrrFBzs59cXP4qxw0P1g3dhtXPts2qt59CcCvYr840/Z?=
- =?us-ascii?Q?wxRE6TjCtYV3grHh1vRoeIPfs4/UzOQWL+K2wJerY8CQ7+QfKZGPExG0ulcq?=
- =?us-ascii?Q?paRnZtb4ipo6oRxaOGx49RkSHrsrs3tTyQaJ7+Q8Fntb4YxjF0c6J4FMON4W?=
- =?us-ascii?Q?KA4msbV3UbTpFsUq83fxtt31nr2gHAnwmugsD6EwLZ40Ydk/ApPYDTulHj1z?=
- =?us-ascii?Q?rf9+sXVCfrO3JS6WM+HJWsu9Xl/Tmvpc1g3C+ELCF2JSoiOSh7sfabCitcR2?=
- =?us-ascii?Q?LiS/uyxpryvCjgHtkpFgioh0DwRGxX4FmrOoJXnX55sM9ufj5ALdKdRX8Fle?=
- =?us-ascii?Q?YuFLkiSx76cS/LiyLRGwuTM61EqV/9FuilOULqWXdJt12sSxfDF19ux/s7M9?=
- =?us-ascii?Q?3NjvYieSKTNHUaQICF2rWvWYb+HbLtCyXqXfspy/Zxh6ImLH5F97bQA7eDFJ?=
- =?us-ascii?Q?xquU/0D1iE/L+E7cOMoyfxWnKb7N/u0McWIrzMv6WXWhPaF8JwSK2ltkyTzx?=
- =?us-ascii?Q?SPKk1zEMqdeuSbuMuYD/y0MNRgMn0zXhj2zhKKdZ8DB8Pl6gswRpsb6K6iMC?=
- =?us-ascii?Q?b+1PeERh2GwPjOxLcoCU23P/+cWhw1xhjfbswMOkhDYvQS/LeTaMD9NL0ggK?=
- =?us-ascii?Q?VEBRpBl8MC5KUCgHBKObXvOZvPuKCg8p0jjPLgmA/tm6u8qYeF3Ssj8gBIkv?=
- =?us-ascii?Q?/5BBq5iobXU5cTDp0khEDnaj5BIf4vqGpCoC5qLV2gPIFNxKOZ8zeYjA/DHK?=
- =?us-ascii?Q?ggy+gad9SGtaczVf9l9SW10WcJd1EvkYLeDZ3AenQHhVdmQZnZuVRV2rCeNk?=
- =?us-ascii?Q?LBwCE86QZwX3UM0GYOUGRRIp+oQEoPSJMqkLjJ6KVRqQRhzDMcWD0KUR8kss?=
- =?us-ascii?Q?4TdepZncydne2WS12dP0kdDs6lzTi5EsmUjeV4jFvTQEycxvm4MD449qy857?=
- =?us-ascii?Q?v3w8I1fjUMf7X3BE7hOgVX8E3yooHtT4TUt53CB0U2mHiVwA+g0ekiNZYsY?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690ED14A8B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733416309; cv=none; b=ivBf/8LHrjzadVOYeqF3xXyR4EQPwMMzNL7LN/E+wJmVKaKPIzVQG6f0QbjQRRBvy5lTG64J3cbCItS2lKlyIvmjyKbPVu3ozA7RfPcpwz0bzkG2KJ6Gn5C34p9mmpXoD4thyXaqy28xBgbujiUF9O6EK8E1KcNLiejtSep3Lhs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733416309; c=relaxed/simple;
+	bh=J3ESyanQrh2f4eFh3WJ4pYGGoFIoFUQGqxlSoVenKuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i4YxnRwIB4gEsaV7FtnhMMcr9+c3TosTcA3Nq1094B1WBjjuyX7Ly0Jnca7jHvNjSc6x/weiLrncBNUDLLPAseRI5ocNuGhC4HDneH2h5g7hy/8yQwrNO2KxKCAdS/AwFB+M5k3IycMgAsDgjdIY9OVJJCPsp2Iit0KtfHfG+EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CjfHJBMF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B59vkNx026596
+	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 16:31:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OO3PETOsyEKUmVhcQ82jscTslmU61XklmW+TguqESPQ=; b=CjfHJBMFUQDYgcWu
+	dbdvJhA6QcbkojJBpqdlxbcG+BycUGL7rRj43yoUCi6vDh00vJKL9XRAOee2eC10
+	BPJR2HAqaKPhTs7frhroVh9U6rj1WjLex2T2JIEU/pHHb9xd10swNo5Ad2yb1dzN
+	NPbEH23Ea8Im7ne+nGwkMTIQlLQwU1rZiB+veQPTFP8MLgGxtHZ1habswNJPInHm
+	D7d6QPcey63fWlyzxpEsWEZFu7CoVzFxyUGF2VhEWW059Fsht55IlffnqDyTVrld
+	n/C13IbvcNqzEFZjKDRzZ1jQvtReP8odynHXyYnt3zqtZTTsSiW+ahJ/DUrRLLEk
+	bfIXmw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba0kh309-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:31:47 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-466c4b8cab2so2854401cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:31:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733416306; x=1734021106;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OO3PETOsyEKUmVhcQ82jscTslmU61XklmW+TguqESPQ=;
+        b=vUUiL9EDuX6MYTYTdIyTgfWhOoL9GB2w/AAEOFp7Ojt8fjuHndAnZsx/sza7MjtovR
+         icauqZXFagh97jkmLjbVqFBom0AjsLX9ndMgAAZDUAQEOZPggKT+3GWAnLHNE6IEaWnv
+         cJP5QeJvK2OF76cSc9l+TAkCIOZnbS/cVPz5wzxf+otmHsyzmNxbRRu5DjTc7uEj9f9d
+         wqvOU52YT4nfpYN29UbloFFQlG+eekyPTnO2YsX3DwYdn4mTdHwOdCoAHib/fkao00zN
+         JW5PCLw750IPpb4uejqr5rHWj0XpXm+bhA6tVQko4rojO41bqXsa1DJV0urepbEXcb2O
+         KomA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1/tZsQisAFIGVJvvyyLH/WfPUq6nW7AJMIHtkbbgPBjVpsHqYiTaoW58R+5Gz9r7uh0z0WqNQYqE8DpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDtpPF7+cqDw9YA8g6w51HL++1dthv1sfzaK6/8/37BhlpEIPU
+	qaij9WxCYqSOdE/TylzUcbaObPqlWwIwGclHCzaFgEDKomjmryU6ZDJqWwo6+eLtUaAUBiS1lq2
+	1mRmQfCPKsLs6c0p5DB0DxDP3Q6gBOUW04MaplAhJzEhwe9ox1lPNRQv+QA8BAfQ=
+X-Gm-Gg: ASbGncsw9b3AcJVpFQtwEUFBJD76sOA92TMBBaj4NZj7K558sdt4hxKMehxO0Tx7ppb
+	7V+JxvJ5Uz+LG1Mx8s1nfWDhVO4ynP062PxXb2b7Bv5/P1uubDeyYgUtWx4VvQvpH85SpDTQvQl
+	+dGK+LqnIQrzeeu9/Kz+XeujVUpNPrCO8VQaWYOgexneiilGvFAwNDwON7SIP6afFUKNNS8+TgS
+	hbLUoARmUHEiQ2WZ8Chd/n61C8pks/rKtr6YvVVBhBkoJ0VJjpSl6wYr3eOUnntWuC2/W0Zqjdq
+	vQpwzDEVzh6oANnZdk1rA4sCsmDzm8I=
+X-Received: by 2002:a05:620a:46aa:b0:7af:cd2f:fc16 with SMTP id af79cd13be357-7b6a6ac4315mr640243285a.0.1733416306261;
+        Thu, 05 Dec 2024 08:31:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHn4mO82urP0n6y4ICtJcZOXowWIRkawjXqvzOlQIsjvcyJPdkawu57/eeRUH0GNZ13RwBadA==
+X-Received: by 2002:a05:620a:46aa:b0:7af:cd2f:fc16 with SMTP id af79cd13be357-7b6a6ac4315mr640240785a.0.1733416305903;
+        Thu, 05 Dec 2024 08:31:45 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4dc68sm115325466b.23.2024.12.05.08.31.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 08:31:45 -0800 (PST)
+Message-ID: <783bda0f-5d51-43e2-8923-a01577a4296d@oss.qualcomm.com>
+Date: Thu, 5 Dec 2024 17:31:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3397885c-573c-4051-cf3c-08dd154a4798
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2024 16:31:32.9125
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR02MB8982
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] phy: qcom: qmp-pcie: add current load vote/devote for
+ PCIe PHY
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, vkoul@kernel.org,
+        kishon@kernel.org, dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+        neil.armstrong@linaro.org, manivannan.sadhasivam@linaro.org,
+        andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241204105249.3544114-1-quic_ziyuzhan@quicinc.com>
+ <20241204105249.3544114-3-quic_ziyuzhan@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241204105249.3544114-3-quic_ziyuzhan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: eFA6j38vJfBxP-D4C0JFgqkFUrekfYhu
+X-Proofpoint-GUID: eFA6j38vJfBxP-D4C0JFgqkFUrekfYhu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050120
 
-From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, November 13=
-, 2024 12:47 AM
->=20
-> From: John Starks <jostarks@microsoft.com>
->=20
-> When resuming from hibernation, log any channels that were present
-> before hibernation but now are gone.
-> In general, the boot-time devices configured for a resuming VM should be
-> the same as the devices in the VM at the time of hibernation. It's
-> uncommon for the configuration to have been changed such that offers
-> are missing. Changing the configuration violates the rules for
-> hibernation anyway.
-> The cleanup of missing channels is not straight-forward and dependent
-> on individual device driver functionality and implementation,
-> so it can be added in future with separate changes.
->=20
-> Signed-off-by: John Starks <jostarks@microsoft.com>
-> Co-developed-by: Naman Jain <namjain@linux.microsoft.com>
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+On 4.12.2024 11:52 AM, Ziyue Zhang wrote:
+> On some platform (eg.qcs615), the current that phy consumes will exceed
+> the maximum current the regulator can provide in LPM mode, leading to
+> over current protection and system boot up stuck. Fix this issue by
+> setting regulator load to an expected value getting from phy device tree
+> node during init so that the regulator can scale up to HPM to allow a
+> larger current load.
+> This change will also set load to zero during deinit to let regulator
+> scale down to LPM mode to reduce itself's power consumptionif PCIe
+> suspend.
+> 
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
 > ---
-> Changes since v2:
-> * Addressed Michael's comments:
->   * Changed commit msg as per suggestions
-> * Addressed Dexuan's comments, which came up in offline discussion:
->   * Minor additions in commit subject.
->=20
-> Changes since v1:
-> * Added Easwar's Reviewed-By tag
-> * Addressed Saurabh's comments:
->   * Added a note for missing channel cleanup in comments and commit msg
-> ---
->  drivers/hv/vmbus_drv.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->=20
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index bd3fc41dc06b..08214f28694a 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -2462,6 +2462,7 @@ static int vmbus_bus_suspend(struct device *dev)
->=20
->  static int vmbus_bus_resume(struct device *dev)
->  {
-> +	struct vmbus_channel *channel;
->  	struct vmbus_channel_msginfo *msginfo;
->  	size_t msgsize;
+>  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 35 ++++++++++++++++++++++--
+>  1 file changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+> index c8e39c147ba4..782d51ab5cf1 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+> @@ -39,6 +39,7 @@
+>  #include "phy-qcom-qmp-pcie-qhp.h"
+>  
+>  #define PHY_INIT_COMPLETE_TIMEOUT		10000
+> +#define MAX_PROP_SIZE		   32
+>  
+>  /* set of registers with offsets different per-PHY */
+>  enum qphy_reg_layout {
+> @@ -2905,6 +2906,7 @@ struct qmp_pcie {
+>  	struct reset_control_bulk_data *resets;
+>  	struct reset_control *nocsr_reset;
+>  	struct regulator_bulk_data *vregs;
+> +	u32 *max_current_load;
+>  
+>  	struct phy *phy;
+>  	int mode;
+> @@ -4087,6 +4089,17 @@ static int qmp_pcie_init(struct phy *phy)
+>  	const struct qmp_phy_cfg *cfg = qmp->cfg;
 >  	int ret;
-> @@ -2494,6 +2495,22 @@ static int vmbus_bus_resume(struct device *dev)
->=20
->  	vmbus_request_offers();
->=20
-> +	mutex_lock(&vmbus_connection.channel_mutex);
-> +	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
-> +		if (channel->offermsg.child_relid !=3D INVALID_RELID)
-> +			continue;
-> +
-> +		/* hvsock channels are not expected to be present. */
-> +		if (is_hvsock_channel(channel))
-> +			continue;
-> +
-> +		pr_err("channel %pUl/%pUl not present after resume.\n",
-> +			&channel->offermsg.offer.if_type,
-> +			&channel->offermsg.offer.if_instance);
-> +		/* ToDo: Cleanup these channels here */
-> +	}
-> +	mutex_unlock(&vmbus_connection.channel_mutex);
-> +
->  	/* Reset the event for the next suspend. */
->  	reinit_completion(&vmbus_connection.ready_for_suspend_event);
->=20
-> --
-> 2.34.1
+>  
+> +	for (int i = 0; i < cfg->num_vregs; i++) {
+> +		if (qmp->max_current_load[i]) {
+> +			ret = regulator_set_load(qmp->vregs[i].consumer, qmp->max_current_load[i]);
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+I think it's better if we just put this info in the driver, like with
+e.g. the DSI PHY
+
+Konrad
 
