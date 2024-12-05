@@ -1,759 +1,444 @@
-Return-Path: <linux-kernel+bounces-433634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10489E5AFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:12:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06F2D167739
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:11:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F8B227B8C;
-	Thu,  5 Dec 2024 16:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="KGhWCnui"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611189E5AE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:10:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830F121C9F8;
-	Thu,  5 Dec 2024 16:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733415005; cv=pass; b=QQ6EYw2hTpJb6R40z+0hFwz/2WwGLYF0FIiPSTtHvqBvRp+XWE5uxcZOw0VDcMK8LyVo/4KQLEU8ETaDWZ0cVrv1hNKtAlZNroB4hRlzvL1tlFQn3ZSkg+DCxN/WVH7rA8jZMj1XaxvmrXDxGvRg+xzvbw6CVf50K/l6OvnPzdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733415005; c=relaxed/simple;
-	bh=CwvOyp60jKYtThgioN90rsLByYH6fxqUV9ySilAvbGI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=NkpFCT0MJY5gdOjwXlpl8t9TMZ5ijRMbVNmhFks5G8FsYOlGh603oDGjM1Nl9HDTWAzT1i+EI2JfxHD1ZS/lO5St7IYtsYXEslPFsxBbPqga72Pck2+OPyRdnHLPaNUBhBv85hzKgwDJ+JZe9EhNL3bqaGs1Wrq6t5KQfPv84O8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=KGhWCnui; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733414958; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Rt8DOKLyxpbGvCLkuxKZs3vFNJ/U9RklguBB93SNwTGstBIGkptRt4H+aotXLNXIBMXmNFpjU7LAaIkjS9E0qwDzXB9h+bYOtXVWkcqjp3S9WqRyH0SdE1/VUM5WH7GSqyH0Etn6Pl/DwqLPG1mQ+GjQi/rbL84cNrOSw04iUU4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733414958; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=40MMr4zyE54ucDXtnRwizB0SWb9WLWtvCrlRmiBIfnY=; 
-	b=XKEoZm1lnMfhqW//YRGqqOPQ8H+geM0Y0bQZ9opPrcp4va+6PixdAJ0ci84GGwHqSPRfr7qC5WbMxwstC+zCZ9ZFMhBsbHwRj1W0XaAtywZwKlJUKYAkXrE+4vvWCYNO+oAAd6PvgnQn4ENoNLE36v+0JERQt3BLG1pzdDmc4R4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733414958;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=40MMr4zyE54ucDXtnRwizB0SWb9WLWtvCrlRmiBIfnY=;
-	b=KGhWCnuiVXfjC8zFoZho/QKYHiZUuD/ZiQmxo9zybXxXOitiafSvZlwypfocyv4B
-	qmcxBrWYhQOzypOyt3H9eoP8LZ7DJ3PyAmNXWoNMXv3AjSN1Mbh4Q02l+SaJ32SNkuk
-	TgdZlwZ+PyKwSWVReqJSWUuP5QNbZKojATYif5C4=
-Received: by mx.zohomail.com with SMTPS id 1733414957440728.3043397680057;
-	Thu, 5 Dec 2024 08:09:17 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16ECD281967
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:10:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EC1224AF9;
+	Thu,  5 Dec 2024 16:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="MRStU71j"
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58E9221440
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733414997; cv=none; b=u5/oA8ZHUgrJLINBw5v3DUJqtFpIPLTn6D0fFAb1fDHJ3qlMoyjRd+L5VJxbi4QZmzsXymSPU0muS1ZQi3hgis9b5fZ3K4g1httzS+mEWZc/MGibFC1BB3GfoVL3jZjRzpEG+QE1tKVNct66J0WiGDI+OrztOkVmdKxnk0fq7v8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733414997; c=relaxed/simple;
+	bh=krzfiqDBxwY3HV9MQzhs3IYyEXAxrsMSzy9q91ee/gs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T4KoghFks24lT3G0JDwD25adkp4nwrLNX8sALmq9nZT9/m3kpNxrmM+WPIwQg6mejaoxPeyxatQcw6XAUXplkoG2ivNqzUKDRp5gdXTWCikjDW/+2MHsu1d0z8k+ds3QMaoSO+8hJwVlZQJLJ8LhtGzNAyqh4Ts/demknH3ioQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=MRStU71j; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3zqY6HLczrlX;
+	Thu,  5 Dec 2024 17:09:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733414985;
+	bh=wo+0B1Oa6yNeoWklyI0hUi9wvvxFtfRaAnS93SPVvfI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MRStU71jcmGvv0iL0C9jf4PNtkhdTR7nz7a6V4binDDmevjMOcPFf7sxo21+eYpN6
+	 ocdeFCz4bea4IAEZhrtrdn/6sx73FBQAvV17RCjyiNPkb+I6dQ52l/QPrQ3Pb80BtM
+	 VnRU3t6IfYMN9f8psTqAp5ZVv9EU+swgeM4NjVHc=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3zqQ2vcrzZ70;
+	Thu,  5 Dec 2024 17:09:38 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Elliott Hughes <enh@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Scott Shell <scottsh@microsoft.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	Yin Fengwei <fengwei.yin@intel.com>,
+	kernel-hardening@lists.openwall.com,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v22 0/8] Script execution control (was O_MAYEXEC)
+Date: Thu,  5 Dec 2024 17:09:17 +0100
+Message-ID: <20241205160925.230119-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 34/35] WIP: rust: drm/kms: Add
- Kms::atomic_commit_tail
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-35-lyude@redhat.com>
-Date: Thu, 5 Dec 2024 13:09:01 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <771FBC25-8887-4C0B-8923-0A9FF1BFFEFF@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-35-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-Hi Lyude
+Hi,
 
-> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> A quick note: this is one of my favorite bindings so far :). It sounds =
-way
-> overly complicated, but so far actually writing implementations of =
-this in
-> rust has been a breeze.
->=20
-> Anyway: RVKMS has a slightly different atomic_commit_tail than normal,
-> which means we need to write up some bindings for atomic_commit_tail. =
-This
-> is a lot more interesting then it might seem on the surface as =
-implementing
-> atomic_commit_tail incorrectly could result in UB. And in general, DRM =
-has
-> up until now relied entirely on the programmer to do this correctly =
-through
-> implicit ordering requirements.
->=20
-> In the universe of rust though, we want no UB at all! To ensure this, =
-we
-> need to make sure that all atomic commit callbacks follow all of these
-> requirements:
->=20
-> * Disable/enable modeset commits must happen exactly once
-> * A disable modeset must be committed for a resource before an enable
->  modeset may be committed for a resource
-> * Plane updates must happen exactly once
-> * drm_atomic_commit_hw_done() must be called exactly once, and only =
-after
->  all commits have been completed.
-> * The state may not be mutated after drm_atomic_commit_hw_done() is =
-called
-> * Access to the prior atomic states are revoked after
->  drm_atomic_commit_hw_done() is called (and our "new" states become =
-"old"
->  states)
->=20
-> To handle this, we introduce a number of new objects and types:
-> tokens:
->=20
-> * AtomicCommitTail
->  Main object for controlling the commit_tail process
->  * ModesetsReadyToken
->    A single use token indicating that no modesets have been committed =
-with
->    the AtomicCommitTail yet
->  * commit_modeset_disables() -> DisablesCommittedToken
->    This function consumes the ModesetsReadyToken, commits modeset
->    disables, and then returns a DisablesCommittedToken
->  * commit_modeset_enables() -> EnablesCommittedToken
->    This function consumes a DisablesCommittedToken, commits modeset
->    enables, and then returns a EnablesCommittedToken
->    EnablesCommittedToken - enforcing the disables -> enables order.
->  * commit_planes() -> PlaneUpdatesCommittedToken
->    Consumes a PlaneUpdatesReadyToken and returns a
->    PlaneUpdatesCommittedToken.
->  * commit_hw_done() -> CommittedAtomicState
->    Revokes access to the AtomicCommitTailObject, and consumes both the
->    EnablesCommittedToken and PlaneUpdatesCommitted tokens. This =
-ensures
->    that all modesets and plane updates have occurred exactly once.
-> * CommittedAtomicState - main object for controlling the =
-atomic_commit_tail
->  after the state has been swapped in. This must be returned from the
->  atomic_commit_tail function to prove that all of the required commits
->  have occurred.
+The goal of this patch series is to be able to ensure that direct file
+execution (e.g. ./script.sh) and indirect file execution (e.g. sh
+script.sh) lead to the same result, especially from a security point of
+view.
 
-This is very informative, you should have that in the documentation =
-somewhere IMHO.
+The main changes from the previous version are the IMA patch to properly
+log access check requests with audit, removal of audit change, an
+extended documentation for tailored distros, a rebase on v6.13-rc1, and
+some minor cosmetic changes.
 
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+The current status is summarized in this article:
+https://lwn.net/Articles/982085/
+I also gave a talk at LPC last month:
+https://lpc.events/event/18/contributions/1692/
+And here is a proof of concept for Python (for now, for the previous
+version: v19): https://github.com/zooba/spython/pull/12
 
-Note that you can use the typestate pattern to model this IIUC.
+Kees, would you like to take this series in your tree?
 
-The main advantage is that you can control which functions are available =
-at each state, whereas
-your solution will have all of them available at all times even though =
-each function requires the right tokens
-to be called.
+Overview
+--------
 
->=20
-> ---
->=20
-> TODO:
->=20
-> * Currently this solution wouldn't be sufficient for drivers that need
->  precise control over the order of each individual modeset or plane
->  update. However, this should be very easy to add.
-> * Figure out something better for enforcing the plane cleanup then =
-what we
->  have right now (e.g. cleaning up planes in the destructor for
->  CommittedAtomicState).
-> * Add iterator functions that take mutable references to the atomic =
-state
->  objects here. This will prevent functions like =
-commit_modeset_disables()
->  from being called while a state borrow is taken out, while still =
-allowing
->  easy access to the contents of the atomic state at any portion of the
->  atomic commit tail.
-> * Actually add some macros for generating bitmasks like we do with
->  PlaneCommitFlags - right now we just do this by hand.
+This patch series is a new approach of the initial O_MAYEXEC feature,
+and a revamp of the previous patch series.  Taking into account the last
+reviews [1], we now stick to the kernel semantic for file executability.
+One major change is the clear split between access check and policy
+management.
 
-I have a patch in-flight for genmask at [0].
+The first patch brings the AT_EXECVE_CHECK flag to execveat(2).  The
+goal is to enable user space to check if a file could be executed (by
+the kernel).  Unlike stat(2) that only checks file permissions,
+execveat2(2) + AT_EXECVE_CHECK take into account the full context,
+including mount points (noexec), caller's limits, and all potential LSM
+extra checks (e.g. argv, envp, credentials).
 
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/kms.rs        |  27 ++-
-> rust/kernel/drm/kms/atomic.rs | 365 +++++++++++++++++++++++++++++++++-
-> 2 files changed, 386 insertions(+), 6 deletions(-)
->=20
-> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
-> index e13f35d9e223f..117c97a9e7165 100644
-> --- a/rust/kernel/drm/kms.rs
-> +++ b/rust/kernel/drm/kms.rs
-> @@ -142,6 +142,26 @@ fn mode_config_info(
->=20
->     /// Create mode objects like [`crtc::Crtc`], [`plane::Plane`], =
-etc. for this device
->     fn create_objects(drm: &UnregisteredKmsDevice<'_, Self::Driver>) =
--> Result;
-> +
-> +    /// The optional [`atomic_commit_tail`] callback for this =
-[`Device`].
-> +    ///
-> +    /// It must return a [`CommittedAtomicState`] to prove that it =
-has signaled completion of the hw
-> +    /// commit phase. Drivers may use this function to customize the =
-order in which commits are
-> +    /// performed during the atomic commit phase.
-> +    ///
-> +    /// If not provided, DRM will use its own default atomic commit =
-tail helper
-> +    /// [`drm_atomic_helper_commit_tail`].
-> +    ///
-> +    /// [`CommittedAtomicState`]: atomic::CommittedAtomicState
-> +    /// [`atomic_commit_tail`]: =
-srctree/include/drm/drm_modeset_helper_vtables.h
-> +    /// [`drm_atomic_helper_commit_tail`]: =
-srctree/include/drm/drm_atomic_helpers.h
-> +    fn atomic_commit_tail<'a>(
-> +        state: atomic::AtomicCommitTail<'a, Self::Driver>,
-> +        _modeset_token: atomic::ModesetsReadyToken<'_>,
-> +        _plane_update_token: atomic::PlaneUpdatesReadyToken<'_>
+The second patch brings two new securebits used to set or get a security
+policy for a set of processes.  For this to be meaningful, all
+executable code needs to be trusted.  In practice, this means that
+(malicious) users can be restricted to only run scripts provided (and
+trusted) by the system.
 
-Fyi, I don=E2=80=99t think you ever plan to use any of the arguments =
-here. You can simply bind them to `_` directly:
+[1] https://lore.kernel.org/r/CAHk-=wjPGNLyzeBMWdQu+kUdQLHQugznwY7CvWjmvNW47D5sog@mail.gmail.com
 
-e.g.:
+Script execution
+----------------
 
-> +    fn atomic_commit_tail<'a>(
-> +        _: atomic::AtomicCommitTail<'a, Self::Driver>,
-> +        _: atomic::ModesetsReadyToken<'_>,
-> +        _: atomic::PlaneUpdatesReadyToken<'_>
+One important thing to keep in mind is that the goal of this patch
+series is to get the same security restrictions with these commands:
+* ./script.py
+* python script.py
+* python < script.py
+* python -m script.py
 
-> +    ) -> atomic::CommittedAtomicState<'a, Self::Driver> {
-> +        build_error::build_error("This function should not be =
-reachable")
-> +    }
-> }
+However, on secure systems, we should be able to forbid these commands
+because there is no way to reliably identify the origin of the script:
+* xargs -a script.py -d '\r' -- python -c
+* cat script.py | python
+* python
 
+Background
+----------
 
->=20
-> impl<T: Kms> private::KmsImpl for T {
-> @@ -164,7 +184,12 @@ impl<T: Kms> private::KmsImpl for T {
->=20
->         kms_helper_vtable: bindings::drm_mode_config_helper_funcs {
->             atomic_commit_setup: None, // TODO
-> -            atomic_commit_tail: None, // TODO
-> +            atomic_commit_tail:
-> +                if Self::HAS_ATOMIC_COMMIT_TAIL {
-> +                    Some(atomic::commit_tail_callback::<Self>)
-> +                } else {
-> +                    None
-> +                },
->         },
->     });
->=20
-> diff --git a/rust/kernel/drm/kms/atomic.rs =
-b/rust/kernel/drm/kms/atomic.rs
-> index a4354b89b07cc..f9398edbca3d6 100644
-> --- a/rust/kernel/drm/kms/atomic.rs
-> +++ b/rust/kernel/drm/kms/atomic.rs
-> @@ -14,14 +14,14 @@
->     private::Sealed
-> };
-> use core::{
-> -    marker::*,
-> -    ptr::NonNull,
->     cell::Cell,
->     ffi::*,
-> -    slice,
-> -    ops::*,
-> -    mem::ManuallyDrop,
->     iter::Iterator,
-> +    marker::*,
-> +    mem::ManuallyDrop,
-> +    ops::*,
-> +    ptr::NonNull,
-> +    slice
-> };
-> use super::{
->     crtc::*,
-> @@ -372,6 +372,361 @@ pub fn add_affected_planes(&self, crtc: &impl =
-AsRawCrtc<Driver =3D T>) -> Result {
->     }
-> }
->=20
-> +/// A token proving that no modesets for a commit have completed.
-> +///
-> +/// This token is proof that no commits have yet completed, and is =
-provided as an argument to
-> +/// [`Kms::atomic_commit_tail`]. This may be used with
-> +/// [`AtomicCommitTail::commit_modeset_disables`].
-> +pub struct ModesetsReadyToken<'a>(PhantomData<&'a ()>);
-> +
-> +/// A token proving that modeset disables for a commit have =
-completed.
-> +///
-> +/// This token is proof that an implementor's =
-[`Kms::atomic_commit_tail`] phase has finished
-> +/// committing any operations which disable mode objects. It is =
-returned by
-> +/// [`AtomicCommitTail::commit_modeset_disables`], and can be used =
-with
-> +/// [`AtomicCommitTail::commit_modeset_enables`] to acquire a =
-[`EnablesCommittedToken`].
-> +pub struct DisablesCommittedToken<'a>(PhantomData<&'a ()>);
-> +
-> +/// A token proving that modeset enables for a commit have completed.
-> +///
-> +/// This token is proof that an implementor's =
-[`Kms::atomic_commit_tail`] phase has finished
-> +/// committing any operations which enable mode objects. It is =
-returned by
-> +/// [`AtomicCommitTail::commit_modeset_enables`].
-> +pub struct EnablesCommittedToken<'a>(PhantomData<&'a ()>);
-> +
-> +/// A token proving that no plane updates for a commit have =
-completed.
-> +///
-> +/// This token is proof that no plane updates have yet been completed =
-within an implementor's
-> +/// [`Kms::atomic_commit_tail`] implementation, and that we are ready =
-to begin updating planes. It
-> +/// is provided as an argument to [`Kms::atomic_commit_tail`].
-> +pub struct PlaneUpdatesReadyToken<'a>(PhantomData<&'a ()>);
-> +
-> +/// A token proving that all plane updates for a commit have =
-completed.
-> +///
-> +/// This token is proof that all plane updates within an =
-implementor's [`Kms::atomic_commit_tail`]
-> +/// implementation have completed. It is returned by =
-[`AtomicCommitTail::commit_planes`].
-> +pub struct PlaneUpdatesCommittedToken<'a>(PhantomData<&'a ()>);
-> +
-> +/// An [`AtomicState`] interface that allows a driver to control the =
-[`atomic_commit_tail`]
-> +/// callback.
-> +///
-> +/// This object is provided as an argument to =
-[`Kms::atomic_commit_tail`], and represents an atomic
-> +/// state within the commit tail phase which is still in the process =
-of being committed to hardware.
-> +/// It may be used to control the order in which the commit process =
-happens.
-> +///
-> +/// # Invariants
-> +///
-> +/// Same as [`AtomicState`].
-> +///
-> +/// [`atomic_commit_tail`]: =
-srctree/include/drm/drm_modeset_helper_vtables.h
-> +pub struct AtomicCommitTail<'a, T: KmsDriver>(&'a AtomicState<T>);
-> +
-> +impl<'a, T: KmsDriver> AtomicCommitTail<'a, T> {
-> +    /// Commit modesets which would disable outputs.
-> +    ///
-> +    /// This function commits any modesets which would shut down =
-outputs, along with preparing them
-> +    /// for a new mode (if needed).
-> +    ///
-> +    /// Since it is physically impossible to disable an output =
-multiple times, and since it is
-> +    /// logically unsound to disable an output within an atomic =
-commit after the output was enabled
-> +    /// in the same commit - this function requires a =
-[`ModesetsReadyToken`] to consume and returns
-> +    /// a [`DisablesCommittedToken`].
-> +    ///
-> +    /// If compatibility with legacy CRTC helpers is desired, this
-> +    /// should be called before [`commit_planes`] which is what the =
-default commit function does.
-> +    /// But drivers with different needs can group the modeset =
-commits tgether and do the plane
-> +    /// commits at the end. This is useful for drivers doing runtime =
-PM since then plane updates
-> +    /// only happen when the CRTC is actually enabled.
-> +    ///
-> +    /// [`commit_planes`]: AtomicCommitTail::commit_planes
-> +    #[inline]
-> +    #[must_use]
-> +    pub fn commit_modeset_disables<'b>(
-> +        &mut self,
-> +        _token: ModesetsReadyToken<'_>,
-> +    ) -> DisablesCommittedToken<'b> {
-> +        // SAFETY: Both `as_raw()` calls are guaranteed to return =
-valid pointers
-> +        unsafe {
-> +            bindings::drm_atomic_helper_commit_modeset_disables(
-> +                self.0.drm_dev().as_raw(),
-> +                self.0.as_raw()
-> +            )
-> +        }
-> +
-> +        DisablesCommittedToken(PhantomData)
-> +    }
-> +
-> +    /// Commit all plane updates.
-> +    ///
-> +    /// This function performs all plane updates for the given =
-[`AtomicCommitTail`]. Since it is
-> +    /// logically unsound to perform the same plane update more then =
-once in a given atomic commit,
-> +    /// this function requires a [`PlaneUpdatesReadyToken`] to =
-consume and returns a
-> +    /// [`PlaneUpdatesCommittedToken`] to prove that plane updates =
-for the state have completed.
-> +    #[inline]
-> +    #[must_use]
-> +    pub fn commit_planes<'b>(
-> +        &mut self,
-> +        _token: PlaneUpdatesReadyToken<'_>,
-> +        flags: PlaneCommitFlags
-> +    ) -> PlaneUpdatesCommittedToken<'b> {
-> +        // SAFETY: Both `as_raw()` calls are guaranteed to return =
-valid pointers
-> +        unsafe {
-> +            bindings::drm_atomic_helper_commit_planes(
-> +                self.0.drm_dev().as_raw(),
-> +                self.0.as_raw(),
-> +                flags.into()
-> +            )
-> +        }
-> +
-> +        PlaneUpdatesCommittedToken(PhantomData)
-> +    }
-> +
-> +    /// Commit modesets which would enable outputs.
-> +    ///
-> +    /// This function commits any modesets in the given =
-[`AtomicCommitTail`] which would enable
-> +    /// outputs, along with preparing them for their new modes (if =
-needed).
-> +    ///
-> +    /// Since it is logically unsound to enable an output before any =
-disabling modesets within the
-> +    /// same atomic commit have been performed, and physically =
-impossible to enable the same output
-> +    /// multiple times - this function requires a =
-[`DisablesCommittedToken`] to consume and returns
-> +    /// a [`EnablesCommittedToken`] which may be used as proof that =
-all modesets in the state have
-> +    /// been completed.
-> +    #[inline]
-> +    #[must_use]
-> +    pub fn commit_modeset_enables<'b>(
-> +        &mut self,
-> +        _token: DisablesCommittedToken<'_>
-> +    ) -> EnablesCommittedToken<'b> {
-> +        // SAFETY: Both `as_raw()` calls are guaranteed to return =
-valid pointers
-> +        unsafe {
-> +            bindings::drm_atomic_helper_commit_modeset_enables(
-> +                self.0.drm_dev().as_raw(),
-> +                self.0.as_raw()
-> +            )
-> +        }
-> +
-> +        EnablesCommittedToken(PhantomData)
-> +    }
-> +
-> +    /// Fake VBLANK events if needed
-> +    ///
-> +    /// Note that this is still relevant to drivers which don't =
-implement [`VblankSupport`] for any
-> +    /// of their CRTCs.
-> +    ///
-> +    /// TODO: more doc
-> +    ///
-> +    /// [`VblankSupport`]: super::vblank::VblankSupport
-> +    pub fn fake_vblank(&mut self) {
-> +        // SAFETY: `as_raw()` is guaranteed to always return a valid =
-pointer
-> +        unsafe { =
-bindings::drm_atomic_helper_fake_vblank(self.0.as_raw()) }
-> +    }
-> +
-> +    /// Signal completion of the hardware commit step.
-> +    ///
-> +    /// This swaps the atomic state into the relevant atomic state =
-pointers and marks the hardware
-> +    /// commit step as completed. Since this step can only happen =
-after all plane updates and
-> +    /// modesets within an [`AtomicCommitTail`] have been completed, =
-it requires both a
-> +    /// [`EnablesCommittedToken`] and a =
-[`PlaneUpdatesCommittedToken`] to consume. After this
-> +    /// function is called, the caller no longer has exclusive access =
-to the underlying atomic
-> +    /// state. As such, this function consumes the =
-[`AtomicCommitTail`] object and returns a
-> +    /// [`CommittedAtomicState`] accessor for performing post-hw =
-commit tasks.
-> +    pub fn commit_hw_done<'b>(
-> +        self,
-> +        _modeset_token: EnablesCommittedToken<'_>,
-> +        _plane_updates_token: PlaneUpdatesCommittedToken<'_>,
-> +    ) -> CommittedAtomicState<'b, T>
-> +    where
-> +        'a: 'b
-> +    {
-> +        // SAFETY: we consume the `AtomicCommitTail` object, making =
-it impossible for the user to
-> +        // mutate the state after this function has been called - =
-which upholds the safety
-> +        // requirements of the C API allowing us to safely call this =
-function
-> +        unsafe { =
-bindings::drm_atomic_helper_commit_hw_done(self.0.as_raw()) };
-> +
-> +        CommittedAtomicState(self.0)
-> +    }
-> +}
-> +
-> +// The actual raw C callback for custom atomic commit tail =
-implementations
-> +pub(crate) unsafe extern "C" fn commit_tail_callback<T: Kms>(
-> +    state: *mut bindings::drm_atomic_state
-> +) {
-> +    // SAFETY:
-> +    // * We're guaranteed by DRM that `state` always points to a =
-valid instance of
-> +    //   `bindings::drm_atomic_state`
-> +    // * This conversion is safe via the type invariants
-> +    let state =3D unsafe { =
-AtomicState::<T::Driver>::from_raw(state.cast_const()) };
-> +
-> +    T::atomic_commit_tail(
-> +        AtomicCommitTail(state),
-> +        ModesetsReadyToken(PhantomData),
-> +        PlaneUpdatesReadyToken(PhantomData),
-> +    );
-> +}
-> +
-> +/// An [`AtomicState`] which was just committed with =
-[`AtomicCommitTail::commit_hw_done`].
-> +///
-> +/// This object represents an [`AtomicState`] which has been fully =
-committed to hardware, and as
-> +/// such may no longer be mutated as it is visible to userspace. It =
-may be used to control what
-> +/// happens immediately after an atomic commit finishes within the =
-[`atomic_commit_tail`] callback.
-> +///
-> +/// Since acquiring this object means that all modesetting locks have =
-been dropped, a non-blocking
-> +/// commit could happen at the same time an [`atomic_commit_tail`] =
-implementer has access to this
-> +/// object. Thus, it cannot be assumed that this object represents =
-the current hardware state - and
-> +/// instead only represents the final result of the =
-[`AtomicCommitTail`] that was just committed.
-> +///
-> +/// # Invariants
-> +///
-> +/// It may be assumed that [`drm_atomic_helper_commit_hw_done`] has =
-been called as long as this type
-> +/// exists.
-> +///
-> +/// [`atomic_commit_tail`]: Kms::atomic_commit_tail
-> +/// [`drm_atomic_helper_commit_hw_done`]: =
-srctree/include/drm/drm_atomic_helper.h
-> +pub struct CommittedAtomicState<'a, T: KmsDriver>(&'a =
-AtomicState<T>);
-> +
-> +impl<'a, T: KmsDriver> CommittedAtomicState<'a, T> {
-> +    /// Wait for page flips on this state to complete
-> +    pub fn wait_for_flip_done(&self) {
-> +        // SAFETY: `drm_atomic_helper_commit_hw_done` has been called =
-via our invariants
-> +        unsafe {
-> +            bindings::drm_atomic_helper_wait_for_flip_done(
-> +                self.0.drm_dev().as_raw(),
-> +                self.0.as_raw()
-> +            )
-> +        }
-> +    }
-> +}
-> +
-> +impl<'a, T: KmsDriver> Drop for CommittedAtomicState<'a, T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY:
-> +        // * This interface represents the last atomic state accessor =
-which could be affected as a
-> +        //   result of resources from an atomic commit being cleaned =
-up.
-> +        unsafe {
-> +            bindings::drm_atomic_helper_cleanup_planes(
-> +                self.0.drm_dev().as_raw(),
-> +                self.0.as_raw()
-> +            )
-> +        }
-> +    }
-> +}
-> +
-> +/// An enumerator representing all the possible flags in a =
-[`PlaneCommitFlags`] mask
-> +///
-> +/// This is a non-exhaustive list, as the C side could add more =
-later.
-> +///
-> +/// TODO: this idea kinda sick we should add some macros for this :3c
+Compared to the previous patch series, there is no more dedicated
+syscall nor sysctl configuration.  This new patch series only add new
+flags: one for execveat(2) and four for prctl(2).
+
+This kind of script interpreter restriction may already be used in
+hardened systems, which may need to fork interpreters and install
+different versions of the binaries.  This mechanism should enable to
+avoid the use of duplicate binaries (and potential forked source code)
+for secure interpreters (e.g. secure Python [2]) by making it possible
+to dynamically enforce restrictions or not.
+
+The ability to control script execution is also required to close a
+major IMA measurement/appraisal interpreter integrity [3].
+
+This new execveat + AT_EXECVE_CHECK should not be confused with the
+O_EXEC flag (for open) which is intended for execute-only, which
+obviously doesn't work for scripts.
+
+I gave a talk about controlling script execution where I explain the
+previous approaches [4].  The design of the WIP RFC I talked about
+changed quite a bit since then.
+
+[2] https://github.com/zooba/spython
+[3] https://lore.kernel.org/lkml/20211014130125.6991-1-zohar@linux.ibm.com/
+[4] https://lssna2023.sched.com/event/1K7bO
+
+Execution policy
+----------------
+
+The "execution" usage means that the content of the file descriptor is
+trusted according to the system policy to be executed by user space,
+which means that it interprets the content or (try to) maps it as
+executable memory.
+
+It is important to note that this can only enable to extend access
+control managed by the kernel.  Hence it enables current access control
+mechanism to be extended and become a superset of what they can
+currently control.  Indeed, the security policy could also be delegated
+to an LSM, either a MAC system or an integrity system.
+
+Complementary W^X protections can be brought by SELinux or IPE [5].
+
+Being able to restrict execution also enables to protect the kernel by
+restricting arbitrary syscalls that an attacker could perform with a
+crafted binary or certain script languages.  It also improves multilevel
+isolation by reducing the ability of an attacker to use side channels
+with specific code.  These restrictions can natively be enforced for ELF
+binaries (with the noexec mount option) but require this kernel
+extension to properly handle scripts (e.g. Python, Perl).  To get a
+consistent execution policy, additional memory restrictions should also
+be enforced (e.g. thanks to SELinux).
+
+[5] https://lore.kernel.org/lkml/1716583609-21790-1-git-send-email-wufan@linux.microsoft.com/
+
+Prerequisite for security use
+-----------------------------
+
+Because scripts might not currently have the executable permission and
+still run well as is, or because we might want specific users to be
+allowed to run arbitrary scripts, we also need a configuration
+mechanism.
+
+According to the threat model, to get a secure execution environment on
+top of these changes, it might be required to configure and enable
+existing security mechanisms such as secure boot, restrictive mount
+points (e.g. with rw AND noexec), correct file permissions (including
+executable libraries), IMA/EVM, SELinux policy...
+
+The first thing to patch is the libc to check loaded libraries (e.g. see
+chromeOS changes).  The second thing to patch are the script
+interpreters by checking direct scripts executability and by checking
+their own libraries (e.g. Python's imported files or argument-passed
+modules).  For instance, the PEP 578 [6] (Runtime Audit Hooks) enables
+Python 3.8 to be extended with policy enforcement points related to code
+interpretation, which can be used to align with the PowerShell audit
+features.  Additional Python security improvements (e.g. a limited
+interpreter without -c, stdin piping of code) are developed [2] [7].
+
+[6] https://www.python.org/dev/peps/pep-0578/
+[7] https://lore.kernel.org/lkml/0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org/
+
+libc patch
+----------
+
+Dynamic linking needs still need to check the libraries the same way
+interpreters need to check scripts.
+
+chromeOS patches glibc with a fstatvfs check [8] [9]. This enables to
+check against noexec mount points, which is OK but doesn't fit with
+execve semantics.  Moreover, the kernel is not aware of such check, so
+all access control checks are not performed (e.g. file permission, LSMs
+security policies, integrity and authenticity checks), it is not handled
+with audit, and more importantly this would not work on generic
+distributions because of the strict requirement and chromeOS-specific
+assumptions.
+
+[8] https://issuetracker.google.com/issues/40054993
+[9] https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/6abfc9e327241a5f684b8b941c899b7ca8b6dbc1/sys-libs/glibc/files/local/glibc-2.37/0007-Deny-LD_PRELOAD-of-files-in-NOEXEC-mount.patch
+
+Examples
+--------
+
+The initial idea comes from CLIP OS 4 and the original implementation
+has been used for more than a decade:
+https://github.com/clipos-archive/clipos4_doc
+Chrome OS has a similar approach:
+https://www.chromium.org/chromium-os/developer-library/guides/security/noexec-shell-scripts/
+
+User space patches can be found here:
+https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+There is more than the O_MAYEXEC changes (which matches this search)
+e.g., to prevent Python interactive execution. There are patches for
+Bash, Wine, Java (Icedtea), Busybox's ash, Perl and Python. There are
+also some related patches which do not directly rely on O_MAYEXEC but
+which restrict the use of browser plugins and extensions, which may be
+seen as scripts too:
+https://github.com/clipos-archive/clipos4_portage-overlay/tree/master/www-client
+
+Past talks and articles
+-----------------------
+
+Closing the script execution control gap at Linux Plumbers Conference
+2024: https://lpc.events/event/18/contributions/1692/
+
+An introduction to O_MAYEXEC was given at the Linux Security Summit
+Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
+
+The "write xor execute" principle was explained at Kernel Recipes 2018 -
+CLIP OS: a defense-in-depth OS:
+https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
+
+LWN articles:
+* https://lwn.net/Articles/982085/
+* https://lwn.net/Articles/832959/
+* https://lwn.net/Articles/820000/
+
+FAQ
+Link: https://lore.kernel.org/r/20241205160925.230119-1-mic@digikod.net
+---
+
+Q: Why not extend open(2) or openat2(2) with a new flag like O_MAYEXEC?
+A: Because it is not flexible enough:
+https://lore.kernel.org/r/CAG48ez0NAV5gPgmbDaSjo=zzE=FgnYz=-OHuXwu0Vts=B5gesA@mail.gmail.com
+
+Q: Why not only allowing file descriptor to avoid TOCTOU?
+A: Because there are different use cases:
+https://lore.kernel.org/r/CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com
+
+Q: We can copy a script into a memfd and use it as an executable FD.
+   Wouldn't that bypass the purpose of this patch series?
+A: If an attacker can create a memfd it means that a
+   malicious/compromised code is already running and it's too late for
+   script execution control to help.  This patch series makes it more
+   difficult for an attacker to execute arbitrary code on a trusted
+   system in the first place:
+https://lore.kernel.org/all/20240717.AGh2shahc9ee@digikod.net/
+
+Q: What about ROP?
+A: See previous answer. If ROP is exploited then the attacker already
+   controls some code:
+https://lore.kernel.org/all/20240718.ahph4che5Shi@digikod.net/
+
+Q: What about LD_PRELOAD environment variable?
+A: The dynamic linker should be enlighten to check if libraries are
+   allowed to be loaded.
+
+Q: What about The PATH environment variable?
+A: All programs allowed to be executed are deemed trusted.
+
+Q: Should we check seccomp filters too?
+A: Yes, they should be considered as executable code because they can
+   change the behavior of processes, similarly to code injection:
+https://lore.kernel.org/all/20240705.IeTheequ7Ooj@digikod.net/
+
+Q: Could that be used for role transition?
+A: That would be risky and difficult to implement correctly:
+https://lore.kernel.org/all/20240723.Tae5oovie2ah@digikod.net/
+
+Previous versions
+-----------------
+
+v20: https://lore.kernel.org/r/20241011184422.977903-1-mic@digikod.net
+v19: https://lore.kernel.org/r/20240704190137.696169-1-mic@digikod.net
+v18: https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
+v17: https://lore.kernel.org/r/20211115185304.198460-1-mic@digikod.net
+v16: https://lore.kernel.org/r/20211110190626.257017-1-mic@digikod.net
+v15: https://lore.kernel.org/r/20211012192410.2356090-1-mic@digikod.net
+v14: https://lore.kernel.org/r/20211008104840.1733385-1-mic@digikod.net
+v13: https://lore.kernel.org/r/20211007182321.872075-1-mic@digikod.net
+v12: https://lore.kernel.org/r/20201203173118.379271-1-mic@digikod.net
+v11: https://lore.kernel.org/r/20201019164932.1430614-1-mic@digikod.net
+v10: https://lore.kernel.org/r/20200924153228.387737-1-mic@digikod.net
+v9: https://lore.kernel.org/r/20200910164612.114215-1-mic@digikod.net
+v8: https://lore.kernel.org/r/20200908075956.1069018-1-mic@digikod.net
+v7: https://lore.kernel.org/r/20200723171227.446711-1-mic@digikod.net
+v6: https://lore.kernel.org/r/20200714181638.45751-1-mic@digikod.net
+v5: https://lore.kernel.org/r/20200505153156.925111-1-mic@digikod.net
+v4: https://lore.kernel.org/r/20200430132320.699508-1-mic@digikod.net
+v3: https://lore.kernel.org/r/20200428175129.634352-1-mic@digikod.net
+v2: https://lore.kernel.org/r/20190906152455.22757-1-mic@digikod.net
+v1: https://lore.kernel.org/r/20181212081712.32347-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (7):
+  exec: Add a new AT_EXECVE_CHECK flag to execveat(2)
+  security: Add EXEC_RESTRICT_FILE and EXEC_DENY_INTERACTIVE securebits
+  selftests/exec: Add 32 tests for AT_EXECVE_CHECK and exec securebits
+  selftests/landlock: Add tests for execveat + AT_EXECVE_CHECK
+  samples/check-exec: Add set-exec
+  selftests: ktap_helpers: Fix uninitialized variable
+  samples/check-exec: Add an enlighten "inc" interpreter and 28 tests
+
+Mimi Zohar (1):
+  ima: instantiate the bprm_creds_for_exec() hook
+
+ Documentation/userspace-api/check_exec.rst    | 144 ++++++
+ Documentation/userspace-api/index.rst         |   1 +
+ fs/exec.c                                     |  20 +-
+ include/linux/binfmts.h                       |   7 +-
+ include/uapi/linux/audit.h                    |   1 +
+ include/uapi/linux/fcntl.h                    |   4 +
+ include/uapi/linux/securebits.h               |  24 +-
+ samples/Kconfig                               |   9 +
+ samples/Makefile                              |   1 +
+ samples/check-exec/.gitignore                 |   2 +
+ samples/check-exec/Makefile                   |  15 +
+ samples/check-exec/inc.c                      | 205 ++++++++
+ samples/check-exec/run-script-ask.inc         |   9 +
+ samples/check-exec/script-ask.inc             |   5 +
+ samples/check-exec/script-exec.inc            |   4 +
+ samples/check-exec/script-noexec.inc          |   4 +
+ samples/check-exec/set-exec.c                 |  85 ++++
+ security/commoncap.c                          |  29 +-
+ security/integrity/ima/ima_appraise.c         |  27 +-
+ security/integrity/ima/ima_main.c             |  29 ++
+ security/security.c                           |  10 +
+ tools/testing/selftests/exec/.gitignore       |   4 +
+ tools/testing/selftests/exec/Makefile         |  19 +-
+ .../selftests/exec/check-exec-tests.sh        | 205 ++++++++
+ tools/testing/selftests/exec/check-exec.c     | 456 ++++++++++++++++++
+ tools/testing/selftests/exec/config           |   2 +
+ tools/testing/selftests/exec/false.c          |   5 +
+ .../selftests/kselftest/ktap_helpers.sh       |   2 +-
+ tools/testing/selftests/landlock/fs_test.c    |  27 ++
+ 29 files changed, 1341 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/userspace-api/check_exec.rst
+ create mode 100644 samples/check-exec/.gitignore
+ create mode 100644 samples/check-exec/Makefile
+ create mode 100644 samples/check-exec/inc.c
+ create mode 100755 samples/check-exec/run-script-ask.inc
+ create mode 100755 samples/check-exec/script-ask.inc
+ create mode 100755 samples/check-exec/script-exec.inc
+ create mode 100644 samples/check-exec/script-noexec.inc
+ create mode 100644 samples/check-exec/set-exec.c
+ create mode 100755 tools/testing/selftests/exec/check-exec-tests.sh
+ create mode 100644 tools/testing/selftests/exec/check-exec.c
+ create mode 100644 tools/testing/selftests/exec/config
+ create mode 100644 tools/testing/selftests/exec/false.c
 
 
-IMHO you should follow the same style as the Alloc code.
-
-This includes a separate `flags` module.
-
-> +#[derive(Copy, Clone, PartialEq, Eq)]
-> +#[repr(u32)]
-> +pub enum PlaneCommitFlag {
-> +    ActiveOnly =3D (1 << 0),
-> +    NoDisableAfterModeset =3D (1 << 1),
-> +}
-> +
-> +impl BitOr for PlaneCommitFlag {
-> +    type Output =3D PlaneCommitFlags;
-> +
-> +    fn bitor(self, rhs: Self) -> Self::Output {
-> +        PlaneCommitFlags(self as u32 | rhs as u32)
-> +    }
-> +}
-> +
-> +impl BitOr<PlaneCommitFlags> for PlaneCommitFlag {
-> +    type Output =3D PlaneCommitFlags;
-> +
-> +    fn bitor(self, rhs: PlaneCommitFlags) -> Self::Output {
-> +        PlaneCommitFlags(self as u32 | rhs.0)
-> +    }
-> +}
-> +
-> +/// A bitmask for controlling the behavior of =
-[`AtomicCommitTail::commit_planes`]
-> +///
-> +/// This corresponds to the `DRM_PLANE_COMMIT_*` flags on the C side. =
-Note that this bitmask does
-> +/// not discard unknown values in order to ensure that adding new =
-flags on the C side of things does
-> +/// not break anything in the future.
-> +#[derive(Copy, Clone, Default, PartialEq, Eq)]
-> +pub struct PlaneCommitFlags(u32);
-> +
-> +impl From<PlaneCommitFlag> for PlaneCommitFlags {
-> +    fn from(value: PlaneCommitFlag) -> Self {
-> +        Self(value as u32)
-> +    }
-> +}
-> +
-> +impl From<PlaneCommitFlags> for u32 {
-> +    fn from(value: PlaneCommitFlags) -> Self {
-> +        value.0
-> +    }
-> +}
-> +
-> +impl BitOr for PlaneCommitFlags {
-> +    type Output =3D Self;
-> +
-> +    fn bitor(self, rhs: Self) -> Self::Output {
-> +        Self(self.0 | rhs.0)
-> +    }
-> +}
-> +
-> +impl BitOrAssign for PlaneCommitFlags {
-> +    fn bitor_assign(&mut self, rhs: Self) {
-> +        *self =3D *self | rhs
-> +    }
-> +}
-> +
-> +impl BitAnd for PlaneCommitFlags {
-> +    type Output =3D PlaneCommitFlags;
-> +
-> +    fn bitand(self, rhs: Self) -> Self::Output {
-> +        Self(self.0 & rhs.0)
-> +    }
-> +}
-> +
-> +impl BitAndAssign for PlaneCommitFlags {
-> +    fn bitand_assign(&mut self, rhs: Self) {
-> +        *self =3D *self & rhs
-> +    }
-> +}
-> +
-> +impl BitOr<PlaneCommitFlag> for PlaneCommitFlags {
-> +    type Output =3D Self;
-> +
-> +    fn bitor(self, rhs: PlaneCommitFlag) -> Self::Output {
-> +        self | Self::from(rhs)
-> +    }
-> +}
-> +
-> +impl BitOrAssign<PlaneCommitFlag> for PlaneCommitFlags {
-> +    fn bitor_assign(&mut self, rhs: PlaneCommitFlag) {
-> +        *self =3D *self | rhs
-> +    }
-> +}
-> +
-> +impl BitAnd<PlaneCommitFlag> for PlaneCommitFlags {
-> +    type Output =3D PlaneCommitFlags;
-> +
-> +    fn bitand(self, rhs: PlaneCommitFlag) -> Self::Output {
-> +        self & Self::from(rhs)
-> +    }
-> +}
-> +
-> +impl BitAndAssign<PlaneCommitFlag> for PlaneCommitFlags {
-> +    fn bitand_assign(&mut self, rhs: PlaneCommitFlag) {
-> +        *self =3D *self & rhs
-> +    }
-> +}
-> +
-> +impl PlaneCommitFlags {
-> +    /// Create a new bitmask
-> +    fn new() -> Self {
-> +        Self::default()
-> +    }
-> +
-> +    /// Check if the bitmask has the given commit flag set
-> +    fn has(&self, flag: PlaneCommitFlag) -> bool {
-> +        *self & flag =3D=3D flag.into()
-> +    }
-> +}
-> +
-> /// An iterator which goes through each DRM plane currently in an =
-atomic state.
-> ///
-> /// Note that this iterator will return [`OpaquePlane`]s, because it's =
-entirely possible for a
-> --=20
-> 2.46.1
->=20
->=20
-
-=E2=80=94 Daniel
-
-[0] =
-https://lore.kernel.org/all/20241024-topic-panthor-rs-genmask-v2-1-85237c1=
-f0cea@collabora.com/
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.47.1
 
 
