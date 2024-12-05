@@ -1,189 +1,128 @@
-Return-Path: <linux-kernel+bounces-433039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5795B9E5341
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:01:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14E09E5347
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D19167226
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEF011677F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979191DB929;
-	Thu,  5 Dec 2024 11:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+5exeIY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6722A1DDA3A;
+	Thu,  5 Dec 2024 11:02:23 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FEB1D5CE3;
-	Thu,  5 Dec 2024 11:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107351DD543
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 11:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733396481; cv=none; b=ae35tGhtqK3gtO1thil70+KpX6JPZ0LGFfqICc3V0JA/czfKPeNt9Srb9IRJIW5q0SZ6WhsI7AHHQ3tHcMmpe/kEEnMnZxy0TOCgBaV0j2qhOP8BEFqqKNaqlLh0dKAyKoOPndKbLZhoskr1SDVIIAYMc4VlKfZjOUmUIn0pTes=
+	t=1733396543; cv=none; b=tfvwzgIQOxRirdhFH5gNxmw0OCHvULEqhstkFra2MC5wwe2WRXysN3AEYIHaSTlZLs4htJnKM6jAc4T5eInMk28O9cPsuWERyPkihWEdQMes6viC/CZmv1EhVTtxw/S7SfdiJ9nsYDosf6PtMGeZTqA/lB2045gCDeR6VhtF+jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733396481; c=relaxed/simple;
-	bh=JcI1zEQmAwPsUCqWj/3UDFGiJYxHwtuikUb7aQqXyho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sR84luhh1ZRPpJ92ja4JdReiMYAxi1fQMg9mew7ycaHO1G74HxO/5DKu+niQGyAi/Y7I41K4/CjfxoY0iZLncT4AKlznqUDUholZpBB8oJgYOxDYcVCn3GnSsxjXewRLySTnmFWzUgowe79rAFEhtZwT7SYUCdmG0cR/viiSpw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+5exeIY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2F0C4CEDF;
-	Thu,  5 Dec 2024 11:01:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733396479;
-	bh=JcI1zEQmAwPsUCqWj/3UDFGiJYxHwtuikUb7aQqXyho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q+5exeIYFO8oWmx+yBilju6NrR3S/lvfz8SGYJL8aXoYUCwQTd0xG9+GiQnrGOIj7
-	 1N55rwYqDUqVGQgZyVCRMG5MEBu7S47pR5/DcYVyFQ6jly0GJ/FjQrdc4XZdMo33wm
-	 NxORS1rvR2fz+GUoUjAUIueec7siMGyckC/gr3ghULeyKNZfSPs1UiFmd4qHIgQrzb
-	 qV3ZujrOjjP3t+aiKbikz55yfrd352BrNsFzsBcGA/63aAciaTc/yhjgoqbY3II+s+
-	 85SiQOAR+KXKmavUJS6fjiCsmD+fMFTX6fBkFkrR/GDlRZ98PTv398eqy8914hheyo
-	 zvm1c1lOZrpZA==
-Received: by mercury (Postfix, from userid 1000)
-	id D909210604B0; Thu, 05 Dec 2024 12:01:16 +0100 (CET)
-Date: Thu, 5 Dec 2024 12:01:16 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: =?utf-8?B?Q3PDs2vDoXMs?= Bence <csokas.bence@prolan.hu>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH v5 5/8] power: ip5xxx_power: Check for optional bits
-Message-ID: <p3uryekxe66hd2n7svp4j4laqjaycv5o6qu6b37shwxmiuljur@23o44yw6jmkv>
-References: <20241119180741.2237692-1-csokas.bence@prolan.hu>
- <20241119180741.2237692-5-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1733396543; c=relaxed/simple;
+	bh=1JXHICbLubrrPzAiD36/7f4WwirzHepM8WRrclSlmrE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=QMFT94vq3xF3Gv/mkzjP81GlUUJuKExydCeB5FpO2qRoCEama2H3NsELJIzym+m/nzWGnm3L4GIuJhdAffmhQSo0sDvyT7QIp1giUBdyLvRS8sSxIr7ts4KVXIn/4AxxSzGmSwbqHzsZB+9hvNmRwTMEhKDRzW6UYfBKNm/QrZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mtapsc-5-yrpZNFbUOxOUAdmBBR9Lbw-1; Thu, 05 Dec 2024 11:02:18 +0000
+X-MC-Unique: yrpZNFbUOxOUAdmBBR9Lbw-1
+X-Mimecast-MFC-AGG-ID: yrpZNFbUOxOUAdmBBR9Lbw
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 5 Dec
+ 2024 11:01:37 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 5 Dec 2024 11:01:37 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'David Howells' <dhowells@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Marc Dionne
+	<marc.dionne@auristor.com>, Yunsheng Lin <linyunsheng@huawei.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next 02/37] rxrpc: Use umin() and umax() rather than
+ min_t()/max_t() where possible
+Thread-Topic: [PATCH net-next 02/37] rxrpc: Use umin() and umax() rather than
+ min_t()/max_t() where possible
+Thread-Index: AQHbRMbh0C4h7ofUKUqfMucF4fVa+LLW8I5ggACM0QCAAAFxUA==
+Date: Thu, 5 Dec 2024 11:01:37 +0000
+Message-ID: <9f8c979a7a2c4b78961297ee2fae380e@AcuMS.aculab.com>
+References: <35033e7d707b4c68ae125820230d3cd3@AcuMS.aculab.com>
+ <20241202143057.378147-1-dhowells@redhat.com>
+ <20241202143057.378147-3-dhowells@redhat.com>
+ <1760515.1733395814@warthog.procyon.org.uk>
+In-Reply-To: <1760515.1733395814@warthog.procyon.org.uk>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vhq4ahvt5mwrn74j"
-Content-Disposition: inline
-In-Reply-To: <20241119180741.2237692-5-csokas.bence@prolan.hu>
-
-
---vhq4ahvt5mwrn74j
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: V1pP41TkE8k4KSORQAUxS-Zx8yiC5JCe5yBtTh_oWho_1733396537
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 5/8] power: ip5xxx_power: Check for optional bits
-MIME-Version: 1.0
 
-Hi,
-
-On Tue, Nov 19, 2024 at 07:07:37PM +0100, Cs=F3k=E1s, Bence wrote:
-> Some parts may not have certain control bits. These bits
-> however may be non-essential to the system's operation,
-> as the default behaviour is the one we would set anyways,
-> or the bits are not applicable for said part (e. g. enabling
-> NTC on a part without an NTC pin, or one where it cannot
-> be disabled via registers anyways).
+From: David Howells
+> Sent: 05 December 2024 10:50
 >=20
-> Signed-off-by: Cs=F3k=E1s, Bence <csokas.bence@prolan.hu>
-> ---
->  drivers/power/supply/ip5xxx_power.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
+> David Laight <David.Laight@ACULAB.COM> wrote:
 >=20
-> diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/i=
-p5xxx_power.c
-> index f64767b81c3b..f47198731a0c 100644
-> --- a/drivers/power/supply/ip5xxx_power.c
-> +++ b/drivers/power/supply/ip5xxx_power.c
-> @@ -113,6 +113,7 @@ struct ip5xxx {
->  	u8 chg_end_inverted;
->  };
-> =20
-> +#define REG_FIELD_UNSUPPORTED { .lsb =3D 1 }
-
-This belongs into the last patch. I fixed it up while applying the
-series.
-
-Greetings,
-
--- Sebastian
-
->  /* Register fields layout. Unsupported registers marked as { .lsb =3D 1 =
-} */
->  struct ip5xxx_regfield_config {
->  	const struct reg_field charger_enable;
-> @@ -206,9 +207,11 @@ static int ip5xxx_initialize(struct power_supply *ps=
-y)
->  	 * Disable shutdown under light load.
->  	 * Enable power on when under load.
->  	 */
-> -	ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.boost.light_load_shutdown.ena=
-ble, 0);
-> -	if (ret)
-> -		return ret;
-> +	if (ip5xxx->regs.boost.light_load_shutdown.enable) {
-> +		ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.boost.light_load_shutdown.en=
-able, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
->  	ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.boost.load_powerup_en, 1);
->  	if (ret)
->  		return ret;
-> @@ -231,9 +234,11 @@ static int ip5xxx_initialize(struct power_supply *ps=
-y)
->  	 * Enable the NTC.
->  	 * Configure the button for two presses =3D> LED, long press =3D> shutd=
-own.
->  	 */
-> -	ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.battery.ntc_dis, 0);
-> -	if (ret)
-> -		return ret;
-> +	if (ip5xxx->regs.battery.ntc_dis) {
-> +		ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.battery.ntc_dis, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
->  	ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.btn.wled_mode, 1);
->  	if (ret)
->  		return ret;
-> @@ -507,9 +512,12 @@ static int ip5xxx_battery_set_voltage_max(struct ip5=
-xxx *ip5xxx, int val)
->  	if (ret)
->  		return ret;
-> =20
-> -	ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.battery.vset_en, 1);
-> -	if (ret)
-> -		return ret;
-> +	/* Don't try to auto-detect battery type, even if the IC could */
-> +	if (ip5xxx->regs.battery.vset_en) {
-> +		ret =3D ip5xxx_write(ip5xxx, ip5xxx->regs.battery.vset_en, 1);
-> +		if (ret)
-> +			return ret;
-> +	}
-> =20
->  	return 0;
->  }
-> --=20
-> 2.34.1
+> > > Use umin() and umax() rather than min_t()/max_t() where the type spec=
+ified
+> > > is an unsigned type.
+> >
+> > You are also changing some max() to umax().
 >=20
+> Good point.  If I have to respin my patches again, I'll update that.
 >=20
+> > Presumably they have always passed the type check so max() is fine.
+> > And max(foo, 1) would have required that 'foo' be 'signed int' and coul=
+d
+> > potentially be negative when max(-1, 1) will be 1 but umax(-1, 1) is
+> > undefined.
 >=20
+> There have been cases like this:
+>=20
+> =09unsigned long timeout;
+> =09...
+> =09timeout =3D max(timeout, 1);
+>=20
+> where the macro would complain because it thought "timeout" and "1" were
+> different sizes, so "1UL" had to be used.  Using umax() deals with that i=
+ssue.
 
---vhq4ahvt5mwrn74j
-Content-Type: application/pgp-signature; name="signature.asc"
+The current version of max() won't complain if you use "1".
+It uses statically_true((x) >=3D 0) to decide whether values are valid
+for an unsigned compare.
 
------BEGIN PGP SIGNATURE-----
+So even:
+=09int r =3D fn();
+=09unsigned int u =3D fu();
+=09if (r < 0)
+=09=09return r;
+=09return max(r, u);
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdRh/wACgkQ2O7X88g7
-+prYdQ//aYL3ELMkAJIj0YiiQw3hIAtKbYUxh9F1Pq7nYVJus1t3qzX8B3FLRq32
-/PpdTQomI94jIWusEupTlCt4ycnZ1qIVDtqURt/oQ6AlIoFx32QYfp1k3AO1g2mM
-+JblYEok3YFyXqdHSb+OSAG2DEvGJRHlQHUolXyXcjhdJ2JY+tNqyfO9dtAm6jN3
-8qCO3nkqb6g9janHX/3eM+IkxYVkQr9yDRArd5qUQqBuAFxsUoyPhIqkLPv6Jkcx
-klAIHhvRwRfjy5wjLEVjSAjZMFvAzUsAhbm+XVwIk6ee2xodtMSZ76DPAWUlcryI
-y5hxRlgu6wQpJio/fmXX4SIBjUbqTj9lqk09cIMejIXLfOVczOp2uoSpmomHTRFY
-+npO7bwjGfkRPD8WYAJVpCqG10AMLB2usEBWsQmlkc0nBnrjdmZiPj2/Ql/9Pcg7
-sTdK+jxGOvlqGdVkrtgH7AwYriG6sJS/hhZyfxcIxSXRuPYcKkmKYDAQg9ITsZkv
-tmyroqZxy0o3vVz/dBoxCAg1ChgvOec2vafeyFHr/yqqPtZhA0mG3cb1FPfQ6s9c
-5m49zOITFC1WrjYcYmocX7VtHY/uwQoyLQ4iP/7kDbNT4N6u1WgE2l44KJbl2pMv
-vWNgPKQZsSPdjx4VkZf3qJOiFh5OYf3AISMxaAOgGHcDNPwS2F8=
-=00Dx
------END PGP SIGNATURE-----
+is fine since modern compilers do limited domain tracking.
 
---vhq4ahvt5mwrn74j--
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
