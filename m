@@ -1,130 +1,140 @@
-Return-Path: <linux-kernel+bounces-432919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7C89E51D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:13:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60479E51C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:10:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC32167A77
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:13:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D262825B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD582163B5;
-	Thu,  5 Dec 2024 10:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9D7217649;
+	Thu,  5 Dec 2024 10:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q/+PPlLq"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Sc5Z0v62";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BaiZmjW5"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB5D2163A8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2863D1D5CC2;
+	Thu,  5 Dec 2024 10:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733393178; cv=none; b=rgXBN3cTPBu0Mb52/LNCnAwiISr8E8fkwfqSdPZKcKuTroBd14GBZ8q6ia9aHfDZTGuxWfaNXuY7T/TJFt0YbQJ5HuCp8w8bgtUYBuWZ1undP+IT7yNbNDpgaDx0j4Bnyun45oUKz+uyWt3hqv8PE67lp3Ns4/g7xnblZqEz83g=
+	t=1733393405; cv=none; b=Al2VyhufYhYEKH/qWvdMRK2omZdUpyVNzF3sO44MWlMAiJ1XOu0l00H7yh7D95ixrlxwVjCkT86QIuFqruB3SH4V6iY50BcdPpzz1dtNq1YS2ektFBhiv5DTcjw1nOMwtYlEoo/vN46qRTDBog8GGg41AvJTV4P3t59XoD/5f0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733393178; c=relaxed/simple;
-	bh=duPje3LygJnHrXaaI0cTK/M8CS+WA9ne+Dj6Zrq6UK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSLHSZ0uvTcpgVGxuyG37RGwXlZLHdEzBhq36O2SwZkdr9IwWxpA4Oj/JmZIsEYix0RD0pyZvEWVrwztFsZDbI00mKlmyJkRwRmp2beRyqJRUUW+bMk9dl5WJmgvwqM9KIIld9W+doyBJx+ynWxl+H6hO2n58IfHkWmw9YUAtpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q/+PPlLq; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e1721716so306228f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733393174; x=1733997974; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M/kQOpXWTUOPQmOqqeamFyujejmTR09eYwRs0b1/cOw=;
-        b=Q/+PPlLqlxGr+HXBwYXaIWAtXTsicWVMb8Mx3FAzxmj/OBi/TetPrn4b6jWAr56ZJU
-         k7xADxEn+j37UDGu1Bl8a+nIfTT21Bs7pdK1Zr4i5YBfsJbBuIsrSlLl/GTRGHlYQ2Sk
-         cNYMGDzdDlLaC4WplB/wn3Kj5psjmBJuqyfYf8vFiOFsS9FDq8KW8gx5UzxFOzJr69ly
-         PRPaeGa6q2NMmi8KmaPTyqMxDOKnywJbbVxLFeaCS+wBL3Juvq4Cn3jlp5oY/wj/Sv0D
-         rsHZNNa4SZ06yPuwOS5YjHYb2hyCu4IogiNFt1L/64kmTvl1HEr+84XBT3hgaB+9cgz4
-         10Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733393174; x=1733997974;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M/kQOpXWTUOPQmOqqeamFyujejmTR09eYwRs0b1/cOw=;
-        b=oerq4XXNJGZbLXmKnLrGa5zPT4/dYBj1YeXeorRCTZ7Xt6vHWBOcMQUORvtPavVQ7e
-         B6BAp0AuaV89Th5Hakr8A0j49c+yMWxO8Qvsi6Gxx6imp7LUWx/WqFSFIaBuFz+0jPCT
-         fFnO8M410WvGz5Ce3T00hkPkZtHynQYEAslQdEibtidfnDp5pv28USEQRFw5P/HTYF9F
-         70yM1IpnwHVQgkbMxauC3ZUiqgQS////PuicCEaqedNJT6RSlINpvxKMonGpFArdYSt4
-         NPMZWSRVPfMdC8l19HvUeu3yHnzbK/0uKtq1uSo0BQ7VzC5LOc622XzWUGUFRpSZRy1x
-         zbgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeWcso/WxXlrkvpc5/vCNAvMouGVdTXAZbJ5R8c0xVs/ct9JwtmN6xbeN1sS6fivDv/sd4C2YYmagnt60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg5YBzVoaKdIm6qq1OYrxAqlqaP2ZAuKyi8GUmsd5tPlwfcDBy
-	Y3u7UJ0i6PEC16fofSo8sCyFb67miloaC1AftdPAXKSJaEJBKvMas0vrPBSZ55g=
-X-Gm-Gg: ASbGncvbZQdNsR/T+vy/exSHfB6MJ+dB/SHkI0x726OXIwbNuNQC1MSj9JAixEBGw+v
-	Zh2+9q6Ooct0GiNIRy3M1WRtwHOSCy33Z9xSI2VjvnXTovT5sAxautd64mRkq61MXNhkFFWbTBr
-	1gFEoaiawmoM0pVMmwlZ2vxE3Xopr8rjZS5SoUa3TOw8lU7JPGhyPzxl+pJnMBIfxvYzFwCJOHd
-	r7UBUwbav5Qv8rUH7pqCtrGi7QqVleQgRh4wGO3cLUqST2rot8X5fs=
-X-Google-Smtp-Source: AGHT+IFKUP4XEhaH9l0KWirCvsRf2IyP3F1dJ5FSJTnmx+VqsQDiutPTjsI+5MMwOtaQ5pVTxO5vKQ==
-X-Received: by 2002:a05:6000:1f8b:b0:385:f249:c336 with SMTP id ffacd0b85a97d-385fd419e08mr7365729f8f.45.1733393174622;
-        Thu, 05 Dec 2024 02:06:14 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386221a607csm1487807f8f.103.2024.12.05.02.06.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 02:06:14 -0800 (PST)
-Date: Thu, 5 Dec 2024 13:06:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Marcello Carla' <marcello.carla@gmx.com>
-Subject: Re: [PATCH 3/4 v3] staging: gpib: Fix erroneous removal of blank
- before newline
-Message-ID: <36f9a87e-ad02-45e6-a8a0-8da65461b346@stanley.mountain>
-References: <20241205093442.5796-1-dpenkler@gmail.com>
+	s=arc-20240116; t=1733393405; c=relaxed/simple;
+	bh=Uye7Sg7D5JhsboEsNHfZkUDA25xAWur279dkqxnPAXc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=uAn/tLRNbvGm0sYthn+mhiDz5J1HdcSl/dKYEgXSi5MqkJ/u0QOqrDGRRltRjF2Dkcphj6KcE1lH7HLUAvimBep/FHQjkRr2muetmwlbQstaG8/ZAnGX574BcjHENyFfhCsD6+t5dNFFjtoj2+3xyLLUwS4+bf4hpkZ9LvrEprE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Sc5Z0v62; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BaiZmjW5; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id EF60E254021E;
+	Thu,  5 Dec 2024 05:10:02 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 05 Dec 2024 05:10:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733393402;
+	 x=1733479802; bh=FSPKuoKyCdYS29EwGZWiI7JAIKFRf2AXJz4FVE+fs2c=; b=
+	Sc5Z0v62Jq1g3a51rnsVQX5t+mLhb124Dy7WZLhEUD7FeFjLfbCwuLl4MnRXtM46
+	d2vvHkPo1etp7WENNJj4DB7fF7GyEOMxziwdn4LB1kj9vXr6ipgmXSlCrqSizPZI
+	ulkhSVrSMITviexXeJzwwQRXjiIxmEplb43jtfTgQlGsrUKF0ZbUCJ3ykDEdA39s
+	Ayr41fYYVf5XTeGu2ORblznhmWpFMqjIOQiwUQ40/rj3tOWXLDqOLFiYNMIdEOhv
+	1p+UfZ0cZaAmxsqRYbu5welnrpUrULq6aAIvxFmMhubW9s0arnqSTalYQ4MvTYyK
+	flyiD+0dZY3wYzW8BUk5Xw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733393402; x=
+	1733479802; bh=FSPKuoKyCdYS29EwGZWiI7JAIKFRf2AXJz4FVE+fs2c=; b=B
+	aiZmjW5kFdczqEqObRlXmtDqB00gslq+oglU+LEE1tp+YQKJKqXYVtIzHogO7rEJ
+	+b2lpCMfbURiFo2UXUtEPvkQO7o9oUF5l+5gelfwkEsl6m+Zcnm2JrNhTSHLDEWL
+	qbqwuwtYoU9fKHe9pFJjyyxmJYsVdnDzEb9UJObUsha/e5rfkEbvYivBN+/9PqTf
+	CPJnKmGuyc+cfm8HBtK2nooVrtbr/ko2Q2XFS/UkXvI6gT+b39hptHGo5tqu60qf
+	i97LfRhE2SJhp5PcdE0YaXewzvI3HqVU9e9nX6Gg0Qdkb9UXXI9lOkRggQzKppgn
+	ouA4KN8a8zHcASxN5eEsw==
+X-ME-Sender: <xms:-XtRZwEoP1x99iNz-eH0sC2PcPfRkh5momsIhzLFmp2mKg8IsaGXIA>
+    <xme:-XtRZ5UKtwuqhYNXGcckZMtjFtUCMVoDIGBQo7wUYK--CoXJQ-oB_ms_4fWDxezQ6
+    IHwrjIQMkfs0rPS8Qo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgdduudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
+    hpthhtoheptghimhhinhgrghhhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggr
+    nhhjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvg
+    grugdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphht
+    thhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:-ntRZ6K3LV8oUegDWFgqeEx_OwWQcFYmU111TMNt680Q3A-OSgdpGQ>
+    <xmx:-ntRZyEorqMY_FC3voU5RGSSKgIuU13lQWjIgWcvV9c6vi1FSAMdng>
+    <xmx:-ntRZ2WA5AFy6_cQoctov9G0AAKRrNt2mStAoq4BHumJvdubExrmMA>
+    <xmx:-ntRZ1MFqI3DKNTe0bQkByZOZUH4I6tiDdIEITEIbF_RgdkvpPSGeA>
+    <xmx:-ntRZ3sla-b7ibxU0xinfs8p0FLqDG05pqJSzFyHV6SCapNOm2PC9LqT>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D691D2220072; Thu,  5 Dec 2024 05:10:01 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205093442.5796-1-dpenkler@gmail.com>
+Date: Thu, 05 Dec 2024 11:09:41 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andy@kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: "Arnd Bergmann" <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Matthew Wilcox" <willy@infradead.org>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Davide Ciminaghi" <ciminaghi@gnudd.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
+Message-Id: <74e8e9c6-8205-413a-97a4-aae32042c019@app.fastmail.com>
+In-Reply-To: <Z1FgxAWHKgyjOZIU@smile.fi.intel.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-10-arnd@kernel.org>
+ <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com>
+ <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
+ <CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com>
+ <Z1FgxAWHKgyjOZIU@smile.fi.intel.com>
+Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 10:34:42AM +0100, Dave Penkler wrote:
-> The USB_GPIB_SET_LINES command string used to be: "\nIBDC \n" but when
-> we were merging this code into the upstream kernel we deleted the space
-> character before the newline to make checkpatch happy.  That turned
-> out to be a mistake.
-> 
-> The "\nIBDC" part of the string is a command that we pass to the
-> firmware and the next character is a variable u8 value.
-> It gets set in set_control_line().
-> 
->  msg[leng - 2] = value ? (retval & ~line) : retval | line;
-> 
-> where leng is the length of the command string.
-> 
-> Imagine the parameter was supposed to be "8".
-> With the pre-merge code the command string would be "\nIBDC8\n"
-> With the post-merge code the command string became "\nIBD8\n"
-> 
-> The firmware doesn't recognize "IBD8" as a valid command and rejects it.
-> 
-> Putting a "." where the parameter is supposed to go fixes the driver
-> and makes checkpatch happy.  Same thing with the other define and
-> the in-line assignment.
-> 
-> Reported-by: Marcello Carla' <marcello.carla@gmx.com>
-> Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
-> Co-developed-by: Marcello Carla' <marcello.carla@gmx.com>
-> Signed-off-by: Marcello Carla' <marcello.carla@gmx.com>
-> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
-> ---
+On Thu, Dec 5, 2024, at 09:13, Andy Shevchenko wrote:
+> On Wed, Dec 04, 2024 at 03:33:19PM -0800, Linus Torvalds wrote:
+>> On Wed, 4 Dec 2024 at 11:44, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> ...
+>
+>> Will that work when you cross-compile? No. Do we care? Also no. It's
+>> basically a simple "you want to optimize for your own local machine"
+>> switch.
+>
+> Maybe it's okay for 64-bit machines, but for cross-compiling for 32-bit on
+> 64-bit. I dunno what '-march=native -m32' (or equivalent) will give in such
+> cases.
 
-Thank you!
+From the compiler's perspective this is nothing special, it just
+builds a 32-bit binary that can use any instruction supported in
+32-bit mode of that 64-bit CPU, the same as the 32-bit CONFIG_MCORE2
+option that I disallow in patch 04/11.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+     Arnd
 
