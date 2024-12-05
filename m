@@ -1,193 +1,119 @@
-Return-Path: <linux-kernel+bounces-433242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0F59E557D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:29:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D56CC16BAB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:29:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B34D219A68;
-	Thu,  5 Dec 2024 12:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G/mOcu52";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1a4GW2nG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE67F9E5581
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:29:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E71F218AC1;
-	Thu,  5 Dec 2024 12:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 698412870E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:29:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2852721883B;
+	Thu,  5 Dec 2024 12:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AstnWdgY"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0B62185A3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401697; cv=none; b=MvwRhxFfB5DO0mzrL5427r0/bqEvIz6ADP8FNLcjAylpE9RvQgxiZahU78cZdwTQRaAYrFXLrbaf3SRHr+17mv1CDuxT/d4atKzHyvHykN4E7ikJpx4y2WvJ+Dh9btykcSOFl6qIgA5CIsfnE12YvmVMI3ps7IVKaE0iL4R1534=
+	t=1733401711; cv=none; b=QR5l/CFdnbsmzBjep18FU6qDWtmVkQdvs7Ir0R4MKt4YLdtWdzBXYsUuyjSb1KdrkLahSLRoB2t6Rb3PhznAE+LYYbqj0v67ryWgbmsNKMm8OxrZWoo0BY/FJ54eEZw1zJ4ns6b7p+xYnDRt5ao36foYW8L6WX/EXg3eE4/5l0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401697; c=relaxed/simple;
-	bh=tdDH5pEIqjNP1IJukpVxg6F0wQuvE8RGgO5Ayz2INBE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FYDyUXsv6qbPeWJvNVwCYMdjoGAD1ZltCgV8FaLx5jJv+pPaLOWqeVrM+eUSmHqeICWojju9FI6/JgSsKUS4SVIlNtuRqWU5gR5M4Lk18XLaPJpAcCC2a5x/H+AtHAjLu6atoSSYwCb6NhTB7zhuOTtNBnbdZQ6nwLq//3l8r0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G/mOcu52; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1a4GW2nG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 05 Dec 2024 12:28:13 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733401694;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WRQ3nX6TYvj16dD5YFNicRt6nYI/MT5Yjewj8JBrFuU=;
-	b=G/mOcu52sJkC+a3Aw6+bVH/rYtQgsd7j340EtQCKH/GVDuWxZU3UNtQbZI3oFUVzC6tM00
-	bGzhHZBQTxQJHmml4GtF1raMSfSJ9bgkWR+GZjctheg5TW1t2iX9QZo03xfWwA64T+g5+F
-	bMJzakkSeJEi6pcuEAKkGN2+WtEcnNMU0DRhNQPLYgmYKAwuo4eprfuOnCStouGiLd/cKU
-	qZ0tdIlWewtuzHJpUQG1Qo9tfaQ998N+22JxnCN5h/KN/VQu0mNMrfbcL3JBV1RwDFcBmE
-	Jyv3f1RmfNbW71+bpl708BG9jwPki9GJrsUouCUQrGhqLH6snecmwu+vRuQDoA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733401694;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WRQ3nX6TYvj16dD5YFNicRt6nYI/MT5Yjewj8JBrFuU=;
-	b=1a4GW2nGS96DKZXGq+qyJw1ygDevRkd4LqWilNv6NbLW6YAFWpfuPIC2MJGgYQXvG4Xhhz
-	0F4xB92Yoc/bQVDg==
-From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/boot] x86/sev: Avoid WARN()s and panic()s in early boot code
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241205112804.3416920-10-ardb+git@google.com>
-References: <20241205112804.3416920-10-ardb+git@google.com>
+	s=arc-20240116; t=1733401711; c=relaxed/simple;
+	bh=18bpV5A/4haIrWRQJEDM74qxWf1ybq3kSy/rlI4CMR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HjFC35AMl6suNyf1gq83Fn+KmgJwJW0rP8FQ/Ws5/vjObsXeeO61ymNfjTCrpDJ6AZUlHIXdGVtg9Dtrmljm9wm8x0hsAFL/OF8ovDZDa7Fm9eGUv3Z2J/0VJr8n/GC2j1D+AApa4jbz93t6CrVOVBZJOYeRlwstI889Oz3jmnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AstnWdgY; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43494a20379so8764415e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:28:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733401708; x=1734006508; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0/z0Y/or6wVIG3eV60xxWRF95SZcxwisFQI5iGbciCs=;
+        b=AstnWdgYcF9rIfZ3krtwW4N0xjeEtGWuj0/s1/pcO4jloTNUI9BNPUo1MsaDCkRDFZ
+         x+kofT7OIEWH6OE4wtjfPDdwy6vaW1ahRVdpyITI0DDMFm3BUmUys67l0B1piUismqBD
+         RAJ1+uh56N+YE6+NdIftuokYVEg8qK9sBGTTfaNcwjBaJ5QBs4iJGKuMLB91fiw+LJI7
+         o2PM4LWC4NB1XUrFEvcUX3JpeOVh8+se3FG+bHc1XYonNTfKOSnVPbbmwfWTRnzzZu/q
+         OaYZOhmv9xrauN8o+6gRNJCxhNMQgJqHVejoGJp5Sgq1ZnksEA/AiMJ4QHdY6YaaQwQz
+         pPFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733401708; x=1734006508;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0/z0Y/or6wVIG3eV60xxWRF95SZcxwisFQI5iGbciCs=;
+        b=D6Nn8ls+57J4dxpQ75/VJa8NDCYN3BE61shCxtCUxzKg3HSnJag7dUBv2oe2MO0gCv
+         PHxSfQcwDxzEqoJ1QIxyVbyk6BnKvJtb/kftt0rCuNOWKvu+zaFMogyGMMKIgWBayBWA
+         TKYlnlcwxPw4Tz68wrT0UOoV5O2U2qoB25PYxCZ3Qc2vnkR0CGLAG2jlw93jNB8OWk+v
+         X8R8f2nXDuIvRPvMQsMI6q63WS8kOQvzJW4M18IlN6HBQav6WealwdCU1eHkTYw/EhPo
+         IRlgjQcrZWTQfIfgFgMBr+Dp7D+qd+oq6gj5hY/8tq1EgFIUQSj+AyxKraIaF5ka70Of
+         j5mA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxamnplNLb0PpPsVFLb1jTrAQN3Ih8EhRxEpUIcVzt3Y5th9bLfzi7tiUiTMvKUf1FNNvQEDagxqjLNzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlO6wGmittUhEUze0fkJwNwYnAtlqqqnPujB5ED6ABtSn+skSt
+	wNsjuUpUQvX0XqeeQnF0ZqTubhUI5ME8zna4rzkZa03CEWLFhVyNqm1lO5tjyvA=
+X-Gm-Gg: ASbGnctS0WFO3VeMCWT86Lxo3rGAap4jcjFDoQhbn1R6gzmMRUbUB47HBXjpY0F3SQI
+	r4f7px2c7b7K8La44MzFDeZFjy19nrPc09ecfQU3BzzHN0faf62QJW25+Ohv8OVaXFYUPU9cvVM
+	nraQ54n65T3dVWm5/2RuNMl/+FYwgZOe9TYp/r09HBEwzPRYkSW1WpH2xzWe657CJZxJ9X++HvW
+	SdWX5++J1d3aRIRsv92H0RLi0OH4ZlFpJYBnjuqNKqKyxbNumfa2VWXxVwpCNQ=
+X-Google-Smtp-Source: AGHT+IFhSy7QZi+I3R64sZovAcTtAbg/HjBABy5kQ0+6tHCowzlGyLUtEVz4AzlfM38dgl84SsqQ3A==
+X-Received: by 2002:a05:600c:4f12:b0:434:a962:2a8c with SMTP id 5b1f17b1804b1-434d0a03abfmr84962955e9.22.1733401708213;
+        Thu, 05 Dec 2024 04:28:28 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0d2698sm22267365e9.8.2024.12.05.04.28.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 04:28:27 -0800 (PST)
+Message-ID: <2afca6ca-10eb-43b3-8730-386d6ca84b60@linaro.org>
+Date: Thu, 5 Dec 2024 12:28:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173340169364.412.10393076400350306074.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dmaengine: qcom: bam_dma: Avoid writing unavailable
+ register
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, vkoul@kernel.org,
+ martin.petersen@oracle.com, kees@kernel.org, av2082000@gmail.com,
+ fenghua.yu@intel.com, linux-arm-msm@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: quic_varada@quicinc.com, quic_srichara@quicinc.com
+References: <20241205120016.948960-1-quic_mdalam@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241205120016.948960-1-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/boot branch of tip:
+On 05/12/2024 12:00, Md Sadre Alam wrote:
 
-Commit-ID:     09d35045cd0f4265cf1dfe18ef83285fdc294688
-Gitweb:        https://git.kernel.org/tip/09d35045cd0f4265cf1dfe18ef83285fdc294688
-Author:        Ard Biesheuvel <ardb@kernel.org>
-AuthorDate:    Thu, 05 Dec 2024 12:28:06 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 05 Dec 2024 13:18:54 +01:00
+The commit log:
 
-x86/sev: Avoid WARN()s and panic()s in early boot code
+> Avoid writing unavailable register in BAM-Lite mode.
+> BAM_DESC_CNT_TRSHLD register is unavailable in BAM-Lite
+> mode. Its only available in BAM-NDP mode. So avoid writing
 
-Using WARN() or panic() while executing from the early 1:1 mapping is
-unlikely to do anything useful: the string literals are passed using
-their kernel virtual addresses which are not even mapped yet. But even
-if they were, calling into the printk() machinery from the early 1:1
-mapped code is not going to get very far.
+and the action taken in the code:
 
-So drop the WARN()s entirely, and replace panic() with a deadloop.
+> +	if (bdev->bam_revision >= BAM_LITE && bdev->bam_revision < BAM_NDP)
+> +		writel_relaxed(DEFAULT_CNT_THRSHLD,
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lore.kernel.org/r/20241205112804.3416920-10-ardb+git@google.com
+Really don't match up. You've said in your commit log 
+BAM_DESC_CNT_TRSHLD is unavailable to the LITE module but, then you say 
+if (bam_revision >= BAM_LITE...)
+
+How can checking if the revision == BAM_LITE match up with the stated 
+objective in your commit log => _not_ writing to DEFAULT_CNT_THRSHLD in 
+lite mode ... ?
+
 ---
- arch/x86/coco/sev/core.c   | 15 +++++----------
- arch/x86/coco/sev/shared.c |  9 +++++----
- 2 files changed, 10 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index c5b0148..499b419 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -777,15 +777,10 @@ early_set_pages_state(unsigned long vaddr, unsigned long paddr,
- 
- 		val = sev_es_rd_ghcb_msr();
- 
--		if (WARN(GHCB_RESP_CODE(val) != GHCB_MSR_PSC_RESP,
--			 "Wrong PSC response code: 0x%x\n",
--			 (unsigned int)GHCB_RESP_CODE(val)))
-+		if (GHCB_RESP_CODE(val) != GHCB_MSR_PSC_RESP)
- 			goto e_term;
- 
--		if (WARN(GHCB_MSR_PSC_RESP_VAL(val),
--			 "Failed to change page state to '%s' paddr 0x%lx error 0x%llx\n",
--			 op == SNP_PAGE_STATE_PRIVATE ? "private" : "shared",
--			 paddr, GHCB_MSR_PSC_RESP_VAL(val)))
-+		if (GHCB_MSR_PSC_RESP_VAL(val))
- 			goto e_term;
- 
- 		/* Page validation must be performed after changing to private */
-@@ -821,7 +816,7 @@ void __head early_snp_set_memory_private(unsigned long vaddr, unsigned long padd
- 	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_PRIVATE);
- }
- 
--void __init early_snp_set_memory_shared(unsigned long vaddr, unsigned long paddr,
-+void __head early_snp_set_memory_shared(unsigned long vaddr, unsigned long paddr,
- 					unsigned long npages)
- {
- 	/*
-@@ -2361,8 +2356,8 @@ static __head void svsm_setup(struct cc_blob_sev_info *cc_info)
- 	call.rax = SVSM_CORE_CALL(SVSM_CORE_REMAP_CA);
- 	call.rcx = pa;
- 	ret = svsm_perform_call_protocol(&call);
--	if (ret)
--		panic("Can't remap the SVSM CA, ret=%d, rax_out=0x%llx\n", ret, call.rax_out);
-+	while (ret)
-+		cpu_relax(); /* too early to panic */
- 
- 	RIP_REL_REF(boot_svsm_caa) = (struct svsm_ca *)pa;
- 	RIP_REL_REF(boot_svsm_caa_pa) = pa;
-diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
-index 71de531..afb7ffc 100644
---- a/arch/x86/coco/sev/shared.c
-+++ b/arch/x86/coco/sev/shared.c
-@@ -1243,7 +1243,7 @@ static void svsm_pval_terminate(struct svsm_pvalidate_call *pc, int ret, u64 svs
- 	__pval_terminate(pfn, action, page_size, ret, svsm_ret);
- }
- 
--static void svsm_pval_4k_page(unsigned long paddr, bool validate)
-+static void __head svsm_pval_4k_page(unsigned long paddr, bool validate)
- {
- 	struct svsm_pvalidate_call *pc;
- 	struct svsm_call call = {};
-@@ -1275,12 +1275,13 @@ static void svsm_pval_4k_page(unsigned long paddr, bool validate)
- 
- 	ret = svsm_perform_call_protocol(&call);
- 	if (ret)
--		svsm_pval_terminate(pc, ret, call.rax_out);
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
- 
- 	native_local_irq_restore(flags);
- }
- 
--static void pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool validate)
-+static void __head pvalidate_4k_page(unsigned long vaddr, unsigned long paddr,
-+				     bool validate)
- {
- 	int ret;
- 
-@@ -1293,7 +1294,7 @@ static void pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool val
- 	} else {
- 		ret = pvalidate(vaddr, RMP_PG_SIZE_4K, validate);
- 		if (ret)
--			__pval_terminate(PHYS_PFN(paddr), validate, RMP_PG_SIZE_4K, ret, 0);
-+			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
- 	}
- }
- 
+bod
 
