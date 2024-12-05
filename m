@@ -1,139 +1,306 @@
-Return-Path: <linux-kernel+bounces-432437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0676F9E4B40
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:38:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6619E4B3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3FE91881364
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6881667CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638CE56C;
-	Thu,  5 Dec 2024 00:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED822FBF6;
+	Thu,  5 Dec 2024 00:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFmsIKhk"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jGiAMcgl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E12B10E9;
-	Thu,  5 Dec 2024 00:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ADDF4E2;
+	Thu,  5 Dec 2024 00:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733359111; cv=none; b=hwEb1Aevajc6Q+WccHYTQS8o+FMz94Y8y0Huizg2lqhT+kHTyCgpECga1J+c7/jzMmTntHL7G4RDpflmeq26VQXykEYKVKeSZfTl2NJJTNDABJFrmEtQC/zVz2pXawR10yGtUhHdR0tnFgS0W2VIwMpK0eJXu+1YXMtWcHndEDw=
+	t=1733359092; cv=none; b=uQBHfiLzVOawCwGGakvOBGepspJ/fBHYT5bUXG8plYI7T0whmTEOpp8SrY6pKHpyZw+8kOOANM0WQmRF3iUycSsrJHDbpawb7TKQre/2znXuNjRI6Lo3margKf5apyP7PsMsvwOBkTa04XyRkncooDSdNZ4Bn6FAm1+d4uCkXzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733359111; c=relaxed/simple;
-	bh=CVtGeYGQ2lsIhDmByOC3VmZ9h8mcsqIVHwZTa60EnLA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rs7PbZtkJ1fhS7cTnPrVmiFL6iq8sWMLP3gr+aWOTtWdkHC7fiPsIRi9gtc45JiknPN4lGbVOreodTyBHcJeEHVf9QMGhg5fOu+TKxCt2Zx/bv8iaUrDNmfUhzNT6591uNo1orkMu6JS6d3AUXf3K4SWKR1eQkXgcf1VYn7B+gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFmsIKhk; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fd10cd5b10so336105a12.2;
-        Wed, 04 Dec 2024 16:38:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733359109; x=1733963909; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9TaqAnQ9e84EfyCGFY27XE5cu/57VweM6gLIO9TxviE=;
-        b=CFmsIKhkOCPqeS98oKWoFO5zo2feDy75fr+q34YeV7lDVwctX2/rbRKW1N9QZvJNAU
-         o4VgW2wK+Aos2a+wPEexI53Og5Svtl/ByWavl8QQCgqXW3dkMME0yQRSPgBNMgDNg5Bk
-         Yv9W3TiSer00ljVvI7pArE4YjjumtM7PAVOucmaMX4by5YvhKJV90/cGhj+Idwx6eJBE
-         b7ZKv/ke+1YaU6A8VCIJ+UOBkLRKxXqecpn+9zO+E6pay0TW0YqZT95jQ/zxtHbCM3EG
-         FH4cwihynyfx3U1RGJfa950YlkaoTuWveNxVsPBSO4UtQ38oqsASGkuvRlk4n3zXgW5p
-         WREg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733359109; x=1733963909;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9TaqAnQ9e84EfyCGFY27XE5cu/57VweM6gLIO9TxviE=;
-        b=EnZDwCfKZVhJYMrGbJQF3/086rpPYP6q/zMnz1Y2svQM3b90fYcJq8kHpd9ezCcW6D
-         mZnKioc7CPVPLQFdPXqi2p4vEsBs2Bp+joRlSaej9y375XuhjUK97aXDcF0kE7KfLp2w
-         GxrrGalxkm32zFziKXL80KZ7lCAP83x2pp/zFOiCTwiUYWSPuyPh6/ZHeGGjZz3ddIGL
-         g/YhQ+wv4kD8+FpRlS3UHR270U4yitCubvKjYRmKeY+cKxayJOxjDnj2Cs6X8ifO0Yj4
-         EYexVoJCasi6TM1+5PB0jsgxft3lfuVxW/UUZF8yNYRC3sEaGqcNFCbdMGJySBAmLrqT
-         GiLw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7dUDNnitaAfD3Q3GFFe5rf3XS99ueSLyDdtxxcM/OXjsq3PEKIqaLfww2XrPSKTDSTDqS70XO1RVscwgKVaK3Dod84w==@vger.kernel.org, AJvYcCWmhQl0vbWEg84C3LoDgttxhjsXjn4qQeuiAQrFCmUOm8U3BQ1cn+jm/KxUK6+JTxic7MjIKkR+EzZnEQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPjdQ6Hh30DVZxVTLOoe5wDnTPdX6250YdXy4erHr2RprTYTBk
-	Gez2iKn/SPkSv1umGUgidj9bKtht6I1lmC9Ps6BlsoQKtos2veO6
-X-Gm-Gg: ASbGncuZlp7LKYd3teQeKhccpm/w+PUhSaGbfEwWjTAzWNlPoXhheTYhirA4unuKuej
-	lfcQR5Dro8xzgEl0Qap8R6B0EhuLm9M8590nsQobujoL4pRawHSxLEAmVbvAKWlq0sUHYwcfHxJ
-	fMvXQh1rwQDopcrQChI41Ey0EwbOqQKt2dS6dOd/1TaJF+XEP8NcWtQfTUnXikd0TB58yfvBZQn
-	8y9jeNWFH3VgfX0At1ffYD+WQGeqm07eGnlwu+5KRhduk48KsPg5F/63cBBSrKIGnp34q+XFGR9
-	j5PXK4HUoR1MDIPyNd0=
-X-Google-Smtp-Source: AGHT+IHGZoXQtkdzn9gcelz/RSchyTX6Ifra/ExRIUhpX7+I/4rIt6Gijq0x5nMiHxPzojX3/Q283w==
-X-Received: by 2002:a05:6a21:339c:b0:1e0:f05b:e727 with SMTP id adf61e73a8af0-1e1653a7977mr12494551637.2.1733359109229;
-        Wed, 04 Dec 2024 16:38:29 -0800 (PST)
-Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2cc9311sm94243b3a.182.2024.12.04.16.38.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 16:38:28 -0800 (PST)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: Dell.Client.Kernel@dell.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	mario.limonciello@amd.com,
-	platform-driver-x86@vger.kernel.org,
-	w_armin@gmx.de
-Subject: [RFC PATCH 01/21] alienware-wmi: Modify parse_rgb() signature
-Date: Wed,  4 Dec 2024 21:38:03 -0300
-Message-ID: <20241205003802.2184367-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
-References: <20241205002733.2183537-3-kuurtb@gmail.com>
+	s=arc-20240116; t=1733359092; c=relaxed/simple;
+	bh=10K0kt3qulMGZi30OdMQv6XXrGRmT0E1cUH//lIKnVY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Yzqd0gCC2jIg7HZZnsf+yjfcayaamTu0FL0jrUfBQVCv/02iSWbJ0QBpg8CZ9HvkNjtC/iz5+XuG2uNc8kYS4bInebD0+1JmYsq7jcnVTvnLQ7e4HaphiqQnWoKZnGL/kXcrfI+eHc7WqCMJt5dN4cNQkc6en90MgPElRKNAK44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jGiAMcgl; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733359090; x=1764895090;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=10K0kt3qulMGZi30OdMQv6XXrGRmT0E1cUH//lIKnVY=;
+  b=jGiAMcglPWDxyvnMxILCqf5SvbwCC1Nq1vLGXGw2eP2quQ1q6iTLYIYM
+   +vHqD6YtQUOtDNSSgq44h/+GY4h8UBaeI7+A6MnalQUvDe8FvfyT64fXa
+   xOPTvMd0vJQexpJhsOSXEZoR9DrYzgaxVVv75A3cFqro3WHtH19s10dp+
+   VRZq5Be3vA5EKG3jVMgxBZiQNLSWWMnqnFTdePej2qfnSNsImsNI460pc
+   ZzOGpJpLVUyK6UyVwQXG18+lCmcQ4ME2/yHEE6nyh4BDYGwzqOg+bZ2Cm
+   e4T880VRuzFpHeiphyX69Z9CpcwQM+cABKVvwxYk5BEWJiRvkV/xMNZRl
+   w==;
+X-CSE-ConnectionGUID: DLfMD7oxTC2SDFk3kVUfRg==
+X-CSE-MsgGUID: 0rQbvfF+SeuEheaNERe1zw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33566518"
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="33566518"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 16:38:09 -0800
+X-CSE-ConnectionGUID: bgfxqTM4QCGuyUxOLRDMHw==
+X-CSE-MsgGUID: caqkOxw8TQ2sQqysq2/IHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="99003015"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.250])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 16:38:08 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Song Yoong Siang <yoong.siang.song@intel.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S .
+ Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next 1/1] igc: Improve XDP_SETUP_PROG process
+In-Reply-To: <20241204120233.3148482-1-yoong.siang.song@intel.com>
+References: <20241204120233.3148482-1-yoong.siang.song@intel.com>
+Date: Wed, 04 Dec 2024 16:38:07 -0800
+Message-ID: <87wmgfvua8.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-parse_rgb() now takes struct color_platform instead of struct
-platform_zone to support upcoming refactor.
+Song Yoong Siang <yoong.siang.song@intel.com> writes:
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
- drivers/platform/x86/dell/alienware-wmi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Improve XDP_SETUP_PROG process by avoiding unnecessary link down/up event
+> and hardware device reset.
+>
 
-diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index 77465ed9b449..b3a73fc43b3c 100644
---- a/drivers/platform/x86/dell/alienware-wmi.c
-+++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -434,7 +434,7 @@ static u8 global_brightness;
- /*
-  * Helpers used for zone control
-  */
--static int parse_rgb(const char *buf, struct platform_zone *zone)
-+static int parse_rgb(const char *buf, struct color_platform *colors)
- {
- 	long unsigned int rgb;
- 	int ret;
-@@ -454,7 +454,7 @@ static int parse_rgb(const char *buf, struct platform_zone *zone)
- 	repackager.package = rgb & 0x0f0f0f0f;
- 	pr_debug("alienware-wmi: r: %d g:%d b: %d\n",
- 		 repackager.cp.red, repackager.cp.green, repackager.cp.blue);
--	zone->colors = repackager.cp;
-+	*colors = repackager.cp;
- 	return 0;
- }
- 
-@@ -538,7 +538,7 @@ static ssize_t zone_set(struct device *dev, struct device_attribute *attr,
- 		pr_err("alienware-wmi: invalid target zone\n");
- 		return 1;
- 	}
--	ret = parse_rgb(buf, target_zone);
-+	ret = parse_rgb(buf, &target_zone->colors);
- 	if (ret)
- 		return ret;
- 	ret = alienware_update_led(target_zone);
+Some examples of problems that these hardware resets are causing would
+be good.
+
+> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+> ---
+
+The duplication of code doesn't look that good. Initialization is
+tricky, it seems to make it easy to update one place and forget to
+update the other.
+
+A couple of ideas:
+ - separate the code into functions that can be used from the "usual"
+ igc_open()/igc_close() flow;
+ - it seems that igc_close()/igc_open() are too big a hammer for
+ installing a new XDP program: what do we really need? (my mental model
+ is: 1. stop new traffic from going into any queue; 2. wait for any
+ packets "in progress"; 3. install the program; 4. resume operations;
+ what else?)
+
+>  drivers/net/ethernet/intel/igc/igc.h      |   2 +
+>  drivers/net/ethernet/intel/igc/igc_main.c | 138 ++++++++++++++++++++++
+>  drivers/net/ethernet/intel/igc/igc_xdp.c  |   4 +-
+>  3 files changed, 142 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
+> index eac0f966e0e4..b1e46fcaae1a 100644
+> --- a/drivers/net/ethernet/intel/igc/igc.h
+> +++ b/drivers/net/ethernet/intel/igc/igc.h
+> @@ -341,6 +341,8 @@ void igc_up(struct igc_adapter *adapter);
+>  void igc_down(struct igc_adapter *adapter);
+>  int igc_open(struct net_device *netdev);
+>  int igc_close(struct net_device *netdev);
+> +void igc_xdp_open(struct net_device *netdev);
+> +void igc_xdp_close(struct net_device *netdev);
+>  int igc_setup_tx_resources(struct igc_ring *ring);
+>  int igc_setup_rx_resources(struct igc_ring *ring);
+>  void igc_free_tx_resources(struct igc_ring *ring);
+> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+> index 27872bdea9bd..098529a80b88 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> @@ -6145,6 +6145,144 @@ int igc_close(struct net_device *netdev)
+>  	return 0;
+>  }
+>  
+> +void igc_xdp_open(struct net_device *netdev)
+> +{
+> +	struct igc_adapter *adapter = netdev_priv(netdev);
+> +	struct pci_dev *pdev = adapter->pdev;
+> +	struct igc_hw *hw = &adapter->hw;
+> +	int err = 0;
+> +	int i = 0;
+> +
+> +	/* disallow open during test */
+> +	if (test_bit(__IGC_TESTING, &adapter->state))
+> +		return;
+> +
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	igc_ptp_reset(adapter);
+> +
+> +	/* allocate transmit descriptors */
+> +	err = igc_setup_all_tx_resources(adapter);
+> +	if (err)
+> +		goto err_setup_tx;
+> +
+> +	/* allocate receive descriptors */
+> +	err = igc_setup_all_rx_resources(adapter);
+> +	if (err)
+> +		goto err_setup_rx;
+> +
+> +	igc_setup_tctl(adapter);
+> +	igc_setup_rctl(adapter);
+> +	igc_configure_tx(adapter);
+> +	igc_configure_rx(adapter);
+> +	igc_rx_fifo_flush_base(&adapter->hw);
+> +
+> +	/* call igc_desc_unused which always leaves
+> +	 * at least 1 descriptor unused to make sure
+> +	 * next_to_use != next_to_clean
+> +	 */
+> +	for (i = 0; i < adapter->num_rx_queues; i++) {
+> +		struct igc_ring *ring = adapter->rx_ring[i];
+> +
+> +		if (ring->xsk_pool)
+> +			igc_alloc_rx_buffers_zc(ring, igc_desc_unused(ring));
+> +		else
+> +			igc_alloc_rx_buffers(ring, igc_desc_unused(ring));
+> +	}
+> +
+> +	err = igc_request_irq(adapter);
+> +	if (err)
+> +		goto err_req_irq;
+> +
+> +	clear_bit(__IGC_DOWN, &adapter->state);
+> +
+> +	for (i = 0; i < adapter->num_q_vectors; i++)
+> +		napi_enable(&adapter->q_vector[i]->napi);
+> +
+> +	/* Clear any pending interrupts. */
+> +	rd32(IGC_ICR);
+> +	igc_irq_enable(adapter);
+> +
+> +	pm_runtime_put(&pdev->dev);
+> +
+> +	netif_tx_start_all_queues(netdev);
+> +	netif_carrier_on(netdev);
+> +
+> +	return;
+> +
+> +err_req_irq:
+> +	igc_release_hw_control(adapter);
+> +	igc_power_down_phy_copper_base(&adapter->hw);
+> +	igc_free_all_rx_resources(adapter);
+> +err_setup_rx:
+> +	igc_free_all_tx_resources(adapter);
+> +err_setup_tx:
+> +	igc_reset(adapter);
+> +	pm_runtime_put(&pdev->dev);
+> +}
+> +
+> +void igc_xdp_close(struct net_device *netdev)
+> +{
+> +	struct igc_adapter *adapter = netdev_priv(netdev);
+> +	struct pci_dev *pdev = adapter->pdev;
+> +	struct igc_hw *hw = &adapter->hw;
+> +	u32 tctl, rctl;
+> +	int i = 0;
+> +
+> +	WARN_ON(test_bit(__IGC_RESETTING, &adapter->state));
+> +
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	set_bit(__IGC_DOWN, &adapter->state);
+> +
+> +	igc_ptp_suspend(adapter);
+> +
+> +	if (pci_device_is_present(pdev)) {
+> +		/* disable receives in the hardware */
+> +		rctl = rd32(IGC_RCTL);
+> +		wr32(IGC_RCTL, rctl & ~IGC_RCTL_EN);
+> +		/* flush and sleep below */
+> +	}
+> +	/* set trans_start so we don't get spurious watchdogs during reset */
+> +	netif_trans_update(netdev);
+> +
+> +	netif_carrier_off(netdev);
+> +	netif_tx_stop_all_queues(netdev);
+> +
+> +	if (pci_device_is_present(pdev)) {
+> +		/* disable transmits in the hardware */
+> +		tctl = rd32(IGC_TCTL);
+> +		tctl &= ~IGC_TCTL_EN;
+> +		wr32(IGC_TCTL, tctl);
+> +		/* flush both disables and wait for them to finish */
+> +		wrfl();
+> +		usleep_range(10000, 20000);
+> +
+> +		igc_irq_disable(adapter);
+> +	}
+> +
+> +	for (i = 0; i < adapter->num_q_vectors; i++) {
+> +		if (adapter->q_vector[i]) {
+> +			napi_synchronize(&adapter->q_vector[i]->napi);
+> +			napi_disable(&adapter->q_vector[i]->napi);
+> +		}
+> +	}
+> +
+> +	del_timer_sync(&adapter->watchdog_timer);
+> +	del_timer_sync(&adapter->phy_info_timer);
+> +
+> +	igc_disable_all_tx_rings_hw(adapter);
+> +	igc_clean_all_tx_rings(adapter);
+> +	igc_clean_all_rx_rings(adapter);
+> +
+> +	igc_free_irq(adapter);
+> +
+> +	igc_free_all_tx_resources(adapter);
+> +	igc_free_all_rx_resources(adapter);
+> +
+> +	pm_runtime_put_sync(&pdev->dev);
+> +}
+> +
+>  /**
+>   * igc_ioctl - Access the hwtstamp interface
+>   * @netdev: network interface device structure
+> diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c b/drivers/net/ethernet/intel/igc/igc_xdp.c
+> index 869815f48ac1..f1d6ab56ab54 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_xdp.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
+> @@ -25,7 +25,7 @@ int igc_xdp_set_prog(struct igc_adapter *adapter, struct bpf_prog *prog,
+>  
+>  	need_update = !!adapter->xdp_prog != !!prog;
+>  	if (if_running && need_update)
+> -		igc_close(dev);
+> +		igc_xdp_close(dev);
+>  
+>  	old_prog = xchg(&adapter->xdp_prog, prog);
+>  	if (old_prog)
+> @@ -37,7 +37,7 @@ int igc_xdp_set_prog(struct igc_adapter *adapter, struct bpf_prog *prog,
+>  		xdp_features_clear_redirect_target(dev);
+>  
+>  	if (if_running && need_update)
+> -		igc_open(dev);
+> +		igc_xdp_open(dev);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.34.1
+>
+>
+
+Cheers,
 -- 
-2.47.1
-
+Vinicius
 
