@@ -1,184 +1,250 @@
-Return-Path: <linux-kernel+bounces-433020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489759E52F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:51:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428B09E530B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:54:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0852A286074
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F7841625AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184E51DF72D;
-	Thu,  5 Dec 2024 10:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5057C1C3C06;
+	Thu,  5 Dec 2024 10:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c+C1wYAq"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HQNYlHxB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9597B1DC1AB;
-	Thu,  5 Dec 2024 10:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D164A2391A1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395868; cv=none; b=IGisEE8CRe/GSplZ1aap4p1iBSb4QqxJn440r6p+qeHNbD3nyuJ9tSn0N6jo/AZiakw4n2lLqmcHbqbETyG77ixnr92A/g1nBhu+zN+fDl/4FKambKtq6Un1ZHZckysObzfolh7ThsWuEMAGpWcS5RJso4MtMODRC3Ud/2gALNo=
+	t=1733396063; cv=none; b=fLbpJ7td6KfM9cQljXDSD/hkG9HSG9Fae5B4uAMwfQ0kWqxKsFEvb2woZSaPBTkHwzm9HTgB8+Lsk+/ksEkP9Q9+LaaZ4k0JwyPAtjz395+dBtK5qoBwNg7sDRW/FHBTOY9UlSB673tSCgmxG5Fh605PNbttU/7aAzYxJHoKxPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395868; c=relaxed/simple;
-	bh=6AbsjSdianUyMbqF6fSEDjfYPCVgMtOCDY/e6aUkIPw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gsx1LThw/jOCG9Vpsw7/aBz+ZQhVXKVT4vuowjtGMiEVGv81GMTFmu22Ore8A/fnaABk5pKlV993N2cvGwkBozwezHjVTJoDvpPowHkShWhcmeJxfuBmleYKZSO8lQlqxNoHO9tbhjHopR+adCIJJo1mgMBHiXJCzu8uzB+xdTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=c+C1wYAq; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B5AoxYW109484;
-	Thu, 5 Dec 2024 04:50:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733395859;
-	bh=9pjo2xI2NoMV+ws/SdQvbE1uUrLIcffRmbIgnflplOI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=c+C1wYAqvEmWXBmLgMQjzUYK7TGxlL2zeMdtfnI6edTrfhKJOvs4H+HrYdPA1ILEF
-	 EtQmIsX7ut+ezOZ++JcWp7xBI4RPOJxnZacqd/LGWYjSlamnihByYQ1pEugFuNUHFd
-	 iI5uVINjdv3f8zmrt2ZohuuuLVCfhF6gWfobGQrI=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B5AoxW5021313
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 5 Dec 2024 04:50:59 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 5
- Dec 2024 04:50:59 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 5 Dec 2024 04:50:59 -0600
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B5AofJu110686;
-	Thu, 5 Dec 2024 04:50:56 -0600
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v4 4/4] arm64: dts: ti: k3-am69-sk: Add overlay for PCIE0 Endpoint Mode
-Date: Thu, 5 Dec 2024 16:20:36 +0530
-Message-ID: <20241205105041.749576-5-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241205105041.749576-1-s-vadapalli@ti.com>
-References: <20241205105041.749576-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1733396063; c=relaxed/simple;
+	bh=R+JSkvJGP68y8lVw0Y5FTl8Agh1EbBn84yR9b/CP4a0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=SBlryw40Vlagae8eO4M+IQshknzLI97axeQ9cOANdqb7OYqBe5ZbnL4UeyOp8zIPSkhZcMo2Io5K1psD0elWjjIAGbXpY2OpNNePSICK3jbVGbKSK/f0P6wYIwitLb+q6XkkqTyaF+wzXraTG/p/GaCBtw8vOZqe6RvuOY8TV80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HQNYlHxB; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733396059; x=1764932059;
+  h=date:from:to:cc:subject:message-id;
+  bh=R+JSkvJGP68y8lVw0Y5FTl8Agh1EbBn84yR9b/CP4a0=;
+  b=HQNYlHxB24a1mwfV/ttFan9q7jd/8mKWL41JxftRvqOAgLJglhCf7vHB
+   QSYPTzt7xuXPc0apDIpYkhw+++nzQKpzc0cTle2jwPumrYvRYunZucN8p
+   vhRfdjj8q549NsL62AHxtoYj5DOgAVwx05ZUkduJZOga2kMTxJ7PlByhf
+   d4WaDoFYbl9kTSgwnNKokZ7rslO/rhIYiV79TAylJ7mUdVpxge7J5nAcV
+   fv+kMJuv7TqSmRQzPL57EirqLT+CIOe+ZDd4hJeb0u80fvX8/OkgHAEnV
+   5VWx68pLUKyxPOFDA3u6+We+opjXyxoxietZivet3IAa/mlvK9a1bVaHC
+   A==;
+X-CSE-ConnectionGUID: dydzQDMIS7md6AUn4D5sfg==
+X-CSE-MsgGUID: kE5LUOZeQVuGC6iaRMGgpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="59105460"
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="59105460"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 02:54:18 -0800
+X-CSE-ConnectionGUID: mTFRb8SESS+UKV5WsauGQQ==
+X-CSE-MsgGUID: sj2aem4kSz+OeYZZ6TEn6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="93927755"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 05 Dec 2024 02:54:08 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJ9Ui-000462-15;
+	Thu, 05 Dec 2024 10:54:05 +0000
+Date: Thu, 05 Dec 2024 18:50:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/tdx] BUILD SUCCESS
+ cd9ce8217345bd13035a0d3edaaecec4244d0ddd
+Message-ID: <202412051838.vRTUlhZB-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add overlay to enable the PCIE0 instance of PCIe on AM69-SK in Endpoint
-mode of operation.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/tdx
+branch HEAD: cd9ce8217345bd13035a0d3edaaecec4244d0ddd  x86/tdx: Disable unnecessary virtualization exceptions
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+elapsed time: 723m
 
-This patch has been newly introduced in this series.
+configs tested: 158
+configs skipped: 107
 
- arch/arm64/boot/dts/ti/Makefile               |  4 ++
- .../boot/dts/ti/k3-am69-sk-pcie0-ep.dtso      | 53 +++++++++++++++++++
- 2 files changed, 57 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am69-sk-pcie0-ep.dtso
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 04438f7136b8..db5ae27467e7 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -126,6 +126,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm.dtb
- 
- # Boards with J784s4 SoC
- dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-am69-sk-pcie0-ep.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-quad-port-eth-exp1.dtbo
-@@ -198,6 +199,8 @@ k3-am68-sk-base-board-pcie1-ep-dtbs := k3-am68-sk-base-board.dtb \
- 	k3-am68-sk-base-board-pcie1-ep.dtbo
- k3-am69-sk-csi2-dual-imx219-dtbs := k3-am69-sk.dtb \
- 	k3-j721e-sk-csi2-dual-imx219.dtbo
-+k3-am69-sk-pcie0-ep-dtbs := k3-am69-sk.dtb \
-+	k3-am69-sk-pcie0-ep.dtbo
- k3-j7200-evm-pcie1-ep-dtbs := k3-j7200-common-proc-board.dtb \
- 	k3-j7200-evm-pcie1-ep.dtbo
- k3-j721e-common-proc-board-infotainment-dtbs := k3-j721e-common-proc-board.dtb \
-@@ -237,6 +240,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
- 	k3-am68-sk-base-board-csi2-dual-imx219.dtb \
- 	k3-am68-sk-base-board-pcie1-ep.dtb \
- 	k3-am69-sk-csi2-dual-imx219.dtb \
-+	k3-am69-sk-pcie0-ep.dtb \
- 	k3-j7200-evm-pcie1-ep.dtb \
- 	k3-j721e-common-proc-board-infotainment.dtb \
- 	k3-j721e-evm-pcie0-ep.dtb \
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk-pcie0-ep.dtso b/arch/arm64/boot/dts/ti/k3-am69-sk-pcie0-ep.dtso
-new file mode 100644
-index 000000000000..9a5bcf282a9e
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am69-sk-pcie0-ep.dtso
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/**
-+ * DT Overlay for enabling PCIE0 instances of PCIe in Endpoint Configuration
-+ * on AM69-SK.
-+ *
-+ * AM69-SK Product Link: https://www.ti.com/tool/SK-AM69
-+ *
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/soc/ti,sci_pm_domain.h>
-+
-+#include "k3-pinctrl.h"
-+
-+/*
-+ * Since Root Complex and Endpoint modes are mutually exclusive
-+ * disable Root Complex mode.
-+ */
-+&pcie0_rc {
-+	status = "disabled";
-+};
-+
-+&cbass_main {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	interrupt-parent = <&gic500>;
-+
-+	pcie0_ep: pcie-ep@2900000 {
-+		compatible = "ti,j784s4-pcie-ep";
-+		reg = <0x00 0x02900000 0x00 0x1000>,
-+		      <0x00 0x02907000 0x00 0x400>,
-+		      <0x00 0x0d000000 0x00 0x00800000>,
-+		      <0x00 0x10000000 0x00 0x08000000>;
-+		reg-names = "intd_cfg", "user_cfg", "reg", "mem";
-+		interrupt-names = "link_state";
-+		interrupts = <GIC_SPI 318 IRQ_TYPE_EDGE_RISING>;
-+		max-link-speed = <3>;
-+		num-lanes = <4>;
-+		power-domains = <&k3_pds 332 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 332 0>;
-+		clock-names = "fck";
-+		max-functions = /bits/ 8 <6>;
-+		max-virtual-functions = /bits/ 8 <4 4 4 4 0 0>;
-+		dma-coherent;
-+		phys = <&serdes1_pcie_link>;
-+		phy-names = "pcie-phy";
-+		ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
-+	};
-+};
--- 
-2.43.0
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+arc                               allnoconfig    gcc-14.2.0
+arc                          axs101_defconfig    clang-18
+arc                          axs101_defconfig    clang-20
+arc                          axs103_defconfig    clang-20
+arc                      axs103_smp_defconfig    gcc-14.2.0
+arc                         haps_hs_defconfig    clang-19
+arc                        nsimosci_defconfig    clang-20
+arc                   randconfig-001-20241205    clang-20
+arc                   randconfig-002-20241205    clang-20
+arc                           tb10x_defconfig    clang-20
+arc                        vdk_hs38_defconfig    gcc-14.2.0
+arc                    vdk_hs38_smp_defconfig    clang-19
+arm                               allnoconfig    gcc-14.2.0
+arm                       aspeed_g4_defconfig    gcc-14.2.0
+arm                         assabet_defconfig    gcc-14.2.0
+arm                          collie_defconfig    gcc-14.2.0
+arm                            dove_defconfig    gcc-14.2.0
+arm                          exynos_defconfig    gcc-14.2.0
+arm                            hisi_defconfig    gcc-14.2.0
+arm                       imx_v4_v5_defconfig    clang-18
+arm                           imxrt_defconfig    clang-20
+arm                      integrator_defconfig    clang-20
+arm                        keystone_defconfig    clang-20
+arm                            mps2_defconfig    clang-20
+arm                       multi_v4t_defconfig    clang-20
+arm                           omap1_defconfig    clang-20
+arm                   randconfig-001-20241205    clang-20
+arm                   randconfig-002-20241205    clang-20
+arm                   randconfig-003-20241205    clang-20
+arm                   randconfig-004-20241205    clang-20
+arm                           sama7_defconfig    clang-20
+arm                          sp7021_defconfig    clang-19
+arm                          sp7021_defconfig    clang-20
+arm                        spear3xx_defconfig    clang-20
+arm                         wpcm450_defconfig    gcc-14.2.0
+arm64                            alldefconfig    gcc-14.2.0
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20241205    clang-20
+arm64                 randconfig-002-20241205    clang-20
+arm64                 randconfig-003-20241205    clang-20
+arm64                 randconfig-004-20241205    clang-20
+csky                              allnoconfig    gcc-14.2.0
+hexagon                          alldefconfig    clang-20
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+i386                 buildonly-randconfig-001    gcc-12
+i386        buildonly-randconfig-001-20241205    clang-19
+i386                 buildonly-randconfig-002    clang-19
+i386                 buildonly-randconfig-002    gcc-12
+i386        buildonly-randconfig-002-20241205    clang-19
+i386                 buildonly-randconfig-003    clang-19
+i386                 buildonly-randconfig-003    gcc-12
+i386        buildonly-randconfig-003-20241205    clang-19
+i386                 buildonly-randconfig-004    gcc-12
+i386        buildonly-randconfig-004-20241205    clang-19
+i386                 buildonly-randconfig-005    gcc-12
+i386        buildonly-randconfig-005-20241205    clang-19
+i386                 buildonly-randconfig-006    gcc-12
+i386        buildonly-randconfig-006-20241205    clang-19
+loongarch                         allnoconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                       m5249evb_defconfig    gcc-14.2.0
+m68k                          multi_defconfig    gcc-14.2.0
+m68k                        mvme147_defconfig    gcc-14.2.0
+m68k                           virt_defconfig    clang-20
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                          ath25_defconfig    gcc-14.2.0
+mips                          ath79_defconfig    clang-20
+mips                          eyeq6_defconfig    clang-20
+mips                           jazz_defconfig    clang-20
+mips                     loongson1b_defconfig    gcc-14.2.0
+mips                   sb1250_swarm_defconfig    clang-20
+nios2                         3c120_defconfig    clang-20
+nios2                             allnoconfig    gcc-14.2.0
+openrisc                         alldefconfig    clang-20
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                       virt_defconfig    clang-19
+parisc                           alldefconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.2.0
+parisc                generic-32bit_defconfig    clang-20
+powerpc                    adder875_defconfig    clang-20
+powerpc                     akebono_defconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                 canyonlands_defconfig    clang-19
+powerpc                      chrp32_defconfig    gcc-14.2.0
+powerpc                      cm5200_defconfig    clang-20
+powerpc                   currituck_defconfig    clang-20
+powerpc                       ebony_defconfig    clang-18
+powerpc                        fsp2_defconfig    clang-19
+powerpc                          g5_defconfig    gcc-14.2.0
+powerpc                    ge_imp3a_defconfig    clang-18
+powerpc                       holly_defconfig    clang-20
+powerpc                        icon_defconfig    gcc-14.2.0
+powerpc                  iss476-smp_defconfig    clang-20
+powerpc                 linkstation_defconfig    clang-18
+powerpc                      mgcoge_defconfig    clang-20
+powerpc                     mpc5200_defconfig    gcc-14.2.0
+powerpc                 mpc8313_rdb_defconfig    gcc-14.2.0
+powerpc                 mpc834x_itx_defconfig    gcc-14.2.0
+powerpc                 mpc837x_rdb_defconfig    clang-20
+powerpc                     redwood_defconfig    gcc-14.2.0
+powerpc                     skiroot_defconfig    clang-20
+powerpc                    socrates_defconfig    clang-19
+powerpc                     tqm5200_defconfig    gcc-14.2.0
+powerpc                     tqm8548_defconfig    clang-20
+powerpc                     tqm8555_defconfig    clang-20
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                        dreamcast_defconfig    gcc-14.2.0
+sh                ecovec24-romimage_defconfig    clang-18
+sh                          landisk_defconfig    gcc-14.2.0
+sh                     magicpanelr2_defconfig    gcc-14.2.0
+sh                            migor_defconfig    gcc-14.2.0
+sh                          polaris_defconfig    gcc-14.2.0
+sh                          r7780mp_defconfig    gcc-14.2.0
+sh                          rsk7264_defconfig    gcc-14.2.0
+sh                           se7343_defconfig    gcc-14.2.0
+sh                           se7721_defconfig    gcc-14.2.0
+sh                             sh03_defconfig    clang-20
+sh                   sh7724_generic_defconfig    clang-20
+sh                        sh7757lcr_defconfig    gcc-14.2.0
+sh                             shx3_defconfig    clang-20
+sh                            titan_defconfig    clang-20
+sparc                            alldefconfig    clang-18
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20241205    clang-19
+x86_64      buildonly-randconfig-002-20241205    clang-19
+x86_64      buildonly-randconfig-003-20241205    clang-19
+x86_64      buildonly-randconfig-004-20241205    clang-19
+x86_64      buildonly-randconfig-005-20241205    clang-19
+x86_64      buildonly-randconfig-005-20241205    gcc-12
+x86_64      buildonly-randconfig-006-20241205    clang-19
+x86_64      buildonly-randconfig-006-20241205    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                  cadence_csp_defconfig    gcc-14.2.0
+xtensa                generic_kc705_defconfig    clang-20
+xtensa                          iss_defconfig    gcc-14.2.0
+xtensa                    xip_kc705_defconfig    gcc-14.2.0
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
