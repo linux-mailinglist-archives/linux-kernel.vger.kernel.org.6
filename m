@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-433443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8279E5877
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:26:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DD39E5879
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:27:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9032916AC49
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6593916ACF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254CC21C16A;
-	Thu,  5 Dec 2024 14:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D198218AB4;
+	Thu,  5 Dec 2024 14:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOuW3ByD"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b="YFjEehpm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dY3r6MBv"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD8921A43F;
-	Thu,  5 Dec 2024 14:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E3A17579
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 14:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733408758; cv=none; b=STLtyC0ZG9RzsRVOlY3cU/4UMi0aesprf00GaA2tqmsDtQPofR1AR6of8t7dmcoxOjcKmERe4QCkwQlS8NJs01lzyeqSl/ryYgUeIAu9jU1qDWxMRhhFYy/RWQk9IKEhH4hIYz22jlz+xnV/ns0KUdmz9PYU+GP5iO3KYGplo5E=
+	t=1733408829; cv=none; b=KoirzE/d1mX/FZFPV7rcLJPzuLH3U1hjvuV9gJW1JFwGx4/khWa9fZOMw8nFdQ8X33q6Xjn3FkvrpwTuz5XPH+mu+6nZp9VvPs2owGfL8ETtsRLTMJ1sGuDVTSa5A7zcYVebvct+wbi+yD7/M5LtPrUcrLbmvVUcSFJekXvKpoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733408758; c=relaxed/simple;
-	bh=0qWPKNY/t9iR/pOsdFpN8VpUFDmeBzeQfCckYttTZnw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=isp/VxKtXw6zPecYF3CfPYNpcuwCsqJ2erF17VsxfZmPPY+4v5nYxHKwOVgY+W9i48YxPEHNhRdxOaVSLOwwLdMgL1/SmLCU0mGUm6D0WIKZdk1fxx+qYbcxbLfPC8MtdI/vqasqkAW4fj3eBn+7cUxQR1PNp1J6Vq7rkrbiKqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jOuW3ByD; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53dd668c5easo1114801e87.1;
-        Thu, 05 Dec 2024 06:25:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733408755; x=1734013555; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ECr3j+PJPfH3u1FCY8Jwj8p+fy3HgSStYnz6KYhRzjc=;
-        b=jOuW3ByD+E1TOf142TMN17nFPVNYLqhEflcICPw4AZOrMEk5B6r4n6Y1Y18xHTPC8I
-         C3Ji+Icja5SlyCLYGkiM5w5aoPyFqMc8VuPsFn0RuMoZq/vATINW2aJ6ADOTyRq/8aQC
-         Kyg8mEsJIK1r44Iwq0eMJFJh+CY1l26A5SoEsQ7Prw20hX2K4Z4SPYfF98+sxp/IQ4bC
-         aMQc4W7uk/U9ainPs3H4f27dtaqvVnx667UEayL5sQrtC3f9hiPTssKXHPdDTqv7DaIT
-         nsI97E5ImL+bc2Kure4C/4/bt3wX3Z4Xd0yFjK1z0sqG8yYiwDbnYZKsqckEd0OeKmU2
-         owBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733408755; x=1734013555;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECr3j+PJPfH3u1FCY8Jwj8p+fy3HgSStYnz6KYhRzjc=;
-        b=tOFCQsyIWYE5xUTyR9LPaQqM07bXGSC2XddERVODtQ8yOeEFVgJDb7lNT2Kd7mzzeH
-         bsUjKvXWgj1FfbKi8oWRYnbTkvRyNsOsSNxg1aFtmgi/DImPweLPsoK/xHqRl31HijGE
-         kYTHdnPsJiZ9BsLRGEJyYrKOjXtAv8KaKOyGxGAfDc5FhzX8ROiWEyuIPd/4iJcuClol
-         Z90GD82HdKCzvjl2wjMi4yCLOevdmWJXogkQmyDwHlyiwbUCsCYt4cf1MikDcNOAY/sY
-         hdOMQdG3WDHShMeLVH3vPKrqVYUyocFnd3r2qtej6vjAgx3fxC9OaUd7aDVZ9DlU5u5/
-         O9pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnQiwOT3+RjKx142r+lNaAzMMfwnOeFNoHZbmWty+Eh+XZU2UQ5VFq5siEQ116/ef5Xvm7Adu1BXnQ9rxYKWQ=@vger.kernel.org, AJvYcCXPCQ+5fh1kqM6Hz7aON9CwZeIKruWjlKxNlbwAojOBD6LeGSHt8rOTSYVsTxPK78W61pS0+ECfnrd6kG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjwXEaNXi6wZ02W7ZLUZmP7dp9I+0hn4XNzwn2dTmeeNuSiXbs
-	hLAvBcPpwIYmLCN6GzjPNGToCH5tc37wvV4YYzgB7SKHGb0yrgeM9YdmpA==
-X-Gm-Gg: ASbGnctovAIWX1uNq8VKjpb7AvksHTjDMZ5CPmjP7m8ybwvX0eJQ9gruuMJcaxOXVhS
-	HQgr5DiE0KVu5tnmziC5DdwT48cw5hJmInV+RDyzhPt9UrRXxLDgvx6/hz1mBVb3tkYy04aRnoS
-	ct6S4X+QwsCwN6YRVTlpBbpVswK3q2C90pA6yOdQ4eFamAGLBL5D53+x0aKVmDZ7/KToRor1IuZ
-	AvpGeugOoibFFtYOy/i5nnLAofY28RvF9f2uVyZz8rBgl/7sylbbjN6G8UQ4sKk/S7J2eOxb6c7
-	Eb1CeofwGTV6IkmHCajM
-X-Google-Smtp-Source: AGHT+IFzlJ/ndqgl+nEbM84hx+ZYeslhN+ABZV1lIYxXxfYOelqjUzikzeWd4ZSkjTOWIlPz8RbBWA==
-X-Received: by 2002:a05:6512:10cd:b0:53d:f63a:e428 with SMTP id 2adb3069b0e04-53e2192c603mr1207101e87.27.1733408754721;
-        Thu, 05 Dec 2024 06:25:54 -0800 (PST)
-Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229c1edcsm261651e87.187.2024.12.05.06.25.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 06:25:54 -0800 (PST)
-Message-ID: <c9baa4bb-81db-42ae-98be-d8cb7d57f237@gmail.com>
-Date: Thu, 5 Dec 2024 16:25:53 +0200
+	s=arc-20240116; t=1733408829; c=relaxed/simple;
+	bh=vbuWrBi3xlmgnCoEMbdJm96eoqTA+mDaV197R1S3r2I=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:
+	 References:In-Reply-To; b=S4WncVhbUlBe712qqHBit+gTKToI7NHznlOH2y1LGYvhh/4jrX02u6TxEgbGmuc32SKoQKLPChkHXjVe5jJyAWDl6gF5JV3OgfVlqd/rrL3UctMg6ImbzkUZtC9d/LZSlbZTNTyK/qJR6SE1SmkolNP0SEI3dkWazgw8bphuE8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev; spf=pass smtp.mailfrom=getstate.dev; dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b=YFjEehpm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dY3r6MBv; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getstate.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id 15E7C13820C9;
+	Thu,  5 Dec 2024 09:27:05 -0500 (EST)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-08.internal (MEProxy); Thu, 05 Dec 2024 09:27:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=getstate.dev; h=
+	cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1733408825; x=1733495225; bh=vbuWrBi3xl
+	mgnCoEMbdJm96eoqTA+mDaV197R1S3r2I=; b=YFjEehpmdak6duqJfs4RblmBFR
+	H7ClFwAvufVmBsFTIk3gDQlqBnmkToHPsVndFySaob7ytjeV/oeSaGzzVKXLqoAT
+	s2awbwqxbUsA3t7BfHDi5AmMKJf90jXAMEmRxR7RBd0CST/ztZXi282xbZ10xUpK
+	Hqi/kJ6o1qQMYfiSXRrP1VR14iKXmclQkBYuSw03TjoyBIPU1P+QMZ/quNpJAIkP
+	Jjlkfaez9Fg20XIIoeMua5vvALIs99SIGZZspx+e7326QxbvYnMqGeZp9wc6/9PE
+	PTPdOaZq0TPZFinib/mo54G0m3/G6E/x8rPEU/vkbDxR37PVjcMEGj6ABFUA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1733408825; x=1733495225; bh=vbuWrBi3xlmgnCoEMbdJm96eoqTA+mDaV19
+	7R1S3r2I=; b=dY3r6MBvXGHGmMVKxRTfnYQnjTxkrm16Bja+D1saiFmuJ432rZO
+	AtB2Jjx+g3Vnb4G9wYOJ/0PPDBkI3J8IHie05B5ddSH6UEXqXIWLXORT5ztHwLhx
+	6IDCP1KPAK5D6KCRvvpA2RU7NoNjsuOWHIG7bpbmdL8GtDy6LgCLfNEWKg+3IQcO
+	YpwAvCqQTOus5/xfpvTPr00CcwRG8G/5ysiBNjQpJpVcWJksHfHdWGnzziKzVRUk
+	QyU12nAyYrGe3yIGpbDZ1y/GH4kHdkwGr5k0kMujUuI272gL6z4Pcxavw7LZ6XrT
+	/w0WrI5M0kjfHH4rXG5NYoFZulg+lhrM4mQ==
+X-ME-Sender: <xms:OLhRZ58m5NWTvcqgyAwOsJxUvDnfV3j1mrIZLF5SNkEoebccDd9udQ>
+    <xme:OLhRZ9tnYdF96FJ9c1kyenusFkNV-QHX8vJWkXDEOK18bw4SlUk43KubuzdoATXq7
+    CwKbNdvSX74yeJYyrw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgdeifecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepofgtggffkf
+    fuhffvofhfjgesmhdtreerredtjeenucfhrhhomhepfdforgiiihhnucetlhhhrgguuggr
+    ugdfuceomhgriihinhesghgvthhsthgrthgvrdguvghvqeenucggtffrrghtthgvrhhnpe
+    ekgffgtefgjeehffeiveelveegfedtheekueffffelleeffeeitdettedugfffvdenucff
+    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepmhgriihinhesghgvthhsthgrthgvrdguvghvpdhnsggp
+    rhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshiiikhgrlh
+    hlvghrqdgsuhhgshesghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtohepshih
+    iigsohhtodegjeelrghffhehudgssgefieduvghfhegrrgdukeesshihiihkrghllhgvrh
+    drrghpphhsphhothhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:OLhRZ3BSDEkMOYvQ-iB5aA9v8jAaf8Uh7ZBbQB0PgI30Yalwp0vDxA>
+    <xmx:OLhRZ9clc5BFF0Rw9oAnscwHmrG0IjQFwcgc0VqisRsE82nZeu_u6w>
+    <xmx:OLhRZ-MKfoW3BnBw0wLIc0wEnTy5VA3pM5BT_RldOJehJgZCZFR9_Q>
+    <xmx:OLhRZ_kwnXjVqTpwTjHIPVYyDfIpq6Os67yFTBM-m-Lo904rsQR2tw>
+    <xmx:ObhRZ3ZxnMrcXNdgJTqMSlE83p-KGZInd8dcZ3OvLm294K8ij6n31-Xl>
+Feedback-ID: i0ed1493d:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id BC1441C20067; Thu,  5 Dec 2024 09:27:04 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+Content-Type: multipart/mixed;
+ boundary=e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] rust: add dma coherent allocator abstraction.
-To: Robin Murphy <robin.murphy@arm.com>, daniel.almeida@collabora.com
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Valentin Obst <kernel@valentinobst.de>,
- "open list:RUST" <rust-for-linux@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-References: <20241205113234.2021442-1-abdiel.janulgue@gmail.com>
- <20241205113234.2021442-2-abdiel.janulgue@gmail.com>
- <1c13843f-6929-4bc6-8564-0ec2d964c41d@arm.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <1c13843f-6929-4bc6-8564-0ec2d964c41d@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Thu, 05 Dec 2024 17:26:56 +0300
+Message-Id: <D63U54UUGORX.2CRU0YBACQARS@getstate.dev>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ mgmt_remove_adv_monitor_sync
+From: "Mazin Alhaddad" <mazin@getstate.dev>
+To: "syzbot" <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>,
+ <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+X-Mailer: aerc 0.18.2
+References: <D63TE6HWP7IF.2VGLGANFA6OGW@getstate.dev>
+ <6751b43b.050a0220.b4160.01d5.GAE@google.com>
+In-Reply-To: <6751b43b.050a0220.b4160.01d5.GAE@google.com>
 
-On 05/12/2024 15:07, Robin Murphy wrote:
->> +    pub fn alloc_coherent(
->> +        dev: &Device,
->> +        count: usize,
->> +        flags: kernel::alloc::Flags,
-> 
-> Might it be worth adding at least a placeholder type and argument for 
-> "attrs" as well, so there's less churn involved in coming back and 
-> adding it later? Or is the intention to have a separate 
-> dma_alloc_attrs() constructor for such users?
-> 
+--e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9
+Content-Type: multipart/alternative;
+ boundary=e0a970c926e37a078c7f1681e4b2bb4b799bf20abc69110f923dc9798f2c
 
-It certainly is possible to include attrs in the constructor using Option:
-```
-     pub fn alloc_coherent(
-         dev: &Device,
-         count: usize,
-         flags: kernel::alloc::Flags,
-         attrs: Option<u64>,
-     ) -> Result<CoherentAllocation<T>> {
+--e0a970c926e37a078c7f1681e4b2bb4b799bf20abc69110f923dc9798f2c
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 
-<cut>
-         let ret = unsafe {
-             bindings::dma_alloc_attrs(
-                 dev.as_raw(),
-                 size,
-                 &mut dma_handle, flags.as_raw(),
-                 attrs.unwrap_or(0),
-             )
-         };
-<cut>
-     }
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+ master
 
-```
-So the signature of the constructor could be:
+--e0a970c926e37a078c7f1681e4b2bb4b799bf20abc69110f923dc9798f2c--
 
-let c = CoherentAllocation::alloc_coherent(dev, 4, GFP_KERNEL, None)?;
+--e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=0001-TEST.patch
+Content-Type: text/plain; charset=utf-8; name=0001-TEST.patch
 
-Andreas, Miguel, Daniel, any thoughts?
-
-Regards,
-Abdiel
-
+RnJvbSAzMjliZmRiYjRmMDk2OTYxNzMwZGZjMWU3NmRmNzliZWVlMTlmOGY4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXppbiBBbEhhZGRhZCA8bWF6aW5AZ2V0c3RhdGUuZGV2PgpE
+YXRlOiBUaHUsIDUgRGVjIDIwMjQgMTY6MDA6MDMgKzAzMDAKU3ViamVjdDogW1BBVENIXSBURVNU
+CgotLS0KIG5ldC9ibHVldG9vdGgvaGNpX3N5bmMuYyB8IDUgKysrLS0KIDEgZmlsZSBjaGFuZ2Vk
+LCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvbmV0L2JsdWV0
+b290aC9oY2lfc3luYy5jIGIvbmV0L2JsdWV0b290aC9oY2lfc3luYy5jCmluZGV4IGM4NmY0ZTQy
+ZS4uYWE1YWEzZmVkIDEwMDY0NAotLS0gYS9uZXQvYmx1ZXRvb3RoL2hjaV9zeW5jLmMKKysrIGIv
+bmV0L2JsdWV0b290aC9oY2lfc3luYy5jCkBAIC01MTk3LDYgKzUxOTcsOSBAQCBpbnQgaGNpX2Rl
+dl9jbG9zZV9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQogCSAqLwogCWRyYWluX3dvcmtxdWV1
+ZShoZGV2LT53b3JrcXVldWUpOwogCisJLyogZmx1c2ggY21kICB3b3JrICovCisJZmx1c2hfd29y
+aygmaGRldi0+Y21kX3dvcmspOworCiAJaGNpX2Rldl9sb2NrKGhkZXYpOwogCiAJaGNpX2Rpc2Nv
+dmVyeV9zZXRfc3RhdGUoaGRldiwgRElTQ09WRVJZX1NUT1BQRUQpOwpAQCAtNTIzNCw4ICs1MjM3
+LDYgQEAgaW50IGhjaV9kZXZfY2xvc2Vfc3luYyhzdHJ1Y3QgaGNpX2RldiAqaGRldikKIAkJY2xl
+YXJfYml0KEhDSV9JTklULCAmaGRldi0+ZmxhZ3MpOwogCX0KIAotCS8qIGZsdXNoIGNtZCAgd29y
+ayAqLwotCWZsdXNoX3dvcmsoJmhkZXYtPmNtZF93b3JrKTsKIAogCS8qIERyb3AgcXVldWVzICov
+CiAJc2tiX3F1ZXVlX3B1cmdlKCZoZGV2LT5yeF9xKTsKLS0gCjIuNDYuMAoK
+--e1e410b999e669fad1e099ff84a4674ce9801619977bb0e30d8f7d83c5e9--
 
