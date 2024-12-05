@@ -1,147 +1,159 @@
-Return-Path: <linux-kernel+bounces-433589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AAF9E5A3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:50:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 802EC9E5A41
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB52167E31
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC6216BC68
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87A821D5AD;
-	Thu,  5 Dec 2024 15:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3943921D58A;
+	Thu,  5 Dec 2024 15:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="KXNBQZTA"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dc+vz+Zi"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E637021C164
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C73217735
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733413798; cv=none; b=ftdhxB3gncAMgIW1SGITB3qCCVg6cIGl9L56LdvdvF6XeIoyemOA2+rpZPcw5LBOxO4YNXtSZuXySFBSBs2y3uJibKPb42k5IV5D7t6UelK2JS3VnfYpx4q9o02ULrBxalAy1oI1H/XRaTazAsTOj5hHdCciLNLn7IT1UyF4z5U=
+	t=1733413953; cv=none; b=rc53F9+SRrYiIxFBv8SYG165g15xV3Yy+q5HyiXt9amVs6Ai4xV9oOGyF5j3rb421L69PiGnpNhElTdL1Mop5wMcxaEZ3WbY1H9FlBLekhzmSVPNRZ2MjyFjj9M6bu1mUe05y0kXPl+EunCfjfIWFMcJsc0WTbHY5VaL3d06XGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733413798; c=relaxed/simple;
-	bh=QJh0SocakRQFAItV+WIZs0QtfPK9Gb+2/saeLJIXm0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NTEtrkGOH1QerOCH0GoleZtL9jJn+4MGXhj1ErAAqsQ/pk6NtFwyh1eIq9tpw4eOHClNFYQkPEUouEafD6BShzJqmjCIA5AjkxCcvm5HNtnTEVpDeZt6P5B2h1wx/0CQtabsIZWZ8cLp7Ver7YjLQOAHwjDwoozPomh3TwfukyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=KXNBQZTA; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so208108866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:49:54 -0800 (PST)
+	s=arc-20240116; t=1733413953; c=relaxed/simple;
+	bh=Kij0pMFjp1FIZECulBkulJhs69DMxK/+RRr1dTBi8Mg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ry8whniVJWfpPKZqYg1MtZ+HuaDQLFIYKXBnUSelLGTqE1Bo174cZJe71E3Nincf60nPvStGubqkumNka8Hf++3X6bpUQPHM7sUwffgbaP2aF54GXroOYeCshfz69H8SLgzerYKzfxf1HPfdCeQolIzUuUPNwVK4dm1z5Tf618c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dc+vz+Zi; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d1228d66a0so9958a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:52:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733413793; x=1734018593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733413950; x=1734018750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jwnaybcL2baNYeNlHgBi1xq+W7PQq1z/cLM7e155nn4=;
-        b=KXNBQZTAR8I08avEHQdxB7EMte+ZfpmY/g+DZQoQFq+XmRCrsIAvTHksMXhDjsAB4H
-         IloJ/Askvfysn9nr7sGRLr9Ci8zx9Ca/EWl21OLvmIOhujfDkPNjD0jlIaUUfYdkRFyq
-         3d4lOH7sqVuQZMcVzoZkirLl0rGX+tN3IP+rRFxejOOvBhLI2JrdLhadToW4WoVQvYUc
-         N5luOfQBg6joQMghHQPKjW/0HbYsQPNkmjQHjAnGhry5UUDbhGy6KVJ0aIUCEZvLet3a
-         GTkY41kx/NbLnuFIQUufuvom3b49BSbGir0FUUEsR8IPFajy+50BzdZwaOHUaX+QHbPk
-         aw8w==
+        bh=vEZhIBbCBW5mV7dogz2EkqQC7Av8Las6Bo0OJgolYbA=;
+        b=dc+vz+ZidA4fziyKq7m9Gz/ilKT/1b6MewlT/L7QWKMvRxKWt9FkDY3r1hBtd6mVPp
+         BSJZ1LoosdiJ1DhfYNyP5H8ER+t0X1Fqizgspz4ChX0soXLTtFfzzvxe4wKPp8K4Tu7D
+         uzPGy/BEvY5xu3MFGDoavb1ygNoqzc3lNA1EakpMw4CjreT5taBZSOwihGrFQwlPbBds
+         li1UpGrbBHfor3l8bZSqfeh5Xp8tQ7aL5CA5zDsslA/b/4uJczMpNdoWW/z+ap6V4ASI
+         uo63z4vRQxd3wsl1OMwvCUhLLsNNz/n6CTf4KAN+RQ+/lkVIw2CGpgg7Gq0YKa+NISus
+         sO2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733413793; x=1734018593;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733413950; x=1734018750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jwnaybcL2baNYeNlHgBi1xq+W7PQq1z/cLM7e155nn4=;
-        b=iCHkfLeB44hFseBZrvuV64h/gz4fbMLq/T/3uPWFfk+P67ZsGRMxNJGwM+LakghXfw
-         ehFGDel/qDFaVV5/L7W9P4sM/aRS2iVw1ndRqshYR6rpGflwsaAE2fxk+v8Ol79QCPF5
-         MYomNYou9MNtNhtOsJ0CtdVwJdprHBTiMwC9aEUQeWCESZSO//GJT3r8z8QRMGFnp2ln
-         7av5FM6oyHtuktfS3LA8e5NzH9XEapjvuk0/PDxnpwgJqWQQr7cuMD6mM7wc9btMa9rj
-         tBSrOyqvlOm00joOAWJ9mkeaRhDPK2bxv35gHJWlc3nj1VXUlu7zuRLUyraPUJ+cE1ml
-         P6jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwfILbOLKZBsQgXk7BLIWFvGZZJYh7re5X469PhgY6AksxIqKMFVQHo70bpzo6pObshY6idaly+H0676k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYt5uydEvg9+OmUPPutjurcWPSd45T/O/Nj23UUPeBtAcv+SoG
-	aGu5JxxGFsB1V2cP9H8C7NYuswUb3qeSJRI+ZNUD3khjOajImQWq5sLUHwSob4I=
-X-Gm-Gg: ASbGnct4ooon4OztxMGXYx5P+5onaKirekCczbDjnkxNNPn/MyNh05H/CYWBjmNAz/6
-	nnlOZZJ4c80IcuVcx8whzpdQE61YlqWCRmS15m8U8W9oVSV7Usf5R5VvctU1GAY8Ga9HnxKmHsX
-	T+9KSJPEAUWGEI8MXkGdCBIBp5PfhI91mfRUVJDTKFT68Dpu3CjLyGukbnnMdS0SXcmBJ2kO6d5
-	K3nwGJabJAkygKuN5P+qQaa/WPMytqrQdf47wOxoO4YZUjQAgsSvrHxQP5/vyFbLCtDPRiucu7C
-	Z/b+0VoN6Vv86Ya9rcAAptmsgxvmcWZGE2dbyX3bIr6GPVHVVg==
-X-Google-Smtp-Source: AGHT+IE2OSa7ZjCjHWl3RYhlRyZyKlZnSLP+x1YzEi8/mKnAl0lFCce0mHxT24btJrTigdztogh09Q==
-X-Received: by 2002:a17:907:9713:b0:aa5:c9f4:7bb9 with SMTP id a640c23a62f3a-aa60182367dmr1087692866b.35.1733413793311;
-        Thu, 05 Dec 2024 07:49:53 -0800 (PST)
-Received: from raven.intern.cm-ag (p200300dc6f2c8700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2c:8700:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e58dffsm107575866b.13.2024.12.05.07.49.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 07:49:53 -0800 (PST)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: amarkuze@redhat.com,
-	xiubli@redhat.com,
-	idryomov@gmail.com,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH v2] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-Date: Thu,  5 Dec 2024 16:49:51 +0100
-Message-ID: <20241205154951.4163232-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
-References: <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
+        bh=vEZhIBbCBW5mV7dogz2EkqQC7Av8Las6Bo0OJgolYbA=;
+        b=BgQNli/QVtuBodGxTdZiLd1KK1QcXGL2jCzSos+fhQcxJa9b4sItbGXJ9OAbMTUE4E
+         hawTJRB6GA0mXqk5q92O+fghk3IUXnK7d7fWK8f0o1WyBl+ZB6rcgMVLBs69SehNJCHZ
+         UI3fd9RrwX9V6YocQBrjkagVH909+Ma8VFYJcirEXqElD6ezkJEtYQIeMl3nvEwUe4OF
+         4y+zDRdOI+UNVUfwgqnyfrmGDtkQ+K74Xry5vUIJgqN6YojnnXlwVNAWYx5b/FRcpiB0
+         gzhCknOyYf56sEWC2meIXjN51t77R8bbh7dVoHr7uHuF/19OrZ96fX2wbCj1lUY312EO
+         LYJw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2UFtSE8FZTkwEeDTzLkpjwHC2Ij79vIF8WekfF1A8TwWLQHuUUNwRx+hjvrLv3JzlOWHTmbChFiEqZbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZcVCjOOaaNXpy+hXcH5+iTRGv9akKKmmhjgC9Bnz6CkW7Q/th
+	PwZ3vJrpFy80aCZ/frddDznVkjP8KnyzMgQicQ2DRbRBgQpvd8xPnb+rUpLusDr3Yj0M6Z+Cnwp
+	1vuC9RXY2iull5k6NeGNaDHTx/U/dBMFi7F0b
+X-Gm-Gg: ASbGnct2uAujatpEiw5sht25jfJQ5T68zFBJ3MzEeak4/fxhLURnjPgURZOwvFjwvRL
+	UkMU5SsWTh5HrcENYUM03K+T8uc6MW7vF
+X-Google-Smtp-Source: AGHT+IFBiLz78aKLQ7PSRqfnfxVbdQRhB246a3JGCkTy/Nk+EAvR/wwPlsqF9sjCkYVRcSQoJuYGGxEhlRPuON1Kgqo=
+X-Received: by 2002:a50:ed99:0:b0:5d0:b20c:205c with SMTP id
+ 4fb4d7f45d1cf-5d13514ed50mr87120a12.5.1733413949872; Thu, 05 Dec 2024
+ 07:52:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241121204220.2378181-20-samitolvanen@google.com>
+ <20241121204220.2378181-21-samitolvanen@google.com> <Z0UIdmDHYQtUTR1i@bombadil.infradead.org>
+ <CAK7LNATK9rSm4AUSneq=aYbADatPL=1eUXuYRChX+WU+zNTyKw@mail.gmail.com>
+ <Z0YS1hVWuozpN4Ln@bombadil.infradead.org> <CAK7LNARcECiG0TAJFmFDhmbgzQiETX0i-_mr3StDAUiGTjKnLA@mail.gmail.com>
+In-Reply-To: <CAK7LNARcECiG0TAJFmFDhmbgzQiETX0i-_mr3StDAUiGTjKnLA@mail.gmail.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Thu, 5 Dec 2024 17:51:52 +0200
+Message-ID: <CABCJKuep1Fk22rpxcZbFzD0_Dhp+1Oonz123jHs8WkNKjQaekA@mail.gmail.com>
+Subject: Re: [PATCH v6 01/18] tools: Add gendwarfksyms
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
+	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In two `break` statements, the call to ceph_release_page_vector() was
-missing, leaking the allocation from ceph_alloc_page_vector().
+Hi,
 
-Instead of adding the missing ceph_release_page_vector() calls, the
-Ceph maintainers preferred to transfer page ownership to the
-`ceph_osd_request` by passing `own_pages=true` to
-osd_req_op_extent_osd_data_pages().  This requires postponing the
-ceph_osdc_put_request() call until after the block that accesses the
-`pages`.
+On Thu, Dec 5, 2024 at 5:46=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> On Wed, Nov 27, 2024 at 3:26=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.o=
+rg> wrote:
+> >
+> > On Tue, Nov 26, 2024 at 12:50:48PM +0900, Masahiro Yamada wrote:
+> > > On Tue, Nov 26, 2024 at 8:30=E2=80=AFAM Luis Chamberlain <mcgrof@kern=
+el.org> wrote:
+> > > >
+> > > > On Thu, Nov 21, 2024 at 08:42:22PM +0000, Sami Tolvanen wrote:
+> > > > > Add a basic DWARF parser, which uses libdw to traverse the debugg=
+ing
+> > > > > information in an object file and looks for functions and variabl=
+es.
+> > > > > In follow-up patches, this will be expanded to produce symbol ver=
+sions
+> > > > > for CONFIG_MODVERSIONS from DWARF.
+> > > > >
+> > > > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> > > > > Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+> > > > > ---
+> > > > >  kernel/module/Kconfig                 |   8 ++
+> > > > >  scripts/Makefile                      |   1 +
+> > > > >  scripts/gendwarfksyms/.gitignore      |   2 +
+> > > >
+> > > > This doesn't add scripts/gendwarfksyms to MAINTAINERS
+> > > > but then again   scripts/genksyms/ is not there either
+> > > > but it does got to Masahiro.
+> > >
+> > > scripts/genksyms/ is a very old tool with no maintainer.
+> > >
+> > > It defaults to the maintainer of the scripts/ directory (i.e. me)
+> > >
+> > > > Masahiro, should we just add both to KERNEL BUILD and add
+> > > > Sami as a Reviewer to help with gendwarfksyms?
+> > >
+> > > I think it is better to have a separate entry for
+> > >
+> > > F:  scripts/gendwarfksyms/
+> > >
+> > > with Sami as the maintainer.
+> >
+> > OK do you want this and the extended modversions to go through your tre=
+e
+> > or modules tree?
+> >
+> >   Luis
+>
+>
+> I guess I can pick up them.
+>
+> I was just thinking about a possibility to
+> make this (and the other one) less worse.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/ceph/file.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Note that I'm planning to send out v7 with the recent feedback
+addressed ~mid-December when I'm back in the office, and I'm sure Matt
+is also happy to make any improvements to his patches that you have in
+mind.
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 4b8d59ebda00..ce342a5d4b8b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1127,7 +1127,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
- 
- 		osd_req_op_extent_osd_data_pages(req, 0, pages, read_len,
- 						 offset_in_page(read_off),
--						 false, false);
-+						 false, true);
- 
- 		op = &req->r_ops[0];
- 		if (sparse) {
-@@ -1186,8 +1186,6 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
- 			ret = min_t(ssize_t, fret, len);
- 		}
- 
--		ceph_osdc_put_request(req);
--
- 		/* Short read but not EOF? Zero out the remainder. */
- 		if (ret >= 0 && ret < len && (off + ret < i_size)) {
- 			int zlen = min(len - ret, i_size - off - ret);
-@@ -1221,7 +1219,8 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
- 				break;
- 			}
- 		}
--		ceph_release_page_vector(pages, num_pages);
-+
-+		ceph_osdc_put_request(req);
- 
- 		if (ret < 0) {
- 			if (ret == -EBLOCKLISTED)
--- 
-2.45.2
-
+Sami
 
