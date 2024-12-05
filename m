@@ -1,91 +1,206 @@
-Return-Path: <linux-kernel+bounces-432438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B0C9E4B43
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:38:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571119E4B45
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9B41881453
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A92167454
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7FD13FFC;
-	Thu,  5 Dec 2024 00:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDA0F513;
+	Thu,  5 Dec 2024 00:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="avJhwTcR"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfrKmPVY"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C70D531;
-	Thu,  5 Dec 2024 00:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1D210E9;
+	Thu,  5 Dec 2024 00:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733359112; cv=none; b=sh31RdNcQ/qjswxdf54/jUJEHZEJEploZZ6I5basA3oXyzykOmnnxlQWMlOw9qbVAc9sVWL5ah7LuIatT1+mLOxdlyZOIPpB4SSfWIjMPhMYgzkQpKyjFykLUW/wfIeo0CyX702gU/RI6jaex2eoTEE+2EN6Qlu7vHu3akKBbAQ=
+	t=1733359143; cv=none; b=cfhvmL/K3pbLhDQNYWtB8MLj22PKwJpics1EBWsbZvBfye6FSIk36TibXaSOI9ISbgINxd0f0hWJ7YMy2WsNWmJWLq2gVvG2U0P8u50ZWHGExX0S4cFNTLEJWYT0Rzs9EaMy2+HI9AtQ/kWQiQx+0OxepS8ZtGgINDITcBnPgiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733359112; c=relaxed/simple;
-	bh=9YVm5TgWSjCYrpLpmtVTO6+TJLEENd0UFDiH4YMYOaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRi/CUo52s1sVP2yUQBaYKrEbG7corfq+mW8Z9rGXquCXXCWy5SpTLDtHr7dTdRMwoOfITvj+/6ZzcmciEUJ0rah1KQ1awTNdIo3zscjH6kVc0RYXzCFriEKI1eu3Lfw3BRAR65wu9oSes5WpKLZkXDwIGmVWpT8S5ekeF+BQBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=avJhwTcR; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Y+oQ0S3ae3U/S6jQx7MGFvQACNYgjF/pNRRinNABr+U=; b=avJhwTcRsgyF38KzhEz/82L23x
-	jjBEnChetTC0jTQmzrlc8kPnox81tZC8a3Ah5PX3Uk8AJ0XiXt0sScmbbR6ltbmZa2A0fHcGaWpXF
-	IYsfk0pUKwjYlI3lOMRUTZyU7bJ1JwicfmJXHZc80HVFSAp7vkJzjBlm9ePYnCQCz+bCHXqHF4KCu
-	aZ4q0G9PRzZKeGePjj2qL2/KobMOHecU8Jz0Zhi9Bmeh4PsT3xQJTAOMuD7sKKYLR2tglHzkXsFh7
-	S0akLWr75xXgL9US362UL7s3Qvpmo10uJT75ZgHhcQA+zJEHcW4+l8pJInBXzQMQvyjhg9rf3PEfC
-	FD20zKOQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIzsy-0000000ENKv-0WGX;
-	Thu, 05 Dec 2024 00:38:28 +0000
-Date: Wed, 4 Dec 2024 16:38:28 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>,
-	Erin Shepherd <erin.shepherd@e43.eu>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	stable <stable@kernel.org>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <Z1D2BE2S6FLJ0tTk@infradead.org>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+	s=arc-20240116; t=1733359143; c=relaxed/simple;
+	bh=I5yT5GXn4XWD061Xb2RH/thnz8ewCQmNGoquSyoEgk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hGA3cGhZERBy0ioeUxY02YVg18iMyWCzpZkPn28A1L2saTsxtaAlDzjQJmuLYklO2Tq4+zM5qNRJ1BayhFDASxYCadP1B6cFOxB22BUVcpWIzRRVE0gRfUjpSZ1+MORqRqkXmU53O6h4FSIrFXEYpjNIC/f+EEPsfK+9ttStFis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfrKmPVY; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-215936688aeso2809455ad.1;
+        Wed, 04 Dec 2024 16:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733359141; x=1733963941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5r0gHAwegXuzSmSEhFIyVewwYq6F+Oy8I87chR6WA6Q=;
+        b=bfrKmPVYq/F77lDEMfTct9lswd8t8+uosWkF8etawTu4LAm9GLRZwXQiBShA1p605h
+         NxcKZQ7s4rm1rlizDHnqhnMi0HH7dzy+6UdFWFFXzKQ++rTbMRFtNvySsvNnICJHgsnJ
+         QGgPD6npB9WnHl5L+Qo/J4e5oPZxhQygSzhsRevmPiMwjotDuQ4vNZrn2vy+0xZdn967
+         G59LdJiSsqrezQE+9VkAbkSscq4DEPMtSGOmqgzpZBCyqINc+AoCh64ynvud8xj3YTcr
+         Oqb1MvovyvPQtlQKay/YQ6PpwmbtvkZ8NffSgnupfmS5qLSRqRbqSysmGkOQ5WjTkXCL
+         o9rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733359141; x=1733963941;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5r0gHAwegXuzSmSEhFIyVewwYq6F+Oy8I87chR6WA6Q=;
+        b=WtnpqYKCQCmFuhma68DiP5WPdPUCMiBIcqL/eKoKrN5rTH5EgUbObZ/OToZHX+TUb2
+         9vTXYloi/JFYMQkxxCsL0uGfVtTlGg1dTcE/Fs56/4f7MPad4/RT06nJuzFeBSOmezRM
+         GlgyzHGDZMuCEZxZQITxXwcMX1MVKZFbHnfNVjYnZ0G1SJCvplIyVltUaps0CzV6NPiE
+         SK/Hno0RvdSjXN6U0N3SCx0tfzJZ9/6/2LjfFhgymzO7qLCBaiHvOqx7gQfxkM7JAjyc
+         pjjhhy6NRIGq1wa8hbmxgF/DadNbh2ROB1NxFZiH4YDsKqjjTbrd5UP/OtEWVwJ03KSf
+         6kJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVuu6DU69z3l0FM/0UzpFeGlLNKoGEDSEa2f+hmxgbxt15zxX2YyF1/s6qwOGnY9TJB/d8wl6so5oTlxI=@vger.kernel.org, AJvYcCVPvXs1QyPyArvRFV7kwogmT1aV5lsTh8Edihy8sfwji1kwxSy6GMs99kAfe7LxpcMCWSV92iZDxqzEwlQUiUb1sqpmLg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyedEejDo/o82P/o9gnvMeUYoSY7c4HEz9lbNMgyrHtFAtT52t8
+	UN9ekhdAbZsT0i7CYQhddBZGXOQaCYr5nyYiye8oFShDtIV9zlFY
+X-Gm-Gg: ASbGncsM+OQn4BDeN8Nlt5vYl3UPkKuvPCCTbIREp+lmcU/3bLLe374/2T3fWxh79DA
+	eXerSh0cMsN/aOhzYYKhtF8gnuiTOmgRtApyp/lrNL66j1gAdUuA6JhBNrKihdaGtHZ+93HBO36
+	JMHp1wAJKCUvg+SX7p753zuE7BqD9j/qz+BhoQg11ZuvkiFsw+jnFtUvQQGJmSBZkSUxeVo+aal
+	Ejt0NrmLC6Si/WYpT9Iy3ERAlEH1QOJlWywivJBDNBrXgCEranGiEe9REGgQ7LTPqlyVv9v8Miv
+	tMLriLzjmD2sBstSVsE=
+X-Google-Smtp-Source: AGHT+IE2Z+B1Krso6luH/4yPviboZj8IyJo+B/qcwzXb5cbk6ZRxRibM3UAtpOStFwEEtdmotg2skw==
+X-Received: by 2002:a17:903:188:b0:215:b9a7:5274 with SMTP id d9443c01a7336-215d0050befmr100072295ad.26.1733359141346;
+        Wed, 04 Dec 2024 16:39:01 -0800 (PST)
+Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f68c2asm1265395ad.283.2024.12.04.16.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 16:39:01 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [RFC PATCH 02/21] alienware-wmi: Move Lighting Control State
+Date: Wed,  4 Dec 2024 21:38:36 -0300
+Message-ID: <20241205003835.2184510-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
+References: <20241205002733.2183537-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Sun, Dec 01, 2024 at 02:12:24PM +0100, Christian Brauner wrote:
-> Hey,
-> 
-> Some filesystems like kernfs and pidfs support file handles as a
-> convenience to enable the use of name_to_handle_at(2) and
-> open_by_handle_at(2) but don't want to and cannot be reliably exported.
-> Add a flag that allows them to mark their export operations accordingly
-> and make NFS check for its presence.
-> 
-> @Amir, I'll reorder the patches such that this series comes prior to the
-> pidfs file handle series. Doing it that way will mean that there's never
-> a state where pidfs supports file handles while also being exportable.
-> It's probably not a big deal but it's definitely cleaner. It also means
-> the last patch in this series to mark pidfs as non-exportable can be
-> dropped. Instead pidfs export operations will be marked as
-> non-exportable in the patch that they are added in.
+Place Lighting Control State logic next to other attributes of the same
+sysfs group.
 
-Can you please invert the polarity?  Marking something as not supporting
-is always awkward.  Clearly marking it as supporting something (and
-writing down in detail what is required for that) is much better, even
-it might cause a little more churn initially.
+While at it, rename:
+
+store_control_state()	-> lighting_control_state_store()
+show_control_state()	-> lighting_control_state_show()
+
+And use DEVICE_ATTR_RW() instead of DEVICE_ATTR().
+
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 73 ++++++++++++-----------
+ 1 file changed, 38 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index b3a73fc43b3c..b1ac0e393180 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -545,6 +545,44 @@ static ssize_t zone_set(struct device *dev, struct device_attribute *attr,
+ 	return ret ? ret : count;
+ }
+ 
++/*
++ * Lighting control state device attribute (Global)
++ */
++static ssize_t lighting_control_state_show(struct device *dev,
++					   struct device_attribute *attr,
++					   char *buf)
++{
++	if (lighting_control_state == LEGACY_BOOTING)
++		return sysfs_emit(buf, "[booting] running suspend\n");
++	else if (lighting_control_state == LEGACY_SUSPEND)
++		return sysfs_emit(buf, "booting running [suspend]\n");
++	return sysfs_emit(buf, "booting [running] suspend\n");
++}
++
++static ssize_t lighting_control_state_store(struct device *dev,
++					    struct device_attribute *attr,
++					    const char *buf, size_t count)
++{
++	u8 val;
++
++	if (strcmp(buf, "booting\n") == 0)
++		val = LEGACY_BOOTING;
++	else if (strcmp(buf, "suspend\n") == 0)
++		val = LEGACY_SUSPEND;
++	else if (interface == LEGACY)
++		val = LEGACY_RUNNING;
++	else
++		val = WMAX_RUNNING;
++
++	lighting_control_state = val;
++	pr_debug("alienware-wmi: updated control state to %d\n",
++		 lighting_control_state);
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(lighting_control_state);
++
+ /*
+  * LED Brightness (Global)
+  */
+@@ -589,41 +627,6 @@ static struct led_classdev global_led = {
+ 	.name = "alienware::global_brightness",
+ };
+ 
+-/*
+- * Lighting control state device attribute (Global)
+- */
+-static ssize_t show_control_state(struct device *dev,
+-				  struct device_attribute *attr, char *buf)
+-{
+-	if (lighting_control_state == LEGACY_BOOTING)
+-		return sysfs_emit(buf, "[booting] running suspend\n");
+-	else if (lighting_control_state == LEGACY_SUSPEND)
+-		return sysfs_emit(buf, "booting running [suspend]\n");
+-	return sysfs_emit(buf, "booting [running] suspend\n");
+-}
+-
+-static ssize_t store_control_state(struct device *dev,
+-				   struct device_attribute *attr,
+-				   const char *buf, size_t count)
+-{
+-	long unsigned int val;
+-	if (strcmp(buf, "booting\n") == 0)
+-		val = LEGACY_BOOTING;
+-	else if (strcmp(buf, "suspend\n") == 0)
+-		val = LEGACY_SUSPEND;
+-	else if (interface == LEGACY)
+-		val = LEGACY_RUNNING;
+-	else
+-		val = WMAX_RUNNING;
+-	lighting_control_state = val;
+-	pr_debug("alienware-wmi: updated control state to %d\n",
+-		 lighting_control_state);
+-	return count;
+-}
+-
+-static DEVICE_ATTR(lighting_control_state, 0644, show_control_state,
+-		   store_control_state);
+-
+ static int alienware_zone_init(struct platform_device *dev)
+ {
+ 	u8 zone;
+-- 
+2.47.1
 
 
