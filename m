@@ -1,144 +1,138 @@
-Return-Path: <linux-kernel+bounces-432964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41049E526E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:35:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A3A9E5272
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:36:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FBFC284D79
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A4C166CCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2721D6DB7;
-	Thu,  5 Dec 2024 10:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C207F1D63EE;
+	Thu,  5 Dec 2024 10:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWI5jfSS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="V7FxV3IW"
+Received: from mail-m49202.qiye.163.com (mail-m49202.qiye.163.com [45.254.49.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2D318FC83;
-	Thu,  5 Dec 2024 10:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9811D5AD4;
+	Thu,  5 Dec 2024 10:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394949; cv=none; b=rZwXhme77PMb0xSJwTOyRC1mQRQHVAX32r6rG658YTfm/8BVHippOvpmgLM2/sU8q245rZyIgwYmdT0OH66+XEmc0lCYsdSYhdd6MAHkKgVr1YmBcNx2RjYOtiqTykAbBrGRxjXgFi2iZxDb0pvJcJxB9sx6yjVLkCFM0gYRIxs=
+	t=1733394999; cv=none; b=i8dbVpLz+665g8D+2FANplulRopKmQxx+ie+PLzg7ZX93sPF0m4+VJva5CyMFiVNpuLBFbDe5gwGMtucVp06CtFQQHEYWYyf95WW0d6xFnJ3ypW/td10RKggzxNLIAkyw7938vdksc7kLgfN0crn440Tk2rl33G2Coo1mGWwPlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394949; c=relaxed/simple;
-	bh=zvwx3dNMbF1OGEZ/wX/0dBuD40qhT1nOo1XKS+LNxVw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m6mrfIsXS+nzflkfPhXd6dhvWjZllr4dYvzsF4VwwC8o0tCQc+sGzb0a70GL4sOq9V9byOhdDRRRt1ZIHmWgpNtzOG+wF2orXnMoqNjDsx2xNTm5XEaUiIsnbd+GjpkyHbstqMG79cUfABPR8KB4/TOaVMjvcLkhMxgc0tXVpZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWI5jfSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D87C4CED1;
-	Thu,  5 Dec 2024 10:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733394948;
-	bh=zvwx3dNMbF1OGEZ/wX/0dBuD40qhT1nOo1XKS+LNxVw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=nWI5jfSS9Q0rD+jRCWevdh2IgcROcB8DWDo3U/YVYumrEG5UbO2tUpCQ+RYjov8UH
-	 IBPqiSmaNTMFBZLn1t8BLUEMSlQRXls8VlODx7FABjQLl9HZ9E3HJoixFVF2NCeCqd
-	 FlrXcaZ+KyONsk2FtXgZp4aRjCUummri/tH5JCCtSt/ZcDO/RAjoy7GyhJO6JeI3w1
-	 AenYLMxRnZGBlr8iGFkVLKq7epAO9yNBQBPLShGoXLYMPe+uZITwdMjd/yI0ocs/pC
-	 +4fVnCh5bgqPvC4ln+sVQSqfbVvd4IpFz/QIpxtPsvvuRN8Ak+T17tNQv7aecR14uc
-	 f7HH+V8oYeHnw==
-Message-ID: <171072ed-c35f-430e-a8c0-5cf718efed0c@kernel.org>
-Date: Thu, 5 Dec 2024 11:35:43 +0100
+	s=arc-20240116; t=1733394999; c=relaxed/simple;
+	bh=z5hAP38ixfML7I/C8knFXpHmeYKXng4WvDOGNEW6tKw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qXP3mBXyqd1Q3xbpbwZ7XDg7yC0S/sx58wDfSfFB5dnKqbEmLso4/RPEQJ3PrWdjfyEA3iW76eDkVUwv4a2L6nd+GwozxhR1Z/H3O09bxrBLkLy4UqGyHBjGzy5lx/m1n/IHymsL1G+sc7KFPm+oN675G+KsjLuM7kQ4MgURVDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=V7FxV3IW; arc=none smtp.client-ip=45.254.49.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4cf7c967;
+	Thu, 5 Dec 2024 18:36:29 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liang Chen <cl@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	Yifeng Zhao <yifeng.zhao@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/6] dts: arm64: rockchip: Add rk3576 naneng combphy nodes
+Date: Thu,  5 Dec 2024 18:36:19 +0800
+Message-Id: <20241205103623.878181-3-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241205103623.878181-1-kever.yang@rock-chips.com>
+References: <20241205103623.878181-1-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?UTF-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
-Cc: 'Guenter Roeck' <linux@roeck-us.net>, 'Rob Herring' <robh@kernel.org>,
- 'Krzysztof Kozlowski' <krzk+dt@kernel.org>,
- 'Conor Dooley' <conor+dt@kernel.org>, 'Alim Akhtar'
- <alim.akhtar@samsung.com>, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241021063903.793166-1-trunixs.kim@samsung.com>
- <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
- <20241021063903.793166-4-trunixs.kim@samsung.com>
- <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
- <20241107103331.GA4818@www.linux-watchdog.org>
- <589c40e1-6a1c-4ef7-b0d8-b761b132578a@kernel.org>
- <20241107113325.GA5284@www.linux-watchdog.org>
- <c487babb-84a5-4e47-a58f-75fec55cbabb@kernel.org>
- <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
- <88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkMeH1ZOQkpMSRhIQxhCGkpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a939664827203afkunm4cf7c967
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ogg6HAw5LjIfQg0RHy5JCxkd
+	Hx5PCzdVSlVKTEhISEJPQkJLQk1JVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJS0pLNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=V7FxV3IWdqlMRwcrHv/JZXj4IxrNmMzuj8ZcM4AszMNfJgsMw2Opm2AqMxrkCI0yA3gXdga2/A53QjBUXQ8LicrvTNrkEM9I7iqrcpTy9Buz12pbzVQZ/6VbFDl4OTDXbMLbUzcbcH8fa9oJvHJF7rgxmNbY1vvzKMNbQVYbtDI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=67jtnZdAqgZmsIdKecCH4vXI2Gu7dBBbAbO28nvPUW0=;
+	h=date:mime-version:subject:message-id:from;
 
-On 05/12/2024 08:19, Krzysztof Kozlowski wrote:
->>>> But that's a never ending discussion, so we won't go into that :-).
->>>
->>> DTS is hardware description independent from Linux, therefore always goes
->>> separate way than Linux drivers.
->>>
->>> Best regards,
->>> Krzysztof
->>
->> I found that the first two patches have been added to the linux-next git, 
->> but the last patch has not yet been reviewed.
->>
->> I would appreciate it if you could take a look at this patch.
-> 
-> Since this patch was applied, I dropped from my queue. I don't have it
-> in my inbox anymore. Please rebase, resolve any comments and resend.
+rk3576 has two naneng combo phy,
+- combophy0 is used for one of pcie and sata;
+- combophy is used for one of pcie, sata and usb3;
 
-I found it in my inbox and tried to apply but it fails:
-error: patch failed: arch/arm64/boot/dts/exynos/exynosautov920.dtsi:172
+Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+---
 
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi | 36 ++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-please rebase and resend.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+index 436232ffe4d1..8938ec7c3bb4 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+@@ -1587,6 +1587,42 @@ uart11: serial@2afd0000 {
+ 			status = "disabled";
+ 		};
+ 
++		combphy0_ps: phy@2b050000 {
++			compatible = "rockchip,rk3576-naneng-combphy";
++			reg = <0x0 0x2b050000 0x0 0x100>;
++			#phy-cells = <1>;
++			clocks = <&cru CLK_REF_PCIE0_PHY>,
++				 <&cru PCLK_PCIE2_COMBOPHY0>,
++				 <&cru PCLK_PCIE0>;
++			clock-names = "refclk", "apbclk", "pipe_clk";
++			assigned-clocks = <&cru CLK_REF_PCIE0_PHY>;
++			assigned-clock-rates = <100000000>;
++			resets = <&cru SRST_P_PCIE2_COMBOPHY0>,
++				 <&cru SRST_PCIE0_PIPE_PHY>;
++			reset-names = "combphy-apb", "combphy";
++			rockchip,pipe-grf = <&php_grf>;
++			rockchip,pipe-phy-grf = <&pipe_phy0_grf>;
++			status = "disabled";
++		};
++
++		combphy1_psu: phy@2b060000 {
++			compatible = "rockchip,rk3576-naneng-combphy";
++			reg = <0x0 0x2b060000 0x0 0x100>;
++			#phy-cells = <1>;
++			clocks = <&cru CLK_REF_PCIE1_PHY>,
++				 <&cru PCLK_PCIE2_COMBOPHY1>,
++				 <&cru PCLK_PCIE1>;
++			clock-names = "refclk", "apbclk", "pipe_clk";
++			assigned-clocks = <&cru CLK_REF_PCIE1_PHY>;
++			assigned-clock-rates = <100000000>;
++			resets = <&cru SRST_P_PCIE2_COMBOPHY1>,
++				 <&cru SRST_PCIE1_PIPE_PHY>;
++			reset-names = "combphy-apb", "combphy";
++			rockchip,pipe-grf = <&php_grf>;
++			rockchip,pipe-phy-grf = <&pipe_phy1_grf>;
++			status = "disabled";
++		};
++
+ 		sram: sram@3ff88000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0x0 0x3ff88000 0x0 0x78000>;
+-- 
+2.25.1
 
-Best regards,
-Krzysztof
 
