@@ -1,206 +1,229 @@
-Return-Path: <linux-kernel+bounces-432798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B679E5074
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:00:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5A4161737
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:00:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED7E1D5162;
-	Thu,  5 Dec 2024 09:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="k2POt1nS"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2084.outbound.protection.outlook.com [40.107.95.84])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39449E5079
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:01:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0551D517E;
-	Thu,  5 Dec 2024 09:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733389210; cv=fail; b=dd0lzeEGI6qp8FYnwfdo0VPV9VrrNMN7VMOW5BbU07PwB/3yeWwDPklwP22Br4JiL8wgcI2y2+mZj4vEbZ1qQ/AJDrgb4/KMCewYI7hlDsNEriofw5FlWrr94KE/HdC/tSlytuq9PDAd8N7AE0I+XL0dJYcMmonod8RBjJp3sCM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733389210; c=relaxed/simple;
-	bh=KegCdmqNoIevGYb0Yd0Z3NBXPAinr09XNO6cCNx8me8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=md3rq8ccZv4DCPE05GqZ1ELFRVSr6we/WkEPgXkR6EGPq49d2jg3drTv5FOdsy7yNzIUiw8XHxCcJhysibkfai8XRCBMqAj7kCyaZG9pCNYOrYtDSvOGUCb4Hd6SpLqY67OdFy6IHh1DWjGc5WXP+d7AZ2+4o0QnDD3yGfLwaN8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=k2POt1nS; arc=fail smtp.client-ip=40.107.95.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AVO8fZyskr5rwCB4erCnU1Ry0CajKCbzWv17GtGBgsxbqMOMbGS7g+4wcvTAuQ0xo/lqXi+Pbxqdo1Ev0ATko6C09rpiiIuUI2i7lheoqnfdCboZ/YHWaP5T0+hzH9RhN9arKTtQ5o4fn9+bot2WfeHoQpsM1h6LQYvDtt3wvknGKBYQvmQzFFMQMBh+0W/26nXRKg8XyF5r6pud5d7Umr31YmPwa55ooVnCRn8vBnugpYH3F1Ro4zDOFbl0ZQoasS3hY1nsbg1Q1IhXuHt+M9HhmAzDCKkoOkGtYcy2pjYJQsrkZZnVTRPDfgQSPjQOxPSOEX2mEAD8JrGhVYvKnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ocy5l4zE5CcqK6ZQFIZcIabnjgDMEiiVm7d1vN+h9Z0=;
- b=HJkfdgCaJnDpQhWdusfRgm7JcbcGKEnLf28UVwzBiMtaqaL26QrWb5pXYEtewlH2mB2PKnwoczdQgn1fLP98rPRcWHfFc2F9dGvw5Pqjh5aHJqmWPLX8Fs46WXr+Z3xoP21If3kS3LClZdUG4w9pikm9/GU51nLJbrqe+VbE6fP8OTFc4Keb3QWicbpgZsBmeMfb1qSw6JLGuKYkND81jixZIJonb9oFUpiou/PYCKJw7w8A8trjIGrJQGQ8m2W3G71F2Brsx3jRp0ido3IPl6GOQLQGnoZ76RVRdud1D0kRoZ9mt/Qk41JYOKXjo9Z2g4huTq7D+RhP3K5FHY73JQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ocy5l4zE5CcqK6ZQFIZcIabnjgDMEiiVm7d1vN+h9Z0=;
- b=k2POt1nSnG2xPNgO+zy0QXHGAJIYWvFz3k3JXhqxtqRf+G3NDTsI0jDCrpru3tKKSvwCQQhk3GWo/K+13OUn/njcGnSssI2UfFtWWRHXzLy/BaAYrHl2gZnxIOV18V1JXiAZ6uH24evvzeoElE03EAC8HxyRYbujddg2uENp5Ls=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6317.namprd12.prod.outlook.com (2603:10b6:208:3c2::12)
- by CYYPR12MB8749.namprd12.prod.outlook.com (2603:10b6:930:c6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Thu, 5 Dec
- 2024 09:00:05 +0000
-Received: from MN0PR12MB6317.namprd12.prod.outlook.com
- ([fe80::6946:6aa5:d057:ff4]) by MN0PR12MB6317.namprd12.prod.outlook.com
- ([fe80::6946:6aa5:d057:ff4%3]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
- 09:00:05 +0000
-Message-ID: <465c927c-88f0-45fc-9178-4c6981f82fd9@amd.com>
-Date: Thu, 5 Dec 2024 14:29:55 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/22] KVM: x86: Virtualize IA32_APERF and IA32_MPERF
- MSRs
-To: Mingwei Zhang <mizhang@google.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Huang Rui <ray.huang@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Len Brown <lenb@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- Jim Mattson <jmattson@google.com>
-References: <20241121185315.3416855-1-mizhang@google.com>
-Content-Language: en-US
-From: Nikunj A Dadhania <nikunj@amd.com>
-In-Reply-To: <20241121185315.3416855-1-mizhang@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0115.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:96::14) To MN0PR12MB6317.namprd12.prod.outlook.com
- (2603:10b6:208:3c2::12)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B582860BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:01:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723701D54EE;
+	Thu,  5 Dec 2024 09:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nP2pY5Ia"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72DC1D514E;
+	Thu,  5 Dec 2024 09:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733389302; cv=none; b=ac8GsZpLAo96aabPsplSnSqhruOnc1aQ4FaBda4SGgQzDZP1Ixxwudu2PHlhf21QP3hgW26t10xqefCZc+unhU9E/aM9WlBO0diq1B8cKAGqNDAUI1QhlKtImOMqmtE4Opzghdt8Es4xQDZXamnFDQ7Hqi8W7UbHkUUPsVNzT5k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733389302; c=relaxed/simple;
+	bh=SqOFpF/xIFWa64G/l65Y5xWT52AN6HV/RtcNy54LSTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ni9LxmnERt4eb3RmBVaroe8JFLPUdrI1lXV7vNXhFBklP9zwmdMCv3HCYjSzUZzgsyJY8KDavxAyoMFmrQ/KrQe08eWFYxf5F5y6AwFu4eQyBHEkB/iF48+7bDah39y2Y+hIEep/YmsOJPAxoE1I5LVImk7cqnnTw3SzpNLh3NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nP2pY5Ia; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A13C4CED1;
+	Thu,  5 Dec 2024 09:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733389302;
+	bh=SqOFpF/xIFWa64G/l65Y5xWT52AN6HV/RtcNy54LSTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nP2pY5IaaWdi6f/sn1/5JHelQzCf4/mODdSdNi5D060Vvxyv+zxvGa4K9btKbwdgh
+	 sV6TM3fHXh/Jm8t2rm0eYgpSeaMBcxRzaIrU13JqJXjOUxL+O2GG6bzknCf3dmCwa+
+	 M1sBYcczwBG8b7E2a+yznladbRPGq5vlhKFtj/ps=
+Date: Thu, 5 Dec 2024 10:01:38 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/2] sample: rust_misc_device: Demonstrate additional
+ get/set value functionality
+Message-ID: <2024120517-bright-expire-955e@gregkh>
+References: <20241204174627.1151288-1-lee@kernel.org>
+ <20241204174627.1151288-2-lee@kernel.org>
+ <2024120453-unfunded-oversight-5161@gregkh>
+ <20241205083848.GD7451@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6317:EE_|CYYPR12MB8749:EE_
-X-MS-Office365-Filtering-Correlation-Id: f45ffa72-6891-47a3-037c-08dd150b35aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NXdBalFJekJUejJVV2dRZEpneUtlQ2RsenI1TEIzdFFHUmxBQ0dPbTg3YkVI?=
- =?utf-8?B?VW5aa3NhTEZyMHpvcG1IZEw1anBJSEVIcTJ2SHJyV3FzbXpiS043WFNEdk9o?=
- =?utf-8?B?dzlncnZkNktvRHdPK3ZUQnBwbWdLQmc4KzhJV0dUSWp5Z1lSSnEwV1ZoUUtK?=
- =?utf-8?B?T1VOVFBlWTJiOGU4ZEpqM0lSaUVtS0s5Vm1rTHNndlZKSzJ2K256UHVCbFBW?=
- =?utf-8?B?SFQ0bWlOOUhQSExpek1HbzUxZEtxZXp4YWdNc3hhNVRCdC8rR1d5bmVETERs?=
- =?utf-8?B?NnlmOExnU0VJRnRaOW5ZeGJxeUVFaUtjZm5mYktFL3F3VGpyOE9qTXJ3d00r?=
- =?utf-8?B?d0R1ZW9vcG1SZkpORkF5Z1A2L252aThpVzZ2czY3S2VpZjJaS1VFazlnbmw2?=
- =?utf-8?B?MXErcU82Qkt4Y204OVRJZzkvc0pkZmx5OW5USzIrb0VFZmJaWFExOW1YVkZh?=
- =?utf-8?B?UXRKL1dtVURpSUdMbGNBbkRjamRUVWpVdDMzZ2xBRmhOdjJ6d0p4N2RQRzZJ?=
- =?utf-8?B?T0N0bGZKN2hzbGV4ZW4xcHNxck9lSVhkc1B0Zm1WbHJwVVcxaHZZNFZOa1ZH?=
- =?utf-8?B?bloyYlI4MnF3cFFRWVV2SW44cHJvQzljdVV6Z0ZDaEpDbkYrc0RwV0lIVlJw?=
- =?utf-8?B?NUxsT3FvUjZ5QW9aTWRwNyt5Rytzbjd4bStBRmVFc3dCbW81NkhZZWpKaUdo?=
- =?utf-8?B?MS9veGtCWVRHRE5BNmNTUWJRbEMzb2tKWHhlVzdKb2IrZU1ORk02VDRVdGtS?=
- =?utf-8?B?UDg1VWluZ1UyY1A4SkNVbkE2aFJVUExUS2RGT1o1VWNON2k0d1FlajR6TndP?=
- =?utf-8?B?OFJ5cVIvNkJ4dlZmS2tWZDR4YUlHZlJwZmdNV1JTM1FmR1hKS2NmZ0hkcE9w?=
- =?utf-8?B?ZkZuaVljU2hkZUh0TTBPWGdGUURjUXZKQTRFUEVVSTJ6cGVIQmR3VDcyREhw?=
- =?utf-8?B?eFFRbnVTbzlHSTU5djVwNXZCaGNPbzR4RDc3S3dnZW5OcGFublpMTHo2NTVY?=
- =?utf-8?B?ckNYaHo1NjVadk84VmtGUEMzR1VISDI0aDB0a1VsNUhUaDZLMUFhNHRDODBD?=
- =?utf-8?B?VGVQMVNwbW1Zc0VNYndtYjM5eWg3bjRoZXU1b3l2SkR1bmNJaHYzRmxmeS9r?=
- =?utf-8?B?a1ZTSU12QnYzWm43UWJRMmdNMVJYeitQbWpwb2FwRXQvTndZMTg2dWdxRVhR?=
- =?utf-8?B?TDZyOGx0RGY0WUZySmU3MFJ0N0NYUlJlYXNGcGU2bGNlM2trTXhNTnpzYWNo?=
- =?utf-8?B?dW4xSXRiSlN5R3YzbDJUTVVVVFJIV1F6ZW5UVjRLUTlMMkhrQ0VnSGo5R0pJ?=
- =?utf-8?B?Ym9OVTdVYllWSDd0SEg2QWJieGRGekNDbDFKeUo4dGZDUks5NGcrRUluT0dE?=
- =?utf-8?B?TUVhT2tZU0FkQ3QvTWdRd1RRV0xwYVlkOVZWMW5idVNKaVIzQlkzSkJVTnEv?=
- =?utf-8?B?US9rR1pwcGwvOW1PV0RaU2lvTTRQSnM1T3FtVGtVdE45N2FvQUQ0VW9ZUmYy?=
- =?utf-8?B?YlZ3ak5vYXpZVmVYcTl0UUxEQVlWOGN4UnVqUVhyRjkrWk82MzgwVEdmdktw?=
- =?utf-8?B?enJEalltNlpYd1NYenlqb1R5TGdvTGpUWFpKTGlMdzhLNHJtamFFd0dsS3J6?=
- =?utf-8?B?N0J5SnFSdXdxOStqa21TNVkydnQ2dm11S1I1eTlEZjEzQ1JnL0xjTzdQSGNI?=
- =?utf-8?B?WjViWEtqWnRZcmtkV3ZUV2QvbHJIOWlrMWdDSzJ4NTBnYnV0eEI0UXByOXlz?=
- =?utf-8?B?cU9GZ1I4K2ZOTG0wWjQ4c0p2ZklPQlE2ZUMzcy9ERnBwYVJXY3JzVDZrL01h?=
- =?utf-8?B?Qm4xdWIzN0Y2dklDWDJTRGhXa2t6V01oUm1xYWJ4NFVpK3Y5L3doWUF1NmRZ?=
- =?utf-8?B?Nnp1YnRjWnZoNGV0RE9BY1gwbDh3TWRjMVY5UGZUU1FCenc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6317.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Snd2dFhOcXhQRHd5TFpsSDVpUmYzRGVPNVB3d2R3TnBYUWtma05vdTRvQmUy?=
- =?utf-8?B?aHQrc05nVklGRXhXY3ZoQUo2a0VieU4yQ3pRTlJmbHMycWk2dG1kNUoyd0ZR?=
- =?utf-8?B?cVNQaXdFVG95a21tZWhrbDRhZjU4ZTQrZGpTTDRmSzJ1TXlFNzFGajNyTGZj?=
- =?utf-8?B?VHdJdXFkNTZ5YzJZTzA5U09VeUtlOFBHOVFwMzBsYTJyODNuSC9sTGNEb3Uz?=
- =?utf-8?B?dnpqWXFWUUhSRkFjeTlwdjZTK2g5QjF4L1U1eWE0L1BGMG1heVN5RzRlV0VC?=
- =?utf-8?B?Ukg1RXp4QWJkZHZnS3dNamFHajFoM2kvRWp0TERMMURiNmpTY1hhSVJ3VjMv?=
- =?utf-8?B?VVBReTl4OE1jWFJlWnBxQXZ6ZnBWc0ZuWmlyd3pjU0ZWUnpRODBWcXZ2NWY1?=
- =?utf-8?B?UEN1Zk5oRC9WTWY3NENMN2E2RUhDaVAraTVLT2diS0xyOUFyL040OEVNT0tV?=
- =?utf-8?B?K292R2c3dEJlSHJRdU1WSFlFZnMvMVNSZW4vL25tWWZlWFl5VngvUzYremY2?=
- =?utf-8?B?b3BTUFFXMXQ2YitKWklhTVduZHpKN0dQaTVVVGZBRkdZc2lXeVk5bEw0NEU4?=
- =?utf-8?B?QyswZTl0dUxRNnNqaWs5disrVTZMTnhaVnYvb0cxYXVDeUo3Y0oxNkFMQVdE?=
- =?utf-8?B?R3kzRi9VUTYrR3Q4QW1aejU0SVlpdGVsNUx2eFJzRmxPMS9Nc292Z3pkTDdo?=
- =?utf-8?B?NnVDMERISmVMQ1BwNzhTb1IzWHVVcU9ZRFhUOVppeUpHK1hTeUpuSk1xeTJK?=
- =?utf-8?B?dEdPZkJsZGxZOHBycmVtR1pBV2R3TGZtQ2xnMXJmajlEc3k4dVNWQ21Saytv?=
- =?utf-8?B?d0RJTW1TYm90Q1ZUTU9vdzF3a29tL1JUVVVDcGRYaFBmU3o3bEpKZkFscDVQ?=
- =?utf-8?B?MDNDNytQUFJOZWtQb0hJYWp2cnViK2xzMHJCL0diTUNPMUdtNWJUL083QWJB?=
- =?utf-8?B?L0hZUUVQbXRoQ3Fabi81OVczVVVIdHhqdldFdjhzL01LWWlEY2lYQmE5WjRJ?=
- =?utf-8?B?Zmh2MlVnOEtTVHFVZnFFSmVRbDM3eFRPNElHam13dHpCaUpMM0RCU2R5NHQy?=
- =?utf-8?B?ZTMzaGVtR2Q1eVl2NXZsOGdOb1NwT3p6eHZ6RE9EMEhidlliWHJHb2QvcVZm?=
- =?utf-8?B?OGR5YjdobjdYM0hWb0pCUFJPbUhBZFhTdy9adG1YdmxoV3A4OC9YamhNRnl5?=
- =?utf-8?B?S0VmTWpBaUt3b3ljNVNBd3crWjNhRTVmYzBOeGxHT08vcDc3allYQ3BNUXVy?=
- =?utf-8?B?Nml3LzE3OG5PSm5XOS9COTVGaXA2OUlDUlgxcnRuV2FhelQyWW5DVzlaM0hN?=
- =?utf-8?B?UEw2ei93OEdNYW1DOTR1Q01EWkU2K08zajNMZlZkeFlEK1FKSDJOQ3UvY1ZM?=
- =?utf-8?B?ekg2NlQwWElyYmxYYXFKTU1XTnVpblFTVlREVHViOWp2L0NxWjh3MzJOLzg3?=
- =?utf-8?B?c0lmZXkzZXplbXVJWis5QmpQK2VHbjBRb2psaVhvQ0RSb0lmNWc3KzZkWWZZ?=
- =?utf-8?B?K1dMSFhYd3BFRUMzSHlQYkVLbVljQ0ordkZaZnRYSVp6SEhzekd0MnJCZFhL?=
- =?utf-8?B?ZllxYncyby9MMFpCRkdpNDh3ZlBUSjJPNUR0dFpZSnBSbmZML2dFaXdnL0ZM?=
- =?utf-8?B?RktiZFhiSkZwbE81WllQb0R2K3FHYnZuSHhTRU80aVBDVGRyRFlOSHUvT2t3?=
- =?utf-8?B?Zk1QajMxaFptM1NmeW1YZlJBZTdaUEdIM0tGd0tFUUdnVUlJN3E5QlNxeldF?=
- =?utf-8?B?TTMrc3hqbVZQRHdjK3VtOTFUTTFiZnljTkx6ZDFua3ZDajRySWQybjNiY05R?=
- =?utf-8?B?VkFEN1ZCZVVCVzBaUG9oVk8wM0hQY3dUZEVxSk9BRWdkRHY0RXQ5OTRQT3pi?=
- =?utf-8?B?bmNobUhrV2FBd3l6dnNtUkxFck1reFJ0UzdUS2JrL1RoZE8vdElCT0dpRE9v?=
- =?utf-8?B?MW43dTNkOW9MZWlaQm9JSU1PMjlhOGVBcitDT2U4WUYzSlFDb0dVaXJLWDhm?=
- =?utf-8?B?NW1wazlaUmJaZnQ4MjcwMzJrbHlHaXJLZE8xeFk4SEN1MDRTOS9sZXFOZy9R?=
- =?utf-8?B?NnYrcFV6RWY1WGZreFNhbXB0T2tNSWxIWnVnU2lXTFZSZjRQTnloN0VXWkpW?=
- =?utf-8?Q?zusJca3DYGx8sJ1kB9YRCzMnr?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f45ffa72-6891-47a3-037c-08dd150b35aa
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6317.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 09:00:04.9515
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CE+V0QZSgJGP0w4mzd9NUliOgVxdsSF6EqDrRhyNE+7iK7Xo9Nol17r5pxAx7vRbS2WhPbCau8jO5zj8YqwnZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8749
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205083848.GD7451@google.com>
 
-On 11/22/2024 12:22 AM, Mingwei Zhang wrote:
-> Linux guests read IA32_APERF and IA32_MPERF on every scheduler tick
-> (250 Hz by default) to measure their effective CPU frequency. To avoid
-> the overhead of intercepting these frequent MSR reads, allow the guest
-> to read them directly by loading guest values into the hardware MSRs.
+On Thu, Dec 05, 2024 at 08:38:48AM +0000, Lee Jones wrote:
+> On Wed, 04 Dec 2024, Greg KH wrote:
 > 
-> These MSRs are continuously running counters whose values must be
-> carefully tracked during all vCPU state transitions:
-> - Guest IA32_APERF advances only during guest execution
-> - Guest IA32_MPERF advances at the TSC frequency whenever the vCPU is
->   in C0 state, even when not actively running
+> > On Wed, Dec 04, 2024 at 05:46:25PM +0000, Lee Jones wrote:
+> > > Expand the complexity of the sample driver by providing the ability to
+> > > get and set an integer.  The value is protected by a mutex.
+> > > 
+> > > Here is a simple userspace program that fully exercises the sample
+> > > driver's capabilities.
+> > > 
+> > > int main() {
+> > >   int value, new_value;
+> > >   int fd, ret;
+> > > 
+> > >   // Open the device file
+> > >   printf("Opening /dev/rust-misc-device for reading and writing\n");
+> > >   fd = open("/dev/rust-misc-device", O_RDWR);
+> > >   if (fd < 0) {
+> > >     perror("open");
+> > >     return errno;
+> > >   }
+> > > 
+> > >   // Make call into driver to say "hello"
+> > >   printf("Calling Hello\n");
+> > >   ret = ioctl(fd, RUST_MISC_DEV_HELLO, NULL);
+> > >   if (ret < 0) {
+> > >     perror("ioctl: Failed to call into Hello");
+> > >     close(fd);
+> > >     return errno;
+> > >   }
+> > > 
+> > >   // Get initial value
+> > >   printf("Fetching initial value\n");
+> > >   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &value);
+> > >   if (ret < 0) {
+> > >     perror("ioctl: Failed to fetch the initial value");
+> > >     close(fd);
+> > >     return errno;
+> > >   }
+> > > 
+> > >   value++;
+> > > 
+> > >   // Set value to something different
+> > >   printf("Submitting new value (%d)\n", value);
+> > >   ret = ioctl(fd, RUST_MISC_DEV_SET_VALUE, &value);
+> > >   if (ret < 0) {
+> > >     perror("ioctl: Failed to submit new value");
+> > >     close(fd);
+> > >     return errno;
+> > >   }
+> > > 
+> > >   // Ensure new value was applied
+> > >   printf("Fetching new value\n");
+> > >   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &new_value);
+> > >   if (ret < 0) {
+> > >     perror("ioctl: Failed to fetch the new value");
+> > >     close(fd);
+> > >     return errno;
+> > >   }
+> > > 
+> > >   if (value != new_value) {
+> > >     printf("Failed: Committed and retrieved values are different (%d - %d)\n", value, new_value);
+> > >     close(fd);
+> > >     return -1;
+> > >   }
+> > > 
+> > >   // Call the unsuccessful ioctl
+> > >   printf("Attempting to call in to an non-existent IOCTL\n");
+> > >   ret = ioctl(fd, RUST_MISC_DEV_FAIL, NULL);
+> > >   if (ret < 0) {
+> > >     perror("ioctl: Succeeded to fail - this was expected");
+> > >   } else {
+> > >     printf("ioctl: Failed to fail\n");
+> > >     close(fd);
+> > >     return -1;
+> > >   }
+> > > 
+> > >   // Close the device file
+> > >   printf("Closing /dev/rust-misc-device\n");
+> > >   close(fd);
+> > > 
+> > >   printf("Success\n");
+> > >   return 0;
+> > > }
+> > > 
+> > > Signed-off-by: Lee Jones <lee@kernel.org>
+> > > ---
+> > >  samples/rust/rust_misc_device.rs | 82 ++++++++++++++++++++++++--------
+> > >  1 file changed, 62 insertions(+), 20 deletions(-)
+> > > 
+> > > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+> > > index 5f1b69569ef7..9c041497d881 100644
+> > > --- a/samples/rust/rust_misc_device.rs
+> > > +++ b/samples/rust/rust_misc_device.rs
+> > > @@ -2,13 +2,20 @@
+> > >  
+> > >  //! Rust misc device sample.
+> > >  
+> > > +use core::pin::Pin;
+> > > +
+> > >  use kernel::{
+> > >      c_str,
+> > > -    ioctl::_IO,
+> > > +    ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
+> > >      miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+> > > +    new_mutex,
+> > >      prelude::*,
+> > > +    sync::Mutex,
+> > > +    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
+> > >  };
+> > >  
+> > > +const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('R' as u32, 7);
+> > > +const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('R' as u32, 8);
+> > 
+> > Shouldn't this be 'W'?
+> 
+> No, I don't think so.
+> 
+> 'W' doesn't mean 'write'.  It's supposed to be a unique identifier:
+> 
+> 'W'   00-1F  linux/watchdog.h                                        conflict!
+> 'W'   00-1F  linux/wanrouter.h                                       conflict! (pre 3.9)
+> 'W'   00-3F  sound/asound.h                                          conflict!
+> 'W'   40-5F  drivers/pci/switch/switchtec.c
+> 'W'   60-61  linux/watch_queue.h
+> 
+> 'R' isn't registered for this either:
+> 
+> 'R'   00-1F  linux/random.h                                          conflict!
+> 'R'   01     linux/rfkill.h                                          conflict!
+> 'R'   20-2F  linux/trace_mmap.h
+> 'R'   C0-DF  net/bluetooth/rfcomm.h
+> 'R'   E0     uapi/linux/fsl_mc.h
+> 
+> ... but since this is just example code with no real purpose, I'm going
+> to hold short of registering a unique identifier for it.
 
-Any particular reason to treat APERF and MPERF differently?
+Ah, sorry, I missed that this is the ioctl "name".  As the ptrace people
+will complain, why not use a new one?  Ick, ioctl-number.rst is way out
+of date, but I guess we should carve out one for "sample drivers, do not
+use in anything real" use cases like here.
 
-AFAIU, APERF and MPERF architecturally will count when the CPU is in C0 state.
-MPERF counting at constant frequency and the APERF counting at a variable
-frequency. Shouldn't we treat APERF and MPERF equal and keep on counting in C0
-state and even when "not actively running" ?
+> > > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
+> > > +        let guard = self.inner.lock();
+> > > +
+> > > +        pr_info!("-> Copying data to userspace (value: {})\n", &guard.value);
+> > > +
+> > > +        writer.write::<i32>(&guard.value)?;
+> > 
+> > What happens if it fails, shouldn't your pr_info() happen after this?
+> 
+> If this fails, I need the line in the log to show where it failed.
 
-Can you clarify what do you mean by "not actively running"?
+pr_info() doesn't show file lines from what I remember has that changed?
 
-Regards
-Nikunj
+But wait, this is a misc device, you should be using dev_info() and
+friends here, no pr_*() stuff please.
 
+> It says "copying" as in "attempting to copy", rather than "copied".
+
+Fair enough, but if the copy fails, nothing gets printed out, right?
+
+thanks,
+
+greg k-h
 
