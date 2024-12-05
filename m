@@ -1,88 +1,81 @@
-Return-Path: <linux-kernel+bounces-434029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0272D9E606C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:22:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85EE9E608B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766CC18855F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:22:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F2E216A7DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8351CD21C;
-	Thu,  5 Dec 2024 22:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7341D416E;
+	Thu,  5 Dec 2024 22:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldj4riYC"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2iD1sXzv"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2069.outbound.protection.outlook.com [40.107.101.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D986A1BBBF1;
-	Thu,  5 Dec 2024 22:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733437363; cv=none; b=nY7Hwn3RXRhqD22EkbP8IZtWTN1IMkqRXo2sVs/gESc0gSgYiJu6J4Kt4yf6Atg5Uok8VWmAtEbzxmU6BxfkcZhefBPpxwFVwYnSrXZkiurQ+ZMqgXoK1cvM+ZtT4FeL4kE4Rbqh1hp3nqJmS+3HlONlllYn6SGw29uK/SBFxEY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733437363; c=relaxed/simple;
-	bh=nAK65Za/KWKxEgWqGsbbQekGzsAf+jmT6jYsvSM8Xko=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MlSQskQTiVL2tGsI56RPwvVerxBqzzgMJg3YyWMNR7Ukw+jwIpth3vKPzT8G/Tx2U2RKobhQZjWfEe0tWzskV5/2v/00R4JIfFOJ7bqqEoCGn6DVojGukNzIuniNTs1+wYMjpn/YTvaiZJ2l6bqzFiz2qrW3l42eP21JV34dyKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldj4riYC; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa54adcb894so248528766b.0;
-        Thu, 05 Dec 2024 14:22:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733437360; x=1734042160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m3lyXrqzIu+Kk45XA+AociMWK/OJuQLe7K4aBvShe1s=;
-        b=ldj4riYCXGtEi6kEzajqkB5WyRpTp2RrJ+TKASM++R1a+09suXWJGKV0SiQibwDwuk
-         flo5Vhw8niFZ7UW8K10diBZt8mCNY0VfUhliU9lYDJQrit2uhdC7pZ1SUrpavojVmUe5
-         oo2j7oODl7i7ep+scMWDZzcK2S+nQVO87nHrhiBhOIjbbRHNhL9JHTSt2aNVl3yYl/W1
-         uLv9iYqbpxKkSvyHAqic0+vzdatIsHsriq6FNKZc4nb/Tlf7Ho5GeqUZQnkx6zT5HlEU
-         S19ihVvt5Yok+CtdqSxSw6yzGgyCTEGeq3Ozr3BwXgaj8Lli7g9TI21En4SwswNKZUu+
-         3jXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733437360; x=1734042160;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m3lyXrqzIu+Kk45XA+AociMWK/OJuQLe7K4aBvShe1s=;
-        b=dTIVTaUpQTgBAQrXb0M0o8K8ZLRkZRmIQ7kIrHZQwOsSym31gLAMRWfuAz8XNVf3TG
-         7kkYnJJ6OV7jr9mlE9Ts+PQ2euraBEMoSjdfNe3K+1R73IalDK9DqasuNkT2y5eWrZag
-         8Eag97XQ4Os7VAAyVszuSTfgl9Xeceo198sNzHK3abk6CeBfxHyYs5QOclGH/zk3QFDg
-         igUHwPfvZMW1hk0IbTu2IQG91FC5/7NOIv0RvLJ7tkolSzqfpH9b8tQfF0X8xWRELpK9
-         0q6dcy5g9tvb0nlaxZEMDY+ZUGKDzcrb59qWNzpEGunJFYkhrz83w/uA66evNNjIgR9z
-         sm0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVTQNu3Z6R8IG3uHYq7R2TUNSrEvZdV1AAlf5G8W4zkKBs7wYtN8G0vz5yOSGyfYASylPJvTqefFwQAKrmq@vger.kernel.org, AJvYcCWw9rtJKxpljZ717C0Iemeln5wUvvnOM59zLDkoQPCbsrcP7ng7oa3KspdC7Yjk6Ywk83C/iDm6w0lxBA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YznQBPQl/EzSZyDRl4rRXMYdO1VIKst8muNhREjeP4HgKaMng65
-	frQ9C3V96AJgagyIbe7C47i6c3hCaRfcEsRUDT9kiuskv0cpLKCD
-X-Gm-Gg: ASbGncu3bn/7AviPBJyGjbYlOY8XkrfAOzAmVISd/yvvojDkhy+vvixmTqpATL1NLBg
-	fcimxukqHCWqBoKv/ujr+2tnxCjfB4W0OxLvWywEAKHPrVAFRTPTeVYmRYF9a/XHH7AzSZjbOgT
-	nZ1G41wwKfBrRs40TPfsqUquM/dB7UIQnZLjgCn+35QEOagxBuSikHlr0sEnjyoGi9q4kdzaZ7m
-	E2N7sUdNzVTxWnXziHEIcF47NTdOW3UpKeaSWj1pfAYBeOo/zjRmxqWXwh+
-X-Google-Smtp-Source: AGHT+IGcrLT4gONP5gatqkYWWG2Utr7wcaZ76fP3t5w0AD0MTmF9LBS0SpqfRAOkQ11uPNvWm5iasQ==
-X-Received: by 2002:a17:907:7703:b0:aa5:449e:1a1d with SMTP id a640c23a62f3a-aa639fa434cmr49156166b.2.1733437359965;
-        Thu, 05 Dec 2024 14:22:39 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260e33f7sm148805566b.183.2024.12.05.14.22.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 14:22:39 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: karprzy7@gmail.com,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com
-Cc: skhan@linuxfoundation.org,
-	linux-input@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
-Subject: [PATCHv2] HID: hid-thrustmaster: Fix warning in thrustmaster_probe by adding endpoint check
-Date: Thu,  5 Dec 2024 23:22:21 +0100
-Message-Id: <20241205222221.3094702-1-karprzy7@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDC11CBEA4;
+	Thu,  5 Dec 2024 22:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733437751; cv=fail; b=qjztgX5CCVvjCI+WeSeqM+uzihVIPSy+olozNIKvufHcMrXJzIE8Dwlb0jWGWMekZvt50WGyeN5cYChwZ3tDpOzQ02+S8nh/6ajXkoJjLuhseAZ7AjuHnTJ9RG01ErDUSYHlrTVofdRva6Mp7Jw/FdQ71AyBzi2HceLkcoraQvM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733437751; c=relaxed/simple;
+	bh=c0uIe+UTK6/R1DFCQQ4zfMzZy1p5S5fvhOXc/MPzH7U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DlRIua10ySCaDINqd6h+rXq1izw4YVAoOFguVvjPwBYoKOSiOxbTIcVDHNiGAvFghrBatSrwKGm/Ie72xihQ0uAhsk5eB/9di4cKMwT0aI4E74DFCH5bCpyQc6k1+e5W6sGl9nDWSJBjX6JFs05SGb92zYYNWZeAqkONPd6rauI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2iD1sXzv; arc=fail smtp.client-ip=40.107.101.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U55rs2oDEl8wLI2U7B443s4KSNd9RLFjuPW8jJSdqAKgr0EyrmFh5Cdre2n8e2DUPOGx3DJJmdyJWtV2Qk+ayxiJAnqbZr1ql+OV9IFu3YsK4rsH92vlxpVR9Isk4zPKuHjVJ+pSEgDQtZqeOzCp9G87MFhZKhrCC+fbvTIIlOf7ltUwwAfiVlBBtqR4usFbgf42LK/283YtT44S1i7CzuaIeI6tY+VcltzptkhBU9R0fD60bTptMKrsIcGm0UQemnqdoc4HNtMHViY4QMZyMfus/yB3rnp7n+ME5F1zXYST6l3QCBRiuCP4/huctjUqsyR1A9zPJ/v2tCZO8i5bJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=anmIpxE0+wTruxd3v3xe2G2c1S/JP+CK+/+dppTZwxk=;
+ b=QldMGwvlb0d8zPWkQaBE2SLbsGNw5oLjiiBBfOUqwqBpOtFEJRDNsitvJBts1YdCHW52PVFbI8addhuIi45J+sX5faEI0S9vFcQaVvzGgxREDt9XcEcMu2DrQkJRCQ4iU67o57J60OaAE1lBEzThCR6auUiW+eUs9O8yMpV912zT5ajoIrf4ZBf4ltLQn1koJVFstt1SCWQaquCDmhdPyf8Mxu62+VU0QYws6BPbSES7rosGR+tn6y4k4Gq3ZLg/YzMfHozbXB7EWzMQKCpCZT4HM656L4KvSW8/9J2iKWnQwnZXOOpSi7aXleXD0zc73g4iD3bgzx7gw0nx2xwPow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=anmIpxE0+wTruxd3v3xe2G2c1S/JP+CK+/+dppTZwxk=;
+ b=2iD1sXzv/dVIIcQGjGow8gV9iMS/ip6t04XQAcRZxvPajxP2fg9i1EazrkpRi2h+0msRo8T4n81kvjOrPvT8YR2KTda0bb4kKoopnAoR8ps1Z3YEM3coNolKgxF8YQISkngVjlcQenuenlYux4zBAUunRZSqCNIdmaWiCFoKQfo=
+Received: from CH0PR03CA0387.namprd03.prod.outlook.com (2603:10b6:610:119::21)
+ by MN2PR12MB4454.namprd12.prod.outlook.com (2603:10b6:208:26c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
+ 2024 22:29:03 +0000
+Received: from CH1PEPF0000A349.namprd04.prod.outlook.com
+ (2603:10b6:610:119:cafe::17) by CH0PR03CA0387.outlook.office365.com
+ (2603:10b6:610:119::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.12 via Frontend Transport; Thu,
+ 5 Dec 2024 22:29:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000A349.mail.protection.outlook.com (10.167.244.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Thu, 5 Dec 2024 22:29:03 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Dec
+ 2024 16:29:01 -0600
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+CC: Perry Yuan <perry.yuan@amd.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH 00/15] amd-pstate 6.14 cleanups and improvements
+Date: Thu, 5 Dec 2024 16:28:32 -0600
+Message-ID: <20241205222847.7889-1-mario.limonciello@amd.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -91,43 +84,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A349:EE_|MN2PR12MB4454:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c3849f6-8b52-45b1-7867-08dd157c391d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CWLsMfzBkPvUKPGdqK26OpFYrFieuw4MO7wuXlKhUGVtVTXgu4mhuq7jQx7V?=
+ =?us-ascii?Q?luGY96A6amU4HY1v5e5oX2UZhpT0sSOg9rLFOxJi8jD407lfu2vClidUy/9B?=
+ =?us-ascii?Q?jT6Vroyzrrms21BzxrXwBksGX7uyWoDKMBpQ8WBhtw+dxlCsbbCHWCQlqrXQ?=
+ =?us-ascii?Q?s0qJOFIxYsbCoqIttQLnz2bTz1CfY7+JUGAY3xONafOL8crALHgMgFNoRoR6?=
+ =?us-ascii?Q?SsM6GNwbrkGoL9KfQQMsR+lJsNXPsBUYXXjVxJCwQ9rhkz6olWC9jiVRm5Hu?=
+ =?us-ascii?Q?cdcwNVIwWzU2t2/jpBI4N/m3USXdQYz4b9dStYAJEg/EWsy0NBLrwt/i1064?=
+ =?us-ascii?Q?NQNSX9FrLJfZw0XDwAz1IY+cbtCAXKGVbNsAa2r4n/lZlyNrVxz0eYBHsjCB?=
+ =?us-ascii?Q?8U1nH0IiUF4cnZAYELAm5zY70DchlifAVBcQG+FozlNYc2qgh6amI12Mds4U?=
+ =?us-ascii?Q?CL+ZRSO+WCeHMjHTw5z/td4vOKHAaxY+9s10sgKualHc2eNb+Mb+Oq/IVU/z?=
+ =?us-ascii?Q?qMR7nbAfIatHddJ9hqZSVyFfLWDmkR1bmiT/1KFCH1wFfCcRWhc75JA4Z65c?=
+ =?us-ascii?Q?qE72QM5Wjy9tA+FxGUo0sFNJMT8fZREb1ejCDzI9ni/oJbq7Vp6uE0ok7bCW?=
+ =?us-ascii?Q?rB17GkXpNWjQ89Q6apAVBa81x73mB7embRJQDDmDj/S1FbFU81manhYK+j0U?=
+ =?us-ascii?Q?XdS/Ehx4RxMIsuc5KsJph4RyIat95sxY+aTu5nU0KtoPjWx1FpCUOVeRBtoS?=
+ =?us-ascii?Q?n2Am+cc6mcOFcIZ3nRsDtOqNgUeRrXK1FTSZYl2uEoFcKn2zjBUr1o9Yi1Da?=
+ =?us-ascii?Q?GuOj/NislcLFnHPV4Uf/l3wKkbMzjPQeM+CkyWrmEOStXcN3eT2zbiK7Y/tX?=
+ =?us-ascii?Q?ZXNPFP/izM9PjjvMx/mDHbzatfR6nNUPcBk0H3RY6xUMwyZBo57+Fq/ceJGv?=
+ =?us-ascii?Q?p0egD8Wnp3bpypwhkoCJjB/26ve6ttbaS3201L7A4CEphGgGf1JJdRPbTTIf?=
+ =?us-ascii?Q?Hcp+IYYsRbptJALlBKZB3IYClcH7Zvx3tCLpO9Fb+ua1pcfNh2LYr9sg3Bqe?=
+ =?us-ascii?Q?XKK+7VENQQZpsNcx48QI9MKdeJ/jYblzX9MKRyp7CMF+o9CyadUGh70USe8X?=
+ =?us-ascii?Q?Y+vF8UuKHXB0vhwObxLcRC8BcKGprN9VPGPUbonMWgdiwXX9+WSxrAResW55?=
+ =?us-ascii?Q?ArRphWccHbD45vYLuY92KS0+6+jDgBmJo6UNxxhVeCpdmC7gQiGSFuoqSPRw?=
+ =?us-ascii?Q?/TvV+ZvVHiyJ3Et3HDSyoWXhmiirF8hwqOU8D5wrE44Fk7RPqRd50mhw8WMu?=
+ =?us-ascii?Q?CSAqhMKq49Rv78ga0QgKsoFKls0SqQ/qAtrHZ+SOCfJxK2fx11DA6ndcRjCp?=
+ =?us-ascii?Q?DZdFOsKk7eSxWenLszO8dwFkMaqKR7ASZbfjl767lo+C+pYHZ+GuNYbHRrMX?=
+ =?us-ascii?Q?DqBLBwCRGFKt1Ch+ktNmA1+S7R2DCLv6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 22:29:03.4057
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c3849f6-8b52-45b1-7867-08dd157c391d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A349.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4454
 
-syzbot has found a type mismatch between a USB pipe and the transfer
-endpoint, which is triggered by the hid-thrustmaster driver[1].
-There is a number of similar, already fixed issues [2].
-In this case as in others, implementing check for endpoint type fixes the issue.
+This series started as work on the behavior around boost numerator that
+was changed in the last few kernels to make it more expected.
 
-[1] https://syzkaller.appspot.com/bug?extid=040e8b3db6a96908d470
-[2] https://syzkaller.appspot.com/bug?extid=348331f63b034f89b622
+As part of the process, of these improvements I found various other
+optimizations that made a lot of sense in the context of the code.
 
-Fixes: c49c33637802 ("HID: support for initialization of some Thrustmaster wheels")
-Reported-by: syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
-Tested-by: syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
- drivers/hid/hid-thrustmaster.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+While I was working on the issues I found it was really helpful to have
+ftrace for EPP, so it introduces that as well.
 
-diff --git a/drivers/hid/hid-thrustmaster.c b/drivers/hid/hid-thrustmaster.c
-index cf1679b0d..6c3e758bb 100644
---- a/drivers/hid/hid-thrustmaster.c
-+++ b/drivers/hid/hid-thrustmaster.c
-@@ -170,6 +170,14 @@ static void thrustmaster_interrupts(struct hid_device *hdev)
- 	ep = &usbif->cur_altsetting->endpoint[1];
- 	b_ep = ep->desc.bEndpointAddress;
- 
-+	/* Are the expected endpoints present? */
-+	u8 ep_addr[1] = {b_ep};
-+
-+	if (!usb_check_int_endpoints(usbif, ep_addr)) {
-+		hid_err(hdev, "Unexpected non-int endpoint\n");
-+		return;
-+	}
-+
- 	for (i = 0; i < ARRAY_SIZE(setup_arr); ++i) {
- 		memcpy(send_buf, setup_arr[i], setup_arr_sizes[i]);
- 
+Lastly a bug was reported requesting that amd-pstate default policy be
+changed for client systems that don't use other software after bootup
+so it includes that change too.
+
+Mario Limonciello (15):
+  cpufreq/amd-pstate: Add trace event for EPP perf updates
+  cpufreq/amd-pstate: convert mutex use to guard()
+  cpufreq/amd-pstate: Drop cached epp_policy variable
+  cpufreq/amd-pstate: Use FIELD_PREP and FIELD_GET macros
+  cpufreq/amd-pstate: Store the boost numerator as highest perf again
+  cpufreq/amd-pstate: Use boost numerator for upper bound of frequencies
+  cpufreq/amd-pstate: Only update the cached value in msr_set_epp() on
+    success
+  cpufreq/amd-pstate: store all values in cpudata struct in khz
+  cpufreq/amd-pstate: Change amd_pstate_update_perf() to return an int
+  cpufreq/amd-pstate: Move limit updating code
+  cpufreq/amd-pstate: Cache EPP value and use that everywhere
+  cpufreq/amd-pstate: Always write EPP value when updating perf
+  cpufreq/amd-pstate: Check if CPPC request has changed before writing
+    to the MSR or shared memory
+  cpufreq/amd-pstate: Drop ret variable from
+    amd_pstate_set_energy_pref_index()
+  cpufreq/amd-pstate: Set different default EPP policy for Epyc and
+    Ryzen
+
+ Documentation/admin-guide/pm/amd-pstate.rst |   4 +-
+ drivers/cpufreq/amd-pstate-trace.h          |  52 ++-
+ drivers/cpufreq/amd-pstate-ut.c             |  12 +-
+ drivers/cpufreq/amd-pstate.c                | 395 ++++++++++----------
+ drivers/cpufreq/amd-pstate.h                |   2 -
+ 5 files changed, 244 insertions(+), 221 deletions(-)
+
+
+base-commit: ab9e5b2eb56412cb8c63b46b935878d29205418e
 -- 
-2.34.1
+2.43.0
 
 
