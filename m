@@ -1,104 +1,271 @@
-Return-Path: <linux-kernel+bounces-433124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10289E541F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:40:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA039E5429
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:41:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD4D282AC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C3A6165EB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B828A207DE3;
-	Thu,  5 Dec 2024 11:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8E207DFA;
+	Thu,  5 Dec 2024 11:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="OsEkz/Rq"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVH1EBpy"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604C9207672;
-	Thu,  5 Dec 2024 11:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9A920767F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 11:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733398831; cv=none; b=KPMICkjCXjsx9qw1SJ7EYhNh0+Oxw7TVROI8ta4Z/6ln4OBXy37OeUz/vqZ1tqWrT1FepKUuH8J+Pm4B+vo9cw8vPQIXE176+hoAJ6KsuC5P/fBOqS9y2SCv+5kZj6n3kI1KqBDaYPa+yzVIIEcD6+MuP7EY/ZqPeKFNomBFnWM=
+	t=1733398852; cv=none; b=ZelSZlfzSeDgecCL9p/riyaibV27KFl6JcYbxU0AYa19Reb4CHgATDhFWZU/DaumsyvQy+VWx34vFZ2V1HPEzMOnJbyYqUujwAkFHCbXak0OA7N+wdCkgoYU1QsqB4zOlyffpKS4ovSF5xx+6Umlh7Emgu26c5WrdpDPGeja+aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733398831; c=relaxed/simple;
-	bh=EI/lxQaw3hKAdW8VAbz7As50feekjFVKCkI2lsa47OM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XGAmgQ1h9c+Q7H9Guuk7WMnXy3itl/qCPCjCax+cINpHiFK0JiFxZ0eOyBBMxyowq1X1WLe2k0lanRMYMCBgy1zd39XsiO30/k0F2n+UK+UP2AFzIOtmY98kvZ/6pPa2R6fkq5OjRea2mComt9esO5ofqSAJ7H7tLPXu6NvROSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=OsEkz/Rq; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id d08b6202bb9225f0; Thu, 5 Dec 2024 12:40:26 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8723B15F0421;
-	Thu,  5 Dec 2024 12:40:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1733398826;
-	bh=EI/lxQaw3hKAdW8VAbz7As50feekjFVKCkI2lsa47OM=;
-	h=From:Subject:Date;
-	b=OsEkz/Rq7XA477UC0KewWchzJAeHGMPXeWFyrON3cBNdsVuPBcvtbJTJecUpoBH4j
-	 5/OS0zUXj6c7gDkuP5NVuRExpAmmn3olPoh7kkk9fm5pFs0hopSUod+Uj43ym4GrEI
-	 jI/Fjc860pL9HYTEFXIoxBGialI3DjcGQ/jE+R5C+aKMNM2Dn4ay9WdnaueVdUNVcg
-	 +dSFR7czx/75PSZX0lcXIxmYdVvc02hj9PJmIJMWya9hX6qkGuCffLRhDWfgLRQofl
-	 BVr6A3osSM86ZBTdKW6nUU0Sp+1wPoRMmAjEFjRMD+KM3AQAVNz+7Wp64CCRUeKrJX
-	 hVb2HYmLzGlQg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v1 2/2] cpufreq: intel_pstate: Drop Arrow Lake from "scaling factor"
- list
-Date: Thu, 05 Dec 2024 12:40:19 +0100
-Message-ID: <2307515.iZASKD2KPV@rjwysocki.net>
-In-Reply-To: <1923452.tdWV9SEqCh@rjwysocki.net>
-References: <1923452.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1733398852; c=relaxed/simple;
+	bh=MgNShRnQp/aT/PaWLKJTQ9YBqwcVrKGxN8gk7Ft9IOw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o23pS8YWpQQj3BtPDaIkx+D29MnAgCAbsJMz4JJJrJbVfK6g1t0ACAmbsxj6UQnfncpFuCtVf7vHf2h9rI4dQ3nQwaAZtBH4cdrVcz03fKpP6CcblQa2RLf4dwuWQfh7kpu/T2tc5r3IN294YnBQzhYnoay0jOnvlvoX0omx7Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CVH1EBpy; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3995f1fe30so1175778276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 03:40:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733398848; x=1734003648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVlR8SfhnG5cey0ump1Xp1q6+3VfWCJyhprNP3dwbtc=;
+        b=CVH1EBpypHoebKjRU1NfKKjNaVmOWbZrI8u4mH59Yie+JzImTf6j3ju5VOxZFRiq47
+         JEPN7niTFkYN833oi5NQDT5rR877kK3OUNAl0Q4d9mOISPixS5t9aSNhumwZEoPlCgA2
+         NXpfHLhOOsN22IGQpt4R+AiShFzyOh3vTkX8gTQBRCrAeDBk48NvjKPD//YwbNAY7uZF
+         WeWKKap6hKBuLTlCbzfKu18PaBgFYG0Ih9NhV6oik4vSpF327Uoh/jjjR+w7+fEI9d2g
+         DIVLNkbmOYREUKWm2H1HGvjst4qMO+7907QqPGhgc5TlBAF7yr4vLmHBbIfDnWrq76U8
+         Vb7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733398848; x=1734003648;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kVlR8SfhnG5cey0ump1Xp1q6+3VfWCJyhprNP3dwbtc=;
+        b=RZSpTOq0JcJYNsZApa2s4jC3DVzY+xqjyBoEkbwWHBZrfAk5qLRWTjKSfC7SGlVhWT
+         Em9fEElYurVPK0PBnWy3zKFCZnBMGn6iQ9xupPGIa8asJ5k7IssoA8OW4YQTNDsPVIgD
+         aTFEZ24qcIKkp1AIqZKsA+XIMtWGZvGM2N8kA9lejCAIOQTaTYgIypllnpC8ZxvZPN4G
+         jwnSZuBf+HL89/G1nzgJLfZwV9ggy9noCWfg4ct4nxRpvruZuCcQcPSCJNuFezSKJPEb
+         tvayBffUHYckoFbGAgbk92Rl3uP4C2VnlIm2ey1lM8Z78IBISvjh+mlkjLhs3GeOI9O7
+         McFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVA1fhyLDlgEsiB73Y9cHl7rEGSTHWHUyzzBCwIlcm97F66SLIPdWqiij5wAerk/oefKcZOE6TlIHncDn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTaCer8b0DswRwsfElvXp7oGM3fQnV3SGzhE8Vi5IPRXV6i06h
+	CSCSVWQsCeJNbrWRnaDfMI5pGl7+P+sL/WSVQF6rISoVDxL5pSw8ZEhcb+K1eQQ40TZE09L9Gb+
+	ZYyiamKBr6+PKYdSvuOcmOmtfvhsDUhK2bXyivA==
+X-Gm-Gg: ASbGnct6YnouefweqB1E9tnhok4yXCqAkaFTjLhfyAJEnCVOYxYDaXaPICj+myDhwfF
+	GuoM06qGb3zSvJa5OmVm0jVT7+VO7S8AeO3b0nnlVWmpyFg==
+X-Google-Smtp-Source: AGHT+IE7HGuIvq1u8h8I8rkPJdzS+9WwLlvVg6WJaLoZvVrKFT+XlrLuu0kqLNSwgkmrfDwW/eoD4F5p5LcplIqXWkE=
+X-Received: by 2002:a05:6902:cc5:b0:e39:b0de:fed8 with SMTP id
+ 3f1490d57ef6-e39d3a293cdmr10638085276.17.1733398848266; Thu, 05 Dec 2024
+ 03:40:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-5-09a4338d93ef@quicinc.com>
+ <CAA8EJpoY8hySQd00yODGeHjSpVZpEBLjF3aBiKGJPUhpr-2mgw@mail.gmail.com>
+ <d2a3cd6f-1077-4edb-9f0c-0c940a639050@quicinc.com> <zvapsvfftai4fp6vwrn33edqsyuuprq2pxz6spij6j7t4y6xmn@zzgp7gbsivbk>
+ <93ddb63c-42da-43c8-9a77-c517ca5d6432@quicinc.com>
+In-Reply-To: <93ddb63c-42da-43c8-9a77-c517ca5d6432@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 5 Dec 2024 13:40:37 +0200
+Message-ID: <CAA8EJprAFYD6ykN10-r=JwHM4A4XeDDcZVcVWYp_5A5FP-=RyA@mail.gmail.com>
+Subject: Re: [PATCH 5/8] drm/msm/dp: Add support for lane mapping configuration
+To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgddvlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeefpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=3 Fuz1=3 Fuz2=3
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 5 Dec 2024 at 13:28, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+>
+>
+>
+> On 12/2/2024 6:46 PM, Dmitry Baryshkov wrote:
+> > On Mon, Dec 02, 2024 at 04:40:05PM +0800, Xiangxu Yin wrote:
+> >>
+> >>
+> >> On 11/29/2024 9:50 PM, Dmitry Baryshkov wrote:
+> >>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com>=
+ wrote:
+> >>>>
+> >>>> Add the ability to configure lane mapping for the DP controller. Thi=
+s is
+> >>>> required when the platform's lane mapping does not follow the defaul=
+t
+> >>>> order (0, 1, 2, 3). The mapping rules are now configurable via the
+> >>>> `data-lane` property in the devicetree. This property defines the
+> >>>> logical-to-physical lane mapping sequence, ensuring correct lane
+> >>>> assignment for non-default configurations.
+> >>>>
+> >>>> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+> >>>> ---
+> >>>>  drivers/gpu/drm/msm/dp/dp_catalog.c | 11 +++++------
+> >>>>  drivers/gpu/drm/msm/dp/dp_catalog.h |  2 +-
+> >>>>  drivers/gpu/drm/msm/dp/dp_ctrl.c    |  2 +-
+> >>>>  drivers/gpu/drm/msm/dp/dp_panel.c   | 13 ++++++++++---
+> >>>>  drivers/gpu/drm/msm/dp/dp_panel.h   |  3 +++
+> >>>>  5 files changed, 20 insertions(+), 11 deletions(-)
+> >>>>
+> >
+> >>>> @@ -461,6 +460,7 @@ static int msm_dp_panel_parse_dt(struct msm_dp_p=
+anel *msm_dp_panel)
+> >>>>         struct msm_dp_panel_private *panel;
+> >>>>         struct device_node *of_node;
+> >>>>         int cnt;
+> >>>> +       u32 lane_map[DP_MAX_NUM_DP_LANES] =3D {0, 1, 2, 3};
+> >>>>
+> >>>>         panel =3D container_of(msm_dp_panel, struct msm_dp_panel_pri=
+vate, msm_dp_panel);
+> >>>>         of_node =3D panel->dev->of_node;
+> >>>> @@ -474,10 +474,17 @@ static int msm_dp_panel_parse_dt(struct msm_dp=
+_panel *msm_dp_panel)
+> >>>>                 cnt =3D drm_of_get_data_lanes_count(of_node, 1, DP_M=
+AX_NUM_DP_LANES);
+> >>>>         }
+> >>>>
+> >>>> -       if (cnt > 0)
+> >>>> +       if (cnt > 0) {
+> >>>> +               struct device_node *endpoint;
+> >>>> +
+> >>>>                 msm_dp_panel->max_dp_lanes =3D cnt;
+> >>>> -       else
+> >>>> +               endpoint =3D of_graph_get_endpoint_by_regs(of_node, =
+1, -1);
+> >>>> +               of_property_read_u32_array(endpoint, "data-lanes", l=
+ane_map, cnt);
+> >>>> +       } else {
+> >>>>                 msm_dp_panel->max_dp_lanes =3D DP_MAX_NUM_DP_LANES; =
+/* 4 lanes */
+> >>>> +       }
+> >>>
+> >>> Why? This sounds more like dp_catalog or (after the refactoring at
+> >>> [1]) dp_ctrl. But not the dp_panel.
+> >>>
+> >>> [1] https://patchwork.freedesktop.org/project/freedreno/series/?order=
+ing=3D-last_updated
+> >>>
+> >> We are used the same prop 'data-lanes =3D <3 2 0 1>' in mdss_dp_out to=
+ keep similar behaviour with dsi_host_parse_lane_data.
+> >> From the modules used, catalog seems more appropriate, but since the m=
+ax_dp_lanes is parsed at dp_panel, it has been placed here.
+> >> Should lane_map parsing in msm_dp_catalog_get, and keep max_dp_lanes p=
+arsing at the dp_panel?
+> >
+> > msm_dp_catalog_get() is going to be removed. Since the functions that
+> > are going to use it are in dp_ctrl module, I thought that dp_ctrl.c is
+> > the best place. A better option might be to move max_dp_lanes and
+> > max_dp_link_rate to dp_link.c as those are link params. Then
+> > lane_mapping also logically becomes a part of dp_link module.
+> >
+> > But now I have a more important question (triggered by Krishna's email
+> > about SAR2130P's USB): if the lanes are swapped, does USB 3 work on tha=
+t
+> > platform? Or is it being demoted to USB 2 with nobody noticing that?
+> >
+> > If lanes 0/1 and 2/3 are swapped, shouldn't it be handled in the QMP
+> > PHY, where we handle lanes and orientation switching?
+> >
+> I have checked the DP hardware programming guide and also discussed it wi=
+th Krishna.
+>
+> According to the HPG section '3.4.2 PN and Lane Swap: PHY supports PN swa=
+p for mainlink and AUX, but it doesn't support lane swap feature.'
+>
+> The lane swap mainly refers to the logical to physical mapping between th=
+e DP controller and the DP PHY. The PHY handles polarity inversion, and the=
+ lane map does not affect USB behavior.
+>
+> On the QCS615 platform, we have also tested when DP works with lane swap,=
+ other USB 3.0 ports can works normally at super speed.
 
-Since HYBRID_SCALING_FACTOR_MTL is not going to be suitable for Arrow
-Lake in general, drop it from the "known hybrid scaling factors" list of
-platforms, so the scaling factor for it will be determined with the
-help of information provided by the platform firmware via CPPC.
+"Other USB 3.0 ports"? What does that mean? Please correct me if I'm
+wrong, you should have a USB+DP combo port that is being managed with
+combo PHY. Does USB 3 work on that port?
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |    1 -
- 1 file changed, 1 deletion(-)
+In other words, where the order of lanes is actually inverted? Between
+DP and combo PHY? Within combo PHY? Between the PHY and the pinout?
+Granted that SM6150 was supported in msm-4.14 could you possibly point
+out a corresponding commit or a set of commits from that kernel?
 
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -3675,7 +3675,6 @@ static const struct x86_cpu_id intel_hyb
- 	X86_MATCH_VFM(INTEL_RAPTORLAKE_P, HYBRID_SCALING_FACTOR_ADL),
- 	X86_MATCH_VFM(INTEL_RAPTORLAKE_S, HYBRID_SCALING_FACTOR_ADL),
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L, HYBRID_SCALING_FACTOR_MTL),
--	X86_MATCH_VFM(INTEL_ARROWLAKE, HYBRID_SCALING_FACTOR_MTL),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M, HYBRID_SCALING_FACTOR_LNL),
- 	{}
- };
+>
+> Additionally, if it were placed on the PHY side, the PHY would need acces=
+s to dp_link=E2=80=99s domain which can access REG_DP_LOGICAL2PHYSICAL_LANE=
+_MAPPING.
+
+I was thinking about inverting the SW_PORTSEL_VAL bit.
+
+> Therefore, we believe that the  max_dp_link_rate,max_dp_lanes and lane_ma=
+p move to dp_link side is better.
+>
+> >>>> +
+> >>>> +       memcpy(msm_dp_panel->lane_map, lane_map, msm_dp_panel->max_d=
+p_lanes * sizeof(u32));
+> >>>>
+> >>>>         msm_dp_panel->max_dp_link_rate =3D msm_dp_panel_link_frequen=
+cies(of_node);
+> >>>>         if (!msm_dp_panel->max_dp_link_rate)
+> >>>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm=
+/dp/dp_panel.h
+> >>>> index 0e944db3adf2f187f313664fe80cf540ec7a19f2..7603b92c32902bd3d448=
+5539bd6308537ff75a2c 100644
+> >>>> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
+> >>>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+> >>>> @@ -11,6 +11,8 @@
+> >>>>  #include "dp_aux.h"
+> >>>>  #include "dp_link.h"
+> >>>>
+> >>>> +#define DP_MAX_NUM_DP_LANES    4
+> >>>> +
+> >>>>  struct edid;
+> >>>>
+> >>>>  struct msm_dp_display_mode {
+> >>>> @@ -46,6 +48,7 @@ struct msm_dp_panel {
+> >>>>         bool video_test;
+> >>>>         bool vsc_sdp_supported;
+> >>>>
+> >>>> +       u32 lane_map[DP_MAX_NUM_DP_LANES];
+> >>>>         u32 max_dp_lanes;
+> >>>>         u32 max_dp_link_rate;
+> >>>>
+> >>>>
+> >>>> --
+> >>>> 2.25.1
+> >>>>
+> >>>
+> >>>
+> >>
+> >>
+> >> --
+> >> linux-phy mailing list
+> >> linux-phy@lists.infradead.org
+> >> https://lists.infradead.org/mailman/listinfo/linux-phy
+> >
+>
 
 
-
+--=20
+With best wishes
+Dmitry
 
