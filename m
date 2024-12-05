@@ -1,107 +1,90 @@
-Return-Path: <linux-kernel+bounces-433931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9909F9E5EED
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C338F9E5EEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFEC616ACCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:37:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4567516D7CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3CA22F3B0;
-	Thu,  5 Dec 2024 19:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB0A22D4E3;
+	Thu,  5 Dec 2024 19:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYMYxOgp"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KMTTDvZr"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBF422E3F9;
-	Thu,  5 Dec 2024 19:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A1422D4C2
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 19:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733427399; cv=none; b=Zj5HftRvmUCr5LYCVy/meXKeYnkh+xChcV3V8lUNjLr/XEbzUGRL9wA62FcWWWbhBTSSPPLxWmCLn/E6Sy/sWSIoK32sRELCD7JTR3ijBSoeIEiu02+bmzyP2lg7FGVs45pjdhiCRAvhyQTkots4oQxIdnEQ5mW6TFUHiMUt4J4=
+	t=1733427441; cv=none; b=G9GX9M2aBQePMqn8zv/ucJlQiDH2m1xA8cIBvNKycyBUhMsh3qiD48latN2fNky6TEUgi4varkjL8kk0eOx/ewBpK8IAiEl1HAQDSmnCa0piJEzD2V882Nu2dIBOo17g6fu10RXeOX7Hv/L4Bju19HDKTRXwm5e8f7fFyBwO8f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733427399; c=relaxed/simple;
-	bh=tE1lqBbBbB5QTaTAST7hMGo2GEUPmBltSO9CWen59Dw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QaJXIldjCzCGDvNK107H3Xkmcpsh6mqd+CZfHpM0rCr5aUNz/y7r+apyho+0k7LZyruBPzvY8fCIHo8LMFvfTGZl5HlULd6aT9Sy0unDnAiTjg61btODYrSkoyHeWDk8Gnh4GiYkzOijVNqaCuzff3jE2uFqeGVD1qvM0rNxvjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYMYxOgp; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so12799535e9.2;
-        Thu, 05 Dec 2024 11:36:37 -0800 (PST)
+	s=arc-20240116; t=1733427441; c=relaxed/simple;
+	bh=/8mWs+LsHg5t40Hdzas9ylAMup4YyUOMJMRhO6YgBdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZePjGf4zE+ak6xugGt7oJyxf9PAuAnXpuNuGqYNhjhiQmj6CPJ/ECNhfSQJkh/fKZW5fIz3LVcSbol+nIjnf0bD5lfyfocScDOh7RnkvpPQRnUc9Y0KIVpPAyloN3l6+pbWtXIMG6K4wS6C6mpD+crAl1MZ/q8io5eJy38RReqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KMTTDvZr; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53e274f149fso1301833e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 11:37:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733427396; x=1734032196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJgt0q1XFsdzcWEuTvfZzx/PS2Wvx0jTJ2onrpygoeo=;
-        b=MYMYxOgpmIm9jl2gzOWrRyboYXD9kTBYiBwUx8TMkFvSK8bhh6tWBvdEkxj6lDa5KL
-         ehzkbWJqwBCAvN9jRkpFexalgVzoLn0Hxk7jNaUv1hY2+Ic/DPF1GWqfNYoQyFP0AaEK
-         0n3gwWBXCrg3K0yZckAX0JnT/8YlNe1MkEUjCB07ivVazm8Y4epFkguQqDlzpEbEbpoU
-         XbCsnHwu0SZ0YslXQVdmJ8Oa1Bxpp1wOk76bOQblwl+dLpyAwQVkRVUzBofbs3wq2Upp
-         xtFzjZGDBkIQyiOSRihtQGE5aGroClEjss1NoVERw2eJ+GXgjBKCwqpWZme7yAvlLDqa
-         z04w==
+        d=linaro.org; s=google; t=1733427437; x=1734032237; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FU/EUHsit16rikYcJKnQECWispe+WbkZdRTRsFjxo4M=;
+        b=KMTTDvZrpFOooCDsMKtgClP9reBquFs7ZsGeBa5HmgrsW+fGz9NHdJ2bWHcwFwnhwy
+         UEb9uuxETSzMOvv1sOUI+IUvFQLcCfdFJyD/TeaZsUV6+1xa5a+KIS56Aocdnf9rWn8q
+         RVs7SrzdY7aHj2Ufm5a6REFtLd7xyBlKSS1broLRnzz301okYzYyYO8Aw5YZos4fMJJw
+         ppNfzXN5GkOPpq4QkrRzn5OLclCh6zYy5mBoTlaIq9xQCwtrozK5gmbeOgRlEGTRVGeD
+         FpiU5lu+zk4q5KmvQ5uEkOGTyshYaDLA1Cx0qZVdAYiN2lc1AZrdfqxHJJOuG4KaDmwP
+         7yog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733427396; x=1734032196;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1733427437; x=1734032237;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TJgt0q1XFsdzcWEuTvfZzx/PS2Wvx0jTJ2onrpygoeo=;
-        b=cPoXhK0Rmm0nx8LpUsmoXEALoNbyYssbxWNP9furNK0WrBLgmBgAcuOVODiXOYsyLt
-         TPSVFe9JpOwpaKeBSrHdYB8Ld63yCG4fSWOkZSN6iPwZNM9NeOBXAKR9Mg0svhoEQew/
-         5wwvmpZ1h8aOYfgM+j6Pks21Bh9tj49E8OtJurXOQH3OMyG+jyWoP3E109fLw4nEyPYS
-         CjXAvYzslAAQ8cJmNk9Jiisywh6qdfyyek47fMQVZF1/QUKUNQ7FDHZwl1R8pYhJ4FMR
-         jPvXtRR9QdHpTmH8ff6UA7KZqDcD6taeXB1JwOQ2d2bPej/9FNVqfMSqwqFW1XH4VNL9
-         rTLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxGeIFSV7MhgFKjpPywA41HeSQB5UfbiENIsMrZjDBDO5QErRHS0m7W7KJy06tvdyM19zYZ/AiUNaF@vger.kernel.org, AJvYcCWZAL9Mb2sRq3H5YYlwmg7RS7MWvPR9yJE8SHSoFZd8Y28/nIm2mxzpW3K1oLH6ro4ojD6l5Byf@vger.kernel.org, AJvYcCWqIEJZATLqzxza93J4cpqGzW8SkQtYat4m6zsu+nXBeCMHAm0vUNyhls+wxVwjZSKIoiRbLmO63A6ILpUl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXUqsO2rnlMuYBP65ChDWNbqvGAClkqqctahvHCBMFR4XnXiy8
-	Wb25XgZekYUyq6tIDuFHmUNhPcMw+xB0TQCbceCSBR8jt6nx3hrr
-X-Gm-Gg: ASbGncuGQdkQSoZh+/TffTe38go45CJyKGv9QZXndKbODI/Vwr0J2lL5/yG0hNYkzCM
-	zC1H8nEiHMK0/OQY86mzMFtUEQfKvoSJvTyOREqnv1amZAMOf1Orq4nAqKr0RUgzz/78aWR4Ug6
-	5ncGZjhhzP78OroOhFTLJbMp4WcpzVjMqAc/oK1/Q97lWFbogLGVvPIcIR1e/zzhxBxVu638RLj
-	zctapN/BPj/6Gkika9iO2OjjUdLEWF419H6YAc+8gV4Rx64E28cI4rfUIdG4funoIZb6D+PIRd6
-	51mo3Q==
-X-Google-Smtp-Source: AGHT+IHCdi5TBjn3C2Fzikl0DE71EaVKFu10wCMrtdjXfxVyz+eSoEPxb+E0BJhugPJeysqSonLogA==
-X-Received: by 2002:a05:600c:4686:b0:434:a7e3:db56 with SMTP id 5b1f17b1804b1-434ddeae575mr4123485e9.6.1733427395743;
-        Thu, 05 Dec 2024 11:36:35 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0da461sm33743535e9.20.2024.12.05.11.36.34
+        bh=FU/EUHsit16rikYcJKnQECWispe+WbkZdRTRsFjxo4M=;
+        b=JJFUsnvIAbAs/hCEj0Dht1WbCEnxn+5ypqy1sSOjXKKxK2sOeAj3L5lZ7lus5o1KN2
+         rR0z0R+Nhg54YxQ0S5cOd/xW8Wch8R1ytCu6ThKOR2pO+/53AoHJUpv4aLQLJeSYEv47
+         rKjSY9pBkF/MgN7LonDCxLH9YD2mkDa/i0Ei4Ty/CHqxQ/MmDQaWcOpiba0n4vEwvPAS
+         Zntt+moz3KdhSN3cByWOXpuWJcRgWmQlaWUluLpoP7y9ZGiYznYVTrz/M/p2XtIdpZhb
+         7QPeQJ9AD9hxVgiD6mt43JurLewGOXDCDYAmBKZS2B+/BLqHil2UK9nT9OPGGJZNcDtU
+         IpMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgO2B6N1IrVSC+HdDqWGIj4R+tnijUb/6eRY0yMf55mEB0zt/HGS02G5W3Ps4Qg8Bn4F5eevLUTzsMeWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmkrYlva5xBiE0Un4aWXFhiclKRnDOIkd2SeMaKeDTinCQkQl3
+	qPLFaIIwet7oo31YAZrJBP+IKouPtEMYJLCcrqXP3yc/KDGOZSgKuoPpMnIK9gk=
+X-Gm-Gg: ASbGncu6QJK45Ht2N54eNI3WR8sB6OIr3ehKtoxGSSr5Y8nYmtu4mp06Nm6U0cMPk0e
+	9vXXcOu4U9Sfp5b9u5TAHJB3cg6upYJdiPVBOWI/7ElQ3na+XkXuLwrr5s4rxFPnQ2X7okIBUXk
+	h4i9rn3ipABDngi1GL4sRDDJCbGtx6OGJw9E2glh52nl/uf6S0OS9SzNWeQdoMGfhB/Nh1ltJGA
+	wkg4ATnVvKun6xQr+HulHhBPjfH2j8pXTsJplkP3cgSrAFa+cIJx4AzgGXqiIkholpvmYj6kiNF
+	+aojikVWPGjGFDP76YdtcsxLSdw2QQ==
+X-Google-Smtp-Source: AGHT+IERXOKhrQS1SGs1D5VgGlJZNknfg8nNxxBg0Nz/3rd8qLiDCnCB7kUCHN8FpkTx1vIxjtpeoA==
+X-Received: by 2002:a05:6512:3083:b0:53d:e324:11c9 with SMTP id 2adb3069b0e04-53e2c504b81mr84578e87.54.1733427436612;
+        Thu, 05 Dec 2024 11:37:16 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229ba760sm320223e87.155.2024.12.05.11.37.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 11:36:35 -0800 (PST)
-Message-ID: <675200c3.7b0a0220.236ac3.9edf@mx.google.com>
-X-Google-Original-Message-ID: <Z1IAvoenir8XRMuU@Ansuel-XPS.>
-Date: Thu, 5 Dec 2024 20:36:30 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-References: <20241205145142.29278-4-ansuelsmth@gmail.com>
- <20241205162759.pm3iz42bhdsvukfm@skbuf>
- <20241205145142.29278-1-ansuelsmth@gmail.com>
- <20241205145142.29278-4-ansuelsmth@gmail.com>
- <20241205162759.pm3iz42bhdsvukfm@skbuf>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <20241205180539.6t5iz2m3wjjwyxp3@skbuf>
- <6751f125.5d0a0220.255b79.7be0@mx.google.com>
- <20241205185037.g6cqejgad5jamj7r@skbuf>
+        Thu, 05 Dec 2024 11:37:15 -0800 (PST)
+Date: Thu, 5 Dec 2024 21:37:12 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, biju.das.jz@bp.renesas.com, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: ite-it6263: Support VESA-24 input format
+Message-ID: <lpkbkayu5hlwhbzxhez47gob5zed27z7ced7vkadqfmxneh54w@6zwd3xvskooc>
+References: <20241205080210.1285385-1-tommaso.merciai.xr@bp.renesas.com>
+ <3bab95ae-ba66-4aed-9cce-13498f2f50e6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,132 +93,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205185037.g6cqejgad5jamj7r@skbuf>
+In-Reply-To: <3bab95ae-ba66-4aed-9cce-13498f2f50e6@nxp.com>
 
-On Thu, Dec 05, 2024 at 08:50:37PM +0200, Vladimir Oltean wrote:
-> On Thu, Dec 05, 2024 at 07:29:53PM +0100, Christian Marangi wrote:
-> > Ohhhh ok, wasn't clear to me the MFD driver had to be placed in the mdio
-> > node.
+On Thu, Dec 05, 2024 at 04:54:09PM +0800, Liu Ying wrote:
+> On 12/05/2024, tomm.merciai@gmail.com wrote:
+> > From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 > > 
-> > To make it clear this would be an implementation.
+> > Introduce it6263_is_input_bus_fmt_valid() and refactor the
+> > it6263_bridge_atomic_get_input_bus_fmts() function to support VESA-24
+> > format by selecting the LVDS input format based on the LVDS data mapping
+> > and thereby support both JEIDA-24 and VESA-24 input formats.
 > > 
-> > mdio_bus: mdio-bus {
-> > 	#address-cells = <1>;
-> > 	#size-cells = <0>;
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > ---
+> > Changes since v1:
+> >  - Inline it6263_is_input_bus_fmt_valid() as suggested by LYing
+> >  - Fixed it6263_is_input_bus_fmt_valid() param from u32 to int as suggested by LYing
+> >  - Fixed commit msg as suggested by LYing
+> >  - Fixed commit body as suggested by LYing
+> >  - Collected DBaryshkov tag
 > > 
-> > 	...
-> > 
-> > 	mfd@1 {
-> > 		compatible = "airoha,an8855-mfd";
-> > 		reg = <1>;
-> > 
-> > 		nvmem_node {
-> > 			...
-> > 		};
-> > 
-> > 		switch_node {
-> > 			...
-> > 		};
-> > 	};
-> > };
+> >  drivers/gpu/drm/bridge/ite-it6263.c | 25 ++++++++++++++++++++++---
+> >  1 file changed, 22 insertions(+), 3 deletions(-)
 > 
-> I mean, I did mention Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
-> in my initial reply, which has an example with exactly this layout...
+> Reviewed-by: Liu Ying <victor.liu@nxp.com>
 > 
-> > The difficulties I found (and maybe is very easy to solve and I'm
-> > missing something here) is that switch and internal PHY port have the
-> > same address and conflicts.
-> > 
-> > Switch will be at address 1 (or 2 3 4 5... every port can access switch
-> > register with page 0x4)
-> > 
-> > DSA port 0 will be at address 1, that is already occupied by the switch.
-> > 
-> > Defining the DSA port node on the host MDIO bus works correctly for
-> > every port but for port 0 (the one at address 1), the kernel complains
-> > and is not init. (as it does conflict with the switch that is at the
-> > same address) (can't remember the exact warning)
-> 
-> Can any of these MDIO addresses (switch or ports) be changed through registers?
+> Since I have no drm-misc push right, Neil, Robert, Laurent or
+> Dmitry, can you help push this?  Ofc, no rush. It's fine to wait
+> for a period of time for potential comments.
 
-No, it can only be changed the BASE address that change the address of
-each port.
-
-port 0 is base address
-port 1 is base address + 1
-port 2 is base address + 2...
-
-> 
-> I guess the non-hack solution would be to permit MDIO buses to have
-> #size-cells = 1, and MDIO devices to acquire a range of the address
-> space, rather than just one address. Though take this with a grain of
-> salt, I have a lot more to learn.
-
-I remember this was an idea when PHY Package API were proposed and was
-rejected as we wanted PHY to be single reg.
-
-> 
-> If neither of those are options, in principle the hack with just
-> selecting, randomly, one of the N internal PHY addresses as the central
-> MDIO address should work equally fine regardless of whether we are
-> talking about the DSA switch's MDIO address here, or the MFD device's
-> MDIO address.
-> 
-> With MFD you still have the option of creating a fake MDIO controller
-> child device, which has mdio-parent-bus = <&host_bus>, and redirecting
-> all user port phy-handles to children of this bus. Since all regmap I/O
-> of this fake MDIO bus goes to the MFD driver, you can implement there
-> your hacks with page switching etc etc, and it should be equally
-> safe.
-
-I wonder if a node like this would be more consistent and descriptive?
-
-mdio_bus: mdio-bus {
-    #address-cells = <1>;
-    #size-cells = <0>;
-
-    ...
-
-    mfd@1 {
-            compatible = "airoha,an8855-mfd";
-            reg = <1>;
-
-            nvmem_node {
-                    ...
-            };
-
-            switch_node {
-                ports {
-                        port@0 {
-                                phy-handle = <&phy>;
-                        };
-
-                        port@1 {
-                                phy-handle = <&phy_2>;
-                        }
-                };
-            };
-
-            phy: phy_node {
-
-            };
-    };
-
-    phy_2: phy@2 {
-        reg = <2>;
-    }
-
-    phy@3 {
-        reg = <3>;
-    }
-
-    ..
-};
-
-No idea how to register that single phy in mfd... I guess a fake mdio is
-needed anyway... What do you think of this node example? Or not worth it
-and better have the fake MDIO with all the switch PHY in it?
+I'll wait for a few days and apply the patch if nobody else beats me on
+it.
 
 -- 
-	Ansuel
+With best wishes
+Dmitry
 
