@@ -1,294 +1,250 @@
-Return-Path: <linux-kernel+bounces-433048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBA99E535D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:08:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AA59E5363
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:09:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBE52860B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7DB51880187
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0AD1DF971;
-	Thu,  5 Dec 2024 11:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1A61DDC10;
+	Thu,  5 Dec 2024 11:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aSahnSHT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZoBLJFjC";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TXWm33Ba"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6AF1DCB0E;
-	Thu,  5 Dec 2024 11:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733396866; cv=none; b=BUOGdnOQKgFALL7663jsoq81kMyRrLTVIF5Uul5vPF5f2+H8gWYENLlM1mEHCyn3IsvjOxZJiEMqQESj2M3AlbJCLWeCZF8R+Vjg9P9Q/GcDB8kYq0bKu+7uj5UiKvwvUrWrMZz10RdeECmR2uIXLb2/kftVSWTGXaXG+TTdDl8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733396866; c=relaxed/simple;
-	bh=w9KxLn4wVU/DO6qh/7wcMNojYZe8nV9WrS1IDIwmbTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Fo7xSk/nal1OFhGL7u3pfcvdHEcYOuEBKJ8duFbhvW98dm+/xHcum/cOhmD0vX8YYK7FuiclXXAKzBJWCyLWiNuzZh6kY0P1iwcT6fMCa0T27g59Mg/Y66EAaIdkBpwJTEvAo0s8iTakvKwZXkEUcsMSW9UmuYLucKPko3wKQvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aSahnSHT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B56H5FQ031191;
-	Thu, 5 Dec 2024 11:07:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Pgi8rzaEWRtb1Qwm7WBfFssjc2xsjvAca14rl02ms/0=; b=aSahnSHT5GKGeuGU
-	cg8Y+cqSsA1GKYCj7DzdWe8PIXQxW8u52bKWEivES/16SjsHd4F6gqPDijIpkxYq
-	bHAUIr6qZtu6uK/WsOuPOAd31BGqbdSerxst/8fM1/oF8dbg4VKggGIyDLx6FLx2
-	j9b03akkNSDIGdT2BVKc9K5vLM3D64TY1r13TwPSfVhKWbvBLkMA//LZEr0RvWuH
-	IuuCovB4Ayjvf7Jxb2VfVHDiHGVfL4S8vZStqD8TIxj9k4CcwjtB9p5umk5IWFua
-	GWdkZcq36BDhvG8iKO4HJ7dauqe36tnVLZefLuT7RUume5sr9z+QaIfaSmMPcz+v
-	Qh9EeQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w90ybex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 11:07:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5B7YaC031800
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 11:07:34 GMT
-Received: from [10.190.163.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 03:07:31 -0800
-Message-ID: <73a16eb4-e590-92db-ee24-cc4f42a9de01@quicinc.com>
-Date: Thu, 5 Dec 2024 16:37:28 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3021DACBB;
+	Thu,  5 Dec 2024 11:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733396945; cv=fail; b=uQ7b1xh7oC1pNGHV+RtXiy8/5ltixgRhEAdOH2FlwHOWSyIPJFVBN0f5HyFrWwkFhIjUNcZWfOZ1NjxmajRf6kZBsvzmsn/zRqOT9Mk4Si4akS458aptODmcLkyU1U4yoIaU00snZfBHy8BylcwzMDXeL7TnHZDSs65p/q8jRhg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733396945; c=relaxed/simple;
+	bh=d7i46PwpEKKNvB+ty9ZxijRLlCJTdPzKMBRR8LrABJg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=O8lLFIeTYFp3UlUFYyuoxgtYgRRXcY1TMjBi9mlfGaNzeDOm5ncpYyhpaPApZ2lqHpmTUl1zkJhULWAXArNtfBwlVSoobYvZYgE9UCtsa6xuf+fGjl/F3WcIu4mNPeiHW0uKez8sOTq+jKR5lXRYA5Vk5S1+eK2HeQTE7cHKILs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZoBLJFjC; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TXWm33Ba; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57MtPD007204;
+	Thu, 5 Dec 2024 11:08:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=99d+JfoqS16dpyF8NLVNs69YfSJPV/VSdBfZAFQ5iNs=; b=
+	ZoBLJFjClK+ggWatAWcdmcFJZVfVRgxqx6I7TXo2jo1q7ziKezJy16KNAGaLW82n
+	drc46CnHVMcUrPPfezjxgx/f1nuygLt75xFfOhX0UYZJPLSVSrEHWveOy2mXyKKr
+	bQH5oC0/Vxg5YhDzUYJ7GvDVTlGdqA0WzPX/w46+oyxbAwzSSnjRwqE9e4iXUyCO
+	PZ8S2ZhytdLEu9elII1VuV+8Gnk0Ito9G0nIqx/fTGkpNmkNALUg2Agfw1ym6LCk
+	8kpEbpnd/mpjPACyX3uFT/BecSyVPobXjaynzoUV4gy1/K6ijzh4Lrsam1jPhSOd
+	BpHZkQecgl5QP+yjlWhd9A==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437sa02s92-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Dec 2024 11:08:04 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5AONS5011751;
+	Thu, 5 Dec 2024 11:08:03 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2047.outbound.protection.outlook.com [104.47.55.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s5aq7sj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Dec 2024 11:08:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qPsnGFXBX43zOJA4mmyxqcuug68BkJQls7EddGi1ckm5BxiP+LisO28QxdwRACYkoRnl0gw3QHABT6Mim5ZX3WHIyT/vwY3HYRrVuQX/SRfApzKxwiWTNB/hGaZfeK9l9Tfp6GpPgqs40xUEDgtjxsjeeFXsqUAMyzBa4Hq0rYjBAdQVji8uhmpZe0G7g8Eda9jZsvxgBhMJ97y51e2nTa+iA+mr2GsFBq6AZkz93L5bMmLkDc4j0+3c+qYH9zPAL7JzvEanrFU3FeesQjoLRTUT9kQMRNR3eWOPNg95ODfjrS0VgluK0v3GA0LKYY1qDGqm1xh37jGL2GQCnCXrlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=99d+JfoqS16dpyF8NLVNs69YfSJPV/VSdBfZAFQ5iNs=;
+ b=OZQ302WFXT/Kn8gZIvxr9virO27xroAvWf2AY/i2eovwE0EmPfs0ILmBviAPjoYFvpklfs1Qef+MfTyCvmpRPrTJhxFFTap+iYKMMFPrF7P1aLAA5M129MbWdUbC/nQ24fkxYzrsI1BlYqWN8SvZf/XV7OmYeu3HQt2S+bD9xvfwUJV1oz8ZU4HBpw+FLUESAqpnokRF417Qz8fOyQH71sGqfy7BJg1CMUjXK6PeFjnT1TdKty93XRo0AsTKZPsD2pSCTSKzHbQtJtDUgrrOi6DlmA5iCAzxGzct9oowc57tN46KKomCtLPdcxUHnxchiS7iImHwfuYkUWlr/lA6Ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=99d+JfoqS16dpyF8NLVNs69YfSJPV/VSdBfZAFQ5iNs=;
+ b=TXWm33BaNvzIvIOuo/b7inqo6lhdsHCJfweZSaxgq3IreSE3jC/zjru+Ir++pkX7DoiUPHEzD+/B3kt59mmUCxk32/cj5EdC/loY7qu1MheuacdEFCDMvSYegOi2kNIVyCJ25eTVi9WGopYnMLlUKD7KGatMwzyP3lwU0qQwn7Q=
+Received: from BLAPR10MB5267.namprd10.prod.outlook.com (2603:10b6:208:30e::22)
+ by CH3PR10MB7209.namprd10.prod.outlook.com (2603:10b6:610:123::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
+ 2024 11:08:00 +0000
+Received: from BLAPR10MB5267.namprd10.prod.outlook.com
+ ([fe80::682b:c879:9f97:a34f]) by BLAPR10MB5267.namprd10.prod.outlook.com
+ ([fe80::682b:c879:9f97:a34f%3]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
+ 11:07:59 +0000
+Message-ID: <b0f1b5d9-8634-4524-b882-b0eda67d4f4a@oracle.com>
+Date: Thu, 5 Dec 2024 11:07:38 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: RFT: Testing pahole for the release of v1.28
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Eduard Zingerman <eddyz87@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>, Daniel Xu <dxu@dxuuu.xyz>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jan Alexander Steffens <heftig@archlinux.org>,
+        Domenico Andreoli <cavok@debian.org>,
+        Matthias Schwarzott <zzam@gentoo.org>,
+        Dominique Leuenberger <dimstar@opensuse.org>,
+        Dominique Martinet <asmadeus@codewreck.org>, bpf@vger.kernel.org,
+        kernel-team@fb.com, dwarves@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <Z0jVLcpgyENlGg6E@x1>
+Content-Language: en-GB
+From: Alan Maguire <alan.maguire@oracle.com>
+In-Reply-To: <Z0jVLcpgyENlGg6E@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0049.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::13) To BLAPR10MB5267.namprd10.prod.outlook.com
+ (2603:10b6:208:30e::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V5 1/2] firmware: arm_scmi: Add QCOM Generic Vendor
- Protocol documentation
-Content-Language: en-US
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <sudeep.holla@arm.com>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
-        <quic_kshivnan@quicinc.com>, <arm-scmi@vger.kernel.org>
-References: <20241115011515.1313447-1-quic_sibis@quicinc.com>
- <20241115011515.1313447-2-quic_sibis@quicinc.com> <Z1BBirNWH1eaSKtr@pluto>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <Z1BBirNWH1eaSKtr@pluto>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XrgWAK3E314MfAigyWSkXsqJzgzavaBT
-X-Proofpoint-GUID: XrgWAK3E314MfAigyWSkXsqJzgzavaBT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5267:EE_|CH3PR10MB7209:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a6ac71f-c085-4bc2-00c7-08dd151d1420
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|10070799003|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?T1RtR1p0Unl0ZUQxNTRzRUtqaGV3Sk5vS2JoVGlRN3JJUzhoL2tTNnVDQk9z?=
+ =?utf-8?B?cS9PSUV4TTJKSHEzK2sxVlBoOWJuV28xNkJhYTFKN0IyY2lqdzg5VWtJUFVs?=
+ =?utf-8?B?b0hJak5lY2xnTFY0NXQzSmNOa1FDTE92MTlEeklaZi82M0hjWlppL0tyZVh2?=
+ =?utf-8?B?dWdZZnVGQURYaDgzNTYzeGJodGZoV3RuczMwS3BYZlkyclJJcTZTK3d1UEhn?=
+ =?utf-8?B?VEdZWmJna1Q4YSs5NXBoTFJidzdOUlhUK3ZzWk5QUU1EVkxHdFdYOEJKK0g5?=
+ =?utf-8?B?YTY0Q1lwWDRDMWlpaDE2YmxqMjF6Wm1rekl6SnQ5U2dyb2trUmpjMjRtV3dC?=
+ =?utf-8?B?bDRPeUZpejd1ei84MTY3d3dCcVI4d0pVYXZmTmR2MG9iaWsrRGxIbGVvWUp3?=
+ =?utf-8?B?K1RiRXFRemFIWXlXMzVOVVpIcVlDYVpUbkhtaFBMYWpmQSsyN01KMFNveldj?=
+ =?utf-8?B?d0ZpWE8xWTN4QmdmcTNZSFI0WTN1OTlaTlpCdy9BS3E5cVJYcmxrOHQ2VjNi?=
+ =?utf-8?B?SXJmeTdFbWt0emJmaDZqR2VIS0lucW5ZeVc3ZElFWW9EWVQxVVlIWllnYys2?=
+ =?utf-8?B?MlVvaVJnVUF4NHEzTnlJYVFLY1hEcCtnN1AyVngxV0ZFZldxenZqclVhUGpQ?=
+ =?utf-8?B?Tmk5TVVGMU1UbFNBOVNWdHNtS0IxY2VOR0NLT0hFazZrUHFLVnN3MFVtNnp0?=
+ =?utf-8?B?d2x1a0dneHdEbWxhVnBBakxjM05DaHI0Qm5tdUZpdFpVdTI5RjljYUpaOWdp?=
+ =?utf-8?B?WGcxNzB2ZmJQT0tXYXUzZy94UVJWbVlLaDlmREtVUEdDeThXekZacXg5Qk5O?=
+ =?utf-8?B?MDhHNm5DZUFFcnE0eXB6MjFPZFJRMkV2WTEyRlo5aitEMGdRRkJ0WFBHWXJP?=
+ =?utf-8?B?a3NkckZqWktPOTQ0UTdvNFhJRmUzTkRRTE1ycXRlbnI2bTJYbHQvdWtVQjRn?=
+ =?utf-8?B?akhYdWpFcmxTSXZMQmhPWXBZU1JteGZHZTBuaFhPR3RQczFZUVlaUFM4YVFW?=
+ =?utf-8?B?cm1jZitta24vQjlLdkhnaForNVROaVd3am1LTGVsbDhhcjMvUjBZbUN5Qzhx?=
+ =?utf-8?B?eWZrV3U5c2FhSDF0QzgxNGRqeExHeUIvLzV0ZERGNnFtQThIM3BlUitvSFpN?=
+ =?utf-8?B?UGFubGFtSkQyL2YxSFVLbEtsUXp5VEtKamdRQnNJUnJvTDJHb0hybWE2ZHA4?=
+ =?utf-8?B?MFQxeGZWZE9sdTFUdTQ0NXdjaVJoSnJZdHdBdnBaTVhMTGd3dzJlZEJITmV5?=
+ =?utf-8?B?eFdkVUtuaHpIVDJ4ckhKZkRJS1lGczBnVjJwTGRVU1E1clIxYVExMVpkSXhY?=
+ =?utf-8?B?RVp6NXc1TTFGWGI5dnhpQ1lvdElLQzgyUWRLRDRCVnpBOThKOFBUbXZLdHlJ?=
+ =?utf-8?B?Kzg4ZEwyNm9yQkVScTFXQnhrVDBjcjZ0NVI2N1FXRjkwZVVFVnc2SmN3bXpj?=
+ =?utf-8?B?cEhMU2FiNHRiNjR6WWYvYlg3cGREV2wzaGl5VXVMTVFGNGM3S0NBOUYrN3FO?=
+ =?utf-8?B?Y1V5ZHdWMmxPZEJVNHI1MU80UVRua2hJYmIwcExyNzhvcGJLYlRCdzFaUSti?=
+ =?utf-8?B?eWUyNGhlcENySWVTUU1SbWFYcGJZNlZiRXFwd1ZqSllPbWhUSEYvT2xzRkJp?=
+ =?utf-8?B?aU5yZ05DdnUwVFZtT1d5K0ZtMjl4QklyN1NUUXVSd0x3cHNrYlZoK29LZFF4?=
+ =?utf-8?B?SFFEdHg4VTRzdWZvZFNJZHM1RHFYNm5GU2RWR1pFZjJOQjZCOGV6bFRZWDli?=
+ =?utf-8?B?M3UvQ1NobUROR0hIOWVKYU0zTld1OXVyQjQrRDFLOWVVNi9WT1I1QjNBT3d5?=
+ =?utf-8?Q?DMn94kGaT7FggvgZh1sXbS8NeZpacY/ZgRqhQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5267.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eEVKYUJGVnVCOGxVcUlGNlYwTXhBNUtuYzMwcnRQWlhLQ0tDTFdaQzV1SXkv?=
+ =?utf-8?B?OTV4bUJWTk1wY0FJaU5qSTl1SEV4QUkwOGZoZlNlL2xUUEJiOGdrN3ZtT2Q1?=
+ =?utf-8?B?TVNpK1I2L1QxMXpBODh3ZS9nQkU2TG5XZDJpVk55TkVhVVk5K0htS1Fmd1hW?=
+ =?utf-8?B?WVVtTCtja3pQRDcrZC80NHh5cGdGRTJkbC9IdzlEQ2dzTlhZTTRtbk4weWEr?=
+ =?utf-8?B?MXZVWTIycTBIYTk0Mk1OTUIxSmtadXV3Ry9wM05Wa3VNb1BYYW0wS084V0do?=
+ =?utf-8?B?MDRIcHVoWHFyNjNSZENpRmJ5UXV6VnpxOXBad2JjWXJTL0VVYUF5R3RDRnZB?=
+ =?utf-8?B?MlhqMlEwMTh0TGs0M09XQnVPZmFLRktHL2lzREdyeS9BR1I3QlJmcHN4VTN1?=
+ =?utf-8?B?Rm9Xczd0TkI0ZnVhUkNOb1M4Qi9ucVBwcUR5UTN5Q09rNUdwc3BMZUpIeUNl?=
+ =?utf-8?B?N211VGVyTFpPeElqYklpMkhqWFErQkpsa1VQM2V0Y0o4bWtnUFdaYnZpZjhv?=
+ =?utf-8?B?eTVmUjNPVmgrWmFtcTZ3SEJXeElkaGVDN1N5QkJORVI0YlFPZVlacFgwL1BN?=
+ =?utf-8?B?UEdzMjNpYVpMWVFHUHpVWnY3TEdhUFZvUitiZDVmOUlKc3FzRlJQZUg4Ni80?=
+ =?utf-8?B?Ny9rejJpTFpFY1NIbGV2dVN6dFJQb25UZERYcmk0Q3k3Z20zdWs5d1RISDQz?=
+ =?utf-8?B?OUwrckIxVFRWQ0NYU2dDUG5UMEhlTlNVbUtoV01mZHlVbTVYMW1iczhhK2VV?=
+ =?utf-8?B?aHQ2ZUNYRnVKbm1HQ2k4L21IYm1wRTJ2OHlzc1RhMGE4RG40QXFIYWE3dTVx?=
+ =?utf-8?B?WVVjUnZSZ0xzNWJmT0RDS3pOSGNHTSsvRlVmQWpzdWFYVitBK0RZT2JLYkxx?=
+ =?utf-8?B?UHRxVjVVc2R3YmlOcFVsWHF6ZUw5MlRobXVxeFVMQUhmYzlicEZwbXRoNDRh?=
+ =?utf-8?B?MXByTGpudlRvSEp4SGp3SlFjL2ZIREp0YXJmbElhWFUzdHU1ZWp6eldkN09K?=
+ =?utf-8?B?Y0RMODZpZ1NOYW9SdEIyaE1yZVZVSWxrcFd4eWYwUGt6Rk4rakhqTVRlR1NG?=
+ =?utf-8?B?Wm1VSjQ2SlF4c2xqcENlNldPZkRUOUNCRFBoTkVVTjVPb3BjV09rN3hkYU5V?=
+ =?utf-8?B?djdCVmtGSkw5dFpWUER0MnpJZS9YaFFRMlhmaExnTGxhTU92SURBNEpyMk5a?=
+ =?utf-8?B?Qlhzdkp2Qm5CUno5cXRoZGdxSEdvZlcvWk5GMHR6ZXhNa0tLTEhMb0l2R0s4?=
+ =?utf-8?B?NTdBN3hoWDlxZDdyRXp0cTlnR2tnMVJ3NFhmVkczOFN4Rkc5TVpXR05vb2RY?=
+ =?utf-8?B?aE5CRDNkRGNZalFlV3pJV2N5ekRBZ2Y4SUE2VjlpS0czamFRazZlcXIwejdQ?=
+ =?utf-8?B?eklnTG12dlRLdkNaU0JCRHQwbmJUZmVaeXN0ZEp1Vm9aZW9VNEhZcC83U2wr?=
+ =?utf-8?B?bldEVm1EL21lV1VnYmV1Q05CYjB2SVBPWnhGOFpxS2NOdDFvUkhiZ0N5SDQ2?=
+ =?utf-8?B?TERoRjlhQnR0ak1qSnR6VDg5UUpFOHZOekpPM05SOThMUUE1NUxTSFNlNDFI?=
+ =?utf-8?B?RkhsMHV0MFVwSFAvc1FvRHcrT2NBbmdsWGMwdktaN1RTaHBDcHpOaTZUeTR3?=
+ =?utf-8?B?dnExL29IdkhaTjBHbkd2Zi9xanVOZWJRekJjKzhjZDUwbkdvYXNMUldjRjNv?=
+ =?utf-8?B?ZnF2UERKdHlaWUpnZjVLaURIMXVGZzgxempTamQrL0o4d1YxZm52M3dhVG9p?=
+ =?utf-8?B?eG5acXI5a0ozYVJqeXBBN0R2NmFqUm1GUURHdDdEMDM3NXlYN2ZvREpYaWE5?=
+ =?utf-8?B?OGlWSC9mWFRzanhaaDVPanFhM3VTN21xQmVHNmgwcDQwM1NKdit1K05CUm8y?=
+ =?utf-8?B?b216Vjh3K2ZEd2VHbXpPQjJPeEtKbzcrRVRSd1B4amNPdFhkZUJnYnZSblFO?=
+ =?utf-8?B?dktOc3h5ekpab0ZFNk52U2JTRXBGOHNaZkV2TWNMUjVRWnNCa2x4Ui95YmY5?=
+ =?utf-8?B?WHZiT1FHQ0dvNWJJSkxtd2g1enU5NnZPWm9NVkI1U08xMGhJSVpWMGVpWHRE?=
+ =?utf-8?B?dlMza0JibkhPYmxiTDZMTnYycDNaYkdCd1VZV0xWWWpMMERNZlJ6SUMvb1BL?=
+ =?utf-8?B?RDQzeFFxOVpXSk9uM3lYdHZiWk1UZjdxckhoN2w3MEM5MjRUUmVMbkR2M0FJ?=
+ =?utf-8?Q?x45AL+cdbSKyQLVUvrSnWMw=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	SBr9YnWHrC2zkNK6EmexudMKMT8yKqNebVd2mabd2RjyXSD/lnEzHdKPGDpgzTj5OIBwcvWE6RYmhHYusbwZaZeJhHvyQDG+6mF3+qH7o0fvw38MqjuDf7i1aGcyBdLgu75G3kjX5m+3IuG8ZWDLDKc7tXN63aza54I5gRRFYkMEo3cQwR6fOGx2jpTzI3/BoOMjmhAgg7RN21qyk8lJTvtjkAI611supRNzKPosY53TmdHjvjc3utTeZsxVT1k6h2U+3J2pNvD7SzNW98Ad2/aCFomIFDbHhgIrfHRsU3ApCeX/GHOPhhwk5r1oZSgjp5JJABnn4+pjHCC1rxz8lYn9YbsBxpt9ejcv/0aYHbz3h/1KYIF8MBlxQyMmGD/48+F+i7opmcx+FySJ9lL/W/P+C3gDUu+c6L4LXr1euh6ULptIMgYVdz3t7IXwmPzJ1+aEymcOzs9PmwDveKGVZBWgz7OBc6ayIqhHH/lvJ3JQPQgVWVsAdqnVF3nl2cwzT5CyleXcCvxnoLEYrKbPWPiZIKBD12+Qb1pFhlPqdBg6ANF9FncW92Kk6UAzqA1mEVOkPURh/MPz2A4NwPtoTtSYbBKs3g2VZyVQl9dxUHM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a6ac71f-c085-4bc2-00c7-08dd151d1420
+X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5267.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 11:07:59.8656
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UTqpngVyo74vULQYskeOS0YO7Tcb3tU6J/C+zuuAhlfrdR9sxOy9PvmoUdMcaz+bkK6Nq+gX0Py+7yG6w4PrMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7209
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050080
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-05_08,2024-12-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
+ adultscore=0 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2411120000 definitions=main-2412050079
+X-Proofpoint-GUID: Cy03lOvxkALZ_6uejq0zGgCrooxKIf15
+X-Proofpoint-ORIG-GUID: Cy03lOvxkALZ_6uejq0zGgCrooxKIf15
 
-
-
-On 12/4/24 17:18, Cristian Marussi wrote:
-> On Fri, Nov 15, 2024 at 06:45:14AM +0530, Sibi Sankar wrote:
->> Add QCOM System Control Management Interface (SCMI) Generic Vendor
->> Extensions Protocol documentation.
->>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->> ---
->>
->> v4:
->> * Update the protol attributes doc with more information. [Cristian]
->>
->>   .../arm_scmi/vendors/qcom/qcom_generic.rst    | 211 ++++++++++++++++++
->>   1 file changed, 211 insertions(+)
->>   create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
->>
->> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
->> new file mode 100644
->> index 000000000000..141bc932e30f
->> --- /dev/null
->> +++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
->> @@ -0,0 +1,211 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +.. include:: <isonum.txt>
->> +
->> +===============================================================================
->> +QCOM System Control and Management Interface(SCMI) Vendor Protocols Extension
->> +===============================================================================
->> +
->> +:Copyright: |copy| 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->> +
->> +:Author: Sibi Sankar <quic_sibis@quicinc.com>
->> +
->> +SCMI_GENERIC: System Control and Management Interface QCOM Generic Vendor Protocol
->> +==================================================================================
->> +
->> +This protocol is intended as a generic way of exposing a number of Qualcomm
->> +SoC specific features through a mixture of pre-determined algorithm string and
->> +param_id pairs hosted on the SCMI controller. It implements an interface compliant
->> +with the Arm SCMI Specification with additional vendor specific commands as
->> +detailed below.
->> +
->> +Commands:
->> +_________
->> +
->> +PROTOCOL_VERSION
->> +~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x0
->> +protocol_id: 0x80
->> +
->> ++---------------+--------------------------------------------------------------+
->> +|Return values                                                                 |
->> ++---------------+--------------------------------------------------------------+
->> +|Name           |Description                                                   |
->> ++---------------+--------------------------------------------------------------+
->> +|int32 status   |See ARM SCMI Specification for status code definitions.       |
->> ++---------------+--------------------------------------------------------------+
->> +|uint32 version |For this revision of the specification, this value must be    |
->> +|               |0x10000.                                                      |
->> ++---------------+--------------------------------------------------------------+
->> +
->> +PROTOCOL_ATTRIBUTES
->> +~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x1
->> +protocol_id: 0x80
->> +
->> ++---------------+--------------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 attributes |Bits[31:16] Reserved, must be to 0.                        |
->> +|                  |Bits[15:8] Number of agents in the system                  |
->> +|                  |Bits[7:0] Number of vendor protocols in the system         |
->> ++------------------+-----------------------------------------------------------+
+On 28/11/2024 20:40, Arnaldo Carvalho de Melo wrote:
+> Hi,
 > 
-> Thanks of clarifing this....may I ask why number of agents is reported
-> here too given that it is already exposed by Base protocol ?
+> 	Please consider testing what is in the master branch both in
+> kernel.org as in github:
 > 
-> Not really arguing about this so much, but you will end up having to maintain this
-> on 2 different protocols fw side...or are they not 'agents' in the SCMI meaning ?
+> https://git.kernel.org/pub/scm/devel/pahole/pahole.git
+> https://github.com/acmel/dwarves.git
 > 
-> Anyway, I'm fine with it, even though you dont seem to use this
-> anywhere.
+> 	So that we can release v1.28, we want to follow the cadence of
+> the kernel, i.e. since the kernel was recently released, we should
+> release a new version of pahole, and this one is long overdue.
+> 
+> 	We'll then try to release v1.29 shortly after Linus releases
+> v6.13, and so on.
+> 
+> 	Alan Maguire accepted to co-maintain pahole and as soon as he
+> gets a kernel.org account he'll be able to help me in processing
+> patches, that we expect to continue with the current fashion of being
+> tested and reviewed by as many developers as possible, its greatly
+> appreciated and a good way for us to keep this codebase in shape.
+> 
+> Thanks a lot for all the help,
+> 
+> - Arnaldo
 
-We don't use it anywhere and it looks like it was just put together
-so that this protocol is compliant to the spec :|
+Looks good on my side too; tested x86_64/aarch64 using latest bpf-next
+and ran dwarves tests.
 
-> 
->> +
->> +PROTOCOL_MESSAGE_ATTRIBUTES
->> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x2
->> +protocol_id: 0x80
->> +
->> ++---------------+--------------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 attributes |For all message id's the parameter has a value of 0.       |
->> ++------------------+-----------------------------------------------------------+
->> +
->> +QCOM_SCMI_SET_PARAM
->> +~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x10
->> +protocol_id: 0x80
->> +
->> ++------------------+-----------------------------------------------------------+
->> +|Parameters                                                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 ext_id     |Reserved, must be zero.                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
->> +|                  |and is used to set various parameters supported by it.     |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
->> +|                  |algorithm string pair.                                     |
->> ++------------------+-----------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
->> +|                  |by the chosen algorithm string.                            |
->> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
->> +|                  |matches.                                                   |
->> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
->> +|                  |is rejected by the algorithm string.                       |
->> ++------------------+-----------------------------------------------------------+
->> +
->> +QCOM_SCMI_GET_PARAM
->> +~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x11
->> +protocol_id: 0x80
->> +
->> ++------------------+-----------------------------------------------------------+
->> +|Parameters                                                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 ext_id     |Reserved, must be zero.                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 param_id   |Serves as the token message id for the algorithm string.   |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 buf[]      |Serves as the payload and store of value for the specified |
->> +|                  |param_id and algorithm string pair.                        |
->> ++------------------+-----------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
->> +|                  |by the chosen algorithm string and the result is copied    |
->> +|                  |into buf[].                                                |
->> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
->> +|                  |matches.                                                   |
->> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
->> +|                  |is rejected by the algorithm string.                       |
->> ++------------------+-----------------------------------------------------------+
-> 
-> ..missed this last time...so you should add here also a field describing
-> the reply buf right ? (as it happenns really in your code) something
-> like:
-> 
->   ++------------------+-----------------------------------------------------------+
->   +|uint32 buf[]      |Holds the payload of the result of the query.	 	 |
->   +|                  |					                         |
->   ++------------------+-----------------------------------------------------------+
-
-Thanks will get this added in the next re-spin.
-
--Sibi
-
-> 
-> Thanks,
-> Cristian
+Tested-by: Alan Maguire <alan.maguire@oracle.com>
 
