@@ -1,105 +1,73 @@
-Return-Path: <linux-kernel+bounces-434090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C049E6187
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:57:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DB59E6189
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:58:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52330188536B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E570B1885034
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C891D5ADD;
-	Thu,  5 Dec 2024 23:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C4D1D5162;
+	Thu,  5 Dec 2024 23:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnTO+2Oj"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gx3MfDgW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B5849627;
-	Thu,  5 Dec 2024 23:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF781B87CF;
+	Thu,  5 Dec 2024 23:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733443039; cv=none; b=Opjw2rW6pdC9CFD5YTBY4jKls2urDxr3w5UJaJeE3cEnVSzTVEC8sXrvnN0O4kDMO5ZdkKhefVgSDfXRtcrwA063JkOrPL/qqZsXUuBxXHa+Pniir/nfFUA/0oM2VAa9M+pyZKpYUz5jlzJx1kAtf9g7FmqJdcBF1lXKxczgsfk=
+	t=1733443087; cv=none; b=PxzBHxFtmxhHNdBFgy42YKwrSAjMMPA3l9u41rDQsvFihmT2FyC8FPGxcy7G8IvLsktdu9cMyX8Z/Eb32uH8UJrIw5YkXCeghpDUZi7dPzKokRPfPSRpEvYQH5/rfGZFg0Qwrziieq9yrJlMkNLQTRYBKwJPmQ4J/DEuAdK5PRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733443039; c=relaxed/simple;
-	bh=Gb9A7IbaXaNn0QmiSU5QWC6XaGim+k77cXLOs53GqPQ=;
+	s=arc-20240116; t=1733443087; c=relaxed/simple;
+	bh=oejPmZfiU+yzXoUlUAyLfIeavFDw3xEbiKLSwA4lQo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VWNoAXnQx+OwBpvOy/2WVe84dqSWsG0ZuCy/+o3psKk7IzMJNfZGLxRP2txqxdbjSYC6/Sg2K87ybXTbwo2dityDn8eA1N7oS5PK2zsxjBMc/qg/S+Q+DCecYSxDNSg/H8EYBJJttDAVRbQX4nnCFuGATPYVaY9O9I0qzP4on84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnTO+2Oj; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa62e741fbaso17582666b.1;
-        Thu, 05 Dec 2024 15:57:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733443035; x=1734047835; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MAo9cVc8wqzk5rP3Z3ruoyEUyVoOdbKhUC4uEqSh6TE=;
-        b=hnTO+2OjxcQorQK+4/SnJh/Dk6oPhaRdCGzeF6KDTRS9OCCGW+ycGz13grEn5p6DeZ
-         i3SYQrtMsNQzsxQ+T34Xl91ffJLK/+5sKlCwg3UpQdfaaDlPfJqSJf//f53oePjHGNpv
-         xOtg0aAZ/v12mKz/Q3lutpViH2dBfsYJEXN6kJqX8QVyz4y6SG+CT90KvqxFjRQ4DFDQ
-         nlpWhDt165BtYPTupS9zvfMs/Ua7Op2k+wnly3yojUcUhXzNitWNhvvwwJLNMAldqnFJ
-         f/RSgSGypaGCEWIr/ybJN7vW2aXcElp6lYakPeUNZT4ACn/v1hXY1VUjtXNk7KNunBWp
-         RWUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733443035; x=1734047835;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MAo9cVc8wqzk5rP3Z3ruoyEUyVoOdbKhUC4uEqSh6TE=;
-        b=Gqb1w3bprxsrjFzoGMx1p2Ybu4a+XCw5qSRJeYHZzDSkduAnqOiWEEROvXCxGlnMbk
-         yUz4rq5rPejEEt4BnnNEFGJlbtiy7kZKXf5T/Vi54wveIgM+nHiZ+pB5Obq1Oi8ZPhg5
-         3kxCXhaLmTfm5agcsEJvbikKuzQ8pSrvdOBicLoyrpTKPLBdrNe6eqzA1Glyia5rdHl0
-         zdCbekk6HIJ37NLxq/MgJ1GK2RuxRvJ2fjqAhuyWSnn3421UPh+UHY6VQmNXcKQ6XRuH
-         qlpjvxqN79gd5GjgJvPvr/X67fWWqX/aioa1YuSJ4APy75ZIG8KDoxArl79mRUm3bvSo
-         F/vA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnYtVdeuTvISaKHAl2fnH06r5goHnxWEODEM5IFjS/T4d97tkWdbMpxZpbJn9AyaRj64dODyNWdHPMDOSg@vger.kernel.org, AJvYcCXXldrefZ7w0MfLo3OM5Y4YTopNu/RJvHMrrl5nKcSoFi8DCLTywJzYF0cCpkeOETHZT9y5vdp2@vger.kernel.org, AJvYcCXhL0Rie1VCmM3SSHtNhd9etEqjeGfEOCCJekCJs8BLpGqpoWmlM53KzfiCjg/i0fRsYWlKdduTv+cO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS2cMY0OqhMe2LqcJepGgVDvgu8iLJI1NwxYNsUrkZpu8uw9S0
-	2c6Lis4CREQom2tzM7tmehU7CYqWX6V0OI0jZB3Va0jS/o+8BXfq
-X-Gm-Gg: ASbGncuI2OL/CX+3j8PfZ2zykIZ1PjmnvNV4KcbAqvDqVe0xvoNKb405YwBrRGjhMT3
-	MZNGV3EzioHU4QJ2bW+L9tkwl/5tXVwySLKM7K9fH5KXmvTTnaFfuiu53guO7BpGG60kec++vye
-	ke/2Py5o03jeLfVLonR08xYPUQrprHEqytUQN7tzr40nbvl8qmAbwdLjzlf7jqOZXLCFqtE6N5N
-	gYSGvzYi0uZnBMNNWeXEYoi4eZyLdWPVPJJpYI=
-X-Google-Smtp-Source: AGHT+IE7dUzMRW5X7ylWUaAfuLQLWmAdBw9QHxuByRnp2/sHxsnIHbysm9CaN6DPwjMSUukK5qW3ng==
-X-Received: by 2002:a17:907:1819:b0:aa5:a36c:88f3 with SMTP id a640c23a62f3a-aa63a20039cmr24798866b.10.1733443034766;
-        Thu, 05 Dec 2024 15:57:14 -0800 (PST)
-Received: from skbuf ([188.25.135.117])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4ed51sm155526866b.31.2024.12.05.15.57.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 15:57:13 -0800 (PST)
-Date: Fri, 6 Dec 2024 01:57:09 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <20241205235709.pa5shi7mh26cnjhn@skbuf>
-References: <20241205162759.pm3iz42bhdsvukfm@skbuf>
- <20241205145142.29278-1-ansuelsmth@gmail.com>
- <20241205145142.29278-4-ansuelsmth@gmail.com>
- <20241205162759.pm3iz42bhdsvukfm@skbuf>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
- <20241205180539.6t5iz2m3wjjwyxp3@skbuf>
- <6751f125.5d0a0220.255b79.7be0@mx.google.com>
- <20241205185037.g6cqejgad5jamj7r@skbuf>
- <675200c3.7b0a0220.236ac3.9edf@mx.google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwjUlaHW522bBkfInSCh4oyEM1VdVXRRvw6MLZjQwZt/RKN18Wuf8JQgjNDdYMrGmLAUPCNRSAvWhbPz6XjLEYgfow8NBO5Qfmkn/Af+G2A4CbQcQ9h05aMyqz9aq7sU7Mu22oCRB33ZJfAKreCaoFM0pAWJLdiobj3LTMCNnTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gx3MfDgW; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733443086; x=1764979086;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oejPmZfiU+yzXoUlUAyLfIeavFDw3xEbiKLSwA4lQo4=;
+  b=Gx3MfDgWFntBqUpujJ8EzRphjdcxADAYRs4uxs/3l1g3JRhXBoPX8Rqi
+   f75TqU6AlkWPCR2h4DeoWqv6jtK9hWPfBmpJnHuyTRYVDe55+z10p/8R5
+   dZiPpma/OScyxMR3OetXmSRwy1PMvD8XY7cPuwxv/c1Y0HtyY+/zzB7wD
+   05R9HXPYOuR1G/Jm+w5fzOp/G8OSFJLJKETNrWHiphjvUh5BKR0irtfai
+   Ue0Norr/gHNEJeXDRS5e5Ycz3q/ZEl4jlsaXwyRK5whGQDUvQFIlXhehL
+   +DRN63eFE4pTbQgDbTDYfB8LpAriLk0OQPhNyfbegJF+9lCaPRUkVRSb/
+   g==;
+X-CSE-ConnectionGUID: 0t1Ba/QlSBqo7g8ZkKx5qA==
+X-CSE-MsgGUID: SCKRNA1LTyKhbsQG5ZUn2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="44450046"
+X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
+   d="scan'208";a="44450046"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 15:57:57 -0800
+X-CSE-ConnectionGUID: WtLJ5Hg+SciRMkACH3pS1A==
+X-CSE-MsgGUID: g2nWHwQKTniFFJkqnjXNXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
+   d="scan'208";a="99322997"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 15:57:57 -0800
+Date: Thu, 5 Dec 2024 15:57:55 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Kyle Meyer <kyle.meyer@hpe.com>
+Cc: bp@alien8.de, james.morse@arm.com, mchehab@kernel.org, rric@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
+Message-ID: <Z1I-A0Rhc8AHhvtw@agluck-desk3>
+References: <20241205165954.7957-1-kyle.meyer@hpe.com>
+ <Z1H7U9-O2LdAoa5r@agluck-desk3>
+ <Z1IHkBlm_0p-0-c3@hpe.com>
+ <Z1Iuk-_VdmZibOes@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,152 +76,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <675200c3.7b0a0220.236ac3.9edf@mx.google.com>
+In-Reply-To: <Z1Iuk-_VdmZibOes@agluck-desk3>
 
-On Thu, Dec 05, 2024 at 08:36:30PM +0100, Christian Marangi wrote:
-> > I guess the non-hack solution would be to permit MDIO buses to have
-> > #size-cells = 1, and MDIO devices to acquire a range of the address
-> > space, rather than just one address. Though take this with a grain of
-> > salt, I have a lot more to learn.
-> 
-> I remember this was an idea when PHY Package API were proposed and was
-> rejected as we wanted PHY to be single reg.
+> +int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
+> +{
+> +#ifdef CONFIG_NUMA
+> +	return skx_get_pkg_id(d, id);
+> +#else
+> +	u32 reg;
+> +
+> +	if (pci_read_config_dword(d->util_all, off, &reg)) {
+> +		skx_printk(KERN_ERR, "Failed to read src id\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	*id = GET_BITFIELD(reg, 12, 14);
+> +	return 0;
+> +#endif
 
-Would that effort have helped with MDIO devices, in the way it was proposed?
-Why did it die out?
+Doh ... I alwasy forget about IS_ENABLED(). This can be written:
 
-> > If neither of those are options, in principle the hack with just
-> > selecting, randomly, one of the N internal PHY addresses as the central
-> > MDIO address should work equally fine regardless of whether we are
-> > talking about the DSA switch's MDIO address here, or the MFD device's
-> > MDIO address.
-> > 
-> > With MFD you still have the option of creating a fake MDIO controller
-> > child device, which has mdio-parent-bus = <&host_bus>, and redirecting
-> > all user port phy-handles to children of this bus. Since all regmap I/O
-> > of this fake MDIO bus goes to the MFD driver, you can implement there
-> > your hacks with page switching etc etc, and it should be equally
-> > safe.
-> 
-> I wonder if a node like this would be more consistent and descriptive?
-> 
-> mdio_bus: mdio-bus {
->     #address-cells = <1>;
->     #size-cells = <0>;
-> 
->     ...
-> 
->     mfd@1 {
->             compatible = "airoha,an8855-mfd";
->             reg = <1>;
-> 
->             nvmem_node {
->                     ...
->             };
-> 
->             switch_node {
->                 ports {
->                         port@0 {
->                                 phy-handle = <&phy>;
->                         };
-> 
->                         port@1 {
->                                 phy-handle = <&phy_2>;
->                         }
->                 };
->             };
-> 
->             phy: phy_node {
-> 
->             };
->     };
-> 
->     phy_2: phy@2 {
->         reg = <2>;
->     }
-> 
->     phy@3 {
->         reg = <3>;
->     }
-> 
->     ..
-> };
-> 
-> No idea how to register that single phy in mfd... I guess a fake mdio is
-> needed anyway... What do you think of this node example? Or not worth it
-> and better have the fake MDIO with all the switch PHY in it?
 
-Could you work with something like this? dtc seems to swallow it without
-any warnings...
+int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
+{
+	u32 reg;
 
-mdio_bus: mdio {
-        #address-cells = <1>;
-        #size-cells = <0>;
+	if (IS_ENABLED(CONFIG_NUMA))
+		return skx_get_pkg_id(d, id);
 
-        soc@1 {
-                compatible = "airoha,an8855";
-                reg = <1>, <2>, <3>, <4>;
-                reg-names = "phy0", "phy1", "phy2", "phy3";
+	if (pci_read_config_dword(d->util_all, off, &reg)) {
+		skx_printk(KERN_ERR, "Failed to read src id\n");
+		return -ENODEV;
+	}
 
-                nvmem {
-                        compatible = "airoha,an8855-nvmem";
-                };
+	*id = GET_BITFIELD(reg, 12, 14);
+	return 0;
+}
 
-                ethernet-switch {
-                        compatible = "airoha,an8855-switch";
-
-                        ethernet-ports {
-                                #address-cells = <1>;
-                                #size-cells = <0>;
-
-                                ethernet-port@0 {
-                                        reg = <0>;
-                                        phy-handle = <&phy0>;
-                                        phy-mode = "internal";
-                                };
-
-                                ethernet-port@1 {
-                                        reg = <1>;
-                                        phy-handle = <&phy1>;
-                                        phy-mode = "internal";
-                                };
-
-                                ethernet-port@2 {
-                                        reg = <2>;
-                                        phy-handle = <&phy2>;
-                                        phy-mode = "internal";
-                                };
-
-                                ethernet-port@3 {
-                                        reg = <3>;
-                                        phy-handle = <&phy3>;
-                                        phy-mode = "internal";
-                                };
-                        };
-                };
-
-                mdio {
-                        compatible = "airoha,an8855-mdio";
-                        mdio-parent-bus = <&host_mdio>;
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-
-                        phy0: ethernet-phy@1 {
-                                reg = <1>;
-                        };
-
-                        phy1: ethernet-phy@2 {
-                                reg = <2>;
-                        };
-
-                        phy2: ethernet-phy@3 {
-                                reg = <3>;
-                        };
-
-                        phy3: ethernet-phy@4 {
-                                reg = <4>;
-                        };
-                };
-        };
-};
+-Tony
 
