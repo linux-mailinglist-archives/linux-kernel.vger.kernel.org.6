@@ -1,174 +1,129 @@
-Return-Path: <linux-kernel+bounces-433214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247979E5537
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:16:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DD69E5536
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B30E18838D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:16:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE25F1883AAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9547B218E92;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95287218E90;
 	Thu,  5 Dec 2024 12:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RIR38fvd"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TmBQ7r1p"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27250218ACE;
-	Thu,  5 Dec 2024 12:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272EC218AD1;
+	Thu,  5 Dec 2024 12:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400930; cv=none; b=JnYwFba4ebRaUmaxQHl8mfbA0GfFVWSQuNzY2NhoQmc0+r5cnnljPl0YsWyPFtTJyuI2ttnm6cBgKjql845hTMWW5WrKuVPhEWeHNAHqht4UXUQnjeknkTipKMyO241lFqrqnteeprYPKp3IUSK36BG/wvuZlTlU6dyrRbVVZdk=
+	t=1733400931; cv=none; b=jN1kZ4JKkYZb896EAsqkulamEuVG3D9ciNACD03zHLR6L2wIlx/Zh+mZzS26AlrbfhUSfuw371gQBhR3ic4VpHFGTWrMZIH04YSROaVrm6czDKD6az7Zm6ozUjJCA+S35aHrbWPbq807nUagnL8OMpAGneBptkUxYgc9fF5MN9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400930; c=relaxed/simple;
-	bh=KyZ5CACimQSWxoWyn7gctVe0I3LE7LBdjabpyJ3Zld0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q37baMYUUBb17ZhMZJCB/3la3roTvr/RZV5M6+moMzNjUW8SheKF6D4uApjR0gVkh0MvvFjFXQDmcFF567e312K2iAS0Fj/kj+YnXaBPq0xfSljgbwJnDbCz+M1ASyG4sUvSSEqoj+BAemC1cgiWueIrNnfQrLpgbE48ZgffhZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RIR38fvd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733400927;
-	bh=KyZ5CACimQSWxoWyn7gctVe0I3LE7LBdjabpyJ3Zld0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RIR38fvdP35N8NMfgWv85t7hMpo0egF0D84RDrw3gkyHSjpxkOLPR15B/z3TixfXV
-	 Ezn7ZGlcHR773nq9JVyBZVFS66WTOQy71yg/tq4FHFegCAFWyHH6ydndKdNpzQn7ro
-	 t70vmLOu7109IQECu2TSqAWMIDIx0vlGVFLHHuhPWEsqLZml3DxLPT8GoQ0ZuWIY6e
-	 fsvWSlGNYmqEY8gztsy7xGb3dnSK+CxNwzV4IIBtjCoq49eyf9FlsixDFizkrum2MR
-	 kN8YIQYd/+N2Fw5RcbZa4VGC+n29REGZM5Hij152p8RqRdLmEmH+ec/U+x1gEtyOlx
-	 vUew3GSNnNwVQ==
-Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1000])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7ECF217E3661;
-	Thu,  5 Dec 2024 13:15:23 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Thu, 05 Dec 2024 09:13:58 -0300
-Subject: [PATCH 5/5] arm64: dts: mediatek: mt8390-genio-700-evk: Add sound
- output support
+	s=arc-20240116; t=1733400931; c=relaxed/simple;
+	bh=/29uYNfB4jsLibyobe2nNI/2TzDkendtERkhqweYv+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZewc7zVw9bh9pCIF4owCXoaUB53GA1HM92PddlJjjRibafIoB/hngifnfeVsOAEBvd31sdnWu0K4yIDOaMpyBJOG6Lbt7kYZy1OSBa2ZsOy1SWj0BQn47pZTYG4Ouxrpa9fuoCepWi9THNQrN1OCHNIEzSs5ex4kckWVp5jEXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=TmBQ7r1p; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=c2uRpWQzrgsevOGntiKGOMAAWqRJBifNOKZIBOx/xX0=; b=TmBQ7r1pewYBgLyGRI3YeehQf3
+	8XCeKdAYF++k8YWHUnLn0LFIFBOOVKPeOaaJtK8b1ZkiZ+GVvLUZZvlzGlUOG2uKwubbDfS5ehoqB
+	n/slnEBsqCHkDn20CrQ0DC+734SXz1s795git2wBOl16lJ4NU5MRuJ3kHwjHVqblHHJ0nW7Yj1HMv
+	VU8DxCz5npDfHRH30WNphV5WM9UXY3h3fw/nfZQJLM+Jq1Ns7rvSGZTgMolmBdnqECwgrL5K4qqwm
+	QF+R0jF4a9zP9ZQlwrTVz+5Y9nwxVRfgpkOcQxQH3Euy4etYXvjPwGDlIwdbJPXXpg4cW65339uTt
+	Y6oPUmHw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40184)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tJAlL-0004m7-04;
+	Thu, 05 Dec 2024 12:15:19 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tJAlJ-0006Y7-1G;
+	Thu, 05 Dec 2024 12:15:17 +0000
+Date: Thu, 5 Dec 2024 12:15:17 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 6/7] phy: dp83td510: add statistics support
+Message-ID: <Z1GZVf7R9AYeRJAF@shell.armlinux.org.uk>
+References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
+ <20241203075622.2452169-7-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241205-genio700-audio-output-v1-5-0e955c78c29e@collabora.com>
-References: <20241205-genio700-audio-output-v1-0-0e955c78c29e@collabora.com>
-In-Reply-To: <20241205-genio700-audio-output-v1-0-0e955c78c29e@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Trevor Wu <trevor.wu@mediatek.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Aary Patil <aary.patil@mediatek.com>, 
- Suhrid Subramaniam <suhrid.subramaniam@mediatek.com>, 
- parkeryang <Parker.Yang@mediatek.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203075622.2452169-7-o.rempel@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Describe all the components to get sound output working on the two audio
-jacks, Earphone and Speaker, present on the Genio 700 EVK board with the
-audio DSP enabled.
+On Tue, Dec 03, 2024 at 08:56:20AM +0100, Oleksij Rempel wrote:
+> Add support for reporting PHY statistics in the DP83TD510 driver. This
+> includes cumulative tracking of transmit/receive packet counts, and
+> error counts. Implemented functions to update and provide statistics via
+> ethtool, with optional polling support enabled through `PHY_POLL_STATS`.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/net/phy/dp83td510.c | 98 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 97 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
+> index 92aa3a2b9744..08d61a6a8c61 100644
+> --- a/drivers/net/phy/dp83td510.c
+> +++ b/drivers/net/phy/dp83td510.c
+> @@ -34,6 +34,24 @@
+>  #define DP83TD510E_CTRL_HW_RESET		BIT(15)
+>  #define DP83TD510E_CTRL_SW_RESET		BIT(14)
+>  
+> +#define DP83TD510E_PKT_STAT_1			0x12b
+> +#define DP83TD510E_TX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
+> +
+> +#define DP83TD510E_PKT_STAT_2			0x12c
+> +#define DP83TD510E_TX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
+> +
+> +#define DP83TD510E_PKT_STAT_3			0x12d
+> +#define DP83TD510E_TX_ERR_PKT_CNT_MASK		GENMASK(15, 0)
+> +
+> +#define DP83TD510E_PKT_STAT_4			0x12e
+> +#define DP83TD510E_RX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
+> +
+> +#define DP83TD510E_PKT_STAT_5			0x12f
+> +#define DP83TD510E_RX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
+> +
+> +#define DP83TD510E_PKT_STAT_6			0x130
+> +#define DP83TD510E_RX_ERR_PKT_CNT_MASK		GENMASK(15, 0)
 
-Co-developed-by: Aary Patil <aary.patil@mediatek.com>
-Signed-off-by: Aary Patil <aary.patil@mediatek.com>
-Co-developed-by: Suhrid Subramaniam <suhrid.subramaniam@mediatek.com>
-Signed-off-by: Suhrid Subramaniam <suhrid.subramaniam@mediatek.com>
-Co-developed-by: parkeryang <Parker.Yang@mediatek.com>
-Signed-off-by: parkeryang <Parker.Yang@mediatek.com>
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- .../boot/dts/mediatek/mt8390-genio-700-evk.dts     | 50 ++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-index bb68665f0b2da80397b833db0241a06648a322a0..2fded39078773e81d8e0313d6b118b3064be308d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-@@ -92,6 +92,24 @@ vpu_mem: memory@57000000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0 0x57000000 0 0x1400000>; /* 20 MB */
- 		};
-+
-+		adsp_mem: memory@60000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x60000000 0 0xf00000>;
-+			no-map;
-+		};
-+
-+		afe_dma_mem: memory@60f00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x60f00000 0 0x100000>;
-+			no-map;
-+		};
-+
-+		adsp_dma_mem: memory@61000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x61000000 0 0x100000>;
-+			no-map;
-+		};
- 	};
- 
- 	common_fixed_5v: regulator-0 {
-@@ -209,6 +227,16 @@ usb_p2_vbus: regulator-9 {
- 	};
- };
- 
-+&adsp {
-+	memory-region = <&adsp_dma_mem>, <&adsp_mem>;
-+	status = "okay";
-+};
-+
-+&afe {
-+	memory-region = <&afe_dma_mem>;
-+	status = "okay";
-+};
-+
- &gpu {
- 	mali-supply = <&mt6359_vproc2_buck_reg>;
- 	status = "okay";
-@@ -912,6 +940,28 @@ &scp {
- 	status = "okay";
- };
- 
-+&sound {
-+	compatible = "mediatek,mt8390-mt6359-evk", "mediatek,mt8188-mt6359-evb";
-+	model = "mt8390-evk";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&audio_default_pins>;
-+	audio-routing =
-+		"Headphone", "Headphone L",
-+		"Headphone", "Headphone R";
-+	mediatek,adsp = <&adsp>;
-+	mediatek,dai-link = "DL_SRC_BE", "UL_SRC_BE", "AFE_SOF_DL2",
-+		"AFE_SOF_DL3", "AFE_SOF_UL4", "AFE_SOF_UL5";
-+	status = "okay";
-+
-+	dai-link-0 {
-+		link-name = "DL_SRC_BE";
-+
-+		codec {
-+			sound-dai = <&pmic 0>;
-+		};
-+	};
-+};
-+
- &spi2 {
- 	pinctrl-0 = <&spi2_pins>;
- 	pinctrl-names = "default";
+I'm not sure I like this pattern of _MASK here. Why not call these
+registers e.g. DP83TD510E_RX_PKT_CNT_31_16 ? Given that the full
+register value is used, I don't see the need for _MASK and the
+FIELD_GET()s, which just add extra complexity to the code and
+reduce readability.
 
 -- 
-2.47.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
