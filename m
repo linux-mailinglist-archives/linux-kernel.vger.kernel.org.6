@@ -1,251 +1,205 @@
-Return-Path: <linux-kernel+bounces-432870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3BF9E5144
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:27:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16DE59E5149
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:27:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA1D163B9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D951188205F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC95B1D5ACD;
-	Thu,  5 Dec 2024 09:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5454A1D5179;
+	Thu,  5 Dec 2024 09:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thpLbIWK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmE33We1"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD7518E028;
-	Thu,  5 Dec 2024 09:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DAA18E028
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733390832; cv=none; b=fdDNzi6ksLoT3y/R4BziyBYm6HCoGK7a9f/MMka2exuMGyPN44zLJJnD/nFYl31T5okFl1xeEEwgq/BAZq9BnqeyLhmCCdYtDGwiN34pXEAZKvPGMrZmnqsnE34t6d83AnLPIG0vtmt3mgdgAsfi86WOLbwk3qTxL1K7uae9Cos=
+	t=1733390870; cv=none; b=GJBMUr/jE92yV17viCQhutm2cJnORnTU9vARDWvfvyTuLw9ApPOjoaGKCQ5fMu1ccgQ4WnIAMImTYBEiEREf6vZIP70UXpIIr7Ko297L2sMe+dxRL/E3t7jjNP+OHShqtXjjzpU+2DFxVSfjRspFkgImtw3zOXu2PqZ8XENZ6Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733390832; c=relaxed/simple;
-	bh=V8mI7/n3IV0EOrdkAGn/fNSLzeaJ+6R5QpFstNb4NVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNVb5Id6NaS8JR+Yfn+FiXa8FdM+vdCmL9voz2yFtbiYq98LvefimPsChgLo/E41petCzExwnRO6NyU2RsIfWc2RyJAjJhjWr70yYZ+cz2sN/OYK/uLjUhnmbvQ4gwyMJ7aaKHJylqKI00IZ6wAFc6R4pytPrJL3ZrQ3W1oceHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thpLbIWK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402DDC4CED1;
-	Thu,  5 Dec 2024 09:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733390831;
-	bh=V8mI7/n3IV0EOrdkAGn/fNSLzeaJ+6R5QpFstNb4NVY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=thpLbIWKkDaAPc6+MQ+KXkXECk4euNpZiSg9r92QVpy0aUzdi6KJZwRq2QvgpQpsL
-	 eKbnMlID87GL4NBqOqXWrogAP4AutXgSE+F++RMPkKHWPzIeKEBrIqaQJ7clQOh4x0
-	 h53x2RaMsOS9B4dBAMxVvRDEI3Z6T/XtUORRpLtYhP7EGwWgGTlIbKcYKScP+Bc05+
-	 V0PchRsvtUgGdppgkhRF69XCGFul2Q5RXt/Om/5jTHKJrx6SiWk8z9ACl9Zsn9tq3+
-	 7V6o1QPq6yzjhHnkslavWCO54OZHjeofdyq1nkIislSR4qAsdV3SBcFEaWJW75sQz6
-	 m/9ZAcvOSXL5w==
-Date: Thu, 5 Dec 2024 09:27:06 +0000
-From: Lee Jones <lee@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] sample: rust_misc_device: Demonstrate additional
- get/set value functionality
-Message-ID: <20241205092706.GG7451@google.com>
-References: <20241204174627.1151288-1-lee@kernel.org>
- <20241204174627.1151288-2-lee@kernel.org>
- <2024120453-unfunded-oversight-5161@gregkh>
- <20241205083848.GD7451@google.com>
- <2024120517-bright-expire-955e@gregkh>
+	s=arc-20240116; t=1733390870; c=relaxed/simple;
+	bh=94kE73ydMVyzonmik9TNYAGbHipWQtvOBZy1ZlXHCNw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ukmr/+6qph6IUBdHFaUrEH7VN9MfB+gPyiSkHJioKnagXreMueTqTj656g6cHfoUfsLD2doQpDJFXu7z15omkVC1A36u8R1nM8SIPoEK5VIdubW0+dxqmnFocsPoPdFtlZ7FRWwRf/2gfpqp1NSm2j1Xvt6Qz0xm2J2j68yrOH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmE33We1; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385eed29d17so585288f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:27:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733390867; x=1733995667; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xU7uFh5m21xrGuOQvVJCOSvoBR6jrAPhaeO+Zvdsqdc=;
+        b=mmE33We1HTZRjYEn6svfeID/zUzkL/YscC0EmFiT9UPem+aN7yiHn+90Vi2ROrP+D8
+         sp338P86Bthm3BZ4Z8b3QhcvxR8Xl3lcqmblhvi0Mqcl4vWA+t8j+5FblHsfv8dY9Boe
+         9e4uLxDJEnJ0+OeFhjfg7vMqCAxMG974HfEF0wEHYH3jIv+WSfJ1bNig/PM7Ptu5FEBg
+         Rsd2B5zWSk1QL4zzpwK1TS9XgJ/tAawDi9ZnYDeEumuNiltgfBJRaugSVofJ5cy6yTWj
+         OzjQ8uCuYvBAPfrpIlVZesepvB8Bklez0VcYyRnygFzeMr2EWlcUlWtbzFoh26Ig7Cy4
+         jixQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733390867; x=1733995667;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xU7uFh5m21xrGuOQvVJCOSvoBR6jrAPhaeO+Zvdsqdc=;
+        b=h4HLNdBf0SVK4aY9fWvsqkMnkuBSeF9l5Ulc+qeG1XNEP3np3NqQomvMCEzhuZD0/U
+         +bv2DRzgLIyRMy8atP3wD43ga1wQXPMIB5JpzdFvvFnR2r/XWdlUNaINeH8GCEaj/lPA
+         shwoh4TT7b1A0FpaVTkoQDTLRCpMWsAwIU4P5IfnqFyR69Dl7pwrM0UdptRfgbADCWLf
+         dZgNCGZdszstfc9NMc0NIWHPz3QxhW4b9yscNUdHkk8tTjjfiipezkVmZBdXrfGqCgtR
+         zOeRWTP6JxGeeKKqB7gUjJV89m7vgQzLqXZWdsAgpRGRxFzdxVzGJyhVqvfsJc+G/iq0
+         Er1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVMxQGvW3MazK00ZYcrm5KWeyncqmR1fm+++ANrL6hjpDojRQLrlh/OdjRrABss2rSoIeH7MOuPn0DWkX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEGrg1tKjNSrJLDgFP8/o6O7igUezv4ePsnTLxS1c1AYyNPuW8
+	a568awF+rE5c5Yn0THcDUqHozaX6hspqfWKFJELoj2XVEO1xXHnCAKBWMypSbV0=
+X-Gm-Gg: ASbGncvty0jGvgdePSnRjObrHOCOj2lvVy6cieMF7HZVIwxo7KRdk2kJqqEAoldyQXA
+	03tVxd9jAC7hql//V54pz5sfvynO7RRYv+93wTMYrSd2y9KwK8D2YovDUN0g1x8YngfD8r+pisT
+	goizOdP+KYEiQubZeRCBKNKDczwzQha1r0JtBA93uVyHf1GFvO15+0zhXjE4J3K03e+9KZ4+6Ay
+	KjJRfT5XBv6RS/486QbDHdmHJcU2AhncA/tY0mFv0MDBqp3fdUpsXspmwFr6ZTbEwL1GC6pS9/I
+	TP06EsTPj0Mwsyctce9Zgv0h4yg=
+X-Google-Smtp-Source: AGHT+IHzKfFrugEilrYTWw7f5n4tGtcZQdBbXHOkNMbrOaUkslhVdrf16gD5Xz2rnOncYyiyTOOnkw==
+X-Received: by 2002:a05:6000:1f88:b0:385:fb34:d585 with SMTP id ffacd0b85a97d-385fd422f21mr8022616f8f.34.1733390867017;
+        Thu, 05 Dec 2024 01:27:47 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:2fc6:5c45:ce54:e076? ([2a01:e0a:982:cbb0:2fc6:5c45:ce54:e076])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526b158sm55748325e9.8.2024.12.05.01.27.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 01:27:46 -0800 (PST)
+Message-ID: <2499c1b4-8cf7-4061-9cc8-d6c0c6aef0fb@linaro.org>
+Date: Thu, 5 Dec 2024 10:27:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/5] arm64: dts: qcom: sdm845-db845c-navigation-mezzanine:
+ fix ov7251 lane properties
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org>
+ <20241204-topic-misc-dt-fixes-v1-2-6d320b6454e6@linaro.org>
+ <vlvchjynnwvevr2raosrwggwmjd5bdrs5skbsztskmzxjjdg7v@6qkhrjyaxlsz>
+ <0c1f4e6a-a77b-46d1-b944-9eb47d66556d@linaro.org>
+ <cd754842-42f0-4938-b590-34ed7c4503c6@linaro.org>
+ <eb7fc499-d60f-4a3f-8279-1c9de19c2328@linaro.org>
+ <e9e8e34b-cd6a-41d8-a267-3b9336e3ca24@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <e9e8e34b-cd6a-41d8-a267-3b9336e3ca24@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024120517-bright-expire-955e@gregkh>
 
-On Thu, 05 Dec 2024, Greg KH wrote:
-
-> On Thu, Dec 05, 2024 at 08:38:48AM +0000, Lee Jones wrote:
-> > On Wed, 04 Dec 2024, Greg KH wrote:
-> > 
-> > > On Wed, Dec 04, 2024 at 05:46:25PM +0000, Lee Jones wrote:
-> > > > Expand the complexity of the sample driver by providing the ability to
-> > > > get and set an integer.  The value is protected by a mutex.
-> > > > 
-> > > > Here is a simple userspace program that fully exercises the sample
-> > > > driver's capabilities.
-> > > > 
-> > > > int main() {
-> > > >   int value, new_value;
-> > > >   int fd, ret;
-> > > > 
-> > > >   // Open the device file
-> > > >   printf("Opening /dev/rust-misc-device for reading and writing\n");
-> > > >   fd = open("/dev/rust-misc-device", O_RDWR);
-> > > >   if (fd < 0) {
-> > > >     perror("open");
-> > > >     return errno;
-> > > >   }
-> > > > 
-> > > >   // Make call into driver to say "hello"
-> > > >   printf("Calling Hello\n");
-> > > >   ret = ioctl(fd, RUST_MISC_DEV_HELLO, NULL);
-> > > >   if (ret < 0) {
-> > > >     perror("ioctl: Failed to call into Hello");
-> > > >     close(fd);
-> > > >     return errno;
-> > > >   }
-> > > > 
-> > > >   // Get initial value
-> > > >   printf("Fetching initial value\n");
-> > > >   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &value);
-> > > >   if (ret < 0) {
-> > > >     perror("ioctl: Failed to fetch the initial value");
-> > > >     close(fd);
-> > > >     return errno;
-> > > >   }
-> > > > 
-> > > >   value++;
-> > > > 
-> > > >   // Set value to something different
-> > > >   printf("Submitting new value (%d)\n", value);
-> > > >   ret = ioctl(fd, RUST_MISC_DEV_SET_VALUE, &value);
-> > > >   if (ret < 0) {
-> > > >     perror("ioctl: Failed to submit new value");
-> > > >     close(fd);
-> > > >     return errno;
-> > > >   }
-> > > > 
-> > > >   // Ensure new value was applied
-> > > >   printf("Fetching new value\n");
-> > > >   ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &new_value);
-> > > >   if (ret < 0) {
-> > > >     perror("ioctl: Failed to fetch the new value");
-> > > >     close(fd);
-> > > >     return errno;
-> > > >   }
-> > > > 
-> > > >   if (value != new_value) {
-> > > >     printf("Failed: Committed and retrieved values are different (%d - %d)\n", value, new_value);
-> > > >     close(fd);
-> > > >     return -1;
-> > > >   }
-> > > > 
-> > > >   // Call the unsuccessful ioctl
-> > > >   printf("Attempting to call in to an non-existent IOCTL\n");
-> > > >   ret = ioctl(fd, RUST_MISC_DEV_FAIL, NULL);
-> > > >   if (ret < 0) {
-> > > >     perror("ioctl: Succeeded to fail - this was expected");
-> > > >   } else {
-> > > >     printf("ioctl: Failed to fail\n");
-> > > >     close(fd);
-> > > >     return -1;
-> > > >   }
-> > > > 
-> > > >   // Close the device file
-> > > >   printf("Closing /dev/rust-misc-device\n");
-> > > >   close(fd);
-> > > > 
-> > > >   printf("Success\n");
-> > > >   return 0;
-> > > > }
-> > > > 
-> > > > Signed-off-by: Lee Jones <lee@kernel.org>
-> > > > ---
-> > > >  samples/rust/rust_misc_device.rs | 82 ++++++++++++++++++++++++--------
-> > > >  1 file changed, 62 insertions(+), 20 deletions(-)
-> > > > 
-> > > > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-> > > > index 5f1b69569ef7..9c041497d881 100644
-> > > > --- a/samples/rust/rust_misc_device.rs
-> > > > +++ b/samples/rust/rust_misc_device.rs
-> > > > @@ -2,13 +2,20 @@
-> > > >  
-> > > >  //! Rust misc device sample.
-> > > >  
-> > > > +use core::pin::Pin;
-> > > > +
-> > > >  use kernel::{
-> > > >      c_str,
-> > > > -    ioctl::_IO,
-> > > > +    ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
-> > > >      miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
-> > > > +    new_mutex,
-> > > >      prelude::*,
-> > > > +    sync::Mutex,
-> > > > +    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
-> > > >  };
-> > > >  
-> > > > +const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('R' as u32, 7);
-> > > > +const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('R' as u32, 8);
-> > > 
-> > > Shouldn't this be 'W'?
-> > 
-> > No, I don't think so.
-> > 
-> > 'W' doesn't mean 'write'.  It's supposed to be a unique identifier:
-> > 
-> > 'W'   00-1F  linux/watchdog.h                                        conflict!
-> > 'W'   00-1F  linux/wanrouter.h                                       conflict! (pre 3.9)
-> > 'W'   00-3F  sound/asound.h                                          conflict!
-> > 'W'   40-5F  drivers/pci/switch/switchtec.c
-> > 'W'   60-61  linux/watch_queue.h
-> > 
-> > 'R' isn't registered for this either:
-> > 
-> > 'R'   00-1F  linux/random.h                                          conflict!
-> > 'R'   01     linux/rfkill.h                                          conflict!
-> > 'R'   20-2F  linux/trace_mmap.h
-> > 'R'   C0-DF  net/bluetooth/rfcomm.h
-> > 'R'   E0     uapi/linux/fsl_mc.h
-> > 
-> > ... but since this is just example code with no real purpose, I'm going
-> > to hold short of registering a unique identifier for it.
+On 04/12/2024 14:30, Vladimir Zapolskiy wrote:
+> On 12/4/24 15:16, neil.armstrong@linaro.org wrote:
+>> On 04/12/2024 14:10, Vladimir Zapolskiy wrote:
+>>> On 12/4/24 14:16, Neil Armstrong wrote:
+>>>> On 04/12/2024 12:05, Dmitry Baryshkov wrote:
+>>>>> On Wed, Dec 04, 2024 at 11:56:54AM +0100, Neil Armstrong wrote:
+>>>>>> Bindings documents data-lanes as a single entry with a separate
+>>>>>> clock-lanes property, but DT uses 2 entries in data-lanes.
+>>>>>>
+>>>>>> This would suggest clock-lanes is missing, fix the DT using the
+>>>>>> bindings example.
+>>>>>>
+>>>>>> This fixes:
+>>>>>> sdm845-db845c-navigation-mezzanine.dtso: camera@60: port:endpoint:data-lanes: [0, 1] is too long
+>>>>>>      from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov7251.yaml#
+>>>>>>
+>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>>>> ---
+>>>>>>     arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso | 3 ++-
+>>>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+>>>>>> index 0a87df806cafc8e726aacc07a772ca478d0ee3df..5a16f4c2b346b314af3d614266e1ca034057e643 100644
+>>>>>> --- a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+>>>>>> +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+>>>>>> @@ -115,7 +115,8 @@ camera@60 {
+>>>>>>             port {
+>>>>>>                 ov7251_ep: endpoint {
+>>>>>> -                data-lanes = <0 1>;
+>>>>>> +                clock-lanes = <1>;
+>>>>>> +                data-lanes = <0>;
+>>>>>
+>>>>> Is it really this way or the other way around, clock = <0>, data = <1>?
+>>>>
+>>>> No idea actually, on the schematics the lanes from the DB845 are :
+>>>>
+>>>> CSI0_P/N -> OV7251_CSI3_LANE0_P/N -> MIPI_CSI3_LANE0_P -> SoC
+>>>> and
+>>>> CLKP/N -> OV7251_CSI3_CLK_P/N -> MIPI_CSI3_CLK_P/N -> SoC
+>>>>
+>>>> So I assume the data-lane is 0, for clock-lane I just used
+>>>> the example, but I found nothing in the code using those assignments
+>>>>
+>>>
+>>> It's a sensor property, and OV7251 sensor has the non-selectable clock lane.
+>>>
+>>> If it's technically acceptable, I would rather suggest to deprecate and
+>>> remove "clock-lanes" property and hard-code "data-lanes" value to <1>.
+>>
+>>
+>> Ok indeed while looking at the OV7251 sensor datasheet, there's a single
+>> fixed data lane and a single fixed clock lane, so on the sensor side we
+>> can't select anything but how would we define lane0 is used on the SoC side ?
 > 
-> Ah, sorry, I missed that this is the ioctl "name".  As the ptrace people
-> will complain, why not use a new one?  Ick, ioctl-number.rst is way out
-> of date, but I guess we should carve out one for "sample drivers, do not
-> use in anything real" use cases like here.
+> It's done right in the common way, there are clock-lanes and data-lanes
+> properties on the ISP endpoint side.
 
-I can carve one out for Samples.
+For the ov8856 yes, but in the current state the ov7251 endpoint is not
+connected to the csiphy3, so it's currently not usable and disabled,
+so I'd rather remove this node completely instead of fixing an
+untestable dtso.
 
-> > > > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
-> > > > +        let guard = self.inner.lock();
-> > > > +
-> > > > +        pr_info!("-> Copying data to userspace (value: {})\n", &guard.value);
-> > > > +
-> > > > +        writer.write::<i32>(&guard.value)?;
-> > > 
-> > > What happens if it fails, shouldn't your pr_info() happen after this?
-> > 
-> > If this fails, I need the line in the log to show where it failed.
+Neil
+
 > 
-> pr_info() doesn't show file lines from what I remember has that changed?
+>>>
+>>> By the way, this particular device tree bindings miss bus-type property,
+>>> it could be either MIPI or LVDS serial output.
+>>>
 > 
-> But wait, this is a misc device, you should be using dev_info() and
-> friends here, no pr_*() stuff please.
 
-Looks like no other Rust driver does this, so I would be the first.
-
-I need to figure out how to obtain Device data via these APIs.
-
-Can I put it on the subsequent work priority list _before_ read/write?
-
-> > It says "copying" as in "attempting to copy", rather than "copied".
-> 
-> Fair enough, but if the copy fails, nothing gets printed out, right?
-
-Not from the kernel, but userspace catches it without issue:
-
-  ioctl: Failed to submit new value: Bad address
-
-This does not appear to be common practice in kernel Rust.
-
-The commonly used ? operator seems to just propagate.
-
--- 
-Lee Jones [李琼斯]
 
