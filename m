@@ -1,58 +1,67 @@
-Return-Path: <linux-kernel+bounces-434030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33749E606F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:22:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F8F9E6069
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:22:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807732842F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0E616A786
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479E31C8FBA;
-	Thu,  5 Dec 2024 22:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7A71CDA14;
+	Thu,  5 Dec 2024 22:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="JMs95la5"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="askbjCWr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75D11CDFCE
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 22:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8BC1BBBF1;
+	Thu,  5 Dec 2024 22:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733437368; cv=none; b=LXNzdCBDeP0HKRjnVsTAyJCi81Ai5Ojs64hef2Ye+GXIW1StS8BTbSUK5jdB48Ssec5CbSrkxgBwJxTdgXWQgUS3pw+STPI/Q+b2iSqvW24bTWUoSi+0B83jtL7erZGbONACDhgj6dyoHKD8Ay0c+hFtbmwsUOA7nd8A6EdGUa8=
+	t=1733437332; cv=none; b=NouVG7UUc09h6oLgxw9x0zgsgUQLEY/ayTXOPE3Zd6Cy7LwWpIMAmUK5UQw5MK6e6bOTgPkyT6jtfcCNykuAwj9I1/1bUemxp8J40XdIRpmOKOVd8ZERy4GaJU5jvVZs4OhcTvN2W0JvFgWlXY1m2rpM9AzKiXCr4B7b3tm9uZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733437368; c=relaxed/simple;
-	bh=d8HrQDCVcr8oHaNUZbKI6K/ZXmZCBRKzc7jggl9VdZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eFv/cJQY6UMieQreFi44UKXYMxeiBdVjFxrOzOm4WV9fPwFU0eqyuqQz590ggVXOiNCyIeNT5f5ilp6Sni2wqMHefQBRSxto9ZQpTZZr6D98WLRsOL8+jRoUloAzOFZKnJt/uuPqUT3iLbAvvqGqQu70kgHtcwXIpjcphsdydEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=JMs95la5; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from localhost.localdomain (c-73-204-82-80.hsd1.fl.comcast.net [73.204.82.80])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 18DF31635A5;
-	Thu,  5 Dec 2024 23:22:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1733437357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nRLupu4JH3T/Yi2wqWYVCgOiaSoWVY88YqycFTyIcC8=;
-	b=JMs95la5pQkkJOReCW3H2l1LqAocxEaSOG6IgARZ3eXRUTC3pP+Al/VlAOOliE4Z8POnRI
-	1mBVM37srDjcrZbOfGrj3CWMudAh8aCfAITIrl8OAhDeJDTL2/Pd2yoR8m9Wz2qwdd8Sm/
-	pkMlF5ELHWGu2IMvLPnV44td654XnAg=
-From: David Heidelberg <david@ixit.cz>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Heidelberg <david@ixit.cz>,
-	Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] samples: add a sample list module
-Date: Thu,  5 Dec 2024 17:18:39 -0500
-Message-ID: <20241205221928.1155984-2-david@ixit.cz>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733437332; c=relaxed/simple;
+	bh=t82vRrD6unr/xrJVlts5wpsmomQrJ3XxRMWJ6iiZEKY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CnV44ioX1cK7Qq6MRtFQfIArAgFfW3oqyIcW9tM2BqSZfGLFdgTzv/3w44gQbb7HU80U9aa43IzFoaxMLzPwZ0e/SGoFeSm7fGlsC30POzygB5XxvfYpKwXxpkZXPn8HdOJGOo/d6llRtpNzQtDn2OLb0vBOqw7rtDM9dJvKJU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=askbjCWr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaNKh003810;
+	Thu, 5 Dec 2024 22:22:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=oEHKbVwkFtPhnMCvlskLSf
+	JguaxofIzLV8n80Bz4s3A=; b=askbjCWrU2O1LIIaqAlu8AfhvDOrgN79lRc0ws
+	NiTftRIylVa+d5ndiYHJ/cgu+FpY6kPhjr+A6R9/IP2xN5cHxAz62KLNZGFB1A/n
+	U0kFP8N/9kEvAj2DS8hLBTln3PYDkEb2vlfKnkW2zJtrMDB0FgPEkKgyuVhykBix
+	xQ1fKM/zIXJr8HiKWZUqUHPx8OlgXg8OmTonlQSQnjKj2VHF/J8JH9YNx4hFDbDI
+	6yWN05ThnOZJTcZDgktqcPbDy53uS+ben3EbZqH/8vHu8+HHjpL+zkrtySM2YeTO
+	LdtKmD4Rnbva2N+cKqrw/pOSqnzA41E+jkrSqHO4kuWj19Jw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm1hy2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 22:22:06 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5MM6OY028834
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 22:22:06 GMT
+Received: from hu-c-gdjako-lv.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Dec 2024 14:22:05 -0800
+From: Georgi Djakov <quic_c_gdjako@quicinc.com>
+To: <andersson@kernel.org>
+CC: <sboyd@kernel.org>, <mturquette@baylibre.com>, <quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <djakov@kernel.org>
+Subject: [PATCH v3] clk: qcom: gdsc: Add a flag to skip setting power collapse bits
+Date: Thu, 5 Dec 2024 14:21:56 -0800
+Message-ID: <20241205222156.1880299-1-quic_c_gdjako@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,206 +69,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UCQxtff08_J3EJV2FNb8Vu1hkXK5TRad
+X-Proofpoint-ORIG-GUID: UCQxtff08_J3EJV2FNb8Vu1hkXK5TRad
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050166
 
-Sample list module that creates a proc entry /proc/sample_list
-and registers read/write file operations.
+The sdm845 platforms have a hardware issue that requires keeping
+some of the MMNOC GDSCs in SW collapse mode (which is the power-on
+default). But if some driver tries to use these GDSCs and the mode
+is updated because of runtime pm calls, we may get a board hang.
+Introduce a flag to skip any updates to the power collapse settings
+for the impacted GDSCs to avoid unexpected board hangs.
 
-Each write to the proc will copy the buffer
-and store it in a data structure.
-
-Each read from the proc will populate the read buffer with
-list entries, up to the read length (buffer size).
-
-Signed-off-by: David Heidelberg <david@ixit.cz>
+Fixes: 7bb38c20f2b6 ("arm64: dts: qcom: sdm845: Add DT nodes for the TBUs")
+Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
+Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
 ---
-I would love to receive feedback on this list implementation approach.
-If there are any implementation mistakes, I am open to revising
-this sample to make it more accurate.
+v3:
+- No changes
 
- samples/Kconfig       |  13 +++++
- samples/Makefile      |   1 +
- samples/list/Makefile |   2 +
- samples/list/list.c   | 125 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 141 insertions(+)
- create mode 100644 samples/list/Makefile
- create mode 100644 samples/list/list.c
+v2: https://lore.kernel.org/r/20241009151657.1041691-1-quic_c_gdjako@quicinc.com/
+- Pick up Reviewed-by tag
+- Add Fixes tag
 
-diff --git ./samples/Kconfig ./samples/Kconfig
-index b288d9991d27..7bc9c2c85599 100644
---- ./samples/Kconfig
-+++ ./samples/Kconfig
-@@ -128,6 +128,19 @@ config SAMPLE_RPMSG_CLIENT
- 	  to communicate with an AMP-configured remote processor over
- 	  the rpmsg bus.
+v1: https://lore.kernel.org/r/20240813120015.3242787-1-quic_c_gdjako@quicinc.com/ 
+ drivers/clk/qcom/gcc-sdm845.c | 6 +++---
+ drivers/clk/qcom/gdsc.c       | 3 +++
+ drivers/clk/qcom/gdsc.h       | 1 +
+ 3 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index dc3aa7014c3e..019b780e31c8 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3503,7 +3503,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
  
-+config SAMPLE_LIST
-+	tristate "Build list implementation sample"
-+	depends on PROC_FS
-+	help
-+	  Build a sample list module that creates a proc entry
-+	  /proc/sample_list and registers read/write file operations.
-+
-+	  Each write to the proc will copy the buffer
-+	  and store it in a data structure.
-+
-+	  Each read from the proc will populate the read buffer with
-+	  list entries, up to the read length (buffer size).
-+
- config SAMPLE_LIVEPATCH
- 	tristate "Build live patching samples -- loadable modules only"
- 	depends on LIVEPATCH && m
-diff --git ./samples/Makefile ./samples/Makefile
-index b85fa64390c5..68158af60c96 100644
---- ./samples/Makefile
-+++ ./samples/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_SAMPLE_KFIFO)		+= kfifo/
- obj-$(CONFIG_SAMPLE_KOBJECT)		+= kobject/
- obj-$(CONFIG_SAMPLE_KPROBES)		+= kprobes/
- subdir-$(CONFIG_SAMPLE_LANDLOCK)	+= landlock
-+obj-$(CONFIG_SAMPLE_LIST)		+= list/
- obj-$(CONFIG_SAMPLE_LIVEPATCH)		+= livepatch/
- subdir-$(CONFIG_SAMPLE_PIDFD)		+= pidfd
- obj-$(CONFIG_SAMPLE_QMI_CLIENT)		+= qmi/
-diff --git ./samples/list/Makefile ./samples/list/Makefile
-new file mode 100644
-index 000000000000..8e77d97aaa9c
---- /dev/null
-+++ ./samples/list/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_SAMPLE_LIST) += list.o
-diff --git ./samples/list/list.c ./samples/list/list.c
-new file mode 100644
-index 000000000000..1db693ee65b3
---- /dev/null
-+++ ./samples/list/list.c
-@@ -0,0 +1,125 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * list.c - Kernel list sample code
-+ *
-+ * Copyright 2024 David Heidelberg <david@ixit.cz>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/proc_fs.h>
-+#include <linux/uaccess.h>
-+#include <linux/slab.h>
-+#include <linux/list.h>
-+
-+#define PROC_NAME "list_sample"
-+#define BUFFER_SIZE 128
-+
-+LIST_HEAD(data_list);
-+
-+struct data_node {
-+	struct list_head list;
-+	char data[BUFFER_SIZE];
-+};
-+
-+static struct proc_dir_entry *proc_entry;
-+
-+static ssize_t proc_write(struct file *file, const char __user *buffer, size_t count, loff_t *pos)
-+{
-+	struct data_node *new_node;
-+
-+	if (count >= BUFFER_SIZE)
-+		count = BUFFER_SIZE - 1;
-+
-+	new_node = kmalloc(sizeof(*new_node), GFP_KERNEL);
-+	if (!new_node)
-+		return -ENOMEM;
-+
-+	if (strncpy_from_user(new_node->data, buffer, count) < 0) {
-+		kfree(new_node);
-+		return -EFAULT;
-+	}
-+
-+	list_add_tail(&new_node->list, &data_list);
-+
-+	return count;
-+}
-+
-+/*
-+ * Several copy_to_user() is a bit less efficient
-+ * comparing to list_for_each_entry_safe, but makes code simpler.
-+ */
-+static ssize_t proc_read(struct file *file, char __user *buffer, size_t count, loff_t *pos)
-+{
-+	static struct list_head *start, *cur;
-+	struct data_node *node;
-+	size_t data_len, batch_len = 0;
-+	char temp_buf[2 * BUFFER_SIZE] = {0};
-+
-+	if (*pos == 0) {
-+		start = &data_list;
-+		cur = &data_list;
-+	}
-+
-+	if (*pos != 0 && cur->next == start)
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+@@ -3512,7 +3512,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+@@ -3521,7 +3521,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
+ 
+ static struct clk_regmap *gcc_sdm670_clocks[] = {
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index fa5fe4c2a2ee..4b83cec9137c 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -121,6 +121,9 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
+ 	u32 reg, mask;
+ 	int ret;
+ 
++	if (sc->flags & SKIP_SET_COLLAPSE)
 +		return 0;
 +
-+	if (list_empty(cur))
-+		return 0;
-+
-+	while (batch_len < BUFFER_SIZE) {
-+		node = list_entry(cur->next, struct data_node, list);
-+		data_len = snprintf(temp_buf + strlen(temp_buf),
-+				     BUFFER_SIZE - strlen(temp_buf),
-+				     "%s",
-+				     node->data);
-+		if (data_len + batch_len > BUFFER_SIZE)
-+			break;
-+
-+		batch_len += data_len;
-+
-+		cur = cur->next;
-+		if (cur->next == start)
-+			break;
-+	}
-+
-+	if (copy_to_user(buffer, temp_buf, batch_len))
-+		return -EFAULT;
-+
-+	*pos += batch_len;
-+
-+	return batch_len;
-+}
-+
-+static const struct proc_ops proc_fops = {
-+	.proc_read = proc_read,
-+	.proc_write = proc_write,
-+};
-+
-+static int __init list_sample_init(void)
-+{
-+	proc_entry = proc_create(PROC_NAME, 0666, NULL, &proc_fops);
-+	if (!proc_entry) {
-+		pr_err("Failed to create proc entry\n");
-+		return -ENOMEM;
-+	}
-+	return 0;
-+}
-+
-+static void __exit list_sample_exit(void)
-+{
-+	struct data_node *node, *tmp;
-+
-+	proc_remove(proc_entry);
-+
-+	list_for_each_entry_safe(node, tmp, &data_list, list) {
-+		list_del(&node->list);
-+		kfree(node);
-+	}
-+}
-+
-+module_init(list_sample_init);
-+module_exit(list_sample_exit);
-+
-+MODULE_AUTHOR("David Heidelberg");
-+MODULE_DESCRIPTION("List sample module.");
-+MODULE_LICENSE("GPL v2");
--- 
-2.45.2
-
+ 	if (sc->collapse_mask) {
+ 		reg = sc->collapse_ctrl;
+ 		mask = sc->collapse_mask;
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 1e2779b823d1..6bb7e023a19a 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -68,6 +68,7 @@ struct gdsc {
+ #define RETAIN_FF_ENABLE	BIT(7)
+ #define NO_RET_PERIPH	BIT(8)
+ #define HW_CTRL_TRIGGER	BIT(9)
++#define SKIP_SET_COLLAPSE	BIT(10)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
 
