@@ -1,107 +1,87 @@
-Return-Path: <linux-kernel+bounces-433196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F719E54FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:07:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E3A9E5500
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CCF16B514
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D291883DD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4200217F29;
-	Thu,  5 Dec 2024 12:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="L7WwuRrx"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44B4217F38;
+	Thu,  5 Dec 2024 12:07:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA7121772E;
-	Thu,  5 Dec 2024 12:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0652F21773E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400420; cv=none; b=TSZbs7h6h6qKnmVX3oRCmz8BWuJsag/6gzZHCskkWsF9m+Aioj3v5epwiHJ8fuUniOMqU7hf+JWzCyxEumBggL9efsLg9afef0PolHRALprX1fBDs2h1/v3EtX6KHnkUXqkMQQUgK2ZRa38jI5gyPCudIhoINg9XRFkPYnnXOBQ=
+	t=1733400425; cv=none; b=lVx/G2otB0Ght9JSB+3rTaokjf/3zUrnpukUcJxW6QtJoy+eNRu85Nyh68esTWwP1ZzXtUq0pLflzzkUHtTbDibqCQUANYIB+yYti0cWaG4vW7mMKdPjEeff3LCOOjg5Bhu90z8/9cRJ3KqIZ/s7q6bAgkoY4vAAbpFkn6dFzMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400420; c=relaxed/simple;
-	bh=xX0Aik4SOLFTwMZuxb3lrcgb4axgzJ9TEpW7q3u8JdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7XbIPx+Pc12OWHoFiH0yH5FafIBUmfeAfUcwDI4aPWxQUJh8Fo2Fg1RxZPgNxOdyD1PfgJv5tCJZb2t1b7O3E9H6mqt6jyhnvTZFYmWrarNW9+DF8udjEm8x/w1si7OOTlBldnEM6GAifXq9HPS57chvJmf858+StDqeqKxm/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=L7WwuRrx; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eBlrQvHGQKgw3f0hUAy1Tn1aB3Z0FysLF4SCWm+DmMA=; b=L7WwuRrxnVVePXoGkHYV2dckCy
-	me76cq9PzZve4IXx72VykMPBlw2MloWtD+Jt56Mhl40WL3PaQrZzY9BCmbcvdwiqbvcdNZCXSGrDa
-	zkVGoUTiT/1pKUPkCepa0bvYmLkxLtFlJ31EXwM7mMTdp3rty4GJg9YDFZNPy5YzaLtZ6PRRrPeMQ
-	A3cJvF7y0RjtcJsSRJO88c1RbIcoSn6Iq2A5GJk3eWwssJJrnT86GhEyMoRO644cmGGnuogRGxqmy
-	eZUM+qAJ17rfI+0Zf8PhlP5D2FA2N52i2QMDLVmm7PGd5uFg9Q4CuZMGUq0cHKlgDnEeyiZs4lbbc
-	4MsC1LWg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37060)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tJAd9-0004kg-2F;
-	Thu, 05 Dec 2024 12:06:52 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tJAd8-0006Wq-1H;
-	Thu, 05 Dec 2024 12:06:50 +0000
-Date: Thu, 5 Dec 2024 12:06:50 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v1 3/7] phy: replace bitwise flag definitions
- with BIT() macro
-Message-ID: <Z1GXWtZbJMgUq9zk@shell.armlinux.org.uk>
-References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
- <20241203075622.2452169-4-o.rempel@pengutronix.de>
- <Z1GWSwtWrUKPZBU7@shell.armlinux.org.uk>
+	s=arc-20240116; t=1733400425; c=relaxed/simple;
+	bh=MJjQKu0CodsYV8YjqvAvup5McixA/hVWjKjJBp/q42M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YZ88qwlmUM3R0N99d76WbhoMQcqd0xbiMjNX7d0nbkbPxebqeW9j4YtxZdzqobBQFFuE6lAbJFoKFN0KLQzCtTARtI/VvsX4/oAVVmK/SrgO9qfc5Sih17NlFX5kYqhOusLkgND0Sg0nxZyLS3BpBf/D0uwlYgS8pReKyhZ4UMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a77d56e862so6402125ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:07:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733400423; x=1734005223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GC/GpZTgVRZai2kRrfhnrQjwJw8Vad/oPzLTsFRt5t0=;
+        b=wzH1iFe0tCJ3uj2uK7xYBNM9HDqssOfbQWawZwj69c3W1+GIEp0UhW5QNV7Fa/4R6e
+         9VZ+3LfzQqdQ94z4nNQIXyC/lqMx6dy7tx1iQ7/fYi91EZ82F9V6ubawtGuxwJckMTIZ
+         yYHQLgRFXKVja/nAIi+LtPtkQNTt0sBTLzV9pmdI/C+X+P4EEW6KiYesKayevyBgLxCe
+         jJ+RRe771eYmKqH8fM2SH9GAfxwpVkMDpsIxEwS/bEHDBCIv9pwjV+kKHZWfu5WtOOWd
+         NDJyxRZe0hU7sbSbTyZAboXXvGPkKQyZ3DmY5OWE7vYMFQuHVspn+fYIW2tRH6IiJq5E
+         Mg6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXhGkiuVqRTkS2WltQJ5CiiWR5oVjFn5/aMXPjSd7w/49Lu9cWDy3mR07VuZ2SQ6beUYBowysO2gHX6AII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvOtm6V2VJbiWkdDjAnEiUk4keMuTK9ribYNs5cRvIo00dMubt
+	QWWcm/anoOVUKdSeSGPAZt5+1duNdgwGZATqpi8HPinHVhD5sCiDT8ha4TYhw0Ebp9xjKgQu87z
+	Jvw4ufXyqbEO2PVNKIme9ovTfo65BhJamPeWcty3MlnxUn2kqHbL26k4=
+X-Google-Smtp-Source: AGHT+IF2YhafkfrKTUvt5hT1eS8P8NVfvGiiXt2BspOMsCshI9Ras4qx1a/B7WPhMf72zrRnabdeU0xnsT44MEfZbKUbl6zj4J4G
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1GWSwtWrUKPZBU7@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-Received: by 2002:a05:6e02:1c86:b0:3a2:6cd7:3250 with SMTP id
+ e9e14a558f8ab-3a7f9a4856fmr118874955ab.10.1733400423207; Thu, 05 Dec 2024
+ 04:07:03 -0800 (PST)
+Date: Thu, 05 Dec 2024 04:07:03 -0800
+In-Reply-To: <tencent_A85875C576B566923DD537C696D037284B09@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67519767.050a0220.17bd51.009d.GAE@google.com>
+Subject: Re: [syzbot] [nilfs?] WARNING in nilfs_rmdir
+From: syzbot <syzbot+9260555647a5132edd48@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 12:02:19PM +0000, Russell King (Oracle) wrote:
-> On Tue, Dec 03, 2024 at 08:56:17AM +0100, Oleksij Rempel wrote:
-> > Convert the PHY flag definitions to use the BIT() macro instead of
-> > hexadecimal values. This improves readability and maintainability.
-> 
-> Maybe only readability. One can argue that changing them introduces the
-> possibility of conflicts when porting patches which adds maintenance
-> burden.
+Hello,
 
-Thinking a bit more about this, we can do much better to improve
-readability. The question that stands out right now is "but what
-are these flags used for?" and their definition doesn't make any
-hint.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-The PHY_* constants are for struct phy_driver.flags, and I think
-this needs to be documented. I think that's a much more important
-detail here that would massively improve readability way beyond
-simply changing them to be defined in terms of BIT().
+Reported-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
+Tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Tested on:
+
+commit:         22aa0501 nilfs2: drop the inode which has been removed
+git tree:       https://github.com/ea1davis/linux nilfs/syz_0163_v3
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a68020580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35f1fa828fe386c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
