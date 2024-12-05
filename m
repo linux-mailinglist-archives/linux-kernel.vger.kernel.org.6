@@ -1,177 +1,159 @@
-Return-Path: <linux-kernel+bounces-433917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648499E5EB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:23:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A3F9E5EBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FDD16C0B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:23:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332D01884D7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3044A229B2B;
-	Thu,  5 Dec 2024 19:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA1B22D4F6;
+	Thu,  5 Dec 2024 19:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="ERCK74Bw"
-Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCavIfJc"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AF6229B1A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 19:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27B2224B0F;
+	Thu,  5 Dec 2024 19:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733426595; cv=none; b=okkyCt9wVWZOfCLX9KdstmT7JJCrDDmvTxxoC/yi8ebiXzj0WovWZpynxBPAIsuoS678XMC7iOMw2OHmEya9aVF8bCv/cysufYMXskbHYPGiLLdVyONABINqYbYqnUC3ONacDmlHr8YSbeyXIxhE5xPS3iuTmH2MsjkHnWJnbx4=
+	t=1733426688; cv=none; b=E6176EEotUks7rQ0VNs3D9WpvcAFW4+RP9RFKkOukjDvkb9o/ECXycG8digBypwnRfoXhk4I/LfefnDGIZOqLcZPc2NOf4pRr8ysQm4Ph50e/TMucChryqeQXEP6oGOKJNZPObeXxtMAQb1FZd+Vya/hyV5QzqvbIDZ9rdd6vFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733426595; c=relaxed/simple;
-	bh=EiPLycQOzJwT/MD+t/r9bSSjNX3LgV0cmum8ro/HHYQ=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=MuEpaIcxGPNyNqEkRFVpxvGRCtAeiZO7jsml7mnr3NTOieBQm9ZP6U+l+KSCaXgIYP9urvpjJgUQNXpwHzrOHW+IgBG3vBt8tmXr+8Eqa84SkoKJfO3RRVYZ7pLmAjPHztKDI9Cp//ZVrRDxNTTvxStWKFl767T1NSUolxJwH4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=ERCK74Bw; arc=none smtp.client-ip=148.163.129.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
-Received: from dispatch1-us1.ppe-hosted.com (ip6-localhost [127.0.0.1])
-	by dispatch1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 0CA152AC469
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 19:23:06 +0000 (UTC)
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
-	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id D203028007D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 19:22:57 +0000 (UTC)
-Received: from [192.168.100.159] (unknown [50.251.239.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail3.candelatech.com (Postfix) with ESMTPSA id 6A28513C2B0
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 11:22:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 6A28513C2B0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-	s=default; t=1733426577;
-	bh=EiPLycQOzJwT/MD+t/r9bSSjNX3LgV0cmum8ro/HHYQ=;
-	h=Date:To:From:Subject:From;
-	b=ERCK74BwqGjHzm6hwmJ+OVpCJdWNyljS97UaCjFnKGKIs9Lt7izIk+8CyeHe44g3t
-	 oWzar+CpCPmV3DIrW+L4ByUbWFOQVDm56XL5rScx3FRCjF3HrjvLHoRz1fTiX/2+z0
-	 FCGQ7KFUT1N4S6FSv38comSJJJfZC4ZXJa/JpvZs=
-Message-ID: <75334977-be5c-08f5-b262-06e2633f4072@candelatech.com>
-Date: Thu, 5 Dec 2024 11:22:57 -0800
+	s=arc-20240116; t=1733426688; c=relaxed/simple;
+	bh=l+RkMx/mt1XUfqn55LLYS4opSUma14BDXGFBSwLsUBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CwivJ/QK0glYAJOjr2yCF2Mic9z3DGW0kAR7kPV+y4X1jQPJzFQ1mdL/uuBZiWp4R6ianhfCiiBZxt7aFwGrTbEPCcxjkAixO3Wt0mJ4ZGu1pZzyjQZERkoP4YzKIv74rJUFfsJCZlEJEMMw/LW2cbLAF2D2H8qJ18v4mel+LNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCavIfJc; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7258ed68cedso1291474b3a.1;
+        Thu, 05 Dec 2024 11:24:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733426685; x=1734031485; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mRE/vWdS/sITcvJvFYmfWqYzfyCATymJHAuKTqgkqno=;
+        b=LCavIfJca+fIq+GpC7K//992yhxVmnS8wYIq9sqY59zbpo5CC+NPXzFEG44UPk1uEB
+         ZbwIpinAixqaF9w+ddZ1F2XahrkyrTZ9Rw2AiPp2xwVvKhkNKNWVWd4MBCYOQalnPZMG
+         E3zP/R8aPAwu+XnuiAH9jSwwxW8BPMXTERIlAgfMHgD6cuMhljRZrm7yUpPZmrFO6w7J
+         TuBQ5+ds2L2rFYK8xnI0aZMMmmNXWyY/+dLN2Xz/COx8jD49LxewJqIb9vtQIgPRbSce
+         l3L++uIDaemKbd4wjWWLSH1N4oX9l4qMqyXYGmffyqllJYz6kFL+nt0fgiYyGPmVnT9j
+         nadw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733426685; x=1734031485;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mRE/vWdS/sITcvJvFYmfWqYzfyCATymJHAuKTqgkqno=;
+        b=EfB3Qp/OsLV4PFJnKIHU3JJ5pMGQHY4nxP9CyW+BCcwwX2yJK82V2OkpJTikFq0SL2
+         nsPARfzAEVw7Y17EywVoYu8lBi+jph0KzJ0MBmfnnHDUBZ59s5bGYhATdT0TiO0Upkzm
+         ODwmy0DeGpigZ3jc1WU/zlHv8IphL3buniau+8iysgh5+24J6mGNiY8b4Dh6K75RkWVj
+         DVszeojK39UrN63axJn2isUhLnUyXbhVhrtaVx7wBP8CDkmfE//Mu4pEcnJROMF7SZmY
+         yWRj3Q/KVTugvVpjjiU1kuvYXcpJ82+CTs8sp0/by8D2Ul2CzgDqmnuo2AGRqfkuh5Du
+         mL+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVqJO4BpyCmvxwaEYxZhxft88OVqF21IOuc24WlIIlK+imWDc5LF26Gz/cBMW6XS9YWJ+k=@vger.kernel.org, AJvYcCWToTTAcf5OZ6HRW0Qt+TcnMarDDnzD4R+y9TTI43pw5T4R0/HbKAQ52BmTdS/pvikNxoW8ymGIBVmvAs4g@vger.kernel.org, AJvYcCXXwnyWArx6GksqawCLq4kDE7qOpwl5b74RzUYcbfJ8QozWnt/DbolxYjreqimmxxZMkCfnTSYUDqbcHI0A7FHiHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyddBcR9j1o8YMenhn7w0uIaPfEjl9+Q/FtPVZBNYTU6OhPfns4
+	N1h+a6c4qNMBgqWavzXwNP5xqKKNwL++09gqfxhh/it05qAum+4=
+X-Gm-Gg: ASbGnctN3DntD5HgbXIeVVshHtOu7AekcTSd3ot17GMaadKzP5BjsuspgVxxLCb852d
+	32iA0FVkFECKMYe5PmiS+u8TjLoVs1D8l+7R04lxxPnX23QK3aDs7mXGAPUoMY8zHtoeQmI+iyw
+	C5uEwEUeKpKFSI4tU9WxGPNclxmijyj6GiDBw5JBeswzyoHdzkm8DoC22QxBC2dqsb5scxN/H+k
+	GJkeljCWNYOkfh5jKpTLVlqGE6MeDYrSPbicuy9vPFe9kQCFA==
+X-Google-Smtp-Source: AGHT+IEzCAH8rLJ0RnV8vk4K1vZD/GPkH620EnuCRv2+8uXr1ofdsYqkiy80sCazZwd6Gwc+d/9pvw==
+X-Received: by 2002:a05:6a00:189c:b0:725:8c57:5969 with SMTP id d2e1a72fcca58-725b8178a9emr589258b3a.19.1733426684801;
+        Thu, 05 Dec 2024 11:24:44 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29c5719sm1648755b3a.27.2024.12.05.11.24.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 11:24:44 -0800 (PST)
+Date: Thu, 5 Dec 2024 11:24:43 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Nick Terrell <terrelln@fb.com>, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bpftool: Fix failure with static linkage
+Message-ID: <Z1H9-9xrWM4FBbNI@mini-arch>
+References: <20241204213059.2792453-1-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: LKML <linux-kernel@vger.kernel.org>
-From: Ben Greear <greearb@candelatech.com>
-Subject: 6.13.0-rc1+: __asan_memcpy crash loading module on boot.
-Organization: Candela Technologies
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MDID: 1733426578-BYmdyrvU8yaG
-X-MDID-O:
- us5;ut7;1733426578;BYmdyrvU8yaG;<greearb@candelatech.com>;c71d53d8b4bf163c84f4470b0e4d7294
-X-PPE-TRUSTED: V=1;DIR=OUT;
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241204213059.2792453-1-leo.yan@arm.com>
 
-Hello,
+On 12/04, Leo Yan wrote:
+> When building perf with static linkage:
+> 
+>   make O=/build LDFLAGS="-static" -C tools/perf VF=1 DEBUG=1
+>   ...
+>   LINK    /build/util/bpf_skel/.tmp/bootstrap/bpftool
+>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_compress':
+>   (.text+0x113): undefined reference to `ZSTD_createCCtx'
+>   /usr/bin/ld: (.text+0x2a9): undefined reference to `ZSTD_compressStream2'
+>   /usr/bin/ld: (.text+0x2b4): undefined reference to `ZSTD_isError'
+>   /usr/bin/ld: (.text+0x2db): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x5a0): undefined reference to `ZSTD_compressStream2'
+>   /usr/bin/ld: (.text+0x5ab): undefined reference to `ZSTD_isError'
+>   /usr/bin/ld: (.text+0x6b9): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x835): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x86f): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0x91b): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: (.text+0xa12): undefined reference to `ZSTD_freeCCtx'
+>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress':
+>   (.text+0xbfc): undefined reference to `ZSTD_decompress'
+>   /usr/bin/ld: (.text+0xc04): undefined reference to `ZSTD_isError'
+>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress_elf':
+>   (.text+0xd45): undefined reference to `ZSTD_decompress'
+>   /usr/bin/ld: (.text+0xd4d): undefined reference to `ZSTD_isError'
+>   collect2: error: ld returned 1 exit status
+> 
+> Building bpftool with static linkage also fails with the same errors:
+> 
+>   make O=/build -C tools/bpf/bpftool/ V=1
+> 
+> To fix the issue, explicitly link libzstd.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/bpf/bpftool/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
+> index a4263dfb5e03..65b2671941e0 100644
+> --- a/tools/bpf/bpftool/Makefile
+> +++ b/tools/bpf/bpftool/Makefile
+> @@ -130,8 +130,8 @@ include $(FEATURES_DUMP)
+>  endif
+>  endif
+>  
+> -LIBS = $(LIBBPF) -lelf -lz
+> -LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz
+> +LIBS = $(LIBBPF) -lelf -lz -lzstd
+> +LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz -lzstd
+>  ifeq ($(feature-libcap), 1)
+>  CFLAGS += -DUSE_LIBCAP
+>  LIBS += -lcap
+> -- 
+> 2.34.1
+> 
 
-I pulled and built a kernel today, with no local modifications.
-It is in continuous reboot, crashing like this below.  I'm curious if
-this is a known issue.
-
-BUG: unable to handle page fault for address: fffffbfff4041000
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 44d0e7067 P4D 44d0e7067 PUD 44d0e3067 PMD 10bb01067 PTE 0
-Oops: Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 7 UID: 0 PID: 327 Comm: systemd-udevd Not tainted 6.13.0-rc1+ #3
-Hardware name: Default string Default string/SKYBAY, BIOS 5.12 02/15/2023
-RIP: 0010:kasan_check_range+0xa5/0x190
-Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 ce 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 d0 0f 84 b29
-RSP: 0018:ffff88812c24f980 EFLAGS: 00010206
-RAX: fffffbfff4041000 RBX: fffffbfff404101e RCX: ffffffff814f30d6
-[  OK  DX: fffffbfff4041018 RSI: 00000000000000f0 RDI: ffffffffa0208000
-0m] Finished BP: fffffbfff4041000 R08: 0000000000000001 R09: fffffbfff404101d
-;1;39msystemd-udR10: ffffffffa02080ef R11: 0000000000000003 R12: ffffffffa0208000
-ev-trig�…e R13: ffffc90000dac930 R14: ffffc90000dac950 R15: dffffc0000000000
-- Coldplug All uFS:  00007f46b51deb40(0000) GS:ffff88841dd80000(0000) knlGS:0000000000000000
-dev Devices.
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffbfff4041000 CR3: 000000012c201006 CR4: 00000000003706f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <TASK>
-  ? __die+0x1f/0x60
-  ? page_fault_oops+0x258/0x910
-  ? dump_pagetable+0x690/0x690
-  ? search_bpf_extables+0x22/0x250
-  ? show_ldttss+0x230/0x230
-  ? search_bpf_extables+0x164/0x250
-  ? kasan_check_range+0xa5/0x190
-  ? fixup_exception+0x4d/0xc70
-  ? exc_page_fault+0xe1/0xf0
-  ? asm_exc_page_fault+0x22/0x30
-  ? load_module+0x3c46/0x8680
-  ? kasan_check_range+0xa5/0x190
-  __asan_memcpy+0x38/0x60
-  load_module+0x3c46/0x8680
-  ? __kernel_read+0x2a0/0x9f0
-  ? module_frob_arch_sections+0x30/0x30
-  ? lockdep_lock+0xbe/0x1b0
-  ? rw_verify_area+0x18d/0x5e0
-  ? kernel_read_file+0x246/0x870
-  ? __x64_sys_fspick+0x290/0x290
-  ? init_module_from_file+0xd1/0x130
-  init_module_from_file+0xd1/0x130
-  ? __ia32_sys_init_module+0xa0/0xa0
-  ? lock_acquire+0x2d/0xb0
-  ? idempotent_init_module+0x10d/0x780
-  ? do_raw_spin_unlock+0x54/0x220
-  idempotent_init_module+0x21d/0x780
-  ? init_module_from_file+0x130/0x130
-  ? __fget_files+0x1a5/0x2d0
-  __x64_sys_finit_module+0xbe/0x130
-  do_syscall_64+0x69/0x160
-  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-RIP: 0033:0x7f46b5dab27d
-Code: 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 248
-RSP: 002b:00007ffdec622ae8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-RAX: ffffffffffffffda RBX: 000055ad173f7950 RCX: 00007f46b5dab27d
-RDX: 0000000000000000 RSI: 00007f46b5f1143c RDI: 0000000000000006
-RBP: 00007f46b5f1143c R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000020000
-R13: 000055ad173d0bb0 R14: 0000000000000000 R15: 000055ad173dab30
-  </TASK>
-Modules linked in:
-CR2: fffffbfff4041000
----[ end trace 0000000000000000 ]---
-BUG: unable to handle page fault for address: fffffbfff404101e
-RIP: 0010:kasan_check_range+0xa5/0x190
-#PF: supervisor read access in kernel mode
-
-I'm not using module compression, and can share full .config and/or lsmod from
-an earlier kernel if that is helpful.
-
-[root@ben-dt5 linux-linux.x64-dbg]# grep MODULE .config
-CONFIG_MODULES_USE_ELF_RELA=y
-CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
-CONFIG_STRICT_MODULE_RWX=y
-CONFIG_MODULES=y
-# CONFIG_MODULE_DEBUG is not set
-# CONFIG_MODULE_FORCE_LOAD is not set
-CONFIG_MODULE_UNLOAD=y
-# CONFIG_MODULE_FORCE_UNLOAD is not set
-# CONFIG_MODULE_UNLOAD_TAINT_TRACKING is not set
-CONFIG_MODULE_SRCVERSION_ALL=y
-# CONFIG_MODULE_SIG is not set
-# CONFIG_MODULE_COMPRESS is not set
-# CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS is not set
-CONFIG_MODULES_TREE_LOOKUP=y
-
-Thanks,
-Ben
-
--- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
-
+I'm not sure we 'offically' support -static builds, but this seems to be
+ok. Tangential: maybe time to switch to pkg-config for bpftool? IIRC,
+there is some flag to query for static lib dependencies... Will leave
+it up to Quentin.
 
