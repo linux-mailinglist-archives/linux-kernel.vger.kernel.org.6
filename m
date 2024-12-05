@@ -1,132 +1,79 @@
-Return-Path: <linux-kernel+bounces-433872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988D39E5E2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB2C9E5E2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC75B16D501
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:22:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997551697F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B107222D4CD;
-	Thu,  5 Dec 2024 18:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC867227B82;
+	Thu,  5 Dec 2024 18:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TFTT9GLY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bf+lT9dQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7895F22B8DE;
-	Thu,  5 Dec 2024 18:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25233221461;
+	Thu,  5 Dec 2024 18:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733422901; cv=none; b=aM15IOGN9Abi3Ia22gFbNVDithMNIoIz0oJ5mWNAZawhxF5vFCrH8AVGDEAcAf7NdBW2gFX2Lca3hkei3WiWNmDyL0ygohyXpY/u3DXq8W6lrz51oWbOEa6DIe61JGeJ1LRR+tS9DHCL6Kiyeo28l7JFNqtmQbsNUzorslUo+rM=
+	t=1733422887; cv=none; b=iXY3SbKg8ZNR3fV2bFQuG3PlbpcFU8QtMUQR1TjzVrOdoNrAByNKgnzRpmBrJpknmUhMLAXgLdfGOGRASRH0lSh0FzNTPSI7tPDbufdc6t0xldo/9G0ZQa+Fl8u7ngYLFN7wVL+Q1t/oALqM71FhcbIEMHc1rVAbfW07NgLBnMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733422901; c=relaxed/simple;
-	bh=XwR2cNJ9uBLrIjtNgqSrHPSpCb0eM4TauolHDDDSVFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=C8eQ1Z+Cq1TFQoH+JUmk2NEL4LDOAqG3JNMw9CCsYUlBNsUiXY6CpqYH883URZLpvjX9MfNKq4N2ap6LRfFukLFqR2g7rQZOFdeS+L1X5fRH8wi/0dLPtQuRpz8GNvshgC0c2dfu+IEz24WmLicKRHZ2iPdryDYUsmUdCLNemgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TFTT9GLY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaVIu004765;
-	Thu, 5 Dec 2024 18:21:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	acODbYzobAE0Dphz+eIe7GNwKUbyyVbd5QQ9b93IuCo=; b=TFTT9GLYoYB8Q8zu
-	SwsYwzmufsh74OYvxdkJb3YTTlm0ZcP0E5iy9gsMvlgXu34BtwI7ZF7gUSsdfjhW
-	hpv+4cSfZH1DizSRxr4QX78TWBvAwQnZgw4bhtAhN1rjypqVWqbdkFmiHkffauks
-	ef9TMz62pdeFMBQj0CPPGgOg6Gcd6B6Nr2DVgVVMiRMvis2OPbqjDh9rzxzGwVw7
-	3r6rwXP/4CRdI3WihSjvodZF/2pSZJ5pIDABx+54mGgHEAxdJxDEcpXq+cl9WK/7
-	ro5azyjEKoiiu6yVN9EnWwsPB9+hl1MYxUv4F0+yDgVxA+UbIKLWb1JHFkabalbD
-	rBr6ng==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3faye8a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 18:21:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5ILV2P015058
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 18:21:31 GMT
-Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 10:21:31 -0800
-Message-ID: <79e55e6e-e560-4f43-8d6e-bbaf7fcf157a@quicinc.com>
-Date: Thu, 5 Dec 2024 10:21:31 -0800
+	s=arc-20240116; t=1733422887; c=relaxed/simple;
+	bh=PJZVeD+ssPQp/USs52Rsa/YED330gBkVqJHrAaCyIwM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bf+sCtRIeOtJLyGgw15U95Ub+sYXTZ34tmkjz0tHz62cnH4mjeyoK0d/gqcUBqt95SURslHK/CBDsfHMWCFtOs8u4P2Gx8v5r+VUi1dCXR90WB7wvlgRWh+8ZJ8jFRMBRn8nNZbsfa9ewyltEQH1KSGMnGkNcZQv/t05bDvD3XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bf+lT9dQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0775C4CED1;
+	Thu,  5 Dec 2024 18:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733422887;
+	bh=PJZVeD+ssPQp/USs52Rsa/YED330gBkVqJHrAaCyIwM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Bf+lT9dQoiVJkmFYLM2ozTpwSGQVXH9Kv4MBSCV0h25tkrZs4ydDt/yX/EifT6RA8
+	 ak7hL2DLeVgw6I6q48jo5eitPWiRa2jCacvhk436XY0o2LEBpRIhhkTmVzu8DMmzSG
+	 3tcB0TK2ybuYUbsH4TfW5cb+aucyeSN0CTcpMmscgj501jLubv5Hy7iK1CmYGlT9ty
+	 DfaGyknvkL+kDfvBKVeMcUh5lxTMn/LdKVhfLNFBZ+T8vDqxSpRqg2V9pmO7fakm3S
+	 p70Ej6uTYifjQ6+Drwg8v1YYQDdikM8az7yGCVJio2P+F4TysTPUoTN51Pd2LZqCht
+	 2vK2BQ4+FclzA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBD72380A951;
+	Thu,  5 Dec 2024 18:21:42 +0000 (UTC)
+Subject: Re: [GIT PULL REQUEST] watchdog - v6.13 release cycle.
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241202181849.GA5357@www.linux-watchdog.org>
+References: <20241202181849.GA5357@www.linux-watchdog.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241202181849.GA5357@www.linux-watchdog.org>
+X-PR-Tracked-Remote: git://www.linux-watchdog.org/linux-watchdog.git linux-watchdog-6.13-rc1
+X-PR-Tracked-Commit-Id: 4962ee045d8f06638714d801ab0fb72f89c16690
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 42d52acfb10cfc53139a1139e1c401a52c3f924c
+Message-Id: <173342290164.2016621.8697383979949097855.pr-tracker-bot@kernel.org>
+Date: Thu, 05 Dec 2024 18:21:41 +0000
+To: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Alexander Sverdlin <alexander.sverdlin@siemens.com>, Animesh Agarwal <animeshagarwal28@gmail.com>, Byoungtae Cho <bt.cho@samsung.com>, Christian Marangi <ansuelsmth@gmail.com>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Colin Ian King <colin.i.king@gmail.com>, Fabio Estevam <festevam@denx.de>, Harini T <harini.t@amd.com>, James Hilliard <james.hilliard1@gmail.com>, Jean Delvare <jdelvare@suse.de>, lijuang <quic_lijuang@quicinc.com>, Marek Vasut <marex@denx.de>, Nick Chan <towinchenmi@gmail.com>, Oleksandr Ocheretnyi <oocheret@cisco.com>, Peter Griffin <peter.griffin@linaro.org>, Rosen Penev <rosenp@gmail.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Xingyu Wu <xingyu.wu@star
+ fivetech.com>, Xin Liu <quic_liuxin@quicinc.com>, Yan Zhen <yanzhen@vivo.com>, Yassine Oudjana <y.oudjana@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] arm64: dts: qcom: Add board dts files for SM8750
- MTP and QRD
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241204-sm8750_master_dt-v3-0-4d5a8269950b@quicinc.com>
- <20241204-sm8750_master_dt-v3-6-4d5a8269950b@quicinc.com>
- <b9225284-7830-4aa4-aed2-7f58fb7320e8@oss.qualcomm.com>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <b9225284-7830-4aa4-aed2-7f58fb7320e8@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Ra41wQQj1CLGgFRpQ-gtTLDBKbtBTp6f
-X-Proofpoint-GUID: Ra41wQQj1CLGgFRpQ-gtTLDBKbtBTp6f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- spamscore=0 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=732
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050135
 
+The pull request you sent on Mon, 2 Dec 2024 19:18:49 +0100:
 
+> git://www.linux-watchdog.org/linux-watchdog.git linux-watchdog-6.13-rc1
 
-On 12/5/2024 8:45 AM, Konrad Dybcio wrote:
-> On 5.12.2024 12:18 AM, Melody Olvera wrote:
->> Add MTP and QRD dts files for SM8750 describing board clocks, regulators,
->> gpio keys, etc.
->>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
-> [...]
->
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->
->> +&tlmm {
->> +	/* reserved for secure world */
->> +	gpio-reserved-ranges = <36 4>, <74 1>;
->> +};
-> Any chance you could describe what those specifically are?
->
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/42d52acfb10cfc53139a1139e1c401a52c3f924c
 
-I'm not too certain, and even if I was, I'm not certain I'd be at 
-liberty to say.
+Thank you!
 
-Thanks,
-Melody
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
