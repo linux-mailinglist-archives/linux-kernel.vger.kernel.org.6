@@ -1,263 +1,137 @@
-Return-Path: <linux-kernel+bounces-433827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8949E5D98
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB689E5DA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D7D165C51
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:46:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61453165B7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E142922576B;
-	Thu,  5 Dec 2024 17:46:44 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EF4229B1B;
+	Thu,  5 Dec 2024 17:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FZXEghZN"
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7786B218E98;
-	Thu,  5 Dec 2024 17:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5549B225796;
+	Thu,  5 Dec 2024 17:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420804; cv=none; b=Lmdx5WKvWW/rd2RpxzNo450RS5CQ1KwuMQJTMNbdKsZr6OjoSVz8U3HSBMLcCgfpEZk/BzDWRQh1zuOCtlRP9jsYuUk/3845vyVTMo8NoRWg3fDqV3Tne3HcYI2bX9P2JFF0DO7KT4x9eFUHM0xKKqffW8hDVU60yAVHZvjRQIo=
+	t=1733420914; cv=none; b=UqEV0n7fg9AJvRYy72r/iYpgd63hoGOuNVXTAHVDCWNcMObPEOXmA7ubwBLdcfHTWBfwk0p0rha1+15PyPjSJCNpJTC0UqDTlfr8jZ7Vkq7yA/JtH2QCjXR767bcFvLV1HFvfQFoKSiADQ0I6fHJNn8VR/GwaRDaTgy0rT6qEGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420804; c=relaxed/simple;
-	bh=1GB7GH1J9M+3yZmb5D+sIaRJ5z6tUwPPtG6cgVQchio=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BUvmIqpPib/4IUJFGYN/VSIoSAsiVJbkzM8/MFVRFVn393vrNH7+jTSK+z0cId9YGrM70KtZMRmx2AdJOFn2Ng/2mUB+xYT/U8GmINqKM7x/T5933U8Z1+F/GSzRI+ZxPWADDAOCYiA8niT1wVlkkcRZGN6bdNwAoHB0gLt+W5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A19C4CED1;
-	Thu,  5 Dec 2024 17:46:39 +0000 (UTC)
-Date: Thu, 5 Dec 2024 12:46:45 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-Cc: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
- <gourry@gourry.net>, <nehagholkar@meta.com>, <abhishekd@meta.com>,
- <david@redhat.com>, <ying.huang@intel.com>, <nphamcs@gmail.com>,
- <akpm@linux-foundation.org>, <hannes@cmpxchg.org>, <feng.tang@intel.com>,
- <kbusch@meta.com>, <bharata@amd.com>, <Hasan.Maruf@amd.com>,
- <sj@kernel.org>, <willy@infradead.org>, <kirill.shutemov@linux.intel.com>,
- <mgorman@techsingularity.net>, <vbabka@suse.cz>, <hughd@google.com>,
- <rientjes@google.com>, <shy828301@gmail.com>, <Liam.Howlett@Oracle.com>,
- <peterz@infradead.org>, <mingo@redhat.com>, "Masami Hiramatsu"
- <mhiramat@kernel.org>, <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH V0 09/10] trace/kmmscand: Add tracing of scanning
- and migration
-Message-ID: <20241205124645.0d56ea57@gandalf.local.home>
-In-Reply-To: <20241201153818.2633616-10-raghavendra.kt@amd.com>
-References: <20241201153818.2633616-1-raghavendra.kt@amd.com>
-	<20241201153818.2633616-10-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733420914; c=relaxed/simple;
+	bh=91fE6MXNHvHfTG8mh42aiRrYkN/U3yVGkH6W8pDMPgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvog0xULo013BtzV1N7eYoWAx5Ro2ypqWjyvl6EyIVscKmIN/dqJ8lw4RvhomJdo5e9UIE5Q+Je0E42J6NXlVp3lCHZ9vif88FXNES3wlIZahzCsfCunD4tKByz+cQuvzp09FEj8PJT6YBu8JmSFFk8eUq0bv9UcRFfK7cK8Fz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FZXEghZN; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y421P2SvXzsD9;
+	Thu,  5 Dec 2024 18:48:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733420905;
+	bh=hi8ArFvU5BqDG4ro/0Wsd51wN4Jn9lVCsIY7xuWXd78=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FZXEghZNBtryfZ3By/HdncgyfMjMG6/IaRrt2aBigqjpfhCNpFUd6XYRogo64//U5
+	 eJf58QkPnXAFRQyM9ddrm1fZlwvD0JGAUPqJiD1Htq5+dY2jtQaTdOg30X2zv7/z8h
+	 +mwr1hKKufgXPBvsjArOPk5itV9+b7tcdWmXjwKA=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y421H5gBtzG4R;
+	Thu,  5 Dec 2024 18:48:19 +0100 (CET)
+Date: Thu, 5 Dec 2024 18:48:17 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>
+Cc: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v22 0/8] Script execution control (was O_MAYEXEC)
+Message-ID: <20241205.ohw5cohsee8A@digikod.net>
+References: <20241205160925.230119-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241205160925.230119-1-mic@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Sun, 1 Dec 2024 15:38:17 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
-
-> Add tracing support to track
->  - start and end of scanning.
->  - migration.
+On Thu, Dec 05, 2024 at 05:09:17PM +0100, Mickaël Salaün wrote:
+> Hi,
 > 
-> CC: Steven Rostedt <rostedt@goodmis.org>
-> CC: Masami Hiramatsu <mhiramat@kernel.org>
-> CC: linux-trace-kernel@vger.kernel.org
+> The goal of this patch series is to be able to ensure that direct file
+> execution (e.g. ./script.sh) and indirect file execution (e.g. sh
+> script.sh) lead to the same result, especially from a security point of
+> view.
 > 
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
-> ---
->  include/trace/events/kmem.h | 99 +++++++++++++++++++++++++++++++++++++
->  mm/kmmscand.c               | 12 ++++-
->  2 files changed, 110 insertions(+), 1 deletion(-)
+> The main changes from the previous version are the IMA patch to properly
+> log access check requests with audit, removal of audit change, an
+> extended documentation for tailored distros, a rebase on v6.13-rc1, and
+> some minor cosmetic changes.
 > 
-> diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-> index b37eb0a7060f..80978d85300d 100644
-> --- a/include/trace/events/kmem.h
-> +++ b/include/trace/events/kmem.h
-> @@ -9,6 +9,105 @@
->  #include <linux/tracepoint.h>
->  #include <trace/events/mmflags.h>
->  
-> +TRACE_EVENT(kmem_mm_enter,
-> +
-> +	TP_PROTO(struct task_struct *t,
-> +		 struct mm_struct *mm),
-> +
-> +	TP_ARGS(t, mm),
-> +
-> +	TP_STRUCT__entry(
-> +		__array(	char, comm, TASK_COMM_LEN	)
+> The current status is summarized in this article:
+> https://lwn.net/Articles/982085/
+> I also gave a talk at LPC last month:
+> https://lpc.events/event/18/contributions/1692/
+> And here is a proof of concept for Python (for now, for the previous
+> version: v19): https://github.com/zooba/spython/pull/12
+> 
+> Kees, would you like to take this series in your tree?
 
-Is there a reason to record "comm"? There's other ways to retrieve it than
-to always write it to the ring buffer.
+> 
+> Previous versions
+> -----------------
+> 
 
-> +		__field(	struct mm_struct *, mm		)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-> +		__entry->mm = mm;
-> +	),
-> +
-> +	TP_printk("kmmscand: mm_enter comm =%s mm=%p", __entry->comm, __entry->mm)
-> +);
-> +
-> +TRACE_EVENT(kmem_scan_mm_start,
-> +
-> +	TP_PROTO(struct task_struct *t,
-> +		 struct mm_struct *mm),
-> +
-> +	TP_ARGS(t, mm),
-> +
-> +	TP_STRUCT__entry(
-> +		__array(	char, comm, TASK_COMM_LEN	)
-> +		__field(	struct mm_struct *, mm		)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-> +		__entry->mm = mm;
-> +	),
-> +
-> +	TP_printk("kmmscand: scan_mm_start comm =%s mm=%p", __entry->comm, __entry->mm)
+v21: https://lore.kernel.org/r/20241112191858.162021-1-mic@digikod.net
 
-No need to write the event name into the TP_printk(). That's redundant.
-
-Also, the above two events are pretty much identical. Please use
-DECLARE_EVENT_CLASS().
-
-> +);
-> +
-> +TRACE_EVENT(kmem_scan_mm_end,
-> +
-> +	TP_PROTO(struct task_struct *t,
-> +		 struct mm_struct *mm,
-> +		 unsigned long start,
-> +		 unsigned long total,
-> +		 unsigned long scan_size,
-> +		 unsigned long scan_period),
-> +
-> +	TP_ARGS(t, mm, start, total, scan_period, scan_size),
-> +
-> +	TP_STRUCT__entry(
-> +		__array(	char, comm, TASK_COMM_LEN	)
-
-Again, why comm?
-
-> +		__field(	struct mm_struct *, mm		)
-> +		__field(	unsigned long,   start		)
-> +		__field(	unsigned long,   total		)
-> +		__field(	unsigned long,   scan_period	)
-> +		__field(	unsigned long,   scan_size	)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-> +		__entry->mm = mm;
-> +		__entry->start = start;
-> +		__entry->total = total;
-> +		__entry->scan_period = scan_period;
-> +		__entry->scan_size = scan_size;
-> +	),
-> +
-> +	TP_printk("kmmscand: scan_mm_end comm =%s mm=%p, start = %ld, total = %ld, scan_period = %ld, scan_size = %ld",
-> +			__entry->comm, __entry->mm, __entry->start,
-> +			__entry->total, __entry->scan_period, __entry->scan_size)
-> +);
-> +
-> +TRACE_EVENT(kmem_scan_mm_migrate,
-> +
-> +	TP_PROTO(struct task_struct *t,
-> +		 struct mm_struct *mm,
-> +		 int rc),
-> +
-> +	TP_ARGS(t, mm, rc),
-> +
-> +	TP_STRUCT__entry(
-> +		__array(	char, comm, TASK_COMM_LEN	)
-> +		__field(	struct mm_struct *, mm		)
-> +		__field(	int,   rc			)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-> +		__entry->mm = mm;
-> +		__entry->rc = rc;
-> +	),
-> +
-> +	TP_printk("kmmscand: scan_mm_migrate comm =%s mm=%p rc=%d", __entry->comm,
-> +			__entry->mm, __entry->rc)
-> +);
-> +
-> +
->  TRACE_EVENT(kmem_cache_alloc,
->  
->  	TP_PROTO(unsigned long call_site,
-> diff --git a/mm/kmmscand.c b/mm/kmmscand.c
-> index 682c0523c0b4..70f588a210dd 100644
-> --- a/mm/kmmscand.c
-> +++ b/mm/kmmscand.c
-> @@ -668,8 +668,10 @@ static void kmmscand_migrate_folio(void)
->  			WRITE_ONCE(kmmscand_cur_migrate_mm, info->mm);
->  			spin_unlock(&kmmscand_migrate_lock);
->  
-> -			if (info->mm)
-> +			if (info->mm) {
->  				ret = kmmscand_promote_folio(info);
-> +				trace_kmem_scan_mm_migrate(info->mm->owner, info->mm, ret);
-> +			}
->  
->  			/* TBD: encode migrated count here, currently assume folio_nr_pages */
->  			if (!ret)
-> @@ -828,6 +830,9 @@ static unsigned long kmmscand_scan_mm_slot(void)
->  		goto outerloop;
->  	}
->  
-> +	if (mm->owner)
-> +		trace_kmem_scan_mm_start(mm->owner, mm);
-> +
->  	now = jiffies;
->  	/*
->  	 * Dont scan if :
-> @@ -868,6 +873,10 @@ static unsigned long kmmscand_scan_mm_slot(void)
->  
->  	update_mmslot_info = true;
->  
-> +	if (mm->owner)
-> +		trace_kmem_scan_mm_end(mm->owner, mm, address, total,
-> +					mm_slot_scan_period, mm_slot_scan_size);
-
-Please do not add conditions that is used just for calling a tracepoint.
-That takes away the "nop" of the function. You can either use
-TRACE_EVENT_CONDITION() or DEFINE_EVENT_CONDITION(), or you can hard code
-it here:
-
-	if (trace_kmem_scan_mm_end_enabled()) {
-		if (mm->owner)
-			trace_kmem_scan_mm_end(mm->owner, mm, address, total,
-						mm_slot_scan_period, mm_slot_scan_size);
-	}
-
-But since it is a single condition, I would prefer the *_CONDITION() macros
-above.
-
--- Steve
-
-> +
->  	count_kmmscand_mm_scans();
->  
->  outerloop:
-> @@ -1020,6 +1029,7 @@ void __kmmscand_enter(struct mm_struct *mm)
->  	spin_unlock(&kmmscand_mm_lock);
->  
->  	mmgrab(mm);
-> +	trace_kmem_mm_enter(mm->owner, mm);
->  	if (wakeup)
->  		wake_up_interruptible(&kmmscand_wait);
->  }
-
+> v20: https://lore.kernel.org/r/20241011184422.977903-1-mic@digikod.net
+> v19: https://lore.kernel.org/r/20240704190137.696169-1-mic@digikod.net
+> v18: https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
+> v17: https://lore.kernel.org/r/20211115185304.198460-1-mic@digikod.net
+> v16: https://lore.kernel.org/r/20211110190626.257017-1-mic@digikod.net
+> v15: https://lore.kernel.org/r/20211012192410.2356090-1-mic@digikod.net
+> v14: https://lore.kernel.org/r/20211008104840.1733385-1-mic@digikod.net
+> v13: https://lore.kernel.org/r/20211007182321.872075-1-mic@digikod.net
+> v12: https://lore.kernel.org/r/20201203173118.379271-1-mic@digikod.net
+> v11: https://lore.kernel.org/r/20201019164932.1430614-1-mic@digikod.net
+> v10: https://lore.kernel.org/r/20200924153228.387737-1-mic@digikod.net
+> v9: https://lore.kernel.org/r/20200910164612.114215-1-mic@digikod.net
+> v8: https://lore.kernel.org/r/20200908075956.1069018-1-mic@digikod.net
+> v7: https://lore.kernel.org/r/20200723171227.446711-1-mic@digikod.net
+> v6: https://lore.kernel.org/r/20200714181638.45751-1-mic@digikod.net
+> v5: https://lore.kernel.org/r/20200505153156.925111-1-mic@digikod.net
+> v4: https://lore.kernel.org/r/20200430132320.699508-1-mic@digikod.net
+> v3: https://lore.kernel.org/r/20200428175129.634352-1-mic@digikod.net
+> v2: https://lore.kernel.org/r/20190906152455.22757-1-mic@digikod.net
+> v1: https://lore.kernel.org/r/20181212081712.32347-1-mic@digikod.net
 
