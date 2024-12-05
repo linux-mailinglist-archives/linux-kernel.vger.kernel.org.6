@@ -1,193 +1,133 @@
-Return-Path: <linux-kernel+bounces-433451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BFD9E588B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:33:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE979E588D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774F916B5D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:33:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADE916B61D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361A921A438;
-	Thu,  5 Dec 2024 14:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2088821A425;
+	Thu,  5 Dec 2024 14:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g67vFvUM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CHU5tGVm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74B2218AA2;
-	Thu,  5 Dec 2024 14:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AC4217735
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 14:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733409224; cv=none; b=ZN3nCRXazte/D6ALECcjSkeAcEzQRuraNl021PO+tyvDtB6S/U0TRIZ17Yz9XPCG4PqdN/4nO5Uu754XkBf1Zjv0XIS2qjQekUEC+6mt+OlYwkpY297heqEU7nmIA0awB1sqFJY0CLi2w2Uw9JM4USNm5q3Zz/9KFLdLuY5PSys=
+	t=1733409235; cv=none; b=HtPDpy1iW6p26W2TgLWdOHhtFP/EGuTgZ4kECTENatwwoefeqtCqBQ781Uz569VamrRzBgUz756uHxOPW2F8yuMZ4Avxcxrt8bMmRxWueHXcJH+VWdCTy3uWxw8Q4kb2l6wwwNzI9tvvFLS8vWp3O4ubkAF9QWX9/Dee4SrZXoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733409224; c=relaxed/simple;
-	bh=5/+qIqiUSdR4xMbXTCzJKGsu0WDoa3zH2SDdHu0Q1dw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AiqTTJoEsMS5VBoLBkfhhBXUOvSgvQhNaOsbxpwyEHbscSZENSobMunWGLqvUNihNN7lWV6Rc4a25uZDVTL+WAEdfkCq99VwNVG/9p/JrP8PKXQiNAESGneqMNKhmBMjFJdTg2NSyeJOguEJ27RoWQ12QoBNMjETFtwaC3PrYQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g67vFvUM; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733409223; x=1764945223;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=5/+qIqiUSdR4xMbXTCzJKGsu0WDoa3zH2SDdHu0Q1dw=;
-  b=g67vFvUMaLN08eAXvtztdVASlS7M1NroPAuSEv3PmVXjikq5TslMKqUv
-   pFPvD2b7QlU9u/hsJlsk3wJiC7e2DozP0qFydjTG2AsPzhhjKcwMaPdvd
-   PnnHuGOt9n+0lBF+l16LgAhIvtH8GWfapC1sguip4Embs8VXv+AKp4f6x
-   56yDG3nJ+Y9i/8iwmKKlKBsFwSU6ZmD9SyL59wXe4eb7yfqGlFhuZaILg
-   IoLKQXIhZrHC32cW+5PMFSHoX3v7s4efCMmZE29D9SGlff0xg3G1C7U6V
-   b/QXIVrEkrPiL3tEF/x2MGi5hsdjGt0wTUpVMBOlfe/jb6VMU3vhi70jI
-   A==;
-X-CSE-ConnectionGUID: tmSfwzanSKmlD+OvMNt5uQ==
-X-CSE-MsgGUID: O6BDBXkYRyGieJApcMRM8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33854573"
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="33854573"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:33:42 -0800
-X-CSE-ConnectionGUID: 546mDef9R0ywwNhIFTpHMw==
-X-CSE-MsgGUID: 0AwMZG/pQi2dhZ+4LsDNfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="99148105"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:33:35 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 5 Dec 2024 16:33:31 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v9 22/22] Documentation: Add documentation about class
- interface for platform profiles
-In-Reply-To: <20241202055031.8038-23-mario.limonciello@amd.com>
-Message-ID: <0eaaa896-5f99-1f40-54b1-8b4c8c6c4a79@linux.intel.com>
-References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-23-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733409235; c=relaxed/simple;
+	bh=Jir3FCnl+lGf2P0N/mk9HvX/Ubt1jFBrjXpyS2UCHdM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=de/R8pwnqFI0lfBl8tXgUl5PH+dlBBfmRnYSlCSh2vIEWdRAT2EpQq2hWKLbH1sNqL2PObts9S2nAHVWvDjnMzlh0dwZFt8X887lcvUz64vz5/zN4U/OLAU5Q4aMpbAuVaES84bUj7A7MBZYIxEZzakW5J2tqZqsrrs69A7pxMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CHU5tGVm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733409232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Jir3FCnl+lGf2P0N/mk9HvX/Ubt1jFBrjXpyS2UCHdM=;
+	b=CHU5tGVmrtk+8y3JtN1mYeesBp8L04SSCzdxzkVMpLOcwfHlk5O7eZjkth6pw4v8TCPP2r
+	nYY3hSTiG0CRV7KgEB5/84AjBxfxHt7YAd1s8sNjVSRkS8kA0RjRzQtamQP3F6Ucg0xQzn
+	+s9mklZ0jiwJ0965hvvuKlwdkknu/+4=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-204-cxOTIX_fO9SN1eGzOG0yVg-1; Thu, 05 Dec 2024 09:33:51 -0500
+X-MC-Unique: cxOTIX_fO9SN1eGzOG0yVg-1
+X-Mimecast-MFC-AGG-ID: cxOTIX_fO9SN1eGzOG0yVg
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385ed79291eso1104654f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 06:33:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733409230; x=1734014030;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jir3FCnl+lGf2P0N/mk9HvX/Ubt1jFBrjXpyS2UCHdM=;
+        b=Qv+JN+IrJoUt3cyIYY4WNZPiGpTgjSAmUeNrwf7WRfIli6+XWv25nMLzj8+ytqfNnm
+         o2CAgXX29AOpyJr+2wAmig7ydoCGczPhcojVwj8ZDFhfiju53MMTbBm78Ycug/y4Pnbc
+         pea+/DZs7k/QPXb6HseqQAzank/lfI5Iq6PTf0Ov7Z+NwzyAtjuRGdDmY+A7BpN2W3QK
+         XiiKSonmAzv91U5gsQCdm8InOGWb9RrEs2ZRqQowg8lyGs1WIkIBbPTpuTndEu3GBx1Z
+         Zu3y6Zyr0TYzcBFCu0EoRpy/adxL22Pe5gyXxyo7KX7DhrLTgq/60GGKh0W14RR6S1AX
+         u6Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpyhVP7YpKyB/UJ+trkIt8cyrMxL6OkddeH7dOkioBQnR7gG7ULFxf2MEE/rC6Xr2kgDqs62C6YXLJ3Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKe1bThbzNQ7w/0g3UgaYtdwF56pNCOn1TwR/0UxSbvSGqw62W
+	IpVfpvFDu7Csj1Qu6o4fIm1DREuBKB0dev1VwX2Wa/Mq8QFcsLt8EWjYmw/1+ij8ftU6y5fCvLt
+	lxZVJBJAZOSAgD2Qbikv5a0Ygw+LDRhb5RwtWVKsTiURH5fONa6ne+DUlzzbAUw==
+X-Gm-Gg: ASbGncvImhD9wI+3sejid6xrUPiW8/YYJux2cAOCKW5Wmc+cSLpPYDCk4S/OLR1GZub
+	wd98f1HRRJbdO7WTOFOYury34j15di/bS1/O/0hNusWoryYCmzk9YM/QFNPwm7kQWv37w0cmrro
+	2LAsnJ6dWhA1TzpLezO8M7mfj9ryriRvbGnQ58/itsmz7wffAR96wdkTzz//UhaqIjs6c9ZYDf7
+	c/S73KQ75R8//UJLrJlr+3fUpXy2QudxlOj2mda2upGTF/DJFPWSkhPfoOsNPgvFshL8vjsETUH
+X-Received: by 2002:a5d:5f4b:0:b0:385:d72b:98 with SMTP id ffacd0b85a97d-3861bb4c74amr2735489f8f.5.1733409230191;
+        Thu, 05 Dec 2024 06:33:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFaZG2BYTZ2RT1a9dY4OQPOx6sg1N6RVN85ljPKoLzCBr5cmOjWR7+C6rxdKP+5jhE/Vmx4Iw==
+X-Received: by 2002:a5d:5f4b:0:b0:385:d72b:98 with SMTP id ffacd0b85a97d-3861bb4c74amr2735477f8f.5.1733409229829;
+        Thu, 05 Dec 2024 06:33:49 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280746sm63050865e9.21.2024.12.05.06.33.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 06:33:49 -0800 (PST)
+Message-ID: <4c067b75e06aadd34eff5b60fc7c59967aa30809.camel@redhat.com>
+Subject: Re: [PATCH] sched: Move task_mm_cid_work to mm delayed work
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar	
+ <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton	
+ <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
+ linux-mm@kvack.org, 	linux-kernel@vger.kernel.org
+Cc: Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	 <vincent.guittot@linaro.org>
+Date: Thu, 05 Dec 2024 15:33:46 +0100
+In-Reply-To: <20241205083110.180134-2-gmonaco@redhat.com>
+References: <20241205083110.180134-2-gmonaco@redhat.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1664960937-1733409211=:932"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The patch is fundamentally broken since I somehow lost the line calling
+schedule_delayed_work in task_mm_cid_work to re-schedule itself.
+Before sending a V2, however, I'd like to get some more insights about
+the requirements of this function.
 
---8323328-1664960937-1733409211=:932
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+The current behaviour upstream is to call task_mm_cid_work for the task
+running after the scheduler tick. The function checks that we don't run
+too often for the same mm, but it seems possible that some process with
+short runtime would rarely run during the tick.
 
-On Sun, 1 Dec 2024, Mario Limonciello wrote:
+The behaviour imposed by this patch (at least the intended one) is to
+run the task_mm_cid_work with the configured periodicity (plus
+scheduling latency) for each active mm.
+This behaviour seem to me more predictable, but would that even be
+required for rseq or is it just an overkill?
 
-> The class interface allows changing multiple platform profiles on a syste=
-m
-> to different values. The semantics of it are similar to the legacy
-> interface.
->=20
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  .../ABI/testing/sysfs-platform_profile        |  5 +++
->  .../userspace-api/sysfs-platform_profile.rst  | 31 +++++++++++++++++++
->  2 files changed, 36 insertions(+)
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-platform_profile b/Documenta=
-tion/ABI/testing/sysfs-platform_profile
-> index baf1d125f9f83..125324ab53a96 100644
-> --- a/Documentation/ABI/testing/sysfs-platform_profile
-> +++ b/Documentation/ABI/testing/sysfs-platform_profile
-> @@ -33,3 +33,8 @@ Description:=09Reading this file gives the current sele=
-cted profile for this
->  =09=09source such as e.g. a hotkey triggered profile change handled
->  =09=09either directly by the embedded-controller or fully handled
->  =09=09inside the kernel.
-> +
-> +=09=09This file may also emit the string 'custom' to indicate
-> +=09=09that multiple platform profiles drivers are in use but
-> +=09=09have different values.  This string can not be written to
-> +=09=09this interface and is solely for informational purposes.
-> diff --git a/Documentation/userspace-api/sysfs-platform_profile.rst b/Doc=
-umentation/userspace-api/sysfs-platform_profile.rst
-> index 4fccde2e45639..0aa384c75095a 100644
-> --- a/Documentation/userspace-api/sysfs-platform_profile.rst
-> +++ b/Documentation/userspace-api/sysfs-platform_profile.rst
-> @@ -40,3 +40,34 @@ added. Drivers which wish to introduce new profile nam=
-es must:
->   1. Explain why the existing profile names cannot be used.
->   2. Add the new profile name, along with a clear description of the
->      expected behaviour, to the sysfs-platform_profile ABI documentation.
-> +
-> +Multiple driver support
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +When multiple drivers on a system advertise a platform profile handler, =
-the
-> +platform profile handler core will only advertise the profiles that are
-> +common between all drivers to the ``/sys/firmware/acpi`` interfaces.
-> +
-> +This is to ensure there is no ambiguity on what the profile names mean w=
-hen
-> +all handlers don't support a profile.
-> +
-> +Individual drivers will register a 'platform_profile' class device that =
-has
-> +similar semantics as the ``/sys/firmware/acpi/platform_profile`` interfa=
-ce.
-> +
-> +To discover which driver is associated with a platform profile handler t=
-he
-> +user can read the ``name`` attribute of the class device.
-> +
-> +To discover available profiles from the class interface the user can rea=
-d the
-> +``choices`` attribute.
-> +
-> +If a user wants to select a profile for a specific driver, they can do s=
-o
-> +by writing to the ``profile`` attribute of the driver's class device.
-> +
-> +This will allow users to set different profiles for different drivers on=
- the
-> +same system. If the selected profile by individual drivers differs the
-> +platform profile handler core will display the profile 'custom' to indic=
-ate
-> +that the profiles are not the same.
-> +
-> +While the ``platform_profile`` attribute has the value ``custom``, writi=
-ng a
-> +common profile from ``platform_profile_choices`` to the platform_profile
-> +attribute of the platform profile handler core will set the profile for =
-all
-> +drivers.
+In other words, was the tick chosen out of simplicity or is there some
+property that has to be preserved?
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+P.S. I run the rseq self tests on both this and the previous patch
+(both broken) and saw no failure.
 
-Thanks for doing all this. The series looks ready to me once the minor=20
-nits I noted to individual patches are addressed.
+Thanks,
+Gabriele
 
-
---=20
- i.
-
---8323328-1664960937-1733409211=:932--
 
