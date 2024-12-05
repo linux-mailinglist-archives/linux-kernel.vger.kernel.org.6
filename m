@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-432979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144529E528E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:40:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53CC9E528F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:40:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B26284A5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6661A167916
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311041D9A7E;
-	Thu,  5 Dec 2024 10:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3171F429B;
+	Thu,  5 Dec 2024 10:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DXLh/qBo"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aTWOpJLQ"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62481F429B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559B21DB951
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395106; cv=none; b=tgD14WWMK9vTPkeNH5X/wj+dW8wo+GFTdUfwCE5OvObu/YcQ2Ref6m9LtyBGaiRXtzMHevkMz5wvRt/bPTiZyzVzjHRPit+nZGfJLuij/y9q6CHQneMQnOAKzi0n2vl9omvYhvGVnGpmv1kfSvBCIOBo0Xoj96TeD6v0U1R3Y/0=
+	t=1733395110; cv=none; b=PDtOJpU19ONHPjI/iKqod7+tOVvAohEj4NUcPKFL2g98y3XCpYCdUbLA6SZ5BbaMXPBkara7v1R13W2ogxJCsHMzOLiBI4S8YCWCcoErA2+8tCXBaqfYAjuKpG9ALyqjiL5oZYuxaagt9n9An5PuokNpykO1cKKaS8UoUebcjCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395106; c=relaxed/simple;
-	bh=gGgNHGAQnglp1EwvvnTVsa9Hle1YBo1yufwyIxTF2p8=;
+	s=arc-20240116; t=1733395110; c=relaxed/simple;
+	bh=iaiXED/tqibRXcFpLigD3NvJz1CulAasWjUYazfFtPc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GdCL2c89J/CqbVurJ64j1qtRP8Dw7f8Rg/0crYqM8uP7PbzpclDm24FD4tssVjRTk7F2uqI5FLt2bhqTxUDSd5XQ1/b79N9xH9KQYiFNaXC72ipvw4+eWSMsKGgGlOtqjspUWY4qPFEz3U2h34lWa61EXHSVc0+6cAad8/cq+8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DXLh/qBo; arc=none smtp.client-ip=209.85.160.45
+	 MIME-Version; b=fzrfH+FfmlHQP5Kgg/tQCZtVQuQF5e54DPZuVUPVBaGYv0XoU2Pd7YbXinrNEJB0PD1cUO4ed8sHgauEthpOkW/B5fgSgV3HKMdDzizTqTpefosLZ4WFKLpBzkd3TEAzuNxeUkb+d8flw+xa9ntCuBctRrixzAF9X+57ztyB6SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aTWOpJLQ; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-29e2a50586dso494572fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:38:24 -0800 (PST)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fcfac22a30so832252a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:38:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733395104; x=1733999904; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1733395108; x=1733999908; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XIMWQ57ZznUQuD/aiNRYDz3W26VtFUEaOqg8e4FokQk=;
-        b=DXLh/qBoWmGDI+SaL7Am02hvd+ZaDvBZUsJI9APctF4J8z3/9S6NBrIBj7RtZktLBi
-         +FD4BFS891G5VODXJqFMrOSXbOQAMezUClFXvYpA05bjDtXwRuWtYU6iBWO/qe3YM9oR
-         Vk7XWKKfuUy2Icikj78OXZoUkpGKwBsXQT+jq1QopN6yR8Xz44m0D7fu+K2mhRste9aN
-         RmZe77KFtORid+0U9s9Udp8nBPhx+GXYCRBWEIR4o9x/UqrXGpzfjmwVvNcp9tBVa47F
-         1jf0e5oucD6BojArdtA9663v0AdqRhwV5ZMU9jjWw0GWnvhy1xj4UMOErxBA1TRXy8dM
-         BJ5w==
+        bh=HFQIXohFMC+aCLCj7cIVe0JD4G758F8Hwu3svQYABEY=;
+        b=aTWOpJLQpSF75/OhWUsAWdmRJmhklV2DlaxSg/3IT7WwdLbkTHdh3/zGg+CL+tyQjn
+         xY0pHJZBTS802R0y3Q78XglE5c8HjkTQaNP/rzOomPcs7q+PbLn4zYuuRQGs9hTRGLam
+         jKLAYBxNNICIvWdLQRGq7XIihkVpNCvYdKLmMFKHguHJBmxJAo5B5BOBi7QrWzbH6b1k
+         fh05d+UEDyDlpbowKIdZCYH37rmYwJ3wqbLQez6DlR2xWiqwct8RGA1r7alBQ/DjuUJ6
+         su+/eyaAMo6Py+M4jFYz/IBKSo/lsZ95pRcEWmKLai40P64EE9BNVSsrH4o/sHt4jNB5
+         N8GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395104; x=1733999904;
+        d=1e100.net; s=20230601; t=1733395108; x=1733999908;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XIMWQ57ZznUQuD/aiNRYDz3W26VtFUEaOqg8e4FokQk=;
-        b=cuX3xQAmZEoiUwRyhGtWxKbhYxk8kPE1gD4c6Ooiyn9yu8aPzp5PGxc1xm8UA/khVr
-         9XQMqt3YuNbv8a/Tk8o3a7buZ29d/DN3bnsL9h24x2ySzg/t/UcgSJeR+9iJ42BD6tyo
-         25ayqiaVnjqcZ+Y7U+XMWfStkXE0tZHw+xIm/Kztq9J1u58gaJK3zYNc4uAxnv71EWix
-         q1zFk+WnSyfJ/0vhZEVkgBukYKKdF70Sn4mO1o4pkEpJrAw35a7qYtVSrixN2061TbkJ
-         jI8HWwtdTo3gQEhAd797hGZrggOiKcMkPHhEsyLcmFzluSKXfybFamRgdr2900uZmnuY
-         o0ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN6Ow67FOzHFteY3HmR12URk8nmtfUuXCuck5+Gv9xEF7ki1ZF2+bTnXrM8AFmkfcAO7z4ao7Ib0HXCUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA+R6AsGYbeInT00Z3RzEaBOXvJJOzIG6M9qp0bur6+hp9zdi6
-	seoAfGxhnAHdDPhkKoXebD0tz0s+E6PzGLiJ7zjPo0alK9zrQYoCGgYnL5a9ZRk=
-X-Gm-Gg: ASbGnctolwQMzr+KLW/5OS+tGTPMnAkH1LLMY2yyCABPsjuHmS0MoBzPE4P9Xa7AEcm
-	uVj3x3UaUOn3wR1ED5BUjl6kQt3RfOFOidPRvzlOPwShCCywAxzstBOznfM8Z1c9ts/Kseepq9m
-	HN2OknsSjhBrFUEjTdxhjA/WFgJF05hyKowffamKqbxWNEFLpTpMr5M7x1KKiMdrUAnoGrlNHpd
-	IOooKKPd3KbujjP08cYMDfTctPpvO0iJuNcPBXCtUdUHyW6WOOU9b2vGplRmyIG1rwkmn0OX1ov
-	1BjPF3yld8EKvm6r37pv78dOHgi04lnB
-X-Google-Smtp-Source: AGHT+IFGD682lN2KXS9mZyYiAgPgUddfTIrz2tftbpWLW1OwVDgKSjli0UbK/dW/c1XvobnxdhptFQ==
-X-Received: by 2002:a05:6870:4944:b0:29d:c5e8:e41f with SMTP id 586e51a60fabf-29e88576409mr11051212fac.5.1733395103681;
-        Thu, 05 Dec 2024 02:38:23 -0800 (PST)
+        bh=HFQIXohFMC+aCLCj7cIVe0JD4G758F8Hwu3svQYABEY=;
+        b=mBmzc93QZrMVlEe1TqqP4ic3OIjYiUZlAYInUCTETpuImheJTLPFwa2e0Y3BNlfDvZ
+         fXMlzhcWaXNLekh4pnCMJvQXfMKqDMHbxMMpkZHhZljTb53fO6F6z+0wGpPf1J/V8zkz
+         SdB8dzIBCQGxQqt9Vdr0fBTW1MyaHf4hlCwvem19zTZNz5NrZTQroQWeyWYjGnr862tA
+         GHRZ9DCRLVaq40VkWtJJ82v2VXll2G4wgYuZIFPaD11HRsbFRw/7H9KjnlFZtN0yGQaQ
+         eUMlUzyRGJs9CV6loCYjpxM7MhHSJn6F4EGiH/1dNS6WG60L5QfH985xhlcllDgIA8hm
+         2Ujg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbo0oTx8M/PL10N7no69rjCgtsKdNF/ZrjwWoLKPcWycEtnhFuVX7fMdwXO8hPabczeC2HXcIxGveIPP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE0Ms6EZg8t9W2fXQXiWyg53H34YHGIDCV0vIkolRzMKjQUpN/
+	sxmGXKHBsEFFykwAqSYndflQ0LMLoxqSv8yAYczoZxeEt+UzK4Omc0iofarTG2Y=
+X-Gm-Gg: ASbGncsdfhXeqI3OBcH8vYzjQxwg+OGe8GX4p21V/sMLQRMk3JolY4RYpy22F+3uXnT
+	8JZxaq0mf3+x993VNdVvpRd6w5mt3a4+4jqXOM1b0XNxGRXdeBEn9hQ2djzWts6KCqWlRuIYpfY
+	OpGz0zsDob9XkAGUChViW1RHHC0s0sdJQR84bS1iQKJXkRa61MU1x6Bnp6aWy/7mUi28K6a1tlt
+	IiGr4lnrdTvgt1QEG/p3FYgN0Jp5gsvJYs7Ns4wOp5twZe9mjFNZ1IPIyqJ+oRypiiXPd1YvBH3
+	F/yvdHSFgn7HQOtMBeVvDIodEKey8xmY
+X-Google-Smtp-Source: AGHT+IEVSD+tgAqJx2WiLXY6iHldH8R0b3LHGoJ+robZaZ03Gbz5dxvb2ZG0GtuQ60x2xrNdVJqFOw==
+X-Received: by 2002:a05:6300:4041:b0:1e1:1659:82a4 with SMTP id adf61e73a8af0-1e16541341fmr16353259637.41.1733395107751;
+        Thu, 05 Dec 2024 02:38:27 -0800 (PST)
 Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156f048csm886826a12.39.2024.12.05.02.38.19
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156f048csm886826a12.39.2024.12.05.02.38.24
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 05 Dec 2024 02:38:23 -0800 (PST)
+        Thu, 05 Dec 2024 02:38:27 -0800 (PST)
 From: Xu Lu <luxu.kernel@bytedance.com>
 To: paul.walmsley@sifive.com,
 	palmer@dabbelt.com,
@@ -84,9 +84,9 @@ Cc: xieyongji@bytedance.com,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [RFC PATCH v2 11/21] riscv: mm: Reimplement mk_huge_pte function
-Date: Thu,  5 Dec 2024 18:37:19 +0800
-Message-Id: <20241205103729.14798-12-luxu.kernel@bytedance.com>
+Subject: [RFC PATCH v2 12/21] riscv: mm: Reimplement tlb flush function
+Date: Thu,  5 Dec 2024 18:37:20 +0800
+Message-Id: <20241205103729.14798-13-luxu.kernel@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20241205103729.14798-1-luxu.kernel@bytedance.com>
 References: <20241205103729.14798-1-luxu.kernel@bytedance.com>
@@ -98,140 +98,221 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Huge pte can be pud, pmd, or svnapot pte. Huge ptes from different page
-table levels have different pte constructors. This commit reimplements
-mk_huge_pte function. We take vma struct as argument to check the target
-huge pte level and applying corresponding constructor.
+When tlb flushing a page correponding to a certain address, CPU actually
+only flushes tlb entries of the first 4K hardware page. This commit
+reimplements tlb flushing function to flush all tlb entries of hardware pages
+in the same software page.
 
 Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 ---
- arch/riscv/include/asm/hugetlb.h |  5 +++++
- arch/riscv/mm/hugetlbpage.c      | 23 ++++++++++++++++++++++-
- arch/s390/include/asm/hugetlb.h  |  2 +-
- include/asm-generic/hugetlb.h    |  5 ++++-
- mm/debug_vm_pgtable.c            |  2 +-
- mm/hugetlb.c                     |  4 ++--
- 6 files changed, 35 insertions(+), 6 deletions(-)
+ arch/riscv/include/asm/pgtable.h  |  9 ++++++---
+ arch/riscv/include/asm/tlbflush.h | 26 ++++++++++++++++++++------
+ arch/riscv/mm/fault.c             | 13 +++++++++----
+ arch/riscv/mm/init.c              |  2 +-
+ arch/riscv/mm/tlbflush.c          | 31 +++++++++++++++++++++----------
+ 5 files changed, 57 insertions(+), 24 deletions(-)
 
-diff --git a/arch/riscv/include/asm/hugetlb.h b/arch/riscv/include/asm/hugetlb.h
-index faf3624d8057..eafd00f4b74f 100644
---- a/arch/riscv/include/asm/hugetlb.h
-+++ b/arch/riscv/include/asm/hugetlb.h
-@@ -51,6 +51,11 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags);
- 
- #endif /*CONFIG_RISCV_ISA_SVNAPOT*/
- 
-+#ifdef CONFIG_RISCV_USE_SW_PAGE
-+#define __HAVE_ARCH_MK_HUGE_PTE
-+pte_t mk_huge_pte(struct vm_area_struct *vma, struct page *page, pgprot_t pgprot);
-+#endif
-+
- #include <asm-generic/hugetlb.h>
- 
- #endif /* _ASM_RISCV_HUGETLB_H */
-diff --git a/arch/riscv/mm/hugetlbpage.c b/arch/riscv/mm/hugetlbpage.c
-index 42314f093922..8896c28ec881 100644
---- a/arch/riscv/mm/hugetlbpage.c
-+++ b/arch/riscv/mm/hugetlbpage.c
-@@ -2,6 +2,27 @@
- #include <linux/hugetlb.h>
- #include <linux/err.h>
- 
-+#ifdef CONFIG_RISCV_USE_SW_PAGE
-+pte_t mk_huge_pte(struct vm_area_struct *vma, struct page *page, pgprot_t pgprot)
-+{
-+	pte_t pte;
-+	unsigned int shift = huge_page_shift(hstate_vma(vma));
-+
-+	if (shift == PGDIR_SHIFT)
-+		pte = pgd_pte(pfn_pgd(page_to_pfn(page), pgprot));
-+	else if (shift == P4D_SHIFT)
-+		pte = p4d_pte(pfn_p4d(page_to_pfn(page), pgprot));
-+	else if (shift == PUD_SHIFT)
-+		pte = pud_pte(pfn_pud(page_to_pfn(page), pgprot));
-+	else if (shift == PMD_SHIFT)
-+		pte = pmd_pte(pfn_pmd(page_to_pfn(page), pgprot));
-+	else
-+		pte = pfn_pte(page_to_pfn(page), pgprot);
-+
-+	return pte;
-+}
-+#endif /* CONFIG_RISCV_USE_SW_PAGE */
-+
- #ifdef CONFIG_RISCV_ISA_SVNAPOT
- pte_t huge_ptep_get(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
- {
-@@ -74,7 +95,7 @@ pte_t *huge_pte_alloc(struct mm_struct *mm,
- 
- out:
- 	if (pte) {
--		pte_t pteval = ptep_get_lockless(pte);
-+		pte_t pteval = ptep_get(pte);
- 
- 		WARN_ON_ONCE(pte_present(pteval) && !pte_huge(pteval));
- 	}
-diff --git a/arch/s390/include/asm/hugetlb.h b/arch/s390/include/asm/hugetlb.h
-index cf1b5d6fb1a6..cea9118d4bba 100644
---- a/arch/s390/include/asm/hugetlb.h
-+++ b/arch/s390/include/asm/hugetlb.h
-@@ -79,7 +79,7 @@ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 	__set_huge_pte_at(mm, addr, ptep, pte_wrprotect(pte));
- }
- 
--static inline pte_t mk_huge_pte(struct page *page, pgprot_t pgprot)
-+static inline pte_t mk_huge_pte(struct vm_area_struct *vma, struct page *page, pgprot_t pgprot)
- {
- 	return mk_pte(page, pgprot);
- }
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 594d5905f615..90765bc03bba 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -5,10 +5,13 @@
- #include <linux/swap.h>
- #include <linux/swapops.h>
- 
--static inline pte_t mk_huge_pte(struct page *page, pgprot_t pgprot)
-+#ifndef __HAVE_ARCH_MK_HUGE_PTE
-+static inline pte_t mk_huge_pte(struct vm_area_struct *vma, struct page *page,
-+				pgprot_t pgprot)
- {
- 	return mk_pte(page, pgprot);
- }
-+#endif
- 
- static inline unsigned long huge_pte_write(pte_t pte)
- {
-diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-index 1cec548cc6c7..24839883d513 100644
---- a/mm/debug_vm_pgtable.c
-+++ b/mm/debug_vm_pgtable.c
-@@ -919,7 +919,7 @@ static void __init hugetlb_basic_tests(struct pgtable_debug_args *args)
- 	 * as it was previously derived from a real kernel symbol.
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index c0f7442c8a9e..9fa16c0c20aa 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -701,7 +701,7 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+ 	 * the extra traps reduce performance.  So, eagerly SFENCE.VMA.
  	 */
- 	page = pfn_to_page(args->fixed_pmd_pfn);
--	pte = mk_huge_pte(page, args->page_prot);
-+	pte = mk_huge_pte(args->vma, page, args->page_prot);
+ 	while (nr--)
+-		local_flush_tlb_page(address + nr * PAGE_SIZE);
++		local_flush_tlb_page(address + nr * PAGE_SIZE, PAGE_SIZE);
  
- 	WARN_ON(!huge_pte_dirty(huge_pte_mkdirty(pte)));
- 	WARN_ON(!huge_pte_write(huge_pte_mkwrite(huge_pte_wrprotect(pte))));
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 190fa05635f4..2b33eb46408f 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5140,10 +5140,10 @@ static pte_t make_huge_pte(struct vm_area_struct *vma, struct page *page,
- 	unsigned int shift = huge_page_shift(hstate_vma(vma));
+ svvptc:;
+ 	/*
+@@ -719,9 +719,12 @@ svvptc:;
+ static inline void update_mmu_cache_pmd(struct vm_area_struct *vma,
+ 		unsigned long address, pmd_t *pmdp)
+ {
+-	pte_t *ptep = (pte_t *)pmdp;
++	asm goto(ALTERNATIVE("nop", "j %l[svvptc]", 0, RISCV_ISA_EXT_SVVPTC, 1)
++		 : : : : svvptc);
  
- 	if (writable) {
--		entry = huge_pte_mkwrite(huge_pte_mkdirty(mk_huge_pte(page,
-+		entry = huge_pte_mkwrite(huge_pte_mkdirty(mk_huge_pte(vma, page,
- 					 vma->vm_page_prot)));
- 	} else {
--		entry = huge_pte_wrprotect(mk_huge_pte(page,
-+		entry = huge_pte_wrprotect(mk_huge_pte(vma, page,
- 					   vma->vm_page_prot));
+-	update_mmu_cache(vma, address, ptep);
++	local_flush_tlb_page(address, PMD_SIZE);
++
++svvptc:;
+ }
+ 
+ #define __HAVE_ARCH_PTE_SAME
+diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/tlbflush.h
+index 72e559934952..25cc39ab84d5 100644
+--- a/arch/riscv/include/asm/tlbflush.h
++++ b/arch/riscv/include/asm/tlbflush.h
+@@ -29,18 +29,32 @@ static inline void local_flush_tlb_all_asid(unsigned long asid)
+ }
+ 
+ /* Flush one page from local TLB */
+-static inline void local_flush_tlb_page(unsigned long addr)
++static inline void local_flush_tlb_page(unsigned long addr,
++					unsigned long page_size)
+ {
+-	ALT_SFENCE_VMA_ADDR(addr);
++	unsigned int i;
++	unsigned long hw_page_num = 1 << (PAGE_SHIFT - HW_PAGE_SHIFT);
++	unsigned long hw_page_size = page_size >> (PAGE_SHIFT - HW_PAGE_SHIFT);
++
++	for (i = 0; i < hw_page_num; i++, addr += hw_page_size)
++		ALT_SFENCE_VMA_ADDR(addr);
+ }
+ 
+ static inline void local_flush_tlb_page_asid(unsigned long addr,
++					     unsigned long page_size,
+ 					     unsigned long asid)
+ {
+-	if (asid != FLUSH_TLB_NO_ASID)
+-		ALT_SFENCE_VMA_ADDR_ASID(addr, asid);
+-	else
+-		local_flush_tlb_page(addr);
++	unsigned int i;
++	unsigned long hw_page_num, hw_page_size;
++
++	if (asid != FLUSH_TLB_NO_ASID) {
++		hw_page_num = 1 << (PAGE_SHIFT - HW_PAGE_SHIFT);
++		hw_page_size = page_size >> (PAGE_SHIFT - HW_PAGE_SHIFT);
++
++		for (i = 0; i < hw_page_num; i++, addr += hw_page_size)
++			ALT_SFENCE_VMA_ADDR_ASID(addr, asid);
++	} else
++		local_flush_tlb_page(addr, page_size);
+ }
+ 
+ void flush_tlb_all(void);
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 4772152be0f9..94524e5adc0b 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -118,7 +118,7 @@ static inline void vmalloc_fault(struct pt_regs *regs, int code, unsigned long a
+ 	pmd_t *pmd_k;
+ 	pte_t *pte_k;
+ 	int index;
+-	unsigned long pfn;
++	unsigned long pfn, page_size;
+ 
+ 	/* User mode accesses just cause a SIGSEGV */
+ 	if (user_mode(regs))
+@@ -154,8 +154,10 @@ static inline void vmalloc_fault(struct pt_regs *regs, int code, unsigned long a
+ 		no_context(regs, addr);
+ 		return;
  	}
- 	entry = pte_mkyoung(entry);
+-	if (pud_leaf(pudp_get(pud_k)))
++	if (pud_leaf(pudp_get(pud_k))) {
++		page_size = PUD_SIZE;
+ 		goto flush_tlb;
++	}
+ 
+ 	/*
+ 	 * Since the vmalloc area is global, it is unnecessary
+@@ -166,8 +168,10 @@ static inline void vmalloc_fault(struct pt_regs *regs, int code, unsigned long a
+ 		no_context(regs, addr);
+ 		return;
+ 	}
+-	if (pmd_leaf(pmdp_get(pmd_k)))
++	if (pmd_leaf(pmdp_get(pmd_k))) {
++		page_size = PMD_SIZE;
+ 		goto flush_tlb;
++	}
+ 
+ 	/*
+ 	 * Make sure the actual PTE exists as well to
+@@ -180,6 +184,7 @@ static inline void vmalloc_fault(struct pt_regs *regs, int code, unsigned long a
+ 		no_context(regs, addr);
+ 		return;
+ 	}
++	page_size = PAGE_SIZE;
+ 
+ 	/*
+ 	 * The kernel assumes that TLBs don't cache invalid
+@@ -188,7 +193,7 @@ static inline void vmalloc_fault(struct pt_regs *regs, int code, unsigned long a
+ 	 * necessary even after writing invalid entries.
+ 	 */
+ flush_tlb:
+-	local_flush_tlb_page(addr);
++	local_flush_tlb_page(addr, page_size);
+ }
+ 
+ static inline bool access_error(unsigned long cause, struct vm_area_struct *vma)
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index f9334aab45a6..678b892b4ed8 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -356,7 +356,7 @@ void __set_fixmap(enum fixed_addresses idx, phys_addr_t phys, pgprot_t prot)
+ 		set_pte(ptep, pfn_pte(phys >> PAGE_SHIFT, prot));
+ 	else
+ 		pte_clear(&init_mm, addr, ptep);
+-	local_flush_tlb_page(addr);
++	local_flush_tlb_page(addr, PAGE_SIZE);
+ }
+ 
+ static inline pte_t *__init get_pte_virt_early(phys_addr_t pa)
+diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
+index 9b6e86ce3867..d5036f2a8244 100644
+--- a/arch/riscv/mm/tlbflush.c
++++ b/arch/riscv/mm/tlbflush.c
+@@ -27,7 +27,7 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
+ 	}
+ 
+ 	for (i = 0; i < nr_ptes_in_range; ++i) {
+-		local_flush_tlb_page_asid(start, asid);
++		local_flush_tlb_page_asid(start, stride, asid);
+ 		start += stride;
+ 	}
+ }
+@@ -36,7 +36,7 @@ static inline void local_flush_tlb_range_asid(unsigned long start,
+ 		unsigned long size, unsigned long stride, unsigned long asid)
+ {
+ 	if (size <= stride)
+-		local_flush_tlb_page_asid(start, asid);
++		local_flush_tlb_page_asid(start, stride, asid);
+ 	else if (size == FLUSH_TLB_MAX_SIZE)
+ 		local_flush_tlb_all_asid(asid);
+ 	else
+@@ -126,14 +126,7 @@ void flush_tlb_mm_range(struct mm_struct *mm,
+ 			  start, end - start, page_size);
+ }
+ 
+-void flush_tlb_page(struct vm_area_struct *vma, unsigned long addr)
+-{
+-	__flush_tlb_range(mm_cpumask(vma->vm_mm), get_mm_asid(vma->vm_mm),
+-			  addr, PAGE_SIZE, PAGE_SIZE);
+-}
+-
+-void flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
+-		     unsigned long end)
++static inline unsigned long local_flush_tlb_page_size(struct vm_area_struct *vma)
+ {
+ 	unsigned long stride_size;
+ 
+@@ -161,6 +154,24 @@ void flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
+ 		}
+ 	}
+ 
++	return stride_size;
++}
++
++void flush_tlb_page(struct vm_area_struct *vma, unsigned long addr)
++{
++	unsigned long page_size;
++
++	page_size = local_flush_tlb_page_size(vma);
++	__flush_tlb_range(mm_cpumask(vma->vm_mm), get_mm_asid(vma->vm_mm),
++			  addr, page_size, page_size);
++}
++
++void flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
++		     unsigned long end)
++{
++	unsigned long stride_size;
++
++	stride_size = local_flush_tlb_page_size(vma);
+ 	__flush_tlb_range(mm_cpumask(vma->vm_mm), get_mm_asid(vma->vm_mm),
+ 			  start, end - start, stride_size);
+ }
 -- 
 2.20.1
 
