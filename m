@@ -1,198 +1,154 @@
-Return-Path: <linux-kernel+bounces-432602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601979E4D8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:18:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5742F9E4D93
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320F0168D89
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E09188129D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CF61AAE10;
-	Thu,  5 Dec 2024 06:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAC61922D8;
+	Thu,  5 Dec 2024 06:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="t01D9cSK"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022108.outbound.protection.outlook.com [52.101.43.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0Lxr09E"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD94E1A0700;
-	Thu,  5 Dec 2024 06:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733379496; cv=fail; b=gmbMv0HJAZuwRiX/rH3Ytf9sma1L4Kiv32tjmWmHpPTdLLWJXkIheYDohnRD1WCtmZMEeE0LmVNWY9JEWtopYZi3S9C9pB6rPSbLzIPZxXpyyUFyc/9d25dmz7q05hPNithpIjnMvKXSIWLXpYWAU/ztdjRc8W9MjgkufWqJwKY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733379496; c=relaxed/simple;
-	bh=5y/I0z2oysurp4On+rfF8LBYDt8vUYrVyn3EzjTYOcE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D8joUwL7vtp7hylkOSLv2GE6YlkgBm7FRDA+120UGu+YrBkeo+TtlVNvbVn/JLSCPbbpkMAEErSSaSTbWHfgalyvk3XvQV71Hzu4eRuZlXrQZabE28vHy0rP9Hy0dD02lIdisTyg8jOn+7uuMHi/DJ6YbgpYsd5dowqhYvL/n1I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=t01D9cSK; arc=fail smtp.client-ip=52.101.43.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r3dl+uyOVX6TdOd7wLaUlqmPjvK7roib/WASvGl/ye0NnBje8+brqHzidKW9yRic+aY/hZoVkecek+rduX6AHZFwwG4io43kaDMVMgc2B7ASTWFBQs9uD97XoH0iUGAjHMekWxp8gAhC5UbpxQBQJDnZ9canorEA3uY/N5GGzJWusqVYn9sV7T1jHL0ad8k58vNG3Uw0AEpMLGT2BvCkdJrSWL9BLiVTVpkRFWuSmsI709NvfGxVuma8aHu6fpAUG4LbU0GCjEymKlBNMNjuUl3ogVX8yRhnHNETCZtsxDks1rtKWwBHcHvIK0j4cycj4pF+/DaWiidmbezrt64ywA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h9VH8bVGmFjq2fDKXn6fOBviDseub8gAY1PTdU9nhYA=;
- b=NyrSXEYxt9kcyT8N2dmj7u8diYPtOwnV+0ld5tSS12R13R5MJCAUjWJIW3PPAvn7/Z71nVAh1cw331IXB0zWUUUcmanDwOcNuz75CWCsZaS6XoG1jgIxkcKYSgSQlWfpNXjKiCn4zTcUy1My51HRvtU5B5kSXv0ZG6/ON/F9uqH8VFbJYjIqtV9bcsVYbNugckpMh9ffM9AuU75AeFJZIL3b4JMK0bDHgJpJ/s1CFP3YIpeQA6NRLf68iUK98A3h+yq8T0KlMVfCH80CTroU6qR5aiGzcX0EryQx4X0XPz4dwXO8hu2fQeXJijTMgCQ8EUoqxB86kt8+WA9qokgurw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8483EAC5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 06:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733379743; cv=none; b=rkwKiSo3i6SxrRg/yPfdkpjq0ysh8fKcSUnAIgxFPBffO0XwM0ICqOi3ii9PjLGxDQJc5WmjU1knK/0Bf9hNWmOkj3kySAkxHRzUUfA+rt5s4QZKoLBazD1ExYWslZ/q7JWYx15DrbUiSCy4O8c1vATIvJD6qbPdPvFjUsJErhg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733379743; c=relaxed/simple;
+	bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h9qpxtijBw/HKXymGZLld3dNMSeS7e+1v08e/BEeSt4RjIH/ruyMSWRCqJ0YOaC4l+1TRZoHQ5QqvgbV93fSYA4GLtxDlro3VyrosDxkXAF/yW1ZoWCjYmASIpEcxPC8vTrTQ6cWZGzllBA0CrKoeW5dtcPLN4pKpnydC7YkMqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F0Lxr09E; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385d6e36de7so473172f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 22:22:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h9VH8bVGmFjq2fDKXn6fOBviDseub8gAY1PTdU9nhYA=;
- b=t01D9cSK4/G8gAAZeTWRQGxiGChnDNXuLn7x+BMotubi/3FFJymd6NqsUM4nYCAkBsWv5ww1xlLDn+NqORPKHkToxhIRxxH+4ZzEJOeNNpSwZLyNmKQbJ0FrYZcaqC+JBojdZVthdqeoS0qmFGnXhXZQc3Tp/BmA7XtYkZ/Lj/U=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- SJ0PR01MB7394.prod.exchangelabs.com (2603:10b6:a03:3f2::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8230.10; Thu, 5 Dec 2024 06:18:12 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8230.008; Thu, 5 Dec 2024
- 06:18:12 +0000
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 2/2] Documentation: dwc_pcie_pmu: Fix the mnemonics and eventid
-Date: Thu,  5 Dec 2024 06:19:14 +0000
-Message-ID: <20241205061914.5568-3-ilkka@os.amperecomputing.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241205061914.5568-1-ilkka@os.amperecomputing.com>
-References: <20241205061914.5568-1-ilkka@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH5P222CA0015.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:610:1ee::13) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+        d=linaro.org; s=google; t=1733379740; x=1733984540; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
+        b=F0Lxr09Eak/GQOOtKyld0TH0mqp9lKCKMeFYoQy5C38t/jyhTIfeqOqlCPDyxW2idp
+         cV5prbbduYU9eMw5+en+nvAC384BJX83WxO5uM+ycbQc7HOs1bthBHKKFiBzN54Ym+9a
+         stqvPQ/mP+M4Aa1FDarvd9cOuLF8ncFDRcqi4nWcou9o3JYITTVRy4eQiV9pZcHl23dg
+         hsaOBu01gHSTJ1fhokbY8n7WUcMnsQRMrO8+MUgL3szPivTnn0IbbwAxrG5h/u7hIn6j
+         ZiRiEsKg74IfhxnJ1B0MBeK5HmvC/J3zOOKyITXdJaaDgrKYRRqN8NInvIkDqTJ8b3O0
+         r+2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733379740; x=1733984540;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
+        b=pHXBqdJYSbiIcyaZ/tKAXQsTfQRMJ0M3QMCwIx+vR6akexODU3Z1jVt5Qah0b3+nTg
+         tosdRHKp46hDV9joLy38Pl6+BEUGTzaM5qkUCt8N5OeRWq7OtoZ+Q5Y4jWXL9MXKQ+Qd
+         P3b7WiJmDMSyoCzdM5yg9yfyjXQsVDmzUUnL+9FZZVMj8+UfYF+LtfxCKbBIwTnm7d5E
+         Hnaz6soHJRXyTOeIG0TEGTEfPzajU0IX3fz/j5igYJziJaC2R4RmzT3jnxRehfGgr5xs
+         PJOf24JArpD3TGgBiIyzmRYmZY2aV0OM2bOF4IhUk/Hu/96g9r7rdKHiJByRdCaOP82X
+         64Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+mHP6yROz77jH1flOo8qL/nR25fvwZ3yaTd1BolQaYzMePZQIhiPshx/gsvCnMHkRejzBNPk1d8tmQFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCMs+P/CXlQ9q2Ku8M7/deUYeTYRYJ9CSN0xcUhWdwjhTFTi6g
+	tRMNtcATGypJQmQ26mUu6gmdC+U692oY3gn/iblP2eBvmT9k8E0nraGnQI47deg=
+X-Gm-Gg: ASbGncsUFY58rPLopX+FSDriNQgIf8e66mxlIeazHXbtZIlpGnijkFFl3QfrGEIXMnO
+	jj+F+t3NcHRVDY4jIWzX9+J/FSrkQipRZY2c6eTbkRwFly/tD3tKuIx/x5yMhx0K5hfQd+X1bX7
+	fYkItYk2TliGHV0sM413/m7MTlBn4x9VwCZLew4cCU6GQ67HxVA+o+zUk+lL8P6MRGzXbnXTTcm
+	qVBHCDbxIRNzb5bB2B9RE84OH/UMJb0JMMV+cojPZGXj5EKgB978A==
+X-Google-Smtp-Source: AGHT+IGp/jNJTmdaFQ6E6rKRxd5mOl5DWkdNmDAnwmLFHgFS6wCHCx0RvANhN0Zro7KAfaQqmMGFCA==
+X-Received: by 2002:a05:6000:1a86:b0:385:ef8e:a652 with SMTP id ffacd0b85a97d-385fd43c331mr9424928f8f.56.1733379739965;
+        Wed, 04 Dec 2024 22:22:19 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52732casm49399175e9.13.2024.12.04.22.22.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 22:22:19 -0800 (PST)
+Message-ID: <2a20b243ade39fa240f75baf22a13f02239e3411.camel@linaro.org>
+Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
+ and don't require nvme address
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
+ <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
+ <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Date: Thu, 05 Dec 2024 06:22:18 +0000
+In-Reply-To: <5281f86d-6917-4f4e-b85d-70502a24c5bd@uclouvain.be>
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+	 <e23721ebd766f410103ddfb8705f3d7d6e5ae3e9.camel@linaro.org>
+	 <575b3275-b2fa-4e5c-bb6b-759394b02e18@uclouvain.be>
+	 <30b0995903fb7db3f866d1304783d878f563fe2f.camel@linaro.org>
+	 <5281f86d-6917-4f4e-b85d-70502a24c5bd@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|SJ0PR01MB7394:EE_
-X-MS-Office365-Filtering-Correlation-Id: a14542c7-c7a1-41dc-e013-08dd14f498da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qQZNGWxPMPpbu4WWY4+gstL4SWt4p8cspR/NV9hHGWlQlJ67huzHjfam8v+u?=
- =?us-ascii?Q?nEJku0lH6uaKnmoxbbqKgEnQDntHwV73iq/bz/vOAFePDSLLKDcwlHqN3Png?=
- =?us-ascii?Q?3y2JokyHB9y2yK7M3sR97rZyFNJbFkrdXG74eByENO2YS/0VAFdn6MelqYO/?=
- =?us-ascii?Q?IxkZg0M/MJMwM6pcCpieIKP0oTRtUjnx6nxCIoIWEIqMpFs10aiVxrhSxfe7?=
- =?us-ascii?Q?TtvqwjU0a94iKMsUcjJ4kvR4UXufCZGO1wegJCN2QjyeCc82xAayTCMwNuMq?=
- =?us-ascii?Q?GKJBMTe5SoKBpDBBJrA8aYdONfxkVg1BiAYOTsWgaUbggMdGtHYAzzMDh4xg?=
- =?us-ascii?Q?XEOjcf3dtvxL6Qtgti+mJ47UPyGZw28Q4dk3nED+rz8JEMNPecLIiZUrkO+w?=
- =?us-ascii?Q?OEdyfpsKw0xwMizHwksf+G5tU9DXTB5Id0w8PYb1AyHyQUn9uq7QDu3hLV4e?=
- =?us-ascii?Q?Cpg+XJO/9LLTi4PtzyPAqSmsv0H0v3EacUyFdW2EVONm9OnbCPPBZ1APUIgX?=
- =?us-ascii?Q?JTU+DrnKd1JQ2zstzbIBhTU9DxfqhJndQ6AzajGq38XdyBiZ/Ra5a0VS7R+9?=
- =?us-ascii?Q?41flAZjGS27JBHrzeNxDcCyAF33rLbylZ2qBbe1XFAHZPJ4KOTVsjBEmjo2n?=
- =?us-ascii?Q?s5xb7KJHUGzQeroEXrMOW/ELzFF07sICCZn2/NdlLCh1KtlXWBtHl2/pbVN0?=
- =?us-ascii?Q?AzPAQ0M+3hksT05dznp6Gsqr2gWavbMOmSrpnyGziigXK0St/0euTcOf0tgp?=
- =?us-ascii?Q?+qDzgQDnahdQVaCQK4tI0zgdM3x9vMLHhAuGmSLJ3mKhhjDIEPh6yztNai3U?=
- =?us-ascii?Q?HbYjboZoI8RqpX+3Jetlku9C4NSi9WWyeMndYOiA6CaxthhM0EBYXmD0HHSK?=
- =?us-ascii?Q?+zpueZniS00XwzzeHuKsQ2ID0uoRPuiYGMsjblakz0ETwrw7nz59buXf9f7l?=
- =?us-ascii?Q?yIYF8PmUVvIKxROUtYUzjQDQkmU3PGLrqWuPhfkHG2QRceH90iElJ5mcGL6A?=
- =?us-ascii?Q?p682/Cj3L44ddTaDtaPoRypoXyeFs7YnNmeGk9QhUsvkGd5Bk6AWX9saP4xH?=
- =?us-ascii?Q?Lk+u9zvEdD3nfMgEIrjhAF02zlP6gHpyt3Hqba63j8gFxVZDmR6x7JCxNvsv?=
- =?us-ascii?Q?IYZeR+2VkKYJLBBZNpz5ClM68UPZfG2dqbsdEuTIBehJIEFaSseun266sCYJ?=
- =?us-ascii?Q?Ye7M67cP2ZGz12WH6dNkX0pw5Y77cRGBiB0r3wI0JIZEPBe74acfFFHNu9ZH?=
- =?us-ascii?Q?tI8r1fDu8EGnf5NQyC8vQvjPFCftKzeXqCnsLt0nMto7Q5wa6C/yZkHw2r/v?=
- =?us-ascii?Q?WELjra2If2sCeMK6iCODak1P47wfg7C4pQtRoCxVna1Km5ePmwOJ2tZpsw8H?=
- =?us-ascii?Q?AfSQt952SgjWXrWnhVPpeag2bMZNiXk92s60ntr+Zf2Uni+Dlw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eGNlTwkgKbKEXlzCuRM6KYv3y89Y01aeJkP2XYJyryvjfeukPePE1fAQaBiT?=
- =?us-ascii?Q?SPSYZ2oCVI/CMS/lMo1q9MTsq/C0+0WjWUj3mmcUKKTDlLXg5+lermBHOY3A?=
- =?us-ascii?Q?RBkPkSdKuNXNT/t8tabbqIRSGtt5kaNSLWC3sqvctlQ7C36ZNr+8c9UOwHlb?=
- =?us-ascii?Q?RrMWsl49TLEA+38SfwT0L0qbbV3YMFP368GE0NCMsWqZ0XzohTa4rGmB2bh7?=
- =?us-ascii?Q?LOn/HNEhcSgCFd/s5q/OTsHtLhdo6v6B7VUYhQLCkIHXddRxDiBjFSEwmp5u?=
- =?us-ascii?Q?WEZk3Nszn+gsbuzpO/clqsqxBgnnHg8HFBOlPQqNmLy4MdOudw0VPsQj24tF?=
- =?us-ascii?Q?Ypul4AOINVHkvuv/DWP3eVpcaEgIa42DoH0ntlIP1wTcS1myJudlbJ82TZDP?=
- =?us-ascii?Q?Md+Wm9bY3WXs5XoRcC92RgSyKo7nEiKvM59zUVcr/7ftEzEEPoaCSGv3ytmg?=
- =?us-ascii?Q?WUir8sW9ku8PphBx6wgevopdEjz7K8IOYnRAPtu9Im3f1fS6QXFr7nbkFJei?=
- =?us-ascii?Q?KqmDZ96m60oAFEbRtxu4rL426kcMCEl0/+d+XGrk3W6sTmVAQFIFtGUHRhC+?=
- =?us-ascii?Q?eqRG60bFNIE0lvpOH6HKunwtO2AM2l9gPSOjYrGox1m5Cor4kO0i8QhzlHw+?=
- =?us-ascii?Q?IcK0Py5sK75VyaddOudaGiifzbRT99mDO1jcMLl64RfAzeSEwcGXELgLsuSE?=
- =?us-ascii?Q?x/u8uYv7LaiZw18+OoctF48p5J5CqtsrWPKVGTk8o6FfxQIcfFRCVfRP+Cg8?=
- =?us-ascii?Q?eblNr93X2b3gear3pj7iq151/Locdm0pcfYmCUXrCkEDpNu0ArABOXo7Kjav?=
- =?us-ascii?Q?YSjR5Rd0AssmTgCQhObrMS/lejmqsQZzC3rHnG1vk4PnpWycA9AJPAnm4NWt?=
- =?us-ascii?Q?5DRTk86m1FhbLLy0BJ5qHQCACY1SHuz6ZSJU0HB2/By6/dBcJ6Pcsrx6jatF?=
- =?us-ascii?Q?T/39WIiBxeG2tbvTxshdTqxkkz4LrdVTZXlM7Vo611PhJ9YAD47htpWq1AJq?=
- =?us-ascii?Q?XFodCqLZT01sCVSGTa24nkNPAs8K0Mmp+ST64iQ+5k88Hxiw5wPgYB6JeUMo?=
- =?us-ascii?Q?NzHhbAwNsbwl2OC7kqSyZtV+45hOL+/3dxrspB+nXQPzB2j5b0MoSABo5XwC?=
- =?us-ascii?Q?FOO0x/09+qyGNRc6jZJE4yjHQL7I/pONOCQ6Dfvqx8hKqtn3ZIohuJWTUjjV?=
- =?us-ascii?Q?0vij7xXcmt0KidjcU6ePd176PwzIWWMU9YotByd7HzMcGmNmA11uAEtORsNu?=
- =?us-ascii?Q?XcQwo3zQ0rsHKwnY7RNx3wBdJzVt0RNTR906ZENFwwY4/ZQVnMZXGrOBSjuU?=
- =?us-ascii?Q?pAVCGM3L6oTxr8PooRg3y0v7kp04/20rKDDccn12Fpd8azZQvgfv2dk7j7KX?=
- =?us-ascii?Q?FsKnnjoJLprDmKoydj13LVRzQBVbCh9LTnswW0Ys1nXvH0dytoG0DDPAneFZ?=
- =?us-ascii?Q?milyfNv9fhKy3wKwVNxMG8lO5WyJn5MJgbEk0fWUUQYwqQOSeK8hgJMrCxrV?=
- =?us-ascii?Q?Fffz060vwKKBUG127K0t+VSuyMBaN833SRXjJS9xEAncvN8cKzszpbbciKAP?=
- =?us-ascii?Q?Ojkr50+TKXPq3+Et4iHdyc4+wmg5dM+wQbVic8ay80qZTQ8tvTFqOj3YroVZ?=
- =?us-ascii?Q?yj+HzlbcTQgJYr1tJjwoCUc=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a14542c7-c7a1-41dc-e013-08dd14f498da
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 06:18:12.6250
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BDhuJZ6luhWIHkoxAgVUMOaP2KGUv8sdFi4UhwymMj2AwCCNaLpAmSClYm9WW90CYRPktIrfX67VKi2NiMj6j9xPzl2M3Cmog09CqN99oHKcme5H2CaAOzTvHPmY0FP6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB7394
 
-Fix the event id and type in the example. In addition, the recent fix,
-which addressed the mnemonics with mixed case, didn't fix the document.
-Match the names with the driver.
+On Wed, 2024-12-04 at 14:13 +0100, Thomas Antoine wrote:
+> On 12/3/24 11:40, Andr=C3=A9 Draszik wrote:
+> > On Tue, 2024-12-03 at 11:23 +0100, Thomas Antoine wrote:
+> > > On 12/3/24 08:12, Andr=C3=A9 Draszik wrote:
+> > > > On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrot=
+e:
+> > > > > From: Thomas Antoine <t.antoine@uclouvain.be>
+> > > > >=20
+> > > > > As the Maxim max77759 fuel gauge has no non-volatile memory slave=
+ address,
+> > > > > make it non-obligatory. Except for this, the max77759 seems to be=
+have the
+> > > > > same as the max1720x.
+> > > >=20
+> > > > What about the battery characterization tables? Aren't they needed =
+for
+> > > > correct reporting?
 
-Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
----
- Documentation/admin-guide/perf/dwc_pcie_pmu.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[...]
 
-diff --git a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
-index 39b8e1fdd0cd..cb376f335f40 100644
---- a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
-+++ b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
-@@ -60,7 +60,7 @@ description of available events and configuration options in sysfs, see
- The "format" directory describes format of the config fields of the
- perf_event_attr structure. The "events" directory provides configuration
- templates for all documented events.  For example,
--"Rx_PCIe_TLP_Data_Payload" is an equivalent of "eventid=0x22,type=0x1".
-+"rx_pcie_tlp_data_payload" is an equivalent of "eventid=0x21,type=0x0".
- 
- The "perf list" command shall list the available events from sysfs, e.g.::
- 
-@@ -79,8 +79,8 @@ Example usage of counting PCIe RX TLP data payload (Units of bytes)::
- 
- The average RX/TX bandwidth can be calculated using the following formula:
- 
--    PCIe RX Bandwidth = Rx_PCIe_TLP_Data_Payload / Measure_Time_Window
--    PCIe TX Bandwidth = Tx_PCIe_TLP_Data_Payload / Measure_Time_Window
-+    PCIe RX Bandwidth = rx_pcie_tlp_data_payload / Measure_Time_Window
-+    PCIe TX Bandwidth = tx_pcie_tlp_data_payload / Measure_Time_Window
- 
- Lane Event Usage
- -------------------------------
--- 
-2.47.0
+> >=20
+> I looked into it. The probe function launches a delay work
+> max1720x_model_work which will try multiple times to run
+> max1720x_model_load which leads to
+> max_m5_load_gauge_model -> max_m5_update_custom_model
+>=20
+> This last function writes 0x0059 to 0x62 and 0x00c4 to 0x63 which unlocks
+> the addresses from 0x80 to 0xaf.
+
+OK. The regmap I had proposed was excluding those based on the
+datasheet I have, but you probably noticed.
+
+[...]
+
+> If it is indeed the case and that all of those are equivalent to their
+> max1720x counterpart, I think the management of those values should be
+> added in another patch which implements it for both the max1720x (and pos=
+sibly the
+> max77759) as the mainline driver does not do anything with those values
+> currently.
+
+Thanks for the analysis! And yes, I agree.
+
+Adding new required properties to a DT binding is an ABI break,
+therefore I was trying to ensure the binding is complete from
+the start.
+
+Cheers,
+Andre'
 
 
