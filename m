@@ -1,149 +1,209 @@
-Return-Path: <linux-kernel+bounces-434011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAFA9E6020
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C68729E6022
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E53B16645B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30F0166B60
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E641CCEED;
-	Thu,  5 Dec 2024 21:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460A81C07C8;
+	Thu,  5 Dec 2024 21:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iHr2z5Hd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="iWc+FMhK"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BE01ADFF8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 21:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907AF192D8B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 21:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733434249; cv=none; b=CS7lAr7t0ZkSpLd94Ys79M4vAZvM5Fv6JkF5XP07q5/r3weBKC8XNDDScxAZ9CXvzfMHnwb+vjpyHH5ZWWJNksJ3ifYl+7IVnGyOoi5oGjnKviKj3b3UWWUAOTz5+cwutUQrOKvAH9uvwYAG07BnU7u/K5LNNnmZPbFFG+z8jKk=
+	t=1733434265; cv=none; b=Ab5d4NF4xBTbWCPIkq27mxUboSEEA2+CVnvFZPJFDW4Zwn/5QuClDPW8PB4Uiq3qz/rZ8+gS0lgzEQJA8e1jBkC51y2GpEiIo3uFTr4oA0Y+dyoc+Ilh4okRra1PWb1oSbFoqdFP1a8QZSU9A4urXyFaXZKv8XexqqWGw5Cxhj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733434249; c=relaxed/simple;
-	bh=Dk1ZS+GRTSpcu51g1k28hBgaIdDpbhkym/Q7g2lSf9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bKh/1Apiv3bmvJ1nxMED8NzdPhVhvsLqg6t6rYOWRbm2Qz8pVOno3QM7nPth11yj4PkEbg1jGJZZ7qSUzOk/PI+vBd1HmLiGSx2FeIC1Ugj6cjinLIzBluUXLu/W6iAyQHuij7X6L+1dJzNvjzR6FkeRscAY8eUpQLbVIqKl/2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iHr2z5Hd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaJ3O003759
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 21:30:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Nd0u8LVE49Zsjorynlz+VwADLKhOL7qlzALMovLJgII=; b=iHr2z5HdE2me8fgm
-	TL6ycqT1czvB6Pg9shfhkMjiCLVf9dJqf4r56C0k5t8c/OMoIDaz8brl7wxiqg9o
-	x9FLVphPQThNWibpvizaYEBNQ86yfWXIp/TxfwIg9s5ZGWOpAQqv6aAuonwYos8W
-	eP6HmLb2+G+EhaNgPXTFpcSlN1cXUyF+PD1GtM2I2hxzruPIsrSUa7oxV7z+UHhi
-	U7Jm4npZGOErxL+j7tBWZTIKha68iJonJ5Sgg1eGHlkh4IBeaKBQFPgLFzVTTogm
-	ROkwBugG1AUTAr8gXpGPOi6i/S2VCNbzYKKYGLjgOvb7frbeGCHEe56X1Tb0nfDo
-	61ykcA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba0khsdk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 21:30:46 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d3b1d1d8c1so3198276d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 13:30:46 -0800 (PST)
+	s=arc-20240116; t=1733434265; c=relaxed/simple;
+	bh=hD2+1vy6RYUSGnMZ0ttXTvGPWWJm2B1GfGDmqcwKzrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKuWF3DyLyihRPEy/aY5MJANpmSDch+6D/e1rlvGnYFEgNdJmBR7bGG91eE5zSLVuhs4BvOrfm+I4m8Q0tBXrRqcp5BuGCArYmWzRIxG+g+PfHXrWkSTE8C69iA6MkTwTJv1TnJ5YQqAfnmYpcj1GJJ7goH/whH2AgTU/VbCxwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=iWc+FMhK; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724ffe64923so1633157b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 13:31:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733434262; x=1734039062; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=swrB1X9v62XhnQOwomPfhFuZeA3/Dy25MIYnjNAQ9Aw=;
+        b=iWc+FMhK1Fp/UVnkXHVvSw7/XPzUUyOvovm1qWMPTCSjNFUfqn2oC3Vhy4I8LGx2hQ
+         zoOmVYnwG1Xya9ZjHC71h43vf0W1OOcmvlz2Pj00ipS9p3s/1U2yOUBjwfHiBHzFadoq
+         j/YCCkCeq2cSZ+9SHn5D1ZOkNN3Y3Ip38f0DR3OfokW2i8w3pBA69CC1FksMhSJvP28O
+         5tz2pKaetiQ1j5fX1XmSTiVRLcSKSsI/7e6VHtCgLi/ZGNN8vSrzpwjYk0Jx9iBmjsRU
+         1WQmUwgOEZjhOg478fCdD47f8Nu+HtUtr9NQpovnmiz4/6YuFAFnoIQIU0yAcPYtPCrX
+         NugA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733434245; x=1734039045;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733434262; x=1734039062;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nd0u8LVE49Zsjorynlz+VwADLKhOL7qlzALMovLJgII=;
-        b=ApPJgKd7IpAunLHLo/swCImH6holoGseH0aY8Fm8d6+rgJ9TR8NRUUDIriPBW+sCM6
-         OLMQ+oUBgozeZ+zH+VPRSz2jKXv+T9nSV0RHNgKeyGuuqFDzksmafqXFQ+QQYURSxhGH
-         AiSrteSNWtgkVzPDhryWUGuZYt6rNbSLeUHl/c3Yv4wplt8/8oYyk18HWA/RboEUxbHz
-         qNc/N4SkVLi87TZWUQ8NhjzZ4ZVaCJBVnfx/Si9YSX2MHX+7hby4NmDLYHtXA+cjYcQw
-         8okONrHj6y9rZa2MHQ/9l9iubUiNRW2gf0YTQu7qsR6zeXcVOyYfwLXHiQywhHv0clK6
-         JKFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjoH7Idy/SFZGDOoNWCORU9LQNhML6yEXpkYCLhTj0gvIabWhBE4g6qN196EcFprPoeVFvTFPjbHxQDHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv8rsE2xZa81wuAkqoApbE3OTqXHmono1hmYqjy4sfwherV3v2
-	vXlCDqfNCPm3yRYw04ThVc48UNh1NGoquOGMWiks1qKRMY2/UVzTgzSvSfGgXsZr+OEFcnuM9l8
-	OAYCLN4RiebFRfXSVpyJ4eSWRfZDYAxhJHb9Hu8KPUAWAVC6rDCanSIhggBE+t54=
-X-Gm-Gg: ASbGncsRHfwuk5OARrWtFNrRkbI2nt/g1ifR2PPaLfb8bAFVV6otaiNLBNkl/oNVC0F
-	eUQeI0Qv0eGCZ3V/SAxARzolOi2ebTUH1/g6MJgJHwzCO+JfgOTyEZIsR3sx4WS2YIESbb+i81k
-	BkBp4sqKtrCXZER9eXkxHUYy+1GUAJzZJrRgR1gEyyxGIHiQ00Tac22qCSOal0v5e+S1X1d3Ro3
-	BkCLRXNq99DwNAU7TkN6NqRm2YVKTJ3Eop7ZH8d7Kx75dga6AmXVpeXk7Xpo2yguVxvAIL7G+Ow
-	XAd1N6Ai3Rx+h8vs/xaJ7IW1w1X2UzU=
-X-Received: by 2002:a05:620a:462b:b0:7a9:c0f2:75fc with SMTP id af79cd13be357-7b6bcb4e3fdmr48657585a.12.1733434245243;
-        Thu, 05 Dec 2024 13:30:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFxeKWkaQPCpadeF0rPd3t9rOnnOYAGLyEXBvPD4ZBjOIHDTBFU6PJHKs5xFnhBgeH5nnsgHQ==
-X-Received: by 2002:a05:620a:462b:b0:7a9:c0f2:75fc with SMTP id af79cd13be357-7b6bcb4e3fdmr48655585a.12.1733434244915;
-        Thu, 05 Dec 2024 13:30:44 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4dc8asm143185966b.35.2024.12.05.13.30.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 13:30:44 -0800 (PST)
-Message-ID: <af0f6e79-cc98-4f95-91df-b940b5471149@oss.qualcomm.com>
-Date: Thu, 5 Dec 2024 22:30:42 +0100
+        bh=swrB1X9v62XhnQOwomPfhFuZeA3/Dy25MIYnjNAQ9Aw=;
+        b=Od//nHcGWMIAqq5A8FoU1QbcjNVkUCa6882nj6MLLpbkeLvtup45xsLE272IAO4rLi
+         Zcjw37Y0Cobobh1erfkbRcKdzo/2HJR1YWQDcOKNnQqCcrX7h2QukR7TFKnxd+kDtKnV
+         IfnLKD60wRiTYGdlWXNKDDMr8s+cCowAtrUbGNc7LdEm2XkA3eWk9ktBf3CMvYQf7Qyi
+         qNw7tnxu+GdFErImjW+tW04dOYT2VhkJLkVHrw7sJJpLPwvFR4ZAFOOxdzrq7REsTVIE
+         b56qcnAsPvs2IcZ5Ihrp11V6LE3cidEQZ5Ax/jI6lX7TYHoJwEKHdIgMQPBNWgWMHw9u
+         NTZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVk/LMlmKcrbBttw+Z3bndkZ38SbzMNg0X5rLN+HkJW5dI9XfWKmV6a8KoaFOTupe2cWtrFozgefa2kSCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkChWaF/01c8I3NaLokybY/ze9OTIzyqzgEiAlreynSR8feM2c
+	EhokMF6JCoWzxv07o1QzcVacIlt0fBQulBeQyOJNQE3UuTTh4dvruvpYZ9AnRo4=
+X-Gm-Gg: ASbGncsIdXVk6V7wGFYcW97OlguCNwPG2j0rTC9kV9dQUIEP3MqFRt3679rjV16s9FX
+	AZ7UlLZ/APuBWG5SrT6GICfdIVPbhsXknThrlMbFHTDQ0EzqFbHdZ2Sf82KsikcHcADDN9NdxMj
+	yirWsbPEIlF0y+touS8MR+yhVzz8h0CmGX9EhH10iDrTz1YM7jdhYmMv0lnV27GZucdtXDXyGGV
+	IMfDR2rh1FhQMJL++5+1mgGnhfD+b/8BKsHB9Gpnme2
+X-Google-Smtp-Source: AGHT+IFL9KJFSFdqWEJ5S3rFfqk+7jTG8B4QqZ1/8txfPBPRJMuKSjeQj3xp8kqjhhl1CQpulA+rfw==
+X-Received: by 2002:a05:6a00:2196:b0:714:15ff:a2a4 with SMTP id d2e1a72fcca58-725b8156675mr1310656b3a.13.1733434261665;
+        Thu, 05 Dec 2024 13:31:01 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:643d:2bb:e7d1:adbd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29e8fa7sm1748633b3a.67.2024.12.05.13.31.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 13:31:01 -0800 (PST)
+Date: Thu, 5 Dec 2024 13:30:59 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>
+Subject: Re: [PATCH v2] riscv: selftests: Fix warnings pointer masking test
+Message-ID: <Z1Ibk8izrtPAywoU@ghost>
+References: <20241204-fix_warnings_pointer_masking_tests-v2-1-1bf0c5095f58@rivosinc.com>
+ <20241205-45c00adab2636bf26ce05f70@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] arm64: dts: qcom: qcs8300: add the first 2.5G
- ethernet
-To: Yijie Yang <quic_yijiyang@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20241123-dts_qcs8300-v4-0-b10b8ac634a9@quicinc.com>
- <20241123-dts_qcs8300-v4-1-b10b8ac634a9@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241123-dts_qcs8300-v4-1-b10b8ac634a9@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: oBWIH5QKFCv7X9VET9QlYHiVf7x-Ejy7
-X-Proofpoint-GUID: oBWIH5QKFCv7X9VET9QlYHiVf7x-Ejy7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050159
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241205-45c00adab2636bf26ce05f70@orel>
 
-On 23.11.2024 9:51 AM, Yijie Yang wrote:
-> Add the node for the first ethernet interface on qcs8300 platform.
-> Add the internal SGMII/SerDes PHY node as well.
+On Thu, Dec 05, 2024 at 09:04:12AM +0100, Andrew Jones wrote:
+> On Wed, Dec 04, 2024 at 06:57:10PM -0800, Charlie Jenkins wrote:
+> > When compiling the pointer masking tests with -Wall this warning
+> > is present:
+> > 
+> > pointer_masking.c: In function ‘test_tagged_addr_abi_sysctl’:
+> > pointer_masking.c:203:9: warning: ignoring return value of ‘pwrite’
+> > declared with attribute ‘warn_unused_result’ [-Wunused-result]
+> >   203 |         pwrite(fd, &value, 1, 0); |
+> >       ^~~~~~~~~~~~~~~~~~~~~~~~ pointer_masking.c:208:9: warning:
+> > ignoring return value of ‘pwrite’ declared with attribute
+> > ‘warn_unused_result’ [-Wunused-result]
+> >   208 |         pwrite(fd, &value, 1, 0);
+> > 
+> > I came across this on riscv64-linux-gnu-gcc (Ubuntu
+> > 11.4.0-1ubuntu1~22.04).
+> > 
+> > Fix this by checking that the number of bytes written equal the expected
+> > number of bytes written.
+> > 
+> > Fixes: 7470b5afd150 ("riscv: selftests: Add a pointer masking test")
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > ---
+> > Changes in v2:
+> > - I had ret != 2 for testing, I changed it to be ret != 1.
+> > - Link to v1: https://lore.kernel.org/r/20241204-fix_warnings_pointer_masking_tests-v1-1-ea1e9665ce7a@rivosinc.com
+> > ---
+> >  tools/testing/selftests/riscv/abi/pointer_masking.c | 19 +++++++++++++++----
+> >  1 file changed, 15 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/riscv/abi/pointer_masking.c b/tools/testing/selftests/riscv/abi/pointer_masking.c
+> > index dee41b7ee3e3..229d85ccff50 100644
+> > --- a/tools/testing/selftests/riscv/abi/pointer_masking.c
+> > +++ b/tools/testing/selftests/riscv/abi/pointer_masking.c
+> > @@ -189,6 +189,7 @@ static void test_tagged_addr_abi_sysctl(void)
+> >  {
+> >  	char value;
+> >  	int fd;
+> > +	int ret;
+> >  
+> >  	ksft_print_msg("Testing tagged address ABI sysctl\n");
+> >  
+> > @@ -200,14 +201,24 @@ static void test_tagged_addr_abi_sysctl(void)
+> >  	}
+> >  
+> >  	value = '1';
+> > -	pwrite(fd, &value, 1, 0);
+> > +	ret = pwrite(fd, &value, 1, 0);
+> > +	if (ret != 1) {
+> > +		ksft_test_result_fail("Write to /proc/sys/abi/tagged_addr_disabled failed.\n");
+> > +		return;
+> > +	}
+> > +
+> >  	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == -EINVAL,
+> >  			 "sysctl disabled\n");
+> >  
+> >  	value = '0';
+> > -	pwrite(fd, &value, 1, 0);
+> > -	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == 0,
+> > -			 "sysctl enabled\n");
+> > +	ret = pwrite(fd, &value, 1, 0);
+> > +	if (ret != 1) {
+> > +		ksft_test_result_fail("Write to /proc/sys/abi/tagged_addr_disabled failed.\n");
+> > +		return;
+> > +	}
 > 
-> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 43 +++++++++++++++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
+> Could make a wrapper function for pwrite() to avoid duplicating the ret
+> value check.
+
+I'll change it to a goto statement to avoid duplicating the
+ksft_test_result_fail call.
+
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> index 2c35f96c3f289d5e2e57e0e30ef5e17cd1286188..718c2756400be884bd28a63c1eac5e8efe1c932d 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -772,6 +772,15 @@ lpass_ag_noc: interconnect@3c40000 {
->  			qcom,bcm-voters = <&apps_bcm_voter>;
->  		};
->  
-> +		serdes0: phy@8909000 {
-> +			compatible = "qcom,qcs8300-dwmac-sgmii-phy", "qcom,sa8775p-dwmac-sgmii-phy";
-> +			reg = <0x0 0x8909000 0x0 0xe10>;
+> > +
+> > +	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == -EINVAL,
+> > +			 "sysctl disabled\n");
+> 
+> Why is this changed from expecting 0 for the return and being the
+> "sysctrl enabled" test? We still write '0' to tagged_addr_disabled here.
 
-Nit: we pad address parts to 8 hex digits with leading zeroes, maybe
-Bjorn could fix this up while applying
+Silly copy mistake, thank you!
 
-otherwise
+> 
+> >  
+> >  	set_tagged_addr_ctrl(0, false);
+> >  
+> > 
+> > ---
+> > base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> > change-id: 20241204-fix_warnings_pointer_masking_tests-3860e4f35429
+> > -- 
+> > - Charlie
+> >
+> 
+> Not part of this patch, but now that I looked at
+> test_tagged_addr_abi_sysctl() I see that
+> ksft_test_result_skip() is duplicated.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Oh huh I hadn't noticed that. I'll send a patch for that I guess, easy
+fix.
 
-Konrad
+- Charlie
+
+> 
+> Thanks,
+> drew
+> 
+> > 
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
