@@ -1,119 +1,81 @@
-Return-Path: <linux-kernel+bounces-432903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C692F9E51ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:17:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5499B188248B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D141DA634;
-	Thu,  5 Dec 2024 09:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q61MEBf2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A3F9E51CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:12:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB851DA0ED;
-	Thu,  5 Dec 2024 09:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76381283FCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:12:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8238202C31;
+	Thu,  5 Dec 2024 09:55:39 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56344202C20;
+	Thu,  5 Dec 2024 09:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733392298; cv=none; b=fKmNxp5camphklpHdda1xcyWq5rLAMTnQcmzFKHlI2AqD/QGcQ8fDDlvQrDnQDsRVyvfLhIbrkJsnDFOYuit5U1Xz8aSgw/0vxTipQNxW6DlfmLl6qxRabvEPUxOrsNledI+C9zV+qTzQeqg0MsWy/PStz7OW2JT8Q9TztoVgKs=
+	t=1733392539; cv=none; b=Uzf1DSiSaaq1HC4z7FN/3l/BaWkl5qoRxthNxdCXKHsGPgWQ2y2ndg1zUxcGP8kQmgY4nOTBU99FVaNeA7aC5BejhkxvvD32nB2BAqZj3PbGrQjOPwBwjeZicy6mzz6Akuc9MlnUglNB4tWFGfIA0vXjY1qKqZmI5E7MYE+RApU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733392298; c=relaxed/simple;
-	bh=wuoye3dUGkRBh7386DHWKpiGlFh08f+epNY8QIOWIEI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RsYbEjluRUoQcQVgnYRQ+9sIQR8rGwL6WW5kXnOo4vwWbbOjAfDka5/ay4AxY/QSkVc60uc68xUvtDMIxSHg0SyEmKevGdPjBwOEVBdKlLBkd/lC2Md4YGHKdyGVm2jcofTlu/VuY2AbHwiq/+luXmbcDMdzOrHtaj1JPn41utY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q61MEBf2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3594C4CED1;
-	Thu,  5 Dec 2024 09:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733392298;
-	bh=wuoye3dUGkRBh7386DHWKpiGlFh08f+epNY8QIOWIEI=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=q61MEBf2X5S2oNIn91BYQVCb1YezaWPj69naQ0KkbNLTt/j2aVtcWNRMcEuLwvAJb
-	 pEzVCF2nmQOaFGClPdHXQFEz7SQe9JTK67a/qlkOl/43o8kT7oTuh8qAVR3tlM97ix
-	 o+SjGjkghHzamDvLtB/PdL1L5NZRjEb1uredBKfVkwzn9F7X9bcVYNousEFtYfViIm
-	 6eQgZCaChh181x+zxS/xAShM1PlsINOisopMSQfwiNHnnf38cQshIdHH7QNcsoJ/Db
-	 5mTdK5JAQnUiaQA0kH+AppjmsOC9eM6EsJxiI3KBJ/0HUGnDp1r1l7cuIph3+PkRWb
-	 8tCcofU1CJqaQ==
-Date: Thu, 5 Dec 2024 09:51:33 +0000
-From: Simon Horman <horms@kernel.org>
-To: Joe Damato <jdamato@fastly.com>,
-	Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org,
-	pabeni@redhat.com, edumazet@google.com, kuba@kernel.org,
-	mkarsten@uwaterloo.ca, "David S. Miller" <davem@davemloft.net>,
-	Shuah Khan <shuah@kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] selftests: net: cleanup busy_poller.c
-Message-ID: <20241205095133.GA3382@kernel.org>
-References: <20241203012838.182522-1-jdamato@fastly.com>
- <Z06T0uZ6422arNue@mini-arch>
- <Z08xIyc7OcRoEE-C@LQ3V64L9R2>
- <Z08zacl_IhADP0FZ@LQ3V64L9R2>
+	s=arc-20240116; t=1733392539; c=relaxed/simple;
+	bh=iRjDAgRpjerTWwbcREdXfoOcXRzk3JFsd6ZpFcFRZ2c=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=u32k+Jr2AyUcNMQG90KA04gVb8m+VdBxsgSYi2kN/PJLlaN4bB2kCGSFGiSzntN/1z1VUFa27RCsrZ/OLjk77yLosN2HLl0ClIuxhNHw5NuD3iN447VhGHgbwdMk/fSsU9pBFSQcmy3esR3ixiC9BKZCRiel5Rglqy0ldANwIqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee9675177bc2f7-dc30f;
+	Thu, 05 Dec 2024 17:51:58 +0800 (CST)
+X-RM-TRANSID:2ee9675177bc2f7-dc30f
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9675177bd835-9f8b7;
+	Thu, 05 Dec 2024 17:51:58 +0800 (CST)
+X-RM-TRANSID:2ee9675177bd835-9f8b7
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: perex@perex.cz
+Cc: tiwai@suse.com,
+	zhujun2@cmss.chinamobile.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: lola: Fix typo in lola_clock.c
+Date: Thu,  5 Dec 2024 01:51:56 -0800
+Message-Id: <20241205095156.17837-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z08zacl_IhADP0FZ@LQ3V64L9R2>
 
-On Tue, Dec 03, 2024 at 08:35:53AM -0800, Joe Damato wrote:
-> On Tue, Dec 03, 2024 at 08:26:11AM -0800, Joe Damato wrote:
-> > On Mon, Dec 02, 2024 at 09:14:58PM -0800, Stanislav Fomichev wrote:
-> > > On 12/03, Joe Damato wrote:
-> > > > Fix various integer type conversions by using strtoull and a temporary
-> > > > variable which is bounds checked before being casted into the
-> > > > appropriate cfg_* variable for use by the test program.
-> > > > 
-> > > > While here, free the strdup'd cfg string for overall hygenie.
-> > > 
-> > > Thank you for fixing this! I also saw them this morning after a net-next
-> > > pull and was about to post... I also see the following (LLVM=1):
-> > > 
-> > > busy_poller.c:237:6: warning: variable 'napi_id' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-> > >   237 |         if (napi_list->obj._present.id)
-> > >       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > busy_poller.c:243:38: note: uninitialized use occurs here
-> > >   243 |         netdev_napi_set_req_set_id(set_req, napi_id);
-> > >       |                                             ^~~~~~~
-> > > busy_poller.c:237:2: note: remove the 'if' if its condition is always true
-> > >   237 |         if (napi_list->obj._present.id)
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > >   238 |                 napi_id = napi_list->obj.id;
-> > >       |                                            ~
-> > >   239 |         else
-> > >       |         ~~~~
-> > >   240 |                 error(1, 0, "napi ID not present?");
-> > >       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > busy_poller.c:226:18: note: initialize the variable 'napi_id' to silence this warning
-> > >   226 |         uint32_t napi_id;
-> > >       |                         ^
-> > >       |                          = 0
-> > > 1 warning generated.
-> > > 
-> > > Presumably the compiler can't connect that fact that (!preset.id) ->
-> > > error. So maybe initialize napi_id to 0 to suppress it as well?
-> > 
-> > Thanks for the report! Can I ask what compiler and version you are
-> > using so that I can test before reposting?
-> 
-> Err, sorry. Haven't had coffee yet. I see you mentioned LLVM=1
-> above. When I use that I also get the same error.
-> 
-> FWIW: I'm using clang version 10.0.0-4ubuntu1 (which as far as I
-> can tell is pretty old). I'll see if I can get a newer version just
-> to make sure no other warnings appear.
+The word 'ajustement' is wrong, so fix it.
 
-Hi Joe,
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ sound/pci/lola/lola_clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you are still looking for recent LLVM toolchains, I suggest taking
-a look at https://mirrors.edge.kernel.org/pub/tools/llvm/
+diff --git a/sound/pci/lola/lola_clock.c b/sound/pci/lola/lola_clock.c
+index cafd30e30..2e73fbf33 100644
+--- a/sound/pci/lola/lola_clock.c
++++ b/sound/pci/lola/lola_clock.c
+@@ -35,7 +35,7 @@ unsigned int lola_sample_rate_convert(unsigned int coded)
+ 	default:        return 0;   /* error */
+ 	}
+ 
+-	/* ajustement */
++	/* adjustement */
+ 	switch (coded & 0x60) {
+ 	case (0 << 5):    break;
+ 	case (1 << 5):    freq = (freq * 999) / 1000; break;
+-- 
+2.17.1
+
+
+
 
