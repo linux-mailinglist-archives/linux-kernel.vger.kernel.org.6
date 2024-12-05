@@ -1,115 +1,155 @@
-Return-Path: <linux-kernel+bounces-433831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8489E5DAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:52:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F4E9E5DAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:53:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE81283F88
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDA621884EEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F4C225772;
-	Thu,  5 Dec 2024 17:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7BA226ED8;
+	Thu,  5 Dec 2024 17:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hNErXSM+"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vGVzvMKd"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8688E21D5AC
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291C721D5AC
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733421121; cv=none; b=LGtBUGh+vzsL5BXUDR7u9JF0xPf946Wo4Ub5jWmFH91pM3wdNzOkMz2p3ZrFD9hqx9kJq2ckKOjhXQAlbl8B3FZYz2TQKiwXQMUwNxKHbOjdHqk3HSEH7rnSTq72HQrB6DEWCRn2mfYxrpgDND7mHSSIOMWr3CHGPCANc7RfbdA=
+	t=1733421231; cv=none; b=j2XcSKCTWukjFC6Rr8dxr2SKKXj5M9vmEdF3P+OPsYWYSGFBHZJuBI62deFVn6fn81CaQ+hsDoEp44Swi3UZ/ex8wXU5AH49BOPH4tJSoV2tnWQ455wXMXlo9rd8ZW5w0JdD0ZzKxCVJHgwbtGWA7sONpQ+W7n6WnjVDS/T5vpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733421121; c=relaxed/simple;
-	bh=7MoIFK5OGXq3gDhad/EY4fgDc+nrvflIniaIyfUBSuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tEMWpo18khSdbwr85xf9iGhe8wXC9512kqb4NgBl3AiQXlYWAolbZIRws8AsyCejz4IhGuO6Kv0BqCL9Pib+3b1elzLhnyXjyQssHuoRb5hfungEYX+7AnnRAlgzn/FjdOTY69FkoAmYsB6Z4fFZPoS0KpJL//DHoR5CW42y3KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hNErXSM+; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53dde5262fdso1603274e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:51:59 -0800 (PST)
+	s=arc-20240116; t=1733421231; c=relaxed/simple;
+	bh=F5+uFyFuVjSoq22HoEhipvOsq8O5C/u1+zRx6Lu+Ggk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FvAayaPVS/XiVjI3RnlWaQ/MHTuvPypT3OXSJI4KXZQFPfYS/PwAwpxfDqFC6ea/shOMkZ71j7XTm522mqXSHmRzTnzpkGawDuA2mVU8lyHtjNYlVF9U/P8GODnOTXfgrezgpxsmWEgCR3srqbqC29hJe+d6IJ1SVYAJ50f1+YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vGVzvMKd; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434b3e32e9dso12908875e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:53:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733421117; x=1734025917; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z5eWK/vs7fqhFUwAujMxMk12h0AxsQYVmA9NF533vvU=;
-        b=hNErXSM+MXC4WHrEc4D09+FSQqOowyS4ijI/q6h7lyB/ywrz1L58b8VfGBOTypHU9n
-         +QI3BQtq1tybGDxnNYhHmvnH1v/XPj+BjTet6hxTnXBSoULsWgpGdyr/wYBZMwyHY9Qv
-         ZprTTLvhqhx8vTazCaoaWvnolgaD+XhVWVCPg=
+        d=linaro.org; s=google; t=1733421228; x=1734026028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JKLV+ZZ6L5RhiT3EAHJqznTL9zji3yYsZpCcDpbwg+Y=;
+        b=vGVzvMKdMh2qeqfUzRbCLx+LEqG5qAzYhkmdXkBkqIGlVO9Ecs5cZs+skNNA6E8Mlv
+         h4Cc1mBUmKVigWJnE89dIx98xAxEMW0+kIb1vzjNzcZRbmuwmlkhKu1EfO7IHzrqGG5s
+         5WW+/NTVpPWEFLij7QbLjfZZ4fIWiogczInN1kdsZfFBFmvdBCHhkM8/nlo/BpkT4RVq
+         n7+hma5JsLb1ejB6WlQhvLDGBOcLWM8SxG/TDXIhpIvfkqYFNRrNO0kpb/oZug7Y4tME
+         YVv7ctmftOlhCxFPcANsHECzRobKeZ2TQIdCIxVQwiPxiF//CuZ17pXvaiyf1/0bTTgZ
+         C7ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733421117; x=1734025917;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1733421228; x=1734026028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=z5eWK/vs7fqhFUwAujMxMk12h0AxsQYVmA9NF533vvU=;
-        b=YEzd1PXb+6Z+tmON381e7qq/JKdeqfa27xPlQnjte2jykR1dQXCIpPAT9ySjX4bizb
-         n9pX+Xnf7wtf9CPxhldU53Q9IjdKGWkV8FFPE6lkE7tU014ZDf8LD5TKbRqIDumc8G+x
-         hLEbG3X3jpFvfBNwwZ6oStbteS1bks4L9JlepAW87fhTP6Zg3utZk/lJEMTfj6sJNbPB
-         PGVUz82HJx5EgMNMq7YorBkjhEmn/oPTaZ3Jeb7qAJPszRVuhor1aJ/GZMqziFvexuDf
-         +wgABJ0PYQBobFg2PSTj6v+P3X0yK6dOYzQMMyI2lsFmdyYnz32CDmrO8+s2dG1TfMnV
-         Xy4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAgg5GoKPusrZbfDphM13cz9JSZujdW08MIAFAAYUdyKwbNLNCzxBGZ68MvhXak6K6azNEi3LmLonr/aw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVJHfvzfio5fwf9IoD8+Kk82Zg7suD7aWgoTP4DrSjJvXazI20
-	V4Cwm1xn3oL5NAi6qkbQbp4sVnXHz22BNZQUVlu+Cjowruzd6WnxsILrF00aZblzKuqzb4LRiR2
-	n7Erxqg==
-X-Gm-Gg: ASbGncvw2bJUGNFLFFleA7uFHxIgvUrkjxjMaseGQy69ZntVYlQGum3wonmpKhU3X0G
-	SzTwHR2N4tY21bVBP9UMwbCEymdZOB61JYvEDGS278HIx5q3rahzZTNXfy9IZgAKX5PNwpjSYYj
-	ZIxkil/lBWDQWZ8wdPh14EQxYo6O2EghCzIAxOlrwEXIpnDB0VV5mg2UsHHYeEorn5935WpJGCR
-	tbTw8KoQ4tku6gLFQJ2U8IEqOb31Hu4xD704hVqYvXc7zzKdHvNz44rLB+aquy2XfSirXKZYISS
-	eb4gV9gatwFJZFiI4X8wAQf8
-X-Google-Smtp-Source: AGHT+IEpKNkV8t2VC1dbPH78inrW3yLkHkToL8Le576ODdhIHCLiF0dXx+/3rnJwnrL3N8D/ZUPAlw==
-X-Received: by 2002:a05:6512:3f2a:b0:53d:a58c:c5a4 with SMTP id 2adb3069b0e04-53e12a22f0bmr6339823e87.40.1733421117518;
-        Thu, 05 Dec 2024 09:51:57 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229ca47esm295179e87.264.2024.12.05.09.51.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 09:51:55 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df19bf6a9so1364497e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:51:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVSpEroka/dQnc48PNfkaLKrA6HJIb98Ur0VNWKsBGqaFXF7xZN9yC0O1QseoL09lmFYojjQAHBp2qON1A=@vger.kernel.org
-X-Received: by 2002:a05:6512:6c9:b0:53d:e4d2:bb3 with SMTP id
- 2adb3069b0e04-53e12a2e4e5mr7858256e87.50.1733421113830; Thu, 05 Dec 2024
- 09:51:53 -0800 (PST)
+        bh=JKLV+ZZ6L5RhiT3EAHJqznTL9zji3yYsZpCcDpbwg+Y=;
+        b=V/uvf44JhzpH0wjHOVAxMn2H7H3xiETyh58/ewzAWtN8tt93ADNAwGO3P0ul8ycQSx
+         2zNugKNp/SEe2cgwP6NQSbVMk8aSgs90a0i4zCNn2CEKmE9UVGbQh+rFJqw2V0XvGfQ2
+         qks1lcVahjJcQ/u7MQqfEI6N6wrUiiXrF7Yp9skEycsrbAlYdL5fnM2EozK5DboQHGSt
+         k8BUyrPrW5eQ58rjOJRSev7/nWZri6eEy2FF0MinaVpfWyF/BIpWP1W1oK4dVxegnKln
+         Xmf9xCn7GS8zzWjXPW9Ca8rfzdKswAvb95nvE4XbrJZ4jiA0BlHl14a/aHxJ0bBNu22H
+         0t4g==
+X-Gm-Message-State: AOJu0Yw0azKTU0vLmAEOoUlQhVaeyyfC5TmGN/NVW+HtqFju7owfduVw
+	pkAHUHOK1+IvgNpHla79uj/rlD6xryZq6CBMYBuW00T8cv7M1ENJ62ijhipk/3Y=
+X-Gm-Gg: ASbGncvKwbKBxT+Uo6vnMo5VIFUGvf0xWK3OJHt2UeMViB8pvu/v8Du3Y9sNLuOlx5r
+	y7/a3xpTalqGPQS6lOnm0j1T6zYZZxbZW1z4bSX/fEGyziyYkGePdY2jaAbMqp5rfnp8a2sq4yU
+	fEbUyT3ZmfsuGe3XzuLQ40oCOrpV5nh+tL4BvUrVN1y7abwOvBiah1JeFU92zBnRYP9mZlBay1R
+	x0urOKPdig2CKCUYFy8DTBZmlQufyLpNPj6AyoQEBBIII0Z39yWRaQplRgYC2s+qq0ir0Qpo0Qq
+	WFTa0bh2zp7Uc7Z7gTkyzl3fNhQsEvvx
+X-Google-Smtp-Source: AGHT+IHYi5ufJF54E0WyoeAp8hOns/BOtH+3X4gKSwUdN9VlL8YVCCF+k0/XEjzO2xfKiytFgL5nWA==
+X-Received: by 2002:a05:600c:35d5:b0:42c:b45d:4a7b with SMTP id 5b1f17b1804b1-434dded6649mr1525615e9.25.1733421228429;
+        Thu, 05 Dec 2024 09:53:48 -0800 (PST)
+Received: from ta2.c.googlers.com.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280fc4sm67882835e9.24.2024.12.05.09.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 09:53:47 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	andre.draszik@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	peter.griffin@linaro.org,
+	javierm@redhat.com,
+	tzimmermann@suse.de,
+	daniel.lezcano@linaro.org,
+	vincent.guittot@linaro.org,
+	ulf.hansson@linaro.org,
+	arnd@arndb.de,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v3 0/3] firmware: add exynos ACPM protocol driver
+Date: Thu,  5 Dec 2024 17:53:42 +0000
+Message-ID: <20241205175345.201595-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203144743.428732212@linuxfoundation.org> <efbda6ac-9482-4b37-90b7-829f2424f579@cachyos.org>
-In-Reply-To: <efbda6ac-9482-4b37-90b7-829f2424f579@cachyos.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 5 Dec 2024 09:51:37 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whGd0dfaJNiWSR60HH5iwxqhUZPDWgHCQd446gH2Wu0yQ@mail.gmail.com>
-Message-ID: <CAHk-=whGd0dfaJNiWSR60HH5iwxqhUZPDWgHCQd446gH2Wu0yQ@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/826] 6.12.2-rc1 review
-To: Peter Jung <ptr1337@cachyos.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 5 Dec 2024 at 07:46, Peter Jung <ptr1337@cachyos.org> wrote:
->
-> Reverting following commits makes the machine again bootable:
-> acf588f9b6fb560e986365c6b175aaf589ef1f2a
-> 09162013082267af54bb39091b523a8daaa28955
+Alive Clock and Power Manager (ACPM) Message Protocol is defined for
+the purpose of communication between the ACPM firmware and masters
+(AP, AOC, ...). ACPM firmware operates on the Active Power Management
+(APM) module that handles overall power activities.
 
-Hmm. Thet commit
+This protocol library provides the interface for all the client drivers
+making use of the features offered by the APM. Add ACPM protocol support.
 
-    091620130822 ("sched/ext: Remove sched_fork() hack")
+I mark this as v3 because it is a continuation of:
+https://lore.kernel.org/linux-arm-kernel/20241017163649.3007062-1-tudor.ambarus@linaro.org/
 
-depends on upstream commit b23decf8ac91 ("sched: Initialize idle tasks
-only once") and does not work on its own.
+The samsung exynos mailbox controller driver, the transport layer for
+ACPM, can be found at:
+https://lore.kernel.org/linux-arm-kernel/20241205174137.190545-1-tudor.ambarus@linaro.org/
 
-         Linus
+Changes in v3:
+- decouple the mailbox controller driver from the ACPM protocol driver
+- address Krzysztof's eview comments 
+- add ACPM PMIC protocol helpers
+
+Cheers,
+ta
+
+Tudor Ambarus (3):
+  dt-bindings: firmware: add samsung,exynos-acpm-ipc bindings
+  firmware: add exynos ACPM protocol driver
+  MAINTAINERS: add entry for the samsung exynos ACPM mailbox protocol
+
+ .../firmware/samsung,exynos-acpm-ipc.yaml     |  64 ++
+ MAINTAINERS                                   |  10 +
+ drivers/firmware/Kconfig                      |   1 +
+ drivers/firmware/Makefile                     |   1 +
+ drivers/firmware/samsung/Kconfig              |  14 +
+ drivers/firmware/samsung/Makefile             |   4 +
+ drivers/firmware/samsung/exynos-acpm-pmic.c   | 226 +++++
+ drivers/firmware/samsung/exynos-acpm-pmic.h   |  24 +
+ drivers/firmware/samsung/exynos-acpm.c        | 772 ++++++++++++++++++
+ drivers/firmware/samsung/exynos-acpm.h        |  15 +
+ .../linux/soc/samsung/exynos-acpm-protocol.h  |  57 ++
+ 11 files changed, 1188 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/samsung,exynos-acpm-ipc.yaml
+ create mode 100644 drivers/firmware/samsung/Kconfig
+ create mode 100644 drivers/firmware/samsung/Makefile
+ create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.c
+ create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.h
+ create mode 100644 drivers/firmware/samsung/exynos-acpm.c
+ create mode 100644 drivers/firmware/samsung/exynos-acpm.h
+ create mode 100644 include/linux/soc/samsung/exynos-acpm-protocol.h
+
+-- 
+2.47.0.338.g60cca15819-goog
+
 
