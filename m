@@ -1,151 +1,175 @@
-Return-Path: <linux-kernel+bounces-433176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABB89E54C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:00:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C0A9E54C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A2B16ABC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A66016ABC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE64214A85;
-	Thu,  5 Dec 2024 12:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C7621767C;
+	Thu,  5 Dec 2024 12:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ImR+GtGI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F4UMYirt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE38214A71;
-	Thu,  5 Dec 2024 12:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116FA217649;
+	Thu,  5 Dec 2024 12:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400022; cv=none; b=eivZmaRaA+2jgImyeJmFA9gp1jLyj48KnPlkVUn58VkD1ss4s9Dpl5ICE8g/npAMKp0lOYy09SIhxWK8TddxUQObAMtjmyrVgK52fFksuEtUBAtrLJcpeRbwhd+Phc6Aa8U7P5WvsGwJW/cEBrjDtNJR117+l4pHzk4TbvndrL4=
+	t=1733400045; cv=none; b=HqSFFDy2FKimCDS2NB/702pk6WTR6PfxxW40K72WKTY62DJ0RYLxzVKJLi1bdGty0GrtDRxHpGHsiRyGlf1PqIu+sDOVyBUSj2EFk9wUCGvnX6Tzd+C+jCaXc0VpyzzQwpK4QkjolHKovO9Kk1MTLxNEKROhB+ktB1oJ288ZQ80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400022; c=relaxed/simple;
-	bh=EHWkyipe9roka/o7iKOg8L6iIH2p1aW8Cxu+0EcgdxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeON8+2FGGXHic1sJl6VkHEPhqag+q5YUFkj7aPgPoZBMq3ScTMlNcI4apfdRSoHNeemw5MHxZGdUAVtOUoYfMKNm2hZv0N/JO8/vjvmHtMrZhduuOGdHBt4lSI/BRRjGVimhEddstCKqQDlUWMgUk7yltWctzG/vDeQQlip8P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ImR+GtGI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:dd5a:60c0:2d2a:9a5a:1723])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CD4AD3E;
-	Thu,  5 Dec 2024 12:59:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733399990;
-	bh=EHWkyipe9roka/o7iKOg8L6iIH2p1aW8Cxu+0EcgdxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ImR+GtGIXN4GeBcppHzvw/Ywp3A6XJYWelmE+/4Q6j4oHfubdg3h2aI/FbHVfxKYf
-	 h4i4ytx5jWw1BxglEt9BuEEnuBCl0Jon2e8aIPsNHULNayijIluHaRfdAt7fAuot32
-	 yXJwgzGqIlgn4XoixT1TQ8c4l8TTCHbjgGgQfMqw=
-Date: Thu, 5 Dec 2024 17:30:13 +0530
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/15] media: i2c: ds90ub960: Add support for I2C_RX_ID
-Message-ID: <d72utbt36uhutdlzl5a6vkjl7mxl2cfgfo6ax6fuvkpit2u3i4@eov4fsavtxw4>
-References: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
- <20241204-ub9xx-fixes-v3-7-a933c109b323@ideasonboard.com>
- <Z1Fk7jRVQJZzsTQp@smile.fi.intel.com>
+	s=arc-20240116; t=1733400045; c=relaxed/simple;
+	bh=wENGL2+tKFj2g36FEcjLIdH7PlNn8qxutB+84PPmxyg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ADmRw+5L/+1tylDMwaagEaZXNJjYjx75qzQjr5oZORnbhs0cSrl92P7n7sY6MWT9pYJpAS6dVp4OPWEPlfIXxcn6vExt+6PSGpIR4ZT7J1DoV2WHTsnK1Qsq1DYktQdOemIMA04EK5EaHLceNpfpfwzHH5kQbiHmWBZee+sjx84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F4UMYirt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BomrG029397;
+	Thu, 5 Dec 2024 12:00:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=T6JAKjEVtMlYzBixygCl0j
+	wi/qQ4OMSQPTiERtHDNtU=; b=F4UMYirtwq1+65K3jjauePV0b0kabYI1Vne4JB
+	zpyNB/b+XdeyESbauabzY/9efI99Mlc41oHsEkfIf4WS/fCdb4SjUzaufvclXjnd
+	nLzmymchTcDZG3hnpy0LR6E4GgDpbUr43d6FlF4OzwKhnioEV7wOiOEiLqGI/CQR
+	La0e0ray5X9S0F+Rwok7WpKMGJK5+iAnRBY4HAWkStx6BZccGCWpOxe9hN8NAVbe
+	hsfW3riq9RUioRon+YKHyIs395wLelHz/l4CxhS0Rie8ljbXTLf+3SwLrprPIS38
+	Dj/fTM1Lb26PLpdv8ALH118yH96Jj/nHcZr1DM/tfNXY3juQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnj00pg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 12:00:36 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5C0ZXU015791
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 12:00:35 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Dec 2024 04:00:31 -0800
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <vkoul@kernel.org>, <martin.petersen@oracle.com>, <kees@kernel.org>,
+        <av2082000@gmail.com>, <fenghua.yu@intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_mdalam@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_srichara@quicinc.com>
+Subject: [PATCH v2] dmaengine: qcom: bam_dma: Avoid writing unavailable register
+Date: Thu, 5 Dec 2024 17:30:16 +0530
+Message-ID: <20241205120016.948960-1-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pmmwf2hswfn26wvm"
-Content-Disposition: inline
-In-Reply-To: <Z1Fk7jRVQJZzsTQp@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: R06QbIe8DXYg5_5aUFGC01q4XpFE3-ct
+X-Proofpoint-ORIG-GUID: R06QbIe8DXYg5_5aUFGC01q4XpFE3-ct
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 mlxscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412050086
 
+Avoid writing unavailable register in BAM-Lite mode.
+BAM_DESC_CNT_TRSHLD register is unavailable in BAM-Lite
+mode. Its only available in BAM-NDP mode. So avoid writing
+this register for clients who is using BAM-Lite mode.
 
---pmmwf2hswfn26wvm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 07/15] media: i2c: ds90ub960: Add support for I2C_RX_ID
-MIME-Version: 1.0
+Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+---
 
-Hi Tomi,
+Change in [v2]
 
-On Dec 05, 2024 at 10:31:42 +0200, Andy Shevchenko wrote:
-> On Wed, Dec 04, 2024 at 01:05:21PM +0200, Tomi Valkeinen wrote:
-> > Normally the driver accesses both the RX and the TX port registers via a
-> > paging mechanism: one register is used to select the page (i.e. the
-> > port), which dictates the port used when accessing the port specific
-> > registers.
-> >=20
-> > The downside to this is that while debugging it's almost impossible to
-> > access the port specific registers from the userspace, as the driver can
-> > change the page at any moment.
-> >=20
-> > The hardware supports another access mechanism: using the I2C_RX_ID
-> > registers (one for each RX port), i2c addresses can be chosen which,
-> > when accessed, will always use the specific port's registers, skipping
-> > the paging mechanism.
-> >=20
-> > The support is only for the RX port, but it has proven very handy while
-> > debugging and testing. So let's add the code for this, but hide it
-> > behind a disabled define.
->=20
-> ...
->=20
-> >  #define MHZ(v) ((u32)((v) * 1000000U))
->=20
-> Missed HZ_PER_MHZ from previous patch?
->=20
-> ...
->=20
-> > +#ifdef UB960_DEBUG_I2C_RX_ID
-> > +	for (unsigned int i =3D 0; i < 4; i++)
->=20
-> Should it use _MAX_RX_NPORTS instead of 4?
->=20
+* Replace 0xff with REVISION_MASK in the statement
+  bdev->bam_revision = val & REVISION_MASK
 
-Instead of hardcoded value or the macro, it is better to use=20
-priv->hw_data->num_rxports.
+Change in [v1]
 
-The cut-down variant of this deser only has 2 ports for example.
-https://www.ti.com/lit/gpn/ds90ub954-q1
+* Added initial patch
 
-> > +		ub960_write(priv, UB960_SR_I2C_RX_ID(i),
-> > +			    (UB960_DEBUG_I2C_RX_ID + i) << 1);
-> > +#endif
->=20
-> --=20
-> With Best Regards,
-> Andy Shevchenko
->=20
->=20
+ drivers/dma/qcom/bam_dma.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
---=20
-Thanks,
-Jai
+diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+index d43a881e43b9..27c5b3b58f92 100644
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -59,6 +59,9 @@ struct bam_desc_hw {
+ #define DESC_FLAG_NWD BIT(12)
+ #define DESC_FLAG_CMD BIT(11)
+ 
++#define BAM_LITE	0x13
++#define BAM_NDP		0x20
++
+ struct bam_async_desc {
+ 	struct virt_dma_desc vd;
+ 
+@@ -398,6 +401,7 @@ struct bam_device {
+ 
+ 	/* dma start transaction tasklet */
+ 	struct tasklet_struct task;
++	u32 bam_revision;
+ };
+ 
+ /**
+@@ -441,8 +445,9 @@ static void bam_reset(struct bam_device *bdev)
+ 	writel_relaxed(val, bam_addr(bdev, 0, BAM_CTRL));
+ 
+ 	/* set descriptor threshold, start with 4 bytes */
+-	writel_relaxed(DEFAULT_CNT_THRSHLD,
+-			bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
++	if (bdev->bam_revision >= BAM_LITE && bdev->bam_revision < BAM_NDP)
++		writel_relaxed(DEFAULT_CNT_THRSHLD,
++			       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
+ 
+ 	/* Enable default set of h/w workarounds, ie all except BAM_FULL_PIPE */
+ 	writel_relaxed(BAM_CNFG_BITS_DEFAULT, bam_addr(bdev, 0, BAM_CNFG_BITS));
+@@ -1000,9 +1005,9 @@ static void bam_apply_new_config(struct bam_chan *bchan,
+ 			maxburst = bchan->slave.src_maxburst;
+ 		else
+ 			maxburst = bchan->slave.dst_maxburst;
+-
+-		writel_relaxed(maxburst,
+-			       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
++		if (bdev->bam_revision >= BAM_LITE && bdev->bam_revision < BAM_NDP)
++			writel_relaxed(maxburst,
++				       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
+ 	}
+ 
+ 	bchan->reconfigure = 0;
+@@ -1192,10 +1197,11 @@ static int bam_init(struct bam_device *bdev)
+ 	u32 val;
+ 
+ 	/* read revision and configuration information */
+-	if (!bdev->num_ees) {
+-		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
++	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
++	if (!bdev->num_ees)
+ 		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
+-	}
++
++	bdev->bam_revision = val & REVISION_MASK;
+ 
+ 	/* check that configured EE is within range */
+ 	if (bdev->ee >= bdev->num_ees)
+-- 
+2.34.1
 
---pmmwf2hswfn26wvm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmdRlc0ACgkQQ96R+SSa
-cUW/xw//UN/uh0P5W7eqxSQv1lIjKSeSDPsY8X9gJAiBU+MvT6aBXieOwSFJGhhA
-3lhXe2mYV5tmgwsu2q0ET0acLIQWArjAjZy/MA1MKoHFoSB1lTdpUV/Ae0D+DYKJ
-nEZrbh2gEGwJg61B4lOzVyMTHn1XDBkupnb1oOkpCrbrQBWAYpVbNoa6Z/MOp183
-Pdcd+A9NBQbK5r3u8oJExcx8atJxH8oe5U7nVRT/6JAzb6+usuUdapxZjWlwe25q
-w5zWdfuuC76HNEnIl1FNi3oy7Vx2vYXomhstZ3sDlBI7YFgoKivLhYn46beabBRl
-ZX4TCVNiDCuI/4wCRbmJgqvFHK3SHxrWffKjlKBSgcsVgUApwVrQxjd093KGUgIS
-GZBDbB5Uzt8CM3ftbZSMcAMIqEQ+2lyhXztMsEnLDJkXKeZr7/LedUwnePZ9LAh2
-MxZQFSIKKDXPMCYjllthX8xv+6tseksA/v6/1SdR9rBYSKLBUp8hGDwhYK7xsWL0
-Aeky0LeNVnU52dPUV5v7ysMZ6hUJeyrsCBwwtftAguEIK185EjD+gsnP9eUUqmbc
-6K28qjaoPM0NJjo6LMrHndMNfjmd0mWI1vH7i3hH85aCqQBt4QfEsTKcZgxPXsQd
-baKMreevizCkp7HFlMCLoJxoATys9qU/M+ly1SBudpOF+DzO5nM=
-=FjmX
------END PGP SIGNATURE-----
-
---pmmwf2hswfn26wvm--
 
