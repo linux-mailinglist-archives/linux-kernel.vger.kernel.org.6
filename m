@@ -1,226 +1,193 @@
-Return-Path: <linux-kernel+bounces-433450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28BD9E5888
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BFD9E588B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B64FE16AE4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:33:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774F916B5D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A176C218EA1;
-	Thu,  5 Dec 2024 14:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361A921A438;
+	Thu,  5 Dec 2024 14:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KS8wJqJx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g67vFvUM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AA7149C64
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 14:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74B2218AA2;
+	Thu,  5 Dec 2024 14:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733409196; cv=none; b=OX8FRbVUfzdp6oW2OD0o19InvHa3tbsrZICGgyuHhJrld9sa4eTBJjJkiG9bi/uwVXTl+Fiwb8hNCSLWFIDVpHWMuLc6ISnHzUlgQLmeLPIvyDuq+nMpM9XE6wKJ7GR+zgm9/yTts9zLFkM4e9VlBoDgeUAvwHyRrmEDvYzcmfQ=
+	t=1733409224; cv=none; b=ZN3nCRXazte/D6ALECcjSkeAcEzQRuraNl021PO+tyvDtB6S/U0TRIZ17Yz9XPCG4PqdN/4nO5Uu754XkBf1Zjv0XIS2qjQekUEC+6mt+OlYwkpY297heqEU7nmIA0awB1sqFJY0CLi2w2Uw9JM4USNm5q3Zz/9KFLdLuY5PSys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733409196; c=relaxed/simple;
-	bh=udsK/NXo03cqE0THHxdmSiUCLh2tIPbDao/AdhDKz/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U5jKOHW6QMEe94zefw4YEebr6jS1BgmQB++NC8kt3EgKi+gi46ZAfoCwKS+ApXW1kH3gtTiOMkoRWdcxxBZYv0BrskT7vYv/D+kA3ztEGmkgnMXlvQGQ2NiGYgzFF7sHafaxZf8/PkyR356McJ/OYBUAI1iMY8NEBcWDRHJcm0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KS8wJqJx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EAB1C4CED1;
-	Thu,  5 Dec 2024 14:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733409195;
-	bh=udsK/NXo03cqE0THHxdmSiUCLh2tIPbDao/AdhDKz/A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KS8wJqJxe2i6CmkGiraT/fZWdQh0HSRdIFhToMu6N0p5dETN1rGQaE+ELzNYyfl8Z
-	 J+nOyIcmUmULOlftEtf2+QiXxum1U3R+Ao1/yKucGMrJu1A1hYGIlwT0DXyAJzRFBg
-	 aAXJY7E2pKMJClYMMjoEECClf0cGQbodZz3UYPERhEBZ4kd879cxPH9uVydJ6t+D3U
-	 6vgXj92h2DTaEIF4P1VIQUo3+bdZuW7lzdjFXoXqxrYJ02lERkx+is5bTN3M12d1n+
-	 0y3xRuoUpzgGzFghDKrekYwhwnSY3j+BQCS/7seXvT59ZJWzQbobAlIiryLNCBiWzn
-	 CMP4RRJJdZhwQ==
-Date: Thu, 5 Dec 2024 15:33:10 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v5 13/16] acpi/ghes: better name the offset of the
- hardware error firmware
-Message-ID: <20241205153310.2e73a5bf@foz.lan>
-In-Reply-To: <20241205102219.274e3d27@imammedo.users.ipa.redhat.com>
-References: <cover.1733297707.git.mchehab+huawei@kernel.org>
-	<20b003136d8c008fd54e8d40c806f13867336e13.1733297707.git.mchehab+huawei@kernel.org>
-	<20241204173759.6f02561a@imammedo.users.ipa.redhat.com>
-	<20241205085959.2223d079@foz.lan>
-	<20241205102219.274e3d27@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733409224; c=relaxed/simple;
+	bh=5/+qIqiUSdR4xMbXTCzJKGsu0WDoa3zH2SDdHu0Q1dw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=AiqTTJoEsMS5VBoLBkfhhBXUOvSgvQhNaOsbxpwyEHbscSZENSobMunWGLqvUNihNN7lWV6Rc4a25uZDVTL+WAEdfkCq99VwNVG/9p/JrP8PKXQiNAESGneqMNKhmBMjFJdTg2NSyeJOguEJ27RoWQ12QoBNMjETFtwaC3PrYQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g67vFvUM; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733409223; x=1764945223;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=5/+qIqiUSdR4xMbXTCzJKGsu0WDoa3zH2SDdHu0Q1dw=;
+  b=g67vFvUMaLN08eAXvtztdVASlS7M1NroPAuSEv3PmVXjikq5TslMKqUv
+   pFPvD2b7QlU9u/hsJlsk3wJiC7e2DozP0qFydjTG2AsPzhhjKcwMaPdvd
+   PnnHuGOt9n+0lBF+l16LgAhIvtH8GWfapC1sguip4Embs8VXv+AKp4f6x
+   56yDG3nJ+Y9i/8iwmKKlKBsFwSU6ZmD9SyL59wXe4eb7yfqGlFhuZaILg
+   IoLKQXIhZrHC32cW+5PMFSHoX3v7s4efCMmZE29D9SGlff0xg3G1C7U6V
+   b/QXIVrEkrPiL3tEF/x2MGi5hsdjGt0wTUpVMBOlfe/jb6VMU3vhi70jI
+   A==;
+X-CSE-ConnectionGUID: tmSfwzanSKmlD+OvMNt5uQ==
+X-CSE-MsgGUID: O6BDBXkYRyGieJApcMRM8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33854573"
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="33854573"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:33:42 -0800
+X-CSE-ConnectionGUID: 546mDef9R0ywwNhIFTpHMw==
+X-CSE-MsgGUID: 0AwMZG/pQi2dhZ+4LsDNfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="99148105"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:33:35 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 5 Dec 2024 16:33:31 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v9 22/22] Documentation: Add documentation about class
+ interface for platform profiles
+In-Reply-To: <20241202055031.8038-23-mario.limonciello@amd.com>
+Message-ID: <0eaaa896-5f99-1f40-54b1-8b4c8c6c4a79@linux.intel.com>
+References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-23-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-1664960937-1733409211=:932"
 
-Em Thu, 5 Dec 2024 10:22:19 +0100
-Igor Mammedov <imammedo@redhat.com> escreveu:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On Thu, 5 Dec 2024 08:59:59 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > Em Wed, 4 Dec 2024 17:37:59 +0100
-> > Igor Mammedov <imammedo@redhat.com> escreveu:
-> >   
-> > > On Wed,  4 Dec 2024 08:41:21 +0100
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >     
-> > > > The hardware error firmware is where HEST error structures are      
-> > >       ^^^^^^^^^^^^^^^^^^^^^^^ I can't parse this, suspect you've meant something else here
-> > >     
-> > > > stored. Those can be GHESv2, but they can also be other types.
-> > > > 
-> > > > Better name the location of the hardware error.
-> > > > 
-> > > > No functional changes.    
-> > 
-> > I meant this fw_cfg file:
-> > #define ACPI_HW_ERROR_FW_CFG_FILE           "etc/hardware_errors"
-> > #define ACPI_HW_ERROR_ADDR_FW_CFG_FILE      "etc/hardware_errors_addr"
-> > 
-> > What about changing description to:
-> > 
-> > 	The etc/hardware_errors fw_cfg file is where the HEST error
-> > 	source structures are stored. Those can be GHESv2, but they can also
-> > 	be other types.  
-> 
-> As I understand it, etc/hardware_errors is a blob
-> for '18.3.2.7.1. Generic Error Data' with some extra fields
-> to accommodate GHESv2 handling (i.e. err addr indirection and ack reg).
-> 
-> While error sources are described in HEST (and only GHES ones would
-> reference  etc/hardware_errors via error status addr/read ack register addr)
+--8323328-1664960937-1733409211=:932
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Yeah, what it is stored there is not the error source structures
-themselves, but the additional address data they contain. For GHESv2,
-such data is the Error Status Address (where CPER data is stored) and 
-the Read Ack Register.
+On Sun, 1 Dec 2024, Mario Limonciello wrote:
 
-Currently, only GHES (type 9) and GHESv2 (type 10) have those
-Generic Address Structure stored there.
+> The class interface allows changing multiple platform profiles on a syste=
+m
+> to different values. The semantics of it are similar to the legacy
+> interface.
+>=20
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  .../ABI/testing/sysfs-platform_profile        |  5 +++
+>  .../userspace-api/sysfs-platform_profile.rst  | 31 +++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-platform_profile b/Documenta=
+tion/ABI/testing/sysfs-platform_profile
+> index baf1d125f9f83..125324ab53a96 100644
+> --- a/Documentation/ABI/testing/sysfs-platform_profile
+> +++ b/Documentation/ABI/testing/sysfs-platform_profile
+> @@ -33,3 +33,8 @@ Description:=09Reading this file gives the current sele=
+cted profile for this
+>  =09=09source such as e.g. a hotkey triggered profile change handled
+>  =09=09either directly by the embedded-controller or fully handled
+>  =09=09inside the kernel.
+> +
+> +=09=09This file may also emit the string 'custom' to indicate
+> +=09=09that multiple platform profiles drivers are in use but
+> +=09=09have different values.  This string can not be written to
+> +=09=09this interface and is solely for informational purposes.
+> diff --git a/Documentation/userspace-api/sysfs-platform_profile.rst b/Doc=
+umentation/userspace-api/sysfs-platform_profile.rst
+> index 4fccde2e45639..0aa384c75095a 100644
+> --- a/Documentation/userspace-api/sysfs-platform_profile.rst
+> +++ b/Documentation/userspace-api/sysfs-platform_profile.rst
+> @@ -40,3 +40,34 @@ added. Drivers which wish to introduce new profile nam=
+es must:
+>   1. Explain why the existing profile names cannot be used.
+>   2. Add the new profile name, along with a clear description of the
+>      expected behaviour, to the sysfs-platform_profile ABI documentation.
+> +
+> +Multiple driver support
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +When multiple drivers on a system advertise a platform profile handler, =
+the
+> +platform profile handler core will only advertise the profiles that are
+> +common between all drivers to the ``/sys/firmware/acpi`` interfaces.
+> +
+> +This is to ensure there is no ambiguity on what the profile names mean w=
+hen
+> +all handlers don't support a profile.
+> +
+> +Individual drivers will register a 'platform_profile' class device that =
+has
+> +similar semantics as the ``/sys/firmware/acpi/platform_profile`` interfa=
+ce.
+> +
+> +To discover which driver is associated with a platform profile handler t=
+he
+> +user can read the ``name`` attribute of the class device.
+> +
+> +To discover available profiles from the class interface the user can rea=
+d the
+> +``choices`` attribute.
+> +
+> +If a user wants to select a profile for a specific driver, they can do s=
+o
+> +by writing to the ``profile`` attribute of the driver's class device.
+> +
+> +This will allow users to set different profiles for different drivers on=
+ the
+> +same system. If the selected profile by individual drivers differs the
+> +platform profile handler core will display the profile 'custom' to indic=
+ate
+> +that the profiles are not the same.
+> +
+> +While the ``platform_profile`` attribute has the value ``custom``, writi=
+ng a
+> +common profile from ``platform_profile_choices`` to the platform_profile
+> +attribute of the platform profile handler core will set the profile for =
+all
+> +drivers.
 
-What about then:
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-	The etc/hardware_errors fw_cfg file is where the HEST error
-	source structures store registers pointed by Generic Address
-	Structures, as defined at:
-
-		https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#generic-error-data-entry
-
-	and
-		
-		https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#generic-hardware-error-source-version-2-ghesv2-structure
-
-	As the name of the firmware file is hardware_errors, better
-	name the variable where the offset pointing to it will be stored
-	from ghes_error_le to hw_error_le.
-
-	No functional changes.
-
-Regards,
-Mauro
-
-> 
-> > 
-> > 	For more details about error source structure, see:
-> > 	https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#acpi-error-source
-> > 
-> > 	Better name the address variable from ghes_error_le to hw_error_le
-> > 	to better reflect that.
-> > 
-> > 	No functional changes.
-> >   
-> > > > 
-> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> > > > ---
-> > > >  hw/acpi/generic_event_device.c | 4 ++--
-> > > >  hw/acpi/ghes.c                 | 4 ++--
-> > > >  include/hw/acpi/ghes.h         | 2 +-
-> > > >  3 files changed, 5 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> > > > index 663d9cb09380..17baf36132a8 100644
-> > > > --- a/hw/acpi/generic_event_device.c
-> > > > +++ b/hw/acpi/generic_event_device.c
-> > > > @@ -364,7 +364,7 @@ static const VMStateDescription vmstate_ghes = {
-> > > >      .version_id = 1,
-> > > >      .minimum_version_id = 1,
-> > > >      .fields = (const VMStateField[]) {
-> > > > -        VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
-> > > > +        VMSTATE_UINT64(hw_error_le, AcpiGhesState),
-> > > >          VMSTATE_END_OF_LIST()
-> > > >      },
-> > > >  };
-> > > > @@ -372,7 +372,7 @@ static const VMStateDescription vmstate_ghes = {
-> > > >  static bool ghes_needed(void *opaque)
-> > > >  {
-> > > >      AcpiGedState *s = opaque;
-> > > > -    return s->ghes_state.ghes_addr_le;
-> > > > +    return s->ghes_state.hw_error_le;
-> > > >  }
-> > > >  
-> > > >  static const VMStateDescription vmstate_ghes_state = {
-> > > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > > > index 52c2b69d3664..90d76b9c2d8c 100644
-> > > > --- a/hw/acpi/ghes.c
-> > > > +++ b/hw/acpi/ghes.c
-> > > > @@ -359,7 +359,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-> > > >  
-> > > >      /* Create a read-write fw_cfg file for Address */
-> > > >      fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
-> > > > -        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
-> > > > +        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
-> > > >  
-> > > >      ags->present = true;
-> > > >  }
-> > > > @@ -385,7 +385,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-> > > >      }
-> > > >      ags = &acpi_ged_state->ghes_state;
-> > > >  
-> > > > -    start_addr = le64_to_cpu(ags->ghes_addr_le);
-> > > > +    start_addr = le64_to_cpu(ags->hw_error_le);
-> > > >  
-> > > >      start_addr += source_id * sizeof(uint64_t);
-> > > >  
-> > > > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> > > > index 21666a4bcc8b..39619a2457cb 100644
-> > > > --- a/include/hw/acpi/ghes.h
-> > > > +++ b/include/hw/acpi/ghes.h
-> > > > @@ -65,7 +65,7 @@ enum {
-> > > >  };
-> > > >  
-> > > >  typedef struct AcpiGhesState {
-> > > > -    uint64_t ghes_addr_le;
-> > > > +    uint64_t hw_error_le;
-> > > >      bool present; /* True if GHES is present at all on this board */
-> > > >  } AcpiGhesState;
-> > > >        
-> > >     
-> > 
-> > 
-> > 
-> > Thanks,
-> > Mauro
-> >   
-> 
+Thanks for doing all this. The series looks ready to me once the minor=20
+nits I noted to individual patches are addressed.
 
 
+--=20
+ i.
 
-Thanks,
-Mauro
+--8323328-1664960937-1733409211=:932--
 
