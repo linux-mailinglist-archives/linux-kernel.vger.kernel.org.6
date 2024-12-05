@@ -1,90 +1,59 @@
-Return-Path: <linux-kernel+bounces-433859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DBA9E5E11
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:12:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C490B9E5E14
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:12:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB131885CA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:12:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B590D227BA5;
+	Thu,  5 Dec 2024 18:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4LAdYka"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1419F286F76
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:12:01 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B406227B96;
-	Thu,  5 Dec 2024 18:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="UbaugdLO"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BE422579F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26322579F;
+	Thu,  5 Dec 2024 18:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733422315; cv=none; b=dyMP5qLuIx4PVeI0EMI+ZyKt4UXqVttEBiCsIsJNaAsxKLe90gANzL4Zq3SerriSNQij+808DFnzwb5N7PGRoNzWOctH0rW0WlwNsUTNHbTTKy6TbWfEEdkUCUlku6frdBRMHCyGX/Kj8WAUyhQYFLOL6VKA7cHdabHvJtdokFc=
+	t=1733422338; cv=none; b=HpaaETScXH68L7+/YduDzIiNC4QXVEN7vr30FKGzdrLsSJbb/cRWrAY6qZw8NMH0Jl4JNXRqCydc9rz4gyGkFwTzj+RC+Vl0mYaQkmpLNCAb4EYAeGcOYxGzQNMMzED46j4wBZqLQrwZOquf5BW+37rZLRUMqgREwvjC3E8WUq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733422315; c=relaxed/simple;
-	bh=1ZxSWeTtz1xYfbYIhQuSzJz0Yo0FouTjzbyq21H8PSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P0aFR6hN3jA/zqgp1rrQsbsyI+LpoXGYiAVrIEdaL2vpYlC9npvXY+r5Z3D2IOxYJ9FN1g5a5yweDPC2WhPqRPUxPb4vNTBNSo/8ZLI2w3gUhMYHGS00P+avFk9dZoANYhdTuneOEzUxyYpU/JPaiiajjL0zLDSR8ah8vPi8i5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=UbaugdLO; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7250c199602so1331790b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 10:11:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1733422313; x=1734027113; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2MUjUIXHE2bJtGuB7BkRXXqw/hOym15VxRARXET8bls=;
-        b=UbaugdLO0GYyPYUpIpeUbCugGBhx78w4t0eFOH+35kSTeUT3G/fSmhCjsotEO8pTLe
-         KYx8fCY8vE6ApGefxzuBGmw+xA7N/slUQbL5ZzX77qAFHneruHGoPRfD9NQYRv8Htrxx
-         K1sY9RnPRfycJ+lZXwndSPbfw6sEVp/mQ2f7lWj3K/LIAaYKcx+SOGx/jveNs3jwPMod
-         sNmdyfH1ZrfvBq6uphs3GiToIhfvQua1aKrK7IyPx2Lqo262kp+Pavyji9OqMkV2Omhn
-         n8g60wwZtHLRapyqy5g/kZ4tKBUufh7BjfXEw91C+QXrXFkqSSYwuirwCwDAq2IRQiYi
-         +rmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733422313; x=1734027113;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2MUjUIXHE2bJtGuB7BkRXXqw/hOym15VxRARXET8bls=;
-        b=piJ4e2zxAhAypB5r9Mue/kB/AghKN0clvrc4Gwzz1M+dr3v6Ym/2js5v51Lwp/fKGV
-         3zLN6N49tC+5XxE2zs3LkXbXec+LVA3iPRlo9oLgd4oRCIsFs9BOQRZb7oJvHaQZeyMV
-         s9i85bxqaQSqeACRbwI5cQK0wC/O8PNb226msZa021i1aYQA/NUP1U9P4ZwaCFeZuh96
-         GQG4P1zAf5qptbBHQ5LxgD/OpB2rwYclXxNTYRUbfYj+zek8Q3kElCCqgva7kamqBRHS
-         rjGuGcHBiQ+XWfRNuEg/sQ24DrMu3oV5zcS/cIIjS+aMbcZ643PlEBmGKpkYo3EIHMxd
-         3SkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvK7ypQg3SsbnEjKKKhCXrwfkUENoJnSp9Gbac0PswxVNssygjO7PCdgWfFgcngRHAOMUhsWniE0LzDBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqE9gV+ICfVc6udUBgxNMMIcvO02hWP2NMsNofCv1uOfzw2nY+
-	7F2HUv5+7Tq1U65Ti/3w5vSWn3iHO/qIs4NGjJyZq88Zh+J+ZvQpINWoEFkM6xY=
-X-Gm-Gg: ASbGncua8LmpwSTKjlRfyBh4Sp+ms/jdUh4n3gGUSvu/Gc/BKGvWIsdzY+V4LTd78rl
-	x7P6Isjk//fLAf03WInIfNLtspF5S1XbarX0d4DA3VFXrWDfGvTlyXvF4qQ3yLZQZWmRfHtpHhF
-	qtC9DGIuUl0Vkn3YU1+a7s/cirq6isiHufTooZCRmarcDEQiyxmFMu31xi4INn/pEMPAIrbjjOx
-	IN36/F/r9HP6GHDAsNHwGWUf+9F8Tk=
-X-Google-Smtp-Source: AGHT+IH9Qxre7SaXJmwLVox5H0UwU/C+KDg/si4WFNP6RN/USaZJmdrSMdvHNGZqEVGV0+rIUHI/aw==
-X-Received: by 2002:a17:90b:5448:b0:2ef:2d9f:8e58 with SMTP id 98e67ed59e1d1-2ef6ab29c49mr113446a91.34.1733422313419;
-        Thu, 05 Dec 2024 10:11:53 -0800 (PST)
-Received: from x1 ([192.210.17.121])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef26ffb6f5sm3584572a91.6.2024.12.05.10.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 10:11:53 -0800 (PST)
-Date: Thu, 5 Dec 2024 10:11:50 -0800
-From: Drew Fustini <drew@pdp7.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: bigunclemax@gmail.com, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] riscv: dts: thead: Fix TH1520 emmc and shdci clock
- rate
-Message-ID: <Z1Hs5smgFV4C6c90@x1>
-References: <20241204111424.263055-1-bigunclemax@gmail.com>
- <CAJM55Z-YAMtRN=K5KxCH1+++Xw4uMM_c49z8tGzi3snU+-KrYA@mail.gmail.com>
+	s=arc-20240116; t=1733422338; c=relaxed/simple;
+	bh=QSZyaJi7d+QA+wOooiJNqMdZ/M4qnUu86w6eRcFcCnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=nPIFd/b2qBjgvK/AgEteFEazNw8bEGU/GPagMUZdUjyfnQhFV/PKFz6OzIB43iSIGD+8zCyAemYSHKSemYES5UDyVQvInNOHG7FJjihfwd4nQjkWHwGO7RLwWu8TZP+ALF4CssD680HdnsGkObsFyW6HF78Wg+fh9Kr/r1vMHlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4LAdYka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C3C2C4CED1;
+	Thu,  5 Dec 2024 18:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733422337;
+	bh=QSZyaJi7d+QA+wOooiJNqMdZ/M4qnUu86w6eRcFcCnM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=o4LAdYkapUYSlaTfcyJXGeTIcz4sh59MYtxw9ug53TfwO2SaxuM7FRgAG43MlDSlH
+	 Ud53mXK7Zc+p84UkN0DRlu412C9D+in5OGJ+OHO/JZnVE+rK5aGIUZvgVxw36bErZ5
+	 Wc2Cnr0Y3uts4Wt4Kgj7SczqhmlrGp/optJALE5nSVdgJhdzRzlKuRnz94hHht2xA6
+	 ojyg/3uEW0mb+tmPOqxVKFpCFeqpN/pvXLwVw00+Rcvw6czE6M4xxxuSf8+t7Om3aB
+	 HsRVk5XlWecCBYyv3PYmYdHEopxpWNeMKIGvEGQNAe7LZq089Hp9WpN6X9FOmFzYG6
+	 AYhB0A3KpU7/Q==
+Date: Thu, 5 Dec 2024 12:12:16 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v5 0/5] Verify devices transition from D3cold to D0
+Message-ID: <20241205181216.GA3058743@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,70 +62,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJM55Z-YAMtRN=K5KxCH1+++Xw4uMM_c49z8tGzi3snU+-KrYA@mail.gmail.com>
+In-Reply-To: <a1dafdb9-1480-480a-97f1-b43367d883fb@kernel.org>
 
-On Wed, Dec 04, 2024 at 03:19:28PM +0000, Emil Renner Berthing wrote:
-> bigunclemax@ wrote:
-> > From: Maksim Kiselev <bigunclemax@gmail.com>
-> >
-> > In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
-> > is 198Mhz.
-> >
-> > But changing from fixed-clock to CLK_EMMC_SDIO leads to increasing input
-> > clock from 198Mhz to 792Mhz. Because the CLK_EMMC_SDIO is actually 792Mhz.
-> >
-> > Therefore calculation of output SDCLK is incorrect now.
-> > The mmc driver sets the divisor to 4 times larger than it should be
-> > and emmc/sd works 4 times slower.
-> >
-> > This can be confirmed with fio test:
-> > Sequential read of emmc with fixed 198Mz clock:
-> > READ: bw=289MiB/s (303MB/s)
-> >
-> > Sequential read with CLK_EMMC_SDIO clock:
-> > READ: bw=82.6MiB/s (86.6MB/s)
-> >
-> > Let's fix this issue by providing fixed-factor-clock that divides
-> > CLK_EMMC_SDIO by 4 for emmc/sd nodes.
+On Wed, Dec 04, 2024 at 09:44:05PM -0600, Mario Limonciello wrote:
+> On 12/4/2024 17:45, Bjorn Helgaas wrote:
+> > On Wed, Dec 04, 2024 at 11:30:51AM -0600, Mario Limonciello wrote:
+> > > On 8/23/2024 10:40, Mario Limonciello wrote:
+> > > > From: Mario Limonciello <mario.limonciello@amd.com>
+> > > > 
+> > > > Gary has reported that when a dock is plugged into a system at the same
+> > > > time the autosuspend delay has tripped that the USB4 stack malfunctions.
+> > > > 
+> > > > Messages show up like this:
+> > > > 
+> > > > ```
+> > > > thunderbolt 0000:e5:00.6: ring_interrupt_active: interrupt for TX ring 0 is already enabled
+> > > > ```
+> > > > 
+> > > > Furthermore the USB4 router is non-functional at this point.
+> > > > 
+> > > > Those messages happen because the device is still in D3cold at the time
+> > > > that the PCI core handed control back to the USB4 connection manager
+> > > > (thunderbolt).
+> > > > 
+> > > > The issue is that it takes time for a device to enter D3cold and do a
+> > > > conventional reset, and then more time for it to exit D3cold.
+> > > > 
+> > > > This appears not to be a new problem; previously there were very similar
+> > > > reports from Ryzen XHCI controllers.  Quirks were added for those.
+> > > > Furthermore; adding extra logging it's apparent that other PCI devices
+> > > > in the system can take more than 10ms to recover from D3cold as well.
+> > > > 
+> > > > This series add a wait into pci_power_up() specifically for D3cold exit and
+> > > > then drops the quirks that were previously used for the Ryzen XHCI controllers.
+> > > > 
+> > > > Mario Limonciello (5):
+> > > >     PCI: Use an enum for reset type in pci_dev_wait()
+> > > >     PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in pci_dev_wait()
+> > > >     PCI: Verify functions currently in D3cold have entered D0
+> > > >     PCI: Allow Ryzen XHCI controllers into D3cold and drop delays
+> > > >     PCI: Drop Radeon quirk for Macbook Pro 8.2
+> > > > 
+> > > >    drivers/pci/pci-driver.c    |  2 +-
+> > > >    drivers/pci/pci.c           | 70 +++++++++++++++++++++++++++----------
+> > > >    drivers/pci/pci.h           | 13 ++++++-
+> > > >    drivers/pci/pcie/dpc.c      |  2 +-
+> > > >    drivers/pci/quirks.c        | 25 -------------
+> > > >    drivers/usb/host/xhci-pci.c | 11 ------
+> > > >    6 files changed, 66 insertions(+), 57 deletions(-)
+> > > 
+> > > Bjorn,
+> > > 
+> > > This series has stalled a while.
+> > > 
+> > > Mika and I went back and forth and I think are generally in agreement so I
+> > > think it's waiting on your feedback.
+> > > 
+> > > Can you take another look?
+> > > 
+> > > The alternative is to add some more piles of quirks, but I'm hoping that we
+> > > can go this direction and drop a bunch of the old ones instead.
+> > > 
+> > > LMK if you want me to rebase it on 6.13-rc1 and resend a v6.
+> > 
+> > I'm still stuck on patch 2/5 because I'm not aware of any spec
+> > language about polling PCI_PM_CTRL to wait for a power state
+> > transition, so it seems really ad hoc.
 > 
-> Thanks for finding this bug!
+> I'm not really sure how to overcome this.  If I rebase everything I'll give
+> specs another read through in case I missed anything, but I suspect you know
+> these specs better than anyoe on this list.
 > 
-> However, this feels like a work-around for a bug in the clock driver, and even
-> if there is a fixed factor divider somewhere this should probably be modelled
-> by the clock driver. Did you look into the documentation[1] and try to figure
-> out where eMMC clock comes from and where the /4 is missing?
-> 
-> There is also a vendor tree somewhere with a much more complete clock driver.
-> Drew do you remember where it is? Maybe it's worth looking at how that driver
-> models the eMMC clocks.
+> Is it worth raising this to PCI-SIG to discuss?
+> Did you perhaps already do that?
 
-Sorry for the delay, I'm travelling until tomorrow.
+I haven't, but it seems like that might be appropriate.  Can we
+formulate a question in terms of PCIe concepts?
 
-Maksim, thanks for finding this issue and sending a patch.
+I guess some of the pieces are:
 
-That is a good point about checking the thead vendor kernel. I normally
-look at revy's thead-kernel repo [1] which is 5.10. revy also has a 6.6
-lts branch in th1520-linux-kernel [2].
+  - ACPI puts device in D3cold
+  - ACPI restores device to D0
+  - Device is not yet in D0 when ACPI method has completed
+  - OS read from device causes UR or RRS, so OS reads ~0
 
-https://github.com/revyos/thead-kernel/tree/lpi4a/drivers/clk/thead
+It's much more complicated if ACPI is involved because then we have
+question of whether the ACPI method should have waited.
 
+Patch 3/5 mentions "Full context restore or boot latency" language in
+PCI PM r1.2, but I couldn't find section.  I don't know how a generic
+spec could constrain D0->D3cold or D3cold->D0 transition time because
+that depends on platform-specific power management hardware.
 
-Looking at line 454 in drivers/clk/thead/clk-light-fm.c [3]:
-
-  clks[EMMC_SDIO_REF_CLK] =
-  thead_light_clk_fixed_factor("emmc_sdio_ref_clk",
-                               "video_pll_foutpostdiv", 1, 4)
-                               /* Note: base clk is div 4 to 198M*/
-
-Which derives from line 373:
-
-  clks[VIDEO_PLL_FOUTPOSTDIV] =
-  thead_clk_fixed("video_pll_foutpostdiv", 792000000);
-
-Thanks,
-Drew
-
-[1] https://github.com/revyos/thead-kernel
-[2] https://github.com/revyos/th1520-linux-kernel
-[3] https://github.com/revyos/thead-kernel/blob/lpi4a/drivers/clk/thead/clk-light-fm.c
+Bjorn
 
