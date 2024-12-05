@@ -1,138 +1,127 @@
-Return-Path: <linux-kernel+bounces-433354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8228E9E5759
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:37:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352049E575D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:38:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F9283F6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:37:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1261A16496F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A59218AAE;
-	Thu,  5 Dec 2024 13:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECABE218E84;
+	Thu,  5 Dec 2024 13:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z4H9n/v3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="moQNLK5n";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z4H9n/v3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="moQNLK5n"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="O+G8DrPB"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581F5199FBB;
-	Thu,  5 Dec 2024 13:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC88214A75;
+	Thu,  5 Dec 2024 13:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733405824; cv=none; b=MZE0X3PqlooITJzNkHrEDvYNK/9qsCPpyPYNWsvHMzZ//syJZIsqo6YBwcqS4LaAOMjh35EWqKFu6s+jIMQ+TP1Feo7+OtCA90mt71R991ShU6pLdykcxAsdX9x7bYgUI/GnybB3KEGM02HP0zoEkgQmue2up5sTSoahdBHcHsI=
+	t=1733405844; cv=none; b=CG3jY0fTMyRxkytjuJXoX/moVEJTp5r+qc5bpULEFcGWMP16jtDIvVK8tMAwEHH8t0fKoSUd7Z7b+3Sokg5Z8YRfz5nukRREQ5L92YLtEnwgba1ljO2Q33qJoO/amr6lKlJX7ieM/d1VFGjfnD66KKeFfCxGuHFKSE/pVu7I/SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733405824; c=relaxed/simple;
-	bh=tZvaQMgSsfB6+PBvwNIpceoyFDrmiZGALLuK77coPek=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rC8HFq7epmypFY2fhBAAau2lPf1DlVxakl3e3RWXEEbqeIuAC7IceE2h6zxE71Uji+B1NcVHDkBYcVzxKBlVxRjW87PXZ3YL7FAdDZIZo3TUjJGdVagVUWAoac/hhv/KCSHm7tHBTD1zMABbwmMjQeiW/qFjX7u+08i/fnbWSBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z4H9n/v3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=moQNLK5n; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z4H9n/v3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=moQNLK5n; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 725FC1F38F;
-	Thu,  5 Dec 2024 13:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733405820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N51jm9ZvQlnU9MCAiRdF9dKQoZU/Xf+qDWzFsCOWkmI=;
-	b=Z4H9n/v3ilqmpWjpDw1wwV70YJfULXcJBRi4XGrLXDbXObexkqxc1HnFBIqCGxpJfxEr8D
-	cL+s/xDNgj3InYJzRDtYeEf/Ow5umB3Qa9JcIE5xg0fphZmJIKjmXfPA3Zp+YZAcYv3coN
-	ZpX/XAOTEcZa+pXMu3z1mcOlHxdcY6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733405820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N51jm9ZvQlnU9MCAiRdF9dKQoZU/Xf+qDWzFsCOWkmI=;
-	b=moQNLK5n8AXwaCuTxajB8MTlGAmwSmnZpsMJGtrsWzp9QdmI9/DXWP4FTSI5vPW0agh/8z
-	vcdEX6Pd11UJA4Bw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733405820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N51jm9ZvQlnU9MCAiRdF9dKQoZU/Xf+qDWzFsCOWkmI=;
-	b=Z4H9n/v3ilqmpWjpDw1wwV70YJfULXcJBRi4XGrLXDbXObexkqxc1HnFBIqCGxpJfxEr8D
-	cL+s/xDNgj3InYJzRDtYeEf/Ow5umB3Qa9JcIE5xg0fphZmJIKjmXfPA3Zp+YZAcYv3coN
-	ZpX/XAOTEcZa+pXMu3z1mcOlHxdcY6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733405820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N51jm9ZvQlnU9MCAiRdF9dKQoZU/Xf+qDWzFsCOWkmI=;
-	b=moQNLK5n8AXwaCuTxajB8MTlGAmwSmnZpsMJGtrsWzp9QdmI9/DXWP4FTSI5vPW0agh/8z
-	vcdEX6Pd11UJA4Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3C496138A5;
-	Thu,  5 Dec 2024 13:37:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r9zpDHysUWfFSwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 05 Dec 2024 13:37:00 +0000
-Date: Thu, 05 Dec 2024 14:36:59 +0100
-Message-ID: <87r06mtfno.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: lola: Fix typo in lola_clock.c
-In-Reply-To: <20241205095156.17837-1-zhujun2@cmss.chinamobile.com>
-References: <20241205095156.17837-1-zhujun2@cmss.chinamobile.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1733405844; c=relaxed/simple;
+	bh=MuSNupq+jL+RBETivFuja2wUSUSVxq0rZUu3LD74f0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YEWI7axTZL+U1tGtSwbqlhqiCyroBQVS9uCMYEhd4heHzFJh6cpu03WI3opWemT2QiN/1MTmtmQ4c/vH6laLY5FD1PNqsdwnYby4DXdL+maMn7ltprmHC5/pgjYMKZimPyNQ21cAx1TTCuKNPs30EqvyMfuoon6j2JWDmrqHoYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=O+G8DrPB; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
+	by mail.ispras.ru (Postfix) with ESMTPSA id B21D840762DC;
+	Thu,  5 Dec 2024 13:37:18 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru B21D840762DC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1733405838;
+	bh=qXC+JNnge7175eBGv9qK1hEZB9g9/Z0J1dck2au77iI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=O+G8DrPBjhnD1EYq7qabhUTvbia72WC/ekLgb4ASGWXXRm3IyF9eC2fEYbhO8OHKu
+	 BQlzBJgk/PfHRsM6LbfmycmnUm0wJXPuB8Rd+Hge1vV0oTZtUBO6tI31Fxo5S5plWG
+	 dB8vzJ44uxbZbUYeybs1tC0mfOoeWBwYSMfrTSis=
+From: Vitalii Mordan <mordan@ispras.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Magnus Damm <damm@igel.co.jp>,
+	Paul Mundt <lethal@linux-sh.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>,
+	stable@vger.kernel.org
+Subject: [PATCH] usb: r8a66597-udc: fix call balance for r8a66597->clk handling routines
+Date: Thu,  5 Dec 2024 16:37:03 +0300
+Message-Id: <20241205133703.885145-1-mordan@ispras.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.98%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 05 Dec 2024 10:51:56 +0100,
-Zhu Jun wrote:
-> 
-> The word 'ajustement' is wrong, so fix it.
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+If the clock r8a66597->clk was not enabled in r8a66597_probe,
+r8a66597->clk will contain a non-NULL value leading to the clock being
+incorrectly disabled later in r8a66597_remove.
 
-Thanks, applied now.
+Use the devm_clk_get_enabled helper function to ensure proper call balance
+for r8a66597->clk.
 
+Found by Linux Verification Center (linuxtesting.org) with Klever.
 
-Takashi
+Fixes: d2e27bdf2870 ("usb: add clock support to r8a66597 gadget driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+---
+ drivers/usb/gadget/udc/r8a66597-udc.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
+index ff6f846b1d41..8518feb90792 100644
+--- a/drivers/usb/gadget/udc/r8a66597-udc.c
++++ b/drivers/usb/gadget/udc/r8a66597-udc.c
+@@ -1812,10 +1812,6 @@ static void r8a66597_remove(struct platform_device *pdev)
+ 	usb_del_gadget_udc(&r8a66597->gadget);
+ 	del_timer_sync(&r8a66597->timer);
+ 	r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
+-
+-	if (r8a66597->pdata->on_chip) {
+-		clk_disable_unprepare(r8a66597->clk);
+-	}
+ }
+ 
+ static void nop_completion(struct usb_ep *ep, struct usb_request *r)
+@@ -1876,12 +1872,11 @@ static int r8a66597_probe(struct platform_device *pdev)
+ 
+ 	if (r8a66597->pdata->on_chip) {
+ 		snprintf(clk_name, sizeof(clk_name), "usb%d", pdev->id);
+-		r8a66597->clk = devm_clk_get(dev, clk_name);
++		r8a66597->clk = devm_clk_get_enabled(dev, clk_name);
+ 		if (IS_ERR(r8a66597->clk)) {
+-			dev_err(dev, "cannot get clock \"%s\"\n", clk_name);
++			dev_err(dev, "cannot get and enable clock \"%s\"\n", clk_name);
+ 			return PTR_ERR(r8a66597->clk);
+ 		}
+-		clk_prepare_enable(r8a66597->clk);
+ 	}
+ 
+ 	if (r8a66597->pdata->sudmac) {
+@@ -1953,9 +1948,6 @@ static int r8a66597_probe(struct platform_device *pdev)
+ err_add_udc:
+ 	r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
+ clean_up2:
+-	if (r8a66597->pdata->on_chip)
+-		clk_disable_unprepare(r8a66597->clk);
+-
+ 	if (r8a66597->ep0_req)
+ 		r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
+ 
+-- 
+2.25.1
+
 
