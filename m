@@ -1,119 +1,218 @@
-Return-Path: <linux-kernel+bounces-432452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0909E4B60
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:44:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8B29E4B68
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857E5165B21
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:44:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DCA3163AE4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDF414286;
-	Thu,  5 Dec 2024 00:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9310A1F;
+	Thu,  5 Dec 2024 00:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CgL5lU4P"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6vx2i4/"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A22D10940
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1D1CA6F;
+	Thu,  5 Dec 2024 00:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733359481; cv=none; b=QX5YLooL4+bOiCp7PQHYaytzNCRUKmJ1uhDwbtqZ0xDuaEAYyaw0V38jr+BLoz+7MN10f+qbSxMeQnvroODLSm3YlduC1Xdx96ojPqmkiifXuAuuw5/3CYrr8sH4L42UTDLDia7eoB0znHF01OhJF/SnCzLXIxbOOWaXU7E+Rjw=
+	t=1733359532; cv=none; b=Ys25yWDK2mTUrRm+j6CdDPHV0TZU+biNOsWGEbmqz2YdA7wWbrLfh/527w7ExJoAPLwXbq21gIzb8bRXsWx+v1Hgycs36vLTeMNLz80q1eU2cN8QI/55gA75gy594+CfZLzU0IDLKW07JF7f/QaZ/gZcmdWY4aBtTKnTPQ4f28E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733359481; c=relaxed/simple;
-	bh=RfWODQeCQ92PKzUdEskZeQY10PlkpbDGFWN1YWWpNow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZLDpQaD98Ze6wiYetzLyNuuDvwDwoAiymBHllzQUwJP3MV2L0+7/iQZknzfOblHydwzQl5k867tVIHo+P/j2N/MyJDVnaNW4FhxRmZ/5YfwuGQiBid/qLOfE9TI3/hKurkQXN+7J2UThHQzoN2NIAw7ODO5NdZhabKHw6myy3pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CgL5lU4P; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3ea33a922afso135808b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 16:44:38 -0800 (PST)
+	s=arc-20240116; t=1733359532; c=relaxed/simple;
+	bh=XaaeTh4i9x9GcUZBoJdkg6ob76CEdYTvanlP7WUGrmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KWQTH8YCUkQUcQvWPFwWo1Ij9hgdqjUp7CfMR5K1juWg3j9eUEbvJ1BnuVHLNOoT6dpx/ryivozeHoVdpgtASdoVzUePqizkorkVwISAsy+9augdQQcK2hlcPQdunw4XmsPnDZRQ1FnfEcrRKJ4tWSgd3Rj/tMYvb+IGMjsyspc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6vx2i4/; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2153e642114so3121145ad.0;
+        Wed, 04 Dec 2024 16:45:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733359478; x=1733964278; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rZU+yuC4IUNNrcZsdQdOWRd6MVYrt80tZt42Hj7Odpo=;
-        b=CgL5lU4PiFH3Zh26mHpXbCWV5ZZSDsnjORx5YEo+8k2N6k9OsjCNHSvqy1c1oONKNc
-         jKW7Gur/n4/TqbytgUX7dJ5PTLUtIzI0GLYJWJkpTevZsz9X+01/+yeZesMkmiyf+Uph
-         JXWXpQMzOabtoRCIQabrIXeT8DGG6uTJGZpLuwkFlCPzWiZb1yozEtAGg67efINQ/cUT
-         fgIokJKF9jK8SZVDw/gIffl+0TaySIYZiGHQ3gZzAhGrNOAqd5WzwdrdcY5/Gk1vlFDP
-         e+4SbMkopRQxKVNEdkfDjoWktt/hKfzNYW5LwGKnhcfG4HW0I2EU/mEXEQ+lFX9mLpMV
-         zriA==
+        d=gmail.com; s=20230601; t=1733359530; x=1733964330; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=soMelWL1/UQuv4PwOE6os4uBGru2kyLXQzhxEqo4tZA=;
+        b=i6vx2i4/sGx8oCxEPXdce7eIqftw+tIc4RLCz/OE6rucP6crZbeXCUos7p9aKgHnAx
+         CHEQCzrDNDOIuckAFjaEgkPoB+/RxrqbfWfvXJlZsFBn71M6FsJwv9/qykXQJt5M44BH
+         shMEqx92e1bYczF8yXiC0fO/EyFxC0u0AixhKxLV0k59NguiSgBAQQIw100YcOsUftZ+
+         hVP9FO+/ndTCirg1eQQjSeNhW277E0dK21XsSae4C8yR5Em1JkQ4mbBgUHucJHX4V2+c
+         sl9S8whYSlUPvo1+DbXU7Qn8ThRDe6ESTvw1KmvynFSyLUUFbG5YASRE5Cxsmz6m2g8f
+         u5IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733359478; x=1733964278;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rZU+yuC4IUNNrcZsdQdOWRd6MVYrt80tZt42Hj7Odpo=;
-        b=cDl2NMIYE3ZXd9KBiA3WA9eMm3TorBTy359ESKfv3ckx91t1UPKZFVdtHyaFl2sPI4
-         bDYb763DdHqd7LY6nlul0Ibh9UuktlhjRMGxfboexUCfwJP6h2OlfVW76AGRKY6k/NoI
-         YTksATeVgXCMI/XS/1yHtqpScSSaj2N8F3qunjxE5LOObd1eYizNlYQb3IpP5BfGvKUE
-         7XzSXOQWfuwf6awr3JBgPZqsvPsZbC3h28zPq0AUZM/BShemgVecj1f/rVPFky7i//9X
-         222ldIIArpAjGnHYzIECrnLGIzRL0uYdAwPZZUIRl6wglqjVMlerQUDZwRkHWS17kzSI
-         Mdbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQYsCiRoXOhnaDclDMh96g8TBZy9OExNcD+56QKiLJdqYDQ83q+HIopGE1RmFYY63Wo/4adCDVgYePDj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN6pgr7YeIaIhUjBSefhH/3gMF8u41LjoIWRNu1orb+vl+P7/o
-	G1WmeSo8hXVfKlQSPl93PSjeofFAi3gcj96jTKw/btBbYz1soqtwaBTbhJmZcBo=
-X-Gm-Gg: ASbGnctB3lYZODAx6i20Y3W8/rSOfCjXpPBspD0iQEpWDNp1r2phRR48WL/qqS7OcrY
-	7wG1fOHVv4UaCBVYNhJr3DN77l27StQC2OYZvxCS+PP081fui/aZd9QKUDLYfQzwx8rm1V0JsbH
-	5uxJjNqY0Pnifvx7ujtdWxkxTHKMw3afWDo/2DQJ5f5AzDoUtTVNLawJpH592mtoLH0xEMQ2vK8
-	6qZVRQHqqNzylJ5mQpuhlzpMJEVDKMXJabG/QJ98XxUMp6bs1p/sCFtPjQWtVjniEwYkn8r3dDB
-	rLWjmIJtyGs=
-X-Google-Smtp-Source: AGHT+IHaFElNJBo9YhzTZTzxYaqVWuPDKa7rUFNx4+15yLQ0Bvjs2W04jhZERCIQ6ow85bmA48lGYg==
-X-Received: by 2002:a05:6830:6516:b0:718:16c8:3c02 with SMTP id 46e09a7af769-71dad6f0756mr5814100a34.29.1733359478045;
-        Wed, 04 Dec 2024 16:44:38 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29f56945d20sm104623fac.35.2024.12.04.16.44.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 16:44:36 -0800 (PST)
-Message-ID: <4795d5b2-2d6d-4d81-a57b-dc28d217aacf@baylibre.com>
-Date: Wed, 4 Dec 2024 18:44:34 -0600
+        d=1e100.net; s=20230601; t=1733359530; x=1733964330;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=soMelWL1/UQuv4PwOE6os4uBGru2kyLXQzhxEqo4tZA=;
+        b=B6GaWH3T6encbsqonxRWhVoiSrHV/OjzKquNR1A1l2aTwAP7ucMB1d6emUOt7QFYQH
+         K3wfPuvrA0OVNJl4ekCNVWs2mRjcYdyfbg3u6iU+5lK9SDAvBDViqMAsuqo8GGHt6Kuc
+         bnAJNh1+pHM6ir+Zn5HNvUoYzK/2KZeteogjpLEu4UOUtXpJMeQvOZvraXWfCSwZs1Fk
+         ubTFZI9xHyYPM8h8iha/yqYmxTQP2TG214n4Lg+jBC1dXgXw3dNPZSLA0pInSBr9Ag9e
+         OaxwLqCbbgZW7biNEkq36RIcJR+IRcSroLpVA/VLoKZKBcoWeTLGUpoaeNlkRdJ/Cf43
+         EWSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCbMYCKptV0s2O+9C/Rc5EoDK+AuQozbPuDVEFBQN/hVrOiLfQhYCdBV13Cy5err8h8zNSL0qyotKyWqvKJo/Bxkv7AQ==@vger.kernel.org, AJvYcCW7hy6GUy1tqVf9wBhpJ3KvVJghlOEMmDkz/2z0l/navvzi5qXVBO/h9FN052l/9JXaLjivxikFuaNhyCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw15pFwRPKzKl5EcDEtca+zHRcek2G6dXGufJN4ePimG2XW2C4P
+	FecM14EO8fSj71KujSyV4NUdz2cIFJPn7FGhziDGIQFyqHdJdDtH
+X-Gm-Gg: ASbGnct79MaSOsK/ahafw43rorWBw5JsnqeNIKZDM6PyXcChJh7DTEnLR+i0UtLuLob
+	6M79vmcOPvojbkQXSsxgd9DahSFPN6d4C7v1d5zwdv2diqgETMBp0tkge8j3+TZ6L4NDLaZOKsM
+	pwR3oOYl2Es3TNYtTFkq9+bhgvSsfc0wKv2ljdMMGYjf1Efzen5HeIpIuyyGbUbDMKTfQbwF+7t
+	BKlLpyx7mm+35GKyF+qX2RNW5z6/qqHBoJBM2XwN6BGMD1fIKlSbC6ApzigRmEigQBYcv1GBdCo
+	qWHIF3DXnB/BIIunzV8=
+X-Google-Smtp-Source: AGHT+IEV+4iLTnRE7vFLN2dsQHUYs+JAPWWL3QLDKIzFNjanYtt7/v7YLAQSqKHy7+wdek6dN9A0OQ==
+X-Received: by 2002:a17:903:2343:b0:215:5a53:eded with SMTP id d9443c01a7336-215bd241404mr127216975ad.39.1733359529938;
+        Wed, 04 Dec 2024 16:45:29 -0800 (PST)
+Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8efa535sm1338625ad.129.2024.12.04.16.45.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 16:45:29 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [RFC PATCH 15/21] alienware-wmi: Refactor sysfs visibility methods
+Date: Wed,  4 Dec 2024 21:44:58 -0300
+Message-ID: <20241205004457.2186386-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
+References: <20241205002733.2183537-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/8] iio: backend: add API for oversampling
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20241129153546.63584-1-antoniu.miclaus@analog.com>
- <20241129153546.63584-4-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241129153546.63584-4-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/29/24 9:35 AM, Antoniu Miclaus wrote:
-> Add backend support for enabling/disabling oversampling.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v7:
->  - implement 2 callbacks
-> 	iio_backend_oversampling_enable()
-> 	iio_backend_oversampling_disable()
+All sysfs visibility methods relied on the `quirks` global variable. To
+avoid this let the WMI drivers set this information as platform specific
+data, and refactor visibility methods accordingly.
 
-I think Jonathan's suggestion from a previous review to pass the
-oversampling ratio instead of enable/disable seems like a good idea
-for making this more generic.
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 52 ++++++++++++++++++++---
+ 1 file changed, 47 insertions(+), 5 deletions(-)
 
-int iio_backend_set_oversampling_ratio(struct iio_backend *back, u32 ratio);
-
-To answer Jonathan's question [1] about why does the backend need to
-know if oversampling is enabled or not... In this case, it looks
-like it changes some timing (the conversion quiet time) on the LVDS/CMOS
-serial data lines depending on if oversampling is enabled or not.
-
-[1]: https://lore.kernel.org/linux-iio/20241123160559.56c57fc7@jic23-huawei/
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index 18a15dcf90a3..25e0139ed78c 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -427,6 +427,10 @@ struct alienfx_ops {
+ struct alienfx_platdata {
+ 	struct wmi_device *wdev;
+ 	struct alienfx_ops ops;
++	u8 num_zones;
++	bool hdmi_mux;
++	bool amplifier;
++	bool deepslp;
+ };
+ 
+ static u8 interface;
+@@ -597,12 +601,24 @@ static DEVICE_ATTR_RW(lighting_control_state);
+ static umode_t zone_attr_visible(struct kobject *kobj,
+ 				 struct attribute *attr, int n)
+ {
+-	return n < quirks->num_zones + 1 ? 0644 : 0;
++	struct device *dev;
++	struct alienfx_platdata *pdata;
++
++	dev = container_of(kobj, struct device, kobj);
++	pdata = dev_get_platdata(dev);
++
++	return n < pdata->num_zones + 1 ? 0644 : 0;
+ }
+ 
+ static bool zone_group_visible(struct kobject *kobj)
+ {
+-	return quirks->num_zones > 0;
++	struct device *dev;
++	struct alienfx_platdata *pdata;
++
++	dev = container_of(kobj, struct device, kobj);
++	pdata = dev_get_platdata(dev);
++
++	return pdata->num_zones > 0;
+ }
+ DEFINE_SYSFS_GROUP_VISIBLE(zone);
+ 
+@@ -737,7 +753,13 @@ static DEVICE_ATTR(source, S_IRUGO | S_IWUSR, show_hdmi_source,
+ 
+ static bool hdmi_group_visible(struct kobject *kobj)
+ {
+-	return quirks->hdmi_mux;
++	struct device *dev;
++	struct alienfx_platdata *pdata;
++
++	dev = container_of(kobj, struct device, kobj);
++	pdata = dev_get_platdata(dev);
++
++	return pdata->hdmi_mux;
+ }
+ DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(hdmi);
+ 
+@@ -786,7 +808,13 @@ static DEVICE_ATTR(status, S_IRUGO, show_amplifier_status, NULL);
+ 
+ static bool amplifier_group_visible(struct kobject *kobj)
+ {
+-	return quirks->amplifier;
++	struct device *dev;
++	struct alienfx_platdata *pdata;
++
++	dev = container_of(kobj, struct device, kobj);
++	pdata = dev_get_platdata(dev);
++
++	return pdata->amplifier;
+ }
+ DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(amplifier);
+ 
+@@ -862,7 +890,13 @@ static DEVICE_ATTR(deepsleep, S_IRUGO | S_IWUSR, show_deepsleep_status, toggle_d
+ 
+ static bool deepsleep_group_visible(struct kobject *kobj)
+ {
+-	return quirks->deepslp;
++	struct device *dev;
++	struct alienfx_platdata *pdata;
++
++	dev = container_of(kobj, struct device, kobj);
++	pdata = dev_get_platdata(dev);
++
++	return pdata->deepslp;
+ }
+ DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(deepsleep);
+ 
+@@ -1211,6 +1245,10 @@ static int legacy_wmi_probe(struct wmi_device *wdev, const void *context)
+ 			.upd_led = legacy_wmi_update_led,
+ 			.upd_brightness = legacy_wmi_update_brightness,
+ 		},
++		.num_zones = quirks->num_zones,
++		.hdmi_mux = quirks->hdmi_mux,
++		.amplifier = quirks->amplifier,
++		.deepslp = quirks->deepslp,
+ 	};
+ 
+ 	if (quirks->num_zones > 0)
+@@ -1291,6 +1329,10 @@ static int wmax_wmi_probe(struct wmi_device *wdev, const void *context)
+ 			.upd_led = wmax_wmi_update_led,
+ 			.upd_brightness = wmax_wmi_update_brightness,
+ 		},
++		.num_zones = quirks->num_zones,
++		.hdmi_mux = quirks->hdmi_mux,
++		.amplifier = quirks->amplifier,
++		.deepslp = quirks->deepslp,
+ 	};
+ 
+ 	if (quirks->thermal)
+-- 
+2.47.1
 
 
