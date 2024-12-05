@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-432421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541BE9E4B04
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:18:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CB49E4B05
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:19:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2332C161C00
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE0C1881257
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D290A3208;
-	Thu,  5 Dec 2024 00:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68799F4E2;
+	Thu,  5 Dec 2024 00:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hJLyFsKO"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ak7Kk8SW"
 Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2043.outbound.protection.outlook.com [40.107.94.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EC118052
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FAB64A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733357929; cv=fail; b=R9cadE/7TQNji+qXaSNuZws4A4CsVxBmZAezGj0a+WoZB7scdEjiZzqjm5yGCsY3yDtZE5LQf4gcY85WqJUI+xw4eslGMTiQzpqlQ13R54dwnqU5XNyTY7hYzIUCuHAGxuc+ZJM2/CLPG/W9uPnAtPF6K1rsYbQnbVFMvZZ9bCg=
+	t=1733357932; cv=fail; b=eRaEwLEPuw2IJQCgyvyfLUfqysFD0Wi4aTaRgjGsw3EoJgYNwF+NNLhOZK0w2uoNQdq4qu04y39Cl1SNNiyE5b1d4ORVEbmAB1mj1BjvKm8D2PYXGF5MjTGNXp5wQPQKeSbl8e7Wdy7rE/X4W7kdgcvfPjjA3z7cFD0huG+YRIk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733357929; c=relaxed/simple;
-	bh=HFbVhJUTfMdW55sFFrXOU7+9DEYAr8/HcBVrfyW1Ra8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=T+rL5Psm7O9I/9QiGdeHZWvu4sFZI3kluETZZgWo0WN6duuFjgSXltFrWqRJG21nUPQPgsxKVsaoghvUTD6rn/oyrxOZNd64yTbyIdmMyxk/tNWPPlm+KjLOsMG/JcrFK1zBodv043404rMdKL5fsHCELUlAPQALxtFNMq4HGVA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hJLyFsKO; arc=fail smtp.client-ip=40.107.94.43
+	s=arc-20240116; t=1733357932; c=relaxed/simple;
+	bh=iwTwrxEAUli/+PQHwMnfd5H5ga6jfuDPLkw+1gBw7d0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VUbyxA7KDzeCeKDaCIuxiAm6YklSgBe8tayJEud0cxoOspHcl8bN/wW5JI1GPg5t8QX8Im2IXbb5EmazJRq3dG8c7XlLUg+8fMP0/Qimx7Ra/ikDP2XXrYlahhtEs/g4O93WipJ6Gchw4/gzrGCWAoKSRz/6THkyKOHjplj3bKc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ak7Kk8SW; arc=fail smtp.client-ip=40.107.94.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yf3zyCgtWV+gWCXxoQLzg/l9fOr8hQijr3uqNQNnCAsVnpDpNkY0gqplcE8mFuNRJow62Tw37s4w7n6zEE/DG/+kuE6tmJM0MNP1vDzMo6LOCg48cQd8aKeYPxKWMYVA4qTpICsssIlAyOI42ZvuNECPMcn7EigmH6nx27rhkqj2lvtSB+SvuCHED1oL2my0on6ThFPVmc8+KJNcqfxWM9t94/URCDlGObihtC8G2dLu81YQd6F8Yr94lIRHCIJrYmkZvwwCgIxiExwo8dSO7gs73vpRHU1HAQC1PLqyHt+c33Sdq0iPO9r+TR6rt51XBn4DJDX66A5U61WTTjEt2g==
+ b=oN+5qogiez2NgcifIL1b/9Uxg6pTc8GGnmWDogYvYA8xmY41gvuTbBlbSoWAvewSZ+iP5z0aQqAcLNsHvJnIo2lmkxw2rBTwIjSuyZdDctBojkG6tmsuiIM6DRAvWE3doDuoegJ8ZCLUBdpbPVVNrAMZ89NXrtgX6e2O0K5saaDK+3Pwidev7N0Y8vayGd+SU6MzgTZb838yoUAV1HYEkP5euMWZaniU/cmDZiVIc9gR7x5xqOX0LnJwgrJjn3IBLVXXT6gGBGrk6U5+6QRAfh7J0NC8TuxhReBJ5nbmOQ0A7GtJ6NrZIVhesvTt8ReeTUwc3CSlpMqr3SGk74GQ/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xKT069lVMAQRzU9nsKMLPA6gzsjFGeFA8wtuDb6+7+k=;
- b=FTjrcA62eG0YgHNegSKk+7FdZ0ECDyz4TH1SAh+LmdBQ9SnT/lVXn6dMkAxnwlPGPhIXmaKPetZlHbZEvnkEymvU5aVsYOxmGpWVkIZuLwB0Y2ICpaw3pSAjhfX5OSiFVYwQzQbr+0JXqN1m1bKlWQLyA33eczwCyQ23Wls5xglSeLMocnjgUV+guGn9hGoM0C9EFDO+6YCfOiNHwVxEZjIG5IUNn8Jjim25UtgRAWwYEK8MysJV+VUcWgAzUFO4foSh9bkD+6AV+tmrPFsqj+7sZcrNevltWWZ8DR0+Yx0E+T8DV/7vb7tltZi1Dgt0pDRNGh7uuFeBQ6DkOZ4CXQ==
+ bh=a+3spWHdN2EMOLZhAL3VZ/AE7EL0e8oC5PEvi8fneRU=;
+ b=LcWylKiZrXb8x+tfXeGnqZM8GNc0nRD0x7vZ7EYba748KtAW/cmdpY5Ny7oCIiL3lB8ox9cLSlFErgo+yZVU1uaFNE8eNHAUpMoFOJCFfJk1NRbb9cRMH6x+XZn9G6AbhIyuCV126AfdGAJ5G2LnnQlgqL0086KrcNx8b5EiwBDsjkqLnyzTFMsoSjiid8OvI4gdfY7t7KZ9PnGdEaWRJW0XAvlB/PWKWSFlZtsLQ/VtvOngF4kjqRUlSD1DdLOKCIi0xwxkJLGeJBimM7eeXSzO50joZUZvEfOCA2fUWbsViA0KWGPIpaBahJGY3/SuI+9+Dgmq2Pz/rWDMFScJlg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xKT069lVMAQRzU9nsKMLPA6gzsjFGeFA8wtuDb6+7+k=;
- b=hJLyFsKOSzjauKusfsh+mzVHyUd6owE//cELFANy7NBP+yZSqsoxX1x35rwVhXjqwrL67+YtMkYUrGH9hDclky5qRyBKYCMrTei25vozG0TgM43bgnZYl114ZyWSOIUkexvHGgm/b0CO6Ppj41O1cXowHb5nvEgBpHfoaMLHqcA+w4PXEsdm0eS4PJRCy2tFbNHkIoSvo1/aUQqH3Co1ss1RqF3EcP2cECT0eNUEblqrI3wU8qn71HgbtWbes8CmazVHwFq2HHlm1i4+mkM2q46SvvVYP2V0sPXpGnqp4uPHB1VuuYPVy4uIMc7rnOTQ9/GCetX9l7ZeMviX+0oLFQ==
+ bh=a+3spWHdN2EMOLZhAL3VZ/AE7EL0e8oC5PEvi8fneRU=;
+ b=Ak7Kk8SWZLEsM0pq+jI56diIOKrSoYgm80zOCxHpDx2p4InJL15fUfcVfXf0nRMNPw4EeJS4PMKC4ECAiWmiBOQa4GdYbKeFIe7C3MG6kGP3UXV1wsVcdCXUv+SW40MvvTG81BV/2/giOlZ0Cxt9rT+Khoxz3w0JGd05vJyu3ww7NqjlcqFHxV0fYtYwBXPUVKpc4PyWyYnmGIHYheGGOfsndZ7TcZNqVeCXbd5Nml0ToqK+i3ddCYyU3q98F4E+PhRyucr/gWiM4EwixmeNWqUgJALhEsauVpnADHdHvlyt4crwzjdfn4q/BtjJ9tGuYGJ7mN5fdz7Je3ZMVsJ1Jg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from BL4PR12MB9478.namprd12.prod.outlook.com (2603:10b6:208:58e::9)
@@ -54,7 +55,7 @@ Received: from BL4PR12MB9478.namprd12.prod.outlook.com (2603:10b6:208:58e::9)
 Received: from BL4PR12MB9478.namprd12.prod.outlook.com
  ([fe80::b90:212f:996:6eb9]) by BL4PR12MB9478.namprd12.prod.outlook.com
  ([fe80::b90:212f:996:6eb9%6]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
- 00:18:43 +0000
+ 00:18:44 +0000
 From: Zi Yan <ziy@nvidia.com>
 To: linux-mm@kvack.org,
 	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
@@ -69,14 +70,16 @@ Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	John Hubbard <jhubbard@nvidia.com>,
 	linux-kernel@vger.kernel.org,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH RESEND v3 0/9] Buddy allocator like folio split
-Date: Wed,  4 Dec 2024 19:18:30 -0500
-Message-ID: <20241205001839.2582020-1-ziy@nvidia.com>
+Subject: [PATCH RESEND v3 1/9] mm/huge_memory: add two new (not yet used) functions for folio_split()
+Date: Wed,  4 Dec 2024 19:18:31 -0500
+Message-ID: <20241205001839.2582020-2-ziy@nvidia.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241205001839.2582020-1-ziy@nvidia.com>
+References: <20241205001839.2582020-1-ziy@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BN0PR04CA0072.namprd04.prod.outlook.com
- (2603:10b6:408:ea::17) To BL4PR12MB9478.namprd12.prod.outlook.com
+X-ClientProxiedBy: BN0PR04CA0063.namprd04.prod.outlook.com
+ (2603:10b6:408:ea::8) To BL4PR12MB9478.namprd12.prod.outlook.com
  (2603:10b6:208:58e::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,220 +89,474 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BL4PR12MB9478:EE_|IA1PR12MB7589:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3a181ec1-ed6b-48c8-51a1-08dd14c260c2
+X-MS-Office365-Filtering-Correlation-Id: 36185e56-4f05-46a8-1c71-08dd14c26166
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?H7fu5s/yKE7pvQzQLNo8UOUnSJmN00E227XYceQrXQkTrLx6Q0tfkvjXbp6b?=
- =?us-ascii?Q?blWLc/1f40VQRY12giN8S+mrP/w/TN86Geky4eC3z2xNk0IcuxIHpPziQ6Ga?=
- =?us-ascii?Q?g+0RO8/A3WVEXRtEOLQKUhkLg4dEBOteC77X1qMWh8g0nXKuJbZFIgYQhYYa?=
- =?us-ascii?Q?Yt7F5mlN5j1I6CrMDbSD31YFXIuJ+AU6a+h4hhGxEVYEnavThPAEAkqYTCBf?=
- =?us-ascii?Q?y6dTKRZ+eloT/iSxrqKD0d1EY/87h6WNsUyZX16EOZhrTTW8ebURuHe1Xmfl?=
- =?us-ascii?Q?00DufcSjrtLymjHPXWqQfDkmvuzmgvEM9or5ZdTx2EQBlEMWKFS4K9ZSTMwJ?=
- =?us-ascii?Q?aCWwAHCvwYKVY/N6sjmVmTKSZZVfaO7smduma1AofSpySCvfEPeuWpR2G7or?=
- =?us-ascii?Q?GYycfETCXPQ03+VY+zh9MZGabuEfbUdWffe3cml0vWjR39ivPhAnHK9eta9L?=
- =?us-ascii?Q?xr9asVfiNpp5RGVK53f+rT57wJUD5e2MjLjzJHEUX4DeHs2KiSFC75Dd1mkm?=
- =?us-ascii?Q?xL36GxxyabO2syGp5uIpadRPHu3E6HmVlrG6rwO1i1J+f0V/MlacoGdkrmio?=
- =?us-ascii?Q?kZAopAFDuen3rep8QffqNjZwJZ7vzb2dvTACq4nD+x6tiWNB3xCxYNkDT2uM?=
- =?us-ascii?Q?Xf7ZZZvDy/39e5RzIVgkLx7TjUWUt2qwxpISezC4aPuhvZi+H8w75085PUOe?=
- =?us-ascii?Q?yYq2MqN9sWRvSAhBxKLiVg0CuY05z8QHLlHhJsLHrVay0z7arL1N9gsH9W3+?=
- =?us-ascii?Q?bnRLBnSX4cazKr3cvEyaq9IW/X9s6BMgCCFKBL8OtSHoVYFdON+sj8mx0omL?=
- =?us-ascii?Q?m9ndYzgyjalviGfNeLOMs+xYnvx6urtDjQSTw/AQNv/FBwBl6MARJzNNakxJ?=
- =?us-ascii?Q?f9Wy1GZFvgw4k5iRPkTBoUrGdTb5urivuDMfoKHd8Ly9MaRUMPz/LaYy6v5k?=
- =?us-ascii?Q?fFgGysNYErQH9/ihECwmMDQ5Be0/YsAxMClNwsz9hFHW5Ob3stvt91ESq8fH?=
- =?us-ascii?Q?XEYF9oxScvqBGVI5QQdPJjp7JgtLHoqIzF1lvW34FJbiZNFvgi5wDh8ZqvzA?=
- =?us-ascii?Q?JNCzGjK9WzbWvVX/HsUnI02mBmRuYCA+AWve9mkYmBAUvlwZkQzry5ZVK1+1?=
- =?us-ascii?Q?BEqneG7Zm9Pty4AzUH4TtGFSHcvau9aGgkcaQPDtwSSqrAzn+Kv6TNwtIJaS?=
- =?us-ascii?Q?pIu2f5Kl2rsv+3hAtExthu30BkFCyU1R0yDHrnvc42cNQzpiL7QvvU28sT8D?=
- =?us-ascii?Q?yn/v+B5Im2Gxp6R+dXVIp+t5jERxDAFX5md9wySCOl/HlO46qsqtHa5qz585?=
- =?us-ascii?Q?mJXMMFHBvS0ZQEd2SLVZ/iQx4yQr/c5EExsGrsmFlH2xV1DSuZGzh74xge+3?=
- =?us-ascii?Q?bxDUQv8=3D?=
+	=?us-ascii?Q?s6pyskzxu24QNu2sQsXfCShkcCx3pS2RuJVk3nURn2Ua+DCxBOG7gLcbkmJ3?=
+ =?us-ascii?Q?ht6bDhe6fBo7M8vipL3IZaqbAH2q+T37nil6W2vKTs8zHHQvX9H/CrRufVr6?=
+ =?us-ascii?Q?J7aNd97wX8jKW49xy3A9CVleOS7EOfJNfZxUlEzGWGIrEnIBgvjQYUu8/fHa?=
+ =?us-ascii?Q?rRdK9MZRb9MThCEgw5pNoONcXVywvXQQUklFL6aLynUa/914gZku35cf32Oy?=
+ =?us-ascii?Q?pWArV5y68SHWARSDuEE2/r0cMP9Wxfpx8RRCo2M3bglQ1niKQOMrCqF0sfGn?=
+ =?us-ascii?Q?P+GV1e2R4G9/mGStLKPZiZGP0E6v68ozMMR00YqVi8mHGEMPMCZBryfi9zbZ?=
+ =?us-ascii?Q?i4KpwTOTrjbuy2DjCdugpMvjwO3emfqlQhHceh3+Hbork5DqgcITsjHoxHG+?=
+ =?us-ascii?Q?63JDEycEGRkDAK3AWgRFbOb00q6ElFVu0EQrmb1qC3UzQcqBIU58A1QKfXx+?=
+ =?us-ascii?Q?gVkDdB0ayF1bjOLS1RMp1tzLLA7276eSv62ZvRW+OLu6Gg42FHGzgQMVBPsV?=
+ =?us-ascii?Q?w1z3zQk2uaqtFR3cW/GACyjB3EPRYVX/ouubEuzDGEGYrnnPl2nH1uq3BNuY?=
+ =?us-ascii?Q?xJmBEP73AHXtMuOmu1IaBAnq9YXBaogC/x0tiUOacxo+CJs22bZTNCGphBJW?=
+ =?us-ascii?Q?q84g0LsF7QUK91kQkdqoBkh3J/QuxSAo7bhvYj+DYSEQ51SVIfl8u4O4q428?=
+ =?us-ascii?Q?qaZ6Co0YJGyl1GeOM9hmyTaR4aR+atJxZWFkbOFK1WEZ0eMQwltpZyrv7/Of?=
+ =?us-ascii?Q?rrNj/DR5oHAwAMmKG37Eau2ooU7FrqWp1PF/7xS4xl/jXSaM35oaCxOhaLPM?=
+ =?us-ascii?Q?WN6cFmWhNTUvEthvyqw8ZXgK0I8BnUmp/KM/MkS3kzt9VloBW3ukTBLK/Z0P?=
+ =?us-ascii?Q?Fhzadc6zMrKvTYzyALkiPDnsWA6e3Aeiosm/73NZ6aQpMHMwCjAE9RSzsTwq?=
+ =?us-ascii?Q?NQ88NT4ET8D3j6gQwNIb6xWhEL/mwEwQN+hKF0UlS2I5BxlCOCxlFqI4CV0H?=
+ =?us-ascii?Q?T79HNBg7QSpbTGtB/mYApvWuLH7voO8JQj+PF4NUjPgC+uzdgI1YoylDIef8?=
+ =?us-ascii?Q?zQZdZlzA2jO/1U/netmLt5Hj48QwjB8z5tGxhgR7cI5yVe8L5ZJrA56d9d0t?=
+ =?us-ascii?Q?ysYWZ49yI4yQp0UnhC8R6yDnz+fngVfR/leLWt+9rPAvr/aY6gyrsiXlhNsO?=
+ =?us-ascii?Q?q+KV6adWm//IM3juH6xG+Dvr1nzPkYKcD3wqAttXNma0/m/2rQvPbfjQ4wTp?=
+ =?us-ascii?Q?tzQhL9DQZY3qByab1zbaIMDKMPzC2bvPU0ogVC1iwyfHzyfp1ZokBMuah35X?=
+ =?us-ascii?Q?TeS7Q874fmojPXLrJ+0e1urwzZNGSHpWlWxx6ZrlB+Sr5g=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR12MB9478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mE9mpiIyZt7xqL1ONiA4L6gdEKuJ+yIabfaXceZsLlNFTzwnW2Eyh+EeBBe4?=
- =?us-ascii?Q?3nlqTLcFLEFmiTqXsMPUdaFDcqZIDdpaMUEuo4XTV+9lFZibLaq/JCpqoijq?=
- =?us-ascii?Q?PkK8UzkA6sxMfAwmP2gR0ZkED3MDFwVnojS0gVmEDgV81MqC68DzKUgea4W8?=
- =?us-ascii?Q?g7ezP3yiH2oVpVsJ7D0D1WScKbkVBzIXgZQfAsPhjaUjyIhArftsaq01fNqW?=
- =?us-ascii?Q?3kzCMU6BR3ZVIZTdP+fMBIJmZSgQlwwVZytHB6yWVqEzJweIuCcIRIK69wZ6?=
- =?us-ascii?Q?n5adfXO0dgdLJlUkfvBkQEKpkfNkhK5TsVd1uq7RETJLNyB/2PtnOfZCFRgN?=
- =?us-ascii?Q?RLZ3qoGJbw1DV8F4akgEmq2K4mnvNrhNRbEPpG2HwRSiWKAW73MBTC0rzjUT?=
- =?us-ascii?Q?lQiGFeN4J2hIC5z5WljRA9vfa5rpQSM4xVxq5xIndjnHjxfjkJXM4PA1XDqy?=
- =?us-ascii?Q?2599nioQbway+4kOumPokpg1M0fMaoBrfI1G081aGjpuOplHP3W+L2uIOnih?=
- =?us-ascii?Q?9kRtEzSEYDY093kb+qqKMAd9azcECXHLedfZS/oV7gHgukOpm55n0kfKdSg0?=
- =?us-ascii?Q?mNz4NUsliC2isHWQ+sZuRhyoFICPhG+Fwx3oVi5tyi58CfKD/tmsMLi3SRGt?=
- =?us-ascii?Q?8Xktt7n3t+va3r31KqYHlMi/I9bjzhBNWWZ/0tB4zOaUQdfnljO1UiPB4jsG?=
- =?us-ascii?Q?of9BQlrAHrcJh8/8UwlyjV0wf19F//0nZSFw/0oBpgYXFMBEmQTEFQODD1fU?=
- =?us-ascii?Q?GxF9SVPBAQfFYrPE2xzNSR4B9O22SlC0+M/4sSf3ompYZw2sQCNX18Tg8yJG?=
- =?us-ascii?Q?oBkQxpLZPoselhX4KqBshtNQWc9NInhqklQU9WIPzeuLUlQ88Jjoga83OxCx?=
- =?us-ascii?Q?XeQYp4SQvB5Z4mvHYeCQ3lpmZepfddn3SrZcHg+jgMDbv6NeWoEmhdzaCBgb?=
- =?us-ascii?Q?LV6Dj8P51Ul6vQRgH+1aovfqzZpjkqrcXVoLBcuzm2D1dFhxSUug+QUgabzD?=
- =?us-ascii?Q?7YJMNrjltJI7ZEs6IOPv2i+RXB40QNmciqkjztys6Fhrdqsh99UvYJF9AYZK?=
- =?us-ascii?Q?J4mc9fuI9/EIkfE6rgdcBTvdhlCG9kcXqCc1QoknEXgL1nIP3qdukeJAHHoF?=
- =?us-ascii?Q?XBeiB2kxGvZyCZdQiXl7kHkw3CK+dLN+nUc4QlDdt6Ic3NMEzHX7fsJlM3si?=
- =?us-ascii?Q?Ezim7cc/E9Ysz7WgeFKZEsrxwBXPCLoTDKOfM3RwAascMeS+W0VyNMB2AwY5?=
- =?us-ascii?Q?RVcmr/33bJrHIfqaf70+zx8ZckHernqRGf+UCEAjnlNyWGEDD2eNE1iINqOx?=
- =?us-ascii?Q?pGoHdDWqi7X7mOfzUwJF7H1j0WIzFv/s2vz2oVj53jWHEj6tzhhjJuertERo?=
- =?us-ascii?Q?fyNMSVGKuZL1N8ST6sQfNDujpknAzGtFnjbNC0S6Bd3Ho1wvkSRPB/vQk8t2?=
- =?us-ascii?Q?Jbbdu4R0WEbTdSM+dkD3f3+elr82Ti5JCYgkX0GTOQbMRcc57Dwnbo+eEdyF?=
- =?us-ascii?Q?Dlj6JOHDLGOGvVn01Xx9f5yRyNpGc4Q96ToKoBwTJAY6Agq6cOFlYVf0953y?=
- =?us-ascii?Q?V0KqdCgH3AbXt5q+5t3Xr143PpI9cBSg45fsiRfW?=
+	=?us-ascii?Q?nir4wRO24tGE7X/Ms5NgF1e9GpVg8wmwtl96KRQbztBELwfPphRJkmiAZjU7?=
+ =?us-ascii?Q?deN//wDuthZDVudBbtGJ4aj3lIygL4e7HF3ZLbhu2ZwB9r2sfo6tYDjY2sAF?=
+ =?us-ascii?Q?UKxofefjj5Hy3MbpDqnSo4i1boK/EAAWPyQwLy8ZxSkOatKw7eWZvhIeWcAW?=
+ =?us-ascii?Q?kTBhKCaXmzamnVJ5SOO7+2fmPmMznRGb17lSjyKHtHDGe9sgdpN8a49Pwqpv?=
+ =?us-ascii?Q?4R3OUSHHZDnyX9SKQa5LLKFXVeG/WAAVRET13TinRPzgSoZLuxHfRPGnr/wc?=
+ =?us-ascii?Q?GyveVGwzFpWp2D5gTiwA7Sosqgk/11f/AVIRdxAqriWd1kV63qxzs4QQdyh/?=
+ =?us-ascii?Q?5owxstvpV/KXAKuzRKmSeXk7hrKxse+fTqm5R7zldOXhjWu7pSr/pfkemQqv?=
+ =?us-ascii?Q?3PwHxuq1HtIL9lU0dGWnClvh7hn/V14URkwGgsAeUxsDntjpgMmoR4dHVj/d?=
+ =?us-ascii?Q?TAcfAgH9EB1gBdChDbOXLkl3Wn1D2DOmnsrP8OtVK19etEjrCyiWlOGGfhNk?=
+ =?us-ascii?Q?tRDqbX55JCvytRLMKrTz/kxUwAqY8/F1pufJ5g8DLfvBQGo/2O+wkaGADpbP?=
+ =?us-ascii?Q?mqtgNeYE56vdOorViLDn7RezCJKKn+MSDzIRX/c08ooeIBoSyJAbnPSQOllg?=
+ =?us-ascii?Q?maHiGKGzNY9GRZMeBCVG5EQP9qPtzcvjDRJ5GTzchLJdNBIDjuVbSCo8D5SV?=
+ =?us-ascii?Q?Vr762qZV0c4EkCtLdI3cZ3E/avBEw2wTbedwZqE5OHjUIAgLBDh//YClR8Em?=
+ =?us-ascii?Q?gq6S+ofnBKfUIuPdUrJ4Hn8bq31/sMtCm1s5GhZJnMpmPHkuYoHbC4GHyCpN?=
+ =?us-ascii?Q?jwem9htEf+rzQEKc1Yisejy7KAEi8jlEGfo9ztscMWsGgrYh6Nyfd+MHjrqo?=
+ =?us-ascii?Q?5MCAYrG7BktlJa+Yxm/hpJlgJcV94htKx15K6pukV23DYQpCKdqRgY4qdvr8?=
+ =?us-ascii?Q?QH35A1DphRstbjVTSk3c9SHFEeAc7MnuYGs+WSY9o+hkJTrvG9HfUzQ9fq4i?=
+ =?us-ascii?Q?vEWCI7sLnEIZZOjl2PMVUDyxPFmdtZmrbdu1hzTVZ6S2twP0aECnhqUDtSmn?=
+ =?us-ascii?Q?FGEf4TOyb/Q1ocB8k4GsRZxvZA88hhExxJxyXDyz/wntQ740p5qQ0PVHLZag?=
+ =?us-ascii?Q?ZjlUJQQsIDjDBsvqRoURrkwSIhWcFCNNQhoKAjKR4VI0soQYyEPj+PmDzeee?=
+ =?us-ascii?Q?P5vupwrhEAEfNdOJ2tBj1aixHXliHXXHABLJ6KZJRQn6K/eX7wyldsPO2/FV?=
+ =?us-ascii?Q?1wqu8NvoAoPfRU5G6EcQG1Njbd1CNuUYk07os30astJUuan5I5/D5mPcaSfs?=
+ =?us-ascii?Q?JupzHjtr5w6Ej7QwEyD6ZjY+CjUIgdIbCaGVBXZNwW1pAG9daW979I53AfDk?=
+ =?us-ascii?Q?mGns2RsNTRWA6L8VJyawW2I/Y6xg85ao6LryK8rTZ4Jp1icsgbU0YdQKvXMi?=
+ =?us-ascii?Q?RoWpMNDQyqdyxDzVI+Xd8liBDbMeWZA1WYBJokxuZXgZx+l/2lcIu7EZWtKj?=
+ =?us-ascii?Q?ArEOCK3RWJ3WK7xqVLm7Dp/9igNDHQgDnePjjnTuvmJhcqd67HkyJDhORc/l?=
+ =?us-ascii?Q?tchG3eEbHlCOyoFPY+3tYJ7cOh8heJOPC4an3Iy/?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a181ec1-ed6b-48c8-51a1-08dd14c260c2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36185e56-4f05-46a8-1c71-08dd14c26166
 X-MS-Exchange-CrossTenant-AuthSource: BL4PR12MB9478.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 00:18:43.7150
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 00:18:44.7556
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /bpgDIyJJvUnOlpOMdpozpo7UkyRsl+M5ntNZoBnJca/BlEkUItxaR1aOU0LAzGs
+X-MS-Exchange-CrossTenant-UserPrincipalName: GloXxXsUr9TmYrGIEXCwtbGIIAT9yudJcykIsFMLm9lnEise6T/iQOEaWfTwuLrm
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7589
 
-Hi all
+This is a preparation patch, both added functions are not used yet.
 
-This patchset adds a new buddy allocator like large folio split to the total
-number of resulting folios, the amount of memory needed for multi-index xarray
-split, and keep more large folios after a split. It is on top of
-linux-next-20241204 and just a resend of v3.
+The added __split_unmapped_folio() is able to split a folio with
+its mapping removed in two manners: 1) uniform split (the existing way),
+and 2) buddy allocator like split.
 
-Instead of duplicating existing split_huge_page*() code, __folio_split()
-is introduced as the shared backend code for both
-split_huge_page_to_list_to_order() and folio_split(). __folio_split()
-can support both uniform split and buddy allocator like split. All
-existing split_huge_page*() users can be gradually converted to use
-folio_split() if possible. In this patchset, I converted
-truncate_inode_partial_folio() to use folio_split().
+The added __split_folio_to_order() can split a folio into any lower order.
+For uniform split, __split_unmapped_folio() calls it once to split
+the given folio to the new order. For buddy allocator split,
+__split_unmapped_folio() calls it (folio_order - new_order) times
+and each time splits the folio containing the given page to one lower
+order.
 
-THP tests in selftesting passed for split_huge_page*() runs and I also
-tested folio_split() for anon large folio, pagecache folio, and
-truncate.
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
+ mm/huge_memory.c | 361 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 360 insertions(+), 1 deletion(-)
 
-Changelog
-===
-From V2[3]:
-1. Incorporated all the feedback from Kirill[4].
-2. Used GFP_NOWAIT for xas_nomem().
-3. Tested the code path when xas_nomem() fails.
-4. Added selftests for folio_split().
-5. Fixed no THP config build error.
-
-From V1[2]:
-1. Split the original patch 1 into multiple ones for easy review (per
-   Kirill).
-2. Added xas_destroy() to avoid memory leak.
-3. Fixed nr_dropped not used error (per kernel test robot).
-4. Added proper error handling when xas_nomem() fails to allocate memory
-   for xas_split() during buddy allocator like split.
-
-From RFC[1]:
-1. Merged backend code of split_huge_page_to_list_to_order() and
-   folio_split(). The same code is used for both uniform split and buddy
-   allocator like split.
-2. Use xas_nomem() instead of xas_split_alloc() for folio_split().
-3. folio_split() now leaves the first after-split folio unlocked,
-   instead of the one containing the given page, since
-   the caller of truncate_inode_partial_folio() locks and unlocks the
-   first folio.
-4. Extended split_huge_page debugfs to use folio_split().
-5. Added truncate_inode_partial_folio() as first user of folio_split().
-
-
-Design
-===
-
-folio_split() splits a large folio in the same way as buddy allocator
-splits a large free page for allocation. The purpose is to minimize the
-number of folios after the split. For example, if user wants to free the
-3rd subpage in a order-9 folio, folio_split() will split the order-9 folio
-as:
-O-0, O-0, O-0, O-0, O-2, O-3, O-4, O-5, O-6, O-7, O-8 if it is anon
-O-1,      O-0, O-0, O-2, O-3, O-4, O-5, O-6, O-7, O-9 if it is pagecache
-Since anon folio does not support order-1 yet.
-
-The split process is similar to existing approach:
-1. Unmap all page mappings (split PMD mappings if exist);
-2. Split meta data like memcg, page owner, page alloc tag;
-3. Copy meta data in struct folio to sub pages, but instead of spliting
-   the whole folio into multiple smaller ones with the same order in a
-   shot, this approach splits the folio iteratively. Taking the example
-   above, this approach first splits the original order-9 into two order-8,
-   then splits left part of order-8 to two order-7 and so on;
-4. Post-process split folios, like write mapping->i_pages for pagecache,
-   adjust folio refcounts, add split folios to corresponding list;
-5. Remap split folios
-6. Unlock split folios.
-
-
-__folio_split_without_mapping() and __split_folio_to_order() replace
-__split_huge_page() and __split_huge_page_tail() respectively.
-__folio_split_without_mapping() uses different approaches to perform
-uniform split and buddy allocator like split:
-1. uniform split: one single call to __split_folio_to_order() is used to
-   uniformly split the given folio. All resulting folios are put back to
-   the list after split. The folio containing the given page is left to
-   caller to unlock and others are unlocked.
-
-2. buddy allocator like split: old_order - new_order calls to
-   __split_folio_to_order() are used to split the given folio at order N to
-   order N-1. After each call, the target folio is changed to the one
-   containing the page, which is given via folio_split() parameters.
-   After each call, folios not containing the page are put back to the list.
-   The folio containing the page is put back to the list when its order
-   is new_order. All folios are unlocked except the first folio, which
-   is left to caller to unlock.
-
-
-Patch Overview
-===
-1. Patch 1 added __folio_split_without_mapping() and
-   __split_folio_to_order() to prepare for moving to new backend split
-   code.
-
-2. Patch 2 replaced __split_huge_page() with
-   __folio_split_without_mapping() in split_huge_page_to_list_to_order().
-
-3. Patch 3 added new folio_split().
-
-4. Patch 4 removed __split_huge_page() and __split_huge_page_tail().
-
-5. Patch 5 added a new in_folio_offset to split_huge_page debugfs for
-   folio_split() test.
-
-6. Patch 6 used folio_split() for truncate operation.
-
-7. Patch 7-9 fixed split_huge_page selftests and added folio_split()
-   tests.
-
-
-Any comments and/or suggestions are welcome. Thanks.
-
-[1] https://lore.kernel.org/linux-mm/20241008223748.555845-1-ziy@nvidia.com/
-[2] https://lore.kernel.org/linux-mm/20241028180932.1319265-1-ziy@nvidia.com/
-[3] https://lore.kernel.org/linux-mm/20241101150357.1752726-1-ziy@nvidia.com/
-[4] https://lore.kernel.org/linux-mm/e6ppwz5t4p4kvir6eqzoto4y5fmdjdxdyvxvtw43ncly4l4ogr@7ruqsay6i2h2/
-
-*** BLURB HERE ***
-
-Zi Yan (9):
-  mm/huge_memory: add two new (not yet used) functions for folio_split()
-  mm/huge_memory: move folio split common code to __folio_split()
-  mm/huge_memory: add buddy allocator like folio_split()
-  mm/huge_memory: remove the old, unused __split_huge_page()
-  mm/huge_memory: add folio_split() to debugfs testing interface.
-  mm/truncate: use folio_split() for truncate operation.
-  selftests/mm: use selftests framework to print test result.
-  selftests/mm: add tests for splitting pmd THPs to all lower orders.
-  selftests/mm: add tests for folio_split(), buddy allocator like split.
-
- include/linux/huge_mm.h                       |  18 +
- mm/huge_memory.c                              | 693 ++++++++++++------
- mm/truncate.c                                 |   5 +-
- .../selftests/mm/split_huge_page_test.c       |  70 +-
- 4 files changed, 511 insertions(+), 275 deletions(-)
-
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index ab46ef718b44..0cde13286bb0 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3127,7 +3127,6 @@ static void remap_page(struct folio *folio, unsigned long nr, int flags)
+ static void lru_add_page_tail(struct folio *folio, struct page *tail,
+ 		struct lruvec *lruvec, struct list_head *list)
+ {
+-	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+ 	VM_BUG_ON_FOLIO(PageLRU(tail), folio);
+ 	lockdep_assert_held(&lruvec->lru_lock);
+ 
+@@ -3371,6 +3370,366 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
+ 					caller_pins;
+ }
+ 
++static long page_in_folio_offset(struct page *page, struct folio *folio)
++{
++	long nr_pages = folio_nr_pages(folio);
++	unsigned long pages_pfn = page_to_pfn(page);
++	unsigned long folios_pfn = folio_pfn(folio);
++
++	if (pages_pfn >= folios_pfn && pages_pfn < (folios_pfn + nr_pages))
++		return pages_pfn - folios_pfn;
++
++	return -EINVAL;
++}
++
++/*
++ * It splits @folio into @new_order folios and copies the @folio metadata to
++ * all the resulting folios.
++ */
++static int __split_folio_to_order(struct folio *folio, int new_order)
++{
++	int curr_order = folio_order(folio);
++	long nr_pages = folio_nr_pages(folio);
++	long new_nr_pages = 1 << new_order;
++	long index;
++
++	if (curr_order <= new_order)
++		return -EINVAL;
++
++	/*
++	 * Skip the first new_nr_pages, since the new folio from them have all
++	 * the flags from the original folio.
++	 */
++	for (index = new_nr_pages; index < nr_pages; index += new_nr_pages) {
++		struct page *head = &folio->page;
++		struct page *new_head = head + index;
++
++		/*
++		 * Careful: new_folio is not a "real" folio before we cleared PageTail.
++		 * Don't pass it around before clear_compound_head().
++		 */
++		struct folio *new_folio = (struct folio *)new_head;
++
++		VM_BUG_ON_PAGE(atomic_read(&new_head->_mapcount) != -1, new_head);
++
++		/*
++		 * Clone page flags before unfreezing refcount.
++		 *
++		 * After successful get_page_unless_zero() might follow flags change,
++		 * for example lock_page() which set PG_waiters.
++		 *
++		 * Note that for mapped sub-pages of an anonymous THP,
++		 * PG_anon_exclusive has been cleared in unmap_folio() and is stored in
++		 * the migration entry instead from where remap_page() will restore it.
++		 * We can still have PG_anon_exclusive set on effectively unmapped and
++		 * unreferenced sub-pages of an anonymous THP: we can simply drop
++		 * PG_anon_exclusive (-> PG_mappedtodisk) for these here.
++		 */
++		new_head->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
++		new_head->flags |= (head->flags &
++				((1L << PG_referenced) |
++				 (1L << PG_swapbacked) |
++				 (1L << PG_swapcache) |
++				 (1L << PG_mlocked) |
++				 (1L << PG_uptodate) |
++				 (1L << PG_active) |
++				 (1L << PG_workingset) |
++				 (1L << PG_locked) |
++				 (1L << PG_unevictable) |
++#ifdef CONFIG_ARCH_USES_PG_ARCH_2
++				 (1L << PG_arch_2) |
++#endif
++#ifdef CONFIG_ARCH_USES_PG_ARCH_3
++				 (1L << PG_arch_3) |
++#endif
++				 (1L << PG_dirty) |
++				 LRU_GEN_MASK | LRU_REFS_MASK));
++
++		/* ->mapping in first and second tail page is replaced by other uses */
++		VM_BUG_ON_PAGE(new_nr_pages > 2 && new_head->mapping != TAIL_MAPPING,
++			       new_head);
++		new_head->mapping = head->mapping;
++		new_head->index = head->index + index;
++
++		/*
++		 * page->private should not be set in tail pages. Fix up and warn once
++		 * if private is unexpectedly set.
++		 */
++		if (unlikely(new_head->private)) {
++			VM_WARN_ON_ONCE_PAGE(true, new_head);
++			new_head->private = 0;
++		}
++
++		if (folio_test_swapcache(folio))
++			new_folio->swap.val = folio->swap.val + index;
++
++		/* Page flags must be visible before we make the page non-compound. */
++		smp_wmb();
++
++		/*
++		 * Clear PageTail before unfreezing page refcount.
++		 *
++		 * After successful get_page_unless_zero() might follow put_page()
++		 * which needs correct compound_head().
++		 */
++		clear_compound_head(new_head);
++		if (new_order) {
++			prep_compound_page(new_head, new_order);
++			folio_set_large_rmappable(new_folio);
++
++			folio_set_order(folio, new_order);
++		}
++
++		if (folio_test_young(folio))
++			folio_set_young(new_folio);
++		if (folio_test_idle(folio))
++			folio_set_idle(new_folio);
++
++		folio_xchg_last_cpupid(new_folio, folio_last_cpupid(folio));
++	}
++
++	if (!new_order)
++		ClearPageCompound(&folio->page);
++
++	return 0;
++}
++
++/*
++ * It splits an unmapped @folio to lower order smaller folios in two ways.
++ * @folio: the to-be-split folio
++ * @new_order: the smallest order of the after split folios (since buddy
++ *             allocator like split generates folios with orders from @folio's
++ *             order - 1 to new_order).
++ * @page: in buddy allocator like split, the folio containing @page will be
++ *        split until its order becomes @new_order.
++ * @list: the after split folios will be added to @list if it is not NULL,
++ *        otherwise to LRU lists.
++ * @end: the end of the file @folio maps to. -1 if @folio is anonymous memory.
++ * @xas: xa_state pointing to folio->mapping->i_pages and locked by caller
++ * @mapping: @folio->mapping
++ * @uniform_split: if the split is uniform or not (buddy allocator like split)
++ *
++ *
++ * 1. uniform split: the given @folio into multiple @new_order small folios,
++ *    where all small folios have the same order. This is done when
++ *    uniform_split is true.
++ * 2. buddy allocator like split: the given @folio is split into half and one
++ *    of the half (containing the given page) is split into half until the
++ *    given @page's order becomes @new_order. This is done when uniform_split is
++ *    false.
++ *
++ * The high level flow for these two methods are:
++ * 1. uniform split: a single __split_folio_to_order() is called to split the
++ *    @folio into @new_order, then we traverse all the resulting folios one by
++ *    one in PFN ascending order and perform stats, unfreeze, adding to list,
++ *    and file mapping index operations.
++ * 2. buddy allocator like split: in general, folio_order - @new_order calls to
++ *    __split_folio_to_order() are called in the for loop to split the @folio
++ *    to one lower order at a time. The resulting small folios are processed
++ *    like what is done during the traversal in 1, except the one containing
++ *    @page, which is split in next for loop.
++ *
++ * After splitting, the caller's folio reference will be transferred to the
++ * folio containing @page. The other folios may be freed if they are not mapped.
++ *
++ * In terms of locking, after splitting,
++ * 1. uniform split leaves @page (or the folio contains it) locked;
++ * 2. buddy allocator like split leaves @folio locked.
++ *
++ *
++ * For !uniform_split, when -ENOMEM is returned, the original folio might be
++ * split. The caller needs to check the input folio.
++ */
++static int __split_unmapped_folio(struct folio *folio, int new_order,
++		struct page *page, struct list_head *list, pgoff_t end,
++		struct xa_state *xas, struct address_space *mapping,
++		bool uniform_split)
++{
++	struct lruvec *lruvec;
++	struct address_space *swap_cache = NULL;
++	struct folio *origin_folio = folio;
++	struct folio *next_folio = folio_next(folio);
++	struct folio *new_folio;
++	struct folio *next;
++	int order = folio_order(folio);
++	int split_order;
++	int start_order = uniform_split ? new_order : order - 1;
++	int nr_dropped = 0;
++	int ret = 0;
++	bool stop_split = false;
++
++	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
++		/* a swapcache folio can only be uniformly split to order-0 */
++		if (!uniform_split || new_order != 0)
++			return -EINVAL;
++
++		swap_cache = swap_address_space(folio->swap);
++		xa_lock(&swap_cache->i_pages);
++	}
++
++	if (folio_test_anon(folio))
++		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
++
++	/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
++	lruvec = folio_lruvec_lock(folio);
++
++	/*
++	 * split to new_order one order at a time. For uniform split,
++	 * folio is split to new_order directly.
++	 */
++	for (split_order = start_order;
++	     split_order >= new_order && !stop_split;
++	     split_order--) {
++		int old_order = folio_order(folio);
++		struct folio *release;
++		struct folio *end_folio = folio_next(folio);
++		int status;
++
++		/* order-1 anonymous folio is not supported */
++		if (folio_test_anon(folio) && split_order == 1)
++			continue;
++		if (uniform_split && split_order != new_order)
++			continue;
++
++		if (mapping) {
++			/*
++			 * uniform split has xas_split_alloc() called before
++			 * irq is disabled, since xas_nomem() might not be
++			 * able to allocate enough memory.
++			 */
++			if (uniform_split)
++				xas_split(xas, folio, old_order);
++			else {
++				xas_set_order(xas, folio->index, split_order);
++				xas_set_err(xas, -ENOMEM);
++				if (xas_nomem(xas, GFP_NOWAIT))
++					xas_split(xas, folio, old_order);
++				else {
++					stop_split = true;
++					ret = -ENOMEM;
++					goto after_split;
++				}
++			}
++		}
++
++		/* complete memcg works before add pages to LRU */
++		split_page_memcg(&folio->page, old_order, split_order);
++		split_page_owner(&folio->page, old_order, split_order);
++		pgalloc_tag_split(folio, old_order, split_order);
++
++		status = __split_folio_to_order(folio, split_order);
++
++		if (status < 0) {
++			stop_split = true;
++			ret = -EINVAL;
++		}
++
++after_split:
++		/*
++		 * Iterate through after-split folios and perform related
++		 * operations. But in buddy allocator like split, the folio
++		 * containing the specified page is skipped until its order
++		 * is new_order, since the folio will be worked on in next
++		 * iteration.
++		 */
++		for (release = folio, next = folio_next(folio);
++		     release != end_folio;
++		     release = next, next = folio_next(next)) {
++			/*
++			 * for buddy allocator like split, the folio containing
++			 * page will be split next and should not be released,
++			 * until the folio's order is new_order or stop_split
++			 * is set to true by the above xas_split() failure.
++			 */
++			if (page_in_folio_offset(page, release) >= 0) {
++				folio = release;
++				if (split_order != new_order && !stop_split)
++					continue;
++			}
++			if (folio_test_anon(release)) {
++				mod_mthp_stat(folio_order(release),
++						MTHP_STAT_NR_ANON, 1);
++			}
++
++			/*
++			 * Unfreeze refcount first. Additional reference from
++			 * page cache.
++			 */
++			folio_ref_unfreeze(release,
++				1 + ((!folio_test_anon(origin_folio) ||
++				     folio_test_swapcache(origin_folio)) ?
++					     folio_nr_pages(release) : 0));
++
++			if (release != origin_folio)
++				lru_add_page_tail(origin_folio, &release->page,
++						lruvec, list);
++
++			/* Some pages can be beyond EOF: drop them from page cache */
++			if (release->index >= end) {
++				if (shmem_mapping(origin_folio->mapping))
++					nr_dropped++;
++				else if (folio_test_clear_dirty(release))
++					folio_account_cleaned(release,
++						inode_to_wb(origin_folio->mapping->host));
++				__filemap_remove_folio(release, NULL);
++				folio_put(release);
++			} else if (!folio_test_anon(release)) {
++				__xa_store(&origin_folio->mapping->i_pages,
++						release->index, &release->page, 0);
++			} else if (swap_cache) {
++				__xa_store(&swap_cache->i_pages,
++						swap_cache_index(release->swap),
++						&release->page, 0);
++			}
++		}
++		xas_destroy(xas);
++	}
++
++	unlock_page_lruvec(lruvec);
++
++	if (folio_test_anon(origin_folio)) {
++		if (folio_test_swapcache(origin_folio))
++			xa_unlock(&swap_cache->i_pages);
++	} else
++		xa_unlock(&mapping->i_pages);
++
++	/* Caller disabled irqs, so they are still disabled here */
++	local_irq_enable();
++
++	if (nr_dropped)
++		shmem_uncharge(mapping->host, nr_dropped);
++
++	remap_page(origin_folio, 1 << order,
++			folio_test_anon(origin_folio) ?
++				RMP_USE_SHARED_ZEROPAGE : 0);
++
++	/*
++	 * At this point, folio should contain the specified page.
++	 * For uniform split, it is left for caller to unlock.
++	 * For buddy allocator like split, the first after-split folio is left
++	 * for caller to unlock.
++	 */
++	for (new_folio = origin_folio, next = folio_next(origin_folio);
++	     new_folio != next_folio;
++	     new_folio = next, next = folio_next(next)) {
++		if (uniform_split && new_folio == folio)
++			continue;
++		if (!uniform_split && new_folio == origin_folio)
++			continue;
++
++		folio_unlock(new_folio);
++		/*
++		 * Subpages may be freed if there wasn't any mapping
++		 * like if add_to_swap() is running on a lru page that
++		 * had its mapping zapped. And freeing these pages
++		 * requires taking the lru_lock so we do the put_page
++		 * of the tail pages after the split is complete.
++		 */
++		free_page_and_swap_cache(&new_folio->page);
++	}
++	return ret;
++}
++
+ /*
+  * This function splits a large folio into smaller folios of order @new_order.
+  * @page can point to any page of the large folio to split. The split operation
 -- 
 2.45.2
 
