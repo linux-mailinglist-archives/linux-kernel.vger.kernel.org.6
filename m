@@ -1,736 +1,259 @@
-Return-Path: <linux-kernel+bounces-433003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB149E52CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:45:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770F19E52DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:47:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E0D11641B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:46:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7488B1DB362;
+	Thu,  5 Dec 2024 10:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lpvbNInr";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DWpUB25q"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3394284594
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:45:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206711D90B6;
-	Thu,  5 Dec 2024 10:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qcd2IMES"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DCC1D63C7
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395453; cv=none; b=MBL831jrobbVjT5PbuKYwCCWBowUuEC03c2tLnxsA3udtmkYKL+O5iiVLollPRCoM6uw3T82Rec9MLviSjGfx8mi8TfMdX2dAZRwDUlvdyKT/az0RF3SwMpOgup0nO3jjxfX7DrxtrqmQCEeAnEo8YK3Y03H40S+KKcR473reo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395453; c=relaxed/simple;
-	bh=2qxJm8zjnH74rgq2TyVtHkxECZLf+nrHuzY2kWw8Rws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BrP9xNLkA1v7UQt/mi2U/Vl9rSQcRScHQwRUW+4kmLXt8qfhne58NQaZY/+X3pLgtlysEFpLIpF318/oJJnvlhuvDuOBd+V/9/cJSZ0AmqBwu/gQb/tNfwsHj2KQPjpswDBK91p5OagUeyy/32YcUNe040XornlHWfOBvUSn2Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qcd2IMES; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-29e7516ee77so568129fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:44:11 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F511D5CDE;
+	Thu,  5 Dec 2024 10:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733395575; cv=fail; b=pGjzJtmmgm1TdocnArFHtgqMgfMuY1Sax8akbHasz2rfGMIljjze3QSinNDGgFPFRamsynMExY2Lv0UucjJ9CLgq6KFFxz+fKSXfKUP5b0j8Ys/SssYEpmYjvxdkK3pI4GubnXVDoIWodlXBI/kAJnheeufq74Cy9tj/49bI+gA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733395575; c=relaxed/simple;
+	bh=niGElkeGG7remf4KNNtO5ER6+Yes7fGaXkQYoxLOOaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ipwfiNsxNOaA2UyehvMqZCXOE7AIoW6mgvVqXDGDfMN/WLaKXU4s5zKRJzi6m1HhYgeCvswsWoylcrN9WMBJ1ZglCC0ifREB1jwdmvzAp8Xhf4qSImEef/sKz8GFlLRVau74OqN7mgwxB9H6pqzkPlpMPaf3I2NOnJjl6RlPRPM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lpvbNInr; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DWpUB25q; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57Mm2j008503;
+	Thu, 5 Dec 2024 10:45:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=niGElkeGG7remf4KNNtO5ER6+Yes7fGaXkQYoxLOOaY=; b=
+	lpvbNInrqlVHUUGT2qDg5ZoU1njKKVn+wYVRXjyWiv1m+xVyHGo2wZURShIUIE5X
+	Y+07izv5SzyA7Y/wryZT72HwGWOflpTZkLDw0Xh1mv5mWHDBRqUy0+QReZln/40g
+	AMYxKNypInFoHGbt+MHj0gpb74uoHTfLtz5cjHJ5iai6c7YZ87wmT7KqQ9YUy1j0
+	eht8KYw9rBMAm7Y/AOY26TwPDFk+PLIffZHolmOz9PAo6qIjEXgHeKzrwD81I6gr
+	a59qPTm8gZchf7FzjIPgSI5mau9BocvNMKms8ptfiJPcSgBFUz7qyadCs+5+lMKT
+	7dbOyK193agCOUsvKB9BmQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437s4caj8w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Dec 2024 10:45:34 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5AL37r036790;
+	Thu, 5 Dec 2024 10:45:33 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s5b788k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Dec 2024 10:45:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cxrTudM24ZuwyqqrO6G1tO1imUubP3FvgbTpe4KQ0YGwEaxq1yHH3SKOHDg0GxA/Sv7iYfrxwxAbO6u55r4zwKwb70HxygsJ/nnoBuBFpp5AS36gRjV7Tzk0Lxyr5Mf9K+5UrS0jN1FrIh+iqGPB5Kw2Ep6sxtrdq6XuIOhmyvdLqZ0qIaSYrjj9ju0ugtETviTjuyd4vSZ70nUs3yANkmO2BL5p0FDyxIJCv6bHoOoMjL/Ozyo+umyH8KJa86t5vZLMAQZM1BBkofxPXfLhm2kHvP11AwFAS4bpPSNfkhGJ3KcnbbYR7Poj2j5oC1sMWWtOEpEM3ANhBENjgAw1Gw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=niGElkeGG7remf4KNNtO5ER6+Yes7fGaXkQYoxLOOaY=;
+ b=kWG1UT5Vp1psAkr/1DreOquI732BAFoIvNlVPG3Blj206aDJL5GFQVOA9zOr280xxzf3ZdOVjfEdghgAWwHXCke7RbgYLB8piqiQRwpuuf/90pmhGgxmBoqrlVtvUTPchw/jNrMypmMU8pJy+ufdjWr57kTQRt114BSCx0r79HuFQyJJ9FaynUNz0V4yuibU76x4gt6iAolMIeMQUpRJzWCF+XCm9Z/S6jOiUnq2YmZST4cxlQlC75vAW0C8BJ3k+dmNGBls5pZ7oybtVKHB2LKFBKOmDn2VpyY1YQu+XTBnpdqAM/a15/3vTtLgC1OEtxODdVZWTJOI4OACCg1G/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733395450; x=1734000250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zrpm3XeH+mOs42vBgawvUmt6HS7pncA0m+kxGWfcqJw=;
-        b=Qcd2IMESni+2Ty027zQWS98r9ZcemiySsyLq6Vy80I8gEvl6Cl8CUtOx1rRbFr0l9Q
-         7jXaAFEMBe09zQJLiDpHht1GApnveRk+rOtrA5s8jYhyN/fIIJd1XydscZnmks30GBYc
-         XKC+eOckdRWeq2Jl3qCGhwBoVIMp74+kv8sq3M2Hd1VqCSY0Ut45/8VweTv9Mx2zFV6P
-         nsuYMNfYnZUoO3EoUrFYt2c48FQTyCtAOUPikaVYdzgm8mG/GMB5CLdWZBER8jdoGJKp
-         8/EOBCHiEwx8LyC308GH+6Pyl4ZSpXZG8SRRPtr2CRyMB90r9NUODCfaDia7Xp8pXzHX
-         lk7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395450; x=1734000250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zrpm3XeH+mOs42vBgawvUmt6HS7pncA0m+kxGWfcqJw=;
-        b=D+Qv6ZTUFG3OKMTXiBvyhzpuvo0p/lzVqNrL/9PfMpszGl5ySK7zNghg+ry3s2B+Mh
-         t81bSfNDL7RTuEEt0nmJaNfsIXwP+VuyW/LdGPPmiKXRd7TCDiX7R3KgCnGdGykGefaR
-         9SYFisIEnpm4z01rCfxEItXsAiNDTUZTeZ4CrfBlKSvmwn7TVdN8I2Mp4DzsyhpkM+1z
-         6GpqPeW4xZdEVPeEK1ib8I6+zHKHKhaOr7TgZusz33j8Lm0ZPiTSn+xfDQGA4VIpjiEI
-         JARSrci6tPyop2Kfsc0YtigGVd9XFdytpuyVnDZ90PxV3oeKZiTQ3qOkqhxDViB4BtKB
-         wjog==
-X-Gm-Message-State: AOJu0YxU6YYpq5YSQa1aq+OWtnHJFgW1wlpY7BWruU1qpumTZaTOgKD1
-	l06q75IvkCBRexL9HuAmaMOg7avzRmxQ0vLQUHO+0//Sxjmmw1r360NEgQku40rr5N1/2QAuKqm
-	45PJGWZ6YaT0h/N8NI/A+cYo3Bn5jh7ZiHjvbFA==
-X-Gm-Gg: ASbGncu4Q0qgvtJt7/ooJk8M3I2vrOvXNY5yRg+Ys1gLrgyH8IOR1+4Oy7l9qAXJAe/
-	JXAeLeGtfz0Eo8evgB3j+5nzGgmuXvSo=
-X-Google-Smtp-Source: AGHT+IEkbgy0HVg9g3FanBbnyR0UrX+I+6OCetArRo5yw3tk0iAyUe69De6WL0TtHdjziJhstql+Sq+aKSTTeC75xNo=
-X-Received: by 2002:a05:6870:e310:b0:29e:2bbd:51ba with SMTP id
- 586e51a60fabf-29e88560cb3mr10541855fac.9.1733395450323; Thu, 05 Dec 2024
- 02:44:10 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=niGElkeGG7remf4KNNtO5ER6+Yes7fGaXkQYoxLOOaY=;
+ b=DWpUB25qDksCtwq0WlT5AvVlQE5WYlrRQz6NLLUz35W0zlPP6C2Uy7QtSw/I5nHEf6QKtY6/m4cGhnLoiiDqxFVTGZwH2uZkdGg91zFI+bQQgROcO/HIwhK8VNX9dVjqLXswh6XtXPW/VO3PBvd52rYRs+PuE8D6y5rT+e36PDE=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by PH7PR10MB5745.namprd10.prod.outlook.com (2603:10b6:510:125::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Thu, 5 Dec
+ 2024 10:45:30 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
+ 10:45:30 +0000
+Date: Thu, 5 Dec 2024 10:45:27 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>,
+        Jann Horn <jannh@google.com>, Suren Baghdasaryan <surenb@google.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Gary Guo <gary@garyguo.net>,
+        =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Benno Lossin <benno.lossin@proton.me>,
+        Andreas Hindborg <a.hindborg@kernel.org>,
+        Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v10 2/8] mm: rust: add vm_area_struct methods that
+ require read access
+Message-ID: <ab86d283-7393-4b11-b08b-ced744de7f82@lucifer.local>
+References: <20241129-vma-v10-0-4dfff05ba927@google.com>
+ <20241129-vma-v10-2-4dfff05ba927@google.com>
+ <CAH5fLgjxmpcLJwj5k85O39R00+vRRixA6i3xeK1STe_LQLHkTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjxmpcLJwj5k85O39R00+vRRixA6i3xeK1STe_LQLHkTA@mail.gmail.com>
+X-ClientProxiedBy: LO4P123CA0425.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18b::16) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128150927.1377981-1-jens.wiklander@linaro.org>
- <20241128150927.1377981-2-jens.wiklander@linaro.org> <CAFA6WYPVEzNLRL3sFUBgGGF_9m7tqGmg+h4TY5LDCAN5=qgBTg@mail.gmail.com>
-In-Reply-To: <CAFA6WYPVEzNLRL3sFUBgGGF_9m7tqGmg+h4TY5LDCAN5=qgBTg@mail.gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 5 Dec 2024 11:43:57 +0100
-Message-ID: <CAHUa44EL-8OH4a9ZvW5v7s3eW14_eYaDJV1HR17exWH5roeUFA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] tee: add restricted memory allocation
-To: Sumit Garg <sumit.garg@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|PH7PR10MB5745:EE_
+X-MS-Office365-Filtering-Correlation-Id: 27d74e13-8735-4c68-7403-08dd1519f007
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZXVhVCttK0Nmb1N1V0xNV1kvaVAza2xNVWZUU3ErYmRXWkpNVE9Yc0lqWEJX?=
+ =?utf-8?B?ZnF6a2FGcXF1MTlua2pxYkRGTXVrdUUzd09FWk9KZ1VDSTVvbWdRcGxjZWJ2?=
+ =?utf-8?B?ZUFtZGh0V0VVYW9pckNRdnpCNXA2NWk0WkRjQ2pYQjVqTEd6dDFKa3NtcXpo?=
+ =?utf-8?B?ZG9hYTVvL3RDTittcWV4RWtRQXpRSVE4R2JROUM1Ukdrbnp1KzgyTWpBTnVM?=
+ =?utf-8?B?Um1DbVRlZXhoWVQrSEZMeURFajg2S2czMFpLWFdCTzhDZmhTYUdhWVVFVkw2?=
+ =?utf-8?B?LzJCS3lvVEd0ckhvYmVLZU5rOExIdW5MbFl5ajZTeUE0MnlZU2JmV2hTY3E2?=
+ =?utf-8?B?N0dPQXRtOUxQRjEzWVZkQk9KaStXeTdUVXRHM0NUb0d3NEpaYWw5WEI3d3Rx?=
+ =?utf-8?B?WlduMXV5dmNaenRZK1l1OWZRSFZWZ0ZYKzJieVR5L05HYldISGwzdmx1c3kv?=
+ =?utf-8?B?WlF4UkpjeFg3Q20rdkJJRkt4RTZLTnpjUkJNOHZ5R2F1L2YwNThMcFp2d0c3?=
+ =?utf-8?B?Tm5wL2tMblJqYS8yeHVOUzFpajBKblJXTTZ6U3l6d21rZ05pR0FYaXdSaFVU?=
+ =?utf-8?B?OU9TR2JCS01IRWlhbTBNeVgrVDdYSmJYL1QvWDBSbnpxemhvWURKZ2xpeHND?=
+ =?utf-8?B?QjdGSkZSK1BVRUJuR3g5LzBBZmY3YW9vemdLdEdtb2FDUEVOejhWYnd2YnNR?=
+ =?utf-8?B?azFSSmY2VWhaS0ZaOFJnbnNtbkNBOFNFMDVDM0FWR2E5dTJaaWE0SlZUR0Vu?=
+ =?utf-8?B?Rjk0UnhEQm40dHF3VFd4NCsyM3c0WWs4OGpRWHBWR2JFWmtCS0I4WE5PNmVu?=
+ =?utf-8?B?czEwZ29NRm9zOUM4dGdERHNuZUZMVVBCQWYyZjBkREgySGV4QUltUW42ajJ1?=
+ =?utf-8?B?Vlhra01qM1c0TDF3U1Bpd3lkQ0FLbm14QTc2NlkrRUVMUXErTFIwQ2FvdCtL?=
+ =?utf-8?B?cWwyMHN1TStJeFdmT0JmYkFHb25SaEdxYWpZSE40Q0dybklvcnU4TWxsRktY?=
+ =?utf-8?B?a0kzYnd1bXlmem9EWGVSaXhzTHlNVVNDWW8vVFZsS1kxcmZSZGtqbzdYOVZW?=
+ =?utf-8?B?cjhsQjhOeWRVcjQ5VXNpbWJkUlhpVkFRMVRaS292TmZXSXBaU1k3TjdUVnpp?=
+ =?utf-8?B?WmZNQ1JDb21RcFM1S2ZTNkR0NzRSOGxCQ0JUMUZnOTJHem9jbVkwaHJ1VmFO?=
+ =?utf-8?B?cU9wU0JSbXBtSVprRDBNSEppdzNLVmt5dWdnMVJwWDltdW90TFByTUZBakEx?=
+ =?utf-8?B?S3RoZ0VvdHlCTGNXS09VTWFlNG9saUxmazVXUFRqOXZSN0hRTThNekR1VTkw?=
+ =?utf-8?B?SnZWRWNmNDBMcHZaQzNUeW9pZUdmdHdCQ0N0Q2FseG5qV0FxV1dlRXUzQVE3?=
+ =?utf-8?B?ZWFEVnY4MDBacXFId09nM0ljc09kMkt0ZnUrZXJzYXFCOG5IK0dUenhmMmxW?=
+ =?utf-8?B?YnNoODRuT2ZHczc2eFJGRXRuWUMrNXhCOUlicyt3a1daSDZjREhLUGhWK09O?=
+ =?utf-8?B?OG5sZ0N6RUFxalNlVEtKNktuZFJaQkFiaHFCdWU1dzdzdU94WEtaUEptNEZ2?=
+ =?utf-8?B?KzNWTWc2S1dlQ0N5bTgxQUN0dEhTeExDNE5HZUhuelp5UC96K1V1eDlBUHdC?=
+ =?utf-8?B?eFYzSEh1MWN5RXh3azRhbC9JVTB5SFZaS0k2TG9VaTEwajdQSWtteXBZZTNT?=
+ =?utf-8?B?aS9Ta3BLN0VBdHUxYUdCb3Y2TWxzN2U1Y1VlZGRpN0prVE8zQmVMS3FNK09D?=
+ =?utf-8?B?UURrdjlCT2EwSCsyWjE1amdzVXJHTVplN3Y0L2tuU0ZJa3Yzd25BdFlVL3JE?=
+ =?utf-8?B?UFl0cTZhM1JlcWtHaUFUdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eHRDZTZOSEVWN09wZlFmbDg2aXozK3JaS3BGNUM3bjBGVmg3NVdQOWtJWTFo?=
+ =?utf-8?B?TW1kVUxWZ2ZZcUVLZFliMUVIZVFuclFLUFF4VzgrTlV0VkkyUCtnMEZzQXdC?=
+ =?utf-8?B?eGZ2RkVydTJGZjlIQ1VyYXcxeVRvMDd2RGxzVXZVVmRaQzFNbGpzd2tsZm54?=
+ =?utf-8?B?S1hmakh3NGd6T25IME1pV1RIQnROeThGUnR4SzRtR29tc3VrM0RqWjVPUFl0?=
+ =?utf-8?B?aGxTQ3R6eDJiWlJsS3BHd3hmZ0gxMzIrNWxYY2E0aFYxOUEydFJvSzhLNFVv?=
+ =?utf-8?B?TThZWExwOGFnTERRRzNwRXlkUTdZZnJhRllJaENIL1R6ck11d2NzaGU5SjZP?=
+ =?utf-8?B?Mm1hdENDZVJKN2pqL2ZiMndzbDQvRkxiVUlKVFZOWGF4a0pOQUhkbFJNWEQ0?=
+ =?utf-8?B?R3JDTWJ3dXRrTVBQMkxhWUhSM2FmWitUT2hZUXpiMkhBc0ZoMWo3UHRscE1Q?=
+ =?utf-8?B?U1Y5dTZMK1FsT1RCL0ZlajlXemFoUlBQWHhDbC9vT3JVVjQ3V0FIZzYrTURR?=
+ =?utf-8?B?NHlENmRjUkx0QW5IbXdUNUlZekE4ckx5RE82OUZsSkJXRExMR0ZJN0IxVUox?=
+ =?utf-8?B?RHZibVY3SUdLVDVuMnpUbTVDUU93WlowUnpkVzNpTjNkNFRJU0hzZ2EyTmFl?=
+ =?utf-8?B?dytQYndiWFBKcFFVaWxBUXZjbkI0Tm15c2M1TGdSbVptSzV4Z2gvT3ZtK0t6?=
+ =?utf-8?B?SUtWZlpNOTBSVldhdkJJOVAxVnc4dW9zMDZ2dXZyaFhiQTJOdWxGNFB3bVZF?=
+ =?utf-8?B?V3RUbVNVNDBlcHorRzdpYUNEdmJhaTR1cUpteHJyQnlvanlzMDZXd2JWVU45?=
+ =?utf-8?B?U0RjRkhZc2dLWUluOE1YekxINCtGOFZnYXFYN0ovekxUZ21sOWxTZjNJMCtp?=
+ =?utf-8?B?cnRIcmZEVGwrNnZMdE5Hay9nUWs4VG8wMUlIOXpxZitDVWNha2UrR3NYTU5X?=
+ =?utf-8?B?OEhERGJpVXZ3UWk3dWNMZ1BMY1Zja0ZtRHJwNkFoRENWWkdERFUwWTdHYk13?=
+ =?utf-8?B?NFRuWjFJTkZtS05iaWdaZnowcmtWQ2p5Vys5MUdRVHU5WHRJTnFKVlZwdzlw?=
+ =?utf-8?B?Wit4QUNhU2R4OWI2TC9Hd1hMS0ltMVBOSkhWNVZ1aWNmemlxTi9lMldaRFcw?=
+ =?utf-8?B?dHRBSFNQYStocTFuSkpIb3lzRUFuQU9Bc0tZTHVsdXZ1KzlRVzVQZGVVaFZ1?=
+ =?utf-8?B?OEZwMXpKcXM5Vm50cy9mcGcvOStCdUJGWExQY0kvVDVJTXNaa3FLYUpidTVS?=
+ =?utf-8?B?VW01L3doZE9GeTlwclEwNHJLaTN4MHFoUU9XT2N4Zko3THEyc0YzanBDMjdT?=
+ =?utf-8?B?T3Z2Zkt3NHhkNzFkb3ZHQ1NPQ01tUi8wRzZuZlEybVFvUjV6VWNseGRxZ05O?=
+ =?utf-8?B?V3hUN0lkYlJET3BpdERrT3hZalA0aGRnMVdqem8rR2hxUFVveHh4TGZ2MG8w?=
+ =?utf-8?B?VFc5QTlZbVRBQjRpQSs0Z29lbE9SZ1hhRU9XeGRYUHVrRmVKVjd3V1lOZURh?=
+ =?utf-8?B?bGppSXNscEFyR3ZpcmYzWmN2dWpWakE4NzU0cTF6WDRXb2VtWEFxWkU0bXhY?=
+ =?utf-8?B?bVZGL0tsU2xuMGFQUjBmaytnakt2VllSMW1BQWM3cGNrM21Eek8vOWVqZjhU?=
+ =?utf-8?B?ZE9jeS9rZUx1aittWEdUMDJQMzRQWjdneHRDQk9MMW5UMnJxMmtrMCtHS2Rq?=
+ =?utf-8?B?clMyRjRpdXpieW10SnlKWk4zSVpHQVJjSXpYMmlDK1pRdXBpdkxoaXVXRkov?=
+ =?utf-8?B?eE9EUG85NDdBSXVsR1FPYlJaTE02OGd3TEdacURkUlZGUzVjYXBYVDBFR0Mw?=
+ =?utf-8?B?WVByZkhrTUdSL3Z0a1lwelM1cVNRd0RSTEpxWTRNNDVKTWtLa2hrK1RvRnJO?=
+ =?utf-8?B?U1FoSWU4MWJTS0p3emF4ZjJqSEE1Vzd0eDFDTWM1OW04dFRBeGk4WG8wK1NK?=
+ =?utf-8?B?dDc3c1ZTN1V3cjFNb2V0ZTFlYTFSOWpqVW9mNWx1bjU1akwvdjRFSzY3OHFS?=
+ =?utf-8?B?QUlXYm96MXdUeTdxVEhQVEFNemNWNVBVQWdGY1IvWUE5OUFMbVNHL0VTSnNU?=
+ =?utf-8?B?aFdXVkQ0Qm1VTkdhNXQ3Nm9uRG1vdjdtc3B6c2d5RWNvN0RBSHdLMTJqNi9n?=
+ =?utf-8?B?MkZkSVZ4YnNWK1pBVWE5V3NzTFF0TlBVS2V6b1JKUFhNa05QRkpHUXBSaU16?=
+ =?utf-8?B?V3c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	EQJZu7MKj3Pj/pZ046Sa4e90GD36H+udhHNsAr7y9b0wuy9d6vyWrzRXeu7XPY3tFHNRohiPRZ50dVaqfEKiZGBGHE4BB7UwsQfdjaKbQ9RJh33NAioS6VYPOVyXVrVz8BKSSV//auaFkHxcdHo+RIaPVhqIqSFCqfDZ7ngqPZYcu2xsBolIw5nJRDNH78e5JSFG/SbaJhJ9QJ2MHonPHiELkPA5YydEQUloI2ffTpRUwqIJfYWSFo5g3aOB+/0UWbImWgrnUOzViW/l62iIzUtd4b6nljCAD8UTnlLQ6HMQwJh7z/kySScCt1pbHYLr715l/2By0nuE++5SoBPEAYcYuvk4t/Orw32PjQnF7bfaLZXICJ9aHMDZH/cyyP352ePfdpEytE9CgHXCJweUMa/O5iGJI4bW3rJ1fQ0v+C6DYmhFoqY+17eFu2/EviZviIqeVTg4kxFtSfzrcFWlWXEJAPj/hNLeyXzdei0Dqmsley0jXFNFFT020s6oGTae/wkbvLapBi91GSWBPfhY4fQfg21NKXLs1Lt2uCygWFoSze/SARHMIcPB6wHQNk2GzQrj0zOCejigJm8K/10m1KoT875RnQ3FVLkS/HOXKng=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27d74e13-8735-4c68-7403-08dd1519f007
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 10:45:30.3220
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FLYKlsCsGvIV9zHlf2DCWyueYHKWdZ85LsjKQQEHOISXu/ytvJIQn9ck9SGh33rxzvaJ1sdIwOGydt1uRIrsWmvEIcV9MYlTsjIasMosfxg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5745
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-05_08,2024-12-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=805 spamscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412050076
+X-Proofpoint-ORIG-GUID: QQFoCvB8NpGiPy0UgU5i20lxfzJ4g8A-
+X-Proofpoint-GUID: QQFoCvB8NpGiPy0UgU5i20lxfzJ4g8A-
 
-Hi Sumit,
+On Thu, Dec 05, 2024 at 11:40:03AM +0100, Alice Ryhl wrote:
+> On Fri, Nov 29, 2024 at 5:32 PM Alice Ryhl <aliceryhl@google.com> wrote:
+> >
+> > This adds a type called VmAreaRef which is used when referencing a vma
+> > that you have read access to. Here, read access means that you hold
+> > either the mmap read lock or the vma read lock (or stronger).
+> >
+> > Additionally, a vma_lookup method is added to the mmap read guard, which
+> > enables you to obtain a &VmAreaRef in safe Rust code.
+> >
+> > This patch only provides a way to lock the mmap read lock, but a
+> > follow-up patch also provides a way to just lock the vma read lock.
+> >
+> > Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> (for mm bits)
+> > Reviewed-by: Jann Horn <jannh@google.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> It looks like binder needs a way to check whether a given vma is
+> associated with a given mm. I guess we can do that by adding a method
+> to VmAreaRef that returns a &MmWithUser.
 
-On Tue, Dec 3, 2024 at 8:58=E2=80=AFAM Sumit Garg <sumit.garg@linaro.org> w=
-rote:
->
-> Hi Jens,
->
-> On Thu, 28 Nov 2024 at 20:39, Jens Wiklander <jens.wiklander@linaro.org> =
-wrote:
-> >
-> > Add restricted memory allocation to the TEE subsystem. Restricted memor=
-y
-> > is not be accessible by kernel during normal circumstances. A new ioctl
->
-> s/not be accessible/not accessible/
->
-> How about if we reword it as follows?
->
->     Restricted memory refers to memory buffers behind a hardware enforced
->     firewall. It is not accessible to the kernel during normal circumstan=
-ces but
->     rather only accessible to certain hardware IPs or CPUs executing in h=
-igher
->     privileged mode than the kernel itself. This interface allows to
-> allocate and
->     manage such restricted memory buffers via interaction with a TEE
->     implementation.
+Presumably this would be with a lock held to ensure the VMA doesn't
+disappear from under us?
 
-Sure, thanks.
+I guess that's implied by possessing a VmAreaRef in the first place.
 
->
-> > TEE_IOC_RSTMEM_ALLOC is added to allocate these restricted memory
-> > buffers.
-> >
-> > The restricted memory is allocated for a specific use-case, like Secure
-> > Video Playback, Trusted UI, or Secure Video Recording where certain
-> > hardware devices can access the memory.
-> >
-> > More use-cases can be added in userspace ABI, but it's up to the backen=
-d
-> > drivers to provide the implementation.
-> >
-> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > ---
-> >  drivers/tee/Makefile       |   1 +
-> >  drivers/tee/tee_core.c     |  37 ++++++-
-> >  drivers/tee/tee_private.h  |   2 +
-> >  drivers/tee/tee_rstmem.c   | 201 +++++++++++++++++++++++++++++++++++++
-> >  drivers/tee/tee_shm.c      |   2 +
-> >  drivers/tee/tee_shm_pool.c |  69 ++++++++++++-
-> >  include/linux/tee_core.h   |  15 +++
-> >  include/linux/tee_drv.h    |   4 +-
-> >  include/uapi/linux/tee.h   |  37 ++++++-
-> >  9 files changed, 363 insertions(+), 5 deletions(-)
-> >  create mode 100644 drivers/tee/tee_rstmem.c
-> >
-> > diff --git a/drivers/tee/Makefile b/drivers/tee/Makefile
-> > index 5488cba30bd2..a4c6b55444b9 100644
-> > --- a/drivers/tee/Makefile
-> > +++ b/drivers/tee/Makefile
-> > @@ -3,6 +3,7 @@ obj-$(CONFIG_TEE) +=3D tee.o
-> >  tee-objs +=3D tee_core.o
-> >  tee-objs +=3D tee_shm.o
-> >  tee-objs +=3D tee_shm_pool.o
-> > +tee-objs +=3D tee_rstmem.o
-> >  obj-$(CONFIG_OPTEE) +=3D optee/
-> >  obj-$(CONFIG_AMDTEE) +=3D amdtee/
-> >  obj-$(CONFIG_ARM_TSTEE) +=3D tstee/
-> > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> > index d113679b1e2d..e81167826002 100644
-> > --- a/drivers/tee/tee_core.c
-> > +++ b/drivers/tee/tee_core.c
-> > @@ -1,12 +1,13 @@
-> >  // SPDX-License-Identifier: GPL-2.0-only
-> >  /*
-> > - * Copyright (c) 2015-2016, Linaro Limited
-> > + * Copyright (c) 2015-2022, 2024, Linaro Limited
-> >   */
-> >
-> >  #define pr_fmt(fmt) "%s: " fmt, __func__
-> >
-> >  #include <linux/cdev.h>
-> >  #include <linux/cred.h>
-> > +#include <linux/dma-buf.h>
-> >  #include <linux/fs.h>
-> >  #include <linux/idr.h>
-> >  #include <linux/module.h>
-> > @@ -815,6 +816,38 @@ static int tee_ioctl_supp_send(struct tee_context =
-*ctx,
-> >         return rc;
-> >  }
-> >
-> > +static int
-> > +tee_ioctl_rstmem_alloc(struct tee_context *ctx,
-> > +                      struct tee_ioctl_rstmem_alloc_data __user *udata=
-)
-> > +{
-> > +       struct tee_ioctl_rstmem_alloc_data data;
-> > +       struct dma_buf *dmabuf;
-> > +       int id;
-> > +       int fd;
-> > +
-> > +       if (copy_from_user(&data, udata, sizeof(data)))
-> > +               return -EFAULT;
-> > +
-> > +       if (data.use_case =3D=3D TEE_IOC_UC_RESERVED)
-> > +               return -EINVAL;
-> > +
-> > +       dmabuf =3D tee_rstmem_alloc(ctx, data.flags, data.use_case, dat=
-a.size,
-> > +                                 &id);
-> > +       if (IS_ERR(dmabuf))
-> > +               return PTR_ERR(dmabuf);
-> > +       if (put_user(id, &udata->id)) {
-> > +               fd =3D -EFAULT;
-> > +               goto err;
-> > +       }
-> > +       fd =3D dma_buf_fd(dmabuf, O_CLOEXEC);
-> > +       if (fd < 0)
-> > +               goto err;
-> > +       return fd;
-> > +err:
-> > +       dma_buf_put(dmabuf);
-> > +       return fd;
-> > +}
-> > +
-> >  static long tee_ioctl(struct file *filp, unsigned int cmd, unsigned lo=
-ng arg)
-> >  {
-> >         struct tee_context *ctx =3D filp->private_data;
-> > @@ -839,6 +872,8 @@ static long tee_ioctl(struct file *filp, unsigned i=
-nt cmd, unsigned long arg)
-> >                 return tee_ioctl_supp_recv(ctx, uarg);
-> >         case TEE_IOC_SUPPL_SEND:
-> >                 return tee_ioctl_supp_send(ctx, uarg);
-> > +       case TEE_IOC_RSTMEM_ALLOC:
-> > +               return tee_ioctl_rstmem_alloc(ctx, uarg);
-> >         default:
-> >                 return -EINVAL;
-> >         }
-> > diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
-> > index 9bc50605227c..bf97796909c0 100644
-> > --- a/drivers/tee/tee_private.h
-> > +++ b/drivers/tee/tee_private.h
-> > @@ -23,5 +23,7 @@ void teedev_ctx_put(struct tee_context *ctx);
-> >  struct tee_shm *tee_shm_alloc_user_buf(struct tee_context *ctx, size_t=
- size);
-> >  struct tee_shm *tee_shm_register_user_buf(struct tee_context *ctx,
-> >                                           unsigned long addr, size_t le=
-ngth);
-> > +struct dma_buf *tee_rstmem_alloc(struct tee_context *ctx, u32 flags,
-> > +                                u32 use_case, size_t size, int *shm_id=
-);
-> >
-> >  #endif /*TEE_PRIVATE_H*/
-> > diff --git a/drivers/tee/tee_rstmem.c b/drivers/tee/tee_rstmem.c
-> > new file mode 100644
-> > index 000000000000..536bca2901e2
-> > --- /dev/null
-> > +++ b/drivers/tee/tee_rstmem.c
-> > @@ -0,0 +1,201 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) 2024 Linaro Limited
-> > + */
-> > +#include <linux/device.h>
-> > +#include <linux/dma-buf.h>
-> > +#include <linux/genalloc.h>
-> > +#include <linux/scatterlist.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/tee_core.h>
-> > +#include "tee_private.h"
-> > +
-> > +struct tee_rstmem_attachment {
-> > +       struct sg_table table;
-> > +       struct device *dev;
-> > +};
-> > +
-> > +static int rstmem_dma_attach(struct dma_buf *dmabuf,
-> > +                            struct dma_buf_attachment *attachment)
-> > +{
-> > +       struct tee_shm *shm =3D dmabuf->priv;
-> > +       struct tee_rstmem_attachment *a;
-> > +       int rc;
-> > +
-> > +       a =3D kzalloc(sizeof(*a), GFP_KERNEL);
-> > +       if (!a)
-> > +               return -ENOMEM;
-> > +
-> > +       if (shm->pages) {
-> > +               rc =3D sg_alloc_table_from_pages(&a->table, shm->pages,
-> > +                                              shm->num_pages, 0,
-> > +                                              shm->num_pages * PAGE_SI=
-ZE,
-> > +                                              GFP_KERNEL);
-> > +               if (rc)
-> > +                       goto err;
-> > +       } else {
-> > +               rc =3D sg_alloc_table(&a->table, 1, GFP_KERNEL);
-> > +               if (rc)
-> > +                       goto err;
-> > +               sg_set_page(a->table.sgl, phys_to_page(shm->paddr), shm=
-->size,
-> > +                           0);
-> > +       }
-> > +
-> > +       a->dev =3D attachment->dev;
-> > +       attachment->priv =3D a;
-> > +
-> > +       return 0;
-> > +err:
-> > +       kfree(a);
-> > +       return rc;
-> > +}
-> > +
-> > +static void rstmem_dma_detach(struct dma_buf *dmabuf,
-> > +                             struct dma_buf_attachment *attachment)
-> > +{
-> > +       struct tee_rstmem_attachment *a =3D attachment->priv;
-> > +
-> > +       sg_free_table(&a->table);
-> > +       kfree(a);
-> > +}
-> > +
-> > +static struct sg_table *
-> > +rstmem_dma_map_dma_buf(struct dma_buf_attachment *attachment,
-> > +                      enum dma_data_direction direction)
-> > +{
-> > +       struct tee_rstmem_attachment *a =3D attachment->priv;
-> > +       int ret;
-> > +
-> > +       ret =3D dma_map_sgtable(attachment->dev, &a->table, direction,
-> > +                             DMA_ATTR_SKIP_CPU_SYNC);
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return &a->table;
-> > +}
-> > +
-> > +static void rstmem_dma_unmap_dma_buf(struct dma_buf_attachment *attach=
-ment,
-> > +                                    struct sg_table *table,
-> > +                                    enum dma_data_direction direction)
-> > +{
-> > +       struct tee_rstmem_attachment *a =3D attachment->priv;
-> > +
-> > +       WARN_ON(&a->table !=3D table);
-> > +
-> > +       dma_unmap_sgtable(attachment->dev, table, direction,
-> > +                         DMA_ATTR_SKIP_CPU_SYNC);
-> > +}
-> > +
-> > +static int rstmem_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
-> > +                                          enum dma_data_direction dire=
-ction)
-> > +{
-> > +       return -EPERM;
-> > +}
-> > +
-> > +static int rstmem_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
-> > +                                        enum dma_data_direction direct=
-ion)
-> > +{
-> > +       return -EPERM;
-> > +}
-> > +
-> > +static int rstmem_dma_buf_mmap(struct dma_buf *dmabuf,
-> > +                              struct vm_area_struct *vma)
-> > +{
-> > +       return -EPERM;
-> > +}
-> > +
-> > +static void rstmem_dma_buf_free(struct dma_buf *dmabuf)
-> > +{
-> > +       struct tee_shm *shm =3D dmabuf->priv;
-> > +
-> > +       tee_shm_put(shm);
-> > +}
-> > +
-> > +static const struct dma_buf_ops rstmem_generic_buf_ops =3D {
-> > +       .attach =3D rstmem_dma_attach,
-> > +       .detach =3D rstmem_dma_detach,
-> > +       .map_dma_buf =3D rstmem_dma_map_dma_buf,
-> > +       .unmap_dma_buf =3D rstmem_dma_unmap_dma_buf,
-> > +       .begin_cpu_access =3D rstmem_dma_buf_begin_cpu_access,
-> > +       .end_cpu_access =3D rstmem_dma_buf_end_cpu_access,
-> > +       .mmap =3D rstmem_dma_buf_mmap,
-> > +       .release =3D rstmem_dma_buf_free,
-> > +};
-> > +
-> > +struct dma_buf *tee_rstmem_alloc(struct tee_context *ctx, u32 flags,
-> > +                                u32 use_case, size_t size, int *shm_id=
-)
-> > +{
-> > +       struct tee_device *teedev =3D ctx->teedev;
-> > +       DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-> > +       struct dma_buf *dmabuf;
-> > +       struct tee_shm *shm;
-> > +       void *ret;
-> > +       int rc;
-> > +
-> > +       if (!tee_device_get(teedev))
-> > +               return ERR_PTR(-EINVAL);
-> > +
-> > +       if (!teedev->desc->ops->rstmem_alloc ||
-> > +           !teedev->desc->ops->rstmem_free) {
-> > +               dmabuf =3D ERR_PTR(-EINVAL);
-> > +               goto err;
-> > +       }
-> > +
-> > +       shm =3D kzalloc(sizeof(*shm), GFP_KERNEL);
-> > +       if (!shm) {
-> > +               dmabuf =3D ERR_PTR(-ENOMEM);
-> > +               goto err;
-> > +       }
-> > +
-> > +       refcount_set(&shm->refcount, 1);
-> > +       shm->flags =3D TEE_SHM_RESTRICTED;
-> > +       shm->use_case =3D use_case;
-> > +       shm->ctx =3D ctx;
-> > +
-> > +       mutex_lock(&teedev->mutex);
-> > +       shm->id =3D idr_alloc(&teedev->idr, NULL, 1, 0, GFP_KERNEL);
-> > +       mutex_unlock(&teedev->mutex);
-> > +       if (shm->id < 0) {
-> > +               dmabuf =3D ERR_PTR(shm->id);
-> > +               goto err_kfree;
-> > +       }
-> > +
-> > +       rc =3D teedev->desc->ops->rstmem_alloc(ctx, shm, flags, use_cas=
-e, size);
-> > +       if (rc) {
-> > +               dmabuf =3D ERR_PTR(rc);
-> > +               goto err_idr_remove;
-> > +       }
-> > +
-> > +       mutex_lock(&teedev->mutex);
-> > +       ret =3D idr_replace(&teedev->idr, shm, shm->id);
-> > +       mutex_unlock(&teedev->mutex);
-> > +       if (IS_ERR(ret)) {
-> > +               dmabuf =3D ret;
-> > +               goto err_rstmem_free;
-> > +       }
-> > +       teedev_ctx_get(ctx);
-> > +
-> > +       exp_info.ops =3D &rstmem_generic_buf_ops;
-> > +       exp_info.size =3D shm->size;
-> > +       exp_info.priv =3D shm;
-> > +       dmabuf =3D dma_buf_export(&exp_info);
-> > +       if (IS_ERR(dmabuf)) {
-> > +               tee_shm_put(shm);
-> > +               return dmabuf;
-> > +       }
-> > +
-> > +       *shm_id =3D shm->id;
-> > +       return dmabuf;
-> > +
-> > +err_rstmem_free:
-> > +       teedev->desc->ops->rstmem_free(ctx, shm);
-> > +err_idr_remove:
-> > +       mutex_lock(&teedev->mutex);
-> > +       idr_remove(&teedev->idr, shm->id);
-> > +       mutex_unlock(&teedev->mutex);
-> > +err_kfree:
-> > +       kfree(shm);
-> > +err:
-> > +       tee_device_put(teedev);
-> > +       return dmabuf;
-> > +}
-> > diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> > index daf6e5cfd59a..416f7f25d885 100644
-> > --- a/drivers/tee/tee_shm.c
-> > +++ b/drivers/tee/tee_shm.c
-> > @@ -55,6 +55,8 @@ static void tee_shm_release(struct tee_device *teedev=
-, struct tee_shm *shm)
-> >                                 "unregister shm %p failed: %d", shm, rc=
-);
-> >
-> >                 release_registered_pages(shm);
-> > +       } else if (shm->flags & TEE_SHM_RESTRICTED) {
-> > +               teedev->desc->ops->rstmem_free(shm->ctx, shm);
-> >         }
-> >
-> >         teedev_ctx_put(shm->ctx);
-> > diff --git a/drivers/tee/tee_shm_pool.c b/drivers/tee/tee_shm_pool.c
-> > index 80004b55628d..ee57ef157a77 100644
-> > --- a/drivers/tee/tee_shm_pool.c
-> > +++ b/drivers/tee/tee_shm_pool.c
-> > @@ -1,9 +1,8 @@
-> >  // SPDX-License-Identifier: GPL-2.0-only
-> >  /*
-> > - * Copyright (c) 2015, 2017, 2022 Linaro Limited
-> > + * Copyright (c) 2015, 2017, 2022, 2024 Linaro Limited
-> >   */
-> >  #include <linux/device.h>
-> > -#include <linux/dma-buf.h>
-> >  #include <linux/genalloc.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/tee_core.h>
-> > @@ -90,3 +89,69 @@ struct tee_shm_pool *tee_shm_pool_alloc_res_mem(unsi=
-gned long vaddr,
-> >         return ERR_PTR(rc);
-> >  }
-> >  EXPORT_SYMBOL_GPL(tee_shm_pool_alloc_res_mem);
-> > +
-> > +static int rstmem_pool_op_gen_alloc(struct tee_shm_pool *pool,
-> > +                                   struct tee_shm *shm, size_t size,
-> > +                                   size_t align)
-> > +{
-> > +       size_t sz =3D ALIGN(size, PAGE_SIZE);
-> > +       phys_addr_t pa;
-> > +
-> > +       pa =3D gen_pool_alloc(pool->private_data, sz);
-> > +       if (!pa)
-> > +               return -ENOMEM;
-> > +
-> > +       shm->size =3D sz;
-> > +       shm->paddr =3D pa;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static void rstmem_pool_op_gen_free(struct tee_shm_pool *pool,
-> > +                                   struct tee_shm *shm)
-> > +{
-> > +       gen_pool_free(pool->private_data, shm->paddr, shm->size);
-> > +       shm->paddr =3D 0;
-> > +}
-> > +
-> > +static struct tee_shm_pool_ops rstmem_pool_ops_generic =3D {
-> > +       .alloc =3D rstmem_pool_op_gen_alloc,
-> > +       .free =3D rstmem_pool_op_gen_free,
-> > +       .destroy_pool =3D pool_op_gen_destroy_pool,
-> > +};
-> > +
-> > +struct tee_shm_pool *tee_rstmem_gen_pool_alloc(phys_addr_t paddr, size=
-_t size)
-> > +{
-> > +       const size_t page_mask =3D PAGE_SIZE - 1;
-> > +       struct tee_shm_pool *pool;
-> > +       int rc;
-> > +
-> > +       /* Check it's page aligned */
-> > +       if ((paddr | size) & page_mask)
-> > +               return ERR_PTR(-EINVAL);
-> > +
-> > +       pool =3D kzalloc(sizeof(*pool), GFP_KERNEL);
-> > +       if (!pool)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       pool->private_data =3D gen_pool_create(PAGE_SHIFT, -1);
-> > +       if (!pool->private_data) {
-> > +               rc =3D -ENOMEM;
-> > +               goto err_free;
-> > +       }
-> > +
-> > +       rc =3D gen_pool_add(pool->private_data, paddr, size, -1);
-> > +       if (rc)
-> > +               goto err_free_pool;
-> > +
-> > +       pool->ops =3D &rstmem_pool_ops_generic;
-> > +       return pool;
-> > +
-> > +err_free_pool:
-> > +       gen_pool_destroy(pool->private_data);
-> > +err_free:
-> > +       kfree(pool);
-> > +
-> > +       return ERR_PTR(rc);
-> > +}
-> > +EXPORT_SYMBOL_GPL(tee_rstmem_gen_pool_alloc);
-> > diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
-> > index a38494d6b5f4..608302f494fe 100644
-> > --- a/include/linux/tee_core.h
-> > +++ b/include/linux/tee_core.h
-> > @@ -26,6 +26,7 @@
-> >  #define TEE_SHM_USER_MAPPED    BIT(1)  /* Memory mapped in user space =
-*/
-> >  #define TEE_SHM_POOL           BIT(2)  /* Memory allocated from pool *=
-/
-> >  #define TEE_SHM_PRIV           BIT(3)  /* Memory private to TEE driver=
- */
-> > +#define TEE_SHM_RESTRICTED     BIT(4)  /* Restricted memory */
-> >
-> >  #define TEE_DEVICE_FLAG_REGISTERED     0x1
-> >  #define TEE_MAX_DEV_NAME_LEN           32
-> > @@ -76,6 +77,8 @@ struct tee_device {
-> >   * @supp_send:         called for supplicant to send a response
-> >   * @shm_register:      register shared memory buffer in TEE
-> >   * @shm_unregister:    unregister shared memory buffer in TEE
-> > + * @rstmem_alloc:      allocate restricted memory
-> > + * @rstmem_free:       free restricted memory
-> >   */
-> >  struct tee_driver_ops {
-> >         void (*get_version)(struct tee_device *teedev,
-> > @@ -99,6 +102,9 @@ struct tee_driver_ops {
-> >                             struct page **pages, size_t num_pages,
-> >                             unsigned long start);
-> >         int (*shm_unregister)(struct tee_context *ctx, struct tee_shm *=
-shm);
-> > +       int (*rstmem_alloc)(struct tee_context *ctx, struct tee_shm *sh=
-m,
-> > +                           u32 flags, u32 use_case, size_t size);
-> > +       void (*rstmem_free)(struct tee_context *ctx, struct tee_shm *sh=
-m);
-> >  };
-> >
-> >  /**
-> > @@ -229,6 +235,15 @@ static inline void tee_shm_pool_free(struct tee_sh=
-m_pool *pool)
-> >         pool->ops->destroy_pool(pool);
-> >  }
-> >
-> > +/**
-> > + * tee_rstmem_gen_pool_alloc() - Create a restricted memory manager
-> > + * @paddr:     Physical address of start of pool
-> > + * @size:      Size in bytes of the pool
-> > + *
-> > + * @returns pointer to a 'struct tee_shm_pool' or an ERR_PTR on failur=
-e.
-> > + */
-> > +struct tee_shm_pool *tee_rstmem_gen_pool_alloc(phys_addr_t paddr, size=
-_t size);
-> > +
-> >  /**
-> >   * tee_get_drvdata() - Return driver_data pointer
-> >   * @returns the driver_data pointer supplied to tee_register().
-> > diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-> > index a54c203000ed..b7ee346e5e44 100644
-> > --- a/include/linux/tee_drv.h
-> > +++ b/include/linux/tee_drv.h
-> > @@ -55,6 +55,7 @@ struct tee_context {
-> >   * @pages:     locked pages from userspace
-> >   * @num_pages: number of locked pages
-> >   * @refcount:  reference counter
-> > + * @use_case:  defined by TEE_IOC_UC_* in tee.h
-> >   * @flags:     defined by TEE_SHM_* in tee_core.h
-> >   * @id:                unique id of a shared memory object on this dev=
-ice, shared
-> >   *             with user space
-> > @@ -71,7 +72,8 @@ struct tee_shm {
-> >         struct page **pages;
-> >         size_t num_pages;
-> >         refcount_t refcount;
-> > -       u32 flags;
-> > +       u16 use_case;
-> > +       u16 flags;
->
-> Shouldn't we keep them u32 instead to be aligned with user-space inputs?
+I also suppoes that the mm having users is implied by you having the VMA
+that implies a lock held on it :)
 
-Sure, that makes sense.
+So that's probably fine then, as long as you can implement some sensible
+means of comparison between a known 'given mm' vs. the &MmWithUser.
 
 >
-> >         int id;
-> >         u64 sec_world_id;
-> >  };
-> > diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
-> > index d0430bee8292..cdc8c82c9a38 100644
-> > --- a/include/uapi/linux/tee.h
-> > +++ b/include/uapi/linux/tee.h
-> > @@ -1,5 +1,5 @@
-> >  /*
-> > - * Copyright (c) 2015-2016, Linaro Limited
-> > + * Copyright (c) 2015-2017, 2020, 2024, Linaro Limited
-> >   * All rights reserved.
-> >   *
-> >   * Redistribution and use in source and binary forms, with or without
-> > @@ -48,6 +48,7 @@
-> >  #define TEE_GEN_CAP_PRIVILEGED (1 << 1)/* Privileged device (for suppl=
-icant) */
-> >  #define TEE_GEN_CAP_REG_MEM    (1 << 2)/* Supports registering shared =
-memory */
-> >  #define TEE_GEN_CAP_MEMREF_NULL        (1 << 3)/* NULL MemRef support =
-*/
-> > +#define TEE_GEN_CAP_RSTMEM     (1 << 4)/* Supports restricted memory *=
-/
-> >
-> >  #define TEE_MEMREF_NULL                (__u64)(-1) /* NULL MemRef Buff=
-er */
-> >
-> > @@ -389,6 +390,40 @@ struct tee_ioctl_shm_register_data {
-> >   */
-> >  #define TEE_IOC_SHM_REGISTER   _IOWR(TEE_IOC_MAGIC, TEE_IOC_BASE + 9, =
-\
-> >                                      struct tee_ioctl_shm_register_data=
-)
-> > +
-> > +#define TEE_IOC_UC_RESERVED            0
-> > +#define TEE_IOC_UC_SECURE_VIDEO_PLAY   1
-> > +#define TEE_IOC_UC_TRUSTED_UI          2
-> > +#define TEE_IOC_UC_SECURE_VIDEO_RECORD 3
-> > +
-> > +/**
-> > + * struct tee_ioctl_rstmem_alloc_data - Restricted memory allocate arg=
-ument
-> > + * @size:      [in/out] Size of restricted memory to allocate
-> > + * @flags:     [in/out] Flags to/from allocate
-> > + * @use_case   [in] Restricted memory use case, TEE_IOC_UC_*
-> > + * @id:                [out] Identifier of the restricted memory
-> > + */
-> > +struct tee_ioctl_rstmem_alloc_data {
-> > +       __u64 size;
-> > +       __u32 flags;
-> > +       __u32 use_case;
-> > +       __s32 id;
-> > +};
-> > +
-> > +/**
-> > + * TEE_IOC_RSTMEM_ALLOC - allocate restricted memory
-> > + *
-> > + * Allocates restricted physically memory normally not accessible by t=
-he
-> > + * kernel.
+> This indicates that vma->vm_mm references an mm with non-zero mm_users
+> whenever it's legal to have a reference to the vma.
 >
-> Can we elaborate here as well on similar lines as per commit message?
-
-OK, I'll add something.
-
-Thanks,
-Jens
-
->
-> -Sumit
->
-> > + *
-> > + * Returns a file descriptor on success or < 0 on failure
-> > + *
-> > + * The returned file descriptor is a dma-buf that can be attached and
-> > + * mapped for device with permission to access the physical memory.
-> > + */
-> > +#define TEE_IOC_RSTMEM_ALLOC     _IOWR(TEE_IOC_MAGIC, TEE_IOC_BASE + 1=
-0, \
-> > +                                      struct tee_ioctl_rstmem_alloc_da=
-ta)
-> > +
-> >  /*
-> >   * Five syscalls are used when communicating with the TEE driver.
-> >   * open(): opens the device associated with the driver
-> > --
-> > 2.43.0
-> >
+> Alice
 
