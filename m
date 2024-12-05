@@ -1,187 +1,178 @@
-Return-Path: <linux-kernel+bounces-433036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4013D9E5335
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:59:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65539E533D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5FD18819BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24C516867D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23F21DA631;
-	Thu,  5 Dec 2024 10:59:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3CB1DD87D;
+	Thu,  5 Dec 2024 11:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="XOeIXzj/"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945831D89E9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733396359; cv=none; b=bGFryTSlfZ4pDhMy4Put3dqSm9JL5S3nGrDdUH9TAQeWbQOKiVI4NO3ph/hCbQJJB2wqQkd7e5Sw89sjx8dHfHULYkzH6BOIRneNVCzvyMn5mVEZHhkYN9qngHsLRvww1yepWU3g7G8w6xym0nrmE4Xklkc/LVj3ikUE3R8/bnM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733396359; c=relaxed/simple;
-	bh=sxy8RMO6UamzIVIj4MzFK3U1aIDo1klLe+1eQR0qPAg=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779661D5CE3;
+	Thu,  5 Dec 2024 11:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733396451; cv=pass; b=jZyAOJ7exWm4s5u6hnSo9ykZF9PnZz99Nux64k5MAxQhiStm4NR/p3zMft0A9Eic5jf7+cvUPyNqQZ3E9DR2M3M0nSXgxrkrw40ze5wS13waiRlecxxG8NT1rNymTIhTTpqJXOcUXSG/1xCq2k8R6XWN7mwcdKFhWRPdo5/QphU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733396451; c=relaxed/simple;
+	bh=VKRMaEvta0IGpHZ7vZbbzzDGpeqGDp79B0sTgUeWAB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOW02dYuvJVWk4i+8jNztp/rTu1KEHdJUR3+kBO7PNU3TChpu8mz4gOnBIBiL/Gzgawj0N4Vipx0OIXswxieZkjcusRi+AbJ/FbvYDbewHlNRcSvuWm+zEJzjZ/iEmiBN8N3wsf7/Zc6GTS+8YE6pkdvOcmjya0Mx+6Ekw1kA90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tJ9ZV-0003Sx-0T; Thu, 05 Dec 2024 11:59:01 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tJ9ZS-001oGe-1u;
-	Thu, 05 Dec 2024 11:58:59 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tJ9ZT-00GQo3-0o;
-	Thu, 05 Dec 2024 11:58:59 +0100
-Date: Thu, 5 Dec 2024 11:58:59 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v1 6/7] phy: dp83td510: add statistics support
-Message-ID: <Z1GHczyyzDFkV592@pengutronix.de>
-References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
- <20241203075622.2452169-7-o.rempel@pengutronix.de>
- <57a7b3bf-02fa-4b18-bb4b-b11245d3ebfb@intel.com>
- <20241205-satisfied-gerbil-of-cookies-471293-mkl@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERMDvN19mxnILZQ73ZtwPfBc/Ut02PQHtLsdTDn71Ak5dqhWqxjrk+S7yaYbEMmhVxhwzmTW8Z9NA7ImSd0T6h5tiAflCoAiICOBEYH47FkyBgkiNv/hzmtfd2ybzti4hGjso+1DEWNvDHh71TZhj1GM6WFpKLzQ2I7p/l8C9IM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=XOeIXzj/; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733396435; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HuASEWdoUKIu6ysVz7xx9n5bzSoww2898xP2EpdljkaC+MQB9m2jQYNfC6wyVedTSbs5i2wgT8IokyWCPe3g03l2vkuiOvd9XUgutfwOjB8D8bK/gJRwv1ynXkmUg/PmmhfpLk5b9TjqCMgS9yr9rMGWt79g8K4BNeUg5G95tpc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733396435; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2z3wyRuIE35ESn19N6dex7TkqFUd44OkK6seAcXauA8=; 
+	b=d/W9I60+1XVWc94E9DVC6FmILpL73lY2Hc1C1R67OFSorn99kjMWyCcK+uwGzkfNbLmWlTygSOvlDrrtczeAja+T4CoUiP8ufkES3C28uwpD45LYKPhzJvZMxTvIsk6zFk0iHOPXXHagrs+5ZLWZQkCjGqkbwnJSXSRwZ1YAx9E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733396435;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=2z3wyRuIE35ESn19N6dex7TkqFUd44OkK6seAcXauA8=;
+	b=XOeIXzj/8f1AOGlo8umRZT6do869bFBVyh3qnLSQjXP0j/IMZ2rxl1vZYJWK6XBJ
+	K2ECDfp81JKFSNl2o8S1zf91pnM7xaFakGrhr57pX/D7ZvGaJWIecZRCt/Ph27YyCQD
+	E/jDWPpmNkiY0r1mbF3YHPZAXbHgvJR2GmQJlC4M=
+Received: by mx.zohomail.com with SMTPS id 1733396432244555.8711485051821;
+	Thu, 5 Dec 2024 03:00:32 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id 0877A10604B0; Thu, 05 Dec 2024 12:00:27 +0100 (CET)
+Date: Thu, 5 Dec 2024 12:00:26 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: =?utf-8?B?Q3PDs2vDoXMs?= Bence <csokas.bence@prolan.hu>
+Cc: Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/8] power: ip5xxx_power: Fix return value on ADC read
+ errors
+Message-ID: <hkmhtj2fasl4x7c2yqi3c6eaygbkecbtcgcz2lduxfzbwirpye@j56gp5vognj4>
+References: <20241119180741.2237692-1-csokas.bence@prolan.hu>
+ <20241119180741.2237692-2-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bfeiau4pldmhijl6"
 Content-Disposition: inline
-In-Reply-To: <20241205-satisfied-gerbil-of-cookies-471293-mkl@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241119180741.2237692-2-csokas.bence@prolan.hu>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/233.272.83
+X-ZohoMailClient: External
 
-On Thu, Dec 05, 2024 at 10:01:10AM +0100, Marc Kleine-Budde wrote:
-> On 05.12.2024 09:43:34, Mateusz Polchlopek wrote:
-> > 
-> > 
-> > On 12/3/2024 8:56 AM, Oleksij Rempel wrote:
-> > > Add support for reporting PHY statistics in the DP83TD510 driver. This
-> > > includes cumulative tracking of transmit/receive packet counts, and
-> > > error counts. Implemented functions to update and provide statistics via
-> > > ethtool, with optional polling support enabled through `PHY_POLL_STATS`.
-> > > 
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > ---
-> > >   drivers/net/phy/dp83td510.c | 98 ++++++++++++++++++++++++++++++++++++-
-> > >   1 file changed, 97 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-> > > index 92aa3a2b9744..08d61a6a8c61 100644
-> > > --- a/drivers/net/phy/dp83td510.c
-> > > +++ b/drivers/net/phy/dp83td510.c
-> > > @@ -34,6 +34,24 @@
-> > >   #define DP83TD510E_CTRL_HW_RESET		BIT(15)
-> > >   #define DP83TD510E_CTRL_SW_RESET		BIT(14)
-> > > +#define DP83TD510E_PKT_STAT_1			0x12b
-> > > +#define DP83TD510E_TX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
-> > > +
-> > > +#define DP83TD510E_PKT_STAT_2			0x12c
-> > > +#define DP83TD510E_TX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
-> > 
-> > Shouldn't it be GENMASK(31, 16) ? If not then I think that macro
-> > name is a little bit misleading
-> 
-> Yes, the name may be a bit misleading...
 
-The naming is done according to the chip datasheet. This is preferable
-way to name defines.
+--bfeiau4pldmhijl6
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 2/8] power: ip5xxx_power: Fix return value on ADC read
+ errors
+MIME-Version: 1.0
 
-> [...]
-> 
-> > > + */
-> > > +static int dp83td510_update_stats(struct phy_device *phydev)
-> > > +{
-> > > +	struct dp83td510_priv *priv = phydev->priv;
-> > > +	u64 count;
-> > > +	int ret;
-> > > +
-> > > +	/* DP83TD510E_PKT_STAT_1 to DP83TD510E_PKT_STAT_6 registers are cleared
-> > > +	 * after reading them in a sequence. A reading of this register not in
-> > > +	 * sequence will prevent them from being cleared.
-> > > +	 */
+Hi,
 
-this comment is relevant for the following question by Marc.
+On Tue, Nov 19, 2024 at 07:07:34PM +0100, Cs=F3k=E1s, Bence wrote:
+> If ADC read returns an error, the return value was silently ignored,
+> execution continued and an uninitialized value and a return code of 0
+> was passed back to userspace. The only exception was
+> POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT, which bailed out correctly.
+> Fix returns for the other cases as well.
+>=20
+> Fixes: 75853406fa27 ("power: supply: Add a driver for Injoinic power bank=
+ ICs")
+>=20
 
-> > > +	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_PKT_STAT_1);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +	count = FIELD_GET(DP83TD510E_TX_PKT_CNT_15_0_MASK, ret);
-> > > +
-> > > +	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_PKT_STAT_2);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +	count |= (u64)FIELD_GET(DP83TD510E_TX_PKT_CNT_31_16_MASK, ret) << 16;
-> > 
-> > Ah... here you do shift. I think it would be better to just define
-> > 
-> > #define DP83TD510E_TX_PKT_CNT_31_16_MASK	GENMASK(31, 16)
-> 
-> No. This would not be the same.
-> 
-> The current code takes the lower 16 bit of "ret" and shifts it left 16
-> bits.
-> 
-> As far as I understand the code DP83TD510E_PKT_STAT_1 contain the lower
-> 16 bits, while DP83TD510E_PKT_STAT_2 contain the upper 16 bits.
-> 
-> DP83TD510E_PKT_STAT_1 gives 0x????aaaa
-> DP83TD510E_PKT_STAT_2 gives 0x????bbbb
-> 
-> count will be 0xbbbbaaaa
-> 
-> This raises another question: Are these values latched?
-> 
-> If not you can get funny results if DP83TD510E_PKT_STAT_1 rolls over. On
-> unlatched MMIO busses you first read the upper part, then the lower,
-> then the upper again and loop if the value of the upper part changed in
-> between. Not sure how much overhead this means for the slow busses.
-> 
-> Consult the doc of the chip if you can read both in one go and if the
-> chip latches these values for that access mode.
+No newline between Fixes and Signed-off-by.
 
-It is not documented, what is documented is that PKT_STAT_1 to
-PKT_STAT_3 should be read in sequence to trigger auto clear function of
-this registers. If chip do not latches these values, we will have
-additional problem - some counts will be lost in the PKT_STAT_1/2 till we with
-PKT_STAT_3 will be done.
+> Signed-off-by: Cs=F3k=E1s, Bence <csokas.bence@prolan.hu>
+> ---
 
-With other words, I'll do more testing and add corresponding comments in
-the code..
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Fixes should always be at the start of a patch series, so that they
+can easily be backported. I fixed both things up when applying the
+patch.
+
+Greetings,
+
+-- Sebastian
+
+>  drivers/power/supply/ip5xxx_power.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/i=
+p5xxx_power.c
+> index 2d4435881a9e..41d91504eb32 100644
+> --- a/drivers/power/supply/ip5xxx_power.c
+> +++ b/drivers/power/supply/ip5xxx_power.c
+> @@ -395,18 +395,24 @@ static int ip5xxx_battery_get_property(struct power=
+_supply *psy,
+> =20
+>  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+>  		ret =3D ip5xxx_battery_read_adc(ip5xxx, &ip5xxx->regs.battery.adc.volt=
+, &raw);
+> +		if (ret)
+> +			return ret;
+> =20
+>  		val->intval =3D 2600000 + DIV_ROUND_CLOSEST(raw * 26855, 100);
+>  		return 0;
+> =20
+>  	case POWER_SUPPLY_PROP_VOLTAGE_OCV:
+>  		ret =3D ip5xxx_battery_read_adc(ip5xxx, &ip5xxx->regs.battery.adc.open=
+_volt, &raw);
+> +		if (ret)
+> +			return ret;
+> =20
+>  		val->intval =3D 2600000 + DIV_ROUND_CLOSEST(raw * 26855, 100);
+>  		return 0;
+> =20
+>  	case POWER_SUPPLY_PROP_CURRENT_NOW:
+>  		ret =3D ip5xxx_battery_read_adc(ip5xxx, &ip5xxx->regs.battery.adc.curr=
+, &raw);
+> +		if (ret)
+> +			return ret;
+> =20
+>  		val->intval =3D DIV_ROUND_CLOSEST(raw * 149197, 200);
+>  		return 0;
+> --=20
+> 2.34.1
+>=20
+>=20
+>=20
+
+--bfeiau4pldmhijl6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdRh8AACgkQ2O7X88g7
++poRAw/+OVre+iQb6jEDswOfOPURBqZbUG2Q6/9f9He/m4zszbHLUwXiDNZFaRX7
+3Xt4ZoF80zreIRS/tOMSf3HdLwoGLrXLPjHbCBFbXL559KznsT3NYH9b+RER8G8+
+Z7b4Tg+RmJzdJE2WcjqKCl7mlNZW30Q3SgHenHw8bzX22W0B76poSr3gSykezXDf
+J54HPDK7OinnQLDnbIrNFoaNzgyJZfVtY+t4xf+V6XoCgvO/5gHUAhEIBYl3IafK
+oExC/zeoHwgNCASfu5VCey0fGTfJVcmmhZAHZBcBfv0zNtBQt76eM7NiZukIKgSo
+2l95PRdFq4GYjXAKBpBewK8ScgN+iTcfhzMAOP11fBDfmwARjVhOgbvzYagh/76z
+lJ/HLavR9aQmuepgYOES/5kWOtsps2FlJLWg9Z3pOowTXSfDQlBleQN7288KFBLq
+3cInqKYvn9o9kCbqF5z//FTY6L0EM2furuO1jbtk8J2XMF/33ZqKyhHxyS5r88cJ
+Cgvqk+CAI04jOPjEPjzd/JiHaFwwNcIyPiTUwlcEnu1vQ5MmY5ycgJ+oDM0V1QuZ
+kBFQAlSU/pQ4UjOhA4ifKj9BPuzBNQI5Ac/4jwZk3KnQVi/39Ilv85U7qO2yOy/F
+U8spyqQ1C6/Z/YDWOq1Bf+eZgE4ovWRraL2I5C9PTv+z2+mISso=
+=wT4a
+-----END PGP SIGNATURE-----
+
+--bfeiau4pldmhijl6--
 
