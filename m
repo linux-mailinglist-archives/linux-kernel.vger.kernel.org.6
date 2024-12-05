@@ -1,129 +1,136 @@
-Return-Path: <linux-kernel+bounces-433132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036B39E543A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:43:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AE69E543D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:43:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8B0163E86
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:43:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C77420B81D;
+	Thu,  5 Dec 2024 11:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGqw+7qA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F86283851
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:43:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E709E20B7E4;
-	Thu,  5 Dec 2024 11:43:15 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853EC209691;
-	Thu,  5 Dec 2024 11:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73959207DE3;
+	Thu,  5 Dec 2024 11:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733398995; cv=none; b=PZoTds1UyU0XwmbxHAZUJijeWsFawYfTPeAKx67WrotVC6ehEnPoCsv4cALO7XwZb5MtCTACFbnqGxYtYGxUQxmLpqLfgQ6vdmEr1xYeo/2hROEPKBitKp5pi9yM+GkUqN++M8txwfmjFcII1qMXAWNfAMGK7kL23o4g8AelgPk=
+	t=1733399009; cv=none; b=ndUcyIyRV8ZQWGKy1l4uD0RtG4kJy9v8FAapww67Dz5dcU8R5PZDp+ewKmp0eeVaUIdnoOcvcBlhg9QkaSahrV2mlHoGwOpevwswttuhYgIFvqCBCJzLLbzDpFIsdKCDnjIanGaGSEuSkUEWZ8k26xYl59Y2WM8dD4FXzSlV8k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733398995; c=relaxed/simple;
-	bh=KtQLCMZ7iHyVdozQv7fcFaIpAl5CUnSrYVHp95gFZf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=frFbDqLg8E+lpJyQQNLUmAcWZJ2Kzu4+sPU59k/rOAKcyLXOAvr9bfXl74t+RBGoFouWhghNnbJppYBZY1w0g8disExTmTVRvQKf9Y1HBpMHwxS3rcOZu0A1J3FYSx0Ul+BbrBFoYwQtejxaidAqOfWq5NYhRUUb4+w8/RpvZt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.180.135.20])
-	by gateway (Coremail) with SMTP id _____8CxTOLNkVFnGoVRAA--.26374S3;
-	Thu, 05 Dec 2024 19:43:09 +0800 (CST)
-Received: from ubuntu.. (unknown [10.180.135.20])
-	by front1 (Coremail) with SMTP id qMiowMAxbODLkVFnFeR2AA--.40380S2;
-	Thu, 05 Dec 2024 19:43:08 +0800 (CST)
-From: Ming Wang <wangming01@loongson.cn>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	WANG Xuerui <git@xen0n.name>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lixuefeng@loongson.cn,
-	gaojuxin@loongson.cn
-Subject: [PATCH v2] rtc: loongson: clear TOY_MATCH0_REG in loongson_rtc_isr()
-Date: Thu,  5 Dec 2024 19:43:07 +0800
-Message-ID: <20241205114307.1891418-1-wangming01@loongson.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733399009; c=relaxed/simple;
+	bh=HyAlxkKVgcHgdm4ZHn5d497lFSBmHpPgP7S1mHmterQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hbsYTtELWudeVOzLuHVHt+bFblDQ44Ev2alV9eQIE26RF+N09AIyaiYsYrVKo7XbkSKZdbFGbaqZu1pPNAs5U8XIdEj5vBDU/qnl+WSRb8D7POrioeKIxRYeu++TbccpWrnzj64DRgjuXIe4lzUcDUNOBXpgZiOWn/gC3Gbwg/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGqw+7qA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F133C4CED6;
+	Thu,  5 Dec 2024 11:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733399009;
+	bh=HyAlxkKVgcHgdm4ZHn5d497lFSBmHpPgP7S1mHmterQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=rGqw+7qA3yRZARh2Il8R63imsJvAWSrLeaH9+k3K/1soJ1FMWhw2bd23qkZsy11Mn
+	 yFTlSeJKsSapv10ywqCHj+FcrDnlmDb/fen7WQVOjPQBEU97SL5EglAzFc7ucmiTM4
+	 TT52LsRlaqJrK9W2+r6sRRe0urmTbwZYKQTJ3Acgi0/WIQhb2a1lbTrs1+EW0ifLOV
+	 zRSU0nDSjJ7LD2/sNCIZqUuXKR2HX4Sc6Yh/SywHZWDXWhvmTfF04GhS+1bNLJZ2aE
+	 rv2w+MNC6UOkWyqAetkd9dHz2TF1gnvOzwPkoXQvf+IP/1LYyNK2xPIhG+I33sceC2
+	 HkUVAbXnJKbuw==
+Message-ID: <640201c7-84d5-4564-8ef3-afcc39929fd9@kernel.org>
+Date: Thu, 5 Dec 2024 12:43:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxbODLkVFnFeR2AA--.40380S2
-X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAQECEmdQ2z8OfwAAsy
-X-Coremail-Antispam: 1Uk129KBj93XoW7uF43tFyxZF1xGw47JF13Awc_yoW8Cryxpr
-	W3C3WDursYvr48Cas5Jay8WrWay393Jr9ruF4xK3yF93Z8Aa4UXF4FgFyUJrWDur95AFWY
-	q3yUCFW5u3WqkwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57
-	IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE
-	14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2
-	IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j8
-	8n5UUUUU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] dt-bindings: mailbox: qcom: Document
+ qcom,tmelite-qmp
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241205080633.2623142-1-quic_srichara@quicinc.com>
+ <20241205080633.2623142-2-quic_srichara@quicinc.com>
+ <e6759ca4-bcfb-4817-8a72-d1e9eb5d3d02@kernel.org>
+ <360dda0a-35e0-4fcb-a2bf-77d400d71623@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <360dda0a-35e0-4fcb-a2bf-77d400d71623@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The TOY_MATCH0_REG should be cleared to 0 in the RTC interrupt handler,
-otherwise the interrupt cannot be cleared, which will cause the
-loongson_rtc_isr() to be triggered multiple times.
+On 05/12/2024 10:17, Sricharan Ramabadhran wrote:
+> 
+> 
+> On 12/5/2024 1:42 PM, Krzysztof Kozlowski wrote:
+>> On 05/12/2024 09:06, Sricharan R wrote:
+>>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>
+>>> This binding describes the component responsible for communication
+>>> between the TME-L server based subsystems (Q6) and the TME-L client
+>>> (APPSS/BTSS/AUDIOSS), used for security services like secure image
+>>> authentication, enable/disable efuses, crypto services. Each client
+>>> in the   SoC has its own block of message RAM and IRQ for communication
+>>> with the TME-L SS. The protocol used to communicate in the message RAM
+>>> is known as Qualcomm Messaging Protocol (QMP).
+>>
+>> This is RFC, so only limited review follows. I will review more once
+>> this is ready for review.
+>>
+> Thanks. Once i get the design/approach confirmed, will post the V1.
 
-The previous code cleared TOY_MATCH0_REG in the loongson_rtc_handler(),
-which is an ACPI interrupt. This did not prevent loongson_rtc_isr()
-from being triggered multiple times.
+Not a v1, but next version. This was v1 already, because we do not count
+from 0. Please use b4 to avoid such mistakes.
 
-This commit moves the clearing of TOY_MATCH0_REG to the
-loongson_rtc_isr() to ensure that the interrupt is properly cleared.
-
-Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
-Signed-off-by: Ming Wang <wangming01@loongson.cn>
----
-v1 -> v2: Fix commit message function name format and add missing blank line.
----
- drivers/rtc/rtc-loongson.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
-index e8ffc1ab90b0..90e9d97a86b4 100644
---- a/drivers/rtc/rtc-loongson.c
-+++ b/drivers/rtc/rtc-loongson.c
-@@ -114,6 +114,13 @@ static irqreturn_t loongson_rtc_isr(int irq, void *id)
- 	struct loongson_rtc_priv *priv = (struct loongson_rtc_priv *)id;
- 
- 	rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
-+
-+	/*
-+	 * The TOY_MATCH0_REG should be cleared 0 here,
-+	 * otherwise the interrupt cannot be cleared.
-+	 */
-+	regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -131,11 +138,7 @@ static u32 loongson_rtc_handler(void *id)
- 	writel(RTC_STS, priv->pm_base + PM1_STS_REG);
- 	spin_unlock(&priv->lock);
- 
--	/*
--	 * The TOY_MATCH0_REG should be cleared 0 here,
--	 * otherwise the interrupt cannot be cleared.
--	 */
--	return regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
-+	return ACPI_INTERRUPT_HANDLED;
- }
- 
- static int loongson_rtc_set_enabled(struct device *dev)
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
