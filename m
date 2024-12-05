@@ -1,163 +1,124 @@
-Return-Path: <linux-kernel+bounces-433889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891939E5E62
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:44:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EDB9E5DE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569B5162587
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:44:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705951885280
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA53222B8D3;
-	Thu,  5 Dec 2024 18:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF2A227B80;
+	Thu,  5 Dec 2024 18:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="mu08w1mU"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3+JdWhe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A94E221461;
-	Thu,  5 Dec 2024 18:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180461922FB;
+	Thu,  5 Dec 2024 18:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733424256; cv=none; b=C5ESc6y1aZ49VFqCTCkz7VAhcPBnQeqmWQ21nW5wr76YxS0zAD0+2felkNToVPrAqJ42YzD9QBTRZjQCZQ9Wo/ATQ8cu3amsFXoNZHbRHk0yNP82oyrieJxdLvDRwkdIsn9q8Zn+T8J5tXLVdRYcwhREbnQ/b//msTGZyKXxfls=
+	t=1733421845; cv=none; b=Pm1SSRjQ8/X9YGTU613EWMadCb+MZYvgKcXfXZ+dEgk/UiAmBdT9DT15mQ86/RSJRAzch9sSdOEBht87QNaoLuPqS1GTlKuhV+u32SweA4C14wyi3LfxsT7StV+r7TqiZsOB/tefW3UyuIUnaEhnFOOoKIY3vQj7RbaHf0jTlqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733424256; c=relaxed/simple;
-	bh=rhyRws2RvyWwmmlvymd4NvI6X/QYo5gUNBZJxdn0cr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKEiypyrSfySoN5M+1qnBal+jlpNrWmc2Pwd/S2lXKoBLmB8i0diDEfgAw7eQXsCTEFNd0jcyRwbd9hToj0y6yP6DtoT7i0+6xywMKI/WehZMpcrTG5ylJ+0HO/ZtuCV6YBMRRQLN3Nm0DunlpT6wimY+iTKgwJWL5ofwK38NV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=mu08w1mU; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HhmRj017980;
-	Thu, 5 Dec 2024 18:02:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps0720; bh=YE
-	A+a4VeBZqyZzyZ1JUkJu7XAw0Og0L1SG6vVFY10fs=; b=mu08w1mUyuJkNJWyGG
-	Shvl51kHQQF0MBCZQWbvqFaOwZv8FxyVGkSrws3SSLWO6dYMsegazV/H/WEnE7C1
-	IYXIVtRR5rtkVut3eFXFCJucyTPFC3g+ikNFqbVLr+iGotU3RUrg/y4F7677wLmU
-	gR8blKV4HlKsKTplQQmQj+zgBHKPfNi1v2B5NUjqsqEm4sORLbMnD9QXzcb0qWUj
-	pbQhwtyamoFFLrzYM3w2L/8UJT2KLs2utk3Jia6Nwo5KQSZl3DgRL5ONRNs1I1Tz
-	BIzx2BqUIh0KInDoO9yli1gK9mIu2AEbgyKYELluUZFJ6PIS7NAg4Q1d5R1yUioH
-	Kr/g==
-Received: from p1lg14880.it.hpe.com ([16.230.97.201])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 43bgtmr67p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 18:02:08 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 18E19801610;
-	Thu,  5 Dec 2024 18:02:08 +0000 (UTC)
-Received: from DESKTOP-V47QP3F. (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id E4AAA801092;
-	Thu,  5 Dec 2024 18:02:05 +0000 (UTC)
-Date: Thu, 5 Dec 2024 12:02:05 -0600
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: Ian Rogers <irogers@google.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: Increase MAX_NR_CPUS to 4096
-Message-ID: <Z1HqnTwKNvWucrEd@hpe.com>
-References: <20241205165118.153148-1-kyle.meyer@hpe.com>
- <CAP-5=fXu2Ye22EAOp8jNEaVHmmNSx4gJXNL521ViH5x6w-bLBQ@mail.gmail.com>
+	s=arc-20240116; t=1733421845; c=relaxed/simple;
+	bh=4hKXmeo2QAswokpLmKjxilzAKe8Ymm1godEgGWglAsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VUOQYFtxUvR+NMJ+eDiy70nwwgmuxHwX81FocroFxFDR2Z52NOIZRsjAdvap0XvyphjB3wO73Cqsf5ltiYIOmyCIGKQnEkAE9bYmijalU7tPusHRV+oWi6tK6rqVp/RkjnClV/ewug+PwtppRRm6cbhFsqKKcdjgowpPZvug0zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3+JdWhe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4ECC4CEEA;
+	Thu,  5 Dec 2024 18:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733421844;
+	bh=4hKXmeo2QAswokpLmKjxilzAKe8Ymm1godEgGWglAsg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s3+JdWhepFNQK7oC3N4HHeBfDaBOu3ejfoauQoTEkHsTtiGYY7L9y3kGolx8smyAe
+	 qTvqVtW1mHTq+IgmbAGDr4ppQnYoeqWwxPW7M8zE7CTk7ZIibgupv8CsQ5CVgnqA17
+	 +tKIj3jrRlZER2JrBHmbS2MDmhPATvH+vWnVb50pzcfWs3zvio/+UDsVknl3qWHmUh
+	 gBBmbujjvP1Basb2ptycOuIVuIr7GaSf/YsmYyehdcuheH1DkqHKWVUMpPW/T1mAZy
+	 3lMDmeUTiYWJeYZ4RN5AHxzroBL2Va1AlBN2yAZghNlr+Adeq198PGtNpase4PYiuy
+	 F6yBPqhzcXjaw==
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e39779a268bso1389564276.1;
+        Thu, 05 Dec 2024 10:04:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUMOijCTjLOJAnSgOkVKKayvsgwzYl+OWhk4/yN4utR5OK+Zf2B8XJU0hALVy+C+tb80aFYmqioYS42Uh5Y@vger.kernel.org, AJvYcCUsZCvOlMUVpeoVXVeGjeVoTputtxpaqQS3AajHj7ak6jvaEi9ITkO70qSWr9ecNmLi3hM/YhmSGbq/bZADuxQ=@vger.kernel.org, AJvYcCVZItE1a2AM+Fc8u3VOVj6SaVtK2TOXtPP9ArqNXIpRmfmYxtr0o3ImF8MIA1PCM3KDrsTFyDQRph7b@vger.kernel.org, AJvYcCX3EPmtxzBvg2cpHFTGlyBEFFhvM32WPhVLXwNVNfRmGM6ymnKDp4G/83zmn2SkgQ2Xtiy0UD74JZ6K@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxoE5aA1IJymJTEQlnqT2s60Zdkc3vyPfHXwoCNu2S2APFJDqJ
+	995o0C0Im4CXoj/SSoWinSsFVS+lvjNAQYIzhPWXYVcF8u2Qkdi6ShOxCnZIfZmDoySQzxxARnj
+	PV0r0UYUx/3JHZC1N4s4ObhmE3w==
+X-Google-Smtp-Source: AGHT+IFsWbuyFC0xdJvNwlNttO6yOetIWR+HbWMrxqTLlO5vtCqRzBs0/Ntdi9D7d17+ieU38U/ZVt62znLLQBIjCTs=
+X-Received: by 2002:a25:b784:0:b0:e38:2a3b:ea58 with SMTP id
+ 3f1490d57ef6-e39f23d100dmr3886681276.20.1733421843375; Thu, 05 Dec 2024
+ 10:04:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXu2Ye22EAOp8jNEaVHmmNSx4gJXNL521ViH5x6w-bLBQ@mail.gmail.com>
-X-Proofpoint-GUID: xjQA8USmAoiHaT-vXbatMwMapcI6ijBd
-X-Proofpoint-ORIG-GUID: xjQA8USmAoiHaT-vXbatMwMapcI6ijBd
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 malwarescore=0 adultscore=0 lowpriorityscore=0 spamscore=0
- mlxscore=0 clxscore=1011 phishscore=0 bulkscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050131
+References: <20241205141533.111830-1-dakr@kernel.org> <20241205141533.111830-14-dakr@kernel.org>
+ <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com>
+In-Reply-To: <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 5 Dec 2024 12:03:52 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJn=bAF4OYVJNDmiyCNQTAte4wmLhpo0Ca5Pv_oGTg73g@mail.gmail.com>
+Message-ID: <CAL_JsqJn=bAF4OYVJNDmiyCNQTAte4wmLhpo0Ca5Pv_oGTg73g@mail.gmail.com>
+Subject: Re: [PATCH v4 13/13] samples: rust: add Rust platform sample driver
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, daniel.almeida@collabora.com, saravanak@google.com, 
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org, 
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 05, 2024 at 09:36:07AM -0800, Ian Rogers wrote:
-> On Thu, Dec 5, 2024 at 9:01 AM Kyle Meyer <kyle.meyer@hpe.com> wrote:
+On Thu, Dec 5, 2024 at 11:09=E2=80=AFAM Dirk Behme <dirk.behme@gmail.com> w=
+rote:
+>
+> Hi Danilo,
+>
+> On 05.12.24 15:14, Danilo Krummrich wrote:
+> > Add a sample Rust platform driver illustrating the usage of the platfor=
+m
+> > bus abstractions.
 > >
-> > Systems have surpassed 2048 CPUs. Increase MAX_NR_CPUS to 4096.
+> > This driver probes through either a match of device / driver name or a
+> > match within the OF ID table.
 > >
-> > Bitmaps declared with MAX_NR_CPUS bits will increase from 256B to 512B,
-> > and cpus_runtime will increase from 81960B to 163880B.
-> >
-> > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
-> 
-> This is very interesting, thanks Kyle! Just noting, having the same
-> #define in many places is clearly error prone and there are other
-> redefinitions of this value:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/bpf_skel/kwork_top.bpf.c?h=perf-tools-next#n21
-> 
-> I wonder I can refactor `tools/lib/perf/cpumap.c` to get rid of that
-> constant as it is only used when parsing from a file/string.
-> 
-> Could the kwork developers perhaps look at their many uses? The other
-> uses in the tool may be removable too.
-> 
-> Wrt this change, perhaps bump
-> `tools/perf/util/bpf_skel/kwork_top.bpf.c` too and then we merge that
-> while trying to remove other uses.
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>
+> Not a review comment, but a question/proposal:
+>
+> What do you think to convert the platform sample into an example/test?
+> And drop it in samples/rust then? Like [1] below?
+>
+> We would have (a) a complete example in the documentation and (b) some
+> (KUnit) test coverage and (c) have one patch less in the series and
+> (d) one file less to maintain long term.
 
-Sure, that sounds good to me. I'll send a second version.
+I think that's going to become unwieldy when/if we add properties,
+iomem, and every other thing a driver can call in probe.
 
-Thanks,
-Kyle Meyer
+OTOH, the need for the sample will quickly diminish once there are
+real drivers using this stuff.
 
-> > ---
-> >
-> > Tested on a 32 socket Sapphire Rapids system with 3840 CPUs.
-> >
-> >  tools/lib/perf/include/internal/cpumap.h | 2 +-
-> >  tools/perf/perf.h                        | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/include/internal/cpumap.h
-> > index 49649eb51ce4..3cf28522004e 100644
-> > --- a/tools/lib/perf/include/internal/cpumap.h
-> > +++ b/tools/lib/perf/include/internal/cpumap.h
-> > @@ -22,7 +22,7 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
-> >  };
-> >
-> >  #ifndef MAX_NR_CPUS
-> > -#define MAX_NR_CPUS    2048
-> > +#define MAX_NR_CPUS    4096
-> >  #endif
-> >
-> >  struct perf_cpu_map *perf_cpu_map__alloc(int nr_cpus);
-> > diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-> > index c004dd4e65a3..3cb40965549f 100644
-> > --- a/tools/perf/perf.h
-> > +++ b/tools/perf/perf.h
-> > @@ -3,7 +3,7 @@
-> >  #define _PERF_PERF_H
-> >
-> >  #ifndef MAX_NR_CPUS
-> > -#define MAX_NR_CPUS                    2048
-> > +#define MAX_NR_CPUS                    4096
-> >  #endif
-> >
-> >  enum perf_affinity {
-> > --
-> > 2.47.1
-> >
+> I think to remember that it was mentioned somewhere that a
+> documentation example / KUnit test is preferred over samples/rust (?).
+
+Really? I've only figured out how you build and run the samples. I
+started looking into how to do the documentation kunit stuff and still
+haven't figured it out. I'm sure it is "easy", but it's not as easy as
+the samples and yet another thing to go learn with the rust stuff. For
+example, just ensuring it builds is more than just "compile the
+kernel". We already have so many steps for submitting things upstream
+and rust is just adding more on top.
+
+Rob
 
