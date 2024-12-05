@@ -1,159 +1,115 @@
-Return-Path: <linux-kernel+bounces-432881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE9D9E5176
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:35:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D30A9E5179
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4F1881C71
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:35:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26561881CC6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1851D516A;
-	Thu,  5 Dec 2024 09:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6B71D5CE7;
+	Thu,  5 Dec 2024 09:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDO2Dq1o"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TtY1vNeR"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AAA1CF7A1
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F311474DA
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733391291; cv=none; b=a4FFOyAp1Hu55hZjWSweYYwJqjKvtMK2QZLM6A+bIuxcg9kGRgpR6E56x1BSu8Fkd1fJIKF1R8tViEfw3SzKbu+Sk3/R3s7t4/BJaSv+1WQx476LwawCzRSIQ4nyg6leb+iPtTYftaIm496lGjRwnorSMOqBDwifB+4B3x3OL7A=
+	t=1733391338; cv=none; b=d7rD2d7M/kgntLdpfJJdeEot747TbAoY+JwvApN74vGnxAw3KLuyA6QVTsMPoZ+LZalDqAAMsL2RD4+kENGlRk+aO/TAigAAnEt3hQIO/JkXLl9Gduq5wuuXYEgFY/lDs+BjzbIzUfySqkFCvZaWLyrv1JhqltTHRkiBhWG4WNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733391291; c=relaxed/simple;
-	bh=rltCx31fQpuLz7eccLuZZQoglSA0TqpZcDzEc45bE4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uHZ3tNPG8cW0J6yE0GRl1xE5m8u6+kmdxcclzlGY7pk5GsmRmC5USztyCj82RN77HH5GfjAB3LZHwUsZIPHmPT1kdt03gj7ttExmN2dd/Qcy87zW54fK092MwW/52B8Ev+aB3n6i5JNFSc5ofNNZLSWLOnfVWbasmIKpUjoRbe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDO2Dq1o; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385e0e224cbso332874f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:34:49 -0800 (PST)
+	s=arc-20240116; t=1733391338; c=relaxed/simple;
+	bh=ioj11kRVt4ZzslmCkvbLnmBtMfYRxYdlCp3WQpO83Kk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xm04HaHe2xeC+4pyOngwM26DBjd82xuVcxAAlcg+rM/wkUXB1VeBlQdZZSqAq+bxqokMmJqzZWurB1GskvbDytJYKVZ1DpNAXrEvQ9UdfdtNkCTl2QWx+3pRkKfgzqJaUwtWxipF09l/UZRfgQ1trkj3bB3Vs01Ra23QxL2boXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TtY1vNeR; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa53ebdf3caso122553566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:35:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733391288; x=1733996088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+97jMlCI1D0FZdR3+nbrjK/zuRlNUinJNWb46g4mfk=;
-        b=EDO2Dq1ouJJAqyMllrDhcVhSOCiNuVAFSkBOFnUyuECTKblIfvhU71L8l51ORH1dUz
-         DEMoXfzxJNfCeqEXGCsXs9Faok7gSkOkGZ6ZGs8hffemLcBA5GpxqAdvSF2Ntxy8DiwV
-         segF43gtETmQKT31Rz6rLcqSALLWxfz5P1WZYouLxkQ5wg+7p50HXkrzyG6pxd7clkEP
-         2HEhIMTkt6jTX59uTtcMxgoyLbeJxhHg519d2J+6AX0JYcYiZJNkv3t+P7ju6vorORH3
-         WmC0iEQjW9VmNuaME7Ho3SLkqdx6xV3PkFgAypSw9xJ55WaBEAhVtrF4c1BzQVnkgTrI
-         yiKg==
+        d=linaro.org; s=google; t=1733391335; x=1733996135; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tjDqS05st+cDBpUDwPN55de5TW7/RedGp9MsJFKfa1A=;
+        b=TtY1vNeRwVPA7C2f9kOILVD+K2JN3BjkhbBN2fmGzwDDKHyiLYZtWnri0Miffn1ZbS
+         wy4wJLHVt21F28iQNiEnstnDe5BoksA5p3WJ+C34lJgKv/T3glfpSCvq9AVnidOH5TeO
+         qlbK0q3+fr67YVsAqBjDz8AwqI4HoFGyqtG2oxDPLxvLQ2HSaEMTcglOtaqgx6xK5tSe
+         zS0u6gxtecC2MPKzDZBc3edT9wgXcOPBKJh1Vw5Za94xAAlV9jCA4gm2VUykMu6QmkW9
+         A+e1KdLLnZNP3pl/zkN13Niju0bZhfd2/IFaSjsvyczB9LZaF0uyxWCvIKrINFgJy+rM
+         APXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733391288; x=1733996088;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w+97jMlCI1D0FZdR3+nbrjK/zuRlNUinJNWb46g4mfk=;
-        b=oE8JkXITijE05Ke8r461LyxCeUk1ShEfXkaCm69R7tlMT0vzFpSdVD/8OJ9CsMDJCb
-         TLRBIV4UZFW76bAtxuxZpyZhpC4WNC1R6JQSPqKQOfJ80E8qs3NAF4iSBSRGM7/uhWnW
-         r1WBj9Jh60dX4oY8BotGx82enWVHil7aqX4AyfCcDT/PnKJAt3AOSxfrhh6WHI/0VFDB
-         lRFrAzoKk4O3VVGkK+4FqlKxy5dcxjsKeP4aWI7IVAi456Ii6fd8Xe3Wbd7vBkk3hvzo
-         6O43BO3qDARU0+fjL24JSbj38KQdWfEGFCtszVARiFyHFa8wfRIrgP6TyKnLgxE2NF9t
-         YJDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvef3qtj6HsizR8CmgEqKZdXWVcWQrdwbmINN3pZ5SwXwDaTrTPbEGYXzbaOMkfYjXOF5COORDIkSn/xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj2RvXw6ON3nLzxuqwwZ+0x+2z8swHgciUSFKkjSCceK+W08bG
-	Xunr495gNZLQjFLtVz7IANkmNHjK96OJIVWAWmPMMlGT9WP4apOc
-X-Gm-Gg: ASbGncsQkLu+kJi0oYM8yHArXEdAWmrmfTwI3tp1ExTbZWaolL2TaeY5wql92Neq4CD
-	kEDsAQ0/Kj/kHFbeh70+YzjOp8PBq0koyu1zxWHQUg3VmMk0QUENjpzyA2bpXxTsM8RxfcCwYyV
-	54+wIKPrhQ8XrdWSlEdbXPjwmNiRrz7ISHg2L6CInWZz4OdB1MSWa49Yodoxi6TcjY0EtvGNk2G
-	TeACy4/wvzeq2KadX1SBfe6w35FKJ9OutrY7bhT+EY3YUuTAQYAyZ4hlk+M/uYZNHtZ8ZI89xfK
-	Z0o4jl6CVw==
-X-Google-Smtp-Source: AGHT+IGUbXbtXietuD43WTiX3xy6XxjT74K3zkI7eAyzgT8YxfTeQEjW0q/cIz9TwN/uMg9xMlFz7g==
-X-Received: by 2002:a5d:6d89:0:b0:385:e429:e59a with SMTP id ffacd0b85a97d-385fd3f2febmr7339380f8f.25.1733391286595;
-        Thu, 05 Dec 2024 01:34:46 -0800 (PST)
-Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a8758sm1428180f8f.27.2024.12.05.01.34.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 01:34:45 -0800 (PST)
-From: Dave Penkler <dpenkler@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org,
-	Dave Penkler <dpenkler@gmail.com>,
-	Marcello Carla' <marcello.carla@gmx.com>
-Subject: [PATCH 3/4 v3] staging: gpib: Fix erroneous removal of blank before newline
-Date: Thu,  5 Dec 2024 10:34:42 +0100
-Message-ID: <20241205093442.5796-1-dpenkler@gmail.com>
-X-Mailer: git-send-email 2.47.1
+        d=1e100.net; s=20230601; t=1733391335; x=1733996135;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tjDqS05st+cDBpUDwPN55de5TW7/RedGp9MsJFKfa1A=;
+        b=vtlq1Ipgq431zCu13xJ3w6EVVLw52jl9jljytt06IsznKVZaiiuHmkjueYPwpsJcNw
+         qC7+HRdrnmNK4MZqLTO5GqA/lB1cnGn+dEt+/ZjquNcyVwqBIUzwtODVWYCS2cg6WT6U
+         pMJUcmyYILNASusB5nUPPIO0OU6UIpgJuK6U/GSRGiv0lxIT+Gw02HdwXoknMoQBkJuM
+         g2WnrLNZk6N9fcdDW3867sj5v9Mk4uBHZ942aGZ0pSiUhm+CcWknhJsntsjCAyZGUJxX
+         Ltcp/MFS7E64Of6bHs/ECxjuXnQAliOb3wsSjqnvK1TBJ6HC4vOv9O++64Bg9T4fJ0cp
+         HofA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDlB79fAV7YVdJabMBf6HdWP4C0ITEh/5R3nQflf9XVgd/ibaVUKELyTF6sxeQ0Wp5uFj5WaSZehHodVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQsPUkr5KQ0nDcxMHDQNoUeU/a5/8i1axjIuTZvMfZ1W6hyzK5
+	AEjJos2xzv+yY6XBlTaUgFGC3MqC56kERz35OG/TVRtKw9EVRHWBiSRgxeHrj04=
+X-Gm-Gg: ASbGncuLiVY6aorggpTaln9qqOSLKi4n88qKGh3rcKSDbKa6rCwnJEYnfuH2vs1qn+Q
+	5Qeyg1TzL8DBt+W8ig/RJfo2eRVCKA4oaMbtl6awvkWhwWSZuH6NJaBzdTyIORz5/+jLfZyIcNC
+	rxlhp25IcIaNLerJeqfDIhEFahItLOcZVBaqcV53YxSajac+9R3Jzqdhw1XJxK6PD/ryQDhKZWG
+	IqSIKPh77jCZKjS7pYUtc58wMi891O2vfd2GystiAxWS02Af60CghpY+I26Wzk=
+X-Google-Smtp-Source: AGHT+IHFm4UZarfubQus9XeHuRq9CcZZpSvgMn+7LHQv0GsiN/Tz1ExqT9VocSpHFgTuSVRxvEIx3A==
+X-Received: by 2002:a17:907:b98:b0:aa6:1678:fdc with SMTP id a640c23a62f3a-aa616781260mr394843066b.58.1733391335136;
+        Thu, 05 Dec 2024 01:35:35 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62601b609sm66188266b.109.2024.12.05.01.35.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 01:35:34 -0800 (PST)
+Message-ID: <51d340e1-a62a-4851-a2be-545580bf4088@linaro.org>
+Date: Thu, 5 Dec 2024 09:35:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/5] arm64: dts: qcom: sc7280: Add support for camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
+ hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
+ hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
+ catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241204100003.300123-1-quic_vikramsa@quicinc.com>
+ <20241204100003.300123-5-quic_vikramsa@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241204100003.300123-5-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The USB_GPIB_SET_LINES command string used to be: "\nIBDC \n" but when
-we were merging this code into the upstream kernel we deleted the space
-character before the newline to make checkpatch happy.  That turned
-out to be a mistake.
-
-The "\nIBDC" part of the string is a command that we pass to the
-firmware and the next character is a variable u8 value.
-It gets set in set_control_line().
-
- msg[leng - 2] = value ? (retval & ~line) : retval | line;
-
-where leng is the length of the command string.
-
-Imagine the parameter was supposed to be "8".
-With the pre-merge code the command string would be "\nIBDC8\n"
-With the post-merge code the command string became "\nIBD8\n"
-
-The firmware doesn't recognize "IBD8" as a valid command and rejects it.
-
-Putting a "." where the parameter is supposed to go fixes the driver
-and makes checkpatch happy.  Same thing with the other define and
-the in-line assignment.
-
-Reported-by: Marcello Carla' <marcello.carla@gmx.com>
-Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
-Co-developed-by: Marcello Carla' <marcello.carla@gmx.com>
-Signed-off-by: Marcello Carla' <marcello.carla@gmx.com>
-Signed-off-by: Dave Penkler <dpenkler@gmail.com>
----
-v1 -> v2
-  Add more details to the commit message
-  Add Signed-off by co developer
-  Add spaces around assignment
-  Fix tabs
-v2 -> v3
-Adopt and adapt the more explanatory commit message kindly
-provided by Dan Carpenter
-
-drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-index 1a8eb3bfb61c..81c110f29e76 100644
---- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-+++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-@@ -97,8 +97,8 @@ module_param(debug, int, 0644);
- #define USB_GPIB_DEBUG_ON    "\nIBDE\xAA\n"
- #define USB_GPIB_SET_LISTEN  "\nIBDT0\n"
- #define USB_GPIB_SET_TALK    "\nIBDT1\n"
--#define USB_GPIB_SET_LINES   "\nIBDC\n"
--#define USB_GPIB_SET_DATA    "\nIBDM\n"
-+#define USB_GPIB_SET_LINES   "\nIBDC.\n"
-+#define USB_GPIB_SET_DATA    "\nIBDM.\n"
- #define USB_GPIB_READ_LINES  "\nIBD?C\n"
- #define USB_GPIB_READ_DATA   "\nIBD?M\n"
- #define USB_GPIB_READ_BUS    "\nIBD??\n"
-@@ -587,7 +587,7 @@ static int usb_gpib_command(gpib_board_t *board,
- 			    size_t *bytes_written)
- {
- 	int i, retval;
--	char command[6] = "IBc\n";
-+	char command[6] = "IBc.\n";
- 
- 	DIA_LOG(1, "enter %p\n", board);
- 
--- 
-2.47.1
-
+On 04/12/2024 10:00, Vikram Sharma wrote:
+> Add changes to support the camera subsystem on the SC7280.
+> 
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sc7280.dtsi | 172 +++++++++++++++++++++++++++
+>   1 file changed, 172 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 55db1c83ef55..e363996602d6 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
