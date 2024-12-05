@@ -1,111 +1,168 @@
-Return-Path: <linux-kernel+bounces-432496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470509E4C24
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:09:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93069E4C27
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:11:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B83BC1691C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F5FF2860FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7911369B6;
-	Thu,  5 Dec 2024 02:09:52 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D554C96
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D69169397;
+	Thu,  5 Dec 2024 02:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtG+cEs/"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E314293;
+	Thu,  5 Dec 2024 02:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733364592; cv=none; b=qnuiJXADNIuKoOOBJzFswO4TcoU/MKfqJ7kHEli0AzwZc6KZehz2NMDzQrMx/wtGN1mMVPlPyQqBT6H6+FfSKAiEFyjLALl+FskGdMnAfg+kvj5Dok9de10c/On8IBlC5MsM8nPZdbj3sAsYqHV76IurkdQ5snOnf7frfm/++9w=
+	t=1733364668; cv=none; b=MWO/eFSzylCfjHajsvmXCMR//fYBlM98DZGqauWyzmFaimMeVYfjW3x4RU851SWR7WnOibDkBUX8YPV0WVaAJzTuXE0Do+bXImx107lBMMzDi30TeI+rN+5ssg2p1ZkqQn0wxTgYaauYiVtttUVskoPr3rIxMZqWA1Nat8NfJMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733364592; c=relaxed/simple;
-	bh=eCsXK+inz01hctskovwnKepxB9sJXRhIO8W91EsmIiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdxX3GCNKBDLBc8/asp0jJSl63+AhsKZAIFOlR8wb0+oIPtWIC2X/QN8BCf2pm+0Da+0DuWbI5B1dF0CB6+W6ijNGOWLnEQnHMAUfUh3dH3dbH43ppVBX3ggdLzDkFOUsErPYKg5/Ulkhc/xPsiGXLns2jG7R9AAiRB0doQZUg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id CEBB372C980;
-	Thu,  5 Dec 2024 05:09:46 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-	by imap.altlinux.org (Postfix) with ESMTPSA id BFFB236D0178;
-	Thu,  5 Dec 2024 05:09:46 +0300 (MSK)
-Date: Thu, 5 Dec 2024 05:09:46 +0300
-From: Vitaly Chikunov <vt@altlinux.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, mark.rutland@arm.com
-Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
- 0000000002000000 [#1] SMP
-Message-ID: <20241205020946.yf6xdieoswsrmvi5@altlinux.org>
-References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
- <20241202153618.GA6834@willie-the-truck>
- <86ttbmt71k.wl-maz@kernel.org>
- <20241202155940.p267a3tz5ypj4sog@altlinux.org>
- <86ser6t6fs.wl-maz@kernel.org>
- <20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
- <Z05cuuMMurzp1jx5@linux.dev>
- <20241203040350.4soyvaeqs75kjqoj@altlinux.org>
+	s=arc-20240116; t=1733364668; c=relaxed/simple;
+	bh=OI1C3FcwMoopDMPKdCCzMjgaBxq20WYQtvRagIuSgbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TeGUVQJjb2R8rJMwIRFSeTPiJBOgxs1C2HMs/RMNK01k35Uotpd7SrOBSA1RzF5eKzjKZhQbsayyZKptphiN3ZhkAqAEV2oMU9P2WHlFxd3b0BJU3FmS8/lL5G2R1xp8fRNpk/VymHKLu9m0kc8PuB6lVkiNZQYV7Mc5+VFdh90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtG+cEs/; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-215ac560292so3663875ad.2;
+        Wed, 04 Dec 2024 18:11:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733364667; x=1733969467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uIFAae5/53dx1Db9qH0BBINR+01DcmVANh9NqUuaEGA=;
+        b=FtG+cEs/dQPw2iFM058GKHXdSwHMMD3sOchthcu7BVPn0PAqUicmLebSCakb0zneaA
+         SAonmWALMPGsYLMaaIq7kU7zSfb5RUhvHumOq/K5ytQgL/iJEE26ztK+EugRl/ArwDHU
+         U4ql7wzMQhlxdojIUA9YhlaLDdRaIv58PXyWxnIseYwxxfH2BXW/cye9HoWs/3z7PsYG
+         eFj3qAFc+LcM2pTy5qrrBetQWAfC5+TPzAUz135SIFM4XTXcZ+sCb450TcnZ0cVW8vkl
+         oM6/j8yzK76wQjTg3Te2eGiNC0MVkEB3gvdtPK+1LkUJWmsp6bB3vPrK1R+D9eHT1RYT
+         LwZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733364667; x=1733969467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uIFAae5/53dx1Db9qH0BBINR+01DcmVANh9NqUuaEGA=;
+        b=TaCO5FRTrMKxC/MNiTlDR2pIqBaUoUPn7oD1iwyAiXPQnZ+2Hxh5SWNrEWGG7Gv/sM
+         wjoT3g0G7PtMoLypuJf5pnYsAry3H2Z5qcCrSkMEa04+5k1axw0wNCuEsnH/q8KXusYb
+         xnzFZXkUTX2Xt9x8ojzwFoGo1tw6ICPNV5q34iaMHSgEvIWy0zH+vkbpnabHkq7sQcXM
+         bjEJNeHKp6417oASYpH8nrzpeH97/o+hHcVVPyIYSD8NP78JNJuS9kN8bHD9qtkAggRq
+         04W4e+Yi5JL5CRYySI4U32S+tebbD6lFNo28JeW28hOlghazY8+xFuz87Le5RD3PdLz+
+         mrQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/WCJwLCCdvpIluCB81Wp2Ps7ZgHrzbpuDMUZgF6L3NrURDfZGFdBEhVgLBE1IaDxFJ97ehgVUExjTb7me@vger.kernel.org, AJvYcCXiDQ1ndX9BenX0iE8y2dixiAe/qSac36sVCEHa5dIDYbhXTLgc6nirWRA7cRdZfkc9eGt2bQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz38+mU9HpEHGN+B9fuJ+FtZo/ltip+as9ROFoG7tlfTML9DYYm
+	EorKEsOIeJ19myKnhdsVBEmuYsGXcSsvBYYMFFGER3pYMhpAVbRJ
+X-Gm-Gg: ASbGncsdDekzdLd055MdGjZMdWSKEWPFtHX+THzA2IKp9DO/1PqjyY0AmedmziL4L3u
+	SlfGIwkvSJisszoaZ/rSFEYJQ1VpDVnPKYGqR7i39BkKtzF4wB1YZzgInIEKN41PdJW0e+ZaUwH
+	zyYy3PjAPd8ZSAuH4rwwWwWcUpx1CPo0yHV09/lIMEXQwa7eqExRzgp7tkTNEfzdFNXppWk5Ba7
+	s4WBOUlzzyG8BVoptA6iqMqjLE83ny8/3YxeB+BzeZkmOXYKW5TcNu2/hYrjafoRX1o0fcbz7+2
+X-Google-Smtp-Source: AGHT+IFW+abQ1cQEgXYe1J9rz1r+lyp7l2EB8L6qp/dVlMkpxTmgrlpZcDxhRU9P2w93JlMBKtSxlA==
+X-Received: by 2002:a17:902:d2c7:b0:215:b18d:e1 with SMTP id d9443c01a7336-215bcfc2ab1mr152750215ad.24.1733364666591;
+        Wed, 04 Dec 2024 18:11:06 -0800 (PST)
+Received: from localhost.localdomain ([180.159.118.224])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f263b9sm2028915ad.226.2024.12.04.18.11.03
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 04 Dec 2024 18:11:06 -0800 (PST)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: paul@paul-moore.com,
+	keescook@chromium.org
+Cc: qiuxu.zhuo@intel.com,
+	rostedt@goodmis.org,
+	lkp@intel.com,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yafang shao <laoar.shao@gmail.com>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH v2] auditsc: Implement a workaround for a GCC bug triggered by task comm changes
+Date: Thu,  5 Dec 2024 10:11:00 +0800
+Message-Id: <20241205021100.86390-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20241203040350.4soyvaeqs75kjqoj@altlinux.org>
+Content-Transfer-Encoding: 8bit
 
-Oliver,
+From: Yafang shao <laoar.shao@gmail.com>
 
-On Tue, Dec 03, 2024 at 07:03:50AM +0300, Vitaly Chikunov wrote:
-> On Mon, Dec 02, 2024 at 05:19:54PM -0800, Oliver Upton wrote:
-> > On Tue, Dec 03, 2024 at 01:31:19AM +0300, Vitaly Chikunov wrote:
-> > > Marc,
-> > > 
-> > > On Mon, Dec 02, 2024 at 04:07:03PM +0000, Marc Zyngier wrote:
-> > > > On Mon, 02 Dec 2024 15:59:40 +0000,
-> > > > Vitaly Chikunov <vt@altlinux.org> wrote:
-> > > > > 
-> > > > > Marc,
-> > > > > 
-> > > > > On Mon, Dec 02, 2024 at 03:53:59PM +0000, Marc Zyngier wrote:
-> > > > > >
-> > > > > > What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
-> > > > > 
-> > > > > No, host is 6.6.60.
-> > > > 
-> > > > Right. I wouldn't be surprised if:
-> > > > 
-> > > > - this v6.6 kernel doesn't hide the MPAM feature as it should (and
-> > > >   that's proably something we should backport)
-> > > 
-> > > How to confirm this? Currently I cannot find any (case-insensitive)
-> > > "MPAM" files in /sys, nor mpam string in /proc/cpuinfo, nor MPAM strings
-> > > in `strace -v` (as it decodes some KVM ioctls) of qemu process.
-> > 
-> > If you can attach to the QEMU gdbstub of the VM, info registers will
-> > dump ~everything.
-> > 
-> > If the value of ID_AA64PFR0_EL1.MPAM (bits 43:40) is nonzero then the
-> > host KVM is erroneously advertising MPAM to the guest.
-> 
-> I don't find such register. There is what I get:
+A build failure has been reported with the following details:
 
-Thanks to ArmCpuInfo.efi I can confirm MPAM is advertised.
+   In file included from include/linux/string.h:390,
+                    from include/linux/bitmap.h:13,
+                    from include/linux/cpumask.h:12,
+                    from include/linux/smp.h:13,
+                    from include/linux/lockdep.h:14,
+                    from include/linux/spinlock.h:63,
+                    from include/linux/wait.h:9,
+                    from include/linux/wait_bit.h:8,
+                    from include/linux/fs.h:6,
+                    from kernel/auditsc.c:37:
+   In function 'sized_strscpy',
+       inlined from '__audit_ptrace' at kernel/auditsc.c:2732:2:
+>> include/linux/fortify-string.h:293:17: error: call to '__write_overflow' declared with attribute error: detected write beyond size of object (1st parameter)
+     293 |                 __write_overflow();
+         |                 ^~~~~~~~~~~~~~~~~~
+   In function 'sized_strscpy',
+       inlined from 'audit_signal_info_syscall' at kernel/auditsc.c:2759:3:
+>> include/linux/fortify-string.h:293:17: error: call to '__write_overflow' declared with attribute error: detected write beyond size of object (1st parameter)
+     293 |                 __write_overflow();
+         |                 ^~~~~~~~~~~~~~~~~~
 
-  Shell> ArmCpuInfo.efi
-  ID_AA64PFR0_EL1  = 0x1100010011111111
-  ...
-  PFR0  | MPAM         | 43:40 |  0001 | FEAT_MPAM v1.0 implemented.
+The issue appears to be a GCC bug, though the root cause remains
+unclear at this time. For now, let's implement a workaround.
 
-I prepared the kernel with Marc's patch (backport of 6685f5d572c22e10 to
-6.6) and am waiting for the admins to boot it, hopefully today or tomorrow.
+A bug report has also been filed with GCC [0].
 
-Thanks,
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117912 [0]
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410171420.1V00ICVG-lkp@intel.com/
+Reported-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Closes: https://lore.kernel.org/all/20241128182435.57a1ea6f@gandalf.local.home/
+Reported-by: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Closes: https://lore.kernel.org/all/CY8PR11MB71348E568DBDA576F17DAFF389362@CY8PR11MB7134.namprd11.prod.outlook.com/
+Originally-by: Kees Cook <kees@kernel.org>
+Link: https://lore.kernel.org/linux-hardening/202410171059.C2C395030@keescook/
+Signed-off-by: Yafang shao <laoar.shao@gmail.com>
+Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/auditsc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+v1->2: Add the link of the GCC bug report
+
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 279ba5c420a4..561d96affe9f 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2728,8 +2728,8 @@ void __audit_ptrace(struct task_struct *t)
+ 	context->target_auid = audit_get_loginuid(t);
+ 	context->target_uid = task_uid(t);
+ 	context->target_sessionid = audit_get_sessionid(t);
+-	security_task_getlsmprop_obj(t, &context->target_ref);
+ 	strscpy(context->target_comm, t->comm);
++	security_task_getlsmprop_obj(t, &context->target_ref);
+ }
+ 
+ /**
+@@ -2755,8 +2755,8 @@ int audit_signal_info_syscall(struct task_struct *t)
+ 		ctx->target_auid = audit_get_loginuid(t);
+ 		ctx->target_uid = t_uid;
+ 		ctx->target_sessionid = audit_get_sessionid(t);
+-		security_task_getlsmprop_obj(t, &ctx->target_ref);
+ 		strscpy(ctx->target_comm, t->comm);
++		security_task_getlsmprop_obj(t, &ctx->target_ref);
+ 		return 0;
+ 	}
+ 
+-- 
+2.43.5
 
 
