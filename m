@@ -1,392 +1,312 @@
-Return-Path: <linux-kernel+bounces-433473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B483A9E58DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:49:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4BE9E58DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:49:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8D1169807
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA85164BCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D408E21A44D;
-	Thu,  5 Dec 2024 14:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9FE21A421;
+	Thu,  5 Dec 2024 14:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qCXl/kdn"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JWI4XGo2"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90CB1B0F22;
-	Thu,  5 Dec 2024 14:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363D31B0F22
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 14:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733410142; cv=none; b=CzCSEriOFVntHxeZJGfjA+NoLudyYaQJt0jJknGxF0xQqJV3AfEggevgy/3l2HrvM/0hR4tQrirLuuwwnayFSYZV/M9h8zYEiiJpVBCw505FyRWRrKlrlDNmgFp/qQEMo+XUKgA4XmEUBUy7CSv/lskIyDsjdS1oSr0Zf6WDUBM=
+	t=1733410135; cv=none; b=afkNzGF+w2+KAkGwt98IxYy4mWEOjAkrALzVE2LcZhhVW1rTE+tX4hYpjvVlRNdIP+WrQvsl2sdMo9UzP6OmL9FpivjW+KkUJpFoV3kf4ctBhYbzOAnHQHR7HAcM0eRU0p6I8KblHpq2y5HeiBarH8axHbrIyhnoQpend9PFgSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733410142; c=relaxed/simple;
-	bh=Qv4zyOQrF9iQghhNt/KoN4bFDn5xZQIlmjYeDyZeSbA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sSYqza0DJRiiHDO9Hg0xX8t6z66N654MmbGa4nMtxgEh2fmLfgUrG0Ga0YTjrbabTTvv6V8M6kPmuxhZuQOrC0ovvjqHKdwOW8AHz7XmXMk6gNTh2X2cFsnyPm+C3O09n0A5WEbpOo3tFRxyCa2fmkReY5FjRXpg929NePFPoRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qCXl/kdn; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5554iX014551;
-	Thu, 5 Dec 2024 14:48:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=msSW/X
-	nJUyMrSC+OBhNgfdmUZjqQ3iW2zMsbZkiwUyY=; b=qCXl/kdnT/bYJgyyLOZEDj
-	N6RPpgS4qlkaFYdUlkxBureUo1OLs+ehA+BXRZd9vIeJ3pXLwAzUmQo9u3l8xoN/
-	+++vNUc5N9Ffz25L0kltUeC+16z/CMCDNLyuSxvgIe6TAnTdh8ufNKKvf5cTxLbf
-	4MXEBe0tjFK/N4QIYVGETNDfYiJ9ZGIqbLjsF03GxggnqcBGKJcpjQ0OuItS90kn
-	8XKecmNGwqEBimo3JqSepgDq7WYY2TgBSRO1CWM/ulZhmlvYcWm4HphxNJCMyOqr
-	wkboxSUMUp4Jp1KjFAvjmvtO1xvGZmFhuQDXfH3zzk/GpNg2CwQ4NZzYA6FF/9Mw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxww33-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 14:48:42 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B5Emg3O016124;
-	Thu, 5 Dec 2024 14:48:42 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxww2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 14:48:42 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5C6lJI005273;
-	Thu, 5 Dec 2024 14:48:41 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 438fr1taau-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 14:48:41 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5EmdTO32833804
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Dec 2024 14:48:39 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CFFBB20040;
-	Thu,  5 Dec 2024 14:48:39 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AFAC120043;
-	Thu,  5 Dec 2024 14:48:33 +0000 (GMT)
-Received: from [9.39.27.31] (unknown [9.39.27.31])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Dec 2024 14:48:32 +0000 (GMT)
-Message-ID: <543d376c-85a7-4628-a38e-52bc117258a5@linux.ibm.com>
-Date: Thu, 5 Dec 2024 20:18:28 +0530
+	s=arc-20240116; t=1733410135; c=relaxed/simple;
+	bh=N2SeMJpPGbddLhpyjmtwQUIsUgW6F2QSmzy0XUSPXfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qzb8lh6rEbt7pXQyz89ShjX6RJevbYgiG3GxYRUui0GinL0Rg/OdQOJoXQbUZOjs7mVGTvv0tqiC0GCPorw2BR9h1auaYF7NDF86GOPu4jq6Y78ISd6lhTThAn0FCnw2exirwghNVmnzAvN8SR70arxQE1EXLqcgSAj9tiZ2e4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JWI4XGo2; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46687f60b73so255311cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 06:48:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733410131; x=1734014931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rjTym21kMjXxfknSCULnhjE4yJ07J6pa/euFI3Nd5Gg=;
+        b=JWI4XGo2hAP6T6guy9LwltatqplHzRF6lMcVfuIaFma+YqHz3mGXKErGja1lMRnpD4
+         mb8fAxT/ZSBN1UUeZDflC2cRadAm3ZZotvS8c8MLqCqWDKoOBWXuzumsz/ZOjdJkOLdO
+         euLiUlXJLgJFo/UGpEf2tC6GBLKVTn/6BDPKSxXklraemkPXjvv3zjHuccXZMGsnGP/N
+         6pjgQ1iwkCEomnC3kw9UfFFX7Kebs/DLeKoio2bysqJ97yb3ctmw1jqqlt3ANPnsUMKg
+         2TY9HN8fePLWUbNDXTuN4JHdRivGcbiLDocIKgXWFA6b5Ly06uoIm4i2BOXZq1vQnBMw
+         JvoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733410131; x=1734014931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rjTym21kMjXxfknSCULnhjE4yJ07J6pa/euFI3Nd5Gg=;
+        b=wg7AmKQzCDWFbE53RoWt+B32epJqZvF0KX8uawbZU6+vabGm+JExVUa1PQ5hKfmdYc
+         RDkHQhdZns+pvPyZU3vFpkb/9HJ92ZKxNEXicEmiOxdUCbEtXmJ2xObYatVmSvy/g089
+         +HylYu4AixMERvFYzmHw6x9KyW77Kzkq1apDc/+beUDjEEj0Tbfo1J5oosz+OmUlhwbE
+         hR1rFcfoF2RTfLfRSJMZsWJ+nzfEeb5Sr5mbD4IGTgMRWHWjnNmYTl46hbMV/GlWL4M5
+         vQVUku6UxM2lHhvEbaRb+nbZ98m7yDgPYc010dwLBtTEFoFAFBYKNGhYrm8AuS8x2sBb
+         x3pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgy0kZxwU3ltFtroX5KIAVWTq6wTCvwCH42Z6GOL49wiuBx9qnQFkEqOpC9ICkMMMUujnhS1S1xBcjQKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlDYDnhdg4jk1/UnDU6WJHT3oLgZMvzd9O68kVTvRVLzueOrT2
+	j91+eT+/87SixJTSJwKfDY+8P89ILh6kajdcveOJDznO1+mW+/kox6lZH/Gp9uIRcX7IXX9d3Dr
+	+GfiluaIgWqntdvphmkGuwJQ3AUwKrzECN3/yxr3ziOZVt9Wz+nekmbF3Ow==
+X-Gm-Gg: ASbGncsOSvRfo2DT80cOi9uwDOlbafxJBK03dGDb8bpwidFsSmGKRdYIXOcW8NUfBkE
+	QpdXKMYMYc8E5nBMdIQ5s1lJCA1M/RW0=
+X-Google-Smtp-Source: AGHT+IEo/e8fIFYI1rnqNhQXA8pP4V80wB0CTsiZ1cwJ96wA3BSxRx75lRvtghC2skrlzdXGA7w5+tTiVNQv8JHMayw=
+X-Received: by 2002:a05:622a:5599:b0:466:8356:8b71 with SMTP id
+ d75a77b69052e-467298d94ebmr3190621cf.19.1733410130723; Thu, 05 Dec 2024
+ 06:48:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] sched/fair: introduce new scheduler group type
- group_parked
-To: Tobias Huschle <huschle@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, linux-s390@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20241204112149.25872-1-huschle@linux.ibm.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20241204112149.25872-1-huschle@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZG0OQFbJ6RTCPqqlVwM6XydZ6_HYbCJ0
-X-Proofpoint-GUID: bKbILWRgrvc6pJIxTQjr7e7AJtrQ9Z7v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- mlxscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
- phishscore=0 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050105
+References: <20241204075248.384215-1-hao.ge@linux.dev> <20241204083448.387862-1-hao.ge@linux.dev>
+ <CAJuCfpF5Yo3Bz1OUy=rfd5-0DRZsWSRaekR3Y-f5TRatdXWkVQ@mail.gmail.com>
+ <e5d6cb44-9a86-ee94-9210-d56acee483c4@linux.dev> <CAJuCfpFHEpFw61ZtqHzgYrpiHn1k86h2LwzZf+C4=sfpULY4TQ@mail.gmail.com>
+ <6dab626e-acee-9f4e-c97b-7a225882edff@linux.dev> <b2f45c47-37e0-c9cf-27ee-68408b2b2d4c@linux.dev>
+In-Reply-To: <b2f45c47-37e0-c9cf-27ee-68408b2b2d4c@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 5 Dec 2024 06:48:38 -0800
+Message-ID: <CAJuCfpF8ftPcd24y2L4C_37GDMC4iaDDh8SicwspwmVAkB=3fQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/alloc_tag: fix vm_module_tags_populate's KASAN
+ poisoning logic
+To: Hao Ge <hao.ge@linux.dev>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 4, 2024 at 7:20=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
+>
+> Hi Suren
+>
+>
+> On 12/5/24 10:14, Hao Ge wrote:
+> > Hi Suren
+> >
+> >
+> > On 12/5/24 03:33, Suren Baghdasaryan wrote:
+> >> On Wed, Dec 4, 2024 at 7:08=E2=80=AFAM Hao Ge <hao.ge@linux.dev> wrote=
+:
+> >>> Hi Suren
+> >>>
+> >>>
+> >>> Thank you for your review.
+> >>>
+> >>>
+> >>> On 12/4/24 22:39, Suren Baghdasaryan wrote:
+> >>>> On Wed, Dec 4, 2024 at 12:35=E2=80=AFAM Hao Ge <hao.ge@linux.dev> wr=
+ote:
+> >>>>> From: Hao Ge <gehao@kylinos.cn>
+> >>>>>
+> >>>>> After merge commit 233e89322cbe ("alloc_tag:
+> >>>>> fix module allocation tags populated area calculation"),
+> >>>>> We still encountered a KASAN bug.
+> >>>>>
+> >>>>> This is because we have only actually performed
+> >>>>> page allocation and address mapping here.
+> >>>>> we need to unpoisoned portions of underlying memory.
+> >>>>>
+> >>>>> Because we have a change in the size here,we need to
+> >>>>> re-annotate poisoned and unpoisoned portions of underlying memory
+> >>>>> according to the new size.
+> >>>>>
+> >>>>> Here is the log for KASAN:
+> >>>>>
+> >>>>> [    5.041171][    T1]
+> >>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>> [    5.042047][    T1] BUG: KASAN: vmalloc-out-of-bounds in
+> >>>>> move_module+0x2c0/0x708
+> >>>>> [    5.042723][    T1] Write of size 240 at addr ffff80007e510000
+> >>>>> by task systemd/1
+> >>>>> [    5.043412][    T1]
+> >>>>> [    5.043523][   T72] input: QEMU QEMU USB Tablet as
+> >>>>> /devices/pci0000:00/0000:00:01.1/0000:02:001
+> >>>>> [    5.043614][    T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Not
+> >>>>> tainted 6.13.0-rc1+ #28
+> >>>>> [    5.045560][    T1] Hardware name: QEMU KVM Virtual Machine,
+> >>>>> BIOS 0.0.0 02/06/2015
+> >>>>> [    5.046328][    T1] Call trace:
+> >>>>> [    5.046670][    T1]  show_stack+0x20/0x38 (C)
+> >>>>> [    5.047127][    T1]  dump_stack_lvl+0x80/0xf8
+> >>>>> [    5.047533][    T1]
+> >>>>> print_address_description.constprop.0+0x58/0x358
+> >>>>> [    5.048092][   T72] hid-generic 0003:0627:0001.0001:
+> >>>>> input,hidraw0: USB HID v0.01 Mouse [QEMU 0
+> >>>>> [    5.048126][    T1]  print_report+0xb0/0x280
+> >>>>> [    5.049682][    T1]  kasan_report+0xb8/0x108
+> >>>>> [    5.050170][    T1]  kasan_check_range+0xe8/0x190
+> >>>>> [    5.050685][    T1]  memcpy+0x58/0xa0
+> >>>>> [    5.051135][    T1]  move_module+0x2c0/0x708
+> >>>>> [    5.051586][    T1] layout_and_allocate.constprop.0+0x308/0x5b8
+> >>>>> [    5.052219][    T1]  load_module+0x134/0x16c8
+> >>>>> [    5.052671][    T1]  init_module_from_file+0xdc/0x138
+> >>>>> [    5.053193][    T1]  idempotent_init_module+0x344/0x600
+> >>>>> [    5.053742][    T1] __arm64_sys_finit_module+0xbc/0x150
+> >>>>> [    5.054289][    T1]  invoke_syscall+0xd4/0x258
+> >>>>> [    5.054749][    T1] el0_svc_common.constprop.0+0xb4/0x240
+> >>>>> [    5.055319][    T1]  do_el0_svc+0x48/0x68
+> >>>>> [    5.055743][    T1]  el0_svc+0x40/0xe0
+> >>>>> [    5.056142][    T1]  el0t_64_sync_handler+0x10c/0x138
+> >>>>> [    5.056658][    T1]  el0t_64_sync+0x1ac/0x1b0
+> >>>>>
+> >>>>> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags
+> >>>>> populated area calculation")
+> >>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> >>>> Thanks for the fix!
+> >>>>
+> >>>>> ---
+> >>>>> v2: Add comments to kasan_unpoison_vmalloc like other places.
+> >>>>>
+> >>>>> commit 233e89322cbe ("alloc_tag: fix module allocation
+> >>>>> tags populated area calculation") is currently in the
+> >>>>> mm-hotfixes-unstable branch, so this patch is
+> >>>>> developed based on the mm-hotfixes-unstable branch.
+> >>>>> ---
+> >>>>>    lib/alloc_tag.c | 13 +++++++++++++
+> >>>>>    1 file changed, 13 insertions(+)
+> >>>>>
+> >>>>> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> >>>>> index 4ee6caa6d2da..f885b3f3af0e 100644
+> >>>>> --- a/lib/alloc_tag.c
+> >>>>> +++ b/lib/alloc_tag.c
+> >>>>> @@ -421,7 +421,20 @@ static int vm_module_tags_populate(void)
+> >>>>> __free_page(next_page[i]);
+> >>>>>                           return -ENOMEM;
+> >>>>>                   }
+> >>>>> +
+> >>>>> +               kasan_poison_vmalloc((void *)module_tags.start_addr=
+,
+> >>>>> + vm_module_tags->nr_pages << PAGE_SHIFT);
+> >>>>> +
+> >>>>>                   vm_module_tags->nr_pages +=3D nr;
+> >>>>> +
+> >>>>> +               /*
+> >>>>> +                * Mark the pages as accessible, now that they are
+> >>>>> mapped.
+> >>>>> +                * With hardware tag-based KASAN, marking is
+> >>>>> skipped for
+> >>>>> +                * non-VM_ALLOC mappings, see
+> >>>>> __kasan_unpoison_vmalloc().
+> >>>>> +                */
+> >>>>> +               kasan_unpoison_vmalloc((void
+> >>>>> *)module_tags.start_addr,
+> >>>>> + vm_module_tags->nr_pages << PAGE_SHIFT,
+> >>>>> + KASAN_VMALLOC_PROT_NORMAL);
+> >>>> Instead of poisoning [module_tags.start_addr,
+> >>>> vm_module_tags->nr_pages], incrementing vm_module_tags->nr_pages and
+> >>>> the unpoisoning [module_tags.start_addr, vm_module_tags->nr_pages]
+> >>>> could we simply poisons the additional area like this:
+> >>>>
+> >>>>                   kasan_unpoison_vmalloc((void
+> >>>> *)module_tags.start_addr +
+> >>>> (vm_module_tags->nr_pages << PAGE_SHIFT),
+> >>>>                                          nr << PAGE_SHIFT,
+> >>>> KASAN_VMALLOC_PROT_NORMAL);
+> >>>>                  vm_module_tags->nr_pages +=3D nr;
+> >>>> ?
+> >>>
+> >>> I had considered making such modifications earlier.
+> >>>
+> >>> But considering the following situation,
+> >>>
+> >>> A module tags spans across the regions of [module_tags.start_addr,
+> >>> vm_module_tags->nr_pages] and [module_tags.start_addr +
+> >>> vm_module_tags->nr_pages, ...].
+> >>>
+> >>> It may result in false positives for out-of-bounds errors.
+> >> Sorry, maybe I'm missing something but I don't see why poisoning only
+> >> newly mapped area would lead to false positives. Could you please
+> >> clarify?
+> >
+> >
+> > Because KASAN may perceive the two as distinct address spaces, despite
+> > their addresses being contiguous.
+> >
+> > So, when a module tag spans across these two contiguous address
+> > spaces, KASAN may incorrectly consider it as an out-of-bounds access.
+> >
+> >
+> >> Also, if you do need to unpoison and then poison, using phys_end and
+> >> new_end would be better, like this:
+> >>
+> >> kasan_poison_vmalloc((void *)module_tags.start_addr,
+> >>                                        phys_end -
+> >> module_tags.start_addr)
+> >>
+> >> kasan_unpoison_vmalloc((void *)module_tags.start_addr,
+> >>                                            new_end -
+> >> module_tags.start_addr,
+> >> KASAN_VMALLOC_PROT_NORMAL);
+> >
+> > OK, the next version will include.
+>
+> After verification and consideration, I have found that this
+> modification may still pose problems.
+>
+> Because we haven't ensured that  new_end is page-aligned,
+>
+> So, we've only made the region from||module_tags.start_addr
+> tonew_endaccessible.
 
+Correct and the area [module_tags.start_addr, new_end] is the one that
+should be considered valid/accessible. We fault-in a physical page
+that includes new_end and might cover some area after that address but
+accessing the addresses above new_end is technically out-of-bounds
+(there are no valid codetags there).
 
-On 12/4/24 16:51, Tobias Huschle wrote:
-> Adding a new scheduler group type which allows to remove all tasks
-> from certain CPUs through load balancing can help in scenarios where
-> such CPUs are currently unfavorable to use, for example in a
-> virtualized environment.
-> 
-> Functionally, this works as intended. The question would be, if this
-> could be considered to be added and would be worth going forward
-> with. If so, which areas would need additional attention?
-> Some cases are referenced below.
-> 
-> The underlying concept and the approach of adding a new scheduler
-> group type were presented in the Sched MC of the 2024 LPC.
-> A short summary:
+>
+> Using this example, in reality,end equals 0xffff80007e5100f0:
+>
+> Write of size 240 at addr ffff80007e510000 by task systemd/1
+>
+> When we access other memory within the same page as0xffff80007e5100f0,
+> KASAN warnings will also be issued due to the lack of unpoisoned
+> portions in that memory.
 
-Thanks for working on this. Yes, we had two possible implementable version.
-1. Using new group type. (this RFC)
-2. Using group_misfit and use very low CPU capacity set using thermal framework.
-Those tricky issues were discussed at plumbers.
+Will you get a KASAN warning if you access memory below new_end?
+Warnings above that address I think should be considered as expected
+(even though we have a valid physical page there).
+Does that make sense?
 
-I agree using new group type simplifies from implementation perspective.
-So for the idea of using this,
-Acked-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-
-> 
-> Some architectures (e.g. s390) provide virtualization on a firmware
-> level. This implies, that Linux kernels running on such architectures
-> run on virtualized CPUs.
-> 
-> Like in other virtualized environments, the CPUs are most likely shared
-> with other guests on the hardware level. This implies, that Linux
-> kernels running in such an environment may encounter 'steal time'. In
-> other words, instead of being able to use all available time on a
-> physical CPU, some of said available time is 'stolen' by other guests.
-> 
-> This can cause side effects if a guest is interrupted at an unfavorable
-> point in time or if the guest is waiting for one of its other virtual
-> CPUs to perform certain actions while those are suspended in favour of
-> another guest.
-> 
-> Architectures, like arch/s390, address this issue by providing an
-> alternative classification for the CPUs seen by the Linux kernel.
-> 
-> The following example is arch/s390 specific:
-> In the default mode (horizontal CPU polarization), all CPUs are treated
-> equally and can be subject to steal time equally.
-> In the alternate mode (vertical CPU polarization), the underlying
-> firmware hypervisor assigns the CPUs, visible to the guest, different
-> types, depending on how many CPUs the guest is entitled to use. Said
-> entitlement is configured by assigning weights to all active guests.
-> The three CPU types are:
->      - vertical high   : On these CPUs, the guest has always highest
->                          priority over other guests. This means
->                          especially that if the guest executes tasks on
->                          these CPUs, it will encounter no steal time.
->      - vertical medium : These CPUs are meant to cover fractions of
->                          entitlement.
->      - vertical low    : These CPUs will have no priority when being
->                          scheduled. This implies especially, that while
->                          all other guests are using their full
->                          entitlement, these CPUs might not be ran for a
->                          significant amount of time.
-> 
-> As a consequence, using vertical lows while the underlying hypervisor
-> experiences a high load, driven by all defined guests, is to be avoided.
-> 
-> In order to consequently move tasks off of vertical lows, introduce a
-> new type of scheduler groups: group_parked.
-> Parked implies, that processes should be evacuated as fast as possible
-> from these CPUs. This implies that other CPUs should start pulling tasks
-> immediately, while the parked CPUs should refuse to pull any tasks
-> themselves.
-> Adding a group type beyond group_overloaded achieves the expected
-> behavior. By making its selection architecture dependent, it has
-> no effect on architectures which will not make use of that group type.
-> 
-> This approach works very well for many kinds of workloads. Tasks are
-> getting migrated back and forth in line with changing the parked
-> state of the involved CPUs.
-
-Likely there could more use-cases. It is basically supposed to be a lightweight
-mechanism to remove tasks out of CPUs instead of offline. Right?
-
-> 
-> There are a couple of issues and corner cases which need further
-> considerations:
-> - no_hz:        While the scheduler tick can and should still be disabled
->                  on idle CPUs, it should not be disabled on parked CPUs
->                  which run only one task, as that task will not be
-task running on Parked CPUs itself is concern right? unless it is pinned.
-
->                  scheduled away in time. Side effects and completeness
->                  need to be further investigated. One option might be to
->                  allow dynamic changes to tick_nohz_full_mask. It is also
->                  possible to handle this in exclusively fair.c, but that
->                  seems not to be the best environment to do so.
-> - pinned tasks: If a task is pinned to CPUs which are all parked, it will
->                  get moved to other CPUs. Like during CPU hotplug, the
->                  information about the tasks initial CPU mask gets lost.
-
-Could be a warning instead saying to user or fail?
-
-> - rt & dl:      Realtime and deadline scheduling require some additional
->                  attention.
-
-Ideal would be not run RT and DL there. But in these virtualized environment there is likely a number of CPUS
-such a number of Vertical High which is always available (in PowerPC we call these as entitled CPUs) and use those
-for RT or DL calculations of admission control?
-
-> - ext:          Probably affected as well. Needs some conceptional
->                  thoughts first.
-> - idle vs parked: It could be considered whether an idle parked CPU
->                  would contribute to the count of idle CPUs. It is
->                  usually preferable to utilize idle CPUs, but parked CPUs
->                  should not be used. So a scheduler group with many idle,
->                  but parked, CPUs, should not be the target for additional
->                  workload. At this point, some more thought needs to be
->                  spent to evaluate if it would be ok to not set the idle
->                  flag on parked CPUs.
-
-I think idle_cpus shouldn't include parked CPUs.
-
-> - optimization: It is probably possible to cut some corners. In order to
->                  avoid tampering with scheduler statistics too much, the
->                  actions based on the parkedness on the CPU are not always
->                  taken on the earliest possible occasion yet.
-> - raciness:     Right now, there are no synchronization efforts. It needs
->                  to be considered whether those might be necessary or if
->                  it is alright that the parked-state of a CPU might change
->                  during load-balancing.
-
-Next load balancing will take care of this instead right? Similar to CPU capacity can
-change on its own even during load balancing. next load balancer takes care.
-
-> 
-> Patches apply to tip:sched/core
-> 
-> The s390 patch serves as a simplified implementation example.
-> 
-> Tobias Huschle (2):
->    sched/fair: introduce new scheduler group type group_parked
->    s390/topology: Add initial implementation for selection of parked CPUs
-> 
->   arch/s390/include/asm/topology.h |   3 +
->   arch/s390/kernel/topology.c      |   5 ++
->   include/linux/sched/topology.h   |  20 +++++
->   kernel/sched/core.c              |  10 ++-
->   kernel/sched/fair.c              | 122 +++++++++++++++++++++++++------
->   5 files changed, 135 insertions(+), 25 deletions(-)
-> 
-
-tl;dr; debug patch and some testing results with mpstats logs.
-
-
-So I gave it a try with using a debugfs based hint to say which CPUs are parked.
-It is a hack to try it out. patch is below so one could try something similar is their archs
-and see if it help if they have a use case.
-
-Notes:
-1. Arch shouldn't set cpu_parked for all CPUs at boot. It causes panic.
-2. Workload gets unpacked to all CPUs when changing from 40 CPUs to 80 CPUs, but
-    doesn't get packed when changing the from 80 to 40 CPUs.
-
-===================================debug patch ======================================
-
-diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
-index 16bacfe8c7a2..ae7571f86773 100644
---- a/arch/powerpc/include/asm/topology.h
-+++ b/arch/powerpc/include/asm/topology.h
-@@ -140,6 +140,9 @@ static inline int cpu_to_coregroup_id(int cpu)
-  #define topology_core_cpumask(cpu)     (per_cpu(cpu_core_map, cpu))
-  #define topology_core_id(cpu)          (cpu_to_core_id(cpu))
-  
-+#define arch_cpu_parked cpu_parked
-+int cpu_parked(int cpu);
-+
-  #endif
-  #endif
-  
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 5ac7084eebc0..6715ea78388c 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -64,6 +64,7 @@
-  #include <asm/systemcfg.h>
-  
-  #include <trace/events/ipi.h>
-+#include <linux/debugfs.h>
-  
-  #ifdef DEBUG
-  #include <asm/udbg.h>
-@@ -77,6 +78,8 @@
-  static DEFINE_PER_CPU(int, cpu_state) = { 0 };
-  #endif
-  
-+static int vp_manual_hint = NR_CPUS;
-+
-  struct task_struct *secondary_current;
-  bool has_big_cores __ro_after_init;
-  bool coregroup_enabled __ro_after_init;
-@@ -1727,6 +1730,7 @@ static void __init build_sched_topology(void)
-         BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
-  
-         set_sched_topology(powerpc_topology);
-+       vp_manual_hint = num_present_cpus();
-  }
-  
-  void __init smp_cpus_done(unsigned int max_cpus)
-@@ -1807,4 +1811,43 @@ void __noreturn arch_cpu_idle_dead(void)
-         start_secondary_resume();
-  }
-  
-+int cpu_parked(int cpu) {
-+       if (cpu  >= vp_manual_hint)
-+               return true;
-+
-+       return false;
-+}
-+
-+static int pv_vp_manual_hint_set(void *data, u64 val)
-+{
-+       if (val == 0 || vp_manual_hint > num_present_cpus())
-+               vp_manual_hint = num_present_cpus();
-+
-+       if (val != vp_manual_hint) {
-+               vp_manual_hint = val;
-+       }
-+       return 0;
-+}
-+
-+static int pv_vp_manual_hint_get(void *data, u64 *val)
-+{
-+       *val = vp_manual_hint;
-+       return 0;
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(fops_pv_vp_manual_hint, pv_vp_manual_hint_get, pv_vp_manual_hint_set, "%llu\n");
-+
-+
-+static __init int paravirt_debugfs_init(void)
-+{
-+       if (is_shared_processor()) {
-+               debugfs_create_file("vp_manual_hint", 0600, arch_debugfs_dir, NULL, &fops_pv_vp_manual_hint);
-+       }
-+
-+       return 0;
-+}
-+
-+device_initcall(paravirt_debugfs_init)
-
-========================================= test logs 80 CPUs system ================================================
-
-set the hint as 40 and run 80 stress-ng.
-Average:      37   82.89    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   17.11
-Average:      38   82.81    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   17.19
-Average:      39   82.98    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   17.02
-Average:      40    0.00    0.00    0.00    0.00    0.00    2.42    0.08    0.00    0.00   97.50
-Average:      41    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:      42    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-Set the hint as 20 and run 80 stress-ng
-Average:      18   93.54    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    6.46
-Average:      19   93.54    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    6.46
-Average:      20    0.00    0.00    0.00    0.00    0.00    1.14    0.00    0.00    0.00   98.86
-Average:      21    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-
-Set the hint as 40 initially and set to 80 midway.
-Average:      38   94.52    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    5.48
-Average:      39   94.53    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    5.47
-Average:      40   42.03    0.00    0.00    0.00    0.00    1.31    0.08    0.00    0.00   56.59
-Average:      41   43.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   57.00
-
-Set the hint as 80 initially and set to 40 midway -- *not working*
-Average:      38   95.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.73
-Average:      39   95.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.73
-Average:      40   95.24    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.76
-Average:      41   95.25    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.75
+>
+> Based on that, I would suggest sticking with the V2 version.
+>
+>
+> Thanks
+>
+> Best Regards
+>
+> Hao
+>
+> >
+> >
+> > Thanks
+> >
+> > Best regards
+> >
+> > Hao
+> >
+> >
+> >>>
+> >>>>>           }
+> >>>>>
+> >>>>>           return 0;
+> >>>>> --
+> >>>>> 2.25.1
+> >>>>>
 
