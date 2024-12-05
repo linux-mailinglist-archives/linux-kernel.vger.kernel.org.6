@@ -1,166 +1,154 @@
-Return-Path: <linux-kernel+bounces-432635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539D89E4DFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E419E4E01
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63F21881740
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE4B1881755
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08C11ABEB0;
-	Thu,  5 Dec 2024 07:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9381AC8A6;
+	Thu,  5 Dec 2024 07:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NsO9kCsX"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uo9d5HUd"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA7A7E0FF
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E602F56
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733382586; cv=none; b=NVD554hwOkHkj7W9W3/an//yTUMrjRYbmBNAuD1TB/dOHaQaZjoD7w8l8RhFqlbDxL092/oDGbMxnJC3D7GWZIscFi5rmd4Tr3VKw+vqqCW3gatu5OjVT3PqvosKZmzp1xRlc4eWNjqFaDPkQF5Ih7ixEMtENZrG304EjDFZoCc=
+	t=1733382604; cv=none; b=u2jk8cEyDoshgz4/qOT6/f4YmeaY8dp0z4SSCX7vRZkqKgpGJuFc/bvoI+swEdm7GVh2SXsE6jxbvz8C3N3yNjd35oQ3f66BDL0WYyOMAb733qhqdAVvLEr8fdFRoZblUYPblSB1tMIimORVnCRVT5ltbbESAGuhuORAkStEDGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733382586; c=relaxed/simple;
-	bh=grkbsRH6D4ZYbAuOb1wmAAyXnV7iDlG0b6TewkJIGas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A9godCG7hLSBFpr5BDXbTwG/aQSO8GpfogPyXyzY4atpxVqOX8pqyRC55IOPuhwNpRS9sOmGrX3HFzD9xgYR5cWrxSUFyKW6Jz8Kbwbe9uypIfBDpHrhA/GNdxsvXsAG5IxPbMqBvd4inYnCbv0axxUiZsG79G8WX8LI8BLINFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NsO9kCsX; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f46d5d1ad5so494791a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:09:44 -0800 (PST)
+	s=arc-20240116; t=1733382604; c=relaxed/simple;
+	bh=m9PAgqLMEdONGInteiZwMJWeLAyp9JtTMil42/JBwso=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V19dlzXWxDvoxpoEgByTcfnbsNSRsqX+srBuuJOPb+Q7F5s1qNtbofz28tPOH/e77kBCSko+bRUL+Ue4PTASVxGtMrm8o4MW4R1gKGf1YslGmw9zx2KgWF+fvCP7F0aSjvBhvNVegoEhdfd7N0c0aJdoFdtfzzU4BTKDb296YpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uo9d5HUd; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a7bc2d7608so65225ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:10:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733382584; x=1733987384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SHVMmQ/KzbcoO5ieQjC56n0uvyFf9M/Mj/sBzX0iX8s=;
-        b=NsO9kCsXqWNmeiqUXxTVF1KOXwcQtipmoak50kQZQMmK89e+Y3q7VfDOcOrUJb215S
-         30qmslclFKHLfVF0YXJ4r3429pPKL7d8uSaAXoJ5Yjw5p5liTy3VW8hQ/pxYlqYb9S4T
-         TfFaNRfkjmVRSfy/6sMdyAVzbFWBAyvcM7Ucw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733382584; x=1733987384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733382602; x=1733987402; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SHVMmQ/KzbcoO5ieQjC56n0uvyFf9M/Mj/sBzX0iX8s=;
-        b=UGxUD+s22PUC40oWg5ZmOKHifQBH5Xd+FnNlIwEoIE76vBn2Z5laYEFtFCpXFK4AiK
-         HUvvMkmESzMU911ASoH94FMe8KvvWW8CuWrSEKpzcrf1/V3mKlRMctah3KoeePfMgAsj
-         tzx0ahwMfBxGwtHd6L2v91LqxV1iKJkS0/oaYdWVX5GopBCPYDpB3EJGhVa730wXl71T
-         Y/LvwREUNtihY5/ugq047q4s6Xzmf4OT5zWC+OO+aEOq7yD7sWLua9o8RW8RbO3Eo4TU
-         i9/8YMnJfZ5mU81xS7mUXDWlnqdStTtImmCny7NWjaZSN4sOt2iu0Rtc7bDKMh//6U8b
-         g23w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6lf+qXpndF/K8QGgTR6NaAYuCXFJAbztHkZwLa7puaSV6/swwUJQVRV4+4DONI8Gl7qPIRmyjmbIgSQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGehDwwoE5MV3qy0ubuUbN63atlat9vu5nvMjIHQsXsx7QzUf4
-	kh9LGQsa473YiaH4kqMJU6U1XTRlX/6kBhAMycA6NBCX0+t6W14lhA6ZA6ctKA==
-X-Gm-Gg: ASbGnctCr72kr+eCKlq2eZ0R77SOJMAsre2M3yz8SgKV1HBHRDw2cm60vf4TY37k7BC
-	NmUu1t+bNk2XznXz4mUyh/d8tzo/Ab+O5ckLv/Q5vMuQauPkwNvKJ3xVzau254+U+eR/xQKWz+m
-	N14MJBy2S+qfNkTkgUrGBjsdLquLa/5J5LVTRxkII1BkUerzT5APGBjddPc/EK9MZWsOLQ19g9Y
-	tuuNjhOrvdNM1hHL4AjI2olFJIQb/9/GDOKcFVJykGSeLD1e2zn
-X-Google-Smtp-Source: AGHT+IG6kRB6dDFmeXz1ne2Hv+akOd+C09aPhvGPo0ufEzIuAUB/OWr1JBmHkYw/DqGSl8lg7DDPHQ==
-X-Received: by 2002:a05:6a21:7e89:b0:1e1:6db4:8a29 with SMTP id adf61e73a8af0-1e16db48a6cmr8797451637.41.1733382584222;
-        Wed, 04 Dec 2024 23:09:44 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:84f:5a2a:8b5d:f44f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156e1e20sm652384a12.32.2024.12.04.23.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 23:09:43 -0800 (PST)
-Date: Thu, 5 Dec 2024 16:09:39 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Desheng Wu <deshengwu@tencent.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] zram: fix uninitialized ZRAM not releasing backing
- device
-Message-ID: <20241205070939.GF16709@google.com>
-References: <20241204180224.31069-1-ryncsn@gmail.com>
- <20241204180224.31069-3-ryncsn@gmail.com>
+        bh=RPDL9SY/CBHi33tr/kgPHOHPuPtSjT4Zve0V9QYVUns=;
+        b=Uo9d5HUdM2Jwlp2Jwa90/00PTltNjViX3HKNiq/XXKqHg3qk2Ms/bzFQu0rOSUjR6X
+         1Z/URjpSyYGQCTaDE/7vSr34zJ9f8EYC13MugLblnGHRDM78oUCwnf8WF/QGiz6pgxXN
+         Gx9guUVAcua5lh2scu0vFdSqabmHmgxBrdMvrVmQ1iqQcqLkELuLRiYLb36zzlbDPuAv
+         HWoD/5Uxq9K1ngrIc07tF5ijI2sJymYsk1jSBnYH9eyXg71bJs02Bjq3HhzQU2j/rQU4
+         vW6Xs1uctGfs+jBC59gsKbuui3uU1b//bLMsmbJ8skjt8gyijJ18FAucwPKq7poKk4Lc
+         en9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733382602; x=1733987402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RPDL9SY/CBHi33tr/kgPHOHPuPtSjT4Zve0V9QYVUns=;
+        b=L2M16uQuPth28tVo0IdzMcPf6SSPln0GCjHMUWwUQL4XdRUwasfCCvWw9l4Ud5N2iM
+         rKjke+BlZA5yG7oYlXnQwkHTffs8mF3IPTR5BomexfSCH8s1rkUtRVGKESsKlUiB09Ia
+         I+tEAMtcyo8d0izWKmlg2yxSy3aDiC4WrtBAhRTLYZ1amGcFb6iOWziKv/BLpe24j+Vy
+         zJiIbhx7lA53l+LFP2GEcd2BhXUKEYj3iwV3szp/nQoMB9EZn+TmLXaDw9mH7TBI1dtb
+         GGHhpODhlwI4krlk94UUkYpHELM53Zi2ptODvMr5336zM8FjV4BdNvip0WGTB2zm4dN+
+         Awkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFsPh512GNTme7KgvOa6enOdBvHhx2R6SH7ZWMaZA9Gwq78ffd6rufCmSOr+sGt0d6zaAIad4aOaGN6Qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSoVjciRlf9Tqw+XrkLgT9HugKrusgwpPabP/1zXQz8ymYlS0H
+	C3uR8J49+Kp9kBnxu8hcZaO9GFNu/yAGZSvrU3I7Df3ePmhKZo48pXopBJJ1FibUgUceiOso/n/
+	xtT5WyWXjrQz5SIwJFqhiDbXUMnfYE15AFjde
+X-Gm-Gg: ASbGncsJQX6EVd38oE4/w8hWxO0P4I6qxK8508/AcMAzsoUoou+UnZigHpI7LgkME53
+	1QSPppnovuiB9JEBbUoj6pBvXHu0ylQoJ
+X-Google-Smtp-Source: AGHT+IECZqE5fteXnXhm7vixb8m+w0qLbQKrsGI/zvrm/ngsLjVg0yiBWZCYVxgp2gk/sSWgzMEK1Gc+/gr5yc7ZgNU=
+X-Received: by 2002:a05:6e02:3710:b0:3a5:e506:162b with SMTP id
+ e9e14a558f8ab-3a80933eb2emr1476435ab.11.1733382601610; Wed, 04 Dec 2024
+ 23:10:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204180224.31069-3-ryncsn@gmail.com>
+References: <20241205022305.158202-1-irogers@google.com> <Z1E-WHWSPAezVF4f@google.com>
+ <CAP-5=fVPw5wJtVR0fxU-7drXg34vNrBsEzurfcLLvC+wFPMAAg@mail.gmail.com>
+In-Reply-To: <CAP-5=fVPw5wJtVR0fxU-7drXg34vNrBsEzurfcLLvC+wFPMAAg@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 4 Dec 2024 23:09:50 -0800
+Message-ID: <CAP-5=fV6s0=X-+8i2+1O_ZKERTL8+S9S-nyZC8rJPNU_nQpbyg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf test expr: Fix system_tsc_freq for only x86
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, 
+	kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com, hbathini@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (24/12/05 02:02), Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
-> 
-> Setting backing device is done before ZRAM initialization.
-> If we set the backing device, then remove the ZRAM module without
-> initializing the device, the backing device reference will be leaked
-> and the device will be hold forever.
-> 
-> Fix this by always check and release the backing device when resetting
-> or removing ZRAM.
-> 
-> Fixes: 013bf95a83ec ("zram: add interface to specif backing device")
-> Reported-by: Desheng Wu <deshengwu@tencent.com>
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/block/zram/zram_drv.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index dd48df5b97c8..dfe9a994e437 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -2335,6 +2335,9 @@ static void zram_reset_device(struct zram *zram)
->  	zram->limit_pages = 0;
->  
->  	if (!init_done(zram)) {
-> +		/* Backing device could be set before ZRAM initialization. */
-> +		reset_bdev(zram);
-> +
->  		up_write(&zram->init_lock);
->  		return;
->  	}
-> -- 
+On Wed, Dec 4, 2024 at 10:33=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Wed, Dec 4, 2024 at 9:47=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+> >
+> > Hi Ian,
+> >
+> > On Wed, Dec 04, 2024 at 06:23:05PM -0800, Ian Rogers wrote:
+> > > The refactoring of tool PMU events to have a PMU then adding the expr
+> > > literals to the tool PMU made it so that the literal system_tsc_freq
+> > > was only supported on x86. Update the test expectations to match -
+> > > namely the parsing is x86 specific and only yields a non-zero value o=
+n
+> > > Intel.
+> > >
+> > > Fixes: 609aa2667f67 ("perf tool_pmu: Switch to standard pmu functions=
+ and json descriptions")
+> > > Reported-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> > > Closes: https://lore.kernel.org/linux-perf-users/20241022140156.98854=
+-1-atrajeev@linux.vnet.ibm.com/
+> > > Co-developed-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> >
+> > It failed on my VM.
+> >
+> >   root@arm64-vm:~/build# ./perf test -v 7
+> >   --- start ---
+> >   test child forked, pid 2096
+> >   Using CPUID 0x00000000000f0510
+> >   division by zero
+> >   syntax error
+> >   Unrecognized literal '#system_tsc_freq'FAILED tests/expr.c:253 #syste=
+m_tsc_freq =3D=3D 0
+> >   ---- end(-1) ----
+> >     7: Simple expression parser                                        =
+: FAILED!
+>
+> I'll need to check this. The test is looking for parsing failures, so
+> it's confusing to me expr__parse is returning 0. I was testing on x86
+> but disabling the literal in the tool PMU.
 
-So here I think we better remove that if entirely and always reset
-the device.  Something like this (untested):
+Hmm.. perhaps you had a similar issue to me and that b4 silently
+failed as git user.email/user.name weren't configured? When I test on
+a raspberry pi 5:
+```
+$ uname -a
+Linux raspberrypi 6.6.51+rpt-rpi-2712 #1 SMP PREEMPT Debian
+1:6.6.51-1+rpt3 (2024-10-08) aarch64 GNU/Linux
+$ git log -1 --oneline
+94733a0e50fd (HEAD -> ptn-expr-test) perf test expr: Fix
+system_tsc_freq for only x86
+$ /tmp/perf/perf test expr -v
+Couldn't bump rlimit(MEMLOCK), failures may take place when creating
+BPF maps, etc
+  7: Simple expression parser                                        : Ok
+```
 
----
-
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 0ca6d55c9917..8773b12afc9d 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1438,12 +1438,16 @@ static void zram_meta_free(struct zram *zram, u64 disksize)
- 	size_t num_pages = disksize >> PAGE_SHIFT;
- 	size_t index;
- 
-+	if (!zram->table)
-+		return;
-+
- 	/* Free all pages that are still in this zram device */
- 	for (index = 0; index < num_pages; index++)
- 		zram_free_page(zram, index);
- 
- 	zs_destroy_pool(zram->mem_pool);
- 	vfree(zram->table);
-+	zram->table = NULL;
- }
- 
- static bool zram_meta_alloc(struct zram *zram, u64 disksize)
-@@ -2327,12 +2331,6 @@ static void zram_reset_device(struct zram *zram)
- 	down_write(&zram->init_lock);
- 
- 	zram->limit_pages = 0;
--
--	if (!init_done(zram)) {
--		up_write(&zram->init_lock);
--		return;
--	}
--
- 	set_capacity_and_notify(zram->disk, 0);
- 	part_stat_set_all(zram->disk->part0, 0);
- 
+Thanks,
+Ian
 
