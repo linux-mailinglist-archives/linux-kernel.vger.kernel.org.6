@@ -1,274 +1,171 @@
-Return-Path: <linux-kernel+bounces-433165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9D29E54AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:55:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6F79E54AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 236771882C3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E062E165BC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14452144C7;
-	Thu,  5 Dec 2024 11:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746922144CA;
+	Thu,  5 Dec 2024 11:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anj5zIvK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RJnDHd7k"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324482144A9;
-	Thu,  5 Dec 2024 11:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BFF2144B4;
+	Thu,  5 Dec 2024 11:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733399722; cv=none; b=q3JO4H669lOJ4LxYFBErKrUIDMbHc82J8OaLaGcIgIEolqh3P/mjm7zO2ii/xjmu9W4DfTtQQ9NEXILdl53v5d7KOXxRHlqQ8ffOV7Gz6omlpMRhXGlrg0yJ9ZIErAl56JYxSzf0ESqObBVDEfjsMjnNkPElv9u2GbIndoV9YEY=
+	t=1733399735; cv=none; b=fMaLUsqGUoAUr52jnQl7wW6Vd02hMTtDr6vqc6U12QJKdzgpncmQJVxM1F5Y2AEVhXt1aJRnI7Qk474pqNwHllfYO51llBnUVJkUqcvsLS1CQxm6zauIcA+S/9xgzeuMHsWmdTtS5dEuUaXlj5epplpLq0R5Prz8Iah1nZPDVg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733399722; c=relaxed/simple;
-	bh=nH8fWMK/VZGDFlBMqiqx0/8P7fZRUuO9WBFNE47C5qI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ncci2P5GA6WssAYJcA0QzgCh0ztsA5s9FOHEDbM/uwGkC2+kkQQyhF456JmoLI+8KamduC59emczCXeD6WlVbNiCWNMJCWhCGsPRanWdtzMS3w6koFjJNNvLZWR41BKDOTqsCDmQr42DLigZMcRcj7O0AUa6b9crKbMlGSdl2oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anj5zIvK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB323C4AF09;
-	Thu,  5 Dec 2024 11:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733399721;
-	bh=nH8fWMK/VZGDFlBMqiqx0/8P7fZRUuO9WBFNE47C5qI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=anj5zIvKlf0vHMIkia5KoWq5OzN7O2+cF51eEu5DeEF2uKrTk+u2Q6f2R2z2OW8ND
-	 3AxbRW4JpuKbagxAiPoZxjMBXGVwZC5ivWQ+5kXVakMPDeJDbrLTXdm1ZS5VpOEMSN
-	 cJzEHm5cJKbqcadNOtZf0ziokFyB/XmISgRneoJepbJDan07C/hVB3Dw+U6BhffEVg
-	 xj6gPZjBcaFsQIzvwIp5MNe8tRGvpYnXvVW4DTJm3qzvZ8gdp2+YYgy09chInkBpTr
-	 hI50UM/aVuGrZ/CmbL3jklGkqUn+XOa/w6DyjgJp0DBspti75nVY35m1exCPG60bGw
-	 VwG7XSW/o8tBg==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-29e806faa88so444257fac.3;
-        Thu, 05 Dec 2024 03:55:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU85cZe05le5BFTMU2uRJrDXX7XfxJ+MlzeDi2rilQNY7nEPYMAC16DRGQcA3pzk8nkB55rM53SV5V6+qE=@vger.kernel.org, AJvYcCX3pPKzaRd2SmhDv621Y2K8hNclvQqE0CUlqoTBY4BT+yNo8QRSRW0YtQVoj1CWcDmtbyRqwY9JAwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDagWd5Oy9+eqfKQVoalgimoWJZWM2yiaw+X03Kcvfj8vAGSfT
-	6WqlD3gHEIiH5tHOKtgsrkYdhEUKDBJ1n/8ZcI9avIzYb/+eEAr1dSRXpa1dPFuh6WGfpPMhPWD
-	y2GWPiJ3mcdfixc8We+mH/NZeiaQ=
-X-Google-Smtp-Source: AGHT+IEqZRrzYgPPQ8nocKRT+iIYaHatFl4Q+kymLwND83PToVpJ78Z6l8jQBUSINcPRCBkE7wqUty8KCSga2TsoK1Y=
-X-Received: by 2002:a05:6870:5687:b0:29e:6394:fd4a with SMTP id
- 586e51a60fabf-29e9b0931e9mr4893961fac.2.1733399721051; Thu, 05 Dec 2024
- 03:55:21 -0800 (PST)
+	s=arc-20240116; t=1733399735; c=relaxed/simple;
+	bh=NfsOyPvwo7r/+S4EQ6TEUevE9QLwFJxg+vHXYxcwVuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSV0hWDIaj0C2mKklSNXoCvPdH5UGQZDl8SU57z9SIeAvYrnlzINJtluZ2gKZIXp3opAmNrXetJIoAymXlMK6g8hdQobaWI4DnobpdvjEpCyvc2lY8PCzLmBmV9h5fC1tMZHivEm01b+TfAZI51+B89I7vkS8qxtkUq0kdlb4L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RJnDHd7k; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B478B40E0287;
+	Thu,  5 Dec 2024 11:55:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id o4O7DtP6EmAo; Thu,  5 Dec 2024 11:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733399725; bh=GDBnJl4+Qj2fE0klOae9WTHpDkooZgSl/C7794+jx8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RJnDHd7kUPP2uknLR0P0B0FVFYqIlB/gts8kG5K4n+hq7zZ1HVO9nryS66dvRsT2M
+	 sAdI0c5En6f5m/x+rLs770tnY8SzTLRIR765g2swK2V/OiwXSBFdyRsB16wG5kHMA3
+	 rlSddSNBUMAGyLAAWnJaRMYilHayvVS/QjGKyTCTrCpkXV7skiGqDDedrTyEjx5OQN
+	 kGtE+6FP0zcrPNZl1zC22RO8v3yjAY5QnjqH9XDHOVYP33C3xqzw9fZkPSSdkx0jIM
+	 wGQ2DQjZFZWJZ8uxocRte27Ygy9kMHvkXtoobeNsCgO7+a0hig4pUC+hmJgrIQIxGS
+	 ZIa06LTgpAV4qlFjjJdBj//Ob0rbnuVcevxwEF7AXWyMVEGbhwpVjaCrbRHUxpkxuc
+	 NvfwlNlLK7Od80eVyMA51u0ZdPjSn98YXHed7v8jYY/1+T5FqjNRlzIr4kbqaJDJz/
+	 zQ6VWE5Jzk7hr57x1a57CDbC+KSVt8N2G84LtFYzjkbCk5i4pgI1rRehjqK3trnxfu
+	 jFspHpqOr73UvHv5UA/R0J9gcR4xCygslggUon94N1qH/808nQWCSY0i5qLIVmUId/
+	 UdWz0W3AdfV8Q+fVp0YwG57qBxgixV3p/jOEm+pp0IBUN4MO0HOdBZS/BxMf3bEPpi
+	 h/93V7is35Bckr8laS/rXZ1w=
+Received: from zn.tnic (pd953008e.dip0.t-ipconnect.de [217.83.0.142])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6EB1A40E015F;
+	Thu,  5 Dec 2024 11:55:14 +0000 (UTC)
+Date: Thu, 5 Dec 2024 12:55:13 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v15 03/13] x86/sev: Add Secure TSC support for SNP guests
+Message-ID: <20241205110455.GCZ1GI1_vv5EIMJwXl@fat_crate.local>
+References: <20241203090045.942078-1-nikunj@amd.com>
+ <20241203090045.942078-4-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <08f3bd66d7fc8e218bb6958777f342786b2c3705.1731554471.git.len.brown@intel.com>
-In-Reply-To: <08f3bd66d7fc8e218bb6958777f342786b2c3705.1731554471.git.len.brown@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 5 Dec 2024 12:55:08 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com>
-Message-ID: <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH] PM: sleep: Ignore device driver suspend()
- callback return values
-To: Len Brown <lenb@kernel.org>
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Alan Stern <stern@rowland.harvard.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241203090045.942078-4-nikunj@amd.com>
 
-Expanded CC list.
+On Tue, Dec 03, 2024 at 02:30:35PM +0530, Nikunj A Dadhania wrote:
+> Add support for Secure TSC in SNP-enabled guests. Secure TSC allows guests
+> to securely use RDTSC/RDTSCP instructions, ensuring that the parameters
+> used cannot be altered by the hypervisor once the guest is launched.
+> 
+> Secure TSC-enabled guests need to query TSC information from the AMD
+> Security Processor. This communication channel is encrypted between the AMD
+> Security Processor and the guest, with the hypervisor acting merely as a
+> conduit to deliver the guest messages to the AMD Security Processor. Each
+> message is protected with AEAD (AES-256 GCM).
+> 
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+> Tested-by: Peter Gonda <pgonda@google.com>
 
-On Thu, Nov 14, 2024 at 4:23=E2=80=AFAM Len Brown <lenb@kernel.org> wrote:
->
-> From: Len Brown <len.brown@intel.com>
->
-> Drivers commonly return non-zero values from their suspend
-> callbacks due to transient errors, not realizing that doing so
-> aborts system-wide suspend.
->
-> Log, but do not abort system suspend on non-zero return values
-> from driver's .suspend/.suspend_noirq/.suspend_late callbacks.
->
-> Both before and after this patch, the correct method for a
-> device driver to abort system-wide suspend is to invoke
-> pm_system_wakeup() during the suspend flow.
->
-> Legacy behaviour can be restored by adding this line to your .config:
-> CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT=3Dy
->
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> ---
->  Documentation/power/driver_api.rst | 25 +++++++++++++++++++++++++
->  Documentation/power/index.rst      |  1 +
->  drivers/base/power/main.c          | 25 ++++++++++++++++++-------
->  kernel/power/Kconfig               | 17 +++++++++++++++++
->  4 files changed, 61 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/power/driver_api.rst
->
-> diff --git a/Documentation/power/driver_api.rst b/Documentation/power/dri=
-ver_api.rst
-> new file mode 100644
-> index 000000000000..b9a46a17f39b
-> --- /dev/null
-> +++ b/Documentation/power/driver_api.rst
-> @@ -0,0 +1,25 @@
-> +.. SPDX-License-Identifier: GPL-2.0+
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Driver Suspend API
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +
-> +1. How Can A driver abort system suspend?
-> +-----------------------------------------
-> +
-> +Any driver can abort system-wide  by invoking pm_system_wakeup()
-> +during the suspend flow.
-> +
-> +ie. from the drivers suspend callbacks:
-> + .suspend()
-> + .suspend_noirq()
-> + .suspend_late()
-> +
-> +Alternatively, if CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT=3Dy is present i=
-n .config,
-> +then any non-zero return value from any device drivers callback:
-> + .suspend()
-> + .suspend_noirq()
-> + .suspend_late()
-> +will abort the system-wide suspend flow.
-> +Note that CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT=3Dn, by default.
-> diff --git a/Documentation/power/index.rst b/Documentation/power/index.rs=
-t
-> index a0f5244fb427..f655662a9c15 100644
-> --- a/Documentation/power/index.rst
-> +++ b/Documentation/power/index.rst
-> @@ -7,6 +7,7 @@ Power Management
->  .. toctree::
->      :maxdepth: 1
->
-> +    driver_api
->      apm-acpi
->      basic-pm-debugging
->      charger-manager
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 4a67e83300e1..1b4ab73112e4 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -1244,7 +1244,6 @@ static int device_suspend_noirq(struct device *dev,=
- pm_message_t state, bool asy
->  Run:
->         error =3D dpm_run_callback(callback, dev, state, info);
->         if (error) {
-> -               async_error =3D error;
->                 dpm_save_failed_dev(dev_name(dev));
->                 pm_dev_err(dev, state, async ? " async noirq" : " noirq",=
- error);
->                 goto Complete;
-> @@ -1270,7 +1269,12 @@ static int device_suspend_noirq(struct device *dev=
-, pm_message_t state, bool asy
->  Complete:
->         complete_all(&dev->power.completion);
->         TRACE_SUSPEND(error);
-> -       return error;
-> +
-> +       if (IS_ENABLED(CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT)) {
-> +               async_error =3D error;
-> +               return error;
-> +       }
-> +       return 0;
->  }
->
->  static void async_suspend_noirq(void *data, async_cookie_t cookie)
-> @@ -1424,7 +1428,6 @@ static int device_suspend_late(struct device *dev, =
-pm_message_t state, bool asyn
->  Run:
->         error =3D dpm_run_callback(callback, dev, state, info);
->         if (error) {
-> -               async_error =3D error;
->                 dpm_save_failed_dev(dev_name(dev));
->                 pm_dev_err(dev, state, async ? " async late" : " late", e=
-rror);
->                 goto Complete;
-> @@ -1437,7 +1440,12 @@ static int device_suspend_late(struct device *dev,=
- pm_message_t state, bool asyn
->  Complete:
->         TRACE_SUSPEND(error);
->         complete_all(&dev->power.completion);
-> -       return error;
-> +
-> +       if (IS_ENABLED(CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT)) {
-> +               async_error =3D error;
-> +               return error;
-> +       }
-> +       return 0;
->  }
->
->  static void async_suspend_late(void *data, async_cookie_t cookie)
-> @@ -1681,7 +1689,7 @@ static int device_suspend(struct device *dev, pm_me=
-ssage_t state, bool async)
->         error =3D dpm_run_callback(callback, dev, state, info);
->
->   End:
-> -       if (!error) {
-> +       if (!error || !IS_ENABLED(CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT))=
- {
->                 dev->power.is_suspended =3D true;
->                 if (device_may_wakeup(dev))
->                         dev->power.wakeup_path =3D true;
-> @@ -1695,14 +1703,17 @@ static int device_suspend(struct device *dev, pm_=
-message_t state, bool async)
->
->   Complete:
->         if (error) {
-> -               async_error =3D error;
->                 dpm_save_failed_dev(dev_name(dev));
->                 pm_dev_err(dev, state, async ? " async" : "", error);
->         }
->
->         complete_all(&dev->power.completion);
->         TRACE_SUSPEND(error);
-> -       return error;
-> +       if (IS_ENABLED(CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT)) {
-> +               async_error =3D error;
-> +               return error;
-> +       }
-> +       return 0;
->  }
->
->  static void async_suspend(void *data, async_cookie_t cookie)
-> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> index afce8130d8b9..db120bba0826 100644
-> --- a/kernel/power/Kconfig
-> +++ b/kernel/power/Kconfig
-> @@ -141,6 +141,23 @@ config PM_SLEEP
->         depends on SUSPEND || HIBERNATE_CALLBACKS
->         select PM
->
-> +config PM_SLEEP_LEGACY_CALLBACK_ABORT
-> +       bool "Enable legacy callback abort via return value"
-> +       depends on PM_SLEEP
-> +       help
-> +       This option enables the legacy API for device .suspend() callback=
-s.
-> +       That API empowered any driver to abort system-wide suspend
-> +       by returning any non-zero value from its suspend calbacks:
-> +       (.suspend/.suspend_noirq/.suspend_late)
-> +       In practice, these aborts are almost always spurious and unwanted=
-.
-> +
-> +       Disabling this option (default) ignores .suspend() callback retur=
-n values,
-> +       though they are still traced and logged.
-> +
-> +       The proper way for a device driver to abort system-wide suspend i=
-s to
-> +       invoke pm_system_wakeup() during the suspend flow.  This method i=
-s
-> +       valid, independent of this config option.
-> +
->  config PM_SLEEP_SMP
->         def_bool y
->         depends on SMP
-> --
 
-I'm wondering if there are any opinions on this.
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-IMV, drivers returning errors from their suspend callbacks without a
-sufficiently serious reason are kind of a problem.
+This patch changed somewhat from last time. When did Peter test it again and
+Tom review it again?
+
+> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> index a61898c7f114..39683101b526 100644
+> --- a/arch/x86/coco/sev/core.c
+> +++ b/arch/x86/coco/sev/core.c
+> @@ -96,6 +96,14 @@ static u64 sev_hv_features __ro_after_init;
+>  /* Secrets page physical address from the CC blob */
+>  static u64 secrets_pa __ro_after_init;
+>  
+> +/*
+> + * For Secure TSC guests, the BP fetches TSC_INFO using SNP guest messaging and
+
+s/BP/BSP/
+
+> + * initializes snp_tsc_scale and snp_tsc_offset. These values are replicated
+> + * across the APs VMSA fields (TSC_SCALE and TSC_OFFSET).
+> + */
+> +static u64 snp_tsc_scale __ro_after_init;
+> +static u64 snp_tsc_offset __ro_after_init;
+> +
+>  /* #VC handler runtime per-CPU data */
+>  struct sev_es_runtime_data {
+>  	struct ghcb ghcb_page;
+
+...
+
+> +	memcpy(tsc_resp, buf, sizeof(*tsc_resp));
+> +	pr_debug("%s: response status 0x%x scale 0x%llx offset 0x%llx factor 0x%x\n",
+> +		 __func__, tsc_resp->status, tsc_resp->tsc_scale, tsc_resp->tsc_offset,
+> +		 tsc_resp->tsc_factor);
+> +
+> +	if (tsc_resp->status == 0) {
+
+Like the last time:
+
+	if (!tsc_resp->status)
+
+> +		snp_tsc_scale = tsc_resp->tsc_scale;
+> +		snp_tsc_offset = tsc_resp->tsc_offset;
+> +	} else {
+> +		pr_err("Failed to get TSC info, response status 0x%x\n", tsc_resp->status);
+> +		rc = -EIO;
+> +	}
+> +
+> +e_request:
+> +	/* The response buffer contains sensitive data, explicitly clear it. */
+> +	memzero_explicit(buf, sizeof(buf));
+> +	memzero_explicit(tsc_resp, sizeof(*tsc_resp));
+> +e_free_mdesc:
+> +	snp_msg_free(mdesc);
+> +e_free_buf:
+> +	kfree(buf);
+> +e_free_rio:
+> +	kfree(rio);
+> +e_free_req:
+> +	kfree(req);
+> + e_free_tsc_resp:
+> +	kfree(tsc_resp);
+> +e_free_tsc_req:
+> +	kfree(tsc_req);
+> +
+> +	return rc;
+> +}
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
