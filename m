@@ -1,194 +1,138 @@
-Return-Path: <linux-kernel+bounces-433217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353249E553D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:18:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD0A9E553E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:18:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A023318821DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D4E282BB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23440217F4A;
-	Thu,  5 Dec 2024 12:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495F7217F3B;
+	Thu,  5 Dec 2024 12:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdHa0+7a"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b="e7SiaHYJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GmZH2S4c"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6BF1C3C03;
-	Thu,  5 Dec 2024 12:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88301217723
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401089; cv=none; b=R98XitIkSAECAkC7rD22FeUok4Z9pNhF+JweIXiHcVLQoHok6POyMDeMM11KuZOErcOZpZKDQ0ovdxo9JNzl7T5TjkTu2S+0wn/i6XfGYm0ClLg1UuuNqTVDR9Luv3uBeX0Pn0XiTsqhPXfyU1ZqoV4ggyZ5Vklrc7GgRw5TD70=
+	t=1733401120; cv=none; b=sIMSu3+Ftj5/2gQe5QP9dK+bJfX4Xbu0+DuQpaQRqPi6nAuUX7fXFYL5GW+QiMZCur0wHLgG0ZiK3HXoCPDYgR4QVkFWxMngyCXABVwHqu6Ra366XSaFU0MA6FK0L3mkGEJUWuItz3BWRXCUSIpK7pBci+llf+Mju9CIWlVKolY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401089; c=relaxed/simple;
-	bh=PUo62EJX+BThvQDC+w6LdhB+MzzOKByD86KNhcVhO4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k8uZxCiQMyT8cC+uJnqpEEgCBiOMvqb/noe/xa+EiQXmdzsoUCrYZSa27ye9IwSCg2RC85hqISLg47pW4/A2wNq8pHTIeR8JeBsioHiMRqIS5sTTV/EcSQ2BGvb077+1IQCOFJLu/PgwtOnhqI1n4dlq6HJok+Rb1Z5Qwg71RdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RdHa0+7a; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7fc8f0598cdso1550421a12.1;
-        Thu, 05 Dec 2024 04:18:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733401087; x=1734005887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Zt64//0+yWmwpsvZsN0hvJBXBIQLXcI79/2PST6f/w=;
-        b=RdHa0+7a2QhNqwNwoneQt5kvZ5bxFWwi7bTqJeQuWBDU0OX5UFBeI//6d/T2h/r+k3
-         V75sYbH3mJ2HJM1hz6SltKzhfQNBQjATVlosZZ7cAu4Hl1+RG7nALudW/z6rg9awF4nv
-         XDqx8L1zqiaQn3dDlgyZmJoZUV4SRxuMJ+d6D/ZxxjWV0sb3rKLBMfozLIAWKss9su3l
-         TEWOKAdArXMsjlhnls2Wb0h+wATmh8QVYGm6kgU0tQHDSftm+TKZjoBWi30fmwlPns7O
-         bjaaG79rU9Nyu7N/iCdPHt25g4k6hSIiT2FZMeSFpMgqYUdRqcYkodSgkE6za56Bzo3r
-         9zgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733401087; x=1734005887;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Zt64//0+yWmwpsvZsN0hvJBXBIQLXcI79/2PST6f/w=;
-        b=sVqLuFT9RHcl6Oy/AY0+ti9dirrtu7tELpVhpfRmay5vJ5T+z9zfWHPGiV7/aNA4ko
-         pIeLtUlxbUPL1X8ii6GQGyq65oPfjvROHoEPk/UL718NqMqW4mEpMmlhJ0Y4qI0YBx9E
-         q4/62d6EVWd+yiICvp+ye564opkHtU9aeq3UceNLhlWeY3zFSIzWWO7mb3z6zLqfNcSe
-         dP94CajeriGGW0zdlsWTwGSmEwOlswXlFgDQW+2SA+CdYfZ6qXw9mpzveus28sGuAhRK
-         hdu3pdxrEEmbBL2D68XapXz+DiGv/f3+3M6hGOAopa26gB7+E04dG9dHlYF8ABA1Kvsv
-         vmZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSw2fC0x1xNldLmfpxAu0fpvr0sxwQRAOEcmfccz+pqyQp2muVh6opn8snkSz9ulOeMrNTJ5MAN1xkQS4=@vger.kernel.org, AJvYcCXxqcGs0cnHcl1wVor1myImXvg7qFEp3t6jBGllKxMwxp70CPenJMOCy7xW6ZXG+n+ferGahBuWWyw5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpuMT9TKELTQbpZgWc4DiVs4UhJnLzVczQxdTQUQn4DADWuCi1
-	xurrblSm/ymH0LN9eH2IbM1gA+ujrieQpN3xNX8Lv1yWxY02GVHj
-X-Gm-Gg: ASbGncubRhA0t0MoX3TVfEMBXBoHYKaxUEtNWYPvCXUb3DQipT46P/rpuzymPVrCIMh
-	HsLSeSa2E/PJd3TvmqsCItrsrh/xkWSYolN8uOzMkEAbRCqyhJXf0/CG78zMZt3dJOFyI4s8xKo
-	N9kkvyqepu3cmL5eGb3sNID4b7O7E4hCKVd6NAUmhCW2W6UEepPgFW1jlfsCZiB+JrcJxsQQaHw
-	QEpxKCz+2CJKnxJ2U+NEYL7aL/yTh0hNA6y+Nh7Jj8huc5ztvIR21iY8sT1glqxIQ==
-X-Google-Smtp-Source: AGHT+IEL5UGfuGeAUmqHASTYYAbwyriaMmTb6+Tzmt59nbNRjOJxQtSnbfBYSLMnz3+//KwU/WkxNg==
-X-Received: by 2002:a05:6a20:7f91:b0:1e0:c713:9a92 with SMTP id adf61e73a8af0-1e17d381480mr4841220637.6.1733401087030;
-        Thu, 05 Dec 2024 04:18:07 -0800 (PST)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd1568eadbsm1159255a12.12.2024.12.05.04.18.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 04:18:06 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: david@fromorbit.com
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	cem@kernel.org,
-	chandanbabu@kernel.org,
-	dchinner@redhat.com,
-	djwong@kernel.org,
-	hch@infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [RESEND PATCH v2] xfs: fix the entry condition of exact EOF block allocation optimization
-Date: Thu,  5 Dec 2024 20:18:02 +0800
-Message-ID: <20241205121802.1232223-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <Z09stGvgxKV91XfX@dread.disaster.area>
-References: <Z09stGvgxKV91XfX@dread.disaster.area>
+	s=arc-20240116; t=1733401120; c=relaxed/simple;
+	bh=2v6iqMuVmL1btOIBYYR8znk6IrkE38Ow5yutyWXKAPQ=;
+	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Subject:
+	 References:In-Reply-To; b=J/znDbLBFMFVwnKsS+QygURJcvCFnK2XmUFWyoYgbOL0romv2MkppUj2xVRprFBTSrTFuiv/QzYTWIp+ZDPEA/YOuuqhb6lk28hkapcla2As0Fvfqvh+sBHtHzJ7oYLruF2hZysxpK+9laj31anvusqamvpZhxp0Vq2j+n22LEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev; spf=pass smtp.mailfrom=getstate.dev; dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b=e7SiaHYJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GmZH2S4c; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getstate.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 6C00511401E2;
+	Thu,  5 Dec 2024 07:18:36 -0500 (EST)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-08.internal (MEProxy); Thu, 05 Dec 2024 07:18:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=getstate.dev; h=
+	cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1733401116; x=1733487516; bh=2v6iqMuVmL
+	1btOIBYYR8znk6IrkE38Ow5yutyWXKAPQ=; b=e7SiaHYJb51mkE1u6io22TYvxa
+	ZKpvkNhACJg0uesErLd7sXVOTXFJV+ykB6bcSrtMHZZQCVeTUNvhK360fNVUDiuJ
+	j6ejcgFHZXEF0guGTlshv8rfEm1A5S+UQFuwk2HTptscBU6i3VSFkpn+YOuIhTW8
+	zuFj1Gd3cPypU9aI8WcdtToCylHSC/NeTYEA2ZGDDbEXB39JoMrYxCRdvkRHEbod
+	Ap9WCaB4EvlBSydfe34cT9DFyHyzKJzjrvXkN3bYbcP1CAk+BPfUUCxa26aPqal2
+	bGPPo92ovycSNpgc7xlVv+EdrYdn4pH1m0nIcx/qVajfHoSgC+3abSybsJaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1733401116; x=1733487516; bh=2v6iqMuVmL1btOIBYYR8znk6IrkE38Ow5yu
+	tyWXKAPQ=; b=GmZH2S4cxZUu+9JykiWE7pDNvNgUTuwvpElGpF+lqt+RibF13SG
+	ChsS/LfBthljc+YFCDq7lhUzZQl8kZF6YGUUxcnR/tlg8+iSbPjirbkcnDiZQU31
+	eoQl+/gcXwSe0Nul+wg/LirJs0VpxBcIQWm5d7OJ2A1phmnlcgVXXPZLUsoRhZA7
+	T760RRrjUQu0VfO06uzPzA+zbgTdTVJCQG6ZdQdR8qaN0Jf9qaH6m3fQuo0Wb35V
+	RVTmpAs191IJlQ9aKBO0vTm2EfO6HI+EHfGKN/+eeeOzgSrCv4iKBECwEk+uRtZ6
+	rXGbYlJiH+mTPHZOR3wuynJCKGI6V5pQbjg==
+X-ME-Sender: <xms:HJpRZwDGhzXi-TC1Zcd6iiO-a47-2k9EIaPdlC5pLUo3niFZhGmyeg>
+    <xme:HJpRZyhqqZY9URINius0bCVCr0lFwnr_JSELvosdo7gCFbzWOwv4S3TavbibzLBCf
+    eEXqQAK9L6RhLD8QEg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgdefjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepofgtggffkf
+    fhvffuofhfjgesmhdtreerredtjeenucfhrhhomhepfdforgiiihhnucetlhhhrgguuggr
+    ugdfuceomhgriihinhesghgvthhsthgrthgvrdguvghvqeenucggtffrrghtthgvrhhnpe
+    ehieeuhfegieehtdelkeeihfekledvvdejhfduvdekjeduteevveehvdevfffhudenucff
+    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepmhgriihinhesghgvthhsthgrthgvrdguvghvpdhnsggp
+    rhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshiiikhgrlh
+    hlvghrqdgsuhhgshesghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtohepshih
+    iigsohhtodegjeelrghffhehudgssgefieduvghfhegrrgdukeesshihiihkrghllhgvrh
+    drrghpphhsphhothhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:HJpRZzl7wt-oewYvZJ0-4LGW28s_YlRcsWXZFPMT1awoAnAAv7FW5w>
+    <xmx:HJpRZ2wZ80uNZVqWDJACmI3d3I48A9saDr4S2nyYucTKgAPj5VYJYQ>
+    <xmx:HJpRZ1SfLBN8x_VNWyFWLWSN5Ehcrdy71OTSjG1uti7oiQw_WxYPOg>
+    <xmx:HJpRZxbre3uxVbFERHfwM05ZF5l_0VlQ6NMmpExf0RF9faK1WGYFsw>
+    <xmx:HJpRZwfDpB8gOYG_paQldk2E2ybG6CwSmZKuSXgc3lb6RG5CCjBC-wLP>
+Feedback-ID: i0ed1493d:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1B8BE1C20067; Thu,  5 Dec 2024 07:18:36 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+Content-Type: multipart/mixed;
+ boundary=e15f8747848842f31d56e6ceecd76e8eb01a93244ad866e5c839dfc6342f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Thu, 05 Dec 2024 15:18:27 +0300
+Message-Id: <D63RERM1B1U9.YBW3S55TUSN7@getstate.dev>
+From: "Mazin Alhaddad" <mazin@getstate.dev>
+To: "syzbot" <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>,
+ <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ mgmt_remove_adv_monitor_sync
+X-Mailer: aerc 0.18.2
+References: <D63QK91VZ3BS.3IA9R221PTFE5@getstate.dev>
+ <675196b3.050a0220.17bd51.009c.GAE@google.com>
+In-Reply-To: <675196b3.050a0220.17bd51.009c.GAE@google.com>
 
-On Wed, 4 Dec 2024 07:40:20 +1100, Dave Chinner wrote:
-> On Sat, Nov 31, 2024 at 07:11:32PM +0800, Jinliang Zheng wrote:
-> > When we call create(), lseek() and write() sequentially, offset != 0
-> > cannot be used as a judgment condition for whether the file already
-> > has extents.
-> > 
-> > Furthermore, when xfs_bmap_adjacent() has not given a better blkno,
-> > it is not necessary to use exact EOF block allocation.
-> > 
-> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > ---
-> > Changelog:
-> > - V2: Fix the entry condition
-> > - V1: https://lore.kernel.org/linux-xfs/ZyFJm7xg7Msd6eVr@dread.disaster.area/T/#t
-> > ---
-> >  fs/xfs/libxfs/xfs_bmap.c | 12 +++++++-----
-> >  1 file changed, 7 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> > index 36dd08d13293..c1e5372b6b2e 100644
-> > --- a/fs/xfs/libxfs/xfs_bmap.c
-> > +++ b/fs/xfs/libxfs/xfs_bmap.c
-> > @@ -3531,12 +3531,14 @@ xfs_bmap_btalloc_at_eof(
-> >  	int			error;
-> >  
-> >  	/*
-> > -	 * If there are already extents in the file, try an exact EOF block
-> > -	 * allocation to extend the file as a contiguous extent. If that fails,
-> > -	 * or it's the first allocation in a file, just try for a stripe aligned
-> > -	 * allocation.
-> > +	 * If there are already extents in the file, and xfs_bmap_adjacent() has
-> > +	 * given a better blkno, try an exact EOF block allocation to extend the
-> > +	 * file as a contiguous extent. If that fails, or it's the first
-> > +	 * allocation in a file, just try for a stripe aligned allocation.
-> >  	 */
-> > -	if (ap->offset) {
-> > +	if (ap->prev.br_startoff != NULLFILEOFF &&
-> > +	     !isnullstartblock(ap->prev.br_startblock) &&
-> > +	     xfs_bmap_adjacent_valid(ap, ap->blkno, ap->prev.br_startblock)) {
-> 
-> There's no need for calling xfs_bmap_adjacent_valid() here -
-> we know that ap->blkno is valid because the
-> bounds checking has already been done by xfs_bmap_adjacent().
+--e15f8747848842f31d56e6ceecd76e8eb01a93244ad866e5c839dfc6342f
+Content-Type: multipart/alternative;
+ boundary=286148bfa00de18ea0dbfa120ad62db96baed4905cd8dd4e75dac9993687
 
-I'm sorry that I didn't express it clearly, what I meant here is: if we want
-to extend the file as a contiguous extent, then ap->blkno must be a better
-choice given by xfs_bmap_adjacent() than other default values.
+--286148bfa00de18ea0dbfa120ad62db96baed4905cd8dd4e75dac9993687
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 
-/*
- * If allocating at eof, and there's a previous real block,
- * try to use its last block as our starting point.
- */
-if (ap->eof && ap->prev.br_startoff != NULLFILEOFF &&
-    !isnullstartblock(ap->prev.br_startblock) &&
-    xfs_bmap_adjacent_valid(ap,
-		ap->prev.br_startblock + ap->prev.br_blockcount,
-		ap->prev.br_startblock)) {
-	ap->blkno = ap->prev.br_startblock + ap->prev.br_blockcount; <--- better A
-	/*
-	 * Adjust for the gap between prevp and us.
-	 */
-	adjust = ap->offset -
-		(ap->prev.br_startoff + ap->prev.br_blockcount);
-	if (adjust && xfs_bmap_adjacent_valid(ap, ap->blkno + adjust,
-			ap->prev.br_startblock))
-		ap->blkno += adjust;                                 <--- better B
-	return true;
-}
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+ master
 
-Only when we reach 'better A' or 'better B' of xfs_bmap_adjacent() above, it
-is worth trying to use xfs_alloc_vextent_EXACT_bno(). Otherwise, NEAR is
-more suitable than EXACT.
+--286148bfa00de18ea0dbfa120ad62db96baed4905cd8dd4e75dac9993687--
 
-Therefore, we need xfs_bmap_adjacent() to determine whether xfs_bmap_adjacent()
-has indeed modified ap->blkno.
+--e15f8747848842f31d56e6ceecd76e8eb01a93244ad866e5c839dfc6342f
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=0001-TEST.patch
+Content-Type: text/plain; charset=utf-8; name=0001-TEST.patch
 
-> 
-> Actually, for another patch, the bounds checking in
-> xfs_bmap_adjacent_valid() is incorrect. What happens if the last AG
-> is a runt? i.e. it open codes xfs_verify_fsbno() and gets it wrong.
-
-For general scenarios, I agree.
-
-But here, the parameters x and y of xfs_bmap_adjacent_valid() are both derived
-from ap->prev. Is it possible that it exceeds mp->m_sb.sb_agcount or
-mp->m_sb.sb_agblocks?
-
-Thank you :)
-Jinliang Zheng
-
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+RnJvbSBkZTc5YTc1YjkwY2MxMjEyOTNkMGM1NDM5YzA2MWZjNDkwOGYxODhhIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXppbiBBbEhhZGRhZCA8bWF6aW5AZ2V0c3RhdGUuZGV2PgpE
+YXRlOiBUaHUsIDUgRGVjIDIwMjQgMDQ6NTU6NDMgKzAzMDAKU3ViamVjdDogW1BBVENIXSBURVNU
+CgotLS0KIG5ldC9ibHVldG9vdGgvaGNpX3N5bmMuYyB8IDMgKystCiAxIGZpbGUgY2hhbmdlZCwg
+MiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvbmV0L2JsdWV0b290
+aC9oY2lfc3luYy5jIGIvbmV0L2JsdWV0b290aC9oY2lfc3luYy5jCmluZGV4IGM4NmY0ZTQyZS4u
+MGFkN2JkMTdhIDEwMDY0NAotLS0gYS9uZXQvYmx1ZXRvb3RoL2hjaV9zeW5jLmMKKysrIGIvbmV0
+L2JsdWV0b290aC9oY2lfc3luYy5jCkBAIC01MjM1LDcgKzUyMzUsOCBAQCBpbnQgaGNpX2Rldl9j
+bG9zZV9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQogCX0KIAogCS8qIGZsdXNoIGNtZCAgd29y
+ayAqLwotCWZsdXNoX3dvcmsoJmhkZXYtPmNtZF93b3JrKTsKKwljYW5jZWxfd29ya19zeW5jKCZo
+ZGV2LT5jbWRfd29yayk7CisJCiAKIAkvKiBEcm9wIHF1ZXVlcyAqLwogCXNrYl9xdWV1ZV9wdXJn
+ZSgmaGRldi0+cnhfcSk7Ci0tIAoyLjQ2LjAKCg==
+--e15f8747848842f31d56e6ceecd76e8eb01a93244ad866e5c839dfc6342f--
 
