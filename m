@@ -1,116 +1,218 @@
-Return-Path: <linux-kernel+bounces-433772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C580F9E5CD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:17:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF0A9E5CD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:17:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8432428490C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6033188519A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E59229B3B;
-	Thu,  5 Dec 2024 17:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE987222572;
+	Thu,  5 Dec 2024 17:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGxelnSm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BnH/cwnU"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546507E105;
-	Thu,  5 Dec 2024 17:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20015224B03
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733418980; cv=none; b=spzfjSPJj2wXNZdIbWTqHqt4Hx+oxQmRMqmvuz/W/tVeOzFGDUcibkv9TnYpD5rR3pWAbAk3V5Smji5ZYz+VLBEzW0tFDOu5mCyCV458BsyWGxH+JMStfLLBuVW/CrlIQRgFisr32JGBffGIQZSAU2zUSEyoKQ0mdfZVf19c90A=
+	t=1733419019; cv=none; b=jzK/x8mq3LLrJh1NVR5aexHsRwBSULxk2p0W+jXuv5wZiNjbvUwa1qBorMItowkqgWaf8EynJ1QIl8RrxqhwGK4W9d5qD1eh+hHP09Nypl3Lt0A9/YngM0QuqrS6NofCC0n1FkgR0wwvwaRzWo2sFZF9raRaKMbhAuKrR0jq6WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733418980; c=relaxed/simple;
-	bh=ll/pqBlh7VQdZrfl40Y3GRd2AxpRWeO2O5BqSRhjrXw=;
+	s=arc-20240116; t=1733419019; c=relaxed/simple;
+	bh=bq3+bNN7RlTO3LzluOulsa1FFZoUNl4cRiM8pa4tVJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mhn2Oozg6kmdWU3apIee0BV0mm3GoHolw6YqTLz3/pYyHGDz/CBcWzeZR0jrzKdG/nPv9XlxPg1o2K6Nd34lfpraKbuyPuYlftbQMhrj8p/1S6xKQOsZ/NIzDaPHz1M/Qj2/p7Lj8GkiTR36szePTIrNPPospvrGWqvcbDXORx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGxelnSm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5A18C4CED1;
-	Thu,  5 Dec 2024 17:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733418979;
-	bh=ll/pqBlh7VQdZrfl40Y3GRd2AxpRWeO2O5BqSRhjrXw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UGxelnSmP2fi+QBtv0TaH/Q9nACsWEbMiXTzcVD8FSQHtVUZmxSLiisduv91ug+sS
-	 Ax5e/T0z+6bvflbNCWXVu47JOFQRYk7k6HmJYDoCCwditaCWxk4O2fJ3AWlSo4fzua
-	 Uf7/+C9qjPN37R2kGgv6k78I5ZLIOtoJ6vVrYqkLT78lSYMkOJpmBAT4mTRI+QFIwM
-	 tv555atqTSfiYtDUEe4wuTnR8GZCmULXsaUg6uMaBo2IbSWPqD+opXDzaQwGbFNsqb
-	 vH+pPl3AQa3oSI8fHxfOqVisVWNpp9sHWglYH14WkcCIzTkdajm+dEi57YY+zUQbvB
-	 f7QmOrNvl4H6A==
-Date: Thu, 5 Dec 2024 17:16:14 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v1 2/5] dt-bindings: vendor-prefixes: Add prefix for Priva
-Message-ID: <20241205-hamstring-mantis-b8b3a25210ef@spud>
-References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
- <20241205125640.1253996-3-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgV/gWjYIXuTN7Tz4N2AQKsmY/3pcqrd4EEtxPUKZyvvGRDu+hXPlnfIZeLdmMIA8UDeBQzalXB43VRuADOWCbG48zx+dH1+d3hsy2quS09kH2F8DWYzaO2mxTBV2TfPBpc5KiPm/V2/ZRnMhw3+e++KwvN4BgG5dOc7vV6CNEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BnH/cwnU; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de771c5ebso1197571e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733419015; x=1734023815; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dk6qeu/c0aGQfq+iRGPsbk8IOsfqn1Rscd5YILluES4=;
+        b=BnH/cwnUIxgrOlQcrvIzL5k5FYyrzFXriVP9v6rT00mU3hmp3yoN1HOtshV03Y2G1r
+         vxCCMXQc52Uf8vaIfv74OzPs5LCSeu2tST7yr9PHTB0do1R0RB9JZ6hI/fe/CXB4BQPu
+         GSqGiOIkQsuCDrbVcJ3Ir2HRh/k+CXd0SuNo/rTIMhkwEz/nQfozUz8Z8lm818BvVyPc
+         IVUFMaRm89L95467XLACtZJVpBvWOS6W1nFL7eqPlUcub0rX3B8e9SkJxueZgGvJb+vx
+         Et0XkaqeYM1h9RoEXoBS2mrWVU6Vi4rYoIknb5Lx0MeaD4U+vddmEaC4eRVHW19ZCt8T
+         bbdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733419015; x=1734023815;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dk6qeu/c0aGQfq+iRGPsbk8IOsfqn1Rscd5YILluES4=;
+        b=rWfVh0JThzwIpAQo/s5g8voaZSg26OcEvMf0REegCn1aJ3xJvoxXVGDYlH0NabGekI
+         6vEHxR7QvWNM9+EZIxn9X/ONCf69DQ5jnGiAYPZvNyY1yT6FhkTAYAAzKZa6sLFJBnN4
+         pN1N34/mi+HUmPLxDrfGUpWjdXfFNbEXhi3UK2g9WOUE3SuVk9df+DawTZGOBUe8igXo
+         DOWf9ZSrAq7Jtp1DlOv+Nl3j54rPXgrZShgx87jZhwPOYep4WVR5SYg6PZDqdxkzwCK+
+         hG4/sbfR/7Hd+qbwEG90/vUB3ZZZbeRti8aupFkWRpcjAuxj5zBElXTLL55WZ1yh+hXE
+         yMJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnT9ewEonFocs1cDKmqSUrngPq2y07SGNWRiZzrxXZQApNjPX3j7QOHYpvacQGD5cjyM0ymmkdA6Am1Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWUpmdHaORuCkBFV65J8wwMoFap8jkNVT6G84xJ8J4U/+W0LXo
+	PS68zdeF2qjsKhgtY03f2pvoMiTbQCOWCSCTzNOQcfVtMKIe48+hcEUYEyoPxJ4=
+X-Gm-Gg: ASbGncsBcjpvMNzKPrfOlTQadYnrKXWKatkxyYHfVWIZyMNYn6Aqa7sr1z72XnDN5sn
+	P8enI594L5B/+dgjyVcrBbMF8C8oqzYHwt1L3Z3Gyt8MjCUX9sNmcb6IFF/agAmFslhZdKqdUTq
+	fKe6IKihAkak9W3m1l2H1QEaM8N1tVkjtwFXRYfQ6Gd+d+qOYnn/Ej/coxqMVzLM76OZ3k5++P8
+	cwaSu2TfbakuXORraLELVuevA0RiDSHtYeaPCa09boYfxB6WJn47j9Kl6yu5hpLg1fp9BD5BW9H
+	x2Sxtamr06QqqOc/qxbYr8W/7r2BMg==
+X-Google-Smtp-Source: AGHT+IEQVBkrgjioAw00LjhLtyaVjJhAuyebF7gUV1LhQmmwc8b638t447Vk/yLDEXbFDy5Y4yCjMA==
+X-Received: by 2002:a05:6512:4024:b0:53e:28ec:6000 with SMTP id 2adb3069b0e04-53e28ec6045mr525398e87.34.1733419014352;
+        Thu, 05 Dec 2024 09:16:54 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e22974fccsm295501e87.69.2024.12.05.09.16.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 09:16:53 -0800 (PST)
+Date: Thu, 5 Dec 2024 19:16:50 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, quic_msavaliy@quicinc.com, 
+	quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v4] dmaengine: qcom: gpi: Add GPI immediate DMA support
+ for SPI protocol
+Message-ID: <d74ibj74mrluovh3ylok3dyctf3r4iimoosegdair5acvpre6c@w5xfl6adtfto>
+References: <20241205170611.18566-1-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="RfxN6UD6pYJLj5Ip"
-Content-Disposition: inline
-In-Reply-To: <20241205125640.1253996-3-o.rempel@pengutronix.de>
-
-
---RfxN6UD6pYJLj5Ip
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241205170611.18566-1-quic_jseerapu@quicinc.com>
 
-On Thu, Dec 05, 2024 at 01:56:37PM +0100, Oleksij Rempel wrote:
-> Introduce the 'pri' vendor prefix for Priva, a company specializing in
-> sustainable solutions for building automation, energy, and climate
-> control.  More information about Priva can be found at
-> https://www.priva.com
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+On Thu, Dec 05, 2024 at 10:36:11PM +0530, Jyothi Kumar Seerapu wrote:
+> The DMA TRE(Transfer ring element) buffer contains the DMA
+> buffer address. Accessing data from this address can cause
+> significant delays in SPI transfers, which can be mitigated to
+> some extent by utilizing immediate DMA support.
+> 
+> QCOM GPI DMA hardware supports an immediate DMA feature for data
+> up to 8 bytes, storing the data directly in the DMA TRE buffer
+> instead of the DMA buffer address. This enhancement enables faster
+> SPI data transfers.
+> 
+> This optimization reduces the average transfer time from 25 us to
+> 16 us for a single SPI transfer of 8 bytes length, with a clock
+> frequency of 50 MHz.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
-umentation/devicetree/bindings/vendor-prefixes.yaml
-> index da01616802c7..9a9ac3adc5ef 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@ -1198,6 +1198,8 @@ patternProperties:
->      description: Primux Trading, S.L.
->    "^probox2,.*":
->      description: PROBOX2 (by W2COMP Co., Ltd.)
-> +  "^pri,.*":
-> +    description: Priva
+> 
+> v3 -> v4:
+>    - Instead using extra variable(immediate_dma) for Immediate dma
+>      condition check, made it to inlined.
+>    - Removed the extra brackets around Immediate dma condition check.
+> 
+>    Link to v3:
+> 	https://lore.kernel.org/lkml/20241204122059.24239-1-quic_jseerapu@quicinc.com/ 
+> 
+> v2 -> v3:
+>    - When to enable Immediate DMA support, control is moved to GPI driver
+>      from SPI driver.
+>    - Optimizations are done in GPI driver related to immediate dma changes.
+>    - Removed the immediate dma supported changes in qcom-gpi-dma.h file
+>      and handled in GPI driver.
+> 
+>    Link to v2:
+> 	https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
+> 	https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
+> 
+> v1 -> v2:
+>    - Separated the patches to dmaengine and spi subsystems
+>    - Removed the changes which are not required for this feature from
+>      qcom-gpi-dma.h file.
+>    - Removed the type conversions used in gpi_create_spi_tre.
+> 
+>    Link to v1:
+> 	https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
+> 
+>  drivers/dma/qcom/gpi.c | 31 ++++++++++++++++++++++++++-----
+>  1 file changed, 26 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+> index 52a7c8f2498f..9d4fc760bbe6 100644
+> --- a/drivers/dma/qcom/gpi.c
+> +++ b/drivers/dma/qcom/gpi.c
+> @@ -27,6 +27,7 @@
+>  #define TRE_FLAGS_IEOT		BIT(9)
+>  #define TRE_FLAGS_BEI		BIT(10)
+>  #define TRE_FLAGS_LINK		BIT(11)
+> +#define TRE_FLAGS_IMMEDIATE_DMA	BIT(16)
+>  #define TRE_FLAGS_TYPE		GENMASK(23, 16)
+>  
+>  /* SPI CONFIG0 WD0 */
+> @@ -64,6 +65,7 @@
+>  
+>  /* DMA TRE */
+>  #define TRE_DMA_LEN		GENMASK(23, 0)
+> +#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
+>  
+>  /* Register offsets from gpi-top */
+>  #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
+> @@ -1711,6 +1713,7 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>  	dma_addr_t address;
+>  	struct gpi_tre *tre;
+>  	unsigned int i;
+> +	int len;
+>  
+>  	/* first create config tre if applicable */
+>  	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+> @@ -1763,14 +1766,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>  	tre_idx++;
+>  
+>  	address = sg_dma_address(sgl);
+> -	tre->dword[0] = lower_32_bits(address);
+> -	tre->dword[1] = upper_32_bits(address);
+> +	len = sg_dma_len(sgl);
+>  
+> -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
+> +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
+> +	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0])) {
+> +		/*
+> +		 * For Immediate dma, data length may not always be length of 8 bytes,
+> +		 * it can be length less than 8, hence initialize both dword's with 0
+> +		 */
+> +		tre->dword[0] = 0;
+> +		tre->dword[1] = 0;
+> +		memcpy(&tre->dword[0], sg_virt(sgl), len);
+> +
+> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
+> +	} else {
+> +		tre->dword[0] = lower_32_bits(address);
+> +		tre->dword[1] = upper_32_bits(address);
+> +
+> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
+> +	}
+>  
+>  	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+> -	if (direction == DMA_MEM_TO_DEV)
+> -		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
+> +	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV &&
+> +					 len <= 2 * sizeof(tre->dword[0]),
+> +					 TRE_FLAGS_IMMEDIATE_DMA);
 
-Why not "priva"? Saving two chars doesn't seem worth less info.
+Don't repeat the condition, put it inside if.
 
---RfxN6UD6pYJLj5Ip
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV,
+> +					 TRE_FLAGS_IEOT);
+>  
+>  	for (i = 0; i < tre_idx; i++)
+>  		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
+> -- 
+> 2.17.1
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1Hf3gAKCRB4tDGHoIJi
-0vCCAPsHVLh5ARoGVS/2vGmP95xh8i6OPSPvwg87l4tT5DQKGAD+OrSsG3fRMkAH
-BhsrJpztvvaJq8afTPZtjQh4PQEPlQc=
-=4PKr
------END PGP SIGNATURE-----
-
---RfxN6UD6pYJLj5Ip--
+-- 
+With best wishes
+Dmitry
 
