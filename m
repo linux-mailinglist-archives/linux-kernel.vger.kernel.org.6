@@ -1,287 +1,215 @@
-Return-Path: <linux-kernel+bounces-432642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CEB9E4E12
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 026749E4E14
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:18:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E370D188072B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4332188161B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2385C1B4135;
-	Thu,  5 Dec 2024 07:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6B11B0F02;
+	Thu,  5 Dec 2024 07:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Idxzssr0"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WZmXwyDx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1RzOLloa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WZmXwyDx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1RzOLloa"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566611B0F33
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA32D1AF0CA;
+	Thu,  5 Dec 2024 07:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733383068; cv=none; b=q+4iKilFEXhUCKEl6a+5VW5kQJTmVSmEa6uAHhY+q4HEHZFg5me3BTq7y4MkIUkZ4MuWPeWrpPGBHcBm/b+Zi9D9g7VSeByQQ8G+rAnzzdB7m+CVaHgclv1xcV1axrUuJgE3kAX8/8l/OrcKJZZ4OLurE2BxRpAPPD3Wox28PHg=
+	t=1733383077; cv=none; b=ajdW6hT2hZ9+DjYxgeMz2RRqYZl53f0sf0HH/4NjtcDU9mQ8DMx9KYFMgjw7ff49B9v+5ctMbFLX0csE3CfkgatWxlCiyfXFo++gAM09uQXJC0aAalfiyVOImn/ThsmAskU4jIUWAcrAKfxah4aWX6Zl3SodcUjUaD1WH8dcg3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733383068; c=relaxed/simple;
-	bh=DUk6KztYOuWCHkF2w3Ail7VTXEtKfUcqVezNhB/cCVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G7KiFhSioKN8aD/avfD3d5sqVhURLIPzMKPqCZOUD+M7nEA0+4YKOouLjIpLEaypXjxnqEnbbwsHP+PpcSQ6DawaWTDrIHlIAu0qSHpmxbO+kxqvRfnTxKSu8JFKcQvvccX0dByUdjFZenxTrDf+9NCe7UGdxrTo5DfTPoX8aAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Idxzssr0; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	s=arc-20240116; t=1733383077; c=relaxed/simple;
+	bh=SsPbjv/HRX3XeUDyRp3ofVV+M7CM3ragOxDLii5KcVc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rW91Q7YNrEAr+hdw6fwwpoJpnuYav9xSFfh+SJ5beurxers1FH0boEvozx1gRJ8BZw07xXBH6ZEWyWzJ7Rr2uBpn+VH1ZYx99flm3o9QV66SSmPGi4KcOUM0qI78UyYkRamL/Vpjo7ZPLvuyQUdMNmKW7vm/Sdw0xHYtQIuBuzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WZmXwyDx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1RzOLloa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WZmXwyDx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1RzOLloa; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4CD043F851
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733383059;
-	bh=veChOtHywlqJWRuy07dGfiMiZy6FsscGgp0bVfweBmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version;
-	b=Idxzssr0tP3giLCBg5x6H9NiXbBHDHWrSpiquSth371BqdtF5u98js4pPYxLp/+0f
-	 Do+xTUMpzD6sF8KlETTV49YYptgR2F5RU2fGZEufSHxvJNL55YU8Q0f4ik+vXQU2MX
-	 uhigUr+VY6bK5Mw2ugg8G+WntJF5/sqk8Yr30v6ZmGgEIoWOzHrHjmO5plpi1/otd2
-	 vIaB4o4KZgZ/BQznaHCVbrIq4rpdMymFbjZjjItrzjKzSXKN6eyP3FCpBqDU0bbBal
-	 5lS8GCLe0qUBS0sBzMLb1W4oN2DYgIucHjUDQkRL8Wqx7kRTWnYtUoY+wHxUIojds1
-	 Fbl7Ulz6J/nsA==
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-7fbd38074f4so296128a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:17:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733383058; x=1733987858;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=veChOtHywlqJWRuy07dGfiMiZy6FsscGgp0bVfweBmw=;
-        b=qU5VpuPmie7BK5YrmGqBe3y7NOfvNGHrWCUNrcEdmW1kHUunrhDuDoCOwLzqcO7CfF
-         p5eiP+/+vhp93HMhrxy1zxxncserybsciIJgnpto2IfHiTQq0ngp6CREAVDcrW6sToiJ
-         XLmWK3B16sBjFDZmFyEBHrNzprsPoWWYjisQ97HVIVPWIPrRusCmTLy9/XQfwfQ1mpb/
-         OYGrO2e0eWPg0mZHIaK08jdbkKUNDJHrI3du0f+P1K0HLVkrLqTorZoyR6v8wSoiBkHj
-         A8mxoRx8HkOgGJ05nZuLqiIXzpIGrAyOEx8DRvIxqGDGtes+E4/Fmb0HiyAze7HK9OdP
-         TpcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZpwNnm2/rwZIG4s94N4umryL37SXu2JAwkWADmk8XgVbxSjNxXyeChMlAtG62JmmlYO5kJR/H6q0/sKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlVzzYYUi9hdaab/pLBh4uNR8f4BgaBCXojqcKkthu+n0mRZ6/
-	K7RAsdcn1pTOrCkn5AXXaAfgz8t8QbNFqR+7XHFkuoCYhEeB/pyeub3rWHT3BLKdKGaeTt2dvmz
-	6wnevQ1BROCs9HYMCM8X9FAvUlSsfaWsTm7i41nLjUZmTPzEZ5tzEY+lRd2CVxJSup6V83G4jEk
-	/2GA==
-X-Gm-Gg: ASbGncsySphEYt4InZpF+G4IcAh3JB6v9/5PADO98YwJqtz2BJ1BojJredHMZm/HWsk
-	9U7LmnWcvuv1uqzXf9FOh2kfb4pebXB/YINGLnEXRdxWNEHc68jAawuVhBzYEvAOGYVKolUhqPW
-	wmadLr91lmMZg/SgT9apXd6QVZDhG4IvvZ91lN3/6jlcil47974MhO/7s/HVVjSTZMrIBg3h9ww
-	hrU+48Y1Aicy6/JSZcxBsJY2MXutm6fBa6aaRiqh1ZNBE/xhijiccYO+Pm7mQaP7p3++amJmaa8
-	NI9EuOiTs7+tnE7lnJk5aXx2/r+5uWyZQNY8GPrIWmQU6L3f1cZj
-X-Received: by 2002:a05:6a21:330b:b0:1e0:d837:c929 with SMTP id adf61e73a8af0-1e16bdd32cemr11192494637.9.1733383057939;
-        Wed, 04 Dec 2024 23:17:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHgzsr7JcfsegoUdP6GY5G8iGsXuJUVNjVey+/PZYj54eOigRoJ8F45T7xC4maZMzZD7dP8lQ==
-X-Received: by 2002:a05:6a21:330b:b0:1e0:d837:c929 with SMTP id adf61e73a8af0-1e16bdd32cemr11192479637.9.1733383057640;
-        Wed, 04 Dec 2024 23:17:37 -0800 (PST)
-Received: from rickywu0421-ThinkPad-X1-Carbon-Gen-11.. (118-163-61-247.hinet-ip.hinet.net. [118.163.61.247])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156fb8fcsm573909a12.40.2024.12.04.23.17.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 23:17:37 -0800 (PST)
-From: En-Wei Wu <en-wei.wu@canonical.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A67FB211F1;
+	Thu,  5 Dec 2024 07:17:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733383073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
+	b=WZmXwyDxko0FGSOl4PZkeSWZIs3QSfGxIZjrPCeZTnYTOVOcXHJroI4pvrzXycMLBOrsfy
+	9Yvn4gSSLRhLnTbRX3pgkhJ3kaZy1qd0ujrFBKE2n7lKjCVHrGIbTG604T2ZZuEd/PPOES
+	WHa7fMYBDUeHWfZWuvpkutyoPJbTuwQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733383073;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
+	b=1RzOLloamMWeZx52/0jUJJj98XuOThho8G6bStvXw42LYlc0eCGTz+DvUuVc28UellOerd
+	apju6X2xI9WAshAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733383073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
+	b=WZmXwyDxko0FGSOl4PZkeSWZIs3QSfGxIZjrPCeZTnYTOVOcXHJroI4pvrzXycMLBOrsfy
+	9Yvn4gSSLRhLnTbRX3pgkhJ3kaZy1qd0ujrFBKE2n7lKjCVHrGIbTG604T2ZZuEd/PPOES
+	WHa7fMYBDUeHWfZWuvpkutyoPJbTuwQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733383073;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kzmBtrH8k11Y2CuCacfEPHHm1/ayZwA9S2/UcgigXpw=;
+	b=1RzOLloamMWeZx52/0jUJJj98XuOThho8G6bStvXw42LYlc0eCGTz+DvUuVc28UellOerd
+	apju6X2xI9WAshAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D6D2132EB;
+	Thu,  5 Dec 2024 07:17:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7eJhGaFTUWeRWgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 05 Dec 2024 07:17:53 +0000
+Date: Thu, 05 Dec 2024 08:17:53 +0100
+Message-ID: <87plm6vbry.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: Takashi Iwai <tiwai@suse.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	pmenzel@molgen.mpg.de
-Cc: quic_tjiang@quicinc.com,
-	kuan-ying.lee@canonical.com,
-	anthony.wong@canonical.com
-Subject: [PATCH v3 2/2] Bluetooth: btusb: Improve SKB safety in QCA dump packet handling
-Date: Thu,  5 Dec 2024 15:17:27 +0800
-Message-ID: <20241205071727.36710-3-en-wei.wu@canonical.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241205071727.36710-1-en-wei.wu@canonical.com>
-References: <20241205071727.36710-1-en-wei.wu@canonical.com>
+	kernel@collabora.com
+Subject: Re: [PATCH 2/2] sound: usb: format: don't warn that raw DSD is unsupported
+In-Reply-To: <20241204151954.658897-2-adrian.ratiu@collabora.com>
+References: <20241204151954.658897-1-adrian.ratiu@collabora.com>
+	<20241204151954.658897-2-adrian.ratiu@collabora.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-Replace direct buffer access and manual pointer arithmetic in QCA dump
-packet handling with safer skb_pull_data() calls. This ensures proper
-bounds checking when accessing packet headers and adds proper restoration
-of SKB data pointer and length on error paths.
+On Wed, 04 Dec 2024 16:19:54 +0100,
+Adrian Ratiu wrote:
+> 
+> UAC 2 & 3 DAC's set bit 31 of the format to signal support for a
+> RAW_DATA type, typically used for DSD playback.
+> 
+> This is correctly tested by (format & UAC*_FORMAT_TYPE_I_RAW_DATA),
+> fp->dsd_raw = true; and call snd_usb_interface_dsd_format_quirks(),
+> however a confusing and unnecessary message gets printed because
+> the bit is not properly tested in the last "unsupported" if test.
+> 
+> For example:
+> 
+> usb 7-1: new high-speed USB device number 5 using xhci_hcd
+> usb 7-1: New USB device found, idVendor=262a, idProduct=9302, bcdDevice=0.01
+> usb 7-1: New USB device strings: Mfr=1, Product=2, SerialNumber=6
+> usb 7-1: Product: TC44C
+> usb 7-1: Manufacturer: TC44C
+> usb 7-1: SerialNumber: 5000000001
+> hid-generic 0003:262A:9302.001E: No inputs registered, leaving
+> hid-generic 0003:262A:9302.001E: hidraw6: USB HID v1.00 Device [DDHIFI TC44C] on usb-0000:08:00.3-1/input0
+> usb 7-1: 2:4 : unsupported format bits 0x100000000
+> 
+> This last "unsupported format" is actually wrong: we know the
+> format is a RAW_DATA which we assume is DSD, so there is no need
+> to print the confusing message.
+> 
+> Thus we update the condition to take into account bit 31 for DSD
+> (notice the "format <<= 1;" line above).
+> 
+> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
 
-The changes include:
-- Replacing manual pointer arithmetic with skb_pull_data() for 
-  safer packet header access
-- Adding SKB state restoration in error paths
+IMO, it's better to clear the already checked format bit instead, as
+there are two distinct bits depending on the protocol.
+That is, something like:
 
-This prevents potential buffer overflows and ensures SKB state remains
-consistent even when packet validation fails.
+--- a/sound/usb/format.c
++++ b/sound/usb/format.c
+@@ -54,6 +54,7 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
+ 
+ 		if (format & UAC2_FORMAT_TYPE_I_RAW_DATA) {
+ 			pcm_formats |= SNDRV_PCM_FMTBIT_SPECIAL;
++			format &= ~UAC2_FORMAT_TYPE_I_RAW_DATA;
+ 			/* flag potentially raw DSD capable altsettings */
+ 			fp->dsd_raw = true;
+ 		}
+@@ -67,8 +68,10 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
+ 		sample_width = as->bBitResolution;
+ 		sample_bytes = as->bSubslotSize;
+ 
+-		if (format & UAC3_FORMAT_TYPE_I_RAW_DATA)
++		if (format & UAC3_FORMAT_TYPE_I_RAW_DATA) {
+ 			pcm_formats |= SNDRV_PCM_FMTBIT_SPECIAL;
++			format &= ~UAC3_FORMAT_TYPE_I_RAW_DATA;
++		}
+ 
+ 		format <<= 1;
+ 		break;
 
-Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
----
- drivers/bluetooth/btusb.c | 95 +++++++++++++++++----------------------
- 1 file changed, 41 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 2bfb915062cf..cbeb1cec790a 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2935,8 +2935,6 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- {
- 	int ret = 0;
- 	u8 pkt_type;
--	u8 *sk_ptr;
--	unsigned int sk_len;
- 	u16 seqno;
- 	u32 dump_size;
- 
-@@ -2945,18 +2943,8 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- 	struct usb_device *udev = btdata->udev;
- 
- 	pkt_type = hci_skb_pkt_type(skb);
--	sk_ptr = skb->data;
--	sk_len = skb->len;
-+	dump_hdr = (struct qca_dump_hdr *)skb->data;
- 
--	if (pkt_type == HCI_ACLDATA_PKT) {
--		sk_ptr += HCI_ACL_HDR_SIZE;
--		sk_len -= HCI_ACL_HDR_SIZE;
--	}
--
--	sk_ptr += HCI_EVENT_HDR_SIZE;
--	sk_len -= HCI_EVENT_HDR_SIZE;
--
--	dump_hdr = (struct qca_dump_hdr *)sk_ptr;
- 	seqno = le16_to_cpu(dump_hdr->seqno);
- 	if (seqno == 0) {
- 		set_bit(BTUSB_HW_SSR_ACTIVE, &btdata->flags);
-@@ -2976,16 +2964,15 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 		btdata->qca_dump.ram_dump_size = dump_size;
- 		btdata->qca_dump.ram_dump_seqno = 0;
--		sk_ptr += offsetof(struct qca_dump_hdr, data0);
--		sk_len -= offsetof(struct qca_dump_hdr, data0);
-+
-+		skb_pull(skb, offsetof(struct qca_dump_hdr, data0));
- 
- 		usb_disable_autosuspend(udev);
- 		bt_dev_info(hdev, "%s memdump size(%u)\n",
- 			    (pkt_type == HCI_ACLDATA_PKT) ? "ACL" : "event",
- 			    dump_size);
- 	} else {
--		sk_ptr += offsetof(struct qca_dump_hdr, data);
--		sk_len -= offsetof(struct qca_dump_hdr, data);
-+		skb_pull(skb, offsetof(struct qca_dump_hdr, data));
- 	}
- 
- 	if (!btdata->qca_dump.ram_dump_size) {
-@@ -3005,7 +2992,6 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- 		return ret;
- 	}
- 
--	skb_pull(skb, skb->len - sk_len);
- 	hci_devcd_append(hdev, skb);
- 	btdata->qca_dump.ram_dump_seqno++;
- 	if (seqno == QCA_LAST_SEQUENCE_NUM) {
-@@ -3036,61 +3022,62 @@ static bool btqca_acl_pkt_is_dump(struct hci_dev *hdev, struct sk_buff *skb)
- 	struct hci_event_hdr *event_hdr;
- 	struct hci_acl_hdr *acl_hdr;
- 	struct qca_dump_hdr *dump_hdr;
-+	void *orig_data;
-+	unsigned int orig_len;
- 
--	sk_ptr = skb->data;
--	sk_len = skb->len;
-+	orig_data = skb->data;
-+	orig_len = skb->len;
- 
--	acl_hdr = hci_acl_hdr(skb);
--	if (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE)
--		return false;
--	sk_ptr += HCI_ACL_HDR_SIZE;
--	sk_len -= HCI_ACL_HDR_SIZE;
--	event_hdr = (struct hci_event_hdr *)sk_ptr;
--
--	if ((event_hdr->evt != HCI_VENDOR_PKT)
--		|| (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
--		return false;
-+	acl_hdr = skb_pull_data(skb, sizeof(*acl_hdr));
-+	if (!acl_hdr || (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE))
-+		goto restore_return;
- 
--	sk_ptr += HCI_EVENT_HDR_SIZE;
--	sk_len -= HCI_EVENT_HDR_SIZE;
-+	event_hdr = skb_pull_data(skb, sizeof(*event_hdr));
-+	if (!event_hdr || (event_hdr->evt != HCI_VENDOR_PKT))
-+		goto restore_return;
- 
--	dump_hdr = (struct qca_dump_hdr *)sk_ptr;
--	if ((sk_len < offsetof(struct qca_dump_hdr, data))
--		|| (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS)
--	    || (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
--		return false;
-+	dump_hdr = (struct qca_dump_hdr *)skb->data;
-+	if ((skb->len < sizeof(*dump_hdr)) ||
-+	   (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS) ||
-+	   (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
-+		goto restore_return;
- 
- 	return true;
-+
-+restore_return:
-+	skb->data = orig_data;
-+	skb->len = orig_len;
-+	return false;
- }
- 
- /* Return: true if the event packet is a dump packet, false otherwise. */
- static bool btqca_event_pkt_is_dump(struct hci_dev *hdev, struct sk_buff *skb)
- {
--	u8 *sk_ptr;
--	unsigned int sk_len;
--
- 	struct hci_event_hdr *event_hdr;
- 	struct qca_dump_hdr *dump_hdr;
-+	void *orig_data;
-+	unsigned int orig_len;
- 
--	sk_ptr = skb->data;
--	sk_len = skb->len;
-+	orig_data = skb->data;
-+	orig_len = skb->len;
- 
--	event_hdr = hci_event_hdr(skb);
-+	event_hdr = skb_pull_data(skb, sizeof(*event_hdr));
-+	if (!event_hdr || (event_hdr->evt != HCI_VENDOR_PKT))
-+		goto restore_return;
- 
--	if ((event_hdr->evt != HCI_VENDOR_PKT)
--		|| (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
--		return false;
-+	dump_hdr = (struct qca_dump_hdr *)skb->data;
-+	if ((skb->len < sizeof(*dump_hdr)) ||
-+	   (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS) ||
-+	   (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
-+		goto restore_return;
- 
--	sk_ptr += HCI_EVENT_HDR_SIZE;
--	sk_len -= HCI_EVENT_HDR_SIZE;
-+	return true;
- 
--	dump_hdr = (struct qca_dump_hdr *)sk_ptr;
--	if ((sk_len < offsetof(struct qca_dump_hdr, data))
--		|| (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS)
--	    || (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
--		return false;
-+restore_return:
-+	skb->data = orig_data;
-+	skb->len = orig_len;
-+	return false;
- 
--	return true;
- }
- 
- static int btusb_recv_acl_qca(struct hci_dev *hdev, struct sk_buff *skb)
--- 
-2.43.0
+thanks,
 
+Takashi
+
+
+> ---
+>  sound/usb/format.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/usb/format.c b/sound/usb/format.c
+> index 0cbf1d4fbe6e..fe2e0580e296 100644
+> --- a/sound/usb/format.c
+> +++ b/sound/usb/format.c
+> @@ -142,7 +142,7 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
+>  		pcm_formats |= SNDRV_PCM_FMTBIT_A_LAW;
+>  	if (format & BIT(UAC_FORMAT_TYPE_I_MULAW))
+>  		pcm_formats |= SNDRV_PCM_FMTBIT_MU_LAW;
+> -	if (format & ~0x3f) {
+> +	if (format & ~0x10000003F) {
+>  		usb_audio_info(chip,
+>  			 "%u:%d : unsupported format bits %#llx\n",
+>  			 fp->iface, fp->altsetting, format);
+> -- 
+> 2.45.2
+> 
 
