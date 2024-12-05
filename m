@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-432455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8B29E4B68
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:45:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E707B9E4B6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DCA3163AE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5969F1880519
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9310A1F;
-	Thu,  5 Dec 2024 00:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF15168B1;
+	Thu,  5 Dec 2024 00:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6vx2i4/"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mGwSyzbq"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1D1CA6F;
-	Thu,  5 Dec 2024 00:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A457E10A1E;
+	Thu,  5 Dec 2024 00:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733359532; cv=none; b=Ys25yWDK2mTUrRm+j6CdDPHV0TZU+biNOsWGEbmqz2YdA7wWbrLfh/527w7ExJoAPLwXbq21gIzb8bRXsWx+v1Hgycs36vLTeMNLz80q1eU2cN8QI/55gA75gy594+CfZLzU0IDLKW07JF7f/QaZ/gZcmdWY4aBtTKnTPQ4f28E=
+	t=1733359564; cv=none; b=ULU369maJbVUz+L1PJuWa2PbvaaRHRtlHfTXcH1pXXqsyNq0yfvLpfiZmFgDuY2Hr5sB0w5aMHVgHE8WYdPiWKB+pO7XMCaj8QtkC4wwLYu/uQABnQEVIAp3XfL8zU1WXTkPCnWGzkv+FJyGAQgwCI+gSWQ/9lwRa4Km85kJcu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733359532; c=relaxed/simple;
-	bh=XaaeTh4i9x9GcUZBoJdkg6ob76CEdYTvanlP7WUGrmM=;
+	s=arc-20240116; t=1733359564; c=relaxed/simple;
+	bh=DDSnkLRx/hpCsj0oZsDNoPzwOrYYZ9lCtPony0GX3+Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KWQTH8YCUkQUcQvWPFwWo1Ij9hgdqjUp7CfMR5K1juWg3j9eUEbvJ1BnuVHLNOoT6dpx/ryivozeHoVdpgtASdoVzUePqizkorkVwISAsy+9augdQQcK2hlcPQdunw4XmsPnDZRQ1FnfEcrRKJ4tWSgd3Rj/tMYvb+IGMjsyspc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6vx2i4/; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=KHr3QfWcw2/n53K55mWCs4PuX0QwuFM//COqUwp5cRHSNSeNiISjE2kqoZssrMln1GPDYO0HUaeDRvr3RajabWot93ZqGSUhP48Jkv8qbGxPKUnCaxR1UJHHHrMOaJsDi7y110ngl2auBjq9b29P54XRbGxb18FOH5hg8gSr0nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mGwSyzbq; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2153e642114so3121145ad.0;
-        Wed, 04 Dec 2024 16:45:30 -0800 (PST)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21572ca3cccso2774515ad.2;
+        Wed, 04 Dec 2024 16:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733359530; x=1733964330; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733359562; x=1733964362; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=soMelWL1/UQuv4PwOE6os4uBGru2kyLXQzhxEqo4tZA=;
-        b=i6vx2i4/sGx8oCxEPXdce7eIqftw+tIc4RLCz/OE6rucP6crZbeXCUos7p9aKgHnAx
-         CHEQCzrDNDOIuckAFjaEgkPoB+/RxrqbfWfvXJlZsFBn71M6FsJwv9/qykXQJt5M44BH
-         shMEqx92e1bYczF8yXiC0fO/EyFxC0u0AixhKxLV0k59NguiSgBAQQIw100YcOsUftZ+
-         hVP9FO+/ndTCirg1eQQjSeNhW277E0dK21XsSae4C8yR5Em1JkQ4mbBgUHucJHX4V2+c
-         sl9S8whYSlUPvo1+DbXU7Qn8ThRDe6ESTvw1KmvynFSyLUUFbG5YASRE5Cxsmz6m2g8f
-         u5IQ==
+        bh=tfA05tZFHk4htG1XoeZapn1ays+eOzOi9+0JezvQoOE=;
+        b=mGwSyzbqNkZs9VjTLc4K+aL4ds6as7e4NddSO+lCPdUQjc1Fb7NrPVmRkiBGI/lRBm
+         rzEc15z8Q3+z4pIqzb9pMd6Z/dP0TfeLLxanQDaR+jA1SF+khqAFdUTLHqy0Ln6mmZQI
+         1CGYG6iB/syqExX7D8amLO9TdJv6Ks4U4Dn6CWvsk7vVYaw69W7McnAZHZI5z2V2MGvt
+         BVn2dAZzdxK8c6tKQEJjWSy8uu5tlwSX2oI6qg4pbmdqPQOl9HIFoauCGNZw3fG8uoST
+         WJ2/Fy5gajhVGMv00F0mo00Lz+gmm3F4ygLJKzWgzwY1p9Bjpb7GDhIRHOLm1hfz4S8O
+         UHTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733359530; x=1733964330;
+        d=1e100.net; s=20230601; t=1733359562; x=1733964362;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=soMelWL1/UQuv4PwOE6os4uBGru2kyLXQzhxEqo4tZA=;
-        b=B6GaWH3T6encbsqonxRWhVoiSrHV/OjzKquNR1A1l2aTwAP7ucMB1d6emUOt7QFYQH
-         K3wfPuvrA0OVNJl4ekCNVWs2mRjcYdyfbg3u6iU+5lK9SDAvBDViqMAsuqo8GGHt6Kuc
-         bnAJNh1+pHM6ir+Zn5HNvUoYzK/2KZeteogjpLEu4UOUtXpJMeQvOZvraXWfCSwZs1Fk
-         ubTFZI9xHyYPM8h8iha/yqYmxTQP2TG214n4Lg+jBC1dXgXw3dNPZSLA0pInSBr9Ag9e
-         OaxwLqCbbgZW7biNEkq36RIcJR+IRcSroLpVA/VLoKZKBcoWeTLGUpoaeNlkRdJ/Cf43
-         EWSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCbMYCKptV0s2O+9C/Rc5EoDK+AuQozbPuDVEFBQN/hVrOiLfQhYCdBV13Cy5err8h8zNSL0qyotKyWqvKJo/Bxkv7AQ==@vger.kernel.org, AJvYcCW7hy6GUy1tqVf9wBhpJ3KvVJghlOEMmDkz/2z0l/navvzi5qXVBO/h9FN052l/9JXaLjivxikFuaNhyCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw15pFwRPKzKl5EcDEtca+zHRcek2G6dXGufJN4ePimG2XW2C4P
-	FecM14EO8fSj71KujSyV4NUdz2cIFJPn7FGhziDGIQFyqHdJdDtH
-X-Gm-Gg: ASbGnct79MaSOsK/ahafw43rorWBw5JsnqeNIKZDM6PyXcChJh7DTEnLR+i0UtLuLob
-	6M79vmcOPvojbkQXSsxgd9DahSFPN6d4C7v1d5zwdv2diqgETMBp0tkge8j3+TZ6L4NDLaZOKsM
-	pwR3oOYl2Es3TNYtTFkq9+bhgvSsfc0wKv2ljdMMGYjf1Efzen5HeIpIuyyGbUbDMKTfQbwF+7t
-	BKlLpyx7mm+35GKyF+qX2RNW5z6/qqHBoJBM2XwN6BGMD1fIKlSbC6ApzigRmEigQBYcv1GBdCo
-	qWHIF3DXnB/BIIunzV8=
-X-Google-Smtp-Source: AGHT+IEV+4iLTnRE7vFLN2dsQHUYs+JAPWWL3QLDKIzFNjanYtt7/v7YLAQSqKHy7+wdek6dN9A0OQ==
-X-Received: by 2002:a17:903:2343:b0:215:5a53:eded with SMTP id d9443c01a7336-215bd241404mr127216975ad.39.1733359529938;
-        Wed, 04 Dec 2024 16:45:29 -0800 (PST)
+        bh=tfA05tZFHk4htG1XoeZapn1ays+eOzOi9+0JezvQoOE=;
+        b=V2PIestjfzLekU9C7wP3BAJfAfzZdDXGgO/JpFF1ZaDnQ91FYL9JwDS/cIESYVQODT
+         pslwKGxYm5/YI/BvCQxX5SbpLF3zDxdSuH6Crq53PJn6CfEoqrV2lVt3CBFn7qjtR9Xp
+         vRUHJk5U/T0irjn7SyVY/l5TNRN3lk2G/IKmnGmlk+CFDoi+E52Dk1JDJqKbQUtjW0Nx
+         iqyOlGjYkIaB1gG5/pnQ1o720whuVrBwY/C0Q0XtmxdszdgmAj9Upxf4dhFUM4W7Z7Nv
+         e6XcWuq2tXANaCGwxEf42gtlD3GxOBPGxu8IWfwfD2c6Airjvqf5z7Z2d9mJFvrSczPM
+         SwnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3GVg61b96W7FdKgs8HZw0bTQomjA7tyZDxO9qveBde38+bl2TrlWTbFyi0lU8pI9GrC+VmvmKHLkB3arUmVxX9S6dDw==@vger.kernel.org, AJvYcCWlTDleyTPVaigc94zSz1wpAKHh+WZPE1P+QGVLsaM8zS5W9v6iJTeTW9n38KvDJZEIpiMOr+8/OnU58Mw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsyqAMhChCE4MdzukkYf1HDzS9ngFiDUdrj9+wSXk1AQCm7xC+
+	sKh84VmWi6TDcnzl07fCEseCpNzadnC1WJyjlus2xp5qNZL+uTuLYXgrsP1u
+X-Gm-Gg: ASbGnct8ubNtsEpJrBGNSC8MkAOBejXLntKqSUZHK7ON3dS0A1J7MkEz/MDWPNV//Hk
+	WccSTs/4RQ+X1KVyw6n27u4PZbFIrz7DSlyz+XnQYz03S4WJsSjavhOuubUBVMpywZfERmkr9DC
+	De1yc/6aAfpnll1YzKsUcvjc528/K3oEWz9sVZIpl9flFYsvhRgMAPXRuF8soPxqN0dOA6h+sGx
+	A/9fFFnEl34uPzv8QJ/okl5bqvZI1QCFiB2jE5g+JvxihNI4g97lyt8bqaf6yMjYLYomyVNaDaD
+	qF31e4W2Wcf4AXV3fSo=
+X-Google-Smtp-Source: AGHT+IE026MuLGTKCZJ0jm1xys3jatnyTlrx3pVvJs3ZKKoA0jNN+3LgUZmcuXKx7xSr8NPb/UvMMw==
+X-Received: by 2002:a17:902:e841:b0:215:4e40:e4b0 with SMTP id d9443c01a7336-215bd1b46bbmr122689305ad.9.1733359561975;
+        Wed, 04 Dec 2024 16:46:01 -0800 (PST)
 Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8efa535sm1338625ad.129.2024.12.04.16.45.27
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a9050asm102329b3a.123.2024.12.04.16.45.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 16:45:29 -0800 (PST)
+        Wed, 04 Dec 2024 16:46:01 -0800 (PST)
 From: Kurt Borja <kuurtb@gmail.com>
 To: kuurtb@gmail.com
 Cc: Dell.Client.Kernel@dell.com,
@@ -80,9 +80,9 @@ Cc: Dell.Client.Kernel@dell.com,
 	mario.limonciello@amd.com,
 	platform-driver-x86@vger.kernel.org,
 	w_armin@gmx.de
-Subject: [RFC PATCH 15/21] alienware-wmi: Refactor sysfs visibility methods
-Date: Wed,  4 Dec 2024 21:44:58 -0300
-Message-ID: <20241205004457.2186386-2-kuurtb@gmail.com>
+Subject: [RFC PATCH 16/21] alienware-wmi: Make running control state part of platdata
+Date: Wed,  4 Dec 2024 21:45:35 -0300
+Message-ID: <20241205004534.2186539-2-kuurtb@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
 References: <20241205002733.2183537-3-kuurtb@gmail.com>
@@ -94,121 +94,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All sysfs visibility methods relied on the `quirks` global variable. To
-avoid this let the WMI drivers set this information as platform specific
-data, and refactor visibility methods accordingly.
+Both WMI devices have a different "RUNNING" control state code. Make the
+WMI drivers decide which code to use, and refactor sysfs methods
+accordingly.
 
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/dell/alienware-wmi.c | 52 ++++++++++++++++++++---
- 1 file changed, 47 insertions(+), 5 deletions(-)
+ drivers/platform/x86/dell/alienware-wmi.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index 18a15dcf90a3..25e0139ed78c 100644
+index 25e0139ed78c..fa21a50d66bd 100644
 --- a/drivers/platform/x86/dell/alienware-wmi.c
 +++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -427,6 +427,10 @@ struct alienfx_ops {
- struct alienfx_platdata {
- 	struct wmi_device *wdev;
- 	struct alienfx_ops ops;
-+	u8 num_zones;
-+	bool hdmi_mux;
-+	bool amplifier;
-+	bool deepslp;
+@@ -431,6 +431,7 @@ struct alienfx_platdata {
+ 	bool hdmi_mux;
+ 	bool amplifier;
+ 	bool deepslp;
++	u8 running_code;
  };
  
  static u8 interface;
-@@ -597,12 +601,24 @@ static DEVICE_ATTR_RW(lighting_control_state);
- static umode_t zone_attr_visible(struct kobject *kobj,
- 				 struct attribute *attr, int n)
+@@ -576,18 +577,18 @@ static ssize_t lighting_control_state_store(struct device *dev,
+ 					    const char *buf, size_t count)
  {
--	return n < quirks->num_zones + 1 ? 0644 : 0;
-+	struct device *dev;
+ 	struct alienfx_priv *priv;
 +	struct alienfx_platdata *pdata;
-+
-+	dev = container_of(kobj, struct device, kobj);
+ 	u8 val;
+ 
+ 	priv = dev_get_drvdata(dev);
 +	pdata = dev_get_platdata(dev);
-+
-+	return n < pdata->num_zones + 1 ? 0644 : 0;
- }
  
- static bool zone_group_visible(struct kobject *kobj)
- {
--	return quirks->num_zones > 0;
-+	struct device *dev;
-+	struct alienfx_platdata *pdata;
-+
-+	dev = container_of(kobj, struct device, kobj);
-+	pdata = dev_get_platdata(dev);
-+
-+	return pdata->num_zones > 0;
- }
- DEFINE_SYSFS_GROUP_VISIBLE(zone);
+ 	if (strcmp(buf, "booting\n") == 0)
+ 		val = LEGACY_BOOTING;
+ 	else if (strcmp(buf, "suspend\n") == 0)
+ 		val = LEGACY_SUSPEND;
+-	else if (interface == LEGACY)
+-		val = LEGACY_RUNNING;
+ 	else
+-		val = WMAX_RUNNING;
++		val = pdata->running_code;
  
-@@ -737,7 +753,13 @@ static DEVICE_ATTR(source, S_IRUGO | S_IWUSR, show_hdmi_source,
- 
- static bool hdmi_group_visible(struct kobject *kobj)
- {
--	return quirks->hdmi_mux;
-+	struct device *dev;
-+	struct alienfx_platdata *pdata;
-+
-+	dev = container_of(kobj, struct device, kobj);
-+	pdata = dev_get_platdata(dev);
-+
-+	return pdata->hdmi_mux;
- }
- DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(hdmi);
- 
-@@ -786,7 +808,13 @@ static DEVICE_ATTR(status, S_IRUGO, show_amplifier_status, NULL);
- 
- static bool amplifier_group_visible(struct kobject *kobj)
- {
--	return quirks->amplifier;
-+	struct device *dev;
-+	struct alienfx_platdata *pdata;
-+
-+	dev = container_of(kobj, struct device, kobj);
-+	pdata = dev_get_platdata(dev);
-+
-+	return pdata->amplifier;
- }
- DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(amplifier);
- 
-@@ -862,7 +890,13 @@ static DEVICE_ATTR(deepsleep, S_IRUGO | S_IWUSR, show_deepsleep_status, toggle_d
- 
- static bool deepsleep_group_visible(struct kobject *kobj)
- {
--	return quirks->deepslp;
-+	struct device *dev;
-+	struct alienfx_platdata *pdata;
-+
-+	dev = container_of(kobj, struct device, kobj);
-+	pdata = dev_get_platdata(dev);
-+
-+	return pdata->deepslp;
- }
- DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE(deepsleep);
- 
-@@ -1211,6 +1245,10 @@ static int legacy_wmi_probe(struct wmi_device *wdev, const void *context)
- 			.upd_led = legacy_wmi_update_led,
- 			.upd_brightness = legacy_wmi_update_brightness,
- 		},
-+		.num_zones = quirks->num_zones,
-+		.hdmi_mux = quirks->hdmi_mux,
-+		.amplifier = quirks->amplifier,
-+		.deepslp = quirks->deepslp,
+ 	priv->lighting_control_state = val;
+ 	pr_debug("alienware-wmi: updated control state to %d\n",
+@@ -1249,6 +1250,7 @@ static int legacy_wmi_probe(struct wmi_device *wdev, const void *context)
+ 		.hdmi_mux = quirks->hdmi_mux,
+ 		.amplifier = quirks->amplifier,
+ 		.deepslp = quirks->deepslp,
++		.running_code = LEGACY_RUNNING,
  	};
  
  	if (quirks->num_zones > 0)
-@@ -1291,6 +1329,10 @@ static int wmax_wmi_probe(struct wmi_device *wdev, const void *context)
- 			.upd_led = wmax_wmi_update_led,
- 			.upd_brightness = wmax_wmi_update_brightness,
- 		},
-+		.num_zones = quirks->num_zones,
-+		.hdmi_mux = quirks->hdmi_mux,
-+		.amplifier = quirks->amplifier,
-+		.deepslp = quirks->deepslp,
+@@ -1333,6 +1335,7 @@ static int wmax_wmi_probe(struct wmi_device *wdev, const void *context)
+ 		.hdmi_mux = quirks->hdmi_mux,
+ 		.amplifier = quirks->amplifier,
+ 		.deepslp = quirks->deepslp,
++		.running_code = WMAX_RUNNING,
  	};
  
  	if (quirks->thermal)
