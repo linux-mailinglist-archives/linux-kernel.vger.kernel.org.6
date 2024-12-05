@@ -1,224 +1,126 @@
-Return-Path: <linux-kernel+bounces-432988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3B4C9E5299
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:41:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFC29E5281
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:37:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ACB11881EFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:37:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289C61DA2E5;
+	Thu,  5 Dec 2024 10:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="guWl3kaO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463A82845FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:41:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2718F206F34;
-	Thu,  5 Dec 2024 10:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Zto/FeYT"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA69B206F29
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387291D3566;
+	Thu,  5 Dec 2024 10:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395142; cv=none; b=XvPj5C5lSdpnQDfY0VStXRA8/B4yM0qNRNb19M3r/x5FJUapVLo7yvDJDN8phuvC9dQw4Hxn6o4yTJeybvTTERA2Nvl3ytfqz59/2ClfRALPXojiuEXR2LjwbafuEqXGLYfNWpLJDJSbEcS3JxZqbR0qzqVeWy0wrA/4tp9A6Eo=
+	t=1733395052; cv=none; b=ZUeEyGfyrhBpNHb6vQQyfLdJTIDJRXQUHgU6ZOBFr1vBV67tCnXM3LkPogLxrOCEt7aZ1t6PTfG+bgO3QRblaHi0e3OgW5ttH1J5v3Sfnk4qkFNgS1gRjdDqiwD+OQgWKvE4hJOwhtdT+HCXEaI7A3Saxakp882G0gnV1QbHUKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395142; c=relaxed/simple;
-	bh=DpO08fjIGRmuLFgPlCH9M2mTu8N/UKIsbU3j6nxBJ+U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OJ0NjYBDJbspws1FcCkFaBCiVxePAo5AnGvWCt7iq+ecOgJHsv7RER71Scq5dB9+QzndzX7Yufli9jeJjqTuwZddMgMkDkSzhd1R8OFk7cLtrMMxJycn7BUjZsAO2D9gEeFTLWSOKwibx+gMJjkVTdGTulOItscNJ9EF7C6pUD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Zto/FeYT; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fc22a88bcbso610032a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:39:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733395140; x=1733999940; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0HKGaUSlXgW0yAKeFS5JtDgO8P73Aga3Eke367yRUOM=;
-        b=Zto/FeYTvrJ8EPutWjt/0l5LCn+K1XmeorPmPpQoI76MNks1abFQptonsxRVhnq53r
-         XNvZtuQkHOsbO0cH9yzJVxIG429Zicw69pxCi5n+xMsXtQudCwJSrHtU/LEm57IxdzN1
-         qw2xLf5MhLRy+51pxHPysw417Q3R5+nT0Tl1aWkNowUx6sYIY+ghqtUFWEtlEH5F/gTv
-         FUmTRht/fyFYp1yCPPIsDJLSRyPbduZMkJ75o27mYUzpHguNDI6OC7QCLFg72w+/ngnD
-         LA2cD2QlBJ5hfMzoY520VbTCp53wderlRTAofICMdOkg6c1kGsmQrhJG+bBV9wxaV65T
-         q+Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395140; x=1733999940;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0HKGaUSlXgW0yAKeFS5JtDgO8P73Aga3Eke367yRUOM=;
-        b=mqpWwgGOVaW09WoKEt/9mMR/YfpsqkX+uXtPqOHSDXRB3olOh2nZ/hxRxdPsHl46N0
-         EdzSap6tAt2L9fWnmwuQ0oh9Sz9h2yFCioC2U7ggV384qIo14yOcIM3uBvzzhFOHaWaO
-         HgU1LscEdhWPsSm3EtZF6TSYbmVr+yTbicRyUgEYKCTdv+4QjaIPdu6lu1mcwcGl1EX7
-         2eDnPd0LrJ2TYxpLu/wyjHz3gq7euLkBOt9TWLV7zlXP1vygO11kJf7YGStqARGfmlNw
-         Ala4cif1FjznG4ccosiihhSERS02JCX2xMP8HIVWh8F3LOTxGCcVDrU0B0hy0G1V8sac
-         FwJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNrLeRz+M1W2wN+4K+O6696zNDtx+SjpYWmaP0Tw5iCT9G04VxTaZ8TPPVrh0+tlkbByRkeDG0ntxuSRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLSkfZFAKvDeOlsdtHD3+ixCRlAjO63qurD+IAVhxdKqZQF+IW
-	CbG9idLMwaQVoKHS7EAKqrQo0MCzerQTw0pTj6I/MPibA95fkBPHqH47E5CNcgk=
-X-Gm-Gg: ASbGncsyq7uIVWk08eXXKgSezE7uePTBnzTgEcNSex3mbJnAnQR35AiD0jXfhXiSp+x
-	UaNfUrHsbJojviG4lrkS7IRPAsIKpVC4UWOUsb0FJrhS98BpTzY9XJWvs4AMxv4lZbykBYanXIE
-	EWxuzcQSrTuYYMiPe/aWemX3+M6lSJ7R2MCzuWGZJVv1VVzCKbNJwNzIJaENaCxX6HPQ4GPX44E
-	Y9j6yksaPkWKnkry+DoY8YOEPq07tQmWYuQjGzWKpVT4ffVFXJmITn1XRaLXl3msQeLIQ+m+/Ej
-	J7pGCfqLx53f+R/hbTP0NKGLQYxarMgI
-X-Google-Smtp-Source: AGHT+IENYN2wIy2LzaSrsQXEce8aC4H6FioafWLUrw0utp3p27SZ8r2YKo2I/DuxTOOKoa8IMLVh9Q==
-X-Received: by 2002:a05:6a21:78a6:b0:1e0:d60c:3f49 with SMTP id adf61e73a8af0-1e165413484mr13667504637.43.1733395140137;
-        Thu, 05 Dec 2024 02:39:00 -0800 (PST)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156f048csm886826a12.39.2024.12.05.02.38.56
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 05 Dec 2024 02:38:59 -0800 (PST)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	ardb@kernel.org,
-	anup@brainfault.org,
-	atishp@atishpatra.org
-Cc: xieyongji@bytedance.com,
-	lihangjing@bytedance.com,
-	punit.agrawal@bytedance.com,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [RFC PATCH v2 20/21] riscv: mm: Adjust address space layout and init page table for 64K Page
-Date: Thu,  5 Dec 2024 18:37:28 +0800
-Message-Id: <20241205103729.14798-21-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241205103729.14798-1-luxu.kernel@bytedance.com>
-References: <20241205103729.14798-1-luxu.kernel@bytedance.com>
+	s=arc-20240116; t=1733395052; c=relaxed/simple;
+	bh=k0Ri1gJvfMPkkmwOG5H5IkESAn8lv1SqrkOcLFEGEog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhAYxoL7+WcdIHF1+5N4BwfzLBUQvE+KMxh8x9XANRk/hHxLWFRVVLZwpiPkVFJM2iPTLiRumMG7lv7zFyflgWx81gI4Se2z17zXBjawaFnHl6wbeV36pLzHYkxiuHBoHp84nP+VElKCuIRlXfgiYwvNHWqKFHID/71xyY+Ec9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=guWl3kaO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853FDC4CED1;
+	Thu,  5 Dec 2024 10:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733395052;
+	bh=k0Ri1gJvfMPkkmwOG5H5IkESAn8lv1SqrkOcLFEGEog=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=guWl3kaOoGEK+6hAPbImxmyWGcZsuvgDfS+SvtpN9yapsfB7pqHGGfp5hVdYv+Q5w
+	 vuRJCFOEzZPcd6Zebd/3fx8AKcwYYRIt2OSrHd1J3yxUb8h1Rom0Xy/H5DqebnGf5X
+	 2dcCaDOq9qqgy/7JnLhrUhhwK5k8bnLOoFX2Tzhd9Y9CvAuLbKVQ0fdaEysiLRWUwk
+	 SYb80dJWMM3YYx1tkOF51oLUhxScy1I23lx2EE8ZPxRTsY8jpWX6xygI0m+rKvAwdl
+	 2OBp+y6LpIANTG9T4G1GK6HuX4jdFpJVpP8FmAHs6E8qRz13DpF2xkEdujO4j3Rh0T
+	 szxkvQEuQm43Q==
+Date: Thu, 5 Dec 2024 11:37:29 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: quic_zijuhu <quic_zijuhu@quicinc.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-sound@vger.kernel.org, sparclinux@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	open-iscsi@googlegroups.com, linux-usb@vger.kernel.org, linux-serial@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 08/11] gpio: sim: Remove gpio_sim_dev_match_fwnode()
+Message-ID: <eyu7nm5hvwfqxgysnrzsvianzf7abvlovpxfo7snsxowmuuhpj@tah3gkqm5ldj>
+References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
+ <20241205-const_dfc_done-v3-8-1611f1486b5a@quicinc.com>
+ <7ugfaj2h3sy77jpaadco5xtjalnten3gmvozowcle3g7zcdqs4@sqf5l47onbsi>
+ <ac42e652-4128-44ea-976e-5234360d8183@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ak6zeaiacfbfwyki"
+Content-Disposition: inline
+In-Reply-To: <ac42e652-4128-44ea-976e-5234360d8183@quicinc.com>
 
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- arch/riscv/include/asm/page.h    |  6 +++++-
- arch/riscv/include/asm/pgtable.h | 12 +++++++++++
- arch/riscv/mm/init.c             | 36 +++++++++++++++++++++++---------
- 3 files changed, 43 insertions(+), 11 deletions(-)
 
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 9bc908d94c7a..236b0106a1c9 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -40,8 +40,12 @@
-  * By default, CONFIG_PAGE_OFFSET value corresponds to SV57 address space so
-  * define the PAGE_OFFSET value for SV48 and SV39.
-  */
-+#ifdef CONFIG_RISCV_64K_PAGES
-+#define PAGE_OFFSET_L4		_AC(0xffffa80000000000, UL)
-+#else
- #define PAGE_OFFSET_L4		_AC(0xffffaf8000000000, UL)
--#define PAGE_OFFSET_L3		_AC(0xffffffd600000000, UL)
-+#endif /* CONFIG_RISCV_64K_PAGES */
-+#define PAGE_OFFSET_L3		_AC(0xffffffd800000000, UL)
- #else
- #define PAGE_OFFSET		_AC(CONFIG_PAGE_OFFSET, UL)
- #endif /* CONFIG_64BIT */
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 9f347e5eefeb..fbc397c4e1c8 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -147,6 +147,18 @@ static inline unsigned long __page_val_to_pfn(unsigned long val);
- #include <asm/pgtable-32.h>
- #endif /* CONFIG_64BIT */
- 
-+#define __PMD_SHIFT	(PMD_SHIFT - (PAGE_SHIFT - HW_PAGE_SHIFT))
-+#define __PMD_SIZE	(_AC(1, UL) << __PMD_SHIFT)
-+
-+#define __PUD_SHIFT	(PUD_SHIFT - (PAGE_SHIFT - HW_PAGE_SHIFT))
-+#define __PUD_SIZE	(_AC(1, UL) << __PUD_SHIFT)
-+
-+#define __P4D_SHIFT	(P4D_SHIFT - (PAGE_SHIFT - HW_PAGE_SHIFT))
-+#define __P4D_SIZE	(_AC(1, UL) << __P4D_SHIFT)
-+
-+#define __PGD_SHIFT	(PGD_SHIFT - (PAGE_SHIFT - HW_PAGE_SHIFT))
-+#define __PGD_SIZE	(_AC(1, UL) << __PGD_SHIFT)
-+
- #include <linux/page_table_check.h>
- 
- #ifdef CONFIG_XIP_KERNEL
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 678b892b4ed8..2c6b7ea33009 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -695,15 +695,15 @@ static uintptr_t __meminit best_map_size(phys_addr_t pa, uintptr_t va, phys_addr
- 		return PAGE_SIZE;
- 
- 	if (pgtable_l5_enabled &&
--	    !(pa & (P4D_SIZE - 1)) && !(va & (P4D_SIZE - 1)) && size >= P4D_SIZE)
-+	    !(pa & (__P4D_SIZE - 1)) && !(va & (P4D_SIZE - 1)) && size >= P4D_SIZE)
- 		return P4D_SIZE;
- 
- 	if (pgtable_l4_enabled &&
--	    !(pa & (PUD_SIZE - 1)) && !(va & (PUD_SIZE - 1)) && size >= PUD_SIZE)
-+	    !(pa & (__PUD_SIZE - 1)) && !(va & (PUD_SIZE - 1)) && size >= PUD_SIZE)
- 		return PUD_SIZE;
- 
- 	if (IS_ENABLED(CONFIG_64BIT) &&
--	    !(pa & (PMD_SIZE - 1)) && !(va & (PMD_SIZE - 1)) && size >= PMD_SIZE)
-+	    !(pa & (__PMD_SIZE - 1)) && !(va & (PMD_SIZE - 1)) && size >= PMD_SIZE)
- 		return PMD_SIZE;
- 
- 	return PAGE_SIZE;
-@@ -937,17 +937,33 @@ static void __init create_kernel_page_table(pgd_t *pgdir,
- 				   PMD_SIZE, PAGE_KERNEL);
- }
- #else
-+
-+#ifdef CONFIG_RISCV_64K_PAGES
-+/* TODO: better implementation */
-+#define KERNEL_MAP_STEP			PAGE_SIZE
-+#else
-+#define KERNEL_MAP_STEP			PMD_SIZE
-+#endif
-+
- static void __init create_kernel_page_table(pgd_t *pgdir, bool early)
- {
- 	uintptr_t va, end_va;
- 
- 	end_va = kernel_map.virt_addr + kernel_map.size;
--	for (va = kernel_map.virt_addr; va < end_va; va += PMD_SIZE)
--		create_pgd_mapping(pgdir, va,
--				   kernel_map.phys_addr + (va - kernel_map.virt_addr),
--				   PMD_SIZE,
--				   early ?
--					PAGE_KERNEL_EXEC : pgprot_from_va(va));
-+	if (early)
-+		for (va = kernel_map.virt_addr; va < end_va; va += PMD_SIZE)
-+			create_pgd_mapping(pgdir, va,
-+					   kernel_map.phys_addr + (va - kernel_map.virt_addr),
-+					   PMD_SIZE,
-+					   early ?
-+						PAGE_KERNEL_EXEC : pgprot_from_va(va));
-+	else
-+		for (va = kernel_map.virt_addr; va < end_va; va += KERNEL_MAP_STEP)
-+			create_pgd_mapping(pgdir, va,
-+					   kernel_map.phys_addr + (va - kernel_map.virt_addr),
-+					   KERNEL_MAP_STEP,
-+					   early ?
-+						PAGE_KERNEL_EXEC : pgprot_from_va(va));
- }
- #endif
- 
-@@ -1138,7 +1154,7 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- 
- 	/* Sanity check alignment and size */
- 	BUG_ON((PAGE_OFFSET % PGDIR_SIZE) != 0);
--	BUG_ON((kernel_map.phys_addr % PMD_SIZE) != 0);
-+	BUG_ON((kernel_map.phys_addr % __PMD_SIZE) != 0);
- 
- #ifdef CONFIG_64BIT
- 	/*
--- 
-2.20.1
+--ak6zeaiacfbfwyki
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 08/11] gpio: sim: Remove gpio_sim_dev_match_fwnode()
+MIME-Version: 1.0
 
+On Thu, Dec 05, 2024 at 04:37:08PM +0800, quic_zijuhu wrote:
+> On 12/5/2024 4:10 PM, Uwe Kleine-K=F6nig wrote:
+> > On Thu, Dec 05, 2024 at 08:10:17AM +0800, Zijun Hu wrote:
+> >> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>
+> >> gpio_sim_dev_match_fwnode() is a simple wrapper of device_match_fwnode=
+()
+> >> Remvoe the unnecessary wrapper.
+
+Just spotted: s/Remvoe/Remove/
+
+> >> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> >> ---
+> >>  drivers/gpio/gpio-sim.c | 7 +------
+> >=20
+> > I think if you move this patch before patch #4 in your series, you only
+> > have to touch this file once.
+>=20
+> the precondition of this change is patch #4, it will have building error
+> if moving it before #4.
+>=20
+> actually, we can only do simplifications with benefits brought by #4.
+
+Ah I see. I thought that device_match_fwnode only got the const for the
+2nd parameter in patch #4.
+
+Best regards
+Uwe
+
+--ak6zeaiacfbfwyki
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdRgmcACgkQj4D7WH0S
+/k6zeggAlBhwMJaGpQIgAi04teyouKX4a/XAJG3tLwpz4YweEcrMm/fv0N42hp/d
+7zUKHjQRRcVM6+TSObZ6uKEFMpac+G1YG1Fze2rNPdlf5IUOCrpKqKUaziMyvEc+
+hhaccpLCXjp9gi7H7tEBDfmrR6/S3i1nnYOeDn6tYmhKVx14uA57l4Isj2h+CIax
+P5d+Gq9NQl5IXDnqiEez80oo8LFhLQQIjIeO1YQM7GrbXaqoD+CfZTGXe4/woRc5
+JjzksiJqSccUbPlwM+90bh5Oj0H2VARUaJTRcHTRANM4ZFTSfWCep0Wkg8DSw343
+fYW4rY4vIXpWKVG9LM4j7NAoluIWvQ==
+=myq/
+-----END PGP SIGNATURE-----
+
+--ak6zeaiacfbfwyki--
 
