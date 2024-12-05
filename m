@@ -1,883 +1,144 @@
-Return-Path: <linux-kernel+bounces-432461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB8E9E4B7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:47:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FEC9E4B7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:47:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36114167918
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:47:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70931284E61
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CBA17579;
-	Thu,  5 Dec 2024 00:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C7636127;
+	Thu,  5 Dec 2024 00:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="l8yVadJV"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSYCLIB0"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9B0C8EB
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E548D1B59A;
+	Thu,  5 Dec 2024 00:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733359626; cv=none; b=ofdwgjyOhC9WPnDKrN5YFD2m9DbT5Wd6VtFfQH12Mc6JXHI6cNG+DDNZxmNqNSzQX5KbdXB272NJemVHZQCpP1Q35BLc+RoNY7BGF4LNxcF8aejZg3581plyg7usQygxv+jYMYsuCkcH54ADb3G8tgFtpdv5Jrb4wYiBICti2rQ=
+	t=1733359646; cv=none; b=IvJzedbQe/MzRJJ+OeZXWXEj5kGQCPPZm+B7MzY+w/MfuCfVpIvUeOlVUgHzabMc0DQR/I+TkbqE0Ndxm0xfZXRAEhuY7lPtv7CR1l7HAIMD4Xwk4AfIgMgnCa72weJQyTw45X5AJjKMKO0eTLSsMHDnPt39UtJxQWfrDAgdXPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733359626; c=relaxed/simple;
-	bh=QysfSxgEVRwQ5xJCXIhvZS3Xsi0lfEQ9bwSeoIrxkDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IRubnETDoqr6Xo8WOtKiZGUcgYuiBjxk0+/t4TCqW7ShWjWYj3bpLvcjOmz+gXw5jjH09RZudZp7H37IpOf4F6/yZ0k3QY4S6KUDMsMh93MtYQcXwjQQYEIEdAegKLyNhlQLWouJvlUmrLrRA39ieHaH7Tj20W+8Q79fpMvSxhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=l8yVadJV; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5f2164a68bbso233458eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 16:47:03 -0800 (PST)
+	s=arc-20240116; t=1733359646; c=relaxed/simple;
+	bh=4ZxeEJPY8xoRML7MMJMoHacS1hJ13w94RIiqCDy8sXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=brpVcTtz2sjxm3iYrjB01cQGaaEdm3tJyT4F9sgNAIJlhm7fyryS7HNTtG2wezVhYVUhQYTCdKVP0ajhl1abaYe+7pdM9ZkBzLyfWu7wDS/ildYGC2q9+eXXhM+qqJJMcP2+0A0i6NAB294YpyiWpgJPNIyFeQUmZSXRxkOKL3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VSYCLIB0; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7fc2dbee20fso379462a12.3;
+        Wed, 04 Dec 2024 16:47:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733359622; x=1733964422; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=e8p4q15WVKblfBi6Kn4uPAclVcX2kybZAq0VzH31+WU=;
-        b=l8yVadJVnb+I1JzpaNVPd5ntfH6e3KkdWSqRuCQc/mYBdeu+jcuJu199i0dKClgwZ3
-         YH1E2hXtGAn3qoBbTVMdtDCV1VI65Ou4gobfyhpxfZ6YRaXOeDYeNga0G1/GmN55ynwO
-         EwMnQUQuTHvPXCDGPdbPHgnMRCnf0bggf6+ud/ktuMOBOA3PXGwPipgqCUv8/ylg1z23
-         hHAJQwnBcStA004LWb/a4zynrcrw80AwNypjObwET4QwSR8wzfE4leih5VKBS+Q+O+sP
-         PRAkFlwlWQkwDar8bOpCKKspl0hvJwZ7YD1zyh1vteuT08adoHgObBUvU6jYxMqkC7O3
-         LmDw==
+        d=gmail.com; s=20230601; t=1733359644; x=1733964444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PhdIFnFtU8L6vmt7RyRfWOP3Xh8e0z4jvRasrWil8Yo=;
+        b=VSYCLIB0P6jJRmdO52/HEa0Nx1L76tRGGAR3xe1osWAsq4OHcSA1UypI1vqwADTR6S
+         zBtWZ5geA+C/ETl1JDwqrfDMc5lr8pBW6ryq/fP/C7Dsn8s4gQNRzW1YZ472pAGRXgj6
+         EM5KwBFqSYUX+TC71fcfNCnQI5Vhc7QUYXbeGdQ0FLqwbyDMSsvPtqxryfBbYpL5Wga6
+         H/d8DvWIOD7fVLWT56xD1/PuWowLT7H07zIHy5MHC7g4obrCMoL95ZtH6ZkidLAuj7Ma
+         NRjZQe1bMI3hzvQP/m/uxUFNVxJ86cnlxLCQ9Sd4/EOmxCdLujN9ictk72IXltV2yEFP
+         OgeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733359622; x=1733964422;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e8p4q15WVKblfBi6Kn4uPAclVcX2kybZAq0VzH31+WU=;
-        b=OUGG4+Wgs5IH1ODOLll4y6qtVg5Eck1QLUQXXyXWN+7XiC8NXHVis/wMzw/M3IHf2s
-         j18WYfYxJC4tEl1BxM084N408imTHAkFSwhQerp10UpIm5Sxk0Fjd79JxBszS7rJPILv
-         ik3rHcISybrVZX1MksNBveR1qeQr1HrRCVe/OrOv4VlwwZ2QmBeHqFANpq6RkAuNhZgd
-         Tn5/LuN/7+6wR1qHpfh4F6RKj63FC3SedceFDLqM21HLmcZqHq886BMaZXqvRR3DHZlb
-         ninS5my8Qnc3c3ZcqJwef7L7J2VC669vrwn8hc9BsjDCC0UH+Lqyyp23vaiTJwxcgS92
-         mjiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY6xgv7bPvYfFr/CUUZAfRVAX7uikIGgI6AmcamVovYYrqYTEI94yXpXCRs2LQr7IQKw0sIFCtAwoDlNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVxFUbtpraCLthWFeXlV6agGcTXtaCXm1zJIficlbWo+yx6ydf
-	uqTiKK4ko8j2asvfZNS3UtiYXTji4TDqoFAemYrIB+CgXcflRdD0MYfUsin8xrY=
-X-Gm-Gg: ASbGnctxqUNfeZbGZDZ2c0ZmBodMZm2fMcJ4JvJdwzZxov/7F6eHR87x8CFSRpjPkP+
-	3k1ib6yghOHSUCN0RVa8/7oSIa6X5kmLN4tWNNBX/oxAYPQt5ZVTRCMx5li1b1ri5GTBns6rNjq
-	JknJidF9bPseqPfKjPROKnHzgcr2Bufvb00C7IiJeCMvlKBvfMQtoZteIBliS5AboJyzK7+IVN0
-	IzwlQX+kmPhU5rLVC5d0L/4E1YqKOGtce3uspoLtDGaBgsCWCVFhoUeApwPpZ6GTNKIl983/U0Z
-	+CgepudR8gA=
-X-Google-Smtp-Source: AGHT+IHwJcUqp71G1F8+1pNoNqOv9fmmPQcWJXqYYlz1QYEPeYCZNukY2WiIQJTY++R6odipVCp4PA==
-X-Received: by 2002:a05:6820:1b09:b0:5ee:d89f:1d35 with SMTP id 006d021491bc7-5f25ae29232mr8492295eaf.6.1733359622304;
-        Wed, 04 Dec 2024 16:47:02 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f279304212sm107672eaf.34.2024.12.04.16.47.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 16:47:01 -0800 (PST)
-Message-ID: <51482499-76c6-4cdc-a3a9-9077ea09787c@baylibre.com>
-Date: Wed, 4 Dec 2024 18:47:00 -0600
+        d=1e100.net; s=20230601; t=1733359644; x=1733964444;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PhdIFnFtU8L6vmt7RyRfWOP3Xh8e0z4jvRasrWil8Yo=;
+        b=KWBpzpnYxstgSRvXRqNlVsSUjjsWQ1EI/BStQbbKBhuMLV/4TPA4ez71Z1iEKPpXX4
+         eWRJilWbKbJgW1fOSrE39Os+sLCNPkD4mtF1otOvSD6z1bvSmRTc9dD0iZxXGohpTLPi
+         ACW8rsyK6GqWUdgAxI1oIZUTwwXDuqDduKPtfx0GarVe078pm79aPHdMmP3h1sGybPH7
+         rnDA1MYnKUGZNB/5hXSO4mjuPv89M/MPta9OokoLt1aJNT5jYJpfhTVlR0ksi0yNzFgU
+         0ZHdVccfmHsIO+YtbGpTo+Dy9080hW55xNEXAkyXXY8XBc4yi4rBZf2OkeMutFyjFk0G
+         IRLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGsS+/FF2ltv3EQd8X+xFXFutU4rSVqxRE6xH2QGsULOcSh9We7oxfXk8XQEgQtrSvBXqGX1H2RkeeFTZlgNdPu4am6A==@vger.kernel.org, AJvYcCWXkZEc3VM8xy45XH0vaaIp2RgNxCUKI7Wl0509ZNEyDd28N+mZmy/CfYi1RdUquD4c/1QoDmbt8WQ6GMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrgFZuM+80P6jM1pExMUpNsxKiIYwLVbNS93kPUiCyL3h5Z6hT
+	SKeC/P9OGspbfcDmJa4HA8/TfoHM8KDU/hsNodAGBBnLjDNi6kFz
+X-Gm-Gg: ASbGncuOd4nTaYnYJTbpYJM7Sq4eTetMZ6UA4rrq7/PIfBmndWWOrlbIOG552cG0Xvo
+	dBHo/FiSWx0RLVM2krsB+EchTSsl1JgCANwiIe1PQrGZLOF9CPtQ1rFvwxyvC+174EnRUbHrP/V
+	cbVUHig95wcJXqL/VEWM9UW3m0VGa6CNOW0spGuxPNwib/jPCWZLGtKWD4e0wsX6OAEkFsrxCll
+	+q+5WBx5kQTGtv18ujQOBkcv+Tw19/gE1Q9lpfeZsEeGAfQbr92hjs7aL5eVMV0lWDQN45GT3F9
+	D+Vqop82Ppk18ujp6ro=
+X-Google-Smtp-Source: AGHT+IFT2v8ovroLfk4FV50rHj5EP/hN5gMU/u6ifXEGMiZjTQ7Xi4QrB+uJBQuIhghdD5jTrD2Fcg==
+X-Received: by 2002:a05:6a20:158a:b0:1e0:f059:cd6 with SMTP id adf61e73a8af0-1e1653f23d6mr11113931637.29.1733359644219;
+        Wed, 04 Dec 2024 16:47:24 -0800 (PST)
+Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29c5719sm109335b3a.27.2024.12.04.16.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 16:47:24 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [RFC PATCH 19/21] platform-x86: Rename alienare-wmi
+Date: Wed,  4 Dec 2024 21:47:10 -0300
+Message-ID: <20241205004709.2186969-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
+References: <20241205002733.2183537-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 8/8] iio: adc: ad4851: add ad485x driver
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20241129153546.63584-1-antoniu.miclaus@analog.com>
- <20241129153546.63584-9-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241129153546.63584-9-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/29/24 9:35 AM, Antoniu Miclaus wrote:
-> Add support for the AD485X a fully buffered, 8-channel simultaneous
-> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
-> differential, wide common-mode range inputs.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
+In order to eventually split the module:
 
-...
+Rename alienware-wmi.c -> alienware-wmi-base.c
 
-> +static const struct ad4851_scale ad4851_scale_table_se[] = {
-> +	{ 2500, 0x0 },
-> +	{ 5000, 0x2 },
-> +	{ 6250, 0x4 },
-> +	{ 10000, 0x6 },
-> +	{ 12500, 0x8 },
-> +	{ 20000, 0xA },
-> +	{ 25000, 0xC },
-> +	{ 40000, 0xE },
-> +};
-> +
-> +static const struct ad4851_scale ad4851_scale_table_diff[] = {
-> +	{ 5000, 0x1 },
-> +	{ 10000, 0x3 },
-> +	{ 12500, 0x5 },
-> +	{ 20000, 0x7 },
-> +	{ 25000, 0x9 },
-> +	{ 40000, 0xB },
-> +	{ 50000, 0xD },
-> +	{ 80000, 0xF },
-> +};
+And modify MAINTAINERS accordingly.
 
-The logic circuits in my brain thank you for separating these. :-)
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ MAINTAINERS                                                    | 3 ++-
+ drivers/platform/x86/dell/Makefile                             | 1 +
+ .../x86/dell/{alienware-wmi.c => alienware-wmi-base.c}         | 0
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+ rename drivers/platform/x86/dell/{alienware-wmi.c => alienware-wmi-base.c} (100%)
 
-Much easier for me to understand how the code works now.
-
-> +
-> +static const unsigned int ad4851_scale_avail_se[] = {
-> +	2500,
-> +	5000,
-> +	6250,
-> +	10000,
-> +	12500,
-> +	20000,
-> +	25000,
-> +	40000,
-> +};
-> +
-> +static const unsigned int ad4851_scale_avail_diff[] = {
-> +	5000,
-> +	10000,
-> +	12500,
-> +	20000,
-> +	25000,
-> +	40000,
-> +	50000,
-> +	80000,
-> +};
-> +
-> +struct ad4851_chip_info {
-> +	const char *name;
-> +	unsigned int product_id;
-> +	int num_scales;
-> +	const struct iio_chan_spec *channels;
-> +	unsigned int num_channels;
-> +	unsigned long max_sample_rate_hz;
-> +	unsigned int resolution;
-> +	int (*parse_channels)(struct iio_dev *indio_dev);
-> +};
-> +
-> +enum {
-> +	AD4851_SCAN_TYPE_NORMAL,
-> +	AD4851_SCAN_TYPE_RESOLUTION_BOOST,
-> +};
-> +
-> +struct ad4851_state {
-> +	struct spi_device *spi;
-> +	struct pwm_device *cnv;
-> +	struct iio_backend *back;
-> +	/*
-> +	 * Synchronize access to members the of driver state, and ensure
-> +	 * atomicity of consecutive regmap operations.
-> +	 */
-> +	struct mutex lock;
-> +	struct regmap *regmap;
-> +	struct regulator *vrefbuf;
-> +	struct regulator *vrefio;
-> +	const struct ad4851_chip_info *info;
-> +	struct gpio_desc *pd_gpio;
-> +	bool resolution_boost_enabled;
-> +	unsigned long sampling_freq;
-> +	unsigned int scales_se[AD4841_MAX_SCALE_AVAIL][2];
-> +	unsigned int scales_diff[AD4841_MAX_SCALE_AVAIL][2];
-> +};
-> +
-> +static int ad4851_reg_access(struct iio_dev *indio_dev,
-> +			     unsigned int reg,
-> +			     unsigned int writeval,
-> +			     unsigned int *readval)
-> +{
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	if (readval)
-> +		return regmap_read(st->regmap, reg, readval);
-> +
-> +	return regmap_write(st->regmap, reg, writeval);
-> +}
-> +
-> +static int ad4851_set_sampling_freq(struct ad4851_state *st, unsigned int freq)
-> +{
-> +	struct pwm_state cnv_state = {
-> +		.duty_cycle = AD4851_T_CNVH_NS,
-
-This still doesn't seem safe due to possible rounding of this minium
-time. See previous reviews.
-
-> +		.enabled = true,
-> +	};
-> +	int ret;
-> +
-> +	freq = clamp(freq, 1, st->info->max_sample_rate_hz);
-> +
-> +	cnv_state.period = DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
-> +
-> +	ret = pwm_apply_might_sleep(st->cnv, &cnv_state);
-> +	if (ret)
-> +		return ret;
-> +
-
-There is now a pwm_get_state_hw() function we can use to get the actual
-PWM period the hardware actually selected. We can use that here to more
-accuratly set st->sampling_freq instead of using the requested value.
-
-> +	st->sampling_freq = freq;
-> +
-> +	return 0;
-> +}
-> +
-> +static const int ad4851_oversampling_ratios[] = {
-> +	1, 2, 4, 8, 16,	32, 64, 128,
-> +	256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
-> +	65536,
-> +};
-> +
-> +static int ad4851_osr_to_regval(int ratio)
-> +{
-> +	int i;
-> +
-> +	for (i = 1; i < ARRAY_SIZE(ad4851_oversampling_ratios); i++)
-> +		if (ratio == ad4851_oversampling_ratios[i])
-> +			return i - 1;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ad4851_set_oversampling_ratio(struct ad4851_state *st,
-> +					 const struct iio_chan_spec *chan,
-> +					 unsigned int osr)
-> +{
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	if (osr == 1) {
-> +		ret = regmap_clear_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					AD4851_OS_EN_MSK);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = iio_backend_oversampling_disable(st->back);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		val = ad4851_osr_to_regval(osr);
-> +		if (val < 0)
-> +			return -EINVAL;
-> +
-> +		ret = regmap_set_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +				      AD4851_OS_EN_MSK);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_RATIO_MSK, val);
-
-Wouldn't hurt to use FIELD_PREP() on val here.
-
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = iio_backend_oversampling_enable(st->back);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	switch (chan->scan_type.realbits) {
-
-When using ext_scan_type, we have to use iio_get_current_scan_type()
-to get the scan type instead of chan->scan_type. Otherwise we will
-be accessing a member of a union that is currently being used for
-something else and will get some unknown value.
-
-We also have to be extra careful here since changing the oversampling
-ratio will change the scan type. So here, it would probably be best to
-use the resolution from the chip info instead of scan_type to get the
-16 or 20. Otherwise, realbits could be 24 if oversampling is already
-enabled on a 20-bit chip.
-
-> +	case 20:
-> +		switch (osr) {
-> +		case 0:
-> +			return -EINVAL;
-> +		case 1:
-> +			val = 20;
-> +			break;
-> +		default:
-> +			val = 24;
-> +			break;
-> +		}
-> +		break;
-> +	case 16:
-> +		val = 16;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = iio_backend_data_size_set(st->back, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (osr == 1 || chan->scan_type.realbits == 16) {
-
-Again here, consider chip info resolution instead of scan_type.
-
-> +		ret = regmap_clear_bits(st->regmap, AD4851_REG_PACKET,
-> +					AD4851_PACKET_FORMAT_MASK);
-> +		if (ret)
-> +			return ret;
-> +
-> +		st->resolution_boost_enabled = false;
-> +	} else {
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_PACKET,
-> +					 AD4851_PACKET_FORMAT_MASK,
-> +					 FIELD_PREP(AD4851_PACKET_FORMAT_MASK, 1));
-> +		if (ret)
-> +			return ret;
-> +
-> +		st->resolution_boost_enabled = true;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad4851_get_oversampling_ratio(struct ad4851_state *st, unsigned int *val)
-> +{
-> +	unsigned int osr;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	ret = regmap_read(st->regmap, AD4851_REG_OVERSAMPLE, &osr);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!FIELD_GET(AD4851_OS_EN_MSK, osr))
-> +		*val = 1;
-> +	else
-> +		*val = ad4851_oversampling_ratios[FIELD_GET(AD4851_OS_RATIO_MSK, osr)];
-> +
-> +	return IIO_VAL_INT;
-> +}
-> +
-> +static void ad4851_reg_disable(void *data)
-> +{
-> +	regulator_disable(data);
-> +}
-> +
-> +static void ad4851_pwm_disable(void *data)
-> +{
-> +	pwm_disable(data);
-> +}
-> +
-> +static int ad4851_setup(struct ad4851_state *st)
-> +{
-> +	unsigned int product_id;
-> +	int ret;
-> +
-> +	if (!IS_ERR(st->vrefbuf)) {
-> +		ret = regmap_set_bits(st->regmap, AD4851_REG_DEVICE_CTRL,
-> +				      AD4851_REFBUF_PD);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regulator_enable(st->vrefbuf);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = devm_add_action_or_reset(&st->spi->dev, ad4851_reg_disable,
-> +					       st->vrefbuf);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (!IS_ERR(st->vrefio)) {
-> +		ret = regmap_set_bits(st->regmap, AD4851_REG_DEVICE_CTRL,
-> +				      AD4851_REFSEL_PD);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regulator_enable(st->vrefio);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = devm_add_action_or_reset(&st->spi->dev, ad4851_reg_disable,
-> +					       st->vrefio);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (st->pd_gpio) {
-> +		/* To initiate a global reset, bring the PD pin high twice */
-> +		gpiod_set_value(st->pd_gpio, 1);
-> +		fsleep(1);
-> +		gpiod_set_value(st->pd_gpio, 0);
-> +		fsleep(1);
-> +		gpiod_set_value(st->pd_gpio, 1);
-> +		fsleep(1);
-> +		gpiod_set_value(st->pd_gpio, 0);
-> +		fsleep(1000);
-> +	} else {
-> +		ret = regmap_set_bits(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
-> +				      AD4851_SW_RESET);
-> +		if (ret)
-> +			return ret;
-> +	}
-
-Resetting here will reset the REFBUF/REFSEL that were already configured
-in the DEVICE_CTRL register. The reset should be done before any other config.
-
-> +
-> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_B,
-> +			   AD4851_SINGLE_INSTRUCTION);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
-> +			   AD4851_SDO_ENABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, AD4851_REG_PRODUCT_ID_L, &product_id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (product_id != st->info->product_id)
-> +		dev_info(&st->spi->dev, "Unknown product ID: 0x%02X\n",
-> +			 product_id);
-> +
-> +	ret = regmap_set_bits(st->regmap, AD4851_REG_DEVICE_CTRL,
-> +			      AD4851_ECHO_CLOCK_MODE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(st->regmap, AD4851_REG_PACKET, 0);
-> +}
-> +
-
-...
-
-> +
-> +static void __ad4851_get_scale(struct ad4851_state *st, int scale_tbl,
-> +			       unsigned int *val, unsigned int *val2)
-> +{
-> +	const struct ad4851_chip_info *info = st->info;
-> +	const struct iio_chan_spec *chan = &info->channels[0];
-> +	unsigned int tmp;
-> +
-> +	tmp = ((unsigned long long)scale_tbl * MICRO) >> chan->scan_type.realbits;
-
-As above, we need to use iio_get_current_scan_type() to safely get the
-current scan_type struct.
-
-Can also abbrivate unsigned long long as u64.
-
-> +	*val = tmp / MICRO;
-> +	*val2 = tmp % MICRO;
-> +}
-> +
-
-...
-
-> +
-> +static int ad4851_scale_fill(struct ad4851_state *st)
-> +{
-> +	unsigned int i, val1, val2;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(ad4851_scale_avail_se); i++) {
-> +		__ad4851_get_scale(st, ad4851_scale_avail_se[i], &val1, &val2);
-> +		st->scales_se[i][0] = val1;
-> +		st->scales_se[i][1] = val2;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(ad4851_scale_avail_diff); i++) {
-> +		__ad4851_get_scale(st, ad4851_scale_avail_diff[i], &val1, &val2);
-> +		st->scales_diff[i][0] = val1;
-> +		st->scales_diff[i][1] = val2;
-> +	}
-
-Isn't this just copying the static structs directly? If that is the case,
-why not just use the static structs directly in the code instead of making
-a copy?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad4851_read_raw(struct iio_dev *indio_dev,
-> +			   const struct iio_chan_spec *chan,
-> +			   int *val, int *val2, long info)
-> +{
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*val = st->sampling_freq;
-
-I didn't think about this before, but oversampling ratio will affect the
-sampling freqency. Userspace tools like iio-oscilloscope expect the rate
-reported by the sampling_frequency attribute to mean how often we read one
-sample from the chip or one batch of samples from a simeltaneous sampling
-chip like this one. But st->sampling_freq is the rate at which we are
-toggling the CNV pin. When oversampling is enabled, we toggle CNV N times
-before doing a read where N is the oversamping ratio. So to get the correct
-value to userspace, we need to divide st->st->sampling_freq by the
-oversampling ratio.
-
-Could also be a good idea to rename st->sampling_freq to something like
-st->cnv_trigger_rate_hz or something like that to avoid confusion.
-
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_CALIBSCALE:
-> +		return ad4851_get_calibscale(st, chan->channel, val, val2);
-> +	case IIO_CHAN_INFO_SCALE:
-> +		return ad4851_get_scale(st, chan, val, val2);
-> +	case IIO_CHAN_INFO_CALIBBIAS:
-> +		return ad4851_get_calibbias(st, chan->channel, val);
-> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-> +		return ad4851_get_oversampling_ratio(st, val);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad4851_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int val, int val2, long info)
-> +{
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-
-Similar to above, we need to take into account oversampling ratio here.
-
-> +		return ad4851_set_sampling_freq(st, val);
-> +	case IIO_CHAN_INFO_SCALE:
-> +		return ad4851_set_scale(st, chan, val, val2);
-> +	case IIO_CHAN_INFO_CALIBSCALE:
-> +		return ad4851_set_calibscale(st, chan->channel, val, val2);
-> +	case IIO_CHAN_INFO_CALIBBIAS:
-> +		return ad4851_set_calibbias(st, chan->channel, val);
-> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-> +		return ad4851_set_oversampling_ratio(st, chan, val);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad4851_update_scan_mode(struct iio_dev *indio_dev,
-> +				   const unsigned long *scan_mask)
-> +{
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +	unsigned int c;
-> +	int ret;
-> +
-> +	for (c = 0; c < st->info->num_channels / 2; c++) {
-
-This doesn't look quite right. This means only the first half of the
-channels could ever be enabled. Also scan_index doesn't correspond to
-channel number any more.
-
-Since each physical input has 2 IIO channels with consecutive scan_index,
-we could read 2 bits at a time from the scan_mask.
-
-If that value == 0x3, then return -EINVAL because we tried to enable
-both the differential and single-ended input on the same physical
-input pin.
-
-If the value is 0x0, disable the channel in the backend. Otherwise,
-enable the channel in the backend (value is 0x1 or 0x2).
-
-> +		if (test_bit(c, scan_mask))
-> +			ret = iio_backend_chan_enable(st->back, c);
-> +		else
-> +			ret = iio_backend_chan_disable(st->back, c);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad4851_read_avail(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     const int **vals, int *type, int *length,
-> +			     long mask)
-> +{
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		if (chan->differential) {
-> +			*vals = (const int *)st->scales_diff;
-> +			*type = IIO_VAL_INT_PLUS_MICRO;
-> +			/* Values are stored in a 2D matrix */
-> +			*length = ARRAY_SIZE(ad4851_scale_avail_diff) * 2;
-> +		} else {
-> +			*vals = (const int *)st->scales_se;
-> +			*type = IIO_VAL_INT_PLUS_MICRO;
-> +			/* Values are stored in a 2D matrix */
-> +			*length = ARRAY_SIZE(ad4851_scale_avail_se) * 2;
-> +		}
-
-This one gets a bit tricky since on 20-bit chips, enabling oversampling
-also changes the number of realbits. So we need different list of scales
-available in that case.
-
-> +		return IIO_AVAIL_LIST;
-> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-> +		*vals = ad4851_oversampling_ratios;
-> +		*length = ARRAY_SIZE(ad4851_oversampling_ratios);
-> +		*type = IIO_VAL_INT;
-> +		return IIO_AVAIL_LIST;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct iio_scan_type ad4851_scan_type_16 = {
-> +	.sign = 's',
-> +	.realbits = 16,
-> +	.storagebits = 16,
-> +};
-
-Don't we need an unsigned version of this one too? Or is this struct
-unused and can be removed?
-
-> +
-> +static const struct iio_scan_type ad4851_scan_type_20_0[] = {
-> +	[AD4851_SCAN_TYPE_NORMAL] = {
-> +		.sign = 'u',
-> +		.realbits = 20,
-> +		.storagebits = 32,
-> +	},
-> +	[AD4851_SCAN_TYPE_RESOLUTION_BOOST] = {
-> +		.sign = 'u',
-> +		.realbits = 24,
-> +		.storagebits = 32,
-> +	},
-> +};
-> +
-> +static const struct iio_scan_type ad4851_scan_type_20_1[] = {
-> +	[AD4851_SCAN_TYPE_NORMAL] = {
-> +		.sign = 's',
-> +		.realbits = 20,
-> +		.storagebits = 32,
-> +	},
-> +	[AD4851_SCAN_TYPE_RESOLUTION_BOOST] = {
-> +		.sign = 's',
-> +		.realbits = 24,
-> +		.storagebits = 32,
-> +	},
-> +};
-> +
-> +static int ad4851_get_current_scan_type(const struct iio_dev *indio_dev,
-> +					const struct iio_chan_spec *chan)
-> +{
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +
-> +	return st->resolution_boost_enabled ? AD4851_SCAN_TYPE_RESOLUTION_BOOST
-> +					    : AD4851_SCAN_TYPE_NORMAL;
-> +}
-> +
-> +#define AD4851_IIO_CHANNEL(index, ch, diff)					\
-> +	.type = IIO_VOLTAGE,							\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |			\
-> +		BIT(IIO_CHAN_INFO_CALIBBIAS) |					\
-> +		BIT(IIO_CHAN_INFO_SCALE),					\
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |		\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
-> +	.info_mask_shared_by_all_available =					\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
-> +	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),		\
-> +	.indexed = 1,								\
-> +	.differential = diff,							\
-> +	.channel = ch,								\
-> +	.channel2 = ch + (diff * 8),						\
-
-Did you mean diff * (ch + 8)?
-
-> +	.scan_index = index,							\
-> +
-> +#define AD4858_IIO_CHANNEL(index, ch, diff, bits)				\
-> +{										\
-> +	AD4851_IIO_CHANNEL(index, ch, diff)					\
-> +	.ext_scan_type = ad4851_scan_type_##bits##_##diff,			\
-> +	.num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_##bits##_##diff),	\
-> +}
-> +
-> +#define AD4857_IIO_CHANNEL(index, ch, diff, bits)				\
-> +{										\
-> +	AD4851_IIO_CHANNEL(index, ch, diff)					\
-> +	.scan_type = {								\
-> +		.sign = 's',							\
-
-sign should be 's' for diff and 'u' for !diff
-
-> +		.realbits = bits,						\
-> +		.storagebits = bits,						\
-
-Could just hard code 16 here and avoid passing it as a parameter.
-
-> +	},									\
-> +}
-> +
-> +static const struct iio_chan_spec ad4858_channels[] = {
-> +	AD4858_IIO_CHANNEL(0, 0, 0, 20),
-> +	AD4858_IIO_CHANNEL(1, 0, 1, 20),
-> +	AD4858_IIO_CHANNEL(2, 1, 0, 20),
-> +	AD4858_IIO_CHANNEL(3, 1, 1, 20),
-> +	AD4858_IIO_CHANNEL(4, 2, 0, 20),
-> +	AD4858_IIO_CHANNEL(5, 2, 1, 20),
-> +	AD4858_IIO_CHANNEL(6, 3, 0, 20),
-> +	AD4858_IIO_CHANNEL(7, 3, 1, 20),
-> +	AD4858_IIO_CHANNEL(8, 4, 0, 20),
-> +	AD4858_IIO_CHANNEL(9, 4, 1, 20),
-> +	AD4858_IIO_CHANNEL(10, 5, 0, 20),
-> +	AD4858_IIO_CHANNEL(11, 5, 1, 20),
-> +	AD4858_IIO_CHANNEL(12, 6, 0, 20),
-> +	AD4858_IIO_CHANNEL(13, 6, 1, 20),
-> +	AD4858_IIO_CHANNEL(14, 7, 0, 20),
-> +	AD4858_IIO_CHANNEL(15, 7, 1, 20),
-> +};
-> +
-> +static const struct iio_chan_spec ad4857_channels[] = {
-> +	AD4857_IIO_CHANNEL(0, 0, 0, 16),
-> +	AD4857_IIO_CHANNEL(1, 0, 1, 16),
-> +	AD4857_IIO_CHANNEL(2, 1, 0, 16),
-> +	AD4857_IIO_CHANNEL(3, 1, 1, 16),
-> +	AD4857_IIO_CHANNEL(4, 2, 0, 16),
-> +	AD4857_IIO_CHANNEL(5, 2, 1, 16),
-> +	AD4857_IIO_CHANNEL(6, 3, 0, 16),
-> +	AD4857_IIO_CHANNEL(7, 3, 1, 16),
-> +	AD4857_IIO_CHANNEL(8, 4, 0, 16),
-> +	AD4857_IIO_CHANNEL(9, 4, 1, 16),
-> +	AD4857_IIO_CHANNEL(10, 5, 0, 16),
-> +	AD4857_IIO_CHANNEL(11, 5, 1, 16),
-> +	AD4857_IIO_CHANNEL(12, 6, 0, 16),
-> +	AD4857_IIO_CHANNEL(13, 6, 1, 16),
-> +	AD4857_IIO_CHANNEL(14, 7, 0, 16),
-> +	AD4857_IIO_CHANNEL(15, 7, 1, 16),
-> +};
-> +
-> +static int ad4857_parse_channels(struct iio_dev *indio_dev)
-> +{
-> +	struct device *dev = indio_dev->dev.parent;
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +	struct iio_chan_spec *ad4851_channels;
-> +	const struct iio_chan_spec ad4851_chan = AD4857_IIO_CHANNEL(0, 0, 0, 16);
-> +	const struct iio_chan_spec ad4851_chan_diff = AD4857_IIO_CHANNEL(0, 0, 1, 16);
-> +	unsigned int num_channels, index = 0, reg;
-> +	int ret;
-> +
-> +	num_channels = device_get_child_node_count(dev);
-> +	if (num_channels > AD4851_MAX_CH_NR)
-> +		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
-> +				     num_channels);
-> +
-> +	ad4851_channels = devm_kcalloc(dev, num_channels,
-> +				       sizeof(*ad4851_channels), GFP_KERNEL);
-> +	if (!ad4851_channels)
-> +		return -ENOMEM;
-> +
-> +	indio_dev->channels = ad4851_channels;
-> +	indio_dev->num_channels = num_channels;
-> +
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		ret = fwnode_property_read_u32(child, "reg", &reg);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Missing channel number\n");
-> +		if (fwnode_property_present(child, "diff-channels")) {
-> +			*ad4851_channels = ad4851_chan_diff;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ad4851_channels->channel2 = reg + AD4851_MAX_CH_NR;
-> +		} else {
-> +			*ad4851_channels = ad4851_chan;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ret = regmap_write(st->regmap, AD4851_REG_CHX_SOFTSPAN(reg),
-> +					   AD4851_SOFTSPAN_0V_40V);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +		ad4851_channels++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad4858_parse_channels(struct iio_dev *indio_dev)
-> +{
-> +	struct device *dev = indio_dev->dev.parent;
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +	struct iio_chan_spec *ad4851_channels;
-> +	const struct iio_chan_spec ad4851_chan = AD4858_IIO_CHANNEL(0, 0, 0, 20);
-> +	const struct iio_chan_spec ad4851_chan_diff = AD4858_IIO_CHANNEL(0, 0, 1, 20);
-> +	unsigned int num_channels, index = 0, reg;
-> +	int ret;
-> +
-> +	num_channels = device_get_child_node_count(dev);
-> +	if (num_channels > AD4851_MAX_CH_NR)
-> +		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
-> +				     num_channels);
-> +
-> +	ad4851_channels = devm_kcalloc(dev, num_channels,
-> +				       sizeof(*ad4851_channels), GFP_KERNEL);
-> +	if (!ad4851_channels)
-> +		return -ENOMEM;
-> +
-> +	indio_dev->channels = ad4851_channels;
-> +	indio_dev->num_channels = num_channels;
-> +
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		ret = fwnode_property_read_u32(child, "reg", &reg);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Missing channel number\n");
-> +		if (fwnode_property_present(child, "diff-channels")) {
-> +			*ad4851_channels = ad4851_chan_diff;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ad4851_channels->channel2 = reg + AD4851_MAX_CH_NR;
-> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_1;
-> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_1);
-> +
-> +		} else {
-> +			*ad4851_channels = ad4851_chan;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_0;
-> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_0);
-> +			ret = regmap_write(st->regmap, AD4851_REG_CHX_SOFTSPAN(reg),
-> +					   AD4851_SOFTSPAN_0V_40V);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +		ad4851_channels++;
-> +	}
-> +
-> +	return 0;
-> +}
-
-Do we actually need these 2 channel parsing functions? I thought the goal
-here was to provide both a differential and single-ended version of each
-channel always so we wouldn't be limited to one or the other by the
-devicetree.
-
-static const struct iio_chan_spec ad4858_channels and ad4857_channels seem
-like they should be sufficint to me without dynamically creating channels
-during probe.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3809931b9240..a4d02074dd91 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -787,7 +787,8 @@ ALIENWARE WMI DRIVER
+ L:	Dell.Client.Kernel@dell.com
+ S:	Maintained
+ F:	Documentation/wmi/devices/alienware-wmi.rst
+-F:	drivers/platform/x86/dell/alienware-wmi.c
++F:	drivers/platform/x86/dell/alienware-wmi-*
++F:	drivers/platform/x86/dell/alienware-wmi.*
+ 
+ ALLEGRO DVT VIDEO IP CORE DRIVER
+ M:	Michael Tretter <m.tretter@pengutronix.de>
+diff --git a/drivers/platform/x86/dell/Makefile b/drivers/platform/x86/dell/Makefile
+index 79d60f1bf4c1..5e7496aeb070 100644
+--- a/drivers/platform/x86/dell/Makefile
++++ b/drivers/platform/x86/dell/Makefile
+@@ -5,6 +5,7 @@
+ #
+ 
+ obj-$(CONFIG_ALIENWARE_WMI)		+= alienware-wmi.o
++alienware-wmi-objs			:= alienware-wmi-base.o
+ obj-$(CONFIG_DCDBAS)			+= dcdbas.o
+ obj-$(CONFIG_DELL_LAPTOP)		+= dell-laptop.o
+ obj-$(CONFIG_DELL_RBTN)			+= dell-rbtn.o
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi-base.c
+similarity index 100%
+rename from drivers/platform/x86/dell/alienware-wmi.c
+rename to drivers/platform/x86/dell/alienware-wmi-base.c
+-- 
+2.47.1
 
 
