@@ -1,175 +1,195 @@
-Return-Path: <linux-kernel+bounces-432891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5689E5194
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:42:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DDD9E519B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:45:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98E12812BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:42:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8FB416671A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE041D5CFD;
-	Thu,  5 Dec 2024 09:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563451D5144;
+	Thu,  5 Dec 2024 09:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWB6B8aD"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjf/BsHK"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193611D47A2;
-	Thu,  5 Dec 2024 09:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA6DD26D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733391747; cv=none; b=J6+i8iRK0Ntb03Rpbuk8yFL4z+A8znm6OvtQSb0cfLaKQchhjMDBTIMIlK+T2QD5zTIK4pfARykRyaNigOKp9YEgVEkfIY0h6Oyijg04wPwXiEufcY1lFsOCJqH86eUsZetw3+7pocBo0HBICB9kDJEqR19nZ+FHDp5VFoMWKzQ=
+	t=1733391952; cv=none; b=JgLU7URfMe/5GTEsGgB9SoVbG+fC46RF+5JIu2zAL3LUlggLIsfcEpGC2KfHL+lfB28UDF75KCx63jJdeJI9Podl09hjuV+8CiZWU/QuDZJz2z17aDxmlcy+DiO7BJ/WWQAMZCF8oeO+E7IKc9DIgyngySyG6Ci0NOnqiPyoqhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733391747; c=relaxed/simple;
-	bh=uMfTwaW+z1uixy5zgQAaP5OlpK7VhcX7/nfcxPE3qYE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fn0/hhW50bKf6c5S+OCoSzinnuDpbiso63wABC9FuvZje4rABhQKuoMR+2LoZU5iiLcBaY45Elc2GAqJLu9kMP+kw/Sh5gvwHTFeVbkJTB3gjwS82zrdHCa9g1/dT3BomQJSsuBmOd/Bkt9W9tiHtgSS43gaYlG0vms2XSwnZQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWB6B8aD; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1733391952; c=relaxed/simple;
+	bh=SNdPmDkLdDDYLgeO+TmHif43uTpTv/p2qWIljnnh6FA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PmGBh6AzH0jNikpqj2QADDD2McEmsPBtbqv7cX0sYYTyaGtSPA8s/JWHJsqtlFOfURY4ttl6ilEMUIGpWm2G4/ZHgitZXOCX9rNz75HVRPh7BdigCKjtwh4eV3uvb8w5RnuzYNCpjSLOTrNLc2X81Kz1w7PmsTS28REeWcI117g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjf/BsHK; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df19bf6a9so784112e87.1;
-        Thu, 05 Dec 2024 01:42:25 -0800 (PST)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7fc99fc2b16so545779a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:45:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733391744; x=1733996544; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6QUY0v5q5a5aeJy9BcvmDe3ZKrjse/FVqfzz1Ow9ERM=;
-        b=jWB6B8aDWurrYFb/foKON8WdsSLpPUioPMmCSNCobwILVt12Idi209uMN4TVRWKttX
-         kooDgzly42hJ6A53jA/HQ068rEJ1jHuD+E4xjAXuy6p097N0/kP6Zv3/JbgdFVaXxwKu
-         pK8VQCqy2ICOcXyAnCrb+y1Oze5x78D7v2jFyjpt9Z01e3KmifFE7bRzCv65CyLxW58f
-         YCffwY4XuNx4em8zJHC5hxbxNnG/z8Y7HXcJAymg3EDQCazsFZp/Nx/CRoj398QPG9Fu
-         inln3ikAy0SDUcrUUMI4Nr+RUXpXXRSUyzV/Kb2pq+DeToetZlH3/0BVjN+wwisvNucz
-         oQFg==
+        d=gmail.com; s=20230601; t=1733391951; x=1733996751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sSCTRtTZFzC38u5ELH86ExDbi7PEAa9+kuBPOpVRQXg=;
+        b=hjf/BsHK2JpIJvN8kHMy6EvV0TtCiCPdrWfR+DEejukQlSh9yRDg0Bd+qoeMF1RkDJ
+         +YJOr3pr3MpmkVVr4iu3wsF7QO5bgzDl3pxRmcfqDqwOtxzk3q9Imgr2fePeS/eqi+CP
+         /V+SYfj8d5Kv7x8+Aym3nz0iETelwaXHYFtRe0ttvoJXBgt1SLviCHyNGKU9vwiPh5eY
+         NCpQlbdRWqyjh7hUTXQLd4JcSNYbBjA48jCXKqm4Q6//ubtJAKOd+lWB8/K3Rzy6mfGj
+         WUUSM8PWY4DaEs7sxXlBGlf3oRiYw3iYHgkLxHlFtEptQXgnrmhrxTyhNoaOfV4NrtHA
+         mrqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733391744; x=1733996544;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6QUY0v5q5a5aeJy9BcvmDe3ZKrjse/FVqfzz1Ow9ERM=;
-        b=jPKXYzgvxkpDP88Z0XSxxAY1TeFzxbwfyfCUB2dlRikJeOxJ0rgiu/s+IX8EF+IvGr
-         u5oU33tKttIz7bcitBxylHZRkxL9CE+rUB8o1e+TANVLh6mZoF7Zz5Pcd7dqHlsECHoN
-         m1EFQYDJoy+eVkXILUkvI1sgb3gVDVRvq+k9Oh1qK8gUWcJW8Tp8RMCu911ebLa3u/wm
-         T1YF/qu+hCZarRF9tDBduYq8yjKlI3gD4Kqk3ybBdG67fPRoeA5Ms8sOJu+eNVcn0ISc
-         lEfbVE7Fu3nCvDUV7F5nQ+GRnXYQkHmmnfK2zrBOeoriNyhKdZtQxEL3dTyBWF10Gh/6
-         SzZw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3IKv2nHpGOhkSDkgt+zuAMtruUn4Y3TuDi1H5aGKZSntSi5isfvXshx7iCc6OtIB9bLX4s5ZiRbDEmyP7@vger.kernel.org, AJvYcCViIDRAxJ1UpnvoTOKAZUSkGHS1kusavzm0uOD0ThsKWFNEaVLWbKe+fnYy9p4CvSUva9FlBR5oBb4o@vger.kernel.org, AJvYcCWHNbQjirX3kg7QBm9IBH4fsYQ9NBMSWYmIRL7fdxq89WP+P5alCgeXl9nL1kPVpOOOFciB2GvNxw7U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtLAZk9UqpC/v7PfB5XMiBhVlfSk3FEamGOT3NtYMk+OCwztlQ
-	KrUOsqeBwVaq5zvbop/0rd4sP4QbwS1oq5UJmSTMKlGHNj9AQAp+
-X-Gm-Gg: ASbGncuNW7Hxt5/yKTm2YjMnqwuHnVS2SK3INmWIwIXL2+AHSYHLQfmxOcVIki7rP1+
-	Oaw1JaJrG0vV8Z3Sb9TlRZQYM7LVBMYdlE6SkBbCzHaN4OrZKbs/VtXu9eoeUd2xV0NGrapp6Zx
-	YKRxvWTaPhAHRI9oUvfcxiKFjVOlVVaE6Xemu+NPMUaK4sswOcD5RHySs+noUoYeF5JYunMmGxn
-	E8dvWT4fD05fxZ4RbwNMuyP4clblvPFCbIgJbPbuP4hvxlZgAAJ9O/nPpSph2B2IZ275T45W5VG
-	2AHePVSNsmEnsQPOckts6GqAIQwbC04=
-X-Google-Smtp-Source: AGHT+IEfSRZ7J9WsY8VKTHBNKbsM71xhiPnLOEwNnwRYWWpfDNYDHMn8qsh4P9CGnvF0ibeS8Nxx0g==
-X-Received: by 2002:a05:6512:118e:b0:53d:e544:3fda with SMTP id 2adb3069b0e04-53e12a31939mr5282564e87.55.1733391743946;
-        Thu, 05 Dec 2024 01:42:23 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e2294792csm181423e87.1.2024.12.05.01.42.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 01:42:23 -0800 (PST)
-Message-ID: <7194cce7-5082-4df5-8599-186c2e39c599@gmail.com>
-Date: Thu, 5 Dec 2024 11:42:21 +0200
+        d=1e100.net; s=20230601; t=1733391951; x=1733996751;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sSCTRtTZFzC38u5ELH86ExDbi7PEAa9+kuBPOpVRQXg=;
+        b=UupQtjmNisavLmVOO16gyBxRDHqlvyWcaYBtIJbi6bL2GulGVjP5HucvOQmJrv58Ys
+         O46YhTUDATNGNWjVWkShLCzez/05bo3JxcXmyUraghax5Hxfbg3+ZIniC51EHqeBS4qh
+         8BcOVqGYsEa3nbSpdv3HnXe+FkI92IB3sGl221pKYMa1dsioKlYVjqF0Dk0HC9sHmm/B
+         V2oi/LpVspGYYjdcdPTcGKunMwhQP/0tRPTR+BmhDtEblVtL/qa1Cyw9VXcONOZio26n
+         r1CudMGO3tqraPTk0jaTQexuPLjgPTAB09a1hKzAg1/e4lS6PA0mkDBI999doJaXtfui
+         91Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOSOTTF75Xw0k1JoHUkLp4ekGWZO27G2xaQwxpgq0YUQz0/ncaINvb0hNFdQldm0kUJgw0f+SUnRRsSVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp0Ktj4rppxebAfIcfDB6KDAAGxzS+3cAYvrffNAItjjTnVdl8
+	RE+GDxYP8eslSSboB+NmNZss0/RuOpJmofjyqIYGxSgcWS8TqDF2
+X-Gm-Gg: ASbGncvJ1C9cKOo3e9XNxviEpocRdJJ9MQY8ngeZ3RtFmSqR+UXgyEk1TyH+oiOxS4G
+	EGA9Wfy92a1JXF1SHCGHbo5KWYU1XWEfBvosgQvL5u0Dkl4ybI+IBzkzgEmVdWD579YY6yOUa9D
+	Or8+JsDAlpQF56J4rAnkxrWQY0SpsRH/6AY0/W3w48VMmlXYGFQ1IxaFNmFNquzYJW8+WpAyVA3
+	MupQzeYIu0k/88N+Fh3y5nLdm9nIuu+KAZD7jIh4tIS/paRaBpp6Y/tN5gTbVI2iQoUEBT4Fw==
+X-Google-Smtp-Source: AGHT+IEdC91bc1pFn/Lu1UYwciLcGwDw8pC1DZiNh/OvhZTcQykXZV+bgtvqpQ9MycoZffLtElbsiw==
+X-Received: by 2002:a05:6a20:430b:b0:1d9:c78f:4207 with SMTP id adf61e73a8af0-1e1653b7c9amr13021353637.11.1733391950622;
+        Thu, 05 Dec 2024 01:45:50 -0800 (PST)
+Received: from localhost.localdomain ([36.110.106.149])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a90542sm889686b3a.106.2024.12.05.01.45.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 01:45:50 -0800 (PST)
+From: Guo Weikang <guoweikang.kernel@gmail.com>
+To: amir73il@gmail.com,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Guo Weikang <guoweikang.kernel@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/shmem: Refactor to reuse vfs_parse_monolithic_sep for option parsing
+Date: Thu,  5 Dec 2024 17:45:21 +0800
+Message-Id: <20241205094521.1244678-1-guoweikang.kernel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: light: Add APDS9160 ALS & Proximity sensor
- driver
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
- Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
-Cc: Mikael Gonella-Bolduc via B4 Relay
- <devnull+mgonellabolduc.dimonoff.com@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>
-References: <20241119-apds9160-driver-v1-0-fa00675b4ea4@dimonoff.com>
- <20241119-apds9160-driver-v1-2-fa00675b4ea4@dimonoff.com>
- <20241124211545.194a9f87@jic23-huawei> <Z0eY+1X1ZSkNui9U@uva.nl>
- <20241201132054.0c063a11@jic23-huawei>
- <9d810e5c-c7a5-41e5-8073-b703717faf3d@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-In-Reply-To: <9d810e5c-c7a5-41e5-8073-b703717faf3d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 02/12/2024 10:22, Matti Vaittinen wrote:
-> Hi Jonathan & Mikael,
-> 
-> On 01/12/2024 15:20, Jonathan Cameron wrote:
->>
->>>>> +};
->>>>> +MODULE_DEVICE_TABLE(of, apds9160_of_match);
->>>>> +
->>>>> +static struct i2c_driver apds9160_driver = {
->>>>> +    .driver      = {
->>>>> +        .name    = APDS9160_DRIVER_NAME,
->>>>> +        .owner = THIS_MODULE,
->>>>> +        .of_match_table = apds9160_of_match,
->>>>> +    },
->>>>> +    .probe    = apds9160_probe,
->>>>> +    .remove      = apds9160_remove,
->>>>> +    .id_table = apds9160_id,
->>>>> +};
->>> First, regarding the integration time/gain/scale parameters. I took a 
->>> look at the datasheet again as there is a table
->>> provided to get lux/count (scale?) for the ALS sensor depending on 
->>> gain and integration time.
->>>
->>> It looks like the correlation in the table is almost linear but it's 
->>> not as there is a loss of precision.
->>> For example, at 1x gain with integration time 100ms the lux/count is 
->>> 0.819 but at 3x the table is stating 0.269 instead of exepected 0.273.
->>>
->>> Is it still possible to use the gts helpers in that case?
->>
->> Ah. Probably not if it goes non linear.  Matti? (+CC)
-> 
-> Disclaimer - I didn't go through the patch and I just respond from the 
-> top of my head :) So, please take my words with a pinch of salt.
-> 
-> AFAIR, it is not required that the impact of integration time is 
-> _linear_ through the range. The "multiplication factor" can be set for 
-> each integration time separately. So, it is perfectly Ok to say:
-> 
-> time 1 => multiply by 1
-> time 2 => multiply by 2
-> time 10 => multiply by 9 <= not linear, as linear would be 10.
-> time 15 => multiply by 15
-> 
-> ...
-> 
-> The notable limitation of _current_ implementation is that the 
-> "multiplication factor" needs to be integer. So, this may result loss of 
-> accuracy.
+The `shmem_parse_options` function is refactored to use
+`vfs_parse_monolithic_sep` with a custom separator function,
+`shmem_next_opt`. This eliminates redundant logic for parsing
+comma-separated options and ensures consistency with other
+kernel code that uses the same interface.
 
-// Snip.
+The `vfs_parse_monolithic_sep()` helper, introduced in commit
+e001d1447cd4 ("fs: factor out vfs_parse_monolithic_sep() helper").
 
-I ended up re-reading this mail as a result of running some of my 
-public-inbox scripts...
+Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
+---
+ mm/shmem.c | 65 +++++++++++++++++++++++-------------------------------
+ 1 file changed, 27 insertions(+), 38 deletions(-)
 
-...and I noticed that the non linear correlation was not about 
-integration time, but about gain. Eg, if I now read you right, the 
-integration time is kept constant 100mS, and gain is changed from 1x => 
-3x, which actually did not bring 3x gain to the lux/count values.
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d23602a33f31..c9c5862848e6 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4646,48 +4646,37 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 	return invalfc(fc, "Bad value for '%s'", param->key);
+ }
+ 
+-static int shmem_parse_options(struct fs_context *fc, void *data)
++static char *shmem_next_opt(char **s)
+ {
+-	char *options = data;
++	char *sbegin = *s;
++	char *p;
+ 
+-	if (options) {
+-		int err = security_sb_eat_lsm_opts(options, &fc->security);
+-		if (err)
+-			return err;
+-	}
++	if (sbegin == NULL)
++		return NULL;
+ 
+-	while (options != NULL) {
+-		char *this_char = options;
+-		for (;;) {
+-			/*
+-			 * NUL-terminate this option: unfortunately,
+-			 * mount options form a comma-separated list,
+-			 * but mpol's nodelist may also contain commas.
+-			 */
+-			options = strchr(options, ',');
+-			if (options == NULL)
+-				break;
+-			options++;
+-			if (!isdigit(*options)) {
+-				options[-1] = '\0';
+-				break;
+-			}
+-		}
+-		if (*this_char) {
+-			char *value = strchr(this_char, '=');
+-			size_t len = 0;
+-			int err;
+-
+-			if (value) {
+-				*value++ = '\0';
+-				len = strlen(value);
+-			}
+-			err = vfs_parse_fs_string(fc, this_char, value, len);
+-			if (err < 0)
+-				return err;
++	/*
++	 * NUL-terminate this option: unfortunately,
++	 * mount options form a comma-separated list,
++	 * but mpol's nodelist may also contain commas.
++	 */
++	for (;;) {
++		p = strchr(*s, ',');
++		if (p == NULL)
++			break;
++		*s = p + 1;
++		if (!isdigit(*(p+1))) {
++			*p = '\0';
++			return sbegin;
+ 		}
+ 	}
+-	return 0;
++
++	*s = NULL;
++	return sbegin;
++}
++
++static int shmem_parse_monolithic(struct fs_context *fc, void *data)
++{
++	return vfs_parse_monolithic_sep(fc, data, shmem_next_opt);
+ }
+ 
+ /*
+@@ -5037,7 +5026,7 @@ static const struct fs_context_operations shmem_fs_context_ops = {
+ 	.free			= shmem_free_fc,
+ 	.get_tree		= shmem_get_tree,
+ #ifdef CONFIG_TMPFS
+-	.parse_monolithic	= shmem_parse_options,
++	.parse_monolithic	= shmem_parse_monolithic,
+ 	.parse_param		= shmem_parse_one,
+ 	.reconfigure		= shmem_reconfigure,
+ #endif
+-- 
+2.25.1
 
-If this is the case, then the GTS helpers aren't likely to help you 
-much. Sorry.
-
-
-Yours,
-	-- Matti
 
