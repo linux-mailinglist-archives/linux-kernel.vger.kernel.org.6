@@ -1,182 +1,134 @@
-Return-Path: <linux-kernel+bounces-433829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08DF9E5DA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:48:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272809E5DA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:48:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9B7165E79
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E9F283094
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6A3227B9A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08356226EF9;
 	Thu,  5 Dec 2024 17:48:30 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B265822577B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA38225764
 	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420910; cv=none; b=QDDiWPPIOGVdFNI/Ws0e9gcLGTgi42Jvik7phuH7CwFmQJamAUNJBleGjYPIqKb75HidHBqTXTFCEXChppsz1Aq4v3DcINnkdt/WCOWD5w96a7GQgxF+OXssIebJA5HNExw7EX+O/3w7bUOkVp7c9BeDgIJhwdfJUEwDA6a1zxw=
+	t=1733420909; cv=none; b=BALOPTerbBpqmfsZOUKYhdq4EsBDV+oYPwM5gj4UC3LX8xPOThXCJHRCUgEbpBwT5GxG3FKAoRYrGLJ5/yHEy4BOkeymmV2tzDBOtKGwVEDU2qaje63FfCCO8H7fC/+B4k+dJvVlXRQwnmPv5sFY2/l6/wSzETXvwlm+8UbT1fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420910; c=relaxed/simple;
-	bh=jKJaUzc7Q2siYZjc6/SsnwWJq8cwB+WZDnbLWj9XuqI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m4zK0hbqh1ewTHoOUrb4nxHd37a6xxtTaJV77uiztBqCQqMcsM16fozRmfAzE7sNXP8BXM00Od61ttJoMF16FIp4KFiGeDhr0HKff5cJaCxpmxgOWNDnpxqgekVvpw/qfNJrhJzuvdK7gkfsG0RxFDW4iq6UGfyaR0aWSb10Wdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1733420909; c=relaxed/simple;
+	bh=zmhlyzlC9GrRt9m5HfMlvC4SlViWXzkbUHgpOC6ThoY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l7MCgXruyhboRT/avvivTqdGErI9ztN5AEl9HvHdCkc58QGMqEJuSEIF+BTmlTq8LXH1B+wFHjo7xmVPlS/cyitUt/ZrCQ8OUiekxA7GEK40wcN2c8TIJingw3jlZuG6tRTZFdCBwy8RGHqfPcI45FZfK7n5I5Yvb9FDsQ2LjVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso22145525ab.0
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7a5031e75so11860685ab.3
         for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:48:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1733420906; x=1734025706;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JCiTiXYqWNNwhIPIBBgITq4kwye1QvnR7vCtkwlzAg0=;
-        b=jRSgF2NXIvyhTTsLOEDQ4as7WAEHj9zvNYK58Ud3XGI0Nez6QUX+VaSX8H+ouK6suj
-         zf7dcCK/jvjBVHHaEOGQCIhPaOOv4LhXmxXG6YuiQNCjotzW/ZXCM9FISd9QLQ1LYDOb
-         5SL+K/q1afP/thbu/nGE4+5PF08mzICPj/Zrk0DtMXfLM9HOAHoc8NVnElaVS6W5MP8m
-         65SEz0EHx38LRpKKyzL4Tw83XtznKkKYxsvmKpoOhBi02UNoFwEWsq/HRoRFUGUeg+om
-         XSycU6LgR1Z0M4hZG1j9Ge1YAhso5wUBsdrTBk561o9ExnUdbycgBuj9wW790r9jKu56
-         7JOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFASo4nCIyNZQAb42q0W7IHHnLVf1eh7BOwJvM5XZdLkbiYxpGsZ9tK2bwuWaK09D0M/SmsK/3MherDno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnxP5Wn9KhKtEE+Z8euN5K3f4h7+m4ZABAnzLI/9UuxoPEUwWU
-	369mEyAG9RxAVO3i9EeViIpjysv7oe89cIg9HbUXhObiS6P9rjjQbSzxL6PFGuilXVhnJEYWTY3
-	gI9vQSMRPiYiiIFn9DgyAjqN1cXGUibrlblZHwUBs7p1X2wVDwstfykU=
-X-Google-Smtp-Source: AGHT+IGXUT71MVLjpr6Etx8JynFsUg0ESuSnn3CKBCgOdDQ55gg//Q6DeXFNFM3BA8UILtYdHoc/05CRd1ksnhP9mgVPuVK5Xs9E
+        bh=YDBm+FIRrPaNrma9sJHagiH/vbC7+T2v9kpxDfCts7k=;
+        b=sdrm2/mKyCYa1HHvpFJc1dsAeCInktydsj399qbpMcj2Z8B6ENkYgak4idpfRXJotl
+         oZ/ZHsWt2LB7FDZijwHKC53UMObjCNiegHqlnGbYelIvIDUUgboDCHWtFbvk45Rng3vL
+         +UZHHTSWSFYqkdzKE1fHCwAbhyZ3GwTP78F4prIDjcqKUWw6gIrf18iu46v+xC4Bhejp
+         6dF6VtpNi07QfPQu8wTYsESPETG+UAVwMnzKQ9I5hVFWx6mInengcktWlxzPKjVw9FoZ
+         xVKi8UlIFJlCigADZ9kkgLA11K+69r0WXojua2VeY8C7cmRfQUp5T/IKuwo5lkI+cjAt
+         KZww==
+X-Forwarded-Encrypted: i=1; AJvYcCVlitXLNO7IZQeAVmLEEuu+b436RJLRGZXP1GiP5pSDWM8UTw5VX4CCKAGuH+mHJV1blp296TPx4UMsv88=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2lkmSmjx8Hf0d+0q3Fm8fVRbPRARKbWf33CqFrc3QFjNpg7kJ
+	w0pXEho8AxvHZu27XxqqXojfENbzzAenJEwaZMF5klmtlh+TVrkXROdHvjdij4UfWs50jHVKlVb
+	MjLJhQomYUh25Ya1crwtaXzEz1bHOYk997oGeUksLsgLWbeuPGAV6mtE=
+X-Google-Smtp-Source: AGHT+IGsBblv1anhEkUDDc7YUKAm5SOXhkZTK1MNJlJ/6MoO/lg9YuBko+zRcQGXaDbcp4RgP5xA6Z/JfcyL9DoxikRckT+vGEae
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ea:b0:3a7:4826:b057 with SMTP id
- e9e14a558f8ab-3a811e2f7femr2193935ab.21.1733420905894; Thu, 05 Dec 2024
- 09:48:25 -0800 (PST)
-Date: Thu, 05 Dec 2024 09:48:25 -0800
+X-Received: by 2002:a05:6e02:1988:b0:3a7:e67f:3c58 with SMTP id
+ e9e14a558f8ab-3a811dab8a4mr3724625ab.3.1733420906142; Thu, 05 Dec 2024
+ 09:48:26 -0800 (PST)
+Date: Thu, 05 Dec 2024 09:48:26 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6751e769.050a0220.b4160.01df.GAE@google.com>
-Subject: [syzbot] [cgroups?] general protection fault in __cgroup_rstat_lock
-From: syzbot <syzbot+31eb4d4e7d9bc1fc1312@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	mkoutny@suse.com, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tj@kernel.org
+Message-ID: <6751e76a.050a0220.b4160.01e0.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel panic: trans should be locked, unlocked
+ by bch2_btree_update_start
+From: syzbot <syzbot+d540192e763531d307ff@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    932fc2f19b74 Merge branch 'irq-save-restore'
-git tree:       bpf-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14fd6330580000
+HEAD commit:    feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1244e330580000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=31eb4d4e7d9bc1fc1312
+dashboard link: https://syzkaller.appspot.com/bug?extid=d540192e763531d307ff
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161cdfc0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12dfc8df980000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ae28df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ae28df980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/afd76657938b/disk-932fc2f1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5ab299e9b5df/vmlinux-932fc2f1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6617519fa7b9/bzImage-932fc2f1.xz
-
-Bisection is inconclusive: the first bad commit could be any of:
-
-42d9e8b7ccdd Merge tag 'powerpc-6.13-1' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=121e8020580000
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-feffde68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6135c7297e8e/vmlinux-feffde68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6c154fdcc9cb/bzImage-feffde68.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/493102bf66d5/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+31eb4d4e7d9bc1fc1312@syzkaller.appspotmail.com
+Reported-by: syzbot+d540192e763531d307ff@syzkaller.appspotmail.com
 
-RBP: 0000000000000001 R08: 00007ffee33edd87 R09: 00007fe28ebf71e7
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffee33ee00c
-R13: 00007ffee33ee030 R14: 00007ffee33ee070 R15: 0000000000000001
- </TASK>
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 UID: 0 PID: 5842 Comm: syz-executor126 Not tainted 6.13.0-rc1-syzkaller-00032-g932fc2f19b74 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:do_perf_trace_cgroup_rstat include/trace/events/cgroup.h:207 [inline]
-RIP: 0010:perf_trace_cgroup_rstat+0x2b2/0x580 include/trace/events/cgroup.h:207
-Code: 8d 98 58 04 00 00 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 fc 0c 75 00 48 8b 1b 48 83 c3 0c 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 0f 85 d5 01 00 00 44 8b 2b 49 8d 5f 08 48 89
-RSP: 0018:ffffc90003837a80 EFLAGS: 00010003
-RAX: 0000000000000001 RBX: 000000000000000c RCX: ffff8880345ada00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8880b8737768
-RBP: ffffc90003837b70 R08: ffffffff81a90e9b R09: 1ffffffff20328d6
-R10: dffffc0000000000 R11: fffffbfff20328d7 R12: ffff8880b87376e0
-R13: 1ffff92000706f5c R14: dffffc0000000000 R15: ffffe8ffffd30be8
-FS:  000055558b3013c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002000050c CR3: 00000000329de000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  io_time[WRITE]    256
+  fragmentation     0
+  bp_start          8
+0 transaction updates for bch2_moving_ctxt_init journal seq 0
+  
+Kernel panic - not syncing: trans should be locked, unlocked by bch2_btree_update_start+0x1168/0x14e0 fs/bcachefs/btree_update_interior.c:1268
+CPU: 0 UID: 0 PID: 5432 Comm: syz-executor147 Not tainted 6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
 Call Trace:
  <TASK>
- trace_cgroup_rstat_locked include/trace/events/cgroup.h:242 [inline]
- __cgroup_rstat_lock+0x3e1/0x590 kernel/cgroup/rstat.c:292
- cgroup_rstat_flush+0x30/0x50 kernel/cgroup/rstat.c:353
- cgroup_rstat_exit+0x27/0x1e0 kernel/cgroup/rstat.c:411
- cgroup_create kernel/cgroup/cgroup.c:5782 [inline]
- cgroup_mkdir+0x53a/0xd60 kernel/cgroup/cgroup.c:5831
- kernfs_iop_mkdir+0x253/0x3f0 fs/kernfs/dir.c:1246
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4311
- do_mkdirat+0x264/0x3a0 fs/namei.c:4334
- __do_sys_mkdir fs/namei.c:4354 [inline]
- __se_sys_mkdir fs/namei.c:4352 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4352
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ panic+0x349/0x880 kernel/panic.c:354
+ bch2_trans_unlocked_error+0x42/0x50 fs/bcachefs/btree_iter.c:1439
+ bch2_trans_verify_not_unlocked fs/bcachefs/btree_iter.h:340 [inline]
+ bch2_path_get+0x11ea/0x1520 fs/bcachefs/btree_iter.c:1720
+ bch2_trans_iter_init_common fs/bcachefs/btree_iter.h:502 [inline]
+ bch2_trans_node_iter_init+0x325/0x630 fs/bcachefs/btree_iter.c:2921
+ bch2_move_btree+0x4b8/0xde0 fs/bcachefs/move.c:846
+ bch2_scan_old_btree_nodes+0x14b/0x3c0 fs/bcachefs/move.c:995
+ bch2_fs_recovery+0x34f5/0x39d0 fs/bcachefs/recovery.c:974
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe28eba7a19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffee33edfe8 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fe28eba7a19
-RDX: 0000000000000000 RSI: d0939199c36b4d28 RDI: 0000000020000000
-RBP: 0000000000000001 R08: 00007ffee33edd87 R09: 00007fe28ebf71e7
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffee33ee00c
-R13: 00007ffee33ee030 R14: 00007ffee33ee070 R15: 0000000000000001
+RIP: 0033:0x7f369224366a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd04f2f448 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd04f2f460 RCX: 00007f369224366a
+RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007ffd04f2f460
+RBP: 0000000000000004 R08: 00007ffd04f2f4a0 R09: 000000000000593f
+R10: 0000000001000000 R11: 0000000000000282 R12: 0000000001000000
+R13: 00007ffd04f2f4a0 R14: 0000000000000003 R15: 0000000001000000
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:do_perf_trace_cgroup_rstat include/trace/events/cgroup.h:207 [inline]
-RIP: 0010:perf_trace_cgroup_rstat+0x2b2/0x580 include/trace/events/cgroup.h:207
-Code: 8d 98 58 04 00 00 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 fc 0c 75 00 48 8b 1b 48 83 c3 0c 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 0f 85 d5 01 00 00 44 8b 2b 49 8d 5f 08 48 89
-RSP: 0018:ffffc90003837a80 EFLAGS: 00010003
-RAX: 0000000000000001 RBX: 000000000000000c RCX: ffff8880345ada00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8880b8737768
-RBP: ffffc90003837b70 R08: ffffffff81a90e9b R09: 1ffffffff20328d6
-R10: dffffc0000000000 R11: fffffbfff20328d7 R12: ffff8880b87376e0
-R13: 1ffff92000706f5c R14: dffffc0000000000 R15: ffffe8ffffd30be8
-FS:  000055558b3013c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002000050c CR3: 00000000329de000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	8d 98 58 04 00 00    	lea    0x458(%rax),%ebx
-   6:	48 89 d8             	mov    %rbx,%rax
-   9:	48 c1 e8 03          	shr    $0x3,%rax
-   d:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1)
-  12:	74 08                	je     0x1c
-  14:	48 89 df             	mov    %rbx,%rdi
-  17:	e8 fc 0c 75 00       	call   0x750d18
-  1c:	48 8b 1b             	mov    (%rbx),%rbx
-  1f:	48 83 c3 0c          	add    $0xc,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 30       	movzbl (%rax,%r14,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 d5 01 00 00    	jne    0x20c
-  37:	44 8b 2b             	mov    (%rbx),%r13d
-  3a:	49 8d 5f 08          	lea    0x8(%r15),%rbx
-  3e:	48                   	rex.W
-  3f:	89                   	.byte 0x89
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -186,7 +138,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
