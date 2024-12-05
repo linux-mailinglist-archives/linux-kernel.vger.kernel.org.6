@@ -1,165 +1,199 @@
-Return-Path: <linux-kernel+bounces-433949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74BF9E5F32
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:54:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803C09E5F36
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:01:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105C318854DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:01:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97A422B8BB;
+	Thu,  5 Dec 2024 20:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDFqA/bH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31614286EBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:54:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF01422E3FA;
-	Thu,  5 Dec 2024 19:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QoJLV9Jg"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CF022D4F6
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 19:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163A62EB1F;
+	Thu,  5 Dec 2024 20:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733428478; cv=none; b=PwOPIzdVBsJICdWtpDaf5z6M31WRbsawj6kvGoojg0Ak52K3rlDvuEHcXOL7/Zzkg5MLM0rua2SqLvqToDMLOoA4KQD+nNYcU9vBRS0BR7zSeZ5o7CnpdS9LpeiInlFVJaOk99pvVZKU4ksW4aFZltdWFCWYcVIHJMF+WveowZk=
+	t=1733428868; cv=none; b=ftCCmRFXUPT+FusP6qlvC/63MCLtvQ1usy3cprBrbQPpAUfTt6mUJDnixqKMqXk5m0G0gkhW4Qsd3qLSl5vcjrYtcYd+1PF2fKzmEEljHLSql7cCvXasI47xREPETdlhNBYccIqQ7nFxE3jhxjZP1PUAvjataOMiPyavT6CqdkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733428478; c=relaxed/simple;
-	bh=vhbbHz1yBMg1oLY8i08EsGZhgnjN0h92EmEVlCnFACY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E2uo1NIXD0F1oTJZF6ilEBAg2zgS6zpxAIsBMH6YCFTJu6SO5CSae+8Bo7aRZCPIrHp1smo3lf+gj50fKSJRr84ygACVcHuFdXO9K4enqMPtONGg6Gz02NHTMRt2QK8zkSblEDB6B5ESGy3ixAcxT+GEKQdBpL5EpfqBtmj559Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QoJLV9Jg; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a9f9a225so9095e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 11:54:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733428475; x=1734033275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YV1GOShnKkFf0HLahvzq1w+GJ+Yzlm4X88Ky6h9+fMA=;
-        b=QoJLV9JgDl34C7Ugqfm9XdnfyPQLc4Lm5yKF+NeashYgx195kbauZjmrx5UP3zT77I
-         MdaKFvpzkMBSPBnwJ0274q8b1280iAjuwwu9WdBxR8UX+HcgBwwmDGS2Udjl3+ScHzDl
-         oPhxNHzqhCee4nX1r5ToPNn/D88EklYAVlMbvCf52wwCzj4a//HTHo/c49JMm39lKl17
-         bFYFYGWsbyIx+MyywsV+Vi+HKWVz0WkL9lh8mRsyu7mqgu/b/6MedyPTsN8Tgy/7iEsf
-         IRAmwR3/NuK8IW5t4qId2sXvmwZJKjBWFKlLGDLsm3gLKTNRbRD/6jOv+ZkJlgeNzWf1
-         t0BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733428475; x=1734033275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YV1GOShnKkFf0HLahvzq1w+GJ+Yzlm4X88Ky6h9+fMA=;
-        b=gzj7Kqm2HN5t6yK5uQL10X4I7qU5xgwNTrUEStlhA2CpmnvhHISJ1+aRLEPyDIDvxE
-         rRSvuOJDTIvxZg6QQgOHTNn7MIdT8uTK1wtG/5Q3cKSaGH1UnOYkchsIxoHaUz7iJXqv
-         YfFIoiWT8DVbdN4eDA2cuSFHRE7GZL7T2AcVwFZ0o6VuDet6hGnNBpJ7qx+uhmDP4up9
-         9TY95zyCzfi/HHOdmdwAh25caoZgvYSPZ+8iFE1kKNwg1YHvFo4ZYETjqoJbzmCB2Srl
-         A0ZFItE8AqWtq7zCiuqAUP1WfiCfP3k4pVNxlK1J4Kg3G8twczmpfcbwQcqMPm+to7Hr
-         LB6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKEnKdddeMnxSVeSyUeRKJrfz5kVBjU/VJdk60V+spC4/FnjD7PG+7sPs85RUn1FgSSjZAE644x7Y7km8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgVdZ8jaRiDB4O7Dy9ZPGXMqmZTVbTPzL9Ml+U86JPd50g1/5i
-	uiiwMKtnN4yT/e+lCSrIezEhZAabv/q5wsc5OwhllMR8FockNaT9BX8gVtc6IctH7j0YqVEwDLn
-	6AwKSCJK/JfQsNjTniwrPfPjcIi0qBYTr9FfF
-X-Gm-Gg: ASbGnctyzP3eGndRtLDHWZHNt6WhFqbs26o7WGy4zu6HmaI6Dd2iu7dSs22jRlnQWA1
-	YwNIl7q1GU6bWfYRsxwTFWm8Dg8UspWjlmF/QbIf7DAMVX1qHZIIq47uMmm/k
-X-Google-Smtp-Source: AGHT+IEg8jS6R8nzvvgqFY4eAzSsGGb0NyqX/at7eAZ/z8kw1IzlpGFkHWMNC7b2JnZaKud2fJhzbW1s/D33iVi8sr0=
-X-Received: by 2002:a05:600c:5846:b0:434:9e1d:44ef with SMTP id
- 5b1f17b1804b1-434de647452mr97705e9.7.1733428474682; Thu, 05 Dec 2024 11:54:34
- -0800 (PST)
+	s=arc-20240116; t=1733428868; c=relaxed/simple;
+	bh=OhkwOeu9XnLmPUB+pIA/JrXoeOZMruEMRrO3YTd2x2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuvQKXCFKTnQ8i5YDq2Fcq+w+t42D+koC7FrVLcQSL9ZsZoPdjcuZpNi/YBJHSRRbzeIfRY0fh4GkSjH3I3AdwAcPNlloKZHPNWS/54bjr+NDR5isanFs8tysjAuV0aoP7/wPTKWfcTojTyr2jIwCRIMIYoruivffJ4EOXMSiuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDFqA/bH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7942AC4CEDC;
+	Thu,  5 Dec 2024 20:01:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733428867;
+	bh=OhkwOeu9XnLmPUB+pIA/JrXoeOZMruEMRrO3YTd2x2E=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=uDFqA/bHGhTHZkFwo0GffmHLmiciYOOdE5yUCmeDlCW8obefOmyuAbOrKGIkzgwrN
+	 INJfecKPw3KcOErzDRsWuR8cT0Ykx9xiGCMAtO+eXuXhrzU27twEfRpB5coCHYlNlV
+	 yLk9SqqLzHTugUkubyhSewKMjmeVg6ivkM317f5wLqblPCJgvNHhDcTRUEHLiUe+hU
+	 Qco2EJsjX68eZMv68WmxWItyz+nIr9gDYtGZ2esPMYTWbY8YpiEfLnPe+U5Anm0SHc
+	 9J1iTHZLMKsySXlsmYZyRraWzOqgFNYKCPNr11hyKPlyCjXSEkk2C2/VokF6pJ5vn7
+	 QEKKMvSbrx9GQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C8A4CCE0774; Thu,  5 Dec 2024 12:01:06 -0800 (PST)
+Date: Thu, 5 Dec 2024 12:01:06 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	edumazet@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+Message-ID: <5a5bda20-f53f-40fe-96ab-a5ae4b39a746@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com>
+ <20241205141850.GS3387508@ZenIV>
+ <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
+ <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
+ <CAGudoHGRaJZWM5s7s7bxXrDFyTEaZd1zEJOPX15yAdqEYr07eA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205192943.3228757-1-isaacmanjarres@google.com>
-In-Reply-To: <20241205192943.3228757-1-isaacmanjarres@google.com>
-From: Jeff Xu <jeffxu@google.com>
-Date: Thu, 5 Dec 2024 11:53:57 -0800
-Message-ID: <CALmYWFvGZj5Bc8LfveMCc=3ZAgd-Lqr=186K4swpnTc=2a-JkQ@mail.gmail.com>
-Subject: Re: [PATCH v1] selftests/memfd: Run sysctl tests when PID namespace
- support is enabled
-To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-Cc: Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Daniel Verkamp <dverkamp@chromium.org>, Kees Cook <kees@kernel.org>, stable@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, kernel-team@android.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGRaJZWM5s7s7bxXrDFyTEaZd1zEJOPX15yAdqEYr07eA@mail.gmail.com>
 
-On Thu, Dec 5, 2024 at 11:29=E2=80=AFAM Isaac J. Manjarres
-<isaacmanjarres@google.com> wrote:
->
-> The sysctl tests for vm.memfd_noexec rely on the kernel to support PID
-> namespaces (i.e. the kernel is built with CONFIG_PID_NS=3Dy). If the
-> kernel the test runs on does not support PID namespaces, the first
-> sysctl test will fail when attempting to spawn a new thread in a new
-> PID namespace, abort the test, preventing the remaining tests from
-> being run.
->
-> This is not desirable, as not all kernels need PID namespaces, but can
-> still use the other features provided by memfd. Therefore, only run the
-> sysctl tests if the kernel supports PID namespaces. Otherwise, skip
-> those tests and emit an informative message to let the user know why
-> the sysctl tests are not being run.
->
-Thanks for fixing this.
+On Thu, Dec 05, 2024 at 08:03:24PM +0100, Mateusz Guzik wrote:
+> On Thu, Dec 5, 2024 at 7:41 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Thu, Dec 05, 2024 at 03:43:41PM +0100, Mateusz Guzik wrote:
+> > > On Thu, Dec 5, 2024 at 3:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > > On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
+> > > > >  void fd_install(unsigned int fd, struct file *file)
+> > > > >  {
+> > > > > -     struct files_struct *files = current->files;
+> > > > > +     struct files_struct *files;
+> > > > >       struct fdtable *fdt;
+> > > > >
+> > > > >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
+> > > > >               return;
+> > > > >
+> > > > > +     /*
+> > > > > +      * Synchronized with expand_fdtable(), see that routine for an
+> > > > > +      * explanation.
+> > > > > +      */
+> > > > >       rcu_read_lock_sched();
+> > > > > +     files = READ_ONCE(current->files);
+> > > >
+> > > > What are you trying to do with that READ_ONCE()?  current->files
+> > > > itself is *not* changed by any of that code; current->files->fdtab is.
+> > >
+> > > To my understanding this is the idiomatic way of spelling out the
+> > > non-existent in Linux smp_consume_load, for the resize_in_progress
+> > > flag.
+> >
+> > In Linus, "smp_consume_load()" is named rcu_dereference().
+> 
+> ok
 
-> Fixes: 11f75a01448f ("selftests/memfd: add tests for MFD_NOEXEC_SEAL MFD_=
-EXEC")
-> Cc: stable@vger.kernel.org # v6.6+
-> Cc: Jeff Xu <jeffxu@google.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Kalesh Singh <kaleshsingh@google.com>
-> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> ---
->  tools/testing/selftests/memfd/memfd_test.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/s=
-elftests/memfd/memfd_test.c
-> index 95af2d78fd31..0a0b55516028 100644
-> --- a/tools/testing/selftests/memfd/memfd_test.c
-> +++ b/tools/testing/selftests/memfd/memfd_test.c
-> @@ -9,6 +9,7 @@
->  #include <fcntl.h>
->  #include <linux/memfd.h>
->  #include <sched.h>
-> +#include <stdbool.h>
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <signal.h>
-> @@ -1557,6 +1558,11 @@ static void test_share_fork(char *banner, char *b_=
-suffix)
->         close(fd);
->  }
->
-> +static bool pid_ns_supported(void)
-> +{
-> +       return access("/proc/self/ns/pid", F_OK) =3D=3D 0;
-> +}
-> +
->  int main(int argc, char **argv)
->  {
->         pid_t pid;
-> @@ -1591,8 +1597,12 @@ int main(int argc, char **argv)
->         test_seal_grow();
->         test_seal_resize();
->
-> -       test_sysctl_simple();
-> -       test_sysctl_nested();
-> +       if (pid_ns_supported()) {
-> +               test_sysctl_simple();
-> +               test_sysctl_nested();
-> +       } else {
-> +               printf("PID namespaces are not supported; skipping sysctl=
- tests\n");
-> +       }
->
->         test_share_dup("SHARE-DUP", "");
->         test_share_mmap("SHARE-MMAP", "");
-> --
-> 2.47.0.338.g60cca15819-goog
->
-Reviewed-by: Jeff Xu <jeffxu@google.com>
+And rcu_dereference(), and for that matter memory_order_consume, only
+orders the load of the pointer against subsequent dereferences of that
+same pointer against dereferences of that same pointer preceding the
+store of that pointer.
+
+	T1				T2
+	a: p->a = 1;			d: q = rcu_dereference(gp);
+	b: r1 = p->b;			e: r2 = p->a;
+	c: rcu_assign_pointer(gp, p);	f: p->b = 42;
+
+Here, if (and only if!) T2's load into q gets the value stored by
+T1, then T1's statements e and f are guaranteed to happen after T2's
+statements a and b.  In your patch, I do not see this pattern for the
+files->resize_in_progress flag.
+
+> > > Anyway to elaborate I'm gunning for a setup where the code is
+> > > semantically equivalent to having a lock around the work.
+> >
+> > Except that rcu_read_lock_sched() provides mutual-exclusion guarantees
+> > only with later RCU grace periods, such as those implemented by
+> > synchronize_rcu().
+> 
+> To my understanding the pre-case is already with the flag set upfront
+> and waiting for everyone to finish (which is already taking place in
+> stock code) + looking at it within the section.
+
+I freely confess that I do not understand the purpose of assigning to
+files->resize_in_progress both before (pre-existing) and within (added)
+expand_fdtable().  If the assignments before and after the call to
+expand_fdtable() and the checks were under that lock, that could work,
+but removing that lockless check might have performance and scalability
+consequences.
+
+> > > Pretend ->resize_lock exists, then:
+> > > fd_install:
+> > > files = current->files;
+> > > read_lock(files->resize_lock);
+> > > fdt = rcu_dereference_sched(files->fdt);
+> > > rcu_assign_pointer(fdt->fd[fd], file);
+> > > read_unlock(files->resize_lock);
+> > >
+> > > expand_fdtable:
+> > > write_lock(files->resize_lock);
+> > > [snip]
+> > > rcu_assign_pointer(files->fdt, new_fdt);
+> > > write_unlock(files->resize_lock);
+> > >
+> > > Except rcu_read_lock_sched + appropriately fenced resize_in_progress +
+> > > synchronize_rcu do it.
+> >
+> > OK, good, you did get the grace-period part of the puzzle.
+> >
+> > Howver, please keep in mind that synchronize_rcu() has significant
+> > latency by design.  There is a tradeoff between CPU consumption and
+> > latency, and synchronize_rcu() therefore has latencies ranging upwards of
+> > several milliseconds (not microseconds or nanoseconds).  I would be very
+> > surprised if expand_fdtable() users would be happy with such a long delay.
+> 
+> The call is already there since 2015 and I only know of one case where
+> someone took an issue with it (and it could have been sorted out with
+> dup2 upfront to grow the table to the desired size). Amusingly I see
+> you patched it in 2018 from synchronize_sched to synchronize_rcu.
+> Bottom line though is that I'm not *adding* it. latency here. :)
+
+Are you saying that the smp_rmb() is unnecessary?  It doesn't seem like
+you are saying that, because otherwise your patch could simply remove
+it without additional code changes.  On the other hand, if it is a key
+component of the synchronization, I don't see how that smp_rmb() can be
+removed while still preserving that synchronization without adding another
+synchronize_rcu() to that function to compensate.
+
+Now, it might be that you are somehow cleverly reusing the pre-existing
+synchronize_rcu(), but I am not immediately seeing how this would work.
+
+And no, I do not recall making that particular change back in the
+day, only that I did change all the calls to synchronize_sched() to
+synchronize_rcu().  Please accept my apologies for my having failed
+to meet your expectations.  And do not be too surprised if others have
+similar expectations of you at some point in the future.  ;-)
+
+> So assuming the above can be ignored, do you confirm the patch works
+> (even if it needs some cosmetic changes)?
+> 
+> The entirety of the patch is about removing smp_rmb in fd_install with
+> small code rearrangement, while relying on the machinery which is
+> already there.
+
+The code to be synchronized is fairly small.  So why don't you
+create a litmus test and ask herd7?  Please see tools/memory-model for
+documentation and other example litmus tests.  This tool does the moral
+equivalent of a full state-space search of the litmus tests, telling you
+whether your "exists" condition is always, sometimes, or never satisfied.
+
+							Thnax, Paul
 
