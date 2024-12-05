@@ -1,131 +1,104 @@
-Return-Path: <linux-kernel+bounces-432939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9EC9E521E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:24:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817189E5220
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0989F188229C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E711880354
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD5A1D8E16;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254FB1F03F6;
+	Thu,  5 Dec 2024 10:23:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982551DF971;
 	Thu,  5 Dec 2024 10:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ejW8K93k"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79931DCB24;
-	Thu,  5 Dec 2024 10:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733394199; cv=none; b=gDUg+mu7A2w0gUkuKlA19wO6S3/TAzI7Ib0Tb6muvlo6GBLZGa4iyb0ZVdHETc7RnuotIYzUAl/AFVRRQtCKFOmK/B6fuN9xva3hgywsjD/QBYF57/5XrCNVLG0W4JPM5HMhv2/Nj4saFxBhSfCvWjKseNujNY5VN6XyzQauf6w=
+	t=1733394201; cv=none; b=JtphxhoDOPJj4f8rUYZgo34NPTpwCVDqF/1Z3flg33VHz7COngazjn545rxBaRr3PtovTnYSixntIs7qDamgwXIdUQxjE/7RDJmRTjMVUUJRXwfMhl4WZVr/yv2soP7g+PDV2S4L2/ol/AsgBiEuYFJu6EFUYqzjUi4kjpwhE14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733394199; c=relaxed/simple;
-	bh=/PeGRqRFynm+jdz+IzuH3g5meFjWDE80+ziUXDeEDNA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kL1JLyAHhHOyKTy33QDoHIqDpHDRv1SGQX35/CTYNb/E8HYhp+2NczuUhhNXGOumUq27ggKTvMlDUHywpDilhZd8HDK/z0hWz3VoMMqgTTzlxPurPXBynXy6Xp2M5K/0C1xZkWv/BFRT66qdis8W8aAZfwjOGbJdfMcatvN4dlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ejW8K93k; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57NIfK006403;
-	Thu, 5 Dec 2024 10:23:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rlN1lGzUAwSQi/4asiMCnXvAR8eN6Qe35fSnB1yc1vQ=; b=ejW8K93kMCMwLZw2
-	LoihZoIHB+bwZci7FsqvQFHFhiAd/Yv2vdB015pAkKEb9GJGhtueBosXvdrc8O95
-	YlqGn9c7kzVoTfSNvmVeD2OsJAXCMOiH3Eeq914VSH4KeQipPYG/gKgltrCv4VWZ
-	QfjqR3rkEo6JWEnn+KWxOEbSJCSV3JrZUkqDycLkyrfTQ9i0v7khAL5h/VEd1H+z
-	1xMdL9MUo6xxcl+hPjOX6RN3H3RFZpkZ5o/9eFbBHVbuCM2B0kllwaTpWCjtplMF
-	vObAUHBvCIjlZN2ej5GU6JbQ3QWkeFjCGWuZ78glYySpeBCJagrV09vVmH9saD75
-	PgoPBw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w3eq6ma-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 10:23:12 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5ANCeK028776
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 10:23:12 GMT
-Received: from bt-iot-sh01-lnx.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Dec 2024 02:23:07 -0800
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao <quic_rjliao@quicinc.com>
-CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
-        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <quic_mohamull@quicinc.com>
-Subject: [PATCH v3 3/3] arm64: dts: qcom: sa8775p-ride: Add firmware-name in BT node
-Date: Thu, 5 Dec 2024 18:22:13 +0800
-Message-ID: <20241205102213.1281865-4-quic_chejiang@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
-References: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
+	s=arc-20240116; t=1733394201; c=relaxed/simple;
+	bh=0XpPuK5VtPAblHD4SHKTto1uJ3DNZ6f5fRxYExWotbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=USSFG0xboOwSPFHoPkhE3ay5vHH3tMVlrlkXiLoEsu0lhJWSA9OI8lm5vDvrD8m3ToJ4PTmsHcCn+bQCDU4wZobyooq26ulqTEKX3VmbMIACmXYRl+fEmvi88HVfnRd9r0sKW3ze4Wl+lOtS0vIC+dLIf1siR7A2o9ub8nEoSwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11BB7FEC;
+	Thu,  5 Dec 2024 02:23:41 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93A703F5A1;
+	Thu,  5 Dec 2024 02:23:12 -0800 (PST)
+Date: Thu, 5 Dec 2024 10:23:10 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Quentin Monnet <qmo@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Nick Terrell <terrelln@fb.com>, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mahe Tardy <mahe.tardy@gmail.com>
+Subject: Re: [PATCH] bpftool: Fix failure with static linkage
+Message-ID: <20241205102310.GA2899345@e132581.arm.com>
+References: <20241204213059.2792453-1-leo.yan@arm.com>
+ <Z1DLYCha0-o1RWkF@google.com>
+ <bf5da4d3-c317-4616-ac68-0d49bb5815c2@kernel.org>
+ <Z1DW1aJ4rYlMI6S1@google.com>
+ <d4d5e80d-1a95-4ef7-a83f-1303563a91eb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DxM-hLwB5r10auEXGj61ZR0Rwig9K5NU
-X-Proofpoint-ORIG-GUID: DxM-hLwB5r10auEXGj61ZR0Rwig9K5NU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- bulkscore=0 mlxscore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4d5e80d-1a95-4ef7-a83f-1303563a91eb@kernel.org>
 
-The sa8775p-ride platform uses the QCA6698 Bluetooth chip. While the
-QCA6698 shares the same IP core as the WCN6855, it has different RF
-components and RAM sizes, requiring new firmware files. Use the
-firmware-name property to specify the NVM and rampatch firmware to load.
+On Wed, Dec 04, 2024 at 10:55:32PM +0000, Quentin Monnet wrote:
 
-Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+[...]
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 3fc62e123..e7fe53d95 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -857,6 +857,7 @@ &uart17 {
- 
- 	bluetooth {
- 		compatible = "qcom,wcn6855-bt";
-+		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
- 
- 		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
- 		vddaon-supply = <&vreg_pmu_aon_0p59>;
--- 
-2.25.1
+> >>> I was about to report exactly the same. :)
+> >>
+> >> Thank you both. This has been reported before [0] but I didn't find the
+> >> time to look into a proper fix.
+> >>
+> >> The tricky part is that static linkage works well without libzstd for
+> >> older versions of elfutils [1], but newer versions now require this
+> >> library. Which means that we don't want to link against libzstd
+> >> unconditionally, or users trying to build bpftool may have to install
+> >> unnecessary dependencies. Instead we should add a new probe under
+> >> tools/build/feature (Note that we already have several combinations in
+> >> there, libbfd, libbfd-liberty, libbfd-liberty-z, and I'm not sure what's
+> >> the best approach in terms of new combinations).
+> >
+> > I think you can use pkg-config if available.
+> >
+> >   $ pkg-config --static --libs libelf
+> >   -lelf -lz -lzstd -pthread
+> 
+> That's another dependency that I'd like to avoid if I can :)
 
+Seems to me, pkg-config is the right tool for doing such kind thing -
+not only it is nature for local building, it is also friendly for build
+system (e.g. buildroot, OpenEmbedded / Yocto).  Though I have no deep
+knowledge for building.
+
+I am a bit confused why this issue is related to build features libbfd,
+libbfd-liberty, libbfd-liberty-z.  Should not the issue is related to
+libelf?  build/feature has several libelf checking, maybe we can add new
+one libelf-zstd?
+
+Thanks,
+Leo
 
