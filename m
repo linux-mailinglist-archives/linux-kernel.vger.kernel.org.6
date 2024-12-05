@@ -1,161 +1,101 @@
-Return-Path: <linux-kernel+bounces-433184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECE59E54DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:02:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E309E54E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:03:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DFD286F77
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450C01664C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8B721770D;
-	Thu,  5 Dec 2024 12:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB6B217706;
+	Thu,  5 Dec 2024 12:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="n1X0GaFu"
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Xc7icjyX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DFA212B0A;
-	Thu,  5 Dec 2024 12:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308791D63C5;
+	Thu,  5 Dec 2024 12:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400141; cv=none; b=fAjqR/BcTvYk7Oa/pTdqXexqPoNlbt3UQlqvbNacts+ujexytEdxyB1zwUI+5I91+BbhV6kKUDdHK8GA1yyV1LxmNOJy39I9ludliQVPFy6qTvHX643eI7yCZ3L0ngu8sDI5ii7uptTKMT5pW2E+rID6Pm1YL2VOXj+r7TKZzSI=
+	t=1733400172; cv=none; b=EZVne2vwUVEQ182mDSf7eKtlOKeVCAG76gNjsKm1EJBBb+ki90Xa2F/AixV16A5BKpB3RoqqXkQIxL3z/XoxovfarchtPgOsaci0Kibe5Cgm2bwZGvMt6gheCZU85/EHiGSUcNZkJ6tAuODCLSrVEjV2baA3zKTuhzyh8MfdeGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400141; c=relaxed/simple;
-	bh=rKZB8eOnyKwtWssMKLG37zWz+7Nre99PZ2G0rsOt0x8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fznNh0HBbcLOK+1IaJNcTY6MVIIfHyjta1efFJBR9r9H+Zbz9uvJzoHtVdALnFn7swiT/VSoNk/UMe0Clh95daIJrIpqYzTK4D5MCRwLaYFufQyGigEoDd4vk/Tsi2IGHKo9rtMvRvMOrWdzTKamTA8NJrlTDNkCL3mnMdPvQ3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=n1X0GaFu; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1733400134;
-	bh=pQ/CY49J5z1LDtCHFpuwhlm1ryazmeF++8881pRdgxQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=n1X0GaFujagDzYAW7MLsSF6V020HDy1VzeduM94O2lN7Jbum0WiZQRnxWLROfzi1s
-	 pMQ5kxzfwR/FHOWV9wwzXTjddWBfHsB2H833bZzpWMIgFROZOnu/1E6D5RXAj7hNcN
-	 wEL2pq3ivy81XQalFpJ5ZcCC8Gk7wqevkenVjVfQ=
-Received: from [10.56.52.9] ([39.156.73.10])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 8ABBE23; Thu, 05 Dec 2024 20:02:10 +0800
-X-QQ-mid: xmsmtpt1733400130t9h70yhmo
-Message-ID: <tencent_678AD9EBC6E82CE286C1AD1079D6CBA58506@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8lYbES8kbQ6GnJsjPBXRxkIxoFVHyntw0bhJ4VULfJExzEOhbkO
-	 76JkU7vaSmcM1GPBCjYcLvGN7BeuVQJKnV8g32p+hNw9PyidXhwEKSJafdPLT25Xcefw+svd5GOz
-	 xOyPuuhXlNqRdvEJSF6+m4Hun42Nd1Qi0HnCCpeqNOBWuipWVDUdG8mJRSS98ikFUUIWmvNS8Jty
-	 b2mcPFCuSi24lAIfW52U73WODFOvw5lqEJeVGNQsXZ9Q2vdO9Wy4O47EZhubhDhmOp6AX5fKU8zH
-	 GIILtfzNX7QlB2iPCb8oHwNQyX+p0QANUiPKQ2O42k0rfNtG+JfsVlptARuTrKtpFwRpU/cGb5Ph
-	 LP+OyqSpsFU1lVnJst7zHQ1H6//XCUXeQ44F30eovF/DASSXizLr0kdshs/A7Lji4oPqxiWEq1rZ
-	 hcHLlxgPIpkCaGZ2q4KAv0jsGm8mMXLG3EiwOBLYG7uyjErFfxhlpzygnQGIoUwdutKaVLN8hN9u
-	 IMdLCivntCCxMg2gvU9PajwDKXnWnSy1SGaTntzYoF7WHSX9zBXpEwCgjoh5Hvnt03zuCcHGhJjs
-	 Le8tRY7xrqg+Vom+a0c9hyM/K/ve+bwVfEJII4Pu9bUa0QGTl8C2z3fY8HpHt+MAuTVuxBVHsQq9
-	 QddoWbUyYwOT+FD6xFOUBaxt0AoESpF5PLFO9LQR0n00KxZWxa1p4Js5gkNLX/6r1piBPuaYaOrY
-	 oF9IC/ByIPfanSBfnTGvi05z/cb1GNtmKDwdwMk1UHeRwAaySUtjxoW3R5O2hS53pRDBwEdPIo2O
-	 xNLppWR/z7a7Ed5ZWcwztrfTjoETXSlwWQsIzV9ANuIXVAkPdmbpz9+PQ7ny8ov5a78IQdeiQHu/
-	 2aACcNxBh5Ukh3e9CJPavEbkMFc1XsE8TlfzXh5uITLxBM/wcCxmk9o/be+w/k6EJ8Kd7Fzl6gDa
-	 zicuq1Ilgk3WlFReCC7nmFsK2qzUeK
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-OQ-MSGID: <57aedc13-42da-4032-a9f9-f12571f570d6@foxmail.com>
-Date: Thu, 5 Dec 2024 20:02:10 +0800
+	s=arc-20240116; t=1733400172; c=relaxed/simple;
+	bh=QviPwX4i1+oGiQ0z7Lj2wfw4JcQbZSTXITIQDql5joU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFc08eDWyXYHHiX0eMPTuLIIua+hbbHzmj4aZZGfi9AOPdhnrJCXuxskA+yz1dGj/jm8Pp594rnZoj3IDSX4hZnkvIQOwWtp5A4LV3rwGZPvNUCkCByPRG8c4GIeZlZO3rLf/QSxCCPO9RiZxu7rKeQo/XQ1tjijvMLUqfikPdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Xc7icjyX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cH/uRS4ajyoldPGNzhQX9EFCmhy17ZLZf2YfVGbhuVM=; b=Xc7icjyXgBpyRNegnkQSYTJV+s
+	Sg53JA/JrfkUjRdAV62EagjT0ICJrfTc+yuX3sEnXwKL/TW/8SNRfquwuWRZG0KMY9iyi+GMPcEcM
+	Emt8AgDuMEc3fFlO0BM9VibntPde4YO6u8zKSipI92V/Gu0m35El094if24t0V7u8GMDkjokFTjTH
+	6pRcCOOQ1pgqbk8kYJ+wmL4Zt73Zlnz16h1DAUD1LaO5LWFJXksUbfTQxE83JTr4IFwOtfm8WwN6w
+	E1hr2rouhTE4HttpwDHMmOCZ0A3ceeH8Eiy+pTcTSK5vmilvf33oG0wCqrfTRyXCq43T21y1wm5iD
+	6aaNSR1Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45000)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tJAYw-0004jA-2r;
+	Thu, 05 Dec 2024 12:02:34 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tJAYl-0006Wi-22;
+	Thu, 05 Dec 2024 12:02:19 +0000
+Date: Thu, 5 Dec 2024 12:02:19 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 3/7] phy: replace bitwise flag definitions
+ with BIT() macro
+Message-ID: <Z1GWSwtWrUKPZBU7@shell.armlinux.org.uk>
+References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
+ <20241203075622.2452169-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2] bpftool: Fix gen object segfault
-To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
- rongtao@cestc.cn
-Cc: Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>,
- "open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <tencent_F62A51AFF6A38188D70664421F5934974008@qq.com>
- <e8d94128-ea41-4e72-83b4-9a6020aaca10@kernel.org>
-Content-Language: en-US
-From: Rong Tao <rtoax@foxmail.com>
-In-Reply-To: <e8d94128-ea41-4e72-83b4-9a6020aaca10@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203075622.2452169-4-o.rempel@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
+On Tue, Dec 03, 2024 at 08:56:17AM +0100, Oleksij Rempel wrote:
+> Convert the PHY flag definitions to use the BIT() macro instead of
+> hexadecimal values. This improves readability and maintainability.
 
-On 12/5/24 19:20, Quentin Monnet wrote:
-> On 05/12/2024 11:10, Rong Tao wrote:
->> From: Rong Tao <rongtao@cestc.cn>
->>
->> If the input file and output file are the same, the input file is cleared
->> due to opening, resulting in a NULL pointer access by libbpf.
->>
->>      $ bpftool gen object prog.o prog.o
->>      libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
->>      Segmentation fault
->>
->>      (gdb) bt
->>      #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
->>      #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized out>, opts=<optimized out>) at linker.c:453
->>      #2  0x000000000040c235 in do_object ()
->>      #3  0x00000000004021d7 in main ()
->>      (gdb) frame 0
->>      #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
->>      1296		Elf64_Sym *sym = symtab->data->d_buf;
->>
->> Signed-off-by: Rong Tao <rongtao@cestc.cn>
->> ---
->> v1: https://lore.kernel.org/lkml/tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com/
->> ---
->>   tools/bpf/bpftool/gen.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
->> index 5a4d3240689e..506d205138db 100644
->> --- a/tools/bpf/bpftool/gen.c
->> +++ b/tools/bpf/bpftool/gen.c
->> @@ -1879,6 +1879,8 @@ static int do_object(int argc, char **argv)
->>   	struct bpf_linker *linker;
->>   	const char *output_file, *file;
->>   	int err = 0;
->> +	int argc_cpy = argc;
->> +	char **argv_cpy = argv;
->
-> Oops sorry, argc_cpy and argv_cpy need to be initialised _after_ the
-> call to GET_ARG() below, otherwise we always start comparing output_file
-> with itself. Please test this code on your side, too :)
->
-> pw-bot: cr
+Maybe only readability. One can argue that changing them introduces the
+possibility of conflicts when porting patches which adds maintenance
+burden.
 
-Sorry, i just test this patch in [1], and it's works, maybe the 
-compile-flags is differenet.
+However, this change looks fine to me:
 
-I'll fix this and submit v2 soon, thanks!!
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-[1] https://github.com/libbpf/bpftool
+Thanks!
 
->
->>   
->>   	if (!REQ_ARGS(2)) {
->>   		usage();
->> @@ -1887,6 +1889,14 @@ static int do_object(int argc, char **argv)
->>   
->>   	output_file = GET_ARG();
->>   
->> +	/* Ensure we don't overwrite any input file */
->> +	while (argc_cpy--) {
->> +		if (!strcmp(output_file, *argv_cpy++)) {
->> +			p_err("Input and output files cannot be the same");
->> +			goto out;
->> +		}
->> +	}
->> +
->>   	linker = bpf_linker__new(output_file, NULL);
->>   	if (!linker) {
->>   		p_err("failed to create BPF linker instance");
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
