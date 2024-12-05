@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-433771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5299E5CD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:17:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C580F9E5CD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:17:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E886016BF38
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8432428490C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A7A229B20;
-	Thu,  5 Dec 2024 17:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E59229B3B;
+	Thu,  5 Dec 2024 17:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KwiSCTz5"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGxelnSm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178557E105
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546507E105;
+	Thu,  5 Dec 2024 17:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733418951; cv=none; b=rRTqX/Pdb4zGWJGE2iprsfkezPDrLVYQWAX7h+xTxrc5y2iKj1q7Pewo8w+SgawUw0rVTeKV62VoEALOcHIl9iZbM+YTH1WsTXx6gTgJmP9sGY3GTRXTuBfgI+b7bUNe3kqOSawIKxpF0OgOSGiqhHBUQ0m2MI0CJwkJ0fLHbJE=
+	t=1733418980; cv=none; b=spzfjSPJj2wXNZdIbWTqHqt4Hx+oxQmRMqmvuz/W/tVeOzFGDUcibkv9TnYpD5rR3pWAbAk3V5Smji5ZYz+VLBEzW0tFDOu5mCyCV458BsyWGxH+JMStfLLBuVW/CrlIQRgFisr32JGBffGIQZSAU2zUSEyoKQ0mdfZVf19c90A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733418951; c=relaxed/simple;
-	bh=rVxdCXnF53bGePiz+b207A98CTZ+XHwr6WSiDwdMXYI=;
+	s=arc-20240116; t=1733418980; c=relaxed/simple;
+	bh=ll/pqBlh7VQdZrfl40Y3GRd2AxpRWeO2O5BqSRhjrXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQ08Xx3aJWrI27brVrtGAyb6J51Rkt2QrQSqC4AIyVMuGLSspV33ZslbKykxqeVCbYXSHXx3p2sTWDNeGfyxQLXa7eYXSndzW2nhMaGG/bG7TulmX3A3i2CBWQX64OlrarVTnJfEfl7nKIoc3nCiVYCAzM28UOsR3mK/ptpoksE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KwiSCTz5; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53e2ad03bb3so70385e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:15:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733418948; x=1734023748; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oNxP0LFln0zgtOWEPbGccnsmPf7gfq1YwGA1WaBfZX8=;
-        b=KwiSCTz5+jhTr+qli+iLMFBa3N49VrXaD6ykqTTnpCT9ZdyEqMO/N4X/sY93zPUbN/
-         p6X16lTOsHKhsyaNhMJzky4I1CvJXca7YF02+vVMdp1OnuH9LbUp7ZQfBPauwKM+aiuh
-         YfuAgb+k+JRErL3tLad3Erhlu33sV7RHxhMR2o5XPe/gFd3yCVrWsa+ZQXc9pkoVIdGO
-         oyGCPYVXAqilVFV4gggXigzldt36KQEGNw0XeWXPVMvHB4bRrkbFFWfEL8z6NZbL+UPQ
-         D7eryEcAchTYkvUG9sKx3KMpEujwpTojI0GlO9Vz55Uiin8dOYxucMRmlzQQd/c3ixuw
-         KpNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733418948; x=1734023748;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oNxP0LFln0zgtOWEPbGccnsmPf7gfq1YwGA1WaBfZX8=;
-        b=mPf+vdmUBfs4ZyK546VAj0y7FQQJ+0dsrN2pCFwQOw24+ZP62lV11l0rVqqbxTtXMq
-         bALjpslheQ5OaKM4R5DbCEkyQYdSiWFUfBX3GIMmWBGC9eDzSaRn6R99nyRjq208kkZK
-         ruJJ4k1yAEFNE4SY1w2xPSo41zVE6YHgO0JyhzetWuAGtA6kQsnBRDkgfUE/MAsY32Go
-         lG81gv3PgvF4lqujNuOP0V+07fUk9v6uBw/KFJZctQb7U6IV+0P/7b2I0UcNZqBwxb7l
-         hnAfcmyRbvsLyhHdXex61Tt3KN/MX87UpaGk7WJ7Zti87KWy0wMwLRhpHQnMCrGn1blA
-         m6tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTAdZoKFruCQWSFjkpknv3xmgd0rFia/lvjaLpmFYXvxgcuSVApKXu+B3SBCM4YVAMGPwT04hTGDc+Sbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTpVAgSkRJiD2IQaiFspG9nR3pOgOOWCVmmogyb1YV/4WHWJoZ
-	/NDIJChAjjXMBbqX44ViosQH4lyxd/lmInkfBIlrkRaKCxbtD84ooZSeCMGUYU8=
-X-Gm-Gg: ASbGncvktIb/2t/OUeZCRl3sxda+Mg2upuYWgTKE6B1JTp64Wm1dSk6avSJ2BSHIQgW
-	n3BSwEr6K2bGUJWrQOsuGzYGbJ4fDDNMY9T7++7MU/Qs//Dx2Pnmu7yXMj09advIcJ/3HcosGT+
-	anFrupVr7v4Z4uZx4e2C23y+5b/d8fotPk+MYt0jLN93Y6Ngg99zJysZ5MgqWNM2NlEYv6casPq
-	nDvWDiiVUca6QBMNusYTWThzXmtGeMrPL8lEN21+MdiuzPJOeHp4PCBzazqm3aTZAbzu4AraGa7
-	kHzfLLoiYLKNjL/HUgJ0pW3OvXI3qw==
-X-Google-Smtp-Source: AGHT+IEyfN0BrcIPh71fjjX8E4/Bx32mFLWHQVrIs1Vx7rUsYWJpnXHHPExUIEGLfLu7e/b8DQpJFA==
-X-Received: by 2002:a05:6512:3087:b0:53d:ed89:d78d with SMTP id 2adb3069b0e04-53e1b8785eamr3514553e87.5.1733418948210;
-        Thu, 05 Dec 2024 09:15:48 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e22947384sm293663e87.45.2024.12.05.09.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 09:15:46 -0800 (PST)
-Date: Thu, 5 Dec 2024 19:15:44 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Jishnu Prakash <quic_jprakash@quicinc.com>
-Subject: Re: [PATCH v3 2/7] arm64: dts: qcom: Add PMD8028 PMIC
-Message-ID: <jnqgccc6penjqmkhursdlbc46xctikvovfa26vlsvttxwqo5zv@uwh7fhixrmrz>
-References: <20241204-sm8750_master_dt-v3-0-4d5a8269950b@quicinc.com>
- <20241204-sm8750_master_dt-v3-2-4d5a8269950b@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mhn2Oozg6kmdWU3apIee0BV0mm3GoHolw6YqTLz3/pYyHGDz/CBcWzeZR0jrzKdG/nPv9XlxPg1o2K6Nd34lfpraKbuyPuYlftbQMhrj8p/1S6xKQOsZ/NIzDaPHz1M/Qj2/p7Lj8GkiTR36szePTIrNPPospvrGWqvcbDXORx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGxelnSm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5A18C4CED1;
+	Thu,  5 Dec 2024 17:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733418979;
+	bh=ll/pqBlh7VQdZrfl40Y3GRd2AxpRWeO2O5BqSRhjrXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UGxelnSmP2fi+QBtv0TaH/Q9nACsWEbMiXTzcVD8FSQHtVUZmxSLiisduv91ug+sS
+	 Ax5e/T0z+6bvflbNCWXVu47JOFQRYk7k6HmJYDoCCwditaCWxk4O2fJ3AWlSo4fzua
+	 Uf7/+C9qjPN37R2kGgv6k78I5ZLIOtoJ6vVrYqkLT78lSYMkOJpmBAT4mTRI+QFIwM
+	 tv555atqTSfiYtDUEe4wuTnR8GZCmULXsaUg6uMaBo2IbSWPqD+opXDzaQwGbFNsqb
+	 vH+pPl3AQa3oSI8fHxfOqVisVWNpp9sHWglYH14WkcCIzTkdajm+dEi57YY+zUQbvB
+	 f7QmOrNvl4H6A==
+Date: Thu, 5 Dec 2024 17:16:14 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v1 2/5] dt-bindings: vendor-prefixes: Add prefix for Priva
+Message-ID: <20241205-hamstring-mantis-b8b3a25210ef@spud>
+References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
+ <20241205125640.1253996-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RfxN6UD6pYJLj5Ip"
+Content-Disposition: inline
+In-Reply-To: <20241205125640.1253996-3-o.rempel@pengutronix.de>
+
+
+--RfxN6UD6pYJLj5Ip
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204-sm8750_master_dt-v3-2-4d5a8269950b@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04, 2024 at 03:18:02PM -0800, Melody Olvera wrote:
-> Add descriptions of PMD8028 PMIC used on SM8750 platforms.
-> 
-> Signed-off-by: Jishnu Prakash <quic_jprakash@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+On Thu, Dec 05, 2024 at 01:56:37PM +0100, Oleksij Rempel wrote:
+> Introduce the 'pri' vendor prefix for Priva, a company specializing in
+> sustainable solutions for building automation, energy, and climate
+> control.  More information about Priva can be found at
+> https://www.priva.com
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->  arch/arm64/boot/dts/qcom/pmd8028.dtsi | 62 +++++++++++++++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
-> 
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
+umentation/devicetree/bindings/vendor-prefixes.yaml
+> index da01616802c7..9a9ac3adc5ef 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -1198,6 +1198,8 @@ patternProperties:
+>      description: Primux Trading, S.L.
+>    "^probox2,.*":
+>      description: PROBOX2 (by W2COMP Co., Ltd.)
+> +  "^pri,.*":
+> +    description: Priva
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
+Why not "priva"? Saving two chars doesn't seem worth less info.
 
--- 
-With best wishes
-Dmitry
+--RfxN6UD6pYJLj5Ip
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1Hf3gAKCRB4tDGHoIJi
+0vCCAPsHVLh5ARoGVS/2vGmP95xh8i6OPSPvwg87l4tT5DQKGAD+OrSsG3fRMkAH
+BhsrJpztvvaJq8afTPZtjQh4PQEPlQc=
+=4PKr
+-----END PGP SIGNATURE-----
+
+--RfxN6UD6pYJLj5Ip--
 
