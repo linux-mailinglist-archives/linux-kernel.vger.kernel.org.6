@@ -1,62 +1,71 @@
-Return-Path: <linux-kernel+bounces-433126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1769E5423
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:40:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 538BA9E53F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178C518829A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:40:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C1D1883262
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58A2207E11;
-	Thu,  5 Dec 2024 11:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCDC1DB52D;
+	Thu,  5 Dec 2024 11:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Z+xezRXa"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="YvjMYEIV"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7BD20767B;
-	Thu,  5 Dec 2024 11:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AE780BF8;
+	Thu,  5 Dec 2024 11:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733398832; cv=none; b=SfbW5Bg57c/tGTU5CfZGZ/RDlLRqg9dinjxt/UWVrmejaO/MjQaiMwrZZsDFGJc+ThhECujNmq3uxGEAxuQAJXizMZzlEWxGZdUICIpWOxkzwIO69+i7NrYaifho7RZxr2QR1/IU564WTnuxbyWHAwHgpREUQ+m6HjTi6mMba7E=
+	t=1733398248; cv=none; b=il6bVVf1wwEbaFlwGrXoZtPLRJSvyB8hXXaLZfhxD7LtF4hKyeieG2dyiEb6kSAeq+WqRJhCbMfGl+kbmsYvltfY2HUnGsDPo9WJOOCPk7hGYEYQw5Eq4cpi/O1gKqbdIwDQvYwuu7NfjhP+RVWL3Pjb5PDBzHcJqSKHRUUbPEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733398832; c=relaxed/simple;
-	bh=5JydV/bnosY4BSOdc5Cfnwg9FtxCCJbcp5PGe2X5C34=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fHspNAmkosM9xmBlLLT5JPFCiUUZ8ANH3CMQQbGGnMem/7vJn5GuzyluPqFujknL5gAVhe1ouRTYJUJTlsaXsmJZV7BuULJZ+lCxvzMDW63wjxldeK+Nzk9a/0vbEWAfDWBHpfZT5CaEMZKpTYBog+lDyth1WKqt/GflMkEd6GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Z+xezRXa; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id caa99672e0bd4faf; Thu, 5 Dec 2024 12:40:27 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 6BA4415F0421;
-	Thu,  5 Dec 2024 12:40:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1733398827;
-	bh=5JydV/bnosY4BSOdc5Cfnwg9FtxCCJbcp5PGe2X5C34=;
-	h=From:Subject:Date;
-	b=Z+xezRXav50EXAm0sBu/MGD897xK6OVfRr5QBklqksYCIwFrcezjXWQJ5wr1grAn1
-	 0GgHN0D5qqwqQbxJi79pY07QplOD1V1siwUtHLPkHCv+JpNFuVYKXU3dFYTy6D3OAa
-	 2EXbvQcQsIMowa2o/iIveVG3Ug43fd2MqdSbEma2O/ecVME+ocsQp4hIe1IPIpFoBv
-	 dyDUg1Pm7bGvn2DF2j7ZahN97w+pcFMd/j41xDT7FVuNbBx+rUchtBdUuIvou/F+FN
-	 PGoOJROT9J62FS9Eq98diQUeOl6d3CU2CS4x9sQCp+hczzy7g/9ufK02ysu1wQaDzg
-	 18muxzBjUK6Ug==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v1 0/2] intel_pstate: Use information from CPPC to compute hybrid
- scaling factors
-Date: Thu, 05 Dec 2024 12:30:09 +0100
-Message-ID: <1923452.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1733398248; c=relaxed/simple;
+	bh=oVVdmh+elcjiFD4mVpLgMvfvNcG39ola2Ka1hHc3iUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s3fXZl30yKDvKsfMH69zgE2GCItcBWuh6QAN9qR9LciW9kHkfnHiE1bAMoahGu7Gkxvdexnty8jFqFPmmt6dxbXtA37DPR/of610yemX6VLPu1wSzsOx/9nU3RJUKsBnu4ekAPp4K6WQh2MDiMCm8vVAB2+pCO/SYeERWvT7H3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=YvjMYEIV; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bdsA3tpj1205+oRa1MPd5D6szg1T6A4Ap44HnR6cFe8=; b=YvjMYEIV2blJiDgrBxOgD4Jz3k
+	zotERM0QMsg0WxDERATtIRFTnz6V/DSFyBCY62tXU7KnpVVcZRXYq2H1ZJ7xPk5koG5NAEhNpihrd
+	AsS9tEoDCZ3SXywxaGVM1+E10xiGr6Nfv4lj+yQArNzHXEmpgLaCzafoaqb6gzpmx6xnxa23xL95S
+	XXKEyK9UVkz2Xp3Ukc5/KMJbOz7Nf6Oi+AHr1PjMr/ELH5IC2OsVbD0mr4oJY2CtjTrlDC0+spCiz
+	2RJR4yxBzTljLn5u2LlUc5iauommu0tIWMUCgIU7tnCnCEQ97/BcjA0G3LC/X8+pcp5mluFEqSJYd
+	aju7IggA==;
+Received: from i5e86190f.versanet.de ([94.134.25.15] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tJA44-0003Zj-Lv; Thu, 05 Dec 2024 12:30:36 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Kever Yang <kever.yang@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org,
+ Kever Yang <kever.yang@rock-chips.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof =?utf-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
+ Simon Xue <xxm@rock-chips.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: PCI: dwc: rockchip: Add rk3576 support
+Date: Thu, 05 Dec 2024 12:30:35 +0100
+Message-ID: <49528886.MN2xkq1pzW@diego>
+In-Reply-To: <20241205103623.878181-2-kever.yang@rock-chips.com>
+References:
+ <20241205103623.878181-1-kever.yang@rock-chips.com>
+ <20241205103623.878181-2-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,31 +73,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgddvlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepfedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=3 Fuz1=3 Fuz2=3
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Everyone,
+Am Donnerstag, 5. Dezember 2024, 11:36:18 CET schrieb Kever Yang:
+> rk3576 is using the same controller as rk3568.
+> 
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 
-The first patch in this series modifies intel_pstate to use nformation from
-CPPC for computing perf-to-frequency scaling factors on hybrid systems as
-per the subject.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-The second patch removes Arrow Lake from the list of platforms for which
-the scaling factor is known because in fact the Meteor Lake scaling factor
-will not be suitable for it in all configurations.
+> ---
+> 
+>  Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+> index 550d8a684af3..5328ccad7130 100644
+> --- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+> @@ -26,6 +26,7 @@ properties:
+>        - const: rockchip,rk3568-pcie
+>        - items:
+>            - enum:
+> +              - rockchip,rk3576-pcie
+>                - rockchip,rk3588-pcie
+>            - const: rockchip,rk3568-pcie
+>  
+> 
 
-These patches have been sent already which the following RFC series:
-
-https://lore.kernel.org/linux-pm/5861970.DvuYhMxLoT@rjwysocki.net/
-
-but as stated there, they are really 6.14 material independent of the
-other patches in it.
-
-Thanks!
 
 
 
