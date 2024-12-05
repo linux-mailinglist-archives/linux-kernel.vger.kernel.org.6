@@ -1,93 +1,155 @@
-Return-Path: <linux-kernel+bounces-433251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE2B9E5598
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9369E559F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEAC8164B43
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:35:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD64C16A94A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0DB2185B3;
-	Thu,  5 Dec 2024 12:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46DD214A60;
+	Thu,  5 Dec 2024 12:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="K1pz2Rxr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xuHLzA05"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27D1203718;
-	Thu,  5 Dec 2024 12:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FF2217721
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 12:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733402129; cv=none; b=FxuxZo+lEZg9bQqxcTx7/zJAhKUgtZ56xaUnxilK8cQRWGYg/IOh1GqX/WMhaThi/ZYOWD+gWc1LC9/y0zkCUZILky9Y8+BvTQlOLLYqSG/KjfJXz2IB7OgnJM+77PEdT1jwo/dTyVhc749aZegej7fkHKEsKed2vxVC0yswGtc=
+	t=1733402216; cv=none; b=Mb7zMTXWDk15840huJ4SK9j9koom5LEFnAgpOuLGPr69WhSqbuauibQXNXjVoatXXxjVooF/GKhaUsRG9Da399tEIQsUd/58vPFzeGaYnx2CUkRvvoMtsUKOhuFT7uen73Svq5f2o3b5FAhEikS96dWB3Lvn4Eca1KLIP0pA8pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733402129; c=relaxed/simple;
-	bh=sMA6Xych+cRnY38lt0wEi/0I/8ZE/i/cFqvtQMrF8SY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDJ9ZWwZLd8OgzIT4G3DS0uWUzRBdNislw6u723zUhv0XuSaREVfvrWGQMdLdpVmZRldo93lY+tmZ1i7eRs02Rq+6ecfhSNG4C+iT0Vaa014+mUn/OWKGHRV++q6P4p0xD5+rXgnWoyS2/fPQgsFG46K9pOoBa54XSC+9Us0H1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=K1pz2Rxr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85499C4CED1;
-	Thu,  5 Dec 2024 12:35:25 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="K1pz2Rxr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1733402124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sMA6Xych+cRnY38lt0wEi/0I/8ZE/i/cFqvtQMrF8SY=;
-	b=K1pz2Rxrrd/WpoVMeBb0VES7uL/oAWJCl+9N6IeSiR6iUKq00AJgFB/A2KcCAWyDxIm+Vi
-	TFY0/o7MuBBUE+z7Ied0NqLm4VdlUD4J01qjHlZIKp24PhraLE1i3SzDXC+9Fa0766Q0Wb
-	VQ3bQ06316UsklfmTSQASI/pmK2SC14=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3037247a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 5 Dec 2024 12:35:23 +0000 (UTC)
-Date: Thu, 5 Dec 2024 13:35:19 +0100
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Davide Ciminaghi <ciminaghi@gnudd.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	sultan@kerneltoast.com
-Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
-Message-ID: <Z1GdxrjBpn2Nu1vu@zx2c4.com>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-10-arnd@kernel.org>
- <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com>
- <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
- <CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com>
- <Z1FgxAWHKgyjOZIU@smile.fi.intel.com>
- <74e8e9c6-8205-413a-97a4-aae32042c019@app.fastmail.com>
- <Z1GLrISQEaXelzqu@smile.fi.intel.com>
- <1f2ad273-f3a5-4d16-95a4-b8d960410917@app.fastmail.com>
+	s=arc-20240116; t=1733402216; c=relaxed/simple;
+	bh=7iQZviBWsipCWsckJ1L2w9D6utBoX7XmVaFR1kH1NlM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PdlIIxzzT4erQ0ZAJYYpayEuEOi59wr7v6T6fwnfg7oUdNWaYnyIEpcCzDUmcsqZ3V2iP0mOpCtTczFpMY8eio+eOph9deaghZBc9ySatoNwo7FYgUIusOJshgbo31Sa7FZ/MZLprlffsiGqlPho2b3nlreIqmXTVSCw2tOhbuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xuHLzA05; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-385d7f6dff1so538663f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 04:36:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733402211; x=1734007011; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vd2e/+7e53PEmvCulx9h5rdqdJTtvKXM/ReO3/927u8=;
+        b=xuHLzA05P8WkAyqP51U0dAe/HKz9MZDK0M3bXeD1Js6GMNjA2YjpUnwkk/RT41EIHY
+         8LSEt6sE4Cr5juL58Elq4B+xiR8E6c4uXX8TCUm/6zXwOyzUl4MjmyHi9EhPwus1FGzx
+         N364NxEoC42jj4/db/xjUDEc3rSOJIkgk4WoZqSoy7wV4VfSvZCRxe1yjx7cxjELAHqW
+         OSDOr16e5YSK1HApY29pRkcwjdDYx8bg+Im6pKtGnA5uJWNvaloovrwPKySSzIciLHlA
+         3RUbH9dMJ6++sZ5PjBcnR8+XMfDBd/14EtmY2/6b+/cYtdNLDLhAQe9eTeQGYtupfrx6
+         xv6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733402211; x=1734007011;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vd2e/+7e53PEmvCulx9h5rdqdJTtvKXM/ReO3/927u8=;
+        b=JSKmMoGiBHO0RnDVKdXd/NXezi2x29GqNK7m9aeo2tFvHLMWAgoAD373Nw0UxMI0jG
+         eN1caNW6HfSeX4re+tFAN8QPODoTZWHbSsIuoDEBNEZeSUBg7qgSKmxjkB65LBZH4U2x
+         gTeCzTzo2vGe1wJbpT5HZJ/5nm5mHPPyEgF80n2P72Nlxcj/9zw+D8vQe+9/flN+lW5X
+         h2Q+thKHLB2c/iJWJ7a6NOQsyYHhGYUXUErtyEaWUZBadaAjB6HicTFIAX0yPIGP+apd
+         sv3bOLj8idyLLYrn2ld8L7xTJ9S5MMtdhj9f729pvqLQwHaDaLOiiDnnlj3+3jiUtNtD
+         tOkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYpR34T4gOSfS4LFaK+zUR0ugzPshW6m9fuqJISodrLBg/J3gvFfhXAlxS3bGoLyXQcHYoguRP2VzxUhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPy2nULu9lVo50BtSFpGCIf8AhLWFBAKSC6YFoMlAK+J03FST8
+	fOvCJQaVm3ODuuwBKz7f5ML7IogrPWZmRxC3z3k4ROxoIfevo+gXQKMoQiKlyRtI7HOdpjVTA50
+	Drw8KWZlaY76Vzw==
+X-Google-Smtp-Source: AGHT+IFStT3/JjmB+ZduzLED9m5mcG/6ApdoyjMwuoRZ3NBOmr/f6c52FU11sp9uLvVjDAHF+X0r73Z9cmx8MnQ=
+X-Received: from wmbhi24.prod.google.com ([2002:a05:600c:5358:b0:434:9939:10da])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:1a87:b0:385:e4a7:df0a with SMTP id ffacd0b85a97d-385fd436393mr7502559f8f.54.1733402211456;
+ Thu, 05 Dec 2024 04:36:51 -0800 (PST)
+Date: Thu, 05 Dec 2024 12:35:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1f2ad273-f3a5-4d16-95a4-b8d960410917@app.fastmail.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIACeeUWcC/x3MQQqAIBBA0avErBtQqYiuEi3MmWwgKrQiEO+et
+ HyL/xNEDsIRhipB4EeiHHuBritwq909o1AxGGUabVSL/raBMF523hjpcMiLpa7XhpSboWRn4EX efzlOOX//X3clYgAAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2238; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=7iQZviBWsipCWsckJ1L2w9D6utBoX7XmVaFR1kH1NlM=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnUZ4ptyh0m08QFCk2CLCvc6ekmeolvC6xwJJmk
+ zJyrwSRTHWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1GeKQAKCRAEWL7uWMY5
+ RohGD/9hgHc0FMDO7Bk0Ysves93jeDpXLwhJe5VEfErnuksTCYpblaUxw+xokgWFpQEEHlXs+3z
+ wwgc8tMZL4AC3b6OrIQ/kR5sFKKMievvs3kHrHAFnDfDjjEbry+llhUNuhQc/Tk3ZMg1ko39Ica
+ lGWpMDJYPzlo175jqz8kotzQGcwPR3HtiOrqM0aZCJDrb7N63O9pl1B7/bnQoFSv3IwmfLrR+Zp
+ AmlO7uSbfdLCP7DXtBz8D4QMBpHnFnDl5HYsmNotRyV4yy39VIBkhvjbMkXiz9N72sutjmmI4tt
+ fVOp25hNU4r6CfhkdprQJutbzqSiZgUgrETOIhS4XhLMeNg11hh3XbdiYxYrTaIM+WcDu1ZANE9
+ jQ5NhZYGsjQ3wmmksy5dahx4s89V98iFVZFbFCknA6ayth9QNIWzy5AM3g7u8cuc2ZrZbgHzVIv
+ zI/r4cTiDUYYtKeanAI4NfUJjZ7cctbBabFAeo6nbC4hIJmFY4hxuVHPAlaeQ6DRNqfdDWRCmk8
+ 5TAih+8oevM/nDOt2QnavabGy01XIWlw83g2WguxFDBZbD7i3bmQJsjpzY0gFLd7H3d6rt9IMUV
+ p8K84SyAsgbOwoNnxbj2qfJaOKw6qZTB0lANW0tjyFbOYzIs+hEivCZoda9g1pzG9eW5R4hydVY c6H3yHRRt1IY54Q==
+X-Mailer: b4 0.13.0
+Message-ID: <20241205-guard-stable-doc-v1-1-a3f8249cf4d4@google.com>
+Subject: [PATCH] rust: sync: document that Guard is not a stable lock guard
+From: Alice Ryhl <aliceryhl@google.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Dec 05, 2024 at 12:58:22PM +0100, Arnd Bergmann wrote:
-> As I said earlier, I don't think we should offer the 'native'
-> option for 32-bit targets at all. For 64-bit, we either decide
-> it's a user error to enable -march=native, or change it to
-> -mtune=native to avoid the problem.
+Most locks in the linux kernel are stable, which means that holding the
+lock is sufficient to keep the value from being freed. For example, this
+means that if you acquire a lock on a refcounted value during rcu, then
+you do not need to acquire a refcount to keep it alive past
+rcu_read_unlock().
 
-I've been building my laptop's kernel with -march=native for years, and
-I'd be happy if this capability were upstream.
+However, the Rust `Guard` type is written in a way where it cannot be
+used with this pattern. One reason for this is the existence of the
+`do_unlocked` method that is used with `Condvar`. The method allows you
+to unlock the lock, run some code, and then reacquire the lock. This
+operation is not okay if the lock itself is what keeps the value alive,
+as it could be freed right after the unlock call.
 
-Jason
+If we want to support stable locks, we'll need a different guard type
+that does not have a `do_unlocked` operation.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ rust/kernel/sync/lock.rs | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index 41dcddac69e2..7eab46d4060a 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -159,6 +159,17 @@ pub fn try_lock(&self) -> Option<Guard<'_, T, B>> {
+ /// Allows mutual exclusion primitives that implement the [`Backend`] trait to automatically unlock
+ /// when a guard goes out of scope. It also provides a safe and convenient way to access the data
+ /// protected by the lock.
++///
++/// This guard may be released and reacquired with [`do_unlocked`]. Note that this implies that
++/// this `Guard` type is _not_ stable, that is, holding this lock is not sufficient to keep the
++/// underlying [`Lock`] alive. That must be done by some other mechanism such as a refcount or
++/// ownership.
++///
++/// # Invariants
++///
++/// This `Guard` owns the lock as defined by the [`Backend`] trait.
++///
++/// [`do_unlocked`]: Guard::do_unlocked
+ #[must_use = "the lock unlocks immediately when the guard is unused"]
+ pub struct Guard<'a, T: ?Sized, B: Backend> {
+     pub(crate) lock: &'a Lock<T, B>,
+
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241205-guard-stable-doc-efad6812d0cb
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
