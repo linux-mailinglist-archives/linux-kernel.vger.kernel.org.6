@@ -1,214 +1,152 @@
-Return-Path: <linux-kernel+bounces-433494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7790F9E593D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D73239E5948
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381F518854EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB3F18813A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50859222587;
-	Thu,  5 Dec 2024 15:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED0321A42B;
+	Thu,  5 Dec 2024 15:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XPnDUiNU"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GzDh9Fwk"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF9222147C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212802F85C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733410890; cv=none; b=HI3ExQmuvaqQEMzBdJveAwc3spChuiAcG3/P7XfAP+ax/uAduL05FwBX7xRagNvtgI23d1JrgjKSb7wqnn37mIikAs270NEtdURPIgz0gH+9Q6/cOUuF1QlR3iUHaTB03LOUcf/Tkcfb/TTJgHgU2hL5Hc1y5b/EMu/dvkfxeCk=
+	t=1733411000; cv=none; b=rlotZWMj68JN+YAKQr1JPfVcr29NCqJc/J/d/tsw9M3a2rz8lPwQeWkwdTlxgTcxyhYRX/WBeH1Vk3/MQTVdTz/BZlogw30Kd2k6aF+zNJpUjbheGnopGjX69oQHD5zMAATUqItGEePzmD61R+CPhPnXudFDC8Jh7EiHhZEV1Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733410890; c=relaxed/simple;
-	bh=IgxztTAMWyT29UYzJNKnw7bdbAV70geqeOh7ctUQCIM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a5F7SYTf9rOwm/yug9tzeoxRyKIkDAe4QJm2k/7+YtNGaS0psUGQ+pCYg6krPrA6WUNBaTRssv6X/OCsMi2r/dbPkCE8E3etJ2mVJTkXSmjEznYoPVqhfRSdHWQmhgpbY+GqdkwHSSLozrfHU+qDW7ga5DgYqIsl3g4jdu0938Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XPnDUiNU; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434ab938e37so7162415e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:01:28 -0800 (PST)
+	s=arc-20240116; t=1733411000; c=relaxed/simple;
+	bh=D6Y7UB/C4hDo9E6h3VZooFVyxnhqXbWJ7eno9Us7o+E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QQ6iKI+xQdmugZfsE9wppjsXZ3IXmprwUSECJDY46YKGd2RYb7kSQVF9Z+skgsFT8R1bFvcj50rRp0srj+GDzSIQKWt4Ynw490z5qTdTxD3vuGc36JN0iiHy7fmOi9JkqbYc+Rb1/F4Nucq1iuZSR9zsnNAKMmtfCt5oezQ3NtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GzDh9Fwk; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43499c1342aso8741365e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:03:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733410887; x=1734015687; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TPWex3NjhW2vBY02766onHCegT7hgDE9dyhsg/tMa2g=;
-        b=XPnDUiNUcFP3Cb5p1EoI2tajowtOurA/BvaRvtw6Pl7CQQk9RPpnMO+QylLBXeL1Xa
-         aj45Ecy9EF37i0Z9rawuPdh5YKXNwUhiGbxJDgPpbmQjth3kaRvQDCx1gix6wJ4sOO14
-         WaRdWD0XRLcLa/ApRbAxCrlnb8R8UpoAgTjpLBP65PMMWkgaoKhtNyIo8hDN3P0K9DHZ
-         nXy2cjqW8mjo/zMaWFSzhS9HOXIFHKn/hd5OZTSSz4TSDIwZQb7FwJzzuPLB9wt99dpX
-         TdddNUI714L37X42wmXAKJTfb94RKbyonL3cMbz1YnLfZudWYdhWrhofLj4y2zgKbRdq
-         RBdw==
+        d=google.com; s=20230601; t=1733410997; x=1734015797; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BwJubUT8Tdc7oClPWEPhghjrfw8jIX6vzdGr4YCz4uQ=;
+        b=GzDh9FwkCB+w0PE4hvv0PgHsSoSRRx0vLcmXdofttb7/UtUTzx3XGo+42v0DKv9qO7
+         ozG2wDIKBmQUJo1eDQrMyrHGxGQCQetzK66P2ZhyQYmQpz0OcYgM1qTBs/dburJuBCLy
+         M5OgpGWRFwsR0Wc/fjAWZe4mVSsFKwFZki3V/vCbN+X6/qQQmD60ewgvDCeP7CsbvATI
+         0KOuMlp0fRi+Wc5OPfNWhG9vtKOMjv4ugLiIQCkLLVwpPN/lVNFoFQPkOJ407HPMupaB
+         pszM8Ng4HSr9/JW6H85dCFgEjPIuTTGsT79Ptj/e/UwxS20vRdrCohHVwXla6RdTd3ot
+         RW9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733410887; x=1734015687;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TPWex3NjhW2vBY02766onHCegT7hgDE9dyhsg/tMa2g=;
-        b=f8yMLHwyZSqtdrYtU0P/utcRs3X59fCFGPMf6C8b5x4xWLjcmy1nOZhlLks+eP4grc
-         BCumzHRK9o6Xwu8eyoTOaRsn570/AVKAK9cc8HC2Vlew400TEheejurUddqVZFqaxDda
-         mJ4sBjt33SrK+JpT6l+uwxmKBXy3kJhV0ygzdthXyPYWphwZPBmb+fOUf7zrVswppCiY
-         TIVnOiyvcxwIU2phDUY398zPuUj0rDHXvCKlV3QIY+OVUNWRZak7b7qZeGC9mB6pzwCJ
-         aPT281UR6aJypObn2fcPMfjb3CaUElahuG7EL5P23YRBPLqhzFFQKQ+ZwF45GXU5luRz
-         1H8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVkMxHaBqWjbg7+nOszG+vch7d6+jECUJ/8GecG8+mg7C0eKq1mDtnIg4gaOdfv5BAgCfNrKpWXIV1MbeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGFKeOFVVm1oDoUuiotM6wNyMUORpTAs+J2wfzEF1PJCCRc65m
-	PPEBBJ6Q+53cZnS+QxOg7HxcFbBLEHomICwJyPxPteIn9OiUA/RrDqoYth2q8Eg=
-X-Gm-Gg: ASbGncsHLED7C1VHq9Z8zaQh7sHgdbwd6ofoQvYrdBJNgm2yHAoYSuaqoDJi1QYx5AD
-	LIsEHQoy7HnYNX1S0tmQXJ060LjmpjyGBD5kokQEAwNOws9DczWFnF9gp2D4Xdt54Vp6c9q7XMd
-	UnkZvRIG8hfvHFhpfQD8C50RQADqi22vVw9HFtVTbudJgo3qOqy3ycyHx/zKQ+WRUAtMp/YxtBw
-	RaP2T0ZLz9vxgYrQn5HJVKDHMd6cZ9Te3H8uqY/dB89CVs8slnGiN4AQXFzFlfWH9dAsQQ=
-X-Google-Smtp-Source: AGHT+IGKNF8m6/P0t+uOND8u3TqccJB3NWyZR7DF6laJJjSGk7SxVgGuFUCe2VWQPy6USrZuONmIlA==
-X-Received: by 2002:a05:600c:4ed0:b0:434:a929:42bb with SMTP id 5b1f17b1804b1-434d3fae263mr79611665e9.18.1733410884709;
-        Thu, 05 Dec 2024 07:01:24 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0bc7sm62830795e9.35.2024.12.05.07.01.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 07:01:24 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 05 Dec 2024 16:01:11 +0100
-Subject: [PATCH v4 7/7] arm64: qcom: dts: sm8650: add interconnect and
- opp-peak-kBps for GPU
+        d=1e100.net; s=20230601; t=1733410997; x=1734015797;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BwJubUT8Tdc7oClPWEPhghjrfw8jIX6vzdGr4YCz4uQ=;
+        b=d4SEHB+UQ4wViw+L6TTDFyu53lSThl37Yv+fC46diA+itySla49PlH/zr3b7SMWWld
+         1RaOQYiEeqNEUTzYPGH3qPUsZ+FP1VcEGQZF3dWR0WHGfplKbuREM3nNfwMGqRbIWaWn
+         zANE8nQ3sgFup5InqMgvroekC2vQ9K7i4xeKB5rKMDCLYKjJZlV251d4jqLbN/qR/rZW
+         zHwJUP7crVGuZ25SIWd9miBd/yx1/Y7KvPshgA9YD6RuC2qVzwLuSrt90koug/ptqRMm
+         o/nYpSfsp4K62eOSxHQcwmDzdO0Ez2GYWSNbOfrFELVVTrFsAOEipipcM5nPEn8TtJcn
+         XrJA==
+X-Gm-Message-State: AOJu0YxDE0N7RQQCRPAvNcTEUDseEGiVgqzKca1JVjYG/4GyfilX3+te
+	cscPbskaVOtRU5Xm4lSM0mIyI9HtiASQWA0omFI2LVWwJev00LtlYZ3mz7jvC+FF/u5kkQ==
+X-Google-Smtp-Source: AGHT+IGioVJCoK8zYYqTywuPhQi+8Z7KdiKyqo2KQn5SY2N3fSHvvtqHDwjOOZi2i4b0vvNS4g5Z3uNA
+X-Received: from wmaw15.prod.google.com ([2002:a05:600c:6d4f:b0:434:a158:2c03])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3151:b0:434:9936:c828
+ with SMTP id 5b1f17b1804b1-434d09b64e4mr97941255e9.12.1733410997284; Thu, 05
+ Dec 2024 07:03:17 -0800 (PST)
+Date: Thu,  5 Dec 2024 16:02:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241205-topic-sm8x50-gpu-bw-vote-v4-7-9650d15dd435@linaro.org>
-References: <20241205-topic-sm8x50-gpu-bw-vote-v4-0-9650d15dd435@linaro.org>
-In-Reply-To: <20241205-topic-sm8x50-gpu-bw-vote-v4-0-9650d15dd435@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2682;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=IgxztTAMWyT29UYzJNKnw7bdbAV70geqeOh7ctUQCIM=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnUcA6jBwt5/lJeHAuMw2p6QcJ8KfjQQOOW4fyFl/Y
- WsBO3zGJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ1HAOgAKCRB33NvayMhJ0e20EA
- CdtdyWN37WortzYjsbLjT6L16akMfEu8GAtTyJt4D8BSQ1G0yVf0YbZhZbO+cIksZi9QkgfPsR+9eh
- 73pd5WF+1wx6Navr5WyAm9I6yO0Cc3M2iVEM/nb00z6p4o5rr+N04AxVyhOnJOTFdzM92wvC9LXySn
- BBDc18x3Ka+L08ygo/P8c2Yvh4Qurr8lM4OHbwarxYl3+ZqQNC/gyt66qvTy5rohJS7Wb24yKlbl3H
- Q+8gGmjsohJoT+5Ny3E+EhZkNSWrpL2+pKOHRKpJ37jmPLfR/OM6WsinrPcMWy1WXpz/4oZTEuyjEc
- mxlspjJITpZQ3bwevUkmSBG2kKzVtTaF6S/xhzKM52T37aaXeuN/yh0vi8h6THpVuvt9d2NUSLT09x
- xgB/R7HAAD+WBpsTpCj3bVacxYuTWT9JPh0GDTGdrNCnz5rLe6Qag20/ahOEeQ0wIiuXLSdcgkxmgQ
- xBQnPUBtULm+hS0Q7V+1UFBjHBJY/iKUdT+j1W0Ma5L5tRp8cltsVqp8IsJSVioA5KVQTBw/4DD1+z
- YK9wGfi3YcITvaWCzrlEIbL2ozgfSzYF14ukaytf/4LszqCyo9PJNQJqTlTCoiW8WIOpw1aM3N2kPH
- 8Gr/0CneZdDb+EXtaKOZ6Ak0uIhyt54sP9j6tp+zFeCgRGGelx4hp7g2tV9Q==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2744; i=ardb@kernel.org;
+ h=from:subject; bh=mRRjZP9KtZpr0axKuxzKvK9RQGNYQZdHxwWtIVX9O9g=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIT3wQFt27UZV6ejOY/n/qh7kyFwzN7runGb/7++ucI8DR
+ xKclFI6SlkYxDgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwES+f2Nk2HLcccoTi9fqjpdS
+ 9VUlpu3Ly6855nl+OoNuy5sqw2/McowMBx++35G/o+9JM0+o1TWRFfeu3hBr/fjj5fLmkvdLJ9/ fxgQA
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241205150229.3510177-8-ardb+git@google.com>
+Subject: [PATCH v2 0/6] arm64: Clean up and simplify PA space size handling
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Kees Cook <keescook@chromium.org>, 
+	Quentin Perret <qperret@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Each GPU OPP requires a specific peak DDR bandwidth, let's add
-those to each OPP and also the related interconnect path.
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This series addresses a number of buglets related to how we handle the
+size of the physical address space when building LPA2 capable kernels:
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 25e47505adcb790d09f1d2726386438487255824..6ee7f362dedb73bcee6e8b2a7da6b71840de9001 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -2636,6 +2636,10 @@ gpu: gpu@3d00000 {
- 			qcom,gmu = <&gmu>;
- 			#cooling-cells = <2>;
- 
-+			interconnects = <&gem_noc MASTER_GFX3D QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "gfx-mem";
-+
- 			status = "disabled";
- 
- 			zap-shader {
-@@ -2649,56 +2653,67 @@ gpu_opp_table: opp-table {
- 				opp-231000000 {
- 					opp-hz = /bits/ 64 <231000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D2>;
-+					opp-peak-kBps = <2136718>;
- 				};
- 
- 				opp-310000000 {
- 					opp-hz = /bits/ 64 <310000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
-+					opp-peak-kBps = <6074218>;
- 				};
- 
- 				opp-366000000 {
- 					opp-hz = /bits/ 64 <366000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D0>;
-+					opp-peak-kBps = <6074218>;
- 				};
- 
- 				opp-422000000 {
- 					opp-hz = /bits/ 64 <422000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+					opp-peak-kBps = <8171875>;
- 				};
- 
- 				opp-500000000 {
- 					opp-hz = /bits/ 64 <500000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L1>;
-+					opp-peak-kBps = <8171875>;
- 				};
- 
- 				opp-578000000 {
- 					opp-hz = /bits/ 64 <578000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+					opp-peak-kBps = <12449218>;
- 				};
- 
- 				opp-629000000 {
- 					opp-hz = /bits/ 64 <629000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L0>;
-+					opp-peak-kBps = <12449218>;
- 				};
- 
- 				opp-680000000 {
- 					opp-hz = /bits/ 64 <680000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+					opp-peak-kBps = <16500000>;
- 				};
- 
- 				opp-720000000 {
- 					opp-hz = /bits/ 64 <720000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
-+					opp-peak-kBps = <16500000>;
- 				};
- 
- 				opp-770000000 {
- 					opp-hz = /bits/ 64 <770000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+					opp-peak-kBps = <16500000>;
- 				};
- 
- 				opp-834000000 {
- 					opp-hz = /bits/ 64 <834000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+					opp-peak-kBps = <16500000>;
- 				};
- 			};
- 		};
+- reject 52-bit physical addressess in the mapping routines when LPA2 is
+  configured but not available at runtime
+- ensure that TCR.IPS is not set to 52-bits if LPA2 is not supported
+- ensure that TCR_EL2.PS and DS match the host, regardless of whether
+  LPA2 is available at stage 2
+- don't rely on kvm_get_parange() and invalid physical addresses as
+  control flags in the pKVM page donation APIs
+
+Finally, the configurable 48-bit physical address space limit is dropped
+entirely, as it doesn't buy us a lot now that all the PARange and {I}PS
+handling is done at runtime.
+
+Changes since v1:
+- rebase onto v6.13-rc1
+- add Anshuman's ack to patch #1
+- incorporate Anshuman's feedback on patches #1 and #2
+- tweak owner_update logic in patch #4
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Quentin Perret <qperret@google.com>
+
+Ard Biesheuvel (6):
+  arm64/mm: Reduce PA space to 48 bits when LPA2 is not enabled
+  arm64/mm: Override PARange for !LPA2 and use it consistently
+  arm64/kvm: Configure HYP TCR.PS/DS based on host stage1
+  arm64/kvm: Avoid invalid physical addresses to signal owner updates
+  arm64: Kconfig: force ARM64_PAN=y when enabling TTBR0 sw PAN
+  arm64/mm: Drop configurable 48-bit physical address space limit
+
+ arch/arm64/Kconfig                     | 37 ++------------------
+ arch/arm64/include/asm/assembler.h     | 14 +++-----
+ arch/arm64/include/asm/cpufeature.h    |  3 +-
+ arch/arm64/include/asm/kvm_pgtable.h   |  3 +-
+ arch/arm64/include/asm/pgtable-hwdef.h | 12 +------
+ arch/arm64/include/asm/pgtable-prot.h  |  7 ++++
+ arch/arm64/include/asm/pgtable.h       | 11 +-----
+ arch/arm64/include/asm/sparsemem.h     |  4 ++-
+ arch/arm64/include/asm/sysreg.h        |  6 ----
+ arch/arm64/kernel/cpufeature.c         |  2 +-
+ arch/arm64/kernel/pi/idreg-override.c  |  9 +++++
+ arch/arm64/kernel/pi/map_kernel.c      |  6 ++++
+ arch/arm64/kvm/arm.c                   |  8 ++---
+ arch/arm64/kvm/hyp/pgtable.c           | 33 ++++++-----------
+ arch/arm64/mm/init.c                   |  7 +++-
+ arch/arm64/mm/pgd.c                    |  9 ++---
+ arch/arm64/mm/proc.S                   |  2 --
+ scripts/gdb/linux/constants.py.in      |  1 -
+ tools/arch/arm64/include/asm/sysreg.h  |  6 ----
+ 19 files changed, 63 insertions(+), 117 deletions(-)
 
 -- 
-2.34.1
+2.47.0.338.g60cca15819-goog
 
 
