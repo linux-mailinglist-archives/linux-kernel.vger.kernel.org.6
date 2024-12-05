@@ -1,82 +1,127 @@
-Return-Path: <linux-kernel+bounces-434082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1829E6165
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:32:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4ED9E6169
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3AD416A2A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA81A188465A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9941CDFAE;
-	Thu,  5 Dec 2024 23:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CE21CEE8A;
+	Thu,  5 Dec 2024 23:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKFoPW4i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6pafc4n"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431D684A22;
-	Thu,  5 Dec 2024 23:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EC149627;
+	Thu,  5 Dec 2024 23:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733441568; cv=none; b=nU2nnGHAeM9q5JyJy32c0f/SpcitrpbSALVsRKDr+AoyDg3auLPWyUelygKN8DNYEOSoIBUHqWW1PHlpA1tksgTyv8xtucEzpQWq5qmm693V2ztCM+ZrM4Iix3h45msaUv2jUqwb2YR1+G6c174ipad7U/nG3Mdov8Ube+S4+KI=
+	t=1733441791; cv=none; b=rchhI5HHDHFTvA/DW0cVCx1+Gfg3kkAfEksERNANm0cRZdUPZS0uNC73yU/AwymuNFHDY7ducLW+bxyuVWRPkV11lXVm2qRkljKu+qKl//gZwA9e8Vr0AGjDS/MiRWlTY4vJPI9PbSddab0Fni2Y/00z4eXEjMS2HOGwHoE0s1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733441568; c=relaxed/simple;
-	bh=eSgBZqO2vnfiAWR9pD+J75croiH27ygn2G58DkHVM5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJAmjhEQ++K8iTvBNh3zecqlRez1GNxlBG01HeRBNCKHe8dBcaKll/LG7cpDtInGaIbZQDMbipWgpFaSsFcwF0sESI2WxZuXhrPPoEzJvKG2ygEnCvyqXRPNYl6idmssPNbhwSLQxg06styGRngeAYey0AeM8YxyEM3CD3JTalU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKFoPW4i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FA6C4CED1;
-	Thu,  5 Dec 2024 23:32:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733441567;
-	bh=eSgBZqO2vnfiAWR9pD+J75croiH27ygn2G58DkHVM5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PKFoPW4iRrox+j5NaW7rl/VfVU2ChOMjhwrYMe0KKabRRKhavT2L2A5LVOoifMya7
-	 l5Q7ZUMraUBgTr3PW7rMpo0N3/CMncRT4Va9D1twlp5qepb/6J0lCQqC0d/uuMwLkv
-	 AqFJyXEwELsAatAijGKDr0588SsvDtVIIy2ZlO/zAxZzZQNBeb5b0gMIfc5aQOrz0y
-	 iY/5EIkpqgMGG2Z5hAFzUSIvCcjmlceZMr5gFK5T+rC+WJQqXa0f4rkhDqx6T3oK5/
-	 wTpQmiOape6kY/hAwVM1LMF+VP7g8ngPCGheqXeJe4OMdp+LSV2mv8nl6SPx36st6T
-	 hK+GIWJVvc4Lg==
-Date: Thu, 5 Dec 2024 15:32:45 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, amit@kernel.org, kvm@vger.kernel.org,
-	amit.shah@amd.com, thomas.lendacky@amd.com, bp@alien8.de,
-	tglx@linutronix.de, peterz@infradead.org,
-	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
-	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
-	kai.huang@intel.com, sandipan.das@amd.com,
-	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
-	david.kaplan@amd.com, dwmw@amazon.co.uk, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v2 2/2] x86/bugs: Don't fill RSB on context switch with
- eIBRS
-Message-ID: <20241205233245.4xaicvusl5tfp2oi@jpoimboe>
-References: <cover.1732219175.git.jpoimboe@kernel.org>
- <d6b0c08000aa96221239ace37dd53e3f1919926c.1732219175.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1733441791; c=relaxed/simple;
+	bh=NwuLwrvl7dGHOZTiIWhR99j3XQrPoL6Gp8aZq7I1bzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J2Ja6MazfrJBUra22uW0JWsJF7Ysg1Yd2S6ZlsrkTAYdWKucksYkaJ/+4B5mrn61q31kz3NB6DoWeQbMsq7aCbUdZ/I4OMGpHR0y+NHaY8q/Qatc3BgfmXo4ILxFi2G+kElllPjjlbrWIWSvufLD88msH64VX5b6qJauFpDG7Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6pafc4n; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ef10b314e4so1292097a91.0;
+        Thu, 05 Dec 2024 15:36:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733441789; x=1734046589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ng7kZ/YTvdaoB00ECoAPKVGg9G2Agwwk8WgdDEaHgnA=;
+        b=m6pafc4nRwPZAKCJKru7OM1SOs/kvu1x1/1Uiv8RDWuvU+YuetpaEQciZXTXGbw5Dg
+         UmS0nRhhK2+e63MsMnEEBYPrjbLnDOtJBw/kUoFdSUcGJJsOhsrHy7WZXTIZAynuC8EL
+         wu5TiGVp2j8j1e5RnGvsViwX1iC/kkGYpcc11keLPR/YsKJ/KBcFscqUUxUcFH03e5rq
+         Wv+TZsCOdKut2XYvvVx2LBYzNjCC+BuHRODS3LbPNBe2Y2TAgsM/mmMBjZzjKYl2yPMc
+         fnvLfiL7sTtbnu6PjqeEXhZdXyOm/hxJmH+i+yewP8lcwG3lttgCDSroag63WqJykZpF
+         qDvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733441789; x=1734046589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ng7kZ/YTvdaoB00ECoAPKVGg9G2Agwwk8WgdDEaHgnA=;
+        b=F85vwJ0m8daChuOWKAwVxqde0FSkY+B2vZpSr1CML4u2ZNHhRTmfqXdiXwe477p25T
+         rKHKh0wnvtGeOr/WwefzwZsLXKw6U/8/5BFaB9KyC6BGpCRb+fdbDVmgscZuBWRB8ULL
+         Fuyi762fDyoAQ2+isv5k4IXk1Y/0MxkGQbwowP980aieB+KCm8V8g8E3lTIZ/yqPUIeA
+         09qXdeZ5C5szlf9Gy7Pr3jm8/ieetxPmiQimjXGQ8OZEu9dN96ZPXzrqaBsGRsk39Tpm
+         JW4ovUJiN2WBDJ0FaQfJhVACrrxoBPrNNouokUIlkO7MYziBxNqcZTwkqGQ8ozTB8T/Z
+         HHUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMs06zQKiz8cFlFkQ596sdJ1bYdBoEMDcwVVcnfWk/Q80nhfK+boqW+JOIbcXdkSdvzx8MxB0JmZ2BBHfZ@vger.kernel.org, AJvYcCWPD32FVomFDHC7TmmwrwDRe6HOxihGOpXQJXhcnSQz3dfpAeVDnL7ievg0oTMW0QLjdggOkPe8R1ZTZofR@vger.kernel.org, AJvYcCXVkZJ1GoHUf5gRwZUKH3aS1cxqwgSj52PPwT/MJdt1BHeOfSnUzKPvyhqLBS9R4M0uiZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEt8j8YXIiqAlcOFj+lKBdAdpRYXfKrmNm1EDrH9lnsXYW0ITk
+	P0fjp1IRdJSLSMv1bKDg45a9++AlBWUQbWPYxzAg9MiyoDCPbNUMEyZtfwK4I6/wpCJbSrn4LZb
+	n0SHJGPojAEDG+7j1AVI1BmH6vdI=
+X-Gm-Gg: ASbGncuW+CjmK9i0c+aoUxy5LqMhgxOqYMG+DGxz4Tw4oOjC2sh8vejuhOOS4vftE0P
+	xx97hHThFL0T4GeQRKSEClU/XoQgXZdT4H+vbB13CdOQDr04=
+X-Google-Smtp-Source: AGHT+IH1w7P6xCp3gCPM7QBsMHRuvicw/bZAJipR3Nsv0xLIOSEs65VTzbCLZYW4sM1pbtS8YBt+j3zdu2KIn3J91Ws=
+X-Received: by 2002:a17:90b:2882:b0:2ef:67c2:4030 with SMTP id
+ 98e67ed59e1d1-2ef6aad12f3mr1401015a91.27.1733441789520; Thu, 05 Dec 2024
+ 15:36:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d6b0c08000aa96221239ace37dd53e3f1919926c.1732219175.git.jpoimboe@kernel.org>
+References: <20241204-resolve_btfids-v3-0-e6a279a74cfd@weissschuh.net> <173344143126.2102866.16200180283142893645.git-patchwork-notify@kernel.org>
+In-Reply-To: <173344143126.2102866.16200180283142893645.git-patchwork-notify@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 5 Dec 2024 15:36:17 -0800
+Message-ID: <CAEf4BzbOzUiiMbW-1_avQ6DoVWc_0Bm=Bz9iC1rGq7NqG-Y1TA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 0/2] kbuild: propagate CONFIG_WERROR to resolve_btfids
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 12:07:19PM -0800, Josh Poimboeuf wrote:
-> User->user Spectre v2 attacks (including RSB) across context switches
-> are already mitigated by IBPB in cond_mitigation(), if enabled globally
-> or if either the prev or the next task has opted in to protection.  RSB
-> filling without IBPB serves no purpose for protecting user space, as
-> indirect branches are still vulnerable.
+On Thu, Dec 5, 2024 at 3:30=E2=80=AFPM <patchwork-bot+netdevbpf@kernel.org>=
+ wrote:
+>
+> Hello:
+>
+> This series was applied to bpf/bpf-next.git (master)
 
-Question for Intel/AMD folks: where is it documented that IBPB clears
-the RSB?  I thought I'd seen this somewhere but I can't seem to find it.
+I unlanded this for now. We are waiting for a fix in the bpf tree to
+make it into bpf-next before we can land this, sorry for the noise.
 
--- 
-Josh
+> by Andrii Nakryiko <andrii@kernel.org>:
+>
+> On Wed, 04 Dec 2024 20:37:43 +0100 you wrote:
+> > Use CONFIG_WERROR to also fail on warnings emitted by resolve_btfids.
+> > Allow the CI bots to prevent the introduction of new warnings.
+> >
+> > This series currently depends on
+> > "[PATCH] bpf, lsm: Fix getlsmprop hooks BTF IDs" [0]
+> >
+> > [0] https://lore.kernel.org/lkml/20241123-bpf_lsm_task_getsecid_obj-v1-=
+1-0d0f94649e05@weissschuh.net/
+> >
+> > [...]
+>
+> Here is the summary with links:
+>   - [bpf-next,v3,1/2] tools/resolve_btfids: Add --fatal_warnings option
+>     https://git.kernel.org/bpf/bpf-next/c/2fd821354772
+>   - [bpf-next,v3,2/2] kbuild: propagate CONFIG_WERROR to resolve_btfids
+>     https://git.kernel.org/bpf/bpf-next/c/0a7a188468c0
+>
+> You are awesome, thank you!
+> --
+> Deet-doot-dot, I am a bot.
+> https://korg.docs.kernel.org/patchwork/pwbot.html
+>
+>
 
