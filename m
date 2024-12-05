@@ -1,121 +1,153 @@
-Return-Path: <linux-kernel+bounces-433779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FDA9E5CEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:20:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75829E5CE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:19:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A38B1884C68
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:20:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A087E28450A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10666224AE9;
-	Thu,  5 Dec 2024 17:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31403224B03;
+	Thu,  5 Dec 2024 17:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Of16J4oi"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqXVxizw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1887422259A;
-	Thu,  5 Dec 2024 17:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8953C21C16C;
+	Thu,  5 Dec 2024 17:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733419197; cv=none; b=TMn6YAQHR36HFdu61u+WPUp+xihxY0L5RULVPU+dyb2TpOtqFY/LFhxINMjahg0waqjTmeD1OFjgX4hh0ni8GLILlh2yNODxV8tzptUX2EA/3S0m40jxtqhGw/cLerpTOkH+yUPZIy2CvbWdqfdjZxvwUNAeeJ4qZ1sHi0qkUfQ=
+	t=1733419145; cv=none; b=CBOUy1F9kKOngsjToKruX30k/btcjvsgEG+Y38sKgsgUTbE+mfhf+oezvWgNDsadh1rp7e7H6O4IZHMj+J3yLdc1lF5mHH6NjUInRYzveeKuQJ60Sav9NYPqE3MEBOgZPyW8moLXnpPH4PAyzMGB1kEvZtPsV625dBLzjWdwqKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733419197; c=relaxed/simple;
-	bh=t/wBNcHC9SYSckp9Xl5qfb+MZAnQUAFym4KWBLEcmR4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Imqt+Naop+HLl+tw4BoiCam1x1cbbrL+crRKsn8YgY2rBIeLOtITHISsM1oPyshDMR7WdK470/fo7bY61XcikahYtS8KLi4yME/eR7wAIXJdGCs6zRUR3lZ3AtHGG5uXN2hmU0MvyasY5pB516fELjRlqLgMCpGTr1LHmnzlt44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Of16J4oi; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-215ac560292so12041065ad.2;
-        Thu, 05 Dec 2024 09:19:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733419195; x=1734023995; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qs+bdC7fmuLJY/Z7Szzgzwh7fG5FZFm9oQK+ZbxckvU=;
-        b=Of16J4oiAdZ+8ofN3xebmRiSbU5aD9eGsir9sTiUmNfz9wGcq8f1lZ9K4e0V3Gvw2Y
-         5vFk/oK77cGqt1RMq+rS138UGrMKOz4lJazeER0rz7e6d7KGZDlpRyUikhcfuap7LOeT
-         RdraJu8RrFyMhYZVe49os+PJPDVYer6hduASQd740NGY68UBSV9iOfTdn9b0gcSe6IHj
-         fh5A4/PMP+ayav5MyfwCVKNDnJYnGcmgfX4CjoDJo+mSjdO50/yAFsUAtzuK5sEnGaEI
-         w2iAjnBmiHq9CWBaaOrZy7QG4JSauVqyLFJKxpSjDk9MZWB4lNaL74JG2eThio6kKprC
-         BY3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733419195; x=1734023995;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qs+bdC7fmuLJY/Z7Szzgzwh7fG5FZFm9oQK+ZbxckvU=;
-        b=qg2BFzgzSfATHKtIvzKJ2I/K+bDtjOIrHaDZi5OZTyubmNdAaXYZP1jlqGgMPeMvI1
-         tn7H7D9+yGjfQuL7pZDJQyXBElA7A6/JNqbN9QeTL1LUdBu0y+zTFR77o7Ld4vQ+Zkzr
-         oYv0JhBY5Rve4mu88ACVRhiWFLFn7+NrigFUcaH+uprUN1d/wAOC6yWVzUi4HDd12S2x
-         VdB3PsHvg1OTEV756tEfGYtE+/bl+lIhmsx5jdREo/WrtFo2r3E116s7pTJuNpbhTJLx
-         TGNUejB6GSWi4b6F6/7aeuSTKVcOT5Fjs2PaW9JZ9VpTUi0bzSmZKWwh5F7ROoqYXRA1
-         28XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8zLaA/CFIawVpehKQv8oNEScrpy5Gu5kndNmzNiQ/k+hTCx3IFT/43QSaZWVrReFYJIURCgzF3Nk0a9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaUjvvfqquPwmptdduD4vcc/oZZ2FZ3bkpwZ9WdVIMvKw3xjJC
-	Q5X8MRBAspNQ9xrDlRzVJD84jzPvXtRRneCXRra+jR4qk0skDIZ7xgvfLI0lNjQ=
-X-Gm-Gg: ASbGncsR9l3HaSB+DPMMu2zUMA9kDJW7peTYxJSeVZCUX8nO6/NUTcH8KejS+LYtK9S
-	ayOHeuFtdcd0oVH6evdKEYDhZckFL5hmaiE54gWDZXm81Z8eNep+HQSWnd3+qWKdTtC1l9HBMBb
-	mcEA3aciQF2udLFZTGQ479GMdejL9COekOVyQjQrPG1rovjhgSDCtRqNI0Xpm5gP4eQOm1/1Zjj
-	an4/zd0TKgJFhm7s2s5G2vBSnpr4NjaHIy/cOKYbATce2rPEP6DEkm1+irgKbMgUmA8CP7tQuM2
-	X57f2eJb
-X-Google-Smtp-Source: AGHT+IEmmmT1mNJBcxgt+hNGHjTQC+qdD5JEpbkVGF6VqQO6Obj+gNIfFuf8xv0agL865HsArRyriQ==
-X-Received: by 2002:a17:903:189:b0:211:6b21:5a88 with SMTP id d9443c01a7336-215bcfbe4f4mr140871855ad.20.1733419194995;
-        Thu, 05 Dec 2024 09:19:54 -0800 (PST)
-Received: from Hridesh-ArchLinux.am.students.amrita.edu ([123.63.2.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f0a886sm14588505ad.208.2024.12.05.09.19.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 09:19:54 -0800 (PST)
-From: Hridesh MG <hridesh699@gmail.com>
-To: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Hridesh MG <hridesh699@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kailang Yang <kailang@realtek.com>,
-	Stefan Binding <sbinding@opensource.cirrus.com>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	Joshua Grisham <josh@joshuagrisham.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH v2] ALSA: hda/realtek: Fix headset mic on Acer Nitro 5
-Date: Thu,  5 Dec 2024 22:48:42 +0530
-Message-ID: <20241205171843.7787-1-hridesh699@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733419145; c=relaxed/simple;
+	bh=VsHwaUKv8NduryaYVZPPWuh8ZJKhLgoxE8VFqbLnXXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfvREG6BICa+u7Pp1Ml/++VdzzzNic/pFpZu3vVmZDfx0+DIi7ALUltyd4zoS28b0wY4U1Pn8f94vHDXiZ+VnYpghZ4IPsbEpSsbQoQKKT96CMOGwTLFUHWHaHLjad0sMkeuq5lhF1Lu2UD9JWHwRZc9R/L2EqFH1jhjncm4FSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqXVxizw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20443C4CED1;
+	Thu,  5 Dec 2024 17:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733419145;
+	bh=VsHwaUKv8NduryaYVZPPWuh8ZJKhLgoxE8VFqbLnXXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iqXVxizwcvQkD9rq3KFgJyvFuOdHzgaQO8kBF39WBbeNcav25kluxu3pPGntKJaig
+	 RkxMrbzDY2Ei5bHfBWTbiSjbGLfW8YfebfXURg+CmduSThPpYppBvMCF1hWyvhgB2c
+	 WC0sQEbkPUAWMx7+yvX35+GzorEtlc81sGCYWQM06OOFKJps0L9JOCFjdDCiQjVhbg
+	 nc2JRnQ+jThNFzZRjA/degil7VDUjEwBPIdvD8C6zBqWnPAqMzTLgKZ6DDmCXIqZWh
+	 R1BdL5pKk5U87ncZ7HQZI8boarF//m8eYLDzEnASkmevuobDXSMv2pKIym8COqD35P
+	 HwdRhC/5PC3YQ==
+Date: Thu, 5 Dec 2024 17:18:59 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v1 1/5] dt-bindings: net: Add TI DP83TD510 10BaseT1L PHY
+Message-ID: <20241205-immortal-sneak-8c5a348a8563@spud>
+References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
+ <20241205125640.1253996-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mjIsdWncN73NzB2k"
+Content-Disposition: inline
+In-Reply-To: <20241205125640.1253996-2-o.rempel@pengutronix.de>
 
-Add a PCI quirk to enable microphone input on the headphone jack on
-the Acer Nitro 5 AN515-58 laptop.
 
-Signed-off-by: Hridesh MG <hridesh699@gmail.com>
----
-Changes from v1: https://lore.kernel.org/all/20241114-alc287-nitro5-v1-1-72e5bf2275c3@gmail.com/
-	Replaced the custom verbs and pin configs with a fixup model
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+--mjIsdWncN73NzB2k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index e675f09aa795..2b9b118afde9 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10142,6 +10142,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1025, 0x1430, "Acer TravelMate B311R-31", ALC256_FIXUP_ACER_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1025, 0x1466, "Acer Aspire A515-56", ALC255_FIXUP_ACER_HEADPHONE_AND_MIC),
- 	SND_PCI_QUIRK(0x1025, 0x1534, "Acer Predator PH315-54", ALC255_FIXUP_ACER_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x1025, 0x159c, "Acer Nitro 5 AN515-58", ALC2XX_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1025, 0x169a, "Acer Swift SFG16", ALC256_FIXUP_ACER_SFG16_MICMUTE_LED),
- 	SND_PCI_QUIRK(0x1028, 0x0470, "Dell M101z", ALC269_FIXUP_DELL_M101Z),
- 	SND_PCI_QUIRK(0x1028, 0x053c, "Dell Latitude E5430", ALC292_FIXUP_DELL_E7X),
--- 
-2.47.1
+On Thu, Dec 05, 2024 at 01:56:36PM +0100, Oleksij Rempel wrote:
+> Introduce devicetree binding for the Texas Instruments DP83TD510
+> Ultra Low Power 802.3cg 10Base-T1L Single Pair Ethernet PHY.
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  .../devicetree/bindings/net/ti,dp83td510.yaml | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,dp83td510.ya=
+ml
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/ti,dp83td510.yaml b/Do=
+cumentation/devicetree/bindings/net/ti,dp83td510.yaml
+> new file mode 100644
+> index 000000000000..cf13e86a4017
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> @@ -0,0 +1,35 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/ti,dp83td510.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI DP83TD510 10BaseT1L PHY
+> +
+> +maintainers:
+> +  - Oleksij Rempel <o.rempel@pengutronix.de>
+> +
+> +description:
+> +  DP83TD510E Ultra Low Power 802.3cg 10Base-T1L 10M Single Pair Ethernet=
+ PHY
+> +
+> +allOf:
+> +  - $ref: ethernet-phy.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ethernet-phy-id2000.0181
 
+There's nothing specific here, can someone remind me why the generic
+binding is not enough?
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    mdio {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        ethernet-phy@0 {
+> +            compatible =3D "ethernet-phy-id2000.0181";
+> +            reg =3D <0>;
+> +        };
+> +    };
+> --=20
+> 2.39.5
+>=20
+
+--mjIsdWncN73NzB2k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1HggwAKCRB4tDGHoIJi
+0mbBAQCXfiVmatNc13W2wjQPVHIfWlcAcWN2O6DRjLQbv3T9bgD9HC5cLIkqrx8y
+ta22P06gmsmSfDEpMhRxajj8S8YG7AM=
+=lKMn
+-----END PGP SIGNATURE-----
+
+--mjIsdWncN73NzB2k--
 
