@@ -1,154 +1,199 @@
-Return-Path: <linux-kernel+bounces-432637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E419E4E01
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:10:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9115B9E4E02
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE4B1881755
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CDE1881778
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9381AC8A6;
-	Thu,  5 Dec 2024 07:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642EB1AAE09;
+	Thu,  5 Dec 2024 07:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uo9d5HUd"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WBOcK7kV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iXQxUYbR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="15Wsd5K5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p5Nhgzku"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E602F56
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450852F56;
+	Thu,  5 Dec 2024 07:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733382604; cv=none; b=u2jk8cEyDoshgz4/qOT6/f4YmeaY8dp0z4SSCX7vRZkqKgpGJuFc/bvoI+swEdm7GVh2SXsE6jxbvz8C3N3yNjd35oQ3f66BDL0WYyOMAb733qhqdAVvLEr8fdFRoZblUYPblSB1tMIimORVnCRVT5ltbbESAGuhuORAkStEDGI=
+	t=1733382723; cv=none; b=kkw9BEJyoUpUIZMh2jHQu1j6Sr4V1NvGWashOmNcYZBi8Z9AXRJ2fZW0q8HfYphl0X3Y7zRvVZKlRcJkgjkh7Do2KBSxKDI7d3Pw/gL3QhAUkCHHjKHFPxlBwpuus9EndMleEbZ/ScHnAyIRN6NJu6lM3nGZigyc2t99LTzb9WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733382604; c=relaxed/simple;
-	bh=m9PAgqLMEdONGInteiZwMJWeLAyp9JtTMil42/JBwso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V19dlzXWxDvoxpoEgByTcfnbsNSRsqX+srBuuJOPb+Q7F5s1qNtbofz28tPOH/e77kBCSko+bRUL+Ue4PTASVxGtMrm8o4MW4R1gKGf1YslGmw9zx2KgWF+fvCP7F0aSjvBhvNVegoEhdfd7N0c0aJdoFdtfzzU4BTKDb296YpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uo9d5HUd; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a7bc2d7608so65225ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733382602; x=1733987402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RPDL9SY/CBHi33tr/kgPHOHPuPtSjT4Zve0V9QYVUns=;
-        b=Uo9d5HUdM2Jwlp2Jwa90/00PTltNjViX3HKNiq/XXKqHg3qk2Ms/bzFQu0rOSUjR6X
-         1Z/URjpSyYGQCTaDE/7vSr34zJ9f8EYC13MugLblnGHRDM78oUCwnf8WF/QGiz6pgxXN
-         Gx9guUVAcua5lh2scu0vFdSqabmHmgxBrdMvrVmQ1iqQcqLkELuLRiYLb36zzlbDPuAv
-         HWoD/5Uxq9K1ngrIc07tF5ijI2sJymYsk1jSBnYH9eyXg71bJs02Bjq3HhzQU2j/rQU4
-         vW6Xs1uctGfs+jBC59gsKbuui3uU1b//bLMsmbJ8skjt8gyijJ18FAucwPKq7poKk4Lc
-         en9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733382602; x=1733987402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RPDL9SY/CBHi33tr/kgPHOHPuPtSjT4Zve0V9QYVUns=;
-        b=L2M16uQuPth28tVo0IdzMcPf6SSPln0GCjHMUWwUQL4XdRUwasfCCvWw9l4Ud5N2iM
-         rKjke+BlZA5yG7oYlXnQwkHTffs8mF3IPTR5BomexfSCH8s1rkUtRVGKESsKlUiB09Ia
-         I+tEAMtcyo8d0izWKmlg2yxSy3aDiC4WrtBAhRTLYZ1amGcFb6iOWziKv/BLpe24j+Vy
-         zJiIbhx7lA53l+LFP2GEcd2BhXUKEYj3iwV3szp/nQoMB9EZn+TmLXaDw9mH7TBI1dtb
-         GGHhpODhlwI4krlk94UUkYpHELM53Zi2ptODvMr5336zM8FjV4BdNvip0WGTB2zm4dN+
-         Awkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFsPh512GNTme7KgvOa6enOdBvHhx2R6SH7ZWMaZA9Gwq78ffd6rufCmSOr+sGt0d6zaAIad4aOaGN6Qc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSoVjciRlf9Tqw+XrkLgT9HugKrusgwpPabP/1zXQz8ymYlS0H
-	C3uR8J49+Kp9kBnxu8hcZaO9GFNu/yAGZSvrU3I7Df3ePmhKZo48pXopBJJ1FibUgUceiOso/n/
-	xtT5WyWXjrQz5SIwJFqhiDbXUMnfYE15AFjde
-X-Gm-Gg: ASbGncsJQX6EVd38oE4/w8hWxO0P4I6qxK8508/AcMAzsoUoou+UnZigHpI7LgkME53
-	1QSPppnovuiB9JEBbUoj6pBvXHu0ylQoJ
-X-Google-Smtp-Source: AGHT+IECZqE5fteXnXhm7vixb8m+w0qLbQKrsGI/zvrm/ngsLjVg0yiBWZCYVxgp2gk/sSWgzMEK1Gc+/gr5yc7ZgNU=
-X-Received: by 2002:a05:6e02:3710:b0:3a5:e506:162b with SMTP id
- e9e14a558f8ab-3a80933eb2emr1476435ab.11.1733382601610; Wed, 04 Dec 2024
- 23:10:01 -0800 (PST)
+	s=arc-20240116; t=1733382723; c=relaxed/simple;
+	bh=0bpD33XRjFRne0V6W5YWFwG6BOmSOn0iyQQ+B3LQJmw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bCpgz8MEETKGqU3Z4C48gR22udVDh3qMD3MzLn3QwFMroXe8b0rWSZAmlm5FZeunhPMBeXDXyF99gGnv0MBnmnR3Odyn3Y3WjKt5qcor5rujFm0b4pug3EggdjS9+snenrQBjBLZ5VunLjlmcyPXqubNVqFWYc7doVeGtFOO3v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WBOcK7kV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iXQxUYbR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=15Wsd5K5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p5Nhgzku; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E361B1F7A3;
+	Thu,  5 Dec 2024 07:11:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733382719; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dzmsmkeW9wwzcRCDWmqz9BsmyNkQRIT1C9+PvHmpY6I=;
+	b=WBOcK7kVC5I2v2s3zWem/vpjihVz363aIPUUj/i7P9zZyQAhn1j9dhH/HffLgC0e11g1GD
+	gD0BaioOH/GCbkJ3kk4b35mSe8IFi79ZNf+x0XvdgvvUA0pKwij3GMym/CcdyWdauxqv1C
+	jByaBUGpUydL0YO8W5ti7CZISWx/LjA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733382719;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dzmsmkeW9wwzcRCDWmqz9BsmyNkQRIT1C9+PvHmpY6I=;
+	b=iXQxUYbRpBYq61M1AT0UosCTTjTmN0UFDQBNAtlIzED9CalfaCpvJwpKOowzl9uqMs8UNJ
+	wTFu+HDuntMKg+Cw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733382718; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dzmsmkeW9wwzcRCDWmqz9BsmyNkQRIT1C9+PvHmpY6I=;
+	b=15Wsd5K55gTDbT1HTgQk1imYIhO8CbcOldnshLZodIBb68fy/MbPLwcJuMmzoyRSLbJ60C
+	YD2qFVgVVF7cbLBv07rNbArXLJJBaMN9hSqiz24Z4DA1iDgx3suN78EXn1gByfAntvW3ts
+	nNay33wXp0PV3x9T+IHguODfgJQZzpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733382718;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dzmsmkeW9wwzcRCDWmqz9BsmyNkQRIT1C9+PvHmpY6I=;
+	b=p5NhgzkuwqsTQUGsacNoGwup+CkUotaHIT2hDTQsgf77ruT30tJxCUL3iOV3Fc2IDOV9Gu
+	1/pCR9OOtQI6xMBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2FE5132EB;
+	Thu,  5 Dec 2024 07:11:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LjRqKj5SUWcWWQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 05 Dec 2024 07:11:58 +0000
+Date: Thu, 05 Dec 2024 08:11:58 +0100
+Message-ID: <87r06mvc1t.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: Takashi Iwai <tiwai@suse.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH 1/2] sound: usb: enable DSD output for ddHiFi TC44C
+In-Reply-To: <20241204151954.658897-1-adrian.ratiu@collabora.com>
+References: <20241204151954.658897-1-adrian.ratiu@collabora.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241205022305.158202-1-irogers@google.com> <Z1E-WHWSPAezVF4f@google.com>
- <CAP-5=fVPw5wJtVR0fxU-7drXg34vNrBsEzurfcLLvC+wFPMAAg@mail.gmail.com>
-In-Reply-To: <CAP-5=fVPw5wJtVR0fxU-7drXg34vNrBsEzurfcLLvC+wFPMAAg@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 4 Dec 2024 23:09:50 -0800
-Message-ID: <CAP-5=fV6s0=X-+8i2+1O_ZKERTL8+S9S-nyZC8rJPNU_nQpbyg@mail.gmail.com>
-Subject: Re: [PATCH v1] perf test expr: Fix system_tsc_freq for only x86
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	akanksha@linux.ibm.com, maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, 
-	kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com, hbathini@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Wed, Dec 4, 2024 at 10:33=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Wed, Dec 4, 2024 at 9:47=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
-> >
-> > Hi Ian,
-> >
-> > On Wed, Dec 04, 2024 at 06:23:05PM -0800, Ian Rogers wrote:
-> > > The refactoring of tool PMU events to have a PMU then adding the expr
-> > > literals to the tool PMU made it so that the literal system_tsc_freq
-> > > was only supported on x86. Update the test expectations to match -
-> > > namely the parsing is x86 specific and only yields a non-zero value o=
-n
-> > > Intel.
-> > >
-> > > Fixes: 609aa2667f67 ("perf tool_pmu: Switch to standard pmu functions=
- and json descriptions")
-> > > Reported-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> > > Closes: https://lore.kernel.org/linux-perf-users/20241022140156.98854=
--1-atrajeev@linux.vnet.ibm.com/
-> > > Co-developed-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> >
-> > It failed on my VM.
-> >
-> >   root@arm64-vm:~/build# ./perf test -v 7
-> >   --- start ---
-> >   test child forked, pid 2096
-> >   Using CPUID 0x00000000000f0510
-> >   division by zero
-> >   syntax error
-> >   Unrecognized literal '#system_tsc_freq'FAILED tests/expr.c:253 #syste=
-m_tsc_freq =3D=3D 0
-> >   ---- end(-1) ----
-> >     7: Simple expression parser                                        =
-: FAILED!
->
-> I'll need to check this. The test is looking for parsing failures, so
-> it's confusing to me expr__parse is returning 0. I was testing on x86
-> but disabling the literal in the tool PMU.
+On Wed, 04 Dec 2024 16:19:53 +0100,
+Adrian Ratiu wrote:
+> 
+> This is a UAC 2 DAC capable of raw DSD on intf 2 alt 4:
+> 
+> Bus 007 Device 004: ID 262a:9302 SAVITECH Corp. TC44C
+> Device Descriptor:
+>   bLength                18
+>   bDescriptorType         1
+>   bcdUSB               2.00
+>   bDeviceClass          239 Miscellaneous Device
+>   bDeviceSubClass         2 [unknown]
+>   bDeviceProtocol         1 Interface Association
+>   bMaxPacketSize0        64
+>   idVendor           0x262a SAVITECH Corp.
+>   idProduct          0x9302 TC44C
+>   bcdDevice            0.01
+>   iManufacturer           1 DDHIFI
+>   iProduct                2 TC44C
+>   iSerial                 6 5000000001
+> .......
+>     Interface Descriptor:
+>       bLength                 9
+>       bDescriptorType         4
+>       bInterfaceNumber        2
+>       bAlternateSetting       4
+>       bNumEndpoints           2
+>       bInterfaceClass         1 Audio
+>       bInterfaceSubClass      2 Streaming
+>       bInterfaceProtocol      32
+>       iInterface              0
+> 	AudioStreaming Interface Descriptor:
+>           bLength                16
+>           bDescriptorType        36
+>           bDescriptorSubtype     1 (AS_GENERAL)
+>           bTerminalLink          3
+>           bmControls             0x00
+>           bFormatType            1
+>           bmFormats              0x80000000
+>           bNrChannels            2
+>           bmChannelConfig        0x00000000
+>           iChannelNames          0
+> .......
+> 
+> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> ---
+>  sound/usb/quirks.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+> index 00101875d9a8..4897d7de7529 100644
+> --- a/sound/usb/quirks.c
+> +++ b/sound/usb/quirks.c
+> @@ -2265,6 +2265,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+>  		   QUIRK_FLAG_ITF_USB_DSD_DAC | QUIRK_FLAG_CTL_MSG_DELAY),
+>  	DEVICE_FLG(0x154e, 0x300b, /* Marantz SA-KI RUBY / SA-12 */
+>  		   QUIRK_FLAG_DSD_RAW),
+> +	DEVICE_FLG(0x262a, 0x9302, /* ddHiFi TC44C */
+> +		   QUIRK_FLAG_DSD_RAW),
+>  	DEVICE_FLG(0x154e, 0x500e, /* Denon DN-X1600 */
+>  		   QUIRK_FLAG_IGNORE_CLOCK_SOURCE),
+>  	DEVICE_FLG(0x1686, 0x00dd, /* Zoom R16/24 */
 
-Hmm.. perhaps you had a similar issue to me and that b4 silently
-failed as git user.email/user.name weren't configured? When I test on
-a raspberry pi 5:
-```
-$ uname -a
-Linux raspberrypi 6.6.51+rpt-rpi-2712 #1 SMP PREEMPT Debian
-1:6.6.51-1+rpt3 (2024-10-08) aarch64 GNU/Linux
-$ git log -1 --oneline
-94733a0e50fd (HEAD -> ptn-expr-test) perf test expr: Fix
-system_tsc_freq for only x86
-$ /tmp/perf/perf test expr -v
-Couldn't bump rlimit(MEMLOCK), failures may take place when creating
-BPF maps, etc
-  7: Simple expression parser                                        : Ok
-```
+The table is sorted in the ID number order.
+Could you put it at the right position?
 
-Thanks,
-Ian
+
+thanks,
+
+Takashi
 
