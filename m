@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-433156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D80D9E5490
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:50:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1488A9E5493
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B85280ECA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6206283979
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F662213237;
-	Thu,  5 Dec 2024 11:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D355C213249;
+	Thu,  5 Dec 2024 11:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5El78I6"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GW5g08DJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4455212B3D;
-	Thu,  5 Dec 2024 11:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA595212B33;
+	Thu,  5 Dec 2024 11:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733399439; cv=none; b=F8rSaJgcwwL3PnpRVM3qH3hiyE8qbynZlJAtJ5jgLHIJWM8QSTg1NTQtePSEjLI2FGe1p3zLJhRmbXzRJZXQD3z1kDjWjHRVGW8pcFu+tuO7xfkMrB/x6iMseiUHlzk/BluiS/2d07fu8wR5Taivb2PLHa9lZSZ8CpIFylr+bXA=
+	t=1733399467; cv=none; b=ptIW79dH+q9hNBZwrAvImGMBfzNF11cS5ysioWe2NLIZseApYYVN9O9NFCgnEsHqJXkDcl8vEQyrIqMLg+hcSgbFK2vPNkK7auAw80zk6on2Ae11VjhMfqGn5Met1Uxn7wpVsB2S6sgfl+5OeZ7e34dVBnbs9Vt54L4a1iEjYb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733399439; c=relaxed/simple;
-	bh=09ZErvOPilkcxrhg8MYOcE6zCdxNbMB3/4gU+4cpInQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mWKu5il4I8/W+VAUnKmAR6YyEK14TcK2PFXgQENo/l2PFz1fH56G62vO+E2D7b2hiGgjCVDCsWctTBQHs7HJu7wEf5YkGf5uCz/viK5XE0n2BLK2iCt2RJ+NPSa+Az0TS2ErSWkkFBMbGAkeD+Qeo6RHbr7MMqtuBjnLeLa3zhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5El78I6; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434aa222d96so9079415e9.0;
-        Thu, 05 Dec 2024 03:50:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733399436; x=1734004236; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S6NnyZQFQJZ/bR6qZgAFz+vbUbEYoSpUoCinAEz1xys=;
-        b=c5El78I6IJJ/MM7Ha9TMj767FUz2Y84TFrhnT/Asav7LuoZaxBYWtwWdYujBfMhU46
-         NdGWgRZNaJHkehjoDXuUddfqUr6N3TwZdk+LUbkzKCoghLMVSPTHXMonrY/JLKoB0dZa
-         ccilczZzl49tG2zdpCGl3fcP1SWr+lmi1f4SyqvQkZvETt/gAu9KDaU4QQZ/hvZRZwgd
-         MNs5OfEJwJPwfWJKLkkQcNyRr3V1G3uEeESEHnAyOgDIJEUN5o+vevr8mfoDXVaPC8gS
-         yZFConY3zMr8e5ztqBGYg+FJgvcTwodZbIAAh5KdRSNN/CVBq97+LPNXI8iqlX77c2gt
-         RUDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733399436; x=1734004236;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S6NnyZQFQJZ/bR6qZgAFz+vbUbEYoSpUoCinAEz1xys=;
-        b=lQu3a7QEJ7SSoR7X0Cx7aPYnB7oxeEhVTbjWG544zP+MRwnzhOa8/TrCvgZAASe3gT
-         ePpB7Zx4RJYEANWw17DtKeS91fDYS+7Fqx8lmR68tsRjjnE4/O0ZjTX4ilanQ6A4lzO/
-         bcz24I1Tr1wEfF/ypwvEz15TqPdqC1Zc87F31dMOLEFdx6XP1merCkWIHF2PZ0NUcmrT
-         UcCNeCRP8cmygdJRvmL2Rwn4fF3uYoAfmtZkeIj/mACxy63HcdVaHpvG2pNdaH+rKunM
-         eyQzDbz/BKtTj4dZA2zYQg1c1lJareDXQx6dlrtReO76AW17IlqtuZzY7Np1jf41xAU8
-         jlSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7YBwqg+Qjd3aRe459nIyCiJIyzbYBvthCCd4jiiycFko+ZwzR+YppR+KzPkAlvOHBssurkmtBtLaq@vger.kernel.org, AJvYcCVOkIOEOVf3YLRInFBcCaPtsM3pSvFYVn4bFoBIeHL2a7eaC+rPXjGWq8IhWhj2tgVvnXTlVeyK+1aW5ps=@vger.kernel.org, AJvYcCXrU7W9vUOc/2HGaD0/DNYoI8iVrB94KsKWMrW2Vbfc7PZwzby1y1QkfCMaUCpuU/V3vvbNofU2oQj8aCcY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRC9fj2F0fGNpsXSspceJDUhYu4bCP9bzgoQALM4eWejvvLN/f
-	vzQRJzwJJJZrzm6ly7bWwgLh3BEOeuFp1UHElhj8krHU/I/0ct4p
-X-Gm-Gg: ASbGncvmIh3sLgClB02bfoNuyAXT+2QX2BjhBFdl9L6ywoICSOysqBfsr3K8Caqzz4b
-	udSdKHyVkPPxfHjPljS43GF8e6rZh81iEZy9REJcFQvItFb7Sekc2tuEI340wiom2uIDB4DFizJ
-	uwrI9T0zrHUzs6dfW6j/xlWJn2yQ2WxKvP5UfvTTeXzlefBNy5e4HEVR1V1eVqmAwo3VZUcVZnf
-	VJeR9Exy+WlvxZVTZZ7Dd04wLBywi3oLuLM62uieFV2DwFlFep1MLzi2RZfDGyK03r5T/3B/kSJ
-	AyDsSnnZjf/sMw9PhS9s+ZJyDMjE/G2cH43gtoappQ==
-X-Google-Smtp-Source: AGHT+IFvdNmuBNbs/9Q5tFDh5WPSX0JQsB3Qmer1TrPs+pisGft0fuZ5HMY7sZM83dxJDY7ZxXqYMg==
-X-Received: by 2002:a05:600c:45c6:b0:434:a5c2:53c1 with SMTP id 5b1f17b1804b1-434d0a0da50mr81873705e9.23.1733399436065;
-        Thu, 05 Dec 2024 03:50:36 -0800 (PST)
-Received: from localhost (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbf57sm57046095e9.39.2024.12.05.03.50.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 03:50:35 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mark Hasemeyer <markhas@chromium.org>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michal Pecio <michal.pecio@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: nyan: Maintain power to USB ports on boot
-Date: Thu,  5 Dec 2024 12:50:33 +0100
-Message-ID: <173339940395.3942914.13239093539349741162.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241204214443.3d9c2224@foxbook>
-References: <20241204214443.3d9c2224@foxbook>
+	s=arc-20240116; t=1733399467; c=relaxed/simple;
+	bh=w9vlss7RTBIs9MOvD8aa6aZwtvGSaxV5zcY1OiUk4GE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CUI+7/sDv2ErbZadPTv63kSjD345SDh1WIWaEQs9XbGVmQ0H3ZYhulXKVhLoDaDN2M8QduKIxGLqVxZAh4H/GdR9iqH6i6kTY6cAymuO7cTgGKp2kQlaqs8wgaHqFzpYlyjkI5YV2vLsG6tFkt4c5VB2ZLeQA+MIQzIBlrwn78M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GW5g08DJ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733399466; x=1764935466;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=w9vlss7RTBIs9MOvD8aa6aZwtvGSaxV5zcY1OiUk4GE=;
+  b=GW5g08DJ72R02tOO6FNP0kyYkha5gYWkEy62uGO2zCxoCmJXWpYGeLC2
+   ICVbSbTvpZBus6MHUhFoh6lrSBFPX/DEZ52LkpTCA7ILz/Xa8wEPJHzB2
+   psWlmcwdjVKhti5jRYZhPeuOkncDkL/7rkZZObcRLH1XUQhZtDzr66ZHr
+   Eu54X1YqNlVms0Ny60RmBY3UPm4Oi7L/OlTDXllkRJoBYyAgDSMZYlfti
+   b5Q+oRbXATTTu8JRf7X156gXnIq6subV2aAS9conoNCHVmv7L/jhj8QRB
+   QGYYlMAf2IzrJV0lcElOAOny3EV0P0DTiapWHXRJSRCtlNkyKguLXD89O
+   w==;
+X-CSE-ConnectionGUID: je/dPIuQRcmDIjLkbB8Yvg==
+X-CSE-MsgGUID: /3OcdXfoQ++EZ/gw/sDitQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33060637"
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="33060637"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 03:51:05 -0800
+X-CSE-ConnectionGUID: bdhA3fSxQo+SY/Da7kwefA==
+X-CSE-MsgGUID: p6K+89ywR66b8dNfmuFmBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="94907867"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 03:50:57 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 5 Dec 2024 13:50:53 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v9 16/22] ACPI: platform_profile: Add concept of a "custom"
+ profile
+In-Reply-To: <20241202055031.8038-17-mario.limonciello@amd.com>
+Message-ID: <5dd1fedf-fab5-df48-bf7c-6c4e48774602@linux.intel.com>
+References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-17-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-401518071-1733399453=:932"
 
-From: Thierry Reding <treding@nvidia.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-401518071-1733399453=:932
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Wed, 04 Dec 2024 21:44:43 +0100, Michal Pecio wrote:
-> USB ports are turned on by the firmware as it looks for disks to boot,
-> ensure that they aren't power cycled before the xHCI driver comes up.
-> 
-> This enables USB devices to be ready for use faster and reduces wear
-> and risk of data loss on storage devices. A particularly annoying case
-> was booting from a mechanical disk, which takes time to spin up again.
-> 
-> [...]
+On Sun, 1 Dec 2024, Mario Limonciello wrote:
 
-Applied, thanks!
+> When two profile handlers don't agree on the current profile it's ambiguo=
+us
+> what to show to the legacy sysfs interface.
+>=20
+> Add a "custom" profile string that userspace will be able to distinguish
+> this situation when using the legacy sysfs interface.
+>=20
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c  | 1 +
+>  include/linux/platform_profile.h | 1 +
+>  2 files changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
+ile.c
+> index 40826876006b5..a9cd13c5fd39b 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -20,6 +20,7 @@ static const char * const profile_names[] =3D {
+>  =09[PLATFORM_PROFILE_BALANCED] =3D "balanced",
+>  =09[PLATFORM_PROFILE_BALANCED_PERFORMANCE] =3D "balanced-performance",
+>  =09[PLATFORM_PROFILE_PERFORMANCE] =3D "performance",
+> +=09[PLATFORM_PROFILE_CUSTOM] =3D "custom",
+>  };
+>  static_assert(ARRAY_SIZE(profile_names) =3D=3D PLATFORM_PROFILE_LAST);
+> =20
+> diff --git a/include/linux/platform_profile.h b/include/linux/platform_pr=
+ofile.h
+> index a888fd085c513..0682bb4c57e5d 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -23,6 +23,7 @@ enum platform_profile_option {
+>  =09PLATFORM_PROFILE_BALANCED,
+>  =09PLATFORM_PROFILE_BALANCED_PERFORMANCE,
+>  =09PLATFORM_PROFILE_PERFORMANCE,
+> +=09PLATFORM_PROFILE_CUSTOM,
+>  =09PLATFORM_PROFILE_LAST, /*must always be last */
+>  };
+> =20
+>=20
 
-[1/1] ARM: tegra: nyan: Maintain power to USB ports on boot
-      commit: cec785a7f25d9ebe3a151ddc4f3a4ede7fc0dab0
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+--=20
+ i.
+
+--8323328-401518071-1733399453=:932--
 
