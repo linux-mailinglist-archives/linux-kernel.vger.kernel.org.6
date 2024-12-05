@@ -1,167 +1,138 @@
-Return-Path: <linux-kernel+bounces-432917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A799E51DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:14:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6D69E51D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C86167EBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:13:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7B1167B3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E679214A88;
-	Thu,  5 Dec 2024 10:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3043E216385;
+	Thu,  5 Dec 2024 10:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvVBnBCp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QsFHSGjQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA26C214A7D;
-	Thu,  5 Dec 2024 10:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798C9215F72;
+	Thu,  5 Dec 2024 10:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733393003; cv=none; b=ApwxfBD95tf9naRY+YVHSlaNY1dNRXNlbt9Wpbw/0FOUcHTHZ6j0SnuoDnrN/yGh7CZNV8364e1Ie9/XP90SPRil1AZlZh1SDG30ZcPLIprSb6jcNY4fPQ3G8UgN+eD1SbDHHksH6Gz12MOXR64QhjksmMCP41/CD0h0G1sePdA=
+	t=1733393153; cv=none; b=YYAyulOp87Tbuayks5YyB720LwL13SGIvNIaJH2LP1Gjo0SVC3Hb5CMFxp6mv63TwsETwZrWs24q1xwAWedrWdKD8RVuMb287FAqUiL5OVfh8qhCQYoNVIQseQ/LoIBLvPUL7JDIn8Ve5y4kmIt8dw2E2K93UviLkz3anOkSiZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733393003; c=relaxed/simple;
-	bh=Xe6VNiv2jn4NXgxPnO4tW3pO+iMwQ+p05ds3Fx7wYeg=;
+	s=arc-20240116; t=1733393153; c=relaxed/simple;
+	bh=JY6FwqIJOGRys05JhdkoNtEjJ06O798hF3fOIWIu+5w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1upXJZgeBZy35rRPDRVn6skXDHwqDC3wMbW61H9r9Mkz3TIO3EPNPsFxK6xpmm86HYtfeTPZIRfUrWKcj0+K/pgVtC/mKvUae12MIGjWKCzqt6t0eOdcVwtf15omuL5xq4WhChWtYL+TwsjIrX+o3ZF8luNheH8yqI6/Jrzm/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvVBnBCp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0753EC4CED1;
-	Thu,  5 Dec 2024 10:03:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nw91a67QnVatWCkPXNYNsSMTtnL4oLfhBhqDqJX/x0NBvRaUF+Xc9SFR+zbowdRkgXp0OacnPeGg6xSXnNezJh9GtGjsHLlU1ztyq11PoaH0aO2X0LuE+35Tb0AY6eoNNFsXn/faO6EgaUVkz4lZ8wDNDo55fUp8ZUUE8fRDeB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QsFHSGjQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97157C4CED1;
+	Thu,  5 Dec 2024 10:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733393002;
-	bh=Xe6VNiv2jn4NXgxPnO4tW3pO+iMwQ+p05ds3Fx7wYeg=;
+	s=k20201202; t=1733393153;
+	bh=JY6FwqIJOGRys05JhdkoNtEjJ06O798hF3fOIWIu+5w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pvVBnBCpwl7rUf/+f2h1UG2sOTftKOx3/cyoGo7CfhARQzJs23GeHd/qNlVunpJ8P
-	 9HJq8elmHlWrHlcU2ka28bf2uKg0RuC4/PhrUN5UqpPfXG2OukXVzYM896eQJ31E2D
-	 UtOlDsW83aAzxM/Q+xpJ9xDfObY6Iduq9T3+0YfQSyZkd+rj32JAv/YM/ge8Nglcie
-	 zbeZOCSTEQQ/PjmgEBtIwW/kkJBN9i5w/TdoePUILptoUx2OwzhFspVzBitgeJ1K3f
-	 4Ifg3ldO9ucN+sGouY6zYLst/0Y4gaF97AfuoeV/Z2AMJWnpJvhi9rpbDLbByAdYBq
-	 fhrPsQw1/6yPA==
-Date: Thu, 5 Dec 2024 10:03:17 +0000
-From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Beno=EEt?= du Garreau <benoit@dugarreau.fr>
-Cc: linux-kernel@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, rust-for-linux@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Subject: Re: [PATCH 1/2] samples: rust: Provide example using the new Rust
- MiscDevice abstraction
-Message-ID: <20241205100317.GI7451@google.com>
-References: <20241204174627.1151288-1-lee@kernel.org>
- <20241205092135.48978-1-benoit@dugarreau.fr>
- <20241205094610.GH7451@google.com>
+	b=QsFHSGjQiQ38Ra604K4DoUgIwISoRDkj7ZSOQMcW2Ntg2Wnti5oWu3XGR4kaDTA7u
+	 b4ve9DXUVrx8KQFSH+UGUMC4YaCzolLajt+5c/NKtRQsgQy58Hq1KKprIDF+3GQenJ
+	 Ru38+zmGRRzvrj/AUm4zyaVuI0l2CGGklr4zEgCuv/RLyRLTWxXnLtrXXDoXlQQFMg
+	 K8DycHuvHS/ROIA/M8GE6VX5JJln5ihnPzGkMVKxvXdtLETcFwXphIIh18rn5Xe9Cu
+	 Jhb6gFyQhslcpH7Jh5KlYPGhaDVxDnjHAuResnmjKLz8FXo+sVi6RZe6CqjZJjln4V
+	 rkTIX/c3QCxjA==
+Date: Thu, 5 Dec 2024 11:05:49 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Lai, Yi" <yi1.lai@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
+Message-ID: <Z1F6_cC4bRvcN56T@pavilion.home>
+References: <20241030140721.pZzb9D-u@linutronix.de>
+ <ZyJUzhzHGDu5CLdi@localhost.localdomain>
+ <20241107144617.MjCWysud@linutronix.de>
+ <Zy4OFlxoRK2jM5zo@localhost.localdomain>
+ <20241108190835.GA11231@redhat.com>
+ <Zy6QHHakztIXvudC@pavilion.home>
+ <20241111120857.5cWFpNkJ@linutronix.de>
+ <20241204134826.GA923@redhat.com>
+ <Z1DxqJlGM_I8irVQ@pavilion.home>
+ <20241205092015.GA8673@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241205094610.GH7451@google.com>
+In-Reply-To: <20241205092015.GA8673@redhat.com>
 
-On Thu, 05 Dec 2024, Lee Jones wrote:
-
-> On Thu, 05 Dec 2024, Benoît du Garreau wrote:
+Le Thu, Dec 05, 2024 at 10:20:16AM +0100, Oleg Nesterov a �crit :
+> > Looking at task_work, it seems that most enqueues happen to the current task.
+> > AFAICT, only io_uring() does remote enqueue. Would it make sense to have a light
+> > version of task_work that is only ever used by current? This would be a very
+> > simple flavour with easy queue and cancellation without locking/atomics/RmW
+> > operations.
 > 
-> > On Wed, 4 Dec 2024 17:46:24 +0000 Lee Jones <lee@kernel.org> wrote:
-> > 
-> > > This sample driver demonstrates the following basic operations:
-> > >
-> > > * Register a Misc Device
-> > > * Create /dev/rust-misc-device
-> > > * Open the aforementioned character device
-> > > * Operate on the character device via a simple ioctl()
-> > > * Close the character device
-> > >
-> > > Signed-off-by: Lee Jones <lee@kernel.org>
-> > > ---
-> > >  samples/rust/Kconfig             | 10 ++++
-> > >  samples/rust/Makefile            |  1 +
-> > >  samples/rust/rust_misc_device.rs | 84 ++++++++++++++++++++++++++++++++
-> > >  3 files changed, 95 insertions(+)
-> > >  create mode 100644 samples/rust/rust_misc_device.rs
-> > >
-> > > diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> > > index b0f74a81c8f9..df384e679901 100644
-> > > --- a/samples/rust/Kconfig
-> > > +++ b/samples/rust/Kconfig
-> > > @@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
-> > >
-> > >  	  If unsure, say N.
-> > >
-> > > +config SAMPLE_RUST_MISC_DEVICE
-> > > +	tristate "Misc device"
-> > > +	help
-> > > +	  This option builds the Rust misc device.
-> > > +
-> > > +	  To compile this as a module, choose M here:
-> > > +	  the module will be called rust_misc_device.
-> > > +
-> > > +	  If unsure, say N.
-> > > +
-> > >  config SAMPLE_RUST_PRINT
-> > >  	tristate "Printing macros"
-> > >  	help
-> > > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> > > index c1a5c1655395..ad4b97a98580 100644
-> > > --- a/samples/rust/Makefile
-> > > +++ b/samples/rust/Makefile
-> > > @@ -2,6 +2,7 @@
-> > >  ccflags-y += -I$(src)				# needed for trace events
-> > >
-> > >  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
-> > > +obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
-> > >  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
-> > >
-> > >  rust_print-y := rust_print_main.o rust_print_events.o
-> > > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-> > > new file mode 100644
-> > > index 000000000000..5f1b69569ef7
-> > > --- /dev/null
-> > > +++ b/samples/rust/rust_misc_device.rs
-> > > @@ -0,0 +1,84 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +//! Rust misc device sample.
-> > > +
-> > > +use kernel::{
-> > > +    c_str,
-> > > +    ioctl::_IO,
-> > > +    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
-> > > +    prelude::*,
-> > > +};
-> > > +
-> > > +const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
-> > > +
-> > > +module! {
-> > > +    type: RustMiscDeviceModule,
-> > > +    name: "rust_misc_device",
-> > > +    author: "Lee Jones",
-> > > +    description: "Rust misc device sample",
-> > > +    license: "GPL",
-> > > +}
-> > > +
-> > > +struct RustMiscDeviceModule {
-> > > +    _miscdev: Pin<KBox<MiscDeviceRegistration<RustMiscDevice>>>,
-> > > +}
-> > > +
-> > > +impl kernel::Module for RustMiscDeviceModule {
-> > 
-> > This could probably use `kernel::InPlaceModule` and avoid allocating
-> > the registration.
+> Perhaps, but we also need to avoid the races with task_work_cancel() from
+> another task. I mean, if a task T does task_work_add_light(work), it can race
+> with task_work_cancel(T, ...) which can change T->task_works on another CPU.
+
+I was thinking about two different lists.
+
 > 
-> Is there a way to do this and keep the print?
+> 
+> OK, I can't suggest a good solution for this problem, so I won't argue with
+> the patch from Sebastian. Unfortunately, with this change we can never restore
+> the fifo ordering. And note that the current ordering is not lifo, it is
+> "unpredictable". Plus the extra lock/xchg for each work...
 
-Seeing as this is the concept/API demonstrator, I think what I'd sooner
-do, is demonstrate some actual initialisation.  Maybe with a head-nod to
-`kernel::InPlaceModule` in a comment.
+Good point it's unpredictable due to extraction before execution.
 
--- 
-Lee Jones [李琼斯]
+Another alternative is to maintain another head that points to the
+head of the executing list. This way we can have task_work_cancel_current()
+that completely cancels the work. That was my initial proposal here and it
+avoids the lock/xchg for each work:
+
+https://lore.kernel.org/all/Zx-B0wK3xqRQsCOS@localhost.localdomain/
+
+> 
+> Hmm. I just noticed that task_work_run() needs a simple fix:
+> 
+> 	--- x/kernel/task_work.c
+> 	+++ x/kernel/task_work.c
+> 	@@ -235,7 +235,7 @@
+> 			raw_spin_unlock_irq(&task->pi_lock);
+> 	 
+> 			do {
+> 	-			next = work->next;
+> 	+			next = READ_ONCE(work->next);
+> 				work->func(work);
+> 				work = next;
+> 				cond_resched();
+> 
+> Perhaps it makes sense before the patch from Sebastian even if that patch
+> removes this do/while loop ?
+
+Hmm, can work->next be modified concurrently here?
+
+Thanks.
+
+> 
+> Oleg.
+> 
 
