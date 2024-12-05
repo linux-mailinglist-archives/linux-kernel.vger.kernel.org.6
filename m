@@ -1,122 +1,139 @@
-Return-Path: <linux-kernel+bounces-432434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2269E4B35
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:32:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0676F9E4B40
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:38:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7650F282A68
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:32:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3FE91881364
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06D1199BC;
-	Thu,  5 Dec 2024 00:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638CE56C;
+	Thu,  5 Dec 2024 00:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="NvUB+1Qn"
-Received: from pv50p00im-tydg10011801.me.com (pv50p00im-tydg10011801.me.com [17.58.6.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFmsIKhk"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A66DDA8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E12B10E9;
+	Thu,  5 Dec 2024 00:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733358730; cv=none; b=jCB5XAK/5jEJDT0HW68Ltw9XtfGWNdo07gClgPJmu9nXq7+ZoC0Bab6GrABXnisT8qxqfBI54sCbEOQPRYi0wd+gRiJ/2z4hY8Jmk2Bj9SFd45t0iukfmFUKoIYU4/dUBtqLhuaM5QdbD+NXxfDJXJesTiFEhTv0PK6dmkQd1Cc=
+	t=1733359111; cv=none; b=hwEb1Aevajc6Q+WccHYTQS8o+FMz94Y8y0Huizg2lqhT+kHTyCgpECga1J+c7/jzMmTntHL7G4RDpflmeq26VQXykEYKVKeSZfTl2NJJTNDABJFrmEtQC/zVz2pXawR10yGtUhHdR0tnFgS0W2VIwMpK0eJXu+1YXMtWcHndEDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733358730; c=relaxed/simple;
-	bh=jTnaUO4D/Q7MxZQscA3/XMdfWqggPPOxxvGW/7ZeXgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TMVr1/MJdSwhWQTCLqSIG5QDFIynE6YJiH7V6m6FH44ZRxwvDCDn/u53VskKbltDv7hI1Xh19cdwPHW3ZmzZPRcYZryF43ZAIkvq8R4amaios6lY2a/sau7eayp67seT5AHc8G5oYAVGoc4OErxUvgRkG39aI4bkuyvbx4/f2kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=NvUB+1Qn; arc=none smtp.client-ip=17.58.6.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733358727;
-	bh=cXKPzq1F5TX5/uxkKzMSB1NXoT3FhOuw3zI5BP+SzJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=NvUB+1QnWMYICgzWlemCLtbKtw0Tm9UBfjUIS4wXxNaGs9onuC2hnMzT/iYvnz07/
-	 HOJi6i+ZJu7u9TFjWv6p091BQybVr1dy2GK+s4Y1dBRyb01zFxvkpYzmKIcdYc+f+h
-	 EPlThxGXJ2V2jWHZoWnqU8CzaC/gBYpkJxrTxi6CAYmoJiqC5cfkokKhTuJPqzI01y
-	 SPAxLX9iaP6k8j/wWV+9x5JN+dMn3a4RipO7xV6ggbD4vgGWQxJbKf7T9HWef6iKb9
-	 MWAynZUufAflnI+7Qdg6sA6wGLflOnhzBW2AQHEIridePBX3xOYMQYs1ZNBMu+9K4s
-	 KuvLdIcO+3S3w==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-tydg10011801.me.com (Postfix) with ESMTPSA id 1971880021D;
-	Thu,  5 Dec 2024 00:32:00 +0000 (UTC)
-Message-ID: <18dd5368-d583-44f3-8dd4-74c669ef3bf9@icloud.com>
-Date: Thu, 5 Dec 2024 08:31:58 +0800
+	s=arc-20240116; t=1733359111; c=relaxed/simple;
+	bh=CVtGeYGQ2lsIhDmByOC3VmZ9h8mcsqIVHwZTa60EnLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Rs7PbZtkJ1fhS7cTnPrVmiFL6iq8sWMLP3gr+aWOTtWdkHC7fiPsIRi9gtc45JiknPN4lGbVOreodTyBHcJeEHVf9QMGhg5fOu+TKxCt2Zx/bv8iaUrDNmfUhzNT6591uNo1orkMu6JS6d3AUXf3K4SWKR1eQkXgcf1VYn7B+gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFmsIKhk; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fd10cd5b10so336105a12.2;
+        Wed, 04 Dec 2024 16:38:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733359109; x=1733963909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9TaqAnQ9e84EfyCGFY27XE5cu/57VweM6gLIO9TxviE=;
+        b=CFmsIKhkOCPqeS98oKWoFO5zo2feDy75fr+q34YeV7lDVwctX2/rbRKW1N9QZvJNAU
+         o4VgW2wK+Aos2a+wPEexI53Og5Svtl/ByWavl8QQCgqXW3dkMME0yQRSPgBNMgDNg5Bk
+         Yv9W3TiSer00ljVvI7pArE4YjjumtM7PAVOucmaMX4by5YvhKJV90/cGhj+Idwx6eJBE
+         b7ZKv/ke+1YaU6A8VCIJ+UOBkLRKxXqecpn+9zO+E6pay0TW0YqZT95jQ/zxtHbCM3EG
+         FH4cwihynyfx3U1RGJfa950YlkaoTuWveNxVsPBSO4UtQ38oqsASGkuvRlk4n3zXgW5p
+         WREg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733359109; x=1733963909;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9TaqAnQ9e84EfyCGFY27XE5cu/57VweM6gLIO9TxviE=;
+        b=EnZDwCfKZVhJYMrGbJQF3/086rpPYP6q/zMnz1Y2svQM3b90fYcJq8kHpd9ezCcW6D
+         mZnKioc7CPVPLQFdPXqi2p4vEsBs2Bp+joRlSaej9y375XuhjUK97aXDcF0kE7KfLp2w
+         GxrrGalxkm32zFziKXL80KZ7lCAP83x2pp/zFOiCTwiUYWSPuyPh6/ZHeGGjZz3ddIGL
+         g/YhQ+wv4kD8+FpRlS3UHR270U4yitCubvKjYRmKeY+cKxayJOxjDnj2Cs6X8ifO0Yj4
+         EYexVoJCasi6TM1+5PB0jsgxft3lfuVxW/UUZF8yNYRC3sEaGqcNFCbdMGJySBAmLrqT
+         GiLw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7dUDNnitaAfD3Q3GFFe5rf3XS99ueSLyDdtxxcM/OXjsq3PEKIqaLfww2XrPSKTDSTDqS70XO1RVscwgKVaK3Dod84w==@vger.kernel.org, AJvYcCWmhQl0vbWEg84C3LoDgttxhjsXjn4qQeuiAQrFCmUOm8U3BQ1cn+jm/KxUK6+JTxic7MjIKkR+EzZnEQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPjdQ6Hh30DVZxVTLOoe5wDnTPdX6250YdXy4erHr2RprTYTBk
+	Gez2iKn/SPkSv1umGUgidj9bKtht6I1lmC9Ps6BlsoQKtos2veO6
+X-Gm-Gg: ASbGncuZlp7LKYd3teQeKhccpm/w+PUhSaGbfEwWjTAzWNlPoXhheTYhirA4unuKuej
+	lfcQR5Dro8xzgEl0Qap8R6B0EhuLm9M8590nsQobujoL4pRawHSxLEAmVbvAKWlq0sUHYwcfHxJ
+	fMvXQh1rwQDopcrQChI41Ey0EwbOqQKt2dS6dOd/1TaJF+XEP8NcWtQfTUnXikd0TB58yfvBZQn
+	8y9jeNWFH3VgfX0At1ffYD+WQGeqm07eGnlwu+5KRhduk48KsPg5F/63cBBSrKIGnp34q+XFGR9
+	j5PXK4HUoR1MDIPyNd0=
+X-Google-Smtp-Source: AGHT+IHGZoXQtkdzn9gcelz/RSchyTX6Ifra/ExRIUhpX7+I/4rIt6Gijq0x5nMiHxPzojX3/Q283w==
+X-Received: by 2002:a05:6a21:339c:b0:1e0:f05b:e727 with SMTP id adf61e73a8af0-1e1653a7977mr12494551637.2.1733359109229;
+        Wed, 04 Dec 2024 16:38:29 -0800 (PST)
+Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2cc9311sm94243b3a.182.2024.12.04.16.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 16:38:28 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [RFC PATCH 01/21] alienware-wmi: Modify parse_rgb() signature
+Date: Wed,  4 Dec 2024 21:38:03 -0300
+Message-ID: <20241205003802.2184367-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241205002733.2183537-3-kuurtb@gmail.com>
+References: <20241205002733.2183537-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/11] driver core: Constify API device_find_child()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
- linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: RvRSqKy8ZqOUE5anLWfZCokK2N1USz-Y
-X-Proofpoint-ORIG-GUID: RvRSqKy8ZqOUE5anLWfZCokK2N1USz-Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-04_19,2024-12-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 mlxscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=919 clxscore=1015 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412050001
+Content-Transfer-Encoding: 8bit
 
-On 2024/12/5 08:10, Zijun Hu wrote:
-> This patch series is to constify the following API:
+parse_rgb() now takes struct color_platform instead of struct
+platform_zone to support upcoming refactor.
 
-This patch series is based on the lasted mainline commit
-Commit: feffde684ac2 ("Merge tag 'for-6.13-rc1-tag' of
-git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux")
-to avoid potential conflict as much as possible.
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> struct device *device_find_child(struct device *dev, void *data,
-> 		int (*match)(struct device *dev, void *data));
-> To :
-> struct device *device_find_child(struct device *dev, const void *data,
-> 				 device_match_t match);
-> typedef int (*device_match_t)(struct device *dev, const void *data);
-> 
-> Why to constify the API?
-> 
-> - Protect caller's match data @*data which is for comparison and lookup
->   and the API does not actually need to modify @*data.
-> 
-> - Make the API's parameters (@match)() and @data have the same type as
->   all of other device finding APIs (bus|class|driver)_find_device().
-> 
-> - All kinds of existing device matching functions can be directly taken
->   as the API's argument, they were exported by driver core.
-> 
-> What to do?
-> 
-> - Patches [1/11, 3/11] prepare for constifying the API.
-> 
-> - Patch 4/11 constifies the API and adapt for its various subsystem usages.
-> 
-> - Remaining do cleanup for several usages with benefits brought above.
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index 77465ed9b449..b3a73fc43b3c 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -434,7 +434,7 @@ static u8 global_brightness;
+ /*
+  * Helpers used for zone control
+  */
+-static int parse_rgb(const char *buf, struct platform_zone *zone)
++static int parse_rgb(const char *buf, struct color_platform *colors)
+ {
+ 	long unsigned int rgb;
+ 	int ret;
+@@ -454,7 +454,7 @@ static int parse_rgb(const char *buf, struct platform_zone *zone)
+ 	repackager.package = rgb & 0x0f0f0f0f;
+ 	pr_debug("alienware-wmi: r: %d g:%d b: %d\n",
+ 		 repackager.cp.red, repackager.cp.green, repackager.cp.blue);
+-	zone->colors = repackager.cp;
++	*colors = repackager.cp;
+ 	return 0;
+ }
+ 
+@@ -538,7 +538,7 @@ static ssize_t zone_set(struct device *dev, struct device_attribute *attr,
+ 		pr_err("alienware-wmi: invalid target zone\n");
+ 		return 1;
+ 	}
+-	ret = parse_rgb(buf, target_zone);
++	ret = parse_rgb(buf, &target_zone->colors);
+ 	if (ret)
+ 		return ret;
+ 	ret = alienware_update_led(target_zone);
+-- 
+2.47.1
 
 
