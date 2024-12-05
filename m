@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-432676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F169E4EA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:34:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EC29E4E8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:34:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AE61188197C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F082823AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CD11C3308;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657C51C0DF3;
 	Thu,  5 Dec 2024 07:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rG0WUIyQ"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uoWM11E7"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D846B1B3920
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E891B81C1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733384000; cv=none; b=HXOkSl+iuMqBJ4Ab9FXMKFvpgD5oiEqCD6ghY3afX3xdNFXE+oQ1gKzmUgqzdhy/c7GeMMS3+560YuSZe38Ipb8OFelcXsnBrFOegYe867GwJsttr44zMNXzm/krYOFl7Zs2u3mjAccGBgMjXFFjMh3JIy48TtZ6bYRbPzKlVLk=
+	t=1733383999; cv=none; b=N14rH9iBQS6eeLvv0gnOnowjKjkCLvMIYdnYaHotmpvZeAiH1/OzRWi4MZk6AOP+Aec2a0fX9OjquE3C7htGB52b5g+Dfj5R9xezVmjQWcBhXXEGTQCDecc4xfjYCqwXpCZOE4cUHLAfE05vgX7Bn8G4unULDmI9Th1Yl/1soy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733384000; c=relaxed/simple;
-	bh=fD1l+jNkgnfWuXI1bHIvbywED4CP+GtggJNFPuFqDcw=;
+	s=arc-20240116; t=1733383999; c=relaxed/simple;
+	bh=kjL8CHF2jTNzGFGAJHP0ju9sbOFLoVxrk7RH0N2gvDA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=irWEMoS4X7nq+TKtUXeSX6OioU4RPNt/Vub5zEZurRJkhuc7N2hJEb4rB9zWHshG56H579lQkv8ry7y2c5KlnEWWOFIQlOVM2tlSq+mGRMexNh0rBifkOIbOCZz54IxtqLFInzVxSrOyCtESa2cshDYMPbi4kZY5gjdp5FH7zDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rG0WUIyQ; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:To:Cc; b=NIdlY0NeUFkl+XpWPoz72BQ9+VaG/Z0yzSO61iJNg9U4McvEHfj+r3uZiv+cBKUOGmdgt4eQlcPsv4iL9+EvhhmqRuY9VWXb62ugQVF9uvCYvqoR2vIuS4T2e1WajR3b9S/LozWRfk0aMnzAtYbabZhEEwp9a8GYOxWHlzi0WCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uoWM11E7; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa549d9dffdso76965966b.2
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa53ebdf3caso103073666b.2
         for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:33:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1733383995; x=1733988795; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=H11rnIjZ/6A+y0BhElAhFFU5gZO2NZydl8Xc9FZjLpY=;
-        b=rG0WUIyQDQeNd1ZuOO5Sr3yGjWCe5ZnDzCDr5MeUR9Z4UFVYNysZshpqxVAo1KDKa/
-         Lbd8pfk8CP9+bOt9hVPPpku3JZPEnqgNhCFEfdqVBKoaimlzE1P7hhDLmEoV6+um7ha+
-         BoOhgP5CPaCMHBLLFA8iKSKalH/71UdzELQGs6/HJnZx8NfFdyhF4xhyEkruFHlAWMj3
-         qWIluB6+Vz5Dx2Gho35rzpJVCPdvCYyAdw1fPY8/WLznucrvf0AvJ+0lv3Hjcs1SbglC
-         vmj/Sf183xE37hfexVq7WXhCkneIK0MCvsdC8+hNBUPmR9Z7Z65QkEBBkvADPG1MBgmI
-         +DlQ==
+        bh=XyAJZWh204Jg961AaAOy2+aPUgd1uUQOUoQ33ic9q34=;
+        b=uoWM11E7/U8RpE1L8G4I7wfk5bojKhIWnB6k+eBrRGKLoF59RYKuP9R/pIL84j46+5
+         l98GN2wMPvTts/0J43fDO2xdApr62/uxi0VBr/Qq2hQPzWQTq4NuWDGUA4GRFGC6yWgA
+         iO14+UW6Gf6dtXDeQwHi76038kQbcgUc5/4i4it+yuottwjWLKavZwcy6cISV8unRflb
+         JPXOx3ZdTuDizLMxHXKhLU6HayWcjo2jU3enxp6z7I7m974GuNXQVXqwKotwqYgeYDsa
+         6PHjxCi+oNAh2UpSAoF+TXhQbGUmA2LO30Lyo//mqVjaG7HWrbu3OsW/j723Shg42+Fn
+         K6gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1733383995; x=1733988795;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H11rnIjZ/6A+y0BhElAhFFU5gZO2NZydl8Xc9FZjLpY=;
-        b=tlWVFNv36U81nE7EC3k8/BeTWLz9ho+uJ73d/twcp5oYZzih+jvpbT6dXE7g9IqEHV
-         NWKZ9wO2mz6z+ks/NW8PmvHZVin6F5ROIK63hguEqw7qujCgirPwUJks71vyYqSCCQvM
-         fxaoB6Ld6BCvfzTS2ZDwRhdFhQ/jtnwQrD9xHNLPG1wC/5M2wqehA06MycP7++r6R7kM
-         gHcQo8PNS3YFBtJMlg1pdXlTWWDecpDB3Ytdy7GBA3etO+P8YDv52LTDSwt0LqFIMEU9
-         2wT2N04YTcUw0EFo0Zr0FAmW3BArjYURy732U2Be6Ckp1rpjs0KI0KZC9m6V6OnpuVoI
-         LuSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgvUPzUygb8mxpeeF7gsLVhkhwdZwBoeAxuvU8AYAsBBPfB5j+aMqdyk+oac2sAvhKjrp6zJrhbLGU6xY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1ahnCGZzUyn+wN6WRgYdhtl4rKHLatFyxoIl32hDfGF7gz6qH
-	YxkQWQxW3gJVnKw0jUTg/Lg0nMFWFaMpSdy4l4h6Cj6qyIVQ7FUc3Fya9j05wn89HpmIVwUbBEk
-	vPJM=
-X-Gm-Gg: ASbGncvXUG9HP8GkxYAT6HBIzkOLCCjxRHy7sGQh3P8CBOateEnQIWVXadpjzmNfDWv
-	4Ulf171osBJCaYwmEb+77fnesg57ypZciI0UJz4hWmzwszxBdVtN4LXAGaMsjrlN8g4lvNGdf8d
-	DHcXEOT08vhCm9z31Ou9IyNfcJ5IwaUood5OmOSIWbF8zZPRBOSd5L/bncG0IRO9TEwNxhdnGX0
-	+rDZ8/BM+JdeyCo8hw+jBrGsQUFCMwtSTTLYDXuuNIQCBl2x57rDFkqXSnb4usowUfC+NSjuYok
-	s/4tGglpRPoHsTR572Ek94LJ3cIYnRF6Fg==
-X-Google-Smtp-Source: AGHT+IFYsJycA4yASAH+sZjUsdut4D7esnBNe4R4ApeFxO8IGWZZ/0bN1Z5Vd1ltD4MxKYmMzQqjIw==
-X-Received: by 2002:a17:906:31c7:b0:a9a:bbcc:508c with SMTP id a640c23a62f3a-aa5f7ca9f9emr722031966b.2.1733383995058;
+        bh=XyAJZWh204Jg961AaAOy2+aPUgd1uUQOUoQ33ic9q34=;
+        b=RGEaYijnDjo9YZp/ftRHlZhheHEatdLDUYPldlrYK4xdBuP020Fghdzuab45FsP4I8
+         5ijPh9MgX9+Yt089JR3nTZyPX2NMNnaTDrXu+rc3zkz0yFVPj7WqU59WUPXqmMpxA94r
+         HBb/IJ04ZKsx0+TOu8d3j3GA+b2HyoYK6kjtzpLS0UKKTOzdYB4pl0VtMiFwQdQfFm8y
+         QigKkoG43OmnheyIl8sWyB1Sgb5617E2RJqdkiayWHssPGIkk9zt5eov61f2dSZj567E
+         fPtdjSNnLaN68w+hWpyxbyeM2Ks7XIldLrJR/iSVwiyzJfZpBO03jOPFdxVoTu9K7vCh
+         iang==
+X-Forwarded-Encrypted: i=1; AJvYcCUUaQBhFJesP/mqeKz2q0ad82wBA2EfPOjEKiZyjxJllaC+72N1erFInEjpEtXbEZWvO9nLpfTehWby7qI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8r2vdk2lEzvckegZ6+a+KvMjDLw1Bwr2WPj2RM1tiGXv4mVWt
+	tUYAKuS27Bi1J8yEhywzsdUXnPrznCjSDiDPCFnKBwkM7iVy2d48rKpuJ8pw0GquuJ/yDrRQEGi
+	akEI=
+X-Gm-Gg: ASbGncsIOxJRI4goqIqvWWZo2iHxbQRm1OHlMwrOqoksTYb6cXlUs6qamB9zMjJQgto
+	WTB7M6IGd6kQeLAIdWitq2Mq5EPAIo6eACG0UyqQmTbUK84xePTaD2iuIqDasSk2kPiSlvgmLtP
+	4bY9l69fkjm7GCdWsp9Ha6RBDohmDuXlRTRVva13KQuHQAZtlSwWlshiYcKRMgP1x1oac2++a07
+	hxbaj4/l7rIuAZjClMMSwUw8Aeznwh61kNZ+FlwYsVz67ejjA4nPgALDwYc44W7pZ+reUAZOwPE
+	J05/lLqNwrDSvX/LRkeqkOmAzqR7BAuFrA==
+X-Google-Smtp-Source: AGHT+IFgMUVAtmrSp5P0iX/M3Y79q6BO4G1fv1/OVbYNaTflw37THP1LL7lHyOBI+yL2Eg8TsZ7fqQ==
+X-Received: by 2002:a17:906:3d31:b0:aa4:9ab1:1985 with SMTP id a640c23a62f3a-aa60191ef15mr658488966b.51.1733383995541;
         Wed, 04 Dec 2024 23:33:15 -0800 (PST)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260888casm53371766b.133.2024.12.04.23.33.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260888casm53371766b.133.2024.12.04.23.33.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 23:33:14 -0800 (PST)
+        Wed, 04 Dec 2024 23:33:15 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 05 Dec 2024 07:33:14 +0000
-Subject: [PATCH v3 3/8] phy: exynos5-usbdrd: convert to dev_err_probe
+Date: Thu, 05 Dec 2024 07:33:15 +0000
+Subject: [PATCH v3 4/8] phy: exynos5-usbdrd: fix EDS distribution tuning
+ (gs101)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241205-gs101-phy-lanes-orientation-phy-v3-3-32f721bed219@linaro.org>
+Message-Id: <20241205-gs101-phy-lanes-orientation-phy-v3-4-32f721bed219@linaro.org>
 References: <20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org>
 In-Reply-To: <20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -100,69 +101,51 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  kernel-team@android.com, linux-phy@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-dev_err_probe() exists to simplify code.
+This code's intention is to configure lane0 and lane2 tunings, but for
+lane2 there is a typo and it ends up tuning something else.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fix the typo, as it doesn't appear to make sense to apply different
+tunings for lane0 vs lane2.
+
+The same typo appears to exist in the bootloader, hence we restore the
+original value in the typo'd registers as well. This can be removed
+once / if the bootloader is updated.
+
+Note that this is incorrect in the downstream driver as well - the
+values had been copied from there.
+
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Tested-by: Peter Griffin <peter.griffin@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
 ---
 v2:
 * collect tags
 ---
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index c421b495eb0f..ceae4b47cece 100644
+index ceae4b47cece..2a724d362c2d 100644
 --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
 +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1725,10 +1725,9 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 
- 	reg_pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
- 						   "samsung,pmu-syscon");
--	if (IS_ERR(reg_pmu)) {
--		dev_err(dev, "Failed to lookup PMU regmap\n");
--		return PTR_ERR(reg_pmu);
--	}
-+	if (IS_ERR(reg_pmu))
-+		return dev_err_probe(dev, PTR_ERR(reg_pmu),
-+				     "Failed to lookup PMU regmap\n");
- 
- 	/*
- 	 * Exynos5420 SoC has multiple channels for USB 3.0 PHY, with
-@@ -1759,10 +1758,9 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
- 		struct phy *phy = devm_phy_create(dev, NULL, drv_data->phy_ops);
- 
--		if (IS_ERR(phy)) {
--			dev_err(dev, "Failed to create usbdrd_phy phy\n");
--			return PTR_ERR(phy);
--		}
-+		if (IS_ERR(phy))
-+			return dev_err_probe(dev, PTR_ERR(phy),
-+					     "Failed to create usbdrd_phy phy\n");
- 
- 		phy_drd->phys[i].phy = phy;
- 		phy_drd->phys[i].index = i;
-@@ -1786,10 +1784,9 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 
- 	phy_provider = devm_of_phy_provider_register(dev,
- 						     exynos5_usbdrd_phy_xlate);
--	if (IS_ERR(phy_provider)) {
--		dev_err(phy_drd->dev, "Failed to register phy provider\n");
--		return PTR_ERR(phy_provider);
--	}
-+	if (IS_ERR(phy_provider))
-+		return dev_err_probe(phy_drd->dev, PTR_ERR(phy_provider),
-+				     "Failed to register phy provider\n");
- 
- 	return 0;
- }
+@@ -1510,8 +1510,11 @@ static const struct exynos5_usbdrd_phy_tuning gs101_tunes_pipe3_preinit[] = {
+ 	PHY_TUNING_ENTRY_PMA(0x09e0, -1, 0x00),
+ 	PHY_TUNING_ENTRY_PMA(0x09e4, -1, 0x36),
+ 	PHY_TUNING_ENTRY_PMA(0x1e7c, -1, 0x06),
+-	PHY_TUNING_ENTRY_PMA(0x1e90, -1, 0x00),
+-	PHY_TUNING_ENTRY_PMA(0x1e94, -1, 0x36),
++	PHY_TUNING_ENTRY_PMA(0x19e0, -1, 0x00),
++	PHY_TUNING_ENTRY_PMA(0x19e4, -1, 0x36),
++	/* fix bootloader bug */
++	PHY_TUNING_ENTRY_PMA(0x1e90, -1, 0x02),
++	PHY_TUNING_ENTRY_PMA(0x1e94, -1, 0x0b),
+ 	/* improve LVCC */
+ 	PHY_TUNING_ENTRY_PMA(0x08f0, -1, 0x30),
+ 	PHY_TUNING_ENTRY_PMA(0x18f0, -1, 0x30),
 
 -- 
 2.47.0.338.g60cca15819-goog
