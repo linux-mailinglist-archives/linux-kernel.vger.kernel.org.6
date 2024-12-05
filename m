@@ -1,154 +1,172 @@
-Return-Path: <linux-kernel+bounces-434053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFF29E60DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:49:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD2E9E60E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D6F28481F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF0D284964
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A5E1D9359;
-	Thu,  5 Dec 2024 22:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D87C1BD9DF;
+	Thu,  5 Dec 2024 22:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VlVn95ht"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="X8c3LChe"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0951E522;
-	Thu,  5 Dec 2024 22:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A743719D8B2;
+	Thu,  5 Dec 2024 22:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733438970; cv=none; b=rhSiU0uSTex3rUz1ewUAiCT0HQ2bSL9yP3qoPXoTiiwdnW28UtxDr3kglLjf9Sqbb9L6JvBJUYTquj1PU4byjBaNf4wlARyE2Rf7KInWfNl20PC6/9yrSnv1x79LOLbZJvsZkrQUTkZw23IKwrQ2mT3weI+yEAD6vlQAHuUYzc0=
+	t=1733439077; cv=none; b=ps8GxcrmO1ns7wHoCbRJck3i0lfNK/6qvEEWC41BimcT78mtPPg81aFje1N7aPcbs7jIWLiU1yR6LcLbZ2Bg9Z0OCHoEh4HKEDGgsh3dachIzksJ6hs5wOSEI5O94sPhlX9gBh8wxqMox+ikanc9sWiGA5bguW9jU840/YpyNsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733438970; c=relaxed/simple;
-	bh=Ou2gxSX0BGU8dCJZomlYlLR0SXr+L0Qw1dH4P4elyPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IcD7O7MSZOPnN9epjhAMFrCTygWNHrYT/hI0skSosf4f6O5FsRAyBmsfXbUjhByINYeLqTwb40TeJFIQjZ/owiKwIQkN4vyyStvUAO+/4EEXHzdhw+44Kb4XG3pQ2PEcIQOO+DSyYIb1Y6mxu0PciXHpFB1JP6imfd7n5v9zv6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VlVn95ht; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733438968; x=1764974968;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ou2gxSX0BGU8dCJZomlYlLR0SXr+L0Qw1dH4P4elyPw=;
-  b=VlVn95htHPGKlPbJ34c35WKnHa1gvh+7ExuDsdnK9be2kzGHVu3jtWa1
-   rWRSMkMfVztsIZL935NAgdyJUiCI/HKLDREdBm2QkC6nW5fFWB7dPaeAm
-   fy+EoWcd4ASQhEuhxRTEROEo41lM8o/DrN2KeqzTY+qtYD84klLSL2bFy
-   6Oyx+ZuI+CpHmMtEYEvHp1gjZmUr6KxTtdExf7B5poR0O+jrkSpCu5Wtu
-   hNxLk5Xv9Lz94ZP6kpmFtm+Bk0Pqb+eaR6wrJOiYGy3sMdeGo+e5mfLTe
-   cUcyoRRbwEKFMgo1ddG2H7+YV8egcExgQtaTA/CDLsONeG0ISpzUUjWX5
-   g==;
-X-CSE-ConnectionGUID: bjA0qJX3SMK9IY1Dpiei5w==
-X-CSE-MsgGUID: nW2umoGgTzaS46JCVmhm6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="34022298"
-X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
-   d="scan'208";a="34022298"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 14:49:27 -0800
-X-CSE-ConnectionGUID: G9L0aRp/QR2YhMCrZdSRAQ==
-X-CSE-MsgGUID: rpoBs8CmRH2FtJjzsBGktg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
-   d="scan'208";a="94042939"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.192])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 14:49:26 -0800
-Date: Thu, 5 Dec 2024 14:49:23 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
-	linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
-	netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v3 10/11] cxl/pmem: Remove match_nvdimm_bridge()
-Message-ID: <Z1It83v8xuNuLrOt@aschofie-mobl2.lan>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-10-1611f1486b5a@quicinc.com>
+	s=arc-20240116; t=1733439077; c=relaxed/simple;
+	bh=8ijS+ITobv+GsRKbZX8Z7wGLSJ4uPcgfXMWIQEL5lVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q5RxBod6tfXG3Mo86AjojP88cMMlpdk8NsMYQITgh+mNmm56RhecWDQzdQvplM3+MWEuGCLOKZoBWME1RNA35l7XbvToG5jigexgKM0YP0Hu2N7iRBoXw97NjdaYPVzJDaEHSjQjV7q5AhR2jNyqAFQthCVEIKb/peLRyUwBqMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=X8c3LChe; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=LXgCfiKDJI0BTBlEwF4kcyyFHf2VWkOpvnbNBhqvwxQ=; b=X8c3LCheM4dStTinHAGLMMF9ra
+	hdAig9828TLDWimJUA3DMIJLJlEYjKgCCj+k6s44jqRDCLcd+u8UO5xliEzye3j293GefmenAfDOc
+	ZZHpCL6U7bd9lwzOCoWM2r4qW4c6olkLnnD1rXPoTjChR7HR8F2K4Ke/K9G8jB41PsUWQ3K3b4GZX
+	TSWAOC6i1NeG147kb/BZXBWMB2HUt9eUq40VLMs2e19aOYlt282gLpNAChbaQAol+7Adb8NMniKBq
+	pPHleXYNH1Djk3Oyv33b3U8+/cljpsOx7jmL47mXPfKOYgEThPeUnuZJs6wufxWuqRw5q0DlS9KWV
+	niNiVjiA==;
+Date: Thu, 5 Dec 2024 23:50:56 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Karol P <karprzy7@gmail.com>
+Cc: Roger Quadros <rogerq@kernel.org>, aaro.koskinen@iki.fi,
+ khilman@baylibre.com, tony@atomide.com, lee@kernel.org,
+ linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org
+Subject: Re: [PATCH] mfd: omap-usb-tll: check clk_prepare return code
+Message-ID: <20241205235056.44b6c980@akair>
+In-Reply-To: <CAKwoAfrvqUxPat9a+4LjRKYx2LZ=n6Q2H+ir3KYkBBj+Rv_HWQ@mail.gmail.com>
+References: <20241113211614.518439-1-karprzy7@gmail.com>
+	<486d5734-aa02-4a5e-b2ee-fdbba65179a3@kernel.org>
+	<20241119145622.2f1f0342@akair>
+	<5d6ccb9f-a8f1-45eb-b54a-cd66e637a2cc@kernel.org>
+	<20241126230647.68b20fcf@akair>
+	<CAKwoAfrvqUxPat9a+4LjRKYx2LZ=n6Q2H+ir3KYkBBj+Rv_HWQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205-const_dfc_done-v3-10-1611f1486b5a@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 08:10:19AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+Am Thu, 5 Dec 2024 22:54:05 +0100
+schrieb Karol P <karprzy7@gmail.com>:
 
-Suggest conveying more detail in the commit msg:
-
-cxl/pmem> Replace match_nvdimm_bridge() w device_match_type()
-
+> On Tue, 26 Nov 2024 at 23:06, Andreas Kemnade <andreas@kemnade.info> wrote:
+> >
+> > Am Tue, 19 Nov 2024 16:16:42 +0200
+> > schrieb Roger Quadros <rogerq@kernel.org>:
+> >  
+> > > On 19/11/2024 15:56, Andreas Kemnade wrote:  
+> > > > Am Tue, 19 Nov 2024 15:10:23 +0200
+> > > > schrieb Roger Quadros <rogerq@kernel.org>:
+> > > >  
+> > > >> Hi,
+> > > >>
+> > > >> On 13/11/2024 23:16, Karol Przybylski wrote:  
+> > > >>> clk_prepare() is called in usbtll_omap_probe to fill clk array.
+> > > >>> Return code is not checked, leaving possible error condition unhandled.
+> > > >>>
+> > > >>> Added variable to hold return value from clk_prepare() and dev_dbg statement
+> > > >>> when it's not successful.
+> > > >>>
+> > > >>> Found in coverity scan, CID 1594680
+> > > >>>
+> > > >>> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> > > >>> ---
+> > > >>>  drivers/mfd/omap-usb-tll.c | 11 +++++++----
+> > > >>>  1 file changed, 7 insertions(+), 4 deletions(-)
+> > > >>>
+> > > >>> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+> > > >>> index 0f7fdb99c809..2e9319ee1b74 100644
+> > > >>> --- a/drivers/mfd/omap-usb-tll.c
+> > > >>> +++ b/drivers/mfd/omap-usb-tll.c
+> > > >>> @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> > > >>>   struct device                           *dev =  &pdev->dev;
+> > > >>>   struct usbtll_omap                      *tll;
+> > > >>>   void __iomem                            *base;
+> > > >>> - int                                     i, nch, ver;
+> > > >>> + int                                     i, nch, ver, err;
+> > > >>>
+> > > >>>   dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+> > > >>>
+> > > >>> @@ -248,10 +248,13 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> > > >>>                                   "usb_tll_hs_usb_ch%d_clk", i);
+> > > >>>           tll->ch_clk[i] = clk_get(dev, clkname);
+> > > >>>
+> > > >>> -         if (IS_ERR(tll->ch_clk[i]))
+> > > >>> +         if (IS_ERR(tll->ch_clk[i])) {
+> > > >>>                   dev_dbg(dev, "can't get clock : %s\n", clkname);  
+> > > >
+> > > > if you want dev_err() later, then why not here?  
+> > >
+> > > Because clk is optional. If it is not there then we should not complain.
+> > > But if it is there then it needs to be enabled successfully.
+> > >  
+> > I guess you mean *prepared*, the clock is enabled later (with error
+> > checking). But your reasoning makes sense.
+> >  
+> > > >  
+> > > >>> -         else
+> > > >>> -                 clk_prepare(tll->ch_clk[i]);
+> > > >>> +         } else {
+> > > >>> +                 err = clk_prepare(tll->ch_clk[i]);
+> > > >>> +                 if (err)
+> > > >>> +                         dev_dbg(dev, "clock prepare error for: %s\n", clkname);  
+> > > >>
+> > > >> dev_err()?
+> > > >>  
+> > > > So why do you want a different return handling here? (I doubt there is
+> > > > any clock having a real prepare() involved here)
+> > > >
+> > > > As said in an earlier incarnation of this patch, the real question is
+> > > > whether having partial clocks available is a valid operating scenario.
+> > > > If yes, then the error should be ignored. If no, then bailing out early
+> > > > is a good idea.  
+> > >
+> > > In the DT binding, clocks is optional. So if it doesn't exist it is not
+> > > an error condition.
+> > >  
+> > > >
+> > > > clk_prepare() errors are catched by failing clk_enable() later,
+> > > > ch_clk[i] is checked later, too.
+> > > >  
+> > > >> I think we should return the error in this case.
+> > > >> (after unpreparing the prepared clocks and clk_put())
+> > > >>  
+> > > > and pm_runtime_put_sync(dev)  
+> >
+> > which can probably be done before dealing with the clocks. It is only
+> > needed for the register access.  
 > 
-> match_nvdimm_bridge(), as matching function of device_find_child(), is to
-> match a device with device type @cxl_nvdimm_bridge_type, and is unnecessary
-
-Prefer being clear that this function recently become needless.
-Something like:
-
-match_nvdimm_bridge(), as matching function of device_find_child(),
-matches a device with device type @cxl_nvdimm_bridge_type. The recently
-added API, device_match_type, simplifies that task.
- 
-Replace match_nvdimm_bridge() usage with device_match_type().
-
-With that you can add:
-
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-
+> I'm fairly new to this subsystem and I'm trying to understand the
+> conclusion. In the end, we should add dev_err() here after
+> clk_prepare() with appropriate handling?
 > 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/cxl/core/pmem.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/pmem.c b/drivers/cxl/core/pmem.c
-> index a8473de24ebfd92f12f47e0556e28b81a29cff7c..0f8166e793e14fc0b1c04ffda79e756a743d9e6b 100644
-> --- a/drivers/cxl/core/pmem.c
-> +++ b/drivers/cxl/core/pmem.c
-> @@ -57,11 +57,6 @@ bool is_cxl_nvdimm_bridge(struct device *dev)
->  }
->  EXPORT_SYMBOL_NS_GPL(is_cxl_nvdimm_bridge, "CXL");
->  
-> -static int match_nvdimm_bridge(struct device *dev, const void *data)
-> -{
-> -	return is_cxl_nvdimm_bridge(dev);
-> -}
-> -
->  /**
->   * cxl_find_nvdimm_bridge() - find a bridge device relative to a port
->   * @port: any descendant port of an nvdimm-bridge associated
-> @@ -75,7 +70,9 @@ struct cxl_nvdimm_bridge *cxl_find_nvdimm_bridge(struct cxl_port *port)
->  	if (!cxl_root)
->  		return NULL;
->  
-> -	dev = device_find_child(&cxl_root->port.dev, NULL, match_nvdimm_bridge);
-> +	dev = device_find_child(&cxl_root->port.dev,
-> +				&cxl_nvdimm_bridge_type,
-> +				device_match_type);
->  
->  	if (!dev)
->  		return NULL;
-> 
-> -- 
-> 2.34.1
-> 
-> 
+we must make sure pm_runtime_put/get are paired and _put is called in
+any case. Looking around a bit:
+I think a good solution would be along this lines:
+https://lore.kernel.org/linux-omap/34ab5f0b78c2869cc43797a72d6a2f40d9b246f3.camel@siemens.com/T/#u
+
+using devm_clk_get_prepared() things can be simplified.
+
+Regards,
+Andreas
 
