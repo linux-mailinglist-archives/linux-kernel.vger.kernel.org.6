@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-433744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708C09E5C78
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:02:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB179E5C7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:04:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30FA16717D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:03:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675E1222572;
+	Thu,  5 Dec 2024 17:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U2SdVL01"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B81028994B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:02:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A47226ED7;
-	Thu,  5 Dec 2024 17:01:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC621773A;
-	Thu,  5 Dec 2024 17:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27254F4E2
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733418117; cv=none; b=uvcW6H9dCXagGvWZvKoDajSmTDpjo2CUW0IuO7tadpsq6hbRMYo86DvwOMX4vn0iMrrSa5MY22U8IUq1ueq3OX9qmS7ONbaX4TGRaNLj7vqOV7qtNkq59sUEPx6bNAjt5+j5hwpL2ruxbwvKrXnjzedoV7WBIvtQNXg9/ee6+a4=
+	t=1733418236; cv=none; b=DcXWohsJhStfLNShgAQI/P1Uosm1fXzj2wLhexfBaoC9oinpgi3rCddNzczG6DycWUib33dY9Vq7daPNaXYu4fPsSY/7P5nz3X0mKBMpvvZ+L+HBm2hbUJJVlNkx7ORmTAyb2ChWU1V8LdfzA7uK8BiW51nWdmGEt7/fJ8DKVKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733418117; c=relaxed/simple;
-	bh=Whapanp2F9YUEI+YugJVd+euaX5xRY4YjBBljMVWfcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nFgcYouD1Ourd2CTZrXIr1/SXqIN4On2Tgmlr2rpGK2LSiPO/+FePLNVgUva3RiVyuPcxnv96VXsRKELv/cWtm0alLcdaW1mSl47jyz5fKfRKD/QD/LdcUDFqNE2oVUXVi2WY4E4wSDwLq6nYzlD4WlVuGDZFFaAPtZeZ9Sk79E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 569091063;
-	Thu,  5 Dec 2024 09:02:23 -0800 (PST)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 682513F71E;
-	Thu,  5 Dec 2024 09:01:53 -0800 (PST)
-Message-ID: <b56cbd79-61a4-49c3-82ce-12ca55a40991@arm.com>
-Date: Thu, 5 Dec 2024 17:01:51 +0000
+	s=arc-20240116; t=1733418236; c=relaxed/simple;
+	bh=6nF22LXP1sHnZx9uArVqkRkllaAodr959unyvprewI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IKW9CFPf+bO2lCVfVr7PYEMMAE+26tKzAJC+SNB8ZasaUmKYf+4n9xv/04WM8KBgNCymy0MrAZMFF6mOxtCzRK5LEz7L2RLZz8wmN2xeQ+tC+PlvywNfL6NSs4VuUBrnEERL86Pz56qWalUTHnRTyddMco/kLxN5kwRgBWSAMC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U2SdVL01; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B58CJHX009954;
+	Thu, 5 Dec 2024 17:03:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TlRG9lr20kr3vkN+TNEGJfsRA7sDv1RaJXESGtew0Zk=; b=U2SdVL01r1tsKhc/
+	JTMTfs015aX+wNjEJ6AZ4NT148NZpxSokFD5WpZHfow8yUxk9S5PbWh6RGzMsH3v
+	UxdILtY9vJCzexued5sP+eZd6O4LlYLKtrdeDSCw51S0KsIORg2mMSLLvwlWTZae
+	tc+qBK2Uq5DLYeUXvGx0w7VlwCkOt1Ap8eWXXqngOhZoBT/AccPZ8nkroml/XGVz
+	Ng/qAAGDXAAWhuaxMyvbdPoCQZQpGiY8FcYByjnkNXXBIyuJG1ZfqrgV385YCnYC
+	HFtrD9hb8EALcPQmxKLgLiNNVm0VUeceHvnFhiVgEFaWDJjxfbNj7j0jVfhqgSd9
+	5upGRQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439v800f16-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 17:03:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5H3eIp001530
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 17:03:40 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 09:03:40 -0800
+Message-ID: <5b2828b2-7bdc-4714-ab09-eb0b3fe8f15a@quicinc.com>
+Date: Thu, 5 Dec 2024 09:03:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,453 +64,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 5/8] coresight: tmc: Add support for reading crash
- data
-To: Linu Cherian <lcherian@marvell.com>, mike.leach@linaro.org,
- james.clark@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
- devicetree@vger.kernel.org, sgoutham@marvell.com, gcherian@marvell.com,
- Anil Kumar Reddy <areddy3@marvell.com>, Tanmay Jagdale <tanmay@marvell.com>
-References: <20241129084714.3057080-1-lcherian@marvell.com>
- <20241129084714.3057080-6-lcherian@marvell.com>
+Subject: Re: [RESEND PATCH v2] drm/panel: synaptics-r63353: Fix regulator
+ unbalance
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <linux-amarula@amarulasolutions.com>,
+        Michael Trimarchi
+	<michael@amarulasolutions.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>
+References: <20241205163002.1804784-1-dario.binacchi@amarulasolutions.com>
 Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241129084714.3057080-6-lcherian@marvell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20241205163002.1804784-1-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: c-_4Djb1FHHmn6TJXmviHUTIGT8-3MtD
+X-Proofpoint-GUID: c-_4Djb1FHHmn6TJXmviHUTIGT8-3MtD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1011
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050124
 
-Hi Linu,
 
-On 29/11/2024 08:47, Linu Cherian wrote:
-> * Add support for reading crashdata using special device files.
->    The special device files /dev/crash_tmc_xxx would be available
->    for read file operation only when the crash data is valid.
-> 
-> * User can read the crash data as below
-> 
->    For example, for reading crash data from tmc_etf sink
-> 
->    #dd if=/dev/crash_tmc_etfXX of=~/cstrace.bin
-> 
 
-Unfortunately there is still a bug that I picked up, see below for the 
-barrier_packet insertion.
+On 12/5/2024 8:29 AM, Dario Binacchi wrote:
+> From: Michael Trimarchi <michael@amarulasolutions.com>
+> 
+> The shutdown function can be called when the display is already
+> unprepared. For example during reboot this trigger a kernel
+> backlog. Calling the drm_panel_unprepare, allow us to avoid
+> to trigger the kernel warning.
+> 
+> Fixes: 2e87bad7cd33 ("drm/panel: Add Synaptics R63353 panel driver")
+> Tested-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-> Signed-off-by: Anil Kumar Reddy <areddy3@marvell.com>
-> Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
-> Signed-off-by: Linu Cherian <lcherian@marvell.com>
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+> 
 > ---
->   .../hwtracing/coresight/coresight-tmc-core.c  | 231 +++++++++++++++++-
->   .../hwtracing/coresight/coresight-tmc-etr.c   |  19 +-
->   drivers/hwtracing/coresight/coresight-tmc.h   |  13 +-
->   3 files changed, 260 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> index 1e3938ec12cb..5f3789314c4d 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> @@ -105,6 +105,151 @@ u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata)
->   	return mask;
->   }
->   
-> +bool is_tmc_crashdata_valid(struct tmc_drvdata *drvdata)
-> +{
-> +	struct tmc_crash_metadata *mdata;
-> +
-> +	if (!tmc_has_reserved_buffer(drvdata) ||
-> +	    !tmc_has_crash_mdata_buffer(drvdata))
-> +		return false;
-> +
-> +	mdata = drvdata->crash_mdata.vaddr;
-> +
-> +	/* Check version match */
-> +	if (mdata->version != CS_CRASHDATA_VERSION)
-> +		return false;
-> +
-> +	/* Check for valid metadata */
-> +	if (!mdata->valid) {
-> +		dev_dbg(&drvdata->csdev->dev,
-> +			"Data invalid in tmc crash metadata\n");
-> +		return false;
-> +	}
-> +
-> +	/*
-> +	 * Buffer address given by metadata for retrieval of trace data
-> +	 * from previous boot is expected to be same as the reserved
-> +	 * trace buffer memory region provided through DTS
-> +	 */
-> +	if (drvdata->resrv_buf.paddr != mdata->trace_paddr) {
-> +		dev_dbg(&drvdata->csdev->dev,
-> +			"Trace buffer address of previous boot invalid\n");
-> +		return false;
-> +	}
-> +
-> +	/* Check data integrity of metadata */
-> +	if (mdata->crc32_mdata != find_crash_metadata_crc(mdata)) {
-> +		dev_dbg(&drvdata->csdev->dev,
-> +			"CRC mismatch in tmc crash metadata\n");
-> +		return false;
-> +	}
-> +	/* Check data integrity of tracedata */
-> +	if (mdata->crc32_tdata != find_crash_tracedata_crc(drvdata, mdata)) {
-> +		dev_dbg(&drvdata->csdev->dev,
-> +			"CRC mismatch in tmc crash tracedata\n");
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata)
-> +{
-> +	int ret = 0;
-> +	u32 status, size;
-> +	u64 rrp, rwp, dba;
-> +	unsigned long flags;
-> +	struct tmc_resrv_buf *rbuf;
-> +	struct tmc_crash_metadata *mdata;
-> +
-> +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> +
-> +	if (drvdata->reading) {
-> +		ret = -EBUSY;
-> +		goto out;
-> +	}
-> +
-> +	if (!is_tmc_crashdata_valid(drvdata)) {
-> +		ret = -ENXIO;
-> +		goto out;
-> +	}
-> +
-> +	mdata = drvdata->crash_mdata.vaddr;
-> +	rbuf = &drvdata->resrv_buf;
-> +
-> +	rrp = mdata->tmc_rrp;
-> +	rwp = mdata->tmc_rwp;
-> +	dba = mdata->tmc_dba;
-> +	status = mdata->tmc_sts;
-> +	size = mdata->tmc_ram_size << 2;
-> +
-> +	/* Sync the buffer pointers */
-> +	rbuf->offset = rrp - dba;
-> +	if (status & TMC_STS_FULL)
-> +		rbuf->len = size;
-> +	else
-> +		rbuf->len = rwp - rrp;
-> +
-
-I believe all of the above can be done one time probe and don't need to
-be repeated every time we do a read_prepare() ?
-
-
-> +	/* Additional sanity checks for validating metadata */
-> +	if ((rbuf->offset > size) ||
-> +	    (rbuf->len > size)) {
-> +		dev_dbg(&drvdata->csdev->dev,
-> +			"Offset and length invalid in tmc crash metadata\n");
-> +		return -EINVAL;
-> +	}
-
-Ideally this should also be done once and "don't expose" crash_tmc
-device if the above is invalid in metada.
-
-
-> +
-> +	if (status & 0x1)
-
-minor nit: s/0x1/TMC_STS_FULL ?
-
-> +		coresight_insert_barrier_packet(drvdata->buf);
-
-And this looks completely out of nowhere and corrupting the drvdata->buf 
-? drvdata->buf is for active sessions, which we haven't set here ?
-
-
-> +
-> +	drvdata->reading = true;
-
-Also, we agreed to not overload "drvdata->reading" ?
-
-See 
-https://lkml.kernel.org/r/20241017114054.GC896339@hyd1403.caveonetworks.com
-
-We are allowed to the ETR (which drvdata->reading prevents from btw) 
-while crash data is being read. You could instead move it to
-drvdata->resrv_buf->reading ?
-
-
-
-Suzuki
-
-
-> +out:
-> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-> +	return ret;
-> +}
-> +
-> +int tmc_read_unprepare_crashdata(struct tmc_drvdata *drvdata)
-> +{
-> +	unsigned long flags;
-> +	struct tmc_resrv_buf *rbuf;
-> +
-> +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> +
-> +	rbuf = &drvdata->resrv_buf;
-> +	/* Reset valid length */
-> +	rbuf->len = 0;
-> +
-> +	drvdata->reading = false;
-> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline ssize_t tmc_get_resvbuf_trace(struct tmc_drvdata *drvdata,
-> +					  loff_t pos, size_t len, char **bufpp)
-> +{
-> +	s64 offset;
-> +	ssize_t actual = len;
-> +	struct tmc_resrv_buf *rbuf = &drvdata->resrv_buf;
-> +
-> +	if (pos + actual > rbuf->len)
-> +		actual = rbuf->len - pos;
-> +	if (actual <= 0)
-> +		return 0;
-> +
-> +	/* Compute the offset from which we read the data */
-> +	offset = rbuf->offset + pos;
-> +	if (offset >= rbuf->size)
-> +		offset -= rbuf->size;
-> +
-> +	/* Adjust the length to limit this transaction to end of buffer */
-> +	actual = (actual < (rbuf->size - offset)) ?
-> +		actual : rbuf->size - offset;
-> +
-> +	*bufpp = (char *)rbuf->vaddr + offset;
-> +
-> +	return actual;
-> +}
-> +
->   static int tmc_read_prepare(struct tmc_drvdata *drvdata)
+> Changes in v2:
+> - Add 'Fixes' tag.
+> - Add 'Reviewed-by' tag of Neil Armstrong.
+> 
+>   drivers/gpu/drm/panel/panel-synaptics-r63353.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-synaptics-r63353.c b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
+> index 169c629746c7..17349825543f 100644
+> --- a/drivers/gpu/drm/panel/panel-synaptics-r63353.c
+> +++ b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
+> @@ -325,7 +325,7 @@ static void r63353_panel_shutdown(struct mipi_dsi_device *dsi)
 >   {
->   	int ret = 0;
-> @@ -223,6 +368,69 @@ static const struct file_operations tmc_fops = {
->   	.release	= tmc_release,
->   };
+>   	struct r63353_panel *rpanel = mipi_dsi_get_drvdata(dsi);
 >   
-> +static int tmc_crashdata_open(struct inode *inode, struct file *file)
-> +{
-> +	int ret;
-> +	struct tmc_drvdata *drvdata = container_of(file->private_data,
-> +						   struct tmc_drvdata,
-> +						   crashdev);
-> +
-> +	ret = tmc_read_prepare_crashdata(drvdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	nonseekable_open(inode, file);
-> +
-> +	dev_dbg(&drvdata->csdev->dev, "%s: successfully opened\n", __func__);
-> +	return 0;
-> +}
-> +
-> +static ssize_t tmc_crashdata_read(struct file *file, char __user *data,
-> +				  size_t len, loff_t *ppos)
-> +{
-> +	char *bufp;
-> +	ssize_t actual;
-> +	struct tmc_drvdata *drvdata = container_of(file->private_data,
-> +						   struct tmc_drvdata,
-> +						   crashdev);
-> +
-> +	actual = tmc_get_resvbuf_trace(drvdata, *ppos, len, &bufp);
-> +	if (actual <= 0)
-> +		return 0;
-> +
-> +	if (copy_to_user(data, bufp, actual)) {
-> +		dev_dbg(&drvdata->csdev->dev,
-> +			"%s: copy_to_user failed\n", __func__);
-> +		return -EFAULT;
-> +	}
-> +
-> +	*ppos += actual;
-> +	dev_dbg(&drvdata->csdev->dev, "%zu bytes copied\n", actual);
-> +
-> +	return actual;
-> +
-> +}
-> +
-> +static int tmc_crashdata_release(struct inode *inode, struct file *file)
-> +{
-> +	int ret = 0;
-> +	struct tmc_drvdata *drvdata = container_of(file->private_data,
-> +						   struct tmc_drvdata,
-> +						   crashdev);
-> +
-> +	ret = tmc_read_unprepare_crashdata(drvdata);
-> +
-> +	dev_dbg(&drvdata->csdev->dev, "%s: released\n", __func__);
-> +	return ret;
-> +}
-> +
-> +static const struct file_operations tmc_crashdata_fops = {
-> +	.owner		= THIS_MODULE,
-> +	.open		= tmc_crashdata_open,
-> +	.read		= tmc_crashdata_read,
-> +	.release	= tmc_crashdata_release,
-> +};
-> +
->   static enum tmc_mem_intf_width tmc_get_memwidth(u32 devid)
->   {
->   	enum tmc_mem_intf_width memwidth;
-> @@ -532,6 +740,20 @@ static u32 tmc_etr_get_max_burst_size(struct device *dev)
->   	return burst_size;
+> -	r63353_panel_unprepare(&rpanel->base);
+> +	drm_panel_unprepare(&rpanel->base);
 >   }
 >   
-> +static void register_crash_dev_interface(struct tmc_drvdata *drvdata,
-> +					 const char *name)
-> +{
-> +	drvdata->crashdev.name =
-> +		devm_kasprintf(&drvdata->csdev->dev, GFP_KERNEL, "%s_%s", "crash", name);
-> +	drvdata->crashdev.minor = MISC_DYNAMIC_MINOR;
-> +	drvdata->crashdev.fops = &tmc_crashdata_fops;
-> +	if (misc_register(&drvdata->crashdev)) {
-> +		dev_dbg(&drvdata->csdev->dev,
-> +			"Failed to setup user interface for crashdata\n");
-> +		drvdata->crashdev.fops = NULL;
-> +	}
-> +}
-> +
->   static int __tmc_probe(struct device *dev, struct resource *res)
->   {
->   	int ret = 0;
-> @@ -632,8 +854,13 @@ static int __tmc_probe(struct device *dev, struct resource *res)
->   	drvdata->miscdev.minor = MISC_DYNAMIC_MINOR;
->   	drvdata->miscdev.fops = &tmc_fops;
->   	ret = misc_register(&drvdata->miscdev);
-> -	if (ret)
-> +	if (ret) {
->   		coresight_unregister(drvdata->csdev);
-> +		goto out;
-> +	}
-> +
-> +	if (is_tmc_crashdata_valid(drvdata))
-> +		register_crash_dev_interface(drvdata, desc.name);
->   out:
->   	return ret;
->   }
-> @@ -687,6 +914,8 @@ static void __tmc_remove(struct device *dev)
->   	 * handler to this device is closed.
->   	 */
->   	misc_deregister(&drvdata->miscdev);
-> +	if (drvdata->crashdev.fops)
-> +		misc_deregister(&drvdata->crashdev);
->   	coresight_unregister(drvdata->csdev);
->   }
->   
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> index fb944a68a11c..18752f58dfa6 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> @@ -2012,6 +2012,23 @@ static ssize_t buf_mode_preferred_show(struct device *dev,
->   	return sysfs_emit(buf, "%s\n", buf_modes_str[drvdata->etr_mode]);
->   }
->   
-> +static int buf_mode_set_resrv(struct tmc_drvdata *drvdata)
-> +{
-> +	unsigned long flags;
-> +	int err = 0;
-> +
-> +	/* Ensure there are no active crashdata read sessions */
-> +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> +	if (!drvdata->reading) {
-> +		tmc_crashdata_set_invalid(drvdata);
-> +		drvdata->etr_mode = ETR_MODE_RESRV;
-> +
-> +	} else
-> +		err = -1;
-> +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-> +	return err;
-> +}
-> +
->   static ssize_t buf_mode_preferred_store(struct device *dev,
->   					  struct device_attribute *attr,
->   					  const char *buf, size_t size)
-> @@ -2027,7 +2044,7 @@ static ssize_t buf_mode_preferred_store(struct device *dev,
->   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_CATU]) && buf_hw.has_catu)
->   		drvdata->etr_mode = ETR_MODE_CATU;
->   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_RESRV]) && buf_hw.has_resrv)
-> -		drvdata->etr_mode = ETR_MODE_RESRV;
-> +		return buf_mode_set_resrv(drvdata) ? -EBUSY : size;
->   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_AUTO]))
->   		drvdata->etr_mode = ETR_MODE_AUTO;
->   	else
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> index d76e83fc840b..2ece44e09911 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> @@ -195,11 +195,15 @@ struct etr_buf {
->    * @paddr	: Start address of reserved memory region.
->    * @vaddr	: Corresponding CPU virtual address.
->    * @size	: Size of reserved memory region.
-> + * @offset	: Offset of the trace data in the buffer for consumption.
-> + * @len	: Available trace data @buf (may round up to the beginning).
->    */
->   struct tmc_resrv_buf {
->   	phys_addr_t     paddr;
->   	void		*vaddr;
->   	size_t		size;
-> +	unsigned long	offset;
-> +	s64		len;
->   };
->   
->   /**
-> @@ -208,6 +212,8 @@ struct tmc_resrv_buf {
->    * @base:	memory mapped base address for this component.
->    * @csdev:	component vitals needed by the framework.
->    * @miscdev:	specifics to handle "/dev/xyz.tmc" entry.
-> + * @crashdev:	specifics to handle "/dev/crash_tmc_xyz" entry for reading
-> + *		crash tracedata.
->    * @spinlock:	only one at a time pls.
->    * @pid:	Process ID of the process that owns the session that is using
->    *		this component. For example this would be the pid of the Perf
-> @@ -227,7 +233,7 @@ struct tmc_resrv_buf {
->    * @idr_mutex:	Access serialisation for idr.
->    * @sysfs_buf:	SYSFS buffer for ETR.
->    * @perf_buf:	PERF buffer for ETR.
-> - * @resrv_buf:	Used by ETR as hardware trace buffer and for trace data
-> + * @resrv_buf:  Used by ETR as hardware trace buffer and for trace data
->    *		retention (after crash) only when ETR_MODE_RESRV buffer
->    *		mode is enabled. Used by ETF for trace data retention
->    *		(after crash) by default.
-> @@ -239,6 +245,7 @@ struct tmc_drvdata {
->   	void __iomem		*base;
->   	struct coresight_device	*csdev;
->   	struct miscdevice	miscdev;
-> +	struct miscdevice	crashdev;
->   	spinlock_t		spinlock;
->   	pid_t			pid;
->   	bool			reading;
-> @@ -309,6 +316,8 @@ void tmc_flush_and_stop(struct tmc_drvdata *drvdata);
->   void tmc_enable_hw(struct tmc_drvdata *drvdata);
->   void tmc_disable_hw(struct tmc_drvdata *drvdata);
->   u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata);
-> +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata);
-> +int tmc_read_unprepare_crashdata(struct tmc_drvdata *drvdata);
->   
->   /* ETB/ETF functions */
->   int tmc_read_prepare_etb(struct tmc_drvdata *drvdata);
-> @@ -371,6 +380,8 @@ void tmc_sg_table_sync_data_range(struct tmc_sg_table *table,
->   				  u64 offset, u64 size);
->   ssize_t tmc_sg_table_get_data(struct tmc_sg_table *sg_table,
->   			      u64 offset, size_t len, char **bufpp);
-> +
-> +bool is_tmc_crashdata_valid(struct tmc_drvdata *drvdata);
->   static inline unsigned long
->   tmc_sg_table_buf_size(struct tmc_sg_table *sg_table)
->   {
+>   static const struct r63353_desc sharp_ls068b3sx02_data = {
+> -- 
+> 2.43.0
+> 
 
 
