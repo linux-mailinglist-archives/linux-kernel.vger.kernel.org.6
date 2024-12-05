@@ -1,162 +1,186 @@
-Return-Path: <linux-kernel+bounces-432650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9AC9E4E26
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:23:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF9F9E4E2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:24:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513BB286389
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29B71881D9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC36157A5C;
-	Thu,  5 Dec 2024 07:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235711AC8A6;
+	Thu,  5 Dec 2024 07:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpI1q1VN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F8BGY9Y8"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EBB17CA17;
-	Thu,  5 Dec 2024 07:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5190157A5C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733383369; cv=none; b=cXRrlk/PzBV8AyzT2GnqGeH4+cq3Dc5DEhW23XKQjROrNviU2VK/a4R6MVz1rs8E7+qy0aC3djDLeNnVXxHPdbztORQMQWL0nqXHfsJduXb5jFcOLN/ylI/5Wl4F351Wr4ui3JHnLVS8unPxEsZjMGDQ7tgyn2ZEGb0/M3pk/1s=
+	t=1733383450; cv=none; b=o556FRDcwPwoewlHXmqyqWPOW4Qi9JE/POlLP8sF20GLJV03ftctoR08NQfnEd7GRVUKxLdhGjaVJR70kCxlYTYOGyiqQSbeFNEY9vcynM6sLLBk3rZoyZ5ZRsdw32AKjpHaDIOebJ01G8ROSqf4oGMGR3rXeelnh1lbTEtw13A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733383369; c=relaxed/simple;
-	bh=yF1f57k9A+hujmFThFOhTBMVCV93i6o7rVGRB0bp+ZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Msn2FJOR7j20HcHKDi+o7vTr/qVwLaZmaks/Rnb+qFJ7BFMq+B9UDUiFF6u6zmLbLSN9j0gfw/zT+VQJSaSRcVcoS7WtpIs/tPhk4dpQiGB7XYbmTRo5fUE5V3dJ3hBpeAwIRMhOEfiOTDa3nvnuF2k4yJbPw5tZbsd9NtwjKUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpI1q1VN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DC3C4CED1;
-	Thu,  5 Dec 2024 07:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733383368;
-	bh=yF1f57k9A+hujmFThFOhTBMVCV93i6o7rVGRB0bp+ZU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dpI1q1VNezzvola/nf/Uai9FeKQTrwuzthVW5m24cPEyd/224wswmBHoOD//345L9
-	 lftN6KRbNLiCs8e8jw23n/DFCle/s3+e6tLOm8MtEOtlAWEFbBXtdcBY1/3dcA4oHt
-	 JyjorgCzy6cgabVdhzjq8AcQEn9HGp1XY9yFS6iQl1lhj7gTyk6W2Fm4NR6r2ZeIA/
-	 y/RbwhnEiVUOPBJEZqONIE+1I68hYz3zfQ2cvTwJcPqW9vn11obJglk1Gzhdmna2c+
-	 Jkxj3nCtflmb2PszICplrlP2GJsq7da3y0WK0N2iaRahBmOX/mjajeWDK2HhdeuDp7
-	 k0LRF+UBmz3WQ==
-Message-ID: <2517ef0e-4d13-4c51-b479-863229783223@kernel.org>
-Date: Thu, 5 Dec 2024 08:22:42 +0100
+	s=arc-20240116; t=1733383450; c=relaxed/simple;
+	bh=tB44b8j0mXl7p0hPwlwNeCka0HVs6dd/wM6/dZvHB6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n7P9cCAwv6oNGchcoTke4/HAAAJnN9dHi3UhhBKxy24m6s01HhIqTikeFZloGuQ3Xy7mhw48kckpkNi+K8NpO9Dvg0U8q0nxa4yR5tf7GNthBJHKSiRyX0J4Zw8rM0dTrQqVUR612uCMDQcU5rFVvTn8JJ5eg7YQP0Ldx8vVAmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F8BGY9Y8; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fd1dcbbc08so61915a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:24:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733383448; x=1733988248; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDlWK8bqWx//67eu6sf8fvYFFpAy/xltJWhR//lc7i4=;
+        b=F8BGY9Y85lazsBz29+p37FTBXK79SRS9DdoPpLFnk7LRduuv6vX2PI1TjkbzoPFjbc
+         qq/c+VYkRBsLUg4catwoOOIRISAYOjKsQuaXJ95t5UzkkiBap+LxKxXXBlZEzN49M2rs
+         HcX47vFyHjnnCY/VmvwVzQlQ6I6IvPhoZCHQo7OdszZx2BLRG7Okq/qJ+BAZ3Z/DdRTp
+         9kV1hn/NcZa/YlEZooeMHN+3J9kTi4WKpLqh+oNu4wOPSTxhvg9Rgfhkq2cNFFp+jT9M
+         wUF3W/149DEaQZ6dP22IabY5YxPRfJ7+wE2w43CK1lxdVXVSwQ62XjO9JTs+A9Uwouvu
+         opOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733383448; x=1733988248;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bDlWK8bqWx//67eu6sf8fvYFFpAy/xltJWhR//lc7i4=;
+        b=wiGsyqAlnULS19N9LCYGWdQXj4FHGyPIE8EVtU+5dHtf+q6Nn2JBwthgyaMHdmoYuy
+         pOpmEye0ZT+LW3g4TGCklsoNs2wks31aWwfwQcA/SVIAROeuUyQEZiIai7+3XmaX5NvF
+         cM7Jgs+vSd/47IJoCTTOSduAMxzBYPh7TWp3LfY/wiaXhJP5f+QnC4puVNQ8mdkEa8m9
+         z8kU6MNgIvOlke3m0EQTpCuPn9XgZqO8dpgDOiiqe0UMlggUwBcWWiijWcbB3FNn5/rj
+         gfb8mKkS3VVF9p9iQq6A2uT0lCsJ64IKAEhs9LmJtS1XvmA6swIpaVUqos48ifo82/HE
+         hcpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsBpLPi3ZWZPTKkK8O6xFzvJsYbFZyF2EiypZJAH22i/pxHzOQIPT9Gd4WzhMHudyqZ2LspYemN+qpuEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEfnTecQZ604tHAM3LcDcJyw9Nk1jn4Lo3nIeOuuuizK7lJqt3
+	A29kU4sMnTPj5ORRLFEps2t+dzWBzQRD3OIX1n4Ps1LvYtnidGOsrgFKRI/p9qByfahOn8qdZmh
+	/Iy9YvqW4rU/5hwrVjlSULCJO64uVMAa70JGHHQ==
+X-Gm-Gg: ASbGncu9pFPw6QQepIEwj7pPkPLkVZ4mFyZpnnDSfWQTiiguP+iBKWSPrc9PQAc4jM9
+	DxV85P4tyXSz3UqU79xXBZTuVL0/HiG0oOcPwFAzh5KO23ww3Bf4H5RL6YjHn
+X-Google-Smtp-Source: AGHT+IGYYCdYRRBIRznlvE3pC7TW4cmru1YchGqhRKfA7haYcbipHC5yDqEpt95ynCxs9jXGZICuceipoKmd5sh2QZ0=
+X-Received: by 2002:a05:6a21:6e4b:b0:1d9:2b51:3ccd with SMTP id
+ adf61e73a8af0-1e1653a2aadmr12792549637.7.1733383447852; Wed, 04 Dec 2024
+ 23:24:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] ASoC: dt-bindings: wcd937x-sdw: Add static channel
- mapping support
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Sanyog Kale <sanyog.r.kale@intel.com>, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com, kernel@quicinc.com
-References: <20241126164300.3305903-1-quic_mohs@quicinc.com>
- <20241126164300.3305903-3-quic_mohs@quicinc.com>
- <jnetmj5ibmmoiputq52vsvfqjz2auwjeqwt36g7sg4kjrrxyso@nrugsa6px4h7>
- <6bb8fe59-a1fc-9813-4623-d27e74a1b882@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <6bb8fe59-a1fc-9813-4623-d27e74a1b882@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241202174606.4074512-1-vincent.guittot@linaro.org> <d36ed494-0143-4afa-8c14-cac7b5d20245@arm.com>
+In-Reply-To: <d36ed494-0143-4afa-8c14-cac7b5d20245@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 5 Dec 2024 08:23:56 +0100
+Message-ID: <CAKfTPtD9ZPW3nj9Npf16ynMckKNteiGwn1Xcc_xtQ=vMCpGD7Q@mail.gmail.com>
+Subject: Re: [PATCH 0/11 v3] sched/fair: Fix statistics with delayed dequeue
+To: Luis Machado <luis.machado@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	kprateek.nayak@amd.com, pauld@redhat.com, efault@gmx.de, tj@kernel.org, 
+	void@manifault.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 05/12/2024 04:56, Mohammad Rafi Shaik wrote:
-> On 11/27/2024 1:38 PM, Krzysztof Kozlowski wrote:
->> On Tue, Nov 26, 2024 at 10:12:57PM +0530, Mohammad Rafi Shaik wrote:
->>> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->>> index d3cf8f59cb23..7893b1c1f80b 100644
->>> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->>> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->>> @@ -58,6 +58,44 @@ properties:
->>>       items:
->>>         enum: [1, 2, 3, 4, 5]
->>>   
->>> +  qcom,tx-channel-mapping:
->>> +    description: |
->>> +      Specifies static channel mapping between slave and master tx port
->>> +      channels.
->>> +      In the order of slave port channels which is adc1, adc2, adc3,
->>> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
->>> +      The channel map index values are fixed values.
->>> +      SWRM_CH1 ==> 1
->>> +      SWRM_CH2 ==> 2
->>> +      SWRM_CH3 ==> 4
->>> +      SWRM_CH4 ==> 8
->>
->> I am surprised to see here again 1/2/4/8. My comments were not
->> addressed. I think we agreed during our off-list talk that you will use
->> 1, 2, 3 and 4.
->>
-> Ack,
-> 
-> Yes right,
-> 
-> Will add the change in next patch set.
-> 
-> will add the channel map values starting from 0 based on order of slave 
-> port channels which are starting from 0.
-> 
-> SWRM_CH1 ==> 0
-> SWRM_CH2 ==> 1
-> SWRM_CH3 ==> 2
-> SWRM_CH4 ==> 3
-These are supposed to be channels, so 1=1, 2=2 not 1=0.
+On Wed, 4 Dec 2024 at 20:10, Luis Machado <luis.machado@arm.com> wrote:
+>
+> On 12/2/24 17:45, Vincent Guittot wrote:
+> > Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until its
+> > lag has elapsed. As a result, it stays also visible in the statistics that
+> > are used to balance the system and in particular the field h_nr_running.
+> >
+> > This serie fixes those metrics by creating a new h_nr_runnable that tracks
+> > only tasks that want to run. It renames h_nr_running into h_nr_runnable.
+> >
+> > h_nr_runnable is used in several places to make decision on load balance:
+> >   - PELT runnable_avg
+> >   - deciding if a group is overloaded or has spare capacity
+> >   - numa stats
+> >   - reduced capacity management
+> >   - load balance between groups
+> >
+> > While fixing h_nr_running, some fields have been renamed to follow the
+> > same pattern. We now have:
+> >   - cfs.h_nr_runnable : running tasks in the hierarchy
+> >   - cfs.h_nr_queued : enqueued tasks in the hierarchy either running or
+> >       delayed dequeue
+> >   - cfs.h_nr_idle : enqueued sched idle tasks in the hierarchy
+> >
+> > cfs.nr_running has been rename cfs.nr_queued because it includes the
+> > delayed dequeued entities
+> >
+> > The unused cfs.idle_nr_running has been removed
+> >
+> > Load balance compares the number of running tasks when selecting the
+> > busiest group or runqueue and tries to migrate a runnable task and not a
+> > sleeping delayed dequeue one. delayed dequeue tasks are considered only
+> > when migrating load as they continue to impact it.
+> >
+> > It should be noticed that this serie doesn't fix the problem of delayed
+> > dequeued tasks that can't migrate at wakeup.
+> >
+> > Some additional cleanups have been added:
+> >   - move variable declaration at the beginning of pick_next_entity()
+> >     and dequeue_entity()
+> >   - sched_can_stop_tick() should use cfs.h_nr_queued instead of
+> >     cfs.nr_queued (previously cfs.nr_running) to know how many tasks
+> >     are running in the whole hierarchy instead of how many entities at
+> >     root level
+> >
+> > Changes since v2:
+> > - Fix h_nr_runnable after removing h_nr_delayed (reported by Mike and Prateek)
+> > - Move "sched/fair: Fix sched_can_stop_tick() for fair tasks" at the
+> >   beginning of the series so it can be easily backported (asked by Prateek)
+> > - Split "sched/fair: Add new cfs_rq.h_nr_runnable" in 2 patches. One
+> >   for the creation of h_nr_runnable and one for its use (asked by Peter)
+> > - Fix more variable declarations (reported Prateek)
+> >
+> >
+> > Changes since v1:
+> > - reorder the patches
+> > - rename fields into:
+> >   - h_nr_queued for all tasks queued both runnable and delayed dequeue
+> >   - h_nr_runnable for all runnable tasks
+> >   - h_nr_idle for all tasks with sched_idle policy
+> > - Cleanup how h_nr_runnable is updated in enqueue_task_fair() and
+> >   dequeue_entities
+> >
+> > Peter Zijlstra (1):
+> >   sched/eevdf: More PELT vs DELAYED_DEQUEUE
+> >
+> > Vincent Guittot (10):
+> >   sched/fair: Fix sched_can_stop_tick() for fair tasks
+> >   sched/fair: Rename h_nr_running into h_nr_queued
+> >   sched/fair: Add new cfs_rq.h_nr_runnable
+> >   sched/fair: Use the new cfs_rq.h_nr_runnable
+> >   sched/fair: Removed unsued cfs_rq.h_nr_delayed
+> >   sched/fair: Rename cfs_rq.idle_h_nr_running into h_nr_idle
+> >   sched/fair: Remove unused cfs_rq.idle_nr_running
+> >   sched/fair: Rename cfs_rq.nr_running into nr_queued
+> >   sched/fair: Do not try to migrate delayed dequeue task
+> >   sched/fair: Fix variable declaration position
+> >
+> >  kernel/sched/core.c  |   4 +-
+> >  kernel/sched/debug.c |  14 ++-
+> >  kernel/sched/fair.c  | 240 ++++++++++++++++++++++++-------------------
+> >  kernel/sched/pelt.c  |   4 +-
+> >  kernel/sched/sched.h |  12 +--
+> >  5 files changed, 153 insertions(+), 121 deletions(-)
+> >
+>
+> Sorry, it took me a bit to work the backports for 6.8/Android. I gave this series a try
+> on the Pixel 6 with a couple workloads (Speedometer and a UI-based one) and I didn't
+> spot any significant performance/frame metric differences or power metric differences compared
+> to a 6.8 kernel with this series applied.
+>
+> Also, checking the statistics for the cores didn't show any numbers that are obviously wrong.
+>
+> Though the kernel version is a bit behind mainline, I hope that's useful.
+>
+> Tested-By: Luis Machado <luis.machado@arm.com>
 
-Best regards,
-Krzysztof
+Thanks
 
