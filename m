@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-433887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DF79E5E5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:41:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003789E5E61
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E4A163676
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E503188517C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E1222B8D6;
-	Thu,  5 Dec 2024 18:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18EF22B8D7;
+	Thu,  5 Dec 2024 18:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9DgpFgZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xQyidbrw"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0344221461;
-	Thu,  5 Dec 2024 18:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBAE229B28
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733424081; cv=none; b=CUBh378js2UwpS2wET5WFe5hx8w4knXmCPwnENItIeE6xs3K6A5cBABSC9Zdf0Fs7lg/QKmKnQ7zCUDOtc2TGRnskrkBVPtgg8DibfIBbw5JUCKsNj5ia176hSnBnpTc+NsuLvCClQKIWSbenm8uzt4wC018v/EnRRRA/hXKTeE=
+	t=1733424137; cv=none; b=Fv7Mgtz56vCGCbflbMlknFnThOHQOp8L9V2vyLkEgLn7f1Yt1Z4vR1V9KN9/zNecIJeNE8di3orYuyQO+nMSdDgif2qjwdWCxavT+QMAuHakSl7oD1c834vfdT1knaiE+EyTINX1m0f4UEcRe6T+3X4CxPCWntoJKjwBAMGaIc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733424081; c=relaxed/simple;
-	bh=0YBNkypV8E/T1JTlxwqRN6rbYdmmeKiFzaa+dqxPaCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rcuae/JRzOXTjbBn/faBUXdYevuwP0QROWK689L4Yuc65XV4HbwNsdfYeqfYozT8RdvzWylCXyyf0Rux0guhvdt5PUNcaYx8wyBMXwYzFhsHYWS+KyfiDZemtp+5dwNEAtrg4PLNih0w8Ssvzdjjtj8LnAi2NevJELfls9Ik35c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9DgpFgZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C01EC4CEDC;
-	Thu,  5 Dec 2024 18:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733424079;
-	bh=0YBNkypV8E/T1JTlxwqRN6rbYdmmeKiFzaa+dqxPaCE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=B9DgpFgZP2hg4PfSRiHH1z8WrSNl2SoVqunygTgEQk68hwNvKX9BgLjYy50x8ePwq
-	 Fjnru7HmOxwrIb9KlP11fdaTMRIyG3awLRQ6HMfVWqyA3d4aJB8CzgK+Mb56JgrMKb
-	 FCCdD9Yg0WK4l+aW5C+P3qdscwyY04GQVwOtUKeovfzuniZpQbKHGQh0edVYXAdxXD
-	 Nmgov/FjslB2NT8PcAIvp9q0kWVII6So1sf3Jrkev7n6S/qS1V1RHD6Xm/0oopVyQD
-	 0GAn6+H+MZTBm751kZPnM379dsjqUNm/1/pxlomNQiJG85grd8EINfJW0ICYnlMGJR
-	 55PP54tjAFqzg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C2EDFCE08E1; Thu,  5 Dec 2024 10:41:17 -0800 (PST)
-Date: Thu, 5 Dec 2024 10:41:17 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	edumazet@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-Message-ID: <a9b7f0a0-bd15-4990-b67b-48986c2eb31d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com>
- <20241205141850.GS3387508@ZenIV>
- <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
+	s=arc-20240116; t=1733424137; c=relaxed/simple;
+	bh=gA/VeNm6V5/8b09vX/49ut5uvV/G8q+I9tBmKj7pctU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MoFRRyvdRa7gQaVPB5FExqo+wOo1XZBtVEAYE28ZTLYTPUYkZZOIOID0LCJoZtbvAhwO2AezJxRf0eRBOY8ZDoSZdQbwFI3cwy/PQXkD+VKVMlKS5jFtuPL6QWJmjJ6MvHNT9iyLGnf5nsAPiH3vdxOon4oLVxDj/jGBEQFCtdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xQyidbrw; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-85b804c0157so263059241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 10:42:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733424134; x=1734028934; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tR8Gx4YF+iGaCMV6DuY+XQYSDcjVdzyIfn9PDc6LDOM=;
+        b=xQyidbrwCeNXzAF1X+SB1F06/dklL8Z590ib2CdIKxi0mHRFXyNX8hgL3ZpkSGfk3o
+         y+R+P7JO9cKow9s69jpcuRNL43GmI/BFfxNP9JBrHTtvPFkKmNV31QMzFtSnLO+Ku7j0
+         vJZEHIvxB6qxPFW9Suo8TEzzebVPYnZj0jBHzKr2fV4a/6+7ZIiXOOh5Z3FO/rEjo7a5
+         asLxtoXvKN324R57hkQ7Ej95nDiSAeFOOM8a80Sr5Mp1+nVnAcbKVcGCpMGgRTQHPVg2
+         Oxjrea5NtO7TfWJv7uQiKtCmlrGXFBBZcd6QbEc5OXgHCt0etnyB6NSEjbk7R+uW0Esf
+         XmcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733424134; x=1734028934;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tR8Gx4YF+iGaCMV6DuY+XQYSDcjVdzyIfn9PDc6LDOM=;
+        b=S9Gpa4od7Ur9aeQfhHtxw2KRToNmu8iAwDiqtcsqeRz+UUydyegSj+ez27eY43i1VK
+         CMkEIjZjUn17ywDioRV9c7hk599xi3QId7zq/XJGYVYZVi8/mEOAhkCuJWr/WXd7KnVf
+         GvbDt5PvAO+6PzmRSEXTv1p/DyfX9CQ++4C5aQhXck6d9x1uKun/CMfogpOQkgFliNEG
+         iASo4VNcOKIRsuLUx+f0gp0XbjXV6ph1Bb5TDhZT984Fwwx6/+iEtq79Hcs+OkCbsG9X
+         8HyTN8lxX2HuVt049ABBzPvyol2xPKR2gCJose8EQ3Q9m6Tv+S2r2Fg0jvKbBCP6FWph
+         yQwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvvXZTUSb4jROpqI58pMKXVR8Omm64wzNUzDuHAOkjG+9SC/RsRE1bmTDTXyFsQcrec/aBF81gbcQj7hM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKfn7QTqvsLuawkoX95YSg3OEamRQMvp5cQRQf5Q9ESxkWl4yw
+	BQbJxm3rNjXHqLni4oGGGRjD4sRW3nDGZDKXX0+UBk5ISNWWHBRx3RcD/xNtQRCbrrqEPGJPCjQ
+	z7Rxj2vBVhsnUy/pF7yZ3gS19Y1ZwtCDO9bGc3A==
+X-Gm-Gg: ASbGncuB/HAxpOYBmz3Vryjv5+MKMbK/HFk8PNMdB5us35mcAr6GBKsZ6fnJ8fa5bVj
+	sFlCCn3xXZaeOhjrG5BJbsIp5r9eX0wwp
+X-Google-Smtp-Source: AGHT+IG269PkgdVPpsUfRMnNfyCTRw+6b9s1FqQamygLLFlRX39CxuzaR647OcbZrJKkKII8mvW1s/GWCnxsPXgxkTM=
+X-Received: by 2002:a05:6102:3909:b0:4af:bf45:39a8 with SMTP id
+ ada2fe7eead31-4afcaa4f74cmr835447137.16.1733424134670; Thu, 05 Dec 2024
+ 10:42:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHH3HFDgu61S4VW2H2DXj1GMJzFRstTWhDx=jjHcb-ArwQ@mail.gmail.com>
+References: <CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com>
+ <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain>
+In-Reply-To: <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 6 Dec 2024 00:12:03 +0530
+Message-ID: <CA+G9fYv5gW1gByakU1yyQ__BoAKWkCcg=vGGyNep7+5p9_2uJA@mail.gmail.com>
+Subject: Re: arm64: include/linux/compiler_types.h:542:38: error: call to
+ '__compiletime_assert_1050' declared with attribute error: clamp() low limit
+ min greater than high limit max_avail
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: David Laight <David.Laight@aculab.com>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, netfilter-devel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
+	Johannes Berg <johannes.berg@intel.com>, toke@kernel.org, 
+	Al Viro <viro@zeniv.linux.org.uk>, kernel@jfarr.cc, kees@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 03:43:41PM +0100, Mateusz Guzik wrote:
-> On Thu, Dec 5, 2024 at 3:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Thu, Dec 05, 2024 at 01:03:32PM +0100, Mateusz Guzik wrote:
-> > >  void fd_install(unsigned int fd, struct file *file)
-> > >  {
-> > > -     struct files_struct *files = current->files;
-> > > +     struct files_struct *files;
-> > >       struct fdtable *fdt;
-> > >
-> > >       if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
-> > >               return;
-> > >
-> > > +     /*
-> > > +      * Synchronized with expand_fdtable(), see that routine for an
-> > > +      * explanation.
-> > > +      */
-> > >       rcu_read_lock_sched();
-> > > +     files = READ_ONCE(current->files);
-> >
-> > What are you trying to do with that READ_ONCE()?  current->files
-> > itself is *not* changed by any of that code; current->files->fdtab is.
-> 
-> To my understanding this is the idiomatic way of spelling out the
-> non-existent in Linux smp_consume_load, for the resize_in_progress
-> flag.
+On Thu, 5 Dec 2024 at 20:46, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Add David to the CC list.
 
-In Linus, "smp_consume_load()" is named rcu_dereference().
+Anders bisected this reported issue and found the first bad commit as,
 
-> Anyway to elaborate I'm gunning for a setup where the code is
-> semantically equivalent to having a lock around the work.
+# first bad commit:
+  [ef32b92ac605ba1b7692827330b9c60259f0af49]
+  minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
 
-Except that rcu_read_lock_sched() provides mutual-exclusion guarantees
-only with later RCU grace periods, such as those implemented by
-synchronize_rcu().
 
-> Pretend ->resize_lock exists, then:
-> fd_install:
-> files = current->files;
-> read_lock(files->resize_lock);
-> fdt = rcu_dereference_sched(files->fdt);
-> rcu_assign_pointer(fdt->fd[fd], file);
-> read_unlock(files->resize_lock);
-> 
-> expand_fdtable:
-> write_lock(files->resize_lock);
-> [snip]
-> rcu_assign_pointer(files->fdt, new_fdt);
-> write_unlock(files->resize_lock);
-> 
-> Except rcu_read_lock_sched + appropriately fenced resize_in_progress +
-> synchronize_rcu do it.
-
-OK, good, you did get the grace-period part of the puzzle.
-
-Howver, please keep in mind that synchronize_rcu() has significant
-latency by design.  There is a tradeoff between CPU consumption and
-latency, and synchronize_rcu() therefore has latencies ranging upwards of
-several milliseconds (not microseconds or nanoseconds).  I would be very
-surprised if expand_fdtable() users would be happy with such a long delay.
-Or are you using some trick to hide this delay?
+ - Naresh
 
