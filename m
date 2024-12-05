@@ -1,163 +1,183 @@
-Return-Path: <linux-kernel+bounces-433720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BC59E5C2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:52:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569819E5C3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:53:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28191886B8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F8528A193
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC3422259C;
-	Thu,  5 Dec 2024 16:51:27 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9829F22259C;
+	Thu,  5 Dec 2024 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZDd5XrT"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5487420C468
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6BC221477
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733417486; cv=none; b=iPP+w0EeutpYVPysIW8E2NBEqr0UPxziDc6eTHo+GyyMZR9uQjr5eI0h+XrAkL7Lc+/2XYVegyYEuiEOx5BdF3dLqFAdsnaQjeAyzrh7w9kszKTtVYpke/Gjft+Tma63CWhOqXaAxNMtPaIaXpnjLe16hA90cu67R2QyUte5Fhk=
+	t=1733417584; cv=none; b=jrg6CKt6yN5Yr5MY0P9XYvrXAZ/eO24f3IIRaUg6D7rJH85zGrW05toEfvIcWgKkuBDnQTeUpxJ8QsVpseLOwJVTQ8RXOdF4LGWZ9bKTMnJ4h/ePr1rYWmqr6O0T/Ar8gOIAbn1PpsTqR9Q+RVADTESlhpfwWFnYxV9PihhSWk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733417486; c=relaxed/simple;
-	bh=UAmPDj30xoP/mRT/12Tk/ijVz4LSRAml6O+Za2Nyc+4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bAEsEwfxZidM8u+fd/WHanDr6uCgRLNTkkNY2x0HU2nbBWDkimhzwROWPO4U3l5s0ZyWiAts46zCyWySvZTdmTlNCU7NlGw0t/QYQftUmJuo5hl2pcki2LySr0F+r0ZCwOxeB4fCkZNB0+QgzAE4/WerNlJErzxKUwoEZs22kFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7e1e6d83fso20954285ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:51:25 -0800 (PST)
+	s=arc-20240116; t=1733417584; c=relaxed/simple;
+	bh=OyMQfIrxSzriwv8hX5lVDVFWmfDKiMyaBU/TmxWr4wI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mg3WJ5AySMK60wdUV0Xh8zoVqAK6vuTAecOclFvkYx2VPjr9VnmvLn1FahUUD0anc2oa9AXWdsztxwgaplW0fUiZ5bz7fperQMzXNI1Cn21/PQOk7dL6oIc4wHkbfYQ++od/NUHiX12GagqA8I7CxJlpPxhnuI0JM62lTOYQK3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZDd5XrT; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7251d20e7f2so1252931b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:53:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733417581; x=1734022381; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3M40H5CkYQDVeDAAfwHVgOu/JLVGUmGE+3t86nRTx/0=;
+        b=MZDd5XrTrGVDGM/UG+y1/B74BshLnyb5UJbR9ZVE1MeRqQsgZ1O6qey7ZS0EzbbAhn
+         r4MsZhyKaE2+Z9Q7lHXrS1Xleeqh+SdrrGRslFudik+zEyOqjIhY3/6SgSo3H+Eouzg1
+         fmfTuqTvhdrg6RXqVC0jQ58PopqV6kHa0Msk1VJbhIVLGqfYExg8FN7DLV839w3+61u5
+         7uFLtN5PU+scn6tUdBFbNBABnqplKNLanODem2KQWJzpDP8wfCkrlSOdpK0Ev8kYKP6s
+         9lptjXeB9l20YL+RFKJRSmBpFPFpUMtaPXyKMQC88TS6cT/YaEHTRW7V6lUNWULhKSrV
+         OWhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733417484; x=1734022284;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1733417581; x=1734022381;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D2gbEUkjVJzZMe3qDA5y2A+gClxSmSQxcirGoSqiF0Q=;
-        b=RTcA30/R/EfoG8y0n9uwYQUotY2k+wmE3sFkucZJeNbJhvyQlrdzX6yQ5aTnfSPD7O
-         IdNbl0Kc0C0Q6BR8/S5pouVtMCzpWE37/rNNsnPCj5LDB9YkkDKNziew7Q88X9hvLGej
-         kPejO3R8ubBgiR27askLeG8RT0IurclHhWsPvTeQOCx0y6C9ooADLUeyJviyT6bNQHQV
-         c6MFi3Xwze14Ihd5hDz5xehyIB44x1fd0Qpa53Wel0X3vlKt1bjyljG4VAKRzEiSXsKg
-         OIwYWNUujZLdUakBwCfDK+MsK39zVBmmC0DvYc5itATNijZV8fkcVNWjcgbZ0nTdN/Uk
-         9DQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXW9ottMk4APf0lN6HtMLB5Ybia98lUi9eZtXmk9jX+uwZawPIBprBXNX1ZXpHTOXlD3OBC/e0K/8VN1fo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFf6Amq7+ACg1HVqm8+CkFeVLyvnNKsEG7o8mTyzg2BqgcYz4n
-	Yfd/sj8E6RXf4KVFf9r0aRMVmC51c0FmaTK9ByVdTOx3UbJp3z6aOLEcV+7jErfzqEssKiVX8oI
-	AL/CYVygRuJ6YiYogMVYJoWmqbWKHmVTI2fq8DazjVMxfEwS08Qh7454=
-X-Google-Smtp-Source: AGHT+IESiye16sM1MLh4ToS68muDj2aem9gMWWEZ/DY4Au40yyXXuSg01lsQy1c1j1U6L6rd3Gqy4JT941LzuGUSobKTymt4BpZz
+        bh=3M40H5CkYQDVeDAAfwHVgOu/JLVGUmGE+3t86nRTx/0=;
+        b=eWGXq5xknNjNLl//Z/N5RkyWpOjGWb59vE4F2m5pelFCjrbHvaR8zYmIVdA2dYlNqy
+         HGbWzzmEmm6E7I61WJrENxRIaYxuY3Pd/2zntm+dN2EW2QiTcgZjZpzO6yyHqBSQZrIq
+         f/bEjd3jMvxwcNczF8UXd5yj6unll65/1MSD7xbWpzoW1bOOTXN/y7dJSqsES3SiZ7QK
+         kXcnfpdV7MFm+Cr5Dv0PbkDW9B2vE+IemCjo7VfrEd2ZOl6NkX+5U+Uk4n5hfkG/RC7+
+         jdai+3K1d5uO/bOzBNadK8sZDLh9CAbrNJQiTWm9Jk0meahYvaFbrT+0QuSOGlsssgT4
+         7xIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbdJquqzH3ARK/v45HMbkhT7R0WDZPMhaUgQuszcBKzkFs+HHkvDpeF0nkID7ftL5aAZ+bVvXXWi8P+nc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynpTAKrXEt4UfoDA2yzvuYra5ndjeC2C4LL4BJJU50uBk4tb+A
+	1BxuuZRwsruO0XwWi7xnrLCxZ4zvAnvvuq5lp9+UbCaXBhC+wbZvCuHKPH5ZDw==
+X-Gm-Gg: ASbGncvDYu96WqOtJs/qFCEZPvaUEf54RgSH30gCiQBzB9EiiSyHgE0FU3bfToRm2Xn
+	g2y9muH9M0NmUwEDRtbp3ki8AjqA2rDGMmoavqCp1lnZwKnA9pbBNaSisUA5T3FpQ8XB1AQLhJ7
+	NOw32voxng60GPdGRl42BZN6a2y8m55D15egx2eBT+fIdx9/1hHcP0P5sNSqtCG8/FFcu57PovY
+	WRjxWI0JZOdVBLdI+uwamMaOV8o/nT1N49pwhYX7ievNGSj7uk6rfVQQN9mYQ==
+X-Google-Smtp-Source: AGHT+IFYO3XDZ6IIHPLOsjky3D00Q3xsDrNzgdjwZkcMxnvdQlHnJg11TlcIOJ2l2C46xAjuD8l7Zw==
+X-Received: by 2002:a17:902:e810:b0:215:734f:ffe5 with SMTP id d9443c01a7336-215bd128365mr145479605ad.32.1733417581263;
+        Thu, 05 Dec 2024 08:53:01 -0800 (PST)
+Received: from thinkpad ([120.60.133.114])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f0921asm14725025ad.178.2024.12.05.08.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 08:53:00 -0800 (PST)
+Date: Thu, 5 Dec 2024 22:22:51 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev, Aishwarya TCV <aishwarya.tcv@arm.com>,
+	Chuan Liu <chuan.liu@amlogic.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
+Message-ID: <20241205165251.fbf3ty6jgdqt4r3x@thinkpad>
+References: <20241202100621.29209-1-johan+linaro@kernel.org>
+ <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org>
+ <Z07AXbQvvZwI8Ki6@hovoldconsulting.com>
+ <20241203092151.izcsgzqep4imbcwe@thinkpad>
+ <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a23:b0:3a7:7ded:53b9 with SMTP id
- e9e14a558f8ab-3a7fed9effcmr116225875ab.20.1733417484608; Thu, 05 Dec 2024
- 08:51:24 -0800 (PST)
-Date: Thu, 05 Dec 2024 08:51:24 -0800
-In-Reply-To: <67508b5f.050a0220.17bd51.0070.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6751da0c.050a0220.b4160.01dc.GAE@google.com>
-Subject: Re: [syzbot] [tipc?] general protection fault in cleanup_bearer
-From: syzbot <syzbot+46aa5474f179dacd1a3b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, eric.dumazet@gmail.com, 
-	horms@kernel.org, jmaloy@redhat.com, kuba@kernel.org, kuniyu@amazon.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net, 
-	ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Dec 03, 2024 at 11:30:07AM -0800, Stephen Boyd wrote:
+> Quoting Manivannan Sadhasivam (2024-12-03 01:21:51)
+> > On Tue, Dec 03, 2024 at 09:25:01AM +0100, Johan Hovold wrote:
+> > > [ +CC: Viresh and Sudeep ]
+> > > 
+> > > On Mon, Dec 02, 2024 at 05:20:06PM -0800, Stephen Boyd wrote:
+> > > > Quoting Johan Hovold (2024-12-02 02:06:21)
+> > > > > This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
+> > > > > 
+> > > > > The offending commit results in errors like
+> > > > > 
+> > > > >         cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
+> > > > > 
+> > > > > spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
+> > > > > machines when cpufreq tries to update the CPUFreq HW Engine clocks.
+> > > > > 
+> > > > > As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clock
+> > > > > provider support"):
+> > > > > 
+> > > > >         [T]he frequency supplied by the driver is the actual frequency
+> > > > >         that comes out of the EPSS/OSM block after the DCVS operation.
+> > > > >         This frequency is not same as what the CPUFreq framework has set
+> > > > >         but it is the one that gets supplied to the CPUs after
+> > > > >         throttling by LMh.
+> > > > > 
+> > > > > which seems to suggest that the driver relies on the previous behaviour
+> > > > > of clk_set_rate().
+> > > > 
+> > > > I don't understand why a clk provider is needed there. Is anyone looking
+> > > > into the real problem?
+> > > 
+> > > I mentioned this to Mani yesterday, but I'm not sure if he has had time
+> > > to look into it yet. And I forgot to CC Viresh who was involved in
+> > > implementing this. There is comment of his in the thread where this
+> > > feature was added:
+> > > 
+> > >       Most likely no one will ever do clk_set_rate() on this new
+> > >       clock, which is fine, though OPP core will likely do
+> > >       clk_get_rate() here.
+> > > 
+> > > which may suggest that some underlying assumption has changed. [1]
+> > > 
+> 
+> Yikes.
+> 
+> > 
+> > I just looked into the issue this morning. The commit that triggered the errors
+> > seem to be doing the right thing (although the commit message was a bit hard to
+> > understand), but the problem is this check which gets triggered now:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c?h=v6.13-rc1#n2319
+> > 
+> > Since the qcom-cpufreq* clocks doesn't have parents now (they should've been
+> > defined anyway) and there is no CLK_SET_RATE_PARENT flag set, the check returns
+> > NULL for the 'top' clock. Then clk_core_set_rate_nolock() returns -EINVAL,
+> > causing the reported error.
+> > 
+> > But I don't quite understand why clk_core_set_rate_nolock() fails if there is no
+> > parent or CLK_SET_RATE_PARENT is not set. The API is supposed to set the rate of
+> > the passed clock irrespective of the parent. Propagating the rate change to
+> > parent is not strictly needed and doesn't make sense if the parent is a fixed
+> > clock like XO.
+> 
+> The recalc_rate clk_op is telling the framework that the clk is at a
+> different rate than is requested by the clk consumer _and_ than what the
+> framework thinks the clk is currently running at. The clk_set_rate()
+> call is going to attempt to satisfy that request, and because there
+> isn't a determine_rate/round_rate clk_op it assumes the clk can't change
+> rate so it looks to see if there's a parent that can be changed to
+> satisfy the rate. There isn't a parent either, so the clk_set_rate()
+> call fails because the rate can't be achieved on this clk.
+> 
+> It may work to have a determine_rate clk_op that is like the recalc_rate
+> one that says "this rate you requested is going to turn into whatever
+> the hardware is running at" by simply returning the rate that the clk is
+> running at.
 
-HEAD commit:    31f1b55d5d7e net :mana :Request a V2 response version for ..
-git tree:       net
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17d290f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3891b550f14aea0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=46aa5474f179dacd1a3b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1724ade8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148868df980000
+Sounds reasonable to me. Fix submitted incorporating your suggestion, thanks!
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ba0fb1ec0f79/disk-31f1b55d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/535224afed4c/vmlinux-31f1b55d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bd1b0227ba3d/bzImage-31f1b55d.xz
+- Mani
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+46aa5474f179dacd1a3b@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-syzkaller-10767-g31f1b55d5d7e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events cleanup_bearer
-RIP: 0010:read_pnet include/net/net_namespace.h:392 [inline]
-RIP: 0010:sock_net include/net/sock.h:655 [inline]
-RIP: 0010:cleanup_bearer+0x1f7/0x280 net/tipc/udp_media.c:820
-Code: 18 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 ec 2e 91 f6 48 8b 1b 48 83 c3 30 e8 80 97 63 00 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 ca 2e 91 f6 49 83 c7 e8 48 8b 1b
-RSP: 0018:ffffc900000e7b70 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: 0000000000000030 RCX: ffff88801cef8000
-RDX: dffffc0000000000 RSI: ffffffff8c0ad980 RDI: 0000000000000001
-RBP: ffff8880287b5e08 R08: ffffffff9432398f R09: 1ffffffff2864731
-R10: dffffc0000000000 R11: fffffbfff2864732 R12: ffff8880287b5e98
-R13: dffffc0000000000 R14: 0000000000000001 R15: ffff8880287b5e18
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007efddcf2f208 CR3: 000000007aa02000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:read_pnet include/net/net_namespace.h:392 [inline]
-RIP: 0010:sock_net include/net/sock.h:655 [inline]
-RIP: 0010:cleanup_bearer+0x1f7/0x280 net/tipc/udp_media.c:820
-Code: 18 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 ec 2e 91 f6 48 8b 1b 48 83 c3 30 e8 80 97 63 00 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 ca 2e 91 f6 49 83 c7 e8 48 8b 1b
-RSP: 0018:ffffc900000e7b70 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: 0000000000000030 RCX: ffff88801cef8000
-RDX: dffffc0000000000 RSI: ffffffff8c0ad980 RDI: 0000000000000001
-RBP: ffff8880287b5e08 R08: ffffffff9432398f R09: 1ffffffff2864731
-R10: dffffc0000000000 R11: fffffbfff2864732 R12: ffff8880287b5e98
-R13: dffffc0000000000 R14: 0000000000000001 R15: ffff8880287b5e18
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055bf163e0cc0 CR3: 000000007e7d8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	18 48 89             	sbb    %cl,-0x77(%rax)
-   3:	d8 48 c1             	fmuls  -0x3f(%rax)
-   6:	e8 03 42 80 3c       	call   0x3c80420e
-   b:	28 00                	sub    %al,(%rax)
-   d:	74 08                	je     0x17
-   f:	48 89 df             	mov    %rbx,%rdi
-  12:	e8 ec 2e 91 f6       	call   0xf6912f03
-  17:	48 8b 1b             	mov    (%rbx),%rbx
-  1a:	48 83 c3 30          	add    $0x30,%rbx
-  1e:	e8 80 97 63 00       	call   0x6397a3
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 ca 2e 91 f6       	call   0xf6912f03
-  39:	49 83 c7 e8          	add    $0xffffffffffffffe8,%r15
-  3d:	48 8b 1b             	mov    (%rbx),%rbx
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+மணிவண்ணன் சதாசிவம்
 
