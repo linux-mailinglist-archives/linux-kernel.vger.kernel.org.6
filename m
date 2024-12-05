@@ -1,121 +1,115 @@
-Return-Path: <linux-kernel+bounces-433344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A709E571D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C23539E5723
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49EEB284CAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82D8C286205
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE44C219A61;
-	Thu,  5 Dec 2024 13:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872B621A42C;
+	Thu,  5 Dec 2024 13:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jDTYYX2u"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RODxSZ7w"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88E5218EAD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 13:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D92217F36;
+	Thu,  5 Dec 2024 13:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733405257; cv=none; b=fP3Itm+e5Oc4Mve8v15/mm5ip0zpvUc9zUuYCOcfRgngqewLLx/TjEnPIDYR/0z2Yq8QLkIk6lHxj4x5hCJK3TjQuj4gjoQDIRWqHTBjEawjIPIoAzaQFAxjf92GkFQ3khhdKy5VVsFehm4jOzlxqBayzs0u+BTGENx9Kz9YVyk=
+	t=1733405399; cv=none; b=qzaJAKjh6BzcTCKUqNXga6rXYa+aMUEfc4vWJ1cewcHAbVxC53kQ8NTsdQfe/KFjzKuOTOP7l/pm/YgphVO/I+rKkNQtI3+lTSoE7LcK8DyqPgy2KFGB5yEpDTSZ0/tOFw2mYLo23vBaJmhrhMToYIsZciM16+3VpYK/BPdvRqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733405257; c=relaxed/simple;
-	bh=SVyJKAObJHq6toM2zS9LouHZmdIC3Ik+jdnb12haUZQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KnmdKUJEV6WlCui2L5sUbBtVEkiYTgHvgazptayGj6486p2fv70E74FoGe5NpB1zuracZhkQ77RcOdU6JXKlJFrAfUDLKSgrOEGmqQ8QMuOqE+BMiJuLXpar6sYbJJ/OfszgQ7G/CYXdYioIiIKrawquyv46ptgKu7qmWZP3VEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jDTYYX2u; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ad370038b30c11ef99858b75a2457dd9-20241205
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=FmxWE5EhzoSWDAXa4b5JycP7gjDtMkh2D/HJuqalzuU=;
-	b=jDTYYX2u4z0aMU0NwYRKyqB9TwlaOOBwm366a0BgVxxVWsSYnc2D9QWyHQ0LbmpR+4XnvopMZLq2bSTZO6vKxeV+IoqvAoMcZTukSePeEamMZgck02fclVJ+DVduAbCm4ygaQ9a9JUOzR13fNNkvv1EEMJvoKh75fN4B3ewxyxc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:b125b73a-e548-42a3-94ee-5096c7928c44,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:58657d3b-e809-4df3-83cd-88f012b9e9ba,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: ad370038b30c11ef99858b75a2457dd9-20241205
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <defa.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 215151407; Thu, 05 Dec 2024 21:27:29 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 5 Dec 2024 21:27:28 +0800
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 5 Dec 2024 21:27:27 +0800
-From: Defa Li <defa.li@mediatek.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<wsd_upstream@mediatek.com>, <mingchang.jia@mediatek.com>,
-	<yuhan.wei@mediatek.com>, <hao.lin@mediatek.com>, Defa Li
-	<defa.li@mediatek.com>
-Subject: [PATCH] i3c: master: Improve initialization of numbered I2C adapters
-Date: Thu, 5 Dec 2024 21:29:02 +0800
-Message-ID: <20241205132934.12110-1-defa.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733405399; c=relaxed/simple;
+	bh=YR4GHueAOAhwFTammZfWOuuRJ4yKoeZUyRqZFAURMSk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S0TReahUXNMh5p5FlyFH0GAC/fol4k8kC49tE0oiuVj5WtYKrAykVTH5raCIk2+8xWk0Fh4OzGII7zWhYjRPnDvKF8nyXGaZu9II6jpRN3RQqTsgfCcSCIr78ZPDXEIYHIijFfjnKGkaPRkNHK0fUn5tzgFp+ViHhY5Wk40BYl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RODxSZ7w; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4afa753c6d6so277601137.2;
+        Thu, 05 Dec 2024 05:29:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733405397; x=1734010197; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ylDjEClI/7mIIYwF0dNr8g22hgKRAkTcMUiNYa8gpm4=;
+        b=RODxSZ7wl7vOhEFFDMu8dfsyzr4z+O0tBYMPk2VRjroBU+n52WpLXFtZ0qG+sJzrOB
+         lOz3veWywe7EswhzwEZrfJ20K1B1n7xTlm4piJKOlsUOkOYbm7hkocJ/J7G9mPZXOR+s
+         zSRoezZ0mYCpV2BJtd2+GmpLgtB3vEX3p7bMI7AEyOhcu/2uhPcJdAE5Kj7hvb/sJGLo
+         JIkXBTMZCDjoyyfDTocVIP5xFT4TeTzTXaZbG/3peFZ+Gv+K2NYRe/YTFrKM/rfznpji
+         8qpfiK7+QLF1MPFAxHpF+YJ8B9jJlyFxqslnR3ZNA71PzFcrsywuYfih8/hLbd212xt3
+         m/sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733405397; x=1734010197;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ylDjEClI/7mIIYwF0dNr8g22hgKRAkTcMUiNYa8gpm4=;
+        b=vxoGLthzWGDNzB4py8SMZiDCb2CHdtjM7mcaESOFoGdcO79k3MMA1MjNlILU2cYkow
+         kUoOYyvBArX+tuTFNm6E0mHvqq8flTWFvaX/4zCml27z+d6Qz1odeI7GwbBvPqvuTAYb
+         PZl6FzR9uEJ3QJ8GttU7EdV2lwPIMm8nlodPu5xkuhQ+WBeFFND3mHYzPyVqPFg/9Zpf
+         tUgE+CSyhyRN/4bpdvLySC4s5ycJfLfqOUdUF1rqtM6ZRQ1Iy0IRGt2rsKGZjOA7tDRM
+         tiev4a2LdR2cUnYmGXqBV+ntXH1jQN2WJqvjkHeU8Oi1R3VxGn8AckDtuH4o7uzd0yfb
+         ovbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNeuCxPwFCkWqkq7S3YGP5pYU5mQ6YV2WMrL1k1XWpg9t4g5Rt+QVFNKzaGbKlvOGwedijnp8EeiDcWf1Q@vger.kernel.org, AJvYcCVg5RLQdgB8Fs1oCDb8gtAMXfOUdg3ihA7ldB/ngNciZTAkA9hX2DNzJcPSSrab8soxMJBmDJJxoDc+@vger.kernel.org, AJvYcCVxk+Rn05RzLzQB+CEh8kOIS7Ydv5iTeM93KBnXJdRoE7wL03yhJAmJdx6mpDTMtZwqf0Cbp9arT/uWV+R/2g==@vger.kernel.org, AJvYcCWVC+ui7oYf40ZJPjBkRqIFozmgBvBB4ooFHcS5fAFPEi575pF0mzzjV7VKwkTBD3KA5nEX+gWRz6VuQxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHksNOwPYqFvl1ZcRPQ7m2vkHISuR2u5wJG8UAwujAxoc7JrjP
+	8IsVkj1GS35TpUdBo6j80BzSAUwfwv/VLw07XFwpOurGAgVciq45QQflmepUWNQnamcBWi1qOm3
+	4m8ycRv2LZjLZ00hUVb5FMKaPQ1k=
+X-Gm-Gg: ASbGnctsRu3on2AO7NHXBhuSRkYH2W/o9/kLPtrq4g/88AIsxjYdRXMZG9AWqqRYKea
+	n8I4ClOiDFnuF6AgCH16I98WWE0y1ow==
+X-Google-Smtp-Source: AGHT+IHqdLVTw7LFCNcWIGfl2YvVPTopD9vaTRve5kiiNTKeEKy6ZWYdof0NETgFtIQlaLA+8jnKb0p9z2BoZJK09to=
+X-Received: by 2002:a05:6102:3908:b0:4af:bda1:8109 with SMTP id
+ ada2fe7eead31-4afbda188bfmr1660076137.21.1733405397371; Thu, 05 Dec 2024
+ 05:29:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20241205084021.35610-1-krzysztof.kozlowski@linaro.org> <c3d2477b-f12a-47dd-bf95-927e6c0d8fd5@sirena.org.uk>
+In-Reply-To: <c3d2477b-f12a-47dd-bf95-927e6c0d8fd5@sirena.org.uk>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Thu, 5 Dec 2024 16:29:45 +0300
+Message-ID: <CABTCjFA9DyRzca93qoS5_+sfc2RLfNVNqN14WVfKODjHykwGJQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ASoC: codecs: wcd9335: Add define for number of DAIs
+To: Mark Brown <broonie@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add logic to initialize I2C adapters with a specific ID if available,
-improving device identification and configuration.
+=D1=87=D1=82, 5 =D0=B4=D0=B5=D0=BA. 2024=E2=80=AF=D0=B3. =D0=B2 15:33, Mark=
+ Brown <broonie@kernel.org>:
+>
+> On Thu, Dec 05, 2024 at 09:40:20AM +0100, Krzysztof Kozlowski wrote:
+> > Number of DAIs in the codec is not really a binding, because it could
+> > grow, e.g. when we implement missing features.  Add the define to the
+> > driver, which will replace the one in the binding header.
+>
+> This breaks an allmodconfig build:
+>
+> /build/stage/linux/sound/soc/codecs/wcd9335.c:162: error: "NUM_CODEC_DAIS=
+" redef
+> ined [-Werror]
+>   162 | #define NUM_CODEC_DAIS          (AIF4_PB + 1)
+>       |
+> In file included from /build/stage/linux/sound/soc/codecs/wcd9335.c:28:
+> /build/stage/linux/include/dt-bindings/sound/qcom,wcd9335.h:13: note: thi=
+s is th
+> e location of the previous definition
+>    13 | #define NUM_CODEC_DAIS          7
+>       |
 
-Signed-off-by: Defa Li <defa.li@mediatek.com>
----
- drivers/i3c/master.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 42310c9a00c2..a838cdbb897b 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -2486,7 +2486,7 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
- 	struct i2c_adapter *adap = i3c_master_to_i2c_adapter(master);
- 	struct i2c_dev_desc *i2cdev;
- 	struct i2c_dev_boardinfo *i2cboardinfo;
--	int ret;
-+	int ret, id = -ENODEV;
- 
- 	adap->dev.parent = master->dev.parent;
- 	adap->owner = master->dev.parent->driver->owner;
-@@ -2497,7 +2497,14 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
- 	adap->timeout = 1000;
- 	adap->retries = 3;
- 
--	ret = i2c_add_adapter(adap);
-+	if (master->dev.of_node)
-+		id = of_alias_get_id(master->dev.of_node, "i2c");
-+
-+	if (id >= 0) {
-+		adap->nr = id;
-+		ret = i2c_add_numbered_adapter(adap);
-+	} else
-+		ret = i2c_add_adapter(adap);
- 	if (ret)
- 		return ret;
- 
--- 
-2.45.2
-
+This is the 1st patch in series, and NUM_CODEC_DAIS redefine from bindings
+is deleted in the 2nd one.
 
