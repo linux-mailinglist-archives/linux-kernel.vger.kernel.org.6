@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-432971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19B69E5285
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D26FD9E5286
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5468716647C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4711673D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A573D1A8F90;
-	Thu,  5 Dec 2024 10:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731911DC19F;
+	Thu,  5 Dec 2024 10:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="M9Gefwf0"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="avLg8tQ4"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9141DC046
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC8A1DA605
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395075; cv=none; b=LJ3NbvUIzLgYEm27/jWq0iQxXGiiHuRORFeX4yvAjnAvLfX1gn4S9wnU3j3GQsdqjopFOUZjnKjboRsAMY7CoFi7TbIBbFz3KunnVKwps0u/USu0k1+d62yMOL4006iAxffh3R0mKqgs2hRPm1JlP1NM5Sbq27EOqGgAQ0TY8vk=
+	t=1733395077; cv=none; b=iv1VgK3cQUxBMWkHKUdWxVOe/Algaw+/JwvIx7NoPQoxI4h+9meykItQjjexULTwyASSDg+GWnPeTn8MusEbSRbRPYg5TiaXus9Q3KgjkFTLhp3zpJfqX1N1+lNVdTut2Lwi/mwS13UIOq40ZFk/hqs/VoRO4PtMEJfsmjkKCYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395075; c=relaxed/simple;
-	bh=3h/3p3d/jgDr8aXeHN9HrkJ5/RDVlpW+np4nhoQy9uo=;
+	s=arc-20240116; t=1733395077; c=relaxed/simple;
+	bh=jUNY6BJZlto1cTtwp/89dNrWlebhXYA8qzsooGeN2uc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kdCqTWHZ53yVOSRUjX7UTfAlcHYOo2jtgYyF/rfMZDiPEvi2eR8wUfgdoT4OOpIMSn+DmWQs5IKBrnIxQUWAqK1xM9Ayvk7DHapEd62HxZnAhAUFEJJg2zOX5komm6OhTLm82zHT8uL/5mGbU5PunKIiQrzx9cWIpuLLhx/MSGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=M9Gefwf0; arc=none smtp.client-ip=209.85.215.180
+	 MIME-Version; b=GlA4PJE6bGd5NXbxZslFoRDMmWr34iasICPKkKunPpxPjCDShUlbFGJqbdPI17hsw24OB/PM8kJfH+/8iDXv2tiMZvv6gUAqKCiAclebeuOLvbY3UpvSGpcFTdrzn+LtyfkjA4bgtBLug4iAIpdJ5vvT4XAvj2aPPCm3+TouPr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=avLg8tQ4; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so653134a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:37:52 -0800 (PST)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fcdbfd8090so606114a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:37:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733395072; x=1733999872; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1733395075; x=1733999875; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=teCsoKxDGeiN3+DzdoxY3wVIl2UTRwagjcvIS6Z3bMs=;
-        b=M9Gefwf0/McuRDvxTm1oJotlatXTQYL2viJY0xcsTTpdAXhIaMfWETVz7a4V08obGa
-         fxK1JSHvW2AzeBvEyrjxjSXRHUaxy9h+7NF7xL5z3uYRIvsQX/54tnoX5wsC+KIeN1X1
-         ktnm9ctOqmRGufOlYhNSQfalp+1ZZ2WA4F7Gq56dzHKnSOiHu4uGnzndPPZnzLGefbOJ
-         6TL1Skl38TVn69asly6Km0INH5U5SjZPBA8sCyY9quCpHlgrB2FkDOQqryQoNfv2hzX1
-         /Ia6Z/+638vk4RvZINs0H0UA9LXtAq5oclat5VTADG+KD6YUBLSXlnlLFyYhdQEBogSg
-         F4UA==
+        bh=cc/dZWEu2lOmGL5teCDDaBtpVgBp3/NGadgIOM//MYE=;
+        b=avLg8tQ4gLQurRtwi2SIY+EgLV0sxOMmf4gm/Gl4AzF3W6Qfb5BPdICuyDTDCqiaWD
+         DGCqd62rdV0bkSqjwyiddxjnRxHwvkJ7enTj+A28fFHnGlukQdv0EhkYVVpfV70bkQYK
+         fKGUGsqzLoXtavQEEujqbVqwGeiv+3y2xLUXf7d3Z3hpbh2An4ApwQe/sSdGl7kCOHYZ
+         e5nVrpuHuD9XYQdaGFyXS5hgpPV/mFicg1U+StAYtbhvNOM5JU4/UZ6wchseldltrWcf
+         4ez2fWc7hxSzm58ICXM4+9SDIN9hYKfTBh5JU7Xs87tFtGot+8n2BG0WAeJhvdsx3kIN
+         dUNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395072; x=1733999872;
+        d=1e100.net; s=20230601; t=1733395075; x=1733999875;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=teCsoKxDGeiN3+DzdoxY3wVIl2UTRwagjcvIS6Z3bMs=;
-        b=a8JChBf5eo+2lJGx3niPMwus32Q68XqmEyNuHzWnh+czd+MF3DnjchFjDR8PHB06TG
-         oWM0JZhIOYL1+SGFFz8lolGnplD1tciVNF5oXINe0m6V6MFXUNFHBD57OXx/Eg3U5YWZ
-         qQb/XNBuXJ7j9z/1ODo/frFA1fHV/iJMosneVy/XkajvQAvNuGXxCa770L/l2k9410l0
-         684RWS6QxiyYwOpY0HEOmTNlk9cAfCDuCLALLwc4/+BdP4VKv+LFLrTbfTmTGEgsdjMV
-         GHUlIwqi49qb/0OauUpyqN+sSA/1a2zmJ4HY4EIgeed3P6iTG1kW7qcYsSnELcTxB3xA
-         3wIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoFKIIJzyXcjkofCZZF8m0j/XvxAlYZz0R3/Oy/Q9DIK3wcFsZVi7uFucQExNP90Gwfg2ecaZML6u1Xa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqgmOWO4ox2Cy+OOXep8uEqItn5LbwowXN2mnzqNcMKjL0B+uO
-	CF4tDMLY5g9aBqf2hXObIWCKhT2dfJivVXTX+Ua64RBXcWsEBipODNTKMeyFJDs=
-X-Gm-Gg: ASbGncsyBrL27gtFAzc8359MkNwOYbdGK8gw+8UUAoiMJ7SghApLcWxjpt3Bl0Ala4w
-	PFnV1xfClftYQGcPESTSAlg0mZOT2EoshZ91XwqPXwUXWYfHj7pWzusDh1G34B+OX8y/Qk8lybN
-	QOphxFuhGopQWSZgyWDFTQs/u0IMFBmrhh3khTMaBO4vrBRqvhAA7lZWJ6MCJ0qVttTWs+q99PW
-	FAbfRlKA7vbR4Grj11Bq3fcaDMGYAcIhokEVDz/LbXJ/Cr8otrMtzNUIM98KKs1yusHp9txvK3b
-	vFVkx6l6Tu0gEkMHz8gjVCC2wV+UAtl5
-X-Google-Smtp-Source: AGHT+IHv/nBjYCvlcRUcvZSgl+N0//z6T9cTlerWiKA9ANKuf1lPaFN2gvQdQxXb4nAsIJJZSEYzng==
-X-Received: by 2002:a05:6a20:1d98:b0:1db:efab:390c with SMTP id adf61e73a8af0-1e1653f3f22mr17696126637.35.1733395071049;
-        Thu, 05 Dec 2024 02:37:51 -0800 (PST)
+        bh=cc/dZWEu2lOmGL5teCDDaBtpVgBp3/NGadgIOM//MYE=;
+        b=A42/zEfjadE+QtM0EOgfty5Oz8glSH43wb7+RJRi1sJCAuS4s4RNcHHFrCoi0rre7R
+         m0uCuWNNh/PKr0stFc5kA1eoPLqYkNfOLzlRF6D8sMoGj6yGUs5rEkfJZBn1pJyHJX6R
+         Bqyg+1NWojb/hFal+eNBkmYBd+Xu5JMXrByp5A93WT/+vgJQOz7eXHbAB53hXNzQvpkt
+         39t2mOPNcgOt8/YPH7lrCqs9MoHSc3XiDN+GLBMDVWZGeYEpZ5xjJnprMp6SKtjTNy/D
+         je7+7IR7KnB91TKlOQG0wj7vgEpM+Lqo7ENuyiVaguH+YU7elKQ/Yi9bLQxawzlwBeOb
+         DbqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXz5aHVt8huo4CpfQA0bp5ueiYGP7NSxhhooQ4tLsGp/ayX2EJp61n83Oq2YzAwaj/8OxNnc1a4WltuNTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBhoOEpBbC6lYb3bxH8qUFklXMk07xT/RObhR6eFFDJLjq1k9D
+	6qoitBPMkRsHze8WwbxywN8mhxcawAcBkmfUlRQ3vn5cThGTGKgOKBPQxlq3ArQ=
+X-Gm-Gg: ASbGncv3lycykzfL8xeMJY1jO2ODE9QWk7nMbrkEWU6aWQ+K024Xbjwp/YXXzmEy2Ak
+	TLspMjM+a+2BDt4nYaO3CX6KMDfpQVFw2Lz0YcY4/JxsbB9eC727TzkrHHFxfdCM135J5m4mpNu
+	OS9ww1q9Djzb2EG70h+81sI5ZGmeI0cSkZBvki813gon6ybcOkMxOwYT1aLeqzQtMDn47lMde8E
+	sJIHjdOvuiVESmv2jiL+FBXJW2RJfmE4SheCeg0I9X54xbVGwIkCWFS5cmkEb69F6Atwm54OVMq
+	2rS8wBhPNiXR8OsyRJVRgTLpZPLPjLbv
+X-Google-Smtp-Source: AGHT+IEA0IERrJMVRep0HIEJfScJ16JhQtj/WdB3oMlrbTyvrSoqe//NvEXdVU3Seu11zobAb4MPFg==
+X-Received: by 2002:a05:6a21:3989:b0:1db:e3f6:55f with SMTP id adf61e73a8af0-1e1653b992amr15407579637.18.1733395075109;
+        Thu, 05 Dec 2024 02:37:55 -0800 (PST)
 Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156f048csm886826a12.39.2024.12.05.02.37.47
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156f048csm886826a12.39.2024.12.05.02.37.51
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 05 Dec 2024 02:37:50 -0800 (PST)
+        Thu, 05 Dec 2024 02:37:54 -0800 (PST)
 From: Xu Lu <luxu.kernel@bytedance.com>
 To: paul.walmsley@sifive.com,
 	palmer@dabbelt.com,
@@ -84,9 +84,9 @@ Cc: xieyongji@bytedance.com,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [RFC PATCH v2 03/21] riscv: mm: Reimplement page table entry structures
-Date: Thu,  5 Dec 2024 18:37:11 +0800
-Message-Id: <20241205103729.14798-4-luxu.kernel@bytedance.com>
+Subject: [RFC PATCH v2 04/21] riscv: mm: Reimplement page table entry constructor function
+Date: Thu,  5 Dec 2024 18:37:12 +0800
+Message-Id: <20241205103729.14798-5-luxu.kernel@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20241205103729.14798-1-luxu.kernel@bytedance.com>
 References: <20241205103729.14798-1-luxu.kernel@bytedance.com>
@@ -98,290 +98,328 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-After decoupling hardware base page and software base page, each
-software page can consists of several hardware base pages now. The pte
-struct should be turned to an array of mapping entires to map the
-software page. For example, in 64K Page Size kernel, each software page
-consists of 16 contiguous hardware pages. Thus the pte struct should
-contains 16 mapping entries to map 16 hardware pages.
-
-This commit reimplements pte structure.
+This commit reimplements the page table entry constructor. As each page
+can contains several hardware pages now, the pte constructor need to
+initialize all mapping entries of these hardware pages. Note that the
+step path between mapping entries differs in different page table entry
+levels. For example, in PTE level, the step path between hardware
+mapping entries is hardware page size (aka 4K). In PMD level, the step
+path is (2 ^ 9) * hardware page size (aka 2M), etc.
 
 Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 ---
- arch/riscv/include/asm/page.h       | 43 +++++++++++++++++++++++----
- arch/riscv/include/asm/pgtable-64.h | 41 +++++++++++++++++++++----
- arch/riscv/include/asm/pgtable.h    | 23 +++++++++++++--
- arch/riscv/mm/pgtable.c             | 46 +++++++++++++++++++++++++++++
- 4 files changed, 141 insertions(+), 12 deletions(-)
+ arch/riscv/include/asm/pgtable-32.h |  5 +++
+ arch/riscv/include/asm/pgtable-64.h | 41 +++++++++++++++++++---
+ arch/riscv/include/asm/pgtable.h    | 54 ++++++++++++++++++++++++-----
+ arch/riscv/mm/pgtable.c             | 47 +++++++++++++++++++++++++
+ 4 files changed, 133 insertions(+), 14 deletions(-)
 
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 7c581a3e057b..9bc908d94c7a 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -63,6 +63,36 @@ void clear_page(void *page);
-  * Use struct definitions to apply C type checking
-  */
+diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
+index 159a668c3dd8..2959ab72f926 100644
+--- a/arch/riscv/include/asm/pgtable-32.h
++++ b/arch/riscv/include/asm/pgtable-32.h
+@@ -37,4 +37,9 @@
+ static const __maybe_unused int pgtable_l4_enabled;
+ static const __maybe_unused int pgtable_l5_enabled;
  
-+#ifdef CONFIG_RISCV_USE_SW_PAGE
++static inline int __pgd_present(unsigned long pgdval)
++{
++	return pgdval & _PAGE_PRESENT;
++}
 +
-+#define HW_PAGES_PER_PAGE	(1 << (PAGE_SHIFT - HW_PAGE_SHIFT))
-+
-+struct page_table_entry {
-+	union {
-+		unsigned long pgds[HW_PAGES_PER_PAGE];
-+		unsigned long p4ds[HW_PAGES_PER_PAGE];
-+		unsigned long puds[HW_PAGES_PER_PAGE];
-+		unsigned long pmds[HW_PAGES_PER_PAGE];
-+		unsigned long ptes[HW_PAGES_PER_PAGE];
-+	};
-+};
-+
-+/* Page Global Directory entry */
-+typedef struct page_table_entry pgd_t;
-+
-+/* Page Table entry */
-+typedef struct page_table_entry pte_t;
-+
-+#define pte_val(x)	((x).ptes[0])
-+#define pgd_val(x)	((x).pgds[0])
-+
-+pte_t __pte(unsigned long pteval);
-+pgd_t __pgd(unsigned long pgdval);
-+#define __pte		__pte
-+#define __pgd		__pgd
-+
-+#else /* CONFIG_RISCV_USE_SW_PAGE */
-+
- /* Page Global Directory entry */
- typedef struct {
- 	unsigned long pgd;
-@@ -73,18 +103,21 @@ typedef struct {
- 	unsigned long pte;
- } pte_t;
- 
-+#define pte_val(x)	((x).pte)
-+#define pgd_val(x)	((x).pgd)
-+
-+#define __pte(x)	((pte_t) { (x) })
-+#define __pgd(x)	((pgd_t) { (x) })
-+
-+#endif /* CONFIG_RISCV_USE_SW_PAGE */
-+
- typedef struct {
- 	unsigned long pgprot;
- } pgprot_t;
- 
- typedef struct page *pgtable_t;
- 
--#define pte_val(x)	((x).pte)
--#define pgd_val(x)	((x).pgd)
- #define pgprot_val(x)	((x).pgprot)
--
--#define __pte(x)	((pte_t) { (x) })
--#define __pgd(x)	((pgd_t) { (x) })
- #define __pgprot(x)	((pgprot_t) { (x) })
- 
- #ifdef CONFIG_64BIT
+ #endif /* _ASM_RISCV_PGTABLE_32_H */
 diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
-index 963aa4be9eed..e736873d7768 100644
+index e736873d7768..efcf63667f93 100644
 --- a/arch/riscv/include/asm/pgtable-64.h
 +++ b/arch/riscv/include/asm/pgtable-64.h
-@@ -41,6 +41,35 @@ extern bool pgtable_l5_enabled;
- #define PMD_SIZE        (_AC(1, UL) << PMD_SHIFT)
- #define PMD_MASK        (~(PMD_SIZE - 1))
+@@ -204,9 +204,14 @@ static inline u64 riscv_page_io(void)
+ 					  _PAGE_USER | _PAGE_GLOBAL |	\
+ 					  _PAGE_MTMASK))
  
-+#ifdef CONFIG_RISCV_USE_SW_PAGE
++static inline int __pud_present(unsigned long pudval)
++{
++	return pudval & _PAGE_PRESENT;
++}
 +
-+/* Page 4th Directory entry */
-+typedef struct page_table_entry p4d_t;
-+
-+#define p4d_val(x)	((x).p4ds[0])
-+p4d_t __p4d(unsigned long p4dval);
-+#define __p4d		__p4d
-+#define PTRS_PER_P4D	(PAGE_SIZE / sizeof(p4d_t))
-+
-+/* Page Upper Directory entry */
-+typedef struct page_table_entry pud_t;
-+
-+#define pud_val(x)      ((x).puds[0])
-+pud_t __pud(unsigned long pudval);
-+#define __pud		__pud
-+#define PTRS_PER_PUD    (PAGE_SIZE / sizeof(pud_t))
-+
-+/* Page Middle Directory entry */
-+typedef struct page_table_entry pmd_t;
-+
-+#define pmd_val(x)      ((x).pmds[0])
-+pmd_t __pmd(unsigned long pmdval);
-+#define __pmd		__pmd
-+
-+#define PTRS_PER_PMD    (PAGE_SIZE / sizeof(pmd_t))
-+
-+#else /* CONFIG_RISCV_USE_SW_PAGE */
-+
- /* Page 4th Directory entry */
- typedef struct {
- 	unsigned long p4d;
-@@ -69,6 +98,8 @@ typedef struct {
+ static inline int pud_present(pud_t pud)
+ {
+-	return (pud_val(pud) & _PAGE_PRESENT);
++	return __pud_present(pud_val(pud));
+ }
  
- #define PTRS_PER_PMD    (PAGE_SIZE / sizeof(pmd_t))
+ static inline int pud_none(pud_t pud)
+@@ -219,11 +224,16 @@ static inline int pud_bad(pud_t pud)
+ 	return !pud_present(pud);
+ }
  
-+#endif /* CONFIG_RISCV_USE_SW_PAGE */
+-#define pud_leaf	pud_leaf
++static inline bool __pud_leaf(unsigned long pudval)
++{
++	return __pud_present(pudval) && (pudval & _PAGE_LEAF);
++}
 +
- /*
-  * rv64 PTE format:
-  * | 63 | 62 61 | 60 54 | 53  10 | 9             8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0
-@@ -98,7 +129,7 @@ enum napot_cont_order {
- #define for_each_napot_order_rev(order)						\
- 	for (order = NAPOT_ORDER_MAX - 1;					\
- 	     order >= NAPOT_CONT_ORDER_BASE; order--)
--#define napot_cont_order(val)	(__builtin_ctzl((val.pte >> _PAGE_PFN_SHIFT) << 1))
-+#define napot_cont_order(val)	(__builtin_ctzl((pte_val(val) >> _PAGE_PFN_SHIFT) << 1))
+ static inline bool pud_leaf(pud_t pud)
+ {
+-	return pud_present(pud) && (pud_val(pud) & _PAGE_LEAF);
++	return __pud_leaf(pud_val(pud));
+ }
++#define pud_leaf	pud_leaf
  
- #define napot_cont_shift(order)	((order) + PAGE_SHIFT)
- #define napot_cont_size(order)	BIT(napot_cont_shift(order))
-@@ -279,7 +310,7 @@ static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
+ static inline int pud_user(pud_t pud)
+ {
+@@ -321,14 +331,30 @@ static inline int p4d_none(p4d_t p4d)
+ 	return 0;
+ }
+ 
++static inline int __p4d_present(unsigned long p4dval)
++{
++	return p4dval & _PAGE_PRESENT;
++}
++
+ static inline int p4d_present(p4d_t p4d)
+ {
  	if (pgtable_l4_enabled)
- 		WRITE_ONCE(*p4dp, p4d);
- 	else
--		set_pud((pud_t *)p4dp, (pud_t){ p4d_val(p4d) });
-+		set_pud((pud_t *)p4dp, __pud(p4d_val(p4d)));
+-		return (p4d_val(p4d) & _PAGE_PRESENT);
++		return __p4d_present(p4d_val(p4d));
+ 
+ 	return 1;
  }
  
- static inline int p4d_none(p4d_t p4d)
-@@ -327,7 +358,7 @@ static inline pud_t *p4d_pgtable(p4d_t p4d)
++static inline int __p4d_leaf(unsigned long p4dval)
++{
++	return 0;
++}
++
++static inline int p4d_leaf(p4d_t p4d)
++{
++	return __p4d_leaf(p4d_val(p4d));
++}
++#define p4d_leaf	p4d_leaf
++
+ static inline int p4d_bad(p4d_t p4d)
+ {
  	if (pgtable_l4_enabled)
- 		return (pud_t *)pfn_to_virt(__page_val_to_pfn(p4d_val(p4d)));
- 
--	return (pud_t *)pud_pgtable((pud_t) { p4d_val(p4d) });
-+	return (pud_t *)pud_pgtable(__pud(p4d_val(p4d)));
+@@ -388,10 +414,15 @@ static inline int pgd_none(pgd_t pgd)
+ 	return 0;
  }
- #define p4d_page_vaddr(p4d)	((unsigned long)p4d_pgtable(p4d))
  
-@@ -346,7 +377,7 @@ static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
++static inline int __pgd_present(unsigned long pgdval)
++{
++	return pgdval & _PAGE_PRESENT;
++}
++
+ static inline int pgd_present(pgd_t pgd)
+ {
  	if (pgtable_l5_enabled)
- 		WRITE_ONCE(*pgdp, pgd);
- 	else
--		set_p4d((p4d_t *)pgdp, (p4d_t){ pgd_val(pgd) });
-+		set_p4d((p4d_t *)pgdp, __p4d(pgd_val(pgd)));
+-		return (pgd_val(pgd) & _PAGE_PRESENT);
++		return __pgd_present(pgd_val(pgd));
+ 
+ 	return 1;
  }
- 
- static inline int pgd_none(pgd_t pgd)
-@@ -384,7 +415,7 @@ static inline p4d_t *pgd_pgtable(pgd_t pgd)
- 	if (pgtable_l5_enabled)
- 		return (p4d_t *)pfn_to_virt(__page_val_to_pfn(pgd_val(pgd)));
- 
--	return (p4d_t *)p4d_pgtable((p4d_t) { pgd_val(pgd) });
-+	return (p4d_t *)p4d_pgtable(__p4d(pgd_val(pgd)));
- }
- #define pgd_page_vaddr(pgd)	((unsigned long)pgd_pgtable(pgd))
- 
 diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 9d3947ec3523..f9aed43809b3 100644
+index f9aed43809b3..1d5f533edbd5 100644
 --- a/arch/riscv/include/asm/pgtable.h
 +++ b/arch/riscv/include/asm/pgtable.h
-@@ -574,6 +574,25 @@ static inline void __set_pte_at(struct mm_struct *mm, pte_t *ptep, pte_t pteval)
- 
- #define PFN_PTE_SHIFT		_PAGE_PFN_SHIFT
- 
-+#ifdef CONFIG_RISCV_USE_SW_PAGE
-+static inline pte_t pte_advance_pfn(pte_t pte, unsigned long nr)
-+{
-+	unsigned int i;
-+
-+	if (pte_present(pte) && !pte_napot(pte))
-+		for (i = 0; i < HW_PAGES_PER_PAGE; i++)
-+			pte.ptes[i] += nr << _PAGE_PFN_SHIFT;
-+
-+	return pte;
-+}
-+#else
-+static inline pte_t pte_advance_pfn(pte_t pte, unsigned long nr)
-+{
-+	return __pte(pte_val(pte) + (nr << _PAGE_PFN_SHIFT));
-+}
-+#endif
-+#define pte_advance_pfn		pte_advance_pfn
-+
- static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
- 		pte_t *ptep, pte_t pteval, unsigned int nr)
- {
-@@ -584,7 +603,7 @@ static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
- 		if (--nr == 0)
- 			break;
- 		ptep++;
--		pte_val(pteval) += 1 << _PAGE_PFN_SHIFT;
-+		pteval = pte_advance_pfn(pteval, 1);
- 	}
+@@ -220,8 +220,19 @@ static inline unsigned long satp_pfn(unsigned long satp)
+ 	return hwpfn_to_pfn(hwpfn);
  }
- #define set_ptes set_ptes
-@@ -882,7 +901,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
- 	  ((offset) << __SWP_OFFSET_SHIFT) })
  
- #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
--#define __swp_entry_to_pte(x)	((pte_t) { (x).val })
-+#define __swp_entry_to_pte(x)	(__pte((x).val))
- 
- static inline int pte_swp_exclusive(pte_t pte)
++static inline int __pgd_leaf(unsigned long pgdval)
++{
++	return __pgd_present(pgdval) && (pgdval & _PAGE_LEAF);
++}
++
++static inline int pgd_leaf(pgd_t pgd)
++{
++	return __pgd_leaf(pgd_val(pgd));
++}
++#define pgd_leaf	pgd_leaf
++
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-static inline int pmd_present(pmd_t pmd)
++static inline int __pmd_present(unsigned long pmdval)
  {
+ 	/*
+ 	 * Checking for _PAGE_LEAF is needed too because:
+@@ -229,15 +240,20 @@ static inline int pmd_present(pmd_t pmd)
+ 	 * the present bit, in this situation, pmd_present() and
+ 	 * pmd_trans_huge() still needs to return true.
+ 	 */
+-	return (pmd_val(pmd) & (_PAGE_PRESENT | _PAGE_PROT_NONE | _PAGE_LEAF));
++	return (pmdval & (_PAGE_PRESENT | _PAGE_PROT_NONE | _PAGE_LEAF));
+ }
+ #else
+-static inline int pmd_present(pmd_t pmd)
++static inline int __pmd_present(unsigned long pmdval)
+ {
+-	return (pmd_val(pmd) & (_PAGE_PRESENT | _PAGE_PROT_NONE));
++	return (pmdval & (_PAGE_PRESENT | _PAGE_PROT_NONE));
+ }
+ #endif
+ 
++static inline int pmd_present(pmd_t pmd)
++{
++	return __pmd_present(pmd_val(pmd));
++}
++
+ static inline int pmd_none(pmd_t pmd)
+ {
+ 	return (pmd_val(pmd) == 0);
+@@ -248,11 +264,16 @@ static inline int pmd_bad(pmd_t pmd)
+ 	return !pmd_present(pmd) || (pmd_val(pmd) & _PAGE_LEAF);
+ }
+ 
+-#define pmd_leaf	pmd_leaf
++static inline bool __pmd_leaf(unsigned long pmdval)
++{
++	return __pmd_present(pmdval) && (pmdval & _PAGE_LEAF);
++}
++
+ static inline bool pmd_leaf(pmd_t pmd)
+ {
+-	return pmd_present(pmd) && (pmd_val(pmd) & _PAGE_LEAF);
++	return __pmd_leaf(pmd_val(pmd));
+ }
++#define pmd_leaf	pmd_leaf
+ 
+ static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
+ {
+@@ -306,9 +327,14 @@ static __always_inline bool has_svnapot(void)
+ 	return riscv_has_extension_likely(RISCV_ISA_EXT_SVNAPOT);
+ }
+ 
++static inline unsigned long __pte_napot(unsigned long val)
++{
++	return val & _PAGE_NAPOT;
++}
++
+ static inline unsigned long pte_napot(pte_t pte)
+ {
+-	return pte_val(pte) & _PAGE_NAPOT;
++	return __pte_napot(pte_val(pte));
+ }
+ 
+ static inline pte_t pte_mknapot(pte_t pte, unsigned int order)
+@@ -324,11 +350,16 @@ static inline pte_t pte_mknapot(pte_t pte, unsigned int order)
+ 
+ static __always_inline bool has_svnapot(void) { return false; }
+ 
+-static inline unsigned long pte_napot(pte_t pte)
++static inline unsigned long __pte_napot(unsigned long pteval)
+ {
+ 	return 0;
+ }
+ 
++static inline unsigned long pte_napot(pte_t pte)
++{
++	return __pte_napot(pte_val(pte));
++}
++
+ #endif /* CONFIG_RISCV_ISA_SVNAPOT */
+ 
+ /* Yields the page frame number (PFN) of a page table entry */
+@@ -356,9 +387,14 @@ static inline pte_t pfn_pte(unsigned long pfn, pgprot_t prot)
+ 
+ #define mk_pte(page, prot)       pfn_pte(page_to_pfn(page), prot)
+ 
++static inline int __pte_present(unsigned long pteval)
++{
++	return (pteval & (_PAGE_PRESENT | _PAGE_PROT_NONE));
++}
++
+ static inline int pte_present(pte_t pte)
+ {
+-	return (pte_val(pte) & (_PAGE_PRESENT | _PAGE_PROT_NONE));
++	return __pte_present(pte_val(pte));
+ }
+ 
+ #define pte_accessible pte_accessible
 diff --git a/arch/riscv/mm/pgtable.c b/arch/riscv/mm/pgtable.c
-index 4ae67324f992..0c6b2fc6be58 100644
+index 0c6b2fc6be58..f57ada26a183 100644
 --- a/arch/riscv/mm/pgtable.c
 +++ b/arch/riscv/mm/pgtable.c
-@@ -5,6 +5,52 @@
- #include <linux/kernel.h>
- #include <linux/pgtable.h>
+@@ -10,6 +10,13 @@
+ pte_t __pte(unsigned long pteval)
+ {
+ 	pte_t pte;
++	unsigned int i;
++
++	for (i = 0; i < HW_PAGES_PER_PAGE; i++) {
++		pte.ptes[i] = pteval;
++		if (__pte_present(pteval) && !__pte_napot(pteval))
++			pteval += 1 << _PAGE_HWPFN_SHIFT;
++	}
  
-+#ifdef CONFIG_RISCV_USE_SW_PAGE
+ 	return pte;
+ }
+@@ -18,6 +25,16 @@ EXPORT_SYMBOL(__pte);
+ pgd_t __pgd(unsigned long pgdval)
+ {
+ 	pgd_t pgd;
++	unsigned int i;
 +
-+pte_t __pte(unsigned long pteval)
-+{
-+	pte_t pte;
++	for (i = 0; i < HW_PAGES_PER_PAGE; i++) {
++		pgd.pgds[i] = pgdval;
++		if (__pgd_leaf(pgdval))
++			pgdval += (1 << (PGDIR_SHIFT - PAGE_SHIFT)) <<
++					_PAGE_HWPFN_SHIFT;
++		else if (__pgd_present(pgdval))
++			pgdval += 1 << _PAGE_HWPFN_SHIFT;
++	}
+ 
+ 	return pgd;
+ }
+@@ -27,6 +44,16 @@ EXPORT_SYMBOL(__pgd);
+ p4d_t __p4d(unsigned long p4dval)
+ {
+ 	p4d_t p4d;
++	unsigned int i;
 +
-+	return pte;
-+}
-+EXPORT_SYMBOL(__pte);
++	for (i = 0; i < HW_PAGES_PER_PAGE; i++) {
++		p4d.p4ds[i] = p4dval;
++		if (__p4d_leaf(p4dval))
++			p4dval += (1 << (P4D_SHIFT - PAGE_SHIFT)) <<
++					_PAGE_HWPFN_SHIFT;
++		else if (__p4d_present(p4dval))
++			p4dval += 1 << _PAGE_HWPFN_SHIFT;
++	}
+ 
+ 	return p4d;
+ }
+@@ -35,6 +62,16 @@ EXPORT_SYMBOL(__p4d);
+ pud_t __pud(unsigned long pudval)
+ {
+ 	pud_t pud;
++	unsigned int i;
 +
-+pgd_t __pgd(unsigned long pgdval)
-+{
-+	pgd_t pgd;
++	for (i = 0; i < HW_PAGES_PER_PAGE; i++) {
++		pud.puds[i] = pudval;
++		if (__pud_leaf(pudval))
++			pudval += (1 << (PUD_SHIFT - PAGE_SHIFT)) <<
++					_PAGE_HWPFN_SHIFT;
++		else if (__pud_present(pudval))
++			pudval += 1 << _PAGE_HWPFN_SHIFT;
++	}
+ 
+ 	return pud;
+ }
+@@ -43,6 +80,16 @@ EXPORT_SYMBOL(__pud);
+ pmd_t __pmd(unsigned long pmdval)
+ {
+ 	pmd_t pmd;
++	unsigned int i;
 +
-+	return pgd;
-+}
-+EXPORT_SYMBOL(__pgd);
-+
-+#ifdef CONFIG_64BIT
-+p4d_t __p4d(unsigned long p4dval)
-+{
-+	p4d_t p4d;
-+
-+	return p4d;
-+}
-+EXPORT_SYMBOL(__p4d);
-+
-+pud_t __pud(unsigned long pudval)
-+{
-+	pud_t pud;
-+
-+	return pud;
-+}
-+EXPORT_SYMBOL(__pud);
-+
-+pmd_t __pmd(unsigned long pmdval)
-+{
-+	pmd_t pmd;
-+
-+	return pmd;
-+}
-+EXPORT_SYMBOL(__pmd);
-+#endif /* CONFIG_64BIT */
-+
-+#endif /* CONFIG_RISCV_USE_SW_PAGE */
-+
- int ptep_set_access_flags(struct vm_area_struct *vma,
- 			  unsigned long address, pte_t *ptep,
- 			  pte_t entry, int dirty)
++	for (i = 0; i < HW_PAGES_PER_PAGE; i++) {
++		pmd.pmds[i] = pmdval;
++		if (__pmd_leaf(pmdval))
++			pmdval += (1 << (PMD_SHIFT - PAGE_SHIFT)) <<
++					_PAGE_HWPFN_SHIFT;
++		else if (__pmd_present(pmdval))
++			pmdval += 1 << _PAGE_HWPFN_SHIFT;
++	}
+ 
+ 	return pmd;
+ }
 -- 
 2.20.1
 
