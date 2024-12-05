@@ -1,157 +1,152 @@
-Return-Path: <linux-kernel+bounces-433369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1369E577E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:44:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F409E578C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D14289AAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDED28A757
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E4A1C3318;
-	Thu,  5 Dec 2024 13:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01CC219A77;
+	Thu,  5 Dec 2024 13:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSeNvS1F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tR/pFGfW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CC820D51C;
-	Thu,  5 Dec 2024 13:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6FAE56C;
+	Thu,  5 Dec 2024 13:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733406273; cv=none; b=VLb6t9Ji8OMUAjhv3EvSE1YeqJvgCqW2cY6CCeGRMe+EDB5xHjfB+61cnUCx02kdsfIaEpIv+MjPBxjVk0m4rZ6fGBHzmaFibSKMlQ8StejnXjQB9YlqBfD/tA3+GAZfJMlnWDfpI1uPyzVeq3KmUsW/uMKQCYBJJLcNgHT+l9c=
+	t=1733406332; cv=none; b=onqvUOmDRoHK50wns8+x8RSxSCGAnSO72noIspIc/9NXEqCuLVn/HKc42DCda1eAsh7uagZx9RUYqv4g8gfhAsUzj3DLI8TTnaGKNm8BKGPq6cej0HHzV6cEe4Zu5NOgqwMMxMErEM6c5wGBd/Ieer15mXBhW2cFCkEokYU64ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733406273; c=relaxed/simple;
-	bh=7qd9ukMCfLX+3kIyTtuM6RCc1gUTy6aBIeGgFPUmZM0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AL/wdvFtUawH28VwBVeFv3UIutRhmp3EPcq+QQybf7e7o64ZSieItiBXbTnvoOnSddKYUJ35yzxpE6xljkk08UP0QBAOCs4YYi3YdZZUg87q49y0rlvbVyBH4Ht855lf0zYLoZDIgJnmXsIF0OoELgOulhj4zIHZ+fIUrQCcNO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSeNvS1F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 549C1C4CED1;
-	Thu,  5 Dec 2024 13:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733406273;
-	bh=7qd9ukMCfLX+3kIyTtuM6RCc1gUTy6aBIeGgFPUmZM0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pSeNvS1FGTNF5y+od7mzfK7pk/9WxWuXPQzi5NTurX7TbotP1nEyp4F5v7XRqrxPR
-	 mbvo8QpaSWo6Hv2U2yVX62Y3jZ08zySNZCnsm6MZJjpzYxcQSpVJ1Waax48jqmKk7G
-	 KYEyoRgvQL6th3hJXwVQfUALAF6GvNHF0m1ifjOos0D4/0cIgPhJdEIPhK878NiF70
-	 IrmC4lmAogYFGHxJoVQEIIkj3XZjXN5zZRowgyyTij6G/GNKJhgg7zVTznDNuGSnYR
-	 46xfspmrtQtnhxJalP4uu5iAR8qjVpnsJFI2uj9f9joXux+jFlO1HXdUk+IiX0e+vf
-	 mS/YiKUQV1I6w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tJC9f-000pdd-5a;
-	Thu, 05 Dec 2024 13:44:31 +0000
-Date: Thu, 05 Dec 2024 13:44:30 +0000
-Message-ID: <86frn2tfb5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>,
-	<sudeep.holla@arm.com>,
-	<cristian.marussi@arm.com>,
-	<andersson@kernel.org>,
-	<konrad.dybcio@linaro.org>,
-	<robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>,
-	<dmitry.baryshkov@linaro.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<quic_rgottimu@quicinc.com>,
-	<quic_kshivnan@quicinc.com>,
-	<conor+dt@kernel.org>,
-	<quic_nkela@quicinc.com>,
-	<quic_psodagud@quicinc.com>,
-	<abel.vesa@linaro.org>
-Subject: Re: [PATCH V7 0/2] qcom: x1e80100: Enable CPUFreq
-In-Reply-To: <0fd14fb1-736d-cf7f-128f-658bda0de583@quicinc.com>
-References: <20241030130840.2890904-1-quic_sibis@quicinc.com>
-	<ZyTQ9QD1tEkhQ9eu@hovoldconsulting.com>
-	<86plnf11yf.wl-maz@kernel.org>
-	<ZyTjiiGc2ApoID9Y@hovoldconsulting.com>
-	<86o72z10b6.wl-maz@kernel.org>
-	<ZypOY-NCDN9fdMAR@hovoldconsulting.com>
-	<86ed3p1rdq.wl-maz@kernel.org>
-	<0fd14fb1-736d-cf7f-128f-658bda0de583@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733406332; c=relaxed/simple;
+	bh=KlExZAtg0Kis5bLL/z3uSjKTU7Vnw5SzSNzHDs3ef7g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oWNnasKTSWH/1lq47HA9NpXO989d1/AIDO06e3gKSalEi17WGWpErOTzWspv7BNAI1EQI6jIx8E8QQJzuPdm7OxT8oSGz8G0Y67+Mt/C9WxxBHUxVsF4h9HAaQdxIoWCH1juZc/Ifgq6P6yDOelwRf6k4Jo4O6h/YGH9lry2+mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tR/pFGfW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C8CD83E;
+	Thu,  5 Dec 2024 14:44:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733406298;
+	bh=KlExZAtg0Kis5bLL/z3uSjKTU7Vnw5SzSNzHDs3ef7g=;
+	h=From:Subject:Date:To:Cc:From;
+	b=tR/pFGfW732svcGgNMRqq7iJxjOVpe1MlH1agJkBZil47fs/n9YG+WIYxfCmIT2wi
+	 uaieqGoK04awZ3tkvt2U+SrYMJhSlOaRy61KUWf9CY3qjskbTwKBU/+sEyNTuna0Kw
+	 z70800sORk8bMIyshIHwWCp1FmWafU3OSmluX+qo=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v2 00/10] drm: Add DSI/DP support for Renesas r8a779h0 V4M
+ and grey-hawk board
+Date: Thu, 05 Dec 2024 15:44:55 +0200
+Message-Id: <20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: quic_sibis@quicinc.com, johan@kernel.org, sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, quic_nkela@quicinc.com, quic_psodagud@quicinc.com, abel.vesa@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFiuUWcC/1XMQQ6CMBCF4auQWTumLRLBFfcwLMZ2gFlIzdQQD
+ endrbhy+b/kfRskVuEEl2oD5VWSxKWEO1TgZ1omRgmlwRl3ssa0qJ4UpxlDEuy8sWMTmMm3UB4
+ P5VFeu3YdSs+SnlHfO77a7/pznKn/nNWiwXPdElvqmuCol8CU4nKLpOHo4x2GnPMHtcTBX60AA
+ AA=
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ linux-clk@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ stable@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2246;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=KlExZAtg0Kis5bLL/z3uSjKTU7Vnw5SzSNzHDs3ef7g=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUa5uOpxV2VVU3bb8dbMufSnS3cON3Mn9QI99q
+ KQ7DMImdiiJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1GubgAKCRD6PaqMvJYe
+ 9f9vD/4zr15OyDkgh0dJJzfSs/l3ztcF2gGAXihxLanqZczBzhNkhyeLexswCj11yvzXCdrMVVt
+ 01iVi5M2WUyeiITUBCTSGUdHAtuibbpI7NuLzjp7k9QQaJg/qIBDbM/6tFQEG2JMvgcQ3QMvrj+
+ RoUcA8Qa4G6/5/lrk+q3pXWTaW60/8RxJm9kiJfR5gFaoEh41bO2u9JPQwjlWh066RiHNqXbCWi
+ J17x5ZrLvFcf1GPa91aIH5IpO169LKtGrTTreAYNKQ3KkIgtsaaqp0kbNAJSCNyKIADy1khxVTJ
+ 49EAVgCVVPkOnEq2VK1MT7cPJd0ZG20IcnvPrYrmxvkHJZZqxciJyBmZt/BrFOyuF1cdoY6LiGS
+ UCvw4y6q64uJqu091JMpYGWGTy77rZRep3AkuyRIsyXwVk+5MISKZUENa0ZNOi+9rbjgIlDX5q0
+ spzVaReL9qTjFPwXCNeoXEEJa3xskla4g6qTvTafZQRUMQdWxAQzPY33tgwGT/y8YmGULNsruI9
+ ocIB2wfQ6pcJh7u/tDkCpR0ICYilGKF0YNSmGhLUZhO7Db7gTo72WbWLlWnASM2Fsh0MYDeELDw
+ 08x5xug0VA1RTWxGJJX8SmADZnQCG+ox62JBe5+apcbghNLNxb3bm8h01vgIPD5+YJ6U+7yF2FH
+ +ME4xxYFKdH7J+Q==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Thu, 05 Dec 2024 11:23:05 +0000,
-Sibi Sankar <quic_sibis@quicinc.com> wrote:
-> 
-> 
-> 
-> On 11/5/24 23:42, Marc Zyngier wrote:
-> > On Tue, 05 Nov 2024 16:57:07 +0000,
-> > Johan Hovold <johan@kernel.org> wrote:
-> >> 
-> >> On Fri, Nov 01, 2024 at 02:43:57PM +0000, Marc Zyngier wrote:
-> >>> On Fri, 01 Nov 2024 14:19:54 +0000,
-> >>> Johan Hovold <johan@kernel.org> wrote:
-> >> 
-> >>>> The side-effects and these remaining warnings are addressed by this
-> >>>> series:
-> >>>> 
-> >>>> 	https://lore.kernel.org/all/20241030125512.2884761-1-quic_sibis@quicinc.com/
-> >>>> 
-> >>>> but I think we should try to make the warnings a bit more informative
-> >>>> (and less scary) by printing something along the lines of:
-> >>>> 
-> >>>> 	arm-scmi arm-scmi.0.auto: [Firmware Bug]: Ignoring duplicate OPP 3417600 for NCC
-> >>>> 
-> >>>> instead.
-> >>> 
-> >>> Indeed. Seeing [Firmware Bug] has a comforting feeling of
-> >>> familiarity... :)
-> >>> 
-> >>> I wonder whether the same sort of reset happen on more "commercial"
-> >>> systems (such as some of the laptops). You expect that people look at
-> >>> the cpufreq stuff closely, and don't see things exploding like we are.
-> >> 
-> >> I finally got around to getting my Lenovo ThinkPad T14s to boot (it
-> >> refuses to start the kernel when using GRUB, and it's not due to the
-> >> known 64 GB memory issue as it only has 32 GB)
-> > 
-> > <cry>
-> > I know the feeling. My devkit can't use GRUB either, so I added a
-> > hook to the GRUB config to generate EFI scripts that directly execute
-> > the kernel with initrd, dtb, and command line.
-> > 
-> > This is probably the worse firmware I've seen in a very long while.
-> 
-> The PERF_LEVEL_GET implementation in the SCP firmware side
-> is the reason for the crash :|, currently there is a bug
-> in the kernel that picks up index that we set with LEVEL_SET
-> with fast channel and that masks the crash. I was told the
-> crash happens when idle states are enabled and a regular
-> LEVEL_GET message is triggered from the kernel. This was
-> fixed a while back but it will take a while to flow back
-> to all the devices. It should already be out CRD's.
+Add everything needed to support the DSI output on Renesas r8a779h0
+(V4M) SoC, and the DP output (via sn65dsi86 DSI to DP bridge) on the
+Renesas grey-hawk board.
 
-But this fix will never reach some platforms, such as the devkit, and
-we cannot mandate that people update to the latest anyway. How do we
-distinguish between good and bad firmware versions?
+Overall the DSI and the board design is almost identical to Renesas
+r8a779g0 and white-hawk board.
 
-Thanks,
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Changes in v2:
+- Add the DT binding with a new conditional block, so that we can set
+  only the port@0 as required
+- Drop port@1 from r8a779h0.dtsi (there's no port@1)
+- Add a new patch to write DPTSR only if num_crtcs > 1
+- Drop RCAR_DU_FEATURE_NO_DPTSR (not needed anymore)
+- Add Cc: stable to the fix, and move it as first patch
+- Added the tags from reviews
+- Link to v1: https://lore.kernel.org/r/20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com
 
-	M.
+---
+Tomi Valkeinen (10):
+      drm/rcar-du: dsi: Fix PHY lock bit check
+      drm/rcar-du: Write DPTSR only if there are more than one crtc
+      dt-bindings: display: bridge: renesas,dsi-csi2-tx: Add r8a779h0
+      dt-bindings: display: renesas,du: Add r8a779h0
+      clk: renesas: r8a779h0: Add display clocks
+      drm/rcar-du: dsi: Add r8a779h0 support
+      drm/rcar-du: Add support for r8a779h0
+      arm64: dts: renesas: gray-hawk-single: Fix indentation
+      arm64: dts: renesas: r8a779h0: Add display support
+      arm64: dts: renesas: gray-hawk-single: Add DisplayPort support
 
+ .../display/bridge/renesas,dsi-csi2-tx.yaml        |   1 +
+ .../devicetree/bindings/display/renesas,du.yaml    |  52 ++++++++-
+ .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 119 ++++++++++++++++++---
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi          |  73 +++++++++++++
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c            |   4 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c      |  18 ++++
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c    |  16 +--
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |   4 +-
+ .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h   |   1 -
+ 9 files changed, 264 insertions(+), 24 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241008-rcar-gh-dsi-9c01f5deeac8
+
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
