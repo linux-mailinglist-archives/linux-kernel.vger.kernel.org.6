@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-433741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAABB9E5C6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:01:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED10F9E5C39
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:53:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843252891AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:01:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71347168A29
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE549222578;
-	Thu,  5 Dec 2024 17:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1067D229B34;
+	Thu,  5 Dec 2024 16:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="WmB+XT4n"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UzoJTvjX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EBA1773A;
-	Thu,  5 Dec 2024 17:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B76222561;
+	Thu,  5 Dec 2024 16:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733418111; cv=none; b=FBvgJBpd7aZ+mDhkrq46MPNP/E4aNlGMl5fwZiBdlyWi0a+Gq3ubSZ1lGCQDrsCQHRfBcq2Xl7w+4A2XEOgZK6U/UELo1Ho3Bq/PpUiphVD3EblD1UAFExVHP0RGtSdrSs9LhQR6pP2FQd3egTGGM9ROhGo4YBCuCPDuKADIBS8=
+	t=1733417519; cv=none; b=mkmwQGQyHVYwK9kTQ/QMwBXZqJvFEteUQHGYGdk1D20v1wQUMi2rMLU1d9aoVgDYJQ1EP3+G2myYYLqniUlJUoDCQi1UdSRFRa6xkVH15fgAlQ7qndtLx586NFGenJk0Jj9d+0mgHgRNBaUFpddKFlM+DYyn+d8eV6fFZ6hL2AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733418111; c=relaxed/simple;
-	bh=hcQ6mXQOWIv6H5d6++tX4TOzw8pDSNVnchrEUZQXGPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UA72K08l6L8vgPw4xsEgLrn9/y21I4Tft96CY9b+qp73nUd5/DiVzITmIfyyv7I/ESL1Cwwp1Yu0dgsRgA8hjUPaLxpX73ROCTigpooys2ftuMR9QQ/aIneTWHgWcUEbBdWcybQVVnmt6O+8xO1VecLY7RrQ2aAYyXBNWFx2bN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=WmB+XT4n; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5GhU39005366;
-	Thu, 5 Dec 2024 17:01:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pps0720; bh=orMNpXH0v4LAkoIc9LBZaYFX7lBg0GF4pdD6C
-	HoKKzg=; b=WmB+XT4naguhdYLv3rRqzLvh8aTtjG/Kk9HOTn3UOMnHddcApnvKM
-	D9R1R8cL9VQbEkHmU2iYqrM5LQ1MJ0uhqyNV6CFUUgq/StU0BDxivRQRu7/F5/1J
-	Dq3ImzEWTdTYXaf+wH2WzyB3VKXgzTRhy+eCEc3aE8NvdeC197owdTrZO8Sc54Bl
-	rKk7l8HgJ93CtFsqgX3RGx25tNLXPkfUkNvTxg2b+Tecwp6rFExAVuNtI+9cBL+O
-	vMkJs5h3xGI7VU1Efoly9dm2qX4e+tR9pJdw6H9krQWIVWdZ3vEgrQ7tJNCE0+M6
-	97zG7PHJlSX0qlh41+mJ68Bpx94AXQIJg==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 43bfxn072d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 17:01:30 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id F0714D1DE;
-	Thu,  5 Dec 2024 17:01:27 +0000 (UTC)
-Received: from cat.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTP id A83A7811A60;
-	Thu,  5 Dec 2024 17:01:27 +0000 (UTC)
-Received: by cat.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-	id 02161B4907; Thu,  5 Dec 2024 10:52:41 -0600 (CST)
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH] perf: Increase MAX_NR_CPUS to 4096
-Date: Thu,  5 Dec 2024 10:51:18 -0600
-Message-Id: <20241205165118.153148-1-kyle.meyer@hpe.com>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1733417519; c=relaxed/simple;
+	bh=P9EPHJQc4bTsB4hGE5HCvIT64O7CFyXT6mNMwFFliCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GdCqrMyTduDoPSWxtJovhsQsX5Yq+jJVUPQZFtygMOj4nVD3MQcZBhA8U0abHoNHLCZlvPkHkqYa/j1GkpKjwIjYByMZpFxIqqhJNUtxMHvpnoZoERhW7A9IJu/EB/mVCB87s/w5hCnYKDhRHk1iVc3R9w0L/4hBxpQfYJsRogc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=UzoJTvjX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=eY09Fm627PVbCKVl5kryyt7XcMRMEBR6XVqQMDGQMZE=; b=UzoJTvjX8sDdc8D0FXaOQM39se
+	W3x2k2ogf9ZBC+mZBz9SUkt3/NCvftbFiRdTvbWNpv1zyDAvyAbIs84WVYV7GKQJ+0ygPMYN9vJsI
+	l7CgtULAUpjRc8DzGm/omRupqYRQCs5DW2XQUXazA2zBONtMFNQCHJ99csaZEZur/XwWMmMo+uAUv
+	DDRn7ag7oPIiUQsfmrhzGd7SqjV9feBGJVn4/tz1XwWx4v/mCki28Z9cRfGT5+ecyprrHmj8o5ouM
+	Ld2Iwa1ZNPijv/wQTouGcuvJ/s+pbw92672l7j7juT74dY/W8QEC/oZK8kWjhS/yX4SLg5im7vdNC
+	1v97PjnQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41306)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tJF4Y-0005C1-1d;
+	Thu, 05 Dec 2024 16:51:27 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tJF4R-0006ho-15;
+	Thu, 05 Dec 2024 16:51:19 +0000
+Date: Thu, 5 Dec 2024 16:51:19 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: jan.petrous@oss.nxp.com
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>, 0x1207@gmail.com,
+	fancer.lancer@gmail.com, Jacob Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH net-next v8 01/15] net: stmmac: Fix CSR divider comment
+Message-ID: <Z1HaB6hT0QX4Jlyx@shell.armlinux.org.uk>
+References: <20241205-upstream_s32cc_gmac-v8-0-ec1d180df815@oss.nxp.com>
+ <20241205-upstream_s32cc_gmac-v8-1-ec1d180df815@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: guLFV4dQ1QhUEb0DDpivF4gdg3nYTPx9
-X-Proofpoint-ORIG-GUID: guLFV4dQ1QhUEb0DDpivF4gdg3nYTPx9
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- spamscore=0 malwarescore=0 clxscore=1011 bulkscore=0 priorityscore=1501
- phishscore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050124
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205-upstream_s32cc_gmac-v8-1-ec1d180df815@oss.nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Systems have surpassed 2048 CPUs. Increase MAX_NR_CPUS to 4096.
+On Thu, Dec 05, 2024 at 05:42:58PM +0100, Jan Petrous via B4 Relay wrote:
+> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+> 
+> The comment in declaration of STMMAC_CSR_250_300M
+> incorrectly describes the constant as '/* MDC = clk_scr_i/122 */'
+> but the DWC Ether QOS Handbook version 5.20a says it is
+> CSR clock/124.
+> 
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
-Bitmaps declared with MAX_NR_CPUS bits will increase from 256B to 512B,
-and cpus_runtime will increase from 81960B to 163880B.
+I gave my reviewed-by for this patch in the previous posting, but you
+haven't included it.
 
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
----
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-Tested on a 32 socket Sapphire Rapids system with 3840 CPUs.
-
- tools/lib/perf/include/internal/cpumap.h | 2 +-
- tools/perf/perf.h                        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/include/internal/cpumap.h
-index 49649eb51ce4..3cf28522004e 100644
---- a/tools/lib/perf/include/internal/cpumap.h
-+++ b/tools/lib/perf/include/internal/cpumap.h
-@@ -22,7 +22,7 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
- };
- 
- #ifndef MAX_NR_CPUS
--#define MAX_NR_CPUS	2048
-+#define MAX_NR_CPUS	4096
- #endif
- 
- struct perf_cpu_map *perf_cpu_map__alloc(int nr_cpus);
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index c004dd4e65a3..3cb40965549f 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -3,7 +3,7 @@
- #define _PERF_PERF_H
- 
- #ifndef MAX_NR_CPUS
--#define MAX_NR_CPUS			2048
-+#define MAX_NR_CPUS			4096
- #endif
- 
- enum perf_affinity {
 -- 
-2.47.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
