@@ -1,164 +1,130 @@
-Return-Path: <linux-kernel+bounces-433809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B599E5D59
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:36:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F005D9E5D43
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F2828259A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A06281FE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17367229B01;
-	Thu,  5 Dec 2024 17:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0507921A42B;
+	Thu,  5 Dec 2024 17:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="KG9tk7D3"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="maNOdNK1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B03221465;
-	Thu,  5 Dec 2024 17:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF46224B00
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420143; cv=none; b=V4swDCduwTPsWtUzWAhxooEQnT4OWXVdlPwEpimbobP9cs0rtu1sq6R2vYals+JW1vWap5DqXx82YF9cu8DyvqF1QcqOHNZGkVMjDmV9Atd1uS7gNzSq2aC6MDCq2ckVmyv6Hi+po4q0/WhfpNauhV4z8Wp0PM1i5snOqD/0ypA=
+	t=1733420121; cv=none; b=i8fWux2Z2blB+3XF7nQMNNO2NFU/QdJa3bYhACPW60+KaHejylZx6zxRdxAdOBfNs0Mcg05tJvwQKM4qNkNtINUtfQ+7kCNQxNS1tf2RAWx09U5CUCo/oJUwGt7Y6pKrN7H8tUPbWPW6x2Smo/R/mC0tPFmKIL2X+FzCPKbjpYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420143; c=relaxed/simple;
-	bh=yFTZIDT/d9HKSr1VCybVUXBQPCUX/YWCdCVUCfZE2/M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pIszNQcjXEd/jvqq5t20u9ghwUgriFXjw3lWXuedNJ8HjC/e1ikq2SJcwiLRdx2+MUjx3h4OZBBD+z1uYLWeTbwg3V8rNW+cPSgHSWm1j33bFpem0BUd53/ic60OmTN17j92BS91m3ZggZmXOMCBN1QoAA9HMxqeJTs/KlfhjL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=KG9tk7D3; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733420137;
-	bh=yFTZIDT/d9HKSr1VCybVUXBQPCUX/YWCdCVUCfZE2/M=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KG9tk7D3L7Uf0IUGoE1XT5UumEfJAlsFAfz8UVuSvsNm0D3SC3/fIgoGLxau2ZERH
-	 mWMESJy6PDE+efZVb10E62JK6JebxXhDp9abmp90ylpbE6ROZkzRiglTfiN2Fx/5k+
-	 W4pJX5dsjU6q3xn4Pjbdhsy3al2VGArAwS9ikGGY=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 05 Dec 2024 18:35:13 +0100
-Subject: [PATCH 1/4] sysfs: constify bin_attribute argument of
- sysfs_bin_attr_simple_read()
+	s=arc-20240116; t=1733420121; c=relaxed/simple;
+	bh=c2l5AZImwi0kJvk1E3IDHHPuiWUV/EiTKKgH2uIeSZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hXgM31DlXJMkMGvCblcfeRdikLqEGrY/hio8x2+lpfPZqh4nEwmlE/lFrIsb0asSgPYN/l1kYjpOHdb0jJjEEa32wH/XCoWZr6bPAWxJEORZ2WW9mrT1IilvFw4mpBA8Ek0J+rWKxWWYzuTlfiEJJV2BTI92OBGd24Sen4byc+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=maNOdNK1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HVftl008252
+	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 17:35:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/hf1V9zdRIw6pH/APZ/I9hBl32oTaCEJ+E39AFJsx4c=; b=maNOdNK1ISfzg10e
+	GMU17NkJFPRdYxgfGziOdLOpmrZT/m+WfBTONiOw7cB3lrE8EW1d5KyoIHDOGnw6
+	jDE9ukkoFn+asRS+aumNTke9iAGFx3kY9Ei2RRPVBrJriYq8plbW45Ps871pgV5g
+	5V233092Zv9jQgOlkOYB7kHl8J439L5MzcVSt+z7ZK6dEytLBU2/0uMCgaqzpLnA
+	HZj5WqVheXENMhVmPAaHjGhq7Y3pjjFIOS3Fuu5XqoDpdoZioFUMUGqwUjrRtCH3
+	k55/Prl5p81iMBsc4A/9QcJOK6a+Tui7QXPEZGiXIg2yfx3WsMSLGuwNVwS73SHM
+	ULivmQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnj0yqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 17:35:17 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b66cd9b7f8so3612185a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:35:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733420116; x=1734024916;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/hf1V9zdRIw6pH/APZ/I9hBl32oTaCEJ+E39AFJsx4c=;
+        b=UPOvF6N0KTbGdOLBaLNa+n/fY5dXhwTR5Asl1V5BeRhlduEZX02k0PbQop60qxliMv
+         dajPtiXh8r/Qsr6ZWJjDMgbHIioUWXR/ssMlIrR6zWQ9qoBYMZgFHU/fyKvpr8VNIRAa
+         9UCYmFk6euXJwq+xU2bgMnOC7QI3nuQQK5Cjb9pXktI05Pu73TSK51RwwyO14F0xXigk
+         /5/apgg4K8YiiEzkY1sWKKao/EJwAev3CXD0klFe4UVf/kPr3lVMOPVg22qlnvp5Bq8M
+         XJU5XUu0C5jQk666ig1AvSOux+jgXM0g/Y+3sNJ7CkiELa5OhIXT1sHeAwSz6sH4ToyD
+         Xz3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWrPs+hO4mH4DUI/xa3azV+nGTibm9OC38BLcZTxFVAe6f5MYojXPIhGZJg1I9QQpUoqok7zYwetnWortw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgTTOIfCeM05DQsCFUd0HmtKDy/a2HsTJ6TaMdqOQJH+UzIBuu
+	fZQxIn9AwiQTfxjtnXuowtdbKKBsSwK3Zb/Y3VrwcSNjK88nlfPaW9T2Px2OZpoL33lbpKHlHR7
+	Y9kFk24YGg9VmUa1mKy5V2+OKPX4hjCK2z1sZfsSla8xnFwwQePDWdMv5RY4uS+FY5JM6xIY=
+X-Gm-Gg: ASbGnctCXC3rfKH6duI0U+J6YhWez/OrLNq9NVMMbYNB2ABt3Aoswv3o4AIeRjjkqrQ
+	fEG+stgFC49ZvyArTzcCSkvEeJaMYWwHhc4Ju/aVPElLusaTfBg/WAe7+QwB7HtALbBhBKVl04D
+	IwkOCum6VjbMdzniH8eOLbYh1rnmThOUu18mQh4AnPhVgFl/ww5Kz0OAaRWCNXB8XEVc6cfDkuy
+	I9WjlkqGnfBNjZbHXZhDTbntUeAJytgrv1IezR0HCz3FEk1Pq0/eyB1pJoZpFwnXwbL/+1mgJys
+	YrbtA4SQboAPbSo6EvH8XSlKiWv+wnE=
+X-Received: by 2002:a05:620a:472b:b0:7b1:b216:f5a with SMTP id af79cd13be357-7b6bcaca6acmr3099585a.3.1733420116619;
+        Thu, 05 Dec 2024 09:35:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEpJItac86niVhaF/4cNgJUrecH7V+GglPqLR994cq+wXutGXaPED7cVUuFPk/R/mKQ7V9KVQ==
+X-Received: by 2002:a05:620a:472b:b0:7b1:b216:f5a with SMTP id af79cd13be357-7b6bcaca6acmr3097285a.3.1733420116273;
+        Thu, 05 Dec 2024 09:35:16 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e58dffsm119321166b.13.2024.12.05.09.35.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 09:35:15 -0800 (PST)
+Message-ID: <b4173f94-1cec-49b6-a882-d07b10ebbddc@oss.qualcomm.com>
+Date: Thu, 5 Dec 2024 18:35:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241205-sysfs-const-bin_attr-simple-v1-1-4a4e4ced71e3@weissschuh.net>
-References: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
-In-Reply-To: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
-To: Michael Ellerman <mpe@ellerman.id.au>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
- Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>, Armin Wolf <W_Armin@gmx.de>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- linux-modules@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- bpf@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733420137; l=3142;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=yFTZIDT/d9HKSr1VCybVUXBQPCUX/YWCdCVUCfZE2/M=;
- b=N6SLb2+eSyolUshM1oNp1SwAkyOJIwilUlfzAQ+W+1VNmN2Og70zO7PtWIR6lJLtiURIW0PKL
- lP9vrvVVQB8C6d3iPwEht3v7ttdLR6Ohcbgt+23W8yn/BbmOnet1+/p
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: sm8750-qrd: Enable CDSP and mention
+ MPSS
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241122-b4-sm8750-cdsp-v1-0-9a69a889d1b7@linaro.org>
+ <20241122-b4-sm8750-cdsp-v1-4-9a69a889d1b7@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241122-b4-sm8750-cdsp-v1-4-9a69a889d1b7@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: S6ijdRl5bhYPyNcCXUFoy_lOVVOV9g3v
+X-Proofpoint-ORIG-GUID: S6ijdRl5bhYPyNcCXUFoy_lOVVOV9g3v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 mlxscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 mlxlogscore=611 lowpriorityscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412050128
 
-Most users use this function through the BIN_ATTR_SIMPLE* macros,
-they can handle the switch transparently.
-Also adapt the two non-macro users in the same change.
+On 22.11.2024 4:26 PM, Krzysztof Kozlowski wrote:
+> Enable the CDSP and MPSS (modem) on QRD8750 board.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Not tested on QRD hardware.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- arch/powerpc/platforms/powernv/opal.c | 2 +-
- fs/sysfs/file.c                       | 2 +-
- include/linux/sysfs.h                 | 4 ++--
- kernel/module/sysfs.c                 | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Not great given the status = "fail" on MTP..
 
-diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
-index 5d0f35bb917ebced8c741cd3af2c511949a1d2ef..013637e2b2a8e6a4ec6b93a520f8d5d9d3245467 100644
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -818,7 +818,7 @@ static int opal_add_one_export(struct kobject *parent, const char *export_name,
- 	sysfs_bin_attr_init(attr);
- 	attr->attr.name = name;
- 	attr->attr.mode = 0400;
--	attr->read = sysfs_bin_attr_simple_read;
-+	attr->read_new = sysfs_bin_attr_simple_read;
- 	attr->private = __va(vals[0]);
- 	attr->size = vals[1];
- 
-diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
-index 785408861c01c89fc84c787848243a13c1338367..6931308876c4ac3b4c19878d5e1158ad8fe4f16f 100644
---- a/fs/sysfs/file.c
-+++ b/fs/sysfs/file.c
-@@ -817,7 +817,7 @@ EXPORT_SYMBOL_GPL(sysfs_emit_at);
-  * Returns number of bytes written to @buf.
-  */
- ssize_t sysfs_bin_attr_simple_read(struct file *file, struct kobject *kobj,
--				   struct bin_attribute *attr, char *buf,
-+				   const struct bin_attribute *attr, char *buf,
- 				   loff_t off, size_t count)
- {
- 	memcpy(buf, attr->private + off, count);
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index 0f2fcd244523f050c5286f19d4fe1846506f9214..2205561159afdb57d0a250bb0439b28c01d9010e 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -511,7 +511,7 @@ __printf(3, 4)
- int sysfs_emit_at(char *buf, int at, const char *fmt, ...);
- 
- ssize_t sysfs_bin_attr_simple_read(struct file *file, struct kobject *kobj,
--				   struct bin_attribute *attr, char *buf,
-+				   const struct bin_attribute *attr, char *buf,
- 				   loff_t off, size_t count);
- 
- #else /* CONFIG_SYSFS */
-@@ -774,7 +774,7 @@ static inline int sysfs_emit_at(char *buf, int at, const char *fmt, ...)
- 
- static inline ssize_t sysfs_bin_attr_simple_read(struct file *file,
- 						 struct kobject *kobj,
--						 struct bin_attribute *attr,
-+						 const struct bin_attribute *attr,
- 						 char *buf, loff_t off,
- 						 size_t count)
- {
-diff --git a/kernel/module/sysfs.c b/kernel/module/sysfs.c
-index 456358e1fdc43e6b5b24f383bbefa37812971174..254017b58b645d4afcf6876d29bcc2e2113a8dc4 100644
---- a/kernel/module/sysfs.c
-+++ b/kernel/module/sysfs.c
-@@ -196,7 +196,7 @@ static int add_notes_attrs(struct module *mod, const struct load_info *info)
- 			nattr->attr.mode = 0444;
- 			nattr->size = info->sechdrs[i].sh_size;
- 			nattr->private = (void *)info->sechdrs[i].sh_addr;
--			nattr->read = sysfs_bin_attr_simple_read;
-+			nattr->read_new = sysfs_bin_attr_simple_read;
- 			++nattr;
- 		}
- 		++loaded;
-
--- 
-2.47.1
-
+Konrad
 
