@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-434073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECAF9E6142
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:26:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 966DF9E6145
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F6918857F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CBF51681AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541A11CDA1A;
-	Thu,  5 Dec 2024 23:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B671CDA1A;
+	Thu,  5 Dec 2024 23:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="njRqkMXx"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ul2hPRsi"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810001CDA14
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0771119048D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733441155; cv=none; b=VhyVd+0LNuzm6cqfBcXgVIP3UXI2m1iVIsBQ8FOWIK2auv19UjcdVihi4VGQEVbraQObZm7IVCWTjAUr8EVcJjF1riwn+/M0RMthZ+FP5nB2us6PmBIjn3l5UbxYaBgZRcwsW9Cqkek8WRRFH6OoKIYsuhenWv9bmeaqUkLJvRI=
+	t=1733441237; cv=none; b=EbCWM+raSCGfH7YHx+VpLSPKKxiLQHrKaiiEwLgdGXnmGaqQryGohmL2mG4wjTitgpiwyLQ4R9G0Nef7VaikCSBF6mtDFAvfI2q9aPYxaUYz3cpjGy0FQeOXIyXcIAaSxvjZR1TzD8wl4VZSqKFfua2VatlBMSyRE/zqHDIC/kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733441155; c=relaxed/simple;
-	bh=BnD8a+g9O1wBFgFQ6cYDTV/dHBnmQb5HB5WKHtqp6lY=;
+	s=arc-20240116; t=1733441237; c=relaxed/simple;
+	bh=eA1kmrXdC/vdKizMTfB4ZlUYmNdEoOoA/xdBxExAfDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twJT03zpYVPTvHhI3+VxqlNOvuA3Pedif859yZ2OT5L6WCDSsy5p8vW3QbU/O3SIKVx+xfVlUBaJwDefHqSGp3l9SCTqPxIiQbjOaJYj8prbviQPbQUcMbxMMtfIVgGs9FYto7lwZ1du+5v6/Ll08h49i0tZyIP0BEe8FG8fQG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=njRqkMXx; arc=none smtp.client-ip=209.85.208.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=XY+zOiJoY8kNUBA6xjGqYF+JDT3dIGgkPVKmgMWphX2+g6UW7Lo900jkPTy7ettu3KF4nfo+HKnjJ8Npd81tUzG1nYtoPAgj9floLV4eyoDEW4hEKfE55MMsxx9vvgcWq4tcPXFO3PLm9FOOvpTJTe+v6Jc5VOcWuRwj4wvIafA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ul2hPRsi; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffe2700e91so13463701fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:25:53 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso15321211fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:27:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733441151; x=1734045951; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733441233; x=1734046033; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9FlG7yhfNag0hwET+zB1Fq/KrhhKmeA4urtrBHSuoPE=;
-        b=njRqkMXxkKjTGrERmtS7SSL6coSVP5OuclUtj5QruHDt3E5zeDjMEgeDr+0KbMJsN0
-         Gf1ESMqmipv8EOM1ZTRs6QudtHSFrvUWYba/Lh58qjUywod4y98GyvdJVW4TxVRnyo9B
-         N8aY0vptdS4Fd0NfTyrxclFGQE28m7MFkMUZthveM9/VexSo/UhUKDP/SCPhZv1SFd2f
-         vrB6Ae5iC+3Ss+xF5LlGi9mSRFHyl+FBKSyoohIzTST+fbWhXr2pzA6SQwUucPXEnu6L
-         ZakmsXJvJkeF52MbvZI2fBAlYVJs/4lPn5RpYoKrsTlSo/qWp0f06u6OYlWjTp2UIQ7r
-         +nhQ==
+        bh=j3DpjOofESGwFVvsCOsndBYuU+rJQeNWZk/BtIw+LZY=;
+        b=ul2hPRsi32Acq/RWcjU8NuGn2P/p+BShWAp4KygEO4Dvs69K8GRNRRzCyoRctRskDm
+         wbdUgdifA8Vx5Hu1MgUm6BSgrzsaYLMuiEs/ShbJxjQHVXHq8aud1ULaehh1xwMRw5r+
+         AVf1AjPINp/qqBRdiaA4wJ+CgG771a0kQ5BhPVELNCbJTts8A1vWvRM6tUzQbV3lITsh
+         NQmMiRB/E/tkcnQhOs2mlcO9Xzq9lQUqvkot9/DLybVdEPxFZaLcLJkwxZbyRB916zv3
+         VWQbFWa3LZbDm+nlOvP/HhNzr4lnMTYWVjuigxKYTEse8cWO5Lq6JhypffCwmG3bZHQJ
+         quRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733441151; x=1734045951;
+        d=1e100.net; s=20230601; t=1733441233; x=1734046033;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9FlG7yhfNag0hwET+zB1Fq/KrhhKmeA4urtrBHSuoPE=;
-        b=stSF6bTj2e4SNqCkRfcpjaQeRbd6y1iPq1kUBtFH9IjBs6yw39RXl7H8NK/tpzp2p8
-         ab2Ng17VO7TMS/3SMDumVbOPGHsQmccuL6VskYiItoTjOvXMXPCuT0KqkWg49MrO4BaJ
-         eR3hAnBsOgx6gl2c2TuFHpn/rrJiYKEmuoph2fnhAqO4mqdswMQTNVOlflPVTTXGk4ow
-         GamImwQbWL2fbPgCEmxVIWyIpN1Qcc7QIEF+BF1CeXd0SZ80HkaWopdF/eZZXJvxSmQV
-         SL2kmXA/mam/yk7qAPPJVtVeTVS88yUMwklSrOI4W26avpdlosVcmzYSdN4qMaYMizxp
-         UA9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWG/TxuqVvXHiEWMcX3R7LOefQIsyM6KJvaCRwGEF4MLtDIrcudYctfjQKwr8+leotoAMxJGEuM8VrAQ5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTq8gbrxlsMUVmYdHn7damTB+AnMLWVAKEbMEef9id36FQ00cK
-	UicS5fYMSfOojaN2JLp1uIDBhQcVGdJCekj06DGRlWEk7kCS8Beu2/2xcrDGGks=
-X-Gm-Gg: ASbGncueo6K74uzI77XXbKkxHXUE1MGA1+i+m2zMoEZ94MkHKFc5nG+GaspfFP/46PX
-	LWIEFydqPIA6piyZHPJtAw/jyX5bGpJyTR+bVWTC/iSguvTwA2QICXrZTDC45aZJThSyhDVH+xh
-	fS8mn/7+ovyHiOUgoNN3aJwedtsxCvWC/WPy6zuWbOA+Iba4JZ0vqQXhTIqb5vx1iBrbxltITw8
-	0XNI7N7P7k49loRzxparizWpqtw8q5s3MQnTBmQ2pqIUykNsdw6/zgsmse/PICKo19V4b4SdUNv
-	o9Nyjbo+KEEJL9d90u+ftx3Hfi4viQ==
-X-Google-Smtp-Source: AGHT+IG3QMXw/m+7lHuXqEEDNuL02EQbGHmtd5Y4ORCYfaK/60JwZdmYAuv6er8IN52O8KWaJeqlHQ==
-X-Received: by 2002:a05:651c:211a:b0:300:1dbd:b248 with SMTP id 38308e7fff4ca-3002f688966mr2145701fa.4.1733441151391;
-        Thu, 05 Dec 2024 15:25:51 -0800 (PST)
+        bh=j3DpjOofESGwFVvsCOsndBYuU+rJQeNWZk/BtIw+LZY=;
+        b=XBlXEOf4ju3oTNRtjd3PXUgdN992OAUdlxtsctaAAozQ3NSM6m5Iz5jCw+mRF1SQ+O
+         1Tj5f+rdyxg8rgetgIuZe0eHvZrr9dNngQ0tWSaL+3/ab5Sdo78srGhJNvWLx/GVIwz4
+         yNdEdwCuqZcDG922HpDDmV/3BANQSInQNSEeGakF/x/2p4tO5v6MuKfXbL/c8vlciV/E
+         /TLU6pPgqAiEohRChmjfEi9N/BEsh6YH+1a+bUub8E+GvR07bxSv3JZaIXjaXE3znDWS
+         mI7RkX0VTZjYxy993iwWEa+F9olKGOjmALkVdEk6jJG4YlvF/uvFJP2wPO2aYDaTx+tz
+         FLiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw4FIvv8eEByWAybNBbB3ju782J14ce1l2lLHa2IUNm5bwjq8zjgJfWyvOmsuJa650gN8Cj/y/WcndiSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWwXRX/vkNnKBjvQFy0XMUUPmNfTpi/Lr+gVsGSEBLsXwU/n4S
+	8fCHDPX/ugP3Nw09eQ3uNj6vXcuU4KjTTqsRYQcWjv/TgOdDSRYhT4Llw7GRtms=
+X-Gm-Gg: ASbGncuGZmg+e3XZeVz9cCUOV/akWaHuPE4kSQotg0/Td4b7Ry8zBwTvIRu9B4r32tL
+	v1nLFPSbJq7NCC3pytRQHio25Y2q+89ZcUkeon07TrAnG+DhNaWiSlYOfo3UZAXNHCYNE2+NOKP
+	G1ygJadsJKKpZvvCm68DrxLN2Zq9nChVLUSpA4VcMfu5Kp16L0hB5oLFW/a2dqcxNwQEl+M4xbG
+	yk8ejoQPJCPuaFeqZOQdVEhpR20Q6ahksGQuCCce/cAAkvz6YxPqdi9AUXP4sKoqFbTBm4IhHSD
+	cLZ7jrzOx0/O+b/zWRFH2PYpZ/p+Zw==
+X-Google-Smtp-Source: AGHT+IF04IJWw+FTd0GCRaXztZvGyXSX3rN72FVRGU3oryP/PZu7ykMonxAr8uVUa1aM3F9tC81oKQ==
+X-Received: by 2002:a2e:bd13:0:b0:300:1f12:bbc9 with SMTP id 38308e7fff4ca-3002fd956abmr2485661fa.34.1733441233109;
+        Thu, 05 Dec 2024 15:27:13 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020da2637sm3142481fa.39.2024.12.05.15.25.48
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020db4074sm2960271fa.61.2024.12.05.15.27.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 15:25:50 -0800 (PST)
-Date: Fri, 6 Dec 2024 01:25:47 +0200
+        Thu, 05 Dec 2024 15:27:11 -0800 (PST)
+Date: Fri, 6 Dec 2024 01:27:09 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Yongbang Shi <shiyongbang@huawei.com>
 Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
@@ -79,11 +79,11 @@ Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
 	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
 	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 drm-dp 2/5] drm/hisilicon/hibmc: add dp link moduel in
+Subject: Re: [PATCH v6 drm-dp 3/5] drm/hisilicon/hibmc: add dp hw moduel in
  hibmc
-Message-ID: <yyunb5oxzlmrrcxlsrub4j7iwwpaptbvubbtxr3omjftietc5b@3tfg2ldxeaoa>
+Message-ID: <q25y46kqfizmwu6os24zvd7r32cwjxrcojbous67hj5vfu7aby@dpf5gp37qeq2>
 References: <20241202131322.1847078-1-shiyongbang@huawei.com>
- <20241202131322.1847078-3-shiyongbang@huawei.com>
+ <20241202131322.1847078-4-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,128 +92,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241202131322.1847078-3-shiyongbang@huawei.com>
+In-Reply-To: <20241202131322.1847078-4-shiyongbang@huawei.com>
 
-On Mon, Dec 02, 2024 at 09:13:19PM +0800, Yongbang Shi wrote:
+On Mon, Dec 02, 2024 at 09:13:20PM +0800, Yongbang Shi wrote:
 > From: baihan li <libaihan@huawei.com>
 > 
-> Add link training process functions in this moduel.
+> Build a dp level that hibmc driver can enable dp by
+> calling their functions.
 > 
 > Signed-off-by: Baihan Li <libaihan@huawei.com>
 > Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
 > ---
-> Changelog:
+> ChangeLog:
 > v5 -> v6:
 >   - using drm_dbg_dp() to print debug info instead of drm_info(), suggested by Dmitry Baryshkov.
+>   - adding code comments in hibmc_dp_set_sst(), suggested by Dmitry Baryshkov.
 > v3 -> v4:
->   - optimizing hibmc_dp_link_get_adjust_train() to delete for loop, suggested by Dmitry Baryshkov.
->   - changing ELNRNG to EIO error code, suggested by Dmitry Baryshkov.
->   - deleting meaningless macro, suggested by Dmitry Baryshkov.
->   - fixing build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202411041559.WIfxRN6n-lkp@intel.com/
+>   - changed the type of train_set to array, suggested by Dmitry Baryshkov.
+>   - using actual link rate instead of magic num, suggested by Dmitry Baryshkov.
+>   - deleting hibmc_dp_hw_uninit(), suggested by Dmitry Baryshkov.
 > v2 -> v3:
->   - using switchcase in dp_link_reduce_lane, suggested by Dmitry Baryshkov.
->   - deleting dp_link_pattern2dpcd function and using macros directly, suggested by Dmitry Baryshkov.
->   - deleting EFAULT error codes, suggested by Dmitry Baryshkov.
-> v1 -> v2:
->   - using drm_dp_* functions implement dp link training process, suggested by Jani Nikula.
 >   - fix build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
+>     Closes: https://lore.kernel.org/oe-kbuild-all/202410250931.UDQ9s66H-lkp@intel.com/
+> v1 -> v2:
+>   - changed some defines and functions to former patch, suggested by Dmitry Baryshkov.
+>   - sorting the headers including in dp_hw.h and hibmc_drm_drv.c files, suggested by Dmitry Baryshkov.
+>   - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
+>   - fix build errors reported by kernel test robot <lkp@intel.com>
+>     Closes: https://lore.kernel.org/oe-kbuild-all/202410040328.VeVxM9yB-lkp@intel.com/
 >   v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
 > ---
->  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   2 +-
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  24 ++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c | 339 +++++++++++++++++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |   8 +
->  4 files changed, 372 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
-> 
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> index 8770ec6dfffd..94d77da88bbf 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
-> -	       dp/dp_aux.o
-> +	       dp/dp_aux.o dp/dp_link.o
->  
->  obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
-> index 7d3cd32393c0..8422999acbf0 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
-> @@ -13,11 +13,34 @@
->  #include <linux/io.h>
->  #include <drm/display/drm_dp_helper.h>
->  
-> +#define HIBMC_DP_LANE_NUM_MAX 2
-> +
-> +struct hibmc_link_status {
-> +	bool clock_recovered;
-> +	bool channel_equalized;
-> +};
-> +
-> +struct hibmc_link_cap {
-> +	int rx_dpcd_revision;
-> +	u8 link_rate;
-> +	u8 lanes;
-> +	bool is_tps3;
-> +	bool is_tps4;
+>  drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
+>  .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  19 ++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 220 ++++++++++++++++++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  28 +++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  41 ++++
+>  5 files changed, 309 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
 
-These two fields are set neither in this patch nor in any of the
-following patches.
 
-> +};
-> +
+I'm still not happy about the 0.9947 math, but hopefully that matches
+the TRM.
 
-[...]
 
-> +static int hibmc_dp_link_training_configure(struct hibmc_dp_dev *dp)
-> +{
-> +	u8 buf[2];
-> +	int ret;
-> +
-> +	/* DP 2 lane */
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_PHYIF_CTRL0, HIBMC_DP_CFG_LANE_DATA_EN,
-> +				 dp->link.cap.lanes == 0x2 ? 0x3 : 0x1);
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_DPTX_GCTL0, HIBMC_DP_CFG_PHY_LANE_NUM,
-> +				 dp->link.cap.lanes == 0x2 ? 0x1 : 0);
-> +
-> +	/* enhanced frame */
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CTRL, HIBMC_DP_CFG_STREAM_FRAME_MODE, 0x1);
-> +
-> +	/* set rate and lane count */
-> +	buf[0] = dp->link.cap.link_rate;
-> +	buf[1] = DP_LANE_COUNT_ENHANCED_FRAME_EN | dp->link.cap.lanes;
-> +	ret = drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, buf, sizeof(buf));
-> +	if (ret != sizeof(buf)) {
-> +		drm_dbg_dp(dp->dev, "dp aux write link rate and lanes failed, ret: %d\n", ret);
-> +		return ret >= 0 ? -EIO : ret;
-> +	}
-> +
-> +	/* set 8b/10b and downspread */
-> +	buf[0] = 0x10;
-
-DP_SPREAD_AMP_0_5
-
-> +	buf[1] = 0x1;
-
-DP_SET_ANSI_8B10B
-
-> +	ret = drm_dp_dpcd_write(&dp->aux, DP_DOWNSPREAD_CTRL, buf, sizeof(buf));
-> +	if (ret != sizeof(buf)) {
-> +		drm_dbg_dp(dp->dev, "dp aux write 8b/10b and downspread failed, ret: %d\n", ret);
-> +		return ret >= 0 ? -EIO : ret;
-> +	}
-> +
-> +	ret = drm_dp_read_dpcd_caps(&dp->aux, dp->dpcd);
-> +	if (ret)
-> +		drm_err(dp->dev, "dp aux read dpcd failed, ret: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
