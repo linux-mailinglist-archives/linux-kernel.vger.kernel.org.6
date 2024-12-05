@@ -1,212 +1,162 @@
-Return-Path: <linux-kernel+bounces-433172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A799E54BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:58:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C169E54C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85266162D07
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:58:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D4716A24A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FF8214A75;
-	Thu,  5 Dec 2024 11:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D312214A82;
+	Thu,  5 Dec 2024 11:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="MeBDCDWy"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NHAx49Nf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UHv46XpB"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E869C191F94
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 11:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470AA214A73;
+	Thu,  5 Dec 2024 11:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733399910; cv=none; b=JFZi4iKPINFIFDRlmhzxuhDtoPnXEgD1qqB2ApDEiG+3tzc8yVmKMghCAu4lRTT/J4dg7qga5Hw0WCWavzbpz+PYYVWJO1p/BlaBz7h5QmJG8BfoMA5XdU4bjNoq1bfT4jtLhpv/xPQIXBVHXSWqsSFrfg63Hi3npe/UXKImq4Y=
+	t=1733399928; cv=none; b=YHdSHUsA4vcL1gVTc5QiCg+PSfVTvFNr4rSB7VMprNxfTVlVzJPHeLWzqiUZEyRs1GHIdwCzs0U5GRjJglYJ1kJmgLJkUX93fy+gqRH2QXVXjorflm78ty6y9qRYAVwA1NiXNK2WIx7Xx3QYIvT8UGxHoXkiTKZ0d5VJmFp4+/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733399910; c=relaxed/simple;
-	bh=/AmEQYrRRuLa1gTXogXEiifLAxlKDNIQJdaMFmq3WeA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fww+KrRUULQ+/jYNtXxikyxFy0JuAf3o1kiGbT14XDzXRTt4UuIPTHaZQi9TJFGfBw3cIz4AhIf6aGqbDubkQqvLfb1Q9ydrBFatCZMQi6MYHF0BF9ZsLUCTjM7wFY8NSrUniGafedH4EMrS+VeAPJm5L5jWrjaxqVkWtdrojxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=MeBDCDWy; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B570HfX016009;
-	Thu, 5 Dec 2024 05:58:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=KkJ4rwPdOb+nRofZEOYwczHMRVxPIcgNMZOyi0r3vQs=; b=
-	MeBDCDWyWcdTGXIijDnv03I4AoCXA9gSSyOrTFxr2WIbAdsjePW9+Es2hhsxNRW+
-	VMgnjbszWpvob2h9lX8Xhe6XtRYBX+MX8VeY7AxJ30W8qEhgJHeHMjm7SD2zgq4G
-	awU3r7El+dlJucs7wrGtYddJmIkh2HI3hiFCqfY8e+baVygmBliJtFF2WMfBT52f
-	M9+lvVRXqtELf3laKmIyhjcjekfkZgqnXiU7fRA6wFMgnnK6UcMVVUyky3xh/vQ3
-	5zCF2SeRiZTKa96ed84s4ffXgy7xrFqybEh19sZbhCrbhnLFztiVEvw/8E4/6v0a
-	e6xCeCgGfudgZkoHpo/VVA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 4381022c8a-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 05:58:25 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 5 Dec
- 2024 11:58:22 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.13 via Frontend Transport; Thu, 5 Dec 2024 11:58:22 +0000
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id C668782024D;
-	Thu,  5 Dec 2024 11:58:22 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <lee@kernel.org>
-CC: <yung-chuan.liao@linux.intel.com>, <peter.ujfalusi@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 4/4] mfd: cs42l43: Use devres for remove as well
-Date: Thu, 5 Dec 2024 11:58:22 +0000
-Message-ID: <20241205115822.2371719-4-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241205115822.2371719-1-ckeepax@opensource.cirrus.com>
-References: <20241205115822.2371719-1-ckeepax@opensource.cirrus.com>
+	s=arc-20240116; t=1733399928; c=relaxed/simple;
+	bh=TXxBsh/0Dupz3rwhGOucWdNFXxWHczDayCS9WG0joQg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=a3i5GG/Muu4K5jXPHj8eJjhqTuZY1kY8v5Mo+zjY/BSAnON1Pp4A6KmXFEBWb1Lw0QVOBjwGW9AVmZvlNWo2eVLT+wANXklROLRNxWL+gK70/yyV/2FRgCr7K0246iR2hcVCBH/x97sLRCb6nAirkOFJIdVMsTAx/8fXcFuEib4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NHAx49Nf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UHv46XpB; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id EE1C8114018E;
+	Thu,  5 Dec 2024 06:58:43 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 05 Dec 2024 06:58:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733399923;
+	 x=1733486323; bh=Tv0o38Q1VlIsg6s/dOh0hDJHiMNuiauv4VLlU8CJQXU=; b=
+	NHAx49NfQKyVGqR1p5crjX1541OJUpvn82ZEseI6Wfol4P11h1KBWtMMPDpZzHib
+	Fp9+p6dQR44e8glWPtTKmvMA9bGe5nxT11mIGPTqtKXSFBBaNg07uP0jp73+J4VS
+	FkfeZG8DD+Lj9tG3cYsePVzkKMl2MvTAyMTLZPhixTTu5/KbMPbA563XIVI/WazT
+	LD1UL3a2ZOhkX5hgvkK6RWgk1mm4IBRs3r/eTpFaImjN56ZtWpIYVWQT0wkNxvLL
+	o0xl+B0H/1y42ce/CT4BLO5SlihY605coj7wMf5aZU4Uc6dfQDoJGIKN+Yz85RDF
+	ZGlibZz5hsYoH5tpsUBnoA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733399923; x=
+	1733486323; bh=Tv0o38Q1VlIsg6s/dOh0hDJHiMNuiauv4VLlU8CJQXU=; b=U
+	Hv46XpBy8/xur5bmR5+r4YLDhvoiHshD2VpjMb5Cu2AQoYEY0f+PoUgf/v24WRrv
+	f1PPKSWog4fBm7w6Gm6jwmucfy6//5FKBhF7LqdVKaSuZ+e5Qd/aGGFD1yYbWKRE
+	5j2CNCl62VqfL6Y/R1EgrduOaWsKqx1QOYf+dx+0vS8EO1v0XEwmYY0ghO0GoVzD
+	WJoRuwv/rt3pCh+vP6jVBFb843MdZJePVTbmrluFazwNbGZh7LDDUovB1tsVPldJ
+	9qwdBeebiZgRsGEXYYodJLEWKqft4wjaEi4ulhs8GOTkIcr05qAmKECqfqDkAT3i
+	MBSgK02NwtvAOT292zCAw==
+X-ME-Sender: <xms:cpVRZ_j_dSzeZKvaB_uTDpKWCPD5XHjZcHkrphGGPvML3yF37P8Pdg>
+    <xme:cpVRZ8DozELlcLQwZB5b9ESr5Bth2jWyek7anHGiXkj9F2hlb7Btq-rOL0Knuj1eI
+    IKQ8rgZu3o4YMpk4Og>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgdeffecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
+    hpthhtoheptghimhhinhgrghhhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggr
+    nhhjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvg
+    grugdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphht
+    thhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:c5VRZ_Hxu5ITd0WSyCdCK_6I14emoPTdPtnN9ILobW4KTeXBk6BJ3A>
+    <xmx:c5VRZ8T1c6L6I2MgXDSqlNUmCnSWUgCGeDqz0tJQB4qlfRPMtMNDKA>
+    <xmx:c5VRZ8yAIR_NWPeKZBrBMrsWTl8auXd9sAJQZpCAj4sfkBeEVKKmEA>
+    <xmx:c5VRZy678X_zr9vLzV7zZK9ZI4McTE8WvyF5dcoltaixYAD68Dr_0w>
+    <xmx:c5VRZxIJDoMhrQU6-YL3vNMyuewhamXkKyrWFXCVDAI1V5ClMgEA6YJp>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DD43B2220072; Thu,  5 Dec 2024 06:58:42 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Thu, 05 Dec 2024 12:58:22 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andy@kernel.org>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Arnd Bergmann" <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Matthew Wilcox" <willy@infradead.org>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Davide Ciminaghi" <ciminaghi@gnudd.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
+Message-Id: <1f2ad273-f3a5-4d16-95a4-b8d960410917@app.fastmail.com>
+In-Reply-To: <Z1GLrISQEaXelzqu@smile.fi.intel.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-10-arnd@kernel.org>
+ <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com>
+ <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
+ <CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com>
+ <Z1FgxAWHKgyjOZIU@smile.fi.intel.com>
+ <74e8e9c6-8205-413a-97a4-aae32042c019@app.fastmail.com>
+ <Z1GLrISQEaXelzqu@smile.fi.intel.com>
+Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
 Content-Type: text/plain
-X-Proofpoint-GUID: V2WN4q8_u7KtD6zuPVKTMM6GNpXeIE0N
-X-Proofpoint-ORIG-GUID: V2WN4q8_u7KtD6zuPVKTMM6GNpXeIE0N
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 7bit
 
-Currently the device is powered down in the remove callback, however
-all other clean up is done through devres. The problem here is the
-MFD children are cleaned up through devres. As this happens after
-the remove callback has run, this leads to the incorrect ordering
-where the child remove functions run after the device has been powered
-down. Put the power down into devres as well such that everything runs
-in the expected order.
+On Thu, Dec 5, 2024, at 12:17, Andy Shevchenko wrote:
+> On Thu, Dec 05, 2024 at 11:09:41AM +0100, Arnd Bergmann wrote:
+>> On Thu, Dec 5, 2024, at 09:13, Andy Shevchenko wrote:
+>> > On Wed, Dec 04, 2024 at 03:33:19PM -0800, Linus Torvalds wrote:
+>> >> On Wed, 4 Dec 2024 at 11:44, Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> >> Will that work when you cross-compile? No. Do we care? Also no. It's
+>> >> basically a simple "you want to optimize for your own local machine"
+>> >> switch.
+>> >
+>> > Maybe it's okay for 64-bit machines, but for cross-compiling for 32-bit on
+>> > 64-bit. I dunno what '-march=native -m32' (or equivalent) will give in such
+>> > cases.
+>> 
+>> From the compiler's perspective this is nothing special, it just
+>> builds a 32-bit binary that can use any instruction supported in
+>> 32-bit mode of that 64-bit CPU,
+>
+> But does this affect building, e.g., for Quark on my Skylake desktop?
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/mfd/cs42l43-i2c.c |  8 --------
- drivers/mfd/cs42l43-sdw.c | 10 ----------
- drivers/mfd/cs42l43.c     | 21 +++++++++++++--------
- drivers/mfd/cs42l43.h     |  1 -
- 4 files changed, 13 insertions(+), 27 deletions(-)
+Not at the moment:
 
-diff --git a/drivers/mfd/cs42l43-i2c.c b/drivers/mfd/cs42l43-i2c.c
-index c9e4ea76149a..1e6422cdf012 100644
---- a/drivers/mfd/cs42l43-i2c.c
-+++ b/drivers/mfd/cs42l43-i2c.c
-@@ -56,13 +56,6 @@ static int cs42l43_i2c_probe(struct i2c_client *i2c)
- 	return cs42l43_dev_probe(cs42l43);
- }
- 
--static void cs42l43_i2c_remove(struct i2c_client *i2c)
--{
--	struct cs42l43 *cs42l43 = dev_get_drvdata(&i2c->dev);
--
--	cs42l43_dev_remove(cs42l43);
--}
--
- #if IS_ENABLED(CONFIG_OF)
- static const struct of_device_id cs42l43_of_match[] = {
- 	{ .compatible = "cirrus,cs42l43", },
-@@ -88,7 +81,6 @@ static struct i2c_driver cs42l43_i2c_driver = {
- 	},
- 
- 	.probe		= cs42l43_i2c_probe,
--	.remove		= cs42l43_i2c_remove,
- };
- module_i2c_driver(cs42l43_i2c_driver);
- 
-diff --git a/drivers/mfd/cs42l43-sdw.c b/drivers/mfd/cs42l43-sdw.c
-index 65f7b1d78248..6af8465b2099 100644
---- a/drivers/mfd/cs42l43-sdw.c
-+++ b/drivers/mfd/cs42l43-sdw.c
-@@ -187,15 +187,6 @@ static int cs42l43_sdw_probe(struct sdw_slave *sdw, const struct sdw_device_id *
- 	return cs42l43_dev_probe(cs42l43);
- }
- 
--static int cs42l43_sdw_remove(struct sdw_slave *sdw)
--{
--	struct cs42l43 *cs42l43 = dev_get_drvdata(&sdw->dev);
--
--	cs42l43_dev_remove(cs42l43);
--
--	return 0;
--}
--
- static const struct sdw_device_id cs42l43_sdw_id[] = {
- 	SDW_SLAVE_ENTRY(0x01FA, 0x4243, 0),
- 	{}
-@@ -209,7 +200,6 @@ static struct sdw_driver cs42l43_sdw_driver = {
- 	},
- 
- 	.probe		= cs42l43_sdw_probe,
--	.remove		= cs42l43_sdw_remove,
- 	.id_table	= cs42l43_sdw_id,
- 	.ops		= &cs42l43_sdw_ops,
- };
-diff --git a/drivers/mfd/cs42l43.c b/drivers/mfd/cs42l43.c
-index 9572c7fd419a..beb63c4efd21 100644
---- a/drivers/mfd/cs42l43.c
-+++ b/drivers/mfd/cs42l43.c
-@@ -1038,6 +1038,15 @@ static int cs42l43_power_down(struct cs42l43 *cs42l43)
- 	return 0;
- }
- 
-+static void cs42l43_dev_remove(void *data)
-+{
-+	struct cs42l43 *cs42l43 = data;
-+
-+	cancel_work_sync(&cs42l43->boot_work);
-+
-+	cs42l43_power_down(cs42l43);
-+}
-+
- int cs42l43_dev_probe(struct cs42l43 *cs42l43)
- {
- 	int i, ret;
-@@ -1084,6 +1093,10 @@ int cs42l43_dev_probe(struct cs42l43 *cs42l43)
- 	if (ret)
- 		return ret;
- 
-+	ret = devm_add_action_or_reset(cs42l43->dev, cs42l43_dev_remove, cs42l43);
-+	if (ret)
-+		return ret;
-+
- 	pm_runtime_set_autosuspend_delay(cs42l43->dev, CS42L43_AUTOSUSPEND_TIME_MS);
- 	pm_runtime_use_autosuspend(cs42l43->dev);
- 	pm_runtime_set_active(cs42l43->dev);
-@@ -1102,14 +1115,6 @@ int cs42l43_dev_probe(struct cs42l43 *cs42l43)
- }
- EXPORT_SYMBOL_NS_GPL(cs42l43_dev_probe, MFD_CS42L43);
- 
--void cs42l43_dev_remove(struct cs42l43 *cs42l43)
--{
--	cancel_work_sync(&cs42l43->boot_work);
--
--	cs42l43_power_down(cs42l43);
--}
--EXPORT_SYMBOL_NS_GPL(cs42l43_dev_remove, MFD_CS42L43);
--
- static int cs42l43_suspend(struct device *dev)
- {
- 	struct cs42l43 *cs42l43 = dev_get_drvdata(dev);
-diff --git a/drivers/mfd/cs42l43.h b/drivers/mfd/cs42l43.h
-index 8d1b1b0f5a47..f3da783930f5 100644
---- a/drivers/mfd/cs42l43.h
-+++ b/drivers/mfd/cs42l43.h
-@@ -25,6 +25,5 @@ bool cs42l43_precious_register(struct device *dev, unsigned int reg);
- bool cs42l43_volatile_register(struct device *dev, unsigned int reg);
- 
- int cs42l43_dev_probe(struct cs42l43 *cs42l43);
--void cs42l43_dev_remove(struct cs42l43 *cs42l43);
- 
- #endif /* CS42L43_CORE_INT_H */
--- 
-2.39.5
+- the bug I'm fixing in the patch at hand is currently only present
+  when building 64-bit kernels
 
+- For a 64-bit target such as a Pineview Atom, it's only a problem
+  if the toolchain default is -arch=native and you build with
+  CONFIG_GENERIC_CPU
+
+- If we add support for configuring -march=native and you build
+  using that option on a Skylake host, that would be equally
+  broken for 32-bit Quark or 64-bit Pineview targets that are
+  lacking some of the instructions present in Skylake.
+
+As I said earlier, I don't think we should offer the 'native'
+option for 32-bit targets at all. For 64-bit, we either decide
+it's a user error to enable -march=native, or change it to
+-mtune=native to avoid the problem.
+
+     Arnd
 
