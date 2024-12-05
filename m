@@ -1,188 +1,83 @@
-Return-Path: <linux-kernel+bounces-432736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA6C9E4F95
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:19:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3889E4F92
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:19:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7CB164FA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D672810BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9EC1D1730;
-	Thu,  5 Dec 2024 08:19:45 +0000 (UTC)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB791D049D;
+	Thu,  5 Dec 2024 08:19:36 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF02194A43;
-	Thu,  5 Dec 2024 08:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22436194A43
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733386785; cv=none; b=NSBvrFR8YpNm8Qzfyncf27U1aKLe5EwRgWJHgpwIr17Z/6fn7SgwpQDD4pgGMoO9wPvVM2eLnKSdEvOqTwsovP1FaSvIuEiuzDqLSGswcVDf/bacWi/Tf77m5+X6z2sDk5GvjCvwNrehc/5rSRn/s06aq21gsUWiTmT5H9qEqAc=
+	t=1733386776; cv=none; b=CUh1Ln89EoPp//iC9ZFHq4yzwAhAzj9aJ6u8hZdgHX4/RV61Fn7lL5K4x+c9uH94/U6ltuHZAh4QQUsPzuLZjAhJLESU4QfA0AOGu6w4jhILM5ESccckUOwEHY+1UC+0nPZvLbrF0lO2I14Oqqy5nTc184C3+WRImwCn7FL6nsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733386785; c=relaxed/simple;
-	bh=z4VF1DfxTuTvepvJLfhUZ5kZWxEqBij7/UOzaZn9R2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RvNHTC2MD0xYlDgYZxZj/fmkBTYVmqOxAmYdK/VMj7TB9/330BrUSxYMyI8zbDCK5OfxFu6jMkgm/Ochk2Q0vyiWQ/iEpIxPkRkk7dTM8c+9dv2zYx+O4UNPi+m7Fvv+VCi38nMVsdD2h7IJt8LUSV+OeTueo3Ykka9a8xBYViI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4afa4094708so152334137.0;
-        Thu, 05 Dec 2024 00:19:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733386780; x=1733991580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TymhtJQJLO1d2er5Qpo5wpVgQe9RLPvK7Re/NeMOgM8=;
-        b=EGHzNRLsZo79vBioMNR+drcptTTDrL9JFnJu5/9GXgfPWVDgcovSAVuGB+hQzEG2HS
-         Bk1hXWIZmZMR4LGjAAoNPXGcdSaGrJoHelrI870w7XE7LBrDi3tjtfasP76RaEAR7sPA
-         VsmLECBGFo3djKFhrgw7/NGXBgHfXDyax5mgCDl8qvWHEkWXbPA+AUsDVg/dIor7m4hq
-         Q9zFpQH3qQdipAgZPn8lp07216gWyKs1wcni5+E0SDiUiqTYinl66QW+bs/OUmZ8K/hN
-         jyzrXnH4wf9aIUD45YUbZBi85hReM90GpO/fDbRKLFd+rn/Q5CSOsXbQGKoJsMDpJmzf
-         U7TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuU1iOVDhuu97DNno2Y6Y07rHszFnTwaVo21M4IhRRtdhN1EZEpdfSH99H9Bj4P0B3r/Gah83zm4P0maA=@vger.kernel.org, AJvYcCXplEDIHEkmelzZR3F0QVvxRi3ID4bRTWpZ47Yn0mXJGPGk1GO0QBhbp5Jb5gMoyUq/tiUt6Ziae2/Lug==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS5yp0TLlY8LC8+yQh+PTkBrQ1CBwparTY8zDltDQnf0s56Y03
-	BNEZPIYOsoVMwzZFKqbMOdNuwuPuEvyaqnaR1jS1nKUey6o4Smg73uxAYpg7
-X-Gm-Gg: ASbGncuAyLwW24XNpb4O7no5YGN54jpvhW9nIg9DtkE9Jz64HESHYmg+Q8+SIAP+iOQ
-	dsQXTrg18YQp6sVys6SctrJIuyKQIbSsllNP3EQTQlnzdOyLUZdWkZl48MBgCw2BImP0HtcxVcQ
-	cj19PRiv7+vtz80G5XSxVY0jdxK+nrNUoi0s+hkj9+1eedMs9Z9v+4VGrSdtZcEbgb2UXxVIi3q
-	7IbYrmSjI5h4ciCf4FyFZBGOJgctXbSUnFb/ynPqEFNcu7FfMHjL4AoDEdvTIjw3M5m6QdAMIrr
-	5gEoVA0J3s7J
-X-Google-Smtp-Source: AGHT+IGzdaPzp74umM20fxzWrRWwHdaUZ7ur1fJz6xT6CX/rzxu42VK6CIPtiSBq9urhnDpx22+qFw==
-X-Received: by 2002:a05:6102:5113:b0:4af:59a2:8425 with SMTP id ada2fe7eead31-4afa52f0755mr9472439137.26.1733386780629;
-        Thu, 05 Dec 2024 00:19:40 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2ba8b1f9sm121544241.19.2024.12.05.00.19.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 00:19:39 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-85b92397fe2so147608241.3;
-        Thu, 05 Dec 2024 00:19:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVUnOj3LOUmmzupONUubH7bksHBF3zTC1pKXXeh9H/WBmUwAiV++/BQUFhHeYfGDJd2IWVqx+Ukg5A8edc=@vger.kernel.org, AJvYcCVq/JlhnCwkxVVmIb0M1UOaz7gIhLl7ISx25kGpJ2vYa2/23kBfxW7ZzqEOWPO9Jeo/jFbmk6IQlSyGrw==@vger.kernel.org
-X-Received: by 2002:a05:6102:358c:b0:4af:ad73:ffd7 with SMTP id
- ada2fe7eead31-4afad741481mr5868855137.7.1733386778916; Thu, 05 Dec 2024
- 00:19:38 -0800 (PST)
+	s=arc-20240116; t=1733386776; c=relaxed/simple;
+	bh=Rp0uSYMv7tS7UlEf36XAhzbPtrr+tZ2JpfXt1fGEMjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+QGwGFIzK1mJNkRgsA4fmUkjDARYJnfD2zb3FjAGv1EJ46d9iEZXry1ZRjcUYGU7SrIdV+XDVBVBbS5jd9t6jHUQP29UEqQAwYpruKgyauki48ojpECk9cHZ7v0OtDmNaMzvveCMGVR4l/DkUtiFINNHP1wMf4FQOFVf3lBe0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: fBrzkG2+T2etuHodIUz50A==
+X-CSE-MsgGUID: pj1Cu+McSgW+YYYHlYU3HQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="21271315"
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="21271315"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 00:19:35 -0800
+X-CSE-ConnectionGUID: BfXL9c6NR5yT3QEPz80omw==
+X-CSE-MsgGUID: aAabbjbPTn2aDyA1ROdO3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="94374241"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 00:19:33 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tJ759-000000041aa-0epQ;
+	Thu, 05 Dec 2024 10:19:31 +0200
+Date: Thu, 5 Dec 2024 10:19:30 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: intel_soc_pmic_chtdc_ti: Remove invalid
+ max_register from regmap-config
+Message-ID: <Z1FiEuqjwpyW4s3Q@smile.fi.intel.com>
+References: <20241204210209.136976-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011150304.709590-1-ziy@nvidia.com> <CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com>
- <DAFE2913-0B32-484F-83BE-080C60362DB8@nvidia.com> <f64f8a9e-fda8-4f7a-85a2-0113de2feb6c@suse.cz>
- <9942C08D-C188-461C-B731-F08DE294CD2B@nvidia.com> <Z1CDbrrTn6RgNmYn@casper.infradead.org>
- <B65776A4-D434-4D9F-9C42-1C45DAE5A72A@nvidia.com>
-In-Reply-To: <B65776A4-D434-4D9F-9C42-1C45DAE5A72A@nvidia.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Dec 2024 09:19:26 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV1hkwajxDWk6AWj_QR_qPkEni0u=tnQWdt1-M83NE0ig@mail.gmail.com>
-Message-ID: <CAMuHMdV1hkwajxDWk6AWj_QR_qPkEni0u=tnQWdt1-M83NE0ig@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid zeroing user movable page twice with init_on_alloc=1
-To: Zi Yan <ziy@nvidia.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	John Hubbard <jhubbard@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko <glider@google.com>, 
-	Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204210209.136976-1-hdegoede@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Zi,
+On Wed, Dec 04, 2024 at 10:02:09PM +0100, Hans de Goede wrote:
+> The max_register = 128 setting in the regmap config is not valid.
+> 
+> The Intel Dollar Cove TI PMIC has an eeprom unlock register at address 0x88
+> and a number of EEPROM registers at 0xF?. Drop the invalid max_register
+> setting so that these registers can be accessed.
 
-On Wed, Dec 4, 2024 at 5:58=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
-> On 4 Dec 2024, at 11:29, Matthew Wilcox wrote:
-> > On Wed, Dec 04, 2024 at 11:16:51AM -0500, Zi Yan wrote:
-> >>> So maybe the clearing done as part of page allocator isn't enough her=
-e.
-> >>>
-> >> Basically, mips needs to flush data cache if kmap address is aliased t=
-o
-> >
-> > People use "aliased" in contronym ways.  Do you mean "has a
-> > non-congruent alias" or "has a congruent alias"?
->
-> I mean if kmap address goes into a different cache line than userspace
-> address, a cache flush is needed to make sure data is visible to
-> userspace.
->
-> >
-> >> userspace address. This means when mips has THP on, the patch below
-> >> is not enough to fix the issue.
-> >>
-> >> In post_alloc_hook(), it does not make sense to pass userspace address
-> >> in to determine whether to flush dcache or not.
-> >>
-> >> One way to fix it is to add something like arch_userpage_post_alloc()
-> >> to flush dcache if kmap address is aliased to userspace address.
-> >> But my questions are that
-> >> 1) if kmap address will always be the same for two separate kmap_local=
-() calls,
-> >
-> > No.  It just takes the next address in the stack.
->
-> So this fix will not work, since it is possible that first kmap and secon=
-d
-> kmap have different pages_do_alias() return values.
->
-> Another way would be to make a special case for mips, like below.
-> But that looks ugly, let me think about it more.
->
-> diff --git a/arch/mips/include/asm/page.h b/arch/mips/include/asm/page.h
-> index bc3e3484c1bf..ef3c6f0b9159 100644
-> --- a/arch/mips/include/asm/page.h
-> +++ b/arch/mips/include/asm/page.h
-> @@ -95,6 +95,19 @@ struct vm_area_struct;
->  extern void copy_user_highpage(struct page *to, struct page *from,
->         unsigned long vaddr, struct vm_area_struct *vma);
->
-> +struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
-> +                                  unsigned long vaddr)
-> + {
-> +       struct folio *folio;
-> +
-> +       folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
-> +       if (folio)
-> +               clear_user_highpage(&folio->page, vaddr);
-> +
-> +       return folio;
-> + }
-> +#define vma_alloc_zeroed_movable_folio vma_alloc_zeroed_movable_folio
-> +
->  #define __HAVE_ARCH_COPY_USER_HIGHPAGE
->
->  /*
-> diff --git a/mm/internal.h b/mm/internal.h
-> index cb8d8e8e3ffa..d513fa683aa3 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -1287,7 +1287,8 @@ void touch_pmd(struct vm_area_struct *vma, unsigned=
- long addr,
->
->  static inline bool alloc_zeroed(void)
->  {
-> -       return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
-> +       return !IS_ENABLED(CONFIG_MIPS) &&
-> +               static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
->                         &init_on_alloc);
->  }
+Wouldn't this break debugfs facility?
+If that is the case, perhaps adding 0xff to it would make more sense?
 
-After adding a missing static inline, #include <linux/gfp.h>, and still
-getting compile failures, I gave up...
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
