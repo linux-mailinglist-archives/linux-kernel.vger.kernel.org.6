@@ -1,111 +1,144 @@
-Return-Path: <linux-kernel+bounces-432721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC54D9E4F68
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:10:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDE79E4F81
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:16:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACD628168B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04BA4167DDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822FB1D31B2;
-	Thu,  5 Dec 2024 08:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpPs2GWb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEA91C4A13;
+	Thu,  5 Dec 2024 08:16:05 +0000 (UTC)
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8290A19645D;
-	Thu,  5 Dec 2024 08:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBDE1940B1;
+	Thu,  5 Dec 2024 08:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733386229; cv=none; b=Q0C3uIbdHa90lrx7uDALFG5WrGe3826jY5SIwyYlC0lv8v40nqQSkfCnnNDbnR9hE7iP9KFkx/VoC37KI9EK5U/TkNz7tny2PAgEBMqsFGefV9Lhh4PZP6TkoRDIFm1H+6hGz1xXgCUAFkXeiTKR3S/Njz8wGudLR2CODozd044=
+	t=1733386565; cv=none; b=DZFFmp50dSV+LnwljQEQw7IqNeMkOeYOusdRR0jttZihlEJqAFOCdrP6W2ZYDyA81LmDTrciKSX2RwymkpRbNcQPdZyKWWvpX6r0rPnefNV+25sixN4kJsm5LsggwvJg7GKG+8lHdo4/xMzvSImamAtdoSk1LeYmlnZ6BFe0Hr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733386229; c=relaxed/simple;
-	bh=dm+XaarJmRd4PNMM8493FEpsyQu1VayQlRTan4XCkBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLdZXHgoEBmit39Ln2LBdxYBUkhf1ffVUZbDQEmM8/TZfYQnYcUjp8kH160b8YGvLY9m7oAHS8HkLQlp8WkZvO0pzqscwkbl+iF1ri9ne5VHqD2lQUwehh+LBsCUvEowJuidvPi5Zj+/z7Wg5fn/E5ZN2AW61EarJ8o4fTWzTc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FpPs2GWb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39BB7C4CED1;
-	Thu,  5 Dec 2024 08:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733386229;
-	bh=dm+XaarJmRd4PNMM8493FEpsyQu1VayQlRTan4XCkBA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FpPs2GWbGgUz5ytJZ+QuBg7XSizF7MBLb5wQ47CrA74Do8i70h2t2SfmkVVxQxJwp
-	 RFeHBA6N+1cKlVI8Shsh2lySUArR5RSI6914U1xBrr+bvhH7rr7cEdzsA4Rgi1d66U
-	 zkLJI2jbu5xXvGwGUD8mz6V+6eqzicBTjawuRRljctphJ44a5cfQaamr4YGrDaX/zh
-	 IbgvB4IO9782E6ZkMrskDL8DfFasy49Ius/Vc5afr1384a7Ak3SKFeTCK94J8odFfT
-	 MaHtfcFW9mpHPKOXqE35SDPO05JukSUMC0SYTE1DD/M4FAoBDI7at285cpbtMDTdO+
-	 RFuFFL23OJDcA==
-Date: Thu, 5 Dec 2024 09:10:25 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, linux-sound@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-block@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	open-iscsi@googlegroups.com, linux-usb@vger.kernel.org, linux-serial@vger.kernel.org, 
-	netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v3 08/11] gpio: sim: Remove gpio_sim_dev_match_fwnode()
-Message-ID: <7ugfaj2h3sy77jpaadco5xtjalnten3gmvozowcle3g7zcdqs4@sqf5l47onbsi>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-8-1611f1486b5a@quicinc.com>
+	s=arc-20240116; t=1733386565; c=relaxed/simple;
+	bh=aE3NYRNv3Kk2Mhx9uX80BNMos/Wvt8Z5kJNseVrDcIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j2vLrhSLLTn0DuU2rjCIBrtTR4WW+bGzunAOfGa8r+88eFNsD799v2mHEfafVgRQS5iP2HjzbeNIkF4jekWnQ0fRcl79E6c7MGpFEC5L7AqLWbV4v0E3Xa2AvOwLmHeVGRBb1Pqj+mGujm6AGicr+1km2YokUe9YuuKzLWILfuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: from relay1-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::221])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id CC5A4C32EA;
+	Thu,  5 Dec 2024 08:11:56 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 803C6240002;
+	Thu,  5 Dec 2024 08:11:47 +0000 (UTC)
+Message-ID: <697a402b-0305-489d-bf4e-aa5e7fa4b2aa@ghiti.fr>
+Date: Thu, 5 Dec 2024 09:11:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ya6wyfjwhlqhd5wu"
-Content-Disposition: inline
-In-Reply-To: <20241205-const_dfc_done-v3-8-1611f1486b5a@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] riscv: selftests: Fix warnings pointer masking test
+Content-Language: en-US
+To: Charlie Jenkins <charlie@rivosinc.com>, Shuah Khan <shuah@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>
+References: <20241204-fix_warnings_pointer_masking_tests-v2-1-1bf0c5095f58@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20241204-fix_warnings_pointer_masking_tests-v2-1-1bf0c5095f58@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
+Hi Charlie,
 
---ya6wyfjwhlqhd5wu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 08/11] gpio: sim: Remove gpio_sim_dev_match_fwnode()
-MIME-Version: 1.0
-
-On Thu, Dec 05, 2024 at 08:10:17AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
->=20
-> gpio_sim_dev_match_fwnode() is a simple wrapper of device_match_fwnode()
-> Remvoe the unnecessary wrapper.
->=20
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+On 05/12/2024 03:57, Charlie Jenkins wrote:
+> When compiling the pointer masking tests with -Wall this warning
+> is present:
+>
+> pointer_masking.c: In function ‘test_tagged_addr_abi_sysctl’:
+> pointer_masking.c:203:9: warning: ignoring return value of ‘pwrite’
+> declared with attribute ‘warn_unused_result’ [-Wunused-result]
+>    203 |         pwrite(fd, &value, 1, 0); |
+>        ^~~~~~~~~~~~~~~~~~~~~~~~ pointer_masking.c:208:9: warning:
+> ignoring return value of ‘pwrite’ declared with attribute
+> ‘warn_unused_result’ [-Wunused-result]
+>    208 |         pwrite(fd, &value, 1, 0);
+>
+> I came across this on riscv64-linux-gnu-gcc (Ubuntu
+> 11.4.0-1ubuntu1~22.04).
+>
+> Fix this by checking that the number of bytes written equal the expected
+> number of bytes written.
+>
+> Fixes: 7470b5afd150 ("riscv: selftests: Add a pointer masking test")
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 > ---
->  drivers/gpio/gpio-sim.c | 7 +------
+> Changes in v2:
+> - I had ret != 2 for testing, I changed it to be ret != 1.
+> - Link to v1: https://lore.kernel.org/r/20241204-fix_warnings_pointer_masking_tests-v1-1-ea1e9665ce7a@rivosinc.com
+> ---
+>   tools/testing/selftests/riscv/abi/pointer_masking.c | 19 +++++++++++++++----
+>   1 file changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/riscv/abi/pointer_masking.c b/tools/testing/selftests/riscv/abi/pointer_masking.c
+> index dee41b7ee3e3..229d85ccff50 100644
+> --- a/tools/testing/selftests/riscv/abi/pointer_masking.c
+> +++ b/tools/testing/selftests/riscv/abi/pointer_masking.c
+> @@ -189,6 +189,7 @@ static void test_tagged_addr_abi_sysctl(void)
+>   {
+>   	char value;
+>   	int fd;
+> +	int ret;
+>   
+>   	ksft_print_msg("Testing tagged address ABI sysctl\n");
+>   
+> @@ -200,14 +201,24 @@ static void test_tagged_addr_abi_sysctl(void)
+>   	}
+>   
+>   	value = '1';
+> -	pwrite(fd, &value, 1, 0);
+> +	ret = pwrite(fd, &value, 1, 0);
+> +	if (ret != 1) {
+> +		ksft_test_result_fail("Write to /proc/sys/abi/tagged_addr_disabled failed.\n");
+> +		return;
+> +	}
+> +
+>   	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == -EINVAL,
+>   			 "sysctl disabled\n");
+>   
+>   	value = '0';
+> -	pwrite(fd, &value, 1, 0);
+> -	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == 0,
+> -			 "sysctl enabled\n");
+> +	ret = pwrite(fd, &value, 1, 0);
+> +	if (ret != 1) {
+> +		ksft_test_result_fail("Write to /proc/sys/abi/tagged_addr_disabled failed.\n");
+> +		return;
+> +	}
+> +
+> +	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == -EINVAL,
+> +			 "sysctl disabled\n");
 
-I think if you move this patch before patch #4 in your series, you only
-have to touch this file once.
+Why did you change the test from 0 to -EINVAL here?
 
-Best regards
-Uwe
+Thanks,
 
---ya6wyfjwhlqhd5wu
-Content-Type: application/pgp-signature; name="signature.asc"
+Alex
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdRX+8ACgkQj4D7WH0S
-/k6rewf+KsN2Irmv5Td5FMMxi+83vZgDfjxwj+eoLUlf72jMXWx89mPqbHAWyq2W
-DVJONM/HQoPhG9ILJDxvkaVLetBPRY7QPBSVY8bMUaDT9ljXmnbxed/NGNngiATy
-r1JyYMzf3dqlGSgJl6LhRpugodssXbGiDv8oVNRtLIHFd5MLH+xlUr0CFu0KsPSd
-E4NADLSFAkpDIDer3BYt19RGkXNgCrbqzP8rfGN50Q9t+xuS58qoK2oY5+jzT11a
-qccGFlDCzdaHWCVsLHVwXYWN2L5mxrrm09Dv8aS/0TcFMueK4nsasVRpUAplw+Gd
-j791qtNhdb4QQUhbiOamc5BP/g6LvQ==
-=1ED3
------END PGP SIGNATURE-----
-
---ya6wyfjwhlqhd5wu--
+>   
+>   	set_tagged_addr_ctrl(0, false);
+>   
+>
+> ---
+> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> change-id: 20241204-fix_warnings_pointer_masking_tests-3860e4f35429
 
