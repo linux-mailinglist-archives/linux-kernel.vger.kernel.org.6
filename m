@@ -1,215 +1,267 @@
-Return-Path: <linux-kernel+bounces-432703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0159E4F00
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:55:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EFC9E4F05
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CA181881E39
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DDE161615
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977491BF7E8;
-	Thu,  5 Dec 2024 07:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CDD1C3050;
+	Thu,  5 Dec 2024 07:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gx5jrvcw"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzNy7hDj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3987D1917EE
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 07:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CF61C07C0;
+	Thu,  5 Dec 2024 07:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733385294; cv=none; b=PNwXN9yaHE+/SX3WHcyLgkeNfL1szhi+0rlcYG12fchpqZgjSbct2dXhGBzgl944kzprTLoYRhS+WBmPQN5/ZuZVugQo8W5UpAA6fOQeR683EKU17B5ilYNz3MpKlBG/BoS5LjZXYeYZ6pDyk31eYTgdAyG3EvWk/zUVqnrNhvs=
+	t=1733385478; cv=none; b=D/jbz1ymBm6EQ5X9lsVDO+1cnfbU1iX8T/grbgWgWCcsWlyJKagbuGRSf6Iz7fSZIFyO7xxynUCKJ4D9yoFMS5aWTjVl2IHHHcre0RJhuzVGnEgcXCRK95y7J5IJCWlKRlgj7O0r8U5oJ099WRb3R9/eR4hZ2xHYgbFYZ78YHx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733385294; c=relaxed/simple;
-	bh=vx5+qBh850FNYmcGamqyfPmnZAHBfCD8QuI0kcDQPpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1RxNuBAgnJsXp9eb7zG1voXTsfmb/OSscAFDtWVVLyJ3CSQ43mE580ZJ6efxDAlMHEi8FHVtlA22+qMxxnBDcBQRBfdL+66MADg3Bmgk2SSwG7dCbPuFxvvz+c8nnCcxYFV5UESgai4hjVzXk7qJTclUXq+lF5EF3iTFB7uR6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gx5jrvcw; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa55da18f89so85487366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 23:54:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733385292; x=1733990092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iPoveC5NiFJebUr6H/XvuyS4HCl5gaDQMYyE2e5JSYo=;
-        b=gx5jrvcwJH+rruOI62eLrlf2k7FMmh3eiIA5/Ws5U6OXXkWGgEslWHHogq3MKzb0CP
-         hOcC2Mq4D0FOuw2CJKaIg3CwedpLs/rk09Kq3AW5CLwTIL5EoYg7SP+2Wmr55tidKToM
-         717Hoiye2CNNzDf5c1Tagf3XCxB+Gvt7B2CRqaMzKN91fgQJNnMS4cXZmnghsgqG8+MA
-         q6/mdb5HoGljY61rmp/qiDYEfxA3m9/KJ9YNWEEpFj9jG6RS+mnkFPCXwEOHuPj/xz5H
-         PIU+L5ZQqsuMnGJ/ALiGYlNLncXtfquv6EHghSdgYLthNZmkRDH2eZN5+gOOPhVo8NYE
-         v0zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733385292; x=1733990092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iPoveC5NiFJebUr6H/XvuyS4HCl5gaDQMYyE2e5JSYo=;
-        b=H0YqFItLh9D5zbiapIG+koYV64aFsZOu9RcB/t1U1icO1x4qEYZc+TjXww3JJxFhrc
-         nsHLKLyGstYJ+MPfCfpLBxpeWd0TwHjGUMw2lTsJazx8WxitMQsixFuSiTtWN2vRWX+h
-         Ky+ByBBIpPD88CsPhL7yIFNEzwo+xXHC74OcqYfADdtDRO0jCiiIRbzkzuyU/vIxTtFg
-         6Y9/pRkciofVmWKBwkvQvahByTUnTY1q1gYJZVyVL8VhdkcMN93oqDuMUTeN6MGnyY3A
-         B9q2yf01PVnKXNwDJughsLeIEIOUC21tSOJU2/nZkpt/oc/zfxrtDD3tfqPPjPlKdEBX
-         PgzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+jwvt5MGqWhRp0ia83KC57j6qY/ZdZwzUMIU9KBIH4cBrUok9+96NSfY4Hu87t4AAz1VmPcxNqKoWVZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLmgpMF2Shj7NlqGQotTqqYcJfWOQHdPIkeZZ+2jCykxr52504
-	qcxioAuXKEUUMPDsrE872hvuqG6u8GJ00g+Womx97WcxPEp1FSCePZaju0JjVVhZnAXBh3eUqe6
-	1wBqS2u/1+YJTi5AqMTAhjkxLRQBQwSE6XT2t
-X-Gm-Gg: ASbGncs9NuTh7qHqej3v0UgBg7/5rqUs2R0/+EBTy1jtAkPm401WP3qC44AONXG8r2m
-	K1hWDoqhaRDuMvgV0eSgrwU90fSr1o2E=
-X-Google-Smtp-Source: AGHT+IEkMEJuQYoavObqjfF1Dm1ARxtTM3In+7tdetfMxymzqpHnS3ICi4gVSe4yccpc3ySQA05ZVBU8SNk46yxZksY=
-X-Received: by 2002:a17:906:23f1:b0:aa5:639d:7cdb with SMTP id
- a640c23a62f3a-aa5f7d4ec79mr647034466b.22.1733385291482; Wed, 04 Dec 2024
- 23:54:51 -0800 (PST)
+	s=arc-20240116; t=1733385478; c=relaxed/simple;
+	bh=uSg/bKSfO3eT91O/43MYGhR9yGuKLhFP26XP6tdrvvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABQpv8q/9fiDhXutFqKuh5WfmYNxtAr0/Q/AVVrKA4U4wtRz7u/0kRaJ7ks0J0ZGGu6fDI7dtGSHztDcMK8PZ9kD+idu6kkDEXML2SjYIEqf4b3S9+gdd5Gi0SKzQIqD93FxzW2qkRh1AJyTBkq/HzUzY1d4hQegiHOGuHjI1y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzNy7hDj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBE1C4CED1;
+	Thu,  5 Dec 2024 07:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733385477;
+	bh=uSg/bKSfO3eT91O/43MYGhR9yGuKLhFP26XP6tdrvvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JzNy7hDj8yY2NKW/uvISgo3NyxjO5tVuz9ugbFYNzkQfy3Jc07JeH3iFdxKdfhbIn
+	 Gs/DgdTpri/fG+tYQuzRGCSnAZsUMiTYX0IFB5XsAAS9Q4+iP1SMD9P5lq/pdweH4y
+	 xH59t/A4HWQPKx6IXoYrtQGY5va/K9fYZ5c+M7u0T4jY0BudHV5nEELfQIfrTLMnmm
+	 6UyC8sSBc38He6D6wSmTiyXbOiPcxIMIuT/hlbZr40n/bhxEegN1wxzTyURvEXXhcT
+	 ctNs0wdcfwYa3sys0zSE5LdNI7ekWciGjI2EbYVmf9lpjoZmNsqXxQyP5XmEpeihLJ
+	 KK1KmMgaXWcDg==
+Date: Thu, 5 Dec 2024 09:57:38 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Kai Huang <kai.huang@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	dave.hansen@intel.com, kirill.shutemov@linux.intel.com,
+	peterz@infradead.org, tony.luck@intel.com, tglx@linutronix.de,
+	bp@alien8.de, mingo@redhat.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, rafael@kernel.org, david@redhat.com,
+	dan.j.williams@intel.com, len.brown@intel.com, ak@linux.intel.com,
+	isaku.yamahata@intel.com, ying.huang@intel.com, chao.gao@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, nik.borisov@suse.com,
+	bagasdotme@gmail.com, sagis@google.com, imammedo@redhat.com
+Subject: Re: [PATCH v15 08/23] x86/virt/tdx: Use all system memory when
+ initializing TDX module as TDX memory
+Message-ID: <Z1Fc8g47vfpz9EVW@kernel.org>
+References: <cover.1699527082.git.kai.huang@intel.com>
+ <87e19d1931e33bfaece5b79602cfbd517df891f1.1699527082.git.kai.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204085801.11563-1-moyuanhao3676@163.com> <80b6603d-ed52-43b7-a434-0253e5de784a@kernel.org>
- <dcdeaf17-c3ce-4677-a0c0-c391d8bd951f@163.com>
-In-Reply-To: <dcdeaf17-c3ce-4677-a0c0-c391d8bd951f@163.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 5 Dec 2024 08:54:40 +0100
-Message-ID: <CANn89iLjhnxkOY7p3zQsyupGowjMt0beWE3=WHTVC2NSM_-2hw@mail.gmail.com>
-Subject: Re: [PATCH net-next] tcp: Check space before adding MPTCP options
-To: Mo Yuanhao <moyuanhao3676@163.com>
-Cc: matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org, 
-	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
-	horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mptcp@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87e19d1931e33bfaece5b79602cfbd517df891f1.1699527082.git.kai.huang@intel.com>
 
-On Thu, Dec 5, 2024 at 8:31=E2=80=AFAM Mo Yuanhao <moyuanhao3676@163.com> w=
-rote:
->
-> =E5=9C=A8 2024/12/4 19:01, Matthieu Baerts =E5=86=99=E9=81=93:
-> > Hi MoYuanhao,
-> >
-> > +Cc MPTCP mailing list.
-> >
-> > (Please cc the MPTCP list next time)
-> >
-> > On 04/12/2024 09:58, MoYuanhao wrote:
-> >> Ensure enough space before adding MPTCP options in tcp_syn_options()
-> >> Added a check to verify sufficient remaining space
-> >> before inserting MPTCP options in SYN packets.
-> >> This prevents issues when space is insufficient.
-> >
-> > Thank you for this patch. I'm surprised we all missed this check, but
-> > yes it is missing.
-> >
-> > As mentioned by Eric in his previous email, please add a 'Fixes' tag.
-> > For bug-fixes, you should also Cc stable and target 'net', not 'net-nex=
-t':
-> >
-> > Fixes: cec37a6e41aa ("mptcp: Handle MP_CAPABLE options for outgoing
-> > connections")
-> > Cc: stable@vger.kernel.org
-> >
-> >
-> > Regarding the code, it looks OK to me, as we did exactly that with
-> > mptcp_synack_options(). In mptcp_established_options(), we pass
-> > 'remaining' because many MPTCP options can be set, but not here. So I
-> > guess that's fine to keep the code like that, especially for the 'net' =
-tree.
-> >
-> >
-> > Also, and linked to Eric's email, did you have an issue with that, or i=
-s
-> > it to prevent issues in the future?
-> >
-> >
-> > One last thing, please don=E2=80=99t repost your patches within one 24h=
- period, see:
-> >
-> >    https://docs.kernel.org/process/maintainer-netdev.html
-> >
-> >
-> > Because the code is OK to me, and the same patch has already been sent
-> > twice to the netdev ML within a few hours, I'm going to apply this patc=
-h
-> > in our MPTCP tree with the suggested modifications. Later on, we will
-> > send it for inclusion in the net tree.
-> >
-> > pw-bot: awaiting-upstream
-> >
-> > (Not sure this pw-bot instruction will work as no net/mptcp/* files hav=
-e
-> > been modified)
-> >
-> > Cheers,
-> > Matt
-> Hi Matt,
->
-> Thank you for your feedback!
->
-> I have made the suggested updates to the patch (version 2):
->
-> I=E2=80=99ve added the Fixes tag and Cc'd the stable@vger.kernel.org list=
-.
-> The target branch has been adjusted to net as per your suggestion.
-> I will make sure to Cc the MPTCP list in future submissions.
->
-> Regarding your question, this patch was created to prevent potential
-> issues related to insufficient space for MPTCP options in the future. I
-> didn't encounter a specific issue, but it seemed like a necessary
-> safeguard to ensure robustness when handling SYN packets with MPTCP optio=
-ns.
->
-> Additionally, I have made further optimizations to the patch, which are
-> included in the attached version. I believe it would be more elegant to
-> introduce a new function, mptcp_set_option(), similar to
-> mptcp_set_option_cond(), to handle MPTCP options.
->
-> This is my first time replying to a message in a Linux mailing list, so
-> if there are any formatting issues or mistakes, please point them out
-> and I will make sure to correct them in future submissions.
->
-> Thanks again for your review and suggestions. Looking forward to seeing
-> the patch applied to the MPTCP tree and later inclusion in the net tree.
+Hi,
 
-We usually do not refactor for a patch targeting a net tree.
+I've been auditing for_each_mem_pfn_range() users and it's usage in TDX is
+dubious for me.
 
-Also, please do not add attachments, we need the patch inline as you did in=
- v1.
+On Fri, Nov 10, 2023 at 12:55:45AM +1300, Kai Huang wrote:
+> 
+> As TDX-usable memory is a fixed configuration, take a snapshot of the
+> memory configuration from memblocks at the time of module initialization
+> (memblocks are modified on memory hotplug).  This snapshot is used to
 
-As you can see, v2 is not avail in
-https://patchwork.kernel.org/project/netdevbpf/list/
+AFAUI this could happen long after free_initmem() which discards all
+memblock data on x86.
 
-Documentation/process/submitting-patches.rst
+> enable TDX support for *this* memory configuration only.  Use a memory
+> hotplug notifier to ensure that no other RAM can be added outside of
+> this configuration.
+ 
+...
 
-No MIME, no links, no compression, no attachments.  Just plain text
--------------------------------------------------------------------
+> +/*
+> + * Ensure that all memblock memory regions are convertible to TDX
+> + * memory.  Once this has been established, stash the memblock
+> + * ranges off in a secondary structure because memblock is modified
+> + * in memory hotplug while TDX memory regions are fixed.
+> + */
+> +static int build_tdx_memlist(struct list_head *tmb_list)
+> +{
+> +	unsigned long start_pfn, end_pfn;
+> +	int i, ret;
+> +
+> +	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, NULL) {
 
-Linus and other kernel developers need to be able to read and comment
-on the changes you are submitting.  It is important for a kernel
-developer to be able to "quote" your changes, using standard e-mail
-tools, so that they may comment on specific portions of your code.
+Unles ARCH_KEEP_MEMBLOCK is defined this won't work after free_initmem()
 
-For this reason, all patches should be submitted by e-mail "inline". The
-easiest way to do this is with ``git send-email``, which is strongly
-recommended.  An interactive tutorial for ``git send-email`` is available a=
-t
-https://git-send-email.io.
+> +		/*
+> +		 * The first 1MB is not reported as TDX convertible memory.
+> +		 * Although the first 1MB is always reserved and won't end up
+> +		 * to the page allocator, it is still in memblock's memory
+> +		 * regions.  Skip them manually to exclude them as TDX memory.
+> +		 */
+> +		start_pfn = max(start_pfn, PHYS_PFN(SZ_1M));
+> +		if (start_pfn >= end_pfn)
+> +			continue;
+> +
+> +		/*
+> +		 * Add the memory regions as TDX memory.  The regions in
+> +		 * memblock has already guaranteed they are in address
+> +		 * ascending order and don't overlap.
+> +		 */
+> +		ret = add_tdx_memblock(tmb_list, start_pfn, end_pfn);
+> +		if (ret)
+> +			goto err;
+> +	}
+> +
+> +	return 0;
+> +err:
+> +	free_tdx_memlist(tmb_list);
+> +	return ret;
+> +}
+> +
+>  static int init_tdx_module(void)
+>  {
+> +	int ret;
+> +
+> +	/*
+> +	 * To keep things simple, assume that all TDX-protected memory
+> +	 * will come from the page allocator.  Make sure all pages in the
+> +	 * page allocator are TDX-usable memory.
+> +	 *
+> +	 * Build the list of "TDX-usable" memory regions which cover all
+> +	 * pages in the page allocator to guarantee that.  Do it while
+> +	 * holding mem_hotplug_lock read-lock as the memory hotplug code
+> +	 * path reads the @tdx_memlist to reject any new memory.
+> +	 */
+> +	get_online_mems();
+> +
+> +	ret = build_tdx_memlist(&tdx_memlist);
+> +	if (ret)
+> +		goto out_put_tdxmem;
+> +
+>  	/*
+>  	 * TODO:
+>  	 *
+> -	 *  - Build the list of TDX-usable memory regions.
+>  	 *  - Get TDX module "TD Memory Region" (TDMR) global metadata.
+>  	 *  - Construct a list of TDMRs to cover all TDX-usable memory
+>  	 *    regions.
+> @@ -168,7 +267,14 @@ static int init_tdx_module(void)
+>  	 *
+>  	 *  Return error before all steps are done.
+>  	 */
+> -	return -EINVAL;
+> +	ret = -EINVAL;
+> +out_put_tdxmem:
+> +	/*
+> +	 * @tdx_memlist is written here and read at memory hotplug time.
+> +	 * Lock out memory hotplug code while building it.
+> +	 */
+> +	put_online_mems();
+> +	return ret;
+>  }
+>  
+>  static int __tdx_enable(void)
+> @@ -258,6 +364,56 @@ static int __init record_keyid_partitioning(u32 *tdx_keyid_start,
+>  	return 0;
+>  }
+>  
+> +static bool is_tdx_memory(unsigned long start_pfn, unsigned long end_pfn)
+> +{
+> +	struct tdx_memblock *tmb;
+> +
+> +	/*
+> +	 * This check assumes that the start_pfn<->end_pfn range does not
+> +	 * cross multiple @tdx_memlist entries.  A single memory online
+> +	 * event across multiple memblocks (from which @tdx_memlist
+> +	 * entries are derived at the time of module initialization) is
+> +	 * not possible.  This is because memory offline/online is done
+> +	 * on granularity of 'struct memory_block', and the hotpluggable
+> +	 * memory region (one memblock) must be multiple of memory_block.
+> +	 */
+> +	list_for_each_entry(tmb, &tdx_memlist, list) {
+> +		if (start_pfn >= tmb->start_pfn && end_pfn <= tmb->end_pfn)
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static int tdx_memory_notifier(struct notifier_block *nb, unsigned long action,
+> +			       void *v)
+> +{
+> +	struct memory_notify *mn = v;
+> +
+> +	if (action != MEM_GOING_ONLINE)
+> +		return NOTIFY_OK;
+> +
+> +	/*
+> +	 * Empty list means TDX isn't enabled.  Allow any memory
+> +	 * to go online.
+> +	 */
+> +	if (list_empty(&tdx_memlist))
+> +		return NOTIFY_OK;
+> +
+> +	/*
+> +	 * The TDX memory configuration is static and can not be
+> +	 * changed.  Reject onlining any memory which is outside of
+> +	 * the static configuration whether it supports TDX or not.
+> +	 */
+> +	if (is_tdx_memory(mn->start_pfn, mn->start_pfn + mn->nr_pages))
+> +		return NOTIFY_OK;
+> +
+> +	return NOTIFY_BAD;
+> +}
+> +
+> +static struct notifier_block tdx_memory_nb = {
+> +	.notifier_call = tdx_memory_notifier,
+> +};
+> +
+>  static int __init tdx_init(void)
+>  {
+>  	u32 tdx_keyid_start, nr_tdx_keyids;
+> @@ -281,6 +437,13 @@ static int __init tdx_init(void)
+>  		return -ENODEV;
+>  	}
+>  
+> +	err = register_memory_notifier(&tdx_memory_nb);
+> +	if (err) {
+> +		pr_err("initialization failed: register_memory_notifier() failed (%d)\n",
+> +				err);
+> +		return -ENODEV;
+> +	}
+> +
+>  	/*
+>  	 * Just use the first TDX KeyID as the 'global KeyID' and
+>  	 * leave the rest for TDX guests.
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+> index a3c52270df5b..c11e0a7ca664 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.h
+> +++ b/arch/x86/virt/vmx/tdx/tdx.h
+> @@ -27,4 +27,10 @@ enum tdx_module_status_t {
+>  	TDX_MODULE_ERROR
+>  };
+>  
+> +struct tdx_memblock {
+> +	struct list_head list;
+> +	unsigned long start_pfn;
+> +	unsigned long end_pfn;
+> +};
+> +
+>  #endif
+> -- 
+> 2.41.0
+> 
 
-If you choose not to use ``git send-email``:
-
-.. warning::
-
-  Be wary of your editor's word-wrap corrupting your patch,
-  if you choose to cut-n-paste your patch.
-
-Do not attach the patch as a MIME attachment, compressed or not.
-Many popular e-mail applications will not always transmit a MIME
-attachment as plain text, making it impossible to comment on your
-code.  A MIME attachment also takes Linus a bit more time to process,
-decreasing the likelihood of your MIME-attached change being accepted.
+-- 
+Sincerely yours,
+Mike.
 
