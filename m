@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-432510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEB19E4C53
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:34:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CD39E4C47
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:33:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C548C18819A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B689F16A510
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D3818BC2F;
-	Thu,  5 Dec 2024 02:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A26E18787F;
+	Thu,  5 Dec 2024 02:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxz5O1FA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xnEOumgz"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39612187FE4;
-	Thu,  5 Dec 2024 02:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58DB79DC
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733366051; cv=none; b=uTCiQsCuPzF8ZOJoz3HnXnXiF1CRcNsW642KbX24RQmAlEh45k07rT2Q4Kv7gTQwWgclPwPS+pVhQ1Nff/uKMhcgNhgBKBZjf7+HOXGe2c8yEl/03p9AgrAJsivmx/DmmIOJmed4M8Ww9IeeoRfwrHKb6GyLO1kGwY+zJmX9idc=
+	t=1733366031; cv=none; b=ToACiq8GM9qJh9mRbTeyq/wacR5L+o3T27rKEV1MBd9PF+DJTIOUyD7EQ22NYvhIf39EtKW/TfOKdS7TUGV9GQC2wcv8CLTDFspJcRQ1m5ILCWlDKFJAUyay6IuUAuykepTDIU+pP+zvWIo4Yea2bGlDTW3U1CRt3PHJjOpVs6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733366051; c=relaxed/simple;
-	bh=UA2Uea6IGitYgfix2+eS7XWDk5SRJWyMNtpCYH383+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XjuwOdnLXyTjqk0BXI+Uhmt07ANbFyrLxWAHdGbJfVJie+tEfMV5s4CBM0BUnnO7gcgL/FJQooWjpBRuzHK4i73Oyjcm7cVwYK+fXCgP7U4fhtpAHTgoNGk8bV6MzjG6GNNtkPazAC/mZtALEPuyU0CtfyajwLH6RykMB2B5RiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxz5O1FA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B63C4CED2;
-	Thu,  5 Dec 2024 02:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733366050;
-	bh=UA2Uea6IGitYgfix2+eS7XWDk5SRJWyMNtpCYH383+M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pxz5O1FA21sHXdqJoW4ydp49kC1q4DawugzBJoe+FT3XF2PqO2AGafugxpJmwrQjm
-	 8zak05K8DnETcDGQaMVRlwW2faNQrfb72FXjtNG+SBj5I+4XqJ7La59tMTOy0JKRA0
-	 9k248/V0ecp1Y4odMbdmbKp6kdWegA1N3vkFEABK5rdVmocSM7nBK7LMMYp8BIixI0
-	 K6nNAo9sFTXKhHvlEW9xAJ+9rowBo628XgK4/wCUVGCm4wPwzV7xVc3HIf4V5Xfm7z
-	 NiMIj94y2QbkiS1ehvIU8g3B1Xx6VCi0j+Vo0Ab5Pf2cfUq3IBD+zaUrSzPMEp61g1
-	 UQkgOHgcpBFLg==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so380672e87.3;
-        Wed, 04 Dec 2024 18:34:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWB6VN3ocFOsRHDnWVRS4qy0OqrAlwMHIz+vmVNZyW5X2I484p9THRm/k7gdqkeM+NsxSTHtfIWfLrNrCo=@vger.kernel.org, AJvYcCWfuD1z91z5tZurR64ZBvFlPOVTZkQJwEBBY06W5gfq/ZM4rBa9zpdOXxbD7lVKbXIvHH0nzPItoJqMuYrw@vger.kernel.org, AJvYcCXUNHj4/suWtY6DgVassFogSRLvP0QY5S/0fvXz4TWNEEwlivRK7VqxfFba/9b8y/nUYOpSg8AyHcpPCu6jZo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBB2jbXCDSUCG+OAZId0vx2Nk/7cWKGdX+jZw0O4BEaix3Nf4V
-	u9G9fA4HqiDA0RJG5DE5js50YcewOVSdbTU/bGKYvLqKGA+GddXIDsRdl8ALmzxmhHmE6CNAPOM
-	mNft+HiP2qjVthF/kahs/zZi5SiE=
-X-Google-Smtp-Source: AGHT+IGrXJnAWJ9eKTc0ln8iyn1stVLkq01FLiKFwS5cJm5ma4gHywwcy98ADbBgmYN9C9+w2atpMxYn2UYI0iUGHDc=
-X-Received: by 2002:a05:6512:1247:b0:53d:a321:db74 with SMTP id
- 2adb3069b0e04-53e12a28208mr4826786e87.50.1733366049377; Wed, 04 Dec 2024
- 18:34:09 -0800 (PST)
+	s=arc-20240116; t=1733366031; c=relaxed/simple;
+	bh=jpl9iVOYWeTiM6kCN3P64k/PHIdrq2ziUsX8zdUfXa4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p7g1FW3ktOwp+lUTzPuFHsQULyTAJFR2NVDTwtP+OZ7CmPeo4bNTgVKSrNghidYGga+rv6z+PcqHGVx314a8vQK+CUTI/xiHXABzLAZI3DKb89R9vwRsYbrJZLzoJvshbapH3XGtlLHdYW14fTlpn0e90AOoy1QcP5ANEp/XmGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xnEOumgz; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434ab938e37so2725945e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 18:33:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733366027; x=1733970827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LEvSg5n9dPi25fVhvj+TfkDWWQ8DpWSUc0fAXy4y1N8=;
+        b=xnEOumgzs87VUtt8xN8gVEOeFcrc5lUREn41aCvYTsk7FU1GHd7feedvLt2NHseiiN
+         cik3i880J+9mc38lBEN2RR/KhmB8+hFjsCGCibyXi8JEexZh3H+xuyGvHVcna2cZQBLt
+         JmClvzxoAyn9dg1Ja8hbWrtpffdRCUBMos/rOitmhfz84Tn3kQ94Yrf341eXW9dCSueB
+         Tm9xiwnceU9zUH7HQq/igN6lqHGGKU/YpED3KR9ezKMUUol9PFq6u4EXbFs43H36857y
+         c4pMsdcvjz+oEOeeMpG+DY3FN0ZpUvv9PwtQhF2XMxH3rOFVPnXfExFWW0JF6Hf+LSkb
+         VVgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733366027; x=1733970827;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LEvSg5n9dPi25fVhvj+TfkDWWQ8DpWSUc0fAXy4y1N8=;
+        b=VV8ubxe+YIAe2snTSPWve7BJZxgCvS4LR2gEaH0FzBk/h4y7vagWWpWcpUVHEFGEBx
+         A6ISNtCsWJVSo4SlAFuoZ+UQEGer3y79znEAzBwb82wTFdKNxhV1LFzxQWK/uh54iQU7
+         g+15fU7pPQlU6uryVn0eHiU/KY6Asco8jnYsq1hK8nx25iZXcj0gdXq79ZbJGSVhUxd0
+         DnREHfgkQE2B7g7zJhyD65iA8Mmi57UbTGyGYq/cBBkW6Uk1ZQORMpRNDta3qhB+rReH
+         OD0R6l/uC2evQKgUPDdN2EC4k3z6PSUSfVeZG7fpq+zS5bxqWJVJAzOwYA8c61yV2r1l
+         UA6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQnK5v5q1nhdgwWuoGj6BKg2//IzLeWqFsPpWLrJp8ZICIXHwvmITF/P/iLLMPp5/Dz4jEptFIqKow1QA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO5jACqKf/q/9YJxKRMzPHJ55PkeD7S6C9ZWB5JIqb9vWdQ1dM
+	aeHVWVDyp388AZhWFs1kk5yYb7x1E8ALYylTtcmJZxgW9gs6TChixmhDIJPZGIA=
+X-Gm-Gg: ASbGncs83rhDyu0lS4/nu3rINunlWqgnzm350ABxCZTx86hLBKbJWT1EyCp7/DJyt9p
+	dQi0tb67mvX7GSEWwfmcKVSIR5stIWtiRw1zImw8ZBtQBqQ2CTM7E5CkkWIi7fIGmxS68/jQmG1
+	rzQTXS5fwhQGvqBdytWA40Ov1peldrR3mrJSgk/qRkUAks3rc2oZJMjMTIB17wJ/ZHf2dCyUnku
+	5ySS8YCO5+3oMsd+Dw04zAmiHV3GghxUwMAgaGT4v0a48bRY4ISiW2LJMhNbUCwlWi/
+X-Google-Smtp-Source: AGHT+IHh2by/doGLjpPWCzeNRn54791OntfvKje7jWHAMUb5dn6DTgMFuSYzcKySXVmKinBfVAjamw==
+X-Received: by 2002:a5d:5f46:0:b0:385:f349:ffe7 with SMTP id ffacd0b85a97d-38607ab5c9bmr5625677f8f.2.1733366026988;
+        Wed, 04 Dec 2024 18:33:46 -0800 (PST)
+Received: from localhost.localdomain ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273440sm44444325e9.18.2024.12.04.18.33.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 18:33:46 -0800 (PST)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: broonie@kernel.org,
+	konradybcio@kernel.org,
+	andersson@kernel.org,
+	srinivas.kandagatla@linaro.org
+Cc: tiwai@suse.com,
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dmitry.baryshkov@linaro.org,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] db845c/rb3: add i2s playback support
+Date: Thu,  5 Dec 2024 02:33:41 +0000
+Message-ID: <20241205023344.2232529-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110013649.34903-1-masahiroy@kernel.org> <20241110013649.34903-6-masahiroy@kernel.org>
- <Z1DAzaKYD_rfgGnk@aschofie-mobl2.lan>
-In-Reply-To: <Z1DAzaKYD_rfgGnk@aschofie-mobl2.lan>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 5 Dec 2024 11:33:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARCz1s2z_mBJgL_S+=o8jWOGSmRb017WLFXaKdp5EDiqw@mail.gmail.com>
-Message-ID: <CAK7LNARCz1s2z_mBJgL_S+=o8jWOGSmRb017WLFXaKdp5EDiqw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
- module directory with M=
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, cocci@inria.fr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 5, 2024 at 5:51=E2=80=AFAM Alison Schofield
-<alison.schofield@intel.com> wrote:
->
-> On Sun, Nov 10, 2024 at 10:34:33AM +0900, Masahiro Yamada wrote:
-> > Currently, Kbuild always operates in the output directory of the kernel=
-,
-> > even when building external modules. This increases the risk of externa=
-l
-> > module Makefiles attempting to write to the kernel directory.
-> >
-> > This commit switches the working directory to the external module
-> > directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
-> > some build artifacts.
-> >
-> > The command for building external modules maintains backward
-> > compatibility, but Makefiles that rely on working in the kernel
-> > directory may break. In such cases, $(objtree) and $(srctree) should
-> > be used to refer to the output and source directories of the kernel.
-> >
-> > The appearance of the build log will change as follows:
-> >
-> > [Before]
-> >
-> >   $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
-> >   make: Entering directory '/path/to/my/linux'
-> >     CC [M]  /path/to/my/externel/module/helloworld.o
-> >     MODPOST /path/to/my/externel/module/Module.symvers
-> >     CC [M]  /path/to/my/externel/module/helloworld.mod.o
-> >     CC [M]  /path/to/my/externel/module/.module-common.o
-> >     LD [M]  /path/to/my/externel/module/helloworld.ko
-> >   make: Leaving directory '/path/to/my/linux'
-> >
-> > [After]
-> >
-> >   $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
-> >   make: Entering directory '/path/to/my/linux'
-> >   make[1]: Entering directory '/path/to/my/externel/module'
-> >     CC [M]  helloworld.o
-> >     MODPOST Module.symvers
-> >     CC [M]  helloworld.mod.o
-> >     CC [M]  .module-common.o
-> >     LD [M]  helloworld.ko
-> >   make[1]: Leaving directory '/path/to/my/externel/module'
-> >   make: Leaving directory '/path/to/my/linux'
-> >
-> > Printing "Entering directory" twice is cumbersome. This will be
-> > addressed later.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
->
-> With this in v6.13-rc1 the cxl-test module fails depmod.
-> It causes depmod  to be invoked from the incorrect place
-> (or something doesn't respect INSTALL_MOD_PATH)
->
-> Is there something additional that this cxl-test module needs
-> to do?
->
-> Repro:
-> /git/new$ make V=3D1 M=3Dtools/testing/cxl INSTALL_MOD_PATH=3Dqbuild/mkos=
-i.extra/ modules_install
+There are i2s signals provided in low-speed connector on such boards
+as required by 96boards spec. Looks like it is possible to actually
+playback something via these pins after adding missing parts here
+and there.
 
-Kbuild changes the working directory, so you need to specify
-an absolute path for INSTALL_MOD_PATH.
+I tested simple widely available cheap DACs like UDA1334 and PCM5102A
+and they works just fine without need for mclk. I guess any DAC that
+can handle 48 kHz and 16bit will do.
 
-INSTALL_MOD_PATH=3D$(realpath qbuild/mkosi.extra/)
+In theory db845 can work without mezzanine board and this provides
+one more use-case to playback sound and not all mezzanines have cosy
+audio connectors.
 
+After staring at
+https://patchwork.kernel.org/project/linux-arm-kernel/patch/20210621074152.306362-1-judyhsiao@chromium.org/
+I suspect that this might not gonna fly since it requires dummy codec.
+Or maybe specific half-dummy qcom codec for such use-case is required to
+verify hw parameters. Couldn't say.
 
+Alexey Klimov (3):
+  ASoC: qcom: common: set codecless link to be a backend
+  ASoC: qcom: sdm845: add handling of secondary MI2S clock
+  arm64: dts: qcom: sdm845-db845c: add i2s playback support via LS1
+    connector
 
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 43 +++++++++++++++++++++-
+ sound/soc/qcom/common.c                    |  4 ++
+ sound/soc/qcom/sdm845.c                    |  5 ++-
+ 3 files changed, 48 insertions(+), 4 deletions(-)
 
---=20
-Best Regards
-Masahiro Yamada
+-- 
+2.45.2
+
 
