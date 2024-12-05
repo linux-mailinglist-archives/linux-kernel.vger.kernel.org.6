@@ -1,227 +1,156 @@
-Return-Path: <linux-kernel+bounces-432492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2309E4C19
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:04:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D170E1881624
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:03:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2B9130A7D;
-	Thu,  5 Dec 2024 02:03:55 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15FD9E4C1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:06:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBD841C69;
-	Thu,  5 Dec 2024 02:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A97C28621A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:06:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3F7130A7D;
+	Thu,  5 Dec 2024 02:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QY2lPp7H"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D689E4C96
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733364234; cv=none; b=bMD22NgbqsDtBFE+cWgxgHbGKFdtc4yx07JHqz5ulCuYSuSISVKGo5RQlz9qefur/ShiJTTAgHNvbMqBN+5KrZqNYFIUHH6DoWq7wU69AuFZO+5+anuipG1vtWtCLGzYJP1WrENmFzVUsbHw9DKw5bXVAvj+E70vzJ07OYYLmgI=
+	t=1733364381; cv=none; b=hQ+v/p4Ik0dwKo3I6GDRLXz5RN7l+/mrXvan2g32x5OeLtjNmAkDGqSCg3TuJjisjft97qXoJAzHi0D0LZtwJApNWagMZDSD5vs/bp5YKwMOcss2fAYElhzdv2lK4BZrHJ2uW4pYncs+x799/XK2T4Epd10Fv8H0sZPzphIQ+MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733364234; c=relaxed/simple;
-	bh=GvOwOZEqvRgYu2PVU0Jj/cD9X7xmD7tDJ1JGk+fLUj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XcIa63qM0DxxynUSE2m44yNR2kXBH5HkiJUqQirklgxy2GVZGIbcNgYQx8xmj3J3Q/8vkVQ/JkZSpIEM30tIOBRBgd2BHzmS+VyNAXPBOxHZUS3Pmz0i1K1IFU9YCS5Q3banXMY1wkAyzH2wSifVzlDtPisIwJUPqBUAox0fX9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:9101:a8b6:82e7:cf5d:dfd9:50ef] (helo=fangorn)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tJ1D3-0000000065H-2LoB;
-	Wed, 04 Dec 2024 21:03:17 -0500
-Date: Wed, 4 Dec 2024 21:03:16 -0500
-From: Rik van Riel <riel@surriel.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, Ingo Molnar
- <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Mel
- Gorman <mgorman@suse.de>
-Subject: [PATCH v4] x86,mm: only trim the mm_cpumask once a second
-Message-ID: <20241204210316.612ee573@fangorn>
-In-Reply-To: <43835b8c-53cd-428f-a46f-554bfa5c2cdd@efficios.com>
-References: <202411282207.6bd28eae-lkp@intel.com>
-	<20241202194358.59089122@fangorn>
-	<Z1BV7NG/Qp0BNw3Y@xsang-OptiPlex-9020>
-	<20241204115634.28964c62@fangorn>
-	<43835b8c-53cd-428f-a46f-554bfa5c2cdd@efficios.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733364381; c=relaxed/simple;
+	bh=bBY4+YZT8ykO/aVTUVMWrYWcrY+HmAwOx3LiCluiIkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vv2CWQRLVJRIvElU9E3tcfyM/sNSfRYP6k9xj9PsiN9N0sPzbtGa9T+DjWlpwY1zK4EeCeTvsoR+KEA83rzN08kSzZJklBj3c3x6tWteZ+7scv2tLBktOKVe1tidj2tqBqnUvhWP+VO+DZaw5oN6g47/m4xlWtKwpeicbE3L5jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QY2lPp7H; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733364380; x=1764900380;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bBY4+YZT8ykO/aVTUVMWrYWcrY+HmAwOx3LiCluiIkI=;
+  b=QY2lPp7Huj2e3eYqf46YJexckE605E+xKPX/tIvBgf5vql7yhod6qiNf
+   XoVj1k12BUOBOhYL/9BAi0DtDCKV1/90okp6Ukj6NanndS6DPIsofc42I
+   NpQnHAo978+vLkziaaPmgZ4KCAE57yjavuexkKmLCwjD3+9U+EkzCk1RX
+   kfxh+HY0AcjGFMnCRMakqE6IkAsdpOjQD4W32MA4jJsLIL6u2Uwc1mOLT
+   7vhGXDEkGSjR9SJvNiWEOsHQvjzjCxFE7+ybbuAe8bJUHZuD0fOGhjfDq
+   XfNJNAHFUu8fZ6DKbHTPZMilJLDewl00AAwNAAr/GDhW+3VH36OE+4WUS
+   Q==;
+X-CSE-ConnectionGUID: 51xiXSTfRleshEuECvW1uQ==
+X-CSE-MsgGUID: BNk5aX3KTGSGsQP3FM7f8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="37595885"
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="37595885"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 18:06:19 -0800
+X-CSE-ConnectionGUID: GMx1CLYlQ/6HEfeM3/7vdA==
+X-CSE-MsgGUID: B52RsMKzTAOeoBgAyJJMXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="93818258"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 04 Dec 2024 18:06:16 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJ1FY-0003fl-0y;
+	Thu, 05 Dec 2024 02:05:55 +0000
+Date: Thu, 5 Dec 2024 10:05:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Guillaume Morin <guillaume@morinfr.org>, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	guillaume@morinfr.org, Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Eric Hagberg <ehagberg@janestreet.com>
+Subject: Re: [PATCH v1] hugetlb: support FOLL_FORCE|FOLL_WRITE
+Message-ID: <202412050943.6b8BLXfY-lkp@intel.com>
+References: <Z1Ce6j5WiBE3kaGf@bender.morinfr.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1Ce6j5WiBE3kaGf@bender.morinfr.org>
 
-On Wed, 4 Dec 2024 15:19:46 -0500
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Hi Guillaume,
 
-> AFAIU this should_trim_cpumask can be called from many cpus
-> concurrently for a given mm, so we'd want READ_ONCE/WRITE_ONCE
-> on the next_trim_cpumask.
+kernel test robot noticed the following build errors:
 
-Here is v4, which is identical to v3 except for READ_ONCE/WRITE_ONCE.
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.13-rc1 next-20241204]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Looking forward to the test bot results, since the hardware I have
-available does not seem to behave in quite the same way :)
+url:    https://github.com/intel-lab-lkp/linux/commits/Guillaume-Morin/hugetlb-support-FOLL_FORCE-FOLL_WRITE/20241205-022843
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/Z1Ce6j5WiBE3kaGf%40bender.morinfr.org
+patch subject: [PATCH v1] hugetlb: support FOLL_FORCE|FOLL_WRITE
+config: i386-buildonly-randconfig-002 (https://download.01.org/0day-ci/archive/20241205/202412050943.6b8BLXfY-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412050943.6b8BLXfY-lkp@intel.com/reproduce)
 
----8<---
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412050943.6b8BLXfY-lkp@intel.com/
 
-=46rom 49af9b203e971d00c87b2d020f48602936870576 Mon Sep 17 00:00:00 2001
-From: Rik van Riel <riel@fb.com>
-Date: Mon, 2 Dec 2024 09:57:31 -0800
-Subject: [PATCH] x86,mm: only trim the mm_cpumask once a second
+All errors (new ones prefixed by >>):
 
-Setting and clearing CPU bits in the mm_cpumask is only ever done
-by the CPU itself, from the context switch code or the TLB flush
-code.
-
-Synchronization is handled by switch_mm_irqs_off blocking interrupts.
-
-Sending TLB flush IPIs to CPUs that are in the mm_cpumask, but no
-longer running the program causes a regression in the will-it-scale
-tlbflush2 test. This test is contrived, but a large regression here
-might cause a small regression in some real world workload.
-
-Instead of always sending IPIs to CPUs that are in the mm_cpumask,
-but no longer running the program, send these IPIs only once a second.
-
-The rest of the time we can skip over CPUs where the loaded_mm is
-different from the target mm.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Reported-by: kernel test roboto <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202411282207.6bd28eae-lkp@intel.com/
----
- arch/x86/include/asm/mmu.h         |  2 ++
- arch/x86/include/asm/mmu_context.h |  1 +
- arch/x86/include/asm/tlbflush.h    |  1 +
- arch/x86/mm/tlb.c                  | 35 +++++++++++++++++++++++++++---
- 4 files changed, 36 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
-index ce4677b8b735..3b496cdcb74b 100644
---- a/arch/x86/include/asm/mmu.h
-+++ b/arch/x86/include/asm/mmu.h
-@@ -37,6 +37,8 @@ typedef struct {
- 	 */
- 	atomic64_t tlb_gen;
-=20
-+	unsigned long next_trim_cpumask;
-+
- #ifdef CONFIG_MODIFY_LDT_SYSCALL
- 	struct rw_semaphore	ldt_usr_sem;
- 	struct ldt_struct	*ldt;
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_=
-context.h
-index 2886cb668d7f..795fdd53bd0a 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -151,6 +151,7 @@ static inline int init_new_context(struct task_struct *=
-tsk,
-=20
- 	mm->context.ctx_id =3D atomic64_inc_return(&last_mm_ctx_id);
- 	atomic64_set(&mm->context.tlb_gen, 0);
-+	mm->context.next_trim_cpumask =3D jiffies + HZ;
-=20
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflus=
-h.h
-index 69e79fff41b8..02fc2aa06e9e 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -222,6 +222,7 @@ struct flush_tlb_info {
- 	unsigned int		initiating_cpu;
- 	u8			stride_shift;
- 	u8			freed_tables;
-+	u8			trim_cpumask;
- };
-=20
- void flush_tlb_local(void);
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 1aac4fa90d3d..0507a6773a37 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -892,9 +892,36 @@ static void flush_tlb_func(void *info)
- 			nr_invalidate);
- }
-=20
--static bool tlb_is_not_lazy(int cpu, void *data)
-+static bool should_flush_tlb(int cpu, void *data)
- {
--	return !per_cpu(cpu_tlbstate_shared.is_lazy, cpu);
-+	struct flush_tlb_info *info =3D data;
-+
-+	/* Lazy TLB will get flushed at the next context switch. */
-+	if (per_cpu(cpu_tlbstate_shared.is_lazy, cpu))
-+		return false;
-+
-+	/* No mm means kernel memory flush. */
-+	if (!info->mm)
-+		return true;
-+
-+	/* The target mm is loaded, and the CPU is not lazy. */
-+	if (per_cpu(cpu_tlbstate.loaded_mm, cpu) =3D=3D info->mm)
-+		return true;
-+
-+	/* In cpumask, but not the loaded mm? Periodically remove by flushing. */
-+	if (info->trim_cpumask)
-+		return true;
-+
-+	return false;
-+}
-+
-+static bool should_trim_cpumask(struct mm_struct *mm)
-+{
-+	if (time_after(jiffies, READ_ONCE(mm->context.next_trim_cpumask))) {
-+		WRITE_ONCE(mm->context.next_trim_cpumask, jiffies + HZ);
-+		return true;
-+	}
-+	return false;
- }
-=20
- DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared=
-);
-@@ -928,7 +955,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cp=
-umask *cpumask,
- 	if (info->freed_tables)
- 		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
- 	else
--		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func,
-+		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
- 				(void *)info, 1, cpumask);
- }
-=20
-@@ -979,6 +1006,7 @@ static struct flush_tlb_info *get_flush_tlb_info(struc=
-t mm_struct *mm,
- 	info->freed_tables	=3D freed_tables;
- 	info->new_tlb_gen	=3D new_tlb_gen;
- 	info->initiating_cpu	=3D smp_processor_id();
-+	info->trim_cpumask	=3D 0;
-=20
- 	return info;
- }
-@@ -1021,6 +1049,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigne=
-d long start,
- 	 * flush_tlb_func_local() directly in this case.
- 	 */
- 	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids) {
-+		info->trim_cpumask =3D should_trim_cpumask(mm);
- 		flush_tlb_multi(mm_cpumask(mm), info);
- 	} else if (mm =3D=3D this_cpu_read(cpu_tlbstate.loaded_mm)) {
- 		lockdep_assert_irqs_enabled();
---=20
-2.47.0
+   In file included from mm/gup.c:7:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/gup.c:20:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/gup.c:665:41: error: call to undeclared function 'pud_soft_dirty'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
+         |                                                ^
+   mm/gup.c:665:41: note: did you mean 'pmd_soft_dirty'?
+   include/linux/pgtable.h:1427:19: note: 'pmd_soft_dirty' declared here
+    1427 | static inline int pmd_soft_dirty(pmd_t pmd)
+         |                   ^
+   3 warnings and 1 error generated.
 
 
+vim +/pud_soft_dirty +665 mm/gup.c
 
+   650	
+   651	#ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
+   652	/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
+   653	static inline bool can_follow_write_pud(pud_t pud, struct page *page,
+   654						struct vm_area_struct *vma,
+   655						unsigned int flags)
+   656	{
+   657		/* If the pud is writable, we can write to the page. */
+   658		if (pud_write(pud))
+   659			return true;
+   660	
+   661		if (!can_follow_write_common(page, vma, flags))
+   662			return false;
+   663	
+   664		/* ... and a write-fault isn't required for other reasons. */
+ > 665		return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
+   666	}
+   667	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
