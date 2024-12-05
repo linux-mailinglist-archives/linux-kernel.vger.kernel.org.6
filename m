@@ -1,114 +1,228 @@
-Return-Path: <linux-kernel+bounces-432850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9E19E5105
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:17:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F589E510B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E2C0287EC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D75288202
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F441D5AA5;
-	Thu,  5 Dec 2024 09:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED23C2391A8;
+	Thu,  5 Dec 2024 09:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUQJ7wRi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KRPiweYx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A420C1D47D9;
-	Thu,  5 Dec 2024 09:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7354D1B4F3E;
+	Thu,  5 Dec 2024 09:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733390237; cv=none; b=theGH54PvXJFTCbLhnl8wh+MbfAeQHgngPYDWM56bpW8VIwYQ3Zy4BNCITRNRwG/JV+4Cj58I+YaRVd7IJ2Di2DmR8ILw51eN/AG5CRuJMoKV/odl75GoIDZX7/scIll+WiN9UAzbb+hy+3XuNAhJGhAko64eo+65HlQh/kIUsc=
+	t=1733390269; cv=none; b=fd2A3K7SDvClWBpR9/pDdgDRg+WsKT+Pijgv+CzbkVhhaJ1oOIuT/1wDnyKJ/36aZp3v5sqBN5GPLjwD9Aq9tXhdsvHgtyQcIzkFiYYOK0LzBrVmEY8hr34+9K7HStPZW3uZVU+030oeKaYn9uaeNXcsmIwKnyiKRzX85f15mMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733390237; c=relaxed/simple;
-	bh=QOb9P9iUUuYbXp8H+bEnhQIs7EBkcuBhE1xcEl9HfSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rcJWYSWot0+yhP6l56WqmDb3/pZqjdShOqfHSVGAmjSW/cuo7/J6sM5X7mQ1jzGHb5F619+l6lCrrUS8xowFwQyu4zp7QDybeYdssnTbb4w2mql5dY2GtH4UjQQm20VPMWwpZr+K3iUVYj2PUd7q+PK5dhAyGucziwToCq1z2Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUQJ7wRi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4560C4CED1;
-	Thu,  5 Dec 2024 09:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733390237;
-	bh=QOb9P9iUUuYbXp8H+bEnhQIs7EBkcuBhE1xcEl9HfSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dUQJ7wRi1jEPT4Ea18YNhAjq8BH/p8Nh8GdgvQvFwsk6AcSoFIwi0obdKwoDanA8D
-	 erRYDZub8cjMcdChPYVwWj2EdteaJtPk5sp8VTk3lXciaJEaudp8jw4bEjRCBqK6ad
-	 2YP9SjIBMPWU3DOrfouWL1evpNl76Kt/jTFBVPddZ+P6dyNqx7PpkFxNxECx19TsMm
-	 cVABsLUrOTnvZNds7gqnxdtnbW8RiHL85WLXRl12MGy3ruQ8I2jchQabR0iuVQMbJo
-	 SsV808YnOZkfZmvZdTsrR0B8uoNsYBdsDW2RsGjDgXZK/qMS8YevXseuO+iTFdAAx7
-	 HH9P0VNYJOu2A==
-Date: Thu, 5 Dec 2024 10:17:13 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, frank.li@nxp.com, 
-	pankaj.gupta@nxp.com, daniel.baluta@nxp.com, silvano.dininno@nxp.com, V.Sethi@nxp.com, 
-	meenakshi.aggarwal@nxp.com, Franck LENORMAND <franck.lenormand@nxp.com>, 
-	Iuliana Prodan <iuliana.prodan@nxp.com>, Horia Geanta <horia.geanta@nxp.com>
-Subject: Re: [PATCH v4 0/4] firmware: imx: secvio: Add secvio support
-Message-ID: <qgh5pzcjlke55eszovjfa3xs4icepcwz7dpfalgo2p6xyv4yei@xmgofqph4yph>
-References: <20241205-secvio-v4-0-5c37cdc39573@nxp.com>
+	s=arc-20240116; t=1733390269; c=relaxed/simple;
+	bh=vQmzFLaJSx6SjteTFCux3R+887jT41Wfnd8OGrMhxw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JWiCKmefxPUjCtfuu8jWcowsq4r1JwrkRfpX6e9Ey5B6u5CePDt99wFiiw3Gyh3Lme6mGuANofYbu4RMqEueNZtKD7fRIrlVKo5ZvM95a/A+qTrOh694E1oaW1DKKb70SzAP3y9q4ZHc3EUpLhi0uuJoaOB2+lWOWo2rVuyBOfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KRPiweYx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57PDoj027833;
+	Thu, 5 Dec 2024 09:17:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hehGs3DSedkJlfVRQiwWzeOctobZ+tIhhAtZy780hbM=; b=KRPiweYxDuGsVtXx
+	ya5tnrXyywY+km0fJ3IKV7X64fP0Ymn99J1kKkFa6dj2NTlLKXADvBLiGVy4Zlut
+	9SHpLxD3CtvUVOOcqDvC0KHOGr+8uibhwo0eZRvIvCML+0gLa/nNqDSRsp2mqqYA
+	9BtKuk1gtfcahTbCDSu8gKRbJtGmXo+a36XZyZcXKaLaEQfdHQkJ9ZRszn9Mm1g8
+	D74Suhkzmr73ylCwhuMf/iDWB67L5MnYQbp4w+z07wFYFcZ01wkXxbjvRibigsA6
+	lEqj6MwvktnmQPpQwDSE8rGRDd6/sua5+PJqECGROF5ywTdnIOoiNKav6vviOyJs
+	EiVW/g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vceq4d1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 09:17:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B59Hfsn012499
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 09:17:41 GMT
+Received: from [10.50.18.22] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 01:17:38 -0800
+Message-ID: <360dda0a-35e0-4fcb-a2bf-77d400d71623@quicinc.com>
+Date: Thu, 5 Dec 2024 14:47:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241205-secvio-v4-0-5c37cdc39573@nxp.com>
-
-On Thu, Dec 05, 2024 at 05:56:31AM +0100, Vabhav Sharma wrote:
-> The tampers are security feature available on i.MX products and
-> managed by SNVS block.The tamper goal is to detect the variation
-> of hardware or physical parameters, which can indicate an attack.
-> 
-> The SNVS, which provides secure non-volatile storage, allows to
-> detect some hardware attacks against the SoC.They are connected
-> to the security-violation ports, which send an alert when an
-> out-of-range value is detected.
-> 
-> This detection is done by:
-> -Analog tampers: measure analogic values
-> 	- External clock frequency.
-> 	- Temperature.
-> 	- Voltage.
-> 
-> - Digital tampers:
-> 	- External tamper
-> 	- Other detectors:
-> 		- Secure real-time counter rollover tamper.
-> 		- Monotonic counter rollover tamper.
-> 		- Power supply glitch tamper.
-> 
-> The on-chip sensors for voltage, temperature, and clock frequency
-> indicate if tamper scenarios may be present. These sensors generate an
-> out-of-range signal that causes a security violation to clear the
-> authentication and storage keys and to block access to sensitive
-> information.
-> 
-> Add linux module secvio driver to handle security violation interrupt.
-> 
-> The "imx-secvio-sc" module is designed to report security violations
-> and tamper triggering to the user.
-> 
-> The functionalities of the module are accessible via the "debugfs"
-> kernel.The folder containing the interface files for the module is
-> "<kernel_debugfs>/secvio/".
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] dt-bindings: mailbox: qcom: Document
+ qcom,tmelite-qmp
+To: Krzysztof Kozlowski <krzk@kernel.org>, <jassisinghbrar@gmail.com>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20241205080633.2623142-1-quic_srichara@quicinc.com>
+ <20241205080633.2623142-2-quic_srichara@quicinc.com>
+ <e6759ca4-bcfb-4817-8a72-d1e9eb5d3d02@kernel.org>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <e6759ca4-bcfb-4817-8a72-d1e9eb5d3d02@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GfoCj5VsCi31arbRmx0wMleQk88v9vo7
+X-Proofpoint-ORIG-GUID: GfoCj5VsCi31arbRmx0wMleQk88v9vo7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050064
 
 
-Debugfs is for debugging, not accessing functions. Come with proper
-sysfs or other control interface and its ABI, not debugging one to avoid
-any review.
 
-Best regards,
-Krzysztof
+On 12/5/2024 1:42 PM, Krzysztof Kozlowski wrote:
+> On 05/12/2024 09:06, Sricharan R wrote:
+>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>
+>> This binding describes the component responsible for communication
+>> between the TME-L server based subsystems (Q6) and the TME-L client
+>> (APPSS/BTSS/AUDIOSS), used for security services like secure image
+>> authentication, enable/disable efuses, crypto services. Each client
+>> in the   SoC has its own block of message RAM and IRQ for communication
+>> with the TME-L SS. The protocol used to communicate in the message RAM
+>> is known as Qualcomm Messaging Protocol (QMP).
+> 
+> This is RFC, so only limited review follows. I will review more once
+> this is ready for review.
+> 
+Thanks. Once i get the design/approach confirmed, will post the V1.
 
+>>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+>>   .../bindings/mailbox/qcom,tmelite-qmp.yaml    | 70 +++++++++++++++++++
+>>   1 file changed, 70 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml b/Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml
+>> new file mode 100644
+>> index 000000000000..1f2b3e02b894
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml
+>> @@ -0,0 +1,70 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mailbox/qcom,tmelite-qmp.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm TMELITE IPCC channel
+>> +
+>> +maintainers:
+>> +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> +
+>> +description:
+>> +  This binding describes the component responsible for communication
+> 
+> 
+> Describe the hardware, not the binding.
+ho ok, will fix and move the hardware description here.
+
+> 
+>> +  between the TME-L server based subsystems (Q6) and the TME-L client
+>> +  (APPSS/BTSS/AUDIOSS), used for security services like secure image
+>> +  authentication, enable/disable efuses, crypto services. Each client
+>> +  in the   SoC has its own block of message RAM and IRQ for communication
+>> +  with the TME-L SS. The protocol used to communicate in the message RAM
+>> +  is known as Qualcomm Messaging Protocol (QMP).
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - qcom,ipq5424-tmelite-qmp
+>> +      - const: qcom,tmelite-qmp
+> 
+> Drop generic compatible.
+ok
+
+> 
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description:
+>> +      The base address and size of the message RAM for this client's
+>> +      communication with the TMELITE core
+> 
+> Drop obvious description. Same everywhere else.
+ok
+
+> 
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +    description:
+>> +      Should specify the TMELITE message IRQ for this client
+>> +
+>> +  mboxes:
+>> +    maxItems: 1
+>> +    description:
+>> +      Reference to the mailbox representing the outgoing doorbell in APCS for
+>> +      this client, as described in mailbox/mailbox.txt
+>> +
+>> +  "#mbox-cells":
+>> +    const: 2
+>> +    description:
+>> +      The first cell is the client-id, and the second cell is the signal-id.
+> 
+> I guess that's the only description not stating obvious.
+> 
+ok
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - mboxes
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    tmel_qmp: qmp@32090000 {
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+>
+ho ok, will fix
+
+> 
+>> +           compatible = "qcom,ipq5424-tmelite-qmp", "qcom,tmelite-qmp";
+> 
+> Use 4 spaces for example indentation.
+>
+ok
+
+Regards,
+  Sricharan
 
