@@ -1,146 +1,78 @@
-Return-Path: <linux-kernel+bounces-433857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A769E5E00
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:07:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA6F9E5DEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:04:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494B018856F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:07:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD60D16D09C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D2F227B80;
-	Thu,  5 Dec 2024 18:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B7C226EF5;
+	Thu,  5 Dec 2024 18:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="G5nZotVw"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMl3rzoO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DE91922FB;
-	Thu,  5 Dec 2024 18:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B98225772;
+	Thu,  5 Dec 2024 18:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733422024; cv=none; b=dvdf+2ftzcbhNFk88nmmqAymdAAO/WpA48vHrvqqDfCaW4UHTovCIh8WycXXvDeORAnv6e6lbfVYPd72attd7PDAs0blvYGKuTsgdS5i5Cfl28QRcfB7WYx/nfrhtZTN/RCSUs+WBqMGUWWVJO6ZP+yaiyTIJBOgFObqhcArRGI=
+	t=1733421868; cv=none; b=tyxyokIQMm7PKvz7MMTptdkksO7IzTbBWvDSFLXOgTFhX8X4Givht2CWacb/MkYxyb0Pp9IRw8sTHT3E+mOuVw7PmuM4Lf3jRg/3yKi36REyshKCi7E4kZkTP5YWinonEJmVGPORIUfp3FdYUZz/xeH5aFjwfgiQJCVndn0Jtlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733422024; c=relaxed/simple;
-	bh=NIJKefEChAZWjCm+T+gtGvYLqfucYwGsgdb2WaVMkn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RzkQPQfnGrakir+YtCnn4KrBd1OCHycEmVied3QFHOO51RMJ4UfBzd26N+mns0VHqb9IELXBpDRPur+3KaSGYUN4uBmpsFeAVOapDf4sOjO2bqMqRoKUMjdBPa91uPSi8MBOeZvU0lIsD+/TydPi1cCDJs7HB+2ZtjeWwMEFSUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=G5nZotVw; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5G4HBk019839;
-	Thu, 5 Dec 2024 19:06:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	0JnhlkT+86La11TTNlcsIBnITx15puWkRfuAEfVFs/I=; b=G5nZotVwCco3qDt6
-	3Cfl9zzcdOOU/Uml9SI6+Fw7T1PoD+tUBhguTxQqOSCFrZl4j6YaIKRFFUSUsiU6
-	Z6iGESJ+JSmq9RTT1t3VA0DFwQJ/Tm6hJnSkA69uFFtZMyJqrtuK7FELR3ZTBTrK
-	S3s21nK0xDo+JIR2VMGa8d3iOmV8DY445J5iDbsysAGTRpdMXryOLz5RnGT76Ar8
-	6seG7FYjzqNSVuXp9r0ifTCCPcdi+nC9M07N/9QOT0Rzif4ecraID5m2AoIhGBS1
-	14KhdkgN7fTr44dxms2+AewXh3kKtod4nNUch5Ho3mf5FBvTX1vRFu9/CPIl0cGW
-	ZAkXGQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 437rq9gssg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 19:06:40 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 69D6840049;
-	Thu,  5 Dec 2024 19:05:36 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 52D9D267F27;
-	Thu,  5 Dec 2024 19:04:41 +0100 (CET)
-Received: from [10.252.15.31] (10.252.15.31) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 5 Dec
- 2024 19:04:40 +0100
-Message-ID: <bdfeceb6-962a-4f20-b76c-4fe5e5ff80c3@foss.st.com>
-Date: Thu, 5 Dec 2024 19:04:39 +0100
+	s=arc-20240116; t=1733421868; c=relaxed/simple;
+	bh=cqTQJsqIDntHz9ubpEhHjYIZ/DxpDB5vielwTC3wsVs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HGEHHadbWCmGcOQRduBOnQM8UBQoBnppAPEfuxTJp7ZAyfRmZfmOiddquTNm6X14XpuDipnNotsYvzCsxIzMRUq8ZhgLvqDngBQA5KYwDyxz/JouzhYdzsoC6ASVRuHK54tzmN27DrZ+NrRK5u6HxX0MraN8iZ1zjiPy/fZZm0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMl3rzoO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78870C4CED1;
+	Thu,  5 Dec 2024 18:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733421865;
+	bh=cqTQJsqIDntHz9ubpEhHjYIZ/DxpDB5vielwTC3wsVs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=BMl3rzoO0xq+PCQvGptSbFfI5SZtwcaSI2C9H3t1lt6b1OjAAqMkiRBQaIOc8uODD
+	 OSmzrInNRJBHSPnVHncD2L+Qd576NrA9jTtO72PoKZqzJk9BdFTCnB6odRI52kf2d7
+	 y+yRwSrayL1jtkKuNQBfeyB1rB+jjVT2ozEjr/kt8CCBzMO/+UPPHcVhJ6g6Dz8Ash
+	 TR6rW3I7yofaRhwrFWrh9TwJb4j1sX31E7v4GeZQxT6SHV8J/Xz07WwkvptgHCdUvN
+	 mYsrPdv6lSJVL4LCzPoGQ0lyPfRQtnRf5lf3EpDEiFRLtec7nqgN1S4ko3Ycibhf5P
+	 lDG/1YYUlIa8Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E11380A951;
+	Thu,  5 Dec 2024 18:04:41 +0000 (UTC)
+Subject: Re: [GIT PULL] LoongArch fixes for v6.13-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241204141818.2091423-1-chenhuacai@loongson.cn>
+References: <20241204141818.2091423-1-chenhuacai@loongson.cn>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241204141818.2091423-1-chenhuacai@loongson.cn>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.13-1
+X-PR-Tracked-Commit-Id: 7f71507851fc7764b36a3221839607d3a45c2025
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5076001689e4f8b6b178c40d268ed2ecd2eac29d
+Message-Id: <173342188008.2011200.16588416920794919491.pr-tracker-bot@kernel.org>
+Date: Thu, 05 Dec 2024 18:04:40 +0000
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: dma: st-stm32-dmamux: Add description for
- dma-cell values
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ken Sloat
-	<ksloat@cornersoftsolutions.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <dmaengine@vger.kernel.org>, <alexandre.torgue@foss.st.com>,
-        <mcoquelin.stm32@gmail.com>, <conor+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <vkoul@kernel.org>
-References: <CADRqkYAaCYvo3ybGdKO1F_y9jFEcwTBxZzRN-Av-adq_4fVu6g@mail.gmail.com>
- <d53538ea-f846-4a6a-bc14-22ec7ee57e53@kernel.org>
- <CADRqkYDnDNL_H2CzxjsPOdM++iYp-9Ak3PVFBw2qcjR_M=GeBA@mail.gmail.com>
- <28d1bb46-ab18-42da-9ca2-ff498c888d66@kernel.org>
-Content-Language: en-US
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <28d1bb46-ab18-42da-9ca2-ff498c888d66@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+The pull request you sent on Wed,  4 Dec 2024 22:18:18 +0800:
 
-On 12/5/24 17:09, Krzysztof Kozlowski wrote:
-> On 05/12/2024 17:07, Ken Sloat wrote:
->>>> + 1. The mux input number/line for the request
->>>> + 2. Bitfield representing DMA channel configuration that is passed
->>>> + to the real DMA controller
->>>> + 3. Bitfield representing device dependent DMA features passed to
->>>> + the real DMA controller
->>>> +
->>>> + For bitfield definitions of cells 2 and 3, see the associated
->>>> + bindings doc for the actual DMA controller the mux is connected
->>>
->>> This does not sound right. This is the binding for DMA controller, so
->>> you are saying "please look at itself". I suggest to drop this as well.
->>>
->>
->> While logically it is the DMA controller, this doc is specifically for
->> the mux - the DMA controller has its own driver and binding docs in
->> Documentation/devicetree/bindings/dma/stm32/st,stm32-dma.yaml
->>
->> I can reference st,stm32-dma.yaml directly, but I was unsure if this
->> mux IP was used with another DMA controller from ST on a different
->> SoC.
->>
->> What do you suggest here?
-> 
-> Thanks for explanation, I think it is fine.
-> 
-> Best regards,
-> Krzysztof
+> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.13-1
 
-This description was lost when STM32 DMAMUX binding txt file was 
-converted to yaml:
-0b7c446fa9f7 ("dt-bindings: dma: Convert stm32 DMAMUX bindings to 
-json-schema")
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5076001689e4f8b6b178c40d268ed2ecd2eac29d
 
--- #dma-cells:	Should be set to <3>.
--		First parameter is request line number.
--		Second is DMA channel configuration
--		Third is Fifo threshold
--		For more details about the three cells, please see
--		stm32-dma.txt documentation binding file
+Thank you!
 
-
-stm32-dmamux exclusively muxes stm32-dma channels. It is not used with 
-other ST DMA controllers (STM32 MDMA, STM32 DMA3).
-
-So it is fine to refer to st,stm32-dma.yaml.
-
-Regards,
-Amelie
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
