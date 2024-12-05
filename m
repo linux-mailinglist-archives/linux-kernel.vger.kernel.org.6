@@ -1,136 +1,100 @@
-Return-Path: <linux-kernel+bounces-432776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1C69E5030
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:48:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0FA9E506E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:59:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 031A11882542
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:48:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECA3283D50
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7B21D5146;
-	Thu,  5 Dec 2024 08:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791E81D5AA0;
+	Thu,  5 Dec 2024 08:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bk1/fQHO"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="oP8OJjsW"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC791D4618
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FD21D515D;
+	Thu,  5 Dec 2024 08:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733388439; cv=none; b=ax5sSpz2Amndj0FQ4jKjFTeBbezhGlc5d6su4Knn50hFYvTD8RzHxOfFStq5566BzSbNPeFIy92FQZtCPGBuMiO2s9dB9gT7khcpc23BWt//+usH5yUXOYm6q/EBJrLcOOxz3YBaC1vKToQGvYcNTVOUpRN4eEVHtVfIag/xldQ=
+	t=1733389175; cv=none; b=Kb1IrB8l35X+LdrWWsLjd7UBYgD3UyBFRrwze7TFJaEeifHnFaFAsKj861hmT4g1rjX9uLeAdW43IkdTNBsaBiomNVaBAgklm/PIf6VAF9xrsl/ArHeatKo3dhCSjHGp4Z9YzDhhCEy/w6UoGBbO80HZZCRzDIIMLvZeISFVj8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733388439; c=relaxed/simple;
-	bh=hnsawiAPmNyTaOqVa4N7z88n0Q+3dFHhfhhfTqZFluI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hawb4961stkok2NkGnyWNJHCBP0x9ZGJ8IiySTjQFSfpoPyVtYa+rJQa5QTm0cyEGK9ZIaSPw3K7oMhTf2vC0hTeHrcB3dXAezK1ysEgaTYmmZ0g0kcug4PUk/krIu9z2m8H0wt0XlcU3FokRTRR8A55KYmFuAN4U5k5bu/WuKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bk1/fQHO; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385dbf79881so1085868f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 00:47:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733388436; x=1733993236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hnsawiAPmNyTaOqVa4N7z88n0Q+3dFHhfhhfTqZFluI=;
-        b=bk1/fQHO81uCf2qg67ZAsKLqkDTud3O/Q4tu06veALpsdxHgka4hu2pTMPxbFs+Ith
-         +vRvJoYzVkT7BSLwuXCq2SZlCW7a2V/aCPOiXiD0SLd/TIUJX/27OSpTA7MAtCJxdEhu
-         YB9Y/5C5DiDVMPDyC66wJBHqCVFdxzU2xTyyH1c724NDqxOoBcRK4FWxaIJfFdoDmNAc
-         mtwtH3ihJgdL+wIZRgiufOQYSjZyPDr2QFRlT6fPmxKYakOaIlb2bB6YuV3pl93Y/afM
-         dsCAntmMwb6rF3F+BC2SM7vUkLJkRnCbivqgltDcsf9Zbdm8/DYDeYvJv1pg83pnuh11
-         i9Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733388436; x=1733993236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hnsawiAPmNyTaOqVa4N7z88n0Q+3dFHhfhhfTqZFluI=;
-        b=T2lZ/vPoDEHJNV95r2A7SGm7Q0nWGe7Oz87+zE4pKdMHND4q3BcX2fVReuz8oUr6kA
-         ezWTLeK6lUoDow5v+RJTIYkX6Zde/MSbPkeYZff9KHxOEvlH88TT/TJme0i0j4pCGs+M
-         JtCdEYn+Gsgv6HTdn2tAmPL/ypK73ERRF+VhTeAhWGb07weoZR0PXtnk7Jr5icfBI3GW
-         OwcTa2QzalHFeY2FX4Yl3pm7QiO4Py44uWX05G6vjtiPsU7RR1ZUdS0PnIDkj5QXwfuH
-         ojJZ7TTfo3k87R5X7TtJOtUAXZLSmQXkF0Y0N/gVyyiCOqSK+6SUg+wvnn8w+xFlbkRa
-         rQGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXICGDYmfThM7MDrUdWd8JPL10/aq+E/+UDISC4AjpK1ZQOIZbG0A39MmKPuQqUV191ki/53vkxyVP/pGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8ilacz0ql7NPuqhG52CsWvI15owzOtXEqxxwsOipGZQz/AYIk
-	w2FRiIQLsFokx1WzQ9Orsmm/9u6HlSpcmIaYhqKJj/GMlocsoaij3tVE7acFfdWLZDQmCntSmJH
-	ATlwFCgUdaL23Nc7hIhlFtfJHgCtJaPpbYsQu
-X-Gm-Gg: ASbGncuEAPK02835cQIpoE0v3EcT+cg/1fsoyGEx8jzdOnAgdNNFmVYxfwzHbiouBuF
-	WrLgqIBFnky2KbMekaFe0fcGZ5gDzN1CVrZa97qVZElhQ09HAXnG0ZcE7ZhUBKw==
-X-Google-Smtp-Source: AGHT+IGnhellO6UJ4z4u30dAkBaqbxEvnFWZdjtopqXpVvl6L1W8rz2P6jjJGe9/awoSRPYnuNZOTWKmtI+ml0eBTxo=
-X-Received: by 2002:a05:6000:1885:b0:385:fdff:d457 with SMTP id
- ffacd0b85a97d-3861bb7c21amr1569820f8f.13.1733388436297; Thu, 05 Dec 2024
- 00:47:16 -0800 (PST)
+	s=arc-20240116; t=1733389175; c=relaxed/simple;
+	bh=aDWgYQBwKAkBmU8mqem4U1vbpJlKGSSLkLEYV7hJT08=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U8rCGm2TUTtDM6ylCk2ASZ61Gw0GyXdYDTn53cv3RIxwfOSwyDXdKAugsiEOD4aWM12wHQOVR94gbfmvTr4+BWMCi+/65s4FKj4GOh996FEIlogIuXtLD1z5suE7CRoX2KyaeExuuEvzWOcBsyNl1u75oSag1osVuhPHgSP4bOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=oP8OJjsW; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=aDWgYQBwKAkBmU8mqem4U1vbpJlKGSSLkLEYV7hJT08=; b=oP8OJjsWLoKfVicRB2LCXen8Vl
+	wH0npdneX8nZoBc05jmy+wn01h/O79FQyoNgPNcTc8jghL1U22uxnxEpjIlQpY4AagQwBuZtxNAno
+	hkG5CHYLT4yA4bZTLhJzflIO4ZR8LVMwJdLym5YbBZgHkS1FxoVpgSBzyU9aEsEhUApUUvJeAlMoA
+	WDvYf6r2yPGQyZMRcP9AbgqR3pViyuS5kGpBLgl+P71FeW+ZbX9pX/EcXIoyUlXlMl4A49AFSpztn
+	6PTFygzbmF1nJhH8VpI4V1LuETGyxsRLGGFIZ8hSZOxjg72rCjkhy83WoBzXpHI5VOWqWeSFfqfL4
+	ERYaTxqg==;
+Received: from i5e86190f.versanet.de ([94.134.25.15] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tJ7Vv-0001iq-2o; Thu, 05 Dec 2024 09:47:11 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Frank Wang <frawang.cn@gmail.com>, vkoul@kernel.org, kishon@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ Kever Yang <kever.yang@rock-chips.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, Frank Wang <frank.wang@rock-chips.com>
+Subject:
+ Re: [RESEND PATCH v3 2/2] phy: rockchip-naneng-combo: add rk3576 support
+Date: Thu, 05 Dec 2024 09:47:10 +0100
+Message-ID: <5541205.29KlJPOoH8@diego>
+In-Reply-To: <e853b62f-2ebd-4520-8dea-15d8102f25d8@rock-chips.com>
+References:
+ <20241106021357.19782-1-frawang.cn@gmail.com>
+ <20241106021357.19782-2-frawang.cn@gmail.com>
+ <e853b62f-2ebd-4520-8dea-15d8102f25d8@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
- <20241126-pr_once_macros-v4-1-410b8ca9643e@tuta.io> <CAH5fLgj30AmuobugAgzG9vOhSOrk5SqWwguOoNeh3J2fmLRHCA@mail.gmail.com>
- <OCjFF0---F-9@tuta.io> <CAH5fLgj2qHjYj=heYi55qWz7=LxyHeUPyhbgVe0QLjzH0S34bw@mail.gmail.com>
- <ODK_F29--F-9@tuta.io>
-In-Reply-To: <ODK_F29--F-9@tuta.io>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Dec 2024 09:47:03 +0100
-Message-ID: <CAH5fLgiwQzrKG2a3Doj+LYGAna7yJcBO5eTtyMYiBfVZmZSLVw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] rust: Add `OnceLite` for executing code once
-To: jens.korinth@tuta.io
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Rust For Linux <rust-for-linux@vger.kernel.org>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Dirk Behme <dirk.behme@gmail.com>, 
-	Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Dec 5, 2024 at 7:49=E2=80=AFAM <jens.korinth@tuta.io> wrote:
->
-> I'm afraid you lost me. You wrote:
->
-> > Using a Once type for this seems like a good idea to me.
->
-> and
->
-> > One advantage of using a Once type is that we can use core::sync::atomi=
-c
-> > until we have working LKMM atomics and then we just swap out the Once
-> > type without having to modify the warn_once abstractions.
->
-> That made sense to me, so I started in this direction. `std::sync::Once`
-> has `is_completed` [1], which made particular sense to implement in my
-> mind to increase the utility of `OnceLite`.
->
-> [1]: https://doc.rust-lang.org/std/sync/struct.Once.html#method.is_comple=
-ted
+Hi Kever,
 
-The stdlib Once type guarantees that when call_once has returned, then
-the closure has finished running *even* if you are not the caller who
-is running the closure. It achieves this by having other callers go to
-sleep until the main caller completes. If we actually want to mirror
-Once, then we should have that logic too, and I really don't think we
-want such complicated logic in our pr_warn_once macro.
+Am Donnerstag, 5. Dezember 2024, 09:21:07 CET schrieb Kever Yang:
+> On 2024/11/6 10:13, Frank Wang wrote:
+> > From: Kever Yang <kever.yang@rock-chips.com>
+> >
+> > Rockchip RK3576 integrates two naneng-combo PHY, PHY0 is used for
+> > PCIE and SATA, PHY1 is used for PCIE, SATA and USB3.
+> >
+> > This adds device specific data support.
+> >
+> > Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+> > Signed-off-by: William Wu <william.wu@rock-chips.com>
+> > Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+> Test on rk3576 evb with pcie port.
+> Test-by: Kever Yang <kever.yang@rock-chips.com>
 
-> > The purpose is to use this for printing once, and printing doesn't need
-> > `is_completed`. We can have another helper for other purposes.
->
-> Why have `OnceLite` then at all, instead of the hidden Rust macro that wa=
-s
-> proposed initially?
+nitpick: the tag should be named
 
-Well, one advantage is that when Boqun manages to add support for LKMM
-atomics, we can switch them out without having to modify macro code.
-Moving logic out of macro code is usually a good idea. It's also
-possible that there are other user-cases of an OnceLite that doesn't
-have is_completed.
+Tested-by: Kever Yang <kever.yang@rock-chips.com>
 
-Alice
+
+
+
 
