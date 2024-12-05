@@ -1,273 +1,230 @@
-Return-Path: <linux-kernel+bounces-432801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1CC9E507C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:02:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2D09E5078
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:01:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5CA6188256E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:01:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1C9191F60;
+	Thu,  5 Dec 2024 09:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZO7ZQwaG"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2080.outbound.protection.outlook.com [40.107.22.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F5C285E83
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:02:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE701C3318;
-	Thu,  5 Dec 2024 09:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SATSsrW3"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC31D5AB5;
-	Thu,  5 Dec 2024 09:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733389306; cv=none; b=DUNk5+8jbfm1XBTY3iXauSqBFovFBCAZyE0DG8Ez9QFVq5F2YOprDZnM2wG8r5tGhk8vTp3dEDPgVYaOturBKgGfrmVsBQA7IjojEEZCPeGy4YV+rkLpt/h+H/dW/iuF2CjwKrd6WgPVsdmaUDbOPZQIcYIpVRr5uYv4EYBYahA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733389306; c=relaxed/simple;
-	bh=XuYULMiBftjpDFIBFODK/ppSNxVOuvr50FoE362c0Ew=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UiRkFRub120SKdF88qSUz68JQb5bUcwWeNg0caX6PDHgsBDfXCeEE1Oe2aegg3zqzK2MNUClfW1Obn5jLMmUZWoZl3wybhdvvxKdmJz8iTSTTE+3WDqEssAzSKaDxD+IMiNIHRQQ1heNgFNqmYdtTZAjNfN7DtNpWgcZ5n5Da8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SATSsrW3; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434aa472617so4310195e9.3;
-        Thu, 05 Dec 2024 01:01:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733389303; x=1733994103; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=obMHPp8QnXn2Bxov7fwvFKyDBRzMfibAxCgpcc97198=;
-        b=SATSsrW3t29JUpBIXVH7hTRTWerai/Ekhrs38Jit7lzJU/UJg1Z5Vhq2CYIyyPG994
-         g/WrU7wHvkTGCJWa++r5DYfxbm6HbpRcApcnMJoxhThUqF2IkczT8hWEBaSypX+H36E5
-         h+JcBQqEOX9V5wadpMA8y0lHBpJgPwEZJeDA7WI/oRjTlAKoxhAZfgciDEQ4CyZoS3sh
-         2eqjUas++YXtznrDUDIDWbx4jXtT59uBOmV45CmQZCeRFXONSOLINtvFxc8RedKmzBbl
-         1zBrmXfsLE4QBVrjzZd9enGsSuC4G0ViMh33gykhW2I962Qjk3zjZDMqJPjGCZklYd/G
-         sZXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733389303; x=1733994103;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=obMHPp8QnXn2Bxov7fwvFKyDBRzMfibAxCgpcc97198=;
-        b=LrSFUJWs8JE4sUkTk/yg0ExDG5SFpCYIjLy0cPuDu0+0WAS/uUTP4Xol6evSBOjwom
-         SIDWZzGdZLbFqtolQLYluga3n1YmiPsKNmnjcr6kVrwTts6N00Xg1gO0Eqs9RjswzmYF
-         jFTEuEjI9BUc+glLuupUAxARTTFj7tvT1XQzk/eDtTOVh3Q/ypYpgsYyzsFCVlIt+VIJ
-         F4LBq9dcFD/DYwa58WxkiIMe3NA1OYm/fbtRvofRYcrTAlUTjCqeYdyGx7ct+nmPEGoG
-         ybViH2BGbLi4Zy4h+L6xGjkD/r7XlD0BvDvwPNDSzYKYDSdiss9I29pCzB8kOIMApWkw
-         ZPJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQrAijG6ciDYywn2YY1d8mDQ0T6h3Z4wJ2wBWrRpLq5AG8NnVFh+sgYNiRP4Q2e9fd8CpSmfL9uT4f@vger.kernel.org, AJvYcCVvVlPu6m1l6w6QDK8jAWcg5hdk4GPidywscOVfm3k3N6gqW6a2QZI8pK+lckzesvXu+91M7pO5Lls=@vger.kernel.org, AJvYcCWBHf3nLEQqI2auKWbk1MAzpiMdMCH5efVZTuexgZTzAFpIMn22m0XOajrd4dtsR4CJSrQ5FEsvh3qKSuux@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPjAl4c9uhE4aX9dxWpJPzZPoAo2SajIgWRwz/B3FuZA6BoNgh
-	x7+fFmTCD4Q5saOc4kVTYc3ZwzyL9RH0elwm6JcVrqpUFGrj8iqE
-X-Gm-Gg: ASbGnctG1ub/R2lHM0xMOrAcDVee9KTXBzEVJCpNzJqy6aTx4us1iXk8xWjvySfxKCo
-	PmWbwQdPaNVzCyG6qtsEk7oXgPdheXmRmzVry5yvToFrsOu8y+v4urkNPNApjm5CS9vrFjjyz1b
-	4at9raul8FuBINbPaHyXi6bEvbVbz87cOaAjYq2eRLrIueIzVKd3fX02fJG+98rSs/aR4V0YPkX
-	d79KtV3cxHSYEvXmmQzSIzGiaVfngBQVCjDI1dBH9xlBld28nQGoEF64wvAb0afxi10zYPTGSCq
-	QSSrRQ==
-X-Google-Smtp-Source: AGHT+IHyCKkWM8ua2yW/ZCwMNBgslXXuCjaxGUgPwNObwte8DZaJItuxSPYEWEtpW0ky5nqIZCJaLQ==
-X-Received: by 2002:a05:6000:2a1:b0:385:fc00:f5d4 with SMTP id ffacd0b85a97d-385fd3e9d3amr6567012f8f.29.1733389302433;
-        Thu, 05 Dec 2024 01:01:42 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a85f2sm1361890f8f.29.2024.12.05.01.01.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 01:01:41 -0800 (PST)
-Message-ID: <67516bf5.df0a0220.13e893.2b1b@mx.google.com>
-X-Google-Original-Message-ID: <Z1Fr844XnU-byc5Z@Ansuel-XPS.>
-Date: Thu, 5 Dec 2024 10:01:39 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: cpufreq: Document support for Airoha
- EN7581 CPUFreq
-References: <20241203163158.580-1-ansuelsmth@gmail.com>
- <20241204184253.GA276662-robh@kernel.org>
- <6750a4c3.df0a0220.1ae5b6.7dfb@mx.google.com>
- <CAL_JsqJvotQ=QZKq+CHs4uW_DRegn02YoSbqmxyi__6RJ0wAuA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFD72391A8;
+	Thu,  5 Dec 2024 09:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733389299; cv=fail; b=XqTBirWY0iFmeCUGEs2VKuTg15MTAsVXoZtilCTljc6+a7IQVM1L5XjcK9aIZO+iMOwgVtr8S1uRes3ABsXQhUlzoeRlJkyH1hGAHVQNbL9UYA/aKXMJl1vHU9lAUYtEFmWZiYyWI2EUgbhUvcK0RdACGVQaoniuo9gWdVoTuWQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733389299; c=relaxed/simple;
+	bh=r+tVnfdeYPsUt5crL8+fyInjw7MexNpURKJnNRFMCnM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iBJdRLNEw1ypOMIAWygfpCQ4DU2zJO0tadg0PVti34i1A0VkSHyNHj6onrzEcSE9nBqnW8cDjiMoURCRQOUwjrz31um8JMVvSwEN+M1PlmuY7kJZSC0wZe9AjArN8JWVF3HR4MJct/k+OWTKxinuHpNF7SozJf4qXwi/4h8hVGo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZO7ZQwaG; arc=fail smtp.client-ip=40.107.22.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PDpxjwdV1DSxX20GJcDVZ9X1CWk0X1rWRHOkVX9H50mi40cqTpHV5yPShXr1sgIxq7CHru7w9+jev5vFDzVsJ3M6n8AGmYtsBK/x/gH3NrE8D7og9BZqvTgKMmCvGAN1ckGB/uKDwsPG0TE7TpFSBXL/V9KJw6vEpyTdgm3UFCt5oplrOVUC1JLW9PH5/fthyzd2ycI9K+qDb/IcUm4b9FPFB51ndgYaEH+UmfdanHb50RrzfcZxIe9fDKodIRMj2RzMoibT243fsbh0zlG3Vl2jF5kYTYNPwq9KxsOQ50I0s1QmQfFg6FpaJVK1fQmsKXImMZwp9AY8kSAsDWgH8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yr/5/hMLh+7Mgs+Eg3wsBFgvwPglXLotbN2OWjdCq68=;
+ b=pcgG5GCNAfOc/6KCeit4witDATpXsm/BW7GJSqIGFzh2OpGMukWBLVjTGz5nmW+22kE+BLCm8bSyAdYHUJqQgXSKkzUI7eSdfZcKIFVZ+hY7vB2TRhBjLpaAtDhjiudEOUjLCpkaJcc9iPm9Xar6ZGqvDOsQ6kW+itlSYgIXD3sk1O7BMaZxs2dBmymWuCDNPtE3J3fmLCRpYW1iHDfyh9GEAP2t1oGCfewZ0VKUo93vhDOXj9mo+lc45Z72dw13Rre4PJIAzapzj5vnNEWE6d9Eg6EnktF2J1VpYiYwosVVvWCxy4+TXUY2VFatJx+ZV3pgq5C024V6W8gWJB+F4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yr/5/hMLh+7Mgs+Eg3wsBFgvwPglXLotbN2OWjdCq68=;
+ b=ZO7ZQwaGpvnBQYTyMxWQfI+NwAT7KiOlTMXCKtLysuV4TGY7xxNlSVZWjlL0rUvZHJjk3DltbS+VzXpqtY4Ge0mIfcLMM43lxPJapKb0aASDxJJsU3zZGmD09mldhazx5zvBzyaBF95ZhSmL/dmhC8le+Cwsnv8Tg/MCnAqOJTR2L9rHtCOv05vDoxyn0CllqyHyZnh+djsOjFF1WqR0r8dxFfkAt8NrkSDtYmKNH3SV0TcEljlNQ/mCcSLhcTFP6AQ9hhUytwzDrQM9O3xE8GMOvi/EpFjGRX88Q5XpD2KAD0pBvcdB/xv/J7TZsd1cNZ25xAjtyVH3fQ2BfAPW3Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by GV1PR04MB9150.eurprd04.prod.outlook.com (2603:10a6:150:25::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
+ 2024 09:01:33 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%6]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
+ 09:01:33 +0000
+Message-ID: <3243b983-2f22-4254-b7e6-0f7ef0ae725c@nxp.com>
+Date: Thu, 5 Dec 2024 17:02:07 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ "tomm.merciai@gmail.com" <tomm.merciai@gmail.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
+ <hd2kom5acz47c3mkjuauxhauahkt7vq2qoilppwn34iidldhos@rb5ydcayhtlj>
+ <054a0278-428f-49cb-b0f0-182c5bb3b61b@nxp.com>
+ <TY3PR01MB113469CCF62FCC801F15C6B2286372@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <TY3PR01MB113469CCF62FCC801F15C6B2286372@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0166.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::22) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqJvotQ=QZKq+CHs4uW_DRegn02YoSbqmxyi__6RJ0wAuA@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GV1PR04MB9150:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87311350-00e6-4bcd-332c-08dd150b6a66
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?ZzYxVnc0ZllxeVU0SzRSY0RIY2NhTG1tdmFOU3Z4d0ZQazFMRDVrenB2NGhT?=
+ =?utf-8?B?ak1TZXZmUFlVb3BoS1hGMmVydHVxb2hrL3p3VHdBcEhSRFp1c0tlYklrZm1m?=
+ =?utf-8?B?V0pxMWdxODFueFBKRjdFY3hMV0lJb1hSdnEvb2hNZkJxVk50Uk5ROFFQK3Jt?=
+ =?utf-8?B?VEc5RXNsNDNBZ2xVWjlsVHFHOTU1L2FnTklIVnRyUE9VYlc2TG5LcWkwQ3NX?=
+ =?utf-8?B?UlpuUVVuem1kNlBGb3k0amRwcFphdFpxYWtmbnBNT1l1UDNWdTY2b2FGK28z?=
+ =?utf-8?B?UU9rdlNYS1RWRlpteVZ2alh0dnhGTnZNbFV3Y2hMamhSclNpb3l6d2YxcFdt?=
+ =?utf-8?B?cHFnV0hHbFBUWnhrcXJyNXNMcVMvN3lLOTRMR1A0TGlYalFrU29EVVlabEVq?=
+ =?utf-8?B?SzJYWDB5WW5wSUcwYUFFaUFTVUd2ZTZxNWZkbW9FVFRZa0o5b2M4SHRVSy9w?=
+ =?utf-8?B?KzYzMmRiSUtRQjJJOVdDdWdGc3kyOEJpa21TQjUyT2tBc1lDUUhsRXVpcXF2?=
+ =?utf-8?B?VTRCMk1HVzlaa1diNkUxaHNFNDN6TGtKN25zbS9LeUVNR2ZtRXZQZ3NnOUZL?=
+ =?utf-8?B?WkVhalU4VzRwRjZyMjhYQjgwMnoxQ2UwRy9ndTNUWFBYait5UE1OUFFuRDNK?=
+ =?utf-8?B?WmpGYVhzZjU2TDIvVlVSZHVQYzAyOFdyVnpxNEJWakVpNEg0WExGUm5MRnM4?=
+ =?utf-8?B?aDNHTER3QVg1L3R3c3FNa3hFQnR0emJUa2xWZmhnRnRlcVltOGFOUk9LQUkz?=
+ =?utf-8?B?ejdBa3BOWHBCTm95a2dYYTdiOE1KcjkwTmQwZWJzbm8zY1dhNnBObWlzRkR4?=
+ =?utf-8?B?bDlIUGtNUm1YTDMrUFR6OHEvOHN1Zy9EQXZGS3dDMFlFVThGQjdISFFpSFpW?=
+ =?utf-8?B?SmM5Lzl6SVRJYXk1YVB6MzE2VGYyV3NvRUdTVTNPVkROdW9JbTFGdkN6YnJz?=
+ =?utf-8?B?M290ZmdFWjFpYlRzQzBvU3l6RFlsVjZXRHpXeU5ySzVkTUR2b1pPSFptbFZk?=
+ =?utf-8?B?MFgvMHNjZDhMWnZiUnFxSDVSYWtYcDQ4akdDMGMxYWp0alRZTDFKSnhDaEJt?=
+ =?utf-8?B?dnVvWkpVZnY3MTdWM3NRTUk3MjBWWU1LMEU0eHFNaWt6VjJza240cEtNTUJu?=
+ =?utf-8?B?ZC9lN2NoTmx0NVNMT1lUeFlCRU9EU2Qrbm50YStiTFRJYjNEclRZbWRiNzd6?=
+ =?utf-8?B?VzVLa3ZTT2dGRms1MHpoTFhnTXFIcjVsTXppT0Rtc1dHSG1qS2I1RWp1UjFE?=
+ =?utf-8?B?N3NpSys0ZWxsNk5tM1kyUys4V2hkU3VmYktSckdPM0U0TDVYWWNuTThiTFRw?=
+ =?utf-8?B?UjRWN3BqcUFQOU0rbnRDd3NBUWFSSEJWbW5XWkphQUp3SXR0RFdta0JuM0wr?=
+ =?utf-8?B?UHVGMlFzM1MrSEp0akxKWEhYenAvbGFpR2RROHljSlVBVjlDVlo1UDZieFJV?=
+ =?utf-8?B?OUFjVFBlcFljdE9XSkhuMXQrMVpTWGtQOEpEMXhlK3RoWVNLUG5lSUcrU0E2?=
+ =?utf-8?B?aEpHUEd5Z1R0QUsyZWRncnFNMmRPYmlPTnlmQkl1T3M0cUNWaFVvQm1kWVFk?=
+ =?utf-8?B?R3pRRkRiWEg0ZE1OYzZFaVk0MmhZZGVtVi84elI3dVJvNStxekI3WUF5M2lw?=
+ =?utf-8?B?NjRRdWFxbVFRcjlZSUlmMWFwTHQxYnY2ZHhZZEFrdTJ3QXJhTHlHdFZJNzRW?=
+ =?utf-8?B?YkZmUWdLZW90M1RxZytSN0ZXUXo1YnFqOVIwZWtmMUtDcUtudUdJcTRGMlI5?=
+ =?utf-8?B?WS9qbFlJazh4WDNxTDlzSER1ZjFRKzMvUUthdzRKM0JFUnl0YWlYci9rWSsv?=
+ =?utf-8?B?UXlxbTNEOU5SemJ0NTljQT09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?bGNpYmRpTkZGblkxbWNTOXBvdXlDeDNNMjJTQWN3UUFLeTcxbkRxUlJpTVFv?=
+ =?utf-8?B?Q0lVUjhqOUI1Rkwzd0ZCYllaK0t5UEdFSkJpZWNFd1M1T0ZKaCtUc3pOZ1Yr?=
+ =?utf-8?B?ZlVHcUNVM05sVnI5Q2xQOUFPc0ZIZm9PUzZoQW5UL2FqNGVnWU9VRjlXdTJ5?=
+ =?utf-8?B?MThZcGMrU3N0OFhSMEVpdGZhY3R5ejdHTnVFVVRlNGJqNTl0QUV3SlpxeE1i?=
+ =?utf-8?B?U2xHeVczMHNLSnE4TGZud3JacisrTWpTZlJMNFl0UytWU3Zoc3ZyZzkvZElJ?=
+ =?utf-8?B?Tm0vcFUxSitEY0YvalBHZnBvblhkeDFTVE1PVktXWklVYkN3M2VXUExnZjN1?=
+ =?utf-8?B?TlhRNUhNTGhDN1U4QWZuQ1pPN05teTNaUWpVaUpCQTh2bkNQTk1tc0NJZStu?=
+ =?utf-8?B?RGVJRDM2NHBxdVFBMXJYMDVUUGk3d29FZzdkM01DL3dhcU9mNUNQOFZpdVB1?=
+ =?utf-8?B?Y1RrVm9qeXFlbnpIL2lFbWN4SWliSHRRY2tTVU5QWk96RnF2ODJJTUJCdVhi?=
+ =?utf-8?B?cjBmQTRrTDBIUFV5a2tzM3UvU0ZuZU1WM1FGZGw2QWxGZnpmaG4vN0ZmZkla?=
+ =?utf-8?B?QWN0QVdSdVhLTThmVjNUYlc5alhoMEl0NHk4NFBqQ3NLNGloWVVDS1l5azZQ?=
+ =?utf-8?B?TlJrbHBGdllmd3pOZUM2TEpqQWdWNnY3cWdvVE1EYVdzdkpBN0w1NEJjSjFB?=
+ =?utf-8?B?R0FmVjk2MFVPMUVmUmVxb1l6NWNzUVNOSGVFUE95VW1xZlQ5dm9iVkhUOHgw?=
+ =?utf-8?B?OFlQc0JnbXZYazJxbWxLNXlzdHlqVUUwM0srdWtsNDVQNjNHdnJPU3p4UWor?=
+ =?utf-8?B?aFR3eW9uNXhXSVZ4WFRtK0JORmdXaHlCT2o4YzIxY2FtWVVYdXBxWVNUeHJ3?=
+ =?utf-8?B?R1QwYXhya21rRTdmSGkxTWhlNnRtSzZBbHM5K0NCZXI5b0RwMmtvVmhVQTRW?=
+ =?utf-8?B?djgwVUZza2Vmd0szcWs1RjZVQ09hZW9tYmR6SU9nS3VJeU5VUENYQmxZaW5M?=
+ =?utf-8?B?NE14MTFsVUpyY2pRNWVOb05FQ0NIQURGeVNock1RaDlYcWlLYUl5WVlOa0lS?=
+ =?utf-8?B?ekowNzg4UW1XRWhneWowWDIxa1V4bzY2UmxMRGgzVDhJdjRkNHdMTHB1OWRG?=
+ =?utf-8?B?ek1STU5qVWRldE5PM1ZxYUV5emZ5V2RQaHJjVytrMmVCMWpRbkRMbkp5L0hX?=
+ =?utf-8?B?OUROYW5SK1JHR2pScURYbldiZTN4cHZ2VTFmQVVBL01IWFlKcGtla1BTN3BW?=
+ =?utf-8?B?NlhYK2U0SktFM1QzOWIyeGNXcnlGdjd6WDlWZUpyZ2pPTDh0ai9GUThxS2Ji?=
+ =?utf-8?B?QmQwb25xaEhibEJaQ0JyWURqOE1iak5YNFJwU0g3VldOSkJNMDdNTmQ5OGZl?=
+ =?utf-8?B?TnhNK0lWVm01QTI2KzNmQnR0VlFmMFZlcERnWFV2UXFSY096UU5PMDdvQmsx?=
+ =?utf-8?B?MDRuNyt6MXlCRlJvd01ta3pBTjlkZFdiM0tranhjalB4ZURva2F1Y1ZoMjFU?=
+ =?utf-8?B?YnJDVWlnWmMrZmRNeHo2UkRFRldTd1poWjlHUG90RzJsL0lPQ0pndmxrUFNz?=
+ =?utf-8?B?NWp5M1BNT1grcWVpOUFPai9vTVJPQWZHcHVzeDNGelRYQUlackxkZzgraUhp?=
+ =?utf-8?B?OUV4eEVLVDVmYm0zT2VONGZvSkZHaWZQWnEzZmtwek1CV2NlQUtqMHNhb3Y2?=
+ =?utf-8?B?dDI4QzR0NEhyaFNvRzllMnFLWFVTOTRBMU1Wc3ltWEJBS3VSeldXR3BOVTZh?=
+ =?utf-8?B?a09DcDFlOGxlMWJrR1N3dTAxMVEvZ3ZPQnYzUlg0b2NZRHlhRUEyWVVaUGZQ?=
+ =?utf-8?B?YUNDeGZsWjN1K3FwcE95anZCYnNBbXRIeFVSdHQ3Vk5vbWtxakdsSHI3bk1K?=
+ =?utf-8?B?ajJ2amtJS3ROdEE0bk1BMEhRRURBWjJxaVU2RGwrY3JUSjh4TW1HMDRWZEhN?=
+ =?utf-8?B?U0dGWEx0Nkg1eFkzY0ljS1ZQVlRmRXJiYjZ3WWd2bCtpaE9UeUZTZG4xdFBS?=
+ =?utf-8?B?ZDFNbXFYMUdnMmZhTGx2MTdnY0NodXZMbWRzdnZPSmxIdmgzdkxScEtiN2dp?=
+ =?utf-8?B?NlhPSnJHVGxTcldPeDh6SEZ0YVZFaTVXK1c0c2szMWJsM0toTFpONGhSN3Vk?=
+ =?utf-8?Q?GB7JAK6Kh8Du7s2Nt4fsmP4w/?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87311350-00e6-4bcd-332c-08dd150b6a66
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 09:01:33.2098
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Tbjzwt5Y/iXTHbTYBS+bR7UPtTn43boA7nffAGMyn5NgcFcxsp9dM1Ws1pNJfQPSE8snSfgxfz7BAQmQZckrxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9150
 
-On Wed, Dec 04, 2024 at 02:30:17PM -0600, Rob Herring wrote:
-> On Wed, Dec 4, 2024 at 12:51 PM Christian Marangi <ansuelsmth@gmail.com> wrote:
-> >
-> > On Wed, Dec 04, 2024 at 12:42:53PM -0600, Rob Herring wrote:
-> > > On Tue, Dec 03, 2024 at 05:31:49PM +0100, Christian Marangi wrote:
-> > > > Document required property for Airoha EN7581 CPUFreq .
-> > > >
-> > > > On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
-> > > > to ATF and no clocks are exposed to the OS.
-> > > >
-> > > > The SoC have performance state described by ID for each OPP, for this a
-> > > > Power Domain is used that sets the performance state ID according to the
-> > > > required OPPs defined in the CPU OPP tables.
-> > > >
-> > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > ---
-> > > > Changes v5:
-> > > > - Add Reviewed-by tag
-> > > > - Fix OPP node name error
-> > > > - Rename cpufreq node name to power-domain
-> > > > - Rename CPU node power domain name to perf
-> > > > - Add model and compatible to example
-> > > > Changes v4:
-> > > > - Add this patch
-> > > >
-> > > >  .../cpufreq/airoha,en7581-cpufreq.yaml        | 262 ++++++++++++++++++
-> > > >  1 file changed, 262 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..7e36fa037e4b
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > > > @@ -0,0 +1,262 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/cpufreq/airoha,en7581-cpufreq.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Airoha EN7581 CPUFreq
-> > > > +
-> > > > +maintainers:
-> > > > +  - Christian Marangi <ansuelsmth@gmail.com>
-> > > > +
-> > > > +description: |
-> > > > +  On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
-> > > > +  to ATF and no clocks are exposed to the OS.
-> > > > +
-> > > > +  The SoC have performance state described by ID for each OPP, for this a
-> > > > +  Power Domain is used that sets the performance state ID according to the
-> > > > +  required OPPs defined in the CPU OPP tables.
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: airoha,en7581-cpufreq
-> > > > +
-> > > > +  '#clock-cells':
-> > > > +    const: 0
-> > >
-> > > You just said no clocks are exposed to the OS.
-> > >
-> >
-> > Well we now simulate one due to request from cpufreq reviewers.
-> >
-> > Everything is still handled by SMC that only report the current
-> > frequency of the CPU.
-> >
-> > > > +
-> > > > +  '#power-domain-cells':
-> > > > +    const: 0
-> > > > +
-> > > > +  operating-points-v2: true
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - '#clock-cells'
-> > > > +  - '#power-domain-cells'
-> > > > +  - operating-points-v2
-> > > > +
-> > > > +additionalProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    / {
-> > > > +        model = "Airoha EN7581 Evaluation Board";
-> > > > +        compatible = "airoha,en7581-evb", "airoha,en7581";
-> > > > +
-> > > > +        #address-cells = <2>;
-> > > > +           #size-cells = <2>;
-> > >
-> > > mixed tab and spaces.
-> > >
-> > > Can't I just go read the actual .dts files if I want to see
-> > > *everything*? Examples should generally be just what the schema covers.
-> > >
-> >
-> > Idea here is to give example as both clock and power-domain property are
-> > needed in the CPU nodes for the CPUFreq driver to correctly work.
+On 12/04/2024, Biju Das wrote:
+> Hi Liu Ying,
+
+Hi Biju,
+
 > 
-> If we want to do that, then we really should have a schema defining
-> that. But since there's only 1 for cpus that doesn't really work.
+>> -----Original Message-----
+>> From: Liu Ying <victor.liu@nxp.com>
+>> Sent: 04 December 2024 03:43
+>> Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
+>>
+>> On 12/04/2024, Dmitry Baryshkov wrote:
+>>> On Tue, Dec 03, 2024 at 06:21:29PM +0100, tomm.merciai@gmail.com wrote:
+>>>> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>>>>
+>>>> Introduce it6263_is_input_bus_fmt_valid() and refactor the
+>>>> it6263_bridge_atomic_get_input_bus_fmts() function to support VESA
+>>>> format by selecting the LVDS input format based on the LVDS data
+>>>> mapping and thereby support both JEIDA and VESA input formats.
+>>>
+>>> For the patch itself,
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>
+>>> A more generic question: is the bridge limited to 4 lanes or does it
+>>> support 3-lane or 5-lane configurations?
+>>
+>> According to ite,it6263.yaml, the bridge supports all the data mappings(jeida-{18,24,30} and vesa-
+>> {24,30}) listed in lvds-data-mapping.yaml.  lvds-data-mapping.yaml specifies the data lanes(3/4/5)
+>> used by each of the data mappings.  So, the bridge supports 3, 4 or 5 data lanes.
 > 
-> > Should I drop and just define the CPUFreq node?
+> In Renesas SMARC RZ/G3E LVDS add on board, only 4 LVDS Rx lanes connected. The 5th one is unconnected.
+> What is the situation in your board Liu Ying?
+
+The adapter cards I'm using to connect with i.MX8MP EVK have only 4
+LVDS data lanes routed out. 
+
 > 
-> Yes.
-> 
-> > > > +
-> > > > +        cpus {
-> > > > +            #address-cells = <1>;
-> > > > +            #size-cells = <0>;
-> > > > +
-> > > > +            cpu0: cpu@0 {
-> > > > +                device_type = "cpu";
-> > > > +                compatible = "arm,cortex-a53";
-> > > > +                reg = <0x0>;
-> > > > +                operating-points-v2 = <&cpu_opp_table>;
-> > > > +                enable-method = "psci";
-> > > > +                clocks = <&cpu_pd>;
-> > > > +                clock-names = "cpu";
-> > > > +                power-domains = <&cpu_pd>;
-> > > > +                power-domain-names = "perf";
-> > > > +                next-level-cache = <&l2>;
-> > > > +                #cooling-cells = <2>;
-> > >
-> > > I don't understand why you have clocks, power-domains and OPP?
-> > > Certainly that's conceivable, but not with how you're abusing
-> > > power-domains for performance points and you said clocks are not exposed
-> > > to the OS.
-> > >
-> >
-> > SMC scale based on index values not frequency. That really resembles a
-> > power-domain.
-> 
-> So what is the point of the OPP table with frequency? You can set an
-> OPP and read the frequency, right? So a table of frequencies is
-> redundant.
->
-
-The OPP for CPU node is to describe the supported frequency and then
-each OPP have a required-opp property to describe the level to configure
-the power-domain. It's really to make a connection between the 2. I need
-to check but from my test the separate OPP table for the power domain is
-needed or it does refuse to probe.
-
-This is a common pattern also used by Qcom and Mediatek. Example qcs404 [0]
-
-As you notice the very same pattern is used here.
-
-> > SMC provide frequency in MHz tho so we model that as a
-> > get-only clock.
-> >
-> > At times with no clocks are exposed I intend that they SoC doesn't
-> > provide any raw control on them in the normal way with a register, bits
-> > to change and logic to apply for mux and divisor, this thing is very
-> > special and works only with 2 command and nothing else so I'm trying my
-> > best to model this in the most descriptive and complete way possible.
-> 
-> Fair enough for the clock. Please clarify the description with what
-> clock is provided. Just to make sure, all CPUs run at the same
-> frequency?
->
-
-Ok, yes it's all global also signaled by the opp-shared property.
-
-[0] https://elixir.bootlin.com/linux/v6.12.1/source/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> Cheers,
+> Biju
 
 -- 
-	Ansuel
+Regards,
+Liu Ying
+
 
