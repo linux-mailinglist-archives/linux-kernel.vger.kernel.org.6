@@ -1,271 +1,250 @@
-Return-Path: <linux-kernel+bounces-433127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA039E5429
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E08409E542D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:41:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C3A6165EB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:41:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE58616463A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8E207DFA;
-	Thu,  5 Dec 2024 11:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DDF207679;
+	Thu,  5 Dec 2024 11:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVH1EBpy"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="juw6fBuG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9A920767F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 11:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF60207E16;
+	Thu,  5 Dec 2024 11:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733398852; cv=none; b=ZelSZlfzSeDgecCL9p/riyaibV27KFl6JcYbxU0AYa19Reb4CHgATDhFWZU/DaumsyvQy+VWx34vFZ2V1HPEzMOnJbyYqUujwAkFHCbXak0OA7N+wdCkgoYU1QsqB4zOlyffpKS4ovSF5xx+6Umlh7Emgu26c5WrdpDPGeja+aU=
+	t=1733398871; cv=none; b=SBYg646tNhOIPYS8Qa/5wXB1IAf4uMCM/C6xReJ26TD0Uo1FlAWAxprtwlnc97QIMX5vRSlsJLlnYsPnovqqKtMqJ62Kr6a5i1EmKBSRe2MPBUFcOxSu0VZSYkf8juwdTzXKgL2FNOKCMredkxOtgRVGXADJBu8qNSqtDp9/PE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733398852; c=relaxed/simple;
-	bh=MgNShRnQp/aT/PaWLKJTQ9YBqwcVrKGxN8gk7Ft9IOw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o23pS8YWpQQj3BtPDaIkx+D29MnAgCAbsJMz4JJJrJbVfK6g1t0ACAmbsxj6UQnfncpFuCtVf7vHf2h9rI4dQ3nQwaAZtBH4cdrVcz03fKpP6CcblQa2RLf4dwuWQfh7kpu/T2tc5r3IN294YnBQzhYnoay0jOnvlvoX0omx7Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CVH1EBpy; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3995f1fe30so1175778276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 03:40:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733398848; x=1734003648; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kVlR8SfhnG5cey0ump1Xp1q6+3VfWCJyhprNP3dwbtc=;
-        b=CVH1EBpypHoebKjRU1NfKKjNaVmOWbZrI8u4mH59Yie+JzImTf6j3ju5VOxZFRiq47
-         JEPN7niTFkYN833oi5NQDT5rR877kK3OUNAl0Q4d9mOISPixS5t9aSNhumwZEoPlCgA2
-         NXpfHLhOOsN22IGQpt4R+AiShFzyOh3vTkX8gTQBRCrAeDBk48NvjKPD//YwbNAY7uZF
-         WeWKKap6hKBuLTlCbzfKu18PaBgFYG0Ih9NhV6oik4vSpF327Uoh/jjjR+w7+fEI9d2g
-         DIVLNkbmOYREUKWm2H1HGvjst4qMO+7907QqPGhgc5TlBAF7yr4vLmHBbIfDnWrq76U8
-         Vb7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733398848; x=1734003648;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kVlR8SfhnG5cey0ump1Xp1q6+3VfWCJyhprNP3dwbtc=;
-        b=RZSpTOq0JcJYNsZApa2s4jC3DVzY+xqjyBoEkbwWHBZrfAk5qLRWTjKSfC7SGlVhWT
-         Em9fEElYurVPK0PBnWy3zKFCZnBMGn6iQ9xupPGIa8asJ5k7IssoA8OW4YQTNDsPVIgD
-         aTFEZ24qcIKkp1AIqZKsA+XIMtWGZvGM2N8kA9lejCAIOQTaTYgIypllnpC8ZxvZPN4G
-         jwnSZuBf+HL89/G1nzgJLfZwV9ggy9noCWfg4ct4nxRpvruZuCcQcPSCJNuFezSKJPEb
-         tvayBffUHYckoFbGAgbk92Rl3uP4C2VnlIm2ey1lM8Z78IBISvjh+mlkjLhs3GeOI9O7
-         McFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA1fhyLDlgEsiB73Y9cHl7rEGSTHWHUyzzBCwIlcm97F66SLIPdWqiij5wAerk/oefKcZOE6TlIHncDn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTaCer8b0DswRwsfElvXp7oGM3fQnV3SGzhE8Vi5IPRXV6i06h
-	CSCSVWQsCeJNbrWRnaDfMI5pGl7+P+sL/WSVQF6rISoVDxL5pSw8ZEhcb+K1eQQ40TZE09L9Gb+
-	ZYyiamKBr6+PKYdSvuOcmOmtfvhsDUhK2bXyivA==
-X-Gm-Gg: ASbGnct6YnouefweqB1E9tnhok4yXCqAkaFTjLhfyAJEnCVOYxYDaXaPICj+myDhwfF
-	GuoM06qGb3zSvJa5OmVm0jVT7+VO7S8AeO3b0nnlVWmpyFg==
-X-Google-Smtp-Source: AGHT+IE7HGuIvq1u8h8I8rkPJdzS+9WwLlvVg6WJaLoZvVrKFT+XlrLuu0kqLNSwgkmrfDwW/eoD4F5p5LcplIqXWkE=
-X-Received: by 2002:a05:6902:cc5:b0:e39:b0de:fed8 with SMTP id
- 3f1490d57ef6-e39d3a293cdmr10638085276.17.1733398848266; Thu, 05 Dec 2024
- 03:40:48 -0800 (PST)
+	s=arc-20240116; t=1733398871; c=relaxed/simple;
+	bh=prkes8uEj3iYakr3bZXZUj3FeRAXRPmf/dzG75uRGTY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=R16INxI5mcfZkCzCvrIZIywBsOScaPALYLFQtZQubtb/tR8q6BbTrh4DTGUgeAUcDgIqnaH/rNQ7Z7/28+cZr7Uq8nkYEg9IVHN1Hd/pOZ52ycmw1hYoTIndQzVKD2qUvsIFQO5xR1OuiM0kNHNZGgkxAM5tLLE/RPmjC3FdnKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=juw6fBuG; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733398869; x=1764934869;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=prkes8uEj3iYakr3bZXZUj3FeRAXRPmf/dzG75uRGTY=;
+  b=juw6fBuGCXzRsnRdbx9kEGtay3JnQJaqXoFeg0sQpQRbMh2Yv+R/Ax0o
+   yVJRm1Jg4k3jvsg57S0pN1OtkNd3TwdW92owqyk6foyxQ8APIFoFgEuGZ
+   gx/Wm6DdcEJ9y1ryUF3UcxhRuUFWsvugHKXMAUxq3nI/Bjv4nviyFyYDs
+   UrtlHiHNPa7Obsi2I1kNHlGRmHVe0NkGNk5XlXYVFR3i9Wo9tyo2BjqFE
+   Zu2ujPTOH2ZOo7Kho6YPEckd5XxGNXiQl1jThEmjX0CdKD0OD0WpSp4JI
+   kkIJ6vvh2j4D1ilhStugU2Lupn5U/FJpgxN/82lhzzSdtqC7SpzqKZW4/
+   A==;
+X-CSE-ConnectionGUID: sgQo8BPgQKWgJiJN1SZHRQ==
+X-CSE-MsgGUID: eXo4CmEbQUq35uOaSiXJNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="59109861"
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="59109861"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 03:41:07 -0800
+X-CSE-ConnectionGUID: YFY5WZ7lSs2Kl6PvWWfpKw==
+X-CSE-MsgGUID: VXl5A4MUQjO/8c/AYI66QA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="99149356"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 03:40:59 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 5 Dec 2024 13:40:56 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v9 13/22] ACPI: platform_profile: Add profile attribute
+ for class interface
+In-Reply-To: <20241202055031.8038-14-mario.limonciello@amd.com>
+Message-ID: <5b1a2aa1-b9be-744a-9c8d-074d981eaf30@linux.intel.com>
+References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-14-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
- <20241129-add-displayport-support-for-qcs615-platform-v1-5-09a4338d93ef@quicinc.com>
- <CAA8EJpoY8hySQd00yODGeHjSpVZpEBLjF3aBiKGJPUhpr-2mgw@mail.gmail.com>
- <d2a3cd6f-1077-4edb-9f0c-0c940a639050@quicinc.com> <zvapsvfftai4fp6vwrn33edqsyuuprq2pxz6spij6j7t4y6xmn@zzgp7gbsivbk>
- <93ddb63c-42da-43c8-9a77-c517ca5d6432@quicinc.com>
-In-Reply-To: <93ddb63c-42da-43c8-9a77-c517ca5d6432@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 5 Dec 2024 13:40:37 +0200
-Message-ID: <CAA8EJprAFYD6ykN10-r=JwHM4A4XeDDcZVcVWYp_5A5FP-=RyA@mail.gmail.com>
-Subject: Re: [PATCH 5/8] drm/msm/dp: Add support for lane mapping configuration
-To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-386674404-1733398856=:932"
 
-On Thu, 5 Dec 2024 at 13:28, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
->
->
->
-> On 12/2/2024 6:46 PM, Dmitry Baryshkov wrote:
-> > On Mon, Dec 02, 2024 at 04:40:05PM +0800, Xiangxu Yin wrote:
-> >>
-> >>
-> >> On 11/29/2024 9:50 PM, Dmitry Baryshkov wrote:
-> >>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com>=
- wrote:
-> >>>>
-> >>>> Add the ability to configure lane mapping for the DP controller. Thi=
-s is
-> >>>> required when the platform's lane mapping does not follow the defaul=
-t
-> >>>> order (0, 1, 2, 3). The mapping rules are now configurable via the
-> >>>> `data-lane` property in the devicetree. This property defines the
-> >>>> logical-to-physical lane mapping sequence, ensuring correct lane
-> >>>> assignment for non-default configurations.
-> >>>>
-> >>>> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-> >>>> ---
-> >>>>  drivers/gpu/drm/msm/dp/dp_catalog.c | 11 +++++------
-> >>>>  drivers/gpu/drm/msm/dp/dp_catalog.h |  2 +-
-> >>>>  drivers/gpu/drm/msm/dp/dp_ctrl.c    |  2 +-
-> >>>>  drivers/gpu/drm/msm/dp/dp_panel.c   | 13 ++++++++++---
-> >>>>  drivers/gpu/drm/msm/dp/dp_panel.h   |  3 +++
-> >>>>  5 files changed, 20 insertions(+), 11 deletions(-)
-> >>>>
-> >
-> >>>> @@ -461,6 +460,7 @@ static int msm_dp_panel_parse_dt(struct msm_dp_p=
-anel *msm_dp_panel)
-> >>>>         struct msm_dp_panel_private *panel;
-> >>>>         struct device_node *of_node;
-> >>>>         int cnt;
-> >>>> +       u32 lane_map[DP_MAX_NUM_DP_LANES] =3D {0, 1, 2, 3};
-> >>>>
-> >>>>         panel =3D container_of(msm_dp_panel, struct msm_dp_panel_pri=
-vate, msm_dp_panel);
-> >>>>         of_node =3D panel->dev->of_node;
-> >>>> @@ -474,10 +474,17 @@ static int msm_dp_panel_parse_dt(struct msm_dp=
-_panel *msm_dp_panel)
-> >>>>                 cnt =3D drm_of_get_data_lanes_count(of_node, 1, DP_M=
-AX_NUM_DP_LANES);
-> >>>>         }
-> >>>>
-> >>>> -       if (cnt > 0)
-> >>>> +       if (cnt > 0) {
-> >>>> +               struct device_node *endpoint;
-> >>>> +
-> >>>>                 msm_dp_panel->max_dp_lanes =3D cnt;
-> >>>> -       else
-> >>>> +               endpoint =3D of_graph_get_endpoint_by_regs(of_node, =
-1, -1);
-> >>>> +               of_property_read_u32_array(endpoint, "data-lanes", l=
-ane_map, cnt);
-> >>>> +       } else {
-> >>>>                 msm_dp_panel->max_dp_lanes =3D DP_MAX_NUM_DP_LANES; =
-/* 4 lanes */
-> >>>> +       }
-> >>>
-> >>> Why? This sounds more like dp_catalog or (after the refactoring at
-> >>> [1]) dp_ctrl. But not the dp_panel.
-> >>>
-> >>> [1] https://patchwork.freedesktop.org/project/freedreno/series/?order=
-ing=3D-last_updated
-> >>>
-> >> We are used the same prop 'data-lanes =3D <3 2 0 1>' in mdss_dp_out to=
- keep similar behaviour with dsi_host_parse_lane_data.
-> >> From the modules used, catalog seems more appropriate, but since the m=
-ax_dp_lanes is parsed at dp_panel, it has been placed here.
-> >> Should lane_map parsing in msm_dp_catalog_get, and keep max_dp_lanes p=
-arsing at the dp_panel?
-> >
-> > msm_dp_catalog_get() is going to be removed. Since the functions that
-> > are going to use it are in dp_ctrl module, I thought that dp_ctrl.c is
-> > the best place. A better option might be to move max_dp_lanes and
-> > max_dp_link_rate to dp_link.c as those are link params. Then
-> > lane_mapping also logically becomes a part of dp_link module.
-> >
-> > But now I have a more important question (triggered by Krishna's email
-> > about SAR2130P's USB): if the lanes are swapped, does USB 3 work on tha=
-t
-> > platform? Or is it being demoted to USB 2 with nobody noticing that?
-> >
-> > If lanes 0/1 and 2/3 are swapped, shouldn't it be handled in the QMP
-> > PHY, where we handle lanes and orientation switching?
-> >
-> I have checked the DP hardware programming guide and also discussed it wi=
-th Krishna.
->
-> According to the HPG section '3.4.2 PN and Lane Swap: PHY supports PN swa=
-p for mainlink and AUX, but it doesn't support lane swap feature.'
->
-> The lane swap mainly refers to the logical to physical mapping between th=
-e DP controller and the DP PHY. The PHY handles polarity inversion, and the=
- lane map does not affect USB behavior.
->
-> On the QCS615 platform, we have also tested when DP works with lane swap,=
- other USB 3.0 ports can works normally at super speed.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-"Other USB 3.0 ports"? What does that mean? Please correct me if I'm
-wrong, you should have a USB+DP combo port that is being managed with
-combo PHY. Does USB 3 work on that port?
+--8323328-386674404-1733398856=:932
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-In other words, where the order of lanes is actually inverted? Between
-DP and combo PHY? Within combo PHY? Between the PHY and the pinout?
-Granted that SM6150 was supported in msm-4.14 could you possibly point
-out a corresponding commit or a set of commits from that kernel?
+On Sun, 1 Dec 2024, Mario Limonciello wrote:
 
->
-> Additionally, if it were placed on the PHY side, the PHY would need acces=
-s to dp_link=E2=80=99s domain which can access REG_DP_LOGICAL2PHYSICAL_LANE=
-_MAPPING.
+> Reading and writing the `profile` sysfs file will use the callbacks for
+> the platform profile handler to read or set the given profile.
+>=20
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-I was thinking about inverting the SW_PORTSEL_VAL bit.
 
-> Therefore, we believe that the  max_dp_link_rate,max_dp_lanes and lane_ma=
-p move to dp_link side is better.
->
-> >>>> +
-> >>>> +       memcpy(msm_dp_panel->lane_map, lane_map, msm_dp_panel->max_d=
-p_lanes * sizeof(u32));
-> >>>>
-> >>>>         msm_dp_panel->max_dp_link_rate =3D msm_dp_panel_link_frequen=
-cies(of_node);
-> >>>>         if (!msm_dp_panel->max_dp_link_rate)
-> >>>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm=
-/dp/dp_panel.h
-> >>>> index 0e944db3adf2f187f313664fe80cf540ec7a19f2..7603b92c32902bd3d448=
-5539bd6308537ff75a2c 100644
-> >>>> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
-> >>>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
-> >>>> @@ -11,6 +11,8 @@
-> >>>>  #include "dp_aux.h"
-> >>>>  #include "dp_link.h"
-> >>>>
-> >>>> +#define DP_MAX_NUM_DP_LANES    4
-> >>>> +
-> >>>>  struct edid;
-> >>>>
-> >>>>  struct msm_dp_display_mode {
-> >>>> @@ -46,6 +48,7 @@ struct msm_dp_panel {
-> >>>>         bool video_test;
-> >>>>         bool vsc_sdp_supported;
-> >>>>
-> >>>> +       u32 lane_map[DP_MAX_NUM_DP_LANES];
-> >>>>         u32 max_dp_lanes;
-> >>>>         u32 max_dp_link_rate;
-> >>>>
-> >>>>
-> >>>> --
-> >>>> 2.25.1
-> >>>>
-> >>>
-> >>>
-> >>
-> >>
-> >> --
-> >> linux-phy mailing list
-> >> linux-phy@lists.infradead.org
-> >> https://lists.infradead.org/mailman/listinfo/linux-phy
-> >
->
-
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
 --=20
-With best wishes
-Dmitry
+ i.
+
+> ---
+> v8:
+>  * whitespace
+>  * rename variables
+> ---
+>  drivers/acpi/platform_profile.c | 102 ++++++++++++++++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+>=20
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
+ile.c
+> index 885f41bca6c25..fdff374aab128 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -47,6 +47,52 @@ static ssize_t _commmon_choices_show(unsigned long *ch=
+oices, char *buf)
+>  =09return len;
+>  }
+> =20
+> +/**
+> + * _store_class_profile - Set the profile for a class device
+> + * @dev: The class device
+> + * @data: The profile to set
+> + */
+> +static int _store_class_profile(struct device *dev, void *data)
+> +{
+> +=09struct platform_profile_handler *handler;
+> +=09int *bit =3D (int *)data;
+> +
+> +=09lockdep_assert_held(&profile_lock);
+> +=09handler =3D dev_get_drvdata(dev);
+> +=09if (!test_bit(*bit, handler->choices))
+> +=09=09return -EOPNOTSUPP;
+> +
+> +=09return handler->profile_set(handler, *bit);
+> +}
+> +
+> +/**
+> + * get_class_profile - Show the current profile for a class device
+> + * @dev: The class device
+> + * @profile: The profile to return
+> + * Return: 0 on success, -errno on failure
+> + */
+> +static int get_class_profile(struct device *dev,
+> +=09=09=09     enum platform_profile_option *profile)
+> +{
+> +=09struct platform_profile_handler *handler;
+> +=09enum platform_profile_option val;
+> +=09int err;
+> +
+> +=09lockdep_assert_held(&profile_lock);
+> +=09handler =3D dev_get_drvdata(dev);
+> +=09err =3D handler->profile_get(handler, &val);
+> +=09if (err) {
+> +=09=09pr_err("Failed to get profile for handler %s\n", handler->name);
+> +=09=09return err;
+> +=09}
+> +
+> +=09if (WARN_ON(val >=3D PLATFORM_PROFILE_LAST))
+> +=09=09return -EINVAL;
+> +=09*profile =3D val;
+> +
+> +=09return 0;
+> +}
+> +
+>  /**
+>   * name_show - Show the name of the profile handler
+>   * @dev: The device
+> @@ -81,9 +127,65 @@ static ssize_t choices_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(choices);
+> =20
+> +/**
+> + * profile_show - Show the current profile for a class device
+> + * @dev: The device
+> + * @attr: The attribute
+> + * @buf: The buffer to write to
+> + *
+> + * Return: The number of bytes written
+> + */
+> +static ssize_t profile_show(struct device *dev,
+> +=09=09=09    struct device_attribute *attr,
+> +=09=09=09    char *buf)
+> +{
+> +=09enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
+> +=09int err;
+> +
+> +=09scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> +=09=09err =3D get_class_profile(dev, &profile);
+> +=09=09if (err)
+> +=09=09=09return err;
+> +=09}
+> +
+> +=09return sysfs_emit(buf, "%s\n", profile_names[profile]);
+> +}
+> +
+> +/**
+> + * profile_store - Set the profile for a class device
+> + * @dev: The device
+> + * @attr: The attribute
+> + * @buf: The buffer to read from
+> + * @count: The number of bytes to read
+> + *
+> + * Return: The number of bytes read
+> + */
+> +static ssize_t profile_store(struct device *dev,
+> +=09=09=09     struct device_attribute *attr,
+> +=09=09=09     const char *buf, size_t count)
+> +{
+> +=09int index, ret;
+> +
+> +=09index =3D sysfs_match_string(profile_names, buf);
+> +=09if (index < 0)
+> +=09=09return -EINVAL;
+> +
+> +=09scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> +=09=09ret =3D _store_class_profile(dev, &index);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09}
+> +
+> +=09sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> +
+> +=09return count;
+> +}
+> +static DEVICE_ATTR_RW(profile);
+> +
+>  static struct attribute *profile_attrs[] =3D {
+>  =09&dev_attr_name.attr,
+>  =09&dev_attr_choices.attr,
+> +=09&dev_attr_profile.attr,
+>  =09NULL
+>  };
+>  ATTRIBUTE_GROUPS(profile);
+>=20
+--8323328-386674404-1733398856=:932--
 
