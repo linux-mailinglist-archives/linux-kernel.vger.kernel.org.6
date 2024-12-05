@@ -1,121 +1,99 @@
-Return-Path: <linux-kernel+bounces-432752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2276C9E4FC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:33:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2991881F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:33:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440EB1D5159;
-	Thu,  5 Dec 2024 08:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0UHqCT4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880D39E4FCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:33:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7EF1D2B22;
-	Thu,  5 Dec 2024 08:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E531D282B4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:33:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521241D358F;
+	Thu,  5 Dec 2024 08:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KFgbqeMI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726AB189B94;
+	Thu,  5 Dec 2024 08:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733387567; cv=none; b=K7+y0CwRhmy+ohEEp3vieiFY8Jm39H8d29lZmawKceQPwnlbAuo1NHNqV/JTJqYN4aheQLb6B1PPk9QredVxkthKCySWvbaTVQLqo3lSSKtAKECGdYgK50l9RcjC3TzFBb55dMpHHZb6YPhak8DD60drLWB39G6drzS0mZF3V2U=
+	t=1733387614; cv=none; b=mHofkEhDASkXP1AGJmETt6P7ILUj2Fm25lwWq6SRRVC5idiAequgE5Y4i9Q4d933my2IA/5l6sk+4evFQ9sBLSaXY0xTuNB6P9WYi1CcGhKFUn575KebM9tkTCedgHmlko2uUhQqu9clo6yz1/fh4+hacBQmErzhRTteJNgXdx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733387567; c=relaxed/simple;
-	bh=L3Q4+XFEGZLsE/qvoDe6aqx3738LMaa3603y9rqxW4E=;
+	s=arc-20240116; t=1733387614; c=relaxed/simple;
+	bh=/XjNWEIJeeQQWXxVCwZfNVKTiH9H2s/msPT967xYN7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQPRb6sAGOMdZXG+caksTnSVVTtNemKN6vMjcV0I8PJlcSlgsEfcNiaiUXO01OtR2UQNQcpuzNNkvbvbSpN6fbqwPSryVCPkwFuB8hOPNT/ic4DG/eZf2JM4Ue7cvK+JxXERqLzmpqy7ajJZNgTaHVFTtUr+4oa+y6dhviTMRow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0UHqCT4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3862C4CEDF;
-	Thu,  5 Dec 2024 08:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733387566;
-	bh=L3Q4+XFEGZLsE/qvoDe6aqx3738LMaa3603y9rqxW4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X0UHqCT4EIGJcE7V35yuXymaT2kuYtB6gECL1hj5SnK5kjWJqgqULtr/6Yk2CBdUD
-	 u5J7femdAkye+GuUHdUsemJF4RNKmj6vZqNVLOnTQQatF0tOUQYoilO8LBXMWM8GcK
-	 aIVkKsSiWvKuS1rSHBn70c4voCBjyulJuAWCiylMbn3xbmjUabiEJcA4HDFiVZYTIP
-	 F1SvfLwEGVOJNn4Xvcokkeqf9UinQlL6LmflueBEcMNjqJDBP16+/+0oiKsFPFU57a
-	 WX7YEHLXXxRLqBgMeA1wgCHdeTEuFaKCR96Z3bdurCm+Q8ddDCAN9+3N5x5hh75QLt
-	 ONHuMGrbF5Msw==
-Date: Thu, 5 Dec 2024 10:32:40 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Cc: Yevgeny Kliteynik <kliteyn@nvidia.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net/mlx5: DR, prevent potential error pointer
- dereference
-Message-ID: <20241205083240.GS1245331@unreal>
-References: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
- <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
- <bf47a26a-ec69-433b-9cf9-667f9bccbec1@stanley.mountain>
- <4183c48a-3c78-47e2-a7b2-11d387b6f833@nvidia.com>
- <93a06b66-ab5e-4722-9270-cf892470d004@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JE5U3kAaASgqprHvNhW/DZZ8uNklSqfUaA8sJbiYVUfRQpj1sEtiIeLn4K+7c5jpQ1KffZman+Tug+bstHsO+mUWNyTysMnOq+5ccuvcpG6Zq0Y5JzunSMfvscFsOfTJbkg58nOkBAuC1dEC/wQJ/x6Ompq5KVPt40TxbAfF1nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KFgbqeMI; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733387613; x=1764923613;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/XjNWEIJeeQQWXxVCwZfNVKTiH9H2s/msPT967xYN7k=;
+  b=KFgbqeMIRXWy9N1qHSGjbqkVbAsTok2serYhAl3E8HZEARgDlQuLwOfL
+   YGnCBcCeTBsYt5isYaJYzYg0QPJOUH9RUXyq/aEtz1MTLloKEKPnW+xLf
+   l9eLTnwmVpTMZ+b48ioZ1yR0qkaRGQeCLRwrJCmXtT+ztqoaEuYyWASqY
+   vbbRdx8W8aD9Y9FwQTGvHPuVHXFO9kQh747PxTI9RHpCQ6GHvRgL7KdAO
+   idkRZ2SwOZby3/2QiliwkgET/JdVBorp4qDYVYNEJDe9wDdaLBCatdo41
+   wS4iapC7JwescHZFRNhP6As6WjrYqeS0FcSHZRG5tG/Lweea4gTA7eGnx
+   Q==;
+X-CSE-ConnectionGUID: 4mgiku1FTM6uYuw5Nus9qg==
+X-CSE-MsgGUID: RX0ax2QqTWOf+UmOTLiX1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="51102883"
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="51102883"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 00:33:33 -0800
+X-CSE-ConnectionGUID: PZ2XDVg7RvevpImaQ/W6+A==
+X-CSE-MsgGUID: w5+okAioRaGsLx0mwWKXxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="124841465"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 00:33:31 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tJ7Ie-000000041nu-1zWw;
+	Thu, 05 Dec 2024 10:33:28 +0200
+Date: Thu, 5 Dec 2024 10:33:28 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jai Luthra <jai.luthra@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 12/15] media: i2c: ds90ub960: Handle errors in
+ ub960_log_status_ub960_sp_eq()
+Message-ID: <Z1FlWPmCA-FJ8rec@smile.fi.intel.com>
+References: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
+ <20241204-ub9xx-fixes-v3-12-a933c109b323@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <93a06b66-ab5e-4722-9270-cf892470d004@intel.com>
+In-Reply-To: <20241204-ub9xx-fixes-v3-12-a933c109b323@ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Dec 03, 2024 at 11:02:15AM +0100, Mateusz Polchlopek wrote:
-> 
-> 
-> On 12/3/2024 10:44 AM, Yevgeny Kliteynik wrote:
-> > On 03-Dec-24 11:39, Dan Carpenter wrote:
-> > > On Tue, Dec 03, 2024 at 10:32:13AM +0100, Mateusz Polchlopek wrote:
-> > > > 
-> > > > 
-> > > > On 11/30/2024 11:01 AM, Dan Carpenter wrote:
-> > > > > The dr_domain_add_vport_cap() function genereally returns NULL on error
-> > > > 
-> > > > Typo. Should be "generally"
-> > > > 
-> > > 
-> > > Sure.
-> > > 
-> > > > > but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
-> > > > > retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
-> > > > 
-> > > > Please remove unnecessary space.
-> > > > 
-> > > 
-> > > What are you talking about?
-> > 
-> > Oh, I see it :)
-> > Double space between "retry." and "The"
-> > 
-> > -- YK
-> > 
-> 
-> Yup, exactly. Sorry, I could point it.
+On Wed, Dec 04, 2024 at 01:05:26PM +0200, Tomi Valkeinen wrote:
+> Add error handling for i2c read/write calls to
+> ub960_log_status_ub960_sp_eq().
 
-Double space after period is perfectly valid typographic style. It is
-with us for last 250 years.
+Wasn't this being reported, I mean add Reported-by / Closes?
 
-Thanks
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> 
-> 
-> > > regards,
-> > > dan carpenter
-> > > 
-> > > 
-> > 
-> 
+
 
