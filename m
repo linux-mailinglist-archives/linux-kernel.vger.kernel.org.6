@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-434062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623169E611A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:07:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECAE9E62DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:01:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C06B1885690
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B55282F1D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36781D61A5;
-	Thu,  5 Dec 2024 23:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="u0Eem8cN"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE34A13A888;
+	Fri,  6 Dec 2024 01:01:14 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8FE1CD208
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F00BE46
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 01:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733440026; cv=none; b=sSqJwLqbiAIGar5pjTc2fAyZrM3D3duAUtxzJrI9jsdxsm5M20PCU8/m2XQVqQO/YvySbT1Ingmrdn2wnA77cLK08NM7u7aCaxpeILWJehsFvrWCWk0WYFN8gyUOk5bgUFLXoZP2kXXEehZCtKboLpi3dwh78ggzb0xD5jGrjBc=
+	t=1733446874; cv=none; b=fpJ0mbIbDCf63mdpk+h6gGFCtL+19byrx9Mm/xo1ARn8gwobsrzU3jMsL/VLr3Oxk/DoK8yvuOhVbDRyUHMj2XmQsyhoUMGaiEg+AfjUoPqZb2bm6DqFWWvVosr+ZWbOxCzVinnNstIf4Cv+bxzvQu1uZZmagNKEZ+Uw/2JaOUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733440026; c=relaxed/simple;
-	bh=CCO50Zue0Xdj/fk+qKD58FhQn3S/oqKwUZ1sNgA60vw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=J9nARnoXJ3QI8a6OMukJIRBau4LK1hrMCtzEWtqVMw8MM7FS9NPOnYb83yI/js7mH5mNaN7F9lm1rHO8Vu3EwFE5Omnw4NdoxRdSRq+lQjebAjqz5eTtOhsapwndlAwG6szZhUUxLemU7Q1afRjPM8otakvB2z+jEQTsdAH1+Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=u0Eem8cN; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ee990ba9d5so1070628a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:07:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733440024; x=1734044824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rHr0wvrqV9j93xPxdFahGVGm+ykMuChm+8HToI4FbxQ=;
-        b=u0Eem8cNfp+rCylX4VakoxayCb9KQX4oJ2bsZahWkA8MhpShPSb524Rgiz3Q7SbZnM
-         GDNk2HtXQjnH7/LYh6w/6HQCaCOxI2pLcFpRdQVrS5bpT6+zRVcf5zJAAAt/alypz+ac
-         mHCxRDRfiEfZMhp9z2QCyBvzB5RxQpQm6tSVskWOr1VweJHLq7gsenMrAbfZ3j5a3mIp
-         gXq4sgKREkvSisXdD0UNM+DFVzWU9nJ5JlPtMNj88GBOV/NAlxPsEIc7hLHOdt0jhvsn
-         qsAO7NOQr1DR6x2l2zsRqECumpOfR2XmfdbtPoonTgFhhhROevhdsaRLQ7FTJ0B00IvV
-         BMlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733440024; x=1734044824;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rHr0wvrqV9j93xPxdFahGVGm+ykMuChm+8HToI4FbxQ=;
-        b=idTTueUx0Tw68JKFBUpJsmsSN5WDocqtpG6AA+DYKFpx2yDByGWlcW86yG1QPR9yxI
-         yC7vw0ryD6g/Z5jCiFVPd1b8I/bGgRkDtF28P/rkz4XY53mufcIjSDKDIQNXWBmShl0f
-         qm4CoTOcNEoR8lU0paYV8lWV3REBs+rxBLlPto5hvr9XSPzjfotxr/i3hVdDObH1cdiV
-         IscmCh2MJ3XLiU330cA6CMSVdr3St2erw1iR7NzYcspoo51zGN4yt0WXzFGW6FKi6Ubd
-         4ZvkTumMq6gJSObA3aRtq9wq/B3RcLPraWVAYz2P7KXTCFcYqQEVAxfGEyXSOjOieMox
-         KzVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUNBY2v0hHbofM0QDo5FD7awTPnt+1yJq8nRBYm0c06/QWhNbBak1clX26BIijoUts1Ezt1Dv027hXzRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCenK91MBNqjA1Xbp0r67KuFdy3/edX0/7R1YwcRvAyksRv7cT
-	tKL+/TTNmXNoo42vf8RMVgHK/1qTrggp17/S6auZW/sAkwxBRIadi91LDFuLsEc=
-X-Gm-Gg: ASbGnctcAtPdFl2bWY5xrkAGr5+Bnz2w7eBiqUK2hJc6M9ExjDeYyR/ac4fgD7MZ0GL
-	nPjnumzM3vmTmRuv27FMemb/8J0CLuyHInvkObey4dkGD8IoiUbt8obUvHXrgkzz8X7rRRHz0rH
-	Z8Hmc5kyueQb0zuHelbRDdUbR13fdeS9wEmthNX3FSM24n0g5/eGLq3TmaExiTUtlyHQElfjUKd
-	4KcQL/qosZpUFe12Kwd6AMnj35UDUwBmm9kJlYn7j5w3i4g
-X-Google-Smtp-Source: AGHT+IFa/tMdzlYgmSpyyWIuzMHOlTyyH5aaxdzqWaBNMPhD6FY5xDPdWjyhOGetFe7TxDwBl+cLKA==
-X-Received: by 2002:a17:90b:4f46:b0:2ee:eb5b:6e06 with SMTP id 98e67ed59e1d1-2ef6aaf3a46mr1402911a91.36.1733440024409;
-        Thu, 05 Dec 2024 15:07:04 -0800 (PST)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45f7eaf8sm1937864a91.11.2024.12.05.15.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 15:07:03 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
-To: tony@atomide.com, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, hns@goldelico.com, linux-omap@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- aaro.koskinen@iki.fi, rogerq@kernel.org, 
- Andreas Kemnade <andreas@kemnade.info>
-Cc: stable@vger.kernel.org
-In-Reply-To: <20241204174152.2360431-1-andreas@kemnade.info>
-References: <20241204174152.2360431-1-andreas@kemnade.info>
-Subject: Re: [PATCH v3] ARM: dts: ti/omap: gta04: fix pm issues caused by
- spi module
-Message-Id: <173344002345.407600.12027474109362942288.b4-ty@baylibre.com>
-Date: Thu, 05 Dec 2024 15:07:03 -0800
+	s=arc-20240116; t=1733446874; c=relaxed/simple;
+	bh=varYe/nsgd0jqbA8BxodQaB5K8QTJcOOiIbwkknH2VY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bcGinmitjmClIMbLEJxTeJqEg0VQpshxVLV91TTtRa9VKt5Fr2FPW712/lA0dLR1DrvT9HSCk+M8FT/xtcjwlj4Bu+Fs2yIlpjsaqS3oor7iHkh0BSN9MBY888eVE1Sod/XFnJxtp6lpdzsScCCXOyh307vgDSP7x0U1h5JR7ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1733446117-086e2312d5235a0001-xx1T2L
+Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx1.zhaoxin.com with ESMTP id bQJAFLG4DCETpKhv (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 06 Dec 2024 08:48:37 +0800 (CST)
+X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX1.zhaoxin.com
+ (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 6 Dec
+ 2024 08:48:36 +0800
+Received: from ZXSHMBX1.zhaoxin.com ([fe80::3066:e339:e3d6:5264]) by
+ ZXSHMBX1.zhaoxin.com ([fe80::3066:e339:e3d6:5264%7]) with mapi id
+ 15.01.2507.039; Fri, 6 Dec 2024 08:48:36 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from xin.lan (10.32.64.1) by ZXBJMBX03.zhaoxin.com (10.29.252.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Dec
+ 2024 19:40:48 +0800
+From: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
+	<robert.moore@intel.com>, <avadhut.naik@amd.com>, <yazen.ghannam@amd.com>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <acpica-devel@lists.linux.dev>
+CC: <CobeChen@zhaoxin.com>, <TonyWWang@zhaoxin.com>, <ErosZhang@zhaoxin.com>,
+	<LeoLiu-oc@zhaoxin.com>
+Subject: [PATCH v4 0/3] Parse the HEST PCIe AER and set to relevant registers
+Date: Thu, 5 Dec 2024 19:40:45 +0800
+X-ASG-Orig-Subj: [PATCH v4 0/3] Parse the HEST PCIe AER and set to relevant registers
+Message-ID: <20241205114048.60291-1-LeoLiu-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cb14d
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Moderation-Data: 12/6/2024 8:48:35 AM
+X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
+X-Barracuda-Start-Time: 1733446117
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 1755
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.134151
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
+From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
 
-On Wed, 04 Dec 2024 18:41:52 +0100, Andreas Kemnade wrote:
-> Despite CM_IDLEST1_CORE and CM_FCLKEN1_CORE behaving normal,
-> disabling SPI leads to messages like when suspending:
-> Powerdomain (core_pwrdm) didn't enter target state 0
-> and according to /sys/kernel/debug/pm_debug/count off state is not
-> entered. That was not connected to SPI during the discussion
-> of disabling SPI. See:
-> https://lore.kernel.org/linux-omap/20230122100852.32ae082c@aktux/
-> 
-> [...]
+According to the Section 18.3.2.4, 18.3.2.5 and 18.3.2.6 in ACPI SPEC r6.5,
+the register value form HEST PCI Express AER Structure should be written to
+relevant PCIe Device's AER Capabilities. So the purpose of the patch set is
+to extract register value from HEST PCI Express AER structures and program
+them into PCIe Device's AER registers. Refer to the ACPI SPEC r6.5 for the
+more detailed description.
 
-Applied, thanks!
+Changes in v2:
+- Move the definition of structure "hest_parse_aer_info" to file apei.h.
+- Link to v1: https://lore.kernel.org/all/20231115091612.580685-1-LeoLiu-oc=
+@zhaoxin.com/
 
-[1/1] ARM: dts: ti/omap: gta04: fix pm issues caused by spi module
-      commit: 93dadbfbd19fa45405e7ef04014c100b4f7a94ca
+Changes in v3:
+- The applicable hardware for this patch is added to the commit
+  information.
+- Change the function name "program_hest_aer_endpoint" to
+  "program_hest_aer_common".
+- Add the comment to function "program_hest_aer_common".
+- Remove the "PCI_EXP_TYPE_PCIE_BRIDGE" branch handling in function
+  "program_hest_aer_params".
+- Link to v2: https://lore.kernel.org/all/20231218030430.783495-1-LeoLiu-oc=
+@zhaoxin.com/
 
-Best regards,
--- 
-Kevin Hilman <khilman@baylibre.com>
+Changes in v4:
+- Fix some compilation warnings.
+- Link to v3: https://lore.kernel.org/all/20240718062405.30571-1-LeoLiu-oc@=
+zhaoxin.com/
+
+LeoLiuoc (3):
+  ACPI/APEI: Add hest_parse_pcie_aer()
+  PCI: Add AER bits #defines for PCIe to PCI/PCI-X Bridge
+  PCI/ACPI: Add pci_acpi_program_hest_aer_params()
+
+ drivers/acpi/apei/hest.c      |  77 ++++++++++++++++++++++++-
+ drivers/pci/pci-acpi.c        | 103 ++++++++++++++++++++++++++++++++++
+ drivers/pci/pci.h             |   9 +++
+ drivers/pci/probe.c           |   1 +
+ include/acpi/apei.h           |  17 ++++++
+ include/uapi/linux/pci_regs.h |   3 +
+ 6 files changed, 208 insertions(+), 2 deletions(-)
+
+--=20
+2.34.1
 
 
