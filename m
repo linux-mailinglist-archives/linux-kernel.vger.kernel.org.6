@@ -1,150 +1,160 @@
-Return-Path: <linux-kernel+bounces-432779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5689E503B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 362D29E503F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94A70281981
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59FB28193C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136041D357B;
-	Thu,  5 Dec 2024 08:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F7A1D47C1;
+	Thu,  5 Dec 2024 08:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BQXisr+p"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZigRGVxg"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DDE1CF7AF
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABD71D3566
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733388636; cv=none; b=tQ/ZDUeWZef3j+mo5v32hHsgdEEjgkV1BzKPPfjDvdQSvjtMqQe8wfvowqf3/iVKEw6PwPMi5jTgN7+D5IG+nmczj6hHXWeggWvyEoloqj6ukQsHENECRLgqyBsqR1fWM43YRgGhumUWMajy4GzjUdTjKJG7Dt+cbhEQU0DDeLM=
+	t=1733388707; cv=none; b=YTZlV9jM1L1GwV3b6ZGAW+VOGHC2mRTZ0VCzWEz35UDcT2tflHyRilq0+kFwI7RFF0YJPhcotjsuirTK7uIkvhGOqxNik2LH8e0AkNXJ2l5V5jGcETGOjxYHIpWLPmaxaZvUz7mTe4tnRWpxTpNgK/Qvgzpijwla0IbGOJq2h1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733388636; c=relaxed/simple;
-	bh=j/m0UPXMsKQrYD9d8ddoEx05ZLKsRfgAsCZuyjezaik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oq0CYFm2LsJCoJLWKqLlUtoQoz+f7gIMje9jHMsXua76oTbHcX5ea7QY1pdWFmO14O3uSVsjAYxZ6k3LeVkqT0dSs1qa0V3i0Xf0MHrWMPIXARAKrvnuT5v9cTbhkdcFZt8IxycKzEYcR4JEITeQw38A7T6UQyuD21Ao7eH2+sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BQXisr+p; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee4f78493aso537235a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 00:50:34 -0800 (PST)
+	s=arc-20240116; t=1733388707; c=relaxed/simple;
+	bh=fiqkj+GRvZeuFOzolqiFGreSPgcdv0TDsi5dd2Towps=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=cpWAKA+x4Bxvehv7yn6UNeo6qQ1+hJRsOzMyO4HFIqCHSph/szL7r3cRiBFNBOLfykozbvQd9Q/pHTy/yaz8CLik1JvU1Xxt+RFg73CT09He/hYTgxCjkZiFY4qbh96WDzkCB3zHPXvfnHdf5rpqLtziQH7ARd42X10MBbe+jHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZigRGVxg; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385de9f789cso470011f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 00:51:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733388634; x=1733993434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3m6k/n43Jh5sqlQ7n3aLi7VnP/EOz+MXchs7oB6O8o0=;
-        b=BQXisr+pe4gINeSthZ+quddSSsARD7lq8+M+7XX7HtddP84UW4CCx/eNUXVcJlHnAk
-         c+VDWZa1lUUGBHrgcQtYgG+JBs8i78cxDwAgPsJxqpNH0Fve1GDy8GbomGvK7r0ev/mU
-         FtbOPowtQqWRxg1m7n3G0P4fS9Ocw8jgD2/NQJMdxk9tb/E3PQ1Yt+hdfARVB3hxP2xP
-         sIII48D3B9Rt1fAtxOD02kudsoQg7Aj20W6EWq30b4WHBTLicmV9jHN06XzGr7jctpSa
-         5zm4q0DVhPrb0KsuJKlLQJjNHEpuAmm0a/InFcElGHvFoEUw2xvlnfrDpAyj9r2+I/Wt
-         glmg==
+        d=tuxon.dev; s=google; t=1733388704; x=1733993504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu+BjISWLkOjToTmmpDVh9uIKwI+akwDpSA5Z73Jrm4=;
+        b=ZigRGVxggyVTIVSZqINO1vdP34ggLGFkV9u7KMUIeTdeXZoW2BZlnIgsFhbl/kSAAf
+         USWscXPqzXmunwlKidYk4SWuDx1FjSHdRgLU8YYngUNJOgBnUWXnP+35b1vkr8BrAj7C
+         IdZqXctQzTyFwPpa1FC2RkArIqWsnF1Oky/SbFsl4fmL8e60a89jPjQoM4cC6mltHBrG
+         YIeE0kzr4k3q72KMzOvIM6Xdl8gWOV3fVSsMQU963ygBOvGR3WzJVMhd71T0Gps6Uaij
+         Sz8o/B0acJSJC3ad7kOIsTDsr9Q3/JJpWb9sGsjHE3mQQNUCNy1FV+NXeDdwR+J4MRXT
+         oBPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733388634; x=1733993434;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3m6k/n43Jh5sqlQ7n3aLi7VnP/EOz+MXchs7oB6O8o0=;
-        b=nxxfrZo0NJk3w7uxUPbXBkb0Q3ufuU+MlayhU6hFOtuOyDKZU/ivaVV6dhgkOfB4GT
-         38KAAsve4Up0zIC/f9AmLUzNhL4ey3461lnKv9XUfwoGOHsGey7XEZek3LEQrGwqegYb
-         70c/CnuHS4HSgsYrxVdBe5RHgg0J9ZIFmphf3yIr0jrDFlpSjBIaqc4tIDEsLtC4I17i
-         VU89Z3+HQhrLQCxQTyz1CB44EMoqKzAVdlJQFKX1/ssQFjU7c9nfnYbyVje+v4ql1MSm
-         zJYuQlzbTUByeMCvuZyGIqaXqlkHDi08oxgbdkSHNzXBMCkS6agngHpnze7dD97H2mTE
-         dZnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdE2uJFJD+wfp0oA86Q9YEjyGN/7rbxwi/z1I7O13cXaWpHxur6+5ffHIvvW0fw8fKHhcPDT8nlwozfVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXJSjf5Z2RVVkRd0sQF7+GBCYQ95EGmW6H458ncrAJ7vMAGnhn
-	kwb+4bGOapX8OEM593pIk4wAPCJAOBjQU9l+uOglpSiBFf99qJY+ahuw9ZlpVxZqhAg5itRDwcQ
-	M0XrC1i9d+xNEO29wcF32kNqyo94RuQPIiTGG
-X-Gm-Gg: ASbGncujiqZLEuLcIC190VIc5sLOUcb3HRV9tqdXBWHTIVdIz3qmWrTBcO7yqwfxaJw
-	A4dJ8Tz6VyYISxiIKVMt8cl7ty4yNM6d/uEV9oFdCsR5DnjUGQW8SdtSHWiBKMQ==
-X-Google-Smtp-Source: AGHT+IGDqjvjpP1LquBhwUILfI5GvXDrluDKyihDOfFq7WkEdDILd9Un2OXx2rTqJ+eRaFheNPrMW+7PvpziFj+P5Eg=
-X-Received: by 2002:a17:90b:3890:b0:2ee:96a5:721c with SMTP id
- 98e67ed59e1d1-2ef0120f308mr10246639a91.21.1733388633922; Thu, 05 Dec 2024
- 00:50:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733388704; x=1733993504;
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu+BjISWLkOjToTmmpDVh9uIKwI+akwDpSA5Z73Jrm4=;
+        b=AuYuIsjrHrM5gfS0On30xKh1A3ZOUhpdlRxyEi76opOenTMxEPhvSyaDDuKUkKkj9i
+         x+g6Kzhf9Wl7u/Ea0q0wP4cpj/IQuBAz52h7ldrkHoSRR+EETFnr34rUuFWZmV8+0lap
+         SeMMVntmeRELu798yPSzfxcu6GTYtthqVnCCwXRBCLhXzkHEl8TUqmZQ+T6ZG9dffX+1
+         NDuMiix5kNi/pVdJVsfkrXxNnBfIcNoYsro9u8HlCn26SjQPzWFkqyAYdSTm8g/EG9Ri
+         /E9A0gb5Mb98oOnGRL+rexKIzF4LTIy4gjvSvH4+kiBoro6eFbj1wmxXsCJIU3uLdLCg
+         XWgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgn+CnBVRwzJOqLfMP1TyTnlTbrlBAoiXzgpMIoIREA1yAJUbjVru93DRhBvi7Q8HGafskOu7cWrYsVPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcc4xiPHXu0ZAa+sAg1oxKxhM3w/oIBt9tv5LdmUvDotC56uJ8
+	RLcHcsp8XFcrRRiP9jZtVRkm0H4lYSO0vsezqZM48l+/YltOjI1tX5mSvsBpWpg=
+X-Gm-Gg: ASbGnctbEvbnu6GRhQ3YaTUTXzKB/f1eDUQ7e/+HpSSlbLcWqZuJo41kHHNTsLFfyY1
+	6Y4e87IdQ9niDAX62ml96q4WUCdThixAXD/77sCVpOMYjEcHmRcfRpB8vj+90rIngp+g6RlFTDL
+	OdCv8PMKPtkINRVTPNEYjSQuzH/3rQwY1LR3qEYDegYj0zf4jxPEsQTvzZryQEV2sevoFqq1u6N
+	ntit1HQwy2u0+KfmwZZiKRZx7bRGFMhMZgAv190+26T/6/74UYiZnGPqIA=
+X-Google-Smtp-Source: AGHT+IEOpwQyKT2ZzfkreqlTf5liiEt9p2jfLaHmcGM387ZkeDSElvomTcEaXCXFcRKTLDZIbgydFg==
+X-Received: by 2002:a05:6000:1446:b0:385:ee3f:5cc6 with SMTP id ffacd0b85a97d-385fd4395c7mr6706652f8f.58.1733388703231;
+        Thu, 05 Dec 2024 00:51:43 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621fbbe50sm1326046f8f.99.2024.12.05.00.51.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 00:51:42 -0800 (PST)
+Message-ID: <1d8ea5f9-deb1-4236-ad64-d29a69a44aa2@tuxon.dev>
+Date: Thu, 5 Dec 2024 10:51:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6751189a.050a0220.17bd51.0084.GAE@google.com> <f7ea7d2ea6efebf66a6c5a27409ac76e404c7241.1733387703.git.xiaopei01@kylinos.cn>
-In-Reply-To: <f7ea7d2ea6efebf66a6c5a27409ac76e404c7241.1733387703.git.xiaopei01@kylinos.cn>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Thu, 5 Dec 2024 09:50:22 +0100
-Message-ID: <CANp29Y7kk8TqW9a7jP1hjH+2OxvObHHYz9vEVTjO0Ud75MkVNg@mail.gmail.com>
-Subject: Re: [PATCH] [PATCH] TEST
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT 0/6] serial: sh-sci: Fixes for earlycon and
+ keep_bootcon
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, geert+renesas@glider.be,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, lethal@linux-sh.org,
+ g.liakhovetski@gmx.de, groeck@chromium.org, mka@chromium.org,
+ ulrich.hecht+renesas@gmail.com, ysato@users.sourceforge.jp,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241204155806.3781200-1-claudiu.beznea.uj@bp.renesas.com>
+ <Z1DLyQdzUzJzRUJJ@shikoro> <b6c7b4d3-021c-4a4b-9e91-316603b348c1@tuxon.dev>
+In-Reply-To: <b6c7b4d3-021c-4a4b-9e91-316603b348c1@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Pei,
+Hi, Wolfram,
 
-Please note that if you want syzbot to test your patch, you need to
-explicitly tell it about that:
+On 05.12.2024 10:39, Claudiu Beznea wrote:
+> Hi, Wolfram,
+> 
+> On 04.12.2024 23:38, Wolfram Sang wrote:
+>> Hi Claudiu,
+>>
+>>> in the following scenarios:
+>>>
+>>> 1/ "earlycon keep_bootcon" were present in bootargs
+>>> 2/ only "earlycon" was present in bootargs
+>>> 3/ none of the "earlycon" or "earlycon keep_bootcon" were present in
+>>>    bootargs
+>> ...
+>>> Please give it a try on your devices as well.
+>>
+>> Will happily do so. Is there something to look for? Except for "it
+>> works"?
 
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patc=
-hes
+Sorry, I noticed I missed to provide a clear answer your question: if boot
+works for this scenarios we should be OK.
 
---=20
-Aleksandr
+> 
+> As this code touches the earlycon functionality, of interest are the 3
+> cases highlighted above:
+> 
+> 1/ "earlycon keep_bootcon" are both present in bootargs
+> 2/ only "earlycon" is present in bootargs
+> 3/ none of the "earlycon" or "earlycon keep_bootcon" are present in
+>    bootargs
+> 
+> One other thing, that I was currently able to test only on RZ/G3S, is to
+> see how it behaves when the debug serial is described in DT with an alias
+> other than zero. E.g., on [1] the debug serial alias on RZ/G3S was changed
+> from 0 to 3. With the new alias (3) there were issues that I've tried to
+> fix with this series.
 
-On Thu, Dec 5, 2024 at 9:44=E2=80=AFAM Pei Xiao <xiaopei01@kylinos.cn> wrot=
-e:
->
-> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-> index b31192d473d0..bbc86b7dce07 100644
-> --- a/net/bluetooth/mgmt.c
-> +++ b/net/bluetooth/mgmt.c
-> @@ -5519,8 +5519,12 @@ static void mgmt_remove_adv_monitor_complete(struc=
-t hci_dev *hdev,
->  {
->         struct mgmt_rp_remove_adv_monitor rp;
->         struct mgmt_pending_cmd *cmd =3D data;
-> -       struct mgmt_cp_remove_adv_monitor *cp =3D cmd->param;
-> +       struct mgmt_cp_remove_adv_monitor *cp;
-> +
-> +       if (cmd !=3D pending_find(MGMT_OP_REMOVE_ADV_MONITOR, hdev))
-> +               return -ECANCELED;
->
-> +       cp =3D cmd->param;
->         hci_dev_lock(hdev);
->
->         rp.monitor_handle =3D cp->monitor_handle;
-> @@ -5540,8 +5544,14 @@ static void mgmt_remove_adv_monitor_complete(struc=
-t hci_dev *hdev,
->  static int mgmt_remove_adv_monitor_sync(struct hci_dev *hdev, void *data=
-)
->  {
->         struct mgmt_pending_cmd *cmd =3D data;
-> -       struct mgmt_cp_remove_adv_monitor *cp =3D cmd->param;
-> -       u16 handle =3D __le16_to_cpu(cp->monitor_handle);
-> +       struct mgmt_cp_remove_adv_monitor *cp;
-> +       u16 handle;
-> +
-> +       if (cmd !=3D pending_find(MGMT_OP_REMOVE_ADV_MONITOR, hdev))
-> +               return -ECANCELED;
-> +
-> +       cp =3D cmd->param;
-> +       handle =3D __le16_to_cpu(cp->monitor_handle);
->
->         if (!handle)
->                 return hci_remove_all_adv_monitor(hdev);
-> --
-> 2.34.1
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit https://groups.google.com/d/msgid/syzkaller=
--bugs/f7ea7d2ea6efebf66a6c5a27409ac76e404c7241.1733387703.git.xiaopei01%40k=
-ylinos.cn.
+If you can also check:
+- it boots in this case and
+- the serial device with alias zero and the debug serial are both working
+  (tx, rx are working) after boot
+
+then we can declare it OK as well.
+
+Thank you,
+Claudiu
+
+> 
+> Thank you for checking it,
+> Claudiu
+> 
+> [1]
+> https://lore.kernel.org/all/20241115134401.3893008-6-claudiu.beznea.uj@bp.renesas.com/
+> 
+>>
+>> Happy hacking,
+>>
+>>    Wolfram
+>>
 
