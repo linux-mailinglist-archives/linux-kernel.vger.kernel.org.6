@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-434089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3553B9E617F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:49:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C049E6187
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:57:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74D7282F6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52330188536B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9721CEE97;
-	Thu,  5 Dec 2024 23:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C891D5ADD;
+	Thu,  5 Dec 2024 23:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="kMVcF/cd"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnTO+2Oj"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2CD1BC063
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B5849627;
+	Thu,  5 Dec 2024 23:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733442535; cv=none; b=Am0Tmr0BXg+YqtctqVLcSr1XlwwG8xzqm0kJDb2baJdxqNpnWU/BZ3gOi1BEKdixjIjiWYJPKzoUos/jmHQtpH35cmHdvXRteeNMB0GApGAZTka0AOIbrcFTWH7VXLDYOUAtLEg4RAGIhUnTXNuLcgipfTxfY4PgwBe40mOqDUg=
+	t=1733443039; cv=none; b=Opjw2rW6pdC9CFD5YTBY4jKls2urDxr3w5UJaJeE3cEnVSzTVEC8sXrvnN0O4kDMO5ZdkKhefVgSDfXRtcrwA063JkOrPL/qqZsXUuBxXHa+Pniir/nfFUA/0oM2VAa9M+pyZKpYUz5jlzJx1kAtf9g7FmqJdcBF1lXKxczgsfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733442535; c=relaxed/simple;
-	bh=uqz6ivQ/2LyumpX9NNCPcod+YMiz19Q1MG3CTwn+rmY=;
+	s=arc-20240116; t=1733443039; c=relaxed/simple;
+	bh=Gb9A7IbaXaNn0QmiSU5QWC6XaGim+k77cXLOs53GqPQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUKoW9jo76yGVICGHag3cvRNS6gLVTgN1XlDwkXc90LzmwmymVou6dgVb6/eUKMm6DB5JQnR/J3rI1CXt41LTx9rkGWKERZ8kIv3aYgf1BVXUIG8Fj6KOez5yn8RAqYStW/IR5GdbzuP2ZBT/j/Aq3yUEZyKL8JEk7el4LIIcIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=kMVcF/cd; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ee50ffcf14so2172086a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:48:53 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWNoAXnQx+OwBpvOy/2WVe84dqSWsG0ZuCy/+o3psKk7IzMJNfZGLxRP2txqxdbjSYC6/Sg2K87ybXTbwo2dityDn8eA1N7oS5PK2zsxjBMc/qg/S+Q+DCecYSxDNSg/H8EYBJJttDAVRbQX4nnCFuGATPYVaY9O9I0qzP4on84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnTO+2Oj; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa62e741fbaso17582666b.1;
+        Thu, 05 Dec 2024 15:57:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1733442532; x=1734047332; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733443035; x=1734047835; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wp6M/ObLqy+1tkOR01UeM6+9P+LWvNmp8Od0Uqs1xZc=;
-        b=kMVcF/cd3g11TjsDU79FEsye6DC96x0VcSgcSrP4jRMsEdJtsQO53+5JB9AOcl7ygE
-         11k2n5k1nHTlGoBitIZcX9XdF+w/WczoxTU+9JcI5lEgL2K89lbEYh6umwT9AxvET7rU
-         oRUaNN5p1tTL1eBumfNPRNc9sVRk0suhF+DG1Z66pXAUPVFu9n+N7KjLwSXvA1jOZKki
-         CMuo6RbnR4FOzqk9jfOsM9iGSdDWarP8FBR1MgEyfGPaCncXc7A4hMOc0+K1AnAUAx3P
-         RZSoInCWS4J8Zs12Zb5WIl8dqRU5LmB5dlsMCkOsnWbmsiUX/jO4ZZN1NOvW2mfNolAO
-         wxbg==
+        bh=MAo9cVc8wqzk5rP3Z3ruoyEUyVoOdbKhUC4uEqSh6TE=;
+        b=hnTO+2OjxcQorQK+4/SnJh/Dk6oPhaRdCGzeF6KDTRS9OCCGW+ycGz13grEn5p6DeZ
+         i3SYQrtMsNQzsxQ+T34Xl91ffJLK/+5sKlCwg3UpQdfaaDlPfJqSJf//f53oePjHGNpv
+         xOtg0aAZ/v12mKz/Q3lutpViH2dBfsYJEXN6kJqX8QVyz4y6SG+CT90KvqxFjRQ4DFDQ
+         nlpWhDt165BtYPTupS9zvfMs/Ua7Op2k+wnly3yojUcUhXzNitWNhvvwwJLNMAldqnFJ
+         f/RSgSGypaGCEWIr/ybJN7vW2aXcElp6lYakPeUNZT4ACn/v1hXY1VUjtXNk7KNunBWp
+         RWUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733442532; x=1734047332;
+        d=1e100.net; s=20230601; t=1733443035; x=1734047835;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wp6M/ObLqy+1tkOR01UeM6+9P+LWvNmp8Od0Uqs1xZc=;
-        b=XDb55k3o4AmX0wy8rJ+DmFM77PD44fw/IcyMOzU/2ucD/aTeyBQ7kjHC6Q6WATrAGu
-         RZfBsvaP3hYMFebzd3JPfI9DYoDtHxy2ENduHUi6swBeYYV7nBuXeN8e7VLzxju0/Syf
-         1OBcZPWq350W4BigyHS0oOQe8P/u5jCHdYQZj0UgwemAP4UC+yTocflyK6zMD0NfcbC4
-         eJzqSQ3KhHCZf04DNxSOD1iQpXKHW7PYAyt8dSJe7WTyZAERP0LL9OqI/fB2JtP7dsiC
-         olj5QsEyMgY3E51SQvIG3BCXdfypUBVuNcjOT0nzQCExeU4Ae4INj1jZOOrNmZiR8OZ2
-         QqUg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8kOVSTl+ydzlqxE/5RJ7dONRbvbJke+lwpdUAATlVrwqVr+ysf+mAlsxCIH4Xttyaqt9ha/jmSACqmAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkX9Jgg4/oP17JnNvKDzGu/QStieqRsybZ90CbuIGjXqXS5itj
-	hA/tdtOc+CyGZ3yuR/bvOpwDfE/ZCiWXV7OCYdfyNHZH04mJJwTyRqnAL0iOqFw=
-X-Gm-Gg: ASbGncsx/Wmjl+OlB5wp730q1D+B9I53TzDd7tXpOoP0hS4Nvvm4uxrnBk7FoA2ygho
-	kd6CunWB/tSdQ+J6ethrT4R2TruzM4UM4cF1b/PA9QFXsHgCY62BgpTRDkyhMYU2dZ+RYqsE+MP
-	1tG0ask6HF6Wl4kHWiHRdFHkXzGcYTUG1wbpO9V7sU4qs6HfsmsBSq7I2QmJJw9o94Zjx71Ac/p
-	w97PU6QsTyQ06wWwulxIETbFF4aEPYm+0Dm7eFGvJ6BKQ7rw3kh8hw8+ov3iK9th7Fv7XAKLsNI
-	dzYmXbdx21/zbeeUXoc9e34=
-X-Google-Smtp-Source: AGHT+IGIGj5SnYCFPesKUm0foOJsHTZQ70hdnjfdPmpvBxSjq6dR3HnM650p3aAphKdS24ug934vVw==
-X-Received: by 2002:a17:90b:3f8b:b0:2ea:8aac:6ac1 with SMTP id 98e67ed59e1d1-2ef68e2a9c7mr1831164a91.15.1733442532547;
-        Thu, 05 Dec 2024 15:48:52 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef27078b03sm4196890a91.38.2024.12.05.15.48.51
+        bh=MAo9cVc8wqzk5rP3Z3ruoyEUyVoOdbKhUC4uEqSh6TE=;
+        b=Gqb1w3bprxsrjFzoGMx1p2Ybu4a+XCw5qSRJeYHZzDSkduAnqOiWEEROvXCxGlnMbk
+         yUz4rq5rPejEEt4BnnNEFGJlbtiy7kZKXf5T/Vi54wveIgM+nHiZ+pB5Obq1Oi8ZPhg5
+         3kxCXhaLmTfm5agcsEJvbikKuzQ8pSrvdOBicLoyrpTKPLBdrNe6eqzA1Glyia5rdHl0
+         zdCbekk6HIJ37NLxq/MgJ1GK2RuxRvJ2fjqAhuyWSnn3421UPh+UHY6VQmNXcKQ6XRuH
+         qlpjvxqN79gd5GjgJvPvr/X67fWWqX/aioa1YuSJ4APy75ZIG8KDoxArl79mRUm3bvSo
+         F/vA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnYtVdeuTvISaKHAl2fnH06r5goHnxWEODEM5IFjS/T4d97tkWdbMpxZpbJn9AyaRj64dODyNWdHPMDOSg@vger.kernel.org, AJvYcCXXldrefZ7w0MfLo3OM5Y4YTopNu/RJvHMrrl5nKcSoFi8DCLTywJzYF0cCpkeOETHZT9y5vdp2@vger.kernel.org, AJvYcCXhL0Rie1VCmM3SSHtNhd9etEqjeGfEOCCJekCJs8BLpGqpoWmlM53KzfiCjg/i0fRsYWlKdduTv+cO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS2cMY0OqhMe2LqcJepGgVDvgu8iLJI1NwxYNsUrkZpu8uw9S0
+	2c6Lis4CREQom2tzM7tmehU7CYqWX6V0OI0jZB3Va0jS/o+8BXfq
+X-Gm-Gg: ASbGncuI2OL/CX+3j8PfZ2zykIZ1PjmnvNV4KcbAqvDqVe0xvoNKb405YwBrRGjhMT3
+	MZNGV3EzioHU4QJ2bW+L9tkwl/5tXVwySLKM7K9fH5KXmvTTnaFfuiu53guO7BpGG60kec++vye
+	ke/2Py5o03jeLfVLonR08xYPUQrprHEqytUQN7tzr40nbvl8qmAbwdLjzlf7jqOZXLCFqtE6N5N
+	gYSGvzYi0uZnBMNNWeXEYoi4eZyLdWPVPJJpYI=
+X-Google-Smtp-Source: AGHT+IE7dUzMRW5X7ylWUaAfuLQLWmAdBw9QHxuByRnp2/sHxsnIHbysm9CaN6DPwjMSUukK5qW3ng==
+X-Received: by 2002:a17:907:1819:b0:aa5:a36c:88f3 with SMTP id a640c23a62f3a-aa63a20039cmr24798866b.10.1733443034766;
+        Thu, 05 Dec 2024 15:57:14 -0800 (PST)
+Received: from skbuf ([188.25.135.117])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4ed51sm155526866b.31.2024.12.05.15.57.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 15:48:51 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tJLaS-000000078y9-1kqe;
-	Fri, 06 Dec 2024 10:48:48 +1100
-Date: Fri, 6 Dec 2024 10:48:48 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: alexjlzheng@tencent.com, cem@kernel.org, chandanbabu@kernel.org,
-	dchinner@redhat.com, djwong@kernel.org, hch@infradead.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [RESEND PATCH v2] xfs: fix the entry condition of exact EOF
- block allocation optimization
-Message-ID: <Z1I74KeyZRv2pBBT@dread.disaster.area>
-References: <Z09stGvgxKV91XfX@dread.disaster.area>
- <20241205121802.1232223-1-alexjlzheng@tencent.com>
+        Thu, 05 Dec 2024 15:57:13 -0800 (PST)
+Date: Fri, 6 Dec 2024 01:57:09 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v9 3/4] net: dsa: Add Airoha AN8855 5-Port
+ Gigabit DSA Switch driver
+Message-ID: <20241205235709.pa5shi7mh26cnjhn@skbuf>
+References: <20241205162759.pm3iz42bhdsvukfm@skbuf>
+ <20241205145142.29278-1-ansuelsmth@gmail.com>
+ <20241205145142.29278-4-ansuelsmth@gmail.com>
+ <20241205162759.pm3iz42bhdsvukfm@skbuf>
+ <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
+ <6751e023.5d0a0220.394b90.7bc9@mx.google.com>
+ <20241205180539.6t5iz2m3wjjwyxp3@skbuf>
+ <6751f125.5d0a0220.255b79.7be0@mx.google.com>
+ <20241205185037.g6cqejgad5jamj7r@skbuf>
+ <675200c3.7b0a0220.236ac3.9edf@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,181 +108,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205121802.1232223-1-alexjlzheng@tencent.com>
+In-Reply-To: <675200c3.7b0a0220.236ac3.9edf@mx.google.com>
 
-On Thu, Dec 05, 2024 at 08:18:02PM +0800, Jinliang Zheng wrote:
-> On Wed, 4 Dec 2024 07:40:20 +1100, Dave Chinner wrote:
-> > On Sat, Nov 31, 2024 at 07:11:32PM +0800, Jinliang Zheng wrote:
-> > > When we call create(), lseek() and write() sequentially, offset != 0
-> > > cannot be used as a judgment condition for whether the file already
-> > > has extents.
-> > > 
-> > > Furthermore, when xfs_bmap_adjacent() has not given a better blkno,
-> > > it is not necessary to use exact EOF block allocation.
-> > > 
-> > > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > ---
-> > > Changelog:
-> > > - V2: Fix the entry condition
-> > > - V1: https://lore.kernel.org/linux-xfs/ZyFJm7xg7Msd6eVr@dread.disaster.area/T/#t
-> > > ---
-> > >  fs/xfs/libxfs/xfs_bmap.c | 12 +++++++-----
-> > >  1 file changed, 7 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> > > index 36dd08d13293..c1e5372b6b2e 100644
-> > > --- a/fs/xfs/libxfs/xfs_bmap.c
-> > > +++ b/fs/xfs/libxfs/xfs_bmap.c
-> > > @@ -3531,12 +3531,14 @@ xfs_bmap_btalloc_at_eof(
-> > >  	int			error;
-> > >  
-> > >  	/*
-> > > -	 * If there are already extents in the file, try an exact EOF block
-> > > -	 * allocation to extend the file as a contiguous extent. If that fails,
-> > > -	 * or it's the first allocation in a file, just try for a stripe aligned
-> > > -	 * allocation.
-> > > +	 * If there are already extents in the file, and xfs_bmap_adjacent() has
-> > > +	 * given a better blkno, try an exact EOF block allocation to extend the
-> > > +	 * file as a contiguous extent. If that fails, or it's the first
-> > > +	 * allocation in a file, just try for a stripe aligned allocation.
-> > >  	 */
-> > > -	if (ap->offset) {
-> > > +	if (ap->prev.br_startoff != NULLFILEOFF &&
-> > > +	     !isnullstartblock(ap->prev.br_startblock) &&
-> > > +	     xfs_bmap_adjacent_valid(ap, ap->blkno, ap->prev.br_startblock)) {
+On Thu, Dec 05, 2024 at 08:36:30PM +0100, Christian Marangi wrote:
+> > I guess the non-hack solution would be to permit MDIO buses to have
+> > #size-cells = 1, and MDIO devices to acquire a range of the address
+> > space, rather than just one address. Though take this with a grain of
+> > salt, I have a lot more to learn.
+> 
+> I remember this was an idea when PHY Package API were proposed and was
+> rejected as we wanted PHY to be single reg.
+
+Would that effort have helped with MDIO devices, in the way it was proposed?
+Why did it die out?
+
+> > If neither of those are options, in principle the hack with just
+> > selecting, randomly, one of the N internal PHY addresses as the central
+> > MDIO address should work equally fine regardless of whether we are
+> > talking about the DSA switch's MDIO address here, or the MFD device's
+> > MDIO address.
 > > 
-> > There's no need for calling xfs_bmap_adjacent_valid() here -
-> > we know that ap->blkno is valid because the
-> > bounds checking has already been done by xfs_bmap_adjacent().
+> > With MFD you still have the option of creating a fake MDIO controller
+> > child device, which has mdio-parent-bus = <&host_bus>, and redirecting
+> > all user port phy-handles to children of this bus. Since all regmap I/O
+> > of this fake MDIO bus goes to the MFD driver, you can implement there
+> > your hacks with page switching etc etc, and it should be equally
+> > safe.
 > 
-> I'm sorry that I didn't express it clearly, what I meant here is: if we want
-> to extend the file as a contiguous extent, then ap->blkno must be a better
-> choice given by xfs_bmap_adjacent() than other default values.
-
-Yes, but xfs_bmap_adjacent_valid() does not tell us that.
-
-> /*
->  * If allocating at eof, and there's a previous real block,
->  * try to use its last block as our starting point.
->  */
-> if (ap->eof && ap->prev.br_startoff != NULLFILEOFF &&
->     !isnullstartblock(ap->prev.br_startblock) &&
->     xfs_bmap_adjacent_valid(ap,
-> 		ap->prev.br_startblock + ap->prev.br_blockcount,
-> 		ap->prev.br_startblock)) {
-> 	ap->blkno = ap->prev.br_startblock + ap->prev.br_blockcount; <--- better A
-
-For people reading along: This sets the allocation target to the
-end of the previous physical extent.
-
-> 	/*
-> 	 * Adjust for the gap between prevp and us.
-> 	 */
-> 	adjust = ap->offset -
-> 		(ap->prev.br_startoff + ap->prev.br_blockcount);
-> 	if (adjust && xfs_bmap_adjacent_valid(ap, ap->blkno + adjust,
-> 			ap->prev.br_startblock))
-> 		ap->blkno += adjust;                                 <--- better B
-
-And this adjusts for the file offset of the new EOF allocation
-being a distance beyond the previous extent. i.e.
-
-file offset:	0	EOF	    ap->offset
-layout:		+--prev--+-----hole-----+--new EOF allocation--+
-
-After allocation:
-file offset:	0	oEOF	      offset		      EOF
-layout:		+--prev--+-----hole-----+--new EOF allocation--+
-physical:	+--used--+-----free-----+-------used-----------+
-
-And now when the write to fill the file offset hole (e.g. because of
-racing concurrent extending AIO+DIO writes being issued out of
-order), we end up with this non-EOF NEAR allocation being set up
-over the hole in the file:
-
-file offset:	0      ap->offset      			      EOF
-layout:		+--prev--+-----hole-----+--------next----------+
-                       ap->blkno
-
-And the NEAR allocation will find the exact free space we left to
-fill that hole, resulting in a file that looks like this:
-
-file offset:	0					      EOF
-layout:		+----------------------------------------------+
-physical:	+----------------------------------------------+
-
-i.e. a single contiguous extent.
-
-> 	return true;
-
-And it's important to note that xfs_bmap_adjacent returns true if
-it selects a new target for exact allocation.
-
-> }
+> I wonder if a node like this would be more consistent and descriptive?
 > 
-> Only when we reach 'better A' or 'better B' of xfs_bmap_adjacent() above, it
-> is worth trying to use xfs_alloc_vextent_EXACT_bno(). Otherwise, NEAR is
-> more suitable than EXACT.
-
-Well, yes, that is exactly what the code was -trying- to do.
-It was using ap->offset as a proxy for "there is a previous extent"
-rather than an explicit check for "do we need exact allocation"
-
-As you've rightly pointed out - this code is not correct in all
-situations, nor optimal for all situations.
-
-What I've been trying to point out to you is that your solution is
-not optimal, either. 
-
-> Therefore, we need xfs_bmap_adjacent() to determine whether xfs_bmap_adjacent()
-> has indeed modified ap->blkno.
-
-It already does, but we ignore it. If we want use exact allocation
-only when we are doing EOF allocation:
-
-Perhaps:
-
--	xfs_bmap_adjacent(ap);
-+	if (!xfs_bmap_adjacent(ap))
-+		ap->eof = false;
-
-And then in xfs_bmap_btalloc_at_eof() all we need is
-
--	if (ap->offset) {
-+	if (ap->eof) {
-
-i.e. we only do exact allocation at EOF when xfs_bmap_adjacent has
-set a target we want exact allocation for.
-
-(note: don't confuse ap->eof and ap->aeof)
-
-> > Actually, for another patch, the bounds checking in
-> > xfs_bmap_adjacent_valid() is incorrect. What happens if the last AG
-> > is a runt? i.e. it open codes xfs_verify_fsbno() and gets it wrong.
+> mdio_bus: mdio-bus {
+>     #address-cells = <1>;
+>     #size-cells = <0>;
 > 
-> For general scenarios, I agree.
+>     ...
+> 
+>     mfd@1 {
+>             compatible = "airoha,an8855-mfd";
+>             reg = <1>;
+> 
+>             nvmem_node {
+>                     ...
+>             };
+> 
+>             switch_node {
+>                 ports {
+>                         port@0 {
+>                                 phy-handle = <&phy>;
+>                         };
+> 
+>                         port@1 {
+>                                 phy-handle = <&phy_2>;
+>                         }
+>                 };
+>             };
+> 
+>             phy: phy_node {
+> 
+>             };
+>     };
+> 
+>     phy_2: phy@2 {
+>         reg = <2>;
+>     }
+> 
+>     phy@3 {
+>         reg = <3>;
+>     }
+> 
+>     ..
+> };
+> 
+> No idea how to register that single phy in mfd... I guess a fake mdio is
+> needed anyway... What do you think of this node example? Or not worth it
+> and better have the fake MDIO with all the switch PHY in it?
 
-This *is* a general scenario. Every single extending allocation goes
-through this path.
+Could you work with something like this? dtc seems to swallow it without
+any warnings...
 
-> But here, the parameters x and y of xfs_bmap_adjacent_valid() are both derived
-> from ap->prev. Is it possible that it exceeds mp->m_sb.sb_agcount or
-> mp->m_sb.sb_agblocks?
+mdio_bus: mdio {
+        #address-cells = <1>;
+        #size-cells = <0>;
 
-I think you missed the significance of the gap (file offset)
-adjustment.
+        soc@1 {
+                compatible = "airoha,an8855";
+                reg = <1>, <2>, <3>, <4>;
+                reg-names = "phy0", "phy1", "phy2", "phy3";
 
-Write a couple of TB beyond EOF and see what happens. Then allocate
-a file in the last AG that is a runt, and try to write a distance
-beyond EOF that will land the target blkno between the size of
-the runt AG and mp->m_sb.sb_agcount....
+                nvmem {
+                        compatible = "airoha,an8855-nvmem";
+                };
 
-Hint: runt AG length < AGBNO(ap->blkno) < mp->m_sb.sb_agcount.
+                ethernet-switch {
+                        compatible = "airoha,an8855-switch";
 
-Cheers,
+                        ethernet-ports {
+                                #address-cells = <1>;
+                                #size-cells = <0>;
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+                                ethernet-port@0 {
+                                        reg = <0>;
+                                        phy-handle = <&phy0>;
+                                        phy-mode = "internal";
+                                };
+
+                                ethernet-port@1 {
+                                        reg = <1>;
+                                        phy-handle = <&phy1>;
+                                        phy-mode = "internal";
+                                };
+
+                                ethernet-port@2 {
+                                        reg = <2>;
+                                        phy-handle = <&phy2>;
+                                        phy-mode = "internal";
+                                };
+
+                                ethernet-port@3 {
+                                        reg = <3>;
+                                        phy-handle = <&phy3>;
+                                        phy-mode = "internal";
+                                };
+                        };
+                };
+
+                mdio {
+                        compatible = "airoha,an8855-mdio";
+                        mdio-parent-bus = <&host_mdio>;
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+
+                        phy0: ethernet-phy@1 {
+                                reg = <1>;
+                        };
+
+                        phy1: ethernet-phy@2 {
+                                reg = <2>;
+                        };
+
+                        phy2: ethernet-phy@3 {
+                                reg = <3>;
+                        };
+
+                        phy3: ethernet-phy@4 {
+                                reg = <4>;
+                        };
+                };
+        };
+};
 
