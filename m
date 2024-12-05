@@ -1,152 +1,105 @@
-Return-Path: <linux-kernel+bounces-432993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471A49E52A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:43:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA449E52A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B526516259B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22AA1882309
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79861E04AC;
-	Thu,  5 Dec 2024 10:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBEF1DF72D;
+	Thu,  5 Dec 2024 10:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRM/7y3f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsj+XhHq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B1E1DB956;
-	Thu,  5 Dec 2024 10:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16691DB956;
+	Thu,  5 Dec 2024 10:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395232; cv=none; b=UAASYUNP5rpPWy8hcV4LtvfgHQX6/E8gApFOnh+wsdQ4cuBq4/PzE17uaZmihhqOnBR/LBMRpUrHVPw5BRIs25JTJrXkFxBUlVRNsXQeM65DoTA6z8AKmUc61tjOyhTz/ODyJS8PB5rqpQC5Bc/fEmZorGCHj78X6atwFPIM6do=
+	t=1733395220; cv=none; b=kOoihhVRYw0S4wySaVnRUNoxxRDc2ljvsY+cMuYB0qnRuo6ekE5c8yZMpFX+JZOe+J2daD1MRaFJ7Pbeh56YIU22bVqbxuj0hvqjk9TNugsWl8MyFr661WgNd+wrkDLLd5/N7mY8cIWkn1gApRiwIpGFdBGJU56HIptY3CEWK2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395232; c=relaxed/simple;
-	bh=ORSekGk4bOFiPV6otsw59RgRZOUrMWgVuVEVcZLExgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+A9bLv3wR25HklvEVFnjQ3DrAwykWtfrLfr5AkVo1E/SaCPEk7Z0lbO3HKOTopMFC/qNKi0e3eSRoHLKeIsx/eb2UlGCZb5eY0aAT5IzfgHJdT1CNdwfNIesBi03/9Wox6v9TL6NKKZx5PH71lSpEqmpqr3lI5/OjLTtFyzD0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRM/7y3f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C7AC4CED1;
-	Thu,  5 Dec 2024 10:40:29 +0000 (UTC)
+	s=arc-20240116; t=1733395220; c=relaxed/simple;
+	bh=AtET8wqbVxERLuaXn8BUW4u06cm4/lDqVfFPRwxry1I=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=oIg72bCEjRg835j1yA7Uz8L7L2DGB179Yj9njwLvJwLdKKd3ixY03L84dG2p2/3I1Tgj+ws+pC2Ui3TfM3ZDA8HIvB7Zz1MJ5NNEKWKijBhPYq1z1LgkDP2k9biehrj2koE7tcKZUR4/8J886sBOkQ1vMy0sFd9NC8SsjcWNuqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsj+XhHq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DD0C4CED6;
+	Thu,  5 Dec 2024 10:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733395232;
-	bh=ORSekGk4bOFiPV6otsw59RgRZOUrMWgVuVEVcZLExgo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bRM/7y3f/MryGKjbTZFCiskiiY2QVswALYCXFiQXLqBA+nqo2bi7UmjFrJ1+RT6WR
-	 U8ESHoJB2937mGHfPQ9e2LIymobTTrdaX6CGhB9K3e2Ud5xfrcqWr6bgrQUzGlqcdb
-	 GhSxF1YSpdJAwI5QYJ5tiViRT+erR74xrOurfV5yCiCkoZ0eVMoKY2GUZle/JinzvP
-	 S/rpnCp8n5KpDyX+aa8IhkIW1rwEosvh02HnRl0zZI7TT8jq37A0gpZAYUiReM3HTU
-	 PC2dQPdz26YVFESf+kd367yrta+PgmtHnyYb/2x9/a1KNQA/nbKg3Gz4uC1gi2vh86
-	 R3qHx9zj2jD5A==
-Message-ID: <2f620bc7-5761-48e4-8568-063136cbf8b8@kernel.org>
-Date: Thu, 5 Dec 2024 10:40:27 +0000
+	s=k20201202; t=1733395218;
+	bh=AtET8wqbVxERLuaXn8BUW4u06cm4/lDqVfFPRwxry1I=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bsj+XhHqOJnNpCR7/wwZc4MS2TxLMUXFn8szjI72GGdD4Jop9nGpZEywjwa6o4h86
+	 1nF23aKg/nPSkxESbk4bvAlDB7QIQK79tHp3vei6JqFyZVQLo4D0JeTgaE3jRezY7C
+	 vPMYWReNOUF4PXo5BsC5eyCEZLQXzkgKHcFszOR5oOeBr0rkj2ynSwMNIUHf10xroU
+	 3NFo2CHdPb/njavp1+NBcx16u3FOIh6bf168wK3f58yzY39qwoAYCrcSL6GAddQeB8
+	 t5J97VK59XGSIzTAt83CMFaLMhI2Y/kDok7EmkmPTU0HpMK02hjzu2aXDRQ9d6BuzJ
+	 3NJq3p6g4B0Tg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF4A380A94D;
+	Thu,  5 Dec 2024 10:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] bpftool: Fix gen object segfault
-To: Rong Tao <rtoax@foxmail.com>, rongtao@cestc.cn, ast@kernel.org
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>,
- "open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [RESEND PATCH net-next v5 0/4] Mitigate the two-reallocations issue
+ for iptunnels
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173339523275.1540596.2078316757203196719.git-patchwork-notify@kernel.org>
+Date: Thu, 05 Dec 2024 10:40:32 +0000
+References: <20241203124945.22508-1-justin.iurman@uliege.be>
+In-Reply-To: <20241203124945.22508-1-justin.iurman@uliege.be>
+To: Justin Iurman <justin.iurman@uliege.be>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 05/12/2024 09:08, Rong Tao wrote:
-> From: Rong Tao <rongtao@cestc.cn>
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Tue,  3 Dec 2024 13:49:41 +0100 you wrote:
+> RESEND v5:
+> - v5 was sent just when net-next closed
+> v5:
+> - address Paolo's comments
+> - s/int dst_dev_overhead()/unsigned int dst_dev_overhead()/
+> v4:
+> - move static inline function to include/net/dst.h
+> v3:
+> - fix compilation error in seg6_iptunnel
+> v2:
+> - add missing "static" keywords in seg6_iptunnel
+> - use a static-inline function to return the dev overhead (as suggested
+>   by Olek, thanks)
 > 
-> If the input file and output file are the same, the input file is cleared
-> due to opening, resulting in a NULL pointer access by libbpf.
-> 
->     $ sudo ./bpftool gen object prog.o prog.o
+> [...]
+
+Here is the summary with links:
+  - [RESEND,net-next,v5,1/4] include: net: add static inline dst_dev_overhead() to dst.h
+    https://git.kernel.org/netdev/net-next/c/0600cf40e9b3
+  - [RESEND,net-next,v5,2/4] net: ipv6: ioam6_iptunnel: mitigate 2-realloc issue
+    https://git.kernel.org/netdev/net-next/c/dce525185bc9
+  - [RESEND,net-next,v5,3/4] net: ipv6: seg6_iptunnel: mitigate 2-realloc issue
+    https://git.kernel.org/netdev/net-next/c/40475b63761a
+  - [RESEND,net-next,v5,4/4] net: ipv6: rpl_iptunnel: mitigate 2-realloc issue
+    https://git.kernel.org/netdev/net-next/c/985ec6f5e623
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-(No sudo required to generate object files)
-
-
->     libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
->     Segmentation fault
-> 
->     (gdb) bt
->     #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
->     #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized out>, opts=<optimized out>) at linker.c:453
->     #2  0x000000000040c235 in do_object ()
->     #3  0x00000000004021d7 in main ()
->     (gdb) frame 0
->     #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
->     1296		Elf64_Sym *sym = symtab->data->d_buf;
-> 
-> Signed-off-by: Rong Tao <rongtao@cestc.cn>
-> ---
->  tools/bpf/bpftool/gen.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-> index 5a4d3240689e..4cd135726758 100644
-> --- a/tools/bpf/bpftool/gen.c
-> +++ b/tools/bpf/bpftool/gen.c
-> @@ -1896,6 +1896,11 @@ static int do_object(int argc, char **argv)
->  	while (argc) {
->  		file = GET_ARG();
->  
-> +		if (!strcmp(file, output_file)) {
-> +			p_err("Input/Output file couldn't be same.");
-
-
-Nits: lowercase for "output", and "cannot" rather than "couldn't"; also
-bpftool doesn't use periods at the end of error messages:
-
-    p_err("Input and output files cannot be the same");
-
-
-> +			goto out;
-> +		}
-> +
->  		err = bpf_linker__add_file(linker, file, NULL);
->  		if (err) {
->  			p_err("failed to link '%s': %s (%d)", file, strerror(errno), errno);
-
-
-Good catch, thank you for this!
-
-I've got one concern though, while your patch addresses the segfault it
-doesn't prevent the user from overwriting the input file. Could we
-instead move the check above the call to bpf_linker__new(...), please?
-Something like this:
-
-	int argc_cpy = argc;
-	char **argv_cpy = argv;
-
-	[...]
-	output_file = GET_ARG();
-
-	/* Ensure we don't overwrite any input file */
-	while (argc_cpy--) {
-		if (!strcmp(output_file, *argv_cpy++)) {
-			p_err("...");
-			goto out;
-		}
-	}
-
-	linker = ...
-
-Thanks,
-Quentin
-
-pw-bot: cr
 
