@@ -1,217 +1,334 @@
-Return-Path: <linux-kernel+bounces-433892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159229E5E6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:47:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B289E5E75
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC710166AF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC4C1673AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0243D22D4E3;
-	Thu,  5 Dec 2024 18:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nYWosraE"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D3C22D4CB;
+	Thu,  5 Dec 2024 18:50:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A27227B98
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C37227BB6
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 18:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733424436; cv=none; b=rZZQ2F51wqzuzDxydeg6ZKtXSeVsDQnJ2Io51jriLUc4VoqUIrju7dlucKqhumLiLGimuWXiSQIk9s9fBQgQZMPiKBhPwkqFfVAEEoAfi9XT2xfYwERtOPInaugPrlE63bNZfuC6ND7nUp4+P0JpMfagyG0N2MKLKkDlATm1uak=
+	t=1733424607; cv=none; b=aap5BP9w1kJzKNu0YYC5YMhU07+OD9aa5LljTjl+VOgUHo1c3HuxNtvu0FvlR/FMuHihkbWBkuObaEIUILuekZXRVqcfQDqC6+WwneidSPURhNRulENbkoK/ntV/sWV56sYpfyFxDCsOGMMZBnqbsRqRFo7JFQOAaxMPZam/dcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733424436; c=relaxed/simple;
-	bh=0Xd3Y3Tg1M4AOOd+LSTDLLjxjSv4FiUGmE38eniiojk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvCjGJHtz8IwyFA2yJPo9xzvc/lS1gunLf9o+8VuVCNCH9+Q5eJI5o5HgXf3ITn0IrbYkYQV/iRXsZ2ANu5HdLQJ5zGpr38m3zJc9V02owBA9Vil7sEfv3/JBiiYvbY0eleqIYEUHAmwo/oKlBBqEj22qij6NhiZkHW4h70as9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nYWosraE; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53de880c77eso1391206e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 10:47:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733424433; x=1734029233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T2KZgasCJzLR0eGkxk5shZvmaTdK44fm0EiIl+dZ+os=;
-        b=nYWosraEoV3IJW/Dn4WBiT8SY4eV8baxioyYfsLs7z4cP6KBS3E7FEctiZcTFaR0ut
-         luDIgpgAU7GaH7gpQkQmPKslLmSmqaIRTjpa9eStTfv65qhYLwwjOfp7Jox+ZZ7TGByg
-         p8vtwmrrrXEa0uv+zuudHhSSFSo2CiSy9FJxr9kyJXL6vwozQKAA9lHuZy1UzPE1NOX2
-         FPVPfhsuDIyapqDKglUgO9pOnN7rVAORR7qMOJfQyU42wZP2LmE5RYwRMQAw8I4nCCtD
-         lAY3YWXHS4g46dXetnyPflEtQSZyNnTpi1nUoE/XDgF64cECNd93Swn7YXLj32QZYrsg
-         hP2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733424433; x=1734029233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T2KZgasCJzLR0eGkxk5shZvmaTdK44fm0EiIl+dZ+os=;
-        b=dJAgWcMpYSgC1Y4xoVJ0NVoTi5r5J3AsnDS/tDRLhK9dtTACUQOEKaTHH5PylsOKwk
-         Fjbo61g9eSV9PPl8yiNkRPyhRW+Wm/1HkxYLf4Lc7EC+CIgX8QkxbnnV4LKnpNhY2SnZ
-         znpQ6/f90TO01EVh1ewckl6ZewN7iQVX0IrpT8yo+xxFt6UHIIHenLhoMJIOlw7pP9Vo
-         ARVbr+P72YQrTS1N3MvtfFBapNDNq25gLmUKGUWd88ZXA38AAfG3vies5N0KKyWGkyT1
-         reMdZtB+/bcc9FiUdw/suymabqwnurF8XQHC5hFN4GzotD6Ef3ajpCJuafmJGQ3VPiy/
-         buqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUILbHKrfJCo55MkjX+/PySYsyiKVWRcXXnHS94MloLx8T3HF1XEtZdcpq5KWKbRPg384/2JTRsoPM3Jic=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4m0IbCViArh4Ssc5PxUcyshvQWt99DyFiVDCpKEdtgzmsqBi4
-	7mWTH3mN95JpGr9w6Gj/R57tRzqygL/LuESrt4oNgTtN/fD9BObTManqNJsu777C4/9qkIH2u99
-	L
-X-Gm-Gg: ASbGncuKRSw0nKFmoNtMSAFGyl0217o+m46nnlB0Xbedu9u3JknIOAIFefEFvPDdyBi
-	1RmmIynwRweP80oO9dIoeFKP74lQ1SSoV+QUkrId8gx+szqgldHI8gzIQCXZZx5KfOeUJ+VrCRG
-	3Bam+l5jnjUmPmOcdVNz1W9xiRUJAvYopTPmEwCSGGijFfBeKl+0OYeWgDTL2m0Bj/pULvlMByT
-	+0G4lDJLc47DhcwRNq6dz6tHxc2MAxhL5rIFnUMRgui8s1tA/An0WFHZf3bsOsZTJFlCJmo4Czf
-	AXVTHbugoQnDI0lfbpV1uCdxt+WrfQ==
-X-Google-Smtp-Source: AGHT+IFz9mpVH5Uurdufw2Dv8q5pLYoVIssxSoi9mVUR6HgvpUPgwV1vo6g4uO5S/daRfryFj2eW3w==
-X-Received: by 2002:a05:6512:3d29:b0:53e:136b:991d with SMTP id 2adb3069b0e04-53e2c2aae84mr10863e87.12.1733424432646;
-        Thu, 05 Dec 2024 10:47:12 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229c95dasm306005e87.227.2024.12.05.10.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 10:47:11 -0800 (PST)
-Date: Thu, 5 Dec 2024 20:47:08 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Scally <djrscally@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 15/18] dt-bindings: usb: Add ports to
- google,cros-ec-typec for DP altmode
-Message-ID: <kidsjzklpxvvamct3glvoawavoi5mjuyh3on5kbtfp6gavwxxn@eack224zuqa3>
-References: <yk3xidaisbd56yndaucax7otijjauqmm7lqm6q4q633kdawlqo@qaq27lwxmvwd>
- <CAE-0n501j+8bMnMKabFyZjn+MLUy3Z68Hiv1PsfW0APy5ggN8g@mail.gmail.com>
- <gstohhcdnmnkszk4l2ikd5xiewtotgo5okia62paauj6zpaw7y@4wchyvoynm2p>
- <CAE-0n50z6MNa7WOsg-NU7k8BpFeJJyYfHX3ov6DsthLWauSNpA@mail.gmail.com>
- <hqmx7jtkvrwvb27n56hw7rpefhp37lhr3a5fawz7gsl76uuj5s@h7m6wpdhibkk>
- <CAE-0n50y1O2C47zOGJPmMjKXK_m6a=jhpEAP4nW+RymZbo2xyg@mail.gmail.com>
- <5kisfv22tgqwzjpxqrbx56ywr7l4r7pny3pl2r7crv4rijqbwk@azricdasttg7>
- <CAE-0n50Bxi2GfnxOmMwe-F+k5jMSiyAVPDb6K8pYm-i6hpJTOA@mail.gmail.com>
- <cartdeijkv6z23dgm7uif4lti3lahfqmuyxcmruzqbefhsp6yk@m6ocjhncs2ko>
- <CAE-0n51-QLLje0f7T4p3xK6Q-FRk4K0NUrVVm4cxkKoevuzktw@mail.gmail.com>
+	s=arc-20240116; t=1733424607; c=relaxed/simple;
+	bh=M/rBbGAx2CuXXqqgw76JMcAKs+dETgh4yUtfeqkmFqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k5EBR0061xPYWb9Hm9uYueIX2QOkADYdKEpSFcvIxIa3R6rsFtnTaJgAEbE5y4+uMlvx5cGvK01b9iGDQwUsEDo0D81EUVZ+1511nuSt+IXHXM/ay7wWllZRxMtIwWQ/N2JOX/CGM+BAPYJXAue3//Wm1hSXvDVK0yZMPylnGCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tJGv7-0006PO-8a; Thu, 05 Dec 2024 19:49:49 +0100
+Message-ID: <6b39268b-7487-427d-aff5-f3ca3b2afd42@pengutronix.de>
+Date: Thu, 5 Dec 2024 19:49:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE-0n51-QLLje0f7T4p3xK6Q-FRk4K0NUrVVm4cxkKoevuzktw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] i2c: imx: support DMA defer probing
+To: Carlos Song <carlos.song@nxp.com>, "mkl@pengutronix.de"
+ <mkl@pengutronix.de>, Frank Li <frank.li@nxp.com>,
+ "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>
+Cc: "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241127083818.2108201-1-carlos.song@nxp.com>
+ <153e8e36-7b0e-4379-9cc3-6dacb5d705be@pengutronix.de>
+ <AM0PR0402MB39370E69BC4B71C761EE8377E8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <AM0PR0402MB39370E69BC4B71C761EE8377E8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2024 at 03:50:58PM -0800, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2024-11-21 14:59:42)
-> > On Tue, Nov 19, 2024 at 08:09:31PM -0500, Stephen Boyd wrote:
-> > >
-> > > It sounds like we're debating how to handle lane assignment in the
-> > > kernel. Either way, the code is going to be implemented in the bridge
-> > > driver because it's the one that has to change what physical lane a
-> > > logical lane is assigned to. The question is if it should be some sort
-> > > of bridge_funcs callback, or should bridge drivers hook into the typec
-> > > framework to expose an orientation switch, or something else?
-> >
-> > I was assuming that orientation switch is such kind of a hook.
-> >
-> > >
-> > > I'm thinking we should introduce some sort of bridge_funcs callback that
-> > > can be called from the DP altmode driver, either parallel to the
-> > > drm_connector_oob_hotplug_event() function or from it directly. If we
-> > > can pass the fwnode for the usb-c-connector to the oob_hotplug_event
-> > > callback, maybe that's all we need to figure out which lanes go where.
-> > > And then in the 2 DP connector muxing world we can call
-> > > drm_connector_oob_hotplug_event() with one or the other DP connector
-> > > node, which will likely be children nodes of the "HPD redriver" device.
-> >
-> > If you call it from drm_bridge_connector's oob_hotplug_event handler,
-> > this should fly. Does it cover your 3-DP or 4-DP usecases?
-> >
-> 
-> I think it will work as long as we're able to add some sort of property
-> to the usb-c-connector node to indicate that the DP lanes are flipped.
-> It feels like that should be in the displayport altmode node to keep
-> things tidy because the SuperSpeed port is overloaded. Maybe the drm
-> framework can have some API that can take the fwnode from the
-> oob_hotplug_event handler and tell the bridge driver which way the
-> orientation is.
-> 
->  connector {
->    compatible = "usb-c-connector";
-> 
->    altmodes {
->      displayport {
->        orientation-reversed;
->      }
->    };
-> 
->    ports {
->      ...
->    };
->  };
-> 
-> 
->  int drm_dp_typec_orientation_flipped(struct fwnode_handle *fwnode)
->  {
->    struct fwnode_handle *altmodes;
->    struct fwnode_handle *dp;
-> 
->    altmodes = fwnode_get_named_child_node(fwnode, "altmodes");
->    if (!altmodes)
->      return -EINVAL;
-> 
->    dp = fwnode_get_named_child_node(altmodes, "displayport");
->    if (!dp)
->      return -EINVAL;
-> 
->    if (fwnode_property_read_bool(dp, "orientation-reversed"))
->      return 1;
+Hello Carlos,
 
-If that passes through DT maintainers, that's fine with me.
+On 27.11.24 11:43, Carlos Song wrote:
+>> -----Original Message-----
+>> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+>> Sent: Wednesday, November 27, 2024 4:38 PM
+>> To: Carlos Song <carlos.song@nxp.com>; mkl@pengutronix.de; Frank Li
+>> <frank.li@nxp.com>; o.rempel@pengutronix.de; kernel@pengutronix.de;
+>> andi.shyti@kernel.org; shawnguo@kernel.org; s.hauer@pengutronix.de;
+>> festevam@gmail.com
+>> Cc: imx@lists.linux.dev; linux-i2c@vger.kernel.org;
+>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Subject: [EXT] Re: [PATCH v4] i2c: imx: support DMA defer probing
+
+>> Please try to address open questions before sending new versions of the patch
+>> set. Otherwise, it's difficult to follow the conversation.
+>>
+>> Did you see my question[1] on your v2:
+>>
+> 
+> Hi, thank you so much! So sorry about it... I missed it yesterday. I will answer your question[1] in this mail.
+> 
+> 
+>> | Wouldn't this break probe for all i2c-imx users who have
+>> | CONFIG_IMX_SDMA disabled?
+>> |
+> 
+> I have tested i2c probe at IMX and LS platform when DMA disabled,
+
+What does DMA disabled mean? Did you leave the dmas property in the device
+tree unchanged, but just disabled the config option?
+
+> it won't break i2c-imx probe.
+> When require DMA channel in i2c_imx_dma_request, find no devices and return
+> -ENODEV, as you see at V4 patch, it will continue to probe and work in PIO mode.
+> I2C adapter should keep available whatever DMA mode is or isn't enabled.
+
+If that's the case, then all is good. I thought the situation described
+above would return -EPROBE_DEFER instead. I haven't dug into the code
+to understand what the difference between when dma_request_chan().
+
+>> | Also I am wondering on what kernel version and what configuration
+>> | (CONFIG_I2C_IMX=?, CONFIG_IMX_SDMA=?) you have that made you run into
+>> | this situation.
+>> |
+> 
+> I want to correct something, these code about DMA in i2c-imx.c is for eDMA not for SDMA.
+> For eDMA mode, I have tested this patch at layerscape-1043 platform. My patch is based on
+> cfba9f07a1d6 (tag: next-20241122, origin/master, origin/HEAD).
+
+The driver also handles i.MX variants like i.MX6, i.MX8 and so on, which
+have SDMA. So eDMA is not the only DMA driver it is used with.
 
 > 
->    return 0;
->  }
+> Test log is :
+> No apply this patch:
+> CONFIG_I2C_IMX=y
+> CONFIG_FSL_EDMA=y
+> root@ls1043ardb:~# dmesg | grep i2c
+> [    1.162053] i2c i2c-0: IMX I2C adapter registered
+> [    1.166826] i2c i2c-0: using dma0chan16 (tx) and dma0chan17 (rx) for DMA transfers
+> [    4.722057] i2c_dev: i2c /dev entries driver
 > 
-> There's another wrinkle on some Corsola devices where the EC says
-> there's a usb-c-connector on the board, but in reality the DP lanes are
-> connected to a DP-to-HDMI bridge that is controlled by the EC which goes
-> to an HDMI connector on the side of the laptop. The EC does the
-> arbitration as usual because there's only one DP source and one or two
-> usb type-c connectors physically on the laptop in addition to the HDMI
-> connector.
+> Not apply the patch:
+> CONFIG_I2C_IMX=y
+> CONFIG_FSL_EDMA=m
+> root@ls1043ardb:~# dmesg | grep i2c
+> [    1.166381] i2c i2c-0: IMX I2C adapter registered
+> [    4.719226] i2c_dev: i2c /dev entries driver
+> (result shows i2c not enabled the eDMA mode)
+> root@ls1043ardb:~# i2cdetect -y -l
+> i2c-0   i2c             2180000.i2c                             I2C adapter
+> root@ls1043ardb:~# i2cdetect -y 0
+>      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+> 00:                         08 -- -- -- -- -- -- --
+> 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 40: UU -- -- -- -- -- -- -- -- -- -- -- UU -- -- --
+> 50: -- UU UU UU -- -- -- -- -- -- -- -- -- -- -- --
+> 60: -- -- -- -- -- -- -- -- -- 69 -- -- -- -- -- --
+> 70: -- -- -- -- -- -- -- --
 > 
-> The easiest way to imagine this is that we took the usb-c-connector and
-> jammed an HDMI dongle in there with some glue so that it can never be
-> removed. There isn't any USB going there either because it can't be
-> used. I suppose we can continue to describe this with an
-> altmodes/displayport node but then add some compatible like
-> "usb-c-hdmi-connector" or another property to the altmodes/displayport
-> node like "type = hdmi" that signifies this is a connector that only
-> outputs HDMI.
+> After apply the patch:
+> CONFIG_I2C_IMX=y
+> CONFIG_FSL_EDMA=m
+> root@ls1043ardb:~#
+> root@ls1043ardb:~# dmesg | grep i2c
+> [    4.697046] i2c_dev: i2c /dev entries driver
+> [    7.304142] imx-i2c 2180000.i2c: using dma0chan16 (tx) and dma0chan17 (rx) for DMA transfers
+> [    7.313532] i2c i2c-0: IMX I2C adapter registered
+> (result shows i2c probed after eDMA module installed)
 
-Does that DP-to-HDMI bridge talk USB-C or just pure DP? In other words,
-will it be properly discovered and handled if we just leave it as a
-weird usb-c-connector (maybe with an additional annotation, we have
-USB_PORT_CONNECT_TYPE_HARD_WIRED for USB ports, we might have something
-similar for Type-C connectors).
+My concern is this configuration:
+
+  - A user has eDMA/SDMA module or disabled, but enabled in DT
+  - The I2C has a PMIC, which is needed for eMMC VCC
+  - System startup is stuck or considerably delayed
+
+> root@ls1043ardb:~#
+> root@ls1043ardb:~# i2cdetect -y -l
+> i2c-0   i2c             2180000.i2c                             I2C adapter
+> root@ls1043ardb:~# i2cdetect -y 0
+>      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+> 00:                         08 -- -- -- -- -- -- --
+> 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 40: UU -- -- -- -- -- -- -- -- -- -- -- UU -- -- --
+> 50: -- UU UU UU -- -- -- -- -- -- -- -- -- -- -- --
+> 60: -- -- -- -- -- -- -- -- -- 69 -- -- -- -- -- --
+> 70: -- -- -- -- -- -- -- --
+> 
+> 
+>> | I'd have expected that with fw_devlink enabled, the I2C controller
+>> | wouldn't be probed before the DMA provider is available.
+>>
+> 
+> This is a legacy patch, it has been in our local tree for a long time. The related history is relatively vague.
+> I reproduced the problem and found this patch is effective, so I referred the community patch and
+> legacy patch to rewrite the commit log(I am not sure if this would happened in some cases so I kept this information).
+> Now it seems that these descriptions are redundant. I should completely removed this in the commit log:
+>     Move i2c_imx_dma_request() before registering I2C adapter to avoid
+>     infinite loop of .probe() calls to the same driver, see "e8c220fac415
+>     Revert "i2c: imx: improve the error handling in i2c_imx_dma_request()""
+>     and "Documentation/driver-api/driver-model/driver.rst".
+
+Cheers,
+Ahmad
+
+> 
+> [1]: https://lore.kernel.org/all/19a43db4-db5c-4638-9778-d94fb571a206@pengutronix.de/
+> [2]:https://lore.kernel.org/all/153e8e36-7b0e-4379-9cc3-6dacb5d705be@pengutronix.de/
+> 
+>>>
+>>> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+>>> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+>>> ---
+>>> Change for V4:
+>>> - Output "Only use PIO mode" log in debug level when no DMA configure.
+>>> Change for V3:
+>>> - According to Marc's comment, remove error print when defer probe.
+>>>   Add info log when DMA has not been enabled and add error log when
+>>>   DMA error, both won't stuck the i2c adapter register, just for reminding,
+>>>   i2c adapter is working only in PIO mode.
+>>> Change for V2:
+>>> - According to Frank's comments, wrap at 75 char and Simplify fix code
+>>>   at i2c_imx_dma_request().
+>>> - Use strict patch check, fix alignment warning at
+>>> i2c_imx_dma_request()
+>>> ---
+>>>  drivers/i2c/busses/i2c-imx.c | 31 +++++++++++++++++++++++--------
+>>>  1 file changed, 23 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/i2c/busses/i2c-imx.c
+>>> b/drivers/i2c/busses/i2c-imx.c index 5ed4cb61e262..b11d66d56c55 100644
+>>> --- a/drivers/i2c/busses/i2c-imx.c
+>>> +++ b/drivers/i2c/busses/i2c-imx.c
+>>> @@ -397,17 +397,16 @@ static void i2c_imx_reset_regs(struct
+>>> imx_i2c_struct *i2c_imx)  }
+>>>
+>>>  /* Functions for DMA support */
+>>> -static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+>>> -                                             dma_addr_t
+>> phy_addr)
+>>> +static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+>>> +dma_addr_t phy_addr)
+>>>  {
+>>>       struct imx_i2c_dma *dma;
+>>>       struct dma_slave_config dma_sconfig;
+>>> -     struct device *dev = &i2c_imx->adapter.dev;
+>>> +     struct device *dev = i2c_imx->adapter.dev.parent;
+>>>       int ret;
+>>>
+>>>       dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
+>>>       if (!dma)
+>>> -             return;
+>>> +             return -ENOMEM;
+>>>
+>>>       dma->chan_tx = dma_request_chan(dev, "tx");
+>>>       if (IS_ERR(dma->chan_tx)) {
+>>> @@ -452,7 +451,7 @@ static void i2c_imx_dma_request(struct
+>> imx_i2c_struct *i2c_imx,
+>>>       dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
+>>>               dma_chan_name(dma->chan_tx),
+>>> dma_chan_name(dma->chan_rx));
+>>>
+>>> -     return;
+>>> +     return 0;
+>>>
+>>>  fail_rx:
+>>>       dma_release_channel(dma->chan_rx);
+>>> @@ -460,6 +459,8 @@ static void i2c_imx_dma_request(struct
+>> imx_i2c_struct *i2c_imx,
+>>>       dma_release_channel(dma->chan_tx);
+>>>  fail_al:
+>>>       devm_kfree(dev, dma);
+>>> +
+>>> +     return ret;
+>>>  }
+>>>
+>>>  static void i2c_imx_dma_callback(void *arg) @@ -1803,6 +1804,23 @@
+>>> static int i2c_imx_probe(struct platform_device *pdev)
+>>>       if (ret == -EPROBE_DEFER)
+>>>               goto clk_notifier_unregister;
+>>>
+>>> +     /*
+>>> +      * Init DMA config if supported, -ENODEV means DMA not enabled at
+>>> +      * this platform, that is not a real error, so just remind "only
+>>> +      * PIO mode is used". If DMA is enabled, but meet error when request
+>>> +      * DMA channel, error should be showed in probe error log. PIO mode
+>>> +      * should be available regardless of DMA.
+>>> +      */
+>>> +     ret = i2c_imx_dma_request(i2c_imx, phy_addr);
+>>> +     if (ret) {
+>>> +             if (ret == -EPROBE_DEFER)
+>>> +                     goto clk_notifier_unregister;
+>>> +             else if (ret == -ENODEV)
+>>> +                     dev_dbg(&pdev->dev, "Only use PIO mode\n");
+>>> +             else
+>>> +                     dev_err_probe(&pdev->dev, ret, "Failed to setup
+>> DMA, only use PIO mode\n");
+>>> +     }
+>>> +
+>>>       /* Add I2C adapter */
+>>>       ret = i2c_add_numbered_adapter(&i2c_imx->adapter);
+>>>       if (ret < 0)
+>>> @@ -1817,9 +1835,6 @@ static int i2c_imx_probe(struct platform_device
+>> *pdev)
+>>>               i2c_imx->adapter.name);
+>>>       dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter registered\n");
+>>>
+>>> -     /* Init DMA config if supported */
+>>> -     i2c_imx_dma_request(i2c_imx, phy_addr);
+>>> -
+>>>       return 0;   /* Return OK */
+>>>
+>>>  clk_notifier_unregister:
+>>
+>>
+>> --
+>> Pengutronix e.K.                           |
+>> |
+>> Steuerwalder Str. 21                       |
+>> http://www.pen/
+>> gutronix.de%2F&data=05%7C02%7Ccarlos.song%40nxp.com%7C1acf840d499f
+>> 49a7872408dd0ebedc39%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0
+>> %7C638682935131084746%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAw
+>> MDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&s
+>> data=Y9Qn9XEk15yu4CespwsNu6hl3%2FqfNTvEeOn4ZvnGxbo%3D&reserved=0
+>> |
+>> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0
+>> |
+>> Amtsgericht Hildesheim, HRA 2686           | Fax:
+>> +49-5121-206917-5555 |
+> 
+
 
 -- 
-With best wishes
-Dmitry
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
