@@ -1,318 +1,148 @@
-Return-Path: <linux-kernel+bounces-432504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21A39E4C40
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:28:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEB19E4C53
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:34:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD99728675C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:28:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C548C18819A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D939B17BB0D;
-	Thu,  5 Dec 2024 02:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D3818BC2F;
+	Thu,  5 Dec 2024 02:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KvrH71J7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxz5O1FA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F36E22EE5;
-	Thu,  5 Dec 2024 02:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39612187FE4;
+	Thu,  5 Dec 2024 02:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733365683; cv=none; b=oIv+wBnzuTiR51sdkx3Cmjt8yu4518TcqfUx/v7yDE7KDYFw3z1qNQboN1cXG2X2Lh9O6n15+FyZP09bXbseGyvJ25W2Gdbve9cMR+Ai1/DfeLgXMR15yN/JEElYcr3wgKZU8JihO962KqxgRIug8v5Y612ztSl7AfduoA2ccGs=
+	t=1733366051; cv=none; b=uTCiQsCuPzF8ZOJoz3HnXnXiF1CRcNsW642KbX24RQmAlEh45k07rT2Q4Kv7gTQwWgclPwPS+pVhQ1Nff/uKMhcgNhgBKBZjf7+HOXGe2c8yEl/03p9AgrAJsivmx/DmmIOJmed4M8Ww9IeeoRfwrHKb6GyLO1kGwY+zJmX9idc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733365683; c=relaxed/simple;
-	bh=QO5IboRu4sXKDliedTe2GJzHgDQy5oh6qE/bI1NxotM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YaVU61WR30DtUWxWnw1P1oup4r13zLISsOWYVN0WXkB1mrRcWZVrKnlAZm7+94aCuf3rLbOPiOCvr9Noztp8ko0NkN7YDEL2v5zgj7m4RgqOje5gSM66vVhrJbC5jI3gAm6uxjga2QvkjvkIOBZTy8q7UfTVSKDOis67HUp2uto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KvrH71J7; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733365681; x=1764901681;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QO5IboRu4sXKDliedTe2GJzHgDQy5oh6qE/bI1NxotM=;
-  b=KvrH71J7kf7mmQYLGHI1aqzSu9HkmKKVNYBEjNn7y5wUSezvBImi5xk+
-   dHmkFPV1k54eNbqdKBErCFgqECJgprD9Zc1T4+4nwPrrnBzyy9fPybLTr
-   l7+IY62hZFLosdnHU5tLtX2/Km7tikGldqLDX+duNa2OkG5CIx6siU+RI
-   1ZooWkrleIHn+JYBgZObcd4fkNeQomiZ2Nknn/4v1ArOVub3P14akkGjF
-   z62ipbghbM7H1u5xF1kC5caJp0T2wQJzrgkqRepfVcVFiaTaBI/ZO8iLx
-   JIG7g37ez6jss+aNiyf6lS1AYIJaJ7TPRj8VOyU9vACl2pf5EOCqC4cXu
-   A==;
-X-CSE-ConnectionGUID: X9G2M+r3SzWhlde9RyMxUg==
-X-CSE-MsgGUID: ooCSlw6eRMqZJBYH8aFuNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33906102"
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="33906102"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 18:28:00 -0800
-X-CSE-ConnectionGUID: Q5g3rUN6RcabXY/8BbzQOA==
-X-CSE-MsgGUID: nlNLgQgxTM6qb2x9125a6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="98025648"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Dec 2024 18:27:57 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJ1as-0003gr-2k;
-	Thu, 05 Dec 2024 02:27:54 +0000
-Date: Thu, 5 Dec 2024 10:27:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maarten Lankhorst <dev@lankhorst.se>, linux-kernel@vger.kernel.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Friedrich Vock <friedrich.vock@gmx.de>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	cgroups@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH v2.1 1/1] kernel/cgroup: Add "dmem" memory accounting
- cgroup
-Message-ID: <202412051039.P06riwrP-lkp@intel.com>
-References: <20241204143112.1250983-1-dev@lankhorst.se>
+	s=arc-20240116; t=1733366051; c=relaxed/simple;
+	bh=UA2Uea6IGitYgfix2+eS7XWDk5SRJWyMNtpCYH383+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XjuwOdnLXyTjqk0BXI+Uhmt07ANbFyrLxWAHdGbJfVJie+tEfMV5s4CBM0BUnnO7gcgL/FJQooWjpBRuzHK4i73Oyjcm7cVwYK+fXCgP7U4fhtpAHTgoNGk8bV6MzjG6GNNtkPazAC/mZtALEPuyU0CtfyajwLH6RykMB2B5RiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxz5O1FA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B63C4CED2;
+	Thu,  5 Dec 2024 02:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733366050;
+	bh=UA2Uea6IGitYgfix2+eS7XWDk5SRJWyMNtpCYH383+M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pxz5O1FA21sHXdqJoW4ydp49kC1q4DawugzBJoe+FT3XF2PqO2AGafugxpJmwrQjm
+	 8zak05K8DnETcDGQaMVRlwW2faNQrfb72FXjtNG+SBj5I+4XqJ7La59tMTOy0JKRA0
+	 9k248/V0ecp1Y4odMbdmbKp6kdWegA1N3vkFEABK5rdVmocSM7nBK7LMMYp8BIixI0
+	 K6nNAo9sFTXKhHvlEW9xAJ+9rowBo628XgK4/wCUVGCm4wPwzV7xVc3HIf4V5Xfm7z
+	 NiMIj94y2QbkiS1ehvIU8g3B1Xx6VCi0j+Vo0Ab5Pf2cfUq3IBD+zaUrSzPMEp61g1
+	 UQkgOHgcpBFLg==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so380672e87.3;
+        Wed, 04 Dec 2024 18:34:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWB6VN3ocFOsRHDnWVRS4qy0OqrAlwMHIz+vmVNZyW5X2I484p9THRm/k7gdqkeM+NsxSTHtfIWfLrNrCo=@vger.kernel.org, AJvYcCWfuD1z91z5tZurR64ZBvFlPOVTZkQJwEBBY06W5gfq/ZM4rBa9zpdOXxbD7lVKbXIvHH0nzPItoJqMuYrw@vger.kernel.org, AJvYcCXUNHj4/suWtY6DgVassFogSRLvP0QY5S/0fvXz4TWNEEwlivRK7VqxfFba/9b8y/nUYOpSg8AyHcpPCu6jZo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBB2jbXCDSUCG+OAZId0vx2Nk/7cWKGdX+jZw0O4BEaix3Nf4V
+	u9G9fA4HqiDA0RJG5DE5js50YcewOVSdbTU/bGKYvLqKGA+GddXIDsRdl8ALmzxmhHmE6CNAPOM
+	mNft+HiP2qjVthF/kahs/zZi5SiE=
+X-Google-Smtp-Source: AGHT+IGrXJnAWJ9eKTc0ln8iyn1stVLkq01FLiKFwS5cJm5ma4gHywwcy98ADbBgmYN9C9+w2atpMxYn2UYI0iUGHDc=
+X-Received: by 2002:a05:6512:1247:b0:53d:a321:db74 with SMTP id
+ 2adb3069b0e04-53e12a28208mr4826786e87.50.1733366049377; Wed, 04 Dec 2024
+ 18:34:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204143112.1250983-1-dev@lankhorst.se>
+References: <20241110013649.34903-1-masahiroy@kernel.org> <20241110013649.34903-6-masahiroy@kernel.org>
+ <Z1DAzaKYD_rfgGnk@aschofie-mobl2.lan>
+In-Reply-To: <Z1DAzaKYD_rfgGnk@aschofie-mobl2.lan>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 5 Dec 2024 11:33:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARCz1s2z_mBJgL_S+=o8jWOGSmRb017WLFXaKdp5EDiqw@mail.gmail.com>
+Message-ID: <CAK7LNARCz1s2z_mBJgL_S+=o8jWOGSmRb017WLFXaKdp5EDiqw@mail.gmail.com>
+Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
+ module directory with M=
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, cocci@inria.fr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maarten,
+On Thu, Dec 5, 2024 at 5:51=E2=80=AFAM Alison Schofield
+<alison.schofield@intel.com> wrote:
+>
+> On Sun, Nov 10, 2024 at 10:34:33AM +0900, Masahiro Yamada wrote:
+> > Currently, Kbuild always operates in the output directory of the kernel=
+,
+> > even when building external modules. This increases the risk of externa=
+l
+> > module Makefiles attempting to write to the kernel directory.
+> >
+> > This commit switches the working directory to the external module
+> > directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
+> > some build artifacts.
+> >
+> > The command for building external modules maintains backward
+> > compatibility, but Makefiles that rely on working in the kernel
+> > directory may break. In such cases, $(objtree) and $(srctree) should
+> > be used to refer to the output and source directories of the kernel.
+> >
+> > The appearance of the build log will change as follows:
+> >
+> > [Before]
+> >
+> >   $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
+> >   make: Entering directory '/path/to/my/linux'
+> >     CC [M]  /path/to/my/externel/module/helloworld.o
+> >     MODPOST /path/to/my/externel/module/Module.symvers
+> >     CC [M]  /path/to/my/externel/module/helloworld.mod.o
+> >     CC [M]  /path/to/my/externel/module/.module-common.o
+> >     LD [M]  /path/to/my/externel/module/helloworld.ko
+> >   make: Leaving directory '/path/to/my/linux'
+> >
+> > [After]
+> >
+> >   $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
+> >   make: Entering directory '/path/to/my/linux'
+> >   make[1]: Entering directory '/path/to/my/externel/module'
+> >     CC [M]  helloworld.o
+> >     MODPOST Module.symvers
+> >     CC [M]  helloworld.mod.o
+> >     CC [M]  .module-common.o
+> >     LD [M]  helloworld.ko
+> >   make[1]: Leaving directory '/path/to/my/externel/module'
+> >   make: Leaving directory '/path/to/my/linux'
+> >
+> > Printing "Entering directory" twice is cumbersome. This will be
+> > addressed later.
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+>
+> With this in v6.13-rc1 the cxl-test module fails depmod.
+> It causes depmod  to be invoked from the incorrect place
+> (or something doesn't respect INSTALL_MOD_PATH)
+>
+> Is there something additional that this cxl-test module needs
+> to do?
+>
+> Repro:
+> /git/new$ make V=3D1 M=3Dtools/testing/cxl INSTALL_MOD_PATH=3Dqbuild/mkos=
+i.extra/ modules_install
 
-kernel test robot noticed the following build errors:
+Kbuild changes the working directory, so you need to specify
+an absolute path for INSTALL_MOD_PATH.
 
-[auto build test ERROR on tj-cgroup/for-next]
-[also build test ERROR on akpm-mm/mm-everything linus/master v6.13-rc1 next-20241204]
-[cannot apply to drm-misc/drm-misc-next drm-tip/drm-tip]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Maarten-Lankhorst/kernel-cgroup-Add-dmem-memory-accounting-cgroup/20241204-233207
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/20241204143112.1250983-1-dev%40lankhorst.se
-patch subject: [PATCH v2.1 1/1] kernel/cgroup: Add "dmem" memory accounting cgroup
-config: um-randconfig-r061-20241205 (https://download.01.org/0day-ci/archive/20241205/202412051039.P06riwrP-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412051039.P06riwrP-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412051039.P06riwrP-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   /usr/bin/ld: kernel/cgroup/dmem.o: in function `set_resource_min':
->> kernel/cgroup/dmem.c:115: undefined reference to `page_counter_set_min'
-   /usr/bin/ld: kernel/cgroup/dmem.o: in function `set_resource_low':
->> kernel/cgroup/dmem.c:121: undefined reference to `page_counter_set_low'
-   /usr/bin/ld: kernel/cgroup/dmem.o: in function `set_resource_max':
->> kernel/cgroup/dmem.c:127: undefined reference to `page_counter_set_max'
-   /usr/bin/ld: kernel/cgroup/dmem.o: in function `reset_all_resource_limits':
->> kernel/cgroup/dmem.c:115: undefined reference to `page_counter_set_min'
->> /usr/bin/ld: kernel/cgroup/dmem.c:121: undefined reference to `page_counter_set_low'
->> /usr/bin/ld: kernel/cgroup/dmem.c:127: undefined reference to `page_counter_set_max'
-   /usr/bin/ld: kernel/cgroup/dmem.o: in function `dmem_cgroup_uncharge':
->> kernel/cgroup/dmem.c:607: undefined reference to `page_counter_uncharge'
-   /usr/bin/ld: kernel/cgroup/dmem.o: in function `dmem_cgroup_calculate_protection':
->> kernel/cgroup/dmem.c:275: undefined reference to `page_counter_calculate_protection'
-   /usr/bin/ld: kernel/cgroup/dmem.o: in function `dmem_cgroup_try_charge':
->> kernel/cgroup/dmem.c:657: undefined reference to `page_counter_try_charge'
-   collect2: error: ld returned 1 exit status
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+INSTALL_MOD_PATH=3D$(realpath qbuild/mkosi.extra/)
 
 
-vim +115 kernel/cgroup/dmem.c
 
-   111	
-   112	static void
-   113	set_resource_min(struct dmem_cgroup_pool_state *pool, u64 val)
-   114	{
- > 115		page_counter_set_min(&pool->cnt, val);
-   116	}
-   117	
-   118	static void
-   119	set_resource_low(struct dmem_cgroup_pool_state *pool, u64 val)
-   120	{
- > 121		page_counter_set_low(&pool->cnt, val);
-   122	}
-   123	
-   124	static void
-   125	set_resource_max(struct dmem_cgroup_pool_state *pool, u64 val)
-   126	{
- > 127		page_counter_set_max(&pool->cnt, val);
-   128	}
-   129	
-   130	static u64 get_resource_low(struct dmem_cgroup_pool_state *pool)
-   131	{
-   132		return pool ? READ_ONCE(pool->cnt.low) : 0;
-   133	}
-   134	
-   135	static u64 get_resource_min(struct dmem_cgroup_pool_state *pool)
-   136	{
-   137		return pool ? READ_ONCE(pool->cnt.min) : 0;
-   138	}
-   139	
-   140	static u64 get_resource_max(struct dmem_cgroup_pool_state *pool)
-   141	{
-   142		return pool ? READ_ONCE(pool->cnt.max) : PAGE_COUNTER_MAX;
-   143	}
-   144	
-   145	static u64 get_resource_current(struct dmem_cgroup_pool_state *pool)
-   146	{
-   147		return pool ? page_counter_read(&pool->cnt) : 0;
-   148	}
-   149	
-   150	static void reset_all_resource_limits(struct dmem_cgroup_pool_state *rpool)
-   151	{
-   152		set_resource_min(rpool, 0);
-   153		set_resource_low(rpool, 0);
-   154		set_resource_max(rpool, PAGE_COUNTER_MAX);
-   155	}
-   156	
-   157	static void dmemcs_offline(struct cgroup_subsys_state *css)
-   158	{
-   159		struct dmemcg_state *dmemcs = css_to_dmemcs(css);
-   160		struct dmem_cgroup_pool_state *pool;
-   161	
-   162		rcu_read_lock();
-   163		list_for_each_entry_rcu(pool, &dmemcs->pools, css_node)
-   164			reset_all_resource_limits(pool);
-   165		rcu_read_unlock();
-   166	}
-   167	
-   168	static void dmemcs_free(struct cgroup_subsys_state *css)
-   169	{
-   170		struct dmemcg_state *dmemcs = css_to_dmemcs(css);
-   171		struct dmem_cgroup_pool_state *pool, *next;
-   172	
-   173		spin_lock(&dmemcg_lock);
-   174		list_for_each_entry_safe(pool, next, &dmemcs->pools, css_node) {
-   175			/*
-   176			 *The pool is dead and all references are 0,
-   177			 * no need for RCU protection with list_del_rcu or freeing.
-   178			 */
-   179			list_del(&pool->css_node);
-   180			free_cg_pool(pool);
-   181		}
-   182		spin_unlock(&dmemcg_lock);
-   183	
-   184		kfree(dmemcs);
-   185	}
-   186	
-   187	static struct cgroup_subsys_state *
-   188	dmemcs_alloc(struct cgroup_subsys_state *parent_css)
-   189	{
-   190		struct dmemcg_state *dmemcs = kzalloc(sizeof(*dmemcs), GFP_KERNEL);
-   191		if (!dmemcs)
-   192			return ERR_PTR(-ENOMEM);
-   193	
-   194		INIT_LIST_HEAD(&dmemcs->pools);
-   195		return &dmemcs->css;
-   196	}
-   197	
-   198	static struct dmem_cgroup_pool_state *
-   199	find_cg_pool_locked(struct dmemcg_state *dmemcs, struct dmem_cgroup_region *region)
-   200	{
-   201		struct dmem_cgroup_pool_state *pool;
-   202	
-   203		list_for_each_entry_rcu(pool, &dmemcs->pools, css_node, spin_is_locked(&dmemcg_lock))
-   204			if (pool->region == region)
-   205				return pool;
-   206	
-   207		return NULL;
-   208	}
-   209	
-   210	static struct dmem_cgroup_pool_state *pool_parent(struct dmem_cgroup_pool_state *pool)
-   211	{
-   212		if (!pool->cnt.parent)
-   213			return NULL;
-   214	
-   215		return container_of(pool->cnt.parent, typeof(*pool), cnt);
-   216	}
-   217	
-   218	static void
-   219	dmem_cgroup_calculate_protection(struct dmem_cgroup_pool_state *limit_pool,
-   220					 struct dmem_cgroup_pool_state *test_pool)
-   221	{
-   222		struct page_counter *climit;
-   223		struct cgroup_subsys_state *css, *next_css;
-   224		struct dmemcg_state *dmemcg_iter;
-   225		struct dmem_cgroup_pool_state *pool, *parent_pool;
-   226		bool found_descendant;
-   227	
-   228		climit = &limit_pool->cnt;
-   229	
-   230		rcu_read_lock();
-   231		parent_pool = pool = limit_pool;
-   232		css = &limit_pool->cs->css;
-   233	
-   234		/*
-   235		 * This logic is roughly equivalent to css_foreach_descendant_pre,
-   236		 * except we also track the parent pool to find out which pool we need
-   237		 * to calculate protection values for.
-   238		 *
-   239		 * We can stop the traversal once we find test_pool among the
-   240		 * descendants since we don't really care about any others.
-   241		 */
-   242		while (pool != test_pool) {
-   243			next_css = css_next_child(NULL, css);
-   244			if (next_css) {
-   245				parent_pool = pool;
-   246			} else {
-   247				while (css != &limit_pool->cs->css) {
-   248					next_css = css_next_child(css, css->parent);
-   249					if (next_css)
-   250						break;
-   251					css = css->parent;
-   252					parent_pool = pool_parent(parent_pool);
-   253				}
-   254				/*
-   255				 * We can only hit this when test_pool is not a
-   256				 * descendant of limit_pool.
-   257				 */
-   258				if (WARN_ON_ONCE(css == &limit_pool->cs->css))
-   259					break;
-   260			}
-   261			css = next_css;
-   262	
-   263			found_descendant = false;
-   264			dmemcg_iter = container_of(css, struct dmemcg_state, css);
-   265	
-   266			list_for_each_entry_rcu(pool, &dmemcg_iter->pools, css_node) {
-   267				if (pool_parent(pool) == parent_pool) {
-   268					found_descendant = true;
-   269					break;
-   270				}
-   271			}
-   272			if (!found_descendant)
-   273				continue;
-   274	
- > 275			page_counter_calculate_protection(
-   276				climit, &pool->cnt, true);
-   277		}
-   278		rcu_read_unlock();
-   279	}
-   280	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Best Regards
+Masahiro Yamada
 
