@@ -1,109 +1,267 @@
-Return-Path: <linux-kernel+bounces-432577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622CA9E4D31
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:13:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28E19E4D34
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A25D1881081
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C0318811AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16ED194AF3;
-	Thu,  5 Dec 2024 05:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FCF194AE2;
+	Thu,  5 Dec 2024 05:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SstSwugA"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pnkiwiOf"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2089.outbound.protection.outlook.com [40.107.93.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAA718FC74;
-	Thu,  5 Dec 2024 05:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733375597; cv=none; b=KYNHNxXhfbOtPJTy45UmavSPAclvtRdmFBqfRZH2lnZS25HN233+Z4hlKJS+XNbBUxzdG16SyFN6QY0mWnYMhw3Fv+6/A4WrVOcBfTMF9ZAigUDmTZZ/O8b7LXsiVZkREJ7bhBQvJVyYCI4tedYTP1oJ296JM1Gp4JStDwNvKcw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733375597; c=relaxed/simple;
-	bh=UylYSkE1r0VlZu5Ykn39oGaMw7xL4h7+hpDU5jx3o0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HKAWJxyknEH03eEh5KZFCkQBAY2heXUsUaoD/LQsTeIyw2HVsNhhHnOorLXisAOfjVdkE1dDP/g+NHIvCQr6RrJbqNOFsly2/KFvleVi1DK6t2ircL4Izw/outjTk4Uqmx3/iccFpbG1nahrhPBntHeMpQNX8rQr5eEVcIB3vuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SstSwugA; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id E6F8C88EDD;
-	Thu,  5 Dec 2024 06:13:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1733375588;
-	bh=dWyo9Bu5l9XOsB4Q8M1dSJaLQtxfsxiyf7xxvykE+sk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SstSwugAf14DWGV0olpYo99gQMHuNa+3siS4StFcJh/xEgnrORDiQssMO2Li27VH3
-	 401H97eV0rRm0NbmB6ei5GhU/JrlUrBdG/6OCb+8Aeykufm/pJCiLP6rmXOKCOhjBf
-	 fuuE8RIqUFBGgJOcNyVQS/oaImdI8HeOPC8/PG2AM1jvK1EehTfMpmGy8Rfi9KHDB1
-	 fB18rdFu5bJaMxU7TA0XkCCrt4YUklofs56efQjO/8v1qfBuHoxzFycT/jI+Tk1COJ
-	 trpyNocUyirAsChlZITCNZw6jj/uONDppuWKyAyN9JQNOvl6We6A3A23w+RnQ6XOkn
-	 0dbwhMVeE69Vw==
-Message-ID: <3c809cae-991b-4b13-8d8b-bd6cbcc9a9b9@denx.de>
-Date: Thu, 5 Dec 2024 06:07:51 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F98193429
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 05:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733375681; cv=fail; b=AgLu3S0C1Pc7snMXCNJb4denlbbmH8o5ilcCZOjfADzdLwEAXgICrWy4jY7wcyeYqqTSa/ESN1XSiPgVcN8YSe5mOn8OwV1ajA8XcdRl8TfJVM3dq+hlc8f+zZyz7kAIqDe79aW4+urLKT8Iw7PRD/HaUkQgmAwlxHVd0toQvsU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733375681; c=relaxed/simple;
+	bh=drukSqaG5RU9n/nsxoZUyO64B364vQy+Px1WFEB/9PY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W4zrdOuchL7nB3ZxiJBiYHcen09NjLaycnaHoKq2MTvsKFUj6fLKxdx8xKTOgd0BKWNMIUICQ3YK0OfcHRchPgHeAP9dqwDSEozOX/4omQfHAyPCLR1jt8LuT/GRgwqeF9bitfQuR+26I46VgkPIWGgoqlHhtOSWoz8DuCovyos=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pnkiwiOf; arc=fail smtp.client-ip=40.107.93.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GjUsrVVM+Kxvi3f85VjhdEY5d1TOP5mhAIdpBOY3pYj7vLyaw7m1I/pSA3TTqH98xUIzFxWbin4OK5qpKQn2Q+uc/AiK3bdRIuHD64aeBCeGLIp44iTL5fVjEoJfEKbdqjC2E69qZGvoH8s1oJoaZf+0aS9QwFO99rPoKceORo++09I6IbAVBOhqUVOx7VR/xn6lIsfzcSd12qYZsx6P1vDP+5FmRnbUJwL2p0tBieHntSqYOtKhYwrDhQ2YzXDCRPuYpHfJwdFRQHunqPv4CmWsudA1gLxIPtwNOAh+UuRvl7uWnJuGPtNzAO8NE/5tmW6bAfN8r9X1I54EgGDM5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NHUuIezHA9lRAxfqwCSt7QcFPFI728tChcboZ4jqCEE=;
+ b=jP+zjKuUD0VYxyh70C9k8X3YBm6HHs0ZlccrJcNjaZgStXXPYV2qC1y9i9XNnCKV63KgQMzE3qVAGJ2LfRlMpegwamrvksy+pxv4JGqSiZcoRIa1cTepJ5Z9AZsPEvAhaq0u4puQfUgREWwG+e0e7dSA1y8bDoJKHrRpFnaf2QBSx3iu5ju9hqFfGGoQS2yPyVJ647ezGnHRIgY03SJARC56ERJZd9g6JOOqCl9kxfuqE1BIIFz4De3W0Xu+gcvEb8wOrYURSBMQFYsICoSh1Feen8207m7iiUAqZs1Lm2YWXVw4D9VM2KGFrAdnvrZ5Eh6RoKBTDBn6yrNlifgX/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NHUuIezHA9lRAxfqwCSt7QcFPFI728tChcboZ4jqCEE=;
+ b=pnkiwiOfEOTMASvWDFf3gfBJ3kS0KJCGsFScu/203PrtV5nTfJrcZnWX/SofOHF22ICpstlrsdA5cJRyrAMB23lCefgCfqzSAGJDawggcZc9crSCivYYj4r2hGN05rLo4u8w10ONVompT8+ZyEof/ENqLe95lTLMZkTyHhjLdM0=
+Received: from DM6PR06CA0067.namprd06.prod.outlook.com (2603:10b6:5:54::44) by
+ SA1PR12MB8987.namprd12.prod.outlook.com (2603:10b6:806:386::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Thu, 5 Dec
+ 2024 05:14:35 +0000
+Received: from DS2PEPF0000343F.namprd02.prod.outlook.com
+ (2603:10b6:5:54:cafe::d4) by DM6PR06CA0067.outlook.office365.com
+ (2603:10b6:5:54::44) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Thu, 5
+ Dec 2024 05:14:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS2PEPF0000343F.mail.protection.outlook.com (10.167.18.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Thu, 5 Dec 2024 05:14:35 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
+ 2024 23:14:34 -0600
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 4 Dec 2024 23:14:33 -0600
+Message-ID: <7741c649-3897-fabb-ee1c-e12c62e4ccfa@amd.com>
+Date: Wed, 4 Dec 2024 21:14:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: stm32: Add check for clk_enable()
-To: Mingwei Zheng <zmw12306@gmail.com>, linus.walleij@linaro.org,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, make24@iscas.ac.cn,
- peng.fan@nxp.com, fabien.dessenne@foss.st.com
-Cc: linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jiasheng Jiang <jiashengjiangcool@gmail.com>
-References: <20241205045942.2441430-1-zmw12306@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V1 5/7] accel/amdxdna: Add query firmware version
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20241205045942.2441430-1-zmw12306@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+To: Mario Limonciello <mario.limonciello@amd.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241204213729.3113941-1-lizhi.hou@amd.com>
+ <20241204213729.3113941-6-lizhi.hou@amd.com>
+ <4f233efa-8269-4f6f-bd22-0dcf2810c4ab@amd.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <4f233efa-8269-4f6f-bd22-0dcf2810c4ab@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343F:EE_|SA1PR12MB8987:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8c20750-978c-48cc-8969-08dd14ebb5a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SWFOc1NpOWE1bTQxeGlVcnZBRXRZSFN1ZFR3L0Vxckw5cE92ajF0U3BYR0ZL?=
+ =?utf-8?B?NnVUdlp2ZHNuWHNXcytnMWV0T1BpeVQ4Rjg3Tmx3OGcvUjRNYXVwdVE3YVBU?=
+ =?utf-8?B?TjhiRTlLSDFxZVpDU1AxaFF6T2U5Nk90QW1FdmJSZDc0U0VpZEhQMXcyVXlx?=
+ =?utf-8?B?UVlkTG50YWZRSjI3YUZ2bEt6aG0yN2tPQUZveXlBeW54a2drTFNJc01wdVFr?=
+ =?utf-8?B?aWhTaUFwMncwVFlpRDdTdGJNVys0M2dMS0hGWGE5cndiVG5DZU1KYm5FRTNV?=
+ =?utf-8?B?UlZTMnNRNHFUaGtHTWU3cFNTaGdTSkl4UzdnT1VLRkg1Tm85MUVnUVdKNllF?=
+ =?utf-8?B?eDBFNHl3M0lFd0QzNEk5QzRzalJWejZ5eFFmT2J4ZURyVWtIR2h6N2xiYlQ0?=
+ =?utf-8?B?MUt4cStpL1JaNEgrd094dVdFNGVGTFNvVEV3WHd5eFVHbUR0SEdSRVovbC9m?=
+ =?utf-8?B?Vm5YT1dFMUpyemIxeVpIZTErR3NGZXIzdmpkZjhqRlNBMlNIQ3BiZTU5aXBv?=
+ =?utf-8?B?bmVwU094WGxHeGs1MUVETllEZXBPL05XTnFJNHh6VUs4Ti9Lc2htMUpzNGNV?=
+ =?utf-8?B?bnhQQy9COW9VR3FQMm9yWDNuU2RPNmg1c0M2QkpEQVY4TzBYYzJXYTNmQ25M?=
+ =?utf-8?B?bXlRejd3ZlNySnhXaXRRVjBpdHBtZ1I5Q0FaVFRhWk5pdExJZFpPc2NNR3R3?=
+ =?utf-8?B?TEd6Rm9HNTFXd0FYODZlTldianNQaFR5UG1xc2kvenZURzlSc2k5b2NXN3Vz?=
+ =?utf-8?B?ZGd5cG14eHQ5SU1XT2IxYzRvT2R5S1dqU2lIdVBmRTIyVTZYMmxDSzRacTRq?=
+ =?utf-8?B?cUtBYmU5a21LZmtCKzVpOTFHcndVelR3TExRM2s0VGVjOTdKY09Fb2Z1REJO?=
+ =?utf-8?B?N25KR2NRRHdqMEpOV0ZKdDl6ejFISkkrS3pJaFJBblNTbXh0cE9HWjRaZWd6?=
+ =?utf-8?B?N2NpcE4zb2YwckxyTjllT1pPQWIxN08xU2tGUUFHeFFFZUozRW1xYXNZOGw1?=
+ =?utf-8?B?TWdQMW1jaHVXNDJ6QzRCMXFHZjdRdG5SWlVjUFo0czZaZVJSeUVzaG1jVDBY?=
+ =?utf-8?B?VXpIeFQ1T0QwK25BNmtkK08wYjBHZlYxMnFrNXdLQlBkMExMRXhIVmQvekth?=
+ =?utf-8?B?N2xPWVc1cmFiT1Q0Z1BaL1JBRVRzWkpzLy9aWGo1a3BHWG96cTF2Q25FMm83?=
+ =?utf-8?B?TVhaMFV6ZzJxeDZML3ZSR1ZySUxPWi9JeENXTDlnTGdKQm45MkpvT1VmcnZW?=
+ =?utf-8?B?OS82UWYySzFGaXJyenB4UkhuOWFsKzJ0UTNqRmkzMlAvc1M2dDFGWWRTSEFr?=
+ =?utf-8?B?SEYvaXFlN3RISk10WWJ5Q0RxV2JBUkk0ZUJhWCtMSnlwUjNWMXFRaVBmbzg5?=
+ =?utf-8?B?eXY1aXJKZmJlaXoxU2R2bnhCTWYyYnpMbjl4QnlqazdwdU1qYnZIMk1oUEU3?=
+ =?utf-8?B?VjZjUW0wYVgxZ09INGozdFlHRGt6cWtQek90cEZwamdTc1N0elhLT3dJeWpF?=
+ =?utf-8?B?d012bWZQcHBXZVFVVUkyS0lLQ2x4SDhBdWVNakZ2dFU4by8wRkxyVEpxamRE?=
+ =?utf-8?B?K1hhTkJPTy9oeVo0akxFaHVYekdESVVmSXdVbjNCQUppUS9Rb2lzbURWMDBR?=
+ =?utf-8?B?NVk5S1BsWVQvNklic3VSNmxibjVvdWlpejhDaGxQOTRmbmd2M1JvZFlWblV4?=
+ =?utf-8?B?OVBXc3VPWmVRVHpOQUx6eldEUDY3bkdjOCtHVGx1SXB4RDRISWllQnFMVHox?=
+ =?utf-8?B?TE5hV01oOTRLRlJyNFhZbTlRRWd2SXpYUTRNNTB4bnBIWEVZcjNCRWhsZEpY?=
+ =?utf-8?B?bFRuSWVEaTBOTEVsWHVIR2d2a09KNDNrUXR3QTN4S2FqcXB4ZjZCVUZaRlhU?=
+ =?utf-8?B?Y2w4WHlkaW1QK2ZUWUVXN01ZNit5cWgxaUo0aWRiYmlZb2M1c2oveXpxdE96?=
+ =?utf-8?Q?4Wl17rvHRXoF7y3OVQebJW8hh8IG9vzD?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 05:14:35.2976
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8c20750-978c-48cc-8969-08dd14ebb5a8
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF0000343F.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8987
 
-On 12/5/24 5:59 AM, Mingwei Zheng wrote:
-> Add check for the return value of clk_enable() to catch the potential
-> error. Add a cleanup loop to disable clocks already enabled in case
-> of an error during clock enabling for subsequent banks.
-> 
-> Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled when LEVEL IRQ requested")
-> Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> ---
->   drivers/pinctrl/stm32/pinctrl-stm32.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> index 5b7fa77c1184..eb7b2f864d88 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -1738,10 +1738,16 @@ int __maybe_unused stm32_pinctrl_resume(struct device *dev)
->   {
->   	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
->   	struct stm32_pinctrl_group *g = pctl->groups;
-> -	int i;
-> +	int i, j, ret;
->   
-> -	for (i = 0; i < pctl->nbanks; i++)
-> -		clk_enable(pctl->banks[i].clk);
-> +	for (i = 0; i < pctl->nbanks; i++) {
-> +		ret = clk_enable(pctl->banks[i].clk);
-> +		if (ret) {
-> +			for (j = 0; j < i; j++)
 
-Instead of this open-coded loop, can you please convert the driver to 
-clk_bulk*() API and then do simple clk_bulk_enable()/clk_bulk_disable() 
-here and everywhere ?
+On 12/4/24 14:24, Mario Limonciello wrote:
+> On 12/4/2024 15:37, Lizhi Hou wrote:
+>> Enhance GET_INFO ioctl to support retrieving firmware version.
+>>
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>> ---
+>>   drivers/accel/amdxdna/aie2_pci.c | 20 ++++++++++++++++++++
+>>   include/uapi/drm/amdxdna_accel.h | 19 +++++++++++++++++++
+>>   2 files changed, 39 insertions(+)
+>>
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.c 
+>> b/drivers/accel/amdxdna/aie2_pci.c
+>> index 1c8170325837..83abd16ade11 100644
+>> --- a/drivers/accel/amdxdna/aie2_pci.c
+>> +++ b/drivers/accel/amdxdna/aie2_pci.c
+>> @@ -640,6 +640,23 @@ static int aie2_get_aie_version(struct 
+>> amdxdna_client *client,
+>>       return 0;
+>>   }
+>>   +static int aie2_get_firmware_version(struct amdxdna_client *client,
+>> +                     struct amdxdna_drm_get_info *args)
+>> +{
+>> +    struct amdxdna_drm_query_firmware_version version;
+>> +    struct amdxdna_dev *xdna = client->xdna;
+>> +
+>> +    version.major = xdna->fw_ver.major;
+>> +    version.minor = xdna->fw_ver.minor;
+>> +    version.patch = xdna->fw_ver.sub;
+>> +    version.build = xdna->fw_ver.build;
+>> +
+>> +    if (copy_to_user(u64_to_user_ptr(args->buffer), &version, 
+>> sizeof(version)))
+>> +        return -EFAULT;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   static int aie2_get_clock_metadata(struct amdxdna_client *client,
+>>                      struct amdxdna_drm_get_info *args)
+>>   {
+>> @@ -752,6 +769,9 @@ static int aie2_get_info(struct amdxdna_client 
+>> *client, struct amdxdna_drm_get_i
+>>       case DRM_AMDXDNA_QUERY_HW_CONTEXTS:
+>>           ret = aie2_get_hwctx_status(client, args);
+>>           break;
+>> +    case DRM_AMDXDNA_QUERY_FIRMWARE_VERSION:
+>> +        ret = aie2_get_firmware_version(client, args);
+>> +        break;
+>>       default:
+>>           XDNA_ERR(xdna, "Not supported request parameter %u", 
+>> args->param);
+>>           ret = -EOPNOTSUPP;
+>> diff --git a/include/uapi/drm/amdxdna_accel.h 
+>> b/include/uapi/drm/amdxdna_accel.h
+>> index af12af8bd699..ea86c57beb92 100644
+>> --- a/include/uapi/drm/amdxdna_accel.h
+>> +++ b/include/uapi/drm/amdxdna_accel.h
+>> @@ -375,6 +375,20 @@ struct amdxdna_drm_query_hwctx {
+>>       __u64 errors;
+>>   };
+>>   +/**
+>> + * struct amdxdna_drm_query_firmware_version - Query the firmware 
+>> version
+>> + * @major: The major version number
+>> + * @minor: The minor version number
+>> + * @patch: The patch level version number
+>> + * @build: The build ID
+>> + */
+>> +struct amdxdna_drm_query_firmware_version {
+>> +    __u32 major; /* out */
+>> +    __u32 minor; /* out */
+>> +    __u32 patch; /* out */
+>> +    __u32 build; /* out */
+>> +};
+>> +
+>>   enum amdxdna_drm_get_param {
+>>       DRM_AMDXDNA_QUERY_AIE_STATUS,
+>>       DRM_AMDXDNA_QUERY_AIE_METADATA,
+>> @@ -382,6 +396,11 @@ enum amdxdna_drm_get_param {
+>>       DRM_AMDXDNA_QUERY_CLOCK_METADATA,
+>>       DRM_AMDXDNA_QUERY_SENSORS,
+>>       DRM_AMDXDNA_QUERY_HW_CONTEXTS,
+>> +    DRM_AMDXDNA_READ_AIE_MEM,
+>> +    DRM_AMDXDNA_READ_AIE_REG,
+>> +    DRM_AMDXDNA_QUERY_FIRMWARE_VERSION,
+>> +    DRM_AMDXDNA_GET_POWER_MODE,
+>> +    DRM_AMDXDNA_QUERY_TELEMETRY,
+>
+> This is more than DRM_AMDXDNA_QUERY_FIRMWARE_VERSION.
+>
+> The other ones should go with other patches.
+> Like DRM_AMDXDNA_GET_POWER_MODE should be in patch 6.
+Ok.
+>
+> I didn't see DRM_AMDXDNA_READ_AIE_MEM, DRM_AMDXDNA_READ_AIE_REG, or
+> DRM_AMDXDNA_QUERY_TELEMETRY used in this series, are they just 
+> placeholders?  Maybe a different patch for the placeholders?
 
-Thank you
+Yes. These are placeholders. I can remove them.
+
+
+Thanks,
+
+Lizhi
+
+>
+>
+>>       DRM_AMDXDNA_NUM_GET_PARAM,
+>>   };
+>
 
