@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-435823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287D69E7DA6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:01:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE6F9E7DF5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 03:02:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA90A16CFAD
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5762882D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD40134BD;
-	Sat,  7 Dec 2024 01:01:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C375912B73;
+	Sat,  7 Dec 2024 02:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="efBNFOkY"
+Received: from out.smtpout.orange.fr (out-17.smtpout.orange.fr [193.252.22.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439313232
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0797128F5;
+	Sat,  7 Dec 2024 02:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733533264; cv=none; b=Np0c0Sf9pMnMgScNLPNWkR5INETqEeLw3q4dCcqh/DzAI1GqquTYdu7ggbt9Nyx/fCPGp+NT9ezDKP96HioyLk/wiMCjbiCnhHvFfeqT2FqhZwXazYXIp06wdedvDwZqMAZ0GUNL1h2VBO3kAWbSMK6pWJJhN19ThBa6hjZOQMY=
+	t=1733536971; cv=none; b=bxcVT75nR8wKNL8L2LF1/Y3+PRKjTVvtbXSuwnf17TThc44r/dQ2lcYYQtJSfZ4J+bEPhDbGJAzzvwzgGuHFMRwQhhURU3k9VRPNoZSsfLdTb+SCekCPBGbVyIBOv2k1mQQX3vyde86S9i7onkCQJWVXl7X7WeRVNvE1bM3HjoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733533264; c=relaxed/simple;
-	bh=u5nYSuuVesD6h7IbFSGckAHDRhurDNBarUCwXsucC0s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gpdqwTK5mpC4fkhpi+Wt9OFtcsoCizbA4mqIIfE3W46kmfXhzHPAz1oWpq7FySLfEzMEcBGR0Wx83PzA5zp7xZKxXUpIU+Eeiz7LH3Bnx6ORw/qr1SiYHE5AmXGEgVFrqJylKaXdKqySYgh3bfJyChMqc9r8t1dQ/tV2N3BM88A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7e1e6d83fso56592555ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 17:01:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733533262; x=1734138062;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JvbLDdytkVXjmJCFEeXCmgooAVyAASqwNDMq6NqMYEQ=;
-        b=GbkIojpy5j2CN3f1c9OTMmkaCk5/pISPtumgnLlAalYODoXhUuMqkXkHHiRpB3TSE5
-         B4HO2lkDkPONPgLA26JNmIV4tddd80mhzE/GjVsKGt2eroUqhDOoPYrZKqNj8/iezt9q
-         1dafrzQdtE2TfXJ4zBIFSwtHbOeI0pTWmHk3ZZyj/2VKXT8R0XLIu85WC7ljDGEdSOUR
-         9F22hbofHDeqYeKiaR+f7Ph+WVv00nZwMsn++4AaUpXXcnVMVOT3QNTnG6HFsf+QKrpc
-         GKA3qXkkNFLVb9Y9CLFikMpL3dvr+ZmuGMydIhAUWIc/aSw2/oEBPXof/FiMh8r0Tr6d
-         0CZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2qYpSnITmjizY5f3g2JY0P6XekZhXWjt6fg9SmKeuNmhD6If1OKP/FMdm+zw07cp3iGtyJfWVh3TICdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFx9VfV79WXZC+X4iB+/d5TgbFgpHtttCJcULb9rpiSI/ZaheM
-	SZzx47sCNfSO8+bq3PHfX6F7uM4hrT0qulezvHUQsaSRSorJ89Sjj4twdevZJa8uDYYxiudqjz/
-	ew6g7N9DzeauSNHBJlILAWCWlwSOJvf/Dt7sNyCsMSPPMyUl0wQc0pIs=
-X-Google-Smtp-Source: AGHT+IGWwrqQngiWMnwECL++Pbfxx6p8Bbp69VM3OYAspBdp6DqhMaIJQSDxdHce6v0Fp9jvolV/mRx9u6SQnKRscTy5tRUzIiys
+	s=arc-20240116; t=1733536971; c=relaxed/simple;
+	bh=M3tRBIMiUGbNOtYs/WiqckLr+eGNBUTYriamxyCBEEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GcxHpODIXGrX6rRFI1Ksi77t4BzW4WCLbZiF6d9YyTjWiOR1+ZWLLepHVgLIMLdd6ZVz16Yiykfdufd75o7udTfGleP1tFDr/SnhU6vhdBSIk4KD/sYZHeX4Uow+dx7mNwzRRsT5VSG7uQQoFTade5r55uAEPGJZKMjA+WWWL+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=efBNFOkY; arc=none smtp.client-ip=193.252.22.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from mail-ej1-f53.google.com ([209.85.218.53])
+	by smtp.orange.fr with ESMTPSA
+	id Jk9XtkHz401M2Jk9Yt7ejV; Sat, 07 Dec 2024 03:02:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733536960;
+	bh=1FRoHoQWpZzbjWYvjotIUGh9Pf5+Jx2FZlKpO4hH6NM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=efBNFOkY+cV8avqyYvv/XZTk9CSlCAOtxOTVoZW0Mm6G5Ejy9p8h9RAHZ3RXeCxVZ
+	 DQ33if63YUgMnR5r76sYSUXmjhocTon9aKksjsrLDbJPIiYcqJ7E8cbNdLtLkpNwFU
+	 1gv5RO/PHzdTeu94CyIONg036fSEPyBCEwKxhFuzXDWS3mK9iuz7KELjJV6CpZDlgW
+	 jP3hyBr8+1NdVpp2R9hx7uVuGKI66YUtDcBn07plPG0WbCHtMKIMETuk+HjeP7WeEq
+	 Ls/lvYaQzVW3Ysyw8FJrWHjvo7i7QwVENBI4H/On82OOYxpf6iVHac96DPf7xs8HtD
+	 gfZS8i8M2AwLg==
+X-ME-Helo: mail-ej1-f53.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 07 Dec 2024 03:02:40 +0100
+X-ME-IP: 209.85.218.53
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa503cced42so371719866b.3;
+        Fri, 06 Dec 2024 18:02:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVHRGWUejAM917mjPVNhIKO6iGDF0g54NU+87ZchYsZTy0U/pnSIaNQ3t3ix3WIylE4jkX9iImd9xQixgpe@vger.kernel.org, AJvYcCW4rKkreCdeZkxsHNzlN91Ng7bNawxj4vPa2O8UUXmYFRSZ58UpGlpP25QxzPVCYxAWAOFlf+HbcmbzIZ+b7yk=@vger.kernel.org, AJvYcCXgIxalHTYmJoly1hq+cMYeACt7kXWUSVbUTYKxVBTp9kqGb+zyCGjdfymyYIYwWVWwbiTqF5AN1b86/hHL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOeWCYdm7jHevU/OL8gDyEwMozVSUUxJTe2wo9aHgte/m5r3m2
+	lobpc5AQJwaqOLDZR4KcAe4oIttiDlVYTFM90xgl0l4xZBtrLXx5j1iAo0oA5KzsBWfzf0AmKPf
+	U1FLz2a34wO3L0kEe4eprpOucRSA=
+X-Google-Smtp-Source: AGHT+IFYWIvr/wb1ttWAqU3XdgmdbVRXgljv2wGXYHxZGru+z8zfXAuY4J7uLgYbwqJhFyewdEilCwKv6EaVf4E+2bE=
+X-Received: by 2002:a17:907:270f:b0:a9e:b5d0:e5c with SMTP id
+ a640c23a62f3a-aa5f7f6f2f8mr768523566b.61.1733414207483; Thu, 05 Dec 2024
+ 07:56:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a7:b0:3a7:8720:9ea4 with SMTP id
- e9e14a558f8ab-3a811d77228mr65586115ab.5.1733533262498; Fri, 06 Dec 2024
- 17:01:02 -0800 (PST)
-Date: Fri, 06 Dec 2024 17:01:02 -0800
-In-Reply-To: <67530069.050a0220.2477f.0003.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67539e4e.050a0220.2477f.000c.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] general protection fault in bpf_prog_array_delete_safe
-From: syzbot <syzbot+2e0d2840414ce817aaac@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	martin.lau@linux.dev, mathieu.desnoyers@efficios.com, 
-	mattbobrowski@google.com, mhiramat@kernel.org, netdev@vger.kernel.org, 
-	olsajiri@gmail.com, rostedt@goodmis.org, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-8-4e4cbaecc216@wanadoo.fr> <6597979088eb4ee7b98cfb99815a402e@AcuMS.aculab.com>
+In-Reply-To: <6597979088eb4ee7b98cfb99815a402e@AcuMS.aculab.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Fri, 6 Dec 2024 00:56:35 +0900
+X-Gmail-Original-Message-ID: <CAMZ6Rq+XhOb+yn5A1dHD=qkbB1_FQXMA7_ydBB4nPTSnys3jkA@mail.gmail.com>
+Message-ID: <CAMZ6Rq+XhOb+yn5A1dHD=qkbB1_FQXMA7_ydBB4nPTSnys3jkA@mail.gmail.com>
+Subject: Re: [PATCH 08/10] drm/i915/reg: replace __is_const_expr() by
+ is_const_true() or is_const()
+To: David Laight <David.Laight@aculab.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+On Thu. 5 Dec 2024 at 04:00, David Laight <David.Laight@aculab.com> wrote:
+> From: Vincent Mailhol
+> > Sent: 02 December 2024 17:34
+> >
+> > Most of the use of __is_const_expr() in i915_reg_defs.h are just to
+> > test whether an expression is known to be true. Because those checks
+> > are all done in a BUILD_BUG_ON_ZERO(), replace those with
+> > is_const_true().
+>
+> Another place that could use statically_true() and BUILD_BUG_ON_MSG().
 
-commit 0ee288e69d033850bc87abe0f9cc3ada24763d7f
-Author: Jiri Olsa <jolsa@kernel.org>
-Date:   Wed Oct 23 20:03:52 2024 +0000
+Here also, BUILD_BUG_ON_MSG() is not suitable because it does not
+return a value.
 
-    bpf,perf: Fix perf_event_detach_bpf_prog error handling
+__BUILD_BUG_ON_ZERO_MSG() could be used; but there is less benefit to
+do this at a driver scope. In this i915_reg_defs.h,
+BUILD_BUG_ON_ZERO() is used 20 times. Adding an error message each
+time will just make things ugly.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=103530f8580000
-start commit:   e2cf913314b9 Merge branch 'fixes-for-stack-with-allow_ptr_..
-git tree:       bpf
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=123530f8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=143530f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fb680913ee293bcc
-dashboard link: https://syzkaller.appspot.com/bug?extid=2e0d2840414ce817aaac
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132a2020580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1291d0f8580000
+If we want more readable error messages here, the solution for me is
+just to redefine BUILD_BUG_ON_ZERO() to print a more meaningful error
+message by default. But this is not the scope of this series. I sent a
+separate patch for this:
 
-Reported-by: syzbot+2e0d2840414ce817aaac@syzkaller.appspotmail.com
-Fixes: 0ee288e69d03 ("bpf,perf: Fix perf_event_detach_bpf_prog error handling")
+  https://lore.kernel.org/all/20241205151316.1480255-2-mailhol.vincent@wanadoo.fr/
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Concerning statically_true() instead of is_const_true(), let me test,
+and if this works, then I will replace these in v2.
+
+
+Yours sincerely,
+Vincent Mailhol
 
