@@ -1,116 +1,108 @@
-Return-Path: <linux-kernel+bounces-433403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8899E9E5800
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:57:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E0A9E5803
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35AD116AF0B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA081883EE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C765221D592;
-	Thu,  5 Dec 2024 13:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966C219A92;
+	Thu,  5 Dec 2024 13:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRm97cn9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="jbdHjFaU"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2963A21A421;
-	Thu,  5 Dec 2024 13:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181C4219A68;
+	Thu,  5 Dec 2024 13:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733406957; cv=none; b=QGOvFnUqIY92SAa21LuT0pVv1v05JwIMg87fCTGYajCvY0m60ByKrSPBoEczgXkHynfuspaPeSRAzzkWRV7JhgAya0Vdh7mxnBYdFUpi5xflKDziEvw2JwokNS8A7xFBbNBhTY6zYbRUXLJJcTlPhIlD/UBgt+CVYWNc7vUxhAQ=
+	t=1733407031; cv=none; b=SzjngmdNeQwdpeYnIk1X3NF8tyrUmMZhW8Yc9+s0Q3LRuuzjyv7tffm9YXiq8qt8yqEwWSxaNe1BXBfvJrAh0P0PxiAQeDa0/hkB37d+haIvIJnY/bNjzX7RdvNOL2abdYFRuuDdda50G8u5tz8ZuASiRXpKAs2hvkXCStWF2jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733406957; c=relaxed/simple;
-	bh=9xfNcPVSe44pJPtT9gM7f8XpXMhKID/xZCOWJKPfTiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=k0J47A1KP9sueqarce6VIrwvoIxjWNDsg5q1GGY1x/nP9BtI5fGySoOEPpImVEYS4Jwf0rtYKlgnUbEmbU2eLWhrmY7w6vO2FWiIuKPkL5Gl248ZIxDsZID/HmRS4N1cKYitaS8B5ZRB2xzvfuwDqgfuoMpKWk3W3djjIoGfc18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRm97cn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CBE4C4CEDF;
-	Thu,  5 Dec 2024 13:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733406957;
-	bh=9xfNcPVSe44pJPtT9gM7f8XpXMhKID/xZCOWJKPfTiU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tRm97cn9eeAPAJMLXbs+YhVuQBugoRRq4zk3EDVRA6/xe8D9TK1TGrdgBgLVUXEww
-	 Q/ZueGm+KCMJOxe04cB3MECeCx5TDE7tfjrEIC5I7bD0Cq8snA1uAVMrx+EQzJvhft
-	 eZC2UNGkx4FRk157vMcxBO5KEeOnWeQltrOUSLwjkrNaYIqt/Csm4Dav2kkGlgL/Ga
-	 pyu2dyIwrPkBK0JvGC7rD3djyBwKMYq5/XHQJvbPqQq67vJNdvZkTFdg90cxHtfvXf
-	 CTBe8+eVZ/JnjHroRHE+zsUX1YQekrEIEJCPE8h7/Rp+TK+HBppRhvX3tmFZlWFMKI
-	 ZO4bM7UTTztZQ==
-Date: Thu, 5 Dec 2024 13:55:53 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Dec 5
-Message-ID: <Z1Gw6QQaz5VxFKFW@sirena.org.uk>
+	s=arc-20240116; t=1733407031; c=relaxed/simple;
+	bh=je2zj7fD0FddiGbiY0XDMI7nIcZj/3JIJPNgFgLplK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DfYIqNdiPl8p4VAZ0DNi1zNEBjaC+1/G3LJbgbl8YL5FKfuYd2l96HaJxEF5Vt7PeGIks6GNSZr8wZOx+ydzVKWILbQK4vMrWOMtuHkpPUpMoekPFl+ohVD/1q7R2RCI6aL4TOGe3pIAMvBNxPJ1zRjWLNQL6nNmb8GVebt78BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=jbdHjFaU; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FEABDAC70;
+	Thu,  5 Dec 2024 14:57:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1733407025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UtwhQ7C5wIeYPqzyZt2Yd8pSy/Elm6bNLL9V5/J8XZE=;
+	b=jbdHjFaUlxfsL26C+dla6KyV8k7UjqTgRVoj/TvhdfoeHCtxQdiqUmObIUma7YYxmPqR4Q
+	40/T8kELCF3zw9Yycq/V7T91V2L6Ha7MVpc3XXzOfGl7/R6As3x3dQHIHX7Ro3tN6bzpVp
+	hjvql7TU4J84AYaERo4EzSYDTqJnNZly9L+pM962hw4mu48WXwC22aFo8mqe8EkRBr440c
+	5FahfA6zAqZWR0LMemdIDw8uCGj2imic1K3I4ZoK+ljIOJCMjDjMBlRKyD8rKzA0bDeEcg
+	Obi+LJufd0e/dNT/cYKs40KqXPzxih9R6aodufL99xc+98jFzsU+uVXFZnKBbw==
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>,
+	 <linux-rt-users@vger.kernel.org>,
+	 <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>
+Cc: Daniel Wagner <wagi@monom.org>
+Subject: [PATCH RT 0/1] Linux v4.19.325-rt140-rc1
+Date: Thu,  5 Dec 2024 14:57:02 +0100
+Message-ID: <20241205135703.20341-1-wagi@monom.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Q1J+13aApQ1Q4AGh"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
+
+Dear RT Folks,
+
+This is the RT stable review cycle of patch 4.19.325-rt140-rc1.
+
+Please scream at me if I messed something up. Please test the patches
+too.
+
+The -rc release is also available on kernel.org
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+on the v4.19-rt-next branch.
+
+If all goes well, this patch will be converted to the next main
+release on 2024-12-12.
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
+Changes from v4.19.324-rt139:
 
 
---Q1J+13aApQ1Q4AGh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Daniel Wagner (1):
+  Linux 4.19.325-rt140
 
-Hi all,
+ localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since 20241204:
+-- 
+2.47.1
 
-None.
-
-Non-merge commits (relative to Linus' tree): 1753
- 1758 files changed, 67871 insertions(+), 29887 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
-and a native build of tools/perf.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 387 trees (counting Linus' and 148 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---Q1J+13aApQ1Q4AGh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdRsOgACgkQJNaLcl1U
-h9ApzQf/T07oRQJfFRlPkS4kHhM1RBfZo1RWsCQzdQFcUTKyguSaWKzAWFuRoXdW
-KAzFbtuJrk9acsNHVf21ujRVl+PjmVh7tMNiyRmUC2K0DQUW1ZhFBSwbGTyDtVnp
-bxzZhcCUD5uQ8LFhefZ2FTe1Uq3HiDrS6pm6YtqpmsUOZuAZiAIvD5rIQpMBfn5s
-GARQQIkYCWkfFq11qc7LYjiQR2rUwTUtMk/TdI+gyPRrJ/uKQTxaXlKEsXjmZnnd
-89mpIB9TReK2ZBZmjhleIGPDp6LmcQKwTdafYJoWJJ+KjSaWsDss+pyjUXoJ7c/7
-PKikxlMcAbqdnRpEhT8JAsp5jC7UKw==
-=/E3v
------END PGP SIGNATURE-----
-
---Q1J+13aApQ1Q4AGh--
 
