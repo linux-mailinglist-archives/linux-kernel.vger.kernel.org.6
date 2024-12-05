@@ -1,61 +1,50 @@
-Return-Path: <linux-kernel+bounces-433678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810A79E5B89
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C981C9E5B8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D93163652
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:35:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34B4164267
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB7822144B;
-	Thu,  5 Dec 2024 16:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxiowLmv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92CA1DD87C;
-	Thu,  5 Dec 2024 16:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9F122144B;
+	Thu,  5 Dec 2024 16:35:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DB421CA18;
+	Thu,  5 Dec 2024 16:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733416501; cv=none; b=OQ25EgCFWxpibx9URhhq7/T+7Hu7+oS9Z7K0MJyKFpYiFi7ZcUHp3XkDJSKRjPPGXtuTD4AePj+1emWmO1PaUbrSGGtH4NKiEWX0YHdSNTCxK53dXK7b1XDl4qv9hX3OKpM743h2k8Dp8o1/UrkpyLic6xOQgjSP+Q/JSaEG8hY=
+	t=1733416539; cv=none; b=j7uTQ+LZakq2zVDNRz61aW1Mn7cndrd+T83wZUa1rdtQtv6u+EoVfG2nAc5NIFYT/eAhEh5bNX9KhgHA5cbjpvkAJjPIZH57k1iIdjk8CbHi76J55WJK6u4NAp99ZFRHWZbb2LiXqMVw4Yk7SixeiAx1zCFH35la1J8SeyGl9Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733416501; c=relaxed/simple;
-	bh=LkDpp24EoiR1aaZseVHVH5cOld710oeNG3SsznlyDe8=;
+	s=arc-20240116; t=1733416539; c=relaxed/simple;
+	bh=K3Bs2RtR8o7MWBW9/HZ/1xV56uM95Nq9cdHJeJ+msnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+USzetN5rvx3elZMVH1mz/R6I8d/yzRDmXgSMZL2wv3YKpVqWlNMtDgoIEQriqBx56zu+SmhZGcglr+XRH/t3X4VxlKuk8YJ0tG9EaCbUBciOO3m3p4efQR8fYq0D9+KLTTohFed3pH3Ww0CsSHsou9ArVWYU4a/w382H5plgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxiowLmv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8AEAC4CED1;
-	Thu,  5 Dec 2024 16:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733416501;
-	bh=LkDpp24EoiR1aaZseVHVH5cOld710oeNG3SsznlyDe8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CxiowLmv4WHmU6hQTOxS+kbaE3DMEPuPd3YB6mjoAZHUb6JMIdypYx9bmODcxOVQ0
-	 ZI3VLZBHJpsdPK/j7Py8X6nI9HhPel0UmVy1dVsrDzR1pETOr/WvEfUY2LL3s8VFj/
-	 WuyF2V4KktszFMjRJGsw6Jg0Orx5DlrpTG8avTJNnrKxRedUbGGdNUM1+3WxdNXHPT
-	 I1I/T52MRhTurbduGnmIys4Bfcr4mintTbWKpU/iC7gmFxRq3UgVgIFg8kamkrWhJ4
-	 7qMYvbOXsvpOJZiXPwbLtQsPtP9/XjqTmKPuHgTzpVfXbEhE6XGbEmrh+M2oFezs6P
-	 IHuE47eYHMGkQ==
-Date: Thu, 5 Dec 2024 16:34:55 +0000
-From: Simon Horman <horms@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
-	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, sudongming1@huawei.com,
-	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hkelam@marvell.com
-Subject: Re: [PATCH V4 RESEND net-next 4/7] net: hibmcge: Add register dump
- supported in this module
-Message-ID: <20241205163455.GD2581@kernel.org>
-References: <20241203150131.3139399-1-shaojijie@huawei.com>
- <20241203150131.3139399-5-shaojijie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tna12rAnXC/lHIO0MLNy6vlKnRL0JHosYRDzutwGHFgkOBfo83aSQZP5S2zz75QhPGKb99ViGOtvv6sMYCLRodhvDCxWXp1FOOrYbLNoHCISrvBvisEpW+gTs5e3RhMwP78JScp4rXlBddPU9lAbKX6sPKoIn290AisK49vJrGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41ECC1063;
+	Thu,  5 Dec 2024 08:36:05 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CD9A3F5A1;
+	Thu,  5 Dec 2024 08:35:35 -0800 (PST)
+Date: Thu, 5 Dec 2024 16:35:33 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: <cristian.marussi@arm.com>, <andersson@kernel.org>,
+	<konrad.dybcio@linaro.org>, <linux-kernel@vger.kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
+	<quic_kshivnan@quicinc.com>, <arm-scmi@vger.kernel.org>
+Subject: Re: [PATCH V5 0/2] arm_scmi: vendors: Qualcomm Generic Vendor
+ Extensions
+Message-ID: <Z1HWVfIS-w0OXQHl@bogus>
+References: <20241115011515.1313447-1-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,51 +53,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241203150131.3139399-5-shaojijie@huawei.com>
+In-Reply-To: <20241115011515.1313447-1-quic_sibis@quicinc.com>
 
-On Tue, Dec 03, 2024 at 11:01:28PM +0800, Jijie Shao wrote:
-> The dump register is an effective way to analyze problems.
+On Fri, Nov 15, 2024 at 06:45:13AM +0530, Sibi Sankar wrote:
+> The QCOM SCMI vendor protocol provides a generic way of exposing a
+> number of Qualcomm SoC specific features (like memory bus scaling)
+> through a mixture of pre-determined algorithm strings and param_id
+> pairs hosted on the SCMI controller. Introduce a client driver that
+> uses the memlat algorithm string hosted on QCOM SCMI Vendor Protocol
+> to detect memory latency workloads and control frequency/level of
+> the various memory buses (DDR/LLCC/DDR_QOS).
 > 
-> To ensure code flexibility, each register contains the type,
-> offset, and value information. The ethtool does the pretty print
-> based on these information.
+> QCOM SCMI Generic Vendor protocol background:
+> It was found that a lot of the vendor protocol used internally was
+> for debug/internal development purposes that would either be super
+> SoC specific or had to be disabled because of some features being
+> fused out during production. This lead to a large number of vendor
+> protocol numbers being quickly consumed and were never released
+> either. Using a generic vendor protocol with functionality abstracted
+> behind algorithm strings gave us the flexibility of allowing such
+> functionality exist during initial development/debugging while
+> still being able to expose functionality like memlat once they have
+> matured enough. The param-ids are certainly expected to act as ABI
+> for algorithms strings like MEMLAT.
 > 
-> The driver can dynamically add or delete registers that need to be dumped
-> in the future because information such as type and offset is contained.
-> ethtool always can do pretty print.
+> Thanks in advance for taking time to review the series.
 > 
-> With the ethtool of a specific version,
-> the following effects are achieved:
-> [root@localhost sjj]# ./ethtool -d enp131s0f1
-> [SPEC] VALID                    [0x0000]: 0x00000001
-> [SPEC] EVENT_REQ                [0x0004]: 0x00000000
-> [SPEC] MAC_ID                   [0x0008]: 0x00000002
-> [SPEC] PHY_ADDR                 [0x000c]: 0x00000002
-> [SPEC] MAC_ADDR_L               [0x0010]: 0x00000808
-> [SPEC] MAC_ADDR_H               [0x0014]: 0x08080802
-> [SPEC] UC_MAX_NUM               [0x0018]: 0x00000004
-> [SPEC] MAX_MTU                  [0x0028]: 0x00000fc2
-> [SPEC] MIN_MTU                  [0x002c]: 0x00000100
-> [SPEC] TX_FIFO_NUM              [0x0030]: 0x00000040
-> [SPEC] RX_FIFO_NUM              [0x0034]: 0x0000007f
-> [SPEC] VLAN_LAYERS              [0x0038]: 0x00000002
-> [MDIO] COMMAND_REG              [0x0000]: 0x0000185f
-> [MDIO] ADDR_REG                 [0x0004]: 0x00000000
-> [MDIO] WDATA_REG                [0x0008]: 0x0000a000
-> [MDIO] RDATA_REG                [0x000c]: 0x00000000
-> [MDIO] STA_REG                  [0x0010]: 0x00000000
-> [GMAC] DUPLEX_TYPE              [0x0008]: 0x00000001
-> [GMAC] FD_FC_TYPE               [0x000c]: 0x00008808
-> [GMAC] FC_TX_TIMER              [0x001c]: 0x000000ff
-> [GMAC] FD_FC_ADDR_LOW           [0x0020]: 0xc2000001
-> [GMAC] FD_FC_ADDR_HIGH          [0x0024]: 0x00000180
-> [GMAC] MAX_FRM_SIZE             [0x003c]: 0x000005f6
-> [GMAC] PORT_MODE                [0x0040]: 0x00000002
-> [GMAC] PORT_EN                  [0x0044]: 0x00000006
-> ...
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> V4:
+> * Splitting the series into vendor protocol and memlat client.
+>   Also the move the memlat client implementation back to RFC
+>   due to multiple opens.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Sorry if I missed the rationale for the split here from the previous
+discussions, but I would like to see the DT bindings if any for all the
+users first before I can merge this. I am happy to get this series reviewed
+independently but my views might change looking at how it will be used as
+I might get better idea looking at the users. I really don't like the
+interface as well as the DT bindings that might be enforcing us to define.
+I have given my initial comments there.
 
+No need to respin it together immediately or even in future as along as
+there is a reference for me to look at.
+
+--
+Regards,
+Sudeep
 
