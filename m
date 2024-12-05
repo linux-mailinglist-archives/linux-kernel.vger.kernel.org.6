@@ -1,158 +1,171 @@
-Return-Path: <linux-kernel+bounces-433860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C490B9E5E14
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D329E5E17
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB131885CA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:12:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F58D18853E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B590D227BA5;
-	Thu,  5 Dec 2024 18:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983D6227B92;
+	Thu,  5 Dec 2024 18:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4LAdYka"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L5WxvhKR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26322579F;
-	Thu,  5 Dec 2024 18:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794CE22146A;
+	Thu,  5 Dec 2024 18:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733422338; cv=none; b=HpaaETScXH68L7+/YduDzIiNC4QXVEN7vr30FKGzdrLsSJbb/cRWrAY6qZw8NMH0Jl4JNXRqCydc9rz4gyGkFwTzj+RC+Vl0mYaQkmpLNCAb4EYAeGcOYxGzQNMMzED46j4wBZqLQrwZOquf5BW+37rZLRUMqgREwvjC3E8WUq8=
+	t=1733422395; cv=none; b=HUkk1r/hXwk522qUlLTNgyDT43BWGy+3SK8wiAexhZy1e/Drm5y0Qo8WmQxE0vZVNPjZ0RyqdsklJgCqrz4hWorBDRVrqcZQnH4iCbKVlyikQOxNxSjjBBQQV9ojsY0aa+XM5Awjv4HrpIgzJBMi7X60Rjp9RcVCCc4wn799f60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733422338; c=relaxed/simple;
-	bh=QSZyaJi7d+QA+wOooiJNqMdZ/M4qnUu86w6eRcFcCnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nPIFd/b2qBjgvK/AgEteFEazNw8bEGU/GPagMUZdUjyfnQhFV/PKFz6OzIB43iSIGD+8zCyAemYSHKSemYES5UDyVQvInNOHG7FJjihfwd4nQjkWHwGO7RLwWu8TZP+ALF4CssD680HdnsGkObsFyW6HF78Wg+fh9Kr/r1vMHlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4LAdYka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C3C2C4CED1;
-	Thu,  5 Dec 2024 18:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733422337;
-	bh=QSZyaJi7d+QA+wOooiJNqMdZ/M4qnUu86w6eRcFcCnM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=o4LAdYkapUYSlaTfcyJXGeTIcz4sh59MYtxw9ug53TfwO2SaxuM7FRgAG43MlDSlH
-	 Ud53mXK7Zc+p84UkN0DRlu412C9D+in5OGJ+OHO/JZnVE+rK5aGIUZvgVxw36bErZ5
-	 Wc2Cnr0Y3uts4Wt4Kgj7SczqhmlrGp/optJALE5nSVdgJhdzRzlKuRnz94hHht2xA6
-	 ojyg/3uEW0mb+tmPOqxVKFpCFeqpN/pvXLwVw00+Rcvw6czE6M4xxxuSf8+t7Om3aB
-	 HsRVk5XlWecCBYyv3PYmYdHEopxpWNeMKIGvEGQNAe7LZq089Hp9WpN6X9FOmFzYG6
-	 AYhB0A3KpU7/Q==
-Date: Thu, 5 Dec 2024 12:12:16 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
-	Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v5 0/5] Verify devices transition from D3cold to D0
-Message-ID: <20241205181216.GA3058743@bhelgaas>
+	s=arc-20240116; t=1733422395; c=relaxed/simple;
+	bh=pr7H0IHzLVobhPW9iDoCa88k9vsxbacp/99FOaF7ylg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JKQ1Sy9ttau4LxU+lmHiXoFk45yvC8LkDMbI2S3yT3q3v5ur5q2UwD3o1zwF9aaATZNBdl7DLFnOc/6vELr3R3SDjuM4ToKF1QYJ2iG/Wt7iFPUCiM2KB4YJWUV5OWLlnfaafjoRSHJfOH2+dpDQQCfoQDKWzbqf/bOxdqlEasA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L5WxvhKR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5A4aJF028365;
+	Thu, 5 Dec 2024 18:12:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=cGlw91
+	o+nrHexn6X/BuiTL1FWhww73eXoOd6hiiEq84=; b=L5WxvhKRw8DyKH/ITtKtM3
+	593DIwipompVZz5cmRoPVmfbA7cxsZQl34NW3sBSds0GKK+dW6jD5pHNMmtcgJFl
+	NxrbM7I/gTkiXKXOClxDDS2sEb9e12n35iRUZYxXJnd0pbTy/oMP70ildqnVH14L
+	vV/d8TvLx5H8bqHzgf/f49yra50K0C+kyZhibkUjsY5yVjwxxvvpKYsTdGmPohzk
+	YXYeZz423GAEB3hE5rtZ3SVKsxh3biMCv52/2lVum92PyhsljvBSLNcCAJ1BGEAE
+	h2j3GVW2lb9oQutZerD31tsRy/hCxhzsaW6yR5olg80GFiAkGPQAXLzF9GS35QBA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ax65wpbk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 18:12:58 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B5I4HGM031691;
+	Thu, 5 Dec 2024 18:12:58 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ax65wpbg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 18:12:58 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5H2wwm023015;
+	Thu, 5 Dec 2024 18:12:57 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1na2jv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 18:12:56 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5ICsEa50070008
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Dec 2024 18:12:55 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AD19E20049;
+	Thu,  5 Dec 2024 18:12:54 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2284D20040;
+	Thu,  5 Dec 2024 18:12:49 +0000 (GMT)
+Received: from [9.39.27.71] (unknown [9.39.27.71])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Dec 2024 18:12:48 +0000 (GMT)
+Message-ID: <1f7ad21c-372f-4d7d-b3dc-9a2fb194b704@linux.ibm.com>
+Date: Thu, 5 Dec 2024 23:42:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1dafdb9-1480-480a-97f1-b43367d883fb@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] s390/topology: Add initial implementation for
+ selection of parked CPUs
+To: Tobias Huschle <huschle@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, linux-s390@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20241204112149.25872-1-huschle@linux.ibm.com>
+ <20241204112149.25872-3-huschle@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20241204112149.25872-3-huschle@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: v4kEbZjuL794IdCBoJXt4wddme7825tN
+X-Proofpoint-GUID: H3adm36waO2L6ynLjyvuSXJGfo6b6ayR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1011 impostorscore=0
+ bulkscore=0 adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412050132
 
-On Wed, Dec 04, 2024 at 09:44:05PM -0600, Mario Limonciello wrote:
-> On 12/4/2024 17:45, Bjorn Helgaas wrote:
-> > On Wed, Dec 04, 2024 at 11:30:51AM -0600, Mario Limonciello wrote:
-> > > On 8/23/2024 10:40, Mario Limonciello wrote:
-> > > > From: Mario Limonciello <mario.limonciello@amd.com>
-> > > > 
-> > > > Gary has reported that when a dock is plugged into a system at the same
-> > > > time the autosuspend delay has tripped that the USB4 stack malfunctions.
-> > > > 
-> > > > Messages show up like this:
-> > > > 
-> > > > ```
-> > > > thunderbolt 0000:e5:00.6: ring_interrupt_active: interrupt for TX ring 0 is already enabled
-> > > > ```
-> > > > 
-> > > > Furthermore the USB4 router is non-functional at this point.
-> > > > 
-> > > > Those messages happen because the device is still in D3cold at the time
-> > > > that the PCI core handed control back to the USB4 connection manager
-> > > > (thunderbolt).
-> > > > 
-> > > > The issue is that it takes time for a device to enter D3cold and do a
-> > > > conventional reset, and then more time for it to exit D3cold.
-> > > > 
-> > > > This appears not to be a new problem; previously there were very similar
-> > > > reports from Ryzen XHCI controllers.  Quirks were added for those.
-> > > > Furthermore; adding extra logging it's apparent that other PCI devices
-> > > > in the system can take more than 10ms to recover from D3cold as well.
-> > > > 
-> > > > This series add a wait into pci_power_up() specifically for D3cold exit and
-> > > > then drops the quirks that were previously used for the Ryzen XHCI controllers.
-> > > > 
-> > > > Mario Limonciello (5):
-> > > >     PCI: Use an enum for reset type in pci_dev_wait()
-> > > >     PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in pci_dev_wait()
-> > > >     PCI: Verify functions currently in D3cold have entered D0
-> > > >     PCI: Allow Ryzen XHCI controllers into D3cold and drop delays
-> > > >     PCI: Drop Radeon quirk for Macbook Pro 8.2
-> > > > 
-> > > >    drivers/pci/pci-driver.c    |  2 +-
-> > > >    drivers/pci/pci.c           | 70 +++++++++++++++++++++++++++----------
-> > > >    drivers/pci/pci.h           | 13 ++++++-
-> > > >    drivers/pci/pcie/dpc.c      |  2 +-
-> > > >    drivers/pci/quirks.c        | 25 -------------
-> > > >    drivers/usb/host/xhci-pci.c | 11 ------
-> > > >    6 files changed, 66 insertions(+), 57 deletions(-)
-> > > 
-> > > Bjorn,
-> > > 
-> > > This series has stalled a while.
-> > > 
-> > > Mika and I went back and forth and I think are generally in agreement so I
-> > > think it's waiting on your feedback.
-> > > 
-> > > Can you take another look?
-> > > 
-> > > The alternative is to add some more piles of quirks, but I'm hoping that we
-> > > can go this direction and drop a bunch of the old ones instead.
-> > > 
-> > > LMK if you want me to rebase it on 6.13-rc1 and resend a v6.
-> > 
-> > I'm still stuck on patch 2/5 because I'm not aware of any spec
-> > language about polling PCI_PM_CTRL to wait for a power state
-> > transition, so it seems really ad hoc.
+
+
+On 12/4/24 16:51, Tobias Huschle wrote:
+> In this simplified example, vertical low CPUs are parked generally.
+> This will later be adjusted by making the parked state dependent
+> on the overall utilization on the underlying hypervisor.
 > 
-> I'm not really sure how to overcome this.  If I rebase everything I'll give
-> specs another read through in case I missed anything, but I suspect you know
-> these specs better than anyoe on this list.
+> Vertical lows are always bound to the highest CPU IDs. This implies that
+> the three types of vertically polarized CPUs are always clustered by ID.
+> This has the following implications:
+> - There can be scheduler domains consisting of only vertical highs
+> - There can be scheduler domains consisting of only vertical lows
 > 
-> Is it worth raising this to PCI-SIG to discuss?
-> Did you perhaps already do that?
 
-I haven't, but it seems like that might be appropriate.  Can we
-formulate a question in terms of PCIe concepts?
+A sched domain can have combination of these two as well. Is that not 
+possible on s390?
 
-I guess some of the pieces are:
+> Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
+> ---
+>   arch/s390/include/asm/topology.h | 3 +++
+>   arch/s390/kernel/topology.c      | 5 +++++
+>   2 files changed, 8 insertions(+)
+> 
+> diff --git a/arch/s390/include/asm/topology.h b/arch/s390/include/asm/topology.h
+> index cef06bffad80..e86afeccde35 100644
+> --- a/arch/s390/include/asm/topology.h
+> +++ b/arch/s390/include/asm/topology.h
+> @@ -99,6 +99,9 @@ static inline int numa_node_id(void)
+>   
+>   #endif /* CONFIG_NUMA */
+>   
+> +#define arch_cpu_parked cpu_parked
+> +int cpu_parked(int cpu);
+> +
+>   #include <asm-generic/topology.h>
+>   
+>   #endif /* _ASM_S390_TOPOLOGY_H */
+> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+> index 4f9c301a705b..1032b65da574 100644
+> --- a/arch/s390/kernel/topology.c
+> +++ b/arch/s390/kernel/topology.c
+> @@ -299,6 +299,11 @@ void store_topology(struct sysinfo_15_1_x *info)
+>   	stsi(info, 15, 1, topology_mnest_limit());
+>   }
+>   
+> +int cpu_parked(int cpu)
+> +{
+> +	return smp_cpu_get_polarization(cpu) == POLARIZATION_VL;
+> +}
 
-  - ACPI puts device in D3cold
-  - ACPI restores device to D0
-  - Device is not yet in D0 when ACPI method has completed
-  - OS read from device causes UR or RRS, so OS reads ~0
+Curious to know how this smp_cpu_get_polarization gets updated at 
+runtime? is it done by add_cpus_to_mask?
 
-It's much more complicated if ACPI is involved because then we have
-question of whether the ACPI method should have waited.
+> +
+>   static void __arch_update_dedicated_flag(void *arg)
+>   {
+>   	if (topology_cpu_dedicated(smp_processor_id()))
 
-Patch 3/5 mentions "Full context restore or boot latency" language in
-PCI PM r1.2, but I couldn't find section.  I don't know how a generic
-spec could constrain D0->D3cold or D3cold->D0 transition time because
-that depends on platform-specific power management hardware.
-
-Bjorn
 
