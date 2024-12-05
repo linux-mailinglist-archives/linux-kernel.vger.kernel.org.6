@@ -1,127 +1,126 @@
-Return-Path: <linux-kernel+bounces-432996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E715B9E52C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 479DA9E52C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1555F1883688
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:43:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71EFB1882D1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7EC202F86;
-	Thu,  5 Dec 2024 10:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A603206F1C;
+	Thu,  5 Dec 2024 10:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnMLmm3t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M79Uz546"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7E81D63C7;
-	Thu,  5 Dec 2024 10:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B82D1D90A7
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395320; cv=none; b=Q+bdYvbVHfK5izp5vVwzXUbLwdp206/jX08VmwRn1JljuzKBzAby/0d3rOe9gDEUJtW7pkCYr/3nfq1j4spwfYmrfgTy9o27twMsPuDkggzVRuKjjIZA9/xEO5IPZ/NOF0PhqqpCF4RD+x/CNitcKj+9QM/JfgPtsN+AuN3n8Wo=
+	t=1733395330; cv=none; b=ueXxqZ2RFd4bfiCAFLERyWKa6KUh9O1W0afpMt6+AQwGLcfBS0XwCvvWwN0iX5Ijj1zVyLg+aCNEDlitAhk1Xz9OQnCFZAFEu0YJBpjle9f/eUKxxc+KOTZrNENp1UfFTuta9/jeWzO1/Lszq7WV9G9jNDec+rPvyN0y6eufd+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395320; c=relaxed/simple;
-	bh=NZpLIj+aF6yV18wyiV+hZZsvH1NLZeOx7bLmfti8dgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCI9FrCK1VolvGDDZF4jeniyUIGQJAs2fyqalzv26BVCawgEzBN9F3DsziPVUT5euLx1agvK+uiPgDTVVwnZ29k/wvMXcShqas862dywiD+B9FtuQyO+2ttuWcKzTBadFdtqHkmga2CqUnXArfKX713jAIfxJWoEEBY2Xx0ko5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnMLmm3t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73D7C4CED1;
-	Thu,  5 Dec 2024 10:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733395319;
-	bh=NZpLIj+aF6yV18wyiV+hZZsvH1NLZeOx7bLmfti8dgM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VnMLmm3tlYwB1Ys4r5Vn/PjbwurVtHQJbu2Sp9+upCl8vyYMiKZJtRNZi9p41s3dd
-	 +QwXcCDWaVNsFDd7tYDQKJycBt3wIkC592WOq5c2OCWOox4WrIqAu/bKBeyRsi9N93
-	 T1aLVwyzqHihZ94hruw1akFGxr+cDy3yHC2zrIbMFU3LuOjZrbl8eYf2Xf9teq8jxz
-	 2r20V8p90hvV6R/o7HM9bEiRQkiL/bJUld2qbg2DALga5ZVfRhhR8QSVihRYtnbPZN
-	 Wqeewe7ZalHOUg6pZrwnuZb9WoFgbLJW6wGDJL2UxBTqsu9BZIZAp8fWpe9+R5mTX7
-	 45eztKwfLgngQ==
-Date: Thu, 5 Dec 2024 11:41:56 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, linux-sound@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-block@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	open-iscsi@googlegroups.com, linux-usb@vger.kernel.org, linux-serial@vger.kernel.org, 
-	netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v3 04/11] driver core: Constify API device_find_child()
- then adapt for various usages
-Message-ID: <h4pndknfwvck5yjnbs5rdmrxkqeksfxldwj4qbjqyvdzs5cjbf@i4afsjsg3obw>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-4-1611f1486b5a@quicinc.com>
+	s=arc-20240116; t=1733395330; c=relaxed/simple;
+	bh=InyyJ5b3p+cMV6PwTAk19hDK9hyyw6Af0BJu9ci/YHs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gL5U5YifCUjqEQPp5ScpCTkR+anwlebqvnToKITyfwHCymuKRHSfFKe4ENzTVEywsUhSBYfdn+c40fLO7SGzMImO9X7VHoZ6DtNg3g+QPoOVbyby5PwO1FJqSsiQSi+w3sEWp4gU8srG1bvmqhZiwCqSDSSZ4wPvQl9HgL08l50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M79Uz546; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385df6d7493so20595f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:42:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733395327; x=1734000127; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8KIDC3qcWfMKcz6d3c6ytjMEzqjSJwAXK2JJVWX96Zw=;
+        b=M79Uz546CUBxrXyRUh1HooIXM0NGWphtJqZ/mJU11XlhM3L09z+7XJVxqk2s6ljBZQ
+         sWW3QoP99PsZu2bY/fMSVmGNZnQVtdE9bsuOO+JDh4LJbgtSAirYMLTu1Scb7QkJ38SL
+         dZMhgNlpDHv/6tEmk3f3STXLrMDhrCpbxhliyVArOg0PYZWtGIe9WO6TdeY79xWZaC6c
+         lcyF4s9PKjKwEt2ZfeJMU2GZeiCf1swSQsjioH8t1XPFL6bwMBOj4Y235NvdMysG2p3Q
+         DzC1bZXP2gxOOSZVLoyTY0iP2KJHqbE71HVEr4Q/WPSG2VWOeFmFUh19IAqQkWkQ9TvC
+         SEZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733395327; x=1734000127;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8KIDC3qcWfMKcz6d3c6ytjMEzqjSJwAXK2JJVWX96Zw=;
+        b=fGK5eqflxMTCWMMy4/iD5GPuIndPwE21uM52n0UmOsu922Ix/YRHAex933P65Np7VK
+         tY3xi+yuVVn6WJbI7Wy9mwc6IjO9lglB8i879d9ZZqFOjkt8f5AH4z13cfLe2CDH8xmh
+         ACP6xA5Cq3vhI9wLc9VpVQ5bwnxuvxnyhn5P2UWTogPpGFjoKlvLfiK3nvGPdispAg68
+         J43qz4b1op8WR2s/raGcYFtb3EsFW6Kr0uCSrMykqASvy0+fol8G0XF5HM0JMozbF4VQ
+         6G9xfcpUhJgO/XNC6DKayC3WWlhNsCJJfDf93N63uohqHfAKxgGxZDsNy6FMsGNjfYJP
+         lb8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJGhxcDLiPz2aLeV9hF9GLkpMbyeakc060SKRv7MDTjMgN82LmQchpnMrAa0/TtQHiWKJjiJI3POguCkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyry3JwGu79gmVFKHNXJzsuaAt/kWmPpwpLhR6pM7bxWJKkaF07
+	wt6esUl26hKfA5rSRknP6txB+tn01eiC8McaX060fKfQR8nQf8CP4HjJTQpl8cY=
+X-Gm-Gg: ASbGncudxkUAWdXzpNUWGwqyimH/a2/CEUkfy4jjimh8iak9N5K5WfTODR01WVzzPaT
+	TfyXNokGj9xLRuqrii9QpFNPYup7qyY08IAy0iHSFbCSDuAjr/OEABQy7dxyxHbdJYMLdTiZ7T5
+	0dFargDKJLdDlXmG/bCuZ8EpAm2AjeSnhV6f/lkQG66LCDxAqiRfRpqaxLymqJ6zoPMQpKyb/Vx
+	0MqVZ5SmFFtU2vAYLUu3rmUGfguHBVFJrl/n1kQfogz5V3Vy+vyXedqkfWEr1e3ig==
+X-Google-Smtp-Source: AGHT+IEIGJejMyX78O7Y5nPwUxTR92b8MmG1gEAzs8vepMTJTKVucanlx+rtoPz82m9AIVr178e/lg==
+X-Received: by 2002:a5d:6d02:0:b0:382:41ad:d8e1 with SMTP id ffacd0b85a97d-385fd42b9ddmr3240841f8f.14.1733395327461;
+        Thu, 05 Dec 2024 02:42:07 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861ecf406csm1662701f8f.3.2024.12.05.02.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 02:42:06 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <cover.1730918663.git.stano.jakubek@gmail.com>
+References: <cover.1730918663.git.stano.jakubek@gmail.com>
+Subject: Re: [PATCH v2 0/5] Cleanup Spreadtrum/Unisoc ARM64 DT (part 2)
+Message-Id: <173339532634.70936.15343238064427564768.b4-ty@linaro.org>
+Date: Thu, 05 Dec 2024 11:42:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7cmlxza5fdv22slz"
-Content-Disposition: inline
-In-Reply-To: <20241205-const_dfc_done-v3-4-1611f1486b5a@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
---7cmlxza5fdv22slz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 04/11] driver core: Constify API device_find_child()
- then adapt for various usages
-MIME-Version: 1.0
+On Wed, 06 Nov 2024 20:05:19 +0100, Stanislav Jakubek wrote:
+> This series continues cleaning up various issues with the Spreadtrum/Unisoc
+> ARM64 DeviceTrees.
+> 
+> Changes in V2:
+> - dropped original patch 2, as it was split off into its own series [1]
+> - new patches 2, 4 and 5 which fix some issues found by Rob's bot
+>   and/or CHECK_DTBS=y
+> - rebase on next-20241106
+> 
+> [...]
 
-On Thu, Dec 05, 2024 at 08:10:13AM +0800, Zijun Hu wrote:
-> diff --git a/arch/sparc/kernel/vio.c b/arch/sparc/kernel/vio.c
-> index 07933d75ac815160a2580dce39fde7653a9502e1..1a1a9d6b8f2e8dfedefafde84=
-6315a06a167fbfb 100644
-> --- a/arch/sparc/kernel/vio.c
-> +++ b/arch/sparc/kernel/vio.c
-> @@ -419,13 +419,13 @@ struct vio_remove_node_data {
->  	u64 node;
->  };
-> =20
-> -static int vio_md_node_match(struct device *dev, void *arg)
-> +static int vio_md_node_match(struct device *dev, const void *arg)
->  {
->  	struct vio_dev *vdev =3D to_vio_dev(dev);
-> -	struct vio_remove_node_data *node_data;
-> +	const struct vio_remove_node_data *node_data;
->  	u64 node;
-> =20
-> -	node_data =3D (struct vio_remove_node_data *)arg;
-> +	node_data =3D (const struct vio_remove_node_data *)arg;
+Applied, thanks!
 
-You can just drop the cast here. But maybe that is better be done i a
-separate change.
+[1/5] arm64: dts: sprd: sp9860g-1h10: fix constant-charge-voltage-max-microvolt property
+      https://git.kernel.org/krzk/linux-dt/c/367d31471c3272b87a7e842355b2aa4bc688add8
+[2/5] arm64: dts: sprd: sp9860g-1h10: fix factory-internal-resistance-micro-ohms property
+      https://git.kernel.org/krzk/linux-dt/c/e864e215ce2197cd5d5c0e9229b4bb83379a5186
+[3/5] arm64: dts: sprd: sc2731: move fuel-gauge monitored-battery to device DTS
+      https://git.kernel.org/krzk/linux-dt/c/ec87fd9f66bb8196ce4c80b6f9a02a8fdb452821
+[4/5] arm64: dts: sprd: sc9863a: fix in-ports property
+      https://git.kernel.org/krzk/linux-dt/c/a34907f484949e3a550a54a19d71e8616d812d7e
+[5/5] arm64: dts: sprd: sc9863a: reorder clocks, clock-names per bindings
+      https://git.kernel.org/krzk/linux-dt/c/49f4ad82f031ac390ea4571a5bf7d58ee27ce4f2
 
->  	node =3D vio_vdev_node(node_data->hp, vdev);
-> =20
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards
-Uwe
-
---7cmlxza5fdv22slz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdRg3IACgkQj4D7WH0S
-/k6XGAf6Av8yk2DAhSYXPrLn/Ud4m0Je4HKR7wDERTkoucUo/owwlaJH19v3/SEN
-BoXiIS4oqDNVJbzYsEPr2ZJQLZUTvBMyzKLJ4oNU1RzaivgdSipCPyK6I0OAHNui
-CtQI8qTG+gSxHLhoEeFCl2kcnUCtV4nGeXk44by5/Mu3CkC/pXRfbRn7iLrDX34F
-XHQ9MMrA6tMoRuStbxo3xHkRI7CkjOJVO6hWgv6PPAoKdFb63QX7jdTrZQTIoNtP
-2SMqVunbF87nTNTOQZWDCN1E3vELVsVjs6YsrlJeMYI9Gs7tcbVD4OHKUvrtSf86
-UHoREl5N4LOf8l+HqvTaxQnH6pb+QQ==
-=qufa
------END PGP SIGNATURE-----
-
---7cmlxza5fdv22slz--
 
