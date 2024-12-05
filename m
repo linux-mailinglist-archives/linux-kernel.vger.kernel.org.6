@@ -1,167 +1,159 @@
-Return-Path: <linux-kernel+bounces-433031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47DC9E5323
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:57:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC9E9E5326
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:57:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F09167377
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124631881955
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DA71D2B34;
-	Thu,  5 Dec 2024 10:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B1D1DA602;
+	Thu,  5 Dec 2024 10:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpHHat8j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bp2UtrnY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013B71DA634;
-	Thu,  5 Dec 2024 10:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2941D9339;
+	Thu,  5 Dec 2024 10:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733396223; cv=none; b=Q4rJW9FqWiorM6NCgjtAI+gWV3Ze0+35WHIlX/LGtAoInNR9y9HBYNfCq6YVJgRsc0CRGdktyeZz9unzOv9STunLAnu4Du9wCqfWOwWmiDWyxkOQxdiN6xQDnx4bB0LLfDiRDjnX41AMuW4UXs9AOEUXyfp0mS62T2izVyTMtt0=
+	t=1733396233; cv=none; b=PhR61tV3hMCLC37DL6R0ixoUOjGo4TNFTnv13e5rzbx/L4tQUPLT5+5+5/t0Fkut8zrIXjpjSVhT3+lXIoGh5zNTapOQCERd73t3Rb9i/vvXxmYTUlY3We78E4ALQoIvw7mGYccOyfV5hXBOZBIdDFm8w7Jl5VIj2gr0f5zZt6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733396223; c=relaxed/simple;
-	bh=6kRllVnfwcu5TGBiLiC1h5yQU5pzrxdhDoaU3LZA5sQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GQpO+VnWtfZzUNpIYDxEZMHvkShCQmtvcnCNlBTo5aIytbj3VNFCvpg0AVlc7Y6BDzWEqE0DSdEOy8O45i1G0iPrr8OBm2T1WRS8OtE64NEG43Zg8+cU/ItUevDDG3ljpO19hkYUUnJM1CRxYSztrY6OLZgnyst6NbRyw3IGI1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpHHat8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82246C4CEDE;
-	Thu,  5 Dec 2024 10:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733396222;
-	bh=6kRllVnfwcu5TGBiLiC1h5yQU5pzrxdhDoaU3LZA5sQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LpHHat8jlUvC2RvdsBaxsPhWFrR5FOi0j2bh+OmZIqrLXRS29BhPJhHeTatXihsfK
-	 a5r0QhoeB2fdziyY0nzIMQK4g/f4c65WLoGAeGncHH3PEpyPtKmIkBjzZK8tDlL8fT
-	 1JkF/Lka1XJtVRmQylp2yqfkAyfCzF/DKr3o/VeUhX3YF40CSLFrnzXIQC/hKl656Y
-	 7OOL9iHPBUe5KywfPpmjr95oGrxxrkOD+2FCBYCIzMlLvqVzgjcIfahqSPyd5bhKAN
-	 UH2bbTkg5p1XSVG+ZjwoaTEyRtaVB2OnVzq3Hs3vDJYvWA7K3TDwle6Nk+QrMdNTnI
-	 FTs6rRHC0yl5g==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-29e2e768952so555706fac.3;
-        Thu, 05 Dec 2024 02:57:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU6GMaALuqWdqVqpNU9Tqgh6hdMABtVUslHDKOGECys9jbLf+hzG9p4vXFwq1xToXEl/VNmx4MyzXU=@vger.kernel.org, AJvYcCVE3xz3WXicXoRJTaot+kaYZrJwgmgMuq4FNzuxnWd9cTbjP/ACpnbYUsPsCVIBiLFlBGIfg4wIMUCug7Mm@vger.kernel.org, AJvYcCVK+EoTgVqQN3SFO3Q7T443xR/AJM1vvBEPHbJhJeX4P72b1/BJ84nMnNzMXpkeNK43nB6cuOFpWe46@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjBgUxc7iFPJrkvr8WJvAwlUaZHRChmQMfv2ZsL51iHoBD7k0E
-	ngbi/X78VYB73Ed1vjMMxYrL3gTbkp1JwzF8t7Y8AaMxLrvtzKHAHE5uybcLKENzWf7It3OnVEr
-	JiCsFP9/rBczG42Ajyk+My46Xmk8=
-X-Google-Smtp-Source: AGHT+IEBhDb774kuTMEXvIw3iQI6Z6uT2XhUQ6Oq/3PIm7kHDHLw4Lr3Y9TLCfDOBFAM4M1j1i5HAhTilnR+x2ZiLBs=
-X-Received: by 2002:a05:6870:798f:b0:29e:3701:47c3 with SMTP id
- 586e51a60fabf-29e8891ba52mr8780289fac.42.1733396221840; Thu, 05 Dec 2024
- 02:57:01 -0800 (PST)
+	s=arc-20240116; t=1733396233; c=relaxed/simple;
+	bh=eZmg7Arh+gScME4sGdoHyYvkstFA9GKzE5elO2gsb8A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=j8xbi9oaSVd2zLnNmN3SJ+EviHy8PCzZ0ympGl8VY2GrImmLkc/O2nmgPqS+R5GRqqzxeiCz0LqHyAK3bWSRNxiZePqh//twh/QHc9E5ioxxOhJRUgnLGFHO/PL6E4h8Y3Aa4HNH6tMa296ZmFv3ldCL29qhG6UEqnHuSmqSYdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bp2UtrnY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B542ECT031997;
+	Thu, 5 Dec 2024 10:57:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EBUdjdgLVwj0/hVJtgaHJOU56SLNHURQ1RyBIpwz4Os=; b=Bp2UtrnYL0yAewsA
+	g2+mP0bimstgu7QQKTe2scd7rgvK2rQRC4ICw2z2RUYPahnMwPkaZd79mvYjmCdW
+	3zhMK0cqvMg4JBdKZB+yQz967I+ZhQbaDJSLgh7urJ0EGfP8fwdgvxxd/9j9LxgM
+	y63IbYAtCI7u46zAXIuaqAFgsxBYeLikbN+dILRFEfN4xOT9RvwqdCSl3mZtFVjX
+	XNKoTQGGLOdnalExdzDsbemccqqSPl3cNV5NRViLf78rBOuIspacux4jV73OampP
+	Ucxjn99H83f+4Ia+1IxizJZJ0Fjzv6A0GUBao/gldbeqDDw7GjkiDG+I6yIwFGxF
+	fccPBQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3fax7ag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 10:57:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5Av1db026052
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Dec 2024 10:57:01 GMT
+Received: from [10.190.163.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 02:56:57 -0800
+Message-ID: <d61bb7bc-d824-883a-4edd-109ae74076c1@quicinc.com>
+Date: Thu, 5 Dec 2024 16:26:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5839859.DvuYhMxLoT@rjwysocki.net> <CAJvTdKm4Fermz1zgTWohEGSoGpoB3CJL2FF-u6y9FAEBwBbcnQ@mail.gmail.com>
-In-Reply-To: <CAJvTdKm4Fermz1zgTWohEGSoGpoB3CJL2FF-u6y9FAEBwBbcnQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 5 Dec 2024 11:56:50 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hyY6v2ZV-h0KMX_ehmJa38K1oQgSnNU4Mvab2Vv8y=-A@mail.gmail.com>
-Message-ID: <CAJZ5v0hyY6v2ZV-h0KMX_ehmJa38K1oQgSnNU4Mvab2Vv8y=-A@mail.gmail.com>
-Subject: Re: [RFC/RFT][PATCH v0.1] ACPI: OSL: Use usleep_range() in acpi_os_sleep()
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Hans de Goede <hdegoede@redhat.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
+ Extensions
+Content-Language: en-US
+To: Johan Hovold <johan@kernel.org>
+CC: Cristian Marussi <cristian.marussi@arm.com>, <sudeep.holla@arm.com>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <conor+dt@kernel.org>, <arm-scmi@vger.kernel.org>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <ZytnRc94iKUfMYH0@hovoldconsulting.com> <ZyvLktLUZOGP-LH5@pluto>
+ <Zy4qvedrmkRdPR3x@hovoldconsulting.com>
+ <8d42682b-0fa7-3962-da12-728cfe64903b@quicinc.com>
+ <Z0BC203BhGEmXcJi@hovoldconsulting.com>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <Z0BC203BhGEmXcJi@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3uxBE9bRq_pqJ6zTmUEmn1JHAbjS8324
+X-Proofpoint-GUID: 3uxBE9bRq_pqJ6zTmUEmn1JHAbjS8324
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050078
 
-On Wed, Dec 4, 2024 at 10:41=E2=80=AFPM Len Brown <lenb@kernel.org> wrote:
->
-> On Thu, Nov 21, 2024 at 8:15=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.=
-net> wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > As stated by Len in [1], the extra delay added by msleep() to the
-> > sleep time value passed to it can be significant, roughly between
-> > 1.5 ns on systems with HZ =3D 1000 and as much as 15 ms on systems with
-> > HZ =3D 100, which is hardly acceptable, at least for small sleep time
-> > values.
->
-> Maybe the problem statement is more clear with a concrete example:
->
-> msleep(5) on the default HZ=3D250 on a modern PC takes about 11.9 ms.
-> This results in over 800 ms of spurious system resume delay
-> on systems such as the Dell XPS-13-9300, which use ASL Sleep(5ms)
-> in a tight loop.
 
-Sure, I can add this information to the changelog.
 
-> (yes, this additional cost used to be over 1200 ms before the v6.12
-> msleep rounding fix)
->
-> > -       msleep(ms);
-> > +       u64 usec =3D ms * USEC_PER_MSEC, delta_us =3D 50;
->
-> > +       if (ms > 5)
-> > +               delta_us =3D (USEC_PER_MSEC / 100) * ms
->
-> I measured 100 resume cycles on the Dell XPS 13 9300 on 4 kernels.
-> Here is the measured fastest kernel resume time in msec for each:
->
-> 1. 1921.292 v6.12 msleep (baseline)
-> 2. 1115.579 v6.12 delta_us =3D (USEC_PER_MSEC / 100) * ms (this patch)
-> 3. 1113.396 v6.12 delta_us =3D 50
-> 4. 1107.835 v6.12 delta_us =3D 0
->
-> (I didn't average the 100 runs, because random very long device
-> hiccups  throw off the average)
->
-> So any of #2, #3 and #4 are a huge step forward from what is shipping tod=
-ay!
->
-> So considering #2 vs #3 vs #4....
->
-> I agree that it is a problem for the timer sub-system to work to
-> maintain a 1ns granularity
-> that it can't actually deliver.
->
-> I think it is fine for the timer sub-system to allow calls to opt into
-> timer slack --
-> some callers may actually know what number to use.
->
-> However, I don't think that the timer sub-system should force callers to =
-guess
-> how much slack is appropriate.  I think that a caller with 0 slack
-> should be internally
-> rounded up by the timer sub-system to the granularity that it can
-> actually deliver
-> with the timer that is currently in use on that system.
->
-> Note also that slack of 0 doesn't mean that no coalescing can happen.
-> A slack=3D0 timer can land within the slack another timer, and the other
-> timer will be pulled forward to coalesce.
->
-> The 50 usec default for user timer slack is certainly a magic number born
-> of tests of interesting workloads on interesting systems on a certain dat=
-e.
-> It may not be the right number for other workloads, or other systems
-> with other timers on other dates.
->
-> My opinion...
->
-> I don't see a justification for increasing timer slack with increasing du=
-ration.
-> User-space timers don't pay this additional delay, why should the ASL
-> programmer?
->
-> Also, the graduated increasing slack with duration is a guess no more
-> valid than the guess of a flat 50 usec.
->
-> A flat 50 or a flat 0 have the virtue of being simple -- they will be sim=
-pler
-> to understand and maintain in the future.
->
-> But I can live with any of these options, since they are all a big step f=
-orward.
+On 11/22/24 14:07, Johan Hovold wrote:
+> On Thu, Nov 14, 2024 at 09:52:12AM +0530, Sibi Sankar wrote:
+>> On 11/8/24 20:44, Johan Hovold wrote:
+> 
+>>>> On Wed, Nov 06, 2024 at 01:55:33PM +0100, Johan Hovold wrote:
+> 
+>>>>> Second, after loading the protocol and client drivers manually (in that
+>>>>> order, shouldn't the client driver pull in the protocol?), I got:
+>>>>>
+>>>>> 	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
+>>>>> 	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
+>>>>> 	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
+>>>>> 	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
+>>>>>
+>>>>> which seems to suggest that the firmware on my CRD does not support this
+>>>>> feature. Is that the way this should be interpreted? And does that mean
+>>>>> that non of the commercial laptops supports this either?
+> 
+>>> Yeah, hopefully Sibi can shed some light on this. I'm using the DT
+>>> patch (5/5) from this series, which according to the commit message is
+>>> supposed to enable bus scaling on the x1e80100 platform. So I guess
+>>> something is missing in my firmware.
+>>
+>> Nah, it's probably just because of the algo string used.
+>> The past few series used caps MEMLAT string instead of
+>> memlat to pass the tuneables, looks like all the laptops
+>> havn't really switched to it yet. Will revert back to
+>> using to lower case memlat so that all devices are
+>> supported. Thanks for trying the series out!
+> 
+> I have a Lenovo ThinkPad T14s set up now so I gave this series a spin
+> there too, and there I do *not* see the above mentioned -EOPNOSUPP error
+> and the memlat driver probes successfully.
+> 
+> On the other hand, this series seems to have no effect on a kernel
+> compilation benchmark. Is that expected?
 
-All right, thanks!
+I can have a look at your tree. But memlat in general
+depends on the cpu frequency when your benchmarks max
+the cpu's the ddr/llcc are scaled accordingly by it.
+
+> 
+> And does this mean that you should stick with the uppercase "MEMLAT"
+> string after all? The firmware on my CRD is not the latest one, but I am
+> using the latest available firmware for the T14s.
+
+We should stick with "memlat" if we run into a device in the
+wild that doesn't support "MEMLAT"
+
+-Sibi
+
+> 
+> Johan
+> 
 
