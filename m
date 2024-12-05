@@ -1,198 +1,148 @@
-Return-Path: <linux-kernel+bounces-432759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E04D9E4FE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:38:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3453A9E4FEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:39:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C20188063D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB17D285001
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15041D416A;
-	Thu,  5 Dec 2024 08:38:32 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9121D47B5;
+	Thu,  5 Dec 2024 08:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="VlJoL1q8"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846771B1D65
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238F21D4339;
+	Thu,  5 Dec 2024 08:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733387912; cv=none; b=POAUAVdNSFsfGXZJpXtJnjU9VK2EnjTXzlyso7jXn6haDc452z7ZmFpNtT77Fvwex9db8FC1VWGaJQoJR2sRhMwTT5yIMoP8GLoT+wUHVOgJrWENxwGlmvZgf6wIq0Zi4tnTYNjAoTgN3qh1oNlHMNYoiXwreBJEUeN+lya6Av0=
+	t=1733387934; cv=none; b=OZxz8N1EPWj/tIofsnZN8RQ06DhcuQYbvr+/sZNJXk9FIYHMBhcI55FRD0+WzcTBdqH4H/WyFaMW/ctbf3TulJYjxvhOAngkav3jIVtKjtidJfKsyFK8wXWiscQZPEmMOso7zvm0zgrxNPAZeWAUGvRqcU3U007idIXvtFclH0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733387912; c=relaxed/simple;
-	bh=jLVygDBn1jJJDyI/td3pC8phqo6G5Rh3oqfY0tTBHqQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Z5bu2kXxG8arDWgnDxSus6AoqqeERluSGEyQyKsdXLixqqklM5TKr8mpZPlrA7XmKlUpK/O3wJIeKg6Jjh9Umh9Qau808GtML5P6iC17gWseUDWr7BKto30BB4LGIlMgfoh56/Mk/un9L/NBc1FD87PtcPMjiAjJZAD67PqHvP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso11610565ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 00:38:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733387909; x=1733992709;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P36ZWJkqqA4FzcSAHHFTCrGAELr3+Ab1FBfvulbueYs=;
-        b=GCUuGoGFu1zZzL9Sy2PKMHvuRZhPn8hMGeQlYWW3VRVeoYHabDAAO/xol4Xt1xISy4
-         dtcNb6HP3HKAKoknA0GmaYe+8kqvDNGYt+i8QrElGpuVHBJnJUgmF3mBlu3+4tM67CEM
-         Vjev2EotaGHbnncnEmHqlmxXA20WzI5JfctE9geqjHJCOlIhE5kgvSjjO4QDy9jhP1Si
-         n3yTWB4aAXBB513h9gzqLaaBMWqrolo2AiZW8AmlUWHq3ntvB4mgP26D9BVmGXyKpu41
-         LSxRm4QHpRx++Vah8cKA0i/rVpRQ8qMKUOu+A7USPgmeekcWEFQ/1Ms2g3FmuSHTEm6I
-         FguA==
-X-Gm-Message-State: AOJu0YxEGcTvs96glr53J/pPNZh43DzkQXq4cFsfI3D+Gkcx/yGKNmT1
-	DrIMg3pdgpdaNcWJXoWH3fkBhlfTDbwlGgEiAaUPjd52hezieh40NhAxfaTGprAALu9BJdfP4Kc
-	EpwF+afD4V94kG8VDd8j6ANLQz3ufHeDA6mvdTCA/nYgteKXq5LyEpRV8eg==
-X-Google-Smtp-Source: AGHT+IGllrQa8Bh7YlaJ9RqR1e/cRBqRSCMp39seAQ1rs/zvYKzJlu34uDgByEZec0OlsjYdZT68LfuUKSNLAdd1YAVoIsyJjLlm
+	s=arc-20240116; t=1733387934; c=relaxed/simple;
+	bh=PAObXDiXmDWj70ESEgFGl1tLxCTLl4RM/SgAzyfuJbE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cA7aO0Pd+2AZkQXJBTFc8BiXxjL2eVig4+1rPFaB+wJLpdKtZLbage9TdsBODs3Z13C3BohlY5WPxKMTyR2v3psfI2OHrydC9a0Cw+oi0eEItaCV9iDMLxZcRmzp2ikgN9VMuIRdDWXLu9eLbLl4OZIYZjnmGpI1pnOmOzkYj8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=VlJoL1q8; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4B58cbNxB2684906, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1733387917; bh=PAObXDiXmDWj70ESEgFGl1tLxCTLl4RM/SgAzyfuJbE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=VlJoL1q8ZTk6O9d5R6UjmtoV+NB/XXTiRt+mT3xvPjfoKDyuZkGIYMirOtqKI6Jnp
+	 GIM1CZtJs/izmbEV4t5YdCS6JFTiB0ZbnY4KpbWf1NAbLn7EMPba3n6/PWocEzjgnh
+	 C9wG3H4RzeaK4MU3KrHh3vn+fhFbxAsJNv1FlmjIQ69kkJQPsd0/rvf8bt+JrCH3pq
+	 EvTCWRSII6Qvw6CV/hPQ1LuAbR2Kau8l+r2yYw5HVrYf5VkwMtWcI3sxd2v4+6nSAt
+	 fUVicuWYI0rXKE8Cb9zt3P739cFgMWBTSDO15dhdgK47ew6yOyaVgNj/QJlQGhbgLe
+	 OjZTMHhI4fVCA==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4B58cbNxB2684906
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Dec 2024 16:38:37 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 5 Dec 2024 16:38:37 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 5 Dec 2024 16:38:37 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f]) by
+ RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f%2]) with mapi id
+ 15.01.2507.035; Thu, 5 Dec 2024 16:38:37 +0800
+From: Zong-Zhe Yang <kevin_yang@realtek.com>
+To: Aditya Kumar Singh <quic_adisi@quicinc.com>,
+        Johannes Berg
+	<johannes@sipsolutions.net>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] wifi: mac80211: re-order unassigning channel in activate links
+Thread-Topic: [PATCH] wifi: mac80211: re-order unassigning channel in activate
+ links
+Thread-Index: AQHbRuNSBxvPvyW8HE26pTx5nrDmYLLXTWQA
+Date: Thu, 5 Dec 2024 08:38:37 +0000
+Message-ID: <65d22960ca6e47e19cf7c1c6a60dd72a@realtek.com>
+References: <20241205-unassign_activate_links-v1-1-84097a1abdeb@quicinc.com>
+In-Reply-To: <20241205-unassign_activate_links-v1-1-84097a1abdeb@quicinc.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b03:b0:3a7:6e72:fbb3 with SMTP id
- e9e14a558f8ab-3a7fecb13bfmr85351905ab.4.1733387909675; Thu, 05 Dec 2024
- 00:38:29 -0800 (PST)
-Date: Thu, 05 Dec 2024 00:38:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67516685.050a0220.17bd51.008c.GAE@google.com>
-Subject: [syzbot] WARNING: `SYZ.NUM.NUM' USES NUM-BIT CAPABILITIES (LEGACY
- SUPPORT IN USE)
-From: syzbot <syzbot+b3c08bda38b11fb7a6a0@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker.=
-.
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D125da330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6851fe4f6179203=
-0
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Db3c08bda38b11fb7a=
-6a0
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7fe=
-b34a89c2a/non_bootable_disk-feffde68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e9751e7030ea/vmlinux-=
-feffde68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f7bf928b44d6/bzI=
-mage-feffde68.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+b3c08bda38b11fb7a6a0@syzkaller.appspotmail.com
-
-DEC  4 15:29:08 SYZKALLER KERN.INFO KERNEL: [   77.863093][    T8] IPVS: ST=
-ARTING ESTIMATOR THREAD 0...
-DEC  4 15:29:08 SYZKALLER KERN.INFO KERNEL: [   77.897775][ T8011] CAPABILI=
-TY: WARNING: `SYZ.2.644' USES 32-BIT CAPABILITIES (LEGACY SUPPORT IN USE)
-DEC  4 15:29:08 SYZKALLER KERN.INFO KERNEL: [   77.956610][ T8007] IPVS: US=
-ING MAX 39 ESTS PER CHAIN, 93600 PER KTHREAD
-DEC  4 15:29:09 SYZKALLER KERN.WARN KERNEL: [   77.991570][ T8023] SELINUX:=
- UNRECOGNIZED NETLINK MESSAGE: PROTOCOL=3D0 NLMSG_TYPE=3D0 SCLASS=3DNETLINK=
-_ROUTE_SOCKET PID=3D8023 COMM=3DSYZ.0.647
-DEC  4 15:29:14 SYZKALLER DAEMON.ERR DHCPCD[8024]: PS_BPF_START_BPF: BPF_OP=
-EN: INVALID ARGUMENT
-DEC  4 15:29:14 SYZKALLER DAEMON.ERR DHCPCD[8024]: PS_ROOT_RECVMSG: INVALID=
- ARGUMENT
-DEC  4 15:29:14 SYZKALLER KERN.WARN KERNEL: [   83.080206][   T39] KAUDITD_=
-PRINTK_SKB: 1103 CALLBACKS SUPPRESSED
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.080219][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.083:3132): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.105246][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.103:3133): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.124798][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.123:3134): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.147813][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.143:3135): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.196065][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.193:3136): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.239782][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.243:3137): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.291565][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.293:3138): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.332978][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.333:3139): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.373209][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.373:3140): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:14 SYZKALLER KERN.NOTICE KERNEL: [   83.411641][   T39] AUDIT:=
- TYPE=3D1400 AUDIT(1733326154.413:3141): AVC:  DENIED  { READ } FOR  PID=3D=
-5331 COMM=3D"SYSLOGD" NAME=3D"LOG" DEV=3D"SDA1" INO=3D1915 SCONTEXT=3DSYSTE=
-M_U:SYSTEM_R:SYSLOGD_T TCONTEXT=3DSYSTEM_U:OBJECT_R:VAR_T TCLASS=3D
-DEC  4 15:29:15 SYZKALLER DAEMON.ERR DHCPCD[8025]: PS_BPF_START_BPF: BPF_OP=
-EN: INVALID ARGUMENT
-DEC  4 15:29:15 SYZKALLER DAEMON.ERR DHCPCD[8025]: PS_ROOT_RECVMSG: INVALID=
- ARGUMENT
-DEC  4 15:29:16 SYZKALLER DAEMON.ERR DHCPCD[8026]: PS_BPF_START_BPF: BPF_OP=
-EN: INVALID ARGUMENT
-DEC  4 15:29:16 SYZKALLER DAEMON.ERR DHCPCD[8026]: PS_ROOT_RECVMSG: INVALID=
- ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8027]: PS_BPF_START_BPF: BPF_OP=
-EN: INVALID ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8027]: PS_ROOT_RECVMSG: INVALID=
- ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8028]: PS_BPF_START_BPF: BPF_OP=
-EN: INVALID ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8028]: PS_ROOT_RECVMSG: INVALID=
- ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8029]: PS_BPF_START_BPF: BPF_OP=
-EN: INVALID ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8029]: PS_ROOT_RECVMSG: INVALID=
- ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8030]: PS_BPF_START_BPF: BPF_OP=
-EN: INVALID ARGUMENT
-DEC  4 15:29:17 SYZKALLER DAEMON.ERR DHCPCD[8030]: PS_ROOT_RECVMSG: INVALID=
- ARGUMENT
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+QWRpdHlhIEt1bWFyIFNpbmdoIDxxdWljX2FkaXNpQHF1aWNpbmMuY29tPiB3cm90ZToNCj4gDQo+
+IFsuLi5dDQo+IA0KPiAgbmV0L21hYzgwMjExL2xpbmsuYyB8IDQ0ICsrKysrKysrKysrKysrKysr
+KysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0
+aW9ucygrKSwgMjIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbmV0L21hYzgwMjEx
+L2xpbmsuYyBiL25ldC9tYWM4MDIxMS9saW5rLmMgaW5kZXgNCj4gNThhNzZiY2Q2YWU2ODY3MGZi
+YmU3ZmE3ZDA3NTQwYzA0ZmY5OTZmOC4uM2M0NmQyYjJlZTI1NGZhYjMyNGQ1N2Y0ZDBmYmU5NGFj
+ZTc2ZDgNCj4gOWQgMTAwNjQ0DQo+IC0tLSBhL25ldC9tYWM4MDIxMS9saW5rLmMNCj4gKysrIGIv
+bmV0L21hYzgwMjExL2xpbmsuYw0KPiBAQCAtMzY3LDI4ICszNjcsNiBAQCBzdGF0aWMgaW50IF9p
+ZWVlODAyMTFfc2V0X2FjdGl2ZV9saW5rcyhzdHJ1Y3QgaWVlZTgwMjExX3N1Yl9pZl9kYXRhDQo+
+ICpzZGF0YSwNCj4gICAgICAgICAgICAgICAgIH0NCj4gICAgICAgICB9DQo+IA0KPiAtICAgICAg
+IGZvcl9lYWNoX3NldF9iaXQobGlua19pZCwgJnJlbSwgSUVFRTgwMjExX01MRF9NQVhfTlVNX0xJ
+TktTKSB7DQo+IC0gICAgICAgICAgICAgICBzdHJ1Y3QgaWVlZTgwMjExX2xpbmtfZGF0YSAqbGlu
+azsNCj4gLQ0KPiAtICAgICAgICAgICAgICAgbGluayA9IHNkYXRhX2RlcmVmZXJlbmNlKHNkYXRh
+LT5saW5rW2xpbmtfaWRdLCBzZGF0YSk7DQo+IC0NCj4gLSAgICAgICAgICAgICAgIGllZWU4MDIx
+MV90ZWFyZG93bl90ZGxzX3BlZXJzKGxpbmspOw0KPiAtDQo+IC0gICAgICAgICAgICAgICBfX2ll
+ZWU4MDIxMV9saW5rX3JlbGVhc2VfY2hhbm5lbChsaW5rLCB0cnVlKTsNCj4gLQ0KPiAtICAgICAg
+ICAgICAgICAgLyoNCj4gLSAgICAgICAgICAgICAgICAqIElmIENTQSBpcyAoc3RpbGwpIGFjdGl2
+ZSB3aGlsZSB0aGUgbGluayBpcyBkZWFjdGl2YXRlZCwNCj4gLSAgICAgICAgICAgICAgICAqIGp1
+c3Qgc2NoZWR1bGUgdGhlIGNoYW5uZWwgc3dpdGNoIHdvcmsgZm9yIHRoZSB0aW1lIHdlDQo+IC0g
+ICAgICAgICAgICAgICAgKiBoYWQgcHJldmlvdXNseSBjYWxjdWxhdGVkLCBhbmQgd2UnbGwgdGFr
+ZSB0aGUgcHJvY2Vzcw0KPiAtICAgICAgICAgICAgICAgICogZnJvbSB0aGVyZS4NCj4gLSAgICAg
+ICAgICAgICAgICAqLw0KPiAtICAgICAgICAgICAgICAgaWYgKGxpbmstPmNvbmYtPmNzYV9hY3Rp
+dmUpDQo+IC0gICAgICAgICAgICAgICAgICAgICAgIHdpcGh5X2RlbGF5ZWRfd29ya19xdWV1ZShs
+b2NhbC0+aHcud2lwaHksDQo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAmbGluay0+dS5tZ2QuY3NhLnN3aXRjaF93b3JrLA0KPiAtICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGluay0+dS5tZ2QuY3NhLnRpbWUg
+LQ0KPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgamlm
+Zmllcyk7DQo+IC0gICAgICAgfQ0KPiAtDQo+ICAgICAgICAgZm9yX2VhY2hfc2V0X2JpdChsaW5r
+X2lkLCAmYWRkLCBJRUVFODAyMTFfTUxEX01BWF9OVU1fTElOS1MpIHsNCj4gICAgICAgICAgICAg
+ICAgIHN0cnVjdCBpZWVlODAyMTFfbGlua19kYXRhICpsaW5rOw0KPiANCj4gQEAgLTQ1OCw2ICs0
+MzYsMjggQEAgc3RhdGljIGludCBfaWVlZTgwMjExX3NldF9hY3RpdmVfbGlua3Moc3RydWN0IGll
+ZWU4MDIxMV9zdWJfaWZfZGF0YQ0KPiAqc2RhdGEsDQo+ICAgICAgICAgICAgICAgICBfX2llZWU4
+MDIxMV9zdGFfcmVjYWxjX2FnZ3JlZ2F0ZXMoc3RhLCBhY3RpdmVfbGlua3MpOw0KPiAgICAgICAg
+IH0NCj4gDQo+ICsgICAgICAgZm9yX2VhY2hfc2V0X2JpdChsaW5rX2lkLCAmcmVtLCBJRUVFODAy
+MTFfTUxEX01BWF9OVU1fTElOS1MpIHsNCj4gKyAgICAgICAgICAgICAgIHN0cnVjdCBpZWVlODAy
+MTFfbGlua19kYXRhICpsaW5rOw0KPiArDQo+ICsgICAgICAgICAgICAgICBsaW5rID0gc2RhdGFf
+ZGVyZWZlcmVuY2Uoc2RhdGEtPmxpbmtbbGlua19pZF0sIHNkYXRhKTsNCj4gKw0KPiArICAgICAg
+ICAgICAgICAgaWVlZTgwMjExX3RlYXJkb3duX3RkbHNfcGVlcnMobGluayk7DQo+ICsNCj4gKyAg
+ICAgICAgICAgICAgIF9faWVlZTgwMjExX2xpbmtfcmVsZWFzZV9jaGFubmVsKGxpbmssIHRydWUp
+Ow0KPiArDQo+ICsgICAgICAgICAgICAgICAvKg0KPiArICAgICAgICAgICAgICAgICogSWYgQ1NB
+IGlzIChzdGlsbCkgYWN0aXZlIHdoaWxlIHRoZSBsaW5rIGlzIGRlYWN0aXZhdGVkLA0KPiArICAg
+ICAgICAgICAgICAgICoganVzdCBzY2hlZHVsZSB0aGUgY2hhbm5lbCBzd2l0Y2ggd29yayBmb3Ig
+dGhlIHRpbWUgd2UNCj4gKyAgICAgICAgICAgICAgICAqIGhhZCBwcmV2aW91c2x5IGNhbGN1bGF0
+ZWQsIGFuZCB3ZSdsbCB0YWtlIHRoZSBwcm9jZXNzDQo+ICsgICAgICAgICAgICAgICAgKiBmcm9t
+IHRoZXJlLg0KPiArICAgICAgICAgICAgICAgICovDQo+ICsgICAgICAgICAgICAgICBpZiAobGlu
+ay0+Y29uZi0+Y3NhX2FjdGl2ZSkNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgd2lwaHlfZGVs
+YXllZF93b3JrX3F1ZXVlKGxvY2FsLT5ody53aXBoeSwNCj4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICZsaW5rLT51Lm1nZC5jc2Euc3dpdGNoX3dvcmss
+DQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsaW5r
+LT51Lm1nZC5jc2EudGltZSAtDQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBqaWZmaWVzKTsNCj4gKyAgICAgICB9DQo+ICsNCj4gICAgICAgICBmb3Jf
+ZWFjaF9zZXRfYml0KGxpbmtfaWQsICZhZGQsIElFRUU4MDIxMV9NTERfTUFYX05VTV9MSU5LUykg
+ew0KPiAgICAgICAgICAgICAgICAgc3RydWN0IGllZWU4MDIxMV9saW5rX2RhdGEgKmxpbms7DQo+
+IA0KDQpDb3VsZCB5b3UgYWxzbyB1cGRhdGUgdGhlIGRlc2NyaXB0aW9uIG9mIGllZWU4MDIxMV9z
+ZXRfYWN0aXZlX2xpbmtzKCkgKGluY2x1ZGUvbmV0L21hYzgwMjExLmgpIHRvIGFsaWduIHRoZSBj
+aGFuZ2VzPw0KSSB0aGluayBpdCB3b3VsZCBiZSBsaWtlOg0KDQogIGNoYW5nZV92aWZfbGlua3Mo
+MHgxMSkNCiAgYXNzaWduX3ZpZl9jaGFuY3R4KGxpbmtfaWQ9NCkNCiAgY2hhbmdlX3N0YV9saW5r
+cygweDExKSBmb3IgZWFjaCBhZmZlY3RlZCBTVEEgKHRoZSBBUCkNCiAgWy4uLl0NCiAgY2hhbmdl
+X3N0YV9saW5rcygweDEwKSBmb3IgZWFjaCBhZmZlY3RlZCBTVEEgKHRoZSBBUCkNCiAgdW5hc3Np
+Z25fdmlmX2NoYW5jdHgobGlua19pZD0wKQ0KICBjaGFuZ2VfdmlmX2xpbmtzKDB4MTApDQoNCg==
 
