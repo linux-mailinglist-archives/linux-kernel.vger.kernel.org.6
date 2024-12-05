@@ -1,98 +1,197 @@
-Return-Path: <linux-kernel+bounces-432836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E189E50E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:13:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7947F9E50EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A4E16543D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF2716663D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1F61D6187;
-	Thu,  5 Dec 2024 09:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27DB1D63CB;
+	Thu,  5 Dec 2024 09:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V5UCWaV0"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oz8WR88J"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AAB17B506;
-	Thu,  5 Dec 2024 09:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378911D63D0
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733389737; cv=none; b=LgT89VsizfLCdJsGWkec37aLOY9SFHWLvhmi5GKMgTBuzjGNreHqle8ftc9TbdJLD3oXxT9iKOziDNuMdpI3DNolEiulqGEB0M3slmwAKsi+wSh0FD0l5VjSOGLh1ivGr3K49O3+VuOsrk+5Fth+3V2zbttjJOmD4h7u0ejUsfA=
+	t=1733389757; cv=none; b=UjFz/o6MaZci95/zpiz4UDVVgc7ObZ0JvvzlMpqE23H8Z+R2FwW7LI93SSb2bg8o/aOFOcA1fK3P45FYXglKOEnzFkT1TC2Ci8UJZcC2eY2mJ5gZwwaheOqrMVPFJM4N5wB9IapA7oL3Ym1f4kbyzW64CLHKvYGpN6c/YYMrg6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733389737; c=relaxed/simple;
-	bh=gHlUUsDQWjcionp01/oa5PhHndYgSQWwZXgoskMtATQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fGrHD/XhajnAwh7psrHqbODdXQ1x2y78wJU0czlJXUAC0S1S18ZRakoiP6mbq1HuvVjfehfkuSG0W/TP4IrV1/33LZwi5cCdqgWyH7rYJimUDdDE9Tre4JS4BrqQPF73rDnugChDzKxioTF4zw+fRr0G+jFD+TcKTBeecLhSvqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V5UCWaV0; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XrqfYbWhJ0Kmzg+uIbXWOSC9Pry0cFxHUfhAYZ5Cp5I=; b=V5UCWaV01FVcq5B7fgqZhw6p0T
-	AjtuBonXSWxLr1fuTaPsFSVUs456p81KxOP3plQIh+yfvmxXzKeq5M5UfEJeKU5W26fjssACqKHlT
-	GhC02MsfLXG60r4hbbQTeoG1e2IqHsyeRsLXvBjohszqemtJ2Dn0oHcTXCKb9DpJt7GX8PU91TBL1
-	NWuHwHeKcid1cp9KahFcpjjTwUXxfM42IHRRRLf1ZEVo3qZhL3Gky+LLH6cO4K/rOU4HJgbR1dwT/
-	GTNWDBvSb7fKr6WjzMm1b5SzcxNIvGE37uB1Shnn7UmXX2zKX4CejD5tJMiXfSC3JPDdJPGHLLPiq
-	wrvdLSKg==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tJ7ql-00000002oPl-05eI;
-	Thu, 05 Dec 2024 09:08:43 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 61CA03004AF; Thu,  5 Dec 2024 10:08:42 +0100 (CET)
-Date: Thu, 5 Dec 2024 10:08:42 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v7 04/12] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-Message-ID: <20241205090842.GI8562@noisy.programming.kicks-ass.net>
-References: <20241130140703.557-1-mario.limonciello@amd.com>
- <20241130140703.557-5-mario.limonciello@amd.com>
- <20241202113512.GA8562@noisy.programming.kicks-ass.net>
- <8517db8d-c755-4fa0-8d8e-fd477060d033@amd.com>
+	s=arc-20240116; t=1733389757; c=relaxed/simple;
+	bh=anqdnB9mHbedhqScyCGcOin7eoauZ/JLfVpOp+j1N8k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lLtF3IiiAUEwa9qrj83d6czuHx9IxlSYNAWEkvkDqeS1lgOtmATyJWT+heXr5FQirrkyAVg7WA8emUfW1eOKt4hQBPIzRLt3eaqlvsm8S0zHjJS1oIggL7iaGBtzFqWvYSExvHSNWakLWs5K6RyHwPwclQTJw50s4zmAwfyjMdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oz8WR88J; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so780603a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:09:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733389753; x=1733994553; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y0VGc4uwsC1VuTO6ILJ7ETPZ+0S9klvWlGFpH9QnNmk=;
+        b=oz8WR88J5U6qqtL0uvCqaWdDFD3BFjbKRhek04opKVxUiSgcWIhEkGxjGfPKR+sPM6
+         Y+jPt636UjYTJ09QhPmbzxkOOV52Lh6i0jI37v870KXhmnZye2BqLLEKTukOKGHPAgL5
+         xjp5sRKDI60GSY93qzeLAuqBy7e6oXRcuvODDfTYohkWAMwJisHiDZoezC54PD1fRl0J
+         SiMyPRifYzOw0qDRBApLFv4Md0Hr6knRO1wK0RbKwwVGR924d+FJj0AjyFWb9rRtYuF2
+         pST5s+UqKORVqWtlsN/QOpup8momsi8kz8VvkNrz3oaBsC3kAwu8SSkGQ5Vo5L0sybyt
+         FriQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733389753; x=1733994553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y0VGc4uwsC1VuTO6ILJ7ETPZ+0S9klvWlGFpH9QnNmk=;
+        b=nEC43C/U5hdUGegS/Au1LRJ2lZLJDHeGJSrwtvCDZBK9Pa+7ueO7YPr8N6Mnp7kacn
+         dYmMlozueBMou8idN3Q0YoA91LtyrE/bNKSlG/JlpAzbYJwscA+cs+ycf/+SASM1v5Zg
+         NYRxrvxXyB75A6qIU0h7JNR8kFGyOY7L7FV+VISBYKuI/mPFsUqhrVro2ZtTk+zMxpTs
+         MBOt/b0PQFzb58hzJ4oH+wYH8yHzuV3LkKNBy5c1VfOWQUyzjXe2JzeJm1MXo/UJHmfm
+         EpAf3Ml+BbJ7cn7hAKYsAQngkkS3EXVW1I4TjfH8YioXwRd9NDLV7r+TjP4VMVDknwYM
+         ON6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXD8xGAZ6HkREKS66iMbYVgBYHWq1UQkMvcnkJDjM3MzYJlzW3FWWfO9SGQqqOgU28dLBtyz/BtD8ca7/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLocLdSFF7UWI//Lv5CcwsG5Ww0iCNt6xZWasTVRcGfeIpk0k0
+	v7vKVAZ0dVFM/Be+xYXHgE10HeId1+rSB7PaZqgjmBFIXx1cfSVE2fS7LPl7Z7/CnLG/DqIuqY8
+	tg9EX1gV6JPoEwrglUb68Q5nfuW87B+ddkxhT
+X-Gm-Gg: ASbGnctqnk3NSiLxmE7x78LrKWv0FjgnguqwSMXfHCkvUlJ/4h6Jat30DkuF5XYyXtt
+	kunHX1O2/dzzSM81YQigm14ZNvZQ+cAI=
+X-Google-Smtp-Source: AGHT+IHfa2rJ8uRXz5tARRzFCZ8XNG3orLjGFc+t9wtCUBW/tuWv2l59CAUEsv8gFxsd6TBk8iqXO3L8PkMnL6mBbmc=
+X-Received: by 2002:a17:906:3d22:b0:aa5:f39a:bc99 with SMTP id
+ a640c23a62f3a-aa5f7da1595mr775307466b.36.1733389753351; Thu, 05 Dec 2024
+ 01:09:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8517db8d-c755-4fa0-8d8e-fd477060d033@amd.com>
+References: <20241113-tcp-md5-diag-prep-v2-0-00a2a7feb1fa@gmail.com> <20241204171351.52b8bb36@kernel.org>
+In-Reply-To: <20241204171351.52b8bb36@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 5 Dec 2024 10:09:02 +0100
+Message-ID: <CANn89iL5_2iW5U_8H43g7vXi0Ky=fkwadvTtmT3fvBdbaJ1BAw@mail.gmail.com>
+Subject: Re: [PATCH net v2 0/5] Make TCP-MD5-diag slightly less broken
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>, 0x7f454c46@gmail.com, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Ahern <dsahern@kernel.org>, Ivan Delalande <colona@arista.com>, 
+	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, Boris Pismenny <borisp@nvidia.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Davide Caratti <dcaratti@redhat.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mptcp@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 02:27:46PM -0600, Mario Limonciello wrote:
+On Thu, Dec 5, 2024 at 2:13=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Wed, 13 Nov 2024 18:46:39 +0000 Dmitry Safonov via B4 Relay wrote:
+> > 2. Inet-diag allocates netlink message for sockets in
+> >    inet_diag_dump_one_icsk(), which uses a TCP-diag callback
+> >    .idiag_get_aux_size(), that pre-calculates the needed space for
+> >    TCP-diag related information. But as neither socket lock nor
+> >    rcu_readlock() are held between allocation and the actual TCP
+> >    info filling, the TCP-related space requirement may change before
+> >    reaching tcp_diag_put_md5sig(). I.e., the number of TCP-MD5 keys on
+> >    a socket. Thankfully, TCP-MD5-diag won't overwrite the skb, but will
+> >    return EMSGSIZE, triggering WARN_ON() in inet_diag_dump_one_icsk().
+>
+> Hi Eric!
+>
+> This was posted while you were away -- any thoughts or recommendation on
+> how to address the required nl message size changing? Or other problems
+> pointed out by Dmitry? My suggestion in the subthread is to re-dump
+> with a fixed, large buffer on EMSGSIZE, but that's not super clean..
 
-> I think the *_present() calls make sense for the other consumers in
-> suspend/resume though. Agree?
+Hi Jakub
 
- *     cpu_possible_mask- has bit 'cpu' set iff cpu is populatable
- *     cpu_present_mask - has bit 'cpu' set iff cpu is populated
- *     cpu_enabled_mask  - has bit 'cpu' set iff cpu can be brought online
- *     cpu_online_mask  - has bit 'cpu' set iff cpu available to scheduler
- *     cpu_active_mask  - has bit 'cpu' set iff cpu available to migration
+inet_diag_dump_one_icsk() could retry, doubling the size until the
+~32768 byte limit is reached ?
 
-The distinction between possible and present is physical hotplug. Using
-present means you care about that distinction. Using that for
-suspend/resume strikes me as equally odd.
+Also, we could make sure inet_sk_attr_size() returns at least
+NLMSG_DEFAULT_SIZE, there is no
+point trying to save memory for a single skb in inet_diag_dump_one_icsk().
+
+
+diff --git a/net/ipv4/inet_diag.c b/net/ipv4/inet_diag.c
+index 321acc8abf17e8c7d6a4e3326615123fff19deab..cd2e7fe9b090ea9127aebbba0fa=
+f2ef12c0f86a4
+100644
+--- a/net/ipv4/inet_diag.c
++++ b/net/ipv4/inet_diag.c
+@@ -102,7 +102,7 @@ static size_t inet_sk_attr_size(struct sock *sk,
+                                bool net_admin)
+ {
+        const struct inet_diag_handler *handler;
+-       size_t aux =3D 0;
++       size_t aux =3D 0, res;
+
+        rcu_read_lock();
+        handler =3D rcu_dereference(inet_diag_table[req->sdiag_protocol]);
+@@ -111,7 +111,7 @@ static size_t inet_sk_attr_size(struct sock *sk,
+                aux =3D handler->idiag_get_aux_size(sk, net_admin);
+        rcu_read_unlock();
+
+-       return    nla_total_size(sizeof(struct tcp_info))
++       res =3D nla_total_size(sizeof(struct tcp_info))
+                + nla_total_size(sizeof(struct inet_diag_msg))
+                + inet_diag_msg_attrs_size()
+                + nla_total_size(sizeof(struct inet_diag_meminfo))
+@@ -120,6 +120,7 @@ static size_t inet_sk_attr_size(struct sock *sk,
+                + nla_total_size(sizeof(struct tcpvegas_info))
+                + aux
+                + 64;
++       return max(res, NLMSG_DEFAULT_SIZE);
+ }
+
+ int inet_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+@@ -570,6 +571,7 @@ int inet_diag_dump_one_icsk(struct inet_hashinfo *hashi=
+nfo,
+        bool net_admin =3D netlink_net_capable(in_skb, CAP_NET_ADMIN);
+        struct net *net =3D sock_net(in_skb->sk);
+        struct sk_buff *rep;
++       size_t attr_size;
+        struct sock *sk;
+        int err;
+
+@@ -577,7 +579,9 @@ int inet_diag_dump_one_icsk(struct inet_hashinfo *hashi=
+nfo,
+        if (IS_ERR(sk))
+                return PTR_ERR(sk);
+
+-       rep =3D nlmsg_new(inet_sk_attr_size(sk, req, net_admin), GFP_KERNEL=
+);
++       attr_size =3D inet_sk_attr_size(sk, req, net_admin);
++retry:
++       rep =3D nlmsg_new(attr_size, GFP_KERNEL);
+        if (!rep) {
+                err =3D -ENOMEM;
+                goto out;
+@@ -585,8 +589,14 @@ int inet_diag_dump_one_icsk(struct inet_hashinfo *hash=
+info,
+
+        err =3D sk_diag_fill(sk, rep, cb, req, 0, net_admin);
+        if (err < 0) {
+-               WARN_ON(err =3D=3D -EMSGSIZE);
+                nlmsg_free(rep);
++               if (err =3D=3D -EMSGSIZE) {
++                       attr_size <<=3D 1;
++                       if (attr_size + NLMSG_HDRLEN <=3D
+SKB_WITH_OVERHEAD(32768)) {
++                               cond_resched();
++                               goto retry;
++                       }
++               }
+                goto out;
+        }
+        err =3D nlmsg_unicast(net->diag_nlsk, rep, NETLINK_CB(in_skb).porti=
+d);
 
