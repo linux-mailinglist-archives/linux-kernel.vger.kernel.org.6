@@ -1,166 +1,127 @@
-Return-Path: <linux-kernel+bounces-433223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952679E554D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:24:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30AB9E53DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:26:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A0816ADA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18BB1883BF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76B1218597;
-	Thu,  5 Dec 2024 12:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E92A1F4276;
+	Thu,  5 Dec 2024 11:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="YpOQGx8j"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idRme8Nh"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9604F1C3C03;
-	Thu,  5 Dec 2024 12:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ED11E282D;
+	Thu,  5 Dec 2024 11:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401481; cv=none; b=pHKpf4PiVmRCt0Ey0UpHp8T1diWtSW6nrYTtzFpGqpC6PWbg9sWj1iIRowXMrY+7DCaBbUgP+HfiR+RhMpxzPUeQMY0btBfQ2piDrcLLr0rS2m60BbG0ZpayrcOkaJOTODWZXE6a30HdXLZSz3cuTg1dLVXerXjhiEGMba+2JTE=
+	t=1733397896; cv=none; b=U1Wh/6xu90fQl/uW2BiqXspRQ8kwzA+YJryC5mMLJwjuKmxHcxJHJeVdTNiRW2vNs70HXaC8eNzlwUQpohX0Fy4vXBGoXCamJhR2JRE+uUXYrHm0UNqh3QCfsgvuYjPjnJM0NJxAnmu8/JjVIUapEreiajQCjSP8NjVGKhFtnx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401481; c=relaxed/simple;
-	bh=6HOpsc625EGjC9PL02c3HToHWwFMARP9I2Vi0twgIrs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UnKNiHkdmZ76Z8I7IVRL4rOqykEhyTqXvtuPBhw3EMHqopwH930zy56G9Isqoe8wf28SlDtcEdWiw3/y8UIAwWhyYXy0QAcs+lyvcgBSI95PXVMt9k8Td1QLnc13seBDoNDnufIg+c9ADwtx2Wd3xeKdlhNfCrsWff4RgnfeiUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=YpOQGx8j; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id a11382d7935d7579; Thu, 5 Dec 2024 12:24:36 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 88CB515F00FF;
-	Thu,  5 Dec 2024 12:24:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1733397876;
-	bh=6HOpsc625EGjC9PL02c3HToHWwFMARP9I2Vi0twgIrs=;
-	h=From:Subject:Date;
-	b=YpOQGx8j1i8ximeDtP0jet2Kgcq/S07XVQDZoWoGp549h4TA9ib79Wzi+isWkIYLc
-	 t4iehrv36QW2woWClLQ+SsKLY7EIDFI+9pYGQjActjoXR61TcZVvVSs1EFZCEaGh7j
-	 +18l7IxfFBkbQ0Bs0FRJWoOLHksaltggG5peethbxmToy+CaH04pLxlqYqvmElJ6HU
-	 l2AfzGk3tHQKvF4zmQ5LBbRMd4qScppx2pVimiM1zznpaSyyUK9w8D+kxDvqz8I4m7
-	 ebhVOnB5aFrU186PGLbpgQI2VNwnqjQF6dHBSzFT6MRYasBFm1fLIPCtco7Za6CcO8
-	 O1yMY0+NVLk+Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Subject: [PATCH v1] ACPI: OSL: Use usleep_range() in acpi_os_sleep()
-Date: Thu, 05 Dec 2024 12:24:35 +0100
-Message-ID: <5857066.DvuYhMxLoT@rjwysocki.net>
+	s=arc-20240116; t=1733397896; c=relaxed/simple;
+	bh=TeZ+L4z4T8oDSEG7S2D9D0VCSvNqmUQTU6VpM5Tp7RQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HANPmRETzXuY7FR3J28ir8itDo1DAJo4UWCqsqnpJrMNYB1tG2FlPWxNi0POsHKgwG7e5vDcRo8d3Vaw/NIkaJF0QvAuMFCJEQfyU/4z3yrdu3JEAU+Ry0V9WQ/mrIngk+dhiFNH9u1INQ57JA/uN3QmNO6EpBLGt4Ai89HzM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idRme8Nh; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ee990ba9d5so568725a91.2;
+        Thu, 05 Dec 2024 03:24:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733397894; x=1734002694; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3b8CDwLKxd9GtZyeopEpifrSDe+9GPqyVH1ezNyx+f0=;
+        b=idRme8Nh2av6uxTMo4UTOICmFphenuq+GZs82f1QA4+DHHh4VLQj5ajaCWI6pKBi1L
+         1BNFOgot81Jd0lYpSy46Hy0YxOzmqpW27//kROqjVlbWS+mAfMbI7gVP0baof7jJKU6h
+         XFBhsHhalpGLtF0a4lREpGLomBrRXh25HSqBshibqrlG5Kooj7rGCPzMQbNbb5D3U5F4
+         QOw5K/KTsDv9cfkVzkQ6+FCvlPhMojDQhVM9kaPet9qdUJCYi5NcFNuKlB0IvgvLpU1X
+         ZWGnOfBEQPDDIOizGqp52rwlClt+Z/2yD/yq66Nc7rHCjlwq7BAS5g8sD1sV84KoGHjf
+         fZwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733397894; x=1734002694;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3b8CDwLKxd9GtZyeopEpifrSDe+9GPqyVH1ezNyx+f0=;
+        b=YC2bmYKa4/xGl7X3qcX2geAe96Pi0En1x1cCpDDOh4gUVkGQf41kl9jo8+YZdHT2D8
+         7TMArf0T2Jb5Il17atBuQNonGqyF3lUAdDcjJle4FQEdIUHcF0EQzVF9eURxUhYEHbTx
+         ZfcAdp733CCfGBFtc6rE+2KNG3KmPVifdAHDJBXowOwG4AhCIOy+j2SgeKH61rnFRoio
+         tQAzZUP7En1abYoub/WnfNcgZaptPPUhI5yjKLybtuB/7sLQaX3064O4DWHeJEV6BM5i
+         FGGGQAcjR+skqQiTYxMF4HOomzGaQDSF/ZJYx0eWto2SHYl+Z4iXCOnki3qzNc8GdR9c
+         sBUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqWGV3mw7G4q0DdWap5u3BjEZ1VPCQ9yhg1Z+jhXWs4SSO+RFtL03cJFrPzZw5iJqJCAB0m1Jn@vger.kernel.org, AJvYcCWL6wRG+p8NXI7MBc5IMB+RnVkOCsYhAgs2xZHzTSEThrtbxTBzj7o8QHDfrZzwFCLWJnbHhZnlDJ5wlpOZ@vger.kernel.org, AJvYcCXeX5kczo9GZ7A5QE9vn48TFRYdxUQbnChiNk96Mk+Z85VMd+ykvr67YyOriJxydPG2C2x3x6GPzUxr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTv+M7ow8gFSRq9U7mZxKS3If6SilVmJA4Gko6oiun2mHDIYd0
+	NkVNkBIKGTk/X7RFGNEPpFfa6IQEmveihh8vLb6nsm81Ug/V6MYU2DyX0v3V4dNkpkXjXlD1eLG
+	oFUjzxCKAuuP/W3yIBnLTwa8A9OE=
+X-Gm-Gg: ASbGncuOcnbPeNbvg0w19lMNrDrACCgoaNxVfj+7VBK8/5/BZOeYtNIu8FRw+tf4LV0
+	grJ4OJd0FCx1ZCr0LF0LktTBxPh+yfOs=
+X-Google-Smtp-Source: AGHT+IF1OiLaI0em7K6ZAWY9gJ1Mmh8HrAYy8K5BoVHEhBAm8hsuCdocq4uLc9ryKSWZiEUdNWLJg3nyqlhuuGp2XHQ=
+X-Received: by 2002:a17:90b:3b8b:b0:2ee:cd83:8fc3 with SMTP id
+ 98e67ed59e1d1-2ef0127967dmr13952696a91.37.1733397893733; Thu, 05 Dec 2024
+ 03:24:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20241127212027.2704515-1-max.kellermann@ionos.com>
+ <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
+ <CAKPOu+8qjHsPFFkVGu+V-ew7jQFNVz8G83Vj-11iB_Q9Z+YB5Q@mail.gmail.com> <CAKPOu+-rrmGWGzTKZ9i671tHuu0GgaCQTJjP5WPc7LOFhDSNZg@mail.gmail.com>
+In-Reply-To: <CAKPOu+-rrmGWGzTKZ9i671tHuu0GgaCQTJjP5WPc7LOFhDSNZg@mail.gmail.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 5 Dec 2024 12:24:42 +0100
+Message-ID: <CAOi1vP-SSyTtLJ1_YVCxQeesY35TPxud8T=Wiw8Fk7QWEpu7jw@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Alex Markuze <amarkuze@redhat.com>, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgddviecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Subject: [PATCH v0.1] ACPI: OSL: Use usleep_range() in acpi_os_sleep()
+On Thu, Dec 5, 2024 at 9:32=E2=80=AFAM Max Kellermann <max.kellermann@ionos=
+.com> wrote:
+>
+> On Fri, Nov 29, 2024 at 9:06=E2=80=AFAM Max Kellermann <max.kellermann@io=
+nos.com> wrote:
+> >
+> > On Thu, Nov 28, 2024 at 1:18=E2=80=AFPM Alex Markuze <amarkuze@redhat.c=
+om> wrote:
+> > > Pages are freed in `ceph_osdc_put_request`, trying to release them
+> > > this way will end badly.
+> >
+> > Is there anybody else who can explain this to me?
+> > I believe Alex is wrong and my patch is correct, but maybe I'm missing
+> > something.
+>
+> It's been a week. Is there really nobody who understands this piece of
+> code? I believe I do understand it, but my understanding conflicts
+> with Alex's, and he's the expert (and I'm not).
 
-As stated by Len in [1], the extra delay added by msleep() to the
-sleep time value passed to it can be significant, roughly between
-1.5 ns on systems with HZ = 1000 and as much as 15 ms on systems with
-HZ = 100, which is hardly acceptable, at least for small sleep time
-values.
+Hi Max,
 
-msleep(5) on the default HZ = 250 in Ubuntu on a modern PC takes about
-12 ms.  This results in over 800 ms of spurious system resume delay on
-systems such as the Dell XPS-13-9300, which use ASL Sleep(5ms) in a
-tight loop.
+Your understanding is correct.  Pages would be freed automatically
+together with the request only if the ownership is transferred by
+passing true for own_pages to osd_req_op_extent_osd_data_pages(), which
+__ceph_sync_read() doesn't do.
 
-Address this by using usleep_range() in acpi_os_sleep() instead of
-msleep().  For short sleep times this is a no brainer, but even for
-long sleeps usleep_range() should be preferred because timer wheel
-timers are optimized for cancelation before they expire and this
-particular timer is not going to be canceled.
+These error path leaks were introduced in commits 03bc06c7b0bd ("ceph:
+add new mount option to enable sparse reads") and f0fe1e54cfcf ("ceph:
+plumb in decryption during reads") with support for fscrypt.  Looking
+at the former commit, it looks like a similar leak was introduced in
+ceph_direct_read_write() too -- on bvecs instead of pages.
 
-Add at least 50 us on top of the requested sleep time in case the
-timer can be subject to coalescing, which is consistent with what's
-done in user space in this context [2], but for sleeps longer than 5 ms
-use 1% of the requested sleep time for this purpose.
+I have applied this patch and will take care of the leak on bvecs
+myself because I think I see other issues there.
 
-The rationale here is that longer sleeps don't need that much of a timer
-precision as a rule and making the timer a more likely candidate for
-coalescing in these cases is generally desirable.  It starts at 5 ms so
-that the delta between the requested sleep time and the effective
-deadline is a contiuous function of the former.
+Thanks,
 
-Link: https://lore.kernel.org/linux-pm/c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com/ [1]
-Link: https://lore.kernel.org/linux-pm/
-CAJvTdK=Q1kwWA6Wxn8Zcf0OicDEk6cHYFAvQVizgA47mXu63+g@mail.gmail.com/ [2]
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=216263
-Reported-by: Len Brown <lenb@kernel.org>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-Tested-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-The previous RFC version of this patch is here:
-
-https://lore.kernel.org/linux-pm/5839859.DvuYhMxLoT@rjwysocki.net/
-
-The difference between this version and the RFC is a changelog update
-suggested by Len, the Closes: tag and the tags from Hans and Mario.
-
----
- drivers/acpi/osl.c |   22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-Index: linux-pm/drivers/acpi/osl.c
-===================================================================
---- linux-pm.orig/drivers/acpi/osl.c
-+++ linux-pm/drivers/acpi/osl.c
-@@ -607,7 +607,27 @@ acpi_status acpi_os_remove_interrupt_han
- 
- void acpi_os_sleep(u64 ms)
- {
--	msleep(ms);
-+	u64 usec = ms * USEC_PER_MSEC, delta_us = 50;
-+
-+	/*
-+	 * Use a hrtimer because the timer wheel timers are optimized for
-+	 * cancelation before they expire and this timer is not going to be
-+	 * canceled.
-+	 *
-+	 * Set the delta between the requested sleep time and the effective
-+	 * deadline to at least 50 us in case there is an opportunity for timer
-+	 * coalescing.
-+	 *
-+	 * Moreover, longer sleeps can be assumed to need somewhat less timer
-+	 * precision, so sacrifice some of it for making the timer a more likely
-+	 * candidate for coalescing by setting the delta to 1% of the sleep time
-+	 * if it is above 5 ms (this value is chosen so that the delta is a
-+	 * continuous function of the sleep time).
-+	 */
-+	if (ms > 5)
-+		delta_us = (USEC_PER_MSEC / 100) * ms;
-+
-+	usleep_range(usec, usec + delta_us);
- }
- 
- void acpi_os_stall(u32 us)
-
-
-
+                Ilya
 
