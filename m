@@ -1,98 +1,164 @@
-Return-Path: <linux-kernel+bounces-433815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804249E5D72
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C5A9E5D78
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FFC9188467E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCC818848B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF70226ED4;
-	Thu,  5 Dec 2024 17:40:29 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18978226EFD;
+	Thu,  5 Dec 2024 17:41:02 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CAD21CA1F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 17:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8570F224AEA;
+	Thu,  5 Dec 2024 17:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420429; cv=none; b=pXaaOIQvEqi84vv/2KKGjGerBapVINaW/7jQhqM8nqplg2l1gSYEdC+kWMMMUIXcRRISweJA8Qd1cG088+klLOMLk4BHQJmHDDn/TmXmg9q+92sIAQCrIJvUmL34M92ugACMTHsHXYRJucPN29oMjK4CQVQbCd5dIrV5f1LR0Xk=
+	t=1733420461; cv=none; b=NudT8xiNkjt501LuTX9C58v2R6GlhE4QLHUQOvCKmr5gbMIpErLQy1qCENhjczL275tbZ3FjocsFHiJFpYUrRcHujsf/qaKBu5tMj3zuKe7r9h1XcyYTNVCyJ2Hu0ckjRDOtESFkOzvTf5aXI66qucN0Sq1pum4ElpzR+bqDxdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420429; c=relaxed/simple;
-	bh=ckqNK1kFj0hOrtGRecbfTqUnXzQvUTv259nme0vqwJ0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dPAPXd8CxPrqjvjAKDUDEvXOWD0znUrWiKlNJv91Dz4YzwMdXOqLJNZZRl6XyWNMB1QaWVQHb2izOb1o5CBsY3XfhudeRtHDoWapDFNE0RQhtT76gV4R9aMQLv8iz1LqQMwqTpZOeEflBECTCUra+mCI0SrB7ZIaaNvRwdTu+8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-841896ec108so181808839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 09:40:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733420425; x=1734025225;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nai+Q+yfGAvS8Ho7NPZXJwCDRmVEaZXI5r28mNwpuR8=;
-        b=NXAABbw02zHTPeON3D05R7duxoRunHQVrPdgAvd3+wBDd8vAz+TjsVb75RtJV/bDD/
-         nOGENGAIAiSzzqWcgZSu/hX3cGhnF4FWUVxp5mvtuttCkWatD+FRlbj8DGl3Xc6xwsN3
-         //2p17zflrldRogfo0lOAzCBkK3RCh1C2ubZLQkA5tcvgUPXJO4kakw47U39gC+q7L+w
-         29D/30wJ6kCQNURyJ1ebQbPYXNOz1wuLSAsbwCakkBCaJ4gOfER3Z8Qp+V6ra0idZ4qH
-         KlXOZOuS7TvcbWHjC3bX24N/ljZze8UjokEPa+kFWO+L9ZvlOUu6Ky2zDuNTsdovwobi
-         jvBg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1nvcecdUs+9JLlG6z2h8UGKLbwxTuoeU8SozmwtoKL4o9+B7+o5MWQ1TkQPJuOVDStSPnZgn+E+Dt8CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWVDAoCS9xrnMpDOaPXJwe9AeZiLgj9i1TfJKE/bbAFpjURl84
-	xmHUiJz8Nn81YbjR49acn+EAqSKzuy18SCWwYdYn5ihjtM7tAy5RQpeMeapporiMIltKTn5nf9P
-	XF+FsrTWHaplgqQg4aTYZXm/M2IDEplNdjNpTu0XdCftpPG9dLryk0sI=
-X-Google-Smtp-Source: AGHT+IFNSNJODWIXbQ394i760sPr6Swl9ckSzqmuHfxCrUVLJz0zVWAEEbVAdJHq/dCMhu2HIigm8ONaBH4FXzvnb8+lzMbUAPaK
+	s=arc-20240116; t=1733420461; c=relaxed/simple;
+	bh=02QwFU0NbxHwwY4/jSg9aLzGDajj8t0KO3Hq/4zLXos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TrDlNtyrbNLDVbvdXBbzK60MVMekN6gXT7owXEdlxq1CD2bX60l2f5g4C7ade6xWoIgkGumDBp7X1iPJtmyBzNnG6N6XRGj6I8WnxSyRLiUb+Eu23Z55wdKEhSUq7s1UycvTg6+lINA3Uk3IXpU5ykVs7LA9MX9KGf9RHBDqQjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 236B51BF203;
+	Thu,  5 Dec 2024 17:40:45 +0000 (UTC)
+Message-ID: <528505d0-e0ba-414b-ad9d-bc78c07464a1@ghiti.fr>
+Date: Thu, 5 Dec 2024 18:40:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1448:b0:3a7:e0e6:65a5 with SMTP id
- e9e14a558f8ab-3a811d94896mr2864845ab.6.1733420425764; Thu, 05 Dec 2024
- 09:40:25 -0800 (PST)
-Date: Thu, 05 Dec 2024 09:40:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6751e589.050a0220.b4160.01de.GAE@google.com>
-Subject: [syzbot] Monthly can report (Dec 2024)
-From: syzbot <syzbot+listef3aa534c94f9b108626@syzkaller.appspotmail.com>
-To: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mkl@pengutronix.de, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] riscv/ptrace: add new regset to access original a0
+ register
+Content-Language: en-US
+To: Celeste Liu <uwu@coelacanthus.name>, Oleg Nesterov <oleg@redhat.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani
+ <abologna@redhat.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ron Economos <re@w6rz.net>,
+ Charlie Jenkins <charlie@rivosinc.com>, Quan Zhou <zhouquan@iscas.ac.cn>,
+ Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
+ Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
+ Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, stable@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241203-riscv-new-regset-v2-0-d37da8c0cba6@coelacanthus.name>
+ <20241203-riscv-new-regset-v2-1-d37da8c0cba6@coelacanthus.name>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20241203-riscv-new-regset-v2-1-d37da8c0cba6@coelacanthus.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hello can maintainers/developers,
+Hi Celeste,
 
-This is a 31-day syzbot report for the can subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/can
+On 03/12/2024 10:30, Celeste Liu wrote:
+> The orig_a0 is missing in struct user_regs_struct of riscv, and there is
+> no way to add it without breaking UAPI. (See Link tag below)
+>
+> Like NT_ARM_SYSTEM_CALL do, we add a new regset name NT_RISCV_ORIG_A0 to
+> access original a0 register from userspace via ptrace API.
+>
+> Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gmail.com/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
+> ---
+>   arch/riscv/kernel/ptrace.c | 32 ++++++++++++++++++++++++++++++++
+>   include/uapi/linux/elf.h   |  1 +
+>   2 files changed, 33 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+> index ea67e9fb7a583683b922fe2c017ea61f3bc848db..18ce07ffb27bb1180667769eed800f6fdf96c083 100644
+> --- a/arch/riscv/kernel/ptrace.c
+> +++ b/arch/riscv/kernel/ptrace.c
+> @@ -31,6 +31,7 @@ enum riscv_regset {
+>   #ifdef CONFIG_RISCV_ISA_SUPM
+>   	REGSET_TAGGED_ADDR_CTRL,
+>   #endif
+> +	REGSET_ORIG_A0,
+>   };
+>   
+>   static int riscv_gpr_get(struct task_struct *target,
+> @@ -184,6 +185,29 @@ static int tagged_addr_ctrl_set(struct task_struct *target,
+>   }
+>   #endif
+>   
+> +static int riscv_orig_a0_get(struct task_struct *target,
+> +			     const struct user_regset *regset,
+> +			     struct membuf to)
+> +{
+> +	return membuf_store(&to, task_pt_regs(target)->orig_a0);
+> +}
+> +
+> +static int riscv_orig_a0_set(struct task_struct *target,
+> +			     const struct user_regset *regset,
+> +			     unsigned int pos, unsigned int count,
+> +			     const void *kbuf, const void __user *ubuf)
+> +{
+> +	unsigned long orig_a0 = task_pt_regs(target)->orig_a0;
+> +	int ret;
+> +
+> +	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &orig_a0, 0, -1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	task_pt_regs(target)->orig_a0 = orig_a0;
+> +	return ret;
+> +}
+> +
+>   static const struct user_regset riscv_user_regset[] = {
+>   	[REGSET_X] = {
+>   		.core_note_type = NT_PRSTATUS,
+> @@ -224,6 +248,14 @@ static const struct user_regset riscv_user_regset[] = {
+>   		.set = tagged_addr_ctrl_set,
+>   	},
+>   #endif
+> +	[REGSET_ORIG_A0] = {
+> +		.core_note_type = NT_RISCV_ORIG_A0,
+> +		.n = 1,
+> +		.size = sizeof(elf_greg_t),
+> +		.align = sizeof(elf_greg_t),
+> +		.regset_get = riscv_orig_a0_get,
+> +		.set = riscv_orig_a0_set,
+> +	},
+>   };
+>   
+>   static const struct user_regset_view riscv_user_native_view = {
+> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+> index b44069d29cecc0f9de90ee66bfffd2137f4275a8..390060229601631da2fb27030d9fa2142e676c14 100644
+> --- a/include/uapi/linux/elf.h
+> +++ b/include/uapi/linux/elf.h
+> @@ -452,6 +452,7 @@ typedef struct elf64_shdr {
+>   #define NT_RISCV_CSR	0x900		/* RISC-V Control and Status Registers */
+>   #define NT_RISCV_VECTOR	0x901		/* RISC-V vector registers */
+>   #define NT_RISCV_TAGGED_ADDR_CTRL 0x902	/* RISC-V tagged address control (prctl()) */
+> +#define NT_RISCV_ORIG_A0	  0x903	/* RISC-V original a0 register */
+>   #define NT_LOONGARCH_CPUCFG	0xa00	/* LoongArch CPU config registers */
+>   #define NT_LOONGARCH_CSR	0xa01	/* LoongArch control and status registers */
+>   #define NT_LOONGARCH_LSX	0xa02	/* LoongArch Loongson SIMD Extension registers */
+>
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 53 have already been fixed.
+Do you know how far this should be backported? Does the following fixes 
+tag make sense?
 
-Some of the still happening issues:
+Fixes: e2c0cdfba7f6 ("RISC-V: User-facing API")
 
-Ref Crashes Repro Title
-<1> 11504   Yes   WARNING: refcount bug in j1939_session_put
-                  https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-<2> 3437    Yes   WARNING: refcount bug in j1939_xtp_rx_cts
-                  https://syzkaller.appspot.com/bug?extid=5a1281566cc25c9881e0
-<3> 671     Yes   WARNING: refcount bug in get_taint (2)
-                  https://syzkaller.appspot.com/bug?extid=72d3b151aacf9fa74455
+Thanks,
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Alex
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
