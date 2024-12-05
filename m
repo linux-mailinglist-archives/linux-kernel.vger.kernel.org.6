@@ -1,180 +1,195 @@
-Return-Path: <linux-kernel+bounces-433159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014029E549B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:52:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBAFC9E5480
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3E90168E7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D368E165952
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512FD2139C6;
-	Thu,  5 Dec 2024 11:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678A221322C;
+	Thu,  5 Dec 2024 11:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Joc3kW/F"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BK2ihiRy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEA1213249;
-	Thu,  5 Dec 2024 11:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5B4213229;
+	Thu,  5 Dec 2024 11:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733399502; cv=none; b=c9K9eSZSB937x+1qBULyBVg6HiV2pZTCVMaf6X3ZYVU1zzhjlfN9bhKgFd+CtmKZJvSxQs09edCaxLBaeyy2xpntJwNtjOSABLU5KpfS2i+m9RkVrX6rp1RtCwv9oaUcUaUI+xMvn/EwmoYVUs5T5Wk/SV5sU8tu5PGZbj4wy3A=
+	t=1733399267; cv=none; b=rD1e613wkjAN5c6CxXI6V6+paZRZzwDPGlRkBr/BhVVFgosoyYc26A5I+dh+5L5GMONKrltxxaCnCiBj1OfRktECfIw1UYHLJeq49BLXggx3o72Nhxt4db0uxUSBmiMxq74rPoaellHUWKRFgVz5byfjRX4KPSZZSLj9wjVnZWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733399502; c=relaxed/simple;
-	bh=oWf1oYpaircxbb7ijNv7L4QRWi8/CRKE5AD2tihxiho=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=orOf+9r0+UO0M5nVrzM9K0zmloUVeqxJeX7HVbzKOwGkzarQFWZ2ijEkdglO8JJAkxMbnfNlqWkZrhOIrRLGsrp22IbOL2PUg5/N25f09iPjTVvRbwuKMtStLVHbjooqeBn6PZN62w38SUGvcIbV294gj8G+WfR5fYv5JuAqMH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Joc3kW/F; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5ANMBj026590;
-	Thu, 5 Dec 2024 12:50:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	DwOpMaW2es02J1yfBmzoVz6Jv19EkUC2xX3SDPzEuqM=; b=Joc3kW/FpGpozv/F
-	49MXK1F3AUIaGDlU0HmQlEy2tYgzNNZdBeXQwaWuNtio/g6MPlb4ftsBGiwKbi8E
-	6FL8hx/WN1hSMIBcxw3kOfykVoKfFxh/z9PAHBqKD+qqyA4uYJLW9md83bGqqOlm
-	+cqsp8LW61JlT6RSyF/jNRr0cQoh+9TiCv0NYStWxoUYOF5KQOT27dJk8xXfSMHu
-	gZnujWyBv9FKpQc8K9QeS4IwlJN7Ctxvb1torK6Y7SesS3Uqox0dODmK4ngz7xuH
-	MSsNpC4o4X6lUb4XAD+oxtUGuMDRWhsrjG3aBrUfFK9VUM/51UsdKak7Mw7OyV14
-	jtDQsg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 438ehp4gjy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 12:50:57 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 907B640044;
-	Thu,  5 Dec 2024 12:49:26 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 454DE29BB01;
-	Thu,  5 Dec 2024 12:46:38 +0100 (CET)
-Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 5 Dec
- 2024 12:46:37 +0100
-Message-ID: <9340979e-8f0e-465b-a524-4ff315a9941d@foss.st.com>
-Date: Thu, 5 Dec 2024 12:46:29 +0100
+	s=arc-20240116; t=1733399267; c=relaxed/simple;
+	bh=V/e/uNyI7Jm4sY0t8Aw33l/+eKGa/aBKJrKnCO6X2rc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MfXQAACCcfG2dYjC0YHsuLPeaEvuf5HWVUTK8i/n+bS2QMV2CRaLHQum5q5ZFMhXWhvIffdeBi/fG6mB3P3lq2E9EfNckyBY1MgYtXMCZkrZPQ+vRcDEWSFz+O8XeoUCCeikp44AmNgSOajeKsp8hl6nf2b4UGyg4x6S3D/laq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BK2ihiRy; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733399266; x=1764935266;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=V/e/uNyI7Jm4sY0t8Aw33l/+eKGa/aBKJrKnCO6X2rc=;
+  b=BK2ihiRyZt2wyK98gtZC/8MXqlQITTV2L4t4jUV0CD9Q1kh7NHuhayUf
+   dqmpTwDkmg5mW9hCoX0eo0yoF3CZhW1y3XX4M1pmOTLXiTc2h9fJjs7RX
+   LfeOd5eDQplx4W8LmSUBpkXPtt8Pb7TIisJxYsXmbHcCgKH7mTFGbk8Zo
+   UNHXUWnwhrBDAoFJoQuEpmSoE83L3Yjvnm4Cdkfv3kmJ0uPK+LAdFZaEt
+   qcquKvLCwGTRGvG7nak/hgkEUvCeVYwPakvXaVSZtEV6DQtYF6uk6UdoW
+   E8YNQutfAnPq+CcoT1x3kNCsWmifx1rRdemjpuai7G/PbEy/xAKa7Ur2I
+   w==;
+X-CSE-ConnectionGUID: Jcx8ff3cT+OkDaoB63mpuw==
+X-CSE-MsgGUID: WPvokuaSRgOxZJcpmG7sSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33838446"
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="33838446"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 03:47:45 -0800
+X-CSE-ConnectionGUID: 7NqGZmhcR/Sibqo9GlSC/Q==
+X-CSE-MsgGUID: SPp3w515RvOmQ6lMRolBlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
+   d="scan'208";a="94423755"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 03:47:37 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 5 Dec 2024 13:47:33 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v9 15/22] ACPI: platform_profile: Only show profiles
+ common for all handlers
+In-Reply-To: <20241202055031.8038-16-mario.limonciello@amd.com>
+Message-ID: <eff0923a-0207-3a0f-43f8-699711dd15cc@linux.intel.com>
+References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-16-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christian Bruel <christian.bruel@foss.st.com>
-Subject: Re: [PATCH v2 2/5] PCI: stm32: Add PCIe host support for STM32MP25
-To: Lucas Stach <l.stach@pengutronix.de>, Bjorn Helgaas <helgaas@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
-        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241129205822.GA2772018@bhelgaas>
- <9ca967aea19d6c28327f3a9bb77e23f6245603e9.camel@pengutronix.de>
-Content-Language: en-US
-In-Reply-To: <9ca967aea19d6c28327f3a9bb77e23f6245603e9.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: multipart/mixed; boundary="8323328-1315692794-1733399253=:932"
 
-Hello Bjorn and Lucas,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 11/29/24 22:18, Lucas Stach wrote:
-> Am Freitag, dem 29.11.2024 um 14:58 -0600 schrieb Bjorn Helgaas:
->> [+to Rob, DMA mask question]
->>
->> On Tue, Nov 26, 2024 at 04:51:16PM +0100, Christian Bruel wrote:
->>> Add driver for the STM32MP25 SoC PCIe Gen2 controller based on the
->>> DesignWare PCIe core.
->>
->> Can you include the numeric rate, not just "gen2", so we don't have to
->> search for it?
->>
->>> +static int stm32_pcie_resume_noirq(struct device *dev)
->>> +{
->>> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
->>> +	struct dw_pcie *pci = stm32_pcie->pci;
->>> +	struct dw_pcie_rp *pp = &pci->pp;
->>> +	int ret;
->>> +
->>> +	/* init_state must be called first to force clk_req# gpio when no
->>> +	 * device is plugged.
->>> +	 */
->>
->> Use drivers/pci/ conventional comment style:
->>
->>    /*
->>     * text ...
->>     */
->>
->>> +static bool is_stm32_pcie_driver(struct device *dev)
->>> +{
->>> +	/* PCI bridge */
->>> +	dev = get_device(dev);
->>> +
->>> +	/* Platform driver */
->>> +	dev = get_device(dev->parent);
->>> +
->>> +	return (dev->driver == &stm32_pcie_driver.driver);
->>> +}
->>> +
->>> +/*
->>> + * DMA masters can only access the first 4GB of memory space,
->>> + * so we setup the bus DMA limit accordingly.
->>> + */
->>> +static int stm32_dma_limit(struct pci_dev *pdev, void *data)
->>> +{
->>> +	dev_dbg(&pdev->dev, "disabling DMA DAC for device");
->>> +
->>> +	pdev->dev.bus_dma_limit = DMA_BIT_MASK(32);
->>
->> I don't think this is the right way to do this.  Surely there's a way
->> to describe the DMA capability of the bridge once instead of iterating
->> over all the downstream devices?  This quirk can't work for hot-added
->> devices anyway.
->>
+--8323328-1315692794-1733399253=:932
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-agree,
+On Sun, 1 Dec 2024, Mario Limonciello wrote:
 
-> This should simply be a dma-ranges property in the PCIe host controller
-> DT node, which should describe the DMA address range limits for
-> transactions passing through the host.
+> If multiple platform profile handlers have been registered, don't allow
+> switching to profiles unique to only one handler.
+>=20
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-far better indeed, dma-ranges works like a charm
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-thanks,
+--=20
+ i.
 
-> 
-> Regards,
-> Lucas
-> 
->>> +	return 0;
->>> +}
->>> +
->>> +static void quirk_stm32_dma_mask(struct pci_dev *pci)
->>> +{
->>> +	struct pci_dev *root_port;
->>> +
->>> +	root_port = pcie_find_root_port(pci);
->>> +
->>> +	if (root_port && is_stm32_pcie_driver(root_port->dev.parent))
->>> +		pci_walk_bus(pci->bus, stm32_dma_limit, NULL);
->>> +}
->>> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_SYNOPSYS, 0x0550, quirk_stm32_dma_mask);
->>
-> 
+> ---
+>  drivers/acpi/platform_profile.c | 52 ++++++++++++++++++++++++++-------
+>  1 file changed, 42 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
+ile.c
+> index bb0178e52ff6b..40826876006b5 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -195,22 +195,54 @@ static const struct class platform_profile_class =
+=3D {
+>  =09.dev_groups =3D profile_groups,
+>  };
+> =20
+> +/**
+> + * _aggregate_choices - Aggregate the available profile choices
+> + * @dev: The device
+> + * @data: The available profile choices
+> + * Return: 0 on success, -errno on failure
+> + */
+> +static int _aggregate_choices(struct device *dev, void *data)
+> +{
+> +=09struct platform_profile_handler *handler;
+> +=09unsigned long *aggregate =3D data;
+> +
+> +=09lockdep_assert_held(&profile_lock);
+> +=09handler =3D dev_get_drvdata(dev);
+> +=09if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
+> +=09=09bitmap_copy(aggregate, handler->choices, PLATFORM_PROFILE_LAST);
+> +=09else
+> +=09=09bitmap_and(aggregate, handler->choices, aggregate, PLATFORM_PROFIL=
+E_LAST);
+> +
+> +=09return 0;
+> +}
+> +
+> +/**
+> + * platform_profile_choices_show - Show the available profile choices fo=
+r legacy sysfs interface
+> + * @dev: The device
+> + * @attr: The attribute
+> + * @buf: The buffer to write to
+> + * Return: The number of bytes written
+> + */
+>  static ssize_t platform_profile_choices_show(struct device *dev,
+> -=09=09=09=09=09struct device_attribute *attr,
+> -=09=09=09=09=09char *buf)
+> +=09=09=09=09=09     struct device_attribute *attr,
+> +=09=09=09=09=09     char *buf)
+>  {
+> -=09int len =3D 0;
+> -=09int i;
+> +=09unsigned long aggregate[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+> +=09int err;
+> =20
+> +=09set_bit(PLATFORM_PROFILE_LAST, aggregate);
+>  =09scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> -=09=09if (!cur_profile)
+> -=09=09=09return -ENODEV;
+> -=09=09for_each_set_bit(i, cur_profile->choices, PLATFORM_PROFILE_LAST)
+> -=09=09=09len +=3D sysfs_emit_at(buf, len, len ? " %s": "%s", profile_nam=
+es[i]);
+> +=09=09err =3D class_for_each_device(&platform_profile_class, NULL,
+> +=09=09=09=09=09    aggregate, _aggregate_choices);
+> +=09=09if (err)
+> +=09=09=09return err;
+>  =09}
+> -=09len +=3D sysfs_emit_at(buf, len, "\n");
+> =20
+> -=09return len;
+> +=09/* no profile handler registered any more */
+> +=09if (bitmap_empty(aggregate, PLATFORM_PROFILE_LAST))
+> +=09=09return -EINVAL;
+> +
+> +=09return _commmon_choices_show(aggregate, buf);
+>  }
+> =20
+>  static ssize_t platform_profile_show(struct device *dev,
+>=20
+--8323328-1315692794-1733399253=:932--
 
