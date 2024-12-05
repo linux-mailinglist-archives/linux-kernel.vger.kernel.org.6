@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-434058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBCA9E6109
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:05:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016509E610C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:06:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE9328490E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB33D18856BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677781D4340;
-	Thu,  5 Dec 2024 23:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FC01D4340;
+	Thu,  5 Dec 2024 23:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="strs9CvE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="035i0Ejl"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1D22391A4;
-	Thu,  5 Dec 2024 23:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1591C3C0A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733439922; cv=none; b=Rhm8h2OdpUU2HCA/yb7fL83q99YIM7QEEaDieQCE9jjIpMQ7AkBeK2iMOUwQv+u9Z38MFQcBlyatYe8ugQrph1fvBt5UVjBoYcBW9WJ2mcREJWX5tPdBJErFg3rBJhMPC62QkZPUVZsBGes05v5Uh2ZzvNXhSZ1A3HU45bcv09A=
+	t=1733439961; cv=none; b=b24MDFsXqTBStjjbeXA9t6dh0QWiF01H97t8+m1k9iKnYyyEmheUeJ5F2cj+kXPXyQnRdVYshevyTvzxG9SPtbS41gkaimYvB+XvKsraJTJAATvb74NmcQHE1wNdE0zOUhD47dXMapCZZicaL9OH+uK4qqx67nlQu3p2v4vveFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733439922; c=relaxed/simple;
-	bh=YxxvZyCyPZW1PHoEXXxQ+L2aEKSBLXubdvbpt/NIXQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luoZxDy62X5aDr9hytHBqFPI1xub11Rsf7ScUx10iy8RmoUJTwO5JeOTlnywTM4FuD09DIOdpG8yBIU97J+J5D5k/vdoJEUvVg2kM6MjrYG43sudxwgp8UZfGToKXbYrjNAl0Yu1fxUdHzq7APCVPUBlZCLIn4tVcYWos+fjSW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=strs9CvE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0AEFC4CED1;
-	Thu,  5 Dec 2024 23:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733439922;
-	bh=YxxvZyCyPZW1PHoEXXxQ+L2aEKSBLXubdvbpt/NIXQA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=strs9CvEKK3oKlvnFiZS9Mc2t/wyf5BqP6YdrO5TjkOSSnboV6Jmwu5ooi2hCLrAm
-	 tSBWlivVanYFiYHBfyzvQ6ikTgFY+JRwpuz5EAzZxtYJxx6hRTtM7jeRPtQ8GWBfpJ
-	 t7Vb/zUaDOxnBtubY+yUWHgUxn1BQer5MEu3WvoVJk+xMVbUWuCqJkGgE9sLyTDMx6
-	 sll1SshDtEu1uiapPKqnhkmKmkZVwBXZ4/f4jqqb+dNp/0/FkjmeNPEVILHN+/zMyh
-	 eHQdotfYJvg+yXC/IbHC9/2DR9ZGFHRF//UOI7g6RbO0uK+BECH1PiVJqfBMA/QXFl
-	 Sy9DlXZYFxe7g==
-Date: Thu, 5 Dec 2024 17:05:17 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/6] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <v7konhz4x7fzfseyeyiazcw35zqmpjb6tjv5ukdlttzs74ykgb@lpftcociq257>
-References: <20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org>
- <20241112-x1e80100-ps8830-v5-2-4ad83af4d162@linaro.org>
- <Z1CCVjEZMQ6hJ-wK@hovoldconsulting.com>
+	s=arc-20240116; t=1733439961; c=relaxed/simple;
+	bh=KtxXe4kgB0BnW3MsFzYn465Cqu75ZgmvR8VczHsk0ts=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XrBc+hCDnIfWxiw9JBmYlaU4NADO3TnVa8Lme8KiT44P7Mqxq6xd5noMsaqjXaojxnElmjmwNEykgs6mQk0vqp+wy0Kw3soE2JCfEWGnx9n6Mo8+DBGqe4D0UOmqKBfRao8TgUu3ZhDizI3UYczuVBM2akwB7PkD3FtM6hvEpsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=035i0Ejl; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-215b13e9ccbso14521765ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:05:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733439958; x=1734044758; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JF86DSQKrbpE7zkN2nZ2brMlp1Djxw82gJt7o2CQPAc=;
+        b=035i0EjlumNK2kL3E73CEI22yu/W3Cz+/ySlvV5hxJbhYCOgWW9u52L25pH4xHOElp
+         DMc1vnF3jDAKd08M9sUEU/pLHYHIwfVxi1ICfyhq4mSjojGIZ344IT8x7l6tblc7ASxX
+         cT0sz2k/id7+3R2u1I8gPgCPDfDKUa6FBTCdgNuHgto2SBSloQSWCBg80IVofiZwii+y
+         gDDnrAwv9/ud4gjlJZ08D0d3CIEtcVe7qeB7fc1ORMCuK7NOGOFNUYyfYRv3kslhAihU
+         AQan1aaDS9oDNO8ujM+qrWv/AqL7JCcVREnNjgx6EPMnVFI6OUPYe69MgKe9A/mFuV7R
+         gFjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733439958; x=1734044758;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JF86DSQKrbpE7zkN2nZ2brMlp1Djxw82gJt7o2CQPAc=;
+        b=bY4YWu4Wza2JFTfVn29tKDwxV4QsCgStzUhsGsHm2dFpVH9p+OkEGL2NO1tLVbXPZs
+         WWLqu7Ld7wXVDDBTlODiys37QyFImsEV6hDMpPpTiMn4ntmHAbCEzbDrle189Oa2Xf4S
+         MZz1/RtIOe2mlM3jarXg/cmO6dfXz0mEYOZX58wMbH6H7TxvISPHyRdRlqHq+DXZSXnU
+         HDqGijfti39vSNX5IBJcRBQaDOyOL38imEQzC09hRpyDdiTe5ayPOQO0gtAAbgOoyKca
+         +kxppc3GI65hVHrSCbBg2/qba1FrS5M7S7HeWkanytX4ckFiiWFgG+6FqlAp1Q8zwwVH
+         +7Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+nug6BjtVNYKCHn86r27IicOu2sQlrQNO9WJ8v5KTgp7H/r5+vxhO/hlvjRHlo8qKhL1cm71DEMjDZ2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4gB60YCjgrdQJhUQpR0qNvGYQ6zMWwN4YJd+VYg7/NAhn2V66
+	cKfXVpx9xB9zcLlVh5eadixwiyawa+EXCbRDCv7szZj2LobwKXpzZikH9/jnAcc=
+X-Gm-Gg: ASbGnct6cwpNE0lHUU2ndXhKFV+n4Q9+KfEd/eE0z1a+mWPi9rbf7WCDHlTQGqKE0SX
+	nmYJk/FCs2ceBiANkXG0fzxlLpREF2Dy/zFwTFxxfGrqaK5R/s4EoYWzn78qbDbypgQbsN4DjyV
+	hPh7BVsEtq7BflHFiykmNN0XIFzs+Xn42l17UhktPmk/9U6YAV/73IjhpGkH7WZTab8H0iPPByE
+	i+Iv3fjATPmRaRzaIvlRzoPAdaqBqr/TeuBD2PjbZq5ZnLt
+X-Google-Smtp-Source: AGHT+IH2vKnwRVJfKJzkSGh5FdTz/wRZJhZsXQWgmQ3KNajlOo7D+P5OBQ8tqAAXIc8fvqH0d73N5g==
+X-Received: by 2002:a17:903:1103:b0:215:acb3:3786 with SMTP id d9443c01a7336-21614d445d7mr8493235ad.19.1733439958591;
+        Thu, 05 Dec 2024 15:05:58 -0800 (PST)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9df9sm17546475ad.148.2024.12.05.15.05.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 15:05:58 -0800 (PST)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Andreas Kemnade <akemnade@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Andreas Kemnade
+ <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>, Conor Dooley
+ <conor+dt@kernel.org>, linux-omap@vger.kernel.org,
+  devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 0/2] ARM: ti/omap: gta04: properly specify GTA04
+ touchscreen properties
+In-Reply-To: <20241205204413.2466775-1-akemnade@kernel.org>
+References: <20241205204413.2466775-1-akemnade@kernel.org>
+Date: Thu, 05 Dec 2024 15:05:57 -0800
+Message-ID: <7hldwthgru.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1CCVjEZMQ6hJ-wK@hovoldconsulting.com>
+Content-Type: text/plain
 
-On Wed, Dec 04, 2024 at 05:24:54PM +0100, Johan Hovold wrote:
-> On Tue, Nov 12, 2024 at 07:01:11PM +0200, Abel Vesa wrote:
-> > The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
-> > controlled over I2C. It usually sits between a USB/DisplayPort PHY
-> > and the Type-C connector, and provides orientation and altmode handling.
-> > 
-> > The boards that use this retimer are the ones featuring the Qualcomm
-> > Snapdragon X Elite SoCs.
-> 
-> > +static int ps883x_sw_set(struct typec_switch_dev *sw,
-> > +			 enum typec_orientation orientation)
-> > +{
-> > +	struct ps883x_retimer *retimer = typec_switch_get_drvdata(sw);
-> > +	int ret = 0;
-> > +
-> > +	ret = typec_switch_set(retimer->typec_switch, orientation);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	mutex_lock(&retimer->lock);
-> > +
-> > +	if (retimer->orientation != orientation) {
-> > +		retimer->orientation = orientation;
-> > +
-> > +		ret = ps883x_set(retimer);
-> > +	}
-> > +
-> > +	mutex_unlock(&retimer->lock);
-> > +
-> > +	return ret;
-> > +}
-> 
-> This seems to indicate a bigger problem, but I see this function called
-> during early resume while the i2c controller is suspended:
-> 
-> [   54.213900] ------------[ cut here ]------------
-> [   54.213942] i2c i2c-2: Transfer while suspended
-> [   54.214125] WARNING: CPU: 0 PID: 126 at drivers/i2c/i2c-core.h:56 __i2c_transfer+0x874/0x968 [i2c_core]
-> ...
-> [   54.214833] CPU: 0 UID: 0 PID: 126 Comm: kworker/0:2 Not tainted 6.13.0-rc1 #11
-> [   54.214844] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
-> [   54.214852] Workqueue: events pmic_glink_altmode_worker [pmic_glink_altmode]
-> ...
-> [   54.215090] Call trace:
-> [   54.215097]  __i2c_transfer+0x874/0x968 [i2c_core] (P)
-> [   54.215112]  __i2c_transfer+0x874/0x968 [i2c_core] (L)
-> [   54.215126]  i2c_transfer+0x94/0xf0 [i2c_core]
-> [   54.215140]  i2c_transfer_buffer_flags+0x5c/0x90 [i2c_core]
-> [   54.215153]  regmap_i2c_write+0x20/0x58 [regmap_i2c]
-> [   54.215166]  _regmap_raw_write_impl+0x740/0x894
-> [   54.215184]  _regmap_bus_raw_write+0x60/0x7c
-> [   54.215192]  _regmap_write+0x60/0x1b4
-> [   54.215200]  regmap_write+0x4c/0x78
-> [   54.215207]  ps883x_set+0xb0/0x10c [ps883x]
-> [   54.215219]  ps883x_sw_set+0x74/0x98 [ps883x]
-> [   54.215227]  typec_switch_set+0x58/0x90 [typec]
-> [   54.215248]  pmic_glink_altmode_worker+0x3c/0x23c [pmic_glink_altmode]
-> [   54.215257]  process_one_work+0x20c/0x610
-> [   54.215274]  worker_thread+0x23c/0x378
-> [   54.215283]  kthread+0x124/0x128
-> [   54.215291]  ret_from_fork+0x10/0x20
-> [   54.215303] irq event stamp: 28140
-> [   54.215309] hardirqs last  enabled at (28139): [<ffffd15e3bc2a434>] __up_console_sem+0x6c/0x80
-> [   54.215325] hardirqs last disabled at (28140): [<ffffd15e3c596aa4>] el1_dbg+0x24/0x8c
-> [   54.215341] softirqs last  enabled at (28120): [<ffffd15e3bb9b82c>] handle_softirqs+0x4c4/0x4dc
-> [   54.215355] softirqs last disabled at (27961): [<ffffd15e3bb501ec>] __do_softirq+0x14/0x20
-> [   54.215363] ---[ end trace 0000000000000000 ]---
-> [   54.216889] Enabling non-boot CPUs ...
-> 
-> This can be reproduced on the CRD (or T14s) by disconnecting, for
-> example, a mass storage device while the laptop is suspended.
-> 
+Dmitry,
 
-I wonder if this is because drivers/rpmsg/qcom_glink_smem.c line 309
-registers the GLINK interrupt as IRQF_NO_SUSPEND as a remnant from being
-used for rpm communication...
+akemnade@kernel.org writes:
 
-This is no longer needed (glink/rpm code path is now different), but
-iirc the cleanup got stuck in the question of dealing with wakeup
-capabilities (and priorities).
+> From: Andreas Kemnade <akemnade@kernel.org>
+>
+> Specify touchscreen in a way that no userspace configuration is needed.
+>
+> Note: if the devicetree patch is in without the input patch, things
+> will be broken in a different way.
 
-Regards,
-Bjorn
+Due to this dependency, I can queue this driver patch in my tree along
+with the DT patch so things go in together.  Let me know your
+preference.
+
+Kevin
+
+
+> Andreas Kemnade (2):
+>   Input: tsc2007 - accept standard properties
+>   ARM: dts: ti/omap: omap3-gta04: use proper touchscreen properties
+>
+>  arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi | 6 ++++--
+>  drivers/input/touchscreen/tsc2007.h        | 2 ++
+>  drivers/input/touchscreen/tsc2007_core.c   | 5 ++---
+>  3 files changed, 8 insertions(+), 5 deletions(-)
+>
+> -- 
+> 2.39.2
 
