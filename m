@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-433349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00169E574F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:35:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4821A9E5756
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908951883391
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3534916B6FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D093B218AD1;
-	Thu,  5 Dec 2024 13:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805FC218E8C;
+	Thu,  5 Dec 2024 13:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6uLUiP7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="XAvpQWug"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7A11C3318
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 13:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F1C218AB8;
+	Thu,  5 Dec 2024 13:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733405585; cv=none; b=b+gSrHorIwd7v8BR4bKMJCEl5UYjQCAiijHn4tvLUoRJYFDf4z4cUZ2DKCRfPmd9A8GSjR6ZpasqaAL7KsW6qPZAJ41lF4d+7ZU7E6iKyC3mivqFt7wxfOEA49nTH4gveyffSVpFusS6GsNXTH2NPzlj4CmhCN+8m9F/KkoGAS0=
+	t=1733405609; cv=none; b=OmYdIZwOzC4DPNyESTHI0euUZkl2g7tSQasseFZx2M4hp3INSh+4paLHBfGWl1MIxLMgBcFBWclcJJ5/EDooCH+WprWPy7dqOTaLLoQqOfn61EmIS4feLlcYhZp0uOPzq/RJYITI0h6ZPxgO9/AvuKeINdHubQ3uqhmrAn4k8TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733405585; c=relaxed/simple;
-	bh=BKPpgKXKsPxA88qjG0dHh7o0xInSFG6ROTDS6QljBm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPTusXgdo10KpQBhGz58xYqaIZYneQmlt5xzXg0VXRukpxPOWnaoqcjrsPOylP7AcunOQEKoyCVPrFa6ECf4mfysXuxUvfn14WZrsCVCt3UfajFW4waglAjEpwEMP40KR3+E+0Ur4wkKoLr8b+c0zFvk292wkWk1L/pOUGGX9HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6uLUiP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15514C4CEE0;
-	Thu,  5 Dec 2024 13:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733405584;
-	bh=BKPpgKXKsPxA88qjG0dHh7o0xInSFG6ROTDS6QljBm4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u6uLUiP7mWr1AlOj5bDhHGYwabj2YbEpSTyR3OfSAt9zgANa7lXf6znFg1cOgy8kd
-	 KaDOHbrxxLTZpm6rTlWeYV3bziOIwsufMNHhhqmazR06EVV/N7f1YnJR1wplzWfwKx
-	 /wZcsO3DKTrCd3J+jatdVwAoJEzpx6YfloZe48/BonLPWup//aXF0/pgWqmnTwuIGL
-	 oTc4GKQbKPz3soNZaNCc/QuohA31HqkUd4gGizochTcQZh/Jdvu+uuQz68bkkB8K3A
-	 gScL9yVHkEoygNEsKmRpVXOaL/UztHlt3jf67DSlgKI3FsqIjaRwRcIcld+NL2BPwJ
-	 La2Ys1wU+e6Mg==
-Date: Thu, 5 Dec 2024 14:32:59 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Ning Sun <ning.sun@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	tboot-devel@lists.sourceforge.net
-Subject: Re: [PATCH 2/4] x86/boot: split kernel resources setup into a helper
- function
-Message-ID: <Z1Gri651igCkRVsx@gmail.com>
-References: <20241203112525.591496-1-rppt@kernel.org>
- <20241203112525.591496-3-rppt@kernel.org>
+	s=arc-20240116; t=1733405609; c=relaxed/simple;
+	bh=lczAqVQfpP9AYgOE79ExuSe2liZMUmXcyvl2haixi/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cQA61lkqN6vq+ET81FgGrbWtDtgr4SmfO0Dm1vAdLspuvo7kDtQ8357OyKGoF8O0KNbaAQ2bI/EmD53+VQkHO0D9MDnUoGZbJ6KKC9PQKDNpwnkObUo7j93dSGBFBW1gjr7dEiMc7OxDqeK33S6yZEJjBu/PK/YlKho+ZUpkW78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=XAvpQWug; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
+	by mail.ispras.ru (Postfix) with ESMTPSA id BA1C840762DC;
+	Thu,  5 Dec 2024 13:33:15 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru BA1C840762DC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1733405595;
+	bh=j0BGhnmGhO8DhdcdiITa7Hz70d0+hDipGh+uz2C2l9U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XAvpQWug+JRVbPPJSkYq6+qysJM9+WgBEyCqlgmJUP7WZBVmXZ+JraFosMDtxIHZg
+	 Ns6vK67zdrr6Y4VssMzWHcn34mD0yNygqbga0dqZQnzZlfxZuGSsKBPMxkqiv/KVKK
+	 e2XL21Y/VDaUxYwVuj+tM6mx43Sm9mtAKzNhS+Sw=
+From: Vitalii Mordan <mordan@ispras.ru>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Deepak Saxena <dsaxena@linaro.org>,
+	Manjunath Goudar <manjunath.goudar@linaro.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>,
+	stable@vger.kernel.org
+Subject: [PATCH] usb: ohci-spear: fix call balance of sohci_p->clk handling routines
+Date: Thu,  5 Dec 2024 16:33:00 +0300
+Message-Id: <20241205133300.884353-1-mordan@ispras.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203112525.591496-3-rppt@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+If the clock sohci_p->clk was not enabled in spear_ohci_hcd_drv_probe,
+it should not be disabled in any path.
 
-* Mike Rapoport <rppt@kernel.org> wrote:
+Conversely, if it was enabled in spear_ohci_hcd_drv_probe, it must be disabled
+in all error paths to ensure proper cleanup.
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Makes setup_arch a bit easier to comprehend.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  arch/x86/kernel/setup.c | 36 ++++++++++++++++++++++--------------
->  1 file changed, 22 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 2383e73fc140..d299fe5bda25 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -524,6 +524,23 @@ void __init reserve_standard_io_resources(void)
->  
->  }
->  
-> +static void __init setup_kernel_resources(void)
-> +{
-> +	code_resource.start = __pa_symbol(_text);
-> +	code_resource.end = __pa_symbol(_etext)-1;
-> +	rodata_resource.start = __pa_symbol(__start_rodata);
-> +	rodata_resource.end = __pa_symbol(__end_rodata)-1;
-> +	data_resource.start = __pa_symbol(_sdata);
-> +	data_resource.end = __pa_symbol(_edata)-1;
-> +	bss_resource.start = __pa_symbol(__bss_start);
-> +	bss_resource.end = __pa_symbol(__bss_stop)-1;
-> +
-> +	insert_resource(&iomem_resource, &code_resource);
-> +	insert_resource(&iomem_resource, &rodata_resource);
-> +	insert_resource(&iomem_resource, &data_resource);
-> +	insert_resource(&iomem_resource, &bss_resource);
-> +}
-> +
->  static bool __init snb_gfx_workaround_needed(void)
->  {
->  #ifdef CONFIG_PCI
-> @@ -842,15 +859,6 @@ void __init setup_arch(char **cmdline_p)
->  		root_mountflags &= ~MS_RDONLY;
->  	setup_initial_init_mm(_text, _etext, _edata, (void *)_brk_end);
->  
-> -	code_resource.start = __pa_symbol(_text);
-> -	code_resource.end = __pa_symbol(_etext)-1;
-> -	rodata_resource.start = __pa_symbol(__start_rodata);
-> -	rodata_resource.end = __pa_symbol(__end_rodata)-1;
-> -	data_resource.start = __pa_symbol(_sdata);
-> -	data_resource.end = __pa_symbol(_edata)-1;
-> -	bss_resource.start = __pa_symbol(__bss_start);
-> -	bss_resource.end = __pa_symbol(__bss_stop)-1;
-> -
->  	/*
->  	 * x86_configure_nx() is called before parse_early_param() to detect
->  	 * whether hardware doesn't support NX (so that the early EHCI debug
-> @@ -894,11 +902,11 @@ void __init setup_arch(char **cmdline_p)
->  	tsc_early_init();
->  	x86_init.resources.probe_roms();
->  
-> -	/* after parse_early_param, so could debug it */
-> -	insert_resource(&iomem_resource, &code_resource);
-> -	insert_resource(&iomem_resource, &rodata_resource);
-> -	insert_resource(&iomem_resource, &data_resource);
-> -	insert_resource(&iomem_resource, &bss_resource);
-> +	/*
-> +	 * Add resources for kernel text and data to the iomem_resource
+The check inside spear_ohci_hcd_drv_resume() actually doesn't prevent
+the clock to be unconditionally disabled later during the driver removal but
+it is still good to have the check at least so that the PM core would duly
+print the errors in the system log. This would also be consistent with
+the similar code paths in ->resume() functions of other usb drivers, e.g. in
+exynos_ehci_resume().
 
-Missing full stop.
+Found by Linux Verification Center (linuxtesting.org) with Klever.
 
-> +	 * Do it eafter parse_early_param, so could debug it
+Fixes: 1cc6ac59ffaa ("USB: OHCI: make ohci-spear a separate driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+---
+ drivers/usb/host/ohci-spear.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Typo...
+diff --git a/drivers/usb/host/ohci-spear.c b/drivers/usb/host/ohci-spear.c
+index 993f347c5c28..6f6ae6fadfe5 100644
+--- a/drivers/usb/host/ohci-spear.c
++++ b/drivers/usb/host/ohci-spear.c
+@@ -80,7 +80,9 @@ static int spear_ohci_hcd_drv_probe(struct platform_device *pdev)
+ 	sohci_p = to_spear_ohci(hcd);
+ 	sohci_p->clk = usbh_clk;
+ 
+-	clk_prepare_enable(sohci_p->clk);
++	retval = clk_prepare_enable(sohci_p->clk);
++	if (retval)
++		goto err_put_hcd;
+ 
+ 	retval = usb_add_hcd(hcd, irq, 0);
+ 	if (retval == 0) {
+@@ -103,8 +105,7 @@ static void spear_ohci_hcd_drv_remove(struct platform_device *pdev)
+ 	struct spear_ohci *sohci_p = to_spear_ohci(hcd);
+ 
+ 	usb_remove_hcd(hcd);
+-	if (sohci_p->clk)
+-		clk_disable_unprepare(sohci_p->clk);
++	clk_disable_unprepare(sohci_p->clk);
+ 
+ 	usb_put_hcd(hcd);
+ }
+@@ -137,12 +138,15 @@ static int spear_ohci_hcd_drv_resume(struct platform_device *dev)
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
+ 	struct ohci_hcd	*ohci = hcd_to_ohci(hcd);
+ 	struct spear_ohci *sohci_p = to_spear_ohci(hcd);
++	int ret;
+ 
+ 	if (time_before(jiffies, ohci->next_statechange))
+ 		msleep(5);
+ 	ohci->next_statechange = jiffies;
+ 
+-	clk_prepare_enable(sohci_p->clk);
++	ret = clk_prepare_enable(sohci_p->clk);
++	if (ret)
++		return ret;
+ 	ohci_resume(hcd, false);
+ 	return 0;
+ }
+-- 
+2.25.1
 
-Also, this sentence isn't proper English AFAICS.
-
-Please do not submit write-only comments...
-
-Thanks,
-
-	Ingo
 
