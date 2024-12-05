@@ -1,243 +1,265 @@
-Return-Path: <linux-kernel+bounces-432582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95F39E4D3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:24:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074B69E4D44
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:37:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6973E2840B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D331881178
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09F4192D7C;
-	Thu,  5 Dec 2024 05:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A46193425;
+	Thu,  5 Dec 2024 05:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2XGSNPs0"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2051.outbound.protection.outlook.com [40.107.93.51])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuKs8SLf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2108A2119
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 05:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733376254; cv=fail; b=t+otCQPGn7qshMCScJY5+vSrt94l0i2DHsqjsk8J//LajitwNDrzIaBZTJtFOTmEPfYbVgnaA+nlBbK7YJzaQNgF79UwdgcCo97YIxrZucS/XioRHKZZqIMMH0J5VoDnvPl+MHFRF5bBEjXbK36f1qr7j8H6527M7zCFJD2L0lY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733376254; c=relaxed/simple;
-	bh=9QGzr0bpIIS6cGjua0AR48f45vIQxjwsO4CcqQH7VWU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lKbJz1ewmoMP2OGDXfaTdSn/duucF5MILE7iuozQ7xxhBQtzrAOtGwJFerK551i56vHn4i8TlzvatnFI6Qh41yqrGgxbbg+Q5IK0wjdwi4c3NoTTde5oWB09br6TEQM9PshGW06Giojh2CcekyN7dgtWnENsJ79QTIMVSlvI2/Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2XGSNPs0; arc=fail smtp.client-ip=40.107.93.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dZrMNKeAbkh+Q5jfoKuWakCH1iZdTyFSOHuzXltULjcR9t1x7z8ErBLlsb5TttTYWo6wjycY1ZIoOI05RVqym2aw+hHyLr+EF9biLPW/p/ISKD7okc3ynVf5UJrDK49DDMm9VSY/u8IZb9T9tl9Z32LFSM8cbWERHWfJadoTXPW/bp415bsZKGTms4yVmGnMBpUsd1UhieJMNaMyud3qVzj5vvxiPnR/ulnKHaEY4oAmIVMhUf1uU0Ls4cCPMu36Q52+SGYey8YYcti7OtmZWH9nvcu1OO3t3bLuwpIMzWytgxXnQuOUCKn4cwGEUE4pt0MoRHLZIxwt0247qiQlhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9QGzr0bpIIS6cGjua0AR48f45vIQxjwsO4CcqQH7VWU=;
- b=HP+oif/7ddYsdneV4cR/IJcOpGFOu16T2MdY7jxNgp+8fWk1a/EoXqQhMtCtNBcQDBsPSKnYE0LBZDXmsDps+47eeGuJ8zvXvcdYMU/3glgAWe/xcsZVh3C2Dc3ApnP0zCDOlHhpfY65GOkk7jDtFJb81mqCBwcq6taJMNFsZN03R8T0n6RIMwq+BTjQ/ndI23rONeXToj3R2hlbGnVf5UShc7mMfU5gYRMVz7WIZae0BTdiB8m+no7L6IOkRuY2VCFuskbJ5QYcDKgmeI9RRb/Jhvolce7+6qN8xlK99QtA8PZvNgpLMRDz5NP7oPihLTJ9Nzfdjv3kRSRlN5wwDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9QGzr0bpIIS6cGjua0AR48f45vIQxjwsO4CcqQH7VWU=;
- b=2XGSNPs0WLJDZGdqLnmGGL/cqClB9S6hAtzEWys1HnlZIF38r6stK8Sic6yDEn/lBHUK7qWKQzBf2G0ykjJfJ1dUVERMaNIavSG8k2M1xlGORHZgvwRBCH5fDEPX5DTSWrq1TAehsG3YYZpeET24YTTiN+/5oGAFzJ1Z/f1TSHw=
-Received: from DM4PR12MB8451.namprd12.prod.outlook.com (2603:10b6:8:182::7) by
- MW6PR12MB8897.namprd12.prod.outlook.com (2603:10b6:303:24a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
- 2024 05:24:09 +0000
-Received: from DM4PR12MB8451.namprd12.prod.outlook.com
- ([fe80::b04e:2da5:7189:4c4d]) by DM4PR12MB8451.namprd12.prod.outlook.com
- ([fe80::b04e:2da5:7189:4c4d%5]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
- 05:24:09 +0000
-From: "Penny, Zheng" <penny.zheng@amd.com>
-To: "Andryuk, Jason" <Jason.Andryuk@amd.com>, =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?=
-	<jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>, Oleksandr
- Tyshchenko <oleksandr_tyshchenko@epam.com>
-CC: "Huang, Ray" <Ray.Huang@amd.com>, "Ragiadakou, Xenia"
-	<Xenia.Ragiadakou@amd.com>, "xen-devel@lists.xenproject.org"
-	<xen-devel@lists.xenproject.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, =?utf-8?B?Um9nZXIgUGF1IE1vbm7DqQ==?=
-	<roger.pau@citrix.com>
-Subject: RE: [PATCH v1 1/4] xen/acpi: upload power and performance related
- data from a PVH dom0
-Thread-Topic: [PATCH v1 1/4] xen/acpi: upload power and performance related
- data from a PVH dom0
-Thread-Index: AQHbRiYT0x98jyXl30G0kVQmyAsIc7LVwRsAgACzWQCAAKqSkA==
-Date: Thu, 5 Dec 2024 05:24:08 +0000
-Message-ID:
- <DM4PR12MB8451450DB78B350A9F46725FE1302@DM4PR12MB8451.namprd12.prod.outlook.com>
-References: <20241204082430.469092-1-Penny.Zheng@amd.com>
- <20241204082430.469092-2-Penny.Zheng@amd.com>
- <fc2ef8da-62e8-431a-8a1b-508b3f9d5ef4@suse.com>
- <89ab9108-aa40-4da4-8e9f-dfa3bd49e2f4@amd.com>
-In-Reply-To: <89ab9108-aa40-4da4-8e9f-dfa3bd49e2f4@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=6ee03fae-d4d4-4996-ae84-4d17a9756712;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-12-05T05:22:22Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB8451:EE_|MW6PR12MB8897:EE_
-x-ms-office365-filtering-correlation-id: 0b3f2a9b-7412-453d-d6b9-08dd14ed0b92
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RXVoYWRNcS9VdTlyaERlSHNwekQ3aXhKd2JEcEpINHlKT3E0MCt2QlRmOUM3?=
- =?utf-8?B?Q0w3YnpVMk91cFVSWEU2eTA5SDJHekJvRlMwalFQczM4ZUxPUElsMEJBbVdo?=
- =?utf-8?B?MTN2WVVOeVZrZDhWTjQyWmU5dUNnVS9zbjBLaGpSbVNUanpIc1NmYUVzbzMw?=
- =?utf-8?B?L1RhaDdOZ2FZbXlsN0hYNHk4OG5sZlBaTFcvcm9TSHpwbnY4MVYrLzNYcnlx?=
- =?utf-8?B?UXBWVTAwYnBqR1hOaFBhM2x3bHQ3aHVuRnBHQlhsb3h2RXNrVFp6THJEOXFP?=
- =?utf-8?B?LzlOUjArVkxITnNrWmhPVFc4NVpXeHlzUzJEWTdZTEdyazZOZUNaRUdDM2tk?=
- =?utf-8?B?VERoTDJ0dGh4NmZLVjlseWtDTFE4eXBsMUdTN2kralBmc0Q5bHA5VFJHckJL?=
- =?utf-8?B?RmxtV3AxRk5YaG5CdCtUZXBvM1NlbStQUi95cXE4K1dGWng0enh2eUEvdnUy?=
- =?utf-8?B?TkZUVnY1U3pWalBwYmtSeWJUV2M0Z2ZpM0k1d3RqMFM0VHNqR1FjMVg0bkdW?=
- =?utf-8?B?Wm9SMkI1OEh0NkVYckgrN1Z0QlZ6N1dtQkNRTDMybldnZXU2cjc1NTkrU1dt?=
- =?utf-8?B?ZlQyajJxSXFvRUNjVXBHRmorOVNsbG1SbUxXL2lPRzZOYi81dkt6cldLb1I5?=
- =?utf-8?B?YzJZYTlzdW5MbS9WaUxEZ1d2cHFvZVQzSiszOE9saWJYQW9NZzhxSkE5Tjdi?=
- =?utf-8?B?aU9FUStGSFpTcUd5NlJ5cE5ZakJDNWdQTnBMTmZkQ2VMUmlvT3BEam84MmYy?=
- =?utf-8?B?WkFqUUdDb0U3K2xUd1VGWi85aGd1WDN4d0RhVGxlVUQzdTJ3SS9RRTc0Uldu?=
- =?utf-8?B?czMrQi9MSTQveUNPRWY1ZzA4ZXp6d292dG1ENlExODJuaVN3V2JrZ1pkd3VR?=
- =?utf-8?B?VGx2VjE2cUJwckNCNW9icDBxYnBiOVZoK2MwNWpLTU5raStDTkszcmRuU2F6?=
- =?utf-8?B?RXN5LzhscHp1VlpwUk5JMEVoZEgvcUgzU2tKdmJjRkV3WFBnTVBVVHNBL2VD?=
- =?utf-8?B?aDVJYTNMeDB5ZVhSWHFYT2o4UmE2NVE0cmcyTWk3ZTBmcS9LR1dEdldEL1N0?=
- =?utf-8?B?OURHR1dIZzBBKzlrMzJJOVoyNGpmbFkwUzkrd0FKbzBCWE9DVk5hNmkvaXho?=
- =?utf-8?B?WHR1UUhycVBiTDZmWVEzYldaQkZ1Ukw2S2RaREVjWFAyU3BUSUZSYUVlNHZX?=
- =?utf-8?B?YUJsNkdKY2tkbGE0RFN1QjlJLzJqQkdvVWllZlB2WVFPckw5cVJEbXJtK0h5?=
- =?utf-8?B?R2pjaXk5ektOWmlpNXl1ZXpOYm9wOERtVTJEdW9pa08renJmZ1RHaDVjcE9v?=
- =?utf-8?B?VlA4WDFXdGRxaHRkM0tEang3N2RPOEJocktZbGVBN2FTbXFuWnRIYSt2UHhv?=
- =?utf-8?B?L2ltd0VhbGNNcDZFTTFOVE1XdTdSYXZPMU0yQStaTllHR2pvQjdDRXlkK3hn?=
- =?utf-8?B?RFpqQUpwbVVYY2FURTkxaWRIbHZDZWVFcUZYU3NlaGpoRko5aEtpdmpDQmRC?=
- =?utf-8?B?ZmMrU0dKNzBzWEttTFZMOFA2REJ3QVhqU3crVFNvYy9ZeWM2djhPNWI0ZXBB?=
- =?utf-8?B?dEFqMlEranJXclpKQTlSTFRiamRpelBQU3kvZ1hSQ1VqOWEvOGlzOWk3a3pr?=
- =?utf-8?B?WTVKOHZFT3JhVDJYTWw5MjR0eW5HanNObitsR3lqWGpSSURJZW1LMDQyTVFw?=
- =?utf-8?B?aVZESGt1MVo0a2xsSFFjY01CS0JUNmFKNTZmNFJSdGhoMWlDOHU2OENlajVC?=
- =?utf-8?B?N3FKWTl6dC80RVZXOTh1S0h0TCtMZnM2RVdBK2thTkg4VURqcGVxYWxGQW9N?=
- =?utf-8?Q?nphfglkOoHP9hy01Us6/RWoa/tEdassn61JG4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8451.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VUF0QS8wTDZrUkdGZUhlcG40U3BBUnMwRFJXaVhwWElZTzZzTnFtcnNtYkEw?=
- =?utf-8?B?VjR2N1E2TmpzaTRCWHFoL2NtbzJpbnJqVzhiUnB1UHEwYWxwNmgzUlhDSnpi?=
- =?utf-8?B?dDdqaEV6WXNRZmNSVjhadzZHV3VUTU9sRmJmRE85dGxVZlljSG13Ri9LcitI?=
- =?utf-8?B?d0tyU1NoSlEvUmN1N1B4U05HWWdLQWNvQUNKOE9Sek9yKzRZVUxxVXhtaUVj?=
- =?utf-8?B?emk0VTMxY2hudjJMUlFBS2ptNkdpeTdkUWd4UHlQMnd1Visvelh5dUxxYjUy?=
- =?utf-8?B?UThNdCswMzcxUzFGc1J1TW00Z0IwYjJ0ZFVKdFkzNFphZzhHcGkyNnkvaDNN?=
- =?utf-8?B?UlRhakhtYVFvU3dvWWM2UlRTMEVsdm9LdGU1WWpoc2pqTzVhVlhsWEhyR2ov?=
- =?utf-8?B?MzBlL1BrUG80NUV1dmdaRkJNaFpUY1VQSWZrbnpxbldNVDE2RzFhN2FPQkRl?=
- =?utf-8?B?ZlRXbWZaUWVuelBYMjE3SHpNRzRZVDU3TVhQZllNNktJN2ZoOHNZYTJ2Wmg2?=
- =?utf-8?B?Z2NNQzdtUXc3bzY1Yis1RVZ3clQvN0M4dnFmZkRicGl3U01mVExHeU5IdzRy?=
- =?utf-8?B?MEtIMDkzYmRmU3V2T2ErdG1hK0c3OEJZR0JXMWIxbGliK0xNUVU5RWZKWE5Z?=
- =?utf-8?B?cVFndW4xc3JTRFErTSt6TFhicFZPcVpBS21IMjYwbkFtQklvSXBpcjBLTDAz?=
- =?utf-8?B?WXNVckZaMERvdmRGdHRvemxYNUNNVEtyVEJVUmsxZmhVWmcyL1BRM3BORXo2?=
- =?utf-8?B?U2RicWp2eWI0VDRMdVVZYzVqZHFBY05QbVNUMElOd0lETUJRQVZIRHpvQ3pH?=
- =?utf-8?B?dFhJbVNlVTRld1M0b0ZoZXVyTEJxWWZ4d2NhTFVpK3pYZjViR3JHOXI1cndq?=
- =?utf-8?B?dlRkZG1tek8zenM5ay9NUWhidTZXRFNob0hXZ1dVbDZRL3JxNDczcTlJOWZh?=
- =?utf-8?B?VUx6S0RYaVNIcldhS2NEOFM1VVBXVEx4VUFsNFNUeGVaTDFVcnJncGdsaTRp?=
- =?utf-8?B?WEpvT2FoMUhZSHlxYWZJSjQ0WWtmRDNvSnFzTHQrUVdiRjh4L0gwa2RHc0dx?=
- =?utf-8?B?ZXFMZ1A4MGlwZjVDMU5STWsrRnJPaitLSVh5R2w2NFA4MGdRRzRkRVlYaGlD?=
- =?utf-8?B?Vm9jR0pBR0MwQXo5aW9tU29BN1dtbmxocWJuR3FnOXpBQjZDTHBYbkRibVdV?=
- =?utf-8?B?bWwxL0hCR0tyeFFZcnB2bE8rR2swaTlJMVkrZk12K0JhNGdIZG1wVG5YWjVN?=
- =?utf-8?B?cS90eUFZVVQ4S2M4R0pUQXJVazFRQk9pSEF3UVJzd3luS0k3MEd0NG5tM05t?=
- =?utf-8?B?bmZmTnM2UDBRTmw3Rm42bnRQdzhDdFRuYXRsZFhyd1RDb0Y0ODlnZy93Z1Bi?=
- =?utf-8?B?NGhEdFhTanArbk1CeTJoTWx0aFlycW4xaHE2eUdocUJpcUZLVXdneStBdzJM?=
- =?utf-8?B?TUprN0ZHaEs0V21lb2R0eUZ1SGV2MUxibG03KzBMaERNTGV4Rkp3d3RsTllB?=
- =?utf-8?B?VUh2b0VUdUtKNzJXMlJKOU9lR1lHRXEvUU4ralBNNWRZcG9lQUkrMDd3WjBK?=
- =?utf-8?B?c20yWGJVY2pSemlVdTlNMnM2VDhRT3g4NjAyRG9vdEVtQmYrZWpjR1Y4TFJ3?=
- =?utf-8?B?bU1MWVJUZWRZdm1VQms5OXpEMUhEZkxjSUpkUkp5RFZWNmRUY1BpaC8rdTJO?=
- =?utf-8?B?SUJ1U052WHJwOGtIUHgwNGZ6T3d4N3MrRW9jeFRqRWVMeml4TjMwUFhDZ20x?=
- =?utf-8?B?bUhmR0YwYzZnQzU3T3ErSkI5c0NpWjdCb3B0d01BWVRNZ09saVNZUjJvYUdt?=
- =?utf-8?B?OUtyeERiTURKbnNJMk10aXlDa2VxRmU3eUttMXBsK1h5eXc3NldMUjUzYU8x?=
- =?utf-8?B?aTlQRnlxekw5WVRqdmhmOFVaUjQ2RkgvY2s4alZWK0Yzb1NxWjZnaTNxNUhW?=
- =?utf-8?B?R2wyK3ArQnpQbk1SSTFJSWQ0dThtZVMvQXN3RitZM0w3b0svak83S3hGTE0v?=
- =?utf-8?B?ZmZKbitUYURUemU1M2ZiQ2ZTeXhPSk05ZkhtWW5aYWNUY2N6N1hMZ3FOc01L?=
- =?utf-8?B?aUR0aUNUaEowbnNQa0hNcVhxQWZndnZmL2UrSVNoaU4yRVJzRXhyYUkvNjN3?=
- =?utf-8?Q?EulA=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4936F12E5D;
+	Thu,  5 Dec 2024 05:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733377017; cv=none; b=pVuEML8mlAWaPKzsFv7EsDF0UE9aM+5bDUmT5V864DXldJmrSm4f19QTyQYciLsvWNY7LRk+2s7cA+YO/ZbxvwTTCAfzU56qlnQ2rZ2YLoyX7T9LzlldNJaSJoHD9JTP6EqLIyHiCaNNBPvPmwyE5GisMnP9h7Mtc3sbgH9b6NA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733377017; c=relaxed/simple;
+	bh=AebNC+EHdWF/RLz/D71pM+UbPstW1kn/igJQNkozLGI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L5xYtYDA60h4rFvHoIJov2xNz9quxIbRogBIuon6EWilkZEi6IKwOZdWmJkDemd03oKrWM9/pbBu7txZqxqdDi2YFLiQbTZp+uET9SZe6vAMR1W1FOub+HrFhZhUx4C/1KCilCLBM5uD4wXK5vEVB4y/XxbavMeDeAIzUI9JcMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuKs8SLf; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733377016; x=1764913016;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AebNC+EHdWF/RLz/D71pM+UbPstW1kn/igJQNkozLGI=;
+  b=RuKs8SLfDqhIiBYuNeJIip9zf0RwVdtHppVOVoAiZCDe5z6QITPa+8wC
+   JiO3RP4A/2BqO5tP1QZzoGLteunltOCA1c6MROYnotApsjGBP2Gp0rpgH
+   qdVwgb9L0janF/ejvypXqrwXlPSoJGy0N6dJLlZ/1AWaLz7Rf3RAqBp3w
+   yzK+I7G4SNCsJxR+EEyF3HHhTVrH6W4mFjjmopmDOgsF5sF8tQN7UhpBn
+   lWETWIoScEELkhIZ19KA333Rm8xE93c1ooAP3d1t54O/DLkMzEwOE2Qlf
+   YfKbOMClYnw1bf4mxnHLxE2Eu44f6hhWcVQx56mDjHD/kwJmaWPonVajZ
+   A==;
+X-CSE-ConnectionGUID: kxpBr/FqQs6s6xhVZKYDQg==
+X-CSE-MsgGUID: kpamJpseR+GFFUMtRE+mdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="37452252"
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="37452252"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 21:36:55 -0800
+X-CSE-ConnectionGUID: SgM3YbkMTnatxbqqgdRTWQ==
+X-CSE-MsgGUID: 1h+Zo78pQwmwa4nqLDdOsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="93832177"
+Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
+  by orviesa010.jf.intel.com with ESMTP; 04 Dec 2024 21:36:52 -0800
+From: niravkumar.l.rabara@intel.com
+To: devicetree@vger.kernel.org
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] dt-bindings: mtd: cadence: convert cadence-nand-controller.txt to yaml
+Date: Thu,  5 Dec 2024 13:33:50 +0800
+Message-Id: <20241205053350.434370-1-niravkumar.l.rabara@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8451.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b3f2a9b-7412-453d-d6b9-08dd14ed0b92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2024 05:24:09.0317
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IRo0r+cuMXYw8S5Uf1R2xHZ8r19ihcReoOkXIJcOT5Rs4ODWJ86/ygRXwpTrEwb+E2P0vcZuiafJeHXiK/Baqw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8897
+Content-Transfer-Encoding: 8bit
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KSGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmFzb24gQW5k
-cnl1ayA8amFzb24uYW5kcnl1a0BhbWQuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgRGVjZW1iZXIg
-NSwgMjAyNCAzOjEyIEFNDQo+IFRvOiBKw7xyZ2VuIEdyb8OfIDxqZ3Jvc3NAc3VzZS5jb20+OyBQ
-ZW5ueSwgWmhlbmcgPHBlbm55LnpoZW5nQGFtZC5jb20+Ow0KPiBTdGVmYW5vIFN0YWJlbGxpbmkg
-PHNzdGFiZWxsaW5pQGtlcm5lbC5vcmc+OyBPbGVrc2FuZHIgVHlzaGNoZW5rbw0KPiA8b2xla3Nh
-bmRyX3R5c2hjaGVua29AZXBhbS5jb20+DQo+IENjOiBIdWFuZywgUmF5IDxSYXkuSHVhbmdAYW1k
-LmNvbT47IFJhZ2lhZGFrb3UsIFhlbmlhDQo+IDxYZW5pYS5SYWdpYWRha291QGFtZC5jb20+OyB4
-ZW4tZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJu
-ZWwub3JnOyBSb2dlciBQYXUgTW9ubsOpIDxyb2dlci5wYXVAY2l0cml4LmNvbT4NCj4gU3ViamVj
-dDogUmU6IFtQQVRDSCB2MSAxLzRdIHhlbi9hY3BpOiB1cGxvYWQgcG93ZXIgYW5kIHBlcmZvcm1h
-bmNlIHJlbGF0ZWQgZGF0YQ0KPiBmcm9tIGEgUFZIIGRvbTANCj4NCj4gT24gMjAyNC0xMi0wNCAw
-MzoyOSwgSsO8cmdlbiBHcm/DnyB3cm90ZToNCj4gPiBPbiAwNC4xMi4yNCAwOToyNCwgUGVubnkg
-Wmhlbmcgd3JvdGU6DQo+ID4+IEZyb206IFJvZ2VyIFBhdSBNb25uw6kgPHJvZ2VyLnBhdUBjaXRy
-aXguY29tPg0KPiA+Pg0KPiA+PiBXaGVuIHJ1bm5pbmcgYXMgYSBQVkggZG9tMCB0aGUgQUNQSSBN
-QURUIGlzIGNyYWZ0ZWQgYnkgWGVuIGluIG9yZGVyDQo+ID4+IHRvIHJlcG9ydCB0aGUgY29ycmVj
-dCBudW1iZXJzIG9mIHZDUFVzIHRoYXQgZG9tMCBoYXMsIHNvIHRoZSBob3N0DQo+ID4+IE1BRFQg
-aXMgbm90IHByb3ZpZGVkIHRvIGRvbTAuICBUaGlzIGNyZWF0ZXMgaXNzdWVzIHdoZW4gcGFyc2lu
-ZyB0aGUNCj4gPj4gcG93ZXIgYW5kIHBlcmZvcm1hbmNlIHJlbGF0ZWQgZGF0YSBmcm9tIEFDUEkg
-ZHluYW1pYyB0YWJsZXMsIGFzIHRoZQ0KPiA+PiBBQ1BJIFByb2Nlc3NvciBVSURzIGZvdW5kIG9u
-IHRoZSBkeW5hbWljIGNvZGUgYXJlIGxpa2VseSB0byBub3QgbWF0Y2gNCj4gPj4gdGhlIG9uZXMg
-Y3JhZnRlZCBieSBYZW4gaW4gdGhlIGRvbTAgTUFEVC4NCj4gPj4NCj4gPj4gWGVuIHdvdWxkIHJl
-bHkgb24gTGludXggaGF2aW5nIGZpbGxlZCBhdCBsZWFzdCB0aGUgcG93ZXIgYW5kDQo+ID4+IHBl
-cmZvcm1hbmNlIHJlbGF0ZWQgZGF0YSBvZiB0aGUgdkNQVXMgb24gdGhlIHN5c3RlbSwgYW5kIHdv
-dWxkIGNsb25lDQo+ID4+IHRoYXQgaW5mb3JtYXRpb24gaW4gb3JkZXIgdG8gc2V0dXAgdGhlIHJl
-bWFpbmluZyBwQ1BVcyBvbiB0aGUgc3lzdGVtDQo+ID4+IGlmIGRvbTAgdkNQVXMgPCBwQ1BVcy4g
-IEhvd2V2ZXIgd2hlbiBydW5uaW5nIGFzIFBWSCBkb20wIGl0J3MgbGlrZWx5DQo+ID4+IHRoYXQg
-bm9uZSBvZiBkb20wIENQVXMgd2lsbCBoYXZlIHRoZSBwb3dlciBhbmQgcGVyZm9ybWFuY2UgZGF0
-YQ0KPiA+PiBmaWxsZWQsIGFuZCBoZW5jZSB0aGUgWGVuIEFDUEkgUHJvY2Vzc29yIGRyaXZlciBu
-ZWVkcyB0byBmZXRjaCB0aGF0DQo+ID4+IGluZm9ybWF0aW9uIGJ5IGl0c2VsZi4NCj4gPj4NCj4g
-Pj4gSW4gb3JkZXIgdG8gZG8gc28gY29ycmVjdGx5LCBpbnRyb2R1Y2UgYSBuZXcgaGVscGVyIHRv
-IGZldGNoIHRoZSBfQ1NUDQo+ID4+IGRhdGEgd2l0aG91dCB0YWtpbmcgaW50byBhY2NvdW50IHRo
-ZSBzeXN0ZW0gY2FwYWJpbGl0aWVzIGZyb20gdGhlDQo+ID4+IENQVUlEIG91dHB1dCwgYXMgdGhl
-IGNhcGFiaWxpdGllcyByZXBvcnRlZCB0byBkb20wIGluIENQVUlEIG1pZ2h0IGJlDQo+ID4+IGRp
-ZmZlcmVudCBmcm9tIHRoZSBvbmVzIG9uIHRoZSBob3N0Lg0KPiA+Pg0KPiA+PiBOb3RlIHRoYXQg
-dGhlIG5ld2x5IGludHJvZHVjZWQgY29kZSB3aWxsIG9ubHkgZmV0Y2ggdGhlIF9DU1QsIF9QU1Ms
-DQo+ID4+IF9QUEMgYW5kIF9QQ1QgZnJvbSBhIHNpbmdsZSBDUFUsIGFuZCBjbG9uZSB0aGF0IGlu
-Zm9ybWF0aW9uIGZvciBhbGwNCj4gPj4gdGhlIG90aGVyIFByb2Nlc3NvcnMuICBUaGlzIHdvbid0
-IHdvcmsgb24gYW4gaGV0ZXJvZ2VuZW91cyBzeXN0ZW0NCj4gPj4gd2l0aCBQcm9jZXNzb3JzIGhh
-dmluZyBkaWZmZXJlbnQgcG93ZXIgYW5kIHBlcmZvcm1hbmNlIHJlbGF0ZWQgZGF0YQ0KPiA+PiBi
-ZXR3ZWVuIHRoZW0uDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IFJvZ2VyIFBhdSBNb25uw6kg
-PHJvZ2VyLnBhdUBjaXRyaXguY29tPg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBKYXNvbiBBbmRyeXVr
-IDxqYXNvbi5hbmRyeXVrQGFtZC5jb20+DQo+ID4NCj4gPiBJIHRoaW5rIHRoaXMgaXMgdGhlIFYy
-IHZlcnNpb24gb2YgSmFzb24ncyBwYXRjaCwgb2Ygd2hpY2ggaGUgc2VudCBWMw0KPiA+IGp1c3Qg
-eWVzdGVyZGF5Pw0KPg0KPiBQZW5ueSdzIHBhdGNoIGhhcyBzb21lIG9mIHRoZSBjaGFuZ2VzIEkg
-bWFkZSwgYnV0IHRoZW4gSSBtYWRlIGFuIGFkZGl0aW9uYWwNCj4gY2hhbmdlIGFuZCBkaWRuJ3Qg
-dGVsbCBoZXIgYWJvdXQgaXQuDQo+DQo+ID4gUGxlYXNlIHN5bmMgd2l0aCBoaW0gaG93IHRvIHBy
-b2NlZWQ6IGlzIGhpcyBwYXRjaCBtZWFudCB0byBiZSBhDQo+ID4gcHJlcmVxdWlzaXRlIGZvciB5
-b3VyIHNlcmllcyBvciBhIHBhcnQgb2YgaXQ/DQo+DQo+IFNvcnJ5IGZvciB0aGUgY29uZnVzaW9u
-LiAgUGVubnksIEkgdGhpbmsgeW91IHNob3VsZCBqdXN0IGdyYWIgbXkgdjMNCj4gKGh0dHBzOi8v
-bG9yZS5rZXJuZWwub3JnL3hlbi1kZXZlbC8yMDI0MTIwMzIyNTMzOC4xMzM2LTEtDQo+IGphc29u
-LmFuZHJ5dWtAYW1kLmNvbS9ULyN1KQ0KPiBhbmQgcmVzdWJtaXQgd2l0aCB0aGF0LiAgSXQgcmVt
-b3ZlcyBhIEJVR19PTiB0aGF0IGNoZWNrcGF0Y2ggY29tcGxhaW5lZCBhYm91dA0KPiAod2hpY2gg
-aXMgdW5yZWFjaGFibGUgYmVjYXVzZSBvZiBhbiBlYXJsaWVyIE5VTEwgY2hlY2spLg0KPg0KDQpT
-dXJlLCBJJ20gZG93bmxvYWRpbmcgeW91ciB2ZXJzaW9uLCBhbmQgd2lsbCByZWJhc2UgYW5kIHB1
-c2ggYSBuZXcgdmVyc2lvbiBoZXJlfg0KDQo+IFRoYW5rcywNCj4gSmFzb24NCg0KTWFudCB0aHgs
-DQpQZW5ueQ0K
+From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+
+Convert cadence-nand-controller.txt to yaml format.
+Update cadence-nand-controller.txt to cdns,hp-nfc.yaml in MAINTAINER file.
+
+Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+---
+
+Changes in v4:
+- Fixed the identation for examples as per review comment in v3.
+
+Changes in v3:
+- Changed file name to cdns,hp-nfc.yaml to match with compatible.
+- Update description, fixed alignment, and used defines for interrupt
+  flag as per review comments in v2.
+
+Changes in v2:
+- Update name cadence-nand-controller.txt to cadence,nand.yaml in MAINTAINER
+  file to resolve the warning.
+
+ .../bindings/mtd/cadence-nand-controller.txt  | 53 -------------
+ .../devicetree/bindings/mtd/cdns,hp-nfc.yaml  | 75 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 76 insertions(+), 54 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
+ create mode 100644 Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
+
+diff --git a/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt b/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
+deleted file mode 100644
+index d2eada5044b2..000000000000
+--- a/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
++++ /dev/null
+@@ -1,53 +0,0 @@
+-* Cadence NAND controller
+-
+-Required properties:
+-  - compatible : "cdns,hp-nfc"
+-  - reg : Contains two entries, each of which is a tuple consisting of a
+-	  physical address and length. The first entry is the address and
+-	  length of the controller register set. The second entry is the
+-	  address and length of the Slave DMA data port.
+-  - reg-names: should contain "reg" and "sdma"
+-  - #address-cells: should be 1. The cell encodes the chip select connection.
+-  - #size-cells : should be 0.
+-  - interrupts : The interrupt number.
+-  - clocks: phandle of the controller core clock (nf_clk).
+-
+-Optional properties:
+-  - dmas: shall reference DMA channel associated to the NAND controller
+-  - cdns,board-delay-ps : Estimated Board delay. The value includes the total
+-    round trip delay for the signals and is used for deciding on values
+-    associated with data read capture. The example formula for SDR mode is
+-    the following:
+-    board delay = RE#PAD delay + PCB trace to device + PCB trace from device
+-    + DQ PAD delay
+-
+-Child nodes represent the available NAND chips.
+-
+-Required properties of NAND chips:
+-  - reg: shall contain the native Chip Select ids from 0 to max supported by
+-    the cadence nand flash controller
+-
+-See Documentation/devicetree/bindings/mtd/nand-controller.yaml for more details on
+-generic bindings.
+-
+-Example:
+-
+-nand_controller: nand-controller@60000000 {
+-	  compatible = "cdns,hp-nfc";
+-	  #address-cells = <1>;
+-	  #size-cells = <0>;
+-	  reg = <0x60000000 0x10000>, <0x80000000 0x10000>;
+-	  reg-names = "reg", "sdma";
+-	  clocks = <&nf_clk>;
+-	  cdns,board-delay-ps = <4830>;
+-	  interrupts = <2 0>;
+-	  nand@0 {
+-	      reg = <0>;
+-	      label = "nand-1";
+-	  };
+-	  nand@1 {
+-	      reg = <1>;
+-	      label = "nand-2";
+-	  };
+-
+-};
+diff --git a/Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml b/Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
+new file mode 100644
+index 000000000000..0bed37a994c3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mtd/cdns,hp-nfc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Cadence NAND controller
++
++maintainers:
++  - Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
++
++allOf:
++  - $ref: nand-controller.yaml
++
++properties:
++  compatible:
++    items:
++      - const: cdns,hp-nfc
++
++  reg:
++    items:
++      - description: Controller register set
++      - description: Slave DMA data port register set
++
++  reg-names:
++    items:
++      - const: reg
++      - const: sdma
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  dmas:
++    maxItems: 1
++
++  cdns,board-delay-ps:
++    description: |
++      Estimated Board delay. The value includes the total round trip
++      delay for the signals and is used for deciding on values associated
++      with data read capture. The example formula for SDR mode is the
++      following.
++      board delay = RE#PAD delay + PCB trace to device + PCB trace from device
++      + DQ PAD delay
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    nand-controller@10b80000 {
++        compatible = "cdns,hp-nfc";
++        reg = <0x10b80000 0x10000>,
++              <0x10840000 0x10000>;
++        reg-names = "reg", "sdma";
++        #address-cells = <1>;
++        #size-cells = <0>;
++        interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&nf_clk>;
++        cdns,board-delay-ps = <4830>;
++
++        nand@0 {
++            reg = <0>;
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e930c7a58b1..9fab4b4a75a1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5009,7 +5009,7 @@ F:	drivers/media/platform/cadence/cdns-csi2*
+ CADENCE NAND DRIVER
+ L:	linux-mtd@lists.infradead.org
+ S:	Orphan
+-F:	Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
++F:	Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
+ F:	drivers/mtd/nand/raw/cadence-nand-controller.c
+ 
+ CADENCE USB3 DRD IP DRIVER
+-- 
+2.25.1
+
 
