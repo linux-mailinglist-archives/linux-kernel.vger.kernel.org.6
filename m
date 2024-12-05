@@ -1,299 +1,233 @@
-Return-Path: <linux-kernel+bounces-433469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1239E58CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:47:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925299E58D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E01B18858BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:47:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E25216B606
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFD421A454;
-	Thu,  5 Dec 2024 14:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF6421CA0D;
+	Thu,  5 Dec 2024 14:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A6M/a8ym";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IEmGGgre";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A6M/a8ym";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IEmGGgre"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YDrQ7r7F"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809D91B0F22;
-	Thu,  5 Dec 2024 14:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733410010; cv=none; b=EqXbfrTEcQAM3Rxhi9Di21dIdJeNO7gFWwy/cGjHn/doqZsaZlKSPRrqfGYU1VO4wreT+INsZEOLF0R8Li97CVCq2YKbKPO5WrZBKmjqz1JKGXtavEyGySBSD4Yk8Z6YU/WZ9ODT7Mpf8IDW/nJBci1k+hB5ZzUp/s/vOH+yn54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733410010; c=relaxed/simple;
-	bh=7/gyP7hOadanIjh7Pi5fa0OyGQnE7z/f+zPKtRz7f58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnqI+EG5dYU0mPQMkSqqtvWrdR6HStuqq09SG0r2Rl6qn+yxvjnP4UCKHNyPilpdhrlV67XETNoCH5TQYKu8g9FMXTERESLdQ+0321CeXA7yGQKh+1Xg9rIbIa7X3glDasj65t0y5c7mnMao83Vc0ivGLg9Va0zxIzQWuv/hJWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A6M/a8ym; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IEmGGgre; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A6M/a8ym; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IEmGGgre; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 54C3D1F38C;
-	Thu,  5 Dec 2024 14:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733410006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=A6M/a8ymwuV+4gt/bH8osHYVlljrS72aPfBmZ0V6TY5SKEXrqRDC7hQcpw/I0dq/Dc3bVT
-	8tV0N/QJPpKOdeHuA0xgSNr7p/bCWZRWSK13WDh+P2QWv7dvfxxefGQFVuf766N0BXnUwg
-	HQqWkuv+egS94C28vl3c8uQcZOKAoVM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733410006;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=IEmGGgrexX9/XxlMlfx0OtB+j3OzPG9mMPBKkWK4kYI3fY5tRZ0+jD1ASUSLAYgc3nQMB7
-	+2clvuD/oN5sDgAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="A6M/a8ym";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=IEmGGgre
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733410006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=A6M/a8ymwuV+4gt/bH8osHYVlljrS72aPfBmZ0V6TY5SKEXrqRDC7hQcpw/I0dq/Dc3bVT
-	8tV0N/QJPpKOdeHuA0xgSNr7p/bCWZRWSK13WDh+P2QWv7dvfxxefGQFVuf766N0BXnUwg
-	HQqWkuv+egS94C28vl3c8uQcZOKAoVM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733410006;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XIWc2YAYdMe+kXlIH9u8pQ2JNxlUGW/w70KQcKVvdco=;
-	b=IEmGGgrexX9/XxlMlfx0OtB+j3OzPG9mMPBKkWK4kYI3fY5tRZ0+jD1ASUSLAYgc3nQMB7
-	+2clvuD/oN5sDgAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48E1D132EB;
-	Thu,  5 Dec 2024 14:46:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KDfCEda8UWcJYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 05 Dec 2024 14:46:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E43CAA08CF; Thu,  5 Dec 2024 15:46:45 +0100 (CET)
-Date: Thu, 5 Dec 2024 15:46:45 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paulmck@kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, edumazet@google.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-Message-ID: <20241205144645.bv2q6nqua66sql3j@quack3>
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289F021CA09;
+	Thu,  5 Dec 2024 14:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733410017; cv=fail; b=UvEYUscX82RFe+IIaI8iuHPsBrSOLWjOdZ4uUy+RMDf0VclfWKO6w3MZ9kSbME04RmJuc5yx2fpPekDu/k2KPRfmdaYf48zfhV5gLt05KjO39S4kxV8QU1dwdj3SNv9cjyOAjgyeOGllBOb99oK9b+iEvygvmMVAyhnk+Qym79o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733410017; c=relaxed/simple;
+	bh=nflTuGHQPPwRA/i7FfJqR6hkxQzWwF4X1yPQxX9f4SQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Mul19+3opB2haQUFkkqMDes1DfN25a00NFIdCYkUFDH4vN536YE59vs6c0aB9AT9Vz6/p4uQItdVxebNwdYUMUIN3qLTfBqafaLXTedI33ninpMeHsmwkI2QIVhmGTJj4IsgASOgw/qXnhLGHO4fLUZS5GlRuicaHqKzGKEfJ2o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YDrQ7r7F; arc=fail smtp.client-ip=40.107.244.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kiPtk2/UtmML2DTOC/8uJ3Bkd1jzTZu/teiQ1xomQY7ID7Ih7ko7K2FhOiBTfqqpiVkUawSbgmHQUB9phTz3W60DpDUhcagSzFBBb1GJVRDeUTfv9y2uR93wfVTQuLo2SkfhCFy/Qlld5ngZKWoZzsVyz2pqKBkXFxEemuvVPvNiB/JtyZ5dFJvgCWM6jkEQzntVZXOu5KZdKcMPfT/dCcazvBLKsKycx2UQ5L7joMAGuvw9YSZfq+Fjdwc/SCSE/Hq0pF8l8rVZ81w9wb9icDEaA35G+sWMON6RAl7Wl78S6dbBvK3Nr8TX78ijyI9CRHkDaaCUP/co/UL/udwH+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bQAlwqrlrE69JBfNZKHF7RZgv9iHsmAwAbAfuZDeLwk=;
+ b=BnIVMpqxa3hqVY3itCS4XfaVelsWArl6ubH+JLXZLKhFl6JgzgNmNn/AFJtBS8BgMZcih4p7ThfIuvhYjvuESQmJ81AzcNsm2TTv9U5usxuwP3PYJdqEioN9q78zLiWqGgrAMS7h4VPsHv+/pr7UFAFppq8koux74cgXha6rML/85gg3cWsY0tXzpuZ1N8MdwUkzLf2PtTexmLC0nr0ysKTxCx0m95XvY7472h9kDruIfj1O6Ge2UB5hYQhbgC+8MuNwNW6/MBpC+WgTD1AXKPtMPeCA7gu6jSzXxIRbPP+3RAu6p1OkabJtt9CG9VqCqsGMt3YlRYsbvQ8msyPsCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bQAlwqrlrE69JBfNZKHF7RZgv9iHsmAwAbAfuZDeLwk=;
+ b=YDrQ7r7F498GJUyFwXtK1K5u+ty2tJcC0+v1pORy81ienSevD7klwD/IAGm/mmivbH04DyZKtHgwV38cruEKJkGIKeRiXSPR0DN89vDZyA1Y7WC7eNBcgpVqbkgdLMEeMhcHob7AGSZ6c+jWnZX00TJQIweEEV/dqtuytvFJFSFGF4ROedx4Fd1u4ZO1/q9tTzTLfd/6IgHWGObXEcTTFP/btDJb9twxdWGLsJuFOontihdA7QOfTmNx4Z7ATSzVbgQhRX+N1WPCuANBdMh9Fk258frp1cB73jXogTYJ3wtLAuPYhYrUzXBmjrx96YWlCOwXdE2dnO+XaoGmcqapng==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by BY5PR12MB4212.namprd12.prod.outlook.com (2603:10b6:a03:202::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.15; Thu, 5 Dec
+ 2024 14:46:53 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%2]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
+ 14:46:53 +0000
+Message-ID: <d731bdf5-e007-4d17-843a-2af5804b6de8@nvidia.com>
+Date: Thu, 5 Dec 2024 14:46:46 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/826] 6.12.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ linux-tegra@vger.kernel.org, stable@vger.kernel.org
+References: <20241203144743.428732212@linuxfoundation.org>
+ <154b3d6f-0597-4ac8-ade1-f613f03804e2@drhqmail201.nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <154b3d6f-0597-4ac8-ade1-f613f03804e2@drhqmail201.nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P123CA0020.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:313::8) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205120332.1578562-1-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: 54C3D1F38C
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|BY5PR12MB4212:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1bdcc156-b12b-48e9-e946-08dd153ba88d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?THlaVE9XdVh2aCs4ajYyeVhhTldHRVllYm42S3Fick05bys0Q0lhQmk4eENk?=
+ =?utf-8?B?Ni9kWTRxVnZ2MnhFNGl3NzBFU0l2c01pOEEzcmYwWDNycVExQ2pUVkFwQmE0?=
+ =?utf-8?B?S1RFd1FqRnllRXFnMG40ZmFNMkZWM0RodHlCejlaTzA1UUtuTHFHR1BjdHRR?=
+ =?utf-8?B?Zi9iQ3NQN0NxMzR4Y3lUZjcvZ1B6c29FakI2Q1hLVXpEbUxEVXNzRzRpTFdO?=
+ =?utf-8?B?aDQ5c0taQU5ZN3ZTcFhzSWU5ZmJBeTVwNjErTHd6K0FlVElFelA2N0lTbEti?=
+ =?utf-8?B?Y3FqaTF5MThha0huU0hzbVBtZFo2WCtXWVUxdGVOWHRFRmR1SlNmM204Rmk1?=
+ =?utf-8?B?Q1F4cmlCREFyU3BwWFRORzRiZTVYaG5Ubm1tWGIvdFJBV0xxQlJQY2lobXBJ?=
+ =?utf-8?B?WDA2bkM3M2hzbDN1ZTU0dVoxR3ZBSDhwbk5lU2plc3RNUTZXRmZSQTNSOFdD?=
+ =?utf-8?B?UFpjUm15dTRldGRKMGZ3cWZldW1hTlRCQVlnNXJJczJob2JrTWRkL2FoT2RQ?=
+ =?utf-8?B?UFR1anRic1Rkczc1dDVMcC8wRUVRMXZxK0M4djYwUXpvZFgraSszVjhnL01U?=
+ =?utf-8?B?bEV6K1NSLzFtZ3RrMUtESDFJMW5xbFhETHZSdlpuZUdmaituMXdmRms1dndj?=
+ =?utf-8?B?TkpQUUNkaGdmYURzMitqNC9jY3o1MnVGVkRLNlpFdFpJMCt5YnZIUnpIZzMv?=
+ =?utf-8?B?a2ppL3pNYW1XWUhxMmtxUDNNQTNnVm4xL3BMcnJ1YUxDbnBYVlVxMG1oQ3lp?=
+ =?utf-8?B?ajcvNm5oMVZXZUFFNlgxcm1yaVRGc2pLa3B3eDh6NjJIM0dQMGRWOXI1eWNG?=
+ =?utf-8?B?N1Z4ejI2YmpONzViTmRiTW5NOTlqdFJhMFFMMGQrejVub3JGRmdTUUR6MjNy?=
+ =?utf-8?B?K1FRbHF2T2JZYjJncVdrWnIvU0JuQ3hhUTMxM09iN2lmZFlHSEJxTnJqK2lZ?=
+ =?utf-8?B?WXUvYmpCajV0dVBmdnFQVkNmOHZiWnR2ck5wK3J5M2I2SGxlSGlHNG5JOWJV?=
+ =?utf-8?B?cUhDdXVnZHE2YW9hL0lLUnMxRGkvcFVzdUtKKzBRNG1YeEhmL2ZVcXNScVdu?=
+ =?utf-8?B?cUNQaG9tNEtCYUZ3MXdtVlUyOXNVKzFDZVhhWjRuVnJocTNGK2pDSFc5RXRI?=
+ =?utf-8?B?K3NBKzNnRzEwcHgzVWQ4YW12V3FrZ0VURXRoVWk4WnBHUHFQRU1CMFhneDNv?=
+ =?utf-8?B?d0NFZEpFVjdrQTRmUTNoU0ttYlkwUDdCVlVrWHVUQWhPQTV0MEZBSDdweFFV?=
+ =?utf-8?B?U044YnpnNUhpSS9pV1g0bW5hb1VaSEQvN0lVMmRxTzVQSUZUWE5WZFpKQ3Nr?=
+ =?utf-8?B?UTh2bHZ0T3VWZEpHRWlzTzAwanhsb28vbDkzNXZsRitDMU9NYjNMcDBXRE9z?=
+ =?utf-8?B?WlZERWEwNG5ReDJkQ3RPQnV2N1Bac3haYU54K0V3ZU1LNkljRjRFNDVvdHJO?=
+ =?utf-8?B?OTBHMmtMWmEzTi9YWmU4NlZzV2FTT2UxRVlHSWxYQmtPZ2FSRWZmMUYwelNT?=
+ =?utf-8?B?amVsdjVtOTM0YURDaXY5MWg5UVBHaGkvZFlWNXp4dC8vSUs5WFA5MWNjdkZm?=
+ =?utf-8?B?V2cwVHg5YWYvQ2t2THZ1YWc4blZJTDJWYVhlejk1dXJOVUw0R1ZxbGZqZWRy?=
+ =?utf-8?B?V0o0QVNNUzhHSEJhWXEyc1ZVSE9mNVdPUTZkdk1GdVVpc2RqVGZuUW9FdXBY?=
+ =?utf-8?B?UW9qQmRSdmlMQmdFOVB2emJNRldKM0NwdkRtUVZaZSs0S0ZyRGdQZHhiQlk0?=
+ =?utf-8?B?blpMK0daZTR1eUxsQ3Vtazlnd0IvQzZMZzQxdFhONUYwWDhoN0tlN2lRK1BK?=
+ =?utf-8?Q?c+S9fl6KIfHR0XN7IEGBocRZbSb2+VbgJ6POI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ejh3QUIzclR0R2oyQTZsa3hxSzVtekJ5eHVnTHJkd3FBaFNYMThoRDhrcWZ4?=
+ =?utf-8?B?OEZzSDQwUzM4TEJGdjhMNERJMVNRcUlibEpsQUZudGF2WlVwMXVUNndqYS9l?=
+ =?utf-8?B?TDdZbGVWd2pOaVNmdDd1VmF1TzRjamR6a3dzUVpXTE9CamZMdDNPSHV0cjJ2?=
+ =?utf-8?B?SldnOXpmNGoxZEQveTdaU0UxZXhWV3hva3hBOWtmSlVuaHdsTWorZ0xhekdm?=
+ =?utf-8?B?akp4cmRzUkN6YlhuNTBRWHpUcFBRMWdxZDk5VXhoVnBMSGo1d21HQnArZVFE?=
+ =?utf-8?B?ZWtLWjY0RksyVHFlSkdjcFgraGdTTC84MTV1eU9wUEYwVnNreVIyUDMwZ2FG?=
+ =?utf-8?B?V3R2K3NHOWlmdWg3a283Y2pNdjJKeUN0TmhSRTVlRStWV3NGZWNOTkc1SmNv?=
+ =?utf-8?B?elJGL25pc2RZMGFnWVRRUytBcnVMRXUrVTV1S0dmOFQxOGZGeEgyRHdpKzBz?=
+ =?utf-8?B?blVyc2ovVnRhQzhldHR3ekkvV0RSejdCS3FVai8zT3JqVDhyWWU3REpBdzBw?=
+ =?utf-8?B?azd0TW5QdWRiRWV6bURxaVp1UXVtdW42ZlcrNjhPR0Y1T3FsdGg4NW00Z0RJ?=
+ =?utf-8?B?clBUbm9qeUF4ejBYZ2IyL01YNnUwNUpnS1A2SHM2VTVnanN0cGVWZTRJRmRx?=
+ =?utf-8?B?U1l4ZXVZSWh5ZStFMkdmQW5jQUdYb3pYRUZQNkh2N3dSTTZkYmhDeUFKVGJm?=
+ =?utf-8?B?MDZBN05aTjdyVUtCV0h5L0d2bEoxR2l2Um5FLzhkV0hqVzFJMHNyVExnN0lo?=
+ =?utf-8?B?OXE3bXhuem80bHdvQmxqaC9JVUVha09sQ0UzMkcxNkU2WmtOUUFNdExCU2Q5?=
+ =?utf-8?B?azVkOTBlV0hoTkJpT2tUUzVmaDM0VnhmVUkyTWxZbGZvTmIrVjZsd0JreE5B?=
+ =?utf-8?B?RzQweHYxY01rQlk4cXF1aU9XV2tnUXdoZzVDNGR0ZDBsY095M0I3MHhvM1VL?=
+ =?utf-8?B?ZFNna04yQnM2bk1McFFyM3g4WTlnZmh2cnBBL1luVE1HWFY5UDgyZlQ4VEYv?=
+ =?utf-8?B?dW1OUXd4TE9HMjVsNnZ1NzRTSkFBM3NkT2ovd25hSk1QK2VEd1hrM2gvVzZy?=
+ =?utf-8?B?Q2xiSjNBb1BNS3UwOWlDamlmZExIT2VxbWpYMTlHVHdkSlZTczBlY25taW0r?=
+ =?utf-8?B?cHd6dDF6OXNKSHRJQlcyd2FpM3hxOUJMZGFNTGZJeGM0dFNSaEc5WVZvWEJv?=
+ =?utf-8?B?a25iaE84aFk2MXovbHZORTdXaHVwNTAzSEtLTVMwUnoxaExuZzRZN2VuU1pL?=
+ =?utf-8?B?ZUo4by9PelYxTUpkODdxSCtBZnAxOUsvZ3ZDUE80dVBPV1RzR0FYVklzalZL?=
+ =?utf-8?B?MXVFUmQ2L0xUUVVtVXlpVGNRVEhPSis2WWFCZytLNkdGcHZ6UFpTVHNRT3RE?=
+ =?utf-8?B?eE1mMGpBWXJQMW0rS0E1YWxaUExtRGR3Wkc5V1ZSU2x5TUtENW01QVk4V2FY?=
+ =?utf-8?B?ZWI4VnRFU29qQXYrNkRyOTZ5akhTQ1hkRzUrM3B4QU1qTjhiSnhjTnUxcDV0?=
+ =?utf-8?B?Mk1pL2FEVENjMHB3Q25ubzFJLzVaYW9vc0R2d09GUFhHSXQ1STg0YkZCaFFz?=
+ =?utf-8?B?c25vazRBd1VBbXlqa25qZC9RNmk1bi8wWWhWNjh4VXdyR2JuSEJuM0xaWjZN?=
+ =?utf-8?B?bHgwOEV0SEt1L0JTSVk4NUtCYnppdmhSN2NCZEY3WCs3WElMRWNNZk9EMC9i?=
+ =?utf-8?B?SGUya04yY1dsMFFLMllGdkZKVGJNaTduUDRjdWgvUENPaXFoSjdDVHhna093?=
+ =?utf-8?B?TCs4U1dKTDFNSEhxMFVUN3JVTEpNQ0RTcjJtTHI4eU90RllhakNlNFg4dEJV?=
+ =?utf-8?B?VHBwNHVwbldkT0xaOFhaU1Y0QVNYaURIMXRRMUdwczhYcG5wU3lYVHorZDRh?=
+ =?utf-8?B?UXpHUFQyNkpsNEtTNk14b1Zub3VocUFPWmdEKzhVSE9PWDZzSE82R2xwM3A5?=
+ =?utf-8?B?VFNVWkhuejR2cEgrajIvdlFobnNTU0tvMmp6UjNpVEJEVjQvMEkwMW5iTzdP?=
+ =?utf-8?B?ZmVFZUdXb0RUTUlpSVkreUFmTExBUXlHaVBMUURNSHJCQnFtZURNSS9SWTNh?=
+ =?utf-8?B?bDdWYlJKRnZ4c3hndVpQNGJ5Wkg2emt3MnZzbkd2NFhFY1VnY2I0WHQ3c1BL?=
+ =?utf-8?B?Y3kwQVJteFZrUzNVeS8yTzVEVGdaTFc4aU1vWlE1eUIzVW5BMjVST3BBUXJD?=
+ =?utf-8?B?WlE9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bdcc156-b12b-48e9-e946-08dd153ba88d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 14:46:53.3100
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7eUtR8zk72tipMQLfC0lfTHgWPxFObH7yYxEkZ5PZHxfpydx74YNGTJaMDKWPzD2uVvxz8raCs/0bCadtIofQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4212
 
-On Thu 05-12-24 13:03:32, Mateusz Guzik wrote:
-> See the added commentary for reasoning.
+
+On 05/12/2024 14:39, Jon Hunter wrote:
+> On Tue, 03 Dec 2024 15:35:27 +0100, Greg Kroah-Hartman wrote:
+>> This is the start of the stable review cycle for the 6.12.2 release.
+>> There are 826 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Thu, 05 Dec 2024 14:45:11 +0000.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.2-rc1.gz
+>> or in the git tree and branch at:
+>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+>> and the diffstat can be found below.
+>>
+>> thanks,
+>>
+>> greg k-h
 > 
-> ->resize_in_progress handling is moved inside of expand_fdtable() for
-> clarity.
+> Failures detected for Tegra ...
 > 
-> Whacks an actual fence on arm64.
+> Test results for stable-v6.12:
+>      10 builds:	10 pass, 0 fail
+>      26 boots:	26 pass, 0 fail
+>      116 tests:	115 pass, 1 fail
 > 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-Hum, I don't think this works. What could happen now is:
-
-CPU1					CPU2
-expand_fdtable()			fd_install()
-  files->resize_in_progress = true;
-  ...
-  if (atomic_read(&files->count) > 1)
-    synchronize_rcu();
-  ...
-  rcu_assign_pointer(files->fdt, new_fdt);
-  if (cur_fdt != &files->fdtab)
-          call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
-
-					rcu_read_lock_sched()
-
-					fdt = rcu_dereference_sched(files->fdt);
-					/* Fetched old FD table - without
-					 * smp_rmb() the read was reordered */
-  rcu_assign_pointer(files->fdt, new_fdt);
-  /*
-   * Publish everything before we unset ->resize_in_progress, see above
-   * for an explanation.
-   */
-  smp_wmb();
-out:
-  files->resize_in_progress = false;
-					if (unlikely(files->resize_in_progress)) {
-					  - false
-					rcu_assign_pointer(fdt->fd[fd], file);
-					  - store in the old table - boom.
-
-								Honza
-
-> diff --git a/fs/file.c b/fs/file.c
-> index 019fb9acf91b..d065a24980da 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -233,28 +233,54 @@ static int expand_fdtable(struct files_struct *files, unsigned int nr)
->  	__acquires(files->file_lock)
->  {
->  	struct fdtable *new_fdt, *cur_fdt;
-> +	int err = 0;
->  
-> +	BUG_ON(files->resize_in_progress);
-> +	files->resize_in_progress = true;
->  	spin_unlock(&files->file_lock);
->  	new_fdt = alloc_fdtable(nr + 1);
->  
-> -	/* make sure all fd_install() have seen resize_in_progress
-> -	 * or have finished their rcu_read_lock_sched() section.
-> +	/*
-> +	 * Synchronize against the lockless fd_install().
-> +	 *
-> +	 * All work in that routine is enclosed with RCU sched section.
-> +	 *
-> +	 * We published ->resize_in_progress = true with the unlock above,
-> +	 * which makes new arrivals bail to locked operation.
-> +	 *
-> +	 * Now we only need to wait for CPUs which did not observe the flag to
-> +	 * leave and make sure their store to the fd table got published.
-> +	 *
-> +	 * We do it with synchronize_rcu(), which both waits for all sections to
-> +	 * finish (taking care of the first part) and guarantees all CPUs issued a
-> +	 * full fence (taking care of the second part).
-> +	 *
-> +	 * Note we know there is nobody to wait for if we are dealing with a
-> +	 * single-threaded process.
->  	 */
->  	if (atomic_read(&files->count) > 1)
->  		synchronize_rcu();
->  
->  	spin_lock(&files->file_lock);
-> -	if (IS_ERR(new_fdt))
-> -		return PTR_ERR(new_fdt);
-> +	if (IS_ERR(new_fdt)) {
-> +		err = PTR_ERR(new_fdt);
-> +		goto out;
-> +	}
->  	cur_fdt = files_fdtable(files);
->  	BUG_ON(nr < cur_fdt->max_fds);
->  	copy_fdtable(new_fdt, cur_fdt);
->  	rcu_assign_pointer(files->fdt, new_fdt);
->  	if (cur_fdt != &files->fdtab)
->  		call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
-> -	/* coupled with smp_rmb() in fd_install() */
-> +
-> +	/*
-> +	 * Publish everything before we unset ->resize_in_progress, see above
-> +	 * for an explanation.
-> +	 */
->  	smp_wmb();
-> -	return 0;
-> +out:
-> +	files->resize_in_progress = false;
-> +	return err;
->  }
->  
->  /*
-> @@ -290,9 +316,7 @@ static int expand_files(struct files_struct *files, unsigned int nr)
->  		return -EMFILE;
->  
->  	/* All good, so we try */
-> -	files->resize_in_progress = true;
->  	error = expand_fdtable(files, nr);
-> -	files->resize_in_progress = false;
->  
->  	wake_up_all(&files->resize_wait);
->  	return error;
-> @@ -629,13 +653,18 @@ EXPORT_SYMBOL(put_unused_fd);
->  
->  void fd_install(unsigned int fd, struct file *file)
->  {
-> -	struct files_struct *files = current->files;
-> +	struct files_struct *files;
->  	struct fdtable *fdt;
->  
->  	if (WARN_ON_ONCE(unlikely(file->f_mode & FMODE_BACKING)))
->  		return;
->  
-> +	/*
-> +	 * Synchronized with expand_fdtable(), see that routine for an
-> +	 * explanation.
-> +	 */
->  	rcu_read_lock_sched();
-> +	files = READ_ONCE(current->files);
->  
->  	if (unlikely(files->resize_in_progress)) {
->  		rcu_read_unlock_sched();
-> @@ -646,8 +675,7 @@ void fd_install(unsigned int fd, struct file *file)
->  		spin_unlock(&files->file_lock);
->  		return;
->  	}
-> -	/* coupled with smp_wmb() in expand_fdtable() */
-> -	smp_rmb();
-> +
->  	fdt = rcu_dereference_sched(files->fdt);
->  	BUG_ON(fdt->fd[fd] != NULL);
->  	rcu_assign_pointer(fdt->fd[fd], file);
-> -- 
-> 2.43.0
+> Linux version:	6.12.2-rc1-g1b3321bcbfba
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                  tegra20-ventana, tegra210-p2371-2180,
+>                  tegra210-p3450-0000, tegra30-cardhu-a04
 > 
+> Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
+
+
+This is a known issue in the mainline that was not caught for Linux 
+v6.12. It is intermittent and so not easily caught. The good news is 
+that a fix [0] has been identified and once in mainline we can backport 
+for stable. It is a networking issue that is causing random test 
+failures when running with NFS.
+
+With that for this update ...
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
+
+[0] 
+https://lore.kernel.org/netdev/20241205091830.3719609-1-0x1207@gmail.com/
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+nvpublic
+
 
