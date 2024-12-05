@@ -1,150 +1,146 @@
-Return-Path: <linux-kernel+bounces-433359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7093C9E5762
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:40:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DFE9E57BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:48:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596FD188312F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:40:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446D628B03D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33622218E94;
-	Thu,  5 Dec 2024 13:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7A721A420;
+	Thu,  5 Dec 2024 13:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QgKfpS75";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GCoWUgHg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QgKfpS75";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GCoWUgHg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hNJBtkMu"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1827218852;
-	Thu,  5 Dec 2024 13:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8360F218AD1;
+	Thu,  5 Dec 2024 13:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733406032; cv=none; b=QTjGe6lBqts+W9Z1NLRf7LuWPaYG3/Kf0GBsFbWRzbFMi6NPqVQIgQe+QyEPlGCHRmGyMx8grIzXbVF1V4IOcLWogsY0TAA95iSwXNaOmQHoY8IqezsFmOGCF0otDdQcaITijIYR8DodJHSSJ3pP9iDir13btAgF8oi3l8xpIWc=
+	t=1733406374; cv=none; b=uNWS3oFDQ9sXdR2w7izjjcxZMkMzjEBlaGWUg+KKPIJeVl9uVZ4RYUJDLFuWVNgB9vbPbCWGakgk7Inxx1sxtVMfd1RITkWLC4wT+Eiih2iBVqcdxs84qbEJNtY0blssw1OxeXF9EKbCm8nFn7j191dbf2WzU9e22qv/mDFRylE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733406032; c=relaxed/simple;
-	bh=ZGvXMjW88upxx0fPmx36SeRsaX1DIzCQfcIrjGdk4ZM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CZ+Qsf/x6E8hvCDey/y25qwf6C7iHxyDbP/BsHYKScw9JCSTcEqbvX3ETmSx4Kxh3lJ0uryNY5SCwl7ieGYvE7cigY9S5d8v37S9C2rAGd+jia4E8lIK9qfQ/M3J/j4B9Q1ChNRlY6RyaVk06/x4NeTj26L+1IR5pM3EPA7XvPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QgKfpS75; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GCoWUgHg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QgKfpS75; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GCoWUgHg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1E2D91F38C;
-	Thu,  5 Dec 2024 13:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733406029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nU4zye91tjThTyXwrSipPttrgEtAJSfGaC89apsk4hE=;
-	b=QgKfpS75omFkpHfkQaP5YtnQp8Bv+5otu5KCSFmxb2rsZjbJ85hIOs6ti34XkU8lXD5JKp
-	1OozwiCADaX82qgWuB0Cmv/njXZEt2jH4Mje6+Pic4mS5T4UdDxxXyI7QezvQxDVdZ3SBh
-	fa6Cq6h/73l7z9thi60ozaUHofLjemk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733406029;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nU4zye91tjThTyXwrSipPttrgEtAJSfGaC89apsk4hE=;
-	b=GCoWUgHgvn2vsuYsbuZm0pjtasstKBobaPSgijy1AfVCqVr4PlIFZLA4ugubBXwsbPV6tI
-	SoQqt0JmBPQhdbCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733406029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nU4zye91tjThTyXwrSipPttrgEtAJSfGaC89apsk4hE=;
-	b=QgKfpS75omFkpHfkQaP5YtnQp8Bv+5otu5KCSFmxb2rsZjbJ85hIOs6ti34XkU8lXD5JKp
-	1OozwiCADaX82qgWuB0Cmv/njXZEt2jH4Mje6+Pic4mS5T4UdDxxXyI7QezvQxDVdZ3SBh
-	fa6Cq6h/73l7z9thi60ozaUHofLjemk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733406029;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nU4zye91tjThTyXwrSipPttrgEtAJSfGaC89apsk4hE=;
-	b=GCoWUgHgvn2vsuYsbuZm0pjtasstKBobaPSgijy1AfVCqVr4PlIFZLA4ugubBXwsbPV6tI
-	SoQqt0JmBPQhdbCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C83B5138A5;
-	Thu,  5 Dec 2024 13:40:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QdcFL0ytUWfTTAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 05 Dec 2024 13:40:28 +0000
-Date: Thu, 05 Dec 2024 14:40:28 +0100
-Message-ID: <87plm6tfhv.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kailang Yang <kailang@realtek.com>,
-	Stefan Binding <sbinding@opensource.cirrus.com>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	Joshua Grisham <josh@joshuagrisham.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	linux-sound@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ALSA: hda/realtek: Fix spelling mistake "Firelfy" -> "Firefly"
-In-Reply-To: <20241205102833.476190-1-colin.i.king@gmail.com>
-References: <20241205102833.476190-1-colin.i.king@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1733406374; c=relaxed/simple;
+	bh=zXUtQdF3kJoehY2VsMC5IChMRcaxhXxdQd/mnE6ECdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QKkrRGWvmICBZRqqvetVnyGvCAnpTp0Sgv9lg2IimNNeK8HBna5iL8eyZsNowF+8yrohn7+ShEcYguXkrB6t+99IL6DKajmAPMvtii4BLdBGwI6ZmyAfu2jYkAkt9UkM5mlJ5bopMazYbQa7G91r1q9GOs+wdQSdDtzpqiHQ/WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hNJBtkMu; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5AWiAB022747;
+	Thu, 5 Dec 2024 14:45:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	9gu2Vz8xpuhrUOAG06JEy41cILvsNVFpEmqGgn17RPI=; b=hNJBtkMubMRskCIV
+	tJ9kgNC+p/g/+EdpcNlmMkE3AV1339M2Z7QAJSn7FahTLfLY5QApK9kvQNA4lAPk
+	RMuF0+Aiha0DVV8SzRvtTJIZu30TEUsO2JvNDo/qV3EbLAYHXpvarjk2KkG3g25k
+	FE7608a6Eu/k911tngGm6ODPB28VOE8U2PfIqzK7tC9epIps0jaaLArm83vhGnNn
+	R/LoSo2VFVZmq+SNylQXd9jL1Zbsuzk5nwzz+fio9f/wy6vmJXpJIjy0jAmUAGVa
+	fukvaD9QzHR6q/vZQRDUxDkmLjTelasVnJQVyhAgRPiBioPbXhHq/91zwSmukUSG
+	s7GVyQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 437tx2g7mq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 14:45:36 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 94F6240047;
+	Thu,  5 Dec 2024 14:44:15 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9A014264FCA;
+	Thu,  5 Dec 2024 14:41:27 +0100 (CET)
+Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 5 Dec
+ 2024 14:41:26 +0100
+Message-ID: <569904ad-2b70-4a58-98fe-4f24e1089e17@foss.st.com>
+Date: Thu, 5 Dec 2024 14:41:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -1.79
-X-Spamd-Result: default: False [-1.79 / 50.00];
-	BAYES_HAM(-2.99)[99.96%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
+ bindings
+To: Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh+dt@kernel.org>
+CC: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <bhelgaas@google.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
+        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241203222515.GA2967814@bhelgaas>
+Content-Language: en-US
+From: Christian Bruel <christian.bruel@foss.st.com>
+In-Reply-To: <20241203222515.GA2967814@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Thu, 05 Dec 2024 11:28:33 +0100,
-Colin Ian King wrote:
+
+
+On 12/3/24 23:25, Bjorn Helgaas wrote:
+> On Tue, Nov 26, 2024 at 04:51:15PM +0100, Christian Bruel wrote:
+>> Document the bindings for STM32MP25 PCIe Controller configured in
+>> root complex mode.
+>>
+>> Supports 4 legacy interrupts and MSI interrupts from the ARM
+>> GICv2m controller.
 > 
-> There is a spelling mistake in a literal string in the alc269_fixup_tbl
-> quirk table. Fix it.
+> s/legacy/INTx/
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>> STM32 PCIe may be in a power domain which is the case for the STM32MP25
+>> based boards.
+>>
+>> Supports wake# from wake-gpios
+> 
+> s/wake#/WAKE#/
+> 
+>> +  wake-gpios:
+>> +    description: GPIO controlled connection to WAKE# input signal
+> 
+> I'm not a hardware guy, but this sounds like a GPIO that *reads*
+> WAKE#, not controls it.
 
-Thanks, applied now.
+Rephrasing as
+"GPIO used as WAKE# input signal" (output for the endpoint bindings)
 
+> 
+>> +    pcie@48400000 {
+>> +        compatible = "st,stm32mp25-pcie-rc";
+>> +        device_type = "pci";
+>> +        num-lanes = <1>;
+> 
+> num-lanes applies to a Root Port, not to a Root Complex.  I know most
+> bindings conflate Root Ports with the Root Complex, maybe because many
+> of these controllers only support a single Root Port?
+> 
+> But are we ever going to separate these out?  I assume someday
+> controllers will support multiple Root Ports and/or additional devices
+> on the root bus, like RCiEPs, RCECs, etc., and we'll need per-RP phys,
+> max-link-speed, num-lanes, reset-gpios, etc.
+> 
+> Seems like it would be to our benefit to split out the Root Ports when
+> we can, even if the current hardware only supports one, so we can
+> start untangling the code and data structures.
 
-Takashi
+OK. and we support only 1 lane anyway, so drop it.
+
+thanks,
+
+> 
+> Bjorn
 
