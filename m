@@ -1,130 +1,238 @@
-Return-Path: <linux-kernel+bounces-433512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B4F9E5963
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:09:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B198E9E5964
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:11:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7E1163AA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192A11883512
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6351C1B0F22;
-	Thu,  5 Dec 2024 15:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D5F21C174;
+	Thu,  5 Dec 2024 15:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="pTr+GQVS"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hwvBTlXa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PehXsZlA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4429A218EB8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112EE433D8;
+	Thu,  5 Dec 2024 15:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733411391; cv=none; b=JQgMjz/zzp73SwurB01p+JOIklIarUp8Y7ilemomXB+iqj72evrE62vaBslWtVORAh8JNgdjLIi3p/T8iys1TEnyIaoG5+m5gUD6kIgc0ED0Bj/8uxkG1oTKxsH/qocyJkiAQlWfOnNz1YNd5TxskakUq1xUSlh6La6kGxMCWn8=
+	t=1733411483; cv=none; b=l4Q580Dc4d9yRbsIDA+IxqYBAR9RvyXaKc/JdMCzgeRiySVkW0cRAqI36Af2Czsy2aknoyLZRfqPiRlOMSL2fFbyhBVcjc21FT52Q8k2WAlkPoErz1rtDM5mzbsKozHDH6XHDyn9W15ETwxjJ4xc2M+fa7fS9c3xdw1TFEupIcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733411391; c=relaxed/simple;
-	bh=kuDwn5MNGL8adcYkNgcDkUlwY1RIiGi86ZN+oVM7n88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Et4NjXJH8CbawyDwQh52Jf6uCm2VDUX7WN8eLrJczMuos/iOJpzfMIm979yL3cAFauhkbjHVi9c8HkVn3XDHcxMqA11e7zbgr/JrFS3bLVyXK+HzYKhwTDE0Gl72ldFoHrsA4Rf8qGDyivnjUMHyHwSBC1eAfd+A8OpVUQ9UAwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=pTr+GQVS; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d87ceb58a0so8425246d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:09:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1733411389; x=1734016189; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PQOjMRYvtbhFCrEpt4LKpQp+egpXGKfp+zEXaVand9M=;
-        b=pTr+GQVSEBdXCHfRc7MlFWfrTl3TaR42/zz/0KKrzLFfcX43Mo8/7iiylCN96BSKZl
-         o9ufFCDF/MoGlOAQWj/eD90WdDm+C/bNLlBaMMYoJjItJ770CoMUEke4fSmazmLvbjd+
-         PXCZC4Wc+Eil5WThzfLM/RSA/gcQaCxxtkIY45rgKGERPrf7kPVdCOppPztEUc2DMry4
-         LhH1w6msmU5QGDW+HN7kbR/w/ln3rkk/YicCjwS2GkSzGJnYJElp+XI8+ZCqLuaohgne
-         qj1qTOijcgorvoRyqm2xGUKynNMZPz1xhLWXNADC+GsXB+MCb1ZdY39CRT3Fgzonf70j
-         2HPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733411389; x=1734016189;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PQOjMRYvtbhFCrEpt4LKpQp+egpXGKfp+zEXaVand9M=;
-        b=T6B6vj6FS2YEDo8U0jny97ejY46bPYswsacCOgnjF4GUEM7kmEyDaIB7pY2csh+N2b
-         D85nVyK2feYLXWOY4RKrRfSfXfqDrQ7PRp7eUGw2e987Tg3Dr07t6k+o3z04uMHtH7HX
-         KFrwBE9QTkDy3hesp05+uWdJfzsIzU1h60j+eNqxpz/w3VrmGMu2T/nzoWf4OWHZtRpv
-         Zz0zbTV1qo9GzfmdhGQpBa8Elhu5kVIKPHlV/9a9M5CmbSZJjyVSzV9gEmAHoR6ef2T9
-         CeGL568iBqzEdG7gq38vqEMPIcOLVUSG/JUwl1TO6r+U4Tii7zyohJ3941GXjBpP9JNz
-         owbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc0Zu47eLRoYrzoARJHylvZlnkVMWHYgC8J41Qv+dFsBHOmEHnknpYZ3MYIWXU4eQw3jK8I5DQ5zCg30k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2aeZhLSkHbEKDGhfH8XNMtVA1CAws7UynXkxUloh/rcewf7+D
-	GHEx2MOHE8MYB2FcNyWaxMRYEflOnA7RkzbOEfjswuEfoLYX03KIlDDI4I1KRw==
-X-Gm-Gg: ASbGncvkjXYLPlOwEDRCICWdWrnsXvgZ5GCmK6kyGpbAC920OQMR5btXHHedav9ywbs
-	YnpfGSjHX/aFeDhR/PyfDAliSRJGPo4V2YCimiT7KD5rgKtBZOudmwtEauHaOnhiLzBZSEV/k+w
-	q4LTrn5e1zXhsILfas9en2hHkP3Jki59QKCw9Uq+KnR5y+kIgqcVFQXK55KfE/CROJJ8bYJJrP9
-	R+l7+UnbediMLSz9eK7CBPMRv2Qu/51wd/VO9DS8T73bxIREus=
-X-Google-Smtp-Source: AGHT+IHhbf/pZzCcxgVHVLVyaXCHOzFn02c6Zf1CQlCRr1jsnO2iE7Rk8YDhgArk93K5vr5mhEnW9g==
-X-Received: by 2002:a05:6214:27e4:b0:6d8:8f14:2f5c with SMTP id 6a1803df08f44-6d8b73a6cb9mr151197666d6.23.1733411389235;
-        Thu, 05 Dec 2024 07:09:49 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::d4d1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da695c98sm7453136d6.33.2024.12.05.07.09.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 07:09:48 -0800 (PST)
-Date: Thu, 5 Dec 2024 10:09:46 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-	Saravana Kannan <saravanak@google.com>
-Subject: Re: [RFC/RFT PATCH] PM: sleep: Ignore device driver suspend()
- callback return values
-Message-ID: <f6621a09-d5e4-4d3b-9b5c-55294c22030f@rowland.harvard.edu>
-References: <08f3bd66d7fc8e218bb6958777f342786b2c3705.1731554471.git.len.brown@intel.com>
- <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com>
+	s=arc-20240116; t=1733411483; c=relaxed/simple;
+	bh=QDBZmVIt+9VHIk2mElyvp3jXNo/pvpUj7/v6nn7mroE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NgnLJnd2PsgGXRu2Zhkf5iCTGpImLZ9HzKunTyWV6v0+GjktEfmNJeLRWJRDfYF3VjA9vSz33qcrdNlCTyOEUcX/OMfToSkG0lsoTPE7Pgnk8phJFbnBendrVpsaHV6bdBDihhSfjD3Vw0AVoNO2PJTwfMb+MAGeSifIUeGi4JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hwvBTlXa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PehXsZlA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 05 Dec 2024 15:11:19 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733411480;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zz4zriZLB5fV9X5mXpQVspZ2dLAgnDHqaEW8qSqoDr8=;
+	b=hwvBTlXa+4zhoxrfqiyMUS+KGzhnxjy+9tPlfPASyR3bCGNPCjSb9Sl0KYEC7MX5C3AwuO
+	CNegzQpsAC0VOmfD1xfihq71hbSmCnkoIHdkyYAkc8GzyAdOyqk5LXiY4sGuXvrnHOpzM9
+	y8PwTNVnbC3p5Ohvpmxl2BTVNMIymr6cYFWqqCNBc4sKlSa7ERMFyqdYcZpKyIfWyCp3+P
+	IQBjz8GBmqjmMa6ih7OfzICEO3DMgwdxbZSktUcwIFUAm18mgGfq6AGtMFtOuGb0tSR5JK
+	qNiSG9S7mMj9p2ePwmHPhcwqN/ynjqdyeiaAOBo5ouLx7/AOx0Mv5Vxe59z3FQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733411480;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zz4zriZLB5fV9X5mXpQVspZ2dLAgnDHqaEW8qSqoDr8=;
+	b=PehXsZlAL1+w/QfkxPJBbXC++U6HhCNqpnrCUTwAN9UyCQ0yYMGg3KI/qkd7MNFgDqiDdH
+	zpUeWZLOH1oAfJDw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/urgent] clocksource: Make negative motion detection more robust
+Cc: Guenter Roeck <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <8734j5ul4x.ffs@tglx>
+References: <8734j5ul4x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com>
+Message-ID: <173341147905.412.14955963756930219376.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 12:55:08PM +0100, Rafael J. Wysocki wrote:
-> Expanded CC list.
-> 
-> On Thu, Nov 14, 2024 at 4:23 AM Len Brown <lenb@kernel.org> wrote:
-> >
-> > From: Len Brown <len.brown@intel.com>
-> >
-> > Drivers commonly return non-zero values from their suspend
-> > callbacks due to transient errors, not realizing that doing so
-> > aborts system-wide suspend.
-> >
-> > Log, but do not abort system suspend on non-zero return values
-> > from driver's .suspend/.suspend_noirq/.suspend_late callbacks.
-> >
-> > Both before and after this patch, the correct method for a
-> > device driver to abort system-wide suspend is to invoke
-> > pm_system_wakeup() during the suspend flow.
-> >
-> > Legacy behaviour can be restored by adding this line to your .config:
-> > CONFIG_PM_SLEEP_LEGACY_CALLBACK_ABORT=y
-> >
-> > Signed-off-by: Len Brown <len.brown@intel.com>
-> > ---
+The following commit has been merged into the timers/urgent branch of tip:
 
-> 
-> I'm wondering if there are any opinions on this.
-> 
-> IMV, drivers returning errors from their suspend callbacks without a
-> sufficiently serious reason are kind of a problem.
+Commit-ID:     76031d9536a076bf023bedbdb1b4317fc801dd67
+Gitweb:        https://git.kernel.org/tip/76031d9536a076bf023bedbdb1b4317fc801dd67
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Tue, 03 Dec 2024 11:16:30 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 05 Dec 2024 16:03:24 +01:00
 
-There is a least one driver whose suspend callback returns an error if 
-the device is enabled for wakeup and a wakeup event occurs during the 
-suspend procedure.  We don't want to ignore those races.
+clocksource: Make negative motion detection more robust
 
-Alan Stern
+Guenter reported boot stalls on a emulated ARM 32-bit platform, which has a
+24-bit wide clocksource.
+
+It turns out that the calculated maximal idle time, which limits idle
+sleeps to prevent clocksource wrap arounds, is close to the point where the
+negative motion detection triggers.
+
+  max_idle_ns:                    597268854 ns
+  negative motion tripping point: 671088640 ns
+
+If the idle wakeup is delayed beyond that point, the clocksource
+advances far enough to trigger the negative motion detection. This
+prevents the clock to advance and in the worst case the system stalls
+completely if the consecutive sleeps based on the stale clock are
+delayed as well.
+
+Cure this by calculating a more robust cut-off value for negative motion,
+which covers 87.5% of the actual clocksource counter width. Compare the
+delta against this value to catch negative motion. This is specifically for
+clock sources with a small counter width as their wrap around time is close
+to the half counter width. For clock sources with wide counters this is not
+a problem because the maximum idle time is far from the half counter width
+due to the math overflow protection constraints.
+
+For the case at hand this results in a tripping point of 1174405120ns.
+
+Note, that this cannot prevent issues when the delay exceeds the 87.5%
+margin, but that's not different from the previous unchecked version which
+allowed arbitrary time jumps.
+
+Systems with small counter width are prone to invalid results, but this
+problem is unlikely to be seen on real hardware. If such a system
+completely stalls for more than half a second, then there are other more
+urgent problems than the counter wrapping around.
+
+Fixes: c163e40af9b2 ("timekeeping: Always check for negative motion")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/all/8734j5ul4x.ffs@tglx
+Closes: https://lore.kernel.org/all/387b120b-d68a-45e8-b6ab-768cd95d11c2@roeck-us.net
+---
+ include/linux/clocksource.h        |  2 ++
+ kernel/time/clocksource.c          | 11 ++++++++++-
+ kernel/time/timekeeping.c          |  6 ++++--
+ kernel/time/timekeeping_internal.h |  8 ++++----
+ 4 files changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index ef1b16d..65b7c41 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -49,6 +49,7 @@ struct module;
+  * @archdata:		Optional arch-specific data
+  * @max_cycles:		Maximum safe cycle value which won't overflow on
+  *			multiplication
++ * @max_raw_delta:	Maximum safe delta value for negative motion detection
+  * @name:		Pointer to clocksource name
+  * @list:		List head for registration (internal)
+  * @freq_khz:		Clocksource frequency in khz.
+@@ -109,6 +110,7 @@ struct clocksource {
+ 	struct arch_clocksource_data archdata;
+ #endif
+ 	u64			max_cycles;
++	u64			max_raw_delta;
+ 	const char		*name;
+ 	struct list_head	list;
+ 	u32			freq_khz;
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index aab6472..7304d7c 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -24,7 +24,7 @@ static void clocksource_enqueue(struct clocksource *cs);
+ 
+ static noinline u64 cycles_to_nsec_safe(struct clocksource *cs, u64 start, u64 end)
+ {
+-	u64 delta = clocksource_delta(end, start, cs->mask);
++	u64 delta = clocksource_delta(end, start, cs->mask, cs->max_raw_delta);
+ 
+ 	if (likely(delta < cs->max_cycles))
+ 		return clocksource_cyc2ns(delta, cs->mult, cs->shift);
+@@ -993,6 +993,15 @@ static inline void clocksource_update_max_deferment(struct clocksource *cs)
+ 	cs->max_idle_ns = clocks_calc_max_nsecs(cs->mult, cs->shift,
+ 						cs->maxadj, cs->mask,
+ 						&cs->max_cycles);
++
++	/*
++	 * Threshold for detecting negative motion in clocksource_delta().
++	 *
++	 * Allow for 0.875 of the counter width so that overly long idle
++	 * sleeps, which go slightly over mask/2, do not trigger the
++	 * negative motion detection.
++	 */
++	cs->max_raw_delta = (cs->mask >> 1) + (cs->mask >> 2) + (cs->mask >> 3);
+ }
+ 
+ static struct clocksource *clocksource_find_best(bool oneshot, bool skipcur)
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 0ca85ff..3d12882 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -755,7 +755,8 @@ static void timekeeping_forward_now(struct timekeeper *tk)
+ 	u64 cycle_now, delta;
+ 
+ 	cycle_now = tk_clock_read(&tk->tkr_mono);
+-	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
++	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
++				  tk->tkr_mono.clock->max_raw_delta);
+ 	tk->tkr_mono.cycle_last = cycle_now;
+ 	tk->tkr_raw.cycle_last  = cycle_now;
+ 
+@@ -2230,7 +2231,8 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 		return false;
+ 
+ 	offset = clocksource_delta(tk_clock_read(&tk->tkr_mono),
+-				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
++				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
++				   tk->tkr_mono.clock->max_raw_delta);
+ 
+ 	/* Check if there's really nothing to do */
+ 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
+diff --git a/kernel/time/timekeeping_internal.h b/kernel/time/timekeeping_internal.h
+index 63e600e..8c90791 100644
+--- a/kernel/time/timekeeping_internal.h
++++ b/kernel/time/timekeeping_internal.h
+@@ -30,15 +30,15 @@ static inline void timekeeping_inc_mg_floor_swaps(void)
+ 
+ #endif
+ 
+-static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
++static inline u64 clocksource_delta(u64 now, u64 last, u64 mask, u64 max_delta)
+ {
+ 	u64 ret = (now - last) & mask;
+ 
+ 	/*
+-	 * Prevent time going backwards by checking the MSB of mask in
+-	 * the result. If set, return 0.
++	 * Prevent time going backwards by checking the result against
++	 * @max_delta. If greater, return 0.
+ 	 */
+-	return ret & ~(mask >> 1) ? 0 : ret;
++	return ret > max_delta ? 0 : ret;
+ }
+ 
+ /* Semi public for serialization of non timekeeper VDSO updates. */
 
