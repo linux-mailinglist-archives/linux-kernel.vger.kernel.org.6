@@ -1,555 +1,222 @@
-Return-Path: <linux-kernel+bounces-432747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465239E4FBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:30:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D909E4FC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:32:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01922282C06
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5746C1881BB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912001D3564;
-	Thu,  5 Dec 2024 08:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD8D1D0DEC;
+	Thu,  5 Dec 2024 08:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x0AY/nm2"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNWmeBWq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524E51E517;
-	Thu,  5 Dec 2024 08:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2119F1B219B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733387449; cv=none; b=HHhm0kfc+wu1be8iCC4HUtWHGU6zUU1+tp5YSaqM/qA7MSlszDXtghf6YKt+6VuMSB2mdKRmUGIdUSuacwRS4IqgqNk4D2QPXZ7iM4qJU1Le1To7S2UtkUwhlKv8nluGX2C8HsTep7LBJ++8Skl6J/1O+dEkw4zkj/MJV6L1e4M=
+	t=1733387520; cv=none; b=J2WSD38Vj+DopNRC6oVQKYl1Bqyw3bZs/Y83/VYaQ5kSzsh+oB49OwjubGIVngWJuf74vFxG8JL5CGfV5yNiwMlZEp9YY2ZExNR7uv7SYYLr6hVO16ZRjKQfAscJWbQpsr5c0h0O9Dvlf/W5vIxLOrLv45iJR0qZdL6pwkoDP2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733387449; c=relaxed/simple;
-	bh=7IqJ9v2zSQH5mRkCQdMwTEhOBAKam4bfRrVxtk94KA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HSd8NNjz2O4XUzdilbOp9H/O7t4AvDFPIEzsC3U8tSKDF37iePgZTvQmqJdHWtiGzai1SIlZDzV2B4dxeGrqKPfD7lKoMQc9ANiokGZwAyf/qGD0f2D+l9KHQnwqjRL0kzMVST+pHItUKUZkBQE8NSBX+SS0FsOp2U06eHAE9bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x0AY/nm2; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B58UTR9101707;
-	Thu, 5 Dec 2024 02:30:29 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733387429;
-	bh=+2RDehCeAqy1Sa/dz+VRMEOHtTzxxo24zkp59yr3MJ0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=x0AY/nm2q+CKavp2sG848X8Qv5czPlK3qa9G8LvU2XAVOYUmSobcj160J4gW1J334
-	 1o4Mh3A0M4X0QK0+5B4jLmWXtN3rFYel2VhOsB+EZRa//exBM3uI1maCYlCFPdJBGY
-	 qKaDUmw2o9XmFEtWzERmxAyTw8nU/4aUu9b03jvc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B58UTWi107459
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 5 Dec 2024 02:30:29 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 5
- Dec 2024 02:30:29 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 5 Dec 2024 02:30:29 -0600
-Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B58UOum075586;
-	Thu, 5 Dec 2024 02:30:25 -0600
-Message-ID: <d0457446-2b45-44ed-91d4-8839e1626180@ti.com>
-Date: Thu, 5 Dec 2024 14:00:24 +0530
+	s=arc-20240116; t=1733387520; c=relaxed/simple;
+	bh=KBvk2jNTghOafdSPBD8B16h6E5ILhhotf3ATl9qqizk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gMeUTpnjShQgBSP1H9vCJ2P5Ehsq44q/rjYQuaFKT0a0dNkdx1dbSDeIj+LISaDMA9ub4qllHRxcJlBHWGcVzuiNhiroeN2AQwXq6FYawIJ98VBQXpkAj9x0IW9JDTW+ctFeJ4snCUkFF+xRTHa98vbCXlJdqGxHgqkyL1dHYKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNWmeBWq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733387517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2vM6qUuCJYzyfHeB88GfpKyQAf0dwch2f0TqJnEPdAU=;
+	b=dNWmeBWqs6/1qiX0fydCArU1A/3UwhsctlKdTwSPaaTe7QeMagdfWcsa6c97UvkRhkZwhU
+	B4uOsFNHPdKEnN/zqLKcWwZ4u5Iy5gg1JxB1inF8NPBSFlu4EEP1sOBMUW9uKp3cD+/h7V
+	l65WA8VSL20wkfGXhv6PONcto/XNezM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-29-gvnJkFQXN86hWtSsyN7wzQ-1; Thu,
+ 05 Dec 2024 03:31:53 -0500
+X-MC-Unique: gvnJkFQXN86hWtSsyN7wzQ-1
+X-Mimecast-MFC-AGG-ID: gvnJkFQXN86hWtSsyN7wzQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 499F31955DA8;
+	Thu,  5 Dec 2024 08:31:52 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.192.112])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CBCB81955E87;
+	Thu,  5 Dec 2024 08:31:42 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mel Gorman <mgorman@suse.de>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH] sched: Move task_mm_cid_work to mm delayed work
+Date: Thu,  5 Dec 2024 09:31:11 +0100
+Message-ID: <20241205083110.180134-2-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3 1/2] net: ti: icssg-prueth: Fix firmware load
- sequence.
-To: <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>,
-        <javier.carrasco.cruz@gmail.com>, <diogo.ivo@siemens.com>,
-        <horms@kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
-        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <danishanwar@ti.com>
-References: <20241205082447.777463-1-m-malladi@ti.com>
-Content-Language: en-US
-From: Meghana Malladi <m-malladi@ti.com>
-In-Reply-To: <20241205082447.777463-1-m-malladi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi All,
+Currently, the task_mm_cid_work function is called in a task work
+triggered by a scheduler tick. This can delay the execution of the task
+for the entire duration of the function, negatively affecting the
+response of real time tasks.
 
-Apologies for this mishap (incorrect patch series). Please ignore this 
-patch.
+This patch runs the task_mm_cid_work in a new delayed work connected to
+the mm_struct rather than in the task context before returning to
+userspace.
 
-On 05/12/24 13:54, Meghana Malladi wrote:
-> From: MD Danish Anwar <danishanwar@ti.com>
-> 
-> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
-> and SLICE1. Currently whenever any ICSSG interface comes up we load the
-> respective firmwares to PRU cores and whenever interface goes down, we
-> stop the resective cores. Due to this, when SLICE0 goes down while
-> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
-> stopped. This results in clock jump for SLICE1 interface as the timesync
-> related operations are no longer running.
-> 
-> As there are interdependencies between SLICE0 and SLICE1 firmwares,
-> fix this by running both PRU0 and PRU1 firmwares as long as at least 1
-> ICSSG interface is up. Add new flag in prueth struct to check if all
-> firmwares are running.
-> 
-> Use emacs_initialized as reference count to load the firmwares for the
-> first and last interface up/down. Moving init_emac_mode and fw_offload_mode
-> API outside of icssg_config to icssg_common_start API as they need
-> to be called only once per firmware boot.
-> 
-> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
-> ---
-> 
-> Hi all,
-> 
-> This patch is based on net-next tagged next-20241128.
-> v2:https://lore.kernel.org/all/20241128122931.2494446-2-m-malladi@ti.com/
-> 
-> * Changes since v2 (v3-v2):
-> - error handling in caller function of prueth_emac_common_start()
-> - Use prus_running flag check before stopping the firmwares
-> Both suggested by Roger Quadros <rogerq@kernel.org>
-> 
->   drivers/net/ethernet/ti/icssg/icssg_config.c |  45 ++++--
->   drivers/net/ethernet/ti/icssg/icssg_config.h |   1 +
->   drivers/net/ethernet/ti/icssg/icssg_prueth.c | 157 ++++++++++++-------
->   drivers/net/ethernet/ti/icssg/icssg_prueth.h |   5 +
->   4 files changed, 140 insertions(+), 68 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> index 5d2491c2943a..342150756cf7 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> @@ -397,7 +397,7 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
->   	return 0;
->   }
->   
-> -static void icssg_init_emac_mode(struct prueth *prueth)
-> +void icssg_init_emac_mode(struct prueth *prueth)
->   {
->   	/* When the device is configured as a bridge and it is being brought
->   	 * back to the emac mode, the host mac address has to be set as 0.
-> @@ -406,9 +406,6 @@ static void icssg_init_emac_mode(struct prueth *prueth)
->   	int i;
->   	u8 mac[ETH_ALEN] = { 0 };
->   
-> -	if (prueth->emacs_initialized)
-> -		return;
-> -
->   	/* Set VLAN TABLE address base */
->   	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
->   			   addr <<  SMEM_VLAN_OFFSET);
-> @@ -423,15 +420,13 @@ static void icssg_init_emac_mode(struct prueth *prueth)
->   	/* Clear host MAC address */
->   	icssg_class_set_host_mac_addr(prueth->miig_rt, mac);
->   }
-> +EXPORT_SYMBOL_GPL(icssg_init_emac_mode);
->   
-> -static void icssg_init_fw_offload_mode(struct prueth *prueth)
-> +void icssg_init_fw_offload_mode(struct prueth *prueth)
->   {
->   	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
->   	int i;
->   
-> -	if (prueth->emacs_initialized)
-> -		return;
-> -
->   	/* Set VLAN TABLE address base */
->   	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
->   			   addr <<  SMEM_VLAN_OFFSET);
-> @@ -448,6 +443,7 @@ static void icssg_init_fw_offload_mode(struct prueth *prueth)
->   		icssg_class_set_host_mac_addr(prueth->miig_rt, prueth->hw_bridge_dev->dev_addr);
->   	icssg_set_pvid(prueth, prueth->default_vlan, PRUETH_PORT_HOST);
->   }
-> +EXPORT_SYMBOL_GPL(icssg_init_fw_offload_mode);
->   
->   int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
->   {
-> @@ -455,11 +451,6 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
->   	struct icssg_flow_cfg __iomem *flow_cfg;
->   	int ret;
->   
-> -	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
-> -		icssg_init_fw_offload_mode(prueth);
-> -	else
-> -		icssg_init_emac_mode(prueth);
-> -
->   	memset_io(config, 0, TAS_GATE_MASK_LIST0);
->   	icssg_miig_queues_init(prueth, slice);
->   
-> @@ -786,3 +777,31 @@ void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port)
->   		writel(pvid, prueth->shram.va + EMAC_ICSSG_SWITCH_PORT0_DEFAULT_VLAN_OFFSET);
->   }
->   EXPORT_SYMBOL_GPL(icssg_set_pvid);
-> +
-> +int emac_fdb_flow_id_updated(struct prueth_emac *emac)
-> +{
-> +	struct mgmt_cmd_rsp fdb_cmd_rsp = { 0 };
-> +	int slice = prueth_emac_slice(emac);
-> +	struct mgmt_cmd fdb_cmd = { 0 };
-> +	int ret = 0;
-> +
-> +	fdb_cmd.header = ICSSG_FW_MGMT_CMD_HEADER;
-> +	fdb_cmd.type   = ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW;
-> +	fdb_cmd.seqnum = ++(emac->prueth->icssg_hwcmdseq);
-> +	fdb_cmd.param  = 0;
-> +
-> +	fdb_cmd.param |= (slice << 4);
-> +	fdb_cmd.cmd_args[0] = 0;
-> +
-> +	ret = icssg_send_fdb_msg(emac, &fdb_cmd, &fdb_cmd_rsp);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	WARN_ON(fdb_cmd.seqnum != fdb_cmd_rsp.seqnum);
-> +	if (fdb_cmd_rsp.status == 1)
-> +		return 0;
-> +
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(emac_fdb_flow_id_updated);
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
-> index 92c2deaa3068..c884e9fa099e 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
-> @@ -55,6 +55,7 @@ struct icssg_rxq_ctx {
->   #define ICSSG_FW_MGMT_FDB_CMD_TYPE	0x03
->   #define ICSSG_FW_MGMT_CMD_TYPE		0x04
->   #define ICSSG_FW_MGMT_PKT		0x80000000
-> +#define ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW	0x05
->   
->   struct icssg_r30_cmd {
->   	u32 cmd[4];
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> index c568c84a032b..2e22e793b01a 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> @@ -164,11 +164,11 @@ static struct icssg_firmwares icssg_emac_firmwares[] = {
->   	}
->   };
->   
-> -static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
-> +static int prueth_emac_start(struct prueth *prueth, int slice)
->   {
->   	struct icssg_firmwares *firmwares;
->   	struct device *dev = prueth->dev;
-> -	int slice, ret;
-> +	int ret;
->   
->   	if (prueth->is_switch_mode)
->   		firmwares = icssg_switch_firmwares;
-> @@ -177,16 +177,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
->   	else
->   		firmwares = icssg_emac_firmwares;
->   
-> -	slice = prueth_emac_slice(emac);
-> -	if (slice < 0) {
-> -		netdev_err(emac->ndev, "invalid port\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	ret = icssg_config(prueth, emac, slice);
-> -	if (ret)
-> -		return ret;
-> -
->   	ret = rproc_set_firmware(prueth->pru[slice], firmwares[slice].pru);
->   	ret = rproc_boot(prueth->pru[slice]);
->   	if (ret) {
-> @@ -208,7 +198,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
->   		goto halt_rtu;
->   	}
->   
-> -	emac->fw_running = 1;
->   	return 0;
->   
->   halt_rtu:
-> @@ -220,6 +209,80 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
->   	return ret;
->   }
->   
-> +static int prueth_emac_common_start(struct prueth *prueth)
-> +{
-> +	struct prueth_emac *emac;
-> +	int ret = 0;
-> +	int slice;
-> +
-> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
-> +		return -EINVAL;
-> +
-> +	/* clear SMEM and MSMC settings for all slices */
-> +	memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
-> +	memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
-> +
-> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
-> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
-> +
-> +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
-> +		icssg_init_fw_offload_mode(prueth);
-> +	else
-> +		icssg_init_emac_mode(prueth);
-> +
-> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
-> +		emac = prueth->emac[slice];
-> +		if (emac) {
-> +			ret |= icssg_config(prueth, emac, slice);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +		ret |= prueth_emac_start(prueth, slice);
-> +	}
-> +	if (!ret)
-> +		prueth->prus_running = 1;
-> +	else
-> +		return ret;
-> +
-> +	emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
-> +	       prueth->emac[ICSS_SLICE1];
-> +	ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
-> +			    emac, IEP_DEFAULT_CYCLE_TIME_NS);
-> +	if (ret) {
-> +		dev_err(prueth->dev, "Failed to initialize IEP module\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int prueth_emac_common_stop(struct prueth *prueth)
-> +{
-> +	struct prueth_emac *emac;
-> +	int slice;
-> +
-> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
-> +		return -EINVAL;
-> +
-> +	icssg_class_disable(prueth->miig_rt, ICSS_SLICE0);
-> +	icssg_class_disable(prueth->miig_rt, ICSS_SLICE1);
-> +
-> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
-> +		if (prueth->prus_running) {
-> +			rproc_shutdown(prueth->txpru[slice]);
-> +			rproc_shutdown(prueth->rtu[slice]);
-> +			rproc_shutdown(prueth->pru[slice]);
-> +		}
-> +	}
-> +	prueth->prus_running = 0;
-> +
-> +	emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
-> +	       prueth->emac[ICSS_SLICE1];
-> +	icss_iep_exit(emac->iep);
-> +
-> +	return 0;
-> +}
-> +
->   /* called back by PHY layer if there is change in link state of hw port*/
->   static void emac_adjust_link(struct net_device *ndev)
->   {
-> @@ -369,12 +432,13 @@ static void prueth_iep_settime(void *clockops_data, u64 ns)
->   {
->   	struct icssg_setclock_desc __iomem *sc_descp;
->   	struct prueth_emac *emac = clockops_data;
-> +	struct prueth *prueth = emac->prueth;
->   	struct icssg_setclock_desc sc_desc;
->   	u64 cyclecount;
->   	u32 cycletime;
->   	int timeout;
->   
-> -	if (!emac->fw_running)
-> +	if (!prueth->prus_running)
->   		return;
->   
->   	sc_descp = emac->prueth->shram.va + TIMESYNC_FW_WC_SETCLOCK_DESC_OFFSET;
-> @@ -543,23 +607,17 @@ static int emac_ndo_open(struct net_device *ndev)
->   {
->   	struct prueth_emac *emac = netdev_priv(ndev);
->   	int ret, i, num_data_chn = emac->tx_ch_num;
-> +	struct icssg_flow_cfg __iomem *flow_cfg;
->   	struct prueth *prueth = emac->prueth;
->   	int slice = prueth_emac_slice(emac);
->   	struct device *dev = prueth->dev;
->   	int max_rx_flows;
->   	int rx_flow;
->   
-> -	/* clear SMEM and MSMC settings for all slices */
-> -	if (!prueth->emacs_initialized) {
-> -		memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
-> -		memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
-> -	}
-> -
->   	/* set h/w MAC as user might have re-configured */
->   	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
->   
->   	icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
-> -	icssg_class_default(prueth->miig_rt, slice, 0, false);
->   	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
->   
->   	/* Notify the stack of the actual queue counts. */
-> @@ -597,18 +655,23 @@ static int emac_ndo_open(struct net_device *ndev)
->   		goto cleanup_napi;
->   	}
->   
-> -	/* reset and start PRU firmware */
-> -	ret = prueth_emac_start(prueth, emac);
-> -	if (ret)
-> -		goto free_rx_irq;
-> +	if (!prueth->emacs_initialized) {
-> +		ret = prueth_emac_common_start(prueth);
-> +		if (ret)
-> +			goto stop;
-> +	}
->   
-> -	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
-> +	flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
-> +	writew(emac->rx_flow_id_base, &flow_cfg->rx_base_flow);
-> +	ret = emac_fdb_flow_id_updated(emac);
->   
-> -	if (!prueth->emacs_initialized) {
-> -		ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
-> -				    emac, IEP_DEFAULT_CYCLE_TIME_NS);
-> +	if (ret) {
-> +		netdev_err(ndev, "Failed to update Rx Flow ID %d", ret);
-> +		goto stop;
->   	}
->   
-> +	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
-> +
->   	ret = request_threaded_irq(emac->tx_ts_irq, NULL, prueth_tx_ts_irq,
->   				   IRQF_ONESHOT, dev_name(dev), emac);
->   	if (ret)
-> @@ -653,8 +716,7 @@ static int emac_ndo_open(struct net_device *ndev)
->   free_tx_ts_irq:
->   	free_irq(emac->tx_ts_irq, emac);
->   stop:
-> -	prueth_emac_stop(emac);
-> -free_rx_irq:
-> +	prueth_emac_common_stop(prueth);
->   	free_irq(emac->rx_chns.irq[rx_flow], emac);
->   cleanup_napi:
->   	prueth_ndev_del_tx_napi(emac, emac->tx_ch_num);
-> @@ -689,8 +751,6 @@ static int emac_ndo_stop(struct net_device *ndev)
->   	if (ndev->phydev)
->   		phy_stop(ndev->phydev);
->   
-> -	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
-> -
->   	if (emac->prueth->is_hsr_offload_mode)
->   		__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
->   	else
-> @@ -728,11 +788,9 @@ static int emac_ndo_stop(struct net_device *ndev)
->   	/* Destroying the queued work in ndo_stop() */
->   	cancel_delayed_work_sync(&emac->stats_work);
->   
-> -	if (prueth->emacs_initialized == 1)
-> -		icss_iep_exit(emac->iep);
-> -
->   	/* stop PRUs */
-> -	prueth_emac_stop(emac);
-> +	if (prueth->emacs_initialized == 1)
-> +		prueth_emac_common_stop(prueth);
->   
->   	free_irq(emac->tx_ts_irq, emac);
->   
-> @@ -1069,16 +1127,10 @@ static void prueth_emac_restart(struct prueth *prueth)
->   	icssg_set_port_state(emac1, ICSSG_EMAC_PORT_DISABLE);
->   
->   	/* Stop both pru cores for both PRUeth ports*/
-> -	prueth_emac_stop(emac0);
-> -	prueth->emacs_initialized--;
-> -	prueth_emac_stop(emac1);
-> -	prueth->emacs_initialized--;
-> +	prueth_emac_common_stop(prueth);
->   
->   	/* Start both pru cores for both PRUeth ports */
-> -	prueth_emac_start(prueth, emac0);
-> -	prueth->emacs_initialized++;
-> -	prueth_emac_start(prueth, emac1);
-> -	prueth->emacs_initialized++;
-> +	prueth_emac_common_start(prueth);
->   
->   	/* Enable forwarding for both PRUeth ports */
->   	icssg_set_port_state(emac0, ICSSG_EMAC_PORT_FORWARD);
-> @@ -1413,13 +1465,10 @@ static int prueth_probe(struct platform_device *pdev)
->   		prueth->pa_stats = NULL;
->   	}
->   
-> -	if (eth0_node) {
-> +	if (eth0_node || eth1_node) {
->   		ret = prueth_get_cores(prueth, ICSS_SLICE0, false);
->   		if (ret)
->   			goto put_cores;
-> -	}
-> -
-> -	if (eth1_node) {
->   		ret = prueth_get_cores(prueth, ICSS_SLICE1, false);
->   		if (ret)
->   			goto put_cores;
-> @@ -1618,14 +1667,12 @@ static int prueth_probe(struct platform_device *pdev)
->   	pruss_put(prueth->pruss);
->   
->   put_cores:
-> -	if (eth1_node) {
-> -		prueth_put_cores(prueth, ICSS_SLICE1);
-> -		of_node_put(eth1_node);
-> -	}
-> -
-> -	if (eth0_node) {
-> +	if (eth0_node || eth1_node) {
->   		prueth_put_cores(prueth, ICSS_SLICE0);
->   		of_node_put(eth0_node);
-> +
-> +		prueth_put_cores(prueth, ICSS_SLICE1);
-> +		of_node_put(eth1_node);
->   	}
->   
->   	return ret;
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> index f5c1d473e9f9..b30f2e9a73d8 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> @@ -257,6 +257,7 @@ struct icssg_firmwares {
->    * @is_switchmode_supported: indicates platform support for switch mode
->    * @switch_id: ID for mapping switch ports to bridge
->    * @default_vlan: Default VLAN for host
-> + * @prus_running: flag to indicate if all pru cores are running
->    */
->   struct prueth {
->   	struct device *dev;
-> @@ -298,6 +299,7 @@ struct prueth {
->   	int default_vlan;
->   	/** @vtbl_lock: Lock for vtbl in shared memory */
->   	spinlock_t vtbl_lock;
-> +	bool prus_running;
->   };
->   
->   struct emac_tx_ts_response {
-> @@ -361,6 +363,8 @@ int icssg_set_port_state(struct prueth_emac *emac,
->   			 enum icssg_port_state_cmd state);
->   void icssg_config_set_speed(struct prueth_emac *emac);
->   void icssg_config_half_duplex(struct prueth_emac *emac);
-> +void icssg_init_emac_mode(struct prueth *prueth);
-> +void icssg_init_fw_offload_mode(struct prueth *prueth);
->   
->   /* Buffer queue helpers */
->   int icssg_queue_pop(struct prueth *prueth, u8 queue);
-> @@ -377,6 +381,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
->   		       u8 untag_mask, bool add);
->   u16 icssg_get_pvid(struct prueth_emac *emac);
->   void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port);
-> +int emac_fdb_flow_id_updated(struct prueth_emac *emac);
->   #define prueth_napi_to_tx_chn(pnapi) \
->   	container_of(pnapi, struct prueth_tx_chn, napi_tx)
->   
+This delayed work is initialised while allocating the mm and disabled
+before freeing it, its execution is no longer triggered by scheduler
+ticks but running periodically based on the defined MM_CID_SCAN_DELAY.
+
+The main advantage of this change is that the function can be offloaded
+to a different CPU and even preempted by RT tasks.
+
+On a busy system, this may mean the function gets called less often, but
+the current behaviour already doesn't provide guarantees. Moreover, this
+new behaviour could be more predictable in some situations since the
+delayed work is always scheduled with the same periodicity for each mm.
+
+This deprecate the "sched: improve task_mm_cid_work impact on isolated
+systems" patches by dropping the first patch and using a workqueue
+instead of RCU callbacks.
+
+Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Link: https://lore.kernel.org/lkml/20241202140735.56368-1-gmonaco@redhat.com/
+---
+ include/linux/mm_types.h |  5 +++++
+ kernel/sched/core.c      | 37 +++++++------------------------------
+ 2 files changed, 12 insertions(+), 30 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 7361a8f3ab68..38c567f06dce 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -856,6 +856,7 @@ struct mm_struct {
+ 		 * mm nr_cpus_allowed updates.
+ 		 */
+ 		raw_spinlock_t cpus_allowed_lock;
++		struct delayed_work mm_cid_work;
+ #endif
+ #ifdef CONFIG_MMU
+ 		atomic_long_t pgtables_bytes;	/* size of all page tables */
+@@ -1149,6 +1150,8 @@ enum mm_cid_state {
+ 	MM_CID_LAZY_PUT = (1U << 31),
+ };
+ 
++extern void task_mm_cid_work(struct work_struct *work);
++
+ static inline bool mm_cid_is_unset(int cid)
+ {
+ 	return cid == MM_CID_UNSET;
+@@ -1221,12 +1224,14 @@ static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *
+ 	if (!mm->pcpu_cid)
+ 		return -ENOMEM;
+ 	mm_init_cid(mm, p);
++	INIT_DELAYED_WORK(&mm->mm_cid_work, task_mm_cid_work);
+ 	return 0;
+ }
+ #define mm_alloc_cid(...)	alloc_hooks(mm_alloc_cid_noprof(__VA_ARGS__))
+ 
+ static inline void mm_destroy_cid(struct mm_struct *mm)
+ {
++	disable_delayed_work(&mm->mm_cid_work);
+ 	free_percpu(mm->pcpu_cid);
+ 	mm->pcpu_cid = NULL;
+ }
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 95e40895a519..0c3a778c9cb5 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5654,7 +5654,6 @@ void sched_tick(void)
+ 		resched_latency = cpu_resched_latency(rq);
+ 	calc_global_load_tick(rq);
+ 	sched_core_tick(rq);
+-	task_tick_mm_cid(rq, donor);
+ 	scx_tick(rq);
+ 
+ 	rq_unlock(rq, &rf);
+@@ -10520,22 +10519,14 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
+ 	sched_mm_cid_remote_clear(mm, pcpu_cid, cpu);
+ }
+ 
+-static void task_mm_cid_work(struct callback_head *work)
++void task_mm_cid_work(struct work_struct *work)
+ {
+ 	unsigned long now = jiffies, old_scan, next_scan;
+-	struct task_struct *t = current;
+ 	struct cpumask *cidmask;
+-	struct mm_struct *mm;
++	struct delayed_work *delayed_work = container_of(work, struct delayed_work, work);
++	struct mm_struct *mm = container_of(delayed_work, struct mm_struct, mm_cid_work);
+ 	int weight, cpu;
+ 
+-	SCHED_WARN_ON(t != container_of(work, struct task_struct, cid_work));
+-
+-	work->next = work;	/* Prevent double-add */
+-	if (t->flags & PF_EXITING)
+-		return;
+-	mm = t->mm;
+-	if (!mm)
+-		return;
+ 	old_scan = READ_ONCE(mm->mm_cid_next_scan);
+ 	next_scan = now + msecs_to_jiffies(MM_CID_SCAN_DELAY);
+ 	if (!old_scan) {
+@@ -10571,26 +10562,12 @@ void init_sched_mm_cid(struct task_struct *t)
+ 
+ 	if (mm) {
+ 		mm_users = atomic_read(&mm->mm_users);
+-		if (mm_users == 1)
++		if (mm_users == 1) {
+ 			mm->mm_cid_next_scan = jiffies + msecs_to_jiffies(MM_CID_SCAN_DELAY);
++			schedule_delayed_work(&mm->mm_cid_work,
++					      msecs_to_jiffies(MM_CID_SCAN_DELAY));
++		}
+ 	}
+-	t->cid_work.next = &t->cid_work;	/* Protect against double add */
+-	init_task_work(&t->cid_work, task_mm_cid_work);
+-}
+-
+-void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
+-{
+-	struct callback_head *work = &curr->cid_work;
+-	unsigned long now = jiffies;
+-
+-	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
+-	    work->next != work)
+-		return;
+-	if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
+-		return;
+-
+-	/* No page allocation under rq lock */
+-	task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
+ }
+ 
+ void sched_mm_cid_exit_signals(struct task_struct *t)
+
+base-commit: feffde684ac29a3b7aec82d2df850fbdbdee55e4
+-- 
+2.47.1
+
 
