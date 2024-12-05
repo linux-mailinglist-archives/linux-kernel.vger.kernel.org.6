@@ -1,233 +1,392 @@
-Return-Path: <linux-kernel+bounces-433471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925299E58D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B483A9E58DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E25216B606
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8D1169807
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF6421CA0D;
-	Thu,  5 Dec 2024 14:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D408E21A44D;
+	Thu,  5 Dec 2024 14:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YDrQ7r7F"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qCXl/kdn"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289F021CA09;
-	Thu,  5 Dec 2024 14:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733410017; cv=fail; b=UvEYUscX82RFe+IIaI8iuHPsBrSOLWjOdZ4uUy+RMDf0VclfWKO6w3MZ9kSbME04RmJuc5yx2fpPekDu/k2KPRfmdaYf48zfhV5gLt05KjO39S4kxV8QU1dwdj3SNv9cjyOAjgyeOGllBOb99oK9b+iEvygvmMVAyhnk+Qym79o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733410017; c=relaxed/simple;
-	bh=nflTuGHQPPwRA/i7FfJqR6hkxQzWwF4X1yPQxX9f4SQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Mul19+3opB2haQUFkkqMDes1DfN25a00NFIdCYkUFDH4vN536YE59vs6c0aB9AT9Vz6/p4uQItdVxebNwdYUMUIN3qLTfBqafaLXTedI33ninpMeHsmwkI2QIVhmGTJj4IsgASOgw/qXnhLGHO4fLUZS5GlRuicaHqKzGKEfJ2o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YDrQ7r7F; arc=fail smtp.client-ip=40.107.244.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kiPtk2/UtmML2DTOC/8uJ3Bkd1jzTZu/teiQ1xomQY7ID7Ih7ko7K2FhOiBTfqqpiVkUawSbgmHQUB9phTz3W60DpDUhcagSzFBBb1GJVRDeUTfv9y2uR93wfVTQuLo2SkfhCFy/Qlld5ngZKWoZzsVyz2pqKBkXFxEemuvVPvNiB/JtyZ5dFJvgCWM6jkEQzntVZXOu5KZdKcMPfT/dCcazvBLKsKycx2UQ5L7joMAGuvw9YSZfq+Fjdwc/SCSE/Hq0pF8l8rVZ81w9wb9icDEaA35G+sWMON6RAl7Wl78S6dbBvK3Nr8TX78ijyI9CRHkDaaCUP/co/UL/udwH+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bQAlwqrlrE69JBfNZKHF7RZgv9iHsmAwAbAfuZDeLwk=;
- b=BnIVMpqxa3hqVY3itCS4XfaVelsWArl6ubH+JLXZLKhFl6JgzgNmNn/AFJtBS8BgMZcih4p7ThfIuvhYjvuESQmJ81AzcNsm2TTv9U5usxuwP3PYJdqEioN9q78zLiWqGgrAMS7h4VPsHv+/pr7UFAFppq8koux74cgXha6rML/85gg3cWsY0tXzpuZ1N8MdwUkzLf2PtTexmLC0nr0ysKTxCx0m95XvY7472h9kDruIfj1O6Ge2UB5hYQhbgC+8MuNwNW6/MBpC+WgTD1AXKPtMPeCA7gu6jSzXxIRbPP+3RAu6p1OkabJtt9CG9VqCqsGMt3YlRYsbvQ8msyPsCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bQAlwqrlrE69JBfNZKHF7RZgv9iHsmAwAbAfuZDeLwk=;
- b=YDrQ7r7F498GJUyFwXtK1K5u+ty2tJcC0+v1pORy81ienSevD7klwD/IAGm/mmivbH04DyZKtHgwV38cruEKJkGIKeRiXSPR0DN89vDZyA1Y7WC7eNBcgpVqbkgdLMEeMhcHob7AGSZ6c+jWnZX00TJQIweEEV/dqtuytvFJFSFGF4ROedx4Fd1u4ZO1/q9tTzTLfd/6IgHWGObXEcTTFP/btDJb9twxdWGLsJuFOontihdA7QOfTmNx4Z7ATSzVbgQhRX+N1WPCuANBdMh9Fk258frp1cB73jXogTYJ3wtLAuPYhYrUzXBmjrx96YWlCOwXdE2dnO+XaoGmcqapng==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by BY5PR12MB4212.namprd12.prod.outlook.com (2603:10b6:a03:202::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.15; Thu, 5 Dec
- 2024 14:46:53 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%2]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
- 14:46:53 +0000
-Message-ID: <d731bdf5-e007-4d17-843a-2af5804b6de8@nvidia.com>
-Date: Thu, 5 Dec 2024 14:46:46 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/826] 6.12.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- linux-tegra@vger.kernel.org, stable@vger.kernel.org
-References: <20241203144743.428732212@linuxfoundation.org>
- <154b3d6f-0597-4ac8-ade1-f613f03804e2@drhqmail201.nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <154b3d6f-0597-4ac8-ade1-f613f03804e2@drhqmail201.nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P123CA0020.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:313::8) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90CB1B0F22;
+	Thu,  5 Dec 2024 14:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733410142; cv=none; b=CzCSEriOFVntHxeZJGfjA+NoLudyYaQJt0jJknGxF0xQqJV3AfEggevgy/3l2HrvM/0hR4tQrirLuuwwnayFSYZV/M9h8zYEiiJpVBCw505FyRWRrKlrlDNmgFp/qQEMo+XUKgA4XmEUBUy7CSv/lskIyDsjdS1oSr0Zf6WDUBM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733410142; c=relaxed/simple;
+	bh=Qv4zyOQrF9iQghhNt/KoN4bFDn5xZQIlmjYeDyZeSbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sSYqza0DJRiiHDO9Hg0xX8t6z66N654MmbGa4nMtxgEh2fmLfgUrG0Ga0YTjrbabTTvv6V8M6kPmuxhZuQOrC0ovvjqHKdwOW8AHz7XmXMk6gNTh2X2cFsnyPm+C3O09n0A5WEbpOo3tFRxyCa2fmkReY5FjRXpg929NePFPoRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qCXl/kdn; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5554iX014551;
+	Thu, 5 Dec 2024 14:48:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=msSW/X
+	nJUyMrSC+OBhNgfdmUZjqQ3iW2zMsbZkiwUyY=; b=qCXl/kdnT/bYJgyyLOZEDj
+	N6RPpgS4qlkaFYdUlkxBureUo1OLs+ehA+BXRZd9vIeJ3pXLwAzUmQo9u3l8xoN/
+	+++vNUc5N9Ffz25L0kltUeC+16z/CMCDNLyuSxvgIe6TAnTdh8ufNKKvf5cTxLbf
+	4MXEBe0tjFK/N4QIYVGETNDfYiJ9ZGIqbLjsF03GxggnqcBGKJcpjQ0OuItS90kn
+	8XKecmNGwqEBimo3JqSepgDq7WYY2TgBSRO1CWM/ulZhmlvYcWm4HphxNJCMyOqr
+	wkboxSUMUp4Jp1KjFAvjmvtO1xvGZmFhuQDXfH3zzk/GpNg2CwQ4NZzYA6FF/9Mw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxww33-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 14:48:42 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B5Emg3O016124;
+	Thu, 5 Dec 2024 14:48:42 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxww2y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 14:48:42 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5C6lJI005273;
+	Thu, 5 Dec 2024 14:48:41 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 438fr1taau-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 14:48:41 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5EmdTO32833804
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Dec 2024 14:48:39 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CFFBB20040;
+	Thu,  5 Dec 2024 14:48:39 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AFAC120043;
+	Thu,  5 Dec 2024 14:48:33 +0000 (GMT)
+Received: from [9.39.27.31] (unknown [9.39.27.31])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Dec 2024 14:48:32 +0000 (GMT)
+Message-ID: <543d376c-85a7-4628-a38e-52bc117258a5@linux.ibm.com>
+Date: Thu, 5 Dec 2024 20:18:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|BY5PR12MB4212:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1bdcc156-b12b-48e9-e946-08dd153ba88d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?THlaVE9XdVh2aCs4ajYyeVhhTldHRVllYm42S3Fick05bys0Q0lhQmk4eENk?=
- =?utf-8?B?Ni9kWTRxVnZ2MnhFNGl3NzBFU0l2c01pOEEzcmYwWDNycVExQ2pUVkFwQmE0?=
- =?utf-8?B?S1RFd1FqRnllRXFnMG40ZmFNMkZWM0RodHlCejlaTzA1UUtuTHFHR1BjdHRR?=
- =?utf-8?B?Zi9iQ3NQN0NxMzR4Y3lUZjcvZ1B6c29FakI2Q1hLVXpEbUxEVXNzRzRpTFdO?=
- =?utf-8?B?aDQ5c0taQU5ZN3ZTcFhzSWU5ZmJBeTVwNjErTHd6K0FlVElFelA2N0lTbEti?=
- =?utf-8?B?Y3FqaTF5MThha0huU0hzbVBtZFo2WCtXWVUxdGVOWHRFRmR1SlNmM204Rmk1?=
- =?utf-8?B?Q1F4cmlCREFyU3BwWFRORzRiZTVYaG5Ubm1tWGIvdFJBV0xxQlJQY2lobXBJ?=
- =?utf-8?B?WDA2bkM3M2hzbDN1ZTU0dVoxR3ZBSDhwbk5lU2plc3RNUTZXRmZSQTNSOFdD?=
- =?utf-8?B?UFpjUm15dTRldGRKMGZ3cWZldW1hTlRCQVlnNXJJczJob2JrTWRkL2FoT2RQ?=
- =?utf-8?B?UFR1anRic1Rkczc1dDVMcC8wRUVRMXZxK0M4djYwUXpvZFgraSszVjhnL01U?=
- =?utf-8?B?bEV6K1NSLzFtZ3RrMUtESDFJMW5xbFhETHZSdlpuZUdmaituMXdmRms1dndj?=
- =?utf-8?B?TkpQUUNkaGdmYURzMitqNC9jY3o1MnVGVkRLNlpFdFpJMCt5YnZIUnpIZzMv?=
- =?utf-8?B?a2ppL3pNYW1XWUhxMmtxUDNNQTNnVm4xL3BMcnJ1YUxDbnBYVlVxMG1oQ3lp?=
- =?utf-8?B?ajcvNm5oMVZXZUFFNlgxcm1yaVRGc2pLa3B3eDh6NjJIM0dQMGRWOXI1eWNG?=
- =?utf-8?B?N1Z4ejI2YmpONzViTmRiTW5NOTlqdFJhMFFMMGQrejVub3JGRmdTUUR6MjNy?=
- =?utf-8?B?K1FRbHF2T2JZYjJncVdrWnIvU0JuQ3hhUTMxM09iN2lmZFlHSEJxTnJqK2lZ?=
- =?utf-8?B?WXUvYmpCajV0dVBmdnFQVkNmOHZiWnR2ck5wK3J5M2I2SGxlSGlHNG5JOWJV?=
- =?utf-8?B?cUhDdXVnZHE2YW9hL0lLUnMxRGkvcFVzdUtKKzBRNG1YeEhmL2ZVcXNScVdu?=
- =?utf-8?B?cUNQaG9tNEtCYUZ3MXdtVlUyOXNVKzFDZVhhWjRuVnJocTNGK2pDSFc5RXRI?=
- =?utf-8?B?K3NBKzNnRzEwcHgzVWQ4YW12V3FrZ0VURXRoVWk4WnBHUHFQRU1CMFhneDNv?=
- =?utf-8?B?d0NFZEpFVjdrQTRmUTNoU0ttYlkwUDdCVlVrWHVUQWhPQTV0MEZBSDdweFFV?=
- =?utf-8?B?U044YnpnNUhpSS9pV1g0bW5hb1VaSEQvN0lVMmRxTzVQSUZUWE5WZFpKQ3Nr?=
- =?utf-8?B?UTh2bHZ0T3VWZEpHRWlzTzAwanhsb28vbDkzNXZsRitDMU9NYjNMcDBXRE9z?=
- =?utf-8?B?WlZERWEwNG5ReDJkQ3RPQnV2N1Bac3haYU54K0V3ZU1LNkljRjRFNDVvdHJO?=
- =?utf-8?B?OTBHMmtMWmEzTi9YWmU4NlZzV2FTT2UxRVlHSWxYQmtPZ2FSRWZmMUYwelNT?=
- =?utf-8?B?amVsdjVtOTM0YURDaXY5MWg5UVBHaGkvZFlWNXp4dC8vSUs5WFA5MWNjdkZm?=
- =?utf-8?B?V2cwVHg5YWYvQ2t2THZ1YWc4blZJTDJWYVhlejk1dXJOVUw0R1ZxbGZqZWRy?=
- =?utf-8?B?V0o0QVNNUzhHSEJhWXEyc1ZVSE9mNVdPUTZkdk1GdVVpc2RqVGZuUW9FdXBY?=
- =?utf-8?B?UW9qQmRSdmlMQmdFOVB2emJNRldKM0NwdkRtUVZaZSs0S0ZyRGdQZHhiQlk0?=
- =?utf-8?B?blpMK0daZTR1eUxsQ3Vtazlnd0IvQzZMZzQxdFhONUYwWDhoN0tlN2lRK1BK?=
- =?utf-8?Q?c+S9fl6KIfHR0XN7IEGBocRZbSb2+VbgJ6POI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ejh3QUIzclR0R2oyQTZsa3hxSzVtekJ5eHVnTHJkd3FBaFNYMThoRDhrcWZ4?=
- =?utf-8?B?OEZzSDQwUzM4TEJGdjhMNERJMVNRcUlibEpsQUZudGF2WlVwMXVUNndqYS9l?=
- =?utf-8?B?TDdZbGVWd2pOaVNmdDd1VmF1TzRjamR6a3dzUVpXTE9CamZMdDNPSHV0cjJ2?=
- =?utf-8?B?SldnOXpmNGoxZEQveTdaU0UxZXhWV3hva3hBOWtmSlVuaHdsTWorZ0xhekdm?=
- =?utf-8?B?akp4cmRzUkN6YlhuNTBRWHpUcFBRMWdxZDk5VXhoVnBMSGo1d21HQnArZVFE?=
- =?utf-8?B?ZWtLWjY0RksyVHFlSkdjcFgraGdTTC84MTV1eU9wUEYwVnNreVIyUDMwZ2FG?=
- =?utf-8?B?V3R2K3NHOWlmdWg3a283Y2pNdjJKeUN0TmhSRTVlRStWV3NGZWNOTkc1SmNv?=
- =?utf-8?B?elJGL25pc2RZMGFnWVRRUytBcnVMRXUrVTV1S0dmOFQxOGZGeEgyRHdpKzBz?=
- =?utf-8?B?blVyc2ovVnRhQzhldHR3ekkvV0RSejdCS3FVai8zT3JqVDhyWWU3REpBdzBw?=
- =?utf-8?B?azd0TW5QdWRiRWV6bURxaVp1UXVtdW42ZlcrNjhPR0Y1T3FsdGg4NW00Z0RJ?=
- =?utf-8?B?clBUbm9qeUF4ejBYZ2IyL01YNnUwNUpnS1A2SHM2VTVnanN0cGVWZTRJRmRx?=
- =?utf-8?B?U1l4ZXVZSWh5ZStFMkdmQW5jQUdYb3pYRUZQNkh2N3dSTTZkYmhDeUFKVGJm?=
- =?utf-8?B?MDZBN05aTjdyVUtCV0h5L0d2bEoxR2l2Um5FLzhkV0hqVzFJMHNyVExnN0lo?=
- =?utf-8?B?OXE3bXhuem80bHdvQmxqaC9JVUVha09sQ0UzMkcxNkU2WmtOUUFNdExCU2Q5?=
- =?utf-8?B?azVkOTBlV0hoTkJpT2tUUzVmaDM0VnhmVUkyTWxZbGZvTmIrVjZsd0JreE5B?=
- =?utf-8?B?RzQweHYxY01rQlk4cXF1aU9XV2tnUXdoZzVDNGR0ZDBsY095M0I3MHhvM1VL?=
- =?utf-8?B?ZFNna04yQnM2bk1McFFyM3g4WTlnZmh2cnBBL1luVE1HWFY5UDgyZlQ4VEYv?=
- =?utf-8?B?dW1OUXd4TE9HMjVsNnZ1NzRTSkFBM3NkT2ovd25hSk1QK2VEd1hrM2gvVzZy?=
- =?utf-8?B?Q2xiSjNBb1BNS3UwOWlDamlmZExIT2VxbWpYMTlHVHdkSlZTczBlY25taW0r?=
- =?utf-8?B?cHd6dDF6OXNKSHRJQlcyd2FpM3hxOUJMZGFNTGZJeGM0dFNSaEc5WVZvWEJv?=
- =?utf-8?B?a25iaE84aFk2MXovbHZORTdXaHVwNTAzSEtLTVMwUnoxaExuZzRZN2VuU1pL?=
- =?utf-8?B?ZUo4by9PelYxTUpkODdxSCtBZnAxOUsvZ3ZDUE80dVBPV1RzR0FYVklzalZL?=
- =?utf-8?B?MXVFUmQ2L0xUUVVtVXlpVGNRVEhPSis2WWFCZytLNkdGcHZ6UFpTVHNRT3RE?=
- =?utf-8?B?eE1mMGpBWXJQMW0rS0E1YWxaUExtRGR3Wkc5V1ZSU2x5TUtENW01QVk4V2FY?=
- =?utf-8?B?ZWI4VnRFU29qQXYrNkRyOTZ5akhTQ1hkRzUrM3B4QU1qTjhiSnhjTnUxcDV0?=
- =?utf-8?B?Mk1pL2FEVENjMHB3Q25ubzFJLzVaYW9vc0R2d09GUFhHSXQ1STg0YkZCaFFz?=
- =?utf-8?B?c25vazRBd1VBbXlqa25qZC9RNmk1bi8wWWhWNjh4VXdyR2JuSEJuM0xaWjZN?=
- =?utf-8?B?bHgwOEV0SEt1L0JTSVk4NUtCYnppdmhSN2NCZEY3WCs3WElMRWNNZk9EMC9i?=
- =?utf-8?B?SGUya04yY1dsMFFLMllGdkZKVGJNaTduUDRjdWgvUENPaXFoSjdDVHhna093?=
- =?utf-8?B?TCs4U1dKTDFNSEhxMFVUN3JVTEpNQ0RTcjJtTHI4eU90RllhakNlNFg4dEJV?=
- =?utf-8?B?VHBwNHVwbldkT0xaOFhaU1Y0QVNYaURIMXRRMUdwczhYcG5wU3lYVHorZDRh?=
- =?utf-8?B?UXpHUFQyNkpsNEtTNk14b1Zub3VocUFPWmdEKzhVSE9PWDZzSE82R2xwM3A5?=
- =?utf-8?B?VFNVWkhuejR2cEgrajIvdlFobnNTU0tvMmp6UjNpVEJEVjQvMEkwMW5iTzdP?=
- =?utf-8?B?ZmVFZUdXb0RUTUlpSVkreUFmTExBUXlHaVBMUURNSHJCQnFtZURNSS9SWTNh?=
- =?utf-8?B?bDdWYlJKRnZ4c3hndVpQNGJ5Wkg2emt3MnZzbkd2NFhFY1VnY2I0WHQ3c1BL?=
- =?utf-8?B?Y3kwQVJteFZrUzNVeS8yTzVEVGdaTFc4aU1vWlE1eUIzVW5BMjVST3BBUXJD?=
- =?utf-8?B?WlE9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bdcc156-b12b-48e9-e946-08dd153ba88d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 14:46:53.3100
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7eUtR8zk72tipMQLfC0lfTHgWPxFObH7yYxEkZ5PZHxfpydx74YNGTJaMDKWPzD2uVvxz8raCs/0bCadtIofQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4212
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/2] sched/fair: introduce new scheduler group type
+ group_parked
+To: Tobias Huschle <huschle@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, linux-s390@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20241204112149.25872-1-huschle@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20241204112149.25872-1-huschle@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZG0OQFbJ6RTCPqqlVwM6XydZ6_HYbCJ0
+X-Proofpoint-GUID: bKbILWRgrvc6pJIxTQjr7e7AJtrQ9Z7v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ phishscore=0 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412050105
 
 
-On 05/12/2024 14:39, Jon Hunter wrote:
-> On Tue, 03 Dec 2024 15:35:27 +0100, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 6.12.2 release.
->> There are 826 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Thu, 05 Dec 2024 14:45:11 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.2-rc1.gz
->> or in the git tree and branch at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
+
+On 12/4/24 16:51, Tobias Huschle wrote:
+> Adding a new scheduler group type which allows to remove all tasks
+> from certain CPUs through load balancing can help in scenarios where
+> such CPUs are currently unfavorable to use, for example in a
+> virtualized environment.
 > 
-> Failures detected for Tegra ...
+> Functionally, this works as intended. The question would be, if this
+> could be considered to be added and would be worth going forward
+> with. If so, which areas would need additional attention?
+> Some cases are referenced below.
 > 
-> Test results for stable-v6.12:
->      10 builds:	10 pass, 0 fail
->      26 boots:	26 pass, 0 fail
->      116 tests:	115 pass, 1 fail
+> The underlying concept and the approach of adding a new scheduler
+> group type were presented in the Sched MC of the 2024 LPC.
+> A short summary:
+
+Thanks for working on this. Yes, we had two possible implementable version.
+1. Using new group type. (this RFC)
+2. Using group_misfit and use very low CPU capacity set using thermal framework.
+Those tricky issues were discussed at plumbers.
+
+I agree using new group type simplifies from implementation perspective.
+So for the idea of using this,
+Acked-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+
 > 
-> Linux version:	6.12.2-rc1-g1b3321bcbfba
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
->                  tegra20-ventana, tegra210-p2371-2180,
->                  tegra210-p3450-0000, tegra30-cardhu-a04
+> Some architectures (e.g. s390) provide virtualization on a firmware
+> level. This implies, that Linux kernels running on such architectures
+> run on virtualized CPUs.
 > 
-> Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
+> Like in other virtualized environments, the CPUs are most likely shared
+> with other guests on the hardware level. This implies, that Linux
+> kernels running in such an environment may encounter 'steal time'. In
+> other words, instead of being able to use all available time on a
+> physical CPU, some of said available time is 'stolen' by other guests.
+> 
+> This can cause side effects if a guest is interrupted at an unfavorable
+> point in time or if the guest is waiting for one of its other virtual
+> CPUs to perform certain actions while those are suspended in favour of
+> another guest.
+> 
+> Architectures, like arch/s390, address this issue by providing an
+> alternative classification for the CPUs seen by the Linux kernel.
+> 
+> The following example is arch/s390 specific:
+> In the default mode (horizontal CPU polarization), all CPUs are treated
+> equally and can be subject to steal time equally.
+> In the alternate mode (vertical CPU polarization), the underlying
+> firmware hypervisor assigns the CPUs, visible to the guest, different
+> types, depending on how many CPUs the guest is entitled to use. Said
+> entitlement is configured by assigning weights to all active guests.
+> The three CPU types are:
+>      - vertical high   : On these CPUs, the guest has always highest
+>                          priority over other guests. This means
+>                          especially that if the guest executes tasks on
+>                          these CPUs, it will encounter no steal time.
+>      - vertical medium : These CPUs are meant to cover fractions of
+>                          entitlement.
+>      - vertical low    : These CPUs will have no priority when being
+>                          scheduled. This implies especially, that while
+>                          all other guests are using their full
+>                          entitlement, these CPUs might not be ran for a
+>                          significant amount of time.
+> 
+> As a consequence, using vertical lows while the underlying hypervisor
+> experiences a high load, driven by all defined guests, is to be avoided.
+> 
+> In order to consequently move tasks off of vertical lows, introduce a
+> new type of scheduler groups: group_parked.
+> Parked implies, that processes should be evacuated as fast as possible
+> from these CPUs. This implies that other CPUs should start pulling tasks
+> immediately, while the parked CPUs should refuse to pull any tasks
+> themselves.
+> Adding a group type beyond group_overloaded achieves the expected
+> behavior. By making its selection architecture dependent, it has
+> no effect on architectures which will not make use of that group type.
+> 
+> This approach works very well for many kinds of workloads. Tasks are
+> getting migrated back and forth in line with changing the parked
+> state of the involved CPUs.
+
+Likely there could more use-cases. It is basically supposed to be a lightweight
+mechanism to remove tasks out of CPUs instead of offline. Right?
+
+> 
+> There are a couple of issues and corner cases which need further
+> considerations:
+> - no_hz:        While the scheduler tick can and should still be disabled
+>                  on idle CPUs, it should not be disabled on parked CPUs
+>                  which run only one task, as that task will not be
+task running on Parked CPUs itself is concern right? unless it is pinned.
+
+>                  scheduled away in time. Side effects and completeness
+>                  need to be further investigated. One option might be to
+>                  allow dynamic changes to tick_nohz_full_mask. It is also
+>                  possible to handle this in exclusively fair.c, but that
+>                  seems not to be the best environment to do so.
+> - pinned tasks: If a task is pinned to CPUs which are all parked, it will
+>                  get moved to other CPUs. Like during CPU hotplug, the
+>                  information about the tasks initial CPU mask gets lost.
+
+Could be a warning instead saying to user or fail?
+
+> - rt & dl:      Realtime and deadline scheduling require some additional
+>                  attention.
+
+Ideal would be not run RT and DL there. But in these virtualized environment there is likely a number of CPUS
+such a number of Vertical High which is always available (in PowerPC we call these as entitled CPUs) and use those
+for RT or DL calculations of admission control?
+
+> - ext:          Probably affected as well. Needs some conceptional
+>                  thoughts first.
+> - idle vs parked: It could be considered whether an idle parked CPU
+>                  would contribute to the count of idle CPUs. It is
+>                  usually preferable to utilize idle CPUs, but parked CPUs
+>                  should not be used. So a scheduler group with many idle,
+>                  but parked, CPUs, should not be the target for additional
+>                  workload. At this point, some more thought needs to be
+>                  spent to evaluate if it would be ok to not set the idle
+>                  flag on parked CPUs.
+
+I think idle_cpus shouldn't include parked CPUs.
+
+> - optimization: It is probably possible to cut some corners. In order to
+>                  avoid tampering with scheduler statistics too much, the
+>                  actions based on the parkedness on the CPU are not always
+>                  taken on the earliest possible occasion yet.
+> - raciness:     Right now, there are no synchronization efforts. It needs
+>                  to be considered whether those might be necessary or if
+>                  it is alright that the parked-state of a CPU might change
+>                  during load-balancing.
+
+Next load balancing will take care of this instead right? Similar to CPU capacity can
+change on its own even during load balancing. next load balancer takes care.
+
+> 
+> Patches apply to tip:sched/core
+> 
+> The s390 patch serves as a simplified implementation example.
+> 
+> Tobias Huschle (2):
+>    sched/fair: introduce new scheduler group type group_parked
+>    s390/topology: Add initial implementation for selection of parked CPUs
+> 
+>   arch/s390/include/asm/topology.h |   3 +
+>   arch/s390/kernel/topology.c      |   5 ++
+>   include/linux/sched/topology.h   |  20 +++++
+>   kernel/sched/core.c              |  10 ++-
+>   kernel/sched/fair.c              | 122 +++++++++++++++++++++++++------
+>   5 files changed, 135 insertions(+), 25 deletions(-)
+> 
+
+tl;dr; debug patch and some testing results with mpstats logs.
 
 
-This is a known issue in the mainline that was not caught for Linux 
-v6.12. It is intermittent and so not easily caught. The good news is 
-that a fix [0] has been identified and once in mainline we can backport 
-for stable. It is a networking issue that is causing random test 
-failures when running with NFS.
+So I gave it a try with using a debugfs based hint to say which CPUs are parked.
+It is a hack to try it out. patch is below so one could try something similar is their archs
+and see if it help if they have a use case.
 
-With that for this update ...
+Notes:
+1. Arch shouldn't set cpu_parked for all CPUs at boot. It causes panic.
+2. Workload gets unpacked to all CPUs when changing from 40 CPUs to 80 CPUs, but
+    doesn't get packed when changing the from 80 to 40 CPUs.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+===================================debug patch ======================================
 
-Jon
+diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
+index 16bacfe8c7a2..ae7571f86773 100644
+--- a/arch/powerpc/include/asm/topology.h
++++ b/arch/powerpc/include/asm/topology.h
+@@ -140,6 +140,9 @@ static inline int cpu_to_coregroup_id(int cpu)
+  #define topology_core_cpumask(cpu)     (per_cpu(cpu_core_map, cpu))
+  #define topology_core_id(cpu)          (cpu_to_core_id(cpu))
+  
++#define arch_cpu_parked cpu_parked
++int cpu_parked(int cpu);
++
+  #endif
+  #endif
+  
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 5ac7084eebc0..6715ea78388c 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -64,6 +64,7 @@
+  #include <asm/systemcfg.h>
+  
+  #include <trace/events/ipi.h>
++#include <linux/debugfs.h>
+  
+  #ifdef DEBUG
+  #include <asm/udbg.h>
+@@ -77,6 +78,8 @@
+  static DEFINE_PER_CPU(int, cpu_state) = { 0 };
+  #endif
+  
++static int vp_manual_hint = NR_CPUS;
++
+  struct task_struct *secondary_current;
+  bool has_big_cores __ro_after_init;
+  bool coregroup_enabled __ro_after_init;
+@@ -1727,6 +1730,7 @@ static void __init build_sched_topology(void)
+         BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
+  
+         set_sched_topology(powerpc_topology);
++       vp_manual_hint = num_present_cpus();
+  }
+  
+  void __init smp_cpus_done(unsigned int max_cpus)
+@@ -1807,4 +1811,43 @@ void __noreturn arch_cpu_idle_dead(void)
+         start_secondary_resume();
+  }
+  
++int cpu_parked(int cpu) {
++       if (cpu  >= vp_manual_hint)
++               return true;
++
++       return false;
++}
++
++static int pv_vp_manual_hint_set(void *data, u64 val)
++{
++       if (val == 0 || vp_manual_hint > num_present_cpus())
++               vp_manual_hint = num_present_cpus();
++
++       if (val != vp_manual_hint) {
++               vp_manual_hint = val;
++       }
++       return 0;
++}
++
++static int pv_vp_manual_hint_get(void *data, u64 *val)
++{
++       *val = vp_manual_hint;
++       return 0;
++}
++
++DEFINE_SIMPLE_ATTRIBUTE(fops_pv_vp_manual_hint, pv_vp_manual_hint_get, pv_vp_manual_hint_set, "%llu\n");
++
++
++static __init int paravirt_debugfs_init(void)
++{
++       if (is_shared_processor()) {
++               debugfs_create_file("vp_manual_hint", 0600, arch_debugfs_dir, NULL, &fops_pv_vp_manual_hint);
++       }
++
++       return 0;
++}
++
++device_initcall(paravirt_debugfs_init)
 
-[0] 
-https://lore.kernel.org/netdev/20241205091830.3719609-1-0x1207@gmail.com/
+========================================= test logs 80 CPUs system ================================================
 
--- 
-nvpublic
+set the hint as 40 and run 80 stress-ng.
+Average:      37   82.89    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   17.11
+Average:      38   82.81    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   17.19
+Average:      39   82.98    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   17.02
+Average:      40    0.00    0.00    0.00    0.00    0.00    2.42    0.08    0.00    0.00   97.50
+Average:      41    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:      42    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
 
+Set the hint as 20 and run 80 stress-ng
+Average:      18   93.54    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    6.46
+Average:      19   93.54    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    6.46
+Average:      20    0.00    0.00    0.00    0.00    0.00    1.14    0.00    0.00    0.00   98.86
+Average:      21    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+
+
+Set the hint as 40 initially and set to 80 midway.
+Average:      38   94.52    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    5.48
+Average:      39   94.53    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    5.47
+Average:      40   42.03    0.00    0.00    0.00    0.00    1.31    0.08    0.00    0.00   56.59
+Average:      41   43.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   57.00
+
+Set the hint as 80 initially and set to 40 midway -- *not working*
+Average:      38   95.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.73
+Average:      39   95.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.73
+Average:      40   95.24    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.76
+Average:      41   95.25    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    4.75
 
