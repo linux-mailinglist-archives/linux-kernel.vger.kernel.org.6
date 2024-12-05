@@ -1,187 +1,266 @@
-Return-Path: <linux-kernel+bounces-432419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2771F9E4B01
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:17:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D1E1881387
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:16:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EA71CBE8C;
-	Thu,  5 Dec 2024 00:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="t2KTkk30"
-Received: from pv50p00im-tydg10011801.me.com (pv50p00im-tydg10011801.me.com [17.58.6.52])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0658E9E4B03
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:18:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D0E80BEC
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 00:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.52
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0826280EA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:18:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D99CBA33;
+	Thu,  5 Dec 2024 00:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrRFyyx0"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECCB391;
+	Thu,  5 Dec 2024 00:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733357593; cv=none; b=lzhqckjqvd6UD2nqZBEv1lJyFUi7337XUYPTG5scRC5jRwtL2sgs1uaF8cMUtr+4XlUtjKPaxbPtTRie5gBJi6skQdl+0nfSEod3KnTapAdjlBnuFyPu2dDDU/hRHeYm2Yvf/dMgUqxmRLAoIAaS7F5xJWMHvVHW70haAzvs0cs=
+	t=1733357905; cv=none; b=kq4sT4eRbJOCHm06XSmxX/MEBYipIU2s4QpFXaUBkPpnkVSwTP2KJJb3su23eLMKydULyTgTPZF/MXWLFEpx+m4PsE++pNIS/nwaIi0aYE3Te6F8pDuZEy99yQOYACwAYc1Aj5OWqD62gj/pYm+Qn+7y7zrFmVmosFVgIGk0ZPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733357593; c=relaxed/simple;
-	bh=9CVfL3LBZDuGqTPOlB/Hz3fqVHtXJi1gTAsCkM1ms9c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mln5oYXz+wWdtP06vMYlVOWuNkUTAQ2kUCcEFDWfZdlXdVXZQh4HT6QIwC39p4hs4r98H728LbsF/VsonN84IHBbFzQlZUXlOAyburE18UBCi3PnEhCplAUW/hMchIX11I6hQNKnTf1RutGIkTFtjaKkn6B5QOaXqpTdIG1d6UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=t2KTkk30; arc=none smtp.client-ip=17.58.6.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733357589;
-	bh=t5prCo8UotA+1FRQmsP8HYiQwFRGgFHZ6D5HPcEJxkY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
-	 x-icloud-hme;
-	b=t2KTkk30j/x8cwgwejUYwek4VjEcxvplqznK79L1VULbmbGc8ou6ycm+rwwfEhTTT
-	 JOueTBNF2mp/zwSxcMu/VtvGuDduuIvrRyjs918+nC81xYIbUQrEH3l7zNMQn45jq5
-	 ZS2Wf15OXou1M+D9min87hMiwC20ZSLHH9UfQwFBhvNC2aqm1DVRhAVZZaydyaXO7b
-	 e93Q4ScxXqL4B+jcufIMkxNyvs8Say+zLJymJXLzwZYkfoKDBRtH/MZJasFyv+4W9Q
-	 7VDFlrk5wo4wXg/geYB1LEf/oH1wpsLc1V2iSnMt4bHHCqtnPt4jOY1A4QtPl58UXK
-	 VhcOwTTLVWhPQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-tydg10011801.me.com (Postfix) with ESMTPSA id 0A474800382;
-	Thu,  5 Dec 2024 00:12:58 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 05 Dec 2024 08:10:20 +0800
-Subject: [PATCH v3 11/11] usb: typec: class: Remove both cable_match() and
- partner_match()
+	s=arc-20240116; t=1733357905; c=relaxed/simple;
+	bh=/U8qXy1M4Q4S9yJGPJ32y/rKMzq/gUFbI6KKXJEp9f4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFpRDPEiUnV9Hr4RndWGh5SeGB9EmsQiwDYu16Sd5hURKh92osz5ns/kJ43Outj7luWhHrJE3BZcRpY83tdNKA8e7s6XO9sejGaj0zVkUjB/dYZRm3DuR9uJ54jVjbYDXTRIcZXN/MWHwbekC0p3t0lzs1dafdMCKOn6TKjpdLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrRFyyx0; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d0cd67766aso305262a12.2;
+        Wed, 04 Dec 2024 16:18:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733357902; x=1733962702; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UTarhtG6QhsBczFzHEEIraRnC7fwbRetkRpuFiI3llM=;
+        b=FrRFyyx0DnRJumDEBfuJz4sHK27Qj7Bezw2pmRm1pxmFFEod9h1ZbNy4jR9erf9ois
+         QUJRLn6PWBbLmWqrVe4sf0ttSKltHNFkbPekuR/0iae1Xq7y7+6dG1Yc/GCSAnyMhRe7
+         YLWFBCa32NaRS6WinLpBRfZSaTTBhbmaM5M2K0dGfGhO9yn4iZuc6ZeMyszpfdM8DgyA
+         INbR5ap9AZVFCIMFhme7ui/Kh1a42sVSHKEyRKnFMtJ7dShZTCePRibDDNquWwIWBm3v
+         Tf4//6DlmCiQlI/c1lMlh5aqlViEioWFoBkrFyHMKnvSAxzjD4Zh6CLpJ2329YeuLUxN
+         150g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733357902; x=1733962702;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UTarhtG6QhsBczFzHEEIraRnC7fwbRetkRpuFiI3llM=;
+        b=f5Ic4HIc+n9U+S944PpEIg89iFXpq5I+i6daFSlr68MF2FBaHQeo9wc+YIewlpArfp
+         NuAC5ZIyA4o2GugDK9ju3++6lee8HbAZZ8d01lYeL3RXtAlNHspxO8h1+9+E3iyhheMq
+         nLVTFflehyoRgxLTcaOuZMuP+ntcmkR5QVDHwZG0RaIT3dHFBYoOg8ThpqCmL1emPCBB
+         UTYmayOVfJTwCwza4fPykBPYoimsSeCkEZ4hmLXEboQjByHE/AVdDY/67pWJvoax6S0N
+         RyEyB6Yj3NSLSea+q9uCe0CBiO9okmaY/wOaHL+NkLIM/cmT1oEF3DLEKMm4nRW2fAkw
+         /k3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9b9+1Nx1e4oV14FhLV/diAjiOHMfqfYm4o73DpdFYauGj3+xKCwY1TsYucxBY22y4aCOXag9bO6ut4//p@vger.kernel.org, AJvYcCVcQLSd6aUP4mx5rWN9rsD/kkeVn8z5ulQ8mVbGtm6uKmym2H1Ipfl5hBhTWFyRgyXvXeeTJmoJ7wlfl7fI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn+oXmJAzBmI9AnllHASIlXZu9Vq+EDGT/CRODb+CArx6KhfJh
+	H3eOGbriijuYwQNhUMvuDHYCVxTIVry5rl/UuI3EmQiTWxBtyWC1
+X-Gm-Gg: ASbGncsdHshiiia4jgP8oODBI+QxD/iP/Jf7nY449js285enfHdiNWLfss35fRikjij
+	u5kOn2U6ahWMl//y14Ht35afDRn30dFeiFXL4DGlsHXrVpCOGushCI5vmtjYOogOrfh1dbau5EH
+	TqIEE6Zz7ZieY0/co3Urt5Yw903aVtY9HIaTc0iEdxXAkISP6rouGOdeiunhoqZBJ+lbrT8dNB/
+	ZN04N3EjMkpz/5q+2sJ5rpfbVKzfT2KNU73RR4zjHeIR85ihA==
+X-Google-Smtp-Source: AGHT+IGOxY0n5S9c6n6c0AB0cBoetyxBwtV/KCtKq2kw2LsDGbLYSOjIytcCwsKgi4Po9m/7Ngarhw==
+X-Received: by 2002:a05:6402:510e:b0:5d0:8606:9ba1 with SMTP id 4fb4d7f45d1cf-5d10cb82718mr7579671a12.24.1733357901839;
+        Wed, 04 Dec 2024 16:18:21 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b608c8dsm118497a12.48.2024.12.04.16.18.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Dec 2024 16:18:20 -0800 (PST)
+Date: Thu, 5 Dec 2024 00:18:19 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] mm: abstract get_arg_page() stack expansion and mmap
+ read lock
+Message-ID: <20241205001819.derfguaft7oummr6@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
+ <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241205-const_dfc_done-v3-11-1611f1486b5a@quicinc.com>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
-In-Reply-To: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- James Bottomley <James.Bottomley@HansenPartnership.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
- Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- nvdimm@lists.linux.dev, linux-sound@vger.kernel.org, 
- sparclinux@vger.kernel.org, linux-block@vger.kernel.org, 
- linux-cxl@vger.kernel.org, linux1394-devel@lists.sourceforge.net, 
- arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
- linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-mediatek@lists.infradead.org, linux-hwmon@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
- open-iscsi@googlegroups.com, linux-usb@vger.kernel.org, 
- linux-serial@vger.kernel.org, netdev@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: VdKDrx-KLtW7yCbNEje76WJIjR4qS0Q9
-X-Proofpoint-GUID: VdKDrx-KLtW7yCbNEje76WJIjR4qS0Q9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-04_19,2024-12-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 mlxscore=0
- spamscore=0 mlxlogscore=901 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2412040186
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Dec 03, 2024 at 06:05:10PM +0000, Lorenzo Stoakes wrote:
+>Right now fs/exec.c invokes expand_downwards(), an otherwise internal
+>implementation detail of the VMA logic in order to ensure that an arg page
+>can be obtained by get_user_pages_remote().
+>
+>In order to be able to move the stack expansion logic into mm/vma.c in
+>order to make it available to userland testing we need to find an
 
-cable_match(), as matching function of device_find_child(), is to match
-a device with device type @typec_cable_dev_type, and is unnecessary.
+Looks the second "in order" is not necessary.
 
-partner_match() is similar with cable_match() but with different device
-type @typec_partner_dev_type.
+Not a native speaker, just my personal feeling.
 
-Remove both functions and directly use API device_match_type() plus
-respective device type instead.
+>alternative approach here.
+>
+>We do so by providing the mmap_read_lock_maybe_expand() function which also
+>helpfully documents what get_arg_page() is doing here and adds an
+>additional check against VM_GROWSDOWN to make explicit that the stack
+>expansion logic is only invoked when the VMA is indeed a downward-growing
+>stack.
+>
+>This allows expand_downwards() to become a static function.
+>
+>Importantly, the VMA referenced by mmap_read_maybe_expand() must NOT be
+>currently user-visible in any way, that is place within an rmap or VMA
+>tree. It must be a newly allocated VMA.
+>
+>This is the case when exec invokes this function.
+>
+>Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>---
+> fs/exec.c          | 14 +++---------
+> include/linux/mm.h |  5 ++---
+> mm/mmap.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++-
+> 3 files changed, 58 insertions(+), 15 deletions(-)
+>
+>diff --git a/fs/exec.c b/fs/exec.c
+>index 98cb7ba9983c..1e1f79c514de 100644
+>--- a/fs/exec.c
+>+++ b/fs/exec.c
+>@@ -205,18 +205,10 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
+> 	/*
+> 	 * Avoid relying on expanding the stack down in GUP (which
+> 	 * does not work for STACK_GROWSUP anyway), and just do it
+>-	 * by hand ahead of time.
+>+	 * ahead of time.
+> 	 */
+>-	if (write && pos < vma->vm_start) {
+>-		mmap_write_lock(mm);
+>-		ret = expand_downwards(vma, pos);
+>-		if (unlikely(ret < 0)) {
+>-			mmap_write_unlock(mm);
+>-			return NULL;
+>-		}
+>-		mmap_write_downgrade(mm);
+>-	} else
+>-		mmap_read_lock(mm);
+>+	if (!mmap_read_lock_maybe_expand(mm, vma, pos, write))
+>+		return NULL;
+> 
+> 	/*
+> 	 * We are doing an exec().  'current' is the process
+>diff --git a/include/linux/mm.h b/include/linux/mm.h
+>index 4eb8e62d5c67..48312a934454 100644
+>--- a/include/linux/mm.h
+>+++ b/include/linux/mm.h
+>@@ -3313,6 +3313,8 @@ extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admi
+> extern int insert_vm_struct(struct mm_struct *, struct vm_area_struct *);
+> extern void exit_mmap(struct mm_struct *);
+> int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift);
+>+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
+>+				 unsigned long addr, bool write);
+> 
+> static inline int check_data_rlimit(unsigned long rlim,
+> 				    unsigned long new,
+>@@ -3426,9 +3428,6 @@ extern unsigned long stack_guard_gap;
+> int expand_stack_locked(struct vm_area_struct *vma, unsigned long address);
+> struct vm_area_struct *expand_stack(struct mm_struct * mm, unsigned long addr);
+> 
+>-/* CONFIG_STACK_GROWSUP still needs to grow downwards at some places */
+>-int expand_downwards(struct vm_area_struct *vma, unsigned long address);
+>-
+> /* Look up the first VMA which satisfies  addr < vm_end,  NULL if none. */
+> extern struct vm_area_struct * find_vma(struct mm_struct * mm, unsigned long addr);
+> extern struct vm_area_struct * find_vma_prev(struct mm_struct * mm, unsigned long addr,
+>diff --git a/mm/mmap.c b/mm/mmap.c
+>index f053de1d6fae..4df38d3717ff 100644
+>--- a/mm/mmap.c
+>+++ b/mm/mmap.c
+>@@ -1009,7 +1009,7 @@ static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
+>  * vma is the first one with address < vma->vm_start.  Have to extend vma.
+>  * mmap_lock held for writing.
+>  */
+>-int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+>+static int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+> {
+> 	struct mm_struct *mm = vma->vm_mm;
+> 	struct vm_area_struct *prev;
+>@@ -1940,3 +1940,55 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+> 	/* Shrink the vma to just the new range */
+> 	return vma_shrink(&vmi, vma, new_start, new_end, vma->vm_pgoff);
+> }
+>+
+>+#ifdef CONFIG_MMU
+>+/*
+>+ * Obtain a read lock on mm->mmap_lock, if the specified address is below the
+>+ * start of the VMA, the intent is to perform a write, and it is a
+>+ * downward-growing stack, then attempt to expand the stack to contain it.
+>+ *
+>+ * This function is intended only for obtaining an argument page from an ELF
+>+ * image, and is almost certainly NOT what you want to use for any other
+>+ * purpose.
+>+ *
+>+ * IMPORTANT - VMA fields are accessed without an mmap lock being held, so the
+>+ * VMA referenced must not be linked in any user-visible tree, i.e. it must be a
+>+ * new VMA being mapped.
+>+ *
+>+ * The function assumes that addr is either contained within the VMA or below
+>+ * it, and makes no attempt to validate this value beyond that.
+>+ *
+>+ * Returns true if the read lock was obtained and a stack was perhaps expanded,
+>+ * false if the stack expansion failed.
+>+ *
+>+ * On stack expansion the function temporarily acquires an mmap write lock
+>+ * before downgrading it.
+>+ */
+>+bool mmap_read_lock_maybe_expand(struct mm_struct *mm,
+>+				 struct vm_area_struct *new_vma,
+>+				 unsigned long addr, bool write)
+>+{
+>+	if (!write || addr >= new_vma->vm_start) {
+>+		mmap_read_lock(mm);
+>+		return true;
+>+	}
+>+
+>+	if (!(new_vma->vm_flags & VM_GROWSDOWN))
+>+		return false;
+>+
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/usb/typec/class.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+In expand_downwards() we have this checked.
 
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 601a81aa1e1024265f2359393dee531a7779c6ea..3a4e0bd0131774afd0d746d2f0a306190219feec 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -1282,11 +1282,6 @@ const struct device_type typec_cable_dev_type = {
- 	.release = typec_cable_release,
- };
- 
--static int cable_match(struct device *dev, const void *data)
--{
--	return is_typec_cable(dev);
--}
--
- /**
-  * typec_cable_get - Get a reference to the USB Type-C cable
-  * @port: The USB Type-C Port the cable is connected to
-@@ -1298,7 +1293,8 @@ struct typec_cable *typec_cable_get(struct typec_port *port)
- {
- 	struct device *dev;
- 
--	dev = device_find_child(&port->dev, NULL, cable_match);
-+	dev = device_find_child(&port->dev, &typec_cable_dev_type,
-+				device_match_type);
- 	if (!dev)
- 		return NULL;
- 
-@@ -2028,16 +2024,12 @@ const struct device_type typec_port_dev_type = {
- /* --------------------------------------- */
- /* Driver callbacks to report role updates */
- 
--static int partner_match(struct device *dev, const void *data)
--{
--	return is_typec_partner(dev);
--}
--
- static struct typec_partner *typec_get_partner(struct typec_port *port)
- {
- 	struct device *dev;
- 
--	dev = device_find_child(&port->dev, NULL, partner_match);
-+	dev = device_find_child(&port->dev, &typec_partner_dev_type,
-+				device_match_type);
- 	if (!dev)
- 		return NULL;
- 
-@@ -2170,7 +2162,9 @@ void typec_set_pwr_opmode(struct typec_port *port,
- 	sysfs_notify(&port->dev.kobj, NULL, "power_operation_mode");
- 	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
- 
--	partner_dev = device_find_child(&port->dev, NULL, partner_match);
-+	partner_dev = device_find_child(&port->dev,
-+					&typec_partner_dev_type,
-+					device_match_type);
- 	if (partner_dev) {
- 		struct typec_partner *partner = to_typec_partner(partner_dev);
- 
-@@ -2334,7 +2328,9 @@ int typec_get_negotiated_svdm_version(struct typec_port *port)
- 	enum usb_pd_svdm_ver svdm_version;
- 	struct device *partner_dev;
- 
--	partner_dev = device_find_child(&port->dev, NULL, partner_match);
-+	partner_dev = device_find_child(&port->dev,
-+					&typec_partner_dev_type,
-+					device_match_type);
- 	if (!partner_dev)
- 		return -ENODEV;
- 
-@@ -2361,7 +2357,8 @@ int typec_get_cable_svdm_version(struct typec_port *port)
- 	enum usb_pd_svdm_ver svdm_version;
- 	struct device *cable_dev;
- 
--	cable_dev = device_find_child(&port->dev, NULL, cable_match);
-+	cable_dev = device_find_child(&port->dev, &typec_cable_dev_type,
-+				      device_match_type);
- 	if (!cable_dev)
- 		return -ENODEV;
- 
+Maybe we just leave this done in one place is enough?
+
+>+	mmap_write_lock(mm);
+>+	if (expand_downwards(new_vma, addr)) {
+>+		mmap_write_unlock(mm);
+>+		return false;
+>+	}
+>+
+>+	mmap_write_downgrade(mm);
+>+	return true;
+>+}
+>+#else
+>+bool mmap_read_lock_maybe_expand(struct mm_struct *mm, struct vm_area_struct *vma,
+>+				 unsigned long addr, bool write)
+>+{
+>+	return false;
+>+}
+>+#endif
+>-- 
+>2.47.1
+>
 
 -- 
-2.34.1
-
+Wei Yang
+Help you, Help me
 
