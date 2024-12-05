@@ -1,183 +1,342 @@
-Return-Path: <linux-kernel+bounces-433728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569819E5C3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEFA89E5C3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F8528A193
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B57DB286C97
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9829F22259C;
-	Thu,  5 Dec 2024 16:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB4622256B;
+	Thu,  5 Dec 2024 16:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZDd5XrT"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/oeQo8K"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6BC221477
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE3A165EFC;
+	Thu,  5 Dec 2024 16:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733417584; cv=none; b=jrg6CKt6yN5Yr5MY0P9XYvrXAZ/eO24f3IIRaUg6D7rJH85zGrW05toEfvIcWgKkuBDnQTeUpxJ8QsVpseLOwJVTQ8RXOdF4LGWZ9bKTMnJ4h/ePr1rYWmqr6O0T/Ar8gOIAbn1PpsTqR9Q+RVADTESlhpfwWFnYxV9PihhSWk0=
+	t=1733417676; cv=none; b=HmycMtLkOWRy99C6CUXjtJQTsM/r2dLvLZ8QXKJHl7yw5Ueg6zzeP2ES18XKrwwxql0kTAfMn6/SBu9dga4tGnxzKreqtfe+jt6Ev5iuqm8X5pwAcF2HhloaikeojAK5wDhNajEZbv1oh9MmKcqua/EAgZae51rj+3E3EEbihX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733417584; c=relaxed/simple;
-	bh=OyMQfIrxSzriwv8hX5lVDVFWmfDKiMyaBU/TmxWr4wI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mg3WJ5AySMK60wdUV0Xh8zoVqAK6vuTAecOclFvkYx2VPjr9VnmvLn1FahUUD0anc2oa9AXWdsztxwgaplW0fUiZ5bz7fperQMzXNI1Cn21/PQOk7dL6oIc4wHkbfYQ++od/NUHiX12GagqA8I7CxJlpPxhnuI0JM62lTOYQK3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZDd5XrT; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7251d20e7f2so1252931b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:53:01 -0800 (PST)
+	s=arc-20240116; t=1733417676; c=relaxed/simple;
+	bh=c0T2W57mUTdv89pc64uQoBBf04uwwOASsr98xtbZWBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TMXNdx5R7Xz/ucgxdEZtyEnW5H4RDfXdhYjpHNB9n67Z6Rxr2G56zHYCd1bIbJ8CUz37WkMDZONgxIA9FHPpqUG5U4ZTKIumuvGCaYbh0GmuITwXBa/cg53E2D9I3RX5CE0rmGf8LMfgOUGB/VFHOuR45LzmjkFxdvOxnRx4tL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/oeQo8K; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fd1dcbbc08so542033a12.3;
+        Thu, 05 Dec 2024 08:54:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733417581; x=1734022381; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3M40H5CkYQDVeDAAfwHVgOu/JLVGUmGE+3t86nRTx/0=;
-        b=MZDd5XrTrGVDGM/UG+y1/B74BshLnyb5UJbR9ZVE1MeRqQsgZ1O6qey7ZS0EzbbAhn
-         r4MsZhyKaE2+Z9Q7lHXrS1Xleeqh+SdrrGRslFudik+zEyOqjIhY3/6SgSo3H+Eouzg1
-         fmfTuqTvhdrg6RXqVC0jQ58PopqV6kHa0Msk1VJbhIVLGqfYExg8FN7DLV839w3+61u5
-         7uFLtN5PU+scn6tUdBFbNBABnqplKNLanODem2KQWJzpDP8wfCkrlSOdpK0Ev8kYKP6s
-         9lptjXeB9l20YL+RFKJRSmBpFPFpUMtaPXyKMQC88TS6cT/YaEHTRW7V6lUNWULhKSrV
-         OWhw==
+        d=gmail.com; s=20230601; t=1733417674; x=1734022474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kn0SGYEpdVC2XTloHJxrfRD+aLFLQ4os0UEd17zTTWs=;
+        b=Z/oeQo8KlyJTIQ1HghC2KkUGnLpVptbJtxxYJP3eurTT18Lg80b6L7nKG4EWwtAXpP
+         1RM3FgqaR9pzc3+O90DpAvgrDvNAdJn7p1Sw9Qy5Dw+FW2WssVjo44vfc4+qPWhXi2pd
+         XLyL6+Jdw0INsfYqbKPNNdonfoZOExVifOTxIobkiPH2k59u/qc3jqjq8hllHxVPRQZW
+         QqzR9v66cJ3G7z2KGWJLZfAke8q8Qw4cV0OjbVYtUYIMVFaRa2tlDcNgamZrkGaLc0S+
+         hXLP76WN+sG3tjUDTWKID8dE+F7UhYUwv5zIEd5KB9+PGf/CBr7Fy08azXeDRXd0r/la
+         4W9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733417581; x=1734022381;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3M40H5CkYQDVeDAAfwHVgOu/JLVGUmGE+3t86nRTx/0=;
-        b=eWGXq5xknNjNLl//Z/N5RkyWpOjGWb59vE4F2m5pelFCjrbHvaR8zYmIVdA2dYlNqy
-         HGbWzzmEmm6E7I61WJrENxRIaYxuY3Pd/2zntm+dN2EW2QiTcgZjZpzO6yyHqBSQZrIq
-         f/bEjd3jMvxwcNczF8UXd5yj6unll65/1MSD7xbWpzoW1bOOTXN/y7dJSqsES3SiZ7QK
-         kXcnfpdV7MFm+Cr5Dv0PbkDW9B2vE+IemCjo7VfrEd2ZOl6NkX+5U+Uk4n5hfkG/RC7+
-         jdai+3K1d5uO/bOzBNadK8sZDLh9CAbrNJQiTWm9Jk0meahYvaFbrT+0QuSOGlsssgT4
-         7xIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbdJquqzH3ARK/v45HMbkhT7R0WDZPMhaUgQuszcBKzkFs+HHkvDpeF0nkID7ftL5aAZ+bVvXXWi8P+nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynpTAKrXEt4UfoDA2yzvuYra5ndjeC2C4LL4BJJU50uBk4tb+A
-	1BxuuZRwsruO0XwWi7xnrLCxZ4zvAnvvuq5lp9+UbCaXBhC+wbZvCuHKPH5ZDw==
-X-Gm-Gg: ASbGncvDYu96WqOtJs/qFCEZPvaUEf54RgSH30gCiQBzB9EiiSyHgE0FU3bfToRm2Xn
-	g2y9muH9M0NmUwEDRtbp3ki8AjqA2rDGMmoavqCp1lnZwKnA9pbBNaSisUA5T3FpQ8XB1AQLhJ7
-	NOw32voxng60GPdGRl42BZN6a2y8m55D15egx2eBT+fIdx9/1hHcP0P5sNSqtCG8/FFcu57PovY
-	WRjxWI0JZOdVBLdI+uwamMaOV8o/nT1N49pwhYX7ievNGSj7uk6rfVQQN9mYQ==
-X-Google-Smtp-Source: AGHT+IFYO3XDZ6IIHPLOsjky3D00Q3xsDrNzgdjwZkcMxnvdQlHnJg11TlcIOJ2l2C46xAjuD8l7Zw==
-X-Received: by 2002:a17:902:e810:b0:215:734f:ffe5 with SMTP id d9443c01a7336-215bd128365mr145479605ad.32.1733417581263;
-        Thu, 05 Dec 2024 08:53:01 -0800 (PST)
-Received: from thinkpad ([120.60.133.114])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f0921asm14725025ad.178.2024.12.05.08.52.57
+        d=1e100.net; s=20230601; t=1733417674; x=1734022474;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kn0SGYEpdVC2XTloHJxrfRD+aLFLQ4os0UEd17zTTWs=;
+        b=BTbA8UYJtdR3jgFhj2tA2wUISHxXseR7pOjzFtLmkVCL107m1e7XR9EvfCPuuZAMT4
+         sAJwF+XhOivWc/StGpUeCIFZGN7v1E58lymLdqbVEmnSBFIJ2+KSwHdrxpqt+M0vi4gp
+         2toZWMaYC4+2c1yMCYLNQ0dHaplfvzzpQlN5RaJgC/gZGi33JkwlwLXrnWrH4cp6+73i
+         CrC6wmzHvw5UPoQZ1GyA2jUNhDL7nI47/2W5yJU58sTZ3YYwrGCwXJdRq76C1Q+/wUmc
+         n2SgwZnCdUm3Il042mWy/6xrZa9H+PS5N91qh/R8uaXu+CUPExsag/F86rCEnQGMDCgO
+         6Iig==
+X-Forwarded-Encrypted: i=1; AJvYcCVpsGg4B3w++wfXXMFBbNyNUJZkc1SCSi1PHLZqcoOnDbN0aJp8YwymwYjMHtAScGp/RitvIUg9hYlELLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjkAqbgHZ9IGjZIO1Gvg+OkJrV26vGHkvSW6ig1j/0ssCdxKWm
+	WhRPaqNZSPMDcj6dbeJcQ+gG/+LbQKzJJUmtGMz95trEAhoWWKd75amV5g==
+X-Gm-Gg: ASbGncvuWVJHqCfePsOslheHYVaVNNVAs1eeRrnCEk5bdvXwlYRI7mI4h1HRZkPgFXa
+	eHBDm5nTb+Hy8pmVBPpYDejvBnyfbApUC4JheaC2wFe1rQvX/LTokhj0uaeNOl4KW/mqYRqOLPJ
+	kSttZ3X/VtI6RQ4NtpMXL0AdHOi0Yb+MFhiB9NMnRMzlfwsWJxc+JCP7Zp6df1S6GIWHsNLCLOC
+	HBJp5p3etumO7vSDKL5kctHEgpAHyw3uPVjwgoCdM1P0orOkdSyaGIxQo7I9eF6mwz8rgm7GTla
+	OJVbKOz95HI6dxiAG4Vingb0
+X-Google-Smtp-Source: AGHT+IH6c4n4lMWz2tkVfQAsnwNt3ElGSgYjtnyjOea/GD2+GgVwTpqe57dWmQRReNubG+Nmvyx/Yg==
+X-Received: by 2002:a05:6a20:7f9a:b0:1db:915b:ab11 with SMTP id adf61e73a8af0-1e1653c834bmr16834822637.24.1733417674330;
+        Thu, 05 Dec 2024 08:54:34 -0800 (PST)
+Received: from localhost ([2a00:79e1:2e00:1301:12e9:d196:a1e9:ab67])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2cc6ea2sm1495088b3a.186.2024.12.05.08.54.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 08:53:00 -0800 (PST)
-Date: Thu, 5 Dec 2024 22:22:51 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev, Aishwarya TCV <aishwarya.tcv@arm.com>,
-	Chuan Liu <chuan.liu@amlogic.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
-Message-ID: <20241205165251.fbf3ty6jgdqt4r3x@thinkpad>
-References: <20241202100621.29209-1-johan+linaro@kernel.org>
- <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org>
- <Z07AXbQvvZwI8Ki6@hovoldconsulting.com>
- <20241203092151.izcsgzqep4imbcwe@thinkpad>
- <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
+        Thu, 05 Dec 2024 08:54:33 -0800 (PST)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	Antonino Maniscalco <antomani103@gmail.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [RFC] drm/msm: Add UABI to request perfcntr usage
+Date: Thu,  5 Dec 2024 08:54:18 -0800
+Message-ID: <20241205165419.54080-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
 
-On Tue, Dec 03, 2024 at 11:30:07AM -0800, Stephen Boyd wrote:
-> Quoting Manivannan Sadhasivam (2024-12-03 01:21:51)
-> > On Tue, Dec 03, 2024 at 09:25:01AM +0100, Johan Hovold wrote:
-> > > [ +CC: Viresh and Sudeep ]
-> > > 
-> > > On Mon, Dec 02, 2024 at 05:20:06PM -0800, Stephen Boyd wrote:
-> > > > Quoting Johan Hovold (2024-12-02 02:06:21)
-> > > > > This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
-> > > > > 
-> > > > > The offending commit results in errors like
-> > > > > 
-> > > > >         cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
-> > > > > 
-> > > > > spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
-> > > > > machines when cpufreq tries to update the CPUFreq HW Engine clocks.
-> > > > > 
-> > > > > As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clock
-> > > > > provider support"):
-> > > > > 
-> > > > >         [T]he frequency supplied by the driver is the actual frequency
-> > > > >         that comes out of the EPSS/OSM block after the DCVS operation.
-> > > > >         This frequency is not same as what the CPUFreq framework has set
-> > > > >         but it is the one that gets supplied to the CPUs after
-> > > > >         throttling by LMh.
-> > > > > 
-> > > > > which seems to suggest that the driver relies on the previous behaviour
-> > > > > of clk_set_rate().
-> > > > 
-> > > > I don't understand why a clk provider is needed there. Is anyone looking
-> > > > into the real problem?
-> > > 
-> > > I mentioned this to Mani yesterday, but I'm not sure if he has had time
-> > > to look into it yet. And I forgot to CC Viresh who was involved in
-> > > implementing this. There is comment of his in the thread where this
-> > > feature was added:
-> > > 
-> > >       Most likely no one will ever do clk_set_rate() on this new
-> > >       clock, which is fine, though OPP core will likely do
-> > >       clk_get_rate() here.
-> > > 
-> > > which may suggest that some underlying assumption has changed. [1]
-> > > 
-> 
-> Yikes.
-> 
-> > 
-> > I just looked into the issue this morning. The commit that triggered the errors
-> > seem to be doing the right thing (although the commit message was a bit hard to
-> > understand), but the problem is this check which gets triggered now:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c?h=v6.13-rc1#n2319
-> > 
-> > Since the qcom-cpufreq* clocks doesn't have parents now (they should've been
-> > defined anyway) and there is no CLK_SET_RATE_PARENT flag set, the check returns
-> > NULL for the 'top' clock. Then clk_core_set_rate_nolock() returns -EINVAL,
-> > causing the reported error.
-> > 
-> > But I don't quite understand why clk_core_set_rate_nolock() fails if there is no
-> > parent or CLK_SET_RATE_PARENT is not set. The API is supposed to set the rate of
-> > the passed clock irrespective of the parent. Propagating the rate change to
-> > parent is not strictly needed and doesn't make sense if the parent is a fixed
-> > clock like XO.
-> 
-> The recalc_rate clk_op is telling the framework that the clk is at a
-> different rate than is requested by the clk consumer _and_ than what the
-> framework thinks the clk is currently running at. The clk_set_rate()
-> call is going to attempt to satisfy that request, and because there
-> isn't a determine_rate/round_rate clk_op it assumes the clk can't change
-> rate so it looks to see if there's a parent that can be changed to
-> satisfy the rate. There isn't a parent either, so the clk_set_rate()
-> call fails because the rate can't be achieved on this clk.
-> 
-> It may work to have a determine_rate clk_op that is like the recalc_rate
-> one that says "this rate you requested is going to turn into whatever
-> the hardware is running at" by simply returning the rate that the clk is
-> running at.
+From: Rob Clark <robdclark@chromium.org>
 
-Sounds reasonable to me. Fix submitted incorporating your suggestion, thanks!
+Performance counter usage falls into two categories:
 
-- Mani
+1. Local usage, where the counter configuration, start, and end read
+   happen within (locally to) a single SUBMIT.  In this case, there is
+   no dependency on counter configuration or values between submits, and
+   in fact counters are normally cleared on context switches, making it
+   impossible to rely on cross-submit state.
 
+2. Global usage, where a single privilaged daemon/process is sampling
+   counter values across all processes for profiling.
+
+The two categories are mutually exclusive.  While you can have many
+processes making local counter usage, you cannot combine global and
+local usage without the two stepping on each others feet (by changing
+counter configuration).
+
+For global counter usage, there is already a SYSPROF param (since global
+counter usage requires disabling counter clearing on context switch).
+This patch adds a REQ_CNTRS param to request local counter usage.  If
+one or more processes has requested counter usage, then a SYSPROF
+request will fail with -EBUSY.  And if SYSPROF is active, then REQ_CNTRS
+will fail with -EBUSY, maintaining the mutual exclusivity.
+
+This is purely an advisory interface to help coordinate userspace.
+There is no real means of enforcement, but the worst that can happen if
+userspace ignores a REQ_CNTRS failure is that you'll get nonsense
+profiling data.
+
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+kgsl takes a different approach, which involves a lot more UABI for
+assigning counters to different processes.  But I think by taking
+advantage of the fact that mesa (freedreno+turnip) reconfigure the
+counters they need in each SUBMIT, for their respective gl/vk perf-
+counter extensions, we can take this simpler approach.
+
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c |  2 +
+ drivers/gpu/drm/msm/msm_drv.c           |  5 ++-
+ drivers/gpu/drm/msm/msm_gpu.c           |  1 +
+ drivers/gpu/drm/msm/msm_gpu.h           | 29 +++++++++++++-
+ drivers/gpu/drm/msm/msm_submitqueue.c   | 52 ++++++++++++++++++++++++-
+ include/uapi/drm/msm_drm.h              |  1 +
+ 6 files changed, 85 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index 31bbf2c83de4..f688e37059b8 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -441,6 +441,8 @@ int adreno_set_param(struct msm_gpu *gpu, struct msm_file_private *ctx,
+ 		if (!capable(CAP_SYS_ADMIN))
+ 			return UERR(EPERM, drm, "invalid permissions");
+ 		return msm_file_private_set_sysprof(ctx, gpu, value);
++	case MSM_PARAM_REQ_CNTRS:
++		return msm_file_private_request_counters(ctx, gpu, value);
+ 	default:
+ 		return UERR(EINVAL, drm, "%s: invalid param: %u", gpu->name, param);
+ 	}
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 6416d2cb4efc..bf8314ff4a25 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -377,9 +377,12 @@ static void msm_postclose(struct drm_device *dev, struct drm_file *file)
+ 	 * It is not possible to set sysprof param to non-zero if gpu
+ 	 * is not initialized:
+ 	 */
+-	if (priv->gpu)
++	if (ctx->sysprof)
+ 		msm_file_private_set_sysprof(ctx, priv->gpu, 0);
+ 
++	if (ctx->counters_requested)
++		msm_file_private_request_counters(ctx, priv->gpu, 0);
++
+ 	context_close(ctx);
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+index 82f204f3bb8f..013b59ca3bb1 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -991,6 +991,7 @@ int msm_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+ 	gpu->nr_rings = nr_rings;
+ 
+ 	refcount_set(&gpu->sysprof_active, 1);
++	refcount_set(&gpu->local_counters_active, 1);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
+index e25009150579..83c61e523b1b 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.h
++++ b/drivers/gpu/drm/msm/msm_gpu.h
+@@ -195,12 +195,28 @@ struct msm_gpu {
+ 	int nr_rings;
+ 
+ 	/**
+-	 * sysprof_active:
++	 * @sysprof_active:
+ 	 *
+-	 * The count of contexts that have enabled system profiling.
++	 * The count of contexts that have enabled system profiling plus one.
++	 *
++	 * Note: refcount_t does not like 0->1 transitions.. we want to keep
++	 * the under/overflow checks that refcount_t provides, but allow
++	 * multiple on/off transitions so we track the logical value plus one.)
+ 	 */
+ 	refcount_t sysprof_active;
+ 
++	/**
++	 * @local_counters_active:
++	 *
++	 * The count of contexts that have requested local (intra-submit)
++	 * performance counter usage plus one.
++	 *
++	 * Note: refcount_t does not like 0->1 transitions.. we want to keep
++	 * the under/overflow checks that refcount_t provides, but allow
++	 * multiple on/off transitions so we track the logical value plus one.)
++	 */
++	refcount_t local_counters_active;
++
+ 	/**
+ 	 * lock:
+ 	 *
+@@ -383,6 +399,13 @@ struct msm_file_private {
+ 	 */
+ 	int sysprof;
+ 
++	/**
++	 * @counters_requested:
++	 *
++	 * Has the context requested local perfcntr usage.
++	 */
++	bool counters_requested;
++
+ 	/**
+ 	 * comm: Overridden task comm, see MSM_PARAM_COMM
+ 	 *
+@@ -626,6 +649,8 @@ void msm_submitqueue_destroy(struct kref *kref);
+ 
+ int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+ 				 struct msm_gpu *gpu, int sysprof);
++int msm_file_private_request_counters(struct msm_file_private *ctx,
++				      struct msm_gpu *gpu, int reqcntrs);
+ void __msm_file_private_destroy(struct kref *kref);
+ 
+ static inline void msm_file_private_put(struct msm_file_private *ctx)
+diff --git a/drivers/gpu/drm/msm/msm_submitqueue.c b/drivers/gpu/drm/msm/msm_submitqueue.c
+index 7fed1de63b5d..1e1e21e6f7ae 100644
+--- a/drivers/gpu/drm/msm/msm_submitqueue.c
++++ b/drivers/gpu/drm/msm/msm_submitqueue.c
+@@ -10,6 +10,15 @@
+ int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+ 				 struct msm_gpu *gpu, int sysprof)
+ {
++	int ret = 0;
++
++	mutex_lock(&gpu->lock);
++
++	if (sysprof && (refcount_read(&gpu->local_counters_active) > 1)) {
++		ret = UERR(EBUSY, gpu->dev, "Local counter usage active");
++		goto out_unlock;
++	}
++
+ 	/*
+ 	 * Since pm_runtime and sysprof_active are both refcounts, we
+ 	 * call apply the new value first, and then unwind the previous
+@@ -18,7 +27,8 @@ int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+ 
+ 	switch (sysprof) {
+ 	default:
+-		return UERR(EINVAL, gpu->dev, "Invalid sysprof: %d", sysprof);
++		ret = UERR(EINVAL, gpu->dev, "Invalid sysprof: %d", sysprof);
++		goto out_unlock;
+ 	case 2:
+ 		pm_runtime_get_sync(&gpu->pdev->dev);
+ 		fallthrough;
+@@ -43,7 +53,45 @@ int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+ 
+ 	ctx->sysprof = sysprof;
+ 
+-	return 0;
++out_unlock:
++	mutex_unlock(&gpu->lock);
++
++	return ret;
++}
++
++int msm_file_private_request_counters(struct msm_file_private *ctx,
++				      struct msm_gpu *gpu, int reqctrs)
++{
++	int ret = 0;
++
++	mutex_lock(&gpu->lock);
++
++	if (reqctrs && (refcount_read(&gpu->sysprof_active) > 1)) {
++		ret = UERR(EBUSY, gpu->dev, "System profiling active");
++		goto out_unlock;
++	}
++
++	if (reqctrs) {
++		if (ctx->counters_requested) {
++			ret = UERR(EINVAL, gpu->dev, "Already requested");
++			goto out_unlock;
++		}
++
++		ctx->counters_requested = true;
++		refcount_inc(&gpu->local_counters_active);
++	} else {
++		if (!ctx->counters_requested) {
++			ret = UERR(EINVAL, gpu->dev, "Not requested");
++			goto out_unlock;
++		}
++		refcount_dec(&gpu->local_counters_active);
++		ctx->counters_requested = false;
++	}
++
++out_unlock:
++	mutex_unlock(&gpu->lock);
++
++	return ret;
+ }
+ 
+ void __msm_file_private_destroy(struct kref *kref)
+diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
+index 2342cb90857e..ae7fb355e4a1 100644
+--- a/include/uapi/drm/msm_drm.h
++++ b/include/uapi/drm/msm_drm.h
+@@ -91,6 +91,7 @@ struct drm_msm_timespec {
+ #define MSM_PARAM_UBWC_SWIZZLE 0x12 /* RO */
+ #define MSM_PARAM_MACROTILE_MODE 0x13 /* RO */
+ #define MSM_PARAM_UCHE_TRAP_BASE 0x14 /* RO */
++#define MSM_PARAM_REQ_CNTRS  0x15 /* WO: request "local" (intra-submit) perfcntr usage  */
+ 
+ /* For backwards compat.  The original support for preemption was based on
+  * a single ring per priority level so # of priority levels equals the #
 -- 
-மணிவண்ணன் சதாசிவம்
+2.47.1
+
 
