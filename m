@@ -1,140 +1,80 @@
-Return-Path: <linux-kernel+bounces-432920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60479E51C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:10:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8061C9E51C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:10:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D262825B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314A418820F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9D7217649;
-	Thu,  5 Dec 2024 10:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Sc5Z0v62";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BaiZmjW5"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2863D1D5CC2;
-	Thu,  5 Dec 2024 10:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D1B217645;
+	Thu,  5 Dec 2024 10:10:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57A1207DF4
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733393405; cv=none; b=Al2VyhufYhYEKH/qWvdMRK2omZdUpyVNzF3sO44MWlMAiJ1XOu0l00H7yh7D95ixrlxwVjCkT86QIuFqruB3SH4V6iY50BcdPpzz1dtNq1YS2ektFBhiv5DTcjw1nOMwtYlEoo/vN46qRTDBog8GGg41AvJTV4P3t59XoD/5f0w=
+	t=1733393417; cv=none; b=U+UfppQrUGRIEA2nMkhNNKlkKua0AWHjAd8Il6XV6ZXjgyaY4zs/eA+KTZnE08E3QDZSCH/tluiXOc0U9gcAMVCOdpybvxzsKQiVGuax/0YWh0i1pm2WMQGJS00o/OC8xMe5b9GZflvHN2mox80cbuyxmXDwmme7vvnrmvOHuik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733393405; c=relaxed/simple;
-	bh=Uye7Sg7D5JhsboEsNHfZkUDA25xAWur279dkqxnPAXc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=uAn/tLRNbvGm0sYthn+mhiDz5J1HdcSl/dKYEgXSi5MqkJ/u0QOqrDGRRltRjF2Dkcphj6KcE1lH7HLUAvimBep/FHQjkRr2muetmwlbQstaG8/ZAnGX574BcjHENyFfhCsD6+t5dNFFjtoj2+3xyLLUwS4+bf4hpkZ9LvrEprE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Sc5Z0v62; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BaiZmjW5; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id EF60E254021E;
-	Thu,  5 Dec 2024 05:10:02 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 05 Dec 2024 05:10:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733393402;
-	 x=1733479802; bh=FSPKuoKyCdYS29EwGZWiI7JAIKFRf2AXJz4FVE+fs2c=; b=
-	Sc5Z0v62Jq1g3a51rnsVQX5t+mLhb124Dy7WZLhEUD7FeFjLfbCwuLl4MnRXtM46
-	d2vvHkPo1etp7WENNJj4DB7fF7GyEOMxziwdn4LB1kj9vXr6ipgmXSlCrqSizPZI
-	ulkhSVrSMITviexXeJzwwQRXjiIxmEplb43jtfTgQlGsrUKF0ZbUCJ3ykDEdA39s
-	Ayr41fYYVf5XTeGu2ORblznhmWpFMqjIOQiwUQ40/rj3tOWXLDqOLFiYNMIdEOhv
-	1p+UfZ0cZaAmxsqRYbu5welnrpUrULq6aAIvxFmMhubW9s0arnqSTalYQ4MvTYyK
-	flyiD+0dZY3wYzW8BUk5Xw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733393402; x=
-	1733479802; bh=FSPKuoKyCdYS29EwGZWiI7JAIKFRf2AXJz4FVE+fs2c=; b=B
-	aiZmjW5kFdczqEqObRlXmtDqB00gslq+oglU+LEE1tp+YQKJKqXYVtIzHogO7rEJ
-	+b2lpCMfbURiFo2UXUtEPvkQO7o9oUF5l+5gelfwkEsl6m+Zcnm2JrNhTSHLDEWL
-	qbqwuwtYoU9fKHe9pFJjyyxmJYsVdnDzEb9UJObUsha/e5rfkEbvYivBN+/9PqTf
-	CPJnKmGuyc+cfm8HBtK2nooVrtbr/ko2Q2XFS/UkXvI6gT+b39hptHGo5tqu60qf
-	i97LfRhE2SJhp5PcdE0YaXewzvI3HqVU9e9nX6Gg0Qdkb9UXXI9lOkRggQzKppgn
-	ouA4KN8a8zHcASxN5eEsw==
-X-ME-Sender: <xms:-XtRZwEoP1x99iNz-eH0sC2PcPfRkh5momsIhzLFmp2mKg8IsaGXIA>
-    <xme:-XtRZ5UKtwuqhYNXGcckZMtjFtUCMVoDIGBQo7wUYK--CoXJQ-oB_ms_4fWDxezQ6
-    IHwrjIQMkfs0rPS8Qo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieejgdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
-    hpthhtoheptghimhhinhgrghhhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggr
-    nhhjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvg
-    grugdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphht
-    thhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:-ntRZ6K3LV8oUegDWFgqeEx_OwWQcFYmU111TMNt680Q3A-OSgdpGQ>
-    <xmx:-ntRZyEorqMY_FC3voU5RGSSKgIuU13lQWjIgWcvV9c6vi1FSAMdng>
-    <xmx:-ntRZ2WA5AFy6_cQoctov9G0AAKRrNt2mStAoq4BHumJvdubExrmMA>
-    <xmx:-ntRZ1MFqI3DKNTe0bQkByZOZUH4I6tiDdIEITEIbF_RgdkvpPSGeA>
-    <xmx:-ntRZ3sla-b7ibxU0xinfs8p0FLqDG05pqJSzFyHV6SCapNOm2PC9LqT>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D691D2220072; Thu,  5 Dec 2024 05:10:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733393417; c=relaxed/simple;
+	bh=OjMZk5dnhstBL9ZqJKabXhL4DDjSkjqgRnVxAIHVpWw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=saCpxwGFQ2M5ME6A94Q+wudbcdzzpDcH0OVCvbfkGfI43essyR99BsA0DR3RK64bAVCI71YYljevoMGNrpu7LNYWss4RcNIrHPJKMRev21LAfyA61tfaN+k75TnuC6fcsL7pJMI43KBYs+IFVk+WNvSpzb5/wS9r7nFwZcKGgPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5CEDFEC;
+	Thu,  5 Dec 2024 02:10:41 -0800 (PST)
+Received: from [10.162.43.28] (K4MQJ0H1H2.blr.arm.com [10.162.43.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79BA43F5A1;
+	Thu,  5 Dec 2024 02:10:11 -0800 (PST)
+Message-ID: <ea15f3d3-5dd8-4404-8dab-5673bb5f3413@arm.com>
+Date: Thu, 5 Dec 2024 15:40:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 05 Dec 2024 11:09:41 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andy@kernel.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, linux-kernel@vger.kernel.org,
- x86@kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Matthew Wilcox" <willy@infradead.org>,
- "Sean Christopherson" <seanjc@google.com>,
- "Davide Ciminaghi" <ciminaghi@gnudd.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
-Message-Id: <74e8e9c6-8205-413a-97a4-aae32042c019@app.fastmail.com>
-In-Reply-To: <Z1FgxAWHKgyjOZIU@smile.fi.intel.com>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-10-arnd@kernel.org>
- <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com>
- <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
- <CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com>
- <Z1FgxAWHKgyjOZIU@smile.fi.intel.com>
-Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Dev Jain <dev.jain@arm.com>
+Subject: Re: [QUESTION] anon_vma lock in khugepaged
+To: ryan.roberts@arm.com, david@redhat.com, kirill.shutemov@linux.intel.com,
+ willy@infradead.org, ziy@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241128062641.59096-1-dev.jain@arm.com>
+Content-Language: en-US
+In-Reply-To: <20241128062641.59096-1-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 5, 2024, at 09:13, Andy Shevchenko wrote:
-> On Wed, Dec 04, 2024 at 03:33:19PM -0800, Linus Torvalds wrote:
->> On Wed, 4 Dec 2024 at 11:44, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> ...
->
->> Will that work when you cross-compile? No. Do we care? Also no. It's
->> basically a simple "you want to optimize for your own local machine"
->> switch.
->
-> Maybe it's okay for 64-bit machines, but for cross-compiling for 32-bit on
-> 64-bit. I dunno what '-march=native -m32' (or equivalent) will give in such
-> cases.
 
-From the compiler's perspective this is nothing special, it just
-builds a 32-bit binary that can use any instruction supported in
-32-bit mode of that 64-bit CPU, the same as the 32-bit CONFIG_MCORE2
-option that I disallow in patch 04/11.
+On 28/11/24 11:56 am, Dev Jain wrote:
+> Hi, I was looking at khugepaged code and I cannot figure out what will the problem be
+> if we take the mmap lock in read mode. Shouldn't just taking the PMD lock, then PTL,
+> then unlocking PTL, then unlocking PMD, solve any races with page table walkers?
+>
+>
 
-     Arnd
+Similar questions:
+
+1. Why do we need anon_vma_lock_write() in collapse_huge_page()? AFAIK we need to walk anon_vma's either
+    when we are forking or when we are unmapping a folio and need to find all VMAs mapping it; the former path takes the
+    mmap_write_lock() and so we have no problem, and for the latter, if we just had anon_vma_lock_read(), then it
+    may happen that kswapd isolates folio from LRU, and traverses rmap and swaps the folio out and khugepaged fails in
+    folio_isolate_lru(), but then that is not a fatal problem but just a performance degradation due to a race (wherein
+    the entire code is racy anyways). What am I missing?
+
+2. In what all scenarios does rmap come into play? Fork, swapping out, any other I am missing?
+
+3. Please confirm the correctness: In stark contrast to page migration, we do not need to do rmap walk and nuke all
+    PTEs referencing the folio, because for anon non-shmem folios, the only way the folio can be shared is forking,
+    and, if that is the case, folio_put() will not release the folio in __collapse_huge_page_copy_succeeded() -> free_page_and_swap_cache(),
+    so the old folio is still there and child processes can read from it. Page migration requires that we are able
+    to deallocate the old folios.
+
 
