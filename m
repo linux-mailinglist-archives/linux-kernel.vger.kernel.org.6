@@ -1,167 +1,163 @@
-Return-Path: <linux-kernel+bounces-433517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F5F9E5975
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:13:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C049E5976
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:13:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC3E18843F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9633282AFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786EE21D595;
-	Thu,  5 Dec 2024 15:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D647921C18A;
+	Thu,  5 Dec 2024 15:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="AiofJIco"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="AMFR03pa"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FC121C9F8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40ABF21A453
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 15:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733411547; cv=none; b=TQjxUA2/GdPHLufeLCnthvXpX1BQHUFsos/zBtjSA/k6UAW0dRO52IaCI9BhoxGoUt6AoXih+EqjaWgJ5bh1ugK5ENbxMLdQLa7C6II+YIRbtznNF0p1qNAfpK1gwW91T2OYrXzIzdPcGy65vSf9hhg+vArkiO6WbycmArUwp3M=
+	t=1733411586; cv=none; b=ca6XFPwvN8W0RyzcB678q3a6L5XiPzyruX9lq2auXPeyirVaEUP6zUESm01IFuDOCdNl/Gmj97MFEGSspvMZkWOGQ+5+R82hek4/HSNzPa97K1Krt4EQcs4mIuCLV4eqMSAO08rA3vtoTVo4bxyd8AqLFUHIz8MkajgLtuPClHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733411547; c=relaxed/simple;
-	bh=8oBlH9Skh5+tYIY+TSUzZhh7emwiSyw93vKxzSMqwEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bhjrkZ1KgN15wqP394Uvzk8wzIkck6UDXAbXy9OQr3mKUZ6BIKQDSvD3mtD/03Hsm7a/qNQzzWXu0eNeV7z8mjIQGt3+AJ7MRehKFGdBrTVtJSo0AsnmtTRektOU+iGrEj0XN+FZwxJmIC8tGoX9w8IJitFAsZoHWPqcUfYsj/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=AiofJIco; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d87ceb58a0so8452776d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:12:24 -0800 (PST)
+	s=arc-20240116; t=1733411586; c=relaxed/simple;
+	bh=3weUk4iB77O9B3Vu+VdOtyHO5IHEoisW4SItE5WMi28=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cVsolblvqQQcMri0oQsrJXXf3E95l81tjz3NZfv2tJuN2Cpa0eyiSYE1ZiDJvA7sMVivsKsoddXtQjNi/po4sSbPAtjKIOPrCPzu7jsnelnxF/IEBpuQkvJOkB/OUE/IP7pchJwr3my9NDR7W1OnSkgrvUPbKVSARnEAtnvB4RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=AMFR03pa; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffc1009a06so8042341fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 07:13:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1733411544; x=1734016344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpDuirXeCkooc6CrYIBSyW5CbLWq2iPbUdPYDNgR92g=;
-        b=AiofJIcoWSSwqw1GEGpOT6SRUMSujaBKPHcX+5hsMedLEoE3U4ASkENK17O8lHZ88u
-         rbfsTo5YXQ/FRACXrqjGC8M3+Xz+y/HYuwX+Yf4BVdLBWgGUUn/40jq/vhwC79h+nBGW
-         w7ywSB0euUeQ/qLNYAN0TpK5MqvOEW3J+OcCer2YnUmsfTa/3wKbKY09im1dtM0Dnah9
-         Kyc86sf3bvrgGBOhYnmCuTnuJGJHNtMDFfDwHBQ1sJxbAsQ3+Cxy7XfvP4PoTWlmgO/b
-         NJ2A1sD7It7jHoEYP4eouapDbmoVQgV/SxrASnqcafh9W60H79vU1f1AcH1vWE8xTUjY
-         +9Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733411544; x=1734016344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=ventanamicro.com; s=google; t=1733411582; x=1734016382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UpDuirXeCkooc6CrYIBSyW5CbLWq2iPbUdPYDNgR92g=;
-        b=m2IUacd1Zm6LXvVIG6hNoonLC5iZa83tEc2nrQ+59pptrdZ98LpTMTtta2pbCSsG4p
-         5aCX1hhGwsYVInI3b81895PN5DZwiNYD6hoB3f+R8pRU4Ls/tfcTsqzTZD9w2kOnoSwy
-         SjL3PMsy91twbpmgO//GlwOpU3/WcGdYDHHUZkDd0jHs+6Oax+uWrLy0Z/2KknPDgEMN
-         90CDIkstSIMZ6QiqsEYq/krbm/q+Rab24oMGwyWvpLdgDCBmdbUfAPJ4+NPBBlyZXoOi
-         lBnGJkJ4pPgZbqKpeWcZYAQ8tqmsLd+uwGRuGfmRr/im45K3ZaZCZkJ07QXeFAPJZI87
-         IWPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiBIl5R6/B2PNs7Smnj73wNUJkxsvhm+ePrB93y3yT+oeN7z8wcCjTvAXmP6rd8d3Tnhyy3ydCQz0z/dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3mypd0te7E7yTE5WEcMVOh7nvYzZJTHD2JiTiqVrjtgBr/7g0
-	Iaqjrm+JbFo2nhNP1PAaiBkr7KIeVxeF9zVhpJJhRqTNdrRjjMBoX5HNGmkqcg==
-X-Gm-Gg: ASbGncvbyq8N8WiGwlRODMM2qhuJY2aActpbfZP8PaTz734qr1I/yF/+ODYEitdgD61
-	hvSBXfMEC7pQ2HQNcFYZ+fVVsXZkoQWrt2yBtGdk43/Wh7L30y9OOxFClxpmYDhSZgY8RVmb5dv
-	BpHLxO6wlM3dLS+3m+g8TbKQQa8uo5DkMXZpkXP2wRagNPZ7eTLtesUeFgQ1S+eJksEVKgHq2Vp
-	EEtdUNfzbIpJ6z7d0WP8MvHaJ0V3/bQPfwSkSGtVlNf9VRzN3c=
-X-Google-Smtp-Source: AGHT+IGMhfCAwtSQVxKuS1TWRYoQx3MDjyra1gBdo8y0EUiz1ShXMjGXkrxghW12qu50gM/TSSZqXA==
-X-Received: by 2002:a05:6214:29c9:b0:6cb:e648:863e with SMTP id 6a1803df08f44-6d8b7454e0emr157169546d6.43.1733411543697;
-        Thu, 05 Dec 2024 07:12:23 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::d4d1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da66ddd4sm7370816d6.9.2024.12.05.07.12.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 07:12:23 -0800 (PST)
-Date: Thu, 5 Dec 2024 10:12:20 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Vitalii Mordan <mordan@ispras.ru>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Deepak Saxena <dsaxena@linaro.org>,
-	Manjunath Goudar <manjunath.goudar@linaro.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Fedor Pchelkin <pchelkin@ispras.ru>,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Vadim Mutilin <mutilin@ispras.ru>, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: ohci-spear: fix call balance of sohci_p->clk
- handling routines
-Message-ID: <81c02947-5617-4ab5-a8bd-56349b9929f4@rowland.harvard.edu>
-References: <20241205133300.884353-1-mordan@ispras.ru>
+        bh=xoG8I2gOfAa1nhpr3MtzTH/bpYIZ43v6YhQ9f0tgVvU=;
+        b=AMFR03paJTo3Mt/jpJPjsi+PGpQD0af8XtUaAuhaaUT6IxZUuwm764x8EbxEcOaOSp
+         ZS28y5Q1ceejuLT/r1ElwOD/IGR9DbBQO5XZpgdQokholZO07EDlYFLpoY303WsjHPEN
+         nZkT0se7qMByYrvjLedUP2ljzif/N7jYRcP1RTBeQFFUp6+MrFvfp8+uW3jLHlbdxUmo
+         jmi0t9sWPjrryi85QJaAb4MX3u9NY28qxzwq6O9WmAtYuk+MdkUCIq0iIn8fKI0sBH2J
+         N5Q1OHFqbbyTjxBzdrlFyXCPara4xYAWGCItIpP13EASblQrn1bcEslURHJ6UKzQYqWI
+         f53w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733411582; x=1734016382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xoG8I2gOfAa1nhpr3MtzTH/bpYIZ43v6YhQ9f0tgVvU=;
+        b=NDRDOcTACGfJ4xSyCZndzIGVOLyiVnCIhz99QAItIaSiXyKgAOVEZCzy3DPLFda5nw
+         SP6Jf2n4E1x2LHpoSRJKsDCnxrilWiVQdXv9GKwD4vl05WkVfG78SGHHF8d9tP9F8ajN
+         Zn4ekXMQ9MVtj9Zkuf0yNVVjc6OS5SusLaNW3k2YJoeeTLXWlQxKqdM7AOYuG+Nuyb1x
+         HSpSqLAP7Pl6XxLdmbD8feoAvX1JNZkCDOaoN54RLWZchho8pjdNLP9ZyEXVxgkYB14i
+         Eo0aFHDO/Wy3U2Z/CN0dupFm10gzPw++2AtBXO/VAoLKgsQr1/ZjjPOPVJQSxzu7Ij68
+         grvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpiQXLJupwpoGL+bio0CiNNgVdkMP25Y249aLLLwYZrJCfP4Lmenntj+b29/kTP6icH2Zo4Y8iwOrjiJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9g6w23LJTXypTpb2E30oyaIes05k9QT5KQsce0XlojoB0fKNt
+	xNDsbm+/4NZlSwxP1iOkb/fLxqqCwSwsfnoF1rTGfvzfbrlt5ZljpL+hctqudgtEsV+Mb2m1Qtb
+	DBaLZhPtAT9T8Xsrb6hkNmVesQUei4R7C7L4P2g==
+X-Gm-Gg: ASbGncvohO/vp2qjD/bwxiav4G8nePGj2byhdjDD0i23oiYG8Z/9ItyeL4NjBaOsGWS
+	jwndi8BeLbQlXNex4V8yZHvsYHNfja+U2kg==
+X-Google-Smtp-Source: AGHT+IGH/8TdnaDUdGz4vg1jz4T+IjoxlkEVgzEnW/Whszlzb3/tE/OJ68+7OcMZC/v7h9xiQOOLAepDgrXh5t82PkQ=
+X-Received: by 2002:a2e:9907:0:b0:300:16c0:9ba with SMTP id
+ 38308e7fff4ca-30016c00c13mr33128631fa.31.1733411582083; Thu, 05 Dec 2024
+ 07:13:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205133300.884353-1-mordan@ispras.ru>
+References: <20241116-cpuidle-riscv-sbi-cleanup-v3-1-a3a46372ce08@gmail.com> <eee10593-eb0b-4660-80cf-3027d6a99435@ghiti.fr>
+In-Reply-To: <eee10593-eb0b-4660-80cf-3027d6a99435@ghiti.fr>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 5 Dec 2024 20:42:50 +0530
+Message-ID: <CAK9=C2W3uxt9aO7NbCfzi6zdp14W_MXvOn2MtGqfzwX89J5aUQ@mail.gmail.com>
+Subject: Re: [PATCH v3] cpuidle: riscv-sbi: fix device node release in early
+ exit of for_each_possible_cpu
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Anup Patel <anup@brainfault.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Atish Patra <atishp@rivosinc.com>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 05, 2024 at 04:33:00PM +0300, Vitalii Mordan wrote:
-> If the clock sohci_p->clk was not enabled in spear_ohci_hcd_drv_probe,
-> it should not be disabled in any path.
-> 
-> Conversely, if it was enabled in spear_ohci_hcd_drv_probe, it must be disabled
-> in all error paths to ensure proper cleanup.
-> 
-> The check inside spear_ohci_hcd_drv_resume() actually doesn't prevent
-> the clock to be unconditionally disabled later during the driver removal but
-> it is still good to have the check at least so that the PM core would duly
-> print the errors in the system log. This would also be consistent with
-> the similar code paths in ->resume() functions of other usb drivers, e.g. in
-> exynos_ehci_resume().
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Klever.
-> 
-> Fixes: 1cc6ac59ffaa ("USB: OHCI: make ohci-spear a separate driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
-> ---
+On Thu, Dec 5, 2024 at 8:10=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wrot=
+e:
+>
+> Hi Anup,
+>
+> On 16/11/2024 00:32, Javier Carrasco wrote:
+> > The 'np' device_node is initialized via of_cpu_device_node_get(), which
+> > requires explicit calls to of_node_put() when it is no longer required
+> > to avoid leaking the resource.
+> >
+> > Instead of adding the missing calls to of_node_put() in all execution
+> > paths, use the cleanup attribute for 'np' by means of the __free()
+> > macro, which automatically calls of_node_put() when the variable goes
+> > out of scope. Given that 'np' is only used within the
+> > for_each_possible_cpu(), reduce its scope to release the nood after
+> > every iteration of the loop.
+> >
+> > Fixes: 6abf32f1d9c5 ("cpuidle: Add RISC-V SBI CPU idle driver")
+> > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> > ---
+> > Changes in v3:
+> > - Unwrap line (100 char width).
+> > - Link to v2: https://lore.kernel.org/r/20241031-cpuidle-riscv-sbi-clea=
+nup-v2-1-aae62d383118@gmail.com
+> >
+> > Changes in v2:
+> > - Squash patches for mainline solution without intermediate steps.
+> > - Link to v1: https://lore.kernel.org/r/20241030-cpuidle-riscv-sbi-clea=
+nup-v1-0-5e08a22c9409@gmail.com
+> > ---
+> >   drivers/cpuidle/cpuidle-riscv-sbi.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpui=
+dle-riscv-sbi.c
+> > index 14462c092039..0c92a628bbd4 100644
+> > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > @@ -504,12 +504,12 @@ static int sbi_cpuidle_probe(struct platform_devi=
+ce *pdev)
+> >       int cpu, ret;
+> >       struct cpuidle_driver *drv;
+> >       struct cpuidle_device *dev;
+> > -     struct device_node *np, *pds_node;
+> > +     struct device_node *pds_node;
+> >
+> >       /* Detect OSI support based on CPU DT nodes */
+> >       sbi_cpuidle_use_osi =3D true;
+> >       for_each_possible_cpu(cpu) {
+> > -             np =3D of_cpu_device_node_get(cpu);
+> > +             struct device_node *np __free(device_node) =3D of_cpu_dev=
+ice_node_get(cpu);
+> >               if (np &&
+> >                   of_property_present(np, "power-domains") &&
+> >                   of_property_present(np, "power-domain-names")) {
+> >
+> > ---
+> > base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+> > change-id: 20241029-cpuidle-riscv-sbi-cleanup-e9b3cb96e16d
+> >
+> > Best regards,
+>
+>
+> Will you make a PR for this? Or should this go through the riscv tree?
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+It's not KVM related so better take it through the RISC-V tree.
 
->  drivers/usb/host/ohci-spear.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ohci-spear.c b/drivers/usb/host/ohci-spear.c
-> index 993f347c5c28..6f6ae6fadfe5 100644
-> --- a/drivers/usb/host/ohci-spear.c
-> +++ b/drivers/usb/host/ohci-spear.c
-> @@ -80,7 +80,9 @@ static int spear_ohci_hcd_drv_probe(struct platform_device *pdev)
->  	sohci_p = to_spear_ohci(hcd);
->  	sohci_p->clk = usbh_clk;
->  
-> -	clk_prepare_enable(sohci_p->clk);
-> +	retval = clk_prepare_enable(sohci_p->clk);
-> +	if (retval)
-> +		goto err_put_hcd;
->  
->  	retval = usb_add_hcd(hcd, irq, 0);
->  	if (retval == 0) {
-> @@ -103,8 +105,7 @@ static void spear_ohci_hcd_drv_remove(struct platform_device *pdev)
->  	struct spear_ohci *sohci_p = to_spear_ohci(hcd);
->  
->  	usb_remove_hcd(hcd);
-> -	if (sohci_p->clk)
-> -		clk_disable_unprepare(sohci_p->clk);
-> +	clk_disable_unprepare(sohci_p->clk);
->  
->  	usb_put_hcd(hcd);
->  }
-> @@ -137,12 +138,15 @@ static int spear_ohci_hcd_drv_resume(struct platform_device *dev)
->  	struct usb_hcd *hcd = platform_get_drvdata(dev);
->  	struct ohci_hcd	*ohci = hcd_to_ohci(hcd);
->  	struct spear_ohci *sohci_p = to_spear_ohci(hcd);
-> +	int ret;
->  
->  	if (time_before(jiffies, ohci->next_statechange))
->  		msleep(5);
->  	ohci->next_statechange = jiffies;
->  
-> -	clk_prepare_enable(sohci_p->clk);
-> +	ret = clk_prepare_enable(sohci_p->clk);
-> +	if (ret)
-> +		return ret;
->  	ohci_resume(hcd, false);
->  	return 0;
->  }
-> -- 
-> 2.25.1
-> 
+Regards,
+Anup
 
