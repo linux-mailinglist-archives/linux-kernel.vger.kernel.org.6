@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-432619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA9E9E4DC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:52:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0AF79E4DCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 759E8167EDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:52:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA318167EF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F244C19645D;
-	Thu,  5 Dec 2024 06:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAE91AA1C7;
+	Thu,  5 Dec 2024 06:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b2TlLoJo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TOgbeKN9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A3417C208
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 06:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FD717C208;
+	Thu,  5 Dec 2024 06:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733381526; cv=none; b=de7AnqLk8jWDza1mWMUy7mkuuJIQT+AK+7O1Y58UlFZ8MeloAPaXASlA6OeZSGoAFALt9B7y4OE6tVEt0oUS0g4TD2zw0NfKJP3HuvvuaGyr1equ0rAMjahL5kxDCw38q8iCRbGa0Og8HDcWsdgwQVMuPpd005VjIe2/9WrvuuE=
+	t=1733381687; cv=none; b=D6o/GoYlwiXnLNtvSOaIBw4kpPCWjeIXj7ydC4tWmLlVr2DCkAYPtsWyQBEkUgw28iuM/0VquMsBgXwc+t/jr/C3mTWgBGj2ymMEuFTEf6qccdwfZrIA6Tyfc3cIZi7qsKqUrg6Yu9a6hQNsTGb5r/kMjQzqtxZSA/Fe283N430=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733381526; c=relaxed/simple;
-	bh=eSX2v5PuzA2MXSSzTQpEhE29wIDDU83B8ybeS+K6Kww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O4EfqjQ6SjR+OfE5h75wXKvg3zcw3tFST80j0NcfvigOi+ErqcfhysgrHJWGluSzFnSoIE57FS/+X6A5IWaYbGoYHxKVwkNlyQ71QMfW8c+tkVpgJVQMwtppNWqRCerE8sqy9LL3adzEB19ok6PGq0325gouQACu3iAFcSNdGiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b2TlLoJo; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733381525; x=1764917525;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=eSX2v5PuzA2MXSSzTQpEhE29wIDDU83B8ybeS+K6Kww=;
-  b=b2TlLoJo7nck0PzGUO6P3A3vajhTnH/VmB5BX12Bn49AKetkTnCGWYZR
-   tFvx+LwNYlYG626YuZcu9Nf+tE+8g4QxfxvI6TJdTz8ZJ63hfkXAzHyt7
-   KyBzXaPXXeUL197dsxapGk57hCqqnafCOo2D1z95Y5mE4Q+fhVOP+OiJs
-   pBT0lJSTU4So9EYS2Vwro9PsQyv3BgnQa/T7tc1Uix/uvw0STzkUfwAT0
-   7ZUsR3wWWX1fwRJWCcojIL+4NGMWxTNTUVXlNgNtd8Mmr+OiW6c2bS6ty
-   cLtkWLjUq4i5VbTEu3DY1wGqUI0w9RRMyq9rtAHTDSa1+kNkHdsolwsYO
-   Q==;
-X-CSE-ConnectionGUID: xejOwO3VQaibenmKL5qQEA==
-X-CSE-MsgGUID: C9xWSF4WTnuvafKAKvLmGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33028964"
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="33028964"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 22:52:04 -0800
-X-CSE-ConnectionGUID: 4U68goN8T+yxGjMZ97rmzQ==
-X-CSE-MsgGUID: tAxrJk4qRtKMwowbqdGFQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="117250934"
-Received: from ubuntu.bj.intel.com ([10.238.156.105])
-  by fmviesa002.fm.intel.com with ESMTP; 04 Dec 2024 22:52:03 -0800
-From: Jun Miao <jun.miao@intel.com>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	Shyam-sundar.S-k@amd.com
-Cc: linux-kernel@vger.kernel.org,
-	jun.miao@intel.com
-Subject: [PATCH] net/ethernet: fix typo in annotation comment
-Date: Thu,  5 Dec 2024 14:52:18 +0800
-Message-Id: <20241205065218.1288394-1-jun.miao@intel.com>
-X-Mailer: git-send-email 2.32.0
+	s=arc-20240116; t=1733381687; c=relaxed/simple;
+	bh=nCrwlCRlUmSmRryR/1WprnfMf/sEwmbB3xEj670GLZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BO2Pq/1CMaFloK/3gvREwgxXFevNg8P3aET5vT7aVa1FpXv/I64ZecQ2eTQRudfZhzZL+vdabqn9WD1Sv+ExJz/c4dIPzjFTn6Msitwbhxg8FqUGPrFNZAYzb3/PNV1baJvg0W+Ea1IRzy4MQOdPkYWw2tavuTogAv4cJzL90eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TOgbeKN9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4N29cl026498;
+	Thu, 5 Dec 2024 06:54:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=N2hHxwoRVaT7PhGq5S08LXhb/7vcgs2aTzV
+	Q0VkESyQ=; b=TOgbeKN9tsaJSZKs1bjzkZK2zsS0I10T7Ey7oaui4VmEMY8sPPa
+	U1nBLJl1Kku1PD7K1t/dSSQ8rRyDy+bQBeG9h2MKTjQ7LOLIilYfWitZis6l2h72
+	oC67Cl+hps4a0EiJAS+aurSUmJZey/2iffM6JuiMTr8b0eFjhWr07+hjLduCkMzc
+	eYWZwZICNGdGC6FPRIddmPsn3Rr50bDw5YUqUGnG2SAREpC1O2cFwRe22ORjbn52
+	m1+8FcJl0ZMKu8wVfO/BYomXgbP1M6By4ITcpjLMGi1UfQg/hTNZcUJOFc8ZER8i
+	PHe/LHCZ4am0wkjOgCDoBAcJAXDd6/F8W0A==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9p30j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 06:54:29 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B56sQdO022751;
+	Thu, 5 Dec 2024 06:54:26 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 437usmedrt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 06:54:26 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4B56sQYj022746;
+	Thu, 5 Dec 2024 06:54:26 GMT
+Received: from hu-devc-hyd-u20-c-new.qualcomm.com (hu-msarkar-hyd.qualcomm.com [10.213.111.249])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4B56sQJd022745
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 06:54:26 +0000
+Received: by hu-devc-hyd-u20-c-new.qualcomm.com (Postfix, from userid 3891782)
+	id 08FC1213F4; Thu,  5 Dec 2024 12:24:25 +0530 (+0530)
+From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+To: manivannan.sadhasivam@linaro.org
+Cc: quic_shazhuss@quicinc.com, quic_ramkri@quicinc.com,
+        quic_nayiluri@quicinc.com, quic_krichai@quicinc.com,
+        quic_vbadigan@quicinc.com, quic_nitegupt@quicinc.com,
+        Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Slark Xiao <slark_xiao@163.com>,
+        Qiang Yu <quic_qianyu@quicinc.com>, Mank Wang <mank.wang@netprisma.us>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Fabio Porcedda <fabio.porcedda@gmail.com>, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH v1 0/2] pci_generic: Add supoprt for SA8775P target
+Date: Thu,  5 Dec 2024 12:24:18 +0530
+Message-Id: <20241205065422.2515086-1-quic_msarkar@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,42 +87,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pxNehPPz4R8txES-ho1ZbUhV3VY55kPE
+X-Proofpoint-GUID: pxNehPPz4R8txES-ho1ZbUhV3VY55kPE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1011 priorityscore=1501 mlxlogscore=553 phishscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050051
 
-It`s "auto-negotiation", not "auto-negotitation". Let's fix that.
+This patch series add separate MHI host configuration to enable
+only IP_SW channel for SA8775P target.
 
-Signed-off-by: Jun Miao <jun.miao@intel.com>
----
- drivers/net/ethernet/amd/xgbe/xgbe-mdio.c  | 2 +-
- drivers/net/ethernet/intel/igb/e1000_mac.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+And also update the proper device id for SA8775P endpoint.
 
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-index 07f4f3418d01..5597e7df0aba 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-@@ -1264,7 +1264,7 @@ static int __xgbe_phy_config_aneg(struct xgbe_prv_data *pdata, bool set_mode)
- 	/* Disable and stop any in progress auto-negotiation */
- 	xgbe_an_disable_all(pdata);
- 
--	/* Clear any auto-negotitation interrupts */
-+	/* Clear any auto-negotiation interrupts */
- 	xgbe_an_clear_interrupts_all(pdata);
- 
- 	pdata->an_result = XGBE_AN_READY;
-diff --git a/drivers/net/ethernet/intel/igb/e1000_mac.c b/drivers/net/ethernet/intel/igb/e1000_mac.c
-index fa3dfafd2bb1..2bcce6eef0c7 100644
---- a/drivers/net/ethernet/intel/igb/e1000_mac.c
-+++ b/drivers/net/ethernet/intel/igb/e1000_mac.c
-@@ -1581,7 +1581,7 @@ s32 igb_disable_pcie_master(struct e1000_hw *hw)
-  *  igb_validate_mdi_setting - Verify MDI/MDIx settings
-  *  @hw: pointer to the HW structure
-  *
-- *  Verify that when not using auto-negotitation that MDI/MDIx is correctly
-+ *  Verify that when not using auto-negotiation that MDI/MDIx is correctly
-  *  set, which is forced to MDI mode only.
-  **/
- s32 igb_validate_mdi_setting(struct e1000_hw *hw)
+Mrinmay Sarkar (2):
+  bus: mhi: host: pci_generic: Add supoprt for SA8775P target
+  PCI: epf-mhi: Update device id for SA8775P
+
+ drivers/bus/mhi/host/pci_generic.c           | 34 ++++++++++++++++++++
+ drivers/pci/endpoint/functions/pci-epf-mhi.c |  2 +-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
 -- 
-2.32.0
+2.25.1
 
 
