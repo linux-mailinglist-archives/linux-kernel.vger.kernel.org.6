@@ -1,129 +1,210 @@
-Return-Path: <linux-kernel+bounces-432474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F659E4BBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1EF9E4BC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3B61881350
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96DC188151B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDD084E0A;
-	Thu,  5 Dec 2024 01:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B6684A22;
+	Thu,  5 Dec 2024 01:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="elES94BW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/z7U6iU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1059F2E403
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 01:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66854782
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 01:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733361645; cv=none; b=euY0+08p9HAxVxdIxnXhqOfhVP8fRweumtzBascXaY7ymwCE1Qz/yKuM2aw9Xc03iIH2v/oDJQuiHVRkk8Ee1zsL6ug2YidnoZ4Y64OUYwWHYeDfW4YJDXArHL+4A2sHbHqFcFIJ/DfCeuaq44HpLKqKuPziM3HqQb94meO/Qpc=
+	t=1733361850; cv=none; b=GD3XqPfwwb0odZLYC4JqUEh3Bpt8EL8LsXw2MeeYkbDtz1kVsvf87VVUH1tV9VHmCM0yxxcTbpK1tUPm1wJ2iAraJqzRVipyl+dIYPrbIXHQKiT3b83ujl117heJbxlQDS5PPrPZkAI1bUAY0tHe+clXPQOId1asA3fLr9lSqiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733361645; c=relaxed/simple;
-	bh=SgowjTQrYekcXyiahCj20togqQfF2xU1QX6ftSI5N/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i9ka2rFo9/CnYZrjWD7ZulLMEQ+G99vW7Go+Ebf2vpOWRThM9c/ajwuTZC/b1oK1tL8CuVkYlkM2Dg36YduHwDoDnX7qo7d0ROjsgEh9SUNLxNPiqMwgyVjc4m18hOaLWhrHHkbKbEaL57H6UVqkOmV/4ERdDfX5mKpq3uRVFy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=elES94BW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733361643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/4YbcbUu4DyS3JwmAn34bQrphZB0KAFMZkW6h21FvT0=;
-	b=elES94BWc7nHiZKpbEILQ6z1QnwlGYX2wFzDBxH1SwZ2Ln5oBL602RqCj8JIk6RAR4DiJC
-	eYn8CevrI2M4rYP2FUn5kizyUvZomHrjhUg2HNqKKhRTDBL0H88O9FWBj3OJEhC+EEGmRL
-	NJGfvCyksG0yeS/m+GZVzlLq4L0vvpg=
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
- [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374-YwaglnImOFe3WuboJVRtdg-1; Wed, 04 Dec 2024 20:20:41 -0500
-X-MC-Unique: YwaglnImOFe3WuboJVRtdg-1
-X-Mimecast-MFC-AGG-ID: YwaglnImOFe3WuboJVRtdg
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-4afbf607173so7636137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 17:20:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733361641; x=1733966441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/4YbcbUu4DyS3JwmAn34bQrphZB0KAFMZkW6h21FvT0=;
-        b=UBtv7bl2IIEW9d+vyrfsThOAxIQpejrhwxo/0RnjFWMh/0Z1jl621S0lUHVhqbtZ0t
-         Bi3vA7e99v8ZNWKZpCZVSkcPEBzFlz42cb0bbpmsj/GEKsyaH4ba/O2+8gvxbZ2W9RyG
-         Ty7vfPxD3ZQ5D4rB9efPPK7rb8oRgjW/XguQbk8G+PVvEpMwyR3QrHcnNmyPu/nwwVhm
-         +alzHa4soQbaWw2So1LY5/jyB2GAXt+Q+geRQB+h+fm8oNBkdKSk4ecuN4tPo2lfSgbJ
-         bQ6qRsHzhsNvSPojxHsWHxRBGF1Zj5QiXBCYCipkm77um14b3ZZng8bE4F93xdJdsk2g
-         nqgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDb3klbK/NGlHdMHgPg+RXVFLEc+WlHsNAO3uKloNkDBcVawm3fhxqk8qPg94Mo8dHDQBu8RaDo1hMddM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynLP3/8cx78tag7QTMR9qVhLHr7CpE+ZR8l/BEeZZWRtmb3dYx
-	yV6P5c+p1sDcPKK0ilb8sIaSZXeb1LI9CCFMvc8fSuUP3pfFoWxLgTe+Y3b8DCoO59UQUREvZih
-	J1FJEI275J20Lx3Lxr3V6whxbFI4ns26yivzQchOOwqqTg2h4DkMeGKwwiAlgRSkJu32BY/ik/g
-	WkXvfhtisaDNk8lsIxnMZDSbup611V0bAeOx1f
-X-Gm-Gg: ASbGncvTPOkISNmUDw2AZm6BSuChMobnaIqZ2Ak7TW//mt6hVBIdSZEBg8NwsGqWOKR
-	04rlaOfZJuuuxttD6+RTfRXlrQ/HnVyOg
-X-Received: by 2002:a05:6102:32ca:b0:4af:5568:8f66 with SMTP id ada2fe7eead31-4af973c0ab2mr12081991137.27.1733361641283;
-        Wed, 04 Dec 2024 17:20:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFiegenlyEQWaMXSs4vqDqiWlLCU9rLscDG3ExVwTbd0zYuJWToUuNU/bX8vEGXFSmoVDfn4McVLiu08cmJjkM=
-X-Received: by 2002:a05:6102:32ca:b0:4af:5568:8f66 with SMTP id
- ada2fe7eead31-4af973c0ab2mr12081985137.27.1733361641045; Wed, 04 Dec 2024
- 17:20:41 -0800 (PST)
+	s=arc-20240116; t=1733361850; c=relaxed/simple;
+	bh=iw7fuXPYCUPZXzib8rOrienqpPhH7l+XsBbTP71d4Zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/nX+3FPDrggYSkYxAwF7b1Y/USIhHTNC1z0TaL99I0BMUKo1z/bsqgW7GB0POHEZgFaXhDb5iN27cFI6xXSq+LKKRf1vgtHJymVtyKdUVrOXQLtMbgGHiuGkuSQXnKfK7KiJ/XbZnxDWKo26bOkEesljWzJr9N75xT9Mk9wQcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/z7U6iU; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733361849; x=1764897849;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iw7fuXPYCUPZXzib8rOrienqpPhH7l+XsBbTP71d4Zo=;
+  b=W/z7U6iUjJAWlHmwTx+wbj2tHxpo9CDDZ3t568kJgNNdzYLq+g/2VDe4
+   lsUb3CwmGzaQewF9qyMh3BfXmXUrernDgimxbUHsHn/hkjaxejpChgzpl
+   G5bccL2K+gCUzXNT3p/O/7Yy+JLJYCMKUbOwyMumu0JUF+8CI6LfwnQuz
+   Vj9hxZt+2rZMc9TnGoELRWz/nQjKhOx9TqLSkghVW9W86YhODdjHR86Gy
+   lsBwpM4HX1fFOlScb34nxhONi0X7dyM5diqDq4pv8CAFCkqR65zAc1PEN
+   CXn7DZQOHyYwmhIcRsY2T7bHDrMLMoSUKV+JdugJJSve4puoc9oK73D0h
+   A==;
+X-CSE-ConnectionGUID: YJMRU0lXSh6+MeJXXDGRpw==
+X-CSE-MsgGUID: aKV46s9sREeRODJKSOZgyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="44685141"
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="44685141"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 17:24:08 -0800
+X-CSE-ConnectionGUID: P03VVCmST22TMFZDz086Nw==
+X-CSE-MsgGUID: Jq6R7X5tTxOL8zTJ/81Amw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="98003848"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 04 Dec 2024 17:24:05 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJ0b5-0003eF-0O;
+	Thu, 05 Dec 2024 01:24:03 +0000
+Date: Thu, 5 Dec 2024 09:23:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Guillaume Morin <guillaume@morinfr.org>, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	guillaume@morinfr.org, Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Eric Hagberg <ehagberg@janestreet.com>
+Subject: Re: [PATCH v1] hugetlb: support FOLL_FORCE|FOLL_WRITE
+Message-ID: <202412050954.m9cwNOJC-lkp@intel.com>
+References: <Z1Ce6j5WiBE3kaGf@bender.morinfr.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204150450.399005-1-colin.i.king@gmail.com>
-In-Reply-To: <20241204150450.399005-1-colin.i.king@gmail.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Thu, 5 Dec 2024 09:20:30 +0800
-Message-ID: <CAFj5m9JLC9+ao1Bhp0HfdS=7K+iKuAnkrURCd+ajDbqaZ7MYHQ@mail.gmail.com>
-Subject: Re: [PATCH][next] blktrace: remove redundant return at end of function
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1Ce6j5WiBE3kaGf@bender.morinfr.org>
 
-On Wed, Dec 4, 2024 at 11:05=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> A recent change added return 0 before an existing return statement
-> at the end of function blk_trace_setup. The final return is now
-> redundant, so remove it.
->
-> Fixes: 64d124798244 ("blktrace: move copy_[to|from]_user() out of ->debug=
-fs_lock")
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  kernel/trace/blktrace.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> index 18c81e6aa496..3679a6d18934 100644
-> --- a/kernel/trace/blktrace.c
-> +++ b/kernel/trace/blktrace.c
-> @@ -639,8 +639,6 @@ int blk_trace_setup(struct request_queue *q, char *na=
-me, dev_t dev,
->                 return -EFAULT;
->         }
->         return 0;
-> -
-> -       return ret;
->  }
->  EXPORT_SYMBOL_GPL(blk_trace_setup);
+Hi Guillaume,
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+kernel test robot noticed the following build warnings:
 
-Thanks,
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on linus/master v6.13-rc1 next-20241204]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Guillaume-Morin/hugetlb-support-FOLL_FORCE-FOLL_WRITE/20241205-022843
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/Z1Ce6j5WiBE3kaGf%40bender.morinfr.org
+patch subject: [PATCH v1] hugetlb: support FOLL_FORCE|FOLL_WRITE
+config: x86_64-buildonly-randconfig-002-20241205 (https://download.01.org/0day-ci/archive/20241205/202412050954.m9cwNOJC-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412050954.m9cwNOJC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412050954.m9cwNOJC-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from mm/gup.c:7:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from mm/gup.c:20:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/gup.c:681:33: warning: variable 'page' is uninitialized when used here [-Wuninitialized]
+     681 |             !can_follow_write_pud(pud, page, vma, flags))
+         |                                        ^~~~
+   mm/gup.c:673:19: note: initialize the variable 'page' to silence this warning
+     673 |         struct page *page;
+         |                          ^
+         |                           = NULL
+   7 warnings generated.
+
+
+vim +/page +681 mm/gup.c
+
+   667	
+   668	static struct page *follow_huge_pud(struct vm_area_struct *vma,
+   669					    unsigned long addr, pud_t *pudp,
+   670					    int flags, struct follow_page_context *ctx)
+   671	{
+   672		struct mm_struct *mm = vma->vm_mm;
+   673		struct page *page;
+   674		pud_t pud = *pudp;
+   675		unsigned long pfn = pud_pfn(pud);
+   676		int ret;
+   677	
+   678		assert_spin_locked(pud_lockptr(mm, pudp));
+   679	
+   680		if ((flags & FOLL_WRITE) &&
+ > 681		    !can_follow_write_pud(pud, page, vma, flags))
+   682			return NULL;
+   683	
+   684		if (!pud_present(pud))
+   685			return NULL;
+   686	
+   687		pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
+   688	
+   689		if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD) &&
+   690		    pud_devmap(pud)) {
+   691			/*
+   692			 * device mapped pages can only be returned if the caller
+   693			 * will manage the page reference count.
+   694			 *
+   695			 * At least one of FOLL_GET | FOLL_PIN must be set, so
+   696			 * assert that here:
+   697			 */
+   698			if (!(flags & (FOLL_GET | FOLL_PIN)))
+   699				return ERR_PTR(-EEXIST);
+   700	
+   701			if (flags & FOLL_TOUCH)
+   702				touch_pud(vma, addr, pudp, flags & FOLL_WRITE);
+   703	
+   704			ctx->pgmap = get_dev_pagemap(pfn, ctx->pgmap);
+   705			if (!ctx->pgmap)
+   706				return ERR_PTR(-EFAULT);
+   707		}
+   708	
+   709		page = pfn_to_page(pfn);
+   710	
+   711		if (!pud_devmap(pud) && !pud_write(pud) &&
+   712		    gup_must_unshare(vma, flags, page))
+   713			return ERR_PTR(-EMLINK);
+   714	
+   715		ret = try_grab_folio(page_folio(page), 1, flags);
+   716		if (ret)
+   717			page = ERR_PTR(ret);
+   718		else
+   719			ctx->page_mask = HPAGE_PUD_NR - 1;
+   720	
+   721		return page;
+   722	}
+   723	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
