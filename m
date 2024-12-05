@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-433357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECB99E5760
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:40:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B683416248F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:39:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66CE218EA2;
-	Thu,  5 Dec 2024 13:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Z6ptqCKB"
-Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4909E575E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:39:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236CA218858
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 13:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51CCD284109
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:39:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27B9218ACD;
+	Thu,  5 Dec 2024 13:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="meXEYwJV"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC45536C;
+	Thu,  5 Dec 2024 13:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733405991; cv=none; b=hH0MIE0bbsaXIC2u/AXh0zzavF4OjSfMxlPqbkuGIZ9bza9mul75TwdaaRphmLYypgqXVeAO+nkKR/dbz9zoUbsNcd4apKQSGI6235tIP1w1rVEmAkwyLMxK7+y2v8M+UzIEG6BLZ0GX3Hxlrs6+QANEzSP+RnghK+mLiuqmksA=
+	t=1733405990; cv=none; b=AtgdjcVoNMABgnG+CcnK82g0elJnCYrYWHZzKOGllMgfqDPHIxTrmxwoCLd4+fX40XEgHj5x6QJxTHpMSxXcMn6Ov9I9Txw23FQMRkP7xILlOTs4xcx5nsa9JSLjXISZg5yVbEmDiwzmcc0WtFqFgGoPZx7o98xig2zea8FW64w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733405991; c=relaxed/simple;
-	bh=w+L/ijIwxtCjBnjeF2BOoaJY0nsNF0I+MjgrNIZmI/E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JHIMiXE183EdxmngWm1U2LIWe0pCKI/ZqpLb+6oREJsoPBAFqqfy5L/lQTPW+YHw3bjfBzGFkGpgdjj+eBWnVsqMgkp2KcKGZAZcHwvZXQzxIK3D0LUU7DkptqiW2ueyz8szcWxV+aYlK8MAcm96neVd2jNQPZFb9IpheWDhCug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Z6ptqCKB; arc=none smtp.client-ip=17.58.6.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733405989;
-	bh=EGaT1YDpM3YHyk2JGIqu5Mj6uAzoCxkX7HHojx+Nakw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
-	 x-icloud-hme;
-	b=Z6ptqCKB8VbbMOxA3C2zdd27e4pyc841ODJECqWb4IybLv6WmFqLzgUY49mCwb+zY
-	 bUQWK+0uA1eZKMdsykc82oUvX7wvM5sY2iPB93t6z6wae9/g5Xc4NEcnNFTwwSJEnS
-	 NdPLaV5wSoSL8fawCOx+k5OgaqeCUeHQ3pMj9Diwtc0wvv3CCyeVgYnNvipbI6R8g7
-	 4oAOzj2yMJGRmX5JnI+r/tdARog3N7UkYkumD+8tobk3h56WTzVe9bljFte184afcJ
-	 vv3nnMNtpJ3dHMp1OHMiWq3xIMsVmKFkQRgXgK7jFEgcLKFRnQgSuUvsMS3JwuDn0z
-	 ayCVCmZqzn12A==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id E5E225000BE;
-	Thu,  5 Dec 2024 13:39:46 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 05 Dec 2024 21:39:22 +0800
-Subject: [PATCH] MAINTAINERS: Remove open-iscsi@googlegroups.com
+	s=arc-20240116; t=1733405990; c=relaxed/simple;
+	bh=3TalG+fQvuVcl6qlH6a3g68GrMatWcukWXt9dvrqCCk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RAP4nkMkbciZxs+s+ZpP3lchwQY0AiwG6lxyhUgiNhW7nmDcDTGjEbYAy6RMaDTQ6e6sdWoBYGXh9KX8vcuZICi1VukhARRkNKfg7MltCmA7Pk//iMiD6z4Vo6Y+TOQJu8JQUudQQpTpfOWnUYnP+VqxFCymIq2WRYtALxSjOCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=meXEYwJV; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B58OKdA011724;
+	Thu, 5 Dec 2024 07:39:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=mwHrasWI7OIzdccU2t
+	YUBifYMW3YIbQB/3qFmWvokyk=; b=meXEYwJV/2J2TGsxoMzlJ+j3XWbxdLZLfM
+	H+z3KzV2HsdcA+4heYNBwP0kUAJfYMcYFu7htIA1y/M9XiMk9nUbgBOjPcGxlHVo
+	xzR+seO4Y+sImBTQZyTu3YfkoHBZqOBMT86mQHyqBX7wJKJZOrPHMr8EJdb2M/5D
+	c8qiIMMiwar5qnOdhggFBHgiSKxLl1OsRacnJcLErdlEuyI7xqNoMaM5XNlyCKn3
+	4AznUidCnr/URFXp8y91f/DBFEc20T9YuF1+kVmEdl3pgyQ7o8hpjaLZENYV1Pne
+	AV6GUrn/6wDR0YspaM9ga6GsdhFEsbwwAk9sFxaO0M0+eJjDapTQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43ap2b9twq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 07:39:28 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 5 Dec
+ 2024 13:39:27 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.13 via Frontend Transport; Thu, 5 Dec 2024 13:39:27 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 34DBC820247;
+	Thu,  5 Dec 2024 13:39:27 +0000 (UTC)
+Date: Thu, 5 Dec 2024 13:39:26 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Andrew Davis <afd@ti.com>
+CC: Lars-Peter Clausen <lars@metafoo.de>,
+        Nuno =?iso-8859-1?Q?S=E1?=
+	<nuno.sa@analog.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Marek Vasut <marex@denx.de>, <patches@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 20/21] ASoC: wm8904: Remove use of i2c_match_id()
+Message-ID: <Z1GtDvuJAUSNrOq6@opensource.cirrus.com>
+References: <20241203200001.197295-1-afd@ti.com>
+ <20241203200001.197295-20-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241205-remove_iscsi_group-v1-1-890ee8484978@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAmtUWcC/x3MQQqAIBBA0avErBPUMqqrRETUaLMoY4YkiO6et
- HyL/x8QZEKBvniAMZFQPDJMWcCyzUdARWs2WG1rY7VTjHtMOJEsQlPgeJ2qc9qbZm4r52vI4cn
- o6f6nw/i+HymhhdtkAAAA
-X-Change-ID: 20241205-remove_iscsi_group-950f16a835f4
-To: Zijun Hu <zijun_hu@icloud.com>, linux-scsi@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Cc: Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: vmZ35Z26o7HxTXn3aJvdxYPTEpY_yAdH
-X-Proofpoint-ORIG-GUID: vmZ35Z26o7HxTXn3aJvdxYPTEpY_yAdH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-05_11,2024-12-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 suspectscore=0
- mlxlogscore=890 adultscore=0 malwarescore=0 phishscore=0 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412050098
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241203200001.197295-20-afd@ti.com>
+X-Proofpoint-GUID: udCdSbBI7IQwbOZZwArODVkD3Uk06UoE
+X-Proofpoint-ORIG-GUID: udCdSbBI7IQwbOZZwArODVkD3Uk06UoE
+X-Proofpoint-Spam-Reason: safe
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Dec 03, 2024 at 02:00:00PM -0600, Andrew Davis wrote:
+> The function i2c_match_id() is used to fetch the matching ID from
+> the i2c_device_id table. This is often used to then retrieve the
+> matching driver_data. This can be done in one step with the helper
+> i2c_get_match_data().
+> 
+> This helper has a couple other benefits:
+>  * It doesn't need the i2c_device_id passed in so we do not need
+>    to have that forward declared, allowing us to remove those or
+>    move the i2c_device_id table down to its more natural spot
+>    with the other module info.
+>  * It also checks for device match data, which allows for OF and
+>    ACPI based probing. That means we do not have to manually check
+>    those first and can remove those checks.
+> 
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
 
-There are always erroneous response when send mail to
-open-iscsi@googlegroups.com.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Remove that unreachable address.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b13d8bbe6bf133ba7b36aa24c2b5e0..1c203d335c8d3e76ea2683996e9804999e4a4d53 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12175,7 +12175,6 @@ ISCSI
- M:	Lee Duncan <lduncan@suse.com>
- M:	Chris Leech <cleech@redhat.com>
- M:	Mike Christie <michael.christie@oracle.com>
--L:	open-iscsi@googlegroups.com
- L:	linux-scsi@vger.kernel.org
- S:	Maintained
- W:	www.open-iscsi.com
-
----
-base-commit: feffde684ac29a3b7aec82d2df850fbdbdee55e4
-change-id: 20241205-remove_iscsi_group-950f16a835f4
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+Thanks,
+Charles
 
