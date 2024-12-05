@@ -1,155 +1,209 @@
-Return-Path: <linux-kernel+bounces-433613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140489E5AA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:02:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0769E5A9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B2E1887FE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116E516656E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0471A221471;
-	Thu,  5 Dec 2024 15:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEnFd6hF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B16224AEB;
+	Thu,  5 Dec 2024 16:00:24 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B35521D595;
-	Thu,  5 Dec 2024 15:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC10C14884D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733414356; cv=none; b=Ia02eAwrIiXlS9lNyKLpfIYYH6LSBZRZVfPwghu9bVCAdR5KNKgGKO97kuXuA+e+gYZIPx186kRhTHa7LHSqblfPRFSr4QsEtzWLEU6ZKq1gNpgErwfUJglCC3QWY/jiH5raE4ITZK+VpxlqknU48MvzvasYQzN+K0/Wt0ArFBQ=
+	t=1733414424; cv=none; b=C3zEzZt9tOg5ld1AufeadQO4DmqiPTG0Mt7jLTuLa2xWMdhawgarFT0YomPsDmPD7U/ijOBecUYV1gwvWtuMwaafXb21Gzn6BVqr/C7wVsjjx2uzQGArETNEIHR6aYetQWVaKmOZQGiNeDqV1IuPhZ0sGEWeqfOsleNZlh2uCGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733414356; c=relaxed/simple;
-	bh=I0pA0LIVOtMR1rdK5y5+lGusd/6Von4ontGZrXx9GoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GM5EkSxPedRtUzk48DFwuDiIcTkvs5uwU2cVF2BjjBJPkG9DLFZRNlzF5VK/O+q2uE0wxW9KxEalT4PgCTCblzgrnJETzF1JJqOGBJ1U0M9SU6qRRlEMHjqHldDy+gbfTeVEGU2LivtnaJhKWuouT0clVgvfgCgJZ3R9dC7rx+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEnFd6hF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C90BCC4CED1;
-	Thu,  5 Dec 2024 15:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733414355;
-	bh=I0pA0LIVOtMR1rdK5y5+lGusd/6Von4ontGZrXx9GoY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=aEnFd6hFAmSmK2pHhN6Vvrznhdk2WNpck3AkX6V8tnag3Yd9SjKXwt4j7otb8wAhh
-	 rJb6ZEY1qjEFPhIDBJS2Qu0YeTfij7aQWxB0fumEUZENJCz0a5NYrETQF8RdygNQM+
-	 CPhPPiOR+m8+9IO4L8/UG3aBq9zVTnxRDKB6jdmHulOVMdvFRx44sBrUBVr/27mGED
-	 sK0357KDwaWutMpw9FTjLRjSxQOuWVxK8uo4dRi0OvAZcbqqvg+CPoLjLPMt/rUdlN
-	 JNfNX5GYvy2cd/e77MS8NwcN2i+FTJlRLgVjLCWufpMobGsh+ff42RBtmA7/91ahgs
-	 SagHO3VBpPrbw==
-Message-ID: <d53538ea-f846-4a6a-bc14-22ec7ee57e53@kernel.org>
-Date: Thu, 5 Dec 2024 16:59:09 +0100
+	s=arc-20240116; t=1733414424; c=relaxed/simple;
+	bh=AXRLyPnlMp9NFNYGxxbppZ4FKyyl2/ZDxFwMNPYVYNI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=WI/MMOJ/KP7Ahbqpco9HrmekxiAalFjfOO034ghPF5Z++D/I1fazwI+VKDZU3cbsqkRbbiLkftNR0XBl9dJ1qWN4g7fVx1eUZdwMd2oF4swVJ4drZB1EE3UkXtp3iwhRSIEtk7++Gyl3l35qTK7HynPhM5arjZ2vSaNlsrxf7lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-279-lmsYNeUrOlaLvsVDlHEuig-1; Thu, 05 Dec 2024 16:00:19 +0000
+X-MC-Unique: lmsYNeUrOlaLvsVDlHEuig-1
+X-Mimecast-MFC-AGG-ID: lmsYNeUrOlaLvsVDlHEuig
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 5 Dec
+ 2024 15:59:36 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 5 Dec 2024 15:59:36 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Dan Carpenter' <dan.carpenter@linaro.org>, Naresh Kamboju
+	<naresh.kamboju@linaro.org>
+CC: open list <linux-kernel@vger.kernel.org>, "lkft-triage@lists.linaro.org"
+	<lkft-triage@lists.linaro.org>, Linux Regressions
+	<regressions@lists.linux.dev>, Linux ARM
+	<linux-arm-kernel@lists.infradead.org>, "netfilter-devel@vger.kernel.org"
+	<netfilter-devel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Anders
+ Roxell" <anders.roxell@linaro.org>, Johannes Berg <johannes.berg@intel.com>,
+	"toke@kernel.org" <toke@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	"kernel@jfarr.cc" <kernel@jfarr.cc>, "kees@kernel.org" <kees@kernel.org>
+Subject: RE: arm64: include/linux/compiler_types.h:542:38: error: call to
+ '__compiletime_assert_1050' declared with attribute error: clamp() low limit
+ min greater than high limit max_avail
+Thread-Topic: arm64: include/linux/compiler_types.h:542:38: error: call to
+ '__compiletime_assert_1050' declared with attribute error: clamp() low limit
+ min greater than high limit max_avail
+Thread-Index: AQHbRyiOROIHG94lCEKLQVwMYBVLZbLXxsYA
+Date: Thu, 5 Dec 2024 15:59:36 +0000
+Message-ID: <68a3ca49c2644af5b2995038ca88a51b@AcuMS.aculab.com>
+References: <CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com>
+ <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain>
+In-Reply-To: <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: dma: st-stm32-dmamux: Add description for
- dma-cell values
-To: Ken Sloat <ksloat@cornersoftsolutions.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, dmaengine@vger.kernel.org,
- alexandre.torgue@foss.st.com, mcoquelin.stm32@gmail.com,
- conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org, vkoul@kernel.org,
- amelie.delaunay@foss.st.com
-References: <CADRqkYAaCYvo3ybGdKO1F_y9jFEcwTBxZzRN-Av-adq_4fVu6g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: WgtWQ5GiYDXQTnU6lWxj0INlljMHPNs9ReLqkERBR4A_1733414417
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CADRqkYAaCYvo3ybGdKO1F_y9jFEcwTBxZzRN-Av-adq_4fVu6g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 05/12/2024 16:32, Ken Sloat wrote:
-> The dma-cell values for the stm32-dmamux are used to craft the DMA spec
-> for the actual controller. These values are currently undocumented
-> leaving the user to reverse engineer the driver in order to determine
-> their meaning. Add a basic description, while avoiding duplicating
-> information by pointing the user to the associated DMA docs that
-> describe the fields in depth.
-> 
-> Signed-off-by: Ken Sloat <ksloat@cornersoftsolutions.com>
-> ---
-> .../bindings/dma/stm32/st,stm32-dmamux.yaml | 11 +++++++++++
-> 1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-> b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-> index f26c914a3a9a..aa2e52027ee6 100644
-> --- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-> +++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-> @@ -15,6 +15,17 @@ allOf:
-> properties:
-> "#dma-cells":
-> const: 3
+From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: 05 December 2024 15:16
+>=20
+> Add David to the CC list.
 
-Your patch is corrupted. Please use git send-email or b4 or b4+relay.
+I've been forwarded this one before.
+It is not unreasonable really.
 
-> + description: |
-> + Should be set to <3> with each cell representing the following:
+Is all stems from order_base_2(totalram_pages()).
+order_base_2(n) is 'n > 1 ? ilog2(n - 1) + 1 : 0'.
+And the compiler is generating two copies of the code.
+(Basically optimising for the zero case.)
+And the one for totalram_pages() being zero hits the check in clamp().
 
-Drop this part, const says this.
+Flipping to clamp(max_avail, min, max) will stop it bleating.
 
-> + 1. The mux input number/line for the request
-> + 2. Bitfield representing DMA channel configuration that is passed
-> + to the real DMA controller
-> + 3. Bitfield representing device dependent DMA features passed to
-> + the real DMA controller
-> +
-> + For bitfield definitions of cells 2 and 3, see the associated
-> + bindings doc for the actual DMA controller the mux is connected
+More interesting would be 'launder' the 0 in order_base_2().
+By adding something like:
+#define optimiser_hide_val(x) ({ \
+=09__auto_type(_x) =3D (x); \
+=09optimiser_hide_var(_x); \
+=09_x; \
+})
+and change order_base_2() to be:
+=09n > 1 ? ilog2(n - 1) + 1 : optimiser_hide_val(0);
+(ISTR there is a split for constant v non-constant before then.)
 
-This does not sound right. This is the binding for DMA controller, so
-you are saying "please look at itself". I suggest to drop this as well.
+=09David
 
+>=20
+> regards,
+> dan carpenter
+>=20
+> On Thu, Dec 05, 2024 at 08:15:13PM +0530, Naresh Kamboju wrote:
+> > The arm64 build started failing from Linux next-20241203 tag with gcc-8
+> > due to following build warnings / errors.
+> >
+> > First seen on Linux next-20241203 tag
+> > GOOD: Linux next-20241128 tag
+> > BAD: Linux next-20241203 tag and next-20241205 tag
+> >
+> > * arm64, build
+> >   - gcc-8-defconfig
+> >   - gcc-8-defconfig-40bc7ee5
+> >
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > Build log:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > net/netfilter/ipvs/ip_vs_conn.c: In function 'ip_vs_conn_init':
+> > include/linux/compiler_types.h:542:38: error: call to
+> > '__compiletime_assert_1050' declared with attribute error: clamp() low
+> > limit min greater than high limit max_avail
+> >   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER_=
+_)
+> >                                       ^
+> > include/linux/compiler_types.h:523:4: note: in definition of macro
+> > '__compiletime_assert'
+> >     prefix ## suffix();    \
+> >     ^~~~~~
+> > include/linux/compiler_types.h:542:2: note: in expansion of macro
+> > '_compiletime_assert'
+> >   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER_=
+_)
+> >   ^~~~~~~~~~~~~~~~~~~
+> > include/linux/build_bug.h:39:37: note: in expansion of macro
+> > 'compiletime_assert'
+> >  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+> >                                      ^~~~~~~~~~~~~~~~~~
+> > include/linux/minmax.h:188:2: note: in expansion of macro 'BUILD_BUG_ON=
+_MSG'
+> >   BUILD_BUG_ON_MSG(statically_true(ulo > uhi),    \
+> >   ^~~~~~~~~~~~~~~~
+> > include/linux/minmax.h:195:2: note: in expansion of macro '__clamp_once=
+'
+> >   __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_),
+> > __UNIQUE_ID(h_))
+> >   ^~~~~~~~~~~~
+> > include/linux/minmax.h:206:28: note: in expansion of macro '__careful_c=
+lamp'
+> >  #define clamp(val, lo, hi) __careful_clamp(__auto_type, val, lo, hi)
+> >                             ^~~~~~~~~~~~~~~
+> > net/netfilter/ipvs/ip_vs_conn.c:1498:8: note: in expansion of macro 'cl=
+amp'
+> >   max =3D clamp(max, min, max_avail);
+> >         ^~~~~
+> >
+> > Links:
+> > ---
+> > - https://storage.tuxsuite.com/public/linaro/lkft/builds/2pjAOE9K3Dz9gR=
+ywrldKTyaXQoT/
+> > - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-
+> 20241203/testrun/26189105/suite/build/test/gcc-8-defconfig/log
+> > - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-
+> 20241203/testrun/26189105/suite/build/test/gcc-8-defconfig/details/
+> > - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-
+> 20241203/testrun/26189105/suite/build/test/gcc-8-defconfig/history/
+> >
+> > Steps to reproduce:
+> > ------------
+> > # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
+> > --kconfig defconfig
+> >
+> > metadata:
+> > ----
+> >   git describe: next-20241203
+> >   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-=
+next.git
+> >   git sha: c245a7a79602ccbee780c004c1e4abcda66aec32
+> >   kernel config:
+> > https://storage.tuxsuite.com/public/linaro/lkft/builds/2pjAOE9K3Dz9gRyw=
+rldKTyaXQoT/config
+> >   build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2pj=
+AOE9K3Dz9gRywrldKTyaXQoT/
+> >   toolchain: gcc-8
+> >   config: gcc-8-defconfig
+> >   arch: arm64
+> >
+> > --
+> > Linaro LKFT
+> > https://lkft.linaro.org
 
-Best regards,
-Krzysztof
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
