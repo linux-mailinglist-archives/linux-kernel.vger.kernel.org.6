@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-433211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD789E552E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:15:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCDC9E552F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:16:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7CB18838D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFFA283606
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D396218AA4;
-	Thu,  5 Dec 2024 12:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155E02185A3;
+	Thu,  5 Dec 2024 12:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nQMq15ZU"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AyCr3/RQ"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8390218836;
-	Thu,  5 Dec 2024 12:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3303218AC1;
+	Thu,  5 Dec 2024 12:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400922; cv=none; b=N2R0Gvql0iqt8PPunS5xh04LU24OUTPyj2IPS/1ycCThAL2efiRMZKKYh8c7FdRdtWV1hXSOAJzFw71EuBUanCbMzDGIGNSGJmXuFauK4T3ciA5uNDw0kCtAWvxhxL8qdsyne4jAwcRGpOMyTmITrRUdKAcZFUbTJrJuLIVI0ek=
+	t=1733400926; cv=none; b=LHMtrmZbR9tX3FUxBhh3qTxYhkvedr8st+svxX0QzERlKH4gX/JMmMBcGx0gzcA78d3Ig62LswONaLlx6dXSTBN48OMETKHZyf2qiELvdyI2+7hovlpQoEzkGcYjPwAZKZNRzkD+jF71g6v+Be6DMfJw451RabaaZhbqgoAA7AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400922; c=relaxed/simple;
-	bh=h6EtCNUapE2Uy+r5ZkHsutNJ70Xge99WvLYAuUKOC7s=;
+	s=arc-20240116; t=1733400926; c=relaxed/simple;
+	bh=s9PqXLkNpVGPkGaqAGeOVRgPs+SSzp40pXGX6y3dMVc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NG+8kNU3NiPTTWQnqqajjUPiJbnM4pZrocj5rJ49LptHDfVs34z0SssUEc4q537P+x5dYo36FxyXjajRyxyS2FWvOHKZAZQVbB24FtBjl9wUfRfsppn6OuJTIQmJrGuzBT3MG6srfhnqngTuA6YDwObuuv3r6XAgl2pnlXYIqlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nQMq15ZU; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=iAd8JMlXCctpG1N57D8lj8We4b7bXbvZ107n1wHe86jMJpS66Raw7RWq4XAqZ3p25wdOLa7BtTw5F2Ie9ofiyFsti2WTyYsx2fsAXeiNm9fI89I884KIwO70t5QqdqbR5VBsEAvz5SLNxxIWyJ8kBM1v5G5dceFVtyC9aEnr6vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AyCr3/RQ; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733400919;
-	bh=h6EtCNUapE2Uy+r5ZkHsutNJ70Xge99WvLYAuUKOC7s=;
+	s=mail; t=1733400923;
+	bh=s9PqXLkNpVGPkGaqAGeOVRgPs+SSzp40pXGX6y3dMVc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nQMq15ZU6sWF/LKfR6yL2hLZS/UkmuE9glfKmCHW2b/epxMss/TUlmQ7Zp3SLN8y9
-	 y6GEyHBHkDr8smT01nq5yxsklJgEWa2Y+qDeFAihea4u87HsLux1Wimq9Zniz/wL6F
-	 JNV7zqksvzPpL3L4t5050qXDakToUKssNvnZp4ekvIedrnKSY4/ZiM0TfkWF2EEysI
-	 iLuezBXXTvSaG+EusgkvYOxshXL7oaFBacLAbvi8ydg6DHwyoSZy7YMPdqfgBe4AJj
-	 hyftXvMbuPqxd5U8vW2NkdAagyEQWlup0iDE5DIvnStXjLkeLbQ/xeG3dZZA7GSf1o
-	 mavCTuRx+rohw==
+	b=AyCr3/RQDBbHkpLbU9EyjM0n0rRgWL876AM4B2L0KQCXM/phSpOoYxqKWtkvRsq4U
+	 TDNgLWcIOdnRqrx4TI9ztjOSwagwi4d+f0ofOb9TqZAlNzedHOQhxzX8cn3qeylKWN
+	 9FGIWub2DTBXBEiGkJHUqTtZ03MN3JLQqmWZoc0EULG1c753LnNGr5GaOiOmX13Rv7
+	 /o7Pybotnudaa0hRMMH73UXnlPLOqlfA8V+rzAgqgecIH2d/b8zQs9fylTvkw+JICj
+	 taepxs+mYssa46ygpIFySRHF2SiXXfb9dFJE3lq2ODSIJTOu/j8jJS/R0ooZszj+KT
+	 JNydJ5GxId8Vg==
 Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1000])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0A92417E3661;
-	Thu,  5 Dec 2024 13:15:15 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BC57017E363B;
+	Thu,  5 Dec 2024 13:15:19 +0100 (CET)
 From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Thu, 05 Dec 2024 09:13:56 -0300
-Subject: [PATCH 3/5] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add DSP
- properties
+Date: Thu, 05 Dec 2024 09:13:57 -0300
+Subject: [PATCH 4/5] ASoC: dt-bindings: mediatek,mt8188-mt6359: Allow
+ DL_SRC/UL_SRC dai-links
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241205-genio700-audio-output-v1-3-0e955c78c29e@collabora.com>
+Message-Id: <20241205-genio700-audio-output-v1-4-0e955c78c29e@collabora.com>
 References: <20241205-genio700-audio-output-v1-0-0e955c78c29e@collabora.com>
 In-Reply-To: <20241205-genio700-audio-output-v1-0-0e955c78c29e@collabora.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -74,36 +74,31 @@ Cc: kernel@collabora.com, devicetree@vger.kernel.org,
  =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
 X-Mailer: b4 0.14.2
 
-Add the mediatek,adsp and mediatek,dai-link properties to allow
-describing the DSP configuration in the sound card node, as is already
-the case for other MediaTek SoCs.
+Add DL_SRC_BE and UL_SRC_BE as possible link-names for dai-links. These
+DAI back-ends are currently hardcoded in the driver to the
+MT6359 codec, but they may still be overridden with dai-links in the
+Devicetree to assign them additional codecs or even to make the
+dependency to the MT6359 codec explicit and allow device links to probe
+the components in the right order and avoid unnecessary probe deferrals.
 
 Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 ---
- .../devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml      | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-index ffe9347b543f5c687433862a21ad534b8aace27e..1e282c34dbd99851d3959b641096968c0b2e71be 100644
+index 1e282c34dbd99851d3959b641096968c0b2e71be..8993dff01244db9fc2fbf7bdefe7ea863be7c362 100644
 --- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
 +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-@@ -33,6 +33,16 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8188 ASoC platform.
+@@ -63,6 +63,8 @@ patternProperties:
+             - ETDM2_OUT_BE
+             - ETDM3_OUT_BE
+             - PCM1_BE
++            - DL_SRC_BE
++            - UL_SRC_BE
  
-+  mediatek,adsp:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle of MT8195 ADSP platform.
-+
-+  mediatek,dai-link:
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+    description:
-+      A list of the desired dai-links in the sound card. Each entry is a
-+      name defined in the machine driver.
-+
- patternProperties:
-   "^dai-link-[0-9]+$":
-     type: object
+       codec:
+         description: Holds subnode which indicates codec dai.
 
 -- 
 2.47.0
