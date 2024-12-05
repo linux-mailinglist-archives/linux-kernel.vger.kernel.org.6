@@ -1,175 +1,120 @@
-Return-Path: <linux-kernel+bounces-433177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C0A9E54C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:00:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A66016ABC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:00:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C7621767C;
-	Thu,  5 Dec 2024 12:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F4UMYirt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03C49E54CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:01:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116FA217649;
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A12B28643C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:01:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C08F21772D;
+	Thu,  5 Dec 2024 12:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="OtigY0H6"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08099217643;
 	Thu,  5 Dec 2024 12:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733400045; cv=none; b=HqSFFDy2FKimCDS2NB/702pk6WTR6PfxxW40K72WKTY62DJ0RYLxzVKJLi1bdGty0GrtDRxHpGHsiRyGlf1PqIu+sDOVyBUSj2EFk9wUCGvnX6Tzd+C+jCaXc0VpyzzQwpK4QkjolHKovO9Kk1MTLxNEKROhB+ktB1oJ288ZQ80=
+	t=1733400047; cv=none; b=W56pAMvBxFjpowX5wLn7mQ1kqQpXmYI0oED6Bj4DnDrY58u/fjhYRBrqeLU4pCUwdMb369FjkcN0cW/KUTOkvpk26IjJ+9knbkrZlm0uMNxXAICI54QNMTq8Gh+JtEWQSmlr9PTUJ53JZHagwXBY8exk4Y+hiLdobBPSYMqf4gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733400045; c=relaxed/simple;
-	bh=wENGL2+tKFj2g36FEcjLIdH7PlNn8qxutB+84PPmxyg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ADmRw+5L/+1tylDMwaagEaZXNJjYjx75qzQjr5oZORnbhs0cSrl92P7n7sY6MWT9pYJpAS6dVp4OPWEPlfIXxcn6vExt+6PSGpIR4ZT7J1DoV2WHTsnK1Qsq1DYktQdOemIMA04EK5EaHLceNpfpfwzHH5kQbiHmWBZee+sjx84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F4UMYirt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BomrG029397;
-	Thu, 5 Dec 2024 12:00:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=T6JAKjEVtMlYzBixygCl0j
-	wi/qQ4OMSQPTiERtHDNtU=; b=F4UMYirtwq1+65K3jjauePV0b0kabYI1Vne4JB
-	zpyNB/b+XdeyESbauabzY/9efI99Mlc41oHsEkfIf4WS/fCdb4SjUzaufvclXjnd
-	nLzmymchTcDZG3hnpy0LR6E4GgDpbUr43d6FlF4OzwKhnioEV7wOiOEiLqGI/CQR
-	La0e0ray5X9S0F+Rwok7WpKMGJK5+iAnRBY4HAWkStx6BZccGCWpOxe9hN8NAVbe
-	hsfW3riq9RUioRon+YKHyIs395wLelHz/l4CxhS0Rie8ljbXTLf+3SwLrprPIS38
-	Dj/fTM1Lb26PLpdv8ALH118yH96Jj/nHcZr1DM/tfNXY3juQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnj00pg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 12:00:36 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B5C0ZXU015791
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 12:00:35 GMT
-Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Dec 2024 04:00:31 -0800
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: <vkoul@kernel.org>, <martin.petersen@oracle.com>, <kees@kernel.org>,
-        <av2082000@gmail.com>, <fenghua.yu@intel.com>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_mdalam@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_srichara@quicinc.com>
-Subject: [PATCH v2] dmaengine: qcom: bam_dma: Avoid writing unavailable register
-Date: Thu, 5 Dec 2024 17:30:16 +0530
-Message-ID: <20241205120016.948960-1-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733400047; c=relaxed/simple;
+	bh=rttFMm5kMnZrxU5EMle2zdqqkrFEu0NuBMm1C9Q5uUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q4lsUV6B1DmKE8bL5sBL33ZMmPmMvCq3OTYATq+VrdKBUyiqiNZPBIBwTsKGo/XtN4c6xAlehqAhN5CJEwybaXYhIR4t+4/NegSNv0puXVkbH4+TDcmJCyRnfkW66apZEsFLKbEE2t3wHxRCZlfcW5t7FP7/Sv4xUpvirZTQSgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=OtigY0H6; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HsNXSjPnsOI9vNbgqxtYP3UXdwyVqEVl44CHRXepZI0=; b=OtigY0H605WikV5hVOm6qPluCM
+	wfVRPVYMiOr+KLLMIebOswK+ldRcWBUj/wV00qxozp9mHYWk1qqhv/CVeIsOyXUs4gKx4Roj3I0Cp
+	6ClQy7zHZzMSiXhEpdmYL78qb/Tsgl2YNHGdnnrTVL1exABi2Ntjj4bSl/4L5Gq+N7rjjD6fZrR4s
+	2qUBli8SYsHpJS4iF2Oncw47F5Mnofzo+U3VacyxfEg+PxklQsCJbAp3oPSe2x7r3+dOr3BR0lqNn
+	UNBvco+mxQPaPzRfzUg+r2tv1zVOW/C4RA6GMNck697clyb6SG+wmMtEqJ3R9FfSsDR9jQ7vsJIna
+	Su4p85Bg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36680)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tJAWy-0004ih-07;
+	Thu, 05 Dec 2024 12:00:28 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tJAWv-0006Wa-1D;
+	Thu, 05 Dec 2024 12:00:25 +0000
+Date: Thu, 5 Dec 2024 12:00:25 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 2/7] net: ethtool: add support for structured
+ PHY statistics
+Message-ID: <Z1GV2cY_LFH7mcAn@shell.armlinux.org.uk>
+References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
+ <20241203075622.2452169-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: R06QbIe8DXYg5_5aUFGC01q4XpFE3-ct
-X-Proofpoint-ORIG-GUID: R06QbIe8DXYg5_5aUFGC01q4XpFE3-ct
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 mlxscore=0 phishscore=0 impostorscore=0
- malwarescore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203075622.2452169-3-o.rempel@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Avoid writing unavailable register in BAM-Lite mode.
-BAM_DESC_CNT_TRSHLD register is unavailable in BAM-Lite
-mode. Its only available in BAM-NDP mode. So avoid writing
-this register for clients who is using BAM-Lite mode.
+On Tue, Dec 03, 2024 at 08:56:16AM +0100, Oleksij Rempel wrote:
+> From: Jakub Kicinski <kuba@kernel.org>
+> 
+> Introduce a new way to report PHY statistics in a structured and
+> standardized format using the netlink API. This new method does not
+> replace the old driver-specific stats, which can still be accessed with
+> `ethtool -S <eth name>`. The structured stats are available with
+> `ethtool -S <eth name> --all-groups`.
+> 
+> This new method makes it easier to diagnose problems by organizing stats
+> in a consistent and documented way.
+> 
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+...
+> diff --git a/include/linux/phy.h b/include/linux/phy.h
+> index 523195c724b5..20a0d43ab5d4 100644
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -1097,7 +1097,8 @@ struct phy_driver {
+>  	 * must only set statistics which are actually collected by the device.
+>  	 */
+>  	void (*get_phy_stats)(struct phy_device *dev,
+> -			      struct ethtool_eth_phy_stats *eth_stats);
+> +			      struct ethtool_eth_phy_stats *eth_stats,
+> +			      struct ethtool_phy_stats *stats);
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
+So we introduce a new function pointer in patch 1, and then change its
+prototype in patch 2... wouldn't it be better to introduce the new
+structure in patch 1, and then the function pointer in the next patch?
 
-Change in [v2]
+Thanks.
 
-* Replace 0xff with REVISION_MASK in the statement
-  bdev->bam_revision = val & REVISION_MASK
-
-Change in [v1]
-
-* Added initial patch
-
- drivers/dma/qcom/bam_dma.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-index d43a881e43b9..27c5b3b58f92 100644
---- a/drivers/dma/qcom/bam_dma.c
-+++ b/drivers/dma/qcom/bam_dma.c
-@@ -59,6 +59,9 @@ struct bam_desc_hw {
- #define DESC_FLAG_NWD BIT(12)
- #define DESC_FLAG_CMD BIT(11)
- 
-+#define BAM_LITE	0x13
-+#define BAM_NDP		0x20
-+
- struct bam_async_desc {
- 	struct virt_dma_desc vd;
- 
-@@ -398,6 +401,7 @@ struct bam_device {
- 
- 	/* dma start transaction tasklet */
- 	struct tasklet_struct task;
-+	u32 bam_revision;
- };
- 
- /**
-@@ -441,8 +445,9 @@ static void bam_reset(struct bam_device *bdev)
- 	writel_relaxed(val, bam_addr(bdev, 0, BAM_CTRL));
- 
- 	/* set descriptor threshold, start with 4 bytes */
--	writel_relaxed(DEFAULT_CNT_THRSHLD,
--			bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
-+	if (bdev->bam_revision >= BAM_LITE && bdev->bam_revision < BAM_NDP)
-+		writel_relaxed(DEFAULT_CNT_THRSHLD,
-+			       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
- 
- 	/* Enable default set of h/w workarounds, ie all except BAM_FULL_PIPE */
- 	writel_relaxed(BAM_CNFG_BITS_DEFAULT, bam_addr(bdev, 0, BAM_CNFG_BITS));
-@@ -1000,9 +1005,9 @@ static void bam_apply_new_config(struct bam_chan *bchan,
- 			maxburst = bchan->slave.src_maxburst;
- 		else
- 			maxburst = bchan->slave.dst_maxburst;
--
--		writel_relaxed(maxburst,
--			       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
-+		if (bdev->bam_revision >= BAM_LITE && bdev->bam_revision < BAM_NDP)
-+			writel_relaxed(maxburst,
-+				       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
- 	}
- 
- 	bchan->reconfigure = 0;
-@@ -1192,10 +1197,11 @@ static int bam_init(struct bam_device *bdev)
- 	u32 val;
- 
- 	/* read revision and configuration information */
--	if (!bdev->num_ees) {
--		val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
-+	val = readl_relaxed(bam_addr(bdev, 0, BAM_REVISION));
-+	if (!bdev->num_ees)
- 		bdev->num_ees = (val >> NUM_EES_SHIFT) & NUM_EES_MASK;
--	}
-+
-+	bdev->bam_revision = val & REVISION_MASK;
- 
- 	/* check that configured EE is within range */
- 	if (bdev->ee >= bdev->num_ees)
 -- 
-2.34.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
