@@ -1,106 +1,173 @@
-Return-Path: <linux-kernel+bounces-432705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFCD9E4F09
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:59:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA25A9E4F0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:00:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22948284BF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4998F18819D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E7A1C3050;
-	Thu,  5 Dec 2024 07:59:31 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27EF1C303E;
+	Thu,  5 Dec 2024 08:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVlXlbqH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDF61C07C0;
-	Thu,  5 Dec 2024 07:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C121C3C15
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733385571; cv=none; b=hVlfHlv586hc9h55qkHZ8vwp2RZQho9IuQbrQLsIUkKCN6SJsBE31YWCfNO247MslmxPCCLQ9ga4OZaz6DRKMbJw+GYLmh+9VPAPI9qomG5EZ08Xqzr/UPSyYjy3ZIqwRaV5jgTdxgJBdqz/5YjouqoCoQIAniyLWcuBbPz+XZ0=
+	t=1733385606; cv=none; b=PozqLubbK8u5N9FDsoXDX/6AY8D/CLhrdgBTpmUICC6xaO4mXKIjIMjuOBRFwgjfvZVXHCqDa1gCGvQbJjqlfI32a6bNZBacrkUopwOJ+zK0WmIPFn16EfkaiiWQmp72epfjgn6Oyr5F0/r/Plv4WbMHZJz6O6bPMdm09qgACJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733385571; c=relaxed/simple;
-	bh=+Kfe35p1h0mIRKJFisZYqKQ5qOz5tMN0HE760IaIWEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzsUilCgNED/PLD0AiHgG9CNkYOqWMeGKEM/g9QfqlJkFsBvVfwnL53GppNClH8qQun8z0aKhUngepI7EvRejGpsfANqUyJOwq+5qgAcez3bbEAweyq3xcqu7f7mmn6XnabYSUibhtJ6dh+xsoRlci6PSQ0zZ5g7ls/vwc7XSWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: t1ggzOYoRcSD8ttc/3R+Ow==
-X-CSE-MsgGUID: Te1BAz3nQwmaswrFJ4iMOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="51216585"
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="51216585"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 23:59:29 -0800
-X-CSE-ConnectionGUID: CvPtWnjlTNiQ9yP9Miql3A==
-X-CSE-MsgGUID: FKonspnPRkGmQGaO0f6esA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="131457772"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 23:59:26 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1tJ6ld-000000041Gm-43sk;
-	Thu, 05 Dec 2024 09:59:21 +0200
-Date: Thu, 5 Dec 2024 09:59:21 +0200
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Davide Ciminaghi <ciminaghi@gnudd.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH 06/11] x86: drop SWIOTLB and PHYS_ADDR_T_64BIT for PAE
-Message-ID: <Z1FdWZHa79OH2b9F@smile.fi.intel.com>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-7-arnd@kernel.org>
- <CAHp75VcQcDD3gbfc6UzH3wYgge6EqSBEyWWOQ_dTkz8Eo+XgFw@mail.gmail.com>
- <d84fc2e4-ca81-42b1-ae44-292d0b32c7ed@app.fastmail.com>
+	s=arc-20240116; t=1733385606; c=relaxed/simple;
+	bh=q7ysq63iGMnUWGArTOv4L3H5qVOaDhKU0OUZpTni/Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G4MXKmxMBtmDU/sk24eFpSLrwwOHx0Nb0laAmkHSIga6ICtQXQwYAUwOTw6mtO4mnO5Sj8/AlPxNuwYXIUqbmJBbFQm+8pUa6BgFoZDXyQnLsCFHj2zVs4I0eF87iNDvuUqhcR9EOFj0xXhBNZ/qZvnOjNQqyqrFwU4hUVDJ0HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVlXlbqH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 820FBC4CED1;
+	Thu,  5 Dec 2024 08:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733385605;
+	bh=q7ysq63iGMnUWGArTOv4L3H5qVOaDhKU0OUZpTni/Xg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jVlXlbqH6PR+Y396UgJAD97rcUiSCOmuBQtf1jEZvS3SAIn00BDsYr88FpVpPIZHt
+	 7mmi0arZ61XfJVSxN9nPdsGuztCxaS9OvLcDEG0ddlTNxf50eNfexvTbBGrvG1QvmM
+	 lvi3rO2j0X3iCPj0+Gpbl9iz2wokXZcOD8rg3IL6Im0MgbJdbYgQ5m92RHGwBgNI+E
+	 TyJMqg/SlcodLQCcpUziYZB9cYaqNBltsr0SVpunycEDlchCIZLF0WddiMxKcFAV7+
+	 oDB5Jmqm6mYDMq7odpIghOm31cR/8XBkh9bhdYXfKvD7/ftn43aQFS2gDNB5C8JJTG
+	 IuG6/oD8ktDjQ==
+Date: Thu, 5 Dec 2024 08:59:59 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 13/16] acpi/ghes: better name the offset of the
+ hardware error firmware
+Message-ID: <20241205085959.2223d079@foz.lan>
+In-Reply-To: <20241204173759.6f02561a@imammedo.users.ipa.redhat.com>
+References: <cover.1733297707.git.mchehab+huawei@kernel.org>
+	<20b003136d8c008fd54e8d40c806f13867336e13.1733297707.git.mchehab+huawei@kernel.org>
+	<20241204173759.6f02561a@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d84fc2e4-ca81-42b1-ae44-292d0b32c7ed@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 09:52:01PM +0100, Arnd Bergmann wrote:
-> On Wed, Dec 4, 2024, at 19:41, Andy Shevchenko wrote:
-> > On Wed, Dec 4, 2024 at 12:31 PM Arnd Bergmann <arnd@kernel.org> wrote:
+Em Wed, 4 Dec 2024 17:37:59 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-...
-
-> >>                 pr_warn_once("%s: Cannot satisfy [mem %#010llx-%#010llx] with a huge-page mapping due to MTRR override.\n",
-> >> -                            __func__, addr, addr + PMD_SIZE);
-> >> +                            __func__, (u64)addr, (u64)addr + PMD_SIZE);
-> >
-> > Instead of castings I would rather:
-> > 1) have addr and size (? does above have off-by-one error?) or end;
-> > 2) use struct resource / range with the respective %p[Rr][a] specifier
-> > or use %pa.
+> On Wed,  4 Dec 2024 08:41:21 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 > 
-> Changed as below now. I'm still not sure whether the mtrr_type_lookup
-> end argument is meant to be inclusive or exclusive, so I've left
-> that alone, but the printed range should be correct now.
+> > The hardware error firmware is where HEST error structures are  
+>       ^^^^^^^^^^^^^^^^^^^^^^^ I can't parse this, suspect you've meant something else here
+> 
+> > stored. Those can be GHESv2, but they can also be other types.
+> > 
+> > Better name the location of the hardware error.
+> > 
+> > No functional changes.
 
-Yep, thanks!
+I meant this fw_cfg file:
+#define ACPI_HW_ERROR_FW_CFG_FILE           "etc/hardware_errors"
+#define ACPI_HW_ERROR_ADDR_FW_CFG_FILE      "etc/hardware_errors_addr"
 
--- 
-With Best Regards,
-Andy Shevchenko
+What about changing description to:
+
+	The etc/hardware_errors fw_cfg file is where the HEST error
+	source structures are stored. Those can be GHESv2, but they can also
+	be other types.
+
+	For more details about error source structure, see:
+	https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#acpi-error-source
+
+	Better name the address variable from ghes_error_le to hw_error_le
+	to better reflect that.
+
+	No functional changes.
+
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+> > ---
+> >  hw/acpi/generic_event_device.c | 4 ++--
+> >  hw/acpi/ghes.c                 | 4 ++--
+> >  include/hw/acpi/ghes.h         | 2 +-
+> >  3 files changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> > index 663d9cb09380..17baf36132a8 100644
+> > --- a/hw/acpi/generic_event_device.c
+> > +++ b/hw/acpi/generic_event_device.c
+> > @@ -364,7 +364,7 @@ static const VMStateDescription vmstate_ghes = {
+> >      .version_id = 1,
+> >      .minimum_version_id = 1,
+> >      .fields = (const VMStateField[]) {
+> > -        VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
+> > +        VMSTATE_UINT64(hw_error_le, AcpiGhesState),
+> >          VMSTATE_END_OF_LIST()
+> >      },
+> >  };
+> > @@ -372,7 +372,7 @@ static const VMStateDescription vmstate_ghes = {
+> >  static bool ghes_needed(void *opaque)
+> >  {
+> >      AcpiGedState *s = opaque;
+> > -    return s->ghes_state.ghes_addr_le;
+> > +    return s->ghes_state.hw_error_le;
+> >  }
+> >  
+> >  static const VMStateDescription vmstate_ghes_state = {
+> > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> > index 52c2b69d3664..90d76b9c2d8c 100644
+> > --- a/hw/acpi/ghes.c
+> > +++ b/hw/acpi/ghes.c
+> > @@ -359,7 +359,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+> >  
+> >      /* Create a read-write fw_cfg file for Address */
+> >      fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
+> > -        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
+> > +        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
+> >  
+> >      ags->present = true;
+> >  }
+> > @@ -385,7 +385,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+> >      }
+> >      ags = &acpi_ged_state->ghes_state;
+> >  
+> > -    start_addr = le64_to_cpu(ags->ghes_addr_le);
+> > +    start_addr = le64_to_cpu(ags->hw_error_le);
+> >  
+> >      start_addr += source_id * sizeof(uint64_t);
+> >  
+> > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> > index 21666a4bcc8b..39619a2457cb 100644
+> > --- a/include/hw/acpi/ghes.h
+> > +++ b/include/hw/acpi/ghes.h
+> > @@ -65,7 +65,7 @@ enum {
+> >  };
+> >  
+> >  typedef struct AcpiGhesState {
+> > -    uint64_t ghes_addr_le;
+> > +    uint64_t hw_error_le;
+> >      bool present; /* True if GHES is present at all on this board */
+> >  } AcpiGhesState;
+> >    
+> 
 
 
+
+Thanks,
+Mauro
 
