@@ -1,146 +1,167 @@
-Return-Path: <linux-kernel+bounces-432467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949379E4B94
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:06:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA8D9E4B99
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:07:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5743D16A31C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:07:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F1D54782;
+	Thu,  5 Dec 2024 01:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vRqhvMjI"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EDC1286254
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:06:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5B45028C;
-	Thu,  5 Dec 2024 01:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aS1YfdXB"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD4C16415;
-	Thu,  5 Dec 2024 01:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009DD3B1A4
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 01:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733360783; cv=none; b=nwwPr+w/JfCS4Aqh6Jax/0olqT19SoRIw/EImOBqBIjkahqEtUhbLBOe/GBPEjNJvzw/Ciex+ZyFAG2JF2kaShn+FIwu1FiDiyWom5sxZnSGlx3xZimbJm3NC5ff20GpNdELIS47ei4b7P3oSr/pIOvUMd8pdN5qkAVdpB9Y40M=
+	t=1733360872; cv=none; b=keSop3Icpfmt301eJi2AGMfFupsDTpvm4Vp3we2zyxxh1fAvy3y/96X2SePY2hslDrGX+ZDdF4M5rBaq9EkanXLJ3xeOjIFiRbqwvwRXzPRv3odVnCCnfOsUVOPZxuQnVn2g+uUZM/1Sea9Pp1IM03NNw+TqbJo8zhYBk7cpUNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733360783; c=relaxed/simple;
-	bh=QKqR2ZVRmaHoDLx2netLJSiB+3gpaG9hpVtBTEEBqdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TnlsSYn6J4O+prjMHmogGe5ucvYpt1wM/BGF1Lp9ItV4rPaxbJfNkCFYywuxY/cZxHpTzMFWLJsMKX1+Dw2+rjz1fgb9qPef43i+tnHvDDWEXHsoxN6+Qxo0H/P8lHXywf+34yf7ky3Bfy7YKyZJvDOGCcNLcA5XBHQtxR7mcqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aS1YfdXB; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e39f43344c5so584407276.1;
-        Wed, 04 Dec 2024 17:06:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733360780; x=1733965580; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QNaROx006A92BJIFhAC3avoJJJdYbGXKC07Oc5xhq/Q=;
-        b=aS1YfdXBTeiAs8d3uolqou9PljHLUi1jKbErBJU5znpxhCZrTV/8nB46FDfwwz0QpV
-         jBRgyq1dRQ4iUjAfynpAtux/kD+C+aBhTBYs7IX01gda+nR2urpIDpuGbtFI9vTOjmk6
-         G3rIdJ65C9voocGVV357zHoppMKuWbbP/dL626b2B93sYZ7Mwq0a4e7+FJgT+0nnNlYy
-         iZHtWgnPy2+/PutCfCEnGtDXwtTdNQ7eRktRnKtzbhoNe+wCxcGZ9MABIP5l39ujS2Lz
-         mWUOOl9eyDCUARCS//QmYW4MJC3Fo8zPo+MlDRRMVe5OMva/MIRy90FzYmrETnlS83M8
-         jRVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733360780; x=1733965580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QNaROx006A92BJIFhAC3avoJJJdYbGXKC07Oc5xhq/Q=;
-        b=TQ5g8l0c3w+cZ8HDBY7fw3231aFSKtv/Oza4a2tbrwg/Ztg0Xt32FW/43Wzd7eTrkR
-         3KsKDm/9Vo6/Ra9cmTYUduUY6FlQfIWusrhc/0t4FO9pp9lrsvdGjB/TC5oZmg2zt/Al
-         wZ15Ryw6Roj3D11jn3Vhlk1gpuqxUXl5NCVQhMcUgMqbDq5dII/mxdg96U0QDTUGgUcE
-         VvZLqsQk9q359i00NcQFTyVT3dCLqq5W4cIGy8Z7N8zLCD8uH9+G8O/J5tGjsekovPTi
-         bdxPjD5TUPCOGiAmyltugFVvRA8bgg0ELzCpLXWUTNu7/kfndrvCRM4dZGmvQHOJbEWZ
-         OTpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVw5CILTLNebkEaAId585R2eIcFsL7DnLAA5TuCS+W8Gms/hNWlpbOjcV+4t1ajHj2hI35T3w7LX/k0Na7UBJq2H/k=@vger.kernel.org, AJvYcCWQ8z/+A6Dz/4Cn2VpKp28EFh6/2exzDYX+/LzzLPv3ADeHWpu5iIMnZxiuR6QVRI235jszA7Vkb6yaMSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTwgfUoMMtUWB72kiCYdZsYefWZvWn7Nm8wd3Ogg86Xcez2oiU
-	QLjly7F/tGc+BJEehfGfLPCxWpgTOk19DVE4zVxXrXOV0DpAwKDIwWZXDj+yICWRMBdYSTjBKOk
-	UxNz2TiUOzeNN4aYD6OEphLd2P+s=
-X-Gm-Gg: ASbGnctIJ3UOHnYBccq1BfVccZCPnnwo5sXlzHvU8mGhhDdplEiiKVjkRIG+VFjupa0
-	Ro9yPUJF/u9eF24VRXzLgSyXw+S2K0Q==
-X-Google-Smtp-Source: AGHT+IER+Xi4ZisxufHbQx8cuMyXEouv70C6SIaLOg/n7VBOcw+yR5wvDbJJeAr7BXkvfySexaX38rdEEG0QNP1YDwA=
-X-Received: by 2002:a05:690c:6486:b0:6ef:4cb2:8b4c with SMTP id
- 00721157ae682-6efad1bc2cemr106996637b3.23.1733360780634; Wed, 04 Dec 2024
- 17:06:20 -0800 (PST)
+	s=arc-20240116; t=1733360872; c=relaxed/simple;
+	bh=pMbb3toWMK0n6yHW/9zWgt9MgBH6/2F+uu1cyUrTeY0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Wv7SHxFy8c0uOuYCfsLq4UlYVLb5whP6PBlFWKJjzdwd/85IUZDYDXCTft8FO1/CFPe0ZPJnaNqaPaOF+B+GEakUoPmO12lchoN24bWOiNO+uuUVLIp/D0BGD9egivZb6kZ53NwVar1+ETK8eVsXQsp+VczHBAeNXyhOPOb+7go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vRqhvMjI; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241205010746epoutp02985bceaf3c8eb2646aecdff97d60f340~OIoZPDOpH0924009240epoutp02j
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 01:07:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241205010746epoutp02985bceaf3c8eb2646aecdff97d60f340~OIoZPDOpH0924009240epoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733360866;
+	bh=SURSzNB545P9Vk5b0nJvlTKPTgVi4ec+V0qYVG4L0sk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=vRqhvMjIw7yO9hQQTghup+rldxt8VO/iNHHnxXNn+IieOUr8WrRgiJDxwyReM/ZMh
+	 dAn3R09cSjAnigjjx9oJzrMMd1Q5XXVq++71AgieYiioWIthNYrLPdC924F7GITO0X
+	 rZwk3fdMas+PNo9zqVDAAH0GDxD4Cnrhe9e6U/2E=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241205010746epcas5p2fe7743c64f6f56f4f0116d8db4e84605~OIoYsYNJe1570115701epcas5p2i;
+	Thu,  5 Dec 2024 01:07:46 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Y3bpm41zKz4x9Q1; Thu,  5 Dec
+	2024 01:07:44 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7F.B1.19710.0ECF0576; Thu,  5 Dec 2024 10:07:44 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241205010744epcas5p31a3babd89f127bfa9fc1432e95ecc2bd~OIoWsH3-b0341203412epcas5p3r;
+	Thu,  5 Dec 2024 01:07:44 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241205010744epsmtrp1392341daf1c97dd7f1e73fb1717e6570~OIoWrSpZU0281902819epsmtrp1c;
+	Thu,  5 Dec 2024 01:07:44 +0000 (GMT)
+X-AuditID: b6c32a44-363dc70000004cfe-44-6750fce003b9
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	32.A5.18949.FDCF0576; Thu,  5 Dec 2024 10:07:43 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241205010742epsmtip1e2d142b116ec47f8b69a575b24a7907f~OIoVaMYWv0580905809epsmtip1K;
+	Thu,  5 Dec 2024 01:07:42 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Igor Belwon'" <igor.belwon@mentallysanemainliners.org>, "'Rob
+	Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20241204145559.524932-3-igor.belwon@mentallysanemainliners.org>
+Subject: RE: [PATCH v2 2/2] arm64: dts: exynos990: Add pmu and syscon-reboot
+ nodes
+Date: Thu, 5 Dec 2024 06:37:41 +0530
+Message-ID: <0f2301db46b2$16b204d0$44160e70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203222750.153272-1-rosenp@gmail.com> <Z0-LgWETqKZe2uyV@shell.armlinux.org.uk>
-In-Reply-To: <Z0-LgWETqKZe2uyV@shell.armlinux.org.uk>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 4 Dec 2024 17:06:09 -0800
-Message-ID: <CAKxU2N_x+DaoSZykT--94qphbXgLTU=QHSEQ0FO7VH2oPN=kmQ@mail.gmail.com>
-Subject: Re: [PATCHv4 net-next] net: modernize ioremap in probe
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, Kurt Kanzenbach <kurt@linutronix.de>, 
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Chris Snook <chris.snook@gmail.com>, 
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Richard Cochran <richardcochran@gmail.com>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:RENESAS ETHERNET SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGGNHhzN/gxjLnIJKtzBVvnrIc1QgGfjHvkAooqZNizX60xoA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmhu6DPwHpBsdmSlqs2XuOyWL+kXOs
+	Ftf2z2KxeDnrHpvFpsfXWC0u75rDZjHj/D4mi/97drA7cHhsWtXJ5rF5Sb3Hw+2H2Dw+b5IL
+	YInKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBukJJ
+	oSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSY
+	kJ0xeddx5oIujorJL3awNjA+Yeti5OSQEDCR+DzzCHsXIxeHkMBuRoneRXtZIZxPjBITFzxj
+	gXC+MUpcOrKFFablw85eqKq9jBIzf15mBkkICbxglNh8xhDEZhPQldixuI0NpEhEYCejxIad
+	85lAHGaBfiDnywuwUZwCvhLHP3YDVXFwCAuESPx+zgcSZhFQkXi4opERxOYVsJTYPf8qM4Qt
+	KHFy5hMWEJtZQF5i+9s5zBAXKUj8fLoMbKSIgJPEqp2vGSFqxCVeHoV4TkJgKodE09qlUF+7
+	SNy4tBvKFpZ4dXwLO4QtJfGyvw3KzpY4fnEWVE2FRHfrR6i4vcTORzdZQG5mFtCUWL9LH2IX
+	n0Tv7ydMIGEJAV6JjjYhiGpVieZ3V1kgbGmJid3d0ED0kNh6q4dlAqPiLCSfzULy2SwkH8xC
+	WLaAkWUVo2RqQXFuemqyaYFhXmo5PMKT83M3MYITqZbLDsYb8//pHWJk4mA8xCjBwawkwhuk
+	HZAuxJuSWFmVWpQfX1Sak1p8iNEUGNwTmaVEk/OBqTyvJN7QxNLAxMzMzMTS2MxQSZz3devc
+	FCGB9MSS1OzU1ILUIpg+Jg5OqQamW+81u324reM3R7zJFTvGt4550me9nBfbJ2dOKenZp735
+	SejpEz4yEk8D/628dZt7kS/7/+nyQRs66iSv3riw+ddjqfdl5z8fU74n+fTmm/+JUUtlGdTj
+	J7n0HL+r1CBif3mi+RtDpbQCkYtxBu2KC64YSGfYccyvuXZ66rqM2OTY2FO+BT8Wrqtznalg
+	Hi16w8Tq56w5vU8blBsbz82qdJLJYnWcHhDmOu0J++nDnY9sTBcn/XSc6CwrFlogEm8u4Zm6
+	efWpeydXu3dl7PFYKefRP2tTUbJczB29TY7Ry118Uh5YbvrI2irMmG8/7fvpry/SD1vPebvC
+	00qFXdc1cp/FYslY3RweO+m1BQ+UWIozEg21mIuKEwG+HKkTLQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42LZdlhJTvf+n4B0g1vXLC3W7D3HZDH/yDlW
+	i2v7Z7FYvJx1j81i0+NrrBaXd81hs5hxfh+Txf89O9gdODw2repk89i8pN7j4fZDbB6fN8kF
+	sERx2aSk5mSWpRbp2yVwZUzedZy5oIujYvKLHawNjE/Yuhg5OSQETCQ+7OxlBbGFBHYzSlz7
+	VwIRl5a4vnECO4QtLLHy33Mgmwuo5hmjxKb/FxlBEmwCuhI7FrexgSREQJq//3zCCuIwC0wG
+	cg6sZYJouc8ocWnFZrB9nAK+Esc/dgPZHBzCAkESx05FgoRZBFQkHq5oBJvKK2ApsXv+VWYI
+	W1Di5MwnLCDlzAJ6Em0bwUqYBeQltr+dwwxxnYLEz6fLwD4QEXCSWLXzNVSNuMTLo0fYJzAK
+	z0IyaRbCpFlIJs1C0rGAkWUVo2RqQXFuem6xYYFRXmq5XnFibnFpXrpecn7uJkZwLGlp7WDc
+	s+qD3iFGJg7GQ4wSHMxKIrxB2gHpQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJ
+	zU5NLUgtgskycXBKNTAlTZWQ+7B3XuyWtYX/1r7gdeyTt3t87EKbXMiLjxNYPvw/WLRL+9aD
+	k1zyt77V8t6b/q/zYcXFz7yLhb+Hzd335l6H7dINuimzdq29P6G1ToOnVaa8wjKJp8Ty3OOj
+	fxt8tZ59NfDfevDM88f7VipHfJUq2P+pMfLHqrm3JJ5Yy99peu6TbmW1R2lfWx3HWSH+TYd8
+	skNaZh+rSIr6qDrvFte94obo6nO1Xg8zLtiHv5zBu0/zZ8J1hY/fV/rdMV1qP8suyk5vlfGp
+	ih8yq9c6iGhsWHM+o9jjTIKpKd+09xO5vB4Vu6+4PnVi/wrLhrpoNrPXi65LGO072rRartzP
+	QeLt9zKVVreeN/LPIluZlFiKMxINtZiLihMBuUGddRQDAAA=
+X-CMS-MailID: 20241205010744epcas5p31a3babd89f127bfa9fc1432e95ecc2bd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241204145953epcas5p4d9d541ee5d585d9e882c3b4b202b96f5
+References: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
+	<CGME20241204145953epcas5p4d9d541ee5d585d9e882c3b4b202b96f5@epcas5p4.samsung.com>
+	<20241204145559.524932-3-igor.belwon@mentallysanemainliners.org>
 
-On Tue, Dec 3, 2024 at 2:51=E2=80=AFPM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, Dec 03, 2024 at 02:27:50PM -0800, Rosen Penev wrote:
-> > resource aquisition and ioremap can be performed in one step.
-> ...
-> > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/=
-net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > index 571631a30320..af9291574931 100644
-> > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > @@ -7425,21 +7425,16 @@ static int mvpp2_init(struct platform_device *p=
-dev, struct mvpp2 *priv)
-> >  static int mvpp2_get_sram(struct platform_device *pdev,
-> >                         struct mvpp2 *priv)
-> >  {
-> > -     struct resource *res;
-> >       void __iomem *base;
-> >
-> > -     res =3D platform_get_resource(pdev, IORESOURCE_MEM, 2);
-> > -     if (!res) {
-> > +     base =3D devm_platform_ioremap_resource(pdev, 2);
-> > +     if (IS_ERR(base)) {
-> >               if (has_acpi_companion(&pdev->dev))
-> >                       dev_warn(&pdev->dev, "ACPI is too old, Flow contr=
-ol not supported\n");
-> >               else
-> >                       dev_warn(&pdev->dev, "DT is too old, Flow control=
- not supported\n");
-> > -             return 0;
-> > -     }
-> > -
-> > -     base =3D devm_ioremap_resource(&pdev->dev, res);
-> > -     if (IS_ERR(base))
-> >               return PTR_ERR(base);
-> > +     }
->
-> This is not equivalent. This means if ioremap() fails inside
-> devm_platform_ioremap_resource(), we end up printing a message that
-> blames the firmware, which is wrong.
->
-> It also changes a "resource missing, proceed anyway" situation into
-> a failure situation.
->
-> Please drop this change, "cleaning" this up is introducing bugs.
-Will do in v5.
->
-> Thanks.
->
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Hi Igor
+
+> -----Original Message-----
+> From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> Sent: Wednesday, December 4, 2024 8:26 PM
+> To: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Alim Akhtar
+> <alim.akhtar@samsung.com>
+> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+linux-
+> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH v2 2/2] arm64: dts: exynos990: Add pmu and syscon-reboot
+> nodes
+> 
+> Add PMU syscon, and syscon-reboot nodes to the Exynos990 dtsi.
+> 
+> Reboot of the Exynos990 SoC is handled by setting bit(SWRESET_TRIGGER[1])
+> of SWRESET register (PMU + 0x3a00).
+> 
+> Tested using the "reboot" command.
+> 
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> ---
+
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+>  arch/arm64/boot/dts/exynos/exynos990.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+[snip]
+> 2.45.2
+
+
 
