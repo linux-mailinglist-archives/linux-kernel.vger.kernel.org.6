@@ -1,182 +1,99 @@
-Return-Path: <linux-kernel+bounces-433347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD899E5749
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:35:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D3F9E5731
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:32:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A4116D3D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00C6B2846A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F35A218E9F;
-	Thu,  5 Dec 2024 13:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BBE219A69;
+	Thu,  5 Dec 2024 13:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdiJo0dm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXL2acNq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0931DED77
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 13:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF745218EAF;
+	Thu,  5 Dec 2024 13:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733405508; cv=none; b=Qaw1AahiNUIkDemkWrJykoz1BXnNmNHCdTl4vCTIL5T9z134beaMyeMs7ppvYfC8g6l/jAj47xIu7vNHuQ9udjPc/9odb4dwNwZVPCNdjHeKYJRL95zfw0VbpVmWxMoX6sZqUVU9+Tp68nM4QMmbsE+vU0kmofnb3Zvh68ZeO7s=
+	t=1733405509; cv=none; b=VSKe50kuR6IpP4DfAf2EZdopjOGdYQvjLKyeyCh4RkGzQEw67esTqV+cMbTBmbm0yfuA7LXsSPiXSmLS07vc6WxaPeGFA9OpsHzEY4QtYOpRot3tuCvQk6dfizUVurJLgJ3YeVtuE+XiwNm8+EnSfnfbRCGDRu2zwf5YL4eaUH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733405508; c=relaxed/simple;
-	bh=Op/DB6ysmIo5E1AItBOhOb/hOmUr1Ei/U42PewlnsN4=;
+	s=arc-20240116; t=1733405509; c=relaxed/simple;
+	bh=WlgjCAS3F3ARAKZEAKQFnrIjg4AKSbxmMgw9Hy07CCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UvTHso3W7LH6Ot1s7fnj93VJqXrNrPSADgxPa05fUeKw+lEq/meDNKKFqq0zp0DFr8blLsMltjjo9aZZWPgDdvIBO0gHFRYqYEEfO8c0u939ju6ihvNMvnkS1tefDvEt2PfIa0suxxtEJXSMnqpgGqPnGz1jPIwz7uRR9r12qds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdiJo0dm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A1DC4CED1;
-	Thu,  5 Dec 2024 13:31:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWFWiDMRUcunGNUoaPfn7JYbGuYANsWCSAOXRzMItB/fPcRDT+2/uK5+h+TYIM7P/InpvOiGLQNgeZRUp5KMy4qS1+E0eYe2y2pBR7XO77N4FnXYFseHR5NN2dpe9JLNbvJFU0t+TYF/cNTukjTSZEQNqSQ5bEQQsM4bkL8vLOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXL2acNq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E8BC4CEDC;
+	Thu,  5 Dec 2024 13:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733405507;
-	bh=Op/DB6ysmIo5E1AItBOhOb/hOmUr1Ei/U42PewlnsN4=;
+	s=k20201202; t=1733405509;
+	bh=WlgjCAS3F3ARAKZEAKQFnrIjg4AKSbxmMgw9Hy07CCY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NdiJo0dm8ReA27KqBJdkMYoMHkb6W4T80bcyXZuujvVr7Vd/WMTRsP+fTPcKc8paC
-	 1/cmDYX8LVyij7pa9kav+grajswBOSUQEscbD4MGRI4qMPHi+2MuSPojxcwdVsPG1Z
-	 5pzN4GyrKpDwT6CQLl9MGUl1Nx1sD3X91ls9Q/Cygu6w6NqbuNQkzTCePcHR5zo9qp
-	 2E8e+5xh7T5NZC1SVYMCqOOydAreaTxKGukZVu7Wp4EDIz49SvOjWvDXjmCm6Xg3J9
-	 pQJqjcfTzBT0IVUdiFys4GFb0WeQjP4gX/E/k1igBckZMwNDQEC5ZNy4tFlnygrVAX
-	 aWAWf/HVDTpKA==
-Date: Thu, 5 Dec 2024 14:31:42 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Ning Sun <ning.sun@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	tboot-devel@lists.sourceforge.net
-Subject: Re: [PATCH 3/4] x86/boot: split parsing of boot_params into a helper
- function
-Message-ID: <Z1GrPjyFQvhHYIIm@gmail.com>
-References: <20241203112525.591496-1-rppt@kernel.org>
- <20241203112525.591496-4-rppt@kernel.org>
+	b=DXL2acNq5+laWr1VhdgaBXuIKQ4YiJeo2ypPoNMc0niOp9v2TxSps34kFoGhXz+b1
+	 nBjusCQ9hRRqM4+I64mLmuYVes585Rvbd2dSkQLst79TSGZPNKZT+dmRaCKO2Z5spG
+	 G6WyHWCP8egps+ZwztSS80aa7EMXjgm0AEKgEGQ0xReZXAeKvxRXew6hHVLm9LNaKC
+	 HqbVoCvzMFH4F83NAgdyajKdCsrzbEw8kSefIIYuPBWLYTubbdOKHMjS1tKnN4XObj
+	 eFtSqYYi44Bnp/oOADtGFmPF1Pqyrwhbo1bDD0W6haoUKwwb7c6klLOFj6C9UwlDNt
+	 4JJ7IXTar3fUg==
+Date: Thu, 5 Dec 2024 13:31:43 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ASoC: codecs: wcd9335: Add define for number of DAIs
+Message-ID: <08e07421-8a9b-4535-9cd5-9383ca9024b3@sirena.org.uk>
+References: <20241205084021.35610-1-krzysztof.kozlowski@linaro.org>
+ <c3d2477b-f12a-47dd-bf95-927e6c0d8fd5@sirena.org.uk>
+ <CABTCjFA9DyRzca93qoS5_+sfc2RLfNVNqN14WVfKODjHykwGJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="I3DviFfx2zdhxkGX"
+Content-Disposition: inline
+In-Reply-To: <CABTCjFA9DyRzca93qoS5_+sfc2RLfNVNqN14WVfKODjHykwGJQ@mail.gmail.com>
+X-Cookie: System checkpoint complete.
+
+
+--I3DviFfx2zdhxkGX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241203112525.591496-4-rppt@kernel.org>
 
+On Thu, Dec 05, 2024 at 04:29:45PM +0300, Dzmitry Sankouski wrote:
 
-* Mike Rapoport <rppt@kernel.org> wrote:
+> This is the 1st patch in series, and NUM_CODEC_DAIS redefine from bindings
+> is deleted in the 2nd one.
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Makes setup_arch a bit easier to comprehend.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  arch/x86/kernel/setup.c | 72 +++++++++++++++++++++++------------------
->  1 file changed, 41 insertions(+), 31 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index d299fe5bda25..d4bb9a2e8f15 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -426,6 +426,42 @@ static void __init parse_setup_data(void)
->  	}
->  }
->  
-> +static void __init parse_boot_params(void)
-> +{
-> +	ROOT_DEV = old_decode_dev(boot_params.hdr.root_dev);
-> +	screen_info = boot_params.screen_info;
-> +	edid_info = boot_params.edid_info;
-> +#ifdef CONFIG_X86_32
-> +	apm_info.bios = boot_params.apm_bios_info;
-> +	ist_info = boot_params.ist_info;
-> +#endif
-> +	saved_video_mode = boot_params.hdr.vid_mode;
-> +	bootloader_type = boot_params.hdr.type_of_loader;
-> +	if ((bootloader_type >> 4) == 0xe) {
-> +		bootloader_type &= 0xf;
-> +		bootloader_type |= (boot_params.hdr.ext_loader_type+0x10) << 4;
-> +	}
-> +	bootloader_version  = bootloader_type & 0xf;
-> +	bootloader_version |= boot_params.hdr.ext_loader_ver << 4;
-> +
-> +#ifdef CONFIG_BLK_DEV_RAM
-> +	rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
-> +#endif
-> +#ifdef CONFIG_EFI
-> +	if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
-> +		     EFI32_LOADER_SIGNATURE, 4)) {
-> +		set_bit(EFI_BOOT, &efi.flags);
-> +	} else if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
-> +		     EFI64_LOADER_SIGNATURE, 4)) {
-> +		set_bit(EFI_BOOT, &efi.flags);
-> +		set_bit(EFI_64BIT, &efi.flags);
-> +	}
-> +#endif
-> +
-> +	if (!boot_params.hdr.root_flags)
-> +		root_mountflags &= ~MS_RDONLY;
-> +}
-> +
->  static void __init memblock_x86_reserve_range_setup_data(void)
->  {
->  	struct setup_indirect *indirect;
-> @@ -803,35 +839,11 @@ void __init setup_arch(char **cmdline_p)
->  
->  	setup_olpc_ofw_pgd();
->  
-> -	ROOT_DEV = old_decode_dev(boot_params.hdr.root_dev);
-> -	screen_info = boot_params.screen_info;
-> -	edid_info = boot_params.edid_info;
-> -#ifdef CONFIG_X86_32
-> -	apm_info.bios = boot_params.apm_bios_info;
-> -	ist_info = boot_params.ist_info;
-> -#endif
-> -	saved_video_mode = boot_params.hdr.vid_mode;
-> -	bootloader_type = boot_params.hdr.type_of_loader;
-> -	if ((bootloader_type >> 4) == 0xe) {
-> -		bootloader_type &= 0xf;
-> -		bootloader_type |= (boot_params.hdr.ext_loader_type+0x10) << 4;
-> -	}
-> -	bootloader_version  = bootloader_type & 0xf;
-> -	bootloader_version |= boot_params.hdr.ext_loader_ver << 4;
-> -
-> -#ifdef CONFIG_BLK_DEV_RAM
-> -	rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
-> -#endif
-> -#ifdef CONFIG_EFI
-> -	if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
-> -		     EFI32_LOADER_SIGNATURE, 4)) {
-> -		set_bit(EFI_BOOT, &efi.flags);
-> -	} else if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
-> -		     EFI64_LOADER_SIGNATURE, 4)) {
-> -		set_bit(EFI_BOOT, &efi.flags);
-> -		set_bit(EFI_64BIT, &efi.flags);
-> -	}
-> -#endif
-> +	/*
-> +	 * Translate the fields of struct boot_param into global variables
+I know, that still means this change is broken.
 
-s/struct boot_param
- /'struct boot_param'
+--I3DviFfx2zdhxkGX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +	 * represting these parameters.
+-----BEGIN PGP SIGNATURE-----
 
-Typo...
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdRqz4ACgkQJNaLcl1U
+h9Dcygf5ATT2STPmD4jp75AW1WldR0rtXa+QNBp3VmNI3O3U2tIDbpr4rVuICxiV
+WdRUEb08sXFyWuHV4k294ySDbdl7umtfI0eHx4NCug915XsAzbzv0MzMFXITeV83
+RC0NuOa05QdzhtVHfoRvvqBd89xJX6aoDQ+z1PKAkTy8a3iVwlQ4bMlnKJQ+HLk3
+zlFYVAgXgBGRzXH78vJwUzx0D+KVjTFSt7atuxgRVekJCXEy5AnpRHgP3bwFMlSO
+6eaUaJEiNpJydyukMrVLkOMr32R4+72Jax4mPZPVk/9ClJ0yo3d7jcpnztbO0KU+
+Sg2CvQnNqtqYCrFaeKfx3v00NwPpvQ==
+=dh68
+-----END PGP SIGNATURE-----
 
-> +	 */
-> +	parse_boot_params();
-
-Also, why not move this explanatory comment to the definition of the new 
-helper function?
-
-Thanks,
-
-	Ingo
+--I3DviFfx2zdhxkGX--
 
