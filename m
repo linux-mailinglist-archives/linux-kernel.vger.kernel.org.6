@@ -1,192 +1,112 @@
-Return-Path: <linux-kernel+bounces-432737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970389E4F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE589E4F9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 635011673E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64B88167039
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278AA1D416B;
-	Thu,  5 Dec 2024 08:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F241D27BB;
+	Thu,  5 Dec 2024 08:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Te7OWJPZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="bDMJAuVg"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE851B1D65
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE641C4A13
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733386938; cv=none; b=W4xB5gKTkzbYDIngvLmFp4PquA/Le8t9BrCQ26Pba8faYPjjIVFG5nJN6HEXLkq01nJ6R74GPuohaX5d4uDA6HBjcJGiDcn69mFE2UpLAThyhAW4m9UJiEhVOvsZNBe3jzszZ2YfHBrNaUOkV3khHVcwWwAViDVG7QGdytkcI8Q=
+	t=1733387096; cv=none; b=Kh7RmC8/+2m95Lajv/Ap/5GrgoVODN7td1CyAUWJ5at2INwJxWiOIwXL4FxllqjbCl1ALxG5Y23tYlOGODvkHaVPkmUYo/As9ESTSz0jRXmFGek3OJxEUOh7/ZZfLoLVUSo2VDccw4zno1RqiW2Q73tRu+Jcp7XvWqh51g1DKkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733386938; c=relaxed/simple;
-	bh=Z+F2W3hNh45ECvBXWOYNZwLYFFwaeFbyUbIMfbSXiCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=clNq7lrvS8Ca7FGV46snSsxI6mDRzALS2rbHUQ7WKgdja6q18NQzlHMBsagof5wASHds6yZjmC7WDHYWXNUIUGIGdMGV28PNxrujKsXXMFL5obK3lXurFRep2WUEnHqRjHJa1t7vtMA23JlE7mDQoJVieRJTbuql/PeLXIe8GgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Te7OWJPZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B55Qxmx023234
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 08:22:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pWaRHTtVbmK4IJGdoyqpW+GmjdnLJECmOOkFb8wysIg=; b=Te7OWJPZinloN6J0
-	uRVTa8Cyn12VLWn/rJaYyDjHZcSRZHYD3R5uZHCBxhWEIAZRVwx6D085g5jPJStB
-	DW+SV24X82KPLxesBbz6gcBgxYXjvuUa1tG15zHcE9SZG1HPmSvZXNxWlh+4+0sJ
-	1h9vNHtIrltdfh/y33g1vHW+M8opxE+fo+3ymnhBKxrfOE0JAdYP11cjpm/HN3qQ
-	WQs5Bn0XiYtFnNG+202Gc+28/lp4Jrpvo4siTFej5opdtbTRBd7uKr+KzZ2rmMD6
-	UF2R9Fb/XnvxBl3MuVDkFjw+Dco5fVT55G2L6z6UhJYyLy8x2BTaFDYGyKCkDqlX
-	AtQRUA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43aj42bhn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:22:15 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-215ccbcdc7eso9607775ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 00:22:15 -0800 (PST)
+	s=arc-20240116; t=1733387096; c=relaxed/simple;
+	bh=Uo9k1X5K3r3Hc4fiemmVrrIOCep2IwuCxnhIE0FNAZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H/K6rSBf9gE09V+ECvx+959tjodvqzEtjiA2CO/rZZlOrnMWjcFRiFLSqq7cY811RjBsLYeZTQogaX8s4BAr/EmMO4O/GstJqKWiMI/wWz8XlTHbZUc6z+PHI0dSzi9tS7Dh3TTGde+6MnL7p5OaS9O1bskKg1C8aIBPSTtKjbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=bDMJAuVg; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa5325af6a0so86652866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 00:24:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733387092; x=1733991892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uo9k1X5K3r3Hc4fiemmVrrIOCep2IwuCxnhIE0FNAZs=;
+        b=bDMJAuVg6R7OCggMtjkmf24FjME3urx061rEFQBtX3Sw48SehiFotTnOBEMMcbge6a
+         D9y5s1rbiN96e5I8Gft8ppRn8/DH4sqCluiBN30mBiCL6KKpn+su0WQ4OWyFMmGMATJX
+         6jRyz6nqrXfhK+ISlQngJb8lI54OpCMe4tz5B+yxhEUfWdveTZ/kWjo+QGICE4eZHQ97
+         ARR2QVVKKZ/7KSYIKhpFCOgZwDwXSGptBwThI7YLOwmTnWSMUgFJeSO8LVTA2ys1mt6B
+         zXkEV1wWlCRx3z6MO0VH3jEiHlMEVGQ/+FUd709bOcvS4nz3PuJPnP9PLPJdBv8FfURL
+         NVSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733386934; x=1733991734;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pWaRHTtVbmK4IJGdoyqpW+GmjdnLJECmOOkFb8wysIg=;
-        b=jjKOPJLY/LTRSM8eouVfohbTVpgKjN013m7vUUhgKLuFfqgZQ6sFodtC/TnN4dgMtP
-         JzKuDGs7T0ihNmyqzGJP4iJxhSSu9wunEBYoG/SJMA8OrTAG2iWxYDU/q7sWQORg7jZJ
-         sUZNiPEp2E6kNoSJf5n+ITen0VrhFDoeLYH/8/LqUMiwnUppVqlL5pap3E7CzgxEX+Uu
-         qt2dw4bNAOlj848VLYAwGZHJfYarxX0n3u5yjAah/3f+1cbSTPgQW2e2HhAQZPrvihZc
-         CazXq9SLQKTvdMjyQ8kNK4QFturP48vZVvgHzbIZg4UJxvs7tz3Bho5RM2SG1O8iFGMX
-         96gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVerKSoL10Un4mhIya2Ylu2JYlTCWU827nMPqhlOvXCNWaEm9ZJ/SJAzTpuIGHOj4QKT2bUDqc5w02wDpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7fiupVhm0/iSF5czLTZclvPVX5Jsaz2ltFKcJTxxR+BSOhq63
-	/aVtyvoNkVBDBMVhilqlXalMKrSL/ODe7uHGtVvVZZApZSxvQyBPod6IkTnSoX7IgoJGepvIita
-	KJG2CKLwMThNjHOoBBMHV8apiYKFR25XYEAUKyNP27RAXmBXygWv7ly7AIBvNtEU=
-X-Gm-Gg: ASbGncvATpGFZ4dZupISMy723TOQrNoLyjL2FtZImc4GXdHrD4b9FH6xJPh6mVcCBjQ
-	ICBEZmZziNRSlslOKaJL1sf/cm8gfzUQZIjhTyqHxFRd4WPe9SltTwcZdFOxXz4fBdV1cx+TOFO
-	pXbNuut+vTd46ko+Y+rFZfkRlR0kQG7v8EjwywHcCR8kK7jjmerY1vSgdtCDsHGUK1v0j4zwq2q
-	wdWAOx4pE0Mc5VLTBfCPBLnPYMjfx5FsgjNbJEY1an3FrIWzpfXHKmhHO52wKL8IowxylFKSVLE
-	muFr5w==
-X-Received: by 2002:a17:902:ecca:b0:215:63a0:b58c with SMTP id d9443c01a7336-215bd24bb6fmr127418165ad.46.1733386934492;
-        Thu, 05 Dec 2024 00:22:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHcRbCkAcP5idjPLoolO7JpL2Ap2RjFZcB3DOTS1QrZrQiXx+rK9bxRV3fLK3OocETika1fcw==
-X-Received: by 2002:a17:902:ecca:b0:215:63a0:b58c with SMTP id d9443c01a7336-215bd24bb6fmr127417835ad.46.1733386934119;
-        Thu, 05 Dec 2024 00:22:14 -0800 (PST)
-Received: from [10.92.169.167] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8ef9ea6sm7453955ad.141.2024.12.05.00.22.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 00:22:13 -0800 (PST)
-Message-ID: <e6f60ca6-a4d2-4539-ab9b-dabe95dd2d21@oss.qualcomm.com>
-Date: Thu, 5 Dec 2024 13:52:08 +0530
+        d=1e100.net; s=20230601; t=1733387092; x=1733991892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uo9k1X5K3r3Hc4fiemmVrrIOCep2IwuCxnhIE0FNAZs=;
+        b=fAa5WKsVgcrhp31LcKQgZmsLuxNvlQDqUVSRVh3dVVmEckIITdRIw06Fzsy0BUOU0K
+         cXiRj+mnM0CSWeeFghIGdSNbmF9DMHUjmROUXee7Bk4KRRug56jgwo6HK2bx944uHEGR
+         jtcJl092g8XiT7uR4TIgAIs1CTHDsq9NAfdqxoCAILi1zkriowQlhELoWvLcvVpHRX5U
+         2KMl5PybFVxb5+B4DuKNCyaortKJL0Ip+apDyyc2mMMdN7isXPxS4NMOtkqqgsLCR3WF
+         cSXzbvVsxvRamDg6T1sAIa8oM7lLJ6UG+5kqHny/84eDpzisUDOQ19O9x7VwWL4BD9TJ
+         koJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw4vGt15WiAglgZOX/WkPc3KOD85pdUEq3FG7kbLmHbcJwfl3N68CoEifqEW3NguKAOdn4e43C2xO4rq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6vSOQTnSRQl6VOwxAZjRB9gh53NeTvM/76l82z9dKQMGGe1RE
+	ZU+TDLMIzhwt/NL04aS93G4Qb4smNnfhIddpnCI49/yrgrjTp2SKbBxNvmKNLtw3+0GgEO5sHJ+
+	Sgv1lYD3IN+Mu/IKsH1lscvzZSAaZJTdSXXKvrg==
+X-Gm-Gg: ASbGnculL6iMUwrIuSvPm9QyTeTn/6CML6OYVl6MJQ5C7glqFNTbt/PMm/ZSG07VYfX
+	hY9DuuOXVCWALt8Vv+T4BhlGN5gdcecLt/YOn4TDzzBClOKGgjHNLe6OsmmAO
+X-Google-Smtp-Source: AGHT+IF2FUmzqqeTqCOHliK3GHeSyqq90+/gTLGnQGE6+L+NEFrr+o2g/bwcOvlBUZndiM7KCRfcrc2i2XJirDHBN4w=
+X-Received: by 2002:a17:906:3ca2:b0:aa5:1c60:39ba with SMTP id
+ a640c23a62f3a-aa5f7cc2f2fmr781184466b.6.1733387092618; Thu, 05 Dec 2024
+ 00:24:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Add USB multiport
- fingerprint reader
-To: Johan Hovold <johan@kernel.org>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@linaro.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org
-References: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
- <20241118-x1e80100-crd-fp-v1-1-ec6b553a2e53@linaro.org>
- <Z07bgH5vVk44zuEH@hovoldconsulting.com>
- <d095ae2a-3f9d-464c-9dc8-a3e73eac6598@oss.qualcomm.com>
- <98b2b88b-9690-44a7-9b22-2f23e6606e82@oss.qualcomm.com>
- <Z1FhQ3OUI0t3k1_q@hovoldconsulting.com>
-Content-Language: en-US
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <Z1FhQ3OUI0t3k1_q@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 67jPwshcqRxnA-LKEKBakBZKk4IbjMBs
-X-Proofpoint-ORIG-GUID: 67jPwshcqRxnA-LKEKBakBZKk4IbjMBs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=638 lowpriorityscore=0 clxscore=1011 malwarescore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412050061
+References: <20241118222828.240530-1-max.kellermann@ionos.com>
+ <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
+ <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
+ <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
+ <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
+ <CAKPOu+8k9ze37v8YKqdHJZdPs8gJfYQ9=nNAuPeWr+eWg=yQ5Q@mail.gmail.com>
+ <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
+ <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com>
+ <CAO8a2SiN+cnsK5LGMV+6jZM=VcO5kmxkTH1mR1bLF6Z5cPxH9A@mail.gmail.com>
+ <CAKPOu+8u1Piy9KVvo+ioL93i2MskOvSTn5qqMV14V6SGRuMpOw@mail.gmail.com>
+ <CAO8a2SizOPGE6z0g3qFV4E_+km_fxNx8k--9wiZ4hUG8_XE_6A@mail.gmail.com>
+ <CAKPOu+_-RdM59URnGWp9x+Htzg5xHqUW9djFYi8msvDYwdGxyw@mail.gmail.com> <CAO8a2ShGd+jnLbLocJQv9ETD8JHVgvVezXDC60DewPneW48u5A@mail.gmail.com>
+In-Reply-To: <CAO8a2ShGd+jnLbLocJQv9ETD8JHVgvVezXDC60DewPneW48u5A@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 5 Dec 2024 09:24:41 +0100
+Message-ID: <CAKPOu+-d=hYUYt-Xd8VpudfvMNHCSmzhSeMrGnk+YQL6WBh95w@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
+	Ilya Dryomov <idryomov@gmail.com>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 4, 2024 at 1:51=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> w=
+rote:
+> It's already in a testing branch; what branch are you working on?
 
+I found this on branch "wip-shirnk-crash":
+https://github.com/ceph/ceph-client/commit/6cdec9f931e38980eb007d9704c5a245=
+35fb5ec5
+- did you mean this branch?
 
-On 12/5/2024 1:46 PM, Johan Hovold wrote:
-> On Thu, Dec 05, 2024 at 01:32:29PM +0530, Krishna Kurapati wrote:
->> On 12/3/2024 6:45 PM, Krishna Kurapati wrote:
->>> On 12/3/2024 3:50 PM, Johan Hovold wrote:
->>>> On Mon, Nov 18, 2024 at 11:34:29AM +0100, Stephan Gerhold wrote:
-> 
->>>>> +&usb_mp_dwc3 {
->>>>> +    /* Limit to USB 2.0 and single port */
->>>>> +    maximum-speed = "high-speed";
->>>>> +    phys = <&usb_mp_hsphy1>;
->>>>> +    phy-names = "usb2-1";
->>>>> +};
->>>>
->>>> The dwc3 driver determines (and acts on) the number of ports based on
->>>> the port interrupts in DT and controller capabilities.
->>>>
->>>> I'm not sure we can (should) just drop the other HS PHY and the SS PHYs
->>>> that would still be there in the SoC (possibly initialised by the boot
->>>> firmware).
->>>
->>> The DWC3 core driver identifies number of ports based on xHCI registers.
->>> The QC Wrapper reads this number via interrupts. But these two values
->>> are independent of each other. The core driver uses these values to
->>> identify and manipulate phys. Even if only one HS is given in multiport
->>> it would be sufficient if the name is "usb2-1". If the others are
->>> missing, those phys would be read by driver as NULL and any ops to phys
->>> would be NOP.
-> 
-> No, the core driver still acts on these ports (to some extent) even if
-> there is no PHY specified (e.g. updates DWC3_GUSB2PHYCFG on suspend).
-> 
-
-Yes, since the port count is obtained from xHCI registers, the 
-GUSB2PHYCFG/ GUSB3PIPECTL regs are modified regardless we use the PHYs 
-or not but this is still fine. It can be considered a NOP AFAIK.
-
-> And IIRC I even had to specify more than just the fingerprint reader PHY
-> on the X13s to get it to enumerate. I never had time to fully determine
-> why this was the case though.
-> 
-
-This might need to be checked. Did you attempt adding each phy 
-individually ? Just incase the first PHY is not the one corresponding to 
-the fingerprint reader.
-
-Regards,
-Krishna,
-
->> However do we need to reduce the number of interrupts used in DTS ?
->> We don't need to give all interrupts as there is only one port present.
->> We don't want to enable all interrupts when ports are not exposed.
-> 
-> No, the interrupts are still there, wired up in the SoC, so we should
-> not change that.
-> 
-> With runtime PM eventually enabled and working as it should, the OS
-> should be able to power down any unused ports. And we could also
-> consider marking some ports as not physically accessible and not
-> connected as a further hint to the OS that they can be disabled even
-> sooner.
-> 
-> Johan
+This is my patch; but you removed the commit message, removed the
+explanation I wrote from the code comment, left the (useless and
+confusing) log message in, and then claimed authorship for my work.
 
