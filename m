@@ -1,228 +1,157 @@
-Return-Path: <linux-kernel+bounces-432852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F589E510B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:18:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470129E5115
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:19:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D75288202
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D6C1622BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED23C2391A8;
-	Thu,  5 Dec 2024 09:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C21D1D54FE;
+	Thu,  5 Dec 2024 09:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KRPiweYx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3/vwMuX"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7354D1B4F3E;
-	Thu,  5 Dec 2024 09:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916A11D2B13;
+	Thu,  5 Dec 2024 09:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733390269; cv=none; b=fd2A3K7SDvClWBpR9/pDdgDRg+WsKT+Pijgv+CzbkVhhaJ1oOIuT/1wDnyKJ/36aZp3v5sqBN5GPLjwD9Aq9tXhdsvHgtyQcIzkFiYYOK0LzBrVmEY8hr34+9K7HStPZW3uZVU+030oeKaYn9uaeNXcsmIwKnyiKRzX85f15mMs=
+	t=1733390379; cv=none; b=me0hDaumdA/K3vyQcjRNXRSY6VTv66hkTpjGFmpc2B9jdZ41cvUAaGoRh8icyVcd4G/4wvl6LbCOqbONvJLk9ImwGxNVQnC/uuPmJtmYospnIUSbv2jIX3ua8gpSdEa+7api2ZeOFCmOkATywwTDsWUUk6J4bqe0tQyEyvFwGcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733390269; c=relaxed/simple;
-	bh=vQmzFLaJSx6SjteTFCux3R+887jT41Wfnd8OGrMhxw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JWiCKmefxPUjCtfuu8jWcowsq4r1JwrkRfpX6e9Ey5B6u5CePDt99wFiiw3Gyh3Lme6mGuANofYbu4RMqEueNZtKD7fRIrlVKo5ZvM95a/A+qTrOh694E1oaW1DKKb70SzAP3y9q4ZHc3EUpLhi0uuJoaOB2+lWOWo2rVuyBOfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KRPiweYx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B57PDoj027833;
-	Thu, 5 Dec 2024 09:17:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hehGs3DSedkJlfVRQiwWzeOctobZ+tIhhAtZy780hbM=; b=KRPiweYxDuGsVtXx
-	ya5tnrXyywY+km0fJ3IKV7X64fP0Ymn99J1kKkFa6dj2NTlLKXADvBLiGVy4Zlut
-	9SHpLxD3CtvUVOOcqDvC0KHOGr+8uibhwo0eZRvIvCML+0gLa/nNqDSRsp2mqqYA
-	9BtKuk1gtfcahTbCDSu8gKRbJtGmXo+a36XZyZcXKaLaEQfdHQkJ9ZRszn9Mm1g8
-	D74Suhkzmr73ylCwhuMf/iDWB67L5MnYQbp4w+z07wFYFcZ01wkXxbjvRibigsA6
-	lEqj6MwvktnmQPpQwDSE8rGRDd6/sua5+PJqECGROF5ywTdnIOoiNKav6vviOyJs
-	EiVW/g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vceq4d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Dec 2024 09:17:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B59Hfsn012499
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Dec 2024 09:17:41 GMT
-Received: from [10.50.18.22] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 01:17:38 -0800
-Message-ID: <360dda0a-35e0-4fcb-a2bf-77d400d71623@quicinc.com>
-Date: Thu, 5 Dec 2024 14:47:30 +0530
+	s=arc-20240116; t=1733390379; c=relaxed/simple;
+	bh=NvuPaqVN7uPk06l42l9WPd/l7xGnaTvLAtemosUcie0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=faiBpcgPkf5jlFygaaJx3yM2J8ZCTd8o4SN1VqYmX0M+kxMvrYkpxIK71l141DP+4Iso7nM8m3dA0ln9FUXt/WjRHOckUlF3uBR1z2qP3xHDu5Pf0Gu8MQW1yZ++TWRN2k0Oybv7cI8sY444CubE/yq2EAHQpGwcGG975l2oXlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3/vwMuX; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21578cfad81so5506355ad.3;
+        Thu, 05 Dec 2024 01:19:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733390376; x=1733995176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0HmfRBKBkLsgyW/HeIjKXTJHSnwiReWOxGDbcg2lig=;
+        b=M3/vwMuXAtdt078C/aU0C1V/0GfHKO/MYJQTq6/dnIvX792wmckPRl/rAH4nV+5rLt
+         9p0yXZuTX0yGGkxpKtgBVYEUSgLSKBz7OqDCuA1wfPJf7GQgY4Jooc6p4vopaJIzMkVF
+         ScH03O39JZzeFisMt4LK/ASnrq5/rk1ZzZcyq4ubHDZf/K8m3XNvj2CQzjzYv//dEaq1
+         Q4KdYXp7gANghxv9Ea6W1AcWFA+iLrCv5uJGSdGezGcHsgNECU4tIQigRIKq+qcp9Go+
+         iIhC7MYgA7GAIjJgmzjFrTjtsXvm4iD4zqtmXJqF0KoGCS/Mv+Ud9lY326poWEenN0OI
+         SRaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733390376; x=1733995176;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y0HmfRBKBkLsgyW/HeIjKXTJHSnwiReWOxGDbcg2lig=;
+        b=WrfppPe6OIX3h3XaRePyWzA7RXMLj2/EQHhzYIca2on7bCpRySwnyKvt3I1opGU/9x
+         xH6wXFbN5MIDtBIY9u/+GlgX/tXZFfsSeb7e83ni9+zlrpJ60kZazE1gw521H5pHydQi
+         sAJW5m1gwfWGQ9K7ayj9zJZdapgxD+8my6xdogIISXzY+OM5qF1l3hrStfnkqtXoX4Nc
+         2asCDjdEK0LWoaUgW2brppJ/pfDO0Igl3PlsaJOFVurImew6w0N3WMBIzPvvT0c/T6iY
+         SmDWEuUlbs+lyS4820Gv94vW8YT43yYc9FLbSFHdQFVi7KGbXJwK0x64r4JWn43hhjre
+         CntA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1kXXugy4S/i4u7aa/3Wv68QaGvnMz07UHKV8d8afs6LMJ8GCK0+ELvrm7GdzCAsOqSamPWB9m57R+H0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAFlkYgpuYBDAHzu9WfNsjnyoABJ2BB7TAzZPgIA7+PMM8b1hQ
+	4aAZSUgvo/NPVCbMpbcvYTzlQz6SNsRsK7j5Twex2JwTqkd2Lsvf82i+TA==
+X-Gm-Gg: ASbGncuMIMjTM8N5QhehAhC8cHlVJjuTPH0WFOOSbPieNE2ygNs2EICNZRhsytIznYH
+	MfQdalCOVRpCozQvJTKO6do1+7LOwuwxAPxsHGIDUILeLc35XErDUOdIUmZeWFo6WOAP1kq9xbq
+	Hww1EOcN3CP6uTQ8VpC+zfVhx66loelXzP2HaFq42mb8oAjnHOqoBQ3mr2s6DcPtwyKgu8Tpg33
+	hPOE8fgh8LZ02kxEfb8XzJCv7ds8x0XdEs83r4MmZTZxXp3oGHn4DfYVINBFTs=
+X-Google-Smtp-Source: AGHT+IHFjK3cGcjfncsTvxz/JQr72PK97p7r+aYYZQ6H2u3kZ0kfRozsXNPN9a0ZsbcFy3VaXfTZ0g==
+X-Received: by 2002:a17:903:1ca:b0:20b:8a71:b5c1 with SMTP id d9443c01a7336-215bd1b4604mr141553115ad.1.1733390376224;
+        Thu, 05 Dec 2024 01:19:36 -0800 (PST)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-215f8f09270sm8234895ad.203.2024.12.05.01.19.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 01:19:35 -0800 (PST)
+From: Furong Xu <0x1207@gmail.com>
+To: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: andrew+netdev@lunn.ch,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH net v1] net: stmmac: TSO: Fix unaligned DMA unmap for non-paged SKB data
+Date: Thu,  5 Dec 2024 17:18:30 +0800
+Message-Id: <20241205091830.3719609-1-0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] dt-bindings: mailbox: qcom: Document
- qcom,tmelite-qmp
-To: Krzysztof Kozlowski <krzk@kernel.org>, <jassisinghbrar@gmail.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20241205080633.2623142-1-quic_srichara@quicinc.com>
- <20241205080633.2623142-2-quic_srichara@quicinc.com>
- <e6759ca4-bcfb-4817-8a72-d1e9eb5d3d02@kernel.org>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <e6759ca4-bcfb-4817-8a72-d1e9eb5d3d02@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GfoCj5VsCi31arbRmx0wMleQk88v9vo7
-X-Proofpoint-ORIG-GUID: GfoCj5VsCi31arbRmx0wMleQk88v9vo7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050064
+Content-Transfer-Encoding: 8bit
 
+Commit 66600fac7a98 ("net: stmmac: TSO: Fix unbalanced DMA map/unmap for
+non-paged SKB data") assigns a wrong DMA buffer address that is added an
+offset of proto_hdr_len to tx_q->tx_skbuff_dma[entry].buf on a certain
+platform that the DMA AXI address width is configured to 40-bit/48-bit,
+stmmac_tx_clean() will try to unmap this illegal DMA buffer address
+and many crashes are reported: [1] [2].
 
+This patch guarantees that DMA address is passed to stmmac_tx_clean()
+unmodified and without offset.
 
-On 12/5/2024 1:42 PM, Krzysztof Kozlowski wrote:
-> On 05/12/2024 09:06, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> This binding describes the component responsible for communication
->> between the TME-L server based subsystems (Q6) and the TME-L client
->> (APPSS/BTSS/AUDIOSS), used for security services like secure image
->> authentication, enable/disable efuses, crypto services. Each client
->> in the   SoC has its own block of message RAM and IRQ for communication
->> with the TME-L SS. The protocol used to communicate in the message RAM
->> is known as Qualcomm Messaging Protocol (QMP).
-> 
-> This is RFC, so only limited review follows. I will review more once
-> this is ready for review.
-> 
-Thanks. Once i get the design/approach confirmed, will post the V1.
+[1] https://lore.kernel.org/all/d8112193-0386-4e14-b516-37c2d838171a@nvidia.com/
+[2] https://lore.kernel.org/all/klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw/
 
->>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>   .../bindings/mailbox/qcom,tmelite-qmp.yaml    | 70 +++++++++++++++++++
->>   1 file changed, 70 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml b/Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml
->> new file mode 100644
->> index 000000000000..1f2b3e02b894
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mailbox/qcom,tmelite-qmp.yaml
->> @@ -0,0 +1,70 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mailbox/qcom,tmelite-qmp.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm TMELITE IPCC channel
->> +
->> +maintainers:
->> +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> +
->> +description:
->> +  This binding describes the component responsible for communication
-> 
-> 
-> Describe the hardware, not the binding.
-ho ok, will fix and move the hardware description here.
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Reported-by: Thierry Reding <thierry.reding@gmail.com>
+Suggested-by: Russell King (Oracle) <linux@armlinux.org.uk>
+Fixes: 66600fac7a98 ("net: stmmac: TSO: Fix unbalanced DMA map/unmap for non-paged SKB data")
+Signed-off-by: Furong Xu <0x1207@gmail.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> 
->> +  between the TME-L server based subsystems (Q6) and the TME-L client
->> +  (APPSS/BTSS/AUDIOSS), used for security services like secure image
->> +  authentication, enable/disable efuses, crypto services. Each client
->> +  in the   SoC has its own block of message RAM and IRQ for communication
->> +  with the TME-L SS. The protocol used to communicate in the message RAM
->> +  is known as Qualcomm Messaging Protocol (QMP).
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - enum:
->> +          - qcom,ipq5424-tmelite-qmp
->> +      - const: qcom,tmelite-qmp
-> 
-> Drop generic compatible.
-ok
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 9b262cdad60b..7227f8428b5e 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4192,8 +4192,8 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	struct stmmac_txq_stats *txq_stats;
+ 	struct stmmac_tx_queue *tx_q;
+ 	u32 pay_len, mss, queue;
++	dma_addr_t tso_hdr, des;
+ 	u8 proto_hdr_len, hdr;
+-	dma_addr_t des;
+ 	bool set_ic;
+ 	int i;
+ 
+@@ -4279,6 +4279,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 			     DMA_TO_DEVICE);
+ 	if (dma_mapping_error(priv->device, des))
+ 		goto dma_map_err;
++	tso_hdr = des;
+ 
+ 	if (priv->dma_cap.addr64 <= 32) {
+ 		first->des0 = cpu_to_le32(des);
+@@ -4310,7 +4311,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	 * this DMA buffer right after the DMA engine completely finishes the
+ 	 * full buffer transmission.
+ 	 */
+-	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
++	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = tso_hdr;
+ 	tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_headlen(skb);
+ 	tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
+ 	tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+-- 
+2.34.1
 
-> 
-> 
->> +
->> +  reg:
->> +    maxItems: 1
->> +    description:
->> +      The base address and size of the message RAM for this client's
->> +      communication with the TMELITE core
-> 
-> Drop obvious description. Same everywhere else.
-ok
-
-> 
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +    description:
->> +      Should specify the TMELITE message IRQ for this client
->> +
->> +  mboxes:
->> +    maxItems: 1
->> +    description:
->> +      Reference to the mailbox representing the outgoing doorbell in APCS for
->> +      this client, as described in mailbox/mailbox.txt
->> +
->> +  "#mbox-cells":
->> +    const: 2
->> +    description:
->> +      The first cell is the client-id, and the second cell is the signal-id.
-> 
-> I guess that's the only description not stating obvious.
-> 
-ok
-
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - mboxes
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    tmel_qmp: qmp@32090000 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
->
-ho ok, will fix
-
-> 
->> +           compatible = "qcom,ipq5424-tmelite-qmp", "qcom,tmelite-qmp";
-> 
-> Use 4 spaces for example indentation.
->
-ok
-
-Regards,
-  Sricharan
 
