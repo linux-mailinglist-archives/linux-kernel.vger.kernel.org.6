@@ -1,101 +1,206 @@
-Return-Path: <linux-kernel+bounces-433812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1039E5D6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:37:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C279E5D6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 109CB1882EFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:37:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A6C161556
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26001226EFA;
-	Thu,  5 Dec 2024 17:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D8122579D;
+	Thu,  5 Dec 2024 17:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/idgI43"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R54SyZfb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED3D21A42B;
-	Thu,  5 Dec 2024 17:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE8621C16C;
+	Thu,  5 Dec 2024 17:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733420194; cv=none; b=cDS2W2GxgMsWe3eipANwp010z1woHBo0fmcbmGmkL/7L906YgJYWRMtvk2l/hnzeyqXKzKBA5Zjg8/2P2AHFTVBU5guOlzLhBjaGq+rpAdhQLxz0UyIP04MSjFiuQCx1pgeitEu77ybaIuv8vkumcFWeHFW3Rmrq+rMgsMbjDg0=
+	t=1733420332; cv=none; b=CKtnL/bLow0q79xDrC80jio+ChZAwfamWWrOu9qwCdwOhdKbZIN2IY/UhIph3oOlKH+E6yi8dQ/z+cA42X/gbnp1zofvQ3311D8ORWqo4HSM6ykwm84RRie7207mbGE1k9r5/r6XupjIzUZZxKvcx4+AVJR6ox3c8uNgRIPLVv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733420194; c=relaxed/simple;
-	bh=JGtrVDKRCTfsW1j6f41xR3O+h6gmlQFHESW4VQ0BzHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tqCxcDHAguLSlvekfoAitdtshlIJ4zdqfvkz0l9BA60oQrERkOVf7ZiRCz6mXRGhIXdc0KtTcqMi9OUWMn5chUKsr8LoDrJ+pSdrrJ3OITZE2OubtnFgoTPMBcqSs0zbvE4Mg2PMcUPY/aHJN7prSh8A4T8pBoSaO9tDPpEWV0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/idgI43; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15D1DC4CED1;
-	Thu,  5 Dec 2024 17:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733420194;
-	bh=JGtrVDKRCTfsW1j6f41xR3O+h6gmlQFHESW4VQ0BzHI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=A/idgI43lStIjvw5uTUH9zEIdCm5sCLRcVpEMHBwFFF4BakL5WaZ82sUL0K4BZjIP
-	 YJUueQQ57ETg9WB+dO2JWIndXrEL77WJQvodI5lxDW/4nPqNoOYic/s9yd3vxg2CQi
-	 c7L7L5muihGF2xd0WCSTqeEl3f79WZNrTgGRUaUOJXfJAIsNkidr4aDRDdTFY+ePf3
-	 lf90fDjeRes553o7DzjFG8mwULX8seDulgBFzNRzWppz33t555YcALTB2dciiR7uQp
-	 baxvQRHQz02qfzHjcBVNt54N/btpQpUW/J0LKR3JFz76n0PWNW8JAZjAUe6fvwpRrt
-	 biHycSXQJyiEw==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-71d537b50beso659866a34.1;
-        Thu, 05 Dec 2024 09:36:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUdfv4hqPKX+8Uz7e7x+durCY2M3Plli9xHCzZcX2OnB4uUTjkR3pg6DQye3p2MTG1RExKt7p8Spb0=@vger.kernel.org, AJvYcCXiuJFY4TYcX9F88z0/gf/qK+gWasTuA6XAVItl6Ulq0CNATqmfOE59Mwmpl7Uge1ijwyteRTGf75RUJxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9qODjM7pEBQ12uszI83kGMKy3iPUoUk25Bt8bTA7MdNA5j9/D
-	YQ0tBhtWUXJqlk6zpxHoxZB95hfcIROx5FbIgnRD69aDPCO6VARsHAZRVXSXpvKJtY3CaIyQnsL
-	IejoC/WX5HLWafoXiauMhwjTXAqI=
-X-Google-Smtp-Source: AGHT+IEBBn49vpMRi+OzmWF5NaHdcOG3lA43Za6HkPJILYov9Ikrfyi54ZLt5Pc+sVMks9eTk5pjh3+W+LVINd2aB6c=
-X-Received: by 2002:a05:6830:43a2:b0:71d:421f:5bd with SMTP id
- 46e09a7af769-71dad62d728mr13962500a34.11.1733420193555; Thu, 05 Dec 2024
- 09:36:33 -0800 (PST)
+	s=arc-20240116; t=1733420332; c=relaxed/simple;
+	bh=9IyCSTADFMbaCYa4zKHlolzJiITHRWb2B9gq4+uEOgk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=h+Hg+0RFBvkU91W2i54QMMmnibbax+PGgNsjFsVGl5MvtTHaC8SpNQkAIs2UuWR/RvTsrSKfrhK4DtBqVKNUkm0s6Kx1p3TmK+kmfUtd4bo7yjJ86O3g4pJv/SqNW35d0jqz0ji49frOI7Ny7tCcj63NHJXP8pokPHuZu24F6Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R54SyZfb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5A0ht5027895;
+	Thu, 5 Dec 2024 17:38:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=q5EY3k
+	X7KhFC/FTPkny53AIy+BAB1uApixoqmRUVNuo=; b=R54SyZfbOdTBVwIlCdGVHw
+	tsdess/Dkj5iW9ArmEiLG2HgGDQiMWiCy9YompcsTLrp4w/+sAhznxWfvI+P+VZh
+	HlWC0UvtLyHi6VPjOMLtRg/buAPti2MmmZNFsx34G9/yh6nMQAIIuIMikOUKBn5M
+	1iFdA6HAGIXcoJoCpHxUk09/44dqGfUO0pXckcyr05rzOEkIeM71lFlUOfFhLsA9
+	s/Bx8Gp5M7b3Hwn1qqdg7ONOClFQUfBt+vIz5AKN2Y9xTFiwhNauGaeMf8Mq+Utx
+	J550N92GUVPDeFa7PhUtXE4C8e71CiESRDldie+uusgG8/AvW6TsniP6g50C7PVA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ba1yj95m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 17:38:31 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B5HO8ZW026779;
+	Thu, 5 Dec 2024 17:38:30 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ba1yj95e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 17:38:30 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5H9Kwp031726;
+	Thu, 5 Dec 2024 17:38:29 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438ehm6xt1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 17:38:29 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5HcPoP34669230
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Dec 2024 17:38:25 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B50952004B;
+	Thu,  5 Dec 2024 17:38:25 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E853020040;
+	Thu,  5 Dec 2024 17:38:17 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.245.236])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  5 Dec 2024 17:38:17 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <08f3bd66d7fc8e218bb6958777f342786b2c3705.1731554471.git.len.brown@intel.com>
- <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com>
- <f6621a09-d5e4-4d3b-9b5c-55294c22030f@rowland.harvard.edu> <CAPDyKFoJ45PZ_o6VdaCiyat+BC6XOZ5AMnxmsZVzk16cCxmDkw@mail.gmail.com>
-In-Reply-To: <CAPDyKFoJ45PZ_o6VdaCiyat+BC6XOZ5AMnxmsZVzk16cCxmDkw@mail.gmail.com>
-From: Len Brown <lenb@kernel.org>
-Date: Thu, 5 Dec 2024 12:36:22 -0500
-X-Gmail-Original-Message-ID: <CAJvTdKkqO5D8tZt3L_dbXkXftUOz+zijEjQiWHginn4t_o4gKQ@mail.gmail.com>
-Message-ID: <CAJvTdKkqO5D8tZt3L_dbXkXftUOz+zijEjQiWHginn4t_o4gKQ@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH] PM: sleep: Ignore device driver suspend()
- callback return values
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Saravana Kannan <saravanak@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH v1] perf test expr: Fix system_tsc_freq for only x86
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <20241205022305.158202-1-irogers@google.com>
+Date: Thu, 5 Dec 2024 23:08:03 +0530
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com, hbathini@linux.ibm.com
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <311D6694-4BB0-4961-B240-A9ACB9B67AEC@linux.vnet.ibm.com>
+References: <20241205022305.158202-1-irogers@google.com>
+To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: cJxkMxJXYzwfOWusoHeslW-C1Qv_nSO3
+X-Proofpoint-GUID: mbS_HROLxajSXWWR5QTFQulaZ48XSr7o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050128
 
-On Thu, Dec 5, 2024 at 10:33=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
 
-> ...I also think this looks a bit risky as the current behaviour
-> has really been there for a long time. Who knows what depends on this.
 
-If everything were working 100% of the time, no risk would be justified
-because no improvement is possible.
+> On 5 Dec 2024, at 7:53=E2=80=AFAM, Ian Rogers <irogers@google.com> =
+wrote:
+>=20
+> The refactoring of tool PMU events to have a PMU then adding the expr
+> literals to the tool PMU made it so that the literal system_tsc_freq
+> was only supported on x86. Update the test expectations to match -
+> namely the parsing is x86 specific and only yields a non-zero value on
+> Intel.
+>=20
+> Fixes: 609aa2667f67 ("perf tool_pmu: Switch to standard pmu functions =
+and json descriptions")
+> Reported-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> Closes: =
+https://lore.kernel.org/linux-perf-users/20241022140156.98854-1-atrajeev@l=
+inux.vnet.ibm.com/
+> Co-developed-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+Hi Ian, Namhyung
 
-But we run over 1,000,000 suspend resume cycles per release in our lab,
-and this issue as a category, is the single most common failure.
+Tested with the changes on powerpc and good with the changes
 
-Worse, there is a huge population of drivers, and we can't possibly test
-them all into correctness.  Every release this issue crops when another
-driver hiccups in response to some device specific transient issue.
+# ./perf test "Simple expression parser"
+  7: Simple expression parser                                        : =
+Ok
 
-The current implementation is not a viable design.
+Thanks
+Athira
 
-> A way forward could be to implement the change as an opt-in thing,
-> rather than an opt-out. That would allow us to test it and see how it
-> plays to potentially change the default behaviour down the road.
+> ---
+> tools/perf/tests/expr.c | 19 ++++++++++++-------
+> 1 file changed, 12 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/tools/perf/tests/expr.c b/tools/perf/tests/expr.c
+> index 41ff1affdfcd..726cf8d4da28 100644
+> --- a/tools/perf/tests/expr.c
+> +++ b/tools/perf/tests/expr.c
+> @@ -75,14 +75,12 @@ static int test__expr(struct test_suite *t =
+__maybe_unused, int subtest __maybe_u
+> double val, num_cpus_online, num_cpus, num_cores, num_dies, =
+num_packages;
+> int ret;
+> struct expr_parse_ctx *ctx;
+> - bool is_intel =3D false;
+> char strcmp_cpuid_buf[256];
+> struct perf_cpu cpu =3D {-1};
+> char *cpuid =3D get_cpuid_allow_env_override(cpu);
+> char *escaped_cpuid1, *escaped_cpuid2;
+>=20
+> TEST_ASSERT_VAL("get_cpuid", cpuid);
+> - is_intel =3D strstr(cpuid, "Intel") !=3D NULL;
+>=20
+> TEST_ASSERT_EQUAL("ids_union", test_ids_union(), 0);
+>=20
+> @@ -245,12 +243,19 @@ static int test__expr(struct test_suite *t =
+__maybe_unused, int subtest __maybe_u
+> if (num_dies) // Some platforms do not have CPU die support, for =
+example s390
+> TEST_ASSERT_VAL("#num_dies >=3D #num_packages", num_dies >=3D =
+num_packages);
+>=20
+> - TEST_ASSERT_VAL("#system_tsc_freq", expr__parse(&val, ctx, =
+"#system_tsc_freq") =3D=3D 0);
+> - if (is_intel)
+> - TEST_ASSERT_VAL("#system_tsc_freq > 0", val > 0);
+> - else
+> - TEST_ASSERT_VAL("#system_tsc_freq =3D=3D 0", fpclassify(val) =3D=3D =
+FP_ZERO);
+>=20
+> + if (expr__parse(&val, ctx, "#system_tsc_freq") =3D=3D 0) {
+> + bool is_intel =3D strstr(cpuid, "Intel") !=3D NULL;
+> +
+> + if (is_intel)
+> + TEST_ASSERT_VAL("#system_tsc_freq > 0", val > 0);
+> + else
+> + TEST_ASSERT_VAL("#system_tsc_freq =3D=3D 0", fpclassify(val) =3D=3D =
+FP_ZERO);
+> + } else {
+> +#if defined(__i386__) || defined(__x86_64__)
+> + TEST_ASSERT_VAL("#system_tsc_freq unsupported", 0);
+> +#endif
+> + }
+> /*
+> * Source count returns the number of events aggregating in a leader
+> * event including the leader. Check parsing yields an id.
+> --=20
+> 2.47.0.338.g60cca15819-goog
+>=20
 
-The default is the only configuration that matters.
-
-Len Brown, Intel Open Source Technology Center
 
