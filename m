@@ -1,201 +1,213 @@
-Return-Path: <linux-kernel+bounces-432605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A709E4D98
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:25:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C89C9E4D9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 07:27:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA581881225
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:25:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EE17168FDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D046199951;
-	Thu,  5 Dec 2024 06:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0100D199FA4;
+	Thu,  5 Dec 2024 06:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a/nXcbJH"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Z37L6G7Q"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BBE18C33C;
-	Thu,  5 Dec 2024 06:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733379934; cv=fail; b=IXN59ic82+V05DD0FLvPcKlmSo/fcwA84EmhYhFpCQJ5uvzvyf7Vw2i6ee4y34m4mz0fDvIjwLVaJvsItLiK5nDNMk5FAE00dfxEwOaEix5I5iy1M9MCjIV8grgctv3n7WqWNtgRs0MXc+fL6my4pUQIv2PWsP9olNvxklDN8wI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733379934; c=relaxed/simple;
-	bh=QeQwL9NjTLTViN6JVffNb0yNF2z36PhcIqtMLn9GSA4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=F57o6ri9nzrMFAXDVEj90mLZMUDz8l9pEH+xJliWDl/MTXaYGAgCwnJIV5fs6XZ54t6akfrB9X1arbN3WB3JmZMPUhQewiXeOIOabEuH/HkLt7TAMbU+ZkXz+b2/6QEGTwbeSGAO42g4ou/qlL6kv3cBtbFOhki7HNIAgjhj81I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a/nXcbJH; arc=fail smtp.client-ip=40.107.92.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jQmtLKeOzJ48D0mlkG/6Tax/uARHPMIlbMutcFNqcR71q6HCeiS5vVnf5a/tiHE46UKycaGyrtD5xHQ3L/VbPczIP07ax7dLMGRwVzQUuQu/lebU8tJDpoP3RXfs087Pu1CqzrBInAcjzjHG8zlFdMzvJ2z1V+epjV9/BtZkB2Ms/9j3wm39J0V0bxA73VwfBjgIr9+DsTBM+fq7BVcQjN4VTlTjTA/J1rwgFU44o1KWwuuDCUO+FnDrEmcIMaMWyxpB8fd21h+eHFRR7EHNIy1PZAsVzZAZOHukXB66tGfxiZD6bWKns7sZJXQJ9qn3qZ6EP8syk2Ym/ScE+4dxvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FKOj0Xpiy95PqiDqt3lRkiR5QHM8pWyqIIUFqWGEbIs=;
- b=nKExi/7vZvO3EhMSOJpDfmgG7vOPCOqjCvg6v6M7DaIlfxCJ27AIlG6vNu8/jiyl8EP7zzN2BL4JtI2iAUGrXcl+qer8pEm6ORy1pt+kqeaJgD7gmtJHMOECE9G8XvNa8h7OVchx/tDV4IT50uDndDsaml6YuQBGojrP9UZ4AN2uJzGtAK2ErBPhFFlUqUZxh3QOXVb20cp337lP908d/5Q5zoF3JCHOMymj8ia0+jPQiyV5xCxC24N1HUB6okqUx5BfLgBQdr+OFLhKxxRjXr+uSBCwGXwBPbkWelzXYQxyGVYIEeZ383/JGiWDzaEYeVlQnh/aIuL+ILeox0wHEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FKOj0Xpiy95PqiDqt3lRkiR5QHM8pWyqIIUFqWGEbIs=;
- b=a/nXcbJHtNxkgRw0N8HwIaMSXCN9r2M7s8MdoyI4TYQQNEvah5G9SOBo3vI5lFVKUEdhBljQ0hhS17NT98vg20Lnszkl/pHqhBur7R4hIq2MT5P1fJAu7dmk/ZpKLzz5Keymk6CDUHj02rzaZ7H4AWj7NZ3Tr2R1NpnW94xIArc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6317.namprd12.prod.outlook.com (2603:10b6:208:3c2::12)
- by SN7PR12MB7953.namprd12.prod.outlook.com (2603:10b6:806:345::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Thu, 5 Dec
- 2024 06:25:29 +0000
-Received: from MN0PR12MB6317.namprd12.prod.outlook.com
- ([fe80::6946:6aa5:d057:ff4]) by MN0PR12MB6317.namprd12.prod.outlook.com
- ([fe80::6946:6aa5:d057:ff4%3]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
- 06:25:29 +0000
-Message-ID: <209a7cf7-9e16-4617-bd7f-3564bc66426e@amd.com>
-Date: Thu, 5 Dec 2024 11:55:20 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 02/13] x86/sev: Relocate SNP guest messaging routines
- to common code
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
- kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
- pbonzini@redhat.com
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-3-nikunj@amd.com>
- <20241204202010.GBZ1C5ehNbXTyCdtpr@fat_crate.local>
-Content-Language: en-US
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <20241204202010.GBZ1C5ehNbXTyCdtpr@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PNYP287CA0017.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:23d::21) To MN0PR12MB6317.namprd12.prod.outlook.com
- (2603:10b6:208:3c2::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F0218C33C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 06:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733380063; cv=none; b=CBbvVYlL8YRiXiRqwMLmHx0/OOnnepoZU71b+a/uOADE0DsnwtcqqYta7F0H1R7xdRTuQoXixjWKwN0I2Rs2pwA5szUB5modE9Vcds2exJ31DRBes66aW4MN9yaGK+nXrPQg3j3cgUrI+wVGCmdUi680eb/eIOWBDzEOUdI2YLQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733380063; c=relaxed/simple;
+	bh=qS1NPBabbYXkSV9uKTFXDZ1+1kaI8qyGYql2iCfXsR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYJsRW3uRdnldVyWNns+at2Z8pLGZCztSplxZDCRS10ByAmC0YlxLmi4DvMmoZN93JqK01CSe3HADQXxUdp1WyHAOjcmahbRZvcZihFHjb9rzCPP0QqXcGwHRfs1Wb3l83JV6lcXJ+uLGS3OHYIDsjV5Bu4ORaoejiV0qIDw+fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Z37L6G7Q; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-723f37dd76cso536359b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 22:27:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733380059; x=1733984859; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XCYS6iztL10oOLNtRWs25ZswwaRh2arrdQMGB4nuP3Q=;
+        b=Z37L6G7Q9O3J/jIe9bXpu/w8sGyS3ep1x0k9Ni7TooVNPkTmYSxF7XdacrJv5sDCdP
+         Zfc7KdMK3SyuH3ehmGPjRHjub4rE2Of/uRpqGPOp2Y19X8CNsYyl7yYWlZlkvAouOVjI
+         oLfrGlf1KVu2OTBV3bAppsdoyjn3QqHtv9kyGlsn5jR1+69cqf7j0rQuNDNWOoM09gGX
+         wITdjy3c/Wht771j6ILxHs/aFUmxc/u5IMubuRTexsSMoPl0YiEdmd5DHLIK5UrJMQRY
+         T0ERtzBUmkPkPhxU9DwwTjKcrGJLorRHTjKaWZZgLm5sEeFMJAnVqFqeIEvfS7vSjsiY
+         d9Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733380059; x=1733984859;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XCYS6iztL10oOLNtRWs25ZswwaRh2arrdQMGB4nuP3Q=;
+        b=duImfx+m7Jd/mDQGvbLOvuM/2T//T/9/IPcm/QOF3S0NxcZ11e7m5yt3N3Pi4Lj9T+
+         osX+LZnfWgDSPowvxwxJIQ/Hp5jBo/rC30Xm3QHJpkxygNgjPRyFIKMmy1vPyKv2UwMX
+         M0vcS7Be+4zlvfAp6nA+KwkKQWZj/OiUEv9TiW91DZaXRzm+wAFUwUMzh7JszOP9lj/W
+         i0r2dG2Wn9bAJH9ENRhFeRMzVSDJhux/W2fq6MVJsiVlFar9GDjG4E6+OezYOGfF2bzU
+         bY97zPdOsgz0HpcNKZxukUufoR/FV4gQ1W/B40KWBLxHjRqrhdP/2IkR2featCnfOQ7k
+         KMdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6DjBgI8A4QlTnTDcNXI91GPCpFndweym7jCSQ3uzt6JmtOvoN3NbceFZ9mSSKnjgQXS4zux4wErPIooM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdJFYCiajTBBVJFL9ceuuxiPL9i9XTKjvIjgsz932i2jpskEWP
+	fHHFySJqKEN9nsUVk67uUrICHjePSRJXBe2CgdKlRXwvOfXIqpluvxKk8Xmgf1o=
+X-Gm-Gg: ASbGncvq9kV5XMCXx++HlpoMupsorEJFcN+hC6dLysNfF+2rwlYvxlJWus7jAKMZsA8
+	VX+ND4SdIpCWjW/o2bLlHD6QgkgwVPZiK7UYf6/gXIZ3RKH6C+kdGS1yLf1/nEQDIc6nw1a9DsK
+	Po7Fm/lEACUdjNUMwnjnk9TUj+9uq8aFCGxVyPHXOQI+FyfjXbIVd7lodPqUAMMWuaIc9S6g2Mv
+	bCKt25yUX8iVokPZqK1/XDnulIf+Bkhbfa/JXUNPYzR
+X-Google-Smtp-Source: AGHT+IFPvyQvWZJgFv3tZ7dxjDrDJ/Mpj5QRafpwVa5PN4Od6vrWdyy5rrj1mByFq7QDEWqX+uF9Gw==
+X-Received: by 2002:a05:6a00:2789:b0:725:9cc4:2354 with SMTP id d2e1a72fcca58-7259cc423b6mr4370890b3a.10.1733380057829;
+        Wed, 04 Dec 2024 22:27:37 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:f7b6:61d:746e:a663])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd157dd329sm569747a12.85.2024.12.04.22.27.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 22:27:37 -0800 (PST)
+Date: Wed, 4 Dec 2024 22:27:34 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, cocci@inria.fr
+Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
+ module directory with M=
+Message-ID: <Z1FH1qIc7nErHVZ2@ghost>
+References: <20241110013649.34903-1-masahiroy@kernel.org>
+ <20241110013649.34903-6-masahiroy@kernel.org>
+ <Z1DnP-GJcfseyrM3@ghost>
+ <CAK7LNAR0jmafdi7GAxq58AU-=tuWdVas02q=sQXC4zaOg4JcEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6317:EE_|SN7PR12MB7953:EE_
-X-MS-Office365-Filtering-Correlation-Id: 012f39a2-2887-4731-e03e-08dd14f59d0e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a25LWGlvNTc5d1JPMENteHRwdHlpSnM5a0N0dVZ4WWZma0NOLzJta2trZmp4?=
- =?utf-8?B?S0hPNlhTcVRudGptOVBXOXQrOTZMV2xuSXZIRlZ5NDRxaGsxVHJIbG9jWXVp?=
- =?utf-8?B?VTFaR3Frd1pDd0VtcWcwNFFsNE1NZFBaeHlUVWdNcG0zR3VCSXB0R3RGVkF4?=
- =?utf-8?B?bTNKZXFjdWZCTWFoeVlKc2hMeFg0VUhvQTMxYmtlcEV6cmR4VFdmL1VMSlFl?=
- =?utf-8?B?VUlUQ2hkNWgxZnFoRVg5aVpnUXg4ZksrWi8rOTdoZEJpTFQ1dXRIMVJ2V2la?=
- =?utf-8?B?TjFERHVwN2hPeHBJTFpYUzBlQitwcC92ZEpxNkpPaXFScnN2NU15NUlXSndj?=
- =?utf-8?B?NWhjZTMvV0krOUxoR3hBZjk4dlpSOU5ySWJ0dFZqa0s5ZmQ2Z3Z5emM0WXpv?=
- =?utf-8?B?R0JCVDNnN0FpYWYwYndVZ3hYY1JWQU9lTnd4TGRzdFM5RUZzbS9ycjhGVFBr?=
- =?utf-8?B?aFpHRVlDNFkxU1JuNmxSSzNzaHpWZDZmU3NZTUNIekJCc05zYk9PekFFRHJH?=
- =?utf-8?B?VGNUeURVclQ4WnN1WHJoOFlXUkZTT0g3YXdxWERNbndYVm5kWTdPR2Z2ZCth?=
- =?utf-8?B?ZEFSditWalhjVkVBdDJOLytYTVJaOW1BaTJ0Mm92Z0JySm5CZTNMMHE2VnV1?=
- =?utf-8?B?Q1gzUlJLM3RjZ0NkT2xzZUxjaW1SY01hSTlCd3ZHeUFqaXNya0dpM2d2MmRT?=
- =?utf-8?B?RXRXWWJDS1ZVdVRVYUF2ZDk1NTBLRS8rRkFSd3lIQ3FJbCtUbXlWWCtqa1lK?=
- =?utf-8?B?MTd6SEx3NDlPMmZONE11VTR2dDAwQzlJcFhDZGJudE9UWE1PZDRiUjJsT01T?=
- =?utf-8?B?M3VlNWllN1ZiVlMrUzdVNVY4aDNzWnZLcUFqQS92SHYzVFVadzZmaEpzWVNR?=
- =?utf-8?B?QXJyaHR6VUU4ZFZQb3hXazMwVHV0dVpQdG9XVnk2TVhweGFqUHRIbkdjZ1V5?=
- =?utf-8?B?Qkl0ZVM3WDJNMkp3WVBUNFU5VklEMXFsNlhqVTlCN3Z0QlpTejV6SHRGcUtM?=
- =?utf-8?B?SmJORGdsZEZ0R0N4dW9JRXBIcm9BRzhMVnFsclNCVkxuK0JTYlhWeDU2SUlQ?=
- =?utf-8?B?cVByMjZOVHdJb1BPakhGbitjRmNxQVVNcEc1UzdNazhGeEozOW12N1A0R3ZU?=
- =?utf-8?B?eDZyNy80NVlTQmJIdmF1OWd6RnZKdmM4WkxTRlorRTdNWG5uOS8rcHlUZFdX?=
- =?utf-8?B?d09zOUY5UkpoNGhWOVpwb0E4cjdrMi9IMFVrZEVwNU9PMUR2V3hwa3NsYUZl?=
- =?utf-8?B?Y2JmUDlQR2hGdndJUVI0c2xZSDdqaVN4SUcweTdxWnJ6YVhrZGYzQVVaTzlI?=
- =?utf-8?B?aHJSMmkyclpvTkRNRFNOb1U3S1BGaE5mR1pwTG9SL0tPZUVhbG80RUFWWXkz?=
- =?utf-8?B?SDZFYjdrc1BlVEJ6SkpQWUg2VSt3Ri9HQ2QwWm9jOGxLMWNOL1JOSVErOGcz?=
- =?utf-8?B?VEIxSEVtWDd2Mkp6YWJwSHEwaU1YOXE4TDRtODk1MUpYcW9oQTFkNTh4OU1o?=
- =?utf-8?B?b1hUSkd0c3V0TXFrQTVudGFDaEpqVFpJWjZjZFo2Ui9KdjlVbGZZejZYL1Nh?=
- =?utf-8?B?SU1mSmlsSzA5MU8xVDhqcGZMRXNBSnlmTEU2YWNDRXdMbllMakxjS0UrcVQ1?=
- =?utf-8?B?dnU4OEJyYk0vT0NDWmNRTEF5empSajJtdE5hWFg3RERhMzNyYmlUUXZLamNi?=
- =?utf-8?B?Y0hEQ2xVb3JrZ0ZQQjY2WGV4Uk1kT2tCcW9oYUdBSWZjNlBGcWNLWWo4Yzk3?=
- =?utf-8?B?L1lQaU91cGN4WE1QRSt1UFJsWGMrN2piQmhZQ1E1YnJ3UEppeGJNaGxqSUdI?=
- =?utf-8?B?SzBUNHFVV1ZEMFlxdGhXZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6317.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGJxc0tzdmNBYzk0RDBCL3hha0E3QmRtME5TWGJtYzdQeFdFQWRvU3N1cEdn?=
- =?utf-8?B?Q1NRdm9TckFQbU10WUI5bmJRTUNBdFR1TFpSM1h0TGRXaWI1UWZYczJwaXgy?=
- =?utf-8?B?ZytDUkZoN3NRb3l0TS9xbXhLNnc5UTMrQ1dwYnBpcWVpWmQ1Tzc1dTZBMmRD?=
- =?utf-8?B?RXp6UU40c2ZIVDNGSmpmWG95LzJzZkI4cEUxWWo5bk94YlpVdTRUYzJaMHNw?=
- =?utf-8?B?ZDQxSXdmMDN0S0U4NlBKLzU5WGVtelNaeHJ1eVJ3TnlzV1BoUGlGWndUMldZ?=
- =?utf-8?B?Q2pXb1daYm1Yc3RPbEdobW5PVCtjNUZraEVEM0ZKRXRvU0FLK3ZZcUN2L2cz?=
- =?utf-8?B?dG0xcHRlaDVOcWVkcmdsNE1rdzVmRlJETzZMZmlNMnNYYzZGN0VNZXpnb2Zy?=
- =?utf-8?B?N3RRRkMyZ3g3aGtCZmlvTElHZVo4WUNVM2MzZXl1Wk1hQkJhOVZZS1RrVnNy?=
- =?utf-8?B?SFBFRUdNWWFOdUR3NGEzS2JDYnNmUXh4RHMvZ21EbHRBTWxXN3JLN291Qmkw?=
- =?utf-8?B?RDMvQmQyVmFpcTF6Z1dDZTJtVzBpOTdrRlVscDR1cko0ejhrcHRnM2dXTisw?=
- =?utf-8?B?Q0VzODYxNW1sK21oT002VmZjUTRDOHhoa0QwZE53bUt0VjFXcCtHY3IzaXV1?=
- =?utf-8?B?bFpBVUEyNnZIVEhndUo0MFNTTGVVZHB0cGo5TGt1b1FmMVVHNit3SmZ0Q0xJ?=
- =?utf-8?B?QXFrRG10SVB5WnFhdlQwYTRlZ1dEQzRUTUFVMTBCNzJFME9LeE1LRy85OS9V?=
- =?utf-8?B?NlRTam12dUVVWk93TGhDZXFYSGNGL0lNb09zM0phZXpnb1JSQUZzbDJsMC9U?=
- =?utf-8?B?SUJIWjNrTmI2UjZmV2o3ME1EZW5tNXlpYTFqR09CSVVVV3Fsdm1TTlZVMlc5?=
- =?utf-8?B?Vy9hYjUwTzQrQ1hTVlFDTHNtRUU4YjU2a1ZQVlg0YVNhaWRnbWRITFBKUHJZ?=
- =?utf-8?B?bE1wVjlkTnhxSld4YTBoZ096NUYzYytYcXNJWk02clJwQXYvVHRUaXNPbU8w?=
- =?utf-8?B?dnp3b0krb3BwWXVLVndrOU9DN1FLcWxnSDN6L2g3ZUVBYTA1VzZXR2ord2NO?=
- =?utf-8?B?bXpSRGhRM3RRNzBwSjFYYVRXaUVHMXhJL0dGdW9ycVZUZ09EN1lZTVVGM0xH?=
- =?utf-8?B?alpsclc4eEd3WUhrSk9mTFJGK3ZjSUFWbWRqdVhxaHdCRmkzcHk3dmtNbWFE?=
- =?utf-8?B?TFc3Y0FoeVc5ZlA2b3B4U2h5b1BpVVZqeEtKVFg4ZTl5eTlxQkVwdXVPb3ZS?=
- =?utf-8?B?M2lNK29UMjRQOTBjYUwzM0FEam9TUndFaG1lU3JNejdxRElmOEs2a3JzMmhC?=
- =?utf-8?B?UU1FbFJsWXltbGtUakVCYXdLeUNTU1FvTDlsTWtKMHZJZ2p0VldtQ2hhcHZU?=
- =?utf-8?B?TEpVNkdla1lBTUM0RWRlbW5qVFZUdzJKNjlEWWZrWjBDMVpHNFVHeUdCVjNr?=
- =?utf-8?B?SldheHZVT3UzQlVETDVWZGVVN0NRdVJvZituclpLSEZUR09UZVNjRWZXd2NY?=
- =?utf-8?B?NHBhSzBvTEpRaGRvZ0QwWWVkWkFJNFFseHlWRmJqWWZuZ2VBUlUzdUk0aUlC?=
- =?utf-8?B?VWRnZFJMdHhPQU55ZTJtOFNPQlN1TzJpaWVodUIyYXRWdC9aMjUwVmJUbmlQ?=
- =?utf-8?B?azNhTW5RZ3pDbHNycmszc3JrMk8vL290N0dpWnFlcWxScGNqT3U4UU1VOG9E?=
- =?utf-8?B?cGlDMzJrUG1YNE52YjlJWVBwbkQweFJYTElPZllBb1lFWFJMZHc0Zld1OGRF?=
- =?utf-8?B?L3EvSnZZczB3UHFxM2JCaW1Iby9Mekd2RTVrYm5JZ0pwNWdjbGNRT2QvZXVy?=
- =?utf-8?B?R3JBbk1nOHVGWCszSWFLODRURXV3ZXkwZW5Nb2dyUEN2Nm9mWjYzRHJQWEYx?=
- =?utf-8?B?SmZDc0ZITFJVTGJaSmlBZ1UwK0dKemRsOHV6eGhmN3FRK1dPYzVOZkhZdGJi?=
- =?utf-8?B?Zlpvdm1tR3R0V2o0VVdEcm44azZuQ0dWR0YzeUkvNFJXSzNkSVhQZjcrRkFu?=
- =?utf-8?B?dm5NSDNFL1dzNWtmUkIzSFFuLzZJdmU5WVp5SmR4U3lyc2VSVm9Ha1BCem8w?=
- =?utf-8?B?NVpiUTZ4cGRNWXdmczF4NzFGZG9vN2h3K1R1Y3FGcVdVZFRiL0FzUnBhRUJz?=
- =?utf-8?Q?gLtBbDXQMkVJ1FZPplzrhFKEN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 012f39a2-2887-4731-e03e-08dd14f59d0e
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6317.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 06:25:29.3865
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2quh6ArkljY1u8fQlpMJF+Tl3HXOfKH2qFboAutrehRzeGHUBPE7qNEdN78YJzMjNxujpAOLA1D+YF0+Oio5Ow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7953
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAR0jmafdi7GAxq58AU-=tuWdVas02q=sQXC4zaOg4JcEA@mail.gmail.com>
 
-On 12/5/2024 1:50 AM, Borislav Petkov wrote:
-> On Tue, Dec 03, 2024 at 02:30:34PM +0530, Nikunj A Dadhania wrote:
->> +	rc = verify_and_dec_payload(mdesc, req);
->> +	if (rc) {
->> +		pr_alert("Detected unexpected decode failure from ASP. rc: %d\n", rc);
->> +		snp_disable_vmpck(mdesc);
->> +		return rc;
->> +	}
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(snp_send_guest_request);
->> +
+On Thu, Dec 05, 2024 at 11:48:08AM +0900, Masahiro Yamada wrote:
+> On Thu, Dec 5, 2024 at 8:35 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
+> >
+> > On Sun, Nov 10, 2024 at 10:34:33AM +0900, Masahiro Yamada wrote:
+> > > Currently, Kbuild always operates in the output directory of the kernel,
+> > > even when building external modules. This increases the risk of external
+> > > module Makefiles attempting to write to the kernel directory.
+> > >
+> > > This commit switches the working directory to the external module
+> > > directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
+> > > some build artifacts.
+> > >
+> > > The command for building external modules maintains backward
+> > > compatibility, but Makefiles that rely on working in the kernel
+> > > directory may break. In such cases, $(objtree) and $(srctree) should
+> > > be used to refer to the output and source directories of the kernel.
+> > >
+> > > The appearance of the build log will change as follows:
+> > >
+> > > [Before]
+> > >
+> > >   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+> > >   make: Entering directory '/path/to/my/linux'
+> > >     CC [M]  /path/to/my/externel/module/helloworld.o
+> > >     MODPOST /path/to/my/externel/module/Module.symvers
+> > >     CC [M]  /path/to/my/externel/module/helloworld.mod.o
+> > >     CC [M]  /path/to/my/externel/module/.module-common.o
+> > >     LD [M]  /path/to/my/externel/module/helloworld.ko
+> > >   make: Leaving directory '/path/to/my/linux'
+> > >
+> > > [After]
+> > >
+> > >   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+> > >   make: Entering directory '/path/to/my/linux'
+> > >   make[1]: Entering directory '/path/to/my/externel/module'
+> > >     CC [M]  helloworld.o
+> > >     MODPOST Module.symvers
+> > >     CC [M]  helloworld.mod.o
+> > >     CC [M]  .module-common.o
+> > >     LD [M]  helloworld.ko
+> > >   make[1]: Leaving directory '/path/to/my/externel/module'
+> > >   make: Leaving directory '/path/to/my/linux'
+> > >
+> > > Printing "Entering directory" twice is cumbersome. This will be
+> > > addressed later.
+> >
+> > This change has caused O=<relative directory> to fail.
+> >
+> > For example:
+> >
+> > make O=build defconfig
+> > make -j$(nproc) V=1 O=build bindeb-pkg
+> >
+> > outputs:
+> >
+> > make ARCH=x86 KERNELRELEASE=6.13.0-rc1 KBUILD_BUILD_VERSION=3  run-command KBUILD_RUN_COMMAND='+$(srctree)/scripts/package/builddeb linux-libc-dev'
+> > dh_installchangelogs -plinux-image-6.13.0-rc1
+> > ../scripts/package/builddeb linux-headers-6.13.0-rc1
+> > dh_compress -plinux-image-6.13.0-rc1
+> > dh_fixperms -plinux-image-6.13.0-rc1
+> > dh_gencontrol -plinux-image-6.13.0-rc1 -- -fdebian/image.files
+> > Rebuilding host programs with x86_64-linux-gnu-gcc...
+> > make[6]: Entering directory '/scratch/kernels/linux/build'
+> > /scratch/kernels/linux/Makefile:190: *** specified kernel directory "build" does not exist.  Stop.
+> >
+> > It is stepping into this directory and then trying to find the directory
+> > it just stepped into so $(realpath $(KBUILD_OUTPUT)) returns an empty
+> > string.
+> >
+> > Using an absolute directory resolves this problem, but I believe it
+> > shouldn't be necessary.
 > 
-> Applying: x86/sev: Relocate SNP guest messaging routines to common code
-> .git/rebase-apply/patch:376: new blank line at EOF.
-> +
-> warning: 1 line adds whitespace errors.
->
+> 
+> Agree.
+> 
+> I will apply the following fixup unless I have a better idea.
+> 
+> 
+> 
+> 
+> diff --git a/scripts/package/install-extmod-build
+> b/scripts/package/install-extmod-build
+> index 64d958ee45f3..85af1573db31 100755
+> --- a/scripts/package/install-extmod-build
+> +++ b/scripts/package/install-extmod-build
+> @@ -69,7 +69,7 @@ if [ "${CC}" != "${HOSTCC}" ]; then
+>         #
+>         # Use the single-target build to avoid the modpost invocation, which
+>         # would overwrite Module.symvers.
+> -       "${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+> +       "${MAKE}" O=. HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+> 
+>         cat <<-'EOF' >  "${destdir}/scripts/Kbuild"
+>         subdir-y := basic
+> @@ -78,7 +78,7 @@ if [ "${CC}" != "${HOSTCC}" ]; then
+>         EOF
+> 
+>         # Run once again to rebuild scripts/basic/ and scripts/mod/modpost.
+> -       "${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+> +       "${MAKE}" O=. HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+> 
+>         rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
+>  fi
+> 
 
-Sure will fix it.
+Looks fine to me :)
 
-Regards
-Nikunj
- 
+If this is what you decide on, feel free to add my tags.
 
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+
+> 
+> 
+> --
+> Best Regards
+> Masahiro Yamada
 
