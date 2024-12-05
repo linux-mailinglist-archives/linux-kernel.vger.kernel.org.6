@@ -1,108 +1,76 @@
-Return-Path: <linux-kernel+bounces-433134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222069E543F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:43:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84999E5442
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 12:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F5C16680C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2AF16912A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDC820CCFC;
-	Thu,  5 Dec 2024 11:43:32 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BDB20CCF7;
+	Thu,  5 Dec 2024 11:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="lbPA0ahp"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC44220B7E4;
-	Thu,  5 Dec 2024 11:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC9820CCC3;
+	Thu,  5 Dec 2024 11:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733399011; cv=none; b=PYGOvPPfZNcMb1/piWBW7mF2in91V/6/apwMhvQ3haeFW3MUUIrVurR16tH1LNWiLL/Zmqhc/0atsnZ6X/5EYuZcnIl7wPa/svcTrpg8V0Tdx9npe03dwszveDfkK5tIWoK7eoOQ2q2f8VIX2VLqdKMjszKhqx9itA5p0sKUW9k=
+	t=1733399034; cv=none; b=HinXIUozNF0U4p4obVvNwR22MYDCm2SVfovOusMt234/EEOeuj+DujcZhoK9BP7v1q/WxjHS4OqSibWztGlPImq7t8JbIYgY0bc+OYEkeSObQS8FOx+dWpWSYH5bCOZCI+iLHRZ0GH+Cr5BCtxi+hNLneLRz59WixxlcNJ+SSLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733399011; c=relaxed/simple;
-	bh=KvQRWLsup4OMLK/V+HPoYCMUgmDbNgo8ZVUt7YlTwrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lZMtt16G+hW0WntyI5vOUxrxzuloEjTxyN2/RCCF+7oxHNbCJmd83A9BLWRlB1l9/p+skgSfcw/+qQJs2buG6qUeh6fsmX0A1WjtpiiLrEpOcrwefgeeKEMKPuH+VHeQ8p4nKRwWoUpjVixwM5x70HaOFIWRyJbm+bYxEsfsGPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y3st92JBWzqTVc;
-	Thu,  5 Dec 2024 19:41:37 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id BA712140391;
-	Thu,  5 Dec 2024 19:43:25 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 5 Dec 2024 19:43:25 +0800
-Message-ID: <70aefeb1-6a78-494c-9d5b-e03696948d11@huawei.com>
-Date: Thu, 5 Dec 2024 19:43:25 +0800
+	s=arc-20240116; t=1733399034; c=relaxed/simple;
+	bh=QBhLboJy/EPEhPKkiL/r3Lo1W3Ty0UYTFagr+zEfnHM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WAH/kzX67gaNB/35HQHn+OSM5udf7WpkKMXEBxPDbPhjsL1+6MmVNM5E5zbdfsPQ3df/Nb1Y/eBMndmVnHfqTEFWvTYoX4AHQN+unC3hV7BcGT3YUh2efnmLdI5TBLje1cv33JSNtX1hZkT5vo+qTlFLUTpdTv1Sumq8H7RtIRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=lbPA0ahp; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=QBhLboJy/EPEhPKkiL/r3Lo1W3Ty0UYTFagr+zEfnHM=;
+	t=1733399032; x=1734608632; b=lbPA0ahpw5uCMBJjp+WxL6KdmKukNJFN6RoAEGcRuxHxeda
+	uOFmuPt8/7K/rNCibewdNIUagyITQdDzzx/97Jge/4+A3t0/mvd4XJiK7LlC8LQk0HwfwCpQpixz7
+	9XJGQxjXg3DP4TId0UiiuPsZiqrjDXBOE2nSY5MBiq43Miby6IAAaKYvSVZ+/ZBDP8F58ptaGLMyo
+	gt/H0VVdcVP7c0YYlWxIxWE3yfUYOcYczZya/JNOmsK9t2i1jfHG12nsWdQPoPr3tiZsvva8G8QV8
+	LNKf4ivGP0cspofpO/6uYoDuvbFwRMpyokrdHAU0Upy/4xP0222pubJ8fFKKgnPQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tJAGr-0000000AsqP-09z1;
+	Thu, 05 Dec 2024 12:43:49 +0100
+Message-ID: <d0acd2178504d76770e9267ef6e7f5c04b50eab3.camel@sipsolutions.net>
+Subject: Re: [PATCH v2] wifi: mac80211: re-order unassigning channel in
+ activate links
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Aditya Kumar Singh <quic_adisi@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 05 Dec 2024 12:43:48 +0100
+In-Reply-To: <20241205-unassign_activate_links-v2-1-ba3f0a2bb4a4@quicinc.com>
+References: <20241205-unassign_activate_links-v2-1-ba3f0a2bb4a4@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 1/3] page_pool: fix timing for checking and
- disabling napi_local
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <davem@davemloft.net>, <pabeni@redhat.com>, <liuyonglong@huawei.com>,
-	<fanghaiqing@huawei.com>, <zhangkun09@huawei.com>, Alexander Lobakin
-	<aleksander.lobakin@intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
-	<ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
- Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241120103456.396577-1-linyunsheng@huawei.com>
- <20241120103456.396577-2-linyunsheng@huawei.com>
- <20241202184954.3a4095e3@kernel.org>
- <e053e75a-bde1-4e69-9a8d-d1f54be06bdb@huawei.com>
- <20241204172846.5b360d32@kernel.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <20241204172846.5b360d32@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+X-malware-bazaar: not-scanned
 
-On 2024/12/5 9:28, Jakub Kicinski wrote:
-> On Wed, 4 Dec 2024 19:01:14 +0800 Yunsheng Lin wrote:
->>> I don't think this is in the right place.
->>> Why not inside page_pool_disable_direct_recycling() ?  
->>
->> It is in page_pool_destroy() mostly because:
->> 1. Only call synchronize_rcu() when there is inflight pages, which should
->>    be an unlikely case, and  synchronize_rcu() might need to be called at
->>    least for the case of pool->p.napi not being NULL if it is called inside
->>    page_pool_disable_direct_recycling().
-> 
-> Right, my point was that page_pool_disable_direct_recycling() 
-> is an exported function, its callers also need to be protected.
+>=20
+> Therefore, re-order the logic so that stations are handled first and then
+> channel is unassigned.
+>=20
 
-It depends on what is the callers is trying to protect by calling
-page_pool_disable_direct_recycling().
+This causes memory leaks in my tests with iwlwifi.
 
-It seems the use case for the only user of the API in bnxt driver
-is about reuseing the same NAPI for different page_pool instances.
-
-According to the steps in netdev_rx_queue.c:
-1. allocate new queue memory & create page_pool
-2. stop old rx queue.
-3. start new rx queue with new page_pool
-4. free old queue memory + destroy page_pool.
-
-The page_pool_disable_direct_recycling() is called in step 2, I am
-not sure how napi_enable() & napi_disable() are called in the above
-flow, but it seems there is no use-after-free problem this patch is
-trying to fix for the above flow.
-
-It doesn't seems to have any concurrent access problem if napi->list_owner
-is set to -1 before napi_disable() returns and the napi_enable() for the
-new queue is called after page_pool_disable_direct_recycling() is called
-in step 2.
+johannes
 
