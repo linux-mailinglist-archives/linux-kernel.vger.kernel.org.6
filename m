@@ -1,222 +1,128 @@
-Return-Path: <linux-kernel+bounces-432750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D909E4FC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:32:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5746C1881BB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:32:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD8D1D0DEC;
-	Thu,  5 Dec 2024 08:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNWmeBWq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6B29E4FBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:31:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2119F1B219B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 08:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733387520; cv=none; b=J2WSD38Vj+DopNRC6oVQKYl1Bqyw3bZs/Y83/VYaQ5kSzsh+oB49OwjubGIVngWJuf74vFxG8JL5CGfV5yNiwMlZEp9YY2ZExNR7uv7SYYLr6hVO16ZRjKQfAscJWbQpsr5c0h0O9Dvlf/W5vIxLOrLv45iJR0qZdL6pwkoDP2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733387520; c=relaxed/simple;
-	bh=KBvk2jNTghOafdSPBD8B16h6E5ILhhotf3ATl9qqizk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gMeUTpnjShQgBSP1H9vCJ2P5Ehsq44q/rjYQuaFKT0a0dNkdx1dbSDeIj+LISaDMA9ub4qllHRxcJlBHWGcVzuiNhiroeN2AQwXq6FYawIJ98VBQXpkAj9x0IW9JDTW+ctFeJ4snCUkFF+xRTHa98vbCXlJdqGxHgqkyL1dHYKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNWmeBWq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733387517;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2vM6qUuCJYzyfHeB88GfpKyQAf0dwch2f0TqJnEPdAU=;
-	b=dNWmeBWqs6/1qiX0fydCArU1A/3UwhsctlKdTwSPaaTe7QeMagdfWcsa6c97UvkRhkZwhU
-	B4uOsFNHPdKEnN/zqLKcWwZ4u5Iy5gg1JxB1inF8NPBSFlu4EEP1sOBMUW9uKp3cD+/h7V
-	l65WA8VSL20wkfGXhv6PONcto/XNezM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-29-gvnJkFQXN86hWtSsyN7wzQ-1; Thu,
- 05 Dec 2024 03:31:53 -0500
-X-MC-Unique: gvnJkFQXN86hWtSsyN7wzQ-1
-X-Mimecast-MFC-AGG-ID: gvnJkFQXN86hWtSsyN7wzQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29991281B09
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:31:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF341D278A;
+	Thu,  5 Dec 2024 08:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cl/w0lxE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 499F31955DA8;
-	Thu,  5 Dec 2024 08:31:52 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.192.112])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CBCB81955E87;
-	Thu,  5 Dec 2024 08:31:42 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mel Gorman <mgorman@suse.de>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH] sched: Move task_mm_cid_work to mm delayed work
-Date: Thu,  5 Dec 2024 09:31:11 +0100
-Message-ID: <20241205083110.180134-2-gmonaco@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AF81E517;
+	Thu,  5 Dec 2024 08:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733387508; cv=none; b=mRRwDuhOujv5LdPy6J023knXxg+j1QmpCxMC2Btq0NyL+5FM+kRar/hNPj50vkpvgE7sKVJs++J8MEig4/kaPz4DmpmnFr1sbsDQV+1iCmbISSNKbPw6GBaTemGPPBIc1U3h1XFUfpUGNHhHbuvWMoauxbwh60dUhrBKpDBvbEI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733387508; c=relaxed/simple;
+	bh=PwUz5TT6if4KR6nx5xSKc3IlJvN+MCVxceBhNWnh3js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fR59FhcDg3ROucRY5QJUXNBTFPwuB+bVEfGW7Dr0WXtj1+fT6ONqnEo5P/Gl+4tybsliHrPrW2gDkkA43nIJfUof2dZ9YFuHRuBQ+xGuSuOIb+/kQHZm5ANrjsyiHCNRfRmz9hriph/WaO+dZpvn6SzGHaNs3iKSUL9oj1lLoTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cl/w0lxE; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733387507; x=1764923507;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PwUz5TT6if4KR6nx5xSKc3IlJvN+MCVxceBhNWnh3js=;
+  b=cl/w0lxE8sx5+ERg+Oz1YonDv65NTaM50tJI2l7454wWuVqwG9I7tzQw
+   5RJDwIA9cBzX3pEpc5qVyf1ZCuZTtypIQ19n6AwpiZTykBvSUPVDocJPn
+   a2wbMMSsb+U9l0PCONkfuz9/JFe83hOvSgIBMuKYjgEX4SYqfiURQU9cO
+   q7Q/mS6YNiWII+/62D3tqZRNuR4e45H285jfGztT/x3Ugll6BnzBlblO0
+   npOAjwSpx3hfvw5scwqggr5du0dOs6TJvG4s90cxkhei+Og0+3DjR4qaY
+   XQ8zEjK9M7CHVF0EBJrakdYFOSeOqF8x4sUdgEpfqMuWMRiXdB0aM1Y67
+   Q==;
+X-CSE-ConnectionGUID: HCl7UNtHSvGpjMM72ZB7IA==
+X-CSE-MsgGUID: pElRg6sJQK+GyScmXUZ4ag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33816457"
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="33816457"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 00:31:46 -0800
+X-CSE-ConnectionGUID: Z9SZoJBqTCS3/bYeldthtw==
+X-CSE-MsgGUID: 9r5WepzzQgyKFz7QtvhZ0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
+   d="scan'208";a="94495498"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 00:31:45 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tJ7Gw-000000041ln-1NMt;
+	Thu, 05 Dec 2024 10:31:42 +0200
+Date: Thu, 5 Dec 2024 10:31:42 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jai Luthra <jai.luthra@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/15] media: i2c: ds90ub960: Add support for I2C_RX_ID
+Message-ID: <Z1Fk7jRVQJZzsTQp@smile.fi.intel.com>
+References: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
+ <20241204-ub9xx-fixes-v3-7-a933c109b323@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204-ub9xx-fixes-v3-7-a933c109b323@ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Currently, the task_mm_cid_work function is called in a task work
-triggered by a scheduler tick. This can delay the execution of the task
-for the entire duration of the function, negatively affecting the
-response of real time tasks.
+On Wed, Dec 04, 2024 at 01:05:21PM +0200, Tomi Valkeinen wrote:
+> Normally the driver accesses both the RX and the TX port registers via a
+> paging mechanism: one register is used to select the page (i.e. the
+> port), which dictates the port used when accessing the port specific
+> registers.
+> 
+> The downside to this is that while debugging it's almost impossible to
+> access the port specific registers from the userspace, as the driver can
+> change the page at any moment.
+> 
+> The hardware supports another access mechanism: using the I2C_RX_ID
+> registers (one for each RX port), i2c addresses can be chosen which,
+> when accessed, will always use the specific port's registers, skipping
+> the paging mechanism.
+> 
+> The support is only for the RX port, but it has proven very handy while
+> debugging and testing. So let's add the code for this, but hide it
+> behind a disabled define.
 
-This patch runs the task_mm_cid_work in a new delayed work connected to
-the mm_struct rather than in the task context before returning to
-userspace.
+...
 
-This delayed work is initialised while allocating the mm and disabled
-before freeing it, its execution is no longer triggered by scheduler
-ticks but running periodically based on the defined MM_CID_SCAN_DELAY.
+>  #define MHZ(v) ((u32)((v) * 1000000U))
 
-The main advantage of this change is that the function can be offloaded
-to a different CPU and even preempted by RT tasks.
+Missed HZ_PER_MHZ from previous patch?
 
-On a busy system, this may mean the function gets called less often, but
-the current behaviour already doesn't provide guarantees. Moreover, this
-new behaviour could be more predictable in some situations since the
-delayed work is always scheduled with the same periodicity for each mm.
+...
 
-This deprecate the "sched: improve task_mm_cid_work impact on isolated
-systems" patches by dropping the first patch and using a workqueue
-instead of RCU callbacks.
+> +#ifdef UB960_DEBUG_I2C_RX_ID
+> +	for (unsigned int i = 0; i < 4; i++)
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-Link: https://lore.kernel.org/lkml/20241202140735.56368-1-gmonaco@redhat.com/
----
- include/linux/mm_types.h |  5 +++++
- kernel/sched/core.c      | 37 +++++++------------------------------
- 2 files changed, 12 insertions(+), 30 deletions(-)
+Should it use _MAX_RX_NPORTS instead of 4?
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 7361a8f3ab68..38c567f06dce 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -856,6 +856,7 @@ struct mm_struct {
- 		 * mm nr_cpus_allowed updates.
- 		 */
- 		raw_spinlock_t cpus_allowed_lock;
-+		struct delayed_work mm_cid_work;
- #endif
- #ifdef CONFIG_MMU
- 		atomic_long_t pgtables_bytes;	/* size of all page tables */
-@@ -1149,6 +1150,8 @@ enum mm_cid_state {
- 	MM_CID_LAZY_PUT = (1U << 31),
- };
- 
-+extern void task_mm_cid_work(struct work_struct *work);
-+
- static inline bool mm_cid_is_unset(int cid)
- {
- 	return cid == MM_CID_UNSET;
-@@ -1221,12 +1224,14 @@ static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *
- 	if (!mm->pcpu_cid)
- 		return -ENOMEM;
- 	mm_init_cid(mm, p);
-+	INIT_DELAYED_WORK(&mm->mm_cid_work, task_mm_cid_work);
- 	return 0;
- }
- #define mm_alloc_cid(...)	alloc_hooks(mm_alloc_cid_noprof(__VA_ARGS__))
- 
- static inline void mm_destroy_cid(struct mm_struct *mm)
- {
-+	disable_delayed_work(&mm->mm_cid_work);
- 	free_percpu(mm->pcpu_cid);
- 	mm->pcpu_cid = NULL;
- }
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 95e40895a519..0c3a778c9cb5 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5654,7 +5654,6 @@ void sched_tick(void)
- 		resched_latency = cpu_resched_latency(rq);
- 	calc_global_load_tick(rq);
- 	sched_core_tick(rq);
--	task_tick_mm_cid(rq, donor);
- 	scx_tick(rq);
- 
- 	rq_unlock(rq, &rf);
-@@ -10520,22 +10519,14 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
- 	sched_mm_cid_remote_clear(mm, pcpu_cid, cpu);
- }
- 
--static void task_mm_cid_work(struct callback_head *work)
-+void task_mm_cid_work(struct work_struct *work)
- {
- 	unsigned long now = jiffies, old_scan, next_scan;
--	struct task_struct *t = current;
- 	struct cpumask *cidmask;
--	struct mm_struct *mm;
-+	struct delayed_work *delayed_work = container_of(work, struct delayed_work, work);
-+	struct mm_struct *mm = container_of(delayed_work, struct mm_struct, mm_cid_work);
- 	int weight, cpu;
- 
--	SCHED_WARN_ON(t != container_of(work, struct task_struct, cid_work));
--
--	work->next = work;	/* Prevent double-add */
--	if (t->flags & PF_EXITING)
--		return;
--	mm = t->mm;
--	if (!mm)
--		return;
- 	old_scan = READ_ONCE(mm->mm_cid_next_scan);
- 	next_scan = now + msecs_to_jiffies(MM_CID_SCAN_DELAY);
- 	if (!old_scan) {
-@@ -10571,26 +10562,12 @@ void init_sched_mm_cid(struct task_struct *t)
- 
- 	if (mm) {
- 		mm_users = atomic_read(&mm->mm_users);
--		if (mm_users == 1)
-+		if (mm_users == 1) {
- 			mm->mm_cid_next_scan = jiffies + msecs_to_jiffies(MM_CID_SCAN_DELAY);
-+			schedule_delayed_work(&mm->mm_cid_work,
-+					      msecs_to_jiffies(MM_CID_SCAN_DELAY));
-+		}
- 	}
--	t->cid_work.next = &t->cid_work;	/* Protect against double add */
--	init_task_work(&t->cid_work, task_mm_cid_work);
--}
--
--void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
--{
--	struct callback_head *work = &curr->cid_work;
--	unsigned long now = jiffies;
--
--	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
--	    work->next != work)
--		return;
--	if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
--		return;
--
--	/* No page allocation under rq lock */
--	task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
- }
- 
- void sched_mm_cid_exit_signals(struct task_struct *t)
+> +		ub960_write(priv, UB960_SR_I2C_RX_ID(i),
+> +			    (UB960_DEBUG_I2C_RX_ID + i) << 1);
+> +#endif
 
-base-commit: feffde684ac29a3b7aec82d2df850fbdbdee55e4
 -- 
-2.47.1
+With Best Regards,
+Andy Shevchenko
+
 
 
