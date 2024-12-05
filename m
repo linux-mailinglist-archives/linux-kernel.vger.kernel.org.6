@@ -1,181 +1,438 @@
-Return-Path: <linux-kernel+bounces-434026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6EA9E6055
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:06:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE51F188567F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:06:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B3F1CDA15;
-	Thu,  5 Dec 2024 22:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+Z5jJ4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD3D9E6058
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:09:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2681B87CF;
-	Thu,  5 Dec 2024 22:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733436367; cv=none; b=E/z82yzUwmirtc/nTQEHWQyjDYOow470PEU/SDBm7lYwne0jhk0jl3akTxucy4cR+zoEeB53tE8XoWf32LTP9oYSiytZCIY9VYpjtHl2/TKBZOTyysfNPI8NzeIieVcj8RenChxcvobeOPiW2GEXUYViLcRxGJtpSpOwfCVFdWs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733436367; c=relaxed/simple;
-	bh=L3PuwvxgeCB6Zi60CiOUyxN2M783Zvc3EW19LwKwWQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hbmDRnNr3q8agecKnRvR3csRLdLOOqFa8jynuCFoYFS23NRzQH44QNnitB24pdJg8P1ON2GSygA+NaPW0zGnySvDEzliQNkffTgfY7IAjedCF9+r+Vzm8/ei/w3nSf65kheWVlUxUddRKf29ZAam0I/ZF0PRepwkdqPqaMr4Nm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+Z5jJ4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66320C4CED1;
-	Thu,  5 Dec 2024 22:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733436366;
-	bh=L3PuwvxgeCB6Zi60CiOUyxN2M783Zvc3EW19LwKwWQQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=c+Z5jJ4sxDwI6oPh94/aevrQXIeBAvgDtR+j2zviPCzTWxVy3w4cm90HakTFqdKV6
-	 GcSEeKKcxKUIKvqTAVcthEdW7QLK20zD9ePPvbwpGLEZ5dGREBClrQQZUtXyIRSLfZ
-	 nIg7G6nmFmgmQpiyvHkW9oznUX8iudWAYx3pyAJprWN4/PAKvi4riXKic4WHUOyJyk
-	 L10iznPTk7FOepEAcXzQZD1wkhgF33VaKjkFKsUeiOj/1EymMIAqmMmYN74cLaCNUV
-	 FMC9NVN92pQHvVKfRnY3w5Cx6h392yllpTlhv/Zhj9/eapyl45X3DbU4wx4MzT0Q/I
-	 MztmMVw4QS4NA==
-Date: Thu, 5 Dec 2024 15:06:04 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Borislav Petkov <bp@alien8.de>, x86@kernel.org
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Kim Phillips <kim.phillips@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Hitting AUTOIBRS WARN_ON_ONCE() in init_amd() booting 32-bit kernel
- under KVM
-Message-ID: <20241205220604.GA2054199@thelio-3990X>
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF678283BA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:09:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31DD1CD1E0;
+	Thu,  5 Dec 2024 22:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="m3UBIRjr"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D2B282FB;
+	Thu,  5 Dec 2024 22:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733436557; cv=fail; b=B2fBk4HpWZc013rkdxrdLsgUpDMBz4nOCgiN9iC//ReYHujI3G2bxFEPQAN6aacauJS+npQ7gL80QgEyUAgCGmBCug5RO3ufSF5QGDlkIxrCEfYUrj+xmZC7zYf2vJ6W4PhYAWBWE6FIJ6ixA0FPzPxetmgCgEvJVeN2DHcJ+vw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733436557; c=relaxed/simple;
+	bh=lrgiCV1S6NOgqbBArqrk8t/kfiq4JezkWNWZ7Rrq3K0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ma+tkFhdErKmuELQ/1nufHoTyXaIaMCi4XgyFfQFZE93xB/Xuk+mg9AdkmubZnDhURphG/Vtq8pBEl4TUmGFvEat1+POGM3agld6D+GnkrFXhgP3egQrsxiqyJPHNth3s9CX1sqkYH3kPHjZ7vlUpjc17XZsip48YIYHzAGFhcc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=m3UBIRjr; arc=fail smtp.client-ip=40.107.94.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tqjkbz8yHYCzQzvgXV/qScrbsUj7/hHZ6wWMJ9EzcZSoko7zknAS8FxS1Hibjqjo8gimtdghN7AsyzAJd/LnhDbqZiN9szA5ch6MkdKWIX/ixJEvhg14cteOCCH61IMurTeDYSvr1hS9VRSWjZCsklr1BZjVclxhvXwf7J81UbB7Y+j26zFwQnALMIMS/bGSvLYiRH2ygHBKsBwddyc7W7xk7Z1H8Thv/ccsj7lewvA3Yw3wjJxtoHBjy5MmRIgebKtGvPMlbpXFjHdI2RbItYWsuL3WEfq2aftZdgp3RXZedOgtdUYSxNmWwRcx1QNoLLGkPEUfhgU3He5OUjdJ4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i2oNJqsZFkdjC6f4t8Tnc11EcksGmoxUcgBJOkfzPoY=;
+ b=VwmK2oTBr+vql5c2HtzRA1z20V/u44HikdiDCQ/9NK04iMV0TEPaWmwiAV0+tsjMcdryaqrQxg/T6K1ghnHJfK7WsX8LGe8rtPqxj1I+PL9Yobg1c6Ig/MMp+cGtSSB6SGGxumbhFHL8PolwGuG0w5SMeA+J7kuMueyeKY1xKOYd+20vCPFYsry4t5q1TOSDEqalDdjfVHkTbkU1oyFuBsw/kOu5QDDSHKblCpx8y77Di4yw+Q8FhYg9yWHGByKlUQHA2jXYqXrT8LnVAFWr5etSyNYN8BqFqUwWW3f9d9dVXOyguwHIvE8263ZR2ds1OnIvKryilgnWOgy82sVXAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i2oNJqsZFkdjC6f4t8Tnc11EcksGmoxUcgBJOkfzPoY=;
+ b=m3UBIRjrhQLVRFdx1aAAt1Gx1R1+1MjUO7Bj64YrXJCs4ZujsX8yVk/Rmqsw1iYply5MSWOvQqvFdpUfYKDXaZCTJWYdmgMnMoBc4DVfDUf6dm1DeGn85IvGdDCQp5S5/AakNqdeIXsICVV/pBll89Pd8hRDl1vxGBICdm/NYNQ=
+Received: from SJ0PR03CA0033.namprd03.prod.outlook.com (2603:10b6:a03:33e::8)
+ by SA1PR12MB8724.namprd12.prod.outlook.com (2603:10b6:806:38b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Thu, 5 Dec
+ 2024 22:09:00 +0000
+Received: from SJ5PEPF000001CE.namprd05.prod.outlook.com
+ (2603:10b6:a03:33e:cafe::ab) by SJ0PR03CA0033.outlook.office365.com
+ (2603:10b6:a03:33e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.11 via Frontend Transport; Thu,
+ 5 Dec 2024 22:08:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ5PEPF000001CE.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Thu, 5 Dec 2024 22:08:59 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Dec
+ 2024 16:08:58 -0600
+Received: from [172.25.146.163] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 5 Dec 2024 16:08:57 -0600
+Message-ID: <b9d5636c-0485-4a27-bf17-fd092b0b8ef9@amd.com>
+Date: Thu, 5 Dec 2024 17:08:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] xen/cppc: introduce cppc data upload sub-hypercall
+To: Penny Zheng <Penny.Zheng@amd.com>, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	"Len Brown" <lenb@kernel.org>
+CC: Ray Huang <Ray.Huang@amd.com>, Xenia Ragiadakou
+	<Xenia.Ragiadakou@amd.com>, <xen-devel@lists.xenproject.org>,
+	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
+References: <20241205054252.471761-1-Penny.Zheng@amd.com>
+ <20241205054252.471761-5-Penny.Zheng@amd.com>
+Content-Language: en-US
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <20241205054252.471761-5-Penny.Zheng@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CE:EE_|SA1PR12MB8724:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52b65e50-943e-4b44-3ac9-08dd15796b88
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UkozUitXU2ZFVTg4Zit4V3B3ajJVNHNGZkJ2ZXJCR1VHRkV2dTlYK1h3UEdS?=
+ =?utf-8?B?WmRmRnBnVi9hNlNuYjBBQWJIeDhleG03dlJnV29ZWnY4N2JsZlUvWitiNVda?=
+ =?utf-8?B?Tys4VzJkUmxUVXNUTm5scGp5SG1UcGYwYTE3MkRFa1JaazdxVkQyYUZTUWJY?=
+ =?utf-8?B?S2tmeUxiOGx1SmtISnh6bmY0Z1NIQnhSR1B2R0JWczBVSU9tNU5mR2h3UWFW?=
+ =?utf-8?B?QzBtRmFDK0NWamxybGY4N0pvOVdqd0xQMExmMjBXWlREdklCSXRpTWdGN2tj?=
+ =?utf-8?B?YTFKRkJvSndWOUdDdmJiV0RydDN4KzFiV29mM3VWNHlLK0xUTzFDVjI5VE9p?=
+ =?utf-8?B?cFdPcVhrZkhJMXgzTnR0bndKQUkrU0RLN05vem81bVU3enVSS0VGZnhUSG15?=
+ =?utf-8?B?c3VtR2tIZExHTWRlZ0Z4Qkh6OUg3UFd4MXFkTExBeXlEVGEzRVVuWm1mR09q?=
+ =?utf-8?B?LzdBbE9GekpHV0JDUGJWWUlOMzUrRkJIWENuc242ZllsUlB4cjlpeXMySzdw?=
+ =?utf-8?B?MlRqVnpZcDlsZjdnNC9lZ0JCQy9ZWGpabHdNVklYVk5WZ21uNnljem0vbGVU?=
+ =?utf-8?B?N1BHQS83ZTJWSDJIa1htaXlBZG80dGlqRVl0RXAzbWJhR2ZTMUxaV1ltSmVS?=
+ =?utf-8?B?L24ycmE2Z0x3OWRyUmw4bVpWN0NLZUtVdUNtWWxXc01kdUpVcXhJQmVUT3NC?=
+ =?utf-8?B?ekdtR05ueEI2dFI5RzVyaysyT1BaMzhOMEJuRlkxS2ZmZjVvWm1kQTJjQjVF?=
+ =?utf-8?B?a3ZkMElSTVFseTRSL0gzU2hYbXZiUE9hU0N2UjY5OXNTL0RlM1RFb3lQNzBs?=
+ =?utf-8?B?QXd6V21OVjdFdUxDbitlSklQSzJBOWxnUEYwdGxCSXc5aUFQVlZFNm11NzRY?=
+ =?utf-8?B?TnQxZkF6TjlIanhxTnBmYzJsV0UrdHJKd1BQSmpZTnhXSWVqZ3BGN3hub0tJ?=
+ =?utf-8?B?R205ZktyZk5wYitHUS9LOWduc0VMZ1J0WVVHWkxvQ1oyYTh3V3dlQjIycjR4?=
+ =?utf-8?B?RUFUNFZXQmhlTjJqdWdveTZWbTc1WklRVUE1emlLYlVGNVk0Wk5jYUVDL0M4?=
+ =?utf-8?B?MFU0R3RsUCs1QisxMi96SE5adUswOUg5ZnpPWi9wdHB6RFlVRDB6ZG1JV1Fh?=
+ =?utf-8?B?NjZCdHRVSXhjcTQzMTJHUDRrSThQd0gvem5vS1REWE1kbG9la2IveW1icXBV?=
+ =?utf-8?B?d1lrNU5VMG1jQnpmR2pkZnZjMHEzQnZBRVM2Tm9LbUljRy9JdHNTZUFyR3Zm?=
+ =?utf-8?B?L09YMWpja1pBb0xYbzJic0E0U1lWVVpPSkV5eTR0enZOd3dpM055RVBEa2hV?=
+ =?utf-8?B?eHdDTElydFlzTFJqVWh0WHdIUEw1U2puU1d5SFYxcnA0b3NiT3A2YWZudlJp?=
+ =?utf-8?B?SzdjTTd1aUlJOVgyeTdFWjUxZVFPMGxMdFlYYUZxQ2RqcXR1amtoOC9UMHFu?=
+ =?utf-8?B?aWZLRy9JSUtnWnNMT2NGYUl3Y25lVXJmdnZtMllvVHF5ejRVMlBDZGxDbEM3?=
+ =?utf-8?B?R1BwUHdxSHpNTCtqQVhIZ1VQOWdEYk5CendTbnpXcE5hK1F6Wnk5OGlzcUg3?=
+ =?utf-8?B?TCtlRDlpYWUrN1NKUmZIZHoxdG12d1I0UUdXaDJYZFhLcjU1dkRVU0gzaXV3?=
+ =?utf-8?B?cmZpTTRaVlB5Q28vU3pXVTVXTXROSyswZXFDQ2RXcS9pODJVZGdQRXlzSEFI?=
+ =?utf-8?B?dkZjUjVsbHJGNitnUDBhVjlrQmtnL0d3N1NPUG55cWc3eDR0dDM5YkVZS1Jz?=
+ =?utf-8?B?dGNoVTRxVGhKUXRGbytiOGNKbVliZENvZUxyUlZKLzMwMXYzNXQra3FVSm5r?=
+ =?utf-8?B?SnZVaFJnb1ExcEU0UDZiS29aUmlkb2JGVlhtTzUvdjRuZEh2Vmd3ZHVxbkVv?=
+ =?utf-8?B?bzFKWnJkME1xM0ZpbUhYNFpHd2JYVFRwN2RmczZNK0ZOSnNhZGFHUkZMMENy?=
+ =?utf-8?Q?rh2YLT1jU4sm0Q1d54icIec5TccPTK/Z?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 22:08:59.4388
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52b65e50-943e-4b44-3ac9-08dd15796b88
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8724
 
-Hi Boris and x86 + KVM folks,
+Adding Rafael and Len. and again keeping the full patch.
 
-I got access to a new box that has an EPYC 9454P in it and I noticed
-that I hit the warning from
+On 2024-12-05 00:42, Penny Zheng wrote:
+> As Xen is uncapable of parsing the ACPI dynamic table, this commit
 
-        /*
-         * Make sure EFER[AIBRSE - Automatic IBRS Enable] is set. The APs are brought up
-         * using the trampoline code and as part of it, MSR_EFER gets prepared there in
-         * order to be replicated onto them. Regardless, set it here again, if not set,
-         * to protect against any future refactoring/code reorganization which might
-         * miss setting this important bit.
-         */
-        if (spectre_v2_in_eibrs_mode(spectre_v2_enabled) &&
-            cpu_has(c, X86_FEATURE_AUTOIBRS))
-                WARN_ON_ONCE(msr_set_bit(MSR_EFER, _EFER_AUTOIBRS));
+s/uncapable/incapable/
 
-that was added by commit 8cc68c9c9e92 ("x86/CPU/AMD: Make sure
-EFER[AIBRSE] is set") when booting a 32-bit kernel in QEMU with KVM. I
-do not see this without KVM, so maybe this has something to do with
-commit 8c19b6f257fa ("KVM: x86: Propagate the AMD Automatic IBRS feature
-to the guest") as well?
+> introduces a new sub-hypercall XEN_PM_CPPC to deliver CPPC perf
+> caps data.
+> 
+> Signed-off-by: Penny Zheng <Penny.Zheng@amd.com>
+> ---
+>   drivers/acpi/cppc_acpi.c         |  1 +
+>   drivers/xen/xen-acpi-processor.c | 89 +++++++++++++++++++++++++++++++-
+>   include/acpi/processor.h         |  1 +
+>   include/xen/interface/platform.h | 11 ++++
+>   4 files changed, 101 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index 3a436591da07..3570a52a5dbd 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -860,6 +860,7 @@ static int acpi_cppc_processor_parse(struct acpi_processor *pr, struct cpc_desc
+>   		cpc_ptr->cpc_regs[i].cpc_entry.int_value = 0;
+>   	}
+>   
+> +	pr->flags.has_cpc = 1;
+>   	pr_debug("Parsed _CPC entry for CPU: %d\n", pr->acpi_id);
+>   	kfree(output.pointer);
+>   	return 0;
+> diff --git a/drivers/xen/xen-acpi-processor.c b/drivers/xen/xen-acpi-processor.c
+> index e9f38f171240..8a39e46c1ebc 100644
+> --- a/drivers/xen/xen-acpi-processor.c
+> +++ b/drivers/xen/xen-acpi-processor.c
+> @@ -25,6 +25,7 @@
+>   #include <xen/xen.h>
+>   #include <xen/interface/platform.h>
+>   #include <asm/xen/hypercall.h>
+> +#include <acpi/cppc_acpi.h>
+>   
+>   static int no_hypercall;
+>   MODULE_PARM_DESC(off, "Inhibit the hypercall.");
+> @@ -45,8 +46,12 @@ static unsigned long *acpi_ids_done;
+>   static unsigned long *acpi_id_present;
+>   /* And if there is an _CST definition (or a PBLK) for the ACPI IDs */
+>   static unsigned long *acpi_id_cst_present;
+> +/* And if there is an _CPC entry for the ACPI IDs */
+> +static unsigned long *acpi_id_cpc_present;
+>   /* Which ACPI P-State dependencies for a enumerated processor */
+>   static struct acpi_psd_package *acpi_psd;
+> +/* ACPI CPPC structures for a enumerated processor */
+> +static struct cppc_perf_caps *acpi_cppc_data;
+>   
+>   static bool pr_initialized;
+>   
+> @@ -208,6 +213,44 @@ static int xen_copy_pct_data(struct acpi_pct_register *pct,
+>   	dst_pct->address = pct->address;
+>   	return 0;
+>   }
+> +static int push_cppc_to_hypervisor(struct acpi_processor *_pr)
+> +{
+> +	int ret = 0;
+> +	struct xen_platform_op op = {
+> +		.cmd            = XENPF_set_processor_pminfo,
+> +		.interface_version  = XENPF_INTERFACE_VERSION,
+> +		.u.set_pminfo.id    = _pr->acpi_id,
+> +		.u.set_pminfo.type  = XEN_PM_CPPC,
+> +	};
+> +	struct cppc_perf_caps *cppc_perf = acpi_cppc_data + _pr->acpi_id;
+> +
+> +	op.u.set_pminfo.cppc_data.highest_perf = cppc_perf->highest_perf;
+> +	op.u.set_pminfo.cppc_data.lowest_perf = cppc_perf->lowest_perf;
+> +	op.u.set_pminfo.cppc_data.nominal_perf = cppc_perf->nominal_perf;
+> +	op.u.set_pminfo.cppc_data.lowest_nonlinear_perf = cppc_perf->lowest_nonlinear_perf;
+> +	op.u.set_pminfo.cppc_data.lowest_freq = cppc_perf->lowest_freq;
+> +	op.u.set_pminfo.cppc_data.nominal_freq = cppc_perf->nominal_freq;
+> +
+> +	if (!no_hypercall)
+> +		ret = HYPERVISOR_platform_op(&op);
+> +
+> +	if (!ret) {
+> +		pr_debug("ACPI CPU%u - CPPC uploaded.\n", _pr->acpi_id);
+> +		pr_debug("     highest_perf: %d\n", cppc_perf->highest_perf);
+> +		pr_debug("     lowest_perf: %d\n", cppc_perf->lowest_perf);
+> +		pr_debug("     lowest_nonlinear_perf: %d\n", cppc_perf->lowest_nonlinear_perf);
+> +		pr_debug("     nominal_perf: %d\n", cppc_perf->nominal_perf);
+> +		pr_debug("     lowest_freq: %d Mhz\n", cppc_perf->lowest_freq);
+> +		pr_debug("     nominal_freq: %d Mhz\n", cppc_perf->nominal_freq);
+> +	} else if ((ret != -EINVAL) && (ret != -ENOSYS))
+> +		/* EINVAL means the ACPI ID is incorrect - meaning the ACPI
+> +		 * table is referencing a non-existing CPU - which can happen
+> +		 * with broken ACPI tables. */
+> +		pr_warn("(_CPC): Hypervisor error (%d) for ACPI CPU%u\n",
+> +			ret, _pr->acpi_id);
+> +
+> +		return ret;
+> +}
+>   static int push_pxx_to_hypervisor(struct acpi_processor *_pr)
+>   {
+>   	int ret = 0;
+> @@ -284,6 +327,9 @@ static int upload_pm_data(struct acpi_processor *_pr)
+>   	if (_pr->flags.power)
+>   		err = push_cxx_to_hypervisor(_pr);
+>   
+> +	if (_pr->flags.has_cpc)
+> +		err |= push_cppc_to_hypervisor(_pr);
+> +
 
-I've included as much information as I can below for reproduction. If
-there is anything more I can provide or test, I am more than happy to do
-so. If this is expected given it is a 32-bit guest or something else, I
-can just ignore the warning in my report infrastructure. I have not
-checked if this is a recent regression since I have only had this box
-for a couple of days.
+Older hypervisors without the xen changes will return an error since 
+they don't implement XEN_PM_CPPC.  We might want to ignore the return 
+when it's EINVAL, the default for the XEN_PM_* switch, but that may 
+ignore more than intended.
 
-  $ uname -r
-  6.13.0-rc1-debug
+The two calls to upload_pm_data() ignore the return value, so maybe it 
+doesn't matter.
 
-  $ lscpu
-  ...
-    Model name:             AMD EPYC 9454P 48-Core Processor
-      CPU family:           25
-      Model:                17
-  ...
-  Vulnerabilities:
-    Gather data sampling:   Not affected
-    Itlb multihit:          Not affected
-    L1tf:                   Not affected
-    Mds:                    Not affected
-    Meltdown:               Not affected
-    Mmio stale data:        Not affected
-    Reg file data sampling: Not affected
-    Retbleed:               Not affected
-    Spec rstack overflow:   Mitigation; Safe RET
-    Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl
-    Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
-    Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP always-on; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
-    Srbds:                  Not affected
-    Tsx async abort:        Not affected
+(This is the end of my comments.)
 
-  $ qemu-system-i386 --version | head -1
-  QEMU emulator version 9.1.2
+Thanks,
+Jason
 
-  $ git show --format='%h ("%s")' -s
-  896d8946da97 ("Merge tag 'net-6.13-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
+>   	if (_pr->performance && _pr->performance->states)
+>   		err |= push_pxx_to_hypervisor(_pr);
+>   
+> @@ -488,6 +534,7 @@ read_acpi_id(acpi_handle handle, u32 lvl, void *context, void **rv)
+>   	union acpi_object object = { 0 };
+>   	struct acpi_buffer buffer = { sizeof(union acpi_object), &object };
+>   	struct acpi_buffer cst_buf = { ACPI_ALLOCATE_BUFFER, NULL };
+> +	struct acpi_buffer cpc_buf = { ACPI_ALLOCATE_BUFFER, NULL };
+>   	acpi_io_address pblk = 0;
+>   
+>   	status = acpi_get_type(handle, &acpi_type);
+> @@ -567,11 +614,20 @@ read_acpi_id(acpi_handle handle, u32 lvl, void *context, void **rv)
+>   	/* .. and it has a C-state */
+>   	__set_bit(acpi_id, acpi_id_cst_present);
+>   
+> +	status = acpi_evaluate_object(handle, "_CPC", NULL, &cpc_buf);
+> +	if (ACPI_FAILURE(status)) {
+> +		return AE_OK;
+> +	}
+> +	kfree(cpc_buf.pointer);
+> +
+> +	/* .. and it has a _CPC entry */
+> +	__set_bit(acpi_id, acpi_id_cpc_present);
+> +
+>   	return AE_OK;
+>   }
+>   static int check_acpi_ids(struct acpi_processor *pr_backup)
+>   {
+> -	if (acpi_id_present && acpi_id_cst_present)
+> +	if (acpi_id_present && acpi_id_cst_present && acpi_id_cpc_present)
+>   		/* OK, done this once .. skip to uploading */
+>   		goto upload;
+>   
+> @@ -588,11 +644,19 @@ static int check_acpi_ids(struct acpi_processor *pr_backup)
+>   		return -ENOMEM;
+>   	}
+>   
+> +	acpi_id_cpc_present = bitmap_zalloc(nr_acpi_bits, GFP_KERNEL);
+> +	if (!acpi_id_cpc_present) {
+> +		bitmap_free(acpi_id_present);
+> +		bitmap_free(acpi_id_cst_present);
+> +		return -ENOMEM;
+> +	}
+> +
+>   	acpi_psd = kcalloc(nr_acpi_bits, sizeof(struct acpi_psd_package),
+>   			   GFP_KERNEL);
+>   	if (!acpi_psd) {
+>   		bitmap_free(acpi_id_present);
+>   		bitmap_free(acpi_id_cst_present);
+> +		bitmap_free(acpi_id_cpc_present);
+>   		return -ENOMEM;
+>   	}
+>   
+> @@ -608,6 +672,12 @@ static int check_acpi_ids(struct acpi_processor *pr_backup)
+>   			pr_backup->acpi_id = i;
+>   			/* Mask out C-states if there are no _CST or PBLK */
+>   			pr_backup->flags.power = test_bit(i, acpi_id_cst_present);
+> +			/* Mask out relevant flag if there are no _CPC */
+> +			pr_backup->flags.has_cpc = test_bit(i, acpi_id_cpc_present);
+> +			if (pr_backup->flags.has_cpc) {
+> +				if (xen_processor_get_perf_caps(pr_backup, acpi_cppc_data + i))
+> +					return -EINVAL;
+> +			}
+>   			/* num_entries is non-zero if we evaluated _PSD */
+>   			if (acpi_psd[i].num_entries) {
+>   				memcpy(&pr_backup->performance->domain_info,
+> @@ -726,6 +796,15 @@ static int __init xen_acpi_processor_init(void)
+>   		bitmap_free(acpi_ids_done);
+>   		return -ENOMEM;
+>   	}
+> +
+> +	acpi_cppc_data = kcalloc(nr_acpi_bits, sizeof(struct cppc_perf_caps),
+> +				GFP_KERNEL);
+> +	if (!acpi_cppc_data) {
+> +		pr_debug("Memory allocation error for acpi_cppc_data\n");
+> +		rc = -ENOMEM;
+> +		goto err1_out;
+> +	}
+> +
+>   	for_each_possible_cpu(i) {
+>   		if (!zalloc_cpumask_var_node(
+>   			&per_cpu_ptr(acpi_perf_data, i)->shared_cpu_map,
+> @@ -751,6 +830,11 @@ static int __init xen_acpi_processor_init(void)
+>   		rc = acpi_processor_get_performance_info(pr);
+>   		if (rc)
+>   			goto err_out;
+> +
+> +		pr->flags.pcc_unsupported = true;
+> +		rc = xen_processor_get_perf_caps(pr, acpi_cppc_data + i);
+> +		if (rc)
+> +			goto err_out;
+>   	}
+>   
+>   	rc = xen_upload_processor_pm_data();
+> @@ -766,6 +850,8 @@ static int __init xen_acpi_processor_init(void)
+>   
+>   err_out:
+>   	/* Freeing a NULL pointer is OK: alloc_percpu zeroes. */
+> +	kfree(acpi_cppc_data);
+> +err1_out:
+>   	free_acpi_perf_data();
+>   	bitmap_free(acpi_ids_done);
+>   	return rc;
+> @@ -779,6 +865,7 @@ static void __exit xen_acpi_processor_exit(void)
+>   	bitmap_free(acpi_id_present);
+>   	bitmap_free(acpi_id_cst_present);
+>   	kfree(acpi_psd);
+> +	kfree(acpi_cppc_data);
+>   	for_each_possible_cpu(i)
+>   		acpi_processor_unregister_performance(i);
+>   
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index 18499cc11366..66492f5d68a8 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -214,6 +214,7 @@ struct acpi_processor_flags {
+>   	u8 bm_control:1;
+>   	u8 bm_check:1;
+>   	u8 has_cst:1;
+> +	u8 has_cpc:1;
+>   	u8 pcc_unsupported:1;
+>   	u8 has_lpi:1;
+>   	u8 power_setup_done:1;
+> diff --git a/include/xen/interface/platform.h b/include/xen/interface/platform.h
+> index 79a443c65ea9..e11bb9443dc0 100644
+> --- a/include/xen/interface/platform.h
+> +++ b/include/xen/interface/platform.h
+> @@ -319,6 +319,7 @@ DEFINE_GUEST_HANDLE_STRUCT(xenpf_getidletime_t);
+>   #define XEN_PM_PX   1
+>   #define XEN_PM_TX   2
+>   #define XEN_PM_PDC  3
+> +#define XEN_PM_CPPC 4
+>   /* Px sub info type */
+>   #define XEN_PX_PCT   1
+>   #define XEN_PX_PSS   2
+> @@ -384,6 +385,15 @@ struct xen_processor_px {
+>   };
+>   DEFINE_GUEST_HANDLE_STRUCT(xen_processor_px);
+>   
+> +struct xen_processor_cppc {
+> +    uint32_t highest_perf;
+> +    uint32_t nominal_perf;
+> +    uint32_t lowest_perf;
+> +    uint32_t lowest_nonlinear_perf;
+> +    uint32_t lowest_freq;
+> +    uint32_t nominal_freq;
+> +};
+> +
+>   struct xen_psd_package {
+>   	uint64_t num_entries;
+>   	uint64_t revision;
+> @@ -412,6 +422,7 @@ struct xenpf_set_processor_pminfo {
+>   		struct xen_processor_power          power;/* Cx: _CST/_CSD */
+>   		struct xen_processor_performance    perf; /* Px: _PPC/_PCT/_PSS/_PSD */
+>   		GUEST_HANDLE(uint32_t)              pdc;
+> +		struct xen_processor_cppc           cppc_data; /* _CPC */
+>   	};
+>   };
+>   DEFINE_GUEST_HANDLE_STRUCT(xenpf_set_processor_pminfo);
 
-  $ make -skj"$(nproc)" ARCH=i386 CROSS_COMPILE=i386-linux- mrproper defconfig bzImage
-
-  $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20241120-044434/x86-rootfs.cpio.zst | zstd -d >rootfs.cpio
-
-  $ qemu-system-i386 \
-      -display none \
-      -nodefaults \
-      -M q35 \
-      -d unimp,guest_errors \
-      -append 'console=ttyS0 earlycon=uart8250,io,0x3f8' \
-      -kernel arch/x86/boot/bzImage \
-      -initrd rootfs.cpio \
-      -cpu host \
-      -enable-kvm \
-      -m 512m \
-      -smp 8 \
-      -serial mon:stdio
-  [    0.000000] Linux version 6.13.0-rc1-00170-g896d8946da97 (nathan@ax162) (i386-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP PREEMPT_DYNAMIC Thu Dec  5 13:54:30 MST 2024
-  ...
-  [    0.096072] smp: Bringing up secondary CPUs ...
-  [    0.096731] smpboot: x86: Booting SMP configuration:
-  [    0.097004] .... node  #0, CPUs:      #1
-  [    0.009830] ------------[ cut here ]------------
-  [    0.009830] WARNING: CPU: 1 PID: 0 at arch/x86/kernel/cpu/amd.c:1068 init_amd+0x50f/0xa20
-  [    0.009830] Modules linked in:
-  [    0.009830] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.13.0-rc1-00170-g896d8946da97 #1
-  [    0.009830] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS Arch Linux 1.16.3-1-1 04/01/2014
-  [    0.009830] EIP: init_amd+0x50f/0xa20
-  [    0.009830] Code: 4d 00 f0 80 4f 78 04 e9 b4 fd ff ff 8d b4 26 00 00 00 00 ba 15 00 00 00 b8 80 00 00 c0 e8 79 65 4d 00 85 c0 0f 84 01 fe ff ff <0f> 0b e9 fa fd ff ff 2e 8d b4 26 00 00 00 00 66 90 8b 47 38 85 c0
-  [    0.009830] EAX: 00000001 EBX: 00000011 ECX: c0000080 EDX: 00000000
-  [    0.009830] ESI: df5850a1 EDI: df585020 EBP: c1157f54 ESP: c1157f04
-  [    0.009830] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00210002
-  [    0.009830] CR0: 80050033 CR2: 00000000 CR3: 0d6ce000 CR4: 00350e90
-  [    0.009830] Call Trace:
-  [    0.009830]  ? show_regs.cold+0x16/0x1e
-  [    0.009830]  ? __warn.cold+0xbf/0x114
-  [    0.009830]  ? init_amd+0x50f/0xa20
-  [    0.009830]  ? init_amd+0x50f/0xa20
-  [    0.009830]  ? report_bug+0x116/0x150
-  [    0.009830]  ? init_amd+0x510/0xa20
-  [    0.009830]  ? exc_overflow+0x50/0x50
-  [    0.009830]  ? handle_bug+0x56/0x90
-  [    0.009830]  ? exc_invalid_op+0x1b/0x70
-  [    0.009830]  ? handle_exception+0x14b/0x14b
-  [    0.009830]  ? exc_overflow+0x50/0x50
-  [    0.009830]  ? init_amd+0x50f/0xa20
-  [    0.009830]  ? exc_overflow+0x50/0x50
-  [    0.009830]  ? init_amd+0x50f/0xa20
-  [    0.009830]  identify_cpu+0x29e/0x700
-  [    0.009830]  identify_secondary_cpu+0xf/0x70
-  [    0.009830]  smp_store_cpu_info+0x5a/0x70
-  [    0.009830]  start_secondary+0x6e/0x100
-  [    0.009830]  startup_32_smp+0x151/0x154
-  [    0.009830] ---[ end trace 0000000000000000 ]---
-  ...
-
-Cheers,
-Nathan
 
