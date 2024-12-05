@@ -1,96 +1,270 @@
-Return-Path: <linux-kernel+bounces-432532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565D99E4C97
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:20:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B749E4C99
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 04:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED1A1881813
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4771881799
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B66618C33C;
-	Thu,  5 Dec 2024 03:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7573F1865E3;
+	Thu,  5 Dec 2024 03:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPCzmvLf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WWJsiaaA"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D071238C;
-	Thu,  5 Dec 2024 03:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D132F22
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 03:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733368818; cv=none; b=FdP+OrkBvmYuBFJkP4ZB1WR8yVRBvvxgPcN0g5wuAHy62Op8aFRMp18iqVvO2qqCsg/MXyooPl7EGIkMYvNjHosjGPPlXqBKnssZHH2Q/0AVsGuQg7pvDRE7m7nLrQk2ZtDg9T6ox6OEVldkNkYVtLGK3egILmEtFCmADL1KA6g=
+	t=1733368862; cv=none; b=lO/u2GIuAsayenqFPxkZ9yv283rnSTUSDt6lYxEkxmU+iXFMaPuo0oV5uCRfHUb1nnII4hk5hwRQH4ZhAaIf8ssEqwCItxsfbO66s4afUIheIAoKnj8AIkC1R9ZWs+UpJMBZHPHoG/W7qPlv2Qv6Jbb5CidpqQjpgFX/J7fppiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733368818; c=relaxed/simple;
-	bh=t0xFVOPHaEG0gdPwQnZdswE/D5MNP32oEBiWtJIcnSk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=N06/kWvoaJJldFu32WOkKv2KkHKpj+ssv3LtSn/x7/sCxZrvlL+jwJ0Rg0kabYnyEiIA1LDqeWB8V1tiu8RQkYFubRkLMKUgj127vcCzge07XtaZfp6Nin1X/XszgcdissrBkIInJg/SGq09KeZy57OjC6BiBscTiKRh6xolN7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPCzmvLf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E7DEC4CED6;
-	Thu,  5 Dec 2024 03:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733368818;
-	bh=t0xFVOPHaEG0gdPwQnZdswE/D5MNP32oEBiWtJIcnSk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=vPCzmvLfpZ4JCSL5khkNMEHBVawjcTvU1Zc+epQY3x1ggNJVQtWy6Cxf0c8lRL5pC
-	 qTmK+SoEI5upMayAzc4QSVgHsmP7OOLqrWGIKDd/q+3BbLJAoK/0GkhwVRwovxXPxi
-	 BhNxM0MTBRy1dulC0zrkOqvU23G5m01X84XxmnkuoFTLX1C+qTg6sh7+dsqzF+9yoF
-	 zGA2bR8+vNqKyEMTPn9Vth6P74sXnFG4YN2XikgZ3yF6Qe8ZMFP+z89Iorzd5bv83y
-	 mvDLgFhadhlAMKx05tcDvRUbzqQxZTeJFv0Qmf8Q+jEBoufNOmD1TMcUHgWUUBWrCJ
-	 DfkAFuG2idasw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 35657380A950;
-	Thu,  5 Dec 2024 03:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733368862; c=relaxed/simple;
+	bh=NsjxCfxPSTRbPCj7fvvwD/dJnN4I67xjRn4TYMrwK6I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GMtoZY/szi9eWKYg5xUaPxlrvyUPB4QDq4NuEhG/FL68KXQ3KszYRF5kIYqZOjZ0+jtt0SIyDAivWMaGodKfK+/CcUc5h+4NpNoLRJUxko6J4vqpYgdB1zcUdXkA/TXveAx8QYlLgD2OcEfVkve9p0s1+XCLA9xiZrLy/eZLW4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WWJsiaaA; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b2f45c47-37e0-c9cf-27ee-68408b2b2d4c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733368855;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qr8GW4K1UBAkugl9lZa9Mb7MVz0SqMO1J50BVo3IvyQ=;
+	b=WWJsiaaAFpnmoAwUvNReeccXaYx7s5xc0g1YbwGRCzpJBL48U5qttJsNwkdM8P6LlOxZj9
+	WLVurcZhOqFrAyFP+faIziVJN/Dhp+/dxVlYOHX9jsErEBRcHOztqW+axrWXRrZ+CmIyLF
+	4SzPOj7/r+XjABfHg2PpVkWTkuOL94w=
+Date: Thu, 5 Dec 2024 11:20:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v2] mm/alloc_tag: fix vm_module_tags_populate's KASAN
+ poisoning logic
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20241204075248.384215-1-hao.ge@linux.dev>
+ <20241204083448.387862-1-hao.ge@linux.dev>
+ <CAJuCfpF5Yo3Bz1OUy=rfd5-0DRZsWSRaekR3Y-f5TRatdXWkVQ@mail.gmail.com>
+ <e5d6cb44-9a86-ee94-9210-d56acee483c4@linux.dev>
+ <CAJuCfpFHEpFw61ZtqHzgYrpiHn1k86h2LwzZf+C4=sfpULY4TQ@mail.gmail.com>
+ <6dab626e-acee-9f4e-c97b-7a225882edff@linux.dev>
+In-Reply-To: <6dab626e-acee-9f4e-c97b-7a225882edff@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v4] ethtool: Fix wrong mod state in case of verbose and
- no_mask bitset
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173336883303.1427062.8314508421207042104.git-patchwork-notify@kernel.org>
-Date: Thu, 05 Dec 2024 03:20:33 +0000
-References: <20241202153358.1142095-1-kory.maincent@bootlin.com>
-In-Reply-To: <20241202153358.1142095-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: mkubecek@suse.cz, davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, o.rempel@pengutronix.de,
- thomas.petazzoni@bootlin.com, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, richardcochran@gmail.com
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon,  2 Dec 2024 16:33:57 +0100 you wrote:
-> A bitset without mask in a _SET request means we want exactly the bits in
-> the bitset to be set. This works correctly for compact format but when
-> verbose format is parsed, ethnl_update_bitset32_verbose() only sets the
-> bits present in the request bitset but does not clear the rest. The commit
-> 6699170376ab ("ethtool: fix application of verbose no_mask bitset") fixes
-> this issue by clearing the whole target bitmap before we start iterating.
-> The solution proposed brought an issue with the behavior of the mod
-> variable. As the bitset is always cleared the old value will always
-> differ to the new value.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v4] ethtool: Fix wrong mod state in case of verbose and no_mask bitset
-    https://git.kernel.org/netdev/net/c/910c4788d615
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Hi Suren
 
 
+On 12/5/24 10:14, Hao Ge wrote:
+> Hi Suren
+>
+>
+> On 12/5/24 03:33, Suren Baghdasaryan wrote:
+>> On Wed, Dec 4, 2024 at 7:08 AM Hao Ge <hao.ge@linux.dev> wrote:
+>>> Hi Suren
+>>>
+>>>
+>>> Thank you for your review.
+>>>
+>>>
+>>> On 12/4/24 22:39, Suren Baghdasaryan wrote:
+>>>> On Wed, Dec 4, 2024 at 12:35 AM Hao Ge <hao.ge@linux.dev> wrote:
+>>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>>
+>>>>> After merge commit 233e89322cbe ("alloc_tag:
+>>>>> fix module allocation tags populated area calculation"),
+>>>>> We still encountered a KASAN bug.
+>>>>>
+>>>>> This is because we have only actually performed
+>>>>> page allocation and address mapping here.
+>>>>> we need to unpoisoned portions of underlying memory.
+>>>>>
+>>>>> Because we have a change in the size here,we need to
+>>>>> re-annotate poisoned and unpoisoned portions of underlying memory
+>>>>> according to the new size.
+>>>>>
+>>>>> Here is the log for KASAN:
+>>>>>
+>>>>> [    5.041171][    T1] 
+>>>>> ==================================================================
+>>>>> [    5.042047][    T1] BUG: KASAN: vmalloc-out-of-bounds in 
+>>>>> move_module+0x2c0/0x708
+>>>>> [    5.042723][    T1] Write of size 240 at addr ffff80007e510000 
+>>>>> by task systemd/1
+>>>>> [    5.043412][    T1]
+>>>>> [    5.043523][   T72] input: QEMU QEMU USB Tablet as 
+>>>>> /devices/pci0000:00/0000:00:01.1/0000:02:001
+>>>>> [    5.043614][    T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Not 
+>>>>> tainted 6.13.0-rc1+ #28
+>>>>> [    5.045560][    T1] Hardware name: QEMU KVM Virtual Machine, 
+>>>>> BIOS 0.0.0 02/06/2015
+>>>>> [    5.046328][    T1] Call trace:
+>>>>> [    5.046670][    T1]  show_stack+0x20/0x38 (C)
+>>>>> [    5.047127][    T1]  dump_stack_lvl+0x80/0xf8
+>>>>> [    5.047533][    T1] 
+>>>>> print_address_description.constprop.0+0x58/0x358
+>>>>> [    5.048092][   T72] hid-generic 0003:0627:0001.0001: 
+>>>>> input,hidraw0: USB HID v0.01 Mouse [QEMU 0
+>>>>> [    5.048126][    T1]  print_report+0xb0/0x280
+>>>>> [    5.049682][    T1]  kasan_report+0xb8/0x108
+>>>>> [    5.050170][    T1]  kasan_check_range+0xe8/0x190
+>>>>> [    5.050685][    T1]  memcpy+0x58/0xa0
+>>>>> [    5.051135][    T1]  move_module+0x2c0/0x708
+>>>>> [    5.051586][    T1] layout_and_allocate.constprop.0+0x308/0x5b8
+>>>>> [    5.052219][    T1]  load_module+0x134/0x16c8
+>>>>> [    5.052671][    T1]  init_module_from_file+0xdc/0x138
+>>>>> [    5.053193][    T1]  idempotent_init_module+0x344/0x600
+>>>>> [    5.053742][    T1] __arm64_sys_finit_module+0xbc/0x150
+>>>>> [    5.054289][    T1]  invoke_syscall+0xd4/0x258
+>>>>> [    5.054749][    T1] el0_svc_common.constprop.0+0xb4/0x240
+>>>>> [    5.055319][    T1]  do_el0_svc+0x48/0x68
+>>>>> [    5.055743][    T1]  el0_svc+0x40/0xe0
+>>>>> [    5.056142][    T1]  el0t_64_sync_handler+0x10c/0x138
+>>>>> [    5.056658][    T1]  el0t_64_sync+0x1ac/0x1b0
+>>>>>
+>>>>> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags 
+>>>>> populated area calculation")
+>>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>>> Thanks for the fix!
+>>>>
+>>>>> ---
+>>>>> v2: Add comments to kasan_unpoison_vmalloc like other places.
+>>>>>
+>>>>> commit 233e89322cbe ("alloc_tag: fix module allocation
+>>>>> tags populated area calculation") is currently in the
+>>>>> mm-hotfixes-unstable branch, so this patch is
+>>>>> developed based on the mm-hotfixes-unstable branch.
+>>>>> ---
+>>>>>    lib/alloc_tag.c | 13 +++++++++++++
+>>>>>    1 file changed, 13 insertions(+)
+>>>>>
+>>>>> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+>>>>> index 4ee6caa6d2da..f885b3f3af0e 100644
+>>>>> --- a/lib/alloc_tag.c
+>>>>> +++ b/lib/alloc_tag.c
+>>>>> @@ -421,7 +421,20 @@ static int vm_module_tags_populate(void)
+>>>>> __free_page(next_page[i]);
+>>>>>                           return -ENOMEM;
+>>>>>                   }
+>>>>> +
+>>>>> +               kasan_poison_vmalloc((void *)module_tags.start_addr,
+>>>>> + vm_module_tags->nr_pages << PAGE_SHIFT);
+>>>>> +
+>>>>>                   vm_module_tags->nr_pages += nr;
+>>>>> +
+>>>>> +               /*
+>>>>> +                * Mark the pages as accessible, now that they are 
+>>>>> mapped.
+>>>>> +                * With hardware tag-based KASAN, marking is 
+>>>>> skipped for
+>>>>> +                * non-VM_ALLOC mappings, see 
+>>>>> __kasan_unpoison_vmalloc().
+>>>>> +                */
+>>>>> +               kasan_unpoison_vmalloc((void 
+>>>>> *)module_tags.start_addr,
+>>>>> + vm_module_tags->nr_pages << PAGE_SHIFT,
+>>>>> + KASAN_VMALLOC_PROT_NORMAL);
+>>>> Instead of poisoning [module_tags.start_addr,
+>>>> vm_module_tags->nr_pages], incrementing vm_module_tags->nr_pages and
+>>>> the unpoisoning [module_tags.start_addr, vm_module_tags->nr_pages]
+>>>> could we simply poisons the additional area like this:
+>>>>
+>>>>                   kasan_unpoison_vmalloc((void 
+>>>> *)module_tags.start_addr +
+>>>> (vm_module_tags->nr_pages << PAGE_SHIFT),
+>>>>                                          nr << PAGE_SHIFT,
+>>>> KASAN_VMALLOC_PROT_NORMAL);
+>>>>                  vm_module_tags->nr_pages += nr;
+>>>> ?
+>>>
+>>> I had considered making such modifications earlier.
+>>>
+>>> But considering the following situation,
+>>>
+>>> A module tags spans across the regions of [module_tags.start_addr,
+>>> vm_module_tags->nr_pages] and [module_tags.start_addr +
+>>> vm_module_tags->nr_pages, ...].
+>>>
+>>> It may result in false positives for out-of-bounds errors.
+>> Sorry, maybe I'm missing something but I don't see why poisoning only
+>> newly mapped area would lead to false positives. Could you please
+>> clarify?
+>
+>
+> Because KASAN may perceive the two as distinct address spaces, despite 
+> their addresses being contiguous.
+>
+> So, when a module tag spans across these two contiguous address 
+> spaces, KASAN may incorrectly consider it as an out-of-bounds access.
+>
+>
+>> Also, if you do need to unpoison and then poison, using phys_end and
+>> new_end would be better, like this:
+>>
+>> kasan_poison_vmalloc((void *)module_tags.start_addr,
+>>                                        phys_end - 
+>> module_tags.start_addr)
+>>
+>> kasan_unpoison_vmalloc((void *)module_tags.start_addr,
+>>                                            new_end - 
+>> module_tags.start_addr,
+>> KASAN_VMALLOC_PROT_NORMAL);
+>
+> OK, the next version will include.
+
+After verification and consideration, I have found that this 
+modification may still pose problems.
+
+Because we haven't ensured that  new_end is page-aligned,
+
+So, we've only made the region from||module_tags.start_addr 
+tonew_endaccessible.
+
+Using this example, in reality,end equals 0xffff80007e5100f0:
+
+Write of size 240 at addr ffff80007e510000 by task systemd/1
+
+When we access other memory within the same page as0xffff80007e5100f0, 
+KASAN warnings will also be issued due to the lack of unpoisoned 
+portions in that memory.
+
+Based on that, I would suggest sticking with the V2 version.
+
+
+Thanks
+
+Best Regards
+
+Hao
+
+>
+>
+> Thanks
+>
+> Best regards
+>
+> Hao
+>
+>
+>>>
+>>>>>           }
+>>>>>
+>>>>>           return 0;
+>>>>> -- 
+>>>>> 2.25.1
+>>>>>
 
