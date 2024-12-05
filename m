@@ -1,78 +1,761 @@
-Return-Path: <linux-kernel+bounces-433650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8179E5B39
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:22:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C8B168596
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:22:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804B121D5B3;
-	Thu,  5 Dec 2024 16:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxMhhosm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4CC9E5B36
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:22:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA66A18B483;
-	Thu,  5 Dec 2024 16:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1712282AED
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:22:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760CF21D588;
+	Thu,  5 Dec 2024 16:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hQ9ZR51P";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QUnzA4sI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hQ9ZR51P";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QUnzA4sI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19B818B483
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733415755; cv=none; b=uUzBH1YHwt7KSlWdGUDDzVUO4FjQJOgamb40J/LvMEShjzw/3vSjbeVwu1KsS8+0t2Le3jU67MgZGlDoEce7F1g8jH5OfHxqVQS2xcADHX7MstgYf39DLIC8+3T0jmiMOLiU3CK4tCsgwvAYHe09usojoo8oWcznsJwJcFXGvFU=
+	t=1733415719; cv=none; b=JPbootCMRcio35zAvAVlkEUqNCrmZbizR+mi8j4bgVAiHRWxDM5tVOrcFDYF91FEhm40MIhcgER/CHNehaW4HZwwbRpxxjtNkMFwXmoBSmSH29o0Vng3AkYMEzjhEzs+RPrOj3C8cXahHY53iBU8bG+AdhZyHzTODSqLy+FK1LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733415755; c=relaxed/simple;
-	bh=UfpBoaWzipUkr6zt+fTmA1zrHvkOCxwku6cXwe0eGMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdHPTQc0BLVN5qaEMtKgUt3xejfotLGZ7siYoEi5de4nEfL3TFgMXd4VMSDAiEC+yv/l7AMqPdI/pyGocsbpIbJk/lk2px70Y0v82ZDlkXbJc6rHm1RGhV0oCdrATMFOb1+o9P1MSMoQ3uL93sOCWRs0dVSCnAieaCfki3Zh3l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxMhhosm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC644C4CED1;
-	Thu,  5 Dec 2024 16:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733415754;
-	bh=UfpBoaWzipUkr6zt+fTmA1zrHvkOCxwku6cXwe0eGMI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RxMhhosmxupV+xkW/RzRCd/hTJxe3keBYEakI1XshVWiiDo1q4/AgEKd/glIM4j8q
-	 It0ck3ZOCjQ1KJnT7NKOoJX4WMe6eE2JXcnKQv9xphJo3r4FR7YNivDC1JEpTJgVsF
-	 dq57089AA6lQqAQLwbXeS38OuPMETRSMhhnTXa2EVXtMTesKmiu18C3YKhoq+91Mlx
-	 DBDX+jKZEm3TllEoeLX78SKhEDDGL1lsVOFdpjzva6/SNcbvwSsgOkUxfhPDuNOBbJ
-	 yNdZgrFf69STVWxxl6Hfrt/+GAclIchZ43g5/VKSMtIS/2slEmBz2Hrm1yj5COzDVc
-	 70tTMHPyvUfPQ==
-Date: Thu, 5 Dec 2024 16:21:28 +0000
-From: Simon Horman <horms@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
-	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, sudongming1@huawei.com,
-	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hkelam@marvell.com
-Subject: Re: [PATCH V4 RESEND net-next 1/7] net: hibmcge: Add debugfs
- supported in this module
-Message-ID: <20241205162128.GA2581@kernel.org>
-References: <20241203150131.3139399-1-shaojijie@huawei.com>
- <20241203150131.3139399-2-shaojijie@huawei.com>
+	s=arc-20240116; t=1733415719; c=relaxed/simple;
+	bh=sAGGLVTLOBsQPRAk9rxllp3eXplotV2NL3mYLtNjWrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gmToEu/t8sfkr3DjmHXrfbw25pTXT6HGp0mHvPf0n1FO6RKTyFhCQLtveRkZ+wW6rK8fJbDX6Z8bIrzt3Uj3sGGens9Vr7/rFSupkCrQ4cErf/ljY6Yd439CldQegfW8ymTx+pRCcGQeTdBWQC4EZhA/CDDtGz6ByfO2AMHkm1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hQ9ZR51P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QUnzA4sI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hQ9ZR51P; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QUnzA4sI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AEF111F38C;
+	Thu,  5 Dec 2024 16:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733415713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZQybBpUukciUAeNPe29JNT5tQxGhJNnk/QOTBFKF6WA=;
+	b=hQ9ZR51P5hbsAGbths9bGids7LoT17+/oJAjz1xN1+MY7NltZL/f3kQKaiT8rDV46YRjs1
+	vU/9d+od7ReFAX6/PdkehYnRIYAqb1Gegls/Ts05A1UC/RHdmRKBAeLjWa96i60nLxsxxY
+	W6kAU+gn2YSqeHR0V/Rl6OaLHlHttrA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733415713;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZQybBpUukciUAeNPe29JNT5tQxGhJNnk/QOTBFKF6WA=;
+	b=QUnzA4sIEv1hJOGROYtf1oF6uZkRHMDw80mOw1K/HM+PalruapzX9vTqMfg1TF6KZe8tSk
+	/7EsAOXNQgogy4CQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733415713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZQybBpUukciUAeNPe29JNT5tQxGhJNnk/QOTBFKF6WA=;
+	b=hQ9ZR51P5hbsAGbths9bGids7LoT17+/oJAjz1xN1+MY7NltZL/f3kQKaiT8rDV46YRjs1
+	vU/9d+od7ReFAX6/PdkehYnRIYAqb1Gegls/Ts05A1UC/RHdmRKBAeLjWa96i60nLxsxxY
+	W6kAU+gn2YSqeHR0V/Rl6OaLHlHttrA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733415713;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZQybBpUukciUAeNPe29JNT5tQxGhJNnk/QOTBFKF6WA=;
+	b=QUnzA4sIEv1hJOGROYtf1oF6uZkRHMDw80mOw1K/HM+PalruapzX9vTqMfg1TF6KZe8tSk
+	/7EsAOXNQgogy4CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4940C138A5;
+	Thu,  5 Dec 2024 16:21:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FmHmDyHTUWezfwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 05 Dec 2024 16:21:53 +0000
+Message-ID: <75efda63-6656-4dfb-a308-cb5d6e08a8d5@suse.de>
+Date: Thu, 5 Dec 2024 17:21:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203150131.3139399-2-shaojijie@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/6] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, John Ogness <john.ogness@linutronix.de>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
+ Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241204160014.1171469-1-jfalempe@redhat.com>
+ <20241204160014.1171469-3-jfalempe@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20241204160014.1171469-3-jfalempe@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,igalia.com,verizon.net,linaro.org,suse.com,lists.freedesktop.org,vger.kernel.org];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,verizon.net];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Dec 03, 2024 at 11:01:25PM +0800, Jijie Shao wrote:
-> This patch initializes debugfs and creates root directory
-> for each device. The tx_ring and rx_ring debugfs files
-> are implemented together.
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+
+
+Am 04.12.24 um 16:45 schrieb Jocelyn Falempe:
+> drm_log is a simple logger that uses the drm_client API to print the
+> kmsg boot log on the screen. This is not a full replacement to fbcon,
+> as it will only print the kmsg. It will never handle user input, or a
+> terminal because this is better done in userspace.
+>
+> Design decisions:
+>   * It uses the drm_client API, so it should work on all drm drivers
+>     from the start.
+>   * It doesn't scroll the message, that way it doesn't need to redraw
+>     the whole screen for each new message.
+>     It also means it doesn't have to keep drawn messages in memory, to
+>     redraw them when scrolling.
+>   * It uses the new non-blocking console API, so it should work well
+>     with PREEMPT_RT.
+>
+> This patch also adds a Kconfig menu to select the drm client to use.
+> It can be overwritten on the kernel command line with:
+> drm_client_lib.active=log or drm_client_lib.active=fbdev
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> Reviewed-by: John Ogness <john.ogness@linutronix.de> # console API
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+>
+> v2:
+>   * Use vmap_local() api, with that change, I've tested it successfully on simpledrm, virtio-gpu, amdgpu, and nouveau.
+>   * Stop drawing when the drm_master is taken. This avoid wasting CPU cycle if the buffer is not visible.
+>   * Use deferred probe. Only do the probe the first time there is a log to draw. With this, if you boot with quiet, drm_log won't do any modeset.
+>   * Add color support for the timestamp prefix, like what dmesg does.
+>   * Add build dependency on  disabling the fbdev emulation, as they are both drm_client, and there is no way to choose which one gets the focus.
+>
+> v3:
+>   * Remove the work thread and circular buffer, and use the new write_thread() console API.
+>   * Register a console for each drm driver.
+>
+> v4:
+>   * Can be built as a module, even if that's not really useful.
+>   * Rebased on top of "drm: Introduce DRM client library" series from Thomas Zimmermann.
+>   * Add a Kconfig menu to choose between drm client.
+>   
+> v5:
+>   * Build drm_log in drm_client_lib module, to avoid circular dependency.
+>
+> v8:
+>   * Rebased after drm client moved to drivers/gpu/drm/clients/
+>   * Rename DRM_LOG to DRM_CLIENT_LOG (Thomas Zimmermann)
+>   * Add an info message if no clients are initialized in drm_client_setup()
+>   
+> v9:
+>   * Add cflags to remove the "../" when including drm internal headers (Jani Nikula)
+>   * Order select alphabetically in KConfig (Thomas Zimmermann)
+>   * Replace drm_info with drm_dbg, to be less verbose (Thomas Zimmermann)
+>   * Rename module parameter to drm_client_lib.active (Thomas Zimmermann)
+>   * Warn if drm_client_lib.active is malformated (Thomas Zimmermann)
+>   
+>   drivers/gpu/drm/clients/Kconfig               |  48 +++
+>   drivers/gpu/drm/clients/Makefile              |   3 +
+>   drivers/gpu/drm/clients/drm_client_internal.h |   6 +
+>   drivers/gpu/drm/clients/drm_client_setup.c    |  29 +-
+>   drivers/gpu/drm/clients/drm_log.c             | 370 ++++++++++++++++++
+>   5 files changed, 452 insertions(+), 4 deletions(-)
+>   create mode 100644 drivers/gpu/drm/clients/drm_log.c
+>
+> diff --git a/drivers/gpu/drm/clients/Kconfig b/drivers/gpu/drm/clients/Kconfig
+> index 01ad3b000130..c18decc90200 100644
+> --- a/drivers/gpu/drm/clients/Kconfig
+> +++ b/drivers/gpu/drm/clients/Kconfig
+> @@ -12,6 +12,7 @@ config DRM_CLIENT_LIB
+>   config DRM_CLIENT_SELECTION
+>   	tristate
+>   	depends on DRM
+> +	select DRM_CLIENT_LIB if DRM_CLIENT_LOG
+>   	select DRM_CLIENT_LIB if DRM_FBDEV_EMULATION
+>   	help
+>   	  Drivers that support in-kernel DRM clients have to select this
+> @@ -70,4 +71,51 @@ config DRM_FBDEV_LEAK_PHYS_SMEM
+>   	  If in doubt, say "N" or spread the word to your closed source
+>   	  library vendor.
+>   
+> +config DRM_CLIENT_LOG
+> +	bool "Print the kernel boot message on the screen"
+> +	depends on DRM_CLIENT_SELECTION
+> +	select DRM_CLIENT
+> +	select DRM_CLIENT_SETUP
+> +	select DRM_DRAW
+> +	help
+> +	  This enable a drm logger, that will print the kernel messages to the
+> +	  screen until the userspace is ready to take over.
+> +
+> +	  If you only need logs, but no terminal, or if you prefer userspace
+> +	  terminal, say "Y".
+> +
+> +choice
+> +	prompt "Default DRM Client"
+> +	depends on DRM_CLIENT_SELECTION
+> +	default DRM_CLIENT_DEFAULT_FBDEV
+> +	help
+> +	  Selects the default drm client.
+> +
+> +	  The selection made here can be overridden by using the kernel
+> +	  command line 'drm_client_lib.active=fbdev' option.
+> +
+> +config DRM_CLIENT_DEFAULT_FBDEV
+> +	bool "fbdev"
+> +	depends on DRM_FBDEV_EMULATION
+> +	help
+> +	  Use fbdev emulation as default drm client. This is needed to have
+> +	  fbcon on top of a drm driver.
+> +
+> +config DRM_CLIENT_DEFAULT_LOG
+> +	bool "log"
+> +	depends on DRM_CLIENT_LOG
+> +	help
+> +	  Use drm log as default drm client. This will display boot logs on the
+> +	  screen, but doesn't implement a full terminal. For that you will need
+> +	  a userspace terminal using drm/kms.
+> +
+> +endchoice
+> +
+> +config DRM_CLIENT_DEFAULT
+> +       string
+> +       depends on DRM_CLIENT
+> +       default "fbdev" if DRM_CLIENT_DEFAULT_FBDEV
+> +       default "log" if DRM_CLIENT_DEFAULT_LOG
+> +       default ""
+> +
+>   endmenu
+> diff --git a/drivers/gpu/drm/clients/Makefile b/drivers/gpu/drm/clients/Makefile
+> index 1d004ec92e1e..c16addbc327f 100644
+> --- a/drivers/gpu/drm/clients/Makefile
+> +++ b/drivers/gpu/drm/clients/Makefile
+> @@ -1,5 +1,8 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   
+> +subdir-ccflags-y += -I$(src)/..
+> +
+>   drm_client_lib-y := drm_client_setup.o
+> +drm_client_lib-$(CONFIG_DRM_CLIENT_LOG) += drm_log.o
+>   drm_client_lib-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fbdev_client.o
+>   obj-$(CONFIG_DRM_CLIENT_LIB) += drm_client_lib.o
+> diff --git a/drivers/gpu/drm/clients/drm_client_internal.h b/drivers/gpu/drm/clients/drm_client_internal.h
+> index 23258934956a..6dc078bf6503 100644
+> --- a/drivers/gpu/drm/clients/drm_client_internal.h
+> +++ b/drivers/gpu/drm/clients/drm_client_internal.h
+> @@ -16,4 +16,10 @@ static inline int drm_fbdev_client_setup(struct drm_device *dev,
+>   }
+>   #endif
+>   
+> +#ifdef CONFIG_DRM_CLIENT_LOG
+> +void drm_log_register(struct drm_device *dev);
+> +#else
+> +static inline void drm_log_register(struct drm_device *dev) {}
+> +#endif
+> +
+>   #endif
+> diff --git a/drivers/gpu/drm/clients/drm_client_setup.c b/drivers/gpu/drm/clients/drm_client_setup.c
+> index 4b211a4812b5..e17265039ca8 100644
+> --- a/drivers/gpu/drm/clients/drm_client_setup.c
+> +++ b/drivers/gpu/drm/clients/drm_client_setup.c
+> @@ -7,6 +7,12 @@
+>   
+>   #include "drm_client_internal.h"
+>   
+> +static char drm_client_default[16] = CONFIG_DRM_CLIENT_DEFAULT;
+> +module_param_string(active, drm_client_default, sizeof(drm_client_default), 0444);
+> +MODULE_PARM_DESC(active,
+> +		 "Choose which drm client to start, default is"
+> +		 CONFIG_DRM_CLIENT_DEFAULT "]");
+> +
+>   /**
+>    * drm_client_setup() - Setup in-kernel DRM clients
+>    * @dev: DRM device
+> @@ -25,11 +31,26 @@
+>    */
+>   void drm_client_setup(struct drm_device *dev, const struct drm_format_info *format)
+>   {
+> -	int ret;
+>   
+> -	ret = drm_fbdev_client_setup(dev, format);
+> -	if (ret)
+> -		drm_warn(dev, "Failed to set up DRM client; error %d\n", ret);
+> +#ifdef CONFIG_DRM_FBDEV_EMULATION
+> +	if (!strcmp(drm_client_default, "fbdev")) {
+> +		int ret;
+> +
+> +		ret = drm_fbdev_client_setup(dev, format);
+> +		if (ret)
+> +			drm_warn(dev, "Failed to set up DRM client; error %d\n", ret);
+> +		return;
+> +	}
+> +#endif
+> +
+> +#ifdef CONFIG_DRM_CLIENT_LOG
+> +	if (!strcmp(drm_client_default, "log")) {
+> +		drm_log_register(dev);
+> +		return;
+> +	}
+> +#endif
+> +	if (strcmp(drm_client_default, ""))
+> +		drm_warn(dev, "Unknown DRM client %s\n", drm_client_default);
+>   }
+>   EXPORT_SYMBOL(drm_client_setup);
+>   
+> diff --git a/drivers/gpu/drm/clients/drm_log.c b/drivers/gpu/drm/clients/drm_log.c
+> new file mode 100644
+> index 000000000000..4e07bff6c864
+> --- /dev/null
+> +++ b/drivers/gpu/drm/clients/drm_log.c
+> @@ -0,0 +1,370 @@
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+> +/*
+> + * Copyright (c) 2024 Red Hat.
+> + * Author: Jocelyn Falempe <jfalempe@redhat.com>
+> + */
+> +
+> +#include <linux/console.h>
+> +#include <linux/font.h>
+> +#include <linux/init.h>
+> +#include <linux/iosys-map.h>
+> +#include <linux/module.h>
+> +#include <linux/types.h>
+> +
+> +#include <drm/drm_client.h>
+> +#include <drm/drm_drv.h>
+> +#include <drm/drm_fourcc.h>
+> +#include <drm/drm_framebuffer.h>
+> +#include <drm/drm_print.h>
+> +
+> +#include "drm_client_internal.h"
+> +#include "drm_draw_internal.h"
+> +
+> +MODULE_AUTHOR("Jocelyn Falempe");
+> +MODULE_DESCRIPTION("DRM boot logger");
+> +MODULE_LICENSE("GPL");
+> +
+> +/**
+> + * DOC: overview
+> + *
+> + * This is a simple graphic logger, to print the kernel message on screen, until
+> + * a userspace application is able to take over.
+> + * It is only for debugging purpose.
+> + */
+> +
+> +struct drm_log_scanout {
+> +	struct drm_client_buffer *buffer;
+> +	const struct font_desc *font;
+> +	u32 rows;
+> +	u32 columns;
+> +	u32 line;
+> +	u32 format;
+> +	u32 px_width;
+> +	u32 front_color;
+> +};
+> +
+> +struct drm_log {
+> +	struct mutex lock;
+> +	struct drm_client_dev client;
+> +	struct console con;
+> +	bool probed;
+> +	u32 n_scanout;
+> +	struct drm_log_scanout *scanout;
+> +};
+> +
+> +static struct drm_log *client_to_drm_log(struct drm_client_dev *client)
+> +{
+> +	return container_of(client, struct drm_log, client);
+> +}
+> +
+> +static struct drm_log *console_to_drm_log(struct console *con)
+> +{
+> +	return container_of(con, struct drm_log, con);
+> +}
+> +
+> +static void drm_log_blit(struct iosys_map *dst, unsigned int dst_pitch,
+> +			 const u8 *src, unsigned int src_pitch,
+> +			 u32 height, u32 width, u32 scale, u32 px_width, u32 color)
+> +{
+> +	switch (px_width) {
+> +	case 2:
+> +		drm_draw_blit16(dst, dst_pitch, src, src_pitch, height, width, scale, color);
+> +		break;
+> +	case 3:
+> +		drm_draw_blit24(dst, dst_pitch, src, src_pitch, height, width, scale, color);
+> +		break;
+> +	case 4:
+> +		drm_draw_blit32(dst, dst_pitch, src, src_pitch, height, width, scale, color);
+> +		break;
+> +	default:
+> +		WARN_ONCE(1, "Can't blit with pixel width %d\n", px_width);
+> +	}
+> +}
+> +
+> +static void drm_log_clear_line(struct drm_log_scanout *scanout, u32 line)
+> +{
+> +	struct drm_framebuffer *fb = scanout->buffer->fb;
+> +	unsigned long height = scanout->font->height;
+> +	struct iosys_map map;
+> +	struct drm_rect r = DRM_RECT_INIT(0, line * height, fb->width, height);
+> +
+> +	if (drm_client_buffer_vmap_local(scanout->buffer, &map))
+> +		return;
+> +	iosys_map_memset(&map, r.y1 * fb->pitches[0], 0, height * fb->pitches[0]);
+> +	drm_client_buffer_vunmap_local(scanout->buffer);
+> +	drm_client_framebuffer_flush(scanout->buffer, &r);
+> +}
+> +
+> +static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
+> +			      unsigned int len)
+> +{
+> +	struct drm_framebuffer *fb = scanout->buffer->fb;
+> +	struct iosys_map map;
+> +	const struct font_desc *font = scanout->font;
+> +	size_t font_pitch = DIV_ROUND_UP(font->width, 8);
+> +	const u8 *src;
+> +	u32 px_width = fb->format->cpp[0];
+> +	struct drm_rect r = DRM_RECT_INIT(0, scanout->line * font->height,
+> +					  fb->width, (scanout->line + 1) * font->height);
+> +	u32 i;
+> +
+> +	if (drm_client_buffer_vmap_local(scanout->buffer, &map))
+> +		return;
+> +
+> +	iosys_map_incr(&map, r.y1 * fb->pitches[0]);
+> +	for (i = 0; i < len && i < scanout->columns; i++) {
+> +		src = drm_draw_get_char_bitmap(font, s[i], font_pitch);
+> +		drm_log_blit(&map, fb->pitches[0], src, font_pitch, font->height, font->width,
+> +			     1, px_width, scanout->front_color);
+> +		iosys_map_incr(&map, font->width * px_width);
+> +	}
+> +
+> +	scanout->line++;
+> +	if (scanout->line >= scanout->rows)
+> +		scanout->line = 0;
+> +	drm_client_buffer_vunmap_local(scanout->buffer);
+> +	drm_client_framebuffer_flush(scanout->buffer, &r);
+> +}
+> +
+> +static void drm_log_draw_new_line(struct drm_log_scanout *scanout,
+> +				  const char *s, unsigned int len)
+> +{
+> +	if (scanout->line == 0) {
+> +		drm_log_clear_line(scanout, 0);
+> +		drm_log_clear_line(scanout, 1);
+> +		drm_log_clear_line(scanout, 2);
+> +	} else if (scanout->line + 2 < scanout->rows)
+> +		drm_log_clear_line(scanout, scanout->line + 2);
+> +
+> +	drm_log_draw_line(scanout, s, len);
+> +}
+> +
+> +static void drm_log_draw_kmsg_record(struct drm_log_scanout *scanout,
+> +				     const char *s, unsigned int len)
+> +{
+> +	/* do not print the ending \n character */
+> +	if (s[len - 1] == '\n')
+> +		len--;
+> +
+> +	while (len > scanout->columns) {
+> +		drm_log_draw_new_line(scanout, s, scanout->columns);
+> +		s += scanout->columns;
+> +		len -= scanout->columns;
+> +	}
+> +	if (len)
+> +		drm_log_draw_new_line(scanout, s, len);
+> +}
+> +
+> +static u32 drm_log_find_usable_format(struct drm_plane *plane)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < plane->format_count; i++)
+> +		if (drm_draw_color_from_xrgb8888(0xffffff, plane->format_types[i]) != 0)
+> +			return plane->format_types[i];
+> +	return DRM_FORMAT_INVALID;
+> +}
+> +
+> +static int drm_log_setup_modeset(struct drm_client_dev *client,
+> +				 struct drm_mode_set *mode_set,
+> +				 struct drm_log_scanout *scanout)
+> +{
+> +	struct drm_crtc *crtc = mode_set->crtc;
+> +	u32 width = mode_set->mode->hdisplay;
+> +	u32 height = mode_set->mode->vdisplay;
+> +	u32 format;
+> +
+> +	scanout->font = get_default_font(width, height, NULL, NULL);
+> +	if (!scanout->font)
+> +		return -ENOENT;
+> +
+> +	format = drm_log_find_usable_format(crtc->primary);
+> +	if (format == DRM_FORMAT_INVALID)
+> +		return -EINVAL;
+> +
+> +	scanout->buffer = drm_client_framebuffer_create(client, width, height, format);
+> +	if (IS_ERR(scanout->buffer)) {
+> +		drm_warn(client->dev, "drm_log can't create framebuffer %d %d %p4cc\n",
+> +			 width, height, &format);
+> +		return -ENOMEM;
+> +	}
+> +	mode_set->fb = scanout->buffer->fb;
+> +	scanout->rows = height / scanout->font->height;
+> +	scanout->columns = width / scanout->font->width;
+> +	scanout->front_color = drm_draw_color_from_xrgb8888(0xffffff, format);
+> +	return 0;
+> +}
+> +
+> +static int drm_log_count_modeset(struct drm_client_dev *client)
+> +{
+> +	struct drm_mode_set *mode_set;
+> +	int count = 0;
+> +
+> +	mutex_lock(&client->modeset_mutex);
+> +	drm_client_for_each_modeset(mode_set, client)
+> +		count++;
+> +	mutex_unlock(&client->modeset_mutex);
+> +	return count;
+> +}
+> +
+> +static void drm_log_init_client(struct drm_log *dlog)
+> +{
+> +	struct drm_client_dev *client = &dlog->client;
+> +	struct drm_mode_set *mode_set;
+> +	int i, max_modeset;
+> +	int n_modeset = 0;
+> +
+> +	dlog->probed = true;
+> +
+> +	if (drm_client_modeset_probe(client, 0, 0))
+> +		return;
+> +
+> +	max_modeset = drm_log_count_modeset(client);
+> +	if (!max_modeset)
+> +		return;
+> +
+> +	dlog->scanout = kcalloc(max_modeset, sizeof(*dlog->scanout), GFP_KERNEL);
+> +	if (!dlog->scanout)
+> +		return;
+> +
+> +	mutex_lock(&client->modeset_mutex);
+> +	drm_client_for_each_modeset(mode_set, client) {
+> +		if (!mode_set->mode)
+> +			continue;
+> +		if (drm_log_setup_modeset(client, mode_set, &dlog->scanout[n_modeset]))
+> +			continue;
+> +		n_modeset++;
+> +	}
+> +	mutex_unlock(&client->modeset_mutex);
+> +	if (n_modeset == 0)
+> +		goto err_nomodeset;
+> +
+> +	if (drm_client_modeset_commit(client))
+> +		goto err_failed_commit;
+> +
+> +	dlog->n_scanout = n_modeset;
+> +	return;
+> +
+> +err_failed_commit:
+> +	for (i = 0; i < n_modeset; i++)
+> +		drm_client_framebuffer_delete(dlog->scanout[i].buffer);
+> +
+> +err_nomodeset:
+> +	kfree(dlog->scanout);
+> +	dlog->scanout = NULL;
+> +}
+> +
+> +static void drm_log_free_scanout(struct drm_client_dev *client)
+> +{
+> +	struct drm_log *dlog = client_to_drm_log(client);
+> +	int i;
+> +
+> +	if (dlog->n_scanout) {
+> +		for (i = 0; i < dlog->n_scanout; i++)
+> +			drm_client_framebuffer_delete(dlog->scanout[i].buffer);
+> +		dlog->n_scanout = 0;
+> +		kfree(dlog->scanout);
+> +		dlog->scanout = NULL;
+> +	}
+> +}
+> +
+> +static void drm_log_client_unregister(struct drm_client_dev *client)
+> +{
+> +	struct drm_log *dlog = client_to_drm_log(client);
+> +	struct drm_device *dev = client->dev;
+> +
+> +	unregister_console(&dlog->con);
+> +
+> +	mutex_lock(&dlog->lock);
+> +	drm_log_free_scanout(client);
+> +	drm_client_release(client);
+> +	mutex_unlock(&dlog->lock);
+> +	kfree(dlog);
+> +	drm_dbg(dev, "Unregistered with drm log\n");
+> +}
+> +
+> +static int drm_log_client_hotplug(struct drm_client_dev *client)
+> +{
+> +	struct drm_log *dlog = client_to_drm_log(client);
+> +
+> +	mutex_lock(&dlog->lock);
+> +	drm_log_free_scanout(client);
+> +	dlog->probed = false;
+> +	mutex_unlock(&dlog->lock);
+> +	return 0;
+> +}
+> +
+> +static const struct drm_client_funcs drm_log_client_funcs = {
+> +	.owner		= THIS_MODULE,
+> +	.unregister	= drm_log_client_unregister,
+> +	.hotplug	= drm_log_client_hotplug,
+> +};
+> +
+> +static void drm_log_write_thread(struct console *con, struct nbcon_write_context *wctxt)
+> +{
+> +	struct drm_log *dlog = console_to_drm_log(con);
+> +	int i;
+> +
+> +	if (!dlog->probed)
+> +		drm_log_init_client(dlog);
+> +
+> +	for (i = 0; i < dlog->n_scanout; i++)
+> +		drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, wctxt->len);
+> +}
+> +
+> +static void drm_log_lock(struct console *con, unsigned long *flags)
+> +{
+> +	struct drm_log *dlog = console_to_drm_log(con);
+> +
+> +	mutex_lock(&dlog->lock);
+> +	migrate_disable();
+> +}
+> +
+> +static void drm_log_unlock(struct console *con, unsigned long flags)
+> +{
+> +	struct drm_log *dlog = console_to_drm_log(con);
+> +
+> +	migrate_enable();
+> +	mutex_unlock(&dlog->lock);
+> +}
+> +
+> +static void drm_log_register_console(struct console *con)
+> +{
+> +	strscpy(con->name, "drm_log");
+> +	con->write_thread = drm_log_write_thread;
+> +	con->device_lock = drm_log_lock;
+> +	con->device_unlock = drm_log_unlock;
+> +	con->flags = CON_PRINTBUFFER | CON_NBCON;
+> +	con->index = -1;
+> +
+> +	register_console(con);
+> +}
+> +
+> +/**
+> + * drm_log_register() - Register a drm device to drm_log
+> + * @dev: the drm device to register.
+> + */
+> +void drm_log_register(struct drm_device *dev)
+> +{
+> +	struct drm_log *new;
+> +
+> +	new = kzalloc(sizeof(*new), GFP_KERNEL);
+> +	if (!new)
+> +		goto err_warn;
+> +
+> +	mutex_init(&new->lock);
+> +	if (drm_client_init(dev, &new->client, "drm_log", &drm_log_client_funcs))
+> +		goto err_free;
+> +
+> +	drm_client_register(&new->client);
+> +
+> +	drm_log_register_console(&new->con);
+> +
+> +	drm_dbg(dev, "Registered with drm log as %s\n", new->con.name);
+> +	return;
+> +
+> +err_free:
+> +	kfree(new);
+> +err_warn:
+> +	drm_warn(dev, "Failed to register with drm log\n");
+> +}
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
