@@ -1,199 +1,318 @@
-Return-Path: <linux-kernel+bounces-433750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876509E5C8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:07:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B589E5C92
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C19A2870F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:07:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E57F281293
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B35224AEF;
-	Thu,  5 Dec 2024 17:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C37225764;
+	Thu,  5 Dec 2024 17:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gMg9obWh"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tw7LGNHZ"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9792E218AD3;
-	Thu,  5 Dec 2024 17:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924A4218AD3;
+	Thu,  5 Dec 2024 17:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733418459; cv=none; b=Nz84DRxOJW4YD7jnMtRxOQtOD+904nsnJ44P/oHIMi2vkFzY8rYC5aCPeJk4lLqEA6UhJRviIZuriv1icM9SPDosifyNQUGL6jDfrolZ213e1Zb+kWRQLuBkPGjiwrAQ//ONIAuo89GfDfur2lrXQpwNp1saOXWeDffdAs4oevE=
+	t=1733418556; cv=none; b=itSd/eo5HkteKY39UmSj4qK7/STUoCY4wefKbMeS5wubFf/UGwino7JtfrYohc1xjqHN6/lDKzii2TFqu/CdxdsJnvcTNev45JaWdGLa+Uve2ZGH6xILMppFgaS19HT8eKwlmJ8uVCIBTbkrHJtlEHoqyxqCN0iOpxpbejG+vRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733418459; c=relaxed/simple;
-	bh=E3N88pgbfcFNczdyyZIDRWIEzyj/imMXLOtvtzzfj5I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V4D83OiebWhcZlPQ6sSVxKRc1nFuzPv4ZezwCHPvMEFqXIFYUcsk7UrK0RIjPtKRhYvrxO0KlNiYHMq1a792QUUi5sBBDZPwtrOEN29rbUF5jqInDUVDpGu9gdxvWl/Tb0zzAOIQHYsj2DJYS0KPY+fRFABMr9T+7z0cq4X7yJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gMg9obWh; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733418454;
-	bh=E3N88pgbfcFNczdyyZIDRWIEzyj/imMXLOtvtzzfj5I=;
-	h=From:Date:Subject:To:Cc:From;
-	b=gMg9obWhZy2Hze5qDX2TxRvmJ3ZO2py+NRt8sMvfLrUksupPw/mWexk22inDUtNcW
-	 Dd/3O2Riue6i/GbcqdilnilBEYvUnP6OMj/R4aBjY/sK+7o+Y9hdbODZF0Eo5sQZGe
-	 MYHmXb0gkzIiQLrItT8E8KpiQ7W2LB2mgaJEq4vo=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 05 Dec 2024 18:07:31 +0100
-Subject: [PATCH] sysfs: constify macro BIN_ATTRIBUTE_GROUPS()
+	s=arc-20240116; t=1733418556; c=relaxed/simple;
+	bh=I4DEoRstOFcKsUpfYkwh7Milk7wreQOuPu9qeHfesrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AokQKGgkbvKS0CHRVUBHGW3jxUqfOBO1pNFudbnTPZCAg7xaQcdiDNP9zF0Q1NDpfNjcY0QubSrJOxvatHYOswu84QdlZLK8khIOgpH+7HnAbL/S/OF4R5UYdOHd+y/SsAg4VuLuj0xnb0oN+QaBn8NJy9BM/yXxacI4e0ZhHIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tw7LGNHZ; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so158667366b.3;
+        Thu, 05 Dec 2024 09:09:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733418553; x=1734023353; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vLTMW2Dj42F10wol8zzpR4Mkc6DH3Pu7ITJmFdh0VZI=;
+        b=Tw7LGNHZHJgXEwGZRzaSma+/oMe1KFu6OhEzUKmJ4Fp0hxZ0uxI8RrPqePbu4p6pOQ
+         4xpR05CMdiGFArGeY/cQHoVB82kgQmt3ypLdaGz1DIhXppcS6tWMWHV+tHbaC1J+7oL0
+         QqbaTgtocbZ6lSvuSKD4wRX2arsHga7pWa3mOnL7TBOcCK8vx1mswHmY+zoAaXB9CcSe
+         tPI3UHAo5uexNchQ80pqDhAVL85OPKKhQqIT/MjLTyXorCnywcBQtc4EuoT96sF7Blhp
+         MpyXy1in2uRRJm3jPifdxKoHQ8IS/x3OcteJPENtcIJg4MJHYWBgV6UwyD7O4Mf8HbQO
+         F8ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733418553; x=1734023353;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vLTMW2Dj42F10wol8zzpR4Mkc6DH3Pu7ITJmFdh0VZI=;
+        b=X1VSUQoT8gXIGZnc9XukfuTFkYuOk9dhrAy0gMZTh8gINYq5w/KfI5TI0vsmKzcI+A
+         1MIQpSuKj5hbFPLh40ZcC6K1B5I6DJBMspGjRkli4WNBwf1GBhhXBmvcd5Aj/5qZiH3I
+         pq8n7fCZjoMVAjpGv5I+crEQuS302X2a3/C2Mr0W1ssie4iWn+U6v9tOVlBMBAOncJDy
+         dIbnGGgjnpsd9ybdZmEj2AYaLcZlI1Q11gIYArnn9IpYj8t+4mVPWPXMUwmNlndq6B8k
+         6zCOVYf+hXX1BXhP+7y4UXGo9roM06KME75Rdg7IJ9vIXEpw7+eUqmfCie5oOtaDLRsd
+         uLMw==
+X-Forwarded-Encrypted: i=1; AJvYcCU53rlW0loGXEfx/XYEYyrN8PMc6lgte4b5n8Obdw6dYtfW4qqrhcpGNz57IulSwV5cfZHrV8DsqjwSGhLR@vger.kernel.org, AJvYcCUdk76B7n9HloQLH+vMh2SzE2yUZNQFw1gcpPuZRQb3D/EzHJCUBWpZFfdM072V5gJmzIIkklzRKXw4@vger.kernel.org, AJvYcCX4bkW/Z6eKAmxuOhdnXGvL0GiZgh/Cn354zjsQTXJhl4MGtawVt4QI9NnbnSbVENuQrMPBMv4o1NDy@vger.kernel.org
+X-Gm-Message-State: AOJu0YysR8VXARiXa+RvbQXoLHocfA92BZJElgupnu0OM7aLV8/lkQng
+	0d3ez21V3jrJFu6M39eLO0wH9XU95a8kpqwZUQnE5qXAXR1Qw26v
+X-Gm-Gg: ASbGncvHIb42v6C12P4Cgj8EbJIJr0y76n0P3SvyUrwEVY5HkgDUj4m7QF6yh6k+Efy
+	XOvEabkS59YuZx535GfWajW9Rjz3o/iKel4gWwVqtfyX8kWaIPHYmChX9V5kaq8EFQnkCCW81TS
+	Bu0PHRnGI1GBbAmxi8/jCjB0oswfcYelaXPxuVSMmUQArWTstr1NLwBdpn8zkfMAFFV9XU1Dmhf
+	9k5v8jeXrPaEJKTUKowwpO1VLGAB6E0bOaZ/TzPKD6S5XVg8m4j01pCpn+uaflhqBDRnv/33k70
+	aWvJCzNbAdX6SVPC02WwSY8+yYcLZlMr3B8PainH+l7aQvgaYxu+DqHV58gJ4g0WzTGfzbgrG0o
+	JveaXsw==
+X-Google-Smtp-Source: AGHT+IHp4L56zZx8xVirTEtsBRdCV6sYlMC7xhSpCQg4VJ/JPZqPaD/WMENWNwroqnO/GnB/9bnPDw==
+X-Received: by 2002:aa7:d455:0:b0:5d0:fb56:3f with SMTP id 4fb4d7f45d1cf-5d10cb5649emr16914349a12.12.1733418551999;
+        Thu, 05 Dec 2024 09:09:11 -0800 (PST)
+Received: from ?IPV6:2003:df:bf0d:b400:f2bf:b7b6:c9e8:82e1? (p200300dfbf0db400f2bfb7b6c9e882e1.dip0.t-ipconnect.de. [2003:df:bf0d:b400:f2bf:b7b6:c9e8:82e1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62601b620sm118305566b.125.2024.12.05.09.09.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 09:09:11 -0800 (PST)
+Message-ID: <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com>
+Date: Thu, 5 Dec 2024 18:09:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241205-sysfs-const-bin_attr-groups_macro-v1-1-ac5e855031e8@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIANLdUWcC/x3NQQ6CMBBA0auQWTtJqVLEqxhDapniLGjJTDUaw
- t1tWL7N/xsoCZPCrdlA6MPKOVW0pwbCy6eZkKdqsMZeWms61J9GxZCTFnxyGn0pgrPk96rj4oN
- kdNF5d566fjBXqJ1VKPL3eNwf+/4HPRR1D3MAAAA=
-X-Change-ID: 20241205-sysfs-const-bin_attr-groups_macro-6f6a63d57908
-To: Vineeth Vijayan <vneethv@linux.ibm.com>, 
- Peter Oberparleiter <oberpar@linux.ibm.com>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733418454; l=4906;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=E3N88pgbfcFNczdyyZIDRWIEzyj/imMXLOtvtzzfj5I=;
- b=v+ul19CBklTVDUy3JIyuDMl11glqTGxgWy0d6lIV29RyMzkcHe1OYz5oi1wy8knh7oEYiFW1x
- 8ER6gtOEbQJALaVzaJ+kHsD+0MZGyd0So2PBAYZc0/smZD2gWU2IDId
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 13/13] samples: rust: add Rust platform sample driver
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org,
+ rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+ a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+ fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+ daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com,
+ j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241205141533.111830-1-dakr@kernel.org>
+ <20241205141533.111830-14-dakr@kernel.org>
+Content-Language: en-US
+From: Dirk Behme <dirk.behme@gmail.com>
+In-Reply-To: <20241205141533.111830-14-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-As there is only one in-tree user, avoid a transition phase and switch
-that user in the same commit. As there are some interdependencies
-between the constness of the different symbols in the s390 driver,
-covert the whole driver at once.
+Hi Danilo,
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-This is intended to be merged through the driver core tree.
----
- drivers/s390/cio/chp.c | 28 ++++++++++++++--------------
- include/linux/sysfs.h  |  2 +-
- 2 files changed, 15 insertions(+), 15 deletions(-)
+On 05.12.24 15:14, Danilo Krummrich wrote:
+> Add a sample Rust platform driver illustrating the usage of the platform
+> bus abstractions.
+> 
+> This driver probes through either a match of device / driver name or a
+> match within the OF ID table.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-diff --git a/drivers/s390/cio/chp.c b/drivers/s390/cio/chp.c
-index cba2d048a96b3cb0cc79080ef4c771b0f7d5bc34..4a0b3f19bd8ef9780da6b4657fbda73171e8c22b 100644
---- a/drivers/s390/cio/chp.c
-+++ b/drivers/s390/cio/chp.c
-@@ -128,7 +128,7 @@ static int s390_vary_chpid(struct chp_id chpid, int on)
-  * Channel measurement related functions
-  */
- static ssize_t measurement_chars_read(struct file *filp, struct kobject *kobj,
--				      struct bin_attribute *bin_attr,
-+				      const struct bin_attribute *bin_attr,
- 				      char *buf, loff_t off, size_t count)
- {
- 	struct channel_path *chp;
-@@ -142,11 +142,11 @@ static ssize_t measurement_chars_read(struct file *filp, struct kobject *kobj,
- 	return memory_read_from_buffer(buf, count, &off, &chp->cmg_chars,
- 				       sizeof(chp->cmg_chars));
- }
--static BIN_ATTR_ADMIN_RO(measurement_chars, sizeof(struct cmg_chars));
-+static const BIN_ATTR_ADMIN_RO(measurement_chars, sizeof(struct cmg_chars));
- 
- static ssize_t measurement_chars_full_read(struct file *filp,
- 					   struct kobject *kobj,
--					   struct bin_attribute *bin_attr,
-+					   const struct bin_attribute *bin_attr,
- 					   char *buf, loff_t off, size_t count)
- {
- 	struct channel_path *chp = to_channelpath(kobj_to_dev(kobj));
-@@ -196,22 +196,22 @@ static ssize_t chp_measurement_copy_block(void *buf, loff_t off, size_t count,
- }
- 
- static ssize_t measurement_read(struct file *filp, struct kobject *kobj,
--				struct bin_attribute *bin_attr,
-+				const struct bin_attribute *bin_attr,
- 				char *buf, loff_t off, size_t count)
- {
- 	return chp_measurement_copy_block(buf, off, count, kobj, false);
- }
--static BIN_ATTR_ADMIN_RO(measurement, sizeof(struct cmg_entry));
-+static const BIN_ATTR_ADMIN_RO(measurement, sizeof(struct cmg_entry));
- 
- static ssize_t ext_measurement_read(struct file *filp, struct kobject *kobj,
--				    struct bin_attribute *bin_attr,
-+				    const struct bin_attribute *bin_attr,
- 				    char *buf, loff_t off, size_t count)
- {
- 	return chp_measurement_copy_block(buf, off, count, kobj, true);
- }
--static BIN_ATTR_ADMIN_RO(ext_measurement, sizeof(struct cmg_ext_entry));
-+static const BIN_ATTR_ADMIN_RO(ext_measurement, sizeof(struct cmg_ext_entry));
- 
--static struct bin_attribute *measurement_attrs[] = {
-+static const struct bin_attribute *measurement_attrs[] = {
- 	&bin_attr_measurement_chars,
- 	&bin_attr_measurement_chars_full,
- 	&bin_attr_measurement,
-@@ -435,7 +435,7 @@ static ssize_t speed_bps_show(struct device *dev,
- static DEVICE_ATTR_RO(speed_bps);
- 
- static ssize_t util_string_read(struct file *filp, struct kobject *kobj,
--				struct bin_attribute *attr, char *buf,
-+				const struct bin_attribute *attr, char *buf,
- 				loff_t off, size_t count)
- {
- 	struct channel_path *chp = to_channelpath(kobj_to_dev(kobj));
-@@ -448,10 +448,10 @@ static ssize_t util_string_read(struct file *filp, struct kobject *kobj,
- 
- 	return rc;
- }
--static BIN_ATTR_RO(util_string,
--		   sizeof(((struct channel_path_desc_fmt3 *)0)->util_str));
-+static const BIN_ATTR_RO(util_string,
-+			 sizeof(((struct channel_path_desc_fmt3 *)0)->util_str));
- 
--static struct bin_attribute *chp_bin_attrs[] = {
-+static const struct bin_attribute *const chp_bin_attrs[] = {
- 	&bin_attr_util_string,
- 	NULL,
- };
-@@ -468,9 +468,9 @@ static struct attribute *chp_attrs[] = {
- 	&dev_attr_speed_bps.attr,
- 	NULL,
- };
--static struct attribute_group chp_attr_group = {
-+static const struct attribute_group chp_attr_group = {
- 	.attrs = chp_attrs,
--	.bin_attrs = chp_bin_attrs,
-+	.bin_attrs_new = chp_bin_attrs,
- };
- static const struct attribute_group *chp_attr_groups[] = {
- 	&chp_attr_group,
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index 0f2fcd244523f050c5286f19d4fe1846506f9214..b4368377fac96734a5ee98209f9532b838953f07 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -293,7 +293,7 @@ __ATTRIBUTE_GROUPS(_name)
- 
- #define BIN_ATTRIBUTE_GROUPS(_name)				\
- static const struct attribute_group _name##_group = {		\
--	.bin_attrs = _name##_attrs,				\
-+	.bin_attrs_new = _name##_attrs,				\
- };								\
- __ATTRIBUTE_GROUPS(_name)
- 
+Not a review comment, but a question/proposal:
 
----
-base-commit: dabe889a826e866d71af72a890f2be07a660350c
-change-id: 20241205-sysfs-const-bin_attr-groups_macro-6f6a63d57908
+What do you think to convert the platform sample into an example/test?
+And drop it in samples/rust then? Like [1] below?
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+We would have (a) a complete example in the documentation and (b) some
+(KUnit) test coverage and (c) have one patch less in the series and
+(d) one file less to maintain long term.
+
+I think to remember that it was mentioned somewhere that a
+documentation example / KUnit test is preferred over samples/rust (?).
+
+Just an idea :)
+
+Best regards
+
+Dirk
+
+[1]
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ae576c842c51..365fc48b7041 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7035,7 +7035,6 @@ F:	rust/kernel/device_id.rs
+ F:	rust/kernel/devres.rs
+ F:	rust/kernel/driver.rs
+ F:	rust/kernel/platform.rs
+-F:	samples/rust/rust_driver_platform.rs
+
+ DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
+ M:	Nishanth Menon <nm@ti.com>
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 868cfddb75a2..77aeb6fc2120 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -142,30 +142,55 @@ macro_rules! module_platform_driver {
+ /// # Example
+ ///
+ ///```
+-/// # use kernel::{bindings, c_str, of, platform};
++/// # mod mydriver {
++/// #
++/// # // Get this into the scope of the module to make the
+assert_eq!() buildable
++/// # static __DOCTEST_ANCHOR: i32 = core::line!() as i32 - 4;
++/// #
++/// # use kernel::{c_str, of, platform, prelude::*};
++/// #
++/// struct MyDriver {
++///     pdev: platform::Device,
++/// }
+ ///
+-/// struct MyDriver;
++/// struct Info(u32);
+ ///
+ /// kernel::of_device_table!(
+ ///     OF_TABLE,
+ ///     MODULE_OF_TABLE,
+ ///     <MyDriver as platform::Driver>::IdInfo,
+-///     [
+-///         (of::DeviceId::new(c_str!("test,device")), ())
+-///     ]
++///     [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
+ /// );
+ ///
+ /// impl platform::Driver for MyDriver {
+-///     type IdInfo = ();
++///     type IdInfo = Info;
+ ///     const OF_ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
+ ///
+-///     fn probe(
+-///         _pdev: &mut platform::Device,
+-///         _id_info: Option<&Self::IdInfo>,
+-///     ) -> Result<Pin<KBox<Self>>> {
+-///         Err(ENODEV)
++///     fn probe(pdev: &mut platform::Device, info:
+Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
++///         dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver
+sample.\n");
++///
++///         assert_eq!(info.unwrap().0, 42);
++///
++///         let drvdata = KBox::new(Self { pdev: pdev.clone() },
+GFP_KERNEL)?;
++///
++///         Ok(drvdata.into())
++///     }
++/// }
++///
++/// impl Drop for MyDriver {
++///     fn drop(&mut self) {
++///         dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver
+sample.\n");
+ ///     }
+ /// }
++///
++/// kernel::module_platform_driver! {
++///     type: MyDriver,
++///     name: "rust_driver_platform",
++///     author: "Danilo Krummrich",
++///     description: "Rust Platform driver",
++///     license: "GPL v2",
++/// }
++/// # }
+ ///```
+ pub trait Driver {
+     /// The type holding information about each device id supported
+by the driver.
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 70126b750426..6d468193cdd8 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -41,16 +41,6 @@ config SAMPLE_RUST_DRIVER_PCI
+
+ 	  If unsure, say N.
+
+-config SAMPLE_RUST_DRIVER_PLATFORM
+-	tristate "Platform Driver"
+-	help
+-	  This option builds the Rust Platform driver sample.
+-
+-	  To compile this as a module, choose M here:
+-	  the module will be called rust_driver_platform.
+-
+-	  If unsure, say N.
+-
+ config SAMPLE_RUST_HOSTPROGS
+ 	bool "Host programs"
+ 	help
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index 761d13fff018..2f5b6bdb2fa5 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -4,7 +4,6 @@ ccflags-y += -I$(src)				# needed for trace events
+ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+-obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+
+ rust_print-y := rust_print_main.o rust_print_events.o
+
+diff --git a/samples/rust/rust_driver_platform.rs
+b/samples/rust/rust_driver_platform.rs
+deleted file mode 100644
+index 2f0dbbe69e10..000000000000
+--- a/samples/rust/rust_driver_platform.rs
++++ /dev/null
+@@ -1,49 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-
+-//! Rust Platform driver sample.
+-
+-use kernel::{c_str, of, platform, prelude::*};
+-
+-struct SampleDriver {
+-    pdev: platform::Device,
+-}
+-
+-struct Info(u32);
+-
+-kernel::of_device_table!(
+-    OF_TABLE,
+-    MODULE_OF_TABLE,
+-    <SampleDriver as platform::Driver>::IdInfo,
+-    [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
+-);
+-
+-impl platform::Driver for SampleDriver {
+-    type IdInfo = Info;
+-    const OF_ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
+-
+-    fn probe(pdev: &mut platform::Device, info:
+Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
+-        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
+-
+-        if let Some(info) = info {
+-            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n",
+info.0);
+-        }
+-
+-        let drvdata = KBox::new(Self { pdev: pdev.clone() },
+GFP_KERNEL)?;
+-
+-        Ok(drvdata.into())
+-    }
+-}
+-
+-impl Drop for SampleDriver {
+-    fn drop(&mut self) {
+-        dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver
+sample.\n");
+-    }
+-}
+-
+-kernel::module_platform_driver! {
+-    type: SampleDriver,
+-    name: "rust_driver_platform",
+-    author: "Danilo Krummrich",
+-    description: "Rust Platform driver",
+-    license: "GPL v2",
+-}
 
 
