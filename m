@@ -1,185 +1,116 @@
-Return-Path: <linux-kernel+bounces-434023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D499E6046
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:54:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D50E9E604C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72DA71885284
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 21:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E28168651
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3EA1CD1ED;
-	Thu,  5 Dec 2024 21:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51FF1C8FB5;
+	Thu,  5 Dec 2024 22:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxzyS2gb"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ZaUDhs9H"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B8819DF66;
-	Thu,  5 Dec 2024 21:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6905282FB;
+	Thu,  5 Dec 2024 22:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733435658; cv=none; b=QjLdljK/XDTkA6EP/pI8XNNDDsaCfjn185KM37tJtVab4GQg+3h33unW2dMWmtQOZB8JAak9kEPUNL9G+JGmsbGlf6BtiQUtepUCkJV6IZTJjqS/Sg6RFeqfdmLHdL9fSm94Mjpe4gLLWOdlSsMF1RBjYAYlE2akfYpJR4ETQWM=
+	t=1733436094; cv=none; b=hAt7tXB5WHoXHxNX98uCb0EXsnbjIP/27cDO/A6aiOV/5IYsPr0bWxwafFaZ557Bu+kQS2tTrMI9zBkQfAzS37yP1izK09ZBatgJssnOM/aaXl7es0JNltSa6l4FqlNgnRCIEDXI660IF80Hs4jbJcuAhTnKQB/XIKR5jSoPdLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733435658; c=relaxed/simple;
-	bh=nqJuzIrwMW5efGJQY+rjr3zhGCylhDL02Nxt5lOUV9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qME5qX0SwGT8NpFvAC3XsGXdaxXk74lXzSu0MjajICCaUSOwDrRvfn2QOxz5cLci4gW+T0udgZlsvEEvZBu68Mp/YE6wlIYOK+q062Q6r9ZNDr9BGrHP3YcRhZkTUHtsOQg1CjlciLPP9jlfxxQUeFzyhLjtu4sxHwkdgZF9GTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxzyS2gb; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4afa53874beso408328137.3;
-        Thu, 05 Dec 2024 13:54:16 -0800 (PST)
+	s=arc-20240116; t=1733436094; c=relaxed/simple;
+	bh=WBRYGqFsKhLsWzBwDgwyb14a6KLVl2Ln8e4DJZjIZ5Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aE8DWL3eDzEoqGBdXDVdJslTqHCvL20iGqNuCTJjBw/dWpfiXw1TsLZwd9NWWyOmz0sw4un22Ahm7pPng6IuzWVmt6zVQcIz+pZL5IjkOhcUH+QT6rEK3xnXjGvEkGxZQeTFQgBeErDKVZ4le3s0BzGgRwMdOQTSYqIJGBXSLgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ZaUDhs9H; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733435656; x=1734040456; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kDiiTJmCz6vEI9PMP7OwaS997HsKHRlfObbXCwvBhbg=;
-        b=RxzyS2gbWL3nP7+LfMaCP5j2LTJXSnetwbOlNYblNZLYyo3sBZd3hkXKBKxNL+2YVl
-         LOhMcqa2MEh6lx8HyImKEVxXBntPoj/7KISnEHL1PZpFUNMIg30dorYaR4pZmTIh3RQl
-         Zr/fyONUqyZOjJ3ULv9aqMuz+R8Z+F6WbaE2qCBLPAecZhwRrKeku6ZeRDV07c6hR7gc
-         YJoUPrKdiGBsSbrLm5BV+nO+4dlcpdePfn+6G7WNkGoFqzzqQRou+348cpfSDm0MtRnx
-         hA+9cIj7B5QQ5cNZk8iN8vSBNMhGDPHu8QmRWaOyvxNlxavdO4Az5PCnrEKkLfTtLmux
-         ByXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733435656; x=1734040456;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kDiiTJmCz6vEI9PMP7OwaS997HsKHRlfObbXCwvBhbg=;
-        b=V8tj7GPVshrecDCr+w0tDpg390UWyom24rhPck6v2ENwgjRC8EVAe+SICZiaUFaNIX
-         IoOFPfS+HAiIkl67pZ6LMaRU54am0LafGpfXMAIp0DDRPkkkPliyy4WGHQ/iz0QmyY4P
-         Rz251HGhCzs/fYjTMtF2TVCVj9PTTY/BSE8/L0deG9ykbTIMCV8HZ+9MJ5bpUGX5vD8t
-         CO+FC4wegHDVh+Mi8Q504XAusSjM6JxfGiCIyoYuh5ZVe7DVsgPXSdO2bjDVCoTitv5v
-         v8z4RywVsOGV/Yvte5drPPOEzs9KewXGqIIOCqENs+VCkmfsM7CKR8l5ftV5kPvRMl4D
-         Hqcg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3AsbjSOc+BpVlLZ2V7n25qji2ACV2vIDpjMmv7U+qYea9RsvH/IJdtKJCaQjoKjhtQ1IvKfbfTpW3Ejw=@vger.kernel.org, AJvYcCX/Q+omsTWaVfqC1az5WHATGRVGmjMJlyErTaYsTkBxSgeR5SHoTu+9EKcBV0gQL3exdWGyqk4DcFOpSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW15cK03toIoYzDugPOPRZSrP9Xgj+9vvvNwM3c37L/JXWo6Dg
-	TkcXDdw8fn4iQxLF76iIIonk6pqvTyuYjVvNk3uVXuPBvuPNiJ4E4Ay+HpeL4lB0weTwephegNP
-	cbW5s4tjzKxSt95+STQIPHPg+8w0=
-X-Gm-Gg: ASbGnctps6shBk94uJ6dlfHB8yqIFFoH0ATKjTa5kxqYvqlLpLlKf/uCil3tuYC4xIR
-	uByZk5STtdzPjYfrA+TbxnuPqRKFvBwo=
-X-Google-Smtp-Source: AGHT+IEL529gtlN+1pRDS7o3I7j8QO6j12BV7TXdg7JFlhhJIA8ROCknDCKBwmLo1FVr21QYijUlItg9XxCJsIPWrS0=
-X-Received: by 2002:a05:6102:2ad4:b0:4af:48a5:1ac1 with SMTP id
- ada2fe7eead31-4afca7438d0mr1604472137.0.1733435656148; Thu, 05 Dec 2024
- 13:54:16 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1733436093; x=1764972093;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=WBRYGqFsKhLsWzBwDgwyb14a6KLVl2Ln8e4DJZjIZ5Q=;
+  b=ZaUDhs9HXptLl/jiL6DsEL/WQNSgVGJMkxzviFWwg6Fpj8rTT3D7bRkP
+   IhNex6IA+ySUcGhbxwD51beF7/VD9CYO7LSgqnZZYMoEhS4Oo9OgpTe4G
+   /6zH4xSDz09aazQJ1rZqt+fOp2Dqcda1JlkGnZDjYr2xY6dIvFBPjU4dK
+   k=;
+X-IronPort-AV: E=Sophos;i="6.12,211,1728950400"; 
+   d="scan'208";a="358487152"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 22:01:31 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:23930]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.181:2525] with esmtp (Farcaster)
+ id 4718b645-8202-4053-9c23-2ce41d312435; Thu, 5 Dec 2024 22:01:30 +0000 (UTC)
+X-Farcaster-Flow-ID: 4718b645-8202-4053-9c23-2ce41d312435
+Received: from EX19D021UWA001.ant.amazon.com (10.13.139.24) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 5 Dec 2024 22:01:30 +0000
+Received: from EX19D021UWA002.ant.amazon.com (10.13.139.48) by
+ EX19D021UWA001.ant.amazon.com (10.13.139.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 5 Dec 2024 22:01:30 +0000
+Received: from EX19D021UWA002.ant.amazon.com ([fe80::1695:13a9:9f52:f30a]) by
+ EX19D021UWA002.ant.amazon.com ([fe80::1695:13a9:9f52:f30a%5]) with mapi id
+ 15.02.1258.034; Thu, 5 Dec 2024 22:01:30 +0000
+From: "Herrenschmidt, Benjamin" <benh@amazon.com>
+To: "robh@kernel.org" <robh@kernel.org>, "segher@kernel.crashing.org"
+	<segher@kernel.crashing.org>
+CC: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, "saravanak@google.com"
+	<saravanak@google.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "conor@kernel.org" <conor@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells
+ handling
+Thread-Topic: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells
+ handling
+Thread-Index: AQHbR2E8vFBrvXcqyUSquwoaq++LVw==
+Date: Thu, 5 Dec 2024 22:01:29 +0000
+Message-ID: <54b34ac1296dd6711bda5239069d5e3b436bbc8f.camel@amazon.com>
+References: <20241106171028.3830266-1-robh@kernel.org>
+	 <87jzdfcm3l.fsf@mpe.ellerman.id.au> <87plmi7jjz.fsf@mpe.ellerman.id.au>
+	 <20241127214232.GQ29862@gate.crashing.org>
+	 <CAL_JsqKhp8bW66koP8JPSkXmrCjA+oQh6NZte_uphiLTC_=7Rw@mail.gmail.com>
+	 <20241202220434.GU29862@gate.crashing.org>
+	 <CAL_JsqL5FHPNQWGdBEz9UpD7cq3We-czPV8OmwD=0w5Eu10=kA@mail.gmail.com>
+In-Reply-To: <CAL_JsqL5FHPNQWGdBEz9UpD7cq3We-czPV8OmwD=0w5Eu10=kA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <640BBA7AD62B3A4D81EFA0FB69EC2557@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113211614.518439-1-karprzy7@gmail.com> <486d5734-aa02-4a5e-b2ee-fdbba65179a3@kernel.org>
- <20241119145622.2f1f0342@akair> <5d6ccb9f-a8f1-45eb-b54a-cd66e637a2cc@kernel.org>
- <20241126230647.68b20fcf@akair>
-In-Reply-To: <20241126230647.68b20fcf@akair>
-From: Karol P <karprzy7@gmail.com>
-Date: Thu, 5 Dec 2024 22:54:05 +0100
-Message-ID: <CAKwoAfrvqUxPat9a+4LjRKYx2LZ=n6Q2H+ir3KYkBBj+Rv_HWQ@mail.gmail.com>
-Subject: Re: [PATCH] mfd: omap-usb-tll: check clk_prepare return code
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Roger Quadros <rogerq@kernel.org>, aaro.koskinen@iki.fi, khilman@baylibre.com, 
-	tony@atomide.com, lee@kernel.org, linux-omap@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 26 Nov 2024 at 23:06, Andreas Kemnade <andreas@kemnade.info> wrote:
->
-> Am Tue, 19 Nov 2024 16:16:42 +0200
-> schrieb Roger Quadros <rogerq@kernel.org>:
->
-> > On 19/11/2024 15:56, Andreas Kemnade wrote:
-> > > Am Tue, 19 Nov 2024 15:10:23 +0200
-> > > schrieb Roger Quadros <rogerq@kernel.org>:
-> > >
-> > >> Hi,
-> > >>
-> > >> On 13/11/2024 23:16, Karol Przybylski wrote:
-> > >>> clk_prepare() is called in usbtll_omap_probe to fill clk array.
-> > >>> Return code is not checked, leaving possible error condition unhandled.
-> > >>>
-> > >>> Added variable to hold return value from clk_prepare() and dev_dbg statement
-> > >>> when it's not successful.
-> > >>>
-> > >>> Found in coverity scan, CID 1594680
-> > >>>
-> > >>> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
-> > >>> ---
-> > >>>  drivers/mfd/omap-usb-tll.c | 11 +++++++----
-> > >>>  1 file changed, 7 insertions(+), 4 deletions(-)
-> > >>>
-> > >>> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
-> > >>> index 0f7fdb99c809..2e9319ee1b74 100644
-> > >>> --- a/drivers/mfd/omap-usb-tll.c
-> > >>> +++ b/drivers/mfd/omap-usb-tll.c
-> > >>> @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
-> > >>>   struct device                           *dev =  &pdev->dev;
-> > >>>   struct usbtll_omap                      *tll;
-> > >>>   void __iomem                            *base;
-> > >>> - int                                     i, nch, ver;
-> > >>> + int                                     i, nch, ver, err;
-> > >>>
-> > >>>   dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
-> > >>>
-> > >>> @@ -248,10 +248,13 @@ static int usbtll_omap_probe(struct platform_device *pdev)
-> > >>>                                   "usb_tll_hs_usb_ch%d_clk", i);
-> > >>>           tll->ch_clk[i] = clk_get(dev, clkname);
-> > >>>
-> > >>> -         if (IS_ERR(tll->ch_clk[i]))
-> > >>> +         if (IS_ERR(tll->ch_clk[i])) {
-> > >>>                   dev_dbg(dev, "can't get clock : %s\n", clkname);
-> > >
-> > > if you want dev_err() later, then why not here?
-> >
-> > Because clk is optional. If it is not there then we should not complain.
-> > But if it is there then it needs to be enabled successfully.
-> >
-> I guess you mean *prepared*, the clock is enabled later (with error
-> checking). But your reasoning makes sense.
->
-> > >
-> > >>> -         else
-> > >>> -                 clk_prepare(tll->ch_clk[i]);
-> > >>> +         } else {
-> > >>> +                 err = clk_prepare(tll->ch_clk[i]);
-> > >>> +                 if (err)
-> > >>> +                         dev_dbg(dev, "clock prepare error for: %s\n", clkname);
-> > >>
-> > >> dev_err()?
-> > >>
-> > > So why do you want a different return handling here? (I doubt there is
-> > > any clock having a real prepare() involved here)
-> > >
-> > > As said in an earlier incarnation of this patch, the real question is
-> > > whether having partial clocks available is a valid operating scenario.
-> > > If yes, then the error should be ignored. If no, then bailing out early
-> > > is a good idea.
-> >
-> > In the DT binding, clocks is optional. So if it doesn't exist it is not
-> > an error condition.
-> >
-> > >
-> > > clk_prepare() errors are catched by failing clk_enable() later,
-> > > ch_clk[i] is checked later, too.
-> > >
-> > >> I think we should return the error in this case.
-> > >> (after unpreparing the prepared clocks and clk_put())
-> > >>
-> > > and pm_runtime_put_sync(dev)
->
-> which can probably be done before dealing with the clocks. It is only
-> needed for the register access.
-
-I'm fairly new to this subsystem and I'm trying to understand the
-conclusion. In the end, we should add dev_err() here after
-clk_prepare() with appropriate handling?
-
->
-> Regards,
-> Andreas
-
-Best regards,
-Karol
+T24gTW9uLCAyMDI0LTEyLTAyIGF0IDE2OjU1IC0wNjAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
+wqDCoMKgwqDCoMKgwqAgLyogTG9vayBmb3IgdGhpcyAjYWRkcmVzcy1jZWxscy4gV2UgaGF2ZSB0
+byBpbXBsZW1lbnQgdGhlIG9sZCBsaW51eA0KPiDCoMKgwqDCoMKgwqDCoMKgICogdHJpY2sgb2Yg
+bG9va2luZyBmb3IgdGhlIHBhcmVudCBoZXJlIGFzIHNvbWUgZGV2aWNlLXRyZWVzIHJlbHkgb24g
+aXQNCj4gwqDCoMKgwqDCoMKgwqDCoCAqLw0KPiANCj4gTWF5YmUgdGhhdCdzIGZyb20gc29tZSBz
+eXN0ZW0gbG9uZyBkcm9wcGVkIGFuZCB3ZSBkb24ndCBuZWVkIGl0DQo+IGFueW1vcmUuIEkgaGF2
+ZSBubyBpZGVhLiBUaGF0J3Mgd2hhdCBJJ20gdHJ5aW5nIHRvIGZpbmQgb3V0IHdpdGggdGhpcw0K
+PiBwYXRjaC4NCj4gDQo+IFdlIGFsc28gZG9uJ3QgcmVhbGx5IGhhdmUgYSB3YXkgdG8gZGlzdGlu
+Z3Vpc2ggT0YgZnJvbSBGRFQgKHdoZXJlIHdlJ2QNCj4gbmVlZCB0bykuIEl0IGlzIHNvbWV3aGF0
+IGp1c3QgYnkgYXJjaCwgYnV0IFBQQyBhbHdheXMgcGFzc2VzIGFuIEZEVCB0bw0KPiB0aGUga2Vy
+bmVsIGZvciBib3RoIEZEVCBhbmQgT0Ygc3lzdGVtcy4NCg0KSSBwcm9iYWJseSB3cm90ZSB0aGF0
+IDotKQ0KDQpUaGUgbGl0dGxlIEkgY2FuIHJlbWVtYmVyLCBJIHRoaW5rIGlzIHRoZXJlIGFyZSBt
+YW55IGNhc2VzIG9mIG9sZCBEVHMNCihlc3AuIG9sZCBBcHBsZSBvbmVzKSBtaXNzaW5nIHRoZSAi
+ZW1wdHkiIHJhbmdlcyBwcm9wZXJ0eSBpbiBzb21lIG5vZGVzDQp0byBpbmRpY2F0ZSB0aGF0IHRo
+ZSBwYXJlbnQgYW5kIGNoaWxkIGFkZHJlc3Mgc3BhY2VzIGFyZSBpZGVudGljYWwuDQoNCkkgaG9u
+ZXN0bHkgZG9uJ3QgcmVtZW1iZXIgdGhlIHNwZWNpZmljcywgYnV0IHRoaXMgaXMgc29tZXRoaW5n
+IEkgZGlkDQpoaXQgYSBmZXcgdGltZXMgaW4gdGhlIHBhc3QuDQoNCkNoZWVycywNCkJlbi4gDQo=
 
