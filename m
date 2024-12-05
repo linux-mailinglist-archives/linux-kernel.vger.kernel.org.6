@@ -1,88 +1,153 @@
-Return-Path: <linux-kernel+bounces-432884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0178C9E517E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BC29E5181
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:38:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55A81664C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2941D1664B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB871D5AD3;
-	Thu,  5 Dec 2024 09:38:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EEE1D63DF;
+	Thu,  5 Dec 2024 09:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFoBwUq9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C5018FC70
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5431D5175;
+	Thu,  5 Dec 2024 09:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733391485; cv=none; b=HED3w7VlwoY21OKa6Tty7FiS5eEyDt/0SKd+IkyCRlOcIYg++KFNouySVqlSCoHMRmPE9LtdKxhetpG1n/haOiqBcnlOuNRGaeaE51gQ5H2b34JQ9FMQhmtmTQQS/au+VDICNedOjtCtayD9wts+L5G773+khUcTxuYIXt/492s=
+	t=1733391488; cv=none; b=eF8fkIvLF4JXOZWZiZB+bHP4vEqQRG5CROJ6ZwvK9/6CPJ+IAApFU5+QX7jxFnXpHdw8+9HQZ/ZPqoyOeZBegXOk7HXotEoGQG5oyULM/W5GAFg9eV+7R8wQNlgUKvTEfnFfsv3skIWHqpLsLlfK5vrMJUxUFDRMrHyie8grINs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733391485; c=relaxed/simple;
-	bh=4sLIStA28MyjAFYwgEVBda4DzX64I5rhQMDZET9fShg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GsE0EpicL8xKsh7FXmyx0TGjnUZLLqjfItB7CKd5H8qWnLa4ErK6mt19NFstj2HYEgehMqERw8FX++I30UAPKxEt0n1a8sXqOfJHhakyun7VxBEilOvW9Et4cRtaRjc98tPK5sYwi3ZoN0aVQ2qMfRQ2H3rJVcF6HJC2BLHuZ+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-843faa97bf9so67242739f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:38:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733391483; x=1733996283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kqtHx8gilipA4D2l4BfFJBVhwcTJrE6lv5dv3Qdh6DY=;
-        b=ZyQVpRrXddqdZCtm/1dg1COvltp4eM3lueql7c0C/jpY9mmNsqH6bYysgiCq+BP98F
-         89f38x/tlwtHtiC1+FZLwSB1I7P7FKcsYRN4f074Yowvff1s1OtPruEz0STtwkZG3gSm
-         tGDArwthcDnBpPXwcfVoLrJe/p7ylNhv/GNGo0MSYY9IJzEdxznwSaeEwZSqhHj4imn1
-         qb0TH7nYw4sNh+vJxQnsI1alAi63CFEN36QifxAYwrD3xyFkqlE2ZmFM06qu5DOQCKO/
-         GvpleB06cX0n2S6jfwegihV7hmK5FLwm/rONu3XwI95IImFil4O4HuFfsGis3JxQbDiR
-         mkCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVn1JRrMPOhPZOe4H7dXlXdk7bOMv7cInPiUyTFD4b6Ec55C6wF+YapbdJM9ql7c/ik70CMgqfM6nmf3qM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0lHViHZgYGRLc4mBPgsNZpq9pHjWI+FWd19jA1RjnwlH6HWrn
-	7ucn7SjNutdqgwy69Kg3fqaWKYj2nDQEuLUh7Rs1RxQGwJougMqsvSGViWZ5C5q2zkUGgcDufUA
-	lGbHUh7oHTnE8L29aEwR78KsRdFl2sCRnzOb1VFmw10OvWYtLJxbSuS0=
-X-Google-Smtp-Source: AGHT+IEv57GA6xSycu2izzUL+l6Xr9iVf/IeL638k/IBXneToy8FNK5YekBaBAdo5R+iqBei9Mh44lLg/x7JaWu1FgbLlmxTvvIq
+	s=arc-20240116; t=1733391488; c=relaxed/simple;
+	bh=HRontmhpAXB7zdihojZafgOYClH6jtz6uOSjDmx3JAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fqk98II6EWBvvxljJEVhvhcj3X6CIeP7fQDbAIrv2tkrfEJXonT7rxSnzz+8mnsZLb3xvURBdCydwYvB397WgTAV4+crXaYXPbTTCB3xHyemKZOoWTHyuaWRBRJ8paJg8nRRczRvuPTXeieRXfInJMxMHHupYcE/606HShAYjyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFoBwUq9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35C8C4CED1;
+	Thu,  5 Dec 2024 09:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733391488;
+	bh=HRontmhpAXB7zdihojZafgOYClH6jtz6uOSjDmx3JAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tFoBwUq9bZELbs1gPcSWPBGsHkmsk3f/29dSssqqA6F50wGecvEPVdaSEEafRy5uN
+	 P+2gXv0Voh/tJKZjq/0TGWE/TwzmSrh6GpidUcRJ+e2ELuzMNuLMhHq/oObNZUfc7i
+	 2q5eaf4mVO1EdZssgcAxOvWdaLTHXUg605ovkVilAqH4xjRooGfLTwRF/axKPrAGxx
+	 YU5B0hZGViS+Zn8ww2JN7cXN6lE4QtEas6qllxk/0P62nNJFmHvHOWW0h3GqFCuud5
+	 5e+vZZjBNTRiwfgr+SDtznU0f33DxLzlaTymhGp8/v90+rB3RbSdKdyCLj0rMId3CE
+	 +mo4+LgVOkg8w==
+Date: Thu, 5 Dec 2024 10:38:05 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	p.zabel@pengutronix.de, quic_nsekar@quicinc.com, dmitry.baryshkov@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: phy: qcom,uniphy-pcie: Document PCIe
+ uniphy
+Message-ID: <7js7lswzde67izdradhuzgvlixwiblgf7aosdvavknbclbtjew@6w3y2e2k3mtk>
+References: <20241204113329.3195627-1-quic_varada@quicinc.com>
+ <20241204113329.3195627-2-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1381:b0:3a7:86ab:bebf with SMTP id
- e9e14a558f8ab-3a7f9aa18bamr138209625ab.19.1733391483393; Thu, 05 Dec 2024
- 01:38:03 -0800 (PST)
-Date: Thu, 05 Dec 2024 01:38:03 -0800
-In-Reply-To: <3493dccc-6004-43fe-9ac1-fcf3dacd9875@kylinos.cn>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6751747b.050a0220.17bd51.0097.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in mgmt_remove_adv_monitor_sync
-From: syzbot <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>
-To: 6751189a.050a0220.17bd51.0084.gae@google.com, linux-kernel@vger.kernel.org, 
-	mazin@getstate.dev, syzkaller-bugs@googlegroups.com, xiaopei01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241204113329.3195627-2-quic_varada@quicinc.com>
 
-Hello,
+On Wed, Dec 04, 2024 at 05:03:24PM +0530, Varadarajan Narayanan wrote:
+> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> 
+> Document the Qualcomm UNIPHY PCIe 28LP present in IPQ5332.
+> 
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v2: Rename the file to match the compatible
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Either I look at wrong v1 from your cover letter or there was no such
+file in v1, so how it can be a rename?
 
-failed to apply patch:
-checking file net/bluetooth/mgmt.c
-patch: **** unexpected end of file in patch
+What happened here?
 
 
+>     Drop 'driver' from title
+>     Dropped 'clock-names'
+>     Fixed 'reset-names'
+> --
+>  .../bindings/phy/qcom,uniphy-pcie.yaml        | 82 +++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml b/Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml
+> new file mode 100644
+> index 000000000000..e0ad98a9f324
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/qcom,uniphy-pcie.yaml
 
-Tested on:
+This does not match compatible, so I don't see how it even matches your
+changelog.
 
-commit:         4615855e Merge branch '100GbE' of git://git.kernel.org..
-git tree:       net
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3891b550f14aea0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=479aff51bb361ef5aa18
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10b88020580000
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/qcom,uniphy-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm UNIPHY PCIe 28LP PHY
+> +
+> +maintainers:
+> +  - Nitheesh Sekar <quic_nsekar@quicinc.com>
+> +  - Varadarajan Narayanan <quic_varada@quicinc.com>
+> +
+> +description:
+> +  PCIe and USB combo PHY found in Qualcomm IPQ5332 SoC
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,ipq5332-uniphy-pcie-gen3x1
+
+Odd naming. Did anyone suggest this? I would expect something matches
+like everything else recent (see X1 for example).
+
+
+> +      - qcom,ipq5332-uniphy-pcie-gen3x2
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 2
+
+What happened here? This cannot be minItems and it never was.
+
+> +
+> +  resets:
+> +    minItems: 2
+> +    maxItems: 3
+
+Why this varies?
+
+This patch is odd. Confusing changelog, v1 entirely different and not
+matching what is here, unusual and incorrect code in the binding itself.
+
+Provide changelog explaining WHY you did such odd changes.
+
+Open *LATEST* existing Qcom bindings and look how they do it. Do not
+implement things differently.
+
+Best regards,
+Krzysztof
 
 
