@@ -1,235 +1,209 @@
-Return-Path: <linux-kernel+bounces-433534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A5D9E59AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:27:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0259E59B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:29:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B7018852F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA602285417
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF0421C9FB;
-	Thu,  5 Dec 2024 15:27:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBE016F8F5;
-	Thu,  5 Dec 2024 15:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D402821C9F8;
+	Thu,  5 Dec 2024 15:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R2y1XW7U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9sU+3iTP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R2y1XW7U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9sU+3iTP"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597C33A268;
+	Thu,  5 Dec 2024 15:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733412446; cv=none; b=NzgETwXj7YglCyS/IntrguUsPbAta5Rax+uOzxU42x4ng2RikaYDNH81gQ7k3ZPE3xVkJ6++2urDadPsW6a0heVVbNSiS7QFn1Pc2OD4kBcjvilemt/1KlIVdwF4W+20NV0/vhuJOymKqggSfE8Y/jGQE3rTqCRH7PlAp6vSY1M=
+	t=1733412590; cv=none; b=TZHTWV+qRwB9Ev64IYihr9UDueq4bMArKEbYn/N/86XhAi9si0bncLVNKS9maGSmILnqs3Ja2j/Zt5JAZbNd69A4GrIeYHyykzFw7UKJaZeUyzPWItD5OpaWWp0o8tSL3iytAnee9ReJIJ67pAusA+SZDcao4+tPesdZVSXwgkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733412446; c=relaxed/simple;
-	bh=J0H+X3H5wdZ7DGBbIMIYrC4sHcriNQKSC2EVNNyNskY=;
+	s=arc-20240116; t=1733412590; c=relaxed/simple;
+	bh=Ri1vtdqrd1HmJUq5VcLDSp53Hksz+SDfwNnxXBNa+Ak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOpZ0GXMKq9jWaG/Dre51uZeigFkI3NxUsVlAQLZItjiuJ3xXYBa9OMzv802dh3ECfPufJqGJV+BgnaO7Ej8TMvkYiDz9dF+hk/3LbK3TNiuTZx0ELYvgM4zI/4Gdo5KxV5V08o6MDx978H8qvKUqLAG/6TYA8lIr/KPuiAr/SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 635C31063;
-	Thu,  5 Dec 2024 07:27:50 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 958453F71E;
-	Thu,  5 Dec 2024 07:27:20 -0800 (PST)
-Date: Thu, 5 Dec 2024 15:27:18 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: <cristian.marussi@arm.com>, <andersson@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>, <konrad.dybcio@linaro.org>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
-	<quic_kshivnan@quicinc.com>, <conor+dt@kernel.org>,
-	<arm-scmi@vger.kernel.org>
-Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
- SCMI Generic Extension
-Message-ID: <Z1HGVhi5xebqc4d4@bogus>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-2-quic_sibis@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cspmcuULf1dmXSrF0JS2fII0NUQyKNuxwY8RpmfFW/03hiHnntO1XF6kIcMPVVIjElj3l8Sn2CS1M3PLmg8egYWJW5ZNTsxZxYpHgsGLavt4yNG3v99qQZHk6iOirTsxCSfm6T3H638dqq7HrnCJxNSaJkVYr1Knz6dlHBLH6x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R2y1XW7U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9sU+3iTP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R2y1XW7U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9sU+3iTP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5F7B5211D2;
+	Thu,  5 Dec 2024 15:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733412586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
+	b=R2y1XW7UAzPHhWSM1yqPX5wB4MedPnS7yqOp4rEk4efBVgi3gxDzTt6RbFbTGfE4Dm/Ubv
+	SLYrx3uAOO+w19IPh2e4+FQC/AvDVW9FmyjVZqpps7/S4RgW2ZxDY9BCFvlaizOlESn+2V
+	U+yP9A8UrTJQzxtP00bvk7Tc7+ImGaw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733412586;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
+	b=9sU+3iTPkVTHjHtL1Lp4a95mQ3Jquzx7pT10se231vTPJ6piLNDRT6kNVsWsquIdw2ZbeS
+	y88QZi/usx1EV2BQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733412586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
+	b=R2y1XW7UAzPHhWSM1yqPX5wB4MedPnS7yqOp4rEk4efBVgi3gxDzTt6RbFbTGfE4Dm/Ubv
+	SLYrx3uAOO+w19IPh2e4+FQC/AvDVW9FmyjVZqpps7/S4RgW2ZxDY9BCFvlaizOlESn+2V
+	U+yP9A8UrTJQzxtP00bvk7Tc7+ImGaw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733412586;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hqVGQidTbQ04kHsCAl2xPOfO6GwktGINxvjsWD7obiQ=;
+	b=9sU+3iTPkVTHjHtL1Lp4a95mQ3Jquzx7pT10se231vTPJ6piLNDRT6kNVsWsquIdw2ZbeS
+	y88QZi/usx1EV2BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F198138A5;
+	Thu,  5 Dec 2024 15:29:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jEtJE+rGUWd+bQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 05 Dec 2024 15:29:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A760AA08CF; Thu,  5 Dec 2024 16:29:37 +0100 (CET)
+Date: Thu, 5 Dec 2024 16:29:37 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, paulmck@kernel.org, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org, edumazet@google.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
+Message-ID: <20241205152937.v2uf65wcmnkutiqz@quack3>
+References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
+ <20241205120332.1578562-1-mjguzik@gmail.com>
+ <20241205144645.bv2q6nqua66sql3j@quack3>
+ <CAGudoHGtOX+XPM5Z5eWd-feCvNZQ+nv0u6iY9zqGVMhPunLXqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241007061023.1978380-2-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGtOX+XPM5Z5eWd-feCvNZQ+nv0u6iY9zqGVMhPunLXqA@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Oct 07, 2024 at 11:40:19AM +0530, Sibi Sankar wrote:
-> Document the various memory buses that can be monitored and scaled by
-> the memory latency governor hosted by the QCOM SCMI Generic Extension
-> Protocol v1.0.
+On Thu 05-12-24 16:01:07, Mateusz Guzik wrote:
+> On Thu, Dec 5, 2024 at 3:46 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 05-12-24 13:03:32, Mateusz Guzik wrote:
+> > > See the added commentary for reasoning.
+> > >
+> > > ->resize_in_progress handling is moved inside of expand_fdtable() for
+> > > clarity.
+> > >
+> > > Whacks an actual fence on arm64.
+> > >
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> >
+> > Hum, I don't think this works. What could happen now is:
+> >
+> > CPU1                                    CPU2
+> > expand_fdtable()                        fd_install()
+> >   files->resize_in_progress = true;
+> >   ...
+> >   if (atomic_read(&files->count) > 1)
+> >     synchronize_rcu();
+> >   ...
+> >   rcu_assign_pointer(files->fdt, new_fdt);
+> >   if (cur_fdt != &files->fdtab)
+> >           call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
+> >
+> >                                         rcu_read_lock_sched()
+> >
+> >                                         fdt = rcu_dereference_sched(files->fdt);
+> >                                         /* Fetched old FD table - without
+> >                                          * smp_rmb() the read was reordered */
+> >   rcu_assign_pointer(files->fdt, new_fdt);
+> >   /*
+> >    * Publish everything before we unset ->resize_in_progress, see above
+> >    * for an explanation.
+> >    */
+> >   smp_wmb();
+> > out:
+> >   files->resize_in_progress = false;
+> >                                         if (unlikely(files->resize_in_progress)) {
+> >                                           - false
+> >                                         rcu_assign_pointer(fdt->fd[fd], file);
+> >                                           - store in the old table - boom.
+> >
 > 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+> I don't believe this ordering is possible because of both
+> synchronize_rcu and the fence before updating resize_in_progress.
 > 
-> v3:
-> * Restructure the bindings to mimic IMX [Christian]
-> 
->  .../bindings/firmware/arm,scmi.yaml           |   1 +
->  .../bindings/firmware/qcom,scmi-memlat.yaml   | 246 ++++++++++++++++++
->  .../dt-bindings/firmware/qcom,scmi-memlat.h   |  22 ++
->  3 files changed, 269 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
->  create mode 100644 include/dt-bindings/firmware/qcom,scmi-memlat.h
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> index 54d7d11bfed4..1d405f429168 100644
-> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> @@ -24,6 +24,7 @@ description: |
->  
->  anyOf:
->    - $ref: /schemas/firmware/nxp,imx95-scmi.yaml
-> +  - $ref: /schemas/firmware/qcom,scmi-memlat.yaml
->  
->  properties:
->    $nodename:
-> diff --git a/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
-> new file mode 100644
-> index 000000000000..0e8ea6dacd6a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
-> @@ -0,0 +1,246 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/firmware/qcom,scmi-memlat.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SCMI Memory Bus nodes
-> +
-> +maintainers:
-> +  - Sibi Sankar <quic_sibis@quicinc.com>
-> +
-> +description:
-> +  This binding describes the various memory buses that can be monitored and scaled
-> +  by memory latency governor running on the CPU Control Processor (SCMI controller).
-> +
-> +properties:
-> +  protocol@80:
-> +    $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        const: 0x80
-> +
-> +    patternProperties:
-> +      '^memory-[0-9]$':
-> +        type: object
-> +        unevaluatedProperties: false
-> +        description:
-> +          The list of all memory buses that can be monitored and scaled by the
-> +          memory latency governor running on the SCMI controller.
-> +
-> +        properties:
-> +          qcom,memory-type:
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1, 2]
-> +            description: |
-> +              Memory Bus Identifier
-> +              0 = QCOM_MEM_TYPE_DDR
-> +              1 = QCOM_MEM_TYPE_LLCC
-> +              2 = QCOM_MEM_TYPE_DDR_QOS
-> +
-> +          freq-table-hz:
-> +            items:
-> +              items:
-> +                - description: Minimum frequency of the memory bus in Hz
-> +                - description: Maximum frequency of the memory bus in Hz
-> +
-> +        patternProperties:
-> +          '^monitor-[0-9]$':
-> +            type: object
-> +            unevaluatedProperties: false
-> +            description:
-> +              The list of all monitors detecting the memory latency bound workloads using
-> +              various counters.
-> +
-> +            properties:
-> +              qcom,compute-type:
-> +                description:
-> +                  Monitors of type compute perform bus dvfs based on a rudimentary CPU
-> +                  frequency to memory frequency map.
-> +                type: boolean
-> +
-> +              qcom,ipm-ceil:
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                description:
-> +                  Monitors having this property perform bus dvfs based on the same
-> +                  rudimentary table but the scaling is performed only if the calculated
-> +                  IPM (Instruction Per Misses) exceeds the given ceiling.
-> +
-> +              cpus:
-> +                $ref: /schemas/types.yaml#/definitions/phandle-array
-> +                description:
-> +                  Should be a list of phandles to CPU nodes (as described in
-> +                  Documentation/devicetree/bindings/arm/cpus.yaml).
+> Any CPU which could try racing like that had to come in after the
+> synchronize_rcu() call, meaning one of the 3 possibilities:
+> - the flag is true and the fd table is old
+> - the flag is true and the fd table is new
+> - the flag is false and the fd table is new
 
-And what exactly this list of cpu phandles represent here ?
+I agree here.
 
-> +
-> +              operating-points-v2: true
+> Suppose the CPU reordered loads of the flag and the fd table. There is
+> no ordering in which it can see both the old table and the unset flag.
 
-Can you elaborate why the protocol can't add a command to fetch this from
-the firmware to avoid any possible mismatch between the DT and firmware.
+But I disagree here. If the reads are reordered, then the fd table read can
+happen during the "flag is true and the fd table is old" state and the flag
+read can happen later in "flag is false and the fd table is new" state.
+Just as I outlined above...
 
-> +              opp-table:
-> +                type: object
-> +
-> +            required:
-> +              - cpus
-> +              - operating-points-v2
-> +
-> +            oneOf:
-> +              - required: [ 'qcom,compute-type' ]
-> +              - required: [ 'qcom,ipm-ceil' ]
-> +
-> +        required:
-> +          - qcom,memory-type
-> +          - freq-table-hz
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/firmware/qcom,scmi-memlat.h>
-> +
-> +    firmware {
-> +        scmi {
-> +            compatible = "arm,scmi";
-> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
-> +            mbox-names = "tx", "rx";
-> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            protocol@80 {
-> +                reg = <0x80>;
-> +
-> +                memory-0 {
-
-I am not sure if it is just me, but I find this binding hard to understand.
-Hence I thought I will look and the example and get better understanding
-instead.
-
-So these monitors are numbered ? If there were any meaningful name it would
-have been slightly better but irrespective of that I find it hard as why
-the communication with firmware is not based on index and why they are not
-part of the bindings though I see indices used in the driver.
-
-> +                    qcom,memory-type = <QCOM_MEM_TYPE_DDR>;
-
-Also I see that the type can be easily derived from the index, care to
-elaborate why the firmware expects it to be sent, if not why is that
-information needed here in the DT ?
-
+								Honza
 -- 
-Regards,
-Sudeep
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
