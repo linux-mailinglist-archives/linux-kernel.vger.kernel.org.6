@@ -1,407 +1,223 @@
-Return-Path: <linux-kernel+bounces-432591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA229E4D57
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 019199E4D59
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 06:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D2E1880739
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E591881187
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 05:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226241AF0A7;
-	Thu,  5 Dec 2024 05:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4308C191F60;
+	Thu,  5 Dec 2024 05:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="if2IhlaI"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xjZ/cb0Q"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2059.outbound.protection.outlook.com [40.107.102.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD1F1A8F6D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 05:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83A3EAC5;
+	Thu,  5 Dec 2024 05:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733377415; cv=fail; b=ck7ntUXZ271LLvSbPvJCPEc4/KqaVQXFXlfIxtzBYIw7Xh/nkhoHVblb1dOa5sWWb5rIMBTB7Bng3johjHmwovlt4bYl2PpnDUxiY5ztqq2WWJIkNBZDPbxjBRDOHzyPEdSO10CUDOOt5f03V/tdEbId/RDlMQOp7JljZIVH4Mo=
+	t=1733377523; cv=fail; b=ngeCcuKI4i5GyX/Y7t9+fji7oyPnhy8pPn6KRMwjzzHZgFz5sfXYnit+5RYnSmc9NbkCZkjnylJOlRoz2ci7DkkZ9sPdJyL11pwMgzNTYK2tkO+5cj1WRKjy9fTa/ICy1STZHFy+i4PfFeHdUpyyx4zZWKK6x+Nv7r3Dy3hqQCM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733377415; c=relaxed/simple;
-	bh=al+s1n5M8GA7gKgRdFR1Tt4bJSgZoQkGcgC+v7Gw+as=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kMDmz26DU3F02TZjJOZB6fPL3Ecic7JhIpEJmzsf8NpWHJHpWohT1gp6M7wNZOqhUOOWenlQhzNxXgFh+XEw+RSgwjXlftClDMuPheq+cYGJQVvtWzzCODopHkXvlrHVyyeoexscdegx9QQlSstr2uEkFJrU61JoRAVedhQfsnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=if2IhlaI; arc=fail smtp.client-ip=40.107.243.76
+	s=arc-20240116; t=1733377523; c=relaxed/simple;
+	bh=Ss8HokStdqgM3WxrIMFoD6mJgjwKL82wt1vriqqBzNI=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IRwumYKkAzf8Prd9FyZOzCkbz3txDI44p+LeJ64h+kNzsBtqcqKOQrNc/U/WhH+l3AVk7lv90mVp1LSRYkQEdRt6nP94RJ+Jy+x/YTwBDN81iR/y64LDyaDB8+u0jbsY6zc6iqMB13QhtzUJOZHprrXZmBBB1GZeE8IUij+Qt3Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xjZ/cb0Q; arc=fail smtp.client-ip=40.107.102.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bqbEarWZcyjRyCaTHu+gTf5GtU0WxNMQmKRL7pBJXmwaWS8qB5qNdfAXW6PC27o4kvZnBvxh+QZgL5QRtbcCuZKHVYZRS2sOLUfEm5nH1kyCaMWIsWc5ab3vQdSeh12x18JFSF9ZLYzJOUWJtkS29WCf+yqoEnK4iVd1qM6Wq99L38yP/76ZgRCXZJ2dRraSlLktPJ0fy3HZ9KgikOUwMTfEeCdaI0bsIhN5LMn7FkpCz9eLq24N8odQyMl01Cw9tff2OU5VYjLJ8aIuhgjULaQ7RlzFD5bXD6PXaOtaYoqPN7PO8vscqBoCa5G/yES0fq1E4WpbttXdux2w4p0Eag==
+ b=uEaOkTK/UL4BpOALS5eqEnpvYrBGyqQNxEPtRC5+pZTE9fOlY4MhJ2BcAp8QipFbVcI9TeoCjrG/mUN01bB8sqNJZCLHkq5gMm+WcP/o2AfhmKroXYB5NUiXpWcXlBes18WuQ1SNtxeJisIXB/s4Kd9wIQ0ufjfMgcEoSNDdBCYjIGK8gGkBAYUaVcjl5rkV9NMGZHGnHriZkXByox/SgeZjL2upRJOVU5hUEqtivnto+OsnxqEk92vdsgsAmnzqWfDmI+itEiMStNyKWNyaMFvwXt3SQfsEBM8K9JSm4kFeEUz0Bk3cQMInInCoFv5+FtW+QRvKpJSy2fv1Q3oPtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f3kT6q2N35dmBYg9LrUhnFoFHFr1MmQ2XdbI9z7bg1s=;
- b=sbepxTvpRkMUDqCcq2jJGi3Ccib/Pa1UTQtuQ4fJT+FB9dSvksHZ32dP/iBwfx53zqos3AuouienTocZ7czrrqujHWl/0qKqvY6u7Rd5QdHjeU+jtBP+ONgOeof75AExah3r5WhwYCseuQSsRbBkn0AzoMXbNOgRsFYZRJ+Yw0+xy7YeSXizAy4pjKlakQ/8+b1SNDgc5eExoZxw1Xtd8a3RkPA99aRd6fJSecrDWZjUamPiOj7Pg9yQIVR4u+zwvD+5Av7HXRUX24dSv1fFzwi3FnB8oWy+utba817OeOkCUq+YqgzMFqwf6FEZxXRIVkBjvssykBGIkVBOuTUSKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
+ bh=AfG3aSBxls4vjkRaBd8EWQ8GW4SP1XUEgEnmh+wZdOs=;
+ b=X8vFA31dn7v7Su+vUXV3Uo86CfmtuI0hOzTDQxnPASwCgg09ijzGiVnJSY4Esy4jiv2YuTRjXtqD5UrrGXcdtlLjhMBB0PhDalKHznvqDJBKyISp7izkv3SyfkloIdbunWZ17OUcHBCQ8HWvVah7HffV9s5Oekt04zHnh4GNbskaBCxYmHYcPpTTAWVkc8FOvxeyg4aLgwszGIVRxi5lS71EN+2sWJUO/sAxxEQQZAielpWGy444IYN1LsXHA6dcveu9IwI86LXU4zcj9j0oztU4ncLNRaJd4MvY9Uye3HFtPNjKgGf/VLVzYo6lJaj6m5lK5lLgvdvFpBZSmzjCng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f3kT6q2N35dmBYg9LrUhnFoFHFr1MmQ2XdbI9z7bg1s=;
- b=if2IhlaItK79RyYRy47iIOOgclnVXSxdIsyzv0378RQBVZbtb6Jz4itfldaRnxq+cgaT4i7Yw5twxZdenehYDSddDh00d6xkV9YOAX9oohA44M56zcibQ79Ez7W4rXHqW2hi8ZsX6WgwzIxtpTeZnIGudzm/h0ZFSvTkvEXgiTk=
-Received: from MW4PR03CA0071.namprd03.prod.outlook.com (2603:10b6:303:b6::16)
- by CY8PR12MB7609.namprd12.prod.outlook.com (2603:10b6:930:99::17) with
+ bh=AfG3aSBxls4vjkRaBd8EWQ8GW4SP1XUEgEnmh+wZdOs=;
+ b=xjZ/cb0QMDciq+MpPclXl9N37kxue4AhD2RhdGfn9+fPPuTikcfg0LnxkUjCDOZBmf8uqPIC76tYPgKwARWAHgolJlDIXXUxEDvTgkaY3+Ma0YhbAFl/0RMK4VMc5ml1HqHtlHKLLbiSlTEe2tGZK8prctOV0G4gqxi0c1zW01A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13)
+ by CY8PR12MB8337.namprd12.prod.outlook.com (2603:10b6:930:7d::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
- 2024 05:43:29 +0000
-Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
- (2603:10b6:303:b6:cafe::bb) by MW4PR03CA0071.outlook.office365.com
- (2603:10b6:303:b6::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Thu, 5
- Dec 2024 05:43:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Thu, 5 Dec 2024 05:43:28 +0000
-Received: from penny-System-Product-Name.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 4 Dec 2024 23:43:25 -0600
-From: Penny Zheng <Penny.Zheng@amd.com>
-To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>
-CC: Ray Huang <Ray.Huang@amd.com>, Xenia Ragiadakou
-	<Xenia.Ragiadakou@amd.com>, Jason Andryuk <jason.andryuk@amd.com>, "Penny
- Zheng" <Penny.Zheng@amd.com>, <xen-devel@lists.xenproject.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/4] xen/cppc: introduce cppc data upload sub-hypercall
-Date: Thu, 5 Dec 2024 13:42:52 +0800
-Message-ID: <20241205054252.471761-5-Penny.Zheng@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241205054252.471761-1-Penny.Zheng@amd.com>
-References: <20241205054252.471761-1-Penny.Zheng@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Thu, 5 Dec
+ 2024 05:45:19 +0000
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3]) by PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3%4]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
+ 05:45:19 +0000
+Message-ID: <557a7deb-1c38-495d-98d0-b1b2a008d99e@amd.com>
+Date: Thu, 5 Dec 2024 11:15:08 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
+From: Raghavendra K T <raghavendra.kt@amd.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org, bharata@amd.com,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dan Williams <dan.j.williams@intel.com>, David Hildenbrand
+ <david@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Alistair Popple <apopple@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Baoquan He <bhe@redhat.com>, ilpo.jarvinen@linux.intel.com,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Fontenot Nathan <Nathan.Fontenot@amd.com>, Wei Huang <wei.huang2@amd.com>
+References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
+ <87frn5wac3.fsf@DESKTOP-5N7EMDA> <Z08KiPwwiw72Vo9R@smile.fi.intel.com>
+ <87iks06w17.fsf@DESKTOP-5N7EMDA> <Z0_F8EuGpxPPytFM@smile.fi.intel.com>
+ <8fdb21b6-5ea4-4be3-bfac-901ecd638897@amd.com>
+Content-Language: en-US
+In-Reply-To: <8fdb21b6-5ea4-4be3-bfac-901ecd638897@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PNYP287CA0027.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:23d::30) To PH7PR12MB5805.namprd12.prod.outlook.com
+ (2603:10b6:510:1d1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|CY8PR12MB7609:EE_
-X-MS-Office365-Filtering-Correlation-Id: 849b106c-4aad-4ce6-36f2-08dd14efbf02
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5805:EE_|CY8PR12MB8337:EE_
+X-MS-Office365-Filtering-Correlation-Id: 852732fd-a876-4eac-fe2a-08dd14f00069
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hUwWn9GBx1E0HpOsdtodvd6SX/W/0F/sohJNZ86YnkruvPeE4P0MOaN103TA?=
- =?us-ascii?Q?nk2EmgyHpWzIITrhCfkVgFZ2WiHoJ4j5Eq53Hk/h+Pgf3UHlkBesoEfa6vgs?=
- =?us-ascii?Q?NwAlEzArodqxBctDOkCWRkj5mIIglmkSoOzKOWNWCS282Kr9EML5K4mgKRTs?=
- =?us-ascii?Q?fV9efe3Dob+gZH+VFioaDBtZqhKl2xZZcSyNSrKGTIF7HwiOuFukrP5jeplW?=
- =?us-ascii?Q?Ox1jxDdlekpPmXb6PoSnthQPNAEIHPnp/xVvlD7kwYCVAchQuLCVVFggz2v+?=
- =?us-ascii?Q?2Y+xsPdgD2j7YZC45o6mvX0hDtizPkJcMC4WT88Dm9KYoPk7EYtwQShNST5a?=
- =?us-ascii?Q?hM5MKHysDqO2M9PkVZKfNUBa9qBtY+3X55htgG0knLTyyyraiTWDK2IOqmxC?=
- =?us-ascii?Q?u2nAUKV7zLkB2Io7/ghKdsAPtKt7xK6Qjf+q3q0ZidsS/aUBfxcX10Q+n4Mz?=
- =?us-ascii?Q?utiS4YUfvalhtVW7kigTlVNipJMT36OOCk0vIAAnU5A43M/6uTs6rxOAApZ/?=
- =?us-ascii?Q?kJn96GobkQDg3KY3i1ByZopsr0Od3hQh7cdv6rSfNOiXmu9bjw+3ExjvKqeh?=
- =?us-ascii?Q?e0Nqp3bOxMDHdiXXPuUpE+orYIun1rQPAxXB0KiUtb0B8jb/WXsHkFoUcKEZ?=
- =?us-ascii?Q?Gg+rHFbYSTJYIaPi6KTNVWOjmSh7CQyMbvqQzevOEufRdeVDsxKYXQZhs9iS?=
- =?us-ascii?Q?xER5onyfc3N45izOY5x/FQsZoOqcWtA8gz0Olzqbyro19hH1tmhRF2mDKdhQ?=
- =?us-ascii?Q?9mFqldziWElNIHV6UsBw2YgUxL0gRHfleGvSdeTkCmYyv/7wp5+1NryR9gEZ?=
- =?us-ascii?Q?Z2/oePtjHORMIdkddujEa9jqmMkMTstzj/TeMv0KYMew2PJmOVK9GXpjNKLE?=
- =?us-ascii?Q?PkTGmyRgaEJPBnXWGDJErhcs/fMMUDg0d7LfNt+dFnEFaDuklfKOjmRKiiiP?=
- =?us-ascii?Q?B3RgObQ4fl1XkYzbA+uRzKTuZ0elVc6X2cm4RDC1aTUHF8kUw02E76V50BAz?=
- =?us-ascii?Q?TBhPYl8tqpYJm01pE4c8lT62c5FtRskZK1JrP1dFkBwIOL+NuHY5y92v8tfc?=
- =?us-ascii?Q?19P8sMBph0O+XuLFnIndHlhsbPQW+fY0+NxtNBBsS3Mdu+NpzZC/DIMYhkgM?=
- =?us-ascii?Q?D66SpmfXwgB9tOcQkDMcSvJtGDgF3Ivxjczf4I1VpqBbNCqhcp/NTgqv77sd?=
- =?us-ascii?Q?I48BiqBgpUTCEu9T90LZ2RNEjhgxPcWzuo9D9cmpDBXsTUO76rvmVBe90H0S?=
- =?us-ascii?Q?bAICojxysyh17BVJmUKXsJjcpNsT7OvYpudh62M2BelBXWDcwXcFcu7HiUJD?=
- =?us-ascii?Q?kETfKDOt/PgfSZKkHTM6sBDGX6DEDbDCtft4aL1hcyVOD9M+MG02ng9if89X?=
- =?us-ascii?Q?NOT+T4Gi6UKM0gnioMLuA+ugBodrbYVz7N+fXuV9SwsVxYGDs+QEnJ6shJ4e?=
- =?us-ascii?Q?BwPWpbOTnYe/NYdLSdM04DOuJpNtPZBz?=
+	=?utf-8?B?WjB0dlJxY05nT3J5VVluRExUbnpFYUJBVWJiOEpPSS9qUVU1aDExZmZwaUpk?=
+ =?utf-8?B?bm9zWmtKb1AwUlRrZGtyZlZMdzBxVnozY25DaGdic1BqQzJaNDR1RjRCS1kv?=
+ =?utf-8?B?WUE0OXp2dWRoK2dzU3NkMEdXVUZ0ZnNQdjBGMnpocjlNWWk2dk5nUHJuOERS?=
+ =?utf-8?B?Qy9sbW9heERHMDdsNGlvVEQwYmVQZGJ1dDY1QlpzM21SV3BnTitOMk1Gbk40?=
+ =?utf-8?B?R0pnejlqWVN0T01rbXFmZjF2Y3cxdTFvK2d1UU41ZXp5OHJDMDFWVjJQN2U5?=
+ =?utf-8?B?SG90MGROQUVienlVcC81SVVJQ1YyclR2bVE3WVNCK2dQd0p6NW9vZ0xkSkZn?=
+ =?utf-8?B?M3B5bnluSlVZcStJbXB4R09mVTlZMEhsdzJEbmk5aloycEd5c0JMZ1Z0Z0JN?=
+ =?utf-8?B?SlJrRDBUaFp0YTc3eEhjbWxZQjJLZWgyTGpPWFlNeUREaXRoL3lKenpYMmxq?=
+ =?utf-8?B?MDdPQThWSEoxb0k5ZFIxczNUWFpnRlV1bEF3SGNUSWRkS0dlYWYrOGNhVXVE?=
+ =?utf-8?B?WU9PSEVKZFVyTkN0WEFxbFc5QTdheVRKN0RTQWZOZXd3S1ZuNFVCNEtQSW1C?=
+ =?utf-8?B?S0hlcHVTSXRObms2SWgxampjTUQzSXRZY3U4TEV6ZjRpYW13c283ZHlCbzVB?=
+ =?utf-8?B?dHpScXByaTVZdUdPMzF1MHNFQ212S0hxTHBLRWhaWkhtemZFSkVDZUZjRHQx?=
+ =?utf-8?B?K3FlTUZsWDRZR1VSbFZzY2F6Q3E2Nk1Va0ZyYi9YVERiNjd5VWpOajE2UGJR?=
+ =?utf-8?B?WWZJZEorbFI4bE1iTzhWVVFDcGQrNnpZcnJaLzYrK3V0UGRtcGQxSFhKSkM5?=
+ =?utf-8?B?Ni9vam9ITTdhY3FFNHFWdDRhdFVhVy9FeUxEZTJQQ3BUMXVOSHNpMWJ1cHFT?=
+ =?utf-8?B?dnhVU0xUb3BDcWQ3RUlqUVBCTFdOYzErZHVrRnBpZG1lVE5kbGNKZnVqQWRS?=
+ =?utf-8?B?UTBHcnk3OHJyRFRITzFpWHoxWFROem1WeGFEUkNRNVVaUmsweDNYRVRKOUY4?=
+ =?utf-8?B?dGdqWXhpbEdQbXVid3Ayc1F6bmJrdGREc000NThnVENaSG1pZXJrdThyU0Jo?=
+ =?utf-8?B?ZlNkcS9WRmpIdGVUM2Q0Ym14bk1uMWwvNVBiWUxSZGhvSE1VTjlNbHltVEQz?=
+ =?utf-8?B?SS96bUdqb00vMFBqRXAxYXdGY1U2MlFMbU5sMEdtRFFFUTFXaUR1cWpjN0lM?=
+ =?utf-8?B?eS9Zd2kvQkhJUGkra0RMZWJqN3dKbkhRdmI4amx3d0pvQWxyNHhIT0lzd0lP?=
+ =?utf-8?B?N21wMDRaVkh1L3k2bi91TmFoeTJQQkhKTCtpa1Ixb1FjVDJTdzdMNnJQMWgx?=
+ =?utf-8?B?M05Sc253czN6cjBRcFdvMzFNNzFENjFob0RIdHpGOERPbWxpMFRIVVBJZ0Fi?=
+ =?utf-8?B?TndIeUo4SjdWTS82OVZNNzFMQzM3dUhSYnZvemlGaVJTTHpVd3pNbEthMXVt?=
+ =?utf-8?B?aUpkNkZrZEx0Y3hhTXZidVI5TGdid1dkTUFPd0FsRFRJWGpHRjh6L1FYZGd0?=
+ =?utf-8?B?YVRtZE81OUdZeUhJcUNpKzdMZmJFWGY1Q0gwOUVkRkg4YXgzd1dHRXpRaXNZ?=
+ =?utf-8?B?VjY4QWV3bkxSMzBXVENoRi9Ea2M1bDlHUzFHeE1WclM1NTBYQ3Nvd014MW9k?=
+ =?utf-8?B?bWFNL0p3QnpYb3FhRm04YU9VM0VSNmpLdTN5V0xRZHV4QUUxTENqZFdncllv?=
+ =?utf-8?B?M0w2cm1sd2puN0RPYTBETzlZWUQ0T3RPTVptWlRDb3UzVVhnZXovUE03aDBQ?=
+ =?utf-8?B?MUVZcWtqYVlCY01Ga2x4YXVSZGIrdGd0RW1NY3FnMjZ4MmJXN0ZWRWYzejdY?=
+ =?utf-8?B?STQ1K2NtdGIveXB4dUd6Zz09?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5805.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dkU3cTFISDhoRSt3TzBqZkNENElPY3ZSK1oxWHRoK1Nsc1kzTm5JSys5ODl6?=
+ =?utf-8?B?TXRkajU5VmJOMzVuZGs4Y08rbnl6THJnQlVMRzI2d21KaW5JVWFJWkRCMTRR?=
+ =?utf-8?B?cGJrZE5WallsblVKUU1VMkN6enR2dm5vQmk2YXozMityVlR0aFlDci9TV1Mv?=
+ =?utf-8?B?bWQzNk5IZ1NBa1JnbVdDd3h0WWFZVGY4eTZBb2NvQ1RjTlRUeXdQVzZvWGJL?=
+ =?utf-8?B?WnNsTld0T0lBcVg2UUhlZVRscnk3TG9ta1RMcjJ6Um0zNDF0U3Vtc29nSERM?=
+ =?utf-8?B?VHE2YjdHQWhSL2lsNEZ1Q1hkclVMd0R1bnd5VTNoSWhUcHhta09YQU9qbzhq?=
+ =?utf-8?B?VXZFTm5tNlcvUjMyN3dPVUxrY3EwL0J1VnFKTVFPcWltdWZRblFHT0JzcVRm?=
+ =?utf-8?B?d0xJaWgva3FnU1Yva0REVTdZNWZBeHJtaUJOVGJ4L3UxRy9kNi9WWGZFYXkr?=
+ =?utf-8?B?L3l2WmUvWXJROFBHbCtzTWp1UW9vK3A5bmxraXB5T0pVQ1VDaGszM0kxQmhq?=
+ =?utf-8?B?ZHhlT3Mzc09hRURjOEpSUXI2MWRaemtQeEtvMkVrcG54WDdsUmszVytuOHlp?=
+ =?utf-8?B?Ulk4bU4vUEtqME5XNVlkN0N6aWpUR2piSDJZK1BDdVZGbElZcE85cG9wbUEv?=
+ =?utf-8?B?Ni95cCtXVkZidlpFcU1sTUgzR2diaEpNd3ZYaGkrSnVGRDRVTjRnc1F6VkYx?=
+ =?utf-8?B?Rm0vNnFSd1ZLYmtxcG80SEJlUkFNUFRyQVRRNEdGSVZ5c0NiTmZWbHQzWjkw?=
+ =?utf-8?B?NFV5M05XWnQva1d4NWEydC9FcWowRCt0ZnU1azRvQ0dEeXA3bmxHcWYrVkoz?=
+ =?utf-8?B?V2h5OGh6Z3YvVmdDWVhob3lRaDVrQWNrQXdtMlllZmVicnQxTGFQOUswUHBv?=
+ =?utf-8?B?cElITjMxMXFwNGxKTGR1WTdiaGl3aG5KSG9TTG1YM0pzM3NOeGRWUEFkVFFW?=
+ =?utf-8?B?eHduajdaTWlHTkFQN0xMcUpjdmVTVEJaUEJFQlZVUlZSU3QyOC9tanBwOUd4?=
+ =?utf-8?B?NkFRclBrNVFyMG4rOEt3K2ZidGtuSm1KWVRnTTNwQXAzMS9wVCs2UHk4ajJZ?=
+ =?utf-8?B?L0hqTFpXNXUvdDhhSFhQWUVOVFlhb1RQdlRqYTdsbG90cStTQnZtYWtjWTR1?=
+ =?utf-8?B?MjFZNFl1eGdtVHNldkF2R0NGdXRYMEo0TkZOZVVTMTFIeGUzU09MY1h2bHQy?=
+ =?utf-8?B?dC9EM3NyaWdNSnArckZkNVNnc0pRS0NUcEVxdDkwUVVxd2N5MDNZNzQrRHlp?=
+ =?utf-8?B?VkNOZTdlOWNZalZUM0d3T0tISThUanpmeE4vd2xueXExWlJLRnR3c0JLRVln?=
+ =?utf-8?B?ZGJVcm1kRVRCZVllNWxLNVJWTkZYckZsdnZWN3RRRnRzcEExNTBGUFpUNkpr?=
+ =?utf-8?B?UERMaVMvdTJnTHhaQURmVGd5bzZRWjE4eW1abjRKc2M3TXQxNHFMOHpSa082?=
+ =?utf-8?B?UlhOay93VmpBZUVlRWovZTk3bURHOFVPc2pLZS9SRkVUSWpBcmRsYmN6UDNK?=
+ =?utf-8?B?S3d5dUNsQjJuVGw5MmdmMjBKMHErYlZmOXlYelgwdzhTTGErajF3TUhrQUVG?=
+ =?utf-8?B?REFiam1XKy84MWF4YThrc2Q0MTJwN0Y1d1g2cTdPU3ZxQ0FTZTBLSnVMU3cz?=
+ =?utf-8?B?K2JQRjhoNU8yall6c1VkbzRNNEI0cmJUdzBkVW1NcUIvakk4T2Z2MDVzUVgr?=
+ =?utf-8?B?bHQxaU0vdFpock9jbFZ0RGFzcjBlbE90SzE4SUM3MTV4eTZ0bER2Rnp5MWJv?=
+ =?utf-8?B?MnhmSTRubkw3T2JENVc4bEovTENlV1FRYUdCZzVPdy9vNkJPaENtMXV0Rjgv?=
+ =?utf-8?B?UkU3UThDb2d4dXk0Y3VUcjRHbGo5UlZDQzIxWG1sWHMySGIrWEl4TWlnUnIz?=
+ =?utf-8?B?L2FWczBTKzFZa0JlcW9ua0F6MFhUUDhOWk1pTXJzYkYyeTJmQTJsdDh1YmNM?=
+ =?utf-8?B?WkhFczhVbVBsc2UrVWNqSGQ0bUF5K1JSQkpWRG9mT2gwbFJJVG5lNzBZR0VL?=
+ =?utf-8?B?aXF0dzBXUEJSNW9pVzJuY2gwNEVmK3c2dFFkTlo1MUsyUUU0OWFZMzA3dE5s?=
+ =?utf-8?B?czV1R25OUjl2WUF4K1h2YksySi8zNHI3RU5Lem9rYlZTbzBIODB1TFQ3TUg4?=
+ =?utf-8?Q?Sl9OeSdb1dExRKrKf5UBGupVZ?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 05:43:28.9248
+X-MS-Exchange-CrossTenant-Network-Message-Id: 852732fd-a876-4eac-fe2a-08dd14f00069
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5805.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 05:45:19.2011
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 849b106c-4aad-4ce6-36f2-08dd14efbf02
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCBE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7609
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5nq3zUrg2W7K37uEu79hR6QT3eiIEl9w92zjNPFtPicgZBUQdR0seD1Mi+6k7MvfuGGFESb6/LFAzvoAJP8PRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8337
 
-As Xen is uncapable of parsing the ACPI dynamic table, this commit
-introduces a new sub-hypercall XEN_PM_CPPC to deliver CPPC perf
-caps data.
 
-Signed-off-by: Penny Zheng <Penny.Zheng@amd.com>
----
- drivers/acpi/cppc_acpi.c         |  1 +
- drivers/xen/xen-acpi-processor.c | 89 +++++++++++++++++++++++++++++++-
- include/acpi/processor.h         |  1 +
- include/xen/interface/platform.h | 11 ++++
- 4 files changed, 101 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index 3a436591da07..3570a52a5dbd 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -860,6 +860,7 @@ static int acpi_cppc_processor_parse(struct acpi_processor *pr, struct cpc_desc
- 		cpc_ptr->cpc_regs[i].cpc_entry.int_value = 0;
- 	}
- 
-+	pr->flags.has_cpc = 1;
- 	pr_debug("Parsed _CPC entry for CPU: %d\n", pr->acpi_id);
- 	kfree(output.pointer);
- 	return 0;
-diff --git a/drivers/xen/xen-acpi-processor.c b/drivers/xen/xen-acpi-processor.c
-index e9f38f171240..8a39e46c1ebc 100644
---- a/drivers/xen/xen-acpi-processor.c
-+++ b/drivers/xen/xen-acpi-processor.c
-@@ -25,6 +25,7 @@
- #include <xen/xen.h>
- #include <xen/interface/platform.h>
- #include <asm/xen/hypercall.h>
-+#include <acpi/cppc_acpi.h>
- 
- static int no_hypercall;
- MODULE_PARM_DESC(off, "Inhibit the hypercall.");
-@@ -45,8 +46,12 @@ static unsigned long *acpi_ids_done;
- static unsigned long *acpi_id_present;
- /* And if there is an _CST definition (or a PBLK) for the ACPI IDs */
- static unsigned long *acpi_id_cst_present;
-+/* And if there is an _CPC entry for the ACPI IDs */
-+static unsigned long *acpi_id_cpc_present;
- /* Which ACPI P-State dependencies for a enumerated processor */
- static struct acpi_psd_package *acpi_psd;
-+/* ACPI CPPC structures for a enumerated processor */
-+static struct cppc_perf_caps *acpi_cppc_data;
- 
- static bool pr_initialized;
- 
-@@ -208,6 +213,44 @@ static int xen_copy_pct_data(struct acpi_pct_register *pct,
- 	dst_pct->address = pct->address;
- 	return 0;
- }
-+static int push_cppc_to_hypervisor(struct acpi_processor *_pr)
-+{
-+	int ret = 0;
-+	struct xen_platform_op op = {
-+		.cmd            = XENPF_set_processor_pminfo,
-+		.interface_version  = XENPF_INTERFACE_VERSION,
-+		.u.set_pminfo.id    = _pr->acpi_id,
-+		.u.set_pminfo.type  = XEN_PM_CPPC,
-+	};
-+	struct cppc_perf_caps *cppc_perf = acpi_cppc_data + _pr->acpi_id;
-+
-+	op.u.set_pminfo.cppc_data.highest_perf = cppc_perf->highest_perf;
-+	op.u.set_pminfo.cppc_data.lowest_perf = cppc_perf->lowest_perf;
-+	op.u.set_pminfo.cppc_data.nominal_perf = cppc_perf->nominal_perf;
-+	op.u.set_pminfo.cppc_data.lowest_nonlinear_perf = cppc_perf->lowest_nonlinear_perf;
-+	op.u.set_pminfo.cppc_data.lowest_freq = cppc_perf->lowest_freq;
-+	op.u.set_pminfo.cppc_data.nominal_freq = cppc_perf->nominal_freq;
-+
-+	if (!no_hypercall)
-+		ret = HYPERVISOR_platform_op(&op);
-+
-+	if (!ret) {
-+		pr_debug("ACPI CPU%u - CPPC uploaded.\n", _pr->acpi_id);
-+		pr_debug("     highest_perf: %d\n", cppc_perf->highest_perf);
-+		pr_debug("     lowest_perf: %d\n", cppc_perf->lowest_perf);
-+		pr_debug("     lowest_nonlinear_perf: %d\n", cppc_perf->lowest_nonlinear_perf);
-+		pr_debug("     nominal_perf: %d\n", cppc_perf->nominal_perf);
-+		pr_debug("     lowest_freq: %d Mhz\n", cppc_perf->lowest_freq);
-+		pr_debug("     nominal_freq: %d Mhz\n", cppc_perf->nominal_freq);
-+	} else if ((ret != -EINVAL) && (ret != -ENOSYS))
-+		/* EINVAL means the ACPI ID is incorrect - meaning the ACPI
-+		 * table is referencing a non-existing CPU - which can happen
-+		 * with broken ACPI tables. */
-+		pr_warn("(_CPC): Hypervisor error (%d) for ACPI CPU%u\n",
-+			ret, _pr->acpi_id);
-+
-+		return ret;
-+}
- static int push_pxx_to_hypervisor(struct acpi_processor *_pr)
- {
- 	int ret = 0;
-@@ -284,6 +327,9 @@ static int upload_pm_data(struct acpi_processor *_pr)
- 	if (_pr->flags.power)
- 		err = push_cxx_to_hypervisor(_pr);
- 
-+	if (_pr->flags.has_cpc)
-+		err |= push_cppc_to_hypervisor(_pr);
-+
- 	if (_pr->performance && _pr->performance->states)
- 		err |= push_pxx_to_hypervisor(_pr);
- 
-@@ -488,6 +534,7 @@ read_acpi_id(acpi_handle handle, u32 lvl, void *context, void **rv)
- 	union acpi_object object = { 0 };
- 	struct acpi_buffer buffer = { sizeof(union acpi_object), &object };
- 	struct acpi_buffer cst_buf = { ACPI_ALLOCATE_BUFFER, NULL };
-+	struct acpi_buffer cpc_buf = { ACPI_ALLOCATE_BUFFER, NULL };
- 	acpi_io_address pblk = 0;
- 
- 	status = acpi_get_type(handle, &acpi_type);
-@@ -567,11 +614,20 @@ read_acpi_id(acpi_handle handle, u32 lvl, void *context, void **rv)
- 	/* .. and it has a C-state */
- 	__set_bit(acpi_id, acpi_id_cst_present);
- 
-+	status = acpi_evaluate_object(handle, "_CPC", NULL, &cpc_buf);
-+	if (ACPI_FAILURE(status)) {
-+		return AE_OK;
-+	}
-+	kfree(cpc_buf.pointer);
-+
-+	/* .. and it has a _CPC entry */
-+	__set_bit(acpi_id, acpi_id_cpc_present);
-+
- 	return AE_OK;
- }
- static int check_acpi_ids(struct acpi_processor *pr_backup)
- {
--	if (acpi_id_present && acpi_id_cst_present)
-+	if (acpi_id_present && acpi_id_cst_present && acpi_id_cpc_present)
- 		/* OK, done this once .. skip to uploading */
- 		goto upload;
- 
-@@ -588,11 +644,19 @@ static int check_acpi_ids(struct acpi_processor *pr_backup)
- 		return -ENOMEM;
- 	}
- 
-+	acpi_id_cpc_present = bitmap_zalloc(nr_acpi_bits, GFP_KERNEL);
-+	if (!acpi_id_cpc_present) {
-+		bitmap_free(acpi_id_present);
-+		bitmap_free(acpi_id_cst_present);
-+		return -ENOMEM;
-+	}
-+
- 	acpi_psd = kcalloc(nr_acpi_bits, sizeof(struct acpi_psd_package),
- 			   GFP_KERNEL);
- 	if (!acpi_psd) {
- 		bitmap_free(acpi_id_present);
- 		bitmap_free(acpi_id_cst_present);
-+		bitmap_free(acpi_id_cpc_present);
- 		return -ENOMEM;
- 	}
- 
-@@ -608,6 +672,12 @@ static int check_acpi_ids(struct acpi_processor *pr_backup)
- 			pr_backup->acpi_id = i;
- 			/* Mask out C-states if there are no _CST or PBLK */
- 			pr_backup->flags.power = test_bit(i, acpi_id_cst_present);
-+			/* Mask out relevant flag if there are no _CPC */
-+			pr_backup->flags.has_cpc = test_bit(i, acpi_id_cpc_present);
-+			if (pr_backup->flags.has_cpc) {
-+				if (xen_processor_get_perf_caps(pr_backup, acpi_cppc_data + i))
-+					return -EINVAL;
-+			}
- 			/* num_entries is non-zero if we evaluated _PSD */
- 			if (acpi_psd[i].num_entries) {
- 				memcpy(&pr_backup->performance->domain_info,
-@@ -726,6 +796,15 @@ static int __init xen_acpi_processor_init(void)
- 		bitmap_free(acpi_ids_done);
- 		return -ENOMEM;
- 	}
-+
-+	acpi_cppc_data = kcalloc(nr_acpi_bits, sizeof(struct cppc_perf_caps),
-+				GFP_KERNEL);
-+	if (!acpi_cppc_data) {
-+		pr_debug("Memory allocation error for acpi_cppc_data\n");
-+		rc = -ENOMEM;
-+		goto err1_out;
-+	}
-+
- 	for_each_possible_cpu(i) {
- 		if (!zalloc_cpumask_var_node(
- 			&per_cpu_ptr(acpi_perf_data, i)->shared_cpu_map,
-@@ -751,6 +830,11 @@ static int __init xen_acpi_processor_init(void)
- 		rc = acpi_processor_get_performance_info(pr);
- 		if (rc)
- 			goto err_out;
-+
-+		pr->flags.pcc_unsupported = true;
-+		rc = xen_processor_get_perf_caps(pr, acpi_cppc_data + i);
-+		if (rc)
-+			goto err_out;
- 	}
- 
- 	rc = xen_upload_processor_pm_data();
-@@ -766,6 +850,8 @@ static int __init xen_acpi_processor_init(void)
- 
- err_out:
- 	/* Freeing a NULL pointer is OK: alloc_percpu zeroes. */
-+	kfree(acpi_cppc_data);
-+err1_out:
- 	free_acpi_perf_data();
- 	bitmap_free(acpi_ids_done);
- 	return rc;
-@@ -779,6 +865,7 @@ static void __exit xen_acpi_processor_exit(void)
- 	bitmap_free(acpi_id_present);
- 	bitmap_free(acpi_id_cst_present);
- 	kfree(acpi_psd);
-+	kfree(acpi_cppc_data);
- 	for_each_possible_cpu(i)
- 		acpi_processor_unregister_performance(i);
- 
-diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-index 18499cc11366..66492f5d68a8 100644
---- a/include/acpi/processor.h
-+++ b/include/acpi/processor.h
-@@ -214,6 +214,7 @@ struct acpi_processor_flags {
- 	u8 bm_control:1;
- 	u8 bm_check:1;
- 	u8 has_cst:1;
-+	u8 has_cpc:1;
- 	u8 pcc_unsupported:1;
- 	u8 has_lpi:1;
- 	u8 power_setup_done:1;
-diff --git a/include/xen/interface/platform.h b/include/xen/interface/platform.h
-index 79a443c65ea9..e11bb9443dc0 100644
---- a/include/xen/interface/platform.h
-+++ b/include/xen/interface/platform.h
-@@ -319,6 +319,7 @@ DEFINE_GUEST_HANDLE_STRUCT(xenpf_getidletime_t);
- #define XEN_PM_PX   1
- #define XEN_PM_TX   2
- #define XEN_PM_PDC  3
-+#define XEN_PM_CPPC 4
- /* Px sub info type */
- #define XEN_PX_PCT   1
- #define XEN_PX_PSS   2
-@@ -384,6 +385,15 @@ struct xen_processor_px {
- };
- DEFINE_GUEST_HANDLE_STRUCT(xen_processor_px);
- 
-+struct xen_processor_cppc {
-+    uint32_t highest_perf;
-+    uint32_t nominal_perf;
-+    uint32_t lowest_perf;
-+    uint32_t lowest_nonlinear_perf;
-+    uint32_t lowest_freq;
-+    uint32_t nominal_freq;
-+};
-+
- struct xen_psd_package {
- 	uint64_t num_entries;
- 	uint64_t revision;
-@@ -412,6 +422,7 @@ struct xenpf_set_processor_pminfo {
- 		struct xen_processor_power          power;/* Cx: _CST/_CSD */
- 		struct xen_processor_performance    perf; /* Px: _PPC/_PCT/_PSS/_PSD */
- 		GUEST_HANDLE(uint32_t)              pdc;
-+		struct xen_processor_cppc           cppc_data; /* _CPC */
- 	};
- };
- DEFINE_GUEST_HANDLE_STRUCT(xenpf_set_processor_pminfo);
--- 
-2.34.1
+On 12/4/2024 10:14 AM, Raghavendra K T wrote:
+> 
+> 
+>>>>
+>>>> (*) in general fixes are better than reverts, but depends on the 
+>>>> timing in
+>>>>      the release cycle the revert may be the only option.
+>>>
+>>> I don't think that the timing is so tight that we should not work on
+>>> proper fix firstly.  I'm trying to work with the reporter on this.
+>>
+>> I agree on this, please do.
+>>
+>>> BTW, the commit b4afe4183ec7 ("resource: fix region_intersects() vs
+>>> add_memory_driver_managed()") fixed a security related bug.  The bug
+>>> weakened the protection to prevent users read/write system memory via
+>>> /dev/mem.  So, IMO, we need to be more careful about this.
+>>
+>> My point was that the regression is obvious and it needs to be fixed.
+>> That's all. Revert is a last resort in this sense.
+>>
+> 
+> I agree in general to both of your comment. (i.e. since this bisected
+> commit had security fix, we shall try to get better fix than a close to
+> revert).
+> 
+>   I am trying to work on this, but it is a bit slow on my side.
+> 
+
+I will try to get a fix that retains old bugfix and works well for me too.
+Since it is reproduced only on this shared system, I will get hold of
+this system next week, and work towards a fix.
+
+Thanks and Regards
+- Raghu
+
 
 
