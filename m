@@ -1,86 +1,67 @@
-Return-Path: <linux-kernel+bounces-433667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948B79E5B68
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:28:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 177EA9E5B86
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCD416110A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:28:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 027481638AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E02221476;
-	Thu,  5 Dec 2024 16:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014ED21CA09;
+	Thu,  5 Dec 2024 16:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ch5SBvcB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=tk154.de header.i=@tk154.de header.b="rCPZEs6y"
+Received: from smtp052.goneo.de (smtp052.goneo.de [85.220.129.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A141A21C9F4
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 16:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2318814A8B;
+	Thu,  5 Dec 2024 16:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.220.129.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733416121; cv=none; b=Ou+xQubVem/W8/Sz3jeWlVkit0OU2L97h+QHYDAFoW4lZ2WCgrMetAo1f2OG6m1/Ih5tWb5HyENcwpK61ABB8SDD3HUiTOgt/xizI29wVat3vn6UjkUGSHJsisKgP1u9VhlX52V+abS1MBUhEfdaopeZLNhxct6Q31s49suF0Cs=
+	t=1733416460; cv=none; b=d2ss6JgGlmWgf8dj+Jxj2KvjSImzT4wk7uttKXLX3F7D7dxqDnnwq8htyo+psdEVKwlIrElv20sWngO2qgPdnEmkC40AAD9QaRbhXXyzA0gnl7f4HHcW/b0Pv2RO8w3AliWbvoIHtVjpBr98CFYoulR5mZgO6sT9lIkS/h7EDXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733416121; c=relaxed/simple;
-	bh=Hyd0DGsgrgFFk1brp6woAw2Gve8VG2lrqOtM5Buj/pI=;
+	s=arc-20240116; t=1733416460; c=relaxed/simple;
+	bh=0lswcrrrf/epOFGJdVWca3PuFg+KtbXYaCM3HgesehQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JW5B2zA6TwgVd6OLOJKhl13LzFLcqgUxNZ6WLbWCYf5q4z0J+/9iwukvwRDyOJ+9ZT0uo/I/J3Xb5+CIL6njqZylklMC2h3K9T6gIGjQPFyI4JkRqmSlstg4O0NT3Lcqq3aV9wcr0ZnXQ2sw9wY6wZCnLlxhtlP/dEX9F8KD54U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ch5SBvcB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5EW1HZ015085
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2024 16:28:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EVewGd+CHap/GFBRG9A4Vc53nu5CRbniCuyyyIyrS/E=; b=Ch5SBvcB0TbZns63
-	81Peg1qa9GnWJwaAeVOgwplc7EZrn58imN7b63HagQ6JYvhDMxyBgtcaT/pmueuB
-	zkUo2dJezjDsRZE+nbXSJnkLFlBzX3ZP8wC4PzS8mDIZPQpXCp0yy6E8LkoLR/DQ
-	V3w+xxssOZOK08jCqrhFmfzGULacHOFNW4ZY23LdjK6pRM42tj28cJeoU6LNeCOQ
-	PL+AxoFXYpW29PE4Z9V4mNkiv56UTIzSVPRwI+y/myG9y9EVMLcWumWjOeHxXYpG
-	vUTvJlD6zXzVds1K+BYG0s9XDU3kJy7tWW1JTxKmz1qgGrx9ybNFOJMMnQ7eIh8K
-	+MCIaw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43be170b23-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:28:38 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d881a3e466so2950726d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 08:28:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733416117; x=1734020917;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EVewGd+CHap/GFBRG9A4Vc53nu5CRbniCuyyyIyrS/E=;
-        b=PlfYK0ZHJ2GI/hsxWULldA3XH/iYV1C6DVvcoq6rV5OBtDYZuNJPL/IjY/SBsc3p6r
-         rnjc0JsMfE32H8JvOk15D5wTm2t3qIliLA6Z/5rxAhcNVkp2DbTbpffB+kovscp7p6/0
-         V2IlOkF2A/wWKNfxLCEhdwcsc0uXczPIscfcTHPzCOa2Hc6ol55CMMp5zMTdYHYLULlU
-         2jATXsGf2NdlL7478taU8lrGuDUiZvJ22zJBTHjDvGWv0idwqIEPehY4XEn+xoPOE82T
-         kzmMNPXtRw3gcobb9qhfehGO97V35YkiCLkqqa+H+/TyzBLJN+Bg1q185cpRkF+46vL9
-         eUlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0ixWy7TmMFpbvqrqGo+Ksrvqlf1VJ0D6dkKVud8VHxNONYuseuwnseterpk4BIqLnhSkG2/0anRy/r7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWzqy6D/gz49aGah7LPHptbAy7/NGhMFQg5IZX/L1aVoSTm45v
-	Nif0kOzXDH4Kc6GYFzIAzokZv3dDces4xHIEIAfi+TleBOcYwS/56MfaFnGxkvGmHEmsIxJT54y
-	W9sCXWeHdX7m8KuVimp3Fk88DmQ9g3TqNjHeWnKDnYxitTs5e42HE6lKJ5b/MkjA=
-X-Gm-Gg: ASbGnctYgTTEkW0qNaMZjEuEYZahYlam3qEIPSG0YZcDF4iZz5OmZUtB3r1QEVr9jm1
-	w9++IX8x3Rl1ByRlckzv7I1wWEPo9v64z5AJ/4joxMoMMmhSSXj+jYyWTwoGI3ivoBALiiaFZf5
-	xXT7UflKiJdzLAiQfeYYuUf1/lWEnfYWb2qNyU4XXkqSh8Nt/EaLRJgGDt4tjxlEIY1RXVnGbQk
-	pqgcb1hNRAxXh5TUga9baL0OLUG+JcuSH8PiD+phTVla3laAyEzdzOSkBqg/y8eIwCIg+lNX1AU
-	ixV5frSP9NpEJ48B1dAyUyeCKUcCCyc=
-X-Received: by 2002:a05:620a:2a0b:b0:7b6:72f6:210e with SMTP id af79cd13be357-7b6a6bddcf1mr653502485a.3.1733416117629;
-        Thu, 05 Dec 2024 08:28:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGIQmJDqB7aPqLdNqqxjOXlNlTRx0vV7ECtpg6Wubt2pVIN3Isf/fldXO36qKZaV1jYkkt/Pw==
-X-Received: by 2002:a05:620a:2a0b:b0:7b6:72f6:210e with SMTP id af79cd13be357-7b6a6bddcf1mr653500585a.3.1733416117234;
-        Thu, 05 Dec 2024 08:28:37 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c7aa441sm964726a12.72.2024.12.05.08.28.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 08:28:36 -0800 (PST)
-Message-ID: <e586b76f-50a7-47cc-9ce6-a37f9b53262f@oss.qualcomm.com>
-Date: Thu, 5 Dec 2024 17:28:33 +0100
+	 In-Reply-To:Content-Type; b=boWgPS10TUunQfWK+96QvyjWRlTwLY3Ez2pvgMm70UHiOb4v9vEZ2BBYXOVVMk+vnz/uBWi3lyhsNoBe05aL05PTxZR2McacA0R/fqJuiPoiHbLnxaagPl+IE/kmlq/4yyDrM61lV/s33oLhn7eeaIq+6qQ9bnagSQiABHXQL/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tk154.de; spf=pass smtp.mailfrom=tk154.de; dkim=pass (2048-bit key) header.d=tk154.de header.i=@tk154.de header.b=rCPZEs6y; arc=none smtp.client-ip=85.220.129.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tk154.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tk154.de
+Received: from hub2.goneo.de (hub2.goneo.de [IPv6:2001:1640:5::8:53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by smtp5.goneo.de (Postfix) with ESMTPS id AE94E240E27;
+	Thu,  5 Dec 2024 17:28:57 +0100 (CET)
+Received: from hub2.goneo.de (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by hub2.goneo.de (Postfix) with ESMTPS id D58022403E9;
+	Thu,  5 Dec 2024 17:28:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tk154.de; s=DKIM001;
+	t=1733416135;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8wbYhcwj77z2TOLb2TYf0vGG0ElaCD4syUYO4qjcAdU=;
+	b=rCPZEs6y1TtoeQUjUIlXzARZlVvsqqv76nJY8JGLTxcU59QtEo/Xs15n7/NwT9EaDQM/pC
+	RnVsKWkIRN0+X3JbZHVoiXBZfq2UNB0NrsENqUVIgM6D74bG0KVNr1egu11sM56MNxyIN5
+	TZpR/rL1XR8PPRmr2WFD4UKxkSM0jhAt4QZ24Zik5MNDR6yADzf2wxeAoSTJFPVkiAVp/x
+	bxEWxEhl1ayHirGsJDHM8NSwBSN9NpRY5LBypXwGtPYOClSBXYVqqIoI1JVj7sU9El1nY7
+	MozX5msAirwNMHjb/u6fcP0ySpx+R2N7ZMqCMbSfMZmUaAg+SiQoVV946aI+FA==
+Received: from [10.10.34.132] (unknown [195.37.88.189])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hub2.goneo.de (Postfix) with ESMTPSA id 4DDE32405C5;
+	Thu,  5 Dec 2024 17:28:54 +0100 (CET)
+Message-ID: <665459ff-9e99-4d22-9aeb-69c34be3db6b@tk154.de>
+Date: Thu, 5 Dec 2024 17:28:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,66 +69,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/5] arm64: dts: qcom: sc7280: Add support for camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
-        todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
-        konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
-        cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
-        will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241204100003.300123-1-quic_vikramsa@quicinc.com>
- <20241204100003.300123-5-quic_vikramsa@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241204100003.300123-5-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net-next v2] net: sysfs: also pass network device driver
+ to uevent
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, idosch@nvidia.com, petrm@nvidia.com
+References: <20241115140621.45c39269@kernel.org>
+ <20241116163206.7585-1-mail@tk154.de> <20241116163206.7585-2-mail@tk154.de>
+ <20241118175543.1fbcab44@kernel.org>
+Content-Language: en-US, de-DE
+From: Til Kaiser <mail@tk154.de>
+In-Reply-To: <20241118175543.1fbcab44@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: NVOB6tdJiJKVAZTcuigO4tAa-pspnjKY
-X-Proofpoint-ORIG-GUID: NVOB6tdJiJKVAZTcuigO4tAa-pspnjKY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412050119
+X-Rspamd-UID: e2e151
+X-Rspamd-UID: 9a904b
 
-On 4.12.2024 11:00 AM, Vikram Sharma wrote:
-> Add changes to support the camera subsystem on the SC7280.
+On 19.11.24 02:55, Jakub Kicinski wrote:
+> On Sat, 16 Nov 2024 17:30:30 +0100 Til Kaiser wrote:
+>> Currently, for uevent, the interface name and
+>> index are passed via shell variables.
+>>
+>> This commit also passes the network device
+>> driver as a shell variable to uevent.
+>>
+>> One way to retrieve a network interface's driver
+>> name is to resolve its sysfs device/driver symlink
+>> and then substitute leading directory components.
+>>
+>> You could implement this yourself (e.g., like udev from
+>> systemd does) or with Linux tools by using a combination
+>> of readlink and shell substitution or basename.
+>>
+>> The advantages of passing the driver directly through uevent are:
+>>   - Linux distributions don't need to implement additional code
+>>     to retrieve the driver when, e.g., interface events happen.
+>>   - There is no need to create additional process forks in shell
+>>     scripts for readlink or basename.
+>>   - If a user wants to check his network interface's driver on the
+>>     command line, he can directly read it from the sysfs uevent file.
 > 
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
+> Thanks for the info, since you're working on an open source project
+> - I assume your exact use case is not secret, could you spell it
+> out directly? What device naming are you trying to achieve based on
+> what device drivers? In my naive view we have 200+ Ethernet drivers
+> so listing Ethernet is not scalable. I'm curious what you're matching,
+> how many drivers you need to list, and whether we could instead add a
+> more general attribute...
+> 
+> Those questions aside, I'd like to get an ack from core driver experts
+> like GregKH on this. IDK what (if any) rules there are on uevents.
+> The merge window has started so we are very unlikely to hear from them
+> now, all maintainers will be very busy. Please repost v3 in >=two weeks
+> and CC Greg (and whoever else is reviewing driver core and/or uevent
+> changes according to git logs).
 
-[...]
+We have some Mellanox Spectrum Switches here whose network interface 
+names don't match their faceplate. They are called eth... and their 
+numbering is also out of order, so we would like to rename them 
+accordingly. They are using the mlxsw_spectrum driver.
 
-(isp@ as mentioned)
+Generally, you could do that once at boot time, but those Spectrum 
+Switches also support port splitting. That means you can attach a 
+breakout cable to one of its ports and then use the devlink tool to 
+split the network interface into multiple ones in Linux. But the split 
+network interfaces are then called eth... again:
 
-> +			interconnects = <&gem_noc  MASTER_APPSS_PROC 0 &cnoc2 SLAVE_CAMERA_CFG 0>,
+root@SN2100:~# ip l | tail -n2
+26: swp1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN qlen 1000
+     link/ether 50:6b:4b:9f:04:59 brd ff:ff:ff:ff:ff:ff
+root@SN2100:~# devlink port split swp1 count 4
+root@SN2100:~# ip l | tail -n8
+27: eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN qlen 1000
+     link/ether 50:6b:4b:9f:04:59 brd ff:ff:ff:ff:ff:ff
+28: eth1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN qlen 1000
+     link/ether 50:6b:4b:9f:04:5a brd ff:ff:ff:ff:ff:ff
+29: eth2: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN qlen 1000
+     link/ether 50:6b:4b:9f:04:5b brd ff:ff:ff:ff:ff:ff
+30: eth3: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN qlen 1000
+     link/ether 50:6b:4b:9f:04:5c brd ff:ff:ff:ff:ff:ff
 
-QCOM_ICC_TAG_ACTIVE_ONLY
+In their GitHub wiki [1], Mellanox recommends using a udev rule for 
+renaming. udev has its implementation for retrieving the driver of a 
+network interface, whereas OpenWrt's hotplug doesn't have such an 
+implementation. With this patch, the driver name would be already 
+available inside such hotplug scripts.
 
-> +					<&mmss_noc MASTER_CAMNOC_HF  0 &mc_virt SLAVE_EBI1     0>;
-
-QCOM_ICC_TAG_ALWAYS
-
-> +			interconnect-names = "ahb", "hf_0";
-> +
-> +			iommus = <&apps_smmu 0x800 0x4e0>;
-> +
-> +			power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
-> +					<&camcc CAM_CC_IFE_1_GDSC>,
-> +					<&camcc CAM_CC_IFE_2_GDSC>,
-> +					<&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +			power-domain-names = "ife0", "ife1", "ife2", "top";
-
-vertical list, please
-
-Konrad
+[1] 
+https://github.com/Mellanox/mlxsw/wiki/Switch-Port-Configuration#using-udev-rules
 
