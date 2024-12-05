@@ -1,140 +1,90 @@
-Return-Path: <linux-kernel+bounces-433915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6AA19E5EB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:21:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6769E5EB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 20:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DBBA1885363
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:21:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D647016BE80
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 19:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74BB229B2B;
-	Thu,  5 Dec 2024 19:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1450B22D4E2;
+	Thu,  5 Dec 2024 19:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IwkJkZy3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b="OHLw6czj"
+Received: from mail.w14.tutanota.de (mail.w14.tutanota.de [185.205.69.214])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE52229B1F;
-	Thu,  5 Dec 2024 19:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E561224B0F;
+	Thu,  5 Dec 2024 19:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733426469; cv=none; b=Ya9vuy62LV7whQk8UQTXD3drScwrZkjTBJ31z3RqXp7qlLHnkPl553feJsl0V/oalyqT7XDjh+oY86UDxmfYDyn39pcSq5fs0JxWMvSODkxrrNc3sW+IJgS54Gpn2m6qEQX3gt49pFfsoFYbqQ1sHHS1xadPSq4g4ENWmYziFCI=
+	t=1733426570; cv=none; b=RYps202q+hbH+kB397+48v/jk62VI81dCQyiKUui2dpUdD5BLbNVU83dHShKU62BITx/bfSQXNEb6jZWd5erEIVgsEBsv27KwGQf1EGKRG5eUlk5JPb6GjfZOxF89gLpOKsWP4T7N0tSVV1Cpd22VBCNsOZHXUo49hQ3URh6Ah4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733426469; c=relaxed/simple;
-	bh=X/cKBT1xamce8ZPdE27n3xgo3YoP/gZ1JBfENVQ+vCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXJ3oarNY8c+J8ywfhx59ndcdqQXIFTzuz+j1dQLcUFtd0BvcpwZY2q5xu3xIeNcBhv/2s9AXiqmUmH2D5IAp9e7NwSn46wqZOzUrAZAVPJvssaISjAtRLENrVTnE4VpPiIc7/r0WfHFWpPHWCVdEe8ah7rv/0nQTKIKiYh5fzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IwkJkZy3; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733426467; x=1764962467;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=X/cKBT1xamce8ZPdE27n3xgo3YoP/gZ1JBfENVQ+vCc=;
-  b=IwkJkZy3o5/t1G6UEGbcIienUYwgaJkDDgpeUEH4JevlBGqyJ0+BBg6n
-   3AtFOjHjhcJuTJS4Fn8Wt0z+tTIC/YoXApJidPLqh4IElmKZ/x1RvQs7U
-   TUNfCoWLyNJVQPPc48bmzz9escX4JhcX+18mbysXOWO4e6daerXVnik6v
-   A1d/C9fcthGliXdmnYU83bAHJSaPGrNvPEuk4pjVjEN05l+AbEy26zR/6
-   8RrWZ3bOlaNtxryV1oggFd8yoCHZc+bnhmrJjepj8qeINluvDAUwRgcy2
-   mkY0WISTLsxZTEEXoiYXuoGxcOqJ/mg+0fBUDdjx42ScRzSG+2Z8WfAR6
-   Q==;
-X-CSE-ConnectionGUID: x5MSHbygRkiW85t1tk7Yog==
-X-CSE-MsgGUID: Fw8SVSxGS2GBXR/zYGeVbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33088360"
-X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
-   d="scan'208";a="33088360"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 11:21:06 -0800
-X-CSE-ConnectionGUID: wrssc6j+RPCfBOqrD+2JMg==
-X-CSE-MsgGUID: +Q3wDQnnRveQCKAj+RgqPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,211,1728975600"; 
-   d="scan'208";a="94393982"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 11:21:05 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tJHPK-00000004BTQ-160g;
-	Thu, 05 Dec 2024 21:21:02 +0200
-Date: Thu, 5 Dec 2024 21:21:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Matthias Maennich <maennich@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Masahiro Yamada <masahiroy@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] doc: module: DEFAULT_SYMBOL_NAMESPACE must be
- defined before #includes
-Message-ID: <Z1H9Hpj-uK6-l9yA@smile.fi.intel.com>
-References: <cover.1733305665.git.ukleinek@kernel.org>
- <3dd7ff6fa0a636de86e091286016be8c90e03631.1733305665.git.ukleinek@kernel.org>
- <Z1Fbrbjx-mNTnV0k@smile.fi.intel.com>
- <td6actwt6wzbutyo6ujv5wmpoieyovtbpqqcmq45twfzhwyca3@hpybcti24ndw>
+	s=arc-20240116; t=1733426570; c=relaxed/simple;
+	bh=Ta9ywsfJdQ6Vo9GcVw9UdsJhBf8GeU+PxCzAYoUhaiw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=B5afochU0/mXPscEMpp4ziT4IROa+oxWVIIhRWK6E1UftGGqRGPbt38kD+oGyEWcNt3XosRT56yI0cI/T0DnM6ll+RnwxR0a73xvNXe/eBwgh9y6w5Vt1rHdojA/IbUQsediOo3jc7KfMj7cHNck4qk7eSf7WW0ivgTR6W1hLEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io; spf=pass smtp.mailfrom=tuta.io; dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b=OHLw6czj; arc=none smtp.client-ip=185.205.69.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuta.io
+Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
+	by mail.w14.tutanota.de (Postfix) with ESMTP id 85753434B591;
+	Thu,  5 Dec 2024 20:22:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733426566;
+	s=s1; d=tuta.io;
+	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:References:Sender;
+	bh=Ta9ywsfJdQ6Vo9GcVw9UdsJhBf8GeU+PxCzAYoUhaiw=;
+	b=OHLw6czj0xmx5L9NlIGK42fFoyoKF1TfdRuocBO6cv8+WfqO21MfRpqzW5gFpjgu
+	r4VBJPAiqYV4kLvQTllsUjqZUwb92GWvYJ3yvbssABhdbTG36yC2xUn49KBfgLjfmoN
+	orU/ix3Hy9YHsaY4FmjpipjqKvkF0aJHStk0uXQwVMfAeYPMD28ZRkP99m5sUz1Fqze
+	/c8E6QQRpNDRSg0o96BpfSoig78A9/vlav4Azt+LNJVcg612cJpY6nkD+UQqTFpu7uv
+	OFxZtiyC1DVnRWkShmdXkC+EVQLUwgPfh9F5EXpfUyH2gPwogy7ewgnyYWQKoVmqVkU
+	jvSt1QuNmA==
+Date: Thu, 5 Dec 2024 20:22:46 +0100 (CET)
+From: jens.korinth@tuta.io
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rust For Linux <rust-for-linux@vger.kernel.org>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Linux Kernel <linux-kernel@vger.kernel.org>
+Message-ID: <ODNG_IK--F-9@tuta.io>
+In-Reply-To: <CANiq72kRiWoo510U8gkLDpyhNi=a1Ps034Dcid5jvLxJnbNRMQ@mail.gmail.com>
+References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io> <20241126-pr_once_macros-v4-3-410b8ca9643e@tuta.io> <CANiq72m-dY0b7UiBiWOg8g1SFPqLxuhkDdWwNh8g8OBk-Tjz=w@mail.gmail.com> <OCjLJ1h--F-9@tuta.io> <CANiq72=A9=uzSt9DOZBvw3sHwf4vqX2+6MBDKO5FokZUyt1V3A@mail.gmail.com> <ODKVmiV--F-9@tuta.io> <CANiq72kRiWoo510U8gkLDpyhNi=a1Ps034Dcid5jvLxJnbNRMQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] rust: error: Replace pr_warn by pr_warn_once
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <td6actwt6wzbutyo6ujv5wmpoieyovtbpqqcmq45twfzhwyca3@hpybcti24ndw>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 12:21:26PM +0100, Uwe Kleine-König wrote:
-> Hello Andy,
-> 
-> On Thu, Dec 05, 2024 at 09:52:13AM +0200, Andy Shevchenko wrote:
-> > On Wed, Dec 04, 2024 at 11:01:11AM +0100, Uwe Kleine-König wrote:
-> > > The definition of EXPORT_SYMBOL et al depends on
-> > > DEFAULT_SYMBOL_NAMESPACE. So DEFAULT_SYMBOL_NAMESPACE must already be
-> > > available when <linux/export.h> is parsed.
-> > 
-> > > -within the corresponding compilation unit before any EXPORT_SYMBOL macro is
-> > > -used.
-> > > +within the corresponding compilation unit before the #include for
-> > > +<linux/export.h>.
-> > 
-> > And how do I know where it is included in the current state of affairs with the
-> > dependency hell in the kernel?
-> > 
-> > I suggest to reword it to something like "before any global inclusions", the
-> > best probably is to repeat the piece from pr_fmt() / dev_fmt() documentation
-> > (if any).
-> 
-> Well, "before <linux/export.h>" is the accurate thing you have to
-> ensure. "before any global inclusion" is the safe and easy thing to do
-> to achieve that. Maybe:
-> 
-> 	...
-> 	within the corresponding compilation unit before the #include for
-> 	<linux/export.h>. Typically it's placed before the first
-> 	#include.
+> Sorry, I am confused. This is not implementing the `From` trait, it is
+> an inherent implementation.
 
-The below is excerpt for pr_fmt():
+Hmm, you're right. I assume there is a reason why it doesn't implement
+`From<c_int>` or `TryFrom<c_int>`?
 
----8>----
-Besides being more concise than the equivalent printk() calls, they can use a
-common definition for the format string through the pr_fmt() macro. For
-instance, defining this at the top of a source file (before any ``#include``
-directive)::
+> If what you mean is that this should not be an infallible operation,
+> then we are back at my previous reply, i.e. are you suggesting to
+> remove the method? Could you please clarify, perhaps with an example?
 
-  #define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
+Yes, I meant to say it should not be infallible, because, well, it isn't. :)
+I'd probably make `try_from_errno` public and remove `from_errno`.
 
----8>----
+If there's no other disadvantage I'd remove `try_from_errno` as well and
+replace it by `TryFrom<c_int>`. Implementing `From<Error> for c_int` may
+also make sense for the other direction?
 
-> ?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Jens
 
