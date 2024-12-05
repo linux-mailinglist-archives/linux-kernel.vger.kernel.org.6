@@ -1,271 +1,262 @@
-Return-Path: <linux-kernel+bounces-432786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8519B9E5051
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:54:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D9B9E505C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:54:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C231285C3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E31188267C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 08:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97DA1D54E3;
-	Thu,  5 Dec 2024 08:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3p1v9o9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0114E1D5AA0;
+	Thu,  5 Dec 2024 08:54:31 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5307A1D0DEC;
-	Thu,  5 Dec 2024 08:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733388830; cv=fail; b=DaDAfD6Hue3otO446L0cHsplOXfOmZLdscNw+FtVTTFrRI+galbYHHFcvqyEjQFo22ptbzZmmnRtZLc2lZq5+vFeuZGo+qhUpV5NDutmelLkOWTIi52eYsjIvgFWmFu0iTrZiTCHpw9ZTVrLNO+qgRg4MK210CJIhXtMl8j+GBo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733388830; c=relaxed/simple;
-	bh=+K/LdK4niIHFK//75ONIOFYOZZgE7F8yA/O7+jLMr5U=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pVAjEpdZpe1lJl2bDdmGwdbK3IP9GvhFS3eKbtHi2QSNG7gktZxhozACKIvCtVs4cS0I3PkkePrTjICkmacwjXmI3s8S8jcQt5hS//nAz8WHtzKLSlxsD0pF4wTqOv79qWo78wBt0rSjXtmNLahNht0jZu9w5FEzMLZuqm7j5u8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3p1v9o9; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733388829; x=1764924829;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+K/LdK4niIHFK//75ONIOFYOZZgE7F8yA/O7+jLMr5U=;
-  b=h3p1v9o9VOYISlQMYabZKi51DBpIhwr5HEI4U0CUkR6FFm+VIMsSR06/
-   hOMIk0RmAdxwOBuQC6ZuquinK7bB6EfUyHJ0oSQk3P/VRCT+zoDYewdZg
-   z8w3zDlbts8sAeOZfdjF5jFuq78a20jv+tMvJrk/Sn3iPX74jREXhm2Hm
-   5bnh80D0lh/EOQoAWfBYlK9WyM03GjdvNd1DzRJpcoE6f99VWKnGT3b0J
-   zjdTUMdaCcPPlOByFo3nn3qDiPYVsohjMEHN4OF+suyF1RI/Mhuvazpn+
-   Lq8gKFo9S3RzgUyfo3a3Id1/xAaVJdqlDa6gQw8PYWcyCqz3CL4RXmp7K
-   g==;
-X-CSE-ConnectionGUID: H27fNd+TRiqtm8uKSMVQzg==
-X-CSE-MsgGUID: NdkmAQ2fRziLUvty2P63OQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="37624622"
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="37624622"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 00:53:49 -0800
-X-CSE-ConnectionGUID: LEwcb02CR+K94rMW0zbchQ==
-X-CSE-MsgGUID: NM/OwO1gStqClqgHGay5xw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,209,1728975600"; 
-   d="scan'208";a="99109776"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Dec 2024 00:53:49 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 5 Dec 2024 00:53:48 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 5 Dec 2024 00:53:48 -0800
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.172)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 5 Dec 2024 00:53:47 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c0ZRxRESjQ9lmkzBnpZqoyEEu/GvAKfQ8q11VhV7UYGxLE4l8TXRUh437+iFcvyKaqXV8qKiPdO4Unhygau7H0wKS/qwbaqkjpAE3nTqlVC7nM6zlEyTKzyjn8kcMX8InCdSwJdqjf9aA0qHRE77Q3Afbf9M0H/20rOY4O1dTIW24EeGAfc6Pqwv251Ssp8mtU2n88qViDwV7gH8VI4S1tG9VCsR3V1DdZLjBZHf3Di6GrYDCTxZdqc987olXtw8+0dWQ/Wh3z6FZq7BB+oVkld4GNm4AqoxFQPXnd6Se7kntDrGW0zldgDX1Ezf/SCIKz+YaMTZABnzh/YeTdlLKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4qXrR//5WvaXiE5bigVCrsYqFGeA2DapMY8k/OZsy5M=;
- b=rBmz4h0wPzJcbK4WBklIHqc485JqGDW0Z5/6XbN/Gef9DM8eWmqy5rEBJYSCZxnYs+kG5hoj2DhYavp3uBuXKTqYGFmTrICn1SWZ6LQ3OJiyY3Hobky14l8aXnsvKjphlttIsWrZRgOcpW0D+f14NAzAogb7T9d/1L+oJtxpd7EL41slZcNJ69fZvJCTHqNrOEtffIB6lVsG1W0F8Z6cvxHnBrEYje0/Ttj4LyXcMLjnRAxy9tdTKjDp5+lR1twGvBww8cw1O42x6O0Fq6wKZJOZEvZH9MFHrfwHD3qt2TkaCYsj81g/9F/NeX/oK0+RguaXLAs5nEFB8LkS3q7ASw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
- by BL3PR11MB6433.namprd11.prod.outlook.com (2603:10b6:208:3b9::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.13; Thu, 5 Dec
- 2024 08:53:46 +0000
-Received: from BL1PR11MB5399.namprd11.prod.outlook.com
- ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
- ([fe80::b8f1:4502:e77d:e2dc%5]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
- 08:53:46 +0000
-Message-ID: <bdc31171-350f-47f8-abef-876e320b10c3@intel.com>
-Date: Thu, 5 Dec 2024 09:53:41 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net/mlx5: DR, prevent potential error pointer
- dereference
-To: Leon Romanovsky <leon@kernel.org>
-CC: Yevgeny Kliteynik <kliteyn@nvidia.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan
-	<tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Muhammad Sammar
-	<muhammads@nvidia.com>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-References: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
- <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
- <bf47a26a-ec69-433b-9cf9-667f9bccbec1@stanley.mountain>
- <4183c48a-3c78-47e2-a7b2-11d387b6f833@nvidia.com>
- <93a06b66-ab5e-4722-9270-cf892470d004@intel.com>
- <20241205083240.GS1245331@unreal>
-Content-Language: pl
-From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Organization: Intel
-In-Reply-To: <20241205083240.GS1245331@unreal>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: WA2P291CA0043.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::28) To BL1PR11MB5399.namprd11.prod.outlook.com
- (2603:10b6:208:318::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5AB16F27E;
+	Thu,  5 Dec 2024 08:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733388870; cv=none; b=Tp2HpPuqU/8/OJ/lzjMvnkSwn6Dk+bgRCN5xDbdNTrIu8yRoiTj1udZyXAUif90BmPw1HbXx32KUxwwxFbd8SXkQRLvKKTtNFNelSworQ0kjYb61WJ8Yk4UIDQq9/ZP5JW6vJz2Gm00W/MQnfixOwGkMI03pwvDxn9jW4VA+B6s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733388870; c=relaxed/simple;
+	bh=g0gydrHl/2oqhtVxsWa7SZilONyoK1LSyfq8FZ/A+/0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hpCy5o3WuMg0r11Awj5NtIPVQuYSgP/P2dnMqBsXsdZgZS/sX3nHgXNZ06WfxMKBo8eNzh+LbPjjuUy8wLMF4Oc+fLXry+Cowm7EDFFrXFn9/OwAPkboC1oBgD4x93AFv4AmR8OoELy3nKhR+T7rIx8KEF3qKdrk6q16yi+JCQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y3nhd2ylsz9v7Vj;
+	Thu,  5 Dec 2024 16:33:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 00C2714051A;
+	Thu,  5 Dec 2024 16:54:09 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwBH9CQdalFnenXcAg--.56302S2;
+	Thu, 05 Dec 2024 09:54:08 +0100 (CET)
+Message-ID: <3a759c091ac097be84b882dd992e6e216ec11723.camel@huaweicloud.com>
+Subject: Re: [PATCH v6 00/15] integrity: Introduce the Integrity Digest Cache
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+ "mcgrof@kernel.org" <mcgrof@kernel.org>, "petr.pavlu@suse.com"
+ <petr.pavlu@suse.com>,  "samitolvanen@google.com"
+ <samitolvanen@google.com>, "da.gomez@samsung.com" <da.gomez@samsung.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, "paul@paul-moore.com"
+ <paul@paul-moore.com>, "jmorris@namei.org" <jmorris@namei.org>,
+ "serge@hallyn.com" <serge@hallyn.com>, "shuah@kernel.org"
+ <shuah@kernel.org>, "mcoquelin.stm32@gmail.com"
+ <mcoquelin.stm32@gmail.com>,  "alexandre.torgue@foss.st.com"
+ <alexandre.torgue@foss.st.com>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-api@vger.kernel.org"
+ <linux-api@vger.kernel.org>, "linux-modules@vger.kernel.org"
+ <linux-modules@vger.kernel.org>, "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+ <linux-kselftest@vger.kernel.org>, "wufan@linux.microsoft.com"
+ <wufan@linux.microsoft.com>, "pbrobinson@gmail.com" <pbrobinson@gmail.com>,
+  "zbyszek@in.waw.pl" <zbyszek@in.waw.pl>, "hch@lst.de" <hch@lst.de>,
+ "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>, "pmatilai@redhat.com"
+ <pmatilai@redhat.com>,  "jannh@google.com" <jannh@google.com>,
+ "dhowells@redhat.com" <dhowells@redhat.com>,  "jikos@kernel.org"
+ <jikos@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
+ "ppavlu@suse.com" <ppavlu@suse.com>, "petr.vorel@gmail.com"
+ <petr.vorel@gmail.com>,  "mzerqung@0pointer.de" <mzerqung@0pointer.de>,
+ "kgold@linux.ibm.com" <kgold@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Thu, 05 Dec 2024 09:53:45 +0100
+In-Reply-To: <B0DC94E7-78A3-4797-B864-31DE0A2C903C@oracle.com>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+	 <C4BE31F8-1FA3-4AD1-A712-ED2AA7E61E96@oracle.com>
+	 <17ef4f662e594c8431a00fe423507af4f6a82286.camel@huaweicloud.com>
+	 <B135AC90-7CE5-4E51-90B1-9D82031668A8@oracle.com>
+	 <00f3eb72042aedaa4644ff0932d06d4e8d215f6b.camel@huaweicloud.com>
+	 <B0DC94E7-78A3-4797-B864-31DE0A2C903C@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|BL3PR11MB6433:EE_
-X-MS-Office365-Filtering-Correlation-Id: decde6bf-10cc-4846-2722-08dd150a540e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?c3lvcC93enY2cmhYcXozMjdWOUV6Z2dvTWVkbmtzQUhIazVaay9Ha2l5YnhC?=
- =?utf-8?B?b2pOZVlIbHlLM0pad2YwYThYL0ovZGVlSGdIdG1kUmhFVzlURTJmTHh3TEI5?=
- =?utf-8?B?aXhXeUVZSmhiL29lb3Z3V1pqSGt1bHJRSWZjVkZDVkxNMG5mOC9STStzS090?=
- =?utf-8?B?bDdzc3pYRndUcjBkQS9sQUFGb25NaEJZODJEcnZwYTMzWTdNZGNXR2FkUWZ5?=
- =?utf-8?B?UEIzekNBOGlhbjluWFpONUxlVVBBNG0rNWlFSjc3RWxSd0wrR0s4elVDa215?=
- =?utf-8?B?SXpwNlZIMmxZU2dFTmszN3Z4b0swa0l1b2pnWXZnQU1hMWo2blFmUHdPWURu?=
- =?utf-8?B?WUxKMVhVUUMxajN4RGVZNU1FMHgwdXdjYzE0aVdVaTlmT3RBVkJkV2poQXU4?=
- =?utf-8?B?dThqby82c29nWk9ETHorQWd5d0ozN25nSlp5bHhXQjJzalkrNitvTlZEYTA0?=
- =?utf-8?B?bFNBbnZsRmtPcE9EaUJHTHhoZlU4UjU0ZjdBa3YxU3ZqYVN4V2hjSXlGNTh4?=
- =?utf-8?B?bEVKR3hqUXFWVmVBNFllcGlWeXBibDkvUVpxVHc3b1Fub1kzUzRjbllPUEZ5?=
- =?utf-8?B?RTFOTkJLTXYrSFJPVGVkMGt1Nk8ybW1GNElmdGJvVDdHZFNWOEg5N0J3Kzhk?=
- =?utf-8?B?VnN2RUZsSmd4U1Ird25CQnlsNnRFdkVFTVlFeXBkaVBRdFFaWEs5b1lBb21P?=
- =?utf-8?B?MlNkTHJ3cTZxSzZ5M01qQkk3aUZ4dlN4cmo5LzFvQ1JMeDFFcStBQ1UxTlBQ?=
- =?utf-8?B?Mjlmb0REZkNjdkNkMHZDbi9hYm0rYVJDR2lmNlRSSnM0aE5WaTA0bzB2ajEx?=
- =?utf-8?B?Yy93bUM0cjFqa2FQVVFhVmpkMzd3L0I0em9Td0pLRENEQkRaa0ttc2FVM1hS?=
- =?utf-8?B?eU5kTTNKc0h3WFRRV3N4RC84YUlQZWpTdVRNVlJHUkd5ekJTRlBUR2VleHBl?=
- =?utf-8?B?OGZkZWVVSXR6NzRwTzd1T0pRVTdZenlNQnI4VUpNUFU1UlFBTHJlc0c5OWpq?=
- =?utf-8?B?eHhQSDZHcldNczR0M1pEV3ZSWnhvMTk2YnVocTJZODRpSUtpL0txamdyQzVT?=
- =?utf-8?B?dEdyMDVsOWhJRDE2dnA2a0JCLzdpdVFWMm5uN0xRM3BVditMbVVIYUdaN0VD?=
- =?utf-8?B?ODZNUGovR3puUzQ5bE9GdFNEVW40QTByV3JwcHRxUWZqZFNzdHNlU0xUWDNJ?=
- =?utf-8?B?d0RFNnZ5ZExyd0ZMbVk0REI2NmVmbzN1eWtPUWxLTGlEbE1WcHNORlNtMGF6?=
- =?utf-8?B?ZWhWU1owYzVhMXlnQ2VpL1QzNTJsU01KWVFtSTY2NkhNZWZpOWtxQmUyajM0?=
- =?utf-8?B?NE1GTzlLQ3lOMzJHUS8zRVlHWHNIbDUwZS91NXhVbEV6d2ZMc1NLSnRWcVFH?=
- =?utf-8?B?SXJFMll1TU9xSDZ6UG5qVGxUN3dSdUIwakFyZk9FS1Y1VllBamNsMzBld0Mz?=
- =?utf-8?B?ak13MkczUHN2bXBxUHAzM2NaandBakFDemJXTWt6L25tWWsvYTl5enMxdWs3?=
- =?utf-8?B?dU8ycGhndGZRMHVuc1pCTStnaVU4NDlzZjh2eEdtdFB2b0ZSLy9rZkhOSnll?=
- =?utf-8?B?czNWNGdZYmtkWFRCTURxUk5WSmdnaFZuc2I0RDNaci8wN21DV3JJV1VkemRY?=
- =?utf-8?B?eEhNZUZIMkF1QmFmdlRxMCtJUVpXVThIZ2NSSmtsOStIMTJKYXNwcVdHQkNt?=
- =?utf-8?B?L29wNHJ6c1l4NjhjYkpQNmVETmRmOStTSkdQRkxiS0MzMTYxM2xyMVQ2Wjdh?=
- =?utf-8?B?M0lRbDU4aTRianQyRmRzRUJ3MUY2MFNKRk1IYjkvQkxwSXdDQ3NpTEQwWUZq?=
- =?utf-8?B?S0ZjWHhDVDFSeUxuU29FUT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Tk1LaFI1cGpYc2xidEFYbTQ1amRTRVZ0TjBtSGRBeldkNk9oV2djWXVVUTRY?=
- =?utf-8?B?TENXOTdKOXcreXQ0c0pXMGhmbHhlbmcwc2FaaVRZbEFXWW9UTUVUeFhiM0Rk?=
- =?utf-8?B?aDUwaUw2T1RvMlNERUpENU42cEk0K1NQUnRINmI2RVF6RnJSWmp4U1VseHQw?=
- =?utf-8?B?L0JGZkNrelVTNkFhbnN0VFhlY0tPVFhiWmgrT2RnMTNsVk5mMFJiYWtjbWor?=
- =?utf-8?B?NkpEa3dHTUg4anl6dkRoNkRTWjJ2NWVRTU1WVm5NTFhhL0daSjcvOTg4Sncr?=
- =?utf-8?B?ZlBFcDN1T1ZydlRhRzdPNEJPaUZacnllUDlCbEdhbkpmbUR2Q1RMZTZWdHJn?=
- =?utf-8?B?V0dvUDJkdW5pNWVaZjhWWHdhQnV1RHBIVWlNTkVrWlRQWjNXNllSeU03dmZo?=
- =?utf-8?B?WmRkMHViSWZaMDdtSEM1WWg3QUhoZEFJUFdxREM2OEVBeVdyZzFFRnJZWTh2?=
- =?utf-8?B?cmZERHlxcGg5T3hPOWtxZ3VPQ005VFlyTzgzcTdOQWtpNHBZeUhkendCQi9O?=
- =?utf-8?B?T0VNWDRLcDlqVFZ6R0MwQ1Q2OFloOGxKNGJFSHJjSUx2cXNaQXlsSkNseVF4?=
- =?utf-8?B?Y0tSay9mZk1WcXBEVDI2cFpIMGdEY3R6cGNYUFV1UEVRYmdEdVRMU0YxWTBM?=
- =?utf-8?B?NFpYWk4zZmNJLy9EZCsvUU1mbml0YlhVUm1jdWdBT25rQ1pIK0FJTHBCcXRt?=
- =?utf-8?B?bmxOTUNQWFFpck90T0h2akZUTU1FRWxmMUZkN0kzcUIvcmhqUXBaNVN2NWo4?=
- =?utf-8?B?Ui96dlJ3S0FnSVdCZTEyZ25WYk9HYVR5b1RtNHBOVjdOMTJDSFlHSGdmTFlE?=
- =?utf-8?B?K1lyRmNDYTBJR1ZpaW5zL2NHT0NSdHNMK3ExTm9ROHFqYjJ6c051aU90R2Na?=
- =?utf-8?B?YVhaRGIyQW5COFV4T0VwRmtHeTJYKzN0V1A2MUR5cGVaRktuRnFqVFlkeFBi?=
- =?utf-8?B?eGhkYXlaMEtHZWZIaWVLMlFpUHlNeFUwaDUvL3B5a0dhRlRicmZtQk1DQ01C?=
- =?utf-8?B?WHlVY1laWFRKV01HUU1YM3pLQ0VhWGkzRVRCM04vRmgwNFpFWWYxMVc3MTN5?=
- =?utf-8?B?QjV6c3hrTm14TWdGd2xFbm52THRWSUFoNWd1ZGZ1MGRCcmhPckxjdlowVE1i?=
- =?utf-8?B?ZjF4clc5MlBzRHBEQXlMZHJxVVFxaDBKcTgrWGNHZUUvYUQvaGRSY0dCY1Iw?=
- =?utf-8?B?NEtUYlN5SDVLdEJkVjVpRVd5TktjdlExU3BYd05ZM0swQ1M1RmZwTVZVcnRO?=
- =?utf-8?B?QTBIVmJUYWdyUTdXM0ZYTG84cmlYOVl1ZXZZanhPcWlsWTAxbVVpQzV0U042?=
- =?utf-8?B?OEVpd29obHAvU1JadTZ2amthSzcvUWt3U3dpVUxQRVF2QjZ2YkVWYmtJWGd0?=
- =?utf-8?B?ZmNTaUdoN0Q3TTBGN1NGSGh4N2xoSmtaVWV1blVDZWU0K1htV2ZTai9WUDNu?=
- =?utf-8?B?NDVMZlpJUFZ3dWZEVFA5WTRVa0lWa3pFK1drZTE2M0phODlKRTNaOFhtekNC?=
- =?utf-8?B?ekY5bEZRR2krcFgwMjVlSUc3RzBVTEc2RTVCRjJjL1JlMzZpVGxTTEdKL0hw?=
- =?utf-8?B?T2pJWE1pMWV5dmFlWVZjUDVjRGJQTnhVcTJzZlIxclp6bzhtRkNpK2xBbFBD?=
- =?utf-8?B?aThnNU44SGpRNWRpak8vdXY3NXhHYlhBVXBDZzg2S1ZITDUvc1pPNGtNUlY0?=
- =?utf-8?B?dlkxQzdmb3VCY3NSenFycXFuVG1vY0VVdlBzN0V5WHZFSy8wYXltWDdvUHV4?=
- =?utf-8?B?ZXE3bHVFemtxSGtMR1duN2M0L0NpOXlKd204K2xtNWh2bk9nclJYQWRPS0Nn?=
- =?utf-8?B?WGlNWGxOWHNza0hRajRkVHVpQ3lNeTJYK2JiZjd4R2RySC85RnhnOTZYRXpE?=
- =?utf-8?B?SFhHREpqNjkwVWxmTmgwL1BIUTVOeE13Q0xHUVUwTDBTNU9qU3ZNbVVFMXZT?=
- =?utf-8?B?U1dWenJTcUlqSFpVNm5tb0VPZkF1eStiM1lEQWNCZ09neFFPSU9YNWhTSGtu?=
- =?utf-8?B?cVhUcHFtcTJwU3UzcXBneitFWmU4L2tLcmo5SzZFalk0a2RUbjh2dnQrUEd3?=
- =?utf-8?B?SStpSTZSbGRRYVB3RjF0cklwaSt5eVlIV3NtVVE0UkNrSTlYekdKUEZmOVlO?=
- =?utf-8?B?b2FwbDZWR0xMbWtuNm50c0VHM0pmVy8rbFlWbnVwaUQ1SklwSnhqTFdYWlNP?=
- =?utf-8?B?dVE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: decde6bf-10cc-4846-2722-08dd150a540e
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 08:53:46.2580
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GZwwVgZn8UdwDNb/Hhb4daFcmMHI2fqrNkfcrZBhjcrFSk7ItXiPhicHnL/zrBda9nzvEMElTVXMGqkYOrZG02mMaaVmpEtD+iFClcMKDc8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6433
-X-OriginatorOrg: intel.com
+X-CM-TRANSID:LxC2BwBH9CQdalFnenXcAg--.56302S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WrW8tF1DCFykKFWfAF47Jwb_yoW7tw1kpa
+	y5Ka13Kr4kWr10k3Z2ka1UWF1Fk3yftr15Xwn8Xry5CrZ0gr929F1xKa15uFyDGr1kGr12
+	vr1ag347CrWDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	EksDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBGdRD-QHxQAAsB
 
+On Thu, 2024-12-05 at 00:57 +0000, Eric Snowberg wrote:
+>=20
+> > On Dec 4, 2024, at 3:44=E2=80=AFAM, Roberto Sassu <roberto.sassu@huawei=
+cloud.com> wrote:
+> >=20
+> > On Tue, 2024-12-03 at 20:06 +0000, Eric Snowberg wrote:
+> > >=20
+> > > > On Nov 26, 2024, at 3:41=E2=80=AFAM, Roberto Sassu <roberto.sassu@h=
+uaweicloud.com> wrote:
+> > > >=20
+> > > > On Tue, 2024-11-26 at 00:13 +0000, Eric Snowberg wrote:
+> > > > >=20
+> > > > > > On Nov 19, 2024, at 3:49=E2=80=AFAM, Roberto Sassu <roberto.sas=
+su@huaweicloud.com> wrote:
+> > > > > >=20
+> > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > >=20
+> > > > > > The Integrity Digest Cache can also help IMA for appraisal. IMA=
+ can simply
+> > > > > > lookup the calculated digest of an accessed file in the list of=
+ digests
+> > > > > > extracted from package headers, after verifying the header sign=
+ature. It is
+> > > > > > sufficient to verify only one signature for all files in the pa=
+ckage, as
+> > > > > > opposed to verifying a signature for each file.
+> > > > >=20
+> > > > > Is there a way to maintain integrity over time?  Today if a CVE i=
+s discovered=20
+> > > > > in a signed program, the program hash can be added to the blackli=
+st keyring.=20
+> > > > > Later if IMA appraisal is used, the signature validation will fai=
+l just for that=20
+> > > > > program.  With the Integrity Digest Cache, is there a way to do t=
+his? =20
+> > > >=20
+> > > > As far as I can see, the ima_check_blacklist() call is before
+> > > > ima_appraise_measurement(). If it fails, appraisal with the Integri=
+ty
+> > > > Digest Cache will not be done.
+> > >=20
+> > >=20
+> > > It is good the program hash would be checked beforehand and fail if i=
+t is=20
+> > > contained on the list.=20
+> > >=20
+> > > The .ima keyring may contain many keys.  If one of the keys was later=
+=20
+> > > revoked and added to the .blacklist, wouldn't this be missed?  It wou=
+ld=20
+> > > be caught during signature validation when the file is later appraise=
+d, but=20
+> > > now this step isn't taking place.  Correct?
+> >=20
+> > For files included in the digest lists, yes, there won't be detection
+> > of later revocation of a key. However, it will still work at package
+> > level/digest list level, since they are still appraised with a
+> > signature.
+> >=20
+> > We can add a mechanism (if it does not already exist) to invalidate the
+> > integrity status based on key revocation, which can be propagated to
+> > files verified with the affected digest lists.
+> >=20
+> > > With IMA appraisal, it is easy to maintain authenticity but challengi=
+ng to=20
+> > > maintain integrity over time. In user-space there are constantly new =
+CVEs. =20
+> > > To maintain integrity over time, either keys need to be rotated in th=
+e .ima=20
+> > > keyring or program hashes need to be frequently added to the .blackli=
+st.  =20
+> > > If neither is done, for an end-user on a distro, IMA-appraisal basica=
+lly=20
+> > > guarantees authenticity.
+> > >=20
+> > > While I understand the intent of the series is to increase performanc=
+e,=20
+> > > have you considered using this to give the end-user the ability to ma=
+intain=20
+> > > integrity of their system?  What I mean is, instead of trying to impo=
+rt anything=20
+> > > from an RPM, just have the end-user provide this information in some =
+format=20
+> > > to the Digest Cache.  User-space tools could be built to collect and =
+format=20
+> >=20
+> > This is already possible, digest-cache-tools
+> > (https://github.com/linux-integrity/digest-cache-tools) already allow
+> > to create a digest list with the file a user wants.
+> >=20
+> > But in this case, the user is vouching for having taken the correct
+> > measure of the file at the time it was added to the digest list. This
+> > would be instead automatically guaranteed by RPMs or other packages
+> > shipped with Linux distributions.
+> >=20
+> > To mitigate the concerns of CVEs, we can probably implement a rollback
+> > prevention mechanism, which would not allow to load a previous version
+> > of a digest list.
+>=20
+> IMHO, pursuing this with the end-user being in control of what is contain=
+ed=20
+> within the Digest Cache vs what is contained in a distro would provide mo=
+re
+> value. Allowing the end-user to easily update their Digest Cache in some =
+way=20
+> without having to do any type of revocation for both old and vulnerable=
+=20
+> applications with CVEs would be very beneficial.
 
+Yes, deleting the digest list would invalidate any integrity result
+done with that digest list.
 
-On 12/5/2024 9:32 AM, Leon Romanovsky wrote:
-> On Tue, Dec 03, 2024 at 11:02:15AM +0100, Mateusz Polchlopek wrote:
->>
->>
->> On 12/3/2024 10:44 AM, Yevgeny Kliteynik wrote:
->>> On 03-Dec-24 11:39, Dan Carpenter wrote:
->>>> On Tue, Dec 03, 2024 at 10:32:13AM +0100, Mateusz Polchlopek wrote:
->>>>>
->>>>>
->>>>> On 11/30/2024 11:01 AM, Dan Carpenter wrote:
->>>>>> The dr_domain_add_vport_cap() function genereally returns NULL on error
->>>>>
->>>>> Typo. Should be "generally"
->>>>>
->>>>
->>>> Sure.
->>>>
->>>>>> but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
->>>>>> retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
->>>>>
->>>>> Please remove unnecessary space.
->>>>>
->>>>
->>>> What are you talking about?
->>>
->>> Oh, I see it :)
->>> Double space between "retry." and "The"
->>>
->>> -- YK
->>>
->>
->> Yup, exactly. Sorry, I could point it.
-> 
-> Double space after period is perfectly valid typographic style. It is
-> with us for last 250 years.
-> 
-> Thanks
-> 
+I developed also an rpm plugin that synchronizes the digest lists with
+installed software. Old vulnerable software cannot be verified anymore
+with the Integrity Digest Cache, since the rpm plugin deletes the old
+software digest lists.
 
-Cool, thanks for explanation and please forget about this unnecessary
-nitpick :)
+https://github.com/linux-integrity/digest-cache-tools/blob/main/rpm-plugin/=
+digest_cache.c
+
+The good thing is that the Integrity Digest Cache can be easily
+controlled with filesystem operations (it works similarly to security
+blobs attached to kernel objects, like inodes and file descriptors).
+
+As soon as something changes (e.g. digest list written, link to the
+digest lists), this triggers a reset in the Integrity Digest Cache, so
+digest lists and files need to be verified again. Deleting the digest
+list causes the in-kernel digest cache to be wiped away too (when the
+reference count reaches zero).
+
+> Is there a belief the Digest Cache would be used without signed kernel=
+=20
+> modules?  Is the performance gain worth changing how kernel modules=20
+> get loaded at boot?  Couldn't this part just be dropped for easier accept=
+ance? =20
+> Integrity is already maintained with the current model of appended signat=
+ures.=20
+
+I don't like making exceptions in the design, and I recently realized
+that it should not be task of the users of the Integrity Digest Cache
+to limit themselves.
+
+But the main problem was not the kernel modules themselves, but the
+infrastructure needed in user space to load them, which might not be
+available at the time a digest list parser needs to be loaded.
+
+I hope ksys_finit_module() does not cause too much resistance (however
+I need to document it better, as others noted). It is just a different
+way to pass the same parameters of the finit_module() system call.
 
 Thanks
 
->>
->>
->>>> regards,
->>>> dan carpenter
->>>>
->>>>
->>>
->>
+Roberto
 
 
