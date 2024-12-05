@@ -1,440 +1,413 @@
-Return-Path: <linux-kernel+bounces-433478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3773B9E58ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:53:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBDD9E58FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:56:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5109916ABA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 541E6287BDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C5D221443;
-	Thu,  5 Dec 2024 14:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808E721C18B;
+	Thu,  5 Dec 2024 14:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDwzHwpd"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fejJ8e24"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A6021D5A2;
-	Thu,  5 Dec 2024 14:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB60218EB8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 14:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733410358; cv=none; b=ETVFbcs1Feu9ZLTVjPiP8t1SryN7VypiHzXYg6RMCO4NedqkkvmLSW6bSGHwrrZT9nuZ+NLnHVE9i93LcglNbWa0ckv6LzUs7D6FKC1OYULcc3uq8mTCZ4yjzeftA92tYnqn6XTqggu9sFdEWnxF85F7JD0wxPZYrf8wAFWiaWI=
+	t=1733410613; cv=none; b=ou6MfJb8qv4p+w+4Y4XIITmUzrfbrlnXxF+z4sLLVkIdKnrYLdWFveUZwHR35YAJczTEe1x2rif9jyoPl9FW1Xdd4oyl5SVlC8HcDiCGFIDbJIZRX/SHHebFQPiaAm1XGNvNL+V6a2S8ALtZvWDx6fzxg3GnMyCusqTuPsOxnHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733410358; c=relaxed/simple;
-	bh=jDmmzxXCMhcSBXGA5ahOLPyqaCmFCNndQJpuhj98nUE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q12NV63tNnw9ca2IT8PVBq3tP48OyfJkEA/dbwcYDmGnsQSYbE1WNE/rqqe+Q767iQfHlJ4RwXaFP16HKbyTvv4o5Gs1U6su3I6nFYYY/tFiEew1FGk4Pc63S0VgPtJA5bWEi/U84N1u8ixmGI9lkKE5XdUO+yjRIwT+3128KqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDwzHwpd; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a044dce2so11459885e9.2;
-        Thu, 05 Dec 2024 06:52:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733410355; x=1734015155; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Svrsg3mmKKAv3YlnGrb0UzTznAqTSntGHCBI+3zPRtg=;
-        b=QDwzHwpdyvGhydqxYM7YfBtCRz13oemsrIAKhUSZ26nhW0t/trhHryoxNj81tOLXXj
-         48BiqNNhv1Yk4R6169tPdzg795YDeoSh1h4BFU2QnrL9LE4TtoWbtdsFEMh1gRzaQ8pt
-         nHZ+WWNEyBCXIw/8EmYiTTPJHvlO33p1MOqi7ky+5JtQcEH1mchOAT/PWosaDgdEv41h
-         uU70YBwZrcDa9lV84cGV50qBDpzlXG1Kp2jph3oRvh4p0Ajcyx2T+7OcYjrvB8jHN/a+
-         QC8EbM+KmwlN1RnZ0pTxWZRcWw+s/278fkuIufzxR/gyYK7UnPo14sqBjX2lL0QGMZ2y
-         ZnxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733410355; x=1734015155;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Svrsg3mmKKAv3YlnGrb0UzTznAqTSntGHCBI+3zPRtg=;
-        b=DzaSfYgcibEo5BIuBbYQZCzkhKfGjP/PNtLXDsI68UY77b7kNHmwnoN21Kf5nVg3VX
-         LAzgwCMNUasDbzvbHq0RnCsKAh9mhwWY+1aPnzqT4Eac5uHh+O4p3Wl2i5l6oyrda4hN
-         4RPSG6HMORPQnIVetv/io0GdF2yhVExOsMD0ikHTCMcHBnOqXCZ5xQcSCpkNFhbd6MtQ
-         on3MtXfb4+5N95HOIjvikh+AP9s5aEufeLH/VVJQkw8bz2BjsDbR93+Ow5iW0l95PEzA
-         QPzC3C8+4BHwd3pSHoocSxO6Qd7Fwt0NaG9XwZAu8BYcId3jBbJHDcYgcSdvS6NZblH1
-         LZIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPlt/4L6zDJXJC0ziB7DEKcIFZiEGiQAxfp4xZgQMH3lljuk+kJfBRogftZNF9uk+YEmBwnfMjpLcBG4br@vger.kernel.org, AJvYcCWO6ziu0B9SRXADgVZEoKFoksPOJfwDHrcmtExyG16xjvWz3N4LwKH2kGgMdEuVydWtMpi+INOL@vger.kernel.org, AJvYcCXoWZTcQbyHycAycH0GMzEXc0Ix+tBD34m5pqfIeg6NIDAcGzIVBBerXRxL/nruak3uGimaZjuqaKCQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtZhqrm9pUEYdLe1B6lz5aAwZZoKBhhnWAfggkiZZUXVyT18MY
-	PPbgdE/dqxHHb+WN5DT+sqgWHJTbjKJmkmo6P95N2DemGxDW4yIlsL3YlQ==
-X-Gm-Gg: ASbGncss/trZTqMWmXFG8MykTp/jEqC/KWWAFxYelWAr8njTDPCiAvD9qBt4y/ZDT3w
-	F7kkIm7IQsd/By5YuPv1YRbRo7hOhLJz93/7y2Apc9ahBSdvKCrdie6SM2r0KiGHjSJcq8sd7DU
-	pzIa0lwuOO6bzN/VCBCdtJMyV5O79URIJ4pW/sZwJ+dJd6Nqwih5nndcAcz0zOPf81MVqBE26zi
-	oPW0cSoQhX0sTtdqM7WGPka03SihvW6Owq7gC++yRJRkCpjzwVspqs3qUPYo2O+c1Ez4pXfT/4/
-	XfPWkbK7pMTHexESusI=
-X-Google-Smtp-Source: AGHT+IECVYzTmRQ/39/5Hz9QGUMhLf4w/V1fncA6uFz4Ei6iNzMhKuRzc3NR5A9mQCceXltHDGjiTQ==
-X-Received: by 2002:a05:600c:35c2:b0:434:a781:f5d9 with SMTP id 5b1f17b1804b1-434d09c11d7mr100625015e9.11.1733410354222;
-        Thu, 05 Dec 2024 06:52:34 -0800 (PST)
-Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434da113580sm26728035e9.29.2024.12.05.06.52.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 06:52:33 -0800 (PST)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
+	s=arc-20240116; t=1733410613; c=relaxed/simple;
+	bh=O3AictZnwwdzBNmqYePdc1bEAfNfPUaShjj+kc4or5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UTt1t7tEk//jTd8Jbc42HBfy/YBjG6bmA2Gp6EvWHlBPbNPteF7qnH3xqh8Zo6w2Jns9H33ebpoho2PSsWMClXeEyLgJn/kereND2wkpRHFT69wbpKUvN6meV+ci8cqFAFMxszQCZumbBMSHlLojBcJHx48L9MCZprmH5kK57mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fejJ8e24; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733410610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o7x+dQLzoUfE1chSNUNoG6EijuRVKSV36Vs0MFnyPBY=;
+	b=fejJ8e245UhJ1VYosa9Jj4UGP5boL8ifp/d4W2+LhP6qAPRDEjSGlRtxB0KC5/xS2mL+JJ
+	CBbWI6aixgnvIWnBA4yxC7S0s1oLsFXqIlZLOr0xAY9zddw/XMbRiXSRmvMb5aPBOQNur2
+	8ItT612y3qFOlMYFBE+dTgE5bcl/Cy4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-458-qD-s7LQ9PkaIim-xUafrrw-1; Thu,
+ 05 Dec 2024 09:56:45 -0500
+X-MC-Unique: qD-s7LQ9PkaIim-xUafrrw-1
+X-Mimecast-MFC-AGG-ID: qD-s7LQ9PkaIim-xUafrrw
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87FCA195608A;
+	Thu,  5 Dec 2024 14:56:43 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.39.193.31])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 97A9E1956094;
+	Thu,  5 Dec 2024 14:56:41 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
 	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: [net-next PATCH v9 4/4] net: phy: Add Airoha AN8855 Internal Switch Gigabit PHY
-Date: Thu,  5 Dec 2024 15:51:34 +0100
-Message-ID: <20241205145142.29278-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241205145142.29278-1-ansuelsmth@gmail.com>
-References: <20241205145142.29278-1-ansuelsmth@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.13-rc2
+Date: Thu,  5 Dec 2024 15:56:05 +0100
+Message-ID: <20241205145605.209744-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Add support for Airoha AN8855 Internal Switch Gigabit PHY.
+Hi Linus!
 
-This is a simple PHY driver to configure and calibrate the PHY for the
-AN8855 Switch with the use of NVMEM cells.
+The following changes since commit 65ae975e97d5aab3ee9dc5ec701b12090572ed43:
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- MAINTAINERS                  |   1 +
- drivers/net/phy/Kconfig      |   5 +
- drivers/net/phy/Makefile     |   1 +
- drivers/net/phy/air_an8855.c | 267 +++++++++++++++++++++++++++++++++++
- 4 files changed, 274 insertions(+)
- create mode 100644 drivers/net/phy/air_an8855.c
+  Merge tag 'net-6.13-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-11-28 10:15:20 -0800)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e3077d9feee2..cf34add2a0bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -726,6 +726,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/dsa/airoha,an8855.yaml
- F:	drivers/net/dsa/an8855.c
- F:	drivers/net/dsa/an8855.h
-+F:	drivers/net/phy/air_an8855.c
- 
- AIROHA ETHERNET DRIVER
- M:	Lorenzo Bianconi <lorenzo@kernel.org>
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index ee3ea0b56d48..1d474038ea7f 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -79,6 +79,11 @@ config SFP
- 
- comment "MII PHY device drivers"
- 
-+config AIR_AN8855_PHY
-+	tristate "Airoha AN8855 Internal Gigabit PHY"
-+	help
-+	  Currently supports the internal Airoha AN8855 Switch PHY.
-+
- config AIR_EN8811H_PHY
- 	tristate "Airoha EN8811H 2.5 Gigabit PHY"
- 	help
-diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-index 90f886844381..baba7894785b 100644
---- a/drivers/net/phy/Makefile
-+++ b/drivers/net/phy/Makefile
-@@ -35,6 +35,7 @@ obj-y				+= $(sfp-obj-y) $(sfp-obj-m)
- 
- obj-$(CONFIG_ADIN_PHY)		+= adin.o
- obj-$(CONFIG_ADIN1100_PHY)	+= adin1100.o
-+obj-$(CONFIG_AIR_AN8855_PHY)   += air_an8855.o
- obj-$(CONFIG_AIR_EN8811H_PHY)   += air_en8811h.o
- obj-$(CONFIG_AMD_PHY)		+= amd.o
- obj-$(CONFIG_AMCC_QT2025_PHY)	+= qt2025.o
-diff --git a/drivers/net/phy/air_an8855.c b/drivers/net/phy/air_an8855.c
-new file mode 100644
-index 000000000000..7ede6674994f
---- /dev/null
-+++ b/drivers/net/phy/air_an8855.c
-@@ -0,0 +1,267 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2024 Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <linux/phy.h>
-+#include <linux/module.h>
-+#include <linux/bitfield.h>
-+#include <linux/nvmem-consumer.h>
-+
-+#define AN8855_PHY_SELECT_PAGE			0x1f
-+#define   AN8855_PHY_PAGE			GENMASK(2, 0)
-+#define   AN8855_PHY_PAGE_STANDARD		FIELD_PREP_CONST(AN8855_PHY_PAGE, 0x0)
-+#define   AN8855_PHY_PAGE_EXTENDED_1		FIELD_PREP_CONST(AN8855_PHY_PAGE, 0x1)
-+
-+/* MII Registers Page 1 */
-+#define AN8855_PHY_EXT_REG_14			0x14
-+#define   AN8855_PHY_EN_DOWN_SHIFT		BIT(4)
-+
-+/* R50 Calibration regs in MDIO_MMD_VEND1 */
-+#define AN8855_PHY_R500HM_RSEL_TX_AB		0x174
-+#define AN8855_PHY_R50OHM_RSEL_TX_A_EN		BIT(15)
-+#define AN8855_PHY_R50OHM_RSEL_TX_A		GENMASK(14, 8)
-+#define AN8855_PHY_R50OHM_RSEL_TX_B_EN		BIT(7)
-+#define AN8855_PHY_R50OHM_RSEL_TX_B		GENMASK(6, 0)
-+#define AN8855_PHY_R500HM_RSEL_TX_CD		0x175
-+#define AN8855_PHY_R50OHM_RSEL_TX_C_EN		BIT(15)
-+#define AN8855_PHY_R50OHM_RSEL_TX_C		GENMASK(14, 8)
-+#define AN8855_PHY_R50OHM_RSEL_TX_D_EN		BIT(7)
-+#define AN8855_PHY_R50OHM_RSEL_TX_D		GENMASK(6, 0)
-+
-+#define AN8855_SWITCH_EFUSE_R50O		GENMASK(30, 24)
-+
-+/* PHY TX PAIR DELAY SELECT Register */
-+#define AN8855_PHY_TX_PAIR_DLY_SEL_GBE		0x013
-+#define   AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_A_GBE GENMASK(14, 12)
-+#define   AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_B_GBE GENMASK(10, 8)
-+#define   AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_C_GBE GENMASK(6, 4)
-+#define   AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_D_GBE GENMASK(2, 0)
-+/* PHY ADC Register */
-+#define AN8855_PHY_RXADC_CTRL			0x0d8
-+#define   AN8855_PHY_RG_AD_SAMNPLE_PHSEL_A	BIT(12)
-+#define   AN8855_PHY_RG_AD_SAMNPLE_PHSEL_B	BIT(8)
-+#define   AN8855_PHY_RG_AD_SAMNPLE_PHSEL_C	BIT(4)
-+#define   AN8855_PHY_RG_AD_SAMNPLE_PHSEL_D	BIT(0)
-+#define AN8855_PHY_RXADC_REV_0			0x0d9
-+#define   AN8855_PHY_RG_AD_RESERVE0_A		GENMASK(15, 8)
-+#define   AN8855_PHY_RG_AD_RESERVE0_B		GENMASK(7, 0)
-+#define AN8855_PHY_RXADC_REV_1			0x0da
-+#define   AN8855_PHY_RG_AD_RESERVE0_C		GENMASK(15, 8)
-+#define   AN8855_PHY_RG_AD_RESERVE0_D		GENMASK(7, 0)
-+
-+#define AN8855_PHY_ID				0xc0ff0410
-+
-+#define AN8855_PHY_FLAGS_EN_CALIBRATION		BIT(0)
-+
-+struct air_an8855_priv {
-+	u8 calibration_data[4];
-+};
-+
-+static const u8 dsa_r50ohm_table[] = {
-+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
-+	127, 127, 127, 127, 127, 127, 127, 126, 122, 117,
-+	112, 109, 104, 101,  97,  94,  90,  88,  84,  80,
-+	78,  74,  72,  68,  66,  64,  61,  58,  56,  53,
-+	51,  48,  47,  44,  42,  40,  38,  36,  34,  32,
-+	31,  28,  27,  24,  24,  22,  20,  18,  16,  16,
-+	14,  12,  11,   9
-+};
-+
-+static int en8855_get_r50ohm_val(struct device *dev, const char *calib_name,
-+				 u8 *dest)
-+{
-+	u32 shift_sel, val;
-+	int ret;
-+	int i;
-+
-+	ret = nvmem_cell_read_u32(dev, calib_name, &val);
-+	if (ret)
-+		return ret;
-+
-+	shift_sel = FIELD_GET(AN8855_SWITCH_EFUSE_R50O, val);
-+	for (i = 0; i < ARRAY_SIZE(dsa_r50ohm_table); i++)
-+		if (dsa_r50ohm_table[i] == shift_sel)
-+			break;
-+
-+	if (i < 8 || i >= ARRAY_SIZE(dsa_r50ohm_table))
-+		*dest = dsa_r50ohm_table[25];
-+	else
-+		*dest = dsa_r50ohm_table[i - 8];
-+
-+	return 0;
-+}
-+
-+static int an8855_probe(struct phy_device *phydev)
-+{
-+	struct device *dev = &phydev->mdio.dev;
-+	struct device_node *node = dev->of_node;
-+	struct air_an8855_priv *priv;
-+	int ret;
-+
-+	/* If we don't have a node, skip get calib */
-+	if (!node)
-+		return 0;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	ret = en8855_get_r50ohm_val(dev, "tx_a", &priv->calibration_data[0]);
-+	if (ret)
-+		return ret;
-+
-+	ret = en8855_get_r50ohm_val(dev, "tx_b", &priv->calibration_data[1]);
-+	if (ret)
-+		return ret;
-+
-+	ret = en8855_get_r50ohm_val(dev, "tx_c", &priv->calibration_data[2]);
-+	if (ret)
-+		return ret;
-+
-+	ret = en8855_get_r50ohm_val(dev, "tx_d", &priv->calibration_data[3]);
-+	if (ret)
-+		return ret;
-+
-+	phydev->priv = priv;
-+
-+	return 0;
-+}
-+
-+static int an8855_get_downshift(struct phy_device *phydev, u8 *data)
-+{
-+	int val;
-+
-+	val = phy_read_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1, AN8855_PHY_EXT_REG_14);
-+	if (val < 0)
-+		return val;
-+
-+	*data = val & AN8855_PHY_EN_DOWN_SHIFT ? DOWNSHIFT_DEV_DEFAULT_COUNT :
-+						 DOWNSHIFT_DEV_DISABLE;
-+
-+	return 0;
-+}
-+
-+static int an8855_set_downshift(struct phy_device *phydev, u8 cnt)
-+{
-+	u16 ds = cnt != DOWNSHIFT_DEV_DISABLE ? AN8855_PHY_EN_DOWN_SHIFT : 0;
-+
-+	return phy_modify_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1,
-+				AN8855_PHY_EXT_REG_14, AN8855_PHY_EN_DOWN_SHIFT,
-+				ds);
-+}
-+
-+static int an8855_config_init(struct phy_device *phydev)
-+{
-+	struct air_an8855_priv *priv = phydev->priv;
-+	int ret;
-+
-+	/* Enable HW auto downshift */
-+	ret = an8855_set_downshift(phydev, DOWNSHIFT_DEV_DEFAULT_COUNT);
-+	if (ret)
-+		return ret;
-+
-+	/* Apply calibration values, if needed.
-+	 * AN8855_PHY_FLAGS_EN_CALIBRATION signal this.
-+	 */
-+	if (priv && phydev->dev_flags & AN8855_PHY_FLAGS_EN_CALIBRATION) {
-+		u8 *calibration_data = priv->calibration_data;
-+
-+		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_R500HM_RSEL_TX_AB,
-+				     AN8855_PHY_R50OHM_RSEL_TX_A | AN8855_PHY_R50OHM_RSEL_TX_B,
-+				     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_A, calibration_data[0]) |
-+				     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_B, calibration_data[1]));
-+		if (ret)
-+			return ret;
-+		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_R500HM_RSEL_TX_CD,
-+				     AN8855_PHY_R50OHM_RSEL_TX_C | AN8855_PHY_R50OHM_RSEL_TX_D,
-+				     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_C, calibration_data[2]) |
-+				     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_D, calibration_data[3]));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Apply values to reduce signal noise */
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_TX_PAIR_DLY_SEL_GBE,
-+			    FIELD_PREP(AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_A_GBE, 0x4) |
-+			    FIELD_PREP(AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_C_GBE, 0x4));
-+	if (ret)
-+		return ret;
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_RXADC_CTRL,
-+			    AN8855_PHY_RG_AD_SAMNPLE_PHSEL_A |
-+			    AN8855_PHY_RG_AD_SAMNPLE_PHSEL_C);
-+	if (ret)
-+		return ret;
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_RXADC_REV_0,
-+			    FIELD_PREP(AN8855_PHY_RG_AD_RESERVE0_A, 0x1));
-+	if (ret)
-+		return ret;
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_RXADC_REV_1,
-+			    FIELD_PREP(AN8855_PHY_RG_AD_RESERVE0_C, 0x1));
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int an8855_get_tunable(struct phy_device *phydev,
-+			      struct ethtool_tunable *tuna, void *data)
-+{
-+	switch (tuna->id) {
-+	case ETHTOOL_PHY_DOWNSHIFT:
-+		return an8855_get_downshift(phydev, data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int an8855_set_tunable(struct phy_device *phydev,
-+			      struct ethtool_tunable *tuna, const void *data)
-+{
-+	switch (tuna->id) {
-+	case ETHTOOL_PHY_DOWNSHIFT:
-+		return an8855_set_downshift(phydev, *(const u8 *)data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int an8855_read_page(struct phy_device *phydev)
-+{
-+	return __phy_read(phydev, AN8855_PHY_SELECT_PAGE);
-+}
-+
-+static int an8855_write_page(struct phy_device *phydev, int page)
-+{
-+	return __phy_write(phydev, AN8855_PHY_SELECT_PAGE, page);
-+}
-+
-+static struct phy_driver an8855_driver[] = {
-+{
-+	PHY_ID_MATCH_EXACT(AN8855_PHY_ID),
-+	.name			= "Airoha AN8855 internal PHY",
-+	/* PHY_GBIT_FEATURES */
-+	.flags			= PHY_IS_INTERNAL,
-+	.probe			= an8855_probe,
-+	.config_init		= an8855_config_init,
-+	.soft_reset		= genphy_soft_reset,
-+	.get_tunable		= an8855_get_tunable,
-+	.set_tunable		= an8855_set_tunable,
-+	.suspend		= genphy_suspend,
-+	.resume			= genphy_resume,
-+	.read_page		= an8855_read_page,
-+	.write_page		= an8855_write_page,
-+}, };
-+
-+module_phy_driver(an8855_driver);
-+
-+static struct mdio_device_id __maybe_unused an8855_tbl[] = {
-+	{ PHY_ID_MATCH_EXACT(AN8855_PHY_ID) },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(mdio, an8855_tbl);
-+
-+MODULE_DESCRIPTION("Airoha AN8855 PHY driver");
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.45.2
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.13-rc2
+
+for you to fetch changes up to 31f1b55d5d7e531cd827419e5d71c19f24de161c:
+
+  net :mana :Request a V2 response version for MANA_QUERY_GF_STAT (2024-12-05 12:02:15 +0100)
+
+----------------------------------------------------------------
+Including fixes from can and netfilter.
+
+Current release - regressions:
+
+  - rtnetlink: fix double call of rtnl_link_get_net_ifla()
+
+  - tcp: populate XPS related fields of timewait sockets
+
+  - ethtool: fix access to uninitialized fields in set RXNFC command
+
+  - selinux: use sk_to_full_sk() in selinux_ip_output()
+
+Current release - new code bugs:
+
+  - net: make napi_hash_lock irq safe
+
+  - eth: bnxt_en: support header page pool in queue API
+
+  - eth: ice: fix NULL pointer dereference in switchdev
+
+Previous releases - regressions:
+
+  - core: fix icmp host relookup triggering ip_rt_bug
+
+  - ipv6:
+    - avoid possible NULL deref in modify_prefix_route()
+    - release expired exception dst cached in socket
+
+  - smc: fix LGR and link use-after-free issue
+
+  - hsr: avoid potential out-of-bound access in fill_frame_info()
+
+  - can: hi311x: fix potential use-after-free
+
+  - eth: ice: fix VLAN pruning in switchdev mode
+
+Previous releases - always broken:
+
+  - netfilter:
+    - ipset: hold module reference while requesting a module
+    - nft_inner: incorrect percpu area handling under softirq
+
+  - can: j1939: fix skb reference counting
+
+  - eth: mlxsw: use correct key block on Spectrum-4
+
+  - eth: mlx5: fix memory leak in mlx5hws_definer_calc_layout
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Ajay Kaher (1):
+      ptp: Add error handling for adjfine callback in ptp_clock_adjtime
+
+Alexander Kozhinov (1):
+      can: gs_usb: add usb endpoint address detection at driver probe step
+
+Arkadiusz Kubalewski (1):
+      ice: fix PHY Clock Recovery availability check
+
+Cong Wang (1):
+      rtnetlink: fix double call of rtnl_link_get_net_ifla()
+
+Cosmin Ratiu (2):
+      net/mlx5: HWS: Fix memory leak in mlx5hws_definer_calc_layout
+      net/mlx5: HWS: Properly set bwc queue locks lock classes
+
+Daniel Xu (2):
+      bnxt_en: ethtool: Supply ntuple rss context action
+      selftests: drv-net: rss_ctx: Add test for ntuple rule
+
+Dario Binacchi (11):
+      can: c_can: c_can_handle_bus_err(): update statistics if skb allocation fails
+      can: sun4i_can: sun4i_can_err(): call can_change_state() even if cf is NULL
+      can: hi311x: hi3110_can_ist(): fix potential use-after-free
+      can: hi311x: hi3110_can_ist(): update state error statistics if skb allocation fails
+      can: m_can: m_can_handle_lec_err(): fix {rx,tx}_errors statistics
+      can: ifi_canfd: ifi_canfd_handle_lec_err(): fix {rx,tx}_errors statistics
+      can: hi311x: hi3110_can_ist(): fix {rx,tx}_errors statistics
+      can: sja1000: sja1000_err(): fix {rx,tx}_errors statistics
+      can: sun4i_can: sun4i_can_err(): fix {rx,tx}_errors statistics
+      can: ems_usb: ems_usb_rx_err(): fix {rx,tx}_errors statistics
+      can: f81604: f81604_handle_can_bus_errors(): fix {rx,tx}_errors statistics
+
+David S. Miller (1):
+      Merge branch 'enetc-mqprio-fixes' Wei Fang sayus:
+
+David Wei (3):
+      bnxt_en: refactor tpa_info alloc/free into helpers
+      bnxt_en: refactor bnxt_alloc_rx_rings() to call bnxt_alloc_rx_agg_bmap()
+      bnxt_en: handle tpa_info in queue API implementation
+
+Dmitry Antipov (2):
+      netfilter: x_tables: fix LED ID check in led_tg_check()
+      can: j1939: j1939_session_new(): fix skb reference counting
+
+Dong Chenchen (1):
+      net: Fix icmp host relookup triggering ip_rt_bug
+
+Eric Dumazet (7):
+      tcp: populate XPS related fields of timewait sockets
+      selinux: use sk_to_full_sk() in selinux_ip_output()
+      net: hsr: avoid potential out-of-bound access in fill_frame_info()
+      ipv6: avoid possible NULL deref in modify_prefix_route()
+      net: hsr: must allocate more bytes for RedBox support
+      geneve: do not assume mac header is set in geneve_xmit_skb()
+      net: avoid potential UAF in default_operstate()
+
+Fernando Fernandez Mancera (1):
+      Revert "udp: avoid calling sock_def_readable() if possible"
+
+Gal Pressman (1):
+      ethtool: Fix access to uninitialized fields in set RXNFC command
+
+Geetha sowjanya (1):
+      octeontx2-af: Fix SDP MAC link credits configuration
+
+Ido Schimmel (1):
+      mlxsw: spectrum_acl_flex_keys: Use correct key block on Spectrum-4
+
+Ivan Solodovnikov (1):
+      dccp: Fix memory leak in dccp_feat_change_recv
+
+Jacob Keller (2):
+      ixgbevf: stop attempting IPSEC offload on Mailbox API 1.5
+      ixgbe: downgrade logging of unsupported VF API version to debug
+
+Jakub Kicinski (6):
+      Merge branch 'bnxt-fix-failure-to-report-rss-context-in-ntuple-rule'
+      MAINTAINERS: list PTP drivers under networking
+      Merge tag 'linux-can-fixes-for-6.13-20241202' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can
+      Merge branch 'bnxt_en-support-header-page-pool-in-queue-api'
+      Merge branch 'mlx5-misc-fixes-2024-12-03'
+      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
+
+Jianbo Liu (1):
+      net/mlx5e: Remove workaround to avoid syndrome for internal port
+
+Jinghao Jia (1):
+      ipvs: fix UB due to uninitialized stack access in ip_vs_protocol_init()
+
+Jiri Wiesner (1):
+      net/ipv6: release expired exception dst cached in socket
+
+Joe Damato (1):
+      net: Make napi_hash_lock irq safe
+
+Joshua Hay (1):
+      idpf: set completion tag for "empty" bufs associated with a packet
+
+Konstantin Shkolnyy (3):
+      vsock/test: fix failures due to wrong SO_RCVLOWAT parameter
+      vsock/test: fix parameter types in SO_VM_SOCKETS_* calls
+      vsock/test: verify socket options after setting them
+
+Kory Maincent (1):
+      ethtool: Fix wrong mod state in case of verbose and no_mask bitset
+
+Kuniyuki Iwashima (1):
+      tipc: Fix use-after-free of kernel socket in cleanup_bearer().
+
+Lion Ackermann (1):
+      net: sched: fix ordering of qlen adjustment
+
+Louis Leseur (1):
+      net/qed: allow old cards not supporting "num_images" to work
+
+Marc Kleine-Budde (3):
+      can: dev: can_set_termination(): allow sleeping GPIOs
+      Merge patch series "Fix {rx,tx}_errors CAN statistics"
+      can: mcp251xfd: mcp251xfd_get_tef_len(): work around erratum DS80000789E 6.
+
+Marcin Szycik (1):
+      ice: Fix VLAN pruning in switchdev mode
+
+Martin Ottens (1):
+      net/sched: tbf: correct backlog statistic for GSO packets
+
+Oleksij Rempel (1):
+      net: phy: microchip: Reset LAN88xx PHY to ensure clean link state on LAN7800/7850
+
+Pablo Neira Ayuso (3):
+      netfilter: nft_socket: remove WARN_ON_ONCE on maximum cgroup level
+      netfilter: nft_inner: incorrect percpu area handling under softirq
+      netfilter: nft_set_hash: skip duplicated elements pending gc run
+
+Paolo Abeni (4):
+      Merge branch 'two-fixes-for-smc'
+      ipmr: tune the ipmr_can_free_table() checks.
+      Merge branch 'vsock-test-fix-wrong-setsockopt-parameters'
+      Merge tag 'nf-24-12-05' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
+
+Patrisious Haddad (2):
+      net/mlx5: E-Switch, Fix switching to switchdev mode with IB device disabled
+      net/mlx5: E-Switch, Fix switching to switchdev mode in MPV
+
+Phil Sutter (1):
+      netfilter: ipset: Hold module reference while requesting a module
+
+Przemyslaw Korba (1):
+      ice: fix PHY timestamp extraction for ETH56G
+
+Shradha Gupta (1):
+      net :mana :Request a V2 response version for MANA_QUERY_GF_STAT
+
+Tariq Toukan (1):
+      net/mlx5e: SD, Use correct mdev to build channel param
+
+Tore Amundsen (1):
+      ixgbe: Correct BASE-BX10 compliance code
+
+Vladimir Oltean (1):
+      net: enetc: read TSN capabilities from port register, not SI
+
+Vyshnav Ajith (1):
+      docs: net: bareudp: fix spelling and grammar mistakes
+
+Wei Fang (1):
+      net: enetc: Do not configure preemptible TCs if SIs do not support
+
+Wen Gu (2):
+      net/smc: initialize close_work early to avoid warning
+      net/smc: fix LGR and link use-after-free issue
+
+Wojciech Drewek (1):
+      ice: Fix NULL pointer dereference in switchdev
+
+Xin Long (1):
+      net: sched: fix erspan_opt settings in cls_flower
+
+Yuan Can (1):
+      igb: Fix potential invalid memory access in igb_init_module()
+
+ Documentation/networking/bareudp.rst               |  11 +-
+ MAINTAINERS                                        |   1 +
+ drivers/net/can/c_can/c_can_main.c                 |  26 ++-
+ drivers/net/can/dev/dev.c                          |   2 +-
+ drivers/net/can/ifi_canfd/ifi_canfd.c              |  58 ++++--
+ drivers/net/can/m_can/m_can.c                      |  33 +++-
+ drivers/net/can/sja1000/sja1000.c                  |  67 ++++---
+ drivers/net/can/spi/hi311x.c                       |  55 +++---
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c      |  29 ++-
+ drivers/net/can/sun4i_can.c                        |  22 ++-
+ drivers/net/can/usb/ems_usb.c                      |  58 +++---
+ drivers/net/can/usb/f81604.c                       |  10 +-
+ drivers/net/can/usb/gs_usb.c                       |  25 ++-
+ drivers/net/can/vxcan.c                            |  10 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          | 205 +++++++++++++--------
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c  |   8 +-
+ drivers/net/ethernet/freescale/enetc/enetc.c       |  12 +-
+ drivers/net/ethernet/freescale/enetc/enetc_hw.h    |   6 +-
+ drivers/net/ethernet/freescale/enetc/enetc_pf.c    |  19 ++
+ drivers/net/ethernet/intel/ice/ice_common.c        |  25 ++-
+ drivers/net/ethernet/intel/ice/ice_main.c          |   8 +-
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.c        |   3 +-
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.h        |   5 +-
+ drivers/net/ethernet/intel/ice/ice_virtchnl.c      |   6 +
+ drivers/net/ethernet/intel/idpf/idpf_txrx.c        |   1 +
+ drivers/net/ethernet/intel/igb/igb_main.c          |   4 +
+ drivers/net/ethernet/intel/ixgbe/ixgbe_common.h    |   2 +
+ drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h       |   2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c     |   2 +-
+ drivers/net/ethernet/intel/ixgbevf/ipsec.c         |   1 -
+ drivers/net/ethernet/marvell/octeontx2/af/common.h |   1 +
+ .../net/ethernet/marvell/octeontx2/af/rvu_nix.c    |   3 +
+ .../ethernet/mellanox/mlx5/core/en/tc_tun_encap.c  |  13 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  32 ++--
+ .../ethernet/mellanox/mlx5/core/eswitch_offloads.c |   5 +-
+ .../mellanox/mlx5/core/steering/hws/bwc_complex.c  |   2 +
+ .../mellanox/mlx5/core/steering/hws/send.c         |   1 +
+ .../mellanox/mlxsw/spectrum_acl_flex_keys.c        |   6 +-
+ drivers/net/ethernet/microsoft/mana/mana_en.c      |   1 +
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c          |   4 +-
+ drivers/net/geneve.c                               |   2 +-
+ drivers/net/netkit.c                               |  11 +-
+ drivers/net/phy/microchip.c                        |  21 +++
+ drivers/net/veth.c                                 |  12 +-
+ drivers/ptp/ptp_clock.c                            |   3 +-
+ include/net/inet_timewait_sock.h                   |   2 +
+ include/net/net_namespace.h                        |   5 +
+ include/net/netfilter/nf_tables_core.h             |   1 +
+ net/can/j1939/transport.c                          |   2 +-
+ net/core/dev.c                                     |  18 +-
+ net/core/link_watch.c                              |   7 +-
+ net/core/rtnetlink.c                               |  44 ++---
+ net/dccp/feat.c                                    |   6 +-
+ net/ethtool/bitset.c                               |  48 ++++-
+ net/ethtool/ioctl.c                                |   3 +-
+ net/hsr/hsr_device.c                               |  19 +-
+ net/hsr/hsr_forward.c                              |   2 +
+ net/ipv4/icmp.c                                    |   3 +
+ net/ipv4/ipmr.c                                    |   2 +-
+ net/ipv4/tcp_minisocks.c                           |   4 +
+ net/ipv4/udp.c                                     |  14 +-
+ net/ipv6/addrconf.c                                |  13 +-
+ net/ipv6/ip6mr.c                                   |   2 +-
+ net/ipv6/route.c                                   |   6 +-
+ net/netfilter/ipset/ip_set_core.c                  |   5 +
+ net/netfilter/ipvs/ip_vs_proto.c                   |   4 +-
+ net/netfilter/nft_inner.c                          |  57 ++++--
+ net/netfilter/nft_set_hash.c                       |  16 ++
+ net/netfilter/nft_socket.c                         |   2 +-
+ net/netfilter/xt_LED.c                             |   4 +-
+ net/sched/cls_flower.c                             |   5 +-
+ net/sched/sch_cake.c                               |   2 +-
+ net/sched/sch_choke.c                              |   2 +-
+ net/sched/sch_tbf.c                                |  18 +-
+ net/smc/af_smc.c                                   |   6 +-
+ net/tipc/udp_media.c                               |   2 +-
+ security/selinux/hooks.c                           |   2 +-
+ tools/testing/selftests/drivers/net/hw/rss_ctx.py  |  12 +-
+ tools/testing/vsock/control.c                      |   9 +-
+ tools/testing/vsock/msg_zerocopy_common.c          |  10 -
+ tools/testing/vsock/msg_zerocopy_common.h          |   1 -
+ tools/testing/vsock/util.c                         | 142 ++++++++++++++
+ tools/testing/vsock/util.h                         |   7 +
+ tools/testing/vsock/vsock_perf.c                   |  20 +-
+ tools/testing/vsock/vsock_test.c                   |  75 ++++----
+ tools/testing/vsock/vsock_test_zerocopy.c          |   2 +-
+ tools/testing/vsock/vsock_uring_test.c             |   2 +-
+ 87 files changed, 985 insertions(+), 454 deletions(-)
 
 
