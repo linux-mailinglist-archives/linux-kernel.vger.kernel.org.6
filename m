@@ -1,98 +1,131 @@
-Return-Path: <linux-kernel+bounces-432835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C12F9E50E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:12:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F410E9E5129
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:21:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DDCE160E56
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4BB22875DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0181D54D6;
-	Thu,  5 Dec 2024 09:08:30 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A391D63C5;
+	Thu,  5 Dec 2024 09:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="SvfL/sF6"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589E217B506
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E7F1D5179;
+	Thu,  5 Dec 2024 09:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733389709; cv=none; b=acV4/0GOYrPrXGx77/LYIiqTgBgHSDNVhHQiPEwnBI6CDlv2HGMy7XjnI6/6jpcz4t8FBP8LICpuxReyf5TASVgSJ6bYytvStewG12r5FkGf33j7EqdbaRco+AEIpeVyMnpaHgSGo/ElhECFZBIkvkee9tjh/GD7dexzL26pe0U=
+	t=1733390484; cv=none; b=LwKF1u2Dg0sZ9u3vHSUNmyQyEFAAHB1NJab/hMsZOsc1C7i2VVUV1s/y55pr+DEpQGS5wct6c/0BPUvZxvngzKLCVX9dROqOy6SIi0zSossUAzYSWscMDXwareOw1VmjBYrJXSs9PwiwMihNQ/ENDbOHbQpyJn0z1VEQJ/FzkxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733389709; c=relaxed/simple;
-	bh=llFR7118dKZ4MLn6ZJ/e2Mm8bz2s3I1Mprl4MGUjl5c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f7yplk4SpEgJmMcPg6f5e8lnwXYM0F4BcHIh/TN29M73KmtM6QT1z4zfmubNy5eigeXAFoMIHD8ZPG6BfbZTt+WQz86FqS462z4XqLCPuoVagY0ZHiECk8QYA88iOmx1TlaPxBq8NIbdFmDuHZKJTUXv4Dbu65ffOWRM+wdY1zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7a5031e75so5974495ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:08:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733389707; x=1733994507;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LOb5bRCTs7fB0tNDMCyTrFEpjY3yj4VUPsI90sOxb2A=;
-        b=RLtr+FRlcdHGYqRzil+E89X8dgLqzwPjhnUNKOeywYL9vcas91gYwk/gOEfUydiScS
-         54udV5nkD8fFma5xEgWh7/0SMyOE/14GG6OIiau7dinUAVZI3NcVmLv5TgaAqsoSkPma
-         d3zFDqIxEUAGlKueM+SH8LAnFI+5uw0jeXDauX/cmlVNOBLN7u/9iiLw1OjaBJIJh0Gv
-         kX8rWdhN1D6XpD5Q9F/4m8T5NxnuM+YtZcDM5X7t9BldfjD7XCGIrMOEidLAhpJhAR94
-         NaLLSxnXjNt+p7SpmDNEjr9BBZ1holf5sTT9INETsIsTwYOM5kl3FyS4RYAjo0oedubG
-         dYVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWNpB1+V/CR5qM9H+Y8gOcAZQJO6lT3cl+PbX0n/6h3r8UNdKGS7KOTmj9IOMj9t5oLFrRaSEg78O7tPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXsRB6tMzwqpietkWLnGoy+j6Lo9nOL/RCPcXxUPUixOTeM1EV
-	I9dSTVz9xTwbM492zZPzJz5u6H8ZJoMJ9zBGthGzT4Zp5Eugu32J/qzAvkgGhHXcyx2rrO4iqdL
-	klM3ISNy+1ah/lf7A0ktdLzjEyg+aFR17LW6OZsJwKAqhoteBHBVj8Nk=
-X-Google-Smtp-Source: AGHT+IGFvIah2BIE67hHqF9MlPPOwhy/w8UaViJ0teMog5nkys7YJXsLbRsV5l6JsV1JrUo7cTM2I2RjWjCRULRGGSwntd5zJKkB
+	s=arc-20240116; t=1733390484; c=relaxed/simple;
+	bh=qsOP8aq+4BKgNXqhMscjUMHdRrJjlpm5TslU9YrmAa0=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=W0yycdHDGXW/1jj+o5zgycFm8FBX2vt4RmSjovgEDD6uv5tu5WL/Rh0dVdhEMbZThOL/ub7E0a2nhIs0EA2Q4mkydUxiiVQF9xnrbJFmWk37PsWTuuxqfhC9z4jdMhBOn1X6BGmJql778wR2UreIms/0t69sani529/I7sNmEfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=SvfL/sF6; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1733390468;
+	bh=wZ9o74dxtdDPeqV/igIwQwn2t+PH3uItK3WPGvDiVnM=;
+	h=From:To:Cc:Subject:Date;
+	b=SvfL/sF6uYGrhiE7TwXS+3mCdIjgk8XfkMyOfkkg5BYJEF9JbLmZbnpxXQOh29vDe
+	 uef2C7lab0P5w1GfDulzIqxtxI0cn7gJnjFL0jNWMmqpDjIpFdRcPYFwdyrSyra+UD
+	 6IEXLGSGtfLCp04boZs0Gyi2aMOxmvp2whhWnU8k=
+Received: from NUC11-F41.. ([39.156.73.10])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 2248902B; Thu, 05 Dec 2024 17:08:36 +0800
+X-QQ-mid: xmsmtpt1733389716tmi4of4es
+Message-ID: <tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntuj07DxHonYAwENPjq4EuWHyc2G6NkcfArv9/2UF+RGgDoV3nsHZ/
+	 XMjZL7AasqNrreLIKj1RD82HY/ERt2WpVIPKjUa/CyREVCTllyw6KQCDk43sNm7q1ZsISOdg5xED
+	 q8ntMYxOQud6yF0Y+qDNcyTXKsGvr9GzXjgOXMIEf3uDBklyUSDMxcYzmyt38OJGqstIpOjxQ5RS
+	 c6nIux1GBe1tB8b1vt4ApBrbbeVnD468cr5AkSk/LcBoIBA6TEyfAmyXkv5u3cnh+nuMbv57EKjD
+	 O390n3MRgmDTgov7lhRxkWX+6eSHsItWqzt8ToNEzLjcCVYlmtsGVMx+EPBNC7geXD/je21vzvWn
+	 damafsKYkiSLWNLwNVG6fDDcc9Te7F0mdfQJ8lo2IsbRvo3wSb9VB38naRTY8sk1JrCMziz2woHX
+	 Up4eTcxXrS/G2UFiwh6Ch2IiT9HCvMrcehmM0zL8FqHECLh2MyHSxjD0TBedtjOfWmLfDcRpvJJs
+	 bNxXA/s2GZEfADSF0/QZJABICOt9uYa6oLOfqY7ZHgMXQZMakUowelsnujSlOyio/5o5nDsdEC1E
+	 W0QGnYu0GgG5CQMJCIeSZVRTeoJV21ExpnNAgVpp9+8V+hm+Lisgkamv7HGNY69l/uiITUQxllcH
+	 O7Y/LZks7jyE8bV97IUslvaBMyzYldP2xEvFQy/m0EVAHzQImSSAtoz/zWw83r28RwHwS1IFN5Q9
+	 Nge8qc1gdaDvJ7pH8pNPLcldbKp2f2Y3IxAB96eQWz3TI/YtTEB5kOCOO+xmYRHRFpJE4X5KcYnp
+	 Rb4voynCs30iNbB+LI97MHop7wdkdGLkF4GunygRV99RWN7SJrw/N5c0WAxOiu8Cjy4OX8KSyrgB
+	 wg7L6N4jri6165SXKdl23zSWSWev1ce3KP5G6fHJLi/93kvaoyqMMiI+g4OpOdRZxv3KptRPgOrp
+	 PZAs/nWgrVJznDx8+J1p54n2HDZtP2
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Rong Tao <rtoax@foxmail.com>
+To: rongtao@cestc.cn,
+	qmo@kernel.org,
+	ast@kernel.org
+Cc: rtoax@foxmail.com,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [TOOLING] (bpftool)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf-next] bpftool: Fix gen object segfault
+Date: Thu,  5 Dec 2024 17:08:34 +0800
+X-OQ-MSGID: <20241205090835.248041-1-rtoax@foxmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164f:b0:3a6:ac4e:264a with SMTP id
- e9e14a558f8ab-3a7f9a46431mr112676745ab.10.1733389707494; Thu, 05 Dec 2024
- 01:08:27 -0800 (PST)
-Date: Thu, 05 Dec 2024 01:08:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67516d8b.050a0220.17bd51.0092.GAE@google.com>
-Subject: [syzbot] Monthly arm report (Dec 2024)
-From: syzbot <syzbot+list5853008af9f104a9355f@syzkaller.appspotmail.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello arm maintainers/developers,
+From: Rong Tao <rongtao@cestc.cn>
 
-This is a 31-day syzbot report for the arm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/arm
+If the input file and output file are the same, the input file is cleared
+due to opening, resulting in a NULL pointer access by libbpf.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 5 have already been fixed.
+    $ sudo ./bpftool gen object prog.o prog.o
+    libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
+    Segmentation fault
 
-Some of the still happening issues:
+    (gdb) bt
+    #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+    #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized out>, opts=<optimized out>) at linker.c:453
+    #2  0x000000000040c235 in do_object ()
+    #3  0x00000000004021d7 in main ()
+    (gdb) frame 0
+    #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+    1296		Elf64_Sym *sym = symtab->data->d_buf;
 
-Ref Crashes Repro Title
-<1> 3448    Yes   BUG: bad usercopy in fpa_set
-                  https://syzkaller.appspot.com/bug?extid=cb76c2983557a07cdb14
-<2> 817     Yes   BUG: unable to handle kernel paging request in trans_pgd_create_copy
-                  https://syzkaller.appspot.com/bug?extid=2d1f5a94167d430a3bd7
-<3> 123     No    WARNING in delayed_work_timer_fn
-                  https://syzkaller.appspot.com/bug?extid=e13e654d315d4da1277c
-
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ tools/bpf/bpftool/gen.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
+index 5a4d3240689e..4cd135726758 100644
+--- a/tools/bpf/bpftool/gen.c
++++ b/tools/bpf/bpftool/gen.c
+@@ -1896,6 +1896,11 @@ static int do_object(int argc, char **argv)
+ 	while (argc) {
+ 		file = GET_ARG();
+ 
++		if (!strcmp(file, output_file)) {
++			p_err("Input/Output file couldn't be same.");
++			goto out;
++		}
++
+ 		err = bpf_linker__add_file(linker, file, NULL);
+ 		if (err) {
+ 			p_err("failed to link '%s': %s (%d)", file, strerror(errno), errno);
+-- 
+2.47.1
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
