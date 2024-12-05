@@ -1,199 +1,99 @@
-Return-Path: <linux-kernel+bounces-433445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F06A9E587C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:27:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C120A9E587E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B827A16B3AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:27:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA17E18854A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B84921C16E;
-	Thu,  5 Dec 2024 14:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NVXB7XDD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB3F21C162;
-	Thu,  5 Dec 2024 14:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4507321A44B;
+	Thu,  5 Dec 2024 14:27:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AADA217F50;
+	Thu,  5 Dec 2024 14:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733408836; cv=none; b=RNjamaMA41KhCZ0SHjwvLNE+hSo6ajclAQTk+GlVYmT2mt3rV8OvjKpG8fHe2T18c+tqxF5BI1DtEtv053+M/FAulVGfaFKl9r4ATV+uxTB7e9jUAQN0/4/nD7OgTZ77oLs+HCMQ9bsS9sFpkF1oNHRtz/AlbESUxIqd3z/6mE8=
+	t=1733408849; cv=none; b=Nmu3CtI2Dz6M4Z3prFD34/joONDHdO6gDB6acPKPnK0ZC0ZYluQyKq5gdVLqo4MJjCqOmumEudCqFOiTc8W/mcXs4msaWm6IAXpNq7DLUY9PupUGuKelCuBBssV7ALvFo1LdywoqTq+fixmTWjwNEmGD9Mp9pVgQNwc0G0TTdUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733408836; c=relaxed/simple;
-	bh=TdHrru6HrKZsTuRgJP9+R3FgVkJlN0Fu+Onr/uxNQxk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gU97qG+vw4M9jC3kl/wd9Ql9qAZHo+J5VfYUoXTCkR+32HAyAn9QiMP44Z476QotEW54wD7/V2H68SsuLa2vbl19N7Ry28GP4NeGUarClC6sJNAlGM0+uiaEne8dDYkOHrUKLhxSjZFe4JvHVJsxglRapX9khokqzPL/1M450Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NVXB7XDD; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733408835; x=1764944835;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=TdHrru6HrKZsTuRgJP9+R3FgVkJlN0Fu+Onr/uxNQxk=;
-  b=NVXB7XDDl7qQ5jK4j9og68EvRdP+r/71giOL8wizPIwDXWYyLpWurR+I
-   UCC6RB/dUDVu9f+mPDCOTo+K7WxSJBH/KCjO+I74h8m9Lx2jXWlj8ybx6
-   kRH/NvRg4kBqA4F0MrFC31unQz0txbV3iG7P4ib733T1upyOxJFkOlr9I
-   BOQdxWtkQPv79AVcf1bGBMyL+7ZQVEaMlbcD2ACZg/F3E1nWIPtjSTYX/
-   yKn7NicbOF9V+sdB/tF1DvVeKWKWpwfsvtyid1PzyzoBCGtCnGYJwjC1a
-   /i7BwL9pDVAMiMLq/7shbrsjVlpsTmgSxWwJOB6DP8jOKVxTKDK0376zz
-   A==;
-X-CSE-ConnectionGUID: U4KzeGOpTIGb2z9nHTd84A==
-X-CSE-MsgGUID: 04oOsGjhSB+7SJUlj0XXng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="56200568"
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="56200568"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:27:14 -0800
-X-CSE-ConnectionGUID: aUWcbiuCTYaljaysBIO2jQ==
-X-CSE-MsgGUID: WjzM/8UlQFSQUkyU6nM6RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,210,1728975600"; 
-   d="scan'208";a="93937382"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.60])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 06:27:07 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 5 Dec 2024 16:27:03 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v9 20/22] ACPI: platform_profile: Allow multiple
- handlers
-In-Reply-To: <20241202055031.8038-21-mario.limonciello@amd.com>
-Message-ID: <e1653608-4073-3f2a-c8c9-9718320d071a@linux.intel.com>
-References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-21-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733408849; c=relaxed/simple;
+	bh=6jvY1TGlZAQLgaOJ/U1KDMJOJn103xAHj0ddui9cQNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlP2vT+AXoM3G0SSbFGeLn+H8aeVgSJRBI1//nH+TKvcyBG46wSSwvHyt67G+1XdwKUkiXWzIaBmActB0AZpeBvEBMOalXxjq99uJm8rwFicQ+k6nBEbHPaDdcdH+MvtCnmyreHGo4qguAcQ3wO61NEVfELhkmru5oZyC1SXC4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A45661063;
+	Thu,  5 Dec 2024 06:27:55 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 659BF3F5A1;
+	Thu,  5 Dec 2024 06:27:26 -0800 (PST)
+Date: Thu, 5 Dec 2024 14:27:24 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH] arm64: dts: fvp: Update bus-range property
+Message-ID: <Z1G4TCY9ekezAc8Y@bogus>
+References: <20241128152543.1821878-1-aneesh.kumar@kernel.org>
+ <173339457335.691023.1334271427632194234.b4-ty@arm.com>
+ <Z1GxQHY1XkQcPFc0@e110455-lin.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-629362536-1733408823=:932"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1GxQHY1XkQcPFc0@e110455-lin.cambridge.arm.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Dec 05, 2024 at 01:57:20PM +0000, Liviu Dudau wrote:
+> On Thu, Dec 05, 2024 at 10:31:03AM +0000, Sudeep Holla wrote:
+> > On Thu, 28 Nov 2024 20:55:43 +0530, Aneesh Kumar K.V (Arm) wrote:
+> > > These days, the Fixed Virtual Platforms(FVP) Base RevC model supports
+> > > more PCI devices. Update the max bus number so that Linux can enumerate
+> > > them correctly. Without this, the kernel throws the below error while
+> > > booting with the default hierarchy
+> > >
+> > > pci_bus 0000:01: busn_res: [bus 01] end is updated to 01
+> > > pci_bus 0000:02: busn_res: can not insert [bus 02-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > > pci_bus 0000:02: busn_res: [bus 02-01] end is updated to 02
+> > > pci_bus 0000:02: busn_res: can not insert [bus 02] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > > pci_bus 0000:03: busn_res: can not insert [bus 03-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > > pci_bus 0000:03: busn_res: [bus 03-01] end is updated to 03
+> > > pci_bus 0000:03: busn_res: can not insert [bus 03] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > > pci_bus 0000:04: busn_res: can not insert [bus 04-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > > pci_bus 0000:04: busn_res: [bus 04-01] end is updated to 04
+> > > pci_bus 0000:04: busn_res: can not insert [bus 04] under [bus 00-01] (conflicts with (null) [bus 00-01])
+> > > pci 0000:00:01.0: BAR 14: assigned [mem 0x50000000-0x500fffff]
+> > >
+> > > [...]
+> > 
+> > Applied to sudeep.holla/linux (for-next/juno/fixes), thanks!
+> > 
+> > [1/1] arm64: dts: fvp: Update bus-range property
+> >       https://git.kernel.org/sudeep.holla/c/4f776d81bf92
+> 
+> Thanks for the quick response. TBH, I did not receive your initial review
+> email, that's why I've messaged thinking it got lost.
 
---8323328-629362536-1733408823=:932
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+No I hadn't responded on the list yet. I queue and wait for a day for the
+kbuild bot or any other bots to report no failures before I officially respond
+as applied as I wouldn't have tried all build configs in general but it
+doesn't apply for DT files though 😉.
 
-On Sun, 1 Dec 2024, Mario Limonciello wrote:
-
-> Multiple drivers may attempt to register platform profile handlers,
-> but only one may be registered and the behavior is non-deterministic
-> for which one wins.  It's mostly controlled by probing order.
->=20
-> This can be problematic if one driver changes CPU settings and another
-> driver notifies the EC for changing fan curves.
->=20
-> Modify the ACPI platform profile handler to let multiple drivers
-> register platform profile handlers and abstract this detail from userspac=
-e.
->=20
-> To avoid undefined behaviors only offer profiles that are commonly
-> advertised across multiple handlers.
->=20
-> If any problems occur when changing profiles for any driver, then the
-> drivers that were already changed remain changed and the legacy sysfs
-> handler will report 'custom'.
->=20
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/acpi/platform_profile.c | 11 -----------
->  1 file changed, 11 deletions(-)
->=20
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
-ile.c
-> index 289b5d43638ae..2e38aa410b3ad 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -10,7 +10,6 @@
->  #include <linux/platform_profile.h>
->  #include <linux/sysfs.h>
-> =20
-> -static struct platform_profile_handler *cur_profile;
->  static DEFINE_MUTEX(profile_lock);
-> =20
->  static const char * const profile_names[] =3D {
-> @@ -399,8 +398,6 @@ static const struct attribute_group platform_profile_=
-group =3D {
-> =20
->  void platform_profile_notify(struct platform_profile_handler *pprof)
->  {
-> -=09if (!cur_profile)
-> -=09=09return;
->  =09scoped_cond_guard(mutex_intr, return, &profile_lock) {
->  =09=09_notify_class_profile(pprof->class_dev, NULL);
->  =09}
-> @@ -463,9 +460,6 @@ int platform_profile_register(struct platform_profile=
-_handler *pprof)
->  =09}
-> =20
->  =09guard(mutex)(&profile_lock);
-> -=09/* We can only have one active profile */
-> -=09if (cur_profile)
-> -=09=09return -EEXIST;
-> =20
->  =09/* create class interface for individual handler */
->  =09pprof->minor =3D ida_alloc(&platform_profile_ida, GFP_KERNEL);
-> @@ -481,8 +475,6 @@ int platform_profile_register(struct platform_profile=
-_handler *pprof)
-> =20
->  =09sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> =20
-> -=09cur_profile =3D pprof;
-> -
->  =09err =3D sysfs_update_group(acpi_kobj, &platform_profile_group);
->  =09if (err)
->  =09=09goto cleanup_cur;
-> @@ -490,7 +482,6 @@ int platform_profile_register(struct platform_profile=
-_handler *pprof)
->  =09return 0;
-> =20
->  cleanup_cur:
-> -=09cur_profile =3D NULL;
->  =09device_unregister(pprof->class_dev);
-> =20
->  cleanup_ida:
-> @@ -505,8 +496,6 @@ int platform_profile_remove(struct platform_profile_h=
-andler *pprof)
->  =09int id;
->  =09guard(mutex)(&profile_lock);
-> =20
-> -=09cur_profile =3D NULL;
-> -
->  =09id =3D pprof->minor;
->  =09device_unregister(pprof->class_dev);
->  =09ida_free(&platform_profile_ida, id);
->=20
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
---8323328-629362536-1733408823=:932--
+--
+Regards,
+Sudeep
 
