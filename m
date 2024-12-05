@@ -1,245 +1,335 @@
-Return-Path: <linux-kernel+bounces-432490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A099E4C16
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:02:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA288188156D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:02:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595237E105;
-	Thu,  5 Dec 2024 02:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="PJMRYTEq"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2046.outbound.protection.outlook.com [40.107.215.46])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AE09E4C17
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:02:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7086D4C96
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733364151; cv=fail; b=Fcc7777JbUk6P8twSn3DrE7fDT+dmjup3kcbIJIhkVkq5UJ9k0ylJHY+cCEZAYihPY5Dnh4WY1LGpxyutCebCOrDgr14hdyXWlhjMVrHH2g+IvMT3aDx81YLWwxHYCodGzEpUA6AO4RH2VKsH4vumGX3wsIaJaJUffY8ghXzAQk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733364151; c=relaxed/simple;
-	bh=Ort3AqNtkBn/HGeme6YyZ8aOlhJ5QsOJbR/otrz2l0E=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iDvHxzE0FbOL68uh+TSCEjyq+/savRUhnwt1UU0uX+19U/As7+4aZTIs6UqJYDPuH+i4/FoY4kNp+RfMlecsYP9qCbkb7mKMcZ8hBCQzA4WXFCVDbdrs38cwUEvhzAhf7bzUbVnNOfMd3pNIIZCSAWXTuRbVZZHHAExb+F7Jz6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=PJMRYTEq; arc=fail smtp.client-ip=40.107.215.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kEAM7hFuErNb49cY8Zex3KuzeN0bqWfFKLvGSccM+fmr/+vhLOcVnOE8elj9q9QCuYfMHCSQLZjJ2uKjgPtS6NJ6vMIXwtcXQ8p/z97rdJV2s1p7L4LZ0w0cN2Y9ISXpG6v16hpsLNxpH/H2R/mFj5PyLS5uFoR3bbSgq4icuqmisi6ojifZLP2Q90tFqD+LvxmtioWHHbZ9IHR8QTc4Ha0dYvE4W56/ujlf2g0tgIy7942QyiGZYs/WIiXhWxniVhCNU92dyD9YIuiLuTRz/MdVKb1/0YHmNZMc+1uWEcS4qd/xvBs9tOYwh4vPF2n5DHRjd0RQ4uDxlZCuSdBi7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X7Sk49/O/g3L+5QtFmqu6OH5J8Z6FOI5Ea3YB4wDoBs=;
- b=Ydfo29et44VoRZF3UCXdbVvR6mBv54z4jl5o+F4kzt+k0wvl6SY8NkaPpN3YrBtMs/jDRdUy+km63R/hAPnthyFx36NMQyh2UPLXXtnnTuTNHPpwcenrPSNRokZg82S74gjjkRylE6B6CbPhiDuVeMeJ1UQZZuxhc0C9RxOUjl5JoedYqlPInPTkpVNB8TvscMhUMUsz0EffVY96L6fucry78X2fWQZTFxylNhiCRXVGdhlHjZI3TcTMjUX6tXabnXASa8xsH66h6pMutTpU/uZQfBrLaiCltaDbxg2krU7eCLm/HzYI9Q7nbA9HuTaEXKF42GSLWuOxEmAER7fHlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X7Sk49/O/g3L+5QtFmqu6OH5J8Z6FOI5Ea3YB4wDoBs=;
- b=PJMRYTEqzgOJGgltTvFvRjhJmDuHoHzf0n2ADHafjo39ubA3cK+oiVTrLTtHUcA1KoBU1I68/gFzYbGtTce1fq83aDkYk4Tf1xtsS1gvxO/KuQLKcxmujb5WlH72JrbidbsO2HkGkNkO/3dXUN5hmVyAFvQVpwkD2rN723UlMbc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oppo.com;
-Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
- by TY0PR02MB6669.apcprd02.prod.outlook.com (2603:1096:405:19::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Thu, 5 Dec
- 2024 02:02:22 +0000
-Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
- ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
- ([fe80::bb06:c283:a50:7796%5]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
- 02:02:21 +0000
-Message-ID: <502ae396-ae82-44d6-b08d-617e9e9c4092@oppo.com>
-Date: Thu, 5 Dec 2024 10:02:18 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] f2fs-tools: Check and fix inline xattr inplace
-To: wangzijie <wangzijie1@honor.com>, jaegeuk@kernel.org, chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- bintian.wang@honor.com
-References: <20241204122317.3042137-1-wangzijie1@honor.com>
-Content-Language: en-US
-From: Sheng Yong <shengyong@oppo.com>
-In-Reply-To: <20241204122317.3042137-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCP286CA0356.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:7c::8) To SEYPR02MB6014.apcprd02.prod.outlook.com
- (2603:1096:101:6b::10)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919BD2858E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:02:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2727E105;
+	Thu,  5 Dec 2024 02:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="Gtg08DYj"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C96F16F0E8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733364158; cv=none; b=IHRlefRfiaj/jjj8QA8dOsClNBCKGbhMgV5lnc6fTGu9JRfccbt7UfMJhWDr7q+KkwSKtH7Z+GA1YtWd/EFBznhPiMt+pY8LTYcSY+2enkQo0fNoc1LG/X80JosV7ZtfOJLCISYTFztY/w4K0vmJOUjd6mD9/ocDr71oTG8Y9Y4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733364158; c=relaxed/simple;
+	bh=crDd3cXECCI9K3K7ksxOvx9AbAXgrYush9vrHX9zpkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AcD19eLPcKN5WPsdLMFPnF/naupnD/xa4gN3AfT/6Jhl9TxMdMBdKxv8e1/eEY4KNkltS/trsIJAPyDS48RWHEXUDy5YVt4G88ebVAl8cGtUM1VRTpoGiaVqu/yJqZhWuLZR8BarwzAuXmvTlLqb02bZ4ELFmS2XWnJkaNGHN9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=Gtg08DYj; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id 373742003AE;
+	Thu,  5 Dec 2024 03:02:27 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=Gtg08DYj;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=9LaaY0KgqG6gEYu65lafSSzzEHTNh8g9U9JnsLTnezU=; b=Gtg08DYjOeZ/8rHAHZnEAZ6THc
+	WUC6iTeB3S3yudJ29wJU/e99aSqrMVNc8KcDEiSQkElmdvAn4lbZmN9jVevHveV1CA9BITzj77iwa
+	J+NXfxDqISgY2nhkT1N0avSbrm8uTjgOqwbOv/Tt1Icb1YUQck0WmuwM66uECxa54cIc=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tJ1CE-001IaL-1U;
+	Thu, 05 Dec 2024 03:02:26 +0100
+Date: Thu, 5 Dec 2024 03:02:26 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Eric Hagberg <ehagberg@janestreet.com>
+Subject: [PATCH v3] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
+Message-ID: <Z1EJssqd93w2erMZ@bender.morinfr.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|TY0PR02MB6669:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57a15599-4931-41de-c1c9-08dd14d0daf6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZGRQWVhvNXdTaVd4ZU1QRkowMmdtMThJalUrMVF1UHJ1MFljNEhMVmQzVzlD?=
- =?utf-8?B?aXIxelYycjJ1T2ltNnA4L3cvWjVHdXRpRGIydUMrcmtIWjVBT0ZRVng3ajdu?=
- =?utf-8?B?c2tHK1BwNktuc084SkRYVWJMazF1d0svVlhaUGErZ1pveTk5eTdMb0NjVmRF?=
- =?utf-8?B?STQzS2NnZGVKSC91SW9seFFMa0JKdGR3azB2Y1pXekpHQWt6MVZOQ0FIL2Fh?=
- =?utf-8?B?dHBjaGhscXZ6UUh5UUhuYXVvQVpvWWFaaUVacDY0THBYOHdWcHFUbHU1blhj?=
- =?utf-8?B?d2diTDZLUlRlMjJVZzJFUUhlM0xWWkZwSEdsQ2tIZStQUk9UOXFXVEtCcGM0?=
- =?utf-8?B?MFNrdTRFVGhzUjQxZmIzc0l4Sm9CaTNhbTRwdktuY3U0SGRrVzNZdXBqdjRt?=
- =?utf-8?B?L0JqSkM4dTBycVIyUlZtNnF1YUZKTkRmYlFESUFlUk90RUxYQjhvaXpWT2Nl?=
- =?utf-8?B?L0JxbHp1R3Fra1pJZ0lPYk16UHI0LzJXZnRGV215WkJqMGVEVTFncDl4RTQr?=
- =?utf-8?B?QldxbndNWUxYd01DU2lHS0pBOXdRZmRlU0lVR2hWSzVTRXdCY0ppRmUyU1dL?=
- =?utf-8?B?WmVNWDQxQUtzc1FLbGIrd29CZW1oT2Q5UmNqUkJJbHhUYWUwck5qRHpOK2tv?=
- =?utf-8?B?U0hQbFRvSGVLVUhsU3BtR3ZHSlVIZi9VTS8wdENXa1NsU3BVSGd2ckJ5NnNL?=
- =?utf-8?B?dThuTjZZMDBoOHdmT01ITFJjeDF2ajVId0pLdTZiYmZvTk5nWlJsOWw4Z3Vr?=
- =?utf-8?B?Z2xBTXA1NFI5dThkWTA4cjA0WTJaWEFhR2tzYmtPT1c0TTRLRnJTMS81Ui85?=
- =?utf-8?B?UUhkcGVEbkFyOENETjhpdnBhRzdveVk0eWpFWEdob0c1aWtvQU5JNmpzRWZX?=
- =?utf-8?B?N0NnWWpJVlovU2lyRDA3d1lpRy85YzFFZkdTWEQrcXFxQ3Z1UTZvakMzM3dR?=
- =?utf-8?B?V20zdGNzVGpIU3M5eGhhcy94SjNxWlBXSkN2NlBzUm1HQWkxVm4vUkFsTXFu?=
- =?utf-8?B?czkwMEk2SmgyaTkxZTM5WDE1K20rTDNnR2tTcHU5WWVVSDhXcHlTT2RSQmJ5?=
- =?utf-8?B?UHZQTzlNMkJ4OG9tMVorSXpjME9jZnd5SENKSThMUmRFZVNiNnp1WUlYUjNn?=
- =?utf-8?B?S0cxMGlBK0ZwajVkVGwrV21ldXh5NjZzaDJDQTFKT1htUll5c0RudDBKN1hs?=
- =?utf-8?B?Y0dYOXY2MWlQWmMwV3MxV3hqQnE3cmdHbFRvSFpjNXVmbk1IU0FQRHd6Tktp?=
- =?utf-8?B?aHBraU8vUlpaMDlUZVJ4ZFRmTS92ZmZLUkhEdUVSOS9LZW16U3g5SmprWjd6?=
- =?utf-8?B?ODJZLzNQcGdLQk41WGxoVS9wT1RHcXRzV01vZU04SC93NFhjY25vb1hOdFZ2?=
- =?utf-8?B?cVdISnJvOGNGSzM3eGMyTlc4QkRFVmgzTHE2WXdCVmV5UWhnUE5kRUNHOWsx?=
- =?utf-8?B?d0REUHBRaTlzWVYramRwaTNJYVdyRFE4OG9RVUE5Ujk0Umd5MmlSVk1JcSt2?=
- =?utf-8?B?V3hSUFdrRVUwRjVQcHV2aHpLY1BnNDZNQ29uVVk2TG9maU9iWURwanhJSkFM?=
- =?utf-8?B?S1lNOE5UNW5YZ013N1lSTGUxZ0IrcEdlWWQvcUhZQVBCZUdudllFY2NBTksr?=
- =?utf-8?B?V2RscUlMNTJjLzBobWhPaVlqT3E2OU83OXBvbTM3cE9IQUo4K1BQNzI2bzVP?=
- =?utf-8?B?aitNTFgwWlBtMDFjWW9GOUtSdmZUd0JHc0hJUGt2ZzBrQ25ubGEyTjRkMW1W?=
- =?utf-8?B?QytWTjBuY3NEZ1NWRWpyUHFXOXJ2RGxPNWtXWmdqOWFqUXRJQ2RxYXl1Vi9u?=
- =?utf-8?B?dHdGMG8va2xiUkM1andQZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR02MB6014.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dU9TYmw0d2V2REVZNGtuak9QbEhVZXVBb0lwVnZ5VDZIMXcvZ1l1czZONDZi?=
- =?utf-8?B?OE4vZzkxa1Q4WnE5OTdZZ0VqQURJOXhIbGFrWk1nU2xKQmsyV2ViLzZvcVBu?=
- =?utf-8?B?VkZSS0gwWElrUjBDNmRtUVVEcnA3RlUyd3VFVjJGaEx4TzU4YWJ6U1U4dXkz?=
- =?utf-8?B?cTNTNmFrczg2dUViYjllYU5rbWx2Y015d0d3cllyVytIY1R2T01HbW9keS9M?=
- =?utf-8?B?aHBVVlFiM3BLcDNHUGlLdlRIcjZSZEppNExGOHJkSDY0ZE1sdzc4aWwyRmVS?=
- =?utf-8?B?dWJ6VGJWWktnbXZHUk92OCtMVDlKWkszdFNKRXpVUnUzYUxsK0pZR09nNUJ4?=
- =?utf-8?B?QVcrSDh3azdxT1BrVms2MUZvQjRJVTNSejNCd3VVaFRuVm1vSDk3THN2bEdn?=
- =?utf-8?B?UGNKL2VvN1hzNEdUUUJpUlZrOEZTNUx0QjdmbENidk43c1ZpWFBtRjNvaHFj?=
- =?utf-8?B?UVprcWF1UWZidmdWaS9TajlVWGFnSVpWeFRpZTR0ZUFMYnVOOSswMktUQm1G?=
- =?utf-8?B?SHRsRndHYllmbXY3V016UGUxSXFiQ3V2c2R6Z3lDOGtvY0RuMUV6YlFzZ1FE?=
- =?utf-8?B?WFQxNmtWMFVHOUxwa3BrQ1k1Rk9sTmdPamlNSXgyVUdrME1Tb08xdm5DaXZK?=
- =?utf-8?B?c0ZGdEJlbWtYbTVyL3dLMzlYOVRyR1pVQlZiV0dsSk5wUVJaZVFJR3RNUnV1?=
- =?utf-8?B?ZmRHZUdSRWRyRlJkbnlCYmhLSWRwSFJXOW5DZWluSm0zSUhETU9oMG4raHor?=
- =?utf-8?B?blZqTm1vdnBqenNrYkowSDJ5b2xtZk1IZ2p3N2ZyY1MwckZabHhESm5vRVpW?=
- =?utf-8?B?QWN2M0hFdmFjOWhLY0ErK2I2QXFhWVEwdHp5Y3lDdDBOVVFtelEvbFdVVHVZ?=
- =?utf-8?B?eElVaTY2S0QxT0gxZnljdmkzV2pqeXhQQjBoeHVid2NibWQ2Z24yZCtwZzU5?=
- =?utf-8?B?U3BXZUZJVlc2RlhmbkpOK3NiazJKZnlQblNWUjdSU2xZZFdtTlA1NE9MdjBj?=
- =?utf-8?B?K3BiaGJZakZDaUZlK2oyTm8wcGJkYklhTUJGYXYzRDdtaE5rbk1vamZia1g1?=
- =?utf-8?B?ajJ2UkloeEN2T056dXpMSzhMZjc0c1NZUndkVDZ1cGhHbmQwYUtGQVFCYzF5?=
- =?utf-8?B?TThKZW1YMjBiV2ZwQ2dhVU1DL2wycy9DREdJY0RJOGVrYkZiOFZzOERFck9M?=
- =?utf-8?B?RkNZWE52Ujk0VGdwU21yTHBid1k5aWs3cVc2ZjUzWTZrcjVpWlBxT3A3Z2ds?=
- =?utf-8?B?NGNLKzF5cGdzNDhnQXZKZGxRNWZZcThEaDBPOW5PZUJ0a0dJTmdqZ3RndTVS?=
- =?utf-8?B?K2c5Y3htbkx5TGR4aHRieDBuSCs2OVhCTG5vWXhpV2pXbEd2dEw0TkthSXpG?=
- =?utf-8?B?U2IzZjQ2NGhqWWJGN1J6ckc4aE81b25FZG53R3dlQUZZOEpaWTV5TmU0cStF?=
- =?utf-8?B?UEZkdkx6T2UyQzRzSS9OYVpQRXlZM1FtdSs3Yk5EVWlzckt1TmFjeU5LZmNs?=
- =?utf-8?B?NmJDaEptVzBiS2QwRk9Wb1NXNFZaVi80dUVtUGJVdGQ3MmhMbUsxY3NJMVB2?=
- =?utf-8?B?ZkFHMzdHRk9XaThxckFzbndLNXB5bktiTWplWEZ0NCtxclJHQVRmQmNQUzZx?=
- =?utf-8?B?dEg1UnpGNGxDSjA5UG1VczhXMjYzUkFkcnptcVFRSTFIdHVpejNmVnJoMXIy?=
- =?utf-8?B?dkVZa0R2S0RpM0xnS3VWYzNLb1RqMEsxb3BNbGl0dnBFK1cvWVZ6T2ttbW5k?=
- =?utf-8?B?dVlhOHNnOEpUMGFreTRNK0FZNzkwY3QwM3lxU2lkcnBWQ1Bsa2txN2R0Vkdu?=
- =?utf-8?B?czVwY05SYXpOU2gwR0l5RmR4WU93aHFUVVJIeEdSeUp0UWU3UDRDNFlKaDVZ?=
- =?utf-8?B?aVIrT0d0WW5pVkZFMHg3cEJKSHkvVHRmV3NjZjBRN3QyM3FLQ1FPTWJLZkFt?=
- =?utf-8?B?RWFuQURBVWNodHhmMko3SU5nZHAyeUJVcmJpaDM3V2k4UE9CVUk0ZUc3V2t3?=
- =?utf-8?B?TlRkYlZZUWFxSnRock5IOGN3QnZZUDlIN2JyeFYrQXRWVnR3Wmt6ZDdFZnNH?=
- =?utf-8?B?OTUrU0Y4Y0ViRzhFL08xVWk2VHBNUCs0TitxeFg3NDdrMHJDZG9vQTBMWXpn?=
- =?utf-8?Q?R52VC2Hp+flf6+m095a5yQk3a?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57a15599-4931-41de-c1c9-08dd14d0daf6
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 02:02:21.7544
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GU48oeEnF4IWne15kWiB227dTzhlqbW81bZMb0BgQ31PZaLHYgyLTrA4c6H122ps3e17K5CXQINmBbBNd5hU3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR02MB6669
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+Eric reported that PTRACE_POKETEXT fails when applications use hugetlb
+for mapping text using huge pages. Before commit 1d8d14641fd9
+("mm/hugetlb: support write-faults in shared mappings"), PTRACE_POKETEXT
+worked by accident, but it was buggy and silently ended up mapping pages
+writable into the page tables even though VM_WRITE was not set.
 
-On 2024/12/4 20:23, wangzijie wrote:
-> When we check inode which just has inline xattr data, we copy
-> inline xattr data from inode, check it(maybe fix it) and copy
-> it again to inode. We can check and fix xattr inplace for this
-> kind of inode to reduce memcpy times.
-> 
-> Signed-off-by: wangzijie <wangzijie1@honor.com>
-> ---
->   fsck/fsck.c | 18 ++++++++++++++----
->   1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index aa3fb97..fd8b082 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -840,11 +840,18 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
->   	struct f2fs_xattr_entry *ent;
->   	__u32 xattr_size = XATTR_SIZE(&inode->i);
->   	bool need_fix = false;
-> +	bool has_xattr_node = false;
-> +	nid_t xnid = le32_to_cpu(inode->i.i_xattr_nid);
->   
->   	if (xattr_size == 0)
->   		return 0;
->   
-> -	xattr = read_all_xattrs(sbi, inode, false);
-> +	if (xattr_size <= inline_xattr_size(&inode->i) && !xnid)
-Hi, zijie,
+In general, FOLL_FORCE|FOLL_WRITE does currently not work with hugetlb.
+Let's implement FOLL_FORCE|FOLL_WRITE properly for hugetlb, such that
+what used to work in the past by accident now properly works, allowing
+applications using hugetlb for text etc. to get properly debugged.
 
-I propose to change the behavors of read_all_xattrs and write_all_xattrs, and to add a
-new free_xattrs.
+This change might also be required to implement uprobes support for
+hugetlb [1].
 
-* read_all_xattrs checks whether xnid exist. If it's not, return inline_xattr directly
-   without alloc and memcpy.
-* write_all_xattrs checks whether inline_xattr and new txattr_addr have the same address
-   to avoid copying back.
-* free_xattrs checks whether inline_xattr and new txattr_addr have the same address to
-   free xattr buffer properly.
+[1] https://lore.kernel.org/lkml/ZiK50qob9yl5e0Xz@bender.morinfr.org/
 
-In this way, all instances where {read|write}_all_xattrs are called can avoid unnecessary
-memory alloc and copy. free_xattrs(xattrs) should be used instead of free(xattrs).
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Eric Hagberg <ehagberg@janestreet.com>
+Signed-off-by: Guillaume Morin <guillaume@morinfr.org>
+---
+ Changes in v2:
+  - Improved commit message
+ Changes in v3:
+  - Fix potential unitialized mem access in follow_huge_pud
+  - define pud_soft_dirty when soft dirty is not enabled
 
-thanks,
-shengyong
+ include/linux/pgtable.h |  5 +++
+ mm/gup.c                | 99 +++++++++++++++++++++--------------------
+ mm/hugetlb.c            | 20 +++++----
+ 3 files changed, 66 insertions(+), 58 deletions(-)
 
-> +		xattr = inline_xattr_addr(&inode->i);
-> +	else {
-> +		xattr = read_all_xattrs(sbi, inode, false);
-> +		has_xattr_node = true;
-> +	}
->   	ASSERT(xattr);
->   
->   	last_base_addr = (void *)xattr + xattr_size;
-> @@ -867,12 +874,15 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
->   	}
->   	if (need_fix && c.fix_on) {
->   		memset(ent, 0, (u8 *)last_base_addr - (u8 *)ent);
-> -		write_all_xattrs(sbi, inode, xattr_size, xattr);
-> +		if (has_xattr_node) {
-> +			write_all_xattrs(sbi, inode, xattr_size, xattr);
-> +			free(xattr);
-> +		}
->   		FIX_MSG("[0x%x] nullify wrong xattr entries", nid);
-> -		free(xattr);
->   		return 1;
->   	}
-> -	free(xattr);
-> +	if (has_xattr_node)
-> +		free(xattr);
->   	return 0;
->   }
->   
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index adef9d6e9b1b..9335d7c82d20 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1422,6 +1422,11 @@ static inline int pmd_soft_dirty(pmd_t pmd)
+ 	return 0;
+ }
+ 
++static inline int pud_soft_dirty(pud_t pud)
++{
++	return 0;
++}
++
+ static inline pte_t pte_mksoft_dirty(pte_t pte)
+ {
+ 	return pte;
+diff --git a/mm/gup.c b/mm/gup.c
+index 746070a1d8bf..cc3eae458013 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -587,6 +587,33 @@ static struct folio *try_grab_folio_fast(struct page *page, int refs,
+ }
+ #endif	/* CONFIG_HAVE_GUP_FAST */
+ 
++/* Common code for can_follow_write_* */
++static inline bool can_follow_write_common(struct page *page,
++		struct vm_area_struct *vma, unsigned int flags)
++{
++	/* Maybe FOLL_FORCE is set to override it? */
++	if (!(flags & FOLL_FORCE))
++		return false;
++
++	/* But FOLL_FORCE has no effect on shared mappings */
++	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
++		return false;
++
++	/* ... or read-only private ones */
++	if (!(vma->vm_flags & VM_MAYWRITE))
++		return false;
++
++	/* ... or already writable ones that just need to take a write fault */
++	if (vma->vm_flags & VM_WRITE)
++		return false;
++
++	/*
++	 * See can_change_pte_writable(): we broke COW and could map the page
++	 * writable if we have an exclusive anonymous page ...
++	 */
++	return page && PageAnon(page) && PageAnonExclusive(page);
++}
++
+ static struct page *no_page_table(struct vm_area_struct *vma,
+ 				  unsigned int flags, unsigned long address)
+ {
+@@ -613,6 +640,22 @@ static struct page *no_page_table(struct vm_area_struct *vma,
+ }
+ 
+ #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
++/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
++static inline bool can_follow_write_pud(pud_t pud, struct page *page,
++					struct vm_area_struct *vma,
++					unsigned int flags)
++{
++	/* If the pud is writable, we can write to the page. */
++	if (pud_write(pud))
++		return true;
++
++	if (!can_follow_write_common(page, vma, flags))
++		return false;
++
++	/* ... and a write-fault isn't required for other reasons. */
++	return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
++}
++
+ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 				    unsigned long addr, pud_t *pudp,
+ 				    int flags, struct follow_page_context *ctx)
+@@ -625,13 +668,16 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 
+ 	assert_spin_locked(pud_lockptr(mm, pudp));
+ 
+-	if ((flags & FOLL_WRITE) && !pud_write(pud))
++	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
++	page = pfn_to_page(pfn);
++
++	if ((flags & FOLL_WRITE) &&
++	    !can_follow_write_pud(pud, page, vma, flags))
+ 		return NULL;
+ 
+ 	if (!pud_present(pud))
+ 		return NULL;
+ 
+-	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
+ 
+ 	if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD) &&
+ 	    pud_devmap(pud)) {
+@@ -653,8 +699,6 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 			return ERR_PTR(-EFAULT);
+ 	}
+ 
+-	page = pfn_to_page(pfn);
+-
+ 	if (!pud_devmap(pud) && !pud_write(pud) &&
+ 	    gup_must_unshare(vma, flags, page))
+ 		return ERR_PTR(-EMLINK);
+@@ -677,27 +721,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
+ 	if (pmd_write(pmd))
+ 		return true;
+ 
+-	/* Maybe FOLL_FORCE is set to override it? */
+-	if (!(flags & FOLL_FORCE))
+-		return false;
+-
+-	/* But FOLL_FORCE has no effect on shared mappings */
+-	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
+-		return false;
+-
+-	/* ... or read-only private ones */
+-	if (!(vma->vm_flags & VM_MAYWRITE))
+-		return false;
+-
+-	/* ... or already writable ones that just need to take a write fault */
+-	if (vma->vm_flags & VM_WRITE)
+-		return false;
+-
+-	/*
+-	 * See can_change_pte_writable(): we broke COW and could map the page
+-	 * writable if we have an exclusive anonymous page ...
+-	 */
+-	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
++	if (!can_follow_write_common(page, vma, flags))
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+@@ -798,27 +822,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
+ 	if (pte_write(pte))
+ 		return true;
+ 
+-	/* Maybe FOLL_FORCE is set to override it? */
+-	if (!(flags & FOLL_FORCE))
+-		return false;
+-
+-	/* But FOLL_FORCE has no effect on shared mappings */
+-	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
+-		return false;
+-
+-	/* ... or read-only private ones */
+-	if (!(vma->vm_flags & VM_MAYWRITE))
+-		return false;
+-
+-	/* ... or already writable ones that just need to take a write fault */
+-	if (vma->vm_flags & VM_WRITE)
+-		return false;
+-
+-	/*
+-	 * See can_change_pte_writable(): we broke COW and could map the page
+-	 * writable if we have an exclusive anonymous page ...
+-	 */
+-	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
++	if (!can_follow_write_common(page, vma, flags))
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+@@ -1285,9 +1289,6 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+ 		if (!(vm_flags & VM_WRITE) || (vm_flags & VM_SHADOW_STACK)) {
+ 			if (!(gup_flags & FOLL_FORCE))
+ 				return -EFAULT;
+-			/* hugetlb does not support FOLL_FORCE|FOLL_WRITE. */
+-			if (is_vm_hugetlb_page(vma))
+-				return -EFAULT;
+ 			/*
+ 			 * We used to let the write,force case do COW in a
+ 			 * VM_MAYWRITE VM_SHARED !VM_WRITE vma, so ptrace could
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ea2ed8e301ef..52517b7ce308 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5169,6 +5169,13 @@ static void set_huge_ptep_writable(struct vm_area_struct *vma,
+ 		update_mmu_cache(vma, address, ptep);
+ }
+ 
++static void set_huge_ptep_maybe_writable(struct vm_area_struct *vma,
++					 unsigned long address, pte_t *ptep)
++{
++	if (vma->vm_flags & VM_WRITE)
++		set_huge_ptep_writable(vma, address, ptep);
++}
++
+ bool is_hugetlb_entry_migration(pte_t pte)
+ {
+ 	swp_entry_t swp;
+@@ -5802,13 +5809,6 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 	if (!unshare && huge_pte_uffd_wp(pte))
+ 		return 0;
+ 
+-	/*
+-	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
+-	 * PTE mapped R/O such as maybe_mkwrite() would do.
+-	 */
+-	if (WARN_ON_ONCE(!unshare && !(vma->vm_flags & VM_WRITE)))
+-		return VM_FAULT_SIGSEGV;
+-
+ 	/* Let's take out MAP_SHARED mappings first. */
+ 	if (vma->vm_flags & VM_MAYSHARE) {
+ 		set_huge_ptep_writable(vma, vmf->address, vmf->pte);
+@@ -5837,7 +5837,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 			SetPageAnonExclusive(&old_folio->page);
+ 		}
+ 		if (likely(!unshare))
+-			set_huge_ptep_writable(vma, vmf->address, vmf->pte);
++			set_huge_ptep_maybe_writable(vma, vmf->address,
++						     vmf->pte);
+ 
+ 		delayacct_wpcopy_end();
+ 		return 0;
+@@ -5943,7 +5944,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 	spin_lock(vmf->ptl);
+ 	vmf->pte = hugetlb_walk(vma, vmf->address, huge_page_size(h));
+ 	if (likely(vmf->pte && pte_same(huge_ptep_get(mm, vmf->address, vmf->pte), pte))) {
+-		pte_t newpte = make_huge_pte(vma, &new_folio->page, !unshare);
++		const bool writable = !unshare && (vma->vm_flags & VM_WRITE);
++		pte_t newpte = make_huge_pte(vma, &new_folio->page, writable);
+ 
+ 		/* Break COW or unshare */
+ 		huge_ptep_clear_flush(vma, vmf->address, vmf->pte);
+-- 
+2.39.1
 
+-- 
+Guillaume Morin <guillaume@morinfr.org>
 
