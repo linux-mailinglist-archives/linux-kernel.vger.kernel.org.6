@@ -1,84 +1,88 @@
-Return-Path: <linux-kernel+bounces-433784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA079E5CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:23:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D1B9E5D02
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 18:24:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820321884850
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13467281359
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 17:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9C0224B1A;
-	Thu,  5 Dec 2024 17:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A15224B0A;
+	Thu,  5 Dec 2024 17:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0ziBbO/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9R45A/j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5AA38C;
-	Thu,  5 Dec 2024 17:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0082EB1F;
+	Thu,  5 Dec 2024 17:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733419392; cv=none; b=MNET2RPOl8G23va5WJ5rQIkshwz5KLOQUWZFvv/3hT6ln/GfFiXJ9PHT3qS7Gt1rEoRBU5W7YpzQPikC6snPAIrBDo8eaTvEMjIizXrmEt3JrEjGQ8ohni3GrQ8Z6rC0828o/dwrnsis36ODdcmJBvzehhJE5EgvPQtAExlCpng=
+	t=1733419481; cv=none; b=cuisJLaUcan5U2CR7PRkLOxniH17wHnqZ0GHp/3PjFqOH/Z3C6Z3lvaJabbWpHnnQkP6oIik4S5ZbKiv9F6xCUl8BBE2bmYJ3bgJIUrmBFRPaUEpCxllrjWdPJa/6+LkY3BSvG/KBEC96uRT1Djlt+H4hpP78a8xnktZZSPzhJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733419392; c=relaxed/simple;
-	bh=fi2WY3gBh65WYtY2fRxW1m7CZSc00650cfNmqqUnA18=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NEsxErZfJKq6LPZuHXvEchOFCU/4RLAlZw8PZRsLowZvVvruFNEzFyjA/bfiSBKZxadsnD5cenLahfDQmeqLCAjv6PM2sPS3218ynZMh/iXdK7a4FjfuXkzKJk6lYHD2LGB8XTST8P23crnHv0KwsaMymH0enXG+y/jXqvif5Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0ziBbO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C484C4CED1;
-	Thu,  5 Dec 2024 17:23:12 +0000 (UTC)
+	s=arc-20240116; t=1733419481; c=relaxed/simple;
+	bh=tLgBZc38dJzW7Rr8Wfgpk+YsydrUjmicWc03HHuWjzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fzXP/Racyv6wkAmcrDInEcjrDmw2gs7n3wCF1nyMGXweBwvFd7H6lZ75lRcSXznsI9wGhipASp9joxNn/DGBCV4YC3D0Hmv8Zr4qTPJYLDWIj8xnHy0Mpr3LnOW0xNBPlndk+fSoAwUJMp+FtoG/WdledwJzpqVjA2t5eVoFtOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9R45A/j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AECAC4CEE1;
+	Thu,  5 Dec 2024 17:24:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733419392;
-	bh=fi2WY3gBh65WYtY2fRxW1m7CZSc00650cfNmqqUnA18=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=N0ziBbO/Al108sgzgpgfqlBHui/9lVvto/OgeBeezQS2smZibRfyFkaN8yazfWTy/
-	 cEkEQTw3Fbupk5EJG3IejmoW5HBwAJJFUSc6fW/p9AHQ53kkSDp9wTlZpmD0xdNY1p
-	 3cSnOtR/P4D70ZVo9Tu+C72eD4uGGr5co+aG+GpFvXB/vKreQntGU0zE6EOKjQLiX6
-	 Y1aWDK8wXTHZsrxqEqFmKZBeWgaoJov5ut0ZtF4cXXgoaCic2mgR3d6Lx6TshMec/f
-	 vXNqjKMtAxBa7DyyeNupzOqD8qd8jIeQfjkDhamsBTx8eDzwcPMITuA/7pxI3RrYku
-	 zHHlNpSFiy7rA==
-Date: Thu, 5 Dec 2024 11:23:10 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	cassel@kernel.org, quic_schintav@quicinc.com,
-	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
- bindings
-Message-ID: <20241205172310.GA3055111@bhelgaas>
+	s=k20201202; t=1733419481;
+	bh=tLgBZc38dJzW7Rr8Wfgpk+YsydrUjmicWc03HHuWjzs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V9R45A/jTPZW0ZGRo1nwAPyXIk/w59AIMC5jV8QEfY4/fm3zKUMNyMYuoHO73F7Az
+	 ohxGSEI+iaH8MSCG93YLZjiQGXCpM+ZIiVw4LugSOl7QbJ7KsP92kf+PAm+0rc1x+4
+	 a4E3uODyBQyZluKzTOzCIE12O7hPXu9V3p4n8AN3dv8VHqZ7j7EaQ7ZXjfxVzX2ud/
+	 ggmuEi066mUfP1ZUBrC8fnUjkCmBbtM1daMltfPscYZrcN7S09yQWe1RgATHdEGoTF
+	 E4yL9T4eKi8smOfBUxK5qqyXcgB6dprBmsqolhTTiqQPvE8OHhJoOzbygTM09e/Row
+	 ULU+LFACatOQg==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2689e7a941fso395076fac.3;
+        Thu, 05 Dec 2024 09:24:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUqrLYi1jOTCpqOJv+M9zI7wYVJD+zvHlTahhNrMqeRvLMsVZmDUsMypbpNu9sFqnVVHUz7AJ3i8Kw=@vger.kernel.org, AJvYcCV7eayjtg3m3QzLIRWl/AwInnYAzaffHoLJXS/39jHAMkYz2BRHDbcGWARNw5HuRHMVvQKyjWYO13h//8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXW12/C3esr3bvOQJD7MlzT10YEIKeEPTWarVsSLxYSYm/X4yi
+	Iumwtu/M7ZqQivjAmbIuiNglAeePSVbyjAVRHOO+/QOSqqhSOhnd5wBOzCJlPxfmzmFu2M+lR/6
+	1l2IFCLCp1hlr/Fgj3L/g9iaFlaQ=
+X-Google-Smtp-Source: AGHT+IFZPb8cpGeot0dOVQk3lMKfuBZkvl8/ZKJwTqLXAD/tJFXfIcthG/sVlgF/YAsDkOLqGiNoXHYduV9uVBATXFY=
+X-Received: by 2002:a05:6830:6208:b0:718:9ae5:9030 with SMTP id
+ 46e09a7af769-71dad6046e6mr7921633a34.4.1733419480417; Thu, 05 Dec 2024
+ 09:24:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126155119.1574564-2-christian.bruel@foss.st.com>
+References: <08f3bd66d7fc8e218bb6958777f342786b2c3705.1731554471.git.len.brown@intel.com>
+ <CAJZ5v0g1JwGRECd2JVKScWO9a=hmrY03YQx95JKZ+q5KisRb1w@mail.gmail.com> <f6621a09-d5e4-4d3b-9b5c-55294c22030f@rowland.harvard.edu>
+In-Reply-To: <f6621a09-d5e4-4d3b-9b5c-55294c22030f@rowland.harvard.edu>
+From: Len Brown <lenb@kernel.org>
+Date: Thu, 5 Dec 2024 12:24:29 -0500
+X-Gmail-Original-Message-ID: <CAJvTdKm-7LbbeRkLpTDW5WBLR9vVNzjNhYWeRvM+Y4myCHN6uQ@mail.gmail.com>
+Message-ID: <CAJvTdKm-7LbbeRkLpTDW5WBLR9vVNzjNhYWeRvM+Y4myCHN6uQ@mail.gmail.com>
+Subject: Re: [RFC/RFT PATCH] PM: sleep: Ignore device driver suspend()
+ callback return values
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 04:51:15PM +0100, Christian Bruel wrote:
-> Document the bindings for STM32MP25 PCIe Controller configured in
-> root complex mode.
-> ...
+On Thu, Dec 5, 2024 at 10:09=E2=80=AFAM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
 
-> +        power-domains = <&CLUSTER_PD>;
-> +    };
-> +
+> > IMV, drivers returning errors from their suspend callbacks without a
+> > sufficiently serious reason are kind of a problem.
+>
+> There is a least one driver whose suspend callback returns an error if
+> the device is enabled for wakeup and a wakeup event occurs during the
+> suspend procedure.  We don't want to ignore those races.
 
-Nit:
+That driver should invoke pm_system_wakeup() on that wakeup event, right?
 
-  Applying: dt-bindings: PCI: Add STM32MP25 PCIe root complex bindings
-  .git/rebase-apply/patch:163: new blank line at EOF.
-  +
-  warning: 1 line adds whitespace errors.
-
+Len Brown, Intel Open Source Technology Center
 
