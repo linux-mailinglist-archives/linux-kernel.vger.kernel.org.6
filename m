@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-434060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0929E610E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:06:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F779E6110
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23B9169945
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672E518857BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72001CF7A1;
-	Thu,  5 Dec 2024 23:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6CD1D5165;
+	Thu,  5 Dec 2024 23:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cZEf0Ahq"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cVPp2XKe"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E261C3C0A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C405190049
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 23:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733439967; cv=none; b=SWw6gfYajgOkV1S19ujxtk+Pp8fOMoJYxAcQ6e1t1kBt82NdN/ZYXasb4F4QEJbN93EsbVx0p3X/Crhm4zN5S7Niu6XNgvP17wrI0dUmKGT2h6CVH3zHf2J3nflsNT3mj4R9U+eunczrXezurRMY5MzeLPr4IKW/Q/eLJPxkReo=
+	t=1733440023; cv=none; b=EIYl+it0xkcJsdIHL1dwP3MPoE8MkbGWNolR/hAi8D7LJLG9iNs3teqnmjwSzHzPy/Cc/tV2WvhSVHPBEhyhcgPS1iDanB3wttnEZnUfdAyfpd0JpR07pqzsK63+6f9pk5TG/wpGEt8+8op9jBiDiKv2G4x+N22suhee7omdyTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733439967; c=relaxed/simple;
-	bh=RSRtkP+Fl4Fu1wv2TYijQ4+N4uCrLGYJmNgMQkiMtOo=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=tPLtp1pH+GvvdC2dnHJmth/wq3zAa4HNUdCO7lEl/ZJqcsWMppilbJw6RJaVBmK53RO6Jnrx8A4uJgVDuQQ4NGlHVRyGrtUQZ+OkBdZvVBZ704Qq+odKpHHK+szK/g4N/gJAbdv1gHh2/cCK1B0YIA4QP2QQgTJuSNDx64FuU4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cZEf0Ahq; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-46679337c24so11134001cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:06:04 -0800 (PST)
+	s=arc-20240116; t=1733440023; c=relaxed/simple;
+	bh=UciXj6R8kmj7F1nkPNLftcUuWn2zjjonY7XeTsiisyQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dWb/GGrKA/PQVZUza8GTyczMyv3HDInCS+/s+wWKUoDBjfydUoVIFDxt42qlfMP/iZnjd5MqrfF8uhPsQaATLaW7N2A1MdAjvdP2Tcd3SZTmV/y+y0ImnRd8eQ+gnO5kvC6V2E7YnaTbiqkYYd6xsw+bvBAHdDNZY4vIqsT4dDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cVPp2XKe; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee76befe58so1252593a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 15:07:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1733439964; x=1734044764; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733440021; x=1734044821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gB2wprHKOPR1C3FlWr0JxgyEJMDu3YBCaXKrSKkj2to=;
-        b=cZEf0AhqaHnk1Bs5gZ4/uADCelK11qH12xO+5Eco7i+9xeNmjmY58s3OC7ujlqAjPZ
-         wnifc1OYOM2uv2MyHx0VQmbcas/hdu1AQBa1Rndceqn45F/uIcOvkDOg2QnKEnWZHZff
-         /wAyzlJS84dVFoWcBtrRBRCYLw2FEzwkLM9MwNJtqJhG8XpgUZw3zpoKjQJFmok2z7CH
-         yUYokBliUjnGwM/4JUXVZrXO63/TabhUlNfYIz4lYFmOiv3Fvt3RMIMMl/mbE8Moybu3
-         mGtFVKQWrHkqBL5wKFsW7Gz2zqk9VVoeOZ4BHlvoMLYCHoT6ivEUlAoyQya6I/cQgFBU
-         mw7w==
+        bh=2cfmId59vxiNvq6eQ30QkQNn6nuXdIqcNwMG9TRCwVI=;
+        b=cVPp2XKesf4ltGnkcHkA+JjCxU88rJTYqOXLX/RrkGqP1gISqUyPdwdPvIihg026XK
+         u5LOC8eRJ0fGtGxo8/Ij6UHDnrS4svhMGZmVAxezXsQ5ISYn5XePWtOMeU04EGpvh8r1
+         dUs9XTsD/zkWGXqDnNzPTU1gqvG2wiwCgavoYlFG8U/myvrZjdFmpr0KZAISfHeuKD7S
+         dstr4mHMITuc/45nnoFkiz01SFVLkq8wesE1K6HIzRoxDb6aE5tmlSen2qRtwjWlRT/u
+         64wNQTTm8kjMXtGIlbhxRubAFd4DC/HMM3A1Av4kj8QJON2PjA2A1OzSZkhvd9/sP9tr
+         mbRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733439964; x=1734044764;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733440021; x=1734044821;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gB2wprHKOPR1C3FlWr0JxgyEJMDu3YBCaXKrSKkj2to=;
-        b=jyR8QIFkAnBseZPjbGfVQErm3M4qA8NwKSfHq1jrL4jBwsaDIlkuV4FAM/NxDaxelG
-         JegrqBLqwGKLIKsHu/LC0Pc9SZoMkKpIiboJh80TkyvqMDan6pvsbspgeJ04kgNzxdLZ
-         eNrpHuukGeEXzYWREPyH62u4+kNJZB9DDgDM5cGrlDFeOeWSSatYeDegJx/JHsz56Bgi
-         zUPFwgUELURClUuU1vo7+7naFyBPGUWrDGoXSCvO+a0SjAyUk/6FX3j6G2RGnP3j7F/W
-         LrOKNHNuB7+Jp3gEupcX7xQCaNIi7h0nAjsR+IQLdsWs3ERNOFObKJ+X8sVtFiaQAgTa
-         LgOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6mwG0r6OXF8lDvJEGO6msIPQ4lMOgOnCbNInEADOFwV9rQrGpMhOqg3cp4FYQGBJW49yU3sy2i9Pzr8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsvyafxtFSkdMDpeWlZo/+Py46d2ZWD+ohkjllzeBpBKqW7Km/
-	2k9Wj64ejWjdJo992reTdjAHeG53XmFUDNj9esUHKdwY8tR89Y9EnCRV2V4t7w==
-X-Gm-Gg: ASbGncv99d7xycg1mdEyvTK6FKHnddL1X1U4VDi/n54+JdQ1S5YNRsgPFQwIW/5eDx8
-	/lu/sO6FdiDrSOzIRYGAuKt9jIyJHfs03q29cCBNFi0R7macka8rpxJS0yLFPHF73Kcjtu+y7jp
-	3zpZLotMhlrKfyo3FTV/TeTvNMDXa5KzbWy/c8h0BMCfI8TjI0wNjuF4xMxWYqHLZLPSosdvFl5
-	CIGJxWcRGdSriwfdLGcb6JKF0/2GJUqwN106NSVpTqf
-X-Google-Smtp-Source: AGHT+IH//YJCxBh1r9M6L58qveosoEAxtWbi0tzDXcNc0u1qOZiSVBYlKljByQTou9Gs7CfnatzY8w==
-X-Received: by 2002:ac8:5955:0:b0:460:996b:2896 with SMTP id d75a77b69052e-46734f48cf2mr12049091cf.45.1733439963780;
-        Thu, 05 Dec 2024 15:06:03 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4672978dd14sm13184221cf.54.2024.12.05.15.06.03
+        bh=2cfmId59vxiNvq6eQ30QkQNn6nuXdIqcNwMG9TRCwVI=;
+        b=ET349MfDTB0UkIZenx9VzZ2Inzxxz0ld8JRzjdc1jRJooaInIo+wHrq7AAFFu03zni
+         ackpNdhq/VE4qwiQeyLbVY5+SU3XN1i5lUZWW5Cvmvo0HkDvgBpZr3Hv+mktoST4duRs
+         OriPTeZPfH4zARrsgnsZu4xFn4o12wabqr+KgqFZBCwwMHSu+HdF1Mq1H0Zhf3ZurmNf
+         59jTZ822sDt5K0tDMUr2tj9fLDn0kt1xwFoa3NvJJoklK883kH3D/KIs/j8YU0rbNBMz
+         oUPOitvDvG8VT3aYw1zpNxBXMu3hvBAPNH1tGZ26D0rfawBDXFxDSz2PeZU/WO/q/53L
+         QL2A==
+X-Gm-Message-State: AOJu0YyCpSyzPMtb+u/PrHYbUpm4phJRmhwGChtgndI4s6y4IRci5dzy
+	YgHMnMKB2s6Rne9IoNexiC2FU8aX5Mz47PVW4tURpyH/vT5pFJaTeZ+cmI1ST68=
+X-Gm-Gg: ASbGncs+KP9jglFKvhKDpwi+gCk7+RlElmfUcTBFihHi/+Jp5zGa5yrffLaZGWe4bj4
+	Z6z1VLIR3s2qzY3vaadlrqFGQzWct2rXESlcdRY26z/1j+hQeNtjTwUWsEzy/bcR06+lFWkNunG
+	60wGSFptEr9BYnk09F/gNksrgA3lgwcZqg5li4Xqf/FXdzsX4FSmVbykAjl2GGnNgULOptvEnet
+	ynmXGxCbisrCctPlbhhgRiPY6mTVPd0B08QRvqfEJPSfTes
+X-Google-Smtp-Source: AGHT+IF0lJnHZZwx5qW89pY3JM7PmU56DWfppWtG1IiiileeHZLO1SZtL+I4lEvD0dwQNQWcZ0pTbg==
+X-Received: by 2002:a17:90b:520e:b0:2ee:fa0c:cebc with SMTP id 98e67ed59e1d1-2ef6a6c112cmr1324606a91.20.1733440021483;
+        Thu, 05 Dec 2024 15:07:01 -0800 (PST)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45f7d804sm1938792a91.1.2024.12.05.15.07.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 15:06:03 -0800 (PST)
-Date: Thu, 05 Dec 2024 18:06:02 -0500
-Message-ID: <70abed262882f79e63e747ef56a0379c@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] audit/audit-pr-20241205
+        Thu, 05 Dec 2024 15:07:00 -0800 (PST)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
+ Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+In-Reply-To: <ec20fd5c347bf74963532e95282f850d209d84d5.1730539664.git.christophe.jaillet@wanadoo.fr>
+References: <ec20fd5c347bf74963532e95282f850d209d84d5.1730539664.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ARM: OMAP2+: Fix a typo
+Message-Id: <173344002056.407600.10771943462992727832.b4-ty@baylibre.com>
+Date: Thu, 05 Dec 2024 15:07:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cb14d
 
-Linus,
 
-A minor audit patch that shuffles some code slightly to workaround a GCC
-bug affecting a number of people.  The GCC folks have been able to
-reproduce the problem and are discussing solutions (see the bug report
-link in the commit), but since the workaround is trivial let's do that
-in the kernel so we can unblock people who are hitting this.
+On Sat, 02 Nov 2024 10:27:51 +0100, Christophe JAILLET wrote:
+> A 'a' is missing in "powerdomin".
+> Add it.
+> 
+> 
 
-Paul
+Applied, thanks!
 
---
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
+[1/1] ARM: OMAP2+: Fix a typo
+      (no commit info)
 
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
-    tags/audit-pr-20241205
-
-for you to fetch changes up to d9381508ea2b590aff46d28d432d20bfef1ba64c:
-
-  audit: workaround a GCC bug triggered by task comm changes
-    (2024-12-04 22:57:46 -0500)
-
-----------------------------------------------------------------
-audit/stable-6.13 PR 20241205
-----------------------------------------------------------------
-
-Yafang shao (1):
-      audit: workaround a GCC bug triggered by task comm changes
-
- kernel/auditsc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---
-paul-moore.com
 
