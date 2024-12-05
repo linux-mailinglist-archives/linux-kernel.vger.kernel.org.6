@@ -1,199 +1,169 @@
-Return-Path: <linux-kernel+bounces-434045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBC89E60A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:31:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0359E60AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:35:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C59284989
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BECC161A61
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 22:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACAE212B2D;
-	Thu,  5 Dec 2024 22:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFB21CD213;
+	Thu,  5 Dec 2024 22:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BeHSDjbE"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2077.outbound.protection.outlook.com [40.107.100.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q3a/vp+u"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90245202C25;
-	Thu,  5 Dec 2024 22:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733437759; cv=fail; b=OP8qEJJRFg9vznxpU0jWCk0dexVwomDNHbOGlDGeWUchA5TaVHOUpsRRiE5Z9sH2/n9BvWgLuoRrTemAn3N2VjoJRERLjPYHNdYMYjHciGuO9zG13X3GJHJhN6UeZN0HHnZ8jSoNbzpEPXIQwDYxSmc8t09spmUKF1CYawQa0Cs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733437759; c=relaxed/simple;
-	bh=FeBJsbEXwJk7sZUSGfiSorVyg1THgjMczg8NBHJMjlk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZAeqc02La29LXha6PVdOMRe4K3N1pdahhAoctpVWUC40OLUSuzgu/oNsNAIi1Qua9fnmXpQ/cMFtk+yNiLBBSrTYjCUHJMBsh2SoZfPRz54/9xLTH+4qVh3mRBuuwUDZPzI3WSU6BPyuUqR/CUlGOl0pJYSlABMKwBkIdCaTypA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BeHSDjbE; arc=fail smtp.client-ip=40.107.100.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HB5gXIOK4A85cGAyY4k7gJVZfHAdSciaRJkCNgUjbWxVlT5iPg31g6JVDBhBIsSMA9K3FoxB8p2g7u5aedQNRJS2ptAi6tiE+CGEosezMrsDTWdN80VRkBuNXeb5wKNuAX/A0ZeDIHaGDQOCvFY7MJq94iTOT20HPOyHqa7JILcvnPst/cIZPFONH9K1tzMFpJcQZZR5JwtyzyL7r8V09KRcw4cy7/qikLWKtAIJRbcmayg7obIxj8y1TCZCELYHsfr+Z1E0/AvG1Wp9sz3dTRj9hXkp29nrYHRRvomdhWHzXQbgKOO9ww/hYwcer+AQ9icwDGRdDTO1WpcSChpxcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0+ia0OX/G09377yBEw4BWVsjDfPXSjjaJK0puH1NgpM=;
- b=M8Tt/Y/4vnnuj1Wb6iW3rFf40ml4xH8kOdwBHYdIkiTaRqXZb0EY0YXUIQ1MuvhGQFAbfnUUt9QNwPRJqfGWhUqJ3dA+2G5SAHbAuqNxoER7zeEGRVr47gVgRN0oOEsX8Xcl3tIb6GovkfgLkbUJP5dHurbLmGml3aLee/sVhj88V6RWizrgM+WFiSTBvslsq0TYhYBzkpn97u5OHGXKJ1SyffHTn+APWxq4bv0pOdHUaLCM9Gk1FW3PbJOBGnLQFVXastG9eiWFkO+dQP+Isj7Q/u7xTTvUlrNgoaNCmshS3TVoG1TIZKu9MqxOglC3Xbcb3dm0Etf3+6Go9j3L4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0+ia0OX/G09377yBEw4BWVsjDfPXSjjaJK0puH1NgpM=;
- b=BeHSDjbEAJ/V+X03+WSD3s3lg3pnpMPiuvrsMLC7pboZ0f5roHd8A7NKyvEoz75h68j7yU+vpZZmAtyOa/NSeenEsmbzWPhwHDP++j954/EUswXv4WWIhQkr5xES7EfPyODxmS8aiDZReSLjZK9y5lUGpx0eG7gLu1UhHoS7LD8=
-Received: from CH0PR03CA0235.namprd03.prod.outlook.com (2603:10b6:610:e7::30)
- by SN7PR12MB7348.namprd12.prod.outlook.com (2603:10b6:806:29b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Thu, 5 Dec
- 2024 22:29:13 +0000
-Received: from CH1PEPF0000A349.namprd04.prod.outlook.com
- (2603:10b6:610:e7:cafe::94) by CH0PR03CA0235.outlook.office365.com
- (2603:10b6:610:e7::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.10 via Frontend Transport; Thu,
- 5 Dec 2024 22:29:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000A349.mail.protection.outlook.com (10.167.244.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Thu, 5 Dec 2024 22:29:13 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Dec
- 2024 16:29:07 -0600
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>
-CC: Perry Yuan <perry.yuan@amd.com>, <linux-kernel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>, "Artem S . Tashkinov"
-	<aros@gmx.com>
-Subject: [PATCH 15/15] cpufreq/amd-pstate: Set different default EPP policy for Epyc and Ryzen
-Date: Thu, 5 Dec 2024 16:28:47 -0600
-Message-ID: <20241205222847.7889-16-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241205222847.7889-1-mario.limonciello@amd.com>
-References: <20241205222847.7889-1-mario.limonciello@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D2D82C60
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 22:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733438097; cv=none; b=ZrLYIRkiwxbCluUtYLIVI8WXZ+cu57DD0b01H1de8bqpHcGPaxEj+w4Bo2u875AyjSKeP3y4DnAfIouXJCF0bbR07xuTO9rpqGg1DQHfOJqKMrbP6e6CEW6FolODnKiUbrZ6ewg5Vf3kzEtQaC3lNLvE/fsaL0x278NaVw5+Fm8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733438097; c=relaxed/simple;
+	bh=FnQaNkcu7dDxH+zvtXWyoCPp/aNTj9xdEOfQHlWj7Gg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ClgbsUfc+s8/tTQBPt3IumLTCRsbPR2Qdb9gwg5BidxQeBUYSPq2qkWrh6AVVfWZb6a7QTszpBlZWjyKYdivMVSqNNvXxaF4+pw/05YW/vCfQKoU+9YSQsKr6qriKlIlnKrH+hcVnAV/yvePtbveLwmln9h9E9JaNEm8N7o2glY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q3a/vp+u; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85b88a685e6so657254241.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 14:34:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733438094; x=1734042894; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vLx0UrhMjsM+bsbSPe2mE/rBZDFhSYSE+W0KTlYQMoU=;
+        b=Q3a/vp+uo2QcuBQdzf129uM0CaVArHIAu1E196LEOM5gS8IMWmJ8EjPGJA5Iea4ik8
+         YH1UK1Wyr/xSa7XaFjivvk6bXhVfqvSqsb6cwtdMjRVe0b8CZOa74+g4EAJDpvIuz0Zv
+         m2eDI2mGO1O1jYjhvs0T1nB/2D1ErulSUvKnrJ0S1tBuPM8VPtwS978kbwr2ktEbNsH8
+         nF2qfhTohYt8kiI6vrxKIGKSjq7NMHOlrVn/vX19748r40CqXh7gHc/rjoyCPBLEa7t5
+         Kjv/lXj1qtmIYv+HyFi8QQSe7/X3J86lIv1gT5SrHx82CJnZlGNroeiOUh0vLgjkPbL6
+         91Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733438094; x=1734042894;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vLx0UrhMjsM+bsbSPe2mE/rBZDFhSYSE+W0KTlYQMoU=;
+        b=AhdV77xb/cgvdu7fTBCLLvIcF80y9XhH6qquD9IQWSFrvREByZZkOv3jClNNVw7JvN
+         9Gi60j6h64Q+rmFZ/RaaYdZww/MD606Nvx2uOL0CT3kSvrEPkzH5k0vK8755IHZpBDUa
+         FVS9RvBzBHCBsA+Yi2OF+Kq9vwzDLWFI3OcjpD5qnzRysMniPhfRtjVHdBUNNXuVNXIh
+         NvJAlsNfW2dhyT9O7UdWVpOfD0O4fGrXVG07VqeWMajqxV4qv2+lmBHxVGRseFettmP7
+         F22WY3iXNrFN+fybDLn/nv5T3oinrYnbW2sQr+YF5NB0jeek84QXYoA+IbP70N7F72Ff
+         AGQw==
+X-Gm-Message-State: AOJu0YzWvPCmBuXdrdKEGlKHbeQQrWV9rLAyJDR1YkzQ49dSqOaAMaDw
+	xn6+mMuXlTTnQfgPmLrciI+T94sCnRSbefojoLqNE0hDHrZ3Qu7Z6MppP0i0qetz6IWwOWs09K7
+	VV5VbPGp8zS6zaABpmrbutVym1IRruI5HIhBT
+X-Gm-Gg: ASbGnctNseWhTi/EFQymKK8kbphA8l2PszRkwE7i/rYuuCT46EI4jzhTGZPcjGuN24T
+	6TugtaZy2hMg/mK7vS3ASNHxkmarp52aF2Ph+OWA0YUNjPGYPy38ez+qaaIkYCrS1
+X-Google-Smtp-Source: AGHT+IGdlSzVsxN2i3IUqTbhLairIN+DaWZozKb0+YQo6tNQdU7eZRUZIA5Ng27UkaLzWpj9aPfuNXN0OApz6OKdGVQ=
+X-Received: by 2002:a05:6102:3583:b0:4af:597b:ef with SMTP id
+ ada2fe7eead31-4afcaa1b3f4mr1474027137.8.1733438094317; Thu, 05 Dec 2024
+ 14:34:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A349:EE_|SN7PR12MB7348:EE_
-X-MS-Office365-Filtering-Correlation-Id: 200e15fe-2277-49a3-93e6-08dd157c3f2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?z32Kn31Z4oA2HO9n440mKw3S7fs6TrY60vDGrgzkXNgrWCClzmrDBoPOFr7Y?=
- =?us-ascii?Q?3Au1UKQXru0U9QPhQwQebZUQvInp6u6kgTQFrMGs2KfeADOnUXI8ke4sduDw?=
- =?us-ascii?Q?mg0yTJHeDKatU4wZlweUUUt3RH5MvQxqxDWxgtKVPdbYpNkCk9TceE2SbuBg?=
- =?us-ascii?Q?Jh1BDQuWUHLhBjjgv72y+RHlBZbwF6nVARthEY5UFgeffb7Cb9JWIdwUk8yk?=
- =?us-ascii?Q?oKkIBOamYCfrC1/tZhLiruECsVi2UNXsPDz3PenSoSi51XZi5fVgZXHnqAaw?=
- =?us-ascii?Q?LED0QlGwAa/90G1hERgSRd9MCB6pnT2pP+Mk5uObryZwJxinos5lYz8xxszG?=
- =?us-ascii?Q?0fA6nOXTKrwZNPk8R/uUaDUIJh53R06+jpL06nalCwOJy1wUXvaNZV/aeEWQ?=
- =?us-ascii?Q?f4G1Ne2zoMdTeXmx2AXn6JVXDGJbbnDFbtTkcchsuFfRP9a1y8HRR4Ht1lh0?=
- =?us-ascii?Q?VzA9AntgCtv+S1DZ8udT0CND0yJNxkNP9qAQQWOUEWvnNWz2tx5PGVc+nH4m?=
- =?us-ascii?Q?lmomYp8P3pu/shBk9goeFs60VyIJUeQ7sqVCS2yYcl69pOI8vi1lF8/pRZZz?=
- =?us-ascii?Q?SsOKuTq3K3gWI1h5BgCvdovwwvEXdn8P+1oIdW+3bzWnbQ39Zsas58d7H+Hq?=
- =?us-ascii?Q?LLTO2aQLMu3eH9E6PHXNIcMbb7f0L1tXPse7nB+ZLnpvTuesH3j0NaqbqSSm?=
- =?us-ascii?Q?SU2jeyD8O5wCm7B8o+HXcxBtFNljZK+qnLAbWSB+u2NVwjs1L8ZLXoHrSI4C?=
- =?us-ascii?Q?rzZ8M3ZwJ4A0rtLfe2+WGHj8SVdkBXnh17K3FqRzuBrKlEpC59RhL4nkJq4J?=
- =?us-ascii?Q?z0xC7GaiZFSWsbrT7t84dWnPBb5BRpenn2gJkqWJivCEZrEEDFlJZdE+3Np9?=
- =?us-ascii?Q?DZJrTLLp8ggdS+1xn3zzYoYIcyJfwjDnpLQQB8+SNa4q6iO13xFrw7jhrkTl?=
- =?us-ascii?Q?mPXrNTKvEMkVfXldd2up8ArJ9pE8YgV9TSdRlgI4NQxOJMiUNyKG7JJQKcCp?=
- =?us-ascii?Q?Zk3zLENhxaQLfdB2yP2mL5Tz4Sv74j0uOEi+yR+TluHOnDWcRu0vq8UqepTF?=
- =?us-ascii?Q?uR+Feh7m2AH2zzOfiVf2D3p1uFT+PLPyCwulJDqcGudEsAk8JkRSj1O5m4l6?=
- =?us-ascii?Q?xaG4v5dWBk2P7wsbTfX8RVlOe1UImTg0h1cVBjfC0U69YjMgcs1IbnTa8gCX?=
- =?us-ascii?Q?+x+N6H1n7idOSeSOFGcbYUQ8tzSzBag0vlPYz1mk8GPEH4di5Ua9/omKQfWO?=
- =?us-ascii?Q?WZlu1PDdCYj9jACGo1Pb36JWskCo5yzDBzA82nsg/2BF2xo+H8rp+Vq+XQXQ?=
- =?us-ascii?Q?gDHxvELl1J0H/J9iWzRdq5sqxVM8x6DrAzHbAGFLnaWPdaZ39XJaUb/2cd9g?=
- =?us-ascii?Q?+PgUO2OYws1jpf8GCdh56T9jSqEn0ZovRY0tgbx3xbQXKe+6G2ZaGDLFwEvJ?=
- =?us-ascii?Q?nh5SPmsDCRO70FxJcIWg8tAc93Kv6nf+?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 22:29:13.5620
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 200e15fe-2277-49a3-93e6-08dd157c3f2d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A349.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7348
+References: <67294349.050a0220.701a.0010.GAE@google.com>
+In-Reply-To: <67294349.050a0220.701a.0010.GAE@google.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Thu, 5 Dec 2024 15:34:16 -0700
+Message-ID: <CAOUHufbF5wFv1LrOm6L+kZC1oOegqSaX94cgHP__RXEUc__2Rw@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING in folio_update_gen
+To: syzbot <syzbot+e5a74963d40b07387bdf@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For Ryzen systems the EPP policy set by the BIOS is generally configured
-to performance as this is the default register value for the CPPC request
-MSR.
+On Thu, Dec 5, 2024 at 8:25=E2=80=AFAM syzbot
+<syzbot+e5a74963d40b07387bdf@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1263458798000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D704b6be2ac2f2=
+05f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3De5a74963d40b073=
+87bdf
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/dis=
+k-c88416ba.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinu=
+x-c88416ba.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/b=
+zImage-c88416ba.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+e5a74963d40b07387bdf@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 85 at mm/vmscan.c:3140 folio_update_gen+0x23d/0x250 =
+mm/vmscan.c:3140
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 85 Comm: kswapd0 Not tainted 6.12.0-rc5-next-20241101-=
+syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> RIP: 0010:folio_update_gen+0x23d/0x250 mm/vmscan.c:3140
+> Code: 00 48 3b 4c 24 60 75 2a 48 c1 e8 29 83 e0 07 ff c8 48 8d 65 d8 5b 4=
+1 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 74 c0 bf ff 90 <0f> 0b 90 e9 91=
+ fe ff ff e8 46 9f ee 09 66 0f 1f 44 00 00 90 90 90
+> RSP: 0018:ffffc900020deb40 EFLAGS: 00010293
+> RAX: ffffffff81d5fd8c RBX: 0000000000000000 RCX: ffff88801cbb8000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffffc900020dec00 R08: ffffffff81d5fc19 R09: 1ffff1100d562d00
+> R10: dffffc0000000000 R11: ffffed100d562d01 R12: 0000000000000003
+> R13: 1ffff9200041bd70 R14: ffffc900020deb80 R15: ffffea0001308000
+> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f7fecc34866 CR3: 00000000223a2000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  walk_pmd_range_locked+0x92b/0xf90 mm/vmscan.c:3514
+>  walk_pmd_range mm/vmscan.c:3594 [inline]
+>  walk_pud_range+0x1f16/0x2310 mm/vmscan.c:3621
+>  walk_p4d_range mm/pagewalk.c:259 [inline]
+>  walk_pgd_range+0x4a9/0x17e0 mm/pagewalk.c:305
+>  __walk_page_range+0x15f/0x700 mm/pagewalk.c:412
+>  walk_page_range_mm+0x58f/0x7c0 mm/pagewalk.c:505
+>  walk_mm mm/vmscan.c:3665 [inline]
+>  try_to_inc_max_seq+0xdd9/0x13b0 mm/vmscan.c:3902
+>  get_nr_to_scan mm/vmscan.c:4740 [inline]
+>  try_to_shrink_lruvec+0xb30/0xc70 mm/vmscan.c:4783
+>  shrink_one+0x3b9/0x850 mm/vmscan.c:4832
+>  shrink_many mm/vmscan.c:4895 [inline]
+>  lru_gen_shrink_node mm/vmscan.c:4973 [inline]
+>  shrink_node+0x37cd/0x3e60 mm/vmscan.c:5954
+>  kswapd_shrink_node mm/vmscan.c:6783 [inline]
+>  balance_pgdat mm/vmscan.c:6975 [inline]
+>  kswapd+0x1ca9/0x3700 mm/vmscan.c:7244
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
 
-If a user doesn't use additional software to configure EPP then the system
-will default biased towards performance and consume extra battery. Instead
-configure the default to "balanced_performance" for this case.
-
-Suggested-by: Artem S. Tashkinov <aros@gmx.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219526
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index b361e691fd33e..57775839a1c44 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1503,8 +1503,6 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
- 
- 	policy->driver_data = cpudata;
- 
--	cpudata->epp_cached = cpudata->epp_default = amd_pstate_get_epp(cpudata);
--
- 	policy->min = policy->cpuinfo.min_freq;
- 	policy->max = policy->cpuinfo.max_freq;
- 
-@@ -1515,10 +1513,13 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
- 	 * the default cpufreq governor is neither powersave nor performance.
- 	 */
- 	if (amd_pstate_acpi_pm_profile_server() ||
--	    amd_pstate_acpi_pm_profile_undefined())
-+	    amd_pstate_acpi_pm_profile_undefined()) {
- 		policy->policy = CPUFREQ_POLICY_PERFORMANCE;
--	else
-+		cpudata->epp_default = amd_pstate_get_epp(cpudata);
-+	} else {
- 		policy->policy = CPUFREQ_POLICY_POWERSAVE;
-+		cpudata->epp_default = AMD_CPPC_EPP_BALANCE_PERFORMANCE;
-+	}
- 
- 	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
- 		ret = rdmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, &value);
-@@ -1531,6 +1532,9 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
- 			return ret;
- 		WRITE_ONCE(cpudata->cppc_cap1_cached, value);
- 	}
-+	ret = amd_pstate_set_epp(cpudata, cpudata->epp_default);
-+	if (ret)
-+		return ret;
- 
- 	current_pstate_driver->adjust_perf = NULL;
- 
--- 
-2.43.0
-
+This is caused by "mm/mglru: rework workingset protection" in
+mm-unstable. Will post v2 today to fix this.
 
