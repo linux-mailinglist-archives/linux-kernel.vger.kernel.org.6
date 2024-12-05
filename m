@@ -1,263 +1,246 @@
-Return-Path: <linux-kernel+bounces-434162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4E79E626E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:49:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB779E611C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB481882FB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:49:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E42B188575F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 23:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E8242069;
-	Fri,  6 Dec 2024 00:48:55 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3742F1D5150;
+	Thu,  5 Dec 2024 23:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Fu8o1lPS";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="V6aEg/ZM"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6C622083
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733446134; cv=none; b=eDXz/mGMRqvB2Jd8KQFlhC5KR91eKJbdr1Ea/GIYHQIxU5rZ0LR0bsqZ1L63e8Y8C+5r0CrQDJt0DC/Mn3EviiJ9RFowqilmVwxciaQHy+MO4Ks2EWmr4vCdM/Hajx0+QxqNeBvlAzZFZjr6GWgX60Cszz5pEQ2Jb5Tn6ajJi+0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733446134; c=relaxed/simple;
-	bh=RDfVKyiGPkxjQWiZXYTMz5EOd1dIdsbHDvSH0iNDcAE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sapTzkTVmpAf82xZ2LZL4C3sxqTv0s/2G3YSF4YPzD0dYOpHcZ5ni8LGlKbUKzzfxxw1/Xrq2tA5gt2QMYRI6Y5gDPFz4cSaqoIQaZR7K/R/fiBdHwM7YLAowyP0iH/elZ9EPLjEhXM8KXyxg3hti8uoo1ml7077BoSwHgWh9Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1733446126-086e2312d5235b0001-xx1T2L
-Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx1.zhaoxin.com with ESMTP id IQ6SxxUcIQQpJ0vr (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 06 Dec 2024 08:48:46 +0800 (CST)
-X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX1.zhaoxin.com
- (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 6 Dec
- 2024 08:48:45 +0800
-Received: from ZXSHMBX1.zhaoxin.com ([fe80::3066:e339:e3d6:5264]) by
- ZXSHMBX1.zhaoxin.com ([fe80::3066:e339:e3d6:5264%7]) with mapi id
- 15.01.2507.039; Fri, 6 Dec 2024 08:48:45 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from xin.lan (10.32.64.1) by ZXBJMBX03.zhaoxin.com (10.29.252.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Dec
- 2024 19:40:53 +0800
-From: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
-	<robert.moore@intel.com>, <avadhut.naik@amd.com>, <yazen.ghannam@amd.com>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-CC: <CobeChen@zhaoxin.com>, <TonyWWang@zhaoxin.com>, <ErosZhang@zhaoxin.com>,
-	<LeoLiu-oc@zhaoxin.com>
-Subject: [PATCH v4 3/3] PCI/ACPI: Add pci_acpi_program_hest_aer_params()
-Date: Thu, 5 Dec 2024 19:40:48 +0800
-X-ASG-Orig-Subj: [PATCH v4 3/3] PCI/ACPI: Add pci_acpi_program_hest_aer_params()
-Message-ID: <20241205114048.60291-4-LeoLiu-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241205114048.60291-1-LeoLiu-oc@zhaoxin.com>
-References: <20241205114048.60291-1-LeoLiu-oc@zhaoxin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4961D0E27;
+	Thu,  5 Dec 2024 23:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733440030; cv=fail; b=fAr+iRnGI25heiyMk4xmY+NxWD6wbDIhk3H2+PnuX4qRc11DWOM1qK0l5cYxXc4MR3OvXcps3QPHNMcnjd2q0QOllmzt8i9qlaf74/lSiDmO51tUA/6rctyboXg4JWRiyGNnpDpOF+UOqgqExa7a6dL5/kR+78lQAQ9gNWDtpOk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733440030; c=relaxed/simple;
+	bh=tpzDJr5WZR1QbSYSh6QYjJZnQRUI0fY6gf2mpYIa+Io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KL+jUZo8YilwIqdLSME/oivGmUPdH2A4sfVKEQMI2E1u5aXQ7/oGRFwbO/GeTcSWW64BIhRhDRH9BeOWQPFdgb2t2VC+lIiIsfMUaCNRjWWsvKGDj9AM36vZ6Xb9lVCtC18Bnc7xMh5Auh/41XbF/NCbVEUTj7eT4G39Wllzsq0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Fu8o1lPS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=V6aEg/ZM; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5LNYLI017866;
+	Thu, 5 Dec 2024 23:01:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=CQ7rQig8Vjk5b19Opr
+	mb9ypqv8UcL6x3H5cWs81I56Q=; b=Fu8o1lPS1IBTyUGafPenhgEV4gvMABuXu8
+	zrzZiXMryD6daecg7MNSwNSl+c0BHVBhct98lf/59mEVGLwKic62qpislJzqrKhA
+	z87VHe3cJ/TZZTaKqUTiDc3sdclPxZ2HA12DgaxZHnT+Nay67lz7m4FioqErdJo2
+	aJO8oDhwq0hI3c5cYJFW6fK6EWZQrYVnJ8KV0mTO5QmPBmv5l4oe5C1/rOWkZVS5
+	1CPy/lH6K8avArhzYNC0NCPZppLEgukJMQKFazAE7e6vabY7eMBxVV2SkLX9eGkD
+	OWsw2I1U3zDWB5QW0pJw8DuglidkAzmHvuTf8HD5WciVIX9ec+aw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437sa04ep5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Dec 2024 23:01:49 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5LxnLO001419;
+	Thu, 5 Dec 2024 23:01:48 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2047.outbound.protection.outlook.com [104.47.57.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 437s5bjbra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Dec 2024 23:01:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vjT+zrbY7YR/nENJJg3SqURWbK4k73OGVR/ms84OpF3N+SOID+10sYNuQ9OT87uiFtw83XI99KdAVsYjZHB3n0DsydGgM/h/64AQp9vehvhjV004yCI18D51YNSUbQP/hTf9FNqaNqgsmPlvwyWU2PM1H6KU/EDBscioiMaECDhhafycUFPHa8ClWbnW45tDCQzCUSNr+IKQHE9bwlo9arAJQJ3wIw7aX2QC9tgiyRZ0Ws8/n6IHz83YbAbWjQF3MCKaFUqiI5ZEUf64Et+w6Hl4knd4rVOsadyaFWHBKOqM67+X7sJqt2RFT6wCLx/qWI8SCkImsPBqJoUK4BVV/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CQ7rQig8Vjk5b19Oprmb9ypqv8UcL6x3H5cWs81I56Q=;
+ b=JF3NWtd99ju15DxxB4dpIgQ1IAykNkCwOpgd1FUhYIuDJ/Ai2UTtJ5jHTd2EwlBehOEx2pQ3ci24Ffr1XyS9IiJ8SWh1WortrAsmqB/nuIRs8Y4G+HjucvlsOr6SVKXHF8YaJrZ/LDyISOyzOKdcRka3u/Zu5yOfTMJvwvuIoYJwDwm4qxdTJ2XoeLw7iZ24Z8N+NlGvxygbzPdS0UXLOOL58hmrgPyy50u0SYItc1WhrzgCrHi0E4xuZ73IBHOGdnQ/qGt7izMTcKq5QLvrfK8o7OvWav7cjP9mVoqDdtn9jEJJS4nxR2L4fq3gTKV4Y5dJmGJ1eLJ0fvOd8kl/Bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CQ7rQig8Vjk5b19Oprmb9ypqv8UcL6x3H5cWs81I56Q=;
+ b=V6aEg/ZMbs8YMFjpCe8YK4MUPkH4Twc0YR/7xhe+blp5kVeSgeiOdc0/qN6+wzT2vnOwFm1ebqTJHjXIAPNUIxaczOYMYHkAIk0RqtJ+ck9R7yx4k13d29i5wRVRrDq+A/OOBCwKiJqkbUWOjyL1xw2lhxKujaEZGv5UBJt7niM=
+Received: from CY8PR10MB7265.namprd10.prod.outlook.com (2603:10b6:930:79::6)
+ by DS7PR10MB5037.namprd10.prod.outlook.com (2603:10b6:5:3a9::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Thu, 5 Dec
+ 2024 23:01:46 +0000
+Received: from CY8PR10MB7265.namprd10.prod.outlook.com
+ ([fe80::d299:36f1:493b:33fc]) by CY8PR10MB7265.namprd10.prod.outlook.com
+ ([fe80::d299:36f1:493b:33fc%5]) with mapi id 15.20.8230.010; Thu, 5 Dec 2024
+ 23:01:44 +0000
+Date: Thu, 5 Dec 2024 18:01:41 -0500
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chenridong@huawei.com, wangweiyang2@huawei.com
+Subject: Re: [PATCH 2/2] padata: fix UAF in padata_reorder
+Message-ID: <nihv732hsimy4lfnzspjur4ndal7n3nngrukvr5fx7emgp2jzl@mjz6q5zsswds>
+References: <20241123080509.2573987-1-chenridong@huaweicloud.com>
+ <20241123080509.2573987-3-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241123080509.2573987-3-chenridong@huaweicloud.com>
+X-ClientProxiedBy: BL6PEPF00013E13.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1001:0:14) To CY8PR10MB7265.namprd10.prod.outlook.com
+ (2603:10b6:930:79::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Moderation-Data: 12/6/2024 8:48:45 AM
-X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
-X-Barracuda-Start-Time: 1733446126
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 5221
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.134151
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR10MB7265:EE_|DS7PR10MB5037:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49e9e129-498b-4d30-53b9-08dd1580c9a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kZD+zDql/JKoOUi0+TZbyA060m5I3PHatAW8JUNOsJlZrHly7kN7nNoMEHns?=
+ =?us-ascii?Q?Ps+kdowmPAwocR/MCS8GXCJk/LCjPKhjQnNoK77dJwTwKB3RCDBXjZRrASEd?=
+ =?us-ascii?Q?6+gFInND89j8STdmvMgdZd9DFDrpBz1EERAtqOn52wgW+aBiPyvMpow1u40h?=
+ =?us-ascii?Q?S6BW/F2KSXzEeSI5mIpyJCSzOsdIHcOa11JlCDU+/LXeq4QkSSOy7qXjUlMg?=
+ =?us-ascii?Q?EvbIKQT0AMV9+ox5kSJgeQB49t9AsUoyvFbJkeNWPXDI0mOS4lOAFxQhixZF?=
+ =?us-ascii?Q?qufwA9JZJBf76vqbfG0BaLwJBcB3ez6Ohc7xJ5XkRun8apHLu6fHt7othqT2?=
+ =?us-ascii?Q?hpXUBdDL4m8hm5y49J+1VQCwnvM7RV/tVy1nuQ33Y47L5vPsnTmX0UKJmOe9?=
+ =?us-ascii?Q?as+0HDMVd/dlKowl7LSoLV6juVwK4umzzuPkuQNE32hAvUZI+3Ofh4VpOOVl?=
+ =?us-ascii?Q?UOS+4ehaa6oDdvwdmgzKkq/TEzw5yO4GqzwJRXdSR/QDs3xF63PFJ1dIS7Bc?=
+ =?us-ascii?Q?H+aQNYYOpoCa7V/PzQ0Nvzb5fVOdEUf2PaDHUMJ/VfnFApHjjBY/k3IxQd4q?=
+ =?us-ascii?Q?lwk/xLRcoLuBPNottV14RQsTICnmMGki5j7s6awMdENuemw7NoKOeQ662LeC?=
+ =?us-ascii?Q?W4YaRtD/x9kIQkmZdBPF5pPRSR7hiZKofEybfg4F3bZKGrIsIBYLqd5SDNCZ?=
+ =?us-ascii?Q?ixTKfqV9jUlWmiDO4ZQ7T3YsH4Kao+PDIlSGKrUuQO59DMWdR948PIpAKhd7?=
+ =?us-ascii?Q?Jqw9fL7ihF52CIpfUC7KHssM1lWcIDt27MUIUnWf6TgDlb25WdLnrw7p/UxQ?=
+ =?us-ascii?Q?8Fn1p5dgVvVswcXvdnmk+//86FR/P38BQVtbiWL+9neoz1yu4zl9h3cuTDFq?=
+ =?us-ascii?Q?Ex9Lo1p7dXWzM22x8YfGavDGPfyBv7fwKOP7O0EeZ65hdC9YGYPimqK3tsB1?=
+ =?us-ascii?Q?d2mX1sUYJIMZxmfFVFAKy5lOz9G8Xk4HCeAD1Tp8dRSkK/PXQmXJy2kmD53P?=
+ =?us-ascii?Q?WPPZIINwQGkNhbjCClKvfbiYZmxplo5p/7Hwrptl5St52JUUhTkgYkg+ojwi?=
+ =?us-ascii?Q?X/enevYf8+2EggPTQHe7aZ3A/zQ+kXLJdKAJ0Z9VzFGqKFzTJBy4wUWQT81C?=
+ =?us-ascii?Q?AwCIZBnnyLZlzU9i3avKxrnI0HaXh2O7Jj70Qodwbn1bqrBS69rVxbWoDdS7?=
+ =?us-ascii?Q?z13zfLbDoGBSUCJf/1/amJYoquDnlNUJIIY/lX1bGc3Nneg9TU/Lq+xjIPV7?=
+ =?us-ascii?Q?5vXdKoZ9r//CuJev9P440czbtkRiGuZihDqsoXsZ5enbuHlAqO22v8KXctD2?=
+ =?us-ascii?Q?KPv8+Uy7CTGm5BM3RttxEP98ykI80ZJ/qfdD0toPPidUwQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR10MB7265.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0WBRCORpVpiNgzUrnTz40WfiGohlaXzHp/Hl7H2JgsrVqa7Ui/RzF7kI+QXI?=
+ =?us-ascii?Q?61dxrDflNXCH6byK0wOWieAhEOzhUkpU0cs66hwVfoNKcmKx71Q0nVP/MClB?=
+ =?us-ascii?Q?gSmYj+p6CSNIcYNv+zaTCn3ECc+Htbr/t89wsEsdfzdMxToZ7wwh7++pP5jS?=
+ =?us-ascii?Q?xNgLhvPJvYqnuN8yAHJ8CWUO4kipsysYVc7mwBnUDdZ0usgvRTWbnaMXuPGb?=
+ =?us-ascii?Q?PgHQK+bllHL0gyNKAIJ+kE7ywoaNxSTpiuU0YdL/QXCPH4xeZeNIcF/bBwO8?=
+ =?us-ascii?Q?ABeCrHlKBvoHVejms7rFRXofKqHd0+GWtp9Vr0ewZGu4floR6F5XXNOM9UMB?=
+ =?us-ascii?Q?5pZlWr31d/I7hJNHbco+8PYFQQnOrxj5qSGnCNCbYPjLQkS6lciSY55cYFB+?=
+ =?us-ascii?Q?Leo0Cb6LWMG230IUZxKrSrrRTfrtpAHh2EL9Y2GD6SGmS7LDLkim9F6gzAMA?=
+ =?us-ascii?Q?MiJknE+CnMDPXLbPA4ibOmkLb9LvJcdtprKT0rmd8V6cPiOitD9aRJjXZLrh?=
+ =?us-ascii?Q?2DMKbqXQniz2Ph5V+GaJyccmnr/lL9N/uHWYpw0e6BLC4NXSDUVwLjzPVFFT?=
+ =?us-ascii?Q?c8fbqKuGguKhxGGyFGhVUMf3ZhtunoNVr6hxb/kPXD58O5uTAQ9kitzvEoQX?=
+ =?us-ascii?Q?h6u4y/4Jj/6NQpznDmkh4QGPtm8BjctgWYLqgA3vZcAzxs/pvb7XT074XoWN?=
+ =?us-ascii?Q?jw68OXbmdW/f6efW6FQ5N1SY4IUmfsfF3OcHfq62u+leB8NXedoWMB4LYH61?=
+ =?us-ascii?Q?IX7vpKdwiA8unwAPPUFdklVsxOjX0JZCNVNZu4L7+1sDr6tsWNlmBa0xjgzw?=
+ =?us-ascii?Q?mQKjxNlw6fXy/P2yCik1L6ozVy1e/E4Up2kbOyrzK1CH0+/mWuQYw+vQ4ayA?=
+ =?us-ascii?Q?sG+Gw274zGqtLnoEDfREJlJI9+OrV92lFLO2J7HANjB00mNKPS3Cxh9lcWaO?=
+ =?us-ascii?Q?b6GEAhU78sN77/o+j7dWolRHsalsZSDLmdwgwb9NhuJ7/9rLC8MVIjFcl3op?=
+ =?us-ascii?Q?bYc9UgUuiZlt4JKORwUM4Riwgr7vqRdsYNO5G+lW9Sq0ZyoGG4tLqZaSQrr3?=
+ =?us-ascii?Q?/iklDP3ls4ZxB/rpMKzvHiIhZAv6xomJ+ch2BDfK+DJDLjE7227z//BOGUB8?=
+ =?us-ascii?Q?PJ9lvzpHcXahgyueF5QCv1wmrAvWRrXiWj9Fb/HWkKHgenWnEByF2qnU/iCI?=
+ =?us-ascii?Q?XNwF60w1HuXBbTx7t7w92bP5gBw3r8qx61FELDt7vMuhZFfAkfK2/NAyPOf3?=
+ =?us-ascii?Q?YIaBqmfCYCClB8XUSXCsLtQ3Eym2/qd1xMXm7sK9cYLifvzVe4ay/1gVPBkZ?=
+ =?us-ascii?Q?nIeOc9cq72p5z0QXi1RKXGLDyu3BWe6D85+XjVEiQ3dlE/b1vb+YZdr5oKqc?=
+ =?us-ascii?Q?bdj7Y9JlY+v2BOXNx4JG5Kg0E6oTbjdnpvgYsINx7Mgt1+fNFHMDD19shZiI?=
+ =?us-ascii?Q?Kp+2KizltByl3afpipSq0hLyFTb0ojcxXt9SpKr7xVkPDZ5tHGJXCNqiRDHN?=
+ =?us-ascii?Q?WU0TH+6PmYXUfIBVBqFEF2o3hY6jYbpIP3CpqbxGut80fJHvqEbCcqmvibDI?=
+ =?us-ascii?Q?seJOfS61JAdcCFCDrwAdvL6r102eGA4J1qrNcLy/mu+yPX+6IkUYRWfWR/he?=
+ =?us-ascii?Q?TQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	NwL4HEVKFB82giXJKyWwAHEJoYKaGqWAA5OH4tud0E/Bmsn9Bhy4czReYunk+VnxJ9bMUsudS6vR4nY28DgHgimSq5nKwXoj3HQz15eEr1nHOyJRZ5/4BvbPXO95gYIJZNbX1u8gZ/k8/V6Hd5kUnBvnpcsZeBzJcRKS7V0MANF+0hyqD7P0GFaXM5/DdUVku1fGFYlq+mOs6xFYQGDDUDXiGgD2E1565wtmHeVLN139EtWnwrFB22ZZHp82859hWYZqtC6bgM9mQ8zxq5Su5XJRas78bYdbVC/ON/MxEqTZ55tiVDSqJa7hIVSUTgbWrjMw1NQndvN7UTtailO9WusuUzo69KyZEn4O8zkXcM3yoy2rWVokvqqbdHCVZIlKXJkCmNuBriJrQ+s1tQ1iB8SLp9vaOEdlqoVFTb6lzCdrxEIDw8CImrwGZgCjQN9IqNgf1EGqYiXeM0Ri0RUkfoWl8eHMi2fkQSXF4MVsHG3IMFVYoIGgaqXlTN/xs2/k0XUE+sxI13XgHwEQKJzLCSQq8gwPXBuPSnP3GJxE+zu8QEr8BnDCgdKVT42FMOqiQY+dac/ZGDgu3my1TLRb8TVtqJzLqGuQNLxE1bsNZJo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49e9e129-498b-4d30-53b9-08dd1580c9a2
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB7265.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 23:01:44.1278
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iwpthTR1odwzaLYOB31JBJi18xQ6Bnomn/OJ/fsKxMXHlyoCljDMN0ArOEIZEj0hZyuSXYFj/Sa2V6cII7DmYLwK/hjON2DNlZHktLGP9YY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5037
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-05_16,2024-12-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2411120000 definitions=main-2412050171
+X-Proofpoint-GUID: -0Hr0G2g2hlBAtZTC9egicveSwGBnt2f
+X-Proofpoint-ORIG-GUID: -0Hr0G2g2hlBAtZTC9egicveSwGBnt2f
 
-From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
+Hello Ridong,
 
-Call the func pci_acpi_program_hest_aer_params() for every PCIe device,
-the purpose of this function is to extract register value from HEST PCIe
-AER structures and program them into AER Capabilities. This function
-applies to all hardware platforms that has a PCI Express AER structure
-in HEST.
+On Sat, Nov 23, 2024 at 08:05:09AM +0000, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> A bug was found when run ltp test:
+...snip...
+> This can be explained as bellow:
+> 
+> pcrypt_aead_encrypt
+> ...
+> padata_do_parallel
+> refcount_inc(&pd->refcnt); // add refcnt
+> ...
+> padata_do_serial
+> padata_reorder // pd
+> while (1) {
+> padata_find_next(pd, true); // using pd
+> queue_work_on
+> ...
+> padata_serial_worker				crypto_del_alg
+> padata_put_pd_cnt // sub refcnt
+> 						padata_free_shell
+> 						padata_put_pd(ps->pd);
+> 						// pd is freed
+> // loop again, but pd is freed
+> // call padata_find_next, UAF
+> }
 
-Signed-off-by: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
----
- drivers/pci/pci-acpi.c | 103 +++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pci.h      |   9 ++++
- drivers/pci/probe.c    |   1 +
- 3 files changed, 113 insertions(+)
+Thanks for the fix and clear explanation.
 
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index af370628e583..6e29af8e6cc4 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -19,6 +19,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/pm_qos.h>
- #include <linux/rwsem.h>
-+#include <acpi/apei.h>
- #include "pci.h"
-=20
- /*
-@@ -806,6 +807,108 @@ int pci_acpi_program_hp_params(struct pci_dev *dev)
- 	return -ENODEV;
- }
-=20
-+#ifdef CONFIG_ACPI_APEI
-+/*
-+ * program_hest_aer_common() - configure AER common registers for Root Por=
-ts,
-+ * Endpoints and PCIe to PCI/PCI-X bridges
-+ */
-+static void program_hest_aer_common(struct acpi_hest_aer_common aer_common=
-,
-+				    struct pci_dev *dev, int pos)
-+{
-+	u32 uncor_mask;
-+	u32 uncor_severity;
-+	u32 cor_mask;
-+	u32 adv_cap;
-+
-+	uncor_mask =3D aer_common.uncorrectable_mask;
-+	uncor_severity =3D aer_common.uncorrectable_severity;
-+	cor_mask =3D aer_common.correctable_mask;
-+	adv_cap =3D aer_common.advanced_capabilities;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK, uncor_mask);
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, uncor_severity);
-+	pci_write_config_dword(dev, pos + PCI_ERR_COR_MASK, cor_mask);
-+	pci_write_config_dword(dev, pos + PCI_ERR_CAP, adv_cap);
-+}
-+
-+static void program_hest_aer_root(struct acpi_hest_aer_root *aer_root,
-+				  struct pci_dev *dev, int pos)
-+{
-+	u32 root_err_cmd;
-+
-+	root_err_cmd =3D aer_root->root_error_command;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, root_err_cmd);
-+}
-+
-+static void program_hest_aer_bridge(struct acpi_hest_aer_bridge *hest_aer_=
-bridge,
-+				    struct pci_dev *dev, int pos)
-+{
-+	u32 uncor_mask2;
-+	u32 uncor_severity2;
-+	u32 adv_cap2;
-+
-+	uncor_mask2 =3D hest_aer_bridge->uncorrectable_mask2;
-+	uncor_severity2 =3D hest_aer_bridge->uncorrectable_severity2;
-+	adv_cap2 =3D hest_aer_bridge->advanced_capabilities2;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK2, uncor_mask2);
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER2, uncor_severity2);
-+	pci_write_config_dword(dev, pos + PCI_ERR_CAP2, adv_cap2);
-+}
-+
-+static void program_hest_aer_params(struct hest_parse_aer_info info)
-+{
-+	struct pci_dev *dev;
-+	int port_type;
-+	int pos;
-+	struct acpi_hest_aer_root *hest_aer_root;
-+	struct acpi_hest_aer *hest_aer_endpoint;
-+	struct acpi_hest_aer_bridge *hest_aer_bridge;
-+
-+	dev =3D info.pci_dev;
-+	port_type =3D pci_pcie_type(dev);
-+	pos =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR);
-+	if (!pos)
-+		return;
-+
-+	switch (port_type) {
-+	case PCI_EXP_TYPE_ROOT_PORT:
-+		hest_aer_root =3D info.hest_aer_root_port;
-+		program_hest_aer_common(hest_aer_root->aer, dev, pos);
-+		program_hest_aer_root(hest_aer_root, dev, pos);
-+	break;
-+	case PCI_EXP_TYPE_ENDPOINT:
-+		hest_aer_endpoint =3D info.hest_aer_endpoint;
-+		program_hest_aer_common(hest_aer_endpoint->aer, dev, pos);
-+	break;
-+	case PCI_EXP_TYPE_PCI_BRIDGE:
-+		hest_aer_bridge =3D info.hest_aer_bridge;
-+		program_hest_aer_common(hest_aer_bridge->aer, dev, pos);
-+		program_hest_aer_bridge(hest_aer_bridge, dev, pos);
-+	break;
-+	default:
-+		return;
-+	break;
-+	}
-+}
-+
-+int pci_acpi_program_hest_aer_params(struct pci_dev *dev)
-+{
-+	struct hest_parse_aer_info info =3D {
-+		.pci_dev =3D dev
-+	};
-+
-+	if (!pci_is_pcie(dev))
-+		return -ENODEV;
-+
-+	if (apei_hest_parse(hest_parse_pcie_aer, &info) =3D=3D 1)
-+		program_hest_aer_params(info);
-+
-+	return 0;
-+}
-+#endif
-+
- /**
-  * pciehp_is_native - Check whether a hotplug port is handled by the OS
-  * @bridge: Hotplug port to check
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 2e40fc63ba31..78bdc121c905 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -897,6 +897,15 @@ static inline void pci_save_aer_state(struct pci_dev *=
-dev) { }
- static inline void pci_restore_aer_state(struct pci_dev *dev) { }
- #endif
-=20
-+#ifdef CONFIG_ACPI_APEI
-+int pci_acpi_program_hest_aer_params(struct pci_dev *dev);
-+#else
-+static inline int pci_acpi_program_hest_aer_params(struct pci_dev *dev)
-+{
-+	return 0;
-+}
-+#endif
-+
- #ifdef CONFIG_ACPI
- bool pci_acpi_preserve_config(struct pci_host_bridge *bridge);
- int pci_acpi_program_hp_params(struct pci_dev *dev);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 2e81ab0f5a25..33b8b46ca554 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2304,6 +2304,7 @@ static void pci_configure_device(struct pci_dev *dev)
- 	pci_configure_serr(dev);
-=20
- 	pci_acpi_program_hp_params(dev);
-+	pci_acpi_program_hest_aer_params(dev);
- }
-=20
- static void pci_release_capabilities(struct pci_dev *dev)
---=20
-2.34.1
+> diff --git a/kernel/padata.c b/kernel/padata.c
+> index 5d8e18cdcb25..627014825266 100644
+> --- a/kernel/padata.c
+> +++ b/kernel/padata.c
+> @@ -319,6 +319,7 @@ static void padata_reorder(struct parallel_data *pd)
+>  	if (!spin_trylock_bh(&pd->lock))
+>  		return;
+>  
+> +	padata_get_pd(pd);
+>  	while (1) {
+>  		padata = padata_find_next(pd, true);
+>  
+> @@ -355,6 +356,7 @@ static void padata_reorder(struct parallel_data *pd)
+>  	reorder = per_cpu_ptr(pd->reorder_list, pd->cpu);
+>  	if (!list_empty(&reorder->list) && padata_find_next(pd, false))
+>  		queue_work(pinst->serial_wq, &pd->reorder_work);
+> +	padata_put_pd(pd);
 
+Putting the ref unconditionally here doesn't cover the case where reorder_work
+is queued and accesses the freed pd.
+
+The review of patches 3-5 from this series has a potential solution for
+this that also keeps some of these refcount operations out of the fast
+path:
+
+    https://lore.kernel.org/all/20221019083708.27138-1-nstange@suse.de/
 
