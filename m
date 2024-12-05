@@ -1,159 +1,159 @@
-Return-Path: <linux-kernel+bounces-432880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B136E9E5175
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:34:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE9D9E5176
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D8518818A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:34:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4F1881C71
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 09:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1D11D5AD3;
-	Thu,  5 Dec 2024 09:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1851D516A;
+	Thu,  5 Dec 2024 09:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsP/MMTr"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDO2Dq1o"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A359A1A8F84;
-	Thu,  5 Dec 2024 09:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AAA1CF7A1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 09:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733391284; cv=none; b=R5S55ZdrSMNoVOeNmyp8QPVS9p5SXLg5+xQFLgRKjBtiULWNH3M8UeOTXc6l3W3QInZvkqHi5XRNkw3Fxm8oRqB1JmJ1/yksRo+nnPV+uxOFUJzWnZB7sAbdn5BuXMhVqObM9Ga4k/PrvxDBrOE99dHEIngnYvuOlFWKIahvBzw=
+	t=1733391291; cv=none; b=a4FFOyAp1Hu55hZjWSweYYwJqjKvtMK2QZLM6A+bIuxcg9kGRgpR6E56x1BSu8Fkd1fJIKF1R8tViEfw3SzKbu+Sk3/R3s7t4/BJaSv+1WQx476LwawCzRSIQ4nyg6leb+iPtTYftaIm496lGjRwnorSMOqBDwifB+4B3x3OL7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733391284; c=relaxed/simple;
-	bh=SgjiSFVxnlRVKIIJzqHaBXZJFjFXmkquQB53qoebHPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=muC+2knvt1ZhnOCIPsskTUG00iE7QZRkgg0BBJ/uL+u4Yu3mZbbAwYnhRRkV5LM/Q69shqU2pi+H9Ydln1OjL76Pn/7preicPZL0Qq8yOJyPTGsRA3xafwHCAWrRzruarCx92j/D+45UGidYzAKefeD+VqAP344pDgX1kj74BEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gsP/MMTr; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1733391291; c=relaxed/simple;
+	bh=rltCx31fQpuLz7eccLuZZQoglSA0TqpZcDzEc45bE4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uHZ3tNPG8cW0J6yE0GRl1xE5m8u6+kmdxcclzlGY7pk5GsmRmC5USztyCj82RN77HH5GfjAB3LZHwUsZIPHmPT1kdt03gj7ttExmN2dd/Qcy87zW54fK092MwW/52B8Ev+aB3n6i5JNFSc5ofNNZLSWLOnfVWbasmIKpUjoRbe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDO2Dq1o; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-724e1742d0dso632460b3a.0;
-        Thu, 05 Dec 2024 01:34:42 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385e0e224cbso332874f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 01:34:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733391282; x=1733996082; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=svw3hVWhjLUsKCnyMo5bW6Ng4sD85ogIrMfseX9wbyA=;
-        b=gsP/MMTrj12JVHLsTZfPYK3umou5w/6L9oGZFjvWjP8g44MrGNRWa9gqhakCtQ/Rdj
-         WXLyj4aDGM12cAWXwl967LARkPJGUrFtSZzUjlQb/Nz+/Q8c3x0rhDu2iM2XvSnc5UV+
-         GJaKvDFLASYDLsH6HT1R9LQkgywD6CdHkA6b7PqK7Z5HOlkWdyK6vV6mL/5ctM4h0ir+
-         xkMDQq6uTEL5PG5dXxMePbgdRO7duDBKa1oWyBUFIbtOzBSVL6U1dzXjmTDSckEITTae
-         DLqr64xJI8627lxQUOKsXQiYJT0pQXv779oz8ZO0RldbKBlrsk3FCzGJApZpp7SQwm7O
-         Vrhg==
+        d=gmail.com; s=20230601; t=1733391288; x=1733996088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w+97jMlCI1D0FZdR3+nbrjK/zuRlNUinJNWb46g4mfk=;
+        b=EDO2Dq1ouJJAqyMllrDhcVhSOCiNuVAFSkBOFnUyuECTKblIfvhU71L8l51ORH1dUz
+         DEMoXfzxJNfCeqEXGCsXs9Faok7gSkOkGZ6ZGs8hffemLcBA5GpxqAdvSF2Ntxy8DiwV
+         segF43gtETmQKT31Rz6rLcqSALLWxfz5P1WZYouLxkQ5wg+7p50HXkrzyG6pxd7clkEP
+         2HEhIMTkt6jTX59uTtcMxgoyLbeJxhHg519d2J+6AX0JYcYiZJNkv3t+P7ju6vorORH3
+         WmC0iEQjW9VmNuaME7Ho3SLkqdx6xV3PkFgAypSw9xJ55WaBEAhVtrF4c1BzQVnkgTrI
+         yiKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733391282; x=1733996082;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=svw3hVWhjLUsKCnyMo5bW6Ng4sD85ogIrMfseX9wbyA=;
-        b=oSEdTdvrdjsM0oZiesZOd3zpWXsyRBbvIj0+/xzYqN6HAQLPHXGdcknlg0LUbavd+a
-         nmu8jR+AgPq6t256YQq0qpOm/Ovvk17OvrI6GYQZI45Uxt6jr8vAPUYg+tOOdHSy9193
-         3JmJASH3pzYeUsm+U51cWjbkFKk6UpV4Kx3c19iwdKQJ4T9H6+hQzKaf2PimdWlJQqgi
-         19+qSxW0yjhj/nO7W3d7ZWmsDCEXbUlYPFlw7qrIWk1HeVAzpYrhvGdAivdeMdAY1hgW
-         Tvtl+4JO41QWzO+1biy+I0K82OthByfbjfm1THS521M/srGG/use6OwO2dWnK8Mx2b6S
-         vdBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUC0qaTZyISTWwOyysCOkY3CQdDPYPGHap9Bg4Ifsnbo684DiEH5ZUXi0L43Ir2Y76PBbeDL3IicEaWVbk=@vger.kernel.org, AJvYcCUqp1P2uPdjXu77BzxfNK9E3rPRoMP4FpmFhhyDLgxHkTLoz2jqd0mithRRrXj5zvKhUbIBrM2peU687LQ=@vger.kernel.org, AJvYcCWfA4//H8e4TnjSNc8+WG5mrqsC3N5jRLJzZoGU/rOY8TVr1aVZtBz3GiRxQkv1OS8bontScTNf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy48HObuvc+CoRn0lt69y1CSdK82+kGSJoqOs49gRpEjFMjfSUo
-	rW+p5sxQpUZxnURP7/GORQHoI6Gpui8fC2VbGA+Km3cyrJOhMIVYFCowBw==
-X-Gm-Gg: ASbGncuZSRENXBAIMMMC/yI/8SvYtxq8aH9QgJmjyTF5P8zV1ahPq7CJ9MavNiqY8oU
-	4fl8SvXsJceJGQrmE8+E1dCwxFmgOINtqpK0uVVxUgog7KWRiVNl/TAn7H1tAjmy8z1o2z1WWhk
-	KtSG9oiJyWcCxKJvI3YiecEeqHXmDW/1KCUR4JyOsiOULJ1ueKXVEEBsnJiAuWTkRwCbhktGWQM
-	Eh8XLx8ZDfNPNm2gJqhP4FN3uLeQxtQHNbx5+PPMq+SdCo=
-X-Google-Smtp-Source: AGHT+IGGByayQpZUFnuuK54B4xfgnuxti4ZXFGpFEg18KahQT7dWybOnF+z1/CV1gszt9ZR4jHsBdg==
-X-Received: by 2002:a17:902:ec8b:b0:215:19ae:77bf with SMTP id d9443c01a7336-215bd0d8999mr134561575ad.19.1733391281860;
-        Thu, 05 Dec 2024 01:34:41 -0800 (PST)
-Received: from localhost ([129.146.253.192])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e5f172sm8672215ad.69.2024.12.05.01.34.36
+        d=1e100.net; s=20230601; t=1733391288; x=1733996088;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w+97jMlCI1D0FZdR3+nbrjK/zuRlNUinJNWb46g4mfk=;
+        b=oE8JkXITijE05Ke8r461LyxCeUk1ShEfXkaCm69R7tlMT0vzFpSdVD/8OJ9CsMDJCb
+         TLRBIV4UZFW76bAtxuxZpyZhpC4WNC1R6JQSPqKQOfJ80E8qs3NAF4iSBSRGM7/uhWnW
+         r1WBj9Jh60dX4oY8BotGx82enWVHil7aqX4AyfCcDT/PnKJAt3AOSxfrhh6WHI/0VFDB
+         lRFrAzoKk4O3VVGkK+4FqlKxy5dcxjsKeP4aWI7IVAi456Ii6fd8Xe3Wbd7vBkk3hvzo
+         6O43BO3qDARU0+fjL24JSbj38KQdWfEGFCtszVARiFyHFa8wfRIrgP6TyKnLgxE2NF9t
+         YJDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvef3qtj6HsizR8CmgEqKZdXWVcWQrdwbmINN3pZ5SwXwDaTrTPbEGYXzbaOMkfYjXOF5COORDIkSn/xU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj2RvXw6ON3nLzxuqwwZ+0x+2z8swHgciUSFKkjSCceK+W08bG
+	Xunr495gNZLQjFLtVz7IANkmNHjK96OJIVWAWmPMMlGT9WP4apOc
+X-Gm-Gg: ASbGncsQkLu+kJi0oYM8yHArXEdAWmrmfTwI3tp1ExTbZWaolL2TaeY5wql92Neq4CD
+	kEDsAQ0/Kj/kHFbeh70+YzjOp8PBq0koyu1zxWHQUg3VmMk0QUENjpzyA2bpXxTsM8RxfcCwYyV
+	54+wIKPrhQ8XrdWSlEdbXPjwmNiRrz7ISHg2L6CInWZz4OdB1MSWa49Yodoxi6TcjY0EtvGNk2G
+	TeACy4/wvzeq2KadX1SBfe6w35FKJ9OutrY7bhT+EY3YUuTAQYAyZ4hlk+M/uYZNHtZ8ZI89xfK
+	Z0o4jl6CVw==
+X-Google-Smtp-Source: AGHT+IGUbXbtXietuD43WTiX3xy6XxjT74K3zkI7eAyzgT8YxfTeQEjW0q/cIz9TwN/uMg9xMlFz7g==
+X-Received: by 2002:a5d:6d89:0:b0:385:e429:e59a with SMTP id ffacd0b85a97d-385fd3f2febmr7339380f8f.25.1733391286595;
+        Thu, 05 Dec 2024 01:34:46 -0800 (PST)
+Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a8758sm1428180f8f.27.2024.12.05.01.34.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 01:34:41 -0800 (PST)
-Date: Thu, 5 Dec 2024 17:34:31 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding
- <thierry.reding@gmail.com>, Robin Murphy <robin.murphy@arm.com>, Jakub
- Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
- <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com, Suraj Jaiswal
- <quic_jsuraj@quicinc.com>, Thierry Reding <treding@nvidia.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Will Deacon
- <will@kernel.org>
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
- for non-paged SKB data
-Message-ID: <20241205173431.0000779e@gmail.com>
-In-Reply-To: <Z1CVRzWcSDuPyQZe@shell.armlinux.org.uk>
-References: <20241128144501.0000619b@gmail.com>
-	<20241202163309.05603e96@kernel.org>
-	<20241203100331.00007580@gmail.com>
-	<20241202183425.4021d14c@kernel.org>
-	<20241203111637.000023fe@gmail.com>
-	<klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
-	<df3a6a9d-4b53-4338-9bc5-c4eea48b8a40@arm.com>
-	<2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
-	<Z1CFz7GpeIzkDro1@shell.armlinux.org.uk>
-	<9719982a-d40c-4110-9233-def2e6cb4d74@nvidia.com>
-	<Z1CVRzWcSDuPyQZe@shell.armlinux.org.uk>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+        Thu, 05 Dec 2024 01:34:45 -0800 (PST)
+From: Dave Penkler <dpenkler@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org,
+	Dave Penkler <dpenkler@gmail.com>,
+	Marcello Carla' <marcello.carla@gmx.com>
+Subject: [PATCH 3/4 v3] staging: gpib: Fix erroneous removal of blank before newline
+Date: Thu,  5 Dec 2024 10:34:42 +0100
+Message-ID: <20241205093442.5796-1-dpenkler@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Russell,
+The USB_GPIB_SET_LINES command string used to be: "\nIBDC \n" but when
+we were merging this code into the upstream kernel we deleted the space
+character before the newline to make checkpatch happy.  That turned
+out to be a mistake.
 
-On Wed, 4 Dec 2024 17:45:43 +0000, "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-> So yes, "des" is being offset, which will upset the unmap operation.
-> Please try the following patch, thanks:
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 9b262cdad60b..c81ea8cdfe6e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -4192,8 +4192,8 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  	struct stmmac_txq_stats *txq_stats;
->  	struct stmmac_tx_queue *tx_q;
->  	u32 pay_len, mss, queue;
-> +	dma_addr_t tso_des, des;
->  	u8 proto_hdr_len, hdr;
-> -	dma_addr_t des;
->  	bool set_ic;
->  	int i;
->  
-> @@ -4289,14 +4289,15 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  
->  		/* If needed take extra descriptors to fill the remaining payload */
->  		tmp_pay_len = pay_len - TSO_MAX_BUFF_SIZE;
-> +		tso_des = des;
->  	} else {
->  		stmmac_set_desc_addr(priv, first, des);
->  		tmp_pay_len = pay_len;
-> -		des += proto_hdr_len;
-> +		tso_des = des + proto_hdr_len;
->  		pay_len = 0;
->  	}
->  
-> -	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
-> +	stmmac_tso_allocator(priv, tso_des, tmp_pay_len, (nfrags == 0), queue);
->  
->  	/* In case two or more DMA transmit descriptors are allocated for this
->  	 * non-paged SKB data, the DMA buffer address should be saved to
-> 
+The "\nIBDC" part of the string is a command that we pass to the
+firmware and the next character is a variable u8 value.
+It gets set in set_control_line().
 
-Much appreciated for your comments and suggestions, I sent a new patch to fix
-this issue. Please let me know if you have any new advice.
-https://lore.kernel.org/netdev/20241205091830.3719609-1-0x1207@gmail.com/
+ msg[leng - 2] = value ? (retval & ~line) : retval | line;
 
-Thanks,
-Furong
+where leng is the length of the command string.
+
+Imagine the parameter was supposed to be "8".
+With the pre-merge code the command string would be "\nIBDC8\n"
+With the post-merge code the command string became "\nIBD8\n"
+
+The firmware doesn't recognize "IBD8" as a valid command and rejects it.
+
+Putting a "." where the parameter is supposed to go fixes the driver
+and makes checkpatch happy.  Same thing with the other define and
+the in-line assignment.
+
+Reported-by: Marcello Carla' <marcello.carla@gmx.com>
+Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
+Co-developed-by: Marcello Carla' <marcello.carla@gmx.com>
+Signed-off-by: Marcello Carla' <marcello.carla@gmx.com>
+Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+---
+v1 -> v2
+  Add more details to the commit message
+  Add Signed-off by co developer
+  Add spaces around assignment
+  Fix tabs
+v2 -> v3
+Adopt and adapt the more explanatory commit message kindly
+provided by Dan Carpenter
+
+drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index 1a8eb3bfb61c..81c110f29e76 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -97,8 +97,8 @@ module_param(debug, int, 0644);
+ #define USB_GPIB_DEBUG_ON    "\nIBDE\xAA\n"
+ #define USB_GPIB_SET_LISTEN  "\nIBDT0\n"
+ #define USB_GPIB_SET_TALK    "\nIBDT1\n"
+-#define USB_GPIB_SET_LINES   "\nIBDC\n"
+-#define USB_GPIB_SET_DATA    "\nIBDM\n"
++#define USB_GPIB_SET_LINES   "\nIBDC.\n"
++#define USB_GPIB_SET_DATA    "\nIBDM.\n"
+ #define USB_GPIB_READ_LINES  "\nIBD?C\n"
+ #define USB_GPIB_READ_DATA   "\nIBD?M\n"
+ #define USB_GPIB_READ_BUS    "\nIBD??\n"
+@@ -587,7 +587,7 @@ static int usb_gpib_command(gpib_board_t *board,
+ 			    size_t *bytes_written)
+ {
+ 	int i, retval;
+-	char command[6] = "IBc\n";
++	char command[6] = "IBc.\n";
+ 
+ 	DIA_LOG(1, "enter %p\n", board);
+ 
+-- 
+2.47.1
+
 
