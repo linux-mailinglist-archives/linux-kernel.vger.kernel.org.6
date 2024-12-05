@@ -1,97 +1,76 @@
-Return-Path: <linux-kernel+bounces-432488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613CC9E4C13
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:57:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B3F1881535
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:57:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF27981720;
-	Thu,  5 Dec 2024 01:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="rsk8276i"
-Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251A59E4C15
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:59:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DD62F56
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 01:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786EF285CFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 01:59:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC1D41C69;
+	Thu,  5 Dec 2024 01:59:00 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3446D81720
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 01:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733363831; cv=none; b=WqON68bmy+M6vl9f/HHzwU1Y8Xb5NG+WjFkB2abHE7x6bI+OI9Tg30Qd/NWmr2FFCBJSbBSxPddAN2fD+GmCIVyqP12xmJret04J/PBz5uCM0/ImTRtYRxdqzUoXUuDWjoPw9BilCletdMJX9DsWuSQ5YI7ZaPPbgFzSMhG6m+o=
+	t=1733363939; cv=none; b=UECZH4ldSAYJhlgY5bUrFJpxHvTURXf2i7UWDMIcCZP8NmANvsJAVqPd6LPxFW+eGM6iPSps7qaBneIfWPPjfhk6RCesy6zzhOuaRhydvx1fBHrHJ2fcFvR2L0U67Stx4Doq32PQa/XBWzTBl+fh6rCfAUFd2JW7dUWmNe02V6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733363831; c=relaxed/simple;
-	bh=iYk5igVeXHOFRXu5T/JSMsT+R2lcpCR/g8bS43SvqeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uVOEQCOw+JDL+RBxv1wCH3y2LcfATnE/Q5+GU02zQrqVPfmJZ/052mzrCuJL7j91R9Z3dDiBbrK6M4Cur4/W+kDFg9Ntkyz/n86LfuUikllW8ggasD06yuvZyg5SQ4x5bmD8EJ/3+maNEwtc4Wc5eHBXuAkwyluJ31YKvdjuujA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=rsk8276i; arc=none smtp.client-ip=212.27.42.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
-Received: from bender.morinfr.org (unknown [82.66.66.112])
-	by smtp2-g21.free.fr (Postfix) with ESMTPS id 1FF9A2003BE;
-	Thu,  5 Dec 2024 02:57:00 +0100 (CET)
-Authentication-Results: smtp2-g21.free.fr;
-	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=rsk8276i;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
-	; s=20170427; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=IjLNNGvNOI6B31kAryzNagbK4F2cDGeBpknM3DNt44E=; b=rsk8276ig8VS+Y4y4hoG0aD1nQ
-	FWus6rX2P10TJUv7gRUGWSfXxyRqM4G+aIlrl618N9iPAndL3yho14Bu5u9fQ9QVE54i2RwX7fDJE
-	2YVbNoh2MDr0N7Uo7nHy1/IyFfz4oL4tnlTKJNahKhmPxTeEs7HqMMj451RPlc1pFiaU=;
-Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
-	(envelope-from <guillaume@morinfr.org>)
-	id 1tJ16x-001IBZ-1W;
-	Thu, 05 Dec 2024 02:56:59 +0100
-Date: Thu, 5 Dec 2024 02:56:59 +0100
-From: Guillaume Morin <guillaume@morinfr.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Eric Hagberg <ehagberg@janestreet.com>
-Subject: Re: [PATCH v1] hugetlb: support FOLL_FORCE|FOLL_WRITE
-Message-ID: <Z1EIa51dKCrsHdTC@bender.morinfr.org>
-References: <Z1Ce6j5WiBE3kaGf@bender.morinfr.org>
- <202412050840.umPPa7cK-lkp@intel.com>
- <Z1EE7gIlaSI3V4SY@bender.morinfr.org>
+	s=arc-20240116; t=1733363939; c=relaxed/simple;
+	bh=jmOfGx8i6WqW/9e9eV0esQhvVw6dNrC2SZ1/lyEA2QA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LMXpnA7m9mlM79dG7lfFgw2VvKLaq4Zc5AYE9oZAuRLrRmps2w01+Z5JMpxcSrOXLYjcOnXe7Y8hL3Y7KeNUFrKQxN83y39KROnKV8dxmSKl4P3qeZ2a+H9oTwa5+UoAyRycpdfjDyHibuyO01ytHwuphO8WF/hBY8tH+ytJMMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a78e952858so3192715ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 17:58:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733363937; x=1733968737;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bicnoxgy/OVG1OfhR8q3/VJAcXZClP4+JgLbGeU2LYg=;
+        b=wfvglUkR3GeQ1k5B1ThPESxc2vG28fDIS/CfPCYz3o//sNTX++bcTyJs87dn25M4Xa
+         t+6S3uzMKGvTyUZvMTj19MQkzf9IQD1K63TVMy2l1ghnYKowk+ThyKpuvPW6N4hV8NyF
+         N8fn2T+0YVkPS2l3M9s38A/x0WUzRlD+mm7dzL/y6InRfZJSV7FjIEFckS8CwgHZZeYJ
+         +2E4uLRQD3CPQZCqSbiTEjIrCU5pRSqBRXogKNvP4dWyYzipdSTMdz4Es3Z1Oi6HjpEM
+         75EC8JoPTwvQZV3p7qZwbdXvvpJTnetw4mhzuYmBZnKZUOXHYLkfohXG8+dS46c+FbKU
+         na3w==
+X-Gm-Message-State: AOJu0Yzqo1gl887THcOlcWOrxNFlKwzz1vN6YKIEfiRbyPHiDTVNO9NS
+	K8hjgjRW5Kj5Rc4Twxw0UzSkz4ztGjX6AdFeT5/LoTUTZhmoxi/5AMUBVDHkubkjnPPl5DddSbt
+	BvOi94F5c9H3E6ejt6EzqXslIum1eGcHI3ebXUoJgEG7gMbN4hgWzak4=
+X-Google-Smtp-Source: AGHT+IF0NxiUY9/ulFeBSNw5fCCbNFGPgSbkle+X3p/7MD1cQFZYHmeX8Y0I48KKISDfXOiHdpgrOOrwvOX6VnXN6D49Nv60ukwt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1EE7gIlaSI3V4SY@bender.morinfr.org>
+X-Received: by 2002:a05:6e02:19c9:b0:3a7:d672:652d with SMTP id
+ e9e14a558f8ab-3a7f9a9f8f9mr113095425ab.16.1733363937336; Wed, 04 Dec 2024
+ 17:58:57 -0800 (PST)
+Date: Wed, 04 Dec 2024 17:58:57 -0800
+In-Reply-To: <00000000000069859c061dfa7e91@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675108e1.050a0220.17bd51.0082.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 05 Dec  2:42, Guillaume Morin wrote:
->
-> On 05 Dec  8:39, kernel test robot wrote:
-> > All errors (new ones prefixed by >>):
-> > 
-> >    mm/gup.c: In function 'can_follow_write_pud':
-> > >> mm/gup.c:665:48: error: implicit declaration of function 'pud_soft_dirty'; did you mean 'pmd_soft_dirty'? [-Werror=implicit-function-declaration]
-> >      665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
-> >          |                                                ^~~~~~~~~~~~~~
-> >          |                                                pmd_soft_dirty
-> >    cc1: some warnings being treated as errors
-> 
-> David, how do you recommend I deal with this?
-> 
-> There is no prototype for pud_soft_dirty() in include/linux/pgtable.h
-> if CONFIG_HAVE_ARCH_SOFT_DIRTY is not set. Should I just add one?
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I am going to respin v3 with that. Let me know if you think it makes
-sense or you think it should be fixed some other way
+***
 
--- 
-Guillaume Morin <guillaume@morinfr.org>
+Subject: 
+Author: mazin@getstate.dev
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
