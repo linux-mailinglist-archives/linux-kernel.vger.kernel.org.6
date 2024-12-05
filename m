@@ -1,168 +1,223 @@
-Return-Path: <linux-kernel+bounces-432497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93069E4C27
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:11:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B97C9E4C2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 03:15:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C1618816AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:15:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8DD13774B;
+	Thu,  5 Dec 2024 02:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fBlGrEdS"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F5FF2860FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 02:11:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D69169397;
-	Thu,  5 Dec 2024 02:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtG+cEs/"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E314293;
-	Thu,  5 Dec 2024 02:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F305938DE0
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 02:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733364668; cv=none; b=MWO/eFSzylCfjHajsvmXCMR//fYBlM98DZGqauWyzmFaimMeVYfjW3x4RU851SWR7WnOibDkBUX8YPV0WVaAJzTuXE0Do+bXImx107lBMMzDi30TeI+rN+5ssg2p1ZkqQn0wxTgYaauYiVtttUVskoPr3rIxMZqWA1Nat8NfJMs=
+	t=1733364953; cv=none; b=Bmn2qhKLZT1npvBQq69RWstqTWzrltaFXyWL0uREF+2Zd0qh6QdBFt8niTO9eYpWzVGeuB/iiqrZJEm7mfLwx9KDhN0R9REUA4ejrvSGioK9ZJ5EIjXxF0viN12pmMJNqrtcv1gZk6rX9yFIaBlJQBbDous2lG9gEft4t8BxiUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733364668; c=relaxed/simple;
-	bh=OI1C3FcwMoopDMPKdCCzMjgaBxq20WYQtvRagIuSgbQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TeGUVQJjb2R8rJMwIRFSeTPiJBOgxs1C2HMs/RMNK01k35Uotpd7SrOBSA1RzF5eKzjKZhQbsayyZKptphiN3ZhkAqAEV2oMU9P2WHlFxd3b0BJU3FmS8/lL5G2R1xp8fRNpk/VymHKLu9m0kc8PuB6lVkiNZQYV7Mc5+VFdh90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtG+cEs/; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-215ac560292so3663875ad.2;
-        Wed, 04 Dec 2024 18:11:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733364667; x=1733969467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uIFAae5/53dx1Db9qH0BBINR+01DcmVANh9NqUuaEGA=;
-        b=FtG+cEs/dQPw2iFM058GKHXdSwHMMD3sOchthcu7BVPn0PAqUicmLebSCakb0zneaA
-         SAonmWALMPGsYLMaaIq7kU7zSfb5RUhvHumOq/K5ytQgL/iJEE26ztK+EugRl/ArwDHU
-         U4ql7wzMQhlxdojIUA9YhlaLDdRaIv58PXyWxnIseYwxxfH2BXW/cye9HoWs/3z7PsYG
-         eFj3qAFc+LcM2pTy5qrrBetQWAfC5+TPzAUz135SIFM4XTXcZ+sCb450TcnZ0cVW8vkl
-         oM6/j8yzK76wQjTg3Te2eGiNC0MVkEB3gvdtPK+1LkUJWmsp6bB3vPrK1R+D9eHT1RYT
-         LwZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733364667; x=1733969467;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uIFAae5/53dx1Db9qH0BBINR+01DcmVANh9NqUuaEGA=;
-        b=TaCO5FRTrMKxC/MNiTlDR2pIqBaUoUPn7oD1iwyAiXPQnZ+2Hxh5SWNrEWGG7Gv/sM
-         wjoT3g0G7PtMoLypuJf5pnYsAry3H2Z5qcCrSkMEa04+5k1axw0wNCuEsnH/q8KXusYb
-         xnzFZXkUTX2Xt9x8ojzwFoGo1tw6ICPNV5q34iaMHSgEvIWy0zH+vkbpnabHkq7sQcXM
-         bjEJNeHKp6417oASYpH8nrzpeH97/o+hHcVVPyIYSD8NP78JNJuS9kN8bHD9qtkAggRq
-         04W4e+Yi5JL5CRYySI4U32S+tebbD6lFNo28JeW28hOlghazY8+xFuz87Le5RD3PdLz+
-         mrQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/WCJwLCCdvpIluCB81Wp2Ps7ZgHrzbpuDMUZgF6L3NrURDfZGFdBEhVgLBE1IaDxFJ97ehgVUExjTb7me@vger.kernel.org, AJvYcCXiDQ1ndX9BenX0iE8y2dixiAe/qSac36sVCEHa5dIDYbhXTLgc6nirWRA7cRdZfkc9eGt2bQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz38+mU9HpEHGN+B9fuJ+FtZo/ltip+as9ROFoG7tlfTML9DYYm
-	EorKEsOIeJ19myKnhdsVBEmuYsGXcSsvBYYMFFGER3pYMhpAVbRJ
-X-Gm-Gg: ASbGncsdDekzdLd055MdGjZMdWSKEWPFtHX+THzA2IKp9DO/1PqjyY0AmedmziL4L3u
-	SlfGIwkvSJisszoaZ/rSFEYJQ1VpDVnPKYGqR7i39BkKtzF4wB1YZzgInIEKN41PdJW0e+ZaUwH
-	zyYy3PjAPd8ZSAuH4rwwWwWcUpx1CPo0yHV09/lIMEXQwa7eqExRzgp7tkTNEfzdFNXppWk5Ba7
-	s4WBOUlzzyG8BVoptA6iqMqjLE83ny8/3YxeB+BzeZkmOXYKW5TcNu2/hYrjafoRX1o0fcbz7+2
-X-Google-Smtp-Source: AGHT+IFW+abQ1cQEgXYe1J9rz1r+lyp7l2EB8L6qp/dVlMkpxTmgrlpZcDxhRU9P2w93JlMBKtSxlA==
-X-Received: by 2002:a17:902:d2c7:b0:215:b18d:e1 with SMTP id d9443c01a7336-215bcfc2ab1mr152750215ad.24.1733364666591;
-        Wed, 04 Dec 2024 18:11:06 -0800 (PST)
-Received: from localhost.localdomain ([180.159.118.224])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f263b9sm2028915ad.226.2024.12.04.18.11.03
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 04 Dec 2024 18:11:06 -0800 (PST)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: paul@paul-moore.com,
-	keescook@chromium.org
-Cc: qiuxu.zhuo@intel.com,
-	rostedt@goodmis.org,
-	lkp@intel.com,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yafang shao <laoar.shao@gmail.com>,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH v2] auditsc: Implement a workaround for a GCC bug triggered by task comm changes
-Date: Thu,  5 Dec 2024 10:11:00 +0800
-Message-Id: <20241205021100.86390-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
+	s=arc-20240116; t=1733364953; c=relaxed/simple;
+	bh=FXtpBHZbgVW0KjhcerodMhEz108fjp4cOcRcL9tbflY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nkKM5RFcaLoCYALQKR8OvFyhfS5FuIedO2EYq2/yk3HEWL0lqNxexe8s9w1uBo7MPFAktmHOcE1zflj5ubf9sUI/XrIQatZ5QtR+Fso7MuGwAa7PIpWUIdvyyAycCvXE7g1l0UpLpbj8k5pgCDgtlybYOaPjzRf4e60Gus7siVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fBlGrEdS; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6dab626e-acee-9f4e-c97b-7a225882edff@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733364947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pRTPO6yPQbL/JsKyn6272w8a89k5009o0qPxqVnHQWI=;
+	b=fBlGrEdS0bOFerVMMX/sNiJHYQf6S6xmGrK0f8XAF7HGv/9JWAzBZX8B/238JkqS+aBBXv
+	zb8HT2Ho4b6XAOvtUxbqR8CZ4OTETsf0kq/sB/J+NKewNEkM6COGVJqTmIOZWgwmRL76+G
+	jPFSaLD3GY+BZuWd8Fwb5wniRdM1HB4=
+Date: Thu, 5 Dec 2024 10:14:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v2] mm/alloc_tag: fix vm_module_tags_populate's KASAN
+ poisoning logic
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20241204075248.384215-1-hao.ge@linux.dev>
+ <20241204083448.387862-1-hao.ge@linux.dev>
+ <CAJuCfpF5Yo3Bz1OUy=rfd5-0DRZsWSRaekR3Y-f5TRatdXWkVQ@mail.gmail.com>
+ <e5d6cb44-9a86-ee94-9210-d56acee483c4@linux.dev>
+ <CAJuCfpFHEpFw61ZtqHzgYrpiHn1k86h2LwzZf+C4=sfpULY4TQ@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpFHEpFw61ZtqHzgYrpiHn1k86h2LwzZf+C4=sfpULY4TQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Yafang shao <laoar.shao@gmail.com>
+Hi Suren
 
-A build failure has been reported with the following details:
 
-   In file included from include/linux/string.h:390,
-                    from include/linux/bitmap.h:13,
-                    from include/linux/cpumask.h:12,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/wait.h:9,
-                    from include/linux/wait_bit.h:8,
-                    from include/linux/fs.h:6,
-                    from kernel/auditsc.c:37:
-   In function 'sized_strscpy',
-       inlined from '__audit_ptrace' at kernel/auditsc.c:2732:2:
->> include/linux/fortify-string.h:293:17: error: call to '__write_overflow' declared with attribute error: detected write beyond size of object (1st parameter)
-     293 |                 __write_overflow();
-         |                 ^~~~~~~~~~~~~~~~~~
-   In function 'sized_strscpy',
-       inlined from 'audit_signal_info_syscall' at kernel/auditsc.c:2759:3:
->> include/linux/fortify-string.h:293:17: error: call to '__write_overflow' declared with attribute error: detected write beyond size of object (1st parameter)
-     293 |                 __write_overflow();
-         |                 ^~~~~~~~~~~~~~~~~~
+On 12/5/24 03:33, Suren Baghdasaryan wrote:
+> On Wed, Dec 4, 2024 at 7:08 AM Hao Ge <hao.ge@linux.dev> wrote:
+>> Hi Suren
+>>
+>>
+>> Thank you for your review.
+>>
+>>
+>> On 12/4/24 22:39, Suren Baghdasaryan wrote:
+>>> On Wed, Dec 4, 2024 at 12:35 AM Hao Ge <hao.ge@linux.dev> wrote:
+>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>
+>>>> After merge commit 233e89322cbe ("alloc_tag:
+>>>> fix module allocation tags populated area calculation"),
+>>>> We still encountered a KASAN bug.
+>>>>
+>>>> This is because we have only actually performed
+>>>> page allocation and address mapping here.
+>>>> we need to unpoisoned portions of underlying memory.
+>>>>
+>>>> Because we have a change in the size here,we need to
+>>>> re-annotate poisoned and unpoisoned portions of underlying memory
+>>>> according to the new size.
+>>>>
+>>>> Here is the log for KASAN:
+>>>>
+>>>> [    5.041171][    T1] ==================================================================
+>>>> [    5.042047][    T1] BUG: KASAN: vmalloc-out-of-bounds in move_module+0x2c0/0x708
+>>>> [    5.042723][    T1] Write of size 240 at addr ffff80007e510000 by task systemd/1
+>>>> [    5.043412][    T1]
+>>>> [    5.043523][   T72] input: QEMU QEMU USB Tablet as /devices/pci0000:00/0000:00:01.1/0000:02:001
+>>>> [    5.043614][    T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #28
+>>>> [    5.045560][    T1] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+>>>> [    5.046328][    T1] Call trace:
+>>>> [    5.046670][    T1]  show_stack+0x20/0x38 (C)
+>>>> [    5.047127][    T1]  dump_stack_lvl+0x80/0xf8
+>>>> [    5.047533][    T1]  print_address_description.constprop.0+0x58/0x358
+>>>> [    5.048092][   T72] hid-generic 0003:0627:0001.0001: input,hidraw0: USB HID v0.01 Mouse [QEMU 0
+>>>> [    5.048126][    T1]  print_report+0xb0/0x280
+>>>> [    5.049682][    T1]  kasan_report+0xb8/0x108
+>>>> [    5.050170][    T1]  kasan_check_range+0xe8/0x190
+>>>> [    5.050685][    T1]  memcpy+0x58/0xa0
+>>>> [    5.051135][    T1]  move_module+0x2c0/0x708
+>>>> [    5.051586][    T1]  layout_and_allocate.constprop.0+0x308/0x5b8
+>>>> [    5.052219][    T1]  load_module+0x134/0x16c8
+>>>> [    5.052671][    T1]  init_module_from_file+0xdc/0x138
+>>>> [    5.053193][    T1]  idempotent_init_module+0x344/0x600
+>>>> [    5.053742][    T1]  __arm64_sys_finit_module+0xbc/0x150
+>>>> [    5.054289][    T1]  invoke_syscall+0xd4/0x258
+>>>> [    5.054749][    T1]  el0_svc_common.constprop.0+0xb4/0x240
+>>>> [    5.055319][    T1]  do_el0_svc+0x48/0x68
+>>>> [    5.055743][    T1]  el0_svc+0x40/0xe0
+>>>> [    5.056142][    T1]  el0t_64_sync_handler+0x10c/0x138
+>>>> [    5.056658][    T1]  el0t_64_sync+0x1ac/0x1b0
+>>>>
+>>>> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
+>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>> Thanks for the fix!
+>>>
+>>>> ---
+>>>> v2: Add comments to kasan_unpoison_vmalloc like other places.
+>>>>
+>>>> commit 233e89322cbe ("alloc_tag: fix module allocation
+>>>> tags populated area calculation") is currently in the
+>>>> mm-hotfixes-unstable branch, so this patch is
+>>>> developed based on the mm-hotfixes-unstable branch.
+>>>> ---
+>>>>    lib/alloc_tag.c | 13 +++++++++++++
+>>>>    1 file changed, 13 insertions(+)
+>>>>
+>>>> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+>>>> index 4ee6caa6d2da..f885b3f3af0e 100644
+>>>> --- a/lib/alloc_tag.c
+>>>> +++ b/lib/alloc_tag.c
+>>>> @@ -421,7 +421,20 @@ static int vm_module_tags_populate(void)
+>>>>                                   __free_page(next_page[i]);
+>>>>                           return -ENOMEM;
+>>>>                   }
+>>>> +
+>>>> +               kasan_poison_vmalloc((void *)module_tags.start_addr,
+>>>> +                                    vm_module_tags->nr_pages << PAGE_SHIFT);
+>>>> +
+>>>>                   vm_module_tags->nr_pages += nr;
+>>>> +
+>>>> +               /*
+>>>> +                * Mark the pages as accessible, now that they are mapped.
+>>>> +                * With hardware tag-based KASAN, marking is skipped for
+>>>> +                * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
+>>>> +                */
+>>>> +               kasan_unpoison_vmalloc((void *)module_tags.start_addr,
+>>>> +                                      vm_module_tags->nr_pages << PAGE_SHIFT,
+>>>> +                                      KASAN_VMALLOC_PROT_NORMAL);
+>>> Instead of poisoning [module_tags.start_addr,
+>>> vm_module_tags->nr_pages], incrementing vm_module_tags->nr_pages and
+>>> the unpoisoning [module_tags.start_addr, vm_module_tags->nr_pages]
+>>> could we simply poisons the additional area like this:
+>>>
+>>>                   kasan_unpoison_vmalloc((void *)module_tags.start_addr +
+>>>                                          (vm_module_tags->nr_pages << PAGE_SHIFT),
+>>>                                          nr << PAGE_SHIFT,
+>>>                                          KASAN_VMALLOC_PROT_NORMAL);
+>>>                  vm_module_tags->nr_pages += nr;
+>>> ?
+>>
+>> I had considered making such modifications earlier.
+>>
+>> But considering the following situation,
+>>
+>> A module tags spans across the regions of [module_tags.start_addr,
+>> vm_module_tags->nr_pages] and [module_tags.start_addr +
+>> vm_module_tags->nr_pages, ...].
+>>
+>> It may result in false positives for out-of-bounds errors.
+> Sorry, maybe I'm missing something but I don't see why poisoning only
+> newly mapped area would lead to false positives. Could you please
+> clarify?
 
-The issue appears to be a GCC bug, though the root cause remains
-unclear at this time. For now, let's implement a workaround.
 
-A bug report has also been filed with GCC [0].
+Because KASAN may perceive the two as distinct address spaces, despite 
+their addresses being contiguous.
 
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117912 [0]
+So, when a module tag spans across these two contiguous address spaces, 
+KASAN may incorrectly consider it as an out-of-bounds access.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410171420.1V00ICVG-lkp@intel.com/
-Reported-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Closes: https://lore.kernel.org/all/20241128182435.57a1ea6f@gandalf.local.home/
-Reported-by: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Closes: https://lore.kernel.org/all/CY8PR11MB71348E568DBDA576F17DAFF389362@CY8PR11MB7134.namprd11.prod.outlook.com/
-Originally-by: Kees Cook <kees@kernel.org>
-Link: https://lore.kernel.org/linux-hardening/202410171059.C2C395030@keescook/
-Signed-off-by: Yafang shao <laoar.shao@gmail.com>
-Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/auditsc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v1->2: Add the link of the GCC bug report
+> Also, if you do need to unpoison and then poison, using phys_end and
+> new_end would be better, like this:
+>
+> kasan_poison_vmalloc((void *)module_tags.start_addr,
+>                                        phys_end - module_tags.start_addr)
+>
+> kasan_unpoison_vmalloc((void *)module_tags.start_addr,
+>                                            new_end - module_tags.start_addr,
+>                                            KASAN_VMALLOC_PROT_NORMAL);
 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 279ba5c420a4..561d96affe9f 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2728,8 +2728,8 @@ void __audit_ptrace(struct task_struct *t)
- 	context->target_auid = audit_get_loginuid(t);
- 	context->target_uid = task_uid(t);
- 	context->target_sessionid = audit_get_sessionid(t);
--	security_task_getlsmprop_obj(t, &context->target_ref);
- 	strscpy(context->target_comm, t->comm);
-+	security_task_getlsmprop_obj(t, &context->target_ref);
- }
- 
- /**
-@@ -2755,8 +2755,8 @@ int audit_signal_info_syscall(struct task_struct *t)
- 		ctx->target_auid = audit_get_loginuid(t);
- 		ctx->target_uid = t_uid;
- 		ctx->target_sessionid = audit_get_sessionid(t);
--		security_task_getlsmprop_obj(t, &ctx->target_ref);
- 		strscpy(ctx->target_comm, t->comm);
-+		security_task_getlsmprop_obj(t, &ctx->target_ref);
- 		return 0;
- 	}
- 
--- 
-2.43.5
+OK, the next version will include.
 
+
+Thanks
+
+Best regards
+
+Hao
+
+
+>>
+>>>>           }
+>>>>
+>>>>           return 0;
+>>>> --
+>>>> 2.25.1
+>>>>
 
