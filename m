@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-433408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E2C9E5808
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 14:59:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC959E580E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E9F188416F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9EFE16B06B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 13:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A339A21A42A;
-	Thu,  5 Dec 2024 13:58:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E374218EA1;
+	Thu,  5 Dec 2024 13:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v93wFxX5"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC7F1DFD98
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 13:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DBC219A68;
+	Thu,  5 Dec 2024 13:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733407094; cv=none; b=j3GgFVu7GBbimlPk4wECnfQIq71EHF+hCDwJ6mJnn3AxsCRVTfZckILc8JPmMXaM37ORx77gb0Fzba6QV7HZ18Dlcgej/967qRdCe10Q4KFKz8vpdPmMCCu3CV/5knPmJb5J9zDsXYQwX/SHvSyOBVyp4kUl60ubzk3ZtUGLueI=
+	t=1733407196; cv=none; b=g2wxT2IcCnd8OtJrNfWJQOE4eetbAk5loa2ceJ6uAHSso00e+qU+Ph2BWQkvTtd6ENEIZylFp/kbxhtfHQA6cNyo7BsZ/VN9cNcenPjhRgK9RuJsEoe925yH7RySRneIcHtyB9/xTYUtAfNv0HiFMuuLU0vrYgLfITt30MJMd68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733407094; c=relaxed/simple;
-	bh=Whztqzqhd31DO6J1pWBJGbIcubmLvvZmURKz55fjQck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HXGNQCZK/iv3xTncY74Id7Q9JreJXADZmpPRYwvtLyNkCqRKuGM0+F0tYSMghAa17K+8t3gKh2RSj2c5YPDV2jNx4WwXegSAFxqDmpkNbETKVsqRafvRh3QLwSk7MAe8aFlFtggLooVv+uCriOtpy+/mFC8FySMMVU8bVpGOxHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tJCMh-0000kQ-S9; Thu, 05 Dec 2024 14:57:59 +0100
-Message-ID: <361b3a14-db86-4c3c-9f07-4ebc1dd40d0e@pengutronix.de>
-Date: Thu, 5 Dec 2024 14:57:59 +0100
+	s=arc-20240116; t=1733407196; c=relaxed/simple;
+	bh=EK7+Gk/puB8knUZc0RO/mSVit81qD/uGcgMxS6w5vWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPZDcGnyOu1/WEcTCQ+EsM6iXTobeidFfJhllheqpuuPG08BcE4RKFmBvE/9eS6RUKb9NkAbbgsJX4YcoasLaSkRDwoPiTgknvcfJxuj7J1SKB7szRPYLFaE7pQnjOFBsqISAl/IFnj8SeUk1/BmTTlqyaL8axSaf3K1z/6smRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v93wFxX5; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=35cFPiCKnS62Ak09FhhAr0rQebrbhrtYntLRrr3P2P4=; b=v93wFxX56OCxO/MT6f7xU2QTXp
+	IBXjDOOEL9WUZLnXqFYPWBbgBkVv0ai7vYi63lyEvxIyZ+wOuQe5qdpuogOi3Urm6nbs+vwIyodaC
+	4rcl6JcKTEAZbqzvLNHRjNSB6hdPAVnpi/b7MWCMoj77ezvSfF2nTKc880Hl2NczI4Oa2f3PVdkMj
+	+/CPG+S0592rbEHNSzeAt3tpMSrgfXoLTrFJV5sqhSHMpMrGg8obWKCeMl6XA+CveijxcwtTFxTTo
+	S2hhipnrV1R8/FRo8V+zfbxmLpuOatZ/JMRgEmozMv4FM01ZXfwZ5OpLqH7BIBDYMDk0NwIGmGDYC
+	yXNODRnA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tJCOK-0000000D7Em-3nke;
+	Thu, 05 Dec 2024 13:59:40 +0000
+Date: Thu, 5 Dec 2024 13:59:40 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH (REPOST)] hfs: don't use BUG() when we can continue
+Message-ID: <Z1GxzKmR-oA3Fmmv@casper.infradead.org>
+References: <ddee2787-dcd9-489d-928b-55a4a95eed6c@I-love.SAKURA.ne.jp>
+ <b6e39a3e-f7ce-4f7e-aa77-f6b146bd7c92@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm: dts: st: stm32mp151a-prtt1l: Fix QSPI
- configuration
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@pengutronix.de,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20240806120517.406714-1-o.rempel@pengutronix.de>
- <20dc2cd4-7684-4894-9db3-23c3f4abd661@pengutronix.de>
- <a483fb50-f978-4e48-b38e-6d79632540f1@foss.st.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <a483fb50-f978-4e48-b38e-6d79632540f1@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b6e39a3e-f7ce-4f7e-aa77-f6b146bd7c92@I-love.SAKURA.ne.jp>
 
-Hello Alex,
+On Thu, Dec 05, 2024 at 10:45:11PM +0900, Tetsuo Handa wrote:
+> syzkaller can mount crafted filesystem images.
+> Don't crash the kernel when we can continue.
 
-On 29.10.24 16:39, Alexandre TORGUE wrote:
-> On 8/7/24 11:38, Ahmad Fatoum wrote:
->> Hello Oleksij,
->>
->> On 06.08.24 14:05, Oleksij Rempel wrote:
->> There's bias-disable in stm32mp15-pinctrl.dtsi. You may want to add
->> a /delete-property/ for that to make sure, it's not up to the driver
->> which one has priority.
->>
->>>           drive-push-pull;
->>>           slew-rate = <1>;
->>
->> These are already in qspi_bk1_pins_a. If repeating those is ok, why
->> not go a step further and just duplicate the pinmux property and stay
->> clear of this issue altogether, provided Alex is amenable to changing
->> his mind regarding pinctrl groups in board device trees.
+The one in hfs_test_inode() makes sense, but we should never get to
+hfs_release_folio() or hfs_write_inode() with a bad inode, even with a
+corrupted fs.  Right?
+
+> +++ b/fs/hfs/inode.c
+> @@ -81,7 +81,7 @@ static bool hfs_release_folio(struct folio *folio, gfp_t mask)
+>  		tree = HFS_SB(sb)->cat_tree;
+>  		break;
+>  	default:
+> -		BUG();
+> +		pr_warn("unexpected inode %lu at %s()\n", inode->i_ino, __func__);
+>  		return false;
+>  	}
+>  
+> @@ -305,7 +305,7 @@ static int hfs_test_inode(struct inode *inode, void *data)
+>  	case HFS_CDR_FIL:
+>  		return inode->i_ino == be32_to_cpu(rec->file.FlNum);
+>  	default:
+> -		BUG();
+> +		pr_warn("unexpected type %u at %s()\n", rec->type, __func__);
+>  		return 1;
+>  	}
+>  }
+> @@ -441,7 +441,7 @@ int hfs_write_inode(struct inode *inode, struct writeback_control *wbc)
+>  			hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
+>  			return 0;
+>  		default:
+> -			BUG();
+> +			pr_warn("unexpected inode %lu at %s()\n", inode->i_ino, __func__);
+>  			return -EIO;
+>  		}
+>  	}
+> -- 
+> 2.47.0
 > 
-> I still prefer to have pin configuration defined in pinctrl dtsi file and I'll continue like this for ST board. The reason is that we try to reuse as much as possible pins when we create a new board and so it is easier to maintain if we declare them only one time.
-
-I can see the point for ST evaluation kits as ST customer hardware
-will often copy the reference designs.
-
-> But, I'm not blocked for "other" boards based on STM32 SoC. I mean, if it is simpler for you and above all if it avoid issues/complexities then, you can declare some pin groups in your board dts file. In this case we need to take care of the IO groups label name.
-
-That's good to hear and what I wanted to clarify. Especially for things like
-ADCs, there are so many possible permutations that there is no point for
-boards to add their pinctrl group to the main DTSI instead of just listing
-their specific pin configuration in the board DTS.
-
-Thanks,
-Ahmad
-
 > 
-> regards
-> alex
-> 
->>
->>
->> Cheers,
->> Ahmad
->>
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
