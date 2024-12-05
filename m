@@ -1,121 +1,152 @@
-Return-Path: <linux-kernel+bounces-432991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7233F9E52A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:42:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 471A49E52A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 11:43:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F5531671FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B526516259B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 10:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5553C1DB924;
-	Thu,  5 Dec 2024 10:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79861E04AC;
+	Thu,  5 Dec 2024 10:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OAHH9ArF"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRM/7y3f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D941D9A7D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2024 10:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B1E1DB956;
+	Thu,  5 Dec 2024 10:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733395219; cv=none; b=GwuSPLl/IdwD+ah5BKeHY2MrMnCdRfeI0z2g0vpoqk9Xi2V6x6Gnw815Cjet14QznVJm1eDRD++V4PkoBGTrMVtV4WX1+wOPjxshPRTBo16iDEmRYShRvb56tdYpAmOp13AX5i7sbaURamdBC7M1WLN+gIvK2+Uze+94Dbd3AbE=
+	t=1733395232; cv=none; b=UAASYUNP5rpPWy8hcV4LtvfgHQX6/E8gApFOnh+wsdQ4cuBq4/PzE17uaZmihhqOnBR/LBMRpUrHVPw5BRIs25JTJrXkFxBUlVRNsXQeM65DoTA6z8AKmUc61tjOyhTz/ODyJS8PB5rqpQC5Bc/fEmZorGCHj78X6atwFPIM6do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733395219; c=relaxed/simple;
-	bh=WPtqld1LaQcMOfLWgEkhuJXsVEQnJwRf+2DulZqLtME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p6JjyNizmoCiDWQppxowQkLQO0gGscX5H7SXtUoaYeTgTdoh+DvMFzB2oFc2GeMJHErkj5DB46eGgbj9RFzAJIulD2xDfuURmvOA1ibiiA3i7TGiUAauDv6A7ezP76Rh9S/4tNwbo/6s4kgwLwpHOXY/N8JwlKDhUYVK6sfd3bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OAHH9ArF; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-382610c7116so430027f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 02:40:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733395215; x=1734000015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WPtqld1LaQcMOfLWgEkhuJXsVEQnJwRf+2DulZqLtME=;
-        b=OAHH9ArFM0U1BdTCVs996B9LTqdwq+Z2LOP1PONKPt50p3oE/9EAgLE740lNJHVckX
-         rs0qeKK2GwZ2+EF7Ue/cVzorSINvIZvmiv1ZTOXaAzKG0yI+lAd5IiIg29vBr0CeF0TQ
-         8rAepjo+7ZPVT3VaOyqWVIZ/cM9IvuDUgL+y7GIsADkZBEje+ztF4Pwo9S/riinzAORn
-         06ztAySDDluxiMFZo0+2zCq6knYb+eBk3WERpiJXVDfdghXiBvTsRcf0k0LxG36CR1Zm
-         vAWiJya+sV/fiRg2fjx5CIHxSzFvDctF3kBwU9Jl5j6p/mdoumf7iiwiAJMRquBGb58U
-         u16A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733395215; x=1734000015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WPtqld1LaQcMOfLWgEkhuJXsVEQnJwRf+2DulZqLtME=;
-        b=bLumvv0gkKPObH2+pmdlmGWMxi8tuUyvlbPWizdNV17uNCcUxV995wIWXR/8oAl3of
-         uxAHI4un+8bTVLxAsyMoIE8ftopQXhUT54Aa4Vs+odgbcufVPGo4laJe8LOerycbSuHW
-         EEck6AE5GsXvIJXvYwuyPLCUf21OLYKG70ev1/m9BYiJ3+y5Wtb7XDVyxBCFiopCOd/G
-         4Ck0OXzbZY/fIsBtZVVVHWx0vf3Ojja5p+gYzm5U44ONjbibWupXA+9z8aSDvfbLQ6qP
-         ey7aF9yiPCHVYpnU7HIPABIyvTrMi5UOtXRqMScLm0e65X3a/FWp1NKeuwICWb79p1dH
-         PSfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlBzVSDU99qBC5wxe5Tgdf4tJUdU6+s1F3iXM5lOnBads/bBNHDzdhmLFGhS1r/xc1eLiobe7eJL+pSu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9VLZo6WmrX0/5Z1PXs84bLGV0fMw45ncSl2AI4ZoeRFwzHcWl
-	stKTQO6NBCmL6au3ESjHxsyvj4wEbTfQxG5M1t//txipZlHRCUjtPLPKVUd3cXOMG+objKI6XFA
-	WKn2mX7tdB510czVlsJDkhZfMt9TwW9h3j/n1
-X-Gm-Gg: ASbGnctf7THZWB0j/yw+fIUhKJ7J0bqDMcbhH+LFfSSc/IB6D++/7RIylndLDOIdGoa
-	7dTwZYHudLop8vXv9UzWhbjHzYOeGrKrLC6n40hetLFDkuJ12GnJZkUA+sT/qqw==
-X-Google-Smtp-Source: AGHT+IFg434w4z8s8tFqBhE5av51BwZ42Q5HKcJ0oYopIV4HP+3g/md6jNDkoJ8cd/1hXD6iFlXDlWN68Eo2+u/s9YQ=
-X-Received: by 2002:a05:6000:1866:b0:385:e5d8:3ef1 with SMTP id
- ffacd0b85a97d-385fd4374d8mr9050329f8f.44.1733395215402; Thu, 05 Dec 2024
- 02:40:15 -0800 (PST)
+	s=arc-20240116; t=1733395232; c=relaxed/simple;
+	bh=ORSekGk4bOFiPV6otsw59RgRZOUrMWgVuVEVcZLExgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E+A9bLv3wR25HklvEVFnjQ3DrAwykWtfrLfr5AkVo1E/SaCPEk7Z0lbO3HKOTopMFC/qNKi0e3eSRoHLKeIsx/eb2UlGCZb5eY0aAT5IzfgHJdT1CNdwfNIesBi03/9Wox6v9TL6NKKZx5PH71lSpEqmpqr3lI5/OjLTtFyzD0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRM/7y3f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C7AC4CED1;
+	Thu,  5 Dec 2024 10:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733395232;
+	bh=ORSekGk4bOFiPV6otsw59RgRZOUrMWgVuVEVcZLExgo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bRM/7y3f/MryGKjbTZFCiskiiY2QVswALYCXFiQXLqBA+nqo2bi7UmjFrJ1+RT6WR
+	 U8ESHoJB2937mGHfPQ9e2LIymobTTrdaX6CGhB9K3e2Ud5xfrcqWr6bgrQUzGlqcdb
+	 GhSxF1YSpdJAwI5QYJ5tiViRT+erR74xrOurfV5yCiCkoZ0eVMoKY2GUZle/JinzvP
+	 S/rpnCp8n5KpDyX+aa8IhkIW1rwEosvh02HnRl0zZI7TT8jq37A0gpZAYUiReM3HTU
+	 PC2dQPdz26YVFESf+kd367yrta+PgmtHnyYb/2x9/a1KNQA/nbKg3Gz4uC1gi2vh86
+	 R3qHx9zj2jD5A==
+Message-ID: <2f620bc7-5761-48e4-8568-063136cbf8b8@kernel.org>
+Date: Thu, 5 Dec 2024 10:40:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129-vma-v10-0-4dfff05ba927@google.com> <20241129-vma-v10-2-4dfff05ba927@google.com>
-In-Reply-To: <20241129-vma-v10-2-4dfff05ba927@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Dec 2024 11:40:03 +0100
-Message-ID: <CAH5fLgjxmpcLJwj5k85O39R00+vRRixA6i3xeK1STe_LQLHkTA@mail.gmail.com>
-Subject: Re: [PATCH v10 2/8] mm: rust: add vm_area_struct methods that require
- read access
-To: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpftool: Fix gen object segfault
+To: Rong Tao <rtoax@foxmail.com>, rongtao@cestc.cn, ast@kernel.org
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ "open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <tencent_410B8166C55CD2AB64BDEA8E92204619180A@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 29, 2024 at 5:32=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> This adds a type called VmAreaRef which is used when referencing a vma
-> that you have read access to. Here, read access means that you hold
-> either the mmap read lock or the vma read lock (or stronger).
->
-> Additionally, a vma_lookup method is added to the mmap read guard, which
-> enables you to obtain a &VmAreaRef in safe Rust code.
->
-> This patch only provides a way to lock the mmap read lock, but a
-> follow-up patch also provides a way to just lock the vma read lock.
->
-> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> (for mm bits)
-> Reviewed-by: Jann Horn <jannh@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On 05/12/2024 09:08, Rong Tao wrote:
+> From: Rong Tao <rongtao@cestc.cn>
+> 
+> If the input file and output file are the same, the input file is cleared
+> due to opening, resulting in a NULL pointer access by libbpf.
+> 
+>     $ sudo ./bpftool gen object prog.o prog.o
 
-It looks like binder needs a way to check whether a given vma is
-associated with a given mm. I guess we can do that by adding a method
-to VmAreaRef that returns a &MmWithUser.
 
-This indicates that vma->vm_mm references an mm with non-zero mm_users
-whenever it's legal to have a reference to the vma.
+(No sudo required to generate object files)
 
-Alice
+
+>     libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
+>     Segmentation fault
+> 
+>     (gdb) bt
+>     #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>     #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized out>, opts=<optimized out>) at linker.c:453
+>     #2  0x000000000040c235 in do_object ()
+>     #3  0x00000000004021d7 in main ()
+>     (gdb) frame 0
+>     #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>     1296		Elf64_Sym *sym = symtab->data->d_buf;
+> 
+> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+> ---
+>  tools/bpf/bpftool/gen.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
+> index 5a4d3240689e..4cd135726758 100644
+> --- a/tools/bpf/bpftool/gen.c
+> +++ b/tools/bpf/bpftool/gen.c
+> @@ -1896,6 +1896,11 @@ static int do_object(int argc, char **argv)
+>  	while (argc) {
+>  		file = GET_ARG();
+>  
+> +		if (!strcmp(file, output_file)) {
+> +			p_err("Input/Output file couldn't be same.");
+
+
+Nits: lowercase for "output", and "cannot" rather than "couldn't"; also
+bpftool doesn't use periods at the end of error messages:
+
+    p_err("Input and output files cannot be the same");
+
+
+> +			goto out;
+> +		}
+> +
+>  		err = bpf_linker__add_file(linker, file, NULL);
+>  		if (err) {
+>  			p_err("failed to link '%s': %s (%d)", file, strerror(errno), errno);
+
+
+Good catch, thank you for this!
+
+I've got one concern though, while your patch addresses the segfault it
+doesn't prevent the user from overwriting the input file. Could we
+instead move the check above the call to bpf_linker__new(...), please?
+Something like this:
+
+	int argc_cpy = argc;
+	char **argv_cpy = argv;
+
+	[...]
+	output_file = GET_ARG();
+
+	/* Ensure we don't overwrite any input file */
+	while (argc_cpy--) {
+		if (!strcmp(output_file, *argv_cpy++)) {
+			p_err("...");
+			goto out;
+		}
+	}
+
+	linker = ...
+
+Thanks,
+Quentin
+
+pw-bot: cr
 
