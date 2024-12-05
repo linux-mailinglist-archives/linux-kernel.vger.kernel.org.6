@@ -1,985 +1,236 @@
-Return-Path: <linux-kernel+bounces-433537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-433536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237119E59B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:31:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD521885369
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:31:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A008421C18D;
-	Thu,  5 Dec 2024 15:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LzxdZBZp"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D2A9E59B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 16:30:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E6520D4E4;
-	Thu,  5 Dec 2024 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733412654; cv=pass; b=Q5u+KQAd2/CCcJp+SbbhnjcpaV2GMVuspp/a3WfFHUloaOd4H45HYJnbNbrBBfApOIc7fzJ0tfhQdMER4I5JS6wn4YaM0e8c6Oz0ePahfsRhSUTLRYZVuE6MW7Db84Pf/d5dCzWgm3zqV8JQiDj0MqiHzM9Tan4xmOlOBbRh+EM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733412654; c=relaxed/simple;
-	bh=UrJ5mFs7Wh0qR7nr7snW1q0cJHqi9uvI4xlK+PZnsXE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ZOnNeAsOiauKeEQUIJcy/Mup3VLktdtT0AyFsd/x7NjX4TXYbdHojXGhA7s6mo9mZPvDZwrpNckmNLdm9v4bAb/fJrz0jcX+yHWnKdf/zRCtX/Ru5Mg+ss+eJxY84U5I/OoLEBbi91tBm4szkILTpNvKMR3V2a12jQ1KpoIFo0E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LzxdZBZp; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733412607; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=V5EHsqKRMXqE2nUOGvFU2jOOUzIp/pRR6tcEqX2oJapOvHygW9zJqIaQ1VXLuPMH+gHLkN94yxzyunri8gf67MqROXzUQnEc8IUzty3SAS8fKvT+2aR+rqsc1mKc56vIsMK26rN/uXMSFy6gZm0GOhzuT/DTEIx1A8l5Svj0Ryg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733412607; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ao2UlA9D5zYNkRb26w2mSmGbiR50MLqfuY2Is6j0DkA=; 
-	b=gAek+vm0F5BUFrZ70IxrQhFXR/2pOZ4PSIpBPjHI5ok+L5HcVFfWMnKxd8gqH8FnANsBvyGi+7e8+LNUe8vsryEvozPfa9A7W/DJsvxSZtkkD+UPhyHIeIMRCerbME95jxKkvmI+l572tFj6Wj3zVaeaRhtUXtQIliNAfJlZbGg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733412607;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=Ao2UlA9D5zYNkRb26w2mSmGbiR50MLqfuY2Is6j0DkA=;
-	b=LzxdZBZpK9/kIv3uBS3iUoLByS24+GgboZo5R51o8YZnwnlXBKz63RRq+HbRmD5Y
-	Oh1IFycTpZ+/4sd2h5lPMfiySn5SggynH1CVnOVsnWkNETl2Uwc/hFJfMB3XEltSPpM
-	ax6cub9iH/nehfTV8eb04Gbo5uOKg+p7KoiGJOwg=
-Received: by mx.zohomail.com with SMTPS id 1733412605170227.73946059541254;
-	Thu, 5 Dec 2024 07:30:05 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6DE828542C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 15:30:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150D821C9E3;
+	Thu,  5 Dec 2024 15:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTFOAup4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4522E14F9D9;
+	Thu,  5 Dec 2024 15:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733412622; cv=none; b=IkaIwXPaMWxAbdNX8ULdRc86yokEeLk+aF0qFJehVLM2yRCGjWa35QcHF+LLz2KJchlYwOPlO3cG410YZZuDeCndcNJ/edxYTzchT/DF6Nw5MX3NWPdGuwrPiLnviTbDTJsJeLkZHty8E2DzlKA4Hxo6pKHgVMZOQWkJ1lS20is=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733412622; c=relaxed/simple;
+	bh=HCPxOaQ+npddRCDh/RvayeJVIVFaUr6mRkUu+ikZw/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jyijN4qv3j6DQuuqolcS86/Ch/jH9Nf4WARPtO+apHCryqrY9YCmIvDpBkFv4PzeOM7PUlzUuqarvG4S6gVeydFY6Ft3ozA+tqMVkmRn8QplsCZ1YiArhbvvmnMJl0amWOZWces5exdVWJ1I5hc+mYNP6yTYVDWrWqE45zwvhJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTFOAup4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 352A8C4CED1;
+	Thu,  5 Dec 2024 15:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733412621;
+	bh=HCPxOaQ+npddRCDh/RvayeJVIVFaUr6mRkUu+ikZw/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OTFOAup4zn+Tkr5GIgMLSRENRP3N4wVEks8nX9Ns8sgjuhHPSkeSaNoSlkxJPYRHt
+	 YeL1RWXQwUunTHUDpG2Yc986m2JZnGfLOUURxuEehpKJJOw09IPDvcNO4vq2PjyTyQ
+	 0kcmzmIW9n+o0cytDxT6XKhO2GQNT/o+GOxQ35I2dOxKTJzIYt9qFtpYgYL4wMnQOk
+	 6wBcI//rlrF3QbXuGtkA4GiX2x5NLkbZW31tEEmcNYeqwPTNG6Vp/dX1qHG5zVNFyN
+	 isoWXVA0tr0zX4dddXl08mML7XcKG+31/N5DToOQyKVt40oqWBRIC66rR0sqC7wmqm
+	 pjWpESM1k3i1Q==
+Date: Thu, 5 Dec 2024 12:30:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	James Clark <james.clark@linaro.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Mingwei Zhang <mizhang@google.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [linus:master] [perf tools]  af954f76ee:
+ perf-sanity-tests.Test_data_symbol.fail
+Message-ID: <Z1HHClaOwjJnR5gr@x1>
+References: <202411301431.799e5531-lkp@intel.com>
+ <Z04ZUHaGdsBapIEL@google.com>
+ <Z1BhfpYWpUQ0p+qR@xsang-OptiPlex-9020>
+ <Z1DNJpDzCIBFrIZT@google.com>
+ <Z1DV0lN8qHSysX7f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 33/35] WIP: rust: drm/kms: Add VblankSupport
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-34-lyude@redhat.com>
-Date: Thu, 5 Dec 2024 12:29:45 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@redhat.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FD0FB134-5FFD-419A-9B66-85ED2EB6554A@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-34-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1DV0lN8qHSysX7f@google.com>
 
-Hi Lyude,
+On Wed, Dec 04, 2024 at 02:21:06PM -0800, Namhyung Kim wrote:
+> On Wed, Dec 04, 2024 at 01:44:06PM -0800, Namhyung Kim wrote:
+> [SNIP]
+> >   perf_event_attr:
+> >     type                             4 (cpu)
+> >     size                             136
+> >     config                           0x1cd (mem-loads)
+> >     { sample_period, sample_freq }   4000
+> >     sample_type                      IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT
+> >     read_format                      ID|LOST
+> >     freq                             1
+> >     precise_ip                       3
+> >     sample_id_all                    1
+> >     { bp_addr, config1 }             0x1f
+> >   ------------------------------------------------------------
+> >   sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
+> >   sys_perf_event_open failed, error -22
+> >   Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+> >   Error:
+> >   The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu/mem-loads,ldlat=30/).
+> >   "dmesg | grep -i perf" may provide additional information.
+> > 
+> > There's an issue with fallback on the inherit bit with the sample read.
+> > I'll take a look.
+> 
+> Hmm, no.  It doesn't have neight SAMPLE_READ nor inherit.  So the error
+> message was misleading.  Maybe it should be printed when it actually
+> clears the bits.
+> 
+> Anyway, I've tested with the old code and realzed that it might be due
+> to precise_ip being 3.  I expected it'd return EOPNOTSUPP for the case
+> but it seems to return EINVAL sometimes.  Then it should check it after
+> the missing features like below.  Can you please test?
 
-> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> This commit adds bindings for implementing vblank support for a =
-driver's
-> CRTCs. These bindings are optional, to account for the fact that not =
-all
-> drivers have dedicated hardware vblanks.
->=20
-> In order to accomplish this, we introduce the VblankSupport trait =
-which can
-> be implemented on DriverCrtc by drivers which support vblanks. This =
-works
-> in the same way as the main Kms trait - drivers which don't support
-> hardware vblanks can simply pass PhantomData<Self> to the associated =
-type
-> on DriverCrtc. If a driver chooses to implement VblankSupport, =
-VblankImpl
-> will be implemented by DRM automatically - and can be passed to the
-> VblankImpl associated type on DriverCrtc.
->=20
-> Additionally, we gate methods which only apply to vblank-supporting =
-drivers
-> by introducing a VblankDriverCrtc trait that is automatically =
-implemented
-> by DRM for CRTC drivers implementing VblankSupport. This works =
-basically in
-> the same way as Kms and KmsDriver, but for CRTCs.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
->=20
-> Notes:
->=20
-> * One thing to keep in mind: this trait is implemented on the CRTC as
->  opposed to the KMS driver due to the possibility that a driver may =
-have
->  multiple different types of CRTCs. As a result, it's not impossible =
-that
->  there could potentially be differences in each type's vblank hardware
->  implementation. In theory this could lead to a driver mistakenly only
->  implementing VblankSupport for some CRTCs and not others, which isn't
->  really defined behavior in DRM. As such, one of the dependencies in =
-the
->  branch for this patch series preview is a fix to ensure that DRM
->  disallows registering drivers that make this mistake.
->=20
-> TODO:
->=20
-> * Technically this patch introduces a soundness issue. We currently =
-allow
->  access to a kernel::drm::Device (through UnregisteredKmsDevice's =
-Deref
->  implementation) within the kernel::drm::kms::Kms::create_objects =
-trait
->  method. A caller could potentially access an uninitialized mutex by
->  calling Crtc::vblank_lock() within this context.
->  My solution for this is likely going to be adding unregistered =
-variants
->  of Crtc and other mode-objects that don't have access to the full set =
-of
->  methods on mode objects.
+Before:
 
-IIUC, you were already thinking about UnregisteredCrtcs in a previous =
-commit
-for a different reason, so this is all the more reason to have it.
+root@number:/tmp# perf mem record -a sleep 1s
+Error:
+The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_core/mem-loads,ldlat=30/).
+"dmesg | grep -i perf" may provide additional information.
 
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/bindings/bindings_helper.h |   1 +
-> rust/helpers/drm/drm.c          |   2 +
-> rust/helpers/drm/vblank.c       |   8 +
-> rust/kernel/drm/kms.rs          |  20 +-
-> rust/kernel/drm/kms/crtc.rs     |  28 +-
-> rust/kernel/drm/kms/vblank.rs   | 454 ++++++++++++++++++++++++++++++++
-> 6 files changed, 505 insertions(+), 8 deletions(-)
-> create mode 100644 rust/helpers/drm/vblank.c
-> create mode 100644 rust/kernel/drm/kms/vblank.rs
->=20
-> diff --git a/rust/bindings/bindings_helper.h =
-b/rust/bindings/bindings_helper.h
-> index 7c324003c3885..191eb24b32234 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -22,6 +22,7 @@
-> #include <drm/drm_mode_object.h>
-> #include <drm/drm_ioctl.h>
-> #include <drm/drm_probe_helper.h>
-> +#include <drm/drm_vblank.h>
-> #include <kunit/test.h>
-> #include <linux/blk-mq.h>
-> #include <linux/blk_types.h>
-> diff --git a/rust/helpers/drm/drm.c b/rust/helpers/drm/drm.c
-> index 365f6807774d4..5d4498e01fd3e 100644
-> --- a/rust/helpers/drm/drm.c
-> +++ b/rust/helpers/drm/drm.c
-> @@ -2,7 +2,9 @@
->=20
-> #ifdef CONFIG_DRM_KMS_HELPER
-> #include "atomic.c"
-> +#include "vblank.c"
-> #endif
-> +
-> #include "gem.c"
-> #ifdef CONFIG_DRM_GEM_SHMEM_HELPER
-> #include "gem_shmem_helper.c"
-> diff --git a/rust/helpers/drm/vblank.c b/rust/helpers/drm/vblank.c
-> new file mode 100644
-> index 0000000000000..165db7ac5b4da
-> --- /dev/null
-> +++ b/rust/helpers/drm/vblank.c
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <drm/drm_vblank.h>
-> +
-> +struct drm_vblank_crtc *rust_helper_drm_crtc_vblank_crtc(struct =
-drm_crtc *crtc)
-> +{
-> + return drm_crtc_vblank_crtc(crtc);
-> +}
-> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
-> index d0745b44ba9b6..e13f35d9e223f 100644
-> --- a/rust/kernel/drm/kms.rs
-> +++ b/rust/kernel/drm/kms.rs
-> @@ -9,6 +9,7 @@
-> pub mod fbdev;
-> pub mod framebuffer;
-> pub mod plane;
-> +pub mod vblank;
->=20
-> use crate::{
->     drm::{
-> @@ -28,6 +29,7 @@
->     ptr::{self, NonNull},
->     mem::{self, ManuallyDrop},
->     marker::PhantomData,
-> +    cell::Cell,
-> };
-> use bindings;
->=20
-> @@ -84,6 +86,13 @@ unsafe fn setup_fbdev(drm: &Device<Self::Driver>, =
-mode_config_info: &ModeConfigI
-> /// state required during the initialization process of a [`Device`].
-> pub struct UnregisteredKmsDevice<'a, T: Driver> {
->     drm: &'a Device<T>,
-> +    // TODO: Get rid of this - I think the solution we came up on the =
-C side to just make it so that
-> +    // DRM is a bit more consistent with verifying whether all CRTCs =
-have this implemented or not -
-> +    // meaning we don't need to keep track of this and can just make =
-the vblank setup conditional on
-> +    // the implementation of `VblankSupport`.
-> +    // Note that this also applies to headless devices - those are =
-literally the same but
-> +    // `dev.num_crtc()` =3D 0
-> +    pub(crate) has_vblanks: Cell<bool>,
+root@number:/tmp# 
 
-Why `Cell` here? For interior mutability? Maybe it=E2=80=99d be good to =
-add a comment explaining why.
+With your patch:
 
-Also, like I commented before, have you considered AtomicBool?
+root@number:/tmp# perf mem record -a sleep 1s
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 11.211 MB perf.data (14616 samples) ]
+root@number:/tmp# perf evlist
+cpu_atom/mem-loads,ldlat=30/P
+cpu_atom/mem-stores/P
+cpu_core/mem-loads-aux/
+cpu_core/mem-loads,ldlat=30/
+cpu_core/mem-stores/P
+dummy:u
+# Tip: use 'perf evlist -g' to show group information
+root@number:/tmp# perf evlist -v
+cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+cpu_core/mem-loads-aux/: type: 4 (cpu_core), size: 136, config: 0x8203 (mem-loads-aux), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+cpu_core/mem-loads,ldlat=30/: type: 4 (cpu_core), size: 136, config: 0x1cd (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, freq: 1, precise_ip: 2, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+cpu_core/mem-stores/P: type: 4 (cpu_core), size: 136, config: 0x2cd (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+# Tip: use 'perf evlist -g' to show group information
+root@number:/tmp#
 
-> }
->=20
-> impl<'a, T: Driver> Deref for UnregisteredKmsDevice<'a, T> {
-> @@ -103,6 +112,7 @@ impl<'a, T: Driver> UnregisteredKmsDevice<'a, T> {
->     pub(crate) unsafe fn new(drm: &'a Device<T>) -> Self {
->         Self {
->             drm,
-> +            has_vblanks: Cell::new(false)
->         }
->     }
-> }
-> @@ -190,6 +200,11 @@ unsafe fn setup_kms(drm: &Device<Self::Driver>) =
--> Result<ModeConfigInfo> {
->=20
->         T::create_objects(&drm)?;
->=20
-> +        if drm.has_vblanks.get() {
-> +            // SAFETY: `has_vblank` is only true if CRTCs with vblank =
-support were registered
-> +            to_result(unsafe { =
-bindings::drm_vblank_init(drm.as_raw(), drm.num_crtcs()) })?;
-> +        }
-> +
->         // TODO: Eventually add a hook to customize how state readback =
-happens, for now just reset
->         // SAFETY: Since all static modesetting objects were created =
-in `T::create_objects()`, and
->         // that is the only place they can be created, this fulfills =
-the C API requirements.
-> @@ -262,10 +277,7 @@ pub fn num_plane(&self) -> u32 {
->         unsafe { (*self.as_raw()).mode_config.num_total_plane as u32 }
->     }
->=20
-> -    /// Return the number of registered CRTCs
-> -    /// TODO: while `num_crtc` is of i32, that type actually makes =
-literally no sense here and just
-> -    /// causes problems and unecessary casts. Same for num_plane(). =
-So, fix that at some point (we
-> -    /// will never get n < 0 anyway)
-> +    /// Return the number of registered [`Crtc`](crtc::Crtc) objects =
-on this [`Device`].
+But there is something strange, 'cpu_core/mem-loads-aux/' doesn't have
+/P, i.e. shouldn't try to set precise_ip to 3, but according to 'perf
+evlist -v' it is setting it to 3.
 
-Maybe this change should be present in the patch that introduced =
-`num_crtcs()`?
+I thought maybe it could be related to groups, but:
 
-Also, you should keep the comment you had about the cast but using =
-=E2=80=9C//=E2=80=9C above the actual statement,
-not docs (i.e. =E2=80=9C///=E2=80=9C) on the fn item.
+root@number:/tmp# perf evlist -g
+cpu_atom/mem-loads,ldlat=30/P
+cpu_atom/mem-stores/P
+{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
+cpu_core/mem-stores/P
+dummy:u
+root@number:/tmp# 
 
->     #[inline]
->     pub fn num_crtcs(&self) -> u32 {
->         // SAFETY:
-> diff --git a/rust/kernel/drm/kms/crtc.rs b/rust/kernel/drm/kms/crtc.rs
-> index ef1b331f742d0..74e7b666d828c 100644
-> --- a/rust/kernel/drm/kms/crtc.rs
-> +++ b/rust/kernel/drm/kms/crtc.rs
-> @@ -8,7 +8,8 @@
->     ModeObject,
->     StaticModeObject,
->     KmsDriver,
-> -    UnregisteredKmsDevice
-> +    UnregisteredKmsDevice,
-> +    vblank::*
-> };
-> use crate::{
->     bindings,
-> @@ -62,13 +63,13 @@ pub trait DriverCrtc: Send + Sync + Sized {
->             cursor_set2: None,
->             cursor_set: None,
->             destroy: Some(crtc_destroy_callback::<Self>),
-> -            disable_vblank: None,
-> +            disable_vblank: <Self::VblankImpl as =
-VblankImpl>::VBLANK_OPS.disable_vblank,
->             early_unregister: None,
-> -            enable_vblank: None,
-> +            enable_vblank: <Self::VblankImpl as =
-VblankImpl>::VBLANK_OPS.enable_vblank,
->             gamma_set: None, // TODO
->             get_crc_sources: None,
->             get_vblank_counter: None,
-> -            get_vblank_timestamp: None,
-> +            get_vblank_timestamp: <Self::VblankImpl as =
-VblankImpl>::VBLANK_OPS.get_vblank_timestamp,
->             late_register: None,
->             page_flip: Some(bindings::drm_atomic_helper_page_flip),
->             page_flip_target: None,
-> @@ -113,6 +114,12 @@ pub trait DriverCrtc: Send + Sync + Sized {
->     /// See [`DriverCrtcState`] for more info.
->     type State: DriverCrtcState;
->=20
-> +    /// The driver's optional hardware vblank implementation
-> +    ///
-> +    /// See [`VblankSupport`] for more info. Drivers that don't care =
-about this can just pass
-> +    /// [`PhantomData<Self>`].
-> +    type VblankImpl: VblankImpl<Crtc =3D Self>;
-> +
->     /// The constructor for creating a [`Crtc`] using this =
-[`DriverCrtc`] implementation.
->     ///
->     /// Drivers may use this to instantiate their [`DriverCrtc`] =
-object.
-> @@ -281,6 +288,10 @@ pub fn new<'a, 'b: 'a, P, C>(
->         P: DriverPlane<Driver =3D T::Driver>,
->         C: DriverPlane<Driver =3D T::Driver>
->     {
-> +        if Self::has_vblank() {
-> +            dev.has_vblanks.set(true)
-> +        }
-> +
->         let this =3D Box::try_pin_init(
->             try_pin_init!(Self {
->                 crtc: Opaque::new(bindings::drm_crtc {
-> @@ -343,6 +354,15 @@ pub fn from_opaque<'a, D>(opaque: &'a =
-OpaqueCrtc<D>) -> &'a Self
->         Self::try_from_opaque(opaque)
->             .expect("Passed OpaqueCrtc does not share this DriverCrtc =
-implementation")
->     }
-> +
-> +    pub(crate) fn get_vblank_ptr(&self) -> *mut =
-bindings::drm_vblank_crtc {
-> +        // SAFETY: FFI Call with no special requirements
-> +        unsafe { bindings::drm_crtc_vblank_crtc(self.as_raw()) }
+But then, in tools/perf/arch/x86/util/mem-events.c
 
-Like elsewhere in this series, this =E2=80=9Cno special requirements=E2=80=
-=9D is also a poor fit.
+struct perf_mem_event perf_mem_events_intel[PERF_MEM_EVENTS__MAX] = {
+        E("ldlat-loads",        "%s/mem-loads,ldlat=%u/P",      "mem-loads",    true,   0),
+        E("ldlat-stores",       "%s/mem-stores/P",              "mem-stores",   false,  0),
+        E(NULL,                 NULL,                           NULL,           false,  0),
+};
 
-You should mention how as_raw() makes sure that we are passing in a =
-valid pointer.
+struct perf_mem_event perf_mem_events_intel_aux[PERF_MEM_EVENTS__MAX] = {
+        E("ldlat-loads",        "{%s/mem-loads-aux/,%s/mem-loads,ldlat=%u/}:P", "mem-loads",    true,   MEM_LOADS_AUX),
+        E("ldlat-stores",       "%s/mem-stores/P",              "mem-stores",   false,  0),
+        E(NULL,                 NULL,                           NULL,           false,  0),
+};
 
-> +    }
-> +
-> +    pub(crate) const fn has_vblank() -> bool {
-> +        T::OPS.funcs.enable_vblank.is_some()
-> +    }
-> }
->=20
-> /// A trait implemented by any type that acts as a [`struct drm_crtc`] =
-interface.
-> diff --git a/rust/kernel/drm/kms/vblank.rs =
-b/rust/kernel/drm/kms/vblank.rs
-> new file mode 100644
-> index 0000000000000..29dce38053a49
-> --- /dev/null
-> +++ b/rust/kernel/drm/kms/vblank.rs
-> @@ -0,0 +1,454 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +
-> +//! Rust bindings for KMS vblank support
-> +
-> +use core::{
-> +    marker::*,
-> +    mem::{self, ManuallyDrop},
-> +    ops::{Drop, Deref},
-> +    ptr::{self, NonNull, null_mut}
-> +};
-> +use kernel::{
-> +    time::Ktime,
-> +    types::Opaque,
-> +    error::{from_result, to_result},
-> +    prelude::*,
-> +    drm::device::Device,
-> +    irq::*
-> +};
-> +use super::{
-> +    crtc::*,
-> +    KmsRef,
-> +    ModeObject,
-> +    KmsDriver,
-> +};
-> +use bindings;
-> +
-> +/// The main trait for a driver to implement hardware vblank support =
-for a [`Crtc`].
-> +///
-> +/// # Invariants
-> +///
-> +/// C FFI callbacks generated using this trait can safely assume that =
-input pointers to
-> +/// [`struct drm_crtc`] are always contained within a =
-[`Crtc<Self::Crtc>`].
-> +///
-> +/// [`struct drm_crtc`]: srctree/include/drm/drm_crtc.h
-> +pub trait VblankSupport: Sized {
-> +    /// The parent [`DriverCrtc`].
-> +    type Crtc: VblankDriverCrtc<VblankImpl =3D Self>;
-> +
-> +    /// Enable vblank interrupts for this [`DriverCrtc`].
-> +    fn enable_vblank(
-> +        crtc: &Crtc<Self::Crtc>,
-> +        vblank_guard: &VblankGuard<'_, Self::Crtc>,
-> +        irq: IrqDisabled<'_>
+It has the :P for that group, maybe that is going to fallback?
 
-Oh, this seems to depend on your spinlock irq series.
+I tried:
 
-> +    ) -> Result;
-> +
-> +    /// Disable vblank interrupts for this [`DriverCrtc`].
-> +    fn disable_vblank(
-> +        crtc: &Crtc<Self::Crtc>,
-> +        vblank_guard: &VblankGuard<'_, Self::Crtc>,
+Breakpoint 1, evsel__precise_ip_fallback (evsel=0xf4a260) at util/evsel.c:1969
+1969	{
+(gdb) bt
+#0  evsel__precise_ip_fallback (evsel=0xf4a260) at util/evsel.c:1969
+#1  0x00000000005dfb09 in evsel__open_cpu (evsel=0xf4a260, cpus=0xf53840, threads=0xf5bfa0, start_cpu_map_idx=0, end_cpu_map_idx=16) at util/evsel.c:2577
+#2  0x00000000005dfc54 in evsel__open (evsel=0xf4a260, cpus=0xf53840, threads=0xf5bfa0) at util/evsel.c:2603
+#3  0x000000000042cbea in record__open (rec=0xec2ce0 <record>) at builtin-record.c:1370
+#4  0x00000000004304a1 in __cmd_record (rec=0xec2ce0 <record>, argc=2, argv=0xf58180) at builtin-record.c:2489
+#5  0x0000000000434840 in cmd_record (argc=2, argv=0xf58180) at builtin-record.c:4260
+#6  0x0000000000469e93 in __cmd_record (argc=3, argv=0x7fffffffde20, mem=0x7fffffffd260, options=0x7fffffffd080) at builtin-mem.c:170
+#7  0x000000000046b2f3 in cmd_mem (argc=4, argv=0x7fffffffde20) at builtin-mem.c:538
+#8  0x00000000004c0414 in run_builtin (p=0xec6098 <commands+696>, argc=5, argv=0x7fffffffde20) at perf.c:351
+#9  0x00000000004c06bb in handle_internal_command (argc=5, argv=0x7fffffffde20) at perf.c:404
+#10 0x00000000004c0814 in run_argv (argcp=0x7fffffffdc0c, argv=0x7fffffffdc00) at perf.c:448
+#11 0x00000000004c0b5d in main (argc=5, argv=0x7fffffffde20) at perf.c:560
+(gdb) print evsel__name(evsel)
+$1 = 0xf529b0 "cpu_core/mem-loads,ldlat=30/"
+(gdb) p evsel->core.attr.precise_ip 
+$2 = 3
+(gdb) p evsel->precise_max
+$3 = true
+(gdb)
 
-Can you add docs describing what this argument is for?
+And it fell back to precise_ip=2, the previous attempt at opening with 3
+resulted in EINVAL.
 
-> +        irq: IrqDisabled<'_>
-> +    );
-> +
-> +    /// Retrieve the current vblank timestamp for this [`Crtc`]
-> +    ///
-> +    /// If this function is being called from the driver's vblank =
-interrupt handler,
-> +    /// `handling_vblank_irq` will be [`Some`].
+It should have that precise level reflected in the evsel name :-\
 
-What will be Some? You probably refactored a bit and this is now stale.
+Ran out of time, hope the above helps.
 
-Btw, this can apparently be called from different places with different =
-semantics. Maybe
-flesh out the docs some more?
+Apart from that, from a purely regression fix, your patch gets the
+previous behaviour, from this isolated test I made, so:
 
-> +    fn get_vblank_timestamp(
-> +        crtc: &Crtc<Self::Crtc>,
-> +        in_vblank_irq: bool,
-> +    ) -> Option<VblankTimestamp>;
-> +}
-> +
-> +/// Trait used for CRTC vblank (or lack there-of) implementations. =
-Implemented internally.
-> +///
-> +/// Drivers interested in implementing vblank support should refer to =
-[`VblankSupport`], drivers
-> +/// that don't have vblank support can use [`PhantomData`].
-> +pub trait VblankImpl {
-> +    /// The parent [`DriverCrtc`].
-> +    type Crtc: DriverCrtc<VblankImpl =3D Self>;
-> +
-> +    /// The generated [`VblankOps`].
-> +    const VBLANK_OPS: VblankOps;
-> +}
-> +
-> +/// C FFI callbacks for vblank management.
-> +///
-> +/// Created internally by DRM.
-> +#[derive(Default)]
-> +pub struct VblankOps {
-> +    pub(crate) enable_vblank: Option<unsafe extern "C" fn(crtc: *mut =
-bindings::drm_crtc) -> i32>,
-> +    pub(crate) disable_vblank: Option<unsafe extern "C" fn(crtc: *mut =
-bindings::drm_crtc)>,
-> +    pub(crate) get_vblank_timestamp: Option<
-> +        unsafe extern "C" fn(
-> +            crtc: *mut bindings::drm_crtc,
-> +            max_error: *mut i32,
-> +            vblank_time: *mut bindings::ktime_t,
-> +            in_vblank_irq: bool,
-> +        ) -> bool
-> +    >
-> +}
-> +
-> +impl<T: VblankSupport> VblankImpl for T {
-> +    type Crtc =3D T::Crtc;
-> +
-> +    const VBLANK_OPS: VblankOps =3D VblankOps {
-> +        enable_vblank: Some(enable_vblank_callback::<T>),
-> +        disable_vblank: Some(disable_vblank_callback::<T>),
-> +        get_vblank_timestamp: =
-Some(get_vblank_timestamp_callback::<T>)
-> +    };
-> +}
-> +
-> +impl<T> VblankImpl for PhantomData<T>
-> +where
-> +    T: DriverCrtc<VblankImpl =3D PhantomData<T>>
-> +{
-> +    type Crtc =3D T;
-> +
-> +    const VBLANK_OPS: VblankOps =3D VblankOps {
-> +        enable_vblank: None,
-> +        disable_vblank: None,
-> +        get_vblank_timestamp: None,
-> +    };
-> +}
-> +
-> +unsafe extern "C" fn enable_vblank_callback<T: VblankSupport>(
-> +    crtc: *mut bindings::drm_crtc,
-> +) -> i32 {
-> +    // SAFETY: We're guaranteed that `crtc` is of type =
-`Crtc<T::Crtc>` by type invariants.
-> +    let crtc =3D unsafe { Crtc::<T::Crtc>::from_raw(crtc) };
-> +
-> +    // SAFETY: This callback happens with IRQs disabled
-> +    let irq =3D unsafe { IrqDisabled::new() };
-> +
-> +    // SAFETY: This callback happens with `vbl_lock` already held
-> +    let vblank_guard =3D ManuallyDrop::new(unsafe { =
-VblankGuard::new(crtc, irq) });
-> +
-> +    from_result(|| T::enable_vblank(crtc, &vblank_guard, irq).map(|_| =
-0))
-> +}
-> +
-> +unsafe extern "C" fn disable_vblank_callback<T: VblankSupport>(
-> +    crtc: *mut bindings::drm_crtc,
-> +) {
-> +    // SAFETY: We're guaranteed that `crtc` is of type =
-`Crtc<T::Crtc>` by type invariants.
-> +    let crtc =3D unsafe { Crtc::<T::Crtc>::from_raw(crtc) };
-> +
-> +    // SAFETY: This callback happens with IRQs disabled
-> +    let irq =3D unsafe { IrqDisabled::new() };
-> +
-> +    // SAFETY: This call happens with `vbl_lock` already held
-> +    let vblank_guard =3D ManuallyDrop::new(unsafe { =
-VblankGuard::new(crtc, irq) });
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Every time you use ManuallyDrop, you should point out why you need it =
-and
-where the value will actually be dropped.
+- Arnaldo
 
+> Thanks,
+> Namhyung
+> 
+> 
+> ---8<---
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index f745723d486ba962..d22c5df1701eccc5 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -2571,12 +2571,12 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+>  	if (err == -EMFILE && rlimit__increase_nofile(&set_rlimit))
+>  		goto retry_open;
+>  
+> -	if (err == -EOPNOTSUPP && evsel__precise_ip_fallback(evsel))
+> -		goto retry_open;
+> -
+>  	if (err == -EINVAL && evsel__detect_missing_features(evsel))
+>  		goto fallback_missing_features;
+>  
+> +	if (evsel__precise_ip_fallback(evsel))
+> +		goto retry_open;
 > +
-> +    T::disable_vblank(crtc, &vblank_guard, irq);
-> +}
-> +
-> +unsafe extern "C" fn get_vblank_timestamp_callback<T: VblankSupport>(
-> +    crtc: *mut bindings::drm_crtc,
-> +    max_error: *mut i32,
-> +    vblank_time: *mut bindings::ktime_t,
-> +    in_vblank_irq: bool
-> +) -> bool {
-> +    // SAFETY: We're guaranteed `crtc` is of type `Crtc<T::Crtc>` by =
-type invariance
-> +    let crtc =3D unsafe { Crtc::<T::Crtc>::from_raw(crtc) };
-> +
-> +    if let Some(timestamp) =3D T::get_vblank_timestamp(crtc, =
-in_vblank_irq) {
-> +        // SAFETY: Both of these pointers are guaranteed by the C API =
-to be valid
-> +        unsafe {
-> +            (*max_error) =3D timestamp.max_error;
-> +            (*vblank_time) =3D timestamp.time.to_ns();
-> +        };
-> +
-> +        true
-> +    } else {
-> +        false
-> +    }
-> +}
-> +
-> +/// A vblank timestamp.
-> +///
-> +/// This type is used by [`VblankSupport::get_vblank_timestamp`] for =
-the implementor to return the
-> +/// current vblank timestamp for the hardware.
-> +#[derive(Copy, Clone)]
-> +pub struct VblankTimestamp {
-> +    /// The actual vblank timestamp, accuracy to within =
-[`Self::max_error`] nanoseconds
-> +    pub time: Ktime,
-> +
-> +    /// Maximum allowable timestamp error in nanoseconds
-> +    pub max_error: i32,
-> +}
-> +
-> +/// A trait for [`DriverCrtc`] implementations with hardware vblank =
-support.
-> +///
-> +/// This trait is implemented internally by DRM for any =
-[`DriverCrtc`] implementation that
-> +/// implements [`VblankSupport`]. It is used to expose =
-hardware-vblank driver exclusive methods and
-> +/// data to users.
-> +pub trait VblankDriverCrtc: DriverCrtc {}
-> +
-> +impl<T, V> VblankDriverCrtc for T
-> +where
-> +    T: DriverCrtc<VblankImpl =3D V>,
-> +    V: VblankSupport<Crtc =3D T> {}
-> +
-> +impl<T: VblankDriverCrtc> Crtc<T> {
-> +    /// Retrieve a reference to the [`VblankCrtc`] for this [`Crtc`].
-> +    pub(crate) fn vblank_crtc(&self) -> &VblankCrtc<T> {
-> +        // SAFETY: Casting is safe via `VblankCrtc`s type invariants.
-> +        unsafe { &*self.get_vblank_ptr().cast() }
-
-Quite a lot going on in a single statement. Please break this into =
-multiple lines.
-
-> +    }
-> +
-> +    /// Access vblank related infrastructure for a [`Crtc`].
-> +    ///
-> +    /// This function explicitly locks the device's vblank lock, and =
-allows access to controlling
-> +    /// the vblank configuration for this CRTC. The lock is dropped =
-once [`VblankGuard`] is
-> +    /// dropped.
-> +    pub fn vblank_lock<'a>(&'a self, irq: IrqDisabled<'a>) -> =
-VblankGuard<'a, T> {
-> +        // SAFETY: `vbl_lock` is initialized for as long as `Crtc` is =
-available to users
-> +        unsafe { bindings::spin_lock(&mut =
-(*self.drm_dev().as_raw()).vbl_lock) };
-> +
-> +        // SAFETY: We just acquired vbl_lock above
-> +        unsafe { VblankGuard::new(self, irq) }
-> +    }
-> +
-> +    /// Trigger a vblank event on this [`Crtc`].
-> +    ///
-> +    /// Drivers should use this in their vblank interrupt handlers to =
-update the vblank counter and
-> +    /// send any signals that may be pending.
-> +    ///
-> +    /// Returns whether or not the vblank event was handled.
-> +    #[inline]
-> +    pub fn handle_vblank(&self) -> bool {
-> +        // SAFETY: FFI call with no special requirements
-> +        unsafe { bindings::drm_crtc_handle_vblank(self.as_raw()) }
-> +    }
-> +
-> +    /// Forbid vblank events for a [`Crtc`].
-> +    ///
-> +    /// This function disables vblank events for a [`Crtc`], even if =
-[`VblankRef`] objects exist.
-
-Do these `VblankRef` objects remain valid?
-
-> +    #[inline]
-> +    pub fn vblank_off(&self) {
-> +        // SAFETY: FFI call with no special requirements
-> +        unsafe { bindings::drm_crtc_vblank_off(self.as_raw()) }
-> +    }
-> +
-> +    /// Allow vblank events for a [`Crtc`].
-> +    ///
-> +    /// This function allows users to enable vblank events and =
-acquire [`VblankRef`] objects again.
-> +    #[inline]
-> +    pub fn vblank_on(&self) {
-> +        // SAFETY: FFI call with no special requirements
-> +        unsafe { bindings::drm_crtc_vblank_on(self.as_raw()) }
-> +    }
-> +
-> +    /// Enable vblank events for a [`Crtc`].
-> +    ///
-> +    /// Returns a [`VblankRef`] which will allow vblank events to be =
-sent until it is dropped. Note
-> +    /// that vblank events may still be disabled by =
-[`Self::vblank_off`].
-
-This is a bit confusing. You can send events after calling `vblank_off`? =
-What happens then, do these get ignored?
-
-Maybe worth considering if this behavior should be disallowed in Rust. =
-Note that you can use the type state pattern
-to encode whether vblank events are enabled.
-
-=20
-> +    #[must_use =3D "Vblanks are only enabled until the result from =
-this function is dropped"]
-> +    pub fn vblank_get(&self) -> Result<VblankRef<'_, T>> {
-> +        VblankRef::new(self)
-> +    }
-> +}
-> +
-> +/// Common methods available on any [`CrtcState`] whose [`Crtc`] =
-implements [`VblankSupport`].
-> +///
-> +/// This trait is implemented automatically by DRM for any =
-[`DriverCrtc`] implementation that
-> +/// implements [`VblankSupport`].
-> +pub trait RawVblankCrtcState: AsRawCrtcState {
-> +    /// Return the [`PendingVblankEvent`] for this CRTC state, if =
-there is one.
-> +    fn get_pending_vblank_event(&mut self) -> =
-Option<PendingVblankEvent<'_, Self>>
-> +    where
-> +        Self: Sized,
-> +    {
-> +        // SAFETY: The driver is the only one that will ever modify =
-this data, and since our
-> +        // interface follows rust's data aliasing rules that means =
-this is safe to read
-> +        let event_ptr =3D unsafe { (*self.as_raw()).event };
-> +
-> +        (!event_ptr.is_null()).then_some(PendingVblankEvent(self))
-> +    }
-> +}
-> +
-> +impl<T, C> RawVblankCrtcState for T
-> +where
-> +    T: AsRawCrtcState<Crtc =3D Crtc<C>>,
-> +    C: VblankDriverCrtc {}
-> +
-> +/// A pending vblank event from an atomic state
-> +pub struct PendingVblankEvent<'a, T: RawVblankCrtcState>(&'a mut T);
-> +
-> +impl<'a, T: RawVblankCrtcState> PendingVblankEvent<'a, T> {
-> +    /// Send this [`PendingVblankEvent`].
-> +    ///
-> +    /// A [`PendingVblankEvent`] can only be sent once, so this =
-function consumes the
-> +    /// [`PendingVblankEvent`].
-> +    pub fn send<C>(self)
-> +    where
-> +        T: RawVblankCrtcState<Crtc =3D Crtc<C>>,
-> +        C: VblankDriverCrtc
-> +    {
-> +        let crtc: &Crtc<C> =3D self.0.crtc();
-> +        let event_lock =3D crtc.drm_dev().event_lock();
-> +
-> +        with_irqs_disabled(|irq| {
-> +            let _guard =3D event_lock.lock_with(irq);
-> +
-> +            // SAFETY:
-> +            // * We now hold the appropriate lock to call this =
-function
-> +            // * Vblanks are enabled as proved by `vbl_ref`, as per =
-the C api requirements
-> +            // * Our interface is proof that `event` is non-null
-> +            unsafe {
-> +                bindings::drm_crtc_send_vblank_event(crtc.as_raw(), =
-(*self.0.as_raw()).event)
-> +            };
-> +        });
-> +
-> +        // SAFETY: The mutable reference in `self.state` is proof =
-that it is safe to mutate this,
-> +        // and DRM expects us to set this to NULL once we've sent the =
-vblank event.
-> +        unsafe { (*self.0.as_raw()).event =3D null_mut() };
-> +    }
-> +
-> +    /// Arm this [`PendingVblankEvent`] to be sent later by the =
-CRTC's vblank interrupt handler.
-> +    ///
-> +    /// A [`PendingVblankEvent`] can only be armed once, so this =
-function consumes the
-> +    /// [`PendingVblankEvent`]. As well, it requires a [`VblankRef`] =
-so that vblank interrupts
-> +    /// remain enabled until the [`PendingVblankEvent`] has been sent =
-out by the driver's vblank
-> +    /// interrupt handler.
-> +    pub fn arm<C>(self, vbl_ref: VblankRef<'_, C>)
-> +    where
-> +        T: RawVblankCrtcState<Crtc =3D Crtc<C>>,
-> +        C: VblankDriverCrtc
-> +    {
-> +        let crtc: &Crtc<C> =3D self.0.crtc();
-> +        let event_lock =3D crtc.drm_dev().event_lock();
-> +
-> +        with_irqs_disabled(|irq| {
-> +            let _guard =3D event_lock.lock_with(irq);
-> +
-> +            // SAFETY:
-> +            // * We now hold the appropriate lock to call this =
-function
-> +            // * Vblanks are enabled as proved by `vbl_ref`, as per =
-the C api requirements
-> +            // * Our interface is proof that `event` is non-null
-> +            unsafe {
-> +                bindings::drm_crtc_arm_vblank_event(crtc.as_raw(), =
-(*self.0.as_raw()).event)
-> +            };
-> +        });
-> +
-> +        // SAFETY: The mutable reference in `self.state` is proof =
-that it is safe to mutate this,
-> +        // and DRM expects us to set this to NULL once we've armed =
-the vblank event.
-> +        unsafe { (*self.0.as_raw()).event =3D null_mut() };
-> +
-> +        // DRM took ownership of `vbl_ref` after we called =
-`drm_crtc_arm_vblank_event`
-> +        mem::forget(vbl_ref);
-> +    }
-> +}
-> +
-> +/// A borrowed vblank reference.
-> +///
-> +/// This object keeps the vblank reference count for a [`Crtc`] =
-incremented for as long as it
-> +/// exists, enabling vblank interrupts for said [`Crtc`] until all =
-references are dropped, or
-> +/// [`Crtc::vblank_off`] is called - whichever comes first.
-> +pub struct VblankRef<'a, T: VblankDriverCrtc>(&'a Crtc<T>);
-> +
-> +impl<T: VblankDriverCrtc> Drop for VblankRef<'_, T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: FFI call with no special requirements
-> +        unsafe { bindings::drm_crtc_vblank_put(self.0.as_raw()) };
-> +    }
-> +}
-> +
-> +impl<'a, T: VblankDriverCrtc> VblankRef<'a, T> {
-> +    fn new(crtc: &'a Crtc<T>) -> Result<Self> {
-> +        // SAFETY: FFI call with no special requirements
-> +        to_result(unsafe { =
-bindings::drm_crtc_vblank_get(crtc.as_raw()) })?;
-> +
-> +        Ok(Self(crtc))
-> +    }
-> +}
-> +
-> +/// The base wrapper for [`drm_vblank_crtc`].
-> +///
-> +/// Users will rarely interact with this object directly, it is a =
-simple wrapper around
-> +/// [`drm_vblank_crtc`] which provides access to methods and data =
-that is not protected by a lock.
-> +///
-> +/// # Invariants
-> +///
-> +/// This type has an identical data layout to [`drm_vblank_crtc`].
-> +///
-> +/// [`drm_vblank_crtc`]: srctree/include/drm/drm_vblank.h
-> +#[repr(transparent)]
-> +pub struct VblankCrtc<T>(Opaque<bindings::drm_vblank_crtc>, =
-PhantomData<T>);
-> +
-> +impl<T: VblankDriverCrtc> VblankCrtc<T> {
-> +    pub(crate) fn as_raw(&self) -> *mut bindings::drm_vblank_crtc {
-> +        // SAFETY: Our data layouts are identical via =
-#[repr(transparent)]
-> +        unsafe { self.0.get() }
-> +    }
-> +
-> +    // SAFETY: The caller promises that `ptr` points to a valid =
-instance of
-> +    // `bindings::drm_vblank_crtc`, and that access to this structure =
-has been properly serialized
-> +    pub(crate) unsafe fn from_raw<'a>(ptr: *mut =
-bindings::drm_vblank_crtc) -> &'a Self {
-> +        // SAFETY: Our data layouts are identical via =
-#[repr(transparent)]
-> +        unsafe { &*ptr.cast() }
-> +    }
-> +
-> +    /// Returns the [`Device`] for this [`VblankGuard`]
-> +    pub fn drm_dev(&self) -> &Device<T::Driver> {
-> +        // SAFETY: `drm` is initialized, invariant and valid =
-throughout our lifetime
-> +        unsafe { Device::borrow((*self.as_raw()).dev) }
-> +    }
-> +}
-> +
-> +// NOTE: This type does not use a `Guard` because the mutex is not =
-contained within the same
-> +// structure as the relevant CRTC
-> +/// An interface for accessing and controlling vblank related state =
-for a [`Crtc`].
-> +///
-> +/// This type may be returned from some [`VblankSupport`] callbacks, =
-or manually via
-> +/// [`Crtc::vblank_lock`]. It provides access to methods and data =
-which require
-> +/// [`drm_device.vbl_lock`] be held.
-> +///
-> +/// # Invariants
-> +///
-> +/// - [`drm_device.vbl_lock`] is acquired whenever an instance of =
-this type exists.
-> +/// - Shares the invariants of [`VblankCrtc`].
-> +///
-> +/// [`drm_device.vbl_lock`]: srctree/include/drm/drm_device.h
-> +#[repr(transparent)]
-> +pub struct VblankGuard<'a, T: VblankDriverCrtc>(&'a VblankCrtc<T>);
-> +
-> +impl<'a, T: VblankDriverCrtc> VblankGuard<'a, T> {
-> +    /// Construct a new [`VblankGuard`]
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must have already acquired =
-[`drm_device.vbl_lock`].
-> +    ///
-> +    /// [`drm_device.vbl_lock`]: srctree/include/drm/drm_device.h
-> +    pub(crate) unsafe fn new(
-> +        crtc: &'a Crtc<T>,
-> +        _irq: IrqDisabled<'a>
-> +    ) -> Self {
-> +        Self(crtc.vblank_crtc())
-> +    }
-> +
-> +    /// Returns the duration of a single scanout frame in ns
-> +    pub fn frame_duration(&self) -> i32 {
-> +        // SAFETY: We hold the appropriate lock for this read via our =
-type invariants.
-> +        unsafe { (*self.as_raw()).framedur_ns }
-> +    }
-> +}
-> +
-> +impl<T: VblankDriverCrtc> Deref for VblankGuard<'_, T> {
-> +    type Target =3D VblankCrtc<T>;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        &self.0
-> +    }
-> +}
-> +
-> +impl<T: VblankDriverCrtc> Drop for VblankGuard<'_, T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY:
-> +        // - We acquired this spinlock when creating this object
-> +        // - This lock is guaranteed to be initialized for as long as =
-our DRM device is exposed to
-> +        //   users.
-
-Where is the call to lock the spinlock? If the user is supposed to lock =
-it externally before `new()`, but
-we explicitly call `spin_unlock` in `drop` then this is very confusing =
-and error-prone.
-
-
-> +        unsafe { bindings::spin_unlock(&mut =
-(*self.drm_dev().as_raw()).vbl_lock) }
-> +    }
-> +}
-> --=20
-> 2.46.1
->=20
-
-=E2=80=94 Daniel
-
+>  	if (evsel__handle_error_quirks(evsel, err))
+>  		goto retry_open;
+>  
 
