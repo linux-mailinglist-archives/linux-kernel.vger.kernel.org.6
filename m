@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-434196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BBF9E6303
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D5F9E6306
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E38282F5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CF6282E5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C2213C677;
-	Fri,  6 Dec 2024 01:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F13A13D245;
+	Fri,  6 Dec 2024 01:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zi3zpQMb"
-Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="opUyGa9U"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E49C47F4A
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 01:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C1713C9A6
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 01:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733447382; cv=none; b=pR7WO2uyCgd0SXpJE4RMvtuEaGn33uL/Yv6/BkbJlxJxIfG1Tnq50hjEZ0tg+nry/UOjSgf6qYZsm8/o2rQ8wowNs0H3tud30W65PZcn0ZuHz9G7sMsA984a195Y9mZpSlUws+yk5TJEUZURpp75FHmlqhXE6+ouOvPi3M6DHik=
+	t=1733447385; cv=none; b=rxhPCVLTNkpetZICOMcLzivIevzGfiz83HoRWTXUpulJnd0L43rk1bzVyFS/oIyqWr361D4f3B/FpdPCDGtLaTlRzZOoOnOIBi99UI/ftZiGk01MOeVvMFnF4dpKsur5p1ezaXdOQWyLb0Hb70zD6LLV9PpwTmDD82OVX9IwCxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733447382; c=relaxed/simple;
-	bh=+wJvCa+37UP6hvax1esryXtm9v0wblehOQqRU99BJVg=;
+	s=arc-20240116; t=1733447385; c=relaxed/simple;
+	bh=J3nKYrj9AmggMWJ3J7t0rcXTlVHBgBWJCCL07vPZGIU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bJ5rdcxdWs4sgsj8mKfhnrea3kRcLyWkj+XZCbVtz7gVnP+9p/R5vEGzI+ZRH+TSHId+i/ptfWma8HOdXMu0wM1bTfXn92Y/SPL5bh+VF3lPFusU+hWUw+3/z9FO3/OEBhiNi/ycgv35oNXtPHAEY6xHbcPBfmtgJSamgF2SRYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zi3zpQMb; arc=none smtp.client-ip=209.85.210.74
+	 To:Cc:Content-Type; b=KxhfBJnxWWzs+3hbDVDOBO1tZjBeneFcwLdNpSCHUkDmKMGXVkaxjAqOjhOkZN5GiExRHZoHSyKfqj9bb1JeMqCERW4V6mxlmg5/jlpg4jP0RQB+BFJ7TSvVRmf3nEVlCB6oxsfIBzlnhLiU9bFj3tal+q3/OXiDITu1JiWSnPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=opUyGa9U; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-71d418d1977so1274174a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 17:09:39 -0800 (PST)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-72513206509so1391702b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 17:09:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733447379; x=1734052179; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733447383; x=1734052183; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVe1l78oGg6d6XLgPQZsewnpRSOEBU8Pjn8H7vlg4Dw=;
-        b=zi3zpQMbUEqnUqKNLy6GnrqPX2mkt5WfUvc2+ta9ia048z1VXcbdBPlyRoBbNnv2xh
-         R/ASlrzllKinPVCUW13JzPRF6FJGtUxrR1nBeodnDQE8UD5Jb+XC2k0a8YEAH/uRrRjP
-         wvooMv8lV0q9gKEE3nRokVWky10OvP8Cyvaa5X3mUplVvDf0yMWiT0/EG0NG0dAU4FL5
-         ec277nWnIQYLNlLbAcyu6ofutYty8e1uxpp0rHxQfZCGo1z61dokSk7e1P0HFkVNgNIx
-         5pclqFlE44Hsd8dun0HfANGBoXPnI4G7XHiEJszaqQxverzEkBPBSf3BN6+dzTm2RPsP
-         IUmA==
+        bh=+0EsM99SG3hihzaaNKgE6hFc9Vf2sd6rRNj6I2ZBeAU=;
+        b=opUyGa9UNFLUEhngwCweZI5C4PC14gOHkRBuKX68/v3MRNnm8t/zRGL/Q2mYBxmy1w
+         fAmCXwjqlRZHC+Qgfp/7NMUp8RxMXygRE7Od95zxFYGEkq47WIpe9+wenmFzeETO1S8Z
+         L6i/Eus+XZPsgH6dpeU4N6AYZQpw75ZJpsTzFY6b5lHvEFZYjHm/WRs42WSQakmLNLtM
+         h6fW51VpG25/wWwTvMIhRcVzjN6lgmpgcGI+wq09SRMLufqF9PcebW9Q2F0etGsarFd5
+         5YImShfcxTp6X89ef9ZFym81aRa6IQFmjC8dDwjRdqr7xZZQxwd7SkbkoPXHEO5lycfW
+         oCAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733447379; x=1734052179;
+        d=1e100.net; s=20230601; t=1733447383; x=1734052183;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVe1l78oGg6d6XLgPQZsewnpRSOEBU8Pjn8H7vlg4Dw=;
-        b=CzQ+fEYobBYxlnY3WEIchoq8m+QDZss+Ad4Wo1X9bz0IM2aLj+2BWr1OsIh3rDKjr2
-         EEjny0X6H4o+lcdAhNUkgO1pJEqAWiJG9p5Mv+ykQhKD1naJP8phrq/ao19yLNbW8uMG
-         7gES3KekAOkZB6b/q5uJyqNVPIYWVSZ6dRuxkGxDurFKJ1EAmg4FNY2xjJV6pSOdGo/8
-         eiCXGJiFyIJ8+UQ3b2+2QGdwAbGQhOrVRL6IvaMQGFF3iBTHgX4jRT87/3hffqWO16vl
-         eG3dEgoRFh0QBs8C5wLM6Lh2QUj3cic8vbZFskU6WEtmvVRSVvZnBfuAkbYnharUtKNO
-         g/dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPnScSwHRtoJjBnZW3Doba1VGaU4NnzuSKSEpnxxUA9Ea4qzLybvRuAEMN8GuQjsv0XpobqP7h9UhgPG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM0u7jM/H9sMZrBXscsaTgJ5kdgp8YuSyKNoMgyz9dPauhcqmL
-	SEoYTbgjExMBpZ/1Hsz8lwWDXOpvRtTKTHoBZ5zfFyXF+qWmDHD/rxK4oTexZxCXumV4ivh+ZNF
-	GqV5ewnmVeRbvlbJUzfJWM+dSVc5vbVjVUg==
-X-Google-Smtp-Source: AGHT+IEYpYAtNlzlC2hTmD5R4FH3FX1Gz1pWaXrJ2tHU6HF+bn7elD4ZxjnSK9HqdAVOAhJ2PH3MkkjOxrNoW9K1dfDvHQ==
-X-Received: from pgct14.prod.google.com ([2002:a05:6a02:528e:b0:7fd:113b:ea62])
+        bh=+0EsM99SG3hihzaaNKgE6hFc9Vf2sd6rRNj6I2ZBeAU=;
+        b=pdvCA30Pq2Eaqf77qknPNLQR9xOknoUsmLyxB2bpdSPpOwHKUKfG67jqYHK3ygbKYY
+         4jph/3w9fMUS5inWoA29tmLaT3gccYUg8mJdpDwzxWgxtBQ2Xn8IbjuSlGhSRfUf6gw5
+         KPe637mtIkU6npWqJXFbdEUU5m8+DjqqA4jZSKa8pfQYKu9f1UHw5ohkTUyL60iQ73Nx
+         xZaT49vQbxHvqCj5zLNiDGWsVEGJ2Y9FdeFPMM3Kd8Y2784Dzckbxr6ERRr+SXg3ENj5
+         416XsqsHLsIF+asuAxTvWEue9Rflb1HkAHUHlBes2OyiXXZz9FLxnuiOx9b39Pm1cG67
+         PZNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwrfyIUEt2PtcrCgcvST1hDauUTlLOfHyb40gqSm+QQCO7ngsI7llKK/tgA51xDSiMoiTX9FTM2VqiUlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqGCEVgwnma4Re4Jj5mFh8T0Nw7BUUQzNEp2eUDpvGk17ZW1+r
+	BNcHdZTMRg6QrlLAiOX6Cip6gPr+Bp/nJgiuZ13WgrxABhZwdd0IABr1t5qEItWe9923WAKBEgq
+	b17CGfHXgEsLoqAkYVqfEZIOqavPaf+UaKQ==
+X-Google-Smtp-Source: AGHT+IE+lZFMJ73v6jAW7BqzJ/0k/ho2hBMCiLFRGaWMMqnKpTaEahh/l5AmKSSMZElIcLOMWDH9HUGgB92p8rghNCEnXw==
+X-Received: from pfbca23.prod.google.com ([2002:a05:6a00:4197:b0:725:20c8:96dc])
  (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6830:2710:b0:71d:4624:3f2b with SMTP id 46e09a7af769-71dcf546d9fmr1201933a34.19.1733447378840;
- Thu, 05 Dec 2024 17:09:38 -0800 (PST)
-Date: Thu,  5 Dec 2024 17:09:22 -0800
+ 2002:a05:6a00:140d:b0:720:9a03:b6dc with SMTP id d2e1a72fcca58-725b81f2d4cmr2040786b3a.18.1733447383706;
+ Thu, 05 Dec 2024 17:09:43 -0800 (PST)
+Date: Thu,  5 Dec 2024 17:09:23 -0800
 In-Reply-To: <20241206010930.3871336-1-isaacmanjarres@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241206010930.3871336-1-isaacmanjarres@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241206010930.3871336-2-isaacmanjarres@google.com>
-Subject: [RFC PATCH v1 1/2] mm/memfd: Add support for F_SEAL_FUTURE_EXEC to memfd
+Message-ID: <20241206010930.3871336-3-isaacmanjarres@google.com>
+Subject: [RFC PATCH v1 2/2] selftests/memfd: Add tests for F_SEAL_FUTURE_EXEC
 From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
 	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
@@ -86,114 +86,127 @@ Cc: "Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, l
 	Kalesh Singh <kaleshsingh@google.com>, John Stultz <jstultz@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Android currently uses the ashmem driver [1] for creating shared memory
-regions between processes. Ashmem buffers can initially be mapped with
-PROT_READ, PROT_WRITE, and PROT_EXEC. Processes can then use the
-ASHMEM_SET_PROT_MASK ioctl command to restrict--never add--the
-permissions that the buffer can be mapped with.
-
-Processes can remove the ability to map ashmem buffers as executable to
-ensure that those buffers cannot be exploited to run unintended code.
-We are currently trying to replace ashmem with memfd. However, memfd
-does not have a provision to permanently remove the ability to map a
-buffer as executable. Although, this should be something that can be
-achieved via a new file seal.
-
-There are known usecases (e.g. CursorWindow [2]) where a process
-maps a buffer with read/write permissions before restricting the buffer
-to being mapped as read-only for future mappings.
-
-The resulting VMA from the writable mapping has VM_MAYEXEC set, meaning
-that mprotect() can change the mapping to be executable. Therefore,
-implementing the seal similar to F_SEAL_WRITE would not be appropriate,
-since it would not work with the CursorWindow usecase. This is because
-the CursorWindow process restricts the mapping permissions to read-only
-after the writable mapping is created. So, adding a file seal for
-executable mappings that operates like F_SEAL_WRITE would fail.
-
-Therefore, add support for F_SEAL_FUTURE_EXEC, which is handled
-similarly to F_SEAL_FUTURE_WRITE. This ensures that CursorWindow can
-continue to create a writable mapping initially, and then restrict the
-permissions on the buffer to be mappable as read-only by using both
-F_SEAL_FUTURE_WRITE and F_SEAL_FUTURE_EXEC. After the seal is
-applied, any calls to mmap() with PROT_EXEC will fail.
-
-[1] https://cs.android.com/android/kernel/superproject/+/common-android-mainline:common/drivers/staging/android/ashmem.c
-[2] https://developer.android.com/reference/android/database/CursorWindow
+Add tests to ensure that F_SEAL_FUTURE_EXEC behaves as expected.
 
 Cc: Suren Baghdasaryan <surenb@google.com>
 Cc: Kalesh Singh <kaleshsingh@google.com>
 Cc: John Stultz <jstultz@google.com>
 Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
 ---
- include/linux/mm.h         |  5 +++++
- include/uapi/linux/fcntl.h |  1 +
- mm/memfd.c                 |  1 +
- mm/mmap.c                  | 11 +++++++++++
- 4 files changed, 18 insertions(+)
+ tools/testing/selftests/memfd/memfd_test.c | 79 ++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 4eb8e62d5c67..40c03a491e45 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4096,6 +4096,11 @@ static inline bool is_write_sealed(int seals)
- 	return seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE);
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index 46027c889e74..12c82af406b3 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
+@@ -30,6 +30,7 @@
+ #define STACK_SIZE 65536
+ 
+ #define F_SEAL_EXEC	0x0020
++#define F_SEAL_FUTURE_EXEC	0x0040
+ 
+ #define F_WX_SEALS (F_SEAL_SHRINK | \
+ 		    F_SEAL_GROW | \
+@@ -317,6 +318,37 @@ static void *mfd_assert_mmap_private(int fd)
+ 	return p;
  }
  
-+static inline bool is_exec_sealed(int seals)
++static void *mfd_fail_mmap_exec(int fd)
 +{
-+	return seals & F_SEAL_FUTURE_EXEC;
++	void *p;
++
++	p = mmap(NULL,
++		 mfd_def_size,
++		 PROT_EXEC,
++		 MAP_SHARED,
++		 fd,
++		 0);
++	if (p != MAP_FAILED) {
++		printf("mmap() didn't fail as expected\n");
++		abort();
++	}
++
++	return p;
 +}
 +
- /**
-  * is_readonly_sealed - Checks whether write-sealed but mapped read-only,
-  *                      in which case writes should be disallowing moving
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 6e6907e63bfc..ef066e524777 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -49,6 +49,7 @@
- #define F_SEAL_WRITE	0x0008	/* prevent writes */
- #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
- #define F_SEAL_EXEC	0x0020  /* prevent chmod modifying exec bits */
-+#define F_SEAL_FUTURE_EXEC	0x0040 /* prevent future executable mappings */
- /* (1U << 31) is reserved for signed error codes */
- 
- /*
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 35a370d75c9a..77b49995a044 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -184,6 +184,7 @@ unsigned int *memfd_file_seals_ptr(struct file *file)
++static void mfd_fail_mprotect_exec(void *p)
++{
++	int ret;
++
++	ret = mprotect(p,
++		       mfd_def_size,
++		       PROT_EXEC);
++	if (!ret) {
++		printf("mprotect didn't fail as expected\n");
++		abort();
++	}
++}
++
+ static int mfd_assert_open(int fd, int flags, mode_t mode)
+ {
+ 	char buf[512];
+@@ -997,6 +1029,52 @@ static void test_seal_future_write(void)
+ 	close(fd);
  }
  
- #define F_ALL_SEALS (F_SEAL_SEAL | \
-+		     F_SEAL_FUTURE_EXEC |\
- 		     F_SEAL_EXEC | \
- 		     F_SEAL_SHRINK | \
- 		     F_SEAL_GROW | \
-diff --git a/mm/mmap.c b/mm/mmap.c
-index b1b2a24ef82e..c7b96b057fda 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -375,6 +375,17 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 		if (!file_mmap_ok(file, inode, pgoff, len))
- 			return -EOVERFLOW;
- 
-+		if (is_exec_sealed(seals)) {
-+			/* No new executable mappings if the file is exec sealed. */
-+			if (prot & PROT_EXEC)
-+				return -EACCES;
-+			/*
-+			 * Prevent an initially non-executable mapping from
-+			 * later becoming executable via mprotect().
-+			 */
-+			vm_flags &= ~VM_MAYEXEC;
-+		}
++/*
++ * Test SEAL_FUTURE_EXEC_MAPPING
++ * Test whether SEAL_FUTURE_EXEC_MAPPING actually prevents executable mappings.
++ */
++static void test_seal_future_exec_mapping(void)
++{
++	int fd;
++	void *p;
 +
- 		flags_mask = LEGACY_MAP_MASK;
- 		if (file->f_op->fop_flags & FOP_MMAP_SYNC)
- 			flags_mask |= MAP_SYNC;
++
++	printf("%s SEAL-FUTURE-EXEC-MAPPING\n", memfd_str);
++
++	fd = mfd_assert_new("kern_memfd_seal_future_exec_mapping",
++			    mfd_def_size,
++			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
++
++	/*
++	 * PROT_READ | PROT_WRITE mappings create VMAs with VM_MAYEXEC set.
++	 * However, F_SEAL_FUTURE_EXEC applies to subsequent mappings,
++	 * so it should still succeed even if this mapping is active when the
++	 * seal is applied.
++	 */
++	p = mfd_assert_mmap_shared(fd);
++
++	mfd_assert_has_seals(fd, 0);
++
++	mfd_assert_add_seals(fd, F_SEAL_FUTURE_EXEC);
++	mfd_assert_has_seals(fd, F_SEAL_FUTURE_EXEC);
++
++	mfd_fail_mmap_exec(fd);
++
++	munmap(p, mfd_def_size);
++
++	/* Ensure that new mappings without PROT_EXEC work. */
++	p = mfd_assert_mmap_shared(fd);
++
++	/*
++	 * Ensure that mappings created after the seal was applied cannot be
++	 * made executable via mprotect().
++	 */
++	mfd_fail_mprotect_exec(p);
++
++	munmap(p, mfd_def_size);
++	close(fd);
++}
++
+ static void test_seal_write_map_read_shared(void)
+ {
+ 	int fd;
+@@ -1633,6 +1711,7 @@ int main(int argc, char **argv)
+ 	test_seal_shrink();
+ 	test_seal_grow();
+ 	test_seal_resize();
++	test_seal_future_exec_mapping();
+ 
+ 	test_sysctl_simple();
+ 	test_sysctl_nested();
 -- 
 2.47.0.338.g60cca15819-goog
 
