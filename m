@@ -1,220 +1,339 @@
-Return-Path: <linux-kernel+bounces-434789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E039E6B57
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:10:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88C71884C3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:10:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2188D1F6679;
-	Fri,  6 Dec 2024 10:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="48+9ct3C"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2081.outbound.protection.outlook.com [40.107.237.81])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4549E6B7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:14:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B99728684;
-	Fri,  6 Dec 2024 10:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733479837; cv=fail; b=qD+PnHhDk7wSpsgdTT/ZYa8rfLI6koHMUL6yEs8ME4jqWsfp3vdgqz6hmttMmwtLOAv1SbFCsbrBA/RqYv4yb1sB8LGR0RL8MYZqJuxbU4flFJ4JJo86vfEfxnebM5cB2Bmyg4K9vjwCo7vWveb0OVuaQCLpEPmGJHQIU9W2Lqg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733479837; c=relaxed/simple;
-	bh=KtxkvRm9Gd4OzZkwDyhsZ5LkATY766mEbdb4XMZI3so=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QFBWlsMiB6ArL1XLJHd75LQ1P9KHVSMwPLf6J87s2i9QcpcLc4wiXGaR4S1/UdKQ+xhPKA5hRHJ717D1WqTmx8la3FDgzHT6X0DgGqhwThioZka6V+r/gmgTW2YXJnVPsiBRPAgvbdsTuLe0BsGmo3DXQq5qkl2M4UZrjjQlCDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=48+9ct3C; arc=fail smtp.client-ip=40.107.237.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C8QSG7Fu/skrtrpDVhP0wXc9CLMEUgg0v1E++4wvSTubECZowDXGINQhwr7v1XtbK9/96pt3POCKDlUO6y+l8MivmRcir7B6dHXWqiZwZT57ZqXkKgRqMXhDHGhnkYtVtL4X/Yrdj5SEXGhDPD+nuCvUTIqFvUHIMo1mCcgvxZEyt2+LROLlM6OQxETbz5m7UW3PtOII37lW43FQMTRi1WjYQOV+IUhHQA6LZeZvi5tk+jzWQbiCTDp+FqOmGZ84P+pYIC6HmvSDK5x27kAgEMAPpVR+sWyR9sQL+5xLvag3wKkz1SnUsG20AOr48L8ZVhcVnqMqYZwEGOxlJZkMqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KtxkvRm9Gd4OzZkwDyhsZ5LkATY766mEbdb4XMZI3so=;
- b=fV3WmR2IQ+FeD3BH4O9vOIh/bLbwENr5GwHyE4KMvruKtjeLWuI/k0ToXMoYQBJ/VGU/dvVG3RI5QHUgIvuknul5pV1x20CMMqXue66q1uw9WM8msbO1lmq5Xpw5lGdw73v4oopFJbcv3RfmMvPfKuz6czZ2wvY63qB/H4Y198Yr9xJ2XArpaJZbCeTNYiV+acv+vJe/yOc53Whj+GHwc4zCaF38VEXr8D5JnUKft+r6lBLJY+bgCNgxBN8yQCQzICymyM9feoyI9zgPMI1oUaTzjJ6h81wvjQIfbmGk5DeqZcneIbcM22jC94C4bTXVRMHFEyZMRZ1dUD68ZELXwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KtxkvRm9Gd4OzZkwDyhsZ5LkATY766mEbdb4XMZI3so=;
- b=48+9ct3Cyg+K4qeG+2YR8XQI4fqRzSacrsqc9j/521bbFtPAS4U14b7rMegmXT/Zb8aVW1ecEK0zLe4ehIrnePwTU44TECAwEPWzWN2PcyUaTAl17nALcObPzwA6MNgQdK4NFw0Ch4xTa0t0h61bOY0oWWQYk1XehY0UDm+WD8I=
-Received: from SA1PR12MB6945.namprd12.prod.outlook.com (2603:10b6:806:24c::16)
- by PH8PR12MB6818.namprd12.prod.outlook.com (2603:10b6:510:1c9::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Fri, 6 Dec
- 2024 10:10:31 +0000
-Received: from SA1PR12MB6945.namprd12.prod.outlook.com
- ([fe80::67ef:31cd:20f6:5463]) by SA1PR12MB6945.namprd12.prod.outlook.com
- ([fe80::67ef:31cd:20f6:5463%6]) with mapi id 15.20.8207.020; Fri, 6 Dec 2024
- 10:10:31 +0000
-From: "Shah, Amit" <Amit.Shah@amd.com>
-To: "jpoimboe@kernel.org" <jpoimboe@kernel.org>, "x86@kernel.org"
-	<x86@kernel.org>
-CC: "corbet@lwn.net" <corbet@lwn.net>, "pawan.kumar.gupta@linux.intel.com"
-	<pawan.kumar.gupta@linux.intel.com>, "kai.huang@intel.com"
-	<kai.huang@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "Lendacky,
- Thomas" <Thomas.Lendacky@amd.com>, "daniel.sneddon@linux.intel.com"
-	<daniel.sneddon@linux.intel.com>, "boris.ostrovsky@oracle.com"
-	<boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"mingo@redhat.com" <mingo@redhat.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "Moger,
- Babu" <Babu.Moger@amd.com>, "Das1, Sandipan" <Sandipan.Das@amd.com>,
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "bp@alien8.de" <bp@alien8.de>,
-	"Kaplan, David" <David.Kaplan@amd.com>
-Subject: Re: [PATCH v2 2/2] x86/bugs: Don't fill RSB on context switch with
- eIBRS
-Thread-Topic: [PATCH v2 2/2] x86/bugs: Don't fill RSB on context switch with
- eIBRS
-Thread-Index: AQHbPFEFmhn1AaOfa0iqMfWlRJj4srLYY1aAgACyLQA=
-Date: Fri, 6 Dec 2024 10:10:31 +0000
-Message-ID: <f1d0197349388c1785eeba356a26553ced29800c.camel@amd.com>
-References: <cover.1732219175.git.jpoimboe@kernel.org>
-	 <d6b0c08000aa96221239ace37dd53e3f1919926c.1732219175.git.jpoimboe@kernel.org>
-	 <20241205233245.4xaicvusl5tfp2oi@jpoimboe>
-In-Reply-To: <20241205233245.4xaicvusl5tfp2oi@jpoimboe>
-Accept-Language: en-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR12MB6945:EE_|PH8PR12MB6818:EE_
-x-ms-office365-filtering-correlation-id: cea2c0c6-aec9-47fa-7515-08dd15de379c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RTFwOG5zU2k0M1haSTQ2dkE2SXNUUi9UTUJsd1NqcUE4d0ZVQ0lycURFYk1n?=
- =?utf-8?B?WDdZRUlLajZjNnlZT3BrT0prU1NzbmVyVzMxK2c5cTZzTDdsZHlGQ2x5OXN1?=
- =?utf-8?B?dU5GdHo4SWI5Zm5SUWVnZTNTN2dSTVB3Y0xhTDd6K1ROb1cyamJBNUVNQ2Zu?=
- =?utf-8?B?ck1hY3FVcDloU0FBNitJQ1A3U3I5TFJ0OGM3WXZmd1YyeXpwUXNrLzZJVnIr?=
- =?utf-8?B?MDljVjRVcW9XNmZIZlRzYnA2KzBFK1VlV0NGUy90bzhoRnZ3T251czFMWWxm?=
- =?utf-8?B?TTVwMUFUUnR0ODM3WUdKVkdaTG82ZFRIL1BHbEtWa0VUUGNTQXFHa09yVU9p?=
- =?utf-8?B?eS95djV0RkxwSXV2a1l0TE5icUlPZ0ZhYXp4bFRtMkFWTHVBRjVmeWc5Wmta?=
- =?utf-8?B?ejFrUWViQVJvSzYrQkRMMVJCMjZMcHRxRmYvQk95aFNUUytSR1FvdERycWhK?=
- =?utf-8?B?emQ5VUprTjVZWG9UcElPTEpWS1JzSklmMS9uaGlJREZlek9PdUFjcFIwVHNO?=
- =?utf-8?B?ZXdMQU9kNnU1S0dJUitNRzE1VnZKNzBrSkNXTGxDNndCSjNTNkY5UHVBZ09x?=
- =?utf-8?B?SStRR21BL1FqTXFMb09aNFZVQ1dpSGVCdDlTdk85SURiN254T0FKNHgyZVdW?=
- =?utf-8?B?SHgrV0ptWHR5cnAxL1hUYWhFZVRYWEpGQTc3TGZqazduZjFNSko4WjJmRkMv?=
- =?utf-8?B?d3hXak1oMnVzc1F5ZnhEM2lOclRGU1Rkdk1pZlFhd01LUzQvMHBBUThBblRQ?=
- =?utf-8?B?NktUUEI4WDBkUHpxNS9zWjJtT0p3QnZnaU5PbTBva0NLYmRVZnNFWndKSnli?=
- =?utf-8?B?RUgybHZVQ09GR3BYQ3dVWTROT09iQ1ZreXdUbXRCNEZxQ1h3RXhXSVA0SFVB?=
- =?utf-8?B?TXIwUVhWSzVzaEM4cW9pNm1zeWpXTTYwdnV4clZncHpoWFc5VFBwOC9TUHhy?=
- =?utf-8?B?djNIUlNqMUhwL0JwaVAvVUdyeHZkSmJFV1ZuNFlodi94cjdJaWNrcURha2M5?=
- =?utf-8?B?TW5NUEUyblRsdFVoK2J0R3l4eGgyTFlBOG1xcnFzVU1DRThSTDZqYWRqY2ha?=
- =?utf-8?B?eEpVSUJEZEdXS1pJZ09LTDgrTmlhazk0RXRGSFRlRlpPNStaQTFqcFpKWk5P?=
- =?utf-8?B?TnRwNjNiS1p3cHdZa3ZnMTNNYW1TYzVpUS9scTRicVZvM3ZrNmZWTzZBNnc3?=
- =?utf-8?B?Zk9GWjN3MkJ6QWJtd0x5dTBTVkVSWDZ6NytpeWNZRXNUVnFhdFpFdkZXYnpX?=
- =?utf-8?B?MEx2SE9UZXRoYUhXOU02OGY2bWhvSm12RDZUSmRkTWw1aDFPSHAxTVRrYnFx?=
- =?utf-8?B?Yk11Mk9iVWRqcVlMNUZ6U0RWRm4raEhUSm04S20zUXBTaFNINXVsTFJJOGh3?=
- =?utf-8?B?TXZuVTNweUxXeWdXTUVEZUpjU0NpcXF6bTdFMzcxZStnamRHZ0p6aGZzVWJL?=
- =?utf-8?B?NHBOT0F4dm5IU1BIdnZzcFIyZjRNdE5uamU0VjlKQ2dMbUpHT1k0andTUnlq?=
- =?utf-8?B?L3NkcWtWZkdpZVRaVFVnZUx4eWUwNzJoaUxNQWxkSklZL25wakpWcm9KRHhU?=
- =?utf-8?B?amQzNjJjazduYmlLbllpWEtJU0VTUHBBK1d6cDJ1TzdLQVMzWUZVWWQ2V0Zz?=
- =?utf-8?B?TGdHNjF3Y0VSbGJvMGoxY29kREZuNHBRbUowbFptOTF5dlpHbmlRL1MvK1NK?=
- =?utf-8?B?WkYxczdNQjBhelNkS0hHbndORjdOU2M2NHBwUnVpaGROVElsblZwbjRKMTFN?=
- =?utf-8?B?b2VaKzc3UGhTa3F6TmF6NVFYRkJ4Tyt6NmlKc3EzelliVWNUNS9aVS9LUGdP?=
- =?utf-8?B?eDcvWDhKU2sxMDB4SGhXWmpBY1oyMDBVYXRid0l6dnVvMDNrTXgwZ0ZodFpv?=
- =?utf-8?B?Z1JwWGQyKzQ5dHNDVHJPZ291VXd1bXpsVjRlSHBOSS9mbVE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB6945.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZCt5M3ZablE1VXhmd2Y0eFBidHpEZVRXZURNM25MWVhaVzF6WkdjdllWOG55?=
- =?utf-8?B?ekNtMDBFck9kNStwdzNoU1RhRUVoZVUrb25zNTRhUjloZERmMGNSTEFyK3pC?=
- =?utf-8?B?WUdMWmFnVmU0V04rcU9kV09yTTQ4R0dYdkV1RmZEU3QyWWMrd29ib244YVZu?=
- =?utf-8?B?YXpCUGIyOG5LZmhIYUxPaVJVL0lZQUtFUHZwTThrcVRCc2lEWkJRYWdMUWJ5?=
- =?utf-8?B?MWpHYW5KUndyNlFTY3BnOW8rc25GMzlkU3p0dmtvTFJYRnZlYlVCYk53NnB1?=
- =?utf-8?B?RjVPUVphMGhka25LYlVmWGJhZHUrK2ZmUXZlaW8rcHdFYW4zT1RteDltSWRa?=
- =?utf-8?B?NEhrM1dHL2wvWktpdVIrZkJDeGZwNWFjODhQbjlPZWRRSUhZa3d1Q1V4WlVz?=
- =?utf-8?B?Z0NtOXZsUWtIdFpDK0tQYkgxV1VqQkEvVGx0UkIzTkdUMHdPaXhxUEFidXBB?=
- =?utf-8?B?V25xdlpSekZ3aHd0dnhBRElGbVFocmlJQ2ZIQVM4SGowbk1weVoydlR1WlVT?=
- =?utf-8?B?eU1yNTJKYXdrY1IxOUNBTmh2M01SN3p3dXFjWTJKcS9sY3pWWjFuTlBFWWxy?=
- =?utf-8?B?ZG5pZFZDcURCQzZzNkNuejdlbHVSNU5ldFk4YlZhdTRXbVdTV2YwaU1Wbmkw?=
- =?utf-8?B?Z0tWZVAzTXNObUZFZFBLa05SODJaWXlPVmhHMmp3S0l1YXR4WXRzRE11ckNn?=
- =?utf-8?B?S0dUSTdDdzlvMjd0NTdGbVJrK3FlWUlkbDFKZ1IySTdpUXFqUjNsZ2lSNldq?=
- =?utf-8?B?d0hUd2JJVE10elV4ZjhWUHU4b0l4ZEJhZ1pncDV5Qmo5T0hUTklNTm1WZ3B2?=
- =?utf-8?B?djNRS3E5VUswbzJWOUhSRHhxWmtFQllMOWdKU080Z3hwTnVWc3RnS2Rxd1Fp?=
- =?utf-8?B?dUhEV2VZclZIVUF5Zk9TSUZnbWF5SWI2MEovZHNwMFhUSWU3cjg1TEJnUjA0?=
- =?utf-8?B?WXlyaVFCcG51dFk1eU0wTEhDWHB3OUd2Qnp5dGJ2OUNtcW95cC9XdWZOZGNF?=
- =?utf-8?B?N1d4aEpQYmVhYTlCY2hUMTVpQ1M1VG44aENNSThwUEZLejVPOGdqbG1VWGxY?=
- =?utf-8?B?bzJCNlVhUWhQTTc0MmlwUmxQbWlveVBtRCsxUDM5QlZ3YmVuNTlPcU5FK0xO?=
- =?utf-8?B?bnZhRTF3T3oybm1DRkVudzFsSnhtV1NVbEM1TlJmSFEzczZsbzZkYUZtazRS?=
- =?utf-8?B?VGpZNkxrNGxpTzVTL2tyeVhFNjFGczdtT2dsMWdBUzV3M2pOWDljWStBakcx?=
- =?utf-8?B?ODBKQStsRklvMVIxN2psYWRTaFlISUY2ck80eDZMZlFubzlTQ0ExNjN1R2FG?=
- =?utf-8?B?ZTk2Mkx3ejI3UVhpVTdwQWhMcURJYlY1NkkwZnhuNzJsd1ZzZjdmUXRvTkdN?=
- =?utf-8?B?QXp5V1pUYUgwdjRYcEpYNjAvVyt2cXVOaHhpOEx0cWNZWWg3T2ttaUtaeldv?=
- =?utf-8?B?aHcxRS9RQXcrT2hpWjZwc1RHL1dyeHkwdHRkdkwxdXA2dHdUM2J6azAraFFm?=
- =?utf-8?B?elBRZUcvTkdGSGVqcTR1QWNQQzlQdCtrbnlRV2l5TFhOdjNiMnMrQXVWbWox?=
- =?utf-8?B?VDY5QWl2alF4eXZlbXFSWVkvRkNsV2ExQ0RPTTBPYzJpS1hyS3Bla3V2L3Fa?=
- =?utf-8?B?UXhKKzd5SU54Wk8zb3ZDQnhLVi9vNkJyTm1mdHZkYXVYUXFEd3ZxY1ZtRTR6?=
- =?utf-8?B?aTh2d3ZkZjFrYVR5SkhJeUlMc0lTdkhXS0NqVTdUMUV3RkZpZ1QrZUpWR0Yx?=
- =?utf-8?B?UzNCQXVBZFBzUkxCMHRKWWUzZnhXcWRwK092SGVHd1BmRGFPczdyUjJpbGRl?=
- =?utf-8?B?b3hCK0dwT0VPK1l4ZjVMSDBxVU5XcW9va213dnZsZWk1enBxbExrVjByVEpw?=
- =?utf-8?B?OTFMeStXVC8xK0E3dFk1TWZkWFBjVHRBSGkvRDhHbnBmSWE3ZURoNkpDbTlh?=
- =?utf-8?B?Zy9hZzhiRGQ1YTYwS0hLd2VvallrYzExekdNb1J2c1U5b0dLdVBvcEtCRXRp?=
- =?utf-8?B?SjVGZi9YSjBIMWNPRGtialdFamYzN0VQRE12NDdENmd1N1RHSTkyNVFTTEVh?=
- =?utf-8?B?Z0JvQ3RkS1lFdjE1dU1wRFdodE5RYXN6cndtcFhGSys5RjIyeWZLci9hQU9m?=
- =?utf-8?Q?lQVdDZY4CxoMUMY7WnbCO+PeS?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <93A35497B1777542A267869B19A7ABF1@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D1A281A6F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:14:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5601FA27E;
+	Fri,  6 Dec 2024 10:13:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC75E1F9F48;
+	Fri,  6 Dec 2024 10:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733479998; cv=none; b=idGlt4t8v+fZJoQsxaF5027m2KtFaeC+EVK7DWoPUTRrBEPWgib4tu1JbzzT/+YRSg52qbTJTFUA81xJNpkLWKoL8+5S+vqfbSm75zT6PCj72AzC/t2yYWr5+K+Poe4WW2n6ELN9lz8F8OJs3ZtCM4AndwO9xP8xqhhHqX0I400=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733479998; c=relaxed/simple;
+	bh=hUYWNuBzkV15c8mHzD/NGx5gKgzhe/dRzz7d/w0IfIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SuGShF/au9ibvx+4eKQYg13r1c1tzAyhE5o0DzvNNDdV8Yd/p8k7aZJxpBQVTrD0z8A6fJqK/tkeI3rBe1Vd9uHmMcfvNf21Fawh1XLoW7pX+oHLSBfv+MQEYJ9Q/JhxJVypOJXQhHoRjvAy8Wlv5jrUVIKfgZmEoX0KZRKoxM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AAC4712FC;
+	Fri,  6 Dec 2024 02:13:40 -0800 (PST)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACD3E3F71E;
+	Fri,  6 Dec 2024 02:13:09 -0800 (PST)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-hardening@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	aruna.ramakrishna@oracle.com,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com,
+	jannh@google.com,
+	jeffxu@chromium.org,
+	joey.gouly@arm.com,
+	kees@kernel.org,
+	maz@kernel.org,
+	pierre.langlois@arm.com,
+	qperret@google.com,
+	ryan.roberts@arm.com,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org
+Subject: [RFC PATCH 00/16] pkeys-based page table hardening
+Date: Fri,  6 Dec 2024 10:10:54 +0000
+Message-ID: <20241206101110.1646108-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB6945.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cea2c0c6-aec9-47fa-7515-08dd15de379c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2024 10:10:31.6001
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G2pR7SM0Qx1AVCbgu0VWnCRobH4R4hJfsoYr67cQQIwlq+ILLRcUuFiwQN87VQ4FYXa5Sr/TYCqaTQyQBLbBLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6818
+Content-Transfer-Encoding: 8bit
 
-T24gVGh1LCAyMDI0LTEyLTA1IGF0IDE1OjMyIC0wODAwLCBKb3NoIFBvaW1ib2V1ZiB3cm90ZToN
-Cj4gT24gVGh1LCBOb3YgMjEsIDIwMjQgYXQgMTI6MDc6MTlQTSAtMDgwMCwgSm9zaCBQb2ltYm9l
-dWYgd3JvdGU6DQo+ID4gVXNlci0+dXNlciBTcGVjdHJlIHYyIGF0dGFja3MgKGluY2x1ZGluZyBS
-U0IpIGFjcm9zcyBjb250ZXh0DQo+ID4gc3dpdGNoZXMNCj4gPiBhcmUgYWxyZWFkeSBtaXRpZ2F0
-ZWQgYnkgSUJQQiBpbiBjb25kX21pdGlnYXRpb24oKSwgaWYgZW5hYmxlZA0KPiA+IGdsb2JhbGx5
-DQo+ID4gb3IgaWYgZWl0aGVyIHRoZSBwcmV2IG9yIHRoZSBuZXh0IHRhc2sgaGFzIG9wdGVkIGlu
-IHRvIHByb3RlY3Rpb24uwqANCj4gPiBSU0INCj4gPiBmaWxsaW5nIHdpdGhvdXQgSUJQQiBzZXJ2
-ZXMgbm8gcHVycG9zZSBmb3IgcHJvdGVjdGluZyB1c2VyIHNwYWNlLA0KPiA+IGFzDQo+ID4gaW5k
-aXJlY3QgYnJhbmNoZXMgYXJlIHN0aWxsIHZ1bG5lcmFibGUuDQo+IA0KPiBRdWVzdGlvbiBmb3Ig
-SW50ZWwvQU1EIGZvbGtzOiB3aGVyZSBpcyBpdCBkb2N1bWVudGVkIHRoYXQgSUJQQiBjbGVhcnMN
-Cj4gdGhlIFJTQj/CoCBJIHRob3VnaHQgSSdkIHNlZW4gdGhpcyBzb21ld2hlcmUgYnV0IEkgY2Fu
-J3Qgc2VlbSB0byBmaW5kDQo+IGl0Lg0KDQoiQU1ENjQgVEVDSE5PTE9HWSBJTkRJUkVDVCBCUkFO
-Q0ggQ09OVFJPTCBFWFRFTlNJT04iDQpodHRwczovL3d3dy5hbWQuY29tL2NvbnRlbnQvZGFtL2Ft
-ZC9lbi9kb2N1bWVudHMvcHJvY2Vzc29yLXRlY2gtZG9jcy93aGl0ZS1wYXBlcnMvMTExMDA2LWFy
-Y2hpdGVjdHVyZS1ndWlkZWxpbmVzLXVwZGF0ZS1hbWQ2NC10ZWNobm9sb2d5LWluZGlyZWN0LWJy
-YW5jaC1jb250cm9sLWV4dGVuc2lvbi5wZGYNCg0KaGFzOg0KDQpJbmRpcmVjdCBicmFuY2ggcHJl
-ZGljdGlvbiBiYXJyaWVyIChJQlBCKSBleGlzdHMgYXQgTVNSIDB4NDkgKFBSRURfQ01EKQ0KaXQg
-MC4gVGhpcyBpcyBhIHdyaXRlIG9ubHkgTVNSIHRoYXQgYm90aCBHUCBmYXVsdHMgd2hlbiBzb2Z0
-d2FyZSByZWFkcw0KaXQgb3IgaWYgc29mdHdhcmUgdHJpZXMgdG8gd3JpdGUgYW55IG9mIHRoZSBi
-aXRzIGluIDYzOjEuIFdoZW4gYml0IHplcm8NCmlzIHdyaXR0ZW4sIHRoZSBwcm9jZXNzb3IgZ3Vh
-cmFudGVlcyB0aGF0IG9sZGVyIGluZGlyZWN0IGJyYW5jaGVzDQpjYW5ub3QgaW5mbHVlbmNlIHBy
-ZWRpY3Rpb25zIG9mIGluZGlyZWN0IGJyYW5jaGVzIGluIHRoZSBmdXR1cmUuIFRoaXMNCmFwcGxp
-ZXMgdG8gam1wIGluZGlyZWN0cywgY2FsbCBpbmRpcmVjdHMgYW5kIHJldHVybnMuIEFzIHRoaXMg
-cmVzdHJpY3RzDQp0aGUgcHJvY2Vzc29yIGZyb20gdXNpbmcgYWxsIHByZXZpb3VzIGluZGlyZWN0
-IGJyYW5jaCBpbmZvcm1hdGlvbiwgaXQNCmlzICBpbnRlbmRlZCB0byBvbmx5IGJlIHVzZWQgYnkg
-c29mdHdhcmUgd2hlbiBzd2l0Y2hpbmcgZnJvbSBvbmUgdXNlcg0KY29udGV4dCB0byBhbm90aGVy
-IHVzZXIgY29udGV4dCB0aGF0IHJlcXVpcmVzIHByb3RlY3Rpb24sIG9yIGZyb20gb25lDQpndWVz
-dCB0byBhbm90aGVyIGd1ZXN0Lg0KDQoJCUFtaXQNCg==
+This is a proposal to leverage protection keys (pkeys) to harden
+critical kernel data, by making it mostly read-only. The series includes
+a simple framework called "kpkeys" to manipulate pkeys for in-kernel use,
+as well as a page table hardening feature based on that framework
+(kpkeys_hardened_pgtables). Both are implemented on arm64 as a proof of
+concept, but they are designed to be compatible with any architecture
+implementing pkeys.
+
+The proposed approach is a typical use of pkeys: the data to protect is
+mapped with a given pkey P, and the pkey register is initially configured
+to grant read-only access to P. Where the protected data needs to be
+written to, the pkey register is temporarily switched to grant write
+access to P on the current CPU.
+
+The key fact this approach relies on is that the target data is
+only written to via a limited and well-defined API. This makes it
+possible to explicitly switch the pkey register where needed, without
+introducing excessively invasive changes, and only for a small amount of
+trusted code.
+
+Page tables were chosen as they are a popular (and critical) target for
+attacks, but there are of course many others - this is only a starting
+point (see section "Further use-cases"). It has become more and more
+common for accesses to such target data to be mediated by a hypervisor
+in vendor kernels; the hope is that kpkeys can provide much of that
+protection in a simpler manner. No benchmarking has been performed at
+this stage, but the runtime overhead should also be lower (though likely
+not negligible).
+
+
+# kpkeys
+
+The use of pkeys involves two separate mechanisms: assigning a pkey to
+pages, and defining the pkeys -> permissions mapping via the pkey
+register. This is implemented through the following interface:
+
+- Pages in the linear mapping are assigned a pkey using set_memory_pkey().
+  This is sufficient for this series, but of course higher-level
+  interfaces can be introduced later to ask allocators to return pages
+  marked with a given pkey. It should also be possible to extend this to
+  vmalloc() if needed.
+
+- The pkey register is configured based on a *kpkeys level*. kpkeys
+  levels are simple integers that correspond to a given configuration,
+  for instance:
+
+  KPKEYS_LVL_DEFAULT:
+        RW access to KPKEYS_PKEY_DEFAULT
+        RO access to any other KPKEYS_PKEY_*
+
+  KPKEYS_LVL_<FEAT>:
+        RW access to KPKEYS_PKEY_DEFAULT
+        RW access to KPKEYS_PKEY_<FEAT>
+        RO access to any other KPKEYS_PKEY_*
+
+  Only pkeys that are managed by the kpkeys framework are impacted;
+  permissions for other pkeys are left unchanged (this allows for other
+  schemes using pkeys to be used in parallel, and arch-specific use of
+  certain pkeys).
+
+  The kpkeys level is changed by calling kpkeys_set_level(), setting the
+  pkey register accordingly and returning the original value. A
+  subsequent call to kpkeys_restore_pkey_reg() restores the kpkeys
+  level. The numeric value of KPKEYS_LVL_* (kpkeys level) is purely
+  symbolic and thus generic, however each architecture is free to define
+  KPKEYS_PKEY_* (pkey value).
+
+# kpkeys_hardened_pgtables
+
+The kpkeys_hardened_pgtables feature uses the interface above to make
+the (kernel and user) page tables read-only by default, enabling write
+access only in helpers such as set_pte(). One complication is that those
+helpers as well as page table allocators are used very early, before
+kpkeys become available. Enabling kpkeys_hardened_pgtables, if and when
+kpkeys become available, is therefore done as follows:
+
+1. A static key is turned on. This enables a transition to
+   KPKEYS_LVL_PGTABLES in all helpers writing to page tables, and also
+   impacts page table allocators (see step 3).
+
+2. All pages holding kernel page tables are set to KPKEYS_PKEY_PGTABLES.
+   This ensures they can only be written when runnning at
+   KPKEYS_LVL_PGTABLES.
+
+3. Page table allocators set the returned pages to KPKEYS_PKEY_PGTABLES
+   (and the pkey is reset upon freeing). This ensures that all page
+   tables are mapped with that privileged pkey.
+
+# Threat model
+
+The proposed scheme aims at mitigating data-only attacks (e.g.
+use-after-free/cross-cache attacks). In other words, it is assumed that
+control flow is not corrupted, and that the attacker does not achieve
+arbitrary code execution. Nothing prevents the pkey register from being
+set to its most permissive state - the assumption is that the register
+is only modified on legitimate code paths.
+
+A few related notes:
+
+- Functions that set the pkey register are all implemented inline.
+  Besides performance considerations, this is meant to avoid creating
+  a function that can be used as a straightforward gadget to set the
+  pkey register to an arbitrary value.
+
+- kpkeys_set_level() only accepts a compile-time constant as argument,
+  as a variable could be manipulated by an attacker. This could be
+  relaxed but it seems unlikely that a variable kpkeys level would be
+  needed in practice.
+
+# Further use-cases
+
+It should be possible to harden various targets using kpkeys, including:
+
+- struct cred (enforcing a "mostly read-only" state once committed)
+
+- fixmap (occasionally used even after early boot, e.g.
+  set_swapper_pgd() in arch/arm64/mm/mmu.c)
+
+- SELinux state (e.g. struct selinux_state::initialized)
+
+... and many others.
+
+kpkeys could also be used to strengthen the confidentiality of secret
+data by making it completely inaccessible by default, and granting
+read-only or read-write access as needed. This requires such data to be
+rarely accessed (or via a limited interface only). One example on arm64
+is the pointer authentication keys in thread_struct, whose leakage to
+userspace would lead to pointer authentication being easily defeated.
+
+# This series
+
+The series is composed of two parts:
+
+- The kpkeys framework (patch 1-7). The main API is introduced in
+  <linux/kpkeys.h>, and it is implemented on arm64 using the POE
+  (Permission Overlay Extension) feature.
+
+- The kpkeys_hardened_pgtables feature (patch 8-16). <linux/kpkeys.h> is
+  extended with an API to set page table pages to a given pkey and a
+  guard object to switch kpkeys level accordingly, both gated on a
+  static key. This is then used in generic and arm64 pgtable handling
+  code as needed. Finally a simple KUnit-based test suite is added to
+  demonstrate the page table protection.
+
+The arm64 implementation should be considered a proof of concept only.
+The enablement of POE for in-kernel use is incomplete; in particular
+POR_EL1 (pkey register) should be reset on exception entry and restored
+on exception return.
+
+# Performance
+
+No particular efforts were made to optimise the use of kpkeys at this
+stage (and no benchmarking was performed either). There are two obvious
+low-hanging fruits in the kpkeys_hardened_pgtables feature:
+
+- Always switching kpkeys level in leaf helpers such as set_pte() can be
+  very inefficient if many page table entries are updated in a row. Some
+  sort of batching may be desirable.
+
+- On arm64 specifically, the page table helpers typically perform an
+  expensive ISB (Instruction Synchronisation Barrier) after writing to
+  page tables. Since most of the cost of switching the arm64 pkey
+  register (POR_EL1) comes from the following ISB, the overhead incurred
+  by kpkeys_restore_pkey_reg() would be significantly reduced by merging
+  its ISB with the pgtable helper's. That would however require more
+  invasive changes, beyond simply adding a guard object.
+
+# Open questions
+
+A few aspects in this RFC that are debatable and/or worth discussing:
+
+- There is currently no restriction on how kpkeys levels map to pkeys
+  permissions. A typical approach is to allocate one pkey per level and
+  make it writable at that level only. As the number of levels
+  increases, we may however run out of pkeys, especially on arm64 (just
+  8 pkeys with POE). Depending on the use-cases, it may be acceptable to
+  use the same pkey for the data associated to multiple levels.
+
+  Another potential concern is that a given piece of code may require
+  write access to multiple privileged pkeys. This could be addressed by
+  introducing a notion of hierarchy in trust levels, where Tn is able to
+  write to memory owned by Tm if n >= m, for instance.
+
+- kpkeys_set_level() and kpkeys_restore_pkey_reg() are not symmetric:
+  the former takes a kpkeys level and returns a pkey register value, to
+  be consumed by the latter. It would be more intuitive to manipulate
+  kpkeys levels only. However this assumes that there is a 1:1 mapping
+  between kpkeys levels and pkey register values, while in principle
+  the mapping is 1:n (certain pkeys may be used outside the kpkeys
+  framework).
+
+- An architecture that supports kpkeys is expected to select
+  CONFIG_ARCH_HAS_KPKEYS and always enable them if available - there is
+  no CONFIG_KPKEYS to control this behaviour. Since this creates no
+  significant overhead (at least on arm64), it seemed better to keep it
+  simple. Each hardening feature does have its own option and arch
+  opt-in if needed (CONFIG_KPKEYS_HARDENED_PGTABLES,
+  CONFIG_ARCH_HAS_KPKEYS_HARDENED_PGTABLES).
+
+
+Any comment or feedback will be highly appreciated, be it on the
+high-level approach or implementation choices!
+
+- Kevin
+
+---
+Cc: aruna.ramakrishna@oracle.com
+Cc: broonie@kernel.org
+Cc: catalin.marinas@arm.com
+Cc: dave.hansen@linux.intel.com
+Cc: jannh@google.com
+Cc: jeffxu@chromium.org
+Cc: joey.gouly@arm.com
+Cc: kees@kernel.org
+Cc: maz@kernel.org
+Cc: pierre.langlois@arm.com
+Cc: qperret@google.com
+Cc: ryan.roberts@arm.com
+Cc: will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: x86@kernel.org
+---
+Kevin Brodsky (16):
+  mm: Introduce kpkeys
+  set_memory: Introduce set_memory_pkey() stub
+  arm64: mm: Enable overlays for all EL1 indirect permissions
+  arm64: Introduce por_set_pkey_perms() helper
+  arm64: Implement asm/kpkeys.h using POE
+  arm64: set_memory: Implement set_memory_pkey()
+  arm64: Enable kpkeys
+  mm: Introduce kernel_pgtables_set_pkey()
+  mm: Introduce kpkeys_hardened_pgtables
+  mm: Map page tables with privileged pkey
+  arm64: kpkeys: Support KPKEYS_LVL_PGTABLES
+  arm64: mm: Map p4d/pgd with privileged pkey
+  arm64: mm: Reset pkey in __tlb_remove_table()
+  arm64: mm: Guard page table writes with kpkeys
+  arm64: Enable kpkeys_hardened_pgtables support
+  mm: Add basic tests for kpkeys_hardened_pgtables
+
+ arch/arm64/Kconfig                    |   2 +
+ arch/arm64/include/asm/kpkeys.h       |  45 +++++++++
+ arch/arm64/include/asm/pgalloc.h      |  21 +++-
+ arch/arm64/include/asm/pgtable-prot.h |  16 ++--
+ arch/arm64/include/asm/pgtable.h      |  19 +++-
+ arch/arm64/include/asm/por.h          |   9 ++
+ arch/arm64/include/asm/set_memory.h   |   4 +
+ arch/arm64/include/asm/tlb.h          |   6 +-
+ arch/arm64/kernel/cpufeature.c        |   5 +-
+ arch/arm64/kernel/smp.c               |   2 +
+ arch/arm64/mm/fault.c                 |   2 +
+ arch/arm64/mm/mmu.c                   |  28 ++----
+ arch/arm64/mm/pageattr.c              |  21 ++++
+ arch/arm64/mm/pgd.c                   |  30 +++++-
+ include/asm-generic/kpkeys.h          |  21 ++++
+ include/linux/kpkeys.h                | 132 ++++++++++++++++++++++++++
+ include/linux/mm.h                    |  22 ++++-
+ include/linux/set_memory.h            |   7 ++
+ mm/Kconfig                            |   5 +
+ mm/Makefile                           |   2 +
+ mm/kpkeys_hardened_pgtables.c         |  17 ++++
+ mm/kpkeys_hardened_pgtables_test.c    |  71 ++++++++++++++
+ mm/memory.c                           | 130 +++++++++++++++++++++++++
+ security/Kconfig.hardening            |  24 +++++
+ 24 files changed, 604 insertions(+), 37 deletions(-)
+ create mode 100644 arch/arm64/include/asm/kpkeys.h
+ create mode 100644 include/asm-generic/kpkeys.h
+ create mode 100644 include/linux/kpkeys.h
+ create mode 100644 mm/kpkeys_hardened_pgtables.c
+ create mode 100644 mm/kpkeys_hardened_pgtables_test.c
+
+-- 
+2.47.0
+
 
