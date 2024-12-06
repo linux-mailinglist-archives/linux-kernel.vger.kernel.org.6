@@ -1,189 +1,137 @@
-Return-Path: <linux-kernel+bounces-435593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151299E79E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:13:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DFAC1881C3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:13:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1C0202C50;
-	Fri,  6 Dec 2024 20:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l+LlE6XI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6529E79EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:14:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D4B1C54B8;
-	Fri,  6 Dec 2024 20:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A747283436
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:14:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B6A1FFC67;
+	Fri,  6 Dec 2024 20:14:38 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45EA1DA619
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733516028; cv=none; b=KwSTpCDvIc26FUlWq9SO/gEinIALKWIyQtpzUiq0IjsZCcPlSS8GUasN+M8T+Rv02AwvwJx5RpRZWeb9d+Yx/vOY74lCn0o164w0HdZb4D0/RO1/L9n0gqr91GzaKmUdZr6MMAfCZCV5YFx8JdeZALWywYMah2HIh6rDTnSQLvA=
+	t=1733516078; cv=none; b=FcACHc/X2MzUzhWvrnfF3qU4qovqcbNeMtvjv2SquHsoB0RLVi73WdI3/b4DybqBZN9RkiYuMnxfkMHaNwQAtLxgmWM78CBQVNzYB98LvUYDzeOUT+Jh/DxUaj9T/KDb+o6E60E9rM4EZQKxj6KGedVnWxsZvmgwHbwvL1AQfNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733516028; c=relaxed/simple;
-	bh=U1hzj8OoDUag2+V7FduQ5KX8Bcx9gIwqwH6aZFRwJKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F0KyuA81kaS8lwkV8ftgoW1DZJK2r+47ZhmHG12LBzomgUjYtT+eec19s/dlEgZ4xnBU3jycmJ67KU8Hh609Ddlsz/7luAcfGk0bDXQBB0kDxumI6kyd8S1+xy3u32fZD28aN/gmJ8IvnDVg03WNJkLN+dl3qQilsci8+8te+KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l+LlE6XI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B69SV3o016306;
-	Fri, 6 Dec 2024 20:13:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sK9CAPNDZeTo2GKy/eE9+KhBdkAX/n3QL66YxJ4ZiLE=; b=l+LlE6XIvnMS4k6R
-	k3rLNoqzcYI7nd1Eoy/yVTc8+jdUt/ctPOAz0JlrpT08qdd033do9RWpLBmmTYwj
-	TdFhNj9X6SxANG4jHtM8A1FAf+25gLGBs3/pD0dwhy2iDHh5QZhyEhy3EVW2G/E1
-	/nEaVXFcbuJzRYA4nv47Z5101CK4vJ78hhd3MIdFCDAW8vDoumlBwP3Jcat8RhIF
-	z3PHSstn24PXMe/Dqkw/au5h2yRoF3awK7qJqnZeyV39VRruN7HDVxQBsvIZzket
-	dJ0As5DBfO/NXObseu/fyysiqeH3I0F2jyG5m0mhthB9K1QWyYL/bkJbUyFlCgWD
-	Ff+Xfw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bxny9mh8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 20:13:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6KDTYh014430
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 20:13:29 GMT
-Received: from [10.110.95.46] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
- 12:13:25 -0800
-Message-ID: <3e7660b3-934a-4b11-82a3-48137d63ea5d@quicinc.com>
-Date: Fri, 6 Dec 2024 12:13:23 -0800
+	s=arc-20240116; t=1733516078; c=relaxed/simple;
+	bh=crdrIU87cmRDRZn0i0zAKUBSB8zhN6TjPShRglgziQc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=Zhzz31g4/r7TKLccOvMxXFfHfClFPfNMDJTv3gFUnUGbDPznJTGUowUquOGNQ+65AI3zLb4PfgOnSTvtgPDtnwWApzyDlGuT/tyrDxJ4okE97djOn40x+p6KKVXcaYm0fYclNYW6XEunn6Ej92fcDOyg0wre/RvEoU8L+5O22sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-265-SKHl7LnjO8e01avqgVl2jQ-1; Fri, 06 Dec 2024 20:14:33 +0000
+X-MC-Unique: SKHl7LnjO8e01avqgVl2jQ-1
+X-Mimecast-MFC-AGG-ID: SKHl7LnjO8e01avqgVl2jQ
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 20:13:46 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 20:13:46 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>
+CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Rosin
+	<peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+	<lars@metafoo.de>
+Subject: RE: [PATCH v1 1/4] iio: afe: rescale: Don't use ^ for booleans
+Thread-Topic: [PATCH v1 1/4] iio: afe: rescale: Don't use ^ for booleans
+Thread-Index: AQHbRezm1jhKv1T7YkOoxbKwnK16YbLZNdEggAAi1wCAAEqwwA==
+Date: Fri, 6 Dec 2024 20:13:46 +0000
+Message-ID: <2a7a87267feb4c35ad9ef493236b6035@AcuMS.aculab.com>
+References: <20241204013620.862943-1-andriy.shevchenko@linux.intel.com>
+ <20241204013620.862943-2-andriy.shevchenko@linux.intel.com>
+ <88f281a31d8342c691b2a6b2666d4e91@AcuMS.aculab.com>
+ <Z1MWBsCJsTHsqNey@smile.fi.intel.com>
+In-Reply-To: <Z1MWBsCJsTHsqNey@smile.fi.intel.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] drm/msm/dp: Add maximum width limitation for modes
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Xiangxu Yin
-	<quic_xiangxuy@quicinc.com>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Kuogee
- Hsieh" <quic_khsieh@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        "Kishon
- Vijay Abraham I" <kishon@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_lliu6@quicinc.com>,
-        <quic_fangez@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
- <20241129-add-displayport-support-for-qcs615-platform-v1-6-09a4338d93ef@quicinc.com>
- <CAA8EJpprTGRTxO+9BC6GRwxE4A3CuvmySsxS2Nh4Tqj0nDRT_Q@mail.gmail.com>
- <95a78722-8266-4d5d-8d2f-e8efa1aa2e87@quicinc.com>
- <CAA8EJpo-1o9i4JhZgdbvRxvoYQE2v18Lz_8dVg=Za7a_pk5EDA@mail.gmail.com>
- <86b9a8be-8972-4c19-af0c-da6b3667cbf4@quicinc.com>
- <fb6enh3wzusadc6r7clg7n7ik2jsucimoi7dnecnsstcz4r6e6@dtahvlm522jj>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: CHsCgMuE8csZy7W2G12vYy2A6sTsgbnl2pBqn96VMbw_1733516072
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <fb6enh3wzusadc6r7clg7n7ik2jsucimoi7dnecnsstcz4r6e6@dtahvlm522jj>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _ttJL0RcNHq4tleLBzgk4VqbRrdUqimV
-X-Proofpoint-ORIG-GUID: _ttJL0RcNHq4tleLBzgk4VqbRrdUqimV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- phishscore=0 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 clxscore=1011 mlxlogscore=717 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060152
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+From: 'Andy Shevchenko'
+> Sent: 06 December 2024 15:20
+...
+> ...
+>=20
+> > >  =09=09 * If only one of the rescaler elements or the schan scale is
+> > >  =09=09 * negative, the combined scale is negative.
+> > >  =09=09 */
+> > > -=09=09if (neg ^ ((rescale->numerator < 0) ^ (rescale->denominator < =
+0))) {
+> > > +=09=09if (neg !=3D (rescale->numerator < 0 || rescale->denominator <=
+ 0)) {
+> >
+> > That is wrong, the || would also need to be !=3D.
+>=20
+> Why do you think so? Maybe it's comment(s) that is(are) wrong?
 
+The old code certainly negates for each of them - so you can get the double
+and triple negative cases.
+So believe the code not the comment.
+>=20
+> > Which will all generate real pile of horrid code.
+> > (I think the x86 version will stun you.)
+>=20
+> I think your remark is based on something, can you show the output to ela=
+borate
+> what exactly becomes horrible in this case?
 
-On 12/3/2024 5:58 AM, Dmitry Baryshkov wrote:
-> On Tue, Dec 03, 2024 at 03:41:53PM +0800, Xiangxu Yin wrote:
->>
->>
->> On 12/2/2024 5:32 PM, Dmitry Baryshkov wrote:
->>> On Mon, 2 Dec 2024 at 11:05, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 11/29/2024 9:52 PM, Dmitry Baryshkov wrote:
->>>>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
->>>>>>
->>>>>> Introduce a maximum width constraint for modes during validation. This
->>>>>> ensures that the modes are filtered based on hardware capabilities,
->>>>>> specifically addressing the line buffer limitations of individual pipes.
->>>>>
->>>>> This doesn't describe, why this is necessary. What does "buffer
->>>>> limitations of individual pipes" mean?
->>>>> If the platforms have hw capabilities like being unable to support 8k
->>>>> or 10k, it should go to platform data
->>>>>
->>>> It's SSPP line buffer limitation for this platform and only support to 2160 mode width.
->>>> Then, shall I add max_width config to struct msm_dp_desc in next patch? for other platform will set defualt value to ‘DP_MAX_WIDTH 7680'
->>>
->>> SSPP line buffer limitations are to be handled in the DPU driver. The
->>> DP driver shouldn't care about those.
->>>
->> Ok, Will drop this part in next patch.
-> 
-> If you drop it, what will be left from the patch itself?
-> 
+Ok it isn't quite as bad as I thought because all the compilers will use xo=
+r
+for the equality test on sign bits. See https://www.godbolt.org/z/qxz5KPcTh
+So changing ^ to !=3D makes no difference at all.
 
-Yes agree with Dmitry, max_width is really not a DP related terminology.
+But f3() shows the sort of thing that can happen.
+Sometimes made worse because the x86 SETcc instruction only set 8bit regist=
+ers.
+(Odd since they got added for the 386)
 
-This patch should be dropped.
+=09David
 
-So there were two issues, overall in this series causing this patch:
+>=20
+> > I'm guessing that somewhere there is a:
+> > =09neg =3D value < 0;
+>=20
+> Nope.
+>=20
+> > Provided all the values are the same size (eg int/s32), in which case:
+> > =09neg =3D value;
+> > ...
+> > =09if ((neg ^ rescale->numerator ^ rescale->denominator) < 0)
+> > will be the desired test.
+>=20
+> --
+> With Best Regards,
+> Andy Shevchenko
+>=20
 
-1) In https://patchwork.freedesktop.org/patch/625822/, instead of using 
-VIG_SDM845_MASK, we should be using VIG_SDM845_MASK_SDMA. Without that 
-even 2k will not work, will leave a comment there.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-2) 4k will still fail. I dont think we can even support 4k on QCS615 but 
-the modes should be filtered out because there is no 3dmux.
-
-I have submitted https://patchwork.freedesktop.org/patch/627694/ to 
-address this.
-
-Xiangxu, please let me know if that works for you.
-
-Thanks
-
-Abhinav
->>>>>>
->>>>>> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
->>>>>> ---
->>>>>>   drivers/gpu/drm/msm/dp/dp_display.c |  3 +++
->>>>>>   drivers/gpu/drm/msm/dp/dp_display.h |  1 +
->>>>>>   drivers/gpu/drm/msm/dp/dp_panel.c   | 13 +++++++++++++
->>>>>>   drivers/gpu/drm/msm/dp/dp_panel.h   |  1 +
->>>>>>   4 files changed, 18 insertions(+)
->>>
->>>
->>
-> 
 
