@@ -1,144 +1,223 @@
-Return-Path: <linux-kernel+bounces-435103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C76D9E6FB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:59:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD909E6FBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44181888443
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4975A1888862
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636E220D501;
-	Fri,  6 Dec 2024 13:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I623HFBA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438C320C02C;
+	Fri,  6 Dec 2024 13:57:45 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5B320ADD6;
-	Fri,  6 Dec 2024 13:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E0420B206
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733493424; cv=none; b=LpMiYH/+knUI4TB6pljk+sLX2Gmm7BZPRjSU1DcUt/uePra5xW9mmSBhkEWaqBfOSO4Hqe6v3uJirz+CrRZIkBrvNsgWG6BpKfYwqpCfntERebzABGwq33T5xJ1MGlcEuqx2aTEPEtXDQ1SkB5QkG75THx0QASCP8NXjZcB0Qk4=
+	t=1733493464; cv=none; b=im1fBajowGvPFzpSp2NiDO152MnmlGjD4wBI5LevNPkEvX9+ISCxQ3Z5dSKyzwP/5VtUJtC2Y2GUFVK5DCOOHyhdEh8LAf130j7gqh5rIImU3xImXK+HoCz5EppZBT5j1v1vl3w2We+Fn6wBdE3BDcFt5J8awER/CI9gE2hVolM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733493424; c=relaxed/simple;
-	bh=uMfKj5t1s/VO3UutWywAjUgCvMT5JcR2uY2pqRS03ek=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OgXrtBIqiJyeRXDm6RuTL0PXx2Shj2QABbSg80xEpWDVMlcTKpYwTOUMMRKsr6u+bHbxbqOJ/VX52fHdjryVfi/1RCqpT5tlGyUTu+Ry4iOROq6NGtifVZRJUISayLUd2QFobgzmna7oK/TT94SKTxksaxK0jH9/BoGHrwrC608=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I623HFBA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67UY7n000771;
-	Fri, 6 Dec 2024 13:56:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=2VvAnUtmxhMMk6F7O3XnWBwviVIumRpdGIrNiXkcO
-	oc=; b=I623HFBA1AeMiaayZmTj3kjVU75tzgchmJyHFXca7xaTnKmDHskpEBLvV
-	c2i88/0hhkAr7ARLArq/VpYkdRtcfisqha4S7o3bkFhj+tUaQVinUauwW0lV709U
-	HVlL9wmBP2r0gJ2OPcWVjNmwUiBcUOlIGRoHqqc9V3yUWq70+utNQlicga15Uz2L
-	O18SDU564YBHegGR0ZMwuFQybgq0sVeLwcmlJbExQG2miDZbPLeXJ+JGiqmdkXaP
-	TmF5f/X5HBuExPLCc8Zeae5edyy9tkugJTxFv3wdljRp5x6qF+ERbDsbMYTFHJR3
-	IoV23UaBBxLVj72RwKXbUAFlt8oWA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43bvxksgrx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 13:56:52 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B6DupYG007143;
-	Fri, 6 Dec 2024 13:56:51 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43bvxksgrw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 13:56:51 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B69mwY9007467;
-	Fri, 6 Dec 2024 13:56:51 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 438f8jxrtu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 13:56:51 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B6Dulmm31654516
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Dec 2024 13:56:47 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 83BDA20043;
-	Fri,  6 Dec 2024 13:56:47 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B5AEC20040;
-	Fri,  6 Dec 2024 13:56:41 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.61.245.143])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  6 Dec 2024 13:56:41 +0000 (GMT)
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        irogers@google.com, namhyung@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com,
-        atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        disgoel@linux.vnet.ibm.com, hbathini@linux.ibm.com
-Subject: [PATCH] tools/perf/arch/powerpc: Add register mask for power11 PVR in extended regs
-Date: Fri,  6 Dec 2024 19:26:37 +0530
-Message-Id: <20241206135637.36166-1-atrajeev@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.35.1
+	s=arc-20240116; t=1733493464; c=relaxed/simple;
+	bh=BnaE+B3sx+ftJBkruhBvPWxADTb1r6NsNkI4huFjUB8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=HHh2UC9RktwsqZgK6wVI4Kx3Lfs+Q1vr5ewOewYyEcdTsgBv0X34aaS1zA2weFddXdCS5S5ejPJCPuBhvmnMQEA/47ppD+4P27DkNTdkGSDl6s1WZbPHF0TTXF6//dBsibFk+t1JUeHlwkJZydcyI29KBYwT+iqyUHVj56imw9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-167-EZHAcN5-Mh68KJfFcc05EQ-1; Fri, 06 Dec 2024 13:57:39 +0000
+X-MC-Unique: EZHAcN5-Mh68KJfFcc05EQ-1
+X-Mimecast-MFC-AGG-ID: EZHAcN5-Mh68KJfFcc05EQ
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 13:56:53 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 13:56:53 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Arnd Bergmann' <arnd@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, Sean Christopherson
+	<seanjc@google.com>, Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini
+	<pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: RE: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
+Thread-Topic: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
+Thread-Index: AQHbRjg+4x576lYtVEaZjwt66lpA/LLZPZ8Q
+Date: Fri, 6 Dec 2024 13:56:53 +0000
+Message-ID: <0163dae8b39b48c2b3ab9e26ed7279bc@AcuMS.aculab.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-10-arnd@kernel.org>
+In-Reply-To: <20241204103042.1904639-10-arnd@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 0DRLT-rEuHGmPWYrKzBJijAP1s6fxZfy
-X-Proofpoint-ORIG-GUID: dhBZ0ROkcyuB7GAbcfJlCqU6k1RPxCLP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- malwarescore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060102
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 8Gu3lqokuCYDJ_vceAeqX-GdbTt5drVzQU652S19gqU_1733493458
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Perf tools side uses extended mask to display the platform
-supported register names (with -I? option) to the user
-and also send this mask to the kernel to capture the extended registers
-as part of each sample. This mask value is decided based on
-the processor version ( from PVR ).
+From: Arnd Bergmann
+> Sent: 04 December 2024 10:31
+> Building an x86-64 kernel with CONFIG_GENERIC_CPU is documented to
+> run on all CPUs, but the Makefile does not actually pass an -march=3D
+> argument, instead relying on the default that was used to configure
+> the toolchain.
+>=20
+> In many cases, gcc will be configured to -march=3Dx86-64 or -march=3Dk8
+> for maximum compatibility, but in other cases a distribution default
+> may be either raised to a more recent ISA, or set to -march=3Dnative
+> to build for the CPU used for compilation. This still works in the
+> case of building a custom kernel for the local machine.
+>=20
+> The point where it breaks down is building a kernel for another
+> machine that is older the the default target. Changing the default
+> to -march=3Dx86-64 would make it work reliable, but possibly produce
+> worse code on distros that intentionally default to a newer ISA.
+>=20
+> To allow reliably building a kernel for either the oldest x86-64
+> CPUs or a more recent level, add three separate options for
+> v1, v2 and v3 of the architecture as defined by gcc and clang
+> and make them all turn on CONFIG_GENERIC_CPU. Based on this it
+> should be possible to change runtime feature detection into
+> build-time detection for things like cmpxchg16b, or possibly
+> gate features that are only available on older architectures.
+>=20
+> Link: https://lists.llvm.org/pipermail/llvm-dev/2020-July/143289.html
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/x86/Kconfig.cpu | 39 ++++++++++++++++++++++++++++++++++-----
+>  arch/x86/Makefile    |  6 ++++++
+>  2 files changed, 40 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+> index 139db904e564..1461a739237b 100644
+> --- a/arch/x86/Kconfig.cpu
+> +++ b/arch/x86/Kconfig.cpu
+> @@ -260,7 +260,7 @@ endchoice
+>  choice
+>  =09prompt "x86-64 Processor family"
+>  =09depends on X86_64
+> -=09default GENERIC_CPU
+> +=09default X86_64_V2
+>  =09help
+>  =09  This is the processor type of your CPU. This information is
+>  =09  used for optimizing purposes. In order to compile a kernel
+> @@ -314,15 +314,44 @@ config MSILVERMONT
+>  =09  early Atom CPUs based on the Bonnell microarchitecture,
+>  =09  such as Atom 230/330, D4xx/D5xx, D2xxx, N2xxx or Z2xxx.
+>=20
+> -config GENERIC_CPU
+> -=09bool "Generic-x86-64"
+> +config X86_64_V1
+> +=09bool "Generic x86-64"
+>  =09depends on X86_64
+>  =09help
+> -=09  Generic x86-64 CPU.
+> -=09  Run equally well on all x86-64 CPUs.
+> +=09  Generic x86-64-v1 CPU.
+> +=09  Run equally well on all x86-64 CPUs, including early Pentium-4
+> +=09  variants lacking the sahf and cmpxchg16b instructions as well
+> +=09  as the AMD K8 and Intel Core 2 lacking popcnt.
 
-Add PVR value for power11 to enable capturing the extended regs
-as part of sample in power11.
+The 'equally well' text was clearly always wrong (equally badly?)
+but is now just 'plain wrong'.
+Perhaps:
+=09Runs on all x86-64 CPUs including early cpu that lack the sahf,
+=09cmpxchg16b and popcnt instructions.
 
-Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
----
+Then for V2 (or whatever it gets called)
+=09Requires support for the sahf, cmpxchg16b and popcnt instructions.
+=09This will not run on AMD K8 or Intel before Sandy bridge.
 
- tools/perf/arch/powerpc/util/perf_regs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I think someone suggested that run-time detect of AVX/AVX2/AVX512
+is fine?
 
-diff --git a/tools/perf/arch/powerpc/util/perf_regs.c b/tools/perf/arch/powerpc/util/perf_regs.c
-index e8e6e6fc6f17..bd36cfd420a2 100644
---- a/tools/perf/arch/powerpc/util/perf_regs.c
-+++ b/tools/perf/arch/powerpc/util/perf_regs.c
-@@ -16,6 +16,7 @@
- 
- #define PVR_POWER9		0x004E
- #define PVR_POWER10		0x0080
-+#define PVR_POWER11		0x0082
- 
- static const struct sample_reg sample_reg_masks[] = {
- 	SMPL_REG(r0, PERF_REG_POWERPC_R0),
-@@ -207,7 +208,7 @@ uint64_t arch__intr_reg_mask(void)
- 	version = (((mfspr(SPRN_PVR)) >>  16) & 0xFFFF);
- 	if (version == PVR_POWER9)
- 		extended_mask = PERF_REG_PMU_MASK_300;
--	else if (version == PVR_POWER10)
-+	else if ((version == PVR_POWER10) || (version == PVR_POWER11))
- 		extended_mask = PERF_REG_PMU_MASK_31;
- 	else
- 		return mask;
--- 
-2.43.5
+=09David
+
+> +
+> +config X86_64_V2
+> +=09bool "Generic x86-64 v2"
+> +=09depends on X86_64
+> +=09help
+> +=09  Generic x86-64-v2 CPU.
+> +=09  Run equally well on all x86-64 CPUs that meet the x86-64-v2
+> +=09  definition as well as those that only miss the optional
+> +=09  SSE3/SSSE3/SSE4.1 portions.
+> +=09  Examples of this include Intel Nehalem and Silvermont,
+> +=09  AMD Bulldozer (K10) and Jaguar as well as VIA Nano that
+> +=09  include popcnt, cmpxchg16b and sahf.
+> +
+> +config X86_64_V3
+> +=09bool "Generic x86-64 v3"
+> +=09depends on X86_64
+> +=09help
+> +=09  Generic x86-64-v3 CPU.
+> +=09  Run equally well on all x86-64 CPUs that meet the x86-64-v3
+> +=09  definition as well as those that only miss the optional
+> +=09  AVX/AVX2 portions.
+> +=09  Examples of this include the Intel Haswell and AMD Excavator
+> +=09  microarchitectures that include the bmi1/bmi2, lzncnt, movbe
+> +=09  and xsave instruction set extensions.
+>=20
+>  endchoice
+>=20
+> +config GENERIC_CPU
+> +=09def_bool X86_64_V1 || X86_64_V2 || X86_64_V3
+> +
+>  config X86_GENERIC
+>  =09bool "Generic x86 support"
+>  =09depends on X86_32
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 05887ae282f5..1fdc3fc6a54e 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -183,6 +183,9 @@ else
+>          cflags-$(CONFIG_MPSC)=09=09+=3D -march=3Dnocona
+>          cflags-$(CONFIG_MCORE2)=09=09+=3D -march=3Dcore2
+>          cflags-$(CONFIG_MSILVERMONT)=09+=3D -march=3Dsilvermont
+> +        cflags-$(CONFIG_MX86_64_V1)=09+=3D -march=3Dx86-64
+> +        cflags-$(CONFIG_MX86_64_V2)=09+=3D $(call cc-option,-march=3Dx86=
+-64-v2,-march=3Dx86-64)
+> +        cflags-$(CONFIG_MX86_64_V3)=09+=3D $(call cc-option,-march=3Dx86=
+-64-v3,-march=3Dx86-64)
+>          cflags-$(CONFIG_GENERIC_CPU)=09+=3D -mtune=3Dgeneric
+>          KBUILD_CFLAGS +=3D $(cflags-y)
+>=20
+> @@ -190,6 +193,9 @@ else
+>          rustflags-$(CONFIG_MPSC)=09+=3D -Ctarget-cpu=3Dnocona
+>          rustflags-$(CONFIG_MCORE2)=09+=3D -Ctarget-cpu=3Dcore2
+>          rustflags-$(CONFIG_MSILVERMONT)=09+=3D -Ctarget-cpu=3Dsilvermont
+> +        rustflags-$(CONFIG_MX86_64_V1)=09+=3D -Ctarget-cpu=3Dx86-64
+> +        rustflags-$(CONFIG_MX86_64_V2)=09+=3D -Ctarget-cpu=3Dx86-64-v2
+> +        rustflags-$(CONFIG_MX86_64_V3)=09+=3D -Ctarget-cpu=3Dx86-64-v3
+>          rustflags-$(CONFIG_GENERIC_CPU)=09+=3D -Ztune-cpu=3Dgeneric
+>          KBUILD_RUSTFLAGS +=3D $(rustflags-y)
+>=20
+> --
+> 2.39.5
+>=20
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
