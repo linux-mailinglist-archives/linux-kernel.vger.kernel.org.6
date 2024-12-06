@@ -1,206 +1,197 @@
-Return-Path: <linux-kernel+bounces-435725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FB69E7B69
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:09:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E6E9E7B7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:13:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ED052820E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:09:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E52A1887553
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAF91E1C10;
-	Fri,  6 Dec 2024 22:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D903213E6B;
+	Fri,  6 Dec 2024 22:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGEoafRQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JJBf+PyR"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E2922C6C0;
-	Fri,  6 Dec 2024 22:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733522988; cv=fail; b=scvL7HpqHzcnnVupzBTsudog6IweFRVkY73wjKPOgkcNKpSNdwSXEIJAC1DejfgDjZ8/s1vSOsRpbnYlmFHmyIaFlIi+Cc6KMXm1xikGZvkweHC+DY8SUlZ94WE449XhbyZY2eGk2ifuHhs8DWXzKvUe7mKiPX9UkZwdUVt8tlM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733522988; c=relaxed/simple;
-	bh=jhrTktiKZlv/oMLe+0ucNQzHWM7i1LI/E0a6mDgEAC0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=o9ZLjVfb9+e/RjFw6Zesn99IDNEvCWl2CEADz3plt1v/z0mgUEsXQWC5jiyroqNinXZb5Ka0isaTl/OYtgHJ+okKjPpsk0Vyebv3ZN7sUfWCm5gbPrOJNBKzqToD+moSLXA0HNUb8VLN0HMyPtBddcgZPF5c+qYpY6pFBvmlBi8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGEoafRQ; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733522987; x=1765058987;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=jhrTktiKZlv/oMLe+0ucNQzHWM7i1LI/E0a6mDgEAC0=;
-  b=eGEoafRQAVJg6n47FMFIi4W0xMhoFuIBR/wPllcrxtxZ0HGSy/JNHtb2
-   5o/iOp2SB3uux2P2pbtaRdMyg39hJLwbGn5KIKgc+gdmFQ3juc3umgWqy
-   TttesQE2q6Fwf2VMXJgw3Tw/RNwcSkhJBhwwpIiGb5VGmYSJ92mpwAj7J
-   Vq7ZkNLnAu2OGh4dascPTjVrq7MkskjewmTojw1CBl9iSJ2CiSSUPwdDA
-   6ykPZd+NQ5Up83QdHDSzt36wXX0uPRqg7E0rIz2NAhVAxfc0SyaeoFSrL
-   9pekyjtoZM4pe6QbTmWZ7P+k3qui6K/LAKfZblgiNvM1eAZJYuwWk/lPD
-   w==;
-X-CSE-ConnectionGUID: jee+n2VoQU+Yh/NDfvlc/Q==
-X-CSE-MsgGUID: ATtDwIlkQImXxt6FgzLtSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="51307490"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="51307490"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 14:09:46 -0800
-X-CSE-ConnectionGUID: B2LWrpdUTN6GgqeXGXib5A==
-X-CSE-MsgGUID: A8SkebCsQ+mDW15UDMGm8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="94611966"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Dec 2024 14:09:45 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 6 Dec 2024 14:09:44 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 6 Dec 2024 14:09:44 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 6 Dec 2024 14:09:42 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E8ZHPfJsUbVxth/eBModOeNnZiHhahUEVkGYr9vvqG/YvzbwJHf9JXDI99fD3LGFfsFoSjE9ZYZM3PYVfXRlwCWyFxTEE8oLUI8cB4Wu7I1uYRqLsp4wdANLzzd3EiBJkaNc3pM5kWsAKcPoAoPuaWFoiumzvbGSeo+COG5RGGC9AHOY9Zdt4oovE5ek1w9CtuSGNyPOwXZQpYEu/dPf3GPQWx5HFhLiVqHZV5Pgne/NI2ITyho+afJeUeGxRy828tgdM35cwoR9ZVtWADdpG5QslaZhSAIJ88lVyxRPUd1jG9MlOrTZzmTtS8Zl/5j/4bGVZMgbzav/BUCdSuSCbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jhrTktiKZlv/oMLe+0ucNQzHWM7i1LI/E0a6mDgEAC0=;
- b=irVSWtChafDcPwyhFInny9p3UFj+VK4XTdvY89nCEdIan5MxwjkljYSgBVF4HcVMAXH7K2PxdVGOv+g5ubW45LoqrMhl9I+j9R4UPNSMpw2begHIX47uXPzv5DnU84ZiMueC3OmIKOtoXQ7sC8HOfpKgZH7OITHzTOS2zjwTrlvat3Se/SUr0KHG/bbaAriw5rM0M8hNJsxJmsBdOueUvNuaWp0TduTfma9eYa0Mqu4bOOi8uJxDLJqUi7CAkSSg51JOVygEWH6HYaa+88E4iK33046jXXfcXhbytEYke60ZVSbFpOdB55FEXgRogdaoHKYT/6sRTxetij3kWlT1bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by SN7PR11MB8065.namprd11.prod.outlook.com (2603:10b6:806:2de::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Fri, 6 Dec
- 2024 22:09:24 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.8207.017; Fri, 6 Dec 2024
- 22:09:23 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "Meyer, Kyle" <kyle.meyer@hpe.com>, "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-	Bjorn Helgaas <helgaas@kernel.org>
-CC: "bp@alien8.de" <bp@alien8.de>, "james.morse@arm.com"
-	<james.morse@arm.com>, "mchehab@kernel.org" <mchehab@kernel.org>,
-	"rric@kernel.org" <rric@kernel.org>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
-Thread-Topic: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
-Thread-Index: AQHbRzdYr6wewCl8WUSfAZZpbFHGCbLYE+DsgABRaYaAAAfzAIAAEs4AgAE5QuCAAA54YA==
-Date: Fri, 6 Dec 2024 22:09:23 +0000
-Message-ID: <SJ1PR11MB60832217752DE71A4ED1054CFC312@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20241205165954.7957-1-kyle.meyer@hpe.com>
- <Z1H7U9-O2LdAoa5r@agluck-desk3> <Z1IHkBlm_0p-0-c3@hpe.com>
- <Z1Iuk-_VdmZibOes@agluck-desk3> <Z1I-A0Rhc8AHhvtw@agluck-desk3>
- <Z1JL7fevweCQtTnT@hpe.com>
- <CY8PR11MB7134E24098C6E16E43C57EAA89312@CY8PR11MB7134.namprd11.prod.outlook.com>
- <Z1Jieg7ACUMZLsF-@hpe.com>
- <SJ1PR11MB60835F7CA3BB0430A4B116C0FC312@SJ1PR11MB6083.namprd11.prod.outlook.com>
-In-Reply-To: <SJ1PR11MB60835F7CA3BB0430A4B116C0FC312@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SN7PR11MB8065:EE_
-x-ms-office365-filtering-correlation-id: 320b0b85-369b-45af-3f99-08dd1642a438
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?uNZOe8uUd2DAd5my7C7HcgIbDwR23Q7X2tl+wsFGDfYBXyZcSz0If1Jm6peL?=
- =?us-ascii?Q?bdZAJ6dOj1k9bO0zcuGI97BITEfVU0EcjDuP0aRlgsxtbWg/3oRcftdyDzlO?=
- =?us-ascii?Q?9D9l1GVPZMDlsXGXHhJALFR1uxCL4LSfWEVqfqEY75WVNI5E8U7tzD2dlnQ2?=
- =?us-ascii?Q?7S/3Vy+gSeAvyMivWTbPymeNH4napbe52uxEnA/dHZePLgxOY7qII62jQmT/?=
- =?us-ascii?Q?73yTS5gCCWdOItLEcOSVB+HEE1HX5+s3q1w7jaVcw+bSTTtT/f18o/qztk1F?=
- =?us-ascii?Q?A1jsh9EUXP1ixt/bwZDQvyUKpPAAOd9F77ixRODVrw8K/hjRlkkx6VU8y553?=
- =?us-ascii?Q?6qah3ZtUwh92qpaOeyZ1AUv4xfCp1U8RxcG6Vj48SMH9eH5PLNjePeVhaPK9?=
- =?us-ascii?Q?YWZSXq9bfFZqPHPtYNLP/BEegj6/CDEA7p7r0CptAgxDCZ8mgAKSUpHfG0eb?=
- =?us-ascii?Q?V7MqXJgEcnrk58DPNtTgdqX+BM0SWP8cQBAxqsHuUzZQtyMGQY15Bzu50geV?=
- =?us-ascii?Q?z2R31GDP0EG1JkHUa1rCVc7fP7Tl0GLGHI3LKeq79/JrIzWP5c/1naX4BEAi?=
- =?us-ascii?Q?VukTMWtGXGoVF+FjBvbI0DTVgysoNLL+wUPQsPDpKAJtt/i2LV65+zRSxNiB?=
- =?us-ascii?Q?nTYSWpf2mgOKHEI8Ga4wG6crYjkrPtriX3go+goBl6bLfyCk//y+kgAtXUxz?=
- =?us-ascii?Q?jobX9z80r92BApjnOkMQYcXGD1bFuXyT8tdnuFkr7w6pQ8vk9Vs3fKDQ5bQI?=
- =?us-ascii?Q?vfg4xEqM9Lzikf0aqXkDiXXHOE9EfuYcwaNla8e+ze+JjBdHQQORIYE+GWR9?=
- =?us-ascii?Q?yFAONYb9mLCcxdBYSRZiQv+BlK7SA16ooO2tY8T5KtFovuwRSUmMgg0ec0kQ?=
- =?us-ascii?Q?Ov6jENGbTSfBU/AbCZqaul9Rl9fohZTjD+CKqei0qp5SczxOUOB1NnYSiJF9?=
- =?us-ascii?Q?xJQlU+z8rYj3pTlg2VguCCr9SyluEZO0MdIok+ax9qbnb9AdwZa/Sp7zMNoQ?=
- =?us-ascii?Q?imEiMKVUO0z4i+WVM6mJiMQSv2VJDQS5N96wMdRzudmFT4v6O0uslHMqt37I?=
- =?us-ascii?Q?u8G0Dg6xmjyLPnxZuCXcbb2l/sT7Q5o4meDjPww5kQcX3yFEuHDMpHhzugNZ?=
- =?us-ascii?Q?w/nSugEH1+4CIRgFwZt7V3XqVDBqJisi71Mq19yZsagz0YVlqK6CydqQRHLn?=
- =?us-ascii?Q?C/kqhu853DCAEMGa7KyQ5h0Cs/noIr1QcDxGasOvHVctRVmVt8UWH8WsSxbt?=
- =?us-ascii?Q?651FRZdHfddg4gyoGwXKGBvfBvXT0nOyDfioiFq+3hG5LXUOJ2gs1he0lcnd?=
- =?us-ascii?Q?oE0uwuQf52gffbiOK8RrnE20kV3mRCffY4pF5zNaRnkqdXQJZnBl//CpfYre?=
- =?us-ascii?Q?oCBN86ZdqRkY0qBNYADeN65iSoq9damVbpkwfZ/s6h66q8DxmQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?SnNI+pUfaM/FUBzihcXU/v6LR42t4cwP6sP2G79NoBvyFN6I7Au+sarUoYwJ?=
- =?us-ascii?Q?X0BDpkmTh9IAtUqM47tAqjiRvEgt2dWsoKuq1N+S5lx9lYnUo2c7XwGeRyKW?=
- =?us-ascii?Q?j6MPWjnO8/qdhFMbypkdY5b1wU7iriOiuF4tJ+4eqdgpohCCtR+Pw4qZ3uGJ?=
- =?us-ascii?Q?2I5lWTi7nS2OnS+nAMvEC8MaBw7izl+lDsHqoUdxHMJfBp3pnlFJTQ8+In/2?=
- =?us-ascii?Q?8N4s6KcQfClZkqpcHHzHhpRKWHyBvJUuyjfocKUYOLHfXViV6sqURztdnuiA?=
- =?us-ascii?Q?hXtRz/TICp7kYacCt2udZIMISC2RzjSqHuQoh2K3V2bVsKqiOrJEIK2V9g7K?=
- =?us-ascii?Q?5yr6/xV33S1mC/Dd5k8SvWQRsCCthHZcNKct8dlkVtkqusmjILz3eZpuy2Ja?=
- =?us-ascii?Q?0BfoArT7hj+1DK+u0aEkdPRVy/2GLGt/c6radyBj6YjXzHFaX4WRnaUqrcnC?=
- =?us-ascii?Q?ucslXRKdq/MNVnpdPMiNzRKBY86JwHtH2TJkI7+0kwxPS5WwW2eekbLr+UQL?=
- =?us-ascii?Q?l1OurHKBxw2HaeZJMRR3pORPmH1dk9rDqyLLTZtAlznRyWYWXNy/XS/A34m2?=
- =?us-ascii?Q?/HVQFDebaUZ6FYaMomiYv2/X0yDHrelcLFxoo0SRrrNPJgtiCMqRCr8CxnUl?=
- =?us-ascii?Q?7HSwamFdq8G7KeSqLBTp/HNuOX6iK0QmX5tmQUE+Uzh/1tg5jOdbBIVhVyum?=
- =?us-ascii?Q?vxXD9potIcXPg8hpBahBgETnSptgFNy+cqBmV53/mIkLtib7YwZdRk/f8T0m?=
- =?us-ascii?Q?va76S0b4VXvc2SRUmU+BwsDh3zjbVa3WAsQiW3wrugfKNfFqmUJEI9dhlOXv?=
- =?us-ascii?Q?xWOoOGsFoi0sUF0vk5j+hPlPnxIV5Az8ClSMsukWEWRxUezj3aYG9HPJGg+c?=
- =?us-ascii?Q?BwYsyJJ7o4kFpojhxvMUTvqm4uJ12f3f0XGY5PhVUDaDAvGRUmel6oNYWL7Z?=
- =?us-ascii?Q?Ykyc8hzmQQenwb4ypP4ZzuyLKopm/KT+3fb4kBi5MVWLpwPpqQcI8LeAHRTB?=
- =?us-ascii?Q?9uoFRlYweX6vJbHapmfVDtms2HmqYCMj7oUV71Rl5spgwrTg3Jg5qtvHo0ep?=
- =?us-ascii?Q?mMWHja4jupAj46FI38Ym8tWdy7I31j2Bqf50qjq/s+RFaHPeEU6d/6LZvJFH?=
- =?us-ascii?Q?RNrXiJWbuTjzhEWkGOCEvTFLUK0FBN4oIfpC5BL17WUAkbl0/GdeGEqWUgkY?=
- =?us-ascii?Q?Xd84hOVthFyOwhBSgavqa8HqMsFoGU7ndFv5mTlRilKF0mFUtmp2XTQCOC1Z?=
- =?us-ascii?Q?MROVKytN0xQRFesDupaWcxf+LjxTxixRl8RGjbScVCm7ETfx6xZNGWjPHmZf?=
- =?us-ascii?Q?9w8q6di9XkGmpKnmrf43IahK9mWvLTJQ56zwqNi7MuKWLKUfjxBYoDaj5iQZ?=
- =?us-ascii?Q?ZopIcJHa8Dzj4jd+zng6j/pAndWEZzNS5Q5c5ZQQv7MJ/S5oHGssVcTG+VOY?=
- =?us-ascii?Q?IKiABMw21eQRx8jbaz6WIPAdPzfOpRtE5PF20/2FKFpuMe2zmqbwUp1Y1lIt?=
- =?us-ascii?Q?AtcTHuP/fVBNwVbByuTaeIM8KBE4TEpF1hyauJsSAncEnUxgbQSIwftjwK1c?=
- =?us-ascii?Q?sdAlYZL++PBBb3ErOlQ5LajBMkzqvCm7bWeF3jtf?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854041CBEAA
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 22:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733523185; cv=none; b=dsK+G96rgIiRV3mXIg9jJBnb/9tNvvQMSfa3Oem+Esi25BW/uBfqFZg7eeR31103WFP/6MJUYjlgap/oetIQJBPv/iWp7LYY9/6o9ATv7EtWnRIEJoAqDVBecr3A9riYTHTv3lBHoswL1NaByU7Bk7NTAfSL5jcKJ2BXlzn3a6M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733523185; c=relaxed/simple;
+	bh=Y97KH6M0ijxkZVfpkGPDKdwkUdjVhhwQOY3Z0kcTNBk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iPphBKtmVfp/0EiTd6Ht4LPbGDiGMEMYgCUkPKKPSyhi8S06bguiA/PzW7fVkjfmF2mcEQDvsshwAtfzJRO5a9wio7GPEad4U1talomRjcS7AvDzQNviroiN1ZIHg7z/CLCyBpCqm76IZIaxkQCrq8cryDltLQeER5D74inq9iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JJBf+PyR; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215da73e256so22996145ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 14:13:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733523182; x=1734127982; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ijyw4ymsAkFeWgQVUc3VJve4hsyHlzdR/n9h/faXYk=;
+        b=JJBf+PyRozYRFqcsfssa3IPoOhCdwphmSmnm9kglYxEnHeaCtazS9KcXeN8/015Ob8
+         F01vPr7XjgV/C5zBEXy7JxyKcw1tSQo/qT2Ql6wkB/f2gbJDxdr52qS+iApQ+mvq+zZp
+         MD6w3Ibzp9IbccaBqOgZbsa9189b69y09QbOm2JhRfiwNcuGsmQxUIflLf8zpjn2+LZ3
+         tWV8bnL2frJJr5t9PTafw+jvP4f0uYUX74/tsW6fhTQOvUa+7ndUIONHPD2vJtqC68zd
+         uVzBLLxRPP3DlfuOAO4bKU5eInI8X8um5hGfi7zkC5eXDE3uZ40+Pd/p1Jxx5lMAe3H1
+         sT6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733523182; x=1734127982;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3ijyw4ymsAkFeWgQVUc3VJve4hsyHlzdR/n9h/faXYk=;
+        b=DYIPHTPWmd5RPZVROGjm+X3UwzEM0sxxCIm3OcS5rHSZnJqKfTOi2EVPCEsBG8fHqK
+         5CdQl0xvBZGNdqWM5u4GROOUhGP/7OxGPkGzsF09XwsqaR/xAPlEmJN3cyo/lM3j2ruf
+         t5i4Etv0OBj9Gmk+NMnROa7LzpUo+O7d8EgYWabnaZXMC4xJeKs24JRTo7GRCZh1RG1Q
+         obZH4R+2tgoAyLEMpYgxAqDI+iReEfaPlti4gpasgHxP0VrCH8QexL+s6Z2Q84dpkalE
+         JnFj4DjuTPokeFvcIVVyIbuC8Z0kZClydVpK/leQFOoAmz/JekiEir1GQDbLyoDn1vHM
+         OkHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrKe2Z7a9NeuyHVlSINDhbp/JimE+6BGSn4hBpixLytU+elEgMjoC3mnYy8yRdBPaaymgAB+chPu+5suw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/SHivZsMmrCmr/KD2SCKka7hWEWcHUKh9FkZn7T5we5gNjHSq
+	Zt5z4MnSmwOFLkQSVAD9V7nWCAz9FzmV/97dmJyA89xCGoCXIuWAnx7RfTScnjM=
+X-Gm-Gg: ASbGncvL4gxFAs1uXh/uI0yUQdRrJEEsOYw12iZ6jlYpzX9ndBmZ60Y6on4MsfOWzf8
+	PCdKUz4+p9k8fxN8mh1akqJfNmRnOp0wwB4yoqSxzwaqNOLCG+JNBBNMggTtCt26h6ex2rKVEeL
+	MPFvteWDm9b148LyeBryVdDrU1qJoytOFY/bG39XoozgWIZypOjbBA9o8zqGTbDFPXjyKYu7aqI
+	n6Jr6/ptILsUCW6tiG6XqfarvmOFyKs7mF3KIu3sNAskYov
+X-Google-Smtp-Source: AGHT+IE0aIHhhTmAidePOav40ceBPnjxnWQH78Ga0X4GWG2q6QRXiZRk6w9WNT1JZkEgO2Szry7sFA==
+X-Received: by 2002:a17:902:d2c4:b0:211:18bf:e91d with SMTP id d9443c01a7336-21614d5dc31mr58848105ad.27.1733523181838;
+        Fri, 06 Dec 2024 14:13:01 -0800 (PST)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725cf9f681esm53275b3a.98.2024.12.06.14.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 14:13:01 -0800 (PST)
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH v6 0/3] pmdomain: ti_sci: collect and send low-power mode
+ constraints
+Date: Fri, 06 Dec 2024 14:12:49 -0800
+Message-Id: <20241206-lpm-v6-10-constraints-pmdomain-v6-0-833980158c68@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 320b0b85-369b-45af-3f99-08dd1642a438
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2024 22:09:23.5004
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2ZdTn4NgpHOCgO/pps7REa16zAN3rHmm/6KkBTt0In1Xnhbs5sbIqRCwPKkaIhWIYN32cgUiPcDecVwSTsPwVQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB8065
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOF2U2cC/43PS27DIBAG4KtYrEs0w6t2Vr1HlQUYaJDiR8BBj
+ SLfvcSp2qiy5LJiRqNv/rmR5GJwieyrG4kuhxSGvhTqpSLtUfcfjgZbasKACaiB0dPY0awoAm2
+ HPk1Rh35KdOzs0JUv9ZxbL7XzQjSkIGN0PnwuC94Pjzq686XsmR5NYnRyxeq6MO2rrHbIaWyR3
+ IePIU1DvC7hMi7T3znkVo6MFKjFWhlVW2dF+2b09RRMdLuya9EzexKx2RRZEYVCzqRWALVfEfm
+ v2PwjIy+i47JpjeGNkmJFFM+i2hTFPSPI8l699mbtavkjIgJuirKIHBC1BqEY+3v1PM9fiEs8c
+ UQCAAA=
+X-Change-ID: 20240802-lpm-v6-10-constraints-pmdomain-f33df5aef449
+To: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org
+Cc: Nishanth Menon <nm@ti.com>, Dhruva Gole <d-gole@ti.com>, 
+ Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+ Markus Schneider-Pargmann <msp@baylibre.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Kevin Hilman <khilman@baylibre.com>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3769; i=khilman@baylibre.com;
+ h=from:subject:message-id; bh=Y97KH6M0ijxkZVfpkGPDKdwkUdjVhhwQOY3Z0kcTNBk=;
+ b=owEBbQKS/ZANAwAIAVk3GJrT+8ZlAcsmYgBnU3bsF4JQ7/8UbfGMucR/j7XBVV4vqdySArbbd
+ iwouJliJfqJAjMEAAEIAB0WIQR7h0YOFpJ/qfW/8QxZNxia0/vGZQUCZ1N27AAKCRBZNxia0/vG
+ ZVOMD/4kyxmRYQGPNwla3vR81G0xRC3SAdlkKmw4KvOlaQMP7jnvqxnKawgQUpX0gu57mPeIbJM
+ Wcbkjj4CpWI2a4MoGunrrGOy0uJIh0ZVVhScv5nXIDxg91LxNGUrkN4FpKvl5A9JYwhsYEkrmzL
+ nYEjGVhUflEOBHycFix8UFQlw2O/3We00L/hnDijh5FP9Y2JfJkBwfOa3EnxVxNNP6ONmBAHswb
+ BmPOl/Qio/vDFBmI4HnL+upZuUdWnNgKrFRt1pHEH2IOtOF0v1Yq6Of0vNwvu2hEIFpGoBdwvAv
+ RadRHYNWtwD2JIddC6CS5tWxs9FE49XaBlKNFyfyuKDShMVpRvi9kUGQp9s3ke2SaFBBH6VSosE
+ Ofq7GFTZYORm2NywmKCOsp0oeMX22GvqQNa0mXM/Jxh6Oo6bVydphSLMoqRqpFn6pBV2IhoKM2H
+ zDtQpU8kqC2JKQ/622LzvbxrJYw0nVfLTt0ajlodWz6LRnN/CemalE/BSjImUy4umhEfR37WOe/
+ jI4atzk4Gohs0SnfBIsMS2QJGwJoDpdnI3FXV336iOxLRsLML7KHZK5KPnV8b1JxOBtkjCo7DTm
+ m+QOqmRRJEyDFDmJeNZpPQGPAsm7hZuJ/LruhjeWtHyND7xeVpNNNR2J5I3EVisf5aTBzfmi6Ka
+ 1rLgeoltRzF0vZw==
+X-Developer-Key: i=khilman@baylibre.com; a=openpgp;
+ fpr=7B87460E16927FA9F5BFF10C5937189AD3FBC665
 
-[+Bjorn]
+The latest (10.x) version of the firmware for the PM co-processor (aka
+device manager, or DM) adds support for a "managed" mode, where the DM
+firmware will select the specific low power state which is entered
+when Linux requests a system-wide suspend.
 
-What we need here is a function that maps from a PCIe device to a CPU socke=
-t.
+In this mode, the DM will always attempt the deepest low-power state
+available for the SoC.
 
-Has this problem been encountered before? Is there an existing solution?
+However, Linux (or OSes running on other cores) may want to constrain
+the DM for certain use cases.  For example, the deepest state may have
+a wakeup/resume latency that is too long for certain use cases.  Or,
+some wakeup-capable devices may potentially be powered off in deep
+low-power states, but if one of those devices is enabled as a wakeup
+source, it should not be powered off.
 
--Tony
+These kinds of constraints are are already known in Linux by the use
+of existing APIs such as per-device PM QoS and device wakeup APIs, but
+now we need to communicate these constraints to the DM.
+
+For TI SoCs with TI SCI support, all DM-managed devices will be
+connected to a TI SCI PM domain.  So the goal of this series is to use
+the PM domain driver for TI SCI devices to collect constraints, and
+communicate them to the DM via the new TI SCI APIs.
+
+This is all managed by TI SCI PM domain code.  No new APIs are needed
+by Linux drivers.  Any device that is managed by TI SCI will be
+checked for QoS constraints or wakeup capability and the constraints
+will be collected and sent to the DM.
+
+This series depends on the support for the new TI SCI APIs (v10) and
+was also tested with this series to update 8250_omap serial support
+for AM62x[2].
+
+[1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
+[2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
+
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+Changes in v6:
+- fix build warning on arm32 when building with W=1 and CONFIG_PM_SLEEP=n
+- rebase onto v6.13-rc1
+- fix latency units: convert usecs (PM QoS) to msecs (TI SCI)
+- all dependencies are now merged in v6.13-rc1
+- Link to v5: https://lore.kernel.org/r/20241101-lpm-v6-10-constraints-pmdomain-v5-0-3011aa04622f@baylibre.com
+
+Changes in v5:
+- fix build error when CONFIG_PM_SLEEP not defined
+- Link to v4: https://lore.kernel.org/r/20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com
+
+Changes in v4:
+- fixed missing return in wakeirq error path
+- updated trailers with reviewed & tested tags
+- Link to v3: https://lore.kernel.org/r/20240905-lpm-v6-10-constraints-pmdomain-v3-0-e359cbb39654@baylibre.com
+
+Changes in v3:
+- change latency set functions to static void
+- Link to v2: https://lore.kernel.org/r/20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com
+
+Changes in v2:
+- To simplify this version a bit, drop the pmdomain ->power_off()
+  changes.  Constraints only sent during ->suspend() path.  The pmdomain
+  path was an optimization that may be added back later.
+- With the above simplification, drop the extra state variables that
+  had been added to keep track of constraint status.
+- Link to v1: https://lore.kernel.org/r/20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com
+
+---
+Kevin Hilman (3):
+      pmdomain: ti_sci: add per-device latency constraint management
+      pmdomain: ti_sci: add wakeup constraint management
+      pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
+
+ drivers/pmdomain/ti/ti_sci_pm_domains.c | 81 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+---
+base-commit: cbc4912199deab59fdbd830b115d81941d0add46
+change-id: 20240802-lpm-v6-10-constraints-pmdomain-f33df5aef449
+
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
+
 
