@@ -1,136 +1,153 @@
-Return-Path: <linux-kernel+bounces-434145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E260C9E6237
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:30:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1390F9E623A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:31:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C30169664
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73F21696EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D337F1DDF5;
-	Fri,  6 Dec 2024 00:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF801DFD1;
+	Fri,  6 Dec 2024 00:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="P8KpZ9G8"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdOoa8zC"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A9193
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5606C2BCFF;
+	Fri,  6 Dec 2024 00:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733445051; cv=none; b=QkdfEkPrHfjzTSHViXuF+qu2dWkIPnp6X4cmiLSsG/0qJnKULH4438IcHTNF+zH+BViRfLd3sArQOUfvYcmt/ztLFFFmoFA+ccTnjM10rlHv7H2yx8Sl13yY8GCmrZm8XIQsZZWXNdBqxOdoze+p1voJkLZbkoZrAH0oB3mUTcE=
+	t=1733445061; cv=none; b=qbDPy6W2EhZ2vgH+MKefvbspH4lkmBudw9cFESsgTzOmoJj8i3JEorwSqU/bAMRfIhjpmM1fl6NiX5FBfh1nRKiZLVEIo3uoNgJh88lagX2GK8Q13/zJFECthubY9kDYurkvGn2/IT+qHefLEmcH70m7yaF62r1JJZ3a34ftwiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733445051; c=relaxed/simple;
-	bh=ZVpk35Xy0VcY4noMVSjOgOVQmT6sANwi9Ktl7vC++qo=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=tmK2Yy/iL/AYqXp8yyOXUNlyT3k6Oivxg9EYSe4mg+F7Cepe1swnsyod0GBFceoj4L1k/nVmccEDtJjQ5Rw1Q5ZohcHeZ24pY7Vq8Jmoxk/zBsHau1j1lNT/l3a9z7lBHyJ1EXoJM6+k7FflCPuO248g24QA9xEF+4wVJna1W4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=P8KpZ9G8; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4668486df76so13193511cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:30:49 -0800 (PST)
+	s=arc-20240116; t=1733445061; c=relaxed/simple;
+	bh=T5XsiHaeA6gX7H3TG0AwK/Z1GuvCOEYpveaCBKvj2iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOy31GmLy3HHSL1EAj6jjzjrLfmbW2e+am3Bh1hxh1Qpwfly8asVIQQj3YRCiTjjhoRifnCiooP1+elf2eYOrCfwEYTC/y7ziqe3Vxv/sE1IqUF8TfmWaC0fytnFPahDzmcaTwJY5ucfqKK7akrv+h6fsYpk9IeuScHT7JSIx5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LdOoa8zC; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa549f2fa32so292117866b.0;
+        Thu, 05 Dec 2024 16:30:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1733445048; x=1734049848; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6TaUN9gc1Djzc3dX6IE8w4c+eTEm7u5dH4ywnDi0aU0=;
-        b=P8KpZ9G8/BIUftu3uuGAPa8c+q4uNA0vEjXXb7f5CsOZ89tLnZ9Z2DvLylY0LBZAqU
-         2Ua0iKbrWNDLiAgmJPsOw3gPD+HVAix8erFFu2KrBsVYJgf9gS5Wax2wjHjOTMmXdmLi
-         ihK+3ISDOzhoEEkpk6N/FEev1oPTGLJWKWpffw9xEPpyEFDamukxCDSLpbdu/cv4ZrvV
-         sSJVoPLp5LKRisQF0pXDf1CMZG5SwiL2BfGv6mIQU79XhiQggApuYMxWDgbZQeiLR0U1
-         oOCWlCgTFJLqLtj+wxrk82uWmLf2Iesx65E0UkjyBEKKm4f/fRVZi3rt0mYGdCZsNu0I
-         gQjQ==
+        d=gmail.com; s=20230601; t=1733445058; x=1734049858; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CuJ7vWjq9N4bf180yHzi7XHCXBBIt3hkByBmhQQJFDA=;
+        b=LdOoa8zCdgGwG0vyIsjaUvxeGi+ZMoIH2ZFUCx7CEMu53mMfV5tIXiWYXYZqDdDyj+
+         iPpc0WLh2TRf8tRDib92PlfuoPD6xqfQeIFAJwlXqd03XWglsMBkX6tGhgHUg4o1Im8m
+         HsdtS485U52WkTQAOXW08O6tVTkRGWKentlg1mqhgBDfsCv43fMd0n8O6vuGzr6Y9tEO
+         5mCMZw+5lQyT09nHEDpMyISeHno72yc/MMYeoSCiJr9zps2I4H4/mc7qnLA+BTZ8OEZT
+         ZDMomtTH5F6uQgA/4uokpA+mjaTEi7tFem4ZblhctmcPVdmMztevQY+a5Wh7CwvzBbDy
+         qhXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733445048; x=1734049848;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6TaUN9gc1Djzc3dX6IE8w4c+eTEm7u5dH4ywnDi0aU0=;
-        b=sI76dny6JkKmAO23YBxEUBqRLgtn8PMcCPeaHOg5WWB0TSqYXM8q3J9AwsmfAKxA2p
-         BDBXLu+QDfmS1OkwkwYGuePyhXg/FA68JjTchPTl0ZQTamuk2VTiYJFBGeV2k3P0Tql8
-         8/+Yd0UZyKY33R8Wqo/DQlLr2Cg8YLcTiVDwQxGw2HOLx+tSJdybeaHaa/BX6MRjFSKD
-         tEHVEpW6y42ARjMt9fzkuDapyx0BQ2CsG5BakdbPLt0xfaUUlkLONIgtppRk3IK9PJ5i
-         XJebd8N6hWLcWLd3kZQPJ5wfVsGff8P0xmU+1VgKHGEs2k9nLBfkzLVMliaOUOHsy1CH
-         rUIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXGjNMVB/bBkmt6Bsp6SKxQF90Kyoxb5+ZJOn67hXy3pZv9sg5qJj38xnQ6g3Ptwebshy4mWl+TcnMLuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyus8U2H7pnXEPtcBJS8Tf4vGoLvf0Vv3iCTE+Mvn6iKeyPdeH/
-	p8K1QCqizgdQ+49F9waOl7g0q4r20avKwgP/Pq+0baSA88FazfP0V0PZM5ff4w==
-X-Gm-Gg: ASbGncs50w0adjI2JeyT1ljnLl0ySb+jR5GC5vJe76+xJ0RPyAgGXViUjXvk99+MwB/
-	aO0FTHoq2fDBMbBRdTbLqe1dnlKgbMpvo3sa07YjTUVpQodwt2sb4E2ujWRqF0PMJtS1wXmEAZk
-	EkSQMTOLZXByKnxE32uYruGsHQK1m3KuIS+Bc67cyvO3HolZ7HXrpN4/kOIY/qfPYWESpnftejz
-	jOINJyeTuwtmSzZN57R7jDr5JjWGhDVQ/hhfS+VOncO
-X-Google-Smtp-Source: AGHT+IFDZJLMCz3nWoimfJa0RViiH6kDbmVW8ZEfAH6eqPnv25/IdRQdHr0MtEhEhTFoK2D+ovylnQ==
-X-Received: by 2002:a05:622a:1103:b0:466:b2fd:3e10 with SMTP id d75a77b69052e-46734cb5cddmr22825661cf.18.1733445048494;
-        Thu, 05 Dec 2024 16:30:48 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296cb98csm14086621cf.30.2024.12.05.16.30.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 16:30:47 -0800 (PST)
-Date: Thu, 05 Dec 2024 19:30:46 -0500
-Message-ID: <282573d0ea82ac71c8305d0c8cc89083@paul-moore.com>
+        d=1e100.net; s=20230601; t=1733445058; x=1734049858;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CuJ7vWjq9N4bf180yHzi7XHCXBBIt3hkByBmhQQJFDA=;
+        b=QsUeC7wtrwozZTJV0nn02uQWpLasYFVbgeC8qXgsL44pYnDJwnNQaZ5QVByVvXVxN9
+         NVqt8yasx/yHnpcGkqWtHaoSey/tw8rncjHP4dp7o2PQ/qzqD93FRVDIn22eFEbFiKJL
+         pTlDGytDVfJyzQpGVFMcwBw3PzIRbJbuojGqH8ur7xIotaJA0q4e46HntaCS1Cdq5RQj
+         AEIznMAe8lUrChIg8/wKoZ/IQ/QsJ/fWqQgk8o2Cf6UKPwcScZ7lKciQThyuhIIGY8Gs
+         iuvadlCJM3QjSywPMk0jCmPLzuJ/uKfs6QpnTw01ehjOQlRySELZGq077YTpZJC5Ti6M
+         mAXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYNUbw5fxBvou199nefXmhZpKHsj0/Q4UorJ0pU55eB8zjhsLSB4gjriKCq9HQbJKg8uNwQTf3xfBAqst1@vger.kernel.org, AJvYcCVmBafAIwIg9QGZwU/zPuygLRHOmduumiNO+P2IZAKPVFMFBek0qo2kTYEY+aGZuEhanmXi7z6U3QKiUR2w@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUsrxQr/0yBGi14OTC9kabpK/nFd55x4rDVivsU+GEYivw476m
+	cIgLsjydX2drJZKP0EyBV+ZgJ1lXlC74ZkFd4S/OLZhi7K8k3RZU
+X-Gm-Gg: ASbGncvkIAEDmdwcSiCbVw102kDXeEK8XyFTQo9BfoNMnUC4t6/+PtCvfpBB2X8cRk5
+	aUXbVnkQN8zTVMeyL3FNS35Gvktn3Vvv4Ck+lXE31YzVgfLtmu03DjvBzSn3bBKyxKAvPUxU7wk
+	TZoC2+9vwZt5tfwNJzE0ikhSpH02W9TUWniveWIawgjOsC39+lwZr8RveA2A+LhuZqz48F0heDc
+	pZuYh86s6twRYzg65KTjp5CyR3DM3QPB6Ja65bj6aIbppadbH+c/Q==
+X-Google-Smtp-Source: AGHT+IGdYCzXiyn+212FHw2lMBug+v2LYRIEy3va52yhzA+1vwvzueHuUr0mlkyKkF4A+lap/DWwIw==
+X-Received: by 2002:a17:906:3155:b0:a99:6791:5449 with SMTP id a640c23a62f3a-aa63a264d25mr68373866b.52.1733445057370;
+        Thu, 05 Dec 2024 16:30:57 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62601b5f3sm160564766b.120.2024.12.05.16.30.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Dec 2024 16:30:56 -0800 (PST)
+Date: Fri, 6 Dec 2024 00:30:54 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] mm/vma: make more mmap logic userland testable
+Message-ID: <20241206003054.cj767w67kydv3rms@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
+ <20241204235632.e44hokoy7izmrdtx@master>
+ <68dd91e4-b9c3-413c-b284-f43636e7ffba@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20241205_1904/pstg-lib:20241205_1757/pstg-pwork:20241205_1904
-From: Paul Moore <paul@paul-moore.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, roberto.sassu@huawei.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, audit@vger.kernel.org
-Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
-References: <20241204192514.40308-1-zohar@linux.ibm.com>
-In-Reply-To: <20241204192514.40308-1-zohar@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68dd91e4-b9c3-413c-b284-f43636e7ffba@lucifer.local>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Dec  4, 2024 Mimi Zohar <zohar@linux.ibm.com> wrote:
-> 
-> Like direct file execution (e.g. ./script.sh), indirect file execution
-> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-> the new security_bprm_creds_for_exec() hook to measure and verify the
-> indirect file's integrity.  Unlike direct file execution, indirect file
-> execution is optionally enforced by the interpreter.
-> 
-> Differentiate kernel and userspace enforced integrity audit messages.
-> 
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
-> Changelog v3:
-> - Mickael: add comment ima_bprm_creds_for_exec(), minor code cleanup,
->   add Co-developed-by tag.
-> 
-> Changelog v2:
-> - Mickael: Use same audit messages with new audit message number
-> - Stefan Berger: Return boolean from is_bprm_creds_for_exec()
-> 
->  include/uapi/linux/audit.h            |  1 +
->  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
->  security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
->  3 files changed, 55 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 75e21a135483..826337905466 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -161,6 +161,7 @@
->  #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
->  #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
->  #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
-> +#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data integrity */
+On Thu, Dec 05, 2024 at 07:03:08AM +0000, Lorenzo Stoakes wrote:
+>On Wed, Dec 04, 2024 at 11:56:32PM +0000, Wei Yang wrote:
+>> On Tue, Dec 03, 2024 at 06:05:07PM +0000, Lorenzo Stoakes wrote:
+>> >This series carries on the work the work started in previous series and
+>>                         ^^^      ^^^
+>>
+>> Duplicated?
+>
+>Thanks yes, but trivial enough that I'm not sure it's worth a
+>correction. Will fix if need to respin.
+>
+>>
+>> >continued in commit 52956b0d7fb9 ("mm: isolate mmap internal logic to
+>> >mm/vma.c"), moving the remainder of memory mapping implementation details
+>> >logic into mm/vma.c allowing the bulk of the mapping logic to be unit
+>> >tested.
+>> >
+>> >It is highly useful to do so, as this means we can both fundamentally test
+>> >this core logic, and introduce regression tests to ensure any issues
+>> >previously resolved do not recur.
+>> >
+>> >Vitally, this includes the do_brk_flags() function, meaning we have both
+>> >core means of userland mapping memory now testable.
+>> >
+>> >Performance testing was performed after this change given the brk() system
+>> >call's sensitivity to change, and no performance regression was observed.
+>>
+>> May I ask what performance test is done?
+>
+>mmtests brk1, brk2 (will-it-scale)
 
-I worry that "DATA_CHECK" is a bit vague, should we change the name so
-that there is some hint of either userspace enforcement or
-AT_EXECVE_CHECK?
+The one from here ?
 
-What about AUDIT_INTEGRITY_DATA_USER?
+https://github.com/gormanm/mmtests
 
---
-paul-moore.com
+>
+>You'd not really expect an impact based on relocation of this code, but
+>with brk it's always worth checking...
+>
+
+Yes, I am trying to know usually what perform test we would use.
+
+>>
+>>
+>> --
+>> Wei Yang
+>> Help you, Help me
+
+-- 
+Wei Yang
+Help you, Help me
 
