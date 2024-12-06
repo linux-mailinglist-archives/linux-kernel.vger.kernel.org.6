@@ -1,185 +1,251 @@
-Return-Path: <linux-kernel+bounces-434870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A146E9E6C3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:30:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507E69E6C37
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:29:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B2921680D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D1018887EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0CC1FF7B4;
-	Fri,  6 Dec 2024 10:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A961F943B;
+	Fri,  6 Dec 2024 10:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgNKkgPN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SU7A9n3c"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD5E1FCF6C;
-	Fri,  6 Dec 2024 10:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E3E1FCD1E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733480608; cv=none; b=dAJsWHhpBuARxxAu0aeSB6QthUQB0GChL4RTELWQgoGZLwNU7avb/OIWCMXjiZ5Le1ulIAqII/o17j4dFYhKFPQQw8AyGt/poGbL3merZLd3Ijn8YYG4FsmUSEMkrOPtbUJbgwOqNVFrXXm+BPZu2Oq6E+8737xEISbViUJ2+HI=
+	t=1733480647; cv=none; b=l8hD/9iyjRRBwE4swg96DzehwCIpijJ6QxPkpcU5Oojr3d3e+UyofEXwBeH66JLilF8rNfFQPlPbmDK/WF0zWlii5gzAO5zOcSuCMVvfTX0XNi9WajE0CJ9PgGLo3Kyfo3DOOzftjpCs9WBC6nr+qBChZZcsUHtDR5YWvMoBsek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733480608; c=relaxed/simple;
-	bh=F/jXH7kKA5jvf6NRT4P2cfIO7UZfrKllBmaBbhxhwis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=irsj+S2XrnImN8k6HuF3wuxD/7JP4vlB/F2W5Lk8p2oSG8nwYmFRagbKuzTkjexFgtDgTs5yYiZW2AtXV15LUvJEG8lfHebjPP3iA/0kjg9e+R7rfesNGhmvME5M4nvImFRLzUnej7kj4z2AyPGZegvqYzmtpr/7D3jr+ZKEWl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgNKkgPN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 313C7C4CEDE;
-	Fri,  6 Dec 2024 10:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733480607;
-	bh=F/jXH7kKA5jvf6NRT4P2cfIO7UZfrKllBmaBbhxhwis=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QgNKkgPNyOSBMvthDEYv9PaeVu7w20++VFlGSN5i7eJg+vLvD5pq5C1rEhinUBBPJ
-	 pLZgb/nHZHKty0MAoQjYeRM+HG7zilGMjR9Yzn7yiNY3IAnTseCuoQKxd8G9nziozY
-	 LPIMU6EH0eOW80lDIzQ7f3ENovHWzdTMiz3k8U8faUpizYBg2WUEKQIXuRgLuVYDhs
-	 o/Y0qf2HMTLetAuHNyiPpsOcJJsk1Qi4oJgXJuDdlv+4+Bj7iykrjwAxd7Hn9kBZko
-	 2TLbHBDqMpdNGfXT47k4UF4eV4kVeQ3A2iELEqTpU+1YbrlBACrQ96imbF4ts9/N2o
-	 7XIfJEqFW/90w==
-Message-ID: <e61b6151-43fd-4282-8440-dfee2aad3c1c@kernel.org>
-Date: Fri, 6 Dec 2024 10:23:22 +0000
+	s=arc-20240116; t=1733480647; c=relaxed/simple;
+	bh=tRfc9+Dw3s3DPWpSDxvIeRMbP/TKJ/og2SIB+waj9+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GZOZkH52doizYALwEeiqjHXpiVoj3+o4zyIj2vlrFxZTW3Wqqegx5ZPMv7qmhb0Gzi1CUscLJiCLYE/FeCRLI8ww089CK8GQ/r0GbvaFURjShtfFVrVN2AXqj8u3bkC37xPWh7yUYg33/sjNLxFwSpe35m0tcUYQH6xqg+mcFl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SU7A9n3c; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8e52so2975294a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 02:24:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733480644; x=1734085444; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PLgwVeLvRNtO9bqicju9J1Pto2NkQrdmzIyUqJYEUV8=;
+        b=SU7A9n3cP5P6Pe9ztMwZR6oUg9fHmQ1/F6HjN3ggcI4GyXUQzldy2R0hnoH4heQ+w2
+         fY9bYc4YbAWUcnF4cAIN5vLcxKfNQVF5RfvsA8rv6B4TbnvisnEcR+XUMqR1TG+gBScE
+         0BRaeW2rW8AUncvmwtIxABAGxzrx3Q9/qCFZg6VYn+ZkUkBQjRPW/bmEbh9brHDaX7lh
+         KuCni6w9/11OzMUZHbS0+fbqJc+zWufTTa7tLS6E4fzgDcqgCjgmxlAKqHv+9/YO2HnH
+         YAJud55rsKrjuIJGnN9FgsokPUJR4Ifx9ecNaqkBKtswkhVOse2qqG+uj2Ml6BZjQJdZ
+         Y2Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733480644; x=1734085444;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PLgwVeLvRNtO9bqicju9J1Pto2NkQrdmzIyUqJYEUV8=;
+        b=rhaHnRuUEnlzhrzUKtljMz8ND725ftbqcALnyAh3Ir416gbuFRmZQHnNlOTfAbMDcx
+         4RzsGyR6nGR2eqvKKvc+wucpw4RmqFPTg3Hu3v+Es6A8PCw3jsQRT6lF1fNYP0FA3Rw3
+         YASkEZutnsmUJh2I3aDFySu5ATQjJlJ/KtoEVyBnEh2RbbGUru2hKp+Xb4wVVEQUkC6A
+         DWEiZY2tUtGEiW6pa3kO8l7CAmO58C9dueIYfdK0NGDuVmNhAa4V76jlbY47OUIUgPtz
+         DcSsPZoCb5Dgt8Y625WDsN49ZdKH1ERG270YEu49UnBMn5vsAX32z2wR1HgRdypOJUrX
+         94gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVckShIDh9ZG4Nvit/zJ7Q9VByV6XqrSyNuv3FVpKi0dRzxpKTcbaM35SsWVYYw2D5QmtQGXI0Wx2wU800=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzovmFBs32P6ZHDPQOAsy4Pir/cmKWYGjZg3rP+C2mqqybThx6T
+	2UvZnKREKAgcrFHn5xVF8dcm31yF4pZ2xlLHVSXxc4BbvTEVdi1llt1aMAL9qoRJRjGK9xVaZag
+	BlRJyAGAGziRj0XDpoB7dMlqtMThVukHwcVa4
+X-Gm-Gg: ASbGncs3f7Iq/3arUaUbb1najGUNiSPshDDaNPOTB5LuH0AYJ60N9m9yBI0u9RYtbru
+	OB7PQuh74X5K8sItA9ZwSzBWQLUXL4xOm+h/wtrtv6nxeo+7Jj4HIpaRy3llDTA==
+X-Google-Smtp-Source: AGHT+IGKvsx2xWWNh3UHm3fPOR00Gf/Clm31KMJXm9Xn58PL2mc2A1jnoF5dmSvyfMx3jpdCZAKOMtspgRTkQeFmps4=
+X-Received: by 2002:a05:6402:e81:b0:5d0:cca6:233a with SMTP id
+ 4fb4d7f45d1cf-5d3be6b506bmr2608560a12.10.1733480643959; Fri, 06 Dec 2024
+ 02:24:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3] bpftool: Fix gen object segfault
-To: Rong Tao <rtoax@foxmail.com>, Andrii Nakryiko
- <andrii.nakryiko@gmail.com>, alexei.starovoitov@gmail.com
-Cc: ast@kernel.org, daniel@iogearbox.net, rongtao@cestc.cn,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <tencent_A7A870BF168D6A21BA193408D5645D5D920A@qq.com>
- <0b96aa24-13ca-4e0a-8e80-f2586fbe2b57@kernel.org>
- <CAEf4BzbLmXF9XB=fBvL7NLMoPmfD=DFFvuM8Fw5h6T7vfFXUFg@mail.gmail.com>
- <tencent_0F0D028440B2BE2E37547C5EFF467511FD09@qq.com>
- <77c9f13e-0162-4e92-b0b8-531122ab0f5e@kernel.org>
- <tencent_2AC9A80622AF8180D05996E4E58A4AE6EB06@qq.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <tencent_2AC9A80622AF8180D05996E4E58A4AE6EB06@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240325172707.73966-1-peternewman@google.com>
+ <20240325172707.73966-4-peternewman@google.com> <4a6b1645-c72c-41dd-a455-bdf0ec57d4c5@intel.com>
+ <CALPaoCiH0CZgEL8UQZeTrRtV_b-Oc6JyvaG4+txuZzsHCv976Q@mail.gmail.com>
+ <CALPaoChad6=xqz+BQQd=dB915xhj1gusmcrS9ya+T2GyhTQc5Q@mail.gmail.com> <2214f589-03d5-4037-8997-bbf78077a101@intel.com>
+In-Reply-To: <2214f589-03d5-4037-8997-bbf78077a101@intel.com>
+From: Peter Newman <peternewman@google.com>
+Date: Fri, 6 Dec 2024 11:23:53 +0100
+Message-ID: <CALPaoCgSO7HzK9BjyM8yL50oPyq9kBj64Nkgyo1WEJrWy5uHUg@mail.gmail.com>
+Subject: Re: [PATCH v1 3/6] x86/resctrl: Disallow mongroup rename on MPAM
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>, James Morse <james.morse@arm.com>, 
+	Stephane Eranian <eranian@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Uros Bizjak <ubizjak@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Xin Li <xin3.li@intel.com>, 
+	Babu Moger <babu.moger@amd.com>, Shaopeng Tan <tan.shaopeng@fujitsu.com>, 
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Jens Axboe <axboe@kernel.dk>, 
+	Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Tycho Andersen <tandersen@netflix.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Beau Belgrave <beaub@linux.microsoft.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2024-12-06 10:22 UTC+0800 ~ Rong Tao <rtoax@foxmail.com>
-> 
-> On 12/6/24 09:56, Quentin Monnet wrote:
->> 2024-12-06 09:11 UTC+0800 ~ Rong Tao <rtoax@foxmail.com>
->>> On 12/6/24 05:34, Andrii Nakryiko wrote:
->>>> On Thu, Dec 5, 2024 at 4:22 AM Quentin Monnet <qmo@kernel.org> wrote:
->>>>> On 05/12/2024 12:09, Rong Tao wrote:
->>>>>> From: Rong Tao <rongtao@cestc.cn>
->>>>>>
->>>>>> If the input file and output file are the same, the input file is
->>>>>> cleared
->>>>>> due to opening, resulting in a NULL pointer access by libbpf.
->>>>>>
->>>>>>       $ bpftool gen object prog.o prog.o
->>>>>>       libbpf: failed to get ELF header for prog.o: invalid `Elf'
->>>>>> handle
->>>>>>       Segmentation fault
->>>>>>
->>>>>>       (gdb) bt
->>>>>>       #0  0x0000000000450285 in linker_append_elf_syms
->>>>>> (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
->>>>>>       #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized
->>>>>> out>, opts=<optimized out>) at linker.c:453
->>>>>>       #2  0x000000000040c235 in do_object ()
->>>>>>       #3  0x00000000004021d7 in main ()
->>>>>>       (gdb) frame 0
->>>>>>       #0  0x0000000000450285 in linker_append_elf_syms
->>>>>> (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
->>>>>>       1296              Elf64_Sym *sym = symtab->data->d_buf;
->>>>>>
->>>>>> Signed-off-by: Rong Tao <rongtao@cestc.cn>
->>>>> Tested-by: Quentin Monnet <qmo@kernel.org>
->>>>> Reviewed-by: Quentin Monnet <qmo@kernel.org>
->>>> Isn't this papering over a deeper underlying issue? Why do we get
->>>> SIGSEGV inside the linker at all instead of just erroring out?
->>>> Comparison based on file path isn't a reliable way to check if input
->>>> and output are both the same file, so this fixes the most obvious
->>>> case, but not the actual issue.
->>> Thanks for your replay! The current scenario is similar to the following
->>> code.
->>> After a.txt is opened in read mode, it is opened in write mode again,
->>> which
->>> causes the contents of a.txt file to be cleared, resulting in no data
->>> being read,
->>>
->>>
->>>      fpr = fopen("a.txt", "r");
->>>      fpw = fopen("a.txt", "w");
->>>
->>>      /* fgets() will get nothing, It's not glibc's fault. */
->>>      while (fgets(buff, sizeof(buff), fpr))
->>>          printf("%s", buff);
->>>
->>>      fprintf(fpw, "....");
->>>
->>>      fclose(fpr);
->>>      fclose(fpw);
->>>
->>> corresponding to the SEGV of bpftool. Perhaps we can add the following
->>> warning
->>>
->>>      if (x == NULL) {
->>>          fprintf(stderr, "Maybe the file was opened for writing after
->>> opened for read\n");
->>>          return -EINVAL;
->>>      }
->>>
->>> Whether this warning can be added may depend on libelf's processing.
->>> I will
->>> try to fix this SEGV in libbpf, hopefully it can be fixed.
->> Thank you Rong, I'm not sure I followed your explanation (the above is
->> not bpftool code, is it?), but I think we just addressed the issue in
->> libbpf with:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/
->> commit/?id=e10500b69c3f3378f3dcfc8c2fe4cdb74fc844f5
-> Thanks for this, i just try this patch, there is still one problem as
-> follows:
-> 
->    $ cd tools/bpf/bpftool
->    $ make -j8
->    $ ls -l prog.o
->    -rw-r--r--. 1 rongtao rongtao 78408 Dec  6 10:18 prog.o
->    $ ./bpftool gen object prog.o prog.o
->    libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
->    Error: failed to link 'prog.o': Invalid argument (22)
->    $ ls -l prog.o
->    -rw-r--r--. 1 rongtao rongtao 0 Dec  6 10:18 prog.o
-> 
-> The input file is cleared (size=0), which is not what the user expected.
+Hi Reinette,
 
+On Fri, Dec 6, 2024 at 5:14=E2=80=AFAM Reinette Chatre
+<reinette.chatre@intel.com> wrote:
+>
+> +Tony
+>
+> Hi Peter,
+>
+> On 12/5/24 7:03 AM, Peter Newman wrote:
+> > On Sat, Apr 6, 2024 at 12:10=E2=80=AFAM Peter Newman <peternewman@googl=
+e.com> wrote:
+> >> On Thu, Apr 4, 2024 at 4:11=E2=80=AFPM Reinette Chatre
+> >> <reinette.chatre@intel.com> wrote:
+> >>>
+> >>> Hi Peter,
+> >>>
+> >>> On 3/25/2024 10:27 AM, Peter Newman wrote:
+> >>>> Moving a monitoring group to a different parent control assumes that=
+ the
+> >>>> monitors will not be impacted. This is not the case on MPAM where th=
+e
+> >>>> PMG is an extension of the PARTID.
+> >>>>
+> >>>> Detect this situation by requiring the change in CLOSID not to affec=
+t
+> >>>> the result of resctrl_arch_rmid_idx_encode(), otherwise return
+> >>>> -EOPNOTSUPP.
+> >>>>
+> >>>
+> >>> Thanks for catching this. This seems out of place in this series. It =
+sounds
+> >>> more like an independent fix that should go in separately.
+> >>
+> >> I asserted in a comment in a patch later in the series that the
+> >> mongroup parent pointer never changes on MPAM, then decided to follow
+> >> up on whether it was actually true, so it's only here because this
+> >> series depends on it. I'll post it again separately with the fix you
+> >> requested below.
+> >
+> > I'm preparing to finally re-post this patch, but another related
+> > question came up...
+> >
+> > It turns out the check added to mongroup rename in this patch is an
+> > important property that the user needs in order to correctly interpret
+> > the value returned by info/L3_MON/num_rmids.
+> >
+> > I had told some Google users to attempt to move a monitoring group to
+> > a new parent to determine whether the monitoring groups are
+> > independent of their parent ctrl_mon groups. This approach proved
+> > unwieldy when used on a system where the maximum number of allowed
+> > groups has already been created. (In their problem case, a
+> > newly-created process wanted to determine this property independently
+> > of the older process which had originally mounted resctrl.)
+>
+> Could you please elaborate why users need the information that monitoring
+> groups are independent of their parent ctrl_mon group?
+> I understood from [2] that Arm can be expected to support moving monitor
+> groups so I am concerned about userspace building some assumptions like
+> "if the monitoring groups are dependent on their parent ctrl_mon groups t=
+hen
+> monitor groups cannot be moved".
 
-And what would the user expect in this case, exactly?
+It's to make the high-level decision of whether ctrl_mon groups or
+mon_groups are to be used as the direct container of a job's tasks.
 
-	$ bpftool gen help
-	Usage: bpftool gen object OUTPUT_FILE INPUT_FILE [INPUT_FILE...]
+Given the semantics of PARTIDs vs PMGs on MPAM, the ctrl_mon groups
+will always be chosen as the container for tasks, so I don't have a
+use case for moving a monitoring group on MPAM.
 
-Bpftool clearly states that the first argument is an _output_ file. So
-yes, if an existing file is passed as the first argument, whether or not
-it's the same as one of the input files, it gets truncated. Same thing
-happens if you run "dd if=prog.o of=prog.o". If the user expects
-otherwise, they are mistaken: I don't see a valid use case for passing
-twice the same argument as both input and output, nor should we focus on
-detecting this particular case. If users do get mistaken, then we likely
-need to do a better work on the docs or the help commands instead.
+Perhaps determining whether moving a monitoring group is allowed in
+order to decide whether to use the model that requires it is
+backwards.
 
-Apologies for the misleading review earlier on your patch, as Andrii and
-Alexei have highlighted as well, this is the wrong approach.
+>
+> >
+> > Also, this information does not require an active rdtgroup pointer or
+> > CLOSID/RMID. The following will also work:
+> >
+> >  resctrl_arch_rmid_idx_encode(0, 0) !=3D resctrl_arch_rmid_idx_encode(1=
+, 0);
+> >
+> > I propose adding a new info file returning the result of this
+> > expression to be placed beside num_rmids. I would name it
+> > "mon_id_includes_control_id", as it implies that the hardware
+> > logically interprets the monitoring ID as concatenated with its parent
+> > control ID. This tells the user whether num_rmids defines the number
+> > of monitoring groups (and ctrl_mon groups) which can be created system
+> > wide or whether it's one more than the number of monitoring groups
+> > which can be created below every ctrl_mon group.
+>
+> Is the goal purely to guide interpretation of "info/L3_MON/num_rmids"?
 
-Quentin
+Partially, I suppose. It is necessary to know how many monitoring
+groups can be created.
+
+>
+> The "mon_id_includes_control_id" seems unique to a use case and if I unde=
+rstand
+> correctly needs additional interpretation from user space to reach the ac=
+tual
+> data of interest, which I understand to be the number of monitor groups t=
+hat
+> can be created.
+>
+> A while ago James proposed [1] adding a new "num_groups" inside each "mon=
+_groups"
+> directory, on x86 it will be the same as num_rmids, on Arm it will be the=
+ maximum PMG bits.
+> At a high level(*) I think something like this may be an intuitive way to=
+ address this
+> issue. What do you think?
+
+On ARM, it would mean num_groups child mon groups can be created,
+while on x86, it would mean between 0 and num_groups child mon_groups
+can be created.
+
+In either case, all instances of the file would return the same value
+at any time.
+
+>
+> (*) If considering this I do think it may be more intuitive to have the f=
+ile
+> be at the top level of the control group and be named "num_mon_groups" (o=
+r something better)
+> to support the idea that it includes the CTRL_MON group self and not that=
+ all monitor groups
+> are within the mon_groups directory.
+>
+> Also please keep in mind that during the discussions about moving monitor=
+ing groups
+> there were some ideas of needing to provide additional information to use=
+r space about
+> whether counters are reset on a monitor group move. I think that if we ar=
+e starting
+> to look at these random properties as files in resctrl (like "mon_id_incl=
+udes_control_id"
+> and maybe "counter_reset_on_monitor_group_move") then we should consider =
+some alternatives
+> to present these flags to prevent resctrl's info directory from turning i=
+nto a mess.
+
+In the meantime, num_rmids > num_closids will probably be a good
+enough heuristic to correctly guess the ID model.
+
+Thanks,
+-Peter
 
