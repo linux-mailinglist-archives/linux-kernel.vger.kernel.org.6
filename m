@@ -1,278 +1,156 @@
-Return-Path: <linux-kernel+bounces-435371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E369E76AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:07:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DD39E76AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:07:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B6E1882A24
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:07:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757C4284724
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990AD1F3D5E;
-	Fri,  6 Dec 2024 17:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xjmI5jrH"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679231F3D49;
+	Fri,  6 Dec 2024 17:07:35 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5D2145A1C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550691FFC4C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733504848; cv=none; b=QkRMgUPS/xKuikqfWUPCBMlwSNnwnlG1AgdbX1ZS8IMUWvbXXxVfZmPc6T7wD1bjAeCLN4kAv8m9sr059KqF5W3MgiTO0tBxRqU+PenntHXM4kSXHynr/1rBu8CP7G0A/DoKyC+N1xMJEtJc2GqQGrT5o+h4NhwDal/xyTpFw9o=
+	t=1733504855; cv=none; b=tM7Eo7y8RSXBxok0112r39zFpHv65hq3uoY95s5FRIQqVDl7wPxIhNSTiCJzawnTLvUQOT0Xc3xmcCQ35l/hoska2OMl4pUW5otSOF+x73r01zZc+50FrW7fJ5YOekxfs4Xr3FQ1ZTXBW93DT+iNk2lwHyKe7btLCNkc6vSAo8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733504848; c=relaxed/simple;
-	bh=XM2fVk8BmpmZZgFdsT/Tztenzixcq7DzM15hBQ2FyuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BUdSZENKl0GpVpQlEskwfKpAMnnxprf5FBeNoLJRPFXtMmjgeB7871k22HVIhw19OyPk42tExSzQ4hTfoT9cGS7EKv3EhpARPNjJ/Cr/XpPBZuKWIiZMzv+B22MZuhZ+u8mt3QVfLUXOYmEsn+QqsgzIwaJn3wneil71fP/AWiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xjmI5jrH; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d0f6fa6f8bso3250530a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 09:07:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733504845; x=1734109645; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vLpJg/ZXtkEHeTxDyyd4m3p5oVAzlFCx8NjwJbsinb4=;
-        b=xjmI5jrHn3oIuk+XHZNAV0DV7dyJ99ujN7IeZpWjjMNayTVRZTvV/ZebGzBKiZq+CT
-         xjVmurBKHffWCYk6yeaGsWMgzw0/YHQRrc5IbocyGGdx/AxlRKza2UWbPHGlpgaweP1j
-         zS9VUwvoRmKim5wjF1gxHnwLXP34f4ssd2BeWdgaopYMiknhuzuYpbemIdhG5KdgAGHl
-         ni3n4R5MrCQvOmyNXUSHRk819PlekHQ/t17d+n7j1aWlHF2Wy6eiKvhsLRxMreE96kPk
-         AfVJRPrW/Eqfh5BhiDstBnd8/u0lIUtDJWg/QNMZFh1gvK6+hftlT37B5gfpCczgheHu
-         QYcg==
+	s=arc-20240116; t=1733504855; c=relaxed/simple;
+	bh=4q8yDMTfc09NPzzwRYnIFy2ENH9ObjoaraJo4EZShcY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ql6yDWquuXirJNDBih3pVCsAUNVZGp6b6P5LDC+AaW5G3EwjD8WGiJCh3XBt79dX1cLXsxD6uY2OkKS/cRrWvCWl2f0cUUQvDdh0lzDnpXtPKWvIRkYluxB1MddxYToK2PMnuFR0yPjz+JD/1hrCHis4vj3GF6mb1wRm5Cyl2Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a81570ea43so9385195ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 09:07:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733504845; x=1734109645;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vLpJg/ZXtkEHeTxDyyd4m3p5oVAzlFCx8NjwJbsinb4=;
-        b=XHlOWTMP2b0AAePp9idSEB8FQzEsEWDPtMQq+g1Ogc3DMZbze8X9GH/SPn4yN3rnWg
-         4ohods0BFAFqqwe+F9EXD9IQYL6mXEeprqJQ7W7kg/cTn5ZzsbjG1BjcdAnjY3Phd8xd
-         4zwhYBed0GC+H7mWF6x4eWMn4Qe+aXyElZKGnfZlAH43OSCWt0FTIeryfTbUlVlq8IYR
-         jzmu/73bsyYJ972yTHbb95EWQwIVqHgEYt6RMvFY1NSIDp4wMl23a8Yy/lOWKh7Jp51h
-         wrfSRRYaauWDxAyFzzydzm0LLh9FXb65ISA2qvFZ11ZKimAuRxpuin+Qv7RaD2GbLl11
-         /Oeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwnIgRrZ4e1PsjanFVSTlzc858pPujYAawdyvQD5i+wxPdp/o8U5S6j2Fosu2l4RfmDfI7nxBEjYqog5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9+66O1AaHdOTD9UMkMpiSJWBdaT0wrBANg4RKIT+QNXCA6cZL
-	U9/mn/U9yc/aBU+yEUSUoK7jWG4jDPGjFxOpu+rr5QzN2il/0MJwlkrTLcd74AA1pQVOgWPfv8z
-	9M0nuKNhAJdxE6IBtw6o2G36egFIbkgXBbX3Nmg==
-X-Gm-Gg: ASbGnctcM0LannCxwUcjxcsbRP8NRaLnib95IOFQYjpFbeM6/ZseUwRjZo3eNVtsoKC
-	FoX30RGoVY8BCe15m7Bk+kBxFydy7FMyBZuszdV3dfKM9GrwlQbSzNCEBQJ90cf//DA==
-X-Google-Smtp-Source: AGHT+IHRCNLjIBg+iMQYmfbQFP6R63D3BSZpfZaZ/J9rF+1bkY9cc2oTZoFpii/ei8CrYUwt6Tj9ffu61txKALNtkXQ=
-X-Received: by 2002:aa7:d1cb:0:b0:5d3:cff2:71a3 with SMTP id
- 4fb4d7f45d1cf-5d3cff294f2mr2163067a12.33.1733504845038; Fri, 06 Dec 2024
- 09:07:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733504852; x=1734109652;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K3ToCg1oZmUTHAe8VqTMmZaX3s+UFbukdNccXKpQqBM=;
+        b=lRFYABMyoSz6uyR+GjzbiUkk/xyYPTDiYgTcrHcOgDGre4XE/nJ1ZcAL6X2rZSETY2
+         10/d6ydFu3s/lvyG6FKGhcHYgB07zgjVnauCz6FboKbXfo7f3HLGycgccLLkgqCRRzl5
+         +30F9bVpccZy8VQpZznEylYrQJ/LMMC8hG0HWI/kz15YGUomEUdJzqtuLuFKfrZymm5T
+         ALeKLBuDi2ewb0uyn6MVV/PrTv79aFrRE+ZhepIPXm7RmfyOX/leL1YLj30rANklDsbi
+         8tYF2+KBO1lMBsTOGLYdc8FE179PC9Kg6eIs1uHGpq/tzqnfZRsUhwJU6w5OuL8XQyB0
+         LOQg==
+X-Forwarded-Encrypted: i=1; AJvYcCV39cmhrsEqJpgH6NcS91LKf6mQ0O32PRhnKvvhhKVcj0gLfGpqSGXViklgqkDvCvuNCeiMAiq7I+sK8iY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpwGCL0V6G+RNEokCfYlbgAzq8YB5cTqNHhVjMDveIooVF7kZz
+	DncCgfbWvbgzsiTL0EEDfSamcAP8KNu0QOj3qdGZf7mwqhZp8bk+3jSO/2FvCn2+klf2gyXxhAy
+	/FNy+e3vAn5uf2Dvx2/zoNYyw9ZPfGpEn/ZVQU4gqwa4Cra6d8G0Ckp0=
+X-Google-Smtp-Source: AGHT+IH5KQd3lTPqzzszmHoWEmqSW5kBjzQ6bpWqs7MzSI8Vdtg6aMzGrjdBh6vQJjiXhA22kcylN2Fjx3SA257i1NtjWGt1tcfq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
- <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com> <Z08+UnATLQQ6kmaD@p14s>
- <1b7c8c21-37bc-4a1a-91bb-1d736d900f00@foss.st.com> <CANLsYkxk0NdKmbzOPEcVHbVpW9hPEz0gS-+9PysWMULDMxbkxw@mail.gmail.com>
-In-Reply-To: <CANLsYkxk0NdKmbzOPEcVHbVpW9hPEz0gS-+9PysWMULDMxbkxw@mail.gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Fri, 6 Dec 2024 10:07:14 -0700
-Message-ID: <CANLsYkxqoN+CT6f=FHVsb_POgP9X8pp6-B+kQbybAU6qGMd5=w@mail.gmail.com>
-Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
- optional operation
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1e06:b0:3a7:d082:651 with SMTP id
+ e9e14a558f8ab-3a811db1f7amr47114085ab.12.1733504852456; Fri, 06 Dec 2024
+ 09:07:32 -0800 (PST)
+Date: Fri, 06 Dec 2024 09:07:32 -0800
+In-Reply-To: <67388dcc.050a0220.bb738.0008.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67532f54.050a0220.a30f1.0142.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_evict_inode (4)
+From: syzbot <syzbot+5c81eb8c0a380fa578b5@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 6 Dec 2024 at 10:05, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> On Thu, 5 Dec 2024 at 11:22, Arnaud POULIQUEN
-> <arnaud.pouliquen@foss.st.com> wrote:
-> >
-> > Hello Mathieu,
-> >
-> > Thanks for the review!
-> > I just need to clarify a point below before preparing the next revision.
-> >
-> > On 12/3/24 18:22, Mathieu Poirier wrote:
-> > > On Thu, Nov 28, 2024 at 09:42:10AM +0100, Arnaud Pouliquen wrote:
-> > >> This patch updates the rproc_ops structures to include two new optional
-> > >> operations.
-> > >>
-> > >> - The load_fw() op is responsible for loading the remote processor
-> > >> non-ELF firmware image before starting the boot sequence. This ops will
-> > >> be used, for instance, to call OP-TEE to  authenticate an load the firmware
-> > >> image before accessing to its resources (a.e the resource table)
-> > >>
-> > >> - The release_fw op is responsible for releasing the remote processor
-> > >> firmware image. For instance to clean memories.
-> > >> The ops is called in the following cases:
-> > >>  - An error occurs between the loading of the firmware image and the
-> > >>    start of the remote processor.
-> > >>  - after stopping the remote processor.
-> > >>
-> > >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> > >> ---
-> > >> Update vs version V13:
-> > >> - Rework the commit to introduce load_fw() op.
-> > >> - remove rproc_release_fw() call from  rproc_start() as called in
-> > >>   rproc_boot() and rproc_boot_recovery() in case of error.
-> > >> - create rproc_load_fw() and rproc_release_fw() internal functions.
-> > >> ---
-> > >>  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
-> > >>  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
-> > >>  include/linux/remoteproc.h               |  6 ++++++
-> > >>  3 files changed, 35 insertions(+), 1 deletion(-)
-> > >>
-> > >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > >> index ace11ea17097..8df4b2c59bb6 100644
-> > >> --- a/drivers/remoteproc/remoteproc_core.c
-> > >> +++ b/drivers/remoteproc/remoteproc_core.c
-> > >> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
-> > >>      kfree(rproc->cached_table);
-> > >>      rproc->cached_table = NULL;
-> > >>      rproc->table_ptr = NULL;
-> > >> +    rproc_release_fw(rproc);
-> > >
-> > > This is not needed since rproc_release_fw() is called in rproc_boot().
-> > >
-> > >>  unprepare_rproc:
-> > >>      /* release HW resources if needed */
-> > >>      rproc_unprepare_device(rproc);
-> > >> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
-> > >>              return ret;
-> > >>      }
-> > >>
-> > >> +    ret = rproc_load_fw(rproc, firmware_p);
-> > >> +    if (ret)
-> > >> +            return ret;
-> > >> +
-> > >>      /* boot the remote processor up again */
-> > >>      ret = rproc_start(rproc, firmware_p);
-> > >> +    if (ret)
-> > >> +            rproc_release_fw(rproc);
-> > >>
-> > >>      release_firmware(firmware_p);
-> > >>
-> > >> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
-> > >>                      goto downref_rproc;
-> > >>              }
-> > >>
-> > >> +            ret = rproc_load_fw(rproc, firmware_p);
-> > >> +            if (ret)
-> > >> +                    goto downref_rproc;
-> > >
-> > > In case of error the firmware is not released.
-> >
-> > I considered that if the load fails, the firmware is not loaded
-> > and therefore does not need to be released.
-> > In other words, in case of a load error in OP-TEE, OP-TEE should
-> > perform the cleanup to return to its initial state before the load.
-> >
-> > Do you see a use case where we should force the release in Linux?
-> > Otherwise, I would propose to implement this behavior later if needed.
-> >
->
-> I'm talking about release_firmware() - it is not called if
-> rproc_load_fw(), and it needs to.
+syzbot has found a reproducer for the following issue on:
 
-Take 2: I'm talking about release_firwware() - it is not called if
-rproc_load_fw() fails and it needs to.
+HEAD commit:    b8f52214c61a Merge tag 'audit-pr-20241205' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ba98df980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=335e39020523e2ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=5c81eb8c0a380fa578b5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155bd0f8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cad330580000
 
->
-> > Thanks,
-> > Arnaud
-> >
-> > >
-> > >> +
-> > >>              ret = rproc_fw_boot(rproc, firmware_p);
-> > >> +            if (ret)
-> > >> +                    rproc_release_fw(rproc);
-> > >>
-> > >>              release_firmware(firmware_p);
-> > >>      }
-> > >> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
-> > >>      kfree(rproc->cached_table);
-> > >>      rproc->cached_table = NULL;
-> > >>      rproc->table_ptr = NULL;
-> > >> +    rproc_release_fw(rproc);
-> > >
-> > > Please move this after rproc_disable_iommu().
-> > >
-> > >
-> > >>  out:
-> > >>      mutex_unlock(&rproc->lock);
-> > >>      return ret;
-> > >> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
-> > >>      if (!rproc->ops->coredump)
-> > >>              rproc->ops->coredump = rproc_coredump;
-> > >>
-> > >> -    if (rproc->ops->load)
-> > >> +    if (rproc->ops->load || rproc->ops->load_fw)
-> > >>              return 0;
-> > >>
-> > >>      /* Default to ELF loader if no load function is specified */
-> > >> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> > >> index 0cd09e67ac14..2104ca449178 100644
-> > >> --- a/drivers/remoteproc/remoteproc_internal.h
-> > >> +++ b/drivers/remoteproc/remoteproc_internal.h
-> > >> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
-> > >>      return (val <= (size_t) -1);
-> > >>  }
-> > >>
-> > >> +static inline void rproc_release_fw(struct rproc *rproc)
-> > >> +{
-> > >> +    if (rproc->ops->release_fw)
-> > >> +            rproc->ops->release_fw(rproc);
-> > >> +}
-> > >> +
-> > >> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
-> > >> +{
-> > >> +    if (rproc->ops->load_fw)
-> > >> +            return rproc->ops->load_fw(rproc, fw);
-> > >> +
-> > >> +    return 0;
-> > >> +}
-> > >> +
-> > >>  #endif /* REMOTEPROC_INTERNAL_H */
-> > >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > >> index 2e0ddcb2d792..ba6fd560f7ba 100644
-> > >> --- a/include/linux/remoteproc.h
-> > >> +++ b/include/linux/remoteproc.h
-> > >> @@ -381,6 +381,10 @@ enum rsc_handling_status {
-> > >>   * @panic:  optional callback to react to system panic, core will delay
-> > >>   *          panic at least the returned number of milliseconds
-> > >>   * @coredump:         collect firmware dump after the subsystem is shutdown
-> > >> + * @load_fw:        optional function to load non-ELF firmware image to memory, where the remote
-> > >
-> > > Round this down to 80 characters please.  Here having a longer line doesn't
-> > > improve readability.
-> > >
-> > >> + *          processor expects to find it.
-> > >> + * @release_fw:     optional function to release the firmware image from memories.
-> > >> + *          This function is called after stopping the remote processor or in case of error
-> > >
-> > > Same.
-> > >
-> > > More comments tomorrow or later during the week.
-> > >
-> > > Thanks,
-> > > Mathieu
-> > >
-> > >>   */
-> > >>  struct rproc_ops {
-> > >>      int (*prepare)(struct rproc *rproc);
-> > >> @@ -403,6 +407,8 @@ struct rproc_ops {
-> > >>      u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> > >>      unsigned long (*panic)(struct rproc *rproc);
-> > >>      void (*coredump)(struct rproc *rproc);
-> > >> +    int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
-> > >> +    void (*release_fw)(struct rproc *rproc);
-> > >>  };
-> > >>
-> > >>  /**
-> > >> --
-> > >> 2.25.1
-> > >>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cfa353b9a35b/disk-b8f52214.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4e744ff2abaf/vmlinux-b8f52214.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2dbf687d48e1/bzImage-b8f52214.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/45ab44aae0f6/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5c81eb8c0a380fa578b5@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/inode.c:920!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5827 Comm: syz-executor120 Not tainted 6.13.0-rc1-syzkaller-00182-gb8f52214c61a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:f2fs_evict_inode+0x1671/0x1690 fs/f2fs/inode.c:920
+Code: 31 ff 89 de e8 f0 f0 a3 fd 40 84 ed 75 2c e8 e6 ed a3 fd 4c 8b 3c 24 e9 63 eb ff ff e8 d8 ed a3 fd 90 0f 0b e8 d0 ed a3 fd 90 <0f> 0b e8 c8 ed a3 fd 90 0f 0b 90 e9 fb fe ff ff e8 ba ed a3 fd e8
+RSP: 0018:ffffc90003d17918 EFLAGS: 00010293
+RAX: ffffffff83fb83f0 RBX: 0000000000000002 RCX: ffff88804cda8000
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff83fb7dd7 R09: 1ffff1100cbe51ad
+R10: dffffc0000000000 R11: ffffed100cbe51ae R12: ffff888065f28910
+R13: ffff888065f288c8 R14: dffffc0000000000 R15: ffff88807e0e0000
+FS:  00005555814413c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2787dbd000 CR3: 0000000021b7c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ evict+0x4e8/0x9a0 fs/inode.c:796
+ dispose_list fs/inode.c:845 [inline]
+ evict_inodes+0x6f6/0x790 fs/inode.c:899
+ generic_shutdown_super+0xa0/0x2d0 fs/super.c:627
+ kill_block_super+0x44/0x90 fs/super.c:1710
+ kill_f2fs_super+0x344/0x690 fs/f2fs/super.c:4972
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f278ef02cb7
+Code: 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffca034a6e8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f278ef02cb7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffca034a7a0
+RBP: 00007ffca034a7a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000206 R12: 00007ffca034b850
+R13: 0000555581442700 R14: 0000000000016846 R15: 0000000000000008
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:f2fs_evict_inode+0x1671/0x1690 fs/f2fs/inode.c:920
+Code: 31 ff 89 de e8 f0 f0 a3 fd 40 84 ed 75 2c e8 e6 ed a3 fd 4c 8b 3c 24 e9 63 eb ff ff e8 d8 ed a3 fd 90 0f 0b e8 d0 ed a3 fd 90 <0f> 0b e8 c8 ed a3 fd 90 0f 0b 90 e9 fb fe ff ff e8 ba ed a3 fd e8
+RSP: 0018:ffffc90003d17918 EFLAGS: 00010293
+RAX: ffffffff83fb83f0 RBX: 0000000000000002 RCX: ffff88804cda8000
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff83fb7dd7 R09: 1ffff1100cbe51ad
+R10: dffffc0000000000 R11: ffffed100cbe51ae R12: ffff888065f28910
+R13: ffff888065f288c8 R14: dffffc0000000000 R15: ffff88807e0e0000
+FS:  00005555814413c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2787dbd000 CR3: 0000000021b7c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
