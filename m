@@ -1,217 +1,140 @@
-Return-Path: <linux-kernel+bounces-434966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768DB9E6D96
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:48:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FFDF9E6D99
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69031884846
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775631643AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203011FF7A1;
-	Fri,  6 Dec 2024 11:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FB71FF7AC;
+	Fri,  6 Dec 2024 11:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOAAfRfF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b="Rzt8tD1P"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5253C1BDA97;
-	Fri,  6 Dec 2024 11:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7B61DB361
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733485692; cv=none; b=nt63nswO4Fk70mh+U0Kj3dVwJ7uKKC7njAV6VkA5I7q/eAH/yyzWW67pD0dg53ZnY49Mz0pd/vMdVJC1ZdLRz/6K7AH3/sfok63noqlxwh/gJ5V2eUggUc+OsRkDeHgo8GVTLuAq3WV4n+dEhEL46eaFPBQpUt8n3UXMPJHcjJg=
+	t=1733485884; cv=none; b=KJ+zpQUHY9WqzD8QcH0brB36asQHHT6nj4bT1Sy9OzHjc7tz0zXX8wrw/wR9KflX81XEqy1wCp5h4AmVbXUqgCEg5mHJsjt/OV77vkTmL0u4cxpoZvPMU+21i0q5G9NPwgBK3JCWAJaTBBib6LfWE3wtNZrBB/GO0l4l+wfUOCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733485692; c=relaxed/simple;
-	bh=qEiT145v+mmmXz/X9So4yw/RdnpSM6fmg8D+g80PLnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+plK4sZ8l6kDoLGFzs0hA5r8CrsXnLFBmefso/RoFEy4Z7HEsZe7hij6uieeRVoaPYTHMd/tRAjaOufF9f9TGAg4UT2O9rgYZhE1oryUfgn0Pn/JH/MJlnaKh4u3CsUecgIkV5nSywvvxrybx94peYBda3CTbKaot0LyGTdSd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOAAfRfF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A25C4CED1;
-	Fri,  6 Dec 2024 11:48:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733485691;
-	bh=qEiT145v+mmmXz/X9So4yw/RdnpSM6fmg8D+g80PLnA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EOAAfRfFmhScD8M4YKfBg2hzYH8fYRKO6PP8IZIL7Ra22OCa9M499fbQ+fQZ715Uu
-	 FvFVlvEe+fXm9svkgmCugWUW+noYen6B/6nWguggGORGE+7XAqjE1pNL1N3uKDzd5y
-	 n6G2Z1exSB00BxTvr1sardR1LSMTqkhupS1IMTBJyiNMoYszJ8E8fDp7Jbyxmr+zhI
-	 UYKFa6qjWlvv61+6eSrwexgt2y1Y7Ljs50KL8opS0XeRCvwTXn/SbMEUqF+kTlyaj+
-	 ryKUFjVCrbYt524ZClofRwD/yxQmIxoyiqmdmGk+tuGzQuNdqdKa98fXWxB+YsATBW
-	 opKuZyDIwvP7g==
-Date: Fri, 6 Dec 2024 11:48:07 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	valentina.fernandezalanis@microchip.com
-Subject: Re: [PATCH v1] i2c: microchip-core: actually use repeated sends
-Message-ID: <20241206-random-spectacle-9de88d412653@spud>
-References: <20240930-uneasy-dorsal-1acda9227b0d@spud>
- <Zvu38H2Y-pRryFFQ@shikoro>
- <20241001-haphazard-fineness-ac536ff4ae96@spud>
- <20241024-snagged-elated-d168d0d6bf35@spud>
+	s=arc-20240116; t=1733485884; c=relaxed/simple;
+	bh=jcKtMmgxbU/AntUCd/uszdkY27gKuPkRyQVGCHTm1Vk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AB4nkjdl7for/pYW6keWsT/2tL8G3fMNo8eveqCoqKzgeC559AxTu7b1U3mY59YrNMRP8i87ZfR8RF0urQvae1jFSiu+jZlF81y54q0gRTpUKTY+lIE2GPuIm/V2CHN51tQaJWC0tSe4G2iZibdpoBfHUO2icy0KWGylmvu+t/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com; spf=pass smtp.mailfrom=cornersoftsolutions.com; dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b=Rzt8tD1P; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cornersoftsolutions.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e3824e1adcdso1714033276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:51:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cornersoftsolutions.com; s=google; t=1733485881; x=1734090681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q62PPXsE+VSeYwcr9qAvv8yZnUeLKqIqrisYrdVxhtU=;
+        b=Rzt8tD1P2KbhSHWSTGtCfA1sPzh0m/puG08v3FGZe5sx5m+sC58HNYOFSC/L44Uefg
+         W/Sbt/NiOZzRx1kKAIJYItaCt0A/ms28XSr6b1vVSnGWpItcw/h+sxIQQ7TbXYKyxWCD
+         MwP8W6EN9Sm+ZE56v0tKLRfwNBuBaUdHZGsVnarA1wdkfFxYl8Ih63xZXi8K/9BiXAxc
+         4gDXLFOWgvXEq3E2JKKy2a1cYBniVxYe0Rhlxjpje2k++ZmIFH9TE0TY68aXLvWFPRyV
+         /R+jjt6N7DSwl3h+TBdfNtF1OFdGwUaGtY+kGUPdCK7NNqzT8085YcYzK07HNLqZwugO
+         FhoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733485881; x=1734090681;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q62PPXsE+VSeYwcr9qAvv8yZnUeLKqIqrisYrdVxhtU=;
+        b=cDI2yUqCNlWKWv/rQIzGp+A5wIzdtiq/D0w17SiyEgqApISn7kqsRPjw/E/fFBQMd/
+         1PF4zE5ArxzcvvXps3NlN8z9wDUI9bQAu3dgo5ajiZ+3T+hsXk7BhnlY8bH1JEdwLf3J
+         ip3l7GrXgSyLALvjYstp4ssza/n2pugXi0DDKi1ImZ5GYPfNeGXPzJhbnGlcSq+CNBBW
+         m1p1sAq4EgtvTyLvcUauUCBZL3tC2YSgMRdSTc9flNsssn67a2hjXjO1wWvacqRfaKmU
+         avEENHD3ww8RmV0GGjsmYr8I2NDOX8bEi3FzOX7L1Mv8cqu7kACcjCorBo09px6CWeG9
+         V/7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXX0g0c7ST2m14MLZQRnK5sG75+632VPdTizMdWfFzViZtDsukmA96Fb0Tot1IHrv+N9gWbVi+XHced45M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9iDlkIdz1WKrnFSMh1gN0TAmSGyxmG2uGUlzU6mt/bBIM1PUP
+	wU4HLek+GNTHUI4ChRg714s+J+BS3gkm8a0ZTaK/3XwTDvZKWnfRogKbBb118Xo=
+X-Gm-Gg: ASbGncu5l9enl+/VF+TaDdBxqUWcZ5B65LdJGjeytVgOrQ4zlFA9/raNMIaZa0BEt5p
+	80R8qG9vDMl1rO1okLB/b1Q5agInBrFkzgPY7+Wv6FhxT76UQU/o0igL0nAq5XjtAoXv06DBs9a
+	W/EXSP2x4hMa3J8kaaT54zZ5dEFhG89VUNXa+Rae+ZJYSci1Z6yYAFaKQs+vqZADnSXyKQOAWsN
+	8CzZ/ISKSLQqc94G1DAR+YIXnSjFrqu/gAV22X6Uo3bmaXdxA/RAzQnHyiv7i4NyAqI1PJ9dX93
+	3LOrIKvzQk8Zybbigf29pC7JmIc=
+X-Google-Smtp-Source: AGHT+IG4eyt1sQPkyNP04ZtSf+u7M13/3ucraXNd9uqXuxzTv7vxnzMKhLqN6poDe47NCkgRh5GBaA==
+X-Received: by 2002:a05:6902:2388:b0:e39:787e:d9a with SMTP id 3f1490d57ef6-e3a0b786147mr1906937276.53.1733485881356;
+        Fri, 06 Dec 2024 03:51:21 -0800 (PST)
+Received: from ken-engineering-laptop.tail1e0d8d.ts.net ([47.196.152.243])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6efee2fc130sm802467b3.4.2024.12.06.03.51.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 03:51:21 -0800 (PST)
+From: Ken Sloat <ksloat@cornersoftsolutions.com>
+To: 
+Cc: Ken Sloat <ksloat@cornersoftsolutions.com>,
+	=?UTF-8?q?Am=C3=A9lie=20Delaunay?= <amelie.delaunay@foss.st.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	dmaengine@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: dma: st-stm32-dmamux: Add description for dma-cell values
+Date: Fri,  6 Dec 2024 06:50:18 -0500
+Message-Id: <20241206115018.1155149-1-ksloat@cornersoftsolutions.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2o2i0BUpv0Ef1SLM"
-Content-Disposition: inline
-In-Reply-To: <20241024-snagged-elated-d168d0d6bf35@spud>
+Content-Transfer-Encoding: 8bit
 
+The dma-cell values for the stm32-dmamux are used to craft the DMA spec
+for the actual controller. These values are currently undocumented
+leaving the user to reverse engineer the driver in order to determine
+their meaning. Add a basic description, while avoiding duplicating
+information by pointing the user to the associated DMA docs that
+describe the fields in depth.
 
---2o2i0BUpv0Ef1SLM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ken Sloat <ksloat@cornersoftsolutions.com>
+---
 
-Hey Wolfram,
+Changes in v2:
+    - Remove redundant comment regarding dma-cells val
+    - Reference bindings doc for DMA controller
 
-On Thu, Oct 24, 2024 at 10:36:33AM +0100, Conor Dooley wrote:
-> On Tue, Oct 01, 2024 at 11:16:24AM +0100, Conor Dooley wrote:
-> > On Tue, Oct 01, 2024 at 10:50:56AM +0200, Wolfram Sang wrote:
-> > > > At present, where repeated sends are intended to be used, the
-> > > > i2c-microchip-core driver sends a stop followed by a start. Lots of=
- i2c
-> > >=20
-> > > Oh, this is wrong. Was this just overlooked or was maybe older hardwa=
-re
-> > > not able to generated correct repeated-starts?
-> >=20
-> > Overlooked, because the devices that had been used until recently didn't
-> > care about whether they got a repeated start or stop + start. The bare
-> > metal driver upon which the Linux one was originally based had a trivial
-> > time of supporting repeated starts because it only allows specific sorts
-> > of transfers. I kinda doubt you care, but the bare metal implementation
-> > is here:
-> > https://github.com/polarfire-soc/polarfire-soc-bare-metal-library/blob/=
-614a67abb3023ba47ea6d1b8d7b9a9997353e007/src/platform/drivers/mss/mss_i2c/m=
-ss_i2c.c#L737
-> >=20
-> > It just must have been missed that the bare metal method was not replac=
-ed.
-> >=20
-> > > > devices must not malfunction in the face of this behaviour, because=
- the
-> > > > driver has operated like this for years! Try to keep track of wheth=
-er or
-> > > > not a repeated send is required, and suppress sending a stop in the=
-se
-> > > > cases.
-> > >=20
-> > > ? I don't get that argument. If the driver is expected to do a repeat=
-ed
-> > > start, it should do a repeated start. If it didn't, it was a bug and =
-you
-> > > were lucky that the targets could handle this. Because most controlle=
-rs
-> > > can do repeated starts correctly, we can also argue that this works f=
-or
-> > > most targets for years. In the unlikely event that a target fails aft=
-er
-> > > converting this driver to proper repeated starts, the target is buggy
-> > > and needs fixing. It would not work with the majority of other
-> > > controllers this way.
-> > >=20
-> > > I didn't look at the code but reading "keeping track whether rep start
-> > > is required" looks wrong from a high level perspective.
-> >=20
-> > I think if you had looked at the code, you'd (hopefully) understand what
-> > I meant w.r.t. tracking that.
-> > The design of this IP is pretty old, and intended for use with other
-> > logic implemented in FPGA fabric where each interrupt generated by
-> > the core would be the stimulus for the state machine controlling it to
-> > transition state. Cos of that, when controlling it from software, the
-> > interrupt handler assumes the role of that state machine. When I talk
-> > about tracking whether or not a repeated send is required, that's
-> > whether or not a particular message in a transfer requires it, not
-> > whether or not the target device requires them or not.
-> >=20
-> > Currently the driver operates by iterating over a list of messages in a
-> > transfer, and calling send() for each one, and then effectively "loopin=
-g"
-> > in the interrupt handler until the message has been sent. By looking at
-> > the current code, you can see that the completion's "lifecycle" matches
-> > that. Currently, at the end of each message being sent
-> > 	static irqreturn_t mchp_corei2c_handle_isr(struct mchp_corei2c_dev *id=
-ev)
-> > 	{
-> > =09
-> > 		<snip>
-> > =09
-> > 		/* On the last byte to be transmitted, send STOP */
-> > 		if (last_byte)
-> > 			mchp_corei2c_stop(idev);
-> > =09
-> > 		if (last_byte || finished)
-> > 			complete(&idev->msg_complete);
-> > =09
-> > 		return IRQ_HANDLED;
-> > 	}
-> > a stop is put on the bus, unless !last_byte, which is only true in error
-> > cases. Clearly I don't need to explain why that is a problem to you...
-> > You'd think that we could do something like moving the stop out of the
-> > interrupt handler, and to the loop in mchp_corei2c_xfer(), where we have
-> > access to the transfer's message list and can check if a stop should be
-> > sent or not - that's not really possible with the hardware we have.
-> >=20
-> > When the interrupt handler completes, it clears the interrupt bit in the
-> > IP, as you might expect. The controller IP uses that as the trigger to
-> > transition state in its state machine, which is detailed in
-> > https://ww1.microchip.com/downloads/aemDocuments/documents/FPGA/Product=
-Documents/UserGuides/ip_cores/directcores/CoreI2C_HB.pdf
-> > On page 23, row 0x28, you can see the case that (IIRC) is the
-> > problematic one. It is impossible to leave this state without triggering
-> > some sort of action.
-> > The only way that I could see to make this work correctly was to get the
-> > driver track whether or not the next message required a repeated start =
-or
-> > not, so as to transition out of state 0x28 correctly.
-> >=20
-> > Unfortunately, then the clearing of the interrupt bit causing state
-> > transitions kicked in again - after sending a repeated start, it will
-> > immediately attempt to act (see state 0x10 on page 23). Without
-> > reworking the driver to send entire transfers "in one go" (where the
-> > completion is that of the transfer rather than the message as it
-> > currently is) the controller will re-send the last target address +
-> > read/write command it sent, instead of the next one. That's why there's
-> > so many changes outside of the interrupt handler and so many additional
-> > members in the controller's private data structure.
-> >=20
-> > I hope that that at least makes some sense..
-> >=20
-> > > The driver
-> > > should do repeated start when it should do repeated start.
-> >=20
-> > Yup, that's what I'm trying to do here :)
->=20
-> I'd like to get this fix in, and Andi only had some minor comments that
-> didn't require a respin. I don't want to respin or resend while this
-> conversation remains unresolved.
+ .../devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Could you please respond to this thread? I don't want to respin without
-resolving this conversation since I feel like we'd just end up having it
-all over again.
+diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
+index f26c914a3a9a..b7bca1a83769 100644
+--- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
++++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
+@@ -15,6 +15,16 @@ allOf:
+ properties:
+   "#dma-cells":
+     const: 3
++    description: |
++      Each cell represents the following:
++      1. The mux input number/line for the request
++      2. Bitfield representing DMA channel configuration that is passed
++         to the real DMA controller
++      3. Bitfield representing device dependent DMA features passed to
++         the real DMA controller
++
++      For bitfield definitions of cells 2 and 3, see the associated
++      bindings doc for the actual DMA controller in st,stm32-dma.yaml.
+ 
+   compatible:
+     const: st,stm32h7-dmamux
+-- 
+2.34.1
 
-Thanks,
-Conor.
-
---2o2i0BUpv0Ef1SLM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1LkdwAKCRB4tDGHoIJi
-0m1XAQCdwXDfHtbOt/o2xFRN6ijk2Q9nmrqhXvVgFV7mO2qxswD7BTQa1bc4lUaZ
-wcUgcQzSvYG39FZbjfGmB8Hf2jCKPAM=
-=TYme
------END PGP SIGNATURE-----
-
---2o2i0BUpv0Ef1SLM--
 
