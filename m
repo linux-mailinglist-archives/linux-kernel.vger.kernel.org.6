@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-434740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8322B9E6A76
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:38:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135109E6A79
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970E81886B0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:38:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B93AB16BDE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8071FA151;
-	Fri,  6 Dec 2024 09:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3E41FBCAC;
+	Fri,  6 Dec 2024 09:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qasvlkzw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViklMXlj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1D61F9F43
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AF21F9F43;
+	Fri,  6 Dec 2024 09:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477827; cv=none; b=nLC8L54890D1QrOnu8Q5Yz98e+DfqLOuUOFJ3RTRRiYbaf4KnvsDc4K6DoKEMzUPNZICjEZGpPqfzIX8xYYyeTum8vsYltzZFwjgxx+uNHR9wOXJ1l83d/bVLCxS/2zZ9Dej0axYtIf37tIPVdLtDJcyLKsmHPwFoTmyt9vSNC4=
+	t=1733477833; cv=none; b=rGL1C8MiC3k+IG7bHWlfLgov/M9fK479cw4fPSEOInXNyhfuPYOw+kp23TEoNLzZtfFSAVXKxyKNZAU+g+TulLCQRFoyTkfOJ0q51J/LCWyOZLi6vE0pPD/CIO17LJRNraTDlZOUUhLycbd/Fca28jO55pJDnxDFDQN1Uv+cZj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477827; c=relaxed/simple;
-	bh=0OVqSdKjz29ID2mDogu1rbXECrb7mkjLRUFXqkvFw88=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qs8P51G7kZ3NxvyP0NbhGk3jEBHpYCcXb6n+y1g3QgV+ihkn+IFqG5N7tXSYBdz33/IRtr456xQycEOEss9RC1JgH5Dw453DpLmoFRvzJqXvC2Q/AuxnisBYbtRjl078G28j5io0morPyoI8AUT9sZCAc5GQqJCO5HU583Y0aAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qasvlkzw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B9BC4CED1;
-	Fri,  6 Dec 2024 09:37:07 +0000 (UTC)
+	s=arc-20240116; t=1733477833; c=relaxed/simple;
+	bh=pM3I9LaJcdLGXKHGOfytgDj//czg5lPUGDRR4kXGCgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQjwnY8zxpijstAYNShP4yPac6HvQZ4y10/7CeDRf0uW43jBG9Q6hkoe34H/pfbpqfFsUucwQiMIZfp49x+IUDN3fRHW2oE4RI1O6pazI5+a8QufSz474fUh/RXhoTkIXA/nAhphTWxKzU9pz6iTEVOZwn9s3YaTUMzKpFDLEFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViklMXlj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7094C4CED1;
+	Fri,  6 Dec 2024 09:37:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733477827;
-	bh=0OVqSdKjz29ID2mDogu1rbXECrb7mkjLRUFXqkvFw88=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QasvlkzwlSXhBS1XlZ6BrGuaxJd0Hl6wlwXggvqdPyoPJum3dEyJqOX1JA9eUZ5UB
-	 XfhDfOQKeN0ftjlp58am78mCVZFIC0UIISRG1V5z3+RQIyAZ5fIGatx+J+ZR7SvquL
-	 eXc1Ew1jcvXPmRz6Tjga7mBtMeATzUHsy73hR/ym5YYUxqifn8BbKxkUmhKsS4p80Y
-	 cNqSHMjl86KXKcNgAkZgFP5or6y2P4t4UkV87hVSCB2+l17/ct4AQlyez8pM9MRa0W
-	 QXuJyhm43Eh9JyZZBpeoOexfIsvHzlUuRzy+Xo0hg06nDirVlb6UQq6ksPJPhmzz7O
-	 OKgj8qL5wbUKQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tJUlk-0016ib-Gf;
-	Fri, 06 Dec 2024 09:37:04 +0000
-Date: Fri, 06 Dec 2024 09:37:04 +0000
-Message-ID: <86cyi5tanz.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: richard clark <richard.xnu.clark@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	will@kernel.org,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Question about interrupt prioriyt of ARM GICv3/4
-In-Reply-To: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
-References: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1733477833;
+	bh=pM3I9LaJcdLGXKHGOfytgDj//czg5lPUGDRR4kXGCgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ViklMXlj7RQwYJYgAqahW7PxSY16ARsma57cIVZcWLULFfteHs3ZNgv2AuhkK++b0
+	 RC7nXSsswcLMjZzfrld1YPcpQCX+N1GvkY4Bxr9BTTukTwVWuN7EJm5U9SWVoeJHDF
+	 OD0eqm2kJgrWejd/Cuhz8n/7sl9c5FokpC5RhEMW/Hy94h7ls3azGlQvFlBg+Wl/8k
+	 fNweUJhR79WrXeE4TlJYi4gLiotyS4IPVckKDh/spXYbvtPavIQedrGQcVjGAFBCPo
+	 zwGGsEXWRHfElBhfNc2dchUlNP6IU9OgDDTfcgOt4IFFY+JWgkj2w5vhCLXrQ7kWDm
+	 pS6kGi2Y1/Y6w==
+Date: Fri, 6 Dec 2024 09:37:08 +0000
+From: Simon Horman <horms@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, frank.li@nxp.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v6 RESEND net-next 2/5] net: enetc: add Tx checksum
+ offload for i.MX95 ENETC
+Message-ID: <20241206093708.GI2581@kernel.org>
+References: <20241204052932.112446-1-wei.fang@nxp.com>
+ <20241204052932.112446-3-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: richard.xnu.clark@gmail.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com, torvalds@linux-foundation.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204052932.112446-3-wei.fang@nxp.com>
 
-On Fri, 06 Dec 2024 08:33:11 +0000,
-richard clark <richard.xnu.clark@gmail.com> wrote:
+On Wed, Dec 04, 2024 at 01:29:29PM +0800, Wei Fang wrote:
+> In addition to supporting Rx checksum offload, i.MX95 ENETC also supports
+> Tx checksum offload. The transmit checksum offload is implemented through
+> the Tx BD. To support Tx checksum offload, software needs to fill some
+> auxiliary information in Tx BD, such as IP version, IP header offset and
+> size, whether L4 is UDP or TCP, etc.
 > 
-> Hi,
-> Currently seems the GICv3/4 irqchip configures all the interrupts as
-> the same priority, I am thinking about to minimize the latency of the
-> interrupt for a particular device, e.g, the arm arch_timer in the RTL
-> system. The question is,
-> 1. Why don't we provide a /proc or /sys interface for the enduser to
-> set the priority of a specific interrupt(SPI/PPI)?
+> Same as Rx checksum offload, Tx checksum offload capability isn't defined
+> in register, so tx_csum bit is added to struct enetc_drvdata to indicate
+> whether the device supports Tx checksum offload.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 
-I'm afraid this really has nothing to do with any particular interrupt
-architecture.
+...
 
-Before thinking of exposing the interrupt priority to userspace, you
-should look at what this translates into for the kernel once you allow
-interrupts to be preempted by another one with a higher priority.
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+> index 4b8fd1879005..590b1412fadf 100644
+> --- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+> @@ -558,7 +558,12 @@ union enetc_tx_bd {
+>  		__le16 frm_len;
+>  		union {
+>  			struct {
+> -				u8 reserved[3];
+> +				u8 l3_start:7;
+> +				u8 ipcs:1;
+> +				u8 l3_hdr_size:7;
+> +				u8 l3t:1;
+> +				u8 resv:5;
+> +				u8 l4t:3;
+>  				u8 flags;
+>  			}; /* default layout */
 
-This means that at every point where you would normally see a
-local_irq_save(), spinlock_irqsave() or equivalent, you would need to
-explicitly specify the priority that you allow for preemption. You
-should then make sure that any code that can be run during an
-interrupt is reentrant. You need to define which data structures can
-be manipulated at which priority level... The list goes on.
+Hi Wei,
 
-If you want a small taste of the complexity, just look at what
-handling NMIs (or even pseudo-NMIs in the case of GICv3) means, and
-generalise it to not just two, but an arbitrary range of priorities.
+Given that little-endian types are used elsewhere in this structure
+I am guessing that the layout above works for little-endian hosts
+but will not work on big-endian hosts.
 
-If you want the full blown experience, look at the BSDs and their use
-of spl*(). I don't think anyone has any plan to get there, and the RT
-patches have shown that there is little need for it.
+If so, I would suggest an alternate approach of using a single 32-bit
+word and accessing it using a combination of FIELD_PREP() and FIELD_GET()
+using masks created using GENMASK() and BIT().
 
-> 2. Is there any way to verify the higher priority interrupt will have
-> more dominant to be selected to the CPU (IOW, the priority is really
-> working) in case of multiple different interrupts asserted to the GIC
-> at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
-> to record higher priority wins)?
+Or, less desirably IMHO, by providing an alternate layout for
+the embedded struct for big endian systems.
 
-The GIC architecture makes no promise that the interrupt you
-acknowledge is the highest priority pending interrupt, because this is
-by definition a very racy process.
-
-Also, even on busy systems, you will very rarely see two interrupts
-targeting the same CPU being made pending at the same time, so that
-the interrupt delivery system would have to arbitrate between the two.
-That's because interrupts are vanishingly rare in the grand scheme of
-things.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+...
 
