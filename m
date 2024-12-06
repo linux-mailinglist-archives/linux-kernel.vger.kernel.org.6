@@ -1,125 +1,102 @@
-Return-Path: <linux-kernel+bounces-435758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4283D9E7BE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:47:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EA59E7BEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E7916B1C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900461885391
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F44B212FAD;
-	Fri,  6 Dec 2024 22:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E8A212F88;
+	Fri,  6 Dec 2024 22:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UeZWq2x8"
-Received: from mail-vk1-f202.google.com (mail-vk1-f202.google.com [209.85.221.202])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="JJGj4uFb"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D981DF743
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 22:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996F21C3F36
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 22:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733525222; cv=none; b=KeMwH/K86I0ik1ZaOd3pONHVDjpi2XPSWVQx7rRkkDDVveG+eLhs7KoIeRVxOStC9i0+FCwe9yha5kPwJX5JURh5Sxcn8Nx6+XyiQLDL+513maFPpNWkRBKAZ2WIfXIHN+Z0MT3rUMuv/HF+F4cYsaDX3jq466xggABy4tUeNpk=
+	t=1733525307; cv=none; b=kS50IHr6nB0/lPbEUKWzop5+4r4kaZXShj5UE4soJgCyGVwQSeE19H1jpssWienYA4rqf7/UfCrxTIqpCKgGAcd/0nbEQ4rrnMPRT5c0vD9lcJujkMUAoIcDxY8G9NmMatWc4SpVj4kNmrNVnNmrLZwXxb5PP++7g2uFInTMXC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733525222; c=relaxed/simple;
-	bh=iITAE1Ks58yzjB7pv45kbC7F7m3AmF+RtaX7q902Uf8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jbVBz++S2S67ADxTzfxXCoHhTPUvLxG3dMArDp5CeCeu9qJc1lPtxbXpXa6bRQJWM18HbNz3hdBBQ2klZD0B4RORhluLCPYYU/ZlWfUsgtk0lYngzvGEfubCyg7GYG3JdZ9qh/98po4vXPoLc6EvQfjO0zjteSCpF3LjymlCvE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UeZWq2x8; arc=none smtp.client-ip=209.85.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-vk1-f202.google.com with SMTP id 71dfb90a1353d-515d5bd3a96so502122e0c.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 14:47:00 -0800 (PST)
+	s=arc-20240116; t=1733525307; c=relaxed/simple;
+	bh=1BWvsmk3F4Oxl/qJ24Ok5zN6PmBHW1QeWrGkfyajj0E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r+s9Us5dqTHiQP5aOEIowUp1pLLDoD7MprgwPGPmKyUhEePgCdAkxcPV9cd+UNhWTFDkiuZEtE/YKxY9LThCHQ9IjlepzKHfc7PMuEF8vohmFAuBzALyeYGg36qxU6NfS/QykaLhjsqOhoJMnxA4GD2Wx+AB1QfiX61+roSeUpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=JJGj4uFb; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so3969064a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 14:48:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733525219; x=1734130019; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8xOebWP/M8X2cP/fdZF9vXfDo8byCjFk2C5X5FbCC10=;
-        b=UeZWq2x8T1e3RuJxryf1R9hW2RwLmEkMrt3ufE+U20FGxTLb8Ugy4tn9n4jVUpbpQ5
-         5PeMMpUTNjgPZx4RIqy7Hw6qiw0R2b3pctMJiogjpYF+D+o5kaysTfRx5aBoagIDo7b+
-         qVXEB7Q6xcBigTmB5vq8dtVX+seSb3ZIIr47FPPyNUu4NJr4vjyZRyCveEC4pX+VNTYz
-         DyeO/O3yVBq7QGzeMUMBf6K7UYvYhf6s8EKqSvohOWYVNFDhUcB0XHN+6BcIg4kjN2F4
-         anEWfTIlDraCHiRaJ3q20SWA9KkfjktCuHhgUeUmOt4RvYXNNomgk3CofeJOc0A5DWsK
-         iw8w==
+        d=ionos.com; s=google; t=1733525303; x=1734130103; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1BWvsmk3F4Oxl/qJ24Ok5zN6PmBHW1QeWrGkfyajj0E=;
+        b=JJGj4uFbUHGgGycQgZA9MfSjeBl8wbk/EO5JIlLi1oZ1x/saeCc0lvAsZRCEWv6ObU
+         XXwbWzK4hP+9Kwbk7n53vhq6/dXaeHNj0s3XqEgAZNRR8pWQGjevK3RQ87gW6OmAzLe6
+         8uO01UlusmWBD1S5KJnldikqEi1A2pYDHdaFqrV6JotfBrCIxPJjidoN5aFyzE4TmOdw
+         ZLELY8WEE2zcUFeyHzU+BHoEkJnCcRjwxiBiEmVZpuF3eM39LdniJQRf2C3VS9mSK3vF
+         cee8gkUAnX1BunfDHWGVlzgK5f6WxclQSYMXt83eLPln4IpR/kwPESSBbTUWLzVrmoSR
+         1a7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733525219; x=1734130019;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8xOebWP/M8X2cP/fdZF9vXfDo8byCjFk2C5X5FbCC10=;
-        b=LhF46SaJ2yrZsrOfT1JPooGvSFcbHkp8RSgU5uJCUhdjPdnzeZwdsW5TLBftsy2zqw
-         BguQdih4G1dmztS1QEwT2XmzRzb+PcznM5ejiqo5EXG9EpSmFxWq8tOj5ecivf5ctB1x
-         00l9u1HQ+w3eOACMaGIn+lvzTr81x/Yns8ykAO2cfZ7oW+P7ZJNFBUd2TiuJ5By+RF7e
-         iJfHDNUO9WmkC8zIhzIuIpUE3qe/T2gcvHwgpM3rM9vfDSyaRduPep0zsoWeCia7lpvr
-         Cxm2QO96K7C5v65o+Br9Q8lnghJa/z10ml9a/auJRgu49jwFSgnJbeY3RjJWf1pXxQcl
-         Yw4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVQPFMB5Offq+9e9LOHddGKnh1zOODTnokyKZ8zdVG1IQ5cxBOuc35m19Ypmn9yYAn/k3DUQfFKWR0V8uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiCK/rMGYO1HNmuob1EYLmNfLLiPakWnV37IAeVM4l9NLVFYkU
-	NrLRHI8u6A56Pgwz8hONm1iHlCxaIMMS+I/0BQbeADv3KcQ4P5u/mSQF4vMD731AS5ON/TbrBWP
-	nYR22P7V62DjHJchfZQ==
-X-Google-Smtp-Source: AGHT+IFWYRH0ZDfG1SCEobsGl/BiWTfQRI31egCmHBP1UIFLmQh8g16wMoeT9PBzM1Kkhhw9DuLZq6uIHa5tY1W0
-X-Received: from vkbes1.prod.google.com ([2002:a05:6122:1b81:b0:50d:806e:dfd0])
- (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6122:1da1:b0:50b:e9a5:cd7b with SMTP id 71dfb90a1353d-515fcae70a3mr5700023e0c.9.1733525219486;
- Fri, 06 Dec 2024 14:46:59 -0800 (PST)
-Date: Fri,  6 Dec 2024 22:46:58 +0000
-In-Reply-To: <202412052133.pTg3UAQm-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1733525303; x=1734130103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1BWvsmk3F4Oxl/qJ24Ok5zN6PmBHW1QeWrGkfyajj0E=;
+        b=Q99pOBhqgUE7eaH4ixqANnObXodOwWnVCCNJJN8/WLQuQubxy9+ZSotYZBMMby0e5W
+         xSAxCj6glPVvQ3Mf76BdOALnuv5Ffrjyn0s/KhBMNelT6l4IC1QCrXFiLEDtHh5WYqmy
+         iq+uZj1Gr+04/zYFlWJZbLGE5NnMIMZyQ14HWX4YB+W8clMHBu/kpEpc25JajLUA9tQ7
+         AzCsfHq2Qklwl1UkdcLzJkGA38yZDxBQ54in/o7/rpJiP/k3+rzNDQu5QhGQdLpoGEcn
+         pmdqB4N9zlyhyzHhRk7ur9iAFZFkUYmKv2yKZ20MpIVMssDUuafJjBrL/t3cVtJu0Q05
+         h8ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUtrk3zz9R1CTbZmsC/eWQww/ThSHZqNWbDctLokEPFCcsb401sUSzXTaIvZi2Tt9hJYYQrQmBRDfLMegM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlQonZMvIl/mNZbP8Ppzhw0chvBTxsdQ5u1zkAh1NIHWZi1Lki
+	4b0vO4enn8l+nugwU4iNDxC3GKUNTlh5CCQYqt2T6pIgK/8UsApm2o1a8QydTAXJh/bNHfzeE5e
+	aZlgLVHqQFo4fui85onAEcrfSh8H/5wIgTE5H2r8G9uIRDbsbw7g=
+X-Gm-Gg: ASbGnctkqn4/9mSWNAucPhfqPCXq7Ml8xXEgWuaZT3Cb/U8cje/pAl1M/jKJrA3WJUv
+	NJ37LrkRRtVydMszMoavWky8IlZF1W22xXWro09LzVvtB7YoRxj+Ltiivf/7z
+X-Google-Smtp-Source: AGHT+IFk7vAYpJ4ej4R2TYQ+KRfQ97bzd69cRG0vYtoOVc551gTh5/P+Xso9NEyVG9xovJ8bKaK2d9k4saRpRapGZhI=
+X-Received: by 2002:a17:907:7701:b0:aa6:302b:21e4 with SMTP id
+ a640c23a62f3a-aa63a025c44mr453223266b.16.1733525302996; Fri, 06 Dec 2024
+ 14:48:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <202412052133.pTg3UAQm-lkp@intel.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241206224658.2833655-1-jthoughton@google.com>
-Subject: Re: [PATCH v1 01/13] KVM: Add KVM_MEM_USERFAULT memslot flag and bitmap
-From: James Houghton <jthoughton@google.com>
-To: lkp@intel.com
-Cc: amoorthy@google.com, corbet@lwn.net, dmatlack@google.com, 
-	jthoughton@google.com, kalyazin@amazon.com, kvm@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org, 
-	oe-kbuild-all@lists.linux.dev, oliver.upton@linux.dev, pbonzini@redhat.com, 
-	peterx@redhat.com, pgonda@google.com, seanjc@google.com, wei.w.wang@intel.com, 
-	yan.y.zhao@intel.com
+MIME-Version: 1.0
+References: <20241206165014.165614-1-max.kellermann@ionos.com>
+ <d3a588b67c3b1c52a759c59c19685ab8fcd59258.camel@ibm.com> <CAKPOu+-6SfZWQTazTP_0ipnd=S0ONx8vxe070wYgakB-g_igDg@mail.gmail.com>
+ <cd3c88aae12ad392f815c15bab0d54c8f9092e46.camel@ibm.com>
+In-Reply-To: <cd3c88aae12ad392f815c15bab0d54c8f9092e46.camel@ibm.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Fri, 6 Dec 2024 23:48:12 +0100
+Message-ID: <CAKPOu+-AwRayUqOR9fEmZ88bpJkrknMbsZadknjDsBW=jcFL0g@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/io: make ceph_start_io_*() killable
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: Alex Markuze <amarkuze@redhat.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->    arch/x86/kvm/../../../virt/kvm/kvm_main.c: In function '__kvm_set_memory_region':
-> >> arch/x86/kvm/../../../virt/kvm/kvm_main.c:2049:41: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->     2049 |                 new->userfault_bitmap = (unsigned long *)mem->userfault_bitmap;
->          |                                         ^
+On Fri, Dec 6, 2024 at 8:11=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
+m.com> wrote:
+> Should be the check of
+> this function's output mandatory? I am not fully sure.
 
-I realize that, not only have I done this cast slightly wrong, I'm
-missing a few checks on userfault_bitmap that I should have. Applying
-this diff, or at least something like it, to fix it:
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index b552cdef2850..30f09141df64 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1977,6 +1977,12 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		return -EINVAL;
- 	if ((mem->memory_size >> PAGE_SHIFT) > KVM_MEM_MAX_NR_PAGES)
- 		return -EINVAL;
-+	if (mem->flags & KVM_MEM_USERFAULT &&
-+	    ((mem->userfault_bitmap != untagged_addr(mem->userfault_bitmap)) ||
-+	     !access_ok((void __user *)(unsigned long)mem->userfault_bitmap,
-+			DIV_ROUND_UP(mem->memory_size >> PAGE_SHIFT, BITS_PER_LONG)
-+			 * sizeof(long))))
-+		return -EINVAL;
- 
- 	slots = __kvm_memslots(kvm, as_id);
- 
-@@ -2053,7 +2059,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 			goto out;
- 	}
- 	if (mem->flags & KVM_MEM_USERFAULT)
--		new->userfault_bitmap = (unsigned long *)mem->userfault_bitmap;
-+		new->userfault_bitmap =
-+		  (unsigned long __user *)(unsigned long)mem->userfault_bitmap;
- 
- 	r = kvm_set_memslot(kvm, old, new, change);
- 	if (r)
+But I am fully sure.
+If you don't check the return value, you don't know whether the inode
+was locked. If you don't know that, you can't decide whether you need
+to unlock it. That being optional now (cancel locking if SIGKILL was
+received) is the sole point of my patch. You MUST check the return
+value. There is no other way. Don't trust my word - just read the
+code.
 
