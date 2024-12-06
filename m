@@ -1,147 +1,175 @@
-Return-Path: <linux-kernel+bounces-434986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6089E6DF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:20:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452039E6DF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:20:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182EC166E34
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:20:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29A6201033;
+	Fri,  6 Dec 2024 12:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eoHDjxEa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CDD02826B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:20:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374BB2010ED;
-	Fri,  6 Dec 2024 12:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="woGS3ZOj"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA2520012D
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0351D516B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733487592; cv=none; b=Z2Sof4QWT2Sp6XjKXIrdAn3w7h042u3afbXxV2JsFEJGxM1HtcTKBIA7gZXFNttIaqSPq6igsI3XRSP+b+S7eb/o2NPSF+r+s4+FKeRM4MLAgABeiOf0rWNYT24QXAEEHxpywcYBXjvANTjiWe3xPH2EXmZUn1Bdw0Wa/qVr0+k=
+	t=1733487626; cv=none; b=i+Tx2WaSTaqK/zSxgyK2+9ApeQeXDyxoJ5aRpPU66kNOylwZO5J7cHISlDL0DKwmUXe0Ls539FuPaZBaqg2myg+UZAF9zieFbi9IXWEQBqLP6ayobzlpgFYtfYjL8qlBIvFXNo6g/E2TbvAd0n7eNaAyEiYY4Os5G9iRZUO2Mnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733487592; c=relaxed/simple;
-	bh=thFV7LBxkJQUfZP0M1Yl6fEmqEUxZ85Tj1GZWMRA1ak=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oCGwXw/64BwjqZfNraJx2uGMGRjBJ0oJFUG479sffpl6AW/y2HNI3B2e1swapnqPb9tBeNFO210m+AFSuhnA1KcT+dZS6RfftkxFWZi3SOsr8AeVlL7uXY8bVpfuBtf1TOE3bf5XeeVnIXRdE3YPtbY04WwTA4tCIbcgqwku594=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=woGS3ZOj; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa5f1909d6fso387231166b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 04:19:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733487588; x=1734092388; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qSCifDtkaWLlhiA+C6rx5IdqAlS5jx1eBvIpRLAtEMo=;
-        b=woGS3ZOjIJWQCcWoqKoi4xAPHIAyPS6gv2SA5bJ1Zm+71ubaUnLSzKxFk02kE6kmUn
-         BEmsbIhtnD8pmrxk4VfOzqketL7pR+POk/uGsWqOT8TL28d+XfRgasns6RtduD4dyaGm
-         Vx8HQqWmGx39gs3RieghG9hR3YiTOiYpdadGwFLg6PSTkdaKm+LkjLE+LEC4z5xMgtLG
-         P17ttr5km0i7VLtPQ6rXdlaMMFrVFYV8tDguQPE4NIsWToDD0u6uKQN6q4nd2DcIh7d9
-         72Avy+AsUHPHaHxd1KrrK9sdova8NoT65odEEgDUGw4FzCUKQa9I/QfIXbRfvMCuH+z8
-         q6fA==
+	s=arc-20240116; t=1733487626; c=relaxed/simple;
+	bh=1lDabRe7v8hzNNeM2BJUg19w6htUe29NSOeCwC/ydLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NMAtfx8arOvMW2Fnd7zwdEJy1eQpR7lz+y4+tdZyPJ5AOMyZRamKQvBlJvxFZPrumfojPwvbS08ZV+bVqNWcIR6LOlEqaKdrHPdedsncSSyCiRQKf1agUj6PH6dczRTgkZFBuBRyc40l2Bg5WUq2ly52MeZsrQyGRrj6KWE3ClU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eoHDjxEa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B68a6iM018434
+	for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2024 12:20:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9E3Q5V18pzVm0efIN2Z36r5MoCfL8CYX45xyLjaUZPo=; b=eoHDjxEay15UJjR6
+	IwX7o44jEaiQbMhdt5dcw6lLE6+/89AUfsd8ka4uEkuIOkjIOe3BTWVxheOVCCSs
+	yIZJc05bJ+Rm7FhKHG3sbiS90CAvrv2TNAlBs/LIuSdffIGx91XFAMZqxEQT5Uz0
+	3QegG+MjAZyHHGXX9ys6M5CC+dZU3ct4BabykCfgej9n3b/5b+hIhOuZ0hY/qI/L
+	X+p+7rVKrp/HkgTV123zb6rbunTRrn3l6yVbQHXXmTsc4DU9zEwkKf3S0aVO4fKB
+	f1ZwqxV+oUPj+ECEsMsY/SLIt87EBwbInIVFu5ZZLJjof9+H78mdzzU4fTq2MRQ1
+	v0tulA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bjk8t9b3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:20:23 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4669114c62dso5209721cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 04:20:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733487588; x=1734092388;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qSCifDtkaWLlhiA+C6rx5IdqAlS5jx1eBvIpRLAtEMo=;
-        b=IaZ42lk7l8tQlHBmPpm17gQoZpfV09haQmWDBAsNiILHLyRg5wihzjnlXkahMYeX8g
-         697/iDlQuBPSt6zloYhT9iuEZUX7NBS54Um66imkhtmwns4ONOlW2GzPueuxMwRPNSEh
-         3e0I/m/9miC0xiJIDLFVUmARr3faoX0RuMbLbngsUPXsTm9ByLOeNZsv+w9dW++0T0eu
-         QiJ9LyjHR/yzxmhXzNABqh6mLNo6JB/ZYfkpQ6zSne+e/+Y0oqy4ZPJPS/8aTJdEVrFi
-         NwImtDKJOwm2G2Tu8SIQM26/u94zehADojMmMt2hKbTt2Ri8FxBid2080tSAWxWr8biS
-         srWw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Y+GxRsBo0Q3nN7MFh2P691kenT5V5Ikxscv4AIDQ2khHJIBUUjA9y542eY5D2hwytiLVRRG/T9oV4G8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyoEZHhfGqqckjSJ4s0apst2fhKrMOeXngdbC0tDW66OdvWyTa
-	yPeVKDfZEq9Sg+JYaObnjZsYlJSr371IzrpdTuFzN1bOv6ZT2OYbp805plqt5H4=
-X-Gm-Gg: ASbGncsosOtBwepf2NObq6bOEVl5XlhvtDBlKF8IsJbt71XPKy1oynlBefWw1nRgY33
-	dOIKLXWPofXzptsSI0dh4Dlw3Vez9fW//1Jbc3OI7Xb7WClZTPUfc1cYV3eN4wwpfJDjxZ2HXY5
-	8r1MdsFLoYHBa4RvMDaACqsoG/apz5FG54Z87inDeBSBLxZjVRx4n9v4kyPTcYTWozU2q5rMmu1
-	dYuljw9p4mRK/LsKppQB6pye8RTcHeJkD4kD4K/vH8buuce7a/dMWKykNNta1LfFAIXZ0jteDHA
-	4dt3alwQ4xOgqJIf2J7dv5rQE32cdyTeVQ==
-X-Google-Smtp-Source: AGHT+IG3wUHCeCtLSEd9ZYbvjU6RybecaVohOs0cXxkPW3wU9kse4Zc5thov3RTYg0Hdfn/4iK6HjQ==
-X-Received: by 2002:a17:907:784b:b0:aa6:29a0:b650 with SMTP id a640c23a62f3a-aa63a005da1mr240377066b.17.1733487587837;
-        Fri, 06 Dec 2024 04:19:47 -0800 (PST)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625eb1ad6sm233624066b.82.2024.12.06.04.19.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 04:19:47 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 06 Dec 2024 12:19:47 +0000
-Subject: [PATCH] usb: dwc3: gadget: fix writing NYET threshold
+        d=1e100.net; s=20230601; t=1733487623; x=1734092423;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9E3Q5V18pzVm0efIN2Z36r5MoCfL8CYX45xyLjaUZPo=;
+        b=msy5bYg3w0JxuF9OTHi4Q96HeAwCOsI7mmuGUKjjOgugbZE6R0DqrIQYDjgi7e0ujp
+         bIZWjPA+pY5n+wz4fWVa4VgyvmWLB5YIZZ65mgJMuzC1/TA5Q4xtwDfsKlsQfeYGeQIn
+         TgyvkjyworjOAKPGcEV12lkJ+39mTbasoAmCJhu2P3MtFjt8NAa5ciXZe5VEfOPpZAB/
+         bmzgf2OVGe7GX1WeDCh7ZPegJelgAvzq9aAp9piNehraesYqJ9b83qydsPjOPcVFsfsc
+         Hen0GPUXyyHhwDCuIu2+b9NRs/3emoy2oSuLybxgu1RMZA4ZyaF4KE1ueNMvt6FnzOlP
+         nfgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTc0Qx03cTt2s54Pq+SRhUqnT/mFpJnOl/2KNxq3zmJgF4Gsrwx9EFdRpee3MaFTE9AEO0AlLuVZ2ek4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJzJCjUvmVJ5Bswl+9QKyT82sNiQgfDk/K6Xb1ChDPSSH+g5TH
+	UPy9LQdBTCrsgUr3qW1x/4JFQM1iSouGRK0KXGJC9TsZx3B/WBBAAl7KzKfKnGiWsz0P60WJM0Z
+	8yP8hVU2vbHVoY68oWuku82G4NTYIpWTEepo3EXHM8pRXrkmzSsv4YYuhw6XfLv8=
+X-Gm-Gg: ASbGnctyEvAq3QamUbjrJGzoQxnCmNpaNy4EPZtYwsSFU54e6ev82zEVARg1mOKTpmG
+	Aau4QvW/yc71pzeu3eB32Jn3MSgPg27TuvVRTv3E4JiG/1RGO3SIFVYBTGpHYGaMGNRO6uOO6XR
+	UDO56lTyuWMuUcq0L4+O/bWr5jWeirjus7FdpcCw5rWakN5JlcXj9tO3VxE22wRBVikkS9yyQyt
+	z8FIpndu84CtDJbaGFDkqQZs56207Dq6X42g1zvZ5Y8ynfP66GyHgbGRHxcu3HjI3qRYu9Fb1ui
+	Ndrd+BRl+aQX54Z8A0RpSqmDrPjITj4=
+X-Received: by 2002:a05:622a:606:b0:464:9faf:664b with SMTP id d75a77b69052e-46734c8f531mr18002181cf.2.1733487622871;
+        Fri, 06 Dec 2024 04:20:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFaYjuLbGBmcbEVFGiae/eyDl8MSbUHvTvfg7816ggOQFX2Cej3+/3TS1KDf5HZCvflpH7buQ==
+X-Received: by 2002:a05:622a:606:b0:464:9faf:664b with SMTP id d75a77b69052e-46734c8f531mr18002011cf.2.1733487622527;
+        Fri, 06 Dec 2024 04:20:22 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a25924sm2113819a12.17.2024.12.06.04.20.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 04:20:22 -0800 (PST)
+Message-ID: <d83ebaa2-1da8-4f85-9034-670e525b457b@oss.qualcomm.com>
+Date: Fri, 6 Dec 2024 13:20:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241206-dwc3-nyet-fix-v1-1-293bc74f644f@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAOLrUmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDIwMz3ZTyZGPdvMrUEt20zApdcwML0zSzFHPDFAMTJaCegqJUoDDYvOj
- Y2loAmjMGeV8AAAA=
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 44/45] arm64: dts: qcom: add mst support for pixel stream
+ clk for DP0
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Rob Clark
+ <robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Chandan Uddaraju <chandanu@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>,
+        Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yongxing Mou <quic_yongmou@quicinc.com>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-44-f8618d42a99a@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241205-dp_mst-v1-44-f8618d42a99a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: NVqS8H-VSmzOlxA_7D56pigoWWkJfXG8
+X-Proofpoint-GUID: NVqS8H-VSmzOlxA_7D56pigoWWkJfXG8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=879
+ priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412060092
 
-Before writing a new value to the register, the old value needs to be
-masked out for the new value to be programmed as intended.
+On 6.12.2024 5:32 AM, Abhinav Kumar wrote:
+> From: Yongxing Mou <quic_yongmou@quicinc.com>
+> 
+> Populate the pixel clock for stream 1 for DP0 for sa8775p DP controller.
+> 
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index 0dbaa17e5e3f06c61b2aa777e45b73a48e50e66b..0150ce27b98e9894fa9ee6cccd020528d716f543 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -3944,16 +3944,20 @@ mdss0_dp0: displayport-controller@af54000 {
+>  					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
+>  					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK>,
+>  					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
+> -					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
 
-At the moment, the dwc3 core initialises the threshold to the maximum
-value (0xf), with the option to override it via a DT. No upstream DTs
-seem to override it, therefore this commit doesn't change behaviour for
-any upstream platform. Nevertheless, the code should be fixed to have
-the desired outcome.
+dispcc also defines PIXEL2/3 clocks.
 
-Do so.
+>  				clock-names = "core_iface",
+>  					      "core_aux",
+>  					      "ctrl_link",
+>  					      "ctrl_link_iface",
+> -					      "stream_pixel";
+> +					      "stream_pixel",
+> +					      "stream_1_pixel";
+>  				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
+> -						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
+> -				assigned-clock-parents = <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>;
+> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
+> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
+> +				assigned-clock-parents = <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>, <&mdss0_dp0_phy 1>;
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/usb/dwc3/core.h   | 1 +
- drivers/usb/dwc3/gadget.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Please turn this into a vertical list
 
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index ee73789326bc..9335fd095968 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -465,6 +465,7 @@
- 
- /* These apply for core versions 1.94a and later */
- #define DWC3_DCTL_NYET_THRES(n)		(((n) & 0xf) << 20)
-+#define DWC3_DCTL_NYET_THRES_MASK	DWC3_DCTL_NYET_THRES(0xf)
- 
- #define DWC3_DCTL_KEEP_CONNECT		BIT(19)
- #define DWC3_DCTL_L1_HIBER_EN		BIT(18)
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 83dc7304d701..31a654c6f15b 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -4195,8 +4195,10 @@ static void dwc3_gadget_conndone_interrupt(struct dwc3 *dwc)
- 		WARN_ONCE(DWC3_VER_IS_PRIOR(DWC3, 240A) && dwc->has_lpm_erratum,
- 				"LPM Erratum not available on dwc3 revisions < 2.40a\n");
- 
--		if (dwc->has_lpm_erratum && !DWC3_VER_IS_PRIOR(DWC3, 240A))
-+		if (dwc->has_lpm_erratum && !DWC3_VER_IS_PRIOR(DWC3, 240A)) {
-+			reg &= ~DWC3_DCTL_NYET_THRES_MASK;
- 			reg |= DWC3_DCTL_NYET_THRES(dwc->lpm_nyet_threshold);
-+		}
- 
- 		dwc3_gadget_dctl_write_safe(dwc, reg);
- 	} else {
-
----
-base-commit: c245a7a79602ccbee780c004c1e4abcda66aec32
-change-id: 20241206-dwc3-nyet-fix-7085f6d71d04
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+Konrad
 
