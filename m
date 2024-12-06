@@ -1,96 +1,154 @@
-Return-Path: <linux-kernel+bounces-434249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF2B9E63E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:14:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970599E63EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62F5116A2C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E64716A2FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCF514B084;
-	Fri,  6 Dec 2024 02:13:54 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A66814EC4E;
+	Fri,  6 Dec 2024 02:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+vf3j25"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F2128684;
-	Fri,  6 Dec 2024 02:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE3214A635;
+	Fri,  6 Dec 2024 02:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733451233; cv=none; b=PgShgm/52Kvmr1Ciqb5mWYIG2DUNh0lXd/C4a0OLws9jdiBaTH8f1pN73JlexEQp85Z8FGk/dLCVMPWW4lWMDCDyrmlUm6ZDGhpVKBFBjMIMcKyur4hxkdSZdXQ2h3eej2Nj7aoEEoJMcWkhwAdtUNplQh8yb745W/49SdmuJv0=
+	t=1733451251; cv=none; b=uBg7ug9Y+qP3C/8i7S+7UNihrIacNpAaMcZp4/u6letYvsDAvuyvhywxvcZDAV4YQsApHuY34dAyJHIFITH/mO+pPOiz3pu1GD0eXLaReVTnP7HTbA4uk1hrh4nUz6N85+Z6+mTfW6H/r3iDAL+bgYLZydnZ5Vz13b0JemoFZ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733451233; c=relaxed/simple;
-	bh=PVniwpOcdArUCZ5TUc82rVqQYAAKx7gKjsdXlFcW2UA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K3QPBX/41cMBzWB3eU0dI3LoX0j12obHe6XnRXCEZZIMkvzJC1MRIVFFN/U+S1c5z+ANGHk5wKXp2bLv9g+QLBByruXcoWPBzMD/PrViPRPBLzoX6NADrfpv8PCwBsFDeOB+BHZu/2tEHcEJHzukyHaqGhOu6eQtr/UBBOBf0bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y4F9s1Vm1z1kvSs;
-	Fri,  6 Dec 2024 10:11:29 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id EFCBD140136;
-	Fri,  6 Dec 2024 10:13:47 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 6 Dec
- 2024 10:13:47 +0800
-Message-ID: <28357e74-88d3-4382-ab2e-4058de185a18@huawei.com>
-Date: Fri, 6 Dec 2024 10:13:46 +0800
+	s=arc-20240116; t=1733451251; c=relaxed/simple;
+	bh=PmaAJnwsgVguSTDMSQlRJ0Of93LX9r891BFyAkXKTCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TMmFntNskwx5sykH6VQSllYGDeQJunqeo2/hlv0yc3azPoke5fMZIKe9v6SIATIQ2qZB2loSKsT414WvPthojRZ0R7QB1LL0c0+lPt8O85esu2SboNS/0Av457RrMZ0Uo6iCxwYk2y3zya9NT2oNNcsf2F7fBcJUYY3TqLzaATk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+vf3j25; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a7ee3d60so16125145e9.1;
+        Thu, 05 Dec 2024 18:14:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733451248; x=1734056048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KmoGVefPaCohRxbkNS8HIVZcAmk0JM77MXc31N8oagg=;
+        b=Q+vf3j25PPNOc2hHriCD1IFqaRRL+JDrJWRu0MrxlJm5cEGMzIfY8BBwOgb1RVvGEJ
+         TEAJD5nAffHz7iQiEpocsVyk9egGyjSdwIJJMZfbV/18SaqgVB6QKoTsj6ZbzRft2dP/
+         w5NvdpS2S8HRKa/kIYs5wOFiPbTP0pC+jz8uT/+/l9IwipxUvWaNesabcJXBiXC5hRHH
+         ZOIs8g/OX0e062xK/s7SqGgweN5+0effM67PtQawe6TxoHnpLrXAhckAbmZ+44J1Hj42
+         ExaP00u4UrX5Jka2/KPYAMn0Uamd74lwW+wNeoJJ2FjstQtgQX12HmBikKpo2JIFMSn/
+         qbFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733451248; x=1734056048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KmoGVefPaCohRxbkNS8HIVZcAmk0JM77MXc31N8oagg=;
+        b=qndebckCr53gqHNvqDn+0YtSxj4bXb/eh2APIjv99a8zf/MXfKudbApysbzkmaerAI
+         e5SYiOUYPVezKSQNSPHSs6DIvaXfQMkm2Ej/dWymYbcZLtkLDG8wpWkx81fOlmMBhngR
+         pIpVaEjRm/W/4uo/5rkXayH9Ban8lZJTMtPY680q+wzLdhpjGl/76ufR4ol1iOeAsmOM
+         c38USAp9f7MVNK+F1fNycKM+T+ExKbufwKpG+9Nk9Ip9wXkKTBNrGMEJAdzRt6BkXl80
+         FxCerwRORYIv2jfD5/c9lNLSnp+rwo+jFJy90E3JJzt3raEVVEXX64cDGxP2dm02rY5M
+         ADfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOnXfl8Sg3qygIaypzkmzLb19ROKs7RDCpp340v2+kyqHIrNiVuys2vEnmFKxP4xyV1ktu2kdXETFgVnDh@vger.kernel.org, AJvYcCUisnDcdqwOqgbRYHBndxJvDSCzyvZ+Y8h0YC9/91o4P4RpsXopuMSHw64o6FxFXDPLU2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy48EtocUYbUaaJSqqcBur9s2SJrkmtlCl3uTljyld10/1f1gus
+	2uGIa6VYuYzIwu3BTxzBdEW6exx4xCo0Lxo5UhOeE4BjOdkAouyCu2oj4K0Bp0Ns4LmDjInRab1
+	STE4sDiBEaz6rFxu+eGc2ydNP1dw=
+X-Gm-Gg: ASbGncv/zzsvAPnxxk3c3Ol4xBu1qlLqwwV1Kwo+ZVoV0sKY4p5fbH6knIwNuKpHluN
+	TykwUmGiCBUR6GpeSz0sj7cSPD4Q2844uZ3bUCdd0Xpuz/l4=
+X-Google-Smtp-Source: AGHT+IFwAEMnn4rd04aD5634MCqysZ4oFc15CGUREQRxrX+wtknCRdJO2kj1w/76ep1E1P6yObkFf3PTlGIL2CLsDYY=
+X-Received: by 2002:a05:6000:1f85:b0:386:1ab3:11f0 with SMTP id
+ ffacd0b85a97d-3862a92dad3mr1049546f8f.28.1733451248083; Thu, 05 Dec 2024
+ 18:14:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] padata: add pd get/put refcnt helper
-To: Daniel Jordan <daniel.m.jordan@oracle.com>, Chen Ridong
-	<chenridong@huaweicloud.com>
-CC: <steffen.klassert@secunet.com>, <herbert@gondor.apana.org.au>,
-	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wangweiyang2@huawei.com>
-References: <20241123080509.2573987-1-chenridong@huaweicloud.com>
- <20241123080509.2573987-2-chenridong@huaweicloud.com>
- <pr7mhqz6twrtnlgy2nphr2nznk747tymlnooxab7xvvgolykmt@lr4z2a72tqur>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <pr7mhqz6twrtnlgy2nphr2nznk747tymlnooxab7xvvgolykmt@lr4z2a72tqur>
+References: <cover.1733449395.git.rongtao@cestc.cn> <tencent_B497E42A7CAF94A35B88EB060E42A2593408@qq.com>
+In-Reply-To: <tencent_B497E42A7CAF94A35B88EB060E42A2593408@qq.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 5 Dec 2024 18:13:56 -0800
+Message-ID: <CAADnVQKRSjV61=Yza_K0Mvyv1kK_hU-+4PhPzzR5dBDg=VDGrQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 1/2] bpftool: Fix gen object segfault
+To: Rong Tao <rtoax@foxmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Quentin Monnet <qmo@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, rongtao@cestc.cn, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, 
+	"open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Dec 5, 2024 at 6:01=E2=80=AFPM Rong Tao <rtoax@foxmail.com> wrote:
+>
+> From: Rong Tao <rongtao@cestc.cn>
+>
+> If the input file and output file are the same, the input file is cleared
+> due to opening, resulting in a NULL pointer access by libbpf.
+>
+>     $ bpftool gen object prog.o prog.o
+>     libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
+>     Segmentation fault
+>
+>     (gdb) bt
+>     #0  0x0000000000450285 in linker_append_elf_syms (linker=3D0x4feda0, =
+obj=3D0x7fffffffe100) at linker.c:1296
+>     #1  bpf_linker__add_file (linker=3D0x4feda0, filename=3D<optimized ou=
+t>, opts=3D<optimized out>) at linker.c:453
+>     #2  0x000000000040c235 in do_object ()
+>     #3  0x00000000004021d7 in main ()
+>     (gdb) frame 0
+>     #0  0x0000000000450285 in linker_append_elf_syms (linker=3D0x4feda0, =
+obj=3D0x7fffffffe100) at linker.c:1296
+>     1296                Elf64_Sym *sym =3D symtab->data->d_buf;
+>
+> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+> ---
+>  tools/bpf/bpftool/gen.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
+> index 5a4d3240689e..e5e3e8705cc7 100644
+> --- a/tools/bpf/bpftool/gen.c
+> +++ b/tools/bpf/bpftool/gen.c
+> @@ -1879,6 +1879,8 @@ static int do_object(int argc, char **argv)
+>         struct bpf_linker *linker;
+>         const char *output_file, *file;
+>         int err =3D 0;
+> +       int argc_cpy;
+> +       char **argv_cpy;
+>
+>         if (!REQ_ARGS(2)) {
+>                 usage();
+> @@ -1887,6 +1889,17 @@ static int do_object(int argc, char **argv)
+>
+>         output_file =3D GET_ARG();
+>
+> +       argc_cpy =3D argc;
+> +       argv_cpy =3D argv;
+> +
+> +       /* Ensure we don't overwrite any input file */
+> +       while (argc_cpy--) {
+> +               if (!strcmp(output_file, *argv_cpy++)) {
+> +                       p_err("Input and output files cannot be the same"=
+);
+> +                       goto out;
 
+This is completely broken. Just because the names are different
+doesn't mean that they don't point to the same file.
 
-On 2024/12/6 7:03, Daniel Jordan wrote:
-> On Sat, Nov 23, 2024 at 08:05:08AM +0000, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> Add helpers for pd to get/put refcnt to make code consice.
-> 
-> Seems reasonable.
-> 
->> +static inline void padata_put_pd(struct parallel_data *pd)
->> +{
->> +	if (refcount_dec_and_test(&pd->refcnt))
->> +		padata_free_pd(pd);
->> +}
->> +
->> +static inline void padata_put_pd_cnt(struct parallel_data *pd, int cnt)
->> +{
->> +	if (refcount_sub_and_test(cnt, &pd->refcnt))
->> +		padata_free_pd(pd);
->> +}
-> 
-> padata_put_pd could be defined as padata_put_pd_cnt(pd, 1).
-> 
+Fix the root cause of segfault instead.
 
-Thank you, will update.
-
-Best regards,
-Ridong
+pw-bot: cr
 
