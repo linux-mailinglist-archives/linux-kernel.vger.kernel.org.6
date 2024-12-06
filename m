@@ -1,160 +1,128 @@
-Return-Path: <linux-kernel+bounces-434571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B699E686F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:08:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB4C9E6874
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39AA418859A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B638416A70D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9515D1DE2B3;
-	Fri,  6 Dec 2024 08:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFhhaO1L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C71DE8A1;
+	Fri,  6 Dec 2024 08:09:36 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7C9328B6;
-	Fri,  6 Dec 2024 08:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394E6197548;
+	Fri,  6 Dec 2024 08:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733472477; cv=none; b=LNuutq6rdwikW9Ulaoo2tQufXmR96M2T8VJX783O2guMTDS7OszGrnNAoHMIgZdjMhEsgumGAE0k8BpXvVn10qgwSEfPx6oO2FIAF9NmRpFKUCJoFAZfgYA+N+IBrWWsQb6nLeO7+oXMhAkLtH8DgLlx9Ei57RHWOOdbBfNaDvg=
+	t=1733472576; cv=none; b=kRLjkI0FB9BCL2IhwoSjksL/pmHlsMqmwih7veA/IFXqDuw/dFnC2WqNEzE/XiTgkbez3yLaEK2gcyKB3W+DsQYNF5PdS075S4z0Ka/lHPewH9wMW1dOsUvB6OjAv1HiApWUPgiKZRhw+DvmN6JYTG36djyCedFbUUd3RSrOnug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733472477; c=relaxed/simple;
-	bh=VVjeTLw06e49HILCXDutSGBKgHH95vHDfuw49h7qGUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cN6b1OFMAHeIDOrBEUArG6xHW16b7eVkaoRHlWWlM1E3iqSG+KATFlbCSqBRe3DwCA4U4IrWu0zEUNOszqfyWlr9X6FB9I1pQD0SFHPdYG8tRN6VYQ6FnR3p0Ee9sfXzzIkfOXyX7S4W9zrVRXEac/jwJX6wmKARomay57K07Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFhhaO1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA9EC4CED1;
-	Fri,  6 Dec 2024 08:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733472476;
-	bh=VVjeTLw06e49HILCXDutSGBKgHH95vHDfuw49h7qGUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XFhhaO1L4R950UjqTiKjRb3wjy2M6ixlzw1dQlEsg9LJwQk6Xjiaj99rEJY9BLz/B
-	 Lg3MKel4VEzIHT9gw8OQd2zbCq7aUxzqkpy10TykwUNDgak3FxLQYjH1myG77CYWDF
-	 m7KmDmhGYrGK4KEjINHDFTFZTjA1cll2LGKjAWNdbL6UXaUgn0A4BCquUcb9fgeqKC
-	 QQWY1BrNo9zAFXF2zv6jYArIqzGxMve/p8OxHXfdq9SyZmdgPngXz1AvIzxeJDdwlB
-	 H/4+Mj9Oq23oAVPCdKEVTc8PxrSZU/KR+wrpQRIlgRLbBkx2Y5n3NKaMNQmcBsLsHr
-	 wh8cA3xC3XVlQ==
-Date: Fri, 6 Dec 2024 08:07:51 +0000
-From: Lee Jones <lee@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
-	arnd@arndb.de, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] rust: miscdevice: Provide accessor to pull out
- miscdevice::this_device
-Message-ID: <20241206080751.GN8882@google.com>
-References: <20241205162531.1883859-1-lee@kernel.org>
- <20241205162531.1883859-2-lee@kernel.org>
- <2024120648-finch-shrubbery-c6f5@gregkh>
- <20241206071646.GE8882@google.com>
- <20241206073309.GG8882@google.com>
- <Z1KvNQUUStyLjpwz@boqun-archlinux>
+	s=arc-20240116; t=1733472576; c=relaxed/simple;
+	bh=TQYE2agDYZJTvN56R/TnJ7DUpWGGKi+XZbXXKF4U1Ms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=flbyhWCCdOBcyhQrcjrylkShKWavZgHMGcewx1TsxjqonGexSMC743bxEA/REthaamMQ8vxXOXE9uuxScd6CpxopMiCZY1/b2xIWY2P1BIXjncMQfOKnitpYNXUvffbxBq63pFeOm0f2z+jKCZqf1JMG/1Bt+P76RkYGb/v+8Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y4P6X3Df1z4f3jct;
+	Fri,  6 Dec 2024 16:09:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8235B1A08DC;
+	Fri,  6 Dec 2024 16:09:27 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCngYU2sVJnEbw9Dw--.20216S3;
+	Fri, 06 Dec 2024 16:09:27 +0800 (CST)
+Message-ID: <0b45ce3d-fd20-4df2-9c04-f956b96bf6a2@huaweicloud.com>
+Date: Fri, 6 Dec 2024 16:09:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1KvNQUUStyLjpwz@boqun-archlinux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/27] ext4: refactor ext4_zero_range()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+ david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-6-yi.zhang@huaweicloud.com>
+ <20241204115208.g4lswqfbwrwmwtqw@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20241204115208.g4lswqfbwrwmwtqw@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCngYU2sVJnEbw9Dw--.20216S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF15Ar1fCw45Gr47GF15urg_yoW8WFW5pF
+	Z7Xa4j9FWkWFyUCa1xKF1fZF4Sk398tr47G34fWry8Zrn8JrnayFs2ga15W3W09ws7Ja1F
+	vanrKryxuF45AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
+	mii3UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Fri, 06 Dec 2024, Boqun Feng wrote:
-
-> On Fri, Dec 06, 2024 at 07:33:09AM +0000, Lee Jones wrote:
-> > On Fri, 06 Dec 2024, Lee Jones wrote:
-> > 
-> > > On Fri, 06 Dec 2024, Greg KH wrote:
-> > > 
-> > > > On Thu, Dec 05, 2024 at 04:25:18PM +0000, Lee Jones wrote:
-> > > > > There are situations where a pointer to a `struct device` will become
-> > > > > necessary (e.g. for calling into dev_*() functions).  This accessor
-> > > > > allows callers to pull this out from the `struct miscdevice`.
-> > > > > 
-> > > > > Signed-off-by: Lee Jones <lee@kernel.org>
-> > > > > ---
-> > > > >  rust/kernel/miscdevice.rs | 9 +++++++++
-> > > > >  1 file changed, 9 insertions(+)
-> > > > > 
-> > > > > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > > > > index 7e2a79b3ae26..55340f316006 100644
-> > > > > --- a/rust/kernel/miscdevice.rs
-> > > > > +++ b/rust/kernel/miscdevice.rs
-> > > > > @@ -10,11 +10,13 @@
-> > > > >  
-> > > > >  use crate::{
-> > > > >      bindings,
-> > > > > +    device::Device,
-> > > > >      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> > > > >      prelude::*,
-> > > > >      str::CStr,
-> > > > >      types::{ForeignOwnable, Opaque},
-> > > > >  };
-> > > > > +
-> > > > >  use core::{
-> > > > >      ffi::{c_int, c_long, c_uint, c_ulong},
-> > > > >      marker::PhantomData,
-> > > > > @@ -84,6 +86,13 @@ pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
-> > > > >      pub fn as_raw(&self) -> *mut bindings::miscdevice {
-> > > > >          self.inner.get()
-> > > > >      }
-> > > > > +
-> > > > > +    /// Returns a pointer to the current Device
-> > > > > +    pub fn device(&self) -> &Device {
-> > > > > +        // SAFETY: This is only accessible after a successful register() which always
-> > > > > +        // initialises this_device with a valid device.
-> > > > > +        unsafe { Device::as_ref((*self.as_raw()).this_device) }
-> > > > 
-> > > > A "raw" pointer that you can do something with without incrementing the
-> > > > reference count of it?  Oh wait, no, it's the rust device structure.
-> > > > If so, why isn't this calling the get_device() interface instead?  That
-> > > > way it's properly incremented and decremented when it "leaves the scope"
-> > > > right?
-> > > > 
-> > > > Or am I missing something here as to why that wouldn't work and this is
-> > > > the only way to get access to the 'struct device' of this miscdevice?
-> > > 
-> > > Fair point.  I'll speak to Alice.
-> > 
-> > Alice isn't available yet, so I may be talking out of turn at this
-> > point, but I just found this is the Device documentation:
-> > 
-> >   /// A `Device` instance represents a valid `struct device` created by the C portion of the kernel.
-> >   ///
-> >   /// Instances of this type are always reference-counted, that is, a call to `get_device` ensures
-> >   /// that the allocation remains valid at least until the matching call to `put_device`.
-> > 
-> > And:
-> > 
-> >   // SAFETY: Instances of `Device` are always reference-counted.
-> > 
-> > Ready for some analysis from this beginner?
-> > 
-> > Since this impl for Device is AlwaysRefCounted, when any references are
-> > taken i.e. in the Device::as_ref line above, inc_ref() is implicitly
-> > called to increase the refcount.  The same will be true of dec_ref()
+On 2024/12/4 19:52, Jan Kara wrote:
+> On Tue 22-10-24 19:10:36, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> The current implementation of ext4_zero_range() contains complex
+>> position calculations and stale error tags. To improve the code's
+>> clarity and maintainability, it is essential to clean up the code and
+>> improve its readability, this can be achieved by: a) simplifying and
+>> renaming variables, making the style the same as ext4_punch_hole(); b)
+>> eliminating unnecessary position calculations, writing back all data in
+>> data=journal mode, and drop page cache from the original offset to the
+>> end, rather than using aligned blocks; c) renaming the stale out_mutex
+>> tags.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > 
-> No, inc_ref() is not called implicitly in Device::as_ref().
+> ...
 > 
-> The thing that might "keep" the original `miscdevice::Device` alive is
-> the lifetime, since the returned `device::Device` reference has the
-> same life at the input parameter `miscdevice::Device` reference (i.e.
-> `&self`), so the returned reference cannot outlive `&self`. That means
-> if compilers find `&self` go out of scope while the returned reference
-> be still alive, it will report an error.
+>> -		goto out_mutex;
+>> -
+>> -	/* Preallocate the range including the unaligned edges */
+>> -	if (partial_begin || partial_end) {
+>> -		ret = ext4_alloc_file_blocks(file,
+>> -				round_down(offset, 1 << blkbits) >> blkbits,
+>> -				(round_up((offset + len), 1 << blkbits) -
+>> -				 round_down(offset, 1 << blkbits)) >> blkbits,
+>> -				new_size, flags);
+>> -		if (ret)
+>> -			goto out_mutex;
+>> -
+>> -	}
+> 
+> So I think we should keep this first ext4_alloc_file_blocks() call before
+> we truncate the page cache. Otherwise if ext4_alloc_file_blocks() fails due
+> to ENOSPC, we have already lost the dirty data originally in the zeroed
+> range. All the other failure modes are kind of catastrophic anyway, so they
+> are fine after dropping the page cache. But this is can be quite common and
+> should be handled more gracefully.
+> 
 
-Okay, so is there something I need to do to ensure we increase the
-refcount?  Does inc_ref() need calling manually?
+Ha, right, I missed this error case, I will revise it.
 
--- 
-Lee Jones [李琼斯]
+Thanks,
+Yi.
+
 
