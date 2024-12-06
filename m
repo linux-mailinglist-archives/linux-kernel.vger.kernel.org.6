@@ -1,242 +1,162 @@
-Return-Path: <linux-kernel+bounces-434554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA2F89E6830
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:47:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F5D9E6823
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:46:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85EAA284120
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:47:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805FF168D8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEC11E0087;
-	Fri,  6 Dec 2024 07:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220B91DB95E;
+	Fri,  6 Dec 2024 07:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWV5LSqH"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eImPJvyK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAA91DE8A2;
-	Fri,  6 Dec 2024 07:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E40A13DDDF;
+	Fri,  6 Dec 2024 07:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733471219; cv=none; b=q3HldVLrBOKz0Ynmvu+CfzFAm7f5F3bw2ssrbpnHIIHlh++K08mCl9NeWX0Gna8KsmMBtHpjvO4IOFNWk03ODQRBvooc9nTnbEOHLJKEfRs3/1ro24G3ZbEvkJcHzsN3kiUkrsTSBBnwIHV+a7cInw8Ft+o0xZdyDs67z/0rnFU=
+	t=1733471192; cv=none; b=FZyv0XljLHCkLgg+zToi85NEE70W8DpRyCi5AOhNVT047PCyIwjGBwxWqWXj99DAhu6mTpeln43ofLgcsYPeDtcp8wYfjTwhbn05tb/D/sFoPGw2oIJoadziZyi/J85nVDjdunHgxd//elkFktb8ffknCfPmpRguQu01QnMz/34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733471219; c=relaxed/simple;
-	bh=Z6X7dtscopNLoz8nldaGstB4IaOylCRwJyOS1rJBRL8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SPGmRbiAG5rrqJ+T4S5zrsB2KI8H1xGSDFNj+QAOjtSsEzchfzLsaMq3Y+iFvkifXJadC/ERxytyjW7kBUxZbJqQK+iG+ZWDaoxcJTndUdDFKdWyP3a6De3mtyh6oBSii3LvlhTy9gG5bJYhiAkM4c7tlqABMpXX+ak+4veVAxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWV5LSqH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 592DAC4CEE3;
-	Fri,  6 Dec 2024 07:46:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733471218;
-	bh=Z6X7dtscopNLoz8nldaGstB4IaOylCRwJyOS1rJBRL8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NWV5LSqHfgUCoVAnvXP8z8CNO2CQLU4Ron9rH5qpmZBGjYBrVEUpnrKrr5DzT0Zwr
-	 TCKmqjLFwsZG78NrP61R6Sa47XHPqWYlwZycYOI936HYY6hWghVcvXDVGJ0TlciRKy
-	 BhDbMvVBbhguOLsrBanCmCttH2B5aAHin0X2Z7w6sJv88N9g+nwSRunB2rVrbhUK+o
-	 znVsgMDowb9OPOyKwVCAWLZR9dvWrtLSWYtQFHzrkXdP7x+FXIsQpEEl0w0n88FDEj
-	 Z7o8Ai+pPR/+dAThQyvOPMrfVJus5gLCd6n6c0VJkWZDcUBdFqlGvgPW9qhPnBaeuF
-	 R22W4wdLAb90w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA4DE77173;
-	Fri,  6 Dec 2024 07:46:58 +0000 (UTC)
-From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Date: Thu, 05 Dec 2024 23:46:10 -0800
-Subject: [PATCH 3/3] usb: typec: tcpm: Add new AMS for Get_Revision
- response
+	s=arc-20240116; t=1733471192; c=relaxed/simple;
+	bh=SG7Ibmb4t1yzkqqkDLJrBnmSr5QF5Rg634/yycaaTpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R8w8vQSH91PaljxZ2JJuKuIdel+zbsqplw7OrL3zEMUkRgJmW/WK6Ez5FcirO/Ew7O/tm144f2OZc10nhNRpcBOeJ2UmblYjeq0xB7r2RfV8nINgUxm55kIONhZTrl8FvF5FZi8337ZdWPjvHJDQ4evBFvJ97uF4kZKrWod5FZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eImPJvyK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E696C4CED1;
+	Fri,  6 Dec 2024 07:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733471192;
+	bh=SG7Ibmb4t1yzkqqkDLJrBnmSr5QF5Rg634/yycaaTpQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eImPJvyKQOVr5v1k1uXxiWiynk0EhxX/2hzakxYhvKfc/FUq7vsly/4lIzHEy2eVA
+	 JDKxyWaodi5ewslxZrS4IUcAyXei0J7mx6SU0qfGdx6bJfoCy59EQniA8/Iq0kyKc/
+	 mnk1m67/o/jDoIeDhJvQmf/UMxTtcfj1DQt1eRl8=
+Date: Fri, 6 Dec 2024 08:46:29 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] rust: miscdevice: Provide accessor to pull out
+ miscdevice::this_device
+Message-ID: <2024120616-endanger-strangely-62b4@gregkh>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <20241205162531.1883859-2-lee@kernel.org>
+ <2024120648-finch-shrubbery-c6f5@gregkh>
+ <20241206071646.GE8882@google.com>
+ <20241206073309.GG8882@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241205-get_rev_upstream-v1-3-90158ee7d75f@google.com>
-References: <20241205-get_rev_upstream-v1-0-90158ee7d75f@google.com>
-In-Reply-To: <20241205-get_rev_upstream-v1-0-90158ee7d75f@google.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Badhri Jagan Sridharan <badhri@google.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Kyle Tso <kyletso@google.com>, RD Babiera <rdbabiera@google.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, Amit Sunil Dhamne <amitsd@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733471217; l=4930;
- i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=YvUI3CfbZ7WfPHWV3UO69yuWSZoIOQnnvLn9UUmlros=;
- b=3N8ucg4taqS49w3NRKMQNlCekKvCDkA9FWY8/U7VBwHc7Z/szcbXtIrJH+cdGFMpCDPdk0lT/
- oRWxszd2HeoBGH7G/yxAkRl+WkRO3A70wW7n+ZJs+ot7p9t9r42kKAY
-X-Developer-Key: i=amitsd@google.com; a=ed25519;
- pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
-X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
- auth_id=262
-X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
-Reply-To: amitsd@google.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206073309.GG8882@google.com>
 
-From: Amit Sunil Dhamne <amitsd@google.com>
+On Fri, Dec 06, 2024 at 07:33:09AM +0000, Lee Jones wrote:
+> On Fri, 06 Dec 2024, Lee Jones wrote:
+> 
+> > On Fri, 06 Dec 2024, Greg KH wrote:
+> > 
+> > > On Thu, Dec 05, 2024 at 04:25:18PM +0000, Lee Jones wrote:
+> > > > There are situations where a pointer to a `struct device` will become
+> > > > necessary (e.g. for calling into dev_*() functions).  This accessor
+> > > > allows callers to pull this out from the `struct miscdevice`.
+> > > > 
+> > > > Signed-off-by: Lee Jones <lee@kernel.org>
+> > > > ---
+> > > >  rust/kernel/miscdevice.rs | 9 +++++++++
+> > > >  1 file changed, 9 insertions(+)
+> > > > 
+> > > > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > > > index 7e2a79b3ae26..55340f316006 100644
+> > > > --- a/rust/kernel/miscdevice.rs
+> > > > +++ b/rust/kernel/miscdevice.rs
+> > > > @@ -10,11 +10,13 @@
+> > > >  
+> > > >  use crate::{
+> > > >      bindings,
+> > > > +    device::Device,
+> > > >      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> > > >      prelude::*,
+> > > >      str::CStr,
+> > > >      types::{ForeignOwnable, Opaque},
+> > > >  };
+> > > > +
+> > > >  use core::{
+> > > >      ffi::{c_int, c_long, c_uint, c_ulong},
+> > > >      marker::PhantomData,
+> > > > @@ -84,6 +86,13 @@ pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
+> > > >      pub fn as_raw(&self) -> *mut bindings::miscdevice {
+> > > >          self.inner.get()
+> > > >      }
+> > > > +
+> > > > +    /// Returns a pointer to the current Device
+> > > > +    pub fn device(&self) -> &Device {
+> > > > +        // SAFETY: This is only accessible after a successful register() which always
+> > > > +        // initialises this_device with a valid device.
+> > > > +        unsafe { Device::as_ref((*self.as_raw()).this_device) }
+> > > 
+> > > A "raw" pointer that you can do something with without incrementing the
+> > > reference count of it?  Oh wait, no, it's the rust device structure.
+> > > If so, why isn't this calling the get_device() interface instead?  That
+> > > way it's properly incremented and decremented when it "leaves the scope"
+> > > right?
+> > > 
+> > > Or am I missing something here as to why that wouldn't work and this is
+> > > the only way to get access to the 'struct device' of this miscdevice?
+> > 
+> > Fair point.  I'll speak to Alice.
+> 
+> Alice isn't available yet, so I may be talking out of turn at this
+> point, but I just found this is the Device documentation:
+> 
+>   /// A `Device` instance represents a valid `struct device` created by the C portion of the kernel.
+>   ///
+>   /// Instances of this type are always reference-counted, that is, a call to `get_device` ensures
+>   /// that the allocation remains valid at least until the matching call to `put_device`.
+> 
+> And:
+> 
+>   // SAFETY: Instances of `Device` are always reference-counted.
+> 
+> Ready for some analysis from this beginner?
+> 
+> Since this impl for Device is AlwaysRefCounted, when any references are
+> taken i.e. in the Device::as_ref line above, inc_ref() is implicitly
+> called to increase the refcount.  The same will be true of dec_ref()
+> once it goes out of scope.
+> 
+>   // SAFETY: Instances of `Device` are always reference-counted.
+>   unsafe impl crate::types::AlwaysRefCounted for Device {
+>       fn inc_ref(&self) {
+>           // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
+>           unsafe { bindings::get_device(self.as_raw()) };
+>       }
+> 
+>       unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>           // SAFETY: The safety requirements guarantee that the refcount is non-zero.
+>           unsafe { bindings::put_device(obj.cast().as_ptr()) }
+>   }
 
-This commit adds a new AMS for responding to a "Get_Revision" request.
-Revision message consists of the following fields:
+Ick, really?  So as_ref() implicitly calles inc_ref() and dec_ref()?
+Ah, ok, in digging into AlwaysRefCounted I now see that seems to be
+true.
 
- +----------------------------------------------------+
- |         Header             |         RMDO          |
- |  No. of data objects = 1   |                       |
- +----------------------------------------------------+
+So great, this is a reference counted object, so what's preventing it
+from now being used in dev_info()?
 
- While RMDO consists of:
-  * B31..28     Revision Major
-  * B27..24     Revision Minor
-  * B23..20     Version Major
-  * B19..16     Version Minor
-  * B15..0      Reserved, shall be set to zero.
+thanks,
 
-As per the PD spec ("8.3.3.16.2.1 PR_Give_Revision State"), a request is
-only expected when an explicit contract is established and the port is
-in ready state. This AMS is only supported for PD >= 3.0.
-
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
----
- drivers/usb/typec/tcpm/tcpm.c | 41 ++++++++++++++++++++++++++++++++++++++++-
- include/linux/usb/pd.h        | 22 ++++++++++++++++++++--
- 2 files changed, 60 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 59621cfaee3d67a36f3ad6870bd1aa92d382f33a..460dbde9fe2239b10c43cfb12dce92c736b1cea9 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -185,7 +185,8 @@
- 	S(UNSTRUCTURED_VDMS),			\
- 	S(STRUCTURED_VDMS),			\
- 	S(COUNTRY_INFO),			\
--	S(COUNTRY_CODES)
-+	S(COUNTRY_CODES),			\
-+	S(REVISION_INFORMATION)
- 
- #define GENERATE_ENUM(e)	e
- #define GENERATE_STRING(s)	#s
-@@ -225,6 +226,7 @@ enum pd_msg_request {
- 	PD_MSG_CTRL_NOT_SUPP,
- 	PD_MSG_DATA_SINK_CAP,
- 	PD_MSG_DATA_SOURCE_CAP,
-+	PD_MSG_DATA_REV,
- };
- 
- enum adev_actions {
-@@ -1244,6 +1246,24 @@ static u32 tcpm_forge_legacy_pdo(struct tcpm_port *port, u32 pdo, enum typec_rol
- 	}
- }
- 
-+static int tcpm_pd_send_revision(struct tcpm_port *port)
-+{
-+	struct pd_message msg;
-+	u32 rmdo;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	rmdo = RMDO(port->pd_rev.rev_major, port->pd_rev.rev_minor,
-+		    port->pd_rev.ver_major, port->pd_rev.ver_minor);
-+	msg.payload[0] = cpu_to_le32(rmdo);
-+	msg.header = PD_HEADER_LE(PD_DATA_REVISION,
-+				  port->pwr_role,
-+				  port->data_role,
-+				  port->negotiated_rev,
-+				  port->message_id,
-+				  1);
-+	return tcpm_pd_transmit(port, TCPC_TX_SOP, &msg);
-+}
-+
- static int tcpm_pd_send_source_caps(struct tcpm_port *port)
- {
- 	struct pd_message msg;
-@@ -3547,6 +3567,17 @@ static void tcpm_pd_ctrl_request(struct tcpm_port *port,
- 				   PD_MSG_CTRL_NOT_SUPP,
- 				   NONE_AMS);
- 		break;
-+	case PD_CTRL_GET_REVISION:
-+		if (port->negotiated_rev >= PD_REV30 && port->pd_rev.rev_major)
-+			tcpm_pd_handle_msg(port, PD_MSG_DATA_REV,
-+					   REVISION_INFORMATION);
-+		else
-+			tcpm_pd_handle_msg(port,
-+					   port->negotiated_rev < PD_REV30 ?
-+					   PD_MSG_CTRL_REJECT :
-+					   PD_MSG_CTRL_NOT_SUPP,
-+					   NONE_AMS);
-+		break;
- 	default:
- 		tcpm_pd_handle_msg(port,
- 				   port->negotiated_rev < PD_REV30 ?
-@@ -3791,6 +3822,14 @@ static bool tcpm_send_queued_message(struct tcpm_port *port)
- 				tcpm_ams_finish(port);
- 			}
- 			break;
-+		case PD_MSG_DATA_REV:
-+			ret = tcpm_pd_send_revision(port);
-+			if (ret)
-+				tcpm_log(port,
-+					 "Unable to send revision msg, ret=%d",
-+					 ret);
-+			tcpm_ams_finish(port);
-+			break;
- 		default:
- 			break;
- 		}
-diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
-index d50098fb16b5d2e2d9e39c55db4329224115e8b1..3068c3084eb6176d7d9184c3959a4110282a9fa0 100644
---- a/include/linux/usb/pd.h
-+++ b/include/linux/usb/pd.h
-@@ -33,7 +33,9 @@ enum pd_ctrl_msg_type {
- 	PD_CTRL_FR_SWAP = 19,
- 	PD_CTRL_GET_PPS_STATUS = 20,
- 	PD_CTRL_GET_COUNTRY_CODES = 21,
--	/* 22-31 Reserved */
-+	/* 22-23 Reserved */
-+	PD_CTRL_GET_REVISION = 24,
-+	/* 25-31 Reserved */
- };
- 
- enum pd_data_msg_type {
-@@ -46,7 +48,9 @@ enum pd_data_msg_type {
- 	PD_DATA_ALERT = 6,
- 	PD_DATA_GET_COUNTRY_INFO = 7,
- 	PD_DATA_ENTER_USB = 8,
--	/* 9-14 Reserved */
-+	/* 9-11 Reserved */
-+	PD_DATA_REVISION = 12,
-+	/* 13-14 Reserved */
- 	PD_DATA_VENDOR_DEF = 15,
- 	/* 16-31 Reserved */
- };
-@@ -453,6 +457,20 @@ static inline unsigned int rdo_max_power(u32 rdo)
- #define EUDO_TBT_SUPPORT		BIT(14)
- #define EUDO_HOST_PRESENT		BIT(13)
- 
-+/*
-+ * Request Message Data Object (PD Revision 3.1+ only)
-+ * --------
-+ * <31:28> :: Revision Major
-+ * <27:24> :: Revision Minor
-+ * <23:20> :: Version Major
-+ * <19:16> :: Version Minor
-+ * <15:0>  :: Reserved, Shall be set to zero
-+ */
-+
-+#define RMDO(rev_maj, rev_min, ver_maj, ver_min)			\
-+	(((rev_maj) & 0xf) << 28 | ((rev_min) & 0xf) << 24 |		\
-+	 ((ver_maj) & 0xf) << 20 | ((ver_min) & 0xf) << 16)
-+
- /* USB PD timers and counters */
- #define PD_T_NO_RESPONSE	5000	/* 4.5 - 5.5 seconds */
- #define PD_T_DB_DETECT		10000	/* 10 - 15 seconds */
-
--- 
-2.47.0.338.g60cca15819-goog
-
-
+greg k-h
 
