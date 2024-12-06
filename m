@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-434670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FA69E69A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:05:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083F39E69A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20381164FB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31FA61884412
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B4E1EE014;
-	Fri,  6 Dec 2024 09:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B601F03E4;
+	Fri,  6 Dec 2024 09:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxIAu4kP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qeDAikPS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B9C1DE8B7;
-	Fri,  6 Dec 2024 09:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17521EF097;
+	Fri,  6 Dec 2024 09:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475935; cv=none; b=T9Nlp5TB+SJTL1TxYiesErK+2AmPfFUd80LKjQKcRmWt39sSYzbCv6snSslR8R3GitcdnyyxLPMydOE0VllMvSu828xbM8NyeQ13aYlUZzNY+pOUkIovzJKLVuJpINq3uw9mmzbQN2GF202NsAGYjy1w3M7100+eUfA7qDCTvXw=
+	t=1733475937; cv=none; b=Qm3UYO0uw8QSbXGHpzZzPmfM1a5TsIhLx2+9UFGFoRpuxKllVazTT+7BrvVTpRjO+B2tkgtpGEC7qxwoOoFQ6qXPQVCPKKw8t5AcFttb4QSFvL1xPsu5DkiyunF+k376U4EBxw0qHh4Ha5sCgkZ9K/iYdfCNS90vHUyuw9HwECw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475935; c=relaxed/simple;
-	bh=22NZyA5YVkMQ03pXUXXdocb9WXBGnORT9AlGZhxewK4=;
+	s=arc-20240116; t=1733475937; c=relaxed/simple;
+	bh=RZlItOZezRowXOLbsBUld7wmGQAUobHGREmd6YYqaDI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RZWGRcOZ/6HkED7IWDQpmeNtuseOKo1D7PuCrkCS8HAZ7LOejQ5+Qn6zb8lEOyKscy9EIs+TORJu+Lo1/+tm8J/JsgC0vapTU3Zs93KbdhqSyZ+1DovNRjmqpWZy3h5Ktuo8tD4NIlptzl5CyTRQFv2YJv8IZ27fUnLMCaFVKB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxIAu4kP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE6EC4CEDD;
-	Fri,  6 Dec 2024 09:05:31 +0000 (UTC)
+	 MIME-Version; b=BMYBG1P74KfpmCMfRbsxKQrdf2VLUedErSiQ5WcfOoa0cMy4HbF0DOBX72A6o3K/rnevptBJZDUc+ovmoBw3tNTa8GbnzWfPb8ong51d0wCk+cnvl6Vx6PIhPm3sBFoI45LrOr8CcPeVNfyEWdvVmFn5TPruAJzsnX+NzAjr8t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qeDAikPS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81986C4CED1;
+	Fri,  6 Dec 2024 09:05:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733475934;
-	bh=22NZyA5YVkMQ03pXUXXdocb9WXBGnORT9AlGZhxewK4=;
+	s=k20201202; t=1733475937;
+	bh=RZlItOZezRowXOLbsBUld7wmGQAUobHGREmd6YYqaDI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nxIAu4kPguSdYqB8VqbnjCCcCYv9b1Ig2tCGogUUuV+gj2S8b3IAUaAzFRbrSe+me
-	 52TEHYUGp6wvTK3lQA9VXuwuUcy7BoDqCNpXm6G+nohza7x8eDqDVKKck4DFBgz3be
-	 0IO3dDALWxg3dZMYXYx/cj5rZvdFmEVxRGs9IrpHs9U3MGSbOeATovXZItMAsacE3I
-	 gFL3A4VASnCW7dOrPWVGkU7pnCe5L1hLIT7260rVA89RLMDrgGLRjsA4NBXn2wc3Jq
-	 aHbk8uWO3nDd5oX9ZqbqCvAqDd+a/vsZM5ssyi0+iBj6U45069B5t+/jcaS3sJLY2w
-	 fYn8YtaGKRheA==
+	b=qeDAikPSlCiDr6NEVNvzPn4isnpWs57s0DFGtEbum25hLbCv8nWTt5MhqZTPfM9qN
+	 hZx3GHCVdSCWVEU3AFbupBaYgfz8g/qpBC6+9ThJvsPvrcVXKL35/3YVnQez3p1NWk
+	 56tSWJ8pFU1vVY9tu4jJqtV1LpOf9BVxeecJLHfvIZPk2fULZogBnn+k9eYM2aZMJ8
+	 p6VyzrNElRiLh91Q0Mt8YPLuKUhc9XerQaIfibF90bsLBs5ewyhjolvRobt+RF9vU7
+	 8Ow7g2Z0qbJ7zSEQx4i8+DC0xhO9jGJROeq5Lej7e6lvADkgOmgIK6FM2Wg9ffmYWl
+	 KKgpNP9vbJtzw==
 From: Lee Jones <lee@kernel.org>
 To: lee@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -55,9 +55,9 @@ Cc: linux-kernel@vger.kernel.org,
 	aliceryhl@google.com,
 	tmgross@umich.edu,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v4 1/4] Documentation: ioctl-number: Carve out some identifiers for use by sample drivers
-Date: Fri,  6 Dec 2024 09:05:03 +0000
-Message-ID: <20241206090515.752267-2-lee@kernel.org>
+Subject: [PATCH v3 1/5] rust: miscdevice: Provide accessor to pull out miscdevice::this_device
+Date: Fri,  6 Dec 2024 09:05:04 +0000
+Message-ID: <20241206090515.752267-3-lee@kernel.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241206090515.752267-1-lee@kernel.org>
 References: <20241206090515.752267-1-lee@kernel.org>
@@ -69,29 +69,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-32 IDs should be plenty (at yet, not too greedy) since a lot of sample
-drivers will use their own subsystem allocations.
-
-Sample drivers predominately reside in <KERNEL_ROOT>/samples, but there
-should be no issue with in-place example drivers using them.
+There are situations where a pointer to a `struct device` will become
+necessary (e.g. for calling into dev_*() functions).  This accessor
+allows callers to pull this out from the `struct miscdevice`.
 
 Signed-off-by: Lee Jones <lee@kernel.org>
 ---
- Documentation/userspace-api/ioctl/ioctl-number.rst | 1 +
- 1 file changed, 1 insertion(+)
+ rust/kernel/miscdevice.rs | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index 243f1f1b554a..dc4bc0cab69f 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -311,6 +311,7 @@ Code  Seq#    Include File                                           Comments
-                                                                      <mailto:oe@port.de>
- 'z'   10-4F  drivers/s390/crypto/zcrypt_api.h                        conflict!
- '|'   00-7F  linux/media.h
-+'|'   80-9F  samples/                                                Any sample and example drivers
- 0x80  00-1F  linux/fb.h
- 0x81  00-1F  linux/vduse.h
- 0x89  00-06  arch/x86/include/asm/sockios.h
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index 7e2a79b3ae26..55340f316006 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -10,11 +10,13 @@
+ 
+ use crate::{
+     bindings,
++    device::Device,
+     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+     prelude::*,
+     str::CStr,
+     types::{ForeignOwnable, Opaque},
+ };
++
+ use core::{
+     ffi::{c_int, c_long, c_uint, c_ulong},
+     marker::PhantomData,
+@@ -84,6 +86,13 @@ pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
+     pub fn as_raw(&self) -> *mut bindings::miscdevice {
+         self.inner.get()
+     }
++
++    /// Returns a pointer to the current Device
++    pub fn device(&self) -> &Device {
++        // SAFETY: This is only accessible after a successful register() which always
++        // initialises this_device with a valid device.
++        unsafe { Device::as_ref((*self.as_raw()).this_device) }
++    }
+ }
+ 
+ #[pinned_drop]
 -- 
 2.47.0.338.g60cca15819-goog
 
