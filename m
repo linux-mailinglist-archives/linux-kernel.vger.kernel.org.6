@@ -1,143 +1,162 @@
-Return-Path: <linux-kernel+bounces-435025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3994C9E6E8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:51:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4819E6E93
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2384616A3BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2848A167F6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08DC2066EF;
-	Fri,  6 Dec 2024 12:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2301C206F07;
+	Fri,  6 Dec 2024 12:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYh6kRf9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJU7ILLh"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252F410E6;
-	Fri,  6 Dec 2024 12:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239553D6B;
+	Fri,  6 Dec 2024 12:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489398; cv=none; b=LJ5JJgJ6d+FE+wuX9/JV5lkkxc+U+XcBjTwfxBZOF2OHTeozq0nnimGVmtBqqH66IR3wwvS3d2YCS120qUh0YapSs5Ty+bd7/ngh7N/VzwjN5bJ2sGppF+GmxrHKOMAHT9TmV7mJnAJm/ZIm5GuNGMEn5MZfJRHMLWElpuyV8JQ=
+	t=1733489449; cv=none; b=Fv5UAxKrSgh+3QPHQNg662hHPFKIVFhGuo03TPa+j8H52u8Qm7PHxmLPa4TBdc76QVsGu86F/RxaYxhHSnKR8Ggvh9TqpGvLYDAOM4kwSRcUN1L2J7CPeocy88gq1bGulbp4FG6pmAsr2+CCU3oGEGE4dAlpiizc+ENuzSWZVHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489398; c=relaxed/simple;
-	bh=TFG+bim7icdVhxwWzSqoHwXSxC+pOqSThunna8oKFyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ILJPnExV+uUkgbDu0o3taKl1cieEq/VHqMG+2GmwagDVB5hN2xooby6eCKHZmheMutRkKJ1ftMLg76yFT6xFFqg1Z8d7ca3q6PAabM5jZvIGsd45M664TD3t6vVkRr77sodPrYJWbS+y3wTpa8peU09wTFyyKXJt8pAZ42AmApQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYh6kRf9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3477C4CED1;
-	Fri,  6 Dec 2024 12:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733489397;
-	bh=TFG+bim7icdVhxwWzSqoHwXSxC+pOqSThunna8oKFyY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OYh6kRf9+4G5NYKJuxoeu8dcah5TpFxeFP+8yVx+kk/rsrvYIyesNQJOkHapaV60s
-	 vQTAvZA1AgKdLo2jt61/LxeuyJEvyXt5LyNwyWUpdnT5ER/rytPk8sSA+ZmjjdY7B1
-	 5j3sP3e+gSN94UxoWinZEyJ+mG9kWavcRiVtCK4RWqUrOFF7asg1Szk9qiNi16yRIy
-	 E8Pn8yns3d3XBkRqiwD3dWkFuSurPRux44knRPqRE6awo4C1EifOmw7MQbype0b0DR
-	 hYv3FSJrFCm8boM/tzGghdifDd1Z58wU6rqwqxGoepT8uxumIgFTAOQhoIgOrwmxBo
-	 BwglYTuWvih1Q==
-Message-ID: <c639ca40-9e4f-4882-8441-57413e835422@kernel.org>
-Date: Fri, 6 Dec 2024 13:49:51 +0100
+	s=arc-20240116; t=1733489449; c=relaxed/simple;
+	bh=XEZyDHk132hZI57xsp0Rf6mJbSdLueVq0jXAyMBO/2I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SiCUFBEgPOrYhyyQJL8i7fLWGcMaXOq6A+u+H/4MCfV37aW7nWRTrJZgXTtflFni6n15Wt0JYur5Ql9ITgYfWhoWH8qNFN7rY54qKbRMQ700CCSTpAgTGidYfVgQkqjI0K5ueCsHJeV8Sx0f1KnAh/77vygnoyaKy5KdHyfGil0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJU7ILLh; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fd24e274fdso640801a12.2;
+        Fri, 06 Dec 2024 04:50:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733489447; x=1734094247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BvnJWSsrkTVTOK9NYAknHMey6BhHTV0eKyyrXxhAy+8=;
+        b=TJU7ILLhuKIB+DdZYmNnXK/p+SNbakk71AxgvLrcRnRrQZCrUZ5CPEcT09Wh5kSgIu
+         8cGePaouVZAbvm/siKXY3XoCLDO7jWZenC9wqe7LTCZjH3qZVm1viFl5stjZCprjo0OX
+         P+5XoOriZ+oPXVcH30IlEW57ugv76w6+A55QCN7s+M3tzU6FM0Bd85QY0+fGUrK1ljAz
+         j8/ZY3fcfee2h9ZtfRJ9kWYTtKtnVKg89YD/EMP+q6REaA1KgJ346p/5UQW65Epy64b1
+         qhP+5ieQNx8ht9uH/lT8mydH3Izim1gP6NOCREtUgmJAOezZnqosOt/r1YTy+2xD9ksT
+         GkgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733489447; x=1734094247;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BvnJWSsrkTVTOK9NYAknHMey6BhHTV0eKyyrXxhAy+8=;
+        b=kPV/gP9TfPaEVZfIESOpF9miDPYLT3FLQEPctBMXAcdyJ8a3ErtHAQ20h18khd6mF0
+         erDm/mSSkAoVeyPLJcOg0LrNlP7S1HPrUs/G7avrRy9QhRuwzNX+K54M9swC09xy6jnT
+         S6Bjmoe0fh9frWqGM9zyojET25/3xLl02scmP9rct7YmG9fM3F+uyd0+gemmMlk0S3mR
+         VifNlHqWtNzOri/2HoBFiLklcKoWHlCBtrMPtWzXt8CjswoeRjPbD6u03Vy96P1kYiYU
+         T+/BwL6TPZjk31+yMxoBsU3bMFOle9c44dnyETnc9EL7904UECzCA2ILcxATv3fxC4zH
+         TSNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYR1ATRm5tftTH/aALjMzbWeVGOqMKP7t6AHEv8N1b6fB8IXIPTy1uGp7zSc8ApbbVGh2UBECN@vger.kernel.org, AJvYcCVzwWv8EbrnEOvxfth10xLGrvav8UPxjd1O/Q3i44JylE8DbrNIiIt9+udI+AtgRBei9E8yd8bA3zdp@vger.kernel.org, AJvYcCXUK/HJI86OVYRxn8Pv01VLJWxLgkzkVJr1xbmplXBnVtJAexifX8nqKFfTZNnlyqXSEYzO9W+fXhmtH84q@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJhMHoJV9+/uB7whT7DN4eAXspzny57/vzJcWLmgTuHKHONW2/
+	0mi24NKTh1rvblLMm28tT9xuGUcPmkX3FVPKertkyJ83MBTvT3dRHgKl4m3niPVLNPiBrfnUczO
+	DJsA/gAW0TXkWnRRBekf/F8nyU+J+8Q9S
+X-Gm-Gg: ASbGnctnCu4MQIut6TEzQ1n0EKMTKMDQI2S3S7i0ZgxlkiRlhQQwfeNw+Vneg/chrf3
+	rSuTfBxMyW8TbpnjnKEj+Efq1vpQ2hsY=
+X-Google-Smtp-Source: AGHT+IGfoReZyqEHkx2l9Z6yTZIOzjckyeg+BIUhB/ROWL3Ic48D0l/l6lTNNJvqLqnQjmI0031T4Qs+fZHxaDSRsvg=
+X-Received: by 2002:a17:90b:17c2:b0:2ee:aa28:79aa with SMTP id
+ 98e67ed59e1d1-2ef69366eb9mr4867604a91.6.1733489447225; Fri, 06 Dec 2024
+ 04:50:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
- <20241119174954.1219002-6-quic_wasimn@quicinc.com>
- <9e351979-be01-4d38-9b94-cc23efac4c3f@kernel.org>
- <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
- <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
+ <20241205154951.4163232-1-max.kellermann@ionos.com> <CAO8a2Si+7uFkOCf4JxCSkLtJR=_nQOYPAZ_WkWES97ifhyHvBQ@mail.gmail.com>
+In-Reply-To: <CAO8a2Si+7uFkOCf4JxCSkLtJR=_nQOYPAZ_WkWES97ifhyHvBQ@mail.gmail.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Fri, 6 Dec 2024 13:50:36 +0100
+Message-ID: <CAOi1vP9Ovx1fJ8AH3gPEfeAT1nL3uT98EAngdO=FHtfiem6+3w@mail.gmail.com>
+Subject: Re: [PATCH v2] fs/ceph/file: fix memory leaks in __ceph_sync_read()
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Max Kellermann <max.kellermann@ionos.com>, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/12/2024 13:14, Konrad Dybcio wrote:
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
->>>> new file mode 100644
->>>> index 000000000000..a04c8d1fa258
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
->>>> @@ -0,0 +1,12 @@
->>>> +// SPDX-License-Identifier: BSD-3-Clause
->>>> +/*
->>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +/dts-v1/;
->>>> +
->>>> +#include "sa8775p-ride-r3.dts"
->>> No guys, you are making these things up. This is EXACTLY the same as
->>> qcs9100.
->>
->> 9100 & 9075 are different from “safe” perspective. They differ in
->> changes related to thermal which will be added later in devicetree.
-> 
-> Since this can't be inferred from just looking at the changes, please
-> make sure to add that to the commit message
+On Thu, Dec 5, 2024 at 5:30=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> w=
+rote:
+>
+> Good.
+> This sequence has not been tested independently, but it should be fine.
 
-Any include of other DTS is clear sign something is odd here. Including
-multiple times without any added nodes is showing these are not real
-products/boards .
-Best regards,
-Krzysztof
+Applied.
+
+Thanks,
+
+                Ilya
+
+>
+> On Thu, Dec 5, 2024 at 5:49=E2=80=AFPM Max Kellermann <max.kellermann@ion=
+os.com> wrote:
+> >
+> > In two `break` statements, the call to ceph_release_page_vector() was
+> > missing, leaking the allocation from ceph_alloc_page_vector().
+> >
+> > Instead of adding the missing ceph_release_page_vector() calls, the
+> > Ceph maintainers preferred to transfer page ownership to the
+> > `ceph_osd_request` by passing `own_pages=3Dtrue` to
+> > osd_req_op_extent_osd_data_pages().  This requires postponing the
+> > ceph_osdc_put_request() call until after the block that accesses the
+> > `pages`.
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> > ---
+> >  fs/ceph/file.c | 7 +++----
+> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 4b8d59ebda00..ce342a5d4b8b 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1127,7 +1127,7 @@ ssize_t __ceph_sync_read(struct inode *inode, lof=
+f_t *ki_pos,
+> >
+> >                 osd_req_op_extent_osd_data_pages(req, 0, pages, read_le=
+n,
+> >                                                  offset_in_page(read_of=
+f),
+> > -                                                false, false);
+> > +                                                false, true);
+> >
+> >                 op =3D &req->r_ops[0];
+> >                 if (sparse) {
+> > @@ -1186,8 +1186,6 @@ ssize_t __ceph_sync_read(struct inode *inode, lof=
+f_t *ki_pos,
+> >                         ret =3D min_t(ssize_t, fret, len);
+> >                 }
+> >
+> > -               ceph_osdc_put_request(req);
+> > -
+> >                 /* Short read but not EOF? Zero out the remainder. */
+> >                 if (ret >=3D 0 && ret < len && (off + ret < i_size)) {
+> >                         int zlen =3D min(len - ret, i_size - off - ret)=
+;
+> > @@ -1221,7 +1219,8 @@ ssize_t __ceph_sync_read(struct inode *inode, lof=
+f_t *ki_pos,
+> >                                 break;
+> >                         }
+> >                 }
+> > -               ceph_release_page_vector(pages, num_pages);
+> > +
+> > +               ceph_osdc_put_request(req);
+> >
+> >                 if (ret < 0) {
+> >                         if (ret =3D=3D -EBLOCKLISTED)
+> > --
+> > 2.45.2
+> >
+>
 
