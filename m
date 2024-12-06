@@ -1,59 +1,81 @@
-Return-Path: <linux-kernel+bounces-434419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566689E667B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:50:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14F99E668B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18C75166ACA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652D618851E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DCB18E03A;
-	Fri,  6 Dec 2024 04:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441B719413B;
+	Fri,  6 Dec 2024 04:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJhjBHsy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VJrw1aoU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750BF28FD;
-	Fri,  6 Dec 2024 04:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13ADC28FD;
+	Fri,  6 Dec 2024 04:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733460622; cv=none; b=rsUsOVpb+LHTlnztB7Js9i3JUaArYcDWgXzxnpn2d8fBQ/rgslwKRh4b5JybumY7fcuY79oXrROdc5wCpGJkR3W0wNZ4M4EJpvx47hEsI1y0ZUcH2eVWUUH4pRn6Mk5G9naO4xFPpOgzmfY3VNtqVwgW2L+snDPR88LsfFtSUU8=
+	t=1733460952; cv=none; b=Mh+9smrvL8LScJ1Y8q6hyj1JCx2oYkTEcmTcKZtOs3xDRPOm4mbOvPbAeZXaIjjy1iifvZL0yx94hUU3MENW7jlxj3MKP9ZgZDJE/+D7QuoRKPf9AD1lmN9gnF9XEhcy+oKe0vfpZCRbCmvFTTXoyLtdDTk+vGsX/dDPzfbpwcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733460622; c=relaxed/simple;
-	bh=azcIaN9xS4OhBh13wKTotBQOrofPdrThVZnKKRGCi5Y=;
+	s=arc-20240116; t=1733460952; c=relaxed/simple;
+	bh=AmLWblXxxrtbKW+nU/XBqH+Po3pZ7cYVz5x5QTefPso=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RIjuVgLqPgjKdb9PFPvZAqx6pxVl0trlA0bzNTs4/Qplx29muvqDfOu0Civ+sCkFduVGvYF6NcDxFDXQi628ruCnZaseW6gceSjBn3mWPEQifr8dTmAHP+LkupgtMqLBOkC110Aa78QWsyaly/74vKkboo6R9ZDCLduYdkmgulc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJhjBHsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 350D6C4CED1;
-	Fri,  6 Dec 2024 04:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733460621;
-	bh=azcIaN9xS4OhBh13wKTotBQOrofPdrThVZnKKRGCi5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FJhjBHsyo2CyO7dZGswIJvUxYIRO9xAsjEWLd98w8UNcfr1Cikneln+LMjOK6JVCI
-	 d9trAdJM6ACDpujasfZIeFgJQT80miFednLZt91bNalsYUPFDX8OIrzcJBwE2i/H98
-	 gnHjgjRXaqrhclbMeXBbFbjrGaF4nbPku4GkC1kYn6pfmn7sW3uqPkBwWC71w19c3l
-	 vlGsVnpykXr5S0WdkcKe4OvKqdYNUvVpPefJPqO94lZ4YEYE00ece9GDesbXWGm1SL
-	 wXIaqz1A5SNiwyZDn9waKgt8O3Go2+rGCaO1uglx3tXdSWiE/tH2Y44z2EG4E8CdJC
-	 ftdqdWXplxrCg==
-Date: Thu, 5 Dec 2024 21:50:19 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Guillaume Morin <guillaume@morinfr.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-	Eric Hagberg <ehagberg@janestreet.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
-Message-ID: <20241206045019.GA2215843@thelio-3990X>
-References: <Z1EJssqd93w2erMZ@bender.morinfr.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8TaVc/bD7iXSpTtAy7gUll6LsqP7AVZqOahlLsEoiupeiCOkDIxZjB1GZAKYiT06+Z7xS0Q9TF4848zsLGhtjJVFJzF6SCYFlp/j1N5G/pzHX7/Ckt7AAaLd9KmcXlnYeKiqAX8FjRYjLeo7vVJxZ1Nqo8faH/w+/NnlhRalAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VJrw1aoU; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733460950; x=1764996950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AmLWblXxxrtbKW+nU/XBqH+Po3pZ7cYVz5x5QTefPso=;
+  b=VJrw1aoUUN339RAP8sB+TXs+QrpadzoTFUH0yPngW0zN/SFfhjACZ1Lc
+   JqUnjDaz0Q1wzGy8Ist+RQ9g0rDrp7ttcAjuwf93ecImeGuJQQt2IRnKX
+   gzWBxJAwaFqyjphKTJJiNZfcgH6Iwx4a9AY1PyBJp42Rfsv9gLE+/ETjR
+   REJNx/uQd+Z3d5ctLmBT6NpuFHqTX8cRQ0A0lLH3J9gghJQSpaQNJTUT0
+   wIvqcRpxnDeyBl2+eeVxpjX48mT4Rn7Ph3OPyCGL63uS60w+fYRNOUL0u
+   soLA29h8hCRiMCmYHmHFPY0bSe3v7EXp/mr8NGubockmdsZrTe/2hdGyA
+   A==;
+X-CSE-ConnectionGUID: QIoprJMoQN+a+bKWaQRKwg==
+X-CSE-MsgGUID: Y5LHS6RKRtGqXdA9ECy8rA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="56296859"
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="56296859"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 20:55:50 -0800
+X-CSE-ConnectionGUID: V0ByfAr8Rbm8yd//5J+6Rg==
+X-CSE-MsgGUID: qMY21bOjTaSKQohmsjCShw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="125205266"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 05 Dec 2024 20:55:44 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJQNS-0000i7-0t;
+	Fri, 06 Dec 2024 04:55:42 +0000
+Date: Fri, 6 Dec 2024 12:54:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>, rafael@kernel.org,
+	lenb@kernel.org, james.morse@arm.com, tony.luck@intel.com,
+	bp@alien8.de, robert.moore@intel.com, dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com, Benjamin.Cheatham@amd.com,
+	Avadhut.Naik@amd.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
+	ira.weiny@intel.com, dave.jiang@intel.com,
+	sthanneeru.opensrc@micron.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2
+ capabilities
+Message-ID: <202412061210.H6R0JvCL-lkp@intel.com>
+References: <20241205211854.43215-6-zaidal@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,291 +84,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1EJssqd93w2erMZ@bender.morinfr.org>
+In-Reply-To: <20241205211854.43215-6-zaidal@os.amperecomputing.com>
 
-Hi Guillaume and s390 folks,
+Hi Zaid,
 
-On Thu, Dec 05, 2024 at 03:02:26AM +0100, Guillaume Morin wrote:
-> 
-> Eric reported that PTRACE_POKETEXT fails when applications use hugetlb
-> for mapping text using huge pages. Before commit 1d8d14641fd9
-> ("mm/hugetlb: support write-faults in shared mappings"), PTRACE_POKETEXT
-> worked by accident, but it was buggy and silently ended up mapping pages
-> writable into the page tables even though VM_WRITE was not set.
-> 
-> In general, FOLL_FORCE|FOLL_WRITE does currently not work with hugetlb.
-> Let's implement FOLL_FORCE|FOLL_WRITE properly for hugetlb, such that
-> what used to work in the past by accident now properly works, allowing
-> applications using hugetlb for text etc. to get properly debugged.
-> 
-> This change might also be required to implement uprobes support for
-> hugetlb [1].
-> 
-> [1] https://lore.kernel.org/lkml/ZiK50qob9yl5e0Xz@bender.morinfr.org/
-> 
-> Cc: Muchun Song <muchun.song@linux.dev>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Eric Hagberg <ehagberg@janestreet.com>
-> Signed-off-by: Guillaume Morin <guillaume@morinfr.org>
-> ---
->  Changes in v2:
->   - Improved commit message
->  Changes in v3:
->   - Fix potential unitialized mem access in follow_huge_pud
->   - define pud_soft_dirty when soft dirty is not enabled
-> 
->  include/linux/pgtable.h |  5 +++
->  mm/gup.c                | 99 +++++++++++++++++++++--------------------
->  mm/hugetlb.c            | 20 +++++----
->  3 files changed, 66 insertions(+), 58 deletions(-)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index adef9d6e9b1b..9335d7c82d20 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1422,6 +1422,11 @@ static inline int pmd_soft_dirty(pmd_t pmd)
->  	return 0;
->  }
->  
-> +static inline int pud_soft_dirty(pud_t pud)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline pte_t pte_mksoft_dirty(pte_t pte)
->  {
->  	return pte;
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 746070a1d8bf..cc3eae458013 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -587,6 +587,33 @@ static struct folio *try_grab_folio_fast(struct page *page, int refs,
->  }
->  #endif	/* CONFIG_HAVE_GUP_FAST */
->  
-> +/* Common code for can_follow_write_* */
-> +static inline bool can_follow_write_common(struct page *page,
-> +		struct vm_area_struct *vma, unsigned int flags)
-> +{
-> +	/* Maybe FOLL_FORCE is set to override it? */
-> +	if (!(flags & FOLL_FORCE))
-> +		return false;
-> +
-> +	/* But FOLL_FORCE has no effect on shared mappings */
-> +	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
-> +		return false;
-> +
-> +	/* ... or read-only private ones */
-> +	if (!(vma->vm_flags & VM_MAYWRITE))
-> +		return false;
-> +
-> +	/* ... or already writable ones that just need to take a write fault */
-> +	if (vma->vm_flags & VM_WRITE)
-> +		return false;
-> +
-> +	/*
-> +	 * See can_change_pte_writable(): we broke COW and could map the page
-> +	 * writable if we have an exclusive anonymous page ...
-> +	 */
-> +	return page && PageAnon(page) && PageAnonExclusive(page);
-> +}
-> +
->  static struct page *no_page_table(struct vm_area_struct *vma,
->  				  unsigned int flags, unsigned long address)
->  {
-> @@ -613,6 +640,22 @@ static struct page *no_page_table(struct vm_area_struct *vma,
->  }
->  
->  #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
-> +/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
-> +static inline bool can_follow_write_pud(pud_t pud, struct page *page,
-> +					struct vm_area_struct *vma,
-> +					unsigned int flags)
-> +{
-> +	/* If the pud is writable, we can write to the page. */
-> +	if (pud_write(pud))
-> +		return true;
-> +
-> +	if (!can_follow_write_common(page, vma, flags))
-> +		return false;
-> +
-> +	/* ... and a write-fault isn't required for other reasons. */
-> +	return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
+kernel test robot noticed the following build warnings:
 
-This looks to be one of the first uses of pud_soft_dirty() in a generic
-part of the tree from what I can tell, which shows that s390 is lacking
-it despite setting CONFIG_HAVE_ARCH_SOFT_DIRTY:
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.13-rc1 next-20241205]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  $ make -skj"$(nproc)" ARCH=s390 CROSS_COMPILE=s390-linux- mrproper defconfig mm/gup.o
-  mm/gup.c: In function 'can_follow_write_pud':
-  mm/gup.c:665:48: error: implicit declaration of function 'pud_soft_dirty'; did you mean 'pmd_soft_dirty'? [-Wimplicit-function-declaration]
-    665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
-        |                                                ^~~~~~~~~~~~~~
-        |                                                pmd_soft_dirty
+url:    https://github.com/intel-lab-lkp/linux/commits/Zaid-Alali/ACPICA-Update-values-to-hex-to-follow-ACPI-specs/20241206-052420
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241205211854.43215-6-zaidal%40os.amperecomputing.com
+patch subject: [PATCH v2 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities
+config: i386-buildonly-randconfig-005-20241206 (https://download.01.org/0day-ci/archive/20241206/202412061210.H6R0JvCL-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061210.H6R0JvCL-lkp@intel.com/reproduce)
 
-Is this expected?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412061210.H6R0JvCL-lkp@intel.com/
 
-Cheers,
-Nathan
+All warnings (new ones prefixed by >>):
 
-> +}
-> +
->  static struct page *follow_huge_pud(struct vm_area_struct *vma,
->  				    unsigned long addr, pud_t *pudp,
->  				    int flags, struct follow_page_context *ctx)
-> @@ -625,13 +668,16 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
->  
->  	assert_spin_locked(pud_lockptr(mm, pudp));
->  
-> -	if ((flags & FOLL_WRITE) && !pud_write(pud))
-> +	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
-> +	page = pfn_to_page(pfn);
-> +
-> +	if ((flags & FOLL_WRITE) &&
-> +	    !can_follow_write_pud(pud, page, vma, flags))
->  		return NULL;
->  
->  	if (!pud_present(pud))
->  		return NULL;
->  
-> -	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
->  
->  	if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD) &&
->  	    pud_devmap(pud)) {
-> @@ -653,8 +699,6 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
->  			return ERR_PTR(-EFAULT);
->  	}
->  
-> -	page = pfn_to_page(pfn);
-> -
->  	if (!pud_devmap(pud) && !pud_write(pud) &&
->  	    gup_must_unshare(vma, flags, page))
->  		return ERR_PTR(-EMLINK);
-> @@ -677,27 +721,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
->  	if (pmd_write(pmd))
->  		return true;
->  
-> -	/* Maybe FOLL_FORCE is set to override it? */
-> -	if (!(flags & FOLL_FORCE))
-> -		return false;
-> -
-> -	/* But FOLL_FORCE has no effect on shared mappings */
-> -	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
-> -		return false;
-> -
-> -	/* ... or read-only private ones */
-> -	if (!(vma->vm_flags & VM_MAYWRITE))
-> -		return false;
-> -
-> -	/* ... or already writable ones that just need to take a write fault */
-> -	if (vma->vm_flags & VM_WRITE)
-> -		return false;
-> -
-> -	/*
-> -	 * See can_change_pte_writable(): we broke COW and could map the page
-> -	 * writable if we have an exclusive anonymous page ...
-> -	 */
-> -	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
-> +	if (!can_follow_write_common(page, vma, flags))
->  		return false;
->  
->  	/* ... and a write-fault isn't required for other reasons. */
-> @@ -798,27 +822,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
->  	if (pte_write(pte))
->  		return true;
->  
-> -	/* Maybe FOLL_FORCE is set to override it? */
-> -	if (!(flags & FOLL_FORCE))
-> -		return false;
-> -
-> -	/* But FOLL_FORCE has no effect on shared mappings */
-> -	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
-> -		return false;
-> -
-> -	/* ... or read-only private ones */
-> -	if (!(vma->vm_flags & VM_MAYWRITE))
-> -		return false;
-> -
-> -	/* ... or already writable ones that just need to take a write fault */
-> -	if (vma->vm_flags & VM_WRITE)
-> -		return false;
-> -
-> -	/*
-> -	 * See can_change_pte_writable(): we broke COW and could map the page
-> -	 * writable if we have an exclusive anonymous page ...
-> -	 */
-> -	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
-> +	if (!can_follow_write_common(page, vma, flags))
->  		return false;
->  
->  	/* ... and a write-fault isn't required for other reasons. */
-> @@ -1285,9 +1289,6 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
->  		if (!(vm_flags & VM_WRITE) || (vm_flags & VM_SHADOW_STACK)) {
->  			if (!(gup_flags & FOLL_FORCE))
->  				return -EFAULT;
-> -			/* hugetlb does not support FOLL_FORCE|FOLL_WRITE. */
-> -			if (is_vm_hugetlb_page(vma))
-> -				return -EFAULT;
->  			/*
->  			 * We used to let the write,force case do COW in a
->  			 * VM_MAYWRITE VM_SHARED !VM_WRITE vma, so ptrace could
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index ea2ed8e301ef..52517b7ce308 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -5169,6 +5169,13 @@ static void set_huge_ptep_writable(struct vm_area_struct *vma,
->  		update_mmu_cache(vma, address, ptep);
->  }
->  
-> +static void set_huge_ptep_maybe_writable(struct vm_area_struct *vma,
-> +					 unsigned long address, pte_t *ptep)
-> +{
-> +	if (vma->vm_flags & VM_WRITE)
-> +		set_huge_ptep_writable(vma, address, ptep);
-> +}
-> +
->  bool is_hugetlb_entry_migration(pte_t pte)
->  {
->  	swp_entry_t swp;
-> @@ -5802,13 +5809,6 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
->  	if (!unshare && huge_pte_uffd_wp(pte))
->  		return 0;
->  
-> -	/*
-> -	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
-> -	 * PTE mapped R/O such as maybe_mkwrite() would do.
-> -	 */
-> -	if (WARN_ON_ONCE(!unshare && !(vma->vm_flags & VM_WRITE)))
-> -		return VM_FAULT_SIGSEGV;
-> -
->  	/* Let's take out MAP_SHARED mappings first. */
->  	if (vma->vm_flags & VM_MAYSHARE) {
->  		set_huge_ptep_writable(vma, vmf->address, vmf->pte);
-> @@ -5837,7 +5837,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
->  			SetPageAnonExclusive(&old_folio->page);
->  		}
->  		if (likely(!unshare))
-> -			set_huge_ptep_writable(vma, vmf->address, vmf->pte);
-> +			set_huge_ptep_maybe_writable(vma, vmf->address,
-> +						     vmf->pte);
->  
->  		delayacct_wpcopy_end();
->  		return 0;
-> @@ -5943,7 +5944,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
->  	spin_lock(vmf->ptl);
->  	vmf->pte = hugetlb_walk(vma, vmf->address, huge_page_size(h));
->  	if (likely(vmf->pte && pte_same(huge_ptep_get(mm, vmf->address, vmf->pte), pte))) {
-> -		pte_t newpte = make_huge_pte(vma, &new_folio->page, !unshare);
-> +		const bool writable = !unshare && (vma->vm_flags & VM_WRITE);
-> +		pte_t newpte = make_huge_pte(vma, &new_folio->page, writable);
->  
->  		/* Break COW or unshare */
->  		huge_ptep_clear_flush(vma, vmf->address, vmf->pte);
-> -- 
-> 2.39.1
-> 
-> -- 
-> Guillaume Morin <guillaume@morinfr.org>
+   In file included from drivers/acpi/apei/einj-core.c:23:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   drivers/acpi/apei/einj-core.c:342:6: warning: variable 'p' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     342 |         if (!r) {
+         |             ^~
+   drivers/acpi/apei/einj-core.c:440:6: note: uninitialized use occurs here
+     440 |         if (p)
+         |             ^
+   drivers/acpi/apei/einj-core.c:342:2: note: remove the 'if' if its condition is always false
+     342 |         if (!r) {
+         |         ^~~~~~~~~
+     343 |                 pr_err("Can not request [mem %#010llx-%#010llx] for Trigger table\n",
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     344 |                        (unsigned long long)trigger_paddr,
+         |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     345 |                        (unsigned long long)trigger_paddr +
+         |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     346 |                             sizeof(*trigger_tab) - 1);
+         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+     347 |                 goto out;
+         |                 ~~~~~~~~~
+     348 |         }
+         |         ~
+   drivers/acpi/apei/einj-core.c:338:17: note: initialize the variable 'p' to silence this warning
+     338 |         void __iomem *p;
+         |                        ^
+         |                         = NULL
+>> drivers/acpi/apei/einj-core.c:728:29: warning: 'memset' call operates on objects of type 'char' while the size is based on a different type 'char *' [-Wsizeof-pointer-memaccess]
+     728 |         memset(einj_buf, 0, sizeof(einj_buf));
+         |                ~~~~~~~~            ^~~~~~~~
+   drivers/acpi/apei/einj-core.c:728:29: note: did you mean to provide an explicit length?
+     728 |         memset(einj_buf, 0, sizeof(einj_buf));
+         |                                    ^~~~~~~~
+   3 warnings generated.
+
+
+vim +728 drivers/acpi/apei/einj-core.c
+
+   721	
+   722	static ssize_t error_type_set(struct file *file, const char __user *buf,
+   723					size_t count, loff_t *ppos)
+   724	{
+   725		int rc;
+   726		u64 val;
+   727	
+ > 728		memset(einj_buf, 0, sizeof(einj_buf));
+   729		if (copy_from_user(einj_buf, buf, count))
+   730			return -EFAULT;
+   731	
+   732		if (strncmp(einj_buf, "V2_", 3) == 0) {
+   733			if (!sscanf(einj_buf, "V2_%llx", &val))
+   734				return -EINVAL;
+   735		} else
+   736			if (!sscanf(einj_buf, "%llx", &val))
+   737				return -EINVAL;
+   738	
+   739		rc = einj_validate_error_type(val);
+   740		if (rc)
+   741			return rc;
+   742	
+   743		error_type = val;
+   744	
+   745		return count;
+   746	}
+   747	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
