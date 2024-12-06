@@ -1,94 +1,121 @@
-Return-Path: <linux-kernel+bounces-434575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1A19E687A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:11:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AEE9E688E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:12:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983F2286187
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:11:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FBEB169D08
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACA91DE4C7;
-	Fri,  6 Dec 2024 08:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A161DF24B;
+	Fri,  6 Dec 2024 08:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sfxCLlT9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="W9aBfhgD"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BAF19CCF9;
-	Fri,  6 Dec 2024 08:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CD719CCF9;
+	Fri,  6 Dec 2024 08:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733472695; cv=none; b=oCbYaL23ml6OsBA5Xq1Qm5JT5AaASrACi627N395VA04qxoN4U67IQVhtN+SGIfleBeRyHdLm4yQpIactr7O2g7YSzMm2gzB/FletF4WX+niJwsqM3P/61D3O1vhHsjeZI0vvzm+lGaX4T9WDaQdyKB8AGu0UYIgk9EYCOv+GWQ=
+	t=1733472768; cv=none; b=e8DN6qwH9OXMqJ31OR0cVjpRqZu/k8XMCCipd41nvy5QA21Yovza7gnSIBwl1O/P8km/g6zLqMMtQn+UMgnPl4xt7l3GJr2jdhTbLA/DJBMuJQriVNtwgYJ9E4QyOgZfZ6iOpTR995k4q8A0sHjA5luw4XVlcZWC+sYrbUvBZB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733472695; c=relaxed/simple;
-	bh=K2D4K5BGp4Xkbz+HqakrV5Ja1cEWXONUVLEXUilhKdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5dHw2qlkpp+kNGDzaEKE79uuoBMmf0ugcPaAZx4Qs8Pa6kNnCmTaFREQLSLcYzNhJxYu6CXnV3b8hllqLp/HxCp8zgwdc5B0juAauCHGiadNKmxYl2jOwrf8meIMk3rF8xDfUAhybrMKldVP9gTaiIZYzKWbE6AeFjIKuLsI6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sfxCLlT9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5BCC4CED1;
-	Fri,  6 Dec 2024 08:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733472694;
-	bh=K2D4K5BGp4Xkbz+HqakrV5Ja1cEWXONUVLEXUilhKdM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sfxCLlT9LLuohDpc2cQPB7JhjghniyO9CALoIIjc/sYdQVewEBQhh+GT8+fPnxuSj
-	 Opv6B92h+U1UqfYPDslf7ugl6nqBpX+uwNtdcHdMkGStGXEUgIkHJy6ok6rOt/zO2m
-	 QhWNLDmQQiGM0y4EdC9c6AZygN6m3EdkH57orRjY=
-Date: Fri, 6 Dec 2024 09:11:30 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] rust: miscdevice: Provide sample driver using the
- new MiscDevice bindings
-Message-ID: <2024120622-unvalued-wriggle-7942@gregkh>
-References: <20241205162531.1883859-1-lee@kernel.org>
- <2024120632-hardwired-hardhead-1906@gregkh>
- <20241206074443.GJ8882@google.com>
+	s=arc-20240116; t=1733472768; c=relaxed/simple;
+	bh=JNNaH34EO1nd5+Uu6cgEU/6hEXGP18OfUC6K9iiula4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uuimZrrS44yDrzKNsS3Gwtj/Ob0kZnInwHg+Y54/4W0U6jyQVrifOxOzJivopdgQNdAao2IsIeyanOU1vNVewgaunD73L+SolWuajSezrq3OSvbPWjQJs1fpXzGstH+xZjdkpGOOVz/CjuPwxXHo42AtyHctCtSULxhTgh46zVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=W9aBfhgD; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5209440004;
+	Fri,  6 Dec 2024 08:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733472756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=j/7tWpNlbID7+A63lCqTn/CaIDT0TjA2WkhQtioC0pU=;
+	b=W9aBfhgDL5IyBLU6yuZvDIpV+1I2rYdI8SGNlSQ/AWolFxp5HKfUX4G+exIEsh3v3o8H8r
+	A3RPIRp6CMokDAnjuudVMdM4EP8eLXTiNhcLyReJe6TxzGcql054u1pU2siH2d3qoUj71N
+	Bl0OC3P6ZK6xPsYG1EbqoSchTgbr15L9ROAiGm7dC/8n9QKTqX2iKE2qSE+zW9nvNKA6Pg
+	BVRbVb1ut2BVM86++lIrGYXZ5Ndp5+9NkF9pmw+7LLagv/3V8nZtO6YEA7x8JO3CSnq3Gg
+	d83llv2+pGP7hUvPuxkG1XefLnJOVqBOuRre3kOOUGS3EUENJ0VfqwOOiYvyOw==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next 0/2] selftests: bpf: Migrate test_xdp_meta.sh to
+ test_progs
+Date: Fri, 06 Dec 2024 09:12:12 +0100
+Message-Id: <20241206-xdp_meta-v1-0-5c150618f6e9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206074443.GJ8882@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANyxUmcC/x3MQQqAIBBA0avErBMmjYquEhGVY80iE5UQpLsnL
+ R98foZAninAWGXw9HDg2xY0dQX7udqDBOtikCjbRqISSbvloriKoRsU9rtGQgUld54Mp381wea
+ MsJQizO/7Ab7b/plkAAAA
+X-Change-ID: 20241203-xdp_meta-868307cd0e03
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Alexis Lothore <alexis.lothore@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Bastien Curutchet <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Fri, Dec 06, 2024 at 07:44:43AM +0000, Lee Jones wrote:
-> On Fri, 06 Dec 2024, Greg KH wrote:
-> 
-> > On Thu, Dec 05, 2024 at 04:25:17PM +0000, Lee Jones wrote:
-> > > It has been suggested that the driver should use dev_info() instead of
-> > > pr_info() however there is currently no scaffolding to successfully pull
-> > > a 'struct device' out from driver data post register().  This is being
-> > > worked on and we will convert this over in due course.
-> > 
-> > But the miscdevice.rs change provides this to you, right?  Or if not,
-> > why not?
-> 
-> This does allow us to pull the 'struct device *` out from `struct
-> miscdevice`; however, since this resides in MiscDeviceRegistration,
-> which we lose access to after .init, we have no means to call it.
-> 
-> Alice is going to work on a way to use ThisModule to get the
-> MiscDeviceRegistration reference back from anywhere in the module. Until
-> that piece lands, we can't call MiscDeviceRegistration::device() outside
-> of RustMiscDeviceModule.
+Hi all,
 
-That seems crazy, as ThisModule shouldn't be dealing with a static misc
-device, what happens for dynamically created ones like all
-normal/sane/non-example drivers do?  This should "just" be a dynamic
-object that is NOT tied to the module object, or worst case, a "static"
-structure that is tied to the module I guess?
+This patch series continues the work to migrate the script tests into
+prog_tests.
 
-Anyway, I'll let you all work it out, good luck!
+test_xdp_meta.sh uses the BPF programs defined in progs/test_xdp_meta.c
+to do a simple XDP/TC functional test that checks the metadata
+allocation performed by the bpf_xdp_adjust_meta() helper.
 
-greg k-h
+This is already partly covered by two tests under prog_tests/:
+- xdp_context_test_run.c uses bpf_prog_test_run_opts() to verify the
+validity of the xdp_md context after a call to bpf_xdp_adjust_meta()
+- xdp_metadata.c ensures that these meta-data can be exchanged through
+an AF_XDP socket.
+
+However test_xdp_meta.sh also verifies that the meta-data initialized
+in the struct xdp_md is forwarded to the struct __sk_buff used by BPF
+programs at 'TC level'. To cover this, I add a test case in
+xdp_context_test_run.c that uses the same BPF programs from
+progs/test_xdp_meta.c.
+
+---
+Bastien Curutchet (2):
+      selftests/bpf: test_xdp_meta: Rename BPF sections
+      selftests/bpf: Migrate test_xdp_meta.sh into xdp_context_test_run.c
+
+ tools/testing/selftests/bpf/Makefile               |  1 -
+ .../bpf/prog_tests/xdp_context_test_run.c          | 86 ++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/test_xdp_meta.c  |  4 +-
+ tools/testing/selftests/bpf/test_xdp_meta.sh       | 58 ---------------
+ 4 files changed, 88 insertions(+), 61 deletions(-)
+---
+base-commit: 6849a3de3507a490fb0788c9bafbb2f29a904f05
+change-id: 20241203-xdp_meta-868307cd0e03
+
+Best regards,
+-- 
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+
 
