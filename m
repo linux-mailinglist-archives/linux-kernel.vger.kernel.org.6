@@ -1,128 +1,128 @@
-Return-Path: <linux-kernel+bounces-434607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6709E68E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:31:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C2F9E68EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:32:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE409166AA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:31:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122D01EE01B;
+	Fri,  6 Dec 2024 08:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ITdYJj9o"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB00284F1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:31:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3721EF0B7;
-	Fri,  6 Dec 2024 08:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4EBie0n"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A331DF260;
-	Fri,  6 Dec 2024 08:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CAF1DFDAE;
+	Fri,  6 Dec 2024 08:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733473716; cv=none; b=hg89uotRXY2fXW5taAV7DrQa64gm2w+UX9l1DPxKd2aT+wbJ7SpBuiqlHcOWhTA8qqQ+va+R1uKTmSk/Y8+hChqQPFID9u4j1duLKP4ff76g/kFQte11P9h9NJ9rwqYIFeSK170RJRjCu0T62O9Sm0U0iHQIYLLrhXzQpXMBAzw=
+	t=1733473741; cv=none; b=Gsez96jn+8mYfh5185RL+t7O4L8m1j/0g6MJ41Hiq1Ypuac5OhvuQhEgm4ybFI+CDfrBE9K28QU1H63qBn5iV5sgNdqLAeqHWsOEWt8afYejXvy9F4rJw/Micn97yhURfwlgSL25+oyBKa7jJ2sahbdLushGFHFICKrDzm3jlD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733473716; c=relaxed/simple;
-	bh=FfyeoJNgTrTmOeMh91E4RFrKOdHb5pGtpb4dWSqUlgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rdCkmgka7vXz6yDmCtfjjYlFUmuSDRiR2WqqlljLnJaQ8VxLcaJQ7J4t7Ko0Ku7/h2Ak1kgG3jSNI9RFmPm8p9e6yh3eJZZgF6nDcKsOh81XftBRf6jOkj+Ev++MUi9eSipaUwhIPrsZE9y4EFwTuJkOUhphboJs3cofYhMoGCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X4EBie0n; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d1265ba5a8so2008896a12.3;
-        Fri, 06 Dec 2024 00:28:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733473712; x=1734078512; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W3c+NwdtE8SA8o6912MKBXAECHKLDvXUOKv+nZ7Jhjw=;
-        b=X4EBie0nTIZb9v7LxjzktREn9PgNztZiosVtMhKkfZLmoxe3lpB9AALGwdhBZ3aiXV
-         I2KBCKP7Pz/dzqJKi69QYz93g5Edg8M4huWvaQzFBhkYyfFLvq6OC1zASpAaJxkEhjcD
-         WpDrct2BSrePETel7gB8y0nz5BafIdK9bnA4/0SfSS9zhCTBVMIu50h+ZnDEwed70F0Y
-         71ByDPTc6zW6BjjpNZ8td+QThNQfGSXAzerZjHD/q08PJZVztg32YIbLjhmBLwzoYuDE
-         wLDPxH7DXv0dPJn64R3oPoCsXPhReYQtTgMkO60DN9DoVMeeKoOx4dpUgShZPzGytw9C
-         FlMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733473712; x=1734078512;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W3c+NwdtE8SA8o6912MKBXAECHKLDvXUOKv+nZ7Jhjw=;
-        b=OObBVt2+NqXweB2QOO9K2yKZ6Gh6Kc98SRXjD8+gDPP28jhZxhRfAzyDnOe7gy3ZHB
-         txLLiOWjWPuwxTYnveolr4H1PHCc/aITJxBq+NhroKwiJy48gM2tUoN7HkUIKyv++mgb
-         16cmgsMyG6diQ6rMxNMieVk/i6PWraBuvIZ71vjx5INXC7h5gCJbNWsQmnmsXm54FXqf
-         w4EdhQJxY9u/FBIdtlPfjPyjBVwl+B81/KYKzb9Sm0LdeL76qje4zKOqqYG0Vgn7Ge8h
-         t8fsapaTz8hMiDbWaxNl5yrb+lk5j22icXozWAGNfoCBG0T/cjvYI6UMP8FVm9HyCfPe
-         7K8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKJHUN32871Xxmk3orf/9/bVKAInUKud+p1iuZ3fRW/zaHB72YRWG4a1bIo5xMP65lCMAQL+7fswN4eFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9ImrMINKuXF9YmqVnb3a9btAmHGbIAo3mMCKSmPrZUfP+Dq+F
-	QHSVgdzQiEPNFTtNRdXi6BYN3yAC1bJqP/1u4gDjk2lh9w2rLrbjkMcygw==
-X-Gm-Gg: ASbGncsC9PogFcgww2D82bzBrXCmFH9pA1qO/34VVeyRdI+jqa2UDSWHt9SPF/2a5iL
-	ezXJOcG7ZVlTXIwLCsLglz9YQTX5MmEq6S9hEl2qn2KxhYtL1abk+m3GXJ5JA912nxrmysPzyAh
-	G99PePNTM9WIFz6pTMgo8vcI29ZWEhhQQz2hQFICfnkYmxw9KhGXe60U8jmZzrCVoHReWP5RdMr
-	2IFLK8IKBz/jUs8KXOIC60MWr8TbaM+3U4Gz9cK7C2cbhXc+ZqbuqIOU8UnG8MX0C6nPGQxjlcs
-	9S883XtKvB/GPA==
-X-Google-Smtp-Source: AGHT+IHF7rsOS0I0cqZbTM/3fjPlhaZ5sKOk0PVgSo6h/3XcIbKV8dspiYniLcWDZDMH5jrLawdKaQ==
-X-Received: by 2002:a05:6402:5386:b0:5d0:e73c:b7f2 with SMTP id 4fb4d7f45d1cf-5d3be660913mr1559713a12.7.1733473712276;
-        Fri, 06 Dec 2024 00:28:32 -0800 (PST)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a25f09sm1908085a12.1.2024.12.06.00.28.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 00:28:31 -0800 (PST)
-Date: Fri, 6 Dec 2024 09:28:30 +0100
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] arm64: dts: sprd: Fix battery-detect-gpios property
-Message-ID: <Z1K1rnndKGIFdgfj@standask-GA-A55M-S2HP>
+	s=arc-20240116; t=1733473741; c=relaxed/simple;
+	bh=wYahsY5KiIyLPKThPbdnAUMc3Rb45i6Vc4VC5tfmd6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IpFldQRhojyJDjrZ+rC2DJdbLfdQU3zCS66AEBV9w5L/VolMuwGmngzO85gm4IChVZu9vVF9ZG/qK+BaW5G1gF7PFd2pkADJnIdgqfDgfx4LhFmfiJVYtPjrQCvQY+Io4kTs4VztMw5ygE0BzAtClD7Q1kDXeQwGyETf7UUenBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ITdYJj9o; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67iBcR003758;
+	Fri, 6 Dec 2024 08:28:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GCXy2PAOsllc1uGY8s2Ib6GQZ8BL+p3UT7SO8Rvjinw=; b=ITdYJj9oUf/17Keb
+	PgFabscgtMo/UO68izasAMwBsNROv+c587Ru8Hk1PzzkCsUwyfIBgRxhJUazRnGa
+	8rePOUFYRGZ16Qei63TjNulEbOQ+5/Z5mwIv0cO/XOoF+oLpEzIqVd1tIx9/kadJ
+	OS8WlwtfSUVqnaqcjkIdOVkFNCNOtfqJl7jpH64s9Oh6ixVHRl2nI/Wvqk30OaFd
+	HK8r7SAPYH69e0qiWzZ1/p2jLuVqv63XpwtIGrQIw9Ia1Na3hWhzyJtGgxAT6Oow
+	w485fjGaiqU1pISSws078qVy/08pSz/BFzfzVAXjiN9UIdT/bxXVnCprclmPqlk5
+	1NzWNA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm2w3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 08:28:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B68St0p027627
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 08:28:55 GMT
+Received: from [10.50.58.122] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
+ 00:28:50 -0800
+Message-ID: <d9ec7d8f-a187-4060-a197-c145a478b70f@quicinc.com>
+Date: Fri, 6 Dec 2024 13:58:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: gcc-ipq5424: remove
+ apss_dbg clock macro
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20241205064037.1960323-1-quic_mmanikan@quicinc.com>
+ <20241205064037.1960323-2-quic_mmanikan@quicinc.com>
+ <dahqtkq6o6vrzfrmr76x7yd6iia4ihhcjfsaskilzw44wcjxth@ql2bkxnv6n3k>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <dahqtkq6o6vrzfrmr76x7yd6iia4ihhcjfsaskilzw44wcjxth@ql2bkxnv6n3k>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DSubngsBIG1H1cKgyaFEllwXefHjGopN
+X-Proofpoint-ORIG-GUID: DSubngsBIG1H1cKgyaFEllwXefHjGopN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060060
 
-According to DT bindings, the property is called 'battery-detect-gpios',
-not 'bat-detect-gpio'. Update the property as such.
 
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
-Krzysztof could you pick this one up as well?
 
-Changes in V3:
-- rebase on next-20241205
-- drop already applied patches
-- drop cover letter, as it's now just a single patch
+On 12/5/2024 3:56 PM, Krzysztof Kozlowski wrote:
+> On Thu, Dec 05, 2024 at 12:10:36PM +0530, Manikanta Mylavarapu wrote:
+>> Since gcc_apss_dbg_clk has no consumers, the linux kernel will turn it
+> 
+> That's not a reason to drop a binding.
+> 
 
-Changes in V2:
-- actually fix the property, as per bindings
-- drop Baolin's R-b as the original patch was incorrect
+Thank you for reviewing the patch.
+I will drop this statement.
 
-Link to V2: https://lore.kernel.org/lkml/cover.1730720720.git.stano.jakubek@gmail.com/
+>> off. This causes a kernel crash because this clock is access protected
+> 
+> This could be. Please rephrase stating that this clock should not be
+> exposed to any user because trust zone handles it and any access would
+> trigger faults.
+> 
 
- arch/arm64/boot/dts/sprd/sc2731.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I will rephrase it and include the changes in the next version.
 
-diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-index 2d27427c41a2..458685b82462 100644
---- a/arch/arm64/boot/dts/sprd/sc2731.dtsi
-+++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-@@ -97,7 +97,7 @@ pmic_adc: adc@480 {
- 		pmic_fgu: fuel-gauge@a00 {
- 			compatible = "sprd,sc2731-fgu";
- 			reg = <0xa00>;
--			bat-detect-gpio = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
-+			battery-detect-gpios = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
- 			io-channels = <&pmic_adc 3>, <&pmic_adc 6>;
- 			io-channel-names = "bat-temp", "charge-vol";
- 			nvmem-cell-names = "fgu_calib";
--- 
-2.43.0
+Thanks & Regards,
+Manikanta.
+
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
