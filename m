@@ -1,98 +1,182 @@
-Return-Path: <linux-kernel+bounces-435426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C339E777B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:31:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09309E777F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:35:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8C6288AB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778431888457
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EC92206AA;
-	Fri,  6 Dec 2024 17:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E812206B4;
+	Fri,  6 Dec 2024 17:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYxI9GY+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u779ivq5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FBF220687
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43656220687;
+	Fri,  6 Dec 2024 17:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733506291; cv=none; b=PN0uBrh9MPKP1DeVCgg8FBjDd9PgStio0Cn9ooBI82EY/9ff/rRT2SB6foIZqSSTTfnPb1jKuZRwZM/uszo5rqjEEL6zQS/0AnRQzqmuWqw4lGyskxW/Hzbh/5GgMpmR7RTjunBXWc2XUIuz0ao61lG7m295sTeZ0EOq1lL/Zts=
+	t=1733506540; cv=none; b=Vp7bVDJChTUzNVrGaHwYuuWX2dUZg2FhnVQaFtsR78kEo4UWQ5m8bd1AnkIdjbmj9Vp7awkt3RXkttc2Syx3UHGclFMuQOHTUvaO63GTav3VBoobz4KMfVrQAO56oLhonTE9hGUZUhnZavBAWOkA879BTrNH7pdTxqWsugRDqnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733506291; c=relaxed/simple;
-	bh=cDewpNOZhWDjQMF7Lhzo1b4KrgQhtwV/+6fL7MNxyHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=flRvrhGbIVc9YfXKtRhPMiE5nnKzrnmUr4r4JvtJmIzvqeozSDY+Ot3HdbzHKz6vJ6KNHX9ZhkRXYaLyfonAwvrXdYq10PxuOW/UCSVvr5kQpKemOo+PGdJVRq/TkoxWFY0iVJONk5x5uVP3wcUOti99pXeJaayb1o330jtPP90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYxI9GY+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5771C4CED1;
-	Fri,  6 Dec 2024 17:31:29 +0000 (UTC)
+	s=arc-20240116; t=1733506540; c=relaxed/simple;
+	bh=ml4wCe8+4O3h3jjAznKlCNTzTZpIkv4tLb/kiCGnGE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9LzzWtwi6wIYZRcP6IvYEfFMWLKzSDpxP5TJ9u396ReYZLsRQK79TqVuY75vj+TjjwgTDaixY8+eSbwepcbomN+HVkcgRAtpFIxCx2l5nMgM9FVPqfRZBkc7jn58nrf3loRbWPZQYaNcgckdiR0Tw5l24eEdKv5y475ctUg04U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u779ivq5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CD5C4CED1;
+	Fri,  6 Dec 2024 17:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733506290;
-	bh=cDewpNOZhWDjQMF7Lhzo1b4KrgQhtwV/+6fL7MNxyHA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WYxI9GY+v0cl3lqqvXLiYaPc/ojnMiM0ZDQK0sC2sM8yVYE94eR5nwQEFmF/WWjxl
-	 MopF+I8i0SZRk7H5NvOVW0mZjK7w6bvojazvv4eBEkVyH14z6+7OZnzXylHJqkQGTl
-	 2SV2JnaSx8ow1XryCWN5PpTthKXbRydiB0IdJK04YpN40LyxiUuA5OTHGrG5rfD3gf
-	 NtSx5hiLPEzpETBDJZ0GrzuaY4pY80FsGs5n+2MUxBG0+Qt12KaWT3GqEz1uStyNIx
-	 /X6u9UOCtklahP5KFZj0oZ0qn+qSjxaulOR8tKHxbinDwJuxSMinLQZehgUmUfjZ/m
-	 VxCi2VFUqbEAQ==
-Message-ID: <bc3b86dd-9bb6-4c6e-b6df-35c687375cde@kernel.org>
-Date: Fri, 6 Dec 2024 09:31:27 -0800
+	s=k20201202; t=1733506539;
+	bh=ml4wCe8+4O3h3jjAznKlCNTzTZpIkv4tLb/kiCGnGE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u779ivq5sT3CNXg9/WIqZL8Dhfjqt8n2kva4qkAiMmn7IuEBySJ8LKx9GgjsF/lCe
+	 ZMLQAaSaJETnegUlAVDhYuRE5qJlru62s6F7bPIwhlUCSKNJZssrehe+iicWOD2kGi
+	 HkNEYYV3B+anG1hyIQ2QsqO8qeOecvKHDDlAWhdC/CSp0XzF30cSmmSoWZPaHX/SPY
+	 QJIjiL8nCtqw0t1iKyM046Vhm6htmG9uTA7++pieHnxqGOGFEfRIzuZX2ag2iz279F
+	 o9aeg3bC8vJkMx68pPGQGvRJCEOqNz4goovWwZc2pQT5Xe6anX4GOVPmMzwAPn/68l
+	 XB0FlzqBOEgyg==
+Date: Fri, 6 Dec 2024 09:35:39 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, bfoster@redhat.com
+Subject: Re: [PATCH 07/12] fs: add RWF_UNCACHED iocb and FOP_UNCACHED
+ file_operations flag
+Message-ID: <20241206173539.GA7816@frogsfrogsfrogs>
+References: <20241203153232.92224-2-axboe@kernel.dk>
+ <20241203153232.92224-9-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: use clear_user_(high)page() for arch with special
- user folio handling
-To: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Vlastimil Babka <vbabka@suse.cz>,
- David Hildenbrand <david@redhat.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, John Hubbard
- <jhubbard@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko
- <glider@google.com>, Kees Cook <keescook@chromium.org>,
- linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
- Vineet Gupta <vgupta@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20241206141938.2750393-1-ziy@nvidia.com>
- <Z1Mpfofz45bFawSq@casper.infradead.org>
- <78D4C1B5-3EE7-47F0-A7A2-F1ACFE71CED0@nvidia.com>
-From: Vineet Gupta <vgupta@kernel.org>
-Content-Language: en-US
-In-Reply-To: <78D4C1B5-3EE7-47F0-A7A2-F1ACFE71CED0@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203153232.92224-9-axboe@kernel.dk>
 
-On 12/6/24 09:08, Zi Yan wrote:
-> On 6 Dec 2024, at 11:42, Matthew Wilcox wrote:
->
->> On Fri, Dec 06, 2024 at 09:19:38AM -0500, Zi Yan wrote:
->>> For architectures setting ARCH_HAS_CPU_CACHE_ALIASING, which requires
->>> flushing cache and arc, which sets folio->flags after clearing a user
->>> folio
->> I think arc just has some legacy code left that needs to be ripped out.
->> See commit d5272aaa8257 which took away ARCH_HAS_CPU_CACHE_ALIASING
->> from arc.
-> The PG_dc_clean bit seems not to be related to cache aliasing.
-> See commit eacd0e950dc2 ("ARC: [mm] Lazy D-cache flush (non aliasing VIPT)")
+On Tue, Dec 03, 2024 at 08:31:43AM -0700, Jens Axboe wrote:
+> If a file system supports uncached buffered IO, it may set FOP_UNCACHED
+> and enable RWF_UNCACHED. If RWF_UNCACHED is attempted without the file
+> system supporting it, it'll get errored with -EOPNOTSUPP.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  include/linux/fs.h      | 14 +++++++++++++-
+>  include/uapi/linux/fs.h |  6 +++++-
+>  2 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 7e29433c5ecc..b64a78582f06 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -322,6 +322,7 @@ struct readahead_control;
+>  #define IOCB_NOWAIT		(__force int) RWF_NOWAIT
+>  #define IOCB_APPEND		(__force int) RWF_APPEND
+>  #define IOCB_ATOMIC		(__force int) RWF_ATOMIC
+> +#define IOCB_UNCACHED		(__force int) RWF_UNCACHED
+>  
+>  /* non-RWF related bits - start at 16 */
+>  #define IOCB_EVENTFD		(1 << 16)
+> @@ -356,7 +357,8 @@ struct readahead_control;
+>  	{ IOCB_SYNC,		"SYNC" }, \
+>  	{ IOCB_NOWAIT,		"NOWAIT" }, \
+>  	{ IOCB_APPEND,		"APPEND" }, \
+> -	{ IOCB_ATOMIC,		"ATOMIC"}, \
+> +	{ IOCB_ATOMIC,		"ATOMIC" }, \
+> +	{ IOCB_UNCACHED,	"UNCACHED" }, \
+>  	{ IOCB_EVENTFD,		"EVENTFD"}, \
+>  	{ IOCB_DIRECT,		"DIRECT" }, \
+>  	{ IOCB_WRITE,		"WRITE" }, \
+> @@ -2127,6 +2129,8 @@ struct file_operations {
+>  #define FOP_UNSIGNED_OFFSET	((__force fop_flags_t)(1 << 5))
+>  /* Supports asynchronous lock callbacks */
+>  #define FOP_ASYNC_LOCK		((__force fop_flags_t)(1 << 6))
+> +/* File system supports uncached read/write buffered IO */
+> +#define FOP_UNCACHED		((__force fop_flags_t)(1 << 7))
+>  
+>  /* Wrap a directory iterator that needs exclusive inode access */
+>  int wrap_directory_iterator(struct file *, struct dir_context *,
+> @@ -3614,6 +3618,14 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
+>  		if (!(ki->ki_filp->f_mode & FMODE_CAN_ATOMIC_WRITE))
+>  			return -EOPNOTSUPP;
+>  	}
+> +	if (flags & RWF_UNCACHED) {
 
-Indeed it is not related to aliasing.
+Should FMODE_NOREUSE imply RWF_UNCACHED?  I know, I'm dredging this up
+again from v3:
 
->> Looking at 8690bbcf3b70, I wonder if you want to use
->> cpu_dcache_is_aliasing() here?
-> Yeah, this is more precise. Will use this in my next version. Thanks.
+https://lore.kernel.org/linux-fsdevel/ZzKn4OyHXq5r6eiI@dread.disaster.area/
 
-Commit 8690bbcf3b70 was wrong for ARC as it assumed aliasing is true. The
-aliasing D$ code is all gone and cpu_dcache_is_aliasing() is false for ARC now.
+but the manpage for fadvise says NOREUSE means "The specified data will
+be accessed only once." and I think that fits what you're doing here.
+And yeah, it's annoying that people keep asking for moar knobs to tweak
+io operations: Let's have a mount option, and a fadvise mode, and a
+fcntl mode, and finally per-io flags!  (mostly kidding)
 
--vineet
+Also, one of your replies referenced a poc to set UNCACHED on NOREUSE
+involving willy and yu.  Where was that?  I've found this:
 
+https://lore.kernel.org/linux-fsdevel/ZzI97bky3Rwzw18C@casper.infradead.org/
+
+but that turned into a documentation discussion.
+
+There were also a few unanswered questions (imo) from the last few
+iterations of this patchset.
+
+If someone issues a lot of small appending uncached writes to a file,
+does that mean the writes and writeback will now be lockstepping each
+other to write out the folio?  Or should programs simply not do that?
+
+What if I wanted to do a bunch of small writes to adjacent bytes,
+amortize writeback over a single disk io, and not wait for reclaim to
+drop the folio?  Admittedly that doesn't really fit with "will be
+accessed only once" so I think "don't do that" is an acceptable answer.
+
+And, I guess if the application really wants fine-grained control then
+it /can/ still pwrite, sync_file_range, and fadvise(WONTNEED).  Though
+that's three syscalls/uring ops/whatever.  But that might be cheaper
+than repeated rewrites.
+
+--D
+
+> +		/* file system must support it */
+> +		if (!(ki->ki_filp->f_op->fop_flags & FOP_UNCACHED))
+> +			return -EOPNOTSUPP;
+> +		/* DAX mappings not supported */
+> +		if (IS_DAX(ki->ki_filp->f_mapping->host))
+> +			return -EOPNOTSUPP;
+> +	}
+>  	kiocb_flags |= (__force int) (flags & RWF_SUPPORTED);
+>  	if (flags & RWF_SYNC)
+>  		kiocb_flags |= IOCB_DSYNC;
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 753971770733..dc77cd8ae1a3 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -332,9 +332,13 @@ typedef int __bitwise __kernel_rwf_t;
+>  /* Atomic Write */
+>  #define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
+>  
+> +/* buffered IO that drops the cache after reading or writing data */
+> +#define RWF_UNCACHED	((__force __kernel_rwf_t)0x00000080)
+> +
+>  /* mask of flags supported by the kernel */
+>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+> -			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
+> +			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+> +			 RWF_UNCACHED)
+>  
+>  #define PROCFS_IOCTL_MAGIC 'f'
+>  
+> -- 
+> 2.45.2
+> 
+> 
 
