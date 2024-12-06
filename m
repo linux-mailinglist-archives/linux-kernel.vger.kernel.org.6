@@ -1,228 +1,147 @@
-Return-Path: <linux-kernel+bounces-435253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221C29E7521
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD819E7525
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFDC12897D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:08:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 370EB289C90
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665E220CCFC;
-	Fri,  6 Dec 2024 16:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1AF20DD43;
+	Fri,  6 Dec 2024 16:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="vWb4fPEy"
-Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5lrjQ+o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC40BA20
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AE420D509;
+	Fri,  6 Dec 2024 16:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733501306; cv=none; b=tJG9HdRD5nnBDIK1qdq2i5RmXbyyy+fmlkA728/k8Yy212wDgCSLicUpEYKaSxG7deBjdverx0UhgVurAzb3QSuB6OyAk3AdNAF9gnpOr7Ve7BB93jC7ZkPRB5A7h1H7syw9ZZLlGcbn0uPiWbD3z6RxXuTjzJoTXD30sYAJCF0=
+	t=1733501385; cv=none; b=n9r4faTVRrtJGaSs6ftqN2szgFAyHGmVmWhosEEQB+0zZsBzEiCwdqv59XQhtkdze0z5RagE44hzmU+4Zn1FYEBXOH0rwu6S5SZqVYOX6RG7bqs/0J/gxNY+J6xpuINSJizfsVp3sBLpOkyMdqa1DE3CtoFukpYbwxfJyuvSrfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733501306; c=relaxed/simple;
-	bh=zQ6WAj7IZof03Q7biW/5/1bT0OdS1alMtD5K8UfvwH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQtkmqcWWlX3VIxyET0QXF4UFqkvGmCeOLsaqb4mS1FK+jXWRoN1Oh0h/PYWzKnd17fuePttT8cuB1UPeWGBu00nCtYkMQCEii2Xj+xyOyVnpCW1+wXjI2AZZRqJZLJDJtRmgmB61rX35ris0nIi8AlWfcossgUv/gWQL+Pj/AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=vWb4fPEy; arc=none smtp.client-ip=212.27.42.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
-Received: from bender.morinfr.org (unknown [82.66.66.112])
-	by smtp2-g21.free.fr (Postfix) with ESMTPS id 311352003EF;
-	Fri,  6 Dec 2024 17:08:14 +0100 (CET)
-Authentication-Results: smtp2-g21.free.fr;
-	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=vWb4fPEy;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
-	; s=20170427; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=NSaDf9G/Xwl7b+3XUHvNR5VSpgYRF37voCO22C3bBPY=; b=vWb4fPEyE/fV5PmHvEnwxKfQls
-	m2ULZ2rYvzhb66+wTq0qPYQ4PPWnRPXH2ycsW094pifv4jKynV4v9x9nLg04pdsR6DYWPLBAdWMRe
-	Nuf6eDeeZL1OFGoXWSEM0QkMDejUCIRNkzBgeq14glxbBGkcvQGjZ1xEunxulSOdidlA=;
-Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
-	(envelope-from <guillaume@morinfr.org>)
-	id 1tJasH-002MXC-22;
-	Fri, 06 Dec 2024 17:08:13 +0100
-Date: Fri, 6 Dec 2024 17:08:13 +0100
-From: Guillaume Morin <guillaume@morinfr.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Guillaume Morin <guillaume@morinfr.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Eric Hagberg <ehagberg@janestreet.com>
-Subject: Re: [PATCH v4] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
-Message-ID: <Z1MhbeS9TxWKOuPX@bender.morinfr.org>
-References: <Z1MO5slZh8uWl8LH@bender.morinfr.org>
- <8395af7d-328a-425c-84a7-517e78a602b1@redhat.com>
+	s=arc-20240116; t=1733501385; c=relaxed/simple;
+	bh=z6DJ+uNuaZ6AHjUx1YiUgRPRfdKJ4aNb8jOjr0j8caM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c/wJRgwn8zIHuZ4JpJ+lSyZM6lrc1D8PVZmAfue8sdb25N7GnjmYtW5Rjy0p5LIEEhwjAR4HVth+Bmtwp1l0f6KznLVSAR1cGk8dCVXHnwh/Wf16eviXVzXpWZXl7eNfegGs/UFuAQK8UOwYr3vrIXiJn1PXf1R+c5JcbEJXDZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5lrjQ+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28E6FC4CED1;
+	Fri,  6 Dec 2024 16:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733501384;
+	bh=z6DJ+uNuaZ6AHjUx1YiUgRPRfdKJ4aNb8jOjr0j8caM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A5lrjQ+oilna3YNNkFNZzr4ATB6kdivBHo4RSCQ9iXo0OExG5VkgE3gPS2sqf36wD
+	 lPkFf43dASrY6qoQA2VQV+m7DIqmfU5/7REYqtq2p/lfPw89hKmvN09e+db0bPUjY6
+	 9PXZvhOnt61NRF/fg9Fd4bOZVKGfaI5PRQfSQ3DDvZW09Jrky51Q6Ucbx6E2tBkR+X
+	 BHgvxkgCz1Tf3Bn4foqyRlCg7j5aGtTgeo1nV6hoLKgRfVTyXfgW1I3fZ4Pny0bHP3
+	 0PiUycGJexVXBtTNBY4Jp5NQ/14fN3V7M/Bi28EtHItXQHW8sjnNRGnFA/5iuzdX/5
+	 kR69pAPgL3ltw==
+Date: Fri, 6 Dec 2024 08:09:43 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: <davem@davemloft.net>, <pabeni@redhat.com>, <liuyonglong@huawei.com>,
+ <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
+ Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC v4 1/3] page_pool: fix timing for checking and
+ disabling napi_local
+Message-ID: <20241206080943.32da477c@kernel.org>
+In-Reply-To: <c2b306af-4817-4169-814b-adbf25803919@huawei.com>
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+	<20241120103456.396577-2-linyunsheng@huawei.com>
+	<20241202184954.3a4095e3@kernel.org>
+	<e053e75a-bde1-4e69-9a8d-d1f54be06bdb@huawei.com>
+	<20241204172846.5b360d32@kernel.org>
+	<70aefeb1-6a78-494c-9d5b-e03696948d11@huawei.com>
+	<20241205164233.64512141@kernel.org>
+	<c2b306af-4817-4169-814b-adbf25803919@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8395af7d-328a-425c-84a7-517e78a602b1@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 06 Dec 17:03, David Hildenbrand wrote:
->
-> On 06.12.24 15:49, Guillaume Morin wrote:
-> > Eric reported that PTRACE_POKETEXT fails when applications use hugetlb
-> > for mapping text using huge pages. Before commit 1d8d14641fd9
-> > ("mm/hugetlb: support write-faults in shared mappings"), PTRACE_POKETEXT
-> > worked by accident, but it was buggy and silently ended up mapping pages
-> > writable into the page tables even though VM_WRITE was not set.
+On Fri, 6 Dec 2024 20:29:40 +0800 Yunsheng Lin wrote:
+> On 2024/12/6 8:42, Jakub Kicinski wrote:
+> > On Thu, 5 Dec 2024 19:43:25 +0800 Yunsheng Lin wrote:  
+> >> It depends on what is the callers is trying to protect by calling
+> >> page_pool_disable_direct_recycling().
+> >>
+> >> It seems the use case for the only user of the API in bnxt driver
+> >> is about reuseing the same NAPI for different page_pool instances.
+> >>
+> >> According to the steps in netdev_rx_queue.c:
+> >> 1. allocate new queue memory & create page_pool
+> >> 2. stop old rx queue.
+> >> 3. start new rx queue with new page_pool
+> >> 4. free old queue memory + destroy page_pool.
+> >>
+> >> The page_pool_disable_direct_recycling() is called in step 2, I am
+> >> not sure how napi_enable() & napi_disable() are called in the above
+> >> flow, but it seems there is no use-after-free problem this patch is
+> >> trying to fix for the above flow.
+> >>
+> >> It doesn't seems to have any concurrent access problem if napi->list_owner
+> >> is set to -1 before napi_disable() returns and the napi_enable() for the
+> >> new queue is called after page_pool_disable_direct_recycling() is called
+> >> in step 2.  
 > > 
-> > In general, FOLL_FORCE|FOLL_WRITE does currently not work with hugetlb.
-> > Let's implement FOLL_FORCE|FOLL_WRITE properly for hugetlb, such that
-> > what used to work in the past by accident now properly works, allowing
-> > applications using hugetlb for text etc. to get properly debugged.
-> > 
-> > This change might also be required to implement uprobes support for
-> > hugetlb [1].
-> > 
-> > [1] https://lore.kernel.org/lkml/ZiK50qob9yl5e0Xz@bender.morinfr.org/
-> > 
-> > Cc: Muchun Song <muchun.song@linux.dev>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Peter Xu <peterx@redhat.com>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Eric Hagberg <ehagberg@janestreet.com>
-> > Signed-off-by: Guillaume Morin <guillaume@morinfr.org>
-> > ---
-> > Changes in v2:
-> >   - Improved commit message
-> > Changes in v3:
-> >   - Fix potential unitialized mem access in follow_huge_pud
-> >   - define pud_soft_dirty when soft dirty is not enabled
-> > Changes in v4:
-> >   - Remove the soft dirty pud check
-> >   - Remove the pud_soft_dirty added in v3
-> > 
-> >   mm/gup.c     | 95 +++++++++++++++++++++++++---------------------------
-> >   mm/hugetlb.c | 20 ++++++-----
-> >   2 files changed, 57 insertions(+), 58 deletions(-)
-> > 
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index 746070a1d8bf..63c705ff4162 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -587,6 +587,33 @@ static struct folio *try_grab_folio_fast(struct page *page, int refs,
-> >   }
-> >   #endif	/* CONFIG_HAVE_GUP_FAST */
-> > +/* Common code for can_follow_write_* */
-> > +static inline bool can_follow_write_common(struct page *page,
-> > +		struct vm_area_struct *vma, unsigned int flags)
-> > +{
-> > +	/* Maybe FOLL_FORCE is set to override it? */
-> > +	if (!(flags & FOLL_FORCE))
-> > +		return false;
-> > +
-> > +	/* But FOLL_FORCE has no effect on shared mappings */
-> > +	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
-> > +		return false;
-> > +
-> > +	/* ... or read-only private ones */
-> > +	if (!(vma->vm_flags & VM_MAYWRITE))
-> > +		return false;
-> > +
-> > +	/* ... or already writable ones that just need to take a write fault */
-> > +	if (vma->vm_flags & VM_WRITE)
-> > +		return false;
-> > +
-> > +	/*
-> > +	 * See can_change_pte_writable(): we broke COW and could map the page
-> > +	 * writable if we have an exclusive anonymous page ...
-> > +	 */
-> > +	return page && PageAnon(page) && PageAnonExclusive(page);
-> > +}
-> > +
-> >   static struct page *no_page_table(struct vm_area_struct *vma,
-> >   				  unsigned int flags, unsigned long address)
-> >   {
-> > @@ -613,6 +640,18 @@ static struct page *no_page_table(struct vm_area_struct *vma,
-> >   }
-> >   #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
-> > +/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
-> > +static inline bool can_follow_write_pud(pud_t pud, struct page *page,
-> > +					struct vm_area_struct *vma,
-> > +					unsigned int flags)
-> > +{
-> > +	/* If the pud is writable, we can write to the page. */
-> > +	if (pud_write(pud))
-> > +		return true;
-> > +
-> > +	return can_follow_write_common(page, vma, flags);
-> > +}
-> > +
-> >   static struct page *follow_huge_pud(struct vm_area_struct *vma,
-> >   				    unsigned long addr, pud_t *pudp,
-> >   				    int flags, struct follow_page_context *ctx)
-> > @@ -625,13 +664,16 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
-> >   	assert_spin_locked(pud_lockptr(mm, pudp));
-> > -	if ((flags & FOLL_WRITE) && !pud_write(pud))
-> > +	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
-> > +	page = pfn_to_page(pfn);
-> > +
-> > +	if ((flags & FOLL_WRITE) &&
-> > +	    !can_follow_write_pud(pud, page, vma, flags))
-> >   		return NULL;
-> >   	if (!pud_present(pud))
-> >   		return NULL;
-> > -	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
+> > The fix is presupposing there is long delay between fetching of
+> > the NAPI pointer and its access. The concern is that NAPI gets
+> > restarted in step 3 after we already READ_ONCE()'ed the pointer,
+> > then we access it and judge it to be running on the same core.
+> > Then we put the page into the fast cache which will never get
+> > flushed.  
 > 
-> That looks wrong. See follow_huge_pmd() for reference
+> It seems the napi_disable() is called before netdev_rx_queue_restart()
+> and napi_enable() and ____napi_schedule() are called after
+> netdev_rx_queue_restart() as there is no napi API called in the
+> implementation of 'netdev_queue_mgmt_ops' for bnxt driver?
 > 
-> (1) You must not do a pfn_to_page() before we verified that we have a
->     present PUD.
+> If yes, napi->list_owner is set to -1 before step 1 and only set to
+> a valid cpu in step 6 as below:
+> 1. napi_disable()
+> 2. allocate new queue memory & create new page_pool.
+> 3. stop old rx queue.
+> 4. start new rx queue with new page_pool.
+> 5. free old queue memory + destroy old page_pool.
+> 6. napi_enable() & ____napi_schedule()
 > 
-> (2) can_follow_write_pud() must be called with the first mapped page. It
->     would currently with hugetlb not be strictly required, but is not
->     future proof.
+> And there are at least three flows involved here:
+> flow 1: calling napi_complete_done() and set napi->list_owner to -1.
+> flow 2: calling netdev_rx_queue_restart().
+> flow 3: calling skb_defer_free_flush() with the page belonging to the old
+>        page_pool.
 > 
+> The only case of page_pool_napi_local() returning true in flow 3 I can
+> think of is that flow 1 and flow 3 might need to be called in the softirq
+> of the same CPU and flow 3 might need to be called before flow 1.
 > 
+> It seems impossible that page_pool_napi_local() will return true between
+> step 1 and step 6 as updated napi->list_owner is always seen by flow 3
+> when they are both called in the softirq context of the same CPU or
+> napi->list_owner != CPU that calling flow 3, which seems like an implicit
+> assumption for the case of napi scheduling between different cpus too.
 > 
-> It must be likely be something like:
+> And old page_pool is destroyed in step 5, I am not sure if it is necessary
+> to call page_pool_disable_direct_recycling() in step 3 if page_pool_destroy()
+> already have the synchronize_rcu() in step 5 before enabling napi.
 > 
-> 
-> if (!pud_present(pud))
-> 	return NULL;
-> 
-> if ((flags & FOLL_WRITE) &&
->     !can_follow_write_pud(pud, pfn_to_page(pfn), vma, flags))
-> 	return NULL;
-> 
-> pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
-> page = pfn_to_page(pfn);
-> 
- 
+> If not, maybe I am missing something here.
 
-Ok, let me fix that.
+Yes, I believe you got the steps 5 and 6 backwards.
 
-> >   		delayacct_wpcopy_end();
-> >   		return 0;
-> > @@ -5943,7 +5944,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
-> >   	spin_lock(vmf->ptl);
-> >   	vmf->pte = hugetlb_walk(vma, vmf->address, huge_page_size(h));
-> >   	if (likely(vmf->pte && pte_same(huge_ptep_get(mm, vmf->address, vmf->pte), pte))) {
-> > -		pte_t newpte = make_huge_pte(vma, &new_folio->page, !unshare);
-> > +		const bool writable = !unshare && (vma->vm_flags & VM_WRITE);
-> > +		pte_t newpte = make_huge_pte(vma, &new_folio->page, writable);
-> );
-> 
-> You probably missed my earlier comment. After the recent changes to
-> make_huge_pte() that are already in mm/mm-unstable, this hunk can be dropped
-> and left unchanged. make_huge_pte() will perform the VM_WRITE check.
-
-Ok, will fix as well
-
--- 
-Guillaume Morin <guillaume@morinfr.org>
+> It would be good to be more specific
+> about the timing window that page_pool_napi_local() returning true for the old
+> page_pool.
 
