@@ -1,168 +1,143 @@
-Return-Path: <linux-kernel+bounces-435024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BB59E6E8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:51:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3994C9E6E8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E101699D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2384616A3BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F88C2066D5;
-	Fri,  6 Dec 2024 12:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08DC2066EF;
+	Fri,  6 Dec 2024 12:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kkesa0FX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="l+ltgAvX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kkesa0FX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="l+ltgAvX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYh6kRf9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C04196DA2;
-	Fri,  6 Dec 2024 12:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252F410E6;
+	Fri,  6 Dec 2024 12:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489342; cv=none; b=k9R+VlWqRf2QDYZ+Th1tkerzSHrjyhDNHcOrDLb/17rwHDHoxVrQ8ra2y1BTVVFwh3dnZYzQxMzvPIgmvjMVnbQmCSJnoqZJEkGniCKtyuLd/DD149kVOYVpAIYndizDAqUsIpcjvYhXw5OOd3zmnFDNqpLC5LY8/nEweptKaLE=
+	t=1733489398; cv=none; b=LJ5JJgJ6d+FE+wuX9/JV5lkkxc+U+XcBjTwfxBZOF2OHTeozq0nnimGVmtBqqH66IR3wwvS3d2YCS120qUh0YapSs5Ty+bd7/ngh7N/VzwjN5bJ2sGppF+GmxrHKOMAHT9TmV7mJnAJm/ZIm5GuNGMEn5MZfJRHMLWElpuyV8JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489342; c=relaxed/simple;
-	bh=b6WgRv8rtiB7pTTMcphIGsOMKRIsXI5qMlLnrXGHB1c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=th5ALGE/BfW2r9QjPUHqwtkD3qSTX3FcFBlgoCCfAVc82NYI07x5lQKOQMqAdN1NUr5WgRlcub78zovymJ12w5c7FuLydhdyKdx3IeHekgl9Uz5vxVvQqrPZPlmfP9gsdIlylJtK9Pe5/DYRIp/AZuRIgZnuvxRGTQnndVT3WYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kkesa0FX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=l+ltgAvX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kkesa0FX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=l+ltgAvX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 06E8421191;
-	Fri,  6 Dec 2024 12:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733489333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K5CGsSKu551hYd3WzWHJ25z8Kb3GEXEqTT48JAUn1A=;
-	b=kkesa0FXkOz6ZdgLYCQCBz5vHsRKao4X5p29Ju5cqRkljWjRMnbAmpTfpr5X+MuuJO/8ff
-	8eSioNdx4TRs6PtUPnYyJkTV7B7aEw6DcUwNlyP3865UQ9o4jUzUJVIcH5jtB3vSq3261P
-	j1u4HXj7QglTSEF5hbz1Ryc4K0fe3Cw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733489333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K5CGsSKu551hYd3WzWHJ25z8Kb3GEXEqTT48JAUn1A=;
-	b=l+ltgAvXi/mJgaVMo1aKyd2vtMX/lug/UFu4YW6oqr5bxb7K+aqWsCQx85PcnMVC5uimLd
-	Gfimvo2njLYHYkDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733489333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K5CGsSKu551hYd3WzWHJ25z8Kb3GEXEqTT48JAUn1A=;
-	b=kkesa0FXkOz6ZdgLYCQCBz5vHsRKao4X5p29Ju5cqRkljWjRMnbAmpTfpr5X+MuuJO/8ff
-	8eSioNdx4TRs6PtUPnYyJkTV7B7aEw6DcUwNlyP3865UQ9o4jUzUJVIcH5jtB3vSq3261P
-	j1u4HXj7QglTSEF5hbz1Ryc4K0fe3Cw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733489333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5K5CGsSKu551hYd3WzWHJ25z8Kb3GEXEqTT48JAUn1A=;
-	b=l+ltgAvXi/mJgaVMo1aKyd2vtMX/lug/UFu4YW6oqr5bxb7K+aqWsCQx85PcnMVC5uimLd
-	Gfimvo2njLYHYkDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAD8C138A7;
-	Fri,  6 Dec 2024 12:48:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2Vc6MLTyUmdhSgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 06 Dec 2024 12:48:52 +0000
-Date: Fri, 06 Dec 2024 13:48:52 +0100
-Message-ID: <87r06lrn7v.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	ghanshyam1898@gmail.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: au88x0: Modify the incorrect format specifier
-In-Reply-To: <20241206020543.2153-1-liujing@cmss.chinamobile.com>
-References: <20241206020543.2153-1-liujing@cmss.chinamobile.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1733489398; c=relaxed/simple;
+	bh=TFG+bim7icdVhxwWzSqoHwXSxC+pOqSThunna8oKFyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ILJPnExV+uUkgbDu0o3taKl1cieEq/VHqMG+2GmwagDVB5hN2xooby6eCKHZmheMutRkKJ1ftMLg76yFT6xFFqg1Z8d7ca3q6PAabM5jZvIGsd45M664TD3t6vVkRr77sodPrYJWbS+y3wTpa8peU09wTFyyKXJt8pAZ42AmApQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYh6kRf9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3477C4CED1;
+	Fri,  6 Dec 2024 12:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733489397;
+	bh=TFG+bim7icdVhxwWzSqoHwXSxC+pOqSThunna8oKFyY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OYh6kRf9+4G5NYKJuxoeu8dcah5TpFxeFP+8yVx+kk/rsrvYIyesNQJOkHapaV60s
+	 vQTAvZA1AgKdLo2jt61/LxeuyJEvyXt5LyNwyWUpdnT5ER/rytPk8sSA+ZmjjdY7B1
+	 5j3sP3e+gSN94UxoWinZEyJ+mG9kWavcRiVtCK4RWqUrOFF7asg1Szk9qiNi16yRIy
+	 E8Pn8yns3d3XBkRqiwD3dWkFuSurPRux44knRPqRE6awo4C1EifOmw7MQbype0b0DR
+	 hYv3FSJrFCm8boM/tzGghdifDd1Z58wU6rqwqxGoepT8uxumIgFTAOQhoIgOrwmxBo
+	 BwglYTuWvih1Q==
+Message-ID: <c639ca40-9e4f-4882-8441-57413e835422@kernel.org>
+Date: Fri, 6 Dec 2024 13:49:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,gmail.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
+ Ride-r3
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
+ <20241119174954.1219002-6-quic_wasimn@quicinc.com>
+ <9e351979-be01-4d38-9b94-cc23efac4c3f@kernel.org>
+ <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
+ <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 06 Dec 2024 03:05:43 +0100,
-liujing wrote:
+On 06/12/2024 13:14, Konrad Dybcio wrote:
+>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+>>>> new file mode 100644
+>>>> index 000000000000..a04c8d1fa258
+>>>> --- /dev/null
+>>>> +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+>>>> @@ -0,0 +1,12 @@
+>>>> +// SPDX-License-Identifier: BSD-3-Clause
+>>>> +/*
+>>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + */
+>>>> +/dts-v1/;
+>>>> +
+>>>> +#include "sa8775p-ride-r3.dts"
+>>> No guys, you are making these things up. This is EXACTLY the same as
+>>> qcs9100.
+>>
+>> 9100 & 9075 are different from “safe” perspective. They differ in
+>> changes related to thermal which will be added later in devicetree.
 > 
-> Make a minor change to eliminate a static checker warning. The type
-> of chip->irq is unsigned int, so the correct format specifier should be
-> %u instead of %i.
-> 
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+> Since this can't be inferred from just looking at the changes, please
+> make sure to add that to the commit message
 
-In this particular case, it's better to correct snd_vortex.irq to be
-normal signed int.  The validity check is with a negative value, as
-it's initialized with -1.
-
-
-thanks,
-
-Takashi
-
-> 
-> diff --git a/sound/pci/au88x0/au88x0.c b/sound/pci/au88x0/au88x0.c
-> index 62b10b0e07b1..e3b1d7116110 100644
-> --- a/sound/pci/au88x0/au88x0.c
-> +++ b/sound/pci/au88x0/au88x0.c
-> @@ -223,7 +223,7 @@ __snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
->  	// Card details needed in snd_vortex_midi
->  	strcpy(card->driver, CARD_NAME_SHORT);
->  	sprintf(card->shortname, "Aureal Vortex %s", CARD_NAME_SHORT);
-> -	sprintf(card->longname, "%s at 0x%lx irq %i",
-> +	sprintf(card->longname, "%s at 0x%lx irq %u",
->  		card->shortname, chip->io, chip->irq);
->  
->  	// (4) Alloc components.
-> -- 
-> 2.27.0
-> 
-> 
-> 
+Any include of other DTS is clear sign something is odd here. Including
+multiple times without any added nodes is showing these are not real
+products/boards .
+Best regards,
+Krzysztof
 
