@@ -1,183 +1,95 @@
-Return-Path: <linux-kernel+bounces-435445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07789E77C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:00:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7DE9E77CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:03:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E541886D73
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F0D168337
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D691FFC64;
-	Fri,  6 Dec 2024 18:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TveFug1/"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06541FD7BA;
+	Fri,  6 Dec 2024 18:02:58 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DF62206A5;
-	Fri,  6 Dec 2024 18:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E471F4E20
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 18:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733508031; cv=none; b=KEwNXUSb5gxnISRuSNIxbTWDCTp1kbLkXA5uaT8qaWKfwyBFQh/CA0Ul2v7nL9s6K4wjFudOPhKSRWR3yyH7kg2lLM7cBNf2tykfnHTwjaHxfLDoq3vaFYPgqKP703QMks6UtpyA3CxwdbIvjStD1cvRJ2JmPzFvb7fltcDnUd0=
+	t=1733508178; cv=none; b=VU+pLz5zhEbgWVG9nPHqK67TESE5+U6KQKRpLryMGErd44kk4r/V+pdBWi6Ldk826C2lqdOdcxY5a9pRATX8KH1JVI+UbeUVz2+14UQOckUrkThTOwObhq4wJZ010sOqqRyogHEcTl5Wwi5hvn4yhGSkHL1WmwH6jf0zjudqsbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733508031; c=relaxed/simple;
-	bh=H8+ijCMiA6ukFvtvHgi/sIc/1ThgkN6eZOLvjTyrHao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eExobWL5w5ohCPgvsZCo2+6RY7I5ZlsThmskO5i6BhfTh1Tkc9+cOGgt2ao+FPjx3BQm/ElIcEJlqiTwTpTHY0pNw+rFk2z+RtB1hILiBihXeE7YGRkZFQy/TSYlh5kPzr2sbG3Ozz5/e4W9cxkVG8BYVDYmvgdpx7hdC+9wk8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TveFug1/; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ef6c56032eso846175a91.2;
-        Fri, 06 Dec 2024 10:00:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733508029; x=1734112829; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=34RpqiH9mb1FjMoXjg/XFvDnF3uQltArdmOLNrd2+ic=;
-        b=TveFug1/KLRCFee/7Jl8qNP2dXRD3IZiudPRz9OwvHkgDp6eANBqp1wwy3ZcsvI6c3
-         cR+BLDdAjtFlNsPp/Zu9FNEjLYQCxRdnOt0fyMpYQ1FRZN03PlDeALwbLna7rPOVhhW5
-         vgOV0wsttPPal/3acF89kDG5NqItTnTpgOo0lcxaNfvqaEtlIzZzcY61UZRSZy1ZGZB0
-         lB/1p4bUoPjQVPdYSqEl+r22IIfQmBecDPjku7fqU3eZtPxdnkx2c75D5R1fBggA4n9a
-         5nK5xxcjfS9YSIq0PgwQjdNbj3mijpBlNr84RjQLWoPxowrarfu7GuI40TY61qktk40f
-         cToQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733508029; x=1734112829;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=34RpqiH9mb1FjMoXjg/XFvDnF3uQltArdmOLNrd2+ic=;
-        b=VajDTg681XMf9hQyerteA0qaBPnbZCNMQ8OhqBup7ILuawhpiHkRddxZBFDQzRQzKE
-         Cju/Jq1SvXYFxq/e6r/d/p3W7WLQY4yGikhzTwizR4QUZNmqOhohJ1G8JscwjI1tGCfo
-         54QK8sTqzNfJXNoRG3kuVBQ9JgZwxCpNnOcHZRIT3Iq9FJdfVLg0WIp0tQCRDaMiXQFA
-         KaRgl93qfpnWX12qs/JYrTHT2TWg0vN5YVEVatGvxWl8AFMP0GkbYU+UxqTyMleQ7OTf
-         j8RTxmQmR6u8s8EFJiUQMv+onzbsq4fLILjTCm9qWfJId3iBPmpa4xOM1u5H2LLl5w8E
-         k7kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlfgUq5bGpXu08gpn341iO0PQlh2BUg2oH6YiuG2hv3zyKECokzBrNg1dM7r0UAONgq2zt5rzDK8o+x5p1@vger.kernel.org, AJvYcCW5mT9N0jE887QXxinDjMl5xQwB1MjcK5J4L2R2GolHY4/z/JTIpQPZ3RbKM8D1GdY3ilw=@vger.kernel.org, AJvYcCXwr3qrjqIHdc6YeYKdpUcVkLF4PW70jp2Ju5sMatrDqfVwRlUpD/tFaopWlYx1rlwklKK4BfouDf7fteYtev8p1EyD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyROJ1zekL9r4zsG+7ybejfVEUMZEj8UrZKDQoSgQQnDaVFJtya
-	flZTIfb/HmGd2i34sZZrqQnu+P2q92b3U+/60+zFlk+OviSjeYR1rouTGtMWlsjGzPy6IT4lMGF
-	K4K6dJDt9sr9JhlwTNwE6rG478AU=
-X-Gm-Gg: ASbGncsl0Kis83BuStPeoXWoPCaj2mUeVXD4w1PgUrVk36v0qgFJv8RThmPiLbVoUhA
-	eVg2tfXa/ZU2lEsca8AXQeoKFa9dA8+ydyxCWIZAyOAH755E=
-X-Google-Smtp-Source: AGHT+IHCNWhxq7so09pbzCCKHYLOVnFH/73MSxeGbWicpEb+f1NdFQzOJpUKEvhEDi5mDeEJAuKV7y0BazV2xTlwol0=
-X-Received: by 2002:a17:90b:3dcb:b0:2ef:114d:7bf8 with SMTP id
- 98e67ed59e1d1-2ef6965464amr5173915a91.6.1733508028565; Fri, 06 Dec 2024
- 10:00:28 -0800 (PST)
+	s=arc-20240116; t=1733508178; c=relaxed/simple;
+	bh=frdiTPh5k8CmyYnrdjopta0oWe7otGMlgOrxo3XFMrs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=QvFM1HmBWWcpLgZmXmQg0aARumxF7d8RNw9exoi9ukiOvz7zMhOi96S4zs5PxIDPE5+5pAPwwDP3CqFuOmE2/qqknImhlb8DcpN1lxNoM/+zAiUgXx17WmJpQUWkUbTxOWQzriR+oQzM3XWQEGpkILqytcpZnuoVNxoCEo8NFNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-172-DfBVzvTdMzWT01Ic5J-YWQ-1; Fri, 06 Dec 2024 18:02:53 +0000
+X-MC-Unique: DfBVzvTdMzWT01Ic5J-YWQ-1
+X-Mimecast-MFC-AGG-ID: DfBVzvTdMzWT01Ic5J-YWQ
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 18:02:07 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 18:02:07 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Dave Penkler' <dpenkler@gmail.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "linux-staging@lists.linux.dev"
+	<linux-staging@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Guenter Roeck <linux@roeck-us.net>
+Subject: RE: [PATCH v5] staging: gpib: Fix i386 build issue
+Thread-Topic: [PATCH v5] staging: gpib: Fix i386 build issue
+Thread-Index: AQHbRnNeLNtjyv8mxUi5PXXR1xkkjbLZhFyw
+Date: Fri, 6 Dec 2024 18:02:07 +0000
+Message-ID: <ba3bf2c6c59f4019a3d502cb0b703d7b@AcuMS.aculab.com>
+References: <20241204162128.25617-1-dpenkler@gmail.com>
+In-Reply-To: <20241204162128.25617-1-dpenkler@gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206002417.3295533-1-andrii@kernel.org> <20241206002417.3295533-5-andrii@kernel.org>
- <Z1MFBVRuUnuYKo8c@krava>
-In-Reply-To: <Z1MFBVRuUnuYKo8c@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 6 Dec 2024 10:00:16 -0800
-Message-ID: <CAEf4BzaESrHfAXZrN0VbjQvxLJ0ij0ujKpsp2T6iQtbisYPa=A@mail.gmail.com>
-Subject: Re: [PATCH perf/core 4/4] uprobes: reuse return_instances between
- multiple uretprobes within task
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, mingo@kernel.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	liaochang1@huawei.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: IB78VIR14JiAatOQrI5QrRmaw-Tj5BGLiNAISPK8Hnk_1733508173
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 6:07=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
->
-> On Thu, Dec 05, 2024 at 04:24:17PM -0800, Andrii Nakryiko wrote:
->
-> SNIP
->
-> > +static void free_ret_instance(struct uprobe_task *utask,
-> > +                           struct return_instance *ri, bool cleanup_hp=
-robe)
-> > +{
-> > +     unsigned seq;
-> > +
-> >       if (cleanup_hprobe) {
-> >               enum hprobe_state hstate;
-> >
-> > @@ -1897,8 +1923,22 @@ static void free_ret_instance(struct return_inst=
-ance *ri, bool cleanup_hprobe)
-> >               hprobe_finalize(&ri->hprobe, hstate);
-> >       }
-> >
-> > -     kfree(ri->extra_consumers);
-> > -     kfree_rcu(ri, rcu);
-> > +     /*
-> > +      * At this point return_instance is unlinked from utask's
-> > +      * return_instances list and this has become visible to ri_timer(=
-).
-> > +      * If seqcount now indicates that ri_timer's return instance
-> > +      * processing loop isn't active, we can return ri into the pool o=
-f
-> > +      * to-be-reused return instances for future uretprobes. If ri_tim=
-er()
-> > +      * happens to be running right now, though, we fallback to safety=
- and
-> > +      * just perform RCU-delated freeing of ri.
-> > +      */
-> > +     if (raw_seqcount_try_begin(&utask->ri_seqcount, seq)) {
-> > +             /* immediate reuse of ri without RCU GP is OK */
-> > +             ri_pool_push(utask, ri);
->
-> should the push be limitted somehow? I wonder you could make uprobes/cons=
-umers
-> setup that would allocate/push many of ri instances that would not be fre=
-ed
-> until the process exits?
+From: Dave Penkler
+> Sent: 04 December 2024 16:21
+>=20
+> These drivers cast resource_type_t to void * causing the build to fail.
+>=20
+> With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsigned
+> int which cannot be cast to a 32 bit pointer.
+>=20
+> Disable these drivers if X68_PAE is enabled
 
-So I'm just relying on the existing MAX_URETPROBE_DEPTH limit that is
-enforced by prepare_uretprobe anyways. But yes, we can have up to 64
-instances in ri_pool.
+You missed the obvious typo :-)
 
-I did consider cleaning this up from ri_timer() (that would be a nice
-properly, because ri_timer fires after 100ms of inactivity), and my
-initial version did use lockless llist for that, but there is a bit of
-a problem: llist doesn't support popping single iter from the list
-(you can only atomically take *all* of the items) in lockless way. So
-my implementation had to swap the entire list, take one element out of
-it, and then put N - 1 items back. Which, when there are deep chains
-of uretprobes, would be quite an unnecessary CPU overhead. And I
-clearly didn't want to add locking anywhere in this hot path, of
-course.
+There is also a proposal to just remove PAE support.
+Mostly because it is likely to have bit-rotted and isn't really
+needed now 64bit code is common.
 
-So I figured that at the absolute worst case we'll just keep
-MAX_URETPROBE_DEPTH items in ri_pool until the task dies. That's not
-that much memory for a small subset of tasks on the system.
+=09David
 
-One more idea I explored and rejected was to limit the size of ri_pool
-to something smaller than MAX_URETPROBE_DEPTH, say just 16. But then
-there is a corner case of high-frequency long chain of uretprobes up
-to 64 depth, then returning through all of them, and then going into
-the same set of functions again, up to 64. So depth oscillates between
-0 and full 64. In this case this ri_pool will be causing allocation
-for the majority of those invocations, completely defeating the
-purpose.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-So, in the end, it felt like 64 cached instances (worst case, if we
-actually ever reached such a deep chain) would be acceptable.
-Especially that commonly I wouldn't expect more than 3-4, actually.
-
-WDYT?
-
->
-> jirka
->
-> > +     } else {
-> > +             /* we might be racing with ri_timer(), so play it safe */
-> > +             ri_free(ri);
-> > +     }
-> >  }
-> >
-> >  /*
-
-[...]
 
