@@ -1,94 +1,58 @@
-Return-Path: <linux-kernel+bounces-434665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC46F9E6994
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:02:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B509E6995
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:02:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9F9164896
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:02:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C831EE003;
+	Fri,  6 Dec 2024 09:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aujXnEVL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6ED2825FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:02:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F4A1E1041;
-	Fri,  6 Dec 2024 09:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPNfTpoa"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EFE18E050
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE011E2617;
+	Fri,  6 Dec 2024 09:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475716; cv=none; b=B47CI7xAuX6knpTACgNdjVCWUYdu9QfGJ8gJTvhxsQCEsKv5lqv4rFTJhMM7lpMChQIorYc4c6htpsyKYq5V/9GGioTJnw2dpySnsuInVqiUOWe4H1COozW5worZKhazWGMTAmaCOhIk2jbHQm/LEVaWRncz93w2ZTqlPlVEEW8=
+	t=1733475721; cv=none; b=YJFGbab34V1i8yXyE24onS/Evaf4qUjIl9BUGqU8XVbXJiaq6lV4xVBJB/jYbMDkDmcet8QbN37WtIJaKTOcMnm2gWOVmwbOh2CTf4nIhi5HUoio6Q8W36+DCT/KODwBcU3Jc5GRdlGHpch0fHK4Z/2MSJOWrgbrbD4d6sTakGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475716; c=relaxed/simple;
-	bh=bIxAup2lz0R5xBDAVAzhHfisE8r1P4jcXjhac0PQRls=;
+	s=arc-20240116; t=1733475721; c=relaxed/simple;
+	bh=XWD3YWdZXUE2SZt16mOKszuwLSOfo+1lXG/AOJzR51Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=go+K7+J3+gdA/QC+xfFC0QtqRZllKKUWd8N0hUIx+AH8dEX/S0n/m586uX7qyIwcbNwieaceMJp7RlFwvgt2c+H0hT1PqLbQ0q7KsC1tyrZilMrvKUhnkgJDloo6w0jUnCVZ6xjnlNlZhfJjhPwLT87L1k9k0Y3m9HNqt6aO7mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KPNfTpoa; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de8ecafeeso2043555e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:01:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733475713; x=1734080513; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewjfA2zB7MJtvrBmdqkSKX8dAgp3ONrC04bFiltR3uU=;
-        b=KPNfTpoauxM9rVly5pjYF/pKPJzg/a/0bLMEqVx/+aKhS9l7LoLt5sR9lfpFr9kE5D
-         Yn+ahc2IibSun2dWioDrZWr0Gq1ZXWSOCoezGysm1zV3MI9xoYh+rZFchnGDdVpzCpyV
-         RKBH3PQUSgvRYNpe5mlzSmXwZinutbFCVHl/d83cbL1d+78pMgYmU/vfmC1T14Pd54v3
-         4Bb05myOhgl58jeJ5peDOFfqBNnaDRKj+IV9b9/m7yg4E67/DoTh4gdOh29gcLhVp7BH
-         UUryUqLVoCD+O+7GmHrig2Xbk4cByy2Ax5rqgG8jAtcsx+nTqPLYSZ3mPvVtaCpObCL/
-         UJeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733475713; x=1734080513;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ewjfA2zB7MJtvrBmdqkSKX8dAgp3ONrC04bFiltR3uU=;
-        b=sp7KyPdtB1U3n+3uicotVFlIerQu2dfF1wYWMkU5JPbOsUmOBzALGjLg7vgdDoJeCg
-         v4kNeaT3j31Jqxs1Vg4x166xnhJAZPU6yfAP+m4D1nUJaPTlsUAtBAQtkbgX/lmYPGJA
-         jdtYx/ZQjGvVNGsPQa1XN7b6CEoouhzOK/4fxE65ayGvAb/4/0Gfx4aNa2B7dNBsxdLa
-         aKK9MCeTT15/WmxlgQrq7fXxjLRrmAmORiyIxl9q8lD6eShXQMvZ1orYJ8KEiFhS/E7F
-         o+YylYs5RgmogzQlcsMww2SrP15vObgx9sfu/3/o4/7POb7UYoSG37Zy8AQ1zx21WruV
-         4PlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA6X40OjHmL5h0rQRNxGpzELuhdh6ROKKso0q+mlHoDHow9aBqmEV/hmyrJVQM+Jj6rBt3BgYd25p5M20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHxuM3/3H0r60kTuljQ632pWi2U3nNXwQ7tXsfjE5Nw63d5tQZ
-	zBbiKpZ1R/NO+66ELqMpBDW8238EOj+L9f2qcIzdpINmIucFGme5XnzmTa+WbHE=
-X-Gm-Gg: ASbGncsS1Q50ZvhAglwTjNDy12/Yt/lG4LnURsoGNp9GxSSHBbciC+yuKQ2kG8yTnyW
-	7xb8pTdR17uDMaaucoxCLYzQKfcqeGZeZbl33AXUJ1vgt4jHpco6UBWyjbOCT8Ips/czbn17HcB
-	NKA3HJmRCLymR5ez/Y/kbNEWux9Pwb0N5LOCygnnwazy41qJTcK2Y9SGhVoP8vgiOMBBWueQj35
-	ij6e+sQCX5mbnjoJ5+jXNcDswHXsL1blP98siYIEbJQGvU2r7NqwnN/qJEbATVSQrdyVh9HhtQy
-	DQPcmhaExNAeky9GK6mxtFmhT71CBA==
-X-Google-Smtp-Source: AGHT+IHewBkomdVnD/xM5P6dyFTA0maIFSMrnI7aNDtbE1FGcJmiheT1aRvkMYU1aVoO3cS20XGa/A==
-X-Received: by 2002:a05:6512:1055:b0:53e:2628:3c24 with SMTP id 2adb3069b0e04-53e2c2effd3mr603786e87.47.1733475712650;
-        Fri, 06 Dec 2024 01:01:52 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e2cd847c2sm124389e87.161.2024.12.06.01.01.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 01:01:51 -0800 (PST)
-Date: Fri, 6 Dec 2024 11:01:48 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
-	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
-	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 06/45] drm/msm/dp: remove dp_display's dp_mode and use
- dp_panel's instead
-Message-ID: <rjhv2modyvb2py4z6ve7i3xqu6ezrz7op7r6ygldbhydbvrtha@32bkl37jwol3>
-References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-6-f8618d42a99a@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLWJQUJ7NrxmMoh8NaAPSNOTClOEcu8oEWfu0MT5EC55P+zHngIsgGq6lTk2fDlp6LFXsiOgWrDT+j3x+u36jY3HiYwLqOk2a5KxgJDUfeg/f2W/nYXvq/KRMtJqxEc+7SVjlMxfQxEVcWI8/DQq1a8nz2VVjwMCvcnm9WP6Eu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aujXnEVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A82C4CEDF;
+	Fri,  6 Dec 2024 09:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733475720;
+	bh=XWD3YWdZXUE2SZt16mOKszuwLSOfo+1lXG/AOJzR51Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aujXnEVLRamWYUKSNF0HSFX25gxTeSm2xe3+A4k6Wmv7MfvN4Pz2AbaeLlco0nuHo
+	 inrGBt/qQZRuL3RJhgaI08Ow6j794+h3EiHR8NDk5HpQeCwYcGs1faONQxyMgjBu8i
+	 b50vrlphiFAeVm0e1EfF2BB7FXYaD6nWxNmnr/ArOBaQVehUW6LTRYeZn++xdi5ZHn
+	 oxGSZJeDvVSWxhpteg/A2M8G7ymdPWy3JXPaf1ApieG16HmhvnUQ4RQzEm/X7na3TP
+	 KPb8+l1Y7YPDyVZlluDdDiUCOifzbPAsp1drMc17e4ABtM1pH32D+91yNy99njyJ+Q
+	 yLh1jRi7sGWQA==
+Date: Fri, 6 Dec 2024 10:01:54 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] samples: rust: Provide example using the new Rust
+ MiscDevice abstraction
+Message-ID: <Z1K9gk3Mel4h98gA@pollux>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <20241205162531.1883859-4-lee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,142 +61,156 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-6-f8618d42a99a@quicinc.com>
+In-Reply-To: <20241205162531.1883859-4-lee@kernel.org>
 
-On Thu, Dec 05, 2024 at 08:31:37PM -0800, Abhinav Kumar wrote:
-> dp_display caches the current display mode and then passes it onto
-> the panel to be used for programming the panel params. Remove this
-> two level passing and directly populated the panel's dp_display_mode
-> instead.
-
-Remove both and use the one from crtc_state?
-
+On Thu, Dec 05, 2024 at 04:25:20PM +0000, Lee Jones wrote:
+> This sample driver demonstrates the following basic operations:
 > 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> * Register a Misc Device
+> * Create /dev/rust-misc-device
+> * Open the aforementioned character device
+> * Operate on the character device via a simple ioctl()
+> * Close the character device
+> 
+> Signed-off-by: Lee Jones <lee@kernel.org>
 > ---
->  drivers/gpu/drm/msm/dp/dp_display.c | 46 ++++++++++++++++---------------------
->  1 file changed, 20 insertions(+), 26 deletions(-)
+>  samples/rust/Kconfig             | 10 ++++
+>  samples/rust/Makefile            |  1 +
+>  samples/rust/rust_misc_device.rs | 80 ++++++++++++++++++++++++++++++++
+>  3 files changed, 91 insertions(+)
+>  create mode 100644 samples/rust/rust_misc_device.rs
 > 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index 052db80c6a365f53c2c0a37d3b69ea2b627aea1f..4bd85ae754429333aa423c985368344cd03c7752 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -90,7 +90,6 @@ struct msm_dp_display_private {
->  	struct msm_dp_panel   *panel;
->  	struct msm_dp_ctrl    *ctrl;
+> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> index b0f74a81c8f9..df384e679901 100644
+> --- a/samples/rust/Kconfig
+> +++ b/samples/rust/Kconfig
+> @@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
 >  
-> -	struct msm_dp_display_mode msm_dp_mode;
->  	struct msm_dp msm_dp_display;
+>  	  If unsure, say N.
 >  
->  	/* wait for audio signaling */
-> @@ -1436,10 +1435,13 @@ bool msm_dp_needs_periph_flush(const struct msm_dp *msm_dp_display,
->  bool msm_dp_wide_bus_available(const struct msm_dp *msm_dp_display)
->  {
->  	struct msm_dp_display_private *dp;
-> +	struct msm_dp_panel *dp_panel;
->  
->  	dp = container_of(msm_dp_display, struct msm_dp_display_private, msm_dp_display);
->  
-> -	if (dp->msm_dp_mode.out_fmt_is_yuv_420)
-> +	dp_panel = dp->panel;
+> +config SAMPLE_RUST_MISC_DEVICE
+> +	tristate "Misc device"
+> +	help
+> +	  This option builds the Rust misc device.
 > +
-> +	if (dp_panel->msm_dp_mode.out_fmt_is_yuv_420)
->  		return false;
->  
->  	return dp->wide_bus_supported;
-> @@ -1501,10 +1503,6 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
->  	bool force_link_train = false;
->  
->  	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
-> -	if (!msm_dp_display->msm_dp_mode.drm_mode.clock) {
-> -		DRM_ERROR("invalid params\n");
-> -		return;
-> -	}
->  
->  	if (dp->is_edp)
->  		msm_dp_hpd_plug_handle(msm_dp_display, 0);
-> @@ -1516,13 +1514,6 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
->  		return;
->  	}
->  
-> -	rc = msm_dp_display_set_mode(dp, &msm_dp_display->msm_dp_mode);
-> -	if (rc) {
-> -		DRM_ERROR("Failed to perform a mode set, rc=%d\n", rc);
-> -		mutex_unlock(&msm_dp_display->event_mutex);
-> -		return;
-> -	}
-> -
->  	state =  msm_dp_display->hpd_state;
->  
->  	if (state == ST_CONNECTED && !dp->power_on) {
-> @@ -1599,37 +1590,40 @@ void msm_dp_bridge_mode_set(struct drm_bridge *drm_bridge,
->  	struct msm_dp *dp = msm_dp_bridge->msm_dp_display;
->  	struct msm_dp_display_private *msm_dp_display;
->  	struct msm_dp_panel *msm_dp_panel;
-> +	struct msm_dp_display_mode msm_dp_mode;
-
-No need to allocate it on stack just to copy it later on. Please write
-the data directly to a proper location from the beginning.
-
->  
->  	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
->  	msm_dp_panel = msm_dp_display->panel;
->  
-> -	memset(&msm_dp_display->msm_dp_mode, 0x0, sizeof(struct msm_dp_display_mode));
-> +	memset(&msm_dp_mode, 0x0, sizeof(struct msm_dp_display_mode));
->  
->  	if (msm_dp_display_check_video_test(dp))
-> -		msm_dp_display->msm_dp_mode.bpp = msm_dp_display_get_test_bpp(dp);
-> +		msm_dp_mode.bpp = msm_dp_display_get_test_bpp(dp);
->  	else /* Default num_components per pixel = 3 */
-> -		msm_dp_display->msm_dp_mode.bpp = dp->connector->display_info.bpc * 3;
-> +		msm_dp_mode.bpp = dp->connector->display_info.bpc * 3;
->  
-> -	if (!msm_dp_display->msm_dp_mode.bpp)
-> -		msm_dp_display->msm_dp_mode.bpp = 24; /* Default bpp */
-> +	if (!msm_dp_mode.bpp)
-> +		msm_dp_mode.bpp = 24; /* Default bpp */
-
-The msm_dp_mode.bpp gets rewritten by msm_dp_panel_init_panel_info()
-after being set here. Is this code part redundant?
-
->  
-> -	drm_mode_copy(&msm_dp_display->msm_dp_mode.drm_mode, adjusted_mode);
-> +	drm_mode_copy(&msm_dp_mode.drm_mode, adjusted_mode);
->  
-> -	msm_dp_display->msm_dp_mode.v_active_low =
-> -		!!(msm_dp_display->msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NVSYNC);
-> +	msm_dp_mode.v_active_low =
-> +		!!(msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NVSYNC);
->  
-> -	msm_dp_display->msm_dp_mode.h_active_low =
-> -		!!(msm_dp_display->msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NHSYNC);
-> +	msm_dp_mode.h_active_low =
-> +		!!(msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NHSYNC);
->  
-> -	msm_dp_display->msm_dp_mode.out_fmt_is_yuv_420 =
-> +	msm_dp_mode.out_fmt_is_yuv_420 =
->  		drm_mode_is_420_only(&dp->connector->display_info, adjusted_mode) &&
->  		msm_dp_panel->vsc_sdp_supported;
->  
-> +	msm_dp_display_set_mode(dp, &msm_dp_mode);
+> +	  To compile this as a module, choose M here:
+> +	  the module will be called rust_misc_device.
 > +
->  	/* populate wide_bus_support to different layers */
->  	msm_dp_display->ctrl->wide_bus_en =
-> -		msm_dp_display->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
-> +		msm_dp_panel->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
->  	msm_dp_display->catalog->wide_bus_en =
-> -		msm_dp_display->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
-> +		msm_dp_panel->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
->  }
+> +	  If unsure, say N.
+> +
+>  config SAMPLE_RUST_PRINT
+>  	tristate "Printing macros"
+>  	help
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index c1a5c1655395..ad4b97a98580 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -2,6 +2,7 @@
+>  ccflags-y += -I$(src)				# needed for trace events
 >  
->  void msm_dp_bridge_hpd_enable(struct drm_bridge *bridge)
-> 
+>  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+> +obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+>  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+>  
+>  rust_print-y := rust_print_main.o rust_print_events.o
+> diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+> new file mode 100644
+> index 000000000000..f50925713f1a
+> --- /dev/null
+> +++ b/samples/rust/rust_misc_device.rs
+> @@ -0,0 +1,80 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2024 Google LLC.
+> +
+> +//! Rust misc device sample.
+> +
+> +use kernel::{
+> +    c_str,
+> +    ioctl::_IO,
+> +    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+> +    prelude::*,
+> +};
+> +
+> +const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
+> +
+> +module! {
+> +    type: RustMiscDeviceModule,
+> +    name: "rust_misc_device",
+> +    author: "Lee Jones",
+> +    description: "Rust misc device sample",
+> +    license: "GPL",
+> +}
+> +
+> +struct RustMiscDeviceModule {
+> +    _miscdev: Pin<KBox<MiscDeviceRegistration<RustMiscDevice>>>,
+
+Why do we add examples where we ask people to allocate those structures with
+kmalloc()?
+
+`MiscDevice` should switch to the generic `Registration` type in [1] and use
+`InPlaceModule`, such that those structures land in the .data section of the
+binary.
+
+[1] https://lore.kernel.org/rust-for-linux/20241205141533.111830-3-dakr@kernel.org/
+
+> +}
+> +
+> +impl kernel::Module for RustMiscDeviceModule {
+> +    fn init(_module: &'static ThisModule) -> Result<Self> {
+> +        pr_info!("Initialising Rust Misc Device Sample\n");
+> +
+> +        let options = MiscDeviceOptions {
+> +            name: c_str!("rust-misc-device"),
+> +        };
+> +
+> +        Ok(Self {
+> +            _miscdev: KBox::pin_init(
+> +                MiscDeviceRegistration::<RustMiscDevice>::register(options),
+> +                GFP_KERNEL,
+> +            )?,
+> +        })
+> +    }
+> +}
+> +
+> +struct RustMiscDevice;
+> +
+> +#[vtable]
+> +impl MiscDevice for RustMiscDevice {
+> +    type Ptr = KBox<Self>;
+> +
+> +    fn open() -> Result<KBox<Self>> {
+> +        pr_info!("Opening Rust Misc Device Sample\n");
+> +
+> +        Ok(KBox::new(RustMiscDevice, GFP_KERNEL)?)
+> +    }
+> +
+> +    fn ioctl(
+> +        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
+> +        cmd: u32,
+> +        _arg: usize,
+> +    ) -> Result<isize> {
+> +        pr_info!("IOCTLing Rust Misc Device Sample\n");
+> +
+> +        match cmd {
+> +            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
+> +            _ => {
+> +                pr_err!("IOCTL not recognised: {}\n", cmd);
+> +                return Err(ENOIOCTLCMD);
+> +            }
+> +        }
+> +
+> +        Ok(0)
+> +    }
+> +}
+> +
+> +impl Drop for RustMiscDevice {
+> +    fn drop(&mut self) {
+> +        pr_info!("Exiting the Rust Misc Device Sample\n");
+> +    }
+> +}
 > -- 
-> 2.34.1
+> 2.47.0.338.g60cca15819-goog
 > 
-
--- 
-With best wishes
-Dmitry
+> 
 
