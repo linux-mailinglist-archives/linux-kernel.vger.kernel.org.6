@@ -1,216 +1,411 @@
-Return-Path: <linux-kernel+bounces-434743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9485B9E6A7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:38:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B73BD9E6A7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4824428BE35
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7415C28C251
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9761EF097;
-	Fri,  6 Dec 2024 09:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C301F9A81;
+	Fri,  6 Dec 2024 09:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sjhYThqP"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AtSjd3fG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pF4gZ/Ny"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1E91DFDA8;
-	Fri,  6 Dec 2024 09:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477910; cv=fail; b=W/Clrq2yme+zmOXgW+WOnIgBCdgpAApfLETBosPpGdDvGbCnk3ogqGQP+lvSRD3jCqhIQtSaOj2jSM1YrMUfNDZFI6hRGjM7e8ciGOIrWgUrjbWyEEmJs3dC4CWUruYzMTEeMnNi+6KRwRcmS/weO9swOijHGXJd6AFXY9VsBUw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477910; c=relaxed/simple;
-	bh=Z8kiQQo0eBAUgBCuMJBLFiWa0BLx9kN1roH7tzoHoQY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=F50W0ig2/U5Rgwux4ugnSJEjqOexvfXE5fbRdsqHZ122Tt6+qEgksLGnH+D4Bbsy3+81azRx4JozoSDBBhs0UYGUR3Ot7gMk/lmud39I8he07xznEEikFZUQU0SIqj4BRyS4z6CnNbu88y5VHM8+97brA9NEup6KAE+K0AfSHWI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sjhYThqP; arc=fail smtp.client-ip=40.107.223.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HXj8nAUw702M9hQ05HHsxRDdl7npaAHXY5juZoYjGwkQqVshZc+xT4Ke1bYXqnzz8gnzgvFn2XSnM9D50Te3m9b9DbiOjdmbqfDyJ7wiI9/+nklcCDGpSFw+XvrwfZTjWo0t4AxhrCNBJxPKLdJ6zLZ0vTZv0/ru6ndFmWbVW1li0Bc+CJMPjA7W0QIFiU5DOvHtLHvIbCbNOzW6SeuRrWgcxgYYF3fzuqlp053FD9T4dun1/pXJa+fnQQLW8QrP+NHDTrapvblRMwQ2qM4z/9U58V6317xtqH4vNKMHF+SKC8YFFeQ9Ve8Gikwy0xEgaf0jr0EbGBDEI8LpNDb8Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NLapCf44ow7jWN6xgyuA6VNRz7vpHm4LO64abzIOTeo=;
- b=lG7uWxCDMDc5MULordVOKSCCVC9rkCE8TZ2SWet5xxLDLFzeFL1mu005wzHNKl3bGWX+LsJqyHHYCw0e30ORgjNJdN8CIDTDURCRyUZueZa4Io2QgNFXyjah6eDsNiURb79ydFTy6ckltqrMewfrCFspu/DnzEri0qfe0BNNOdU+TUhLEv1+hqIZUN0oQx59jMBNBJaKu45r3HM368QJIm9G9agm/Uql+XyVFDwM0YKtrE+QcfBmYOl142Jv8X571ZLTZ22RKIbtTUoLBCb/NptjwVYwyX0L2uxjtAU8QDvkX9qXeq3JeqWBx36hm8eRz9hxi1ZqDM7IrOqQZkspwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NLapCf44ow7jWN6xgyuA6VNRz7vpHm4LO64abzIOTeo=;
- b=sjhYThqP1Lh4URf0W+EYIKVA7x6B8LxB9kF6OWI7vj3cGkDCXT9MIFaroJHcAaLKkd4gX0WPup25Cwiu5mXex69mNTIcBmDj/1WN7c6jSqvnxG2uyqoX+1t5uDcHkLaAG13/amPiLz9HRUJ5+yPkmn36V4Ur0q2HOAJ9QRg5vfY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by DM4PR12MB8497.namprd12.prod.outlook.com (2603:10b6:8:180::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.23; Fri, 6 Dec
- 2024 09:38:26 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%5]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
- 09:38:25 +0000
-Message-ID: <96075e49-5f99-4f43-9c43-5b01fdc98897@amd.com>
-Date: Fri, 6 Dec 2024 15:08:14 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/10] perf/amd/ibs: Don't allow freq mode event
- creation through ->config interface
-To: Ingo Molnar <mingo@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
- acme@kernel.org, eranian@google.com, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
- Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20241206051713.991-1-ravi.bangoria@amd.com>
- <20241206051713.991-6-ravi.bangoria@amd.com> <Z1K6IckahmlME6Py@gmail.com>
- <abe58150-735f-4d9d-8ff4-a20b0fc6b376@amd.com> <Z1LCTtw99YTutYOR@gmail.com>
-Content-Language: en-US
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-In-Reply-To: <Z1LCTtw99YTutYOR@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0235.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:eb::13) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7481F8AE3;
+	Fri,  6 Dec 2024 09:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733477916; cv=none; b=QA4n1Eh6oquVJVboFa1gXHQBS60N8k3meD6EExpKm+84Z3sJUSht2sb2PKf3TsWJp3ltISbbrqZmeKnRgYdxsye2aaqPRBgbNqLrvKPzOZSz8PdFPc9/sCrPxw7GZ9IAY5a05wwFvE4OfJYR9B8p6TcZdeCYa2zB8mGMgbNa+rc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733477916; c=relaxed/simple;
+	bh=FNZmFTcmddAPU8gsPHM2v25hOV11+dLQ+nGFKEZlJag=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HB6VwNI5kHekam3uzkSLJPU939KQ9BNK9AiEyUmS2jSHcDUPFK0p9TUxumoWH1NrCT8zXlWxozDbKEqWbInsCKteNAsqPh2OWaMMhZh+AtUNjr7ntT2IV0lQNJhF4UUrytqk07qDckT1wMCfbfSEZjb5c1a6FhDZa/7WlVCwcl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AtSjd3fG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pF4gZ/Ny; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 06 Dec 2024 09:38:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733477912;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3C35kz0/iqfBN4DKbJFpYyv9tbCSz48vgc4MOVZbXBg=;
+	b=AtSjd3fGzy0Gj+nO9Cvz0PIlu0WwtE6kcNpSZs4jFbZLvPsZGiLwy8td9ctZjJ74A3wN7i
+	FCLckGO1TZw9wyeqYQI1z9WnFOqqOUK3PYFMqlGxmeXoYEIaiF3KtFM0lQM/igBjMN9CRP
+	rF9PHMpP4xZeUPCN5PlQMqDYflvW0vPJErthSV/E3oBYHbf+19y0+2fuO1J4eC78ptnHGf
+	FfR0d0C1ZqV79XkZgReI6XUJkLwwZ1GfkhsOZPyS3C9Uo2Kbb3HtH1XbkLvzaMWwkprsAv
+	AWEatCyNjudrleSwm4jw/1+qENIdjsV5WO7KQwWFNccVN2r3apfZ3CaFor+v4Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733477912;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3C35kz0/iqfBN4DKbJFpYyv9tbCSz48vgc4MOVZbXBg=;
+	b=pF4gZ/NyKucC1gPPDFD1BIjNdmfQa404clGbHN4arDxTehNbS5SN5NqqHRWiHcF9Ze6bHm
+	Acd2zRp2ER2GR6AQ==
+From: "tip-bot2 for Andrii Nakryiko" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] uprobes: Reuse return_instances between multiple
+ uretprobes within task
+Cc: Andrii Nakryiko <andrii@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241206002417.3295533-5-andrii@kernel.org>
+References: <20241206002417.3295533-5-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|DM4PR12MB8497:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04f3710b-0fba-481d-49bb-08dd15d9bb49
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UnR5RVNPbWZsT3NMRkQvcEs0RkpoVGdHakk5akp0U3l3VVlFajlITG4zSUpo?=
- =?utf-8?B?M3I2ODdxb3JQWnVRSHJlVVNZSVlNWkY2ZjlTL3dOd3JjS0xpaGNVd0IvSlBZ?=
- =?utf-8?B?L3M4aFN0UVJldDRHdGJJTjdwTXdyNUI5QzJkSE1pS0EvOUdYa0FUQ0ZzeEti?=
- =?utf-8?B?T1BHYndheXNUZ0NYVmNnM2RBZGQxcG1OZ3NmUEFCTDRQUzRWNGh1Uk5TcDlO?=
- =?utf-8?B?WE9DRjhJNE9Ud0p0LzNpdU5CbkZWZDVSL2toQTlQakZLeVZpakJvU2U4bWNz?=
- =?utf-8?B?WHVkYUJ2T3lHVDkyUXM4bTA0blluWjFnQndEcUFUMHFkK3dLMmxyQ3FGRXZ5?=
- =?utf-8?B?QnZLcEFIT1NZUTNBazZDazBGVFgxSFQzYjN0ZzZnVU5qQWVtRWJIWkE3Zmto?=
- =?utf-8?B?YWxWclY4dXZOazlIcUtmY25yYWJFQjRXbktGNm9HRndWaDVxbGdXWHdmM2V6?=
- =?utf-8?B?c3ZGMlFWYTgwNmVrUVpPalVCcm42MGtxY3N5NStvR252M2tzL0ZDQjkzV1Jh?=
- =?utf-8?B?dVRjUmExaEt2dlJXNWU3aVhNQTF6TVFqTllSbTBpUWtHMEU3SlQwa2JiWmN1?=
- =?utf-8?B?NHFrSnZpYnVpZ3VpMHpmV1JJTnVzdklVdytXY0g5TkVTQlpsN1BBTWRlK2o3?=
- =?utf-8?B?Zm9LL0NlQm9YS1ZBem01RnJIbmQrRHBEZldHclVsWnBXSW9YeXlCWGdIUU1C?=
- =?utf-8?B?eG9XUkJ2OEFFOTZzNnhnUFpvZTBvUDZPSUtvd1FQZHpEcWdpelc1alUybGZQ?=
- =?utf-8?B?NUl0V2FWdVh4K2Z4cW5GUHRKWks0eWtEN2hEWUhYVnZ5VGE0L2JtT3pMVnZt?=
- =?utf-8?B?NmlMVmZtSkV0WGZtUEJHblZmZ1ZYYWxsVktQckJQSDduaGZ1eGcxSndlVU1I?=
- =?utf-8?B?Qm8rY3lKWnR3cVVpcm4vZDF5Ynd4cDNYSGhTUnIvTGd2Qy9uajNoVzhMSEpj?=
- =?utf-8?B?NWJDNU94b3g4eU0yaHpKc3B3RUIvS1RsQ2NGVFZVdSs4Q21mM043VWN1OE8w?=
- =?utf-8?B?WXRXa1ZJSUI1ZTRUMFo0WEF4ek16ekhQYnk1cEMrOTE2SWlYR0tsWDgzT2x1?=
- =?utf-8?B?WXQ0SDlkakJMNHRYR0FvYXowdFR5WklCSHE4ZWNpRkRuUHVGM0Y4Wlc2eG1M?=
- =?utf-8?B?MkpPcmhyZTZRM3V1czU3WlpEZ2krK0ZXTVVOZllEaElJUUVNUFEyeUVDYnlT?=
- =?utf-8?B?a1ZmN0ZyMGFzaURXVE42Ykh6MTlpN045R3JqUVJ6cUloOHovMnI2Vy95RDlp?=
- =?utf-8?B?SThKVFVsczNZakJCeDh0a1FoUm5YRkVRb3pDMkcvTVpHeXlYUzU0emZDellr?=
- =?utf-8?B?cjhaZXFKYlpFeE9uRlM2MnpZNVR6OWxZbFJQMG5rZHoyQ00yMFVrMXI3QzJW?=
- =?utf-8?B?aTZ0SUh2czJsMTl0eGRYS05qZU04ZjgycGlRWGlqTThEVUVvL0xGUTJMVXRP?=
- =?utf-8?B?YzZIb1RHcU1obitVUUszcmpyaDNkV3YwbHZzQlNVZXJhaEl6amt5aVNhQjVE?=
- =?utf-8?B?eDNVZjYzdDF5c3RxRmxtMjZEcmVXcGVQYXVwT1YwWU9sTEpGM25LMWZmUklN?=
- =?utf-8?B?bllIalh0dnNubENjaEd0K3ExNFl4NUh0RnlXZG9yVS9lRzJ5UURNT3VEOFBY?=
- =?utf-8?B?V3FTY1pVWk5SdjZzVkt0cW1GaVFBTUVjSUhWSXV5YU1xYmFEcm8zOWlNd0JB?=
- =?utf-8?B?QndCU21ySFFpZktVRVdSbzlLLzJkdXhaTUNOcE9Xd0U5aDZ2L3RCSWg1WHlm?=
- =?utf-8?B?MkdYVGUvZjFxVVBWay9XbmZlelRDM3I3K1g0NGtNeUl2TU13M0NrSFZ0cGJz?=
- =?utf-8?B?aU1QWTJQU3lWS1lOVDNXQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aU1leEdFak5jMHpDeXZkZTllZFBiclcvOGZYcjA1d1FSUG9kWXRDSHllQmVN?=
- =?utf-8?B?TWQrYUtIcXJPVkFtZm9NUzNtT0dhVGRseGFJbHJtYWtubm5EUWdiaUpsQlBo?=
- =?utf-8?B?c2NQTjB5cW41U1Y1QjVibnAwK1gvd0RIeE9talIveUJucHNKbHE1WTBWWm1H?=
- =?utf-8?B?UEc4MTNsRGRsdDlkY1NyalVzSThFS2VpbTZRNTk5dkdld2lQRkw1VW1rcVVW?=
- =?utf-8?B?SEVoL2xNeForVGFKc2JSMVZJcG9EbTR2OVFKclQrei92WlVjN2h2ZVh6QmFn?=
- =?utf-8?B?OFJUbGhhVVpvNi9VaXM0QkJ3ZC9SMTc4ay9zTkJnUUhyUnFJSWpmdHBFSWNY?=
- =?utf-8?B?NDlJTExmMUFMR3lzQ1daMGlvR0xKa0I0VXZkYXZrV3BKNDlTd3pkOERlbWRo?=
- =?utf-8?B?MEhyMUdNNVc4WFROVDYzak9ZUkpJZmYrRDYvTG52NGpKeWF5K1RlWENJRHpp?=
- =?utf-8?B?ZFhlcGhBWjV5Q0djYkVCVlhDTjJBYTlQOGQ2TjRRa3YzajhiQmU0b2JxWHI1?=
- =?utf-8?B?dEEvelpTdXNEUEI0VEVvZHlBVEF5TkI1RjBqTEZ1dHNKczN6dDExVnhkTWx1?=
- =?utf-8?B?TStXVGY0Y0ZQTHNtWk1PZnY4dGpiMlEyR3I0RWJyUE0wc3FjcVpQOHJYS3NV?=
- =?utf-8?B?VDM4NWl4dVFFWUFqUXltcld6cVZLSnplcHNETDdZN0ltTGYxcjRuYWg3RExp?=
- =?utf-8?B?Z3lHTGZob3VLa1RQcWtLTTN3eVdEK24ySDkyZDZhS0IzZ0dDSThhdEFOQXp2?=
- =?utf-8?B?dGxxcWVsSzJEVFVLbTBRZEY2TDJRSEtYK3NEeWFzWU9SRklVRFNLdVptYjNz?=
- =?utf-8?B?aUF6R0RlY0Z6VE4zbktwUUQ5TG9LN0lXOGFEMjVFc2RwQS9MWUc1cWVGR2Rw?=
- =?utf-8?B?UFlScDFsaU9SdnhpM0ZmWHozY3k3QlVHNGptM2hzd1N3U2ovQkxRN2RETXhG?=
- =?utf-8?B?Z1B0cmdVbG83dzByYitmTVM2SXVFVDIvZTJ3UEVibXIwZkRJRGd1cWsxNjNC?=
- =?utf-8?B?MVBJeXlGRE91S3BrU3BFMmpKblRYc1d4WmcybkxVMDBnQUJDV1Z2RmF4Ty91?=
- =?utf-8?B?T3ZFQzNaNTl3Q2ZxYk5BK3MyYkF3bXhmamxZZ3c1WjhIZVYxc0wyc0ZJV3ZC?=
- =?utf-8?B?Y1JsM3dtQ21waWswSFd2VzdIaTcwa1ZTaldlakZWNVdpUHhOL0J3azVzZE95?=
- =?utf-8?B?eENDTFFYZXRXbnFkTC92UHA3Tkk4dWRwdXp2TS9uc2FjaXR0dG1LK3hmZVpB?=
- =?utf-8?B?RnR1WnVySWVCRkpvWm9lU1QzUzA4eVM2S1RtZTNlRllPM2srNkZhajZqcmp4?=
- =?utf-8?B?Rk9kOWgwa2FhUXZaVkN1NXZkNmdyNTBHUmRsNkFsVTJKd1doRzk5bjRqbXdU?=
- =?utf-8?B?OHBHOXo4QVdwL1hBazEvbWhsdjVFdGh5ZkZIMTFLZ0NRS1phRXhiK2ZFd01Z?=
- =?utf-8?B?ejJZMy85MVR6dlFOQncyVGN1VVYyb0diQ3I2UVBOeEVSRW9DMTVUbXl2VnZB?=
- =?utf-8?B?eW1mV082b0FEZjRzcjBqQXFYNk9Iek4zZnltZ0RwY3dJNVdXZGR1cWtlbm92?=
- =?utf-8?B?V1hKeWZKeTlhV2NhWEJrWGsvMzBjZnNhd2xkNy9IbHplZEdac0NWOGI3Rk1E?=
- =?utf-8?B?TytDbkF5OGh2cVhmUUVQaHkzWnFuQWY3a3A3bjgwN1FoWEJTWjRiOW04TTEr?=
- =?utf-8?B?bHNJNDIyTXVsTXBZR0F1dnhKVGxPVjRWa2hhZ0hhWWdacXZJYzNPOVEwbUwx?=
- =?utf-8?B?R0Evc2E2RSt4RVFBMG5yZHJ2MGdrRmdtMGE5Z0tnU09UQjUzeWZQMk1kQ3Fm?=
- =?utf-8?B?Syt5U2tCYklVaWRxajVmamkwUysrb0Rya3lhOTFRUVRlM3JpRVkrc0UvY0N1?=
- =?utf-8?B?ZGxoN21tVlIweGtmQXV2MGF1dWNRL05qbUZNejFBS0I4Zk5lbVYrdUJFdHNO?=
- =?utf-8?B?Yzd6YTRUd2RrRjBub0lFMnMzekNrbjZUWWpXM3NGb0FVeVRWU3FnTVRoN3l4?=
- =?utf-8?B?bWwranNjSHZRWjRhNzlGK3JnKzUwdjVCTHVTb3I5SkZaTzdEc2w0UFBDQllN?=
- =?utf-8?B?RStrSWdHNmpyN2dWa1hyQzVSN3Ewa08wNFppTlJHbjlocnhJbHNRRHhuOWJS?=
- =?utf-8?Q?93AMWttKqgM/nKhKr4xiqtXwb?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04f3710b-0fba-481d-49bb-08dd15d9bb49
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 09:38:25.4120
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4d2C40OZrf/IWGDP+wBEnv37VSPz4bSiT+WaAQHwfFDNeJ2K3ZUuU3Egq7RAXRMvtjsDuI/3FdyVPXvVieeAeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8497
+Message-ID: <173347791130.412.18279060471011612144.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
->>>> Most perf_event_attr->config bits directly maps to IBS_{FETCH|OP}_CTL
->>>> MSR. Since the sample period is programmed in these control registers,
->>>> IBS PMU driver allows opening an IBS event by setting sample period
->>>> value directly in perf_event_attr->config instead of using explicit
->>>> perf_event_attr->sample_period interface.
->>>>
->>>> However, this logic is not applicable for freq mode events since the
->>>> semantics of control register fields are applicable only to fixed
->>>> sample period whereas the freq mode event adjusts sample period after
->>>> each and every sample. Currently, IBS driver (unintentionally) allows
->>>> creating freq mode event via ->config interface, which is semantically
->>>> wrong as well as detrimental because it can be misused to bypass
->>>> perf_event_max_sample_rate checks.
->>>
->>> Then let's fix those rate checks?
->>>
->>> AFAICS this patch limits functionality because the IBS driver would 
->>> have to be fixed/enhanced to support frequency based events?
->>>
->>> I'd strongly favor fixing/enhancing the driver instead, as 'perf top -F 
->>> 1000' is easy to use and it is a useful concept.
->>
->> No. This patch does not prevent opening an IBS event in freq mode. User
->> can still open freq mode IBS event with usual interface attr->freq=1 and
->> attr->sample_freq=<freq>. i.e. 'perf top -F 1000' with IBS event will
->> work fine with this patch.
-> 
-> Oh, I see - the regular tooling uses perf_event_attr->sample_period, right?
+The following commit has been merged into the perf/core branch of tip:
 
-Correct.
+Commit-ID:     c65b7bf8027bb0c769f4636e81e846493b0f53e2
+Gitweb:        https://git.kernel.org/tip/c65b7bf8027bb0c769f4636e81e846493b0=
+f53e2
+Author:        Andrii Nakryiko <andrii@kernel.org>
+AuthorDate:    Thu, 05 Dec 2024 16:24:17 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 06 Dec 2024 09:52:01 +01:00
 
-> Never mind then.
+uprobes: Reuse return_instances between multiple uretprobes within task
 
-No worries. Thanks for the review :)
+Instead of constantly allocating and freeing very short-lived
+struct return_instance, reuse it as much as possible within current
+task. For that, store a linked list of reusable return_instances within
+current->utask.
 
-Thanks,
-Ravi
+The only complication is that ri_timer() might be still processing such
+return_instance. And so while the main uretprobe processing logic might
+be already done with return_instance and would be OK to immediately
+reuse it for the next uretprobe instance, it's not correct to
+unconditionally reuse it just like that.
+
+Instead we make sure that ri_timer() can't possibly be processing it by
+using seqcount_t, with ri_timer() being "a writer", while
+free_ret_instance() being "a reader". If, after we unlink return
+instance from utask->return_instances list, we know that ri_timer()
+hasn't gotten to processing utask->return_instances yet, then we can be
+sure that immediate return_instance reuse is OK, and so we put it
+onto utask->ri_pool for future (potentially, almost immediate) reuse.
+
+This change shows improvements both in single CPU performance (by
+avoiding relatively expensive kmalloc/free combon) and in terms of
+multi-CPU scalability, where you can see that per-CPU throughput doesn't
+decline as steeply with increased number of CPUs (which were previously
+attributed to kmalloc()/free() through profiling):
+
+	BASELINE (latest perf/core)
+	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+	uretprobe-nop         ( 1 cpus):    1.898 =C2=B1 0.002M/s  (  1.898M/s/cpu)
+	uretprobe-nop         ( 2 cpus):    3.574 =C2=B1 0.011M/s  (  1.787M/s/cpu)
+	uretprobe-nop         ( 3 cpus):    5.279 =C2=B1 0.066M/s  (  1.760M/s/cpu)
+	uretprobe-nop         ( 4 cpus):    6.824 =C2=B1 0.047M/s  (  1.706M/s/cpu)
+	uretprobe-nop         ( 5 cpus):    8.339 =C2=B1 0.060M/s  (  1.668M/s/cpu)
+	uretprobe-nop         ( 6 cpus):    9.812 =C2=B1 0.047M/s  (  1.635M/s/cpu)
+	uretprobe-nop         ( 7 cpus):   11.030 =C2=B1 0.048M/s  (  1.576M/s/cpu)
+	uretprobe-nop         ( 8 cpus):   12.453 =C2=B1 0.126M/s  (  1.557M/s/cpu)
+	uretprobe-nop         (10 cpus):   14.838 =C2=B1 0.044M/s  (  1.484M/s/cpu)
+	uretprobe-nop         (12 cpus):   17.092 =C2=B1 0.115M/s  (  1.424M/s/cpu)
+	uretprobe-nop         (14 cpus):   19.576 =C2=B1 0.022M/s  (  1.398M/s/cpu)
+	uretprobe-nop         (16 cpus):   22.264 =C2=B1 0.015M/s  (  1.391M/s/cpu)
+	uretprobe-nop         (24 cpus):   33.534 =C2=B1 0.078M/s  (  1.397M/s/cpu)
+	uretprobe-nop         (32 cpus):   43.262 =C2=B1 0.127M/s  (  1.352M/s/cpu)
+	uretprobe-nop         (40 cpus):   53.252 =C2=B1 0.080M/s  (  1.331M/s/cpu)
+	uretprobe-nop         (48 cpus):   55.778 =C2=B1 0.045M/s  (  1.162M/s/cpu)
+	uretprobe-nop         (56 cpus):   56.850 =C2=B1 0.227M/s  (  1.015M/s/cpu)
+	uretprobe-nop         (64 cpus):   62.005 =C2=B1 0.077M/s  (  0.969M/s/cpu)
+	uretprobe-nop         (72 cpus):   66.445 =C2=B1 0.236M/s  (  0.923M/s/cpu)
+	uretprobe-nop         (80 cpus):   68.353 =C2=B1 0.180M/s  (  0.854M/s/cpu)
+
+	THIS PATCHSET (on top of latest perf/core)
+	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+	uretprobe-nop         ( 1 cpus):    2.253 =C2=B1 0.004M/s  (  2.253M/s/cpu)
+	uretprobe-nop         ( 2 cpus):    4.281 =C2=B1 0.003M/s  (  2.140M/s/cpu)
+	uretprobe-nop         ( 3 cpus):    6.389 =C2=B1 0.027M/s  (  2.130M/s/cpu)
+	uretprobe-nop         ( 4 cpus):    8.328 =C2=B1 0.005M/s  (  2.082M/s/cpu)
+	uretprobe-nop         ( 5 cpus):   10.353 =C2=B1 0.001M/s  (  2.071M/s/cpu)
+	uretprobe-nop         ( 6 cpus):   12.513 =C2=B1 0.010M/s  (  2.086M/s/cpu)
+	uretprobe-nop         ( 7 cpus):   14.525 =C2=B1 0.017M/s  (  2.075M/s/cpu)
+	uretprobe-nop         ( 8 cpus):   15.633 =C2=B1 0.013M/s  (  1.954M/s/cpu)
+	uretprobe-nop         (10 cpus):   19.532 =C2=B1 0.011M/s  (  1.953M/s/cpu)
+	uretprobe-nop         (12 cpus):   21.405 =C2=B1 0.009M/s  (  1.784M/s/cpu)
+	uretprobe-nop         (14 cpus):   24.857 =C2=B1 0.020M/s  (  1.776M/s/cpu)
+	uretprobe-nop         (16 cpus):   26.466 =C2=B1 0.018M/s  (  1.654M/s/cpu)
+	uretprobe-nop         (24 cpus):   40.513 =C2=B1 0.222M/s  (  1.688M/s/cpu)
+	uretprobe-nop         (32 cpus):   54.180 =C2=B1 0.074M/s  (  1.693M/s/cpu)
+	uretprobe-nop         (40 cpus):   66.100 =C2=B1 0.082M/s  (  1.652M/s/cpu)
+	uretprobe-nop         (48 cpus):   70.544 =C2=B1 0.068M/s  (  1.470M/s/cpu)
+	uretprobe-nop         (56 cpus):   74.494 =C2=B1 0.055M/s  (  1.330M/s/cpu)
+	uretprobe-nop         (64 cpus):   79.317 =C2=B1 0.029M/s  (  1.239M/s/cpu)
+	uretprobe-nop         (72 cpus):   84.875 =C2=B1 0.020M/s  (  1.179M/s/cpu)
+	uretprobe-nop         (80 cpus):   92.318 =C2=B1 0.224M/s  (  1.154M/s/cpu)
+
+For reference, with uprobe-nop we hit the following throughput:
+
+	uprobe-nop            (80 cpus):  143.485 =C2=B1 0.035M/s  (  1.794M/s/cpu)
+
+So now uretprobe stays a bit closer to that performance.
+
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Link: https://lore.kernel.org/r/20241206002417.3295533-5-andrii@kernel.org
+---
+ include/linux/uprobes.h |  6 ++-
+ kernel/events/uprobes.c | 83 +++++++++++++++++++++++++++++++++-------
+ 2 files changed, 75 insertions(+), 14 deletions(-)
+
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 1d44997..b1df7d7 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -16,6 +16,7 @@
+ #include <linux/types.h>
+ #include <linux/wait.h>
+ #include <linux/timer.h>
++#include <linux/seqlock.h>
+=20
+ struct uprobe;
+ struct vm_area_struct;
+@@ -124,6 +125,10 @@ struct uprobe_task {
+ 	unsigned int			depth;
+ 	struct return_instance		*return_instances;
+=20
++	struct return_instance		*ri_pool;
++	struct timer_list		ri_timer;
++	seqcount_t			ri_seqcount;
++
+ 	union {
+ 		struct {
+ 			struct arch_uprobe_task	autask;
+@@ -137,7 +142,6 @@ struct uprobe_task {
+ 	};
+=20
+ 	struct uprobe			*active_uprobe;
+-	struct timer_list		ri_timer;
+ 	unsigned long			xol_vaddr;
+=20
+ 	struct arch_uprobe              *auprobe;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 2345aeb..1af9502 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1888,8 +1888,34 @@ unsigned long uprobe_get_trap_addr(struct pt_regs *reg=
+s)
+ 	return instruction_pointer(regs);
+ }
+=20
+-static void free_ret_instance(struct return_instance *ri, bool cleanup_hprob=
+e)
++static void ri_pool_push(struct uprobe_task *utask, struct return_instance *=
+ri)
+ {
++	ri->cons_cnt =3D 0;
++	ri->next =3D utask->ri_pool;
++	utask->ri_pool =3D ri;
++}
++
++static struct return_instance *ri_pool_pop(struct uprobe_task *utask)
++{
++	struct return_instance *ri =3D utask->ri_pool;
++
++	if (likely(ri))
++		utask->ri_pool =3D ri->next;
++
++	return ri;
++}
++
++static void ri_free(struct return_instance *ri)
++{
++	kfree(ri->extra_consumers);
++	kfree_rcu(ri, rcu);
++}
++
++static void free_ret_instance(struct uprobe_task *utask,
++			      struct return_instance *ri, bool cleanup_hprobe)
++{
++	unsigned seq;
++
+ 	if (cleanup_hprobe) {
+ 		enum hprobe_state hstate;
+=20
+@@ -1897,8 +1923,22 @@ static void free_ret_instance(struct return_instance *=
+ri, bool cleanup_hprobe)
+ 		hprobe_finalize(&ri->hprobe, hstate);
+ 	}
+=20
+-	kfree(ri->extra_consumers);
+-	kfree_rcu(ri, rcu);
++	/*
++	 * At this point return_instance is unlinked from utask's
++	 * return_instances list and this has become visible to ri_timer().
++	 * If seqcount now indicates that ri_timer's return instance
++	 * processing loop isn't active, we can return ri into the pool of
++	 * to-be-reused return instances for future uretprobes. If ri_timer()
++	 * happens to be running right now, though, we fallback to safety and
++	 * just perform RCU-delated freeing of ri.
++	 */
++	if (raw_seqcount_try_begin(&utask->ri_seqcount, seq)) {
++		/* immediate reuse of ri without RCU GP is OK */
++		ri_pool_push(utask, ri);
++	} else {
++		/* we might be racing with ri_timer(), so play it safe */
++		ri_free(ri);
++	}
+ }
+=20
+ /*
+@@ -1920,7 +1960,15 @@ void uprobe_free_utask(struct task_struct *t)
+ 	ri =3D utask->return_instances;
+ 	while (ri) {
+ 		ri_next =3D ri->next;
+-		free_ret_instance(ri, true /* cleanup_hprobe */);
++		free_ret_instance(utask, ri, true /* cleanup_hprobe */);
++		ri =3D ri_next;
++	}
++
++	/* free_ret_instance() above might add to ri_pool, so this loop should come=
+ last */
++	ri =3D utask->ri_pool;
++	while (ri) {
++		ri_next =3D ri->next;
++		ri_free(ri);
+ 		ri =3D ri_next;
+ 	}
+=20
+@@ -1943,8 +1991,12 @@ static void ri_timer(struct timer_list *timer)
+ 	/* RCU protects return_instance from freeing. */
+ 	guard(rcu)();
+=20
++	write_seqcount_begin(&utask->ri_seqcount);
++
+ 	for_each_ret_instance_rcu(ri, utask->return_instances)
+ 		hprobe_expire(&ri->hprobe, false);
++
++	write_seqcount_end(&utask->ri_seqcount);
+ }
+=20
+ static struct uprobe_task *alloc_utask(void)
+@@ -1956,6 +2008,7 @@ static struct uprobe_task *alloc_utask(void)
+ 		return NULL;
+=20
+ 	timer_setup(&utask->ri_timer, ri_timer, 0);
++	seqcount_init(&utask->ri_seqcount);
+=20
+ 	return utask;
+ }
+@@ -1975,10 +2028,14 @@ static struct uprobe_task *get_utask(void)
+ 	return current->utask;
+ }
+=20
+-static struct return_instance *alloc_return_instance(void)
++static struct return_instance *alloc_return_instance(struct uprobe_task *uta=
+sk)
+ {
+ 	struct return_instance *ri;
+=20
++	ri =3D ri_pool_pop(utask);
++	if (ri)
++		return ri;
++
+ 	ri =3D kzalloc(sizeof(*ri), GFP_KERNEL);
+ 	if (!ri)
+ 		return ZERO_SIZE_PTR;
+@@ -2119,7 +2176,7 @@ static void cleanup_return_instances(struct uprobe_task=
+ *utask, bool chained,
+ 		rcu_assign_pointer(utask->return_instances, ri_next);
+ 		utask->depth--;
+=20
+-		free_ret_instance(ri, true /* cleanup_hprobe */);
++		free_ret_instance(utask, ri, true /* cleanup_hprobe */);
+ 		ri =3D ri_next;
+ 	}
+ }
+@@ -2186,7 +2243,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, st=
+ruct pt_regs *regs,
+=20
+ 	return;
+ free:
+-	kfree(ri);
++	ri_free(ri);
+ }
+=20
+ /* Prepare to single-step probed instruction out of line. */
+@@ -2385,8 +2442,7 @@ static struct return_instance *push_consumer(struct ret=
+urn_instance *ri, __u64 i
+ 	if (unlikely(ri->cons_cnt > 0)) {
+ 		ric =3D krealloc(ri->extra_consumers, sizeof(*ric) * ri->cons_cnt, GFP_KER=
+NEL);
+ 		if (!ric) {
+-			kfree(ri->extra_consumers);
+-			kfree_rcu(ri, rcu);
++			ri_free(ri);
+ 			return ZERO_SIZE_PTR;
+ 		}
+ 		ri->extra_consumers =3D ric;
+@@ -2428,8 +2484,9 @@ static void handler_chain(struct uprobe *uprobe, struct=
+ pt_regs *regs)
+ 	struct uprobe_consumer *uc;
+ 	bool has_consumers =3D false, remove =3D true;
+ 	struct return_instance *ri =3D NULL;
++	struct uprobe_task *utask =3D current->utask;
+=20
+-	current->utask->auprobe =3D &uprobe->arch;
++	utask->auprobe =3D &uprobe->arch;
+=20
+ 	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_tr=
+ace_held()) {
+ 		bool session =3D uc->handler && uc->ret_handler;
+@@ -2449,12 +2506,12 @@ static void handler_chain(struct uprobe *uprobe, stru=
+ct pt_regs *regs)
+ 			continue;
+=20
+ 		if (!ri)
+-			ri =3D alloc_return_instance();
++			ri =3D alloc_return_instance(utask);
+=20
+ 		if (session)
+ 			ri =3D push_consumer(ri, uc->id, cookie);
+ 	}
+-	current->utask->auprobe =3D NULL;
++	utask->auprobe =3D NULL;
+=20
+ 	if (!ZERO_OR_NULL_PTR(ri))
+ 		prepare_uretprobe(uprobe, regs, ri);
+@@ -2554,7 +2611,7 @@ void uprobe_handle_trampoline(struct pt_regs *regs)
+ 			hprobe_finalize(&ri->hprobe, hstate);
+=20
+ 			/* We already took care of hprobe, no need to waste more time on that. */
+-			free_ret_instance(ri, false /* !cleanup_hprobe */);
++			free_ret_instance(utask, ri, false /* !cleanup_hprobe */);
+ 			ri =3D ri_next;
+ 		} while (ri !=3D next_chain);
+ 	} while (!valid);
 
