@@ -1,165 +1,267 @@
-Return-Path: <linux-kernel+bounces-435162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9F09E72DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:13:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9F69E72DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:14:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5FC16E2F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B90FF281350
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F144120C024;
-	Fri,  6 Dec 2024 15:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FC6154BF5;
+	Fri,  6 Dec 2024 15:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6tFYIKp"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="OH7cNNwk"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8734E20B1F7;
-	Fri,  6 Dec 2024 15:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DE418FDAA
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 15:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733497957; cv=none; b=GOl8Cn1w5Y6lRW7lUmX6U7pHis4e/c5D9KbK8KbPr5WvyLd5ME2DEGcP3rHnNClcDHgPsmbPTQfFjfF8gR0G/eLCKfxKHj3rjD/IE4B9S2dBJj9zONN08sRD75aVS2mcozpxTd3CY/4ylkwAjLq1D0GGy4cA46q6hyeNQz26PwI=
+	t=1733498033; cv=none; b=D60thf14b7uxOO/OaOpm6wFO3AmBV8VjYXRCL/zp2aC0Obpvgw8w0J8gOOtNQPZ/L4sfulZ7GxEFWat/NlNoizzS8tHA8xosyxwHBNBcIvNIlRs7gIOteRnsUqDFyQ0zKFFfCW3/Vs5xg41ntghrWx08dFF//In62hcXj8T2drM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733497957; c=relaxed/simple;
-	bh=nBxHtdhQB5FLlrFFA527YiECEEEtLZr/yyEPczDfXps=;
+	s=arc-20240116; t=1733498033; c=relaxed/simple;
+	bh=8liA1sTQEEmfq+FT684h6YxI0E+3xtwS2RK5SUSEfj4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lYDNx8M8uesafvQ62CWLearjv07uIEgCXJfuUVMKd0i88oBHXiXzm2nOQA4lg517k5yta1CdP2tCVVBKEaZiB5KzU+6vV1sEyw+W0G3QEI54+qfXnkamn1J3GPX4UC3kchpQTsR5Sw9ADEceYOJRX//cXqbTOCvrtvjEK4N6eQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6tFYIKp; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso27276671fa.0;
-        Fri, 06 Dec 2024 07:12:34 -0800 (PST)
+	 To:Cc:Content-Type; b=EcoQC0uRCOjSA7P0DDVtRCnGZGq1dw8KpIZp4JVsrgDFImyADlce0rEFomDm0ccb9yw6H7wYMsa3VBtRgO1QJdhIFIFVaZ6PJUbtxVLbvhoZ2nRHuoH0qL6nHs+9BU+memV20gIrv5DDAgF5Yb0jkjmYJxunKcKylBoxdydeBb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=OH7cNNwk; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa5f1909d6fso425297366b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 07:13:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733497953; x=1734102753; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1733498030; x=1734102830; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W73679HmQ8KlBF8NSlHlv/uvxLcjA1X6Vo9+LFPoX88=;
-        b=j6tFYIKpy6upMel7KzLJZvBXYW0xnlrIVlMOOERPaIR0FBmTba6ZrAP7MQG/z9eVxE
-         t/QRe7zkIjYCoFlWlOBUi/bJXUFnJvXN2HWQxisPA76/iU8eiwaiqqm+qEpB3gpVXv/p
-         0CJDctrd2SF9anfRrt1SB0UoZp68tMU9Y8ZgRYUxKdFOm2CEKTSvh+nHWUyzVGnqyszW
-         EM8zK+QLvd/7+hzAeSOvfMn83tSMvVGjVbJLR595nS1wsyRd7Jgtxh1GbJWMsWfejRiC
-         8oYGEHtU36zNQxmbtSNoJczbS2L4ck84Nbjw/kXQLKGBzaqDuZVZkNJXSYSlbo/IUl0L
-         mmFg==
+        bh=kBIylH2WoqXEC5PXsPbLbKHH/xROShxWYjYAl4Pnads=;
+        b=OH7cNNwkM5VbtU03UcyLNkPiu/QYHXu60Y0ebSnD7qX0ccDXMIx+LtndlWDPYckT9m
+         NJOvzrSgDVO8FrDl6bWzbEQ6oXidNO2XPArmhHySX7UfRwp6lm11KAO9vMPyDXi1S38b
+         JysD6XC7gWAshJ95y/QlHBgtjqmHYNp2uZeKrf+M/jKDVVDBjkeEIfE769mU8pdaEwHZ
+         6BsKfRCFgpAloNbBbNEdwFa05VMPnB1nLTWSKHu2W39r1SBkv5USjU2SIcM3Bf7zJ/4q
+         9sb0gQxbQIBiy6KBNE/+IZg0wizWrovAG5n/u1+ZENvqe3eC9HVOajI7pjImocQKOnMO
+         qYXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733497953; x=1734102753;
+        d=1e100.net; s=20230601; t=1733498030; x=1734102830;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W73679HmQ8KlBF8NSlHlv/uvxLcjA1X6Vo9+LFPoX88=;
-        b=K3ZWGghwGZl7QnPB83ZgYIQ3fU4sro6bBM5s16DCEIFAcKZpSh4x9w4ewUtZCu4SAD
-         Q/ZIdrPIGtp4oyULrLAO5Fvc1N2uXAB0boEjAefzJV6SmHnND/i5+e03YTJRubpM7hyi
-         GCAuBtiekHHTovSZ00ACBviN+0zFv3dfqNYB7YqEMCIYs3yDSn+Dm5X018rGsY5Tr5/K
-         qE3tN1aoPYSIgnpQlL5cxtHlftWr5BoZzaDcRWpMwwtoVyQFcLd51LuNGag2v9nzoQZT
-         vOH3lbXsUbR89F8mPnXaTqM5PhrclDMo/dnSfHv6Ul74UxGnPkNPwTx7RqiT6vWFqbmJ
-         Qttw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0RLXvnvHEkv2/WCcKFC1X7DeT+1lL/boeStpaGAwFACpt88FKZ1SiTShT2vDLt25ZE/CjpqX8@vger.kernel.org, AJvYcCUWW4PpRlHV9qQ6LKFRMxOrXglh3vAwXTirTIFEU7qtuXucXoTtrWg4ItaST5IuiGrYhlyPMgtw49QR7K4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8mkh0F67MRcDYp75mmFbXdNFSKF3gCr5HcfiVU7ux7uHw1BJw
-	Si/i86P31vrnKmiMOH81XGjYIGN8h9MA/FHb1rznw4DpS4wBJdmy3grkxc9i//w/wfv87HvBW3o
-	fPiPvlquqOGt+hQ2On6Qlr0DP8g==
-X-Gm-Gg: ASbGnctMrgs88VHCYijUeWnpIkWWfE682RjPWf1yGN9lG+8SqslfAmAZ0TTkbX5ArMI
-	RgtLRXIOsXqLZCmpgXsC9kmyr3NouqDlp1B4ywDOXf9ahoA==
-X-Google-Smtp-Source: AGHT+IHwK0hARRMdu/ZslO7Jdrs0a5LHFRqi533TRz4TWoZ2vLhjJ6JLSNL1SEj9Z3vQyPSDb/d/7EYLL4Ue0VsfGbY=
-X-Received: by 2002:a05:6512:2342:b0:53d:f1cb:6258 with SMTP id
- 2adb3069b0e04-53e2c2c23afmr2410284e87.32.1733497952400; Fri, 06 Dec 2024
- 07:12:32 -0800 (PST)
+        bh=kBIylH2WoqXEC5PXsPbLbKHH/xROShxWYjYAl4Pnads=;
+        b=cpHEjSfKGsVpSqT3ZXDex+Nq3FZxmabdH30q/EVMOUJGpFJYJXc3XiZ077aGKEiQFX
+         gkjhmoGNv7OB5zXB3mKOK42upwENWYwYtmOKUIcf6TU7rS+/P1zd/ZmTdTf+Bx10EbY2
+         BYy6KW8HPb/oqmvG2AKbq0hNDsotu0KniJAmt+akQAnSbNEpf9rkTqQqBP4qUTs8G2+A
+         Gyr5qYsYllDTZY6lG9eRhGZz4CFcScA4v1ENU0nvFTSqKeyXa5W9f0LUyQbXpLwyfuZo
+         /Gd4+OR0bMtEoBWWuLPcmJ6u/EZzkAt7vCOjcaRPJxOP64BqHcA4E9OH8lwOowWkV3Pa
+         n4Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxLF4/WLcefvMT4gvyGNwRqHGyoOLkTmBZSuRDYR9pJ794RexwzSBb1jQm1HisMt10k08c9LSuTmKysSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyorUkRP2opqSqu8SbNvPc6iXihRZNmBc+DsIDsCKPagFRmL7Af
+	OqOPiwJU7kuoCJgVv7JZC8gn5GTAvFE+BuOtmKJvWYWklXLRmO9OzBKTDlH+G3G9wB/Y0bKaTBz
+	3z93wF9kPaaOgxk379y1bEEqi6Pg4Pmlaz7mNNQ==
+X-Gm-Gg: ASbGncuWC7sh/KsBDBSnhyFIbM3YlqPpPABQSUiFRiJPdAtVpvQHCkcdW2lorSKGFPX
+	vYO/OrEgDyinSRnZeH/iOwXVMkxAae9EKThWznc1CmY+kP8LhdPngLYU0u45M
+X-Google-Smtp-Source: AGHT+IGBlnNQyQHwMGtDrrdX3CreOzUXQEgfAHVDJHbn0J4R35WIrMg0ozIUkEHvGZDTG45AYzQi7pT+kdCmFyBEI9E=
+X-Received: by 2002:a17:907:7702:b0:aa5:3705:2dc with SMTP id
+ a640c23a62f3a-aa63a206fd5mr292025066b.45.1733498029618; Fri, 06 Dec 2024
+ 07:13:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-2-brgerst@gmail.com>
- <20241206123207.GA2091@redhat.com> <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
- <20241206142152.GB31748@redhat.com> <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
-In-Reply-To: <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Fri, 6 Dec 2024 10:12:21 -0500
-Message-ID: <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org, 
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
+References: <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com>
+ <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com>
+ <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
+In-Reply-To: <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Fri, 6 Dec 2024 16:13:38 +0100
+Message-ID: <CAKPOu+_PEmxR-LpnQFfxRpOVrU1G83npFmoQhgsBndZvNY+kYg@mail.gmail.com>
+Subject: Re: 6.12 WARNING in netfs_consume_read_data()
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 9:37=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wro=
-te:
+On Fri, Dec 6, 2024 at 4:08=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
+.com> wrote:
+> Similar hangs wth 6.12.2 (vanilla without your "netfs-writeback" branch):
 >
-> On Fri, 6 Dec 2024 at 15:22, Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > On 12/06, Ard Biesheuvel wrote:
-> > >
-> > > On Fri, 6 Dec 2024 at 13:32, Oleg Nesterov <oleg@redhat.com> wrote:
-> > > >
-> > > > +#ifdef CONFIG_STACKPROTECTOR
-> > > >  /* needed for Clang - see arch/x86/entry/entry.S */
-> > > >  PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
-> > > > +#endif
-> > > >
-> > > >  #ifdef CONFIG_X86_64
-> > > >  /*
-> > >
-> > > This shouldn't be necessary - PROVIDE() is only evaluated if a
-> > > reference exists to the symbol it defines.
-> > >
-> > > Also, I'm failing to reproduce this. Could you share your .config,
-> > > please, and the error that you get during the build?
-> >
-> > Please see the attached .config
-> >
-> > without the change above:
-> >
-> >         $ make bzImage
-> >           CALL    scripts/checksyscalls.sh
-> >           DESCEND objtool
-> >           INSTALL libsubcmd_headers
-> >           UPD     include/generated/utsversion.h
-> >           CC      init/version-timestamp.o
-> >           KSYMS   .tmp_vmlinux0.kallsyms.S
-> >           AS      .tmp_vmlinux0.kallsyms.o
-> >           LD      .tmp_vmlinux1
-> >         ./arch/x86/kernel/vmlinux.lds:154: undefined symbol `__stack_ch=
-k_guard' referenced in expression
-> >         scripts/Makefile.vmlinux:77: recipe for target 'vmlinux' failed
-> >         make[2]: *** [vmlinux] Error 1
-> >         /home/oleg/tmp/LINUX/Makefile:1225: recipe for target 'vmlinux'=
- failed
-> >         make[1]: *** [vmlinux] Error 2
-> >         Makefile:251: recipe for target '__sub-make' failed
-> >         make: *** [__sub-make] Error 2
-> >
-> > perhaps this is because my toolchain is quite old,
-> >
-> >         $ ld -v
-> >         GNU ld version 2.25-17.fc23
-> >
-> > but according to Documentation/process/changes.rst
-> >
-> >         binutils               2.25             ld -v
-> >
-> > it is still supported.
-> >
->
-> We're about to bump the minimum toolchain requirements to GCC 8.1 (and
-> whichever version of binutils was current at the time), so you might
-> want to consider upgrading.
->
-> However, you are right that these are still supported today, and so we
-> need this fix this, especially because this has been backported to
-> older stable kernels too.
->
-> For the patch,
->
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> [<0>] folio_wait_bit_common+0x23a/0x4f0
+> [<0>] folio_wait_private_2+0x37/0x70
+> [<0>] netfs_invalidate_folio+0x168/0x520
+> [<0>] truncate_cleanup_folio+0x281/0x340
+> [<0>] truncate_inode_pages_range+0x1bb/0x780
+> [<0>] ceph_evict_inode+0x17e/0x6b0
+> [<0>] evict+0x331/0x780
+> [<0>] __dentry_kill+0x17b/0x4f0
+> [<0>] dput+0x2a6/0x4a0
+> [<0>] __fput+0x36d/0x910
+> [<0>] __x64_sys_close+0x78/0xd0
+> [<0>] do_syscall_64+0x64/0x100
+> [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Using PROVIDES() is now unnecessary.
+This might help you understand the problem:
 
+ INFO: task cp:3345 blocked for more than 122 seconds.
+       Not tainted 6.12.3-cm4all0-hp+ #297
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ task:cp              state:D stack:0     pid:3345  tgid:3345
+ppid:3331   flags:0x00000002
+ Call Trace:
+  <TASK>
+  __schedule+0xc34/0x4df0
+  ? __pfx___schedule+0x10/0x10
+  ? lock_release+0x206/0x660
+  ? schedule+0x283/0x340
+  ? __pfx_lock_release+0x10/0x10
+  ? schedule+0x1e8/0x340
+  schedule+0xdc/0x340
+  io_schedule+0xc0/0x130
+  folio_wait_bit_common+0x23a/0x4f0
+  ? __pfx_folio_wait_bit_common+0x10/0x10
+  ? __pfx_wake_page_function+0x10/0x10
+  ? __pfx_truncate_folio_batch_exceptionals.part.0+0x10/0x10
+  folio_wait_private_2+0x37/0x70
+  netfs_invalidate_folio+0x168/0x520
+  ? ceph_invalidate_folio+0x114/0x2a0
+  truncate_cleanup_folio+0x281/0x340
+  truncate_inode_pages_range+0x1bb/0x780
+  ? __pfx_truncate_inode_pages_range+0x10/0x10
+  ? __pfx_do_raw_spin_lock+0x10/0x10
+  ? find_held_lock+0x2d/0x110
+  ? do_raw_spin_unlock+0x54/0x220
+  ceph_evict_inode+0x17e/0x6b0
+  ? lock_release+0x206/0x660
+  ? __pfx_ceph_evict_inode+0x10/0x10
+  ? __pfx_lock_release+0x10/0x10
+  ? do_raw_spin_lock+0x12d/0x270
+  ? __pfx_do_raw_spin_lock+0x10/0x10
+  evict+0x331/0x780
+  ? __pfx_evict+0x10/0x10
+  ? do_raw_spin_unlock+0x54/0x220
+  ? _raw_spin_unlock+0x1f/0x30
+  ? iput.part.0+0x3d0/0x670
+  __dentry_kill+0x17b/0x4f0
+  dput+0x2a6/0x4a0
+  __fput+0x36d/0x910
+  __x64_sys_close+0x78/0xd0
+  do_syscall_64+0x64/0x100
+  ? syscall_exit_to_user_mode+0x57/0x120
+  ? do_syscall_64+0x70/0x100
+  ? do_raw_spin_unlock+0x54/0x220
+  ? _raw_spin_unlock+0x1f/0x30
+  ? generic_fadvise+0x210/0x590
+  ? __pfx_generic_fadvise+0x10/0x10
+  ? syscall_exit_to_user_mode+0x57/0x120
+  ? __pfx___seccomp_filter+0x10/0x10
+  ? fdget+0x53/0x430
+  ? __pfx_do_sys_openat2+0x10/0x10
+  ? __x64_sys_fadvise64+0x139/0x180
+  ? syscall_exit_to_user_mode+0x57/0x120
+  ? do_syscall_64+0x70/0x100
+  ? __x64_sys_openat+0x135/0x1d0
+  ? __pfx___x64_sys_openat+0x10/0x10
+  ? syscall_exit_to_user_mode+0x57/0x120
+  ? do_syscall_64+0x70/0x100
+  ? irqentry_exit_to_user_mode+0x3d/0x100
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ RIP: 0033:0x7f66375bd960
+ RSP: 002b:00007ffd5bcd65a8 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+ RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f66375bd960
+ RDX: 0000000000000004 RSI: 0000000000000000 RDI: 0000000000000003
+ RBP: 00007ffd5bcd6990 R08: 7fffffffc0000000 R09: 0000000000000000
+ R10: 00007f66374dc498 R11: 0000000000000202 R12: 0000000000000001
+ R13: 0000000000000000 R14: 0000000000008000 R15: 0000000000000001
+  </TASK>
 
-Brian Gerst
+ Showing all locks held in the system:
+ 1 lock held by khungtaskd/163:
+  #0: ffffffffb5829b80 (rcu_read_lock){....}-{1:2}, at:
+debug_show_all_locks+0x64/0x280
+ 2 locks held by kworker/14:1/476:
+  #0: ffff88815cb2b548 ((wq_completion)ceph-cap){....}-{0:0}, at:
+process_one_work+0xdea/0x14f0
+  #1: ffff88810ca97da0
+((work_completion)(&mdsc->cap_reclaim_work)){....}-{0:0}, at:
+process_one_work+0x743/0x14f0
+
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+ INFO: task kworker/14:1:476 blocked for more than 122 seconds.
+       Not tainted 6.12.3-cm4all0-hp+ #297
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ task:kworker/14:1    state:D stack:0     pid:476   tgid:476   ppid:2
+    flags:0x00004000
+ Workqueue: ceph-cap ceph_cap_reclaim_work
+ Call Trace:
+  <TASK>
+  __schedule+0xc34/0x4df0
+  ? __pfx___schedule+0x10/0x10
+  ? lock_release+0x206/0x660
+  ? schedule+0x283/0x340
+  ? __pfx_lock_release+0x10/0x10
+  ? kick_pool+0x1da/0x530
+  schedule+0xdc/0x340
+  io_schedule+0xc0/0x130
+  folio_wait_bit_common+0x23a/0x4f0
+  ? __pfx_folio_wait_bit_common+0x10/0x10
+  ? __pfx_wake_page_function+0x10/0x10
+  ? __pfx_truncate_folio_batch_exceptionals.part.0+0x10/0x10
+  folio_wait_private_2+0x37/0x70
+  netfs_invalidate_folio+0x168/0x520
+  ? ceph_invalidate_folio+0x114/0x2a0
+  truncate_cleanup_folio+0x281/0x340
+  truncate_inode_pages_range+0x1bb/0x780
+  ? __pfx_truncate_inode_pages_range+0x10/0x10
+  ? __lock_acquire.constprop.0+0x598/0x13e0
+  ? release_sock+0x1b/0x180
+  ? reacquire_held_locks+0x1e9/0x460
+  ? release_sock+0x1b/0x180
+  ? find_held_lock+0x2d/0x110
+  ? lock_release+0x206/0x660
+  ? truncate_inode_pages_final+0x59/0x80
+  ? __pfx_lock_release+0x10/0x10
+  ? do_raw_spin_lock+0x12d/0x270
+  ? __pfx_do_raw_spin_lock+0x10/0x10
+  ? find_held_lock+0x2d/0x110
+  ? do_raw_spin_unlock+0x54/0x220
+  ceph_evict_inode+0x17e/0x6b0
+  ? lock_release+0x206/0x660
+  ? __pfx_ceph_evict_inode+0x10/0x10
+  ? __pfx_lock_release+0x10/0x10
+  ? lock_is_held_type+0xdb/0x110
+  evict+0x331/0x780
+  ? __pfx_evict+0x10/0x10
+  ? do_raw_spin_unlock+0x54/0x220
+  ? _raw_spin_unlock+0x1f/0x30
+  ? iput.part.0+0x3d0/0x670
+  __dentry_kill+0x17b/0x4f0
+  dput+0x2a6/0x4a0
+  __dentry_leases_walk+0x6c6/0x10d0
+  ? do_raw_spin_lock+0x12d/0x270
+  ? __pfx___dentry_leases_walk+0x10/0x10
+  ? __pfx_do_raw_spin_lock+0x10/0x10
+  ceph_trim_dentries+0x1b1/0x260
+  ? __pfx_ceph_trim_dentries+0x10/0x10
+  ? lock_acquire+0x11f/0x290
+  ? process_one_work+0x743/0x14f0
+  ceph_cap_reclaim_work+0x19/0xc0
+  process_one_work+0x7b4/0x14f0
+  ? __pfx_process_one_work+0x10/0x10
+  ? assign_work+0x16c/0x240
+  ? lock_is_held_type+0x9a/0x110
+  worker_thread+0x52b/0xe40
+  ? do_raw_spin_unlock+0x54/0x220
+  ? __kthread_parkme+0x95/0x120
+  ? __pfx_worker_thread+0x10/0x10
+  kthread+0x28a/0x350
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork+0x2d/0x70
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
 
