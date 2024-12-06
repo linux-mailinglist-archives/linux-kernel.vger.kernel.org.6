@@ -1,368 +1,267 @@
-Return-Path: <linux-kernel+bounces-434615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016B19E68FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:34:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E859E68FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:34:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014FE188622B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F1591617F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1471DE2B3;
-	Fri,  6 Dec 2024 08:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100511DDA3A;
+	Fri,  6 Dec 2024 08:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwp4SlyC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vUARV8Jr"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771AF6FBF;
-	Fri,  6 Dec 2024 08:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734A71DDC01
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474034; cv=none; b=sBF1Pq/Fed65+aEiuT/OdYSP+aETklx+yzJp+QZT3OiJI7fWvD16gIww/Q/Mc+BtAphF1gDwTgq5SKUhLsrWtvhXZTW1SzxWyobHTG7kNyPt8ytHO1rZEE4GrwEVFzaV7SEw0gTbgdDWbP1W7Q60nDhM//aVsbNe5nQI+H0ozIg=
+	t=1733474059; cv=none; b=eIvaUqGzrVGsk7XWVjUWz9bn1B5YO6LMbjco/fUHHjl48GNWjSS5SB1WC0USM5JVu7nYBxoL+lBR/pRQgkNq0Pf+aZZQhTYlz8ngzgz8s0qC+UdpHoXd/EV1PGC70Jc/tUBAhneMOpNByNYUbbKgA+C2faNgoMuQYwXR1hb17qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474034; c=relaxed/simple;
-	bh=DdsykxjoYwGNap8VBMiXurGFc0Soee4yASPhhni6j/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lY2l8mJTi8mHssegF9oXwSo/HLMtoM+AZk994k0qGf0to3bPG6s9Mav2OLJ3d9GM9ZLAnfcXP7Sszea1G+fKlrojwA768zFhFrcmQT+IU1ksoe9vVYqfQ6Sx/JYgb9ytCAZP51452CgxH0qWL5Gccv5jaDLINux0WM9nJfrRu5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwp4SlyC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D8AC4CED1;
-	Fri,  6 Dec 2024 08:33:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733474034;
-	bh=DdsykxjoYwGNap8VBMiXurGFc0Soee4yASPhhni6j/Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bwp4SlyCOjqE1HX7OTfX265WGvdBBIYnnd5v2H7PnzHa0M+WMCXRw0hawTxkPyvDK
-	 WQiW3Utv+26d8d7PZy095rUn82Qhc8qqFbuu+Y0wIl2b/pDP+MPnpWh9uBdrGQaZQN
-	 IgPGsw9cp9OfQZcdN0wKBXzX9OtX5c73VnFf4syWEBXDSpwDH6PnYBgjAtzFLhM1P7
-	 JKtDUNUOcGgXxP/J1nTc7ECVXCj5woG/a0mfJiZDw9amF9Dhh977yBYIyB5sFr2rdO
-	 682Db5mC1VALKjbex0OZk+0dSIXPynaMtM5GEOO3Y0xcI3FjXtwG6rTbkhta743aEP
-	 rImWaBq/Lrb4g==
-Message-ID: <17a4dbd7-56cb-4c20-a913-0df5c39fc3ff@kernel.org>
-Date: Fri, 6 Dec 2024 09:33:48 +0100
+	s=arc-20240116; t=1733474059; c=relaxed/simple;
+	bh=CzvxH9gkJxMLDmcJg1PiYkIsVIuRDkUPYM3JYP9Eedk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I5N/Iy8oZyvaJG4wCkt4sC2vnh+Ja6AQlTNVXI4MYYjpzSYW0dXiwBsRMTHDO0i2LiRczY1CvaMiQt9ogYUdSb7AfVqI9eSr2doCCdRletM+7sZBYSYfXLo0aFR22Um9Yj5i2fUH55hckwlfd6FdyfimhkW+tAVD7pjD4+HnrP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vUARV8Jr; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e3985aabf43so1580582276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:34:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733474055; x=1734078855; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yXKgcEVb1fAZ9PQ6roP5n37uMrfa9dLkMGVwoJG+NRE=;
+        b=vUARV8JrtoMRQ9wVbILF9ZRta5mKFf9m7Cgt850glTBM57GgbNKCJhtTenWef8Us92
+         0NAp6hx8Z3xIVGII1/M1Zri5sv7VQ0Bi91wc2ejIsFTpeiNoBX/h7Fp0tkExQDpF0ODq
+         I5uyN6QX+4GBY1SxA2kXk35hjB1U38N+xkhB3Gp6Fgzq+68Mn2OwiuN+fEex3pmJVZpV
+         T/QbzruZB2Rm+hFD9FCX2txgjfH2KHTDvB4L5lXMC1J3QXb8i/ojZfTDYNgsW7i+3IxL
+         J62AHAZzMnr2Oq3YKH+/gGhio2E0j9Rv0qmt2ngqGbgxHBKrsqIGkSpYHdUJ1EtxYJT1
+         6/IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733474055; x=1734078855;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yXKgcEVb1fAZ9PQ6roP5n37uMrfa9dLkMGVwoJG+NRE=;
+        b=KG979qgj+1d6nPN+k3SIWrIDftA7YuCCJcTtpbO0/swSXd1HoN8kxVF2OCZz+0w283
+         qrHT7oe4ZS9gN2PYGPadvsmRie+g7mHq52jkwLfG+X2oeUbDCTLUKttsii54//O7WUt9
+         HARua/0r5zMJ0DH0pAS2Y7DeCeGkIfZgiMTld5LfuudH5xu2oVDUVg8L8GwSiQlSC956
+         +gnVzFQ3GDolyZsS9jxLPAyvBzyIhD4auzojxyNUUjuv08MRHnKx5GRULEkPIOt5Ryy0
+         /ufi3jqS5YqGjb4BWsFY5q4YT1Cjt5WovzNNpcxwzhSfDQ9HO463NfKdCFBiwRdbTen8
+         iP9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW7tC728DZBvub5xO3tmYSdrgAGhAv1kaqea5Rev1BjGzyNbwHZNt8xzsUBXX4OB2VOv+PR0vfHKRrzia0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBVyWYlJnXhL8o7KIpzx6Lx6sg/dY+PPnMSWDKqqVBbaSkSWSF
+	UH06El7gcIKpXqcZ9C0OYEogL0PiUgrYlrg3Ys1qjmxCxVi3M9LhhYei3+eZV1Z6DyTk4UZfCPK
+	r+6j7oB7zSroHxApHyTvjAwwpo0/9AmVZtOR2/A==
+X-Gm-Gg: ASbGncua13WqHj2Rbd8TnTV9zCJ38jbjlhcgqFS7Fc6HD46L4VKVaw111kxb9vKV4bX
+	PGfxBdXkV52SGFlwGDn0WxqdFGCPanl14TvyktW+EsMZatw==
+X-Google-Smtp-Source: AGHT+IHyXduCRkh45D5lh25sBvKIj/KnqB4qNNwNbS/p4VvHcYUsVzvbtMEVOSG9sGkzLNoSmyaf4A1tpaHlx/4QtSA=
+X-Received: by 2002:a05:6902:c11:b0:e39:9853:e661 with SMTP id
+ 3f1490d57ef6-e3a0b13324emr1756773276.26.1733474055019; Fri, 06 Dec 2024
+ 00:34:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator:s5m8767 Fully convert to GPIO descriptors
-To: Song Chen <chensong_2000@189.cn>, lgirdwood@gmail.com,
- broonie@kernel.org, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241206051358.496832-1-chensong_2000@189.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241206051358.496832-1-chensong_2000@189.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
+ <20241205102213.1281865-3-quic_chejiang@quicinc.com> <w7r4itwyrh3jva3rx3kmsm4kqtawqkgkneqrlin4hpjkqb3deo@2qmjd3ijzqn3>
+ <541a5682-5b99-4793-84ee-a7c9168cb9a0@quicinc.com>
+In-Reply-To: <541a5682-5b99-4793-84ee-a7c9168cb9a0@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 6 Dec 2024 10:34:04 +0200
+Message-ID: <CAA8EJppmTSovZKTPb+syrc0Vvfu8U=HoP18tW072OEZ5nYyOgg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] Bluetooth: qca: Expand firmware-name to load
+ specific nvm and rampatch
+To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	quic_jiaymao@quicinc.com, quic_shuaz@quicinc.com, quic_zijuhu@quicinc.com, 
+	quic_mohamull@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 06/12/2024 06:13, Song Chen wrote:
-> This converts s5m8767 regulator driver to use GPIO
-> descriptors.
+On Fri, 6 Dec 2024 at 05:05, Cheng Jiang (IOE)
+<quic_chejiang@quicinc.com> wrote:
+>
+> Hi Dmitry,
+>
+> On 12/5/2024 8:00 PM, Dmitry Baryshkov wrote:
+> > On Thu, Dec 05, 2024 at 06:22:12PM +0800, Cheng Jiang wrote:
+> >> The firmware-name property has been expanded to specify the names of NVM
+> >> and rampatch firmware for certain chips, such as the QCA6698 Bluetooth
+> >> chip. Although it shares the same IP core as the WCN6855, the QCA6698
+> >> has different RF components and RAM sizes, necessitating new firmware
+> >> files. This change allows for the configuration of NVM and rampatch in
+> >> DT.
+> >>
+> >> Different connectivity boards may be attached to the same platform. For
+> >> example, QCA6698-based boards can support either a two-antenna or
+> >> three-antenna solution, both of which work on the sa8775p-ride platform.
+> >> Due to differences in connectivity boards and variations in RF
+> >> performance from different foundries, different NVM configurations are
+> >> used based on the board ID.
+> >
+> > Two separate commits, one for NVM, another one for RAM patch.
+> >
+> Ack.
+> >>
+> >> Therefore, in the firmware-name property, if the NVM file has an
+> >> extension, the NVM file will be used. Otherwise, the system will first
+> >> try the .bNN (board ID) file, and if that fails, it will fall back to
+> >> the .bin file.
+> >>
+> >> Possible configurations:
+> >> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
+> >> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+> >> firmware-name = "QCA6698/hpnv21.bin";
+> >>
+> >> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> >> ---
+> >>  drivers/bluetooth/btqca.c   | 154 ++++++++++++++++++++++++++----------
+> >>  drivers/bluetooth/btqca.h   |   5 +-
+> >>  drivers/bluetooth/hci_qca.c |  21 ++++-
+> >>  3 files changed, 134 insertions(+), 46 deletions(-)
+> >>
+> >> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> >> index dfbbac922..e8b89b8cc 100644
+> >> --- a/drivers/bluetooth/btqca.c
+> >> +++ b/drivers/bluetooth/btqca.c
+> >> @@ -272,6 +272,31 @@ int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(qca_send_pre_shutdown_cmd);
+> >>
+> >> +static int qca_get_alt_nvm_path(char *path, size_t max_size)
+> >
+> > int is usually for errors, the code suggests bool return type.
+> >
+> Ack.
+> >> +{
+> >> +    char fwname[64];
+> >> +    const char *suffix;
+> >> +
+> >> +    suffix = strrchr(path, '.');
+> >> +
+> >> +    if (!suffix)
+> >> +            return 0;
+> >> +
+> >> +    strscpy(fwname, path, strlen(path));
+> >
+> > 64 bytes ought to be enough for anybody, correct?
+> >
+> Yes, in current driver, the max f/w path length is 64.
+>
+> >> +    fwname[suffix - path] = 0;
+> >
+> > with path = "qcom/sc7180/Oh.My.Device/name" this is broken.
+> >
+> Let me test this and fix in next patch.
+> >> +
+> >> +    snprintf(fwname, sizeof(fwname), "%s.bin", fwname);
+> >> +
+> >> +    /* If nvm file is already the default one, return false to
+> >> +     * skip the retry.
+> >> +     */
+> >> +    if (strcmp(fwname, path) == 0)
+> >> +            return 0;
+> >> +
+> >> +    snprintf(path, max_size, "%s", fwname);
+> >> +    return 1;
+> >> +}
+> >> +
+> >>  static int qca_tlv_check_data(struct hci_dev *hdev,
+> >>                             struct qca_fw_config *config,
+> >>                             u8 *fw_data, size_t fw_size,
+> >> @@ -564,6 +589,19 @@ static int qca_download_firmware(struct hci_dev *hdev,
+> >>                                         config->fwname, ret);
+> >>                              return ret;
+> >>                      }
+> >> +            }
+> >> +            /* For nvm, if desired nvm file is not present and it's not the
+> >> +             * default nvm file(ends with .bin), try to load the default nvm.
+> >> +             */
+> >> +            else if (config->type == TLV_TYPE_NVM &&
+> >> +                     qca_get_alt_nvm_path(config->fwname, sizeof(config->fwname))) {
+> >
+> > Please, don't rewrite the config. The file may be not present now, but
+> > it will reappear later (e.g. when rootfs gets mounted).
+> >
+> This tries to load a default NVM file if the board-specific NVM is not found.
+> It is called when request_firmware fails. It's safe to rewrite the config->fwname
+> here since we have already tried to load the board-specific NVM. The config
+> is a local variable in qca_uart_setup and will return after downloading the NVM.
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+Please read my question before answering it.
 
-Subject: missing : after s5m prefix.
+> >> +                    bt_dev_info(hdev, "QCA Downloading %s", config->fwname);
+> >> +                    ret = request_firmware(&fw, config->fwname, &hdev->dev);
+> >> +                    if (ret) {
+> >> +                            bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
+> >> +                                       config->fwname, ret);
+> >> +                            return ret;
+> >> +                    }
+> >>              } else {
+> >>                      bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
+> >>                                 config->fwname, ret);
+> >> @@ -730,15 +768,38 @@ static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
+> >>                       "qca/%snv%02x.b%02x", stem, rom_ver, bid);
+> >>  }
+> >>
+> >> +static void qca_get_nvm_name_by_board(char *fwname, size_t max_size,
+> >> +            const char *firmware_name, struct qca_btsoc_version ver,
+> >> +            enum qca_btsoc_type soc_type, u16 bid)
+> >> +{
+> >> +    const char *variant;
+> >> +
+> >> +    /* Set the variant to empty by default */
+> >> +    variant = "";
+> >> +    /* hsp gf chip */
+> >> +    if (soc_type == QCA_WCN6855) {
+> >> +            if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) == QCA_HSP_GF_SOC_ID)
+> >> +                    variant = "g";
+> >
+> > Didn't you get the 'set but unused' here?
+> >
+> Yes, miss this part. Thank you!
+> >> +    }
+> >> +
+> >> +    if (bid == 0x0)
+> >
+> > 0x0 or 0xff?
+> board is set to 0 by default, 0x0 means read board id fails, then we should use
+> the default one.
 
-> 
-> Signed-off-by: Song Chen <chensong_2000@189.cn>
-> ---
->  drivers/regulator/s5m8767.c      | 110 ++++++++++---------------------
->  include/linux/mfd/samsung/core.h |   5 +-
->  2 files changed, 37 insertions(+), 78 deletions(-)
-> 
-> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-> index d25cd81e3f36..d0b1eed4dfa0 100644
-> --- a/drivers/regulator/s5m8767.c
-> +++ b/drivers/regulator/s5m8767.c
-> @@ -5,7 +5,7 @@
->  
->  #include <linux/cleanup.h>
->  #include <linux/err.h>
-> -#include <linux/of_gpio.h>
-> +//#include <linux/of_gpio.h>
+What is the 'unprogrammed' board_id? On the WiFi side it's usually 0xff.
 
-Some development code was left.
+> >
+> >> +            snprintf(fwname, max_size, "qca/%s.bin", firmware_name);
+> >> +    else if (bid & 0xff00)
+> >> +            snprintf(fwname, max_size, "qca/%s.b%x", firmware_name, bid);
+> >
+> > Doesn't ".b%02x" work in this case too?
+> >
+> No, board id are two bytes, it coudl be 0x0206, then we need .b206. Or it is
+> 0x000a, then we need .b0a.
 
->  #include <linux/gpio/consumer.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> @@ -15,6 +15,7 @@
->  #include <linux/mfd/samsung/s5m8767.h>
->  #include <linux/regulator/of_regulator.h>
->  #include <linux/regmap.h>
-> +#include <linux/of.h>
->  
->  #define S5M8767_OPMODE_NORMAL_MODE 0x1
->  
-> @@ -23,6 +24,8 @@ struct s5m8767_info {
->  	struct sec_pmic_dev *iodev;
->  	int num_regulators;
->  	struct sec_opmode_data *opmode;
-> +	struct gpio_desc *buck_gpios[3];
-> +	struct gpio_desc *buck_ds[3];
->  
->  	int ramp_delay;
->  	bool buck2_ramp;
-> @@ -35,8 +38,7 @@ struct s5m8767_info {
->  	u8 buck2_vol[8];
->  	u8 buck3_vol[8];
->  	u8 buck4_vol[8];
-> -	int buck_gpios[3];
-> -	int buck_ds[3];
+What will ".b%02x" write in those two cases?
 
-Don't move them.
-
-> +
-
-No need.
-
->  	int buck_gpioindex;
->  };
->  
-> @@ -272,9 +274,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
->  {
->  	int temp_index = s5m8767->buck_gpioindex;
->  
-> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
->  
->  	return 0;
->  }
-> @@ -283,9 +285,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
->  {
->  	int temp_index = s5m8767->buck_gpioindex;
->  
-> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
->  
->  	return 0;
->  }
-> @@ -486,16 +488,22 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
->  			struct sec_platform_data *pdata,
->  			struct device_node *pmic_np)
->  {
-> -	int i, gpio;
-> +	int i;
-> +	char label[32];
->  
->  	for (i = 0; i < 3; i++) {
-> -		gpio = of_get_named_gpio(pmic_np,
-> -					"s5m8767,pmic-buck-dvs-gpios", i);
-> -		if (!gpio_is_valid(gpio)) {
-> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
-> +		pdata->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
-> +					"s5m8767,pmic-buck-dvs", i, GPIOD_OUT_LOW);
-> +		if (IS_ERR(pdata->buck_gpios[i])) {
-> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
-
-Why not printing error msg? This should be also return dev_err_probe
-
->  			return -EINVAL;
->  		}
-> -		pdata->buck_gpios[i] = gpio;
-> +
-> +		/* SET GPIO*/
-
-What is a SET GPIO?
-
-> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
-
-Why using "SET" as name, not the actual name it is used for? Buck DVS?
-
-> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
-> +		gpiod_direction_output(pdata->buck_gpios[i],
-> +					(pdata->buck_default_idx >> (2 - i)) & 0x1);
-
-This is not an equivalent code. You set values for GPIOs 0-1 even if
-requesting GPIO 2 fails.
-
-On which board did you test it?
-
->  	}
->  	return 0;
->  }
-> @@ -504,16 +512,21 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
->  			struct sec_platform_data *pdata,
->  			struct device_node *pmic_np)
->  {
-> -	int i, gpio;
-> +	int i;
-> +	char label[32];
->  
->  	for (i = 0; i < 3; i++) {
-> -		gpio = of_get_named_gpio(pmic_np,
-> -					"s5m8767,pmic-buck-ds-gpios", i);
-> -		if (!gpio_is_valid(gpio)) {
-> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
-> +		pdata->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
-> +					"s5m8767,pmic-buck-ds", i, GPIOD_OUT_LOW);
-> +		if (IS_ERR(pdata->buck_ds[i])) {
-> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
->  			return -EINVAL;
->  		}
-> -		pdata->buck_ds[i] = gpio;
-> +
-> +		/* SET GPIO*/
-> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
-> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
-> +		gpiod_direction_output(pdata->buck_gpios[i], 0);
->  	}
->  	return 0;
->  }
-> @@ -785,61 +798,6 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
-> -						pdata->buck4_gpiodvs) {
-> -
-> -		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
-> -			!gpio_is_valid(pdata->buck_gpios[1]) ||
-> -			!gpio_is_valid(pdata->buck_gpios[2])) {
-> -			dev_err(&pdev->dev, "GPIO NOT VALID\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
-> -					"S5M8767 SET1");
-> -		if (ret)
-> -			return ret;
-> -
-> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
-> -					"S5M8767 SET2");
-> -		if (ret)
-> -			return ret;
-> -
-> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
-> -					"S5M8767 SET3");
-> -		if (ret)
-> -			return ret;
-> -
-> -		/* SET1 GPIO */
-> -		gpio_direction_output(pdata->buck_gpios[0],
-> -				(s5m8767->buck_gpioindex >> 2) & 0x1);
-> -		/* SET2 GPIO */
-> -		gpio_direction_output(pdata->buck_gpios[1],
-> -				(s5m8767->buck_gpioindex >> 1) & 0x1);
-> -		/* SET3 GPIO */
-> -		gpio_direction_output(pdata->buck_gpios[2],
-> -				(s5m8767->buck_gpioindex >> 0) & 0x1);
-> -	}
-> -
-> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
-> -	if (ret)
-> -		return ret;
-> -
-> -	/* DS2 GPIO */
-> -	gpio_direction_output(pdata->buck_ds[0], 0x0);
-> -	/* DS3 GPIO */
-> -	gpio_direction_output(pdata->buck_ds[1], 0x0);
-> -	/* DS4 GPIO */
-> -	gpio_direction_output(pdata->buck_ds[2], 0x0);
-> -
->  	regmap_update_bits(s5m8767->iodev->regmap_pmic,
->  			   S5M8767_REG_BUCK2CTRL, 1 << 1,
->  			   (pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
-> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-> index 750274d41fc0..b757f15877a3 100644
-> --- a/include/linux/mfd/samsung/core.h
-> +++ b/include/linux/mfd/samsung/core.h
-> @@ -33,6 +33,7 @@
->  #define STEP_12_5_MV		12500
->  #define STEP_6_25_MV		6250
->  
-> +#define BULK_GPIO_COUNT		3
-
-Where do you use ot?
-
->  struct gpio_desc;
->  
->  enum sec_device_type {
-> @@ -77,10 +78,10 @@ int sec_irq_resume(struct sec_pmic_dev *sec_pmic);
->  struct sec_platform_data {
->  	struct sec_regulator_data	*regulators;
->  	struct sec_opmode_data		*opmode;
-> +	struct gpio_desc			*buck_gpios[3];
-> +	struct gpio_desc			*buck_ds[3];
->  	int				num_regulators;
->  
-> -	int				buck_gpios[3];
-> -	int				buck_ds[3];
-
-Don't move the code.
-
->  	unsigned int			buck2_voltage[8];
->  	bool				buck2_gpiodvs;
->  	unsigned int			buck3_voltage[8];
+> >> +    else
+> >> +            snprintf(fwname, max_size, "qca/%s.b%02x", firmware_name, bid);
+> >> +}
+> >> +
 
 
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
 
