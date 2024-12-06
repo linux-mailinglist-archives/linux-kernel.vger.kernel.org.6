@@ -1,151 +1,95 @@
-Return-Path: <linux-kernel+bounces-434612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3F59E68F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D6F9E68F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:33:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2361886E32
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA1F1882F7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D851E22FA;
-	Fri,  6 Dec 2024 08:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603891DA61D;
+	Fri,  6 Dec 2024 08:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d1aZ7D6N"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GukpDvUy"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A49C13DDDF
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDFC19DF66
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733473905; cv=none; b=KkNszHM26K2Ippn7A1UUJkIx45rOmyIJthMzGPwkr9YLzhrRrpLQJjApYdlNs+uqV8uAbpt3V2yIGx/DPE2jY9oksgT37Vblw1MCIC7fz6O4G9F/Jlb8YazxteiUl9QLyybxmNJJRSl+7wPpFG9ZeVUmH10hudtA6FWPFQMbJ3c=
+	t=1733474006; cv=none; b=iG+zlH4rRsTQLmJMeDJgVVGKoh7riNDrBsamsZKKN8YALIAipyqSOI4+2HMf/aOqqrfz0+FC1ySqLMVbbX8M6s71bDZPq5gh4ZgQ2eqRsStMte65r2tvgZp+W93j0trOcXsFNh1F3roEWCN24FSzuUoonJl4SXWojV8IH7DD3xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733473905; c=relaxed/simple;
-	bh=G/NWr+cFHKo5I/8lV3/xQbIcisFUGORAhy2vxW/qyMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tHHFAv//I+Lhw3snBa6l/ZM18T+tQ907KQAGhHNmR/jhzaqJ3TPAgCeFsSmOMcZJa3MBjPEhHm2rB9qkTPb3nnV4HOdL53EEKnQS1L0RGy3ho/QmhVFbX99k8S1pVmiVgiy24HhsqBOJ1biP5IkbuXfKH/Ju3zASc8hOMUOpH/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d1aZ7D6N; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so1316483f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:31:42 -0800 (PST)
+	s=arc-20240116; t=1733474006; c=relaxed/simple;
+	bh=1UwquMqHQAEbMWHm24NJ3i+17h6zazMQWy5+3k3rLW0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NC6SKuqbE7mtau8poGCxaRXtNZxMPbY+MkQN5yTi5jX2O46X13htHjZTuRJMWLAUlw19pHu6ROyqEonpOLzmHb/u6z9mvqtaBAl7NMC2fN1Wwo+F7M7pyKGo6iwi1kVoTDfDv7Vv9yhX5vA4VhMgRiXsOfn2tISTXZYoLxHUBT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GukpDvUy; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3862d16b4f5so171179f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:33:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733473901; x=1734078701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MndMYY4GPIQ8HTWtED6XEkvHTM70jq0Eh04UxVuFw2o=;
-        b=d1aZ7D6Nt8ILsx6RFqi8QW7445Eue/ZjN+BsLIy2x5inimawsd10PLW+im1uvd9D1l
-         Y1zb0exPbH7yVOK7h84Rcf20EgktENM+FmuUM8J2L75j++hfKnPm4TiOl5aFikaSlfxN
-         if21uPHfQzFKtBlZCsk7d6YjswDZhOhBe2YXJ6VTSf0Np23aC/0Li3NaouiU365r+EEy
-         v9semLhnErQWXjeI8Wx9OghV93APROSHbpr4X758hnsf769PY23c7RR200p2CmU317kx
-         oln/u2B+m1bjSLgv2A77KrlcKVkwS1PhG+2h/dZuPKFK2/RqKMncYgoguY4tYUneuRnm
-         iGTQ==
+        d=gmail.com; s=20230601; t=1733474003; x=1734078803; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1UwquMqHQAEbMWHm24NJ3i+17h6zazMQWy5+3k3rLW0=;
+        b=GukpDvUyNRqdYIuMPd6mzKwhLKQJakUb0vlOfCaIFSmoXTKYtUVtHGEHz8zIAUvfvN
+         9jkOapTOD5Wl5Ch+WpFBaKIlwTVpNWKUXw7ozX0PAJWQGCWlRKan6QhaZzQszeZkQFhx
+         vkbZd4L0Rj6/6GWR/sPxklVxEe2rmre9vKsDhW5c24aaGAVrSYqUwaUwgr3CP4xCn2+G
+         Ryl181SXWgpCMCmN9VPTl+g+gXx5i05GJTWIwUYfjP9/G582e9YKU1UdT7MVJtYd+Ahs
+         92BmtvzsU8y/wzwUuOn24MvH6vrmsOj4cJkQ2plIiPVap/o54l79PvE7h5QcCwfrSJm3
+         Kirg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733473901; x=1734078701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MndMYY4GPIQ8HTWtED6XEkvHTM70jq0Eh04UxVuFw2o=;
-        b=ugEI/vqA5Ad+O/w3YrWyO9ClYQKHgZ4hqEcLUwJZKNl0/sJBJ3o7SwnZrvWP4vMNVl
-         dld5eXaBPndRSQt5TpVDjtQfZ5Yx3t/W5ctfMEEwg2J66vFOLNGrmmaGZonk/xlBmnsx
-         pjqWxMszVxY50SeFo2FJC///tYBNhY1RkIMK61aveM9TkWC7oAROBf2v2m1HfK9F8hTq
-         sQtyI41a+ZxJmCsrn8dZyCMtJ8jU6RVtYyQo67D1qRjzfuhqnl+FHRpz9Wad+WHDzXDH
-         iSN9yS4RWDSisxzdaJp1PHcGDAslipoDmgdEjpoXZAO9C/ejy8uADP142svuzFEreGqY
-         RTyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVf1/IycdH4QTx6qPmDtz9zwCpYAqMyClwY8ZaTQSt+gJ+hIX9Y0P7JY1eJPm41WqqBilxa7s37MSKgBcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy133AEMX4OQL8GMNeEMtn36QQWzY2qYYFzJ5VOX/Z+C6Eluhts
-	hoFI/SWYuefNY+Q1h4nTmZZzpZfQTlR19hDFFqwN/HygCdpx0oz/J5xEUEGxRAf1QZ+HRfYjhXk
-	nkhq8AG87txyVl3gFh8JJtdaDj7I5Pn2gYhiW
-X-Gm-Gg: ASbGncsEK0YCrSyQqactrXJdu1uja+5CTeqBR0la78UIHOcbuabGJi+ez19YYvcFWFU
-	M4u0S9FTMvPkcS6bmJMVK9mBhP44ZxbUc
-X-Google-Smtp-Source: AGHT+IHTpVhNbdQ5mRt21s4Gec32i/tVvuXdlp9phX7cA24emalaIIqZWOzUp/cCiiZ1ZpZANHDBZHrFKALrak5xbNw=
-X-Received: by 2002:a05:6000:a14:b0:385:f0c9:4b66 with SMTP id
- ffacd0b85a97d-3862b39b9b4mr1763642f8f.33.1733473901426; Fri, 06 Dec 2024
- 00:31:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733474003; x=1734078803;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1UwquMqHQAEbMWHm24NJ3i+17h6zazMQWy5+3k3rLW0=;
+        b=PGZjDutUedx+XVRzePK9K4IxkF3rZTRJUTMPtEhlDqYK6PTC/xomOsFdFE2K0FVF3M
+         N+eo7caIsHIvwlaO6UIrexf7VjPzZDSHKbB0MHs6qYNmKtR9BAI0GhZx/HPA0ugRjbFh
+         h44ZXJs0BzucKc1YjNQeDZMKlcEIFZLI8Fp1MPAIceEGw6wcyOBrZQ7r1SteLwt3uqhq
+         OnJEuCq57X0lqgZt/Yoj5lmsFlG7mv3Q7b7mbQLtplnKaa0d6aQmahT4wMlRzhxHxBMc
+         6zGgSWfWvCb7odPVbGnh+SJVR2PoqrLMK/eRyQFVG3DXfcc7o/+pwE19LRZibShigEFJ
+         nNSw==
+X-Gm-Message-State: AOJu0YzVXOVAGzgoSt8ywoetNGEavOU3csKcmD62rhzgjNmnQEMo8qoA
+	kNKKp1l93NKsOZMKh6oNwZEJeDmZ3ZuWtulAXlgNSnMS9cLZw7BKL27lMSZjq8zbwUOmC4c2Avn
+	QcVfMs+cs29SQPzeHexK5O2aHTNE=
+X-Gm-Gg: ASbGncur3D5NDr6nLLYQmuWlp/7QRNYpjKrV3fZeA1TnwXuFa3Dltpq6pblGGv2e2QQ
+	7akGFSSWNWAaoTdMxh/GWouv6k+z+41c=
+X-Google-Smtp-Source: AGHT+IEmuAIU0mTKGq/6tyiv+faRyxylaFEW1ymbM8aaM75TuBDPrX1SjlYvQZ+S74OUZZ/o13CLBsk08f2Llqzwq20=
+X-Received: by 2002:a05:6000:4026:b0:385:fa26:f0b5 with SMTP id
+ ffacd0b85a97d-3862a91496emr1291250f8f.20.1733474003070; Fri, 06 Dec 2024
+ 00:33:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205162531.1883859-1-lee@kernel.org> <2024120632-hardwired-hardhead-1906@gregkh>
- <20241206074443.GJ8882@google.com> <2024120622-unvalued-wriggle-7942@gregkh>
-In-Reply-To: <2024120622-unvalued-wriggle-7942@gregkh>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 6 Dec 2024 09:31:28 +0100
-Message-ID: <CAH5fLgj6rqVbGHrU4008fvO60fJdRWoE2SvW7nc9njPUFuzJ_A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] rust: miscdevice: Provide sample driver using the
- new MiscDevice bindings
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, arnd@arndb.de, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, rust-for-linux@vger.kernel.org
+From: richard clark <richard.xnu.clark@gmail.com>
+Date: Fri, 6 Dec 2024 16:33:11 +0800
+Message-ID: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
+Subject: Question about interrupt prioriyt of ARM GICv3/4
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>, will@kernel.org, 
+	"Russell King (Oracle)" <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, richard clark <richard.xnu.clark@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 9:11=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
->
-> On Fri, Dec 06, 2024 at 07:44:43AM +0000, Lee Jones wrote:
-> > On Fri, 06 Dec 2024, Greg KH wrote:
-> >
-> > > On Thu, Dec 05, 2024 at 04:25:17PM +0000, Lee Jones wrote:
-> > > > It has been suggested that the driver should use dev_info() instead=
- of
-> > > > pr_info() however there is currently no scaffolding to successfully=
- pull
-> > > > a 'struct device' out from driver data post register().  This is be=
-ing
-> > > > worked on and we will convert this over in due course.
-> > >
-> > > But the miscdevice.rs change provides this to you, right?  Or if not,
-> > > why not?
-> >
-> > This does allow us to pull the 'struct device *` out from `struct
-> > miscdevice`; however, since this resides in MiscDeviceRegistration,
-> > which we lose access to after .init, we have no means to call it.
-> >
-> > Alice is going to work on a way to use ThisModule to get the
-> > MiscDeviceRegistration reference back from anywhere in the module. Unti=
-l
-> > that piece lands, we can't call MiscDeviceRegistration::device() outsid=
-e
-> > of RustMiscDeviceModule.
->
-> That seems crazy, as ThisModule shouldn't be dealing with a static misc
-> device, what happens for dynamically created ones like all
-> normal/sane/non-example drivers do?  This should "just" be a dynamic
-> object that is NOT tied to the module object, or worst case, a "static"
-> structure that is tied to the module I guess?
->
-> Anyway, I'll let you all work it out, good luck!
+Hi,
+Currently seems the GICv3/4 irqchip configures all the interrupts as
+the same priority, I am thinking about to minimize the latency of the
+interrupt for a particular device, e.g, the arm arch_timer in the RTL
+system. The question is,
+1. Why don't we provide a /proc or /sys interface for the enduser to
+set the priority of a specific interrupt(SPI/PPI)?
+2. Is there any way to verify the higher priority interrupt will have
+more dominant to be selected to the CPU (IOW, the priority is really
+working) in case of multiple different interrupts asserted to the GIC
+at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
+to record higher priority wins)?
 
-If you store it somewhere else, you're probably okay. The current
-place is just hard to access.
-
-The problem is that the Rust module abstractions generate a global
-variable that holds an RustMiscDeviceModule which is initialized in
-init_module() and destroyed in cleanup_module(). To have safe access
-to this global, we need to ensure that you access it only between
-init_module() and cleanup_module(). For loadable modules, the
-try_module_get() logic seems perfect, so in Miscdevice::open we have a
-file pointer, which implies that the fs infrastructure took a refcount
-on fops->owner, which it can only do once init_module() is done.
-
-Unfortunately, this doesn't translate to built-in modules since the
-owner pointer is just null, and try_module_get performs no checks at
-all.
-
-Also, I'm realizing now that try_module_get() succeeds even if `state
-=3D=3D MODULE_STATE_COMING`. :(
-
-So in conclusion, I don't know of any way to provide safe access to
-the global RustMiscDeviceModule value.
-
-Alice
+Thanks
 
