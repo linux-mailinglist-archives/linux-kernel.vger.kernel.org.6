@@ -1,89 +1,151 @@
-Return-Path: <linux-kernel+bounces-435365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEF69E7699
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:02:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E13C165C8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:02:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312711527AC;
-	Fri,  6 Dec 2024 17:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="nAD3iraQ"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6CB9E769C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:03:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573FB20628B;
-	Fri,  6 Dec 2024 17:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733504537; cv=none; b=QLNIjnTih4U+7dtnZPXMXWsJQ3h42SIBJq2Gg3Z8LVve3hIdA13EpjR3OmCCHjpG+4XM3Fe8npn1f9rr2PpyvyqDk4C8Vkey5M+i2cxOzXkmX1m9lg0vyT5Iv0ApR6dvlCNFsDR73u2mxaFvhITvqG2Okc/yDyi4pELZprcD66o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733504537; c=relaxed/simple;
-	bh=yfenPM9ODdWg9R4e21a6fn0/25fwjaFiu0cv69tMrZQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=j2qnlo2kMws9Xjvn9y4d8i1dJ9gyXGWQcoXbYVUeWPf6l+1aOCradz72TthVdmOhCG9SbgcfRZ5WvD8r9RZ2wYhYfq72fW416LKsMew5p0gas7evVeGPtb+yxlbX/Q3RkxWlMylMwUWT1ID6zK5x34T2H93BTud/K0Fsl6V/YFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=nAD3iraQ; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 71F94403E1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1733504535; bh=qoYyWO2Qf+oKhBLSxdz/BPi+iDGhwGeVa29pxC1vl3Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nAD3iraQBMb/D1dPlbUU4yY1TrK/dkSxIulIrmySJyCXfDD4kTTVAJ9KOMaGD+eoQ
-	 qz78BxxMiWqNfU/YC9ySE6ize8QXYMIB+D4P/omVazfubYbptbH+r2VqPJW+dYwRW/
-	 E4/QJ6aUvhmv+SgccHHKn9QbhnQyT/jETxegBjCJAv7aDcQeScW024IRszm4Ut8mB8
-	 ZsHjjyFZviGM8d9va9IqMgT2e6b+iOYF+4qPjNufYxfRg8RTawLABMI3xsJDwoM1QS
-	 81oR0+yyu+P9tcy0AN5q0NRtyj0KW1n3PkBhPxidLEA6AfUKRbxwWuihwqGGy+dl4z
-	 dzLjF29oTi4fA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9AF2824F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:02:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D477A1F3D27;
+	Fri,  6 Dec 2024 17:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s95Pvg4h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 71F94403E1;
-	Fri,  6 Dec 2024 17:02:15 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dave Hansen <dave.hansen@intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v1 0/3] x86/Documentation: boot.rst: More style &format
- fixes
-In-Reply-To: <639b9aef-456a-4f13-84f3-555a0da9672d@intel.com>
-References: <20241128152546.2396782-1-andriy.shevchenko@linux.intel.com>
- <874j3gu5at.fsf@trenco.lwn.net>
- <639b9aef-456a-4f13-84f3-555a0da9672d@intel.com>
-Date: Fri, 06 Dec 2024 10:02:14 -0700
-Message-ID: <87r06ksq21.fsf@trenco.lwn.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E0A20628B;
+	Fri,  6 Dec 2024 17:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733504574; cv=none; b=EmRLG5VhvgeUBQlANG4XPV1MMqDKBkRGbY8jn+Lhr5R9DenVZjo+09HMIihwErmPbJ/WBfxHhU3T9tUzmcqQW3XyABBBTR22NQ7piwk3KrubAG940ghnfy5CUwHfNFapQB6Kj6bZcaq3IPzzpgg7r1Yk0+pDYQr3u7ikzGINmCc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733504574; c=relaxed/simple;
+	bh=49stkS5Jr0gbDKUcViWSMu1jZ0Ttci8yCgTnQYqEciE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FvvkXfVK1Bp451Ib4hBab9tqtKMNLddrMr9qkvzSOLMdBtJMZ4+gtkzmpXbmHKPBWwfSq/1/JfcLTOWTeWxGO0G4EYkKJC5pOTkCkYZL5JJDf5QjqRNw7Kqgm0JkEo1YkgxK2OHjIsKyVykIobb8kGDjTjw29VQU0zad+IQccZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s95Pvg4h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 583CFC4CED1;
+	Fri,  6 Dec 2024 17:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733504573;
+	bh=49stkS5Jr0gbDKUcViWSMu1jZ0Ttci8yCgTnQYqEciE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s95Pvg4hT1qOEsnoGUyCjcqlT8rFHJIecyBajPwtIJlikGvE804slOA25zRrwqQb0
+	 tXt/X2XMt7XZ0YyBh96/pm95OBro70p9Cfee6m6LJivURqrimVPxtAvBgxdQXado9Z
+	 6zZ42DBbu02ElICCwhfXUmmdipv/2TVTB2I79Nyr8Gzf7OKs+0INQywoi4jItZMw//
+	 K/jov+IKTkQ7iPRQOOh7foyMJnRfOfR6H7J7kK9wP3zTjJm5RfY7LxrqCTK9/4Z50k
+	 4G8I+vfuhjHp2Q3eHO8SGlv2eX0gNVubg9BY/hFCCzjVXpwiDPQDdFuR+p36VGdRR/
+	 NSvZVwSc+0zCA==
+Date: Fri, 6 Dec 2024 17:02:49 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Dharma.B@microchip.com
+Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	Aubin.Constans@microchip.com, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mmc: atmel,hsmci: Convert to json schema
+Message-ID: <20241206-untoasted-ripening-83ecf98bc42f@spud>
+References: <20241205-hsmci-v1-1-5a25e622dfed@microchip.com>
+ <20241205-trickster-rebate-d5e64bc29992@spud>
+ <4e3a4154-9e05-40b4-961f-6d7e95ec0890@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ScKT+5iAjDgPbCZa"
+Content-Disposition: inline
+In-Reply-To: <4e3a4154-9e05-40b4-961f-6d7e95ec0890@microchip.com>
 
-Dave Hansen <dave.hansen@intel.com> writes:
 
-> On 12/6/24 08:47, Jonathan Corbet wrote:
->> How were you thinking of getting this one upstream?  I can take it
->> through docs if that's what's wanted, but would like an x86 ack first.
->
-> It all looks sane to me.  Going through docs works for me.  Thanks, Jon!
->
-> For the series:
->
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+--ScKT+5iAjDgPbCZa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, then, I've applied the set.
+On Fri, Dec 06, 2024 at 05:16:39AM +0000, Dharma.B@microchip.com wrote:
+> Hi Conor,
+>=20
+> On 05/12/24 11:15 pm, Conor Dooley wrote:
+> > On Thu, Dec 05, 2024 at 03:27:02PM +0530, Dharma Balasubiramani wrote:
+> >=20
+> >> +patternProperties:
+> >> +  "^slot@[0-9]+$":
+> >> +    type: object
+> >> +    description: A slot node representing an MMC, SD, or SDIO slot.
+> >> +
+> >> +    allOf:
+> >> +      - $ref: mmc-controller.yaml
+> >> +
+> >> +    properties:
+> >> +      reg:
+> >> +        description: Slot ID.
+> >> +        minimum: 0
+> >> +
+> >> +      bus-width:
+> >> +        description: Number of data lines connected to the controller.
+> >> +        enum: [1, 4, 8]
+> >> +
+> >> +      cd-gpios:
+> >> +        description: GPIO used for card detection.
+> >> +
+> >> +      cd-inverted:
+> >> +        type: boolean
+> > This type conflicts with mmc-controller.yaml, it's a flag there.
+>=20
+> Yes, I overlooked it. I'll simply remove the type here.
+>=20
+> >=20
+> >> +        description: Inverts the value of the card detection GPIO.
+> >> +
+> >> +      wp-gpios:
+> >> +        description: GPIO used for write protection.
+> >> +
+> >> +    required:
+> >> +      - reg
+> >> +      - bus-width
+> >> +
+> >> +    unevaluatedProperties: false
+> > Do you mean additionalProperties: false here? You listed properties
+> > contained in mmc-controller.yaml which makes it seem like you're
+> > restricting to this subset rather than allowing all properties - but you
+> > need additionalProperties: false to do that.
+>=20
+> No, I'm not restricting the properties to this subset. There are=20
+> additional properties, such as "non-removable," "broken-cd," and=20
+> "disable-wp," that are used in our DTS files but are not defined in the=
+=20
+> old text bindings. For this reason, I used `unevaluatedProperties:=20
+> false` instead of `additionalProperties: false`.
 
-Thanks,
+> Let me know if an=20
+> `allOf` reference to `mmc-controller` alone would be sufficient in this=
+=20
+> context.
 
-jon
+Yes, there's no point duplicating properties from there, unless you're
+restricting to a subset. I think all you need to keep (other than the
+reference) is the required properties list because there seems to be
+none in mmc-controller.yaml.
+
+--ScKT+5iAjDgPbCZa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1MuOQAKCRB4tDGHoIJi
+0puPAQDGnZ7QeA/JWBnu9hKRBgcjCLFYUU/RfTgFGpqBBbr0rwEAlDSML8gQFQC2
+16Y1lIsu3uODoMdJwSPiOmNE7oFsdAY=
+=XVJL
+-----END PGP SIGNATURE-----
+
+--ScKT+5iAjDgPbCZa--
 
