@@ -1,195 +1,126 @@
-Return-Path: <linux-kernel+bounces-435065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D954E9E6F01
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:12:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA0C1881927
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:08:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A456204F91;
-	Fri,  6 Dec 2024 13:08:50 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD5C9E6EEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:09:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73B81EE02E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F06281C06
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:09:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046C52066DC;
+	Fri,  6 Dec 2024 13:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m4LMBlNZ"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9140220103B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490529; cv=none; b=iGS2pqYpniTsRR+iWcXmM4d8plT1v3Q+Ual2uEP1IsSPbV2TISuX0FbIB513pAYb/ZB/GzX5UVxAgRy3sTv1KRB7Nnbzfy3T4W/4cN9NK4bivbxFVdYWOpaECJyhaLJiokkwHmEI4W3c9ItmCJNI8fpGzFcAvLtR8QcpEh4Y2EE=
+	t=1733490566; cv=none; b=tx0U+z1yJWuawUvi8zf+6/DfLVvctOp2WOi8kyGu4ZzucvkdvSTRBdej2vCcwABb7TCEOZdHSy9jnxqCNKroZWgMitRqNAMZP5MH2w6bw0k9Kupgdg+BiINGOk7XTL1M1+tzWRm4T6znUXNxEIHU3udj9lMLlJFXVedLPIqFnds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490529; c=relaxed/simple;
-	bh=QF8c2MhUemDCUpYqGQBweZ1Ws7IWDc/WAQA2tfJjVVU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=fsBRufi/sp2nA8jGo3LkrhB9wWZETsYrZvt0czDMyz8Bv020ndJWKN90ezujEgFpn0R6R4ZV9LXTTcLbgCbzF2KICfZHJ1KxxZc5Hyp1/VOiSmTBCLIV1m4aT7wz4B7OR+xaG7HgOtYQqILtwNkho9E4/VpiQPmqhFtAOGwdN8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-168-rEnKtWNUMFWeQM5TnnsDWQ-1; Fri, 06 Dec 2024 13:08:45 +0000
-X-MC-Unique: rEnKtWNUMFWeQM5TnnsDWQ-1
-X-Mimecast-MFC-AGG-ID: rEnKtWNUMFWeQM5TnnsDWQ
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
- 2024 13:07:59 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Dec 2024 13:07:59 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Julian Anastasov' <ja@ssi.bg>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 'Naresh Kamboju'
-	<naresh.kamboju@linaro.org>, 'Dan Carpenter' <dan.carpenter@linaro.org>,
-	"'pablo@netfilter.org'" <pablo@netfilter.org>, 'open list'
-	<linux-kernel@vger.kernel.org>, "'lkft-triage@lists.linaro.org'"
-	<lkft-triage@lists.linaro.org>, 'Linux Regressions'
-	<regressions@lists.linux.dev>, 'Linux ARM'
-	<linux-arm-kernel@lists.infradead.org>, "'netfilter-devel@vger.kernel.org'"
-	<netfilter-devel@vger.kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, "'Anders
- Roxell'" <anders.roxell@linaro.org>, 'Johannes Berg'
-	<johannes.berg@intel.com>, "'toke@kernel.org'" <toke@kernel.org>, 'Al Viro'
-	<viro@zeniv.linux.org.uk>, "'kernel@jfarr.cc'" <kernel@jfarr.cc>,
-	"'kees@kernel.org'" <kees@kernel.org>
-Subject: RE: [PATCH net] Fix clamp() of ip_vs_conn_tab on small memory
- systems.
-Thread-Topic: [PATCH net] Fix clamp() of ip_vs_conn_tab on small memory
- systems.
-Thread-Index: AdtHyTlbE/fm67s0Ria1gsbgnJ6KcgAD9raAAACnwVA=
-Date: Fri, 6 Dec 2024 13:07:59 +0000
-Message-ID: <2a91ee407ed64d24b82e5fc665971add@AcuMS.aculab.com>
-References: <33893212b1cc4a418cec09aeeed0a9fc@AcuMS.aculab.com>
- <5ec10e7c-d050-dab8-1f1b-d0ca2d922eef@ssi.bg>
-In-Reply-To: <5ec10e7c-d050-dab8-1f1b-d0ca2d922eef@ssi.bg>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733490566; c=relaxed/simple;
+	bh=Hk+8FdCJyJ2RtcsWXsbcyvBWzUyxa4peO3nujhwWwz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SFTLS6wiHaWbWYWaKRGVWps4RuTqrbIXd6J3ShoM5scARxoLX0/0hj53qQ4K/QAOR9zvNa5a0N2KR40rk8Z7MMrMq9EUM2ipmoI/bKn6QKNFkGW2w8xHnu7u6orwmg47xqXTIuCYJu6uG8Kc5Xww86jlheydiIueMgXMkW4G3Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m4LMBlNZ; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso20101805e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 05:09:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733490563; x=1734095363; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n/SGgSgGbGfS4qal8H23FKyEqnU45LmUqMyclprxKRY=;
+        b=m4LMBlNZ/oEep3zcGJu0K5tRl1lx77q+YjT5h53ZZcw4Wyl44rACj6eL5bFj6NSGvf
+         CDd/SOkRS3ahS9FDqfEdN5pBOeGmC/L3AkAfhdopoJSqvrgwTI5mqribBO/Ls3NQinM9
+         Mfyx9u+id8ldl7wfMUTEVfGvG7j2SMvuyYcOugabNgzfqgCRQLknngBI2pz7FiJRJWKe
+         hIxbRbz6zHNdoTzfMz2t8vBt/4W/0m2iV9qV6OtgK1OVaMUTCSV1TjZUjnm/3eaCKbkK
+         h8LW3L5cenuZWGMFNI5H7Rst0eyJ4mvzzkFKmd6k7P8MQ7kVZZYUvynOp2CR/SEGya/+
+         fsQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733490563; x=1734095363;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/SGgSgGbGfS4qal8H23FKyEqnU45LmUqMyclprxKRY=;
+        b=I27C3e/w/mtA9VOQ3VHZEL1PDJXFqh87tW4OMTZaszo+LcovbBU2Q137XQXH12DU9y
+         FZzXJS/AwhvpnNiLOfZ5teoGYzETi95u3Bm+FTi1ffMP/Aq3JvyqDOpRZef5bRK6jqS9
+         oVCd5vfIG7Capzeilxgm0Jh04pFmTTIf1Bt1V2CGW3SDg1G+GqNKTeaQg/l/qjmqE1Al
+         C16lwG95SZqWZB/Y8HWG/hHJ38TIQQC7ZreL3LHvuGzFDLxt1NcoZSobiIcQwvJpqb+H
+         ZVCacRyX7XhZBVgYDddfJmL+2HFlB8gqQgSFX8MfMHhnhl4XVe41PAi//o7qwPQWP9uH
+         iA5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUYxUE85/qwCpxUh/jUvzw3UclqmiABgUeTXf+/ziPNgdm875LvLwAPDGywwg2cDqguDD05iXtL83wA1Gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk1Msaz2j9U4Z1K7qoMUaT6uL3eI3/dH+ubA+FSnBAqcFu3S9h
+	eVD/NFQ0Qpzla/pxVaaUc0vNbmLRAG687cpNH4lcC+r6zRw/Q8EVRkbVRilvQj4=
+X-Gm-Gg: ASbGnculTs4UMpp8ccdX8B9tdhWXBpuLJl3byQUh14TGO5UZF8BQtYOzb9G4cV5WjXn
+	Ptc1L9J8k8TvA4Ru9Eh7y5goyus8gyO6/f7Rj6Nj3U0iVtb/nhHKK914/423kwCDi64Nyk6rtCF
+	AjrXWguVR+rl5SLnT0HKjOBKI8Y+JpWvqfcSlm8MWyHFOQH2yb6tA7ti6zMTxiRXNeSib+2Zx8Q
+	V6IIyzuEbNRSgP4IBF2y4GffS5uPirJtkGKqSvLcEeFXg5RdPCsWH4=
+X-Google-Smtp-Source: AGHT+IEe8eUou/A//oG9K2iNOUpaAPFb7T+EAvrirPkHn2z8KIBCuyQ60MWJalATbJ02kxAAUHl+dg==
+X-Received: by 2002:a05:600c:3b99:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-434ddeacf25mr27975715e9.3.1733490562877;
+        Fri, 06 Dec 2024 05:09:22 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0da4a1sm57254375e9.19.2024.12.06.05.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 05:09:22 -0800 (PST)
+Date: Fri, 6 Dec 2024 16:09:18 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Badhri Jagan Sridharan <badhri@google.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: typec: tcpm/tcpci_maxim: fix error code in
+ max_contaminant_read_resistance_kohm()
+Message-ID: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: R0Wd8CprcEuWDo08-pVRES0KYPZuqHZpqUqda5PoGxw_1733490524
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Julian Anastasov
-> Sent: 06 December 2024 12:19
->=20
-> On Fri, 6 Dec 2024, David Laight wrote:
->=20
-> > The intention of the code seems to be that the minimum table
-> > size should be 256 (1 << min).
-> > However the code uses max =3D clamp(20, 5, max_avail) which implies
->=20
-> =09Actually, it tries to reduce max=3D20 (max possible) below
-> max_avail: [8 .. max_avail]. Not sure what 5 is here...
+If max_contaminant_read_adc_mv() fails, then return the error code.  Don't
+return zero.
 
-Me mistyping values between two windows :-)
+Fixes: 02b332a06397 ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/usb/typec/tcpm/maxim_contaminant.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Well min(max, max_avail) would be the reduced upper limit.
-But you'd still fall foul of the compiler propagating the 'n > 1'
-check in order_base_2() further down the function.
-
-> > the author thought max_avail could be less than 5.
-> > But clamp(val, min, max) is only well defined for max >=3D min.
-> > If max < min whether is returns min or max depends on the order of
-> > the comparisons.
->=20
-> =09Looks like max_avail goes below 8 ? What value you see
-> for such small system?
-
-I'm not, but clearly you thought the value could be small otherwise
-the code would only have a 'max' limit.
-(Apart from a 'sanity' min of maybe 2 to stop the code breaking.)
-
->=20
-> > Change to clamp(max_avail, 5, 20) which has the expected behaviour.
->=20
-> =09It should be clamp(max_avail, 8, 20)
->=20
-> >
-> > Replace the clamp_val() on the line below with clamp().
-> > clamp_val() is just 'an accident waiting to happen' and not needed here=
-.
->=20
-> =09OK
->=20
-> > Fixes: 4f325e26277b6
-> > (Although I actually doubt the code is used on small memory systems.)
-> >
-> > Detected by compile time checks added to clamp(), specifically:
-> > minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
->=20
-> =09Existing or new check? Does it happen that max_avail
-> is a constant, so that a compile check triggers?
-
-Is all stems from order_base_2(totalram_pages()).
-order_base_2(n) is 'n > 1 ? ilog2(n - 1) + 1 : 0'.
-And the compiler generates two copies of the code that follows
-for the 'constant zero' and ilog2() values.
-And the 'zero' case compiles clamp(20, 8, 0) which is errored.
-Note that it is only executed if totalram_pages() is zero,
-but it is always compiled 'just in case'.
-
->=20
-> >
-> > Signed-off-by: David Laight <david.laight@aculab.com>
->=20
-> =09The code below looks ok to me but can you change the
-> comments above to more correctly specify the values and if the
-> problem is that max_avail goes below 8 (min).
->=20
-> > ---
-> >  net/netfilter/ipvs/ip_vs_conn.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs=
-_conn.c
-> > index 98d7dbe3d787..c0289f83f96d 100644
-> > --- a/net/netfilter/ipvs/ip_vs_conn.c
-> > +++ b/net/netfilter/ipvs/ip_vs_conn.c
-> > @@ -1495,8 +1495,8 @@ int __init ip_vs_conn_init(void)
-> >  =09max_avail -=3D 2;=09=09/* ~4 in hash row */
-> >  =09max_avail -=3D 1;=09=09/* IPVS up to 1/2 of mem */
-> >  =09max_avail -=3D order_base_2(sizeof(struct ip_vs_conn));
->=20
-> =09More likely we can additionally clamp max_avail here:
->=20
-> =09max_avail =3D max(min, max_avail);
->=20
-> =09But your solution solves the problem with less lines.
-
-And less code in the path that is actually executed.
-
-=09David
-
->=20
-> > -=09max =3D clamp(max, min, max_avail);
-> > -=09ip_vs_conn_tab_bits =3D clamp_val(ip_vs_conn_tab_bits, min, max);
-> > +=09max =3D clamp(max_avail, min, max);
-> > +=09ip_vs_conn_tab_bits =3D clamp(ip_vs_conn_tab_bits, min, max);
-> >  =09ip_vs_conn_tab_size =3D 1 << ip_vs_conn_tab_bits;
-> >  =09ip_vs_conn_tab_mask =3D ip_vs_conn_tab_size - 1;
-> >
-> > --
-> > 2.17.1
->=20
-> Regards
->=20
-> --
-> Julian Anastasov <ja@ssi.bg>
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
+index 22163d8f9eb0..0cdda06592fd 100644
+--- a/drivers/usb/typec/tcpm/maxim_contaminant.c
++++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
+@@ -135,7 +135,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
+ 
+ 		mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+ 		if (mv < 0)
+-			return ret;
++			return mv;
+ 
+ 		/* OVP enable */
+ 		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCOVPDIS, 0);
+@@ -157,7 +157,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
+ 
+ 	mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+ 	if (mv < 0)
+-		return ret;
++		return mv;
+ 	/* Disable current source */
+ 	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, SBURPCTRL, 0);
+ 	if (ret < 0)
+-- 
+2.45.2
 
 
