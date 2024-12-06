@@ -1,72 +1,174 @@
-Return-Path: <linux-kernel+bounces-435780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB699E7C32
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:04:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0A79E7C37
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C46188580B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:04:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA61116CCF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A05B204563;
-	Fri,  6 Dec 2024 23:04:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B64422C6E5;
-	Fri,  6 Dec 2024 23:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EF1212FA4;
+	Fri,  6 Dec 2024 23:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GwevWi3z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2161EF090;
+	Fri,  6 Dec 2024 23:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733526243; cv=none; b=GZTiRU3XsGD8FdTqeYWFGcH1YelJuGfnxvcp2roHnyY+Y/dvxQRVfH+L0BxRqG6iSsPz7qxrWp5/yWhtYFqcMa3niCmn9vwnkFRMt/chOSu8AFRCUXeKtxa/krVghvlJJiYMspPiDaP/ubrLavpf8fpMO8Sezj8yHvf/MMNHjLw=
+	t=1733526415; cv=none; b=TjAfkBjcoaI/70HbS9CGAMh08qT3rJrfJ39aPGgj4YgDWNyTLrPqaPvybSDUSTvEa0lmjRYFNES2wVGGRkkBNap0wIr6rA6UFulO6c7a1/I6Yd7bNd09TF8HD6W9SQ3JjcwO69zTUs+Ml3YRasLYQmqDO6coRokbp8JGVV5rm7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733526243; c=relaxed/simple;
-	bh=p4EFccDucNVKIcFX7FJDu84xUmq+NZPYJp6PPyIdjio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2jKcVjZHXQsBoTVYBmZWjIyglV5m0YbvG2EuycJBry/SdtA/OaDCjV5Lwc1qYJ02AS76zGUELYsfryHnJKdI+9fRejSGKP1CEMVClOzVrCJSMxchbI2Hn7Rg7GCTtVJEH9xacbjsFbDByfEn/cQDwDTz7NZyHyNUgIVFy/6Ldw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E283D11FB;
-	Fri,  6 Dec 2024 15:04:28 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E4A53F58B;
-	Fri,  6 Dec 2024 15:04:00 -0800 (PST)
-Date: Fri, 6 Dec 2024 23:03:58 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Kyle Meyer <kyle.meyer@hpe.com>, Ben Gainey <ben.gainey@arm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/8] Cpumap improvements for large MAX_NR_CPUS
-Message-ID: <20241206230358.GB5430@e132581.arm.com>
-References: <20241206044035.1062032-1-irogers@google.com>
+	s=arc-20240116; t=1733526415; c=relaxed/simple;
+	bh=ZtoiAjQ2U+lEx4d4Q+20KSR/KUtr9wtqJss8xBJgrck=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JuARf8kXdWkJZWcZgHg6UC+oMRIT/Fxu6hZD92yYBXdlwTlNm2ksoKvgrD2EkmlkEpGnghW4VNvF15M87bgJ3xjWfhEUo3695sQiYpeGeb5G6eDIFj6dI0fQqOeQL59lLQ0ij1AJGetDaym+6EVpsjKyA3r2G5Hacq/dl1Vfw/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GwevWi3z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A704C4CED1;
+	Fri,  6 Dec 2024 23:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733526415;
+	bh=ZtoiAjQ2U+lEx4d4Q+20KSR/KUtr9wtqJss8xBJgrck=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=GwevWi3zEYTROksNfCuVInm2/ZJETA3X2Omp/Nz3xcxMo2mI3KyQLeGRMdIZ3i2hi
+	 Ghk+KC7pFawEoLcBHwDUsaUo15ija/rUOtN4E1Sw/jYgqxaZ2BCQunRqu8BZvvsTod
+	 XWRSfjTgOXtxW88x+SPkzCrkBTiqGCPjSUQTBn6ApxX5Wv3zwvh15yMawHxLJQiSTl
+	 AAhLLApcTm4v1CRpe0yZ/0aEb1UOGVgE1rmsHCzbS7O+oZ+QN91j3jAgXG9hwYYX72
+	 gmrnBOUbdkKc/JjyODzR9kC9ZdlwLglkj2GgDVusG5k2GXusx0nZGLgboAvDL5d3zC
+	 AD+VUkhOMamww==
+Message-ID: <5f27c14467aa728358ebfe1686517aabe7c1e878.camel@kernel.org>
+Subject: Re: [PATCH v9 6/9] PCI/bwctrl: Re-add BW notification portdrv as
+ PCIe BW controller
+From: Niklas Schnelle <niks@kernel.org>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo
+ Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	 <kw@linux.com>, "Maciej W . Rozycki"
+ <macro@orcam.me.uk>, Jonathan Cameron	 <Jonathan.Cameron@Huawei.com>, Lukas
+ Wunner <lukas@wunner.de>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, Krishna
+ chaitanya chundru <quic_krichai@quicinc.com>, Srinivas Pandruvada
+ <srinivas.pandruvada@linux.intel.com>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, 	linux-pm@vger.kernel.org, Smita Koralahalli	
+ <Smita.KoralahalliChannabasappa@amd.com>, linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria
+ <amitk@kernel.org>,  Zhang Rui <rui.zhang@intel.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, niks@kernel.org
+Date: Sat, 07 Dec 2024 00:06:49 +0100
+In-Reply-To: <7a4a9d51a9105bd5ca2c850c26fed6435b5e90e9.camel@kernel.org>
+References: <20241018144755.7875-1-ilpo.jarvinen@linux.intel.com>
+						 <20241018144755.7875-7-ilpo.jarvinen@linux.intel.com>
+					 <db8e457fcd155436449b035e8791a8241b0df400.camel@kernel.org>
+				 <91b501c0ce92de681cc699eb6064840caad28803.camel@kernel.org>
+		 <7a4a9d51a9105bd5ca2c850c26fed6435b5e90e9.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206044035.1062032-1-irogers@google.com>
 
-On Thu, Dec 05, 2024 at 08:40:27PM -0800, Ian Rogers wrote:
-> 
-> Prompted by Kyle Meyer's <kyle.meyer@hpe.com> report of the
-> MAX_NR_CPUS value being too small, initiate some clean up of its
-> use. Kyle's patch is at the head of the series. The additional patches
-> hide MAX_NR_CPUS as exposed from cpumap.h, reduce its use by removing
-> perf_cpu_map__read, and try to better size the temporary CPU array in
-> perf_cpu_map__new.
+On Fri, 2024-12-06 at 21:07 +0100, Niklas Schnelle wrote:
+> On Fri, 2024-12-06 at 20:31 +0100, Niklas Schnelle wrote:
+> > On Fri, 2024-12-06 at 19:12 +0100, Niklas Schnelle wrote:
+> > > On Fri, 2024-10-18 at 17:47 +0300, Ilpo J=C3=A4rvinen wrote:
+> > > > This mostly reverts the commit b4c7d2076b4e ("PCI/LINK: Remove
+> > > > bandwidth notification"). An upcoming commit extends this driver
+> > > > building PCIe bandwidth controller on top of it.
+> > > >=20
+> > > > The PCIe bandwidth notification were first added in the commit
+> > > > e8303bb7a75c ("PCI/LINK: Report degraded links via link bandwidth
+> > > > notification") but later had to be removed. The significant changes
+> > > > compared with the old bandwidth notification driver include:
+> > > >=20
+> > ---8<---
+> > > > ---
+> > >=20
+> > > Hi Ilpo,
+> > >=20
+> > > I bisected a v6.13-rc1 boot hang on my personal workstation to this
+> > > patch. Sadly I don't have much details like a panic or so because the
+> > > boot hangs before any kernel messages, or at least they're not visibl=
+e
+> > > long enough to see. I haven't yet looked into the code as I wanted to
+> > > raise awareness first. Since the commit doesn't revert cleanly on
+> > > v6.13-rc1 I also haven't tried that yet.
+> > >=20
+> > > Here are some details on my system:
+> > > - AMD Ryzen 9 3900X=20
+> > > - ASRock X570 Creator Motherboard
+> > > - Radeon RX 5600 XT
+> > > - Intel JHL7540 Thunderbolt 3 USB Controller (only USB 2 plugged)
+> > > - Intel 82599 10 Gigabit NIC with SR-IOV enabled with 2 VFs
+> > > - Intel n I211 Gigabit NIC
+> > > - Intel Wi-Fi 6 AX200
+> > > - Aquantia AQtion AQC107 NIC
+> > >=20
+> > > If you have patches or things to try just ask.
+> > >=20
+> > > Thanks,
+> > > Niklas
+> > >=20
+> >=20
+> > Ok I can now at least confirm that bluntly disabling the new bwctrl
+> > driver with the below diff on top of v6.13-rc1 circumvents the boot
+> > hang I'm seeing. So it's definitely this.
+> >=20
+> > diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+> > index 5e10306b6308..6fa54480444a 100644
+> > --- a/drivers/pci/pcie/portdrv.c
+> > +++ b/drivers/pci/pcie/portdrv.c
+> > @@ -828,7 +828,7 @@ static void __init pcie_init_services(void)
+> >         pcie_aer_init();
+> >         pcie_pme_init();
+> >         pcie_dpc_init();
+> > -       pcie_bwctrl_init();
+> > +       /* pcie_bwctrl_init(); */
+> >         pcie_hp_init();
+> >  }
+> >=20
+>=20
+> Also here is the full lspci -vvv output running the above on v6.13-rc1:
+> https://paste.js.org/9UwQIMp7eSgp
+>=20
+> Also note that I have CONFIG_PCIE_THERMAL unset so it's also not the
+> cooling device portion that's causing the issue. Next I guess I should
+> narrow it down to the specific port where enabling the bandwidth
+> monitoring is causing trouble, not yet sure how best to do this with
+> this many devices.
+>=20
+> Thanks,
+> Niklas
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+Ok did some fiddeling and it's the thunderbolt ports. The below diff
+works around the issue. That said I guess for a proper fix this would
+should get filtered by the port service matching? Also as can be seen
+in lspci the port still claims to support bandwidth management so maybe
+other thunderbolt ports actually do.
+
+Thanks,
+Niklas
+
+diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+index b59cacc740fa..76a14f959c7f 100644
+--- a/drivers/pci/pcie/bwctrl.c
++++ b/drivers/pci/pcie/bwctrl.c
+@@ -294,6 +294,9 @@ static int pcie_bwnotif_probe(struct pcie_device *srv)
+        struct pci_dev *port =3D srv->port;
+        int ret;
+
++       if (srv->port->is_thunderbolt)
++               return -EOPNOTSUPP;
++
+        struct pcie_bwctrl_data *data =3D devm_kzalloc(&srv->device,
+                                                     sizeof(*data), GFP_KER=
+NEL);
+        if (!data)
+
 
