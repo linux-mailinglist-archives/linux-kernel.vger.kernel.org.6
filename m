@@ -1,239 +1,287 @@
-Return-Path: <linux-kernel+bounces-434335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804CB9E650D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B55549E64B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:20:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D31188556C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C379C1885673
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886CD1925A1;
-	Fri,  6 Dec 2024 03:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961CF18C932;
+	Fri,  6 Dec 2024 03:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XCIvd1c1"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2046.outbound.protection.outlook.com [40.107.100.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Afse77TG"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB04A1917FD;
-	Fri,  6 Dec 2024 03:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733455666; cv=fail; b=gCMr6B7xH3RLMJOK0Q+cgFK8XfWGbXj5Ed6tuOrVOybCktm+32tmM4GdJCb22DkXeL1CDn3ltxzC57l8gN24QidyKD3d8V9dhQqy6t6IFxkZmgdI1mQWfFyYf7C3HddbvLhYgZL53UEamTGqmCrJOA5azCe0cYw7es1/OR4NTwQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733455666; c=relaxed/simple;
-	bh=l2U2KjFfLUmyApn2ATtD6b4JTW7rGlGqzZsqU6yv/I8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=plgTxnoDoMuRHl6NYhGM29eklMORq6xf4tiQC3k6aCQBz/4AZVo0SYZPA91IJInKlw/KcOv40kLrF7LEUI9SaWf+lZH4z6zFczHYj5wYY5Y1liHe+zbPmfgtWgOPiy4+M96U0vPeDex3zr72yYdY95osFbkpU3tzu0j5VX6XYl8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XCIvd1c1; arc=fail smtp.client-ip=40.107.100.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hv59tU+Zb1lV1PQuzaFF0KbdXB7EfFmSwDON0lio/R5CVs502Vc/FWuIp8kwIu1Ti7GFrT7QCysSQLggS293yPUZC35B6ZJPxbGvvwNctmLobCNFhRHmyjdIA0Tq/nlDdhxxL8J4U7T3z8A9lY6hG7sZth201qJdpMrq4L3tCFdO6jJnGkvMMgb9kDpOWNe/pMkf0bzXAtqMnKBVh80mz3G2Ds8mrKQQnPB8udbwF+pJI1KamkyUQI69c121RcTzfwzAj3wTD7n4I03jXQdY/hnF/3NgDU6n7jC/1ldPtPysvXqupyxuGwvQnT9zmzGuEBDiXHCddFrxuPoEUjUwBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WUTFvONGs1tTyLtC91QLAACJkBeUgHTdatBQ/+u7ljE=;
- b=H8vE6Qv2vZjCxpvMl+WdgrlQ9z+xDPQtwTC25Ud95a+m478LM4YYu3XuwVM4AltthdgbAFezMjMA0NPPORr7OAudQ6v6fM5iFjZ5bbqUbHXJOc+fzXv7dLjiSIewhleeLrC4+CSFkQhKosPbO+70VtVV25xK0uW39fhCCJwTBxAnaZ0QWzwNJvz7zj70W/RbL9xBHCuCRhfPJKD68hd1edpgolfNjFhb5Y8vY0kBzDOtigh7/UIsT9yLpd86njaUUBRv/KA9mLlbBwAEKZEGBtjVd/EVfk71OncA0upk60DC+TlGTHI6nFekqAaRE2qVD+J7RePcSZoOqlaZ0Y9mWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WUTFvONGs1tTyLtC91QLAACJkBeUgHTdatBQ/+u7ljE=;
- b=XCIvd1c1YoUUXoRDncLRQ32dW3pmD4XMMil8kMIz349pZncAzKygKW1UEJ+925qHjY4FHN0ZN90IQJtbZcdWg/Acm4p0GIVSwWg/2zXmvw25SLqBXOQ/ngvvkV5nHTHklJR9j4SXsdJU7BxHjO68Vy1MFXdX2hiXjdiyvvmsQu4=
-Received: from BY3PR10CA0007.namprd10.prod.outlook.com (2603:10b6:a03:255::12)
- by IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
- 2024 03:27:39 +0000
-Received: from SJ1PEPF000023CF.namprd02.prod.outlook.com
- (2603:10b6:a03:255:cafe::4a) by BY3PR10CA0007.outlook.office365.com
- (2603:10b6:a03:255::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.10 via Frontend Transport; Fri,
- 6 Dec 2024 03:27:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000023CF.mail.protection.outlook.com (10.167.244.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Fri, 6 Dec 2024 03:27:39 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Dec
- 2024 21:26:28 -0600
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: Hans de Goede <hdegoede@redhat.com>, =?UTF-8?q?Ilpo=20J=C3=A4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, "Shyam
- Sundar S K" <Shyam-sundar.S-k@amd.com>, Corentin Chary
-	<corentin.chary@gmail.com>, "Luke D . Jones" <luke@ljones.dev>, Ike Panhc
-	<ike.pan@canonical.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	"Alexis Belmonte" <alexbelm48@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>, Ai Chao <aichao@kylinos.cn>, Gergo Koteles
-	<soyer@irl.hu>, open list <linux-kernel@vger.kernel.org>, "open list:ACPI"
-	<linux-acpi@vger.kernel.org>, "open list:MICROSOFT SURFACE PLATFORM PROFILE
- DRIVER" <platform-driver-x86@vger.kernel.org>, "open list:THINKPAD ACPI
- EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, Mark Pearson
-	<mpearson-lenovo@squebb.ca>, Matthew Schwartz <matthew.schwartz@linux.dev>,
-	Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <W_Armin@gmx.de>
-Subject: [PATCH v10 22/22] Documentation: Add documentation about class interface for platform profiles
-Date: Thu, 5 Dec 2024 21:19:18 -0600
-Message-ID: <20241206031918.1537-23-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241206031918.1537-1-mario.limonciello@amd.com>
-References: <20241206031918.1537-1-mario.limonciello@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2EE175BF;
+	Fri,  6 Dec 2024 03:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733455190; cv=none; b=g4+GWIcdWPgY/lwWa/uaa9kzibAUshA60Yw+WV/s0ECoy/CSNXX+Pr6v0AMD6Ahe3SYXk2b4pHWeNocxlR6QIxm0xeVENDjmkvWZskqeoHq/n3N3GqwanPX+G9yuQzkSwTrOwC9Dx30xcJVVrJ57duoJI7eHBOIQfz+TV/2Wh/k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733455190; c=relaxed/simple;
+	bh=qPqQ+wNsjqTxctx8MISRF3Ki9z5d0UPs2JnHnsZDIn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VbdSqxcg3PXXQlMOnCtm0SkI5DmDcdi84fIBKtJw+tKFskKZcUrhkyIE1lJjXIB7RtLit3Nc9/RYEiTOQ3Kwg3roml3uC5GQwiM9rUHyBZK4tgAwhT/W3WlOds6LCJ8T6HKtgd8A4g5yHL28xjQ6AXQBn2nJ/kVCViyNbgOqYic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Afse77TG; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-215a0390925so16941825ad.0;
+        Thu, 05 Dec 2024 19:19:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733455188; x=1734059988; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o1J08d2GpR5DBDse4TbjdicR+imRnKLikvjMWBZLku0=;
+        b=Afse77TGI0GWWXxk3d64mgUBlSz+LJ7HZ90GT5p1HpsyWSNeKXWLZlzF+yAY1zmQAQ
+         j5LdQqAQXtsZRKUbK7s54VjV3sjL9XHHb0e4gGisP7gYEbC7sLsbgpraCQ89sJqUwXvj
+         8Qph0IAeAEjB9q95sTUhovtp8fQpkN/UPuM9oQuyeSyhqWllhgvxznQ3i9xWy9P6ET5K
+         76zkk2L8F9qxopQcs4HKm+XfJ/KzKxjteTQr/G8o/dUSU8TJILrOy8DfUGIBtOky1u02
+         PyRTGa77VH/7M81/oyRZN8eRJs7PqpUq8NrDeK37TEYRqc3+jYsXgkzBKv1DHz889zmG
+         AKjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733455188; x=1734059988;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o1J08d2GpR5DBDse4TbjdicR+imRnKLikvjMWBZLku0=;
+        b=Jc02cGuLdoIFDKZWFmBdu9S65kPDnLtNfChFHc89fLbIejrPKrVykQWlExWGvlE/oH
+         YIm2wlTpaipGSqLl1U4rWN5MUXEF86C8Eqxq/SBmntNKP/8Tfcj6/XV+C3761fxk2LOh
+         ubf3NM8zKIl0TehEtT+zmnL2EYhu/eCYf/e2hZmJneoXFx7YW1qD4/egwXxqdDOdKPzU
+         CtEW1OtjtiDP9Vxo4KsZYoRLgm59rNMLqFC+MxYzb5uL2h18QWf3FzQ9o4NpbxWFrHvQ
+         3TlCrAkFeJ7izz5pMf4xMeYu9ahv1kQmtFTixNEs7CpEMAsl/QJkpPh37mhrGul96ifp
+         nDQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWPT7hPlQLsWXHNOMZC90lvKRCe7CouXzM7okoUfiDRvVcDfC4MOktQVso4VZjrirOjHs1GCaK@vger.kernel.org, AJvYcCWgRFG6B2zaKdWlQHlQVJrd+wJ0QYB/tlY14L/AM/IYz1eicOes0uqCKj4fwVLLUsDVlDaY14GxmHiJ@vger.kernel.org, AJvYcCWiTTmveouW0ADjcXtX2x4nO3m9Utzdy+3Oo2Z+6nQU2HQSFTpdqdp29ER+sXhjGZ8hn0ivbtDTbUP0q5uI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSezoVfErTNCV6gXdDg57Out29bN/GTejBRlUYrssIjGoJjdFR
+	eHqvau+FIrhnIV5KDbqCNPQa14BB03EfiXawfR9+AYzytVvbXSSafSdfmw==
+X-Gm-Gg: ASbGnctEIAYAkeZkX+8Pp9xYKBoKR/evbxkx5Cb9yvKnx3Yr4Xm8FgvBMzwlRke33hc
+	v003jOyj3r6N4P1WZnaFsFlYuH1XSgkAHmZ0nF9oOZv7Des+Ff0mM5MvhX3bxOarZ/BDq7Q/h/t
+	91rYi92XCMqp/Lx9Ue25FB/U/6fEC3BS4Y6r0MyFgKaUsI1XJ9494+g00m+HrY+QRT8BES/qhoH
+	LhJNrfaPv5tRg1mfjWpKBski/w+k/plwcqak/2wmv+agaNL/ojM5yaE37kO2JbDiqsM/Yi9PB+q
+	qzT6O0oajn6FEaZquvRHvTD/e1SJ
+X-Google-Smtp-Source: AGHT+IF785ewAXxfZzF45gbEj/3x8DTYf9enjYTZG3Qjck/WxskvwgRBw9uMc142aJEKW0klUE6onw==
+X-Received: by 2002:a17:903:240a:b0:215:6816:6345 with SMTP id d9443c01a7336-21614d74ed8mr23832465ad.16.1733455188374;
+        Thu, 05 Dec 2024 19:19:48 -0800 (PST)
+Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21610638673sm5075265ad.271.2024.12.05.19.19.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 19:19:47 -0800 (PST)
+Message-ID: <a04cd927-63cb-4271-bfc7-3ec97c5a978d@gmail.com>
+Date: Fri, 6 Dec 2024 11:19:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
+ MA35 family GMAC
+To: Rob Herring <robh@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, peppe.cavallaro@st.com,
+ linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20241202023643.75010-1-a0987203069@gmail.com>
+ <20241202023643.75010-2-a0987203069@gmail.com>
+ <20241204142722.GA177756-robh@kernel.org>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <20241204142722.GA177756-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CF:EE_|IA1PR12MB9031:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7b29437-0bb4-4069-77b7-08dd15a5efd4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T1k3dEo1VTZjNDlmUWJkbWR5SnlXbURCbDdqZU51Q2tyRENkcmc5UEpiM0dq?=
- =?utf-8?B?WFUydzNjeFBuOWh5eDBSbHprbURmaUJ3MGd4d29DUVRFRHJoSWVxWWg2TW53?=
- =?utf-8?B?bE5uN1J4RytuUFd1SFRNNjRJdmFndldwYTNiZlFYRC9HaDRYYUNPVExTOC85?=
- =?utf-8?B?QXg5R2lCWFpQR256TGJucWlTa09WNjVPZFVOQnplUWs2c3pTcTVwdnJ4N2cv?=
- =?utf-8?B?Z3Q0Mmc1b0MvNWhVQkhmSlN0YnpLUTRRTHorTTBzeGpvRHJoNDZqMVpTaEk1?=
- =?utf-8?B?Q2wzbC93b25kU2VQZFZmdTlrZkNxb1VCb0V3Q0doblVCK056SWVtZWVjSXFx?=
- =?utf-8?B?L0tkbE1aakIrWllnaS9FNHlyM0pHVGE0QXVFZFJCK210N1hGUmhEYnU5bHNk?=
- =?utf-8?B?S2p6QnBmWm1kRklVcUpPZnhmY1FUOTYxQzRvSUREUWR0Z0Zvd1l3M3lGVTI3?=
- =?utf-8?B?M2pyT002NVJPSFMvQW1hSGpvNkhzUU1LR0RoRUx3WjcvUUNTWm1iYllNTkNw?=
- =?utf-8?B?MFc4Ykhyd3lrSkZyR0lRVWNLcUxFNXdIZUE5d0krdFFmWU9KNG1sWVB2OXFF?=
- =?utf-8?B?ekl4WUxWaFJYVlVXRUVvTSsxblFhQmdBTlAwMlpEQjhNQlMzTk40WGZBeXJG?=
- =?utf-8?B?QkFMVVJFRmJPZmdQZHg5S2dETm1sNitsRG94Lzk1UVoxejM1NjlDT1lldTBy?=
- =?utf-8?B?TkpYaUdBaWU3TUg5S2tNTEwza3ViOHRCZE9IWXVDZkI1SUMxRjM2azdZUGIx?=
- =?utf-8?B?NGxYM3FyeFcySGxGckJ3aUlzMW5JTFltNHpRSGZPNTd0N2hqcndaeGVtVmZN?=
- =?utf-8?B?ZXNZNlF2S29TNHNMSFZuelU2dlR5cmw4OUg5SC9LMko2eWM0aXgvamNBR3BX?=
- =?utf-8?B?aTJzRG5pWXljSEdaZkFIQTJrV0VVNHFRWlZzN3U5YmU4bWdENXpOQ3NWOEx2?=
- =?utf-8?B?b3dHQURmd21uRFlOTVQ2L1BQTUJJTVFpRkhEUGVtQVNYeFpIMVJ1V1oxMUov?=
- =?utf-8?B?RkViZFNjWUpRUXJYWFdWTk9zUG52dG40R1JJRkFsRzBHTnZMM1FZQjIzNE1R?=
- =?utf-8?B?RjNkTi9RMHAwbG1MREd2U0F3Y256cUxYajFob0ZZQWFGYWdtb2YvRGFJTVlL?=
- =?utf-8?B?MmE4aTc1RHR0b3JnZ29lTjlOOXdTTGI2a0NKc28ra2tCd1B0eU9NMkxMVVpZ?=
- =?utf-8?B?TTFLbjVvRDNSZVhYTWJFVnR5R2FQQng3a2pXa3NNM21sUU1IQjlxZkxtcHNO?=
- =?utf-8?B?RTVJR09pTVdSdm5KY294TWFORXJmOTBZOWdmUUZPTFJ6YW5vempGVUVYOEhN?=
- =?utf-8?B?U052UFBuNG9rRW8rQzhXK05LMURmTVhOcTgyQkZCa3l1WVduc3Y4OVpIVUo0?=
- =?utf-8?B?OFhhRnVvb2hpVytJYit3Z3RwcDNMSDVBNFdCajk4QlNUdmJJdkVJNEUwSDQv?=
- =?utf-8?B?ZkhWNVQ0RTQ1Z2dtVS83ZlZ0SktuRy9tM1ZDdUZWSW5qMllkWE91WUNDcGo1?=
- =?utf-8?B?b2hmTEI1SXdJY2FzZDBESVQzM3JEdGI1K2lMN0dUVlVjUnBCcklsbHFxcUl4?=
- =?utf-8?B?MlNBUUhwZ1hXcEhyKzBkZ1A2cVgxWVBJbEhzZEkrS2NFOHFOQldFanJjUURQ?=
- =?utf-8?B?S2FKME9lOVBKc2NFWC8wZnFZQlAzRUVtaVRQR0tKaHNXMXcyYlBmaFZHbXFa?=
- =?utf-8?B?SUpBRTYwNkJvRmptYzA4a0xQS1MycHEvTzE0Nklya3N2OXBRNm81UDk5Tklr?=
- =?utf-8?B?d25UcUdGekhVU0dKSmpNdU9tKzZLSnZlZ0ZRM0gvNUJqK2I4UWVNSVRVWTZZ?=
- =?utf-8?B?Y1R1UGNXbzZDb2JxSVJOVldDdXhZQUY1Z1VadmlaM25xeVZDa2xwQzdQNHoz?=
- =?utf-8?B?d09SMWwrU2o2alVVNGFaSWVFZGFGaFFiSVFXZjZCYUorVnk1NGRrK3lZWXZR?=
- =?utf-8?Q?m3zeM1q3JAg7ljVsi0yEzKjv8OO61L6M?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 03:27:39.2381
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7b29437-0bb4-4069-77b7-08dd15a5efd4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023CF.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9031
 
-The class interface allows changing multiple platform profiles on a system
-to different values. The semantics of it are similar to the legacy
-interface.
+Dear Rob,
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-v10:
- * Add custom section
----
- .../ABI/testing/sysfs-platform_profile        |  5 +++
- .../userspace-api/sysfs-platform_profile.rst  | 38 +++++++++++++++++++
- 2 files changed, 43 insertions(+)
+Thank you for your reply.
 
-diff --git a/Documentation/ABI/testing/sysfs-platform_profile b/Documentation/ABI/testing/sysfs-platform_profile
-index baf1d125f9f83..125324ab53a96 100644
---- a/Documentation/ABI/testing/sysfs-platform_profile
-+++ b/Documentation/ABI/testing/sysfs-platform_profile
-@@ -33,3 +33,8 @@ Description:	Reading this file gives the current selected profile for this
- 		source such as e.g. a hotkey triggered profile change handled
- 		either directly by the embedded-controller or fully handled
- 		inside the kernel.
-+
-+		This file may also emit the string 'custom' to indicate
-+		that multiple platform profiles drivers are in use but
-+		have different values.  This string can not be written to
-+		this interface and is solely for informational purposes.
-diff --git a/Documentation/userspace-api/sysfs-platform_profile.rst b/Documentation/userspace-api/sysfs-platform_profile.rst
-index 4fccde2e45639..7f013356118ae 100644
---- a/Documentation/userspace-api/sysfs-platform_profile.rst
-+++ b/Documentation/userspace-api/sysfs-platform_profile.rst
-@@ -40,3 +40,41 @@ added. Drivers which wish to introduce new profile names must:
-  1. Explain why the existing profile names cannot be used.
-  2. Add the new profile name, along with a clear description of the
-     expected behaviour, to the sysfs-platform_profile ABI documentation.
-+
-+"Custom" profile support
-+========================
-+The platform_profile class also supports profiles advertising a "custom"
-+profile. This is intended to be set by drivers when the setttings in the
-+driver have been modified in a way that a standard profile doesn't represent
-+the current state.
-+
-+Multiple driver support
-+=======================
-+When multiple drivers on a system advertise a platform profile handler, the
-+platform profile handler core will only advertise the profiles that are
-+common between all drivers to the ``/sys/firmware/acpi`` interfaces.
-+
-+This is to ensure there is no ambiguity on what the profile names mean when
-+all handlers don't support a profile.
-+
-+Individual drivers will register a 'platform_profile' class device that has
-+similar semantics as the ``/sys/firmware/acpi/platform_profile`` interface.
-+
-+To discover which driver is associated with a platform profile handler the
-+user can read the ``name`` attribute of the class device.
-+
-+To discover available profiles from the class interface the user can read the
-+``choices`` attribute.
-+
-+If a user wants to select a profile for a specific driver, they can do so
-+by writing to the ``profile`` attribute of the driver's class device.
-+
-+This will allow users to set different profiles for different drivers on the
-+same system. If the selected profile by individual drivers differs the
-+platform profile handler core will display the profile 'custom' to indicate
-+that the profiles are not the same.
-+
-+While the ``platform_profile`` attribute has the value ``custom``, writing a
-+common profile from ``platform_profile_choices`` to the platform_profile
-+attribute of the platform profile handler core will set the profile for all
-+drivers.
--- 
-2.43.0
+Rob Herring 於 12/4/2024 10:27 PM 寫道:
+> On Mon, Dec 02, 2024 at 10:36:41AM +0800, Joey Lu wrote:
+>> Create initial schema for Nuvoton MA35 family Gigabit MAC.
+>>
+>> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+>> ---
+>>   .../bindings/net/nuvoton,ma35d1-dwmac.yaml    | 134 ++++++++++++++++++
+>>   .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+>>   2 files changed, 135 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml b/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+>> new file mode 100644
+>> index 000000000000..e44abaf4da3e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+>> @@ -0,0 +1,134 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/net/nuvoton,ma35d1-dwmac.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Nuvoton DWMAC glue layer controller
+>> +
+>> +maintainers:
+>> +  - Joey Lu <yclu4@nuvoton.com>
+>> +
+>> +description:
+>> +  Nuvoton 10/100/1000Mbps Gigabit Ethernet MAC Controller is based on
+>> +  Synopsys DesignWare MAC (version 3.73a).
+>> +
+>> +allOf:
+>> +  - $ref: snps,dwmac.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - nuvoton,ma35d1-dwmac
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description:
+>> +      Register range should be one of the GMAC interface.
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: MAC clock
+>> +      - description: PTP clock
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: stmmaceth
+>> +      - const: ptp_ref
+>> +
+>> +  nuvoton,sys:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    items:
+>> +      - items:
+>> +          - description: phandle to access syscon registers.
+>> +          - description: GMAC interface ID.
+>> +            enum:
+>> +              - 0
+>> +              - 1
+>> +    description:
+>> +      A phandle to the syscon with one argument that configures system registers
+>> +      for MA35D1's two GMACs. The argument specifies the GMAC interface ID.
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  reset-names:
+>> +    items:
+>> +      - const: stmmaceth
+>> +
+>> +  phy-mode:
+>> +    enum:
+>> +      - rmii
+>> +      - rgmii
+>> +      - rgmii-id
+>> +      - rgmii-txid
+>> +      - rgmii-rxid
+>> +
+>> +  tx-internal-delay-ps:
+>> +    default: 0
+>> +    minimum: 0
+>> +    maximum: 2000
+>> +    description:
+>> +      RGMII TX path delay used only when PHY operates in RGMII mode with
+>> +      internal delay (phy-mode is 'rgmii-id' or 'rgmii-txid') in pico-seconds.
+>> +      Allowed values are from 0 to 2000.
+>> +
+>> +  rx-internal-delay-ps:
+>> +    default: 0
+>> +    minimum: 0
+>> +    maximum: 2000
+>> +    description:
+>> +      RGMII RX path delay used only when PHY operates in RGMII mode with
+>> +      internal delay (phy-mode is 'rgmii-id' or 'rgmii-rxid') in pico-seconds.
+>> +      Allowed values are from 0 to 2000.
+>> +
+>> +  mdio:
+>> +    $ref: /schemas/net/mdio.yaml#
+> Drop. snps,dwmac.yaml already has this.
+Got it.
+>
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - interrupt-names
+> Drop all 4. Already required by snps,dwmac.yaml.
+Got it.
+>
+>> +  - clocks
+>> +  - clock-names
+>> +  - nuvoton,sys
+>> +  - resets
+>> +  - reset-names
+>> +  - phy-mode
+> Drop this one too.
+Got it.
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+>> +    #include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
+>> +    ethernet@40120000 {
+>> +        compatible = "nuvoton,ma35d1-dwmac";
+>> +        reg = <0x40120000 0x10000>;
+>> +        interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+>> +        interrupt-names = "macirq";
+>> +        clocks = <&clk EMAC0_GATE>, <&clk EPLL_DIV8>;
+>> +        clock-names = "stmmaceth", "ptp_ref";
+>> +
+>> +        nuvoton,sys = <&sys 0>;
+>> +        resets = <&sys MA35D1_RESET_GMAC0>;
+>> +        reset-names = "stmmaceth";
+>> +
+>> +        phy-mode = "rgmii-id";
+>> +        phy-handle = <&eth_phy0>;
+>> +        mdio {
+>> +            compatible = "snps,dwmac-mdio";
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +
+>> +            ethernet-phy@0 {
+>> +                reg = <0>;
+>> +            };
+>> +        };
+>> +    };
+>> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>> index eb1f3ae41ab9..4bf59ab910cc 100644
+>> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>> @@ -67,6 +67,7 @@ properties:
+>>           - ingenic,x2000-mac
+>>           - loongson,ls2k-dwmac
+>>           - loongson,ls7a-dwmac
+>> +        - nuvoton,ma35d1-dwmac
+>>           - qcom,qcs404-ethqos
+>>           - qcom,sa8775p-ethqos
+>>           - qcom,sc8280xp-ethqos
+>> -- 
+>> 2.34.1
+
+Thanks!
+
+BR,
+
+Joey
 
 
