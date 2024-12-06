@@ -1,146 +1,182 @@
-Return-Path: <linux-kernel+bounces-434278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917639E644E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:40:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CDD4188214F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:40:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743AB183CD1;
-	Fri,  6 Dec 2024 02:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cbMjFzPq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3BC9E6451
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:40:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D62513A87E;
-	Fri,  6 Dec 2024 02:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A1B284A7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:40:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A56A1865E2;
+	Fri,  6 Dec 2024 02:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfQNkJHV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC18214D433;
+	Fri,  6 Dec 2024 02:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452802; cv=none; b=DYpggNdpmtosrngzryXp3pbAfQSXrGdZJFgR7yyEBxrhZCCjNbNgnqoO8uyzIPhYVBgeQIHo5trfowzNymGVV2P23n0/UrvhPSi2NxAU932WfSZyxY5RorbA8L2AjCXZhHiMeigtXSUbx/dfoCGKf5iJh5sJdSUmxtGFdIbuCxI=
+	t=1733452818; cv=none; b=LuUvH2k9CkIagEigqRQuKsu3Lkn+8Xqvl9EfMTUv+fEMkSJ2Gx6zlvyKmrKOjg0I7Jt/VzQeHJJ7pvw0Og34dF8M5r7pC/zSdGFc7qZMeCxzLwGiufTWUbA3IGXGQQC8t0Q1cUCNstVUOFME6KSc/4h11nE0diiv59imlC/cpgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452802; c=relaxed/simple;
-	bh=vN7kfYVGX7Ui/e/G8mzCoyKlVgGDsyr4JqQpjh9g4SE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=or086A5V3+yxNX3WzhtdiB7vWeu3KP5Z10K9P6invUZCSCeVbvpcaKWylVDjojDCQ1VuL6l1SdrdIMJtwBW3hfZ+TaG0Rq4QTXuuSIUwrxjSHOZ1I969XJVDJHHhZgWF7i7Ed39g1vXjQ4odGIe1ZdCz0JDb3lE7125tj/rpP8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cbMjFzPq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaOZ1003829;
-	Fri, 6 Dec 2024 02:39:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ES+0LLK6o5L5hH4IvB8J17J4xxpqhqjEDDhe1N+9LK8=; b=cbMjFzPqQI6kTw6V
-	dvS3xRb27GFBA4eN5geZzCitwB/0vipL5/BC2kqksT1WnTd4Bg2eSxWbPCciphvH
-	mz40uUITrhNrBiVccacroISs+/ZA+pSOl61Hcu4SdBza7yAhB4rHYwZIXuyFhZ4Z
-	w8dv0Lg6gk2d7L0XFJdDFYs9vL43ai7HhbUFpaxLLJLvwZdJWQSsOwO1eFNBME/W
-	U7BnOsScJ4VGVCuQ2/7Bzkt/Mcndk5evo/m6rJ4EKH7mEfrwhQeau9wNEudqgZQM
-	dm2C1gPRXsXsTJuX0CEJ/N+b8hVSI0O2DabuNoJ6xXFAdtwwpXbMIpSPDqc++y46
-	svvd2w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm21ka-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 02:39:54 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62dsS4011446
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 02:39:54 GMT
-Received: from [10.233.22.158] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 18:39:49 -0800
-Message-ID: <d46037b0-1654-449a-9e42-3baf57a6feb2@quicinc.com>
-Date: Fri, 6 Dec 2024 10:39:46 +0800
+	s=arc-20240116; t=1733452818; c=relaxed/simple;
+	bh=kutxWliyYMrFZcWXJ006HBnrlV8xm95oCb5CgE0l0ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W9w3AcLND7s+Oo5jFh1lM4fWRiwEbe3AuY3U0fCWwaoLlAFHK+NAyjzQgC7KCssBBzk9gea+iHbeIXHNPttAcHfSCnRuvRIwg5jVpt3ER/+dYlFWuxFWDZlH4ql58CVXArJcCuaU3dxAYm/s0m0j+mJyQMIsiC8eEXihYtneeWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfQNkJHV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7856BC4CED6;
+	Fri,  6 Dec 2024 02:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733452818;
+	bh=kutxWliyYMrFZcWXJ006HBnrlV8xm95oCb5CgE0l0ko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TfQNkJHV8m3/KABqjivX6rNREbRv43EQ8wZPFYT7CfYwmqNAt/sFnkNjeAr5D43fb
+	 jZ9JdvkYkpt9/BXtZxyL8ES61EJLcXubKZ49B4QCB3sNH/bmDHBX+BbrPF87TB1VIa
+	 e5+9Z9BLXkOv0GWslGLYFJe+dKELNbHPpMWwFkd5bDibgmeNq2vePzjaiiybyM8l2h
+	 ZaccR92rEJlsv5UENx3SxK9WUGYv4Xt7PcXVeTmZufGLSNRNJIZ9L7NF4R8z6ELlRQ
+	 N0D7uMW54XgzDJZ04BUyLOOKvqtHBBuSgt5sJRG7uHJxgKai3aOtYoQvNT9vqt/Z5G
+	 r2PBztOUGhgIw==
+Date: Thu, 5 Dec 2024 18:40:16 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Toke
+ =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>, Maciej
+ Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
+ <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 09/10] page_pool: allow mixing PPs within
+ one bulk
+Message-ID: <20241205184016.6941f504@kernel.org>
+In-Reply-To: <20241203173733.3181246-10-aleksander.lobakin@intel.com>
+References: <20241203173733.3181246-1-aleksander.lobakin@intel.com>
+	<20241203173733.3181246-10-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: sa8775p-ride: Add firmware-name
- in BT node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
-        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
-References: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
- <20241205102213.1281865-4-quic_chejiang@quicinc.com>
- <kgxxykbogtdfsnkyk3f5mpht54o3siqkhkfji5nqo7cyck44rf@x7kb2otqdo7n>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <kgxxykbogtdfsnkyk3f5mpht54o3siqkhkfji5nqo7cyck44rf@x7kb2otqdo7n>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SP8Y9ZqXSoU9KyGcPf_62QeYC5I2eeXM
-X-Proofpoint-ORIG-GUID: SP8Y9ZqXSoU9KyGcPf_62QeYC5I2eeXM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060018
 
-Hi Dmitry,
+Very nice in general, I'll apply the previous 8 but I'd like to offer
+some alternatives here..
 
-On 12/5/2024 8:13 PM, Dmitry Baryshkov wrote:
-> On Thu, Dec 05, 2024 at 06:22:13PM +0800, Cheng Jiang wrote:
->> The sa8775p-ride platform uses the QCA6698 Bluetooth chip. While the
->> QCA6698 shares the same IP core as the WCN6855, it has different RF
->> components and RAM sizes, requiring new firmware files. Use the
->> firmware-name property to specify the NVM and rampatch firmware to load.
->>
->> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->> index 3fc62e123..e7fe53d95 100644
->> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->> @@ -857,6 +857,7 @@ &uart17 {
->>  
->>  	bluetooth {
->>  		compatible = "qcom,wcn6855-bt";
->> +		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
-> 
-> And the rampatch is not going to be board-specific?
-> 
-Yes, rampatch is chip-specific. 
->>  
->>  		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
->>  		vddaon-supply = <&vreg_pmu_aon_0p59>;
->> -- 
->> 2.25.1
->>
-> 
+On Tue,  3 Dec 2024 18:37:32 +0100 Alexander Lobakin wrote:
+> +void page_pool_put_netmem_bulk(netmem_ref *data, u32 count)
+>  {
+> -	int i, bulk_len = 0;
+> -	bool allow_direct;
+> -	bool in_softirq;
+> +	bool allow_direct, in_softirq, again = false;
+> +	netmem_ref bulk[XDP_BULK_QUEUE_SIZE];
+> +	u32 i, bulk_len, foreign;
+> +	struct page_pool *pool;
+>  
+> -	allow_direct = page_pool_napi_local(pool);
+> +again:
+> +	pool = NULL;
+> +	bulk_len = 0;
+> +	foreign = 0;
+>  
+>  	for (i = 0; i < count; i++) {
+> -		netmem_ref netmem = netmem_compound_head(data[i]);
+> +		struct page_pool *netmem_pp;
+> +		netmem_ref netmem;
+> +
+> +		if (!again) {
+> +			netmem = netmem_compound_head(data[i]);
+>  
+> -		/* It is not the last user for the page frag case */
+> -		if (!page_pool_is_last_ref(netmem))
+> +			/* It is not the last user for the page frag case */
+> +			if (!page_pool_is_last_ref(netmem))
+> +				continue;
 
+We check the "again" condition potentially n^2 times, is it written
+this way because we expect no mixing? Would it not be fewer cycles
+to do a first pass, convert all buffers to heads, filter out all
+non-last refs, and delete the "again" check?
+
+Minor benefit is that it removes a few of the long lines so it'd be
+feasible to drop the "goto again" as well and just turn this function
+into a while (count) loop.
+
+> +		} else {
+> +			netmem = data[i];
+> +		}
+> +
+> +		netmem_pp = netmem_get_pp(netmem);
+
+nit: netmem_pp is not a great name. Ain't nothing especially netmem
+about it, it's just the _current_ page pool.
+
+> +		if (unlikely(!pool)) {
+> +			pool = netmem_pp;
+> +			allow_direct = page_pool_napi_local(pool);
+> +		} else if (netmem_pp != pool) {
+> +			/*
+> +			 * If the netmem belongs to a different page_pool, save
+> +			 * it for another round after the main loop.
+> +			 */
+> +			data[foreign++] = netmem;
+>  			continue;
+> +		}
+>  
+>  		netmem = __page_pool_put_page(pool, netmem, -1, allow_direct);
+>  		/* Approved for bulk recycling in ptr_ring cache */
+>  		if (netmem)
+> -			data[bulk_len++] = netmem;
+> +			bulk[bulk_len++] = netmem;
+>  	}
+>  
+>  	if (!bulk_len)
+
+You can invert this condition, and move all the code from here to the
+out label into a small helper with just 3 params (pool, bulk, bulk_len).
+Naming will be the tricky part but you can save us a bunch of gotos.
+
+> -		return;
+> +		goto out;
+>  
+>  	/* Bulk producer into ptr_ring page_pool cache */
+>  	in_softirq = page_pool_producer_lock(pool);
+>  	for (i = 0; i < bulk_len; i++) {
+> -		if (__ptr_ring_produce(&pool->ring, (__force void *)data[i])) {
+> +		if (__ptr_ring_produce(&pool->ring, (__force void *)bulk[i])) {
+>  			/* ring full */
+>  			recycle_stat_inc(pool, ring_full);
+>  			break;
+> @@ -893,13 +915,22 @@ void page_pool_put_netmem_bulk(struct page_pool *pool, netmem_ref *data,
+>  
+>  	/* Hopefully all pages was return into ptr_ring */
+>  	if (likely(i == bulk_len))
+> -		return;
+> +		goto out;
+>  
+>  	/* ptr_ring cache full, free remaining pages outside producer lock
+>  	 * since put_page() with refcnt == 1 can be an expensive operation
+>  	 */
+>  	for (; i < bulk_len; i++)
+> -		page_pool_return_page(pool, data[i]);
+> +		page_pool_return_page(pool, bulk[i]);
+> +
+> +out:
+> +	if (!foreign)
+> +		return;
+> +
+> +	count = foreign;
+> +	again = true;
+> +
+> +	goto again;
+>  }
+>  EXPORT_SYMBOL(page_pool_put_netmem_bulk);
 
