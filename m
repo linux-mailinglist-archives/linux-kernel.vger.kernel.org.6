@@ -1,216 +1,188 @@
-Return-Path: <linux-kernel+bounces-434301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0306C9E6498
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:11:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F649E649E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:13:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9D9169F31
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F269818854F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578351865FA;
-	Fri,  6 Dec 2024 03:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1FA188906;
+	Fri,  6 Dec 2024 03:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="S7GbuEp5"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHG+t9ch"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F20B41C77
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 03:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC49A1CA94;
+	Fri,  6 Dec 2024 03:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733454694; cv=none; b=ZM28WNcD4/EOKAj8w5I9pDXCHtPowNIE0P5j6jzAHIViEBQ9OuYUmh0uQ70GhXtk5DjLPLZbb39sz4gnsajulzVUWKnGe56MIEIjKsEl6D5tws+KEoXirqZn5J5pOX/EXh1gyFdM7y1bS8zWBXfzrr+Yk8SroTayPokxxp//uGo=
+	t=1733454806; cv=none; b=YpB2Tz/BqzdBraaHyEzWoMhd0GFLrXlTniKU6qmAE19XOlhvSWir4PEGBQNu/Mo2snhe9mhpccL9lA/Orq6d848BNatWyjDKzhu1cc/Qgs0juB0E7yE9p0Da31JF0hJ8/Ed39Ly8ixkp//8ssLFvm/16mZCebDIlUfLQRntsjXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733454694; c=relaxed/simple;
-	bh=Z4J7TkCwX7hDU1Qu/rRgqv+dTbzMJN55S6FBRGCH+wQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QuaLeMn/KV7pUqEHoNZuApQTPUu0bNJ6jsg9ygGEOBgxhJbNOvE9F9HPHIlx1+fQ084nVlPZN5a15nBZD5UUFkZM4sFgr/vJVAjQlr85bR+ZtK+CjwSdbSVUVlnuhhj8R8+E2t4SmmoBzNHh0yzChWrITTVb91Du3UcBsfLkrMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=S7GbuEp5; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ef6af22ea8so303861a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 19:11:31 -0800 (PST)
+	s=arc-20240116; t=1733454806; c=relaxed/simple;
+	bh=Joighory19Iblj7Uie5NE/QYRYwk2lMN0L+ZXWc3PY4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qRAgFdmUgn62Mclv7jxMptwGvcxG/CzDVVtWi96ry9WSGmJUyJ2LGXaRxs4TXQxVMnE8jvWBu2ZoU9kyInmBnqIuArSp5yG5CFp/JdBWuiYZsGqQTR8D8TuedHo/Ork9coYLXlvjGw+DrOe8ILTHj5OmPrFFxtI4yPVO3fXD+ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHG+t9ch; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-724e1742d0dso1511900b3a.0;
+        Thu, 05 Dec 2024 19:13:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733454690; x=1734059490; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPtELaheiEZ50gSakyGhUgUYd2EpF+2rxS7HLuOc52o=;
-        b=S7GbuEp5hskuC1/b1tfbsAwkJXbY63sHJXqxNzXSpKKRrTKWf/WNkCRIOnVbh+2ary
-         ONotlP1XHUQ6+g6s4/UWlI29y3k0HjFyHD74/4uE58/c2dF9/7+PtK0GoVWSxNhcwFTK
-         9PXhMptCLH62kcGolcX5asT5iYxT2//oGfpzzliUNkEysWm7PFqE8ghR3tu/UccX/Usu
-         NxU/vH5ex4VowUsUi2xfCx49/DddlzTQTGQDuH9Wl7ET37wfv2vIk38CZYmk38hoS6Kd
-         SW1syDcr+K1H0pF9nB9p70VW79sSC5nLf1hJJ/hC1nFF0SN8mSaWy29rHUg0onIjkiOB
-         iw+g==
+        d=gmail.com; s=20230601; t=1733454804; x=1734059604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xt0SCTkvn+YR9UJenhf6zDr8e0FUj6bUNlIsy8Vy6XY=;
+        b=RHG+t9chJ6llDd5oFv82iFKQpkEHJhT7JwkP06A84GEjmOB8mgP4E0JMnjytsijv8o
+         DUJLzxif0SGpY6R1Q4fgiCIrVQ3njgu6izRsqvqKgDvBK7AAOiTf5u8J8F9VmCo2w4vh
+         TRT4k4CC/l3AOPKRLv2ja9EJ3NC4ftEL5Vncezzu1M8HthJBxJmU1VkM/LUqoY3pAmZH
+         LC/GgK7YgmmNwp9CTSZALTqYuEwuYRVSe4urjNgUz/fkwac000rIwR0LlwER+ghXfEML
+         txZ46Y7O9FLgS+TOtfTVPh79Epbize4Si8fINiqbhr7p6zz1VldHRXXYWWIcDwt+gzjt
+         BWdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733454690; x=1734059490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vPtELaheiEZ50gSakyGhUgUYd2EpF+2rxS7HLuOc52o=;
-        b=hCwnBzPdQ5WUwxpIoBPWu8DuFPTfykphmIatr1at82LWXeuvRbPaNrKAx3AQ9oIuND
-         L9JqkUYXEWW/f6cV7+M7NSiy1vUs8LCi//oXK9Dt5Z73D/sn5XlzF0glGx+KXZQDraNj
-         M+Vx/R8/T6eUcPLJUyt8dgtZTjw1+3lvHSEdO8VPgxC7u+WuVbFC3rWoyHETCh7Ss/R5
-         MZxPgt+lvGkma+KSMjqVFjAdUzryUiDCNI9x0prg27BbppLJ8idY5+wo18HQxVBnIxcN
-         9VMs3BSpTr13Nbq3vufXuxTsLp8UF/K3c3l4oyW3VOqooR6tcYUzVuO0LhRi1mPsmFrl
-         TqJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUloMUXio482/fB62DeZrUqCVs7gF+rFv9ATLhaxlr59R+0JockDv0BR46WJnNWRLEw65XQJkoBuBdUwbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycUA9xZO2UkWbaXjF/w8xMq/4Qn18OuaLSQ5CXEjY+mAOXrGlj
-	1vmfKfk2aGN5J2WSKOxPnttuJwV1wTAv6PwSKfo5T9UcjMNaRtcKOzjY/iAVhk6oPFhz9Pgv26r
-	eM18G7CQ/gcXQ/dQqmUO+/db6GP5NNxw5dHE7vg==
-X-Gm-Gg: ASbGnct8f5sjRHMXvdxFqzWNLefn5PU/7Oq8Pm0r6KQQ3AR36FHiikSskDp1ZsiLNgc
-	mvNq1iPaWYsDAqkeiP/lTxp5KBBASUL0fnuZatguzIMz3
-X-Google-Smtp-Source: AGHT+IHV0/FTNpzXCB+SWhNxGQqOyiwBlyuuQ4ZUGS/dKk13G8i2+s+EFfOF0h8AXMfdA7fqW2w35m8OZih68Z2b3+Q=
-X-Received: by 2002:a17:90b:524e:b0:2ee:f1e3:fd21 with SMTP id
- 98e67ed59e1d1-2ef6aaeedffmr2341974a91.25.1733454690511; Thu, 05 Dec 2024
- 19:11:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733454804; x=1734059604;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xt0SCTkvn+YR9UJenhf6zDr8e0FUj6bUNlIsy8Vy6XY=;
+        b=G8bIjVRZsrMy/1VKhnM/07n8kxkFOcr/+EBlJKAYhGeGGuBwLJ+HLz+K/ZsHSvEZL2
+         GyE6P25+Ot9GSHZtC5EJbi5X7YID1YsqX4Da6lGzK5Q87skBRRg4s/xL3KXVs2WGjmL9
+         bG3RzcuoxvT/iWd9KGj13SGdSNV4aGJcHVYqHzE7KLGbe3HnnDKz41rxsdyIOXm1rj0E
+         j4UM3IvowjLhAN0537Y0rSosDEDNPynfJV1IzWFNB+pVQZD8oZ0T6pkF3h28ffFWY3Xd
+         SYejBbLxqpHwKE4x940bM1vLPIkyuQ1skDL5mZrZFrF6QFzA0dwr91UgeJk1kISGQwQM
+         QLUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZr69ATtdhCx4mFj1FLuqzlOel3/TN0dThJWLaGjOk2fsBALumN9lkm7vvigseibgQ986o1xP8i3OZ@vger.kernel.org, AJvYcCWjGluVmRgqhj7eHdTeyHkksFh9jUofJPzmIrIVQM1+t06AZMn6BPYU7f0fNpli7lwWZO5m4MfQXvNf9VPK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVq4f145CHAB9nLu0cSYypgDx6uZc8PPJQGY0p4x3pHojYsRBP
+	6VDTi08Tj+TOqUhdPZP99yTx8XKyosp6aVXsltBDJIMXhLjVTaTI
+X-Gm-Gg: ASbGncvdyrmdz16H3d/W4V54HjV97a3NubH3icvm2C01KUSATsl4uyLsUsMYvegDqUr
+	VVVmgU1kDAqjdZdDudmmKvtSH5D2EPeHu3QhqeqM3k0s7hetoOaZOP11YPHdLfajxiByEgHEWI4
+	YHPaZqRRSxcPfD4V3yl4Mn57jtIK1X8SwpV55Oe6JPNfK8YjPsJMuwNovya4lBgGGct9rTUb8em
+	/rChr5Ds9wePR29a2NwaOTcwCBTHt6Bn1H0E1v1LGHcR3f8Iy9Rs5hyDUnwo6EUdif03H2ojeyT
+	JJG/nMh0dAI/WY2KDuUsxGEpt9MqGtTtuOk=
+X-Google-Smtp-Source: AGHT+IF7SIhnyAIa2s6klAC+ixAZnJb7XNMJ0xYjIoh2x56kOXx7Y1GiufB+JlFrmxcvjwEpoM/fmg==
+X-Received: by 2002:a05:6a00:14d2:b0:71e:a3:935b with SMTP id d2e1a72fcca58-725b820eac5mr2862137b3a.25.1733454804100;
+        Thu, 05 Dec 2024 19:13:24 -0800 (PST)
+Received: from localhost.localdomain (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29e9003sm1966791b3a.44.2024.12.05.19.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 19:13:23 -0800 (PST)
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	nikita.shubin@maquefel.me,
+	arnd@arndb.de,
+	vkoul@kernel.org,
+	esben@geanix.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hui-Ping Chen <hpchen0nvt@gmail.com>
+Subject: [PATCH v11 0/2] Add support for nuvoton ma35 nand controller
+Date: Fri,  6 Dec 2024 03:13:16 +0000
+Message-Id: <20241206031318.156152-1-hpchen0nvt@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203144954.91731-1-luxu.kernel@bytedance.com> <edba44ad-a4b6-473d-a175-142ea49add1c@ghiti.fr>
-In-Reply-To: <edba44ad-a4b6-473d-a175-142ea49add1c@ghiti.fr>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Fri, 6 Dec 2024 11:11:19 +0800
-Message-ID: <CAPYmKFtAAZkY-v7Oat4dXYnm6zCcReMnDdFo3qcqtqhj1wv8eg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2] riscv: mm: Fix alignment of phys_ram_base
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alexghiti@rivosinc.com, bjorn@rivosinc.com, lihangjing@bytedance.com, 
-	xieyongji@bytedance.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Alex,
+This patch series adds the mtd nand driver for the nuvoton ma35 ARMv8 SoC.
+It includes DT binding documentation and the ma35 mtd nand driver.
 
-On Thu, Dec 5, 2024 at 10:34=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
-te:
->
-> Hi Xu,
->
-> On 03/12/2024 15:49, Xu Lu wrote:
-> > This commit fixes the alignment of phys_ram_base in RISC-V.
-> >
-> > In sparse vmemmap model, the virtual address of vmemmap is calculated a=
-s:
-> > ((struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT)).
-> > And the struct page's va can be calculated with an offset:
-> > (vmemmap + (pfn)).
-> >
-> > However, when initializing struct pages, kernel actually starts from th=
-e
-> > first page from the same section that phys_ram_base belongs to. If the
-> > first page's physical address is not (phys_ram_base >> PAGE_SHIFT), the=
-n
-> > we get an va below VMEMMAP_START when calculating va for it's struct pa=
-ge.
-> >
-> > For example, if phys_ram_base starts from 0x82000000 with pfn 0x82000, =
-the
-> > first page in the same section is actually pfn 0x80000. During
-> > init_unavailable_range(), we will initialize struct page for pfn 0x8000=
-0
-> > with virtual address ((struct page *)VMEMMAP_START - 0x2000), which is
-> > below VMEMMAP_START as well as PCI_IO_END.
-> >
-> > This commit fixes this bug by aligning phys_ram_base with SECTION_SIZE.
-> >
-> > Fixes: c3bcc65d4d2e ("riscv: Start of DRAM should at least be aligned o=
-n PMD size for the direct mapping")
-> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
-> > ---
-> >   arch/riscv/mm/init.c | 15 ++++++++++++++-
-> >   1 file changed, 14 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > index 0e8c20adcd98..974cafa7c85e 100644
-> > --- a/arch/riscv/mm/init.c
-> > +++ b/arch/riscv/mm/init.c
-> > @@ -33,6 +33,9 @@
-> >   #include <asm/pgtable.h>
-> >   #include <asm/sections.h>
-> >   #include <asm/soc.h>
-> > +#ifdef CONFIG_SPARSEMEM
-> > +#include <asm/sparsemem.h>
-> > +#endif
-> >   #include <asm/tlbflush.h>
-> >
-> >   #include "../kernel/head.h"
-> > @@ -59,6 +62,12 @@ EXPORT_SYMBOL(pgtable_l4_enabled);
-> >   EXPORT_SYMBOL(pgtable_l5_enabled);
-> >   #endif
-> >
-> > +#ifdef CONFIG_SPARSEMEM
-> > +#define RISCV_MEMSTART_ALIGN (1UL << SECTION_SIZE_BITS)
-> > +#else
-> > +#define RISCV_MEMSTART_ALIGN PMD_SIZE
-> > +#endif
-> > +
-> >   phys_addr_t phys_ram_base __ro_after_init;
-> >   EXPORT_SYMBOL(phys_ram_base);
-> >
-> > @@ -239,9 +248,13 @@ static void __init setup_bootmem(void)
-> >       /*
-> >        * Make sure we align the start of the memory on a PMD boundary s=
-o that
-> >        * at worst, we map the linear mapping with PMD mappings.
-> > +      *
-> > +      * Also, make sure we align the start of the memory on a SECTION =
-boundary
-> > +      * when CONFIG_SPARSEMEM_VMEMMAP is enabled to ensure the correct=
-ness of
-> > +      * pfn_to_page().
-> >        */
-> >       if (!IS_ENABLED(CONFIG_XIP_KERNEL))
-> > -             phys_ram_base =3D memblock_start_of_DRAM() & PMD_MASK;
-> > +             phys_ram_base =3D round_down(memblock_start_of_DRAM(), RI=
-SCV_MEMSTART_ALIGN);
-> >
-> >       /*
-> >        * In 64-bit, any use of __va/__pa before this point is wrong as =
-we
->
->
-> That's a good catch indeed. But I'm wondering if it would be more
-> correct to fix the macro vmemmap instead of phys_ram_base since
-> phys_ram_base is supposed to hold the real base of the system memory,
-> which would be wrong with your patch. I mean something like that instead
-> (or similar, I haven't tested):
->
-> #define vmemmap         ((struct page *)VMEMMAP_START -
-> (round_down(memblock_start_of_DRAM(), RISCV_MEMSTART_ALIGN) >> PAGE_SHIFT=
-))
+v11:
+  - Update ma35d1 mtd nand driver
+    - Fix warnings and checks use --strict.
 
-Thanks for your comment.
+v10:
+  - Update ma35d1 mtd nand driver
+    - Add unsupported write page handling.
 
-Good idea. I have thought about this. But I wasn't sure if it's OK to
-introduce extra calculation whenever pfn_to_page() and page_to_pfn()
-is called. So I referred to ARM which aligns memstart_addr with
-SECTION size too and then made a similar modification.
+v9:
+  - Update ma35d1 mtd nand driver
+    - Remove NAND_NO_SUBPAGE_WRITE flag.
+    - Remove of_get_property().
+    - Add ecc.write_subpage and ecc.read_subpage.
 
-If it is not appropriate to change the semantics of phys_ram_base, how
-about introducing a new variable vmemmap_start_addr and use it to
-calculate vmemmap:
+v8:
+  - Update ma35d1 mtd nand driver
+    - Rename to nuvoton-ma35d1-nand-controller.c.
+    - Use switch case instead of if else.
+    - Move some parameters to be set during initialization.
+    - Fix the ecc.read_page return value issue.
+    - Add enable/disable ECC engine before and after reading/writing the page.
+    - Return IRQ_NONE if (isr & INT_DMA) == 0.
+    - Move the HW ECC related settings to ON_HOST.
+    - Move hw_init() to probe.
 
-#define vmemmap         ((struct page *)VMEMMAP_START -
-(vmemmap_start_addr >> PAGE_SHIFT))
+v7:
+  - Update nuvoton,ma35d1-nand.yaml
+    - Remove required 'nand-ecc-step-size' and 'nand-ecc-strength'.
+    - Add 'reg' for chip select.
+  - Update ma35d1 mtd nand driver
+    - Update space and comments style.
+    - Add chip select setting from DT.
+    - Add switch case which supports various ECC configurations.
+    - Set reset before NAND controller enable.
 
-Best Regards,
+v6:
+  - Update ma35d1 mtd nand driver
+    - Remove extra blank lines and add comments.
 
-Xu Lu
+v5:
+  - Update ma35d1 mtd nand driver
+    - Remove unnecessary definitions and comments.
+    - Modified DMA API call sequence.
+    - Move the ECC check out of the interrupt handler.
+      Check it after reading a page.
 
->
-> And the fixes tag should be:
->
-> Fixes: a11dd49dcb93 ("riscv: Sparse-Memory/vmemmap out-of-bounds fix")
->
-> Thanks,
->
-> Alex
->
+v4:
+  - Update nuvoton,ma35d1-nand.yaml
+    - rename 'nuvoton,ma35d1-nand' to 'nuvoton,ma35d1-nand-controller'.
+  - Update ma35d1 mtd nand driver
+    - Rewrite the NAND driver using the exec_op API.
+
+v3:
+  - Update ma35d1 mtd nand driver
+    - Release IRQ handler.
+    - Remove unused functions.
+    - Remove '.owner'.
+
+v2:
+  - Update nuvoton,ma35d1-nand.yaml
+    - Adjust the order and remove any unnecessary items.
+    - Add 'nand-ecc-step-size' and 'nand-ecc-strength' to the required list.
+  - Update ma35d1 mtd nand driver
+    - Fix coding style.
+    - Use 'devm_clk_get' instead of 'of_clk_get'.
+    - Use 'dev_err_probe' instead of 'dev_err'.
+    - Remove 'pr_info' and 'of_match_ptr'.
+    - Remove 'module_init' and 'module_exit'.
+
+
+Hui-Ping Chen (2):
+  dt-bindings: mtd: nuvoton,ma35d1-nand: add new bindings
+  mtd: rawnand: nuvoton: add new driver for the Nuvoton MA35 SoC
+
+ .../bindings/mtd/nuvoton,ma35d1-nand.yaml     |   95 ++
+ drivers/mtd/nand/raw/Kconfig                  |    8 +
+ drivers/mtd/nand/raw/Makefile                 |    1 +
+ .../nand/raw/nuvoton-ma35d1-nand-controller.c | 1029 +++++++++++++++++
+ 4 files changed, 1133 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
+ create mode 100644 drivers/mtd/nand/raw/nuvoton-ma35d1-nand-controller.c
+
+-- 
+2.25.1
+
 
