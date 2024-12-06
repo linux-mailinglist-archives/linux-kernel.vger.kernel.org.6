@@ -1,82 +1,120 @@
-Return-Path: <linux-kernel+bounces-434790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F959E6B5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:11:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0771884ED8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:11:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8694E1F8AF0;
-	Fri,  6 Dec 2024 10:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBP9H2H0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C859E6B9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:17:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7BD1AD9F9;
-	Fri,  6 Dec 2024 10:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94CBA287352
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:17:48 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EE01FCFEC;
+	Fri,  6 Dec 2024 10:14:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FF52066C3;
+	Fri,  6 Dec 2024 10:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733479874; cv=none; b=SW/zfWf73AL3ye4Nw26ts2Y/gAcr7ylAfdCxK/hYGO0etYstKuKHknvr59YUCzgQHlFBUGJnBVTHfAZX55bKgTSExDI97lAVJGo2/YIT4aKpnrtJkPyz7/TvnFUDI06nyiYoSXqukpK+baUVoA2xWISjpEzJEPS3eiVBdnhfSHk=
+	t=1733480043; cv=none; b=Jkxd9FZ5A3YX0wvMCWfV9HgjA4+NC9liyu6eg6SPfCzZOX5J5mE2JcwWfmI6/yE1wCh7KYvsjG6/6cVqm7efbGr+YewwiXEr8p/BKMIfBWR5CE6JQXiKlljwWtO5/75DdvQmEinxEFZWYwqONa5XqWHa59sZqdzwqaOxWbsjfiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733479874; c=relaxed/simple;
-	bh=MLNJAgBwRgs2KjM5s4PX7TmimuKXeMg69Vr4tEt3vIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMrt+p/y0SohUU2rnYHT4lfi4bCcFNDVunR/4N63ZuCfHlpaiK4uryM54n3yWzeE+QnksskaX0cJDtJqF2AcIyUHJ8IxB+rSp+4uPXe98jaKIdyg7a3+9XMWvSLOTpMdlXZYY9b7vsqnK4KBu5yMwDzx8Sm5kbum71xfIR6e7iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBP9H2H0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A591C4CED1;
-	Fri,  6 Dec 2024 10:11:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733479873;
-	bh=MLNJAgBwRgs2KjM5s4PX7TmimuKXeMg69Vr4tEt3vIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YBP9H2H0tqtGwm1CvEqLxfcBJhulgIHIQU5M+lk2sHOvivaDxLZHUmWH/xKxtoUZJ
-	 RM8SdJK9fttmHgrm7fJEgRrFmSHFsXlyuRxfXwoW7qGICZqH0fjniM++fhLaza6mPu
-	 GbwBUhJjh6xRpWZU8IaaIJsB80z5GxnuwnMtze36uwqvw4MNjA1k3LqCqRhisG5T/S
-	 ibwfIcyBpTJeTbO22kikY5pILlQxYK2DJUJYDR48wjI/DvSmjXhQ+JLzPv/2K/pTlx
-	 XdRinRuf57Iq8dfUeAJU3Kz3Kbmd0fD9xHaJJZ88Xe5Ja8WIzRNN7vLHwQJJqL6UCF
-	 TAdA5nXM/N6ZQ==
-Date: Fri, 6 Dec 2024 10:11:09 +0000
-From: Simon Horman <horms@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, frank.li@nxp.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v6 RESEND net-next 3/5] net: enetc: update max chained Tx
- BD number for i.MX95 ENETC
-Message-ID: <20241206101109.GK2581@kernel.org>
-References: <20241204052932.112446-1-wei.fang@nxp.com>
- <20241204052932.112446-4-wei.fang@nxp.com>
+	s=arc-20240116; t=1733480043; c=relaxed/simple;
+	bh=kI4EdNe7sM87gGs7vbW38Mj+O5EShaowAzL5bvtYhd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cflurd5A8xs4ya1SVZk3rqCUBr05MI9QteYF84JaKDIRDdH6FMvpAYuPCNeG0n0o67aWRejOnWpfnFFHHaMkTUMrMNWGtaLYQ7Lc5NDYceb+1eu1wNTWhcr8DTAb7/0Akn6YuLJ76SszP6xbEx8TgrDp7yBhItd6Ajmkgg49dhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B95E1BA8;
+	Fri,  6 Dec 2024 02:14:29 -0800 (PST)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 220533F71E;
+	Fri,  6 Dec 2024 02:13:57 -0800 (PST)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-hardening@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	aruna.ramakrishna@oracle.com,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com,
+	jannh@google.com,
+	jeffxu@chromium.org,
+	joey.gouly@arm.com,
+	kees@kernel.org,
+	maz@kernel.org,
+	pierre.langlois@arm.com,
+	qperret@google.com,
+	ryan.roberts@arm.com,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org
+Subject: [RFC PATCH 15/16] arm64: Enable kpkeys_hardened_pgtables support
+Date: Fri,  6 Dec 2024 10:11:09 +0000
+Message-ID: <20241206101110.1646108-16-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241206101110.1646108-1-kevin.brodsky@arm.com>
+References: <20241206101110.1646108-1-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204052932.112446-4-wei.fang@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04, 2024 at 01:29:30PM +0800, Wei Fang wrote:
-> The max chained Tx BDs of latest ENETC (i.MX95 ENETC, rev 4.1) has been
-> increased to 63, but since the range of MAX_SKB_FRAGS is 17~45, so for
-> i.MX95 ENETC and later revision, it is better to set ENETC4_MAX_SKB_FRAGS
-> to MAX_SKB_FRAGS.
-> 
-> In addition, add max_frags in struct enetc_drvdata to indicate the max
-> chained BDs supported by device. Because the max number of chained BDs
-> supported by LS1028A and i.MX95 ENETC is different.
-> 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+kpkeys_hardened_pgtables should be enabled as early as possible (if
+selected). It does however require kpkeys being available, which
+means on arm64 POE being detected and enabled. POE is a boot
+feature, so calling kpkeys_hardened_pgtables_enable() just after
+setup_boot_cpu_features() in smp_prepare_boot_cpu() is the best we
+can do.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+With that done, all the bits are in place and we can advertise
+support for kpkeys_hardened_pgtables by selecting
+ARCH_HAS_KPKEYS_HARDENED_PGTABLES if ARM64_POE is enabled.
+
+Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+---
+ arch/arm64/Kconfig      | 1 +
+ arch/arm64/kernel/smp.c | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index f35964641c1a..dac2f9a64826 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -2184,6 +2184,7 @@ config ARM64_POE
+ 	select ARCH_USES_HIGH_VMA_FLAGS
+ 	select ARCH_HAS_PKEYS
+ 	select ARCH_HAS_KPKEYS
++	select ARCH_HAS_KPKEYS_HARDENED_PGTABLES
+ 	help
+ 	  The Permission Overlay Extension is used to implement Memory
+ 	  Protection Keys. Memory Protection Keys provides a mechanism for
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 3b3f6b56e733..074cab55f9db 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -35,6 +35,7 @@
+ #include <linux/kgdb.h>
+ #include <linux/kvm_host.h>
+ #include <linux/nmi.h>
++#include <linux/kpkeys.h>
+ 
+ #include <asm/alternative.h>
+ #include <asm/atomic.h>
+@@ -468,6 +469,7 @@ void __init smp_prepare_boot_cpu(void)
+ 	if (system_uses_irq_prio_masking())
+ 		init_gic_priority_masking();
+ 
++	kpkeys_hardened_pgtables_enable();
+ 	kasan_init_hw_tags();
+ 	/* Init percpu seeds for random tags after cpus are set up. */
+ 	kasan_init_sw_tags();
+-- 
+2.47.0
 
 
