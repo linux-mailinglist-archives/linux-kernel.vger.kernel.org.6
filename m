@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-434967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFDF9E6D99
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:51:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0C09E6D9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775631643AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:51:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87574188195D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FB71FF7AC;
-	Fri,  6 Dec 2024 11:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5121FF7D3;
+	Fri,  6 Dec 2024 11:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b="Rzt8tD1P"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XxJdm4/4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7B61DB361
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2734D1F9A81
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733485884; cv=none; b=KJ+zpQUHY9WqzD8QcH0brB36asQHHT6nj4bT1Sy9OzHjc7tz0zXX8wrw/wR9KflX81XEqy1wCp5h4AmVbXUqgCEg5mHJsjt/OV77vkTmL0u4cxpoZvPMU+21i0q5G9NPwgBK3JCWAJaTBBib6LfWE3wtNZrBB/GO0l4l+wfUOCw=
+	t=1733485953; cv=none; b=Fq4r1t6RmvScZa9emmja3QQ/mdVZEZIFEd5wxw9L+q9DrBziemO7Iyx5BDkLLiqeDjnf0+aLC+ouIPiMAfFHLy8VNPoX2FatjhleSEZD3lu7wIr4BrUeqsdrylkJpPjnJhPkctTYrSaUqtjJpz5u90peXVJYu3qFDP8pt4We3RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733485884; c=relaxed/simple;
-	bh=jcKtMmgxbU/AntUCd/uszdkY27gKuPkRyQVGCHTm1Vk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AB4nkjdl7for/pYW6keWsT/2tL8G3fMNo8eveqCoqKzgeC559AxTu7b1U3mY59YrNMRP8i87ZfR8RF0urQvae1jFSiu+jZlF81y54q0gRTpUKTY+lIE2GPuIm/V2CHN51tQaJWC0tSe4G2iZibdpoBfHUO2icy0KWGylmvu+t/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com; spf=pass smtp.mailfrom=cornersoftsolutions.com; dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b=Rzt8tD1P; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cornersoftsolutions.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e3824e1adcdso1714033276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:51:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cornersoftsolutions.com; s=google; t=1733485881; x=1734090681; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q62PPXsE+VSeYwcr9qAvv8yZnUeLKqIqrisYrdVxhtU=;
-        b=Rzt8tD1P2KbhSHWSTGtCfA1sPzh0m/puG08v3FGZe5sx5m+sC58HNYOFSC/L44Uefg
-         W/Sbt/NiOZzRx1kKAIJYItaCt0A/ms28XSr6b1vVSnGWpItcw/h+sxIQQ7TbXYKyxWCD
-         MwP8W6EN9Sm+ZE56v0tKLRfwNBuBaUdHZGsVnarA1wdkfFxYl8Ih63xZXi8K/9BiXAxc
-         4gDXLFOWgvXEq3E2JKKy2a1cYBniVxYe0Rhlxjpje2k++ZmIFH9TE0TY68aXLvWFPRyV
-         /R+jjt6N7DSwl3h+TBdfNtF1OFdGwUaGtY+kGUPdCK7NNqzT8085YcYzK07HNLqZwugO
-         FhoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733485881; x=1734090681;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q62PPXsE+VSeYwcr9qAvv8yZnUeLKqIqrisYrdVxhtU=;
-        b=cDI2yUqCNlWKWv/rQIzGp+A5wIzdtiq/D0w17SiyEgqApISn7kqsRPjw/E/fFBQMd/
-         1PF4zE5ArxzcvvXps3NlN8z9wDUI9bQAu3dgo5ajiZ+3T+hsXk7BhnlY8bH1JEdwLf3J
-         ip3l7GrXgSyLALvjYstp4ssza/n2pugXi0DDKi1ImZ5GYPfNeGXPzJhbnGlcSq+CNBBW
-         m1p1sAq4EgtvTyLvcUauUCBZL3tC2YSgMRdSTc9flNsssn67a2hjXjO1wWvacqRfaKmU
-         avEENHD3ww8RmV0GGjsmYr8I2NDOX8bEi3FzOX7L1Mv8cqu7kACcjCorBo09px6CWeG9
-         V/7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXX0g0c7ST2m14MLZQRnK5sG75+632VPdTizMdWfFzViZtDsukmA96Fb0Tot1IHrv+N9gWbVi+XHced45M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9iDlkIdz1WKrnFSMh1gN0TAmSGyxmG2uGUlzU6mt/bBIM1PUP
-	wU4HLek+GNTHUI4ChRg714s+J+BS3gkm8a0ZTaK/3XwTDvZKWnfRogKbBb118Xo=
-X-Gm-Gg: ASbGncu5l9enl+/VF+TaDdBxqUWcZ5B65LdJGjeytVgOrQ4zlFA9/raNMIaZa0BEt5p
-	80R8qG9vDMl1rO1okLB/b1Q5agInBrFkzgPY7+Wv6FhxT76UQU/o0igL0nAq5XjtAoXv06DBs9a
-	W/EXSP2x4hMa3J8kaaT54zZ5dEFhG89VUNXa+Rae+ZJYSci1Z6yYAFaKQs+vqZADnSXyKQOAWsN
-	8CzZ/ISKSLQqc94G1DAR+YIXnSjFrqu/gAV22X6Uo3bmaXdxA/RAzQnHyiv7i4NyAqI1PJ9dX93
-	3LOrIKvzQk8Zybbigf29pC7JmIc=
-X-Google-Smtp-Source: AGHT+IG4eyt1sQPkyNP04ZtSf+u7M13/3ucraXNd9uqXuxzTv7vxnzMKhLqN6poDe47NCkgRh5GBaA==
-X-Received: by 2002:a05:6902:2388:b0:e39:787e:d9a with SMTP id 3f1490d57ef6-e3a0b786147mr1906937276.53.1733485881356;
-        Fri, 06 Dec 2024 03:51:21 -0800 (PST)
-Received: from ken-engineering-laptop.tail1e0d8d.ts.net ([47.196.152.243])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6efee2fc130sm802467b3.4.2024.12.06.03.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 03:51:21 -0800 (PST)
-From: Ken Sloat <ksloat@cornersoftsolutions.com>
-To: 
-Cc: Ken Sloat <ksloat@cornersoftsolutions.com>,
-	=?UTF-8?q?Am=C3=A9lie=20Delaunay?= <amelie.delaunay@foss.st.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	dmaengine@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: dma: st-stm32-dmamux: Add description for dma-cell values
-Date: Fri,  6 Dec 2024 06:50:18 -0500
-Message-Id: <20241206115018.1155149-1-ksloat@cornersoftsolutions.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733485953; c=relaxed/simple;
+	bh=fvR19Fke+nqsX8G1M7vQ81Me4p4pbkSD1dYSS3UM4zA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0p29BKdrTY3OK9ujiaBGwfgVWvNEg//bdxhrHEA6D8k1X3AtanXbh1bx4Z97NG676hwyG9u8kO9n7YH918WC+bHCrdg7EznNcC/rfgoue21diPqmr/HsrTEsa23iWLDoQucbYkjSHq/xY9ginMBv48R3auCh7iM66tS+2RXrY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XxJdm4/4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733485951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gppRjBK2ayDqLXJbDav8bMCH+p/FKEHFZICRNK1hGng=;
+	b=XxJdm4/4Ddwo3iTdc0GrEYeqrQv0iBfpfaUzMSXI75QWsqhv2pMKqE3WnVH2S0bmrQ9B6+
+	uc3cjO4RI3B3L7zfV6I4M+CAXNzfAhbPJJz/BbqoAHUNs9/0M6qf4xjobNrNTmchaOo3B7
+	UaWfUNWhZqIjnzjbF6punKrgF1zALLE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-468-ENwAxsbaOkSeO5nLZWaGhg-1; Fri,
+ 06 Dec 2024 06:52:25 -0500
+X-MC-Unique: ENwAxsbaOkSeO5nLZWaGhg-1
+X-Mimecast-MFC-AGG-ID: ENwAxsbaOkSeO5nLZWaGhg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 499E21956055;
+	Fri,  6 Dec 2024 11:52:23 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.103])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 571B31956095;
+	Fri,  6 Dec 2024 11:52:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  6 Dec 2024 12:52:00 +0100 (CET)
+Date: Fri, 6 Dec 2024 12:51:54 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>,
+	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
+	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v5 01/16] x86/stackprotector: Work around strict Clang
+ TLS symbol requirements
+Message-ID: <20241206115154.GA32491@redhat.com>
+References: <20241105155801.1779119-1-brgerst@gmail.com>
+ <20241105155801.1779119-2-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105155801.1779119-2-brgerst@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-The dma-cell values for the stm32-dmamux are used to craft the DMA spec
-for the actual controller. These values are currently undocumented
-leaving the user to reverse engineer the driver in order to determine
-their meaning. Add a basic description, while avoiding duplicating
-information by pointing the user to the associated DMA docs that
-describe the fields in depth.
+On 11/05, Brian Gerst wrote:
+>
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -468,6 +468,9 @@ SECTIONS
+>  . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
+>  	   "kernel image bigger than KERNEL_IMAGE_SIZE");
+>
+> +/* needed for Clang - see arch/x86/entry/entry.S */
+> +PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
 
-Signed-off-by: Ken Sloat <ksloat@cornersoftsolutions.com>
----
+Don't we need the simple fix below?
 
-Changes in v2:
-    - Remove redundant comment regarding dma-cells val
-    - Reference bindings doc for DMA controller
+without this patch I can't build the kernel with CONFIG_STACKPROTECTOR=n.
 
- .../devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Oleg.
 
-diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-index f26c914a3a9a..b7bca1a83769 100644
---- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-+++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dmamux.yaml
-@@ -15,6 +15,16 @@ allOf:
- properties:
-   "#dma-cells":
-     const: 3
-+    description: |
-+      Each cell represents the following:
-+      1. The mux input number/line for the request
-+      2. Bitfield representing DMA channel configuration that is passed
-+         to the real DMA controller
-+      3. Bitfield representing device dependent DMA features passed to
-+         the real DMA controller
-+
-+      For bitfield definitions of cells 2 and 3, see the associated
-+      bindings doc for the actual DMA controller in st,stm32-dma.yaml.
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index fab3ac9a4574..2ff48645bab9 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -472,8 +472,10 @@ SECTIONS
+ . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
+ 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
  
-   compatible:
-     const: st,stm32h7-dmamux
--- 
-2.34.1
++#ifdef CONFIG_STACKPROTECTOR
+ /* needed for Clang - see arch/x86/entry/entry.S */
+ PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
++#endif
+ 
+ #ifdef CONFIG_X86_64
+ /*
 
 
