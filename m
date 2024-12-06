@@ -1,167 +1,146 @@
-Return-Path: <linux-kernel+bounces-434277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00C09E644A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:38:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917639E644E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85701168C01
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:38:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CDD4188214F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C121317B418;
-	Fri,  6 Dec 2024 02:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743AB183CD1;
+	Fri,  6 Dec 2024 02:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YHNRCVGt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cbMjFzPq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C335214D433
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D62513A87E;
+	Fri,  6 Dec 2024 02:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452714; cv=none; b=gMVTropMC+fA98Mq9aMShkGLyDRlHR2Vn0ybtc5yQEin2PY5IuxY29jUw2x830oFsmtEQb547R4pvIfwS2vZ9ZakJ384YJgUCi6FbcKf9zFzK7KPYXbFf6v8VI1kZe/xULpHIv2FFnYV1AtAivJi194BMYFku+I+XwzseB7FZ20=
+	t=1733452802; cv=none; b=DYpggNdpmtosrngzryXp3pbAfQSXrGdZJFgR7yyEBxrhZCCjNbNgnqoO8uyzIPhYVBgeQIHo5trfowzNymGVV2P23n0/UrvhPSi2NxAU932WfSZyxY5RorbA8L2AjCXZhHiMeigtXSUbx/dfoCGKf5iJh5sJdSUmxtGFdIbuCxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452714; c=relaxed/simple;
-	bh=wNgTPz8AgRVXV6HrZhY9Nb41hj2wBW/WH3xQZRZYaMc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eqH8KNE1CnRrCFQqSlF3ttKagzHnAcm4IfeJ2UOQ7v/WnzeDfoZAbd+CorwuLq/TdpjGvI2ssdBZ983o0aDKpO+l/akgP8Id7cq1+bPaofE6/3aCp2/Ca4g5CWYsd++UrhefJtlc0SDpw3DjQgsaf8zdVR3k6fqgLvSG71IdYKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YHNRCVGt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733452709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6nT0DV9JByo+6iUSRQFf0u5MMGCTCWwzLaVplVJHUzA=;
-	b=YHNRCVGtTCOrs5MIaarewlJsBpArRaX6LXRoLIorj8QeSPaoaXFdQ4S06Lq2j0GZH1QWQU
-	4ojlm76CW5q5e09Ym9Wmi/JEmkJfskLlYWZrkmfHoyMgoaBJYS80So6y14gSS/U0TtXum5
-	/o8vvc50/ndGOUV5xqMejIZ0UQ2qh38=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-21-HbTOODgINJmoImFslz3C1A-1; Thu, 05 Dec 2024 21:38:28 -0500
-X-MC-Unique: HbTOODgINJmoImFslz3C1A-1
-X-Mimecast-MFC-AGG-ID: HbTOODgINJmoImFslz3C1A
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ee8cdb4c40so1560343a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 18:38:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733452707; x=1734057507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6nT0DV9JByo+6iUSRQFf0u5MMGCTCWwzLaVplVJHUzA=;
-        b=bLQlKOaxgtLfeGePnS9jda/gdSxuqWa6Y/83v35SPV0Yon2WhOOshesVAq3yRx7vC4
-         vn/N+0z7gtZ4QTgRT7Vi/kWKDdYF8sJBqPwx4Fs74kOnBMo33EmSdnrA2zeGuAqmDKUe
-         vd5WwevZ1VuAuVfKZWOWZgQcB5o+BctEUXf9nM30iB/9iY++AbPoKseeYu471iywre5U
-         824yqFc87dgkr0e1A3ul87W2mnjqeaE193JzZseU+ik7sv5hIme0kycev05zbbR7V74+
-         scLLpxr7iMt5w2Ca+rzvCTijiwlqV8cCDH7zG6Oe8focoN02qAhheoOdG/3PPHI9uHP5
-         mp1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWDKdfzIPcsKMIO7OMHK0HOmlliVf2x1B6nZ2q/q2HZcSyfdaxRBmRWCiAsMPrI0iXyKL4ADFtRGkaZH84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+5mk+YocBW8wYLdKUzkpjM/5xrF84tp4t3xJhuCiYgFItEh45
-	WY1OwuYly2wpqjh4HglFfiN1LRc2KS4gx56ca3xkUpofVpt98SuJ/cknKH5ky4ZMdmQt2x2jwxW
-	KwMsmgLFbONyJxLhGazsaaQGr2Hmj7VmxfMv3uvtVPILOy/f8AOprpuUaSKeZeALhi/VkGo3FCE
-	Z6yfIxvP937wYO94SjHQ28WfprRAh7VMRDR2mq
-X-Gm-Gg: ASbGncutg1Xlck5nrXR/wYdlWi+bkSgnx9kDkGcZIl+gMWbChaCENVAN9tkgpQz3bdr
-	ZbrLhUrhS+j99fUymXMYdYjw8UMG4XPPcFg==
-X-Received: by 2002:a17:90b:3a48:b0:2ee:c9d8:d01a with SMTP id 98e67ed59e1d1-2ef69e12847mr2282969a91.11.1733452707514;
-        Thu, 05 Dec 2024 18:38:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGxVsjXZwpAnmXEbhbW5Xn3qF8C7Ogv9ErnhY0q29NJY1JfEkb/9EFOVWWxh5R9GTjTFyGFd6YK0d2Wj4RnD0o=
-X-Received: by 2002:a17:90b:3a48:b0:2ee:c9d8:d01a with SMTP id
- 98e67ed59e1d1-2ef69e12847mr2282945a91.11.1733452707116; Thu, 05 Dec 2024
- 18:38:27 -0800 (PST)
+	s=arc-20240116; t=1733452802; c=relaxed/simple;
+	bh=vN7kfYVGX7Ui/e/G8mzCoyKlVgGDsyr4JqQpjh9g4SE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=or086A5V3+yxNX3WzhtdiB7vWeu3KP5Z10K9P6invUZCSCeVbvpcaKWylVDjojDCQ1VuL6l1SdrdIMJtwBW3hfZ+TaG0Rq4QTXuuSIUwrxjSHOZ1I969XJVDJHHhZgWF7i7Ed39g1vXjQ4odGIe1ZdCz0JDb3lE7125tj/rpP8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cbMjFzPq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaOZ1003829;
+	Fri, 6 Dec 2024 02:39:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ES+0LLK6o5L5hH4IvB8J17J4xxpqhqjEDDhe1N+9LK8=; b=cbMjFzPqQI6kTw6V
+	dvS3xRb27GFBA4eN5geZzCitwB/0vipL5/BC2kqksT1WnTd4Bg2eSxWbPCciphvH
+	mz40uUITrhNrBiVccacroISs+/ZA+pSOl61Hcu4SdBza7yAhB4rHYwZIXuyFhZ4Z
+	w8dv0Lg6gk2d7L0XFJdDFYs9vL43ai7HhbUFpaxLLJLvwZdJWQSsOwO1eFNBME/W
+	U7BnOsScJ4VGVCuQ2/7Bzkt/Mcndk5evo/m6rJ4EKH7mEfrwhQeau9wNEudqgZQM
+	dm2C1gPRXsXsTJuX0CEJ/N+b8hVSI0O2DabuNoJ6xXFAdtwwpXbMIpSPDqc++y46
+	svvd2w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm21ka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 02:39:54 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62dsS4011446
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 02:39:54 GMT
+Received: from [10.233.22.158] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 18:39:49 -0800
+Message-ID: <d46037b0-1654-449a-9e42-3baf57a6feb2@quicinc.com>
+Date: Fri, 6 Dec 2024 10:39:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121134002.990285-1-sthotton@marvell.com> <20241121134002.990285-4-sthotton@marvell.com>
-In-Reply-To: <20241121134002.990285-4-sthotton@marvell.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 6 Dec 2024 10:38:15 +0800
-Message-ID: <CACGkMEtydc4q5Dc1wwN52na37uWLf24e-Tmp6rYmKyg0TDgXUg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] vdpa/octeon_ep: add interrupt handler for virtio
- crypto device
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: virtualization@lists.linux.dev, mst@redhat.com, dan.carpenter@linaro.org, 
-	schalla@marvell.com, vattunuru@marvell.com, ndabilpuram@marvell.com, 
-	jerinj@marvell.com, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Satha Rao <skoteshwar@marvell.com>, open list <linux-kernel@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: sa8775p-ride: Add firmware-name
+ in BT node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao
+	<quic_rjliao@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
+        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
+References: <20241205102213.1281865-1-quic_chejiang@quicinc.com>
+ <20241205102213.1281865-4-quic_chejiang@quicinc.com>
+ <kgxxykbogtdfsnkyk3f5mpht54o3siqkhkfji5nqo7cyck44rf@x7kb2otqdo7n>
+Content-Language: en-US
+From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+In-Reply-To: <kgxxykbogtdfsnkyk3f5mpht54o3siqkhkfji5nqo7cyck44rf@x7kb2otqdo7n>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SP8Y9ZqXSoU9KyGcPf_62QeYC5I2eeXM
+X-Proofpoint-ORIG-GUID: SP8Y9ZqXSoU9KyGcPf_62QeYC5I2eeXM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060018
 
-On Thu, Nov 21, 2024 at 9:43=E2=80=AFPM Shijith Thotton <sthotton@marvell.c=
-om> wrote:
->
-> Introduced an interrupt handler for the virtio crypto device, as its
-> queue usage differs from that of network devices. While virtio network
-> device receives packets only on even-indexed queues, virtio crypto
-> device utilize all available queues for processing data.
+Hi Dmitry,
 
-I'm not sure I will get here but the recent kernel depends heavily on
-the tx interrupt for skb post processing as well.
-
->
-> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
-> ---
->  drivers/vdpa/octeon_ep/octep_vdpa_main.c | 52 +++++++++++++++++++++++-
->  1 file changed, 50 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octe=
-on_ep/octep_vdpa_main.c
-> index d674b9678428..1bdf7a8111ce 100644
-> --- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-> +++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-> @@ -44,7 +44,35 @@ static struct octep_hw *vdpa_to_octep_hw(struct vdpa_d=
-evice *vdpa_dev)
->         return oct_vdpa->oct_hw;
->  }
->
-> -static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
-> +static irqreturn_t octep_vdpa_crypto_irq_handler(int irq, void *data)
-> +{
-> +       struct octep_hw *oct_hw =3D data;
-> +       int i;
-> +
-> +       /* Each device interrupt (nb_irqs) maps to specific receive rings
-> +        * (nr_vring) in a round-robin fashion.
-> +        *
-> +        * For example, if nb_irqs =3D 8 and nr_vring =3D 64:
-> +        * 0 -> 0, 8, 16, 24, 32, 40, 48, 56;
-> +        * 1 -> 1, 9, 17, 25, 33, 41, 49, 57;
-> +        * ...
-> +        * 7 -> 7, 15, 23, 31, 39, 47, 55, 63;
-> +        */
-
-So this algorithm is mandated by the device?
-
-I'm asking since it's better to not have type specific policy in the
-vDPA layer. As the behaviour of the guest might change.
-
-For example, for networking devices, in the future we may switch to
-use a single interrupt/NAPI to handle both RX and TX. And note that
-this is only the behaviour of Linux, not other drivers like DPDK or
-other OSes.
-
-> +       for (i =3D irq - oct_hw->irqs[0]; i < oct_hw->nr_vring; i +=3D oc=
-t_hw->nb_irqs) {
-> +               if (ioread32(oct_hw->vqs[i].cb_notify_addr)) {
-> +                       /* Acknowledge the per ring notification to the d=
-evice */
-> +                       iowrite32(0, oct_hw->vqs[i].cb_notify_addr);
-> +
-> +                       if (likely(oct_hw->vqs[i].cb.callback))
-> +                               oct_hw->vqs[i].cb.callback(oct_hw->vqs[i]=
-.cb.private);
-> +                       break;
-> +               }
-> +       }
-
-Thanks
+On 12/5/2024 8:13 PM, Dmitry Baryshkov wrote:
+> On Thu, Dec 05, 2024 at 06:22:13PM +0800, Cheng Jiang wrote:
+>> The sa8775p-ride platform uses the QCA6698 Bluetooth chip. While the
+>> QCA6698 shares the same IP core as the WCN6855, it has different RF
+>> components and RAM sizes, requiring new firmware files. Use the
+>> firmware-name property to specify the NVM and rampatch firmware to load.
+>>
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> index 3fc62e123..e7fe53d95 100644
+>> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> @@ -857,6 +857,7 @@ &uart17 {
+>>  
+>>  	bluetooth {
+>>  		compatible = "qcom,wcn6855-bt";
+>> +		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+> 
+> And the rampatch is not going to be board-specific?
+> 
+Yes, rampatch is chip-specific. 
+>>  
+>>  		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
+>>  		vddaon-supply = <&vreg_pmu_aon_0p59>;
+>> -- 
+>> 2.25.1
+>>
+> 
 
 
