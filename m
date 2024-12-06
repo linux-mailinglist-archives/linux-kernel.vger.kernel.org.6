@@ -1,370 +1,338 @@
-Return-Path: <linux-kernel+bounces-434142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7916E9E6229
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B459E622D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE671691BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E06169796
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A712112EBE7;
-	Fri,  6 Dec 2024 00:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D1D1EB48;
+	Fri,  6 Dec 2024 00:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMJNYpA4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="O3NGbEKm"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3568126C04;
-	Fri,  6 Dec 2024 00:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BD0C2C8
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733444675; cv=none; b=JCOIJYTfQpr6idnIAhK2A92XuuWJwjbQuBvNCAgPJVO/fL6sAVRwRkFhYr+lZDWJpKtLJgJ7HwyZ8MsFdQRqwUW/STSSF3rtFvacTgp/0ccri9fordB2wadIqxCHUr+XWHIu23od38ldK8WakCnC8D6NSUUKKIVZpbIGhu4UjlM=
+	t=1733444881; cv=none; b=aVomMNfkFUTFeFyCxodlnLeBtup/RHf8CgKaPwQntpl0AxHv/xp5mZnXk1DfBbnLJNQpaZ7oW5u41T2VMrnVahemTocbAX8YTpmFoiES1mIFaWuVVooXwPvVjgHqhms/SozExD9fdq79E15oerasngMOE+4oVfIIOfzWMoExUOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733444675; c=relaxed/simple;
-	bh=2NHAC/ucuHOP+dlhjMOWq5m414F5Fa63pCr8kcoZANw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ApMCF5uUgc8YMg0HUjmnQKNGH7xV06ka7VYFqMqONN/ObNxxwdXqiqpJ/Fem5DttIsvoiUTt7uIGLDxgx1gNSA4ltPy8kUAlJS7Gvl1JYb7yo71ElSzLrchgaMNYJhtQoDqCOUo7LVrSyHCQNHJ5hYgIvnSf7J+OGjdoKQcy2QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMJNYpA4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5D1C4CEDE;
-	Fri,  6 Dec 2024 00:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733444675;
-	bh=2NHAC/ucuHOP+dlhjMOWq5m414F5Fa63pCr8kcoZANw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TMJNYpA4TY1sa/yhPNmOTItnOBduRdjmQn1Z539woQX3k+TyNkP1nGqZ8s8vdzUHP
-	 TZrhBS/0XZprMR3u0/AeRfD6FbDciXQZaai26J4OvEdGbp8baa3ZRaoJThNy7ntgnH
-	 1USoJA9pDHeYCZKhkmfXVNVEP8n+fXou3+reJatRwAtd+y7tFSeSDwRqOpw8Sh4FaT
-	 7pZpqrpcJV3JwaCaDLORFxSxMelgvoLpHF4BOQBPQilymqUxLXeFiMAJvGwkO5PJPr
-	 bh06hxn4bkjGRScpVfVwNAdc9xpi0z9ERW1zpm4D4Ab0HUI4KUfdHhQz3JmbiOQodg
-	 s8RH9I0mAQb6g==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org,
-	mingo@kernel.org
-Cc: oleg@redhat.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jolsa@kernel.org,
-	liaochang1@huawei.com,
-	kernel-team@meta.com,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH perf/core 4/4] uprobes: reuse return_instances between multiple uretprobes within task
-Date: Thu,  5 Dec 2024 16:24:17 -0800
-Message-ID: <20241206002417.3295533-5-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241206002417.3295533-1-andrii@kernel.org>
-References: <20241206002417.3295533-1-andrii@kernel.org>
+	s=arc-20240116; t=1733444881; c=relaxed/simple;
+	bh=gurEB20qLPc4NxxkGx7vvw608KFI5HGmD9RkOyPkmV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7MkW4VHSSb0dAXUZh8D/8kh1tY3BHPXvCzwSFCfilXS7bw2+BvzwJXpfNziqL4oQXGPIrcNlvUgGRYPw8nz2caFu3r98yI9bANmh1iXMIHCRuRwwKdYnVmWp2fHYYOI0qLJReiMwkM7NyGNOXTpkE6nF78PBGQk4B74SKsBzVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=O3NGbEKm; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7BE613F29E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1733444876;
+	bh=MivuSGCdKstLxqo59xhVbWuDzb+dNtWFJm5+HOIPd5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=O3NGbEKmY6h5Hd8aU5U4M1WOHFGXoXvhEuCJiPPe9fF17OYQeKFJHv4R0nUqWImN+
+	 1tuW/jNE6HrWvPe0qr1RDp3XXQPs5XC2msHqaVniFEgAdtPrpUgPrZGU1cfpHf5j/e
+	 32bI49sCXk6yf70kq8+nvDp+N4CVPt70DcgWun2pfyBtzkxN40opT2x83EQKp5qNT3
+	 yhPMNFyYlVECthhK8FuuIaS+sYkrG0QxpESDTcAfLiIZ2kWdjBRYpicv/OOYvATOqC
+	 Ljw65x2D+aIaLgjPgFdIMv+VW7mp3Daqtl69VMOJY3Zre6ODZnbx4SV3PrsGXjrTLu
+	 KjMEpiFTksqyA==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-215c54e5ceeso13769625ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:27:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733444875; x=1734049675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MivuSGCdKstLxqo59xhVbWuDzb+dNtWFJm5+HOIPd5E=;
+        b=wQThYEhF9uwfwx+G9zVjgAf6+IuDQWDMYomtyxw1v0+jrxFp05c2+myUlmdEifS8dw
+         OZJuzH3Tn0qzll5V6CdoEvnjdBSCNs8awXPxPVrllldqBidB43caNJWIAByyPjgkjs68
+         V4u/KbO78f1fBqo010d21eelrjo0Jrj5WO82FPnbmPqjWUEHGgedLMRynMnDMguPAmWR
+         SiYUPqISYath1PLr22lM5k/HNYBjKJdyFcsKdekc9w9U85yk5pTW+PAxAep7H03HAd6t
+         BvFc8cIw7tyBTNVRurwxvAM/PItPaRDd7JncXK7hcxE2y2dTNbpCefE2nj8vENpnoqJv
+         cT5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQYZYvwfvEOv4L9TvaDqEyanDWi9xPECDHZz8oTh9h8M74eVKns0pOoF0LaBXmmWRPk4eeXjcCUf9mcD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkiZiavoyPr5j3tJaCEiefVBbXGc325O1Aa/ykpG3gz8Spog/m
+	MxgaQDC3nfA19c+YGxWxrrkUdKH0MHCEDFBAsKnP+l7kGDUGvxDvEN73lwpgLTN2caxPReE770w
+	Bg+pUckpugkfnL9xstc1TPJXiABXqkPTkX1F36e7zUY0Ct3iaaaxTFyo0vgM3uOIYkvcSFENcVn
+	F6gw==
+X-Gm-Gg: ASbGncvHgzZ0g5QHwPoufzF25uJ4bQkIDiVLm8pAwBap9YHU30YYez8eUkzvAJ7RAGs
+	FePKCP0yPG0fdZoFC5RfLsCHr7ru8iOOdG2IStaF8FjQNVH7z4jlyLFx5fHDsmJW9mVnlqD2764
+	h8SEjtIzictFrAt6RMOuSnU8LU83gCrZYrJGQTIYJhq2FTgcHJlUqVx3gUjOdy2qpiu9ULv81ys
+	KvSC1PRWIm4srXAm838uNEfT/HJ+20InPonHXM64fY77P6UkVjY
+X-Received: by 2002:a17:902:e5cd:b0:215:9091:4f56 with SMTP id d9443c01a7336-21614d4528cmr15324315ad.14.1733444874998;
+        Thu, 05 Dec 2024 16:27:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEh/VvFCT5z5C2KnGLcEdyl7MPwt/FRnLMuLWN2yQxFP70ZRl02J3qZnmYbnfdapLquaCmkhQ==
+X-Received: by 2002:a17:902:e5cd:b0:215:9091:4f56 with SMTP id d9443c01a7336-21614d4528cmr15323905ad.14.1733444874553;
+        Thu, 05 Dec 2024 16:27:54 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:9740:f048:7177:db2e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a8f474sm1822663b3a.97.2024.12.05.16.27.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 16:27:54 -0800 (PST)
+Date: Fri, 6 Dec 2024 09:27:52 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: virtualization@lists.linux.dev, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/7] virtio_net: correct
+ netdev_tx_reset_queue() invocation point
+Message-ID: <wiioftpgwh7j2l2ohepyp2lygqv4t45o57t7tzicfvqrwfpzz6@wrnnnivyargv>
+References: <20241204050724.307544-1-koichiro.den@canonical.com>
+ <20241204050724.307544-2-koichiro.den@canonical.com>
+ <20241205052729-mutt-send-email-mst@kernel.org>
+ <nmjiptygbpqfcveclpzmpgczd3geir72kkczqixfucpgrl3g7u@6dzpd7qijvdm>
+ <cv7ph7yna6d5a37k7hoxplyzrbmrdxrcjd67nrttevsta3r54h@35ztxhqaczqd>
+ <20241205101611-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205101611-mutt-send-email-mst@kernel.org>
 
-Instead of constantly allocating and freeing very short-lived
-struct return_instance, reuse it as much as possible within current
-task. For that, store a linked list of reusable return_instances within
-current->utask.
+On Thu, Dec 05, 2024 at 10:17:59AM -0500, Michael S. Tsirkin wrote:
+> On Thu, Dec 05, 2024 at 10:16:35PM +0900, Koichiro Den wrote:
+> > On Thu, Dec 05, 2024 at 09:43:38PM +0900, Koichiro Den wrote:
+> > > On Thu, Dec 05, 2024 at 05:33:36AM -0500, Michael S. Tsirkin wrote:
+> > > > On Wed, Dec 04, 2024 at 02:07:18PM +0900, Koichiro Den wrote:
+> > > > > When virtnet_close is followed by virtnet_open, some TX completions can
+> > > > > possibly remain unconsumed, until they are finally processed during the
+> > > > > first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
+> > > > > [1].
+> > > > 
+> > > > 
+> > > > So it's a bugfix. Why net-next not net?
+> > > 
+> > > I was mistaken (I just read netdev-FAQ again). I'll resend to net, with
+> > > adjustments reflecting your feedback.
+> > > 
+> > > > 
+> > > > > Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
+> > > > > before RX napi enable") was not sufficient to eliminate all BQL crash
+> > > > > cases for virtio-net.
+> > > > > 
+> > > > > This issue can be reproduced with the latest net-next master by running:
+> > > > > `while :; do ip l set DEV down; ip l set DEV up; done` under heavy network
+> > > > > TX load from inside the machine.
+> > > > > 
+> > > > > netdev_tx_reset_queue() can actually be dropped from virtnet_open path;
+> > > > > the device is not stopped in any case. For BQL core part, it's just like
+> > > > > traffic nearly ceases to exist for some period. For stall detector added
+> > > > > to BQL, even if virtnet_close could somehow lead to some TX completions
+> > > > > delayed for long, followed by virtnet_open, we can just take it as stall
+> > > > > as mentioned in commit 6025b9135f7a ("net: dqs: add NIC stall detector
+> > > > > based on BQL"). Note also that users can still reset stall_max via sysfs.
+> > > > > 
+> > > > > So, drop netdev_tx_reset_queue() from virtnet_enable_queue_pair(). This
+> > > > > eliminates the BQL crashes. Note that netdev_tx_reset_queue() is now
+> > > > > explicitly required in freeze/restore path, so this patch adds it to
+> > > > > free_unused_bufs().
+> > > > 
+> > > > I don't much like that free_unused_bufs now has this side effect.
+> > > > I think would be better to just add a loop in virtnet_restore.
+> > > > Or if you want to keep it there, pls rename the function
+> > > > to hint it does more.
+> > > 
+> > > It makes sense. I would go for the former. Thanks.
+> > 
+> > Hmm, as Jacob pointed out in v1
+> > (https://lore.kernel.org/all/20241202181445.0da50076@kernel.org/),
+> > it looks better to follow the rule of thumb.
+> 
+> OK then. I'm fine with keeping your code as is, just a squash,
+> and add a comment
+> 
+> 	/*
+> 	 * Rule of thumb is netdev_tx_reset_queue() should follow any
+> 	 * skb freeing not followed by netdev_tx_completed_queue()
+> 	 */
 
-The only complication is that ri_timer() might be still processing such
-return_instance. And so while the main uretprobe processing logic might
-be already done with return_instance and would be OK to immediately
-reuse it for the next uretprobe instance, it's not correct to
-unconditionally reuse it just like that.
+Ok, thanks for the review!
 
-Instead we make sure that ri_timer() can't possibly be processing it by
-using seqcount_t, with ri_timer() being "a writer", while
-free_ret_instance() being "a reader". If, after we unlink return
-instance from utask->return_instances list, we know that ri_timer()
-hasn't gotten to processing utask->return_instances yet, then we can be
-sure that immediate return_instance reuse is OK, and so we put it
-onto utask->ri_pool for future (potentially, almost immediate) reuse.
-
-This change shows improvements both in single CPU performance (by
-avoiding relatively expensive kmalloc/free combon) and in terms of
-multi-CPU scalability, where you can see that per-CPU throughput doesn't
-decline as steeply with increased number of CPUs (which were previously
-attributed to kmalloc()/free() through profiling):
-
-BASELINE (latest perf/core)
-===========================
-uretprobe-nop         ( 1 cpus):    1.898 ± 0.002M/s  (  1.898M/s/cpu)
-uretprobe-nop         ( 2 cpus):    3.574 ± 0.011M/s  (  1.787M/s/cpu)
-uretprobe-nop         ( 3 cpus):    5.279 ± 0.066M/s  (  1.760M/s/cpu)
-uretprobe-nop         ( 4 cpus):    6.824 ± 0.047M/s  (  1.706M/s/cpu)
-uretprobe-nop         ( 5 cpus):    8.339 ± 0.060M/s  (  1.668M/s/cpu)
-uretprobe-nop         ( 6 cpus):    9.812 ± 0.047M/s  (  1.635M/s/cpu)
-uretprobe-nop         ( 7 cpus):   11.030 ± 0.048M/s  (  1.576M/s/cpu)
-uretprobe-nop         ( 8 cpus):   12.453 ± 0.126M/s  (  1.557M/s/cpu)
-uretprobe-nop         (10 cpus):   14.838 ± 0.044M/s  (  1.484M/s/cpu)
-uretprobe-nop         (12 cpus):   17.092 ± 0.115M/s  (  1.424M/s/cpu)
-uretprobe-nop         (14 cpus):   19.576 ± 0.022M/s  (  1.398M/s/cpu)
-uretprobe-nop         (16 cpus):   22.264 ± 0.015M/s  (  1.391M/s/cpu)
-uretprobe-nop         (24 cpus):   33.534 ± 0.078M/s  (  1.397M/s/cpu)
-uretprobe-nop         (32 cpus):   43.262 ± 0.127M/s  (  1.352M/s/cpu)
-uretprobe-nop         (40 cpus):   53.252 ± 0.080M/s  (  1.331M/s/cpu)
-uretprobe-nop         (48 cpus):   55.778 ± 0.045M/s  (  1.162M/s/cpu)
-uretprobe-nop         (56 cpus):   56.850 ± 0.227M/s  (  1.015M/s/cpu)
-uretprobe-nop         (64 cpus):   62.005 ± 0.077M/s  (  0.969M/s/cpu)
-uretprobe-nop         (72 cpus):   66.445 ± 0.236M/s  (  0.923M/s/cpu)
-uretprobe-nop         (80 cpus):   68.353 ± 0.180M/s  (  0.854M/s/cpu)
-
-THIS PATCHSET (on top of latest perf/core)
-==========================================
-uretprobe-nop         ( 1 cpus):    2.253 ± 0.004M/s  (  2.253M/s/cpu)
-uretprobe-nop         ( 2 cpus):    4.281 ± 0.003M/s  (  2.140M/s/cpu)
-uretprobe-nop         ( 3 cpus):    6.389 ± 0.027M/s  (  2.130M/s/cpu)
-uretprobe-nop         ( 4 cpus):    8.328 ± 0.005M/s  (  2.082M/s/cpu)
-uretprobe-nop         ( 5 cpus):   10.353 ± 0.001M/s  (  2.071M/s/cpu)
-uretprobe-nop         ( 6 cpus):   12.513 ± 0.010M/s  (  2.086M/s/cpu)
-uretprobe-nop         ( 7 cpus):   14.525 ± 0.017M/s  (  2.075M/s/cpu)
-uretprobe-nop         ( 8 cpus):   15.633 ± 0.013M/s  (  1.954M/s/cpu)
-uretprobe-nop         (10 cpus):   19.532 ± 0.011M/s  (  1.953M/s/cpu)
-uretprobe-nop         (12 cpus):   21.405 ± 0.009M/s  (  1.784M/s/cpu)
-uretprobe-nop         (14 cpus):   24.857 ± 0.020M/s  (  1.776M/s/cpu)
-uretprobe-nop         (16 cpus):   26.466 ± 0.018M/s  (  1.654M/s/cpu)
-uretprobe-nop         (24 cpus):   40.513 ± 0.222M/s  (  1.688M/s/cpu)
-uretprobe-nop         (32 cpus):   54.180 ± 0.074M/s  (  1.693M/s/cpu)
-uretprobe-nop         (40 cpus):   66.100 ± 0.082M/s  (  1.652M/s/cpu)
-uretprobe-nop         (48 cpus):   70.544 ± 0.068M/s  (  1.470M/s/cpu)
-uretprobe-nop         (56 cpus):   74.494 ± 0.055M/s  (  1.330M/s/cpu)
-uretprobe-nop         (64 cpus):   79.317 ± 0.029M/s  (  1.239M/s/cpu)
-uretprobe-nop         (72 cpus):   84.875 ± 0.020M/s  (  1.179M/s/cpu)
-uretprobe-nop         (80 cpus):   92.318 ± 0.224M/s  (  1.154M/s/cpu)
-
-For reference, with uprobe-nop we hit the following throughput:
-
-uprobe-nop            (80 cpus):  143.485 ± 0.035M/s  (  1.794M/s/cpu)
-
-So now uretprobe stays a bit closer to that performance.
-
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- include/linux/uprobes.h |  6 ++-
- kernel/events/uprobes.c | 83 ++++++++++++++++++++++++++++++++++-------
- 2 files changed, 75 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 1d449978558d..b1df7d792fa1 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -16,6 +16,7 @@
- #include <linux/types.h>
- #include <linux/wait.h>
- #include <linux/timer.h>
-+#include <linux/seqlock.h>
- 
- struct uprobe;
- struct vm_area_struct;
-@@ -124,6 +125,10 @@ struct uprobe_task {
- 	unsigned int			depth;
- 	struct return_instance		*return_instances;
- 
-+	struct return_instance		*ri_pool;
-+	struct timer_list		ri_timer;
-+	seqcount_t			ri_seqcount;
-+
- 	union {
- 		struct {
- 			struct arch_uprobe_task	autask;
-@@ -137,7 +142,6 @@ struct uprobe_task {
- 	};
- 
- 	struct uprobe			*active_uprobe;
--	struct timer_list		ri_timer;
- 	unsigned long			xol_vaddr;
- 
- 	struct arch_uprobe              *auprobe;
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 2345aeb63d3b..1af950208c2b 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1888,8 +1888,34 @@ unsigned long uprobe_get_trap_addr(struct pt_regs *regs)
- 	return instruction_pointer(regs);
- }
- 
--static void free_ret_instance(struct return_instance *ri, bool cleanup_hprobe)
-+static void ri_pool_push(struct uprobe_task *utask, struct return_instance *ri)
- {
-+	ri->cons_cnt = 0;
-+	ri->next = utask->ri_pool;
-+	utask->ri_pool = ri;
-+}
-+
-+static struct return_instance *ri_pool_pop(struct uprobe_task *utask)
-+{
-+	struct return_instance *ri = utask->ri_pool;
-+
-+	if (likely(ri))
-+		utask->ri_pool = ri->next;
-+
-+	return ri;
-+}
-+
-+static void ri_free(struct return_instance *ri)
-+{
-+	kfree(ri->extra_consumers);
-+	kfree_rcu(ri, rcu);
-+}
-+
-+static void free_ret_instance(struct uprobe_task *utask,
-+			      struct return_instance *ri, bool cleanup_hprobe)
-+{
-+	unsigned seq;
-+
- 	if (cleanup_hprobe) {
- 		enum hprobe_state hstate;
- 
-@@ -1897,8 +1923,22 @@ static void free_ret_instance(struct return_instance *ri, bool cleanup_hprobe)
- 		hprobe_finalize(&ri->hprobe, hstate);
- 	}
- 
--	kfree(ri->extra_consumers);
--	kfree_rcu(ri, rcu);
-+	/*
-+	 * At this point return_instance is unlinked from utask's
-+	 * return_instances list and this has become visible to ri_timer().
-+	 * If seqcount now indicates that ri_timer's return instance
-+	 * processing loop isn't active, we can return ri into the pool of
-+	 * to-be-reused return instances for future uretprobes. If ri_timer()
-+	 * happens to be running right now, though, we fallback to safety and
-+	 * just perform RCU-delated freeing of ri.
-+	 */
-+	if (raw_seqcount_try_begin(&utask->ri_seqcount, seq)) {
-+		/* immediate reuse of ri without RCU GP is OK */
-+		ri_pool_push(utask, ri);
-+	} else {
-+		/* we might be racing with ri_timer(), so play it safe */
-+		ri_free(ri);
-+	}
- }
- 
- /*
-@@ -1920,7 +1960,15 @@ void uprobe_free_utask(struct task_struct *t)
- 	ri = utask->return_instances;
- 	while (ri) {
- 		ri_next = ri->next;
--		free_ret_instance(ri, true /* cleanup_hprobe */);
-+		free_ret_instance(utask, ri, true /* cleanup_hprobe */);
-+		ri = ri_next;
-+	}
-+
-+	/* free_ret_instance() above might add to ri_pool, so this loop should come last */
-+	ri = utask->ri_pool;
-+	while (ri) {
-+		ri_next = ri->next;
-+		ri_free(ri);
- 		ri = ri_next;
- 	}
- 
-@@ -1943,8 +1991,12 @@ static void ri_timer(struct timer_list *timer)
- 	/* RCU protects return_instance from freeing. */
- 	guard(rcu)();
- 
-+	write_seqcount_begin(&utask->ri_seqcount);
-+
- 	for_each_ret_instance_rcu(ri, utask->return_instances)
- 		hprobe_expire(&ri->hprobe, false);
-+
-+	write_seqcount_end(&utask->ri_seqcount);
- }
- 
- static struct uprobe_task *alloc_utask(void)
-@@ -1956,6 +2008,7 @@ static struct uprobe_task *alloc_utask(void)
- 		return NULL;
- 
- 	timer_setup(&utask->ri_timer, ri_timer, 0);
-+	seqcount_init(&utask->ri_seqcount);
- 
- 	return utask;
- }
-@@ -1975,10 +2028,14 @@ static struct uprobe_task *get_utask(void)
- 	return current->utask;
- }
- 
--static struct return_instance *alloc_return_instance(void)
-+static struct return_instance *alloc_return_instance(struct uprobe_task *utask)
- {
- 	struct return_instance *ri;
- 
-+	ri = ri_pool_pop(utask);
-+	if (ri)
-+		return ri;
-+
- 	ri = kzalloc(sizeof(*ri), GFP_KERNEL);
- 	if (!ri)
- 		return ZERO_SIZE_PTR;
-@@ -2119,7 +2176,7 @@ static void cleanup_return_instances(struct uprobe_task *utask, bool chained,
- 		rcu_assign_pointer(utask->return_instances, ri_next);
- 		utask->depth--;
- 
--		free_ret_instance(ri, true /* cleanup_hprobe */);
-+		free_ret_instance(utask, ri, true /* cleanup_hprobe */);
- 		ri = ri_next;
- 	}
- }
-@@ -2186,7 +2243,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs,
- 
- 	return;
- free:
--	kfree(ri);
-+	ri_free(ri);
- }
- 
- /* Prepare to single-step probed instruction out of line. */
-@@ -2385,8 +2442,7 @@ static struct return_instance *push_consumer(struct return_instance *ri, __u64 i
- 	if (unlikely(ri->cons_cnt > 0)) {
- 		ric = krealloc(ri->extra_consumers, sizeof(*ric) * ri->cons_cnt, GFP_KERNEL);
- 		if (!ric) {
--			kfree(ri->extra_consumers);
--			kfree_rcu(ri, rcu);
-+			ri_free(ri);
- 			return ZERO_SIZE_PTR;
- 		}
- 		ri->extra_consumers = ric;
-@@ -2428,8 +2484,9 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
- 	struct uprobe_consumer *uc;
- 	bool has_consumers = false, remove = true;
- 	struct return_instance *ri = NULL;
-+	struct uprobe_task *utask = current->utask;
- 
--	current->utask->auprobe = &uprobe->arch;
-+	utask->auprobe = &uprobe->arch;
- 
- 	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
- 		bool session = uc->handler && uc->ret_handler;
-@@ -2449,12 +2506,12 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
- 			continue;
- 
- 		if (!ri)
--			ri = alloc_return_instance();
-+			ri = alloc_return_instance(utask);
- 
- 		if (session)
- 			ri = push_consumer(ri, uc->id, cookie);
- 	}
--	current->utask->auprobe = NULL;
-+	utask->auprobe = NULL;
- 
- 	if (!ZERO_OR_NULL_PTR(ri))
- 		prepare_uretprobe(uprobe, regs, ri);
-@@ -2554,7 +2611,7 @@ void uprobe_handle_trampoline(struct pt_regs *regs)
- 			hprobe_finalize(&ri->hprobe, hstate);
- 
- 			/* We already took care of hprobe, no need to waste more time on that. */
--			free_ret_instance(ri, false /* !cleanup_hprobe */);
-+			free_ret_instance(utask, ri, false /* !cleanup_hprobe */);
- 			ri = ri_next;
- 		} while (ri != next_chain);
- 	} while (!valid);
--- 
-2.43.5
-
+> 
+> > Taking both suggestions
+> > from Jacob and you, adding a loop to remove_vq_common(), just after
+> > free_unused_bufs(), seems more fitting now, like this:
+> > 
+> >      static void remove_vq_common(struct virtnet_info *vi)
+> >      {
+> >     +       int i;
+> >     +
+> >             virtio_reset_device(vi->vdev);
+> >     
+> >             /* Free unused buffers in both send and recv, if any. */
+> >             free_unused_bufs(vi);
+> >     
+> >     +       /* Tx unused buffers flushed, so reset BQL counter */
+> >     +       for (i = 0; i < vi->max_queue_pairs; i++)
+> >     +               netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, i));
+> >     +
+> >             free_receive_bufs(vi);
+> > 
+> > What do you think?
+> > 
+> > Thanks,
+> > 
+> > -Koichiro Den
+> > 
+> > > 
+> > > > 
+> > > > 
+> > > > > 
+> > > > > [1]:
+> > > > > ------------[ cut here ]------------
+> > > > > kernel BUG at lib/dynamic_queue_limits.c:99!
+> > > > > Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> > > > > CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
+> > > > > Tainted: [N]=TEST
+> > > > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
+> > > > > BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> > > > > RIP: 0010:dql_completed+0x26b/0x290
+> > > > > Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
+> > > > > 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
+> > > > > d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
+> > > > > RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
+> > > > > RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
+> > > > > RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
+> > > > > RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
+> > > > > R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
+> > > > > R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
+> > > > > FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
+> > > > > knlGS:0000000000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
+> > > > > PKRU: 55555554
+> > > > > Call Trace:
+> > > > >  <IRQ>
+> > > > >  ? die+0x32/0x80
+> > > > >  ? do_trap+0xd9/0x100
+> > > > >  ? dql_completed+0x26b/0x290
+> > > > >  ? dql_completed+0x26b/0x290
+> > > > >  ? do_error_trap+0x6d/0xb0
+> > > > >  ? dql_completed+0x26b/0x290
+> > > > >  ? exc_invalid_op+0x4c/0x60
+> > > > >  ? dql_completed+0x26b/0x290
+> > > > >  ? asm_exc_invalid_op+0x16/0x20
+> > > > >  ? dql_completed+0x26b/0x290
+> > > > >  __free_old_xmit+0xff/0x170 [virtio_net]
+> > > > >  free_old_xmit+0x54/0xc0 [virtio_net]
+> > > > >  virtnet_poll+0xf4/0xe30 [virtio_net]
+> > > > >  ? __update_load_avg_cfs_rq+0x264/0x2d0
+> > > > >  ? update_curr+0x35/0x260
+> > > > >  ? reweight_entity+0x1be/0x260
+> > > > >  __napi_poll.constprop.0+0x28/0x1c0
+> > > > >  net_rx_action+0x329/0x420
+> > > > >  ? enqueue_hrtimer+0x35/0x90
+> > > > >  ? trace_hardirqs_on+0x1d/0x80
+> > > > >  ? kvm_sched_clock_read+0xd/0x20
+> > > > >  ? sched_clock+0xc/0x30
+> > > > >  ? kvm_sched_clock_read+0xd/0x20
+> > > > >  ? sched_clock+0xc/0x30
+> > > > >  ? sched_clock_cpu+0xd/0x1a0
+> > > > >  handle_softirqs+0x138/0x3e0
+> > > > >  do_softirq.part.0+0x89/0xc0
+> > > > >  </IRQ>
+> > > > >  <TASK>
+> > > > >  __local_bh_enable_ip+0xa7/0xb0
+> > > > >  virtnet_open+0xc8/0x310 [virtio_net]
+> > > > >  __dev_open+0xfa/0x1b0
+> > > > >  __dev_change_flags+0x1de/0x250
+> > > > >  dev_change_flags+0x22/0x60
+> > > > >  do_setlink.isra.0+0x2df/0x10b0
+> > > > >  ? rtnetlink_rcv_msg+0x34f/0x3f0
+> > > > >  ? netlink_rcv_skb+0x54/0x100
+> > > > >  ? netlink_unicast+0x23e/0x390
+> > > > >  ? netlink_sendmsg+0x21e/0x490
+> > > > >  ? ____sys_sendmsg+0x31b/0x350
+> > > > >  ? avc_has_perm_noaudit+0x67/0xf0
+> > > > >  ? cred_has_capability.isra.0+0x75/0x110
+> > > > >  ? __nla_validate_parse+0x5f/0xee0
+> > > > >  ? __pfx___probestub_irq_enable+0x3/0x10
+> > > > >  ? __create_object+0x5e/0x90
+> > > > >  ? security_capable+0x3b/0x70
+> > > > >  rtnl_newlink+0x784/0xaf0
+> > > > >  ? avc_has_perm_noaudit+0x67/0xf0
+> > > > >  ? cred_has_capability.isra.0+0x75/0x110
+> > > > >  ? stack_depot_save_flags+0x24/0x6d0
+> > > > >  ? __pfx_rtnl_newlink+0x10/0x10
+> > > > >  rtnetlink_rcv_msg+0x34f/0x3f0
+> > > > >  ? do_syscall_64+0x6c/0x180
+> > > > >  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > > >  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+> > > > >  netlink_rcv_skb+0x54/0x100
+> > > > >  netlink_unicast+0x23e/0x390
+> > > > >  netlink_sendmsg+0x21e/0x490
+> > > > >  ____sys_sendmsg+0x31b/0x350
+> > > > >  ? copy_msghdr_from_user+0x6d/0xa0
+> > > > >  ___sys_sendmsg+0x86/0xd0
+> > > > >  ? __pte_offset_map+0x17/0x160
+> > > > >  ? preempt_count_add+0x69/0xa0
+> > > > >  ? __call_rcu_common.constprop.0+0x147/0x610
+> > > > >  ? preempt_count_add+0x69/0xa0
+> > > > >  ? preempt_count_add+0x69/0xa0
+> > > > >  ? _raw_spin_trylock+0x13/0x60
+> > > > >  ? trace_hardirqs_on+0x1d/0x80
+> > > > >  __sys_sendmsg+0x66/0xc0
+> > > > >  do_syscall_64+0x6c/0x180
+> > > > >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > > > RIP: 0033:0x7f41defe5b34
+> > > > > Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
+> > > > > f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
+> > > > > f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+> > > > > RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+> > > > > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
+> > > > > RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
+> > > > > RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
+> > > > > R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
+> > > > > R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
+> > > > >  </TASK>
+> > > > > [...]
+> > > > > ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+> > > > > 
+> > > > > Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
+> > > > > Cc: <stable@vger.kernel.org> # v6.11+
+> > > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > > > > ---
+> > > > >  drivers/net/virtio_net.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > > > index 64c87bb48a41..48ce8b3881b6 100644
+> > > > > --- a/drivers/net/virtio_net.c
+> > > > > +++ b/drivers/net/virtio_net.c
+> > > > > @@ -3054,7 +3054,6 @@ static int virtnet_enable_queue_pair(struct virtnet_info *vi, int qp_index)
+> > > > >  	if (err < 0)
+> > > > >  		goto err_xdp_reg_mem_model;
+> > > > >  
+> > > > > -	netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, qp_index));
+> > > > >  	virtnet_napi_enable(vi->rq[qp_index].vq, &vi->rq[qp_index].napi);
+> > > > >  	virtnet_napi_tx_enable(vi, vi->sq[qp_index].vq, &vi->sq[qp_index].napi);
+> > > > >  
+> > > > > @@ -6243,6 +6242,7 @@ static void free_unused_bufs(struct virtnet_info *vi)
+> > > > >  		struct virtqueue *vq = vi->sq[i].vq;
+> > > > >  		while ((buf = virtqueue_detach_unused_buf(vq)) != NULL)
+> > > > >  			virtnet_sq_free_unused_buf(vq, buf);
+> > > > > +		netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, i));
+> > > > >  		cond_resched();
+> > > > >  	}
+> > > > >  
+> > > > > -- 
+> > > > > 2.43.0
+> > > > 
+> 
 
