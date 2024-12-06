@@ -1,214 +1,149 @@
-Return-Path: <linux-kernel+bounces-435190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0EA9E7423
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:32:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD399E743C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:34:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBD3281F9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0397A168C4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292AF208983;
-	Fri,  6 Dec 2024 15:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2053A20C032;
+	Fri,  6 Dec 2024 15:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AkxJrcKa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rYKTUp0D";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AkxJrcKa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rYKTUp0D"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ew4vvDAZ"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8204462171;
-	Fri,  6 Dec 2024 15:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A6920B81D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 15:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733499154; cv=none; b=dNTaSCg/Hgv1JviYFWplJwjHwqf9iADOGA8OZnE5EEdIb2kBo2CTSmGNbsULNvoHErI8MJkJav7r0c8PvnVjvq1iAbL6gvH0Poisd0d8bVrRjSi1Vsa09C+FaHFj15YFGzmyrhhPx/eZvvJj7EFwJMeuK8UujonV1FAYabzSfZY=
+	t=1733499184; cv=none; b=WnX6o58G6r//miw9+MDCXJ0GgGfg0dWtbZayXma9B3uhD6K7z5O6335s6KIET73NbO2ES+cmfItuNF0ExlHSfJwnYHqvdzYGxlxWJTSJDmqcuU2+QuGyLetlz/f+KONzb1grMVBbq+iATvy+mZBA+b/Or7EDur8zpBsMQkMQyX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733499154; c=relaxed/simple;
-	bh=tzczW2NaBtH/TqyTYWpEi1peWqluiHajhsHRLcDS+Lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tet+DoSb6Q/qfNqK7jrfIwLtuPzY1cmXmJ9Dy/QBme7vLwzOkhWFJ0XZfCR35yixaP/MLAv9HSLV9CuL/fMrpyZEc07AV+TedJKsOIfTnuoE2ueFUS+L/Ay8Knxihr3LRg9GsTXGIN/EW3jUAx38UL0WM0jQK4nZ49Wra9fWTrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AkxJrcKa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rYKTUp0D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AkxJrcKa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rYKTUp0D; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A78C01F37E;
-	Fri,  6 Dec 2024 15:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733499150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
-	b=AkxJrcKaRWSRTUyebc4BNqsWEqRLVml3zw17Ebdd7bsDwZXT/LDfQMtV3XJ6GPLwCmGyuX
-	6qlJt3IJVwZ5Uqsig9tBqKnmntbu4WUgwKkbkTB4gE+i23VVvqK3ojKoL5PaSuVP9qoBSO
-	tS95ep1fcVrNMavWO/YNgQxYGkDC5ww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733499150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
-	b=rYKTUp0D/fxGj4yRqY8/V4BmmllSxdrJ09Z1msMPhS9CYnC+y8MEYaxJzIVEYHF0Ylr9ni
-	BS5YhsWB4wy6bUBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733499150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
-	b=AkxJrcKaRWSRTUyebc4BNqsWEqRLVml3zw17Ebdd7bsDwZXT/LDfQMtV3XJ6GPLwCmGyuX
-	6qlJt3IJVwZ5Uqsig9tBqKnmntbu4WUgwKkbkTB4gE+i23VVvqK3ojKoL5PaSuVP9qoBSO
-	tS95ep1fcVrNMavWO/YNgQxYGkDC5ww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733499150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gFRnd9sjo2xH2tQED/Tut4UkToLXL+o1pumphDRBYEE=;
-	b=rYKTUp0D/fxGj4yRqY8/V4BmmllSxdrJ09Z1msMPhS9CYnC+y8MEYaxJzIVEYHF0Ylr9ni
-	BS5YhsWB4wy6bUBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9213713647;
-	Fri,  6 Dec 2024 15:32:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id y/ugIw4ZU2cZfAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 15:32:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4C868A08CD; Fri,  6 Dec 2024 16:32:30 +0100 (CET)
-Date: Fri, 6 Dec 2024 16:32:30 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, paulmck@kernel.org, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org, edumazet@google.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: elide the smp_rmb fence in fd_install()
-Message-ID: <20241206153230.6o37z5raxvohbqqm@quack3>
-References: <CAGudoHG6zYMfFmhizJDPAw=CF8QY8dzbvg0cSEW4XVcvTYhELw@mail.gmail.com>
- <20241205120332.1578562-1-mjguzik@gmail.com>
- <20241205144645.bv2q6nqua66sql3j@quack3>
- <CAGudoHGtOX+XPM5Z5eWd-feCvNZQ+nv0u6iY9zqGVMhPunLXqA@mail.gmail.com>
- <20241205152937.v2uf65wcmnkutiqz@quack3>
- <CAGudoHGyFVCjSTjenyO8Y+uPHyhkOCwZrvBW=FyQRDundntFdw@mail.gmail.com>
+	s=arc-20240116; t=1733499184; c=relaxed/simple;
+	bh=wGJs/hCgvCfg4tPxqhTQVJCx5xKl6MYukEo2gMI2JOc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Hlx+S0dzJT1zfEzWcVat2yCPT1/3Ut+PUDXPRn1XTLw5ja0Cvp1FIAJl1w1IkFEuQtceHoF3btI34mIVZfK4ZsBkxiSs3c7D/cZ9ZZbpHFD/F6DbJ1nvI/jGdtyLKmciHBrLcDdtLTvb7N2PT97+Q0wSJSbMiAfBRF/VedmVh7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ew4vvDAZ; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434975a1fb1so1641575e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 07:33:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733499181; x=1734103981; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=scjyqPvfEwyYnHKcOKZj+usRHidKmUR9PWZzzmumLP8=;
+        b=ew4vvDAZU88uAsZHAV8MLXwB973lgWF8zwO+z9dNLTiemUH3YzMn9SFyWcT2STu+Xr
+         23psCon2EqSJyKSHKdEd1F2nPFfrhsQaD/dNiUw5jjRPaEj0j8bt9AyIJdWqR8OVdbto
+         v7+JzNJyDx9JwTcLmdfXxVYsmtUi4CqG2g9uHhOYIa4w1x+ATj7H/mVpigwd6tASWHvb
+         8ToHMRTP8oAIkBoVbpg7fKenabWxjvzhscgMyCHG41664apgpkQ7YKUQR53KE8DvxZ8V
+         oLSJs8iJ56wXvphfqSUsxmfXEeWBMlcneUl5ZyqsiinX/y34Cdnd59P6Gg0BRsX+T8ig
+         aqXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733499181; x=1734103981;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=scjyqPvfEwyYnHKcOKZj+usRHidKmUR9PWZzzmumLP8=;
+        b=T35ARzJckSJis4O1aP+EPEJS7o2Wr1Ie2fRNCAtIltK9SKIeBop+vuJK9l5HlTu5mM
+         Uo4z3UNLyQYe/D5VlnWZgzYOjkqdiqT4QDdQfIURLHmZfa4O5sPri++Adf+/cSvcUAnS
+         GYZa/sDv1u7xTJ0TTQP94j8P3vQLlPWbgxpAAgUAO5t+BPkVY6pnpERH5cSDrhZ/8eS4
+         i+eYS/no7EGewFI0bY9dfRPALhLZfIcEcxSSaS07yI+ljDCMhj+qRcrHx+ERA5asO4Hl
+         V4HpiC+MuhTv47LA1za+GPnXS7g43alcM1n2YLY27IqGX8pEbQvTSQV5yv52T0sl4tJk
+         /+Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCX20NpMTxwq+MwF5gFcEfrT8ifpEMlfROeBDlF7YfBeUwbqcyYGt9vr5ILyOhH/3itxIobsuMPGEUrYSBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLwHaXSLnIUGXtzADMzjOYq0HO2x22d1aWwpxsVxCLDU5zplYM
+	B13ySwBUrJh6dh2bEMDxLU4xrZx+m3sv9m076qJbcY1WLhlG1uXm4XYl3hDb97A=
+X-Gm-Gg: ASbGncsuQKBFlD3UM+I7BLtOR5cTKMP/8VnsMYksTdnvFXUTY2sbuTZJFA5m2vl6Mgo
+	dAE9ItTefmABnj9ccaJ8/ffczT+CPE063ShioLPCs3fqyh1A3PdKlYkkn7NnVba18EmIJgTAQgR
+	UfSYBX3Ff5PGl1jvOUlNLN8yU77ePo80xjrClpcRDQ3UxsW7x3Uzdw4MUpb5inAtFQykpD3ZKyl
+	hvEb/7TRVNTn5LPpHvldUCNv9sMvUO36sFuqlOfuXA7Xl7dbdfmCW0vRAu33T7EBg==
+X-Google-Smtp-Source: AGHT+IHILBeWRHwkDA17u+4MRyoG92Fr9Qvb08+lPm19d2dTJXAT6qJi3ewM+7kEyqmMIGCLJqWHSg==
+X-Received: by 2002:a05:600c:1393:b0:430:52ec:1e2a with SMTP id 5b1f17b1804b1-434dded5a3bmr12438535e9.7.1733499180663;
+        Fri, 06 Dec 2024 07:33:00 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113580sm61158035e9.29.2024.12.06.07.32.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 07:33:00 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Fri, 06 Dec 2024 16:32:30 +0100
+Subject: [PATCH 06/19] arm64: dts: qcom: sm8450: Fix MPSS memory length
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHGyFVCjSTjenyO8Y+uPHyhkOCwZrvBW=FyQRDundntFdw@mail.gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241206-dts-qcom-cdsp-mpss-base-address-v1-6-2f349e4d5a63@linaro.org>
+References: <20241206-dts-qcom-cdsp-mpss-base-address-v1-0-2f349e4d5a63@linaro.org>
+In-Reply-To: <20241206-dts-qcom-cdsp-mpss-base-address-v1-0-2f349e4d5a63@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+ Luca Weiss <luca.weiss@fairphone.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1282;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=wGJs/hCgvCfg4tPxqhTQVJCx5xKl6MYukEo2gMI2JOc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnUxkSAiZZ/djyD3ojNevVX5dvjku8nb3JP6jMK
+ XSqJxpAPryJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ1MZEgAKCRDBN2bmhouD
+ 11vtD/4pjoutspeu27zGNtPOzJRYXILv2CNUQ8GsEAuB5iEI5uCEu8B/96cQPuk8LkSvY6CFRDk
+ s5WqQZXJMjLVpsmCBJpGvfTMXbBjeSgFZx5AJwM8SdnCXLo2HLMIirYX/nhvylabsXbh5+XipVQ
+ TYRCjQXgYyxLt71CFaB85Okkf4uZ/yyK3Bxg5C1aT9/JKki1SVC01wQKhp0BlVKHJ0yE/BONjbI
+ gGGhMyOa+08SYwAfT3+5wutt3yVtsdsnxyD1givRz+6ivLkiKdIs690yzo4LFmNdga8yDAI6nDP
+ fUbr2yPS8nZrRMNRrUvkbxQufH9U2cjGriD+iCobfp06KK8GaAAXF1nvX1VbcSeeZ43yEATZfXY
+ 6K8cPh/GXpmiIIJAMabq78jbE1nogUZUB2wJqBqt2qFe0X++s6YCbXEVd2TJbybTkWzl0LumUAZ
+ e1EtV42skhjat6rljZsWRAm+Rc1qkm0Hmbvmb4bmWNIm540x+hB0bhGK+P2bt0+A+EiQ3SGjnnn
+ GH2WkzodHhX6g3/DAdULZ9S+xCGY8lr4iCs3Mtu6wcB+ycqt28CLZe7MXGS7HIi/W6ffU220C/Z
+ jkoqAzTPtsZlWdHckHsnbQOsCPHR9ZLTAlGzSyGHkQLNwX9RW1/7/UYRI4DxMmIsrwUOZ77nwgY
+ CcM6qqLUojBzioA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Thu 05-12-24 16:36:40, Mateusz Guzik wrote:
-> On Thu, Dec 5, 2024 at 4:29 PM Jan Kara <jack@suse.cz> wrote:
-> > On Thu 05-12-24 16:01:07, Mateusz Guzik wrote:
-> > > Suppose the CPU reordered loads of the flag and the fd table. There is
-> > > no ordering in which it can see both the old table and the unset flag.
-> >
-> > But I disagree here. If the reads are reordered, then the fd table read can
-> > happen during the "flag is true and the fd table is old" state and the flag
-> > read can happen later in "flag is false and the fd table is new" state.
-> > Just as I outlined above...
+The address space in MPSS/Modem PAS (Peripheral Authentication Service)
+remoteproc node should point to the QDSP PUB address space
+(QDSP6...SS_PUB) which has a length of 0x10000.  Value of 0x4040 was
+copied from older DTS, but it grew since then.
 
-Ugh, I might be missing something obvious so please bear with me.
+This should have no functional impact on Linux users, because PAS loader
+does not use this address space at all.
 
-> In your example all the work happens *after* synchronize_rcu().
+Fixes: 1172729576fb ("arm64: dts: qcom: sm8450: Add remoteproc enablers and instances")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/sm8450.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Correct.
-
-> The thread resizing the table already published the result even before
-> calling into it.
-
-Really? You proposed expand_table() does:
-
-       BUG_ON(files->resize_in_progress);
-       files->resize_in_progress = true;
-       spin_unlock(&files->file_lock);
-       new_fdt = alloc_fdtable(nr + 1);
-       if (atomic_read(&files->count) > 1)
-               synchronize_rcu();
-
-       spin_lock(&files->file_lock);
-       if (IS_ERR(new_fdt)) {
-               err = PTR_ERR(new_fdt);
-               goto out;
-       }
-       cur_fdt = files_fdtable(files);
-       BUG_ON(nr < cur_fdt->max_fds);
-       copy_fdtable(new_fdt, cur_fdt);
-       rcu_assign_pointer(files->fdt, new_fdt);
-       if (cur_fdt != &files->fdtab)
-               call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
-       smp_wmb();
-out:
-       files->resize_in_progress = false;
-       return err;
-
-So synchronize_rcu() is called very early AFAICT. At that point we have
-allocated the new table but copy & store in files->fdt happens *after*
-synchronize_rcu() has finished. So the copy & store can be racing with
-fd_install() calling rcu_read_lock_sched() and prefetching files->fdt (but
-not files->resize_in_progress!) into a local CPU cache.
-
-> Furthermore by the time synchronize_rcu returns
-> everyone is guaranteed to have issued a full fence. Meaning nobody can
-> see the flag as unset.
-
-Well, nobody can see the flag unset only until expand_fdtable() reaches:
-
-       smp_wmb();
-out:
-       files->resize_in_progress = false;
+diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+index 7a3bf847b0b9eae2094b0a8f48f6900a31b28ae4..6df110f3ec21dd8efe0bf5e93621b2cabb77fd17 100644
+--- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+@@ -2907,7 +2907,7 @@ compute-cb@8 {
  
-And smp_wmb() doesn't give you much unless the reads of
-files->resize_in_progress and files->fdt are ordered somehow on the other
-side (i.e., in fd_install()).
+ 		remoteproc_mpss: remoteproc@4080000 {
+ 			compatible = "qcom,sm8450-mpss-pas";
+-			reg = <0x0 0x04080000 0x0 0x4040>;
++			reg = <0x0 0x04080000 0x0 0x10000>;
+ 
+ 			interrupts-extended = <&intc GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_modem_in 0 IRQ_TYPE_EDGE_RISING>,
 
-But I'm looking forward to the Litmus test to resolve our discussion :)
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
