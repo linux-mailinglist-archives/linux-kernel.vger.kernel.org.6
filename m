@@ -1,128 +1,120 @@
-Return-Path: <linux-kernel+bounces-434952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46069E6D60
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:26:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DEB59E6D62
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70FC7285EBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:26:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168D5286344
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA0C200B88;
-	Fri,  6 Dec 2024 11:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FB91FCFC3;
+	Fri,  6 Dec 2024 11:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZI8kySF1"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FNf7w7i0"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653FE1FF7C8
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C79F1FCF77
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733484307; cv=none; b=Hzcnj/27sJsUU3mSdJ/uIZTD+CvovG2rbtb/m6U66BTlB9JZ60iaXgBDh7MmKlyAUfZGnbqucjnv3S+HTjilV3aIdZMDTyudLD++F7CXnr1QSKQDHWadMuXLHQuRC+M7RvmVL2aSK2XTA1c0lvpDtl5pcfxsPRSK/zsgoShG1J4=
+	t=1733484400; cv=none; b=rLrsi0j64IHr4Gu4qe0zP3ec19lSrA7UfnpxiZml5HcUmHU0sCHyx7WZQQxh8c4Hxgb33r6UjrFSUJpbpYrGQy+dF0dQDbEtqS8OqXas9NsoT/j+TLkEZJ4vlJqavRk45WxY96wplCBVO+XynGds/lihdYFAzFYvPdOUlcxrGG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733484307; c=relaxed/simple;
-	bh=TTFZ4CXBOgQ4q5MIsYN3yZmsm/oTlNtD8vDI9zrrcOo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QniwALSiNN5oIEJmPmZXyTBgi3be6rkrbyVoT3gMgExUIBRK+oAxM+J4B5VChnSPzUqMIG6HKAr1LBtJlF6HIYXll8lWlj4CDLx1j2tndDOW0lsmWaQKmJ4KMLG/xZ/xcyOwPt9SNlXj6Gi51Uspw+85m9wBhmo0FgT6e/h7puE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZI8kySF1; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-725b93a59feso541814b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:25:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733484304; x=1734089104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=axS0mpcWAsMj7lGkmb/FIxmxAQmAcm2tqBZhm+ItLoE=;
-        b=ZI8kySF13g97WxMTCV2CajFGlhxM6H9RdKM9omCcLWkU4wnFxQWWUlBVo6fmcDhnWJ
-         Qw35mdNhBOgV4/3vQtKY2y9rK2TVL+KpTGFW5JRckkkN5aEzL20BiLenH5ICO70fr4RC
-         0jCEcLz7ohErFJ5FKmSKFvzuDnnGe1C8gF4CNgxQmvohK6rIYNChfmqW0R+aK9aRXTQx
-         3V2FElS3kHHgKONEeXISEdk6u0bb5x1c8JHlG1aRhhTXAQhwLCp48jFitSuMJZ7uWfql
-         pRozh52pwpyvAqwr/nnOl7UKsa7CA4hKLce34szjqDFP1wT1m+TdyJRaZ7TPJkM+ep65
-         LcFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733484304; x=1734089104;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=axS0mpcWAsMj7lGkmb/FIxmxAQmAcm2tqBZhm+ItLoE=;
-        b=aDqhyi8LWixVmprprOCvMd88L7s/oneV7F4tsEqgxWfhaQH2a1nJGCv73LTQqxcdNe
-         g+qENM4+jvAc8DS5TAUDCAowGdg5LMZ1lEPR33QevBfb4LQR1HhwlfM7aXK9+nyKwBcd
-         FVxIGSotHTF5Uh196oc6c6QVUcAr6ytz/WtHQyz7qz1XG7F7cYEJtGsf+OvDLYMO2fql
-         LB/ckkFeNmyZREdd2IKrc2gH01xn0iBU7C8esFErtdK0ggQK555FKPujjZC1D8UpZaZz
-         vFOS06maSIgCctx6uJ62n/tjH8Q1iEQaRKWzAL6axZSFo1l5fxXHjOINJbfnql4Ohx2X
-         6Ulg==
-X-Forwarded-Encrypted: i=1; AJvYcCVo3CvVdHVjtd9zob7o5KfYvmy35ntgsLzMbHGgoTQQJ4vsTCe+H81yk7Fq9YY2DDWoxJoWltx5jBdjFUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx2bNPlTClfR5n8aHfCIQiqtUifbNJAJRUufThnKc7ih9P0jNq
-	MJ3SYz/x0i6ejyiXkeLhkufvSj3gHXkL1zvJANNQ6Nk5ZuoeHKCT7xpTb6RBbys=
-X-Gm-Gg: ASbGncs/bo4oe5opNLgchNBz2apATQPOHa7NQCo1Ig30qA33Q6/Rn4Gf0J/daAJ/weL
-	Ow4krNIa5HAZiYj1kYIpT3lG4bayqDBVo5eliJL9aHMYz5/dhTbG/r3ZMtKO0LVl4SLh5ZyFKTA
-	LH9odcAsNXa/Rs2dkQ1xyMzeOuFQ5nB1GTYS8e/Xm5mIiL3D6Akiai+GYYHpF3GeDfcfYa+Mw4n
-	G0oNVjD21MMY6It6mnx1/MUK/vPDJQFjkW7+qiKeayjzrVI3hJv+9fV0iaSQ4j204oJOpHyXwa8
-	5msJadG+Ovcs6A==
-X-Google-Smtp-Source: AGHT+IHzXCqK7Nq67xvQiiO8Mynf+aHH7g6jxp0vKtZyuMSGX/7uZxLiIx7gwmRGPwhfZ7cakjLiMw==
-X-Received: by 2002:a05:6a00:92a6:b0:71e:6c3f:2fb6 with SMTP id d2e1a72fcca58-725b80ff2f7mr4574374b3a.8.1733484304628;
-        Fri, 06 Dec 2024 03:25:04 -0800 (PST)
-Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a90345sm2822911b3a.109.2024.12.06.03.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 03:25:04 -0800 (PST)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: akpm@linux-foundation.org,
-	dan.carpenter@linaro.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v4 09/11 fix] fix: mm: pgtable: reclaim empty PTE page in madvise(MADV_DONTNEED)
-Date: Fri,  6 Dec 2024 19:23:48 +0800
-Message-Id: <20241206112348.51570-1-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <92aba2b319a734913f18ba41e7d86a265f0b84e2.1733305182.git.zhengqi.arch@bytedance.com>
-References: <92aba2b319a734913f18ba41e7d86a265f0b84e2.1733305182.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1733484400; c=relaxed/simple;
+	bh=92LOd4MVW8Q5TbMDOf61nL89xm4rnQFTUKQsD73JLss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L9+IrKWTGhPf7fD0B4AviCYAUo6GSIZGYNP8c2wI6SS4AK5qzYT+SnOa5m80TQ+FVWtgW2JH9HZ74ULJK9yX2n1NsGTOj8Qz3U26zaD4mjAhl3iCoRh+lCkmLY2mHZpEum2imQVB06iS+OFYUguGaByA+rmP/4ZqYtG6DC8I+2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FNf7w7i0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733484396;
+	bh=92LOd4MVW8Q5TbMDOf61nL89xm4rnQFTUKQsD73JLss=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FNf7w7i0c3cowGaiFG8pUSh1g1UNSADZB4AaL/dDcWwsOrivA21zTi/NBBqTuXE8f
+	 MvT0q5EJ7owzF/J4OzM36JE9qEZUegyzP+s4diMmg0PR+qgrO+Z/W4FDy8998ZVUJ6
+	 APbPjeFis4XgoJtt+J+KZCLs+X00bvtOD1hLcApU5pGWNv834fCj6aG8t+GV0CQ2Ui
+	 iJuGN+hLeitnRl7Ccfr4GGnziJlzwqdex129nUVsKcmKI6DYUVIyIxZAnfDANJm9QC
+	 p6dnvJzX1U1xtiIiBB0zmC3+WEH3FTW48CwAGih+WiO974m2sgsDUxyl/NSgmdoTs2
+	 0i/xIgiWn1VKQ==
+Received: from [192.168.1.90] (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 57DB417E3614;
+	Fri,  6 Dec 2024 12:26:36 +0100 (CET)
+Message-ID: <87273a36-07f9-4224-bfff-63e905be9b0a@collabora.com>
+Date: Fri, 6 Dec 2024 13:26:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] phy: phy-rockchip-samsung-hdptx: Don't use dt aliases
+ to determine phy-id
+To: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ quentin.schulz@cherry.de, Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20241206103401.1780416-1-heiko@sntech.de>
+ <20241206103401.1780416-3-heiko@sntech.de>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20241206103401.1780416-3-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dan Carpenter reported the following warning:
+On 12/6/24 12:34 PM, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> 
+> The phy needs to know its identity in the system (phy0 or phy1 on rk3588)
+> for some actions and the driver currently contains code abusing of_alias
+> for that.
+> 
+> Devicetree aliases are always optional and should not be used for core
+> device functionality, so instead keep a list of phys on a soc in the
+> of_device_data and find the phy-id by comparing against the mapped
+> register-base.
+> 
+> Fixes: c4b09c562086 ("phy: phy-rockchip-samsung-hdptx: Add clock provider support")
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> ---
+>  .../phy/rockchip/phy-rockchip-samsung-hdptx.c | 50 ++++++++++++++++---
+>  1 file changed, 44 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> index c5c64c209e96..b137f8c4d157 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> @@ -385,11 +385,22 @@ enum rk_hdptx_reset {
+>  	RST_MAX
+>  };
 
-Commit e3aafd2d3551 ("mm: pgtable: reclaim empty PTE page in
-madvise(MADV_DONTNEED)") from Dec 4, 2024 (linux-next), leads to the
-following Smatch static checker warning:
+[...]
 
-	mm/pt_reclaim.c:69 try_to_free_pte()
-	error: uninitialized symbol 'ptl'.
+> +
+> +	/* find the phy-id from the io address */
+> +	hdptx->phy_id = -ENODEV;
+> +	for (id = 0; id < hdptx->cfgs->num_phys; id++) {
+> +		if (res->start == hdptx->cfgs->phy_ids[id]) {
+> +			hdptx->phy_id = id;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (hdptx->phy_id < 0)
+> +		return dev_err_probe(dev, -ENODEV, "no matching device found\n");
 
-To fix it, assign an initial value of NULL to the ptl.
+Maybe we could simply fallback to assume phy1 doesn't exist in this
+case, which avoids the need to provide a match data with a single entry.
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-mm/224e6a4e-43b5-4080-bdd8-b0a6fb2f0853@stanley.mountain/
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
----
- mm/pt_reclaim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regardless,
 
-diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
-index 6540a3115dde8..7e9455a18aae7 100644
---- a/mm/pt_reclaim.c
-+++ b/mm/pt_reclaim.c
-@@ -36,7 +36,7 @@ void try_to_free_pte(struct mm_struct *mm, pmd_t *pmd, unsigned long addr,
- 		     struct mmu_gather *tlb)
- {
- 	pmd_t pmdval;
--	spinlock_t *pml, *ptl;
-+	spinlock_t *pml, *ptl = NULL;
- 	pte_t *start_pte, *pte;
- 	int i;
- 
--- 
-2.20.1
-
+Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
