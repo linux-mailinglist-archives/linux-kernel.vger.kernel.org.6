@@ -1,104 +1,183 @@
-Return-Path: <linux-kernel+bounces-435102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527029E6FB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:58:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0799E6FA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E063188823E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A381882FE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8691C20C499;
-	Fri,  6 Dec 2024 13:57:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8CB20ADED;
-	Fri,  6 Dec 2024 13:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F3D207E19;
+	Fri,  6 Dec 2024 13:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0++dduS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19FC1FF7B4;
+	Fri,  6 Dec 2024 13:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733493423; cv=none; b=UAIjHtcHmSard25H81mnmxxX1mymW3KbRmixYl/a4KCq0wKjy/4CIINYsVIEU6aRZr5fsJU1v0ITSqtAaZ5eUQ+1fIH5MxhoNAkG98mwOj80LzEL2G8PdhbMS16EHO74XaabxS0zBCM86ZfXMFCYaKqhDL002RTUJY2haNbWtt4=
+	t=1733493375; cv=none; b=P2EBLn+pc4fMCuALsrgn8SbNdE5ApOrcrMrifMF7PxgWINWJ8gDyTecxGEE/3DJ34WG8h5LT8fUIS45UPKAvTlIiPzHOLac3eYgwO0TZqnCM4+xkz2cDRUdZWr5MrIYk5YJ3Z+Kbbo16p0hbkHf6UoRFKkF+XZVFH1KOhy4BtKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733493423; c=relaxed/simple;
-	bh=V7kbG2we2G9VPn+kmJJl0fOGU9tS1a4sR7kecVizBi0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JKcGLZx/9p/2truKhz94zAj3uRZcCVJqD8YzzN9MdNf9JWyZ8B2YSdTlGvpU0+0VriMS3YF9g75fj0vg7o7xgcYBqkdZHfvhp3zrXVL5IO+XvAU31QExSIQZdmek2QeZF9wqT2C63ls7+PEkkpQi2R7XwozkDHcxOLMI8hxs90o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7D971474;
-	Fri,  6 Dec 2024 05:57:28 -0800 (PST)
-Received: from e125905.cambridge.arm.com (e125905.cambridge.arm.com [10.1.194.73])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E38753F71E;
-	Fri,  6 Dec 2024 05:56:58 -0800 (PST)
-From: Beata Michalska <beata.michalska@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com,
-	sudeep.holla@arm.com,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: sumitg@nvidia.com,
-	yang@os.amperecomputing.com,
-	vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com,
-	zhanjie9@hisilicon.com
-Subject: [PATCH v8 4/4] arm64: Update AMU-based freq scale factor on entering idle
-Date: Fri,  6 Dec 2024 13:56:00 +0000
-Message-Id: <20241206135600.4083965-5-beata.michalska@arm.com>
-In-Reply-To: <20241206135600.4083965-1-beata.michalska@arm.com>
-References: <20241206135600.4083965-1-beata.michalska@arm.com>
+	s=arc-20240116; t=1733493375; c=relaxed/simple;
+	bh=563SsPu6/+OsYwdbvzEtes3bIYtTyUec5qqj5KSLCAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvF0vYeGzv02Ksbrz2qGeJ7fSyYZbi9s0x9doPprSwSrCJFExApXDgTxMzwxsW06hJHN2H2URyETYi7fZniAls6DW0DKoVYai409pH36XqZRySESItKGuijMr5D8wcH9j36hseDVwnMNd2gxUt8UhnT3XvepED9TqQPp10cLKjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0++dduS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261C0C4CEDC;
+	Fri,  6 Dec 2024 13:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733493375;
+	bh=563SsPu6/+OsYwdbvzEtes3bIYtTyUec5qqj5KSLCAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z0++dduS4VP6El2s8mBfIALW+2dmy6vZ33ooYuEgdXM317b/U4EqhGelyHGrrZNzL
+	 miIzeR+cSJnDn2jCkwlWbbPQzMvGFWSHJhDdY+7Q/Yd+Cq1A2hSDtsk9xQb/HEkLVt
+	 0ZmBu6Yv/uqEFGGpNw+RidIfX39MLYvNpox74jqIsyHDwG8s0kme4AlF6hXb3g1p4Q
+	 PD8UA0A0sOhtVkJtPiVQde7vkG47XDvRIjeALCafiEVQT9rNkK5XaiRD+igQQhlf1T
+	 9Ixw6DsaTKfU0t/e/lZGzQ9lrlMDkUdvGSpTCflX+LMZTIiL/wAyKsXyfrrwV7lYxj
+	 OjWK6lrW78A6Q==
+Date: Fri, 6 Dec 2024 13:56:08 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 08/11] clk: move meson clk-regmap implementation to
+ common code
+Message-ID: <20241206-threaten-showing-1214491f3899@spud>
+References: <20241002-private-unequal-33cfa6101338@spud>
+ <20241002-hula-unwashed-1c4ddbadbec2@spud>
+ <2b49c4df-a34a-42c5-8d44-9e47da630fe8@linaro.org>
+ <1jwmiqsks3.fsf@starbuckisacylon.baylibre.com>
+ <20241003-tacking-ladylike-dfe2b633e647@spud>
+ <20241106-freefall-slider-db379b05821e@spud>
+ <430bde3b35382e640843e32a9f351326.sboyd@kernel.org>
+ <20241128-monstrous-embargo-a665d921410d@wendy>
+ <e53adbf9fdf6e3f142083b0d40d074ca.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="D3KsjEcBH/hYSuAR"
+Content-Disposition: inline
+In-Reply-To: <e53adbf9fdf6e3f142083b0d40d074ca.sboyd@kernel.org>
 
-Now that the frequency scale factor has been activated for retrieving
-current frequency on a given CPU, trigger its update upon entering
-idle. This will, to an extent, allow querying last known frequency
-in a non-invasive way. It will also improve the frequency scale factor
-accuracy when a CPU entering idle did not receive a tick for a while.
-As a consequence, for idle cores, the reported frequency will be the
-last one observed before entering the idle state.
 
-Suggested-by: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>
-Signed-off-by: Beata Michalska <beata.michalska@arm.com>
----
- arch/arm64/kernel/topology.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+--D3KsjEcBH/hYSuAR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 5f5738b174c7..6c43aafac77c 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -213,6 +213,19 @@ static __always_inline bool amu_fie_cpu_supported(unsigned int cpu)
- 		cpumask_test_cpu(cpu, amu_fie_cpus);
- }
- 
-+void arch_cpu_idle_enter(void)
-+{
-+	unsigned int cpu = smp_processor_id();
-+
-+	if (!amu_fie_cpu_supported(cpu))
-+		return;
-+
-+	/* Kick in AMU update but only if one has not happened already */
-+	if (housekeeping_cpu(cpu, HK_TYPE_TICK) &&
-+	    time_is_before_jiffies(per_cpu(cpu_amu_samples.last_scale_update, cpu)))
-+		amu_scale_freq_tick();
-+}
-+
- #define AMU_SAMPLE_EXP_MS	20
- 
- int arch_freq_get_on_cpu(int cpu)
--- 
-2.25.1
+On Tue, Dec 03, 2024 at 02:50:31PM -0800, Stephen Boyd wrote:
+> Quoting Conor Dooley (2024-11-28 02:36:16)
+> > On Thu, Nov 14, 2024 at 05:29:54PM -0800, Stephen Boyd wrote:
+> > > Quoting Conor Dooley (2024-11-06 04:56:25)
+> > > > My use case doesn't
+> > > > actually need the registration code changes either as, currently, o=
+nly reg
+> > > > gets set at runtime, but leaving that out is a level of incomplete =
+I'd not
+> > > > let myself away with.
+> > > > Obviously shoving the extra members into the clk structs has the do=
+wnside
+> > > > of taking up a pointer and a offset worth of memory for each clock =
+of
+> > > > that type registered, but it is substantially easier to support dev=
+ices
+> > > > with multiple regmaps that way. Probably moot though since the appr=
+oach you
+> > > > suggested in the thread linked above that implements a clk_hw_get_r=
+egmap()
+> > > > has to store a pointer to the regmap's identifier which would take =
+up an
+> > > > identical amount of memory.
+> > >=20
+> > > We don't need to store the regmap identifier in the struct clk. We can
+> > > store it in the 'struct clk_init_data' with some new field, and only =
+do
+> > > that when/if we actually need to. We would need to pass the init data=
+ to
+> > > the clk_ops::init() callback though. We currently knock that out duri=
+ng
+> > > registration so that clk_hw->init is NULL. Probably we can just set t=
+hat
+> > > to NULL after the init routine runs in __clk_core_init().
+> > >=20
+> > > Long story short, don't add something to 'struct clk_core', 'struct
+> > > clk', or 'struct clk_hw' for these details. We can have a 'struct
+> > > clk_regmap_hw' that everyone else can build upon:
+> > >=20
+> > >   struct clk_regmap_hw {
+> > >         struct regmap *regmap;
+> > >         struct clk_hw hw;
+> > >   };
+> >=20
+> > What's the point of this? I don't understand why you want to do this ov=
+er
+> > what clk_divider et al already do, where clk_hw and the iomem pointer
+> > are in the struct itself.
+>=20
+> Can you give an example? I don't understand what you're suggesting. I
+> prefer a struct clk_regmap_hw like above so that the existing struct
+> clk_hw in the kernel aren't increased by a pointer. SoC drivers can use
+> the same struct as a replacement for their struct clk_hw member today.
 
+Best example I guess is to link what I did? This one is the core
+changes:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
+=3Dsyscon-rework-2&id=3D35904222355e971c24b3eb9b9fad3dd0c38d1393
+clk-gate has my original hack that I did while trying to figure out
+what you wanted, clk-divider-regmap is a 99% copy of clk-divider with
+the types, function names and readl()/writel() implementations modified.
+Before your last set of comments I was doing something identical to the
+clk-gate change for clk-divider also.
+Here's the changes required to my driver to make it work with the
+updated:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
+=3Dsyscon-rework-2&id=3Dea40211fe20f8bc6ef0320b93e1baa5b3f244601
+It's pretty much a drop in replacement, other than the additional
+complexity in probe.
+
+Hopefully that either gets my point across or lets you spot why I don't
+understand the benefit of a wrapper around clk_hw.
+
+Cheers,
+Conor.
+
+--D3KsjEcBH/hYSuAR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1MCeAAKCRB4tDGHoIJi
+0sqzAP9waSsOIi7fzVRAF2IfUyhCzbN2HRg7fuiXsVL8Q28vwQD7BAtQFxtD1L8h
+wFWZMACgozCdkOQyTUTRyE/s54HVoAg=
+=wQYC
+-----END PGP SIGNATURE-----
+
+--D3KsjEcBH/hYSuAR--
 
