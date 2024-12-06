@@ -1,138 +1,255 @@
-Return-Path: <linux-kernel+bounces-435063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1AA9E6EEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:07:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9A59E6EF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:12:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9D4281C06
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:07:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819861885E2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA57203713;
-	Fri,  6 Dec 2024 13:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00720201278;
+	Fri,  6 Dec 2024 13:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mU+H7rdr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="E7JWWcnG"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400741C1F19;
-	Fri,  6 Dec 2024 13:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E7C1C1F19;
+	Fri,  6 Dec 2024 13:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490448; cv=none; b=kOu5blf/AZzZzNZw9Dre3WeCjefDsWGLCKksZnlM/qJbT4BRsIyWfCq5prNdK/mWeJWsGSVk4FwPGeTF/VpuEPzN1P166d4z2LNE59/Z+PfSjr8iOK0jaDnXgNwM6jkqGuCXLAWpfc4J/rPPEx2+zh2UrcloQNA+Q6MJqOZdzy8=
+	t=1733490484; cv=none; b=l5MWu9URYgBMUhdYUm8Ts8xYGFEWZu34DcZd850yLXyEcV9WIeU8yTygR9x3IDMUYoNU7keGJjf8Zbe+FyHye8BK8W7pvyLg5HFh3uTmX66nI2YUZ8+O2tjN+l0x8ohiP6HAc8zhXJ0fvNx0/aEZFz/H92iBkIJt85VYvuMzfNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490448; c=relaxed/simple;
-	bh=+MOizm4Hi8EsvmrUseTAmqGt2xqTmOXTLu/gHyRBzzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6vIwthYPFTWi1/1R0Ueo89+aD1b9w7N4ERfCCOg6GSybP1BV8Wz3j78JnbkbJ2sg1RwJuzNJlmYXJMKvu5O9nmtarPNnfh+Jr32302I9t9aVBcLusSAiP7GmMEbT0z2NdYhGHO7gUuz454kDXd2LuPVZKuI/3et5bejBrxOVVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mU+H7rdr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070F7C4CED2;
-	Fri,  6 Dec 2024 13:07:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733490447;
-	bh=+MOizm4Hi8EsvmrUseTAmqGt2xqTmOXTLu/gHyRBzzI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mU+H7rdrruunhHauD8KabWFkDgYtiRl5h8hqJ3eeUBdjW66fE1mm0d3YAyQLvBGR6
-	 ILXSzv7P5kFnVokBWaz8X3ThUYPtj1xh5GPQZ1U+FC8freyFfR40+Zzrl7CXU2oayg
-	 1bRTwTJXbnLJjUoV7T/Wle3GPJBydDsMEK633JPUKlrdEY1lzgdeIxD0s3eDjsQF80
-	 bUZRhdY9GScL1UDO1Ci38EX9CB00vjinBR6n8QUyqEAHIVy/etb5baRuaVyFOlSfvA
-	 iy0mzywF09QEW9qrbpmmfCxO4o10TwgO9TB7RLgC0Kn3GYt+C6yl5rvC88/J8qXCeT
-	 aNXedLzEaEPKQ==
-Date: Fri, 6 Dec 2024 14:07:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	igor.belwon@mentallysanemainliners.org
-Subject: Re: [PATCH v4 0/4] Add minimal Samsung Galaxy S20 Series board,
- SM-G981B and SM-G980F support
-Message-ID: <dpby4tvamvsk6437kngv4d6diq6pqh5fquptwy7p5325e6hb3j@ot6eaurn4bun>
-References: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
+	s=arc-20240116; t=1733490484; c=relaxed/simple;
+	bh=1ixYuV9vn+tvWWMjI9qcrLzeMtCAsGWYRbir1E1avq8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=s+eHmZG0oyRzO9E6fyf2PjZSp0hStPyh1eYjXpoe6AkQqCvilAMzElZv4R405NX4OmiH/p17nelMD+kS75XjStoc3SGHm14S7+Pxsn74qxNDH87VAc2baLRNqqgsroadzNeorq4tlZJZe7memahRX81bSjV6wYUDH8dV+NguPRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=E7JWWcnG; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1733490481;
+	bh=XnKm59ylPYPwoM2DkN4Cx3zBQck18EMZi4AXKvhtbWo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=E7JWWcnG1+tJLydCqLAwS1NH5On7Gx6kfN9sRI2Ava1ePlhNZ1oVGZUUMpr2Mfb3x
+	 T+PMUlh7kW9ltKamp7Ssg+cSNOukT1ZHR04gyTjbj+BIeRycG2ti5+on178Di/xb7n
+	 7DnQSmJU5jRYDj9mk4pGWk0QPUy60JrD/h+AoKDU=
+Received: from stargazer.. (unknown [113.200.174.114])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 14E6C6748E;
+	Fri,  6 Dec 2024 08:07:59 -0500 (EST)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Shuah Khan <shuah@kernel.org>,
+	Fangrui Song <i@maskray.me>,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: [PATCH v3] selftests/vDSO: support DT_GNU_HASH
+Date: Fri,  6 Dec 2024 21:07:25 +0800
+Message-ID: <20241206130724.7944-2-xry111@xry111.site>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <297cfe11-0418-4633-8c15-4ffc7d290a3d@linuxfoundation.org>
+References: <297cfe11-0418-4633-8c15-4ffc7d290a3d@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 08:03:22AM +0000, Umer Uddin wrote:
-> Hi folks,
-> 
-> This series adds initial support for the Samsung Galaxy S20 Series and also
-> initial board support for the Samsung Galaxy S20 5G (SM-G981B)
-> codenamed x1s.
-> 
-> The S20 Series feature a lot of similarities in their configuration
-> and internally Samsung named the common devicetrees in their
-> downstream kernel 'hubble', please note hubble excludes the
-> S20 FE series and Note20 series. To accomodate this, I've
-> now named the device tree common's matching the codenames
-> (x1s-common).
-> The device trees have been tested with dtbs_check W=1
-> and results in no warnings.
-> 
-> This initial bringup consists of:
->  * pinctrl
->  * gpio-keys
->  * simple-framebuffer
-> 
-> This is enough to reach a shell in an initramfs. More platform support
-> will be added in the future.
-> 
-> Just like SM-N981B, the preferred way to boot the upstream kernel is
-> by using a shim bootloader, called uniLoader [1], which works around
-> some issues with the stock, non-replacable Samsung S-LK bootloader.
-> For example, the stock bootloader leaves the decon trigger control
-> unset, which causes the framebuffer not to refresh.
-> 
-> Device functionality depends on the patch series from Igor Belwon:
-> "Add minimal Exynos990 SoC and SM-N981B support"
-> 
-> [1] https://github.com/ivoszbg/uniLoader
-> 
-> Changes in v4:
->  - Rebase from krzk's kernel tree to accomodate
->    for the merge of r8s
->  - Rename exynos990-hubble-common.dtsi
->    to exynos990-x1s-common.dtsi
+From: Fangrui Song <i@maskray.me>
 
+glibc added support for DT_GNU_HASH in 2006 and DT_HASH has been
+obsoleted for more than one decade in many Linux distributions.
 
-What else happened here?
+Many vDSOs support DT_GNU_HASH. This patch adds selftests support.
 
-b4 diff '20241203080327.4751-2-umer.uddin@mentallysanemainliners.org'
-Checking for older revisions
-Grabbing search results from lore.kernel.org
-  Added from v3: 9 patches
+Signed-off-by: Fangrui Song <i@maskray.me>
+Tested-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Xi Ruoyao <xry111@xry111.site> # rebase
 ---
-Analyzing 29 messages in the thread
-WARNING: duplicate messages found at index 3
-   Subject 1: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G (x1s)
-   Subject 2: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G (x1s)
-  2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 4
-   Subject 1: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 (x1slte)
-   Subject 2: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G (x1s)
-  2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-   Subject 1: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
-   Subject 2: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
-  2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-   Subject 1: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series boards (hubble)
-   Subject 2: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
-  2 is not a reply... assume additional patch
-Preparing fake-am for v3: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
-ERROR: v3 series incomplete; unable to create a fake-am range
+ tools/testing/selftests/vDSO/parse_vdso.c | 110 ++++++++++++++++------
+ 1 file changed, 82 insertions(+), 28 deletions(-)
 
-Working with these series is a pain.
+diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
+index 28f35620c499..2fe5e983cb22 100644
+--- a/tools/testing/selftests/vDSO/parse_vdso.c
++++ b/tools/testing/selftests/vDSO/parse_vdso.c
+@@ -53,6 +53,7 @@ static struct vdso_info
+ 	/* Symbol table */
+ 	ELF(Sym) *symtab;
+ 	const char *symstrings;
++	ELF(Word) *gnu_hash;
+ 	ELF_HASH_ENTRY *bucket, *chain;
+ 	ELF_HASH_ENTRY nbucket, nchain;
+ 
+@@ -81,6 +82,16 @@ static unsigned long elf_hash(const char *name)
+ 	return h;
+ }
+ 
++static uint32_t gnu_hash(const char *name)
++{
++	const unsigned char *s = (void *)name;
++	uint32_t h = 5381;
++
++	for (; *s; s++)
++		h += h * 32 + *s;
++	return h;
++}
++
+ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+ {
+ 	size_t i;
+@@ -123,6 +134,7 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+ 	 */
+ 	ELF_HASH_ENTRY *hash = 0;
+ 	vdso_info.symstrings = 0;
++	vdso_info.gnu_hash = 0;
+ 	vdso_info.symtab = 0;
+ 	vdso_info.versym = 0;
+ 	vdso_info.verdef = 0;
+@@ -143,6 +155,11 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+ 				((uintptr_t)dyn[i].d_un.d_ptr
+ 				 + vdso_info.load_offset);
+ 			break;
++		case DT_GNU_HASH:
++			vdso_info.gnu_hash =
++				(ELF(Word) *)((uintptr_t)dyn[i].d_un.d_ptr +
++					      vdso_info.load_offset);
++			break;
+ 		case DT_VERSYM:
+ 			vdso_info.versym = (ELF(Versym) *)
+ 				((uintptr_t)dyn[i].d_un.d_ptr
+@@ -155,17 +172,27 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+ 			break;
+ 		}
+ 	}
+-	if (!vdso_info.symstrings || !vdso_info.symtab || !hash)
++	if (!vdso_info.symstrings || !vdso_info.symtab ||
++	    (!hash && !vdso_info.gnu_hash))
+ 		return;  /* Failed */
+ 
+ 	if (!vdso_info.verdef)
+ 		vdso_info.versym = 0;
+ 
+ 	/* Parse the hash table header. */
+-	vdso_info.nbucket = hash[0];
+-	vdso_info.nchain = hash[1];
+-	vdso_info.bucket = &hash[2];
+-	vdso_info.chain = &hash[vdso_info.nbucket + 2];
++	if (vdso_info.gnu_hash) {
++		vdso_info.nbucket = vdso_info.gnu_hash[0];
++		/* The bucket array is located after the header (4 uint32) and the bloom
++		 * filter (size_t array of gnu_hash[2] elements).
++		 */
++		vdso_info.bucket = vdso_info.gnu_hash + 4 +
++				   sizeof(size_t) / 4 * vdso_info.gnu_hash[2];
++	} else {
++		vdso_info.nbucket = hash[0];
++		vdso_info.nchain = hash[1];
++		vdso_info.bucket = &hash[2];
++		vdso_info.chain = &hash[vdso_info.nbucket + 2];
++	}
+ 
+ 	/* That's all we need. */
+ 	vdso_info.valid = true;
+@@ -209,6 +236,26 @@ static bool vdso_match_version(ELF(Versym) ver,
+ 		&& !strcmp(name, vdso_info.symstrings + aux->vda_name);
+ }
+ 
++static bool check_sym(ELF(Sym) *sym, ELF(Word) i, const char *name,
++		      const char *version, unsigned long ver_hash)
++{
++	/* Check for a defined global or weak function w/ right name. */
++	if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
++		return false;
++	if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
++	    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
++		return false;
++	if (strcmp(name, vdso_info.symstrings + sym->st_name))
++		return false;
++
++	/* Check symbol version. */
++	if (vdso_info.versym &&
++	    !vdso_match_version(vdso_info.versym[i], version, ver_hash))
++		return false;
++
++	return true;
++}
++
+ void *vdso_sym(const char *version, const char *name)
+ {
+ 	unsigned long ver_hash;
+@@ -216,29 +263,36 @@ void *vdso_sym(const char *version, const char *name)
+ 		return 0;
+ 
+ 	ver_hash = elf_hash(version);
+-	ELF(Word) chain = vdso_info.bucket[elf_hash(name) % vdso_info.nbucket];
+-
+-	for (; chain != STN_UNDEF; chain = vdso_info.chain[chain]) {
+-		ELF(Sym) *sym = &vdso_info.symtab[chain];
+-
+-		/* Check for a defined global or weak function w/ right name. */
+-		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
+-			continue;
+-		if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
+-		    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
+-			continue;
+-		if (sym->st_shndx == SHN_UNDEF)
+-			continue;
+-		if (strcmp(name, vdso_info.symstrings + sym->st_name))
+-			continue;
+-
+-		/* Check symbol version. */
+-		if (vdso_info.versym
+-		    && !vdso_match_version(vdso_info.versym[chain],
+-					   version, ver_hash))
+-			continue;
+-
+-		return (void *)(vdso_info.load_offset + sym->st_value);
++	ELF(Word) i;
++
++	if (vdso_info.gnu_hash) {
++		uint32_t h1 = gnu_hash(name), h2, *hashval;
++
++		i = vdso_info.bucket[h1 % vdso_info.nbucket];
++		if (i == 0)
++			return 0;
++		h1 |= 1;
++		hashval = vdso_info.bucket + vdso_info.nbucket +
++			  (i - vdso_info.gnu_hash[1]);
++		for (;; i++) {
++			ELF(Sym) *sym = &vdso_info.symtab[i];
++			h2 = *hashval++;
++			if (h1 == (h2 | 1) &&
++			    check_sym(sym, i, name, version, ver_hash))
++				return (void *)(vdso_info.load_offset +
++						sym->st_value);
++			if (h2 & 1)
++				break;
++		}
++	} else {
++		i = vdso_info.bucket[elf_hash(name) % vdso_info.nbucket];
++		for (; i; i = vdso_info.chain[i]) {
++			ELF(Sym) *sym = &vdso_info.symtab[i];
++			if (sym->st_shndx != SHN_UNDEF &&
++			    check_sym(sym, i, name, version, ver_hash))
++				return (void *)(vdso_info.load_offset +
++						sym->st_value);
++		}
+ 	}
+ 
+ 	return 0;
 
-Best regards,
-Krzysztof
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.47.1
 
 
