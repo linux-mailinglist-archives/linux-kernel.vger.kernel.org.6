@@ -1,118 +1,166 @@
-Return-Path: <linux-kernel+bounces-435571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2009E799A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:03:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D3D9E7960
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:01:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A08188896B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5542818857DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC4D21B1A5;
-	Fri,  6 Dec 2024 20:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22BD1C54BA;
+	Fri,  6 Dec 2024 20:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pq0uuLFx"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EcGL0vVN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C22D202F9C;
-	Fri,  6 Dec 2024 20:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD6D1C548A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733515289; cv=none; b=diw22nsD/Dj6EjHxwXZY8xQF7vX0/d7vBTjF3IUDANVRi4GBuUNrrl2WKzZElx8foH6ThY3eDQdBMk+FRVxbw/mnyG7RSmKdKhc/pSotI58+lOqxXXtUDQEtHSNXgTeDP2z/VCEChnD3ypbLDEUvA8JJjfWIF9WrAkjfXBmwocc=
+	t=1733515266; cv=none; b=DZqSVLixeE2jab91vSEvSPWFIbDbbXPBcpp6TDuFUVaBxCjC0hTiQD/ZrvjzCEhepByMmgHYJZpipTCBCKTVvdl7NuKp014aRL6AfJSn7R4XXfXn1b2SwLDmACInRsSvSy7eK5seyzJ/nCFR2n8Q3XAWoqbxShYIdLrYtvv2oDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733515289; c=relaxed/simple;
-	bh=y6XXCJxHP7R+S063ODrYUxtG2dLu1WyZCtnr2qnbn14=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R2zPjk0CPv7w4GhpjU6K5lQehupCbTz2HtdhdAM9g5VorGJ4YnYVe4RPW57Qh/5a4K5lPe+HEwdF2J4vxMS8/sYxmYnLC6ki4lU0oXcKnEH5jQ1L6v5EFQP/qHBhFxLV/+ICkJYgxeeuxdA/yUCt8SXVsb49g7HmkO/npFE578M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pq0uuLFx; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733515287; x=1765051287;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=y6XXCJxHP7R+S063ODrYUxtG2dLu1WyZCtnr2qnbn14=;
-  b=pq0uuLFxMM3evb3Bfx57ajZrrFQGsZ/O22WmMVM42r1j9YiwXktm4Aq/
-   +kTLPi9X/TXMdjB6OPrexZYg79tHWhF3Uyx5Df8xkx8Q0j0HbgFpK9Eug
-   PbY4KcpTaokMgSS4MJIL3Ji1Vu9QAV6MdMTleMFjBosWKMLQEHN9przTa
-   Fy3Y2XJpzHvAzgHPNux63TO7+k+TGdlUMYJfw3ph5BboTP5nGvkRK8KQ5
-   Y6E1kvzkzHb8v4A7Dar8GP7J5onpWypuhgNvTQyHXuYBklToD1WPnDGtp
-   iSkdGgi3vwcJAO8nInIvNbq7xLxXprivsTbhcn/H2PhX1ppIxSwohbCrK
-   Q==;
-X-CSE-ConnectionGUID: wHv5dacKTzaP3KMzdbJ8Aw==
-X-CSE-MsgGUID: Qt5jBYA3Tu+eE+ndM0DS+w==
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="202686993"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Dec 2024 13:01:24 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 6 Dec 2024 13:01:11 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 6 Dec 2024 13:01:11 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<arnd@arndb.de>
-CC: <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
-	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH v3 13/13] ARM: at91: add new SoC sama7d65
-Date: Fri, 6 Dec 2024 12:59:58 -0700
-Message-ID: <465960c9240553753e96a7f4ff3f48879ade7558.1733505542.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1733505542.git.Ryan.Wanner@microchip.com>
-References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1733515266; c=relaxed/simple;
+	bh=wJFpZYjvbcAJE78Oh0X5Elu4itegB/Xs0WGo8oeSKBQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HU5j0RiuSzhdztHI1sqPLr2sQrPYOW06loEQafKZt1SXfWw1HjWjRHnbDGN2fksh0esvwgng9Soim9Zsj0JHlr/Yp7+cBOi48ousnMyCE2NkqJQL1Rfc1JK3rozU73Fas+97Ad1QF9CeA9FDH1E+JjyT1uIClHWxJ944RoSputU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EcGL0vVN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733515261;
+	bh=wJFpZYjvbcAJE78Oh0X5Elu4itegB/Xs0WGo8oeSKBQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=EcGL0vVNeFDYa6IY+f1PKKRtqJNpP/80lV83Ha5FDs8JdfeKPuRJUOZP4kjfIwL9C
+	 Wjx5SRf6romQeFbR56pv5exChrWNeHO42SAS22hn0dwCGS7vGYCHgsMTtNO0cQP3aS
+	 7Ni8ohBspgedEHO4z4Lk8gi3npJghkNLpZn4W/B/LPXf3NlwykoiW/Vjl4j+PHy1b7
+	 wTMv73lw170EAQGTr4lORz4wMfRRpV6r9t4ulBe4T43kyxUOnOsRO4EmufFA3nt+oO
+	 s8XDmmNFMZryrKWiV6/4jEJr+4z19hTdK5cP/fFgnRTV87LDzNjDpb1R+pLf72r4PK
+	 +vaybO7DQZzVg==
+Received: from localhost (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B48CA17E37E7;
+	Fri,  6 Dec 2024 21:01:01 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Fri, 06 Dec 2024 22:00:46 +0200
+Subject: [PATCH v2] drm/bridge-connector: Prioritize supported_formats over
+ ycbcr_420_allowed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241206-bridge-conn-fmt-prio-v2-1-85c817529b88@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAO1XU2cC/4WNTQqDMBCFryKzbooT/6Cr3kNcJDGpA5qRiUiLe
+ PemXqC81ffgfe+A5IV8gkdxgPidEnHMoG8FuMnEl1c0ZgZd6hqxKpUVGnPrOEYVlk2tQqxcg53
+ Duuz82ECeruIDvS9tP2SeKG0sn+tlx1/7R7ijyqlb27ZVwC5UT8fzbCyLuTteYDjP8wuCwjq+v
+ AAAAA==
+X-Change-ID: 20241130-bridge-conn-fmt-prio-c517c1407ed5
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+Bridges having the DRM_BRIDGE_OP_HDMI flag set in drm_bridge->ops are
+supposed to rely on drm_bridge->supported_formats bitmask to advertise
+the supported colorspaces, including HDMI_COLORSPACE_YUV420.  Therefore,
+the newly introduced drm_bridge->ycbcr_420_allowed flag becomes
+redundant in this particular context.
 
-Add new SoC from at91 family: sama7d65
+Moreover, when drm_bridge_connector gets initialised, only
+drm_bridge->ycbcr_420_allowed is considered in the process of adjusting
+the equivalent property of the base drm_connector, which effectively
+discards the formats advertised by the HDMI bridge.
 
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+Handle the inconsistency by ignoring ycbcr_420_allowed for HDMI bridges
+and, instead, make use of the supported_formats bitmask when setting up
+the bridge connector.
+
+Additionally, ensure the YUV420 related bit is removed from the bitmask
+passed to drmm_connector_hdmi_init() when the final ycbcr_420_allowed
+flag for the connector ends up not being set (i.e. the case of having at
+least one non-HDMI bridge in the pipeline that didn't enable it).
+
+Fixes: 3ced1c687512 ("drm/display: bridge_connector: handle ycbcr_420_allowed")
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- arch/arm/mach-at91/Kconfig | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changes in v2:
+- Wrapped HDMI_COLORSPACE_YUV420 flag in the BIT() macro to properly
+  check its presence in supported_formats
+- Ensured YUV420 gets removed from the bitmask passed to
+  drmm_connector_hdmi_init() when ycbcr_420_allowed is not set
+- Link to v1: https://lore.kernel.org/r/20241130-bridge-conn-fmt-prio-v1-1-146b663f17f3@collabora.com
+---
+ drivers/gpu/drm/display/drm_bridge_connector.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index 344f5305f69a..2c7179b1baa0 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -58,6 +58,15 @@ config SOC_SAMA5D4
- 	help
- 	  Select this if you are using one of Microchip's SAMA5D4 family SoC.
+diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+index 320c297008aaa8b6ef5b1f4c71928849b202e8ac..1f05278b8683a25a845f943720c76faeed24c2e2 100644
+--- a/drivers/gpu/drm/display/drm_bridge_connector.c
++++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+@@ -414,7 +414,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 	drm_for_each_bridge_in_chain(encoder, bridge) {
+ 		if (!bridge->interlace_allowed)
+ 			connector->interlace_allowed = false;
+-		if (!bridge->ycbcr_420_allowed)
++		if (!bridge->ycbcr_420_allowed && !(bridge->ops & DRM_BRIDGE_OP_HDMI))
+ 			connector->ycbcr_420_allowed = false;
  
-+config SOC_SAMA7D65
-+        bool "SAMA7D65 family"
-+        depends on ARCH_MULTI_V7
-+        select HAVE_AT91_GENERATED_CLK
-+        select HAVE_AT91_SAM9X60_PLL
-+        select SOC_SAMA7
-+        help
-+         Select this if you are using one of Microchip's SAMA7D65 family SoC.
+ 		if (bridge->ops & DRM_BRIDGE_OP_EDID)
+@@ -436,6 +436,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 
+ 			if (bridge->supported_formats)
+ 				supported_formats = bridge->supported_formats;
 +
- config SOC_SAMA7G5
- 	bool "SAMA7G5 family"
- 	depends on ARCH_MULTI_V7
--- 
-2.43.0
++			if (!(bridge->supported_formats & BIT(HDMI_COLORSPACE_YUV420)))
++				connector->ycbcr_420_allowed = false;
++
+ 			if (bridge->max_bpc)
+ 				max_bpc = bridge->max_bpc;
+ 		}
+@@ -459,7 +463,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 	if (connector_type == DRM_MODE_CONNECTOR_Unknown)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	if (bridge_connector->bridge_hdmi)
++	if (bridge_connector->bridge_hdmi) {
++		if (!connector->ycbcr_420_allowed)
++			supported_formats &= ~BIT(HDMI_COLORSPACE_YUV420);
++
+ 		ret = drmm_connector_hdmi_init(drm, connector,
+ 					       bridge_connector->bridge_hdmi->vendor,
+ 					       bridge_connector->bridge_hdmi->product,
+@@ -468,10 +475,11 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 					       connector_type, ddc,
+ 					       supported_formats,
+ 					       max_bpc);
+-	else
++	} else {
+ 		ret = drmm_connector_init(drm, connector,
+ 					  &drm_bridge_connector_funcs,
+ 					  connector_type, ddc);
++	}
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20241130-bridge-conn-fmt-prio-c517c1407ed5
 
 
