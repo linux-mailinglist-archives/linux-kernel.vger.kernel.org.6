@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-435017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7830F9E6E80
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:46:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E309E6E84
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B024416A27E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:42:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5B91887A96
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E512036E8;
-	Fri,  6 Dec 2024 12:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1484E2066C2;
+	Fri,  6 Dec 2024 12:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+n0/+uG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DE0a3bPG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A3F202F7C;
-	Fri,  6 Dec 2024 12:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B2C2036F3;
+	Fri,  6 Dec 2024 12:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733488967; cv=none; b=EKJT2ySlKxVL61x2395We5Z2ZAI4E/0cBABx9BUg91E8p9OX+QVnHCSac/q/l/hc2ycQO/3QJ9fuKtBY9sO6x+HVxJPuF0IY632XTw3FYgDKHiFGgz7+Oc/5G+PQNNeLJSV1g78GnCF5WZX40PkjhhNhC8W02prsaJlzPzhdk5E=
+	t=1733488974; cv=none; b=MQ0z+OGpOgS1x0mHUiFG+Ni03+muOWS6+BGQ/qn0aNU+23fPubTeXtU7T/NmhUE4p7PNz9QUTe2z5loe99hRCFg67GPeKFBYJ1lpyHYXpLJ7aKzIbXCjBV2dha1T5HEXvEPKDdG1cGl3newf8r8TqkWB7N7uFQgpwylr+uMA0f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733488967; c=relaxed/simple;
-	bh=22NZyA5YVkMQ03pXUXXdocb9WXBGnORT9AlGZhxewK4=;
+	s=arc-20240116; t=1733488974; c=relaxed/simple;
+	bh=WFkpKiXyvQ59F/bCxcLhHbqQzdnF8Nx2WniZliuSybA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R/WjRk2+uX36FnkstmggbHN2J9VeX5n2/aSpsYqcqNjKqN8ZRs+nNv1NhkGU2LtY51ssrn6LjTYJhEFxnnaaETfne6dmFBmMkpiIHUF0hiazl3QMsOI34VXHdDblP1Xv45kxxymIhxoPqtuc+YVKyGcxkfJG+TPYo1+0oY2909A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+n0/+uG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44378C4AF09;
-	Fri,  6 Dec 2024 12:42:41 +0000 (UTC)
+	 MIME-Version; b=r1HXOVb970uX0osP3/CB42yIR1d85vNdKbKED59R0c/b7dh+E46SKfviHwKVVZ/FrjKUgu3iqKn3BKI++/CVGtNrmnuuvaNwYR7Lg/K9sRYl37ACl7cANAADwOmFYIpIKaUW3QQT1VGRovUXwonB+pLXRcI+ilceiaQahl9hvAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DE0a3bPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA29C4CED1;
+	Fri,  6 Dec 2024 12:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733488967;
-	bh=22NZyA5YVkMQ03pXUXXdocb9WXBGnORT9AlGZhxewK4=;
+	s=k20201202; t=1733488974;
+	bh=WFkpKiXyvQ59F/bCxcLhHbqQzdnF8Nx2WniZliuSybA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a+n0/+uGtvOKALSQgobwyvPSupUwFdAFldRrey79jA3zmTfz0f9LY/wT8nSWnjvGX
-	 qRF6ADfoum7VFiQzv++Qi7innBfZ3v62/d9WSRIJja27Erlw6P6qXS2FbkVmw8KVXt
-	 cl/nzbvY0jTB8LJAgqigY/Ff6ONACILEpzqBT3KiXR3jijnBU/Cx8x/n5ffgteVpeS
-	 K3an0NaISg3uVTKrpqwH7N6+wzKGv+zkHpQp/WXCoyn7r9IaFtup2tqxpaY+s4aTls
-	 mReDJ3BEFjINCjE0avmP2tD4QdjWsQL1UbeOToswptAM3B3SIjH6upL3AcwOMvnLyR
-	 Gd+v1/jaxS/ng==
+	b=DE0a3bPGqAObx3iJSMPQZ6MAwgC8vB5Y6m7QdcN6s3rnH+xu64+/8Y0LzfBjSSDe5
+	 1pUkXu+E4hmzoqWKgx11Vksm31z1+wii+CZHhxO0U6oq4Fc+lqRXVO9ufi6rJgEmJ2
+	 SPG6nOMW/DesdRZ4nPCdjbIS+YixUdCCVZjo7qL0P+G379H+ny6FViMdxPGgHkCBn0
+	 7ZBtyf3XNwFaTXcNUX/bnm5TW0ef2ZlB0AR2ItIBqdt6G1UcnsBf4L+vSGQONAWbIq
+	 OUgKI/l4AloKTGEem/1AbILRUv6XqhYfzNqJTdaow2fNX3wym6pdh7N/JoMqGuM2vt
+	 rlWY3pj/Wzbrg==
 From: Lee Jones <lee@kernel.org>
 To: lee@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -55,9 +55,9 @@ Cc: linux-kernel@vger.kernel.org,
 	aliceryhl@google.com,
 	tmgross@umich.edu,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v5 1/4] Documentation: ioctl-number: Carve out some identifiers for use by sample drivers
-Date: Fri,  6 Dec 2024 12:42:12 +0000
-Message-ID: <20241206124218.165880-2-lee@kernel.org>
+Subject: [PATCH v5 2/4] samples: rust: Provide example using the new Rust MiscDevice abstraction
+Date: Fri,  6 Dec 2024 12:42:13 +0000
+Message-ID: <20241206124218.165880-3-lee@kernel.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241206124218.165880-1-lee@kernel.org>
 References: <20241206124218.165880-1-lee@kernel.org>
@@ -69,29 +69,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-32 IDs should be plenty (at yet, not too greedy) since a lot of sample
-drivers will use their own subsystem allocations.
+This sample driver demonstrates the following basic operations:
 
-Sample drivers predominately reside in <KERNEL_ROOT>/samples, but there
-should be no issue with in-place example drivers using them.
+* Register a Misc Device
+* Create /dev/rust-misc-device
+* Provide open call-back for the aforementioned character device
+* Operate on the character device via a simple ioctl()
+* Provide close call-back for the character device
 
 Signed-off-by: Lee Jones <lee@kernel.org>
 ---
- Documentation/userspace-api/ioctl/ioctl-number.rst | 1 +
- 1 file changed, 1 insertion(+)
+ samples/rust/Kconfig             | 10 ++++
+ samples/rust/Makefile            |  1 +
+ samples/rust/rust_misc_device.rs | 79 ++++++++++++++++++++++++++++++++
+ 3 files changed, 90 insertions(+)
+ create mode 100644 samples/rust/rust_misc_device.rs
 
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index 243f1f1b554a..dc4bc0cab69f 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -311,6 +311,7 @@ Code  Seq#    Include File                                           Comments
-                                                                      <mailto:oe@port.de>
- 'z'   10-4F  drivers/s390/crypto/zcrypt_api.h                        conflict!
- '|'   00-7F  linux/media.h
-+'|'   80-9F  samples/                                                Any sample and example drivers
- 0x80  00-1F  linux/fb.h
- 0x81  00-1F  linux/vduse.h
- 0x89  00-06  arch/x86/include/asm/sockios.h
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index b0f74a81c8f9..df384e679901 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
+ 
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_MISC_DEVICE
++	tristate "Misc device"
++	help
++	  This option builds the Rust misc device.
++
++	  To compile this as a module, choose M here:
++	  the module will be called rust_misc_device.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_PRINT
+ 	tristate "Printing macros"
+ 	help
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index c1a5c1655395..ad4b97a98580 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -2,6 +2,7 @@
+ ccflags-y += -I$(src)				# needed for trace events
+ 
+ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
++obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+ 
+ rust_print-y := rust_print_main.o rust_print_events.o
+diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+new file mode 100644
+index 000000000000..c94b56c454fb
+--- /dev/null
++++ b/samples/rust/rust_misc_device.rs
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2024 Google LLC.
++
++//! Rust misc device sample.
++
++use kernel::{
++    c_str,
++    ioctl::_IO,
++    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
++    prelude::*,
++};
++
++const RUST_MISC_DEV_HELLO: u32 = _IO('|' as u32, 0x80);
++
++module! {
++    type: RustMiscDeviceModule,
++    name: "rust_misc_device",
++    author: "Lee Jones",
++    description: "Rust misc device sample",
++    license: "GPL",
++}
++
++#[pin_data]
++struct RustMiscDeviceModule {
++    #[pin]
++    _miscdev: MiscDeviceRegistration<RustMiscDevice>,
++}
++
++impl kernel::InPlaceModule for RustMiscDeviceModule {
++    fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
++        pr_info!("Initialising Rust Misc Device Sample\n");
++
++        let options = MiscDeviceOptions {
++            name: c_str!("rust-misc-device"),
++        };
++
++        try_pin_init!(Self {
++            _miscdev <- MiscDeviceRegistration::register(options),
++        })
++    }
++}
++
++struct RustMiscDevice;
++
++#[vtable]
++impl MiscDevice for RustMiscDevice {
++    type Ptr = KBox<Self>;
++
++    fn open() -> Result<KBox<Self>> {
++        pr_info!("Opening Rust Misc Device Sample\n");
++
++        Ok(KBox::new(RustMiscDevice, GFP_KERNEL)?)
++    }
++
++    fn ioctl(
++        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
++        cmd: u32,
++        _arg: usize,
++    ) -> Result<isize> {
++        pr_info!("IOCTLing Rust Misc Device Sample\n");
++
++        match cmd {
++            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
++            _ => {
++                pr_err!("IOCTL not recognised: {}\n", cmd);
++                return Err(ENOTTY);
++            }
++        }
++
++        Ok(0)
++    }
++}
++
++impl Drop for RustMiscDevice {
++    fn drop(&mut self) {
++        pr_info!("Exiting the Rust Misc Device Sample\n");
++    }
++}
 -- 
 2.47.0.338.g60cca15819-goog
 
