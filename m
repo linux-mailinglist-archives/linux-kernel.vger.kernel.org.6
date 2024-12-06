@@ -1,165 +1,90 @@
-Return-Path: <linux-kernel+bounces-434538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88369E6803
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:36:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDAD9E6804
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035231881E9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895CF1885A10
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ABC1DE4FE;
-	Fri,  6 Dec 2024 07:35:59 +0000 (UTC)
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B665C1DF274;
+	Fri,  6 Dec 2024 07:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSUiTVaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86631B4F1F;
-	Fri,  6 Dec 2024 07:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE851DBB3A;
+	Fri,  6 Dec 2024 07:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733470559; cv=none; b=jFv4RfDjV/FaePTI28LM2MNT6zpM4BRJMoiu+yiXZK1QD1GdIMYZaE3Sq+oQWSwXukNpZtWu4lQMotlyZxSJkEJB2g2jOYa2fTBZBUgJbvPAsAuw58JkdxKJgDbL30byAOAJNKym5JKlWhIxrye/SJSYyC2iKW/m87wEWQ092DY=
+	t=1733470564; cv=none; b=lja0CyVmYFpDbfkJD2xzTPnXTq4euucEmI2EOs4StUHvKhOyGQ285VAYU7Nn8wGRYiO1KPjmol5/sB7B7SY4lsJA0MhC8nPYVlWihA0jgX4takAawKKGSWRjNfW2NCv7R5R9FtEXnyYsWWlxha8kir+0alkdyd5U8Whktr9qa8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733470559; c=relaxed/simple;
-	bh=GWVUSjQxAvUUmMLC8RroneMaixS408dLu1A7yPcAjoc=;
+	s=arc-20240116; t=1733470564; c=relaxed/simple;
+	bh=GgZaIKYqwHFnub4K6lKDTb/cpONWd1rIk/cClD2yA2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9rrGkZJ8BZwEnsxVHrkdCrD/s8MqD4XLBb41gch/veQpDaLLVFyEwstxFiBD3qgyx3Zn9+gTWp4RDINJoVpL+6Dr9Ha5k+0hyYoJIvXrX844o+N2Rj3gO9pew24Zkmm1etoZcvOurLaQ+K6uuuNO+51WDm290sI/o11ej7kSrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-29e998c70f9so1211817fac.2;
-        Thu, 05 Dec 2024 23:35:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733470557; x=1734075357;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e04UQN4Bgq81Dxa3sAw+VWMHnoxLZmrzryZOBk+bxd8=;
-        b=Ag/TrsDsvhZ6lqLQlJxZ4AMdRyMNKpx7D4S1dzdzA9rxtBKP9gh+Be/uKdRfb7btRe
-         KEVwmghKJ6KR7oucOY0UMUiYrtW6eG47ZWSqkGPqJnNLTehH5dqxLxDfzsbeJd8SaEIv
-         uMBJa8T1/E9aXbnQGxN0xUBe0zsqLroV6KGMBFQ/uU/FYwd9nIGn7kA/GPcxyb5wjKd4
-         /D5gBW6qh4I1O3YaOaTtGLIA7TcEguWRQVfZ4Ko9YDlCLoHBsepYWnqo2ae5J4nM7JDM
-         iGCFEIB/GwTwDF5uQHf6bYjXIXGqdNwM1CrH4DK8mpcsmF2FitsBfR2OfHiIjlTUSOm9
-         nv7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUAM7HsEoyD2jQ1BviLcCy1J5eckh5hK81YCBLYBfzRjSzv1kz1HACqZeUbFEHbAMvEtE46jjMc1gs+8CoD@vger.kernel.org, AJvYcCUJHa9+fyW7M2eY30O6gW1F1j0qDkYtvqTM57DI0Emf+FPW4WQ1mJoBu6W3WbEw2kW6dZ11LOsG@vger.kernel.org, AJvYcCWjQkulUhH0pMj/26QyPxA/7oi+GzMrD+Qu0KGosPlArvlECCH1CDw/l8lKdmC7jMTJmldcgah2B7cyoo+8Azo=@vger.kernel.org, AJvYcCXSBC/PCEDcgux1oxtJLgDU/qK8CkP7A01zy+MDFlyOjZkIMMnycFYn9lCCo0gbX3XaeJRW55LUHfxm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/If1Z5j7GFwV205kE6WRtSM2KNnpG3yjWiQbwkrikjPayBbWi
-	EblRM6/y6/AOQt1HLBXehfEk1If+Lg25chLS8NUEL00ycGnJDnE0
-X-Gm-Gg: ASbGncvwx+5im8U8Q4Bvno+dYiRoE/qnuiceQJbA+yALu7YNI9Bgk/uiPiVAP+94y3t
-	w5C2tMqgeRhdTP+/XghoSZYWpWNb/L8iZuY8VCt9cMfXg/PI2WtzITNKvW5vszF4fQhOR6nyUtS
-	DVSbzrMFBq8J/Jtx0kRuxJG64WJ4Jd3S2BdHQA+W4YJDmhdx220F8waAUL9afBJFBczWpz4pQZR
-	rUcAaFzj3rRsRc75Mia+d2ekfPEoLbmAcJPNPrXLS7SLLTZmzZkWqhZA2C7
-X-Google-Smtp-Source: AGHT+IEuZaAtLFt7J5lrqNm1axRoJWe4AUHjojGK9/xI3HOEczyiq8ngMxRqB/ki0aT6JOUV5jSY9A==
-X-Received: by 2002:a05:6870:3b8e:b0:29e:247b:4f77 with SMTP id 586e51a60fabf-29f733405d8mr2472478fac.20.1733470556826;
-        Thu, 05 Dec 2024 23:35:56 -0800 (PST)
-Received: from V92F7Y9K0C.lan ([136.25.84.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156e1e20sm2442332a12.32.2024.12.05.23.35.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 23:35:56 -0800 (PST)
-Date: Thu, 5 Dec 2024 23:35:53 -0800
-From: Dennis Zhou <dennis@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-arch@vger.kernel.org,
-	netdev@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 5/6] percpu: Repurpose __percpu tag as a named address
- space qualifier
-Message-ID: <Z1KpWenJGqhjtNL9@V92F7Y9K0C.lan>
-References: <20241205154247.43444-1-ubizjak@gmail.com>
- <20241205154247.43444-6-ubizjak@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDwWBFTnacaPdK64FOpgFCJEXcacfgXGbbnu5e6QJYy0Il9ZTcMlDfsQ6mvZd9eOWuQe+zOeJslJ2TPmtU9v6vfa9j9Q1RDlNQcFySqd9ynUAEEF1UUgO4mHD5VbB72o4SHmMs5lLafAJ/aS2YubWYLU8ZF0Iaqd/W1wyZf/9W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSUiTVaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5C0C4CED1;
+	Fri,  6 Dec 2024 07:36:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733470563;
+	bh=GgZaIKYqwHFnub4K6lKDTb/cpONWd1rIk/cClD2yA2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GSUiTVaX9Q54RW05rss5hrg4ujhMQyVWWb0IB1fW8VvuuxUEO+qbz47/qWV14dbAs
+	 q67Od2tg+CAt9zgle/Nt4ETvW2Ordw6OBFmXdp75wIqEHMrZ+DKyxs+fNz5sw29IrZ
+	 jYRARSgQ4XVnVT82eYDRMXI2r5wvisodODqYRblWQXnc4QP4hYT4MwKvF2eQSD90MW
+	 Y32+Y8pXuPp1RTt800n9EBiya2kuGNh0+4RhHqMuikAkIkkT+yNt9pzTwHjPYY0091
+	 2Wc/A2bp3cdLES1xyMvFjggl+7moDGL9GdYj2uZf3KF7QVT4x6N4Xp+VpgBKREPPf9
+	 7PN/CDCF4Od5A==
+Date: Fri, 6 Dec 2024 07:35:58 +0000
+From: Lee Jones <lee@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] samples: rust: Provide example using the new Rust
+ MiscDevice abstraction
+Message-ID: <20241206073558.GH8882@google.com>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <20241205162531.1883859-4-lee@kernel.org>
+ <2024120604-diffusive-reach-6c99@gregkh>
+ <20241206071430.GC8882@google.com>
+ <2024120610-jailbreak-preschool-ff45@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241205154247.43444-6-ubizjak@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024120610-jailbreak-preschool-ff45@gregkh>
 
-Hi Uros,
+On Fri, 06 Dec 2024, Greg KH wrote:
 
-On Thu, Dec 05, 2024 at 04:40:55PM +0100, Uros Bizjak wrote:
-> The patch introduces per_cpu_qual define and repurposes __percpu
-> tag as a named address space qualifier using the new define.
+> On Fri, Dec 06, 2024 at 07:14:30AM +0000, Lee Jones wrote:
+> > On Fri, 06 Dec 2024, Greg KH wrote:
+> > > > +    fn open() -> Result<KBox<Self>> {
+> > > > +        pr_info!("Opening Rust Misc Device Sample\n");
+> > > 
+> > > I'd prefer this to be dev_info() to start with please.
+> > 
+> > This is not possible at the moment.  Please see the cover-letter.
 > 
-> Arches can now conditionally define __per_cpu_qual as their
-> named address space qualifier for percpu variables.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Acked-by: Nadav Amit <nadav.amit@gmail.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Dennis Zhou <dennis@kernel.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Brian Gerst <brgerst@gmail.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> ---
->  include/asm-generic/percpu.h   | 15 +++++++++++++++
->  include/linux/compiler_types.h |  2 +-
->  2 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.h
-> index 50597b975a49..3b93b168faa1 100644
-> --- a/include/asm-generic/percpu.h
-> +++ b/include/asm-generic/percpu.h
-> @@ -6,6 +6,21 @@
->  #include <linux/threads.h>
->  #include <linux/percpu-defs.h>
->  
-> +/*
-> + * per_cpu_qual is the qualifier for the percpu named address space.
-> + *
-> + * Most arches use generic named address space for percpu variables but
-> + * some arches define percpu variables in different named address space
-> + * (on the x86 arch, percpu variable may be declared as being relative
-> + * to the %fs or %gs segments using __seg_fs or __seg_gs named address
-> + * space qualifier).
-> + */
-> +#ifdef __per_cpu_qual
+> Then why make the change to miscdevice.rs if that pointer provided there
+> doesn't work for you here?
 
-I read through the series and I think my only nit would be here. Can we
-name this __percpu_qual? My thoughts are that it keeps it consistent
-with the old address space identifier and largely most of the core
-percpu stuff is defined with percpu as the naming scheme.
+It's half the puzzle to get it working.  We're waiting on the other
+(more complex) part from Alice before we can make use of it.  Would you
+like me to remove it from the set until we have all of the pieces?
 
-> +# define per_cpu_qual __per_cpu_qual
-> +#else
-> +# define per_cpu_qual
-> +#endif
-> +
->  #ifdef CONFIG_SMP
->  
->  /*
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index 981cc3d7e3aa..877fe0c43c5d 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -57,7 +57,7 @@ static inline void __chk_io_ptr(const volatile void __iomem *ptr) { }
->  #  define __user	BTF_TYPE_TAG(user)
->  # endif
->  # define __iomem
-> -# define __percpu	BTF_TYPE_TAG(percpu)
-> +# define __percpu	per_cpu_qual BTF_TYPE_TAG(percpu)
->  # define __rcu		BTF_TYPE_TAG(rcu)
->  
->  # define __chk_user_ptr(x)	(void)0
-> -- 
-> 2.42.0
-> 
-
-Thanks,
-Dennis
+-- 
+Lee Jones [李琼斯]
 
