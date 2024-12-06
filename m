@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-435512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125D39E78D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:21:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6219E78D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:22:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E368316C288
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:21:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99451887207
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE7B202F9C;
-	Fri,  6 Dec 2024 19:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8040B204584;
+	Fri,  6 Dec 2024 19:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="DqNtanWt"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="HoMz1uQ8"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800562206BA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BBF1F3D26
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733512909; cv=none; b=KTANHvyN9aSyvJR1B4ajcmoFdKU2Eu1IIsbKAAQuEucG5FCs6QHRqdFEOLngZgxmObu8bD7oCyCbliBU8sRlE4QzD+8J/nOmBgCxJKDL+98rdenfWwN7FZOEDXF8/UJu6pW1d+6JH/Owz+BL4kow/EnVWKZESt5WCSMYBHmjB8I=
+	t=1733512910; cv=none; b=Rrmg5TvArfvLgsmTGJ0bUiqfXenEwglA3upr/Hrxmgz3pvmYcAnapateu0LV/ltHHoD1+sRK55QvBrVPzvhDx+2tkUj0DgPQr76lr8x4eeBlM25lXiLO2wCNdlajqHhzquAxyceJRNJSwoMd8SOvQ50l5ks9iJq1USmgi61Y07g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733512909; c=relaxed/simple;
-	bh=0GFGArkZIeu9YFzFvIo10D81sChF5r/4lriL8Wgz9mM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lxbCWMdcefwzPxlXhOB2/YHEJIVz9EupNcjrJTbjAS+2/mRBqvxvVFfqovMQAxpvZuMfvddMzdNS9Z4I/IeWSGXbbamOPrah3whYYHUy3R47I+MDH9ZIBYULhTyDyYLrjKc1KMun9SU0y3ljnZ2FXrTB1DBCUn0Lz9X1ufrgVwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=DqNtanWt; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1733512910; c=relaxed/simple;
+	bh=J1wLyzO5W9j22me9P5kEa5FIRVr4K39X5lpjOH5Mlbw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aM3PjHlh9BiOy1P8KefS20wTm7YQGUaU9MmmAmxunJ7IaiaVgBCopOrZK7Gt/H/VLx65U9Ix9SmElZB6CwN4VYNKPDLJLDI4iL40xpxRt2Q1aIB7Qo1YAYCivOzBeGmTMzt1JXnlQY1TFH8DCTQtJVPllwqMqesq65QplyCi+rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=HoMz1uQ8; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ffbfee94d7so19983691fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:21:47 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53e3a227b82so203310e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:21:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733512906; x=1734117706; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=alKzgZIWJBJQIC3RtpQ5nlO/OOrtZ6jVpTyw98aDLPE=;
-        b=DqNtanWtwkaJW+jNdggEKnNE0Y/rILIyu6YBbEz/XJZalfM78u5z1asQT3VBkCoZON
-         n9phqGQLt0Tx/lkDxt3Y1Yl26xbvn9Ca3NoTbcKinHuY63Guu4qVb1IArEAa05N6qx9t
-         sSnh0WuxC9OCh4psgjvPGbyoqar0LTW84+wlaZgMm4fEGDx+XhVSPxUJaYSR94TKnCF5
-         ESGy4hL3/SUkKEeX8sWrounWjgPabMABp5eVVNNvJ93xBeI6XUDZQUQrxfiH/6VtFxby
-         koJ5UhAhVhD5Bzbgq0muHfbYxNzdkCeJl/CWTYuUllBilSYnogGwXty0pkX/b2JDjM0H
-         Dnaw==
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733512907; x=1734117707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b5NOSdyB6WjlvcQgCrw9n8rSk8sPjoBbSdt8losq+os=;
+        b=HoMz1uQ8dmjv2njQLXj0xHIWahsuG4ZfnHU9zCMi+mg+1UDUQu94d2VgY6MEkEiDwm
+         ccMZgIs+phJjBaOrko6woeeHf0jpmObFuNDwHO0/0fpQ/9DOrryHdI02FDBG0AA5pcML
+         r1ib01AqBxZtq4r0oh7SUFuk7DDL569VyVgFQNi9Sz1NWBfJnT6xhWnm0IqGos515utW
+         GKVUNFlN8TZFamKbVlodfCd71nTIdd+5VTUskh99tb400OWVuff5MEiJgKNHnQyhBmB3
+         HCxtpdKk6XmPYsR7g4Vq4cx4+/bD+41ewp9Egl7FyGZLHy9WpBeGLx1DUhKlY+6prRYX
+         +hIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733512906; x=1734117706;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=alKzgZIWJBJQIC3RtpQ5nlO/OOrtZ6jVpTyw98aDLPE=;
-        b=AjiQ3IakVMQvO62HUIi1Zy8TQdhXcatUTjwZs3CKOLarALFVtx100pAoEwMMlisedM
-         /dV/2JxHmVi44ZWD/5awkK3p+L9mMu3PAaMAnM2bATf0IuN5fyrjsEax3t1prBSnTvir
-         cEN3bzeIa0biI5xVoOkIdQbhGq6mrjV7HZ476KBtpzriQS54IBox3WaWhsB9ZUiL+XND
-         Rq2e7aUzlaBkTMFJB+7V6EvaluTnmRyKeADhMXtGzQ/fljdgxmkzjKb0K1zH/j6eplYR
-         tDvwcHCEt5DRPn3Bb2tDeMvuudq48gBhe2v1Y8rDozmW+7JTWg2YfQOrg+v/Wz9OeGbh
-         eBbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWioToViePQWPFXmS7VYBEUNwP1SSmuDl6KGmGNvu7WPG0eVgy5S3AcQ+Km6UVT7EfaQmxGTotxr1O0fz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWeBaiYj95izWuuT+Xat94dDjUO8iu7peJBL9phk2l8f71edcq
-	Z0BZIUtUfONi4VioPia3uSfCvG0EchtJDeD46I9WN3AvmvWTpF5kptwI3//JZQo=
-X-Gm-Gg: ASbGnct4Mh6usVL2h3C4T5K3idlGs2LzokdKgDJiWgb3UObyvti1bizq858YIbG0y8N
-	c8KSQQys9Svlobih+iuhiU8SlOVi+NBBKMRjWu7ffLZKvdtXxWo6cl1rIZLCAPgKHZPFtk3pK0S
-	tF7R4lQfyX9GlJ0vIqgBm/T9zEyXjsXZjM2YIirpVBapMABJdHRv9As40b4+RyuQrk6iOkI96WR
-	McU0+v68/EEnOBReIPK/iVUodbiQoZLRpr3G7Cqt4F3gGKBJq08OIoHHSCVpl/8
-X-Google-Smtp-Source: AGHT+IGXrMN3PorF3VW/yScaTvpLE0Z6C7mKmkFF9Kzew6G834zYw9FfFy4W2LNLgP2XaPcVO5ogvA==
-X-Received: by 2002:a05:6512:2316:b0:53d:dd02:7cc5 with SMTP id 2adb3069b0e04-53e2c2b12b9mr1148864e87.7.1733512905680;
-        Fri, 06 Dec 2024 11:21:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733512907; x=1734117707;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b5NOSdyB6WjlvcQgCrw9n8rSk8sPjoBbSdt8losq+os=;
+        b=qiYUGxdtlkTjIo/+IMIn8+hStiSit8KRqANGCrfAc75wojSkVMH7eKZA3kt3KB5lik
+         XexnuIdt+Tqzc+HPOWdyorj40ngtatLxOI0r89Q7rMRXxT+YEmCpoCIL4fIBu7hpCewn
+         5p67JFqsw38qL7HCYbPlJgeJV8pX8oGwMW6qyOVuGWPYj63jmDcnX3rcS/Z7AL0ZM15J
+         /IfoC/4+xu9HqlsVaedBCd6JNz/ybUQ2T59yWoYXne4VlQbAyIRxMoijHp/fLz9GnjQh
+         jVtAS5QNtfuKSIYybKz9syI2D+IEMUO1P75rxGb2stVAXzSgjEVixLBXSDVBr4+5B/XZ
+         5zkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjp7Ivv3P4RT8c9/NcJgwmYZ9PZly4q893GxmKDD32gLsuNCE+JgxR3k+Ox+pAJodram827sgUJwdiwSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlMgJY14btNce88uSdGpxeJDFEdF7EhyR+n57lQvlXaJhKjDn3
+	C1mFkyw8eDBVkmaOUr4/UR/qXAccsB0ZN5xO1wHZ4qooHHaIpzXDrGef+iqywes=
+X-Gm-Gg: ASbGnctIyZ4mt+RVME96sVqicszUS5fVKBSbaW5hLkBHjywAXnujCeIsW2/lhykFuLg
+	pV4YnrJLadHE9HfZ3XrKUhR5LkFUMr+1iD+FuHN14SBfCwrI7e6ZpX8R6Shmti3kVONGMTMMwfu
+	k1pP11KbfMdhRTJlKMplxJfCLc39bQaXogIl+N+VYGcbNQyOYr3DHSLDNCvHtUBG95TnNUI1acW
+	KgP4pd/rUx+ZDxT2W8UxVqGOCy2A20BR+C2M/bYImnke4cT6oJ0WBoObMcBRZOg
+X-Google-Smtp-Source: AGHT+IEkrNNKRE22p/N7Vgw2gN9RWXvT2Tt4dnHwGRo3syIX1cQ2Ucr9kBvwLbKypCn8l/wN+oLarw==
+X-Received: by 2002:a05:6512:2812:b0:53e:3729:eaf7 with SMTP id 2adb3069b0e04-53e3729ee24mr1674109e87.34.1733512907374;
+        Fri, 06 Dec 2024 11:21:47 -0800 (PST)
 Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e22974f20sm590041e87.70.2024.12.06.11.21.44
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e22974f20sm590041e87.70.2024.12.06.11.21.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 11:21:45 -0800 (PST)
+        Fri, 06 Dec 2024 11:21:47 -0800 (PST)
 From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -83,10 +85,12 @@ Cc: netdev@vger.kernel.org,
 	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
 	Dennis Ostermann <dennis.ostermann@renesas.com>,
 	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH net-next 1/2] net: renesas: rswitch: do not deinit disabled ports
-Date: Sat,  7 Dec 2024 00:21:39 +0500
-Message-Id: <20241206192140.1714-1-nikita.yoush@cogentembedded.com>
+Subject: [PATCH net-next 2/2] net: renesas: rswitch: remove speed from gwca structure
+Date: Sat,  7 Dec 2024 00:21:40 +0500
+Message-Id: <20241206192140.1714-2-nikita.yoush@cogentembedded.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241206192140.1714-1-nikita.yoush@cogentembedded.com>
+References: <20241206192140.1714-1-nikita.yoush@cogentembedded.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,28 +99,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In rswitch_ether_port_init_all(), only enabled ports are initialized.
-Then, rswitch_ether_port_deinit_all() shall also only deinitialize
-enabled ports.
+This field is set but never used.
+
+GWCA is rswitch CPU interface module which connects rswitch to the
+host over AXI bus. Speed of the switch ports is not anyhow related to
+GWCA operation.
 
 Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/rswitch.c | 3 ---
+ drivers/net/ethernet/renesas/rswitch.h | 1 -
+ 2 files changed, 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index 3b57abada200..cba80ccc3ce2 100644
+index cba80ccc3ce2..8ac6ef532c6a 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1527,7 +1527,7 @@ static void rswitch_ether_port_deinit_all(struct rswitch_private *priv)
- {
- 	unsigned int i;
+@@ -1902,9 +1902,6 @@ static int rswitch_device_alloc(struct rswitch_private *priv, unsigned int index
+ 	if (err < 0)
+ 		goto out_get_params;
  
--	for (i = 0; i < RSWITCH_NUM_PORTS; i++) {
-+	rswitch_for_each_enabled_port(priv, i) {
- 		phy_exit(priv->rdev[i]->serdes);
- 		rswitch_ether_port_deinit_one(priv->rdev[i]);
- 	}
+-	if (rdev->priv->gwca.speed < rdev->etha->speed)
+-		rdev->priv->gwca.speed = rdev->etha->speed;
+-
+ 	err = rswitch_rxdmac_alloc(ndev);
+ 	if (err < 0)
+ 		goto out_rxdmac;
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index 72e3ff596d31..303883369b94 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -993,7 +993,6 @@ struct rswitch_gwca {
+ 	DECLARE_BITMAP(used, RSWITCH_MAX_NUM_QUEUES);
+ 	u32 tx_irq_bits[RSWITCH_NUM_IRQ_REGS];
+ 	u32 rx_irq_bits[RSWITCH_NUM_IRQ_REGS];
+-	int speed;
+ };
+ 
+ #define NUM_QUEUES_PER_NDEV	2
 -- 
 2.39.5
 
