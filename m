@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-435192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C099E742B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:33:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C0D9E7430
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:33:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2731885484
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E56C281638
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCB220CCC0;
-	Fri,  6 Dec 2024 15:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193BD20D502;
+	Fri,  6 Dec 2024 15:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xBNYbe4d"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vBCtfh4r"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE9B20125C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 15:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D11320B81B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 15:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733499174; cv=none; b=s7xwRNI2LFfizy7Lg084qrgKDlwmLB9E+MIqP6zttqjQo9XvV/WXzgN5ryPBtCd6QJ51gU3OIzCvRKjWK0AUgv1U0GCvLvBuEJ9+msyTiZBV2LF/Vtu4DLkSm7POyNNLLnM6LzPmA/75spaxPsb01uU66ULKWPHGN01HI9CAv0s=
+	t=1733499177; cv=none; b=XC0xXaIuMP14jiLqqmD7lrYM4LXNx2Om2tAFjRuSc7FRU6q0Nk1WZ50ic60cqkKY04LwexyS15xSv7ybBunBYfW94CfptaVW75FmiZtuHgNHKGJHiQGwOnse3Tnkq/8dfDhOomQkawMec4ugdemlItfR+ZOHGKwfMPR3yFdLzd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733499174; c=relaxed/simple;
-	bh=BmeLBSD7e/5702j3yO++zDTzKsDBRH4GtN6Tw8+69y4=;
+	s=arc-20240116; t=1733499177; c=relaxed/simple;
+	bh=eZkXlPyaruX8crpL1/AvzdOvoDUQnQQd9zI2il3C2w0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LRAGZQsVtUdre+Of1NCfZHuxakdi9N6Vm23JRCiDI6V2k9VbHTzkzIYAZo1Atb/Sb2V3uTOf4l1V4l1wsVndusM94SIE2WnM5P+LI0TnuJHFb1bRR4KTUZProff0CW+f329mKUMDNmssGINjPGngBwVzANC72Rvon3hO1ZFVvbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xBNYbe4d; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:To:Cc; b=myb8ZYIKAbg/CPDCOk53/AFf7dZyCAa9RNQSJ5i7mT0Bz8WPAVPmWLT+XiClfPH+YFdAa54ZWEsvt0Tk6xaQrt4vJmVnlk6pAarhKpwNqrglc/Nq2Efn7KJycwP8Pa3oMRH6duNRTqd9hcKj4DRs3R3gTfZpW4465cQJXAzRIdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vBCtfh4r; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43499332f7aso2346555e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 07:32:51 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4349dea3e0dso2366895e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 07:32:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733499170; x=1734103970; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733499172; x=1734103972; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/fP5kZHXhj/8NE4k7+vfB0C5FDMhhdszC9LncVHhIgA=;
-        b=xBNYbe4d0fN5c5z4Bbwe/J7K9rA8Lal7zcS3vvVmufQJBMisp2bVuCAAP1LVvW1BZC
-         8WlxTMkKGSlZLZNH31AKdzbvlMsVCBtACOf4XwEuq9Lbn7GkhLqo8dQts8Jo3dA+DpEH
-         8wja2Z/aygMk5oUHlKPl3QlmYhIY8DaLkSxXHG86smCuClfRDiIMIUXjgpccHUgObCFp
-         xBHZrdVVNrZcn9GhXYx5auM9LQjN+dztAa9wJFsOCO2VuhB95tzPigzfG6w+plZQmJda
-         49W6JocTsO8hYNmdUJJtJukWcJ/RVfYUDZLbdqsVfS0t4r8UH1FBfX0KiqoqfmgdPGN+
-         P7AA==
+        bh=wCQZHcMvRi9iQ8s0t6z5HpqVIJgC7kyG4M3HNIWuLDA=;
+        b=vBCtfh4rQgorFxs9yXcTCF/HRTqGDKw1EUDT5CddPYfz8d8lIaSHZnpIc4zUWSjPK6
+         Wae+qZJGJrBWHxq+4sQb78yZkbqXyXuVcJ9R4OoFf0Cf4Ew4GnEzZslTKP/Olif2vJau
+         50uMINJQ4EMI435cS1O+6izbdcPoClv7qy6ohkwGs93r13v6hIU02h1fXsql6oJygDvT
+         H6ZjSqUYXpFVCraQldqi6JmyzqEzTdXfpUdUSJb3bKHkMMAQyXxd4zTSQCYkCD0FVaWy
+         GfK4AAkELA8fWCLKlK+Ozd13drszArwjZBQbCpV1Uo3VKbzWJ25asdkVp10BGctcagJX
+         kdGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733499170; x=1734103970;
+        d=1e100.net; s=20230601; t=1733499172; x=1734103972;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/fP5kZHXhj/8NE4k7+vfB0C5FDMhhdszC9LncVHhIgA=;
-        b=Vcno0ua0LPoKycaKsxjDAYuvPoqzM+4ciyzMEXab222Bw6UNhoJWRzjW4oDxyTm5gB
-         UyOClUfrtcGqrYhjEGr4dCvlJ/ErpAgZ+W0UA0lAVxLyUlYjhLec+yXGom1RMWUe8iQJ
-         QtRVhxbk84KTxGBn3bGX4PqcJceBNU8HvtMOhahRmTlGYdIkRYVRHp0jgTftt5kN4vmb
-         WMtYlqT/1opbNyAuQf8SeOWSA/Cmd+Zu90n4VJA7jIODOwFH6dDVUNkK5ikIcqne10hz
-         IaUb+phHoVqJjiACCBmkyiRdMce1dzP6I4B92jHcvPXks9bLyP9sVNveHQgGXuGKGjah
-         Rdew==
-X-Forwarded-Encrypted: i=1; AJvYcCVGdRQ0HQkiv4Mr0KOK3jaiL/iG5HYc99Op1N+dgZFcO1DcGah2UEKdJCm6IgP9uqmcdGIs43VrlNmu+iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvhT3aVRwqYabv24mhULj+h7lM1OOfD5hItZdUodSuwoagBAQR
-	magyzAQ72+BZ09ltoI4vGyctUPcgPZboMzvusYeNfUs4LdvDHKCfTxhuHZYeNRc=
-X-Gm-Gg: ASbGncskqmrbDN1Y32ezIPQrtbcU4Ohvbk5wagX2eAwE0F1/YvgHqeNFBxzapRnc5Qd
-	EJG+uRu8lFYs8EwLtoVpBTdGw3jbspkppKJ8+k5QHPti+qhss65HULEh5FK1teAKghfiHoUK//T
-	NTB0vE6BOISd/WJBMy4JQj4+icRFY9/0OZFRGh4HwOw1oFOtP9qr1i+PDU2kdFAZwIjHdXaP8wm
-	P0X1hBc17pbU9w06X/DRZeAeRIofVGE0E66ETmO17HBLnP1H0HLapsLhpwGcbbTeQ==
-X-Google-Smtp-Source: AGHT+IEqk0JEuSuJAZ3heowJQjuPLLGytVEwtun1KUqwa6iUVud58u9HPAElPZ4dtUN4QPdjtHAasA==
-X-Received: by 2002:a05:600c:46c8:b0:42c:ba83:3f08 with SMTP id 5b1f17b1804b1-434ddea6713mr13067285e9.2.1733499170271;
-        Fri, 06 Dec 2024 07:32:50 -0800 (PST)
+        bh=wCQZHcMvRi9iQ8s0t6z5HpqVIJgC7kyG4M3HNIWuLDA=;
+        b=Bwh5EXDoaIY/9dXTsorDgYg2j7vsMEA348vNG9H/2yHx5Yieb8xybykNmoTrJlzs2O
+         KMW7oVTyiUeipBWM//R3CtwIDqnQOMjprxNZWLIiMm9rHPBpyBAVRAxaNTXF1o+xlpcu
+         ym0GJwJsSVn5nfx9MROe6P1IMUVSg7+6ebPT4/8OyUi4nmvr2hBzyuJeIuUKS+IB4Gcb
+         IOsIQ/7PhrIBq4hPVzEI7ZnxA13PAI8lL48svq6eaIFLCmR0gSI/WiXO5Cw7kAWpPPCF
+         N3srPBl6d3AQ1Z4rQH3XZsK+UJXxMsZFmAIV2fCR2lB2Uo6R1/xn63lgwAwWzdBrTWmu
+         +2/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUBPUjSw0QRIUrxaJp9Nhh7aQ+ZWh7EjL4XlUWBspEhsTV4Kf/v6tuah/BqKo0DGSmBwzDKISbnNmHy2Gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsVNMZqOiBXOCRHWZU9Y5oFhdrQCQlF0VQNt2JVTcKQhDfiHj/
+	LPyVzRr0oCwgGRA43Hda+w9dvl5gRqOgNt7931gVQRjLLjlqAX+AXywoW56fD/Y=
+X-Gm-Gg: ASbGnctTysj0U+/j6IqeKE7uBU6o769jsuJjZhwq3jQf64aItMO3Ox96wtTD0gME+Ks
+	vIOdNmp2wqHIZbUPFyN2TBlJDE0s6HsCf4gqeQez2Zq1Fi8WDdCajp+552VVAGZoPu8UiI0RLi/
+	yqdJ0Eis8r61CCIweLHHPRZUmGKy1yGNuNTmByT9zi+YRnU6W1zt1SmLYU2KTjSzoAzyZdmGUNI
+	oZY5vICkKEf0lcZR8b9XmtzZlxDRxcc/RV7tww/DtZyYscEBqRQorD/J6ihBOXiiA==
+X-Google-Smtp-Source: AGHT+IETVZzXLvgDfNBKBtAiHy4A8nXWIBfY5wvIQr/9uMqFwRXZfIifox3UKttKKBdXgsszZh4ljg==
+X-Received: by 2002:a05:600c:3b10:b0:42c:b9c8:2ba9 with SMTP id 5b1f17b1804b1-434dded7235mr12657805e9.6.1733499172353;
+        Fri, 06 Dec 2024 07:32:52 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113580sm61158035e9.29.2024.12.06.07.32.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113580sm61158035e9.29.2024.12.06.07.32.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 07:32:49 -0800 (PST)
+        Fri, 06 Dec 2024 07:32:51 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 06 Dec 2024 16:32:25 +0100
-Subject: [PATCH 01/19] arm64: dts: qcom: sm8350: Fix ADSP memory base and
+Date: Fri, 06 Dec 2024 16:32:26 +0100
+Subject: [PATCH 02/19] arm64: dts: qcom: sm8350: Fix CDSP memory base and
  length
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-dts-qcom-cdsp-mpss-base-address-v1-1-2f349e4d5a63@linaro.org>
+Message-Id: <20241206-dts-qcom-cdsp-mpss-base-address-v1-2-2f349e4d5a63@linaro.org>
 References: <20241206-dts-qcom-cdsp-mpss-base-address-v1-0-2f349e4d5a63@linaro.org>
 In-Reply-To: <20241206-dts-qcom-cdsp-mpss-base-address-v1-0-2f349e4d5a63@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -97,33 +97,35 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8733;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7882;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=BmeLBSD7e/5702j3yO++zDTzKsDBRH4GtN6Tw8+69y4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnUxkOAMkm6xnxUhXCe02+km9UVDnpihMdnKqLE
- xwMWb6ZnoqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ1MZDgAKCRDBN2bmhouD
- 1x6EEACSiePl2lgyuzmXQEf3BhHdsMHIOl46AtpbPde51y6Rf3nkYLIPlY5bZL+XmST7f388VcD
- HHALgya33hOLdDi2Kfy55944R2fAGVehlypMqu/kbw5USowpPNFgbGQBF9NpUx3MFE2EUz6eo8a
- drLjV/1wR56fEegzMTaXPfVivRF2d71JbpPeXHc0Kzj+m0QpRy8pgghwqulAdlbCIGBEZK7+moR
- m509S+ZnOASWInsW05+IyskY+3LVoOsjNwCURj4J7RYW9oay702dFHJeGI9GFPI8/7PVKN3vnUn
- Yi+tawfwCO/08b1vc8VoawxnEjGd9a+JkCLhuiCkFE3YCGpm953bZhNNZU/mzEs3vbduKyDtes3
- Qwolvmvhz59pZc7mDIBY6aaCvllVjux+mrhUqWFa6rnUOwihrkvnwmaD/LEXCTLk+6rDx3D2H9o
- ztGDAiodKOvcTnXBSrVyA0+yPD1XE7b9k2e8xoDPGhPIpf2EEby7r/TnrfCdTDhOXEvTuJ3jIZo
- iqYp55wtSLNhDRMTVig+hb6wvZk/AklvIwRV7VyHJ9y4JizG4SyYzHM4/iDr8ew7j5Ej4yq1k3I
- sJAEfQycBS6dMJWJcdTvdY4RAliP8tQIuspQJYtVWll7HlZ4JMMYVaJ13jqOzSf7pOVjWIGeFe9
- tPGgA7Fs83OyzSw==
+ bh=eZkXlPyaruX8crpL1/AvzdOvoDUQnQQd9zI2il3C2w0=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnUxkOxMrudnhfM48tTmd0twXsbBXcFk4QaDhD4
+ DskwcJKeZSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ1MZDgAKCRDBN2bmhouD
+ 12KjD/wMXzbb5JKfBH/byjIDNo3QiCjxi03k2ZTPP0DsgvqYAf6LvrMQ7gbAYqMdeZs1gzfq7JZ
+ KPr2DfVBo9TiZOg4JS9QEo3OomYS7mQ8fkXqu9bSrFrhY9YOzdSvNfU0YhtOOp+CQxK0dNYiAG3
+ uuL0zsv30GbWAGbrL4qKsCKWK7jlyfe8NlMs4qmoX7MN1Scpsc9/VS6vGGOdvSKe2EVfMzfC0Kn
+ XGtYlcrtnJw9S4VipjdxT8Sdw71UC8CMqDJFQhsTqlnKVhjIaTn0+rcqID02i8vxVfbVPuF/xVJ
+ C66JO42//fEQb+ko7uRz7HUq9dLdHlDJfB405xiy/Ol60ruwY0zJMK+34j2i/O06pUPKLrwRh8M
+ k90y3ipoyT6S60e+6JenDaPb2Cm5hnX7xsVIk0FlWFheSLmpIfLDFyiIWl18HnPWUO0L7H+5pSd
+ GWSSBjY4wH8mtKmCXp9ysdjO8kgyhaMkiAXh78KsxqWjQwmFC1g5VXZnUQlPgdTIO0t0bGhw/ro
+ MWXyclx8yBO21IFTcQ5MrewVZnUit2zVfZEPysES3xx5gcd9RPhHqSoA38REXBGUC4/EHv82FH5
+ awPoSFIy2Ep85r4Pw848GSk60FVNh8ayT6e1gJFMUypwZ4E4ygtn32uvrQTGCMYRsShDU5yNzvV
+ 0A5UXxty5eWN8hg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-The address space in ADSP PAS (Peripheral Authentication Service)
+The address space in CDSP PAS (Peripheral Authentication Service)
 remoteproc node should point to the QDSP PUB address space
-(QDSP6...SS_PUB): 0x0300_0000 with length of 0x10000.  0x1730_0000,
+(QDSP6...SS_PUB): 0x0a30_0000 with length of 0x10000.  0x9890_0000,
 value used so far, was copied from downstream DTS, is in the middle of
-unused space and downstream DTS describes the PIL loader, which is a bit
-different interface.
+RAM/DDR space and downstream DTS describes the PIL loader, which is a
+bit different interface.  Datasheet says that one of the main CDSP
+address spaces is 0x0980_0000, which is oddly similar to 0x9890_0000,
+but quite different.
 
 Assume existing value (thus downstream DTS) is not really describing the
-intended ADSP PAS region.
+intended CDSP PAS region.
 
 Correct the base address and length, which also moves the node to
 different place to keep things sorted by unit address.  The diff looks
@@ -135,299 +137,245 @@ Fixes: 177fcf0aeda2 ("arm64: dts: qcom: sm8350: Add remoteprocs")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm8350.dtsi | 272 +++++++++++++++++------------------
- 1 file changed, 136 insertions(+), 136 deletions(-)
+ arch/arm64/boot/dts/qcom/sm8350.dtsi | 218 +++++++++++++++++------------------
+ 1 file changed, 109 insertions(+), 109 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-index 877905dfd861edbcd083e6691a7cfa1279164ffc..5fae676af3a3da21066d01092b6b24fbc4ae4a40 100644
+index 5fae676af3a3da21066d01092b6b24fbc4ae4a40..2a62405c0c9eff959abc4cee57753a8b1545c9bf 100644
 --- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-@@ -1876,6 +1876,142 @@ tcsr: syscon@1fc0000 {
- 			reg = <0x0 0x1fc0000 0x0 0x30000>;
+@@ -2496,6 +2496,115 @@ compute_noc: interconnect@a0c0000 {
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
  		};
  
-+		adsp: remoteproc@3000000 {
-+			compatible = "qcom,sm8350-adsp-pas";
-+			reg = <0x0 0x03000000 0x0 0x10000>;
++		cdsp: remoteproc@a300000 {
++			compatible = "qcom,sm8350-cdsp-pas";
++			reg = <0x0 0x0a300000 0x0 0x10000>;
 +
-+			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 3 IRQ_TYPE_EDGE_RISING>;
 +			interrupt-names = "wdog", "fatal", "ready",
 +					  "handover", "stop-ack";
 +
 +			clocks = <&rpmhcc RPMH_CXO_CLK>;
 +			clock-names = "xo";
 +
-+			power-domains = <&rpmhpd RPMHPD_LCX>,
-+					<&rpmhpd RPMHPD_LMX>;
-+			power-domain-names = "lcx", "lmx";
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>;
++			power-domain-names = "cx", "mxc";
 +
-+			memory-region = <&pil_adsp_mem>;
++			interconnects = <&compute_noc MASTER_CDSP_PROC 0 &mc_virt SLAVE_EBI1 0>;
++
++			memory-region = <&pil_cdsp_mem>;
 +
 +			qcom,qmp = <&aoss_qmp>;
 +
-+			qcom,smem-states = <&smp2p_adsp_out 0>;
++			qcom,smem-states = <&smp2p_cdsp_out 0>;
 +			qcom,smem-state-names = "stop";
 +
 +			status = "disabled";
 +
 +			glink-edge {
-+				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++				interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
 +							     IPCC_MPROC_SIGNAL_GLINK_QMP
 +							     IRQ_TYPE_EDGE_RISING>;
-+				mboxes = <&ipcc IPCC_CLIENT_LPASS
++				mboxes = <&ipcc IPCC_CLIENT_CDSP
 +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
 +
-+				label = "lpass";
-+				qcom,remote-pid = <2>;
-+
-+				apr {
-+					compatible = "qcom,apr-v2";
-+					qcom,glink-channels = "apr_audio_svc";
-+					qcom,domain = <APR_DOMAIN_ADSP>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					service@3 {
-+						reg = <APR_SVC_ADSP_CORE>;
-+						compatible = "qcom,q6core";
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+					};
-+
-+					q6afe: service@4 {
-+						compatible = "qcom,q6afe";
-+						reg = <APR_SVC_AFE>;
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+
-+						q6afedai: dais {
-+							compatible = "qcom,q6afe-dais";
-+							#address-cells = <1>;
-+							#size-cells = <0>;
-+							#sound-dai-cells = <1>;
-+						};
-+
-+						q6afecc: clock-controller {
-+							compatible = "qcom,q6afe-clocks";
-+							#clock-cells = <2>;
-+						};
-+					};
-+
-+					q6asm: service@7 {
-+						compatible = "qcom,q6asm";
-+						reg = <APR_SVC_ASM>;
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+
-+						q6asmdai: dais {
-+							compatible = "qcom,q6asm-dais";
-+							#address-cells = <1>;
-+							#size-cells = <0>;
-+							#sound-dai-cells = <1>;
-+							iommus = <&apps_smmu 0x1801 0x0>;
-+
-+							dai@0 {
-+								reg = <0>;
-+							};
-+
-+							dai@1 {
-+								reg = <1>;
-+							};
-+
-+							dai@2 {
-+								reg = <2>;
-+							};
-+						};
-+					};
-+
-+					q6adm: service@8 {
-+						compatible = "qcom,q6adm";
-+						reg = <APR_SVC_ADM>;
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+
-+						q6routing: routing {
-+							compatible = "qcom,q6adm-routing";
-+							#sound-dai-cells = <0>;
-+						};
-+					};
-+				};
++				label = "cdsp";
++				qcom,remote-pid = <5>;
 +
 +				fastrpc {
 +					compatible = "qcom,fastrpc";
 +					qcom,glink-channels = "fastrpcglink-apps-dsp";
-+					label = "adsp";
++					label = "cdsp";
 +					qcom,non-secure-domain;
 +					#address-cells = <1>;
 +					#size-cells = <0>;
 +
++					compute-cb@1 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <1>;
++						iommus = <&apps_smmu 0x2161 0x0400>,
++							 <&apps_smmu 0x1181 0x0420>;
++					};
++
++					compute-cb@2 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <2>;
++						iommus = <&apps_smmu 0x2162 0x0400>,
++							 <&apps_smmu 0x1182 0x0420>;
++					};
++
 +					compute-cb@3 {
 +						compatible = "qcom,fastrpc-compute-cb";
 +						reg = <3>;
-+						iommus = <&apps_smmu 0x1803 0x0>;
++						iommus = <&apps_smmu 0x2163 0x0400>,
++							 <&apps_smmu 0x1183 0x0420>;
 +					};
 +
 +					compute-cb@4 {
 +						compatible = "qcom,fastrpc-compute-cb";
 +						reg = <4>;
-+						iommus = <&apps_smmu 0x1804 0x0>;
++						iommus = <&apps_smmu 0x2164 0x0400>,
++							 <&apps_smmu 0x1184 0x0420>;
 +					};
 +
 +					compute-cb@5 {
 +						compatible = "qcom,fastrpc-compute-cb";
 +						reg = <5>;
-+						iommus = <&apps_smmu 0x1805 0x0>;
++						iommus = <&apps_smmu 0x2165 0x0400>,
++							 <&apps_smmu 0x1185 0x0420>;
 +					};
++
++					compute-cb@6 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <6>;
++						iommus = <&apps_smmu 0x2166 0x0400>,
++							 <&apps_smmu 0x1186 0x0420>;
++					};
++
++					compute-cb@7 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <7>;
++						iommus = <&apps_smmu 0x2167 0x0400>,
++							 <&apps_smmu 0x1187 0x0420>;
++					};
++
++					compute-cb@8 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <8>;
++						iommus = <&apps_smmu 0x2168 0x0400>,
++							 <&apps_smmu 0x1188 0x0420>;
++					};
++
++					/* note: secure cb9 in downstream */
 +				};
 +			};
 +		};
 +
- 		lpass_tlmm: pinctrl@33c0000 {
- 			compatible = "qcom,sm8350-lpass-lpi-pinctrl";
- 			reg = <0 0x033c0000 0 0x20000>,
-@@ -3285,142 +3421,6 @@ apps_smmu: iommu@15000000 {
- 			dma-coherent;
+ 		usb_1: usb@a6f8800 {
+ 			compatible = "qcom,sm8350-dwc3", "qcom,dwc3";
+ 			reg = <0 0x0a6f8800 0 0x400>;
+@@ -3589,115 +3698,6 @@ cpufreq_hw: cpufreq@18591000 {
+ 			#freq-domain-cells = <1>;
+ 			#clock-cells = <1>;
  		};
- 
--		adsp: remoteproc@17300000 {
--			compatible = "qcom,sm8350-adsp-pas";
--			reg = <0 0x17300000 0 0x100>;
 -
--			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
--					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
--					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
--					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
--					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
+-		cdsp: remoteproc@98900000 {
+-			compatible = "qcom,sm8350-cdsp-pas";
+-			reg = <0 0x98900000 0 0x1400000>;
+-
+-			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
+-					      <&smp2p_cdsp_in 0 IRQ_TYPE_EDGE_RISING>,
+-					      <&smp2p_cdsp_in 1 IRQ_TYPE_EDGE_RISING>,
+-					      <&smp2p_cdsp_in 2 IRQ_TYPE_EDGE_RISING>,
+-					      <&smp2p_cdsp_in 3 IRQ_TYPE_EDGE_RISING>;
 -			interrupt-names = "wdog", "fatal", "ready",
 -					  "handover", "stop-ack";
 -
 -			clocks = <&rpmhcc RPMH_CXO_CLK>;
 -			clock-names = "xo";
 -
--			power-domains = <&rpmhpd RPMHPD_LCX>,
--					<&rpmhpd RPMHPD_LMX>;
--			power-domain-names = "lcx", "lmx";
+-			power-domains = <&rpmhpd RPMHPD_CX>,
+-					<&rpmhpd RPMHPD_MXC>;
+-			power-domain-names = "cx", "mxc";
 -
--			memory-region = <&pil_adsp_mem>;
+-			interconnects = <&compute_noc MASTER_CDSP_PROC 0 &mc_virt SLAVE_EBI1 0>;
+-
+-			memory-region = <&pil_cdsp_mem>;
 -
 -			qcom,qmp = <&aoss_qmp>;
 -
--			qcom,smem-states = <&smp2p_adsp_out 0>;
+-			qcom,smem-states = <&smp2p_cdsp_out 0>;
 -			qcom,smem-state-names = "stop";
 -
 -			status = "disabled";
 -
 -			glink-edge {
--				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
+-				interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
 -							     IPCC_MPROC_SIGNAL_GLINK_QMP
 -							     IRQ_TYPE_EDGE_RISING>;
--				mboxes = <&ipcc IPCC_CLIENT_LPASS
+-				mboxes = <&ipcc IPCC_CLIENT_CDSP
 -						IPCC_MPROC_SIGNAL_GLINK_QMP>;
 -
--				label = "lpass";
--				qcom,remote-pid = <2>;
--
--				apr {
--					compatible = "qcom,apr-v2";
--					qcom,glink-channels = "apr_audio_svc";
--					qcom,domain = <APR_DOMAIN_ADSP>;
--					#address-cells = <1>;
--					#size-cells = <0>;
--
--					service@3 {
--						reg = <APR_SVC_ADSP_CORE>;
--						compatible = "qcom,q6core";
--						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
--					};
--
--					q6afe: service@4 {
--						compatible = "qcom,q6afe";
--						reg = <APR_SVC_AFE>;
--						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
--
--						q6afedai: dais {
--							compatible = "qcom,q6afe-dais";
--							#address-cells = <1>;
--							#size-cells = <0>;
--							#sound-dai-cells = <1>;
--						};
--
--						q6afecc: clock-controller {
--							compatible = "qcom,q6afe-clocks";
--							#clock-cells = <2>;
--						};
--					};
--
--					q6asm: service@7 {
--						compatible = "qcom,q6asm";
--						reg = <APR_SVC_ASM>;
--						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
--
--						q6asmdai: dais {
--							compatible = "qcom,q6asm-dais";
--							#address-cells = <1>;
--							#size-cells = <0>;
--							#sound-dai-cells = <1>;
--							iommus = <&apps_smmu 0x1801 0x0>;
--
--							dai@0 {
--								reg = <0>;
--							};
--
--							dai@1 {
--								reg = <1>;
--							};
--
--							dai@2 {
--								reg = <2>;
--							};
--						};
--					};
--
--					q6adm: service@8 {
--						compatible = "qcom,q6adm";
--						reg = <APR_SVC_ADM>;
--						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
--
--						q6routing: routing {
--							compatible = "qcom,q6adm-routing";
--							#sound-dai-cells = <0>;
--						};
--					};
--				};
+-				label = "cdsp";
+-				qcom,remote-pid = <5>;
 -
 -				fastrpc {
 -					compatible = "qcom,fastrpc";
 -					qcom,glink-channels = "fastrpcglink-apps-dsp";
--					label = "adsp";
+-					label = "cdsp";
 -					qcom,non-secure-domain;
 -					#address-cells = <1>;
 -					#size-cells = <0>;
 -
+-					compute-cb@1 {
+-						compatible = "qcom,fastrpc-compute-cb";
+-						reg = <1>;
+-						iommus = <&apps_smmu 0x2161 0x0400>,
+-							 <&apps_smmu 0x1181 0x0420>;
+-					};
+-
+-					compute-cb@2 {
+-						compatible = "qcom,fastrpc-compute-cb";
+-						reg = <2>;
+-						iommus = <&apps_smmu 0x2162 0x0400>,
+-							 <&apps_smmu 0x1182 0x0420>;
+-					};
+-
 -					compute-cb@3 {
 -						compatible = "qcom,fastrpc-compute-cb";
 -						reg = <3>;
--						iommus = <&apps_smmu 0x1803 0x0>;
+-						iommus = <&apps_smmu 0x2163 0x0400>,
+-							 <&apps_smmu 0x1183 0x0420>;
 -					};
 -
 -					compute-cb@4 {
 -						compatible = "qcom,fastrpc-compute-cb";
 -						reg = <4>;
--						iommus = <&apps_smmu 0x1804 0x0>;
+-						iommus = <&apps_smmu 0x2164 0x0400>,
+-							 <&apps_smmu 0x1184 0x0420>;
 -					};
 -
 -					compute-cb@5 {
 -						compatible = "qcom,fastrpc-compute-cb";
 -						reg = <5>;
--						iommus = <&apps_smmu 0x1805 0x0>;
+-						iommus = <&apps_smmu 0x2165 0x0400>,
+-							 <&apps_smmu 0x1185 0x0420>;
 -					};
+-
+-					compute-cb@6 {
+-						compatible = "qcom,fastrpc-compute-cb";
+-						reg = <6>;
+-						iommus = <&apps_smmu 0x2166 0x0400>,
+-							 <&apps_smmu 0x1186 0x0420>;
+-					};
+-
+-					compute-cb@7 {
+-						compatible = "qcom,fastrpc-compute-cb";
+-						reg = <7>;
+-						iommus = <&apps_smmu 0x2167 0x0400>,
+-							 <&apps_smmu 0x1187 0x0420>;
+-					};
+-
+-					compute-cb@8 {
+-						compatible = "qcom,fastrpc-compute-cb";
+-						reg = <8>;
+-						iommus = <&apps_smmu 0x2168 0x0400>,
+-							 <&apps_smmu 0x1188 0x0420>;
+-					};
+-
+-					/* note: secure cb9 in downstream */
 -				};
 -			};
 -		};
--
- 		intc: interrupt-controller@17a00000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
+ 	};
+ 
+ 	thermal_zones: thermal-zones {
 
 -- 
 2.43.0
