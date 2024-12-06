@@ -1,283 +1,139 @@
-Return-Path: <linux-kernel+bounces-434294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD449E647D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:53:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357B09E647F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259D616A17A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ADFA16A41A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ACE17A5BE;
-	Fri,  6 Dec 2024 02:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ECB14EC46;
+	Fri,  6 Dec 2024 02:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aeq1myOJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdpytCAM"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C304C9A;
-	Fri,  6 Dec 2024 02:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02CE1E522
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733453628; cv=none; b=lQ1lyjS+NNkLwIGErFoW5rd40xhZG1YR7ItwVUdcRAbbSFqoNeCjrssQRblBymxHc2xNs1qfuc62YZgqMIeivHA3GNpuJ0gTfm6HTnJQ4sZeXP0E7KidgcNIBJBAIzMBazi5kMNWDy5YlecIAYBUULmCsgIIjy9kb86Pe+Y6Je8=
+	t=1733453849; cv=none; b=NM3hycgFAZ6bD2rvqmDUPaTFkyz8Gud87dZPTzuYuWbDY8OH7u285JQwtNwpxg+x2PzLgHAb4IbptkGhH/89uINrlgqDmyMa2akXPclIIfOb8De6GMF326Ce2mnF5C4Q1MXqHqgKMWsk0nyx7FKlgQA5iEpa1jtDALlFnQnZ5nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733453628; c=relaxed/simple;
-	bh=9+nnjZyKOJUU2Gqt8b+xPm1V7Se8+MxBK7AHG9TMF3I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GN9JQtl+fYe2mWp+XxX6fGml2Pf2LuWLBq80cAFfR3kJUh1dWf9lAoMsxlDKBXW/J5NRef2QhiDDPVzaihgx58WsK4ofqqPgLZbEcLN0s4WhZlIKFttEUsAoh7Qgdo6Erg9KVXoTU5kaq31PKFW+91lvK6FqXBjn934rj/P9l+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aeq1myOJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaWp1007445;
-	Fri, 6 Dec 2024 02:53:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=afbfzP5xvo9Ii8t3LxkXEvLC
-	fOl2+S4rEmpVWjCcDlM=; b=aeq1myOJa2IfxFiQXY4SMYQLg4eZZ5VmpXldt9zp
-	EQijVr0+BzQN4tmoXc/XF5ywRGa+26vSFUnAxivufQ9Pw1NfFVFun9nTQdv0mqal
-	4ybHDDJb5HF/mcZ21lp+uw5XsqtvySr0gCYM/3QiESipNNbMQSHw6+QD//GnaE+N
-	eCsY72jUKTK6n+91tAcEXu6Xr8Ib7pxV1wP+j7mnLZBqbcdLZY7SIPu7Zoaq2DHx
-	PGYxKJAMJ3ueQIyMdzNaOQR/sYvt3lxDy+bJ7fWxQX1Wqf9tlX8Q7Bj53+Zy1lYi
-	AP4Gm1jM44H4+YRl8V8/l/NzQ5r5+LZYxph2gUzrpwUpkQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ben89hu3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 02:53:43 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62rgZh014416
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 02:53:42 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Dec 2024 18:53:39 -0800
-Date: Fri, 6 Dec 2024 10:53:35 +0800
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
-        <quic_zhgao@quicinc.com>, <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH v2] mmc: sdhci-msm: Correctly set the load for the
- regulator
-Message-ID: <Z1JnL9sgsJ+8wNxm@cse-cd02-lnx.ap.qualcomm.com>
-References: <20241127095029.3918290-1-quic_yuanjiey@quicinc.com>
- <cj7nsn2xphd4ftnhtp6ztor4cqyjsdwkubjgancfd3xojddj4s@m3pb4qc645sn>
+	s=arc-20240116; t=1733453849; c=relaxed/simple;
+	bh=9HvO6MAsaIXImHWsj9SUkjkf6vOQBCv+prcETtLm2y0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=cYOtAPuHiBT02cPWKYyU9D3ZAEkJ12elqbPuzg3Z3IgZFCg8oK38K0jc4dR8xTmxre1dvqlFBaa8HHVDVMMva4kgtpG6CHlndBN2fAOBkbi+q1Y8ttd4nugODg+GQqTw+3E+70UBKt/3n5klyOMuMbonGjjeXxElU2auiGYQVaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdpytCAM; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-215bebfba73so15249825ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 18:57:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733453846; x=1734058646; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UuXPmsAiOF3KO5nczLS1cdNL/HEbPrxijgBKivhC7TQ=;
+        b=NdpytCAM99uWwLqIatFyk4UZkqwV0HG9jj1nt+PoCx1/W5CjjKas/hmYCZ6Dfqz3RC
+         WIUFbJ8w2aPbPSRsNfIQPuuZQuJgEfAV12qyDjOQbsTi04S+OR28wkqKUH94PoXlI+rY
+         74pWoJJudIDOt5ldh4FTVvRv9tlMo/bs/pIKB2hkeulYenF7jMhyK6bfTlEvyJX6aizT
+         M5D/WP6vi5UV8fFhZQv17p/vUWc4OiJFZp4gvGcFdt5VIRMzODtjtAPOh+7mFLBy89GZ
+         tRvKUW8KBrxZijjp6j7EwIjWHNpexjeZn0QBbLy6VYsASILbgOESHqUUR8FvOX9FsTLq
+         zVsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733453846; x=1734058646;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UuXPmsAiOF3KO5nczLS1cdNL/HEbPrxijgBKivhC7TQ=;
+        b=rubLytFjJRnFnRrJk/TsK7hlhwe4mSCgO01NcMoFE2HsMxvxKFjgoOgYtdcQlot9Tk
+         2NE5uNEVYm6z/ioQoIHEtqIvlsUBoZi6DIH3P3gDLr5IAZjHgKDPr7oS/WakDs8mJ4sF
+         u3i456MlmPkonQfasQ7WgxypHhO5gY7uEroSQ2M3q/wE3UewJ71Z2ZW21JbyOyEnEfHH
+         P6RwTM/YaQW30arEZVaGA9XXyXFKorQeAkVUyovtIJfT1262cqUo4oHzSBFaHPYMRIVI
+         w7e6WFoG7pabnEqQSKy/aLGBwyEZhb7OGpMVp81uxfYk3/LznqE9E9LGBM4KWfjixEXb
+         HcLg==
+X-Forwarded-Encrypted: i=1; AJvYcCX63trg18itSx/nVc38MsFFAGVO2ve29yLx68bfy7tO/J6a5L7XyPGJdmPDyLDiMwVYjtT7i6Q7bdcTSHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJWEwgbZ9wSfvfMlO41zL+6EQrv0I8KxLecEFPB19iMtPJO6qN
+	AQWYDbrFWSEo0XXD2skVNvVYnaxNyZkGB4zqxuQ+lSWZeBLRxau2
+X-Gm-Gg: ASbGnct5OyK4Ow4znQI8xIXeTfKj90Bl9zqg5fZRCdsimDgR5QE5i7axi6kpxl8oYW+
+	EO1SRj6tLGif8Ne1peBiIuce0nA/zwLAh0kaURtLxRHoPZlupGUb9o7n0EQWtVAvom7E+yTYbDD
+	H9XJe7JfV+sUMwTw/aUC96M1QvXKbBJ0q7jUJPJg58livmX4sZvNBao7isEJvHeIhclKSX2NUsj
+	doFZpY7bPLxk26ORbQsm/qNnpKxJZmBwqrw+g01hR23HKIfxKQtw9p1DtI=
+X-Google-Smtp-Source: AGHT+IHejNabSimnXrS0lGaFIhPRq1cGDp6OFV5HMLaXgF0kRwII3SCTj6G4UiGebDcRVGiFJ/yURw==
+X-Received: by 2002:a17:903:234a:b0:215:6093:e384 with SMTP id d9443c01a7336-21614dd7fbcmr15675455ad.49.1733453845922;
+        Thu, 05 Dec 2024 18:57:25 -0800 (PST)
+Received: from localhost.localdomain ([43.153.70.29])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e3fd6bsm19436955ad.4.2024.12.05.18.57.24
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Dec 2024 18:57:25 -0800 (PST)
+From: mengensun88@gmail.com
+X-Google-Original-From: mengensun@tencent.com
+To: akpm@linux-foundation.org
+Cc: linux@weissschuh.net,
+	joel.granados@kernel.org,
+	avagin@google.com,
+	linux-kernel@vger.kernel.org,
+	yuehongwu@tencent.com,
+	MengEn Sun <mengensun@tencent.com>
+Subject: [PATCH 1/2] ucounts: Move kfree() out of critical zone protected by ucounts_lock
+Date: Fri,  6 Dec 2024 10:57:22 +0800
+Message-Id: <1733453842-5773-1-git-send-email-mengensun@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cj7nsn2xphd4ftnhtp6ztor4cqyjsdwkubjgancfd3xojddj4s@m3pb4qc645sn>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mp9x1ViV_t9Cw5JYxVPuu7RI-XersSFS
-X-Proofpoint-GUID: mp9x1ViV_t9Cw5JYxVPuu7RI-XersSFS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 clxscore=1015
- malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060020
 
-On Fri, Nov 29, 2024 at 08:44:37PM +0200, Dmitry Baryshkov wrote:
-> On Wed, Nov 27, 2024 at 05:50:29PM +0800, Yuanjie Yang wrote:
-> > Qualcomm regulator supports two power supply modes: HPM and LPM.
-> > Currently, the sdhci-msm.c driver does not set the load to adjust
-> > the current for eMMC and SD. Therefore, if the regulator set load
-> > in LPM state, it will lead to the inability to properly initialize
-> > eMMC and SD.
-> > 
-> > Set the correct regulator current for eMMC and SD to ensure that the
-> > device can work normally even when the regulator is in LPM.
-> > 
-> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> > ---
-> > Changes in v2:
-> > - Add enum msm_reg_type to optimize the code
-> > - Delete redundant emmc type judgment
-> > - Link to v1: https://lore.kernel.org/linux-arm-msm/20241122075048.2006894-1-quic_yuanjiey@quicinc.com/
-> > 
-> > ---
-> >  drivers/mmc/host/sdhci-msm.c | 92 +++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 90 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> > index e00208535bd1..fc13ef60ab61 100644
-> > --- a/drivers/mmc/host/sdhci-msm.c
-> > +++ b/drivers/mmc/host/sdhci-msm.c
-> > @@ -134,9 +134,22 @@
-> >  /* Timeout value to avoid infinite waiting for pwr_irq */
-> >  #define MSM_PWR_IRQ_TIMEOUT_MS 5000
-> >  
-> > +/* Max load for eMMC Vdd supply */
-> > +#define MMC_VMMC_MAX_LOAD_UA	570000
-> > +
-> >  /* Max load for eMMC Vdd-io supply */
-> >  #define MMC_VQMMC_MAX_LOAD_UA	325000
-> >  
-> > +/* Max load for SD Vdd supply */
-> > +#define SD_VMMC_MAX_LOAD_UA	800000
-> > +
-> > +/* Max load for SD Vdd-io supply */
-> > +#define SD_VQMMC_MAX_LOAD_UA	22000
-> > +
-> > +#define MAX_MMC_SD_VMMC_LOAD_UA  max(MMC_VMMC_MAX_LOAD_UA, SD_VMMC_MAX_LOAD_UA)
-> > +
-> > +#define MAX_MMC_SD_VQMMC_LOAD_UA max(MMC_VQMMC_MAX_LOAD_UA, SD_VQMMC_MAX_LOAD_UA)
-> > +
-> >  #define msm_host_readl(msm_host, host, offset) \
-> >  	msm_host->var_ops->msm_readl_relaxed(host, offset)
-> >  
-> > @@ -147,6 +160,11 @@
-> >  #define CQHCI_VENDOR_CFG1	0xA00
-> >  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
-> >  
-> > +enum msm_reg_type {
-> > +	VMMC_REGULATOR,
-> > +	VQMMC_REGULATOR,
-> 
-> Please drop enum completely, then...
-Thanks, I will drop enum in next version.
+From: MengEn Sun <mengensun@tencent.com>
 
-> > +};
-> > +
-> >  struct sdhci_msm_offset {
-> >  	u32 core_hc_mode;
-> >  	u32 core_mci_data_cnt;
-> > @@ -1403,11 +1421,71 @@ static int sdhci_msm_set_pincfg(struct sdhci_msm_host *msm_host, bool level)
-> >  	return ret;
-> >  }
-> >  
-> > -static int sdhci_msm_set_vmmc(struct mmc_host *mmc)
-> > +static int sdhci_msm_get_regulator_load(struct mmc_host *mmc, int max_current,
-> > +					enum msm_reg_type type)
-> > +{
-> > +	int load = 0;
-> > +
-> > +	/*
-> > +	 * When eMMC and SD are powered on for the first time, select a higher
-> > +	 * current value from the corresponding current for eMMC and SD to
-> > +	 * ensure that the eMMC and SD cards start up properly and complete
-> > +	 * initialization. After the initialization process is finished, use
-> > +	 * the corresponding current to set the eMMC and SD to ensure the
-> > +	 * normal work of the device.
-> > +	 */
-> > +
-> > +	if (!mmc->card)
-> > +		return max_current;
-> > +
-> > +	if (mmc_card_mmc(mmc->card))
-> > +		load = (type == VMMC_REGULATOR) ? MMC_VMMC_MAX_LOAD_UA : MMC_VQMMC_MAX_LOAD_UA;
-> > +	else if (mmc_card_sd(mmc->card))
-> > +		load = (type == VMMC_REGULATOR) ? SD_VMMC_MAX_LOAD_UA : SD_VQMMC_MAX_LOAD_UA;
-> 
-> ... split this into two functions, one for vmmc and another one for
-> vqmmc...
-Thanks, I will split this funcution into two function in next version.
+Although kfree is a non-sleep function, it is possible to enter a
+long chain of calls probabilistically, so it looks better to move
+kfree from alloc_ucounts() out of the critical zone of ucounts_lock.
 
-> > +
-> > +	return load;
-> > +}
-> > +
-> > +static int msm_config_regulator_load(struct sdhci_msm_host *msm_host, struct mmc_host *mmc,
-> > +				     bool hpm, int max_current, enum msm_reg_type type)
-> 
-> Then this becomes two functions too, each of those can be inlined in the
-> proper place.
-Thanks, I will fix it in next version.
+Reviewed-by: YueHong Wu <yuehongwu@tencent.com>
+Signed-off-by: MengEn Sun <mengensun@tencent.com>
+---
+ kernel/ucount.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> 
-> > +{
-> > +	int ret;
-> > +	int load = 0;
-> > +
-> > +	/*
-> > +	 * After the initialization process is finished, Once the type of card
-> > +	 * is determined, only set the corresponding current for SD and eMMC.
-> > +	 */
-> > +
-> > +	if (mmc->card && !(mmc_card_mmc(mmc->card) || mmc_card_sd(mmc->card)))
-> > +		return 0;
-> 
-> This goes into sdhci_msm_get_regulator_load().
-Thanks, I will optimize this code in next patch.
-
-> > +
-> > +	if (hpm)
-> > +		load = sdhci_msm_get_regulator_load(mmc, max_current, type);
-> > +
-> > +	if (type == VMMC_REGULATOR)
-> > +		ret = regulator_set_load(mmc->supply.vmmc, load);
-> > +	else
-> > +		ret = regulator_set_load(mmc->supply.vqmmc, load);
-> > +	if (ret)
-> > +		dev_err(mmc_dev(mmc), "%s: set load failed: %d\n",
-> > +			mmc_hostname(mmc), ret);
-> > +	return ret;
-> > +}
-> > +
-> > +static int sdhci_msm_set_vmmc(struct sdhci_msm_host *msm_host,
-> > +			      struct mmc_host *mmc, bool hpm)
-> >  {
-> > +	int ret;
-> > +
-> >  	if (IS_ERR(mmc->supply.vmmc))
-> >  		return 0;
-> >  
-> > +	ret = msm_config_regulator_load(msm_host, mmc, hpm,
-> > +					MAX_MMC_SD_VMMC_LOAD_UA, VMMC_REGULATOR);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >  	return mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, mmc->ios.vdd);
-> >  }
-> >  
-> > @@ -1435,6 +1513,15 @@ static int msm_toggle_vqmmc(struct sdhci_msm_host *msm_host,
-> >  				goto out;
-> >  			}
-> >  		}
-> > +
-> > +		ret = msm_config_regulator_load(msm_host, mmc, level,
-> > +						MAX_MMC_SD_VQMMC_LOAD_UA, VQMMC_REGULATOR);
-> > +		if (ret < 0) {
-> > +			dev_err(mmc_dev(mmc), "%s: vqmmc set regulator load failed: %d\n",
-> > +				mmc_hostname(mmc), ret);
-> > +			goto out;
-> > +		}
-> > +
-> >  		ret = regulator_enable(mmc->supply.vqmmc);
-> >  	} else {
-> >  		ret = regulator_disable(mmc->supply.vqmmc);
-> > @@ -1642,7 +1729,8 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
-> >  	}
-> >  
-> >  	if (pwr_state) {
-> > -		ret = sdhci_msm_set_vmmc(mmc);
-> > +		ret = sdhci_msm_set_vmmc(msm_host, mmc,
-> > +					 pwr_state & REQ_BUS_ON);
-> >  		if (!ret)
-> >  			ret = sdhci_msm_set_vqmmc(msm_host, mmc,
-> >  					pwr_state & REQ_BUS_ON);
-> > -- 
-> > 2.34.1
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
-
-Thanks,
-Yuanjie
+diff --git a/kernel/ucount.c b/kernel/ucount.c
+index f950b5e5..86c5f1c 100644
+--- a/kernel/ucount.c
++++ b/kernel/ucount.c
+@@ -164,8 +164,8 @@ struct ucounts *get_ucounts(struct ucounts *ucounts)
+ struct ucounts *alloc_ucounts(struct user_namespace *ns, kuid_t uid)
+ {
+ 	struct hlist_head *hashent = ucounts_hashentry(ns, uid);
+-	struct ucounts *ucounts, *new;
+ 	bool wrapped;
++	struct ucounts *ucounts, *new = NULL;
+ 
+ 	spin_lock_irq(&ucounts_lock);
+ 	ucounts = find_ucounts(ns, uid, hashent);
+@@ -182,17 +182,17 @@ struct ucounts *alloc_ucounts(struct user_namespace *ns, kuid_t uid)
+ 
+ 		spin_lock_irq(&ucounts_lock);
+ 		ucounts = find_ucounts(ns, uid, hashent);
+-		if (ucounts) {
+-			kfree(new);
+-		} else {
++		if (!ucounts) {
+ 			hlist_add_head(&new->node, hashent);
+ 			get_user_ns(new->ns);
+ 			spin_unlock_irq(&ucounts_lock);
+ 			return new;
+ 		}
+ 	}
++
+ 	wrapped = !get_ucounts_or_wrap(ucounts);
+ 	spin_unlock_irq(&ucounts_lock);
++	kfree(new);
+ 	if (wrapped) {
+ 		put_ucounts(ucounts);
+ 		return NULL;
+-- 
+1.8.3.1
 
 
