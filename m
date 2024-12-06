@@ -1,135 +1,198 @@
-Return-Path: <linux-kernel+bounces-434478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305139E675A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:41:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE0A1882BA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:41:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBA1DA61D;
-	Fri,  6 Dec 2024 06:41:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C5C9E675F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:42:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332361D7E35;
-	Fri,  6 Dec 2024 06:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407C5281E41
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:42:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2AC1DACAF;
+	Fri,  6 Dec 2024 06:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LG+eE0ue"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A053F58222;
+	Fri,  6 Dec 2024 06:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733467263; cv=none; b=MB7VpBsKVq73S7bcDgwOZgeC7K1HMox6ls+4dk1k7kKSTvI81WQ6BhqCXA5ch9bYBWB93GYWLltAQgdoSqBPpcyAxNaIHDSTvfUc7wejMf3qEYWu2KpNSENumEVdp1pGA4lehWcinxTRUi9cQ7BfLt70qLi85lJEIy9f7TkjRdA=
+	t=1733467337; cv=none; b=jz/1HUhzBEhiNr+p6aEyACvVMQw0pECjYnnWXqpB83iJYYSsD5ig9c4IkmvkeTzyBWgvmqxJgiE/Er7nbCHKkidx5GHTpG5keQYfNQZE1LyYwig3Uk0tOpJ5jNs/08bKjWCfIRE2EA1HKgpmzUPkdjbmdQuucIh9DQAPgLJKgK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733467263; c=relaxed/simple;
-	bh=66+PVLJ+QChN/bHTgdHcuh9hc8K19AZ0ZHwK+EOPX7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qQT2uBugRpv2QFxLU891Ojgd5g48Jrd0YNTH44SmqmRXejjNePoPRREUf9oIZQumKHNycSzJShjxRe0HijR8aWfmmuCybo+Wz7sSs/RM9uMB8aHQ+qI0MEGMkHrCG/6k1YoaCDaWq2z84NYbYTwZav0mz6w0siqh6rF9JguUiRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4M8L4L8Xz4f3lVM;
-	Fri,  6 Dec 2024 14:40:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id A8E281A0196;
-	Fri,  6 Dec 2024 14:40:54 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgA35uJ1nFJnECUdDw--.53652S2;
-	Fri, 06 Dec 2024 14:40:54 +0800 (CST)
-Message-ID: <897b04c9-dba3-44ae-8113-145ca3457cb3@huaweicloud.com>
-Date: Fri, 6 Dec 2024 14:40:53 +0800
+	s=arc-20240116; t=1733467337; c=relaxed/simple;
+	bh=LfFLuF4ji/kVInVTaqlpwXqrFKokO1KMpLsxrSto4Eo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=kBuPlcbAOYvqYo5+j6qKi7YhD8bRrDFDPd0A2+qlZN+Ep8hBzxqv+bGTIsrdUXHlVssSaM6GXNxgwAFmatqq+3wo1AaJLD30aCmvlBN28t7OrQ34fe9Z4mcH7a3fWiN88oZJQiWA/NLxKPq1p8Hq9fnG6Jj4rjv5nOD+X8JjEs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LG+eE0ue; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5JhlNn018707;
+	Fri, 6 Dec 2024 06:42:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fmIOF/1fhz42BBjw/bkKoA
+	fgSj8dTtOj8CdHzCK6Dik=; b=LG+eE0ueM+ZCzejqB8Uj5gSe3pgvOJ+dEd/03S
+	YznVwcUcSM5Fmu65WYaeYa6LXKqnDST6pFySnITaPdsoUm9Pz7WwT/vX+yUG2h6L
+	f/CIL8LwYY8c+oAClXTcktJvUdlnOIjd0pJpncHIJYCLAoxsYjMhbiJmd39m5BGn
+	7lK/RiiBXnj0eSIHXyJuzLnO7i+Sp7p1Bip6JGhPtnBJNiTiDh0EznGHLy934+Wm
+	GQCNdptE6IAmfmBOaBWJIIWpANOHLPSn5vANQkG2MwgjKq9ZK6DywoNWFu4Goufr
+	nWeOCHiNo7Dp4voEZCu6MCLkgbuxVWgQJzc1YDMrwTjp7kGA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bjk8sbrn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 06:42:11 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B66gAG2028469
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 06:42:10 GMT
+Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Dec 2024 22:42:07 -0800
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+Date: Fri, 6 Dec 2024 14:41:13 +0800
+Subject: [PATCH] arm64: dts: qcom: qcs8300: Add capacity and DPC properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [next -v1 3/5] memcg: simplify the mem_cgroup_update_lru_size
- function
-To: Yu Zhao <yuzhao@google.com>, Hugh Dickins <hughd@google.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, hannes@cmpxchg.org,
- yosryahmed@google.com, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- muchun.song@linux.dev, davidf@vimeo.com, vbabka@suse.cz, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- chenridong@huawei.com, wangweiyang2@huawei.com
-References: <20241206013512.2883617-1-chenridong@huaweicloud.com>
- <20241206013512.2883617-4-chenridong@huaweicloud.com>
- <CAOUHufbCCkOBGcSPZqNY+FXcrH8+U7_nRvftzOzKUBS4hn+kuQ@mail.gmail.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <CAOUHufbCCkOBGcSPZqNY+FXcrH8+U7_nRvftzOzKUBS4hn+kuQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgA35uJ1nFJnECUdDw--.53652S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF4rCryrGw48XFW8Ar43Wrg_yoW8ZF15pF
-	W7CFyFy3WkArW7u3s7twsaq3y2krs5JFWUXF9xX34fJw1j9FyIkF4UtrWYqrW7AFn5Cw43
-	trZxWr1vyFZ0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241206-qcs8300_dpc-v1-1-af2e8e6d3da9@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAImcUmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIwMz3cLkYgtjA4P4lIJkXSNjgzRzczPzNDMDYyWgjoKi1LTMCrBp0bG
+ 1tQCLi3HAXQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <quic_anshar@quicinc.com>, <quic_tengfan@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jingyi Wang <quic_jingyw@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733467327; l=2838;
+ i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
+ bh=LfFLuF4ji/kVInVTaqlpwXqrFKokO1KMpLsxrSto4Eo=;
+ b=apMza4Au9MGEqMRZI6HrEXSj3FhfYKBJNLc1qJwjvWaTBMYIeASwvJD3MmC0RlDyxAhce8DHp
+ nhZnJ1JTUUJDp/EYYmNquDXFahVY0AKoUgb7A+kaMiHCZG2iclzXB4/
+X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
+ pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Jt0EoEmU-QYBVz5V-UXykJxfhn9MmDZD
+X-Proofpoint-GUID: Jt0EoEmU-QYBVz5V-UXykJxfhn9MmDZD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=809
+ priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412060046
 
+The "capacity-dmips-mhz" and "dynamic-power-coefficient" are used to
+build Energy Model which in turn is used by EAS to take placement
+decisions. So add it to QCS8300 SoC.
 
+Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-On 2024/12/6 13:33, Yu Zhao wrote:
-> On Thu, Dec 5, 2024 at 6:45 PM Chen Ridong <chenridong@huaweicloud.com> wrote:
->>
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> In the `mem_cgroup_update_lru_size` function, the `lru_size` should be
->> updated by adding `nr_pages` regardless of whether `nr_pages` is greater
->> than 0 or less than 0. To simplify this function, add a check for
->> `nr_pages` == 0. When `nr_pages` is not equal to 0, perform the same
->> actions.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> 
-> NAK.
-> 
-> The commit that added that clearly explains why it was done that way.
+diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+index 73abf2ef9c9f..2996b09e4c54 100644
+--- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+@@ -44,6 +44,8 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&l2_0>;
+ 			power-domains = <&cpu_pd0>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1946>;
++			dynamic-power-coefficient = <472>;
+ 
+ 			l2_0: l2-cache {
+ 				compatible = "cache";
+@@ -61,6 +63,8 @@ cpu1: cpu@100 {
+ 			next-level-cache = <&l2_1>;
+ 			power-domains = <&cpu_pd1>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1946>;
++			dynamic-power-coefficient = <472>;
+ 
+ 			l2_1: l2-cache {
+ 				compatible = "cache";
+@@ -78,6 +82,8 @@ cpu2: cpu@200 {
+ 			next-level-cache = <&l2_2>;
+ 			power-domains = <&cpu_pd2>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1946>;
++			dynamic-power-coefficient = <507>;
+ 
+ 			l2_2: l2-cache {
+ 				compatible = "cache";
+@@ -95,6 +101,8 @@ cpu3: cpu@300 {
+ 			next-level-cache = <&l2_3>;
+ 			power-domains = <&cpu_pd3>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1946>;
++			dynamic-power-coefficient = <507>;
+ 
+ 			l2_3: l2-cache {
+ 				compatible = "cache";
+@@ -112,6 +120,8 @@ cpu4: cpu@10000 {
+ 			next-level-cache = <&l2_4>;
+ 			power-domains = <&cpu_pd4>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <100>;
+ 
+ 			l2_4: l2-cache {
+ 				compatible = "cache";
+@@ -129,6 +139,8 @@ cpu5: cpu@10100 {
+ 			next-level-cache = <&l2_5>;
+ 			power-domains = <&cpu_pd5>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <100>;
+ 
+ 			l2_5: l2-cache {
+ 				compatible = "cache";
+@@ -146,6 +158,8 @@ cpu6: cpu@10200 {
+ 			next-level-cache = <&l2_6>;
+ 			power-domains = <&cpu_pd6>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <100>;
+ 
+ 			l2_6: l2-cache {
+ 				compatible = "cache";
+@@ -163,6 +177,8 @@ cpu7: cpu@10300 {
+ 			next-level-cache = <&l2_7>;
+ 			power-domains = <&cpu_pd7>;
+ 			power-domain-names = "psci";
++			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <100>;
+ 
+ 			l2_7: l2-cache {
+ 				compatible = "cache";
 
-Thank you for your reply.
-
-I have read the commit message for ca707239e8a7 ("mm: update_lru_size
-warn and reset bad lru_size") before sending my patch. However, I did
-not quite understand why we need to deal with the difference between
-'nr_pages > 0' and 'nr_pages < 0'.
-
-
-The 'lru_zone_size' can only be modified in the
-'mem_cgroup_update_lru_size' function. Only subtracting 'nr_pages' or
-adding 'nr_pages' in a way that causes an overflow can make the size < 0.
-
-For case 1, subtracting 'nr_pages', we should issue a warning if the
-size goes below 0. For case 2, when adding 'nr_pages' results in an
-overflow, there will be no warning and the size won't be reset to 0 the
-first time it occurs . It might be that a warning will be issued the
-next time 'mem_cgroup_update_lru_size' is called to modify the
-'lru_zone_size'. However, as the commit message said, "the first
-occurrence is the most informative," and it seems we have missed that
-first occurrence.
-
-As the commit message said: "and then the vast unsigned long size draws
-page reclaim into a loop of repeatedly", I think that a warning should
-be issued and 'lru_zone_size' should be reset whenever 'size < 0' occurs
-for the first time, whether from subtracting or adding 'nr_pages'.
-
-I am be grateful if you can explain more details, it has confused me for
-a while. Thank you very much.
+---
+base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
+change-id: 20241206-qcs8300_dpc-230f7767f603
 
 Best regards,
-Ridong
+-- 
+Jingyi Wang <quic_jingyw@quicinc.com>
 
 
