@@ -1,128 +1,134 @@
-Return-Path: <linux-kernel+bounces-434572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB4C9E6874
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:09:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823CC9E6875
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B638416A70D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39B0F1885FA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C71DE8A1;
-	Fri,  6 Dec 2024 08:09:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29021DDC01;
+	Fri,  6 Dec 2024 08:10:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394E6197548;
-	Fri,  6 Dec 2024 08:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF4C328B6
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733472576; cv=none; b=kRLjkI0FB9BCL2IhwoSjksL/pmHlsMqmwih7veA/IFXqDuw/dFnC2WqNEzE/XiTgkbez3yLaEK2gcyKB3W+DsQYNF5PdS075S4z0Ka/lHPewH9wMW1dOsUvB6OjAv1HiApWUPgiKZRhw+DvmN6JYTG36djyCedFbUUd3RSrOnug=
+	t=1733472634; cv=none; b=BvKSrq8xNHPpvrnEChYk5DwjWMd8/iiGsb4atqwALlqb+oKJZzYsP9YGQ5S4MF5H03nG7IV53kYdkkXeoa7Csv/QWVhUseRAeustDhFSU8iFS7DQHeZnJzzEHlsvg5tdGipuVWIvXe24hd/5YF85+Fjgzo/pXdN/R20IeB3IrQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733472576; c=relaxed/simple;
-	bh=TQYE2agDYZJTvN56R/TnJ7DUpWGGKi+XZbXXKF4U1Ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=flbyhWCCdOBcyhQrcjrylkShKWavZgHMGcewx1TsxjqonGexSMC743bxEA/REthaamMQ8vxXOXE9uuxScd6CpxopMiCZY1/b2xIWY2P1BIXjncMQfOKnitpYNXUvffbxBq63pFeOm0f2z+jKCZqf1JMG/1Bt+P76RkYGb/v+8Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y4P6X3Df1z4f3jct;
-	Fri,  6 Dec 2024 16:09:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8235B1A08DC;
-	Fri,  6 Dec 2024 16:09:27 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCngYU2sVJnEbw9Dw--.20216S3;
-	Fri, 06 Dec 2024 16:09:27 +0800 (CST)
-Message-ID: <0b45ce3d-fd20-4df2-9c04-f956b96bf6a2@huaweicloud.com>
-Date: Fri, 6 Dec 2024 16:09:26 +0800
+	s=arc-20240116; t=1733472634; c=relaxed/simple;
+	bh=WT6K333Hn/1oP2xiL+aIaPJPrM5BmsVifFJnZlbEwx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfWbJT3/Zp3/dP/fCzwJMuHaumKdln7x6mnJ+NJ5OQ+vqv651NdHYosxUN+HBoOqMI3OjxWqlBnyiYSTmdkqK8/vEHBSixkKG754iEasuOmgTGQ7kAtgycmc/zB0bpm8BQuD+FD9GBVhBmCk0/Tth3QxaZkO6MwySt3FM/O/RYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJTPm-0007sL-09; Fri, 06 Dec 2024 09:10:18 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJTPh-001xvO-1g;
+	Fri, 06 Dec 2024 09:10:14 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJTPi-000jS9-0a;
+	Fri, 06 Dec 2024 09:10:14 +0100
+Date: Fri, 6 Dec 2024 09:10:14 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v1 1/5] dt-bindings: net: Add TI DP83TD510 10BaseT1L PHY
+Message-ID: <Z1KxZmRekrYGSdd4@pengutronix.de>
+References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
+ <20241205125640.1253996-2-o.rempel@pengutronix.de>
+ <20241205-immortal-sneak-8c5a348a8563@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/27] ext4: refactor ext4_zero_range()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
- david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-6-yi.zhang@huaweicloud.com>
- <20241204115208.g4lswqfbwrwmwtqw@quack3>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20241204115208.g4lswqfbwrwmwtqw@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCngYU2sVJnEbw9Dw--.20216S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF15Ar1fCw45Gr47GF15urg_yoW8WFW5pF
-	Z7Xa4j9FWkWFyUCa1xKF1fZF4Sk398tr47G34fWry8Zrn8JrnayFs2ga15W3W09ws7Ja1F
-	vanrKryxuF45AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
-	mii3UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241205-immortal-sneak-8c5a348a8563@spud>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2024/12/4 19:52, Jan Kara wrote:
-> On Tue 22-10-24 19:10:36, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> The current implementation of ext4_zero_range() contains complex
->> position calculations and stale error tags. To improve the code's
->> clarity and maintainability, it is essential to clean up the code and
->> improve its readability, this can be achieved by: a) simplifying and
->> renaming variables, making the style the same as ext4_punch_hole(); b)
->> eliminating unnecessary position calculations, writing back all data in
->> data=journal mode, and drop page cache from the original offset to the
->> end, rather than using aligned blocks; c) renaming the stale out_mutex
->> tags.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Thu, Dec 05, 2024 at 05:18:59PM +0000, Conor Dooley wrote:
+> On Thu, Dec 05, 2024 at 01:56:36PM +0100, Oleksij Rempel wrote:
+> > Introduce devicetree binding for the Texas Instruments DP83TD510
+> > Ultra Low Power 802.3cg 10Base-T1L Single Pair Ethernet PHY.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  .../devicetree/bindings/net/ti,dp83td510.yaml | 35 +++++++++++++++++++
+> >  1 file changed, 35 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ti,dp83td510.yaml b/Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > new file mode 100644
+> > index 000000000000..cf13e86a4017
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > @@ -0,0 +1,35 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/ti,dp83td510.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TI DP83TD510 10BaseT1L PHY
+> > +
+> > +maintainers:
+> > +  - Oleksij Rempel <o.rempel@pengutronix.de>
+> > +
+> > +description:
+> > +  DP83TD510E Ultra Low Power 802.3cg 10Base-T1L 10M Single Pair Ethernet PHY
+> > +
+> > +allOf:
+> > +  - $ref: ethernet-phy.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - ethernet-phy-id2000.0181
 > 
-> ...
-> 
->> -		goto out_mutex;
->> -
->> -	/* Preallocate the range including the unaligned edges */
->> -	if (partial_begin || partial_end) {
->> -		ret = ext4_alloc_file_blocks(file,
->> -				round_down(offset, 1 << blkbits) >> blkbits,
->> -				(round_up((offset + len), 1 << blkbits) -
->> -				 round_down(offset, 1 << blkbits)) >> blkbits,
->> -				new_size, flags);
->> -		if (ret)
->> -			goto out_mutex;
->> -
->> -	}
-> 
-> So I think we should keep this first ext4_alloc_file_blocks() call before
-> we truncate the page cache. Otherwise if ext4_alloc_file_blocks() fails due
-> to ENOSPC, we have already lost the dirty data originally in the zeroed
-> range. All the other failure modes are kind of catastrophic anyway, so they
-> are fine after dropping the page cache. But this is can be quite common and
-> should be handled more gracefully.
-> 
+> There's nothing specific here, can someone remind me why the generic
+> binding is not enough?
 
-Ha, right, I missed this error case, I will revise it.
+The missing binding was blamed by checkpatch. Haw should I proceed with this
+patch?
 
-Thanks,
-Yi.
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
