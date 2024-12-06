@@ -1,189 +1,275 @@
-Return-Path: <linux-kernel+bounces-435583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11349E79C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:06:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D4716C16F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:05:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557EF2135C7;
-	Fri,  6 Dec 2024 20:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cg+Yzfpi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E899E795A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:58:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0E6207658
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D089282C9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:58:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA2D1D95B3;
+	Fri,  6 Dec 2024 19:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zE9SDQxR"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1FF1D63CE
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733515478; cv=none; b=MjVEP5eI8SEWg91THhRtybFvu6Lv12LQbp1lVyv/w8FjG3qkwCeycNsPfW7JAe99+EhpD4lldhEqulVogeg9KEstgp16+qBiepjiVy9xX+sqC1ODSWYB0GCZFkytcck+8gDbmc9zU2tV44GIpKoB+hUohLLBQ/PNHF9zgsaaXzk=
+	t=1733515094; cv=none; b=nppzFzeNJw1dL/bkVWCqZRMG2XE7l4v8D7IIISwhpvetel8TFWl1C1+0C9zv/eMG3GffqV9jKVZQVZegm7IqugGF0+N5vjc/x0WhY9WQqf91aK3OkBsuAZ4z/rjhw7XeaytYlO5vBYp8RW3KrLf9GLAdhs6fD8l5+A/m64BlImo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733515478; c=relaxed/simple;
-	bh=vIG7g6S+y3x8IVVR0Rwd2ra4ixtI7rPHq7MMT+V5aUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mez6L0kDQ/EDaUdrTzgckbPWToB2zZdSBl+tsxd/PW9cJrCHXjhEBy9Z7x19NDS+eiIOnJh6HQ739RIEAN1y37Zw7sT5joiUuZNuMNDhSvad7P1xJjfpuJN06kebJrV/F3H09OywJuX3+9tR23vJkwpLgSXOvxzlay2pxurAoxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cg+Yzfpi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733515475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fMjHOTJ3IG23u1irgURN19CYjdI/G0om6iCqk5PM28U=;
-	b=Cg+YzfpiZJLHpEmcnw++E5DLu8Ktbvp36/nbc3MTzYxQifLOpHuLtUyey1Yynu0zhjpQvN
-	/+9vEIR8sZ91hnwVM8xZhXUaQDs8vwTJ7WwIMXczNafWF7kkPC3yLGA4vYZLbUhzkM4RbA
-	YZnOhCFJtadz6hwPoQQ2V7t8uJNvZmI=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-1vTmg-9QMxmwN6z4g9Tb3w-1; Fri, 06 Dec 2024 15:04:34 -0500
-X-MC-Unique: 1vTmg-9QMxmwN6z4g9Tb3w-1
-X-Mimecast-MFC-AGG-ID: 1vTmg-9QMxmwN6z4g9Tb3w
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa62da5ef1fso284041666b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:04:34 -0800 (PST)
+	s=arc-20240116; t=1733515094; c=relaxed/simple;
+	bh=8gWvy5zGQ4r6v8YrdHYM6ddRzdaCisV+xhxtXzwPYYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jzws+72KaZc22iW8st7h/G3bb1gSO8e55WqRqTt5Qhax7YS6qqdl7+ugjsPhbm5NoXZO+rVjMgTgd2jmKql1ZO5jwr8JfVx0ChAq1wyhbnPnUgiA12yGyQ0tr+tjjpiGm+cmh1manJp9mO+cY/OhIO4GpYbp1YfEACSMFA6ipZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zE9SDQxR; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21561f7d135so14005ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:58:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733515092; x=1734119892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A82gvr7sDzCugWZNh93f0M6gJn7XxjisLQmLnxRt2mE=;
+        b=zE9SDQxRrNMvgT5AOn4wLnG+bekRarlMrudzpfoD4oXu83ct0Zw9R2vz5SBHRj7o3s
+         flpz0nwH+6msQoCHXt/SwF93d9LhBX1mJimAtG/SfSvpdYWvggr0ObZg/ol/G66k/+sw
+         alEZKZEx7AuCpZt49Gyoe0CphnFrswQfWb3nCKyCLWB0Qvbmuq+CTNa6Z9vC8t2L7ESu
+         LEsFN6Mvyn1hgR9083z54Zfij1UowlugiuOZX1hD3rNzEB7YchIZaoKtkzh39xJ4OlCJ
+         wq1qiWmb8ML31HlIJ1xJ1I/tNDAzsTukT3p9usAfZxpMJRUgYSsMo2uijrhE7P9dI7/V
+         ljqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733515473; x=1734120273;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fMjHOTJ3IG23u1irgURN19CYjdI/G0om6iCqk5PM28U=;
-        b=LvGrYTawL+lWCCXhG8STshreOASie+iDtMnZXm9ubPUBEuAM5n3XJnFGjl4cBTl6yn
-         mCQvpr9DWtTZaXOmfuPCoLP9u8xvbzQPdp7InBBSsOcwIfDbF1WmkcK7pn7ZkdkAh/v2
-         Wva0kuN+wO9Yy87e9c9/1pXQd95L5r9ph0VF6QTV0B2qM6kl6OonE3w7IqxxeuGZUifI
-         vxNPxL0UkLq92DLEgOwUtko4SXP3X2kJ8o+Jx6LSLIovVfib0YlCiE42VtUDrSl2zFgG
-         9CaP/kFqXxlPIev/KXGSXfbG0dOc6jL/9nRw0OrDMBCGFRAkzuZmbqio2t+vU2k/Ee1q
-         Hm9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHEdMKfzx5bF9bjSGAl100MNRzArFlc2eorYO5Q+/BnwgXlcB8W6k+2h0Rr80I6Nr+4oCYMk1fWvCF2DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMraH3/9BiCI2246mMNlEaxskf+LY9NriqQ4rlkHZ5r9yoZmUk
-	RpOoaXZfHVUAjYPzd7ncR4aoDjFSMN7pLiHIjSEsqkBVq+DP2LTr7FRX4n/9s5z1aveLv5LM5Hp
-	EdBvYydES1ZH4Fo3+S3SQIRgWfacXV/GHyqerbDImD40knOaaku+lZLVHmOVrZA==
-X-Gm-Gg: ASbGncuFiujstvu2i0HVqOLKsk1P1kxdNxVXMi7YxqBwuDJo/SCQ2gCu66TqNikjYqQ
-	uxeFCW3X23rTpvZxBuHKa7s1HJnTSvBO8bg+hRCfGBY/a1RiNVBnIIYbiwbDwwv2P3QT9wK3y0l
-	Jn9+wZvwV6LHfZOZGI9gbJC018oR+cEXKavXPrIBAR3rvs4FyFSUo20ne54bu4Bh9dB25VsYreF
-	+E30xzNG3SLPhE7JDScnJmNnAEK9Lxh0mR5akgoqWz/X6bjgeicPq2Ppnqa31sAjqOve7wCDlxn
-	KCnAJZS6Qb1DA3hG1giWtjSMbmb6VNxINIhrtsG+8OTiuX4e
-X-Received: by 2002:a17:906:c10b:b0:aa5:3fe7:4475 with SMTP id a640c23a62f3a-aa6203311dfmr900970266b.11.1733515473386;
-        Fri, 06 Dec 2024 12:04:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF+BQutmvcA0nsCT88Amhm9QkyS+wJzkpWUQDFYNpirUHnJMDP0FLESOGwII887k38IbqsJUg==
-X-Received: by 2002:a17:906:c10b:b0:aa5:3fe7:4475 with SMTP id a640c23a62f3a-aa6203311dfmr900967666b.11.1733515472947;
-        Fri, 06 Dec 2024 12:04:32 -0800 (PST)
-Received: from eisenberg.fritz.box (200116b82da23a00e80f0db59251468d.dip.versatel-1u1.de. [2001:16b8:2da2:3a00:e80f:db5:9251:468d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e9706csm281725266b.71.2024.12.06.12.04.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 12:04:32 -0800 (PST)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
-	Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
-	Liu Haijun <haijun.liu@mediatek.com>,
-	M Chetan Kumar <m.chetan.kumar@linux.intel.com>,
-	Ricardo Martinez <ricardo.martinez@linux.intel.com>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH] net: wwan: t7xx: Replace deprecated PCI functions
-Date: Fri,  6 Dec 2024 20:57:13 +0100
-Message-ID: <20241206195712.182282-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1733515092; x=1734119892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A82gvr7sDzCugWZNh93f0M6gJn7XxjisLQmLnxRt2mE=;
+        b=ZDJgyKyGWB5u2QfPgcVDi9FmThLYrMFD0M7//iMhh8LNZOVzoOKY0xC9iAB+SetvRp
+         /4UX0Toxi1W+P6GabasGmGO/41fVwpt91sALg44iBDhgvzByQrkmiVLTBKTBYtYPAYJQ
+         LL8i8ljTyM63wYn42+7xZMVrY5lvBy0GtaDKfo8XUeU9RkAm8NNMW9gKUMCGBNDegXpk
+         RsM8gN72qDBr7a1/lWoXhXygKsZZsLXlD8raIhjEKi9pPNv96nQP7KTwB9qXzSDlN4/Y
+         5dr76hQZYoFn4neGxb/hRpN7WW5U4BD4Dv6MCVDN41tPW4lhzZQFjEhOM+hlem4QrDoo
+         iGWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWifxeF6+eMO+4rTzvLStc1LacayF2ClAIXLx9j57iiQsYRc7BP2BmgrL2jJY+l7ksc5bSZD69/Ovq0+7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc8wNHtXqtz4ARLuf0/Gd2QkwZFKU/4vOINl8NEVsm3K1BE1BF
+	0zELR6ENT857Pgi0jLH926ozMi1r8PDo+t0PIpLptl5SYjECbuuYwHjxG0hvPAlDJlqc/jTCEWt
+	Ulb+m47wGmwE375dT8ssKZKFhfZmlY/LBkx4e
+X-Gm-Gg: ASbGncvEu8mCDuZd8ZmP1vsEZiF/LtpPBwM4GEobDl0YSBmrHrae/ztjdbt5qAnrNM8
+	6B15s0dPLhvK40wqYfd+m9IB8TtpMOBFNNAybAxOuzXWfHyRIQGMGPm82t9Y=
+X-Google-Smtp-Source: AGHT+IHZdlpKcu54llf+M0CD9QkcB0RHZTeLren1vYJvc90nzNmtuhq9YRRgqZ68LMma3iPfL32X7Vz6IZrABpYfBzY=
+X-Received: by 2002:a17:902:ce06:b0:215:3e48:2b17 with SMTP id
+ d9443c01a7336-2162ad6a092mr200125ad.5.1733515091991; Fri, 06 Dec 2024
+ 11:58:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241127025728.3689245-1-yuanchu@google.com> <20241127072604.GA2501036@cmpxchg.org>
+In-Reply-To: <20241127072604.GA2501036@cmpxchg.org>
+From: Yuanchu Xie <yuanchu@google.com>
+Date: Fri, 6 Dec 2024 11:57:55 -0800
+Message-ID: <CAJj2-QFdP6DKVQJ4Tw6rdV+XtgDihe=UOnvm4cm-q61K0hq6CQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/9] mm: workingset reporting
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, Khalid Aziz <khalid.aziz@oracle.com>, 
+	Henry Huang <henry.hj@antgroup.com>, Yu Zhao <yuzhao@google.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Gregory Price <gregory.price@memverge.com>, 
+	Huang Ying <ying.huang@intel.com>, Lance Yang <ioworker0@gmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Tejun Heo <tj@kernel.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Mike Rapoport <rppt@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Daniel Watson <ozzloy@each.do>, cgroups@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, SeongJae Park <sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pcim_iomap_regions() and pcim_iomap_table() have been deprecated by the
-PCI subsystem.
+Thanks for the response Johannes. Some replies inline.
 
-Replace them with pcim_iomap_region().
+On Tue, Nov 26, 2024 at 11:26=E2=80=AFPM Johannes Weiner <hannes@cmpxchg.or=
+g> wrote:
+>
+> On Tue, Nov 26, 2024 at 06:57:19PM -0800, Yuanchu Xie wrote:
+> > This patch series provides workingset reporting of user pages in
+> > lruvecs, of which coldness can be tracked by accessed bits and fd
+> > references. However, the concept of workingset applies generically to
+> > all types of memory, which could be kernel slab caches, discardable
+> > userspace caches (databases), or CXL.mem. Therefore, data sources might
+> > come from slab shrinkers, device drivers, or the userspace.
+> > Another interesting idea might be hugepage workingset, so that we can
+> > measure the proportion of hugepages backing cold memory. However, with
+> > architectures like arm, there may be too many hugepage sizes leading to
+> > a combinatorial explosion when exporting stats to the userspace.
+> > Nonetheless, the kernel should provide a set of workingset interfaces
+> > that is generic enough to accommodate the various use cases, and extens=
+ible
+> > to potential future use cases.
+>
+> Doesn't DAMON already provide this information?
+>
+> CCing SJ.
+Thanks for the CC. DAMON was really good at visualizing the memory
+access frequencies last time I tried it out! For server use cases,
+DAMON would benefit from integrations with cgroups. The key then would
+be a standard interface for exporting a cgroup's working set to the
+user. It would be good to have something that will work for different
+backing implementations, DAMON, MGLRU, or active/inactive LRU.
 
-Additionally, pass the actual driver name to that function to improve
-debug output.
+>
+> > Use cases
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Job scheduling
+> > On overcommitted hosts, workingset information improves efficiency and
+> > reliability by allowing the job scheduler to have better stats on the
+> > exact memory requirements of each job. This can manifest in efficiency =
+by
+> > landing more jobs on the same host or NUMA node. On the other hand, the
+> > job scheduler can also ensure each node has a sufficient amount of memo=
+ry
+> > and does not enter direct reclaim or the kernel OOM path. With workings=
+et
+> > information and job priority, the userspace OOM killing or proactive
+> > reclaim policy can kick in before the system is under memory pressure.
+> > If the job shape is very different from the machine shape, knowing the
+> > workingset per-node can also help inform page allocation policies.
+> >
+> > Proactive reclaim
+> > Workingset information allows the a container manager to proactively
+> > reclaim memory while not impacting a job's performance. While PSI may
+> > provide a reactive measure of when a proactive reclaim has reclaimed to=
+o
+> > much, workingset reporting allows the policy to be more accurate and
+> > flexible.
+>
+> I'm not sure about more accurate.
+>
+> Access frequency is only half the picture. Whether you need to keep
+> memory with a given frequency resident depends on the speed of the
+> backing device.
+>
+> There is memory compression; there is swap on flash; swap on crappy
+> flash; swapfiles that share IOPS with co-located filesystems. There is
+> zswap+writeback, where avg refault speed can vary dramatically.
+>
+> You can of course offload much more to a fast zswap backend than to a
+> swapfile on a struggling flashdrive, with comparable app performance.
+>
+> So I think you'd be hard pressed to achieve a high level of accuracy
+> in the usecases you list without taking the (often highly dynamic)
+> cost of paging / memory transfer into account.
+>
+> There is a more detailed discussion of this in a paper we wrote on
+> proactive reclaim/offloading - in 2.5 Hardware Heterogeneity:
+>
+> https://www.cs.cmu.edu/~dskarlat/publications/tmo_asplos22.pdf
+>
+Yes, PSI takes into account the paging cost. I'm not claiming that
+Workingset reporting provides a superset of information, but rather it
+can complement PSI. Sorry for the bad wording here.
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/net/wwan/t7xx/t7xx_pci.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+> > Ballooning (similar to proactive reclaim)
+> > The last patch of the series extends the virtio-balloon device to repor=
+t
+> > the guest workingset.
+> > Balloon policies benefit from workingset to more precisely determine th=
+e
+> > size of the memory balloon. On end-user devices where memory is scarce =
+and
+> > overcommitted, the balloon sizing in multiple VMs running on the same
+> > device can be orchestrated with workingset reports from each one.
+> > On the server side, workingset reporting allows the balloon controller =
+to
+> > inflate the balloon without causing too much file cache to be reclaimed=
+ in
+> > the guest.
+The ballooning use case is an important one. Having working set
+information would allow us to inflate a balloon of the right size in
+the guest.
 
-diff --git a/drivers/net/wwan/t7xx/t7xx_pci.c b/drivers/net/wwan/t7xx/t7xx_pci.c
-index 8381b0dc7acb..02f2ec7cf4ce 100644
---- a/drivers/net/wwan/t7xx/t7xx_pci.c
-+++ b/drivers/net/wwan/t7xx/t7xx_pci.c
-@@ -43,6 +43,8 @@
- #include "t7xx_state_monitor.h"
- #include "t7xx_port_proxy.h"
- 
-+#define DRIVER_NAME "mtk_t7xx"
-+
- #define T7XX_PCI_IREG_BASE		0
- #define T7XX_PCI_EREG_BASE		2
- 
-@@ -833,6 +835,7 @@ static void t7xx_pci_infracfg_ao_calc(struct t7xx_pci_dev *t7xx_dev)
- static int t7xx_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- {
- 	struct t7xx_pci_dev *t7xx_dev;
-+	void __iomem *iomem;
- 	int ret;
- 
- 	t7xx_dev = devm_kzalloc(&pdev->dev, sizeof(*t7xx_dev), GFP_KERNEL);
-@@ -848,12 +851,21 @@ static int t7xx_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	pci_set_master(pdev);
- 
--	ret = pcim_iomap_regions(pdev, BIT(T7XX_PCI_IREG_BASE) | BIT(T7XX_PCI_EREG_BASE),
--				 pci_name(pdev));
-+	iomem = pcim_iomap_region(pdev, T7XX_PCI_IREG_BASE, DRIVER_NAME);
-+	ret = PTR_ERR_OR_ZERO(iomem);
- 	if (ret) {
--		dev_err(&pdev->dev, "Could not request BARs: %d\n", ret);
-+		dev_err(&pdev->dev, "Could not request IREG BAR: %d\n", ret);
- 		return -ENOMEM;
- 	}
-+	IREG_BASE(t7xx_dev) = iomem;
-+
-+	iomem = pcim_iomap_region(pdev, T7XX_PCI_EREG_BASE, DRIVER_NAME);
-+	ret = PTR_ERR_OR_ZERO(iomem);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not request EREG BAR: %d\n", ret);
-+		return -ENOMEM;
-+	}
-+	t7xx_dev->base_addr.pcie_ext_reg_base = iomem;
- 
- 	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
- 	if (ret) {
-@@ -867,9 +879,6 @@ static int t7xx_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return ret;
- 	}
- 
--	IREG_BASE(t7xx_dev) = pcim_iomap_table(pdev)[T7XX_PCI_IREG_BASE];
--	t7xx_dev->base_addr.pcie_ext_reg_base = pcim_iomap_table(pdev)[T7XX_PCI_EREG_BASE];
--
- 	ret = t7xx_pci_pm_init(t7xx_dev);
- 	if (ret)
- 		return ret;
-@@ -937,7 +946,7 @@ static const struct pci_device_id t7xx_pci_table[] = {
- MODULE_DEVICE_TABLE(pci, t7xx_pci_table);
- 
- static struct pci_driver t7xx_pci_driver = {
--	.name = "mtk_t7xx",
-+	.name = DRIVER_NAME,
- 	.id_table = t7xx_pci_table,
- 	.probe = t7xx_pci_probe,
- 	.remove = t7xx_pci_remove,
--- 
-2.47.0
-
+> >
+> > Promotion/Demotion
+> > If different mechanisms are used for promition and demotion, workingset
+> > information can help connect the two and avoid pages being migrated bac=
+k
+> > and forth.
+> > For example, given a promotion hot page threshold defined in reaccess
+> > distance of N seconds (promote pages accessed more often than every N
+> > seconds). The threshold N should be set so that ~80% (e.g.) of pages on
+> > the fast memory node passes the threshold. This calculation can be done
+> > with workingset reports.
+> > To be directly useful for promotion policies, the workingset report
+> > interfaces need to be extended to report hotness and gather hotness
+> > information from the devices[1].
+> >...
+> >
+> > Benchmarks
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Ghait Ouled Amar Ben Cheikh has implemented a simple policy and ran Lin=
+ux
+> > compile and redis benchmarks from openbenchmarking.org. The policy and
+> > runner is referred to as WMO (Workload Memory Optimization).
+> > The results were based on v3 of the series, but v4 doesn't change the c=
+ore
+> > of the working set reporting and just adds the ballooning counterpart.
+> >
+> > The timed Linux kernel compilation benchmark shows improvements in peak
+> > memory usage with a policy of "swap out all bytes colder than 10 second=
+s
+> > every 40 seconds". A swapfile is configured on SSD.
+> > --------------------------------------------
+> > peak memory usage (with WMO): 4982.61328 MiB
+> > peak memory usage (control): 9569.1367 MiB
+> > peak memory reduction: 47.9%
+> > --------------------------------------------
+> > Benchmark                                           | Experimental     =
+|Control         | Experimental_Std_Dev | Control_Std_Dev
+> > Timed Linux Kernel Compilation - allmodconfig (sec) | 708.486 (95.91%) =
+| 679.499 (100%) | 0.6%                 | 0.1%
+> > --------------------------------------------
+> > Seconds, fewer is better
+>
+> You can do this with a recent (>2018) upstream kernel and ~100 lines
+> of python [1]. It also works on both LRU implementations.
+>
+> [1] https://github.com/facebookincubator/senpai
+>
+> We use this approach in virtually the entire Meta fleet, to offload
+> unneeded memory, estimate available capacity for job scheduling, plan
+> future capacity needs, and provide accurate memory usage feedback to
+> application developers.
+>
+> It works over a wide variety of CPU and storage configurations with no
+> specific tuning.
+>
+> The paper I referenced above provides a detailed breakdown of how it
+> all works together.
+>
+> I would be curious to see a more in-depth comparison to the prior art
+> in this space. At first glance, your proposal seems more complex and
+> less robust/versatile, at least for offloading and capacity gauging.
+We have implemented TMO PSI-based proactive reclaim and compared it to
+a kstaled-based reclaimer (reclaiming based on 2 minute working set
+and refaults). The PSI-based reclaimer was able to save more memory,
+but it also caused spikes of refaults and a lot higher
+decompressions/second. Overall the test workloads had better
+performance with the kstaled-based reclaimer. The conclusion was that
+it was a trade-off. Since we have some app classes that we don't want
+to induce pressure but still want to proactively reclaim from, there's
+a missing piece. I do agree there's not a good in-depth comparison
+with prior art though.
 
