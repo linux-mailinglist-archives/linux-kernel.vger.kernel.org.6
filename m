@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-434551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FC99E682B
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7025F9E682C
 	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFE05168E08
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:47:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57BBE168E6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFAB1DF743;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F06E1DF748;
 	Fri,  6 Dec 2024 07:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zy5oQh4A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4Tqnhd2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791501DDC38;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BF1DDC3F;
 	Fri,  6 Dec 2024 07:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733471218; cv=none; b=fMzhrNICpX5iNHiSkmPu0pZzR6aZuz+e1F/ddwoLvcOVhwnGECu7GYd7rmrbLKd5qGOYHBbbpPaZduk+DJUFiBHUqGb0xjaeJy7EqOEsn1eSDCPTqix0/UbxMEwTJfF6cuVI49JkZ4Wc76VcT+lkNma2Cw/5/MESPKh0MymX5Tw=
+	t=1733471218; cv=none; b=b4nObeImMkcctl1VhTMIW6hc6OIczFaKMA8O/p0cDc0IcURzeoPLtvzmOMB2YPoFAicd9NvYINgEMiDkno7eG0MoaaWy/SigBVmeTyWQW7SD/U2lfORWeUEzC73yimWmV6tyPstQcf0wxp8HB+KbZCMbadV6svM+MFEXEBC9MmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733471218; c=relaxed/simple;
-	bh=rIuOPSZ3vHFGNWi/6Cw75i5UpoJ+Y1ASP/eaOjNNLBM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=g/FICHEKSy1uXM1u4b48ESnwtOFMhd6CkaQ4cPylqP434u0pcVCbh4/Z5M3eKGwfszTRqjA4YatkwLM0xmX9kowLakz0NZwKAj0wrP/adIMpVS1uBdtRX8RHzFPO07il3/TdbjMYMbOlvgi13cxXT3knIxSsVm5txbhODO1PCFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zy5oQh4A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 00BD3C4CEDE;
+	bh=Q0eQs9S1ZtP3dTPRCecbQHN1HOTEtAG6/4CUFgxubHg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=H5K0sP1WIgIMNWJ8T3dHX/UO+w/kx9abI9Xb2JBU4YKQPoGaj4ZI1wa02lFYCPvL88UAxGF6MVmxCinbf3SfreejBKrNILUWrIrJ3lwzUtXYuAwLCN2vv5HmZkziaqX/SOoyW1gYBmTKW688GZ4zy9wiGPtEJvK9/2L8A21a74o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4Tqnhd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C45CC4CEE0;
 	Fri,  6 Dec 2024 07:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733471218;
-	bh=rIuOPSZ3vHFGNWi/6Cw75i5UpoJ+Y1ASP/eaOjNNLBM=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=Zy5oQh4ABy9TlOL/KeAq8Y4H6+4MA1gkYH8gIcHq0K+Nm7fn46LqlyHnmiqSTcFis
-	 rW7618qKeXh7gefhNXB7xeGLx2bfrZ/ea3PpaMKIsvF9NNFYIze4OMmR0Q5TRhbngw
-	 GcjB1pWSoSmfcDRAq/PhbeXHiX4lMeHCydzhdHu1VWDVOqsy4zcGUnSAo4xmuQAphK
-	 f5Taib2qplWEDu04ZQfRkB7/EB1T9Xyyh4vP6G0Sg3f5sJ54L5faNFQMrcVuI96qH1
-	 EYnO7AJFlQAlcOjnxdfvhVqS+imsAyr7lkfkBMevK5kyAr6m6Vp5n0BjMII9Y2ZxfM
-	 9gR2Xgha3L6Tg==
+	bh=Q0eQs9S1ZtP3dTPRCecbQHN1HOTEtAG6/4CUFgxubHg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Q4Tqnhd2vi/J5R/Rgc6Ix0D8D6F855NNH0kX/WLDsdkipxebG6cJvXhHEYhVGCmsN
+	 B/PmGulrmVS2jHw00cZAT3IqjBd/kHTw9kBfHxHLuCu5YXII1RUut1fq6ROLC3xA46
+	 5u6YfpNHVg35sQCoRfq58rzrAtChi+8XU7UbTp15QCso7adoq+23HXsusZd+qamINY
+	 SbRM04yIMHCLvImn7Fhd6sQ4DZCRxI02AX3/i9wgbqGW/kWi6LplEdDEKQ7ewl4+lX
+	 hPqLeU6M08trk8RfzUlQFs4ThtaKy3st7vQzf+7JCF+Nll1YDpeSXBiFC3hhbyRzK0
+	 kAaRCnphGBQ1A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E880BE77173;
-	Fri,  6 Dec 2024 07:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 055B8E77179;
+	Fri,  6 Dec 2024 07:46:58 +0000 (UTC)
 From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Subject: [PATCH 0/3] Add support for responding to Get_Revision request
-Date: Thu, 05 Dec 2024 23:46:07 -0800
-Message-Id: <20241205-get_rev_upstream-v1-0-90158ee7d75f@google.com>
+Date: Thu, 05 Dec 2024 23:46:08 -0800
+Subject: [PATCH 1/3] dt-bindings: connector: Add pd-revision property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,10 +54,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAL+rUmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDIwNT3fTUknigwvjSguKSotTEXF2zJDMDIDAzNkhMUwJqKyhKTcusABs
- ZHVtbCwAxUc9OYgAAAA==
-X-Change-ID: 20241205-get_rev_upstream-6b60000630af
+Message-Id: <20241205-get_rev_upstream-v1-1-90158ee7d75f@google.com>
+References: <20241205-get_rev_upstream-v1-0-90158ee7d75f@google.com>
+In-Reply-To: <20241205-get_rev_upstream-v1-0-90158ee7d75f@google.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -67,11 +66,11 @@ Cc: Kyle Tso <kyletso@google.com>, RD Babiera <rdbabiera@google.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-usb@vger.kernel.org, Amit Sunil Dhamne <amitsd@google.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733471217; l=1144;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733471217; l=1957;
  i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=rIuOPSZ3vHFGNWi/6Cw75i5UpoJ+Y1ASP/eaOjNNLBM=;
- b=YKIez4YBYfYYsJa+1AFtSUFmhxjiYGDNbHUnDHgje5A92QwKJb1MDUDHicgLm/fG50ZXNaFKO
- hWZgAPclbrjA6EW8y4PTa5t4ewhu1cFc7i5+UUVEribllXSFCzKP63M
+ bh=KCmbTIYgv+x/jL3O6vDHgQvacNFdRGVm2+fsSGCWj+Y=;
+ b=jKPvHiOi2wcPAm8xaOb259LiyLK7UT/7BuQMvOhx8IA0cMKZNgIm51ClNUs9rmjz50CQ7xG4R
+ tlpJBr1FwDpBDP1ftV1lqliBLK/si3qmYxX8wNMmuMfAQyZllq3dKKK
 X-Developer-Key: i=amitsd@google.com; a=ed25519;
  pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
 X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
@@ -79,32 +78,49 @@ X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
 X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
 Reply-To: amitsd@google.com
 
-Currently TCPM doesn't support responding to Get_Revision request
-message. However, as per Message Applicability in USB PD Spec 3.1 v1.8
-("6.13.2 Applicability of Data Messages") "Revision" is a Normative
-(compulsory) message and needs to be supported. As part of this patchset
-add support for responding to Get_Revision requests as part of
-Revision_Information AMS.
+From: Amit Sunil Dhamne <amitsd@google.com>
+
+Add pd-revision property definition, to specify the maximum Power
+Delivery Revision and Version supported by the connector.
 
 Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
 ---
-Amit Sunil Dhamne (3):
-      dt-bindings: connector: Add pd-revision property
-      usb: typec: tcpm: Add support for parsing pd-revision DT property
-      usb: typec: tcpm: Add new AMS for Get_Revision response
+ Documentation/devicetree/bindings/connector/usb-connector.yaml | 6 ++++++
+ Documentation/devicetree/bindings/usb/maxim,max33359.yaml      | 1 +
+ 2 files changed, 7 insertions(+)
 
- .../bindings/connector/usb-connector.yaml          |  6 ++
- .../devicetree/bindings/usb/maxim,max33359.yaml    |  1 +
- drivers/usb/typec/tcpm/tcpm.c                      | 87 +++++++++++++++++++++-
- include/linux/usb/pd.h                             | 22 +++++-
- 4 files changed, 111 insertions(+), 5 deletions(-)
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241205-get_rev_upstream-6b60000630af
+diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+index 67700440e23b5b7ca0db2c395c8a455bcf650864..341d2872e8d43450d219b7b72d48790051dc4e2b 100644
+--- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
++++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+@@ -293,6 +293,12 @@ properties:
+       PD negotiation till BC1.2 detection completes.
+     default: 0
+ 
++  pd-revision:
++    description: Specifies the maximum USB PD revision and version supported by
++      the connector. This property is specified in the following order;
++      <revision_major, revision_minor, version_major, version_minor>.
++    $ref: /schemas/types.yaml#/definitions/uint8-array
++
+ dependencies:
+   sink-vdos-v1: [ sink-vdos ]
+   sink-vdos: [ sink-vdos-v1 ]
+diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+index 20b62228371bdedf2fe92767ffe443bec87babc5..350d39fbf2dcd4d99db07cb8f099467e6fc653ee 100644
+--- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
++++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+@@ -70,6 +70,7 @@ examples:
+                                        PDO_FIXED_DUAL_ROLE)
+                                        PDO_FIXED(9000, 2000, 0)>;
+                 sink-bc12-completion-time-ms = <500>;
++                pd-revision = /bits/ 8 <0x03 0x01 0x01 0x08>;
+             };
+         };
+     };
 
-Best regards,
 -- 
-Amit Sunil Dhamne <amitsd@google.com>
+2.47.0.338.g60cca15819-goog
 
 
 
