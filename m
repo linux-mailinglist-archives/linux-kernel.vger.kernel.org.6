@@ -1,49 +1,60 @@
-Return-Path: <linux-kernel+bounces-434468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854489E6744
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:22:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE7A9E6746
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353231883CCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E831638F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620D1D5AC8;
-	Fri,  6 Dec 2024 06:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1E91D63D1;
+	Fri,  6 Dec 2024 06:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vPECzn5D"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ew4ArJeN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29E917CA1D
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 06:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F21917CA1D;
+	Fri,  6 Dec 2024 06:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733466127; cv=none; b=sIBqCyJLoAmwIhsi92bfTZLUjNUqMfLjE3keGsyZBFsOYprIQUepQoV1eeA2frBHqy6fI8TDm7UXwgE3atDot04PigbbKFNatg+41sjWawtWnsPFePq153wNNfhLwhVlhSe21O0BpIjLB7JNrwoJa2rVGsHOvxNFyRO/QCSleMs=
+	t=1733466189; cv=none; b=H1KcNhCMozwVGklerCposjyIC65+f/apAkm1WaSpHRmfLE6XBPO+/x+RxAIuBEGBgK/s/MU2FopNVpg/GpUVPtJPcwqMCf0clyADimxu9wY67N6lrBgb4XCT+1SBirK6MsabgamXkSkCR3q4VUsp/BGWtVWxtcICFBY4wZEOaM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733466127; c=relaxed/simple;
-	bh=gjN5dqkISywj5Q++n3F0NK385h8+NWDqFL+cKI/ZciU=;
+	s=arc-20240116; t=1733466189; c=relaxed/simple;
+	bh=MkeuBrC406SRMMNMVpBw/NLIAbufzkCKSKGch2ynNwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIrPwGU98w22EudKm7u8tKVA9l/iZQrWNmh83zKiU0MOwdfLAW226xaWSIRGBrLjbOC3BWiwYcQ1zpOfXd/8GM5Q3sxEgzV3efezPLaYC1P7yxDoMpLDod0Yt6H53tq7ymZhA/TM/TiSR82vZrnRpuY2XzhUSj0U2ygS8e1umQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vPECzn5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ED74C4CED1;
-	Fri,  6 Dec 2024 06:22:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QRVxeVDj4EdE1PZ8zquiKv4+RvUGWlUIbvFgRa+hRvv6Q6ZRaF19SdiThc+nBAFP5I7YlNXptSRyvZ2pK5X7/IwSz1lmtWDCClwhcroihSlfVDKGQYDW5PhIVI8WJ7hJWq3X5IKVnItAlpstqJHPm+UAXblfjectWaaFs8NrWqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ew4ArJeN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11245C4CED1;
+	Fri,  6 Dec 2024 06:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733466126;
-	bh=gjN5dqkISywj5Q++n3F0NK385h8+NWDqFL+cKI/ZciU=;
+	s=korg; t=1733466188;
+	bh=MkeuBrC406SRMMNMVpBw/NLIAbufzkCKSKGch2ynNwE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vPECzn5Dr4GgJ0p5b44yAgNF3T+e8tUOyMLuR83Za9h32dMq1OnRuZBMttDv9+Kee
-	 XaHgjHq8ZrFPY3dqTvbsQ/Ja5cHtMmTabW72VEWZHdG5p+3MRrXKwiBNiQBDUBZRnU
-	 lzHCkCI7wTgAFr4ioqlBYs4EFC9Oy6dhgfrk5AKo=
-Date: Fri, 6 Dec 2024 07:22:03 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: thorsten.blum@toblux.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sample/acrn: Remove redundant assignment to itself
-Message-ID: <2024120627-debtor-guise-2275@gregkh>
-References: <20241206024127.2732-1-liujing@cmss.chinamobile.com>
+	b=ew4ArJeNKM626zYU0Oj9uJXhA+eQA0Yj1qn6gOQGEr2HkJEm8A9B7Eq4A5xdIc8fG
+	 PaPU4wz5PrYrMuTXzLwXq9k3AaZeFuIe0ZGJ/bCBfqHLwoB+Ee0hy8zVmbqqNbVCcN
+	 XNWeYnZXQNu4j3jVfhE4A6/kMhXnBLSURMud9NCw=
+Date: Fri, 6 Dec 2024 07:23:05 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, andrew+netdev@lunn.ch,
+	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hkelam@marvell.com
+Subject: Re: [PATCH V4 RESEND net-next 1/7] net: hibmcge: Add debugfs
+ supported in this module
+Message-ID: <2024120644-swapping-laxative-48e5@gregkh>
+References: <20241203150131.3139399-1-shaojijie@huawei.com>
+ <20241203150131.3139399-2-shaojijie@huawei.com>
+ <20241205175006.318f17d9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,38 +63,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206024127.2732-1-liujing@cmss.chinamobile.com>
+In-Reply-To: <20241205175006.318f17d9@kernel.org>
 
-On Fri, Dec 06, 2024 at 10:41:27AM +0800, liujing wrote:
-> Delete the self-redundancy assignment for sig, argc, and argv.
-
-But perhaps they are there for a reason?
-
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+On Thu, Dec 05, 2024 at 05:50:06PM -0800, Jakub Kicinski wrote:
+> On Tue, 3 Dec 2024 23:01:25 +0800 Jijie Shao wrote:
+> > +static void hbg_debugfs_uninit(void *data)
+> > +{
+> > +	debugfs_remove_recursive((struct dentry *)data);
+> > +}
+> > +
+> > +void hbg_debugfs_init(struct hbg_priv *priv)
+> > +{
+> > +	const char *name = pci_name(priv->pdev);
+> > +	struct device *dev = &priv->pdev->dev;
+> > +	struct dentry *root;
+> > +	u32 i;
+> > +
+> > +	root = debugfs_create_dir(name, hbg_dbgfs_root);
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(hbg_dbg_infos); i++)
+> > +		debugfs_create_devm_seqfile(dev, hbg_dbg_infos[i].name,
+> > +					    root, hbg_dbg_infos[i].read);
+> > +
+> > +	/* Ignore the failure because debugfs is not a key feature. */
+> > +	devm_add_action_or_reset(dev, hbg_debugfs_uninit, root);
 > 
-> diff --git a/samples/acrn/vm-sample.c b/samples/acrn/vm-sample.c
-> index c61e0f91456e..f6d62d1659ef 100644
-> --- a/samples/acrn/vm-sample.c
-> +++ b/samples/acrn/vm-sample.c
-> @@ -34,7 +34,6 @@ int is_running = 1;
->  
->  void vm_exit(int sig)
->  {
-> -	sig = sig;
->  
->  	is_running = 0;
->  	ioctl(hsm_fd, ACRN_IOCTL_PAUSE_VM, vmid);
-> @@ -50,8 +49,6 @@ int main(int argc, char **argv)
->  	struct acrn_io_request *io_req;
->  	struct acrn_ioreq_notify __attribute__((aligned(8))) notify;
->  
-> -	argc = argc;
-> -	argv = argv;
+> There is nothing specific to this driver in the devm action,
+> also no need to create all files as devm if you remove recursive..
+> 
+> Hi Greg, are you okay with adding debugfs_create_devm_dir() ?
 
-If you remove these, odds are now you will have build errors/warnings,
-right?  That's why someone added these.
+Seems like overkill, but if you can find multiple users of it, sure,
+that would be fine to add.
 
-sorry,
+thanks,
 
 greg k-h
 
