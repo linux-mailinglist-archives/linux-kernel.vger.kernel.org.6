@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-435094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8819E6FA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:55:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC8D16D61D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:53:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24355206F10;
-	Fri,  6 Dec 2024 13:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="wJquaEgZ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211D99E6FA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:55:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E4F1FCCFB
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E43285467
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:55:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310DE207E19;
+	Fri,  6 Dec 2024 13:55:11 +0000 (UTC)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B03201269;
+	Fri,  6 Dec 2024 13:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733493203; cv=none; b=O5u4KSGTrnPHJr4X5R/monbasYcPzhKIIPQfHbwg2r2OwjtH/wOa6IYDK8ujPnfgBDSfplawvaoZnJbqIWhu+/sG5GKdtQsmyl/k3/rQlfq3o3irNiaIB8N7jms7BSGsCPiY7mBloajZdDU2uRvm4dgUeR+EyrKEZti7eJcdCH0=
+	t=1733493310; cv=none; b=aItQkN176yqpLWxBuW0WclAVXOUDta7jD5w/XoOFG0LUZyjaEFloE8OCwKmt84Aa9yu0oqllsfLjzOz0m1zN0JC2VAcK93yB3PMOhLbC1Oy33Kze2PCUxjZAAq9qAl+to5+X0NLvX28wqkzQwB1cSyvoaqPQQ+wwYRLPoTQ72qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733493203; c=relaxed/simple;
-	bh=1OO1fi22KQhjYpjXXc0UuiOo2wcBVoYhgC5i5pB3Jac=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mNoOEmhDHfen4wA1GiW/TfqalcYnCUgZpm0UqbYdRgXxFxq46sJlRibgWHqXGbZ841/aSK9spLzYf8ipugBt1MysvukANq8rJN2TJz+sMjuUdy4zRQiI8VRFrf/umrzG0h+k0KOlqP4EFSS+GKqfiwiFnGQvdxkT8PstheFHXX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=wJquaEgZ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ZbYJrhkQc0nvUHQDz7CHZJDyBA/Z0++rFcxDzUyd6KA=; b=wJquaEgZ8eQk7upw2fXmwkzvEb
-	ROAcLrOufdlHgtSYsjWmNv5XPCMzML1UhZnRf+c1MBkbFItVt1uLgoF2IxvJOvK1Kk41XASnk/8ry
-	2lRgNuW2aEDsIvGQb3kwfoeiZx/e1vSWU7KCwLQrVVrgwv5QqfuvggH18yy7WnbphtpbjdgERexro
-	MBUZwdAqML56vLfu/UuWHMP3Bx4cbPTWkt4EgehUj5r6JwI36ud8GcbPdyLjahkAQP4yD3CDdDrhF
-	oPQS9Yoi5Me8b6tK0G6FhSPKNkfAcCkMIKNKurGgEvZnGneNBWgBbSAD+pIvyUacvoUM7Qh5rh035
-	2x89O6bw==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tJYld-0000cM-0l; Fri, 06 Dec 2024 14:53:13 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: vkoul@kernel.org, kishon@kernel.org,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- quentin.schulz@cherry.de, Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject:
- Re: [PATCH 2/2] phy: phy-rockchip-samsung-hdptx: Don't use dt aliases to
- determine phy-id
-Date: Fri, 06 Dec 2024 14:53:12 +0100
-Message-ID: <11259672.BaYr0rKQ5T@diego>
-In-Reply-To: <87273a36-07f9-4224-bfff-63e905be9b0a@collabora.com>
-References:
- <20241206103401.1780416-1-heiko@sntech.de>
- <20241206103401.1780416-3-heiko@sntech.de>
- <87273a36-07f9-4224-bfff-63e905be9b0a@collabora.com>
+	s=arc-20240116; t=1733493310; c=relaxed/simple;
+	bh=35tXrHehphd8UKl5WJEOudgvnNENyraL3kMkrb/5N20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SA2Yv4PvjKOmlk4c7E1XrWKL33Xjj2/2NJk8u7hsGiWcTDsN+5DYZXigkqOVP7iX53kznWJBdoNU50jIQyTQmg5J7JYAX//kJYg3wJg4DBFBFwVRW/SAwNVuBKpkN9oLyTLufULLZvGglR6s53kUlc6UMCzm3/Sh1pdvDW4QGuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85c529e72bcso80088241.0;
+        Fri, 06 Dec 2024 05:55:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733493306; x=1734098106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mFx+gnmIbf6Ff/K8kUB1TzM57MX3Vguw4LO8xY75gyw=;
+        b=XT4T20I0Ia3twlO9ZoKoEgvvnOuf36oZpDqItjRSgzS4O5ZAdBZvSr6CahMHj6VLpO
+         b1phqGrDRPmFro1o9Vo9kjmv5VUUcB1Fywqt9PfcExjFyPnJvsHYLzspXglYRNZFQUM6
+         RLZADF4EC5PAxvRtN3S2nCRCJJgZSmUgwfCbiL/H9nI4oSKi5BBZWZpOdy2hRiyYb3R+
+         ktfzmzQJ/F4NIwNhVZTrdXlEfKCwV8XgZJrtSf+HROFiuRHvRobh0D4cUYwwTBz0tnOM
+         9BhXtjYKY/y1P0+qa17fiSidcaH6hIe/0nrWFOn6AvByYhZjh/CnFY+m1rx5LshR2bE6
+         z0kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUT5S60ZsJ7j0PbBfZP1bk5VBcxfsyfj6hmZljpkTexEOt3O2EpRqW8f5Yxa7/ntA5vl5zI1lL3JrBiBtF/Q/qQ1IU=@vger.kernel.org, AJvYcCV7LpoRuleAghIzYZP0QuBiysSa77rhWdQV7BNAUl3/Sajs2NGz8CUgIjMFmHHoxDy4DdMH1S3nqRsB@vger.kernel.org, AJvYcCWKGaHoLOE7m1/hlBBPou/tnIKoidMXmtq9Cqy1dUFnc3TbV6y/MQm9kKhZJHr6DgCu45quyEr9WLKIrsGu@vger.kernel.org, AJvYcCWiNq0LYKtpdn8SKXGuCHFKUcLuQF0u9f0CCEYQFMbGQbki0QOoqiHp539A8Dh3eIHf9fjDchxX0Lzz@vger.kernel.org, AJvYcCXnZ1fQTYbA7dgj3p+gqlbJsaOc0YlB55765rC9sKG8SxDhwKbwxy3dSlhcI+zGs+6EOKtoGgIOOGS9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjw2l5DIYshNyMQobfFPDqHHyuhxuxwHGLL4mQvAe+AnRuAHJJ
+	xo5rc0bOVq1WxXfl06+co/krftzvozxS0HI4Y+MgTSqCamZhD+aSi8glmy/e
+X-Gm-Gg: ASbGncsbIxiPDc7B0qxeZTy6I4xjIwOEFJzYOoWTYEC3MwzoUvkodkkdcpnPu2QxiKV
+	B9qTukPKuc2j5fb9tHdFN06FNY/NdpNtwQ8zElgXBOFMpepFW77Bi42IssBRWbcbi86zml52pMs
+	11vxj7XW6Fvik6XjER4H/hYHi+EIWmT4Z3aKx9nXHM+fFYs0ZBQ3CKGjHPFnLETSLYzNtAVbzWt
+	N87v9uX/hJmAqEAblxoKwc11vvf1kvSh4jXVoUs5TZox47ON5LxT/BouWHSCbjuSDAITs4pjHCt
+	CaAYuW6S8Zj8
+X-Google-Smtp-Source: AGHT+IELHsyph6EjruavIZbnBltuZ6aqNdZ8QzzgBnhI6WIWB/QC1unKyTNKCavV5E3ukn211r0vlA==
+X-Received: by 2002:a05:6102:3e92:b0:4af:c435:58b5 with SMTP id ada2fe7eead31-4afcab164admr2887011137.22.1733493306530;
+        Fri, 06 Dec 2024 05:55:06 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51606dc43efsm73014e0c.32.2024.12.06.05.55.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 05:55:06 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4aef1e4c3e7so524253137.2;
+        Fri, 06 Dec 2024 05:55:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZXlqfxnsNroBqlKLet62oM9LBkng3EtmwEdXVLKWJf3saTuqGlajErnvH0k7/nLxY0CGo4XRGTi6Z@vger.kernel.org, AJvYcCUwCHpmnK9yPvSFnNitDw16g5rISOTWnyB1Co/p+1ynAiAmtXtpeSREMUYqihH6w9Xxs35liEIduzr6@vger.kernel.org, AJvYcCVf9EoYgp0vD/g+TC/xhkGl5feVmTZW01CzVEA5hYkFkz5pSahfv/ulxzbI1cC66+cdsp4V71LMPsEftjz5kUPpT2A=@vger.kernel.org, AJvYcCWU3pwkXUAnhw7/gnApWMgVYlg0sreFUIcU4gxAiFoTnwGg4UttFHxAeZZXPuPafGIkXnYlaIPh4Upg@vger.kernel.org, AJvYcCXRcr7o8dnkYEwtntz0RMhtuvShX/mWIKTLrj1eFfTeEwKrRtljTdcfN7vGtGZFOSwsCej9lHWNCMYyGPvf@vger.kernel.org
+X-Received: by 2002:a05:6102:cc6:b0:4af:4d60:2e12 with SMTP id
+ ada2fe7eead31-4afcaa3dbb5mr3166643137.7.1733493305691; Fri, 06 Dec 2024
+ 05:55:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com> <20241206111337.726244-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241206111337.726244-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Dec 2024 14:54:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUo4Fy+MF6fp6oFn965pf0=ZR0or0GQ6nZLGb9PmVYe5Q@mail.gmail.com>
+Message-ID: <CAMuHMdUo4Fy+MF6fp6oFn965pf0=ZR0or0GQ6nZLGb9PmVYe5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] clk: renesas: r9a08g045: Add clocks, resets and
+ power domain support for the ADC IP
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	p.zabel@pengutronix.de, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Cristian,
+On Fri, Dec 6, 2024 at 12:13=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add clocks, resets and power domains for ADC IP available on the Renesas
+> RZ/G3S SoC.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - rebased on top of the latest r9a08g045-cpg version
 
-Am Freitag, 6. Dezember 2024, 12:26:35 CET schrieb Cristian Ciocaltea:
-> On 12/6/24 12:34 PM, Heiko Stuebner wrote:
-> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > 
-> > The phy needs to know its identity in the system (phy0 or phy1 on rk3588)
-> > for some actions and the driver currently contains code abusing of_alias
-> > for that.
-> > 
-> > Devicetree aliases are always optional and should not be used for core
-> > device functionality, so instead keep a list of phys on a soc in the
-> > of_device_data and find the phy-id by comparing against the mapped
-> > register-base.
-> > 
-> > Fixes: c4b09c562086 ("phy: phy-rockchip-samsung-hdptx: Add clock provider support")
-> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > ---
-> >  .../phy/rockchip/phy-rockchip-samsung-hdptx.c | 50 ++++++++++++++++---
-> >  1 file changed, 44 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> > index c5c64c209e96..b137f8c4d157 100644
-> > --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> > +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> > @@ -385,11 +385,22 @@ enum rk_hdptx_reset {
-> >  	RST_MAX
-> >  };
-> 
-> [...]
-> 
-> > +
-> > +	/* find the phy-id from the io address */
-> > +	hdptx->phy_id = -ENODEV;
-> > +	for (id = 0; id < hdptx->cfgs->num_phys; id++) {
-> > +		if (res->start == hdptx->cfgs->phy_ids[id]) {
-> > +			hdptx->phy_id = id;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	if (hdptx->phy_id < 0)
-> > +		return dev_err_probe(dev, -ENODEV, "no matching device found\n");
-> 
-> Maybe we could simply fallback to assume phy1 doesn't exist in this
-> case, which avoids the need to provide a match data with a single entry.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.14.
 
-Personally I'm a fan of consistent behaviour, not things working
-accidentially ;-) . See the usbdp phy for example, also declaring just
-one phy using the same mechanism.
+Gr{oetje,eeting}s,
 
-Also I really don't trust the hdptxphy-grf being stable over time.
-Rockchip engineers always move bts around in those, so there will be a
-need for platform-data at some point anyway.
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> Regardless,
-> 
-> Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-
-thanks :-)
-
-Heiko
-
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
