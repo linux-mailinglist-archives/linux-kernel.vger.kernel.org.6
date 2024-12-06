@@ -1,105 +1,145 @@
-Return-Path: <linux-kernel+bounces-434264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1BD9E6420
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:29:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B22E89E6424
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75FC188523B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B03018855C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92B71714DF;
-	Fri,  6 Dec 2024 02:29:01 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E89517B427;
+	Fri,  6 Dec 2024 02:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km/OYkIZ"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB293D6B;
-	Fri,  6 Dec 2024 02:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B18615B102;
+	Fri,  6 Dec 2024 02:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452141; cv=none; b=Zfitg8zkt9kiVKGh83ewi38FqYUmLKyc3Cs/xM1cK8iogB9In0nUuCeLRRW1onxces+d1HvCyAOVptHQVdNNU6F8tq8igd0pDrZLr3cbU0qlu2QmSwGebhqMHCkAVyUQvc6uChbVJEuH3J9zy/hVCWAwVI5LiupAn8wEsLnmbOU=
+	t=1733452163; cv=none; b=o+mKHgAKQD6LpTjhd0BpPhDu8sFstd+3+/wvVpDEY6KNkhqMtBz8QM5VuA5rUYsxWEOt4E5yj9EcZUkdfV0Ewyg8iuGXh5479o3IyJ2qBRDBkniOI7PT/vjKQvU3Y5dUkUCeQpqZ2Hp9AT6p4IAtL02YhHA4JhprzT8N/IduUbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452141; c=relaxed/simple;
-	bh=wbLhQT3zz+yC6Xn7uDEsUyEfxjn1dhwRYtWQogfi448=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hQ1WtKhDX9qjxiykKjo6zKDnoSaj6l4FVnFG/C8OvAExYZL0k5axgieumx5aZLuyEBofZwFhbd07d323gjGjm/1/Ce6CPI3W7iBhorO/5aldUGgQx7L1Yex0j9E0HGDs3ZB9NOnmTnVjisL+s+xRGfrTkEYeZtb+brEjtLkYiho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Y4FZB0sSFz1yrgv;
-	Fri,  6 Dec 2024 10:29:06 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2BAB81A016C;
-	Fri,  6 Dec 2024 10:28:50 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 6 Dec 2024 10:28:49 +0800
-Message-ID: <09cd08cf-9c6b-4c5f-b0da-e9a74ef120a5@huawei.com>
-Date: Fri, 6 Dec 2024 10:28:48 +0800
+	s=arc-20240116; t=1733452163; c=relaxed/simple;
+	bh=dZRT2fcSHjnMoU6qnGBH964/9Ps4VyIHK7kAxlb3RMk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ML5GcSluAsgEjdxoMxWyBYolKPMPD6u4sWu4CeMqC8lLVzbD3DgTJ1HBK+MbR6rGW4rRFhfDlWxMgrjxE0hIqCbbjaQXL8lxjp+KnXnVD5GtIFAVjxJWiy5fcPDjnTlVtCkPn6FoyRacNaU8P84jrTJyGJ7rS3bb3F6zJ/t3cTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Km/OYkIZ; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso1164669a91.0;
+        Thu, 05 Dec 2024 18:29:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733452161; x=1734056961; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HTd3s3aluN78Fp6JU1KrhtNeKWaky7LzzZMIynAmPTU=;
+        b=Km/OYkIZaudL12kvx3f36bXxRMECb3KIIe0FxnyiEe1Z3yU0RcanhZklT/ueD7XGoY
+         I4w4jGf09NWFdKejRcpeTiYNfbqyatc5l8YuQKZiExDxZQJhPtOUdg00CLvhoi8sEO0X
+         ORvo+4SggPUmVbZ1uR0/B184eseKHl4IvVfh7JEkm8WyDxFtNcZIbCN1m5go1vYkDPyx
+         AVp+mYDchjoRMgjB+YBVU8hMWT0ERT4P+kd6Phm2fwY5ofllGa/6sY2lX/Z0Idj4iZDN
+         GVznJPcfLUokhAY8/GYCQ1rB9jQMmNJrRZu3OTbCUTNpSuvVbbgW9zs4arEhWFjruy6b
+         9Q2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733452161; x=1734056961;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HTd3s3aluN78Fp6JU1KrhtNeKWaky7LzzZMIynAmPTU=;
+        b=ix08x3cz3rvS4NnD5YuFFqT2o2dhjO9L6Lsj8LavmLjOtkNEDptuhXIwf0q90sUdYi
+         Tad7xARxfYj6966FrwFDAAvq7vkg54HI/FpBiqztdzNuZ677DbukSKDzNTWf7Cdwdo2C
+         N0HX4p7X5TGWfgzegWRf+VVMvDb2JV/ScXzH/jh0fsuRn/3d+AEYdcJCuM2UTxHVB9FB
+         p4D90qagYyfZRM3v0JDwENkhhX8Bnp2D7pca4nDYznKvoHlrhjgcti+zinSYLcTJAnnT
+         u4sW0UtxamifEwMwHg1p3uxO64gRvDJ4UiDOqEidCkT0cNQPbvXHZc8swglNoHtmKek9
+         sujg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdua8/+nSDZUnthzHqjV0I/fHwcVDjR/l7QFxLcnTBqmav6aBWYcm73sYpDMBL0cL9AhfZC+TJyrfTUua89iw=@vger.kernel.org, AJvYcCWrqOPllJq8k/t4JvPIp1qSjN9/iWxSDIirKhs59WpzPanH6P02GVsD+uKez0uV61oe31W5KlkbY+AppYsr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKuDg0A7VkQiMQ8yJhF7dwvzaw7bF1H7yinghY7OJQn9CD5BIZ
+	6uyHYVXnxjcCLBWng+wPpdRp4q+kglDh1sJxfncW3AQ/YazXaVU4
+X-Gm-Gg: ASbGnctMpmINvtHQiiB+Qxzf3iFyaLDKHByMuf526Ja3QQfklMhYCNl2Pm3MTh3PceT
+	0RUIfhHNdyppSKM+rtB2Vz3Puh1WenToBvZlbn260AK1M6gaAdNjwIZqX/fZ0izkqmjQKl4t1Kw
+	Cg1KKITAzD6tZTZgHVyg7nXwjjhuhCnPMexaqXC2wzxCk08FYpRl2xrestyXKUDZqPQyIsE5hf3
+	NQkhZqF3I4uqJLHj9BiaAD21f6pVrH5dFvQAdDe4Idl1TxtM3dRDGmCLeqczBZRGyqhn/D202XS
+	QCbDMDHd
+X-Google-Smtp-Source: AGHT+IENADZamiqnBlD27UzquN0EcS+uEssM9SmnMSUyaY3tEGzNq20fxMu9PeMax023yYnyI0hAAA==
+X-Received: by 2002:a17:90b:254b:b0:2ee:fd53:2b03 with SMTP id 98e67ed59e1d1-2ef6aadb46dmr2207449a91.25.1733452161282;
+        Thu, 05 Dec 2024 18:29:21 -0800 (PST)
+Received: from amdora.. (c-76-146-136-228.hsd1.wa.comcast.net. [76.146.136.228])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eeffcdd432sm3180613a91.2.2024.12.05.18.29.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 18:29:20 -0800 (PST)
+From: John Glotzer <jglotzer@gmail.com>
+To: sergio.callegari@gmail.com
+Cc: Aaron.Hou@mediatek.com,
+	Chris.Lu@mediatek.com,
+	Deren.Wu@mediatek.com,
+	Hao.Qin@mediatek.com,
+	Sean.Wang@mediatek.com,
+	jglotzer@gmail.com,
+	johan.hedberg@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	luiz.dentz@gmail.com,
+	marc.payne@mdpsys.co.uk,
+	marcel@holtmann.org,
+	regressions@leemhuis.info,
+	regressions@lists.linux.dev,
+	steve.lee@mediatek.com,
+	tiwai@suse.de
+Subject: Re: [REGRESSION] bluetooth: mt7921: Crash on Resume From Suspend And Hibernate
+Date: Thu,  5 Dec 2024 18:29:19 -0800
+Message-ID: <20241206022919.183292-1-jglotzer@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <ad78ad62-ebd2-40d7-8a6d-623ae947584c@gmail.com>
+References: <ad78ad62-ebd2-40d7-8a6d-623ae947584c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
-	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <hkelam@marvell.com>
-Subject: Re: [PATCH V4 RESEND net-next 1/7] net: hibmcge: Add debugfs
- supported in this module
-To: Jakub Kicinski <kuba@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-References: <20241203150131.3139399-1-shaojijie@huawei.com>
- <20241203150131.3139399-2-shaojijie@huawei.com>
- <20241205175006.318f17d9@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241205175006.318f17d9@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Transfer-Encoding: 8bit
 
+Sergio,
 
-on 2024/12/6 9:50, Jakub Kicinski wrote:
-> On Tue, 3 Dec 2024 23:01:25 +0800 Jijie Shao wrote:
->> +static void hbg_debugfs_uninit(void *data)
->> +{
->> +	debugfs_remove_recursive((struct dentry *)data);
->> +}
->> +
->> +void hbg_debugfs_init(struct hbg_priv *priv)
->> +{
->> +	const char *name = pci_name(priv->pdev);
->> +	struct device *dev = &priv->pdev->dev;
->> +	struct dentry *root;
->> +	u32 i;
->> +
->> +	root = debugfs_create_dir(name, hbg_dbgfs_root);
->> +
->> +	for (i = 0; i < ARRAY_SIZE(hbg_dbg_infos); i++)
->> +		debugfs_create_devm_seqfile(dev, hbg_dbg_infos[i].name,
->> +					    root, hbg_dbg_infos[i].read);
->> +
->> +	/* Ignore the failure because debugfs is not a key feature. */
->> +	devm_add_action_or_reset(dev, hbg_debugfs_uninit, root);
-> There is nothing specific to this driver in the devm action,
-> also no need to create all files as devm if you remove recursive..
->
-> Hi Greg, are you okay with adding debugfs_create_devm_dir() ?
+My apologies, I neglected to mention that my setup is PCI, and not USB.
 
-Of course, it's my pleasure. I will add a patch in V5 to try to add this interface.
+It's an AMD Ryzen 5 7600 CPU on a PRO B650M-A Wifi motherboard. For completeness OS is Fedora 40
+with any kernel starting with 6.11.x.
+
+    $ lspci | grep MEDIATEK
+    0c:00.0 Network controller: MEDIATEK Corp. MT7922 802.11ax PCI Express Wireless Network Adapter
+
+    $lshw -C Network
+       ...
+      *-network
+           description: Wireless interface
+           product: MT7922 802.11ax PCI Express Wireless Network Adapter
+           vendor: MEDIATEK Corp.
+           physical id: 0
+           bus info: pci@0000:0c:00.0
+           logical name: wlp12s0
+           version: 00
+           serial: 0e:80:32:35:2c:9b
+           width: 64 bits
+           clock: 33MHz
+           capabilities: bus_master cap_list ethernet physical wireless
+           configuration: broadcast=yes driver=mt7921e driverversion=6.11.10-200.fc40.x86_64 firmware=____000000-20240716163327
+           ip=192.168.139.211 latency=0 link=yes multicast=yes wireless=IEEE 802.11
+           resources: iomemory:fc0-fbf irq:103 memory:fcf0300000-fcf03fffff memory:f6c00000-f6c07fff
+
+What I am struggling to understand is given how easy this issue is to reproduce -  an AMD CPU, Mediatek MT7922 wifi/bluetooth chip,
+and a 6.11 kernel, you suspend, and then wake up, kernel panics -  I would have thought that the interested parties would
+make this a priority.
+
+I think that a logical first step would be for SW owners to confirm (or deny) the anomalous behavior.
 
 Thanks,
-Jijie Shao
+
+John
 
 
