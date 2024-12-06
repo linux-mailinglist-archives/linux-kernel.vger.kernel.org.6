@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-435148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1729E7191
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:57:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A159E71A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064EE167FCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:57:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9291887772
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F294C2066C2;
-	Fri,  6 Dec 2024 14:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Do6T4CVe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A92206F1A;
+	Fri,  6 Dec 2024 14:58:10 +0000 (UTC)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662131FCCE5;
-	Fri,  6 Dec 2024 14:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DAF14AD29;
+	Fri,  6 Dec 2024 14:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733497052; cv=none; b=dgjkmMZT44k4u+0AL4GNg1R1x8DvNH8y3jvWHVGZ3yaFBZiEfg+crJKS4K/9bIZWRilH5eWO8v0aCM2QprYfywFy/GeW2XlCgwSi6PSuPfZsaiAaglUfFvbdqmPBlMKsLYDMIjZTa069sfdAzBwCWZtvd2jsYrX6blne/NtVF1o=
+	t=1733497089; cv=none; b=IJ9R1Kg5TRy0XahCqImUVE7oMSXQjxcltQs+o0m97IAgxneakmCIZ7F7/0AbfiZ72QQo6q2DbAsqOVybH9w7vKRGaQtDVIYqxkvNN9pDlOkZTUlL2c64kA1thVkJCrDCNghApRBB8bZYLqGBb0Wgc+8wOJ2YnEdjByDzHEFiZ5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733497052; c=relaxed/simple;
-	bh=rIiclzYWsy2EpIFwkYbIy1wPtiPdlIKiO08nnrnWi6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXKWYpPRegBU2ORLVudyTKUS8KDMwCZ4ET4yW2URDNnXwSak/NGo93DeP83qFNwsoVzJhWo48OsRPBXaE4KChkHZL+Z4XqXDMbiZg7gW3oNn6qOc4ZbFeKxURTr3M+OZqvi9WoPeTM5yY75r7JHjWEOfSCo6CgfD/63/0diafyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Do6T4CVe; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733497051; x=1765033051;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rIiclzYWsy2EpIFwkYbIy1wPtiPdlIKiO08nnrnWi6s=;
-  b=Do6T4CVeJfbooKyxg+tcczoDFu3nlTCKls9svSsEOqIZqmNIPEy4RveJ
-   1Crz4VX0E4WbMokVhE7DS6NEE3Z1FgdEEVIw4teT775GgOFowxagLwYiB
-   jVp5kOSVRzIAbZ4PWTyKmV44qJp4n/F+Vf7mKxiuuMiOTcylVI8zWFhnP
-   1OlLv7l6tsCmCnp/rsICMBCcs6pQEyMIHUnyY1XXvbBW7sJV7/90uN3lq
-   klZqV6ifySLkE8bJyos58NWquqJwM+rXMDSHBGMTZMIVnMg4JdbQf69Mb
-   sU8csAk6nQPukRIf9q8y3zuvlmUFZGmlBkE7LivgIsE+3bvcLcWGyt7yu
-   g==;
-X-CSE-ConnectionGUID: N+1Ny9V6RKaZV3yUO7tdHw==
-X-CSE-MsgGUID: Hiw5ZeZYS3CIELWEJcPQuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="37636532"
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="37636532"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 06:57:30 -0800
-X-CSE-ConnectionGUID: RLR5WN/rQMK7fcC/pevK1g==
-X-CSE-MsgGUID: y291u3VkSESRjnUcBPPRVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="98490816"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 06 Dec 2024 06:57:24 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJZlh-0001Sp-38;
-	Fri, 06 Dec 2024 14:57:21 +0000
-Date: Fri, 6 Dec 2024 22:57:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, horms@kernel.org, gregkh@linuxfoundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shaojijie@huawei.com,
-	hkelam@marvell.com
-Subject: Re: [PATCH V5 net-next 1/8] debugfs: Add debugfs_create_devm_dir()
- helper
-Message-ID: <202412062221.GPVtNG5v-lkp@intel.com>
-References: <20241206111629.3521865-2-shaojijie@huawei.com>
+	s=arc-20240116; t=1733497089; c=relaxed/simple;
+	bh=dNzs88DXm0DsW0ColNww97VGrXRlHHoDcjWPBTgdGB8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I1w2mTCD0xIVNzgZ4fsRXmPZSlSd9eRVvk7FpXcfqmcTVydscPv3nl7MMB8jfUd7AW0/JNLAQP8J3SCHx8i/3jKjH/aNW3A6Wry4z8yk8brgfPVyX8f4TswGeViSQsiJYON4MwpfMCe4yJL3U0mlD/Kwes+A0vaKocU7trMBki8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51529df6202so600311e0c.3;
+        Fri, 06 Dec 2024 06:58:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733497084; x=1734101884;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KGs26nf32J7IWFe5gQzebo3VoEYybxmOCRS8t1bpYOQ=;
+        b=VdADRObJPDQFH70UmMe1Socn/2R1PMpMY8T8Ilq1NDFCI+mDCnD5AYfVkC8kNUUCxi
+         b8bu/uJGymJs5LgyYKaMpXVUMSFujAaVqgN43eUs3N2e6acnH3FqISissO/UJXNpEiOQ
+         dO32cQYzPgkSMeS4jtZbkeGWSI8qsb/YgZh7hmA/dJJMADZdyzGEIKJsbovNRauYuMOm
+         LHdNjA9VwYESQhqG69pZuRmk3YH3EcqDa++iU5Kp0CwVDQtVx3HgMU4eUz9tNdkN8bd8
+         UC8hnO21ZW0AbUeqaFYGxg302Jl4csfRxsRzwrs/Emx9Lv5dwu8d9X4rpeplNBxLQY5k
+         T+mw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4XXmj8DBo0Phj9q8Hwzn6v1+TMfBwLEHjv4iPAIZ5IDsahiN7OQitdFwRIr1fkrDOxbESAy1Z4mwT@vger.kernel.org, AJvYcCUAHQ/SyuPPXgGuskrbv4qws5bHTAZ9TFF5zsihfsG2kwj8vJkRNlr174JCkzcrLLLjJ450X7QwAKxkc259fw/RBtE=@vger.kernel.org, AJvYcCW9NcXK8QCR40bpONcOgMDVLJvjXXXtSV6b5gzSCEko/6rBYN4WfwMRcj6qv6HXQbKCoaY6dYKz7wGoJxnC@vger.kernel.org, AJvYcCWO4AP+r+k/y3OQiZJ2UiwneiIWXmHMx4TL0HYddsIOUWLxecBcXJ/4TUhThVhWFuupzecQBfFF1ivBMGQ0@vger.kernel.org, AJvYcCWVYQThLgRg8U6B1qfAbNcDiMBXAnS4bWe6YJ1jMH4yRv/ZqoBPQXtwcrqa0PEg+pcs8O9N89dvCcdh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Nty19rZk7qBTxgs+9cWElBsYSOCv31NM4t1GQWObdE9mNi34
+	2U+GDGoaAhEtcKWm3G5q4O3vV0BvqCe8acSY2DPsh04YmKkaYznJuEjMG0+V
+X-Gm-Gg: ASbGncs4//jfU8ZaH6pf7iFeaenkySTgMvBB+8EdVwJXuto5EpQUGyJw0ihjmaP90dw
+	2oH+ZipeONKuMFYOUJihOVFri2HBptWn//wn1Ldqz2eyCQsQKkgAovM+6DYRxla6BgYFL38dw8d
+	lKF45H4e2QaMLbcQyjDbJK8BVEJUpVyBstzAxKKDLHrBe+u9n1MATIfPdBfzvcYEE/Z/5hAAYRB
+	pxNZSt4UoTZOWhnaH9MsdkL9Ebtll/fy3XHSfTcmuUMXlE5M4hICxKQj+DbeJGd9/M1GWvDdukM
+	3rihoa+zfsv1yZ4c
+X-Google-Smtp-Source: AGHT+IGBnN9xSt2JyOO6oL5msc6O1e0S7Sai6fx1X5GsLtKd5puVckXOjGJoBmWJE7WmWO+MpxB7DQ==
+X-Received: by 2002:a05:6122:458f:b0:50d:56ee:b9d1 with SMTP id 71dfb90a1353d-515fcafc734mr3116130e0c.12.1733497083732;
+        Fri, 06 Dec 2024 06:58:03 -0800 (PST)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eae16d19sm318366e0c.7.2024.12.06.06.58.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 06:58:03 -0800 (PST)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5152a869d10so640314e0c.1;
+        Fri, 06 Dec 2024 06:58:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV5dO8N1SOPn9JxHeAGpUyuVJu3VhuDe9dgMLYQTGmzjbBh8ToRCPcHKo8PXc+30eVw0YtwbmxY/hZt@vger.kernel.org, AJvYcCVCF1Tg/C3zwvFC/tNjTOPhMgz6lv0T8gJa0uUnhbO9ZxPpE+5JaqoTAzOcpDnPoPsaqtilC2VPAlGysA6M9SdecqE=@vger.kernel.org, AJvYcCVH6vW5WjBMrEGwLvW0WGtUv4y0+C3bkcqpjnFSMXQzwYtbiIyZdYgDXAscM3SI5/DGqnMEjKFYf6IHt7g8@vger.kernel.org, AJvYcCWH0hPGClDcB44PSnTQLhsLLwQUwUrJfKX4jGd3Iy9uQzOSRSg3QpKZ8i7IJO1GvK7jOPssLfOJnq/X@vger.kernel.org, AJvYcCWksRyzGxqEDAVI8ym6m8sUDiF0O5NZuk778qPP5iDoT39Fpp6tMPR2V3Zg7/l8ks9+qNwPLeIqT44Ir5xD@vger.kernel.org
+X-Received: by 2002:a05:6122:2804:b0:515:3bb5:5625 with SMTP id
+ 71dfb90a1353d-515fcae7824mr3399476e0c.10.1733497082367; Fri, 06 Dec 2024
+ 06:58:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206111629.3521865-2-shaojijie@huawei.com>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com> <20241115134401.3893008-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241115134401.3893008-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Dec 2024 15:57:50 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUaMZB0Dmc70DXTPnNu=Vp0p6K3w0A9y53B2OmrR6MeFg@mail.gmail.com>
+Message-ID: <CAMuHMdUaMZB0Dmc70DXTPnNu=Vp0p6K3w0A9y53B2OmrR6MeFg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] arm64: dts: renesas: rzg3s-smarc: Fix the debug
+ serial alias
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	p.zabel@pengutronix.de, lethal@linux-sh.org, g.liakhovetski@gmx.de, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-serial@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jijie,
+Hi Claudiu,
 
-kernel test robot noticed the following build warnings:
+On Fri, Nov 15, 2024 at 2:50=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The debug serial of the RZ/G3S is SCIF0 which is routed on the Renesas
+> RZ SMARC Carrier II board on the SER3_UART. Use serial3 alias for it for
+> better hardware description. Along with it, the chosen properties were
+> moved to the device tree corresponding to the RZ SMARC Carrier II board.
+>
+> Fixes: adb4f0c5699c ("arm64: dts: renesas: Add initial support for RZ/G3S=
+ SMARC SoM")
+> Fixes: d1ae4200bb26 ("arm64: dts: renesas: Add initial device tree for RZ=
+ SMARC Carrier-II Board")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-[auto build test WARNING on net-next/main]
+Thanks for your patch!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jijie-Shao/debugfs-Add-debugfs_create_devm_dir-helper/20241206-192734
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241206111629.3521865-2-shaojijie%40huawei.com
-patch subject: [PATCH V5 net-next 1/8] debugfs: Add debugfs_create_devm_dir() helper
-config: powerpc-ebony_defconfig (https://download.01.org/0day-ci/archive/20241206/202412062221.GPVtNG5v-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412062221.GPVtNG5v-lkp@intel.com/reproduce)
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> @@ -43,11 +43,6 @@ aliases {
+>  #endif
+>         };
+>
+> -       chosen {
+> -               bootargs =3D "ignore_loglevel";
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412062221.GPVtNG5v-lkp@intel.com/
+I'd say please keep bootargs here, but as you don't support using the
+SoM without the carrier board, I guess it's fine to keep it together
+with stdout-path.
 
-All warnings (new ones prefixed by >>):
+> -               stdout-path =3D "serial0:115200n8";
+> -       };
 
->> fs/debugfs/inode.c:643:3: warning: ignoring return value of function declared with 'warn_unused_result' attribute [-Wunused-result]
-     643 |                 ERR_PTR(ret);
-         |                 ^~~~~~~ ~~~
-   1 warning generated.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.14.
 
+Gr{oetje,eeting}s,
 
-vim +/warn_unused_result +643 fs/debugfs/inode.c
+                        Geert
 
-   619	
-   620	/**
-   621	 * debugfs_create_devm_dir - Managed debugfs_create_dir()
-   622	 * @dev: Device that owns the action
-   623	 * @name: a pointer to a string containing the name of the directory to
-   624	 *        create.
-   625	 * @parent: a pointer to the parent dentry for this file.  This should be a
-   626	 *          directory dentry if set.  If this parameter is NULL, then the
-   627	 *          directory will be created in the root of the debugfs filesystem.
-   628	 * Managed debugfs_create_dir(). dentry will automatically be remove on
-   629	 * driver detach.
-   630	 */
-   631	struct dentry *debugfs_create_devm_dir(struct device *dev, const char *name,
-   632					       struct dentry *parent)
-   633	{
-   634		struct dentry *dentry;
-   635		int ret;
-   636	
-   637		dentry = debugfs_create_dir(name, parent);
-   638		if (IS_ERR(dentry))
-   639			return dentry;
-   640	
-   641		ret = devm_add_action_or_reset(dev, debugfs_remove_devm, dentry);
-   642		if (ret)
- > 643			ERR_PTR(ret);
-   644	
-   645		return dentry;
-   646	}
-   647	EXPORT_SYMBOL_GPL(debugfs_create_devm_dir);
-   648	
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
