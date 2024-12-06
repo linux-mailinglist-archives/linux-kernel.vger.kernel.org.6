@@ -1,191 +1,337 @@
-Return-Path: <linux-kernel+bounces-434782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801929E6B3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:02:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B059E6B41
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:03:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AADF281151
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:02:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B33188331F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF351EE016;
-	Fri,  6 Dec 2024 10:02:49 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F861F6678;
+	Fri,  6 Dec 2024 10:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yzh+rj2B"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51FA18C932;
-	Fri,  6 Dec 2024 10:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD9D28684;
+	Fri,  6 Dec 2024 10:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733479368; cv=none; b=qyjOOTRvlKfev7I3F4nT17SWJLy33A26N29HQ7g98dF+V7s+Op2dhkoOzruKfKXVskYOb14xFOD1vCRDhOd0nKglMmxwoQF4NXyNoaYeuAGl1HSr5ZjpeViDIVreXqH+iynvjnhmXNYqMyM/EmLkgbhiD+MJc/OWgczJfsh9O3w=
+	t=1733479407; cv=none; b=TVOEwblqB/cCgoQFNNvMsS13yutxjeRH51CDmoeVFTloqX07NXL14y2SD6GdYIRLAl/FfUD9EpBwVUOJYNyYMHYIFgVJAQloDllX1YORhHF9Lm0EttdqG0ln67pKleIk/eIMJx8FTyZVJzFxwC2Av2QI+dF19Kni0vKZwtBrd7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733479368; c=relaxed/simple;
-	bh=yoTakXWpm/NE0li7ticRGi+v9cW+Md+MAg5MxT8Xo2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uNJmBRfLTRy/YON+hcHzzQCcMLQLDLMDq7ZtEWwF1kpwDjcxCGuhY29tJkinLoskGgG7OP8+CODgiOgz7Ptty5pysX5JhK5hZa66lNmbqGCc8IqyqW/gBaDv3ltiZWsUKapHFgnDBQd/FQV7268yGydrFmLJJF/TpfR5KkpA2vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4Rd72Gb0z4f3lfZ;
-	Fri,  6 Dec 2024 18:02:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 587F81A0196;
-	Fri,  6 Dec 2024 18:02:39 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgAHmMS9y1JnrSHUDg--.2760S2;
-	Fri, 06 Dec 2024 18:02:39 +0800 (CST)
-Message-ID: <fd60bf25-1e27-4992-92d6-7d9415a4e23f@huaweicloud.com>
-Date: Fri, 6 Dec 2024 18:02:37 +0800
+	s=arc-20240116; t=1733479407; c=relaxed/simple;
+	bh=NuKXcBvVrsigPdVTcyeGYfowk1rbjZM9c9NH3bBlkYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mWp/uXjY+G74S3oS7LhTKBeSuR08iWyW9lG3Syqtd1ybCeM1jIF1NixDbbNmlaR8MXb2mJRYrvlkuVzZH0VEmUJe1E5OGURO/fwp9wipenj7kyif4IIJRyQNNfWL3zKpx3ArFwLeIIANcRmm1FJWPxagDG4xKrQa6h6iVhqQOVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yzh+rj2B; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67lkIA005269;
+	Fri, 6 Dec 2024 10:03:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	s5CCRsYoQnK8cuXtQOsZAQ0Rud5UbE35efXt8t0o+I4=; b=Yzh+rj2BlTda5r9H
+	y2tbfd67DP4Sf1KYaK8pFYQgChzzu0HNZFk3HJUF6G2FeXUHiQQmje2br/5lGK04
+	fjonj29C9qTy5A1ht6VtZ/jqDxhP2o1eFBmzpEf4IlYsLWqtkaDy3hKe3K82NZl3
+	odPmM1EucaSxJ2kESkVMGrphm4N8dCLR5xbqJj9SzxMoi0yRx0pZcYmJV+MYPHaj
+	foiUeKvOZyZZ7PTSNUZW5DE7/SwaTO7cuGbaw8l3kBsMfVPA/KGF4aK1SWfODzci
+	5TF/3+Ozk3NxVTUj8PtQYujmnfg626bRdRshv+UgpWtDyGLAKL1avzMryz0eTpIM
+	KiO+aA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm36d1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 10:03:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6A3KUj008343
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 10:03:20 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
+ 02:03:15 -0800
+Message-ID: <a2285d28-0f57-d165-a22e-2aa57b3cff65@quicinc.com>
+Date: Fri, 6 Dec 2024 15:33:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [next -v1 3/5] memcg: simplify the mem_cgroup_update_lru_size
- function
-To: Hugh Dickins <hughd@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, akpm@linux-foundation.org,
- mhocko@kernel.org, hannes@cmpxchg.org, yosryahmed@google.com,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
- davidf@vimeo.com, vbabka@suse.cz, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- chenridong@huawei.com, wangweiyang2@huawei.com
-References: <20241206013512.2883617-1-chenridong@huaweicloud.com>
- <20241206013512.2883617-4-chenridong@huaweicloud.com>
- <CAOUHufbCCkOBGcSPZqNY+FXcrH8+U7_nRvftzOzKUBS4hn+kuQ@mail.gmail.com>
- <897b04c9-dba3-44ae-8113-145ca3457cb3@huaweicloud.com>
- <edab8d46-7c03-4bf5-fe1c-0150cdf4d96a@google.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 3/3] media: dt-bindings: qcom-venus: Deprecate
+ video-decoder and video-encoder where applicable
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <edab8d46-7c03-4bf5-fe1c-0150cdf4d96a@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAHmMS9y1JnrSHUDg--.2760S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw18uw17KF48WF1xKrWfKrg_yoWrAw4kpF
-	WUKFyYya1kZrW7A3s2ywsaq3y0kr4fAFWUXr13G34rAw1qvFyxtF4UKrWY9FWDArs3Cw43
-	tFZ3Wrn7AFs8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	UAwIDUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <quic_renjiang@quicinc.com>, <quic_vnagar@quicinc.com>,
+        <konradybcio@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-0-fd062b399374@linaro.org>
+ <20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-3-fd062b399374@linaro.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-3-fd062b399374@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SeOtIOieL2fz3aNzlgT0pXh1A1-t01pM
+X-Proofpoint-ORIG-GUID: SeOtIOieL2fz3aNzlgT0pXh1A1-t01pM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060072
 
 
 
-On 2024/12/6 16:24, Hugh Dickins wrote:
-> On Fri, 6 Dec 2024, Chen Ridong wrote:
->> On 2024/12/6 13:33, Yu Zhao wrote:
->>> On Thu, Dec 5, 2024 at 6:45 PM Chen Ridong <chenridong@huaweicloud.com> wrote:
->>>> From: Chen Ridong <chenridong@huawei.com>
->>>>
->>>> In the `mem_cgroup_update_lru_size` function, the `lru_size` should be
->>>> updated by adding `nr_pages` regardless of whether `nr_pages` is greater
->>>> than 0 or less than 0. To simplify this function, add a check for
->>>> `nr_pages` == 0. When `nr_pages` is not equal to 0, perform the same
->>>> actions.
->>>>
->>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>
->>> NAK.
->>>
->>> The commit that added that clearly explains why it was done that way.
+On 11/28/2024 9:51 PM, Bryan O'Donoghue wrote:
+> For the list of yaml files here the video-decoder and video-encoder nodes
+> provide nothing more than configuration input for the driver. These entries
+> do not in fact impart hardware specific data and should be deprecated.
 > 
-> Thanks Yu: I did spot this going by, but was indeed hoping that someone
-> else would NAK it, with more politeness than I could muster at the time!
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  .../devicetree/bindings/media/qcom,msm8916-venus.yaml        | 12 ++----------
+>  .../devicetree/bindings/media/qcom,sc7180-venus.yaml         | 12 ++----------
+>  .../devicetree/bindings/media/qcom,sc7280-venus.yaml         | 12 ++----------
+>  .../devicetree/bindings/media/qcom,sdm845-venus-v2.yaml      | 12 ++----------
+>  .../devicetree/bindings/media/qcom,sm8250-venus.yaml         | 12 ++----------
+>  5 files changed, 10 insertions(+), 50 deletions(-)
 > 
->>
->> Thank you for your reply.
->>
->> I have read the commit message for ca707239e8a7 ("mm: update_lru_size
->> warn and reset bad lru_size") before sending my patch. However, I did
->> not quite understand why we need to deal with the difference between
->> 'nr_pages > 0' and 'nr_pages < 0'.
->>
->>
->> The 'lru_zone_size' can only be modified in the
->> 'mem_cgroup_update_lru_size' function. Only subtracting 'nr_pages' or
->> adding 'nr_pages' in a way that causes an overflow can make the size < 0.
->>
->> For case 1, subtracting 'nr_pages', we should issue a warning if the
->> size goes below 0. For case 2, when adding 'nr_pages' results in an
->> overflow, there will be no warning and the size won't be reset to 0 the
->> first time it occurs . It might be that a warning will be issued the
->> next time 'mem_cgroup_update_lru_size' is called to modify the
->> 'lru_zone_size'. However, as the commit message said, "the first
->> occurrence is the most informative," and it seems we have missed that
->> first occurrence.
->>
->> As the commit message said: "and then the vast unsigned long size draws
->> page reclaim into a loop of repeatedly", I think that a warning should
->> be issued and 'lru_zone_size' should be reset whenever 'size < 0' occurs
->> for the first time, whether from subtracting or adding 'nr_pages'.
+A general query, this change is not done for 8996-venus, sdm660-venus and
+sdm845-venus, was that intentional? may be because these are not active
+SOCs in upstream?
+
+Thanks,
+Dikshita
+> diff --git a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
+> index 9410f13ca97c181973c62fe62d0399fc9e82f05d..da140c2e3d3f3c3e886496e3e2303eda1df99bb4 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
+> @@ -45,6 +45,7 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>    video-encoder:
+> @@ -57,13 +58,12 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>  required:
+>    - compatible
+>    - iommus
+> -  - video-decoder
+> -  - video-encoder
+>  
+>  unevaluatedProperties: false
+>  
+> @@ -83,12 +83,4 @@ examples:
+>          power-domains = <&gcc VENUS_GDSC>;
+>          iommus = <&apps_iommu 5>;
+>          memory-region = <&venus_mem>;
+> -
+> -        video-decoder {
+> -            compatible = "venus-decoder";
+> -        };
+> -
+> -        video-encoder {
+> -            compatible = "venus-encoder";
+> -        };
+>      };
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
+> index 5cec1d077cda77817f6d876109defcb0abbfeb2c..83c4a5d95f020437bd160d6456850bc84a2cf5ff 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
+> @@ -70,6 +70,7 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>    video-encoder:
+> @@ -82,14 +83,13 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>  required:
+>    - compatible
+>    - power-domain-names
+>    - iommus
+> -  - video-decoder
+> -  - video-encoder
+>  
+>  unevaluatedProperties: false
+>  
+> @@ -114,12 +114,4 @@ examples:
+>                        "vcodec0_core", "vcodec0_bus";
+>          iommus = <&apps_smmu 0x0c00 0x60>;
+>          memory-region = <&venus_mem>;
+> -
+> -        video-decoder {
+> -            compatible = "venus-decoder";
+> -        };
+> -
+> -        video-encoder {
+> -            compatible = "venus-encoder";
+> -        };
+>      };
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> index 10c334e6b3dcf25967fa438f8e6e5035448af1b9..413c5b4ee6504ba1d5fe9f74d5be04ad8c90c318 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> @@ -68,6 +68,7 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>    video-encoder:
+> @@ -80,14 +81,13 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>  required:
+>    - compatible
+>    - power-domain-names
+>    - iommus
+> -  - video-decoder
+> -  - video-encoder
+>  
+>  unevaluatedProperties: false
+>  
+> @@ -125,14 +125,6 @@ examples:
+>  
+>          memory-region = <&video_mem>;
+>  
+> -        video-decoder {
+> -            compatible = "venus-decoder";
+> -        };
+> -
+> -        video-encoder {
+> -            compatible = "venus-encoder";
+> -        };
+> -
+>          video-firmware {
+>              iommus = <&apps_smmu 0x21a2 0x0>;
+>          };
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
+> index 6228fd2b324631f3138e128c918266da58f6b544..c839cb1ebc0999e10b865f4bb43ea76ffa2bf46d 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
+> @@ -70,6 +70,7 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>    video-core1:
+> @@ -82,14 +83,13 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>  required:
+>    - compatible
+>    - power-domain-names
+>    - iommus
+> -  - video-core0
+> -  - video-core1
+>  
+>  unevaluatedProperties: false
+>  
+> @@ -119,12 +119,4 @@ examples:
+>          iommus = <&apps_smmu 0x10a0 0x8>,
+>                   <&apps_smmu 0x10b0 0x0>;
+>          memory-region = <&venus_mem>;
+> -
+> -        video-core0 {
+> -            compatible = "venus-decoder";
+> -        };
+> -
+> -        video-core1 {
+> -            compatible = "venus-encoder";
+> -        };
+>      };
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
+> index f66033ae8b590e7b6f1e344c368994744411aca2..da54493220c9dc90e7d9f5fcfce7590acb241c85 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
+> @@ -73,6 +73,7 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>    video-encoder:
+> @@ -85,6 +86,7 @@ properties:
+>      required:
+>        - compatible
+>  
+> +    deprecated: true
+>      additionalProperties: false
+>  
+>  required:
+> @@ -95,8 +97,6 @@ required:
+>    - iommus
+>    - resets
+>    - reset-names
+> -  - video-decoder
+> -  - video-encoder
+>  
+>  unevaluatedProperties: false
+>  
+> @@ -132,12 +132,4 @@ examples:
+>          resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>,
+>                   <&videocc VIDEO_CC_MVS0C_CLK_ARES>;
+>          reset-names = "bus", "core";
+> -
+> -        video-decoder {
+> -            compatible = "venus-decoder";
+> -        };
+> -
+> -        video-encoder {
+> -            compatible = "venus-encoder";
+> -        };
+>      };
 > 
-> One thing, not obvious, but important to understand, is that WARN_ONCE()
-> only issues a warning the first time its condition is found true, but
-> it returns the true or false of the condition every time.  So lru_size
-> is forced to 0 each time an inconsistency is detected.
-> 
-
-Thank you for your explanation.
-My patch does not change this logic.
-
-> (But IIRC VM_WARN_ON_ONCE() does not behave in that useful way; or maybe
-> I've got that macro name wrong - we have so many slightly differing.)
-> 
-> Perhaps understanding that will help you to make better sense of the
-> order of events in this function.
-> 
-> Another thing to understand: it's called before adding folio to list,
-> but after removing folio from list: when it can usefully compare whether
-> the emptiness of the list correctly matches lru_size 0.  It cannot do so
-> when adding if you "simplify" it in the way that you did.
-> 
-
-The commit b4536f0c829c ("mm, memcg: fix the active list aging for
-lowmem requests when memcg is enabled") has removed the emptiness check.
-
-What is meaningful is that we can determine whether the size is smaller
-than 0 before adding `nr_pages`. However, as I mentioned, the
-`lru_zone_size` can only be modified in the `mem_cgroup_update_lru_size`
-function, which means that a warning must have been issued if the size
-was smaller than 0 before adding `nr_pages` when `nr_pages` is greater
-than 0. In this case, it will not issue a warning again.
-
-Perhaps "when it can usefully compare whether the emptiness of the list
-correctly matches lru_size 0" is not useful now.
-
-> You might be focusing too much on the "size < 0" aspect of it, or you
-> might be worrying more than I did about size growing larger and larger
-> until it wraps to negative (not likely on 64-bit, unless corrupted).> I hope these remarks help, but you need to think through it again
-> for yourself.
-> 
-> Hugh
-
-Thank you very much for your patience.
-
-Best regards,
-Ridong
-
-> 
->>
->> I am be grateful if you can explain more details, it has confused me for
->> a while. Thank you very much.
->>
->> Best regards,
->> Ridong
-
 
