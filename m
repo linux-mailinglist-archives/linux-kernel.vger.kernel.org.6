@@ -1,142 +1,216 @@
-Return-Path: <linux-kernel+bounces-434302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1419E649A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:11:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0306C9E6498
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:11:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 453291885552
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:11:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9D9169F31
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051518FDA3;
-	Fri,  6 Dec 2024 03:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578351865FA;
+	Fri,  6 Dec 2024 03:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mevta1bH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="S7GbuEp5"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6A18E361;
-	Fri,  6 Dec 2024 03:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F20B41C77
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 03:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733454700; cv=none; b=dpwoCL3nvUTYwGB/Bpeln8295jh7sBY6Byrul43z9Z2wKeWXSyl6fA4zfd6KZQBCDPF0kuTiFqUYj7PvLTFsjEtIkBZgN5pzZaNhp3I2CmibIRsB6QRp/If7hAoaFa5xPHRgVVLAx0v9R9iBMzfuTF2xb0k60ZZ3D+wEJ/ZTCME=
+	t=1733454694; cv=none; b=ZM28WNcD4/EOKAj8w5I9pDXCHtPowNIE0P5j6jzAHIViEBQ9OuYUmh0uQ70GhXtk5DjLPLZbb39sz4gnsajulzVUWKnGe56MIEIjKsEl6D5tws+KEoXirqZn5J5pOX/EXh1gyFdM7y1bS8zWBXfzrr+Yk8SroTayPokxxp//uGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733454700; c=relaxed/simple;
-	bh=2p7yAnzIn4l4lR9klx+Ihd8mz1BQuI2IefYmFHxauns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/BzPae6Jt6JHUVh0OTMB7X4PgWFOASw/JqkCstleG5VMrdJJQDCrc1hZia8Ib4VaMffyKcqbSK7hns2JtoM5O/LLn+n/TjP1VnOVqZP0bku4301g98BHTqreNN0moq5qCKA7ozbw1F72wg1GQPiez00vlnD8zGRgTnQkVr5Phw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mevta1bH; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733454699; x=1764990699;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2p7yAnzIn4l4lR9klx+Ihd8mz1BQuI2IefYmFHxauns=;
-  b=mevta1bHdIA1mcFSdTok8k45Cb2qowmZDo+IsZA7C1gAT0WWAPps1og9
-   2ing/N2ZhiDVRh5smeGDkP0iaU5Gs8tm5UMviM/66ud6UOvOEAbNNfsCx
-   F7wXTanU13x9BwPJj9kOzhjdLAe/am4Us7Cy9zni9rAwaGWMuoDu0CiqI
-   mCcPucz77s1QIX2RVXZZ4oupgDVPaLQhfNGazvSbq3fxZA9pxaR5U/LIa
-   Sy4EozEW31/uE7FJ5oRfKPCUK2hh+vOojv3pwgAL3RZPKElTNugB96cwU
-   cpGaDZH8gHbfLS+pkNd980C3eBCxOGaJf8FPqJvUN25/EWSLQDVvlI8ip
-   A==;
-X-CSE-ConnectionGUID: jS1ivcb8R4mRN0JTcgp09w==
-X-CSE-MsgGUID: zyoFgzMKQqWGJM7pJxlM8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33945828"
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="33945828"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 19:11:39 -0800
-X-CSE-ConnectionGUID: P2kuHB3BQ8yLcCjGFXSfJQ==
-X-CSE-MsgGUID: cXZLOWEJQ2KzQ+kyzt9UTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="125118657"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 05 Dec 2024 19:11:36 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJOkf-0000eV-1T;
-	Fri, 06 Dec 2024 03:11:33 +0000
-Date: Fri, 6 Dec 2024 11:10:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, Perry Yuan <perry.yuan@amd.com>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH 10/15] cpufreq/amd-pstate: Move limit updating code
-Message-ID: <202412061054.cJTnhP0n-lkp@intel.com>
-References: <20241205222847.7889-11-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733454694; c=relaxed/simple;
+	bh=Z4J7TkCwX7hDU1Qu/rRgqv+dTbzMJN55S6FBRGCH+wQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QuaLeMn/KV7pUqEHoNZuApQTPUu0bNJ6jsg9ygGEOBgxhJbNOvE9F9HPHIlx1+fQ084nVlPZN5a15nBZD5UUFkZM4sFgr/vJVAjQlr85bR+ZtK+CjwSdbSVUVlnuhhj8R8+E2t4SmmoBzNHh0yzChWrITTVb91Du3UcBsfLkrMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=S7GbuEp5; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ef6af22ea8so303861a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 19:11:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1733454690; x=1734059490; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vPtELaheiEZ50gSakyGhUgUYd2EpF+2rxS7HLuOc52o=;
+        b=S7GbuEp5hskuC1/b1tfbsAwkJXbY63sHJXqxNzXSpKKRrTKWf/WNkCRIOnVbh+2ary
+         ONotlP1XHUQ6+g6s4/UWlI29y3k0HjFyHD74/4uE58/c2dF9/7+PtK0GoVWSxNhcwFTK
+         9PXhMptCLH62kcGolcX5asT5iYxT2//oGfpzzliUNkEysWm7PFqE8ghR3tu/UccX/Usu
+         NxU/vH5ex4VowUsUi2xfCx49/DddlzTQTGQDuH9Wl7ET37wfv2vIk38CZYmk38hoS6Kd
+         SW1syDcr+K1H0pF9nB9p70VW79sSC5nLf1hJJ/hC1nFF0SN8mSaWy29rHUg0onIjkiOB
+         iw+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733454690; x=1734059490;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vPtELaheiEZ50gSakyGhUgUYd2EpF+2rxS7HLuOc52o=;
+        b=hCwnBzPdQ5WUwxpIoBPWu8DuFPTfykphmIatr1at82LWXeuvRbPaNrKAx3AQ9oIuND
+         L9JqkUYXEWW/f6cV7+M7NSiy1vUs8LCi//oXK9Dt5Z73D/sn5XlzF0glGx+KXZQDraNj
+         M+Vx/R8/T6eUcPLJUyt8dgtZTjw1+3lvHSEdO8VPgxC7u+WuVbFC3rWoyHETCh7Ss/R5
+         MZxPgt+lvGkma+KSMjqVFjAdUzryUiDCNI9x0prg27BbppLJ8idY5+wo18HQxVBnIxcN
+         9VMs3BSpTr13Nbq3vufXuxTsLp8UF/K3c3l4oyW3VOqooR6tcYUzVuO0LhRi1mPsmFrl
+         TqJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUloMUXio482/fB62DeZrUqCVs7gF+rFv9ATLhaxlr59R+0JockDv0BR46WJnNWRLEw65XQJkoBuBdUwbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycUA9xZO2UkWbaXjF/w8xMq/4Qn18OuaLSQ5CXEjY+mAOXrGlj
+	1vmfKfk2aGN5J2WSKOxPnttuJwV1wTAv6PwSKfo5T9UcjMNaRtcKOzjY/iAVhk6oPFhz9Pgv26r
+	eM18G7CQ/gcXQ/dQqmUO+/db6GP5NNxw5dHE7vg==
+X-Gm-Gg: ASbGnct8f5sjRHMXvdxFqzWNLefn5PU/7Oq8Pm0r6KQQ3AR36FHiikSskDp1ZsiLNgc
+	mvNq1iPaWYsDAqkeiP/lTxp5KBBASUL0fnuZatguzIMz3
+X-Google-Smtp-Source: AGHT+IHV0/FTNpzXCB+SWhNxGQqOyiwBlyuuQ4ZUGS/dKk13G8i2+s+EFfOF0h8AXMfdA7fqW2w35m8OZih68Z2b3+Q=
+X-Received: by 2002:a17:90b:524e:b0:2ee:f1e3:fd21 with SMTP id
+ 98e67ed59e1d1-2ef6aaeedffmr2341974a91.25.1733454690511; Thu, 05 Dec 2024
+ 19:11:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205222847.7889-11-mario.limonciello@amd.com>
+References: <20241203144954.91731-1-luxu.kernel@bytedance.com> <edba44ad-a4b6-473d-a175-142ea49add1c@ghiti.fr>
+In-Reply-To: <edba44ad-a4b6-473d-a175-142ea49add1c@ghiti.fr>
+From: Xu Lu <luxu.kernel@bytedance.com>
+Date: Fri, 6 Dec 2024 11:11:19 +0800
+Message-ID: <CAPYmKFtAAZkY-v7Oat4dXYnm6zCcReMnDdFo3qcqtqhj1wv8eg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v2] riscv: mm: Fix alignment of phys_ram_base
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alexghiti@rivosinc.com, bjorn@rivosinc.com, lihangjing@bytedance.com, 
+	xieyongji@bytedance.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mario,
+Hi Alex,
 
-kernel test robot noticed the following build warnings:
+On Thu, Dec 5, 2024 at 10:34=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
+te:
+>
+> Hi Xu,
+>
+> On 03/12/2024 15:49, Xu Lu wrote:
+> > This commit fixes the alignment of phys_ram_base in RISC-V.
+> >
+> > In sparse vmemmap model, the virtual address of vmemmap is calculated a=
+s:
+> > ((struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT)).
+> > And the struct page's va can be calculated with an offset:
+> > (vmemmap + (pfn)).
+> >
+> > However, when initializing struct pages, kernel actually starts from th=
+e
+> > first page from the same section that phys_ram_base belongs to. If the
+> > first page's physical address is not (phys_ram_base >> PAGE_SHIFT), the=
+n
+> > we get an va below VMEMMAP_START when calculating va for it's struct pa=
+ge.
+> >
+> > For example, if phys_ram_base starts from 0x82000000 with pfn 0x82000, =
+the
+> > first page in the same section is actually pfn 0x80000. During
+> > init_unavailable_range(), we will initialize struct page for pfn 0x8000=
+0
+> > with virtual address ((struct page *)VMEMMAP_START - 0x2000), which is
+> > below VMEMMAP_START as well as PCI_IO_END.
+> >
+> > This commit fixes this bug by aligning phys_ram_base with SECTION_SIZE.
+> >
+> > Fixes: c3bcc65d4d2e ("riscv: Start of DRAM should at least be aligned o=
+n PMD size for the direct mapping")
+> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+> > ---
+> >   arch/riscv/mm/init.c | 15 ++++++++++++++-
+> >   1 file changed, 14 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> > index 0e8c20adcd98..974cafa7c85e 100644
+> > --- a/arch/riscv/mm/init.c
+> > +++ b/arch/riscv/mm/init.c
+> > @@ -33,6 +33,9 @@
+> >   #include <asm/pgtable.h>
+> >   #include <asm/sections.h>
+> >   #include <asm/soc.h>
+> > +#ifdef CONFIG_SPARSEMEM
+> > +#include <asm/sparsemem.h>
+> > +#endif
+> >   #include <asm/tlbflush.h>
+> >
+> >   #include "../kernel/head.h"
+> > @@ -59,6 +62,12 @@ EXPORT_SYMBOL(pgtable_l4_enabled);
+> >   EXPORT_SYMBOL(pgtable_l5_enabled);
+> >   #endif
+> >
+> > +#ifdef CONFIG_SPARSEMEM
+> > +#define RISCV_MEMSTART_ALIGN (1UL << SECTION_SIZE_BITS)
+> > +#else
+> > +#define RISCV_MEMSTART_ALIGN PMD_SIZE
+> > +#endif
+> > +
+> >   phys_addr_t phys_ram_base __ro_after_init;
+> >   EXPORT_SYMBOL(phys_ram_base);
+> >
+> > @@ -239,9 +248,13 @@ static void __init setup_bootmem(void)
+> >       /*
+> >        * Make sure we align the start of the memory on a PMD boundary s=
+o that
+> >        * at worst, we map the linear mapping with PMD mappings.
+> > +      *
+> > +      * Also, make sure we align the start of the memory on a SECTION =
+boundary
+> > +      * when CONFIG_SPARSEMEM_VMEMMAP is enabled to ensure the correct=
+ness of
+> > +      * pfn_to_page().
+> >        */
+> >       if (!IS_ENABLED(CONFIG_XIP_KERNEL))
+> > -             phys_ram_base =3D memblock_start_of_DRAM() & PMD_MASK;
+> > +             phys_ram_base =3D round_down(memblock_start_of_DRAM(), RI=
+SCV_MEMSTART_ALIGN);
+> >
+> >       /*
+> >        * In 64-bit, any use of __va/__pa before this point is wrong as =
+we
+>
+>
+> That's a good catch indeed. But I'm wondering if it would be more
+> correct to fix the macro vmemmap instead of phys_ram_base since
+> phys_ram_base is supposed to hold the real base of the system memory,
+> which would be wrong with your patch. I mean something like that instead
+> (or similar, I haven't tested):
+>
+> #define vmemmap         ((struct page *)VMEMMAP_START -
+> (round_down(memblock_start_of_DRAM(), RISCV_MEMSTART_ALIGN) >> PAGE_SHIFT=
+))
 
-[auto build test WARNING on ab9e5b2eb56412cb8c63b46b935878d29205418e]
+Thanks for your comment.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/cpufreq-amd-pstate-Add-trace-event-for-EPP-perf-updates/20241206-063920
-base:   ab9e5b2eb56412cb8c63b46b935878d29205418e
-patch link:    https://lore.kernel.org/r/20241205222847.7889-11-mario.limonciello%40amd.com
-patch subject: [PATCH 10/15] cpufreq/amd-pstate: Move limit updating code
-config: x86_64-buildonly-randconfig-001-20241206 (https://download.01.org/0day-ci/archive/20241206/202412061054.cJTnhP0n-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061054.cJTnhP0n-lkp@intel.com/reproduce)
+Good idea. I have thought about this. But I wasn't sure if it's OK to
+introduce extra calculation whenever pfn_to_page() and page_to_pfn()
+is called. So I referred to ARM which aligns memstart_addr with
+SECTION size too and then made a similar modification.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412061054.cJTnhP0n-lkp@intel.com/
+If it is not appropriate to change the semantics of phys_ram_base, how
+about introducing a new variable vmemmap_start_addr and use it to
+calculate vmemmap:
 
-All warnings (new ones prefixed by >>):
+#define vmemmap         ((struct page *)VMEMMAP_START -
+(vmemmap_start_addr >> PAGE_SHIFT))
 
-   drivers/cpufreq/amd-pstate.c: In function 'amd_pstate_update_min_max_limit':
->> drivers/cpufreq/amd-pstate.c:606:45: warning: variable 'lowest_perf' set but not used [-Wunused-but-set-variable]
-     606 |         u32 max_limit_perf, min_limit_perf, lowest_perf, max_perf, max_freq;
-         |                                             ^~~~~~~~~~~
+Best Regards,
 
+Xu Lu
 
-vim +/lowest_perf +606 drivers/cpufreq/amd-pstate.c
-
-ec437d71db77a18 Huang Rui         2021-12-24  603  
-febab20caebac95 Wyes Karny        2023-11-17  604  static int amd_pstate_update_min_max_limit(struct cpufreq_policy *policy)
-febab20caebac95 Wyes Karny        2023-11-17  605  {
-b623ceabb704d2d Mario Limonciello 2024-12-05 @606  	u32 max_limit_perf, min_limit_perf, lowest_perf, max_perf, max_freq;
-febab20caebac95 Wyes Karny        2023-11-17  607  	struct amd_cpudata *cpudata = policy->driver_data;
-febab20caebac95 Wyes Karny        2023-11-17  608  
-18d9b5227121389 Mario Limonciello 2024-10-12  609  	max_perf = READ_ONCE(cpudata->highest_perf);
-b623ceabb704d2d Mario Limonciello 2024-12-05  610  	max_freq = READ_ONCE(cpudata->max_freq);
-b623ceabb704d2d Mario Limonciello 2024-12-05  611  	max_limit_perf = div_u64(policy->max * max_perf, max_freq);
-b623ceabb704d2d Mario Limonciello 2024-12-05  612  	min_limit_perf = div_u64(policy->min * max_perf, max_freq);
-febab20caebac95 Wyes Karny        2023-11-17  613  
-8164f743326404f Meng Li           2024-02-27  614  	lowest_perf = READ_ONCE(cpudata->lowest_perf);
-8164f743326404f Meng Li           2024-02-27  615  
-6fbd2a2609d0033 Mario Limonciello 2024-12-05  616  	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
-6fbd2a2609d0033 Mario Limonciello 2024-12-05  617  		min_limit_perf = min(cpudata->nominal_perf, max_limit_perf);
-8164f743326404f Meng Li           2024-02-27  618  
-febab20caebac95 Wyes Karny        2023-11-17  619  	WRITE_ONCE(cpudata->max_limit_perf, max_limit_perf);
-febab20caebac95 Wyes Karny        2023-11-17  620  	WRITE_ONCE(cpudata->min_limit_perf, min_limit_perf);
-febab20caebac95 Wyes Karny        2023-11-17  621  	WRITE_ONCE(cpudata->max_limit_freq, policy->max);
-febab20caebac95 Wyes Karny        2023-11-17  622  	WRITE_ONCE(cpudata->min_limit_freq, policy->min);
-febab20caebac95 Wyes Karny        2023-11-17  623  
-febab20caebac95 Wyes Karny        2023-11-17  624  	return 0;
-febab20caebac95 Wyes Karny        2023-11-17  625  }
-febab20caebac95 Wyes Karny        2023-11-17  626  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> And the fixes tag should be:
+>
+> Fixes: a11dd49dcb93 ("riscv: Sparse-Memory/vmemmap out-of-bounds fix")
+>
+> Thanks,
+>
+> Alex
+>
 
