@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-434182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6E09E62A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 284439E62B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03B21884C88
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:55:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3042818844FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A504D1494B2;
-	Fri,  6 Dec 2024 00:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F2513A89B;
+	Fri,  6 Dec 2024 00:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="adwJKSIi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="kb+PAfJg"
+Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BF847F53;
-	Fri,  6 Dec 2024 00:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA532BB09
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733446461; cv=none; b=FDi0NmHrthEmkmMHjWVCQovcC1JZj6R7wt0+Xycow4vFrvzxJZMtGRo6R4ypaUIl8q0uef9BOM9fWrD7jl61bmfNAcCPwbcFigm1+4n0p1q8jWw9LypuzyoYP1BsnXzfaS8XVnk3Uou38K/mmEQNCRiuY37isyhb1XJWUsXZj9Y=
+	t=1733446602; cv=none; b=FVFGtZJfqC14k3zqimYqJwZkcd8ycMJ7fSJKvGFd4ZZTaj1VMBZG4p6SqMNSPw9myIkWTIhhQRHpzuYGiKCz5w/AeVyxC+bTCiYRJB6GQaapwlFv3TZ0GyfqhBx9ghKD7976tlZ9FKKZUUEZBSWi8HfdfAGhB0x5LKBLebsnh94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733446461; c=relaxed/simple;
-	bh=zU/Ob/0H2ECG4sYoylH6KG177uMJ2rQquBgB0bWCbOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ixMG3LKbrWYYqw1WNld1ykutFhsRfFzGyLW4IwC8Yl/2nEClYnuclJ39OevWuhlgndkYAyjxA8fSRyHisSCm16rl4UFxROWbq6mgKzbwYlUYmO0bUI0Q2VQJ2mJ48EZ8ecsIeGmt9XrnLlXZXDAOShkf7VCE7rPahwQqfO4iDDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=adwJKSIi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HadST005219;
-	Fri, 6 Dec 2024 00:53:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zU/Ob/0H2ECG4sYoylH6KG177uMJ2rQquBgB0bWCbOI=; b=adwJKSIi+w5XyKTt
-	+kX3DOT1SzOtuaGREZyMADjlgpw55vejiozxyZ7416kT3xo8ezQTZ9TtB9y4Cf1g
-	pHCaJe9j2wb616j/4SzdAb5cbddthy/+H53oQBjcFj3U83li0kUxbUurqhpif/Od
-	5tC0BjHf1H2o8l/TAdKT3srFlFNbEYAtg9OQuCobxO9t139Yiffim8MpGHxaeJT6
-	W13B8qjPzujMUEbkz3vWeAuzbFOrqfGwIslnxHKUsvUXhGbW411OpTJzI2GVrFh9
-	PNJgjwNQWKNRk+Gt/zFi9BonVgiXZDvw6lZGXU0MlB3g8fORhL7wBB+WgrIAwTwF
-	96JFQQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba142514-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 00:53:57 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B60rttG009017
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 00:53:55 GMT
-Received: from [10.71.112.120] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 16:53:55 -0800
-Message-ID: <0a36814a-5818-493a-a9e3-b1a1e9559387@quicinc.com>
-Date: Thu, 5 Dec 2024 16:53:54 -0800
+	s=arc-20240116; t=1733446602; c=relaxed/simple;
+	bh=192sas5/3dB52EZjfRuQhdzd9qENarFp7gqCphryGrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FJ85Z8APAlnaA1abfx4Z38/TTJG+oLW/BA3TwRcbcdlf6xqjMGSmERuonZP/7MVtbXLDGRVg9FkIlpWLo3VByhLb3U0Pr2QWza8I0TtdWUy7Wa/Dn67722DQ4kf5O3NvMJtgY7J40J3FnjXrJJsAwGwPRmUDSNANUpgQYKdImcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=kb+PAfJg; arc=none smtp.client-ip=17.58.6.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733446598;
+	bh=gD/eV8FniOqkvsbchGLbTggCmSZ3+Zy4ZNoHJzav1qY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=kb+PAfJgaCYIQRvFMLki16gYica5tRz/08+GznpmNX7VeO+OH27EOPjbOCq88Bq5G
+	 C85X8m08IvDSJIBUkQpWDkm/U+UPvjMndrTjwaHPdxebzthJxcCvzNq1UluTMsOJE0
+	 f/0ApVaydU3tkF/jonXQ6he1D/A1oPkgLYw3/ROwGhr2XOvjy8TJ9vq91JoxTwmWUc
+	 ba2JcPh21U8etDOzQaiUpPg1qZtmIP7MChQkfEtsT7WmDEkJB7EJJI67OyQh+q5UI+
+	 YN2aWgZIZGmaIvEcoooWNySYWbIvD/XfFw0E7Ta1fRv2r40AtsA3NMQGWCkVFfGaKX
+	 jqpQZGpB+nUgg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id 86E9E5001C0;
+	Fri,  6 Dec 2024 00:56:29 +0000 (UTC)
+Message-ID: <288fe563-bd3b-4075-bcf6-5fc4782a6cb9@icloud.com>
+Date: Fri, 6 Dec 2024 08:56:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,91 +53,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 00/30] Introduce QC USB SND audio offloading support
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-        Cezary Rojewski
-	<cezary.rojewski@intel.com>
-CC: Takashi Iwai <tiwai@suse.de>, Greg KH <gregkh@linuxfoundation.org>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>,
-        <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <edfeb642-297e-42bb-ad09-cbf74f995514@quicinc.com>
- <2024111655-approve-throwback-e7df@gregkh>
- <2f512d8d-e5f3-4bdd-8172-37114a382a69@quicinc.com>
- <875xoi3wqw.wl-tiwai@suse.de>
- <d0da6552-238a-41be-b596-58da6840efbb@quicinc.com>
- <CF49CA0A-4562-40BC-AA98-E550E39B366A@linux.dev>
- <65273bba-5ec1-44ea-865b-fb815afccc91@intel.com>
- <4C900353-B977-451C-B003-BAA51E458726@linux.dev>
- <e7b8f141-efd4-4933-b074-641638914905@intel.com>
- <4E9925AF-F297-42A5-9CB8-F8568F0A5EDF@linux.dev>
+Subject: Re: [PATCH v3 01/11] libnvdimm: Simplify nd_namespace_store()
+ implementation
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
+ linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
+ netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
+ <20241205-const_dfc_done-v3-1-1611f1486b5a@quicinc.com>
+ <Z1I3lSpcnIIbc7S1@aschofie-mobl2.lan>
 Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <4E9925AF-F297-42A5-9CB8-F8568F0A5EDF@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xnlrAd4vM065YTEDkp5w1IU4WxluZVdD
-X-Proofpoint-ORIG-GUID: xnlrAd4vM065YTEDkp5w1IU4WxluZVdD
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <Z1I3lSpcnIIbc7S1@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: m6MvnGCh7TgcaO5x_qBwHR0pa2QT6zvQ
+X-Proofpoint-GUID: m6MvnGCh7TgcaO5x_qBwHR0pa2QT6zvQ
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- phishscore=0 clxscore=1011 mlxscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=920 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060005
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-05_16,2024-12-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0 adultscore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412060007
 
+On 2024/12/6 07:30, Alison Schofield wrote:
+> On Thu, Dec 05, 2024 at 08:10:10AM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Hi Zihun,
+> 
+> Similar to my comment on Patch 10/11, this commit msg can be
+> explicit:
+> 
+> libnvdimm: Replace namespace_match() w device_find_child_by_name()
+> 
+>>
+>> Simplify nd_namespace_store() implementation by  device_find_child_by_name()
+>                                                   ^using 
+> 
 
-On 12/4/2024 2:49 PM, Pierre-Louis Bossart wrote:
->
+thank you Alison for code review.
+
+will send v4 with your suggestions.
+(^^)
+
+> Otherwise you can add:
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> 
+>>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  drivers/nvdimm/claim.c | 9 +--------
+>>  1 file changed, 1 insertion(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
+>> index 030dbde6b0882050c90fb8db106ec15b1baef7ca..9e84ab411564f9d5e7ceb687c6491562564552e3 100644
+>> --- a/drivers/nvdimm/claim.c
+>> +++ b/drivers/nvdimm/claim.c
+>> @@ -67,13 +67,6 @@ bool nd_attach_ndns(struct device *dev, struct nd_namespace_common *attach,
+>>  	return claimed;
+>>  }
+>>  
+>> -static int namespace_match(struct device *dev, void *data)
+>> -{
+>> -	char *name = data;
+>> -
+>> -	return strcmp(name, dev_name(dev)) == 0;
+>> -}
+>> -
+>>  static bool is_idle(struct device *dev, struct nd_namespace_common *ndns)
+>>  {
+>>  	struct nd_region *nd_region = to_nd_region(dev->parent);
+>> @@ -168,7 +161,7 @@ ssize_t nd_namespace_store(struct device *dev,
+>>  		goto out;
+>>  	}
+>>  
+>> -	found = device_find_child(dev->parent, name, namespace_match);
+>> +	found = device_find_child_by_name(dev->parent, name);
+>>  	if (!found) {
+>>  		dev_dbg(dev, "'%s' not found under %s\n", name,
+>>  				dev_name(dev->parent));
+>>
+>> -- 
+>> 2.34.1
 >>
 >>
->>>> UAOL is one of our priorities right now and some (e.g.: me) prefer to not pollute their mind with another approaches until what they have in mind is crystalized. In short, I'd vote for a approach where USB device has a ASoC representative in sound/soc/codecs/ just like it is the case for HDAudio. Either that or at least a ASoC-component representative, a dependency for UAOL-capable card to enumerate.
->>> The main difference is that we don’t want the USB audio *control* part to be seen in two places. The only requirement is to stream data with an alternate optimized path, but all the volume control and whatnot is supposed to be done using the regular usb-audio card. It would be complete chaos for userspace if the same volume can be represented differently.
->>> The comparison with HDaudio is not quite right either. In the case of HDaudio, it’s an all-or-nothing solution. The external device is controlled by one entity, either legacy or ASoC based. That choice is made at driver probe time. In the case of USB, the application needs to have the choice of using either the legacy path, or the optimized path that goes through a DSP. I think the last thing you want given this context is to make the USB audio device an ASoC codec.
->>> I find it rather interesting that this architectural feedback comes at the v30, it’s unfair to Wesley really...
->>
->> Hi Pierre,
->>
->> Obviously I'm late. After scanning the history of this one, indeed it's been a while since v1 has been sent. And thus I posted no NACKs. At the same time if I am to choose between: provide feedback vs provide no-feedback, I'd rather choose the former even if I'm to be ignored/overridden by a subsystem maintainer.
->>
->> The subsystem maintainers also hold the last word, and I have no problem with them merging the patches if they believe its existing shape is good-enough. For example, my team could follow up this implementation next year with a patchset expanding/updating the functionality. I see this as a viable option.
->
-> That’s what we had in mind before I left Intel. The interfaces seen by userspace are PCM devices and kcontrols, it doesn’t matter too much if there is one card, two cards, and if the implementation relies on an ASoC codec, a library or something else. 
-> The bulk of the work is to enable the USB offload from top to bottom, by changing PipeWire/CRAS/HAL to select the new optimized path when available and deal with plug/unplug events.
-> Improvements at the kernel level can be done later if required. It’s hard to argue that the proposal in this series is fundamentally broken, but as usual it’s likely that some requirements are missing or not known yet. The same thing happened with compressed offload, none one thought about gapless playback until Android made it a requirement. Maybe what we’d need is a ‘protocol version’ for USB offload so that changes can be tracked and handled?
-
-
-Thanks for chiming in, Pierre.  So for now, with the next revision I have prepared, I'm currently adding:
-
-1.  Some improvements to xHCI sideband to account for core sequences that need to be notified to the offload driver, ie transfer ring free
-
-2.  Moved the USB SND offload mixer driver into the QC vendor module for now, as instructed by Takashi:
-
-https://lore.kernel.org/linux-usb/87cyiiaxpc.wl-tiwai@suse.de/
-
-3.  Added separate kcontrols for fetching mapped PCM device and card indexes (versus one that returns a card and PCM device pair [array])
-
-4.  Removed some jack controls (enable/disable) from soc-usb
-
-5.  Updated documentation for #3
-
-
-Those are the major changes that will come in the next revision.  I'm just trying to figure out who/where the "protocol version" should be checked if we decided to add it.  (or if we need to check for it anywhere...)  From the userspace perspective, it should be agnostic to how we've implemented offloading from the kernel, and I don't see any major shifts in how userspace implements things even if we make improvements from kernel.
-
-
-Thanks
-
-Wesley Cheng
 
 
