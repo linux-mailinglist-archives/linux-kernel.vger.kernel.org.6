@@ -1,160 +1,163 @@
-Return-Path: <linux-kernel+bounces-434895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7B19E6C69
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:40:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E219E6C6F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2921882F38
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEB841882F55
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906961F9AB5;
-	Fri,  6 Dec 2024 10:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9D61FBEA2;
+	Fri,  6 Dec 2024 10:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q1MyN2vH"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b="DRIDXevY"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344F41AD9F9
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6141F8F13
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733481628; cv=none; b=IKCdjisElTh/hyYhXXQogURAzozJWoDi+4z97Si99dwSpylrgKwlfdnNlLTyINsb2yHreHsfgTABA41hNTTuHKjgSE2YfuMhMIeZ8g5kyWC3oRxhFDsOBFgx/zXaN29wjr+nvsrQqxlpG0lFSK9TaOyACh7Fo8l7OM+X2kMXUg0=
+	t=1733481630; cv=none; b=DgX9BziY2n8Xciv7ynLXQZv57XfM/kGiqPndA5sJtPnz8D28Re9h5soCDRg3j34R3afUEjRiuDgQkbflGzStcBdFJxnQcKgY4HPEiNWq/ug8H8xO/cAwN8rAGW6nIUGKBmFbM7r3I+3D+lv3rpZ5q4yk5L7ryxWr7cr8F1WWK04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733481628; c=relaxed/simple;
-	bh=4b6JbIxkrcACSYVKUqWVhPcw1Gwr93RFWwqSH6ROR0Y=;
+	s=arc-20240116; t=1733481630; c=relaxed/simple;
+	bh=g8IFaUOB4P3I43rGs+nQsOp0ozchV1oKjUnIOr2vrKY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O+7q6YZiQ3VAGcoaTqbyc6hUiTddyL43Y9pTsgguHxAJYmIYp8EuiF730papHCmJpaNzxPkagzLmPJnTk2lgeE7Cwx0G18IRomeEKKAwCz7YsP29Ik/mIOF7s8vg7qrysuRB/MC/BMziVHXxk56g5u1SZYNPzaavhY25ZIHMFdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q1MyN2vH; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385e075255fso1399882f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 02:40:25 -0800 (PST)
+	 To:Cc:Content-Type; b=e0Q0OtcFW1gSfnKn3qlYqoDxPL3nTaXmw8D0Xfk+pMC1MQRF44eOGto73x66hXMJdhoNV5oMX2cz5Y0gHxbN07TuA1Bhwt5St10aZUvukSbcs9giEIRjU7lpnE3IyXiFWjBKHG/DQXZKGOy2Y3oZkNZSUU0PsM5fuDiP9nW34ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com; spf=pass smtp.mailfrom=cornersoftsolutions.com; dkim=pass (2048-bit key) header.d=cornersoftsolutions.com header.i=@cornersoftsolutions.com header.b=DRIDXevY; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cornersoftsolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cornersoftsolutions.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-294ec8e1d8aso1891138fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 02:40:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733481624; x=1734086424; darn=vger.kernel.org;
+        d=cornersoftsolutions.com; s=google; t=1733481628; x=1734086428; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4b6JbIxkrcACSYVKUqWVhPcw1Gwr93RFWwqSH6ROR0Y=;
-        b=q1MyN2vHm+SmwRq2L5F5NB8xXJcuRcoTBooM4D+Gb7U5dyPZUnZEryLH9sveo27fIp
-         YWdc0/bMMUPvExLQXjC8Xr9Ugvn2F1aKma3nw1E2tlzUAQPhDyMzzvZn/PhM4sndS4s6
-         qQB0CGpEVGRJjvM/yTWoSgj6joGkTvw6HvETdhzMprjhS5tYMmHRTewoB/W6GgYQ8l6L
-         LvpETgJTApQKpJzxaLhJKyzHXWuqaczCXNU96U9IzndZqw4sTsy5hgq6jCL6coDSts1M
-         uOfO9raUgkmpo/eA5U2fAl6XoFO2ttGkWfoapCqw9PiDAjLL/n7/fuvHOiEP2jc0t9U0
-         5x2g==
+        bh=5dpoHhnnSqF1AlwYKD5E4gHGT3XutAgIPGhaNKW/0HU=;
+        b=DRIDXevYclBLvFbQOjWGLyq3N9ANzBIrkJu8pxUClP5qmcNpj4BXJo02yQ8kAu7VGX
+         bcfZhBSZLqOel/sQqc6xcC24kq8u69ZJdj3oBDn9KrLMSfdaQo7qQffhOHx9gTWn4ls2
+         2Acdwslm8rxG0czrHP+CZfP3X86fzfEZBHH0nNnm4lFO4TnrBcVRksoZwjFkeTuTZ+oj
+         KMyYPfpvcx/p/zo6zxMREw9kLd02r32xb8JWztm6YYRq3euAcEEy56NKWt9KuZOEDXqm
+         GTVUeprHyYLTPHERcaJdrcichVx8SLY5fzt5oXvDg7z7xmPa8vF1HSw+LI0GCIX4AOUJ
+         +Aog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733481624; x=1734086424;
+        d=1e100.net; s=20230601; t=1733481628; x=1734086428;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4b6JbIxkrcACSYVKUqWVhPcw1Gwr93RFWwqSH6ROR0Y=;
-        b=Lp6M1SPMp5EaQ3mV2Kq7FuBJzwkSD3riFAvUvkIuRQ8pBWM4/rPmdqQRJWsMQ3ZAoJ
-         k3ujJSlcEoh38NlrTt/xXM3tFBQr8iB+B2mgorO5ZN5nJBCNSw1T5RSMHfHvgEQpk+mU
-         0f4p/5IoDA8TkUAF23Zr2BuPeBmiNbHnGHet39w996KifbIcOLHaIPl88oF4IzwW/WCt
-         BrJQtgX2/4BXl5qwjJtEQmZ5J62W03ybgo6bY9et2MnfTD/NGz5aL2dOROqYw9WLLK/m
-         a1dz7TuaDeTrT/OQlJb90ZXchhe+yDlq4R0c1CdkT1TUjysf0DVzBj8nT2n5QYogV/FG
-         rdRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPzyctKD5GD0/+s0OCc8D/AU+OTcP72aXzMj6qo8q5U3z++u/vZTbodIIsp098R5Fr6svCKbvc9PLLiyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpWwPtIVQ5rJLQykeKUZs82wy3XbWe2No52N/xObprGBBKBJ11
-	R8MtoZvLsAXf+s9ADcmZpmDiCGt64EmDRIyyFDXcIgJ0LcQ6uM0gk4lVaLmul7l/ltrPKtShx7w
-	SmEHkM1UoWbHwnYq/a32BX4K7KArdxAkHD7ThPONHeDCYjHCkLpm9
-X-Gm-Gg: ASbGncthAI55eCPQpafCqkvmBfyylIxfnpM4imSnZ5jcmbFAab0bpUrUZqO3IeR9KP+
-	dk9Xy3OLkjyr+/pxbvf2tuk24F3uJHzrp
-X-Google-Smtp-Source: AGHT+IF8yfvzoPg+mwLQsS8oLj5YOX1CsFTqvFqAArzcubYzYvhVdzTXuq4R7PKdVsHpwellV09n354CjxUnnlRs1Lk=
-X-Received: by 2002:a05:6000:2cd:b0:385:e877:c035 with SMTP id
- ffacd0b85a97d-3862b3f5655mr2073492f8f.53.1733481624282; Fri, 06 Dec 2024
- 02:40:24 -0800 (PST)
+        bh=5dpoHhnnSqF1AlwYKD5E4gHGT3XutAgIPGhaNKW/0HU=;
+        b=UyeoyKB+w2UCKeHNjpCrCpgvc8ZyQnh9ZKxErTsGqJqE8+bmQbVsuv26Igb2vDCax/
+         8xm3qNLaiJpeQYY0BJHmAaAx7GhQEvrRn+vvmvBk55Ey2LnasRQDwxKkTngNNsVVYG8A
+         E72LeLk2XEI9Fc+p6YMmO+epJF172ixHAuVXtGIz71bxxQn2eFYrLWo5IeURrhGhQvIa
+         bdOGIkQWYwCiEq0p5oJXddZin8jOAqmfIn0gumYohTHi2Y9ODAxrm4bjLDrNVCAuphoY
+         aRIWEnW8K8gGEaxI2DO8m1I6rSDhMYolzKRi/b+Ckh1a+WuKCO5oyU4q0ftVSmL/obQB
+         ZBdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoFb7fCkCEFis/8L7HC3yuWm096rCBgoUqZXqL57tOQd22p8eYkWNFaPSdfnUPV9vziBSHVZxOPnUNwGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyseFsrDqf5j2Ol9+RM7/2rFX3YBoTQDi81M5RY+a8zO2O/k5K5
+	X1PZqpPgETs1+oEGH655MaW8SqcH0CDaG3LspQhvHjKbfWPV/lJf1+taQyBvXWEMHcJMZUkxc5Y
+	sY5Lo7s6DbI58Py9dGQ0WWluRIL+G0WnFFzkpGQ==
+X-Gm-Gg: ASbGnctQ5P3gAKv8Fcg/VHDw6XDCYbite6VxjyaZOmeH8YWAyiXqWfRrugXGOZIMNCw
+	jPa17YwB1VGvy2hK5k0j7CrCT3Bc0eke4
+X-Google-Smtp-Source: AGHT+IEEgtCpiEfKyepoSM+/D8HoOWbGc7v8g0uhiFB/aNLSdUw6Ym7nLZpksS0y4DeVwr2P94N5ssZLKnJh8nBacmA=
+X-Received: by 2002:a05:6870:c69a:b0:29d:c832:7ef6 with SMTP id
+ 586e51a60fabf-29f735d53damr1234503fac.39.1733481627713; Fri, 06 Dec 2024
+ 02:40:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206090515.752267-1-lee@kernel.org> <20241206090515.752267-5-lee@kernel.org>
- <57c35f7f-76e8-4e21-8288-c66a1b6e7069@app.fastmail.com> <CAH5fLgjauL-1QbnkVVK34COD_Ch_rcdpUEMKBsC9HB-TKWNscA@mail.gmail.com>
- <2073da49-37c6-4add-9450-47842d05cd79@app.fastmail.com>
-In-Reply-To: <2073da49-37c6-4add-9450-47842d05cd79@app.fastmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 6 Dec 2024 11:40:12 +0100
-Message-ID: <CAH5fLghxCn07bHgfqMJz3p=ak6f9KNOWVUtiCmT1nmKvsk0OwQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] samples: rust: Provide example using the new Rust
- MiscDevice abstraction
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org
+References: <CADRqkYAaCYvo3ybGdKO1F_y9jFEcwTBxZzRN-Av-adq_4fVu6g@mail.gmail.com>
+ <d53538ea-f846-4a6a-bc14-22ec7ee57e53@kernel.org> <CADRqkYDnDNL_H2CzxjsPOdM++iYp-9Ak3PVFBw2qcjR_M=GeBA@mail.gmail.com>
+ <28d1bb46-ab18-42da-9ca2-ff498c888d66@kernel.org> <bdfeceb6-962a-4f20-b76c-4fe5e5ff80c3@foss.st.com>
+In-Reply-To: <bdfeceb6-962a-4f20-b76c-4fe5e5ff80c3@foss.st.com>
+From: Ken Sloat <ksloat@cornersoftsolutions.com>
+Date: Fri, 6 Dec 2024 05:40:16 -0500
+Message-ID: <CADRqkYAg5k3xM81-qBBiiLsvVdJCGdCVyAJgEexMw4s-1PeQkQ@mail.gmail.com>
+Subject: Re: [PATCH v1] dt-bindings: dma: st-stm32-dmamux: Add description for
+ dma-cell values
+To: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, dmaengine@vger.kernel.org, 
+	alexandre.torgue@foss.st.com, mcoquelin.stm32@gmail.com, conor+dt@kernel.org, 
+	krzk+dt@kernel.org, robh@kernel.org, vkoul@kernel.org, 
+	Ken Sloat <ksloat@cornersoftsolutions.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 11:31=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote=
-:
+Hi Amelie,
+
+Thanks for reviewing
+
+On Thu, Dec 5, 2024 at 1:06=E2=80=AFPM Amelie Delaunay
+<amelie.delaunay@foss.st.com> wrote:
 >
-> On Fri, Dec 6, 2024, at 11:09, Alice Ryhl wrote:
-> > On Fri, Dec 6, 2024 at 11:05=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> w=
-rote:
+>
+> On 12/5/24 17:09, Krzysztof Kozlowski wrote:
+> > On 05/12/2024 17:07, Ken Sloat wrote:
+> >>>> + 1. The mux input number/line for the request
+> >>>> + 2. Bitfield representing DMA channel configuration that is passed
+> >>>> + to the real DMA controller
+> >>>> + 3. Bitfield representing device dependent DMA features passed to
+> >>>> + the real DMA controller
+> >>>> +
+> >>>> + For bitfield definitions of cells 2 and 3, see the associated
+> >>>> + bindings doc for the actual DMA controller the mux is connected
+> >>>
+> >>> This does not sound right. This is the binding for DMA controller, so
+> >>> you are saying "please look at itself". I suggest to drop this as wel=
+l.
+> >>>
 > >>
-> >> On Fri, Dec 6, 2024, at 10:05, Lee Jones wrote:
-> >> > This sample driver demonstrates the following basic operations:
-> >> >
-> >> > * Register a Misc Device
-> >> > * Create /dev/rust-misc-device
-> >> > * Provide open call-back for the aforementioned character device
-> >> > * Operate on the character device via a simple ioctl()
-> >> > * Provide close call-back for the character device
-> >> >
-> >> > Signed-off-by: Lee Jones <lee@kernel.org>
+> >> While logically it is the DMA controller, this doc is specifically for
+> >> the mux - the DMA controller has its own driver and binding docs in
+> >> Documentation/devicetree/bindings/dma/stm32/st,stm32-dma.yaml
 > >>
-> >> Could you include a compat_ioctl() callback in the example?
-> >> I think it would be good to include it as a reminder for
-> >> authors of actual drivers that every driver implementing
-> >> ioctl should also implement compat_ioctl. In C drivers, this
-> >> can usually be done by pointing .compat_ioctl() to the
-> >> generic compat_ptr_ioctl() function, which assumes that 'arg'
-> >> is a pointer disguised as an 'unsigned long'.
+> >> I can reference st,stm32-dma.yaml directly, but I was unsure if this
+> >> mux IP was used with another DMA controller from ST on a different
+> >> SoC.
+> >>
+> >> What do you suggest here?
 > >
-> > The current Rust logic for building the fops table will use
-> > compat_ptr_ioctl() automatically if you specify ioctl() but don't
-> > specify compat_ioctl(), so this already uses compat_ptr_ioctl(). But
-> > maybe that's not what we want?
+> > Thanks for explanation, I think it is fine.
+> >
+> > Best regards,
+> > Krzysztof
 >
-> Ok, got it. It's usually the right thing to do, but it's easy
-> to get wrong if there is at least one ioctl command that actually
-> needs an integer argument instead of a pointer.
+> This description was lost when STM32 DMAMUX binding txt file was
+> converted to yaml:
+> 0b7c446fa9f7 ("dt-bindings: dma: Convert stm32 DMAMUX bindings to
+> json-schema")
 >
-> Almost all command definitions are for either no argument or
-> a pointer argument, and compat_ptr_ioctl() works fine there, by
-> doing a conversion from a 32-bit pointer to a 64-bit pointer
-> by zero-extending the upper 33 (on s390) or 32 bits (everywhere
-> else). Integer values need to either a 32-bit sign-extension
-> or a 32-bit zero-extension depending on how the argument is
-> interpreted on 32-bit architectures.
+> -- #dma-cells:  Should be set to <3>.
+> -               First parameter is request line number.
+> -               Second is DMA channel configuration
+> -               Third is Fifo threshold
+
+Thanks for the info, this aligns with what I have
+
+> -               For more details about the three cells, please see
+> -               stm32-dma.txt documentation binding file
 >
-> I wonder if we should change the prototype of the ioctl
-> callback to always pass a __user pointer and just not allow
-> the few commands that pass an integer in rust drivers, and
-> worry about it only when it's absolutely needed.
+>
+> stm32-dmamux exclusively muxes stm32-dma channels. It is not used with
+> other ST DMA controllers (STM32 MDMA, STM32 DMA3).
+>
+> So it is fine to refer to st,stm32-dma.yaml.
 
-One option is to let the Rust Miscdevice trait have three ioctl methods:
+Ok, I can add that on v2
 
-fn ioctl(cmd: u32, arg: UserPtr);
-fn ioctl_raw(cmd: u32, arg: usize);
-fn compat_ioctl(cmd: u32, arg: usize);
+>
+> Regards,
+> Amelie
 
-Then when building the fops vtable, we do one of:
-
-1. If `ioctl` is specified, use that implementation with compat_ptr_ioctl()=
-.
-2. If `ioctl_raw` and `compat_ioctl` are specified, use those two
-implementations.
-3. If none of the above are specified, use null pointers.
-4. All other cases trigger an error at build time.
-
-Thoughts?
-
-Alice
+--=20
+Sincerely,
+Ken Sloat
 
