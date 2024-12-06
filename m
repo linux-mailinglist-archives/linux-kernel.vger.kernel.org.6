@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-434455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19849E671A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:59:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 260B09E671D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4624B282EE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA56282F45
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D3F1B6D06;
-	Fri,  6 Dec 2024 05:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BE51D5AD4;
+	Fri,  6 Dec 2024 05:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFwGtEbv"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kg7hUVXC"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F06E1CEE8D;
-	Fri,  6 Dec 2024 05:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3D81B87CF;
+	Fri,  6 Dec 2024 05:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733464759; cv=none; b=B4kdM0ycPLKD1Fw2z7/42GG73/ri7tGyW/jKKsQ0Jru5cEkAGwqjUyQeUWXYWJ3M9POGxRYhvn6bwmX0bZAg09SSv0Ipmim1Md4Y0tSOXYTZy7FttUpmDRbxP8SzoKy0+fGx8u7yqOl9gX1nAdmh6QgOgm7wjNOvysfrlJ4H/zs=
+	t=1733464763; cv=none; b=P8g34zkSZ97L6EN2tEseiof3cWVAUU/Zd+OyFm+wKDyJL3xqtX/vtsmuhVFHWsEXQZ3jUhjmO45kGCzeuw885dQFz0+yIaHdL5J+WwzGAj+s5pPO04LUSNvlHHp2GB8OA1+nyT79D7klJVTAfCn/dgXh2uRVBTY5+iLoA9DXRU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733464759; c=relaxed/simple;
-	bh=2dEbaBxqpR80Ebd9pNkN+bXtNMd42veqfFq3u+pKSyk=;
+	s=arc-20240116; t=1733464763; c=relaxed/simple;
+	bh=ba1AhIdb3txdJBXGCN8JGEaigNGoqMs3l4lTkhuJnRY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qvG5SEYii+otdvzGC1iVooHbp8uHs5nGEWxnYCG+2Zs52HKOy4MVfLoqJ+xxQuIQkCtI6wGB4YTXIKkbpQp4/V6fqjUpB6pXx2mB0TcJprmdAjmA7sqXvX2ti54wPFVsO+1aqQuiD5m+LpjEWXTBDOrhlPVka6I35yKcPHO9RCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFwGtEbv; arc=none smtp.client-ip=209.85.160.169
+	 MIME-Version; b=U2G144kyA9helkmkWVUEDlJ6c88Mj2Xcd6gXibqjogu4rj02lPIHZ/FvxOoruXKD8BWgeD+YRMjlhcdLEFW/03/RGQZQCWWeIqsMeTJN6k9sCkcrV9AYW0TYRBvGwfwJBOSu7/3Z0D03HP4oTUwt5bX11ZcdRiGXjAwVB5iPPDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kg7hUVXC; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-466a0ac9211so18083311cf.0;
-        Thu, 05 Dec 2024 21:59:17 -0800 (PST)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d842280932so24907906d6.2;
+        Thu, 05 Dec 2024 21:59:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733464757; x=1734069557; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733464760; x=1734069560; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N8BiXrdu8AjyVxaZxHVQZLdp0cv6/V99Kwq2ArWLgVQ=;
-        b=NFwGtEbv2cOTr9x+J6Y/klNPEil3bspXe7DJX9HVahYRL4/toDUt3qK+0sh4vxkERm
-         KfCzgIn1ghW594/4oYhSyp+rXl1TshLGh46YR2QpEPlyTylQMvWH4GC0xTA0YWrZUvlI
-         yTSu4WD7V7Y5kFGcv/VgF0ReQ7uaufb4KrReQc9nHQRDVVoSxKi0Y+B5LFuPdj/QbMde
-         pbCxBckYItrp34RH66Rsy8p46Cr/Dl53okPqX0aUrFEHmUyrJhEl6dpBdzJ8wsDRb9Wl
-         nH4/KRjkmeMtxiTTXTtAzu/DeYcuGvOxeUT2GlvsQvgyPWuq4kjRkQQ8MMzISCekgBsE
-         FkAg==
+        bh=3B2zlAfPxzGcJqLLkasGHOZWMqJHtz0wkkNYHD9NX98=;
+        b=kg7hUVXC7nZeKtmRo8wMG0QL1rsikTApT5TA9HKZWFlzDC7hfKWWd2iR8Fzmh3BR63
+         1V8CmYKlyI5VKx8D/GSo/OMK3fxN7dPaA9AYqECAtxI6CoWP4p/dlXtMnD2C/8pPSw3Q
+         N4HVUm+U2I6BfHsquiuDlJqn/p6slcjO+taZ7WBwLKTm7xJ4HZSp00PHvoLvLqJB07KO
+         qGNFQDEPLEwpRH3cG+wGr1ybIdXykABLbD652S3tWuPmI6do3Iq5mhdAaUxqxCNd6C+E
+         qk13ioK7G0or43/ndrmjA/E9DEMupnIjGS63lalRQrUh1pbn29ZSptoWTDlcrFQPJb8g
+         E2Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733464757; x=1734069557;
+        d=1e100.net; s=20230601; t=1733464760; x=1734069560;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N8BiXrdu8AjyVxaZxHVQZLdp0cv6/V99Kwq2ArWLgVQ=;
-        b=FSJ6rqg8VkGFyVV4ed9+Vr5uZVmZ1eOxb1ppvig4GA8k6ILBVSPrqbtqyiKIU+DFIM
-         K5Z9gEb0fx+vHMBg53BYWEsm3MxALU5xK9iIb5g0CvwdwaoD83p5F2Cc5b7MXVIlphPr
-         dl9ASywPZnpM/5bDss9cquBSQtZIU4FchW7fDhBbr7ILrMurLVq2y6rhQNj9syega8+l
-         JC7fDch2XP7n10CqwASGwKYYMKN4mBx25nsdZexajrzYD3XwdgscTVVDv2r4zbgtANiw
-         sP5Onyi3vEWWUBp/1WmiHVKvJOz5kgkX7zKBBatqAh5NXy9PtvJ22KfsIEYCF9eCvsyl
-         ZnvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUds2Gm3oEYpFtp0KeRoYcv4nSY1kMdbEpj7SfnPKTQaN2cRE6yNPkLff8EkTfgfBd/v8QG0Isxu/i2@vger.kernel.org, AJvYcCXiZimlFQgQCy0k2ugYGFT3lLhFe/28CJimpOthkXGYPnVgxGAaCpTVtIkE7zLnHCnEl8oYnF7m0gyAh/Jh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkCGM4DCiIWgm2e8oHBrdQDJV/7PoQWlWX34FCQey6k53LE7yF
-	ZUh+5nND3P1tuXySi2HrfMUug437xVOqWj2nry/iD1JF9Lf4L5ob
-X-Gm-Gg: ASbGncshgJCg9Dl76cclKJ0pkA4qZ3DA4E8IMGCv06veS6zja44gx2qiqthF0OJGqTy
-	JieL8/258Ig67J7pGEbXCg6d78yGbCrjfmuphI5AyC5CuVrxnHngI+7uf6r5cAWdLRY1oUJFSpv
-	91bmQCP1809boa3sCkCGbwoDjjmYshXcHOtoQltmvXCYFBM6XSfMQw5umcFNN8NOqyLm6CbCM6J
-	asXbVDYqVUW92M5HUUf82t/dQ==
-X-Google-Smtp-Source: AGHT+IGr4f0bbdkY7GxypZLey3m/davrnr3G1VH5MnjbXb79c+bf+NeCMvcxLFALb91XgqHliaybZQ==
-X-Received: by 2002:a05:6214:f26:b0:6d8:9d1d:3a7 with SMTP id 6a1803df08f44-6d8e7168da6mr20671156d6.17.1733464757010;
-        Thu, 05 Dec 2024 21:59:17 -0800 (PST)
+        bh=3B2zlAfPxzGcJqLLkasGHOZWMqJHtz0wkkNYHD9NX98=;
+        b=Gpb7y63pD2g2xRhKiHJ9u30shpqEUK7kg/homDGeg+2K5AOLWTk9cNMyv+QuqC7rNh
+         lqJYcrQGQ01NOS+wxWXAAnbvOXcGzhS5L5Pa93hb59KmdvEZAEJHO3K5pysukHx+BxAd
+         oKhgHtRT56Nb+/9ws58eiUz2Rt6PVMiarblPr2K+TjQFnGuqPsc9yr/asWn9uWakCV62
+         turAKwKEZdam4leCqyviJ9Mbl3Y5G0aXOOnsCX+ul6E/M9IHEv4S2ORyFJnGzetloDft
+         UjnhMZFZ1jdslhazT3Ag65sMl1HGiCzqdUg79tiX/A4vckspas0hYTXpL0B7q9AbvCkt
+         xiWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnihfSqThu2twYFZUEu7SfPOPtJNTdDDTHEt5E2+VpHKMrwFAUhyyy0vXBh89M2J8SzeSLzU5OeYu/@vger.kernel.org, AJvYcCWwalzj3VzmoWavm4U7ogUe8CRUUhQwLiXW5x9SZOhgd3luZJTyqEVmstTUBYe/SLkBHuUvPkqG+BZ5bLOH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIHJxd9zwW9ynpisbRzSdtrNGHtTu1B4hno453R/SXArjqnjt3
+	lzM9WE48oNT433YqisKag7abidgYo19sII5uW5iKzXTzR5Q5Ig09
+X-Gm-Gg: ASbGncvV+5Aqr+60pBXiqN9iVCWBjTG5h1i8dkLTvX8yWQvwctzYYUXUim9bzUUxlIC
+	JHqcRegUc4qXSsAXWV2F9tAraD7Kp8FYQHwPRkzEWk8y7z0GNGwVU1EI0rtEbgS6n72oVGd8eg1
+	iDLtuHeMc5IBms+H05mvL+1pxsvnVER/UTLgVAGNgKqWEJ7JfyKZy8gCWwdtD1znAHLzhijJLA3
+	O7QMltB7Z3HoTdLmoFgMAOMKw==
+X-Google-Smtp-Source: AGHT+IHSpUqq5Os4ifAgGNhdw5ThUTTLrj+Ai+/aRacSkXwVnOFqsvWmHLjVYLoRqjraOD4r+REhNw==
+X-Received: by 2002:a05:6214:1bcf:b0:6d8:9dad:e14b with SMTP id 6a1803df08f44-6d8e70ca7a8mr25029446d6.13.1733464760713;
+        Thu, 05 Dec 2024 21:59:20 -0800 (PST)
 Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8dac016bfsm15381436d6.116.2024.12.05.21.59.15
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8dac016cbsm15430616d6.117.2024.12.05.21.59.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 21:59:16 -0800 (PST)
+        Thu, 05 Dec 2024 21:59:20 -0800 (PST)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Chen Wang <unicorn_wang@outlook.com>,
 	Jonathan Corbet <corbet@lwn.net>,
@@ -94,11 +94,10 @@ Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v3 1/3] dt-bindings: riscv: add bfloat16 ISA extension description
-Date: Fri,  6 Dec 2024 13:58:27 +0800
-Message-ID: <20241206055829.1059293-2-inochiama@gmail.com>
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v3 2/3] riscv: add ISA extension parsing for bfloat16 ISA extension
+Date: Fri,  6 Dec 2024 13:58:28 +0800
+Message-ID: <20241206055829.1059293-3-inochiama@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241206055829.1059293-1-inochiama@gmail.com>
 References: <20241206055829.1059293-1-inochiama@gmail.com>
@@ -110,86 +109,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add description for the BFloat16 precision Floating-Point ISA extension,
-(Zfbfmin, Zvfbfmin, Zvfbfwma). which was ratified in commit 4dc23d62
-("Added Chapter title to BF16") of the riscv-isa-manual.
+Add parsing for Zfbmin, Zvfbfmin, Zvfbfwma ISA extension which
+were ratified in 4dc23d62 ("Added Chapter title to BF16") of
+the riscv-isa-manual.
 
 Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../devicetree/bindings/riscv/extensions.yaml | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ arch/riscv/include/asm/hwcap.h | 3 +++
+ arch/riscv/kernel/cpufeature.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index 9c7dd7e75e0c..0a1f1a76d129 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -329,6 +329,12 @@ properties:
-             instructions, as ratified in commit 056b6ff ("Zfa is ratified") of
-             riscv-isa-manual.
+diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+index 869da082252a..14cc29f2a723 100644
+--- a/arch/riscv/include/asm/hwcap.h
++++ b/arch/riscv/include/asm/hwcap.h
+@@ -100,6 +100,9 @@
+ #define RISCV_ISA_EXT_ZICCRSE		91
+ #define RISCV_ISA_EXT_SVADE		92
+ #define RISCV_ISA_EXT_SVADU		93
++#define RISCV_ISA_EXT_ZFBFMIN		94
++#define RISCV_ISA_EXT_ZVFBFMIN		95
++#define RISCV_ISA_EXT_ZVFBFWMA		96
  
-+        - const: zfbfmin
-+          description:
-+            The standard Zfbfmin extension which provides minimal support for
-+            16-bit half-precision brain floating-point instructions, as ratified
-+            in commit 4dc23d62 ("Added Chapter title to BF16") of riscv-isa-manual.
-+
-         - const: zfh
-           description:
-             The standard Zfh extension for 16-bit half-precision binary
-@@ -525,6 +531,18 @@ properties:
-             in commit 6f702a2 ("Vector extensions are now ratified") of
-             riscv-v-spec.
+ #define RISCV_ISA_EXT_XLINUXENVCFG	127
  
-+        - const: zvfbfmin
-+          description:
-+            The standard Zvfbfmin extension for minimal support for vectored
-+            16-bit half-precision brain floating-point instructions, as ratified
-+            in commit 4dc23d62 ("Added Chapter title to BF16") of riscv-isa-manual.
-+
-+        - const: zvfbfwma
-+          description:
-+            The standard Zvfbfwma extension for vectored half-precision brain
-+            floating-point widening multiply-accumulate instructions, as ratified
-+            in commit 4dc23d62 ("Added Chapter title to BF16") of riscv-isa-manual.
-+
-         - const: zvfh
-           description:
-             The standard Zvfh extension for vectored half-precision
-@@ -663,6 +681,33 @@ properties:
-         then:
-           contains:
-             const: zca
-+      # Zfbfmin depends on F
-+      - if:
-+          contains:
-+            const: zfbfmin
-+        then:
-+          contains:
-+            const: f
-+      # Zvfbfmin depends on V or Zve32f
-+      - if:
-+          contains:
-+            const: zvfbfmin
-+        then:
-+          oneOf:
-+            - contains:
-+                const: v
-+            - contains:
-+                const: zve32f
-+      # Zvfbfwma depends on Zfbfmin and Zvfbfmin
-+      - if:
-+          contains:
-+            const: zvfbfwma
-+        then:
-+          allOf:
-+            - contains:
-+                const: zfbfmin
-+            - contains:
-+                const: zvfbfmin
- 
- allOf:
-   # Zcf extension does not exist on rv64
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index c0916ed318c2..5cfcab139568 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -341,6 +341,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
+ 	__RISCV_ISA_EXT_DATA(zawrs, RISCV_ISA_EXT_ZAWRS),
+ 	__RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
++	__RISCV_ISA_EXT_DATA(zfbfmin, RISCV_ISA_EXT_ZFBFMIN),
+ 	__RISCV_ISA_EXT_DATA(zfh, RISCV_ISA_EXT_ZFH),
+ 	__RISCV_ISA_EXT_DATA(zfhmin, RISCV_ISA_EXT_ZFHMIN),
+ 	__RISCV_ISA_EXT_DATA(zca, RISCV_ISA_EXT_ZCA),
+@@ -373,6 +374,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_SUPERSET(zve64d, RISCV_ISA_EXT_ZVE64D, riscv_zve64d_exts),
+ 	__RISCV_ISA_EXT_SUPERSET(zve64f, RISCV_ISA_EXT_ZVE64F, riscv_zve64f_exts),
+ 	__RISCV_ISA_EXT_SUPERSET(zve64x, RISCV_ISA_EXT_ZVE64X, riscv_zve64x_exts),
++	__RISCV_ISA_EXT_DATA(zvfbfmin, RISCV_ISA_EXT_ZVFBFMIN),
++	__RISCV_ISA_EXT_DATA(zvfbfwma, RISCV_ISA_EXT_ZVFBFWMA),
+ 	__RISCV_ISA_EXT_DATA(zvfh, RISCV_ISA_EXT_ZVFH),
+ 	__RISCV_ISA_EXT_DATA(zvfhmin, RISCV_ISA_EXT_ZVFHMIN),
+ 	__RISCV_ISA_EXT_DATA(zvkb, RISCV_ISA_EXT_ZVKB),
 -- 
 2.47.1
 
