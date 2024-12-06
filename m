@@ -1,45 +1,39 @@
-Return-Path: <linux-kernel+bounces-434340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F13B9E6524
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:48:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D42C99E6539
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:56:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493A21885558
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:48:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC78188555E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3EC18C34B;
-	Fri,  6 Dec 2024 03:48:50 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331EE6FBF;
-	Fri,  6 Dec 2024 03:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13554192D9C;
+	Fri,  6 Dec 2024 03:56:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B866FBF;
+	Fri,  6 Dec 2024 03:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733456929; cv=none; b=Wl3LNV0W5oLctotd0qGF8Rgi5kXb+7f/s6iOTT6BsvLLlXwSyuaU+yf1iCaVVhgeMpytk4jZHPdy6L7guCE6G3oM+ouRW8FFQ2UqJHHlNlLtgMyBh/LYd+pyYuay/lDX5oqWcGKrYs0Zi2gC9HQSpJOUS+SwtGqzbRifGWXiZ9g=
+	t=1733457403; cv=none; b=I2bfYO/GQNP8dO8XkyZSMUi22ijEslNxrj8VTMl7o92HFK+ETRE3MdED9+HC/lpTJY9qwhQYGysxT97P3eGe6SY0jArpuDZ6CTonwjlNVDgoQxmyAJuLSMwBxVcZrazRdUZ9i+yOxe7xkz/BKHbU8u5Pcq/DLX15DCF/L5CgmUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733456929; c=relaxed/simple;
-	bh=ynRzNbP/8JinuPL9OYupd8jhTZfVrzQbdDdX3HyqwJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h2BBXaNNg4m1NkaUkMJe/mj2rlQbGN3YShof5HVAQi6bbCduvjISpeh+JbQYrtq90bL+0tAgNuReu7iaUZ60ayL6BDZgX4AFBYuRokFWkAt+icnVesmuVSZ6veDovMvq8IxaR1ZW3FHc2KkPnixN25vaUfzF3nTHmjHaNvUk9go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y4HHH29v2z11PQ2;
-	Fri,  6 Dec 2024 11:46:19 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3859F140118;
-	Fri,  6 Dec 2024 11:48:38 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 6 Dec
- 2024 11:48:37 +0800
-Message-ID: <2ba08cbe-ce27-4b83-acad-3845421c9bf6@huawei.com>
-Date: Fri, 6 Dec 2024 11:48:36 +0800
+	s=arc-20240116; t=1733457403; c=relaxed/simple;
+	bh=2OrVg2wTjxGzF3gX1FKhWEV4gZ2+cqniMAPHcV+eQlI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ME7htC8kwi4SIfV0zSeUP7mrU32LyuTDxbtOKeMm+ZKlqT3HdsiLt167Hwbl1Vrm9TYWpHSid6b1fLa2Bghsoor02SvhGOOx79iM2Z3lSjGCh4KQTqglSbdT7bZqwXR6+irWBDvvP6bBEUZCYuHL/25415tRLyBKjewLdREtjps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DF41169E;
+	Thu,  5 Dec 2024 19:57:08 -0800 (PST)
+Received: from [10.163.50.12] (unknown [10.163.50.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 201353F58B;
+	Thu,  5 Dec 2024 19:56:34 -0800 (PST)
+Message-ID: <e48df345-0946-4b34-a463-e89aa89680f9@arm.com>
+Date: Fri, 6 Dec 2024 09:26:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,120 +41,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] padata: fix UAF in padata_reorder
-To: Daniel Jordan <daniel.m.jordan@oracle.com>, Chen Ridong
-	<chenridong@huaweicloud.com>
-CC: <steffen.klassert@secunet.com>, <herbert@gondor.apana.org.au>,
-	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wangweiyang2@huawei.com>
-References: <20241123080509.2573987-1-chenridong@huaweicloud.com>
- <20241123080509.2573987-3-chenridong@huaweicloud.com>
- <nihv732hsimy4lfnzspjur4ndal7n3nngrukvr5fx7emgp2jzl@mjz6q5zsswds>
+Subject: Re: [PATCH v2 4/4] arm64: add a new document for the fine-tuning tips
+To: Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org
+Cc: patches@amperecomputing.com, paulmck@kernel.org,
+ akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
+ xiongwei.song@windriver.com, ardb@kernel.org, steven.price@arm.com,
+ suzuki.poulose@arm.com, mark.rutland@arm.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ cl@os.amperecomputing.com
+References: <20241126085647.4993-1-shijie@os.amperecomputing.com>
+ <20241126085647.4993-5-shijie@os.amperecomputing.com>
 Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <nihv732hsimy4lfnzspjur4ndal7n3nngrukvr5fx7emgp2jzl@mjz6q5zsswds>
-Content-Type: text/plain; charset="UTF-8"
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20241126085647.4993-5-shijie@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
-
-
-On 2024/12/6 7:01, Daniel Jordan wrote:
-> Hello Ridong,
+On 11/26/24 14:26, Huang Shijie wrote:
+> Put some fine-tuning tips in this file:
+> 	1.) rodata=noalias
+> 	2.) slab_strict_numa
+> 	3.) CONFIG_SCHED_CLUSTER
 > 
-> On Sat, Nov 23, 2024 at 08:05:09AM +0000, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> A bug was found when run ltp test:
-> ...snip...
->> This can be explained as bellow:
->>
->> pcrypt_aead_encrypt
->> ...
->> padata_do_parallel
->> refcount_inc(&pd->refcnt); // add refcnt
->> ...
->> padata_do_serial
->> padata_reorder // pd
->> while (1) {
->> padata_find_next(pd, true); // using pd
->> queue_work_on
->> ...
->> padata_serial_worker				crypto_del_alg
->> padata_put_pd_cnt // sub refcnt
->> 						padata_free_shell
->> 						padata_put_pd(ps->pd);
->> 						// pd is freed
->> // loop again, but pd is freed
->> // call padata_find_next, UAF
->> }
+> We can add more tips in future.
 > 
-> Thanks for the fix and clear explanation.
+> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+> ---
+>  Documentation/arch/arm64/fine-tuning-tips.rst | 23 +++++++++++++++++++
+>  Documentation/arch/arm64/index.rst            |  1 +
+>  2 files changed, 24 insertions(+)
+>  create mode 100644 Documentation/arch/arm64/fine-tuning-tips.rst
 > 
->> diff --git a/kernel/padata.c b/kernel/padata.c
->> index 5d8e18cdcb25..627014825266 100644
->> --- a/kernel/padata.c
->> +++ b/kernel/padata.c
->> @@ -319,6 +319,7 @@ static void padata_reorder(struct parallel_data *pd)
->>  	if (!spin_trylock_bh(&pd->lock))
->>  		return;
->>  
->> +	padata_get_pd(pd);
->>  	while (1) {
->>  		padata = padata_find_next(pd, true);
->>  
->> @@ -355,6 +356,7 @@ static void padata_reorder(struct parallel_data *pd)
->>  	reorder = per_cpu_ptr(pd->reorder_list, pd->cpu);
->>  	if (!list_empty(&reorder->list) && padata_find_next(pd, false))
->>  		queue_work(pinst->serial_wq, &pd->reorder_work);
->> +	padata_put_pd(pd);
-> 
-> Putting the ref unconditionally here doesn't cover the case where reorder_work
-> is queued and accesses the freed pd.
-> 
-> The review of patches 3-5 from this series has a potential solution for
-> this that also keeps some of these refcount operations out of the fast
-> path:
-> 
->     https://lore.kernel.org/all/20221019083708.27138-1-nstange@suse.de/
-> 
+> diff --git a/Documentation/arch/arm64/fine-tuning-tips.rst b/Documentation/arch/arm64/fine-tuning-tips.rst
+> new file mode 100644
+> index 000000000000..70ef1cef92fb
+> --- /dev/null
+> +++ b/Documentation/arch/arm64/fine-tuning-tips.rst
+> @@ -0,0 +1,23 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +================
+> +fine-tuning tips
+> +================
+> +
+> +This file contains some fine-tuning tips for arm64 machines.
+> +These tips do not gurantee that you can get better performance,
+> +but you can try them with your workload.
+> +
+> +rodata=noalias
+> +----------------
+> +It can provide us more block mappings and contiguous hits
+> +to map the linear region which minimizes the TLB footprint.
+> +
+> +slab_strict_numa
+> +----------------
+> +In NUMA, it will provide the local memory allocation by SLUB.
+> +
+> +CONFIG_SCHED_CLUSTER
+> +----------------
+> +Some arm64 machines have cpu core cluster, enable it may
+> +helps you get better performance.
+> diff --git a/Documentation/arch/arm64/index.rst b/Documentation/arch/arm64/index.rst
+> index 6a012c98bdcd..36d1ef09bd71 100644
+> --- a/Documentation/arch/arm64/index.rst
+> +++ b/Documentation/arch/arm64/index.rst
+> @@ -16,6 +16,7 @@ ARM64 Architecture
+>      cpu-feature-registers
+>      cpu-hotplug
+>      elf_hwcaps
+> +    fine-tuning-tips
+>      gcs
+>      hugetlbpage
+>      kdump
+Although the idea for such a file makes sense, to help system admins
+tune the kernel command line for required behaviour, I am concerned
+about the overall structure and scope for such a document. Should it
+contain tips regarding all the subsystems on the platform, till what
+extent these details should be described in there and then there are
+so many aspects for a required behaviour etc ?
 
-Thank you for your review.
-
-IIUC, patches 3-5 from this series aim to fix two issue.
-1. Avoid UAF for pd(the patch 3).
-2. Avoid UAF for ps(the patch 4-5).
-What my patch 2 intends to fix is the issue 1.
-
-Let's focus on issue 1.
-As shown bellow, if reorder_work is queued, the refcnt must greater than
-0, since its serial work have not be finished yet. Do your agree with that?
-
-pcrypt_aead_encrypt/pcrypt_aead_decrypt
-padata_do_parallel 			// refcount_inc(&pd->refcnt);
-padata_parallel_worker	
-padata->parallel(padata);
-padata_do_serial(padata);		
-// pd->reorder_list 			// enque reorder_list
-padata_reorder
- - case1:squeue->work
-	padata_serial_worker		// sub refcnt cnt
- - case2:pd->reorder_work		// reorder->list is not empty
-	invoke_padata_reorder 		// this means refcnt > 0
-	...
-	padata_serial_worker
-
-I think the patch 3(from Nicolai Stange) can also avoid UAF for pd, but
-it's complicated. IIUC, the issue 1 can only occur in the scenario what
-I mentioned is my commit message. How I fix issue 1 is by adding and
-putting the refcnt in the padata_reorder function, which is simple and
-clear.
-
-If understand something uncorrectly, please let me know.
-
-As the issue 2, I have not encountered it, but it exists in theory.
-
-Thanks,
-Ridong
+Besides maintaining such a document might also be very difficult as
+well given how implementations will change over time thus requiring
+different tuning etc. Hence kernel source might not be a place for
+such a document.
 
