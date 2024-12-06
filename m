@@ -1,147 +1,124 @@
-Return-Path: <linux-kernel+bounces-434344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050569E6548
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:08:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA7D9E6549
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:09:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8ECE283C45
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:08:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A94A1884987
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEA1193081;
-	Fri,  6 Dec 2024 04:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1AE19413C;
+	Fri,  6 Dec 2024 04:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nC5KKrHb"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZrVBQud/"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3108E17B418
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E5018CBFE
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733458082; cv=none; b=UHbikrCW0eVNzcmA9jTn4HJRh7JB7vV8qoF9JyEdx9fMvwRyTeGg2/Z4fJowTvEypgNfe67HAWRLnKWpk42ejtDkfUdXkRn8ieYljb82kfYOuiRF3C7Uwd7SjmlVbEA9gainsqqrrquKKEHWn5Jg35fqLiHI0ZBvc6YGORVBPcI=
+	t=1733458132; cv=none; b=SyFGqMSjdEETnjCs01Hg9qvaNu2H0OUzLIiWmKA/ep3u7YFf0KmQDFFZ8+EL5CCRaZngdNTq0LRdDEJ5aP6RaDW/IeQdnGZ+nXQPAzcDut1OtsFvWMYZwT/BWfVPSCcXElEhMiG/KAga6QAi5a198HtjyF4dfTgai59IBLXQcwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733458082; c=relaxed/simple;
-	bh=O5tbgkJtTww2COB0IW/n9F+3ypwcoIXeihq+fIsxaSE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=jYNlXEs4HQgUT1uw2ww73dyUQJPWk5MKmRh6lan5pKUFRgexmqm2THbhiRDXQh+4rZBuT1rB+dfekbX9ej1bvc6/7FARWyFiO2XwDg948ALswBIrao6Fn09pk293U30lNBi/p0mkGs6/E6M8IU7BV0K1Lpkzg5HbFnNli2eqeDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nC5KKrHb; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ee51d9ae30so1168015a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:07:59 -0800 (PST)
+	s=arc-20240116; t=1733458132; c=relaxed/simple;
+	bh=mfEM/DG4PNsmSscMrTtijAKM7ewta8wLDkEBOoOqr1U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKAO8VuWB1fl5JpbL8bOVu0AXnQqUXPJ6HMKVNlj/mJ4NmNrgGAqNL5Nopr1FL96XY1xXAhSegFRx2ZUaOToORTccaajqJbyXf+Wn3UgwNQCxMB8hSCO9RQ7oB3PcLmQWEE4DLRKpKeASb3gs1fObj+/m0sQpoPFhWvKq279s58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZrVBQud/; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ef1cec0326so219047a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:08:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733458079; x=1734062879; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xX6QPj4nLe+SRLq6kYr05LzTbu8ntOqXUXW6tqY//W4=;
-        b=nC5KKrHbRYYC03DHC4oH+1X/TtXwrlGdoAD8mp4E5s82Io83TNovLaVNuo/43d8MTc
-         Y1A1IDsZ9Q7zsWAwuyXs61QUJ8jGJVeqSYsu7ce8JMRvk1ZlJVBnJo+sCX8ZEYAKVOBI
-         NjHCkiY5A2e+MwITrE3WhQCV0tExSgrdDUOfOR+Qoq2Gz0aj7Fs1FtQbcGYhme5/A/VM
-         jHxIKapvhqWrlRAF9SNCHGfp9pr+xoJv4BK/LXjWSfVP7lwjwJGWGDgYAf7W7OkGCrDN
-         DI1pwJ2eMmf+YB6wfS5K/KWAJQEVP70ZCh6LS3McqudO5fhDpw8whyyaHmyqlK4Er/k0
-         92Kw==
+        d=broadcom.com; s=google; t=1733458131; x=1734062931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pycc29BcH8MRwie8Do3jeg7dOfWDOOE59oanfpjCi0o=;
+        b=ZrVBQud/OGxzB/B/f18babgbVCORCrWMXfrTAA5dku3BxdfA3gludd3umcMX2hYrXM
+         lObEWPSn0Ejcs1XdC+Z7ou9zrityUFjbTGQC2VSrnFYDaQT/0Pmn3wANh5qoRbsSnxK8
+         aDsdIf0SXer1f3UFi0jfj913y5GtdbeDJQbxA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733458079; x=1734062879;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xX6QPj4nLe+SRLq6kYr05LzTbu8ntOqXUXW6tqY//W4=;
-        b=Ik9Rb9UASiE2C1hJxSq0szNDv+PKE6DXZ7TaDuItret9n5n/5CCJo4JabW1Nuuljcj
-         6h3jHM6raq+axvkbW50ZGXZhh1dgnj5Ky6NQCzbRI+h8kPvuc4B1oH0oa7iDYAoI5Vzx
-         UBUOJAU/ue7rDj/+mU5I8ts7ImMjYMHpKh80BTXEIwhapoO1hsVCD3MkUcUA2Q98TZ03
-         DhLKiw9mrNUcOJaCkSGBZjLSzlcko2OyE/pQgbXfLeGB5GrZ9mvUS+9KI8QRMykI0ipL
-         s17EOm/Ry6uJzGUSiPp6xsEXlExhzFvQzQtgk7BgDp4QW7W5QVD8WWrNIYt5b3bMGv73
-         CqQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiD1h23G2cDaijLmj+1H1b4OtOFxQaP+8qQy/ZSVFpozZvAmz9Kc6yyhJpNu0LZxnWFMS+Y1zWlbhJjhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9vHmWp+2iEl3m49LE/3ksyQiwC8S5n/zWsGiaR6TsrlAYqDPc
-	bfR0Yt45B1tcetwSFErQsqzCxeSQ+F0KFPnv5poz2lbTZBuS2CLz
-X-Gm-Gg: ASbGncuA4ovyqVv/bhQAm78DVmr/AkguRWZv17ieP9RU9s0fTmcvatBk22WW65qVVr9
-	ul80X4akdjRmv9XLORJUiUY67tnrwmcEM6ShqXLtYghTqXJ0Ebt7vaKahjNmZbfYGaggx2P/4JG
-	Q6kiah42FfrY6ZL1NPcL+mw9l2sB1eHIu3FFNpWwG0va+pQDuN0+UDNmb93c2iDNoII6MUSY5f9
-	N3gg3LDscgU38CdmYZI5IKtQ2shnUxnVKD8VYGZ7SYth+bhEXlPDl6Ja30=
-X-Google-Smtp-Source: AGHT+IFAH82tiTAdSTfKoKht5sMU1MFdjd2j947H1oHZ3PGjFMA1ymMMudDcSejNKuX+kPb8exa+nA==
-X-Received: by 2002:a05:6a21:33a1:b0:1e0:9cc2:84b1 with SMTP id adf61e73a8af0-1e18711c3a7mr2737467637.30.1733458079369;
-        Thu, 05 Dec 2024 20:07:59 -0800 (PST)
-Received: from localhost.localdomain ([43.153.70.29])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29e8db9sm2103044b3a.64.2024.12.05.20.07.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Dec 2024 20:07:59 -0800 (PST)
-From: MengEn Sun <mengensun88@gmail.com>
-X-Google-Original-From: MengEn Sun <mengensun@tencent.com>
-To: mengensun88@gmail.com
-Cc: akpm@linux-foundation.org,
-	avagin@google.com,
-	joel.granados@kernel.org,
+        d=1e100.net; s=20230601; t=1733458131; x=1734062931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pycc29BcH8MRwie8Do3jeg7dOfWDOOE59oanfpjCi0o=;
+        b=YWcZhHCEBp14MjghrUOvnuEIpygQVQcXSbB2gqjgfR/ch1d4DLDI1oE3q/lgIT3orL
+         nT38keAdERsOgJvkilkCJi+N9Fq5OTEMjeOp5K1umock86g+nzrXfFqCzrsC6InNOB3K
+         2eUygqI0OBrgs1o2hLvObGXeUcVSc9Y8+h2mvurYPpi/IxL3Ihuabe8o/phET1EJ9Qe7
+         ulVdn7wSNTuWZZas45LpcPSHTMy6hv0upkiS27b0qX03h/qrZRiIkKNFFqWuqDOlo4Mt
+         MvS8mjZRIHrHxelrOl8ol2GLfgTSBCL7TaVvrk/ivMl+dtlGpMj5iuwnQBMk2HvCfPWG
+         JzVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzPyhYja4GmTXOvpDh0wMyH5h8+DjjXGn0P6HKNEaAMV/P1kt2Bl2Ap4HcbxU8Lqbn71XLZUc3/BAzGbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS53o9f4ylOuddP8T27ZPsMWvqFdbCczeEiryNLTq1xBDaxEAe
+	6Mo1R0qRf/QBo4dG18mf9SQOb3/wGF8CQYx9qceIwLUU8CZ+goxQiS8JdzzHfA==
+X-Gm-Gg: ASbGncverpg3UNgK0dTNmKK5Em9o5iPr/jKvWXq2VIH5NjmKvTpHIhRySnCnBboSvnf
+	RJE+JEIKRkMleEF25E7GmaGNAiC2YtyLLxiiDZVDUkNnKFOZJPo62RLiSZLpDfiykhrPNhKPpqj
+	5sTTfErdubnYww/UbA3Tx9+JxHT3Ovi5QJ97OxslkqFAaYVDvFKvCRW/w/Amf5ApfzlsAtj0Knl
+	VMoEbUbmNkCAKPlNckpcQ6rUx1z8+pbuHlv4Vwgqx+zfpAq1MwLDmnwe2u33U909W8u6RWPWIbr
+	8DmOmER+A4pIeDJ1cQ==
+X-Google-Smtp-Source: AGHT+IHxgK0uBuqS9VxoHyUeS6mBM9E7ub6R77truPmNtH3VetfzIrO8WGEyYuJM9Zme/SwKoAuxfA==
+X-Received: by 2002:a17:902:c402:b0:215:a3fd:61f9 with SMTP id d9443c01a7336-21614dce2fdmr7340275ad.15.1733458130805;
+        Thu, 05 Dec 2024 20:08:50 -0800 (PST)
+Received: from kk-ph5.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f26ff2sm19920525ad.227.2024.12.05.20.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 20:08:50 -0800 (PST)
+From: Keerthana K <keerthana.kalyanasundaram@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux@weissschuh.net,
-	mengensun@tencent.com,
-	yuehongwu@tencent.com
-Subject: Re: [PATCH 1/2] ucounts: Move kfree() out of critical zone protected by ucounts_lock 
-Date: Fri,  6 Dec 2024 12:07:57 +0800
-Message-Id: <1733458077-11339-1-git-send-email-mengensun@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1733453842-5773-1-git-send-email-mengensun@tencent.com>
-References: <1733453842-5773-1-git-send-email-mengensun@tencent.com>
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	Sasha Levin <sashal@kernel.org>,
+	Keerthana K <keerthana.kalyanasundaram@broadcom.com>
+Subject: [PATCH v5.10-v6.6] btrfs: don't BUG_ON on ENOMEM from btrfs_lookuip_extent_info() in walk_down_proc()
+Date: Fri,  6 Dec 2024 04:08:46 +0000
+Message-Id: <20241206040846.4013310-1-keerthana.kalyanasundaram@broadcom.com>
+X-Mailer: git-send-email 2.39.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-I'm very sorry to disturb everyone. I wrote the subject incorrectly, so
-this one is void; I will send a new one.
+From: Josef Bacik <josef@toxicpanda.com>
 
-> Date: Fri,  6 Dec 2024 10:57:22 +0800	[thread overview]
-> Message-ID: <1733453842-5773-1-git-send-email-mengensun@tencent.com> (raw)
-> 
-> From: MengEn Sun <mengensun@tencent.com>
-> 
-> Although kfree is a non-sleep function, it is possible to enter a
-> long chain of calls probabilistically, so it looks better to move
-> kfree from alloc_ucounts() out of the critical zone of ucounts_lock.
-> 
-> Reviewed-by: YueHong Wu <yuehongwu@tencent.com>
-> Signed-off-by: MengEn Sun <mengensun@tencent.com>
-> ---
->  kernel/ucount.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/ucount.c b/kernel/ucount.c
-> index f950b5e5..86c5f1c 100644
-> --- a/kernel/ucount.c
-> +++ b/kernel/ucount.c
-> @@ -164,8 +164,8 @@ struct ucounts *get_ucounts(struct ucounts *ucounts)
->  struct ucounts *alloc_ucounts(struct user_namespace *ns, kuid_t uid)
->  {
->  	struct hlist_head *hashent = ucounts_hashentry(ns, uid);
-> -	struct ucounts *ucounts, *new;
->  	bool wrapped;
-> +	struct ucounts *ucounts, *new = NULL;
->  
->  	spin_lock_irq(&ucounts_lock);
->  	ucounts = find_ucounts(ns, uid, hashent);
-> @@ -182,17 +182,17 @@ struct ucounts *alloc_ucounts(struct
-> user_namespace *ns, kuid_t uid)
->  
->  		spin_lock_irq(&ucounts_lock);
->  		ucounts = find_ucounts(ns, uid, hashent);
-> -		if (ucounts) {
-> -			kfree(new);
-> -		} else {
-> +		if (!ucounts) {
->  			hlist_add_head(&new->node, hashent);
->  			get_user_ns(new->ns);
->  			spin_unlock_irq(&ucounts_lock);
->  			return new;
->  		}
->  	}
-> +
->  	wrapped = !get_ucounts_or_wrap(ucounts);
->  	spin_unlock_irq(&ucounts_lock);
-> +	kfree(new);
->  	if (wrapped) {
->  		put_ucounts(ucounts);
->  		return NULL;
-> --
+[ Upstream commit a580fb2c3479d993556e1c31b237c9e5be4944a3 ]
+
+We handle errors here properly, ENOMEM isn't fatal, return the error.
+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Keerthana K <keerthana.kalyanasundaram@broadcom.com>
+---
+ fs/btrfs/extent-tree.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index 0d97c8ee6..f53c4d52b 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -5213,7 +5213,6 @@ static noinline int walk_down_proc(struct btrfs_trans_handle *trans,
+ 					       eb->start, level, 1,
+ 					       &wc->refs[level],
+ 					       &wc->flags[level]);
+-		BUG_ON(ret == -ENOMEM);
+ 		if (ret)
+ 			return ret;
+ 		if (unlikely(wc->refs[level] == 0)) {
+-- 
+2.19.0
+
 
