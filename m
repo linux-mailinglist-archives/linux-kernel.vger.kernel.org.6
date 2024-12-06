@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-434958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0199E6D72
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:34:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75EDC9E6D73
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:34:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B32F328101B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:34:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7871884714
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C701FF612;
-	Fri,  6 Dec 2024 11:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822C2200124;
+	Fri,  6 Dec 2024 11:34:35 +0000 (UTC)
 Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038FF17E4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F1B1FC10D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733484874; cv=none; b=NYdZzfWEGjE2YOXmzeC2WWkeNyghjBjrtOSUyeQV/eyo8Y2dE8OH85b/Z6sPnXP5B6T4VimcvLh1EmGMLmYPmTh5c2pMsga/RCY5MyKxqT6YEUCLOy2R1fDVe/6DpmOOmj7NjrD8npzxUmhb3GkBA2CtmVjyRVLsvsWEhAEacpo=
+	t=1733484874; cv=none; b=ZMW2mRk771KzpRYfIJo9cI+ePZOzvkvQfH3svAa6txes50clfg3aX2BWf8iT7oPAGliRtxTyfzVlBLrCuAtFVX+kNjc4UMQk5QfW/6hc8kk3NO/6fZ+nlxyaScUhPutcWyXqQFR+uDXvvasjUiXzGlMev6pdSMt0uwf/O2Sx2h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733484874; c=relaxed/simple;
-	bh=b5DtsCuTsjGEzom/MhfXDqShQZWcfcQKHHns/CXIM1Q=;
+	bh=Tn34KyaGLpcxh2ks7RJY5yhaVAyPtm8N19I39u7IGdA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FlMxLTqG2aUS+2iqfP0Khi77czk+Wg67L87KjrHfrk6eN7R2YWc2ripVXhZtiyF3i1yl+W1QMzvd7rY8YivqZL+Ynyy1rYHcWF/nGZAh16WW8WX76opntAp2CU3Hx+6ZpsIFNZbhCw/0PuyhpU+Gg96OFzL2EoyMOYQfF46e6f8=
+	 MIME-Version:Content-Type; b=E2uWom9F6Y55o2aR+lS6DRwxLgYOIf2RroG/Z3PAkzy5mA/OlyydpcFjCywjFz8JbnSY6d5hcrabn/cTgS9y6LKurjXMSegIC5EWAxQwOEOJj5s95qQ+BYFGUfhxzH2ciyXcuSWrgl9ZFmuXyVkPUJi3T4+3Prxsk6a0ORzqTpk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y4Tcn4QCfzhZPg
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:32:09 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y4Tc209rqz11M1L
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:31:30 +0800 (CST)
 Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id DA448180102
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:34:28 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 7252C180064
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:34:29 +0800 (CST)
 Received: from huawei.com (10.175.112.208) by kwepemf500003.china.huawei.com
  (7.202.181.241) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Dec
@@ -43,9 +43,9 @@ To: <xuwei5@hisilicon.com>, <lihuisong@huawei.com>,
 	<Jonathan.Cameron@huawei.com>
 CC: <linux-kernel@vger.kernel.org>, <liuyongqiang13@huawei.com>,
 	<zhangzekun11@huawei.com>
-Subject: [PATCH 1/2] soc: hisilicon: kunpeng_hbmdev: Add support for controling the power of hbm memory
-Date: Fri, 6 Dec 2024 19:28:11 +0800
-Message-ID: <20241206112812.32618-2-zhangzekun11@huawei.com>
+Subject: [PATCH 2/2] soc: hisilicon: kunpeng_hbmcache: Add support for online and offline the hbm cache
+Date: Fri, 6 Dec 2024 19:28:12 +0800
+Message-ID: <20241206112812.32618-3-zhangzekun11@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20241206112812.32618-1-zhangzekun11@huawei.com>
 References: <20241206112812.32618-1-zhangzekun11@huawei.com>
@@ -59,329 +59,212 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemf500003.china.huawei.com (7.202.181.241)
 
-Add a driver for High Bandwidth Memory (HBM) devices, which will provide
-user space interfaces to power on/off the HBM devices. In Kunpeng servers,
-we need to control the power of HBM devices which can be power consuming
-and will only be used in some specialized scenarios, such as HPC. HBM
-memory devices in a socket are in the same power domain, and should be
-power off/on together.
-
-HBM devices will be configured with ACPI device id "PNP0C80", and be used
-as a cpuless numa node. HBM devices in the same power domain will be put
-into the same container. ACPI function "_ON" and "_OFF" are reponsible
-for power on/off the HBM device, and notify the OS to fully online/offline
-the HBM memory.
+Add a driver for High Bandwidth Memory (HBM) cache, which provides user
+space interfaces to power on/off the HBM cache. Use HBM as a cache can
+take advantage of the high bandwidth of HBM in normal memory access, and
+OS does not need to aware of the existence of HBM cache. For workloads
+which does not require a high memory access bandwidth, power off the HBM
+cache device can help save energy.
 
 Signed-off-by: Zhang Zekun <zhangzekun11@huawei.com>
 ---
- MAINTAINERS                            |   6 +
- drivers/soc/hisilicon/Kconfig          |  12 ++
- drivers/soc/hisilicon/Makefile         |   1 +
- drivers/soc/hisilicon/kunpeng_hbm.h    |  31 ++++
- drivers/soc/hisilicon/kunpeng_hbmdev.c | 210 +++++++++++++++++++++++++
- 5 files changed, 260 insertions(+)
- create mode 100644 drivers/soc/hisilicon/kunpeng_hbm.h
- create mode 100644 drivers/soc/hisilicon/kunpeng_hbmdev.c
+ MAINTAINERS                              |   3 +-
+ drivers/soc/hisilicon/Kconfig            |  11 ++
+ drivers/soc/hisilicon/Makefile           |   1 +
+ drivers/soc/hisilicon/kunpeng_hbmcache.c | 136 +++++++++++++++++++++++
+ 4 files changed, 150 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/hisilicon/kunpeng_hbmcache.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 0456a33ef657..e8b4cf7d7162 100644
+index e8b4cf7d7162..4819d04badd7 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -10283,6 +10283,12 @@ F:	Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
+@@ -10283,10 +10283,11 @@ F:	Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
  F:	drivers/soc/hisilicon/kunpeng_hccs.c
  F:	drivers/soc/hisilicon/kunpeng_hccs.h
  
-+HISILICON KUNPENG SOC KUNPENG HBMDEV DRIVER
-+M:	Zhang Zekun <zhangzekun11@huawei.com>
-+S:	Maintained
-+F:	drivers/soc/hisilicon/kunpeng_hbm.h
-+F:	drivers/soc/hisilicon/kunpeng_hbmdev.c
-+
- HISILICON LPC BUS DRIVER
- M:	Jay Fang <f.fangjian@huawei.com>
+-HISILICON KUNPENG SOC KUNPENG HBMDEV DRIVER
++HISILICON KUNPENG SOC KUNPENG HBM DRIVER
+ M:	Zhang Zekun <zhangzekun11@huawei.com>
  S:	Maintained
+ F:	drivers/soc/hisilicon/kunpeng_hbm.h
++F:	drivers/soc/hisilicon/kunpeng_hbmcache.c
+ F:	drivers/soc/hisilicon/kunpeng_hbmdev.c
+ 
+ HISILICON LPC BUS DRIVER
 diff --git a/drivers/soc/hisilicon/Kconfig b/drivers/soc/hisilicon/Kconfig
-index 6d7c244d2e78..b3ca7d6f5d01 100644
+index b3ca7d6f5d01..f12f3e42d908 100644
 --- a/drivers/soc/hisilicon/Kconfig
 +++ b/drivers/soc/hisilicon/Kconfig
-@@ -21,4 +21,16 @@ config KUNPENG_HCCS
+@@ -21,6 +21,17 @@ config KUNPENG_HCCS
  	  health status and port information of HCCS, or reducing system
  	  power consumption on Kunpeng SoC.
  
-+config KUNPENG_HBMDEV
-+	bool "add extra support for hbm memory device"
-+	depends on ACPI_HOTPLUG_MEMORY
-+	select ACPI_CONTAINER
++config KUNPENG_HBMCACHE
++	tristate "HBM cache memory device"
++	depends on ACPI
 +	help
-+	  The driver provides methods for userpace to control the power
-+	  of HBM memory devices on Kunpeng soc, which can help to save
-+	  energy. The functionality of the driver would require dedicated
-+	  BIOS configuration.
++	  This driver provids methods to control the power of High Bandwidth
++	  Memory (HBM) cache device in Kunpeng SoC. Use HBM as a cache can
++	  take advantage of the high bandwidth of HBM in normal memory access.
 +
-+	  If not sure, say N.
++	  To compile the driver as a module, choose M here:
++	  the module will be called kunpeng_hbmcache.
 +
- endmenu
+ config KUNPENG_HBMDEV
+ 	bool "add extra support for hbm memory device"
+ 	depends on ACPI_HOTPLUG_MEMORY
 diff --git a/drivers/soc/hisilicon/Makefile b/drivers/soc/hisilicon/Makefile
-index 226e747e70d6..08048d73586e 100644
+index 08048d73586e..b7c7c1682979 100644
 --- a/drivers/soc/hisilicon/Makefile
 +++ b/drivers/soc/hisilicon/Makefile
-@@ -1,2 +1,3 @@
+@@ -1,3 +1,4 @@
  # SPDX-License-Identifier: GPL-2.0-only
  obj-$(CONFIG_KUNPENG_HCCS)	+= kunpeng_hccs.o
-+obj-$(CONFIG_KUNPENG_HBMDEV)	+= kunpeng_hbmdev.o
-diff --git a/drivers/soc/hisilicon/kunpeng_hbm.h b/drivers/soc/hisilicon/kunpeng_hbm.h
+ obj-$(CONFIG_KUNPENG_HBMDEV)	+= kunpeng_hbmdev.o
++obj-$(CONFIG_KUNPENG_HBMCACHE)	+= kunpeng_hbmcache.o
+diff --git a/drivers/soc/hisilicon/kunpeng_hbmcache.c b/drivers/soc/hisilicon/kunpeng_hbmcache.c
 new file mode 100644
-index 000000000000..ef306c888480
+index 000000000000..32eb7e781fd7
 --- /dev/null
-+++ b/drivers/soc/hisilicon/kunpeng_hbm.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/soc/hisilicon/kunpeng_hbmcache.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2024. Huawei Technologies Co., Ltd
 + */
 +
-+#ifndef _HISI_INTERNAL_H
-+#define _HISI_INTERNAL_H
-+
-+enum {
-+	STATE_ONLINE,
-+	STATE_OFFLINE,
-+};
-+
-+static const char *const online_type_to_str[] = {
-+	[STATE_ONLINE] = "online",
-+	[STATE_OFFLINE] = "offline",
-+};
-+
-+static inline int online_type_from_str(const char *str)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(online_type_to_str); i++) {
-+		if (sysfs_streq(str, online_type_to_str[i]))
-+			return i;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+#endif
-diff --git a/drivers/soc/hisilicon/kunpeng_hbmdev.c b/drivers/soc/hisilicon/kunpeng_hbmdev.c
-new file mode 100644
-index 000000000000..1945676ff502
---- /dev/null
-+++ b/drivers/soc/hisilicon/kunpeng_hbmdev.c
-@@ -0,0 +1,210 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Huawei Technologies Co., Ltd
-+ */
-+
-+#include <linux/kobject.h>
-+#include <linux/module.h>
-+#include <linux/nodemask.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
 +#include <linux/acpi.h>
-+#include <linux/container.h>
++#include <linux/device.h>
 +
 +#include "kunpeng_hbm.h"
 +
-+#define ACPI_MEMORY_DEVICE_HID			"PNP0C80"
-+#define ACPI_GENERIC_CONTAINER_DEVICE_HID	"PNP0A06"
++#define MODULE_NAME            "hbm_cache"
 +
-+struct cdev_node {
-+	struct device *dev;
-+	struct list_head clist;
-+};
++static struct kobject *cache_kobj;
++static struct mutex cache_lock;
 +
-+struct cdev_node cdev_list;
-+
-+static int get_pxm(struct acpi_device *acpi_device, void *arg)
-+{
-+	acpi_handle handle = acpi_device->handle;
-+	nodemask_t *mask = arg;
-+	unsigned long long sta;
-+	acpi_status status;
-+	int nid;
-+
-+	status = acpi_evaluate_integer(handle, "_STA", NULL, &sta);
-+	if (ACPI_SUCCESS(status) && (sta & ACPI_STA_DEVICE_ENABLED)) {
-+		nid = acpi_get_node(handle);
-+		if (nid != NUMA_NO_NODE)
-+			node_set(nid, *mask);
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t pxms_show(struct device *dev,
-+			 struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	nodemask_t mask;
-+
-+	nodes_clear(mask);
-+	acpi_dev_for_each_child(adev, get_pxm, &mask);
-+
-+	return sysfs_emit(buf, "%*pbl\n", nodemask_pr_args(&mask));
-+}
-+static DEVICE_ATTR_RO(pxms);
-+
-+static int memdev_power_on(struct acpi_device *adev)
-+{
-+	acpi_handle handle = adev->handle;
-+	acpi_status status;
-+
-+	/* Power on and online the devices */
-+	status = acpi_evaluate_object(handle, "_ON", NULL, NULL);
-+	if (ACPI_FAILURE(status)) {
-+		acpi_handle_warn(handle, "Power on failed (0x%x)\n", status);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int hbmdev_check(struct acpi_device *adev, void *arg)
-+{
-+	const char *hid = acpi_device_hid(adev);
-+
-+	if (!strcmp(hid, ACPI_MEMORY_DEVICE_HID)) {
-+		bool *found = arg;
-+		*found = true;
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int memdev_power_off(struct acpi_device *adev)
-+{
-+	acpi_handle handle = adev->handle;
-+	acpi_status status;
-+
-+	/* Eject the devices and power off */
-+	status = acpi_evaluate_object(handle, "_OFF", NULL, NULL);
-+	if (ACPI_FAILURE(status))
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
-+static ssize_t state_store(struct device *dev, struct device_attribute *attr,
++static ssize_t state_store(struct device *d, struct device_attribute *attr,
 +			   const char *buf, size_t count)
 +{
-+	struct acpi_device *adev = ACPI_COMPANION(dev);
++	struct acpi_device *adev = ACPI_COMPANION(d);
 +	const int type = online_type_from_str(buf);
-+	int ret = -EINVAL;
++	acpi_handle handle = adev->handle;
++	acpi_status status = AE_OK;
 +
-+	/*
-+	 * Take the lock to avoid race on underlying PCC operation region
-+	 * used in ACPI function "_ON" and "_OFF".
-+	 */
-+	ret = lock_device_hotplug_sysfs();
-+	if (ret)
-+		return ret;
++	if (!mutex_trylock(&cache_lock))
++		return restart_syscall();
 +
 +	switch (type) {
 +	case STATE_ONLINE:
-+		ret = memdev_power_on(adev);
++		status = acpi_evaluate_object(handle, "_ON", NULL, NULL);
 +		break;
 +	case STATE_OFFLINE:
-+		ret  = memdev_power_off(adev);
++		status = acpi_evaluate_object(handle, "_OFF", NULL, NULL);
 +		break;
 +	default:
 +		break;
 +	}
-+	unlock_device_hotplug();
++	mutex_unlock(&cache_lock);
 +
-+	if (ret)
-+		return ret;
++	if (ACPI_FAILURE(status))
++		return -ENODEV;
 +
 +	return count;
 +}
 +static DEVICE_ATTR_WO(state);
 +
-+static bool has_hbmdev(struct device *dev)
++static ssize_t socket_id_show(struct device *d, struct device_attribute *attr,
++				char *buf)
 +{
-+	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	const char *hid = acpi_device_hid(adev);
-+	bool found = false;
++	int socket_id;
 +
-+	if (strcmp(hid, ACPI_GENERIC_CONTAINER_DEVICE_HID))
-+		return found;
++	if (device_property_read_u32(d, "socket_id", &socket_id))
++		return -EINVAL;
 +
-+	acpi_dev_for_each_child(adev, hbmdev_check, &found);
-+	return found;
++	return sysfs_emit(buf, "%d\n", socket_id);
 +}
++static DEVICE_ATTR_RO(socket_id);
 +
-+static int container_add(struct device *dev, void *data)
-+{
-+	struct cdev_node *cnode;
-+
-+	if (!has_hbmdev(dev))
-+		return 0;
-+
-+	cnode = kmalloc(sizeof(struct cdev_node), GFP_KERNEL);
-+	if (!cnode)
-+		return -ENOMEM;
-+
-+	cnode->dev = dev;
-+	list_add_tail(&cnode->clist, &cdev_list.clist);
-+
-+	return 0;
-+}
-+
-+static void container_remove(void)
-+{
-+	struct cdev_node *cnode, *tmp;
-+
-+	list_for_each_entry_safe(cnode, tmp, &cdev_list.clist, clist) {
-+		device_remove_file(cnode->dev, &dev_attr_state);
-+		device_remove_file(cnode->dev, &dev_attr_pxms);
-+		list_del(&cnode->clist);
-+		kfree(cnode);
-+	}
-+}
-+
-+static int container_init(void)
-+{
-+	struct cdev_node *cnode;
-+
-+	INIT_LIST_HEAD(&cdev_list.clist);
-+
-+	if (bus_for_each_dev(&container_subsys, NULL, NULL, container_add)) {
-+		container_remove();
-+		return -ENOMEM;
-+	}
-+
-+	if (list_empty(&cdev_list.clist))
-+		return -ENODEV;
-+
-+	list_for_each_entry(cnode, &cdev_list.clist, clist) {
-+		device_create_file(cnode->dev, &dev_attr_state);
-+		device_create_file(cnode->dev, &dev_attr_pxms);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct acpi_platform_list kunpeng_hbm_plat_info[] = {
-+	{"HISI  ", "HIP11   ", 0, ACPI_SIG_IORT, all_versions, NULL, 0},
-+	{ }
++static struct attribute *attrs[] = {
++	&dev_attr_state.attr,
++	&dev_attr_socket_id.attr,
++	NULL,
 +};
 +
-+static int __init hbmdev_init(void)
++static struct attribute_group attr_group = {
++	.attrs = attrs,
++};
++
++static int cache_probe(struct platform_device *pdev)
 +{
-+	if (acpi_match_platform_list(kunpeng_hbm_plat_info) < 0)
-+		return 0;
++	int ret;
 +
-+	return container_init();
++	ret = sysfs_create_group(&pdev->dev.kobj, &attr_group);
++	if (ret)
++		return ret;
++
++	ret = sysfs_create_link(cache_kobj,
++				&pdev->dev.kobj,
++				kobject_name(&pdev->dev.kobj));
++	if (ret) {
++		sysfs_remove_group(&pdev->dev.kobj, &attr_group);
++		return ret;
++	}
++
++	return 0;
 +}
-+module_init(hbmdev_init);
 +
++static void cache_remove(struct platform_device *pdev)
++{
++	sysfs_remove_group(&pdev->dev.kobj, &attr_group);
++	sysfs_remove_link(&pdev->dev.kobj,
++			  kobject_name(&pdev->dev.kobj));
++}
++
++static const struct acpi_device_id cache_acpi_ids[] = {
++	{"HISI04A1", 0},
++	{"", 0},
++};
++
++static struct platform_driver hbm_cache_driver = {
++	.probe = cache_probe,
++	.remove = cache_remove,
++	.driver = {
++		.name = MODULE_NAME,
++		.acpi_match_table = ACPI_PTR(cache_acpi_ids),
++	},
++};
++
++static int __init hbm_cache_module_init(void)
++{
++	int ret;
++
++	cache_kobj = kobject_create_and_add("hbm_cache", kernel_kobj);
++	if (!cache_kobj)
++		return -ENOMEM;
++
++	mutex_init(&cache_lock);
++
++	ret = platform_driver_register(&hbm_cache_driver);
++	if (ret) {
++		kobject_put(cache_kobj);
++		return ret;
++	}
++	return 0;
++}
++module_init(hbm_cache_module_init);
++
++static void __exit hbm_cache_module_exit(void)
++{
++	kobject_put(cache_kobj);
++	platform_driver_unregister(&hbm_cache_driver);
++}
++module_exit(hbm_cache_module_exit);
 +MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Zhang Zekun <zhangzekun11@huawei.com>");
 -- 
 2.17.1
 
