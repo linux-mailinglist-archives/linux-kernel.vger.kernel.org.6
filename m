@@ -1,384 +1,163 @@
-Return-Path: <linux-kernel+bounces-434757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897639E6ADC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:44:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8A29E6AD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC01216C439
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0301882FC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907181FC7CB;
-	Fri,  6 Dec 2024 09:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8C71F4267;
+	Fri,  6 Dec 2024 09:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cyLuGRGB";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Iy5+BpOG"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BicLqy1G"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372901FA164;
-	Fri,  6 Dec 2024 09:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733478205; cv=fail; b=uV5LMPosJ3+6t5xtVz6t4LJOSPmDAW6QbYZvogeHp9nHVBrvdfSMq2BdXZ2qoXCKJhape8RP3la5SP9NHt6J2q/Zn2JobNn5YLOVvj4sgTRbvs8unp84rbpgf4wGIr3tHRPv94lNeiVco8SKC3iERz7nyKsD8gm7twM8JwDOG4I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733478205; c=relaxed/simple;
-	bh=jTtrwM2os9y6CpCNiE74KnY+9yLW5jRlgu3419+XlF4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qKFRry/tSzzc8YiikWPu0p/Y83bg+qBKFFloQTvtkOq1T8BkdX+m+GEuFrS9pbF8PnrMOIS/i+kfgBlCkYWUTAB11dVp1dIrHt7YNkm5x+A4O8NxdW85VVHC9pTnmqF/sfrgJOOAou2KnsipiGLtOIWeqTtauEk1+4i11lHJalI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cyLuGRGB; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Iy5+BpOG; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B66s4Er020813;
-	Fri, 6 Dec 2024 09:43:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=U7Xa/Wpu+cN34nhFVk73SbLA9QZHdrtv6L/+PPU/QCQ=; b=
-	cyLuGRGBaAW+qye8KH0KaDle/gEnjDtYxMegdXPRZknGFxYYnNcM/ls6+9Q0nCIy
-	DweOl+79Q+GtD8t+H4mW5xJ0gQtjO9rlqo5SUpcZn21N340si/LXSmjbW0o9lKfn
-	8hNTsQ7cVgSr14Cr3gFYvmzD8WTQxvNcpZ0sH5lHG+QjRa/yKQk+HtXuJyD694rK
-	yEB/ccKfW2Efdso/ABygThdxx2HQuElbheYQRf0At1+SlT44rd62oBl7PT+G7mME
-	nfINLHSw5AaykGJ/OFhz4ZQhW4qUs3ZT8dKsXPgTeQHNxB48VSZNvedFICwabDBM
-	58k7DO61LLO12b9AWlHy7A==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437trbw6d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 06 Dec 2024 09:43:13 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67j9aX036791;
-	Fri, 6 Dec 2024 09:43:12 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2044.outbound.protection.outlook.com [104.47.70.44])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s5cmp09-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 06 Dec 2024 09:43:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lWua55hXL77iZxH0mUfxlkhcV4KDOlAzInPswuMeGkMyDhhHvWnKHn2HDafaS1IQdmVWRfMpbn8o0vABUIrSpfCcJgOh3JqxiE4Yam4SKjRJ7oGn6n/6W0RR3DQ70AZdQrkPz+J8ZB9eb5R1Fi5issyKzDE4w+jUmNU6Sn19Gxc0TagPqk7GCBo56KQ51rhDMpLl/HsHFLwOGlJUc+G669wNBN8PXxnHZhjasDiRDiWBvQs/rK5zi4cA4gmiWahtMC+OMMfFcNtc+YoFwYogyJ4J1Iyp5hQt6nmqVVvTnzfY2FnIkisDHcsKGBsIEzkSzCGARYv0BMUJfc5zBKncAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U7Xa/Wpu+cN34nhFVk73SbLA9QZHdrtv6L/+PPU/QCQ=;
- b=HLXOtVjHNrzwvq/2DcK3StqLflN+8XdqpR3dULU7OOp/pRMWpd1CzzyJ3CkAImN2dKH6V5gwLRWTzOawBF+QT3Qnr5+3BBKf4MWLf2/oZD78ysLPMCc/VmNtFBLPnttPoSKrtsmpna8+g2co2UD/A3CGbqHRFJ6Cu3ROZRtLHbIlwubTGVZVWrl/sBn6bA74tGfPfyt4fxUIrZ9F0FnqAh0GlB4IJ3XtMIDFKeM9Kivo3aVszht+qXCr/HvG9LrizfrUxgzqUKsY4C0moxoeDpHYxr/4SBtbZO+x2vb7zj2ZQcGL1pM6dRIBLagGPVnBDPsQRd+cHd/joiTR5adgfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC7F1F9EAE
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733478204; cv=none; b=a/DUuPKvr+CJ7LB1DVnx/+dS1RX428q9XAgOKNtKqdi2NMMRAU+OKo/lNTV5ysMiahnlt9IOf303co/OntL2vTDb3xJVnGaYhYpzxLwvbxB2iBCKwLlvmJkgdUmsDMJrzLiO+mvIjlO2/RHRY0n5lOC8YoFkW1CgU40NGOKr1Ys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733478204; c=relaxed/simple;
+	bh=S2LNy/QG/Pvu7jaLQRzV8x9aVeJiuTJJixaJAknwzOI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dr6XXjJbhh8nhX17jm1nVhgZepe4thviJCRn7hWSJhCMX3qz5pPwuyQIxCaZgeyD5kBq782lwJSNld8ZVLtnk5/vBo6W6WkiJgOAZn9tQfhnzK0JTkhBsNtd3P03BfuUhP3CS/vHqx7dHdhjDp9tB2raDb1H79ILVdrR41h7828=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BicLqy1G; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so17819951fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:43:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U7Xa/Wpu+cN34nhFVk73SbLA9QZHdrtv6L/+PPU/QCQ=;
- b=Iy5+BpOGW+O5WdhHFULvNFxKyCa1Xt7Cy64mVLxoDm3qt/v95WtsGt9GPBG5I0Vs500PH5boEpijfUbGLP8eCGt+JC/HWcCF6IGHu0LmIE9e/k86HbFOrkak07XXBa97/jri2hJGeGbeaKj0LPeuhblqe9DhSnMZgdvpneQuSBw=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SJ0PR10MB4800.namprd10.prod.outlook.com (2603:10b6:a03:2da::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
- 2024 09:43:09 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%4]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
- 09:43:09 +0000
-Message-ID: <956e081a-2f1c-4a8e-a5fa-49eb91778eee@oracle.com>
-Date: Fri, 6 Dec 2024 09:43:06 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] iomap: Lift blocksize restriction on atomic writes
-To: Dave Chinner <david@fromorbit.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com,
-        hch@lst.de, ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        martin.petersen@oracle.com
-References: <20241204154344.3034362-1-john.g.garry@oracle.com>
- <20241204154344.3034362-2-john.g.garry@oracle.com>
- <Z1C9IfLgB_jDCF18@dread.disaster.area>
- <3ab6000e-030d-435a-88c3-9026171ae9f1@oracle.com>
- <Z1IX2dFida3coOxe@dread.disaster.area>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <Z1IX2dFida3coOxe@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P302CA0026.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:2c1::18) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=linaro.org; s=google; t=1733478200; x=1734083000; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wh7X6NiXjO0ZK0icbu5RRSIlyMlU/s3VBkgppSRGnTc=;
+        b=BicLqy1GHsDtul6M54FTDxmspEV8KLfCzEGux/KaZ8lSkyzZ8qT8NGwwk8JQEIiRd2
+         LGKTaLL8d+mBCb6w3o8ylAvr41d5S/9cNPzrwcOdf7BNBYXgwGRfQNTJfh/1OlfxHsH3
+         qmbu5vuRobTkYq61rod7hkDh9zrHspfJPWqpE2QqGiFekonmD4fD9rqceGGfnfRxb2pL
+         Q/CZQkfG7EmsRVfWotClBndg3BnE5H5OOgNL8J0LexKdfthFpUq4/jxM/Sc+YDk54bjZ
+         RsLldkeWtG21eBatalhGjBJ9XtrIdo6Rn+3sZepjq26sP4Qv3u66Xn64fido74OdJf/f
+         4xLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733478200; x=1734083000;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wh7X6NiXjO0ZK0icbu5RRSIlyMlU/s3VBkgppSRGnTc=;
+        b=eN+HFx2ZRkt0o8Babuo3EUp4IkpZBLuWCqiNp2h14TlRycgYe0fRa8Y/sA0xxs2zcR
+         7pasm4aW5tAnW7tUoxaAsCZdD+gHQqyjBg+shogj8lYysyRflQxKdtdrEoDS6oIoaMxz
+         u2BA0j1BR/x6b2FDp9tUFWNi/ChflWhNoq9QStcy9VJ+x9oyeDrOMoxvXRm7hCZPfOzg
+         uKlg5Oaax8kp9TKFvNeUf0tjr5BjprqTlw6LoopWDWUof45QGhBvnFEMtee8giactTsT
+         fRNuXTNJk4cu4DkFWFAopOJBpFbT+h9zlWTIttzyf9fr1QDuutF/Or4iZJ//+JTk8dGT
+         BCpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtdWRrgWUrR9TOtZZNRnleU7k9Zgri/NYoi3NcWbFydWzLW4zDF3PXuNieEg0VUgH+TG8I/VrHFf/JUkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKdtVhdqPNdX6Ko8gSGA4BHc+UJmTGAZWa+qUAaut5hhEPAL8R
+	qfLKiis8e95m7zvo6H1i/BfLWlZAuceei6F/pPF+/9K4iYp/b5QAhPN8ULxC0Wc=
+X-Gm-Gg: ASbGncvRPW83rHYkvI+JZBCcxPPd8RS4L4mx+Mswk389FSBxSVUC5xHKzW8ZjFDPXKK
+	u/ow6hFbA2MtU3ztyJVisUNXG8xgVK66ol3SxUpp4/CAxHHNkHsKMgrZOL3qvR2h/jvh++Iskfr
+	m7+ubKMl+ymCA8FE3lsNy8/c0AeG7+e852/b/lvJiYJt1wuza8mpc3C9m+LUxP7bRcfnwaqLyNG
+	HPJYUEtZsU1FK65tj7OXPcBgBeTP33EVekzOeQMOgNG32+BKx3zOgCijA==
+X-Google-Smtp-Source: AGHT+IFBxT03pxchsuAow8zXPe44X5vXMeN6+pzw5XgO7yRZwFTl4DSSqXqmQN/nIOwdAf9XNhMk0g==
+X-Received: by 2002:a2e:a90f:0:b0:2fa:cc86:f217 with SMTP id 38308e7fff4ca-3002fcc6314mr10909661fa.35.1733478199996;
+        Fri, 06 Dec 2024 01:43:19 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020db3805sm4128441fa.50.2024.12.06.01.43.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 01:43:18 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 06 Dec 2024 11:43:06 +0200
+Subject: [PATCH v2 03/10] drm/bridge: ite-it66121: use eld_mutex to protect
+ access to connector->eld
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ0PR10MB4800:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4adba49-9ac7-441f-7e84-08dd15da6461
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T2pXeVNuMGxuVTd5NXhjeXpPSVRqNmNvMUlMYVRleDBsb3huWjRqbzc2L2Z6?=
- =?utf-8?B?R3RuWnlJYUdzcUkwWThwQ0N5TDc0VllhRDZWdmJnd1MydllveTlPTnZOdTVX?=
- =?utf-8?B?YUdVUUNDOFR2VjNhek5aU0M0eHlscW91MnJHOFE0dGRqaER0MGk0U2FwaVhH?=
- =?utf-8?B?RGUvaHhlQk4vNWxwZ1BKZFJhTVVBSFlYMWNIRC96RE5LbXlCMnJsa2dNZERp?=
- =?utf-8?B?Q2ppNHpGZVplS1NFWERmdkt4WnNmcDdGWkJBZy9DaEhtWkZUb1F2UmhzY1FV?=
- =?utf-8?B?L0hQRnFxbmp2Mkw4QnRqM0xJeC9haTBwUE0ybWtCMTFWK2VNVXhOQkcrQnVU?=
- =?utf-8?B?cDFEYUFqQXE1c25UeTFEN2FGU0hVRXRjTC9zOUlwTHlpdElueWV6OHZTcDBS?=
- =?utf-8?B?ZGhEU3g3Z0grS2wrNTRHcTNuM2dpandZZzQxRUZXZXMySnhhR2RDekVNSnR3?=
- =?utf-8?B?MDdDWE9RV1NKZGlLSXB6dnVsbFp0dkw1K3ExeFNMNmNTUW9nSGdDQ3dsK3VW?=
- =?utf-8?B?TGlCU1hXMklEZm80RWFTS2V1SWp1dVBoOTkrNGZQT2ZFQWdBaVBuRUNVWTc4?=
- =?utf-8?B?dWNHZzJNMS91dWZTQU82S1ZRdXNlRTdvdnlhYzgwTWUyc2QvVTVXVlEyRGpp?=
- =?utf-8?B?QloyZ2h6Wk95MGs4QnJScHJqSFgwYWtnSlUyTERhV3UyL29SZUpHR0dOVk9U?=
- =?utf-8?B?SmZ5VjFEaEFMT01PN2VaWlQzZytHRWNYRDErRDdJdFhDdUNuaTFjY2ZpenBy?=
- =?utf-8?B?eUExUjl0a1NpNUVYbWcyTTROK0NSK3BmTzNHcEtNUlk1dUt4R0VaVW5ieVVX?=
- =?utf-8?B?UTQ1eFkvbWhTSDBpb3F2aDlrNDlndUdacmdJKzUxMithVFhGTWdjUjYwZEdM?=
- =?utf-8?B?S29uSVJzWVF3UmRUVkRQdVMwbWdJV0E1SG4rSURteCs4ZjB2RVVnTjh5bHNZ?=
- =?utf-8?B?cTA5cFh2eE8za2NwRjZYTzVrQ3VKMENXcnZEVm5GY005MWJzS001MDQwNHIx?=
- =?utf-8?B?a2VBR3NXa1NnWWFmSVRxU2xZZWFuZVVWcEdmeStpOG5YZU45RmNNRVNRVk9G?=
- =?utf-8?B?dUhjcDhlWWJ0NVZNZDJQUVRtUzlnU2pRZGNlU0hSVGlOc3k5M0tZd1hkemtv?=
- =?utf-8?B?VHZjenlHbUp4emM3SnRveFlrTkc5TnU3TGJvb2dJTW1kRyt4V0JJeHB6NnhF?=
- =?utf-8?B?cjRCOHJGcy9XNDZ5cmxGYldFeVFsOGJ6a3dTS0FVY2ttcy9wVjFOUERFTjk3?=
- =?utf-8?B?NG41eEdOZHdjYjR2NFEzU1EzZng5bkZPTnlzMlp2UEFWNjltQXV4cmV3ei9s?=
- =?utf-8?B?dUxzcGEvY1hoSEdOTVhPZmJYSHUxQkxVcmovWWE4THFiZDl5K0RXSWhIWmVR?=
- =?utf-8?B?TGZXcjlEZDNXazlHOTcvM1lnZ1A5V3c0ZGJYbVNuZ2gzMWVsd2xma0wrK2E5?=
- =?utf-8?B?ZzN6c3k3b1YzcEVKSFdQeVVhcjdiS1ErNG9iRE1VK240cXRnTnNteklHR3RI?=
- =?utf-8?B?Y0RDbTMzbWxJNXJ3a3NDTkRZWlpvNFBuNXRhRnozZGJXdmVQMmpKSEZBY1RT?=
- =?utf-8?B?aVVKVjQzcDJMVzFMdTRGNlRTcXdiakNuOTBLQVMwM1BUeHJYVkJ0elN6d0tE?=
- =?utf-8?B?TkJvaERXU2xTQlNBT3Y5RUwyQ0EwWU5yWWp6Und4cXMxUGJBTWo3UnZHSUNq?=
- =?utf-8?B?MWVxRlVFdS8rbkYrRnRaY1VDVnlZYVdPdFlMZ2VHWGlWeDZ1MURPV3pzbjFv?=
- =?utf-8?B?OE5BeTkxRVdGcVc0WFJQYWlBbUpySjc2U0NZbjFqMFUxTGd3dGxHdURNdTJJ?=
- =?utf-8?Q?ZyZjyMazKzOa8SPZq87nvpadKrgeSvAP7CZx4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bG9vbjhOQit3MmpIWGFwZ2NGdU54b1BvNjRQNjIwVVl4U25uQlNOWDdpM2Ri?=
- =?utf-8?B?cWh2ZHFKeFNjeThXKzdrdjBaejUzejJOUWx3MWcwaDlCQ0U3Tzh5Y3ZKSzZ3?=
- =?utf-8?B?ZEE1WU5OcU8zdk0zeE04ZHA1OGl5K2twN0Y0OC8wR0ZpSEl6eWkwTmZIUm5M?=
- =?utf-8?B?TEFoOURRTERIK05JT2xIUXdtZUNSWVU3Y245a0YwaUVkTU81bmJ6dFBWTDAr?=
- =?utf-8?B?VDdMTTRsK1JTYjhvRXg2UjlXa0RiQjBuVWhWQVlHZXl2OFVVOHZ1ak5POEJm?=
- =?utf-8?B?WTR0cmhBOXNzREU3dVh3aExFL1hQWE5aeFQyN25pSENZaFBqV2o3MVJSODZk?=
- =?utf-8?B?b3BoWTVHc1BxWTZZSlB3WjRrNW8ybS9DWm5YSmZ2NXFJNGgvNTJnUGwveFpw?=
- =?utf-8?B?RzFaRlBsMEE0NTB6WjBiNXA3c3UvRUtCckdFQXFDKzVBMVJEeHVqdWczL25q?=
- =?utf-8?B?Mk01WXB6bDgvWVpUZHFRLzZHZWk4eU54VGcxeld4YkwyWGVwb0dWM2JNL0xp?=
- =?utf-8?B?OGlKb2dpQnV3U2p3aHBvd2R2ZUR4UkRyMjdjdmRmRHM3bU52eTJqQ2s5akVa?=
- =?utf-8?B?MUk3VDduc0Q1WFl4eW9PNUMwK0hoS2dmS2tTNWNMdGJPWmNZN2RwdDBRd2hm?=
- =?utf-8?B?Mi9tOVExSWxFcFNBSWgyQkZ0dGRHa0JiTkZrcDdCN3NjNHJXSE4zYUtMNHB4?=
- =?utf-8?B?NGlvN21BaVRQTVlDZ2xjb2Q5aVU0dVh5WE5oWVFTN25MVzdBZlBGTFROdDRq?=
- =?utf-8?B?V3BrQ1MyNHZ2dTZNV1F1Wit1WjJpZnFobjBLSHVwZjVYTS9vSnk0VmFkUE9j?=
- =?utf-8?B?MERHMG5NZzVtYUJsYzVsSUJmODBrbzk5ZmZuVHpEa3ltN0pBaG1GN2I0MWpW?=
- =?utf-8?B?YlM3ZTBzVkE0clRLMzE3OFBDK1ltR3FVZ2NWWE56MkpKclVib1FCTmlWb21a?=
- =?utf-8?B?aGVoYkd3VFh6U0Z4bVVWeFFhQ01qZUo3WHpIRkF1M0xROXozanRDRURwQWxp?=
- =?utf-8?B?aVR3NXUzU3NkZy85bm8zYVBqeExMV3dMSlNza0N2K0l2VDRLVURXcnQzNk00?=
- =?utf-8?B?NkN3dzlUQXcyUThaUEMvUEJyelJ2Ri9STUN2U3dVU3RBbDFCck1qSm80Z0NX?=
- =?utf-8?B?ZWM2b29oaTFpM0ovc2JjWDRzQ1VPSEduMWZHcVU3QThIMXNXYk4vY1ovWXlI?=
- =?utf-8?B?RXgyaXZ5a2RRdkhjM0hxdDZsZWdqMGpGSFllSmZmcmpkZG5FWmcwblpPWWZD?=
- =?utf-8?B?UnRnZ0lqY2MvTTdkWFJDNjY3OHFIMXVLMVZseVV1MDBFNkhPL0gvUHdzc3N0?=
- =?utf-8?B?aU5iVkZubTdYTkJadWU5NGVnb0R0T1kyaTJvUTBwTG5tWXhZcnlYZElISnpn?=
- =?utf-8?B?N2IydXdqREt4RDdQd3NXY3pyT2Vadk9mbjQwcWU4RW5COXJwQWM4aU5WaVl1?=
- =?utf-8?B?TWpYNmg5eU1Lb3R5RGJleGxNNmpyb3MwQmdKbUg5amljWERRTHV3ckZpQVZL?=
- =?utf-8?B?MGxZWHRINEpDdnd5WS9qTWEwdmVQTkVkUWFyZGVqRGpqQVJIMm5USzNOTGlH?=
- =?utf-8?B?S1p4dzBWakZUREJ0T3lrY2w4cm1sSWQ3V1dhWG4wdkRINXlCekg0ejAzRW1t?=
- =?utf-8?B?OGdqRFdGbHMvdG5xOHh5M25Hcy9OdWllMC90YWtUWWdWK1JRdzdsQ2hxSStm?=
- =?utf-8?B?R0c1aHVWQU5YeVR3SjlpNzJITHB4Z2VZdkZRb0Z6T3VIelQ3VUJJWEdRQ0lw?=
- =?utf-8?B?dGlWK21GVjNEZkdFTldDYVhWQXJoM3Z0eEh5RzJoTHpHRzV0R0kwQ1NRM0Ev?=
- =?utf-8?B?V0xMQVp4QnBIZUFsVWRBc3VBME0vQUVFZ0ZSM3k0VG9OQ3g5Mm1leUFjdGkx?=
- =?utf-8?B?YlZuQ3BpdVNzSUkrT3REdjRUUUl5eGMzamwyOWNGanpiYzRmZkJjL2VucUk5?=
- =?utf-8?B?MWZCcUp6RGg3dmNpSWZVeXgyRVU4dHhRNFpuSURKZXp4S0YvK010dzBYOXc3?=
- =?utf-8?B?VGpVVnYwcVBJYlBwZ0kwY3U4QzM5ZW9NTnRpMWF1NlZRdjcvdG5jcjBEL2NK?=
- =?utf-8?B?c2g1a2dBUEVZWU9kQTkvdTdEMWZqVU9yRVdHRVZZTWtEWXp3bTJ6VzJTeHBT?=
- =?utf-8?B?UGx4dmdTR3FGc1lLc3VNb3FWeXkzbFdONEp3SzROd0dZUmFKckZyR256cS9T?=
- =?utf-8?B?Y1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1cn/CHANYfiKe01iYMtlGtGYgzLmiWjyHd9m5hpJzFPgd7b/HpLcZzHd7wztDekE3gtlNH+Z4BlXD4WxoXfY/824IzuIbD3ym5InWbc538lRCsQvPDJlfFW2iTcWOTeNTrg5z9zmb7Jo+Vje3KAy1d0P2y1FUhHXPa3seyg6VLtJgz0p1bjdZyXsi2CSUxSw6/YIH4FDb6XNVoCYcfzfznV1xCzDpmfpu0yDjxlluewXKwv+DMMmWHXdc/aNRT50t1xL938uK9jjeHMP0Sgbcm8zooUVuH8TMLWFwO/8n5VPy7a5L6yWXBmMhS6b1EzCUwZAEfCZK5N5SSUiJtK2BTKter50qIEFOsPMcoFjF8QYlotfvFj32jxWqGHsYUszk6DiAfn+ZYaxDR3eertUtuGf915HyjoQbGFqu89e2rRWzHdBmJsoWJpzRBluUOBq9rmwXOB9Fd7xd50Ed1zOBw6+i7OidD4xEFIVLYcJufeNUcq11Q0L3xPtbYxzVYMoKGE/5lhOytUAG12kHSlmoe3/i02yLJKRlU2tFLvFSc5ZYKmqstN2uvq5hXS4De6xLeMwC4D3Ui9nkV2adQDq72RLgQU5vMnze4nUN09OuiI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4adba49-9ac7-441f-7e84-08dd15da6461
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 09:43:09.2750
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +WOf6C3eJHVYiH0lXkJm4n51GQZEWhAEaSgbloAQTZ+AJE5HZ6zkCpq4+Txaye9be9T6y/pxfteyWtodonwzKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4800
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-06_05,2024-12-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412060069
-X-Proofpoint-GUID: eu76VH7qhrS2Z5H3Z9txl053XUpE5tUr
-X-Proofpoint-ORIG-GUID: eu76VH7qhrS2Z5H3Z9txl053XUpE5tUr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241206-drm-connector-eld-mutex-v2-3-c9bce1ee8bea@linaro.org>
+References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
+In-Reply-To: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1093;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=S2LNy/QG/Pvu7jaLQRzV8x9aVeJiuTJJixaJAknwzOI=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ3rQcT0D+fWrdf7eTuO7miErYRRq/uGdQ1bilxVd2j16Z
+ z/vrJ/SyWjMwsDIxSArpsjiU9AyNWZTctiHHVPrYQaxMoFMYeDiFICJpAtzMKxmXrAmIf3sx79J
+ n5x5p8lbc0yOj9hTUFTN17jvemrJ5y/aGWJsN90qs3j2HCpJO3d947HLoiufHO66EK487WcPu11
+ nm12ex98Nfkt75Zb+CJdfGT4lNHqmtrDVbxVb710nCjUmbrr9djMbP9vtiRfb/tVodHA/9zbjTp
+ F0UW+v3VO2sZRl3zl7tlRnDkUX0/ud0U8Cn1rduKSQ9zDX7POhM+sniP9cXR1c0TOtPPZAG7NQc
+ 23p9xmHks64efKmbr0dkTlrP/cz+ZmZz6Y5SZ2ZxRdyk8vljuq/sP1L23tFZb+4PNSt8KvLEfbi
+ rq6MWdlq8X/xgh4O6wU1LBPiahwNfFNvHJtbsfeP697ZAA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+Reading access to connector->eld can happen at the same time the
+drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
+order to protect connector->eld from concurrent access.
 
->>> Where's the documentation that outlines all the restrictions on
->>> userspace behaviour to prevent this sort of problem being triggered?
->>
->> I would provide a man page update.
-> 
-> I think, at this point, we need an better way of documenting all the
-> atomic write stuff in one place. Not just the user interface and
-> what is expected of userspace, but also all the things the
-> filesystems need to do to ensure atomic writes work correctly. I was
-> thinking that a document somewhere in the Documentation/ directory,
-> rather than random pieces of information splattered across random man pages
-> would be a much better way of explaining all this.
-> 
-> Don't get me wrong - man pages explaining the programmatic API are
-> necessary, but there's a whole lot more to understanding and making
-> effective use of atomic writes than what has been added to the man
-> pages so far.
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/gpu/drm/bridge/ite-it66121.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Sure, maybe that would be useful. I think that the final piece of the 
-jigsaw is large atomic write support, and then any kernel documentation 
-can be further considered.
+diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+index 35ae3f0e8f51f768229e055a086b53a419ffcd9f..940083e5d2ddbfc56f14e2bdc6ddd0b9dd50b1f8 100644
+--- a/drivers/gpu/drm/bridge/ite-it66121.c
++++ b/drivers/gpu/drm/bridge/ite-it66121.c
+@@ -1450,8 +1450,10 @@ static int it66121_audio_get_eld(struct device *dev, void *data,
+ 		dev_dbg(dev, "No connector present, passing empty EDID data");
+ 		memset(buf, 0, len);
+ 	} else {
++		mutex_lock(&ctx->connector->eld_mutex);
+ 		memcpy(buf, ctx->connector->eld,
+ 		       min(sizeof(ctx->connector->eld), len));
++		mutex_unlock(&ctx->connector->eld_mutex);
+ 	}
+ 	mutex_unlock(&ctx->lock);
+ 
 
-> 
->>> Common operations such as truncate, hole punch,
->>
->> So how would punch hole be a problem? The atomic write unit max is limited
->> by the alloc unit, and we can only punch out full alloc units.
-> 
-> I was under the impression that this was a feature of the
-> force-align code, not a feature of atomic writes. i.e. force-align
-> is what ensures the BMBT aligns correctly with the underlying
-> extents.
-> 
-> Or did I miss the fact that some of the force-align semantics bleed
-> back into the original atomic write patch set?
-
-Not really.
-
-As I mentioned, if we can only punch out a full allocation unit and 
-atomic write unit max is limited by the allocation unit size, then 
-punching out a hole should not create a new range of mixed extents that 
-we can legally attempt to atomic write.
-
-> 
->>> buffered writes,
->>> reflinks, etc will trip over this, so application developers, users
->>> and admins really need to know what they should be doing to avoid
->>> stepping on this landmine...
->>
->> If this is not a real-life scenario which we expect to see, then I don't see
->> why we would add the complexity to the kernel for this.
-> 
-> I gave you one above - restoring a data set as a result of disaster
-> recovery.
-
-ack
-
-> 
->> My motivation for atomic writes support is to support atomically writing
->> large database internal page size. If the database only writes at a fixed
->> internal page size, then we should not see mixed mappings.
-> 
-> Yup, that's the problem here. Once atomic writes are supported by
-> the kernel and userspace, all sorts of applications are going to
-> start using them for in all sorts of ways you didn't think of.
-> 
->> But you see potential problems elsewhere ..
-> 
-> That's my job as a senior engineer with 20+ years of experience in
-> filesystems and storage related applications. I see far because I
-> stand on the shoulders of giants - I don't try to be a giant myself.
-> 
-> Other people become giants by implementing ground-breaking features
-> (e.g. like atomic writes), but without the people who can see far
-> enough ahead just adding features ends up with an incoherent mess of
-> special interest niche features rather than a neatly integrated set
-> of widely usable generic features.
-
-yes
-
-> 
-> e.g. look at MySQL's use of fallocate(hole punch) for transparent
-> data compression - nobody had forseen that hole punching would be
-> used like this, but it's a massive win for the applications which
-> store bulk compressible data in the database even though it does bad
-> things to the filesystem.
-> 
-> Spend some time looking outside the proprietary database application
-> box and think a little harder about the implications of atomic write
-> functionality.  i.e. what happens when we have ubiquitous support
-> for guaranteeing only the old or the new data will be seen after
-> a crash *without the need for using fsync*.
-> 
-> Think about the implications of that for a minute - for any full
-> file overwrite up to the hardware atomic limits, we won't need fsync
-> to guarantee the integrity of overwritten data anymore. We only need
-> a mechanism to flush the journal and device caches once all the data
-> has been written (e.g. syncfs)...
-> 
-> Want to overwrite a bunch of small files safely?  Atomic write the
-> new data, then syncfs(). There's no need to run fdatasync after each
-> write to ensure individual files are not corrupted if we crash in
-> the middle of the operation. Indeed, atomic writes actually provide
-> better overwrite integrity semantics that fdatasync as it will be
-> all or nothing. fdatasync does not provide that guarantee if we
-> crash during the fdatasync operation.
-> 
-> Further, with COW data filesystems like XFS, btrfs and bcachefs, we
-> can emulate atomic writes for any size larger than what the hardware
-> supports.
-> 
-> At this point we actually provide app developers with what they've
-> been repeatedly asking kernel filesystem engineers to provide them
-> for the past 20 years: a way of overwriting arbitrary file data
-> safely without needing an expensive fdatasync operation on every
-> file that gets modified.
-
-Understood, you see that there are many applications of atomic writes 
-beyond the scope of DBs.
-
-> 
-> Put simply: atomic writes have a huge potential to fundamentally
-> change the way applications interact with Linux filesystems and to
-> make it *much* simpler for applications to safely overwrite user
-> data.  Hence there is an imperitive here to make the foundational
-> support for this technology solid and robust because atomic writes
-> are going to be with us for the next few decades...
-> 
-
-Thanks for going further in describing the possible use cases.
-
-Now let's talk again about the implementation of kernel extent zeroing 
-for atomic writes.
-
-Firstly I will mention the obvious and that is we so far can 
-automatically atomically write a single FS block and there was no 
-FS_XFLAG_ATOMICWRITES flag introduced for enabling this. Furthermore, 
-the range of data does not need to be in mapped state.
-
-Then we need to consider how to decide to do the extent zeroing for the 
-following scenarios for atomic writes:
-a. For forcealign, we can decide to always zero the full alloc unit, 
-same as [0]. So that is good for atomic writes. But that does involve 
-further work to zero extents for buffered IO.
-b. For rtvol without forcealign, we will not start to always zero the 
-full alloc unit as that would be major regression in performance.
-c. For rtvol with forcealign, we can do the same as a.
-
-I can suggest 2x options for solving b:
-1. Introduce FS_XFLAG_LARGE_ATOMICWRITES to control whether we do the 
-same as a.
-2. Introduce a method to pre-zero extents for atomic writes only
-
-Option 2. would work like this:
-- when we find that the atomic write covers a mix of unwritten and 
-mapped extent mappings, we have 2x phases of the atomic write:
-- phase 1. will pre-zero the unwritten extents and update the extent 
-mappings
-- phase 2. will retry the atomic write, and we should find a single mapping
-
-Option 2. could also be leveraged for a. and c., above.
-
-Please let me know your thoughts on this.
-
-[0] 
-https://lore.kernel.org/linux-xfs/20240607143919.2622319-3-john.g.garry@oracle.com/
-
-John
+-- 
+2.39.5
 
 
