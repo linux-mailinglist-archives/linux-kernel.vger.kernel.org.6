@@ -1,242 +1,144 @@
-Return-Path: <linux-kernel+bounces-435080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3599E6F5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:34:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9919E6EE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:07:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C821881A0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:05:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A7420B7E0;
+	Fri,  6 Dec 2024 13:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6R3V9ZK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666C42847A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:34:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089951FBEA2;
-	Fri,  6 Dec 2024 13:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sHukvqds"
-Received: from out.smtpout.orange.fr (out-11.smtpout.orange.fr [193.252.22.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8FA224EA;
-	Fri,  6 Dec 2024 13:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C82206F1F;
+	Fri,  6 Dec 2024 13:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733492074; cv=none; b=dV3LgnT9XaUqqz+tgBMZsuOstPWi4leW0blQwkzetx3RiqH0fNNACCqbWE54ShrpfHJOFBe4w6bR0YqE7ccRHP81prqY0dQNTCzFBXFdxqPxiyIFKlQDW3fHErVLnyOAxdtcPuG+NT7AHuqR/baSSmyrLQl8XH2SNUnEGsxNsKI=
+	t=1733490263; cv=none; b=tldVqpcC5yudQaFXAjZLC+I9FBb24+FTxbkdrXN3acvDBnS+HO63dBERIcSnRDskoHON8o07XX36pJxCz2rSPeIS7vqt44aHMbqOZp03AUiZjJCEgk3j895l72zqliwsC3OvBC/X5eaqx7IPs/KS0b0105aHLzos8patTFXzRAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733492074; c=relaxed/simple;
-	bh=xIpQAgKEraRSL0RoJOcbUawoMAYTVxlvxGt2v08UmTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l4G/c3+jB/ocARZIJk+cY6lbpLeBPNIoC2p8T7FwKfpKPWItOW/q13/LxescvprnydzsTIYOJ7vWQZNMFrMitwpBMIeujWfXtfD2hUS4bsVHIjenolc7EzKaBf/ehIWhCO3C8rLoHx6lXVZdbo1wAZfoSahz5aBwD2T3On2vcwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sHukvqds; arc=none smtp.client-ip=193.252.22.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-ej1-f44.google.com ([209.85.218.44])
-	by smtp.orange.fr with ESMTPSA
-	id JYSKti5we3wKNJYSKtpHXW; Fri, 06 Dec 2024 14:33:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733491996;
-	bh=j52yWXL33J+b9C4aQGdxSf0Rg4c/99LnqEiKjLeaVbc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=sHukvqdsLXBdLCC5GSHxe4+Sj1vU0ZsRurb1o1Mq2+tn3RhZ3R7GpUIXHpHn2wFli
-	 0rTNoYxthc7Ed2W6bwo/OYXm+joSd4ndyDnvQu5ydTx5TM32IOTHdiGmk9angdrbbk
-	 cpIDbusRfnlfUmM+oLIPWglkGg2HOiI4np0co39Ri1maHzPT+ln9U6BkTISjsl4UIH
-	 BZYzKIZuLLsMc/SHnuoi2gQFFCGbPpMj4APEMh7aLDvc3ayzgbHtOcBhNkNJUErU24
-	 GAXssA9EBHEubZmiaY+HAji98LKpDjFSDjCYHpFKCqnSZVdvKnDWD92qgMVrZVNJ4S
-	 mopdAIBu5Qryg==
-X-ME-Helo: mail-ej1-f44.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 06 Dec 2024 14:33:16 +0100
-X-ME-IP: 209.85.218.44
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa643eb7f24so54020566b.0;
-        Fri, 06 Dec 2024 05:33:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUraftUwawQd3uQWCjKA+zQYXrhG/TRKrgSeTQiBRgv7Ob3LlKumE1bQj+Ci880hia4lyJtZplo/VewDSN717o=@vger.kernel.org, AJvYcCWllUVGgEbW0QkzTdpy8V1DmhddFwrbnBAmFhDXfI23JdKGonAVUIKRR6zxA++J2qtYmJV6PjCaOAlq1Wd8@vger.kernel.org, AJvYcCXxfOsNNqfCMjif79mgECjKqNJ+zePLM8j62A7z0m4ws8ccTVH/iCeEvO827DRH7QuutvSLzHmphmm2IdBS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMp0rq3zUQmhlcqnRwx6LaNrxfoh4t9JDqO/HxQr+zOD3hMKnE
-	obbL0lkzPBDIMUhQ2+nrmEGIbKoxgGJcFacmuV4UT2Yh8PwrsqHilPq9ddcMXq+IE6f02wm0h7G
-	yrigmFdpTZUT/X9d+Q05vCBi1IKM=
-X-Google-Smtp-Source: AGHT+IFPV3ip3SYHkyJAtAl7kySK0yuNHOCaaw0rmFlBgQknleAfhI1fXHmOk07U56ZQY/Lp14i5paMJiLtiZFuprbE=
-X-Received: by 2002:a17:906:2191:b0:aa6:2d5c:29ce with SMTP id
- a640c23a62f3a-aa62d5c2a3bmr190097866b.52.1733413722571; Thu, 05 Dec 2024
- 07:48:42 -0800 (PST)
+	s=arc-20240116; t=1733490263; c=relaxed/simple;
+	bh=vnlbtpQU0ZM/p6oSUAtyreorxH4BApB8/i74FdQ9nU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iuvYde0+qKHNJcYwl8eunnk8IKmCht87VnyDBZT9lRIeN8I6M2LGGgWxH5R+fHt5efrI2GwkfykpKOoqLgeULuDHAhUFeWTRSkIOUHKzVNpugLCFE8KA0c5pUeMWrvlA3TWAH62//Ndxm2rBQsG2qNGmGCiovIGYiBkJlHaUdDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6R3V9ZK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F33BC4CEE2;
+	Fri,  6 Dec 2024 13:04:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733490262;
+	bh=vnlbtpQU0ZM/p6oSUAtyreorxH4BApB8/i74FdQ9nU0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O6R3V9ZKuAK4GNNEeN5z54qY1XiCDLI7dWdmQd9l4a8L+JgvAxQxRxHxaDeLbB9j/
+	 WZojL8el2aMp2iZbVRZC/iMlNEehQThDHTg2CpWr608lUVLlDfVd945t8PfynrGwZP
+	 ltPOOYO2/MyALttdoL1jjuVTuvHq+oprhyC0cvjrZhji8p7ZQLZZFpxqf0uGrLtFhk
+	 Wf79c6J0Sx4krmaPBvGAICVKCxFFlk+ErJHdwoyJo7Mgn4mbQQmDvLaUEdkExis6wg
+	 bYO78iUqspc4EJlmJ7kuZBoHXXV3DiXFJwzObazdYT63kOvYgCCGcSNbsiFESMrJq7
+	 hkKaC+QA9rMfA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-pm@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH 2/5] cpuidle: Introduce CPUIDLE_FLAG_MWAIT
+Date: Fri,  6 Dec 2024 14:04:05 +0100
+Message-ID: <20241206130408.18690-3-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20241206130408.18690-1-frederic@kernel.org>
+References: <20241206130408.18690-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-3-4e4cbaecc216@wanadoo.fr> <c617483816b54096ba4b30bea595da49@AcuMS.aculab.com>
-In-Reply-To: <c617483816b54096ba4b30bea595da49@AcuMS.aculab.com>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Fri, 6 Dec 2024 00:48:31 +0900
-X-Gmail-Original-Message-ID: <CAMZ6Rq+=-d0_v3Xqj0CpaPbNuzQuv1SouTkc3Ew5vc5Sb_DUng@mail.gmail.com>
-Message-ID: <CAMZ6Rq+=-d0_v3Xqj0CpaPbNuzQuv1SouTkc3Ew5vc5Sb_DUng@mail.gmail.com>
-Subject: Re: [PATCH 03/10] compiler.h: add is_const_true() and is_const_false()
-To: David Laight <David.Laight@aculab.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
-	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu. 5 Dec 2024 at 03:48, David Laight <David.Laight@aculab.com> wrote:
-> From: Vincent Mailhol
-> > Sent: 02 December 2024 17:33
-> >
-> > __builtin_constant_p() is known for not always being able to produce
-> > constant expression [1] which led to the introduction of
-> > __is_constexpr() [2]. Because of its dependency on
-> > __builtin_constant_p(), statically_true() suffers from the same
-> > issues.
->
-> No, they are testing different things.
+From: Peter Zijlstra <peterz@infradead.org>
 
-OK, I will remove this paragraph.
+Provide a way to tell the cpuidle core about states monitoring
+TIF_NEED_RESCHED on the hardware level, monitor/mwait users being the
+only examples in use.
 
-> > For example:
-> >
-> >   void foo(int a)
-> >   {
-> >        /* fail on GCC */
-> >       BUILD_BUG_ON_ZERO(statically_true(a));
-> >
-> >        /* fail on both clang and GCC */
-> >       static char arr[statically_true(a) ? 1 : 2];
-> >   }
-> >
-> > Define a new is_const_true() and is_const_false() pair of macros
-> > which, by making use of __is_const_zero(), always produces a constant
-> > expression.
-> >
-> > Note that is_const_false() can not be directly defined as an alias to
-> > __is_const_zero(). Otherwise, it could yield some false positives on
-> > huge numbers because of a lost of precision when doing the (long) cast
-> > in __is_const_zero(). Example:
-> >
-> >   is_const_false((u128)ULONG_MAX << BITS_PER_LONG)
-> >
-> > Furthermore, using the ! operator like this:
-> >
-> >   #define is_const_true(x) __is_const_zero(!(x))
-> >   #define is_const_false(x) __is_const_zero(!!(x))
-> >
-> > would yield a -Wint-in-bool-context compiler warning if the argument
-> > is not a boolean. Use the =3D=3D and !=3D operators instead.
-> >
-> > It should be noted that statically_true/false() are the only ones
-> > capable of folding tautologic expressions in which at least one on the
-> > operands is not a constant expression. For example:
-> >
-> >   statically_true(true || var)
-> >   statically_true(var =3D=3D var)
-> >   statically_false(var * 0)
-> >   statically_false(var * 8 % 4)
-> >
-> > always evaluate to true, whereas all of these would be false under
-> > is_const_true/false() if var is not a constant expression [3].
-> >
-> > For this reason, usage of const_true/false() should be the exception.
-> > Reflect in the documentation that const_true() is less powerful and
-> > that statically_true() is the overall preferred solution.
-> >
-> > [1] __builtin_constant_p cannot resolve to const when optimizing
-> > Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D19449
-> >
-> > [2] commit 3c8ba0d61d04 ("kernel.h: Retain constant expression output f=
-or max()/min()")
-> > Link: https://git.kernel.org/torvalds/c/3c8ba0d61d04
-> >
-> > [3] https://godbolt.org/z/E4r7EaxW9
+This will allow cpuidle core to manage TIF_NR_POLLING on behalf of all
+kinds of TIF_NEED_RESCHED watching states while keeping a necessary
+distinction for the governors between software loops polling on
+TIF_NEED_RESCHED and hardware monitored writes to thread flags.
 
-D'oh, I used some old versions of the macros in that link. The link
-will be updated to this in v2:
+[fweisbec: _ Initialize flag from acpi_processor_setup_cstates() instead
+             of acpi_processor_setup_lpi_states(), as the latter seem to
+             be about arm64...
+           _ Rename CPUIDLE_FLAG_NO_IPI to CPUIDLE_FLAG_MWAIT]
 
-  https://godbolt.org/z/E4r7EaxW9
+Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ drivers/acpi/processor_idle.c | 3 +++
+ drivers/idle/intel_idle.c     | 5 ++++-
+ include/linux/cpuidle.h       | 1 +
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-> > Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> > ---
-> >  include/linux/compiler.h | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> >
-> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> > index 30ce06df4153cfdc0fad9bc7bffab9097f8b0450..165aa5b9bc484376087a130=
-a1ac1f3edb50c983d 100644
-> > --- a/include/linux/compiler.h
-> > +++ b/include/linux/compiler.h
-> > @@ -357,6 +357,29 @@ static inline void *offset_to_ptr(const int *off)
-> >   */
-> >  #define is_const(x) __is_const_zero(0 * (x))
-> >
-> > +/*
-> > + * Similar to statically_true() but produces a constant expression
->
-> No.
-> It tests whether a value is a 'constant integer expression' and
-> the result is a 'constant integer expression'.
-> statically_true() checks for the value being a 'compile time constant'.
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index 698897b29de2..66cb5536d91e 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -806,6 +806,9 @@ static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+ 		if (cx->type == ACPI_STATE_C1 || cx->type == ACPI_STATE_C2)
+ 			drv->safe_state_index = count;
+ 
++		if (cx->entry_method == ACPI_CSTATE_FFH)
++			state->flags |= CPUIDLE_FLAG_MWAIT;
++
+ 		/*
+ 		 * Halt-induced C1 is not good for ->enter_s2idle, because it
+ 		 * re-enables interrupts on exit.  Moreover, C1 is generally not
+diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+index ac4d8faa3886..d52723fbeb04 100644
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -1787,7 +1787,8 @@ static void __init intel_idle_init_cstates_acpi(struct cpuidle_driver *drv)
+ 		if (cx->type > ACPI_STATE_C1)
+ 			state->target_residency *= 3;
+ 
+-		state->flags = MWAIT2flg(cx->address);
++		state->flags = MWAIT2flg(cx->address) | CPUIDLE_FLAG_MWAIT;
++
+ 		if (cx->type > ACPI_STATE_C2)
+ 			state->flags |= CPUIDLE_FLAG_TLB_FLUSHED;
+ 
+@@ -2072,6 +2073,8 @@ static bool __init intel_idle_verify_cstate(unsigned int mwait_hint)
+ 
+ static void state_update_enter_method(struct cpuidle_state *state, int cstate)
+ {
++	state->flags |= CPUIDLE_FLAG_MWAIT;
++
+ 	if (state->flags & CPUIDLE_FLAG_INIT_XSTATE) {
+ 		/*
+ 		 * Combining with XSTATE with IBRS or IRQ_ENABLE flags
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index a9ee4fe55dcf..b8084617aa27 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -85,6 +85,7 @@ struct cpuidle_state {
+ #define CPUIDLE_FLAG_OFF		BIT(4) /* disable this state by default */
+ #define CPUIDLE_FLAG_TLB_FLUSHED	BIT(5) /* idle-state flushes TLBs */
+ #define CPUIDLE_FLAG_RCU_IDLE		BIT(6) /* idle-state takes care of RCU */
++#define CPUIDLE_FLAG_MWAIT		BIT(7) /* hardware need_resched() monitoring */
+ 
+ struct cpuidle_device_kobj;
+ struct cpuidle_state_kobj;
+-- 
+2.46.0
 
-I still would argue that =E2=80=99constant integer expressions=E2=80=99 and=
- =E2=80=99compile
-time constants=E2=80=99 are *similar*. Not the same, agreed, but not
-drastically different either. I picked the term *similar* for that
-reason.
-
-> Most code really doesn't care, it all got added to min() so that
-> a very few places could do:
->         char foo[min(16, sizeof (type))];
-> without triggering the 'variable length array' warning.
-> But that just bloated everywhere else and (IIRC) Linus replaced
-> them with a MIN() that was just an expression.
-
-What about:
-
-  Return an integer constant expression while evaluating if the
-  argument is a true (non zero) integer constant expression.
-
-
-
-> > + *
-> > + * To be used in conjunction with macros, such as BUILD_BUG_ON_ZERO(),
-> > + * which require their input to be a constant expression and for which
-> > + * statically_true() would otherwise fail.
->
-> Use a different BUILD_BUG macro instead.
-> Look at the current definition of min().
-
-Do you mean BUILD_BUG_ON_MSG()? That one, at the end, relies on the
-error attribute:
-
-  https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-=
-error-function-attribute
-
-And the error attribute logic relies on compiler optimization. So
-BUILD_BUG_ON_MSG() is not a valid example here because it does not
-require its argument to be an integer constant expression. It works
-well with other compile time constants.
-
-Another valid example would be _Static_assert() but as a matter of
-fact, it is more common to use __is_constexpr() together with
-BUILD_BUG_ON_ZERO() than it is with _Static_assert(). So I think that
-BUILD_BUG_ON_ZERO() is best here.
-
-
-Yours sincerely,
-Vincent Mailhol
 
