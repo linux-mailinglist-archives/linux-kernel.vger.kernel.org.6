@@ -1,60 +1,56 @@
-Return-Path: <linux-kernel+bounces-435062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B16D9E6EF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:11:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1AA9E6EEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:07:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C42B1884728
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:06:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9D4281C06
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E3A201278;
-	Fri,  6 Dec 2024 13:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA57203713;
+	Fri,  6 Dec 2024 13:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kc/UHJ+T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mU+H7rdr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A88F1B4122;
-	Fri,  6 Dec 2024 13:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400741C1F19;
+	Fri,  6 Dec 2024 13:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490410; cv=none; b=fgLOPXnb/Tn1mGFPZlM9oMEyqNzQ03rfjQUZTuYMR5COtelvprA9sDbCaSbXSoIB2gOewYS1ZeTDHcmYQQBMwRKaQzPehKihg8c/MzkSntsCdJtqCIe5naclnTy3CGcb+tbJkc719F3cKDTqmukjWXeTOOsB8wGlLtq/3USGa1Q=
+	t=1733490448; cv=none; b=kOu5blf/AZzZzNZw9Dre3WeCjefDsWGLCKksZnlM/qJbT4BRsIyWfCq5prNdK/mWeJWsGSVk4FwPGeTF/VpuEPzN1P166d4z2LNE59/Z+PfSjr8iOK0jaDnXgNwM6jkqGuCXLAWpfc4J/rPPEx2+zh2UrcloQNA+Q6MJqOZdzy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490410; c=relaxed/simple;
-	bh=up30GlcVvBI0Xy6cqKBrq0wBFy8mljvMaYeXKxSq4LY=;
+	s=arc-20240116; t=1733490448; c=relaxed/simple;
+	bh=+MOizm4Hi8EsvmrUseTAmqGt2xqTmOXTLu/gHyRBzzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9AGtjt+MfycYDSQKDS8zAAje04prPXNBBZE7ow2y7GzlvR/VP+kndXyHFpIDsZ6AaA5utYoVNmnapE6r++NGnvp0n2TSrRpVWu46M7kpAfGmYBj0xjP2NM2ro12d4YdDFXSajQF+63JsmjIzY2JvKf+mVwzwdrk+Ra8AtVkPnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kc/UHJ+T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83187C4CED1;
-	Fri,  6 Dec 2024 13:06:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=M6vIwthYPFTWi1/1R0Ueo89+aD1b9w7N4ERfCCOg6GSybP1BV8Wz3j78JnbkbJ2sg1RwJuzNJlmYXJMKvu5O9nmtarPNnfh+Jr32302I9t9aVBcLusSAiP7GmMEbT0z2NdYhGHO7gUuz454kDXd2LuPVZKuI/3et5bejBrxOVVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mU+H7rdr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070F7C4CED2;
+	Fri,  6 Dec 2024 13:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733490410;
-	bh=up30GlcVvBI0Xy6cqKBrq0wBFy8mljvMaYeXKxSq4LY=;
+	s=k20201202; t=1733490447;
+	bh=+MOizm4Hi8EsvmrUseTAmqGt2xqTmOXTLu/gHyRBzzI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kc/UHJ+TO7Eeo+1qG6J9LSn4JQ+R2/1LX4iHLyHPLnHbPdSdD3pEI4sIl0qr28m+A
-	 XQ1MFIMpQ0eRrDWqUqVVxDCIz6PzzWwPfAbnkpn8s36k4RiqsDhLdzMuglOc21CPq+
-	 jD7/CDXE08l9vzrkk+Vc+6OOrhodijP6ORyDTE2buc5NDhDcW1+7Q8LviO6p+18qmX
-	 Pia7afE44I/K+jLwrxiqXDpYSMeHUDj+h1Jhehtb9vPV3VvhX40+nm9YN2NWG1xMP3
-	 2W9CwHlWuM3YKaelTL8eGT1G/UpEz+oUNSZHLEbHq/G+SQVTYPje5jP7In3doBTxMx
-	 nGBllcWjwpRtQ==
-Date: Fri, 6 Dec 2024 13:06:30 +0000
-From: Lee Jones <lee@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] sample: rust_misc_device: Demonstrate additional
- get/set value functionality
-Message-ID: <20241206130630.GD7684@google.com>
-References: <20241206124218.165880-1-lee@kernel.org>
- <20241206124218.165880-4-lee@kernel.org>
- <2024120652-champion-chute-4e74@gregkh>
- <20241206130449.GC7684@google.com>
+	b=mU+H7rdrruunhHauD8KabWFkDgYtiRl5h8hqJ3eeUBdjW66fE1mm0d3YAyQLvBGR6
+	 ILXSzv7P5kFnVokBWaz8X3ThUYPtj1xh5GPQZ1U+FC8freyFfR40+Zzrl7CXU2oayg
+	 1bRTwTJXbnLJjUoV7T/Wle3GPJBydDsMEK633JPUKlrdEY1lzgdeIxD0s3eDjsQF80
+	 bUZRhdY9GScL1UDO1Ci38EX9CB00vjinBR6n8QUyqEAHIVy/etb5baRuaVyFOlSfvA
+	 iy0mzywF09QEW9qrbpmmfCxO4o10TwgO9TB7RLgC0Kn3GYt+C6yl5rvC88/J8qXCeT
+	 aNXedLzEaEPKQ==
+Date: Fri, 6 Dec 2024 14:07:24 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	igor.belwon@mentallysanemainliners.org
+Subject: Re: [PATCH v4 0/4] Add minimal Samsung Galaxy S20 Series board,
+ SM-G981B and SM-G980F support
+Message-ID: <dpby4tvamvsk6437kngv4d6diq6pqh5fquptwy7p5325e6hb3j@ot6eaurn4bun>
+References: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,48 +59,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241206130449.GC7684@google.com>
+In-Reply-To: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
 
-On Fri, 06 Dec 2024, Lee Jones wrote:
-
-> On Fri, 06 Dec 2024, Greg KH wrote:
+On Tue, Dec 03, 2024 at 08:03:22AM +0000, Umer Uddin wrote:
+> Hi folks,
 > 
-> > On Fri, Dec 06, 2024 at 12:42:14PM +0000, Lee Jones wrote:
-> > > Expand the complexity of the sample driver by providing the ability to
-> > > get and set an integer.  The value is protected by a mutex.
-> > > 
-> > > Here is a simple userspace program that fully exercises the sample
-> > > driver's capabilities.
-> > 
-> > nit, subject line should have "samples" not "sample" :)
+> This series adds initial support for the Samsung Galaxy S20 Series and also
+> initial board support for the Samsung Galaxy S20 5G (SM-G981B)
+> codenamed x1s.
 > 
-> Ack.
+> The S20 Series feature a lot of similarities in their configuration
+> and internally Samsung named the common devicetrees in their
+> downstream kernel 'hubble', please note hubble excludes the
+> S20 FE series and Note20 series. To accomodate this, I've
+> now named the device tree common's matching the codenames
+> (x1s-common).
+> The device trees have been tested with dtbs_check W=1
+> and results in no warnings.
 > 
-> > > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
-> > > +        let guard = self.inner.lock();
-> > > +        let value = guard.value;
-> > > +
-> > > +        // Refrain from calling write() on a locked resource
-> > > +        drop(guard);
-> > > +
-> > > +        pr_info!("-> Copying data to userspace (value: {})\n", &value);
-> > > +
-> > > +        writer.write::<i32>(&value)?;
-> > > +        Ok(0)
-> > > +    }
-> > 
-> > I don't understand why you have to drop the mutex before calling
-> > pr_info() and write (i.e. copy_to_user())?  It's a mutex, not a
-> > spinlock, so you can hold it over that potentially-sleeping call, right?
-> > Or is there some other reason why here?
+> This initial bringup consists of:
+>  * pinctrl
+>  * gpio-keys
+>  * simple-framebuffer
 > 
-> This was a request from Alice to demonstrate how to unlock a mutex.
+> This is enough to reach a shell in an initramfs. More platform support
+> will be added in the future.
+> 
+> Just like SM-N981B, the preferred way to boot the upstream kernel is
+> by using a shim bootloader, called uniLoader [1], which works around
+> some issues with the stock, non-replacable Samsung S-LK bootloader.
+> For example, the stock bootloader leaves the decon trigger control
+> unset, which causes the framebuffer not to refresh.
+> 
+> Device functionality depends on the patch series from Igor Belwon:
+> "Add minimal Exynos990 SoC and SM-N981B support"
+> 
+> [1] https://github.com/ivoszbg/uniLoader
+> 
+> Changes in v4:
+>  - Rebase from krzk's kernel tree to accomodate
+>    for the merge of r8s
+>  - Rename exynos990-hubble-common.dtsi
+>    to exynos990-x1s-common.dtsi
 
-It's common practice to apply guards only around the protected value.
 
-Why would this be different?
+What else happened here?
 
--- 
-Lee Jones [李琼斯]
+b4 diff '20241203080327.4751-2-umer.uddin@mentallysanemainliners.org'
+Checking for older revisions
+Grabbing search results from lore.kernel.org
+  Added from v3: 9 patches
+---
+Analyzing 29 messages in the thread
+WARNING: duplicate messages found at index 3
+   Subject 1: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G (x1s)
+   Subject 2: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G (x1s)
+  2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 4
+   Subject 1: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 (x1slte)
+   Subject 2: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G (x1s)
+  2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+   Subject 1: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
+   Subject 2: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
+  2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+   Subject 1: arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series boards (hubble)
+   Subject 2: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
+  2 is not a reply... assume additional patch
+Preparing fake-am for v3: dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B and SM-G980F board
+ERROR: v3 series incomplete; unable to create a fake-am range
+
+Working with these series is a pain.
+
+Best regards,
+Krzysztof
+
 
