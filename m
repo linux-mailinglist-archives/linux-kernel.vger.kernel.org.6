@@ -1,144 +1,183 @@
-Return-Path: <linux-kernel+bounces-435444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A1A9E77C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:59:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07789E77C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:00:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDEF2839D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E541886D73
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2F71FFC4C;
-	Fri,  6 Dec 2024 17:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D691FFC64;
+	Fri,  6 Dec 2024 18:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="OfuALeJw"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TveFug1/"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D1E22068F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DF62206A5;
+	Fri,  6 Dec 2024 18:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733507959; cv=none; b=anVY4i4W/AYV1tTiV3GB4AGtwJ4Oy5qZ5hR8EEUpv2pLP51Uptboei/QgL9/nZvT8x7KukmPndXt32Xgdy536Eoiq02IVFVLWdZYYXjCXJD3OlIzFxmtVhItgc8UKqxAsMRpZ5HcZ+j4UpqAvPPET/g8+2HC7bHpksRXYvsOPs8=
+	t=1733508031; cv=none; b=KEwNXUSb5gxnISRuSNIxbTWDCTp1kbLkXA5uaT8qaWKfwyBFQh/CA0Ul2v7nL9s6K4wjFudOPhKSRWR3yyH7kg2lLM7cBNf2tykfnHTwjaHxfLDoq3vaFYPgqKP703QMks6UtpyA3CxwdbIvjStD1cvRJ2JmPzFvb7fltcDnUd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733507959; c=relaxed/simple;
-	bh=C7/IjrZPAe7jrd6+Hvq7qkkD7bICDlJFHdbE7CmOEAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmFmi11OQWoZ1NTgtibLBmtKlQQ+aJJnOWXsbLshMjlciB439szC/UxDetAPw0gci5M++lm2+noXxUuyCaMFD3h+PDkSHLV2OOrQgSK8x84BtZzxQs1mgwtYK5hq1GsUStLLYUY5/F2vZULWMfQQr4CCui9DEMGWPTbzuj7bSAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=OfuALeJw; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-215513ea198so28417845ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 09:59:17 -0800 (PST)
+	s=arc-20240116; t=1733508031; c=relaxed/simple;
+	bh=H8+ijCMiA6ukFvtvHgi/sIc/1ThgkN6eZOLvjTyrHao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eExobWL5w5ohCPgvsZCo2+6RY7I5ZlsThmskO5i6BhfTh1Tkc9+cOGgt2ao+FPjx3BQm/ElIcEJlqiTwTpTHY0pNw+rFk2z+RtB1hILiBihXeE7YGRkZFQy/TSYlh5kPzr2sbG3Ozz5/e4W9cxkVG8BYVDYmvgdpx7hdC+9wk8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TveFug1/; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ef6c56032eso846175a91.2;
+        Fri, 06 Dec 2024 10:00:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733507956; x=1734112756; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KXWTnS4ACRG69KERwtrtjSEjtFzKArian+QB5LBEOK0=;
-        b=OfuALeJwEBFahJQqD6+JikVEowM5iKse4P5UTho6ywR5DQhoR6FYDDvFCcvSsWxB4+
-         Etvt39nLzLVrsoEU7p+jCZn48LJB8Q7b3ctVV2Z2d/br4bz6DaofuLC28MZRr0hOrLlW
-         Q5md3+NdEhM/nmdEHtGj4YR3PNLpHSjaJecdcswCzb+t0CErbqj4O7mHEK+FH72IwO0v
-         BXbqzR6Uf9HvxymXMAniW7/16xb+YZdGgegV31J6cO0Qx6Re143ZgpJY9Z/aTu/oinkV
-         wPAP99bkEYhcCIqHw9FI4bZsEsq9FtbMrdH1zQ64CALN4mYPERu0AHOfYUnJU8aqdEYX
-         oe4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733507956; x=1734112756;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733508029; x=1734112829; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KXWTnS4ACRG69KERwtrtjSEjtFzKArian+QB5LBEOK0=;
-        b=LuagEBP75PQ150g3QTxz1cJrtAUBOvNm41rlYYR9wtntn8djmNnyAnQ1hSHZqT1e90
-         Ud8kZp2CdW8VKqWDb+f8Wqkkjr5ir9zll8he2kiTU3NYTROUBWhKJDauUKtDF9Q60xxw
-         0bfYQTOsWpqsPJS+ut+l1jGG6KqVxHekgLYAXF70N+/EwBCIAYzSODFIluev56sr0hzG
-         xZL2lvXMeBE/k96e+HNdL5Ma+PQeUVwfoGMFoSMLx2Enu3m8X6nVg3ebjOilqoI9CbK+
-         tmRguD1W95haq45qJgJ7ifAsYaSn5apANvsm0Qb2sOaGrPfWi7v9di8+QuOdmTWhyiXL
-         dpDw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7xqFsRjLV444rFM1zAjet/1KNNfE1aqD/tnV2Pp6gztQydxpk0dE6hmf1dRO9EslHEPjxt6jfflfCDxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuE994eNjaXbDTeO3t+wufpHdTloaK4mvXdFV9g+fOTHyXB3C8
-	MJkL/2gW40c4vhOsoIYoKVcZqC5xhLn1J9fo4yZaWTEU16svc2urdiwmUXmo9MyaWBhg8wCwTZP
-	Y
-X-Gm-Gg: ASbGncvt0R7i+2DfYTgVwYjXCzM6l6BZlE2bkbFxkDow6xVHp+lbexGxocneINOwM9x
-	BRXXPOClywP8xHhvZE1VplCijWpnuDO8zSpV2uhyhIB67NiRH2UIlCcMTnqjxDpU51uv+hvutaT
-	jixZcglb0iTd/f19R9FsSNm+6h4U1tFAvi0AW9J6IUS+VRNRhIRxe0A687qquLg6t62H/Bg6bfx
-	VYBbIigBx07SrWuCjuXGKbZM/lvVtlXASYymRbsttcX+Q==
-X-Google-Smtp-Source: AGHT+IE8qx0uEW+Lby99GPzuztrI/Tze8sHzsHxtrWCEM5K3xCHJB/gtU8TFHEdMyknysnx83WZqKQ==
-X-Received: by 2002:a17:903:2b08:b0:215:6c5f:d142 with SMTP id d9443c01a7336-21611afca0amr56824085ad.20.1733507956637;
-        Fri, 06 Dec 2024 09:59:16 -0800 (PST)
-Received: from ghost ([2600:1010:b0ba:197a:c0e9:4a0e:e502:edf9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8efc906sm31536465ad.166.2024.12.06.09.59.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 09:59:16 -0800 (PST)
-Date: Fri, 6 Dec 2024 09:59:13 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: linux-kselftest@vger.kernel.org, shuah@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH for-next v3] selftests/filesystems: Add missing gitignore
- file
-Message-ID: <Z1M7cUPhV6D6yXlX@ghost>
-References: <20241122073725.1531483-1-lizhijian@fujitsu.com>
+        bh=34RpqiH9mb1FjMoXjg/XFvDnF3uQltArdmOLNrd2+ic=;
+        b=TveFug1/KLRCFee/7Jl8qNP2dXRD3IZiudPRz9OwvHkgDp6eANBqp1wwy3ZcsvI6c3
+         cR+BLDdAjtFlNsPp/Zu9FNEjLYQCxRdnOt0fyMpYQ1FRZN03PlDeALwbLna7rPOVhhW5
+         vgOV0wsttPPal/3acF89kDG5NqItTnTpgOo0lcxaNfvqaEtlIzZzcY61UZRSZy1ZGZB0
+         lB/1p4bUoPjQVPdYSqEl+r22IIfQmBecDPjku7fqU3eZtPxdnkx2c75D5R1fBggA4n9a
+         5nK5xxcjfS9YSIq0PgwQjdNbj3mijpBlNr84RjQLWoPxowrarfu7GuI40TY61qktk40f
+         cToQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733508029; x=1734112829;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=34RpqiH9mb1FjMoXjg/XFvDnF3uQltArdmOLNrd2+ic=;
+        b=VajDTg681XMf9hQyerteA0qaBPnbZCNMQ8OhqBup7ILuawhpiHkRddxZBFDQzRQzKE
+         Cju/Jq1SvXYFxq/e6r/d/p3W7WLQY4yGikhzTwizR4QUZNmqOhohJ1G8JscwjI1tGCfo
+         54QK8sTqzNfJXNoRG3kuVBQ9JgZwxCpNnOcHZRIT3Iq9FJdfVLg0WIp0tQCRDaMiXQFA
+         KaRgl93qfpnWX12qs/JYrTHT2TWg0vN5YVEVatGvxWl8AFMP0GkbYU+UxqTyMleQ7OTf
+         j8RTxmQmR6u8s8EFJiUQMv+onzbsq4fLILjTCm9qWfJId3iBPmpa4xOM1u5H2LLl5w8E
+         k7kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlfgUq5bGpXu08gpn341iO0PQlh2BUg2oH6YiuG2hv3zyKECokzBrNg1dM7r0UAONgq2zt5rzDK8o+x5p1@vger.kernel.org, AJvYcCW5mT9N0jE887QXxinDjMl5xQwB1MjcK5J4L2R2GolHY4/z/JTIpQPZ3RbKM8D1GdY3ilw=@vger.kernel.org, AJvYcCXwr3qrjqIHdc6YeYKdpUcVkLF4PW70jp2Ju5sMatrDqfVwRlUpD/tFaopWlYx1rlwklKK4BfouDf7fteYtev8p1EyD@vger.kernel.org
+X-Gm-Message-State: AOJu0YyROJ1zekL9r4zsG+7ybejfVEUMZEj8UrZKDQoSgQQnDaVFJtya
+	flZTIfb/HmGd2i34sZZrqQnu+P2q92b3U+/60+zFlk+OviSjeYR1rouTGtMWlsjGzPy6IT4lMGF
+	K4K6dJDt9sr9JhlwTNwE6rG478AU=
+X-Gm-Gg: ASbGncsl0Kis83BuStPeoXWoPCaj2mUeVXD4w1PgUrVk36v0qgFJv8RThmPiLbVoUhA
+	eVg2tfXa/ZU2lEsca8AXQeoKFa9dA8+ydyxCWIZAyOAH755E=
+X-Google-Smtp-Source: AGHT+IHCNWhxq7so09pbzCCKHYLOVnFH/73MSxeGbWicpEb+f1NdFQzOJpUKEvhEDi5mDeEJAuKV7y0BazV2xTlwol0=
+X-Received: by 2002:a17:90b:3dcb:b0:2ef:114d:7bf8 with SMTP id
+ 98e67ed59e1d1-2ef6965464amr5173915a91.6.1733508028565; Fri, 06 Dec 2024
+ 10:00:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122073725.1531483-1-lizhijian@fujitsu.com>
+References: <20241206002417.3295533-1-andrii@kernel.org> <20241206002417.3295533-5-andrii@kernel.org>
+ <Z1MFBVRuUnuYKo8c@krava>
+In-Reply-To: <Z1MFBVRuUnuYKo8c@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 6 Dec 2024 10:00:16 -0800
+Message-ID: <CAEf4BzaESrHfAXZrN0VbjQvxLJ0ij0ujKpsp2T6iQtbisYPa=A@mail.gmail.com>
+Subject: Re: [PATCH perf/core 4/4] uprobes: reuse return_instances between
+ multiple uretprobes within task
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, mingo@kernel.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	liaochang1@huawei.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 03:37:25PM +0800, Li Zhijian wrote:
-> Compiled binary files should be added to .gitignore
-> 
-> 'git status' complains:
-> Untracked files:
-> (use "git add <file>..." to include in what will be committed)
->      filesystems/statmount/statmount_test_ns
-> 
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Miklos Szeredi <mszeredi@redhat.com>
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> ---
-> Hello,
-> Cover letter is here.
-> 
-> This patch set aims to make 'git status' clear after 'make' and 'make
-> run_tests' for kselftests.
-> ---
-> V3:
->   sorted the ignored files
-> V2:
->    split as a separate patch from a small one [0]
->    [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
-> 
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> ---
->  tools/testing/selftests/filesystems/statmount/.gitignore | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/filesystems/statmount/.gitignore b/tools/testing/selftests/filesystems/statmount/.gitignore
-> index 82a4846cbc4b..973363ad66a2 100644
-> --- a/tools/testing/selftests/filesystems/statmount/.gitignore
-> +++ b/tools/testing/selftests/filesystems/statmount/.gitignore
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> +statmount_test_ns
+On Fri, Dec 6, 2024 at 6:07=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
+:
+>
+> On Thu, Dec 05, 2024 at 04:24:17PM -0800, Andrii Nakryiko wrote:
+>
+> SNIP
+>
+> > +static void free_ret_instance(struct uprobe_task *utask,
+> > +                           struct return_instance *ri, bool cleanup_hp=
+robe)
+> > +{
+> > +     unsigned seq;
+> > +
+> >       if (cleanup_hprobe) {
+> >               enum hprobe_state hstate;
+> >
+> > @@ -1897,8 +1923,22 @@ static void free_ret_instance(struct return_inst=
+ance *ri, bool cleanup_hprobe)
+> >               hprobe_finalize(&ri->hprobe, hstate);
+> >       }
+> >
+> > -     kfree(ri->extra_consumers);
+> > -     kfree_rcu(ri, rcu);
+> > +     /*
+> > +      * At this point return_instance is unlinked from utask's
+> > +      * return_instances list and this has become visible to ri_timer(=
+).
+> > +      * If seqcount now indicates that ri_timer's return instance
+> > +      * processing loop isn't active, we can return ri into the pool o=
+f
+> > +      * to-be-reused return instances for future uretprobes. If ri_tim=
+er()
+> > +      * happens to be running right now, though, we fallback to safety=
+ and
+> > +      * just perform RCU-delated freeing of ri.
+> > +      */
+> > +     if (raw_seqcount_try_begin(&utask->ri_seqcount, seq)) {
+> > +             /* immediate reuse of ri without RCU GP is OK */
+> > +             ri_pool_push(utask, ri);
+>
+> should the push be limitted somehow? I wonder you could make uprobes/cons=
+umers
+> setup that would allocate/push many of ri instances that would not be fre=
+ed
+> until the process exits?
 
-Thank you! This is still an issue in 6.13-rc1.
+So I'm just relying on the existing MAX_URETPROBE_DEPTH limit that is
+enforced by prepare_uretprobe anyways. But yes, we can have up to 64
+instances in ri_pool.
 
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+I did consider cleaning this up from ri_timer() (that would be a nice
+properly, because ri_timer fires after 100ms of inactivity), and my
+initial version did use lockless llist for that, but there is a bit of
+a problem: llist doesn't support popping single iter from the list
+(you can only atomically take *all* of the items) in lockless way. So
+my implementation had to swap the entire list, take one element out of
+it, and then put N - 1 items back. Which, when there are deep chains
+of uretprobes, would be quite an unnecessary CPU overhead. And I
+clearly didn't want to add locking anywhere in this hot path, of
+course.
 
->  /*_test
-> -- 
-> 2.44.0
-> 
-> 
+So I figured that at the absolute worst case we'll just keep
+MAX_URETPROBE_DEPTH items in ri_pool until the task dies. That's not
+that much memory for a small subset of tasks on the system.
+
+One more idea I explored and rejected was to limit the size of ri_pool
+to something smaller than MAX_URETPROBE_DEPTH, say just 16. But then
+there is a corner case of high-frequency long chain of uretprobes up
+to 64 depth, then returning through all of them, and then going into
+the same set of functions again, up to 64. So depth oscillates between
+0 and full 64. In this case this ri_pool will be causing allocation
+for the majority of those invocations, completely defeating the
+purpose.
+
+So, in the end, it felt like 64 cached instances (worst case, if we
+actually ever reached such a deep chain) would be acceptable.
+Especially that commonly I wouldn't expect more than 3-4, actually.
+
+WDYT?
+
+>
+> jirka
+>
+> > +     } else {
+> > +             /* we might be racing with ri_timer(), so play it safe */
+> > +             ri_free(ri);
+> > +     }
+> >  }
+> >
+> >  /*
+
+[...]
 
