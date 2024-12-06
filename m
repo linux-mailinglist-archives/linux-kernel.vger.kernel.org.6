@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-435355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8509D9E7674
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:53:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A109E767D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:54:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2196E1615F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C36C282F9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9B41F3D39;
-	Fri,  6 Dec 2024 16:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8341F63F6;
+	Fri,  6 Dec 2024 16:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHza94HH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyJ8LGjg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B481E206271;
-	Fri,  6 Dec 2024 16:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9C206271;
+	Fri,  6 Dec 2024 16:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503991; cv=none; b=AVUQcWmZpnzH02QiQML+Kjfy2pAdXOrqjGjnOUqEPvhCI+QNejUmBQtP5EoWNExPeLyTrR4b00ctx68osUoD8zIJ5vwt7K4LsaXSlr7EDjgZLVyWZbnhFBcr9oghqaU7HXLPpQ1e3UPZPs7qx5N3/7MRxaBpDYJILGzaCl2pvT0=
+	t=1733504045; cv=none; b=b3aHeIc15qGniI94SX37PzVbK+ks0MUlkqyhIVcPYMlw86/yOF5qLRxJkLuuhBDkbpvmc2L6WfwiPNx7CtcyBc08VSkukZC8eEXT25qJOs7U6pFa/nF2hOCUq1LNgKrewjlHWTvnmszYDlHZ0eVYtuBKaowKFXgnAPpJqEXg9Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503991; c=relaxed/simple;
-	bh=JpS/Zt5Xq9vuGvkn4jptuxcPyo4ktemXE6eY8TMimTI=;
+	s=arc-20240116; t=1733504045; c=relaxed/simple;
+	bh=YDomNLDNajdoJ1pBaUnkgQgWUUdvwDEczy/rTy2dTbU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKpAuAixGg9hc2puNRQ5PA3+MlCydTIU6ncRvg6G3H3W4p3Qj5sbJcpDOPjjVeK7bYGKHWrtymo9yUcnomMMoA0kGMcMqKrMHmFmeo4uFEqN2WlyMieemcEH1IvIdx5FxCieS9DbwgGkTCpkSqr9rZBSAjiinauQyj0lAVoCPno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHza94HH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE2E6C4CED1;
-	Fri,  6 Dec 2024 16:53:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGfYKsC6gncvvSZ+I7JXY/7P4oVVEgnZ4P67IPV22CykNzlM8DTtLTLdMeXOkkYfzRYLPRNPpPt0b40eGk6SGEmfBivTQThxKS2tDMbbzlYxGrf4VPwgrPIk4TMsXpyAeNGXd6wNfkvZ4tHLmWdSfuXWb0d8RrgSXgXzC7X0zbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyJ8LGjg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEB6C4CED1;
+	Fri,  6 Dec 2024 16:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733503991;
-	bh=JpS/Zt5Xq9vuGvkn4jptuxcPyo4ktemXE6eY8TMimTI=;
+	s=k20201202; t=1733504044;
+	bh=YDomNLDNajdoJ1pBaUnkgQgWUUdvwDEczy/rTy2dTbU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MHza94HH8zx5zpl+tyZniMpGI8BVsXN6Ue6b1SnP0Q2AeEPTMtSpePIt0PNJ7ln5e
-	 Bi8fql9veu1U3/o5xq0bkxI8FinVXnn5uxim3eo/IA2y/t3LGchsLlmh7Qm2s2qrae
-	 lDtyaJUupUDJ2Oxf7PNi68ZUKN5YK26EiBhd8DAxIYdWA8aBkLlkqpIppabcDR9PpU
-	 eBZ++wepN8+6I3qTEUj3RCuJmHq8Rjr/De8FAfTMIew/3IrS15ou8lfHgZQ0EHeed9
-	 llM9rjlFP/esIVb0Ef1TSlkYCbxvsJalbYZ/0bY5ZgOsEufHV9g6xvBhPzdJmLlhYW
-	 Ni3LPwqthYfyA==
-Date: Fri, 6 Dec 2024 17:53:08 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Mingwei Zheng <zmw12306@gmail.com>
-Cc: fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, hierry.reding@gmail.com, lee@kernel.org, 
-	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: Re: [PATCH V2] pwm: stm32-lp: Add check for clk_enable()
-Message-ID: <o6rh2bcxnnubhx6xem55otgequw5zrqmkretcgofohvcpbygdw@z3qagurhjyp3>
-References: <20241206012605.2877412-1-zmw12306@gmail.com>
- <cim6rnzdvhik4kdibfmglf6jiky7xccynqwazmxmnr2f5fvu3f@lvoo3drlgaua>
+	b=VyJ8LGjgKsTP180BTd2aZsogaMbr5GsUU5SD/4TEZb0FoWaezrs6XOcxMKOA5ig/5
+	 Hpcx+1bUEu3JiDO12HHydxvzvQtj8gSVNKtCPhsH/UY2gnyjLswYuoXLCyHGrj0qwk
+	 n7iIi1BAOOPZta+iWiKCJzYH2KARp1qZqUOgKPhPEU2fKuxGCdEjsX9oG7GIIuLok+
+	 RDlXQphub6Cj6UvMvjzhQ+bvMw2daLcMOEmxN+gLXs8bGcK/34UHzgyuihOrkvU6YD
+	 FKQEDPDqKKBCNuL8al67YQ1tltwI1ro/vVjGxxqzoMpIxZqkOajSKXRa1yPO7aoJn0
+	 GWt0pDvpx0dCw==
+Date: Fri, 6 Dec 2024 16:53:59 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Woojung Huh <woojung.huh@microchip.com>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, kernel@pengutronix.de,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v1 2/5] dt-bindings: vendor-prefixes: Add prefix for Priva
+Message-ID: <20241206-juncture-copier-97c30459c041@spud>
+References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
+ <20241205125640.1253996-3-o.rempel@pengutronix.de>
+ <20241205-hamstring-mantis-b8b3a25210ef@spud>
+ <Z1KV9bCW0iafJ2hF@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lvtle2mtnfezbcjm"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d/WfSM3/k/7/bMv1"
 Content-Disposition: inline
-In-Reply-To: <cim6rnzdvhik4kdibfmglf6jiky7xccynqwazmxmnr2f5fvu3f@lvoo3drlgaua>
+In-Reply-To: <Z1KV9bCW0iafJ2hF@pengutronix.de>
 
 
---lvtle2mtnfezbcjm
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+--d/WfSM3/k/7/bMv1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V2] pwm: stm32-lp: Add check for clk_enable()
-MIME-Version: 1.0
 
-On Fri, Dec 06, 2024 at 08:12:57AM +0100, Uwe Kleine-K=F6nig wrote:
-> On Thu, Dec 05, 2024 at 08:26:05PM -0500, Mingwei Zheng wrote:
-> > Add check for the return value of clk_enable() to catch the potential
-> > error.
+On Fri, Dec 06, 2024 at 07:13:09AM +0100, Oleksij Rempel wrote:
+> On Thu, Dec 05, 2024 at 05:16:14PM +0000, Conor Dooley wrote:
+> > On Thu, Dec 05, 2024 at 01:56:37PM +0100, Oleksij Rempel wrote:
+> > > Introduce the 'pri' vendor prefix for Priva, a company specializing in
+> > > sustainable solutions for building automation, energy, and climate
+> > > control.  More information about Priva can be found at
+> > > https://www.priva.com
+> > >=20
+> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > ---
+> > >  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b=
+/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > > index da01616802c7..9a9ac3adc5ef 100644
+> > > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > > @@ -1198,6 +1198,8 @@ patternProperties:
+> > >      description: Primux Trading, S.L.
+> > >    "^probox2,.*":
+> > >      description: PROBOX2 (by W2COMP Co., Ltd.)
+> > > +  "^pri,.*":
+> > > +    description: Priva
 > >=20
-> > Fixes: e70a540b4e02 ("pwm: Add STM32 LPTimer PWM driver")
-> > Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-> > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> > Why not "priva"? Saving two chars doesn't seem worth less info.
 >=20
-> In reply to (implicit) v1 you wrote:
-> > We detected this through static analysis, instead of actually hit.
->=20
-> Would be nice to mention the tool that actually found it in the commit
-> log.
->=20
-> Otherwise I'm happy with that change now.
->=20
-> Given the issue is old (the offending commit is in v4.14-rc1), I'd note
-> send it as a fix before v4.14. I'd send it along however if something
-> more urgent pops up.
+> This is typical prefix which is used by this vendor, if it is possible
+> i would prefer not to change it. But, last decision is on your side :)
 
-I wasn't very attentive when I wrote that mail, what I meant was:
+I dunno, think if I was being unreasonable like that people would tell
+me where to go.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Given the issue is old (the offending commit is in v4.14-rc1), I'd not
-send it as a fix before v6.13. I'd send it along however if something
-more urgent pops up.
-
-Best regards
-Uwe
-
-
-
---lvtle2mtnfezbcjm
+--d/WfSM3/k/7/bMv1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdTK/IACgkQj4D7WH0S
-/k42UAgAs6H2mPbme8oPwP5+Vo7po8iDZLSjx2VBZfboLqKgg60SSEgkWJDW3QRW
-JSMgjh22hbHhuXTjBDM3281KZfebAxFyiVCUoLkFX4dxsP/HBJGb1VCovMAAIdzp
-aKNyDDpyGzvbXv+rNdV8nIRLYooE0AxWuoZiQU5/54Zsg6BQOdRYOw/7NrUffYHx
-Y4cuErXghldB8y6lDG86quZffAwnAp0BFuV55mixSpcV1MKiwiPWqRmr9w605/m3
-e8V6BYUoh+IK/2hvFlcdl95pULgQjAtzaq+NNMQgBU3mT05sD5oOl6EAtvVbJEVd
-fNXPXDr9aVWZWRuTWR8pnjJFn9t/wA==
-=eYs8
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1MsJwAKCRB4tDGHoIJi
+0q7+AP0WgVVYCgxQgsALCbzKmK4HISYQEtJkGhxbcC8rwUd3TAEAwBQ/eBKPr4RW
+KuUnP3OeYJ7cqKeQXBHhBYkRbSC5gg4=
+=wzoa
 -----END PGP SIGNATURE-----
 
---lvtle2mtnfezbcjm--
+--d/WfSM3/k/7/bMv1--
 
