@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-434929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7969E6D05
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:16:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E3A9E6D0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF1D1883EA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C649163A07
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5796F202C4A;
-	Fri,  6 Dec 2024 11:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAE3202F79;
+	Fri,  6 Dec 2024 11:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XDNyaHnU"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RlVFnxWX"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA73201254
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF85B1FCFEA
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733483655; cv=none; b=JBJNfHlKfYt78Am2Orq9+PopaeWtf7EnU7CYiegDH0tKrYPS3B7mSsexbOWj/1zvjCbooaMPt8ZeKPWzfP4fzsf+I9sa9Vl+Q0ch9LMgQXIR5FtOAKGlgDa24MBpHYhmPSN1wphyw9QUI9dIfSY34F5oyPkFo9W6HoGHOKBTuKQ=
+	t=1733483657; cv=none; b=N9eeTxi8wxLojs7HEfp5Vszfthbth2d1+ZpDHgnFxN2s7V2FHrhpt45+wxXddjL0CIb10E9+xKgL1Yhb4QfU4il3nbcQVporr+DbjNlNMc0WjckJB515KbDp8FVZymWaV7kfVqHHQDVQ5p+CmSDXPITmU4aFI2OzAvM62dO6MqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733483655; c=relaxed/simple;
-	bh=wxZRPXX+wShOhw7KsuKigJkq79dPZO6Cla2zUo3+n2w=;
+	s=arc-20240116; t=1733483657; c=relaxed/simple;
+	bh=fiQmPOGrFM1sT1OFzrZ1mHt7tw1wgM6W+Xfd0aJucl0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N/bWXA62tVxteVTTxVimSAVW7dNRK76hxn+llp+hV7x1BWTKmWNGtevPDdoofnUTIptwvEOMt3L3Cvg+3BtZ+ynpb2pfoKofM+nS8+0Kayc7v7YOJ1wyaNseDryQpXIk23+UOQhEKS7exkUs8XKZv6AefNFqpeusQDX2m6iWbgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XDNyaHnU; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=BO4X0PgvAqe6ot+1NXZ3xllwH3V6sjoGf0IL0rDiud+lX4hiA49gFzSb93S8T84kap+4yjD8RfSM1DYoeqlkiMU3OOwD8aTf13I9i1ZC6rs1SZ9jqWmsWDlo3P0Tm+eeZilr66sDew/m1svRps5bzVW4dV0lXzMIGEfVYtuhG4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RlVFnxWX; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d10f713ef0so5490122a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:14:13 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e2880606so1646244f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:14:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733483652; x=1734088452; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733483653; x=1734088453; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GeWsRAgiOnQ9J+Bi5jRmNn74NPnMNokWHPaSe/KrAuI=;
-        b=XDNyaHnUqoOeGNHVbu8DPm6yKi1PfeEfY+2ABhMwxpkcMqOv7aypGcIPBX/qG/YO2f
-         eYF+w1gxf30Ey/RYGFwVbwlnJa+FsLtJjIksc+aWxrUXK06zIWT9073CPl00f7UqJitb
-         eLA+Ftn6FnsD0bcHjTuR1aBQdL5Z+T3TTNbgJNFSz/kOhClSsu7REH662eFZJ677K4To
-         EOXluF3CkoTGjUmPrp/cDlp8irN15BecyeE/EMXNpOT98Pz+mXrNmj2PaqApBPGo1tCG
-         5yVF0r8hO6XYaD06DSYVHyLG8HSFVWK7beVehy8MEWUVbFUepR5zCYPhXzfjCxH9CHbi
-         VH+Q==
+        bh=4G1+H4vCuAFYlF6vDclbc4UqdYRAmFagMT67tI+psAM=;
+        b=RlVFnxWXp+EbulnFE5rQyswB6EXsnGumjjxC9xclRMpnXSTSHk5RB5Auv4T3qcKQ4t
+         UwXtSKluyv1XPIb5FCeq+iXFeh6fWoKBK5j8c2j/hBgItksEWjI6/OCU3S0chdUpqz0z
+         Yl6/Lymb6P9bRqZ78GHLzf44c26mp7WxsLLDXiYqx5AcgBXOsUgy5EGx+G6aKLcSuv/i
+         RsQQDJ03Pcywb2AeAFpYbTpMuq0245cCauAPHL2wHikZ0aNJf/ya4kxn3yQbLx/gYXWE
+         bSsj6sgxrcG6FMQOhVd9bnSgx23W6Wt4Nkw5r5SctWbSj5t8T7rdWy1oRph3O0vjAQcw
+         5g2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733483652; x=1734088452;
+        d=1e100.net; s=20230601; t=1733483653; x=1734088453;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GeWsRAgiOnQ9J+Bi5jRmNn74NPnMNokWHPaSe/KrAuI=;
-        b=IHUVt5fgl+AEgw9g0gIG6nszibyFD3LYrmWWj12BVxNDQt2SgHYfHZZ1QOBApY0SMs
-         RTu8BI6Im/C+41oCYsHdfpr2Iw1tb7ixqK18OekFpsQ88VaYLJ8202G2jRNqhJn3yAMS
-         Pq4f65TMZu9LjhNzapxLuyYvjL5z0371ztY3iCE6QGfMTHHR7QdHezxm0vc08AYfonLX
-         HZv1KuJZZIzanqH1edp8Hsdhg1IXWK8lBHPV9y7ZByOJma7ybw26gyuEnBId/qxV3obV
-         sBf0x6b4hGS3YNmAKqgN774muInKl6Lq5OkzO4JKCued8+dJ51ZyREIBJXPV+8A6Ktt0
-         ZbdA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ytk03zGaeePEwhIK21Gm9sOyNTkyyRq/tiIkKrmlt5dw60c1npKvxV8z1NsQbPG/KE8xduJGdSouIAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPyidHH+6d6ZvNsZedHIauJLU9smcc5AwMc5Fdoy99BVtemZ3c
-	+qk3S8giskqRTXQiNUM6if6bjKRPYk6NAS2uid+mZ0+mbqaQwTSpk5Enb7PMQWk=
-X-Gm-Gg: ASbGnctkt2EF68JgZmH+AgjPpU8IPxu3MrISfaPpDf+q4h12q1teZu/apTRUoIWx2zM
-	+LS0h8R0km/7kGor1ejGCZpTd4Ufs/+3yrjayrFDdrP2yB1iwWz0CFjvBC8VYoJjm+1+cdwByzT
-	BDPfJQzwK1CjBZyewgh8z5cljFSascqapOXUf2m3yYQ+7jSBuAvP6IAB1yDlEDNSHTnvXc+dZrK
-	jJBvnGa2tCGBcRwRKFKxOh4o+Y7VRprnAIOFUTQRKjEvMlrQel9lSJF6TbsJ17Lz+KyC9ND8CZ4
-	zUML
-X-Google-Smtp-Source: AGHT+IHTQu8XnR/9fX757rUtPWhGNIBbj7HW1RmDso9os/gZdEm8EVXl76Iicy9Ae0iw5PO3pdZnrQ==
-X-Received: by 2002:a17:907:2d0f:b0:aa5:ef1c:9dfc with SMTP id a640c23a62f3a-aa62032df68mr624741666b.8.1733483651596;
-        Fri, 06 Dec 2024 03:14:11 -0800 (PST)
+        bh=4G1+H4vCuAFYlF6vDclbc4UqdYRAmFagMT67tI+psAM=;
+        b=iF8rrpo4sV8jAtLTYWgOp84MICcSg9qivOjMVzrlkWDzRNSURaEkfXJEytHKFMp/FS
+         GpUQYwi963guTjCV/7PI6BLPujBHO6X17iZLqapVEqmycXu78PHRv5PrSrZvcRisH9iy
+         hDHY3GN3/fgeLV2aBOZQqMum965hwYbXDDe+Y63241Ll/LSCjr0P0E6tBq+k49j3mVFp
+         Pfga2/X6aF0sMnH7F/HwI0IHQpv2W6Mh2gL7rHD1hMCgOoQ9XLS4qAayTwev+Dq3SgeU
+         MlyNc1aHn4PSfQo0m7NbECV5wQinCFbcrY0FAe4vTOA157xrvqMkQpiYPY7SctgVLp5a
+         gNOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzdYW5Y3TsbD7aAwupyQEtZXPXbL/+f8DOZAds2/QFHjBi3lwfJ1U/8+6ipY7OJQocowa9hZCDoTpfFIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygqiLab2fhaKG3sHhzxZqXxNau8QLbdhj6ub98e9WXvscAtgbq
+	zHjNktyUmE7WP2FoiiKysUvj+sGKIbhXxfoeA306j8v2cSlsF61MB3tT17mpibA=
+X-Gm-Gg: ASbGnctXruAjRujGXmN5UUR/ovT943PjXQ6RYJzeWYsdE3hr5OhWJLM5civfWQJYqKv
+	ikzmniifmvw7TVEmiEh42sHwbZDdJSUeGUytmJsYB5eEH2hgIARYmzx77n9xALT6sjcjZfnNqcz
+	Eq8blMOOTkklbIlkiucfYJsvwVk5WNqb0qA4AHRsBWTvGceiobvxNWmFu7w/QDDPfu5G1yZ04sF
+	401acN9s1G50r/8ylp8RZAsYa+pnNtP1LPSQMJfrqm8eJAEk6TrblpFxYaLv+erKXAU1NF0LwSY
+	iEvI
+X-Google-Smtp-Source: AGHT+IEXTKNP4MKWcbf/JA1+bXvtEWlNT3ImVzjM+DDONN2Br3jW+udfgrQ804DeDzabWUv7DT92fA==
+X-Received: by 2002:a5d:47af:0:b0:385:e5dc:e285 with SMTP id ffacd0b85a97d-3862b3e4f43mr1602093f8f.58.1733483653344;
+        Fri, 06 Dec 2024 03:14:13 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625eee2a6sm226877866b.90.2024.12.06.03.14.10
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625eee2a6sm226877866b.90.2024.12.06.03.14.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 03:14:11 -0800 (PST)
+        Fri, 06 Dec 2024 03:14:12 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: prabhakar.mahadev-lad.rj@bp.renesas.com,
@@ -91,9 +91,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 10/15] iio: adc: rzg2l_adc: Add support for channel 8
-Date: Fri,  6 Dec 2024 13:13:32 +0200
-Message-Id: <20241206111337.726244-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 11/15] iio: adc: rzg2l_adc: Add suspend/resume support
+Date: Fri,  6 Dec 2024 13:13:33 +0200
+Message-Id: <20241206111337.726244-12-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
@@ -107,252 +107,114 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The ADC on the Renesas RZ/G3S SoC includes an additional channel (channel
-8) dedicated to reading temperature values from the Thermal Sensor Unit
-(TSU). There is a direct in-SoC connection between the ADC and TSU IPs.
+The Renesas RZ/G3S SoC features a power-saving mode where power to most of
+the SoC components is turned off, including the ADC IP.
 
-To read the temperature reported by the TSU, a different sampling rate
-(compared to channels 0-7) must be configured in the ADM3 register.
-
-The rzg2l_adc driver has been updated to support reading the TSU
-temperature.
+Suspend/resume support has been added to the rzg2l_adc driver to restore
+functionality after resuming from this power-saving mode. During suspend,
+the ADC resets are asserted, and the ADC is powered down. On resume, the
+ADC resets are de-asserted, the hardware is re-initialized, and the ADC
+power is restored using the runtime PM APIs.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- adjusted the RZG2L_ADC_MAX_CHANNELS
-- introduced rzg2l_adc_ch_to_adsmp_index() and used it accordingly
-- made the IIO_TEMP channel as raw channel as requested in the
-  review process. I also realized having it as scale channel is
-  wrong as the ADC doesn't actually report a temperature but a
-  raw value that is then converted to a temperature with the
-  help of the TSU (Thermal Sensor Unit) driver. Code from the
-  TSU driver (not yet published) that reads the TSU sensor through
-  the ADC and coverts the raw value to a temperature value is as
-  follows:
+- none
 
-
-// ...
-
-#define TSU_READ_STEPS		8
-
-/* Default calibration values, if FUSE values are missing */
-#define SW_CALIB0_VAL	1297
-#define SW_CALIB1_VAL	751
-
-#define MCELSIUS(temp)		(temp * MILLIDEGREE_PER_DEGREE)
-
-struct rzg3s_thermal_priv {
-	void __iomem *base;
-	struct device *dev;
-	struct thermal_zone_device *tz;
-	struct reset_control *rstc;
-	struct iio_channel *channel;
-	u16 calib0;
-	u16 calib1;
-};
-
-// ...
-
-static int rzg3s_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
-{
-	struct rzg3s_thermal_priv *priv = thermal_zone_device_priv(tz);
-	struct device *dev = priv->dev;
-	u32 ts_code_ave = 0;
-	int ret, val;
-
-	ret = pm_runtime_resume_and_get(dev);
-	if (ret)
-		return ret;
-
-	for (u8 i = 0; i < TSU_READ_STEPS; i++) {
-		ret = iio_read_channel_raw(priv->channel, &val);
-		if (ret < 0)
-			goto rpm_put;
-		
-		ts_code_ave += val;
-		/*
-		 * According to HW manual (section 40.4.4 Procedure for Measuring the Temperature)
-		 * we need to wait here at leat 3us.
-		 */
-		usleep_range(5, 10);
-	}
-
-	ret = 0;
-	ts_code_ave = DIV_ROUND_CLOSEST(ts_code_ave, TSU_READ_STEPS);
-
-	/*
-	 * According to HW manual (section 40.4.4 Procedure for Measuring the Temperature)
-	 * the formula to compute the temperature is as follows;
-	 *
-	 * Tj = (ts_code_ave - priv->calib0) * (165 / (priv->calib0 - priv->calib1)) - 40
-	 */
-	*temp = DIV_ROUND_CLOSEST_ULL(((u64)(ts_code_ave - priv->calib1) * 165),
-				      (priv->calib0 - priv->calib1)) - 40;
-
-	/* Round it up to 0.5 degrees Celsius and report it in Mili Celsius. */
-	*temp = roundup(MCELSIUS(*temp), 500);
-
-rpm_put:
-	pm_runtime_mark_last_busy(dev);
-	pm_runtime_put_autosuspend(dev);
-
-	return ret;
-}
-
-// ...
-
-
- drivers/iio/adc/rzg2l_adc.c | 62 ++++++++++++++++++++++++++-----------
- 1 file changed, 44 insertions(+), 18 deletions(-)
+ drivers/iio/adc/rzg2l_adc.c | 70 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
 diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 6740912f83c5..e8dbc5dfbea1 100644
+index e8dbc5dfbea1..2a911269a358 100644
 --- a/drivers/iio/adc/rzg2l_adc.c
 +++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -52,12 +52,13 @@
- #define RZG2L_ADCR(n)			(0x30 + ((n) * 0x4))
- #define RZG2L_ADCR_AD_MASK		GENMASK(11, 0)
- 
--#define RZG2L_ADC_MAX_CHANNELS		8
-+#define RZG2L_ADC_MAX_CHANNELS		9
- #define RZG2L_ADC_TIMEOUT		usecs_to_jiffies(1 * 4)
+@@ -88,6 +88,7 @@ struct rzg2l_adc {
+ 	struct completion completion;
+ 	struct mutex lock;
+ 	u16 last_val[RZG2L_ADC_MAX_CHANNELS];
++	bool was_rpm_active;
+ };
  
  /**
-  * struct rzg2l_adc_hw_params - ADC hardware specific parameters
-- * @default_adsmp: default ADC sampling period (see ADM3 register)
-+ * @default_adsmp: default ADC sampling period (see ADM3 register); index 0 is
-+ * used for voltage channels, index 1 is used for temperature channel
-  * @adsmp_mask: ADC sampling period mask (see ADM3 register)
-  * @adint_inten_mask: conversion end interrupt mask (see ADINT register)
-  * @default_adcmp: default ADC cmp (see ADM3 register)
-@@ -65,7 +66,7 @@
-  * @adivc: specifies if ADVIC register is available
-  */
- struct rzg2l_adc_hw_params {
--	u16 default_adsmp;
-+	u16 default_adsmp[2];
- 	u16 adsmp_mask;
- 	u16 adint_inten_mask;
- 	u8 default_adcmp;
-@@ -89,15 +90,26 @@ struct rzg2l_adc {
- 	u16 last_val[RZG2L_ADC_MAX_CHANNELS];
- };
- 
--static const char * const rzg2l_adc_channel_name[] = {
--	"adc0",
--	"adc1",
--	"adc2",
--	"adc3",
--	"adc4",
--	"adc5",
--	"adc6",
--	"adc7",
-+/**
-+ * struct rzg2l_adc_channel - ADC channel descriptor
-+ * @name: ADC channel name
-+ * @type: ADC channel type
-+ */
-+struct rzg2l_adc_channel {
-+	const char * const name;
-+	enum iio_chan_type type;
-+};
-+
-+static const struct rzg2l_adc_channel rzg2l_adc_channels[] = {
-+	{ "adc0", IIO_VOLTAGE },
-+	{ "adc1", IIO_VOLTAGE },
-+	{ "adc2", IIO_VOLTAGE },
-+	{ "adc3", IIO_VOLTAGE },
-+	{ "adc4", IIO_VOLTAGE },
-+	{ "adc5", IIO_VOLTAGE },
-+	{ "adc6", IIO_VOLTAGE },
-+	{ "adc7", IIO_VOLTAGE },
-+	{ "adc8", IIO_TEMP },
- };
- 
- static unsigned int rzg2l_adc_readl(struct rzg2l_adc *adc, u32 reg)
-@@ -163,9 +175,18 @@ static void rzg2l_set_trigger(struct rzg2l_adc *adc)
- 	rzg2l_adc_writel(adc, RZG2L_ADM(1), reg);
+@@ -527,8 +528,77 @@ static int rzg2l_adc_pm_runtime_resume(struct device *dev)
+ 	return 0;
  }
  
-+static u8 rzg2l_adc_ch_to_adsmp_index(u8 ch)
++static int rzg2l_adc_suspend(struct device *dev)
 +{
-+	if (rzg2l_adc_channels[ch].type == IIO_VOLTAGE)
-+		return 0;
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct rzg2l_adc *adc = iio_priv(indio_dev);
++	struct reset_control_bulk_data resets[] = {
++		{ .rstc = adc->presetn },
++		{ .rstc = adc->adrstn },
++	};
++	int ret;
 +
-+	return 1;
++	if (pm_runtime_suspended(dev)) {
++		adc->was_rpm_active = false;
++	} else {
++		ret = pm_runtime_force_suspend(dev);
++		if (ret)
++			return ret;
++		adc->was_rpm_active = true;
++	}
++
++	ret = reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
++	if (ret)
++		goto rpm_restore;
++
++	return 0;
++
++rpm_restore:
++	if (adc->was_rpm_active)
++		pm_runtime_force_resume(dev);
++
++	return ret;
 +}
 +
- static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
- {
- 	const struct rzg2l_adc_hw_params *hw_params = adc->hw_params;
-+	u8 index = rzg2l_adc_ch_to_adsmp_index(ch);
- 	u32 reg;
- 
- 	if (rzg2l_adc_readl(adc, RZG2L_ADM(0)) & RZG2L_ADM0_ADBSY)
-@@ -179,6 +200,11 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
- 	reg |= BIT(ch);
- 	rzg2l_adc_writel(adc, RZG2L_ADM(2), reg);
- 
-+	reg = rzg2l_adc_readl(adc, RZG2L_ADM(3));
-+	reg &= ~hw_params->adsmp_mask;
-+	reg |= hw_params->default_adsmp[index];
-+	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
++static int rzg2l_adc_resume(struct device *dev)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct rzg2l_adc *adc = iio_priv(indio_dev);
++	struct reset_control_bulk_data resets[] = {
++		{ .rstc = adc->adrstn },
++		{ .rstc = adc->presetn },
++	};
++	int ret;
 +
- 	/*
- 	 * Setup ADINT
- 	 * INTS[31] - Select pulse signal
-@@ -235,7 +261,7 @@ static int rzg2l_adc_read_raw(struct iio_dev *indio_dev,
++	ret = reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
++	if (ret)
++		return ret;
++
++	if (adc->was_rpm_active) {
++		ret = pm_runtime_force_resume(dev);
++		if (ret)
++			goto resets_restore;
++	}
++
++	ret = rzg2l_adc_hw_init(dev, adc);
++	if (ret)
++		goto rpm_restore;
++
++	return 0;
++
++rpm_restore:
++	if (adc->was_rpm_active) {
++		pm_runtime_mark_last_busy(dev);
++		pm_runtime_put_autosuspend(dev);
++	}
++resets_restore:
++	reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
++	return ret;
++}
++
+ static const struct dev_pm_ops rzg2l_adc_pm_ops = {
+ 	RUNTIME_PM_OPS(rzg2l_adc_pm_runtime_suspend, rzg2l_adc_pm_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(rzg2l_adc_suspend, rzg2l_adc_resume)
+ };
  
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW: {
--		if (chan->type != IIO_VOLTAGE)
-+		if (chan->type != IIO_VOLTAGE && chan->type != IIO_TEMP)
- 			return -EINVAL;
- 
- 		guard(mutex)(&adc->lock);
-@@ -258,7 +284,7 @@ static int rzg2l_adc_read_label(struct iio_dev *iio_dev,
- 				const struct iio_chan_spec *chan,
- 				char *label)
- {
--	return sysfs_emit(label, "%s\n", rzg2l_adc_channel_name[chan->channel]);
-+	return sysfs_emit(label, "%s\n", rzg2l_adc_channels[chan->channel].name);
- }
- 
- static const struct iio_info rzg2l_adc_iio_info = {
-@@ -332,11 +358,11 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
- 		if (channel >= hw_params->num_channels)
- 			return -EINVAL;
- 
--		chan_array[i].type = IIO_VOLTAGE;
-+		chan_array[i].type = rzg2l_adc_channels[channel].type;
- 		chan_array[i].indexed = 1;
- 		chan_array[i].channel = channel;
- 		chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
--		chan_array[i].datasheet_name = rzg2l_adc_channel_name[channel];
-+		chan_array[i].datasheet_name = rzg2l_adc_channels[channel].name;
- 		i++;
- 	}
- 
-@@ -386,7 +412,7 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
- 	reg &= ~RZG2L_ADM3_ADCMP_MASK;
- 	reg &= ~hw_params->adsmp_mask;
- 	reg |= FIELD_PREP(RZG2L_ADM3_ADCMP_MASK, hw_params->default_adcmp) |
--	       hw_params->default_adsmp;
-+	       hw_params->default_adsmp[0];
- 
- 	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
- 
-@@ -469,7 +495,7 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
- static const struct rzg2l_adc_hw_params rzg2l_hw_params = {
- 	.num_channels = 8,
- 	.default_adcmp = 0xe,
--	.default_adsmp = 0x578,
-+	.default_adsmp = { 0x578 },
- 	.adsmp_mask = GENMASK(15, 0),
- 	.adint_inten_mask = GENMASK(7, 0),
- 	.adivc = true
+ static struct platform_driver rzg2l_adc_driver = {
 -- 
 2.39.2
 
