@@ -1,147 +1,155 @@
-Return-Path: <linux-kernel+bounces-435302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499EC9E75DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:25:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300701883B35
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:24:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AC42309AE;
-	Fri,  6 Dec 2024 16:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KxDGeDof"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E9E9E75DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:25:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC151FCCFB;
-	Fri,  6 Dec 2024 16:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F13289258
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:25:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6FB2309A3;
+	Fri,  6 Dec 2024 16:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BUv+Q0kf"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B62620E31F
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733502277; cv=none; b=bpWqNQ+oixsh5G0xHnkFal2HuzcxEYPIjehx2nqzUZGX51AZClFfkDmg+/G+20X0hDv9D0vVg1bJKAkORs9Zm3v9h/qeeQ2LSi+o+Hp5kltB8ewTx5g/ZKx8Bb1AwW8HvMniP+hFCQGBjObak7ha4P9YeMNMlryDteFDdQI1uU0=
+	t=1733502320; cv=none; b=mQlY0Wjbsv82e5cJrdEtN9aDFtwR8RfY2e3ZbziXB+KGpY9byPbmmrEmyblS719DABOOk/imkNIj8kVWQO420SWqn1BwH+c60CawUEJHVhLbOl445TH1OXBl94C80Z+wP4v8If46XSOKOMX0vA4LoBYnT+dyRUWFrNX+dH7MpTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733502277; c=relaxed/simple;
-	bh=J8Eq20L533gMYqHUJBYk7z6R9jQSiFigPKwHtNiYJYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=quDVIgJCKSifOLlAQR/APABPOFd9CAYpXr1Zbsd6Os6SHRyLVrIGUsqJ2rwaU32f4qblh2yWwAifP9pmLOTbxyGAhRc3nEBdfkT5ZLo93Wq6JJfNAzOZQ/E2k6Kpm61d2Bd18wehGnGi6nUyBDuFyj5hq1AoGuBc6sTKD7VxvoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KxDGeDof; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733502276; x=1765038276;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=J8Eq20L533gMYqHUJBYk7z6R9jQSiFigPKwHtNiYJYM=;
-  b=KxDGeDofiWVp8qvTpj0MTDpzv08ACiD2cjbxY09tbhI5iqVC+7dAhc0z
-   t6E7HaVRKTLsUuOwMdZQLBk3MZ22o34FemTNu9McBvZWOv1cmT0FQEUdb
-   MtM9XUJjNaHlN4qlEChBl2Z7zyFKGHPrEdQToJMti9AuaLIsZxI2pFhmZ
-   1NoeDLS2zKhG4Euy7uwcKrq5ve1UaQMlPLLWZZJ7EThFf19BDK/k9HNYL
-   r8fwByGNlsg5TPGsPsxuwwOuqQeBtfSTWPb5FmuhzVltzzIK+7txvGNaz
-   3wzFpTxUHKuQxKTjl4SStfSwpfT6os/9NrgHe79xsh+ameaI+xVrEKkms
-   A==;
-X-CSE-ConnectionGUID: yxf9n3WYRm2xxEioEigujg==
-X-CSE-MsgGUID: OCzXlaTEQYO9rKnmEUvN+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="44883633"
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="44883633"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 08:24:35 -0800
-X-CSE-ConnectionGUID: YNG1T7y9Rry5SkfG1NXlwQ==
-X-CSE-MsgGUID: UtjMJo5MSIOgHMFDFHsXnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="94808632"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.220.211]) ([10.124.220.211])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 08:24:34 -0800
-Message-ID: <11479069-6f1d-42b8-81b6-376603aea76f@intel.com>
-Date: Fri, 6 Dec 2024 08:24:34 -0800
+	s=arc-20240116; t=1733502320; c=relaxed/simple;
+	bh=ei0FtpHHrZUcxUt8WzTuRuIK31qZw6OThe6/aKViKtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e5PbhvMpAO931TTpc34sUO4aM73BNB4SOPbxPeQ0q+MzzTSZKfwU9Pgd0yPgtUEqOuxp++HzSF0fsRmCpJl45wTX08l+K2aVP9HQcIJMQQkQj14MapLB7iW4CP4JJ9nKucipRXBNSdf93e4MC6Yn6sPypUsh7qc7J77lSo9KHFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BUv+Q0kf; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a815a5fb60so85575ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 08:25:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733502318; x=1734107118; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z7AN4YKGkPuhBlqSxu9pcW9rYzEsgmg57zAfnSADqwM=;
+        b=BUv+Q0kf6WC4j5MEVOF5XMOgQUm6qHL2SAZbquaC0PjG9wVkbvYyq+HAzHC5aN1ctR
+         0gHG7+Q0Af8v574fnmCfFQdy1D2p+2DQqYyeRYwStluLprTpQVwV9oByDZuEfa7xxxlu
+         WPvJtmi2n7NfHcuKHA0AN2DTIItAZxpudBUiQUvgRJVzp7iC4TvMCM/rXs/bFlmfu/HU
+         iVY7+ZDfR/ovKD5/jOoRGcXlclpJRyPjccolrqXoWWYvjM0fotLvxbfX7cTJvXb2dCRu
+         sEsrr5btkXdAmzcr4K094EcB/lPEYoHgwjk04fybbJEvk1SwiDDBjy4Y0Bjvmkk1907z
+         oMUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733502318; x=1734107118;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z7AN4YKGkPuhBlqSxu9pcW9rYzEsgmg57zAfnSADqwM=;
+        b=RLLUulHgiLH7M++TapO4V8BVo9ZCDnttAGmOEDmK2GAUrkXvm5jB3wGcmwelT+apPB
+         8qGXjVAsttPMnKF9727L7HJLUS7N5xo9Prnx+EvpbtzgnHbziiDIw8dSK+AzXfqlcE72
+         Y0mA1NdbekNtWJJu9LlIgVdDkiRJYkqZZjDFJSZmV3qseK59MnX05IE1Pp2WFdCWxAh8
+         7nooQBacZ8uVATr7sGOOhNYZAH5uB6+iaiHlt0LZJmlFyriUjz0U8F5vEwhvknW5f/Za
+         VNKNuC+K4kREYjVSg8nqY7Z/ZoRshaaQIkf1vYpJCvUSNd1qrNrDYnM78dCxAjoJngVl
+         OGqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2+0/JKn4e9aCLkpvzipb8mN4JxHEsbjf+wK1hcbcKhK27b3BlzDERlmNyzrpSmSm4gYsQwmbxPoi3W9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq/pdbMYt9hyrusNskAryYfLOJnw97vcUCT3ozD5zJDaQjhG6h
+	nZSKwytmZI2dUjeIDJkO29PUj0YtODCrCkNIXRnSu3WjSR0jXrj9aV1ObO336Pee9Qwg+yGYxHl
+	15VFqNMpXRW6567GaTcMBeftQVIKKHpo4Xbfr
+X-Gm-Gg: ASbGnct0ryA1BLIqxx1bgQFv6s2kMS+YnTH1Ml9sba+TR1YLOSStmS1heM6Z1vU6MYS
+	LSF+bBEspTMjMoOmuqGgJHggsvB9qXXjL
+X-Google-Smtp-Source: AGHT+IEwiUM7lSchJOJMWcRstd5T/zhaT5EPwLxomkR/JEk3yV8g29msWYUMSgXl/Nhrl5J83dk6tUOv/1uuSGw6VLg=
+X-Received: by 2002:a05:6e02:3a86:b0:3a7:aa54:ce04 with SMTP id
+ e9e14a558f8ab-3a812c4d915mr3484025ab.18.1733502318069; Fri, 06 Dec 2024
+ 08:25:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/25] x86/virt/tdx: Read essential global metadata for
- KVM
-To: "Huang, Kai" <kai.huang@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <20241030190039.77971-4-rick.p.edgecombe@intel.com>
- <419a166c-a4a8-46ad-a7ed-4b8ec23ca7d4@intel.com>
- <47f2547406893baaaca7de5cd84955424940b32b.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <47f2547406893baaaca7de5cd84955424940b32b.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241206044035.1062032-1-irogers@google.com> <20241206044035.1062032-2-irogers@google.com>
+ <20241206102451.GA3418674@e132581.arm.com>
+In-Reply-To: <20241206102451.GA3418674@e132581.arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 6 Dec 2024 08:25:06 -0800
+Message-ID: <CAP-5=fVDH6k7rW3_LXK5Y9Givs3WO5MQ8XMKsuUXXY5nQ66qDg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/8] perf: Increase MAX_NR_CPUS to 4096
+To: Leo Yan <leo.yan@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Kyle Meyer <kyle.meyer@hpe.com>, 
+	Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/6/24 08:13, Huang, Kai wrote:
-> It is not safe. We need to check
-> 
->       sysinfo_td_conf->num_cpuid_config <= 32.
-> 
-> If the TDX module version is not matched with the json file that was
-> used to generate the tdx_global_metadata.h, the num_cpuid_config
-> reported by the actual TDX module might exceed 32 which causes
-> out-of-bound array access.
+On Fri, Dec 6, 2024 at 2:24=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> Hi Ian,
+>
+> On Thu, Dec 05, 2024 at 08:40:28PM -0800, Ian Rogers wrote:
+> >
+> > From: Kyle Meyer <kyle.meyer@hpe.com>
+> >
+> > Systems have surpassed 2048 CPUs. Increase MAX_NR_CPUS to 4096.
+> >
+> > Bitmaps declared with MAX_NR_CPUS bits will increase from 256B to 512B,
+> > cpus_runtime will increase from 81960B to 163880B, and max_entries will
+> > increase from 8192B to 16384B.
+> >
+> > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/lib/perf/include/internal/cpumap.h | 2 +-
+> >  tools/perf/perf.h                        | 2 +-
+> >  tools/perf/util/bpf_skel/kwork_top.bpf.c | 4 +++-
+> >  3 files changed, 5 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/=
+include/internal/cpumap.h
+> > index 49649eb51ce4..3cf28522004e 100644
+> > --- a/tools/lib/perf/include/internal/cpumap.h
+> > +++ b/tools/lib/perf/include/internal/cpumap.h
+> > @@ -22,7 +22,7 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
+> >  };
+> >
+> >  #ifndef MAX_NR_CPUS
+> > -#define MAX_NR_CPUS    2048
+> > +#define MAX_NR_CPUS    4096
+> >  #endif
+>
+> This series is fine for me.  Just wandering if we can use a central
+> place to maintain the macro, e.g. lib/perf/include/perf/cpumap.h.  It
+> is pointless to define exactly same macros in different headers.  As
+> least, I think we can unify this except the kwork bpf program?
+>
+> P.s. for dynamically allocating per CPU maps in eBPF program, we can
+> refer to the code samples/bpf/xdp_sample_user.c, but this is another
+> topic.
 
-The JSON *IS* the ABI description. It can't change between versions of
-the TDX module. It can only be extended. The "32" is not in the spec
-because the spec refers to the JSON!
+Thanks Leo,
+
+can I take this as an acked-by? Wrt a single constant I agree,
+following these changes MAX_NR_CPUS is just used for a warning in
+libperf's cpumap.c. I think we're agreed that getting rid of the
+constant would be best. I also think the cpumap logic is duplicating
+something that libc is providing in cpu_set:
+https://man7.org/linux/man-pages/man3/CPU_SET.3.html
+And we have more than one representation in perf for the sake of the
+disk representation:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/lib/perf/include/perf/event.h?h=3Dperf-tools-next#n227
+Just changing the int to be a s16 would lower the memory overhead,
+which is why I'd kind of like the abstraction to be minimal.
+
+Thanks,
+Ian
 
