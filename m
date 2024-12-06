@@ -1,116 +1,130 @@
-Return-Path: <linux-kernel+bounces-435131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293829E700F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:30:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 964069E7014
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D071882A02
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CEE2169071
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9011494AD;
-	Fri,  6 Dec 2024 14:30:23 +0000 (UTC)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D552614A4F0;
+	Fri,  6 Dec 2024 14:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WELdmpke"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683E213D8B5;
-	Fri,  6 Dec 2024 14:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE36E38384;
+	Fri,  6 Dec 2024 14:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733495423; cv=none; b=gYLy2OlLPr8LpIOpL+Ja9hqjNOuPDx3q//lvpI+1jhFz8kxUHNlyISqupms5TtjFIRCGdnQeYSNaMY//yv6xCW0E8gVPdV8NPwjZG1kPKiKVSnZHj44SuZSuTW1tUJGaailStFBwL9b15xPOwdG2nmQdntvjC8aimUEbMSABYtk=
+	t=1733495568; cv=none; b=pBKB90TXdKApuTP3IZv9HvZqwf3uuOb0ajvL29cyvbHJYxZJ+z4xl6e0nntkE+ez+WILTjs9Z1AVRatcRVmkGvUf6Q9J3fzFZQWDyDO4N30GsvcNAuhfEn/ZJCn4R4ep9O0Phpq3QdfnCz/EYjHfFIRLjshCMn8mgCmbD3IEFNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733495423; c=relaxed/simple;
-	bh=TGVasmDCO3tnOBpJKA4aLJGzJlE4q7jJxKgqMz/34tc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cL+3OA7NqX4z/4n4m8PSbvwuLe3j45HqK1ZJwF9t1GPOmiXfdqROewT3dhbVoJIHbBHwiMU0fNYh5Jyby48jTXpsf2g0BRa3/fifheasL8VNPz+zACbkZC4hJMitF9/E6s0m1IyIxWCFB/gPUlJ0PXLdR8KBcsAWZeSztVl7a3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-85c4557fce0so165845241.3;
-        Fri, 06 Dec 2024 06:30:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733495419; x=1734100219;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dKDuu8Gf8V/wWQlq1EzhT4nZUUbeswEARFJ5dyRd2oo=;
-        b=JoDov9tIAZv3S0XiVELfDFANQMtL1AMbv9yZr3trzd8r7/Yp9ZgToh/DAxhu9f2t+c
-         JE7rhj3l4vgy5Ij6A5Y0AFjQiiEGEsYccU2QAqZc0Ze7z2Og9N6VX0F7LfGh47HE/6qn
-         zKU1zU0Lcxd8k+jhf11HSzA8j706/XfS8K/PHuJgHkz3R8vdRp2iTEJv7v1UGi0w73uF
-         JmZ+lQXcFpWo9OOVs7NIZRoNvKzbYRQOHGAs39GIEEKm0ZNZRAn0EJGZNhKSAyvayisQ
-         Sc3LJ6IJYcKBnt6gqgupsJSSMqGVTkZSy6KYjwow7hZi0HqyR9VvW6kFMmg1QsDTV+i7
-         QpVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU24aozmzlkDhR0VB13c6oLmr7OSxRPwUo+fd2L2J78271Pv9Xhn8QkIOzDfzg5YokyeVRadP0aJn6X0xC9@vger.kernel.org, AJvYcCVIr+lTrShPFJ4ILJorFwK9bSDhnvRgSuZqkpTjGu6iGjHUwet+14EDrhT4oaWGAQYjjw4uEAk45x41jz+a@vger.kernel.org, AJvYcCVn8ZBS1Lb4epZlue+KwMaNvosHCG+TtPE4K/PkiRzEp+zRb0btbSmm/ge9seKQ0VXm+aym3rTcqJO01Gm+xKLxx1Q=@vger.kernel.org, AJvYcCWjsN61UWJyUjcczIEmtGMSnjVNnbCzA7veV0mL4+yvDHImcjNg1+TDplT6TOC2A2ZGD/I7Nvt3i/yT@vger.kernel.org, AJvYcCXb/dHkAzX+9SJgMMb2PHXmuXvB1BmbZiAIeToeHLidBIOtfHw7lNec0Q1smeLOcd94p33Z4wjK4IRz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKcOGXnYIe8VeN2DUgxyFQkmfh6FqY4S8AUxuXN8YvK0ztV4pM
-	sgiZbie/Jr3NfW8KieWfaBYfkkC3f5IPrbR4Tny10+0wmH8mbqHLiNXX28dF
-X-Gm-Gg: ASbGncvgsGKBFi6iyTk/PjxSBI2u6Sm4ArLRzD7uv2J9KstYizw9cSAHZOqRuAhSnhU
-	1KT9gV82W7zg0tlZEemwWztsfRmZ/fXv+euLIxc017+HDwNPj61KzINFaMMhwts9VuzGzWldcfG
-	s43+JWez2retFanNbrPtUDoOsivV00KWnAgabOj/RhZbIYVuJS5OjYiawi5hHQ/q/2dsYPx0EWc
-	lWOxbzdO3/pRtLTm9W7IUTO9wLNvBpk2Eg8xjCkPClaUKpYpkcBucbk942yfcMWzYHUot0A3c5d
-	JE7UBTGor/Dl0c2H
-X-Google-Smtp-Source: AGHT+IFcxhlJzUj7uxEx3SlyHKEVyAMYIbTLbaPBa9NHFLbRhbWv8Im71D6vq/QsTyuX8H251q9xug==
-X-Received: by 2002:a05:6122:2a12:b0:501:2556:1cd9 with SMTP id 71dfb90a1353d-515fcae3475mr3236127e0c.10.1733495417846;
-        Fri, 06 Dec 2024 06:30:17 -0800 (PST)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eaf60863sm333026e0c.46.2024.12.06.06.30.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 06:30:17 -0800 (PST)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-515e7d76f65so559484e0c.1;
-        Fri, 06 Dec 2024 06:30:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUOCI/QBEIPAZXg/hy65ZDihgsmbJL1rZrU4N87EK0159IdHT2tOa8YEJnOgj/XmRTeQgZTsrUVGkkK6J0e2eebqbs=@vger.kernel.org, AJvYcCVIh/jo2/QDtWg84msfrc3wVAWXUJGAQQhbh8VwpUZg3aeKTi6J4scCCLtvNoLaxmCP1sChIOFifJ2i@vger.kernel.org, AJvYcCWbXpMGxoeXcMAYN7Me/3Ss0WwC12q5TGyzsPpl3rS8Qg55pdmmnmlfKfosBW7WNy+lnlSGKOP6geUO@vger.kernel.org, AJvYcCXPSzzlFDgHf8DuIr5TEjYUfIIWzFeEoiwbWLXRfzOwedXduLsFRm8QkT2aAQzpCEQhjS6I2MuKUsNtK87k@vger.kernel.org, AJvYcCXjmnBLuBo7OU1h8Jkl6NPMuMmUQQZ65EppfPg/l/ueYe6KIB0oRDofW5AN6jwFS64RyuYO3FerVRBqDHrN@vger.kernel.org
-X-Received: by 2002:a05:6122:2526:b0:50c:79a4:c25 with SMTP id
- 71dfb90a1353d-515fcac6327mr3656559e0c.8.1733495417121; Fri, 06 Dec 2024
- 06:30:17 -0800 (PST)
+	s=arc-20240116; t=1733495568; c=relaxed/simple;
+	bh=x1x5lZTfbcN/UYiBOy/j8SpdkEQ/Y4TzF8UlXN0Ddu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XpzhdhKPsySwqsZoIME4WrFu/DemFecPmBPQd1XN0XSnqFBZClCJs4KTJGqY72YWPWZupa1qgejWOCiH+Dp2ijcwTVQCIpGdvz1Y8ojGMdv4Py1nIafCCU08N9WeXsQX6T88DlOV7CP2KDyHLieLYx2sSRTFYsSmfiidl5y8UWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WELdmpke; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6CF4Ij003155;
+	Fri, 6 Dec 2024 14:32:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KPDZlNBlfWl08rL8S2G09TciFQAjveDqfFO68tbpYHU=; b=WELdmpkeEaK0npgH
+	GxjtdA1yDixZTduVJxoRCmQ+rBnMOfeNdWuko4eT17jTISYmPG9NPZHHr6KL/dol
+	yGW3CyhPPZ2d/Bd39HmUl062XN6WVYsMaDcDzFjbFUabCmQqFY44VPxaE5KNZIJF
+	aa/DUStK412KboG1FFYfeQ6nuwjd3+eDQHD+aw/wLG96CfO2eBVKTgL74yfvT0Re
+	WjJF8bGRJ/u/pDVW1wk2jTVrA58tRqi5lCHGpep8nVejmFxg8IT3ylaCfhExVDW8
+	4FEqEzB8fAjxFfvheKphzRMDawfzuqJQwkwE5GvydPmTCQrCDR8VOONa9BhYsWx+
+	zc41tA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43brgp1tqn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 14:32:42 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6EWflZ003869
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 14:32:41 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
+ 06:32:35 -0800
+Message-ID: <d5c52ecf-1606-4563-ba16-a88437c414da@quicinc.com>
+Date: Fri, 6 Dec 2024 22:32:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com> <20241115134401.3893008-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241115134401.3893008-5-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Dec 2024 15:30:05 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUoC-MUgOpudNeKqVD-ka_Kiem6kzskX7VCJDH4rVRR2g@mail.gmail.com>
-Message-ID: <CAMuHMdUoC-MUgOpudNeKqVD-ka_Kiem6kzskX7VCJDH4rVRR2g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] arm64: dts: renesas: r9a08g045: Add the remaining
- SCIF interfaces
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de, 
-	lethal@linux-sh.org, g.liakhovetski@gmx.de, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/16] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <vladimir.zapolskiy@linaro.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Yongsheng Li
+	<quic_yon@quicinc.com>
+References: <20241205155538.250743-1-quic_depengs@quicinc.com>
+ <20241205155538.250743-12-quic_depengs@quicinc.com>
+ <0909a2b2-089d-41f3-82e6-f0e05682ce27@linaro.org>
+ <2515c9d8-0e9d-4e1e-b8ff-764b53ea3edb@quicinc.com>
+ <e5f89ace-3a22-41a7-aafe-1365f2fd9bcd@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <e5f89ace-3a22-41a7-aafe-1365f2fd9bcd@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 20zBSk_dzKd5RqAkkKwyp_bzp0nqBJ_W
+X-Proofpoint-ORIG-GUID: 20zBSk_dzKd5RqAkkKwyp_bzp0nqBJ_W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ adultscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 mlxlogscore=961
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060109
 
-On Fri, Nov 15, 2024 at 2:50=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The Renesas RZ/G3S SoC has 6 SCIF interfaces. SCIF0 is used as debug
-> console. Add the remaining ones.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Bryan,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.14.
+On 12/6/2024 6:06 PM, Bryan O'Donoghue wrote:
+> On 06/12/2024 02:18, Depeng Shao wrote:
+>>
+>> Since the camss driver just support ife, so I think only ife related 
+>> iommus are needed, just like we don't add ipe,bps,jpeg related clk and 
+>> register in the dt-binding.
+>>
+>>      msm_cam_smmu_ife {
+>>
+>>          compatible = "qcom,msm-cam-smmu-cb";
+>>
+>>          iommus = <&apps_smmu 0x800 0x20>;
+>>          ......
+>>      };
+> 
+> Upstream camss entries provide a long list of iommu entries, please 
+> provide as complete a table as you can here.
+> 
 
-Gr{oetje,eeting}s,
+Do you mean also add jpeg, icp and cmd's iommu entries to here? Starting 
+from SM8550, IFE just has one smmu entry, SM8650 and SM8750 are same.
 
-                        Geert
+Thanks,
+Depeng
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
