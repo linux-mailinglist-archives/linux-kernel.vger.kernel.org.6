@@ -1,147 +1,206 @@
-Return-Path: <linux-kernel+bounces-435628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40159E7A54
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:03:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91F09E7A57
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:04:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6585B284EF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CCA18861A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F10202F9C;
-	Fri,  6 Dec 2024 21:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E3E203710;
+	Fri,  6 Dec 2024 21:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nnis4g0A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9+uSzXQ"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90BD1C3C18;
-	Fri,  6 Dec 2024 21:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F871C3C18;
+	Fri,  6 Dec 2024 21:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733519006; cv=none; b=d/PpMLT3NwD0zYTim4B8uffJs0JCw4WKRn/6k2IwEl1xqEb9MKBKGaLrorDf5wuS5eVn9G1mJEpaarbZ93NmyzO+ygpWWcqoI9z8HY3jTZwZJ2LSGAOvqk9AkY48QDwxxDGXpcd7oh3tekOXdoxexcJEj2pyqEun/tLmv6Wfw8I=
+	t=1733519084; cv=none; b=oDbGdtwSVTi8LSFjPPVKIYWJlofP+skLnn79sjnJn8DUTc/GkOaDcvbIrXOGrDyhZK1rdt4pOlDjYicxBlWQ2Ki6XGlmvYen/AfKOvyFCLOWD6WnXpd1K1Pyq44irCCZZemqYKsx3ECTgmW6bnUvg6gJhfMcEBJ2e2hvuq6bIDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733519006; c=relaxed/simple;
-	bh=rjYe+1mTHx2nCmLqd3cmIWfysX4E1LYaiuujOJeiI6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fwj8Oc+008r5UauOByV2vTtjzkyzcFW4QngkkCGEYjrFTCSSkQ2A6pTOyNeABvB4GVQIbktCu27z9PyosnciTI9F72Ma2/Cd1QMOr+2/8CWSlwdjvTzgaLs/phWCjw0VFcVkeOJrXPIfS5JGirQ7lf3F0MsMkSnf9Lhft7rD7BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nnis4g0A; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733519005; x=1765055005;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rjYe+1mTHx2nCmLqd3cmIWfysX4E1LYaiuujOJeiI6E=;
-  b=nnis4g0Awp80RXkdPPH8wgQN1FbpDsoGxknMkf72MLK3FcBmd6JcQrnk
-   T2WslOwP/V7aw2hW0Hh0gjYhyh4QEzlzK9/40s5rOzCrGs7K03A/MjS4I
-   taVrmqOGDuFAEU6+gY5LrAY+TWYZzPiPhY0BgXxvSuQ9mud5AvnIl2eLx
-   Jj4M23BKy9/yuCMo1Xget2Vrz27zUvzYpr3+9D2jZ6xfmHZupThAfaDj+
-   gphWN2Avn08aGuqdzRKKPi5sxMnQyreAu7KjDB/ucypYHdoTqComdEKOC
-   Qc8rK84NP5ks4cgf0bck6AnlhJ/0rbBm6LoImxUViModFONm2mO9qExPM
-   A==;
-X-CSE-ConnectionGUID: c0cxSqSyT5SRllVGlujyMw==
-X-CSE-MsgGUID: D2Kt/jQFTuuPbDp5XB3h+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="33233818"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="33233818"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 13:03:24 -0800
-X-CSE-ConnectionGUID: P11hVv+GRmOT2rr69RHaUg==
-X-CSE-MsgGUID: Rl6xV7T1RHG+DT2T+/YfCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="125344723"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 06 Dec 2024 13:03:20 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJfTo-0002Fx-2P;
-	Fri, 06 Dec 2024 21:03:16 +0000
-Date: Sat, 7 Dec 2024 05:02:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>, rafael@kernel.org,
-	lenb@kernel.org, james.morse@arm.com, tony.luck@intel.com,
-	bp@alien8.de, robert.moore@intel.com, dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com, Benjamin.Cheatham@amd.com,
-	Avadhut.Naik@amd.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
-	ira.weiny@intel.com, dave.jiang@intel.com,
-	sthanneeru.opensrc@micron.com, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2
- capabilities
-Message-ID: <202412070418.9pHXTR91-lkp@intel.com>
-References: <20241205211854.43215-6-zaidal@os.amperecomputing.com>
+	s=arc-20240116; t=1733519084; c=relaxed/simple;
+	bh=M83fACsut8XvBVtcUvfBH8jP+xPV8I4U2WKYEJvzyBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UNnq+MrbcEWR9lSrKG1su1KwjSFeCUiqPcyLa69riaRtJV6IZQ20+Je6jZ9W4d1KMsOuviC8wCGTDqVICuDEeXpCoz+DbX9j73U47/KqV6ddbpe56976Ev/v09FvzIsvtm5qxTJrDiVVMQfqPjGaEPsoiSCETSliHpP7J4K0y7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9+uSzXQ; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d8a2d0588bso21601946d6.2;
+        Fri, 06 Dec 2024 13:04:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733519082; x=1734123882; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tIsQxVZOmSisxuVH5z4x+NyiZyPKlPsv2rD1mEtYR5Y=;
+        b=W9+uSzXQC7c6x3XE015ZhyzBX9VWJJ/wOHi6NbkpRkZ2Ei1kbADx8gcof5Gtg7qcyO
+         +Y+g3SYcVeUDQSXOj8JuPTV/KYwCuK9LZP7WXFG0YgRN4FxwB7ftRr575daY1n+Ysdlx
+         AI0EMhNQOiSuNiR2MtIwwMwjo7tYuPO6hoW08Rp7atN4Es1z+6KbQSj7FqPDOaGtJhYn
+         5pXyXekq0TRgXsCxjoJ9tPyX3en1rLLaXxwaQNfNOjY1AQFaQrKMb31C7oCi2v6ChA+f
+         Um+e3RUcqDMR0g1WAH+xzacrF0BE1pRu893Y15HG9yM/02DtKI4wF7UluOE4MUtDjRJ0
+         QPWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733519082; x=1734123882;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tIsQxVZOmSisxuVH5z4x+NyiZyPKlPsv2rD1mEtYR5Y=;
+        b=N3c48uSTKB0ihZB1lSXgPDlVWrv5vuXbfPkYeTeqXeypkP1ZxVJVW0RD+7IEnoWDjM
+         sn6619aVnKMOzFqvB81TaYyJPBdENXBYbjM7ELKi/S6++NHXAe1cZ4jPwcrogZ10wB9r
+         u4Vvqtzsf2ygQscz1BJrCuNcFp5q/gipmHZo1xcZEM7uS7HiXq2Ndc8+iYyjelHaoOgp
+         Oba6DA2HO7jhoa3TE+nExFrnK/jPmah5Oq/ZC9Pi0n1RmczVaDOfCuUEERw54Lik5Rjq
+         flskKp1mcG9ZQEIjFn/qtJk2wtBXsfE58MeSFmGFNcqgzHWtxyRS2p+3mFkhdXzEReEk
+         fItw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdsoHb+hfPYPl64UE9vZxR5hIJ0/GJd9ib3iKUg+SNVKNFb4jIcmwZqTRjTcn3aHPS0TdqkY3Qobd+vj/c@vger.kernel.org, AJvYcCXdr/Rq6dD/BMBMOPHZchf5wSkpR64SVJSdXW2SXci82z9zg3JeX5oDGnC2Fu92FnU0SZHH8Zy/XtCz@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm91FNIAlC6nWSP90nXH8GXlgy1IQ//7Dp8jvmSoXsXdIHU6x7
+	T+KQWKr7qhrxfVBToeR6VNeQ8vl3ED1NQN16tAmC1PsO4HzkK6ht
+X-Gm-Gg: ASbGncuOKmSk8rf/pgOqn0S5pUh5BAl78s6m4hflBCduGYRzncLmFLxh1yBjiNBUyM2
+	7HhVh7fkGtpIi+2D6q3aOyJ2AONZ+LUWZjiTQBVNM2t5HyGitcnTyOVBci5mKBR/xHA/09JneB2
+	thFpp0i4XBvwqT96YSmRfZOjqUDBB1zodFOy8kzBtqWX3Vun608jSvXHSyzQLwhDM3VZIkUQqd5
+	3A7pYpsAnseIojxbiOoIlOlsXB/e1qNelJA/1jAtagk8sk4RfaTHayVniY1dA==
+X-Google-Smtp-Source: AGHT+IEQdKZujTj7jjBxjOcAodQ9XvJwI3WBewZCeAsZZLW6wO5g4aM64JIpWh3fzo/92H8adS9G7Q==
+X-Received: by 2002:a05:6214:20c3:b0:6d4:36ff:4358 with SMTP id 6a1803df08f44-6d8e718552amr89532996d6.25.1733519082094;
+        Fri, 06 Dec 2024 13:04:42 -0800 (PST)
+Received: from localhost.localdomain ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da675214sm23068256d6.11.2024.12.06.13.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 13:04:41 -0800 (PST)
+From: Mingwei Zheng <zmw12306@gmail.com>
+To: marex@denx.de
+Cc: linus.walleij@linaro.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	make24@iscas.ac.cn,
+	peng.fan@nxp.com,
+	fabien.dessenne@foss.st.com,
+	linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Mingwei Zheng <zmw12306@gmail.com>,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH v2] pinctrl: stm32: Add check for clk_enable()
+Date: Fri,  6 Dec 2024 16:08:00 -0500
+Message-Id: <20241206210800.3346579-1-zmw12306@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205211854.43215-6-zaidal@os.amperecomputing.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Zaid,
+Convert the driver to clk_bulk*() API.
+Add check for the return value of clk_bulk_enable() to catch
+the potential error.
 
-kernel test robot noticed the following build warnings:
+Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled when LEVEL IRQ requested")
+Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+Changelog:
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.13-rc1 next-20241206]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+v1 -> v2:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zaid-Alali/ACPICA-Update-values-to-hex-to-follow-ACPI-specs/20241206-052420
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20241205211854.43215-6-zaidal%40os.amperecomputing.com
-patch subject: [PATCH v2 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities
-config: x86_64-randconfig-101-20241206 (https://download.01.org/0day-ci/archive/20241207/202412070418.9pHXTR91-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+1. Convert the driver to clk_bulk*() API.
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412070418.9pHXTR91-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/acpi/apei/einj-core.c:728:21-27: ERROR: application of sizeof to pointer
-
-vim +728 drivers/acpi/apei/einj-core.c
-
-   721	
-   722	static ssize_t error_type_set(struct file *file, const char __user *buf,
-   723					size_t count, loff_t *ppos)
-   724	{
-   725		int rc;
-   726		u64 val;
-   727	
- > 728		memset(einj_buf, 0, sizeof(einj_buf));
-   729		if (copy_from_user(einj_buf, buf, count))
-   730			return -EFAULT;
-   731	
-   732		if (strncmp(einj_buf, "V2_", 3) == 0) {
-   733			if (!sscanf(einj_buf, "V2_%llx", &val))
-   734				return -EINVAL;
-   735		} else
-   736			if (!sscanf(einj_buf, "%llx", &val))
-   737				return -EINVAL;
-   738	
-   739		rc = einj_validate_error_type(val);
-   740		if (rc)
-   741			return rc;
-   742	
-   743		error_type = val;
-   744	
-   745		return count;
-   746	}
-   747	
-
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 5b7fa77c1184..188de29ac281 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -86,7 +86,6 @@ struct stm32_pinctrl_group {
+ 
+ struct stm32_gpio_bank {
+ 	void __iomem *base;
+-	struct clk *clk;
+ 	struct reset_control *rstc;
+ 	spinlock_t lock;
+ 	struct gpio_chip gpio_chip;
+@@ -108,6 +107,7 @@ struct stm32_pinctrl {
+ 	unsigned ngroups;
+ 	const char **grp_names;
+ 	struct stm32_gpio_bank *banks;
++	struct clk_bulk_data *clks;
+ 	unsigned nbanks;
+ 	const struct stm32_pinctrl_match_data *match_data;
+ 	struct irq_domain	*domain;
+@@ -1308,7 +1308,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
+ 	if (IS_ERR(bank->base))
+ 		return PTR_ERR(bank->base);
+ 
+-	err = clk_prepare_enable(bank->clk);
++	err = clk_prepare_enable(pctl->clks[pctl->nbanks].clk);
+ 	if (err) {
+ 		dev_err(dev, "failed to prepare_enable clk (%d)\n", err);
+ 		return err;
+@@ -1397,7 +1397,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
+ 	return 0;
+ 
+ err_clk:
+-	clk_disable_unprepare(bank->clk);
++	clk_disable_unprepare(pctl->clks[pctl->nbanks].clk);
+ 	return err;
+ }
+ 
+@@ -1631,11 +1631,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 			fwnode_handle_put(child);
+ 			return -EPROBE_DEFER;
+ 		}
+-
+-		bank->clk = of_clk_get_by_name(np, NULL);
+-		if (IS_ERR(bank->clk)) {
++		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
++		if (IS_ERR(pctl->clks[i].clk)) {
+ 			fwnode_handle_put(child);
+-			return dev_err_probe(dev, PTR_ERR(bank->clk),
++			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
+ 					     "failed to get clk\n");
+ 		}
+ 		i++;
+@@ -1647,7 +1646,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 			fwnode_handle_put(child);
+ 
+ 			for (i = 0; i < pctl->nbanks; i++)
+-				clk_disable_unprepare(pctl->banks[i].clk);
++				clk_disable_unprepare(pctl->clks[i].clk);
+ 
+ 			return ret;
+ 		}
+@@ -1726,10 +1725,8 @@ static int __maybe_unused stm32_pinctrl_restore_gpio_regs(
+ int __maybe_unused stm32_pinctrl_suspend(struct device *dev)
+ {
+ 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
+-	int i;
+ 
+-	for (i = 0; i < pctl->nbanks; i++)
+-		clk_disable(pctl->banks[i].clk);
++	clk_bulk_disable(pctl->nbanks, pctl->clks);
+ 
+ 	return 0;
+ }
+@@ -1738,10 +1735,11 @@ int __maybe_unused stm32_pinctrl_resume(struct device *dev)
+ {
+ 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
+ 	struct stm32_pinctrl_group *g = pctl->groups;
+-	int i;
++	int i, ret;
+ 
+-	for (i = 0; i < pctl->nbanks; i++)
+-		clk_enable(pctl->banks[i].clk);
++	ret = clk_bulk_enable(pctl->nbanks, pctl->clks);
++	if (ret)
++		return ret;
+ 
+ 	for (i = 0; i < pctl->ngroups; i++, g++)
+ 		stm32_pinctrl_restore_gpio_regs(pctl, g->pin);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
