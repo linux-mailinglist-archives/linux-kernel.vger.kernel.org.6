@@ -1,69 +1,83 @@
-Return-Path: <linux-kernel+bounces-434644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453389E694C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:49:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB42E9E6940
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:49:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3889167C6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19616283252
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EC91DF985;
-	Fri,  6 Dec 2024 08:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407F91DDC33;
+	Fri,  6 Dec 2024 08:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="S2ain+q+"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AD+EvKMS"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0CC192D89;
-	Fri,  6 Dec 2024 08:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3132192D89
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474981; cv=none; b=Y6IXGZsKRmNvNW91T71fhMKJ8SLNmGWnSE2+F4iT/UmDPzaQH6CwiR9/7KHUgZumRb6VDRAB0BMmWxzEA8kRAY0tKpp1ROgnewN8SUr38YNPVu/gqU5c4M5ov2dID09SQdaOe8dQwSV4ZOmc103A3/K22v3xfukJuC+dI792dds=
+	t=1733474938; cv=none; b=H5nciDAZykmcRCOctMOmImYXCMeRdI/g38WY6i0BBk375N/Wkv+Y3EynD7oxaq9OGOApL0/yX30KragaS3bksTOx3nWqYb5hJwmYI6RQ29pdHITIX00turrUG46R37C3m0/Kk4QyRwjlL/cmpseIlKS1CalIz91dIhipu7PdBZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474981; c=relaxed/simple;
-	bh=SpWS6tHvJ4vr0pLDDXRJKN4Rqy+4CXz8b7KhTFwlur0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=asvUJ1ykX11kTIHBbUlzW4Yyq3kDJOcd05p08qYZVmu4qBIEze2+MukFFKNlaGylGnVdUSd88ttCXu9p/crTOvDEbunwpCFePyqyJAIeGUKDRo9sk73m3kPqcL6CglS5ZKWw6u2zySHr7uxR1Ufkl7P0daBZBwDpa8H0Kwta1cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=S2ain+q+; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4B68mxmaF138139, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1733474939; bh=SpWS6tHvJ4vr0pLDDXRJKN4Rqy+4CXz8b7KhTFwlur0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=S2ain+q+hbOZDcQOnPP5J6tFw15t1PWvDM2UgxVxXmVE/wscVAJYyvE0HkL+KyMfh
-	 KdhBjmNg/QmptUsh3j72j2b73dcxIE1wLNqJeKG1Rt3zZOekJmf6Rxt6OV146efOkn
-	 BQZjRca51qaKzbzIyLeCmHuBcl1c/ooOC8OUvdMQHwCkIJgt8Pwr2gIQtz/dvahrlm
-	 wv7kIUM2DqHdXs3p6xNC7G+F8+B1tFeStQdS1SxQZR5ZDo8xLrmhbiEua1LewUVraF
-	 fX2O18l6qTpIgvZH+2vKLEWZtCVda/VpsFi+VyDZE7W/5zqmUeHe5L0xx06Bz44qcz
-	 IVPl0GJUtMYyw==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4B68mxmaF138139
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Dec 2024 16:48:59 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 6 Dec 2024 16:48:59 +0800
-Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 6 Dec
- 2024 16:48:58 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <horms@kernel.org>,
-        <michal.kubiak@intel.com>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, Justin Lai
-	<justinlai0215@realtek.com>
-Subject: [PATCH net-next] rtase: Refine the if statement
-Date: Fri, 6 Dec 2024 16:48:51 +0800
-Message-ID: <20241206084851.760475-1-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733474938; c=relaxed/simple;
+	bh=utjkZbDeEMTthCs80VCBUvjS3enz36ctYpoj7DLBIEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iE+Rk/kpFn399XHDkaDMYH1LKGmjkZg9Yx6tnHFMDi5/AQ9gON+fMOQFvyvrOM+kBrtHZxCHUoUZH7+WcxWQWiKZcx5D5UNmVtM+Sk0n4o3WZ4TrE6CAIbzN8owaQqDqpArfs25ZxBcPvNJkSmwdzz4GfxbYU6kICkjEW/2OQxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AD+EvKMS; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-300392cc4caso614721fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:48:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733474935; x=1734079735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+KHZbWUUIbfPMrkQ0dg3yxh8EkZEBHyzYKLApYVQfA=;
+        b=AD+EvKMSiOilJIqp62aW6ZPUUB1rC1LCIqSWSIjJ6rcEwtVc3TRLKj/NytlOS7mME7
+         sidpkXc6eHIjY5eDC9ibYP+IZmxwR+RFMd0qAjh29kaWVWEmMlkjzDpY4cQHOx2rFwkQ
+         i9dHIxkXc7UZTep/CtoaCIBENsbvTb5NLDPm57ozrKDlNWj4VhHeQXBZv+0DPMJAK4HO
+         LCwj3IwayqoFmbHXvnsDIKUNIcqwpNbC1qSqqiu6520tsmZmpL50GBeKoUaqv1GqlSXh
+         pqGZH+2eL0/wovW5TTwPV75SaOnOrda4PMwvGvl/yVNVPcTgW4ViHIjscH3YRjqyp59M
+         CDGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733474935; x=1734079735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1+KHZbWUUIbfPMrkQ0dg3yxh8EkZEBHyzYKLApYVQfA=;
+        b=LPO8FUgtYclzBnSIbTpHXz2WbLACC5t68kh8bjz+p/r4Qp+BW9ReNeoufMGnEFCqe7
+         TWk+1KqADVJjsRYwXgbqby0HtTDx8v/gfOpRbXdjN+Cj4D5tfZYQc0eJ3eUVhup9UTYr
+         vDuWfZ7X4EAaDYFezQQMCU4ph47e+TniY5dvmSJ8vr7EMfNYwjpfHrdhRn9NsT2YBAtS
+         b9oapxVxQj60YkERPzVIw6YcqmgKh3u0ktJreSGz+NmUDjV3cOfHXRo7wz4fP60SWtky
+         q5ha5Ve99KA9YH9fuBjnFuYAJtmy/N+pxfavjL0qGRDamxNKsiT1XYRhoCMY9Atnj/wZ
+         YeMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4cm98S2bzvk+ES0HZo0x23i3viYuK6qIfbUm9st5hRIvZJgBUs8QqBl7tkFVRF73IMHX/IVAcg7MjlCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAhnSNPPtHvWsClt0uQsChqZmZ8DUHaSrUn5aJU6fbBhQ/tP1+
+	r7FTjvIfIt0LKxqbPlPSLvoc+LoSKTWlc8y3uAniJY4HdOcUwXVL7kpJU3UzJV0=
+X-Gm-Gg: ASbGncvr2OzK8d+VoRL4UK5J6N+bdOA05MKrNWBFZ+ZVJu/UBcwdXgm/79E3gQeG5iJ
+	PZroOTaKMv41B9aA7y+Hypa6tVRXL4cndQr/J+VerPqBwveKeVD/NDXuqkG1DUYQmyrC63zO0P+
+	C97pL9NLHeEni94b0gzxWSXwN+EixQN05VnxSR5rwWU+WyI0COFvM0zVQVlm7tjTfLD1qPuiaWj
+	njoChLXwNcHTB759aWGhUa+lOaqhkpOiKeK8OXr2Y5O7kAsoEYLk6KOlsgN25WEYLPlQ/JLeuBm
+	CcavdajtICtboGRLahtaEiO8
+X-Google-Smtp-Source: AGHT+IFhY/F+2PQCWkWIZiH6/atvzrmubiERnGlL5oxg15r9QqhSnIsJkiSQjR3EzbfRECrt0dNZkw==
+X-Received: by 2002:a05:651c:505:b0:300:2ddb:aaa5 with SMTP id 38308e7fff4ca-3002fc92a19mr6541821fa.30.1733474934985;
+        Fri, 06 Dec 2024 00:48:54 -0800 (PST)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30030799f35sm1374041fa.93.2024.12.06.00.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 00:48:53 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v6.13-rc2
+Date: Fri,  6 Dec 2024 09:48:52 +0100
+Message-ID: <20241206084852.119710-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,76 +85,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Refine the if statement to improve readability.
+Hi Linus,
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- drivers/net/ethernet/realtek/rtase/rtase_main.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Here's a PR with a couple of MMC fixes intended for v6.13-rc2. Details about the
+highlights are as usual found in the signed tag.
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-index 6106aa5333bc..585d0b21c9e0 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-+++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-@@ -2018,7 +2018,7 @@ static int rtase_init_board(struct pci_dev *pdev, struct net_device **dev_out,
- 	SET_NETDEV_DEV(dev, &pdev->dev);
- 
- 	ret = pci_enable_device(pdev);
--	if (ret < 0)
-+	if (ret)
- 		goto err_out_free_dev;
- 
- 	/* make sure PCI base addr 1 is MMIO */
-@@ -2034,7 +2034,7 @@ static int rtase_init_board(struct pci_dev *pdev, struct net_device **dev_out,
- 	}
- 
- 	ret = pci_request_regions(pdev, KBUILD_MODNAME);
--	if (ret < 0)
-+	if (ret)
- 		goto err_out_disable;
- 
- 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-@@ -2110,7 +2110,7 @@ static int rtase_init_one(struct pci_dev *pdev,
- 	dev_dbg(&pdev->dev, "Automotive Switch Ethernet driver loaded\n");
- 
- 	ret = rtase_init_board(pdev, &dev, &ioaddr);
--	if (ret != 0)
-+	if (ret)
- 		return ret;
- 
- 	tp = netdev_priv(dev);
-@@ -2120,7 +2120,7 @@ static int rtase_init_one(struct pci_dev *pdev,
- 
- 	/* identify chip attached to board */
- 	ret = rtase_check_mac_version_valid(tp);
--	if (ret != 0) {
-+	if (ret) {
- 		dev_err(&pdev->dev,
- 			"unknown chip version: 0x%08x, contact rtase maintainers (see MAINTAINERS file)\n",
- 			tp->hw_ver);
-@@ -2131,7 +2131,7 @@ static int rtase_init_one(struct pci_dev *pdev,
- 	rtase_init_hardware(tp);
- 
- 	ret = rtase_alloc_interrupt(pdev, tp);
--	if (ret < 0) {
-+	if (ret) {
- 		dev_err(&pdev->dev, "unable to alloc MSIX/MSI\n");
- 		goto err_out_del_napi;
- 	}
-@@ -2176,7 +2176,7 @@ static int rtase_init_one(struct pci_dev *pdev,
- 	netif_carrier_off(dev);
- 
- 	ret = register_netdev(dev);
--	if (ret != 0)
-+	if (ret)
- 		goto err_out_free_dma;
- 
- 	netdev_dbg(dev, "%pM, IRQ %d\n", dev->dev_addr, dev->irq);
--- 
-2.34.1
+Please pull this in!
 
+Kind regards
+Ulf Hansson
+
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
+
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.13-rc1
+
+for you to fetch changes up to 87a0d90fcd31c0f36da0332428c9e1a1e0f97432:
+
+  mmc: core: Further prevent card detect during shutdown (2024-12-02 15:37:16 +0100)
+
+----------------------------------------------------------------
+MMC core:
+ - Further prevent card detect during shutdown
+
+MMC host:
+ - sdhci-pci: Add DMI quirk for missing CD GPIO on Vexia Edu Atla 10 tablet
+
+----------------------------------------------------------------
+Hans de Goede (1):
+      mmc: sdhci-pci: Add DMI quirk for missing CD GPIO on Vexia Edu Atla 10 tablet
+
+Ulf Hansson (1):
+      mmc: core: Further prevent card detect during shutdown
+
+ drivers/mmc/core/bus.c            |  2 ++
+ drivers/mmc/core/core.c           |  3 ++
+ drivers/mmc/host/sdhci-pci-core.c | 72 +++++++++++++++++++++++++++++++++++++++
+ drivers/mmc/host/sdhci-pci.h      |  1 +
+ 4 files changed, 78 insertions(+)
 
