@@ -1,108 +1,97 @@
-Return-Path: <linux-kernel+bounces-435459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134B89E780C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:25:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB499E7812
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:27:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2102285B81
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CD2A188622E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E90D20456A;
-	Fri,  6 Dec 2024 18:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80679204564;
+	Fri,  6 Dec 2024 18:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl5mKPRJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGGpyjra"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF81194120;
-	Fri,  6 Dec 2024 18:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D11FFC47;
+	Fri,  6 Dec 2024 18:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733509528; cv=none; b=GvPG8BNep+us+TVt3bSRSm33IJHTa3xsFZrmdA35ohVRXUSYWVYkMLhMgku8uQHP8F+MgewS8moBQcxch5Ow5zGbp4/MKxnsgXCaDdlPLK6ev5PCxsSby/r2gMT87o4mJ/h0OvpGXZ5r9WZ+Lt/G3TnOMu09itg3n+6Qg+KNjD8=
+	t=1733509631; cv=none; b=tkCaxKuQ4N2QihcgPN1g6JhNLiH5uIuhaFrLThOsPN/RDSIVvmreP3d4C/hBwyhUdRvmq7fKWCutmeqzWnYBB5gpFWn1Iz3gk4E09qam3qlJff0Jm4swtMOn14sK3F0IyiMBVX0i/OHI9CKjwd0Yyyvnv6fXSNhrigekeD1GAuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733509528; c=relaxed/simple;
-	bh=6zPrOx2SudmgD/c40+Z4a9ztiOiUIdAL08zqV81/sfs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=LTIDzc97gKVkdMfFSz4T4gExWgxGcaC/h6q/iwihELLpk36t9CQVg1PL3N6Qpg3Q7C7TvGsomkHifdzmo5w3GfrOAMFRSZozxpnS24fTi8LN2ivotySkYx7KLuuGUqU3zSrVeziXq/uYqkQUnVo5zz63TkxccpGWWjB4gjIXqJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl5mKPRJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FBBC4CED1;
-	Fri,  6 Dec 2024 18:25:27 +0000 (UTC)
+	s=arc-20240116; t=1733509631; c=relaxed/simple;
+	bh=gQICDubasA8BeXox8HD9geLL3hPzglB8j/QXZHsNIsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8kP9fEDimmSnX0LYyKX4R88kZscSOuhoiTTmXtBofY0nQ18PWwZxAx9bEKH47It8pJtlSS57bnvjETUymE4BBV8EISKkK1I8ARxjVbkC0XtMSxfFUilmf0LQhIGOO2vAsBohQn+i+hdtaNISIL6DEcR2h632jhrLwabehy/GTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGGpyjra; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB14C4CED1;
+	Fri,  6 Dec 2024 18:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733509528;
-	bh=6zPrOx2SudmgD/c40+Z4a9ztiOiUIdAL08zqV81/sfs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=tl5mKPRJ4qW6dAOX/AFyy4x6zWaRQy9Z/ra+AtEAYP1YS+8iNTK13pAz/lwHUFmuW
-	 vkO18VAW3gT75101h1AAzL4GWebmnOzOPe/RZUwWSkKQsPssck0zqGUeRH3vQU64G4
-	 0c+pwI61ZfzdDMUK+pur+1WXpU9i2vQiDL27LgnsflrBquDTI0N031EaWffY/x3z+G
-	 Uscw4QpmECno6h5u2jkEw7vFHzL45uDGHBkpiGnVt8TPbdmC/hS/tV+3JIOcQ9Zykk
-	 yKni9yZvcLdKsSbookP0Y5Omwi9ArnXRDmdyVX+u4bpc0kMVQW+enQNSLexJwbWOtH
-	 N7edetiR57TsQ==
-Date: Fri, 06 Dec 2024 12:25:26 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733509630;
+	bh=gQICDubasA8BeXox8HD9geLL3hPzglB8j/QXZHsNIsI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VGGpyjra5TaAPWlndu6mOoiPlK+tfoycDzN9aDTgWBDfwFLYdHBRkCvUMyfAy4gMz
+	 EQGyPmEhwAiByXGb5v/ACLE18ZUnUIcvHYpQUdz8oNqrdeJEVnLzRwhhMvAKCIUO53
+	 oKBLuO1hK24MQ582thKBCuYcEjkGS9U9vtn4pFsuCdJgmdpWdkpH5gL923iT9d+bGD
+	 509/nktnXyHEk+J0hDOQTOXW1DTpbHySCVoUcIXCBj0quqPsGHNTZCZk++I5jmGYqY
+	 t2U3qhGlK5Qv4X2LPu1kiFU/Hp177qAKnzQ/hlT0sLtJr9U+9SppQBeLLOOq5JTJzl
+	 2ZwfeGSE/NaPQ==
+Date: Fri, 6 Dec 2024 18:27:02 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.6 000/676] 6.6.64-rc1 review
+Message-ID: <2904b937-bb47-4e38-903f-2277982b09e5@sirena.org.uk>
+References: <20241206143653.344873888@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Helge Deller <deller@gmx.de>, Lee Jones <lee@kernel.org>, 
- Hector Martin <marcan@marcan.st>, dri-devel@lists.freedesktop.org, 
- linux-leds@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, 
- asahi@lists.linux.dev, Sven Peter <sven@svenpeter.dev>, 
- linux-arm-kernel@lists.infradead.org, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Pavel Machek <pavel@ucw.cz>, 
- Daniel Thompson <danielt@kernel.org>, linux-fbdev@vger.kernel.org
-To: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20241206172735.4310-2-towinchenmi@gmail.com>
-References: <20241206172735.4310-1-towinchenmi@gmail.com>
- <20241206172735.4310-2-towinchenmi@gmail.com>
-Message-Id: <173350952667.3933863.13037602591337209524.robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: leds: backlight: apple,dwi-bl: Add
- bindings for Apple DWI backlight
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KElxUtpqtXd90UhZ"
+Content-Disposition: inline
+In-Reply-To: <20241206143653.344873888@linuxfoundation.org>
+X-Cookie: Sales tax applies.
 
 
-On Sat, 07 Dec 2024 01:24:33 +0800, Nick Chan wrote:
-> Add the device tree bindings for backlight controllers attached via Apple
-> DWI 2-wire interface.
-> 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  .../bindings/leds/backlight/apple,dwi-bl.yaml | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
-> 
+--KElxUtpqtXd90UhZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-My bot found errors running 'make dt_binding_check' on your patch:
+On Fri, Dec 06, 2024 at 03:26:59PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.64 release.
+> There are 676 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-yamllint warnings/errors:
+Tested-by: Mark Brown <broonie@kernel.org>
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/leds/backlight/apple,dwi.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
+--KElxUtpqtXd90UhZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-doc reference errors (make refcheckdocs):
+-----BEGIN PGP SIGNATURE-----
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241206172735.4310-2-towinchenmi@gmail.com
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdTQfUACgkQJNaLcl1U
+h9C4aQf/eyTf3b3mfzyGC/0vIHe0WEMrrc4MhSbJsrQ3KQX9O4YE2YfppjpWlTYI
+RHbkrpB6HTtfxk75hEyWGFIpmM94lG3isr9+Mb53gH0FQQ4/hMxtmaGcZ/mnpLh4
+u+4A1I5V/yUWhLwfLV80PpVS2pKy286P/xw0CPRvvtO6IuloSG17HNzF3Bi6rPGD
+UTgz3PMUQUToFxxxNQbu2buZgGP5uO1lHoY2Fjh2ADXzRXp3Vp2Rxjod4c+clqU1
+X/+fR0oh+jhr3+1tRyJRkt7bwCvFMwca1fOKMODSorMoZ11XYi8/6v8ekTSCLZlr
+A0Zm1jgsWFteeHBsxP0o7oHBl2UC/A==
+=Qzz5
+-----END PGP SIGNATURE-----
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--KElxUtpqtXd90UhZ--
 
