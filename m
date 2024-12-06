@@ -1,207 +1,222 @@
-Return-Path: <linux-kernel+bounces-435093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821D69E6F9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:54:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29AEE16C980
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:52:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9214A20B80F;
-	Fri,  6 Dec 2024 13:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="MSj7guEp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xDNgtnHy"
-Received: from flow-b5-smtp.messagingengine.com (flow-b5-smtp.messagingengine.com [202.12.124.140])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76C19E6F98
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:53:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94A22066DE;
-	Fri,  6 Dec 2024 13:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.140
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B0E285545
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:53:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4C320ADCA;
+	Fri,  6 Dec 2024 13:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hz4kGGB6"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749CF1FCCFB;
+	Fri,  6 Dec 2024 13:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733493144; cv=none; b=kb6VoE3kG/l1xrjhHQtLqz3djb+/svPwYng5Y2OJ4GzYMul0oFBNsv4Jyftq+lymRmMZXbaAygMkkzH43alovKusm/Jdt18WpuRsr3hKbGJjvyja5YJ3NU1lj272Q0OE4ARnI0udsAadi/m48JTkaaAuPEh3CATOnFyaQPWZF8U=
+	t=1733493210; cv=none; b=q7AKpaeq2HlkLGgEg7xVpW7c02fan/LmzePXTb54M1KjFKKGwlycM9MuXfJoQiymuhSAYg3b7dKi/a79BxTCVkqXiLLviXJA5FuP1ljMZTQwsOyGh4c/Hc8AF1SnjVhbTnT+DI1ePtcD7je6G7caAXxZnKxHiZosST68ttwgyUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733493144; c=relaxed/simple;
-	bh=Qg6Ce5uSEcP+55XWYkwP9vkeQ++48Pfctd6qXinl3Gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlmuNeRnFgnW5J1zg2XC3ao5yvtDYNznys+fiJ2wPRjdPDLXeGMvPYRpIvHXdUMz71qZWGRlZWQPIigUWD/JgvMp67SBeahMpfMF4f3y/FC/NIRZoCJeDAl0HC6yBDdcNe60/+8ONja747ZJSWVdJA1yJKfpVPd6Stks6tIh1lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=MSj7guEp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xDNgtnHy; arc=none smtp.client-ip=202.12.124.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id 158141D40557;
-	Fri,  6 Dec 2024 08:52:19 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Fri, 06 Dec 2024 08:52:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1733493138; x=
-	1733500338; bh=F/P5NvV/oPgyLOVDdO9jbE313zKQetWBog6B0EvuLEA=; b=M
-	Sj7guEpfYyfJVeSxZkmsMh0zyS2W2XOGFWxV1S085lP0oWUiSQf+HQv4B/im8Smb
-	A/50JTK4DLLh18J9Sjqs2aNhk6S2yarJ+EHcouloSh/oqCB7hArt2q3ZuIFbkj/I
-	fFgU9Qg9R5ZGGvT47CzpDp1KUbo7nK9HO2ae1NPXsXP/wl5BchFWD0yg/JCYjsr9
-	fXIJRALKFsKvFqe71MneVTz8jaGQLkP6wUACGnoi/5zIDs6FZV9i4SCRlzylZIdL
-	JEk2HHQSDWp63JDjM2qb1hil4JrLTf5nQRDL1cyESz6dFceNZAlsmT22L0W8F1gH
-	86D9/srMF3PNNTLIIkUqQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733493138; x=1733500338; bh=F/P5NvV/oPgyLOVDdO9jbE313zKQetWBog6
-	B0EvuLEA=; b=xDNgtnHy1tK7puhnLX5+esK/IgziPC4HzD0yPzyaPgVs8BauerX
-	5Gh9QHIIwI9c+CUD9aR7FksVyc+wiv9c8kDcmUBxhh3LvOEfxlVik7VuxrqmuwTf
-	XafAHjl0THPYXeq+RMCHSq+xyRbTf81BcpKLtm5vGNbxwyK3XhqSKKD0/eNEBIEs
-	ifGsiqyf80HwoUEiHyMx99sbVBdhIbumQXWTwZBPE4uZQkwcPkqT1sz1khwQ5fKP
-	5LvTH20FG+Z0W6OgHmIRX0xxkcJ4AsJgifC3XCJZIrNaVdO1xmRRG8EZSEdZAiGB
-	55jZB+7jQTMglESe+lwBG7aRRXR4qQbb60A==
-X-ME-Sender: <xms:kgFTZ9eRxZgsQ_HyW0NQeyBhAa8qrP-js82jZsEnrc73rIKbqI5cQg>
-    <xme:kgFTZ7NeULk2V4bgBoKUbD2I9wnDfcKDJoG1qVHeHqzZoP8DCptzP2hkGxpDbhB_u
-    HTxZFgGNz0vK71z6CA>
-X-ME-Received: <xmr:kgFTZ2h8sZq6o250A96V6I672leVJ0PaesW6z8yf8EHC8ehGiJXlNNIQaY-eGODpBFung7qO_vhuMVEX_XB2I8ZKk7sWPvGZxo8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieelgdehiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
-    hfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrg
-    hkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhteetgfekvdeiueff
-    veevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgt
-    tghhihdrjhhppdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepiihijhhunhgphhhusehitghlohhuugdrtghomhdprhgtphhtthhopehgrhgv
-    ghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehukhhlvg
-    hinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrmhgvshdrsghothhtohhm
-    lhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtghomhdprhgtphhtthhopehthh
-    homhgrshesthdqkegthhdruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhvughimhhmsehlihhsthhsrd
-    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqshhouhhnugesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehsphgrrhgtlhhinhhugiesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:kgFTZ2_UGngVtygK4_p0LKXvJr2g0v9oePYeEVcrzT0gkzTro-YK0g>
-    <xmx:kgFTZ5vx35KJMQHqHYcHa0QjhtFrNmuU_ZD5-UGD0krqFfoJC4mPyQ>
-    <xmx:kgFTZ1G9NWKiaU4m6BL1Na5OaZRNRdHCaRGEc0E-ttIN_XuEHc32wg>
-    <xmx:kgFTZwPzQVAELvWI33zBnvWj1s6ncPtql6n1UYpP22HdnXi_-3k-FA>
-    <xmx:kgFTZ4-yVlVkD3Q8ajGh0oXdOkDvMdTtHW1-CAta77ld53oKIK-nLbK0>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 6 Dec 2024 08:52:12 -0500 (EST)
-Date: Fri, 6 Dec 2024 22:52:09 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
-	linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
-	netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v3 04/11] driver core: Constify API device_find_child()
- then adapt for various usages
-Message-ID: <20241206135209.GA133715@workstation.local>
-Mail-Followup-To: Zijun Hu <zijun_hu@icloud.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
-	linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
-	netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-4-1611f1486b5a@quicinc.com>
+	s=arc-20240116; t=1733493210; c=relaxed/simple;
+	bh=cBY2VIajDDBnPJ5p52pXeZV0PIrohjX5RRqCXkTuxQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X0z+UL94GEPDLdFY9Q6HhsC2k1pMZuscpr0n/v7gzx+RMGvT98uWRuNzcyRQxqafqxp2Qwz02w4/XCF8GHm1W5BhPO8gInFlHlM9Fp6senvQerz7kgdSn5EFXen8B/STtRqhmB3shJMUQtgrjOmz0CUPGwliDc+OyJmtK/Z0NUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hz4kGGB6; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6DRdPd010817;
+	Fri, 6 Dec 2024 13:53:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=j6a/5nELmVvzW7RBn0lo+X1Ulo3HZGlYxE0pch8J/
+	Gg=; b=hz4kGGB6IdjFe7t0mD2Gx7opnF2f77J08DxNCpkVWtVGnoFN6otT9r5+q
+	mhifmwCS4fw2B3nAZORsyDK+iZTVK3R+rl1hruyIPebJWhVEs2m4htXy1D+E1+5f
+	wplcSYRvsQTy8VRv+9d/cXRC2bKmDdLBD5bfi6gJxQAWqlTfkZG9D+xFdSdwR0sq
+	lSzAy2kwt5Bu0bahqtkIAPflGTMF0acinCzqMMhniT96kTNGGuXq8BB+agS3osn/
+	0qJdNKgL2y+w7/pKKUoPxQkV4P5dRHT8VsWYo6G4rBPoGOxIDhbII6OAEl1QmVbx
+	rEW9rUvwUUL/JcYvz20CpmtpV1DFg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43b24rh9t9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 13:53:17 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B6DlBSX030722;
+	Fri, 6 Dec 2024 13:53:16 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43b24rh9t6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 13:53:16 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6Ahbms023542;
+	Fri, 6 Dec 2024 13:53:15 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1ndthd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 13:53:15 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B6DrBtl48497106
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 6 Dec 2024 13:53:11 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9714420043;
+	Fri,  6 Dec 2024 13:53:11 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1AA7820040;
+	Fri,  6 Dec 2024 13:53:05 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.61.245.143])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  6 Dec 2024 13:53:04 +0000 (GMT)
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com,
+        atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com, mpetlan@redhat.com, vmolnaro@redhat.com
+Subject: [PATCH V3] tools/perf/tests/shell/base_probe: Enhance print_overall_results to print summary information
+Date: Fri,  6 Dec 2024 19:22:54 +0530
+Message-Id: <20241206135254.35727-1-atrajeev@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205-const_dfc_done-v3-4-1611f1486b5a@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: T8M1A0-vWUG_BwSkCz0aMQqRKY4VZ6BB
+X-Proofpoint-ORIG-GUID: GYTlBYgYCohyvti5uNlTwmUku567qHIP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060102
 
-Hi,
+Currently print_overall_results prints the number of
+fails in the summary, example from base_probe tests in
+testsuite_probe:
 
-On Thu, Dec 05, 2024 at 08:10:13AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> Constify the following API:
-> struct device *device_find_child(struct device *dev, void *data,
-> 		int (*match)(struct device *dev, void *data));
-> To :
-> struct device *device_find_child(struct device *dev, const void *data,
->                                  device_match_t match);
-> typedef int (*device_match_t)(struct device *dev, const void *data);
-> with the following reasons:
-> 
-> - Protect caller's match data @*data which is for comparison and lookup
->   and the API does not actually need to modify @*data.
-> 
-> - Make the API's parameters (@match)() and @data have the same type as
->   all of other device finding APIs (bus|class|driver)_find_device().
-> 
-> - All kinds of existing device match functions can be directly taken
->   as the API's argument, they were exported by driver core.
-> 
-> Constify the API and adapt for various existing usages by simply making
-> various match functions take 'const void *' as type of match data @data.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  arch/sparc/kernel/vio.c                |  6 +++---
->  drivers/base/core.c                    |  6 +++---
->  drivers/block/sunvdc.c                 |  6 +++---
->  drivers/bus/fsl-mc/dprc-driver.c       |  4 ++--
->  drivers/cxl/core/pci.c                 |  4 ++--
->  drivers/cxl/core/pmem.c                |  2 +-
->  drivers/cxl/core/region.c              | 21 ++++++++++++---------
->  drivers/firewire/core-device.c         |  4 ++--
->  drivers/firmware/arm_scmi/bus.c        |  4 ++--
->  drivers/firmware/efi/dev-path-parser.c |  4 ++--
->  drivers/gpio/gpio-sim.c                |  2 +-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c |  2 +-
->  drivers/hwmon/hwmon.c                  |  2 +-
->  drivers/media/pci/mgb4/mgb4_core.c     |  4 ++--
->  drivers/nvdimm/bus.c                   |  2 +-
->  drivers/pwm/core.c                     |  2 +-
->  drivers/rpmsg/rpmsg_core.c             |  4 ++--
->  drivers/scsi/qla4xxx/ql4_os.c          |  3 ++-
->  drivers/scsi/scsi_transport_iscsi.c    | 10 +++++-----
->  drivers/slimbus/core.c                 |  8 ++++----
->  drivers/thunderbolt/retimer.c          |  2 +-
->  drivers/thunderbolt/xdomain.c          |  2 +-
->  drivers/tty/serial/serial_core.c       |  4 ++--
->  drivers/usb/typec/class.c              |  8 ++++----
->  include/linux/device.h                 |  4 ++--
->  include/scsi/scsi_transport_iscsi.h    |  4 ++--
->  net/dsa/dsa.c                          |  2 +-
->  tools/testing/cxl/test/cxl.c           |  2 +-
->  28 files changed, 66 insertions(+), 62 deletions(-)
+ ## [ FAIL ] ## perf_probe :: test_invalid_options SUMMARY ::
+	11 failures found
 
-For the changes in FireWire subsystem:
+test_invalid_options contains multiple tests and out
+of that 11 failed. Sometimes it could happen that it
+is due to missing dependency in the build or environment
+dependency.
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Example, perf probe -L requires DWARF enabled. otherwise
+it fails as below:
+ ./perf probe -L
+  Error: switch `L' is not available because NO_DWARF=1
 
+"-L" is tested as one of the option in :
+   for opt in '-a' '-d' '-L' '-V'; do
+   <<perf probe test>>
+   print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "missing argument
+	for $opt"
 
-Thanks
+Here -a and -d doesn't require DWARF. Similarly there
+are few other tests requiring DWARF. To hint the user that
+missing dwarf could be one issue, update print_overall_results
+to print a comment string along with summary hinting the possible
+cause. Update test_invalid_options.sh and test_line_semantics.sh
+to pass the info about dwarf requirement since these tests
+failed when perf is built without DWARF. Use the check for
+presence of dwarf with "perf check feature" and append the
+hint message based on the result.
 
-Takashi Sakamoto
+With the change:
+ ## [ FAIL ] ## perf_probe :: test_invalid_options SUMMARY ::
+ 11 failures found :: Some of the tests need DWARF to run
+
+Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+---
+Changelog:
+v1 -> v2
+ Check presence of dwarf using "perf check feature". Add
+ failure hint message for dwarf based on this check
+
+v2 -> v3
+ Check for empty task comment to avoid trailing space
+ at the end as suggested by Michael Petlan
+
+ tools/perf/tests/shell/base_probe/test_invalid_options.sh | 5 ++++-
+ tools/perf/tests/shell/base_probe/test_line_semantics.sh  | 5 ++++-
+ tools/perf/tests/shell/common/init.sh                     | 5 ++++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/tests/shell/base_probe/test_invalid_options.sh b/tools/perf/tests/shell/base_probe/test_invalid_options.sh
+index 1fedfd8b0d0d..c51d8d9bfdb7 100755
+--- a/tools/perf/tests/shell/base_probe/test_invalid_options.sh
++++ b/tools/perf/tests/shell/base_probe/test_invalid_options.sh
+@@ -22,6 +22,9 @@ if ! check_kprobes_available; then
+ 	exit 0
+ fi
+ 
++# Check for presence of dwarf
++$CMD_PERF check feature -q dwarf
++[ $? -ne 0 ] && HINT_FAIL="Some of the tests need DWARF to run"
+ 
+ ### missing argument
+ 
+@@ -75,5 +78,5 @@ done
+ 
+ 
+ # print overall results
+-print_overall_results "$TEST_RESULT"
++print_overall_results "$TEST_RESULT" $HINT_FAIL
+ exit $?
+diff --git a/tools/perf/tests/shell/base_probe/test_line_semantics.sh b/tools/perf/tests/shell/base_probe/test_line_semantics.sh
+index d8f4bde0f585..f5d3b6e8d0d6 100755
+--- a/tools/perf/tests/shell/base_probe/test_line_semantics.sh
++++ b/tools/perf/tests/shell/base_probe/test_line_semantics.sh
+@@ -23,6 +23,9 @@ if ! check_kprobes_available; then
+ 	exit 0
+ fi
+ 
++# Check for presence of dwarf
++$CMD_PERF check feature -q dwarf
++[ $? -ne 0 ] && HINT_FAIL="Some of the tests need DWARF to run"
+ 
+ ### acceptable --line descriptions
+ 
+@@ -51,5 +54,5 @@ done
+ 
+ 
+ # print overall results
+-print_overall_results "$TEST_RESULT"
++print_overall_results "$TEST_RESULT" $HINT_FAIL
+ exit $?
+diff --git a/tools/perf/tests/shell/common/init.sh b/tools/perf/tests/shell/common/init.sh
+index 075f17623c8e..259706ef5899 100644
+--- a/tools/perf/tests/shell/common/init.sh
++++ b/tools/perf/tests/shell/common/init.sh
+@@ -46,10 +46,13 @@ print_results()
+ print_overall_results()
+ {
+ 	RETVAL="$1"; shift
++	TASK_COMMENT="$*"
++	test -n "$TASK_COMMENT" && TASK_COMMENT=":: $TASK_COMMENT"
++
+ 	if [ $RETVAL -eq 0 ]; then
+ 		_echo "$MALLPASS## [ PASS ] ##$MEND $TEST_NAME :: $THIS_TEST_NAME SUMMARY"
+ 	else
+-		_echo "$MALLFAIL## [ FAIL ] ##$MEND $TEST_NAME :: $THIS_TEST_NAME SUMMARY :: $RETVAL failures found"
++		_echo "$MALLFAIL## [ FAIL ] ##$MEND $TEST_NAME :: $THIS_TEST_NAME SUMMARY :: $RETVAL failures found $TASK_COMMENT"
+ 	fi
+ 	return $RETVAL
+ }
+-- 
+2.43.5
+
 
