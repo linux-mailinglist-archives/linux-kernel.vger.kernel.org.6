@@ -1,186 +1,121 @@
-Return-Path: <linux-kernel+bounces-434898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B429E6C75
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:43:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82E49E6C78
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:44:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BBB3165152
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89310284CB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7681F8F13;
-	Fri,  6 Dec 2024 10:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4B71F9EA5;
+	Fri,  6 Dec 2024 10:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S27lXZAG"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="igEsb60U"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EB5145B07
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CC91DFD89;
+	Fri,  6 Dec 2024 10:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733481814; cv=none; b=cVkFh7xiRQeqfd72LbKd1sUzuB88Z1cDT6QwNc6m7EoCdMb4Azaxb4rXW3UMtDwgxYUmicFp7q6VpRsiySs8VBvyJst2WlT4ua51809WggzDOFUYTKifzXO/+NiGtIL1QamgTupKrLSJzjTxY4drsxhg7PqqoYx90YaTT9jZv50=
+	t=1733481848; cv=none; b=aHzcy9lkLr7AuyDBdhyfNit1KRDAG2XT239g96ZTe5Xs/G9w+E5QJZKGJmtE9ytj9RxcjCWE3sSV3JMiHIFLXWKu6nKj3a93VwkTqC1PAiUhoC0FrexXdSPWEF0vf2O+0y8z+jqUKgbQK/VDP+egv94yYtVZiByW+/i0rQ/Tcos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733481814; c=relaxed/simple;
-	bh=5uNKrRrhzP/OIA71f5P48+zZBGvPFSZXjZ+UxTehcWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tBYwtYiTbg1vzQb0ctWvQu2tFhCSRyT/8YvUXpQM5bgvoJ/+sCf+6pAK7xVDIiprS0/SmCdmSC9b1XiKbFjexwK9CP1b5LepL9ZKmAV5XUiHGCe8kQU9XNMG1Eg34T/SqnNW7J6NCSlCokkx//7MEIRmxTTpNtQQSN5BFv7gkVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S27lXZAG; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so18992065e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 02:43:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733481811; x=1734086611; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypldDvXdf/MRPfsrxzrKXantEZsEaAlzytl7UEr/BhM=;
-        b=S27lXZAGVCH28jv+uZPOBwMU58azRk4LP3JJvrUrhR4NZirfTbvLqWdO8AvO8eSjmT
-         vOGdGfHc8NuQpSt9HQYMWNFWNZaXUkeosDKOZwW5Y+zMohhM8602aCc87X/EP055nMeR
-         3GovvTq8Br/5IDXggPK1Q+KbTXMnRGb/h4EPj9cfuhAdZkvc7+M9yLP51umQtu6piNJq
-         mxqQbo1bZ+4xxBC1x1DdHzTEXIHGeaR4ShuX/tTnSfq+O9THyZyxRNLLy36AkiwwwwZ1
-         Dc3eMLJ3WxxZs8HPDUYjczC2iS+6VQrOvRPjyfCeziNoT40mhSP8h7cgQIu8U9vAlVfP
-         psTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733481811; x=1734086611;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ypldDvXdf/MRPfsrxzrKXantEZsEaAlzytl7UEr/BhM=;
-        b=m2/llXUjZLle17cUgrxAzl1okuw2I7M0f7bbC0riRhqD7d1x+nYmbzARTGv0x201tf
-         RCFvxJk1WGQVWA8zrN8JZh/s4bgScHzSeKOgVFUEpF7KC1t26Ykh7mMefA132t+jINdk
-         xLVTvfqfKdZ3pJZbwbb6qmWhPQwtkTsV7+OiHAurKzVoxiAkMkYe8jqKIScmW0sIGn+2
-         xqZY9HS8psmOAuh/xnnxGuiYU7We4wqZsHiTShkmu0LvY73HYF2l0RJw23JjOKwWE4yh
-         h6POWOU5taJpJg2De0Reg/+rcxblimMZi8Ig1DcKuPrlQjn2KlvB91arJ/lHoXR9vMGu
-         G9kA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9No9A4F5eGwOTeaOqHkXYDJPS3jedZ37tu7oPQj5s4oiulEEJRRsQm/h/LXmmp2ZpNkEZ9EpF7FWkOAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5exQd4T3b5DX2IIL0NQ716+K3FTWN2ZyLsOAUcPwLg5WkhUk9
-	2vEpyFb7ydDT2fep2ugJu8jD8I5n2xwU5b+cZofWSnWH5G3C6jvV1M6wwGtnc80=
-X-Gm-Gg: ASbGncvpM0R8nqNv8oSkISp5WpqtJJRRqIDQ0FDEUR1njBw3BjOLRB+8uuQLhrD2JuA
-	iwxQCe+9uac3KrfSL352wj915KscEBUZvKJH3J5EL8ZFWj9y0QWZ/5jIeo73/mr1MCVOg7U2lWQ
-	RIqr9v4y9wwiE5ZXMzRkCs9QR64qx4suhDlSPhAjvMNn9vr4Q37ntsXzbiYhUaG0X1Rv6Fo1gba
-	BGFRL34H8RRggyCcVPYd/xp35A1sCsf0+21bBexejd8ApVIgQgqrmI=
-X-Google-Smtp-Source: AGHT+IEyt0rS6n4oEiP757TGu6ABO+e8NCWcZluPWhmNM/nCS4kfFoLzgZs162So8GRoMBfFBIF4jg==
-X-Received: by 2002:a05:600c:1906:b0:434:a39b:5e44 with SMTP id 5b1f17b1804b1-434ddeb8c98mr24193255e9.17.1733481811085;
-        Fri, 06 Dec 2024 02:43:31 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d43a0df4sm72091175e9.1.2024.12.06.02.43.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 02:43:30 -0800 (PST)
-Date: Fri, 6 Dec 2024 13:43:26 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] sched/deadline: Correctly account for allocated
- bandwidth during hotplug
-Message-ID: <cb188000-f0e1-4b0a-9b5a-d725b754c353@stanley.mountain>
-References: <20241114142810.794657-1-juri.lelli@redhat.com>
- <20241114142810.794657-3-juri.lelli@redhat.com>
+	s=arc-20240116; t=1733481848; c=relaxed/simple;
+	bh=D5NwxUYd/7Gk33lOmB/SZAd5lGLdnHgSUsTAhuNAnEs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYDDw9il7D7vwmGinRCgV4Vx7m7WykGXczdPWPDkKISM0IWCUe41gpp47qMJuUA/Ffrj5sRVQgvY2xgH3nrUDMkBVUnVeSGscD5ZKSmH2Bbg0ay/Ee9v3eRmybf8o6Kf6zTwkeMVcTF4O5PxTWjro9Lq/CjicG/17FQlJS8Pj5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=igEsb60U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67lXcC007445;
+	Fri, 6 Dec 2024 10:44:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ijNIPLgbGRllGx1qPc8GZ8yk
+	5hMbtPgQc4xhg9JkayE=; b=igEsb60UR0QfOFGHEHAYBb61dXhNTSyJPCNPjk9n
+	mYpK7+qKbWmM/EHh31LNZvZw2TBpS0yufFNKoggHGDJqkKGxxct5rPhMuiaYfo4z
+	hpmdDLJGrbSpgY3Xdu1KX02/Zo15HKb4HiC+oCCg90h0VWUOXtX0tmS1MI1BRz4Y
+	u1RGkRFwSnJwRJaJ/JLsUQ1jrEMzpXmRfLZfkOshgzmBPL44O3+RjLl/Xt7Jci5l
+	FZCGr5CHsVdbe6J0mixolBZ7M+yIdw7fdNTJBLd1b2y/2EqAtMT0XzspqLegIfzZ
+	sKHOVZ+U6jp/GaPvjsKtnBn7ASVyDP99G3CbzmevPkI9ww==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ben8as2g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 10:44:03 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6Ai25c015507
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 10:44:02 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Dec 2024 02:43:55 -0800
+Date: Fri, 6 Dec 2024 16:13:45 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+Subject: Re: [PATCH v3 0/5] arm64: qcom: Add support for QCS9075 boards
+Message-ID: <Z1LVYelWl3sPPHcD@hu-wasimn-hyd.qualcomm.com>
+References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
+ <7f52e0d2-0934-49ca-9c7d-4ba88460096a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20241114142810.794657-3-juri.lelli@redhat.com>
+In-Reply-To: <7f52e0d2-0934-49ca-9c7d-4ba88460096a@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bwC6cpYf3EE9U_JLXHPBYuHAmO2s6oRE
+X-Proofpoint-GUID: bwC6cpYf3EE9U_JLXHPBYuHAmO2s6oRE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=695 clxscore=1011
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060078
 
-On Thu, Nov 14, 2024 at 02:28:10PM +0000, Juri Lelli wrote:
->  static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->  {
-> -	unsigned long flags;
-> +	unsigned long flags, cap;
->  	struct dl_bw *dl_b;
->  	bool overflow = 0;
-> +	u64 fair_server_bw = 0;
-        ^^^^^^^^^^^^^^^^^^
-This is a u64.
+On Wed, Nov 20, 2024 at 05:41:39PM +0100, Krzysztof Kozlowski wrote:
+> On 19/11/2024 18:49, Wasim Nazir wrote:
+> > This series:
+> > 
+> > Add support for Qualcomm's rb8, ride/ride-r3 boards using QCS9075 SoC.
+> > 
+> > QCS9075 is compatible IoT-industrial grade variant of SA8775p SoC
+> How does it relate to qcs9100? Why this is not compatible with the
+> other? It looks like you duplicate here a lot without trying to make
+> these built on top of each other.
+> 
 
->  
->  	rcu_read_lock_sched();
->  	dl_b = dl_bw_of(cpu);
->  	raw_spin_lock_irqsave(&dl_b->lock, flags);
->  
-> -	if (req == dl_bw_req_free) {
-> +	cap = dl_bw_capacity(cpu);
-> +	switch (req) {
-> +	case dl_bw_req_free:
->  		__dl_sub(dl_b, dl_bw, dl_bw_cpus(cpu));
-> -	} else {
-> -		unsigned long cap = dl_bw_capacity(cpu);
-> -
-> +		break;
-> +	case dl_bw_req_alloc:
->  		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
->  
-> -		if (req == dl_bw_req_alloc && !overflow) {
-> +		if (!overflow) {
->  			/*
->  			 * We reserve space in the destination
->  			 * root_domain, as we can't fail after this point.
-> @@ -3501,6 +3503,34 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->  			 */
->  			__dl_add(dl_b, dl_bw, dl_bw_cpus(cpu));
->  		}
-> +		break;
-> +	case dl_bw_req_deactivate:
-> +		/*
-> +		 * cpu is going offline and NORMAL tasks will be moved away
-> +		 * from it. We can thus discount dl_server bandwidth
-> +		 * contribution as it won't need to be servicing tasks after
-> +		 * the cpu is off.
-> +		 */
-> +		if (cpu_rq(cpu)->fair_server.dl_server)
-> +			fair_server_bw = cpu_rq(cpu)->fair_server.dl_bw;
-> +
-> +		/*
-> +		 * Not much to check if no DEADLINE bandwidth is present.
-> +		 * dl_servers we can discount, as tasks will be moved out the
-> +		 * offlined CPUs anyway.
-> +		 */
-> +		if (dl_b->total_bw - fair_server_bw > 0) {
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Since this subtraction is unsigned the condition is equivalent to:
+QCS9075 is non-safe while QCS9100 is safe.
+Reference: https://docs.qualcomm.com/bundle/publicresource/87-83840-1_REV_A_Qualcomm_IQ9_Series_Product_Brief.pdf
 
-        if (dl_b->total_bw != fair_server_bw)
+Separate board files are needed as thermal mitigation changes are
+required for non-safe variant only.
 
-but it feels like maybe it was intended to be:
 
-        if (dl_b->total_bw > fair_server_bw) {
+> Best regards,
+> Krzysztof
 
-regards,
-dan carpenter
 
-> +			/*
-> +			 * Leaving at least one CPU for DEADLINE tasks seems a
-> +			 * wise thing to do.
-> +			 */
-> +			if (dl_bw_cpus(cpu))
-> +				overflow = __dl_overflow(dl_b, cap, fair_server_bw, 0);
-> +			else
-> +				overflow = 1;
-> +		}
-> +
-> +		break;
->  	}
-
+Thanks & Regards,
+Wasim
 
