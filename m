@@ -1,232 +1,217 @@
-Return-Path: <linux-kernel+bounces-434965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE1F9E6D90
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:46:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768DB9E6D96
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE8D1884830
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69031884846
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383B61FF7C6;
-	Fri,  6 Dec 2024 11:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203011FF7A1;
+	Fri,  6 Dec 2024 11:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m2eMtTxj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOAAfRfF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA38C1FC7FE
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5253C1BDA97;
+	Fri,  6 Dec 2024 11:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733485591; cv=none; b=XIeCekaqoX6NikfxEDwhEWyP8VynEb19qUjcpWjmHr/W9P9xUwa5nXSBSW/dmSB0EY397xiQDjeDlaZ5Yh7+UfnAJcNOlcIC+k0lUsISpI8PK3ryvB/ZAEZBMvy0Lh1P/eqx84W3mFTTK1XaVV/tkkJpFgpA7Za5aJPipQ0U2Jo=
+	t=1733485692; cv=none; b=nt63nswO4Fk70mh+U0Kj3dVwJ7uKKC7njAV6VkA5I7q/eAH/yyzWW67pD0dg53ZnY49Mz0pd/vMdVJC1ZdLRz/6K7AH3/sfok63noqlxwh/gJ5V2eUggUc+OsRkDeHgo8GVTLuAq3WV4n+dEhEL46eaFPBQpUt8n3UXMPJHcjJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733485591; c=relaxed/simple;
-	bh=jTMtrDLnjk5W3t/iPqQBtaBROJ7vQIK3Plh8o9UC2sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WpEHBUvo+fm80CD6bqotV1fPv2bKixZ4XNKMcOBZMufoaFB3LDrizcN5gDwAqRgI2/lnQxLF3o/6yh2wATp9JtoIRTjpIJWMHIqXRVG34XFMf3Nng6Eaw2XjYhWpHMO3+EzL4sQ08foCb+c5PzNsd3WBOhathZei8NdL7DaeR7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m2eMtTxj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B68ZQjP018614
-	for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2024 11:46:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5hUY1e/YxiySi/wLCkZ/A7ok8yUIQYxm2Ew51lyeXS4=; b=m2eMtTxjm3bJXk29
-	l5wPFxi/4jimYBJzvV9mpPXTAA3Z1gI6uNZYM2ZB7W+REvLS+NTmbRFCr6wv/K73
-	O75U48bocJPWLGWM9Mn1uew6H8Uc7jzEbMKj5mVgiO+BRLZydmmfHydYkTiZCQsG
-	RuCu/YUxFciy4wllLrDTSuvmcIastvTRJtYxWaEhOK6VNvWPWZCpLGDoqQhdn5Qv
-	qpzhXVlYdOf8e4YRS4yx456wmd6GidtE8A/sCC3mU0Fo/7pS4L3GYctTH9F6MP4t
-	Knu5OonPBr8MrpeuYUIo0OV4dx9qxCfAw5mgDtP+KvqJhQL8D4fTeBITQqTJn6F+
-	qDvh4A==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bjk8t6kn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:46:28 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b68e634a16so14078585a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:46:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733485588; x=1734090388;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5hUY1e/YxiySi/wLCkZ/A7ok8yUIQYxm2Ew51lyeXS4=;
-        b=u1thg4703ppcsq5SIOylU392yGJrKRcZ4WpqdzsH8jOegA2MiGrf+sq/rc7FluhY+t
-         6nYOqwhZXge4qkSYsTwYt/nnxRmBWWgIAdfFzh/rZJVrRczDo4LA6sPjtPZtRL3+KA0Y
-         4kEuhPnR4cQOHEe+VJmZ7315QkMFI+Kdwbwuajs9mAqltfUzxGcIXk1l+Y+flmjAjKV/
-         iHZg3PpkGk8rOMke9m35So1VNTWZMPL/yiu94nspgB1re0/5Z0yp9y8nj6NEMvkL03gE
-         78QC4CUC8v5r9+Ps0uwtWEHszyjTGpx8T1YAXDI4nmPje7H+lABSZqKwz4HoUixSjnkP
-         gZbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzrXvp+M4ti5CQv8VXZe5x+ND0g7VSu7ShlOemUb3tKatoaw7qmunvqN1G4ksnfYpksFQ58PF690puxNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqKwYM73mFsh6dhOitr3GbUCSiJ3r+hlpFepgIcaQhZv4n2XHd
-	ubHin6qHo3d38BRGMfiJ6qqgu8WCcMbGqzqGTvLegpAwsDQhCxj8lBGFJNh1uAhDgJ1g/dQK9xK
-	4jawoL5odakL3jUdZTpP4x4fEkqwdKG2F9nbfrVv9DVf5POvp8tk6vPGhg8DF8VI=
-X-Gm-Gg: ASbGncuMFAK9z8CARshFkKACRwm/AObV0wYfeubpBD3ppU83Zgqy9tkDlkNsBALvIaL
-	yIR5CV0lR2TKa5+zz0yIiTvKyekaDHNaMg6Q6BANswGl9NkdtheooD+kczTV+wRUHdDhaxOrTMA
-	u6OXCAfy56xPuVHNrOkGUKKLbxoeDOLWD56Z2vczFXczQt5C6dOtsURkMQv32hihlSuP5LmPEoT
-	7uPTmmNoIy6JCLInfPS1b8YYNpVl8t8ug59CKmezG2GF1EO7K+sfQ4KOcKURinxWjfASi3aIgSJ
-	94iefKTI4HEl+2CLOY3BQGy2Z1lKN9w=
-X-Received: by 2002:a05:620a:469f:b0:7b6:6634:5a3a with SMTP id af79cd13be357-7b6bcace083mr134724985a.6.1733485587828;
-        Fri, 06 Dec 2024 03:46:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE2ztyWlSb4kx6b26cpg9MuRvCCN2v3JqU/i03b5FNDZ8dzZTlaEdkLBo8DgxUk1CP0/Qt3mw==
-X-Received: by 2002:a05:620a:469f:b0:7b6:6634:5a3a with SMTP id af79cd13be357-7b6bcace083mr134722785a.6.1733485587363;
-        Fri, 06 Dec 2024 03:46:27 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e96aebsm229571566b.65.2024.12.06.03.46.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 03:46:26 -0800 (PST)
-Message-ID: <153a9d51-6fc8-47d8-934b-4c53365077bc@oss.qualcomm.com>
-Date: Fri, 6 Dec 2024 12:46:23 +0100
+	s=arc-20240116; t=1733485692; c=relaxed/simple;
+	bh=qEiT145v+mmmXz/X9So4yw/RdnpSM6fmg8D+g80PLnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+plK4sZ8l6kDoLGFzs0hA5r8CrsXnLFBmefso/RoFEy4Z7HEsZe7hij6uieeRVoaPYTHMd/tRAjaOufF9f9TGAg4UT2O9rgYZhE1oryUfgn0Pn/JH/MJlnaKh4u3CsUecgIkV5nSywvvxrybx94peYBda3CTbKaot0LyGTdSd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOAAfRfF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A25C4CED1;
+	Fri,  6 Dec 2024 11:48:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733485691;
+	bh=qEiT145v+mmmXz/X9So4yw/RdnpSM6fmg8D+g80PLnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EOAAfRfFmhScD8M4YKfBg2hzYH8fYRKO6PP8IZIL7Ra22OCa9M499fbQ+fQZ715Uu
+	 FvFVlvEe+fXm9svkgmCugWUW+noYen6B/6nWguggGORGE+7XAqjE1pNL1N3uKDzd5y
+	 n6G2Z1exSB00BxTvr1sardR1LSMTqkhupS1IMTBJyiNMoYszJ8E8fDp7Jbyxmr+zhI
+	 UYKFa6qjWlvv61+6eSrwexgt2y1Y7Ljs50KL8opS0XeRCvwTXn/SbMEUqF+kTlyaj+
+	 ryKUFjVCrbYt524ZClofRwD/yxQmIxoyiqmdmGk+tuGzQuNdqdKa98fXWxB+YsATBW
+	 opKuZyDIwvP7g==
+Date: Fri, 6 Dec 2024 11:48:07 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	valentina.fernandezalanis@microchip.com
+Subject: Re: [PATCH v1] i2c: microchip-core: actually use repeated sends
+Message-ID: <20241206-random-spectacle-9de88d412653@spud>
+References: <20240930-uneasy-dorsal-1acda9227b0d@spud>
+ <Zvu38H2Y-pRryFFQ@shikoro>
+ <20241001-haphazard-fineness-ac536ff4ae96@spud>
+ <20241024-snagged-elated-d168d0d6bf35@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/22] wifi: ath12k: add AHB driver support for IPQ5332
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Balamurugan S <quic_bselvara@quicinc.com>,
-        P Praneesh <quic_ppranees@quicinc.com>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-18-quic_rajkbhag@quicinc.com>
- <243cd21d-6a35-4ff0-9b38-ec519a804670@oss.qualcomm.com>
- <9093b41c-986d-4304-8414-61e4ee2d9950@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <9093b41c-986d-4304-8414-61e4ee2d9950@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: GkK-s0yL5Y4yFusNZQqmT4cwA-ohkY9_
-X-Proofpoint-GUID: GkK-s0yL5Y4yFusNZQqmT4cwA-ohkY9_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412060088
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2o2i0BUpv0Ef1SLM"
+Content-Disposition: inline
+In-Reply-To: <20241024-snagged-elated-d168d0d6bf35@spud>
 
-On 6.12.2024 10:56 AM, Raj Kumar Bhagat wrote:
-> On 10/19/2024 1:59 AM, Konrad Dybcio wrote:
->> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
->>> From: Balamurugan S <quic_bselvara@quicinc.com>
->>>
->>> Add Initial Ath12k AHB driver support for IPQ5332. IPQ5332 is AHB
->>> based IEEE802.11be 2 GHz 2x2 WiFi device.
->>>
->>> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
->>> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
->>>
->>> Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
->>> Co-developed-by: P Praneesh <quic_ppranees@quicinc.com>
->>> Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
->>> Co-developed-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->>> ---
->>
->> [...]
->>
->>> +enum ext_irq_num {
->>> +	host2wbm_desc_feed = 16,
->>> +	host2reo_re_injection,
->>
->> Why?
->>
-> 
-> This enum is used as a IRQ number for Ath12k AHB. Based on this enum
-> we can get the IRQ name from irq_name[]. This helps to request the original
-> IRQ number from the DT.
-> It is starting from 16 becasue, in irq_name[], the name for ext IRQ starts
-> from 16 index.
 
-[...]
+--2o2i0BUpv0Ef1SLM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->>> +				irq_grp->irqs[num_irq++] =
->>> +					reo2host_destination_ring1 - j;
->>> +			}
->>> +
->>> +			if (ab->hw_params->ring_mask->rx_err[i] & BIT(j))
->>> +				irq_grp->irqs[num_irq++] = reo2host_exception;
->>> +
->>> +			if (ab->hw_params->ring_mask->rx_wbm_rel[i] & BIT(j))
->>> +				irq_grp->irqs[num_irq++] = wbm2host_rx_release;
->>> +
->>> +			if (ab->hw_params->ring_mask->reo_status[i] & BIT(j))
->>> +				irq_grp->irqs[num_irq++] = reo2host_status;
->>> +
->>> +			if (ab->hw_params->ring_mask->rx_mon_dest[i] & BIT(j))
->>> +				irq_grp->irqs[num_irq++] =
->>> +					rxdma2host_monitor_destination_mac1;
->>> +		}
->>> +
->>> +		irq_grp->num_irq = num_irq;
->>> +
->>> +		for (j = 0; j < irq_grp->num_irq; j++) {
->>> +			irq_idx = irq_grp->irqs[j];
->>> +
->>> +			irq = platform_get_irq_byname(ab->pdev,
->>> +						      irq_name[irq_idx]);
->>> +			ab->irq_num[irq_idx] = irq;
->>> +			irq_set_status_flags(irq, IRQ_NOAUTOEN | IRQ_DISABLE_UNLAZY);
->>> +			ret = request_irq(irq, ath12k_ahb_ext_interrupt_handler,
->>> +					  IRQF_TRIGGER_RISING,
->>> +					  irq_name[irq_idx], irq_grp);
->>> +			if (ret) {
->>> +				ath12k_err(ab, "failed request_irq for %d\n",
->>> +					   irq);
->>> +			}
->>> +		}
->>
->> Instead of doing all this magic, can we request the IRQs manually, as we
->> have interrupt-names in dt?
->>
-> 
-> I'm not sure if I fully understood this comment.
-> If we manually request IRQs using their names from the DT, we won't be able to
-> group the IRQs. Grouping the IRQs is one of our main objectives here. Additionally,
-> we are not using all the IRQ names defined in the DT, so the logic in this function
-> is crucial for grouping and requesting the IRQs according to the ring-mask.
+Hey Wolfram,
 
-Surely you can name these "foo_bar_ring%d" in DT and use the OF APIs
+On Thu, Oct 24, 2024 at 10:36:33AM +0100, Conor Dooley wrote:
+> On Tue, Oct 01, 2024 at 11:16:24AM +0100, Conor Dooley wrote:
+> > On Tue, Oct 01, 2024 at 10:50:56AM +0200, Wolfram Sang wrote:
+> > > > At present, where repeated sends are intended to be used, the
+> > > > i2c-microchip-core driver sends a stop followed by a start. Lots of=
+ i2c
+> > >=20
+> > > Oh, this is wrong. Was this just overlooked or was maybe older hardwa=
+re
+> > > not able to generated correct repeated-starts?
+> >=20
+> > Overlooked, because the devices that had been used until recently didn't
+> > care about whether they got a repeated start or stop + start. The bare
+> > metal driver upon which the Linux one was originally based had a trivial
+> > time of supporting repeated starts because it only allows specific sorts
+> > of transfers. I kinda doubt you care, but the bare metal implementation
+> > is here:
+> > https://github.com/polarfire-soc/polarfire-soc-bare-metal-library/blob/=
+614a67abb3023ba47ea6d1b8d7b9a9997353e007/src/platform/drivers/mss/mss_i2c/m=
+ss_i2c.c#L737
+> >=20
+> > It just must have been missed that the bare metal method was not replac=
+ed.
+> >=20
+> > > > devices must not malfunction in the face of this behaviour, because=
+ the
+> > > > driver has operated like this for years! Try to keep track of wheth=
+er or
+> > > > not a repeated send is required, and suppress sending a stop in the=
+se
+> > > > cases.
+> > >=20
+> > > ? I don't get that argument. If the driver is expected to do a repeat=
+ed
+> > > start, it should do a repeated start. If it didn't, it was a bug and =
+you
+> > > were lucky that the targets could handle this. Because most controlle=
+rs
+> > > can do repeated starts correctly, we can also argue that this works f=
+or
+> > > most targets for years. In the unlikely event that a target fails aft=
+er
+> > > converting this driver to proper repeated starts, the target is buggy
+> > > and needs fixing. It would not work with the majority of other
+> > > controllers this way.
+> > >=20
+> > > I didn't look at the code but reading "keeping track whether rep start
+> > > is required" looks wrong from a high level perspective.
+> >=20
+> > I think if you had looked at the code, you'd (hopefully) understand what
+> > I meant w.r.t. tracking that.
+> > The design of this IP is pretty old, and intended for use with other
+> > logic implemented in FPGA fabric where each interrupt generated by
+> > the core would be the stimulus for the state machine controlling it to
+> > transition state. Cos of that, when controlling it from software, the
+> > interrupt handler assumes the role of that state machine. When I talk
+> > about tracking whether or not a repeated send is required, that's
+> > whether or not a particular message in a transfer requires it, not
+> > whether or not the target device requires them or not.
+> >=20
+> > Currently the driver operates by iterating over a list of messages in a
+> > transfer, and calling send() for each one, and then effectively "loopin=
+g"
+> > in the interrupt handler until the message has been sent. By looking at
+> > the current code, you can see that the completion's "lifecycle" matches
+> > that. Currently, at the end of each message being sent
+> > 	static irqreturn_t mchp_corei2c_handle_isr(struct mchp_corei2c_dev *id=
+ev)
+> > 	{
+> > =09
+> > 		<snip>
+> > =09
+> > 		/* On the last byte to be transmitted, send STOP */
+> > 		if (last_byte)
+> > 			mchp_corei2c_stop(idev);
+> > =09
+> > 		if (last_byte || finished)
+> > 			complete(&idev->msg_complete);
+> > =09
+> > 		return IRQ_HANDLED;
+> > 	}
+> > a stop is put on the bus, unless !last_byte, which is only true in error
+> > cases. Clearly I don't need to explain why that is a problem to you...
+> > You'd think that we could do something like moving the stop out of the
+> > interrupt handler, and to the loop in mchp_corei2c_xfer(), where we have
+> > access to the transfer's message list and can check if a stop should be
+> > sent or not - that's not really possible with the hardware we have.
+> >=20
+> > When the interrupt handler completes, it clears the interrupt bit in the
+> > IP, as you might expect. The controller IP uses that as the trigger to
+> > transition state in its state machine, which is detailed in
+> > https://ww1.microchip.com/downloads/aemDocuments/documents/FPGA/Product=
+Documents/UserGuides/ip_cores/directcores/CoreI2C_HB.pdf
+> > On page 23, row 0x28, you can see the case that (IIRC) is the
+> > problematic one. It is impossible to leave this state without triggering
+> > some sort of action.
+> > The only way that I could see to make this work correctly was to get the
+> > driver track whether or not the next message required a repeated start =
+or
+> > not, so as to transition out of state 0x28 correctly.
+> >=20
+> > Unfortunately, then the clearing of the interrupt bit causing state
+> > transitions kicked in again - after sending a repeated start, it will
+> > immediately attempt to act (see state 0x10 on page 23). Without
+> > reworking the driver to send entire transfers "in one go" (where the
+> > completion is that of the transfer rather than the message as it
+> > currently is) the controller will re-send the last target address +
+> > read/write command it sent, instead of the next one. That's why there's
+> > so many changes outside of the interrupt handler and so many additional
+> > members in the controller's private data structure.
+> >=20
+> > I hope that that at least makes some sense..
+> >=20
+> > > The driver
+> > > should do repeated start when it should do repeated start.
+> >=20
+> > Yup, that's what I'm trying to do here :)
+>=20
+> I'd like to get this fix in, and Andi only had some minor comments that
+> didn't require a respin. I don't want to respin or resend while this
+> conversation remains unresolved.
 
-[...]
+Could you please respond to this thread? I don't want to respin without
+resolving this conversation since I feel like we'd just end up having it
+all over again.
 
->>
->>> +	/* Set fixed_mem_region to true for platforms that support fixed memory
->>> +	 * reservation from DT. If memory is reserved from DT for FW, ath12k driver
->>> +	 * need not to allocate memory.
->>> +	 */
->>> +	if (!of_property_read_u32(ab->dev->of_node, "memory-region", &addr)) {
->>> +		set_bit(ATH12K_FLAG_FIXED_MEM_REGION, &ab->dev_flags);
->>> +		mem_node = of_find_node_by_name(NULL, "mlo_global_mem_0");
->>
->> This is not mentioned or documented anywhere.
->>
-> 
-> In next version, will document the below info:
-> 
-> "If the platform supports fixed memory, then it should define/reserve
-> MLO global memory in DT to support Multi Link Operation.
-> If MLO global memory is not reserved in fixed memory mode, then
-> MLO cannot be supported."
+Thanks,
+Conor.
 
-You should also explain what Multi Link Operation means
+--2o2i0BUpv0Ef1SLM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Konrad
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1LkdwAKCRB4tDGHoIJi
+0m1XAQCdwXDfHtbOt/o2xFRN6ijk2Q9nmrqhXvVgFV7mO2qxswD7BTQa1bc4lUaZ
+wcUgcQzSvYG39FZbjfGmB8Hf2jCKPAM=
+=TYme
+-----END PGP SIGNATURE-----
+
+--2o2i0BUpv0Ef1SLM--
 
