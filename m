@@ -1,172 +1,202 @@
-Return-Path: <linux-kernel+bounces-434647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8D19E6957
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:52:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AFD9E6958
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:53:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59DC1884454
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:53:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4141DF260;
+	Fri,  6 Dec 2024 08:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PqLYUPUi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95AAB283594
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:52:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F090C1DF748;
-	Fri,  6 Dec 2024 08:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NxEA9n2F"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C984F1B532F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141411B4122
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475140; cv=none; b=FaRtprLBE8DCZpeN2l2AmtkImLU5h7ouv01EELG5ju5jdAm4B4KXsw4Z1W/XU9FmdSlSPA/xqOkhRD4bHLGJAX4X3Ddk+8K0fP2PPvnGDQT6et9AdvgtG5FaDAbzOA6cAWwkSYbaSUHqxUNNtG0glx2jnw+JB63q1OQplvnWg+E=
+	t=1733475211; cv=none; b=WaPRFYhJdKPejYpDBLN24eIiDPVBJNBCQCAb0NpLrAHyI1ImEk/Q5lZaErNLiiDc12LgtyBH49hkOSew3Pw5vlCfczvAoesWZpc/Qe4F2UOlF2G/pMJkRcmJ2TrT2sPB+XU6Ow1bje6qvllyGO9ffZ6ik1BX2ptHSyjwdBA811k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475140; c=relaxed/simple;
-	bh=vOEb4E4aKxygcaLscuw12g6Ou/Ts3AX4lPHWDBDyG5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVlW8mS7o8FgIBGMSt9spV76oBFislR5QKE6s5nkqxtHP5wrhmbNmoE80WecONDWYT9XJwfcbZX66VcAtXSvsUE3kGhghdptFEx7D/WYj7rSESup0PJrzqakA4Doh5nglYjOrkbPh/mY6sAOEqOnuO8EYz9fvIM6P7eGvhTOq9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NxEA9n2F; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53e152731d0so2570584e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:52:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733475136; x=1734079936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uWvF0H0EGmUGSVxOV1MB8umQ2kXN27sOruVW1MZF7lM=;
-        b=NxEA9n2FMYH1coNkzrdLtfHNHrEdaeBr/SyEjUtDjmSWtSFQdfWaPVArdH+50OlCau
-         0n6yh7ueJtRYdOjJ+wPs1LRakKu0CIWwZnJN8hi7o4yeiYdhsi83rD1B2UlnuEzGl+g/
-         XvrIcxnlRIOh2M7ahSNXyKeQRATXEYMpccvbhwchVMkW7WsMl3onlS5Ut9UFNnDCTUpy
-         CNJVAe99LFlAsduuT43bIJjeKuZEwLilNAs5XlgoGA3Ngo2ZJYqv1NWsOJ2RAWy91Q8Q
-         nckFM5BfyuyE6xprv68sdy39TUug5iBJh1WMIk13xJGJhva5+JkZpZ4uRWQUYzva0tlg
-         YZBw==
+	s=arc-20240116; t=1733475211; c=relaxed/simple;
+	bh=dQsPkFZWr/tWQwTwc2UOwpKsAv2li1hhpvLNjprhWFc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pmy0+S8sEMkF/es2DWQZW2DHQptE1az59pjHfFEVd7MMqVjxAN5KuAfRFN16mF0W9WW8KLimJUjFETjT74lwwknIfdsFmMv7lPSWGZL9+OzXFhN+480DLyXkDoxaeDAmA9qhFNe1iob93elITOjihv5oiLPCPXiaMnY1f6VGHWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PqLYUPUi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733475208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dQsPkFZWr/tWQwTwc2UOwpKsAv2li1hhpvLNjprhWFc=;
+	b=PqLYUPUizkWGmJhH0ZHPG8MNXdARXkLIJM767BQRjdV1fQ3DUnWy/sihZf9Nae/f+TMSzS
+	OkSHrSOaWhj+d+WgHk96L0MOw9DohmbNc3oEUfOdShQjrq3XeuRO3rtIEz2lO1JeSfIJcp
+	P4vVJvXWFl0+a+ko2906KanToosauuQ=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-179-okVU2DFYMYu-LfPZk_MAYw-1; Fri, 06 Dec 2024 03:53:27 -0500
+X-MC-Unique: okVU2DFYMYu-LfPZk_MAYw-1
+X-Mimecast-MFC-AGG-ID: okVU2DFYMYu-LfPZk_MAYw
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d8edc021f9so4371326d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:53:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733475136; x=1734079936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uWvF0H0EGmUGSVxOV1MB8umQ2kXN27sOruVW1MZF7lM=;
-        b=Ghxp/P26t3fgcQvQ+KBjaRjOoxUA+ccqrxSRmHxE7wTKeCnNtMv29LXQxy5X1rbSBq
-         7yiYiVPCm/DJH5QBQYM3kQnPH4mgmPWpV+N6VrLYBZAzqKud/EyOJsldjiMOOW12Pzh/
-         tm6x77mlcuVaEZChqJaYS+SCnLpBAJ1N1zwZLhLm7zTUc8ePyYrQbEW5z0OovXjsiAW3
-         xYs7RGmDnqMFTiYx5oh+T3bJk1AEX3tv77Ul9gVWs/7Yo/2aTfpQ0KVIPtl+VU5Jkior
-         SDUJSVO5h4MwdBKGJSW9UzQoyMakse8ORKJr2Z0dLcgW/wzTItshpzn20B6v31b9wTNB
-         oD0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXBLWBh94I9qlSPxkMD+P+MVPqv3vEhdYAOJa0xHJNurnhU2SsAxC2VMAh3v8x5rOlb/DWbHtF0aliQ+xQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5BmnPC5QjTGHgEl8rew4a5YQiQV/ilHoxVSXhewT8gfP3KwUv
-	zgyDxmSKI3wKXdjZ1A5fCqlPoDbjIf+PL1qOieuG6ZRsev/X75VJb8vJL64MSQM=
-X-Gm-Gg: ASbGnctbtdm+YUMn0hFMiWD7hHk55fToDzGmKaqeuVhSqOhDFRVT3yoq/m54IavcooS
-	jGOyUXT7hoi6aJAGV7dDC1GoyI01Gxt4+4v40ZS2dMnQLfMwl/jkRPhH8kJjYtGOizoAqX+gj71
-	dQgGG9bvwpny90IhZsX5qEW9F8g1ctEJmKBDENqIXiJN5n0NCVBw/rgk+ngNpGQmoFUYZi4p8tk
-	A+wtD8XVvoVyYEsdSHZL38m7vKFsXnP7BUt7GOzpceZJFbD3+5BdSpSWqbIDK7f4lkXbowLo8eb
-	QpGDoh+f29PkN7AsAttqNZ57AaZYbw==
-X-Google-Smtp-Source: AGHT+IF6Vdn52CT8JySCn5wU2COywbsd5j5s7R3p4rxRLjto9tXn/oJVzfxtra1uUQQ11wKfZqg7fw==
-X-Received: by 2002:a05:6512:3d0c:b0:53e:2246:c262 with SMTP id 2adb3069b0e04-53e2246c7d1mr2115452e87.0.1733475135953;
-        Fri, 06 Dec 2024 00:52:15 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229479e6sm444272e87.28.2024.12.06.00.52.13
+        d=1e100.net; s=20230601; t=1733475207; x=1734080007;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dQsPkFZWr/tWQwTwc2UOwpKsAv2li1hhpvLNjprhWFc=;
+        b=tVnl3N+wL6kDdP6iN6l45v1bL+Lq29UGoZvCa/1dFHEcFABzhYvdD2FfRaOP0eAipJ
+         SqEHbYKOnOpFrmalmFNV3NLrtI2QYSXAmQxP1Q98idrzGLrMZ3FV9mcynanaYRL2nYZK
+         qa0I61vyPbxfeLjU2JqLTaQPUNvgazXPXa8XcjNCPm/aIDAg5dOl7MGQXgZ3euijb6cp
+         eTw3DPLBilQmk8R2pMBB3kI+VsrKOYbOaIVILW/cLdhZGWb4CU01aP9ZSj6F7QrV2hFa
+         KrUjRKCHG4PrqkI5S8uLJMaMsSoLd9qXvejqRP0EmFJCOMEwzocP58MgyIrAX5EeOb+a
+         3P9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVHst+zBc4fucZOMqd+hMnvzR4WRKBqiKogad9v4IJWQE5kWwN3EaSbxIefni4x3EDzz1XTpY8ZTBP+GnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj5saeptIE/rGE9ho8Cxs1Ja5qiKQm9yNoNJQ/RTi0kNRdlRba
+	iI5ZViQHRQ4VypLv3lystNevSjCdvRZJ2KWrS2XIXdVOwwMgRNqcfTgDMDGLdbivOlREiX3+qgc
+	lviHeFMuG/heT6hReP5qZFHTD71CAlKgPhzS9LyKps4+xpiSM3YgNNk8D0E5ytw==
+X-Gm-Gg: ASbGncu7CcccGKCXnvI/aqY0G3vjBfC/VfGwxJvIGcnpQGICQnCS1Ev2BzsF3svWNU2
+	IkX7Te15PAWuUmgqmoOMUwVUni569dtLodopBNFfiQtMgVoryYeJj3JlLVZgB1XLZN1OJF3L73Y
+	UlLr1wNSPfbYqHyNXQgDQyMEq287MLSx9cEVFzxf4uwNR+Dmt7emkNLogvnyp1ttK1rIiKpWCBE
+	aF09azlM292Nl9uWMRArxOn39KDnvXZrf3Hc3YppB9f6J8vodjJMgd0FHVkZuQgfMqJA3VhEtkh
+X-Received: by 2002:a05:6214:5195:b0:6d8:9e16:d083 with SMTP id 6a1803df08f44-6d8e70d6eb2mr30193016d6.3.1733475206875;
+        Fri, 06 Dec 2024 00:53:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHuIt3GmOjFHzFyqi2fUZDfOlLKfiJiyAspNyaIfAL0leXUx0zN3aoJ55+2dkoSOqMA86dikg==
+X-Received: by 2002:a05:6214:5195:b0:6d8:9e16:d083 with SMTP id 6a1803df08f44-6d8e70d6eb2mr30192766d6.3.1733475206551;
+        Fri, 06 Dec 2024 00:53:26 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da66da32sm17004936d6.2.2024.12.06.00.53.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 00:52:14 -0800 (PST)
-Date: Fri, 6 Dec 2024 10:52:12 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
-	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
-	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 05/45] drm/msm/dp: add a helper to read mst caps for
- dp_panel
-Message-ID: <aksnudxy2oyojjzwm73i4mulftcxccdsnddcdamypmscn6skpq@ijtp7x76m3pt>
-References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-5-f8618d42a99a@quicinc.com>
+        Fri, 06 Dec 2024 00:53:26 -0800 (PST)
+Message-ID: <ead55d690448cbf23677bcc1b4c1a5c129240c90.camel@redhat.com>
+Subject: Re: [PATCH] sched: Move task_mm_cid_work to mm delayed work
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar	
+ <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton	
+ <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
+ linux-mm@kvack.org, 	linux-kernel@vger.kernel.org
+Cc: Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	 <vincent.guittot@linaro.org>
+Date: Fri, 06 Dec 2024 09:53:20 +0100
+In-Reply-To: <5ba975e2-06b9-4b98-bece-d601b19a06db@efficios.com>
+References: <20241205083110.180134-2-gmonaco@redhat.com>
+	 <4c067b75e06aadd34eff5b60fc7c59967aa30809.camel@redhat.com>
+	 <5ba975e2-06b9-4b98-bece-d601b19a06db@efficios.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-5-f8618d42a99a@quicinc.com>
 
-On Thu, Dec 05, 2024 at 08:31:36PM -0800, Abhinav Kumar wrote:
-> Add a helper to check whether a dp_panel is mst capable.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/dp/dp_aux.h   |  1 +
->  drivers/gpu/drm/msm/dp/dp_panel.c | 14 ++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_panel.h |  1 +
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_aux.h b/drivers/gpu/drm/msm/dp/dp_aux.h
-> index 39c5b4c8596ab28d822493a6b4d479f5f786cdee..cb97a73cdd6ea74b612053bec578247a42214f23 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_aux.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_aux.h
-> @@ -8,6 +8,7 @@
->  
->  #include "dp_catalog.h"
->  #include <drm/display/drm_dp_helper.h>
-> +#include <drm/display/drm_dp_mst_helper.h>
->  
->  int msm_dp_aux_register(struct drm_dp_aux *msm_dp_aux);
->  void msm_dp_aux_unregister(struct drm_dp_aux *msm_dp_aux);
-> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
-> index d277e9b2cbc03688976b6aa481ee724b186bab51..172de804dec445cb08ad8e3f058407f483cd6684 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-> @@ -108,6 +108,20 @@ static u32 msm_dp_panel_get_supported_bpp(struct msm_dp_panel *msm_dp_panel,
->  	return min_supported_bpp;
->  }
->  
-> +bool msm_dp_panel_read_mst_cap(struct msm_dp_panel *msm_dp_panel)
-> +{
-> +	struct msm_dp_panel_private *panel;
-> +
-> +	if (!msm_dp_panel) {
-> +		DRM_ERROR("invalid input\n");
-> +		return 0;
-> +	}
-> +
-> +	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
-> +
-> +	return drm_dp_read_mst_cap(panel->aux, msm_dp_panel->dpcd);
+On Thu, 2024-12-05 at 11:25 -0500, Mathieu Desnoyers wrote:
+> On 2024-12-05 09:33, Gabriele Monaco wrote:
+>=20
+> > Before sending a V2, however, I'd like to get some more insights
+> > about
+> > the requirements of this function.
+> >=20
+> > The current behaviour upstream is to call task_mm_cid_work for the
+> > task
+> > running after the scheduler tick. The function checks that we don't
+> > run
+> > too often for the same mm, but it seems possible that some process
+> > with
+> > short runtime would rarely run during the tick.
+> >=20
+>=20
+> So your concern is about a mm with threads running in short bursts,
+> and those would happen to rarely run while the tick interrupt is
+> triggered. We may indeed be missing something here, because the goal
+> is to ensure that we periodically do the task_mm_cid_work for each
+> mm.
+>=20
+> The side-effect of missing this work is not compacting the
+> mm_cid allocation cpumask. It won't cause rseq to fail per se,
+> but it will cause the mm_cid allocation to be less compact than
+> it should be.
 
-So, it's a one-line wrapper. Do we actually need it?
+Yes, that was exactly the case, tasks like timerlat/cyclictest running
+periodically but doing very short work.
+Makes sense, now it's much clearer.
 
-> +}
-> +
->  int msm_dp_panel_read_link_caps(struct msm_dp_panel *msm_dp_panel,
->  				struct drm_connector *connector)
->  {
-> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
-> index 7a38655c443af597c84fb78c6702b2a3ef9822ed..363b416e4cbe290f9c0e6171d6c0c5170f9fea62 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
-> @@ -67,6 +67,7 @@ int msm_dp_panel_get_modes(struct msm_dp_panel *msm_dp_panel,
->  		struct drm_connector *connector);
->  void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel);
->  void msm_dp_panel_tpg_config(struct msm_dp_panel *msm_dp_panel, bool enable);
-> +bool msm_dp_panel_read_mst_cap(struct msm_dp_panel *dp_panel);
->  
->  /**
->   * is_link_rate_valid() - validates the link rate
-> 
-> -- 
-> 2.34.1
-> 
+>=20
+> > The behaviour imposed by this patch (at least the intended one) is
+> > to
+> > run the task_mm_cid_work with the configured periodicity (plus
+> > scheduling latency) for each active mm.
+>=20
+> What you propose looks like a more robust design than running under
+> the tick.
+>=20
+> > This behaviour seem to me more predictable, but would that even be
+> > required for rseq or is it just an overkill?
+>=20
+> Your approach looks more robust, so I would be tempted to introduce
+> it as a fix. Is the space/runtime overhead similar between the
+> tick/task work approach vs yours ?
 
--- 
-With best wishes
-Dmitry
+I'm going to fix the implementation and come up with some runtime stats
+to compare the overhead of both methods.
+As for the space overhead, I think I can answer this question already:
+* The current approach uses a callback_head per thread (16 bytes)
+* Mine relies on a delayed work per mm (88 bytes)
+
+Tasks with 5 threads or less have lower memory footprint with the
+current approach.
+I checked quickly on some systems I have access to and I'd say my
+approach introduces some memory overhead on an average system, but
+considering a task_struct can be 7-13 kB and an mm_struct is about 1.4
+kB, the overhead should be acceptable.
+
+>=20
+> >=20
+> > In other words, was the tick chosen out of simplicity or is there
+> > some
+> > property that has to be preserved?
+>=20
+> Out of simplicity, and "do like what NUMA has done". But I am not
+> particularly attached to it. :-)
+>=20
+> >=20
+> > P.S. I run the rseq self tests on both this and the previous patch
+> > (both broken) and saw no failure.
+>=20
+> That's expected, because the tests do not so much depend on the
+> compactness of the mm_cid allocation. They way I validated this
+> in the past is by creating a simple multi-threaded program that
+> periodically prints the current mm_cid from userspace, and
+> sleep for a few seconds between printing, from many threads on
+> a many-core system.
+>=20
+> Then see how it reacts when run: are the mm_cid close to 0, or
+> are there large values of mm_cid allocated without compaction
+> over time ? I have not found a good way to translate this into
+> an automated test though. Ideas are welcome.
+>=20
+> You can look at the librseq basic_test as a starting point. [1]
+
+Perfect, will try those!
+
+Thanks,
+Gabriele
+
 
