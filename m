@@ -1,86 +1,94 @@
-Return-Path: <linux-kernel+bounces-434708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F2D9E69FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:25:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FC85188570A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:25:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E471E0DF6;
-	Fri,  6 Dec 2024 09:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QzLceQVi"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12EC9E6A03
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:26:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B057D1CD219;
-	Fri,  6 Dec 2024 09:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E333283418
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:26:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820F81E2616;
+	Fri,  6 Dec 2024 09:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CdiKmgl8"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C661DA10C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477122; cv=none; b=AePRJm3x55whjoCZCTo+tMoqzDHVOzXsElNKfyYjjGJeqlD5vgc7dGeu8Tt5ahksCiJOrzOkkFQM5suwNGWbrdnMz9TlviL/hGyGZ/cddLcpScQ1eNwmEHqTdR8XyuMA7ZzdwUznc+VurPs61zA9bBfT8XPd263XwaxGwQ/660w=
+	t=1733477159; cv=none; b=rTCpDbhIhAZ9BrLJXGnOJkcD+MrhJ0Q4kn9m2DPg4Erru5w7EE5WphaKapbtMLqpO3eFGKahxfMriRGUDcPo4U7dL7mGzxOa+uUSf3+km81dFPjOCW8tUYcEaDSInSqiOoCyywoERf1Np23nLDIeWMPkudZgWYU9rF6BJ31i2Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477122; c=relaxed/simple;
-	bh=WkxUZmi3pnNlkbYCoGcUcUNXIVcAzpOl3fQlVAgSdnQ=;
+	s=arc-20240116; t=1733477159; c=relaxed/simple;
+	bh=DnHGjRWsKYTW4FcAmnRONMUxDw+YrQbtkfuiDDTOiF8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kc8hDBMoSszwAakeR77RaMqIJ03qJZNGFXCGPbPZ4QZTWQm4Mo2yRzgAXRvXnWpJQBoQGRK8mw6pOp1ub18uH9kShm8kq4skFau8kcbb6cKxjCmem+C4o5pfyP4pAXt+nS0Uq7KBvlN+PLWNriuOBlONYDheGYGatEo91K6XjL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QzLceQVi; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5KUr8a011023;
-	Fri, 6 Dec 2024 09:25:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=RZS6F1TKgzJqFxis0CrZzfpp//nfgL
-	kDyjeydfC6dVc=; b=QzLceQVio46n4VJnVjsTBKG7JWiYjMOnX94zbJNo9HHaEn
-	Bg6zUM+0R8TruDBeTNigXuAs+6XimhS/+fwamln9DpY91ygxV3zn3F2/FnkBU4zp
-	GhvtFgTTbYd8aWspcXdXrw6kdeOuuHIk6jEmqi7rAlU0L9+c/RXh7bfhDqwG3F54
-	UoMdAYw8c9+y2SboQkbW9jKTdcN5PnY72g9sxDz04U1KwqGUSGAyCBLUN5y+N2zg
-	9LHEf2e1VoN8JhbyWCsQxPmsF5GrrYASa+WunSCy0Af9QQ+XxDlqMA0e33aUXl52
-	g6naz0zidXpLJqZzhYpJoYAfVw5FUoh0EAkPkqBg==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43bk99jmtb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 09:25:00 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B65J76C008622;
-	Fri, 6 Dec 2024 09:24:59 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 438f8jwwkw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 09:24:59 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B69Ot1v10486200
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Dec 2024 09:24:55 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AA7E020043;
-	Fri,  6 Dec 2024 09:24:55 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F032320040;
-	Fri,  6 Dec 2024 09:24:54 +0000 (GMT)
-Received: from osiris (unknown [9.171.17.195])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  6 Dec 2024 09:24:54 +0000 (GMT)
-Date: Fri, 6 Dec 2024 10:24:53 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Guillaume Morin <guillaume@morinfr.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Muchun Song <muchun.song@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-        Eric Hagberg <ehagberg@janestreet.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
-Message-ID: <20241206092453.9026-A-hca@linux.ibm.com>
-References: <Z1EJssqd93w2erMZ@bender.morinfr.org>
- <20241206045019.GA2215843@thelio-3990X>
- <Z1KLLXpzrDac-oqF@bender.morinfr.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qlu826f0ado99swd38FTjt/vpFII1HUBUIqotTqmpIUHL+5krx5XRBMG33BhJcSLQ6cUK2vBzVCKD9dACJijCj7QEchlmcadx6HgRL40TVLM0bosi+dblkilZfg0DhgWVmolGM9tnyAhMe/cr6ShpF3RXTNKKeMhqPKrf7StG50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CdiKmgl8; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ffa974b2b0so16665631fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:25:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733477155; x=1734081955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OoUr7wn0ZUiIfTkQsgOoOd0m6IiBq8HA9tyXLM1N7tU=;
+        b=CdiKmgl83FzB28bnoyLrX4H7xmFTwSuRNE9vj80TLCgv0Yq2i27QqoWSCevZubT8L4
+         YeXhHO8/e2xe3h23AvCaB5xhKrfnHEjlmNH8/9WfA0M3NANqjH1DkDxEvQIjznAohfH9
+         dZSmz6NYEXp24pcGMN0ebsvIkO+hNjbtdYYnQzpNYZrkCV18fMZEsfIe9DNuKZBuA48y
+         gn2uc8Fn7YXjULG6HpLkI5aOM/cGncxfb0MymIU9n04qhjEyaNN0hX8oqYwXwAGxpn2S
+         e3r+pq1uurXxOJSk+QmCbVlaFu+BSkUPT/IAV6EXgsUO7qIuhz8bHyXPaqS8RH4rJMGZ
+         pI/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733477155; x=1734081955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OoUr7wn0ZUiIfTkQsgOoOd0m6IiBq8HA9tyXLM1N7tU=;
+        b=BOs9K+L6oKgvyI/jWosJ3PvcCfVwZI5h8bQLR9QM8Yx5+RpKRmOCeJ8yLoYFcNcR6g
+         TDi6H7fW+whToBGw9GY9XOLnFUzmYcKTQKHrnb0okWqAQCZ0FJJhYmo8tFnKiWwBxGEJ
+         nzpnp9CostdSvvHy/KXp0yhBo4y5i7CFSS2bjhhqb7U6RFjN199fsDR59TKBix9GHwzg
+         6fEgUUPcXEWgtl4pAdNh9L7IQ/fJHWyO7XgRyZyjuVrT/IuhmvhUvRMVtLZfELVwKpyh
+         KshFPdZ7hqvp/tlgkv7yAU3LWdgY5jpHBkB49xQeOfMcjd4JpJGipZydNeuIguEWtmlB
+         iLjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJeZ4BcW/PXo7EQhQeE4uG4W+VJIK0I9yMbAega3mjkazZ5t9rIVhPfGkEX/zMukHhGfpuXI8mZM1sofs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTw5ZVQGqOIhZdqHEIsO3khkj8ENHF1I/PHkZm74qZb3abchP5
+	qNMj+TrsaOwH+APoO9RZIvSpEl7JUnlV+1Yhc54RVphC/KMKOXC5GdN5HkeM1Bs=
+X-Gm-Gg: ASbGncsHipws/nXuc8DEd8LFmiAu5r1yxhWh8GpveElYlATWIqvhee8nLKtbgM5BRxO
+	yIsU/QKY9B8nsZJEY5AljWwVrXTG+8MA+mtzzrGLASBrVaLpfGxPiRW3sFpw5c9QawToLKInf1T
+	sLWYghpZXjYpVPsXkFZZbVfuDpf9K0Wta6r+Gt/bp4I1kqkI2gVhlevoiAfWmNGgnSiaaKM+nnI
+	Ge7MdfQe2CwbM+4P+VaOIBayUg6FTNX2zFJ4frxdN2d9gKX8b6VHxsFDlZTQpB6qZNVrcnrYsid
+	tP0DF0eaIEExq9obfRgmU5Sq3A1r8A==
+X-Google-Smtp-Source: AGHT+IHEPjXcBrm7XkLeyj1S9Myc1Ilx1u8zaCsZKn1lMH6hzLdh64MAK0T3iqxzwepLT5rGpHD/Mw==
+X-Received: by 2002:a05:651c:553:b0:2ff:d7e8:b712 with SMTP id 38308e7fff4ca-3002f8c88b6mr7541101fa.13.1733477155305;
+        Fri, 06 Dec 2024 01:25:55 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020d85356sm4231801fa.15.2024.12.06.01.25.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 01:25:54 -0800 (PST)
+Date: Fri, 6 Dec 2024 11:25:51 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
+	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 41/45] drm/msm/dpu: use msm_dp_get_mst_intf_id() to get
+ the intf id
+Message-ID: <tqxoqjrpi3smnjuipnog5idh4kjhld7jem7s637pdjhcoc4paf@75kcofgrxwdv>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-41-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,74 +97,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1KLLXpzrDac-oqF@bender.morinfr.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7EedieBvwZ570EpYYf5NVEvE0HRd2YQh
-X-Proofpoint-ORIG-GUID: 7EedieBvwZ570EpYYf5NVEvE0HRd2YQh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1011 malwarescore=0
- priorityscore=1501 spamscore=0 mlxlogscore=539 impostorscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060065
+In-Reply-To: <20241205-dp_mst-v1-41-f8618d42a99a@quicinc.com>
 
-On Fri, Dec 06, 2024 at 06:27:09AM +0100, Guillaume Morin wrote:
-> On 05 Dec 21:50, Nathan Chancellor wrote:
-> > >  #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
-> > > +/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
-> > > +static inline bool can_follow_write_pud(pud_t pud, struct page *page,
-> > > +					struct vm_area_struct *vma,
-> > > +					unsigned int flags)
-> > > +{
-> > > +	/* If the pud is writable, we can write to the page. */
-> > > +	if (pud_write(pud))
-> > > +		return true;
-> > > +
-> > > +	if (!can_follow_write_common(page, vma, flags))
-> > > +		return false;
-> > > +
-> > > +	/* ... and a write-fault isn't required for other reasons. */
-> > > +	return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
-> > 
-> > This looks to be one of the first uses of pud_soft_dirty() in a generic
-> > part of the tree from what I can tell, which shows that s390 is lacking
-> > it despite setting CONFIG_HAVE_ARCH_SOFT_DIRTY:
-> > 
-> >   $ make -skj"$(nproc)" ARCH=s390 CROSS_COMPILE=s390-linux- mrproper defconfig mm/gup.o
-> >   mm/gup.c: In function 'can_follow_write_pud':
-> >   mm/gup.c:665:48: error: implicit declaration of function 'pud_soft_dirty'; did you mean 'pmd_soft_dirty'? [-Wimplicit-function-declaration]
-> >     665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
-> >         |                                                ^~~~~~~~~~~~~~
-> >         |                                                pmd_soft_dirty
-> > 
-> > Is this expected?
+On Thu, Dec 05, 2024 at 08:32:12PM -0800, Abhinav Kumar wrote:
+> Use msm_dp_get_mst_intf_id() to get the intf id for the DP MST
+> controller as the intf_id is unique for each MST stream of each
+> DP controller.
 > 
-> Yikes! It does look like an oversight in the s390 code since as you said
-> it has CONFIG_HAVE_ARCH_SOFT_DIRTY and pud_mkdirty seems to be setting
-> _REGION3_ENTRY_SOFT_DIRTY. But I'll let the s390 folks opine.
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 25 ++++++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
 > 
-> I don't mind dropping the pud part of the change (even if that's a bit
-> of a shame) if it's causing too many issues.
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> index 83de7564e2c1fe14fcf8c4f82335cafc937e1b99..ce2f0fa8ebb1efd1a229a99543593965dbccd752 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> @@ -2512,17 +2512,23 @@ static int dpu_encoder_virt_add_phys_encs(
+>  
+>  static int dpu_encoder_setup_display(struct dpu_encoder_virt *dpu_enc,
+>  				 struct dpu_kms *dpu_kms,
+> -				 struct msm_display_info *disp_info)
+> +				 struct msm_display_info *disp_info,
+> +				 int drm_enc_mode)
 
-It would be quite easy to add pud_soft_dirty() etc. helper functions
-for s390, but I think that would be the wrong answer to this problem.
+No need to, use dpu_enc->base.encoder_type
 
-s390 implements pud_mkdirty(), but it is only used in the context of
-HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD, which s390 doesn't support. So
-this function should probably be removed from s390's pgtable.h.
+>  {
+>  	int ret = 0;
+>  	int i = 0;
+>  	struct dpu_enc_phys_init_params phys_params;
+> +	unsigned int intf_id;
+> +	struct msm_drm_private *priv;
+> +	struct drm_encoder *drm_enc;
+>  
+>  	if (!dpu_enc) {
+>  		DPU_ERROR("invalid arg(s), enc %d\n", dpu_enc != NULL);
+>  		return -EINVAL;
+>  	}
+>  
+> +	drm_enc = &dpu_enc->base;
+> +	priv = drm_enc->dev->dev_private;
+>  	dpu_enc->cur_master = NULL;
+>  
+>  	memset(&phys_params, 0, sizeof(phys_params));
+> @@ -2559,9 +2565,18 @@ static int dpu_encoder_setup_display(struct dpu_encoder_virt *dpu_enc,
+>  		DPU_DEBUG("h_tile_instance %d = %d, split_role %d\n",
+>  				i, controller_id, phys_params.split_role);
+>  
+> -		phys_params.hw_intf = dpu_encoder_get_intf(dpu_kms->catalog, &dpu_kms->rm,
+> -							   disp_info->intf_type,
+> -							   controller_id);
+> +		if (drm_enc_mode == DRM_MODE_ENCODER_DPMST) {
+> +			intf_id = msm_dp_get_mst_intf_id(priv->dp[controller_id],
+> +							 disp_info->stream_id);
+> +			DPU_DEBUG("intf_id %d for disp_info->stream_id = %d\n", intf_id,
+> +				  disp_info->stream_id);
+> +			phys_params.hw_intf = dpu_rm_get_intf(&dpu_kms->rm, intf_id);
+> +
+> +		} else {
+> +			phys_params.hw_intf = dpu_encoder_get_intf(dpu_kms->catalog, &dpu_kms->rm,
+> +								   disp_info->intf_type,
+> +								   controller_id);
+> +		}
+>  
+>  		if (disp_info->intf_type == INTF_WB && controller_id < WB_MAX)
+>  			phys_params.hw_wb = dpu_rm_get_wb(&dpu_kms->rm, controller_id);
+> @@ -2662,7 +2677,7 @@ struct drm_encoder *dpu_encoder_init(struct drm_device *dev,
+>  	mutex_init(&dpu_enc->enc_lock);
+>  	mutex_init(&dpu_enc->rc_lock);
+>  
+> -	ret = dpu_encoder_setup_display(dpu_enc, dpu_kms, disp_info);
+> +	ret = dpu_encoder_setup_display(dpu_enc, dpu_kms, disp_info, drm_enc_mode);
+>  	if (ret) {
+>  		DPU_ERROR("failed to setup encoder\n");
+>  		return ERR_PTR(-ENOMEM);
+> 
+> -- 
+> 2.34.1
+> 
 
-Similar the pud_soft_dirty() and friends helper functions should only
-be implemented if common code support for soft dirty would exist,
-which is currently not the case. Otherwise similar fallbacks like for
-pmd_soft_dirty() (-> include/linux/pgtable.h) would also need to be
-implemented.
-
-So IMHO the right fix (at this time) seems to be to remove the above
-pud part of your patch, and in addition we should probably also drop
-the partially implemented pud level soft dirty bits in s390 code,
-since that is dead code and might cause even more confusion in future.
-
-Does that make sense?
+-- 
+With best wishes
+Dmitry
 
