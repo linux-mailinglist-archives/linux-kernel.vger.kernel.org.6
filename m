@@ -1,338 +1,174 @@
-Return-Path: <linux-kernel+bounces-434143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B459E622D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:28:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CAE29E6233
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E06169796
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:28:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00AD41693D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D1D1EB48;
-	Fri,  6 Dec 2024 00:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5B62030A;
+	Fri,  6 Dec 2024 00:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="O3NGbEKm"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZO+hp0t4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BD0C2C8
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A46256E;
+	Fri,  6 Dec 2024 00:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733444881; cv=none; b=aVomMNfkFUTFeFyCxodlnLeBtup/RHf8CgKaPwQntpl0AxHv/xp5mZnXk1DfBbnLJNQpaZ7oW5u41T2VMrnVahemTocbAX8YTpmFoiES1mIFaWuVVooXwPvVjgHqhms/SozExD9fdq79E15oerasngMOE+4oVfIIOfzWMoExUOA=
+	t=1733444918; cv=none; b=CU1iKw5+78pS7rpcvzl5wVeAtPzdu/2nDOhTcsdXhR/mZ9jzWk3bxuj6bQpoYA1Sz0PzeLeP65ToXG38SSuARmXbVFJk23F+pA99khYnBgI4Is3loZ2nXhvNcRSjklGFWcq95VxhE6AL4C646uUyaXRg3CLSAwFSsXkUzljvkSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733444881; c=relaxed/simple;
-	bh=gurEB20qLPc4NxxkGx7vvw608KFI5HGmD9RkOyPkmV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7MkW4VHSSb0dAXUZh8D/8kh1tY3BHPXvCzwSFCfilXS7bw2+BvzwJXpfNziqL4oQXGPIrcNlvUgGRYPw8nz2caFu3r98yI9bANmh1iXMIHCRuRwwKdYnVmWp2fHYYOI0qLJReiMwkM7NyGNOXTpkE6nF78PBGQk4B74SKsBzVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=O3NGbEKm; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7BE613F29E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733444876;
-	bh=MivuSGCdKstLxqo59xhVbWuDzb+dNtWFJm5+HOIPd5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=O3NGbEKmY6h5Hd8aU5U4M1WOHFGXoXvhEuCJiPPe9fF17OYQeKFJHv4R0nUqWImN+
-	 1tuW/jNE6HrWvPe0qr1RDp3XXQPs5XC2msHqaVniFEgAdtPrpUgPrZGU1cfpHf5j/e
-	 32bI49sCXk6yf70kq8+nvDp+N4CVPt70DcgWun2pfyBtzkxN40opT2x83EQKp5qNT3
-	 yhPMNFyYlVECthhK8FuuIaS+sYkrG0QxpESDTcAfLiIZ2kWdjBRYpicv/OOYvATOqC
-	 Ljw65x2D+aIaLgjPgFdIMv+VW7mp3Daqtl69VMOJY3Zre6ODZnbx4SV3PrsGXjrTLu
-	 KjMEpiFTksqyA==
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-215c54e5ceeso13769625ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:27:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733444875; x=1734049675;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MivuSGCdKstLxqo59xhVbWuDzb+dNtWFJm5+HOIPd5E=;
-        b=wQThYEhF9uwfwx+G9zVjgAf6+IuDQWDMYomtyxw1v0+jrxFp05c2+myUlmdEifS8dw
-         OZJuzH3Tn0qzll5V6CdoEvnjdBSCNs8awXPxPVrllldqBidB43caNJWIAByyPjgkjs68
-         V4u/KbO78f1fBqo010d21eelrjo0Jrj5WO82FPnbmPqjWUEHGgedLMRynMnDMguPAmWR
-         SiYUPqISYath1PLr22lM5k/HNYBjKJdyFcsKdekc9w9U85yk5pTW+PAxAep7H03HAd6t
-         BvFc8cIw7tyBTNVRurwxvAM/PItPaRDd7JncXK7hcxE2y2dTNbpCefE2nj8vENpnoqJv
-         cT5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXQYZYvwfvEOv4L9TvaDqEyanDWi9xPECDHZz8oTh9h8M74eVKns0pOoF0LaBXmmWRPk4eeXjcCUf9mcD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkiZiavoyPr5j3tJaCEiefVBbXGc325O1Aa/ykpG3gz8Spog/m
-	MxgaQDC3nfA19c+YGxWxrrkUdKH0MHCEDFBAsKnP+l7kGDUGvxDvEN73lwpgLTN2caxPReE770w
-	Bg+pUckpugkfnL9xstc1TPJXiABXqkPTkX1F36e7zUY0Ct3iaaaxTFyo0vgM3uOIYkvcSFENcVn
-	F6gw==
-X-Gm-Gg: ASbGncvHgzZ0g5QHwPoufzF25uJ4bQkIDiVLm8pAwBap9YHU30YYez8eUkzvAJ7RAGs
-	FePKCP0yPG0fdZoFC5RfLsCHr7ru8iOOdG2IStaF8FjQNVH7z4jlyLFx5fHDsmJW9mVnlqD2764
-	h8SEjtIzictFrAt6RMOuSnU8LU83gCrZYrJGQTIYJhq2FTgcHJlUqVx3gUjOdy2qpiu9ULv81ys
-	KvSC1PRWIm4srXAm838uNEfT/HJ+20InPonHXM64fY77P6UkVjY
-X-Received: by 2002:a17:902:e5cd:b0:215:9091:4f56 with SMTP id d9443c01a7336-21614d4528cmr15324315ad.14.1733444874998;
-        Thu, 05 Dec 2024 16:27:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEh/VvFCT5z5C2KnGLcEdyl7MPwt/FRnLMuLWN2yQxFP70ZRl02J3qZnmYbnfdapLquaCmkhQ==
-X-Received: by 2002:a17:902:e5cd:b0:215:9091:4f56 with SMTP id d9443c01a7336-21614d4528cmr15323905ad.14.1733444874553;
-        Thu, 05 Dec 2024 16:27:54 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:9740:f048:7177:db2e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a8f474sm1822663b3a.97.2024.12.05.16.27.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 16:27:54 -0800 (PST)
-Date: Fri, 6 Dec 2024 09:27:52 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: virtualization@lists.linux.dev, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/7] virtio_net: correct
- netdev_tx_reset_queue() invocation point
-Message-ID: <wiioftpgwh7j2l2ohepyp2lygqv4t45o57t7tzicfvqrwfpzz6@wrnnnivyargv>
-References: <20241204050724.307544-1-koichiro.den@canonical.com>
- <20241204050724.307544-2-koichiro.den@canonical.com>
- <20241205052729-mutt-send-email-mst@kernel.org>
- <nmjiptygbpqfcveclpzmpgczd3geir72kkczqixfucpgrl3g7u@6dzpd7qijvdm>
- <cv7ph7yna6d5a37k7hoxplyzrbmrdxrcjd67nrttevsta3r54h@35ztxhqaczqd>
- <20241205101611-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1733444918; c=relaxed/simple;
+	bh=fDpBfsqh+A93EKAXwhvxuIFOiEt3bUWwtkGoE+I7iGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NWknDVsXAtWS9OX5FDBraHWw8Wyu3f08yooYonY+hzwk0uQpowbc/+HsQDEmjus/oVogJzGK4xhfDfUEjKKNiObIMqCg32auZ+bAHKF8AZLYCAqeDX1sk2xG+Gu1PVMNS/we+vtoHlv83WO2qFGbTNIVEX/MJ5712ENAQHKsJuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZO+hp0t4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HadR9005219;
+	Fri, 6 Dec 2024 00:28:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fDpBfsqh+A93EKAXwhvxuIFOiEt3bUWwtkGoE+I7iGA=; b=ZO+hp0t4/XogRzCx
+	bmFm3kj6RZbBMYCgJLACmLH0LO73UftEG5K1i/lfppptIJMnDfJznDI5qPreWAJZ
+	aUMlPEOOlVK7b/eB5u9ynEcbqocVEi0KMyHkh3cpRRAQ0Q53Z8Cwp6YrRoVQ1nnb
+	PLQsRTg/sF+NQb3Z3LLADEs338VqqY2tArCzEZj1odi+VZFcztyT5MYR2w5yddiy
+	w3iUySaY5OsVE0PoaVG9YT54rTIKJ/fCgSN7foiKDDHN0wN9ZM7VD8YbwvTITyHt
+	bQW/ylHfozn15LR+2j822iRB8MXyUPeVn3hvdRm5HebZe0t39D59dFpxmYG+J1Mk
+	LEzPPA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba1423gx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 00:28:13 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B60SCQm010724
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 00:28:12 GMT
+Received: from [10.71.112.120] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 16:28:11 -0800
+Message-ID: <d7c52a11-bd2b-4cce-a0c2-6dc2dadfeaa3@quicinc.com>
+Date: Thu, 5 Dec 2024 16:28:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205101611-mutt-send-email-mst@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v30 00/30] Introduce QC USB SND audio offloading support
+To: Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>
+CC: Takashi Iwai <tiwai@suse.de>, Greg KH <gregkh@linuxfoundation.org>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>,
+        <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <edfeb642-297e-42bb-ad09-cbf74f995514@quicinc.com>
+ <2024111655-approve-throwback-e7df@gregkh>
+ <2f512d8d-e5f3-4bdd-8172-37114a382a69@quicinc.com>
+ <875xoi3wqw.wl-tiwai@suse.de>
+ <d0da6552-238a-41be-b596-58da6840efbb@quicinc.com>
+ <CF49CA0A-4562-40BC-AA98-E550E39B366A@linux.dev>
+ <65273bba-5ec1-44ea-865b-fb815afccc91@intel.com>
+ <fbc04c06-c210-416b-9b77-a6bd8a71a637@quicinc.com>
+ <9d95e6fa-afcb-4445-9fe3-e0eed95ec953@intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <9d95e6fa-afcb-4445-9fe3-e0eed95ec953@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sTJTZGmt5NNLZiU1kgwFwmYnTxTeYTNZ
+X-Proofpoint-ORIG-GUID: sTJTZGmt5NNLZiU1kgwFwmYnTxTeYTNZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=974 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060002
 
-On Thu, Dec 05, 2024 at 10:17:59AM -0500, Michael S. Tsirkin wrote:
-> On Thu, Dec 05, 2024 at 10:16:35PM +0900, Koichiro Den wrote:
-> > On Thu, Dec 05, 2024 at 09:43:38PM +0900, Koichiro Den wrote:
-> > > On Thu, Dec 05, 2024 at 05:33:36AM -0500, Michael S. Tsirkin wrote:
-> > > > On Wed, Dec 04, 2024 at 02:07:18PM +0900, Koichiro Den wrote:
-> > > > > When virtnet_close is followed by virtnet_open, some TX completions can
-> > > > > possibly remain unconsumed, until they are finally processed during the
-> > > > > first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
-> > > > > [1].
-> > > > 
-> > > > 
-> > > > So it's a bugfix. Why net-next not net?
-> > > 
-> > > I was mistaken (I just read netdev-FAQ again). I'll resend to net, with
-> > > adjustments reflecting your feedback.
-> > > 
-> > > > 
-> > > > > Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
-> > > > > before RX napi enable") was not sufficient to eliminate all BQL crash
-> > > > > cases for virtio-net.
-> > > > > 
-> > > > > This issue can be reproduced with the latest net-next master by running:
-> > > > > `while :; do ip l set DEV down; ip l set DEV up; done` under heavy network
-> > > > > TX load from inside the machine.
-> > > > > 
-> > > > > netdev_tx_reset_queue() can actually be dropped from virtnet_open path;
-> > > > > the device is not stopped in any case. For BQL core part, it's just like
-> > > > > traffic nearly ceases to exist for some period. For stall detector added
-> > > > > to BQL, even if virtnet_close could somehow lead to some TX completions
-> > > > > delayed for long, followed by virtnet_open, we can just take it as stall
-> > > > > as mentioned in commit 6025b9135f7a ("net: dqs: add NIC stall detector
-> > > > > based on BQL"). Note also that users can still reset stall_max via sysfs.
-> > > > > 
-> > > > > So, drop netdev_tx_reset_queue() from virtnet_enable_queue_pair(). This
-> > > > > eliminates the BQL crashes. Note that netdev_tx_reset_queue() is now
-> > > > > explicitly required in freeze/restore path, so this patch adds it to
-> > > > > free_unused_bufs().
-> > > > 
-> > > > I don't much like that free_unused_bufs now has this side effect.
-> > > > I think would be better to just add a loop in virtnet_restore.
-> > > > Or if you want to keep it there, pls rename the function
-> > > > to hint it does more.
-> > > 
-> > > It makes sense. I would go for the former. Thanks.
-> > 
-> > Hmm, as Jacob pointed out in v1
-> > (https://lore.kernel.org/all/20241202181445.0da50076@kernel.org/),
-> > it looks better to follow the rule of thumb.
-> 
-> OK then. I'm fine with keeping your code as is, just a squash,
-> and add a comment
-> 
-> 	/*
-> 	 * Rule of thumb is netdev_tx_reset_queue() should follow any
-> 	 * skb freeing not followed by netdev_tx_completed_queue()
-> 	 */
 
-Ok, thanks for the review!
+On 12/4/2024 2:01 PM, Cezary Rojewski wrote:
+> On 2024-12-03 9:38 PM, Wesley Cheng wrote:
+>> Hi Cezary,
+>>
+>> On 12/3/2024 8:17 AM, Cezary Rojewski wrote:
+>>> On 2024-12-01 4:14 AM, Pierre-Louis Bossart wrote:
+>>>> Sorry to chime in late, I only look at email occasionally.
+>
+> ...
+>
+>>>> The notion of two cards was agreed inside Intel as far back as 2018, when Rakesh first looked at USB offload.
+>>>
+>>>
+>>> Well, I believe a lot has changed since then, not sure if USB Audio Offload (UAOL) was even stable on the Windows solution back then. Obviously we want to incorporate what we have learned during all that time into our solution before it lands on upstream.
+>>>
+>>
+>> Hard to comment further without more details on the lessons learnt you had on Windows.  I just want to make sure we're talking about the same feature here, because I see sprinkles of the xHCI audio sideband (section 7.9) on the Windows documentation without much details on how its implemented, which is different than what is presented here.
+>
+> The comment was directed towards mention of Intel, 2018 and Rakesh. The decisions made then do not bind us, and current Intel's Audio team has a clean slide. Wanted to make sure it's clear.
+>
+>>> UAOL is one of our priorities right now and some (e.g.: me) prefer to not pollute their mind with another approaches until what they have in mind is crystalized. In short, I'd vote for a approach where USB device has a ASoC representative in sound/soc/codecs/ just like it is the case for HDAudio. Either that or at least a ASoC-component representative, a dependency for UAOL-capable card to enumerate.
+>>>
+>>
+>> Just to clarify, "struct snd_soc_usb" does have some correlation with our "codec" entity within the QCOM ASoC design.  This would be the q6usb driver.
+>>
+>>
+>>> Currently struct snd_soc_usb does not represent any component at all. Lack of codec representative, component representative and, given my current understanding, mixed dependency of sound/usb on sound/soc/soc-usb does lead to hard-to-understand ASoC solution.
+>>
+>>
+>> IMO the dependency on USB SND is necessary, so that we can leverage all the pre-existing sequences used to identify USB audio devices, and have some ability to utilize USB HCD APIs as well within the offload driver.
+>
+> So, while I do not have patches in shape good enough to be shared, what we have in mind is closer to existing HDAudio solution and how it is covered in both ALSA and ASoC.
+>
+> A ASoC sound card is effectively a combination of instances of struct snd_soc_component. Think of it as an MFD device. Typically at least two components are needed:
+>
+> - platform component, e.g.: for representing DSP-capable device
+> - codec component, e.g.: for representing the codec device
+>
+> USB could be represented by such a component, listed as a dependency of a sound card. By component I literally mean it extending the base struct:
+>
+> stuct snd_soc_usb {
+>     struct snd_soc_component base;
+>     (...)
+> };
+>
+> In my opinion HDAudio is a good example of how to mesh existing ALSA-based implementation with ASoC. Full, well implemented behaviour of HDAudio codec device drivers is present at sound/pci/hda/patch_*.c and friends. That part of devoid of any ASoC members. At the same time, an ASoC wrapper is present at sound/soc/codecs/hda.c. It will represent each and every HDAudio codec device on the HDAudio bus as a ASoC-component. This follows the ASoC design and thus is easy understand for any daily ASoC user, at least in my opinion.
+>
+> Next, the USB Audio Offload streams are a limited resource but I do not see a reason to not treat it as a pool. Again, HDAudio comes into picture. The HDAudio streams are assigned and released with help of HDAudio library, code found in sound/hda/hdac_stream.c. In essence, as long as UAOL-capable streaming is allowed, a pcm->open() could approach a UAOL-lib (? component perhaps?) and perform ->assign(). If no resources available, fallback to the non-offloaded case.
+>
+> While I have not commented on the kcontrol part, the above means that our current design does go into a different direction. We'd like to avoid stream-assignment hardcoding i.e.: predefining who owns a UAOL-capable stream if possible.
+>
+>
 
-> 
-> > Taking both suggestions
-> > from Jacob and you, adding a loop to remove_vq_common(), just after
-> > free_unused_bufs(), seems more fitting now, like this:
-> > 
-> >      static void remove_vq_common(struct virtnet_info *vi)
-> >      {
-> >     +       int i;
-> >     +
-> >             virtio_reset_device(vi->vdev);
-> >     
-> >             /* Free unused buffers in both send and recv, if any. */
-> >             free_unused_bufs(vi);
-> >     
-> >     +       /* Tx unused buffers flushed, so reset BQL counter */
-> >     +       for (i = 0; i < vi->max_queue_pairs; i++)
-> >     +               netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, i));
-> >     +
-> >             free_receive_bufs(vi);
-> > 
-> > What do you think?
-> > 
-> > Thanks,
-> > 
-> > -Koichiro Den
-> > 
-> > > 
-> > > > 
-> > > > 
-> > > > > 
-> > > > > [1]:
-> > > > > ------------[ cut here ]------------
-> > > > > kernel BUG at lib/dynamic_queue_limits.c:99!
-> > > > > Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> > > > > CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
-> > > > > Tainted: [N]=TEST
-> > > > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
-> > > > > BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> > > > > RIP: 0010:dql_completed+0x26b/0x290
-> > > > > Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
-> > > > > 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
-> > > > > d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
-> > > > > RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
-> > > > > RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
-> > > > > RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
-> > > > > RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
-> > > > > R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
-> > > > > R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
-> > > > > FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
-> > > > > knlGS:0000000000000000
-> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
-> > > > > PKRU: 55555554
-> > > > > Call Trace:
-> > > > >  <IRQ>
-> > > > >  ? die+0x32/0x80
-> > > > >  ? do_trap+0xd9/0x100
-> > > > >  ? dql_completed+0x26b/0x290
-> > > > >  ? dql_completed+0x26b/0x290
-> > > > >  ? do_error_trap+0x6d/0xb0
-> > > > >  ? dql_completed+0x26b/0x290
-> > > > >  ? exc_invalid_op+0x4c/0x60
-> > > > >  ? dql_completed+0x26b/0x290
-> > > > >  ? asm_exc_invalid_op+0x16/0x20
-> > > > >  ? dql_completed+0x26b/0x290
-> > > > >  __free_old_xmit+0xff/0x170 [virtio_net]
-> > > > >  free_old_xmit+0x54/0xc0 [virtio_net]
-> > > > >  virtnet_poll+0xf4/0xe30 [virtio_net]
-> > > > >  ? __update_load_avg_cfs_rq+0x264/0x2d0
-> > > > >  ? update_curr+0x35/0x260
-> > > > >  ? reweight_entity+0x1be/0x260
-> > > > >  __napi_poll.constprop.0+0x28/0x1c0
-> > > > >  net_rx_action+0x329/0x420
-> > > > >  ? enqueue_hrtimer+0x35/0x90
-> > > > >  ? trace_hardirqs_on+0x1d/0x80
-> > > > >  ? kvm_sched_clock_read+0xd/0x20
-> > > > >  ? sched_clock+0xc/0x30
-> > > > >  ? kvm_sched_clock_read+0xd/0x20
-> > > > >  ? sched_clock+0xc/0x30
-> > > > >  ? sched_clock_cpu+0xd/0x1a0
-> > > > >  handle_softirqs+0x138/0x3e0
-> > > > >  do_softirq.part.0+0x89/0xc0
-> > > > >  </IRQ>
-> > > > >  <TASK>
-> > > > >  __local_bh_enable_ip+0xa7/0xb0
-> > > > >  virtnet_open+0xc8/0x310 [virtio_net]
-> > > > >  __dev_open+0xfa/0x1b0
-> > > > >  __dev_change_flags+0x1de/0x250
-> > > > >  dev_change_flags+0x22/0x60
-> > > > >  do_setlink.isra.0+0x2df/0x10b0
-> > > > >  ? rtnetlink_rcv_msg+0x34f/0x3f0
-> > > > >  ? netlink_rcv_skb+0x54/0x100
-> > > > >  ? netlink_unicast+0x23e/0x390
-> > > > >  ? netlink_sendmsg+0x21e/0x490
-> > > > >  ? ____sys_sendmsg+0x31b/0x350
-> > > > >  ? avc_has_perm_noaudit+0x67/0xf0
-> > > > >  ? cred_has_capability.isra.0+0x75/0x110
-> > > > >  ? __nla_validate_parse+0x5f/0xee0
-> > > > >  ? __pfx___probestub_irq_enable+0x3/0x10
-> > > > >  ? __create_object+0x5e/0x90
-> > > > >  ? security_capable+0x3b/0x70
-> > > > >  rtnl_newlink+0x784/0xaf0
-> > > > >  ? avc_has_perm_noaudit+0x67/0xf0
-> > > > >  ? cred_has_capability.isra.0+0x75/0x110
-> > > > >  ? stack_depot_save_flags+0x24/0x6d0
-> > > > >  ? __pfx_rtnl_newlink+0x10/0x10
-> > > > >  rtnetlink_rcv_msg+0x34f/0x3f0
-> > > > >  ? do_syscall_64+0x6c/0x180
-> > > > >  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > > > >  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
-> > > > >  netlink_rcv_skb+0x54/0x100
-> > > > >  netlink_unicast+0x23e/0x390
-> > > > >  netlink_sendmsg+0x21e/0x490
-> > > > >  ____sys_sendmsg+0x31b/0x350
-> > > > >  ? copy_msghdr_from_user+0x6d/0xa0
-> > > > >  ___sys_sendmsg+0x86/0xd0
-> > > > >  ? __pte_offset_map+0x17/0x160
-> > > > >  ? preempt_count_add+0x69/0xa0
-> > > > >  ? __call_rcu_common.constprop.0+0x147/0x610
-> > > > >  ? preempt_count_add+0x69/0xa0
-> > > > >  ? preempt_count_add+0x69/0xa0
-> > > > >  ? _raw_spin_trylock+0x13/0x60
-> > > > >  ? trace_hardirqs_on+0x1d/0x80
-> > > > >  __sys_sendmsg+0x66/0xc0
-> > > > >  do_syscall_64+0x6c/0x180
-> > > > >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > > > > RIP: 0033:0x7f41defe5b34
-> > > > > Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
-> > > > > f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
-> > > > > f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
-> > > > > RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
-> > > > > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
-> > > > > RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
-> > > > > RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
-> > > > > R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
-> > > > > R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
-> > > > >  </TASK>
-> > > > > [...]
-> > > > > ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
-> > > > > 
-> > > > > Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
-> > > > > Cc: <stable@vger.kernel.org> # v6.11+
-> > > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> > > > > ---
-> > > > >  drivers/net/virtio_net.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > > index 64c87bb48a41..48ce8b3881b6 100644
-> > > > > --- a/drivers/net/virtio_net.c
-> > > > > +++ b/drivers/net/virtio_net.c
-> > > > > @@ -3054,7 +3054,6 @@ static int virtnet_enable_queue_pair(struct virtnet_info *vi, int qp_index)
-> > > > >  	if (err < 0)
-> > > > >  		goto err_xdp_reg_mem_model;
-> > > > >  
-> > > > > -	netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, qp_index));
-> > > > >  	virtnet_napi_enable(vi->rq[qp_index].vq, &vi->rq[qp_index].napi);
-> > > > >  	virtnet_napi_tx_enable(vi, vi->sq[qp_index].vq, &vi->sq[qp_index].napi);
-> > > > >  
-> > > > > @@ -6243,6 +6242,7 @@ static void free_unused_bufs(struct virtnet_info *vi)
-> > > > >  		struct virtqueue *vq = vi->sq[i].vq;
-> > > > >  		while ((buf = virtqueue_detach_unused_buf(vq)) != NULL)
-> > > > >  			virtnet_sq_free_unused_buf(vq, buf);
-> > > > > +		netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, i));
-> > > > >  		cond_resched();
-> > > > >  	}
-> > > > >  
-> > > > > -- 
-> > > > > 2.43.0
-> > > > 
-> 
+Thanks for sharing the implementation for HDA.  I did take a look to the best of my ability on how the HDAudio library was built, and I see the differences that are there with the current proposal.  However, I think modifying the current design to something like that would also require the QCOM ASoC side to change a bit too.  As mentioned by Pierre, I think its worthwhile to see if we can get the initial changes in, which is the major part of the challenge.  For the most part, I think we could eventually refactor soc-usb to behave similarly to what hda_bind.c is doing.  Both entities are the ones that handle linking (or creation in case of HDA) of ASoC components.  The one major factor I can see is that within the HDA implementation vs USB SND is that, for USB, hot plugging is a common practice, and that's a scenario that will probably need more discussion if we do make that shift.
+
+
+Anyway, I just wanted to acknowledge the technical details that are utilized by HDAudio, and that we could potentially get there with USB SoC as well.
+
+
+Thanks
+
+Wesley Cheng
+
 
