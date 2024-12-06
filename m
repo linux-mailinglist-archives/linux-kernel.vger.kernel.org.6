@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-434911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A555B9E6CAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:00:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DDD9E6CB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:01:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75587165D6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:00:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3858F165A70
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374C61B6D04;
-	Fri,  6 Dec 2024 11:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1880E1FBC80;
+	Fri,  6 Dec 2024 11:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6pNu0Ae"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o75NoZGH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7D01DA0ED
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E1E1B6D04;
+	Fri,  6 Dec 2024 11:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733482847; cv=none; b=ESkV9V4oQWmy60MELRQHbfxuH8PSSQOEj7giOQkuFXP9g54W8NPHlS34bFooLbqfsQslEStyMmiM5fJrkZB/y2M9awC7E6F9ntj5ffTHldXvTtkwzIZvqIUowIzHkWo2LeN0/3phjlql77oGyeHzgppQKH6+mKReLn7iWZm1Cjk=
+	t=1733482868; cv=none; b=eCcIhU+d2NTPJHOT5L3DIqNPVR6wtEzDphxXrjcdueOHvoKM1/bojbzGs1l4SVsRX80PNDJfo7etcoKLskXzTQLI2Tq4hrb8C7n5XKesDcUXR6ucczeN8YlUfbYR153w+lTOlADom/GWBBdTtMrBjAcmsg6l/qkOq4PwPB6STYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733482847; c=relaxed/simple;
-	bh=cQlFajvuHyFsfmxrk4m+vVxvc7Bo/fdPu8CtdTBVCWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZgkamHoH0yIWht4pw9TIatcdEeInzFZVVwmdjCJJoc+T4QDiGP1cD4t9EJfvwwqSxydCMawkQ8ssIP7llXewBkfQ19SVbmRwrXFadQ8fqN/WS1HtvgPSOdLXLH01OW1U5hbfQasVy6pnGyzTaC8NKMk2GhZBoEiKQnxlbEl5J1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6pNu0Ae; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-725b4f6332bso144928b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:00:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733482844; x=1734087644; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cQlFajvuHyFsfmxrk4m+vVxvc7Bo/fdPu8CtdTBVCWE=;
-        b=a6pNu0Aev+7bhuK/O2PeqfvOiBPTUhIQl8jznEdGxM3J4F4swuDL1zi5/0i60NctkB
-         c+2jOUQkFXYcdBkgVAbHn6X/09Yc+qyqbkrfga/QGvL7INhSMLmiBXNDwwUIzJECNQH0
-         5xArQ7XuavxoCWG+tblx2RFOwr8ggNXT4FJJk7Y54bak8vXSWGEXceyYL8El7qmphuTq
-         AIJ1q9ZUKmWRbU6ANy/cb5a0vmDG3myX7d1utpMB9IVkc14nam1DtxNXFDtk+L3nESxT
-         eD4f5m3yP0U7057zgsPr2TXSvFqZrbQNlsE0WMWxAOaBeciOqGerYhGIf7/n7ms/4XOR
-         UZHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733482844; x=1734087644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cQlFajvuHyFsfmxrk4m+vVxvc7Bo/fdPu8CtdTBVCWE=;
-        b=GbpU5AlebnqCcNvUXS5ERbQa1E8uqWhkOKWPfzJDKTZW3iO2VAebXykzzP7/eLDLC3
-         O8PV2pFKG+kP7Pqn0Ml4/BwvpVeDc2QNIg86x1imlvzB5IMQEBCfz/csV3/N8UlwQlUE
-         0+M9/Qz2U5StZDIkYTy9iJTROitcUH96c3vDY4njPVE7F+bqP2zj3KcftxWubPRaBeEZ
-         Pszp+SEq0JHwon1COsCzdJkfjaD0zlnTAm0wfy7wT75UOXPSoL4Twuiy3WUmn27PpxAp
-         vlwULjKXASL/+ZlxRvcA8kgpE3wNldZt017+rH6LG/VkaJG1GSEiEf8cn5N2OdjcliKD
-         ashg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMVx9lM4lOKlqct4fkeOgdjNZEu9P8W6A86vX72JA1XONhvO7+x3nHAU8c4E0djx7PkglDMIe4pz94rdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXA1U1alGMNXtuFvtub4FoMuerqeRdrg2EFU/OaDMnbkkqTeap
-	p5KxmY/tViZlh7Ff//vKOsNhtrARmzqNnMRh1AS18VhLVEEqlB/QqArIAo+bLFcw7BLn2hT3y8h
-	cxk93xEVPB3GpbYRwO+pTu2D9Wt8=
-X-Gm-Gg: ASbGncvgBcqcQhWEgfMkiuk7dj8uUYpPFtpKGP6he6eSDBeMoH9my6eADloD/4ACN8x
-	ernFLWjjo77cnARHbnviWO0KrqoyTe0c=
-X-Google-Smtp-Source: AGHT+IFlTQf96GggNi+tTMsEv+Ohdjf+dgguO6qstJdTsai1UF/MPTMj7RQXJgLK15YYVqvphXUSwHYiM7UuBcTd5go=
-X-Received: by 2002:a17:90b:4a49:b0:2ee:c059:7de6 with SMTP id
- 98e67ed59e1d1-2ef693630a5mr1590944a91.2.1733482843973; Fri, 06 Dec 2024
- 03:00:43 -0800 (PST)
+	s=arc-20240116; t=1733482868; c=relaxed/simple;
+	bh=lO/tyTm5+yR5ePg4IGo2uulBxL8vFx/D5lpPw78n5/s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4YkcaozeAhI8Kz/i67Np+X+mpidGZ8JxLfaGpfBtn5fcykUJHhknSvE17iVGO4xBas0ysE6pGsroAhABZW/Ku07mGr8hMJxe8S1B6jiQ3LaJALQxthw9YQ3m0qJfxLRRs+NO8h4RTwl7o0mGeQgpf27FrtzKpV9cXutVx+88TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o75NoZGH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67Lh5v009794;
+	Fri, 6 Dec 2024 11:01:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=OrZ511VHXj+LXC/Z8lUQgB78
+	T62iKhV0p/c7TUXR1oc=; b=o75NoZGHjuTQYKGCd0tofmSVwv9lkl9Ie9Cw85lm
+	ZilQw9JL4Q3V+eLEfmCM19cYeYSgD81HeU1APRnU2sYZjFfIoytj7HTHEpDSu7mz
+	FccUzozvEcNaUT18c110HL0ynHYvpLVMO93Ge8yYRxuAOt0PIJv5LjgWaCShSZK5
+	0x0w3zeyw9kr4WnoOWL/lVCopbEjsiobBHXy5XsfXUQ6W0tjvJtAPSUQpb3do8yB
+	D5MBiCc03LyRQ0RRL0Do1C5Bb0+5vvNDxSXNiQAXtSSFBoFRA/zTSOQCbJTzV5HT
+	R3P7a47GVtxCu8ODLnV6sL/ygXQuw/sPvN6NPYvSY5O0Nw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ben8atb1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 11:00:59 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6B0xK2005391
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 11:00:59 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Dec 2024 03:00:52 -0800
+Date: Fri, 6 Dec 2024 16:30:48 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+Subject: Re: [PATCH v3 3/5] dt-bindings: arm: qcom: Document rb8/ride/ride-r3
+ on QCS9075
+Message-ID: <Z1LZYOJbl4snJu/u@hu-wasimn-hyd.qualcomm.com>
+References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
+ <20241119174954.1219002-4-quic_wasimn@quicinc.com>
+ <9fc564e4-4bb5-4529-a38b-88d93684805b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204000652.GA1999416@thelio-3990X>
-In-Reply-To: <20241204000652.GA1999416@thelio-3990X>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 6 Dec 2024 12:00:31 +0100
-Message-ID: <CANiq72mZzevQY=wouBiTzPoC3jn9W3B-kKKsUnaZvTYDLYQ3sw@mail.gmail.com>
-Subject: Re: Prebuilt LLVM 19.1.5 uploaded
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org, conor@kernel.org, 
-	ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9fc564e4-4bb5-4529-a38b-88d93684805b@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Fb8FyK6FS4-WnD4wfmDlAdvdcNstOcCm
+X-Proofpoint-GUID: Fb8FyK6FS4-WnD4wfmDlAdvdcNstOcCm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=794 clxscore=1015
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060080
 
-On Wed, Dec 4, 2024 at 1:06=E2=80=AFAM Nathan Chancellor <nathan@kernel.org=
-> wrote:
->
-> I have built and uploaded LLVM 19.1.5 to
-> https://mirrors.edge.kernel.org/pub/tools/llvm/.
->
-> If there are any issues found, please let us know via email or
-> https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
-> opportunity to get them fixed in main and backported before the 19.x
-> series is no longer supported.
+On Wed, Nov 20, 2024 at 05:43:12PM +0100, Krzysztof Kozlowski wrote:
+> On 19/11/2024 18:49, Wasim Nazir wrote:
+> > qcs9075 rb8, ride & ride-r3 boards are based on QCS9075 SoC.
+> > 
+> > QCS9075 is compatible IoT-industrial grade variant of SA8775p SoC
+> > without safety monitorng feature of SAfety-IsLand subsystem.
+> 
+> SA or Sa?
+> Also some typos above.
 
-Works for Rust -- thanks!
+SAfety-IsLand (SAIL) was intended. I will rectify it along with
+other typos.
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+> 
+> > This subsystem continues to supports other features like built-in
+> > self-test, error-detection, reset-handling, etc.
+> 
+> Which subsystem? How does it matter for the board? Drop all marketing
+> stuff from here and rather explain why this is not related to qcs9100.
+> We had quite a lot of talks and I am surprised seeing this without any
+> earlier references.
 
-Cheers,
-Miguel
+It is for SAIL subsystem. It does not matter to the board but it is for
+the SoC.
+
+> 
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+
+Thanks & Regards,
+Wasim
 
