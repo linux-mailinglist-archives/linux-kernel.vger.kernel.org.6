@@ -1,256 +1,269 @@
-Return-Path: <linux-kernel+bounces-435749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF559E7BC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:28:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE139E7BD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:30:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297BE16AFD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B192916AF30
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B13204582;
-	Fri,  6 Dec 2024 22:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503D61FBEAF;
+	Fri,  6 Dec 2024 22:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="CsfxvXcB"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2103.outbound.protection.outlook.com [40.107.103.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ab/7eHE9"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A288122C6DD;
-	Fri,  6 Dec 2024 22:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.103
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733524084; cv=fail; b=dh+Y+xFweZUSXpmSf1+kz2NBHHcZMC6vheFN4fC14vvxABxK53cYx1hqkK5gUwfYDhotcX+OYJWkeWeyngtTu5ySFMQIn4Nosu99QDMCMiFcU2YTL+RkKz9h5K1nzyQDt0x1u+dhKm/W4ZbYfvubktqJxkeF2KfgcUyBudoV4xA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733524084; c=relaxed/simple;
-	bh=aniplOPlH8hMl5tQ+253Z60HuLu0eBCjNhRcetQ9wL8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=buNHtpOAgNoBXZ+AOH9xX+CBg027eW5d/Fn+WJhhEM+NQgOJGxa8rmC32L4ifHaYX4ASWYi5qqd1JzKDqqIBc5Dvpx9iZsGOUD6Enh3lQFLw9bXNBkXdF6huejD7tAcCNxjqem30wuPWFn+6CyNR7YZ37U+8fSc6OT3g56Coyas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axentia.se; spf=pass smtp.mailfrom=axentia.se; dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b=CsfxvXcB; arc=fail smtp.client-ip=40.107.103.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axentia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axentia.se
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EZvsvrWuAeoUybdyNfVCCvKk9BfJVi08Co1iPggeaBG458LmHg3HKL5VaCoZs3Ie2OmBoK32efx4LOmOp7Pn08hQrTIlYrebDXe6E7yfdZkqwgGSdwz0Unh8kw/LKLO+E95UWnV6lFDWQLY/NfKypFO7rIpEvKghHBWVrVBcqRG4QdrzooFphoPeA1mKqDGx8OcTCSqZfCG1ZeeMDAee/+K/7gWln4v6HMKNruTD+W+EciSX8L6ZnCw4oD4Rr/9yzh0SGRiugbEjH2I5LvzFFqYi1zL8UAZYF55DSiPNbvBbB1ZxF9rH5yv3nZ6YoIabwJ9PHgb8MKR/eAbK2RyxVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nuicteeSmTsFTG1ZPSk8XRoYcMuJQJuosImxBNcCCj0=;
- b=Vv/Bs9c93EhouTQZkdoE5sKW1VKnT6O0XwE78UJG8EgGnjW9M+0172hnRDSkZnZpaEJA2EBo658fKxZ8fQcucq4kgBB+1plViDMLbmPZ+i4vbTjtO/+Y/rhMJSZDqFyNNxbRo5vUfRr8jxOx0SrPz6NrtOwqw+ETWPUGyV/mBjxCWOdI326y+0O9cSFsV3ukVNT7Y5YnVQ5byFGbPNlidJYPs3UIU5X0FPkPDjUtnA8Dh1KpOxxbD3LWUGLZ0G9gjAaXUT+WdIVEybZ9fbg3YRZzutJY76Ip3oqHrPb64SZ12vAL55Zm0szn4s7r9MytpRVoE9QXE4JOyUjL+LvCbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nuicteeSmTsFTG1ZPSk8XRoYcMuJQJuosImxBNcCCj0=;
- b=CsfxvXcBfJhC92KAFhmWyOXqTm7CheG2rxurdEA9dyo4uKRE7N9d3X5b7CIlk0bE2JLkrn55SpRTS1/ExmwR9gJWr2A0HPywcNb5hDHr/3RIGOsbQoQYJh2kJW2t1ykiztKvaxH3JHZKc7LoBdFrYexGcXa2jhxBLenpIEuRfSk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axentia.se;
-Received: from DU0PR02MB8500.eurprd02.prod.outlook.com (2603:10a6:10:3e3::8)
- by VI0PR02MB10609.eurprd02.prod.outlook.com (2603:10a6:800:205::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Fri, 6 Dec
- 2024 22:27:54 +0000
-Received: from DU0PR02MB8500.eurprd02.prod.outlook.com
- ([fe80::aff4:cbc7:ff18:b827]) by DU0PR02MB8500.eurprd02.prod.outlook.com
- ([fe80::aff4:cbc7:ff18:b827%7]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
- 22:27:54 +0000
-Message-ID: <631f114e-c59f-ca69-6873-09dad1694913@axentia.se>
-Date: Fri, 6 Dec 2024 23:27:52 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v1 1/4] iio: afe: rescale: Don't use ^ for booleans
-Content-Language: sv-SE, en-US
-To: David Laight <David.Laight@ACULAB.COM>,
- 'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>
-Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-References: <20241204013620.862943-1-andriy.shevchenko@linux.intel.com>
- <20241204013620.862943-2-andriy.shevchenko@linux.intel.com>
- <88f281a31d8342c691b2a6b2666d4e91@AcuMS.aculab.com>
- <Z1MWBsCJsTHsqNey@smile.fi.intel.com>
- <2a7a87267feb4c35ad9ef493236b6035@AcuMS.aculab.com>
-From: Peter Rosin <peda@axentia.se>
-In-Reply-To: <2a7a87267feb4c35ad9ef493236b6035@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: GV3P280CA0113.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:8::13) To DU0PR02MB8500.eurprd02.prod.outlook.com
- (2603:10a6:10:3e3::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A9F22C6D9;
+	Fri,  6 Dec 2024 22:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733524238; cv=none; b=Dqa2igtjZA68ijd5Mrm3+Nm9MeOxalyLxlOS+72BwRYJrG0xZElIzoLekyiVUxWNOglEDDHMMA/5zYJZJQOqgnwReadRhaE6UGZcEZvHxybhCDRuS2lW7dTv3cIn9pDLf6IxfS5sZNiwgqu9homRSsMFGTrUUnPLgdQYBSjya5Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733524238; c=relaxed/simple;
+	bh=M9oXkYncjye5rqyZTh6Fj1B9bteBE/P+h1Y/jrE/iKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bJaWyPZpfigXI5o6UND3yQ6cxsVnaGkwqqctI3ZNWAtR9hIBhE6hGcbL9rBqs+ARJG+HLRQqMdA1rMQuJyzwjHTC990D/PEFRsyFpxwfwS/rmGRqN/CjLNEo5PnY8r2+9MBo0OQY0ycQV4cGn3IeVuhw6M4vLu0nerwwZlSDvGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ab/7eHE9; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e9ff7a778cso3042291a91.1;
+        Fri, 06 Dec 2024 14:30:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733524236; x=1734129036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zd7p5nCc9B3SIz2MhjIlf+HXUuYkWnzYDNg0nc2RF0U=;
+        b=Ab/7eHE9ecVZofY9EHcPwt0pSw4SdZuuGpYYEM8r8VFj+lRw/ZaX/B7q6GkTXg2ifO
+         ZgYyHJjkDONPSMbL/h9d0nQBscX1cKfaW8uUWp/mgrsegamNpcBgqzijGNm5ew9o9B4Q
+         +VIdwS8cVzHi1s59FUjTJQ0NHPoVcRtNgbku20ysmfNlLlCpEv6eqoB4Q7kjti/Mn2QA
+         +4LT7h3u4Vv5Dp0yeMz9JwGYuvraxpNZrJAYl9Z9lgSu88CEHZONJJfhNX/qYrVLbAeS
+         uFpdk1EvhfiNRprq9rW7uAdEC4odDcfEF/GmFogmz52FnN9E8BRiScDHkjQqWwLZlCJp
+         0tbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733524236; x=1734129036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zd7p5nCc9B3SIz2MhjIlf+HXUuYkWnzYDNg0nc2RF0U=;
+        b=TL6MHpwoEsHA5mt5Myc/zFIwLHnpOMtuf5aP+zUb8G2Iyp3KWUKrIkpdAY9TrfU120
+         0N32nji2RWTJS5jj6OUSaQvMYR/5X0pxcu8bA/ETLsOhO50uPUAVi412Zfd7vxjcF/D9
+         47dkAu8CR9lmYuJeK7Os6YPxgt1SmohUqofzrIC/TD/viF/H81ZR5GsTKWAgRNVEl3XG
+         +rgjIuObIbgk6mzPhOxWq9A48lG849atydVhvWAIkRlSeyJiau0TVXJ8r3FMcy4wv1Bo
+         DoIAnAt5KxGvBgoVZv5MEmmxcGHk23ciWCqlX/KSdiWLLx2o4xVada3jxzuH0ItRE/mS
+         2GvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9LPFr/Oj1L9D5nqwckBZH0eyClf3a0Kc7HK7C0f3BG3/AOUCkiIXJcK6+dcKXc+XRSqwMb4i8b4EOti2R@vger.kernel.org, AJvYcCVMz4lsR5ZNjODdlXL9CJfukA23RNxLyuW2WJVd1uhpD+P/ldKQHqBp0S7uyE3s5dsbHGU=@vger.kernel.org, AJvYcCVY1ccxDs4f6W4PnDuUMrRIkqt/B9pO1yVkaEk+JPXspvOIpd/qRuu1xJ9QogqByWlCqjS10/chv4FjLFCKskNGoTPi@vger.kernel.org, AJvYcCXZzMyvhPeAzhco5gPYzFvtCRnAzd7zkrppDEHnFM+sHEblXPg8SJQWnT9p18HvA2yz74Wbku/R@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKsdK9nn8dVAgSXJKbH2AKkXx9BC76BMmgOjZoVrsolHbRZBs0
+	AAvgmAbIU5cbQhQ9Fw9inQiurQcwmY34kZ+xkFpkgH7sRYbgWbsVQtziy22v3V8MBZO3Hby5x+X
+	OvHi2Im6T15AkLnJmzK1JFZppPrk=
+X-Gm-Gg: ASbGncsiPrLM9gVLknzcb47h5ZfYZMElaf8ZvRtfkcZTbLCGUnRiOs9f85bY841Ksyk
+	eqM3bwsAMpnzupRw4MZc6A+rpyDuvIcmNdF8AtWx3wBIJrzA=
+X-Google-Smtp-Source: AGHT+IHuFiWE8Z1e33Jfgv2XwP/oL9fWbs1UT7k34APrZVI8qwR088/WkGYlYsnOv1I2m923Z82u0H6SbdNKwpYHh/w=
+X-Received: by 2002:a17:90b:3a86:b0:2ee:c30f:33c9 with SMTP id
+ 98e67ed59e1d1-2ef68e13ed3mr7811076a91.14.1733524236218; Fri, 06 Dec 2024
+ 14:30:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR02MB8500:EE_|VI0PR02MB10609:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93722780-16aa-4f4e-56a2-08dd16453a60
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3R6Q2lMMUI0aVpJYlJ5S21tK2g3ekZoRndsa1U4Mk1ENVJFT3FOa1l0a3Ax?=
- =?utf-8?B?eUc3a2VyWURwYW55L0JMdnFZRUxmLy9ucTJPVzdzU2M2SlEvbTk5amROSnRW?=
- =?utf-8?B?UDZiQUF5ZlhRZXBRcUVkbFlHNkxhRGxBTExzR0dxRGdZTDR6dG9qQlMwOGxE?=
- =?utf-8?B?N1cyTjh6eUJ2Z1JDTGxFNDRHSGdxWlJKcGRsWVROanVMMHh6R251UVhOWVFn?=
- =?utf-8?B?WGlCZWpwb3I0M1ROWVI3blBjK094RTlNVzZVemcxK2d6dzZEalB5eCtJVEQ0?=
- =?utf-8?B?SEorWE5aeW5WeElYM0RaTThOOUtTZkQ0K0YzK3I5ZTFLTTBOMEJ5bjQvOU12?=
- =?utf-8?B?dFRxajZwOFRTWmw1UGZvS2htWkRZKy9IcDVtdzNxY3hzMVpWbWRGOTFuaTAr?=
- =?utf-8?B?MXJkUHpTQUFCUkZQbGpnRlhCa3ZRODRRL3E5YXpLVm11aHRLMXNDczIwWU9H?=
- =?utf-8?B?Z1I4aE1yNzdaYzBRN1JwOFhnYXZhM3pwbmVVWWxPVTNLdUpGNlVPZFM1YXpn?=
- =?utf-8?B?WFh0V1pkdk8wWDJHYXdaSmo4N0xjVEd4YzNPZWpyUEpaZ3VxUGI5cnVMNmVC?=
- =?utf-8?B?SjlPcjV4SkVBaEQ2dDRYQ2l4eW90cTZGbzIydzM1NG80TUxzTENwZ0tGMFgv?=
- =?utf-8?B?bTROVFNFd2RSUEc3c2FHWVVzM1A5S1FHS2RvZFZjeVpsNjdEYnpRU1hXanoy?=
- =?utf-8?B?MDZlTUxxY3RwZlMrU01TOENLWFdTd01pQ3paT2sxMTIrMDVSS3RlUjd6WmVG?=
- =?utf-8?B?dStRNVNlL3lWUXMwdnJvRFl0Q2pxZG1PZTE3OVM4dzhwWTVRTzFoSkZ4MHA3?=
- =?utf-8?B?QU5Yd3RZY21OblRxTUp6cVJMa2FEUDl1S295Qmw4YjIxY2VrTUl1SDlpOERh?=
- =?utf-8?B?RmRsT3Y4NlRGZFBWTEkzRmFKNExqcnZLY1F6eGpUekJ2MmJkYXdDc2pKYWhI?=
- =?utf-8?B?RkdCVVhQNVQ4RUMzMGdySkN2Q2JEbGplTGZUT09nTmJoTnMreHlNdnFzbU5U?=
- =?utf-8?B?MGpQdU02ZDZUYkhKUVV6OUZBbENVeUY4R2Z6a2trbFh5Q0VtVFNxS1hBNVY1?=
- =?utf-8?B?RTRTL0haVVJNSE1MdCtnU3REQk9zMG5aOVFKemRYTUdJZDhPRHJXT2phVFZC?=
- =?utf-8?B?SVFaZ3VjcVI4TURpU2tRRENKVWxsLzdnTDFzVE5pczJ0ellZanVneXlzeDk3?=
- =?utf-8?B?VzF4Z212TW5KN0NINTNSblBrcnVRY1ZnYWs5dXFDUGJZUERHRVBZUUxsSDZN?=
- =?utf-8?B?KzBDWWR6amZtYVB2N25kRXNUbnoxZkl4djlNY0NPaUhKOG5KYVRuS0p2OEtV?=
- =?utf-8?B?cHB2cVVBNWpDRDVGeHlZNE95Ty8zNSsyMWtYODVpNlI1YkxlL0tFaXJIc0t6?=
- =?utf-8?B?OUt2K0RrUjNZZkkxS2sxekMzZkVDaVZzK0h1K055MHFCbVJZaUZzUHlFbW9v?=
- =?utf-8?B?cnRkemZxclRWMEs1WGJSTk11cFZPK1gyV2FFZTJUOXVsSERBRWxmeDhqV2Qw?=
- =?utf-8?B?bXJEUHpJbm1yZVlwOGdQaUZRVkgzMk9HM1NwM3ZZZURIajZkSlpnZysyYjJh?=
- =?utf-8?B?Qnpwa0hxd1V5bWd3RmpOS2ZJUjRLZDRZNmZuZUk1TC9hRWNRYzFnNjBiMzFD?=
- =?utf-8?B?emxVYmg3emp4ajVRL2ZJUktOOXpHWDFNM283eGplZGdpWWtBMWRwOUdJSDd4?=
- =?utf-8?B?TkRtVnZZd3E2UEg1RnZEa2s4aUQ4MytPeHM2bng3dTl2ejZ1UTdUQVNnbXR2?=
- =?utf-8?B?ZFgwRVBMVFozb1V5Q3JmWEU1QUF5MU0xMlhTWFV3a0t4VEVYa1pwSkZWdDN0?=
- =?utf-8?B?c3llSnNNdzFiMVFMaVJOdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR02MB8500.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QldqSVkzc1dGWlJTU1V2UTdKRnJPZjFpZTVxVTlGUnF1d2hNaXd5TmRFcXRP?=
- =?utf-8?B?VWtqMEJoVUs3dU52RVo1NThmcy9QTmRCN2V1RWJvOW9RTGQ5U3RKeFphbEw3?=
- =?utf-8?B?VDJGeTZHUHdiY3kvb0FnanM3T0htMG13UWRzWkd5dGI4TnR5MEVLNG1Ubk95?=
- =?utf-8?B?ekJoTU13RE9RZHhrSWJWanRNN0NDbjhHQ2dhM0FWbUZkNHNSc2I2cWMvNG5D?=
- =?utf-8?B?aVdwL3VuZ1lGMWVGN1VpR0R4L2lrNWhzMnBpZWJFVmZXQkMzdVI1WXVqVGpV?=
- =?utf-8?B?TEEva2IwQ1E4SlV3b1hEQStjVjVvanYxTGhwWFVyK0RaejZDclJ4bmFyTnpI?=
- =?utf-8?B?QmVOODVDZzEzWk1VUzdSdXJ5aHhBdkVHdXNoK29iTWRFRDhMTFBMdHcyWDdF?=
- =?utf-8?B?VzhYY3QzSHJkUkRSTGFkZlZJQm5WcHpsc3RIT2Nzbm9aZTYwYSsvYjNaZ0tx?=
- =?utf-8?B?RWlNT3JKdVdJd21WQTRwMDhmNzU4YU9TRTQzdmdjbHFVbGVzd2o4aVBrYjdi?=
- =?utf-8?B?Ync0d2ZEVHdvQjFOTFdtTlFPNEwwVWhscVZ6K09iVldDQkFCaEtTYXcrYXN6?=
- =?utf-8?B?Sy9PR0tySm81SVhPdzZ4SkE4V1o3VHdvUjhkejNIenVWcmhxRWhERFoxakg3?=
- =?utf-8?B?dWliVjV4YkVHK0VhcTRHWkhlU0dEaDNwRnp2V3pWUzh3MXpCVnBKc3U2SDdC?=
- =?utf-8?B?VVpVZzBMM0xiMVhNUHRkZW5LTWxsYnc3dGcrZ1Fnb1BHMVdYR0x4WHhJejV3?=
- =?utf-8?B?a3pzcXk0MFZMTmhRcVFrTWlLaDhRc1FQV0RCNC9ETEg1T1RiaDlaeGJZa2Zn?=
- =?utf-8?B?a080NlRJT1ZPZUVoaUNlVlh2R2VvdmNIMVRiaGVodFFrOW14K2tSN3RnbFlq?=
- =?utf-8?B?VGZUUjQ1TXIwQkR1Z1F2WmFQTWR0ZzdEM01Lb2U3VFArRXRjSGhac3d0aUtm?=
- =?utf-8?B?YTlvVlg3VUN0dENLWWVMR3VwdVhLWTFuZ28zcEx0N1RVNGYvS0hPOENHSWtS?=
- =?utf-8?B?L3NvZFN6ajBqL3Z0MjExL0U2RnZha3A3VVcvNHBFL1B1SXVyMWEvSmxHUy80?=
- =?utf-8?B?N25OMFg2UUZQbHYvZVpUUmpsMEJJaTNydHdiS25tY1BGREpldVJGSHJPWlFG?=
- =?utf-8?B?c2xpNnluSnVSOW0xdjF0UDA4RWNzcTVlemY4QUgwY2JJaWFPOWhkUWN4bjVU?=
- =?utf-8?B?YWE3RXRPRWRSdnNhV3gyOXRFVVBSektZS2tyL2hpYmxEUjJFcStnVm1tbStz?=
- =?utf-8?B?c2dDNk5ZNjJSTHlheU9qemZqbzhhdEJlYm5tUkF5SHhTQ21qcDdheENXVU1t?=
- =?utf-8?B?NHNOdHhNWjlqc25hZzdSY2J1VFNKeXdVR2F0Sy81a2NHWWJHd0E0c1pETThE?=
- =?utf-8?B?VS83SGRIL0l2NlQ5UHozYUY4NW5JWEFCRTJ4aGxqUVhUY2xKSXBSb1lJb1Ny?=
- =?utf-8?B?TEc4TGNKY2hhYUMyQTh6bXNuZHZ5UDBDLzdiOEJwcGQxb2VwZEFJdjh2eW5I?=
- =?utf-8?B?QlRhU0hiWW1pckJUbGdRc0FWcUZNQ2xWUXQ2bkhidDRxblJNRm9yZDltWWx6?=
- =?utf-8?B?NUFmb2ZIaUdnQWdNMytvVVpsWjBYTjNuY3l5R0RCSDhCU3JraXlJYUJsQmFZ?=
- =?utf-8?B?bGdrVXAwdU9Mekp5bnFNb0I4L3V4TEl3V1NBcndOZlJXNkdHekVqcTFFNXNV?=
- =?utf-8?B?VlJhNW44SGZ1aXlRL2ZFemJxcUVGOGlMWnpIeHgzMWxCcDRJbFdQS0tYNVlo?=
- =?utf-8?B?akVwbGhsTTYwSFczNENuaWh4MWFuQ2pQUDlpRVdYdE9tTWhaMDgrdjJHS09S?=
- =?utf-8?B?RStnbWJwc1FSWVd0RUJUSzBMYTNkUGQ1SHRLRGdDVkVyN3JzMVFhZ2ZkZ3kz?=
- =?utf-8?B?Qmh1U2ZaQWdnV0tvU095c2JRZFFjdzBYMnZhcVNIaEZYN1BuVm5KdFJRM1Vh?=
- =?utf-8?B?eXVzWFRPTHcyYmNUQlhDbXVEeEdkZTBSeTQyakdkZ1gvUFg4L3M3dXlleDJy?=
- =?utf-8?B?WnZDNitnYjR2SXd3Rmd3VitkYWNhQjd5K1ZwSEFoS3ZVeGtXYTQzQXJJOTh5?=
- =?utf-8?B?RHV6VHU3Qk1KRUJHcG1RZVdzeFVNS0o5eVptYlpUaXVScXJUWXVpMlQwOGNO?=
- =?utf-8?Q?Bt8GY1V951QoLjI0VwBuc5aLW?=
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93722780-16aa-4f4e-56a2-08dd16453a60
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR02MB8500.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 22:27:54.6330
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d3nMcvgGZxU2Ro9TkEesw6zw0QbplsRgxPJE2y4pR+MhZfCJuNACiOc3kA6yRz9b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR02MB10609
+References: <20241206-bpf-fix-uprobe-uaf-v2-1-4c75c54fe424@google.com>
+ <CAEf4BzYxaKd8Gv5g8PBY6zaQukYKSjjtaSgYMjJxL-PZ0dLrbQ@mail.gmail.com> <CAG48ez3i5haHCc8EQMVNjKnd9xYwMcp4sbW_Y8DRpJCidJotjw@mail.gmail.com>
+In-Reply-To: <CAG48ez3i5haHCc8EQMVNjKnd9xYwMcp4sbW_Y8DRpJCidJotjw@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 6 Dec 2024 14:30:24 -0800
+Message-ID: <CAEf4BzYkGQ0sw9JEeAMLAfcQbzxwg46c487kBD_LcbZSaTKD5Q@mail.gmail.com>
+Subject: Re: [PATCH bpf v2] bpf: Fix prog_array UAF in __uprobe_perf_func()
+To: Jann Horn <jannh@google.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Delyan Kratunov <delyank@fb.com>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Fri, Dec 6, 2024 at 2:25=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+>
+> On Fri, Dec 6, 2024 at 11:15=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> > On Fri, Dec 6, 2024 at 12:45=E2=80=AFPM Jann Horn <jannh@google.com> wr=
+ote:
+> > >
+> > > Currently, the pointer stored in call->prog_array is loaded in
+> > > __uprobe_perf_func(), with no RCU annotation and no RCU protection, s=
+o the
+> > > loaded pointer can immediately be dangling. Later,
+> > > bpf_prog_run_array_uprobe() starts a RCU-trace read-side critical sec=
+tion,
+> > > but this is too late. It then uses rcu_dereference_check(), but this =
+use of
+> > > rcu_dereference_check() does not actually dereference anything.
+> > >
+> > > It looks like the intention was to pass a pointer to the member
+> > > call->prog_array into bpf_prog_run_array_uprobe() and actually derefe=
+rence
+> > > the pointer in there. Fix the issue by actually doing that.
+> > >
+> > > Fixes: 8c7dcb84e3b7 ("bpf: implement sleepable uprobes by chaining gp=
+s")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > ---
+> > > To reproduce, in include/linux/bpf.h, patch in a mdelay(10000) direct=
+ly
+> > > before the might_fault() in bpf_prog_run_array_uprobe() and add an
+> > > include of linux/delay.h.
+> > >
+> > > Build this userspace program:
+> > >
+> > > ```
+> > > $ cat dummy.c
+> > > #include <stdio.h>
+> > > int main(void) {
+> > >   printf("hello world\n");
+> > > }
+> > > $ gcc -o dummy dummy.c
+> > > ```
+> > >
+> > > Then build this BPF program and load it (change the path to point to
+> > > the "dummy" binary you built):
+> > >
+> > > ```
+> > > $ cat bpf-uprobe-kern.c
+> > > #include <linux/bpf.h>
+> > > #include <bpf/bpf_helpers.h>
+> > > #include <bpf/bpf_tracing.h>
+> > > char _license[] SEC("license") =3D "GPL";
+> > >
+> > > SEC("uprobe//home/user/bpf-uprobe-uaf/dummy:main")
+> > > int BPF_UPROBE(main_uprobe) {
+> > >   bpf_printk("main uprobe triggered\n");
+> > >   return 0;
+> > > }
+> > > $ clang -O2 -g -target bpf -c -o bpf-uprobe-kern.o bpf-uprobe-kern.c
+> > > $ sudo bpftool prog loadall bpf-uprobe-kern.o uprobe-test autoattach
+> > > ```
+> > >
+> > > Then run ./dummy in one terminal, and after launching it, run
+> > > `sudo umount uprobe-test` in another terminal. Once the 10-second
+> > > mdelay() is over, a use-after-free should occur, which may or may
+> > > not crash your kernel at the `prog->sleepable` check in
+> > > bpf_prog_run_array_uprobe() depending on your luck.
+> > > ---
+> > > Changes in v2:
+> > > - remove diff chunk in patch notes that confuses git
+> > > - Link to v1: https://lore.kernel.org/r/20241206-bpf-fix-uprobe-uaf-v=
+1-1-6869c8a17258@google.com
+> > > ---
+> > >  include/linux/bpf.h         | 4 ++--
+> > >  kernel/trace/trace_uprobe.c | 2 +-
+> > >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > >
+> >
+> > Looking at how similar in spirit bpf_prog_run_array() is meant to be
+> > used, it seems like it is the caller's responsibility to
+> > RCU-dereference array and keep RCU critical section before calling
+> > into bpf_prog_run_array(). So I wonder if it's best to do this instead
+> > (Gmail will butcher the diff, but it's about the idea):
+>
+> Yeah, that's the other option I was considering. That would be more
+> consistent with the existing bpf_prog_run_array(), but has the
+> downside of unnecessarily pushing responsibility up to the caller...
+> I'm fine with either.
 
-2024-12-06 at 21:13, David Laight wrote:
-> From: 'Andy Shevchenko'
->> Sent: 06 December 2024 15:20
-> ...
->> ...
->>
->>>>  		 * If only one of the rescaler elements or the schan scale is
->>>>  		 * negative, the combined scale is negative.
->>>>  		 */
->>>> -		if (neg ^ ((rescale->numerator < 0) ^ (rescale->denominator < 0))) {
->>>> +		if (neg != (rescale->numerator < 0 || rescale->denominator < 0)) {
->>>
->>> That is wrong, the || would also need to be !=.
->>
->> Why do you think so? Maybe it's comment(s) that is(are) wrong?
-> 
-> The old code certainly negates for each of them - so you can get the double
-> and triple negative cases.
+there is really just one caller ("legacy" singular uprobe handler), so
+I think this should be fine. Unless someone objects I'd keep it
+consistent with other "prog_array_run" helpers
 
-Indeed. And for me, xor is the natural operator for getting to such
-"oddness" when three or more values needs to be considered. So, I
-prefer to keep the code as is since a ^ b ^ c is nice and succinct,
-while anything you try to write using != is going to be convoluted
-when you have three or more values.
+>
+> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> > index eaee2a819f4c..4b8a9edd3727 100644
+> > --- a/include/linux/bpf.h
+> > +++ b/include/linux/bpf.h
+> > @@ -2193,26 +2193,25 @@ bpf_prog_run_array(const struct bpf_prog_array =
+*array,
+> >   * rcu-protected dynamically sized maps.
+> >   */
+> >  static __always_inline u32
+> > -bpf_prog_run_array_uprobe(const struct bpf_prog_array __rcu *array_rcu=
+,
+> > +bpf_prog_run_array_uprobe(const struct bpf_prog_array *array,
+> >                           const void *ctx, bpf_prog_run_fn run_prog)
+> >  {
+> >         const struct bpf_prog_array_item *item;
+> >         const struct bpf_prog *prog;
+> > -       const struct bpf_prog_array *array;
+> >         struct bpf_run_ctx *old_run_ctx;
+> >         struct bpf_trace_run_ctx run_ctx;
+> >         u32 ret =3D 1;
+> >
+> >         might_fault();
+> > +       RCU_LOCKDEP_WARN(!rcu_read_lock_trace_held(), "no rcu lock held=
+");
+> > +
+> > +       if (unlikely(!array))
+> > +               goto out;
+> >
+> > -       rcu_read_lock_trace();
+> >         migrate_disable();
+> >
+> >         run_ctx.is_uprobe =3D true;
+> >
+> > -       array =3D rcu_dereference_check(array_rcu, rcu_read_lock_trace_=
+held());
+> > -       if (unlikely(!array))
+> > -               goto out;
+> >         old_run_ctx =3D bpf_set_run_ctx(&run_ctx.run_ctx);
+> >         item =3D &array->items[0];
+> >         while ((prog =3D READ_ONCE(item->prog))) {
+> > @@ -2229,7 +2228,6 @@ bpf_prog_run_array_uprobe(const struct
+> > bpf_prog_array __rcu *array_rcu,
+> >         bpf_reset_run_ctx(old_run_ctx);
+> >  out:
+> >         migrate_enable();
+> > -       rcu_read_unlock_trace();
+> >         return ret;
+> >  }
+> >
+> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> > index fed382b7881b..87a2b8fefa90 100644
+> > --- a/kernel/trace/trace_uprobe.c
+> > +++ b/kernel/trace/trace_uprobe.c
+> > @@ -1404,7 +1404,9 @@ static void __uprobe_perf_func(struct trace_uprob=
+e *tu,
+> >         if (bpf_prog_array_valid(call)) {
+> >                 u32 ret;
+> >
+> > +               rcu_read_lock_trace();
+> >                 ret =3D bpf_prog_run_array_uprobe(call->prog_array,
+> > regs, bpf_prog_run);
+>
+> But then this should be something like this (possibly split across
+> multiple lines with a helper variable or such):
+>
+> ret =3D bpf_prog_run_array_uprobe(rcu_dereference_check(call->prog_array,
+> rcu_read_lock_trace_held()), regs, bpf_prog_run);
 
-> So believe the code not the comment.
+Yeah, absolutely, forgot to move the RCU dereference part, good catch!
+But I wouldn't do the _check() variant here, literally the previous
+line does rcu_read_trace_lock(), so this check part seems like just
+unnecessary verboseness, I'd go with a simple rcu_dereference().
 
-I claim that the comment is correct. Or at least not incorrect. It might
-not be complete, but what it does state holds. It does not spell out that
-the combined scale is positive if both of the rescaler elements and the
-schan scale are positive. It does not spell out that the combined scale
-is negative if all three are negative. What it does give you though, is
-a hint that the whole if () is all about the sign of the combined scale.
-
-But yes, the comment could be improved.
-
-I expect a fail from this test in iio-test-rescale.c with the new code
-
-	{
-		.name = "negative IIO_VAL_INT_PLUS_NANO, 3 negative",
-		.numerator = -1000000,
-		.denominator = -8060,
-		.schan_scale_type = IIO_VAL_INT_PLUS_NANO,
-		.schan_val = -10,
-		.schan_val2 = 123456,
-		.expected = "-1240.710106203",
-	},
-
-but the 0-day has been silent. I wonder why? Does it not actually
-run the tests?
-
-There could also be some more tests to try make sure the logic doesn't
-regress. The first of these should also fail with this patch, while
-the second should be ok.
-
-	{
-		.name = "positive IIO_VAL_INT_PLUS_MICRO, 2 negative",
-		.numerator = -1,
-		.denominator = -2,
-		.schan_scale_type = IIO_VAL_INT_PLUS_MICRO,
-		.schan_val = 5,
-		.schan_val2 = 1234,
-		.expected = "2.500617",
-	},
-	{
-		.name = "positive IIO_VAL_INT_PLUS_MICRO, 2 negative",
-		.numerator = 1,
-		.denominator = -2,
-		.schan_scale_type = IIO_VAL_INT_PLUS_MICRO,
-		.schan_val = -5,
-		.schan_val2 = 1234,
-		.expected = "2.500617",
-	},
-
-Cheers,
-Peter
+>
+> > +               rcu_read_unlock_trace();
+> >                 if (!ret)
+> >                         return;
+> >         }
+> >
+> >
 
