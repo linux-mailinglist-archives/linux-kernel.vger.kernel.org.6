@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-434411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702879E666E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:44:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6612D9E666F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F26284C8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259F828240A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86641D63D1;
-	Fri,  6 Dec 2024 04:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5FA1D90BD;
+	Fri,  6 Dec 2024 04:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3fFqmvrw"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RqV5UwmR"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902FB1D5172
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AA51D63D7
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733460050; cv=none; b=XrTSc3ZI1KZFHvYaBDjJWTfvpFgXIS+S/4SwaTL0bvhpFgzsng1zQPrngG12l2FZZUBD4XqAvl5OUTUNrBVutAb/Q1tBdDeq9hWl7ykCnpy0YhMVxZ34T3KJFMN6J1rRe0eDYxTgAoBU/C5BIM3OUEq/FwbwKhJycEsu8wBG2co=
+	t=1733460052; cv=none; b=ceehHBQdi27JnfunF8a3cBptBiL1esWYogNsUPEv016NF5NPfzZY+EvllNgb0Y++5mHte+ATGFflQu1e83dYKziGh+aiqzNM2Ywqe4oPKkA7tCmmZ0zhBHadbg3XE1KqblQyJzB2IFC3fIYR+neriXStz9WLAnxLz40cP1TQR9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733460050; c=relaxed/simple;
-	bh=sy3VlSAHvcJviVgcFZMJmc7WftJUr4tw3K+lsQD12d0=;
+	s=arc-20240116; t=1733460052; c=relaxed/simple;
+	bh=tL5UcvcaUuHSFNHf+2eJphHFXMLILMHZEi5NFaOiUOk=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=OsPY2GLRTRGcfkZH3ZQqVCpfZHwpnmOeBpzZwgglJ1dbp3ebGPQ7Xuqiv31MOgnD9DHUavXQpY2XxAbEKT5hO491mVfG6++ywdIQ7pSnjdTw4RBIi+S9f3SYu4efMvzUPfyXo2vyHT4ZNQSYtygDMsKbkMEgFVnoVSKdYXgmTUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3fFqmvrw; arc=none smtp.client-ip=209.85.219.202
+	 To:Content-Type; b=WdIWjqn2TdyS2rN/IXnrW00cQq2FyPtiBVIjRbyhJ6kZWWC6ucYx2ymV0QWCcWGj418Uq+CWoNiwWMHlA6hL0c3k0EeXYBU+GhYW8pMjbSHzeBNWQzUqodedx0VRtnP9eG8s1nioNkiPZguh/yJswrwp6ekYj7wYj8XO/Rlc3wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RqV5UwmR; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e38d8aaeb4aso2750295276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:40:48 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ef6e33c182so16792937b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:40:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733460047; x=1734064847; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733460050; x=1734064850; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9TRhSW9l3K7YWslNZkoYOdpdUsj4ahnHxjZdZRRIcDQ=;
-        b=3fFqmvrwIGiqy9GF1+OOOU9cW46/4/c2gQuloJRjqkfKedsYnPKoyOFK3NcgVFz19s
-         atHTan8zq30epiOa6Bl6Awf04/U8wEG6tputXb7kTs2byk5IjlcrMVyj8F9BdxVuqLbr
-         Rgjo00hwmaoMEvnS58rtCBFTUcAkuru6ARbP9Cv+7iAxF91lIdHJLOqjwI9i0R5JlMkt
-         DiaQWZaInzcV8yTEsTMZJYcw75YX2ADdVtXeE5v/9Ib6gkACqqbNQxhfgidWffZSuKkG
-         0rud4wZdGCVjwNU7Xj0B8Rr7bea85dyNVVJ39y+eVD2CFxQfy7kS+Tae4kcKgrv01H9i
-         7cTA==
+        bh=hxKOwJDxb0nbB94Cpeqs1MqiCtTfBA0AAYbHAMWSNGo=;
+        b=RqV5UwmRQyRrrvxjZCab6+A9fzd/cWzjS65qnhe24N7iR3AZDihfOcdA+gv/IuI0Ju
+         OaLErCYYVdVDVoCPoEfcWWQnb0LtGpz6bj/Jt3DDlB+lEWyNsum3vqrDlOle1faZtJPm
+         O2DTd3+5dlxBKa4ucZzZ8YLFp+Cq9sEMjkImkqefcD9fssOBAAWKoIS++NVvpfHCKrhY
+         TZ0f8wDvJHtZKGHU7J9uQigWNX8ArxJLUva2daHQV+TCsdp2WbEPQcycafMIux+lhGx+
+         pBku6+m0PjECwDz18qpSYHIVfYuOpZYqsu4ZF4WhZdPTZrbv/KUu913D4oyiox3Ooucl
+         /R1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733460047; x=1734064847;
+        d=1e100.net; s=20230601; t=1733460050; x=1734064850;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9TRhSW9l3K7YWslNZkoYOdpdUsj4ahnHxjZdZRRIcDQ=;
-        b=pFT6D8GGk/1xqMzpasAFDYVkT5Z8EGg8YzrLVuzKOLAlGVwzChKVFj9q1WkRpRaUIP
-         h8AI1jPTYUGECw22FHosxCPeBGtLS6Rargx5GGHJIh2nE7cIhH67pX0dI3ELAJl5OvlL
-         UQxYlkCXxBAhmqp849w8Z3XJdyTz0LhJlgEHxhvtwRDEDjUvzzsfkVnIcJEgyT1e36hd
-         VYQBX7oZmOCBpl6MKp60mGSHA386aBBgJM5bPAy2ai6lDQV8v/+gIO4jmrTBEC2ZxiRE
-         GhDgPwbM8w4EboW/PMxD93Ow8iB7768AeYBz9wu7AmihqTA7P8rm/bRnLLzsuYOGQ0vm
-         AygQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV48aXz66tYPAGWq7GtZhmBuNCs3BBJ9SBxh3uYkq6A3hz//ttU3EuByY8GJFrEgaYnprNe9/GjNtJxn8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCxqhqfW6aEW+LXSzsdbh21FNcgtgWZnK5g1Q5GudYOduY3KTF
-	7rHQfWObYZ5sJC60IPcpRQIYhPcLsdqXn52TN+Fl3qLsItlr7AYppHZSUMTmXQmtpFPkk2AylxE
-	3pDTi8w==
-X-Google-Smtp-Source: AGHT+IFE2LwLNaSTO62nxIL6A+u7AnZGRX7WeJwZhuOzG3htBmKYKjKvD2BCbNixg616M4EERkMINqDwdmlK
+        bh=hxKOwJDxb0nbB94Cpeqs1MqiCtTfBA0AAYbHAMWSNGo=;
+        b=Vp9/pvlRJt60fwJopfovgu5+2jIBvfgy5ku2uTOrgGjgZLZ0klfF5Tw5pgmH7UpQbj
+         XdlgUuNmUMa6Gt/FQRhSSJRXqKyoSGSFcw9K1Z9cu2DeJENNcbaI6Vl5bomyp6P2ktzr
+         T51UuuYCL0MVOOrXplKGZ7mJpxA0TTsjTUafCDKV/pHE5ysrS+/Oix+2cUaPn978+iOd
+         NIMKF0SV8zhPBc5bDKoHNnYFzfW1/KDkh2KicBA0ALr2BbDQ4xgzlrKkHvyMy/7oUPBc
+         ZxzfEMtDYrQlrBCcYn1iaJD+H3QGj5x5usMEpuEIbzD7tEUUnRhDbXBiSW1gkIJKMgBX
+         ym2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXKgbel1Dw0w+sK74HzZTTnaDkh7c0/MtpqlExZA5zGIOIdcLT0Xf8TvKbFkUFbr8nj9/s/IS0ZVJeqUDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI8IrSMUSMhVNucxYdKsMEruTpe1kgy1t8PZSCMX/50KGO5oxM
+	Jz3cEDamp/veWPNdY5AXpg335bi+Arpv6PmqYjorIXqX7KqE+SRhPJ13bD8Bw8W4CqoacgKYm33
+	rjexqNg==
+X-Google-Smtp-Source: AGHT+IEITj0IZXGOHRW2OjbGAsUtPzL7lWINzqsu/4f+Dqz6jJr8cNOz1t9vJB6+EjMUbfKp4lW+UCKDWNZf
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:eb75:393:2a8c:1440])
- (user=irogers job=sendgmr) by 2002:a25:c5d4:0:b0:e39:8087:42aa with SMTP id
- 3f1490d57ef6-e3a0b07a87emr817276.1.1733460047449; Thu, 05 Dec 2024 20:40:47
- -0800 (PST)
-Date: Thu,  5 Dec 2024 20:40:31 -0800
+ (user=irogers job=sendgmr) by 2002:a05:690c:4782:b0:6ef:5e7a:aa72 with SMTP
+ id 00721157ae682-6efe3cb751bmr8277b3.8.1733460049675; Thu, 05 Dec 2024
+ 20:40:49 -0800 (PST)
+Date: Thu,  5 Dec 2024 20:40:32 -0800
 In-Reply-To: <20241206044035.1062032-1-irogers@google.com>
-Message-Id: <20241206044035.1062032-5-irogers@google.com>
+Message-Id: <20241206044035.1062032-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241206044035.1062032-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1 4/8] libperf cpumap: Be tolerant of newline at the end of a cpumask
+Subject: [PATCH v1 5/8] perf pmu: Remove use of perf_cpu_map__read
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -86,36 +86,73 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-File cpumasks often have a newline that shouldn't trigger the invalid
-parsing case in perf_cpu_map__new.
+Remove use of a FILE and switch to reading a string that is then
+passed to perf_cpu_map__new. Being able to remove perf_cpu_map__read
+avoids duplicated parsing logic.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/lib/perf/cpumap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/pmu.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/tools/lib/perf/cpumap.c b/tools/lib/perf/cpumap.c
-index 3ea06865d4b0..20d9ee9308c6 100644
---- a/tools/lib/perf/cpumap.c
-+++ b/tools/lib/perf/cpumap.c
-@@ -240,7 +240,7 @@ struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list)
- 		p = NULL;
- 		start_cpu = strtoul(cpu_list, &p, 0);
- 		if (start_cpu >= INT_MAX
--		    || (*p != '\0' && *p != ',' && *p != '-'))
-+		    || (*p != '\0' && *p != ',' && *p != '-' && *p != '\n'))
- 			goto invalid;
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 08a9d0bd9301..891c905d08a1 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -12,6 +12,7 @@
+ #include <stdbool.h>
+ #include <dirent.h>
+ #include <api/fs/fs.h>
++#include <api/io.h>
+ #include <locale.h>
+ #include <fnmatch.h>
+ #include <math.h>
+@@ -748,26 +749,35 @@ static int pmu_alias_terms(struct perf_pmu_alias *alias, int err_loc, struct lis
+  * Uncore PMUs have a "cpumask" file under sysfs. CPU PMUs (e.g. on arm/arm64)
+  * may have a "cpus" file.
+  */
+-static struct perf_cpu_map *pmu_cpumask(int dirfd, const char *name, bool is_core)
++static struct perf_cpu_map *pmu_cpumask(int dirfd, const char *pmu_name, bool is_core)
+ {
+-	struct perf_cpu_map *cpus;
+ 	const char *templates[] = {
+ 		"cpumask",
+ 		"cpus",
+ 		NULL
+ 	};
+ 	const char **template;
+-	char pmu_name[PATH_MAX];
+-	struct perf_pmu pmu = {.name = pmu_name};
+-	FILE *file;
  
- 		if (*p == '-') {
-@@ -248,7 +248,7 @@ struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list)
- 			p = NULL;
- 			end_cpu = strtoul(cpu_list, &p, 0);
- 
--			if (end_cpu >= INT_MAX || (*p != '\0' && *p != ','))
-+			if (end_cpu >= INT_MAX || (*p != '\0' && *p != ',' && *p != '\n'))
- 				goto invalid;
- 
- 			if (end_cpu < start_cpu)
+-	strlcpy(pmu_name, name, sizeof(pmu_name));
+ 	for (template = templates; *template; template++) {
+-		file = perf_pmu__open_file_at(&pmu, dirfd, *template);
+-		if (!file)
++		struct io io;
++		char buf[128];
++		char *cpumask = NULL;
++		size_t cpumask_len;
++		ssize_t ret;
++		struct perf_cpu_map *cpus;
++
++		io.fd = perf_pmu__pathname_fd(dirfd, pmu_name, *template, O_RDONLY);
++		if (io.fd < 0)
+ 			continue;
+-		cpus = perf_cpu_map__read(file);
+-		fclose(file);
++
++		io__init(&io, io.fd, buf, sizeof(buf));
++		ret = io__getline(&io, &cpumask, &cpumask_len);
++		close(io.fd);
++		if (ret < 0)
++			continue;
++
++		cpus = perf_cpu_map__new(cpumask);
++		free(cpumask);
+ 		if (cpus)
+ 			return cpus;
+ 	}
 -- 
 2.47.0.338.g60cca15819-goog
 
