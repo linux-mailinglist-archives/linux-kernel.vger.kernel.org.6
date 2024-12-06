@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-435561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A6A9E795D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:59:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138019E7981
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDFAA16A8E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:59:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F188816D8A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C1B1D95B3;
-	Fri,  6 Dec 2024 19:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30431FFC70;
+	Fri,  6 Dec 2024 20:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PjlXpGaR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tmFKyt9/"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4776F145B07
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913C61D6DBC;
+	Fri,  6 Dec 2024 20:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733515143; cv=none; b=NhQV1qW8NknS36iuI/D/2ImptDjgxc1t98sqo/erMl8WxVNStsmGq38I3pAB3irGZzi1/QoINCyAuM0WuC1VFZewF6UT/wEVOX62SHKDhxF1VpRMjrZhQqt0QSBZTllJs/rNfsADkqyIWsTWTzFTM0LcQZaoh1VoOyYe6sSQXoA=
+	t=1733515284; cv=none; b=CpNeeGa1lQswWj8E3XUHIJ2a/Ci1ZD/lX/nxD0xQ8biDJopZajqSNOVVxWNOSFPesbf1lXo730epaLUDZKt0AETqKD5RlyAq1ILLTMD01oPeDxLaWYNzfdHMAkVbW7e53AQOckAs0q4J9m/HpEItGmHdxIaI7fD1RebZeX0iigQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733515143; c=relaxed/simple;
-	bh=/7jE4zlRFEHeKcaZ8XoKDRNdhmY5SIIoAAtS8asgEMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kd08DUuPCh5qGKStr81fAJfdMYUlOFC41fhAUZTjOJMqupNtaSlb2VXcPZSEpex/HN8jGqr/n7JxlRh70Qu/6FDDZrlGomArKd3mnMC4vGifijrFEq3yBBugpVYXhn3a8JXA0bYkrXW3VInjRNnA7CRP2iJY13FHxztdUxma98M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PjlXpGaR; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1733515284; c=relaxed/simple;
+	bh=Nbyfn+1oYpcw+P1XPkh6jD6oqLO72wK92m4lABnV+GU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qWK2WG0qJYeng5WdBFwr18xkra3iqeg+6lLMjlN9TApv/+OS5hXnJ3hYL8Ml3Z65FDj13ewbAab0YVJjDbBeJcT5WZ97Qp/7IApcYH4z1fkfY6JI7NEbVazkYBrZG6aWKTkKZX2eHPbTdkjYoE6hZiwoad6g9dHgUUcc3XkXa3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tmFKyt9/; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733515142; x=1765051142;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/7jE4zlRFEHeKcaZ8XoKDRNdhmY5SIIoAAtS8asgEMg=;
-  b=PjlXpGaRDnx7J3tTamnF2K5w9HP0D4P7VXhQTxp9Dkxc6YG4Ns8EjAmc
-   edDgHK+TF2We5vO6i1USeNprqQ3dl/eDaOHIfZhN5jKe7ug0yeYUrq4Cl
-   G4zfDi8i4Bd8AvQXB1/cbVNWwsx6yYZEf2f3A6yyykoQSa/Nm/it0cQdQ
-   9eNVu840BoFzEh1jcLh/QrybKwHeAjfNx6SP9LL48YJCIq3YwH6ir1Enc
-   K7lJ8DsAgALsIR0qahv2l4Wu+lulHAcWYlqWisjX6vEib04CHEvmmHDU8
-   Kwx9t486iRu6sfO9TUTcmeyacB6xZ/zegoxxWxvz95zjQaQEIDogUq0uD
-   Q==;
-X-CSE-ConnectionGUID: It97oQjrSmWzoPx9IaSMfA==
-X-CSE-MsgGUID: WJAJwutlTZiCofmgMs1zig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="37664103"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733515282; x=1765051282;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Nbyfn+1oYpcw+P1XPkh6jD6oqLO72wK92m4lABnV+GU=;
+  b=tmFKyt9/JRnsgbcF2LoA3rZYz4FS+YtOFfmYBRTgd8HvZAzgscHnIlBG
+   K13ICcN4ORBmvCH/DhfbHlpkoTqKndlZg1UzgGT0KPckB2UpJL3hk/Xnr
+   uq6lZqlQELIVujR3AjPSC6GsPe9ji+82o3i5P29FJfU4oiU0PlNZP1Q0a
+   dLDxpjbZH7GnwOyyRbo0OxbIlCVP/IDDqrUm+foh5vHVbFFNPqiV11M/r
+   bc8/nhsNh7pOl+5AsEa8XzRnxOHna5xKoM3rFz4w7JNbhL1Wn/U3yYpiN
+   E4WKQ7BMCDPp16KBRCy3/xfoBlU94BSv8MI0fnlJo6M5yrrWYhGhxYXAb
+   g==;
+X-CSE-ConnectionGUID: wHv5dacKTzaP3KMzdbJ8Aw==
+X-CSE-MsgGUID: 1NUJjekURzSRYGbtL23iQg==
 X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="37664103"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 11:59:01 -0800
-X-CSE-ConnectionGUID: xYBs8b4XTbuKUNm34EUE5g==
-X-CSE-MsgGUID: GWtxBjriTxqvqothfjaImg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="95295362"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.220.211]) ([10.124.220.211])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 11:59:00 -0800
-Message-ID: <c873a9c3-df0d-423b-b3f5-452c6b9de506@intel.com>
-Date: Fri, 6 Dec 2024 11:58:59 -0800
+   d="scan'208";a="202686982"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Dec 2024 13:01:21 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 6 Dec 2024 13:01:09 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 6 Dec 2024 13:01:09 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<arnd@arndb.de>
+CC: <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
+	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
+Subject: [PATCH v3 00/13] Add support for SAMA7D65
+Date: Fri, 6 Dec 2024 12:59:45 -0700
+Message-ID: <cover.1733505542.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] x86/cpu: Replace PEBS use of 'x86_cpu_desc' use with
- 'x86_cpu_id'
-To: "Luck, Tony" <tony.luck@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "x86@kernel.org" <x86@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>,
- "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>
-References: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
- <20241206193834.3ABE2E95@davehans-spike.ostc.intel.com>
- <SJ1PR11MB6083BB886A09D6850ABAFE7DFC312@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <SJ1PR11MB6083BB886A09D6850ABAFE7DFC312@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 12/6/24 11:55, Luck, Tony wrote:
->> The 'x86_cpu_desc' and 'x86_cpu_id' structures are very similar.
->> Reduce duplicate infrastructure by moving the few users of
->> 'x86_cpu_id' to the much more common variant.
-> This paragraph is backwards. You are moving 'x86_cpu_desc to 'x86_cpu_id.
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Thanks for catching that, Tony! Fixed.
+This series adds support for the SAMA7D65 SoC.
+
+V2 of this series [1].
+
+For the pinctrl and pit64 timers those will have DTB warnings due to
+those bindings not being in the .yaml format.
+
+Changes v1->v2:
+- V1 set was sent incorrectly as multiple seprate patches v2 took all
+  those patches and put them in 1 thread.
+
+Changes v2->v3:
+- Correct the patch order to follow correct practice.
+- Correct flexcom dt-binding commit messge to reflect the changes in the
+  coding style.
+- Add missing SoB tags to patches.
+- Moved export clocks to DT patch to be included with the clock binding
+  patch.
+- Separate Kconfig changes and defconfig changes into different patches
+  and removed unused Kconfig params.
+- Correct confusing SoB and Co-developed chain.
+- Removed unsued nodes in DTSI file and sorted includes
+  alphanumerically.
+- Fix incorrect dts formatting.
+- Separate dts and pinmux changes into two patches.
+- Combine PLL and MCK changes into core clock driver patch.
+- Correct formatting in main clock driver.
+- MMC dt-binding changes are applied for next so have been removed from
+  the set [2].
+
+1) https://lore.kernel.org/linux-arm-kernel/cover.1732030972.git.Ryan.Wanner@microchip.com/T/#m9691b4d58b62f36f6cbac1d06883c985766c2c0d
+2) https://lore.kernel.org/linux-arm-kernel/cover.1732030972.git.Ryan.Wanner@microchip.com/T/#mccf6521c07e74e1c7dc61b09ae0ebdbbdde73a28
+
+Dharma Balasubiramani (6):
+  dt-bindings: mfd: atmel,sama5d2-flexcom: add
+    microchip,sama7d65-flexcom
+  dt-bindings: atmel-sysreg: add sama7d65 RAM and PIT
+  dt-bindings: serial: atmel,at91-usart: add microchip,sama7d65-usart
+  dt-bindings: pinctrl: at91-pio4: add microchip,sama7d65-pinctrl
+  dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
+  dt-bindings: clock: Add SAMA7D65 PMC compatible string
+
+Romain Sioen (2):
+  dt-bindings: ARM: at91: Document Microchip SAMA7D65 Curiosity
+  ARM: dts: microchip: add support for sama7d65_curiosity board
+
+Ryan Wanner (5):
+  clk: at91: sama7d65: add sama7d65 pmc driver
+  ARM: dts: microchip: add sama7d65 SoC DT
+  ARM: dts: at91: Add sama7d65 pinmux
+  ARM: configs: at91: sama7: add new SoC config
+  ARM: at91: add new SoC sama7d65
+
+ .../devicetree/bindings/arm/atmel-at91.yaml   |    7 +
+ .../devicetree/bindings/arm/atmel-sysregs.txt |   14 +-
+ .../bindings/clock/atmel,at91rm9200-pmc.yaml  |    2 +
+ .../bindings/clock/atmel,at91sam9x5-sckc.yaml |    1 +
+ .../bindings/mfd/atmel,sama5d2-flexcom.yaml   |    9 +-
+ .../pinctrl/atmel,at91-pio4-pinctrl.txt       |    1 +
+ .../bindings/serial/atmel,at91-usart.yaml     |    1 +
+ arch/arm/boot/dts/microchip/Makefile          |    3 +
+ .../dts/microchip/at91-sama7d65_curiosity.dts |   89 ++
+ .../arm/boot/dts/microchip/sama7d65-pinfunc.h |  947 ++++++++++++
+ arch/arm/boot/dts/microchip/sama7d65.dtsi     |  145 ++
+ arch/arm/configs/multi_v7_defconfig           |    1 +
+ arch/arm/configs/sama7_defconfig              |    1 +
+ arch/arm/mach-at91/Kconfig                    |    9 +
+ drivers/clk/at91/Makefile                     |    1 +
+ drivers/clk/at91/clk-master.c                 |    2 +-
+ drivers/clk/at91/clk-sam9x60-pll.c            |    2 +-
+ drivers/clk/at91/pmc.c                        |    1 +
+ drivers/clk/at91/sama7d65.c                   | 1373 +++++++++++++++++
+ include/dt-bindings/clock/at91.h              |    4 +
+ 20 files changed, 2600 insertions(+), 13 deletions(-)
+ create mode 100644 arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+ create mode 100644 arch/arm/boot/dts/microchip/sama7d65-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/microchip/sama7d65.dtsi
+ create mode 100644 drivers/clk/at91/sama7d65.c
+
+-- 
+2.43.0
+
 
