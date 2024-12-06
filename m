@@ -1,90 +1,118 @@
-Return-Path: <linux-kernel+bounces-434539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDAD9E6804
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:36:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AF39E6806
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895CF1885A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3BD163B7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B665C1DF274;
-	Fri,  6 Dec 2024 07:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E498A1DC184;
+	Fri,  6 Dec 2024 07:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSUiTVaX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B/jIZs/m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE851DBB3A;
-	Fri,  6 Dec 2024 07:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455E81B4F1F
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 07:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733470564; cv=none; b=lja0CyVmYFpDbfkJD2xzTPnXTq4euucEmI2EOs4StUHvKhOyGQ285VAYU7Nn8wGRYiO1KPjmol5/sB7B7SY4lsJA0MhC8nPYVlWihA0jgX4takAawKKGSWRjNfW2NCv7R5R9FtEXnyYsWWlxha8kir+0alkdyd5U8Whktr9qa8U=
+	t=1733470624; cv=none; b=ob3/Zs7eWY7qgK/RPPpocizoK+nFuZJBagzx0Vbr59BdSWaILkT0T5FDkKVeLt8IaQXXhb8k2AW7HtrULAjf6z0Uo+FE/3D22IWiZlZJWfmRHINpjBjANbwXA6IgGQA+cXXbbRZSz38C+Wf7JU4N5eEjVO91jBqkmQzKCz1u1kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733470564; c=relaxed/simple;
-	bh=GgZaIKYqwHFnub4K6lKDTb/cpONWd1rIk/cClD2yA2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDwWBFTnacaPdK64FOpgFCJEXcacfgXGbbnu5e6QJYy0Il9ZTcMlDfsQ6mvZd9eOWuQe+zOeJslJ2TPmtU9v6vfa9j9Q1RDlNQcFySqd9ynUAEEF1UUgO4mHD5VbB72o4SHmMs5lLafAJ/aS2YubWYLU8ZF0Iaqd/W1wyZf/9W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSUiTVaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5C0C4CED1;
-	Fri,  6 Dec 2024 07:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733470563;
-	bh=GgZaIKYqwHFnub4K6lKDTb/cpONWd1rIk/cClD2yA2U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GSUiTVaX9Q54RW05rss5hrg4ujhMQyVWWb0IB1fW8VvuuxUEO+qbz47/qWV14dbAs
-	 q67Od2tg+CAt9zgle/Nt4ETvW2Ordw6OBFmXdp75wIqEHMrZ+DKyxs+fNz5sw29IrZ
-	 jYRARSgQ4XVnVT82eYDRMXI2r5wvisodODqYRblWQXnc4QP4hYT4MwKvF2eQSD90MW
-	 Y32+Y8pXuPp1RTt800n9EBiya2kuGNh0+4RhHqMuikAkIkkT+yNt9pzTwHjPYY0091
-	 2Wc/A2bp3cdLES1xyMvFjggl+7moDGL9GdYj2uZf3KF7QVT4x6N4Xp+VpgBKREPPf9
-	 7PN/CDCF4Od5A==
-Date: Fri, 6 Dec 2024 07:35:58 +0000
-From: Lee Jones <lee@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] samples: rust: Provide example using the new Rust
- MiscDevice abstraction
-Message-ID: <20241206073558.GH8882@google.com>
-References: <20241205162531.1883859-1-lee@kernel.org>
- <20241205162531.1883859-4-lee@kernel.org>
- <2024120604-diffusive-reach-6c99@gregkh>
- <20241206071430.GC8882@google.com>
- <2024120610-jailbreak-preschool-ff45@gregkh>
+	s=arc-20240116; t=1733470624; c=relaxed/simple;
+	bh=rW1zGLV6GTd/TuyA7CJ5ZhgHBXyrglW4LXqh85Cy7Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GWG5Bp9h2gErTAL9i816f5HWm90l0S/pWMfHSeVyAW4+u0Z/7v9dMC58qTZyURjXPaLun+4PN/0qXLSUW+7TqlOqRflb0ajWGPiJZRjc6C2iGXUZEMsWRozF0wb1PjRSSk3MjGPcb2yAAJNBbTmxlJPw7ChDtP02h0Y77MPjYz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B/jIZs/m; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733470622; x=1765006622;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=rW1zGLV6GTd/TuyA7CJ5ZhgHBXyrglW4LXqh85Cy7Ms=;
+  b=B/jIZs/m3Okt7ZEOX97Fp0OKUba8ZMzwzmQV5fFVsoVHwZ7NiA1I+9Sy
+   Pxaed5xNIEKZVdClP3HS14j/ILDn/pqqD8p2iULWgIYYLF0MqKe69QJW3
+   E104ZnSnJwH/rpX4sIsWyip9eJBJCboomjUHs8xhkkgwG7S4ngZTehZmZ
+   1zeYCAtu+GVfiMTeDzvU4dU9s25WY8KoGIA9GCJwgCADrnWYevb+ZEE0x
+   SmdyAe24lTcvtq5ikQsdwddF+Yb7a3DTGcsAS3oWsn5jEGbEMdrpQ4X78
+   uAJcjB4KgUbnmnrvueztxuDELC15dQcWn7FgFNeJIQ/ykNSY7mUeh5HZZ
+   A==;
+X-CSE-ConnectionGUID: qLT/cOmfRWyvBXG3oaZ2tw==
+X-CSE-MsgGUID: UxbFQpgKRm67S2LxSumpJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="51349829"
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="51349829"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 23:37:02 -0800
+X-CSE-ConnectionGUID: 89jERL4lS0CfN0d7LhvzVA==
+X-CSE-MsgGUID: gxST0mFARj+y9oflYWhSpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="94526314"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 05 Dec 2024 23:37:01 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJStW-0000od-27;
+	Fri, 06 Dec 2024 07:36:58 +0000
+Date: Fri, 6 Dec 2024 15:36:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: drivers/tty/serial/pic32_uart.c:904:34: warning:
+ 'pic32_serial_dt_ids' defined but not used
+Message-ID: <202412061528.c3mAs1pi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024120610-jailbreak-preschool-ff45@gregkh>
 
-On Fri, 06 Dec 2024, Greg KH wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b8f52214c61a5b99a54168145378e91b40d10c90
+commit: e3e7b13bffae85e2806c73e3ccacd4447bcb19ed serial: allow COMPILE_TEST for some drivers
+date:   2 years, 8 months ago
+config: mips-randconfig-r111-20241114 (https://download.01.org/0day-ci/archive/20241206/202412061528.c3mAs1pi-lkp@intel.com/config)
+compiler: mips64-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241206/202412061528.c3mAs1pi-lkp@intel.com/reproduce)
 
-> On Fri, Dec 06, 2024 at 07:14:30AM +0000, Lee Jones wrote:
-> > On Fri, 06 Dec 2024, Greg KH wrote:
-> > > > +    fn open() -> Result<KBox<Self>> {
-> > > > +        pr_info!("Opening Rust Misc Device Sample\n");
-> > > 
-> > > I'd prefer this to be dev_info() to start with please.
-> > 
-> > This is not possible at the moment.  Please see the cover-letter.
-> 
-> Then why make the change to miscdevice.rs if that pointer provided there
-> doesn't work for you here?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412061528.c3mAs1pi-lkp@intel.com/
 
-It's half the puzzle to get it working.  We're waiting on the other
-(more complex) part from Alice before we can make use of it.  Would you
-like me to remove it from the set until we have all of the pieces?
+All warnings (new ones prefixed by >>):
+
+>> drivers/tty/serial/pic32_uart.c:904:34: warning: 'pic32_serial_dt_ids' defined but not used [-Wunused-const-variable=]
+     904 | static const struct of_device_id pic32_serial_dt_ids[] = {
+         |                                  ^~~~~~~~~~~~~~~~~~~
+
+
+vim +/pic32_serial_dt_ids +904 drivers/tty/serial/pic32_uart.c
+
+157b9394709ed52 Andrei Pistirica 2016-01-13  903  
+157b9394709ed52 Andrei Pistirica 2016-01-13 @904  static const struct of_device_id pic32_serial_dt_ids[] = {
+157b9394709ed52 Andrei Pistirica 2016-01-13  905  	{ .compatible = "microchip,pic32mzda-uart" },
+157b9394709ed52 Andrei Pistirica 2016-01-13  906  	{ /* sentinel */ }
+157b9394709ed52 Andrei Pistirica 2016-01-13  907  };
+157b9394709ed52 Andrei Pistirica 2016-01-13  908  MODULE_DEVICE_TABLE(of, pic32_serial_dt_ids);
+157b9394709ed52 Andrei Pistirica 2016-01-13  909  
+
+:::::: The code at line 904 was first introduced by commit
+:::::: 157b9394709ed5233288986a293405def22792ed serial: pic32_uart: Add PIC32 UART driver
+
+:::::: TO: Andrei Pistirica <andrei.pistirica@microchip.com>
+:::::: CC: Ralf Baechle <ralf@linux-mips.org>
 
 -- 
-Lee Jones [李琼斯]
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
