@@ -1,155 +1,110 @@
-Return-Path: <linux-kernel+bounces-435550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AF69E7930
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:44:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F0A18861B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:44:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D7D1C548F;
-	Fri,  6 Dec 2024 19:44:31 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540159E7940
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:48:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44D91C5487
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 152AF28314D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:48:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CBD1D04A4;
+	Fri,  6 Dec 2024 19:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AIkE3k8Q"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CFC1C5490
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733514271; cv=none; b=C8udzEFyx6y7gUiY7bAWaviOsHnCfb0Xq+wg9ow5UIowxcFXADGzd9X6C4+QXtF5s0BCzMKlnKj6Ioh0l5f76UlX0y0C8ydCXyncyXKSOF+eKw7pZEyBq8erVwqB3wCeNdGKqWcp4YpqI6gv4i02VnjNhGFz2o0OlXWcu1zmHUc=
+	t=1733514523; cv=none; b=Yqbx/RYVbhCqwpEZcri5xbI81TxXTXm73plmotw6EmyNx3c3p36xvaaAElYd8PUtIkcocw489l2s6U9I7oBsL/omBFy25Itf7PqaM+MUEn4V7LqrvPC4eUyRuAaekisdb4JSZs0EYDZHY8nTG3invqUYoKP9mOpwHOuz+g1q/c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733514271; c=relaxed/simple;
-	bh=CBjR+8wmuRcN1mnDNGDirE0hhPKkyw5iUutIghxZPV0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=ps6tjMRkh+i7XuA7DEYuGDWl4zENuq9wswSzeWR7+4oTQW+1zFj5j04xhdQ3qIOxC1/Iz7lbE1SAJbzjCsaw/a8aOVDR5610bpL5INP/5Gvf+wwks+mAeTxf3iDUkNijcWoR0ghEemjUjkPIzKfjAbRxfIjMsEkkodW+3nAbhfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-117-WxcFF2J0PnutzUqsQ_ZSew-1; Fri, 06 Dec 2024 19:44:26 +0000
-X-MC-Unique: WxcFF2J0PnutzUqsQ_ZSew-1
-X-Mimecast-MFC-AGG-ID: WxcFF2J0PnutzUqsQ_ZSew
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
- 2024 19:43:39 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Dec 2024 19:43:39 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Willy Tarreau' <w@1wt.eu>, Linus Torvalds <torvalds@linux-foundation.org>
-CC: Vincent Mailhol <vincent.mailhol@gmail.com>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "uecker@tugraz.at" <uecker@tugraz.at>
-Subject: RE: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-Thread-Topic: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-Thread-Index: AQHbROFPJXcuwP9wN0+yRzIQ2cx/pbLWa+gggAFf14CAACMqUIABpzoGgAAClHCAAAo1Y4AAAKpg
-Date: Fri, 6 Dec 2024 19:43:39 +0000
-Message-ID: <8f4b7d1bfbd84885bddf4cc1dfb9ce43@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
- <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
- <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
- <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
- <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
- <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
- <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
- <d23fe8a5dbe84bfeb18097fdef7aa4c4@AcuMS.aculab.com>
- <CAHk-=win8afdcergvJ6f2=rRrff8giGUW62qmYs9Ae6aw=wcnA@mail.gmail.com>
- <20241206193836.GA26860@1wt.eu>
-In-Reply-To: <20241206193836.GA26860@1wt.eu>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733514523; c=relaxed/simple;
+	bh=q4U1LXC8ox3d7UwtdidJGxH/oi2EvLePFYdjxr+tYug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bBQcE0qTZYcVT5RIwIbNIdD/xRwEwdm3uBYYCXYQD6nu65ljumGpaiFj8cjVFamkbgoB/8wKlQTUPhSROBwM7N+4yXfEweYxC99pzPXeXeR3qXPlxM4N0r5nSIcwIaLfd+GhU0ypZhmHBEWb6AtjiOcbAXtL7huzhResdbLStrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AIkE3k8Q; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ef79243680so72977a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:48:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733514520; x=1734119320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zWHOSFnp6YO+lsoFcP0qwFbbFIGSFxBuBWk/HmNV+8A=;
+        b=AIkE3k8QipZUTwj+8z9mcrbFfFMGUAzFaMzDK/7miqwpBT871sKq4c+Miqxc+ZHWd4
+         RGYqOWy/cF+AuvFasqTSwAni2mZBtKv9FbGPSM2ODgAS4u9pqmPKGB+LDLfoI5CrL7ng
+         Oa7aPRujZbXaoaLpy1ut91AqpXa8ayS2aN+EA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733514520; x=1734119320;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zWHOSFnp6YO+lsoFcP0qwFbbFIGSFxBuBWk/HmNV+8A=;
+        b=Nr85LoGj25rFBzy4pMjYvISpGomKnJUGdi6xu1hRGztmUzgWm6SODA10vyLB+KxbA5
+         dGU/Dz6GoFWmq1zzPxU85owqCkricFtBFRAS/ra8CjvoCLeB4Zcn0MXA9modSKfEUhFt
+         kDU2tAh7hChdl56HkDDY1y8hWnK5oHpLKTpFsslbkU079e+WSM7/XGwJt0nNwS0nx7n2
+         gEudjveMo8Kc/Ss0F1nSegdZ7AwwlZMxzZhwDZqjKq2ji3YIxHHY+qSpO8y/6wBiydjl
+         MU75HOfzwjrAj78EDUWBRPP7Qf7Wj6Nd7k84ZTA7KoP99A64wH0JH9scwAqX1+p1oLlw
+         KMMg==
+X-Gm-Message-State: AOJu0YwEU9kY6S+CmcIdpwNjkO0dyN+Fxhcr3ySBczr26uFqgG7zcrI9
+	trG0qPU+Zc0NFFphQch32BhBhJGgpAPNWsa/zNMWj/CJSDaLWH7pgNg5ChF8iQ==
+X-Gm-Gg: ASbGncsOvFHOYnKaXxgZvkaOXmYow+8eMa7j/w2kLA7Q//PjXsYRN4otcnC1ygK/D1W
+	qZkSIMpcPRQvG1kAxUqUP3DS/K5+fPCuEKo/vNkyRVV5GrDqC6YC5uBmy62a/m/LipITK4irkPz
+	xP6WL/RfhoCsm6dZMvzHjywY+JMYw7mMPXZ9Ug3PIghIJyb35UjVqmjpnNoG34hxPtyseY1FpB9
+	WjSLXnTomyweZQKkdQhd4WKh5c0Lfpr2ka2xogAeHQrtzNjo5E9Orx30eTHBTG3chLqErTp5bFv
+	B1bPYMVzylQ=
+X-Google-Smtp-Source: AGHT+IG65sTKlmsqpI7GdM3gNDUVOxz/ZHodlOQCUdzYHPngVaIbt2p5YZVSA9/sCstTA9tW0wBaJA==
+X-Received: by 2002:a17:90b:3910:b0:2ee:3fa7:ef23 with SMTP id 98e67ed59e1d1-2ef6ab23270mr2485494a91.8.1733514520663;
+        Fri, 06 Dec 2024 11:48:40 -0800 (PST)
+Received: from localhost (238.76.127.34.bc.googleusercontent.com. [34.127.76.238])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ef45fa64e0sm3536432a91.26.2024.12.06.11.48.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 11:48:40 -0800 (PST)
+From: jeffxu@chromium.org
+To: akpm@linux-foundation.org,
+	vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@Oracle.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-mm@kvack.org,
+	jorgelo@chromium.org,
+	keescook@chromium.org,
+	pedro.falcato@gmail.com,
+	rdunlap@infradead.org,
+	Jeff Xu <jeffxu@chromium.org>
+Subject: [PATCH v2 0/1] remove can_do_mseal
+Date: Fri,  6 Dec 2024 19:48:38 +0000
+Message-ID: <20241206194839.3030596-1-jeffxu@google.com>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: epnFUQj6I4RRhGaXqnumuB4bhEujToX2CPE5mrA5mvg_1733514265
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-From: Willy Tarreau
-> Sent: 06 December 2024 19:39
-> On Fri, Dec 06, 2024 at 11:15:20AM -0800, Linus Torvalds wrote:
-> > On Fri, 6 Dec 2024 at 11:07, David Laight <David.Laight@aculab.com> wro=
-te:
-> > >
-> > > I'm missing the compiler version and options to generate the error.
-> >
-> > Just -Wall with most recent gcc versions seems to do it. At least I
-> > can repro it with gcc-14.2.1 and something silly like this:
-> >
-> >   $ cat t.c
-> >   int fn(int a) { return (a<<2)?1:2; }
-> >   $ gcc -Wall -S t.c
-> >   t.c: In function 'fn':
-> >   t.c:1:26: warning: '<<' in boolean context, did you mean '<'?
-> > [-Wint-in-bool-context]
-> >
-> > > Does a '+ 0' help?  "(var << 2) + 0 ? 0 : 0"
-> >
-> > Yeah, that actually works.
-> >
-> > And "+0" is nice in that it should work in any context.
->=20
-> I've already used "+0" to shut certain warnings, I don't really remember
-> which one, but also remember it was OK everywhere I needed.
+From: Jeff Xu <jeffxu@chromium.org>
 
-I've often used +0u when -Wsign-compare is enabled.
-Much safer than a cast.
+History:
+V2: remove the can_do_mseal (Liam.Howlett, Lorenzo Stoakes)
 
->=20
-> Another trick I've been using to shut up the compiler is a cast via typeo=
-f
-> and an intermediary variable:
->=20
->   #define shut_up(expr)                           \
->           ({                                      \
->                   typeof(expr) _expr_ =3D expr;     \
->                   _expr_;                         \
->                   })
+V1: initial version.
 
-That is like OPTIMISER_HIDE_VAR() and can't be used in a 'constant integer =
-expression'.
+Jeff Xu (1):
+  mseal: move can_do_mseal() to mseal.c
 
-I suspect it also has the same nasty habit of adding an extra register move=
-.
+ mm/internal.h | 16 ----------------
+ mm/mseal.c    |  6 +++---
+ 2 files changed, 3 insertions(+), 19 deletions(-)
 
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+-- 
+2.47.0.338.g60cca15819-goog
 
 
