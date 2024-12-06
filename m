@@ -1,229 +1,138 @@
-Return-Path: <linux-kernel+bounces-434270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66FE9E6430
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:32:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCF49E6433
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDEA6167FAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0B518853D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D99C16132F;
-	Fri,  6 Dec 2024 02:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECE7189905;
+	Fri,  6 Dec 2024 02:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aCXmADwZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f7NHdqLO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43C913D297
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6DD1714B7;
+	Fri,  6 Dec 2024 02:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452332; cv=none; b=hUnyKFZVwl/BdUTcanDIPvpDS0f+ilD8J5Mfc/qOJMCZBwU0XNb5gT+ASecmQG45k5UHNnlLr3PU38gjlY6taeueqHpeQL4GBzuQ5fBRVD2Wtkj0NoOJTNp5hNjDD56cKLOgQ+ITFGYTcLyz5xIb7ayvRA6Jt3a4FvhFFZZk8+o=
+	t=1733452335; cv=none; b=ZEzxrwfqh+ktdbq9L/nuPkHWI4bpwOf9rOy884hVyygrr4p2DbGJTxb4tPWqRjnHoZh9nK81Is/HxbqvfFsnENRZLu+ht+ngu50eJRNLKKPygd0NpxaLyPqiYeiO2ctpkcmuReAJY5n35pfsthaZeJlGxZH1THcNI531cpPrQ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452332; c=relaxed/simple;
-	bh=psSwgMWe1elT1U8qnXgITerD+WZPDcBSA++06zwT/mk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sbsBYUIuAulHdcUosOPv6P5bCBghPLKDfEq6+tupDKwic8MwmX1JARoRZRN+6JyYjjVD45eNJq8YDamNsnCAnuJzz1oEeJQsXCksm37Pb2RGQnLIRKarQlAPsCtuMOGiy1ENyw8c9AODkbJm4xw0iveYl2INaKtAsKRAu13aaEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aCXmADwZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733452329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i3S7L9cV5CfeVxO8g8iOYfQ1CSd9bs4P7h0GpTlREvk=;
-	b=aCXmADwZwlZyL1W0EXEG80secrjjQE9tcof+xfQEVKWAFgCeTg6xLrKrQVrpNtVdRfmzpj
-	SJkGxJXrFdBNkwL8HQmrRdDvpxGNxYDsDlgLdFxD40LaYkgsTwRaDtoxo+DKj/RA1kItaU
-	Axt/Be7YSNJs0iUeWG5XY5HkfJ8oMJE=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-235-2cbWA7j1PhuwjtBqd-lV-A-1; Thu, 05 Dec 2024 21:32:08 -0500
-X-MC-Unique: 2cbWA7j1PhuwjtBqd-lV-A-1
-X-Mimecast-MFC-AGG-ID: 2cbWA7j1PhuwjtBqd-lV-A
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ee964e6a50so1907679a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 18:32:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733452327; x=1734057127;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i3S7L9cV5CfeVxO8g8iOYfQ1CSd9bs4P7h0GpTlREvk=;
-        b=nISV+ZRgDMml11BIvdwnzwvjyWywSemWDoxN+ULaQlVu56MKm3JAF0NJBgYSiyHL9W
-         Rq2FcEac3uls3koJilMyZ+QNQH9oFx0DR47/2QIRVtJ0iltaAfliMVd5QFRknPIbb6ha
-         RnaG35MtZ9KmOUIv38m2x6u2hKiMmqzvSMGV67N6jOSFaj5MKJtI0ChF6JNWU3z0csA3
-         rk8fm8Yw/1e5jZSP3DAvnWw4I8flbdPFx1eIFsU0hBp1HAZmS2hoHqkPwQhsYDIs3hrh
-         hRbJprpMSgb3uC9aDOP7bht6LiSIgPaOaiMjZjYHSEGEXfRrFCl9DgwRXrUMeLOgVJRa
-         bJmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXU1TnwWgqK7Sfq65MNYI/fDxr0ZAZbvOVASuZjYLl7FaK8d2PAdJyn+C1Ane9k73EBH8SkWwg0XR7/Oag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy083Li1gizjIwvtZoxdV4wK/4r/l5UFPyU7bsoMkjpXSaS83rv
-	/f182SOxIF5noekfV4hBody+vB3OGDLvXx3v9WMYkQj7ym6A98yIpY84pVrI1Sjlb+gJYNrxXZM
-	iP8aYcPDh8wmp7J9MUD/umCBNK8gDPHh5XbMD1Oai/3ZYLsj0yHlkh1qNYiC2pdDarJHRppZGBs
-	X7+R9b5gjo2MerSb69v2VQLBFR3hxztYc+ZvfU
-X-Gm-Gg: ASbGnctkTQLrb7n0pWCMUsmvdiraASsk2GWKjxsOs1tOchMyix/Up9No5jK61D3kCcp
-	vv1i4afwFVIDT7wGyh1E0l/8j+xu4O0B2aw==
-X-Received: by 2002:a17:90a:d450:b0:2ee:d958:1b18 with SMTP id 98e67ed59e1d1-2ef6ab27052mr1747247a91.36.1733452326931;
-        Thu, 05 Dec 2024 18:32:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFhXJCyWb9HqzY2+QoDErhsAlFYoLsDYEfHhVuqbZB1A7HCi3OjW3Rr6hN1lh6neRiTf7dqSPpRL70foPxIPRc=
-X-Received: by 2002:a17:90a:d450:b0:2ee:d958:1b18 with SMTP id
- 98e67ed59e1d1-2ef6ab27052mr1747223a91.36.1733452326522; Thu, 05 Dec 2024
- 18:32:06 -0800 (PST)
+	s=arc-20240116; t=1733452335; c=relaxed/simple;
+	bh=Xz0urQSXk0PIG0DUXBAQZqGKfzANZgT6gI9BQyjAbfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ge1XxihXxZeAE7FxLS3Zpno6mgx/F8iNPVVdpYp/m3R+dn+C6z8XQXARfaAWhxkYDI40ItEK12/z/4mMzFRmamJDSZ0gS9w95zg/8dDAsuP60j9zSPY9QwUNbE+ood908TbBFRZG+p05G06QS2vjbPYDPj8FBnenmHufOIA5pyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f7NHdqLO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaMNm015782;
+	Fri, 6 Dec 2024 02:32:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IJfqkSMfcyB+XPVvEIKaC6xKx4MczluwSCWfhSjFvQY=; b=f7NHdqLO+RSpEQce
+	7TbAVRqySKc8VCOeUzTNx2TJgeUo3KUZ3u5lqHGxq/qzIz18hRUfDK/mWzQv2MEr
+	MNAXL/DxYxp7mTtbgDT5MoD2+on5518lvMUsKYnHhxBA6329wUQIJdkCnjOxjzJ8
+	qJjwLkQwYOdm2LanD0C0R+V+GZyrklpgxTA4DSAECFRHKiZSm14EwYMqCOqY+8D1
+	fDEHCyVnAE8rUX23NmaRbsBhezPaoqV3KKsfDJb0gfP/R+PTfNl+yCsxHAw65hwM
+	VkD/EKVjHCbKbv2yl9eZQjZk/s/AAds5FfS45dYeDO3BGWKQIyjnkFvX0+l2YPB9
+	tChDjA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnmj1f6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 02:32:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62W8Kt030174
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 02:32:08 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 18:32:01 -0800
+Message-ID: <38dd7991-8503-44af-8400-cbe6a8968213@quicinc.com>
+Date: Fri, 6 Dec 2024 10:31:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121134002.990285-1-sthotton@marvell.com> <CACGkMEueyPOfgA4W72CMCZHP06fHw07PxbpvKzxm=O2udhRLxA@mail.gmail.com>
-In-Reply-To: <CACGkMEueyPOfgA4W72CMCZHP06fHw07PxbpvKzxm=O2udhRLxA@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 6 Dec 2024 10:31:55 +0800
-Message-ID: <CACGkMEvhZJCidEf2b5-cppvnX4=JwhbVX_cT9x+LMKLh_N3NcQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] vdpa/octeon_ep: enable support for multiple
- interrupts per device
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: virtualization@lists.linux.dev, mst@redhat.com, dan.carpenter@linaro.org, 
-	schalla@marvell.com, vattunuru@marvell.com, ndabilpuram@marvell.com, 
-	jerinj@marvell.com, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Satha Rao <skoteshwar@marvell.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 15/16] media: qcom: camss: Add CSID 780 support for sm8550
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <vladimir.zapolskiy@linaro.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Yongsheng Li
+	<quic_yon@quicinc.com>
+References: <20241205155538.250743-1-quic_depengs@quicinc.com>
+ <20241205155538.250743-16-quic_depengs@quicinc.com>
+ <220068ff-9979-4bef-935f-936a276034f0@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <220068ff-9979-4bef-935f-936a276034f0@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NPYah-CMWdDoMDp_z5zD81c2Zt_l_Hxu
+X-Proofpoint-GUID: NPYah-CMWdDoMDp_z5zD81c2Zt_l_Hxu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060017
 
-On Fri, Dec 6, 2024 at 9:25=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Thu, Nov 21, 2024 at 9:45=E2=80=AFPM Shijith Thotton <sthotton@marvell=
-.com> wrote:
-> >
-> > Updated the driver to utilize all the MSI-X interrupt vectors supported
-> > by each OCTEON endpoint VF, instead of relying on a single vector.
-> > Enabling more interrupts allows packets from multiple rings to be
-> > distributed across multiple cores, improving parallelism and
-> > performance.
-> >
-> > Signed-off-by: Shijith Thotton <sthotton@marvell.com>
-> > ---
-> > v1:
-> > - https://lore.kernel.org/virtualization/20241120070508.789508-1-sthott=
-on@marvell.com
-> >
-> > Changes in v2:
-> > - Handle reset getting called twice.
-> > - Use devm_kcalloc to allocate irq array.
-> > - IRQ is never zero. Adjusted code accordingly.
-> >
-> >  drivers/vdpa/octeon_ep/octep_vdpa.h      | 10 +--
-> >  drivers/vdpa/octeon_ep/octep_vdpa_hw.c   |  2 -
-> >  drivers/vdpa/octeon_ep/octep_vdpa_main.c | 90 ++++++++++++++++--------
-> >  3 files changed, 64 insertions(+), 38 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/octeon_ep/octep_vdpa.h b/drivers/vdpa/octeon_=
-ep/octep_vdpa.h
-> > index 046710ec4d42..2d4bb07f91b3 100644
-> > --- a/drivers/vdpa/octeon_ep/octep_vdpa.h
-> > +++ b/drivers/vdpa/octeon_ep/octep_vdpa.h
-> > @@ -29,12 +29,12 @@
-> >  #define OCTEP_EPF_RINFO(x) (0x000209f0 | ((x) << 25))
-> >  #define OCTEP_VF_MBOX_DATA(x) (0x00010210 | ((x) << 17))
-> >  #define OCTEP_PF_MBOX_DATA(x) (0x00022000 | ((x) << 4))
-> > -
-> > -#define OCTEP_EPF_RINFO_RPVF(val) (((val) >> 32) & 0xF)
-> > -#define OCTEP_EPF_RINFO_NVFS(val) (((val) >> 48) & 0x7F)
-> > +#define OCTEP_VF_IN_CTRL(x)        (0x00010000 | ((x) << 17))
-> > +#define OCTEP_VF_IN_CTRL_RPVF(val) (((val) >> 48) & 0xF)
-> >
-> >  #define OCTEP_FW_READY_SIGNATURE0  0xFEEDFEED
-> >  #define OCTEP_FW_READY_SIGNATURE1  0x3355ffaa
-> > +#define OCTEP_MAX_CB_INTR          8
-> >
-> >  enum octep_vdpa_dev_status {
-> >         OCTEP_VDPA_DEV_STATUS_INVALID,
-> > @@ -50,7 +50,6 @@ struct octep_vring_info {
-> >         void __iomem *notify_addr;
-> >         u32 __iomem *cb_notify_addr;
-> >         phys_addr_t notify_pa;
-> > -       char msix_name[256];
-> >  };
-> >
-> >  struct octep_hw {
-> > @@ -68,7 +67,8 @@ struct octep_hw {
-> >         u64 features;
-> >         u16 nr_vring;
-> >         u32 config_size;
-> > -       int irq;
-> > +       int nb_irqs;
-> > +       int *irqs;
-> >  };
-> >
-> >  u8 octep_hw_get_status(struct octep_hw *oct_hw);
-> > diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c b/drivers/vdpa/octe=
-on_ep/octep_vdpa_hw.c
-> > index 1d4767b33315..d5a599f87e18 100644
-> > --- a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-> > +++ b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-> > @@ -495,8 +495,6 @@ int octep_hw_caps_read(struct octep_hw *oct_hw, str=
-uct pci_dev *pdev)
-> >         if (!oct_hw->vqs)
-> >                 return -ENOMEM;
-> >
-> > -       oct_hw->irq =3D -1;
-> > -
-> >         dev_info(&pdev->dev, "Device features : %llx\n", oct_hw->featur=
-es);
-> >         dev_info(&pdev->dev, "Maximum queues : %u\n", oct_hw->nr_vring)=
-;
-> >
-> > diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/oc=
-teon_ep/octep_vdpa_main.c
-> > index cd55b1aac151..e10cb26a3206 100644
-> > --- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-> > +++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-> > @@ -47,13 +47,30 @@ static struct octep_hw *vdpa_to_octep_hw(struct vdp=
-a_device *vdpa_dev)
-> >  static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
-> >  {
-> >         struct octep_hw *oct_hw =3D data;
-> > -       int i;
-> > +       int i, ring_start, ring_stride;
-> > +
-> > +       /* Each device has multiple interrupts (nb_irqs) shared among r=
-eceive
-> > +        * rings (nr_vring). Device interrupts are mapped to specific r=
-eceive
-> > +        * rings in a round-robin fashion. Only rings handling receive
-> > +        * operations require interrupts, and these are at even indices=
-.
-> > +        *
-> > +        * For example, if nb_irqs =3D 8 and nr_vring =3D 64:
-> > +        * 0 -> 0, 16, 32, 48;
-> > +        * 1 -> 2, 18, 34, 50;
-> > +        * ...
-> > +        * 7 -> 14, 30, 46, 62;
-> > +        */
-> > +       ring_start =3D (irq - oct_hw->irqs[0]) * 2;
-> > +       ring_stride =3D oct_hw->nb_irqs * 2;
-> >
-> > -       for (i =3D 0; i < oct_hw->nr_vring; i++) {
-> > -               if (oct_hw->vqs[i].cb.callback && ioread32(oct_hw->vqs[=
-i].cb_notify_addr)) {
-> > -                       /* Acknowledge the per queue notification to th=
-e device */
-> > +       for (i =3D ring_start; i < oct_hw->nr_vring; i +=3D ring_stride=
-) {
-> > +               if (ioread32(oct_hw->vqs[i].cb_notify_addr)) {
->
-> Could oct_hw->vqs[i].cb_notify_addr change? If not, maybe we can cache
-> it somewhere to avoid the read here.
+Hi Bryan,
 
-Ok, it looks like the device reuse the notify addr somehow works like an IS=
-R.
+On 12/6/2024 8:14 AM, Bryan O'Donoghue wrote:
+> Re: [PATCH 15/16] media: qcom: camss: Add CSID 780 support for sm8550
+> 
+> Please drop sm8550 in your patch title, change it to something more 
+> consistent with the VFE patch title i.e. your next patch.
+> 
 
-Thanks
+Sure, will drop sm8550 in the title.
+
+>> +++ b/drivers/media/platform/qcom/camss/camss-csid-780.h
+>> @@ -0,0 +1,25 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * camss-csid-780.h
+>> + *
+>> + * Qualcomm MSM Camera Subsystem - CSID (CSI Decoder) Module 
+>> Generation 3
+>> + *
+>> + * Copyright (c) 2024 Qualcomm Technologies, Inc.
+>> + */
+>> +#ifndef QC_MSM_CAMSS_CSID_780_H
+>> +#define QC_MSM_CAMSS_CSID_780_H
+> 
+> #ifndef __CAMSS_CSID_780_H__ or __QC_MSM_CAMSS_CSID_780_H__
+> 
+> Either way please encapsulate your guard __thus__
+> 
+> Same comment for all new headers added in this series.
+> 
+
+Thanks for the comments, I will check the other headers in this series 
+and update them based on suggestion.
+
+Thanks,
+Depeng
 
 
