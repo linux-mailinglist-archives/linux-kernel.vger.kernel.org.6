@@ -1,94 +1,107 @@
-Return-Path: <linux-kernel+bounces-435681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501B99E7AED
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B95BA9E7AF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC7D1672E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E75E416CA37
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4F322C6CE;
-	Fri,  6 Dec 2024 21:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lR5iFGTz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1094322C6C3;
-	Fri,  6 Dec 2024 21:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0884C2147EE;
+	Fri,  6 Dec 2024 21:26:26 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35C7203710;
+	Fri,  6 Dec 2024 21:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733520314; cv=none; b=WI07oa/kXtmCsh5Ylgxl6t4gF8TyLqQN5A/ni68+j6e3Sgm+JB68vHNV/acAWI2ayXPgeDo0zf4WbFb9qDKSmSFDUFLe4dN0dgoG9pT7Cxc1wKRXugWRrZbgqUX9mb5Vj6ED1SWdDlfRac6XGBPLbdKMfqVSRuCOzX66O0sCqU0=
+	t=1733520385; cv=none; b=eMljkGODU6Q3hy91pVeRB1GYG5xHHy4KWS4Ib1CCJm5vlRE2yrm953O5lIDhQRfg+89WE5hn+SWeTA/4woo0ie1OuTpZeGOyGCJcA8OfN0Obth22ouPyBzV3GkMwl1SICi1BHSDDO7NtDlPxX6QRq5qGxLnCE/DLiIekJ6KP4bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733520314; c=relaxed/simple;
-	bh=g9kRebP2ubTDbIpBSlEK3ZKvUYraWoniSEh/ikaKw64=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=byKh22/ZBZ+b8tdFAUzrQ8jXmc1IFQLS5o3XvyuJobNEqa75jbT//6Y5MBy5l6CLLJoJyeFeTS7Dxk0klStA+PyYjiyQB1U9iQLQdboNGnbsCc88Ksv16ErzfZjNieVS87Oiu80ANQfLPDK2SBLHj6KiWKnu/JCkwujC0b9iJWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lR5iFGTz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3D4C4CED1;
-	Fri,  6 Dec 2024 21:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733520313;
-	bh=g9kRebP2ubTDbIpBSlEK3ZKvUYraWoniSEh/ikaKw64=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lR5iFGTzzmACNjYMZdIHiE/zfJtkQ03Wl9mhHGv+M5iSYIkTxMpdiHonOd1AxKEV6
-	 KPWeSH3cOZz5AcvnpXGqmAI5lPvUm7CXIuCoXAomHEfwBM70rdEKHyQBQDT6nwj6Yd
-	 51AaY4JFxJFjTfrI4vXgybcSGT16ddr1za0ds2kYfpEvsAJITA21a1LjY8SJmF0OoH
-	 MhKkxV2PYYG7JvHyVky7U2YqmocNfWTjyA5WRD/ss/K8qCDVPB4MR6sTFpHCM0Z64L
-	 TkhV2c1waIM7fWwWU0PC6TfTsLI9WW+0D5yZPloMBrT/B777KfJCNUheAsgsKsUDV8
-	 +UL12i2aE3o4A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 10/14] rust: alloc: add `Box::into_pin`
-In-Reply-To: <Z1Nb0dQvO0GKlMmb@pollux> (Danilo Krummrich's message of "Fri, 06
-	Dec 2024 21:17:21 +0100")
-References: <20241206-hrtimer-v3-v6-12-rc2-v4-0-6cb8c3673682@kernel.org>
-	<20241206-hrtimer-v3-v6-12-rc2-v4-10-6cb8c3673682@kernel.org>
-	<BAT3INRKXEYrKMKrPQO7CCEMcwAUeqxMVpEXTwr0bSEtnG28BQbBs3q8gwhSkpJPFO2yGCqUflc7cCxOfSFsmA==@protonmail.internalid>
-	<Z1Nb0dQvO0GKlMmb@pollux>
-Date: Fri, 06 Dec 2024 22:25:02 +0100
-Message-ID: <87ser0ec7l.fsf@kernel.org>
+	s=arc-20240116; t=1733520385; c=relaxed/simple;
+	bh=vwbnjMHw+xksP7WhWpRJH247ClEYq7SZVgWhjva7jcM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q/YzzFLcAo55C+/r16+vhkSO+o8Y1TFayF7JdzL9vRPg+Y+mTwiXatixwH2grYVUiVRCC4ZfDFy42VLM5jtVEqnrwbYtL0YEzL5GkvdQ7jzcYirbiydk6CcZ04EotPZq9FiTqx5vAn6F609iMzbMn1fhOe8OHdkCMHZsgSTj/yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: qvJaJ8G5QbuRH5Hks30Mjg==
+X-CSE-MsgGUID: 4kjj9xcgQJGPrvXnjdLzfQ==
+X-IronPort-AV: E=Sophos;i="6.12,214,1728918000"; 
+   d="scan'208";a="227147358"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2024 06:26:14 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.246])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 66C6A4090598;
+	Sat,  7 Dec 2024 06:26:04 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: john.madieu@gmail.com,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 0/5] soc: renesas: Add system controller support for RZ/G3E SoC
+Date: Fri,  6 Dec 2024 22:25:54 +0100
+Message-ID: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Danilo Krummrich" <dakr@kernel.org> writes:
+This patch series adds support for the RZ/G3E system controller and extends
+the existing RZ/V2H(P) system controller to support syscon. The RZ/G3E
+system controller allows detecting various SoC features like core count,
+NPU availability, and CA55 PLL configuration.
 
-> On Fri, Dec 06, 2024 at 08:33:02PM +0100, Andreas Hindborg wrote:
->> Add an associated function to convert a `Box<T>` into a `Pin<Box<T>>`.
->
-> What do you need this function for?
->
-> There is an `impl<T, A> From<Box<T, A>> for Pin<Box<T, A>>` already.
->
+Key features:
+- Syscon support for both RZ/V2H and RZ/G3E system controllers
+- Detection of quad/dual core configuration
+- Detection of Ethos-U55 NPU presence
+- Validation of CA55 PLL frequency setting
+- SoC-specific extended identification through callbacks
 
-I didn't realize, but that could work as well. I was rebasing this
-series from before we did our own `Box`, and rust `Box` has this method,
-which I was using.
+This patch series depends upon [1] and [2].
 
-At any rate, I think it would make sense to have `into_pin` as well as
-the `From` impl, to match the standard library. We could always
-implement one in terms of the other.
+Tested:
+- Example of SoC detection:
+[    0.065608] renesas-rz-sysc 10430000.system-controller: Detected Renesas Quad Core RZ/G3E r9a09g047 Rev 0  with Ethos-U55
+- Example of PLL misconfiguration warning:
+ [    0.065616] renesas-rz-sysc 10430000.system-controller: CA55 PLL is not set to 1.7GHz
 
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=914097
+[2] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=912697
 
-Best regards,
-Andreas Hindborg
+John Madieu (5):
+  dt-bindings: arm: renesas: Add syscon compatibility to RZ/V2H(P) SYS
+    Controller
+  dt-bindings: soc: renesas: Document Renesas RZ/G3E SoC variants
+  soc: renesas: rz-sysc: Add support for RZ/G3E family
+  arm64: dts: renesas: r9a09g047: add sys node
+  arm64: dts: renesas: r9a09g057: Add syscon compatibility to sys node
 
+ .../soc/renesas/renesas,r9a09g057-sys.yaml    |  8 ++-
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  7 ++
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |  2 +-
+ drivers/soc/renesas/Kconfig                   |  6 ++
+ drivers/soc/renesas/Makefile                  |  1 +
+ drivers/soc/renesas/r9a09g047-sysc.c          | 70 +++++++++++++++++++
+ drivers/soc/renesas/rz-sysc.c                 | 44 ++++++++----
+ drivers/soc/renesas/rz-sysc.h                 |  7 ++
+ 8 files changed, 128 insertions(+), 17 deletions(-)
+ create mode 100644 drivers/soc/renesas/r9a09g047-sysc.c
+
+-- 
+2.25.1
 
 
