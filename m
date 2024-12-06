@@ -1,130 +1,140 @@
-Return-Path: <linux-kernel+bounces-434640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB42E9E6940
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:49:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1B49E6946
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:49:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B08F8166FB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:49:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927321E1C11;
+	Fri,  6 Dec 2024 08:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcN78dvS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19616283252
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:49:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407F91DDC33;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51111DF73C;
 	Fri,  6 Dec 2024 08:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AD+EvKMS"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3132192D89
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474938; cv=none; b=H5nciDAZykmcRCOctMOmImYXCMeRdI/g38WY6i0BBk375N/Wkv+Y3EynD7oxaq9OGOApL0/yX30KragaS3bksTOx3nWqYb5hJwmYI6RQ29pdHITIX00turrUG46R37C3m0/Kk4QyRwjlL/cmpseIlKS1CalIz91dIhipu7PdBZo=
+	t=1733474939; cv=none; b=e43JZFkQi/e/1DMoWlaf1tHTJIVFoNCh47oEI42UatLdCU85Q6x9JUnGzSsedDvjf5u+EuH3WaJUT+ujfqRJgKsraSg0Xubc97mBgXqdpcBjCXhHoThQlK7dPcujmUYQN5THQ3tK4+tK1423h6QGSC+vR3xPFaOyOgTuX7fxuK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474938; c=relaxed/simple;
-	bh=utjkZbDeEMTthCs80VCBUvjS3enz36ctYpoj7DLBIEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iE+Rk/kpFn399XHDkaDMYH1LKGmjkZg9Yx6tnHFMDi5/AQ9gON+fMOQFvyvrOM+kBrtHZxCHUoUZH7+WcxWQWiKZcx5D5UNmVtM+Sk0n4o3WZ4TrE6CAIbzN8owaQqDqpArfs25ZxBcPvNJkSmwdzz4GfxbYU6kICkjEW/2OQxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AD+EvKMS; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-300392cc4caso614721fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:48:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733474935; x=1734079735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+KHZbWUUIbfPMrkQ0dg3yxh8EkZEBHyzYKLApYVQfA=;
-        b=AD+EvKMSiOilJIqp62aW6ZPUUB1rC1LCIqSWSIjJ6rcEwtVc3TRLKj/NytlOS7mME7
-         sidpkXc6eHIjY5eDC9ibYP+IZmxwR+RFMd0qAjh29kaWVWEmMlkjzDpY4cQHOx2rFwkQ
-         i9dHIxkXc7UZTep/CtoaCIBENsbvTb5NLDPm57ozrKDlNWj4VhHeQXBZv+0DPMJAK4HO
-         LCwj3IwayqoFmbHXvnsDIKUNIcqwpNbC1qSqqiu6520tsmZmpL50GBeKoUaqv1GqlSXh
-         pqGZH+2eL0/wovW5TTwPV75SaOnOrda4PMwvGvl/yVNVPcTgW4ViHIjscH3YRjqyp59M
-         CDGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733474935; x=1734079735;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1+KHZbWUUIbfPMrkQ0dg3yxh8EkZEBHyzYKLApYVQfA=;
-        b=LPO8FUgtYclzBnSIbTpHXz2WbLACC5t68kh8bjz+p/r4Qp+BW9ReNeoufMGnEFCqe7
-         TWk+1KqADVJjsRYwXgbqby0HtTDx8v/gfOpRbXdjN+Cj4D5tfZYQc0eJ3eUVhup9UTYr
-         vDuWfZ7X4EAaDYFezQQMCU4ph47e+TniY5dvmSJ8vr7EMfNYwjpfHrdhRn9NsT2YBAtS
-         b9oapxVxQj60YkERPzVIw6YcqmgKh3u0ktJreSGz+NmUDjV3cOfHXRo7wz4fP60SWtky
-         q5ha5Ve99KA9YH9fuBjnFuYAJtmy/N+pxfavjL0qGRDamxNKsiT1XYRhoCMY9Atnj/wZ
-         YeMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4cm98S2bzvk+ES0HZo0x23i3viYuK6qIfbUm9st5hRIvZJgBUs8QqBl7tkFVRF73IMHX/IVAcg7MjlCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAhnSNPPtHvWsClt0uQsChqZmZ8DUHaSrUn5aJU6fbBhQ/tP1+
-	r7FTjvIfIt0LKxqbPlPSLvoc+LoSKTWlc8y3uAniJY4HdOcUwXVL7kpJU3UzJV0=
-X-Gm-Gg: ASbGncvr2OzK8d+VoRL4UK5J6N+bdOA05MKrNWBFZ+ZVJu/UBcwdXgm/79E3gQeG5iJ
-	PZroOTaKMv41B9aA7y+Hypa6tVRXL4cndQr/J+VerPqBwveKeVD/NDXuqkG1DUYQmyrC63zO0P+
-	C97pL9NLHeEni94b0gzxWSXwN+EixQN05VnxSR5rwWU+WyI0COFvM0zVQVlm7tjTfLD1qPuiaWj
-	njoChLXwNcHTB759aWGhUa+lOaqhkpOiKeK8OXr2Y5O7kAsoEYLk6KOlsgN25WEYLPlQ/JLeuBm
-	CcavdajtICtboGRLahtaEiO8
-X-Google-Smtp-Source: AGHT+IFhY/F+2PQCWkWIZiH6/atvzrmubiERnGlL5oxg15r9QqhSnIsJkiSQjR3EzbfRECrt0dNZkw==
-X-Received: by 2002:a05:651c:505:b0:300:2ddb:aaa5 with SMTP id 38308e7fff4ca-3002fc92a19mr6541821fa.30.1733474934985;
-        Fri, 06 Dec 2024 00:48:54 -0800 (PST)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30030799f35sm1374041fa.93.2024.12.06.00.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 00:48:53 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v6.13-rc2
-Date: Fri,  6 Dec 2024 09:48:52 +0100
-Message-ID: <20241206084852.119710-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733474939; c=relaxed/simple;
+	bh=aoEdMQVRDm62MFwU7+GmBXr5pYnwEby46sw7PqYogLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fhwt+YAk6peAkal6pFrumRrsIyRJ4sHUy7nWYKxiZYs07zrKYOroF5g3EgAsIj8RmrObDVhZpLCOZXfhrrgA+vE5cZ0o6moubNzAItmA2G0d1uMR+BMCSlRz9KNtU3VS2fVMekZyr4NXsrlE2zMdQrBxFVy6EHe4F1H+er/wC6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcN78dvS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F3B2C4CED1;
+	Fri,  6 Dec 2024 08:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733474939;
+	bh=aoEdMQVRDm62MFwU7+GmBXr5pYnwEby46sw7PqYogLk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EcN78dvShJ/8mD3gXzP2sahPpgGZGuuRJIZHjcBDPHQu3c6BGAjVwJqFdNuOdEL6D
+	 iUfcc4cLeRLLH+mNxi6kOv2NQWYN/SMvprkQ/vN+gHXQL/LQYJwWTG5TivN6brisGj
+	 1oRsasYcTsJnI0ydTKjcPeLuUWyNMzeh5gXNFcl0qF3oIU4DwpAFtizoZ8MtJk4M+6
+	 7bu04siKCwmE8jdlrEE8obHiYZqc/i7IhQkj9ylcW0HtOQmqkSAkhiVqmGrCK7VSOi
+	 yifQrAhk18qnU7OM/mZtkRiTB+UtBuHWizixdkrH0giW8NljXp1r0zAfqXKkAcohkT
+	 Ga2i0etFXewcw==
+Message-ID: <510e826d-a434-437d-8d2e-3f2618c28b7f@kernel.org>
+Date: Fri, 6 Dec 2024 09:48:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] arm64: dts: exynosautov920: add watchdog DT node
+To: Taewan Kim <trunixs.kim@samsung.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
+References: <20241206025139.2148833-1-trunixs.kim@samsung.com>
+ <CGME20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833@epcas2p4.samsung.com>
+ <20241206025139.2148833-2-trunixs.kim@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241206025139.2148833-2-trunixs.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 06/12/2024 03:51, Taewan Kim wrote:
+> From: Byoungtae Cho <bt.cho@samsung.com>
+> 
+> Adds two watchdog devices for ExynosAutoV920 SoC.
+> 
+> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+> ---
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index c759134c909e..7b9591255e91 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -183,6 +183,26 @@ cmu_misc: clock-controller@10020000 {
+>  				      "noc";
+>  		};
+>  
+> +		watchdog_cl0: watchdog@10060000 {
 
-Here's a PR with a couple of MMC fixes intended for v6.13-rc2. Details about the
-highlights are as usual found in the signed tag.
+You need to do careful rebase, not just accept whatever tools shown you.
 
-Please pull this in!
+This is now placed in incorrect order - not keeping sorting by unit address.
 
-Kind regards
-Ulf Hansson
-
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
-
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.13-rc1
-
-for you to fetch changes up to 87a0d90fcd31c0f36da0332428c9e1a1e0f97432:
-
-  mmc: core: Further prevent card detect during shutdown (2024-12-02 15:37:16 +0100)
-
-----------------------------------------------------------------
-MMC core:
- - Further prevent card detect during shutdown
-
-MMC host:
- - sdhci-pci: Add DMI quirk for missing CD GPIO on Vexia Edu Atla 10 tablet
-
-----------------------------------------------------------------
-Hans de Goede (1):
-      mmc: sdhci-pci: Add DMI quirk for missing CD GPIO on Vexia Edu Atla 10 tablet
-
-Ulf Hansson (1):
-      mmc: core: Further prevent card detect during shutdown
-
- drivers/mmc/core/bus.c            |  2 ++
- drivers/mmc/core/core.c           |  3 ++
- drivers/mmc/host/sdhci-pci-core.c | 72 +++++++++++++++++++++++++++++++++++++++
- drivers/mmc/host/sdhci-pci.h      |  1 +
- 4 files changed, 78 insertions(+)
+Best regards,
+Krzysztof
 
