@@ -1,121 +1,141 @@
-Return-Path: <linux-kernel+bounces-435490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068179E7883
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:02:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6559E7887
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4491887F5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB34C1887FD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF251D222B;
-	Fri,  6 Dec 2024 19:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31EA1D222B;
+	Fri,  6 Dec 2024 19:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u9cZuE6G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x/f1Oe+P"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UYvuoncw"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE36C13D516;
-	Fri,  6 Dec 2024 19:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F63D153836
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733511758; cv=none; b=CTazmM49rLfLZMlQWEx48Dxje5Gm5fswq85JtYNnb3BXAWVUDnxR1eL3Cnc61sti2OFDEmFYuYhvBV+r6bzSwFwRUp+lY69fEzV+2fsup1oHQcMOb1Jsr6uAH7d8yu13EyZUbbeCI0bAzwav8dGjrfIq9ZuGo6nNquxU6W7mLJc=
+	t=1733511789; cv=none; b=uDRDNfTwuY8LTj9x01ICphoLHfH5YrNDRWBdpGVFqKUVWsB0S22i6FsIdfLEGT0r8fDRmweZLDO+Ec1pmh7hqdAlyJyd5wNu8T9KGeTp/7fdvY4Kvo75TbCQxCks63DN+mZdVl5hdAb6vN+msqcbQmB+wOca33AkHbM6IPpBtn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733511758; c=relaxed/simple;
-	bh=mOsEHHL7vLHUpRJBVrndf7EXabAD5NG6NwnSvg8Y0Ys=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HA5qN/tonf4FTpfrVSfP0sPZ3OCyWmfp0Wh3jBLEOqfJbjfgczKDbtTmJWhLs5wHUO913WMV9CuU1LXgUrucZ0bbW5dca44gsfDufAzVqzFi15Wl3R4JfsUznXCPsVuiokeNFWQ2pzTAqGzQdKG/Py/Wn13Wv2781InRtuarH1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u9cZuE6G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x/f1Oe+P; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 06 Dec 2024 19:02:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733511754;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jRhLd7M5uFXlGp0Tkw2VSN+PGpMwRwIrIA+DfB6yw9Y=;
-	b=u9cZuE6GUkW3PnQIMLE6GIQJeYGVhMIvFdv/wmqgDjyNsyAS30OSX8EmoGkTqKuXRQka2Z
-	crjClgp9jwdWAjirQ/O6taq4UY1mDOUFxYbjtAFReLVlIhbpPOZMzUtYwkuZw916JTMBs6
-	FEn0rUfdLPlsPnMaF34e1uvVPTstPmnjT50A3nBhY/bbcD4qxvm/h+4xkhjwOFJ8x4ZlV4
-	VfeYDm8/4jEsq1u9nU0MCdQOZJ93xuMzYgZ5qZnnoypqZ0Av69lqNBDkfIhKBITgBfozm4
-	btc2V67g1Iw3s9LalaawFwLwlbhr9Brns/JFkDMmvRz1ZK9yqknCeqYZGabQdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733511754;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jRhLd7M5uFXlGp0Tkw2VSN+PGpMwRwIrIA+DfB6yw9Y=;
-	b=x/f1Oe+PBlYwamB5nCZTRAcgVXHXnvM3zbvdMiCdWQ9UjHx6r1wXIjy1gvBFMBa9pooeNN
-	UxzxRSrwLEgS3iAA==
-From: "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/CPU/AMD: WARN when setting EFER.AUTOIBRS if and
- only if the WRMSR fails
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Sean Christopherson <seanjc@google.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <Z1MkNofJjt7Oq0G6@google.com>
-References: <Z1MkNofJjt7Oq0G6@google.com>
+	s=arc-20240116; t=1733511789; c=relaxed/simple;
+	bh=mpzJOBPMyEgZbeHSaWVVY8PUqVjZS+sd0oYWuGX6RdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cwb//FZGNwGEvMMUj0bWieG//4N+DQ02HRkgGGFo9WlCG1df1vVEi90Btu9PwcZHJRjX4KupSamTVUSNcRurgIs3aUVerfd8sLWPkuqQJAaa6ydEyMkCuvF19Z5aE/EvyBKTKMi0aORrRwz4Z26k1BLpkLSnwlISp5fLAPXOSXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UYvuoncw; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d10f713ef0so6315132a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:03:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1733511785; x=1734116585; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CnspTgT+QlMaq72RnxBUxeYja+eFoihpXPIoDsPSZVk=;
+        b=UYvuoncw2AY9fp5PlKtkmgXeThFO9CAuOxEuUEQD8Vyj5zmr8+yxj/AdvUCEou8d7i
+         JzE5PmRK3fyc3YZl25lA5mlLASaW7j4nj8MUL7gTQjfI0OswfVxGmxMTA/H/LzrizdbZ
+         e6CdUHBJi8cN1qVQ3NeOFbu3ZgfNowpn43aZY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733511785; x=1734116585;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CnspTgT+QlMaq72RnxBUxeYja+eFoihpXPIoDsPSZVk=;
+        b=OLT5M3Q/arZbszLuuCxr6C77UtOvYAo2ayG6LGO+imrKI6hYGnpreOVIPq7E7zkbXF
+         DDvqKzdZwv9lLWHbNOe0+MiadStEr1qd8XkgynuxF+/Hwjz21lOOnG1RBBm8+g0Mzaxd
+         KvJ3bcIOj0t+7ycTtX7bm4OD8nheLaYZhuGo1XET2oGGrA5OELOzYn2+8XAetp7rlcus
+         HKNCw/uXzrm8Iea7qn9iDcHcORigRDA1K95SuYCBWiEtTEr07Ra7l3E/qdPawOyPw4vj
+         ib70CGsLw6H0ABodIJ5Anph3cHHgvREKyyVJMztf/yQeEvCB0SqQdcW7BwUMoSbvKYim
+         4sMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLZVrZxm9UCFxYgx+/zYdl3ph/FCIko+2TB6XQ6H1DaDGvjz4z1dh3CadMpxvonAxTgf8DEk5/jdN6yYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRGZ5GfnGrGebfgGyVvz8N04oiYC2RKPFd2vpWFCrHoEezZi8l
+	INEzEKEOgAAsaepso7auOkG/KQVdTqQXk/YB/1/PEFkCzqizHyFcToVL6JCudNLkh7fbgxzexfc
+	zgc9ong==
+X-Gm-Gg: ASbGncvHNdri094XggZD1c4RBM1U35M7fgRdPAZHmAMygrlTJGocfYqyVGkzjjLI0iu
+	8clfRF1ftetnNCGPMV+u9SlAsKiJOs81dvOscVLEtSYWppEBmVt+tXo0GEwyZUch/T7SEmgS/zU
+	VLkxednUDPi1N+xfCl6joThrYOGXtQAEwTN2PxXSNaNCTm8VwcrUvsrQdWvZfcPz2UvqXX7vKBW
+	ulMjfN43wQUuq11TB9mG1oBQna1lT0fUcQuG37EKmsQ9fZNfNGvXJ0eIIc8JKM//Z2FLbUBpgXP
+	UliykYclvvFnUM9NfLLqTKBWH+EJ
+X-Google-Smtp-Source: AGHT+IEdJ+Kk0mMrXb6GzijnWwfHFKmgOUNp5PDaKSnwWm/+Q2QFVWLRju8SxsBXaeAn4c3iRzSv3g==
+X-Received: by 2002:a17:907:31c3:b0:aa5:b8dd:fec4 with SMTP id a640c23a62f3a-aa6202e01efmr852287966b.4.1733511785516;
+        Fri, 06 Dec 2024 11:03:05 -0800 (PST)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260a3beasm278586166b.162.2024.12.06.11.03.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 11:03:04 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa560a65fd6so423811966b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:03:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVsFsNVjyqsLU7ckryrIgPQUG9aYugVySAbY0FUhMG6pMlRpKKESEKhXtsTaSl/onr21OjNBDVgIp+wjpE=@vger.kernel.org
+X-Received: by 2002:a17:906:9c18:b0:a9e:b5d0:4714 with SMTP id
+ a640c23a62f3a-aa6375f5cd6mr310802966b.21.1733511783880; Fri, 06 Dec 2024
+ 11:03:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173351175403.412.3888951416121519088.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com> <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com> <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
+ <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com> <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 6 Dec 2024 11:02:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjk_thfjRnAYRoGX7LjJ8AyiPTmBqjJEPu6JiKDLG2isg@mail.gmail.com>
+Message-ID: <CAHk-=wjk_thfjRnAYRoGX7LjJ8AyiPTmBqjJEPu6JiKDLG2isg@mail.gmail.com>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of __is_constexpr()
+To: Vincent Mailhol <vincent.mailhol@gmail.com>
+Cc: David Laight <David.Laight@aculab.com>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, uecker@tugraz.at
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Fri, 6 Dec 2024 at 10:52, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> This may be a case of "we just need to disable that incorrect compiler
+> warning". Or does anybody see a workaround?
 
-Commit-ID:     492077668fb453b8b16c842fcf3fafc2ebc190e9
-Gitweb:        https://git.kernel.org/tip/492077668fb453b8b16c842fcf3fafc2ebc190e9
-Author:        Sean Christopherson <seanjc@google.com>
-AuthorDate:    Fri, 06 Dec 2024 08:20:06 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Dec 2024 19:57:05 +01:00
+Hmm. The "== 0" thing does work, but as mentioned, that causes (more
+valid, imho) warnings with pointers.
 
-x86/CPU/AMD: WARN when setting EFER.AUTOIBRS if and only if the WRMSR fails
+And it's not necessarily require that a pointer expression actually be
+marked as a constant, as for the fact that these macros often get used
+in various arbitrary contexts where things *might* be pointers, even
+if "not constant" is a perfectly fine answer.
 
-When ensuring EFER.AUTOIBRS is set, WARN only on a negative return code
-from msr_set_bit(), as '1' is used to indicate the WRMSR was successful
-('0' indicates the MSR bit was already set).
+We do actually consciously use __builtin_constant_p() on pointers.
+It's very convenient for format strings in particular, where
+__builtin_constant_p() is a good test for a constant string, which
+sometimes gets treated differently.
 
-Fixes: 8cc68c9c9e92 ("x86/CPU/AMD: Make sure EFER[AIBRSE] is set")
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/Z1MkNofJjt7Oq0G6@google.com
-Closes: https://lore.kernel.org/all/20241205220604.GA2054199@thelio-3990X
----
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+And in fact, dealing with NULL pointers statically might be worth it
+too, so I do think it's worth keeping in mind.
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index d8408aa..79d2e17 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -1065,7 +1065,7 @@ static void init_amd(struct cpuinfo_x86 *c)
- 	 */
- 	if (spectre_v2_in_eibrs_mode(spectre_v2_enabled) &&
- 	    cpu_has(c, X86_FEATURE_AUTOIBRS))
--		WARN_ON_ONCE(msr_set_bit(MSR_EFER, _EFER_AUTOIBRS));
-+		WARN_ON_ONCE(msr_set_bit(MSR_EFER, _EFER_AUTOIBRS) < 0);
- 
- 	/* AMD CPUs don't need fencing after x2APIC/TSC_DEADLINE MSR writes. */
- 	clear_cpu_cap(c, X86_FEATURE_APIC_MSRS_FENCE);
+               Linus
 
