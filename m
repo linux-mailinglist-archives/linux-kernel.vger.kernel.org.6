@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-435788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E94C9E7C57
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:19:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C724D9E7C59
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D1418859AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:19:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25FB16A35F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21314212FA7;
-	Fri,  6 Dec 2024 23:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0CD212F97;
+	Fri,  6 Dec 2024 23:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UND0e9v7"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbf4rOcP"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342A922C6CD;
-	Fri,  6 Dec 2024 23:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D9C1F4706;
+	Fri,  6 Dec 2024 23:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733527146; cv=none; b=bN6aCX0MIHA3+HH89OYjhIjF8yhlBBdecsrXTTdHjY2segbae35A79n8f6y6iHhEk6r53tmOINXVmL61hOPKkie6lFgtIcIXpuRG8ZEx29jOt8UZliAw0lYqIqeHEYSjpYCCcpS0R6uF9J5x8qLvqDeRQVGxFGg2tdayvQ614iM=
+	t=1733527241; cv=none; b=raEB975+x2Au9CKoNpnxhbC3hcEE3MPfKqLFNyBrjjw/ETlTmW0Eo0tWZpzfKR8tI1guGyZhdgboFs5zgquQe49bC6+FlVNQn0MvEkv03+/Lk/FAxZWCBMX8nGVef8tvG/uRtXYtljwqvN0HIdkbHOOOJ4K3XX1Sg8zWne92iKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733527146; c=relaxed/simple;
-	bh=JxTIiy96rTE1YU9SbWroA1I8AUFKzVQGZ7a3IGFt6oE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=icNyJwfkva7i5XVv6SDG5He5strtiL8LNYjBkrU8VssqBMhqx88EArUKFU2V9DeDZ13lIjx2qPw+dH5uz6XfDlmE5AVWc9+4zMkpltdYAa+FyiYlhV85MM9NG4MMS4ZjnTAXBpzEufthXWWpU75j4D/ekvFHu5n7GIsqRzIS6Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UND0e9v7; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id Jhb3tmgoI3wKNJhb3tAfoD; Sat, 07 Dec 2024 00:18:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733527135;
-	bh=iJWW7bjs8XwyN4BIQGqjB9cOcNKN/bIWxDUv1xg8da4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=UND0e9v7tzPGGp6E7+obUozTJf8mcAnHD1ZLR04dZmh9hwHwg7MJeljXmKQlTurrR
-	 6vPurxc5khR3hKArvHM/P43taifzDRf55tZZXpPxwqIidy0cghUl4u1Ah9TJbSIjvx
-	 f69wvY9VZuKlgP9HaLs2gZMRZM4oQ96c0Ka3biZk3Hg0Xarbnx485nO+KhyQKiq/nP
-	 cLqZt/lDNE4/izURS6lCWscrGB8PoU5KTr+sSxkMQj2fhV5k3b719bEo/ssSpR0RQC
-	 n0jb/rbn7eBWMdwtlAYIWm82InCM3+oQ87hPOQ5A5IUf1/tYNLlwvaB4woT5Oz8tzE
-	 sOgzvC3DtjUxQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 07 Dec 2024 00:18:55 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <81e0e916-b14b-4ecf-b70a-2ce334c174cf@wanadoo.fr>
-Date: Sat, 7 Dec 2024 00:18:52 +0100
+	s=arc-20240116; t=1733527241; c=relaxed/simple;
+	bh=KeYg3MycPle5RHn6ARMJNrmNcPW0/jHSxgJyyCQOPLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZnzIapMMcvdesozaRE9x4CtMiGRVsPePcsiVJ0wdL11lrMnTwCWjkRfTT8YPmHlBC+Yb7R5cNW1MMlQeM16eB5tyuIrVV9n5L5EC9Tfur4mZ2BCqKHOnmQSLMBd875dWRemStvKxn/BZKqDZ/3DCTBrb3lzUlMoEYIMbm+P0ES0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fbf4rOcP; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d340313a4fso2225008a12.2;
+        Fri, 06 Dec 2024 15:20:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733527238; x=1734132038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P4h1nqGewaKzsi8QNniPMbF/tinUcgzwDW10s57UOc4=;
+        b=fbf4rOcPaw8IGgc2FuZ9PnTM6sUmvxorL6yHnw4HW9YPSvm9iL+btKIacdpxouDLcE
+         /6ix94RNkuQK2YP8GytuSKWjK70s53jmRtj5SMWE7R6xsa9ucj/Wn6nxo93UtZ/rmK1r
+         N176MM7pW5v/BGLYUHzJH5BAdyCH7BQXvmwOnXPvyUKgaRCt6atdcsAinP+gMcSKxcZ2
+         FyjLPlzeTDw0/NMmpv8wRqkf8a8Ba9Qz/5XeAlXNc+PnsUSGAxgRNYwYLUU+5/c8kSu7
+         ia4vw17OY6WO/mTiP0vOnYL8LO//2kS/NiFxjxEi+woHGlRj/2RPdVh9MdXi5FXPi+sR
+         uZOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733527238; x=1734132038;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P4h1nqGewaKzsi8QNniPMbF/tinUcgzwDW10s57UOc4=;
+        b=eR8S8CgvS/Pciev0E9lxMq0GIVPpJEab2ARpigeJ09IQus5/5R7pVSzcCePsZW5mCF
+         XwnPE10inPz+2TlklaSmf/rTRQJ7ttwl3jjtaCxd6VO3w0kHQ5Kg9SSsgzhZ0edj+0aT
+         D5/Inu/wZ3Dqe/6PaBe0vlPgx293aP0jVda+gcOwLXRCHSB5HPsLorMhGsjgwdl4qc/P
+         /T2KCmvmB+Pr3rKBSe/kusWmtbwVlGFb8slxeFdOIhotVnQQBYJ43xfa1ACtnmBnGPUb
+         QF85ogPQ5TJfaBmSl+vdQYtOjqkwp/5PfOPDvjxJPbIpapsxQi8KoNmuIrkPSVP1XZY/
+         5vVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFWJMop8Y20Dho5uG17fbmBmYs/NgJGENcr9KnvI6HOJVhb9ru9Jz30yJh/xwR4OVIVqC82JY/5UM=@vger.kernel.org, AJvYcCXasgU2WOCXVBAGL2gQ9C8Tb35bbY9Q9UqS0y0Vby3l010nMA0af5/jPaCl+byKj2r01YAourPPMGso7MBG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFZhZC4JWosIK4+d3Fnau4GAy+SKMl2BtIQlOXTpawV8eW6Ztm
+	T80vceS5/DlD5FdYa8WgS1PNjhyRlOhaaPpNYEjPag5v4M8Q8+8=
+X-Gm-Gg: ASbGncvd2f++167JqYZ2x8+fpDaXglyggqpBxU+PBWqLn4pfITp2mPc211hX01POAdZ
+	n6jcL54Lh2DNgmu9joDf+uHQ30Y9nFPutM5rWAcuzAFqRpi75GwdLQyPCjdj3IkGWRpECDf10GQ
+	+Bi5nU5S6X0pgymRl5RkAKkbnM2x5z8XIP301CjtxSJHRC3/OAjlhRvDRhN4fo1bMk7acStYafY
+	Sh640Oh+30fGHXOxsr3tFjY0/YeHGbAKVAjY7GOTbbXKV2KFqrRThU5kss/nCZPRO5dtA==
+X-Google-Smtp-Source: AGHT+IE6Nj5sbj3vQqbPGZzxXqk+OdVeuuu8XMzGsoeDnc4KTpBBzFjx2ggheX/nQimxUwbTOd7Gaw==
+X-Received: by 2002:a17:907:3a18:b0:a9e:4b88:e03b with SMTP id a640c23a62f3a-aa639c1960cmr293604166b.0.1733527238047;
+        Fri, 06 Dec 2024 15:20:38 -0800 (PST)
+Received: from vova-pc.cloudlinux.com ([46.161.87.65])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa62602cff7sm300794066b.130.2024.12.06.15.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 15:20:37 -0800 (PST)
+From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+To: 
+Cc: Vladimir Riabchun <ferr.lambarginio@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: pnx: Fix timeout in wait functions
+Date: Sat,  7 Dec 2024 00:19:34 +0100
+Message-ID: <20241206231937.86408-1-ferr.lambarginio@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] thermal/drivers/qoriq: Use dev_err_probe() simplify
- the code
-To: Frank Li <Frank.Li@nxp.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- "open list:THERMAL" <linux-pm@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241206225624.3744880-1-Frank.Li@nxp.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241206225624.3744880-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 06/12/2024 à 23:56, Frank Li a écrit :
-> Use dev_err_probe() and devm_clk_get_optional_enabled() to simplify the
-> code.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->   drivers/thermal/qoriq_thermal.c | 33 ++++++++++-----------------------
->   1 file changed, 10 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-> index 52e26be8c53df..baf1b75b97cbe 100644
-> --- a/drivers/thermal/qoriq_thermal.c
-> +++ b/drivers/thermal/qoriq_thermal.c
-> @@ -296,38 +296,27 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
->   
->   	base = devm_platform_ioremap_resource(pdev, 0);
->   	ret = PTR_ERR_OR_ZERO(base);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to get memory region\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to get memory region\n");
->   
->   	data->regmap = devm_regmap_init_mmio(dev, base, &regmap_config);
->   	ret = PTR_ERR_OR_ZERO(data->regmap);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to init regmap (%d)\n", ret);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to init regmap\n");
->   
-> -	data->clk = devm_clk_get_optional(dev, NULL);
-> +	data->clk = devm_clk_get_optional_enabled(dev, NULL);
->   	if (IS_ERR(data->clk))
->   		return PTR_ERR(data->clk);
->   
-> -	ret = clk_prepare_enable(data->clk);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to enable clock\n");
-> -		return ret;
-> -	}
-> -
->   	ret = devm_add_action_or_reset(dev, qoriq_tmu_action, data);
+Since commit f63b94be6942 ("i2c: pnx: Fix potential deadlock warning
+from del_timer_sync() call in isr") jiffies are stored in
+i2c_pnx_algo_data.timeout, but wait_timeout and wait_reset are still
+using it as milliseconds. Convert jiffies back to milliseconds to wait
+for the expected amount of time.
 
-clk_disable_unprepare() in qoriq_tmu_action() should be removed as-well.
+Fixes: f63b94be6942 ("i2c: pnx: Fix potential deadlock warning from del_timer_sync() call in isr")
+Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+---
+ drivers/i2c/busses/i2c-pnx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->   	if (ret)
->   		return ret;
->   
->   	/* version register offset at: 0xbf8 on both v1 and v2 */
->   	ret = regmap_read(data->regmap, REGS_IPBRR(0), &ver);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to read IP block version\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,  "Failed to read IP block version\n");
-> +
->   	data->ver = (ver >> 8) & 0xff;
->   
->   	qoriq_tmu_init_device(data);	/* TMU initialization */
-> @@ -337,10 +326,8 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
->   		return ret;
->   
->   	ret = qoriq_tmu_register_tmu_zone(dev, data);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to register sensors\n");
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to register sensors\n");
->   
->   	platform_set_drvdata(pdev, data);
->   
+diff --git a/drivers/i2c/busses/i2c-pnx.c b/drivers/i2c/busses/i2c-pnx.c
+index d4d139b97513..9a1af5bbd604 100644
+--- a/drivers/i2c/busses/i2c-pnx.c
++++ b/drivers/i2c/busses/i2c-pnx.c
+@@ -95,7 +95,7 @@ enum {
+ 
+ static inline int wait_timeout(struct i2c_pnx_algo_data *data)
+ {
+-	long timeout = data->timeout;
++	long timeout = jiffies_to_msecs(data->timeout);
+ 	while (timeout > 0 &&
+ 			(ioread32(I2C_REG_STS(data)) & mstatus_active)) {
+ 		mdelay(1);
+@@ -106,7 +106,7 @@ static inline int wait_timeout(struct i2c_pnx_algo_data *data)
+ 
+ static inline int wait_reset(struct i2c_pnx_algo_data *data)
+ {
+-	long timeout = data->timeout;
++	long timeout = jiffies_to_msecs(data->timeout);
+ 	while (timeout > 0 &&
+ 			(ioread32(I2C_REG_CTL(data)) & mcntrl_reset)) {
+ 		mdelay(1);
+-- 
+2.43.0
 
 
