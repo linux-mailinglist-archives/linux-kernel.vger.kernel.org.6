@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-435116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E489E6FDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:12:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 046CA9E6FE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:13:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59A71885218
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955FF1885368
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B931207E1A;
-	Fri,  6 Dec 2024 14:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA9520ADD6;
+	Fri,  6 Dec 2024 14:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBuKNaNZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="ku0pRdJ3"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B35F201001;
-	Fri,  6 Dec 2024 14:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E8B206F25
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733494320; cv=none; b=PvIa+ZgY9MpvrJHsSHhYoPJoF9Z+csBTPoHGGtx3tsVkN1qN1MBmBB5NGjk5mju2PKI1oiNSnRXiRDsTSh95IiW6mRoYGOG5m9rsNRJuWlJeWTn2TV0wE3jUCAAqQ9HO1Vg/5FrdZOmyesvFJ5Ktv8/s0Q6NfxOURfVctjUXyMA=
+	t=1733494390; cv=none; b=Bset6noAqJFh9LEIpFVIT0fsyTs9AsT69VILTr/Wzl29T1UNtDmyXdJQbKjl4H4Jdwq1pGKTXqMGgZw+NtrKm6jcGautzaBdC+1RmJSC6dLzdx2wXd3pifWffD8HA6DUA+jFrRa3FudkRCE5knDEfMmamuFitUb7rEnTMGd6VJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733494320; c=relaxed/simple;
-	bh=8FH5lBgWNIAEjsKX33NT40twbgY4YS5QRxCuJsZyGS8=;
+	s=arc-20240116; t=1733494390; c=relaxed/simple;
+	bh=Ky0xTycKUZkk3hyyBC6n4I32KZnP62ZRkFAtoMGnQjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2zLeicA/UUm4J3biXNOiQ8/Btn/B7M+wIn2sw4LxQmn/OrX8FUeh7XtOY6CRLiEqQ1Xo4aJJUOdfdE2VVVjqWee54uQQ/njo718PpiIuG4uficxAkqWFL32A545xqmKh+SwtRZWzLseyWxHzyL0EtiyDpfs5xakRew2fPRDYnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBuKNaNZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B15C4CED1;
-	Fri,  6 Dec 2024 14:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733494320;
-	bh=8FH5lBgWNIAEjsKX33NT40twbgY4YS5QRxCuJsZyGS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SBuKNaNZWbu26ObvbPG20Bv759vrpLQnlotkOFx+diGx23XzE1XB2okn3vzE/iq9x
-	 8ZbsrDjAeiCs4pj4wMrB9ir/qWrSVOPrxDMYhDGoVOOD0W44IFlWaKAWduj1GrD+0L
-	 dSgOX/UY09zzMCI/xwoXBk+D3A+UZzLtomTwDhjfaK/rd0gjQa+ZS2+z1H00S1mE5U
-	 3HxhJtM6GL7MnpkwbiqEM7ctI62Oxq+93wd8Q+If5EkjWpr83Km+TDB+DQhteklwnc
-	 UDExjGvZYIKU+mtsTtt2/tG7abNwP/dqU2Z7gEojfnnxbolV13Z4We2lmldrp6jsso
-	 5KGUQ7bUcvhow==
-Date: Fri, 6 Dec 2024 15:11:57 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
- infrastructure
-Message-ID: <20241206-agile-tidy-avocet-c69bff@houat>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-8-b5316e82f61a@linaro.org>
- <20241202-industrious-unnatural-beagle-7da5d4@houat>
- <e7jngrc4nljdsksekinbkir2h76ztsth2xj4yqcyapfv43uryh@356yrxv3j4x6>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBHK8lcA+pJNw3q4aD/hfZZCI/YMUoF8ZGmSIG+4NiLdUHe4zgRNQCdriykl89VxLT9CWO+7J/Y6Xvyx0oHXC/isVp2Ly6MTiLxIF7sBU8xa36WniFFxiDY7Q6QHzU1T94bkGBuVGP/ZOAbu+oD/yXHSPkF/2Rs5l6JEsWDt/ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=ku0pRdJ3; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b6bf4e3de1so41441585a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 06:13:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1733494387; x=1734099187; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VSlfzGrYKdsTUt5xgNec45rqOgruZrd85AT5IIIufHE=;
+        b=ku0pRdJ3Fw5Hm5DFwlGv7qcQWzpcMw11bFLPOI5smweegKpwEpVmzVigGuKCViKeLv
+         vuapzFjxzFOcuXMd09YXG7Vvs+xJySaMihCVqLuPKkaOf24ZcX2z3G6ljZP5PMlrJxmf
+         9RJ6rPk8u0T04wuPcYr4mEPUZHLZXm6acaU72k9rvt+c4jN3H4xumlQ6DPG6iWvaTHI9
+         TTj5aDiKbUkiHOMF8uULSkLbo6MMZdRnYTg4xo/3Ubn9p5Q2/NGl8oIshHtl+G3KOD0n
+         LwWz/TV2ooJM7njkQMAgN54OWOvs6+JT7cwFfgsFvMhXisWVA6JCOKmSpacTa0qNP8m4
+         LiLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733494387; x=1734099187;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VSlfzGrYKdsTUt5xgNec45rqOgruZrd85AT5IIIufHE=;
+        b=leTR/gsjdZGteNPEKTi14AGpTxrbEFLR9BBvOpQegwxxy1qaFDb7vNXXJUlbQMLm0r
+         8Rw2NlQxEm++Fuss6lRVwInZ7Ptr7psQCQsDi+SvfO4Rb1Rl+LlAm3+kS3t5reWJccC4
+         PpY//FVjeH1c6Qij0d3lcCty/mixLiOKK9dzFP6Vg3Xm9dVXlq4l1Mkcvo/F9XwvnQoe
+         RtHTYrBd7AKq9SJMAEKzx/cje0Q93bC8UQnQ0/YE9OH+SeDMBeZOqfsE3vur9t6RnoOm
+         atLtBW4vU/qq5MQC7HUd7W8ppnTRL4KlcuPmIUP2qxWnM0QOuztnqsAYEb+DlfJnfel2
+         ZWag==
+X-Forwarded-Encrypted: i=1; AJvYcCUBvSe4HokbdpwAPUJBWmGOIFyM1p4nHg0TFXyoFndmM2pHQjM4BzBUxuF/KlNZtm0hioq/aAOGQnYA6WI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWxj+Y2Apj3Jrn5ll2/DJnBOEO5iJt/BpjsWWIsuk0B753cQ5I
+	qqzfhqsdbVHiT3AuW3f6QkLmCwfEo69mqyGfHpCbJ7wzxJS0vVAvuTb3x9DWSw==
+X-Gm-Gg: ASbGncvekeyBttwY7j3O9gRTGLzmJBLfmrr8FA7sffvp+sn9jaMtIl7NmzyJyQQtfhf
+	w3qWlTDhk3i9pdCVn2Zd60k0971u92leeoIyefg0oXIn6flLgD0ls95oQcAaRiULNCpRtft+Kv/
+	wf2XMWTqivKCmFRYNVSykOWQyALlrFbvamY2tcFUBneI4+LEjQqmTuJVp9SUL9Qe0x2wMGtI43o
+	KemuvJmIPp64RIUeLDNle7Ndlm+hjGcmGbo6sbOXweyib66J7A=
+X-Google-Smtp-Source: AGHT+IE70N2fo5/39zy6vDHU1B5QUupz5J4HOppahroXdi/TPSfnv0dn4woZWOZyAc8PrIqeDQNhGg==
+X-Received: by 2002:a05:620a:4144:b0:7b6:7653:edf5 with SMTP id af79cd13be357-7b6bcaf6ac0mr329245085a.29.1733494386825;
+        Fri, 06 Dec 2024 06:13:06 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::f39d])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6b5a9e348sm175791185a.101.2024.12.06.06.13.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 06:13:06 -0800 (PST)
+Date: Fri, 6 Dec 2024 09:13:03 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: gregkh@linuxfoundation.org, mathias.nyman@linux.intel.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Wayne Chang <waynec@nvidia.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3] USB: core: Disable LPM only for non-suspended ports
+Message-ID: <92e615fb-4d3b-41bb-ab80-b54227c743af@rowland.harvard.edu>
+References: <20241206074817.89189-1-kaihengf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="zlmn4u42a2hgjiwb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e7jngrc4nljdsksekinbkir2h76ztsth2xj4yqcyapfv43uryh@356yrxv3j4x6>
+In-Reply-To: <20241206074817.89189-1-kaihengf@nvidia.com>
 
+On Fri, Dec 06, 2024 at 03:48:17PM +0800, Kai-Heng Feng wrote:
+> There's USB error when tegra board is shutting down:
+> [  180.919315] usb 2-3: Failed to set U1 timeout to 0x0,error code -113
+> [  180.919995] usb 2-3: Failed to set U1 timeout to 0xa,error code -113
+> [  180.920512] usb 2-3: Failed to set U2 timeout to 0x4,error code -113
+> [  186.157172] tegra-xusb 3610000.usb: xHCI host controller not responding, assume dead
+> [  186.157858] tegra-xusb 3610000.usb: HC died; cleaning up
+> [  186.317280] tegra-xusb 3610000.usb: Timeout while waiting for evaluate context command
+> 
+> The issue is caused by disabling LPM on already suspended ports.
+> 
+> For USB2 LPM, the LPM is already disabled during port suspend. For USB3
+> LPM, port won't transit to U1/U2 when it's already suspended in U3,
+> hence disabling LPM is only needed for ports that are not suspended.
+> 
+> Cc: Wayne Chang <waynec@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Fixes: d920a2ed8620 ("usb: Disable USB3 LPM at shutdown")
+> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
+> ---
+> v3:
+>  Use udev->port_is_suspended which reflects upstream port status
+> 
+> v2:
+>  Add "Cc: stable@vger.kernel.org"
 
---zlmn4u42a2hgjiwb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
- infrastructure
-MIME-Version: 1.0
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-On Tue, Dec 03, 2024 at 02:19:41PM +0200, Dmitry Baryshkov wrote:
-> On Mon, Dec 02, 2024 at 02:20:04PM +0100, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > Sorry, I've been drowning under work and couldn't review that series be=
-fore.
->=20
-> No worries, at this point I'm more concerned about my IGT series rather
-> than this one.
->=20
-> >=20
-> > I'll review the driver API for now, and we can focus on the exact
-> > implementation later on.
-> >=20
-> > On Sun, Dec 01, 2024 at 02:44:12AM +0200, Dmitry Baryshkov wrote:
-> > > Drop driver-specific implementation and use the generic HDMI Codec
-> > > framework in order to implement the HDMI audio support.
-> > >=20
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 68 ++++++++++----------------------=
-----------
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.h |  2 --
-> > >  2 files changed, 15 insertions(+), 55 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4=
-_hdmi.c
-> > > index 7295834e75fb1ab0cd241ed274e675567e66870b..d0a9aff7ad43016647493=
-263c00d593296a1e3ad 100644
-> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > @@ -595,6 +595,9 @@ static int vc4_hdmi_connector_init(struct drm_dev=
-ice *dev,
-> > >  	if (vc4_hdmi->variant->supports_hdr)
-> > >  		max_bpc =3D 12;
-> > > =20
-> > > +	connector->hdmi_codec.max_i2s_channels =3D 8;
-> > > +	connector->hdmi_codec.i2s =3D 1;
-> > > +
-> >=20
-> > I guess it's a similar discussion than we had with HDMI2.0+ earlier
-> > today, but I don't really like initializing by structs. Struct fields
-> > are easy to miss, and can be easily uninitialized by mistake.
-> >=20
-> > I think I'd prefer to have them as argument to the init function. And if
-> > they are optional, we can explicitly mark them as unused.
->=20
-> Do you mean drm_connector_hdmi_init()? I think it's overloaded already,
-> but I defintely can think about:
->=20
-> drmm_connector_hdmi_init(..., max_bpc, HDMI_CODEC_I2S_PLAYBACK(8) |
-> HDMI_CODEC_NO_CAPTURE | HDMI_CODEC_DAI_ID(4));
->=20
-> or
->=20
-> ... | HDMI_CODEC_NO_DAI_ID)
->=20
-> The default (0) being equivalent to:
->=20
-> HDMI_CODEC_NO_I2S | HDMI_CODEC_NO_SPDIF | HDMI_CODEC_NO_CAPTURE | HDMI_CO=
-DEC_NO_DAI_ID
->=20
-> WDYT?
-
-I know it's kind of contradictory, but it definitely looks overcrowded.
-
-A bit after we merged the HDMI infrastructure, Thomas commented that it
-might have been better to have a secondary init function instead of an
-alloc/init function.
-
-https://lore.kernel.org/all/5934b4b2-3a99-4b6b-b3e3-e57eb82b9b16@suse.de/
-
-It's still sitting in my inbox and haven't had the time to work on that,
-but maybe that's how we should deal with this?
-
-Switch to using drm_connector_init, then drm_connector_hdmi_init would
-only take care of the video stuff, and we could have an additional
-drm_connector_hdmi_audio_init?
-
-That way, we could have both explicit stuff, and yet not overcrowd the
-arguments list too much?
-
-Maxime
-
---zlmn4u42a2hgjiwb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1MGKAAKCRAnX84Zoj2+
-dsbFAYD9a9CbKAF5U+/Xm3fLE7a14J/XPBbuz9EMu0GYhSCDU8jSH+AV+9KU2ocR
-VKqXE0sBf3bndpAJ89NpeYGjJK6VbFoQ356f4QDu++x8FSywdfvKoLqiFOIjJWpk
-49TswdgyBg==
-=ehcm
------END PGP SIGNATURE-----
-
---zlmn4u42a2hgjiwb--
+>  drivers/usb/core/port.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
+> index e7da2fca11a4..c92fb648a1c4 100644
+> --- a/drivers/usb/core/port.c
+> +++ b/drivers/usb/core/port.c
+> @@ -452,10 +452,11 @@ static int usb_port_runtime_suspend(struct device *dev)
+>  static void usb_port_shutdown(struct device *dev)
+>  {
+>  	struct usb_port *port_dev = to_usb_port(dev);
+> +	struct usb_device *udev = port_dev->child;
+>  
+> -	if (port_dev->child) {
+> -		usb_disable_usb2_hardware_lpm(port_dev->child);
+> -		usb_unlocked_disable_lpm(port_dev->child);
+> +	if (udev && !udev->port_is_suspended) {
+> +		usb_disable_usb2_hardware_lpm(udev);
+> +		usb_unlocked_disable_lpm(udev);
+>  	}
+>  }
+>  
+> -- 
+> 2.47.0
+> 
 
