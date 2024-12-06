@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-435354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8D09E7671
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:53:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8509D9E7674
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:53:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5749286D05
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:53:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2196E1615F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098971F63F5;
-	Fri,  6 Dec 2024 16:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9B41F3D39;
+	Fri,  6 Dec 2024 16:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOy4snWv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHza94HH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FD3206262;
-	Fri,  6 Dec 2024 16:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B481E206271;
+	Fri,  6 Dec 2024 16:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503973; cv=none; b=RKxmMsJDg/EFXhWmTipFJydJhMdIgJ9BPk9oYGg9UYZsY5R24BIOP0I3nbaaCdKUuTc67HBdrz3mMiOjeodBvJycWqIj+4XLp9MAtSlKbhVqFC7KRiH5X6Zm08DybA+oHeaN5KhJSNV+8ceHH0/ozRJnEq0O2YQuumhP84/TRfI=
+	t=1733503991; cv=none; b=AVUQcWmZpnzH02QiQML+Kjfy2pAdXOrqjGjnOUqEPvhCI+QNejUmBQtP5EoWNExPeLyTrR4b00ctx68osUoD8zIJ5vwt7K4LsaXSlr7EDjgZLVyWZbnhFBcr9oghqaU7HXLPpQ1e3UPZPs7qx5N3/7MRxaBpDYJILGzaCl2pvT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503973; c=relaxed/simple;
-	bh=sq7dQBficLSadbyGg1ToMr9fEj08H3sh3k8KpNn23aA=;
+	s=arc-20240116; t=1733503991; c=relaxed/simple;
+	bh=JpS/Zt5Xq9vuGvkn4jptuxcPyo4ktemXE6eY8TMimTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPBI6vD53XT+laYRN/bDq5n/xmXDtXnbY0hYYSm8ovokdnCq4szgQYT2Jj5fWGz4+wXPMBkNb46HFTTrhn+zz61pyDjxHUc/qcVATGCIm5CQpOQfgDX2DyS2FcOKyNLTkQiv7n2kWtqX/IeuiB9mlGl5FM/iaOWZ8GCrZobJUiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOy4snWv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A385C4CED1;
-	Fri,  6 Dec 2024 16:52:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DKpAuAixGg9hc2puNRQ5PA3+MlCydTIU6ncRvg6G3H3W4p3Qj5sbJcpDOPjjVeK7bYGKHWrtymo9yUcnomMMoA0kGMcMqKrMHmFmeo4uFEqN2WlyMieemcEH1IvIdx5FxCieS9DbwgGkTCpkSqr9rZBSAjiinauQyj0lAVoCPno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHza94HH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE2E6C4CED1;
+	Fri,  6 Dec 2024 16:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733503972;
-	bh=sq7dQBficLSadbyGg1ToMr9fEj08H3sh3k8KpNn23aA=;
+	s=k20201202; t=1733503991;
+	bh=JpS/Zt5Xq9vuGvkn4jptuxcPyo4ktemXE6eY8TMimTI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZOy4snWvS4vUEJ5vkEuZVku7kZ18NLUWIIhvcDv8E/k00XTb4+5L42fr3LXAhC+ju
-	 52WeOo0Lg4Mvm0wQDES96OVxOMUZGxc1Y2/rV02BqV4DuavlUjEQyweFb4wR8CeybG
-	 Hm12bA51/qiM4EZ9uTSm8ZNFGetL7XuQ2voxRc7KTydsRw2ebsqhSCwTQnzsyslte+
-	 xwsbZVZ3R6aNkHqaebBzk/2zFJTyYafi/+xMzgqrp2TV1ShporV1m8ZBl7XBE6RGXD
-	 RKQrhF9yEPWgPRxzgqQ9D2Ldt/iFrVji1wAo/NBcPqT3lsEWarY/Vvha3VpGbJ1qGV
-	 w2HY+WrhmQEjw==
-Date: Fri, 6 Dec 2024 16:52:48 +0000
-From: Conor Dooley <conor@kernel.org>
-To: amitsd@google.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Kyle Tso <kyletso@google.com>, RD Babiera <rdbabiera@google.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: connector: Add pd-revision property
-Message-ID: <20241206-perch-elliptic-4e8a8170426e@spud>
-References: <20241205-get_rev_upstream-v1-0-90158ee7d75f@google.com>
- <20241205-get_rev_upstream-v1-1-90158ee7d75f@google.com>
+	b=MHza94HH8zx5zpl+tyZniMpGI8BVsXN6Ue6b1SnP0Q2AeEPTMtSpePIt0PNJ7ln5e
+	 Bi8fql9veu1U3/o5xq0bkxI8FinVXnn5uxim3eo/IA2y/t3LGchsLlmh7Qm2s2qrae
+	 lDtyaJUupUDJ2Oxf7PNi68ZUKN5YK26EiBhd8DAxIYdWA8aBkLlkqpIppabcDR9PpU
+	 eBZ++wepN8+6I3qTEUj3RCuJmHq8Rjr/De8FAfTMIew/3IrS15ou8lfHgZQ0EHeed9
+	 llM9rjlFP/esIVb0Ef1TSlkYCbxvsJalbYZ/0bY5ZgOsEufHV9g6xvBhPzdJmLlhYW
+	 Ni3LPwqthYfyA==
+Date: Fri, 6 Dec 2024 17:53:08 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Mingwei Zheng <zmw12306@gmail.com>
+Cc: fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, hierry.reding@gmail.com, lee@kernel.org, 
+	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: Re: [PATCH V2] pwm: stm32-lp: Add check for clk_enable()
+Message-ID: <o6rh2bcxnnubhx6xem55otgequw5zrqmkretcgofohvcpbygdw@z3qagurhjyp3>
+References: <20241206012605.2877412-1-zmw12306@gmail.com>
+ <cim6rnzdvhik4kdibfmglf6jiky7xccynqwazmxmnr2f5fvu3f@lvoo3drlgaua>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pNSV/oThW7kFwOxz"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lvtle2mtnfezbcjm"
 Content-Disposition: inline
-In-Reply-To: <20241205-get_rev_upstream-v1-1-90158ee7d75f@google.com>
+In-Reply-To: <cim6rnzdvhik4kdibfmglf6jiky7xccynqwazmxmnr2f5fvu3f@lvoo3drlgaua>
 
 
---pNSV/oThW7kFwOxz
-Content-Type: text/plain; charset=us-ascii
+--lvtle2mtnfezbcjm
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH V2] pwm: stm32-lp: Add check for clk_enable()
+MIME-Version: 1.0
 
-On Thu, Dec 05, 2024 at 11:46:08PM -0800, Amit Sunil Dhamne via B4 Relay wr=
-ote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
+On Fri, Dec 06, 2024 at 08:12:57AM +0100, Uwe Kleine-K=F6nig wrote:
+> On Thu, Dec 05, 2024 at 08:26:05PM -0500, Mingwei Zheng wrote:
+> > Add check for the return value of clk_enable() to catch the potential
+> > error.
+> >=20
+> > Fixes: e70a540b4e02 ("pwm: Add STM32 LPTimer PWM driver")
+> > Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+> > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
 >=20
-> Add pd-revision property definition, to specify the maximum Power
-> Delivery Revision and Version supported by the connector.
+> In reply to (implicit) v1 you wrote:
+> > We detected this through static analysis, instead of actually hit.
 >=20
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> ---
->  Documentation/devicetree/bindings/connector/usb-connector.yaml | 6 ++++++
->  Documentation/devicetree/bindings/usb/maxim,max33359.yaml      | 1 +
->  2 files changed, 7 insertions(+)
+> Would be nice to mention the tool that actually found it in the commit
+> log.
 >=20
-> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.ya=
-ml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> index 67700440e23b5b7ca0db2c395c8a455bcf650864..341d2872e8d43450d219b7b72=
-d48790051dc4e2b 100644
-> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> @@ -293,6 +293,12 @@ properties:
->        PD negotiation till BC1.2 detection completes.
->      default: 0
-> =20
-> +  pd-revision:
-> +    description: Specifies the maximum USB PD revision and version suppo=
-rted by
-> +      the connector. This property is specified in the following order;
-> +      <revision_major, revision_minor, version_major, version_minor>.
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +
->  dependencies:
->    sink-vdos-v1: [ sink-vdos ]
->    sink-vdos: [ sink-vdos-v1 ]
-> diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/=
-Documentation/devicetree/bindings/usb/maxim,max33359.yaml
-> index 20b62228371bdedf2fe92767ffe443bec87babc5..350d39fbf2dcd4d99db07cb8f=
-099467e6fc653ee 100644
-> --- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
-> +++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
-> @@ -70,6 +70,7 @@ examples:
->                                         PDO_FIXED_DUAL_ROLE)
->                                         PDO_FIXED(9000, 2000, 0)>;
->                  sink-bc12-completion-time-ms =3D <500>;
-> +                pd-revision =3D /bits/ 8 <0x03 0x01 0x01 0x08>;
+> Otherwise I'm happy with that change now.
+>=20
+> Given the issue is old (the offending commit is in v4.14-rc1), I'd note
+> send it as a fix before v4.14. I'd send it along however if something
+> more urgent pops up.
 
-Why do you need this? Doesn't the compatible already give you this
-information?
+I wasn't very attentive when I wrote that mail, what I meant was:
 
->              };
->          };
->      };
->=20
-> --=20
-> 2.47.0.338.g60cca15819-goog
->=20
->=20
+Given the issue is old (the offending commit is in v4.14-rc1), I'd not
+send it as a fix before v6.13. I'd send it along however if something
+more urgent pops up.
 
---pNSV/oThW7kFwOxz
+Best regards
+Uwe
+
+
+
+--lvtle2mtnfezbcjm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1Mr4AAKCRB4tDGHoIJi
-0n8rAQDOcuOF4z1yyHB5vS3KHL2iVJpdDPRUgaVgB/49RTnkmgD8CEZVAB9v0JqY
-jgZOP7ZJdQNGphOiKh47LLIMMteXBAk=
-=kNCV
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdTK/IACgkQj4D7WH0S
+/k42UAgAs6H2mPbme8oPwP5+Vo7po8iDZLSjx2VBZfboLqKgg60SSEgkWJDW3QRW
+JSMgjh22hbHhuXTjBDM3281KZfebAxFyiVCUoLkFX4dxsP/HBJGb1VCovMAAIdzp
+aKNyDDpyGzvbXv+rNdV8nIRLYooE0AxWuoZiQU5/54Zsg6BQOdRYOw/7NrUffYHx
+Y4cuErXghldB8y6lDG86quZffAwnAp0BFuV55mixSpcV1MKiwiPWqRmr9w605/m3
+e8V6BYUoh+IK/2hvFlcdl95pULgQjAtzaq+NNMQgBU3mT05sD5oOl6EAtvVbJEVd
+fNXPXDr9aVWZWRuTWR8pnjJFn9t/wA==
+=eYs8
 -----END PGP SIGNATURE-----
 
---pNSV/oThW7kFwOxz--
+--lvtle2mtnfezbcjm--
 
