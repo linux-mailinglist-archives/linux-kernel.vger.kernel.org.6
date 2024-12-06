@@ -1,135 +1,163 @@
-Return-Path: <linux-kernel+bounces-434629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB329E6926
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:40:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A863C9E692C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:41:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15B3C162EF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA262820C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C7B1DF732;
-	Fri,  6 Dec 2024 08:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E1D1DDA3A;
+	Fri,  6 Dec 2024 08:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dk4BXXGh"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbpsUQqM"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7A518A6C6
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE431DACA8
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474439; cv=none; b=C7rqk+fLr9ZRwucgt70qx/AuqJSTikwb4wFhygJt6zHP9jvRBTA3SCvzSOe8s5FZ94gp3FFV9eIVHU1cP+9j0yuM5Zq+i4tiubiZ0LSaDZuoXnf7zI6YdYajIeRi3XllR4JTLI1T12LPWDa7BhA8HxuieXk3uriWtES33LxoW0o=
+	t=1733474483; cv=none; b=gP1lfUIoIdkT2g8UdLeqlmCXiTuXyBjyPTtHvIE6Dtrd4xyeQO+rUe/e4ZB66S0Kv8p8aHcwQK2/pR3jwuLFIIfonYx/SqYuLUgPpvJHYLx7dhX2ZOta9TrGe76J/w1B7UYdltfIBFXnlU65VfvOVY6hk69p9EObx0uKvzEHoPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474439; c=relaxed/simple;
-	bh=OkwL0QgGjHbpwOJvTu6jbAUyXPydHvv8mamPZjhsB+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mVYwaPj/oNKp2R6LlpOLPBOHGcqC6g/ePwUrCWc5grI0w0L//UrI3ubn0SbeJiBZd06tM05wvXQ7PI6TYDwqRbj471kW3FH/6YND5VZd9s31K8rebkyUQKmUt0Xe5EULzRyLXcB2wcEK3CQFpKnL4/lm9n+h2E608yYMHrvlmjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dk4BXXGh; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1733474483; c=relaxed/simple;
+	bh=bcX/8gOs6XW0Ygt0hDstjuJt5JxZsVwkevrtwRWGGhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9BkVEUsa2Gr0xmmFuWM/j7F/Zu/SpIPJO8eksTLfJl58rnXSpxAw3fmR+u/oE0iOieBhdx20yxr/Pl9DSvUOhi0IBRrUF4DAX/MZ4d7j9OeDR+cpx9EapqneSYKnLj01MkiWtZpvRNQDIe7tsHAchNC9mkjLgqPR4RNZUwkYhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kbpsUQqM; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53e2baf3160so762764e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:40:36 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53dde5262fdso2321870e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:41:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733474435; x=1734079235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8VUSVD5d4Al31C/uHXsnAW+QuZilX6JYMkj8nRl9R0w=;
-        b=Dk4BXXGhjEnRv8zY08ah9CM4X9IMuvJjLOxUqfN5SQ4Aj87qJSydByKyplGeB7xJAN
-         0GGEbAqTSE0p3MHnEPWY997Td32DoMrOXtbKpB0cjRR0XgF7S+5qIXoCsTe+lt/jTCI0
-         McCKtaiSwSN43uGfGkN5wj3V9qgoi/KjSHBLfRk8+sz875KGLdR1fS/lePeyMX6p9oV+
-         cs0MxXSxerM2NGSljltkjbVhHFuicF/g5ZuBEbCVCOZdZduEcfz+ocKMSfSSNXBEYSq/
-         bK1y2uKlDpCkByGFnVdEBkX3VFoYewM48Mw4oVqiDkDu6o3+wFMfJmWAHIOlVXbugL35
-         jN4Q==
+        d=linaro.org; s=google; t=1733474478; x=1734079278; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=li5k7w3RncPwKsG06G6cusXPPrs5ee6rU92nmMBGwZA=;
+        b=kbpsUQqMbo1umoI1M85Ld5epUYGoFWjMKKtpu070h+kxpeauKfrChvnUV38EwpiJ1O
+         AtLZHeMfInS25/Vd8woICYkV1T8eU3ssnP/lG+f3vLm911JqwxjimIpwoyDKkQUz/n7y
+         mCIVKsSUNS1ObsSAcVkVYEXdROuoo5n8GcSNbZl/7tkhrHiP0yNgwYqVbeSrwD+zGOoi
+         dKZERMB3+gHRqlIfifRXOUTHDtY6CuReDCuGfms8B2lgo+iKjs4YC4bctPBI2JpEUnmV
+         fs0L8rhCqD61sQCKsizoegNERQSIoVR7bernEmcB8aFhtoBU6I4yBGY/Wzjp6Wi45y/D
+         ZIKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733474435; x=1734079235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8VUSVD5d4Al31C/uHXsnAW+QuZilX6JYMkj8nRl9R0w=;
-        b=vfxxL3Od8wcRlXyQBceH/IQcuH3adg6GT9vBkCQ+6Ns7PIapauBsqz2Jwm+rMm5uym
-         ssjKe+L1HpIHv8NGywrnQqIufZ0oj9rcYSCB3QFuKY2IvDkBpumXs0Q/ZCslIdJlNT/O
-         2TOU2x1Vvxhx4+O5TH70PjwbAll9E0C/FgOFdw0vWGBdi0NHSBDE9g+wvRd3Kr5KdsN/
-         lrTVA7dIM+TTDQ/9NouQI7DqGyV5V2pcdy9HC3U519sveIL5d85rDBXjQc2CagK31N4w
-         I1oRPFmtr1huhL3iOOMazgbjrYRvSFxeLWak/gpsGCK/uk6hPEhDDs7hBgCNvONs+vi5
-         dTNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4EdNnRoWZ2f7C4uYvh3mOlE4hyavN6PlZo6vkDGCHTeMqkrx07oA9fCSeophhDNebshS7wHTwTZ6jyMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysSd1ihRrPQ06RGkjsdLjjsi7ctcMYefS5Y5Q+PzD+M8TULG6G
-	FIdYLmHzJc3RAn4cM1sCRsqIKwJ6eavEOcSf9xQ4cc1Hj9KZdcPPsraiLfR/KO0=
-X-Gm-Gg: ASbGncsqiGbh2+6kEX481Jin00m04kezfpGbo5+Vk0AYtlZEqKfO0cOg3OiHjVorHMO
-	aTT1Ffn2sX+MgFR7SeXwkt2ygofK5rjWJZMR5nZIUd4FA0qbzA3R1OYVpR/+pyaxG9MwDA0mMnN
-	LzpylpXIFslunn4F1iPOZdq98GflUDUhA5MwQzFjUPxErF2vIVtLwGw2ovY60qn9yi4BpDFw8js
-	e2hmbnjWEfeo/vP2qkMUNMAkqEQ5I+R4ZQ426e/vsxY5Z9okgZSfjYpRwgedoq1YqqQV9iU0Tbj
-	xo+SqG5zZLVrPj2THhbydhCx
-X-Google-Smtp-Source: AGHT+IFpuj5t7B9JAnco0SLRdwKPzD3iDmQdoSabd9nUYzKXx43l+NudJrIm2FG0ufsZx+78hIKN8g==
-X-Received: by 2002:a05:6512:e9c:b0:53e:1fb4:45cd with SMTP id 2adb3069b0e04-53e2c2eb652mr1210445e87.41.1733474435296;
-        Fri, 06 Dec 2024 00:40:35 -0800 (PST)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229751c2sm440973e87.106.2024.12.06.00.40.32
+        d=1e100.net; s=20230601; t=1733474478; x=1734079278;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=li5k7w3RncPwKsG06G6cusXPPrs5ee6rU92nmMBGwZA=;
+        b=HbD8u6ofBXUAiuPdw6mIoZwbwMHT12S3NfqncRFH+DqTEqTMdsGDl+LTiPSgl7fvCo
+         3eplpV8vNvaoJgS+k7xiaet2kwUdF7ag1ROSeGCG39Qay926sMvXthPnQwq+wDsY/Z+9
+         kEjhoaCqpQ4aRWKtiNz1X4U3QqdC9R0qcueY48FCo1E1hs+kUi9dLvCzK3csSjFPq1NK
+         0ogVVMwbMX3YK4OKqFlXTjF3aBGXJKiDyFvzqfMmlG4CUVoID41uQoeGjACoOIxHBhlJ
+         h0L7/jgE/bGU41A+jDz7jBfdzPpfbdhTTFuxifRDUZ6mB1wvxsLGPGvrt1tQHUY+5Brg
+         O0cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrYW1RWFxzI9hElu90FevIurb0sFxx2SeQHZkmY9M66xcM3gUzBds9h399DAi2Fp2KkTwnNGKv4gv2CEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCwePc1w/aibZGWRI6Ldpccx43L7gOa4QjFcZTI4u2BckzANG8
+	F5K7noeqvqUjsZRzb/OIzP6fx8y5hw99ge+X/XXzleXKvgqci7zTO3gkh6MBudY=
+X-Gm-Gg: ASbGncsrGk8ZMBy+5lxXb/aUsfl2mVv9CoG0yXqYnTOb51Tjhil6b3Y4A8HpAkeyJoG
+	GfBJ1jzX+/4P9vR0Lnie73bA9o6QzdwFaQxwoFp8up1PbwJSFbP/v4R5DrfeXu2tgkxHWc+VOkq
+	9FYcrjV2rkLTeEiGbRrYbVzTTTfryDmxvWSZlHQkkzu2lhZaOEPhtUQD04nyHsKpiA+eibZIqGp
+	oLgSO0Nm2q3qD3XS2Oris/USBI5nWbwKgvI9KoBxJp+lI5jQbeBBvRCuKYPv9KG1/Hv6AB8wIfd
+	thK4Vul5degoAYk8VuBp+lUQQ7Mifg==
+X-Google-Smtp-Source: AGHT+IFPNVHu/d8sk7Z9glpuRmqa30hf9B+0XHZ+yeGqInSbHjdmC0Dj+A9i/LiHl6Y+WoYcHtnQtA==
+X-Received: by 2002:ac2:5e84:0:b0:53e:350a:72a5 with SMTP id 2adb3069b0e04-53e350a7482mr349029e87.36.1733474478446;
+        Fri, 06 Dec 2024 00:41:18 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e372c9228sm26344e87.2.2024.12.06.00.41.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 00:40:33 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] pmdomain fixes for v6.13-rc2
-Date: Fri,  6 Dec 2024 09:40:31 +0100
-Message-ID: <20241206084031.119041-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        Fri, 06 Dec 2024 00:41:17 -0800 (PST)
+Date: Fri, 6 Dec 2024 10:41:14 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
+	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 03/45] drm/msm/dp: fix the intf_type of MST interfaces
+Message-ID: <4ttrd5nrl3flexsmlmlp2jdbht23lxsrkfuuma72nf5uknkehz@xpl3d3w4kjr3>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-3-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205-dp_mst-v1-3-f8618d42a99a@quicinc.com>
 
-Hi Linus,
+On Thu, Dec 05, 2024 at 08:31:34PM -0800, Abhinav Kumar wrote:
+> Interface type of MST interfaces is currently INTF_NONE.
+> Fix this to INTF_DP.
 
-Here's a PR with a couple of pmdomain fixes intended for v6.13-rc2. Details
-about the highlights are as usual found in the signed tag.
+Neither subject nor commit message tell that this is limited to sa8775p
+only. Please consider toggling all catalog files which are supposed to
+handle MST.
 
-Please pull this in!
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> index 907b4d7ceb470b0391d2bbbab3ce520efa2b3263..2509e28e3d6b582cd837c6aea167b3f4ad877383 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> @@ -375,7 +375,7 @@ static const struct dpu_intf_cfg sa8775p_intf[] = {
+>  		.name = "intf_3", .id = INTF_3,
+>  		.base = 0x37000, .len = 0x280,
+>  		.features = INTF_SC7280_MASK,
+> -		.type = INTF_NONE,
+> +		.type = INTF_DP,
+>  		.controller_id = MSM_DP_CONTROLLER_0,	/* pair with intf_0 for DP MST */
+>  		.prog_fetch_lines_worst_case = 24,
+>  		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 30),
+> @@ -393,7 +393,7 @@ static const struct dpu_intf_cfg sa8775p_intf[] = {
+>  		.name = "intf_6", .id = INTF_6,
+>  		.base = 0x3A000, .len = 0x280,
+>  		.features = INTF_SC7280_MASK,
+> -		.type = INTF_NONE,
+> +		.type = INTF_DP,
+>  		.controller_id = MSM_DP_CONTROLLER_0,	/* pair with intf_0 for DP MST */
+>  		.prog_fetch_lines_worst_case = 24,
+>  		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 17),
+> @@ -402,7 +402,7 @@ static const struct dpu_intf_cfg sa8775p_intf[] = {
+>  		.name = "intf_7", .id = INTF_7,
+>  		.base = 0x3b000, .len = 0x280,
+>  		.features = INTF_SC7280_MASK,
+> -		.type = INTF_NONE,
+> +		.type = INTF_DP,
+>  		.controller_id = MSM_DP_CONTROLLER_0,	/* pair with intf_0 for DP MST */
+>  		.prog_fetch_lines_worst_case = 24,
+>  		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 18),
+> @@ -411,7 +411,7 @@ static const struct dpu_intf_cfg sa8775p_intf[] = {
+>  		.name = "intf_8", .id = INTF_8,
+>  		.base = 0x3c000, .len = 0x280,
+>  		.features = INTF_SC7280_MASK,
+> -		.type = INTF_NONE,
+> +		.type = INTF_DP,
+>  		.controller_id = MSM_DP_CONTROLLER_1,	/* pair with intf_4 for DP MST */
+>  		.prog_fetch_lines_worst_case = 24,
+>  		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 12),
+> 
+> -- 
+> 2.34.1
+> 
 
-Kind regards
-Ulf Hansson
-
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
-
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.13-rc1
-
-for you to fetch changes up to 2379fb937de5333991c567eefd7d11b98977d059:
-
-  pmdomain: imx: gpcv2: Adjust delay after power up handshake (2024-12-02 17:09:26 +0100)
-
-----------------------------------------------------------------
-pmdomain core:
- - Fix a couple of memory-leaks during genpd init/remove
-
-pmdomain providers:
- - imx: Adjust delay for gpcv2 to fix power up handshake
- - mediatek: Fix DT bindings by adding another nested power-domain layer
-
-----------------------------------------------------------------
-Fei Shao (1):
-      dt-bindings: power: mediatek: Add another nested power-domain layer
-
-Shengjiu Wang (1):
-      pmdomain: imx: gpcv2: Adjust delay after power up handshake
-
-Ulf Hansson (2):
-      pmdomain: core: Add missing put_device()
-      pmdomain: core: Fix error path in pm_genpd_init() when ida alloc fails
-
- .../bindings/power/mediatek,power-controller.yaml  |  4 +++
- drivers/pmdomain/core.c                            | 37 ++++++++++++----------
- drivers/pmdomain/imx/gpcv2.c                       |  2 +-
- 3 files changed, 25 insertions(+), 18 deletions(-)
+-- 
+With best wishes
+Dmitry
 
