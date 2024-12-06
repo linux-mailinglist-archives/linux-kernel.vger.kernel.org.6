@@ -1,101 +1,125 @@
-Return-Path: <linux-kernel+bounces-434889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1B19E6C5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:36:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AAA8163E5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:34:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A951DF274;
-	Fri,  6 Dec 2024 10:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NI0ddyqe"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8189E6C58
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:35:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E333199E92;
-	Fri,  6 Dec 2024 10:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0336228FA12
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:35:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE248199E92;
+	Fri,  6 Dec 2024 10:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="OvlaLO0/"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363761DF978;
+	Fri,  6 Dec 2024 10:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733481280; cv=none; b=RSI8tzAs9nd1Oj4bqq7qkIU1K9f/IWAZkrarvk7os6vVwfzBQmSjVJ1ZXuwBpyUSOqj3yyHy9EsI7LpaQIKibVaDsWhQZ64TsfJ4EuBaC9NlIv5LzmlSacbeomP0fONGkplvOOjIHTu6AJJ6T7EXrfPnvK9aOW2V3eaXpbfJa9s=
+	t=1733481322; cv=none; b=pVaEbcZTaWJ2qIwLYByxK4VCs8T2lDfxcI39g7lK6aEZDuB6ftHadToxi+3RJiWr5mnBLFUnEl6NcEAR6jLnLYW0/lXzCB8nmdt0ydtQjB+VWe+lHkWw69vgGZwbpoXm9ph9fMmNGyBoFXCICZXGb/ylD4k8wrm78k0zo/l2wsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733481280; c=relaxed/simple;
-	bh=i+zfIBw5DvlGVG+5jujERRBXQi9e8CjS112aE93QRYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SSEeJ+7b6rQ7FZEUYXdj6tO80LsnSEw4HQperMtdQOa62uyyG6oGnkGtsF8O+EmpCokxZAV9blqAJy5vFUFUmHm9OvpvAXLVjcumft8tEyLnh1o/emOmRaHX//Xbs58oZJOC7JkcA0ascA7HvXI/2ftdAUN6U8LVt4yGhoXTxHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NI0ddyqe; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B760CFF80A;
-	Fri,  6 Dec 2024 10:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733481276;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2ajKPXRG0k9JASC73/ZnAiBhOVfRI5UgSWHK8cjfgbY=;
-	b=NI0ddyqe3dsSmjff9NxKmmSpGUb/70r3vZO6id9LQjdJEOUuO8puBx6QNzi6QYjbbDgWMy
-	jOoQj7fjpmsmBCObRsCjDUchSgkQiC/vapFzgkffT+dVyut43lFdzMWovHQtuSVMXRvRL/
-	xjhX+D64S+6PvEAs4Q1sEEW7D/s4HDvZpH5l72zASCfxyqR6tK20wPs9jvk2wk7ex1mo/K
-	+rhvjXEWF+28Tb74KI81KpR0f8P6yceD5rn8L7jyohcQAMzE7gOIEa/Z6Ky1Eiq2fVSsFd
-	p/cAMQPJTGgFbKskLK7AazwTAvBwulMFaU+4wsLjKgZcoKOKULpFTNVpYM9hxQ==
-Message-ID: <02c38a22-6196-4b53-b092-5185b4df134c@bootlin.com>
-Date: Fri, 6 Dec 2024 11:34:35 +0100
+	s=arc-20240116; t=1733481322; c=relaxed/simple;
+	bh=UxJXuWJ5ThYOM2wpxglSc61Ze5uMCy/3edaG4WVImTk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUvJwwB9G/itToMmgy3PKHNkAkJMyqS6lmKccheDmA/LJ1QgNvmJ7UIxiGZ0LPJuLTCkZ5Sw56edPwfGK1DaZCjL1JFmYLt+AZY+t7cmK4UpVzCBifbeb/PRmoDGB6Z8hfMzNa0UpMwf6qgHLY4LZK5QmfDns2SIm0ayDqPH7bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=OvlaLO0/; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B66Wwmt028165;
+	Fri, 6 Dec 2024 04:34:59 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=3MHHGhnK5Y2zsDYRkZ
+	EK/nJzMDB2uZ4a8qkD9C1qxiU=; b=OvlaLO0/aAijFVHYpTQv3C0zr5re80k0iV
+	g7k3HaTiXMRYsdJkwrv/BybEiwXXTJ5MdI0XQb6zl9AFCNNzmUamHp6aJ1kIN8By
+	/cCC1vUwc3z8EWQOOR3wIbs+p22msKJx/w5EVQyE0VVPvdgqQ2XimRZYxe4qJpDa
+	H5AzIsjjyoUXvajR2+G9cypkjRg63JVI5VK7yw1FBkC8rFzpt/rpWDictWEzCxXW
+	SKNVRMiCtxUAx68ETcu/hKPf8iAxLcoIjoB+Ap67oY76XQN5zabrMSiOLa+E7tql
+	n6FNYejCjRQwgR0jNGqFZMRbwiV2xlcU7Ckw0twy69IkFwS6EPVg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43ap2bb2xx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 04:34:59 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Fri, 6 Dec
+ 2024 10:34:58 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.13 via Frontend Transport; Fri, 6 Dec 2024 10:34:58 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id EA88E820248;
+	Fri,  6 Dec 2024 10:34:57 +0000 (UTC)
+Date: Fri, 6 Dec 2024 10:34:56 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: anish kumar <yesanishhere@gmail.com>
+CC: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH V4] Docs/sound: Update codec-to-codec documentation
+Message-ID: <Z1LTUDDJZyg1+OOz@opensource.cirrus.com>
+References: <20241031211411.58726-1-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] hwmon: Add Congatec Board Controller monitoring
- driver
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Lee Jones <lee@kernel.org>,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com
-References: <20241115-congatec-board-controller-hwmon-v3-0-1c45637c8266@bootlin.com>
- <20241115-congatec-board-controller-hwmon-v3-1-1c45637c8266@bootlin.com>
- <e91a3c4a-6324-471a-a1eb-47eb329d2d6b@roeck-us.net>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <e91a3c4a-6324-471a-a1eb-47eb329d2d6b@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241031211411.58726-1-yesanishhere@gmail.com>
+X-Proofpoint-GUID: z4wo7ClzZH60Ie0gro7wEM0F7YTSxSHB
+X-Proofpoint-ORIG-GUID: z4wo7ClzZH60Ie0gro7wEM0F7YTSxSHB
+X-Proofpoint-Spam-Reason: safe
 
-On 11/15/24 16:57, Guenter Roeck wrote:
-> On Fri, Nov 15, 2024 at 04:39:08PM +0100, Thomas Richard wrote:
->> Add support for the Congatec Board Controller. This controller exposes
->> temperature, voltage, current and fan sensors.
->>
->> The available sensors list cannot be predicted. Some sensors can be
->> present or not, depending the system.
->> The driver has an internal list of all possible sensors, for all Congatec
->> boards. The Board Controller gives to the driver its sensors list, and
->> their status (active or not).
->>
->> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
->> ---
->>  MAINTAINERS                |   1 +
->>  drivers/hwmon/Kconfig      |   9 ++
->>  drivers/hwmon/Makefile     |   1 +
->>  drivers/hwmon/cgbc-hwmon.c | 304 +++++++++++++++++++++++++++++++++++++++++++++
+On Thu, Oct 31, 2024 at 02:14:11PM -0700, anish kumar wrote:
+> Updated documentation to provide more details
+> for codec-to-codec connection especially around
+> the scenarios and DAPM core details for C2C
+> creation.
 > 
-> Two problems:
-> - Documentation/hwmon/cgbc-hwmon.rst is missing.
-> - "git am" fails due to a conflict in MAINTAINERS, meaning it is not based
->   on the mainline kernel.
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+> +Boot-up logs will display message similar to:
+> +
+> +.. code-block:: text
+> +
+> +   ASoC: registered pcm #0 codec2codec(Playback Codec)
+> +
+> +To trigger this DAI link, a control interface is established by the
 
-It is based on linux-next, as the MFD driver was not yet merged mainline.
-Now v6.13-rc1 is available. So I will rebase the serie.
+Probably better to describe this as a widget rather than a
+control interface. This widget may have a control to switch the
+params but really the key point is the widget here.
 
-Regards,
+> +DAPM core during internal DAI creation. This interface links to
+> +the ``snd_soc_dai_link_event`` function, which is invoked when a
+> +path connects in the DAPM core. A mixer must be created to trigger
+> +the connection, prompting the DAPM core to evaluate path
 
-Thomas
+I am not 100% sure what we are going for here with "A mixer must
+be created", I think we are saying that the DAPM graph must route
+into the C2C link to power it up. I would be inclined to drop
+this and just mention the callbacks that get called.
+
+> +connections and call the ``snd_soc_dai_link_event`` callback with
+> +SND_SOC_DAPM_*_PMU and SND_SOC_DAPM_*_PMD events.
+> +
+> +It is important to note that not all operations defined in
+> +``snd_soc_dai_ops`` are invoked as C2C connections offer
+> +limited control over DAI configuration. The operations typically
+> +executed in C2C setups include startup, ``hw_params``, ``hw_free``,
+> +digital mute, and shutdown from the ``snd_soc_dai_ops`` struct.
+> +
+
+But I think those are my only remaining comments.
+
+Thanks,
+Charles
 
