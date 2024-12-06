@@ -1,174 +1,129 @@
-Return-Path: <linux-kernel+bounces-434534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06A39E67F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:30:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EC89E67F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:30:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375D21885901
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCD018853AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB961DB37A;
-	Fri,  6 Dec 2024 07:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A60225D6;
+	Fri,  6 Dec 2024 07:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="dVCo8f2e"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011039.outbound.protection.outlook.com [52.101.129.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkwOtMcv"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6625D2F5E;
-	Fri,  6 Dec 2024 07:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733470246; cv=fail; b=ercqnMDjREkpkRxu/A+n6RnRIGljfkvXU3bBBTQrmvwJ4xHtdR/HVlWC53w9rl5RLSS5UU+IOn1m4nWLYDBCSMTeLizDr1M7nkJpWEmE6x2UPko3uGUs/R7YgF+3/mFkZESTYiaNnJLBDqK8yoYuG+K0MoL+PZBonxWx+XKCqFk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733470246; c=relaxed/simple;
-	bh=I6SPPQBvY8M8+yC+tqBRC1MQQZC95Uk3L7y4Z7kQsCU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nTIsnhm2rGrezoCG6wTrV5EGWJvIuAb55X1pPLEtD8HdOCjwGyVPwBHx10p5EbB/oLQheWhUkYhpGdZnmdih+5DY534LSoFpZ6nAnPGRKiW85dyevSQJkqiPSmtOVs4ciSjkwIm7T9NYwJJvD/+XAfHn2qfcWgzohfJUkZ/75nE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=dVCo8f2e; arc=fail smtp.client-ip=52.101.129.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FkmUyx35i4AneyW/xp0IKxwEoiu2ok9P6dlbB0xQVvYYJXR01FqT2OdGuc9RX/ThRvE531O9vIlpMTmotTBvaLft5LldA9JAPUxz30D7VYDjQAEfvQ7wMqFTxOiquT85ALZlpebsiQM2SszoBHJm9A9wlh/w8U4iVGZl/v60LnyausWOaV33e8a+Wu8eVsKph4oPTG+CjL/bDwiDT+uQNH6u7HgBzirht4UqTzuuY1NmRS2j9Rea3Wv8xN+xlVjKYY6RYPObFacL39fjXe9IpIlvthkUb4LGSUw13GqJhdlTsP1l5uOhsQj6ROEFVrYg1xKLZ7Y+hXlM3Q8jgnXdcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gUoaheTGILqa2n96rfzdpSN9fN9jf2emerEdMyFRzu0=;
- b=ggu5vBhW6EYH80UkoRKXFfUUtr1B0O4UXaztPshpsohUGJf9rkLTxudyeKV55qTbmm9m1rtjNcytIukHYTL/IXVzGpg1VGI9F8dld2hlsxhvCn8hk2SZ/xl3RYFTtAz0wscTGHLeSQswyh7TCjRGTKwUjkW7qryH3esCae1O5fZ3SCT5Do73t4i4/xsmB4hsvhxUYAaoTw/tycdsHLDW5vnqZ4zCZmz5K2as9FVVdlqRYpZiTjhWkdl5E5AArFFBjOFrKCPS9GzmvSOcE1Yzqm5CwusCD+CY3Muk+8LPpimyjZKjZsKlb8IJnFtnH7eKtF4QIUAD7bHvJ6gvczbnnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=samsung.com smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gUoaheTGILqa2n96rfzdpSN9fN9jf2emerEdMyFRzu0=;
- b=dVCo8f2eOXxxQZe7y465b06rt2Fzl8qcDPVNv/RR2THInnxJHD26X2UugaAcYBknHQAljVBG7r8cjH7CBGXYNLjbCGem+8LxV6REzcEf2vTqFwX+/t67cjuzBCRdspd9n19OJXP8VeW3D9ceeIkA1NI4AvNL9OCF9zGijp3qqFM=
-Received: from SI2PR02CA0028.apcprd02.prod.outlook.com (2603:1096:4:195::8) by
- SEYPR02MB7388.apcprd02.prod.outlook.com (2603:1096:101:1dd::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Fri, 6 Dec
- 2024 07:30:39 +0000
-Received: from HK3PEPF00000220.apcprd03.prod.outlook.com
- (2603:1096:4:195:cafe::9b) by SI2PR02CA0028.outlook.office365.com
- (2603:1096:4:195::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.12 via Frontend Transport; Fri,
- 6 Dec 2024 07:30:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- HK3PEPF00000220.mail.protection.outlook.com (10.167.8.42) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Fri, 6 Dec 2024 07:30:39 +0000
-Received: from localhost.localdomain (172.16.40.118) by mailappw30.adc.com
- (172.16.56.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Dec
- 2024 15:30:37 +0800
-From: <liuderong@oppo.com>
-To: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<peter.wang@mediatek.com>, <manivannan.sadhasivam@linaro.org>,
-	<ahalaney@redhat.com>, <beanhuo@micron.com>, <quic_mnaresh@quicinc.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, liuderong
-	<liuderong@oppo.com>
-Subject: [PATCH v2] scsi:ufs:core: update compl_time_stamp_local_clock after complete a cqe
-Date: Fri, 6 Dec 2024 15:29:42 +0800
-Message-ID: <1733470182-220841-1-git-send-email-liuderong@oppo.com>
-X-Mailer: git-send-email 2.7.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F541D63C4
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 07:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733470211; cv=none; b=I0PpdKHSblgDqe/eXVY2S14ueeiajsQvoxmKAQBgSBPoIkvDaVtg+faoo9fjmHHWl30uuGoZgDnVwKfIGsWpXyK7FQFQkzdKV0K1BX4Q6OF+yMUvAqbWpCuo3vwVop2QYMk7IA5zAA7LuIujpbkSSWvMaVadDqSrULq2BZR5tVI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733470211; c=relaxed/simple;
+	bh=sgzM5IoI7p3S3EB4CvffyxidkciOZwqKaaQjcxJhl18=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=keFcrjJNVw57CL5zT9M86hs99jGuZwHBaJAVNyIkH3Tk+zDnFMcaCzGwTfRTaTNB78kBr/upr3LkE6SimDl8ZFStOUI4wk5Ur/2lodf8eX6BwZKrWkvRJ5kDZoaDAkOD16sOE3yYWjhaVqhaGq2TDix5X81rzDrEQjvRujaIjiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GkwOtMcv; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea8de14848so1355452a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 23:30:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733470209; x=1734075009; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wEwq24c5z2zaEdnRWFeQ2NmKzmhnGWd1lmeDNbRELm8=;
+        b=GkwOtMcvUQP9hXwkXXwD6eaqWpu1z2lzEH8htGeKMMZ9sqeu28uzGY/Cec0VUDONVm
+         6k8lC41QBFJYWrq3XSXNLLAUqdoA32ZP1yIlj+4+QqS1yBxjcpyG5EyeRwGsj7jQum16
+         /MpyqElRxCuTgmGjTlA5SQqC2ogWR9oz/ovnPbXoyDt2KNjKvYQriQMGFOx11nvdHqtx
+         UAQ9QmEbayH9suup4BHjgknppv5gQYh4qwpyFyhH/KOweMgOnOMnLGxVbfLO/Ea+jmXs
+         3hBdIHh3tCxEqZj48TTDGR2Qmz3ve8WS9gP9ZQWv5yRbG7BdIlY9YIJEKbnqMxUj6OJZ
+         NWHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733470209; x=1734075009;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wEwq24c5z2zaEdnRWFeQ2NmKzmhnGWd1lmeDNbRELm8=;
+        b=E6U0y3/43GNFt9YtwQvt0tHcpJ0ycyJ2G2EtgGGDazVx/aBej2bqIsaDayViiDAqs+
+         K8fMWNqcge7ndEb1kq2mKBxFezvP0T5KZSjy6F2C9BcoPhaTDjflU+XINKz8AkidzJAP
+         zchJTYE/4ipPp3EjOGNlPV+omu//yz02S9O3LtaCGFNa2ddjGJFTOU8oE8Gc1589rwdB
+         zaH1XdU9lBpyeKE4XQTYgFhKGQeTc1c12JoTIL36UhE6Z1sToTTLWoqKkW3qIPOi7mTH
+         WXtiY0qfNtIj7cdPYj0/j7E8UqFn5hAVi+K9NdkGud2ZGUNW/BaFiCoy5c4MZ2HCpkL2
+         StMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWO0NwvytE4Q+Vw/GNW0KaI2W9U/upkrA7lwvMh6RvFJn6oChxuMTN9davqXNzeJsRiNE2PyU3QZPrbfB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw2rgT7mo9d5522qxqwI89vjRpw5nXmInDu+VPTsImTKdAtExP
+	91/8+xSbcseoDL/10aFRcsp0ooav5TZWNsVN45xCtkDmvmWsM7ga
+X-Gm-Gg: ASbGncteqLdqDVAcsIFRVdG296oPKvkSTjTaCQpUiUQIOjSr6f2a3x3FJjUVQmKd5EA
+	mjkMd/+1zqD8SCfdZBEdkoNnc4EIroUaS3IG6/FyxDaBB4Ladk7G0/b1ajMu3uXMoAgiplca3mz
+	koMFbuv34c41P6syYh8nU2or8TFKYXYMCjREbi5QWjBu3Lj3BQDlOdQsdzsVNg/lqUX08QVPu2i
+	cgX/9w1TsIrANRhbc6R4AiYfd0Bs7wxdpMApCGTbgAdy3sFHt8cO0G0j90=
+X-Google-Smtp-Source: AGHT+IH+njD1GiGGJ2Q6P5lfX4e5GYPFZl7ibqMyTBSEmw+vZH087F6xk1eyQXRyIDerdLBmszLCWg==
+X-Received: by 2002:a05:6a21:6f01:b0:1e0:d934:6189 with SMTP id adf61e73a8af0-1e1871234bdmr4369991637.31.1733470209288;
+        Thu, 05 Dec 2024 23:30:09 -0800 (PST)
+Received: from localhost.localdomain ([43.153.70.29])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29c5f27sm2358899b3a.11.2024.12.05.23.30.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Dec 2024 23:30:08 -0800 (PST)
+From: MengEn Sun <mengensun88@gmail.com>
+X-Google-Original-From: MengEn Sun <mengensun@tencent.com>
+To: visitorckw@gmail.com
+Cc: akpm@linux-foundation.org,
+	avagin@google.com,
+	joel.granados@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@weissschuh.net,
+	mengensun88@gmail.com,
+	mengensun@tencent.com
+Subject: Re: ucounts: Move kfree() out of critical zone protected by ucounts_lock
+Date: Fri,  6 Dec 2024 15:30:07 +0800
+Message-Id: <1733470207-23473-1-git-send-email-mengensun@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <Z1KR55ggLyTzPys/@visitorckw-System-Product-Name>
+References: <Z1KR55ggLyTzPys/@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
- (172.16.56.197)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF00000220:EE_|SEYPR02MB7388:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39eb9056-1fda-494e-e3a1-08dd15c7e218
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|36860700013|1800799024|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?31Sg0UqJxMBn7NJR77xO5pr3hbf+mIsNI5oKnGZ7jzMg0sdDp0k0D9OaAaOS?=
- =?us-ascii?Q?VL+HB9N9+ldUbTxcrIC9yE9G/ZCY4OGLFb3W3aywpkHuOXtur+wtckiyn/5B?=
- =?us-ascii?Q?GbGEvj1b1s3HySqrRCkXl4TpSFxI9MMnTi9LyX7HpC9QwxOKaXczvFCE7pG+?=
- =?us-ascii?Q?DH6OL81le2IZ0hWapGs9GLMGw8GZL18niUtQlxOAKfcJ87RvP/FyOdJYk6Pf?=
- =?us-ascii?Q?BdYME7OtlprXY5uEXsTZBU9qdsu8B1vfv6zU+5jTxeiQcTO4uZ/XuzyYiEnz?=
- =?us-ascii?Q?o4SDW/r2+07RZVXudkidZrUJvPPVnh6WOXF+gIrZXFByqIlqY8jODYBKz4Zy?=
- =?us-ascii?Q?2/nLwdvEwQe4mAbTkZpGascY2ee+WnWEDgC4weSxfUqPD1mHv18vlDwV5EMt?=
- =?us-ascii?Q?yMVDO2yRpD+0vDYZtvgSr5g1n+0vvFt2LFH2WgcP7jD8EesXCnLkg88vLmwH?=
- =?us-ascii?Q?CSkUog74YYoLZk13hGiaxv6YGYSrdktgcp18oIKSMFyr2crpDWhgQyLV6Tjw?=
- =?us-ascii?Q?E8Qcvxspny/8+6749SKl/SDeq6bOlG2hPVt23OIQiWRgyxHWCzpsyJZDiXw/?=
- =?us-ascii?Q?DwlHFBvEVsU4ko2M/WfJtGC0UhXR+6iXAWUKi96rk2+EEe9eD0Z601hIwHiy?=
- =?us-ascii?Q?t6nXIXXEezwRD2duRHX9LJoK9eBPMuyyXxVOwyTp0OHk6nA0nMmH8FZTGJDS?=
- =?us-ascii?Q?PJbrnqeC9uCJyNkyksAtQ563pdxnaTdZ+A1yhfgNP0gslOy4+4GiDcgIKTHO?=
- =?us-ascii?Q?2dbcnIb6yiSikvBABia0mCw+vW07uLwUt+Vp/QrIL5TQi9dh6hQ6ZxgQ5A3M?=
- =?us-ascii?Q?zhuNKJAhnPrHwGFTUXezo9/nssz1InvNYmSXYtM9aSgd8f0cgggpLaRp9K1F?=
- =?us-ascii?Q?RdKqUwfOpOxOU0WHzcZrOXCKfpAK4EO1Z0FPUIa8j3V1vT7CAxzxdZYZ6WAN?=
- =?us-ascii?Q?f6wEk2irTNdsaNRJI82Iu2HNiSBtcZvtpWzqjdvlqCdpa2unFqxVNkeupRte?=
- =?us-ascii?Q?pZeASKpOakjzAALOiwkzqQ/lYbmoOOawOvvmqZrEjfQVg1qMfAj3Gg+0lP3l?=
- =?us-ascii?Q?1Xxxvy5vYxJP9t3QAnGaZyO3oU2FYDyLJ43PEXYTDUSOGkW0bh8e0OyLWWLb?=
- =?us-ascii?Q?FSVyRYP1hDO/TB4oY+lqkPleH5bXI2EUXkPfNZPg3zokuKoMiP8wpd2sB+4q?=
- =?us-ascii?Q?sSETxvxuLA/spjn/w2LDVWvXgJ4BLzQObv9yQ5LBSxh2O5zuduuVkdi7bBsJ?=
- =?us-ascii?Q?k4fACjkI2GWXtkCrlubBrZvErAX1R792sPkzyk7X+LKmuqp/vlEtyhk2LGCJ?=
- =?us-ascii?Q?JMaGrbIwAtVzVRLEeo3Dv/tp6VhNxtE3ZsDhSOKegbUMoomolpdiCq2ohjT4?=
- =?us-ascii?Q?gscv8RJF19XjxsPOeywYusCvhnvlNzdn831Ys/3GTFfrHwWDwIRcXVuFOxyk?=
- =?us-ascii?Q?sjna+l+yTvuF/rd/PAEs/RP7P88ilt+aJnrncpBpHcevqQo64uAmHA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(36860700013)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 07:30:39.0716
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39eb9056-1fda-494e-e3a1-08dd15c7e218
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF00000220.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB7388
 
-From: liuderong <liuderong@oppo.com>
+Hi Kuan Wei
 
-For now, lrbp->compl_time_stamp_local_clock is set to zero
-after send a sqe, but it is not updated after complete a cqe,
-the printed information in ufshcd_print_tr will always be zero.
-So update lrbp->cmpl_time_stamp_local_clock after complete a cqe.
+On Fri, 6 Dec 2024 13:55:51 +0800 visitorckw@gmail.com wrote:
+> Hi MengEn,
+> 
+> On Fri, Dec 06, 2024 at 12:13:47PM +0800, mengensun88@gmail.com wrote:
+> > From: MengEn Sun <mengensun@tencent.com>
+> > 
+> > Although kfree is a non-sleep function, it is possible to enter a
+> > long chain of calls probabilistically, so it looks better to move
+> > kfree from alloc_ucounts() out of the critical zone of ucounts_lock.
+> > 
+> > Reviewed-by: YueHong Wu <yuehongwu@tencent.com>
+> > Signed-off-by: MengEn Sun <mengensun@tencent.com>
+> > ---
+> >  kernel/ucount.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> It's a common convention to prefix your subject line with [PATCH] to
+> let others know it's a patch. Additionally, when resending a patch
+> without changes, consider adding RESEND to the subject line, e.g.,
+> [PATCH RESEND] ucounts: Move kfree() out of critical zone protected by
+> ucounts_lock.
 
-Log sample:
-ufshcd-qcom 1d84000.ufshc: UPIU[8] - issue time 8750227249 us
-ufshcd-qcom 1d84000.ufshc: UPIU[8] - complete time 0 us
+Thank you very much for your reply. I will make some changes here.
 
-Fixes: c30d8d010b5e ("scsi: ufs: core: Prepare for completion in MCQ")
-Reviewed-by: Bean Huo <beanhuo@micron.com>
-Reviewed-by: Peter Wang <peter.wang@mediatek.com>
-Signed-off-by: liuderong <liuderong@oppo.com>
----
-v1 -> v2: add fixes tag 
- drivers/ufs/core/ufshcd.c | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> See: https://www.kernel.org/doc/html/v6.12/process/submitting-patches.html#include-patch-in-the-subject
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 6a26853..bd70fe1 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -5519,6 +5519,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
- 
- 	lrbp = &hba->lrb[task_tag];
- 	lrbp->compl_time_stamp = ktime_get();
-+	lrbp->compl_time_stamp_local_clock = local_clock();
- 	cmd = lrbp->cmd;
- 	if (cmd) {
- 		if (unlikely(ufshcd_should_inform_monitor(hba, lrbp)))
--- 
-2.7.4
+I will study this document carefully.
 
+> 
+> Regards,
+> Kuan-Wei
+
+Regards,
+Meng En
 
