@@ -1,138 +1,204 @@
-Return-Path: <linux-kernel+bounces-434271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCF49E6433
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:32:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8705F9E6437
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0B518853D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75D618853AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECE7189905;
-	Fri,  6 Dec 2024 02:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C05161302;
+	Fri,  6 Dec 2024 02:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f7NHdqLO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="h0aqviOd"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6DD1714B7;
-	Fri,  6 Dec 2024 02:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3654437A;
+	Fri,  6 Dec 2024 02:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452335; cv=none; b=ZEzxrwfqh+ktdbq9L/nuPkHWI4bpwOf9rOy884hVyygrr4p2DbGJTxb4tPWqRjnHoZh9nK81Is/HxbqvfFsnENRZLu+ht+ngu50eJRNLKKPygd0NpxaLyPqiYeiO2ctpkcmuReAJY5n35pfsthaZeJlGxZH1THcNI531cpPrQ1k=
+	t=1733452432; cv=none; b=usmszxm//Xf2bGBDxhx5nRFm8c3wgIjbRGf9qykRRjC5EmQRum0hFqam97n3bHhW4CP0Ko8qCkCAJOEAh1vpJP5NO8rEXzIo2KygC+Zew3MCkFBfW/YeXcIn/DfEDL0m4KBkXWbTtrUib9HRYZSwrp0H76U/++0Xtc2oWMsIa6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452335; c=relaxed/simple;
-	bh=Xz0urQSXk0PIG0DUXBAQZqGKfzANZgT6gI9BQyjAbfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ge1XxihXxZeAE7FxLS3Zpno6mgx/F8iNPVVdpYp/m3R+dn+C6z8XQXARfaAWhxkYDI40ItEK12/z/4mMzFRmamJDSZ0gS9w95zg/8dDAsuP60j9zSPY9QwUNbE+ood908TbBFRZG+p05G06QS2vjbPYDPj8FBnenmHufOIA5pyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f7NHdqLO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaMNm015782;
-	Fri, 6 Dec 2024 02:32:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IJfqkSMfcyB+XPVvEIKaC6xKx4MczluwSCWfhSjFvQY=; b=f7NHdqLO+RSpEQce
-	7TbAVRqySKc8VCOeUzTNx2TJgeUo3KUZ3u5lqHGxq/qzIz18hRUfDK/mWzQv2MEr
-	MNAXL/DxYxp7mTtbgDT5MoD2+on5518lvMUsKYnHhxBA6329wUQIJdkCnjOxjzJ8
-	qJjwLkQwYOdm2LanD0C0R+V+GZyrklpgxTA4DSAECFRHKiZSm14EwYMqCOqY+8D1
-	fDEHCyVnAE8rUX23NmaRbsBhezPaoqV3KKsfDJb0gfP/R+PTfNl+yCsxHAw65hwM
-	VkD/EKVjHCbKbv2yl9eZQjZk/s/AAds5FfS45dYeDO3BGWKQIyjnkFvX0+l2YPB9
-	tChDjA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnmj1f6-1
+	s=arc-20240116; t=1733452432; c=relaxed/simple;
+	bh=Hu+PWZzOoEL7fHQA9oRdv7spRwnFA1WkCAuNxlSepA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOr2LcBcVCpqtDaKbE3miZoZMxlzpADkD75le+/syGMhtHNoCSIhT0OCYmRHDei1H8W+FUyXmsQ3Cpn7oqX8jwPr5RQsFTQy0X3HaWyof5X/2l6fYnkJ8B0VImg4G3ROXqiMrPArYIvJxETfWw5LK6gZrz9ZcScWF3ydXCk7G8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=h0aqviOd; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B61NORH007896;
+	Fri, 6 Dec 2024 02:33:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps0720; bh=2ptQXIAoLbAo5fsJupX7l1C1pu
+	lZTh/QjdikRsjALxs=; b=h0aqviOdw9lZiXRl0Y9u4Apk7ZGcsPWMcZZpoh5TYp
+	+He3p9cXllL7cJx7hdbYPrt/bxzJ1lU53BTJCcjlhqHsCp4g1G9igwkelJfas8We
+	CvDvB5D/3Ei8Ax2BfVuW6wdJt2P5l4FLWF65wtim+8sZg4wKmfC9gL6oG0Sy+0/q
+	AjgdxekG50FvxA10bK06t8ytSQSGreBd4ryp/6TDHGkoYt8rIq6kZu3N30Hl1gTF
+	qUNj96tHgNX7q/2bgpFt9RYGsJU45iXXvEAb2qhCzmimZJSliEkUvNOVPxo3jPfg
+	spoBMlbGLfrgdjfDeOqligvcVQxRbh5mXrpoNNiIdg2Q==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 43bqja8gnc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 02:32:09 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62W8Kt030174
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 02:32:08 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 18:32:01 -0800
-Message-ID: <38dd7991-8503-44af-8400-cbe6a8968213@quicinc.com>
-Date: Fri, 6 Dec 2024 10:31:58 +0800
+	Fri, 06 Dec 2024 02:33:34 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 59134804DC4;
+	Fri,  6 Dec 2024 02:33:33 +0000 (UTC)
+Received: from DESKTOP-V47QP3F. (unknown [16.231.227.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id BDE6C80B9B4;
+	Fri,  6 Dec 2024 02:33:31 +0000 (UTC)
+Date: Thu, 5 Dec 2024 20:33:30 -0600
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "rric@kernel.org" <rric@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
+Message-ID: <Z1Jieg7ACUMZLsF-@hpe.com>
+References: <20241205165954.7957-1-kyle.meyer@hpe.com>
+ <Z1H7U9-O2LdAoa5r@agluck-desk3>
+ <Z1IHkBlm_0p-0-c3@hpe.com>
+ <Z1Iuk-_VdmZibOes@agluck-desk3>
+ <Z1I-A0Rhc8AHhvtw@agluck-desk3>
+ <Z1JL7fevweCQtTnT@hpe.com>
+ <CY8PR11MB7134E24098C6E16E43C57EAA89312@CY8PR11MB7134.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/16] media: qcom: camss: Add CSID 780 support for sm8550
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <vladimir.zapolskiy@linaro.org>
-CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Yongsheng Li
-	<quic_yon@quicinc.com>
-References: <20241205155538.250743-1-quic_depengs@quicinc.com>
- <20241205155538.250743-16-quic_depengs@quicinc.com>
- <220068ff-9979-4bef-935f-936a276034f0@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <220068ff-9979-4bef-935f-936a276034f0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NPYah-CMWdDoMDp_z5zD81c2Zt_l_Hxu
-X-Proofpoint-GUID: NPYah-CMWdDoMDp_z5zD81c2Zt_l_Hxu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR11MB7134E24098C6E16E43C57EAA89312@CY8PR11MB7134.namprd11.prod.outlook.com>
+X-Proofpoint-GUID: 4P8DZEfPJvGZxqk-olS1XhYRUD0G7Qgl
+X-Proofpoint-ORIG-GUID: 4P8DZEfPJvGZxqk-olS1XhYRUD0G7Qgl
+X-HPE-SCL: -1
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0
- suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ clxscore=1011 adultscore=0 mlxscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2411120000 definitions=main-2412060017
 
-Hi Bryan,
+On Fri, Dec 06, 2024 at 01:26:12AM +0000, Zhuo, Qiuxu wrote:
+> > From: Kyle Meyer <kyle.meyer@hpe.com>
+> > Sent: Friday, December 6, 2024 8:57 AM
+> > To: Luck, Tony <tony.luck@intel.com>
+> > Cc: bp@alien8.de; james.morse@arm.com; mchehab@kernel.org;
+> > rric@kernel.org; linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple
+> > clumps
+> > 
+> > On Thu, Dec 05, 2024 at 03:57:55PM -0800, Luck, Tony wrote:
+> > > > +int skx_get_src_id(struct skx_dev *d, int off, u8 *id) { #ifdef
+> > > > +CONFIG_NUMA
+> > > > +	return skx_get_pkg_id(d, id);
+> > > > +#else
+> > > > +	u32 reg;
+> > > > +
+> > > > +	if (pci_read_config_dword(d->util_all, off, &reg)) {
+> > > > +		skx_printk(KERN_ERR, "Failed to read src id\n");
+> > > > +		return -ENODEV;
+> > > > +	}
+> > > > +
+> > > > +	*id = GET_BITFIELD(reg, 12, 14);
+> > > > +	return 0;
+> > > > +#endif
+> > >
+> > > Doh ... I alwasy forget about IS_ENABLED(). This can be written:
+> > >
+> > >
+> > > int skx_get_src_id(struct skx_dev *d, int off, u8 *id) {
+> > > 	u32 reg;
+> > >
+> > > 	if (IS_ENABLED(CONFIG_NUMA))
+> > > 		return skx_get_pkg_id(d, id);
+> > >
+> > > 	if (pci_read_config_dword(d->util_all, off, &reg)) {
+> > > 		skx_printk(KERN_ERR, "Failed to read src id\n");
+> > > 		return -ENODEV;
+> > > 	}
+> > >
+> > > 	*id = GET_BITFIELD(reg, 12, 14);
+> > > 	return 0;
+> > > }
+> > 
+> > Looks good.
+> > 
+> > > 1) Does this work? I tried on a non-clumpy system that is NUMA.
+> > 
+> > Yes, I just tested this on a Sapphire Rapids system with multiple UPI domains.
+> > 
+> > > 2) Is it better (assuming #fidef factored off into a .h file)?
+> > 
+> > IMO, yes, but there's one subtle difference. EDAC will not load on systems that
+> > have a single UPI domain when CONFIG_NUMA is enabled but numa=off,
+> > because
+> > pcibus_to_node() in skx_get_pkg_id() will return NUMA_NO_NODE (-1). Is
+> > that a case that we need to worry about?
+> 
+> I think we need to make the EDAC load/work even in this case. 
+> Regardless of CONFIG_NUMA or whether numa=off is set or not, could we do it like this:
+> 
+> int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
+> {
+>         u32 reg;
+> 
+>         if (!skx_get_pkg_id(d, id))
+>                 return 0;
+> 
+>         if (pci_read_config_dword(d->util_all, off, &reg)) {
+>                 skx_printk(KERN_ERR, "Failed to read src id\n");
+>                 return -ENODEV;
+>         }
+> 
+>         *id = GET_BITFIELD(reg, 12, 14);
+>         return 0;
+> }
 
-On 12/6/2024 8:14 AM, Bryan O'Donoghue wrote:
-> Re: [PATCH 15/16] media: qcom: camss: Add CSID 780 support for sm8550
-> 
-> Please drop sm8550 in your patch title, change it to something more 
-> consistent with the VFE patch title i.e. your next patch.
-> 
+So, we're back to the original issue on systems with multiple UPI/QPI domains
+when NUMA is disabled.
 
-Sure, will drop sm8550 in the title.
+Systems with multiple UPI/QPI domains can't use source IDs to map devices
+to sockets. skx_get_src_id() will successfully read the source ID from PCI
+configuration space registers but it might not map to the correct socket because
+each UPI/QPI domain has identical repeating source IDs.
 
->> +++ b/drivers/media/platform/qcom/camss/camss-csid-780.h
->> @@ -0,0 +1,25 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * camss-csid-780.h
->> + *
->> + * Qualcomm MSM Camera Subsystem - CSID (CSI Decoder) Module 
->> Generation 3
->> + *
->> + * Copyright (c) 2024 Qualcomm Technologies, Inc.
->> + */
->> +#ifndef QC_MSM_CAMSS_CSID_780_H
->> +#define QC_MSM_CAMSS_CSID_780_H
-> 
-> #ifndef __CAMSS_CSID_780_H__ or __QC_MSM_CAMSS_CSID_780_H__
-> 
-> Either way please encapsulate your guard __thus__
-> 
-> Same comment for all new headers added in this series.
-> 
+For example, 8 sockets with 2 UPI/QPI domains:
 
-Thanks for the comments, I will check the other headers in this series 
-and update them based on suggestion.
+Socket 0 -> Source ID 0
+Socket 1 -> Source ID 1
+Socket 2 -> Source ID 2
+Socket 3 -> Source ID 3
+Socket 4 -> Source ID 0
+Socket 5 -> Source ID 1
+Socket 6 -> Source ID 2
+Socket 7 -> Source ID 3
+
+EDAC will successfully load, but it will not find the the corresponding device
+for errors on sockets 4 though 7 (for example, see skx_common.c:178).
+
+Looking at my original patch, EDAC will not load when a system has multiple UPI/
+QPI domains and NUMA is disabled. We fail early with "Failed to get package ID
+from NUMA information" instead of later when an error occurs.
 
 Thanks,
-Depeng
-
+Kyle Meyer
 
