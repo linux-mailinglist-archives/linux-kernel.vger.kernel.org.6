@@ -1,253 +1,108 @@
-Return-Path: <linux-kernel+bounces-435458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A688B9E7804
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:23:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134B89E780C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:25:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D15B1885AD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:23:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2102285B81
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DC81FFC5B;
-	Fri,  6 Dec 2024 18:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E90D20456A;
+	Fri,  6 Dec 2024 18:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lQqbRWZj"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl5mKPRJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5018F194120
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 18:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF81194120;
+	Fri,  6 Dec 2024 18:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733509381; cv=none; b=uDpwqGMybkJsrfZSZbxFEycOtMCZDUzYUYTVGIqIsgy2Rz5Ezn6tIkD9XrMPHPa7Gpjsuj/5UHjlqSMyxlrc6YFv2nvuLoyv/nyfvlzL3csOhDm54yVKKoBrYf60yMsdwAZEA9SBERC2oaz8VeIwx2BrTgj4SzUAgfssJD7DPM4=
+	t=1733509528; cv=none; b=GvPG8BNep+us+TVt3bSRSm33IJHTa3xsFZrmdA35ohVRXUSYWVYkMLhMgku8uQHP8F+MgewS8moBQcxch5Ow5zGbp4/MKxnsgXCaDdlPLK6ev5PCxsSby/r2gMT87o4mJ/h0OvpGXZ5r9WZ+Lt/G3TnOMu09itg3n+6Qg+KNjD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733509381; c=relaxed/simple;
-	bh=kf+zolflO/EHKE7MBlJ7iCG3NR0ZL/XWpDUekPqViOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Va51SEe7C6wFZDKttM4NBiX9CKYyOO3pRxXqyA5GpPideeKzNo4HJBI+S85dODlBu2wW5sEm+nDpUmSHZSuh++JaALFIGoiRtNl/Hp4lmyBEXEkPqp22UbBB35BHykOfjAoE5/MP2DBVKzAb6q/t/1ePMSaPWojJajHn4IY3OXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lQqbRWZj; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7fd1dcbbc08so1514406a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 10:22:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733509378; x=1734114178; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r3FJ78ZOiVCMNMYdkIsCKf6EgHgZd92CbNxtZ6WSke4=;
-        b=lQqbRWZjq0uoAu9w7fHaVlr06XGUFUyeYIDX5AOOzuAOHYGwFhNftG9PgHiEXgpkt+
-         KTF/is6AnM8uVQpd55qcZAVoFDn+a80tNftIJ0lTu1g7RXXAjG1g3S0IB/VjhTePKndc
-         XqKeBFXNI5dQa3K6SVOuqW7Rz4tAluh6syDEBYsaKI9zEnZKMw6g8s4/tzVTVhQhmiE5
-         9Bsa/vGwS+UgsTLlKVHKXVr4GLLe+FBz2jNsJXvNF5lYaFJ3gV3oeMQIkS3NTCm1F+oO
-         FUG9U8eLwa7zQ7oxE5piIqhxnusYkNPjqucmozwLbZaicHDqIh2d0KUk3HAB/zI6rfBk
-         /WLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733509378; x=1734114178;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r3FJ78ZOiVCMNMYdkIsCKf6EgHgZd92CbNxtZ6WSke4=;
-        b=Q6f0jmGFnNlF62yeQYnqUrJOahUT/GqZg0ekVg6kuGaHoQvsT8UgU+aoNb3H1ZCHPg
-         o5iPDnsPs2ljex6Jn84V677uqLS93ehvvtujDMjU+FeCQ4J47mNzFGuLnaEXDQqgrYpp
-         W33FRtibUXFYIrJd7aun08atfGUsVJGz4s0mEJ7KPO5A/BGMvgZQUh5mp986ZD/5jWH7
-         vMJq0gVi30ylItqMnsC5tOp+M4YS/AZklHeKgQSWTAjLtrVJ1H+Iv3SoLrxktHL/8c9n
-         3qfJ1km90vsKYSKFhIklMHOKJi+A5dUsGa3tw53mH5URAk/xCIwFHX6FF8iaszrEOgYf
-         WsXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqov6Zb8tK1h5CuWTcmUVUhURJJMGEyEZ9DvJz1theXJDAxQRzp8dWNYmXuBKTrOfimzqS6u4CfKFJv2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6eUrjHeoerDPPqxGX7LPcCTn7OdKwrr1XVoCkCFGnV3C4z/x5
-	4eJfecTbFDiGEotnE62Fw9MBkUEUvpCnm59hm16Xrb15EphSb66VJRIsdE+wj+8=
-X-Gm-Gg: ASbGncssFc5zTiyUIJKZ1kT3THswAQPLJk9Wdt7Wo/WbHBg2cRDn7Aju+0GYlXXuzAU
-	/ln9OqKhQItKacoPre9FEY9ZfveHXv/tYDpZjcgJ6oZkaxBDxZQcOH+XBcRToK2duGl21vG3/WG
-	N2BOXGfuFP91slig9hWdlVIyXEYysN1cw7/crKWCYxxjE+tR0YA9DFKtjrfumuF1/S0v3r0vXge
-	LflyEJLn+2oAOjlbruL1S9+4tivCx7LRcjO8gDe20hKMUaiwSYsIm9UwA==
-X-Google-Smtp-Source: AGHT+IHZGJYd2MJ3DSBJ5dS+uaz/fvvXJs4HyxPKMbVKQT4GlNW86jLqGUGSgu6lfLCPoThTJFDfbw==
-X-Received: by 2002:a05:6a20:1584:b0:1e0:c971:a138 with SMTP id adf61e73a8af0-1e18715e8e0mr4909996637.39.1733509377622;
-        Fri, 06 Dec 2024 10:22:57 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:47b4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45fa64d2sm3480035a91.28.2024.12.06.10.22.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 10:22:56 -0800 (PST)
-Message-ID: <39033717-2f6b-47ca-8288-3e9375d957cb@kernel.dk>
-Date: Fri, 6 Dec 2024 11:22:55 -0700
+	s=arc-20240116; t=1733509528; c=relaxed/simple;
+	bh=6zPrOx2SudmgD/c40+Z4a9ztiOiUIdAL08zqV81/sfs=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=LTIDzc97gKVkdMfFSz4T4gExWgxGcaC/h6q/iwihELLpk36t9CQVg1PL3N6Qpg3Q7C7TvGsomkHifdzmo5w3GfrOAMFRSZozxpnS24fTi8LN2ivotySkYx7KLuuGUqU3zSrVeziXq/uYqkQUnVo5zz63TkxccpGWWjB4gjIXqJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl5mKPRJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FBBC4CED1;
+	Fri,  6 Dec 2024 18:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733509528;
+	bh=6zPrOx2SudmgD/c40+Z4a9ztiOiUIdAL08zqV81/sfs=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=tl5mKPRJ4qW6dAOX/AFyy4x6zWaRQy9Z/ra+AtEAYP1YS+8iNTK13pAz/lwHUFmuW
+	 vkO18VAW3gT75101h1AAzL4GWebmnOzOPe/RZUwWSkKQsPssck0zqGUeRH3vQU64G4
+	 0c+pwI61ZfzdDMUK+pur+1WXpU9i2vQiDL27LgnsflrBquDTI0N031EaWffY/x3z+G
+	 Uscw4QpmECno6h5u2jkEw7vFHzL45uDGHBkpiGnVt8TPbdmC/hS/tV+3JIOcQ9Zykk
+	 yKni9yZvcLdKsSbookP0Y5Omwi9ArnXRDmdyVX+u4bpc0kMVQW+enQNSLexJwbWOtH
+	 N7edetiR57TsQ==
+Date: Fri, 06 Dec 2024 12:25:26 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/12] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <20241203153232.92224-13-axboe@kernel.dk>
- <20241206171740.GD7820@frogsfrogsfrogs>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241206171740.GD7820@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Helge Deller <deller@gmx.de>, Lee Jones <lee@kernel.org>, 
+ Hector Martin <marcan@marcan.st>, dri-devel@lists.freedesktop.org, 
+ linux-leds@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, 
+ asahi@lists.linux.dev, Sven Peter <sven@svenpeter.dev>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Pavel Machek <pavel@ucw.cz>, 
+ Daniel Thompson <danielt@kernel.org>, linux-fbdev@vger.kernel.org
+To: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20241206172735.4310-2-towinchenmi@gmail.com>
+References: <20241206172735.4310-1-towinchenmi@gmail.com>
+ <20241206172735.4310-2-towinchenmi@gmail.com>
+Message-Id: <173350952667.3933863.13037602591337209524.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: leds: backlight: apple,dwi-bl: Add
+ bindings for Apple DWI backlight
 
-On 12/6/24 10:17 AM, Darrick J. Wong wrote:
-> On Tue, Dec 03, 2024 at 08:31:47AM -0700, Jens Axboe wrote:
->> If RWF_UNCACHED is set for a write, mark new folios being written with
->> uncached. This is done by passing in the fact that it's an uncached write
->> through the folio pointer. We can only get there when IOCB_UNCACHED was
->> allowed, which can only happen if the file system opts in. Opting in means
->> they need to check for the LSB in the folio pointer to know if it's an
->> uncached write or not. If it is, then FGP_UNCACHED should be used if
->> creating new folios is necessary.
->>
->> Uncached writes will drop any folios they create upon writeback
->> completion, but leave folios that may exist in that range alone. Since
->> ->write_begin() doesn't currently take any flags, and to avoid needing
->> to change the callback kernel wide, use the foliop being passed in to
->> ->write_begin() to signal if this is an uncached write or not. File
->> systems can then use that to mark newly created folios as uncached.
->>
->> This provides similar benefits to using RWF_UNCACHED with reads. Testing
->> buffered writes on 32 files:
->>
->> writing bs 65536, uncached 0
->>   1s: 196035MB/sec
->>   2s: 132308MB/sec
->>   3s: 132438MB/sec
->>   4s: 116528MB/sec
->>   5s: 103898MB/sec
->>   6s: 108893MB/sec
->>   7s: 99678MB/sec
->>   8s: 106545MB/sec
->>   9s: 106826MB/sec
->>  10s: 101544MB/sec
->>  11s: 111044MB/sec
->>  12s: 124257MB/sec
->>  13s: 116031MB/sec
->>  14s: 114540MB/sec
->>  15s: 115011MB/sec
->>  16s: 115260MB/sec
->>  17s: 116068MB/sec
->>  18s: 116096MB/sec
->>
->> where it's quite obvious where the page cache filled, and performance
->> dropped from to about half of where it started, settling in at around
->> 115GB/sec. Meanwhile, 32 kswapds were running full steam trying to
->> reclaim pages.
->>
->> Running the same test with uncached buffered writes:
->>
->> writing bs 65536, uncached 1
->>   1s: 198974MB/sec
->>   2s: 189618MB/sec
->>   3s: 193601MB/sec
->>   4s: 188582MB/sec
->>   5s: 193487MB/sec
->>   6s: 188341MB/sec
->>   7s: 194325MB/sec
->>   8s: 188114MB/sec
->>   9s: 192740MB/sec
->>  10s: 189206MB/sec
->>  11s: 193442MB/sec
->>  12s: 189659MB/sec
->>  13s: 191732MB/sec
->>  14s: 190701MB/sec
->>  15s: 191789MB/sec
->>  16s: 191259MB/sec
->>  17s: 190613MB/sec
->>  18s: 191951MB/sec
->>
->> and the behavior is fully predictable, performing the same throughout
->> even after the page cache would otherwise have fully filled with dirty
->> data. It's also about 65% faster, and using half the CPU of the system
->> compared to the normal buffered write.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  include/linux/fs.h      |  5 +++++
->>  include/linux/pagemap.h |  9 +++++++++
->>  mm/filemap.c            | 12 +++++++++++-
->>  3 files changed, 25 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index 40383f5cc6a2..32255473f79d 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -2912,6 +2912,11 @@ static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
->>  				(iocb->ki_flags & IOCB_SYNC) ? 0 : 1);
->>  		if (ret)
->>  			return ret;
->> +	} else if (iocb->ki_flags & IOCB_UNCACHED) {
->> +		struct address_space *mapping = iocb->ki_filp->f_mapping;
->> +
->> +		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos,
->> +					      iocb->ki_pos + count);
->>  	}
->>  
->>  	return count;
->> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->> index f2d49dccb7c1..e49587c40157 100644
->> --- a/include/linux/pagemap.h
->> +++ b/include/linux/pagemap.h
->> @@ -14,6 +14,7 @@
->>  #include <linux/gfp.h>
->>  #include <linux/bitops.h>
->>  #include <linux/hardirq.h> /* for in_interrupt() */
->> +#include <linux/writeback.h>
->>  #include <linux/hugetlb_inline.h>
->>  
->>  struct folio_batch;
->> @@ -70,6 +71,14 @@ static inline int filemap_write_and_wait(struct address_space *mapping)
->>  	return filemap_write_and_wait_range(mapping, 0, LLONG_MAX);
->>  }
->>  
->> +/*
->> + * Value passed in to ->write_begin() if IOCB_UNCACHED is set for the write,
->> + * and the ->write_begin() handler on a file system supporting FOP_UNCACHED
->> + * must check for this and pass FGP_UNCACHED for folio creation.
->> + */
->> +#define foliop_uncached			((struct folio *) 0xfee1c001)
->> +#define foliop_is_uncached(foliop)	(*(foliop) == foliop_uncached)
+
+On Sat, 07 Dec 2024 01:24:33 +0800, Nick Chan wrote:
+> Add the device tree bindings for backlight controllers attached via Apple
+> DWI 2-wire interface.
 > 
-> Honestly, I'm not a fan of foliop_uncached or foliop_is_uncached.
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  .../bindings/leds/backlight/apple,dwi-bl.yaml | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
+> 
 
-It definitely is what I would elegantly refer to as somewhat of a
-hack... But it's not _that_ bad imho.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> The first one because it's a magic value and can you guarantee that
-> 0xfee1c001 will never be a pointer to an actual struct folio, even on
-> 32-bit?
+yamllint warnings/errors:
 
-I don't think that should be possible, since it's deliberately 1 at the
-end. A struct like folio (or anything else) should at least be sizeof
-aligned, and this one is not.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/leds/backlight/apple,dwi.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
 
-> Second, they're both named "foliop" even though the first one doesn't
-> return a (struct folio **) but the second one takes that as an arg.
+doc reference errors (make refcheckdocs):
 
-I just named them as such since they only deal with the folio ** that is
-being passed in. I can certainly rename the second one to
-folio_uncached, that would be an improvement I think. Thanks!
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241206172735.4310-2-towinchenmi@gmail.com
 
-> I think these two macros are only used for ext4 (or really, !iomap)
-> support, right?  And that's only to avoid messing with ->write_begin?
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Indeed, ideally we'd change ->write_begin() instead. And that probably
-should still be done, I just did not want to deal with that nightmare in
-terms of managing the patchset. And honestly I think it'd be OK to defer
-that part until ->write_begin() needs to be changed for other reasons,
-it's a lot of churn just for this particular thing and dealing with the
-magic pointer value (at least to me) is liveable.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-> What if you dropped ext4 support instead? :D
+pip3 install dtschema --upgrade
 
-Hah, yes obviously that'd be a solution, then I'd need to drop btrfs as
-well. And I would kind of prefer not doing that ;-)
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
--- 
-Jens Axboe
 
