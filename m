@@ -1,337 +1,138 @@
-Return-Path: <linux-kernel+bounces-434783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B059E6B41
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:03:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B33188331F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:03:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F861F6678;
-	Fri,  6 Dec 2024 10:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yzh+rj2B"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1499E6B44
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:05:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD9D28684;
-	Fri,  6 Dec 2024 10:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EBF280F8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:05:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F331F4737;
+	Fri,  6 Dec 2024 10:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="taDKLzgB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pLk7R9x1"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E051DFDAE;
+	Fri,  6 Dec 2024 10:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733479407; cv=none; b=TVOEwblqB/cCgoQFNNvMsS13yutxjeRH51CDmoeVFTloqX07NXL14y2SD6GdYIRLAl/FfUD9EpBwVUOJYNyYMHYIFgVJAQloDllX1YORhHF9Lm0EttdqG0ln67pKleIk/eIMJx8FTyZVJzFxwC2Av2QI+dF19Kni0vKZwtBrd7I=
+	t=1733479522; cv=none; b=HiftvcKngyRQlMoWX1ujnov7Rsxc3Le3IScyt5MK0X/vT9iuNDNHbpPD8tm1sjzDZGZ3Q3BZiBO8BuMqdplL+rfgNRSExXmnMpXeNlh944oG1ssgHuyT1U0nIZeHEs10O5fF0TAftfCZ9zNqKjjB/io4Dz1TyAnlVpYQPNCAQsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733479407; c=relaxed/simple;
-	bh=NuKXcBvVrsigPdVTcyeGYfowk1rbjZM9c9NH3bBlkYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mWp/uXjY+G74S3oS7LhTKBeSuR08iWyW9lG3Syqtd1ybCeM1jIF1NixDbbNmlaR8MXb2mJRYrvlkuVzZH0VEmUJe1E5OGURO/fwp9wipenj7kyif4IIJRyQNNfWL3zKpx3ArFwLeIIANcRmm1FJWPxagDG4xKrQa6h6iVhqQOVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yzh+rj2B; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67lkIA005269;
-	Fri, 6 Dec 2024 10:03:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s5CCRsYoQnK8cuXtQOsZAQ0Rud5UbE35efXt8t0o+I4=; b=Yzh+rj2BlTda5r9H
-	y2tbfd67DP4Sf1KYaK8pFYQgChzzu0HNZFk3HJUF6G2FeXUHiQQmje2br/5lGK04
-	fjonj29C9qTy5A1ht6VtZ/jqDxhP2o1eFBmzpEf4IlYsLWqtkaDy3hKe3K82NZl3
-	odPmM1EucaSxJ2kESkVMGrphm4N8dCLR5xbqJj9SzxMoi0yRx0pZcYmJV+MYPHaj
-	foiUeKvOZyZZ7PTSNUZW5DE7/SwaTO7cuGbaw8l3kBsMfVPA/KGF4aK1SWfODzci
-	5TF/3+Ozk3NxVTUj8PtQYujmnfg626bRdRshv+UgpWtDyGLAKL1avzMryz0eTpIM
-	KiO+aA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbqm36d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 10:03:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6A3KUj008343
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 10:03:20 GMT
-Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
- 02:03:15 -0800
-Message-ID: <a2285d28-0f57-d165-a22e-2aa57b3cff65@quicinc.com>
-Date: Fri, 6 Dec 2024 15:33:12 +0530
+	s=arc-20240116; t=1733479522; c=relaxed/simple;
+	bh=RrA8I8dF0J92FZTcmFvmsnpScWk0YFpUbKH70ww5FzI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=FUdXXqNdDYNoGwFOsDAXoYmcjIgGiaSruaE0KlzxRARSCmQnHjIq2NErdwh93RYLGUpu53hxX5n49P1RrNHxJtDllvRC5LIlvGpVRSsoxldlfrjnaJwCyMwmdzbLLhG5Y7EDNdrVpIeSLpNfr7TYWpqQTfsok6wPqaELf80Hq2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=taDKLzgB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pLk7R9x1; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 16D072540190;
+	Fri,  6 Dec 2024 05:05:19 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 06 Dec 2024 05:05:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733479518;
+	 x=1733565918; bh=inPW88KNR+Skr6L3XiROaAs7CBIGj/blbIFxaE3cAdA=; b=
+	taDKLzgB3LVPGgKXx9CVvD9CFlR8mKmUw2wyqungAF8LOmhJmywxorozkHJzyNEg
+	+09OJ0rbmFYpW3eAiWL7XngrtXIOMGob1Bkr2VBxsYrkIeM3flR1m2PA8cSVVKQy
+	BlWux3u24Lg6UaA12/oeOPkO8/wlD4XSx/+Arq0SRYNvBQ1IzmYNIpNdcLr94fxc
+	SqFhvJqc5MTvbc0IIUL8B0o8NAGZouuBPaMufX4n3l84OH9val1lnGXUXtGA7k3r
+	8I6ahpo6rLlCPIemjSd55vQfhPFHdXQuX7zI4cbGWZfwFhz4YEc1KPPtWLcqMG1h
+	ns6pAr7IpZ4W/hQyFcoxsg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733479518; x=
+	1733565918; bh=inPW88KNR+Skr6L3XiROaAs7CBIGj/blbIFxaE3cAdA=; b=p
+	Lk7R9x1R9MVIUPlREpL5Wi80EBtc6f0BxfVs4yN+t+Z/9FNBB9cFYzrS74vH3Q8p
+	njds9mr7+a30GjDQyHSrur4w42auc3ZVQ7Kz90rRIQMexV3z0tneUT7ji7hwpnF3
+	yJfNlWdz/StqX66P7uC2sXnOyipdG9VcuzY7kxwqfO2zvie0+dlNO3i67R2Q3NSq
+	G9+sABtSfcqt5Mv7OqUByQcSUvLi+zdt7ujXPdLCnwKgit4FyI93pN0PJH5xNpYe
+	1HtMJZ8QiS9EHFJyKgTNCo06wespVgMTc7jqWtkzf4fT0SWBrkBw4JQ6bbb7XEC/
+	MB8BMxgCLrvJm3sUBURMQ==
+X-ME-Sender: <xms:XsxSZ51DMsHQtsOy1NFCl3mf9jM3AXQdxcnERVf3tI813Omnm1WCIA>
+    <xme:XsxSZwH01y0x_9Ma-VsAUXwVFuof2yco1Hos1Vc89r4NipTFSpwJJQq39pZiSvcmJ
+    aSCnb6S49KAG39yMXM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieelgddutdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvg
+    htpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphht
+    thhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitg
+    gvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrghes
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhh
+    sehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsggvnhhnohdrlh
+    hoshhsihhnsehprhhothhonhdrmhgv
+X-ME-Proxy: <xmx:XsxSZ54ieFB7nJHhiGNt9BbAgOfWqZsK1lPt855ZSq6oQQW2qG70xw>
+    <xmx:XsxSZ20dzGQY39KJJBERmnDSJKG2PdJog0uvqAFO7ZIxXbARTNFaVg>
+    <xmx:XsxSZ8E5GDBqdjOEr1at5iCm82ozWC93F6QSN_wJgIk65gVPU6pwYA>
+    <xmx:XsxSZ3-ZBluVtrDRRYNzRI4b7Dsol543PPVWnzmCMmv6rhqsdzZ81A>
+    <xmx:XsxSZzfft_Xlo4HEVGEON0HDZ3EFDnMmOWnLkI0EecQ8Ir_iQyy5pU4U>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7AAB22220072; Fri,  6 Dec 2024 05:05:18 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 3/3] media: dt-bindings: qcom-venus: Deprecate
- video-decoder and video-encoder where applicable
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <quic_renjiang@quicinc.com>, <quic_vnagar@quicinc.com>,
-        <konradybcio@kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-0-fd062b399374@linaro.org>
- <20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-3-fd062b399374@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-3-fd062b399374@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 06 Dec 2024 11:04:57 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lee Jones" <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org
+Message-Id: <57c35f7f-76e8-4e21-8288-c66a1b6e7069@app.fastmail.com>
+In-Reply-To: <20241206090515.752267-5-lee@kernel.org>
+References: <20241206090515.752267-1-lee@kernel.org>
+ <20241206090515.752267-5-lee@kernel.org>
+Subject: Re: [PATCH v4 2/4] samples: rust: Provide example using the new Rust
+ MiscDevice abstraction
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SeOtIOieL2fz3aNzlgT0pXh1A1-t01pM
-X-Proofpoint-ORIG-GUID: SeOtIOieL2fz3aNzlgT0pXh1A1-t01pM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060072
 
+On Fri, Dec 6, 2024, at 10:05, Lee Jones wrote:
+> This sample driver demonstrates the following basic operations:
+>
+> * Register a Misc Device
+> * Create /dev/rust-misc-device
+> * Provide open call-back for the aforementioned character device
+> * Operate on the character device via a simple ioctl()
+> * Provide close call-back for the character device
+>
+> Signed-off-by: Lee Jones <lee@kernel.org>
 
+Could you include a compat_ioctl() callback in the example?
+I think it would be good to include it as a reminder for
+authors of actual drivers that every driver implementing
+ioctl should also implement compat_ioctl. In C drivers, this
+can usually be done by pointing .compat_ioctl() to the
+generic compat_ptr_ioctl() function, which assumes that 'arg'
+is a pointer disguised as an 'unsigned long'.
 
-On 11/28/2024 9:51 PM, Bryan O'Donoghue wrote:
-> For the list of yaml files here the video-decoder and video-encoder nodes
-> provide nothing more than configuration input for the driver. These entries
-> do not in fact impart hardware specific data and should be deprecated.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  .../devicetree/bindings/media/qcom,msm8916-venus.yaml        | 12 ++----------
->  .../devicetree/bindings/media/qcom,sc7180-venus.yaml         | 12 ++----------
->  .../devicetree/bindings/media/qcom,sc7280-venus.yaml         | 12 ++----------
->  .../devicetree/bindings/media/qcom,sdm845-venus-v2.yaml      | 12 ++----------
->  .../devicetree/bindings/media/qcom,sm8250-venus.yaml         | 12 ++----------
->  5 files changed, 10 insertions(+), 50 deletions(-)
-> 
-A general query, this change is not done for 8996-venus, sdm660-venus and
-sdm845-venus, was that intentional? may be because these are not active
-SOCs in upstream?
-
-Thanks,
-Dikshita
-> diff --git a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
-> index 9410f13ca97c181973c62fe62d0399fc9e82f05d..da140c2e3d3f3c3e886496e3e2303eda1df99bb4 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
-> @@ -45,6 +45,7 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->    video-encoder:
-> @@ -57,13 +58,12 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->  required:
->    - compatible
->    - iommus
-> -  - video-decoder
-> -  - video-encoder
->  
->  unevaluatedProperties: false
->  
-> @@ -83,12 +83,4 @@ examples:
->          power-domains = <&gcc VENUS_GDSC>;
->          iommus = <&apps_iommu 5>;
->          memory-region = <&venus_mem>;
-> -
-> -        video-decoder {
-> -            compatible = "venus-decoder";
-> -        };
-> -
-> -        video-encoder {
-> -            compatible = "venus-encoder";
-> -        };
->      };
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
-> index 5cec1d077cda77817f6d876109defcb0abbfeb2c..83c4a5d95f020437bd160d6456850bc84a2cf5ff 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
-> @@ -70,6 +70,7 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->    video-encoder:
-> @@ -82,14 +83,13 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->  required:
->    - compatible
->    - power-domain-names
->    - iommus
-> -  - video-decoder
-> -  - video-encoder
->  
->  unevaluatedProperties: false
->  
-> @@ -114,12 +114,4 @@ examples:
->                        "vcodec0_core", "vcodec0_bus";
->          iommus = <&apps_smmu 0x0c00 0x60>;
->          memory-region = <&venus_mem>;
-> -
-> -        video-decoder {
-> -            compatible = "venus-decoder";
-> -        };
-> -
-> -        video-encoder {
-> -            compatible = "venus-encoder";
-> -        };
->      };
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> index 10c334e6b3dcf25967fa438f8e6e5035448af1b9..413c5b4ee6504ba1d5fe9f74d5be04ad8c90c318 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> @@ -68,6 +68,7 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->    video-encoder:
-> @@ -80,14 +81,13 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->  required:
->    - compatible
->    - power-domain-names
->    - iommus
-> -  - video-decoder
-> -  - video-encoder
->  
->  unevaluatedProperties: false
->  
-> @@ -125,14 +125,6 @@ examples:
->  
->          memory-region = <&video_mem>;
->  
-> -        video-decoder {
-> -            compatible = "venus-decoder";
-> -        };
-> -
-> -        video-encoder {
-> -            compatible = "venus-encoder";
-> -        };
-> -
->          video-firmware {
->              iommus = <&apps_smmu 0x21a2 0x0>;
->          };
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-> index 6228fd2b324631f3138e128c918266da58f6b544..c839cb1ebc0999e10b865f4bb43ea76ffa2bf46d 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-> @@ -70,6 +70,7 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->    video-core1:
-> @@ -82,14 +83,13 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->  required:
->    - compatible
->    - power-domain-names
->    - iommus
-> -  - video-core0
-> -  - video-core1
->  
->  unevaluatedProperties: false
->  
-> @@ -119,12 +119,4 @@ examples:
->          iommus = <&apps_smmu 0x10a0 0x8>,
->                   <&apps_smmu 0x10b0 0x0>;
->          memory-region = <&venus_mem>;
-> -
-> -        video-core0 {
-> -            compatible = "venus-decoder";
-> -        };
-> -
-> -        video-core1 {
-> -            compatible = "venus-encoder";
-> -        };
->      };
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
-> index f66033ae8b590e7b6f1e344c368994744411aca2..da54493220c9dc90e7d9f5fcfce7590acb241c85 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
-> @@ -73,6 +73,7 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->    video-encoder:
-> @@ -85,6 +86,7 @@ properties:
->      required:
->        - compatible
->  
-> +    deprecated: true
->      additionalProperties: false
->  
->  required:
-> @@ -95,8 +97,6 @@ required:
->    - iommus
->    - resets
->    - reset-names
-> -  - video-decoder
-> -  - video-encoder
->  
->  unevaluatedProperties: false
->  
-> @@ -132,12 +132,4 @@ examples:
->          resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>,
->                   <&videocc VIDEO_CC_MVS0C_CLK_ARES>;
->          reset-names = "bus", "core";
-> -
-> -        video-decoder {
-> -            compatible = "venus-decoder";
-> -        };
-> -
-> -        video-encoder {
-> -            compatible = "venus-encoder";
-> -        };
->      };
-> 
+      Arnd
 
