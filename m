@@ -1,220 +1,125 @@
-Return-Path: <linux-kernel+bounces-435757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BA19E7BE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:45:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4283D9E7BE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8C918848C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E7916B1C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A01D212F93;
-	Fri,  6 Dec 2024 22:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F44B212FAD;
+	Fri,  6 Dec 2024 22:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="AUoYZ9QL"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UeZWq2x8"
+Received: from mail-vk1-f202.google.com (mail-vk1-f202.google.com [209.85.221.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ADC22C6D5;
-	Fri,  6 Dec 2024 22:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D981DF743
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 22:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733525141; cv=none; b=mlrYWyP+u8wBrTW3baO6futUS3qsk7fthPZBzkSR2/NofQtuERQCHz4ExIabM1ruO0/PIXCAZcF9wCBHEhSLTU3w/X5vwQWdpRcdPTQdMkz6ukghZ0XP3b1/YDyhp5SQqT6lk2hN0w/XMbMtNl+8JJpIAdpyH2gHN3cXnLYTJnw=
+	t=1733525222; cv=none; b=KeMwH/K86I0ik1ZaOd3pONHVDjpi2XPSWVQx7rRkkDDVveG+eLhs7KoIeRVxOStC9i0+FCwe9yha5kPwJX5JURh5Sxcn8Nx6+XyiQLDL+513maFPpNWkRBKAZ2WIfXIHN+Z0MT3rUMuv/HF+F4cYsaDX3jq466xggABy4tUeNpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733525141; c=relaxed/simple;
-	bh=SPq6ru6KeEu7S/DJ3r40M5+WSJlUxaW6SpmQGfhX2YQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sts0j9uB8BL/xI8GyAMolsRo9hM4sh8KSjrosdqwqX857TXzKPc8UQL2YG90KcHX7R09ps+yShzmqh3x5RXgDGgZ+zN5NGIJVv7yEmKomIb2Or2m5TLnHiBAwOW512ILglCcJtUixF4MttlvmZlmeBibugmcR45HlL0ESvY7+E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=AUoYZ9QL; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=EDv7b+GrDXjsRKtyYoIJaRrs2yTN4GiCq+PXW32/j2Y=; b=AUoYZ9QLJ9NvvzMDdANLL2Dg7S
-	yUps5jChAvRfa++KcL43tsdgZCxl6ShEJflCMZfgBejPSodAClvJ1aG3QV9XpTjfqEPnlwfD7hzOd
-	3LEIk6AAmYuuyvmghsY1+py0zdH5KHC5Dj1E2qmGIiAdpIwK5KlzHB431zoKaZRTszYVnpD1JT4mT
-	c0HN0hH9JJT00PaCpe3ilcpoGQdu0wozVcL4wN8Q7ok2bQWDlG9NwdXEJ28vQnSjHvAhNDevIKY/d
-	Rkl5eBIp026UdOV2roqctIKqCFMT2vGapc38mzmWnMCzY0nURBreSmTd+BRK6MPlBIAvLI4iP9YFr
-	cPk/DdkQ==;
-Received: from 226.206.1.85.dynamic.cust.swisscom.net ([85.1.206.226] helo=localhost)
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1tJh4q-0008Du-54; Fri, 06 Dec 2024 23:45:36 +0100
-From: Daniel Borkmann <daniel@iogearbox.net>
-To: torvalds@linux-foundation.org
-Cc: bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alexei.starovoitov@gmail.com,
-	andrii@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@kernel.org
-Subject: [GIT PULL] bpf for v6.13-rc2
-Date: Fri,  6 Dec 2024 23:45:34 +0100
-Message-ID: <20241206224535.279796-1-daniel@iogearbox.net>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733525222; c=relaxed/simple;
+	bh=iITAE1Ks58yzjB7pv45kbC7F7m3AmF+RtaX7q902Uf8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jbVBz++S2S67ADxTzfxXCoHhTPUvLxG3dMArDp5CeCeu9qJc1lPtxbXpXa6bRQJWM18HbNz3hdBBQ2klZD0B4RORhluLCPYYU/ZlWfUsgtk0lYngzvGEfubCyg7GYG3JdZ9qh/98po4vXPoLc6EvQfjO0zjteSCpF3LjymlCvE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UeZWq2x8; arc=none smtp.client-ip=209.85.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-vk1-f202.google.com with SMTP id 71dfb90a1353d-515d5bd3a96so502122e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 14:47:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733525219; x=1734130019; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8xOebWP/M8X2cP/fdZF9vXfDo8byCjFk2C5X5FbCC10=;
+        b=UeZWq2x8T1e3RuJxryf1R9hW2RwLmEkMrt3ufE+U20FGxTLb8Ugy4tn9n4jVUpbpQ5
+         5PeMMpUTNjgPZx4RIqy7Hw6qiw0R2b3pctMJiogjpYF+D+o5kaysTfRx5aBoagIDo7b+
+         qVXEB7Q6xcBigTmB5vq8dtVX+seSb3ZIIr47FPPyNUu4NJr4vjyZRyCveEC4pX+VNTYz
+         DyeO/O3yVBq7QGzeMUMBf6K7UYvYhf6s8EKqSvohOWYVNFDhUcB0XHN+6BcIg4kjN2F4
+         anEWfTIlDraCHiRaJ3q20SWA9KkfjktCuHhgUeUmOt4RvYXNNomgk3CofeJOc0A5DWsK
+         iw8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733525219; x=1734130019;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8xOebWP/M8X2cP/fdZF9vXfDo8byCjFk2C5X5FbCC10=;
+        b=LhF46SaJ2yrZsrOfT1JPooGvSFcbHkp8RSgU5uJCUhdjPdnzeZwdsW5TLBftsy2zqw
+         BguQdih4G1dmztS1QEwT2XmzRzb+PcznM5ejiqo5EXG9EpSmFxWq8tOj5ecivf5ctB1x
+         00l9u1HQ+w3eOACMaGIn+lvzTr81x/Yns8ykAO2cfZ7oW+P7ZJNFBUd2TiuJ5By+RF7e
+         iJfHDNUO9WmkC8zIhzIuIpUE3qe/T2gcvHwgpM3rM9vfDSyaRduPep0zsoWeCia7lpvr
+         Cxm2QO96K7C5v65o+Br9Q8lnghJa/z10ml9a/auJRgu49jwFSgnJbeY3RjJWf1pXxQcl
+         Yw4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQPFMB5Offq+9e9LOHddGKnh1zOODTnokyKZ8zdVG1IQ5cxBOuc35m19Ypmn9yYAn/k3DUQfFKWR0V8uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiCK/rMGYO1HNmuob1EYLmNfLLiPakWnV37IAeVM4l9NLVFYkU
+	NrLRHI8u6A56Pgwz8hONm1iHlCxaIMMS+I/0BQbeADv3KcQ4P5u/mSQF4vMD731AS5ON/TbrBWP
+	nYR22P7V62DjHJchfZQ==
+X-Google-Smtp-Source: AGHT+IFWYRH0ZDfG1SCEobsGl/BiWTfQRI31egCmHBP1UIFLmQh8g16wMoeT9PBzM1Kkhhw9DuLZq6uIHa5tY1W0
+X-Received: from vkbes1.prod.google.com ([2002:a05:6122:1b81:b0:50d:806e:dfd0])
+ (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6122:1da1:b0:50b:e9a5:cd7b with SMTP id 71dfb90a1353d-515fcae70a3mr5700023e0c.9.1733525219486;
+ Fri, 06 Dec 2024 14:46:59 -0800 (PST)
+Date: Fri,  6 Dec 2024 22:46:58 +0000
+In-Reply-To: <202412052133.pTg3UAQm-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27479/Fri Dec  6 10:40:14 2024)
+Mime-Version: 1.0
+References: <202412052133.pTg3UAQm-lkp@intel.com>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241206224658.2833655-1-jthoughton@google.com>
+Subject: Re: [PATCH v1 01/13] KVM: Add KVM_MEM_USERFAULT memslot flag and bitmap
+From: James Houghton <jthoughton@google.com>
+To: lkp@intel.com
+Cc: amoorthy@google.com, corbet@lwn.net, dmatlack@google.com, 
+	jthoughton@google.com, kalyazin@amazon.com, kvm@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org, 
+	oe-kbuild-all@lists.linux.dev, oliver.upton@linux.dev, pbonzini@redhat.com, 
+	peterx@redhat.com, pgonda@google.com, seanjc@google.com, wei.w.wang@intel.com, 
+	yan.y.zhao@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+>    arch/x86/kvm/../../../virt/kvm/kvm_main.c: In function '__kvm_set_memory_region':
+> >> arch/x86/kvm/../../../virt/kvm/kvm_main.c:2049:41: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>     2049 |                 new->userfault_bitmap = (unsigned long *)mem->userfault_bitmap;
+>          |                                         ^
 
-The following changes since commit 9f16d5e6f220661f73b36a4be1b21575651d8833:
+I realize that, not only have I done this cast slightly wrong, I'm
+missing a few checks on userfault_bitmap that I should have. Applying
+this diff, or at least something like it, to fix it:
 
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2024-11-23 16:00:50 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
-
-for you to fetch changes up to 509df676c2d79c985ec2eaa3e3a3bbe557645861:
-
-  Merge branch 'fixes-for-lpm-trie' (2024-12-06 09:14:35 -0800)
-
-----------------------------------------------------------------
-BPF fixes:
-
-- Fix several issues for BPF LPM trie map which were found by
-  syzbot and during addition of new test cases (Hou Tao)
-
-- Fix a missing process_iter_arg register type check in the
-  BPF verifier (Kumar Kartikeya Dwivedi, Tao Lyu)
-
-- Fix several correctness gaps in the BPF verifier when
-  interacting with the BPF stack without CAP_PERFMON
-  (Kumar Kartikeya Dwivedi, Eduard Zingerman, Tao Lyu)
-
-- Fix OOB BPF map writes when deleting elements for the case of
-  xsk map as well as devmap (Maciej Fijalkowski)
-
-- Fix xsk sockets to always clear DMA mapping information when
-  unmapping the pool (Larysa Zaremba)
-
-- Fix sk_mem_uncharge logic in tcp_bpf_sendmsg to only uncharge
-  after sent bytes have been finalized (Zijian Zhang)
-
-- Fix BPF sockmap with vsocks which was missing a queue check
-  in poll and sockmap cleanup on close (Michal Luczaj)
-
-- Fix tools infra to override makefile ARCH variable if defined
-  but empty, which addresses cross-building tools. (Björn Töpel)
-
-- Fix two resolve_btfids build warnings on unresolved bpf_lsm
-  symbols (Thomas Weißschuh)
-
-- Fix a NULL pointer dereference in bpftool (Amir Mohammadi)
-
-- Fix BPF selftests to check for CONFIG_PREEMPTION instead of
-  CONFIG_PREEMPT (Sebastian Andrzej Siewior)
-
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-
-----------------------------------------------------------------
-Alexei Starovoitov (5):
-      Merge branch 'bpf-vsock-fix-poll-and-close'
-      Merge branch 'bpf-fix-oob-accesses-in-map_delete_elem-callbacks'
-      Merge branch 'fix-missing-process_iter_arg-type-check'
-      Merge branch 'fixes-for-stack-with-allow_ptr_leaks'
-      Merge branch 'fixes-for-lpm-trie'
-
-Amir Mohammadi (1):
-      bpftool: fix potential NULL pointer dereferencing in prog_dump()
-
-Björn Töpel (1):
-      tools: Override makefile ARCH variable if defined, but empty
-
-Eduard Zingerman (2):
-      samples/bpf: Remove unnecessary -I flags from libbpf EXTRA_CFLAGS
-      selftests/bpf: Introduce __caps_unpriv annotation for tests
-
-Hou Tao (9):
-      bpf: Remove unnecessary check when updating LPM trie
-      bpf: Remove unnecessary kfree(im_node) in lpm_trie_update_elem
-      bpf: Handle BPF_EXIST and BPF_NOEXIST for LPM trie
-      bpf: Handle in-place update for full LPM trie correctly
-      bpf: Fix exact match conditions in trie_get_next_key()
-      bpf: Switch to bpf mem allocator for LPM trie
-      bpf: Use raw_spinlock_t for LPM trie
-      selftests/bpf: Move test_lpm_map.c to map_tests
-      selftests/bpf: Add more test cases for LPM trie
-
-Kumar Kartikeya Dwivedi (5):
-      selftests/bpf: Add tests for iter arg check
-      bpf: Zero index arg error string for dynptr and iter
-      bpf: Don't mark STACK_INVALID as STACK_MISC in mark_stack_slot_misc
-      selftests/bpf: Add test for reading from STACK_INVALID slots
-      selftests/bpf: Add test for narrow spill into 64-bit spilled scalar
-
-Larysa Zaremba (1):
-      xsk: always clear DMA mapping information when unmapping the pool
-
-Maciej Fijalkowski (2):
-      xsk: fix OOB map writes when deleting elements
-      bpf: fix OOB devmap writes when deleting elements
-
-Michal Luczaj (4):
-      bpf, vsock: Fix poll() missing a queue
-      selftest/bpf: Add test for af_vsock poll()
-      bpf, vsock: Invoke proto::close on close()
-      selftest/bpf: Add test for vsock removal from sockmap on close()
-
-Sebastian Andrzej Siewior (1):
-      selftests/bpf: Check for PREEMPTION instead of PREEMPT
-
-Tao Lyu (2):
-      bpf: Ensure reg is PTR_TO_STACK in process_iter_arg
-      bpf: Fix narrow scalar spill onto 64-bit spilled scalar slots
-
-Thomas Weißschuh (1):
-      bpf, lsm: Remove getlsmprop hooks BTF IDs
-
-Zijian Zhang (2):
-      tcp_bpf: Fix the sk_mem_uncharge logic in tcp_bpf_sendmsg
-      selftests/bpf: Add apply_bytes test to test_txmsg_redir_wait_sndmem in test_sockmap
-
- kernel/bpf/bpf_lsm.c                               |   2 -
- kernel/bpf/devmap.c                                |   6 +-
- kernel/bpf/lpm_trie.c                              | 133 ++++---
- kernel/bpf/verifier.c                              |  27 +-
- net/ipv4/tcp_bpf.c                                 |  11 +-
- net/vmw_vsock/af_vsock.c                           |  70 ++--
- net/xdp/xsk_buff_pool.c                            |   5 +-
- net/xdp/xskmap.c                                   |   2 +-
- samples/bpf/Makefile                               |  13 +-
- tools/bpf/bpftool/prog.c                           |  17 +-
- tools/scripts/Makefile.arch                        |   4 +-
- tools/testing/selftests/bpf/.gitignore             |   1 -
- tools/testing/selftests/bpf/Makefile               |   2 +-
- .../lpm_trie_map_basic_ops.c}                      | 405 ++++++++++++++++++++-
- .../selftests/bpf/map_tests/task_storage_map.c     |   4 +-
- .../selftests/bpf/prog_tests/sockmap_basic.c       |  77 ++++
- .../selftests/bpf/prog_tests/task_local_storage.c  |   2 +-
- tools/testing/selftests/bpf/prog_tests/verifier.c  |  19 +-
- tools/testing/selftests/bpf/progs/bpf_misc.h       |  12 +
- tools/testing/selftests/bpf/progs/dynptr_fail.c    |  22 +-
- tools/testing/selftests/bpf/progs/iters.c          |  26 ++
- .../selftests/bpf/progs/iters_state_safety.c       |  14 +-
- .../selftests/bpf/progs/iters_testmod_seq.c        |   4 +-
- .../bpf/progs/read_bpf_task_storage_busy.c         |   4 +-
- .../selftests/bpf/progs/task_storage_nodeadlock.c  |   4 +-
- .../selftests/bpf/progs/test_kfunc_dynptr_param.c  |   2 +-
- .../selftests/bpf/progs/verifier_bits_iter.c       |   8 +-
- tools/testing/selftests/bpf/progs/verifier_mtu.c   |   4 +-
- .../selftests/bpf/progs/verifier_spill_fill.c      |  35 ++
- tools/testing/selftests/bpf/test_loader.c          |  46 +++
- tools/testing/selftests/bpf/test_sockmap.c         |   6 +-
- 31 files changed, 813 insertions(+), 174 deletions(-)
- rename tools/testing/selftests/bpf/{test_lpm_map.c => map_tests/lpm_trie_map_basic_ops.c} (65%)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b552cdef2850..30f09141df64 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1977,6 +1977,12 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 		return -EINVAL;
+ 	if ((mem->memory_size >> PAGE_SHIFT) > KVM_MEM_MAX_NR_PAGES)
+ 		return -EINVAL;
++	if (mem->flags & KVM_MEM_USERFAULT &&
++	    ((mem->userfault_bitmap != untagged_addr(mem->userfault_bitmap)) ||
++	     !access_ok((void __user *)(unsigned long)mem->userfault_bitmap,
++			DIV_ROUND_UP(mem->memory_size >> PAGE_SHIFT, BITS_PER_LONG)
++			 * sizeof(long))))
++		return -EINVAL;
+ 
+ 	slots = __kvm_memslots(kvm, as_id);
+ 
+@@ -2053,7 +2059,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 			goto out;
+ 	}
+ 	if (mem->flags & KVM_MEM_USERFAULT)
+-		new->userfault_bitmap = (unsigned long *)mem->userfault_bitmap;
++		new->userfault_bitmap =
++		  (unsigned long __user *)(unsigned long)mem->userfault_bitmap;
+ 
+ 	r = kvm_set_memslot(kvm, old, new, change);
+ 	if (r)
 
