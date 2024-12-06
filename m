@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-435069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFD69E6F16
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:16:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189A09E6F13
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:15:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93AF1188772C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E107516D921
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7C0206F0D;
-	Fri,  6 Dec 2024 13:10:39 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31742206F0F;
+	Fri,  6 Dec 2024 13:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hIOTXNBq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C1D46426;
-	Fri,  6 Dec 2024 13:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8215046426;
+	Fri,  6 Dec 2024 13:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490639; cv=none; b=hre5i+fQaX3m9OqTQ1n9tkd0zilDICHB0tNLOiunRx40s6QxaAqya8yse7mpQxN0vYOaWh5AbF9jRC+4VSF16Sk2vOxyodUqjbrrdGEpfRYxgsjeJcuhmn/gdgFVmvNaC84M5Su7FYe6IuGTUWYGfKHTfbyROdIEnyQL7dUQHHc=
+	t=1733490631; cv=none; b=eMvG9MCMNKxHhUhHoWI+m/xHhZFy9QPeb7RamcRPVaWO0zhwlgd3lk3hMYQ5nulcx0i2LW5F062z4JliVcJayv5o8BE9ECaYUi0uB6nzaLZb8i15ZfZQSGOe5xKg0rG51FKq0kxKXJg59F8hkU3a+GhcoSjpz01caVNRSEmNPc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490639; c=relaxed/simple;
-	bh=SH/3j3ECeyymb8PH5w6WyujIUzyrcGJY5HcoMo+irDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GN9MfDXAMvGGVDceoTJeP2XyYXJrlvfBVKH3C+3KWeJSdR11Dm0KdwNJcZfS7hD0CxdkJ6OMk7UZPrJ9bOk5b1MYj8hLppuqTnRsyV/Z8GDwqj5CDMefjiS4XB5hjINXn9jnCIra5nSHb3/x//TcuPlrOYPh1XH4mLvniq/QfvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b678da9310so169289585a.2;
-        Fri, 06 Dec 2024 05:10:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733490636; x=1734095436;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DlZO4imh3EMKTA4D3V2rJMtFJFhXruDb91eAxWihna8=;
-        b=bF2Sk4WSogn3qTXC5mGPfO327z80rSzMb5sMgiD8ei05PApaKEJr8zaqq7p3Kk8iRH
-         xMrLPbz3xj/W7VPx4UDLLaGE11DSmnrphMwJmHMhuh4LR9tKk/9D0F2AotDHXY+Kh+Gx
-         WYcpeXyyC5L7ozPJt0Fl/7LVrVllUlglqF3HUaRbawmnX2I3UUOEnLqs/H7OQjPNdZGR
-         S+rMznK3w4pz4cyiGjVUsDODKq/6qNdVbt4warQNWlEba//vFOm1PNTumXJqu1uQquY+
-         dwiStTdKxDfCMIYWb3m5ChsRixqv45dHoS3egwHoFxpzdhc/S3VUcbppsJw9lCKay3ln
-         ZvFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxxAxy6+gSxG4fQprkSp1dtZEuuOP+H6GvePZaSYU1aFaclvSLiM1Y89GmKt06x1jhVqBFCagdW0TzAIh6RGDBHQE=@vger.kernel.org, AJvYcCV5t1719b/klJKeAnmMV2IBB113ZM3SmPtZgmKAeO4eC2Lj9Tfoc7beFbRezYmOsPnrrGAFe3zXhZs=@vger.kernel.org, AJvYcCWzlItkS6sLhNq+s4z6nywlOyxaokRuPT8GkbBJdukKCXu9KUWsZOAnZ8nCPC/5j9q4XcdTk+fpUzhPFODt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkzxoNS+fZvu4BcHfzSHjafLhEd+PEkcTDNMqOJrvVSEYVVhZO
-	s6hXGxEd4OXbMzWSIwXZBdwey5PF5gdyCWVg/B0vYmPjL9DB2ZI0g8vapPlT
-X-Gm-Gg: ASbGncvrWoNbUne7ECXUM1pdlmYXQyx1BPja5tBoIPFbx2SqO/wit6BJsrFWn3ZI8xU
-	qPuuM98inHscOoVAKwwh3OR3d1BPgVbbCdG/AJWOPP9+pD8AKAUE2sABCW1PnIKwgUkqKrN98Nn
-	ADTnRQaGaHMM+Hxc4pmofkPeNzhph1oVApDS8ey0Ec65kYcefWBZsfpWfKoPy9Slf1szSMVkPnb
-	fDG3YeFbKkxO7HToWL82YCObnqqDTVYtrqq5RyI/r8JpawoYvYQyKZDYwOppUL5NzACoYO2+9iG
-	6kwCwkkPTxxVde3Q
-X-Google-Smtp-Source: AGHT+IH++JFF4X4EYNnVtINeoZVUsCjbU5XPPts5RbzU+FN0HbrGI2gMATQri7UmEjH2oU9tnwsU9A==
-X-Received: by 2002:a05:620a:f14:b0:7b1:113f:2e55 with SMTP id af79cd13be357-7b6bcb973c3mr492844185a.58.1733490635886;
-        Fri, 06 Dec 2024 05:10:35 -0800 (PST)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6b5a481a4sm171699885a.1.2024.12.06.05.10.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 05:10:35 -0800 (PST)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b670de79e6so133135785a.3;
-        Fri, 06 Dec 2024 05:10:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU8kjFJic+N0CCobroq7YeNJ2MEo/nxbxqDt6WkltpZBRJFwCvL+3g30qDjTftXpZm2uYy9aGUb2i3e+bMpKCYdwkI=@vger.kernel.org, AJvYcCUKykYBzxuF+66tUb+ys+ibymcGAs0FwJEu8Ae8UFMqYi977JDG003rzpJ6wy2wmkNM22Q+TWXzWyRWFr0H@vger.kernel.org, AJvYcCWjMQ7gNv4rN4dozV8LUZTTJPAwGvXpNYKDSd2qpItsdeNrIgBXPXRyAfhl3ID11oDFdpOVa9pqPHo=@vger.kernel.org
-X-Received: by 2002:a05:620a:294f:b0:7b6:78e9:1ea2 with SMTP id
- af79cd13be357-7b6bcac8926mr507291085a.4.1733490635494; Fri, 06 Dec 2024
- 05:10:35 -0800 (PST)
+	s=arc-20240116; t=1733490631; c=relaxed/simple;
+	bh=lv+yLoUWzU6ZgUk5BaJ7dyYumFSPDEZpbiDsolyCWVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sv0QQg1A1sfBzI+kDL2d92Rf4JrbxgVfeEuFKv3r62wmQRPGCIm5pRIhTj3L6DgBudFR7bw/gIIajXEtIvlSjepayc245WdYuDw8Z71qY4Wvwbn/pO+zOBnSTyUR7b4lAl09B+nb2UmvYVS4aeiRQncRfsYmWzocNsBNThUw+qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hIOTXNBq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 738C9C4CED1;
+	Fri,  6 Dec 2024 13:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733490631;
+	bh=lv+yLoUWzU6ZgUk5BaJ7dyYumFSPDEZpbiDsolyCWVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hIOTXNBqP1Ux1GLqi0HsJdqy5ctcBq2talRY2vLw+h/kONS9t14fm+lhG+CCq9N2E
+	 SPmSDBekNXmnqZy9SFp2Gdz6WWe7G3qzAVnlINIC7ROzZfi4bR/lj4yRtk6dR+w6rB
+	 DweVFN8ez5t7gCT5fB/v4SxqIj2WnyzOgMw6mIJY=
+Date: Fri, 6 Dec 2024 14:10:27 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] sample: rust_misc_device: Demonstrate additional
+ get/set value functionality
+Message-ID: <2024120637-handoff-monetary-c2f5@gregkh>
+References: <20241206124218.165880-1-lee@kernel.org>
+ <20241206124218.165880-4-lee@kernel.org>
+ <2024120652-champion-chute-4e74@gregkh>
+ <20241206130449.GC7684@google.com>
+ <20241206130630.GD7684@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202203916.48668-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241202203916.48668-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241202203916.48668-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Dec 2024 14:10:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWc4DLN0Frr+S-Ri2oJNYtViJgpxBWuwhFdKKJzHp1NiQ@mail.gmail.com>
-Message-ID: <CAMuHMdWc4DLN0Frr+S-Ri2oJNYtViJgpxBWuwhFdKKJzHp1NiQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: renesas: r9a09g057: Add support for PLLVDO,
- CRU clocks, and resets
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206130630.GD7684@google.com>
 
-On Mon, Dec 2, 2024 at 9:39=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add support for the PLLVDO clock and its related CRU clocks and reset
-> entries in the r9a09g057 CPG driver. Introduce `CLK_PLLVDO` and associate=
-d
-> clocks like `CLK_PLLVDO_CRU0`, `CLK_PLLVDO_CRU1`, `CLK_PLLVDO_CRU2`, and
-> `CLK_PLLVDO_CRU3`, along with their corresponding dividers.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, Dec 06, 2024 at 01:06:30PM +0000, Lee Jones wrote:
+> On Fri, 06 Dec 2024, Lee Jones wrote:
+> > On Fri, 06 Dec 2024, Greg KH wrote:
+> > > On Fri, Dec 06, 2024 at 12:42:14PM +0000, Lee Jones wrote:
+> > > > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
+> > > > +        let guard = self.inner.lock();
+> > > > +        let value = guard.value;
+> > > > +
+> > > > +        // Refrain from calling write() on a locked resource
+> > > > +        drop(guard);
+> > > > +
+> > > > +        pr_info!("-> Copying data to userspace (value: {})\n", &value);
+> > > > +
+> > > > +        writer.write::<i32>(&value)?;
+> > > > +        Ok(0)
+> > > > +    }
+> > > 
+> > > I don't understand why you have to drop the mutex before calling
+> > > pr_info() and write (i.e. copy_to_user())?  It's a mutex, not a
+> > > spinlock, so you can hold it over that potentially-sleeping call, right?
+> > > Or is there some other reason why here?
+> > 
+> > This was a request from Alice to demonstrate how to unlock a mutex.
+> 
+> It's common practice to apply guards only around the protected value.
+> 
+> Why would this be different?
 
-Thanks, will queue in renesas-clk for v6.14.
+It isn't, it's just that you are implying that the guard has to be
+dropped because of the call to write(), which is confusing.  It's only
+"needed" because you want to guard a single cpu instruction that is
+guaranteed atomic by the processor :)
 
-Gr{oetje,eeting}s,
+As this is an example driver, documentation is essential, so maybe the
+comment should be:
+	// Drop the mutex as we can now use our local copy
+or something like that.
 
-                        Geert
+thanks,
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+greg k-h
 
