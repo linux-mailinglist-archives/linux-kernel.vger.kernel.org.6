@@ -1,175 +1,134 @@
-Return-Path: <linux-kernel+bounces-435114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17269E6FD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:09:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1BB9E6FD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD3D61884014
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:09:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2F2A165AB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A087207E17;
-	Fri,  6 Dec 2024 14:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA28207E0D;
+	Fri,  6 Dec 2024 14:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KA11Guc5"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LacXbEam"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CDE2E859;
-	Fri,  6 Dec 2024 14:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CC02E859;
+	Fri,  6 Dec 2024 14:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733494148; cv=none; b=IRGcvPjjCvy0eYhQYmTab/ufPLE/pCOF4L3kWCQeLxFnEN2xHP0sksW52l3bhNmiXjZvzMDxdCqbiZOEV5fsur/rukJ+tyUNcObaeYXoyhtkCOLJkjiLk+YvcZTOxRLEDZH4XcPIEP2AkDexhnfnrITLivmbThCtl1c2Oltp5bc=
+	t=1733494210; cv=none; b=R8JwBC8jsVhhL1DFTqBW+6jRL6UZ6PRXtkqMmAHRCuHqpeaU6YVhIYGXZ4CkQjzKyuAKP1SfYP7gL06ojpGzHe0Qm5x9uw2fYnO7a3s9RMWBtckoMcajTQkgL/sog1SzyKusAMLVMgiQv42hRc4p8nMZAN2KajOyE3hd4AH6qUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733494148; c=relaxed/simple;
-	bh=5byG2XU+5kpJVdaF+EoxTEV/QVS2LOy3OWzTIb7LAtE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWu6utbgUbFo5c1A5dTKi6WTn6vqwyOQaGMb6l5WlzXErZe1mbTM3ZGzZISuzBOCbI6K8o6XvyGH43Zn30MHzvv7xibfhtU+fi+BpZfJJ5XaXKFLQLvJlo1PoMp7gp5035ama8y7yJdocq2ikE5Akq+VvcimdQJ9N5G1gekqglM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KA11Guc5; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1733494210; c=relaxed/simple;
+	bh=8PFPN7DbZZGHpYlhMxeWbMPrpnXKX3Dkt/Q2/+aIyaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TbyLZuDRForZx60oHBg419adGb/eouI6/BGL/1ZY4/fuM8f6IN2THbG3WLMiJHUSAqVJ7W+IVIc9rk0xo608VkfK5Ayw5CPeVW1ItVvn2L4/rW/YJZVeAYB+jujvFLUM2eJpLkJYOZZL6ksnihwBjCj9sU342DuhNfPREjP2nGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LacXbEam; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa5500f7a75so280832866b.0;
-        Fri, 06 Dec 2024 06:09:06 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53e1c3dfbb0so1946759e87.3;
+        Fri, 06 Dec 2024 06:10:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733494145; x=1734098945; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iEQkk4fFx/6Hy0B/67rmUPlRypoGwjE5KfTmQ56ckDU=;
-        b=KA11Guc5IEkYlYLDfjm6Qw1PaTTEKkc53WVl5mCkAnkIOjTP0g9xcAwRHGImQIenHH
-         Coabi8FBX9dpqwK2XqNcuKLpa2g47Ew/7BS8LR2/0tY6W3q4EVO7lgLwqKQ9S3cpJOd4
-         Uh655LH6HS/OY79bqcE/wkxEkKe6OFIv/rzluwTtwb1JGfhPJNgpcE1wIDyKoXgIYKu6
-         AlVhSSmVtyYaugY1T6ZmcgE6g1yv14MnyVIKnea+blCElt5kRGdUZiUxOHdPkqRK//pX
-         Y8hxJ/kKlt+IehYC7qEJt2tu2PPgsVbPRPBTIskyx0De49BL1OR9KNJeTqAXcLEliM5N
-         WNiA==
+        d=gmail.com; s=20230601; t=1733494207; x=1734099007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WJ9IUcbryk0YazN7Sa5TOtgGdDNEInD45SiDVANUoqs=;
+        b=LacXbEamzHiOouoomoi6B/EyG1v2tdcp3UaFR46QA7a4tSiA5LpDIeiriFwNrEW9oO
+         8Plag1/sNtshuSfhg8Tvk5itIlWc1oR1Wqt0xJ+dhrAC+yLQ9DzJTsYxjiMDmAeePtZw
+         9vhpOyeYdkbVeI4fYsVrxPCxn1JPvI8Sfn0i5atOVzwKbTR85XDXVSbPkhdFkFdlpU6w
+         uhUKBKn5IjVyJrWYIkcKDE8UN5fYW5nullBxk9p9oTq+Eix8mvFby5nSBPJqG4X9jfQ3
+         ivZv+PaaJEo5ZEOnYyZRnSzoRalDBJbPGQ3my397eTmC4N0FojL4p1SGGmKCWM9tdwFY
+         lYpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733494145; x=1734098945;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iEQkk4fFx/6Hy0B/67rmUPlRypoGwjE5KfTmQ56ckDU=;
-        b=H2dGd+SFKbK/LF6SXxWrYqs0TGU9O33HXG+oHl+bx0hTvCbrF5Lz8on1nEegHnNS3e
-         czp7R996xXGlZwgti0dGdcxjeORxQKkQgxAxtEAVvtEET869GDiy3bVo4V2yWi+NhkOc
-         xDdMerAN8JtF1vLts6J/2R1UR9CYgCu74z6I86NFqCjXxkryyPkHZHkJpBgPhwC1E2/A
-         jZ/gKxzNNhB0XBX4EugUzHlCBgEOU0qXycw1wl2fV1fxjtQYP8/RaEGEj8Fly0rArl9C
-         mGEJH1IyNaANIop4slNHtBPn+RPS9aHd4cQtr7/e+cnivl4h7Ig/BjWtqpau4FGn6ZGv
-         BBMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+7XiteMTx4+ewZbrs9OvSLypGljW/E1+lIKAxBTBmXtH+xlThxPvd5o7IUJnIC4jviDwEhnjapn//w+XQ@vger.kernel.org, AJvYcCUahE0UFHsz+Z7lijjtu8YcG0noe9F3m8sCkOcd+JLDgmD4Kb/7t7aaa3VjbB16RX8okek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFXGzmOm1KQvl2Xyv5xdjO59Y7Kwq2K7SZHF0Ulnwaut1v5sVV
-	LwF9ozdq7BdOH38z+oEuAvkH6qW1cvLloNzAKTHz+jQhNljupcXF
-X-Gm-Gg: ASbGnctwAHnghaYjHMf6yYkyg8GtCq2bY26PRYrrQJ4/Nimlx5c1oS8EIqNfu5ipGuE
-	7oZOy2MDf/FOzWSIKuytkHdvKv5k1MenESOh9afHXJlr9RBf9NGE6UqnFA54NFf3GOxCdGEfu6D
-	IVKGuZWlSQUJyaysXXCBOzlKQZ5vNRsTNCzV9Y4+XdOmgzdtDbwAtQ3SorL1c05mPq5gQ13In1P
-	H7iOBUGGmIzk3hD69hA4FiBMKWjXRPFIGmjr9O7brzHih1FdLGet5yuf7ef+xVqJVdaOnU6WjhN
-	Ha21/pV6gyDGXdO8ts8oLzg=
-X-Google-Smtp-Source: AGHT+IFKFPRm11x4mfUND5YQitW1R/PrAiz1fZWusMP4dh6vJmZemIkQ7jlkBQZZxbnTB6t4X8q+Cg==
-X-Received: by 2002:a17:906:30cb:b0:aa5:3782:53af with SMTP id a640c23a62f3a-aa63a07edfcmr222168166b.27.1733494145215;
-        Fri, 06 Dec 2024 06:09:05 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260a3aa0sm245075466b.170.2024.12.06.06.09.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 06:09:04 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 6 Dec 2024 15:09:03 +0100
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	mingo@kernel.org, oleg@redhat.com, rostedt@goodmis.org,
-	mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, liaochang1@huawei.com,
-	kernel-team@meta.com
-Subject: Re: [PATCH perf/core 4/4] uprobes: reuse return_instances between
- multiple uretprobes within task
-Message-ID: <Z1MFfyNLRilb8G6r@krava>
-References: <20241206002417.3295533-1-andrii@kernel.org>
- <20241206002417.3295533-5-andrii@kernel.org>
+        d=1e100.net; s=20230601; t=1733494207; x=1734099007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WJ9IUcbryk0YazN7Sa5TOtgGdDNEInD45SiDVANUoqs=;
+        b=ZytnZ1MGUzroR7rG4ZnoDeBu2Vzj3HVyU2s6OJ/q+RWntipwzV0OT/cFVPSLWnSVkg
+         tIk5QfPklaF6VQFNQkrgbTGXjZai1mDhtzn1+nehJURCx9DwpEPiVx5JmUl2F4m0Ufta
+         1Wm/STQFwZvCtKhhamP1Y+YsgOlEM3P43Uh/7kXkQEWUfqxIasLagDDaCGmUApItYtgm
+         DjxSryz8/sH8kfRbfYW5Zsbmms115+riGycHg3wWf0hBx1rePaij96iSGLnPZWoIwuuc
+         XkAWdEnFm8GwS1VsnsAtMiqsrcuQ4DvOSg5yy+NJjvvdeRmjDRn4gXMGhNRpYF6zR/5S
+         9qhw==
+X-Forwarded-Encrypted: i=1; AJvYcCV76x6c6HJEns7Wdeye5W9LtHJB3cb5W0Dqct8NZLQqTLxJ99dANUHyLpldHndQ5n+leBbNtdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjW59x++aK9UXYvDfhBE9VnrRsoJwiUfCrz0BljwgawfZffxfX
+	rJdrsXfCF9Hf3C6wmeIzkpA9hHxRvGgnG1dudHP60m1bvcxaAxcK3eREPwAF+AEhFfx3E3VpHTc
+	RdkJlrc7WaWNC7u3KmgMeWpN/swg2
+X-Gm-Gg: ASbGncuFDssWLNlNO+0trdc4e5D10u9awVXQklPu6cbaicAjcYRY5v1wAa5lDPNv531
+	gX3HrYtEMnUpe+T62KqJS1kw9YDMlfx+v9RMUrlsWQD9JoQ==
+X-Google-Smtp-Source: AGHT+IFmPgaxVCncnxSpgGFH2NGYgVn6CI4Sy8CIqD74igkDri8YqGT7RQpReqsWcGBJ+i/X88yERPyj1yI/64Yzmfs=
+X-Received: by 2002:a05:6512:e88:b0:53e:12f2:68f7 with SMTP id
+ 2adb3069b0e04-53e2c2b1a6amr767751e87.1.1733494206924; Fri, 06 Dec 2024
+ 06:10:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241206002417.3295533-5-andrii@kernel.org>
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-2-brgerst@gmail.com>
+ <20241206115154.GA32491@redhat.com>
+In-Reply-To: <20241206115154.GA32491@redhat.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Fri, 6 Dec 2024 09:09:55 -0500
+Message-ID: <CAMzpN2g8eenLASqXA36LwP=Zr+8Z1cO7Cpz0ijiUdOr_+7G-3A@mail.gmail.com>
+Subject: Re: [PATCH v5 01/16] x86/stackprotector: Work around strict Clang TLS
+ symbol requirements
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>, 
+	stable@vger.kernel.org, Fangrui Song <i@maskray.me>, 
+	Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 05, 2024 at 04:24:17PM -0800, Andrii Nakryiko wrote:
-> Instead of constantly allocating and freeing very short-lived
-> struct return_instance, reuse it as much as possible within current
-> task. For that, store a linked list of reusable return_instances within
-> current->utask.
-> 
-> The only complication is that ri_timer() might be still processing such
-> return_instance. And so while the main uretprobe processing logic might
-> be already done with return_instance and would be OK to immediately
-> reuse it for the next uretprobe instance, it's not correct to
-> unconditionally reuse it just like that.
-> 
-> Instead we make sure that ri_timer() can't possibly be processing it by
-> using seqcount_t, with ri_timer() being "a writer", while
-> free_ret_instance() being "a reader". If, after we unlink return
-> instance from utask->return_instances list, we know that ri_timer()
-> hasn't gotten to processing utask->return_instances yet, then we can be
-> sure that immediate return_instance reuse is OK, and so we put it
-> onto utask->ri_pool for future (potentially, almost immediate) reuse.
-> 
-> This change shows improvements both in single CPU performance (by
-> avoiding relatively expensive kmalloc/free combon) and in terms of
-> multi-CPU scalability, where you can see that per-CPU throughput doesn't
-> decline as steeply with increased number of CPUs (which were previously
-> attributed to kmalloc()/free() through profiling):
-> 
-> BASELINE (latest perf/core)
-> ===========================
-> uretprobe-nop         ( 1 cpus):    1.898 ± 0.002M/s  (  1.898M/s/cpu)
-> uretprobe-nop         ( 2 cpus):    3.574 ± 0.011M/s  (  1.787M/s/cpu)
-> uretprobe-nop         ( 3 cpus):    5.279 ± 0.066M/s  (  1.760M/s/cpu)
-> uretprobe-nop         ( 4 cpus):    6.824 ± 0.047M/s  (  1.706M/s/cpu)
-> uretprobe-nop         ( 5 cpus):    8.339 ± 0.060M/s  (  1.668M/s/cpu)
-> uretprobe-nop         ( 6 cpus):    9.812 ± 0.047M/s  (  1.635M/s/cpu)
-> uretprobe-nop         ( 7 cpus):   11.030 ± 0.048M/s  (  1.576M/s/cpu)
-> uretprobe-nop         ( 8 cpus):   12.453 ± 0.126M/s  (  1.557M/s/cpu)
-> uretprobe-nop         (10 cpus):   14.838 ± 0.044M/s  (  1.484M/s/cpu)
-> uretprobe-nop         (12 cpus):   17.092 ± 0.115M/s  (  1.424M/s/cpu)
-> uretprobe-nop         (14 cpus):   19.576 ± 0.022M/s  (  1.398M/s/cpu)
-> uretprobe-nop         (16 cpus):   22.264 ± 0.015M/s  (  1.391M/s/cpu)
-> uretprobe-nop         (24 cpus):   33.534 ± 0.078M/s  (  1.397M/s/cpu)
-> uretprobe-nop         (32 cpus):   43.262 ± 0.127M/s  (  1.352M/s/cpu)
-> uretprobe-nop         (40 cpus):   53.252 ± 0.080M/s  (  1.331M/s/cpu)
-> uretprobe-nop         (48 cpus):   55.778 ± 0.045M/s  (  1.162M/s/cpu)
-> uretprobe-nop         (56 cpus):   56.850 ± 0.227M/s  (  1.015M/s/cpu)
-> uretprobe-nop         (64 cpus):   62.005 ± 0.077M/s  (  0.969M/s/cpu)
-> uretprobe-nop         (72 cpus):   66.445 ± 0.236M/s  (  0.923M/s/cpu)
-> uretprobe-nop         (80 cpus):   68.353 ± 0.180M/s  (  0.854M/s/cpu)
-> 
-> THIS PATCHSET (on top of latest perf/core)
-> ==========================================
-> uretprobe-nop         ( 1 cpus):    2.253 ± 0.004M/s  (  2.253M/s/cpu)
-> uretprobe-nop         ( 2 cpus):    4.281 ± 0.003M/s  (  2.140M/s/cpu)
-> uretprobe-nop         ( 3 cpus):    6.389 ± 0.027M/s  (  2.130M/s/cpu)
-> uretprobe-nop         ( 4 cpus):    8.328 ± 0.005M/s  (  2.082M/s/cpu)
-> uretprobe-nop         ( 5 cpus):   10.353 ± 0.001M/s  (  2.071M/s/cpu)
-> uretprobe-nop         ( 6 cpus):   12.513 ± 0.010M/s  (  2.086M/s/cpu)
-> uretprobe-nop         ( 7 cpus):   14.525 ± 0.017M/s  (  2.075M/s/cpu)
-> uretprobe-nop         ( 8 cpus):   15.633 ± 0.013M/s  (  1.954M/s/cpu)
-> uretprobe-nop         (10 cpus):   19.532 ± 0.011M/s  (  1.953M/s/cpu)
-> uretprobe-nop         (12 cpus):   21.405 ± 0.009M/s  (  1.784M/s/cpu)
-> uretprobe-nop         (14 cpus):   24.857 ± 0.020M/s  (  1.776M/s/cpu)
-> uretprobe-nop         (16 cpus):   26.466 ± 0.018M/s  (  1.654M/s/cpu)
-> uretprobe-nop         (24 cpus):   40.513 ± 0.222M/s  (  1.688M/s/cpu)
-> uretprobe-nop         (32 cpus):   54.180 ± 0.074M/s  (  1.693M/s/cpu)
-> uretprobe-nop         (40 cpus):   66.100 ± 0.082M/s  (  1.652M/s/cpu)
-> uretprobe-nop         (48 cpus):   70.544 ± 0.068M/s  (  1.470M/s/cpu)
-> uretprobe-nop         (56 cpus):   74.494 ± 0.055M/s  (  1.330M/s/cpu)
-> uretprobe-nop         (64 cpus):   79.317 ± 0.029M/s  (  1.239M/s/cpu)
-> uretprobe-nop         (72 cpus):   84.875 ± 0.020M/s  (  1.179M/s/cpu)
-> uretprobe-nop         (80 cpus):   92.318 ± 0.224M/s  (  1.154M/s/cpu)
+On Fri, Dec 6, 2024 at 6:52=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
+e:
+>
+> On 11/05, Brian Gerst wrote:
+> >
+> > --- a/arch/x86/kernel/vmlinux.lds.S
+> > +++ b/arch/x86/kernel/vmlinux.lds.S
+> > @@ -468,6 +468,9 @@ SECTIONS
+> >  . =3D ASSERT((_end - LOAD_OFFSET <=3D KERNEL_IMAGE_SIZE),
+> >          "kernel image bigger than KERNEL_IMAGE_SIZE");
+> >
+> > +/* needed for Clang - see arch/x86/entry/entry.S */
+> > +PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
+>
+> Don't we need the simple fix below?
+>
+> without this patch I can't build the kernel with CONFIG_STACKPROTECTOR=3D=
+n.
+>
+> Oleg.
+>
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.=
+S
+> index fab3ac9a4574..2ff48645bab9 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -472,8 +472,10 @@ SECTIONS
+>  . =3D ASSERT((_end - LOAD_OFFSET <=3D KERNEL_IMAGE_SIZE),
+>            "kernel image bigger than KERNEL_IMAGE_SIZE");
+>
+> +#ifdef CONFIG_STACKPROTECTOR
+>  /* needed for Clang - see arch/x86/entry/entry.S */
+>  PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
+> +#endif
+>
+>  #ifdef CONFIG_X86_64
+>  /*
 
-nice! left few comments but overall lgtm
+Which compiler are you using?  It builds fine with GCC 14 and clang 18.
 
-thanks,
-jirka
+
+Brian Gerst
 
