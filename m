@@ -1,143 +1,169 @@
-Return-Path: <linux-kernel+bounces-434188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4339E62DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:01:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD089E62E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9620418853DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 501971611FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D9738F9C;
-	Fri,  6 Dec 2024 01:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2704553370;
+	Fri,  6 Dec 2024 01:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="G1yK0/3Y"
-Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0dp/80df"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6529A45BE3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 01:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30661DFFC
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 01:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733446852; cv=none; b=AcD56mfIKl8AC+VfsiMqe5fzBIQzrlZT7OHmhOAt5jti6v9EzwEAvEr3qFs6/s+d9xE77HKNBB2UN0KpMKy8VGHmlRFZnk4nO0sUpOhAQWT6aCWjD+Edrioj6MVGDJddjBsPnv+ZXx/OTkRwayyaiXS8tOwMViL7xiy6ctU56xQ=
+	t=1733446942; cv=none; b=FvM+7vI8CsqbVoJk+ituXkk6fqxtiNz5esp18d3pqhbCJVsoNbpzXe95fVcmY0lALAb3xOBn89z9hgGGsTRqSiSujPXnHazEtczPt+5KZfjO01HMWbb8+RhGkvHaFJMKXn/kKabtXZRHBfHqCurU5GewEMosbEN9vLPdsxCTnMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733446852; c=relaxed/simple;
-	bh=BllzfyJKzSwiUMnAWZVlcX0N+XiDfGCLEzInEB6bL4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oHFu/oLmUZKyuffgDQ1tax9GK8KuvF2b7GBvfc3xOX6gV22Y/LsXAu2O5ZQ/EJENWjSH9/IHU2dMhX9KcC4x7578Eo/l5AnojZ/V4hiB/M6mJR3cx05UMPQBE+RW/eEtNigEvLwmh3S7A67oGWKXMcOkeh8dgfmLqF3auqSNV1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=G1yK0/3Y; arc=none smtp.client-ip=17.58.6.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733446848;
-	bh=YgEIWxk2/e/iYW5sknXjbn6nIFGLK2sO7NKKDe0RmG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=G1yK0/3YSKhJBjyAzf3EDn2bwsIP/TQQaRq1+pHJTcb2xhFy2oJ0HZEOPVqoRVZ1E
-	 OCmrwAZ0Pelc2A+d5SIf+o2wTYc5YRsN5C08BDyF81reWnJwkQ8WCcrN+rg8/iFkLY
-	 COKgxB3az9ZDQQfgx+wkVQVP1xHK3X2EYQ6noCH1ngqsophyDhSnN2eP9f7VpeeOYq
-	 w4RWgmn8cNyUjoenz34MjLIeG58YJJcIhoEN0ew9sEcgFtgARBItj5vel2yJFWvOYb
-	 prUp0wWigkT1r8rtSAhXkqyZ2q0gfpXZjzSPoxNR8nP7Va9VvM54ECluqJtancf2m4
-	 2NX8HkzdAMjtw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id 15B785002B3;
-	Fri,  6 Dec 2024 01:00:37 +0000 (UTC)
-Message-ID: <8c89163d-2fac-42ef-acd3-76c0f298e8cb@icloud.com>
-Date: Fri, 6 Dec 2024 09:00:33 +0800
+	s=arc-20240116; t=1733446942; c=relaxed/simple;
+	bh=AEbDNYDTXF4aiNY44nLSGz9KiD7JfrcFpeVov6AtjDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r+2Rz2V7d9IsVTMgMUaHpEEh8Z7ZaUO2HwYDLv8Ju/MsAivh9by3u9nCWEGxFoVy9/oYM/xtUJcheyPQmRybfj0QtN/xN4qvyLfwN6ySSmfelGwYBHiVqpIq903FHjoWqa8grnzRVQ+7UpmKQKOfvmZlhf1UXio0yLuu3myzakc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0dp/80df; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4349338add3so13105e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 17:02:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733446939; x=1734051739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HcmaJfowWcM2EfWC/f7eVIZnrBnrT7YMLdrj9P9FhKU=;
+        b=0dp/80dfGsV7X/VCsxlfy0AKL08clM99V/IXIrCgybcYXt7M+HgbF4jQh+1wjsiHs3
+         oqGycVEfQ+GdoMYEq/ZhS2KLU6wjeqWZ4hva5PniKl/9LLqGVhRz2o7/n/hjTlCS3ifW
+         JN5iOE9KxRCpBf+Y+g+h+tejH76Kn9kThmZOKAsv+/gCOO2QC9FihorUAuOqUEqHb0RZ
+         fpktbG+1WP+Ms9wGHS11jlPtkD6YagHMGZdw2s70udzOHssbTm3UPZyHUbrCCe6KH93I
+         jRzG1c9Uv80h0SiVN035zPmeG6siiLDOixOfsOnrH4DbniFBCp/woyMTE+XWvcQscxL0
+         CbLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733446939; x=1734051739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HcmaJfowWcM2EfWC/f7eVIZnrBnrT7YMLdrj9P9FhKU=;
+        b=KzLMcVdVp7IHXJwEgVDfIKLk8eJRUdOQ+uPD+v6DHo7aIGmD9l+EbMbR8C6w8hlJUL
+         3BRScERJE1XcwhqnJjOUipbndpN4j1+FIphM5WOfo2yKXMIszK0+gIAJwC2gxtbzSP5W
+         /QiRwPaWtJJ2W18Rnr7cGxDViobP0ck1MZ5q87AKgh6y4JqH3fq9uB36oEGjsfeffHYe
+         mN4O76jhZtecF7XVl729W2w7NbfFv5gCfLbLFq4ivPvefRkrA5nWZbXDH0Nxr6AoeRHv
+         Mda/W+W82w3Z2PJTlyh3KZOGCq4Dk7nGXFSdVv+YvgxUJCxNYsGnBLahMqQLwEG+Izbo
+         unSw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8e5hAanowwBouzEraF+epa43DZ37+I0exxNpWyglYwhU6d5WQnp7JM0Bsj99ZcW377twhgt9zyPeAFUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJT7ghCjlcnSkpZd/Si3gl/PAgs9KUBGNGU8/EpCoOqLtdBygc
+	7G1RA+fyXN/LZvuU158i2FhBohH5sYknWF43JXMLZGeCRKuATfUqqux+sJUpgf2GjMdxZDOcfHT
+	17alwKKTuP+haUuXCOptHRAPGrW1Y/68bh5M3
+X-Gm-Gg: ASbGnctKMQazu8KgpnWFKq+hxlLFkb+2qhusVSb56/dvXE1xtQIdEQOB+MrGAmM0c1e
+	cRhpWUNiwXy1kx74DaPSiecAIMw//DGw0LAEWLHgEa0Y8YxUcqfWrVsXE0rZ+mw==
+X-Google-Smtp-Source: AGHT+IHr7rZI6yrn8JV11lazv05GZRIqvfrcbTPzKk8VEbu5RR7SF7uBMzJ9HVO9yJW2t5jlaavaPVHxFJi+zcGvyVY=
+X-Received: by 2002:a05:600c:35ca:b0:42c:acd7:b59b with SMTP id
+ 5b1f17b1804b1-434de39c6bbmr476085e9.6.1733446938910; Thu, 05 Dec 2024
+ 17:02:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/11] gpio: sim: Remove gpio_sim_dev_match_fwnode()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
- linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-8-1611f1486b5a@quicinc.com>
- <CAMRc=Mf--vRm15N2au-zvP89obcxRuk+3OOLqFtrjgg61_LotA@mail.gmail.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <CAMRc=Mf--vRm15N2au-zvP89obcxRuk+3OOLqFtrjgg61_LotA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: zbowhbFmvtzwQ1zQJwPzLroNMq0mmr26
-X-Proofpoint-ORIG-GUID: zbowhbFmvtzwQ1zQJwPzLroNMq0mmr26
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-05_16,2024-12-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=915 suspectscore=0 clxscore=1015 mlxscore=0 bulkscore=0
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412060007
+References: <20241031212104.1429609-1-jiaqiyan@google.com> <86r07v1g2z.wl-maz@kernel.org>
+ <CACw3F51FbzkkX_DcCVCieZ=408oP_Fy3sXYk5AjWRX3RJO2Fzg@mail.gmail.com>
+ <878qtou96b.wl-maz@kernel.org> <CACw3F50gB40dqQ4CZ7f4X4aRkxHQhjiYunAhqbmVtcGnd5g3bA@mail.gmail.com>
+ <Zz2TyC9-zNQ3D-KB@linux.dev>
+In-Reply-To: <Zz2TyC9-zNQ3D-KB@linux.dev>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Thu, 5 Dec 2024 17:02:06 -0800
+Message-ID: <CACw3F50ACSOsP9+qJr2g=dL9p3-6AcZ2VWP2bbWvBMasu796pw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] KVM: arm64: Introduce KVM_CAP_ARM_SIGBUS_ON_SEA
+To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+Cc: joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, duenwen@google.com, rananta@google.com, 
+	James Houghton <jthoughton@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/12/6 00:24, Bartosz Golaszewski wrote:
-> On Thu, Dec 5, 2024 at 1:15 AM Zijun Hu <zijun_hu@icloud.com> wrote:
->>
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> gpio_sim_dev_match_fwnode() is a simple wrapper of device_match_fwnode()
->> Remvoe the unnecessary wrapper.
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  drivers/gpio/gpio-sim.c | 7 +------
->>  1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
->> index 370b71513bdb529112e157fa22a5451e02502a17..b1f33cbaaaa78aca324f99c45a868e7e79a9d672 100644
->> --- a/drivers/gpio/gpio-sim.c
->> +++ b/drivers/gpio/gpio-sim.c
->> @@ -413,11 +413,6 @@ static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
->>         return devm_add_action_or_reset(dev, gpio_sim_sysfs_remove, chip);
->>  }
->>
->> -static int gpio_sim_dev_match_fwnode(struct device *dev, const void *data)
->> -{
->> -       return device_match_fwnode(dev, data);
->> -}
->> -
->>  static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
->>  {
->>         struct gpio_sim_chip *chip;
->> @@ -503,7 +498,7 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
->>         if (ret)
->>                 return ret;
->>
->> -       chip->dev = device_find_child(dev, swnode, gpio_sim_dev_match_fwnode);
->> +       chip->dev = device_find_child(dev, swnode, device_match_fwnode);
->>         if (!chip->dev)
->>                 return -ENODEV;
->>
->>
->> --
->> 2.34.1
->>
->>
-> 
-> Please use get_maintainers.pl to get the complete list of addresses to Cc.
+On Tue, Nov 19, 2024 at 11:46=E2=80=AFPM Oliver Upton <oliver.upton@linux.d=
+ev> wrote:
+>
+> On Tue, Nov 19, 2024 at 03:57:46PM -0800, Jiaqi Yan wrote:
+> >
+> > While continuing the discussion here, I think it may make sense I sent
+> > out a V2 with 2 major updates:
+> >   - add documentation for new SIGBUS feature
+> >   - remove KVM_CAP_ARM_SIGBUS_ON_SEA
+>
+> Just wanted to add that QEMU already has a functioning "MCE" injection
+> implemenation based on signals that deals with the sloppy mess of
+> coordinating w/ vCPU threads [*].
+>
+> I completely agree with Marc that the UAPI around using signals for this
+> sort of thing is a giant pile of crap, but it seems to be a semi-understo=
+od
+> pile of crap. And from that perspective, wiring unclaimed SEAs into the
+> existing infrastructure at least makes the UAPI consistent.
+>
+> [*]: https://elixir.bootlin.com/qemu/v9.1.1/C/ident/kvm_on_sigbus_vcpu
+>
+> > On Tue, Nov 12, 2024 at 12:51=E2=80=AFAM Marc Zyngier <maz@kernel.org> =
+wrote:
+> > > > Do you mean a CAP that VMM can tell KVM the VM guest has RAS abilit=
+y?
+> > > > I don't know if there is one for arm64. On x86 there is
+> > > > KVM_X86_SETUP_MCE. KVM_CAP_ARM_INJECT_EXT_DABT maybe a revelant one
+> > > > but I don't think it is exactly the one for "RAS ability".
+> > >
+> > > Having though about this a bit more, I now think this is independent
+> > > of the guest supporting RAS. This really is about the VMM asking to b=
+e
+> > > made aware of RAS errors affecting the guest, and it is the signallin=
+g
+> > > back to the guest that needs to be gated by ID_AA64PFR0_EL1.RAS.
+> >
+> > Just to make sure I fully catch you. I think ID_AA64PFR0_EL1.RAS
+> > translates to ARM64_HAS_RAS_EXTN in the kernel. If VMM signals RAS
+> > error back to the guest with SEA, are you suggesting
+> > __kvm_arm_vcpu_set_events should check
+> > cpus_have_final_cap(ARM64_HAS_RAS_EXTN) before it
+> > kvm_inject_dabt(vcpu)?
+> >
+> > If so, how could __kvm_arm_vcpu_set_events know if the error is about
+> > RAS (e.g. memory error) vs about accessing memory not in a memslot
+> > (i.e. KVM_EXIT_ARM_NISV)? I guess KVM needs to look at ESR_EL2 again
+> > (e.g. kvm_vcpu_abt_issea vs kvm_vcpu_dabt_isvalid)?
+>
+> Good point. I don't think we can lock down this UAPI after the fact
+> given the existing use cases. It is ultimately up to the VMM what to do.
+>
+> I don't see anything that would stop an implementation without FEAT_RAS
+> from generating an SEA in this situation. The lack of FEAT_RAS (to me at
+> least) implies:
+>
+>  - No ESR injection for vSErrors (already enforced in UAPI)
+>  - No deferral of SErrors / ESBs
+>  - No error record registers in the PE
 
-thanks for code review.
-will fix it in v4.
+Thanks Oliver, if I read you correctly, __kvm_arm_vcpu_set_events
+doesn't need to assert ARM64_HAS_RAS_EXTN, and it also doesn't need to
+differentiate RAS and KVM_EXIT_ARM_NISV.
 
-> 
-> Bartosz
+>
+> Of course, it is very likely you've thought about this more than I have,
+> Marc.
 
+I will send out RFC V2 in a second. Please take another look and
+comment there, Marc and Oliver, thanks!
+
+>
+> --
+> Thanks,
+> Oliver
 
