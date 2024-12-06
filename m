@@ -1,209 +1,644 @@
-Return-Path: <linux-kernel+bounces-434682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7859E69B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:08:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1A69E69BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:09:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A700428138B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:08:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275BF1625C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA1D1EF08D;
-	Fri,  6 Dec 2024 09:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC491F4726;
+	Fri,  6 Dec 2024 09:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vuwcapfY"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2060.outbound.protection.outlook.com [40.107.93.60])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Yq/BetS1"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2080.outbound.protection.outlook.com [40.107.21.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA6B1EC010;
-	Fri,  6 Dec 2024 09:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1931EC010;
+	Fri,  6 Dec 2024 09:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733476040; cv=fail; b=ZX9b636Kc7dLeIsBaXhhp8sX0bKrKUbWWQPFnWPyLHkh6L3pEAwVrdxovrDSQLBdUBw2ovTAQHZXJn6n/0QPAdfT/f4jnUrNFlEQonLa1JpX9YxYGJDfsqIlUotraUYnwzksrkbp49IUFMSGOcD8hbAzYm0VSqh+qHgFQ4pZDqc=
+	t=1733476059; cv=fail; b=m46DWzv5v2OvB1LkCOpJPFONeF8eB4AhTpDOL2agXr/EDY7jWrlLqA1P/Wdgcu1qTenYNHUTTgmn0TCkzKLwJ360B9f4DHKFJGNXHRBa0mSAXUImjDELTJQvzhwiKVg7f9t0YsRyOF1dC3Xn0Po7B5uP/v53lq3ukHbG36viwns=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733476040; c=relaxed/simple;
-	bh=DwXMk4PMtZaGRHDpSW9koyGNnxfVi4PVWXFX5CPZ9KQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OH9ExXlStxKObuIoMmmyVQTz+xFZgvardjnjcir2OJs78oL7R3FeSaIy2QPHao9Flg3UPKkRc9M5VTRvY9Z1FqWnj7qj3KbBx93vKM/M2WX3wOFdvJIcRikhNpeUbxWNx4p3Y1kE8PzXHzE699d4UWxwOmnwqcjU7tcMcCZfDpc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vuwcapfY; arc=fail smtp.client-ip=40.107.93.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1733476059; c=relaxed/simple;
+	bh=sPqMHu2zKtZp0qhDg1TOyp8bSooXDVvqKgGb62vD8VI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Zy956+sh8ED17xmrujevnYHWC7+hSB2JvbEnaHlxbcrLgC6Ij4pdnCdWF81wojiwrR7X+5K54XB+UqvPcphwNv7t+InLMOzP/bKNUUqSIjii/yw//ZJn00Pz6why95By8l63MGJXyAh5IdEuyChhOfZncFB0ECHCEhAiuyrdvTI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Yq/BetS1; arc=fail smtp.client-ip=40.107.21.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ti7yvyRNI4xomfrauW+Ly/wjQ90/JUZIJcEdi88nM72S/c+OwNHLaRTECLZpPoNeSm15P1F3NN1ST7Mb89K1HCu1EhHJTDRVu9W0znW/h1k9FaooGI4zPPPE5xZnts4/BwCAOJkLKTMZirsijzGSuuV8xQNrV8mreWBSZ1ROLteDbJXmrGXEG0PGd1sdjhvOSROGZbGpnLLa0lXibQYPEDzs/7haNtRhRLl7fH8xBSbJmJquAE8/pm1Rh/Kn9aug8+ZtYdJVrYvnctTT647HKAvNnIAf1N5v7UQfb3P3xQw0O9jF5A/lFzm6mu78Es7qus761/4SBSmlRKowLWIuJQ==
+ b=nARHzsGNtqGjCcFGicewfH8+qNDoLmbvGIM0T4VfkpyJf/qN9cqPdyWiUuhhs+Q2l1MKRlQ34t1Xgat4nKY5TxV5il7CKG7zORW/SJVZ/jPhgikqP+wWrM+uMKEeTjGlkk+sP4AA8c4hAKhpmPzp2hAFvsfRqtcAELO1g7I/5dLi8LAs5TGCExeoQcgxQ8JgRB5NU/wc6UKO2F2+OxfeCI0ShSaSCOyYrXdr1YSp0Wh1LOJiYmH23C/ya/1hjtN9X7SUPwHCUWzSlOoPRtA1OFOi2amhNSolWKEPh5WxLkxfzzkBLkqPGx5on7s1kLK/RBsj4yGzuXwFecUmybyajw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AfgASD12dOwk2VN84fpu4JuQ/HMDG7Vzj3iLUD0jwCg=;
- b=k6k/k2mETPzSTydQy3gIsparpKRAHnFVl8QFxWVJcqecM+AfjnXLcHu4AjWBUl1oe6MrxByuMJCzELKvKBsEtHMWKfYzaPKQQu4/HeWkYptEXDVDL6R5bqHw10DIYc4J+R0rLDasgornTjcDsMvys0Jvs4LkdmjpQhYAm0fBGyOra+E9ZdG+QbIpkQSmfn5PGhyqeSfUNJWGtZisOyEtHinY59pa2hWfTbVw7eoI4X6NCMaYvXGAnX/qYs3zfPXIa9dXycZrzvzgK/f5l+sv4rAouv3m/rDfnQDLW7J670svDWI8V/fMvbZaVvZDQChEgAVDZmEJ0Zajmk8nF1DvaA==
+ bh=JtHFQGTqkSJDVKUuaC8b+gbh4ALZDeXSe7oFlkvtS2c=;
+ b=xZztFZVJ/G5mVPsrBgShErCVifvZSVUJjjqsvrLi0PHL/s9vp7pRSdYZtiwlOd+7+sUBi/B7yR65eMQVX7DuN0DG74GqVUzzggG0tXTB4GZImHV3WXYyUHfY9q6KSy/u9t/h1RcHdP6GdPybPSvsnEJ0RmnidDqk64w2XVLQ2vT2FIVxRY4ptBADKiCAwgHtX7V2BD8hAqEkpIWH6RcrBqJyKBHyrjBXzwAE0kkdPNM/qwNP7kaqg3MDOWtuq8ShVcXpNHH6YSc4jvwF8DlDuJkB38TfPGoIhPyyusFwvYJffoCxEAx9L0LkZo5DSFRioz2VzhAt7Y/0BCx8MWYw+A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AfgASD12dOwk2VN84fpu4JuQ/HMDG7Vzj3iLUD0jwCg=;
- b=vuwcapfYL0PdEgrorkRcCuGbr/zZZ9scEPQVRXN3t9E1kg3261d5ofEq0A23++oNAl4GiAgWQqETDb/BSyKRPtZJUD4qRigeoIrSVCPASyeQ+5mNYLwpKrb5lIYqEBs0UABIAjnRqInsd48R3EATZHI0s3fR9CPqgVIE3cNxiDI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by PH7PR12MB8779.namprd12.prod.outlook.com (2603:10b6:510:26b::8) with
+ bh=JtHFQGTqkSJDVKUuaC8b+gbh4ALZDeXSe7oFlkvtS2c=;
+ b=Yq/BetS1g2aMm38I+/6WSALD9YWrO8WxokypP4Y4rUOm3AbP/eRax+htJvqHzfEjVnOqYPWyYpfLfFWKm+qmzW/OI68kq2IMBYFatV42EKQ9Km/fINtreIVwdkw1sFmBA69Iip4vrrFQM+ubJucQm051HJ1JDWfWin17rm0mFGX34pZTc7S6TFh/R7A5csfCfP6UexqeQ/ZJ0zEGdT4V9e23dzPmHP1tZS7z3qmrHskICEuWnD9AvbXfUyIWx1Qa/e//0RfXhuo/kIJ7wX0ljHgBaXsRtoU1RJzFeJ9xYjbxKYM9M9ybbhFPpKAyK7fNVnRa3QYK3C0sUkbI9F+cfw==
+Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com (2603:10a6:208:5::22)
+ by VI0PR04MB10253.eurprd04.prod.outlook.com (2603:10a6:800:23e::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
- 2024 09:07:16 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%5]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
- 09:07:15 +0000
-Message-ID: <abe58150-735f-4d9d-8ff4-a20b0fc6b376@amd.com>
-Date: Fri, 6 Dec 2024 14:37:04 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/10] perf/amd/ibs: Don't allow freq mode event
- creation through ->config interface
-To: Ingo Molnar <mingo@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
- acme@kernel.org, eranian@google.com, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
- Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20241206051713.991-1-ravi.bangoria@amd.com>
- <20241206051713.991-6-ravi.bangoria@amd.com> <Z1K6IckahmlME6Py@gmail.com>
+ 2024 09:07:33 +0000
+Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com
+ ([fe80::4e37:f56b:8a3e:bff0]) by AM0PR0402MB3937.eurprd04.prod.outlook.com
+ ([fe80::4e37:f56b:8a3e:bff0%5]) with mapi id 15.20.8207.017; Fri, 6 Dec 2024
+ 09:07:33 +0000
+From: Carlos Song <carlos.song@nxp.com>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>, "mkl@pengutronix.de"
+	<mkl@pengutronix.de>, Frank Li <frank.li@nxp.com>, "o.rempel@pengutronix.de"
+	<o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] i2c: imx: support DMA defer probing
+Thread-Topic: [PATCH v4] i2c: imx: support DMA defer probing
+Thread-Index: AQHbR75IcSDnkQBuKUWIyjvnjw2QSw==
+Date: Fri, 6 Dec 2024 09:07:32 +0000
+Message-ID:
+ <AM0PR0402MB39378417A496F13B201A1907E8312@AM0PR0402MB3937.eurprd04.prod.outlook.com>
+References: <20241127083818.2108201-1-carlos.song@nxp.com>
+ <153e8e36-7b0e-4379-9cc3-6dacb5d705be@pengutronix.de>
+ <AM0PR0402MB39370E69BC4B71C761EE8377E8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
+ <6b39268b-7487-427d-aff5-f3ca3b2afd42@pengutronix.de>
+In-Reply-To: <6b39268b-7487-427d-aff5-f3ca3b2afd42@pengutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-In-Reply-To: <Z1K6IckahmlME6Py@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0226.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:eb::9) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM0PR0402MB3937:EE_|VI0PR04MB10253:EE_
+x-ms-office365-filtering-correlation-id: 32389c02-e6ad-421c-ece7-08dd15d56b99
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?JWn6WUWTYf3U19Fg4yXgXcdzSPySy58/9igI+6GkySMR4TpsUsEnWinwQQ1J?=
+ =?us-ascii?Q?3qdN7gl6LYMIST1+BYnc/H2s+dc4sLqJ8mZ3ScXj30YMuXAfxTdkZXcxKCUP?=
+ =?us-ascii?Q?TnX3nwbrUugSWC5lzi8cHE0MwX6hDcTFmhPM5ubkJHj2t1II/lsYCrFu7Tze?=
+ =?us-ascii?Q?wrBnbFadHHu9w0p69j5OAY3SdRu6HJuLosMD2UlCWssze8vZp8parikjXq4g?=
+ =?us-ascii?Q?M9DJ2gESzA4rAQHqN4AUBk7zGEeWomvwed6Q16kJP34j2r8A1+Q8qRTHz2ru?=
+ =?us-ascii?Q?CFYc8Kn3m4mrcEuQm6wnsk9yy5/v600GuvcDV90s0FAWbhuKrLemJqA+iuvJ?=
+ =?us-ascii?Q?7jA/RQqw/8B3w0q0bep13TIG0VrRtixhajS6mlgnpFMOz8j2KI40dlb7RzdE?=
+ =?us-ascii?Q?WAnHkY/j5zIaSrUqW4Z+EHsW2TObOFdzRciBfEWwjc0pj0voiLb1Z0IV8Flo?=
+ =?us-ascii?Q?qxMvpsReayLh7ZaAPy2uTt8TjEUAzEVgFZfw3Q5kRNRQHGzpFG5viszcp3HH?=
+ =?us-ascii?Q?G+eu9/QSm1Etvasv5HoKhhJGdbhV6+PpAZH8vCdLXbyTtHptvQVR2Eo1FML1?=
+ =?us-ascii?Q?OQ0d3clw4PKjPdCilI6WV2SYF6OSnT459h/GC7ghiyLuQGon7Oq1eEpw1Nel?=
+ =?us-ascii?Q?tsIjAfOhW/OjyR7Uqq8Ay904RDFer2Y6nFN8LHnKFritOfpPv8vWexTrKFUb?=
+ =?us-ascii?Q?4NMTymT4tUBBARmaniM2V1rq0MShz+IiYv5NNACcoA3YCcIZULSfy5YVzc2h?=
+ =?us-ascii?Q?dUofr6qIT2uNhQN+Rn0w3CM28nsLcVdOfM4juGGDRUVw5jXCI+OQdYXr7ch9?=
+ =?us-ascii?Q?k/YMssNd6MJau/awPJnzXGdR+Pw6takKZ/zViilq3XWw7FqScag3lEKd6fgf?=
+ =?us-ascii?Q?fGp3hkCxPdsuw9WWu1oLDuhwdrJ+bWHx11UBOf+DXZMFvyfIYt39TYxemne0?=
+ =?us-ascii?Q?hc1s2XT/faxpl1lNO9roizVAK1NszTD1FJPdD2g8gX7SXKBkV0C4fwbn2C4+?=
+ =?us-ascii?Q?Kxqabfb/n7UsB+hkrFtEZi14fVYeGVR1ZOsLEFCxYG7bPweFumVHpY0sDP8T?=
+ =?us-ascii?Q?QDazEJtiHe/3lvqv6TanaUPNrPSacFHGEn/dWPWzEfLikr5MJg/qBfjpswyc?=
+ =?us-ascii?Q?YEZK/ivGK/TYdlMPWJkhFfiOcawNfTLxocqm4essdIFu76HMuiCjrBd4PttO?=
+ =?us-ascii?Q?I6KeqRDqICEYOu/c+H9NucpiqXqr2ra8nVwxAuTmaoQj8E1nhTvG1v1/2ML8?=
+ =?us-ascii?Q?Md2FifJHBk7D5YaOq3W6FLgnZ63hA4buwYWMlzQPjCuS4LDRnSLy2gDlKD3U?=
+ =?us-ascii?Q?66qHuAqX24Sk50cBBgD2rrQkrPLY9G6iO4Xlr+aH7JOF2KAXdnBLR9VRdkSx?=
+ =?us-ascii?Q?K7vO7Y4=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3937.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?YuIc4hS5m5Xfk1DLEzbtHxGzwjHkQXrxmHUNIliFw3y2uqQ4zCWpi5EnqsYA?=
+ =?us-ascii?Q?tPuXwoneddrXCE/T6fd64rJnSriv6wr97hi0aZhWlgZB4t9sV7I9lDt0eDKn?=
+ =?us-ascii?Q?nOe4Fs4MRL6zzktPoreuKKJvFo/M327MPlDDCtIxSsi+jC6WR5uB89l8DSvf?=
+ =?us-ascii?Q?BxTKnxJlJDHzKiYwS/N5JfW34tTOsupEIpdoMuEVZTY9H6akozRJ9JGqieTv?=
+ =?us-ascii?Q?TWbKc0EYI/hoIMEwf9rEEMeoBNVWLmM9tQN23Zq1BiPjNI6cl3IA8D8sCNXb?=
+ =?us-ascii?Q?M9zGi5lD3XBDOTeKqz9VRJLDSfBF7T7OiXWspIYxjzZkPEsYh3wHzdsxqKA2?=
+ =?us-ascii?Q?GXzlv3YJNA/0zE/5BwSJiVpCOFiPUl8rkyusXsfODzmw+stgmx84WFlhPray?=
+ =?us-ascii?Q?J1zcr4KjOo83mXlNNFdDXVr7Kkv6FDxbaLcMIaqs/MElPhafpmF4izue8dPC?=
+ =?us-ascii?Q?Ry42PHzDPQ7z+UDRd+lLvMb7q1oVqfB4DR+91lGmVJ3TBa/blP4D1yl8lnI7?=
+ =?us-ascii?Q?huISZuNDJ5gVhdqvI/11ps8H7Biv4fwg4GOdOtgky2rGlqWFzE5X8bt/aPOi?=
+ =?us-ascii?Q?qpeLK2w623m3+a/3WIVqrP93VjbVkKjXKFuW7f8CD4MBjGSUTEZhVD7UBQav?=
+ =?us-ascii?Q?F6EBnDLeM2pMEWMHPnckHn8NbRDD646BJQvL+ZRP3qIFnONXxwtp4J3TPiZM?=
+ =?us-ascii?Q?nkGMw+uBa9QjQfBnRJJRnQijbHoJNL/7yRu/bTavDxUmUIjXU4PaXbu3Vskh?=
+ =?us-ascii?Q?hbhosVXDj5K3MX79wsFecrbmDqGDgBqCiBy6PYq+YxjAAKWtjdnGygb4yx4A?=
+ =?us-ascii?Q?C6v3HeNMwiBZPKN1ykqQt2NgRxoDz46DznYJHrAVlLad04r1DZ98+qJJWTTq?=
+ =?us-ascii?Q?8QF0JMx3kZjZ2nMLU0Ddqk7jg1a+iDDrHV1u5X3aPSNqkWlpU8+8uckUCiev?=
+ =?us-ascii?Q?pH1ow2nw//kAXINOfFs2n9XYstX5pPwGPc2rWASHlgMfqN6xCrFsT+jTGy0y?=
+ =?us-ascii?Q?OKm14PvCTb31ubRX1tXcIjwnpExY0Mb1wMRYYcUZoCEZv626H79McBzBb2Th?=
+ =?us-ascii?Q?kqjrQSBmLAnNqkt2xOHnMX1EtBTI3ugryLX5dzlS4JEKJwdMWIQoq5yKjxhn?=
+ =?us-ascii?Q?mRzpRZwj9XZn9r+kKekf820oWkKGz5lNEcIk2huKFfsvnRnPOxUbp7Q1UL/J?=
+ =?us-ascii?Q?jTnLMLodNBe8air07fnKVw94Gl2mG9tDM8nO0hXgh2O7AeszMpRhIRJSYfIu?=
+ =?us-ascii?Q?za0tsEM3HVTqyJJB4AtfEcamrSegSeyghSV3F1Q+p049xd0vGFUTrkDHIQFm?=
+ =?us-ascii?Q?0ehYuU/sU0j2g528lBIDrt3vDVO3SiS5KoPZTEqfNABicdBEIZ/0fB5o1o/5?=
+ =?us-ascii?Q?iRccXmfCs0QNMkk3SYptt/o7wTCm8csVnddLqgLBaKgk2GniOgD+RIVZtZ0l?=
+ =?us-ascii?Q?JBvZoKuSNTC2je2jU03ZJTRk/Xxg/YaN4bE90x1TBVS4V7Jo0z3EvnwBE3x+?=
+ =?us-ascii?Q?gNjvugVBdfiBWEmXZjqxTy4c0Z/WXZfoffWIbYPLzfFhFnYAAVTtuJozypZo?=
+ =?us-ascii?Q?WTmt9DcQkohYgpZutlI=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|PH7PR12MB8779:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4b7896c-145e-4892-73cb-08dd15d560f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?REhPd3FWbHVaSjJDVlA3ZVdOdUJlaHl2Y1c3bXlTV3d2UWJSWldjaDlrTWp2?=
- =?utf-8?B?ckowOXJray9uYmNqbllBZi9rVzhZMmFFOXA2dnNRejN5dExCYWw1UlAwNmI2?=
- =?utf-8?B?TEVvWDRqOG85L0ozb2R6ZHRVbVM1R3hXVDNpWnZPeUIzVDJkVCtlb0hFZ2Ev?=
- =?utf-8?B?QUNXeUdXOFNOdzdBcUdLSjZlUmRjb3FieGNPTnZaQWhtUkZObTdkblh5T3ZG?=
- =?utf-8?B?WXBIYVU2VVExTWRIMmpPdEpFZUFWNytrVXowUS9BbEZSNkNUQVkvRTc5eURR?=
- =?utf-8?B?OTdOSzgvdGpDS2NhOGltaGlQeVlYaEU5ekRYYXBmSWlydDFxZTNSSEN0dTVY?=
- =?utf-8?B?OEo2ZUJHbGdlS1VoSHFNOHNFY2ZWNHNIV0lzQXYvVnBtS2xrMTA1R3hNQTdU?=
- =?utf-8?B?L1RWQTYzcFhXc1lCTHl6ZWNlcFRzODZHK01XdWFjUkpDYnFJUmdUbzVXY0Iy?=
- =?utf-8?B?S3ZZVXlsT0lvbWlEMFpDamxwaEFpMkdnbncyUlpvdldYelhPcVlpaEY1ando?=
- =?utf-8?B?MHpZQjJncnlGVSs5SXFzNkloV0RyUVdKdlVNQTRycUd0VVB5NWNQbUJBa0xO?=
- =?utf-8?B?SDZyQjNscXZEOFhCMlRTa2RiMktzNzYzM0FiMm1JdDIwd0ovcEx4TndjYzg5?=
- =?utf-8?B?U01uQklYYmRkbzB6T3E2Y2V2cDFwZ1FGYllpRWhkci9aTUR5VWVzYUE0TmlI?=
- =?utf-8?B?ZGhVWmhVa0s2R1ZxL0I2SzFhdG1LcERxZTlkL0hoaVZFMjQyRnRWVys3V3RJ?=
- =?utf-8?B?M0MyUkRtWjJ2SUZjUnBzMHpPWjRHL3JHeFRHeGw4VG9wc21wZUJFdFVJcGQ3?=
- =?utf-8?B?alU4eVNHSFE5YU91TWN6eHowRno0a3NGdmcrckpmTlBaRTFvUHliRzU3d3FP?=
- =?utf-8?B?cGcrOE80aTViMFpWYVYxZllOTEwyS2hLYkNxQzJDZzBYM1lyWVA0dUZNZ25K?=
- =?utf-8?B?RkdqVEZNU0RqZW5hbmFVMnAwRnFuSG9KK3YrUG1WZUVKUWR3enJiaGJCVUJh?=
- =?utf-8?B?T0dOTzJDNjVsV3cvS3gvT1prV203bThjTnZvZ1dHTGZEZFlQM2VpcWNLZnBU?=
- =?utf-8?B?a0hxeUhEVWtIc3BrWlJrZHM0TkRwcUYrdGpOL2pFQ2x4NXRPdWh6ZkFVSjJN?=
- =?utf-8?B?VlVER210TnlSNkxPSXM4S2JSMFJlTG1yYWNzZmMrMng3NGdCeXJqaXFqVXdl?=
- =?utf-8?B?cGlRSnkzNFVXUlVhcW52RGltWXZ2SHUrNGhtanc2c2JwUTlzWjZ0Q0ZBV3p5?=
- =?utf-8?B?RUZ0amI5LzZqN0crajl1eVdEbTU5OVpPMi9JYVNJZXJpa0hIRzU1S2tWdmNS?=
- =?utf-8?B?WVNQdzQ0Yzg5RlZPZHBXcWxDQlRpcFZXb212cGx5K3NvakRxWkNYTVJrcERO?=
- =?utf-8?B?OXR5Nk8vQm91ZVBvdmlEVWFRbHNYTGRUY2dSMmYrS2Y4M3lxSkVyd1k2Tjg2?=
- =?utf-8?B?eW02SnhsZElJSklqR1Z2NnVPd1hWOXJzdGh0WGVDUmpLWDQzb05vYUZmTUx1?=
- =?utf-8?B?ZDh6d2lDK05jb2I5dXl5bkFscFNYZUVZdWlIci85WU1FLzMyelBjeHNIUk9W?=
- =?utf-8?B?aGJRTnd2SVB1NmZ2MzJHWDQxb2FGR0pFeDk2L3lyV0IvdjRqNlgyeW1qUW03?=
- =?utf-8?B?RHJBUFdubGJqU3hpR0k0SEpsVGphcEVzSkdsaVB3VHBDYm5DQTdFQWt6akpj?=
- =?utf-8?B?c2VZZi9Xc3RuaHNLYnk3U0dXR1Bia0FyME90WGl3UTcrdEM4NXd1OFF2aGQ5?=
- =?utf-8?B?UXM0dGkra0Fnc09pN3RoSGNXaTdPRGtjQTd2RStOejJYR2kxTEZMd0JQcVFa?=
- =?utf-8?B?d0xveldhWnkxNlQ1VjJNUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c1pOTzkveWV4R2pjN3BuaFZLZ011NldDd0dncW9DQk43cFlid1VLV1hFYXZE?=
- =?utf-8?B?d1Y3RFNlZmY1Q04rZkMzTENGcTEvRnVWcUo4QVd0WFZDdVp6RHdVb3lpNlJz?=
- =?utf-8?B?Z2Q0cXhCZnJQUklGdG9LTTcrTmk2OEppQnU1TUFyWG9ndUFNUEovN3VZQXBO?=
- =?utf-8?B?bFJ2dTQvaUUvRXpYazZtZHVYQkVNbVZWT3JjTlBreHhhMXlUZHRPUTZzNHdz?=
- =?utf-8?B?UXcrWG50RWsxK1cyZ0RxenN1MWI0TGx3eWNkTXp1bzAwS3dqOWxyMnNxeUV1?=
- =?utf-8?B?eUNPSUJ3TFNjUXVUS0ZWUHN4NThidk40ZEE0TnczcThFeWpiMDRReitRUVVz?=
- =?utf-8?B?TEpLbFM0dDhzNU93djNTcEFaMUt4M1V4cGlTUU1UOW9YNEdCMkQ1REloakc3?=
- =?utf-8?B?VEIwZkZMSDZJcXBIeVNEbTVKQmlGbUZZR0lSWVlaYnpGWGhsTkZEY0h3RmxR?=
- =?utf-8?B?a0NJMGMxdkZsanJqb2ZVdGJOYitIbWhydlJBRDBGUEhWcVZGMzcySytTSkVm?=
- =?utf-8?B?NDRiY0tBOXd2VS95SjZhWkg2QndyUmhLaE1qbzVwaHExcFd3bXRoWE9VQktZ?=
- =?utf-8?B?dmZaR2RlS1Y2Z0dsd2g4bXo3UzVmbHdXOWF3djhCdnppM0VaM01tNWpYMXBy?=
- =?utf-8?B?TTJrU2REUGYwOGw3YWUxbEZoaWdtUnAyaFBwdVJuVmkwVExnelpnTnY4VHdp?=
- =?utf-8?B?TUNIbXpSb3FKT2I1aFNqcmIzbWRCa0N3dnQxNHlmcTl3ZnFaV0dIUlRDVXFC?=
- =?utf-8?B?N1JDOXJpamp3QjNKaG9iY2t1OG1vSFpHVHVhdi9Fd1gxcjgyVlZnVFcwRCt2?=
- =?utf-8?B?Njh4NFZmMEFMVnBjL0RQRXVUcXVXbTRqRXMvSVJXL0tEeEJmN29SSjVDcGlD?=
- =?utf-8?B?czI0QkZxQUt2Y2t2ZGVSckNxVWFUamxuRTNKSVA3S3IvNlBZeklCNmgyYkJF?=
- =?utf-8?B?ZDNBRFpsb05yalU3M1dvRm9FVjV4Tm4yc0d4c21uMGdScnR5NkFDbVRVd0lP?=
- =?utf-8?B?dzgvWjhBTXpRY3pwczRhZHZOcENzZDhXVlhuMVhDcGJ4MlcxTVBPcG1uZzMx?=
- =?utf-8?B?aTFxMmpmTFU1L0JxZ2FWYzlkMFVwYllUZ2FWcHo3TmhxZzhzQ1JzZGxpUUdl?=
- =?utf-8?B?Mk95aENzZmpSQ0U3MC82WUhzQ09FZmZCWHAwblRsR3B5dEhvUHpvU0cyUmhh?=
- =?utf-8?B?cmxGWHYzV3Z1a1FoeFVFZFVFWnFUeFVEcUlkTU55Z0pOcVI2VXFnSlA1S25W?=
- =?utf-8?B?R3Aza0orRWJ0eU9TbWZmVkN4NUJMaDF5cFRMK0NmeDd1REZYOTB3RXlEekpL?=
- =?utf-8?B?ZjlZRllmcElhZ05yYVFVOE1zZDYxVUNYNGp4RVJHbXEvS05EcE5DNk9MUkpa?=
- =?utf-8?B?ZFFtTllDNnU2S3pyVmlCdWh0VWhVeTlMaE9pYkY2V2ZoM2VpNUZOMThZbjhE?=
- =?utf-8?B?QTlrMFVSenlQVG03S2YzQ0t1V3F6WS9zNm9rRnJFaXVNOWVEQTU2Ykl4cDZ5?=
- =?utf-8?B?MFJic1BvekV2dHl5M1lVaTVKWGZsWmtwa0NuNkQ0UDV4REVwZXhvTXZuaTU0?=
- =?utf-8?B?a3FETlRHQkQ3eEk5cENrM1RHREFmMmNQb1VzTlU5VjVWbkxJWWZsdUZ0NHJm?=
- =?utf-8?B?Z0JMai9ab3p6SXZHOGlvSElqNm5tRmV4NytSRHNJaG9XUDV1T0JjTmdHWlBS?=
- =?utf-8?B?dC92QXdFMktmdytDbCswS0FlamNpNHlQb01WRU9md1A0YVBMY1FUc0d5M2pm?=
- =?utf-8?B?Mk5HeDEzVlVxUnRjdW1yZWZoZWZZa2dQRFdBVTl1ZGtRMW1oc1JGMTlodDdq?=
- =?utf-8?B?VW93QTI2b2NabDFpZGZsVlBrd2p2dDU0RjV4S1N5Y1lFcTNNTllVODNNUHhG?=
- =?utf-8?B?UUhjYmRlYVlnSXpvVFhFUExTQk5HM2FqL1NjWjRrZmp2NS95b0dPWjdsT0Ns?=
- =?utf-8?B?azVXUSsxc0l4dlpOakN6dXhBV0Izclg1QzB6cHlnNWlTVGVDZlFFcy9oZy9H?=
- =?utf-8?B?a0xPRC9YYjFqMDI4KzRBWEdzdDFHN3VJL2dPRDJrcWw3RDRsVldTaStzQ1lK?=
- =?utf-8?B?cGNRTXJvUlhmcUdBUlFEb0s2ZmpCeHdyd1REUlNjclJXN1pMaHZWMnBxWVF1?=
- =?utf-8?Q?EzPdqLKku2dl2/piHI35F8Dya?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4b7896c-145e-4892-73cb-08dd15d560f5
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 09:07:15.8791
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR0402MB3937.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32389c02-e6ad-421c-ece7-08dd15d56b99
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2024 09:07:33.3519
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tcUSW060z0KmiXv17bQpEUsKAR00/3BqOdQ233H4vVLd/0Knxa4zN5sroVMvb7TUKCmWi0H+bfYZ5mMRiFMP8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8779
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vxj/Xi1lpu/JqsXNXBYGpVj5grBprm2oDOhuNjT7jaVSLHfE7tP/9gP5vr+4N9frOGW4gJ2IbhLsV+wsntdejQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10253
 
-Hi Ingo,
 
->> Most perf_event_attr->config bits directly maps to IBS_{FETCH|OP}_CTL
->> MSR. Since the sample period is programmed in these control registers,
->> IBS PMU driver allows opening an IBS event by setting sample period
->> value directly in perf_event_attr->config instead of using explicit
->> perf_event_attr->sample_period interface.
->>
->> However, this logic is not applicable for freq mode events since the
->> semantics of control register fields are applicable only to fixed
->> sample period whereas the freq mode event adjusts sample period after
->> each and every sample. Currently, IBS driver (unintentionally) allows
->> creating freq mode event via ->config interface, which is semantically
->> wrong as well as detrimental because it can be misused to bypass
->> perf_event_max_sample_rate checks.
-> 
-> Then let's fix those rate checks?
-> 
-> AFAICS this patch limits functionality because the IBS driver would 
-> have to be fixed/enhanced to support frequency based events?
-> 
-> I'd strongly favor fixing/enhancing the driver instead, as 'perf top -F 
-> 1000' is easy to use and it is a useful concept.
 
-No. This patch does not prevent opening an IBS event in freq mode. User
-can still open freq mode IBS event with usual interface attr->freq=1 and
-attr->sample_freq=<freq>. i.e. 'perf top -F 1000' with IBS event will
-work fine with this patch.
+> -----Original Message-----
+> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> Sent: Friday, December 6, 2024 2:50 AM
+> To: Carlos Song <carlos.song@nxp.com>; mkl@pengutronix.de; Frank Li
+> <frank.li@nxp.com>; o.rempel@pengutronix.de; kernel@pengutronix.de;
+> andi.shyti@kernel.org; shawnguo@kernel.org; s.hauer@pengutronix.de;
+> festevam@gmail.com
+> Cc: imx@lists.linux.dev; linux-i2c@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> Subject: [EXT] Re: [PATCH v4] i2c: imx: support DMA defer probing
+>
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report =
+this
+> email' button
+>
+>
+> Hello Carlos,
+>
+> On 27.11.24 11:43, Carlos Song wrote:
+> >> -----Original Message-----
+> >> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> >> Sent: Wednesday, November 27, 2024 4:38 PM
+> >> To: Carlos Song <carlos.song@nxp.com>; mkl@pengutronix.de; Frank Li
+> >> <frank.li@nxp.com>; o.rempel@pengutronix.de; kernel@pengutronix.de;
+> >> andi.shyti@kernel.org; shawnguo@kernel.org; s.hauer@pengutronix.de;
+> >> festevam@gmail.com
+> >> Cc: imx@lists.linux.dev; linux-i2c@vger.kernel.org;
+> >> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> >> Subject: [EXT] Re: [PATCH v4] i2c: imx: support DMA defer probing
+>
+> >> Please try to address open questions before sending new versions of
+> >> the patch set. Otherwise, it's difficult to follow the conversation.
+> >>
+> >> Did you see my question[1] on your v2:
+> >>
+> >
+> > Hi, thank you so much! So sorry about it... I missed it yesterday. I wi=
+ll answer
+> your question[1] in this mail.
+> >
+> >
+> >> | Wouldn't this break probe for all i2c-imx users who have
+> >> | CONFIG_IMX_SDMA disabled?
+> >> |
+> >
+> > I have tested i2c probe at IMX and LS platform when DMA disabled,
+>
+> What does DMA disabled mean? Did you leave the dmas property in the devic=
+e
+> tree unchanged, but just disabled the config option?
+>
+> > it won't break i2c-imx probe.
+> > When require DMA channel in i2c_imx_dma_request, find no devices and
+> > return -ENODEV, as you see at V4 patch, it will continue to probe and w=
+ork in
+> PIO mode.
+> > I2C adapter should keep available whatever DMA mode is or isn't enabled=
+.
+>
+> If that's the case, then all is good. I thought the situation described a=
+bove would
+> return -EPROBE_DEFER instead. I haven't dug into the code to understand w=
+hat
+> the difference between when dma_request_chan().
+>
+> >> | Also I am wondering on what kernel version and what configuration
+> >> | (CONFIG_I2C_IMX=3D?, CONFIG_IMX_SDMA=3D?) you have that made you run
+> >> | into this situation.
+> >> |
+> >
+> > I want to correct something, these code about DMA in i2c-imx.c is for e=
+DMA
+> not for SDMA.
+> > For eDMA mode, I have tested this patch at layerscape-1043 platform.
+> > My patch is based on
+> > cfba9f07a1d6 (tag: next-20241122, origin/master, origin/HEAD).
+>
+> The driver also handles i.MX variants like i.MX6, i.MX8 and so on, which =
+have
+> SDMA. So eDMA is not the only DMA driver it is used with.
+>
+> >
+> > Test log is :
+> > No apply this patch:
+> > CONFIG_I2C_IMX=3Dy
+> > CONFIG_FSL_EDMA=3Dy
+> > root@ls1043ardb:~# dmesg | grep i2c
+> > [    1.162053] i2c i2c-0: IMX I2C adapter registered
+> > [    1.166826] i2c i2c-0: using dma0chan16 (tx) and dma0chan17 (rx) for
+> DMA transfers
+> > [    4.722057] i2c_dev: i2c /dev entries driver
+> >
+> > Not apply the patch:
+> > CONFIG_I2C_IMX=3Dy
+> > CONFIG_FSL_EDMA=3Dm
+> > root@ls1043ardb:~# dmesg | grep i2c
+> > [    1.166381] i2c i2c-0: IMX I2C adapter registered
+> > [    4.719226] i2c_dev: i2c /dev entries driver
+> > (result shows i2c not enabled the eDMA mode) root@ls1043ardb:~#
+> > i2cdetect -y -l
+> > i2c-0   i2c             2180000.i2c
+> I2C adapter
+> > root@ls1043ardb:~# i2cdetect -y 0
+> >      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+> > 00:                         08 -- -- -- -- -- -- --
+> > 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> > 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> > 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> > 40: UU -- -- -- -- -- -- -- -- -- -- -- UU -- -- --
+> > 50: -- UU UU UU -- -- -- -- -- -- -- -- -- -- -- --
+> > 60: -- -- -- -- -- -- -- -- -- 69 -- -- -- -- -- --
+> > 70: -- -- -- -- -- -- -- --
+> >
+> > After apply the patch:
+> > CONFIG_I2C_IMX=3Dy
+> > CONFIG_FSL_EDMA=3Dm
+> > root@ls1043ardb:~#
+> > root@ls1043ardb:~# dmesg | grep i2c
+> > [    4.697046] i2c_dev: i2c /dev entries driver
+> > [    7.304142] imx-i2c 2180000.i2c: using dma0chan16 (tx) and dma0chan1=
+7
+> (rx) for DMA transfers
+> > [    7.313532] i2c i2c-0: IMX I2C adapter registered
+> > (result shows i2c probed after eDMA module installed)
+>
+Hi, Ahmad
 
-Thanks,
-Ravi
+Refer previous history:
+https://lore.kernel.org/linux-arm-kernel/6b39268b-7487-427d-aff5-f3ca3b2afd=
+42@pengutronix.de/
+
+Your suggestions are very insightful. I'm very grateful!
+
+Before replying to your question, I think we should synchronize SDMA and eD=
+MA firstly.
+sDMA and EDMA for i2c is different.
+Only 1 SDMA channel for i2c SDMA TX/RX event.
+But 2 eDMA channels for i2c eDMA TX request and RX request.
+
+Now in i2c-imx, DMA code all are for eDMA, they have nothing to do with SDM=
+A initialization.
+It is very different initialization of SDMA and eDMA.
+
+SDMA at dts:
+@@ -1046,6 +1046,8 @@ i2c1: i2c@30a20000 {
+                                ...
++                               dmas =3D <&sdma1 18 27 0>;
++                               dma-names =3D "rx-tx";
+                                status =3D "disabled";
+                        };
+eDMA at dts:
+                i2c0: i2c@2180000 {
+                        ....
++                               dmas =3D <&edma0 1 38>,
++                                      <&edma0 1 39>;
++                               dma-names =3D "rx", "tx";
+                        status =3D "disabled";
+                };
+
+SDMA initialization in i2c-imx driver:
+
++       dma->chan_tx =3D dma_request_chan(dev, "rx-tx");
++       if (IS_ERR(dma->chan_tx)) {
++               ret =3D PTR_ERR(dma->chan_tx);
++               goto fail_dma;
++       }
++
++       dma->chan_rx =3D dma->chan_tx;
++       i2c_imx->dma =3D dma;
+
+eDMA initialization in i2c-imx driver:
+
+...
++       dma->chan_tx =3D dma_request_chan(dev, "tx");
+....
++       dma->chan_rx =3D dma_request_chan(dev, "rx");
+....
+        i2c_imx->dma =3D dma;
+
+So if need to enable SDMA, should define a separate dma_request function an=
+d should not reuse the current i2c_imx_dma_request function.
+Also according to different platforms i2c-imx driver need to choose to use =
+eDMA or SDMA.
+
+So now we start to discuss about your confusion:
+
+> My concern is this configuration:
+>
+>   - A user has eDMA/SDMA module or disabled, but enabled in DT
+[Carlos]:
+I delete edma channel at dts to disable eDMA before. It works in PIO mode.
+I also test your case : when enable dma channel in DT but disable eDMA modu=
+le. It will meet error:
+
++++ b/arch/arm64/configs/defconfig
+....
+-CONFIG_FSL_EDMA=3Dy
+....
+
+root@ls1043ardb:~# dmesg | grep i2c
+[    4.697392] i2c_dev: i2c /dev entries driver
+[   18.357685] platform 2180000.i2c: deferred probe pending: (reason unknow=
+n)
+root@ls1043ardb:~# i2cdetect -y -l
+
+The case you mentioned is completely inconsistent with the actual usage. Si=
+nce you have defined the dma channel in dts, it means that you need to
+use DMA mode in i2c, but you disabled the eDMA module when building the Ima=
+ge. This makes no sense at all. I think this is a usage error.
+And the deferred probe pending error is predictable. Since there is no DMA =
+driver loaded, I2C will keep defer probe and be hanged.
+
+>   - The I2C has a PMIC, which is needed for eMMC VCC
+[Carlos]:
+PMIC is critical for the whole board, so PMIC will finish all critical syst=
+em power-on configuration(include eMMC VCC) in the uboot not at kernel.
+So pmic driver probe in kernel won't and shouldn't effect system boot.
+
+>   - System startup is stuck or considerably delayed
+>
+The purpose of defer probe is to solve the problem of interdependence of mo=
+dule loading, and to try to load again after a while is to ensure that the =
+required functions
+will not be unavailable because the resources are not ready. This delay is =
+unavoidable. If a defer probe occurs, the first consideration should be to =
+reasonably adjust the
+loading order of each module, rather than directly giving up the functions =
+that should be enabled.
+
+> > root@ls1043ardb:~#
+> > root@ls1043ardb:~# i2cdetect -y -l
+> > i2c-0   i2c             2180000.i2c
+> I2C adapter
+> > root@ls1043ardb:~# i2cdetect -y 0
+> >      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+> > 00:                         08 -- -- -- -- -- -- --
+> > 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> > 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> > 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> > 40: UU -- -- -- -- -- -- -- -- -- -- -- UU -- -- --
+> > 50: -- UU UU UU -- -- -- -- -- -- -- -- -- -- -- --
+> > 60: -- -- -- -- -- -- -- -- -- 69 -- -- -- -- -- --
+> > 70: -- -- -- -- -- -- -- --
+> >
+> >
+> >> | I'd have expected that with fw_devlink enabled, the I2C controller
+> >> | wouldn't be probed before the DMA provider is available.
+> >>
+> >
+> > This is a legacy patch, it has been in our local tree for a long time. =
+The related
+> history is relatively vague.
+> > I reproduced the problem and found this patch is effective, so I
+> > referred the community patch and legacy patch to rewrite the commit log=
+(I
+> am not sure if this would happened in some cases so I kept this informati=
+on).
+> > Now it seems that these descriptions are redundant. I should completely
+> removed this in the commit log:
+> >     Move i2c_imx_dma_request() before registering I2C adapter to avoid
+> >     infinite loop of .probe() calls to the same driver, see "e8c220fac4=
+15
+> >     Revert "i2c: imx: improve the error handling in
+> i2c_imx_dma_request()""
+> >     and "Documentation/driver-api/driver-model/driver.rst".
+>
+> Cheers,
+> Ahmad
+>
+> >
+> > [1]:
+> > https://lore/
+> > .kernel.org%2Fall%2F19a43db4-db5c-4638-9778-d94fb571a206%40pengutro
+> nix
+> > .de%2F&data=3D05%7C02%7Ccarlos.song%40nxp.com%7C3e9bcb1cc97b43a69
+> ca608dd
+> >
+> 155d9977%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638690213
+> 9450713
+> >
+> 71%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAu
+> MDAwMCI
+> >
+> sIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdat
+> a=3DT
+> > z0JcOxf9rrSOl2FoCHNbQz4rtKY5V0eS1ZMV%2BXED4I%3D&reserved=3D0
+> > [2]:https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2=
+F
+> >
+> lore.kernel.org%2Fall%2F153e8e36-7b0e-4379-9cc3-6dacb5d705be%40pengutr
+> >
+> onix.de%2F&data=3D05%7C02%7Ccarlos.song%40nxp.com%7C3e9bcb1cc97b43a
+> 69ca6
+> >
+> 08dd155d9977%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63869
+> 0213945
+> >
+> 090490%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwL
+> jAuMDA
+> >
+> wMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C
+> &sda
+> > ta=3DpAT68urcH7CTFknvK1xM3lfuYjZQO0I16B%2FTTsCJw6Q%3D&reserved=3D0
+> >
+> >>>
+> >>> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> >>> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> >>> ---
+> >>> Change for V4:
+> >>> - Output "Only use PIO mode" log in debug level when no DMA configure=
+.
+> >>> Change for V3:
+> >>> - According to Marc's comment, remove error print when defer probe.
+> >>>   Add info log when DMA has not been enabled and add error log when
+> >>>   DMA error, both won't stuck the i2c adapter register, just for remi=
+nding,
+> >>>   i2c adapter is working only in PIO mode.
+> >>> Change for V2:
+> >>> - According to Frank's comments, wrap at 75 char and Simplify fix cod=
+e
+> >>>   at i2c_imx_dma_request().
+> >>> - Use strict patch check, fix alignment warning at
+> >>> i2c_imx_dma_request()
+> >>> ---
+> >>>  drivers/i2c/busses/i2c-imx.c | 31 +++++++++++++++++++++++--------
+> >>>  1 file changed, 23 insertions(+), 8 deletions(-)
+> >>>
+> >>> diff --git a/drivers/i2c/busses/i2c-imx.c
+> >>> b/drivers/i2c/busses/i2c-imx.c index 5ed4cb61e262..b11d66d56c55
+> >>> 100644
+> >>> --- a/drivers/i2c/busses/i2c-imx.c
+> >>> +++ b/drivers/i2c/busses/i2c-imx.c
+> >>> @@ -397,17 +397,16 @@ static void i2c_imx_reset_regs(struct
+> >>> imx_i2c_struct *i2c_imx)  }
+> >>>
+> >>>  /* Functions for DMA support */
+> >>> -static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+> >>> -                                             dma_addr_t
+> >> phy_addr)
+> >>> +static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+> >>> +dma_addr_t phy_addr)
+> >>>  {
+> >>>       struct imx_i2c_dma *dma;
+> >>>       struct dma_slave_config dma_sconfig;
+> >>> -     struct device *dev =3D &i2c_imx->adapter.dev;
+> >>> +     struct device *dev =3D i2c_imx->adapter.dev.parent;
+> >>>       int ret;
+> >>>
+> >>>       dma =3D devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
+> >>>       if (!dma)
+> >>> -             return;
+> >>> +             return -ENOMEM;
+> >>>
+> >>>       dma->chan_tx =3D dma_request_chan(dev, "tx");
+> >>>       if (IS_ERR(dma->chan_tx)) {
+> >>> @@ -452,7 +451,7 @@ static void i2c_imx_dma_request(struct
+> >> imx_i2c_struct *i2c_imx,
+> >>>       dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
+> >>>               dma_chan_name(dma->chan_tx),
+> >>> dma_chan_name(dma->chan_rx));
+> >>>
+> >>> -     return;
+> >>> +     return 0;
+> >>>
+> >>>  fail_rx:
+> >>>       dma_release_channel(dma->chan_rx);
+> >>> @@ -460,6 +459,8 @@ static void i2c_imx_dma_request(struct
+> >> imx_i2c_struct *i2c_imx,
+> >>>       dma_release_channel(dma->chan_tx);
+> >>>  fail_al:
+> >>>       devm_kfree(dev, dma);
+> >>> +
+> >>> +     return ret;
+> >>>  }
+> >>>
+> >>>  static void i2c_imx_dma_callback(void *arg) @@ -1803,6 +1804,23 @@
+> >>> static int i2c_imx_probe(struct platform_device *pdev)
+> >>>       if (ret =3D=3D -EPROBE_DEFER)
+> >>>               goto clk_notifier_unregister;
+> >>>
+> >>> +     /*
+> >>> +      * Init DMA config if supported, -ENODEV means DMA not enabled
+> at
+> >>> +      * this platform, that is not a real error, so just remind "onl=
+y
+> >>> +      * PIO mode is used". If DMA is enabled, but meet error when
+> request
+> >>> +      * DMA channel, error should be showed in probe error log. PIO
+> mode
+> >>> +      * should be available regardless of DMA.
+> >>> +      */
+> >>> +     ret =3D i2c_imx_dma_request(i2c_imx, phy_addr);
+> >>> +     if (ret) {
+> >>> +             if (ret =3D=3D -EPROBE_DEFER)
+> >>> +                     goto clk_notifier_unregister;
+> >>> +             else if (ret =3D=3D -ENODEV)
+> >>> +                     dev_dbg(&pdev->dev, "Only use PIO mode\n");
+> >>> +             else
+> >>> +                     dev_err_probe(&pdev->dev, ret, "Failed to
+> >>> + setup
+> >> DMA, only use PIO mode\n");
+> >>> +     }
+> >>> +
+> >>>       /* Add I2C adapter */
+> >>>       ret =3D i2c_add_numbered_adapter(&i2c_imx->adapter);
+> >>>       if (ret < 0)
+> >>> @@ -1817,9 +1835,6 @@ static int i2c_imx_probe(struct
+> >>> platform_device
+> >> *pdev)
+> >>>               i2c_imx->adapter.name);
+> >>>       dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter
+> >>> registered\n");
+> >>>
+> >>> -     /* Init DMA config if supported */
+> >>> -     i2c_imx_dma_request(i2c_imx, phy_addr);
+> >>> -
+> >>>       return 0;   /* Return OK */
+> >>>
+> >>>  clk_notifier_unregister:
+> >>
+> >>
+> >> --
+> >> Pengutronix e.K.                           |
+> >> |
+> >> Steuerwalder Str. 21                       |
+> >> http://www/.
+> >>
+> pen%2F&data=3D05%7C02%7Ccarlos.song%40nxp.com%7C3e9bcb1cc97b43a69c
+> a608d
+> >>
+> d155d9977%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63869021
+> 394510
+> >>
+> 5284%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjA
+> uMDAw
+> >>
+> MCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&s
+> da
+> >> ta=3DqE5UgdZSuGjzXtDFcY1BVbjNgb6sPPrpykvr3gpHsLg%3D&reserved=3D0
+> >>
+> gutronix.de%2F&data=3D05%7C02%7Ccarlos.song%40nxp.com%7C1acf840d499f
+> >>
+> 49a7872408dd0ebedc39%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0
+> >> %7C638682935131084746%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLj
+> Aw
+> >>
+> MDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&s
+> >>
+> data=3DY9Qn9XEk15yu4CespwsNu6hl3%2FqfNTvEeOn4ZvnGxbo%3D&reserved=3D0
+> >> |
+> >> 31137 Hildesheim, Germany                  | Phone:
+> +49-5121-206917-0
+> >> |
+> >> Amtsgericht Hildesheim, HRA 2686           | Fax:
+> >> +49-5121-206917-5555 |
+> >
+>
+>
+> --
+> Pengutronix e.K.                           |
+> |
+> Steuerwalder Str. 21                       |
+> http://www.pen/
+> gutronix.de%2F&data=3D05%7C02%7Ccarlos.song%40nxp.com%7C3e9bcb1cc97b
+> 43a69ca608dd155d9977%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0
+> %7C638690213945119868%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGki
+> OnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ
+> %3D%3D%7C0%7C%7C%7C&sdata=3DSU8Ak78%2BZCcOo4G%2F9Kq1E3IZNAgg5E
+> 0m1CC1qr4ANYk%3D&reserved=3D0  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0
+> |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:
+> +49-5121-206917-5555 |
 
