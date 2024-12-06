@@ -1,184 +1,151 @@
-Return-Path: <linux-kernel+bounces-434611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34499E68EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:32:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3F59E68F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:33:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5496F286125
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2361886E32
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B4C1DE2B3;
-	Fri,  6 Dec 2024 08:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D851E22FA;
+	Fri,  6 Dec 2024 08:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3kljBk2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d1aZ7D6N"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E465C3D6B;
-	Fri,  6 Dec 2024 08:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A49C13DDDF
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733473883; cv=none; b=LX+TgstHfngiXWOis82sPL4sQxBQhA5TxrgHvDVhm+RjYVDyfPpWfvB+ThxDnt0McL32xAuWpt+KiY2MrnSJ6+BhtSR0rjpzeLqvp7mZbYyeR7FBQEyMQ5ehFtJBD1MfNmiGf5Y0pzxXcpL+GRdv/OjK+k+lFu7Rwqdtf2WIWqQ=
+	t=1733473905; cv=none; b=KkNszHM26K2Ippn7A1UUJkIx45rOmyIJthMzGPwkr9YLzhrRrpLQJjApYdlNs+uqV8uAbpt3V2yIGx/DPE2jY9oksgT37Vblw1MCIC7fz6O4G9F/Jlb8YazxteiUl9QLyybxmNJJRSl+7wPpFG9ZeVUmH10hudtA6FWPFQMbJ3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733473883; c=relaxed/simple;
-	bh=wwVvhOgw3TqhMZRruQ7sCYqRQDH1bBCjL08Ym4VjgvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJpUQq9QEje/2vVx0XZsvDT/4TCAso8Guov+2BGISAAuwDeRGwVbwWv5xMw+yAJLDaUzkoo2Mhn3CQtv7TawpTzvBKuvwtGqSDTZFwIeBt6A+BnwFZSZLL09SNcZwFdfOSuySrZ5pqbFr+wFHPuYX2fRMIg0ig8Eq+qoxr/99Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3kljBk2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5341C4CEDD;
-	Fri,  6 Dec 2024 08:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733473882;
-	bh=wwVvhOgw3TqhMZRruQ7sCYqRQDH1bBCjL08Ym4VjgvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3kljBk22ib53sm2gMc8/CWKnxk3bkb6G8LQP9kGEgokpKPz0YPjeebupaNgcB7/g
-	 mTsFT5/EURcVIoGg0fhx6tq5kLjCN+2HZYbd96JDu3QYljh1090fXk29BxGrt4fl7c
-	 ZKZGT9E+YJ7nZLruVxOjjjJe/i5jENoPWHFp8QMqikVhwvA2CfpcWp2BLufI8FQbd+
-	 j4AVz6D67PZ4wB67RBHq4SlkHXFdJ3CnjMRTcBovnuORvfdEvIx7UXQ+WDqJTnc0WY
-	 tLinVmkwsgna7/5ozkUv5TDqG+IFjk0NAuYoaJlr9MBM+dGFqpvfu3mMGbiJrGYr49
-	 nj7Q60MWq0FPw==
-Date: Fri, 6 Dec 2024 08:31:17 +0000
-From: Lee Jones <lee@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
-	arnd@arndb.de, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] rust: miscdevice: Provide accessor to pull out
- miscdevice::this_device
-Message-ID: <20241206083117.GO8882@google.com>
-References: <20241205162531.1883859-1-lee@kernel.org>
- <20241205162531.1883859-2-lee@kernel.org>
- <2024120648-finch-shrubbery-c6f5@gregkh>
- <20241206071646.GE8882@google.com>
- <20241206073309.GG8882@google.com>
- <Z1KvNQUUStyLjpwz@boqun-archlinux>
- <20241206080751.GN8882@google.com>
- <Z1Kynwt4LpWdOiBN@boqun-archlinux>
+	s=arc-20240116; t=1733473905; c=relaxed/simple;
+	bh=G/NWr+cFHKo5I/8lV3/xQbIcisFUGORAhy2vxW/qyMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tHHFAv//I+Lhw3snBa6l/ZM18T+tQ907KQAGhHNmR/jhzaqJ3TPAgCeFsSmOMcZJa3MBjPEhHm2rB9qkTPb3nnV4HOdL53EEKnQS1L0RGy3ho/QmhVFbX99k8S1pVmiVgiy24HhsqBOJ1biP5IkbuXfKH/Ju3zASc8hOMUOpH/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d1aZ7D6N; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so1316483f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 00:31:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733473901; x=1734078701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MndMYY4GPIQ8HTWtED6XEkvHTM70jq0Eh04UxVuFw2o=;
+        b=d1aZ7D6Nt8ILsx6RFqi8QW7445Eue/ZjN+BsLIy2x5inimawsd10PLW+im1uvd9D1l
+         Y1zb0exPbH7yVOK7h84Rcf20EgktENM+FmuUM8J2L75j++hfKnPm4TiOl5aFikaSlfxN
+         if21uPHfQzFKtBlZCsk7d6YjswDZhOhBe2YXJ6VTSf0Np23aC/0Li3NaouiU365r+EEy
+         v9semLhnErQWXjeI8Wx9OghV93APROSHbpr4X758hnsf769PY23c7RR200p2CmU317kx
+         oln/u2B+m1bjSLgv2A77KrlcKVkwS1PhG+2h/dZuPKFK2/RqKMncYgoguY4tYUneuRnm
+         iGTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733473901; x=1734078701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MndMYY4GPIQ8HTWtED6XEkvHTM70jq0Eh04UxVuFw2o=;
+        b=ugEI/vqA5Ad+O/w3YrWyO9ClYQKHgZ4hqEcLUwJZKNl0/sJBJ3o7SwnZrvWP4vMNVl
+         dld5eXaBPndRSQt5TpVDjtQfZ5Yx3t/W5ctfMEEwg2J66vFOLNGrmmaGZonk/xlBmnsx
+         pjqWxMszVxY50SeFo2FJC///tYBNhY1RkIMK61aveM9TkWC7oAROBf2v2m1HfK9F8hTq
+         sQtyI41a+ZxJmCsrn8dZyCMtJ8jU6RVtYyQo67D1qRjzfuhqnl+FHRpz9Wad+WHDzXDH
+         iSN9yS4RWDSisxzdaJp1PHcGDAslipoDmgdEjpoXZAO9C/ejy8uADP142svuzFEreGqY
+         RTyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVf1/IycdH4QTx6qPmDtz9zwCpYAqMyClwY8ZaTQSt+gJ+hIX9Y0P7JY1eJPm41WqqBilxa7s37MSKgBcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy133AEMX4OQL8GMNeEMtn36QQWzY2qYYFzJ5VOX/Z+C6Eluhts
+	hoFI/SWYuefNY+Q1h4nTmZZzpZfQTlR19hDFFqwN/HygCdpx0oz/J5xEUEGxRAf1QZ+HRfYjhXk
+	nkhq8AG87txyVl3gFh8JJtdaDj7I5Pn2gYhiW
+X-Gm-Gg: ASbGncsEK0YCrSyQqactrXJdu1uja+5CTeqBR0la78UIHOcbuabGJi+ez19YYvcFWFU
+	M4u0S9FTMvPkcS6bmJMVK9mBhP44ZxbUc
+X-Google-Smtp-Source: AGHT+IHTpVhNbdQ5mRt21s4Gec32i/tVvuXdlp9phX7cA24emalaIIqZWOzUp/cCiiZ1ZpZANHDBZHrFKALrak5xbNw=
+X-Received: by 2002:a05:6000:a14:b0:385:f0c9:4b66 with SMTP id
+ ffacd0b85a97d-3862b39b9b4mr1763642f8f.33.1733473901426; Fri, 06 Dec 2024
+ 00:31:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1Kynwt4LpWdOiBN@boqun-archlinux>
+References: <20241205162531.1883859-1-lee@kernel.org> <2024120632-hardwired-hardhead-1906@gregkh>
+ <20241206074443.GJ8882@google.com> <2024120622-unvalued-wriggle-7942@gregkh>
+In-Reply-To: <2024120622-unvalued-wriggle-7942@gregkh>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 6 Dec 2024 09:31:28 +0100
+Message-ID: <CAH5fLgj6rqVbGHrU4008fvO60fJdRWoE2SvW7nc9njPUFuzJ_A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] rust: miscdevice: Provide sample driver using the
+ new MiscDevice bindings
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, arnd@arndb.de, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 06 Dec 2024, Boqun Feng wrote:
+On Fri, Dec 6, 2024 at 9:11=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org>=
+ wrote:
+>
+> On Fri, Dec 06, 2024 at 07:44:43AM +0000, Lee Jones wrote:
+> > On Fri, 06 Dec 2024, Greg KH wrote:
+> >
+> > > On Thu, Dec 05, 2024 at 04:25:17PM +0000, Lee Jones wrote:
+> > > > It has been suggested that the driver should use dev_info() instead=
+ of
+> > > > pr_info() however there is currently no scaffolding to successfully=
+ pull
+> > > > a 'struct device' out from driver data post register().  This is be=
+ing
+> > > > worked on and we will convert this over in due course.
+> > >
+> > > But the miscdevice.rs change provides this to you, right?  Or if not,
+> > > why not?
+> >
+> > This does allow us to pull the 'struct device *` out from `struct
+> > miscdevice`; however, since this resides in MiscDeviceRegistration,
+> > which we lose access to after .init, we have no means to call it.
+> >
+> > Alice is going to work on a way to use ThisModule to get the
+> > MiscDeviceRegistration reference back from anywhere in the module. Unti=
+l
+> > that piece lands, we can't call MiscDeviceRegistration::device() outsid=
+e
+> > of RustMiscDeviceModule.
+>
+> That seems crazy, as ThisModule shouldn't be dealing with a static misc
+> device, what happens for dynamically created ones like all
+> normal/sane/non-example drivers do?  This should "just" be a dynamic
+> object that is NOT tied to the module object, or worst case, a "static"
+> structure that is tied to the module I guess?
+>
+> Anyway, I'll let you all work it out, good luck!
 
-> On Fri, Dec 06, 2024 at 08:07:51AM +0000, Lee Jones wrote:
-> > On Fri, 06 Dec 2024, Boqun Feng wrote:
-> > 
-> > > On Fri, Dec 06, 2024 at 07:33:09AM +0000, Lee Jones wrote:
-> > > > On Fri, 06 Dec 2024, Lee Jones wrote:
-> > > > 
-> > > > > On Fri, 06 Dec 2024, Greg KH wrote:
-> > > > > 
-> > > > > > On Thu, Dec 05, 2024 at 04:25:18PM +0000, Lee Jones wrote:
-> > > > > > > There are situations where a pointer to a `struct device` will become
-> > > > > > > necessary (e.g. for calling into dev_*() functions).  This accessor
-> > > > > > > allows callers to pull this out from the `struct miscdevice`.
-> > > > > > > 
-> > > > > > > Signed-off-by: Lee Jones <lee@kernel.org>
-> > > > > > > ---
-> > > > > > >  rust/kernel/miscdevice.rs | 9 +++++++++
-> > > > > > >  1 file changed, 9 insertions(+)
-> > > > > > > 
-> > > > > > > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > > > > > > index 7e2a79b3ae26..55340f316006 100644
-> > > > > > > --- a/rust/kernel/miscdevice.rs
-> > > > > > > +++ b/rust/kernel/miscdevice.rs
-> > > > > > > @@ -10,11 +10,13 @@
-> > > > > > >  
-> > > > > > >  use crate::{
-> > > > > > >      bindings,
-> > > > > > > +    device::Device,
-> > > > > > >      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> > > > > > >      prelude::*,
-> > > > > > >      str::CStr,
-> > > > > > >      types::{ForeignOwnable, Opaque},
-> > > > > > >  };
-> > > > > > > +
-> > > > > > >  use core::{
-> > > > > > >      ffi::{c_int, c_long, c_uint, c_ulong},
-> > > > > > >      marker::PhantomData,
-> > > > > > > @@ -84,6 +86,13 @@ pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
-> > > > > > >      pub fn as_raw(&self) -> *mut bindings::miscdevice {
-> > > > > > >          self.inner.get()
-> > > > > > >      }
-> > > > > > > +
-> > > > > > > +    /// Returns a pointer to the current Device
-> > > > > > > +    pub fn device(&self) -> &Device {
-> > > > > > > +        // SAFETY: This is only accessible after a successful register() which always
-> > > > > > > +        // initialises this_device with a valid device.
-> > > > > > > +        unsafe { Device::as_ref((*self.as_raw()).this_device) }
-> > > > > > 
-> > > > > > A "raw" pointer that you can do something with without incrementing the
-> > > > > > reference count of it?  Oh wait, no, it's the rust device structure.
-> > > > > > If so, why isn't this calling the get_device() interface instead?  That
-> > > > > > way it's properly incremented and decremented when it "leaves the scope"
-> > > > > > right?
-> > > > > > 
-> > > > > > Or am I missing something here as to why that wouldn't work and this is
-> > > > > > the only way to get access to the 'struct device' of this miscdevice?
-> > > > > 
-> > > > > Fair point.  I'll speak to Alice.
-> > > > 
-> > > > Alice isn't available yet, so I may be talking out of turn at this
-> > > > point, but I just found this is the Device documentation:
-> > > > 
-> > > >   /// A `Device` instance represents a valid `struct device` created by the C portion of the kernel.
-> > > >   ///
-> > > >   /// Instances of this type are always reference-counted, that is, a call to `get_device` ensures
-> > > >   /// that the allocation remains valid at least until the matching call to `put_device`.
-> > > > 
-> > > > And:
-> > > > 
-> > > >   // SAFETY: Instances of `Device` are always reference-counted.
-> > > > 
-> > > > Ready for some analysis from this beginner?
-> > > > 
-> > > > Since this impl for Device is AlwaysRefCounted, when any references are
-> > > > taken i.e. in the Device::as_ref line above, inc_ref() is implicitly
-> > > > called to increase the refcount.  The same will be true of dec_ref()
-> > > 
-> > > No, inc_ref() is not called implicitly in Device::as_ref().
-> > > 
-> > > The thing that might "keep" the original `miscdevice::Device` alive is
-> > > the lifetime, since the returned `device::Device` reference has the
-> > > same life at the input parameter `miscdevice::Device` reference (i.e.
-> > > `&self`), so the returned reference cannot outlive `&self`. That means
-> > > if compilers find `&self` go out of scope while the returned reference
-> > > be still alive, it will report an error.
-> > 
-> > Okay, so is there something I need to do to ensure we increase the
-> > refcount?  Does inc_ref() need calling manually?
-> > 
-> 
-> When you convert a `&Device` into a `ARef<Device>`, Device::inc_ref()
-> will be called. You can do that with:
-> 
-> 	ARef::from(Device::as_ref((*self.as_raw()).this_device))
-> 
-> You will also need to change the return type. And when an `ARef<Device>`
-> goes out of scope, dec_ref() will be called. 
+If you store it somewhere else, you're probably okay. The current
+place is just hard to access.
 
-I have been reliably assured by Alice that we don't need to refcount here.
+The problem is that the Rust module abstractions generate a global
+variable that holds an RustMiscDeviceModule which is initialized in
+init_module() and destroyed in cleanup_module(). To have safe access
+to this global, we need to ensure that you access it only between
+init_module() and cleanup_module(). For loadable modules, the
+try_module_get() logic seems perfect, so in Miscdevice::open we have a
+file pointer, which implies that the fs infrastructure took a refcount
+on fops->owner, which it can only do once init_module() is done.
 
-> I had an old patch for a bit document on this part:
-> 
-> 	https://lore.kernel.org/rust-for-linux/20240710032447.2161189-1-boqun.feng@gmail.com/
-> 
-> maybe I should send a re-spin.
+Unfortunately, this doesn't translate to built-in modules since the
+owner pointer is just null, and try_module_get performs no checks at
+all.
 
-Very nice!  Yeah, it would be a shame for all that work to go to waste.
+Also, I'm realizing now that try_module_get() succeeds even if `state
+=3D=3D MODULE_STATE_COMING`. :(
 
--- 
-Lee Jones [李琼斯]
+So in conclusion, I don't know of any way to provide safe access to
+the global RustMiscDeviceModule value.
+
+Alice
 
