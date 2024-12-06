@@ -1,170 +1,316 @@
-Return-Path: <linux-kernel+bounces-435140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F0E9E70AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:46:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05CB9E70EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04FF16A2D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480B6163B54
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CC2207DF8;
-	Fri,  6 Dec 2024 14:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F1E1547E7;
+	Fri,  6 Dec 2024 14:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U9pId0bi"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="yJ8Im3m5"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC2E203710
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD481474AF
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733496359; cv=none; b=mhfSYPD4gjDLjkGwJUVE/xQx4nAgqWG0iWWrr45uu/gXHd3GjvMtbw8u1QXVdjCMEbc21D9cZOLnh4qOSjje0QdiaX7TSTy6knzsqmR7qPz59eA9C6poChYMHX01cstVZuyBQ63bMm235aAeoqK4K0MBK752XROJ3RE5BizLKyc=
+	t=1733496566; cv=none; b=RwBMM9Q7pI4zzXNOBVqKy7ZATv3CmL8WpJMFbBpjJalPBHJ2Qf0vYOWu7vGe0Q81okzHM1dZnJPqtWntHYB3aI+NhLefSduY7X2Z/Zwo5t9amCU1fCFvHdgDqaPQML6JPUZZRCS1lYlCDw91eHBxL276xHFRTu8TRIl3M839YaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733496359; c=relaxed/simple;
-	bh=YGeEtCKq3iU0NBpubva75CGG0kEYAXe3ybNXoZyZmF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWm9A75o1iS87kbi+JlAG2bOvISXCo3CdwBUEWPfTHYAO9ulS758MAwGtMGsIDQSloYl1G5tHeBWcKIU8DKMdgLHcxgkYRmwRSe7guP9yMhiP2g7bYK+O+CWZFSJEncv7SCSkdynijEenlSY6HwUNcmq63JHKSnApNX7nRsS6J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U9pId0bi; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-5d1265ba5a8so2393695a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 06:45:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733496355; x=1734101155; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1naNItJmzQ5g6ZFSIYj9aFToXW2l3jmmypLl/wgICNc=;
-        b=U9pId0bisip5BNSgk5d2bFED/wnQ1JJG/F96aGTD7lRYSgTOkUhheDBhWAtC8qzCIk
-         pFWbRV9A92tN83Z4ZdNuHNmauywuG+Z7/rmcH2khtqegmemf+jSsblLGBRjG8umEih70
-         b717R4TBGNtbECYxNxLtwwrRetRLOqFasYU2qAJtJPipHtIrFY/a0EWd+uV4I/9KnVi9
-         HGmXjtTvDE8nc0VyhveDBBdeYlwxq754SlJNM+mnxfPV0kv6WUrFDUuTSA0lgjDOCKTQ
-         Q895a+UTm4RftcHl+r8Mqn3XJ3BgZPJF/DN8iEcFtYfgxStmjHFKusUvh+yp3c+dd3bJ
-         QRPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733496355; x=1734101155;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1naNItJmzQ5g6ZFSIYj9aFToXW2l3jmmypLl/wgICNc=;
-        b=AWV5fxkSHxICyplU3m60GbSkbo7VP4nFhI7odtLEZISywmeP7gbCH2SqxAoy6I8zSg
-         X2Gb4OyC9Bc3A+t0/+aWiZfSgcFE8wTLj50JcdU6m8bnVCF4T6/sz3bN3xnp3oz/Z+k+
-         lRdqC1yq5cEG8mDPTcRIw6QgtGNFKZlWRAMHJfqnvVblEySej4M1yGIL3gFGV8VnYY3x
-         kTFlFbF+vG2BkwRHxJUovwbPSI/XvW/fZM8NNU8upB9BhOOMk6yEnMi12BC301cHBueG
-         P0rdg8hcB1rl93zktl2liGMpaYjM6OWoz+SJ2JNbv3vrHYK+nyxsvns3pqtZ5dIf1aMi
-         Od9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWnwn8tKWwrvqP8Fq1JKAjYj48H5qZ6jYk5tHvZM48FtYRlEGmwAhUkYD1K2TTHtohYCw5BRzqF8EwC9E8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy12/dBv/oppNNLp3jCdS+aDiT4VbOZYzuAfKI5iUkcpL4TKZT+
-	yLmMvc3/SUv6OHSoJRFprLURRBVIm/Tp/IsrVO0ybY3bl+ur16v3cVGCJR1zNak=
-X-Gm-Gg: ASbGncuLDOIYLsQdIfbfBSX8I2LB49Cgp0T3qiEwHqhbOXLNVwpvzPMl+S8qDuLS66l
-	IF/asV3G0643cFJgH3RCXRF9YPK/GzYe/zRv8WOgFSHGXyJqVSpJmN9taPsLZ68dd1BEaLvgqXK
-	vCb8Eh1iKLJZdUhEst+34ar4TiZag8OGZn0DgxWFiLQU7mRRpRn8uY8WPj/z52RoHr8mQ68FwKE
-	3K7drUBY3QeEPfPRSBvMYqA4vg3i1Gixu5VpS5K98ZxF/nz9OKEyg==
-X-Google-Smtp-Source: AGHT+IGsLAMVU9kIz0u6ExvGFnLit3F2iF/fgasvZYu72DF3l9zd4X23NQjrrunUmVEzQ2ltjRgaFg==
-X-Received: by 2002:a17:906:31d1:b0:aa5:4b7f:e70c with SMTP id a640c23a62f3a-aa639fa5f76mr225052466b.6.1733496353790;
-        Fri, 06 Dec 2024 06:45:53 -0800 (PST)
-Received: from localhost ([2a02:8071:b783:6940:f267:d848:5e2:8699])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e4da21sm248542966b.33.2024.12.06.06.45.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 06:45:53 -0800 (PST)
-Date: Fri, 6 Dec 2024 15:45:50 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matthias Maennich <maennich@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Masahiro Yamada <masahiroy@kernel.org>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] doc: module: Fix documented type of namespace
-Message-ID: <zsqtlottouotiklytvbqapexuopzxlasqod7ynohu4yhtnr7no@j2zqryrst7qc>
-References: <cover.1733305665.git.ukleinek@kernel.org>
- <6fe15069c01b31aaa68c6224bec2df9f4a449858.1733305665.git.ukleinek@kernel.org>
- <Z1FbOrGjaVsGKIXa@smile.fi.intel.com>
- <mfgqf5xpjnyud3qm4hwycbnz23mfik4pzry3h7fi2k6khokbgd@facrmygrrqnh>
- <Z1H5UqN-egUs0GhJ@smile.fi.intel.com>
+	s=arc-20240116; t=1733496566; c=relaxed/simple;
+	bh=+qHBNTSmW89CLLoFjMHUcVLfkLdp0ocvLoXZW5SvP3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=C2zym/qOFNJGRpe7GZUAP1rH1w9Op2j67UJPOso0JsOc/kopoaYYam7BhxWpqFfhd8P8ArU3q+aahpMsFPKsKiFcV0MJLJLlpu3pz5kx6ehKo6PGc7Ro7tY0JdPZkUwvZGsn/3iEbn5Wjy7gtc8gnFe3yOM6E0PpI/SQo7k13WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=yJ8Im3m5; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id 22CA92003C3;
+	Fri,  6 Dec 2024 15:49:11 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=yJ8Im3m5;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=rtW+89OL3kHNY2f3ZFBSLcpZsPRLhfKsgEViwWMhwZg=; b=yJ8Im3m5RDuXNWQxJmxR93WRXI
+	JH8TIUStpjIje6UtgeBZFQXmJ8R+TqI1AiDrmt/eppAyMaaNc9CMFgCd+TOhwe8UOFhNr9l/82eJj
+	yjtWd6dqfFPCItc5ctxLR3ULr6zO+EM2LJNWjE7AtHubSvm8sPiOlMeWG8MPNwbnm488=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tJZdm-002IqN-1W;
+	Fri, 06 Dec 2024 15:49:10 +0100
+Date: Fri, 6 Dec 2024 15:49:10 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Eric Hagberg <ehagberg@janestreet.com>
+Subject: [PATCH v4] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
+Message-ID: <Z1MO5slZh8uWl8LH@bender.morinfr.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="okrgf7btsuqvxlmf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1H5UqN-egUs0GhJ@smile.fi.intel.com>
 
+Eric reported that PTRACE_POKETEXT fails when applications use hugetlb
+for mapping text using huge pages. Before commit 1d8d14641fd9
+("mm/hugetlb: support write-faults in shared mappings"), PTRACE_POKETEXT
+worked by accident, but it was buggy and silently ended up mapping pages
+writable into the page tables even though VM_WRITE was not set.
 
---okrgf7btsuqvxlmf
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] doc: module: Fix documented type of namespace
-MIME-Version: 1.0
+In general, FOLL_FORCE|FOLL_WRITE does currently not work with hugetlb.
+Let's implement FOLL_FORCE|FOLL_WRITE properly for hugetlb, such that
+what used to work in the past by accident now properly works, allowing
+applications using hugetlb for text etc. to get properly debugged.
 
-On Thu, Dec 05, 2024 at 09:04:50PM +0200, Andy Shevchenko wrote:
-> On Thu, Dec 05, 2024 at 11:55:54AM +0100, Uwe Kleine-K=F6nig wrote:
-> > On Thu, Dec 05, 2024 at 09:50:18AM +0200, Andy Shevchenko wrote:
-> > > On Wed, Dec 04, 2024 at 11:01:10AM +0100, Uwe Kleine-K=F6nig wrote:
-> > > > Since commit cdd30ebb1b9f ("module: Convert symbol namespace to str=
-ing
-> > > > literal") the namespace has to be a string. Fix accordingly.
-> > >=20
-> > > >  In addition to the macros EXPORT_SYMBOL() and EXPORT_SYMBOL_GPL(),=
- that allow
-> > > >  exporting of kernel symbols to the kernel symbol table, variants o=
-f these are
-> > > >  available to export symbols into a certain namespace: EXPORT_SYMBO=
-L_NS() and
-> > > > -EXPORT_SYMBOL_NS_GPL(). They take one additional argument: the nam=
-espace.
-> > > > -Please note that due to macro expansion that argument needs to be a
-> > > > -preprocessor symbol. E.g. to export the symbol ``usb_stor_suspend`=
-` into the
-> > > > +EXPORT_SYMBOL_NS_GPL(). They take one additional argument: the nam=
-espace as a
-> > > > +C-string. E.g. to export the symbol ``usb_stor_suspend`` into the
-> > >=20
-> > > But C-string is ambiguous. Is it now okay to use
-> > >=20
-> > > static const char *p =3D "my constant C-string";
-> > >=20
-> > > EXPORT_...(, p);
-> >=20
-> > I didn't test that, but I guess that won't work. While you could argue
-> > that p isn't a C-string but a pointer, I agree that the wording isn't
-> > optimal.
-> >=20
-> > So maybe make that:
-> >=20
-> > 	... the namespace as a string constant.
->=20
-> ...a string literal.
+This change might also be required to implement uprobes support for
+hugetlb [1].
 
-Gcc calls it "string constant":
-https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#String-Constants
+[1] https://lore.kernel.org/lkml/ZiK50qob9yl5e0Xz@bender.morinfr.org/
 
-My C book (https://www.amazon.de/dp/013089592X) also calls it "string
-constant".
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Eric Hagberg <ehagberg@janestreet.com>
+Signed-off-by: Guillaume Morin <guillaume@morinfr.org>
+---
+Changes in v2:
+ - Improved commit message
+Changes in v3:
+ - Fix potential unitialized mem access in follow_huge_pud
+ - define pud_soft_dirty when soft dirty is not enabled
+Changes in v4:
+ - Remove the soft dirty pud check
+ - Remove the pud_soft_dirty added in v3
 
-So I tend to keep that name as it seems to be the official term.
+ mm/gup.c     | 95 +++++++++++++++++++++++++---------------------------
+ mm/hugetlb.c | 20 ++++++-----
+ 2 files changed, 57 insertions(+), 58 deletions(-)
 
-Best regards
-Uwe
+diff --git a/mm/gup.c b/mm/gup.c
+index 746070a1d8bf..63c705ff4162 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -587,6 +587,33 @@ static struct folio *try_grab_folio_fast(struct page *page, int refs,
+ }
+ #endif	/* CONFIG_HAVE_GUP_FAST */
+ 
++/* Common code for can_follow_write_* */
++static inline bool can_follow_write_common(struct page *page,
++		struct vm_area_struct *vma, unsigned int flags)
++{
++	/* Maybe FOLL_FORCE is set to override it? */
++	if (!(flags & FOLL_FORCE))
++		return false;
++
++	/* But FOLL_FORCE has no effect on shared mappings */
++	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
++		return false;
++
++	/* ... or read-only private ones */
++	if (!(vma->vm_flags & VM_MAYWRITE))
++		return false;
++
++	/* ... or already writable ones that just need to take a write fault */
++	if (vma->vm_flags & VM_WRITE)
++		return false;
++
++	/*
++	 * See can_change_pte_writable(): we broke COW and could map the page
++	 * writable if we have an exclusive anonymous page ...
++	 */
++	return page && PageAnon(page) && PageAnonExclusive(page);
++}
++
+ static struct page *no_page_table(struct vm_area_struct *vma,
+ 				  unsigned int flags, unsigned long address)
+ {
+@@ -613,6 +640,18 @@ static struct page *no_page_table(struct vm_area_struct *vma,
+ }
+ 
+ #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
++/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
++static inline bool can_follow_write_pud(pud_t pud, struct page *page,
++					struct vm_area_struct *vma,
++					unsigned int flags)
++{
++	/* If the pud is writable, we can write to the page. */
++	if (pud_write(pud))
++		return true;
++
++	return can_follow_write_common(page, vma, flags);
++}
++
+ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 				    unsigned long addr, pud_t *pudp,
+ 				    int flags, struct follow_page_context *ctx)
+@@ -625,13 +664,16 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 
+ 	assert_spin_locked(pud_lockptr(mm, pudp));
+ 
+-	if ((flags & FOLL_WRITE) && !pud_write(pud))
++	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
++	page = pfn_to_page(pfn);
++
++	if ((flags & FOLL_WRITE) &&
++	    !can_follow_write_pud(pud, page, vma, flags))
+ 		return NULL;
+ 
+ 	if (!pud_present(pud))
+ 		return NULL;
+ 
+-	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
+ 
+ 	if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD) &&
+ 	    pud_devmap(pud)) {
+@@ -653,8 +695,6 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 			return ERR_PTR(-EFAULT);
+ 	}
+ 
+-	page = pfn_to_page(pfn);
+-
+ 	if (!pud_devmap(pud) && !pud_write(pud) &&
+ 	    gup_must_unshare(vma, flags, page))
+ 		return ERR_PTR(-EMLINK);
+@@ -677,27 +717,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
+ 	if (pmd_write(pmd))
+ 		return true;
+ 
+-	/* Maybe FOLL_FORCE is set to override it? */
+-	if (!(flags & FOLL_FORCE))
+-		return false;
+-
+-	/* But FOLL_FORCE has no effect on shared mappings */
+-	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
+-		return false;
+-
+-	/* ... or read-only private ones */
+-	if (!(vma->vm_flags & VM_MAYWRITE))
+-		return false;
+-
+-	/* ... or already writable ones that just need to take a write fault */
+-	if (vma->vm_flags & VM_WRITE)
+-		return false;
+-
+-	/*
+-	 * See can_change_pte_writable(): we broke COW and could map the page
+-	 * writable if we have an exclusive anonymous page ...
+-	 */
+-	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
++	if (!can_follow_write_common(page, vma, flags))
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+@@ -798,27 +818,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
+ 	if (pte_write(pte))
+ 		return true;
+ 
+-	/* Maybe FOLL_FORCE is set to override it? */
+-	if (!(flags & FOLL_FORCE))
+-		return false;
+-
+-	/* But FOLL_FORCE has no effect on shared mappings */
+-	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
+-		return false;
+-
+-	/* ... or read-only private ones */
+-	if (!(vma->vm_flags & VM_MAYWRITE))
+-		return false;
+-
+-	/* ... or already writable ones that just need to take a write fault */
+-	if (vma->vm_flags & VM_WRITE)
+-		return false;
+-
+-	/*
+-	 * See can_change_pte_writable(): we broke COW and could map the page
+-	 * writable if we have an exclusive anonymous page ...
+-	 */
+-	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
++	if (!can_follow_write_common(page, vma, flags))
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+@@ -1285,9 +1285,6 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+ 		if (!(vm_flags & VM_WRITE) || (vm_flags & VM_SHADOW_STACK)) {
+ 			if (!(gup_flags & FOLL_FORCE))
+ 				return -EFAULT;
+-			/* hugetlb does not support FOLL_FORCE|FOLL_WRITE. */
+-			if (is_vm_hugetlb_page(vma))
+-				return -EFAULT;
+ 			/*
+ 			 * We used to let the write,force case do COW in a
+ 			 * VM_MAYWRITE VM_SHARED !VM_WRITE vma, so ptrace could
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ea2ed8e301ef..52517b7ce308 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5169,6 +5169,13 @@ static void set_huge_ptep_writable(struct vm_area_struct *vma,
+ 		update_mmu_cache(vma, address, ptep);
+ }
+ 
++static void set_huge_ptep_maybe_writable(struct vm_area_struct *vma,
++					 unsigned long address, pte_t *ptep)
++{
++	if (vma->vm_flags & VM_WRITE)
++		set_huge_ptep_writable(vma, address, ptep);
++}
++
+ bool is_hugetlb_entry_migration(pte_t pte)
+ {
+ 	swp_entry_t swp;
+@@ -5802,13 +5809,6 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 	if (!unshare && huge_pte_uffd_wp(pte))
+ 		return 0;
+ 
+-	/*
+-	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
+-	 * PTE mapped R/O such as maybe_mkwrite() would do.
+-	 */
+-	if (WARN_ON_ONCE(!unshare && !(vma->vm_flags & VM_WRITE)))
+-		return VM_FAULT_SIGSEGV;
+-
+ 	/* Let's take out MAP_SHARED mappings first. */
+ 	if (vma->vm_flags & VM_MAYSHARE) {
+ 		set_huge_ptep_writable(vma, vmf->address, vmf->pte);
+@@ -5837,7 +5837,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 			SetPageAnonExclusive(&old_folio->page);
+ 		}
+ 		if (likely(!unshare))
+-			set_huge_ptep_writable(vma, vmf->address, vmf->pte);
++			set_huge_ptep_maybe_writable(vma, vmf->address,
++						     vmf->pte);
+ 
+ 		delayacct_wpcopy_end();
+ 		return 0;
+@@ -5943,7 +5944,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 	spin_lock(vmf->ptl);
+ 	vmf->pte = hugetlb_walk(vma, vmf->address, huge_page_size(h));
+ 	if (likely(vmf->pte && pte_same(huge_ptep_get(mm, vmf->address, vmf->pte), pte))) {
+-		pte_t newpte = make_huge_pte(vma, &new_folio->page, !unshare);
++		const bool writable = !unshare && (vma->vm_flags & VM_WRITE);
++		pte_t newpte = make_huge_pte(vma, &new_folio->page, writable);
+ 
+ 		/* Break COW or unshare */
+ 		huge_ptep_clear_flush(vma, vmf->address, vmf->pte);
+-- 
+2.39.1
 
---okrgf7btsuqvxlmf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdTDhMACgkQj4D7WH0S
-/k6XIggAr72APIuwK8Z2rnlUezHAca6BECUx010mnTEh+NlPfksbn0fmKK/GdH9s
-wB5Wjb8tpYqvMoAZbX+629Fxj7HtyxtI6uyjLfuRrK52hrzl8WIpoNH7m1j6gYrg
-UMPA7YsoacVB/PYn5Jq9crxACIUaWEDMMprg8GEJv0S6QQ/BSl4GTOWCuAW57fmf
-ObSxONffTmNH2JXj06rJrFuecEWZJsDDwJq7M10tgRO2eXxRoVm1iq5J1RSMmSjl
-UpUJWalNDz34O8WYAvhFw2/6I0flonRflRpXZUnw6aeh6tW9XGKw8acl8itwedmd
-AYeanf/POnlI/oHyscN7NG+uVinaLw==
-=To0M
------END PGP SIGNATURE-----
-
---okrgf7btsuqvxlmf--
+-- 
+Guillaume Morin <guillaume@morinfr.org>
 
