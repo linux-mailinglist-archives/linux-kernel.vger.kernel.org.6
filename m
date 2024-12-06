@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-434674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788E09E69AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:06:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B6C9E69B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E123A1886A40
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:06:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DBBD1886888
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447241F942A;
-	Fri,  6 Dec 2024 09:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C369D1F9EC7;
+	Fri,  6 Dec 2024 09:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNT1yTKh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/SdWkeJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13001F8AFD;
-	Fri,  6 Dec 2024 09:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0255122315;
+	Fri,  6 Dec 2024 09:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475943; cv=none; b=KMVSS+nj129Y7OL+8nnTgUPEGZrFOBr2jaz/n3LzuyFs+MGyX81r+uvnaf0yHVtMlz4ouDzJ1uGOXzoxlYNDmutiskXyicA7U0s+myacE9rjns460C8negEQvE9PGG/2ct3BVMGWXbCAFy6Uc4ClOvbM53b/FCJfZ1N3OsoH8FA=
+	t=1733475947; cv=none; b=eOzhu5nScWKWtz6zYdKxntpUgvJClAgJNBtt0abR7svuulxtZ8kI7wD+WPk4DeQxJhaF83MVfvuMFuv4yNiSRf2f00E1A9E7d8MFlxXG1Il5HXFUD0cfYlvl0hfle3AYH7Wb7+ugT3w9Rnh+WUC4UDLRLxRdxOaTWp64ZHJrE+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475943; c=relaxed/simple;
-	bh=/vGNwkuzJwrok7OwiHWU6wXKpr+MGQsYZDS7oxldDSE=;
+	s=arc-20240116; t=1733475947; c=relaxed/simple;
+	bh=z8ZHUz6kwnp2IDcmZZ1KEAfTtpu9BEoMiALS4JhpqeQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vbw/+4Nrjl6PgxAfZBgejrNhvUr5wOSLrZo6jgZhjG0CNgTieFsWiEn0/MmL2waCA+qYvR+zPIm5yRbsxru2SsQn/34WT9E9UmFqIXXaKw1mfuD02HzNQTKyj0/UzENEqw4FBu/1yJyaZ/cs077k4JZ3z2aTkPq+gozdQ4evqH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNT1yTKh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40A7C4CEDD;
-	Fri,  6 Dec 2024 09:05:40 +0000 (UTC)
+	 MIME-Version; b=agvdDYrc+I6G5/3NVZ28Yz43OFhSCXdf0PCjUNnIWN/8nPNXTp4xv1p15kJGnAwvBxTdj3XYCI1kW9cnWZR81uGCUjGNyUF77Ta4ajOYqRBUqGCDG/Rkmm6mTo7vKUIEOz7+z5MhiawIuMSAuHAep5PjUbPomTcqRRq/Np1gToM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/SdWkeJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9704C4CEDE;
+	Fri,  6 Dec 2024 09:05:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733475943;
-	bh=/vGNwkuzJwrok7OwiHWU6wXKpr+MGQsYZDS7oxldDSE=;
+	s=k20201202; t=1733475946;
+	bh=z8ZHUz6kwnp2IDcmZZ1KEAfTtpu9BEoMiALS4JhpqeQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZNT1yTKhmoK5Bln6Fk9kNGFSKx562INp9fUkT10gscUkP7ILGKB5OcizGbloWxSbZ
-	 km5ZkEzFdx/1RrTGBZ118hIdEYl4BgD44O97P6lYp6YGqgmGX0fDUPo0RrOJOE0E77
-	 JjS1TEWt7ah3iN78hPfqYs29DHW8e8TSsUeUAqe/xZ7FrBxwTIhnO9YBAdgMkUcksE
-	 RRdjfZDcM69q7uBzbqyg7+b3lGEtWR2jt+qYZCHoScrRCRopENrq1HGZhHLTXDrAtT
-	 bWnzFKiV6Gi7+FbxP6krNlnjWsxT4SYeAoJ4KE5bom28ytcVmPvPqnC0L1AE1MisvE
-	 KEYG9gRfp36cA==
+	b=E/SdWkeJsffV/GLow5WUql0MRSsP/p7rVqQJF3M1yu64delUACGbkgwSyhNDiE4mv
+	 NLE8xRHIMebHAxeqPqkOFrN7K4AjBc3MRvV7echU71z0azYo+ez5WmDteaKh9nrywN
+	 sx3FlDsLNxiDwI0x51GI/xH7ixNU4StN+y2CndR5ZUejx4TgY871/Bs48d6MBpWqHI
+	 U2LnMVtkIaKocIsAIYtlzKTRJl9urDzQsryYNsiZHHYiOvjGsltgYu0vgxE+p910gv
+	 xD911AaLWVCgTpCc0hjKR2znpcfv/9+u/PEkQxq4jvfqkjUKNlNP9TCtYVv3O7QKOA
+	 WGdUhhCJCCUrQ==
 From: Lee Jones <lee@kernel.org>
 To: lee@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -55,9 +55,9 @@ Cc: linux-kernel@vger.kernel.org,
 	aliceryhl@google.com,
 	tmgross@umich.edu,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v4 2/4] samples: rust: Provide example using the new Rust MiscDevice abstraction
-Date: Fri,  6 Dec 2024 09:05:06 +0000
-Message-ID: <20241206090515.752267-5-lee@kernel.org>
+Subject: [PATCH v4 3/4] sample: rust_misc_device: Demonstrate additional get/set value functionality
+Date: Fri,  6 Dec 2024 09:05:07 +0000
+Message-ID: <20241206090515.752267-6-lee@kernel.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241206090515.752267-1-lee@kernel.org>
 References: <20241206090515.752267-1-lee@kernel.org>
@@ -69,139 +69,251 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This sample driver demonstrates the following basic operations:
+Expand the complexity of the sample driver by providing the ability to
+get and set an integer.  The value is protected by a mutex.
 
-* Register a Misc Device
-* Create /dev/rust-misc-device
-* Provide open call-back for the aforementioned character device
-* Operate on the character device via a simple ioctl()
-* Provide close call-back for the character device
+Here is a simple userspace program that fully exercises the sample
+driver's capabilities.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+
+#define RUST_MISC_DEV_FAIL _IO('|', 0)
+#define RUST_MISC_DEV_GET_VALUE _IOR('|', 7, int)
+#define RUST_MISC_DEV_SET_VALUE _IOW('|', 8, int)
+#define RUST_MISC_DEV_HELLO _IO('|', 9)
+
+int main() {
+  int value, new_value;
+  int fd, ret;
+
+  // Open the device file
+  printf("Opening /dev/rust-misc-device for reading and writing\n");
+  fd = open("/dev/rust-misc-device", O_RDWR);
+  if (fd < 0) {
+    perror("open");
+    return errno;
+  }
+
+  // Make call into driver to say "hello"
+  printf("Calling Hello\n");
+  ret = ioctl(fd, RUST_MISC_DEV_HELLO, NULL);
+  if (ret < 0) {
+    perror("ioctl: Failed to call into Hello");
+    close(fd);
+    return errno;
+  }
+
+  // Get initial value
+  printf("Fetching initial value\n");
+  ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &value);
+  if (ret < 0) {
+    perror("ioctl: Failed to fetch the initial value");
+    close(fd);
+    return errno;
+  }
+
+  value++;
+
+  // Set value to something different
+  printf("Submitting new value (%d)\n", value);
+  ret = ioctl(fd, RUST_MISC_DEV_SET_VALUE, &value);
+  if (ret < 0) {
+    perror("ioctl: Failed to submit new value");
+    close(fd);
+    return errno;
+  }
+
+  // Ensure new value was applied
+  printf("Fetching new value\n");
+  ret = ioctl(fd, RUST_MISC_DEV_GET_VALUE, &new_value);
+  if (ret < 0) {
+    perror("ioctl: Failed to fetch the new value");
+    close(fd);
+    return errno;
+  }
+
+  if (value != new_value) {
+    printf("Failed: Committed and retrieved values are different (%d - %d)\n", value, new_value);
+    close(fd);
+    return -1;
+  }
+
+  // Call the unsuccessful ioctl
+  printf("Attempting to call in to an non-existent IOCTL\n");
+  ret = ioctl(fd, RUST_MISC_DEV_FAIL, NULL);
+  if (ret < 0) {
+    perror("ioctl: Succeeded to fail - this was expected");
+  } else {
+    printf("ioctl: Failed to fail\n");
+    close(fd);
+    return -1;
+  }
+
+  // Close the device file
+  printf("Closing /dev/rust-misc-device\n");
+  close(fd);
+
+  printf("Success\n");
+  return 0;
+}
+
+And here is the output (manually spliced together):
+
+USERSPACE: Opening /dev/rust-misc-device for reading and writing
+KERNEL: rust_misc_device: Opening Rust Misc Device Sample
+USERSPACE: Calling Hello
+KERNEL: rust_misc_device: IOCTLing Rust Misc Device Sample
+KERNEL: rust_misc_device: -> Hello from the Rust Misc Device
+USERSPACE: Fetching initial value
+KERNEL: rust_misc_device: IOCTLing Rust Misc Device Sample
+KERNEL: rust_misc_device: -> Copying data to userspace (value: 0)
+USERSPACE: Submitting new value (1)
+KERNEL: rust_misc_device: IOCTLing Rust Misc Device Sample
+KERNEL: rust_misc_device: -> Copying data from userspace (value: 1)
+USERSPACE: Fetching new value
+KERNEL: rust_misc_device: IOCTLing Rust Misc Device Sample
+KERNEL: rust_misc_device: -> Copying data to userspace (value: 1)
+USERSPACE: Attempting to call in to an non-existent IOCTL
+KERNEL: rust_misc_device: IOCTLing Rust Misc Device Sample
+KERNEL: rust_misc_device: -> IOCTL not recognised: 20992
+USERSPACE: ioctl: Succeeded to fail - this was expected: Inappropriate ioctl for device
+USERSPACE: Closing /dev/rust-misc-device
+KERNEL: rust_misc_device: Exiting the Rust Misc Device Sample
+USERSPACE: Success
 
 Signed-off-by: Lee Jones <lee@kernel.org>
 ---
- samples/rust/Kconfig             | 10 ++++
- samples/rust/Makefile            |  1 +
- samples/rust/rust_misc_device.rs | 80 ++++++++++++++++++++++++++++++++
- 3 files changed, 91 insertions(+)
- create mode 100644 samples/rust/rust_misc_device.rs
+ samples/rust/rust_misc_device.rs | 82 ++++++++++++++++++++++++++------
+ 1 file changed, 67 insertions(+), 15 deletions(-)
 
-diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-index b0f74a81c8f9..df384e679901 100644
---- a/samples/rust/Kconfig
-+++ b/samples/rust/Kconfig
-@@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
- 
- 	  If unsure, say N.
- 
-+config SAMPLE_RUST_MISC_DEVICE
-+	tristate "Misc device"
-+	help
-+	  This option builds the Rust misc device.
-+
-+	  To compile this as a module, choose M here:
-+	  the module will be called rust_misc_device.
-+
-+	  If unsure, say N.
-+
- config SAMPLE_RUST_PRINT
- 	tristate "Printing macros"
- 	help
-diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-index c1a5c1655395..ad4b97a98580 100644
---- a/samples/rust/Makefile
-+++ b/samples/rust/Makefile
-@@ -2,6 +2,7 @@
- ccflags-y += -I$(src)				# needed for trace events
- 
- obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
-+obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
- obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
- 
- rust_print-y := rust_print_main.o rust_print_events.o
 diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-new file mode 100644
-index 000000000000..3837532d259e
---- /dev/null
+index 3837532d259e..02ef8780804e 100644
+--- a/samples/rust/rust_misc_device.rs
 +++ b/samples/rust/rust_misc_device.rs
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -4,13 +4,20 @@
+ 
+ //! Rust misc device sample.
+ 
++use core::pin::Pin;
 +
-+// Copyright (C) 2024 Google LLC.
-+
-+//! Rust misc device sample.
-+
-+use kernel::{
-+    c_str,
-+    ioctl::_IO,
-+    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
-+    prelude::*,
-+};
-+
-+const RUST_MISC_DEV_HELLO: u32 = _IO('|' as u32, 9);
-+
-+module! {
-+    type: RustMiscDeviceModule,
-+    name: "rust_misc_device",
-+    author: "Lee Jones",
-+    description: "Rust misc device sample",
-+    license: "GPL",
+ use kernel::{
+     c_str,
+-    ioctl::_IO,
++    ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
+     miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
++    new_mutex,
+     prelude::*,
++    sync::Mutex,
++    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
+ };
+ 
++const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('|' as u32, 7);
++const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('|' as u32, 8);
+ const RUST_MISC_DEV_HELLO: u32 = _IO('|' as u32, 9);
+ 
+ module! {
+@@ -42,39 +49,84 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
+     }
+ }
+ 
+-struct RustMiscDevice;
++struct Inner {
++    value: i32,
 +}
 +
-+struct RustMiscDeviceModule {
-+    _miscdev: Pin<KBox<MiscDeviceRegistration<RustMiscDevice>>>,
++#[pin_data(PinnedDrop)]
++struct RustMiscDevice {
++    #[pin]
++    inner: Mutex<Inner>,
 +}
+ 
+ #[vtable]
+ impl MiscDevice for RustMiscDevice {
+-    type Ptr = KBox<Self>;
++    type Ptr = Pin<KBox<Self>>;
+ 
+-    fn open() -> Result<KBox<Self>> {
++    fn open() -> Result<Pin<KBox<Self>>> {
+         pr_info!("Opening Rust Misc Device Sample\n");
+ 
+-        Ok(KBox::new(RustMiscDevice, GFP_KERNEL)?)
++        KBox::try_pin_init(
++            try_pin_init! {
++                RustMiscDevice { inner <- new_mutex!( Inner{ value: 0_i32 } )}
++            },
++            GFP_KERNEL,
++        )
+     }
+ 
+-    fn ioctl(
+-        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
+-        cmd: u32,
+-        _arg: usize,
+-    ) -> Result<isize> {
++    fn ioctl(device: Pin<&RustMiscDevice>, cmd: u32, arg: usize) -> Result<isize> {
+         pr_info!("IOCTLing Rust Misc Device Sample\n");
+ 
++        let size = _IOC_SIZE(cmd);
 +
-+impl kernel::Module for RustMiscDeviceModule {
-+    fn init(_module: &'static ThisModule) -> Result<Self> {
-+        pr_info!("Initialising Rust Misc Device Sample\n");
-+
-+        let options = MiscDeviceOptions {
-+            name: c_str!("rust-misc-device"),
+         match cmd {
+-            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
++            RUST_MISC_DEV_GET_VALUE => device.get_value(UserSlice::new(arg, size).writer())?,
++            RUST_MISC_DEV_SET_VALUE => device.set_value(UserSlice::new(arg, size).reader())?,
++            RUST_MISC_DEV_HELLO => device.hello()?,
+             _ => {
+-                pr_err!("IOCTL not recognised: {}\n", cmd);
++                pr_err!("-> IOCTL not recognised: {}\n", cmd);
+                 return Err(ENOTTY);
+             }
+-        }
 +        };
+ 
+         Ok(0)
+     }
+ }
+ 
+-impl Drop for RustMiscDevice {
+-    fn drop(&mut self) {
++#[pinned_drop]
++impl PinnedDrop for RustMiscDevice {
++    fn drop(self: Pin<&mut Self>) {
+         pr_info!("Exiting the Rust Misc Device Sample\n");
+     }
+ }
 +
-+        Ok(Self {
-+            _miscdev: KBox::pin_init(
-+                MiscDeviceRegistration::<RustMiscDevice>::register(options),
-+                GFP_KERNEL,
-+            )?,
-+        })
-+    }
-+}
++impl RustMiscDevice {
++    fn set_value(&self, mut reader: UserSliceReader) -> Result<isize> {
++        let new_value = reader.read::<i32>()?;
++        let mut guard = self.inner.lock();
 +
-+struct RustMiscDevice;
++        pr_info!("-> Copying data from userspace (value: {})\n", new_value);
 +
-+#[vtable]
-+impl MiscDevice for RustMiscDevice {
-+    type Ptr = KBox<Self>;
-+
-+    fn open() -> Result<KBox<Self>> {
-+        pr_info!("Opening Rust Misc Device Sample\n");
-+
-+        Ok(KBox::new(RustMiscDevice, GFP_KERNEL)?)
-+    }
-+
-+    fn ioctl(
-+        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
-+        cmd: u32,
-+        _arg: usize,
-+    ) -> Result<isize> {
-+        pr_info!("IOCTLing Rust Misc Device Sample\n");
-+
-+        match cmd {
-+            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
-+            _ => {
-+                pr_err!("IOCTL not recognised: {}\n", cmd);
-+                return Err(ENOTTY);
-+            }
-+        }
-+
++        guard.value = new_value;
 +        Ok(0)
 +    }
-+}
 +
-+impl Drop for RustMiscDevice {
-+    fn drop(&mut self) {
-+        pr_info!("Exiting the Rust Misc Device Sample\n");
++    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
++        let guard = self.inner.lock();
++        let value = guard.value;
++
++        // Refrain from calling write() on a locked resource
++        drop(guard);
++
++        pr_info!("-> Copying data to userspace (value: {})\n", &value);
++
++        writer.write::<i32>(&value)?;
++        Ok(0)
++    }
++
++    fn hello(&self) -> Result<isize> {
++        pr_info!("-> Hello from the Rust Misc Device\n");
++
++        Ok(0)
 +    }
 +}
 -- 
