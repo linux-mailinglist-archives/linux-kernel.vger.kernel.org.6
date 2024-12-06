@@ -1,205 +1,289 @@
-Return-Path: <linux-kernel+bounces-434803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975E79E6B84
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:15:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BFE9E6BBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:19:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591E6282EAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD9116D03A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871AC200B8A;
-	Fri,  6 Dec 2024 10:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3481FC7D8;
+	Fri,  6 Dec 2024 10:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T2V3FHwV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lnhwJhku";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bsj9trVh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AE620013E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BA21FBE82;
+	Fri,  6 Dec 2024 10:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733480004; cv=none; b=KfNILfCC/57bUzIPKe+O0X8umCmkM91vELlY60+3snx1PQo/ZO6ijiDvutqh9n5ij9Sa7U5QBg5zIY9Nf21a2Mo/Spu9a0EyiFjXbV6lwu31tx3FLtkXLsHQJ/N2Lg5LrXvNXxWA+BUk7rCyOGWiCPP/jnlFGh3nmdbAzrLHMNc=
+	t=1733480159; cv=none; b=qbn8wA3YBguPaXqEY0Q4Q0jQ3sCfWEcs8ZQo/SzyJ2dSfnBI4vmiuGPRvNn+rimgWkOutTFbXGc//5ZXXn6sNlNJj7pphuR33cJbOTySzI2amnYR+kFSyiNHdPNCQUjO7S2mwrEvIAbUR0n4UhM4MpMsk0cGy+gTCCOtj/Mqwl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733480004; c=relaxed/simple;
-	bh=somms22eqcnK6raUYg1L3Ujqx3OTx5AIIMXNQDS1YDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cz3UaJ06q5IaXFjUdy8+F196jgeNObDjbsYVQea04SxcRmX88LSs+gWLeVWNxW+MtbA5Y1+eJNF4HfJm/2XEo21xRybwo9YUUzw0kpGg7/qzXeAxq3bGRMZS/cxvltJ0aC/EGr9gZ9ZxRTk2i08ckVRY6FIBwWkqmkPH+ek5i4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T2V3FHwV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733480001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1733480159; c=relaxed/simple;
+	bh=1W/2SPqk+2Km9kqtsPBOmWkQADi8NGxBi75HD0M+A2g=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=YMELx8g2+SisGlPfhoDu337niD9Rp4QHRzHlWUqPfhJ9+wlJ9zZRib5l6hpe/8/F/eVvRaV1/APeB+V8g8vFU6XWp9FiyH3uNpvUxfqNsev8VEIXJz0InB89WzBfqzaRfefeIFMvXP1pUuOlAUnbOr2GEDcsqDsYzapl6XI+Pd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lnhwJhku; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bsj9trVh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 06 Dec 2024 10:15:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733480154;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sE0+Jv8p1+RSxZLSoZ0bdw7B9NQgiiacOi3XQtYmxiw=;
-	b=T2V3FHwVdkTzaNZ9ViWh3l/WnxE1CvDOVCg19A1oLKP2iCM6NwRvvhakPHq639JZwtI0ZB
-	X8gvpxZpxIC4xoriVdlxIuGmk4vGNfLpleYgH1FUSJPg9lNZUPWCU3LiguD2fVq0dhnPZ4
-	nOAcdKGGAPmBsXXZ+vhwDNrOWlXwDjQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-g1_EVkh9ONmBya-sazCRpw-1; Fri, 06 Dec 2024 05:13:20 -0500
-X-MC-Unique: g1_EVkh9ONmBya-sazCRpw-1
-X-Mimecast-MFC-AGG-ID: g1_EVkh9ONmBya-sazCRpw
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-434a876d15cso15047585e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 02:13:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733479999; x=1734084799;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sE0+Jv8p1+RSxZLSoZ0bdw7B9NQgiiacOi3XQtYmxiw=;
-        b=R4Ek9CL2+s/vI1juvCoXsFlOglqBDi5tqeA1dzywwxcDSAS4yebjCKmhXuc+cv94oq
-         dSKS+HZkbE550LYMdyouFcDf1u39NkjbhAImpT8mms1TaXdzyX+WCW9v7OG2RkESTQAg
-         MOJxDiz8mudVkM9rGXmLZyMWV+aNJBp5TSYl8q4+nXzuX0OnD+cr6ywg1R2LH+hKPlaH
-         /J4E0GDRshDIDoOsuaFxNGZSs58N9VeiyKIX0ia3oQ4jPfKYocts1Dc8o6kKnFTn9+yx
-         vHR/o8m04xd0LpsDnDjnwwBEmDD+LqdYJeMWAyHOn02GJIhRw0+24M2QLM6INuISHJQo
-         ctJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ySRo1EFC81nYdAmTJbl1iO0JuVG0NrT6YvZJZeqOb9BTM9iBm3+VKGxtAreE3afGLaH4WpHq60jtDHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ1JDIiAuTaMn7xV4+bseic1jBS2otOpdjQKJ3iwFstG5I7sky
-	8dzgkbcroY8j7M2ko08ViN7WwAzoWi6h2rhRhx8iuK6XLRbZuWYdFVfqtAx4fxLrfcfNE8vOEOh
-	aUFUGs32JkZ1sQw32hgt8h+Bd965QBsOIhf+xbx1gk6GFDhGuP2Q0NHwwIJjCGA==
-X-Gm-Gg: ASbGncutQp7gXSzS4xDevEcjtuXknPIYgnqHCz/YBqeXntePunUSrogFwWufE3OEkaa
-	M88y5frrOWdvr0GDD254JhLoK81aTgPm1Ku3C9ZGbpjDbsR5szD5CkR81N7+2ZiMIi9jadL3CqD
-	dLtvINoGxMupmwDrqX7vdtRJbpoKoqnm3AB+9xOXx2QgzPUvbPx5z6ft6cLYdzcPkC9SYHykj5F
-	IdkOslGZtW2xZC52wp0OGGzv1q9qfcDrk/J8etAhjX5Jl8DtwNTpr1Gy1swmPETJSYVlGqT3GR6
-	gWDD0zn3EzYtWx15zPUCK8Ncs5y8Hz192uLfj1t1f2+1EwBqYx5Ly3K3Xg0S9vZdJhlKleoBzGU
-	6+w==
-X-Received: by 2002:a05:600c:1f95:b0:434:92f8:54a8 with SMTP id 5b1f17b1804b1-434d91fde3fmr47410305e9.0.1733479999506;
-        Fri, 06 Dec 2024 02:13:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGNAgJk6SspH05tND9d7SeEiASYCdP05xI5bAcUm7iX+ghPB0Puwlk/OQoFkiQYYQToswv2GA==
-X-Received: by 2002:a05:600c:1f95:b0:434:92f8:54a8 with SMTP id 5b1f17b1804b1-434d91fde3fmr47410045e9.0.1733479999159;
-        Fri, 06 Dec 2024 02:13:19 -0800 (PST)
-Received: from ?IPV6:2003:cb:c71b:d000:1d1f:238e:aeaf:dbf7? (p200300cbc71bd0001d1f238eaeafdbf7.dip0.t-ipconnect.de. [2003:cb:c71b:d000:1d1f:238e:aeaf:dbf7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d43a100csm80243435e9.1.2024.12.06.02.13.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 02:13:17 -0800 (PST)
-Message-ID: <315752c5-6129-4c8b-bf8c-0cc26f0ad5c5@redhat.com>
-Date: Fri, 6 Dec 2024 11:13:16 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=m3tII31XRT1H9db1GCPJwrV3BzA7wm7UKnIw2Z+iHkU=;
+	b=lnhwJhkuLAMv6WdpZOLF0oUjr8ZVk5SA3X85h+lvH0DFJsi9UBCSDXNFSOgIIvavUT5cCw
+	oak9g0Q6vcrVjf8VNBjVlZoLVbPUeh9PMjnn/wukR6x1IsFEDWiNWfRtdHNALccUny2T3S
+	JRVA06qYnTCKTDJWQQFF+M3cPu/uykHGAqypzT1HVvRwWxeradDA9pYLoUsCeNrxMEuI1q
+	9hO64aJ/nFyaQ2H+YsIqztBdHkgw1iXzUaXaxAHgN2eZt8fta53RO6n5SnKPuOgxi88hR6
+	HG39bAL7CU7I9bkZTbo5k7fZRSki4IkvYjpLjxQuTsbZC1EgWsqsWWhjMkttyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733480154;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m3tII31XRT1H9db1GCPJwrV3BzA7wm7UKnIw2Z+iHkU=;
+	b=Bsj9trVhZfF7ZodaDhpvOmJbAAZrVPtcw4JdUoseHhORMhdNiwe+U+4ZYhxmpUVni4SA78
+	/1DZ/5UQy5+nqiDQ==
+From: "tip-bot2 for Namhyung Kim" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/core] perf/x86: Relax privilege filter restriction on AMD IBS
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241203180441.1634709-3-namhyung@kernel.org>
+References: <20241203180441.1634709-3-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 00/21] riscv: Introduce 64K base page
-To: Zi Yan <ziy@nvidia.com>, Xu Lu <luxu.kernel@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- ardb@kernel.org, anup@brainfault.org, atishp@atishpatra.org,
- xieyongji@bytedance.com, lihangjing@bytedance.com,
- punit.agrawal@bytedance.com, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Linux MM <linux-mm@kvack.org>
-References: <20241205103729.14798-1-luxu.kernel@bytedance.com>
- <F94D21C0-8189-404A-B796-BB3C6620AB89@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <F94D21C0-8189-404A-B796-BB3C6620AB89@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <173348015311.412.11007950704393914602.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 06.12.24 03:00, Zi Yan wrote:
-> On 5 Dec 2024, at 5:37, Xu Lu wrote:
-> 
->> This patch series attempts to break through the limitation of MMU and
->> supports larger base page on RISC-V, which only supports 4K page size
->> now. The key idea is to always manage and allocate memory at a
->> granularity of 64K and use SVNAPOT to accelerate address translation.
->> This is the second version and the detailed introduction can be found
->> in [1].
->>
->> Changes from v1:
->> - Rebase on v6.12.
->>
->> - Adjust the page table entry shift to reduce page table memory usage.
->>      For example, in SV39, the traditional va behaves as:
->>
->>      ----------------------------------------------
->>      | pgd index | pmd index | pte index | offset |
->>      ----------------------------------------------
->>      | 38     30 | 29     21 | 20     12 | 11   0 |
->>      ----------------------------------------------
->>
->>      When we choose 64K as basic software page, va now behaves as:
->>
->>      ----------------------------------------------
->>      | pgd index | pmd index | pte index | offset |
->>      ----------------------------------------------
->>      | 38     34 | 33     25 | 24     16 | 15   0 |
->>      ----------------------------------------------
->>
->> - Fix some bugs in v1.
->>
->> Thanks in advance for comments.
->>
->> [1] https://lwn.net/Articles/952722/
-> 
-> This looks very interesting. Can you cc me and linux-mm@kvack.org
-> in the future? Thanks.
-> 
-> Have you thought about doing it for ARM64 4KB as well? ARM64’s contig PTE
-> should have similar effect of RISC-V’s SVNAPOT, right?
+The following commit has been merged into the perf/core branch of tip:
 
-What is the real benefit over 4k + large folios/mTHP?
+Commit-ID:     c8bec3b6fd0088c326985b9119c9cd876c227b4c
+Gitweb:        https://git.kernel.org/tip/c8bec3b6fd0088c326985b9119c9cd876c227b4c
+Author:        Namhyung Kim <namhyung@kernel.org>
+AuthorDate:    Tue, 03 Dec 2024 10:04:41 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 06 Dec 2024 10:32:44 +01:00
 
-64K comes with the problem of internal fragmentation: for example, a 
-page table that only occupies 4k of memory suddenly consumes 64K; quite 
-a downside.
+perf/x86: Relax privilege filter restriction on AMD IBS
 
--- 
-Cheers,
+While IBS is available for per-thread profiling, still regular users
+cannot open an event due to the default paranoid setting (2) which
+doesn't allow unprivileged users to get kernel samples.  That means
+it needs to set exclude_kernel bit in the attribute but IBS driver
+would reject it since it has PERF_PMU_CAP_NO_EXCLUDE.  This is not what
+we want and I've been getting requests to fix this issue.
 
-David / dhildenb
+This should be done in the hardware, but until we get the HW fix we may
+allow exclude_{kernel,user,hv} in the attribute and silently drop the
+samples in the PMU IRQ handler.  It won't guarantee the sampling
+frequency or even it'd miss some with fixed period too.  Not ideal,
+but that'd still be helpful to regular users.
 
+To minimize the confusion, let's add 'swfilt' bit to attr.config2 which
+is exposed in the sysfs format directory so that users can figure out
+if the kernel support the privilege filters by software.
+
+  $ perf record -e ibs_op/swfilt=1/u true
+
+This uses perf_exclude_event() which checks regs->cs.  But it should be
+fine because set_linear_ip() also updates the CS according to the RIP
+provided by IBS.
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
+Reviewed-by: Ravi Bangoria <ravi.bangoria@amd.com>
+Link: https://lore.kernel.org/r/20241203180441.1634709-3-namhyung@kernel.org
+---
+ arch/x86/events/amd/ibs.c | 59 ++++++++++++++++++++++++++------------
+ 1 file changed, 41 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index f029396..e7a8b87 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -31,6 +31,8 @@ static u32 ibs_caps;
+ #define IBS_FETCH_CONFIG_MASK	(IBS_FETCH_RAND_EN | IBS_FETCH_MAX_CNT)
+ #define IBS_OP_CONFIG_MASK	IBS_OP_MAX_CNT
+ 
++/* attr.config2 */
++#define IBS_SW_FILTER_MASK	1
+ 
+ /*
+  * IBS states:
+@@ -290,6 +292,16 @@ static int perf_ibs_init(struct perf_event *event)
+ 	if (has_branch_stack(event))
+ 		return -EOPNOTSUPP;
+ 
++	/* handle exclude_{user,kernel} in the IRQ handler */
++	if (event->attr.exclude_host || event->attr.exclude_guest ||
++	    event->attr.exclude_idle)
++		return -EINVAL;
++
++	if (!(event->attr.config2 & IBS_SW_FILTER_MASK) &&
++	    (event->attr.exclude_kernel || event->attr.exclude_user ||
++	     event->attr.exclude_hv))
++		return -EINVAL;
++
+ 	ret = validate_group(event);
+ 	if (ret)
+ 		return ret;
+@@ -550,24 +562,14 @@ static struct attribute *attrs_empty[] = {
+ 	NULL,
+ };
+ 
+-static struct attribute_group empty_format_group = {
+-	.name = "format",
+-	.attrs = attrs_empty,
+-};
+-
+ static struct attribute_group empty_caps_group = {
+ 	.name = "caps",
+ 	.attrs = attrs_empty,
+ };
+ 
+-static const struct attribute_group *empty_attr_groups[] = {
+-	&empty_format_group,
+-	&empty_caps_group,
+-	NULL,
+-};
+-
+ PMU_FORMAT_ATTR(rand_en,	"config:57");
+ PMU_FORMAT_ATTR(cnt_ctl,	"config:19");
++PMU_FORMAT_ATTR(swfilt,		"config2:0");
+ PMU_EVENT_ATTR_STRING(l3missonly, fetch_l3missonly, "config:59");
+ PMU_EVENT_ATTR_STRING(l3missonly, op_l3missonly, "config:16");
+ PMU_EVENT_ATTR_STRING(zen4_ibs_extensions, zen4_ibs_extensions, "1");
+@@ -578,8 +580,9 @@ zen4_ibs_extensions_is_visible(struct kobject *kobj, struct attribute *attr, int
+ 	return ibs_caps & IBS_CAPS_ZEN4 ? attr->mode : 0;
+ }
+ 
+-static struct attribute *rand_en_attrs[] = {
++static struct attribute *fetch_attrs[] = {
+ 	&format_attr_rand_en.attr,
++	&format_attr_swfilt.attr,
+ 	NULL,
+ };
+ 
+@@ -593,9 +596,9 @@ static struct attribute *zen4_ibs_extensions_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct attribute_group group_rand_en = {
++static struct attribute_group group_fetch_formats = {
+ 	.name = "format",
+-	.attrs = rand_en_attrs,
++	.attrs = fetch_attrs,
+ };
+ 
+ static struct attribute_group group_fetch_l3missonly = {
+@@ -611,7 +614,7 @@ static struct attribute_group group_zen4_ibs_extensions = {
+ };
+ 
+ static const struct attribute_group *fetch_attr_groups[] = {
+-	&group_rand_en,
++	&group_fetch_formats,
+ 	&empty_caps_group,
+ 	NULL,
+ };
+@@ -628,6 +631,11 @@ cnt_ctl_is_visible(struct kobject *kobj, struct attribute *attr, int i)
+ 	return ibs_caps & IBS_CAPS_OPCNT ? attr->mode : 0;
+ }
+ 
++static struct attribute *op_attrs[] = {
++	&format_attr_swfilt.attr,
++	NULL,
++};
++
+ static struct attribute *cnt_ctl_attrs[] = {
+ 	&format_attr_cnt_ctl.attr,
+ 	NULL,
+@@ -638,6 +646,11 @@ static struct attribute *op_l3missonly_attrs[] = {
+ 	NULL,
+ };
+ 
++static struct attribute_group group_op_formats = {
++	.name = "format",
++	.attrs = op_attrs,
++};
++
+ static struct attribute_group group_cnt_ctl = {
+ 	.name = "format",
+ 	.attrs = cnt_ctl_attrs,
+@@ -650,6 +663,12 @@ static struct attribute_group group_op_l3missonly = {
+ 	.is_visible = zen4_ibs_extensions_is_visible,
+ };
+ 
++static const struct attribute_group *op_attr_groups[] = {
++	&group_op_formats,
++	&empty_caps_group,
++	NULL,
++};
++
+ static const struct attribute_group *op_attr_update[] = {
+ 	&group_cnt_ctl,
+ 	&group_op_l3missonly,
+@@ -667,7 +686,6 @@ static struct perf_ibs perf_ibs_fetch = {
+ 		.start		= perf_ibs_start,
+ 		.stop		= perf_ibs_stop,
+ 		.read		= perf_ibs_read,
+-		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	},
+ 	.msr			= MSR_AMD64_IBSFETCHCTL,
+ 	.config_mask		= IBS_FETCH_CONFIG_MASK,
+@@ -691,7 +709,6 @@ static struct perf_ibs perf_ibs_op = {
+ 		.start		= perf_ibs_start,
+ 		.stop		= perf_ibs_stop,
+ 		.read		= perf_ibs_read,
+-		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	},
+ 	.msr			= MSR_AMD64_IBSOPCTL,
+ 	.config_mask		= IBS_OP_CONFIG_MASK,
+@@ -1111,6 +1128,12 @@ fail:
+ 		regs.flags |= PERF_EFLAGS_EXACT;
+ 	}
+ 
++	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
++	    perf_exclude_event(event, &regs)) {
++		throttle = perf_event_account_interrupt(event);
++		goto out;
++	}
++
+ 	if (event->attr.sample_type & PERF_SAMPLE_RAW) {
+ 		raw = (struct perf_raw_record){
+ 			.frag = {
+@@ -1227,7 +1250,7 @@ static __init int perf_ibs_op_init(void)
+ 	if (ibs_caps & IBS_CAPS_ZEN4)
+ 		perf_ibs_op.config_mask |= IBS_OP_L3MISSONLY;
+ 
+-	perf_ibs_op.pmu.attr_groups = empty_attr_groups;
++	perf_ibs_op.pmu.attr_groups = op_attr_groups;
+ 	perf_ibs_op.pmu.attr_update = op_attr_update;
+ 
+ 	return perf_ibs_pmu_init(&perf_ibs_op, "ibs_op");
 
