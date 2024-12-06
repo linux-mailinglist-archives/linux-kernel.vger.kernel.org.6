@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-435390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9D89E76F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:22:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE159E76F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:22:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC9E287772
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:22:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C178118824FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D257321B18F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D7A219EA5;
 	Fri,  6 Dec 2024 17:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIXFdOi4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fycifNtu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B6F1FFC7E;
-	Fri,  6 Dec 2024 17:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2FD203D46
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733505688; cv=none; b=M9jRNY8x3eyJp24YK4GZ9fyqjA4FLd5nF78qqa6LWiDS2znTWMMNebK8XDtc5ycsto1f4oze7eeYVMSmy2jVm+o9Z6hkqMzJO4Du21QXxp8XgfHkA1lg3i4bUAQsMDjOPPEPdBZko9sJcOOlKWOmmawO+wvezjimZhdSkbZ0Ka8=
+	t=1733505688; cv=none; b=EXJBsO0uWF4ZdZx19sQQEjxZpMu3/kcVrZbYf90iP7NlflBbxNsw9kLtQ4qU7Fvz9IUji7yL967ESkd25mZxMI2fhzf34zxiaiJGVsEClOtLvJhyB6wF2uZVwR+z9sQRGauCKAqBR3Frw205jcCwBDLd65yfjsKv9TAsbtMBQz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733505688; c=relaxed/simple;
-	bh=JT8b/ioHveURTHXfhjgSPVQ+q+WwuqGM5jeY5r5+xrE=;
+	bh=EZFsmHMf3WbcMSlyh1u3n8d24jrZ2fM6gqwzFgnZ1EY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jKJZOkVkID2vEDqXUnZSxVwJMGa7wI1qfqLzP9bv925pQGFSfhAyxsJ0q7ZIB18fPRhJLftwR02FoEBlVFz4l4NJebFc/hmBaLDtZQbULRnqc5jp1m9JhieCkMtwD0NYq6+3eiY8N+YuwLc/Vz0Rg4W5tS3lnSocsFxdMilmpSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIXFdOi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835FAC4CEE6;
+	 MIME-Version; b=nqZCva41YHXw25+AOm1gldq2RpNJ583N4L3RC+VO0acMpFO9GtNtyU2ykodkDwAx5lKxUyWP2vC5i3TWvmPWOMle+WlBRybrL5WZHgfHSNtBt4r7gJpxHZSKkQlSxsjEtyYvm9KmERF8S/AEiAnc7fDJFu2liR67BtID5xcnwnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fycifNtu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D053C4CEE9;
 	Fri,  6 Dec 2024 17:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733505687;
-	bh=JT8b/ioHveURTHXfhjgSPVQ+q+WwuqGM5jeY5r5+xrE=;
+	bh=EZFsmHMf3WbcMSlyh1u3n8d24jrZ2fM6gqwzFgnZ1EY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mIXFdOi4NVe3rIe61EsHqn+VIsX5frVk4Dk8dMFCx/JzQLPc9f0mbaPrXeA/UPWHf
-	 ISfENxG/PEbr83YgG/RWRJ42JWEut4cUVrDqdTFvasXCOTa2bFg/e+m/Lmv/9B6ke2
-	 /VZNxz+2nhKIRij/Fx9l9EcrmhYe7uZyv/QziVbgKEC7IKqqj4jVDHdJwYJSa1RZwt
-	 Q/IVfGmef3Obk+YH079+XDtXYo9nX8WugT6+7xfRZmigo4k9ohE5YIR26ukuxMj+gu
-	 lSuy2rwdXqvw+7srXZOcM3llQONlO+RnrBEVITH5Ur24N8zjOfUvczlX3ijUHQ9ruw
-	 MJbqJ1rTk7iMA==
+	b=fycifNtuEjP/MCgBm6JPBOptAWGUXxqwpD0CxnlHGZhhvRp8hijf8XEaBY0uOepN7
+	 csBVDTTb5kycySak7Mz+TOlkk1ce1/XX2JpRSA1z+7MMykODETLNtwx0/T9+XS6VE4
+	 rl6J4eDIoKloPSA57yAG8l2HdF2qBJojnBGOasH+FsX7YVYgKe9karOf4oAiCa2IK1
+	 KVycZuZ+8EEZ63qZn6L3JLC8QWt6wofvVsFjSEDv066GLiMEzdXrYmrCakhmmZIjXj
+	 9MFux4Ha415G3zqTWXPrqMdEojGlQACqAYa5hquf0bmVYpFPYxaLxfYq0PdUUrcDsK
+	 /ehphYruOdgqQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tJc17-00000005RKA-35og;
+	id 1tJc17-00000005RKE-3DUg;
 	Fri, 06 Dec 2024 18:21:25 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: "Michael S . Tsirkin" <mst@redhat.com>
@@ -52,15 +52,12 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Ani Sinha <anisinha@redhat.com>,
 	Dongjiu Geng <gengdongjiu1@gmail.com>,
 	Igor Mammedov <imammedo@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
 	qemu-devel@nongnu.org
-Subject: [PATCH 10/31] acpi/ghes: better name GHES memory error function
-Date: Fri,  6 Dec 2024 18:12:32 +0100
-Message-ID: <4eda9374d37a60cf74de8b3f9d8ded8e068639c0.1733504943.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 11/31] acpi/ghes: don't crash QEMU if ghes GED is not found
+Date: Fri,  6 Dec 2024 18:12:33 +0100
+Message-ID: <de6e3d9b672d780b9fb778f6e11c6f4df43bc1a4.1733504943.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1733504943.git.mchehab+huawei@kernel.org>
 References: <cover.1733504943.git.mchehab+huawei@kernel.org>
@@ -73,81 +70,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The current function used to generate GHES data is specific for
-memory errors. Give a better name for it, as we now have a generic
-function as well.
+Make error handling within ghes_record_cper_errors() consistent,
+i.e. instead abort just print a error in case ghes GED is not found.
 
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
- hw/acpi/ghes-stub.c    | 2 +-
- hw/acpi/ghes.c         | 2 +-
- include/hw/acpi/ghes.h | 4 ++--
- target/arm/kvm.c       | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ hw/acpi/ghes.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/hw/acpi/ghes-stub.c b/hw/acpi/ghes-stub.c
-index 2b64cbd2819a..7cec1812dad9 100644
---- a/hw/acpi/ghes-stub.c
-+++ b/hw/acpi/ghes-stub.c
-@@ -11,7 +11,7 @@
- #include "qemu/osdep.h"
- #include "hw/acpi/ghes.h"
- 
--int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
-+int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
- {
-     return -1;
- }
 diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index 4b5332f8c667..414a4a1ee00e 100644
+index 414a4a1ee00e..2df5ddf68a13 100644
 --- a/hw/acpi/ghes.c
 +++ b/hw/acpi/ghes.c
-@@ -415,7 +415,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
-     return;
- }
+@@ -371,7 +371,10 @@ void ghes_record_cper_errors(const void *cper, size_t len,
  
--int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
-+int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
- {
-     /* Memory Error Section Type */
-     const uint8_t guid[] =
-diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-index 8859346af51a..21666a4bcc8b 100644
---- a/include/hw/acpi/ghes.h
-+++ b/include/hw/acpi/ghes.h
-@@ -74,15 +74,15 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
-                      const char *oem_id, const char *oem_table_id);
- void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
-                           GArray *hardware_errors);
-+int acpi_ghes_memory_errors(uint16_t source_id, uint64_t error_physical_addr);
- void ghes_record_cper_errors(const void *cper, size_t len,
-                              uint16_t source_id, Error **errp);
--int acpi_ghes_record_errors(uint16_t source_id, uint64_t error_physical_addr);
+     acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
+                                                        NULL));
+-    g_assert(acpi_ged_state);
++    if (!acpi_ged_state) {
++        error_setg(errp, "Can't find ACPI_GED object");
++        return;
++    }
+     ags = &acpi_ged_state->ghes_state;
  
- /**
-  * acpi_ghes_present: Report whether ACPI GHES table is present
-  *
-  * Returns: true if the system has an ACPI GHES table and it is
-- * safe to call acpi_ghes_record_errors() to record a memory error.
-+ * safe to call acpi_ghes_memory_errors() to record a memory error.
-  */
- bool acpi_ghes_present(void);
- #endif
-diff --git a/target/arm/kvm.c b/target/arm/kvm.c
-index 7b6812c0de2e..b4260467f8b9 100644
---- a/target/arm/kvm.c
-+++ b/target/arm/kvm.c
-@@ -2387,7 +2387,7 @@ void kvm_arch_on_sigbus_vcpu(CPUState *c, int code, void *addr)
-              */
-             if (code == BUS_MCEERR_AR) {
-                 kvm_cpu_synchronize_state(c);
--                if (!acpi_ghes_record_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
-+                if (!acpi_ghes_memory_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
-                     kvm_inject_arm_sea(c);
-                 } else {
-                     error_report("failed to record the error");
+     start_addr = le64_to_cpu(ags->ghes_addr_le);
 -- 
 2.47.1
 
