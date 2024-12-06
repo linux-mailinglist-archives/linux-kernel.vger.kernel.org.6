@@ -1,111 +1,201 @@
-Return-Path: <linux-kernel+bounces-435089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1A89E6F78
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:47:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C849D9E6F77
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE18D283B15
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30859283A05
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34CF2066DE;
-	Fri,  6 Dec 2024 13:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzyEzSlZ"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F383B13B5AF;
+	Fri,  6 Dec 2024 13:47:24 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAC51714DF
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CAA1714DF
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733492850; cv=none; b=VnGHNhNmK8kEeB1QGK0YZtK6Q1Z+1kWh2+lH+OuveFYjR4SnY0qc2qHBXOfIJtlmkRJNNPuanomm0wJZpqZxpvrt7fL0mO5HKaXNEfGCP9THlsP0bj/AJwa018bLPiBo7SVoW88sP0K2kHm2RKelHn4web2xMzDie53MqyFy4HI=
+	t=1733492844; cv=none; b=XvJ1GtO8hIvZ7F7JXEcG8mLhvg2vWUl7PUzsugMuEpBO54pqYVNhYAP44LlhMzsTtPy0A1IfaKeUfgrHlGpUyLs3z6RnOXDIhyaY/kPtLtxj/hRA+u6Q29HM73Vcvxkwh1rlRqMlG3nXOmwFlvMAF5sB6txoZqBoFJP4y/559J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733492850; c=relaxed/simple;
-	bh=eSB2dP57Lt2cDgjY30l+ZZVZbIDYSxCFILYWSdP1C5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cw4k2vHIui3SUp6GM8r/oc4IwFUUV8I4kpKsp6fXTgdeRhBC425w3wInEFku+UL/uq+dnc7rPzsx+HvU89aWTQpx+XNGxV9hFSF6TFZAUdAGlczyap67t5xtoQvmR5anr6tWxnpDFQMeu0AviOT+7EEbbxQZbyRnDk1iby8F2Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzyEzSlZ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so2401258a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 05:47:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733492847; x=1734097647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HB2GYj6h7NTYp3tz+N8E4YVHX5ZUGOngPw2xjBveqkY=;
-        b=DzyEzSlZZqFNjyIq9K/+i3UxAPXyjr7iIuxUPzPiEu4hjy7xGM71/OPQg+ySw2X1LA
-         6CjGQShB0bCMMetVokDI7p7ZwNhh2263EjJb0nvoPY5jweRr8K5N9Oeap4DZpFsnwPTP
-         b7hDbRt8ytdaZK2UHsggftvJSnY6soc2Ire1P7a70MCWSbuw2VoYp1zIeiu1tW2+j9fz
-         p24vHt0WVLJXJ9XMjj5MY+9mft15nTGCbM0SKYGKnVtDNERlxgC3mznSG/Wp7a8WACLV
-         oKLMERUTeYuoEci2eE0Is/1uWnxE/Tdg8uxVM4BsT54uWL4Mk2qRgRgqaHoYPfZx00+n
-         +qXA==
+	s=arc-20240116; t=1733492844; c=relaxed/simple;
+	bh=CGjkfpE/iqpjTkKByuC9/m2KrcsyrYtsoLpoSb7Qy0Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EPRu8ahwFtyKC5BXk7L2pQuosWaZAnwa/9U0LzG2/WjphvkcsYbTywM/jaEq1r2FJP7E8oWJtLBOCAeofopIX1jjxCY0OeIIr55Aw5k912I7JugHRDILVgsWoSWXFwnRp58MDiYEIh6WmrqGGenRlMAu+6wNC+Fyh0L0SvZ9swg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a814bfb77bso4923935ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 05:47:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733492847; x=1734097647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HB2GYj6h7NTYp3tz+N8E4YVHX5ZUGOngPw2xjBveqkY=;
-        b=IsrRWJXUJgL+4oiG17E2QJzynZpdoptUBm+sfIqGkpGVG75r8LtCS9/qHwMvqBv/Vm
-         hLl5X4lni2oNNSHwAhHtgGIUJ2gJb85gKaSr4ZdDZu4ykqVjYZ5CUu/+ui+6zX0Zq3x5
-         Zz3JKCdfbiDzuksc+rkOpktG6J1RQ6ny8WhC88XeimcHSg8D6CEgwkoAKlAUUZOMf77+
-         HkjfzuVJyR027j5wJsOfKgX4j29ePWik9C4r+NCIyyGpukkLBUncYcLZkG8sJfStHUFA
-         8CPPRTtcQAwClZcGLs/87ppOrxQNRgVdDVHpPcP1taMf2NJiwB1OBjhn3HmVbB2gR21H
-         TBng==
-X-Forwarded-Encrypted: i=1; AJvYcCWdF+JxmVLyZJhbonLMai0bmgruMCOd661OwEdMbeETvD2KHLcumqbbXXp1b+7vFC4hv6H4Vq+AmzrNjHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBSl6lgq5yVIa+AGsQgQaKDppqQAhyXqSGMrtZkW86MJ1mIHIB
-	adzMwIbcnvh5EzZ//eT5HgmodLNbnUd+3lIJzgeUUOviJ7f+aIkjPAlhReXO8h41SWuM11RtiSw
-	IUGzRkdp9eU87jz1N79VCyxXQgrI=
-X-Gm-Gg: ASbGnctW7DnMXPGFgPu/WpWJDo98jr/2unnspQwfHdTZYZAc29C0kg8Zx9vNFC9065t
-	z6kGPXqDepkgHPmyIjeiJxLu0GvcKoMNp
-X-Google-Smtp-Source: AGHT+IGg0aM7++Y4TB4B65EgJVZGYM7ZpTzbI5RsZdwW/tELAdoAmtg10jBQK9NEDGoxriVkcyNHApdTu4VWsEIFDlU=
-X-Received: by 2002:a05:6402:254e:b0:5d0:d30b:d53e with SMTP id
- 4fb4d7f45d1cf-5d3be697749mr2551925a12.19.1733492846758; Fri, 06 Dec 2024
- 05:47:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733492842; x=1734097642;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NuAws6VQ8mGzerpOo6fFbh4rcQNx+TjOqsMRzbhwfg8=;
+        b=JQQGwe6E6UBDCOnbthJHcoEhtPIay113Z2IuWHxsPww3q/sonsl+NGvTAT1hlc7aAm
+         yJvQuULsqzAnVubNubvhbXR6Ym8TrT+ikTTQm/XhgTy5B2p1qIvYkCpr09Y0dKkfs8Xx
+         89wzjTm0aatnUShXak79k4tN7wl7LQZpDeWFK9YEZCfzQUr0IAFDYfJ7cb67KCxM6kCc
+         jGAUPZHWxOMBjmq6FtgY7IiRlCh/9J/8GhX7DaK0lC1ovkIHkN3/+epqG7rBSNkMh/pj
+         NLZ3AnSJC/Wd2j+M/CpVmOIs+osryu+55ZZJolBWUuwaBRlXMCxhiMqnfXcJ06RMnu3V
+         B4Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/cTnQ6/aZ9C3tyD5V1ub9hT1zDMF7Y6yAWh+60p0oeLub1OLlYofYKJpfKhqPiL2oFn08VyjjNm8HLxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn02QLfuXG6dzjPzuUT9GQN0h4aN49tAruMkmZI3CQq6E8NQhp
+	Sf31DspZuzoRB3nYoHf1bgt1XFceW6y7ri4woyJVWMQfWlbpYwrFcUQP43rguo7Jp+i+VOQ3/hu
+	PQoTG4Dmrce80xi5zmbHBTodr4J+P1wrEfW2vR926PuLUDivDEm1+viY=
+X-Google-Smtp-Source: AGHT+IEzYCyVg0n08ARqutqBP3VrdhRVOZlrvtE48PAkMGLxogk6wmuaeci376uhZ1eQnDEnARYnRMO88MOEkQwlRcvWyLeU9V28
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206123751.981977-1-simons.philippe@gmail.com>
- <2ec677db-2db8-4a74-af76-d8ff1f4b2173@sirena.org.uk> <CADomA4-xTcPyFcX_qCYJwoi7y5vfYmzOfF9iO5MKgEzZdpbJCQ@mail.gmail.com>
- <50ecb2cc-7fd2-4a72-bd68-05d33269c01e@sirena.org.uk>
-In-Reply-To: <50ecb2cc-7fd2-4a72-bd68-05d33269c01e@sirena.org.uk>
-From: Philippe Simons <simons.philippe@gmail.com>
-Date: Fri, 6 Dec 2024 14:47:16 +0100
-Message-ID: <CADomA48sOgYor3XEfBWwmqifFdE1u5sOQGR1CzzkHOAOaT_JEA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: axp20x: AXP717: set ramp_delay
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	"open list:VOLTAGE AND CURRENT REGULATOR FRAMEWORK" <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:1aad:b0:3a7:cf75:30b4 with SMTP id
+ e9e14a558f8ab-3a80761d9a4mr85129845ab.10.1733492842016; Fri, 06 Dec 2024
+ 05:47:22 -0800 (PST)
+Date: Fri, 06 Dec 2024 05:47:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67530069.050a0220.2477f.0003.GAE@google.com>
+Subject: [syzbot] [bpf?] general protection fault in bpf_prog_array_delete_safe
+From: syzbot <syzbot+2e0d2840414ce817aaac@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 2:44=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> On Fri, Dec 06, 2024 at 01:54:39PM +0100, Philippe Simons wrote:
-> > On Fri, Dec 6, 2024 at 1:48=E2=80=AFPM Mark Brown <broonie@kernel.org> =
-wrote:
->
-> > > >  static const struct regulator_desc axp717_regulators[] =3D {
-> > > > +     AXP_DESC_RANGES_DELAY(AXP717, DCDC1, "dcdc1", "vin1",
-> > > > +                     AXP717_DCDC_OUTPUT_CONTROL, BIT(0), 640),
->
-> > > This doesn't seem to match with the above - ramp_delay is in units of
-> > > uV/us?
->
-> > 15.625 us / 10mV =3D 1.5625 us/mV =3D 0.0015625 us/uV
-> > 0.0015625^-1 =3D 640 uV/us
->
-> Ah, yes - sorry - I typed when I did the calculation.
+Hello,
 
-No problem.
-BTW: this patch is critical to at least Anbernic H700 based devices.
-Without it, DVFS crashes very quickly.
+syzbot found the following issue on:
+
+HEAD commit:    e2cf913314b9 Merge branch 'fixes-for-stack-with-allow_ptr_..
+git tree:       bpf
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13b5ede8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fb680913ee293bcc
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e0d2840414ce817aaac
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132a2020580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1291d0f8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/487d8ef2aead/disk-e2cf9133.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/899f2234c9d5/vmlinux-e2cf9133.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ea8993a0dfd6/bzImage-e2cf9133.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2e0d2840414ce817aaac@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+CPU: 0 UID: 0 PID: 5849 Comm: syz-executor326 Not tainted 6.12.0-syzkaller-09099-ge2cf913314b9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:bpf_prog_array_delete_safe+0x2d/0xc0 kernel/bpf/core.c:2583
+Code: 00 41 57 41 56 41 55 41 54 53 49 89 f7 49 89 fd 49 bc 00 00 00 00 00 fc ff df e8 ce 84 f0 ff 4d 8d 75 10 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 54 6b 5b 00 49 8b 1e 48 85 db 74
+RSP: 0018:ffffc90003807970 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: 1ffff92000700f38 RCX: ffff888034eb8000
+RDX: 0000000000000000 RSI: ffffc90000abe000 RDI: 0000000000000000
+RBP: ffffc90003807a48 R08: ffffffff81a1aa9e R09: 1ffffffff203c816
+R10: dffffc0000000000 R11: fffffbfff203c817 R12: dffffc0000000000
+R13: 0000000000000000 R14: 0000000000000010 R15: ffffc90000abe000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000000e738000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ perf_event_detach_bpf_prog+0x2b0/0x330 kernel/trace/bpf_trace.c:2255
+ perf_event_free_bpf_prog kernel/events/core.c:10801 [inline]
+ _free_event+0xb04/0xf60 kernel/events/core.c:5352
+ put_event kernel/events/core.c:5454 [inline]
+ perf_event_release_kernel+0x7c1/0x850 kernel/events/core.c:5579
+ perf_release+0x38/0x40 kernel/events/core.c:5589
+ __fput+0x23c/0xa50 fs/file_table.c:450
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ exit_task_work include/linux/task_work.h:43 [inline]
+ do_exit+0xa2f/0x28e0 kernel/exit.c:938
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1096
+ x64_sys_call+0x26a8/0x26b0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9408276e09
+Code: Unable to access opcode bytes at 0x7f9408276ddf.
+RSP: 002b:00007fffe6c98ad8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9408276e09
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 00007f94082f22b0 R08: ffffffffffffffb8 R09: 0000000000000006
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f94082f22b0
+R13: 0000000000000000 R14: 00007f94082f2d00 R15: 00007f9408248040
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bpf_prog_array_delete_safe+0x2d/0xc0 kernel/bpf/core.c:2583
+Code: 00 41 57 41 56 41 55 41 54 53 49 89 f7 49 89 fd 49 bc 00 00 00 00 00 fc ff df e8 ce 84 f0 ff 4d 8d 75 10 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 54 6b 5b 00 49 8b 1e 48 85 db 74
+RSP: 0018:ffffc90003807970 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: 1ffff92000700f38 RCX: ffff888034eb8000
+RDX: 0000000000000000 RSI: ffffc90000abe000 RDI: 0000000000000000
+RBP: ffffc90003807a48 R08: ffffffff81a1aa9e R09: 1ffffffff203c816
+R10: dffffc0000000000 R11: fffffbfff203c817 R12: dffffc0000000000
+R13: 0000000000000000 R14: 0000000000000010 R15: ffffc90000abe000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000007f382000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	00 41 57             	add    %al,0x57(%rcx)
+   3:	41 56                	push   %r14
+   5:	41 55                	push   %r13
+   7:	41 54                	push   %r12
+   9:	53                   	push   %rbx
+   a:	49 89 f7             	mov    %rsi,%r15
+   d:	49 89 fd             	mov    %rdi,%r13
+  10:	49 bc 00 00 00 00 00 	movabs $0xdffffc0000000000,%r12
+  17:	fc ff df
+  1a:	e8 ce 84 f0 ff       	call   0xfff084ed
+  1f:	4d 8d 75 10          	lea    0x10(%r13),%r14
+  23:	4c 89 f0             	mov    %r14,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 f7             	mov    %r14,%rdi
+  34:	e8 54 6b 5b 00       	call   0x5b6b8d
+  39:	49 8b 1e             	mov    (%r14),%rbx
+  3c:	48 85 db             	test   %rbx,%rbx
+  3f:	74                   	.byte 0x74
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
