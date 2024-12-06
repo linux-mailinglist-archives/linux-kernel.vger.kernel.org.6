@@ -1,164 +1,116 @@
-Return-Path: <linux-kernel+bounces-434357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F929E6564
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:28:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9FA9E6568
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0111885D1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:28:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221C51884509
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048D1192B8C;
-	Fri,  6 Dec 2024 04:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="17shW8Tl"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2D618FC75
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04235192B76;
+	Fri,  6 Dec 2024 04:29:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760BBECF;
+	Fri,  6 Dec 2024 04:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733459280; cv=none; b=d3iGM1QBz7TuqZiiw/O25+F9fETJWxsiWM3BVHs11dPjPd6t9b+IR6/ZSnMsAS8K1A6E2BnaoAdBQi6TF6OEJlWZxmOwhMk7OlETSDJBvmQ5EoxEIbaoS3DKKs822aomE/jJ1jmcJq23c7CPuYIuU6d33kus1Y5t3gQnv/z/ODo=
+	t=1733459377; cv=none; b=M7qWtdkFpDlsUH5pWBjgE936b6X7Zq9c3ozcZlM5XJUofz8iduRhsx5iLzc+t4TrVeIFnC0RPUmYqbCkSo3MWIakr4AsX69Jje6lQyFCLrv3UBeXNotCl2LnG5sZuKtYfZgPq8oe+U7DLcVIiLJoKYbmNPAomHoESrYCEZDMnOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733459280; c=relaxed/simple;
-	bh=3k6Oc5FnFR/eW2ImmZ9Hl7zvpSjV1UtVQ1ntYtqXBUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=amSzwUFkBm5lFTLd0X4ng4mWj4UO5XPC878p3UKsnmsi6FvknVxSnhVkBn32+mIruWGbObFG4usEHy3+zcBfQmPPTPPcb1vUsKWUfRQHBkebYKg97ZJlfyJB9d3y+PBiX8bAk15ibgSwjCuyvTiRH9W7Kej6VduX4BdBKr5DrIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=17shW8Tl; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a815a5fb60so6335ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:27:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733459277; x=1734064077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K94sqNNQGu1n5mRcV3yW0ipuJfinFO6kahK8zCx8uPU=;
-        b=17shW8TlmNqoe2hj+ky61Phe+hanM2ruozqS7sdXvHIe6k9CvLDP/z0evQNXSx71GR
-         iyYPX9cZS6RWv4G8GSaicAJ5AqdDmHL2m+FoN/gi1m10la6+KehvBAx3C9tKaCLSXWzD
-         WfwIHcoTyHPZ/kJORvICyG3oT+NjkScf2SrW+LEL1BBKAaBi+rnZ+PkX5XD9B5mEqJzA
-         3Ksz72Rt/AiAtys+wsd/jLNlr8c/JnjCdA+RtCvg7Szau7YQrmLHw4vBdGENVk2rjTNa
-         xXNnyuYt9hF10z9qxPhdkmIiORgiQOMyMG1r+eE0iOgMvRrftoorMSNAm1MK5ovt2kfK
-         Me1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733459277; x=1734064077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K94sqNNQGu1n5mRcV3yW0ipuJfinFO6kahK8zCx8uPU=;
-        b=Y8FGDAWOVj4DPP1OGaZ7m1MSgQM4gDzhG9nsZ0RHOHEhTtDbp5yQv7cAgLjYqQvdZz
-         hwob8qR7o8YoxGobn4wYjzJiuevmWDbTQisjOfWLW+NKlO6JuTeUD6X757ka1FywxP2X
-         2s3gbRdqvLMVfDct1AeUm0K+FqgfeAyUvUzeoizW0m3U9viH/jDs1FO8TblWsdTbEyRO
-         io+v5TKDf4heVtTdpOhC8T178iUgYdpkM1uyeirGLRVOkz9LgV7K7MzxuzcPwHSZfpSe
-         LvC/Ih7pSoJeSNO9e9ujEZAlvAe0DEceJsYIRd/sVePvmvNOHcAL4gxxNPbwZHKPBXms
-         na7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9prMu2U1R9h8HaSYF1ril7JPWTPabub/N+WitZNrDlHpHnxGczZ6L80u4MNS7lquA1+y7x5jtP4woOso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT7av3RzQ1JaSraku+6TrP9KpORSjXIgUmPjIrnNJzwQUU5iKJ
-	MeLIfR/tI4Y6t5zHPdWIEoRWs+CH2mtgxE3nOmDxT5YFzznek1B0NgZAMKRwfQSBhas2ZHOvsyE
-	iNIC+BlFBKFd7TBpcXVldl/Usb3N/Uy/UDUq+
-X-Gm-Gg: ASbGncua3SQreQyaHid29Z34wfkeG/Z2Ij47q0X/m7t3MM8vxw/xl2dHFxZaMe55QeT
-	V8wWyPo9GzMQ2zrJzBoI6m84HiVrKyn03
-X-Google-Smtp-Source: AGHT+IEUysvxIKxnOpDK6+RkAno6VytnrnDCCtKcWOqAWxmmrjUHE5m/yHUlyuk+Ny6CjqC3wGU6nT+/nWI2wOsPkUg=
-X-Received: by 2002:a05:6e02:3a13:b0:3a7:9ec6:2cff with SMTP id
- e9e14a558f8ab-3a813bef45cmr1093555ab.25.1733459276716; Thu, 05 Dec 2024
- 20:27:56 -0800 (PST)
+	s=arc-20240116; t=1733459377; c=relaxed/simple;
+	bh=ACte4UBGSvGouCXSY/zdfbHLzl3Fi//YtS1Kb4ZbHDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tuQKu/C2uLUau/vwogxrqTfU0aZEllp/GtPg3N64XBze3+23uVV3klqq5sQDqYutpv+sqsobwtyrnCA/B39MoLWK+PSrk61ph7IPWINTgKwceOt2BKKCeQmeuWSLgQWWfwwSXkdexXbTe1duOC59pETUx55qnKkNIbhVxpdekho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A47F2169E;
+	Thu,  5 Dec 2024 20:30:02 -0800 (PST)
+Received: from [10.163.50.12] (unknown [10.163.50.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDAD13F58B;
+	Thu,  5 Dec 2024 20:29:29 -0800 (PST)
+Message-ID: <03245d82-ad68-4ac2-a6f1-d8e4cc5397c3@arm.com>
+Date: Fri, 6 Dec 2024 09:59:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205210444.84894-1-kyle.meyer@hpe.com>
-In-Reply-To: <20241205210444.84894-1-kyle.meyer@hpe.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 5 Dec 2024 20:27:45 -0800
-Message-ID: <CAP-5=fVQnXM2c7dH=kfDu4AzN2mQs5G1zXZoopTs7Dco+bHi+A@mail.gmail.com>
-Subject: Re: [PATCH v2] perf: Increase MAX_NR_CPUS to 4096
-To: Kyle Meyer <kyle.meyer@hpe.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] arm64: introduce rodata=noalias
+To: Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org
+Cc: patches@amperecomputing.com, paulmck@kernel.org,
+ akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
+ xiongwei.song@windriver.com, ardb@kernel.org, steven.price@arm.com,
+ suzuki.poulose@arm.com, mark.rutland@arm.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ cl@os.amperecomputing.com
+References: <20241126085647.4993-1-shijie@os.amperecomputing.com>
+ <20241126085647.4993-4-shijie@os.amperecomputing.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20241126085647.4993-4-shijie@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 5, 2024 at 1:07=E2=80=AFPM Kyle Meyer <kyle.meyer@hpe.com> wrot=
-e:
->
-> Systems have surpassed 2048 CPUs. Increase MAX_NR_CPUS to 4096.
->
-> Bitmaps declared with MAX_NR_CPUS bits will increase from 256B to 512B,
-> cpus_runtime will increase from 81960B to 163880B, and max_entries will
-> increase from 8192B to 16384B.
->
-> Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
 
-Reviewed-by: Ian Rogers <irogers@google.com>
 
-Thanks,
-Ian
-
+On 11/26/24 14:26, Huang Shijie wrote:
+> The rodata=noalias is the original rodata=on.
+> 
+> The rodata=noalias can provide us more block mappings and contiguous hits
+> to map the linear region which minimize the TLB footprint. And the
+> linear aliases of pages belonging to read-only mappings in vmalloc
+> region are also marked as read-only.
+> 
+> Also update kernel-parameters.txt for it:
+>    change "full" to "noalias"
+> 
+> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
 > ---
->
-> v1 -> v2:
->   * Increase MAX_NR_CPUS in tools/perf/util/bpf_skel/kwork_top.bpf.c, as
->     suggested by Ian Rogers.
->   * https://lore.kernel.org/all/20241205165118.153148-1-kyle.meyer@hpe.co=
-m/
->
->  tools/lib/perf/include/internal/cpumap.h | 2 +-
->  tools/perf/perf.h                        | 2 +-
->  tools/perf/util/bpf_skel/kwork_top.bpf.c | 4 +++-
->  3 files changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/in=
-clude/internal/cpumap.h
-> index 49649eb51ce4..3cf28522004e 100644
-> --- a/tools/lib/perf/include/internal/cpumap.h
-> +++ b/tools/lib/perf/include/internal/cpumap.h
-> @@ -22,7 +22,7 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
->  };
->
->  #ifndef MAX_NR_CPUS
-> -#define MAX_NR_CPUS    2048
-> +#define MAX_NR_CPUS    4096
->  #endif
->
->  struct perf_cpu_map *perf_cpu_map__alloc(int nr_cpus);
-> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-> index c004dd4e65a3..3cb40965549f 100644
-> --- a/tools/perf/perf.h
-> +++ b/tools/perf/perf.h
-> @@ -3,7 +3,7 @@
->  #define _PERF_PERF_H
->
->  #ifndef MAX_NR_CPUS
-> -#define MAX_NR_CPUS                    2048
-> +#define MAX_NR_CPUS                    4096
->  #endif
->
->  enum perf_affinity {
-> diff --git a/tools/perf/util/bpf_skel/kwork_top.bpf.c b/tools/perf/util/b=
-pf_skel/kwork_top.bpf.c
-> index 594da91965a2..73e32e063030 100644
-> --- a/tools/perf/util/bpf_skel/kwork_top.bpf.c
-> +++ b/tools/perf/util/bpf_skel/kwork_top.bpf.c
-> @@ -18,7 +18,9 @@ enum kwork_class_type {
->  };
->
->  #define MAX_ENTRIES     102400
-> -#define MAX_NR_CPUS     2048
-> +#ifndef MAX_NR_CPUS
-> +#define MAX_NR_CPUS     4096
-> +#endif
->  #define PF_KTHREAD      0x00200000
->  #define MAX_COMMAND_LEN 16
->
-> --
-> 2.35.3
->
+>  Documentation/admin-guide/kernel-parameters.txt | 2 +-
+>  arch/arm64/include/asm/setup.h                  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index dc663c0ca670..54b4df42e631 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -5894,7 +5894,7 @@
+>  	rodata=		[KNL,EARLY]
+>  		on	Mark read-only kernel memory as read-only (default).
+>  		off	Leave read-only kernel memory writable for debugging.
+> -		full	Mark read-only kernel memory and aliases as read-only
+> +		noalias	Use more block mappings,may have better performance.
+>  		        [arm64]
+>  
+>  	rockchip.usb_uart
+> diff --git a/arch/arm64/include/asm/setup.h b/arch/arm64/include/asm/setup.h
+> index 5ded3bd11476..3d96dde4d214 100644
+> --- a/arch/arm64/include/asm/setup.h
+> +++ b/arch/arm64/include/asm/setup.h
+> @@ -31,7 +31,7 @@ static inline bool arch_parse_debug_rodata(char *arg)
+>  		return true;
+>  	}
+>  
+> -	if (!strcmp(arg, "full")) {
+> +	if (!strcmp(arg, "noalias")) {
+>  		rodata_enabled = true;
+>  		rodata_full = false;
+>  		return true;
+
+This patch should be folded back into [PATCH 1/4] ensuring that
+
+- "rodata=" processing gets updated completely i.e dropping 'full',
+  adding new 'noalias' and also updating the documentation at once
+
+- Avoids temporary the "full" option breakage as mentioned earlier
+
+Also please do add in code comment above arch_parse_debug_rodata()
+function explaining all the options after these update.
 
