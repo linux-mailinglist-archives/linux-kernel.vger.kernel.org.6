@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-434585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E3E9E68A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:19:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 958269E68E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF46D1620B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:19:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15FA516C1FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA761DF274;
-	Fri,  6 Dec 2024 08:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3021E3DFA;
+	Fri,  6 Dec 2024 08:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cmCbf1/Q";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bXW+boal"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="IrSORVTE"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2B81D935A
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272BE1E1A3B;
+	Fri,  6 Dec 2024 08:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733473146; cv=none; b=kxxovAwQ8CB3vq8AnpKS64wCvqfO5ooMqoXoJmJadiYSwQc61p2i2Wf40ymRGlK1+BwhsrhNAwrrQoFlxuS6cpSrplVNNLfEp6xv0wwzcB0nMgz0kmkLjJdQTww/lft8QZdHjWvHEa1C3tfeMp0DY1u9F2ZghRtB5dlTTOzRga4=
+	t=1733473674; cv=none; b=UIdsPo+WHXNaKwXoRzuia/TrxgJXJkiflW3qkhBf7+vVfaMNrM09Y6QmoKzxDTfFcHLZltCUoSHiz9juC8rDrdhkmnlfj4AcUFpEV8VgF6wdUp7+CRsJZW570mnZSePuovu49pLmaPeDWbvTra0KpXyX1E8wZ614BtFshedA63g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733473146; c=relaxed/simple;
-	bh=KRIYyavnKYu+t3bWkla4nojjnl6N/DqSm7gf2hp1BsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ew2IcFSURgMFhXtOvDgJXR1dfGaPRaqVHGyod+RaM4G/S4OLvzgAIsvtN4qBKSrW3VGbpiZTpJFoIKQE96QRkPqnXC3SBYieZIjUCy1T9KaCAacjkJx2PKx9yuBuRyJ8sf0mMoNuXoIpfbuYwTwQcCjh6qrMimldJK1QNItB7/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cmCbf1/Q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bXW+boal; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 6 Dec 2024 09:19:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733473143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MjIntSzuffv2x+joxRCuwKm7MC9U7l2H1EecTvX/5LU=;
-	b=cmCbf1/Q7wsxJr7BBd20azJqdkR5vTKXUpSDnCmGJc5YungkovsdM+emYa79kee/jvu1Js
-	4+M89m0k9dKTNBfw0vckkPX66KSS6GNA1vRf9VY76qie4Dpcj4bA0OK/cdMcxRCGMCdSmW
-	C3Q+Aomt41tkBgdL64tWPflVfAiE3fmWd3SSkNQuNAqgVX+xSOn3wRZmdyqBnJpTr1tRbk
-	ZKHeKmslHUTTmf+qpFVFQDayHdzbr6y18FpsmQNwbYjTfrso3SFe1O36gPgWbkhjzVFjpJ
-	Iud3dE/ZvI7x6r4mLaBoHudEwM9AYrjdCvKD1En27wbWOeUd8tlQNEvWObIu9Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733473143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MjIntSzuffv2x+joxRCuwKm7MC9U7l2H1EecTvX/5LU=;
-	b=bXW+boalyYXYP0HB7J/GXMMGB6Em4bbbXOchsRuGdkGQ0g9MEKSp1OCfRZ+HltSrj+dCbt
-	jhbwMXXwHsPiXcBg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH v4 07/11] futex: Allow to make the number of slots
- invariant.
-Message-ID: <20241206081901.cPNVptQi@linutronix.de>
-References: <20241203164335.1125381-1-bigeasy@linutronix.de>
- <20241203164335.1125381-8-bigeasy@linutronix.de>
+	s=arc-20240116; t=1733473674; c=relaxed/simple;
+	bh=yg9cG3z9v1uGca8OxptmQy1is0mfUpEEq8+L2Ssfyr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VEQChm5Gc3UPvGWTVhO+WrnjaOqnx1954L5AHigLJ/PsETwXrkcHAvSpEqM/kq7DbUkNWpeske1i02pnevfM9xTAytK2cw+HkWc0LjzOm2152+XP6lGKnJntrghdC3yJhFFkkBfGLOgyKOKOB6N0K+BoM25INxqle8ZMu6dOTXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=IrSORVTE; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4Y4PLt09zWz1DDBf;
+	Fri,  6 Dec 2024 09:19:50 +0100 (CET)
+Received: from [10.10.15.2] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4Y4PLs4HbZz1DHWD;
+	Fri,  6 Dec 2024 09:19:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1733473189;
+	bh=4urAkc/3MHuHZa0TymfWY2lk/3IpIrXpJmcfgt0ecRA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=IrSORVTEhTWWKSevKebjQvY3EuBImCZO7FrBxuM2yJQuTGvxgq5v4O03Zwjd7eLWN
+	 xzNIDXgbAV/iaa4L42LFFGzz2d3kGZDUSq76DgjbW67M84R6pqnZbyg0pYXSRXWvSC
+	 lwvkvAReC7MFUM2IU6/V2S1UAvnu0hy/FulzCUGs=
+Message-ID: <6bc7817c-6044-4999-b901-1b87e88fef42@gaisler.com>
+Date: Fri, 6 Dec 2024 09:19:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241203164335.1125381-8-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sparc: Move va_end() before exit
+To: liujing <liujing@cmss.chinamobile.com>, davem@davemloft.net
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241204112145.6987-1-liujing@cmss.chinamobile.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20241204112145.6987-1-liujing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-12-03 17:42:15 [+0100], To linux-kernel@vger.kernel.org wrote:
-> diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-> index 0dd7100e36419..1abea8f9abd22 100644
-> --- a/kernel/futex/core.c
-> +++ b/kernel/futex/core.c
-> @@ -1323,6 +1335,36 @@ static int futex_hash_get_slots(void)
-=E2=80=A6
-> +bool futex_hash_is_invariant(void)
-> +{
-> +	struct futex_hash_bucket_private *hb_p;
-> +	struct mm_struct *mm;
-> +
-> +	mm =3D current->mm;
-> +	guard(rcu)();
-> +	hb_p =3D rcu_dereference(mm->futex_hash_bucket);
-> +	if (!hb_p)
-> +		return -EINVAL;
+On 2024-12-04 12:21, liujing wrote:
+> [PATCH] sparc: Move va_end() before exit
 
-Dan spotted that this should be false.
+Please use exit() rather than exit also here. As it is the calls you are
+swapping order of and not an implementation perhaps phrase it "Call
+va_end()..." or "Move va_end() call..." or something like that. Please
+also indicate where this change is happening, not just in sparc.
 
-> +	return hb_p->slots_invariant;
-> +}
+> This patch makes a minor adjustment by moving the va_end call before
+> exit. Since the exit() function terminates the program, any code
+> after exit(1) is unreachable thus notexecuted. Placing va_end before
+> exit ensures that the va_list is properly cleaned up.
 
-Sebastian
+Please also describe how you found this.
+
+> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+> 
+> diff --git a/arch/sparc/vdso/vdso2c.c b/arch/sparc/vdso/vdso2c.c
+> index dc81240aab6f..372e3330850a 100644
+> --- a/arch/sparc/vdso/vdso2c.c
+> +++ b/arch/sparc/vdso/vdso2c.c
+> @@ -90,8 +90,8 @@ static void fail(const char *format, ...)
+>  	vfprintf(stderr, format, ap);
+>  	if (outfilename)
+>  		unlink(outfilename);
+> -	exit(1);
+>  	va_end(ap);
+> +	exit(1);
+>  }
+>  
+>  /*
+
+Cheers,
+Andreas
 
