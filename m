@@ -1,132 +1,86 @@
-Return-Path: <linux-kernel+bounces-434620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981A49E6909
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:35:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E269E690B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:35:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B55281A3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317611881E34
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FAB1DFD89;
-	Fri,  6 Dec 2024 08:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C501DF997;
+	Fri,  6 Dec 2024 08:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8Ej1feC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NVR9hKjE"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E5D1D47A2;
-	Fri,  6 Dec 2024 08:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883B91DDA3A;
+	Fri,  6 Dec 2024 08:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474120; cv=none; b=RSCVB0fD+WUrQCyEdur611ig79ZWVH2MiBVl+jtYzbo7epzSpmy1iqM3GU1sw2/jyCu62y14Kuj0zfn3dpYXOCWQRuISkzio6EvElAoBmEY4+CYABv66CAvfgTFIkpZkkcjmXvBUOTz0w/LEhlBFBkOU+BVlBdCezvw6Lt1YXKo=
+	t=1733474125; cv=none; b=F1AREfT7iH4E39PDvaIhrRXW9UX4rEagLAvvmUAR4NTiJV0XvprGScj20D4USkZ2qT+UavtDjIEGzQ/L5qGG7SheRZMS/571KcgcluY0z7PyZO5iTrNHU+M6lCPmBynCla5WSHrkiILmsNsWQCSVwKmLyK+RF8G4EK+mMONiva0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474120; c=relaxed/simple;
-	bh=EDg03OFGs4apDaHp6iemMW926EGHkRWDR38JWms23d4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O+IYjJoCYQeNgGW5/DEfD34g12gj+hnERBQEKbdMpVW5ME6h1XzOeX+69klbDVKqD++cWis0bg8+pDL4k9pwq7KIdXtIBST+zgLFi8S6qA2ZTHuzZfR5UMTEdzH/qTxP0dCREQoKnjm0diQhCkDQYO4fDai0PwObY2lds0m/pKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8Ej1feC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A140DC4CED1;
-	Fri,  6 Dec 2024 08:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733474120;
-	bh=EDg03OFGs4apDaHp6iemMW926EGHkRWDR38JWms23d4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n8Ej1feCB6qzINjL4xqPekE/MiX1cbdFFBCL4hxUZK/kb97RPOkL5zDzDThImkDmV
-	 PmtlqHJzqj/aLdanj50OzC7llEMIQELruetkp45I/43mkmiPBKgMJJyog2R3Y7uAuT
-	 /dWNJTLbevGb5+aNEMMp+AETqKxWOr8BAvoXeeJIQufGxKFkHYxg/u+befpybaCU1G
-	 bDRTcwdHF6kT3jlZm7DzKiljpfFQ/oNs2d6h/bZ1mPqyD94aBG3e3ZgmvHJj5ihwSe
-	 7LEJYQWbn0sXc3WP9Y6SR0FHgmHzcuBjJeqa4pWStiQZYH+nMXPqCkKBGeGWgLt5pe
-	 DIaUSSHmCkVhA==
-Message-ID: <7d9523c4-ba97-496d-ae73-d349aaeb0cd5@kernel.org>
-Date: Fri, 6 Dec 2024 09:35:14 +0100
+	s=arc-20240116; t=1733474125; c=relaxed/simple;
+	bh=WV1SumrajbXcBiCZh7cR2oodxjaKHzLM/ljKxiy91EQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=ftxhzGHIkL9/nVJBf+FyNl8ASMjkUVBqC1OLqb8xGur3xBNW1rr2lmr/KBIMBPpJs4CraRsyKHwqdbWgHql9fX2PkAhKrwh01H6zizS7L8gzugWpMUc2NYqv/n14WVFhtww14+pWeATseLv5/l8ho7yyWQCV7BeZv0B0JGdidH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NVR9hKjE; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B2F6B6000D;
+	Fri,  6 Dec 2024 08:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733474115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WV1SumrajbXcBiCZh7cR2oodxjaKHzLM/ljKxiy91EQ=;
+	b=NVR9hKjEAG9vYhynz6REfbxApCyedl4pC+K9g0c2uoNtqUXAlwha3VTqMb83md9W6qHwE8
+	i1vOcNCALO+W5ixz/qgDbTPfXuT/cTweM3YXwRJYAHlp3gH8rS3GQYuGs5+e+Z2nzniDFo
+	3xGH11k7Dv1XpB4QExEFuhFAc3QyF10SbwZprHXbECJQzDobU6sE3VFzOMQpVuxddwO81z
+	Fw0+J8uu6XyXEw+IzVXX67VfUjaTyv+19PRbSpDwoAwVEywL7EAojFtOygHBe/f4Q6Q6RW
+	BMtpe7eYdhKeJxZzRZ36VMASdxxtYZplzL/4nXFgg3kpT9JA5NVieyb2LbT+kg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/1] arm64: dts: exynos990: Add cmu nodes
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241205194020.785846-1-igor.belwon@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241205194020.785846-1-igor.belwon@mentallysanemainliners.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Fri, 06 Dec 2024 09:35:14 +0100
+Message-Id: <D64HAEFFEGS1.3FJ6VM6Y6F1M1@bootlin.com>
+Subject: Re: [PATCH] i2c: nomadik: Add missing sentinel to match table
+Cc: <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Geert Uytterhoeven" <geert+renesas@glider.be>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Andi Shyti" <andi.shyti@kernel.org>, "Wolfram
+ Sang" <wsa+renesas@sang-engineering.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <34b6ee90437fe19526d9388f2f304d175596cb1f.1733473582.git.geert+renesas@glider.be>
+In-Reply-To: <34b6ee90437fe19526d9388f2f304d175596cb1f.1733473582.git.geert+renesas@glider.be>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 05/12/2024 20:40, Igor Belwon wrote:
-> Hi all,
-> 
-> This patchset adds device tree nodes for Exynos990 CMUs (TOP and HSI0).
-> 
-> This patchset is compile-time and runtime dependent on [1], which adds
-> driver support for CMU.
-> 
-> [1] https://lore.kernel.org/linux-samsung-soc/20241205193423.783815-1-igor.
-> belwon@mentallysanemainliners.org/T/#t
-> 
+Hello Geert & all,
 
-Don't wrap links.
+On Fri Dec 6, 2024 at 9:28 AM CET, Geert Uytterhoeven wrote:
+> The OF match table is not NULL-terminated.
+> Fix this by adding a sentinel to nmk_i2c_eyeq_match_table[].
 
-> Igor Belwon (1):
->   arm64: dts: exynos990: Add clock management unit nodes
-> 
->  arch/arm64/boot/dts/exynos/exynos990.dtsi | 27 +++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
+I had the exact same patch pending locally. Sorry and thanks!
 
+Reviewed-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
 
-Best regards,
-Krzysztof
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
