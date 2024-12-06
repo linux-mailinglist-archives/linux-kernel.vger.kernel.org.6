@@ -1,149 +1,208 @@
-Return-Path: <linux-kernel+bounces-435118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C6E9E6FE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:13:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9064C9E6FE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:14:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A63168D56
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:14:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B777207E14;
+	Fri,  6 Dec 2024 14:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="IFJoSVAt"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBFB284B44
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:13:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B8320A5EA;
-	Fri,  6 Dec 2024 14:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lMJt2KLF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409811FCCFB
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F1B2E859
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733494409; cv=none; b=GrX0673bYZfQS8UFVpyEqVjf7js/JTWAUIpUB4nRuFNFbf/TwfOguoRNZPRf4S/t6VPyyjlrpYyN/z+Sk0OKwJHknGWF7rZ1y5LZvND7Ld1rOIFWBeW0Ujvsv7Wir5LAlFvM33PSqBt7b4e7HgAWGlXKlgxhamOnDlFHigVIN0k=
+	t=1733494490; cv=none; b=JSKV2+fKHnM638NVyZG9Dl0Tg4cP7JNXULrmuV4y7wIKVtIr0ZK47Lm3JYTiBunZqU4aUl+FTyrkWjnpKPj+mg1b40Fb+/Y7ioQZlWwmB009rThFGpqP/64Z1tdjFFwzI31PD/CJxhZdqP/c9y9W5NQJIOalUZeNzvwNP8YYoaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733494409; c=relaxed/simple;
-	bh=1DF44BAXCAedUfJU1fvmYW3s55YCLMM/4Pv6fBs7ZVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H2S6158oBrjfx1GfOt5seZhzfhmkPqOClg1VJuV+/tTFeIQpC2sTjNprDhcjvQ0Lx7bluAcrdn+CAulu/A0nBohEUTVSySoqWcTQZeeQq4SU91szv0k5eepLbqZznfqzcfvM3ir7ngTmci1VzMZvq4I8f75TM9NauAXtPgBB9ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lMJt2KLF; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434aa222d96so24152335e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 06:13:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733494406; x=1734099206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=invAFTZMnZvuIAIS0gW4T2jxGGD8MCPvZg9vdT55zVE=;
-        b=lMJt2KLFKDPuiqp29DKcPD7+qYIgWANazhBMqqjxwlbxdhtZYqSamYmL6L7ovrZnGk
-         6Em23nR4qSRhzUPA7U1BtTZ/eJu7etisq/arcQwdNC/wHeIgCoK6ojHdoBizJs5EU2ym
-         OKIdioKBT0nTOSdlPvtZN98CQXPkUwm4laTdmIuO+epSbFX3a96+c/9DM/4V8VhX4uJI
-         FYFIhwsib9wdEEGcAlkRksrcrpv0BrP4UxFBTl9cbUjcxtlUshpKtYzTjO6K6jCnPdHi
-         P4vSVXOmeD5KrAOhuom7z+C2IMsP8ImTxOZsJYi58p8RuKYhnYOlWsXuDYf0fI3lOnzB
-         BMXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733494406; x=1734099206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=invAFTZMnZvuIAIS0gW4T2jxGGD8MCPvZg9vdT55zVE=;
-        b=LLLehnWcYYt68nBl+vwiltXj1xHvxyROusFeyrWHuY1h/Hpv0CkaP0a9e9k3UVpUWI
-         rmzRjihO9W/x5KvL29uM4Up7bCFYgzdoHVAc4uwkHw1qbswlcrWT119xdNXijJ1Raqnn
-         E6fOh4fUP6mxXV64xGPW4pCIbVtkzb6tuuzebD/LN6sgofgihQWUsHg+dWtqkaPJEpCm
-         NJZ9p3+VCs7o+bTouvmytdRNvFmbe5a2A7iIREEMTgxKAcQdNJwC78HhDzbE3ktIkYp6
-         kQtzveuJe9QU+ulY6NIZ0tqowsPzz1AgmNLadL2O92TgZHHHkDC3e12Eh6RdBQsUP/Wl
-         Sr0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWR1Clw6YYabvd0DIgm9fPTV2PX56PFkcVvDe9QwlVxyj20KidOi/W8fSFgYg+hYh2PUC4Hu8Z6JUgLbfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp2fOB9uAqcnzF72Nbro+yEZXTv6QCjyb+KRWmZBs93hghzUTd
-	2SRnulPSFl6Cw9s0hD7Cy1aNchBErRplKEM8AB8cFMcUliPD9zDaemgMHjUXdDGMvMLzcBljJsB
-	jbMD47ksE39cvcImy/U2Z0SlRN00DnssHhJez
-X-Gm-Gg: ASbGncv8J28ZdVwXcG033x7TCM3rNK4SZgFZs7rDYdVO9YBBleLjhqkrdfgSiq7tKuV
-	e0qMH92Y5CRR91Ca6bknjZb+9Xo+rRIp5
-X-Google-Smtp-Source: AGHT+IF75B2Q9PZzE+uP3SRRKyAqlTWeSijFYxXXRaaA7vpUlEcJ9S0YdWujapsIeVT3nm8E9Iep1XrnCeRltZPDi+0=
-X-Received: by 2002:a05:600c:3b08:b0:434:9fac:b157 with SMTP id
- 5b1f17b1804b1-434ddeb5eddmr33010655e9.13.1733494406426; Fri, 06 Dec 2024
- 06:13:26 -0800 (PST)
+	s=arc-20240116; t=1733494490; c=relaxed/simple;
+	bh=S9ZuMJHhQfi2ySmApw4QqUCGnkxfvXkwr5pJnt7ri04=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Rk2SyIQMPS7LQyQFSs9d04+EYq0gRDj3qAGy+sLqmAQ7YQEHUYk2TDNEOqqVcy+62ftpkXcXYvuKd1MPln4pUnMk7yj7wXyQWIbQaH0lZ0nyZ/jWR4aMWwOwrRdqlxC9bx+tuMrIMlNSolTuKOmCXKVkyxW5cRQ+or5GoP357CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=IFJoSVAt; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733494488; x=1765030488;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=S9ZuMJHhQfi2ySmApw4QqUCGnkxfvXkwr5pJnt7ri04=;
+  b=IFJoSVAtX6SUpUNMnXLVVIceW0b1RcZ6TDIWfGH8pOxFyylMQWtvKRjm
+   64dsr8E7+c/n2OZH41HY26MhJzb5jIZd9SqGzRQiESRM+aduQyg7APhRG
+   gV2Ou2LV3bJfj36f7dxNw/4hcfCRizJS1IH5ZITL2AFaU0dCfFevbdGuO
+   /RIPlrr4q9+rxQSteQK7hJLWBnxAKMjlwQqt9b7IdFEiM7uLOsma/j3M6
+   yqDvwRHzBjqt8QumoGim3NGM9ST7dC92dd/YE/oIJO6lXCy1KAapfrWBH
+   K3dkXlvhIn6qzE7jx960PxRVjrIEpp7CP2vi+NtOZsAwfztx+mpjdq1Ag
+   g==;
+X-CSE-ConnectionGUID: LNqYZ07gQL+lqwuz+ksYkA==
+X-CSE-MsgGUID: +JKe+NVQQ1asrSyShs1RmQ==
+X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
+   d="scan'208";a="34914261"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Dec 2024 07:14:41 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 6 Dec 2024 07:14:01 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 6 Dec 2024 07:14:00 -0700
+Message-ID: <c7ad1f03-f2a9-4706-ae87-2843b93de040@microchip.com>
+Date: Fri, 6 Dec 2024 15:14:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205141533.111830-1-dakr@kernel.org> <20241205141533.111830-7-dakr@kernel.org>
-In-Reply-To: <20241205141533.111830-7-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 6 Dec 2024 15:13:14 +0100
-Message-ID: <CAH5fLgg4wxyar_2uPfUJ=Bcc5=SVWOoYWvoC3ieVd9ayakiopQ@mail.gmail.com>
-Subject: Re: [PATCH v4 06/13] rust: add `io::{Io, IoRaw}` base types
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: at91: pm: change BU Power Switch to automatic mode
+Content-Language: en-US, fr-FR
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Cristian Birsan <cristian.birsan@microchip.com>
+References: <20241125165648.509162-1-nicolas.ferre@microchip.com>
+ <34a5b77b-e732-4393-a469-d9c719afa879@tuxon.dev>
+ <24069031-9ed4-4592-af98-ff53222caf03@microchip.com>
+Organization: microchip
+In-Reply-To: <24069031-9ed4-4592-af98-ff53222caf03@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 5, 2024 at 3:16=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> I/O memory is typically either mapped through direct calls to ioremap()
-> or subsystem / bus specific ones such as pci_iomap().
->
-> Even though subsystem / bus specific functions to map I/O memory are
-> based on ioremap() / iounmap() it is not desirable to re-implement them
-> in Rust.
->
-> Instead, implement a base type for I/O mapped memory, which generically
-> provides the corresponding accessors, such as `Io::readb` or
-> `Io:try_readb`.
->
-> `Io` supports an optional const generic, such that a driver can indicate
-> the minimal expected and required size of the mapping at compile time.
-> Correspondingly, calls to the 'non-try' accessors, support compile time
-> checks of the I/O memory offset to read / write, while the 'try'
-> accessors, provide boundary checks on runtime.
->
-> `IoRaw` is meant to be embedded into a structure (e.g. pci::Bar or
-> io::IoMem) which creates the actual I/O memory mapping and initializes
-> `IoRaw` accordingly.
->
-> To ensure that I/O mapped memory can't out-live the device it may be
-> bound to, subsystems must embed the corresponding I/O memory type (e.g.
-> pci::Bar) into a `Devres` container, such that it gets revoked once the
-> device is unbound.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Claudiu,
 
-One nit below. With that addressed:
+On 02/12/2024 at 17:44, Nicolas Ferre wrote:
+> On 02/12/2024 at 09:05, Claudiu Beznea wrote:
+>> Hi, Nicolas,
+>>
+>> On 25.11.2024 18:56, nicolas.ferre@microchip.com wrote:
+>>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>>
+>>> Change how the Backup Unit Power is configured and force the
+>>> automatic/hardware mode.
+>>> This change eliminates the need for software management of the power
+>>> switch, ensuring it transitions to the backup power source before
+>>> entering low power modes.
+>>>
+>>> This is done in the only locaton where this swich was configured. It's
+>>
+>> s/locaton/location
+>>
+>>> usually done in the bootloader.
+>>>
+>>> Previously, the loss of the VDDANA (or VDDIN33) power source was not
+>>> automatically compensated by an alternative power source. This resulted
+>>> in the loss of Backup Unit content, including Backup Self-refresh low
+>>> power mode information, OTP emulation configuration, and boot
+>>> configuration, for instance.
+>>
+>> Should we add a fixes for this?
+> 
+> Not so easy to tell as there's a loose dependency with the bootloader.
+> But it's true that switching to automatic never harm. So probably yes.
+> 
+>>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>> ---
+>>>    arch/arm/mach-at91/pm.c | 31 ++++++++++++++++++++-----------
+>>>    1 file changed, 20 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+>>> index b9b995f8a36e..05a1547642b6 100644
+>>> --- a/arch/arm/mach-at91/pm.c
+>>> +++ b/arch/arm/mach-at91/pm.c
+>>> @@ -598,7 +598,21 @@ static int at91_suspend_finish(unsigned long val)
+>>>         return 0;
+>>>    }
+>>>
+>>> -static void at91_pm_switch_ba_to_vbat(void)
+>>> +/**
+>>> + * at91_pm_switch_ba_to_auto() - Configure Backup Unit Power Switch
+>>> + * to automatic/hardware mode.
+>>> + *
+>>> + * The Backup Unit Power Switch can be managed either by software or hardware.
+>>> + * Enabling hardware mode allows the automatic transition of power between
+>>> + * VDDANA (or VDDIN33) and VDDBU (or VBAT, respectively), based on the
+>>> + * availability of these power sources.
+>>> + *
+>>> + * If the Backup Unit Power Switch is already in automatic mode, no action is
+>>> + * required. If it is in software-controlled mode, it is switched to automatic
+>>> + * mode to enhance safety and eliminate the need for toggling between power
+>>> + * sources.
+>>> + */
+>>> +static void at91_pm_switch_ba_to_auto(void)
+>>>    {
+>>>         unsigned int offset = offsetof(struct at91_pm_sfrbu_regs, pswbu);
+>>>         unsigned int val;
+>>> @@ -609,24 +623,19 @@ static void at91_pm_switch_ba_to_vbat(void)
+>>>
+>>>         val = readl(soc_pm.data.sfrbu + offset);
+>>>
+>>> -     /* Already on VBAT. */
+>>> -     if (!(val & soc_pm.sfrbu_regs.pswbu.state))
+>>> +     /* Already on auto/hardware. */
+>>> +     if (!(val & soc_pm.sfrbu_regs.pswbu.ctrl))
+>>>                 return;
+>>>
+>>> -     val &= ~soc_pm.sfrbu_regs.pswbu.softsw;
+>>
+>> It seems that softsw and state members of at91_pm_sfrbu_regs.pswbu along
+>> with their initialization could be dropped. What do you think?
+> 
+> I think that I tried when writing the patch but I think that there's a
+> little difference with sama5d2 register layout. Give me a couple more
+> days to come back to this and verify.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Ok, I remember now: I was wondering if I needed to remove the whole 
+sfrbu_regs.xxx mechanism and define more generically the content of 
+include/soc/at91/sama7-sfrbu.h for sama5d2, but if we need one day to 
+use the STATE bit or even the SMCTRL bit of sama5d2, then it should be kept.
 
-> +impl<const SIZE: usize> Io<SIZE> {
-> +    /// Converts an `IoRaw` into an `Io` instance, providing the accesso=
-rs to the MMIO mapping.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that `addr` is the start of a valid I/O mapp=
-ed memory region of size
-> +    /// `maxsize`.
-> +    pub unsafe fn from_raw<'a>(raw: &IoRaw<SIZE>) -> &'a Self {
+So, now that the mechanism is in place, I would prefer that we keep it: 
+okay for you?
 
-I would use this signature:
+Do you want me to re-spin a v2 for the rest?
 
-pub unsafe fn from_raw(raw: &IoRaw<SIZE>) -> &Self;
+Best regards,
+   Nicolas
 
-Otherwise, you're saying that the returned reference is allowed to
-outlive the IoRaw instance, which wouldn't be okay.
+>> I can do it while applying, if any.
+>>
+>> Thank you,
+>> Claudiu
+>>
+>>
+>>> -     val |= soc_pm.sfrbu_regs.pswbu.key | soc_pm.sfrbu_regs.pswbu.ctrl;
+>>> +     val &= ~soc_pm.sfrbu_regs.pswbu.ctrl;
+>>> +     val |= soc_pm.sfrbu_regs.pswbu.key;
+>>>         writel(val, soc_pm.data.sfrbu + offset);
+>>> -
+>>> -     /* Wait for update. */
+>>> -     val = readl(soc_pm.data.sfrbu + offset);
+>>> -     while (val & soc_pm.sfrbu_regs.pswbu.state)
+>>> -             val = readl(soc_pm.data.sfrbu + offset);
+>>>    }
+>>>
+>>>    static void at91_pm_suspend(suspend_state_t state)
+>>>    {
+>>>         if (soc_pm.data.mode == AT91_PM_BACKUP) {
+>>> -             at91_pm_switch_ba_to_vbat();
+>>> +             at91_pm_switch_ba_to_auto();
+>>>
+>>>                 cpu_suspend(0, at91_suspend_finish);
+>>>
+> 
+> 
 
-Alice
 
