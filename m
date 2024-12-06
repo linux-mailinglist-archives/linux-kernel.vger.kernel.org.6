@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-434409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381499E666C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:43:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A8B9E666D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF74C1615E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CD4C1645DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377BF1CBEA4;
-	Fri,  6 Dec 2024 04:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7301D516B;
+	Fri,  6 Dec 2024 04:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1MuVUJKi"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aEGG85QZ"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7892194C7A
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D021CCEE2
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733460045; cv=none; b=F2JrA0o/mvdojQIdYJZA3bsjbQCruww+51394GCX9VTG9aLcfoN/TMHjRuTiT6Sa4vDylEy7lklELlRkcP19Tmv49Ra/AsclVSUfLE9pFJnSJMDxCUufm1cet6qHwEe8OqKe6la9+goOPeTHqSaPv1kUpgjti/ICsH2Zov5CcG4=
+	t=1733460047; cv=none; b=In/3nve9jZ309kktcxrhJd3iQ5DvxVBrOkuNTMGch6obSyyfybjFx1UQuDJKZpFLuy9UhNaC04KeRie4gvmWc38REWXy52g4qluBDLKRK/GHuGtyTD9+4v5R+qqxvFBFzPjL0MfuAWFVBYpkpPwtwDATXGT3aEmxdmrD9RlVZLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733460045; c=relaxed/simple;
-	bh=l8qUIHya3K31WTRvVu1jv39b7mumPyblakLVFf0XyaY=;
+	s=arc-20240116; t=1733460047; c=relaxed/simple;
+	bh=sNrG9Ry1Ixsz3Iw2Cir6bSd/AcmJIt/1w3p+Zn0bR2k=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=BqibnZ/16MqLhsXrLiVn3x6HBgOoMUphpZKYG5aREK6DniJvOeqceucJNCQsEeBS0Nnh7HnvcZSpybxuEIyWiRkcMJ3+sdFARXW1HQMsTBxHMa8wp8XQJNcquyGHJi2yQLa8ua/nm3qOylKZs1oM0cDui+ELijw9Brxn5uRyv6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1MuVUJKi; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=Gusno5h3r506EO78AZXvvvi6ymZ7nw40YHAJIfskvqj0pgjd2Zgu1VpzQH2u169OQSx0AxxxggJA4CONyw66VFH4/X/sCbw2kTluI5STX4eYmWcRM0paMv4C99EDIHDlLksY0/XRV+M4WfbiAKDkDw9lLXVmY2Sn8Dub2CVrn0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aEGG85QZ; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30cf48435fso2517541276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:40:43 -0800 (PST)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ef66fd6e78so18227267b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:40:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733460043; x=1734064843; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733460045; x=1734064845; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T/6KuZeoA9hfQ8w7qTpUnYSr+3QNWIClGfYo5QkRc1U=;
-        b=1MuVUJKi5UrHeOEQC5WBonUv1rVreiVF+yrEXxIELhpNZHd91idgxwQPxOqD/yW+T4
-         J9JMHpQCR6ZLg69nAIGFDv3Ce9CgvIe2V6Sc6ROWYIUyubZsGmeQofSZRzHEl693VASq
-         ZAn6s1t+WUFQ706KlB3D3EOBrndssbXUvEB5tj1ckm0XZ6GqBSIud7L3CuMNTJOIydii
-         GbfxRMGxWiLXdgU+w6zDSKnF4x5Hb4rsUdJypPrbeX454GblunC8ygRudeLw8xnYLujp
-         y960TV0aKEVm+4P5gNjNXCEzSIfo2s7LAHAT0L1YX2obptG7PydxJYENWG9SIxCcK89E
-         wVyQ==
+        bh=Zxiu9g2tnYAaehM/09JR47eYFX/Tpdp15RNfcOT5D1I=;
+        b=aEGG85QZnkte0ReldoZqNQ5FkEHDuZDWuhaLPJIX5af3UFwDQJUKiOJ6olL9xAWGrT
+         JWyRQCwmciPwz0xbNXTsqfe1MZ6sorSJDOf1kjvxfjC0kYZOKHiZ9xI/dm4VGAgoxAOQ
+         f7Xc9nEjPw3jaRykEEqc/NHEV6gxozcobxqWx8mIGwtA9NoDaJzio0SUK0HhKoFAw15E
+         qTrxUfqwDmP3aACBqMBJiqMqUbmsNGmzGanrdLPRjPjxDO/BTHxvGibCi2v+Fxch86DA
+         AJjNHLEWtMfVveZ4eNMS3A/EQUj9ndBm2SwXO/IK3i87uyVV9+8dDxO19OZvnn71TdSE
+         +kTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733460043; x=1734064843;
+        d=1e100.net; s=20230601; t=1733460045; x=1734064845;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/6KuZeoA9hfQ8w7qTpUnYSr+3QNWIClGfYo5QkRc1U=;
-        b=iHZD7F3Pi4IxupqcOOwGCVEIZPHATLbxkXDTGYZ2KMsFOQ9+kw9lRql940EdQBOB1S
-         +rzxnx71qpV4nkNlm6LXI7O3z5rRVahZsoaF5571s5OzagKE60DRingVyqzMWEhLeGGv
-         xHTuFfQGbatiKPG3Yr+muuTs9sWp8G7+Q3Y8pXk565uy07FpJxpAPoieQmDfU3PaD2TZ
-         Plo3s0++5XiwTyJXys6xrWIx94+b6OZGrbf1uRlf1I8ot9eL93ZpkRujolplrNo0x7Pj
-         k+rc5aRkR2SAiG4fFTrI/4bQkcJRMfonHcXbVMnyXeKULASCqgbM4OP1C5b/RVJ0dxSX
-         WoYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWk1vgkzM6iNgCcOKoS4jUwsReiM/34mhZfCvyv5QlPY8G8rQGPwx2gTV2a6gq4BedoZO7y29YS8BiAp9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGuVnDtslcNFxNjEYs6zxXeqta+k80gAEIyKX6yEfa/l+ebnTF
-	d5W/0y3svfoOLqnIFfQCNx0xgSIqUgrXhq/w5JDXk6pbfTdlOhRJwxvg1ZfQB3ODNQ/pc6oKCF6
-	r2tGYig==
-X-Google-Smtp-Source: AGHT+IERX0y+SrjaaB6yLsinmWuyNnCNJB6CooagJGk19unTJTWsreDzrfz5zQi5ugSeemAO8BjhrdkKmd0f
+        bh=Zxiu9g2tnYAaehM/09JR47eYFX/Tpdp15RNfcOT5D1I=;
+        b=C8eRthXnT3yqFV60a5FfpdZTHhgpPUjgUU6tg6Enu6AHbJE3eN/up7TOvNMO/4FapD
+         0a9dPn3V0muviiYYcTmmEWlX2XWnk28/EmHzDE1P8iJV3TTZy4nTErGJUpbEtcKvM1V2
+         yBY2qH0/orbQyfFrrZON2sSxdMeHIUubRwV6yXd6CAVIuxqyA9TxgB33dGub1fx4ES+e
+         fzxhGqjM7BUO/8CCUSA57VSSYmnxanYCeWZ8I+t4EIDB5rzgmv8fqkoNvJ2oURZKd9NN
+         IvfNmSJHIwG7zRaV9+Y+Px7APneXMyAouSMbATxXRZXzFJt9kRQcD3qfYrJf+J666gZf
+         /H1g==
+X-Forwarded-Encrypted: i=1; AJvYcCV/YVd2qPrNjKkPYJ0S3GD0TUSdqxuXdorVccWzgfST7Xz/jObtCDgRmk4rNrw61Dni6TlORCM8SHM4F5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzobWae3rCbNyx0jJZvtXuydAFdXbsiOBJwLdCXFlo6ya0diVzB
+	khwugjEBDmtFFxL1nr4AYdgb7mGGUVWxoq/bP8K8gHpT/n2tFUJDymf2+0zMBIyDFipyt2QVx34
+	GroSnCQ==
+X-Google-Smtp-Source: AGHT+IHoyqw3/FLlGrXxAG+PamnShXsumtQls5He4Er5Rpy3RIlaO66WUpmsOzXBH4IQRbPpNZn7bhv41hiA
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:eb75:393:2a8c:1440])
- (user=irogers job=sendgmr) by 2002:a25:fc1c:0:b0:e33:111b:c6a4 with SMTP id
- 3f1490d57ef6-e3a0b073bbdmr734276.1.1733460042968; Thu, 05 Dec 2024 20:40:42
- -0800 (PST)
-Date: Thu,  5 Dec 2024 20:40:29 -0800
+ (user=irogers job=sendgmr) by 2002:a05:690c:700b:b0:6d3:e7e6:8460 with SMTP
+ id 00721157ae682-6efe38de0f3mr210687b3.1.1733460045224; Thu, 05 Dec 2024
+ 20:40:45 -0800 (PST)
+Date: Thu,  5 Dec 2024 20:40:30 -0800
 In-Reply-To: <20241206044035.1062032-1-irogers@google.com>
-Message-Id: <20241206044035.1062032-3-irogers@google.com>
+Message-Id: <20241206044035.1062032-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241206044035.1062032-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1 2/8] perf cpumap: Reduce transitive dependencies on libperf MAX_NR_CPUS
+Subject: [PATCH v1 3/8] libperf cpumap: Hide/reduce scope of MAX_NR_CPUS
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -86,119 +86,43 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-libperf exposes MAX_NR_CPUS via
-tools/lib/perf/include/internal/cpumap.h which is internal. The
-preferred dependency should be the definition in
-tools/perf/perf.h. Add the includes of perf.h so that MAX_NR_CPUS can
-be hidden in libperf.
+Avoid redefinition of MAX_NR_CPUS as a global constant, the original
+definition is tools/perf/perf.h.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-annotate.c | 1 +
- tools/perf/builtin-diff.c     | 1 +
- tools/perf/builtin-kwork.c    | 1 +
- tools/perf/builtin-mem.c      | 1 +
- tools/perf/builtin-sched.c    | 1 +
- tools/perf/util/kwork.h       | 1 +
- tools/perf/util/session.c     | 1 +
- tools/perf/util/svghelper.c   | 1 +
- 8 files changed, 8 insertions(+)
+ tools/lib/perf/cpumap.c                  | 2 ++
+ tools/lib/perf/include/internal/cpumap.h | 4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index bb87e6e7687d..836ae0122dab 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -7,6 +7,7 @@
-  * a histogram of results, along various sorting keys.
-  */
- #include "builtin.h"
-+#include "perf.h"
+diff --git a/tools/lib/perf/cpumap.c b/tools/lib/perf/cpumap.c
+index cae799ad44e1..3ea06865d4b0 100644
+--- a/tools/lib/perf/cpumap.c
++++ b/tools/lib/perf/cpumap.c
+@@ -11,6 +11,8 @@
+ #include <limits.h>
+ #include "internal.h"
  
- #include "util/color.h"
- #include <linux/list.h>
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index 82fb7773e03e..196969538e58 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -6,6 +6,7 @@
-  * DSOs and symbol information, sort them and produce a diff.
-  */
- #include "builtin.h"
-+#include "perf.h"
++#define MAX_NR_CPUS 4096
++
+ void perf_cpu_map__set_nr(struct perf_cpu_map *map, int nr_cpus)
+ {
+ 	RC_CHK_ACCESS(map)->nr = nr_cpus;
+diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/include/internal/cpumap.h
+index 3cf28522004e..e2be2d17c32b 100644
+--- a/tools/lib/perf/include/internal/cpumap.h
++++ b/tools/lib/perf/include/internal/cpumap.h
+@@ -21,10 +21,6 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
+ 	struct perf_cpu	map[];
+ };
  
- #include "util/debug.h"
- #include "util/event.h"
-diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
-index 8234410cba4c..233ca3c3895c 100644
---- a/tools/perf/builtin-kwork.c
-+++ b/tools/perf/builtin-kwork.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include "builtin.h"
-+#include "perf.h"
- 
- #include "util/data.h"
- #include "util/evlist.h"
-diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-index 651188c1d825..99d5e1491a28 100644
---- a/tools/perf/builtin-mem.c
-+++ b/tools/perf/builtin-mem.c
-@@ -4,6 +4,7 @@
- #include <sys/stat.h>
- #include <unistd.h>
- #include "builtin.h"
-+#include "perf.h"
- 
- #include <subcmd/parse-options.h>
- #include "util/auxtrace.h"
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 7049c60ebf77..26ece6e9bfd1 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include "builtin.h"
-+#include "perf.h"
- #include "perf-sys.h"
- 
- #include "util/cpumap.h"
-diff --git a/tools/perf/util/kwork.h b/tools/perf/util/kwork.h
-index 76fe2a821bcf..596595946a06 100644
---- a/tools/perf/util/kwork.h
-+++ b/tools/perf/util/kwork.h
-@@ -1,6 +1,7 @@
- #ifndef PERF_UTIL_KWORK_H
- #define PERF_UTIL_KWORK_H
- 
-+#include "perf.h"
- #include "util/tool.h"
- #include "util/time-utils.h"
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 507e6cba9545..c06e3020a976 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -37,6 +37,7 @@
- #include "arch/common.h"
- #include "units.h"
- #include "annotate.h"
-+#include "perf.h"
- #include <internal/lib.h>
- 
- static int perf_session__deliver_event(struct perf_session *session,
-diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
-index 2b04f47f4db0..b1d259f590e9 100644
---- a/tools/perf/util/svghelper.c
-+++ b/tools/perf/util/svghelper.c
-@@ -21,6 +21,7 @@
- #include <perf/cpumap.h>
- 
- #include "env.h"
-+#include "perf.h"
- #include "svghelper.h"
- 
- static u64 first_time, last_time;
+-#ifndef MAX_NR_CPUS
+-#define MAX_NR_CPUS	4096
+-#endif
+-
+ struct perf_cpu_map *perf_cpu_map__alloc(int nr_cpus);
+ int perf_cpu_map__idx(const struct perf_cpu_map *cpus, struct perf_cpu cpu);
+ bool perf_cpu_map__is_subset(const struct perf_cpu_map *a, const struct perf_cpu_map *b);
 -- 
 2.47.0.338.g60cca15819-goog
 
