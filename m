@@ -1,252 +1,253 @@
-Return-Path: <linux-kernel+bounces-435743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE879E7BB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A64659E7BBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:26:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD4F1887956
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8193118878D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196C1F76A5;
-	Fri,  6 Dec 2024 22:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1578212FAB;
+	Fri,  6 Dec 2024 22:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BPVL+eqt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UIDdRHXQ"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8741714DF;
-	Fri,  6 Dec 2024 22:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C399E1EE010
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 22:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733523934; cv=none; b=ozTSA+zyLAnYEad/O2hGvCzYdAMGwZxz5KmUK98gJV/eu0K0XFe66RRhJxNssgCHxoKqO1PK++mk+GSgkaiCaOrOtBkcu2SvsKONayAaTWkeLkIAxbobwg70xAjnMA81TdWFSGFdEfbQ6w0d2NNJMaUz04fmy7ng1Xygxfo5FAc=
+	t=1733523955; cv=none; b=akURbDYfaafDdZubtNA0yi9D4kGtH1qf+FlF8mTxvjQMFFD0wtvxd7yToJ8Y8/4nCicaAZapADt78OdYhjMAx0my51YAlJtcubqJJT8F4H/jGHePqTdKeBPAEge+MuG2Gi231Mfh2wuf/JIahhpvXPuJeOeQKhw2cOwIqVjr+8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733523934; c=relaxed/simple;
-	bh=bCffiw8OTwFgkjUxdoGc91mQ61iZQnE3xHFFCbqUAlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bSUqlniz/dg0ol0OwWpzARSfX7XKevyz5s4JPyQbvc1V7unuOmorYqFvR1j2gOUpyRCjg0K2qWZussK2Totgtd59S6cCPMPEP1BF4CJEhsJ8iS3kQaJ+tODceektTLVC2fZIitBW9+SH8cQK71beP4Y+m0r5ZdXKHbDEYopXrpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BPVL+eqt; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733523932; x=1765059932;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bCffiw8OTwFgkjUxdoGc91mQ61iZQnE3xHFFCbqUAlY=;
-  b=BPVL+eqtQzBzftX/283oeX6TeY3nHfk3bEIM5nnGms5QAAcCOb4CXCSr
-   CVvUp8zL2n5dRo/EaydciTP4AwTxmYHlmGct9XtzGU+pNQWEF1ZZxpWtE
-   pai7pnFP4vi/wKNOiEh1C/uxhrIR0F37xgC63YIgkmVD8tWxqimvsaS6g
-   yDe9aOSzR2XtqCShVuB0zi2EnUlCGXbJijOHqB+bs7WOxX9Uyv0yrZ4n6
-   bEpWOlWKWaC7gDN1J9o5BZu0fES4Mp5Y15DzO9T2g5aqpdpFFLbMEvkGK
-   qGX8ftseRzHjg+lEmsHBswXEiAAs2mUgTQXDjzdBRBA1RuYerGGyFSbR7
-   Q==;
-X-CSE-ConnectionGUID: YwXzhM3pRKO5Um7rlHcNuw==
-X-CSE-MsgGUID: 4a4x9xJ1QNGnYHqgUlOyAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="44565162"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="44565162"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 14:25:31 -0800
-X-CSE-ConnectionGUID: YiK7CDGQR8Kyz3eZXpGVJQ==
-X-CSE-MsgGUID: NLDm8aHvRMWdUqnSlq2szA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="95009660"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 06 Dec 2024 14:25:26 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJglH-0002J7-1P;
-	Fri, 06 Dec 2024 22:25:23 +0000
-Date: Sat, 7 Dec 2024 06:24:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mikael Gonella-Bolduc via B4 Relay <devnull+mgonellabolduc.dimonoff.com@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: light: Add APDS9160 ALS & Proximity sensor
- driver
-Message-ID: <202412070600.aufBle2b-lkp@intel.com>
-References: <20241206-apds9160-driver-v2-2-be2cb72ef8f4@dimonoff.com>
+	s=arc-20240116; t=1733523955; c=relaxed/simple;
+	bh=1Fwo0G+mz8Rgqzi4ztNvShWWW3SkD0B+uK0GadEUKac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zszcc+BMcBY43TytUV7DrSZOgXKoE9XnZdvfgKjm0qqAh6ZCmqnoBg8CTOj7etzNR10FP8mTChHARomHlAoOQFd6eGvBB5igbPQlmKG2KTedV84ny4wBh5ivjr1+2HsFtKvm7YlOekEIdoFi2EmutbbezvWNZ8YGx4oTHg2Hu6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UIDdRHXQ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d1228d66a0so305a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 14:25:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733523951; x=1734128751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1ibw0mzwOYA+EzgKVla/feMEiJCLA2VfI89MQ/7dNM=;
+        b=UIDdRHXQ6FNhuBPWEDKdTDi8nOH3C5aRrPnPY/qdO74BQ3piTvUdMtWaKi4pH3jAe1
+         IHr7iDW+z0Tb7bEoDv8Rwcril4BkiJCySEyBv0a+qQysEu6H1oWJnMsDBhixxVGpF04r
+         PZtswU3KbX5ereO7sBPBUYF0Zjed+H/dnfXqsIMOEjKcrMuJgFo2n6rsDentz0dRAifa
+         l8i+1FURH0qywsjLAm0vVdbOFAdqC1wFPHf9mxEz+Cu24YiDTXrV0EgxgiR/tNCGtHbr
+         A935BtJ73cNCP/0CwBNN6U3p8B2X0d40CIdmIPP6d0mtrjo7Jd996Uaopl/sd2IunOGL
+         w72Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733523951; x=1734128751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u1ibw0mzwOYA+EzgKVla/feMEiJCLA2VfI89MQ/7dNM=;
+        b=UBCsiXh6dCzHoGTHqPiK5D5nU3GKD1qBAMUyfzSaCoUy30UkcdhUBVESaa496XNx1n
+         3oTxVPWa8ssqeiOcIWNSmKoXTu8Q0xu1Jsq6sim4geL7yCw7tVqz3VLpA5P+TA4cc8Is
+         uPBwOJILZSSzTz9w8wTQLrdULDPeEw29/Z+q/T6nhuHO04bYheNS2wCJYUWa3TuIClVs
+         9ehTJUPQqHcrtn+YTnDFE8cM0DayVtymcWQknp+bJcuGAohqLuP2NAsk4Z28gzK6+T66
+         ZBuALWYQOBdhqCA1XFXiTHcr823VwQ93pkfh/I5REGKkiEaGYjYpLGodyeDvB9HEsidd
+         BY4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWe/iLDnlSAzAr04udy72jwt9NDSJaCKhgPSixDD4NpuEOHMsMH1wudEqOuNTZBrS4hUuqVQKOgGUHXfoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBIam9KCWr0Zlt+5tzxZXwRBm/hrVnLpA6mk7DEL8Tp6Rv9ZLn
+	RpZpiAjj3AcTsh+rLHiWqeSVyjqVY7LrjgtLxDBhUhxXuVx1hoXA/i6jxHAKLlGDfSVBwFoT+YB
+	zndRoiau9ZCmgPui0kbLeWnYm07df0hD3ohuj
+X-Gm-Gg: ASbGncumaY9TrYCW6plPrx5QPMCnxEiUfmARxXIn9UHUJbHcLj/vo6ESg1scFQcFIdX
+	oayQnzniT8QlipfYHY7jqgvFzQ/bX2do2lQVz6ptiVBGWvyhbMn3oq+qcvZI=
+X-Google-Smtp-Source: AGHT+IGHQO7IlDTtHrmr+Kut7qmPrr+UDCTNqigZmKQw/bnbO/ORPn5+jQhaPBeJv/Cif8WX01NTzcK0mkM4k6xUdU0=
+X-Received: by 2002:a50:ef0f:0:b0:5d0:d7ca:7bf4 with SMTP id
+ 4fb4d7f45d1cf-5d3daa9f7d3mr29058a12.0.1733523950627; Fri, 06 Dec 2024
+ 14:25:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206-apds9160-driver-v2-2-be2cb72ef8f4@dimonoff.com>
+References: <20241206-bpf-fix-uprobe-uaf-v2-1-4c75c54fe424@google.com> <CAEf4BzYxaKd8Gv5g8PBY6zaQukYKSjjtaSgYMjJxL-PZ0dLrbQ@mail.gmail.com>
+In-Reply-To: <CAEf4BzYxaKd8Gv5g8PBY6zaQukYKSjjtaSgYMjJxL-PZ0dLrbQ@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 6 Dec 2024 23:25:14 +0100
+Message-ID: <CAG48ez3i5haHCc8EQMVNjKnd9xYwMcp4sbW_Y8DRpJCidJotjw@mail.gmail.com>
+Subject: Re: [PATCH bpf v2] bpf: Fix prog_array UAF in __uprobe_perf_func()
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Delyan Kratunov <delyank@fb.com>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mikael,
+On Fri, Dec 6, 2024 at 11:15=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Fri, Dec 6, 2024 at 12:45=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
+e:
+> >
+> > Currently, the pointer stored in call->prog_array is loaded in
+> > __uprobe_perf_func(), with no RCU annotation and no RCU protection, so =
+the
+> > loaded pointer can immediately be dangling. Later,
+> > bpf_prog_run_array_uprobe() starts a RCU-trace read-side critical secti=
+on,
+> > but this is too late. It then uses rcu_dereference_check(), but this us=
+e of
+> > rcu_dereference_check() does not actually dereference anything.
+> >
+> > It looks like the intention was to pass a pointer to the member
+> > call->prog_array into bpf_prog_run_array_uprobe() and actually derefere=
+nce
+> > the pointer in there. Fix the issue by actually doing that.
+> >
+> > Fixes: 8c7dcb84e3b7 ("bpf: implement sleepable uprobes by chaining gps"=
+)
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > ---
+> > To reproduce, in include/linux/bpf.h, patch in a mdelay(10000) directly
+> > before the might_fault() in bpf_prog_run_array_uprobe() and add an
+> > include of linux/delay.h.
+> >
+> > Build this userspace program:
+> >
+> > ```
+> > $ cat dummy.c
+> > #include <stdio.h>
+> > int main(void) {
+> >   printf("hello world\n");
+> > }
+> > $ gcc -o dummy dummy.c
+> > ```
+> >
+> > Then build this BPF program and load it (change the path to point to
+> > the "dummy" binary you built):
+> >
+> > ```
+> > $ cat bpf-uprobe-kern.c
+> > #include <linux/bpf.h>
+> > #include <bpf/bpf_helpers.h>
+> > #include <bpf/bpf_tracing.h>
+> > char _license[] SEC("license") =3D "GPL";
+> >
+> > SEC("uprobe//home/user/bpf-uprobe-uaf/dummy:main")
+> > int BPF_UPROBE(main_uprobe) {
+> >   bpf_printk("main uprobe triggered\n");
+> >   return 0;
+> > }
+> > $ clang -O2 -g -target bpf -c -o bpf-uprobe-kern.o bpf-uprobe-kern.c
+> > $ sudo bpftool prog loadall bpf-uprobe-kern.o uprobe-test autoattach
+> > ```
+> >
+> > Then run ./dummy in one terminal, and after launching it, run
+> > `sudo umount uprobe-test` in another terminal. Once the 10-second
+> > mdelay() is over, a use-after-free should occur, which may or may
+> > not crash your kernel at the `prog->sleepable` check in
+> > bpf_prog_run_array_uprobe() depending on your luck.
+> > ---
+> > Changes in v2:
+> > - remove diff chunk in patch notes that confuses git
+> > - Link to v1: https://lore.kernel.org/r/20241206-bpf-fix-uprobe-uaf-v1-=
+1-6869c8a17258@google.com
+> > ---
+> >  include/linux/bpf.h         | 4 ++--
+> >  kernel/trace/trace_uprobe.c | 2 +-
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> >
+>
+> Looking at how similar in spirit bpf_prog_run_array() is meant to be
+> used, it seems like it is the caller's responsibility to
+> RCU-dereference array and keep RCU critical section before calling
+> into bpf_prog_run_array(). So I wonder if it's best to do this instead
+> (Gmail will butcher the diff, but it's about the idea):
 
-kernel test robot noticed the following build errors:
+Yeah, that's the other option I was considering. That would be more
+consistent with the existing bpf_prog_run_array(), but has the
+downside of unnecessarily pushing responsibility up to the caller...
+I'm fine with either.
 
-[auto build test ERROR on 5de07b8a24cf44cdb78adeab790704bf577c2c1d]
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index eaee2a819f4c..4b8a9edd3727 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -2193,26 +2193,25 @@ bpf_prog_run_array(const struct bpf_prog_array *a=
+rray,
+>   * rcu-protected dynamically sized maps.
+>   */
+>  static __always_inline u32
+> -bpf_prog_run_array_uprobe(const struct bpf_prog_array __rcu *array_rcu,
+> +bpf_prog_run_array_uprobe(const struct bpf_prog_array *array,
+>                           const void *ctx, bpf_prog_run_fn run_prog)
+>  {
+>         const struct bpf_prog_array_item *item;
+>         const struct bpf_prog *prog;
+> -       const struct bpf_prog_array *array;
+>         struct bpf_run_ctx *old_run_ctx;
+>         struct bpf_trace_run_ctx run_ctx;
+>         u32 ret =3D 1;
+>
+>         might_fault();
+> +       RCU_LOCKDEP_WARN(!rcu_read_lock_trace_held(), "no rcu lock held")=
+;
+> +
+> +       if (unlikely(!array))
+> +               goto out;
+>
+> -       rcu_read_lock_trace();
+>         migrate_disable();
+>
+>         run_ctx.is_uprobe =3D true;
+>
+> -       array =3D rcu_dereference_check(array_rcu, rcu_read_lock_trace_he=
+ld());
+> -       if (unlikely(!array))
+> -               goto out;
+>         old_run_ctx =3D bpf_set_run_ctx(&run_ctx.run_ctx);
+>         item =3D &array->items[0];
+>         while ((prog =3D READ_ONCE(item->prog))) {
+> @@ -2229,7 +2228,6 @@ bpf_prog_run_array_uprobe(const struct
+> bpf_prog_array __rcu *array_rcu,
+>         bpf_reset_run_ctx(old_run_ctx);
+>  out:
+>         migrate_enable();
+> -       rcu_read_unlock_trace();
+>         return ret;
+>  }
+>
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index fed382b7881b..87a2b8fefa90 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -1404,7 +1404,9 @@ static void __uprobe_perf_func(struct trace_uprobe =
+*tu,
+>         if (bpf_prog_array_valid(call)) {
+>                 u32 ret;
+>
+> +               rcu_read_lock_trace();
+>                 ret =3D bpf_prog_run_array_uprobe(call->prog_array,
+> regs, bpf_prog_run);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mikael-Gonella-Bolduc-via-B4-Relay/dt-bindings-iio-light-Add-APDS9160-binding/20241207-001144
-base:   5de07b8a24cf44cdb78adeab790704bf577c2c1d
-patch link:    https://lore.kernel.org/r/20241206-apds9160-driver-v2-2-be2cb72ef8f4%40dimonoff.com
-patch subject: [PATCH v2 2/2] iio: light: Add APDS9160 ALS & Proximity sensor driver
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241207/202412070600.aufBle2b-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412070600.aufBle2b-lkp@intel.com/reproduce)
+But then this should be something like this (possibly split across
+multiple lines with a helper variable or such):
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412070600.aufBle2b-lkp@intel.com/
+ret =3D bpf_prog_run_array_uprobe(rcu_dereference_check(call->prog_array,
+rcu_read_lock_trace_held()), regs, bpf_prog_run);
 
-All error/warnings (new ones prefixed by >>):
-
-   drivers/iio/light/apds9160.c: In function 'apds9160_read_raw':
->> drivers/iio/light/apds9160.c:911:32: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-     911 |                         *val = FIELD_GET(APDS9160_PS_DATA_MASK, *val);
-         |                                ^~~~~~~~~
-   drivers/iio/light/apds9160.c: At top level:
->> drivers/iio/light/apds9160.c:256:18: warning: 'apds9160_als_gain_avail' defined but not used [-Wunused-const-variable=]
-     256 | static const int apds9160_als_gain_avail[] = {
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/FIELD_GET +911 drivers/iio/light/apds9160.c
-
-   889	
-   890	static int apds9160_read_raw(struct iio_dev *indio_dev,
-   891				     struct iio_chan_spec const *chan, int *val,
-   892				     int *val2, long mask)
-   893	{
-   894		struct apds9160_chip *data = iio_priv(indio_dev);
-   895		int ret = -EINVAL;
-   896	
-   897		switch (mask) {
-   898		case IIO_CHAN_INFO_RAW:
-   899			switch (chan->type) {
-   900			case IIO_PROXIMITY: {
-   901				__le16 buf;
-   902	
-   903				ret = regmap_bulk_read(data->regmap, chan->address,
-   904						       &buf, 2);
-   905				if (ret)
-   906					return ret;
-   907	
-   908				ret = IIO_VAL_INT;
-   909				*val = le16_to_cpu(buf);
-   910				/* Remove overflow bits from result */
- > 911				*val = FIELD_GET(APDS9160_PS_DATA_MASK, *val);
-   912			} break;
-   913			case IIO_LIGHT:
-   914			case IIO_INTENSITY: {
-   915				u8 buf[3];
-   916	
-   917				ret = regmap_bulk_read(data->regmap, chan->address,
-   918						       &buf, 3);
-   919				if (ret)
-   920					return ret;
-   921	
-   922				ret = IIO_VAL_INT;
-   923				*val = get_unaligned_le24(buf);
-   924			} break;
-   925			case IIO_CURRENT:
-   926				ret = IIO_VAL_INT;
-   927				*val = data->ps_current;
-   928				break;
-   929			default:
-   930				break;
-   931			}
-   932			break;
-   933		case IIO_CHAN_INFO_HARDWAREGAIN:
-   934			switch (chan->type) {
-   935			case IIO_LIGHT:
-   936				ret = IIO_VAL_INT;
-   937				*val = data->als_hwgain;
-   938				break;
-   939			case IIO_PROXIMITY:
-   940				ret = IIO_VAL_INT;
-   941				*val = data->ps_gain;
-   942				break;
-   943			default:
-   944				break;
-   945			}
-   946			break;
-   947		case IIO_CHAN_INFO_INT_TIME:
-   948			switch (chan->type) {
-   949			case IIO_LIGHT:
-   950				ret = IIO_VAL_INT;
-   951				*val = data->als_itime;
-   952				break;
-   953			default:
-   954				break;
-   955			}
-   956			break;
-   957		case IIO_CHAN_INFO_SAMP_FREQ:
-   958			switch (chan->type) {
-   959			case IIO_PROXIMITY:
-   960				ret = IIO_VAL_INT;
-   961				*val = data->ps_rate;
-   962				break;
-   963			default:
-   964				break;
-   965			}
-   966			break;
-   967		case IIO_CHAN_INFO_CALIBSCALE:
-   968			switch (chan->type) {
-   969			case IIO_PROXIMITY:
-   970				ret = IIO_VAL_INT;
-   971				*val = data->ps_cancellation_level;
-   972				break;
-   973			default:
-   974				break;
-   975			}
-   976			break;
-   977		case IIO_CHAN_INFO_CALIBBIAS:
-   978			switch (chan->type) {
-   979			case IIO_PROXIMITY:
-   980				ret = IIO_VAL_INT;
-   981				*val = data->ps_cancellation_analog;
-   982				break;
-   983			case IIO_CURRENT:
-   984				ret = IIO_VAL_INT;
-   985				*val = data->ps_cancellation_current;
-   986			default:
-   987				break;
-   988			}
-   989			break;
-   990		case IIO_CHAN_INFO_SCALE:
-   991			switch (chan->type) {
-   992			case IIO_LIGHT:
-   993				ret = IIO_VAL_INT_PLUS_MICRO;
-   994				*val = data->als_scale1;
-   995				*val2 = data->als_scale2;
-   996				break;
-   997			default:
-   998				break;
-   999			}
-  1000			break;
-  1001		default:
-  1002			break;
-  1003		}
-  1004	
-  1005		return ret;
-  1006	};
-  1007	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +               rcu_read_unlock_trace();
+>                 if (!ret)
+>                         return;
+>         }
+>
+>
 
