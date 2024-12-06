@@ -1,179 +1,283 @@
-Return-Path: <linux-kernel+bounces-434292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A389E6476
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:52:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD449E647D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D481E188496E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259D616A17A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AA41714A1;
-	Fri,  6 Dec 2024 02:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ACE17A5BE;
+	Fri,  6 Dec 2024 02:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pM+GsbY5"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aeq1myOJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93DC145A05
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C304C9A;
+	Fri,  6 Dec 2024 02:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733453522; cv=none; b=Bt4JnMiCZDJFTDpkYHX6FKwM7aQaN3K9okaNg0gLJZEFEbsNSGVQoXDzSH0ingnoht8+EZIQaBWyfkRCQueX2QO5akp3s2vQR7xjZGGj3Wqkks1Bb42rbufF2U2Nl8+3vuV09O5mMqtSzo1cAGTBHO7igl7rPe7cz9n6yVubLuM=
+	t=1733453628; cv=none; b=lQ1lyjS+NNkLwIGErFoW5rd40xhZG1YR7ItwVUdcRAbbSFqoNeCjrssQRblBymxHc2xNs1qfuc62YZgqMIeivHA3GNpuJ0gTfm6HTnJQ4sZeXP0E7KidgcNIBJBAIzMBazi5kMNWDy5YlecIAYBUULmCsgIIjy9kb86Pe+Y6Je8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733453522; c=relaxed/simple;
-	bh=feCUvC3SSXWPARoG6xLkk3g5qe2XfwFu91s3EPhtxOU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=G4Xen0ORK/ZI6Jz/w4nv4IOv/f2BrmFV7kUMWNxuO6Co3TtgJ/dJkv09ewbPH67GWoR7KELd5uh+zMFB3WTTv9dTL1UTcpUd37expUCwHuLkeDZ5arpYS5/4PTMFkHxlqTY0kpFg0U1k3EM0s++tSFkVZKvwLxqBwwjPuL/cJ4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pM+GsbY5; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241206025157epoutp02f1392cd1633d3886f8db7a9b96b71498~OdspUQ4D21966519665epoutp02Z
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:51:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241206025157epoutp02f1392cd1633d3886f8db7a9b96b71498~OdspUQ4D21966519665epoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733453517;
-	bh=cqimClylACdPib2XjzAzujqrVa+bLgNFlUoMYpGNb7A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pM+GsbY5Jqv9e3MtoD/eWJpKDxQUsgAJDev+rEgcMpvEe+c5IkMZMzBJ5KBaFxbjB
-	 3YE4d4pB8fHjgawfcNasCpys/R6AKF2+Sv8+L8GcAj7setjOQdzZcanJdevJnyA0vt
-	 7Wn1IqtfHERnyTBgGb1LFfNlzOGZ0rwUdj0oD1Gg=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241206025157epcas2p1de9a1f3d058856d20254a587ef836e9d~OdsopW9jl2022620226epcas2p1I;
-	Fri,  6 Dec 2024 02:51:57 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y4G4X4YSPz4x9Q1; Fri,  6 Dec
-	2024 02:51:56 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9E.61.22094.CC662576; Fri,  6 Dec 2024 11:51:56 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833~OdsnjsnD93176431764epcas2p4B;
-	Fri,  6 Dec 2024 02:51:56 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241206025156epsmtrp2ce7ead182b09be7aabed38fe61e14aeb~Odsni1Mk23190931909epsmtrp2c;
-	Fri,  6 Dec 2024 02:51:56 +0000 (GMT)
-X-AuditID: b6c32a48-e72eb7000000564e-aa-675266ccb376
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3B.74.18949.BC662576; Fri,  6 Dec 2024 11:51:55 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241206025155epsmtip1bcd0f7988c86df47d542edc9def24326~OdsnYg9TL3234132341epsmtip1C;
-	Fri,  6 Dec 2024 02:51:55 +0000 (GMT)
-From: Taewan Kim <trunixs.kim@samsung.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>,
-	Taewan Kim <trunixs.kim@samsung.com>
-Subject: [PATCH v4 1/1] arm64: dts: exynosautov920: add watchdog DT node
-Date: Fri,  6 Dec 2024 11:51:38 +0900
-Message-ID: <20241206025139.2148833-2-trunixs.kim@samsung.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241206025139.2148833-1-trunixs.kim@samsung.com>
+	s=arc-20240116; t=1733453628; c=relaxed/simple;
+	bh=9+nnjZyKOJUU2Gqt8b+xPm1V7Se8+MxBK7AHG9TMF3I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GN9JQtl+fYe2mWp+XxX6fGml2Pf2LuWLBq80cAFfR3kJUh1dWf9lAoMsxlDKBXW/J5NRef2QhiDDPVzaihgx58WsK4ofqqPgLZbEcLN0s4WhZlIKFttEUsAoh7Qgdo6Erg9KVXoTU5kaq31PKFW+91lvK6FqXBjn934rj/P9l+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aeq1myOJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaWp1007445;
+	Fri, 6 Dec 2024 02:53:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=afbfzP5xvo9Ii8t3LxkXEvLC
+	fOl2+S4rEmpVWjCcDlM=; b=aeq1myOJa2IfxFiQXY4SMYQLg4eZZ5VmpXldt9zp
+	EQijVr0+BzQN4tmoXc/XF5ywRGa+26vSFUnAxivufQ9Pw1NfFVFun9nTQdv0mqal
+	4ybHDDJb5HF/mcZ21lp+uw5XsqtvySr0gCYM/3QiESipNNbMQSHw6+QD//GnaE+N
+	eCsY72jUKTK6n+91tAcEXu6Xr8Ib7pxV1wP+j7mnLZBqbcdLZY7SIPu7Zoaq2DHx
+	PGYxKJAMJ3ueQIyMdzNaOQR/sYvt3lxDy+bJ7fWxQX1Wqf9tlX8Q7Bj53+Zy1lYi
+	AP4Gm1jM44H4+YRl8V8/l/NzQ5r5+LZYxph2gUzrpwUpkQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ben89hu3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 02:53:43 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62rgZh014416
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 02:53:42 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Dec 2024 18:53:39 -0800
+Date: Fri, 6 Dec 2024 10:53:35 +0800
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
+        <quic_zhgao@quicinc.com>, <quic_yuanjiey@quicinc.com>
+Subject: Re: [PATCH v2] mmc: sdhci-msm: Correctly set the load for the
+ regulator
+Message-ID: <Z1JnL9sgsJ+8wNxm@cse-cd02-lnx.ap.qualcomm.com>
+References: <20241127095029.3918290-1-quic_yuanjiey@quicinc.com>
+ <cj7nsn2xphd4ftnhtp6ztor4cqyjsdwkubjgancfd3xojddj4s@m3pb4qc645sn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmue6ZtKB0g9fHlS0ezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
-	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
-	tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y/6r5WwFp7krGr9MZWxg
-	vMjZxcjBISFgItHaY97FyMUhJLCDUeLZ7jtsEM4nRomdZ5YzQzjfGCW+nzoJ5HCCdSybuZ4J
-	pFtIYC+jxMoqiJqPjBLzp/5iAqlhE9CS2Hb4FRNIQkTgNaNEU+87sEnMAl8ZJba3trKCVAkL
-	eEh8n72MDcRmEVCVmHRlNpjNK2AnMf3udCaIbfISk9a0gm3mFLCXmLhmMQtEjaDEyZlPwGxm
-	oJrmrbPBFkgIzOSQ2HF+M1Szi0Tb39usELawxKvjW9ghbCmJz+/2skHY+RIrV56Aqq+RuNe2
-	iwXCtpdYdOYnO8ibzAKaEut36UPCS1niyC2otXwSHYf/skOEeSU62oQgTFWJ6csCIGZIS0yc
-	sRZqj4dEy/ONYPuFBCYxSrR8lJzAqDALyS+zkPwyC2HtAkbmVYxiqQXFuempxUYFJvDoTc7P
-	3cQITrVaHjsYZ7/9oHeIkYmD8RCjBAezkghvZVhguhBvSmJlVWpRfnxRaU5q8SFGU2BIT2SW
-	Ek3OByb7vJJ4QxNLAxMzM0NzI1MDcyVx3nutc1OEBNITS1KzU1MLUotg+pg4OKUamPqVbN3u
-	njjdOGta4gnV/KPX/C4d+x2Y8+Bn17w9lwJnvX/8WTPz8cmezm9urU9W8l/e7ZFzZO1Krqid
-	AWd4/i3bNj/UZ0mgdsjRv2Wztlrciprj35R+4Mm0n+umJM8qcku4MkPgWp2/ZE5f8Z++m7c5
-	wuZ2zz3qfMLSpq18t13augT1iANfNx62+e06iyfyb4Sj7K/NLgtYlLeYnlWZtiZEY4qK8nox
-	rZepzXfCOs5M2Xf31t0/3vlau2vbb//SlzH42+sp/+xbKn9Q4srVZ7YkSDNObf59T85L4k3p
-	8gspSe8nTo+I0Ar7k3P8G89Cj8Dvc7wfFZ4ytTH8t6h8c9sst2j/edePnvQN2XXpqvdmJZbi
-	jERDLeai4kQA/L4iET4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsWy7bCSnO7ptKB0gxP7bSwezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJUx
-	/9VytoLT3BWNX6YyNjBe5Oxi5OSQEDCRWDZzPVMXIxeHkMBuRolV7cdYIBLSEkd+v2CDsIUl
-	7rccYQWxhQTeM0r82isMYrMJaElsO/wKrFkEJH72yy9GkASzwG9GiQ0LjEFsYQEPie+zl4EN
-	YhFQlZh0ZTaYzStgJzH97nQmiAXyEpPWtDKD2JwC9hIT1ywGOoIDaJmdxLmVFRDlghInZz5h
-	gRgvL9G8dTbzBEaBWUhSs5CkFjAyrWKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI4M
-	La0djHtWfdA7xMjEwXiIUYKDWUmEtzIsMF2INyWxsiq1KD++qDQntfgQozQHi5I477fXvSlC
-	AumJJanZqakFqUUwWSYOTqkGpqPX4r/V7az2zWvLTNqzPembh4Vnesv6Lbs4xAznhtd8neO6
-	2sH006c3yQweggzus/2vX1/7/NkyrvigMxHbOAo50+YfmS0xi+1uyNUVrCu7LFmcrIvv3la0
-	7TuREZSxOaY6dlPCiu60FSuj3gX/vqkRsF+7JWbrrPKIxPkvZhVIiR38v2xeisLckBqzS99U
-	0tXyHHcUGPHc6ItlP3nordsahaMNezwav/y328Dy786RmtD+F9e7n97Yv93rTcCpba4Ldy5m
-	4ngwqyfQ91EZ72lG18R/Kjov1mTrJey6YuCxsTWW9Ud4ev1Vs7m6ixhsBUJLO/LOhJyemLnw
-	Orfnd+VUzr2/mZT/tvG7vl4vo8RSnJFoqMVcVJwIAElLh5j7AgAA
-X-CMS-MailID: 20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833
-References: <20241206025139.2148833-1-trunixs.kim@samsung.com>
-	<CGME20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833@epcas2p4.samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cj7nsn2xphd4ftnhtp6ztor4cqyjsdwkubjgancfd3xojddj4s@m3pb4qc645sn>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mp9x1ViV_t9Cw5JYxVPuu7RI-XersSFS
+X-Proofpoint-GUID: mp9x1ViV_t9Cw5JYxVPuu7RI-XersSFS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=999 clxscore=1015
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060020
 
-From: Byoungtae Cho <bt.cho@samsung.com>
+On Fri, Nov 29, 2024 at 08:44:37PM +0200, Dmitry Baryshkov wrote:
+> On Wed, Nov 27, 2024 at 05:50:29PM +0800, Yuanjie Yang wrote:
+> > Qualcomm regulator supports two power supply modes: HPM and LPM.
+> > Currently, the sdhci-msm.c driver does not set the load to adjust
+> > the current for eMMC and SD. Therefore, if the regulator set load
+> > in LPM state, it will lead to the inability to properly initialize
+> > eMMC and SD.
+> > 
+> > Set the correct regulator current for eMMC and SD to ensure that the
+> > device can work normally even when the regulator is in LPM.
+> > 
+> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> > ---
+> > Changes in v2:
+> > - Add enum msm_reg_type to optimize the code
+> > - Delete redundant emmc type judgment
+> > - Link to v1: https://lore.kernel.org/linux-arm-msm/20241122075048.2006894-1-quic_yuanjiey@quicinc.com/
+> > 
+> > ---
+> >  drivers/mmc/host/sdhci-msm.c | 92 +++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 90 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> > index e00208535bd1..fc13ef60ab61 100644
+> > --- a/drivers/mmc/host/sdhci-msm.c
+> > +++ b/drivers/mmc/host/sdhci-msm.c
+> > @@ -134,9 +134,22 @@
+> >  /* Timeout value to avoid infinite waiting for pwr_irq */
+> >  #define MSM_PWR_IRQ_TIMEOUT_MS 5000
+> >  
+> > +/* Max load for eMMC Vdd supply */
+> > +#define MMC_VMMC_MAX_LOAD_UA	570000
+> > +
+> >  /* Max load for eMMC Vdd-io supply */
+> >  #define MMC_VQMMC_MAX_LOAD_UA	325000
+> >  
+> > +/* Max load for SD Vdd supply */
+> > +#define SD_VMMC_MAX_LOAD_UA	800000
+> > +
+> > +/* Max load for SD Vdd-io supply */
+> > +#define SD_VQMMC_MAX_LOAD_UA	22000
+> > +
+> > +#define MAX_MMC_SD_VMMC_LOAD_UA  max(MMC_VMMC_MAX_LOAD_UA, SD_VMMC_MAX_LOAD_UA)
+> > +
+> > +#define MAX_MMC_SD_VQMMC_LOAD_UA max(MMC_VQMMC_MAX_LOAD_UA, SD_VQMMC_MAX_LOAD_UA)
+> > +
+> >  #define msm_host_readl(msm_host, host, offset) \
+> >  	msm_host->var_ops->msm_readl_relaxed(host, offset)
+> >  
+> > @@ -147,6 +160,11 @@
+> >  #define CQHCI_VENDOR_CFG1	0xA00
+> >  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
+> >  
+> > +enum msm_reg_type {
+> > +	VMMC_REGULATOR,
+> > +	VQMMC_REGULATOR,
+> 
+> Please drop enum completely, then...
+Thanks, I will drop enum in next version.
 
-Adds two watchdog devices for ExynosAutoV920 SoC.
+> > +};
+> > +
+> >  struct sdhci_msm_offset {
+> >  	u32 core_hc_mode;
+> >  	u32 core_mci_data_cnt;
+> > @@ -1403,11 +1421,71 @@ static int sdhci_msm_set_pincfg(struct sdhci_msm_host *msm_host, bool level)
+> >  	return ret;
+> >  }
+> >  
+> > -static int sdhci_msm_set_vmmc(struct mmc_host *mmc)
+> > +static int sdhci_msm_get_regulator_load(struct mmc_host *mmc, int max_current,
+> > +					enum msm_reg_type type)
+> > +{
+> > +	int load = 0;
+> > +
+> > +	/*
+> > +	 * When eMMC and SD are powered on for the first time, select a higher
+> > +	 * current value from the corresponding current for eMMC and SD to
+> > +	 * ensure that the eMMC and SD cards start up properly and complete
+> > +	 * initialization. After the initialization process is finished, use
+> > +	 * the corresponding current to set the eMMC and SD to ensure the
+> > +	 * normal work of the device.
+> > +	 */
+> > +
+> > +	if (!mmc->card)
+> > +		return max_current;
+> > +
+> > +	if (mmc_card_mmc(mmc->card))
+> > +		load = (type == VMMC_REGULATOR) ? MMC_VMMC_MAX_LOAD_UA : MMC_VQMMC_MAX_LOAD_UA;
+> > +	else if (mmc_card_sd(mmc->card))
+> > +		load = (type == VMMC_REGULATOR) ? SD_VMMC_MAX_LOAD_UA : SD_VQMMC_MAX_LOAD_UA;
+> 
+> ... split this into two functions, one for vmmc and another one for
+> vqmmc...
+Thanks, I will split this funcution into two function in next version.
 
-Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
----
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> > +
+> > +	return load;
+> > +}
+> > +
+> > +static int msm_config_regulator_load(struct sdhci_msm_host *msm_host, struct mmc_host *mmc,
+> > +				     bool hpm, int max_current, enum msm_reg_type type)
+> 
+> Then this becomes two functions too, each of those can be inlined in the
+> proper place.
+Thanks, I will fix it in next version.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index c759134c909e..7b9591255e91 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -183,6 +183,26 @@ cmu_misc: clock-controller@10020000 {
- 				      "noc";
- 		};
- 
-+		watchdog_cl0: watchdog@10060000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10060000 0x100>;
-+			interrupts = <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <0>;
-+		};
-+
-+		watchdog_cl1: watchdog@10070000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10070000 0x100>;
-+			interrupts = <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <1>;
-+		};
-+
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
--- 
-2.47.1
+> 
+> > +{
+> > +	int ret;
+> > +	int load = 0;
+> > +
+> > +	/*
+> > +	 * After the initialization process is finished, Once the type of card
+> > +	 * is determined, only set the corresponding current for SD and eMMC.
+> > +	 */
+> > +
+> > +	if (mmc->card && !(mmc_card_mmc(mmc->card) || mmc_card_sd(mmc->card)))
+> > +		return 0;
+> 
+> This goes into sdhci_msm_get_regulator_load().
+Thanks, I will optimize this code in next patch.
+
+> > +
+> > +	if (hpm)
+> > +		load = sdhci_msm_get_regulator_load(mmc, max_current, type);
+> > +
+> > +	if (type == VMMC_REGULATOR)
+> > +		ret = regulator_set_load(mmc->supply.vmmc, load);
+> > +	else
+> > +		ret = regulator_set_load(mmc->supply.vqmmc, load);
+> > +	if (ret)
+> > +		dev_err(mmc_dev(mmc), "%s: set load failed: %d\n",
+> > +			mmc_hostname(mmc), ret);
+> > +	return ret;
+> > +}
+> > +
+> > +static int sdhci_msm_set_vmmc(struct sdhci_msm_host *msm_host,
+> > +			      struct mmc_host *mmc, bool hpm)
+> >  {
+> > +	int ret;
+> > +
+> >  	if (IS_ERR(mmc->supply.vmmc))
+> >  		return 0;
+> >  
+> > +	ret = msm_config_regulator_load(msm_host, mmc, hpm,
+> > +					MAX_MMC_SD_VMMC_LOAD_UA, VMMC_REGULATOR);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	return mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, mmc->ios.vdd);
+> >  }
+> >  
+> > @@ -1435,6 +1513,15 @@ static int msm_toggle_vqmmc(struct sdhci_msm_host *msm_host,
+> >  				goto out;
+> >  			}
+> >  		}
+> > +
+> > +		ret = msm_config_regulator_load(msm_host, mmc, level,
+> > +						MAX_MMC_SD_VQMMC_LOAD_UA, VQMMC_REGULATOR);
+> > +		if (ret < 0) {
+> > +			dev_err(mmc_dev(mmc), "%s: vqmmc set regulator load failed: %d\n",
+> > +				mmc_hostname(mmc), ret);
+> > +			goto out;
+> > +		}
+> > +
+> >  		ret = regulator_enable(mmc->supply.vqmmc);
+> >  	} else {
+> >  		ret = regulator_disable(mmc->supply.vqmmc);
+> > @@ -1642,7 +1729,8 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
+> >  	}
+> >  
+> >  	if (pwr_state) {
+> > -		ret = sdhci_msm_set_vmmc(mmc);
+> > +		ret = sdhci_msm_set_vmmc(msm_host, mmc,
+> > +					 pwr_state & REQ_BUS_ON);
+> >  		if (!ret)
+> >  			ret = sdhci_msm_set_vqmmc(msm_host, mmc,
+> >  					pwr_state & REQ_BUS_ON);
+> > -- 
+> > 2.34.1
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
+
+Thanks,
+Yuanjie
 
 
