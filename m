@@ -1,193 +1,108 @@
-Return-Path: <linux-kernel+bounces-435240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54129E74E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:52:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA989E750B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42EF169890
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:52:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E303F1608C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39FA20C00C;
-	Fri,  6 Dec 2024 15:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7FF20ADF4;
+	Fri,  6 Dec 2024 16:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZpMZQhq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGXsG7K5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZpMZQhq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGXsG7K5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="IK3r7GcU"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769B062171;
-	Fri,  6 Dec 2024 15:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461E7BA20
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733500318; cv=none; b=mqXh3/IfPFnCfXVWFC8Lg2O9VUjc0HhqNv57lW9D6kXr0frxucBTZEWR/1nw5ZmuWuqDkjQ0AJXHxGeUIk8SXwxVwDRTAS1A99U9Qul/MEV5+hH1NORId+KgsZXcOQ+e9qJLLFsGjSGObjfiLQyk9XL1kCi/g57UFbC/SNM4DSU=
+	t=1733500967; cv=none; b=OBP1op61P3AD5IXw87v2fYl7v50igSS6yxib51edP7QUb/bqCnZNJlDvGcDTgqPHYUXkoAY7xI1OFfBU3nszhGdoy3sMlTer7s/oBHN/PfBDVaJKdzK+ARbpSPID5LSB1JE/jL1s2eeg3tSIzdbJvkm+OZA9muA+ZlWy7JPkZQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733500318; c=relaxed/simple;
-	bh=wCTL2ZjpQRRY6WMst98GL6ldhXJSLL8p6Tx1prpotTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmBp3UMvmzsNyKAYqjLCeMCfKYmsyICazyESYNF4i9NzfUpVYhTac207ICo24SLm4z5zpp74MEQ1t/U7vAJLPCdKr0T6gcKTjzUOuyY2YumzzowxgQaRJAvp9gYmg0gzjnW2L9pEfwupp3Nj/3zjTalWiBxDMPHFvXJteI/G4Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZpMZQhq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGXsG7K5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZpMZQhq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGXsG7K5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9DDBE1F37E;
-	Fri,  6 Dec 2024 15:51:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733500314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=PZpMZQhqTR7kjmiBhrDltOQnk8ZkHqTw76XJ+Xm8euzfI/yYFnGkbsP/hVRg60XpqlaR0G
-	Nf372g6LN/Pl7yCXIhn1nVQMvY9CjcmgB12vl/HF/qvLcD0xXYeWzcV+KQZhAxv3fnK5cs
-	3D5QxDXkDI2z4Fph457UCWXARcDxhAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733500314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=mGXsG7K5TuH3+WMnmgzR3qGdDoZmo6Zdx/zTCG44OR6aUYiQTpQ6asiW5R+NK1hdqkD0hj
-	CjWIsVuhwYpb+6Cw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733500314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=PZpMZQhqTR7kjmiBhrDltOQnk8ZkHqTw76XJ+Xm8euzfI/yYFnGkbsP/hVRg60XpqlaR0G
-	Nf372g6LN/Pl7yCXIhn1nVQMvY9CjcmgB12vl/HF/qvLcD0xXYeWzcV+KQZhAxv3fnK5cs
-	3D5QxDXkDI2z4Fph457UCWXARcDxhAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733500314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nt/SdeMd1iRB5c5Rd6Y7lq44iHK7kKqPbjOk3YA3ZQ4=;
-	b=mGXsG7K5TuH3+WMnmgzR3qGdDoZmo6Zdx/zTCG44OR6aUYiQTpQ6asiW5R+NK1hdqkD0hj
-	CjWIsVuhwYpb+6Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BBF613647;
-	Fri,  6 Dec 2024 15:51:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y90ZIpodU2ceAwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 15:51:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3BEF1A08CD; Fri,  6 Dec 2024 16:51:46 +0100 (CET)
-Date: Fri, 6 Dec 2024 16:51:46 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 09/27] ext4: move out inode_lock into ext4_fallocate()
-Message-ID: <20241206155146.wmc2flrony62d524@quack3>
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-10-yi.zhang@huaweicloud.com>
- <20241204120527.jus6ymhsddxhlqjz@quack3>
- <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
+	s=arc-20240116; t=1733500967; c=relaxed/simple;
+	bh=ha38dfHBZqm+4g1Lc7GZXHhvv6jjdqTzc74/DfBu9+k=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=eAEho+dkbODdqiOk0kKdKrUJWH8+xdKPKSZQErL1IlUrkw1vEoiznqXOA8rr4e04+/dOmUya/3Zsvsy8bLOdPmT4BUzcFZWGrwTmzto8AsC+siD4G5Pb4iiMxbcEHpUihZ7WahyI+2ki4e9Mu9PXT81zq5llKrB7iIiT1cgWQsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=IK3r7GcU; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1733500958; bh=uxWdeH2YQlHshFXryLQwdchwT2um8IKLVMXCKavSOqM=;
+	h=From:To:Cc:Subject:Date;
+	b=IK3r7GcUCYDv2dGvJp18M4VHt9lhieW281cITn8ji7/n1QDJwzXqxi1YNurXZMM6N
+	 qtCaXcQXH7yFdRidzFXv+eX421fDqit3M8oLxuB+HT+Brbk4j+2EDEfn1cOLqTeZTu
+	 dpDlUoGI1EdPp7fM9XGg9sJGdsAVp1lKPAX4AQFo=
+Received: from localhost.localdomain ([2409:875e:a030:1001:14::e66])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id E1A1FA93; Fri, 06 Dec 2024 23:56:26 +0800
+X-QQ-mid: xmsmtpt1733500586t7x4gb7xz
+Message-ID: <tencent_08B979048FE091821B290B18AE97E70DC507@qq.com>
+X-QQ-XMAILINFO: MoQ+ZqrtYx1+NruHmYG8445a4j957OD+RZD7E1SXz5loSGWVRU64ZWuQqBffsI
+	 m5IoNe6qWycnYPt8Iru6mmG8MYpkJ0QapVedaK4LUPglh4bkRAa2TeQKXhmygA+izZ+OUCWF922X
+	 rXxfDYbXx4z+B9RgBAEpGVACGIdSOB895oQrbyUnBpzZdGnko5Q1M0E01h6b2H5x0Yd3ngsUtLbN
+	 d09q5xnNyd+jYCPcoBQtVauZtJpFy1yLjbSzk0i2G0LtZhslR/L0wRES6mZ/JG+43p4y1m7T27C5
+	 DYzmAA8c9ub6hXXMZ6Al8+8OpVEv+zCfE2/6By+kqmJWTojgLhIpi1Wu4kL5FsepMQtdeeNY7ZUL
+	 ZJ4YqXTT5KunOm9oyS3yDEMbiSKM+mU/SqRwqi65yFEiyhOaXA28AppCQj236qJ6gcUq7WcV+N2B
+	 7LivaFwzbo3Xu1OJz5ptCgibNCfAesl40H5WjeJJ/sXlh/h3zA8X2cDcGRoL8jya2YhorlfufZ+y
+	 2f2VEk/PmyPJ07HPOTRXQew6yALD2ymzeZjgYEFS5Qe//ZycE9AutqtW+06HKadN9AE0iR4ZE8JV
+	 y4kBMfUhrC60YxBaxrLJIBT3uLS2QCS3PlpZIagG968xyRQBf0Lyo8Ev3B4gzoVoz5FbtXfnNmz9
+	 Kqe16JDPjQ1lTXZHBdF87wvtIxhBrV/niTk9ZXCesPZeEKeUTP+Jd0AuOZxjUMIxSTPiEXmAYogK
+	 uJk7PCv3buEOi8iT/J8+gRzkjpoGSH9sesTZbHhHT/uD1r1F3adB9IJcd1DkzDI1myODZNqLoYHo
+	 12OJpS8KK4eOHvTEDe99HrG3yD8iS9IK9vUOF8HEas9p+CY49L8m6lFGlp97J9wAtP96Tmlj5EH+
+	 VmudfRGJYxWqFsuKFZJLnPV1w1qdmilOxn5BHpIDioBmuBcS6uE3qXhPTJKDYa6F/YpayGC85zdw
+	 Q7y4VxtJ9C6Sr068Nolem6UvghEMqJnP+KiXPpex0L0eLLRPGVTn9bxM/pnVOdsr5JdV0EOzI=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Junjie Fu <fujunjie1@qq.com>
+To: linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	willy@infradead.org,
+	mhocko@suse.com,
+	gourry@gourry.net,
+	Junjie Fu <fujunjie1@qq.com>
+Subject: [PATCH] mempolicy.h: Remove unnecessary header file inclusions
+Date: Fri,  6 Dec 2024 23:53:49 +0800
+X-OQ-MSGID: <20241206155349.1673191-1-fujunjie1@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Fri 06-12-24 16:13:14, Zhang Yi wrote:
-> On 2024/12/4 20:05, Jan Kara wrote:
-> > On Tue 22-10-24 19:10:40, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> Currently, all five sub-functions of ext4_fallocate() acquire the
-> >> inode's i_rwsem at the beginning and release it before exiting. This
-> >> process can be simplified by factoring out the management of i_rwsem
-> >> into the ext4_fallocate() function.
-> >>
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > Ah, nice. Feel free to add:
-> > 
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > 
-> > and please ignore my comments about renaming 'out' labels :).
-> > 
-> > 								Honza
-> > 
-> 
-> ...
-> 
-> >> @@ -4774,9 +4765,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-> >>  
-> >>  	inode_lock(inode);
-> >>  	ret = ext4_convert_inline_data(inode);
-> >> -	inode_unlock(inode);
-> >>  	if (ret)
-> >> -		return ret;
-> >> +		goto out;
-> >>  
-> >>  	if (mode & FALLOC_FL_PUNCH_HOLE)
-> >>  		ret = ext4_punch_hole(file, offset, len);
-> >> @@ -4788,7 +4778,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-> >>  		ret = ext4_zero_range(file, offset, len, mode);
-> >>  	else
-> >>  		ret = ext4_do_fallocate(file, offset, len, mode);
-> >> -
-> >> +out:
-> >> +	inode_unlock(inode);
-> >>  	return ret;
-> >>  }
-> >>  
-> 
-> I guess you may want to suggest rename this out to out_inode_lock as well.
+Originally, linux/mempolicy.h included linux/pagemap.h because vma_migratable()
+was implemented inline within the header, requiring mapping_gfp_mask()
+function to implement vma_migratable(). Now that vma_migratable() is only
+declared in linux/mempolicy.h and its implementation has been moved to mempolicy.c,
+the inclusion of linux/pagemap.h in the header is no longer necessary.
 
-Right. This one should better be out_inode_lock.
+Additionally, since mempolicy.c includes internal.h, and internal.h already
+includes linux/pagemap.h, so there is no need to modify mempolicy.c after
+removing the direct inclusion of linux/pagemap.h from linux/mempolicy.h
 
-								Honza
+Signed-off-by: Junjie Fu <fujunjie1@qq.com>
+---
+ include/linux/mempolicy.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+index ce9885e0178a..d36877557b00 100644
+--- a/include/linux/mempolicy.h
++++ b/include/linux/mempolicy.h
+@@ -12,7 +12,6 @@
+ #include <linux/rbtree.h>
+ #include <linux/spinlock.h>
+ #include <linux/nodemask.h>
+-#include <linux/pagemap.h>
+ #include <uapi/linux/mempolicy.h>
+ 
+ struct mm_struct;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
