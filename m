@@ -1,188 +1,148 @@
-Return-Path: <linux-kernel+bounces-435358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721DE9E7682
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 490019E7689
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:57:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C22D161575
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909BD167046
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167AD1F4E22;
-	Fri,  6 Dec 2024 16:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213791FD7BA;
+	Fri,  6 Dec 2024 16:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHmXV3QX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKFuZvVH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F52C20628A;
-	Fri,  6 Dec 2024 16:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B5F20626A;
+	Fri,  6 Dec 2024 16:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733504099; cv=none; b=b6/vg1rTO8YtF4ZegbXOBQe2ZWtB9WydjvO64iNtXbntGXyUVXXBRYMAoompqQq2+ibDG3cJeSW/6ZwCXzutSSLTtFxCGkA9n4xTlV3O1knYE1F6W98iQZx1VBfVL0y+6CDN+f9T0iMTGTecAAoQaCxp66cQdx+AmVPZQkbbMvg=
+	t=1733504228; cv=none; b=VzB+G6M6Bl6+hJpSB0lOQLAqmYKCDjDXwCDwKWgCZKJRR1UYYqTwjdFDRaucEly8mJ9sthzWVJoHxm97NMEH2iENbIQImTL7xqsKHItIOVrMPUT/99ontUHkorGRdb6S/NfPM7HlXVkacZ/EP7Iazo3YPNmGvlYmq1RyTZlBEiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733504099; c=relaxed/simple;
-	bh=np6gijQaJ2x8dV5tPEnKGpmtFkb0N2ZUr3OIxXLKdYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=QxYHXZSNLzjAUuLhcn4veoRbjhfC1Xl99SGqxB1Yj7A9CUjoOwbTwNv7aLFLk0BzEsQhDqX1YDEsA9UlVAQawY2HhmvMJ+SbRNrfbXzcfvEFn4sSdrtOUhM2KinpOehzBcY2FhjBquD3ZxWd8z0631H1B67Sa2+jMnjYWngGmn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHmXV3QX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C59EDC4CED1;
-	Fri,  6 Dec 2024 16:54:58 +0000 (UTC)
+	s=arc-20240116; t=1733504228; c=relaxed/simple;
+	bh=IlbyNXzPNPA3XWALgOApHSlRf9t/sdvMEQkGLZZhe2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CitnWBkA92pwdC5v6Arui2jxAEjF8tWyjKfbxHVntunQ7QU1SH1bD4jbeyr4ZoJRt9tnac72V8jxNXd4J7G9sCsC3OPP6l28mvkdUsLutnKnxvYoZXzUQ+8eihV8iPh1GUiDm0c8DeoRN1CsQwafLYNIvhIQoo3k7k3XwqHsO1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKFuZvVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D63A8C4CED1;
+	Fri,  6 Dec 2024 16:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733504098;
-	bh=np6gijQaJ2x8dV5tPEnKGpmtFkb0N2ZUr3OIxXLKdYo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OHmXV3QX4IIj37XKRydmQO6CdiMsGQTMjhUjio6TN2j6HRFguE72Bcc6sUNFYPePF
-	 xBW8jxki98Q/fX72d1w/6Z8/cbmFUH7IlGHPpXgNeVtUH6Z+xxIkhADMnoZnHDu6ny
-	 09abxs+PBL+KFW2dwFVPb7N10ptQTr5Wb5pqGsIWajRKAaWZYh2sOJkv2ZD8PM0sUu
-	 0qeX1nQfIqjRZv/vQSmKxPWO8PQasbHzVXLOyBeW0w7oeU45kk8Us3kxvTZMMd958/
-	 ItKdqjHGo8moZJqmS0W0WzwXtl9yu5ESZ86aYUb7doZWKfgs3LXNuVeae7y9L+3fJX
-	 ALExZT5dld14w==
-Date: Fri, 6 Dec 2024 10:54:57 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: ilkka@os.amperecomputing.com, kaishen@linux.alibaba.com,
-	yangyicong@huawei.com, will@kernel.org, Jonathan.Cameron@huawei.com,
-	baolin.wang@linux.alibaba.com, robin.murphy@arm.com,
-	chengyou@linux.alibaba.com, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	rdunlap@infradead.org, mark.rutland@arm.com,
-	zhuo.song@linux.alibaba.com, renyu.zj@linux.alibaba.com
-Subject: Re: [PATCH v12 4/5] drivers/perf: add DesignWare PCIe PMU driver
-Message-ID: <20241206165457.GA3101599@bhelgaas>
+	s=k20201202; t=1733504228;
+	bh=IlbyNXzPNPA3XWALgOApHSlRf9t/sdvMEQkGLZZhe2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BKFuZvVHuFHoCSNTrhMzKMGPYetsabsJvzKRQduJkh2nmwUv2hWQ4m3yXQLJ1/fnZ
+	 L1o7TBpt6IpSo0pXNvUwIyjEcNlG5VaKfVgVX/sS8BoYVTsioyQygrbznr86Gw8aX+
+	 rADfDYdzNjthGrzunUaadGx2yVOLtHeXbLbGA+JrTz6vhIYemmRmuGWcaOtrPyawxu
+	 kgnnG9ceBfSJKzjHgJg5wRhOaO/Era+tKF8MZ7xLPr1vtpjXiUJq+IcWTCRjA6B1zF
+	 WyGZlhzMo2s7+CXpIbGsRYq+CHT5ciGpfYoH1xzP/PL346ARbkbrCHaxnHKYYYQiMP
+	 2KyT+RG/0Pfwg==
+Date: Fri, 6 Dec 2024 16:57:01 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v1 1/5] dt-bindings: net: Add TI DP83TD510 10BaseT1L PHY
+Message-ID: <20241206-wrought-jailbreak-52cc4a21a713@spud>
+References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
+ <20241205125640.1253996-2-o.rempel@pengutronix.de>
+ <20241205-immortal-sneak-8c5a348a8563@spud>
+ <Z1KxZmRekrYGSdd4@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1+XZodfQGimtFoRM"
+Content-Disposition: inline
+In-Reply-To: <Z1KxZmRekrYGSdd4@pengutronix.de>
+
+
+--1+XZodfQGimtFoRM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231208025652.87192-5-xueshuai@linux.alibaba.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 08, 2023 at 10:56:51AM +0800, Shuai Xue wrote:
-> This commit adds the PCIe Performance Monitoring Unit (PMU) driver support
-> for T-Head Yitian SoC chip. Yitian is based on the Synopsys PCI Express
-> Core controller IP which provides statistics feature. The PMU is a PCIe
-> configuration space register block provided by each PCIe Root Port in a
-> Vendor-Specific Extended Capability named RAS D.E.S (Debug, Error
-> injection, and Statistics).
+On Fri, Dec 06, 2024 at 09:10:14AM +0100, Oleksij Rempel wrote:
+> On Thu, Dec 05, 2024 at 05:18:59PM +0000, Conor Dooley wrote:
+> > On Thu, Dec 05, 2024 at 01:56:36PM +0100, Oleksij Rempel wrote:
+> > > Introduce devicetree binding for the Texas Instruments DP83TD510
+> > > Ultra Low Power 802.3cg 10Base-T1L Single Pair Ethernet PHY.
+> > >=20
+> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > ---
+> > >  .../devicetree/bindings/net/ti,dp83td510.yaml | 35 +++++++++++++++++=
+++
+> > >  1 file changed, 35 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/net/ti,dp83td51=
+0.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/net/ti,dp83td510.yaml =
+b/Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > > new file mode 100644
+> > > index 000000000000..cf13e86a4017
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > > @@ -0,0 +1,35 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/net/ti,dp83td510.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: TI DP83TD510 10BaseT1L PHY
+> > > +
+> > > +maintainers:
+> > > +  - Oleksij Rempel <o.rempel@pengutronix.de>
+> > > +
+> > > +description:
+> > > +  DP83TD510E Ultra Low Power 802.3cg 10Base-T1L 10M Single Pair Ethe=
+rnet PHY
+> > > +
+> > > +allOf:
+> > > +  - $ref: ethernet-phy.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - ethernet-phy-id2000.0181
+> >=20
+> > There's nothing specific here, can someone remind me why the generic
+> > binding is not enough?
+>=20
+> The missing binding was blamed by checkpatch. Haw should I proceed with t=
+his
+> patch?
 
-> +#define DWC_PCIE_VSEC_RAS_DES_ID		0x02
+Does dtbs_check complain when you use it in a dts? What you have here
+matches against the pattern ^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$
+so I think it won't. checkpatch might be too dumb to evaluate the regex?
 
-> +static const struct dwc_pcie_vendor_id dwc_pcie_vendor_ids[] = {
-> +	{.vendor_id = PCI_VENDOR_ID_ALIBABA },
-> +	{} /* terminator */
-> +};
+--1+XZodfQGimtFoRM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +static bool dwc_pcie_match_des_cap(struct pci_dev *pdev)
-> +{
-> +	const struct dwc_pcie_vendor_id *vid;
-> +	u16 vsec;
-> +	u32 val;
-> +
-> +	if (!pci_is_pcie(pdev) || !(pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT))
-> +		return false;
-> +
-> +	for (vid = dwc_pcie_vendor_ids; vid->vendor_id; vid++) {
-> +		vsec = pci_find_vsec_capability(pdev, vid->vendor_id,
-> +						DWC_PCIE_VSEC_RAS_DES_ID);
+-----BEGIN PGP SIGNATURE-----
 
-This looks wrong to me, and it promotes a misunderstanding of how VSEC
-Capabilities work.  The VSEC ID is defined by the vendor, so we have
-to check both the Vendor ID and the VSEC ID before we know what this
-VSEC Capability is.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1Ms3QAKCRB4tDGHoIJi
+0lUpAP9+qqmvW19GgRq0c+lbiZOY7fIICF4B/h1qoUeHagDQTQD/fDngZjYfswC5
+hPbbjp55rWg5MrwOXxr3+f02ruaodws=
+=XnGn
+-----END PGP SIGNATURE-----
 
-In this patch, we only find a VSEC Capability that matches
-(PCI_VENDOR_ID_ALIBABA, DWC_PCIE_VSEC_RAS_DES_ID), but as of
-v6.13-rc1, it finds all of these:
-
-  (PCI_VENDOR_ID_ALIBABA, DWC_PCIE_VSEC_RAS_DES_ID)
-  (PCI_VENDOR_ID_AMPERE, DWC_PCIE_VSEC_RAS_DES_ID)
-  (PCI_VENDOR_ID_QCOM, DWC_PCIE_VSEC_RAS_DES_ID)
-
-There is no assurance that DWC_PCIE_VSEC_RAS_DES_ID means the same
-thing to Alibaba, Ampere, and Qualcomm because each company defines
-what 0x02 means to it.  PCIe r6.0, sec 7.9.5 for details.
-
-I alluded to this earlier [1] and suggested that these devices should
-have used a Designated Vendor-Specific (DVSEC) Capability instead of a 
-Vendor-Specific (VSEC) Capability.
-
-But since they didn't, I think the dwc_pcie_vendor_ids[] table is a
-dangerous way to work around this because it suggests that all we have
-to do is add new vendors to that table.
-
-I think the table should be extended to contain the Vendor ID, *and*
-the VSEC ID, *and* the VSEC Rev used by that vendor, i.e., it should
-look like this:
-
-  struct dwc_pcie_pmu_vsec {
-    u16 vendor_id;
-    u16 vsec_id;
-    u8 vsec_rev;
-  };
-
-  struct dwc_pcie_pmu_vsec dwc_pcie_pmu_vsec_ids[] = {
-    { .vendor_id = PCI_VENDOR_ID_ALIBABA,
-      .vsec_id = DWC_PCIE_VSEC_RAS_DES_ID, .vsec_rev = 0x4 },
-    { .vendor_id = PCI_VENDOR_ID_AMPERE,
-      .vsec_id = DWC_PCIE_VSEC_RAS_DES_ID, .vsec_rev = 0x4 },
-    { .vendor_id = PCI_VENDOR_ID_QCOM,
-      .vsec_id = DWC_PCIE_VSEC_RAS_DES_ID, .vsec_rev = 0x4 },
-    {}
-  };
-
-This *looks* the same, but it's not, because it makes it obvious that
-the VSEC ID and VSEC Rev are defined separately by each vendor.  It's
-just a lucky coincidence that they happen to be the same for these
-vendors.
-
-> +		if (vsec)
-> +			break;
-> +	}
-> +	if (!vsec)
-> +		return false;
-> +
-> +	pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
-> +	if (PCI_VNDR_HEADER_REV(val) != 0x04)
-> +		return false;
-> +
-> +	pci_dbg(pdev,
-> +		"Detected PCIe Vendor-Specific Extended Capability RAS DES\n");
-> +	return true;
-> +}
-
-> +static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
-> +{
-> +	struct pci_dev *pdev = plat_dev->dev.platform_data;
-> +	struct dwc_pcie_pmu *pcie_pmu;
-> +	char *name;
-> +	u32 bdf, val;
-> +	u16 vsec;
-> +	int ret;
-> +
-> +	vsec = pci_find_vsec_capability(pdev, pdev->vendor,
-> +					DWC_PCIE_VSEC_RAS_DES_ID);
-> +     pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
-
-Nit: "val" is never used, so why read it?
-
-This looks even more wrong, because this matches ANY VSEC Capability
-from ANY vendor that happens to be numbered DWC_PCIE_VSEC_RAS_DES_ID.
-
-I know this is indirectly qualified by the check above in
-dwc_pcie_match_des_cap(), but duplicating this here just spreads the
-confusion about how to interpret VSEC IDs.
-
-I suggest updating dwc_pcie_match_des_cap() to iterate through the
-dwc_pcie_pmu_vsec_ids[] table and return the capability offset so you
-can call it from here.
-
-Bjorn
-
-[1] https://lore.kernel.org/r/20231012162512.GA1069387@bhelgaas
-
+--1+XZodfQGimtFoRM--
 
