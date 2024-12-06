@@ -1,176 +1,146 @@
-Return-Path: <linux-kernel+bounces-435339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567359E7644
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:38:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2BD9E764B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:41:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 088F9288D79
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:38:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7BFD160FB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8210F20629B;
-	Fri,  6 Dec 2024 16:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDF9206299;
+	Fri,  6 Dec 2024 16:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nekQRKo/"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TFmBClOH"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2818C206282;
-	Fri,  6 Dec 2024 16:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA2A819;
+	Fri,  6 Dec 2024 16:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503100; cv=none; b=Zxxnh7qlnGQPyZkO6HOUBNSM02X4nd4LaiFUd5cuLK5ZQltzBiiYge97NW1qafT/k+VLDtgB94ssyRRBnw2hKPA+rJdOYeDDRqEoWMhAYk83ResSEjqJCnne2lwZWEw2PQliWSavpkATVbJ1UQdeM81Z+6c/9ujdiNdmHaSco64=
+	t=1733503269; cv=none; b=Tkf53IiP5ue/n3IO7ZADW1ctf9M9syZsUJCAxG1uWS+usGnkVAEwcztxAerM5eV3KKAZGiRmPsQbp+BmBmaMklBwulaeJRp7hBkIrRIvVX+k/wQIJiBMk1ZGceoOWsVlR+8fYhNYKmM5UqzdT8Vu//z3gYGq1BR+gsPx4GLMZPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503100; c=relaxed/simple;
-	bh=8HjIVg8Q7AA5TKAQZ/UOH+7uuqAsH+wKs9KM11XZzhw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p6W6kYqV/Xku/cRZ5B4hK0pBk1vfZu8Bp5aQHdgQhKJWZQkFowUKzGcySW8ydaDOGywS8dopSar/NsZSqzu59KK74zeV4HVzWfU9oOirdeEe4lVDOk+dS0JH/4zT4baWt5lpQ4ruAHFirxL+QgUVK+IdsYN4Sa4PG1u4AIDpxPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nekQRKo/; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-29e65257182so1360477fac.2;
-        Fri, 06 Dec 2024 08:38:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733503098; x=1734107898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUtyIe7GyZ1qnAGrnhHO6jZfnl/bJDmJX9w6y5HU/x0=;
-        b=nekQRKo/k6WMACYvJP6Q/d0jEM75wBKVKrxVTvi7Q57B7yF9AhxAnBgdyRWQME5pFD
-         /2hYcG/IJ3UyDJc4sxl6z6ItkOaindxMDgvoPk/TKqC2NKVaNjQbh7DX013z/ycB9WCC
-         ZMCCUXMSaIzkAvDP/KSClQmDK97RbounfvzdhmkPEZZdntcs0g8+L9Px2bcn7ohE37SS
-         xTXQDoPXjJe0AfNCwZ/2sEekh5NM5HrJ2zTyjKjyWPX9oaoktCCx4upI/ANHu2cmD1Zd
-         96svJk+ssvx8xgwsdBOCQsti8ft4N3lGup3XxEYX6rYS8CVZiBj74NfH8XzxUeLDQrJ5
-         Hqcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733503098; x=1734107898;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OUtyIe7GyZ1qnAGrnhHO6jZfnl/bJDmJX9w6y5HU/x0=;
-        b=UuTaC3bnJW0BIKJ6Bb/9QhjL/IQs5YSYUfVYTgWOJxhR0oV7BmF6NnekfdBcXyd9Ez
-         QiwbqEuRyCfEm7aT+06m22D4dlmAK1LwuPzcORR4PpMKHGwrT2Lyti0S9zrsYnx4Fjob
-         nz35B80dd2H0q5/LlvgSfHxNCh1hhOPQ9qka7URRmq7kk7zpPWhjqr9v21CoPLFRiev9
-         tn7a4+GuiHtvYFCDsjEn4uQPZJiRzuwXrY82MAPjHEm+D0Odxt+tgNTFycvGOUSFg4Rv
-         Y8SYfQkC+2Nh0qDmpTCzJptdRrwqj3ZyZ3Hj4crjZvdBfI99mcqcdNjiwB6fEeK6r7MS
-         pulw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+1zxwX93POZgyfRP3lFTMFWUa4+bexJvVGpJu5uyLznW42qHipPvXYSBp4nIgPAV0/vUS+MczbUBS@vger.kernel.org, AJvYcCWF+LfqmCdx7Yt9QRSqZtVft8oTmgy+DjbtxEy18cg+7YNaGyhaoUy+qzhv7Wf37587iktP8kQASrruyoo=@vger.kernel.org, AJvYcCX8kbaGRtxK1Xhnugqiz2gyTymHvaryyRQWFAlut416RYBOFpMPUSrKxFIZuhOkP4wuVjSSQl/QSdQI@vger.kernel.org, AJvYcCXq6recn+bSzwKMkiIwNi37aMGEePeOGPQZ1EeOVTqdrW85QWB7pB/xNTA5vHocYrNoZbyHsFgz9BcN3Ma4bkC+XJ6Xcg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7V0MWS+uzS0ovE3uW6dZaSErh4zhMxVXUh1if9RMrTFZzuQwr
-	njD5Fgn3ZdFf68/4mQMokcx9qKW5Y+t5C9pvykUnh3ze0kKfA2n1
-X-Gm-Gg: ASbGncufMeXEvB7Eo6rlxpnf8XUcDTKgx2c5Qm4iNo3cMO4Iyi2uyKES47sptLNfbDl
-	q4KdbYIemCpI8oen5O/Bw6UHNLhiqscIhIFtr7o5ssOqUnDuxCHoN0sGTwLMOoV1BG7GDHXTm9h
-	+WDH2FsDoHRirKbll4/IrkfyEdzaAkLPdA7y5vZqqACPkA5HSamyBes7d3EsUxSjXZdMuYDKRYW
-	K3r1uJB+vlaslt/Lk1G1UmyIv4fMf4I+6jvwZ9xaiuFppBfttWpRnbs+7nx5haFpzIyQqogWIlT
-	8XYxCUb7oR0IZL9jEXs0oC8=
-X-Google-Smtp-Source: AGHT+IGoXYPM0I+mAe7yUjNA6q2L0/CNK+6uzHAQbo7IsFfUj+O/131z1tjwI2LRhsUFPH0ZokM00g==
-X-Received: by 2002:a05:6870:8991:b0:29e:554b:f47d with SMTP id 586e51a60fabf-29f734d39cbmr4506172fac.27.1733503097310;
-        Fri, 06 Dec 2024 08:38:17 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd157b0171sm2872334a12.66.2024.12.06.08.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 08:38:16 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <82d7c96a-af68-4c7f-acb8-e4a883098a2e@roeck-us.net>
-Date: Fri, 6 Dec 2024 08:38:13 -0800
+	s=arc-20240116; t=1733503269; c=relaxed/simple;
+	bh=7ANu5EScUwuJ6PQjUEeCzCCZry0hPu73TNNgvcoO70Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cxalo6z/R575WhhkW+5i8hyyse/B38cR5jwMbMOGVL7yd/QpM0LeXVaLqaEEGtCRcvJ18cC7hx8oUGIFDGKKjQj63TLRKBzvKCNozoJZ8VqqHgaTLIaKY6DKWDIOGWNlP+gwnQJLywvvaLG+VqitFqzz1idLCXwHYMnonXnEPz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TFmBClOH; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id JbMqtRjeSgyqpJbMqthh1y; Fri, 06 Dec 2024 17:39:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733503190;
+	bh=j8NFJHpTnotxjR23il/PFTjZwL7eJr/DxZvCjCEpviw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=TFmBClOHnKrl2gNLgLkmaW6lQl+KGzrIc46tK1ss2HkGyLTiwFvqzgioS7ZR2eROP
+	 awZaRWMpAMnDWrltN3qsw31k93H2PLh0+IIkd3hOP8i6VCuRaeTygE5f1dq2d0zsqr
+	 FRy7ltBzCuTgHA/HgBby7GAWG8W3/sFhXpx0IwWBK2/Op4l3ZQtoAfGk7ftlqeW7CM
+	 NLugchr9Jo1AradlZ0QLkKB4T6hXD+vDaflqqdwiZyJ2zs+aumuKHgPGle5cCZanV9
+	 fd1yj4C0vqdXZRRiPLeKN2hZBjVM/H+cnrNNocW5uod0ngkRf2AXGKBMhJ6QWoXDaU
+	 s+EyAUdqhqzpA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 06 Dec 2024 17:39:50 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org
+Subject: [PATCH v2] iio: adc: ad9467: Fix the "don't allow reading vref if not available" case
+Date: Fri,  6 Dec 2024 17:39:28 +0100
+Message-ID: <cc65da19e0578823d29e11996f86042e84d5715c.1733503146.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/16] x86/amd_nb, hwmon: (k10temp): Simplify
- amd_pci_dev_to_node_id()
-To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
- Tony Luck <tony.luck@intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jean Delvare <jdelvare@suse.com>,
- Clemens Ladisch <clemens@ladisch.de>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
- Suma Hegde <suma.hegde@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-hwmon@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20241206161210.163701-1-yazen.ghannam@amd.com>
- <20241206161210.163701-10-yazen.ghannam@amd.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241206161210.163701-10-yazen.ghannam@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/6/24 08:12, Yazen Ghannam wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> amd_pci_dev_to_node_id() tries to find the AMD node ID of a device by
-> searching and counting devices.
-> 
-> The AMD node ID of an AMD node device is simply its slot number minus
-> the AMD node 0 slot number.
-> 
-> Simplify this function and move it to k10temp.c.
-> 
-> [Yazen: Update commit message and simplify function]
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> Co-developed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+The commit in Fixes adds a special case when only one possible scale is
+available.
+If several scales are available, it sets the .read_avail field of the
+struct iio_info to ad9467_read_avail().
 
-I assume this patch will be applied together with the series.
-With that in mind:
+However, this field already holds this function pointer, so the code is a
+no-op.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Use another struct iio_info instead to actually reflect the intent
+described in the commit message. This way, the structure to use is selected
+at runtime and they can be kept as const.
 
-Thanks,
-Guenter
+This is safer because modifying static structs that are shared between all
+instances like this, based on the properties of a single instance, is
+asking for trouble down the road.
+
+Fixes: b92f94f74826 ("iio: adc: ad9467: don't allow reading vref if not available")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is compile tested only and is completely speculative.
+
+Changes in v2:
+  - use another struct iio_info to keep the structure const
+
+v1: https://lore.kernel.org/linux-kernel/556f87c8931d7d7cdf56ebc79f974f8bef045b0d.1733431628.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/iio/adc/ad9467.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iio/adc/ad9467.c b/drivers/iio/adc/ad9467.c
+index d358958ab310..f30119b42ba0 100644
+--- a/drivers/iio/adc/ad9467.c
++++ b/drivers/iio/adc/ad9467.c
+@@ -895,7 +895,7 @@ static int ad9467_update_scan_mode(struct iio_dev *indio_dev,
+ 	return 0;
+ }
+ 
+-static struct iio_info ad9467_info = {
++static const struct iio_info ad9467_info = {
+ 	.read_raw = ad9467_read_raw,
+ 	.write_raw = ad9467_write_raw,
+ 	.update_scan_mode = ad9467_update_scan_mode,
+@@ -903,6 +903,14 @@ static struct iio_info ad9467_info = {
+ 	.read_avail = ad9467_read_avail,
+ };
+ 
++/* Same as above, but without .read_avail */
++static const struct iio_info ad9467_info_no_read_avail = {
++	.read_raw = ad9467_read_raw,
++	.write_raw = ad9467_write_raw,
++	.update_scan_mode = ad9467_update_scan_mode,
++	.debugfs_reg_access = ad9467_reg_access,
++};
++
+ static int ad9467_scale_fill(struct ad9467_state *st)
+ {
+ 	const struct ad9467_chip_info *info = st->info;
+@@ -1214,11 +1222,12 @@ static int ad9467_probe(struct spi_device *spi)
+ 	}
+ 
+ 	if (st->info->num_scales > 1)
+-		ad9467_info.read_avail = ad9467_read_avail;
++		indio_dev->info = &ad9467_info;
++	else
++		indio_dev->info = &ad9467_info_no_read_avail;
+ 	indio_dev->name = st->info->name;
+ 	indio_dev->channels = st->info->channels;
+ 	indio_dev->num_channels = st->info->num_channels;
+-	indio_dev->info = &ad9467_info;
+ 
+ 	ret = ad9467_iio_backend_get(st);
+ 	if (ret)
+-- 
+2.47.1
 
 
