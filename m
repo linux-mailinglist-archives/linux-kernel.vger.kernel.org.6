@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-434663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E7C9E698B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:01:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894FB9E698E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C673162FAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:01:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF9218815EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DAD1E1022;
-	Fri,  6 Dec 2024 09:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B8A18E050;
+	Fri,  6 Dec 2024 09:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iIy/GWmF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="R5mcBZlk"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306E818E050;
-	Fri,  6 Dec 2024 09:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEDB1E0E0A;
+	Fri,  6 Dec 2024 09:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475674; cv=none; b=Xqu+hnuQGOkukVH88lfip1jacSXVsmUr9b/P+PkkXtLbQtTC7bFcLEZUIIvgEtvu78tQUXgCnwe11h/YaHR+N7urWOYrKZ73KHtNnohoJsubxqvzlSYDwp3pqz5jcH8HqCGtf/IZFDMYCD/Fm9y9AY4dr/5ohkAWTxdmBsBpSzE=
+	t=1733475677; cv=none; b=LxnCbiEmVUPFSewstteTTzG4XZLys9nqFgELFDQsc9xf613DjG9Gn7Dt9AJ6fy5ZQj30k8tR1exdEFAZc6MDa7VvOH4EpkYpEvDY3QrWI1QWFD25c4OFfM4ZnkS0LF2DIrKdiB9YRFcFkjW6uC1EuwzX1VzoeoptjRNl1bXJsiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475674; c=relaxed/simple;
-	bh=cJaEmG5Cap40I/5eDF09BoVGIys6UEJD8mrieDH2l4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=swZnx53OVTa/CBIIcgoUTjjoqrED8r5OZqHoNw4CLJn4XiO5lyjQscwhTD/9m1HtUTVy5rW0s/Q5C4+K2MODwPHonNgyoje0mRGq5iV1RxdOCMZAiOOkkPFa20Hy45pFAQjS/bBTXMTAgWEGY0dtWGjltnbFwmJALqgsCGXySvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iIy/GWmF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67M91A015878;
-	Fri, 6 Dec 2024 09:00:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FmjqYhq1MJRQ8g7LbaIVL0aiHIBV4Hk6ORD2vdi08Dk=; b=iIy/GWmFG2FbtD2M
-	VNqwQFCdCEh4lte0kp5D05/d8imuXSCuUPkQzg2S6lwgrTYFVjUdWTrxof098963
-	X+VYPSl6h8IszzectOGnU7LODxm8sOxC9irYmixKqIh9kSx56Mho3vNDlZ304eIB
-	sZNa5ceIo2SWvnX3HepDTGMqOWkMmJ2L5kZD1oTS244uUkMC7SVyT79pevUEaN3d
-	7aojoAEIR+S5jW0HjngvgxlQlrpsZHX4rM2L6RixRiwOm0zo2GmUvgaEsPA2SHcW
-	Kr3Dx8Z8V4ZIk7QprTMMsJELyY8LYzb27EUCu1Egbp7lVZS3zeZer3xLgTGjlYUC
-	tmSq0A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnmk078-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 09:00:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B690rdj004703
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 09:00:53 GMT
-Received: from [10.50.58.122] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
- 01:00:49 -0800
-Message-ID: <75d01254-746b-4089-b717-e2ff49e500dd@quicinc.com>
-Date: Fri, 6 Dec 2024 14:30:46 +0530
+	s=arc-20240116; t=1733475677; c=relaxed/simple;
+	bh=1x0u9riat8kPFEsKvxvrEvzMJpAUfICf+XazPaTsegE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RdOtCLfq8BWADKNSRac8gmMhR0oPebj9jON+leJHr/2ZS+CiXiYBaZPr7I8vJg/8p8t0hYBFbTjoGY72Tq9QGRvZjIPaW2WiNDOdPpRtlQJGU0wG640jtYgk2P53bBOmCppAOQiz7jMTbYNIw9SD40HtouVfxs6FeiOInHeFUio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=R5mcBZlk; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1733475666;
+	bh=X3geVufKFha8U2gEPNSOrBEm2am/RCbYcSR/VBvB+jY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=R5mcBZlk1kZb26zMgduE6ypCEPutYgoUQT9MC/hv6sjUmbqBZG8DItVI96CGxBzXM
+	 rtWcMA+BxEwq5NJKC7hOD6ixGhasIuv4OSjvJ1EJDl5/IdcCU/LsxlbnEQzgddTjVR
+	 J4QITIMOncl9SLkHzKHFWOx7wzKog74z997TfZLs=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 44AE467033;
+	Fri,  6 Dec 2024 04:01:04 -0500 (EST)
+Message-ID: <1b73fbcfa3eab810d2e3e2ff886d2aa0991639f9.camel@xry111.site>
+Subject: Re: [PATCH AUTOSEL 6.11 13/15] MIPS: Loongson64: DTS: Really fix
+ PCIe port nodes for ls7a
+From: Xi Ruoyao <xry111@xry111.site>
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, si.yanteng@linux.dev,
+ davem@davemloft.net, 	jiaxun.yang@flygoat.com, devicetree@vger.kernel.org,
+ linux-mips@vger.kernel.org
+Date: Fri, 06 Dec 2024 17:01:02 +0800
+In-Reply-To: <20241204221726.2247988-13-sashal@kernel.org>
+References: <20241204221726.2247988-1-sashal@kernel.org>
+	 <20241204221726.2247988-13-sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: gcc-ipq5424: remove
- apss_dbg clock macro
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241205064037.1960323-1-quic_mmanikan@quicinc.com>
- <20241205064037.1960323-2-quic_mmanikan@quicinc.com>
- <vatyg3nkpillhyknyqe62myhmkp3nfbqwtltjcwfy2qhf4ez6j@iohbquyw6zsc>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <vatyg3nkpillhyknyqe62myhmkp3nfbqwtltjcwfy2qhf4ez6j@iohbquyw6zsc>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kOkWGSt4wi5J2PaGsrYmJe5dbRH5KGgf
-X-Proofpoint-GUID: kOkWGSt4wi5J2PaGsrYmJe5dbRH5KGgf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0
- suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060065
 
+On Wed, 2024-12-04 at 17:17 -0500, Sasha Levin wrote:
+> From: Xi Ruoyao <xry111@xry111.site>
+>=20
+> [ Upstream commit 4fbd66d8254cedfd1218393f39d83b6c07a01917 ]
+>=20
+> Fix the dtc warnings:
+>=20
+> =C2=A0=C2=A0=C2=A0 arch/mips/boot/dts/loongson/ls7a-pch.dtsi:68.16-416.5:=
+ Warning (interrupt_provider): /bus@10000000/pci@1a000000: '#interrupt-cell=
+s' found, but node is not an interrupt provider
+> =C2=A0=C2=A0=C2=A0 arch/mips/boot/dts/loongson/ls7a-pch.dtsi:68.16-416.5:=
+ Warning (interrupt_provider): /bus@10000000/pci@1a000000: '#interrupt-cell=
+s' found, but node is not an interrupt provider
+> =C2=A0=C2=A0=C2=A0 arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb=
+: Warning
+> (interrupt_map): Failed prerequisite 'interrupt_provider'
+>=20
+> And a runtime warning introduced in commit 045b14ca5c36 ("of: WARN on
+> deprecated #address-cells/#size-cells handling"):
 
+Is it better to drop this part from the the commit message?  The
+referred commit isn't in 6.11 or earlier.
 
-On 12/5/2024 3:57 PM, Krzysztof Kozlowski wrote:
-> On Thu, Dec 05, 2024 at 12:10:36PM +0530, Manikanta Mylavarapu wrote:
->> Since gcc_apss_dbg_clk has no consumers, the linux kernel will turn it
->> off. This causes a kernel crash because this clock is access protected
->> by trust zone. Therefore remove the gcc_apss_dbg_clk macro.
->>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>  include/dt-bindings/clock/qcom,ipq5424-gcc.h | 1 -
->>  1 file changed, 1 deletion(-)
->>
-> 
-> You did not even build your patches... This fails to compile.
-> 
+> =C2=A0=C2=A0=C2=A0 WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus=
+_n_addr_cells+0x9c/0xe0
+> =C2=A0=C2=A0=C2=A0 Missing '#address-cells' in /bus@10000000/pci@1a000000=
+/pci_bridge@9,0
+>=20
+> The fix is similar to commit d89a415ff8d5 ("MIPS: Loongson64: DTS: Fix PC=
+Ie
+> port nodes for ls7a"), which has fixed the issue for ls2k (despite its
+> subject mentions ls7a).
+>=20
+> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-Thank you for reviewing the patch and pointing out the issue.
-I apologize for the oversight. I build the entire series, but missed building this patch individually.
-Moving forward, I will ensure each patch is built separately to prevent this issue.
+/* snip */
 
-Thanks & Regards,
-Manikanta.
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
