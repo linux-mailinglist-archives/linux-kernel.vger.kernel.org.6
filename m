@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-434233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF789E6396
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:49:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0299E6398
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D0FB18859EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB971621A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB9D78B60;
-	Fri,  6 Dec 2024 01:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA4E80054;
+	Fri,  6 Dec 2024 01:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdQEP56w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVCnGO87"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3241D1758B;
-	Fri,  6 Dec 2024 01:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5454310957;
+	Fri,  6 Dec 2024 01:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733449778; cv=none; b=YCiHUn2O7if5DlFj8RP7Rg+j29qBcmLg9G5o7NceSu3TiE6jrDTTYf72rDynOOB5YXtXi50Ttu2geuSio5MeHdUWqtkglUyydyWq9UgsMkyXhUKLuXkI2t3t6vWqeOBoFkidmXXlNlU9Q00Tqjjl/AnswlDZtq9tTsHuOyFcvEU=
+	t=1733449809; cv=none; b=cDAGKxy/NJTvOb3ltWxNS4fx68Zz9ufm2ByfEhv0y9XYqyNYHDlOaeBeMd66y6t7Wi80u8LnQL+AQFpDtY1n6XuoLqDjRZ8Yh/21KGR6QzEMoKQH55X/gWrUcJ82ZTBUuyb+/Hob2mhvTgQTfTLq1ugeMNBdwFoM0KiIcKiYf30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733449778; c=relaxed/simple;
-	bh=L4DXv199Z3VF0FFNAtlfPHVec44fIh6kYkZfjqUvd2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bwOpTVSynkoRo8IK+XmznmnfeKWZ6/+XWV2j/zKM3BLe4G4VEofG//VuL95oaGpxc+NuFXUMF1k1dY8aitd1wA7C6kJ9gsvq7uBxlrhnZweHB6uzLns4HhjMLO/Ok39mLw7aBZAzQ+j/QMOLFYuHbYuQSA9xEfvuoCnQ3awhI6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdQEP56w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6830C4CED1;
-	Fri,  6 Dec 2024 01:49:36 +0000 (UTC)
+	s=arc-20240116; t=1733449809; c=relaxed/simple;
+	bh=bW65i811fDrjHfY/VxLUbPF+5BLD0cbq8jfzdEKjG/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P9KjrQRipxfgnXpGq11zXrFDE4LWCtdgmQOE34N8SzNFEYNxE+z/pyYN0RLE0TouxB+LGiIQ+jNihTQr+voZGiyeAuxF8dnLHAJDuVQbt5SgOoj601sUs+0bKH693aJTShEk3GVyMk1N+A6m0+U34m2x6nVr//78UZV3EC/ahYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVCnGO87; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD99DC4CED1;
+	Fri,  6 Dec 2024 01:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733449777;
-	bh=L4DXv199Z3VF0FFNAtlfPHVec44fIh6kYkZfjqUvd2E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=EdQEP56weDWGGpq3MZEWgWO2nZNrpnEwnoMicsmUyyunrex3x6Rbb89miDWIzDZfq
-	 4hfKYtzNbc0p7T1WcNCk7W2A3ix79OKIPhXNKMLPzcHWKygIeWmm2U7lRrpEq6A6V/
-	 ORmNSQ50Z+hDgyVpjl/J4ZdujO5PQMTlnKlwDzK2Ua/wk+Tp4XJsybYtQfNuXT4Uvr
-	 Kovgyqx8oW/S80i5AfSVEbyxfVUXzdlGiLaHbFFgPIsk4jsBU6Bo4ar49F85r3PLBi
-	 keCh/iopn5ZJ+joOsEO0xz2720Y1RFgpfkxir252Z8ySN78yCvpxtCEkJLh05Hbcrv
-	 0CtvB10R/3iig==
-Date: Thu, 5 Dec 2024 19:49:34 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
- the user
-Message-ID: <20241206014934.GA3081609@bhelgaas>
+	s=k20201202; t=1733449808;
+	bh=bW65i811fDrjHfY/VxLUbPF+5BLD0cbq8jfzdEKjG/8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EVCnGO874yBcBhXsba/iFWje7H0YxtyTVTO04Ogb11ZABhYXRhXWbMHl++OnBpNfC
+	 S+H75kBS+miuNu/GUv2cJ5lhyjkxt9I8kO1e6x7pYxKWWz7A0yVGHYnGd7PSDXUcYB
+	 zt/2zY+UR4wZXYaCup/MW1agfNpjA0+osNnFJ5qPq+bT7NEt/iFG5bsT+aVI9gsSeT
+	 PhPUQh8o3aX9mQe9cBF6TvD5Zl61qpgwzKYa9bt9F+bjxbvkPMpsNG/pP0HIof0B1M
+	 6/+A8f/EC4fSozZzYN/pK4BmJh8ew+mAye9h62q6no+zVdMEEkhnUGOnz90WdqX8wn
+	 NyyYxVOQOzqaw==
+Date: Thu, 5 Dec 2024 17:50:06 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jijie Shao <shaojijie@huawei.com>, <davem@davemloft.net>,
+ <edumazet@google.com>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+ <horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+ <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+ <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+ <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+ <jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+ <salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <hkelam@marvell.com>
+Subject: Re: [PATCH V4 RESEND net-next 1/7] net: hibmcge: Add debugfs
+ supported in this module
+Message-ID: <20241205175006.318f17d9@kernel.org>
+In-Reply-To: <20241203150131.3139399-2-shaojijie@huawei.com>
+References: <20241203150131.3139399-1-shaojijie@huawei.com>
+	<20241203150131.3139399-2-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205232900.GA3072557@bhelgaas>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 05:29:00PM -0600, Bjorn Helgaas wrote:
-> On Sat, Nov 23, 2024 at 02:31:13PM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Nov 22, 2024 at 04:20:50PM -0600, Bjorn Helgaas wrote:
-> > > On Mon, Nov 18, 2024 at 01:53:44PM +0530, Manivannan Sadhasivam wrote:
-> > > > PCI core allows users to configure the D3Cold state for each PCI
-> > > > device through the sysfs attribute
-> > > > '/sys/bus/pci/devices/.../d3cold_allowed'. This attribute sets
-> > > > the 'pci_dev:d3cold_allowed' flag and could be used by users to
-> > > > allow/disallow the PCI devices to enter D3Cold during system
-> > > > suspend.
-> ...
+On Tue, 3 Dec 2024 23:01:25 +0800 Jijie Shao wrote:
+> +static void hbg_debugfs_uninit(void *data)
+> +{
+> +	debugfs_remove_recursive((struct dentry *)data);
+> +}
+> +
+> +void hbg_debugfs_init(struct hbg_priv *priv)
+> +{
+> +	const char *name = pci_name(priv->pdev);
+> +	struct device *dev = &priv->pdev->dev;
+> +	struct dentry *root;
+> +	u32 i;
+> +
+> +	root = debugfs_create_dir(name, hbg_dbgfs_root);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(hbg_dbg_infos); i++)
+> +		debugfs_create_devm_seqfile(dev, hbg_dbg_infos[i].name,
+> +					    root, hbg_dbg_infos[i].read);
+> +
+> +	/* Ignore the failure because debugfs is not a key feature. */
+> +	devm_add_action_or_reset(dev, hbg_debugfs_uninit, root);
 
-> > We did attempt to solve this problem in multiple ways, but the
-> > lesson learned was, kernel cannot decide the power mode without help
-> > from userspace. That's the reason I wanted to make use of this
-> > 'd3cold_allowed' sysfs attribute to allow userspace to override the
-> > D3Cold if it wants based on platform requirement.
-> 
-> It seems sub-optimal that this only works how you want if the user
-> intervenes.
+There is nothing specific to this driver in the devm action,
+also no need to create all files as devm if you remove recursive..
 
-Oops, I think I got this part backwards.  The patch uses PCI PM if
-d3cold_allowed is set, and it's set by default, so it does what you
-need for the Qualcomm platform *without* user intervention.
-
-But I guess using the flag allows users in other situations to force
-use of NVMe power management by clearing d3cold_allowed via sysfs.
-Does that mean some unspecified other platforms might only work
-correctly with that user intervention?
+Hi Greg, are you okay with adding debugfs_create_devm_dir() ?
 
