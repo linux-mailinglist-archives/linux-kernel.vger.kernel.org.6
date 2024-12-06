@@ -1,255 +1,195 @@
-Return-Path: <linux-kernel+bounces-435064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9A59E6EF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:12:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D954E9E6F01
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:12:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819861885E2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:08:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA0C1881927
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00720201278;
-	Fri,  6 Dec 2024 13:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="E7JWWcnG"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A456204F91;
+	Fri,  6 Dec 2024 13:08:50 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E7C1C1F19;
-	Fri,  6 Dec 2024 13:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73B81EE02E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490484; cv=none; b=l5MWu9URYgBMUhdYUm8Ts8xYGFEWZu34DcZd850yLXyEcV9WIeU8yTygR9x3IDMUYoNU7keGJjf8Zbe+FyHye8BK8W7pvyLg5HFh3uTmX66nI2YUZ8+O2tjN+l0x8ohiP6HAc8zhXJ0fvNx0/aEZFz/H92iBkIJt85VYvuMzfNQ=
+	t=1733490529; cv=none; b=iGS2pqYpniTsRR+iWcXmM4d8plT1v3Q+Ual2uEP1IsSPbV2TISuX0FbIB513pAYb/ZB/GzX5UVxAgRy3sTv1KRB7Nnbzfy3T4W/4cN9NK4bivbxFVdYWOpaECJyhaLJiokkwHmEI4W3c9ItmCJNI8fpGzFcAvLtR8QcpEh4Y2EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490484; c=relaxed/simple;
-	bh=1ixYuV9vn+tvWWMjI9qcrLzeMtCAsGWYRbir1E1avq8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s+eHmZG0oyRzO9E6fyf2PjZSp0hStPyh1eYjXpoe6AkQqCvilAMzElZv4R405NX4OmiH/p17nelMD+kS75XjStoc3SGHm14S7+Pxsn74qxNDH87VAc2baLRNqqgsroadzNeorq4tlZJZe7memahRX81bSjV6wYUDH8dV+NguPRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=E7JWWcnG; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1733490481;
-	bh=XnKm59ylPYPwoM2DkN4Cx3zBQck18EMZi4AXKvhtbWo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E7JWWcnG1+tJLydCqLAwS1NH5On7Gx6kfN9sRI2Ava1ePlhNZ1oVGZUUMpr2Mfb3x
-	 T+PMUlh7kW9ltKamp7Ssg+cSNOukT1ZHR04gyTjbj+BIeRycG2ti5+on178Di/xb7n
-	 7DnQSmJU5jRYDj9mk4pGWk0QPUy60JrD/h+AoKDU=
-Received: from stargazer.. (unknown [113.200.174.114])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 14E6C6748E;
-	Fri,  6 Dec 2024 08:07:59 -0500 (EST)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Shuah Khan <shuah@kernel.org>,
-	Fangrui Song <i@maskray.me>,
-	linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH v3] selftests/vDSO: support DT_GNU_HASH
-Date: Fri,  6 Dec 2024 21:07:25 +0800
-Message-ID: <20241206130724.7944-2-xry111@xry111.site>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <297cfe11-0418-4633-8c15-4ffc7d290a3d@linuxfoundation.org>
-References: <297cfe11-0418-4633-8c15-4ffc7d290a3d@linuxfoundation.org>
+	s=arc-20240116; t=1733490529; c=relaxed/simple;
+	bh=QF8c2MhUemDCUpYqGQBweZ1Ws7IWDc/WAQA2tfJjVVU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=fsBRufi/sp2nA8jGo3LkrhB9wWZETsYrZvt0czDMyz8Bv020ndJWKN90ezujEgFpn0R6R4ZV9LXTTcLbgCbzF2KICfZHJ1KxxZc5Hyp1/VOiSmTBCLIV1m4aT7wz4B7OR+xaG7HgOtYQqILtwNkho9E4/VpiQPmqhFtAOGwdN8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-168-rEnKtWNUMFWeQM5TnnsDWQ-1; Fri, 06 Dec 2024 13:08:45 +0000
+X-MC-Unique: rEnKtWNUMFWeQM5TnnsDWQ-1
+X-Mimecast-MFC-AGG-ID: rEnKtWNUMFWeQM5TnnsDWQ
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 13:07:59 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 13:07:59 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Julian Anastasov' <ja@ssi.bg>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 'Naresh Kamboju'
+	<naresh.kamboju@linaro.org>, 'Dan Carpenter' <dan.carpenter@linaro.org>,
+	"'pablo@netfilter.org'" <pablo@netfilter.org>, 'open list'
+	<linux-kernel@vger.kernel.org>, "'lkft-triage@lists.linaro.org'"
+	<lkft-triage@lists.linaro.org>, 'Linux Regressions'
+	<regressions@lists.linux.dev>, 'Linux ARM'
+	<linux-arm-kernel@lists.infradead.org>, "'netfilter-devel@vger.kernel.org'"
+	<netfilter-devel@vger.kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, "'Anders
+ Roxell'" <anders.roxell@linaro.org>, 'Johannes Berg'
+	<johannes.berg@intel.com>, "'toke@kernel.org'" <toke@kernel.org>, 'Al Viro'
+	<viro@zeniv.linux.org.uk>, "'kernel@jfarr.cc'" <kernel@jfarr.cc>,
+	"'kees@kernel.org'" <kees@kernel.org>
+Subject: RE: [PATCH net] Fix clamp() of ip_vs_conn_tab on small memory
+ systems.
+Thread-Topic: [PATCH net] Fix clamp() of ip_vs_conn_tab on small memory
+ systems.
+Thread-Index: AdtHyTlbE/fm67s0Ria1gsbgnJ6KcgAD9raAAACnwVA=
+Date: Fri, 6 Dec 2024 13:07:59 +0000
+Message-ID: <2a91ee407ed64d24b82e5fc665971add@AcuMS.aculab.com>
+References: <33893212b1cc4a418cec09aeeed0a9fc@AcuMS.aculab.com>
+ <5ec10e7c-d050-dab8-1f1b-d0ca2d922eef@ssi.bg>
+In-Reply-To: <5ec10e7c-d050-dab8-1f1b-d0ca2d922eef@ssi.bg>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: R0Wd8CprcEuWDo08-pVRES0KYPZuqHZpqUqda5PoGxw_1733490524
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Fangrui Song <i@maskray.me>
+From: Julian Anastasov
+> Sent: 06 December 2024 12:19
+>=20
+> On Fri, 6 Dec 2024, David Laight wrote:
+>=20
+> > The intention of the code seems to be that the minimum table
+> > size should be 256 (1 << min).
+> > However the code uses max =3D clamp(20, 5, max_avail) which implies
+>=20
+> =09Actually, it tries to reduce max=3D20 (max possible) below
+> max_avail: [8 .. max_avail]. Not sure what 5 is here...
 
-glibc added support for DT_GNU_HASH in 2006 and DT_HASH has been
-obsoleted for more than one decade in many Linux distributions.
+Me mistyping values between two windows :-)
 
-Many vDSOs support DT_GNU_HASH. This patch adds selftests support.
+Well min(max, max_avail) would be the reduced upper limit.
+But you'd still fall foul of the compiler propagating the 'n > 1'
+check in order_base_2() further down the function.
 
-Signed-off-by: Fangrui Song <i@maskray.me>
-Tested-by: Xi Ruoyao <xry111@xry111.site>
-Signed-off-by: Xi Ruoyao <xry111@xry111.site> # rebase
----
- tools/testing/selftests/vDSO/parse_vdso.c | 110 ++++++++++++++++------
- 1 file changed, 82 insertions(+), 28 deletions(-)
+> > the author thought max_avail could be less than 5.
+> > But clamp(val, min, max) is only well defined for max >=3D min.
+> > If max < min whether is returns min or max depends on the order of
+> > the comparisons.
+>=20
+> =09Looks like max_avail goes below 8 ? What value you see
+> for such small system?
 
-diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
-index 28f35620c499..2fe5e983cb22 100644
---- a/tools/testing/selftests/vDSO/parse_vdso.c
-+++ b/tools/testing/selftests/vDSO/parse_vdso.c
-@@ -53,6 +53,7 @@ static struct vdso_info
- 	/* Symbol table */
- 	ELF(Sym) *symtab;
- 	const char *symstrings;
-+	ELF(Word) *gnu_hash;
- 	ELF_HASH_ENTRY *bucket, *chain;
- 	ELF_HASH_ENTRY nbucket, nchain;
- 
-@@ -81,6 +82,16 @@ static unsigned long elf_hash(const char *name)
- 	return h;
- }
- 
-+static uint32_t gnu_hash(const char *name)
-+{
-+	const unsigned char *s = (void *)name;
-+	uint32_t h = 5381;
-+
-+	for (; *s; s++)
-+		h += h * 32 + *s;
-+	return h;
-+}
-+
- void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- {
- 	size_t i;
-@@ -123,6 +134,7 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- 	 */
- 	ELF_HASH_ENTRY *hash = 0;
- 	vdso_info.symstrings = 0;
-+	vdso_info.gnu_hash = 0;
- 	vdso_info.symtab = 0;
- 	vdso_info.versym = 0;
- 	vdso_info.verdef = 0;
-@@ -143,6 +155,11 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- 				((uintptr_t)dyn[i].d_un.d_ptr
- 				 + vdso_info.load_offset);
- 			break;
-+		case DT_GNU_HASH:
-+			vdso_info.gnu_hash =
-+				(ELF(Word) *)((uintptr_t)dyn[i].d_un.d_ptr +
-+					      vdso_info.load_offset);
-+			break;
- 		case DT_VERSYM:
- 			vdso_info.versym = (ELF(Versym) *)
- 				((uintptr_t)dyn[i].d_un.d_ptr
-@@ -155,17 +172,27 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
- 			break;
- 		}
- 	}
--	if (!vdso_info.symstrings || !vdso_info.symtab || !hash)
-+	if (!vdso_info.symstrings || !vdso_info.symtab ||
-+	    (!hash && !vdso_info.gnu_hash))
- 		return;  /* Failed */
- 
- 	if (!vdso_info.verdef)
- 		vdso_info.versym = 0;
- 
- 	/* Parse the hash table header. */
--	vdso_info.nbucket = hash[0];
--	vdso_info.nchain = hash[1];
--	vdso_info.bucket = &hash[2];
--	vdso_info.chain = &hash[vdso_info.nbucket + 2];
-+	if (vdso_info.gnu_hash) {
-+		vdso_info.nbucket = vdso_info.gnu_hash[0];
-+		/* The bucket array is located after the header (4 uint32) and the bloom
-+		 * filter (size_t array of gnu_hash[2] elements).
-+		 */
-+		vdso_info.bucket = vdso_info.gnu_hash + 4 +
-+				   sizeof(size_t) / 4 * vdso_info.gnu_hash[2];
-+	} else {
-+		vdso_info.nbucket = hash[0];
-+		vdso_info.nchain = hash[1];
-+		vdso_info.bucket = &hash[2];
-+		vdso_info.chain = &hash[vdso_info.nbucket + 2];
-+	}
- 
- 	/* That's all we need. */
- 	vdso_info.valid = true;
-@@ -209,6 +236,26 @@ static bool vdso_match_version(ELF(Versym) ver,
- 		&& !strcmp(name, vdso_info.symstrings + aux->vda_name);
- }
- 
-+static bool check_sym(ELF(Sym) *sym, ELF(Word) i, const char *name,
-+		      const char *version, unsigned long ver_hash)
-+{
-+	/* Check for a defined global or weak function w/ right name. */
-+	if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
-+		return false;
-+	if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
-+	    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
-+		return false;
-+	if (strcmp(name, vdso_info.symstrings + sym->st_name))
-+		return false;
-+
-+	/* Check symbol version. */
-+	if (vdso_info.versym &&
-+	    !vdso_match_version(vdso_info.versym[i], version, ver_hash))
-+		return false;
-+
-+	return true;
-+}
-+
- void *vdso_sym(const char *version, const char *name)
- {
- 	unsigned long ver_hash;
-@@ -216,29 +263,36 @@ void *vdso_sym(const char *version, const char *name)
- 		return 0;
- 
- 	ver_hash = elf_hash(version);
--	ELF(Word) chain = vdso_info.bucket[elf_hash(name) % vdso_info.nbucket];
+I'm not, but clearly you thought the value could be small otherwise
+the code would only have a 'max' limit.
+(Apart from a 'sanity' min of maybe 2 to stop the code breaking.)
+
+>=20
+> > Change to clamp(max_avail, 5, 20) which has the expected behaviour.
+>=20
+> =09It should be clamp(max_avail, 8, 20)
+>=20
+> >
+> > Replace the clamp_val() on the line below with clamp().
+> > clamp_val() is just 'an accident waiting to happen' and not needed here=
+.
+>=20
+> =09OK
+>=20
+> > Fixes: 4f325e26277b6
+> > (Although I actually doubt the code is used on small memory systems.)
+> >
+> > Detected by compile time checks added to clamp(), specifically:
+> > minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
+>=20
+> =09Existing or new check? Does it happen that max_avail
+> is a constant, so that a compile check triggers?
+
+Is all stems from order_base_2(totalram_pages()).
+order_base_2(n) is 'n > 1 ? ilog2(n - 1) + 1 : 0'.
+And the compiler generates two copies of the code that follows
+for the 'constant zero' and ilog2() values.
+And the 'zero' case compiles clamp(20, 8, 0) which is errored.
+Note that it is only executed if totalram_pages() is zero,
+but it is always compiled 'just in case'.
+
+>=20
+> >
+> > Signed-off-by: David Laight <david.laight@aculab.com>
+>=20
+> =09The code below looks ok to me but can you change the
+> comments above to more correctly specify the values and if the
+> problem is that max_avail goes below 8 (min).
+>=20
+> > ---
+> >  net/netfilter/ipvs/ip_vs_conn.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs=
+_conn.c
+> > index 98d7dbe3d787..c0289f83f96d 100644
+> > --- a/net/netfilter/ipvs/ip_vs_conn.c
+> > +++ b/net/netfilter/ipvs/ip_vs_conn.c
+> > @@ -1495,8 +1495,8 @@ int __init ip_vs_conn_init(void)
+> >  =09max_avail -=3D 2;=09=09/* ~4 in hash row */
+> >  =09max_avail -=3D 1;=09=09/* IPVS up to 1/2 of mem */
+> >  =09max_avail -=3D order_base_2(sizeof(struct ip_vs_conn));
+>=20
+> =09More likely we can additionally clamp max_avail here:
+>=20
+> =09max_avail =3D max(min, max_avail);
+>=20
+> =09But your solution solves the problem with less lines.
+
+And less code in the path that is actually executed.
+
+=09David
+
+>=20
+> > -=09max =3D clamp(max, min, max_avail);
+> > -=09ip_vs_conn_tab_bits =3D clamp_val(ip_vs_conn_tab_bits, min, max);
+> > +=09max =3D clamp(max_avail, min, max);
+> > +=09ip_vs_conn_tab_bits =3D clamp(ip_vs_conn_tab_bits, min, max);
+> >  =09ip_vs_conn_tab_size =3D 1 << ip_vs_conn_tab_bits;
+> >  =09ip_vs_conn_tab_mask =3D ip_vs_conn_tab_size - 1;
+> >
+> > --
+> > 2.17.1
+>=20
+> Regards
+>=20
+> --
+> Julian Anastasov <ja@ssi.bg>
+
 -
--	for (; chain != STN_UNDEF; chain = vdso_info.chain[chain]) {
--		ELF(Sym) *sym = &vdso_info.symtab[chain];
--
--		/* Check for a defined global or weak function w/ right name. */
--		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
--			continue;
--		if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
--		    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
--			continue;
--		if (sym->st_shndx == SHN_UNDEF)
--			continue;
--		if (strcmp(name, vdso_info.symstrings + sym->st_name))
--			continue;
--
--		/* Check symbol version. */
--		if (vdso_info.versym
--		    && !vdso_match_version(vdso_info.versym[chain],
--					   version, ver_hash))
--			continue;
--
--		return (void *)(vdso_info.load_offset + sym->st_value);
-+	ELF(Word) i;
-+
-+	if (vdso_info.gnu_hash) {
-+		uint32_t h1 = gnu_hash(name), h2, *hashval;
-+
-+		i = vdso_info.bucket[h1 % vdso_info.nbucket];
-+		if (i == 0)
-+			return 0;
-+		h1 |= 1;
-+		hashval = vdso_info.bucket + vdso_info.nbucket +
-+			  (i - vdso_info.gnu_hash[1]);
-+		for (;; i++) {
-+			ELF(Sym) *sym = &vdso_info.symtab[i];
-+			h2 = *hashval++;
-+			if (h1 == (h2 | 1) &&
-+			    check_sym(sym, i, name, version, ver_hash))
-+				return (void *)(vdso_info.load_offset +
-+						sym->st_value);
-+			if (h2 & 1)
-+				break;
-+		}
-+	} else {
-+		i = vdso_info.bucket[elf_hash(name) % vdso_info.nbucket];
-+		for (; i; i = vdso_info.chain[i]) {
-+			ELF(Sym) *sym = &vdso_info.symtab[i];
-+			if (sym->st_shndx != SHN_UNDEF &&
-+			    check_sym(sym, i, name, version, ver_hash))
-+				return (void *)(vdso_info.load_offset +
-+						sym->st_value);
-+		}
- 	}
- 
- 	return 0;
-
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
--- 
-2.47.1
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
