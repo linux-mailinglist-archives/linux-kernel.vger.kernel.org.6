@@ -1,278 +1,573 @@
-Return-Path: <linux-kernel+bounces-434559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75169E683A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9949E683D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81CEF28593B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BAB128451F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04491DB94F;
-	Fri,  6 Dec 2024 07:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A001DDC38;
+	Fri,  6 Dec 2024 07:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QI1XjUEA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="bMF2YOqh"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D550B197548;
-	Fri,  6 Dec 2024 07:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733471463; cv=fail; b=YL4+cCo8N//Z6uszvY8W0M/HBgL4Smj5X+l8l0psghVN+PYyIECCthR686xjBYEk2Mq9na5acWXt5myaAaj6MfNU8Y0NBf54/rTNbiLv5Jw9FiT2cXaIeYRJ/ua1nBypMSJdwNncBCyd0uz8tILs7SfZ73ZlCcBwqXiuTNadFGo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733471463; c=relaxed/simple;
-	bh=IFgT+V1XuK6aet/dSYcLVF1+A8Mm1Y1eGPCEmQfSzx8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Znf/i8ehzFvdHx3LKpa5/BNTiAiqMEPAuF0suNrN3i4v6qfmcThud7C9cWdMyybsHsOWAwbm6SUl0k2ELYqpuaveIuwZLCLjUtsfLXGfWXWlvLKGpnP0y0W5B5TBl2OGIwfV7L1LhG86RSIGnm2ZC8xs26xHqDrSQM5pC5pNYAA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QI1XjUEA; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733471460; x=1765007460;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=IFgT+V1XuK6aet/dSYcLVF1+A8Mm1Y1eGPCEmQfSzx8=;
-  b=QI1XjUEAyWsdjXU2BX+WLuvllFzdtMS2TbyMWrjd5TfPOKYfPLPJC5vQ
-   E8E/Be1cmJjoHh6uLnxDr3wibxyC1OZ7wHMKoAi77KuhGf5HEtYzzl3bQ
-   cNJNw64lCuQLIbug/BY6TBLpD6zg3+VHFW7ijUtAczwDWmZ4Ucn/AuzGE
-   Z0Ac5/9ttR+duzFQiCuYMnlMOJt8HytNVpTJ5ymMr/MQFRowm0VukbPed
-   zQptV0hP85AH3bZF9QbNxif4NG9Vv8I9UFUUdUWRAu2tf236+G9jvx/3C
-   q9p6jEuKQkCxxVYkowymTKBTYHBCnbyW/J10RE62GGsUpvGlQ9o9eINDl
-   g==;
-X-CSE-ConnectionGUID: n9mEvH51QWqssHOg8vIV4g==
-X-CSE-MsgGUID: 62L9L6BHQ5CDlxIsjWv1wA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="45192223"
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="45192223"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 23:51:00 -0800
-X-CSE-ConnectionGUID: OYx+GhFcQ+me3QOcg1uAKA==
-X-CSE-MsgGUID: vCQD+OTFQVOs3P2VNV2ZKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="94141750"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Dec 2024 23:51:01 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 5 Dec 2024 23:50:59 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 5 Dec 2024 23:50:59 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.40) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 5 Dec 2024 23:50:59 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WSgBVSElvmcSiowXXW/AxWZ7YLnJpPynAnRapqUQkaWfZFrH+tFEw4WnKooNFw7xTXrSX7R7vPlW36ttuIA0tOJI5vCFIHDYkPJHN7BM2apVT9G4n7W9pYUv2Fit+gwsUTaA59Qe8xrrzwq4ri3hpzpVZvdOSUekj/p04GCClE1IzHw15OiuqLB77/aTbrjMiGJ4wcFbhBHm3foc5JK7q3MGFlSfxSB+SXxOPzlEtWe2ra71DYkZm++uCQCg+vt9ExJtjc38KbLCgJC/pc5XvfrH7laCNAoaBc3Woy7xFrxLGT0oFZBlJgogZpr5EEaoS2aFhVm6/iCQMchIYSqpRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TaBxPUD3j7GV3+1RG+22CFgP3DrePUpfc9eKtOWncx4=;
- b=DAmSL0RyZzpq31I47N0dlh+8e/5g7jS2Lmt2+PRzeSSyIH7IxlhBRkye4yCdYrQCT1O2p/WQBgoaMkbSEZGre29Fb/KYUiuAyNC5hq4LvsAoGh6nYj8AXeSfN822DREoH7VwS6731h/Men5tdzyLVunwuzWtqRGTj3wng/Ddk1PFeGj0tj6PKCGaIrL/rvawlogRjr7smFgqTRPLXkj1mdTm94YvBcKtZbr3JZOcD4/9ILNChCfsB9Fxckxk415dOi+vFkuGRRugCO+cYGMXe7oMfYgYRBU0CfxsCTFkHsvlJ9ww/Zpy6ptVfEP4m4k8beGGpeJ40oGIpxUCEHBMrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by MW4PR11MB5892.namprd11.prod.outlook.com (2603:10b6:303:16a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
- 2024 07:50:52 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
- 07:50:52 +0000
-Date: Thu, 5 Dec 2024 23:50:49 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>, Dan Williams
-	<dan.j.williams@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>
-CC: <bharata@amd.com>, Huang Ying <ying.huang@intel.com>, Andrew Morton
-	<akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Alistair Popple <apopple@nvidia.com>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
-	<ilpo.jarvinen@linux.intel.com>, Mika Westerberg
-	<mika.westerberg@linux.intel.com>, Fontenot Nathan <Nathan.Fontenot@amd.com>,
-	Wei Huang <wei.huang2@amd.com>, <regressions@lists.linux.dev>
-Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
-Message-ID: <6752acd92baf0_10a08329424@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
- <674fd2b4942f1_3e0f629420@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <33b4b93b-5ab6-4a3b-b3b2-c9b3cbc9d929@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <33b4b93b-5ab6-4a3b-b3b2-c9b3cbc9d929@amd.com>
-X-ClientProxiedBy: MW4PR02CA0004.namprd02.prod.outlook.com
- (2603:10b6:303:16d::19) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F22197548
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 07:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733471488; cv=none; b=QCIgLxDdZLtfhZ5E8FpLy0Yf9zsbJCAQ8G8hi7ti7TMl14+ihYQ8PmD7GkQA98IJU06gFCJdIE/GRjN24jUwwPfzK5zD7ZBRbGD24hhz4zBAHEXGUApEevTSLM0qUEQ5+Dzgz85dTqjd6epoqDESh7Fug5dNAVTuyLyfMP662q0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733471488; c=relaxed/simple;
+	bh=n+Pyzq+wC+5vFfME+mElXfKguUlc7V4KQGES2ype71A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=gJHtPgLWXIX2qJQSeGOKHOY2B0d17ROSpB4QNSGAMPDoMzJ+vWgROVGqaYOY6xx295sIpmNODs8+QylBz4dEacm28WW86JuzaYkDISOSxMXk5DzdOEjmPHduv7l2+Ep/cuj80lyOVC5HldmevKru9Q5obBZHbGY8zt48MjeMt9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=bMF2YOqh; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4349f160d62so12248255e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 23:51:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1733471484; x=1734076284; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rtF2AzVJ+m1dlr0KVksDDm3jCCBe3fegi9uwgdV42W0=;
+        b=bMF2YOqhwevrYHaMyNn+7w8cd631NpspuJ81Fb7gljRuEKQehuaMYxj6hWjrmZaK4p
+         +nB9gq+VWDvva2Cjti+XM0leFUj8TpNoM8oR4XA3wuIjYKEDseCFX12DxsDMIByT94Gi
+         EiaN1j0EtOFhXqfDDx4+3x9LIkrY4/9DfbjNJygO/UYpUTu74hGhoW4cyckJW7Jiar7m
+         DppWxRTIpwFTVcptbJDnEPl0rYiP0WCg97XHe0Wqq3cSLAywx/kZ6T4MfgQPp0ecJyij
+         OeSR798n15mfXtfMBCiwD7g/CO6TJOtXleCujwUa06Mb236/BBfCzdcZz+dqxYgEmP9t
+         rFnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733471484; x=1734076284;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rtF2AzVJ+m1dlr0KVksDDm3jCCBe3fegi9uwgdV42W0=;
+        b=E3faLWOUtHBpoYeRpKyupsl0g/ckQAEVdNY136xSCtPlfg0IghIvYuW0BFhzylHT9c
+         ouSiFljqgcUWjftEBnfd572O++HxjBzqhXsyMW+3L5644muf9V0AcqInQflW+D653P8w
+         KAM/2z5RZV+d5G9xcwibknTmWc5nOPaacoSs3cjy5xgxj2ns9G2A0lS7jdSAAq7Qexib
+         8TQPAUW2SVk/m8KAywfRE+EktkkJb3Pz0fb9QLmYlvhM8yvICmxMNtOxSyRMUanN9yy9
+         ieGIWW//IXFLNipONKA5cPNCSTnW0dDodRltwWKZBVX46yF7ceVIhUEJ9ByLSBhszt3T
+         YOYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU43Oa4CutMBoSjvvESDvS/VpmfYgzXV/0xVA8fSIZBpVdJ1L1yTWe5DzkJUsKr8dGPkXfg5h4fj8lZ4O4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYgvML1KGB7mopMxouR4GlPzzu6x5EBhlCCdFXkX242Zkt7aT9
+	UrFs1jqByuMMcT9Xcg+HLSiCCVowCI2ofM7y5EvQUIWiYcaGVhlWxF1ePoXj5K0=
+X-Gm-Gg: ASbGnct4ytLU9wrvc1RqwnlA1fahBhE9gWo8AAkpCyTuWnGW6dwnF53aYOxeULJd+Fw
+	V4kn1yZvB+mQcZ6t3mAdhsDLRfymSd94P6gjh5ZSZa32j7ky4r0DSROCnS7Hm9n1jOBGDheLubv
+	TTWHyfSzAl9LDlqdNhgTIJd23YDNrotUNGF52tTYqKC9FWnT0yAiV6ulCp0qamw0cMt1JXoMMqF
+	pbPRbzj8/yvHCIzxrIiCyPOG/N8Mbu7nEsA8fpsnv38cPJCXQ==
+X-Google-Smtp-Source: AGHT+IE5fZ/i7z7N2nXmNIPVv1fmyaLiPz/XOt9gQ0D8TNBC3UISXUH544FlgQA3hcVUMGlt3gRdWw==
+X-Received: by 2002:a05:600c:3c9c:b0:434:a10f:c3 with SMTP id 5b1f17b1804b1-434ddeb49bcmr16655415e9.9.1733471484212;
+        Thu, 05 Dec 2024 23:51:24 -0800 (PST)
+Received: from localhost ([41.66.99.84])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273199sm85839435e9.14.2024.12.05.23.51.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 23:51:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|MW4PR11MB5892:EE_
-X-MS-Office365-Filtering-Correlation-Id: cdd4e36b-d9ca-4e92-47ff-08dd15cab535
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?LzxmoHfQZ4iez0k6BSJ73Ikcn61/1xCXcngKvNRM/EJErtYSpie6WgFFaED2?=
- =?us-ascii?Q?By2vxXXRkfibgxRg4cFXQlUrEWx93NbQepH8eckb8GIlwAt7pioV1qDFy4ch?=
- =?us-ascii?Q?LxU7cafc9qPeDseUJjrSTl6O5G1K37wjk2Po39E4CMAnglpfKFMSmr9WHKMz?=
- =?us-ascii?Q?XZmS7htIIikp6aGQbPX1tHEs+e444FuOx6Vs7l+zDDX83yu8kBu041PGCUSr?=
- =?us-ascii?Q?iZHQzLEPLNmRG/FdFaNxqjZ5+BBRsAJ8N4PmyWz81M8sjvZVD9Jgn+5PQe2y?=
- =?us-ascii?Q?ZwglOWZO/39rMThplfJGgSmvi9wYUI7uQfdIDuxgJTl8wlsT2FNpoBaPUFMX?=
- =?us-ascii?Q?oUnNkY8sb+cUVN3qvkLQr3oPHS54CfG72F3if4sWqeYp+IAAO6ecTUt6apZ9?=
- =?us-ascii?Q?jQZEyzuAedojJy8th9vcAJipcvQN7OWgSX0+PN4/0ZooltiwhRkRp1QGgm+6?=
- =?us-ascii?Q?DFAoPX20UX11DKPt+l3E1Y2JapXHmTDOcvrw2xa2kB4OsWgaZOFPRT5JqrN+?=
- =?us-ascii?Q?pz+TIiWWSPBZaGY5ow8WtF5zXlsG5eBPgoXTqsFssiTvM8Y9Ffj+bQZWrI5d?=
- =?us-ascii?Q?3CtpxVYul0LogE4t8+wiw0TBzOXHR2g+oxlkzzdCOwawV3FpS/0/DFcj9cSx?=
- =?us-ascii?Q?QQIq9zmD4XjfAKhfcauYhuMfIxmgl4vJzhIYtpeLr3esLi+hVSWEIGQcw2kg?=
- =?us-ascii?Q?bLWBHQ3dBM44bE/doJADaEbMMDPa7SzenDt1C/nIV2rSx/Y97OchNYv0uzej?=
- =?us-ascii?Q?aZMblhVG5YflWCr1rJD4c2ug8oDLVLfcwitxS2qkBeEBKv4tPvve7oDkvFvs?=
- =?us-ascii?Q?zzqbo80b1CJnj7I/ARTmRkv44JYH4PNFYvNYwhvYm/PvxnrdvZoPhmbR4ZAx?=
- =?us-ascii?Q?X7vCDvgLafNuxxLwLrWQoC/kcs4UTFYLsVCc7jBvv1HueBpKc1x4m8SfaK5c?=
- =?us-ascii?Q?WvDDQS9tKqw8ZK3xbm8nfmDbrzZ5fEIb4adNiZY3DG4IPC0aI1CIM340lNZg?=
- =?us-ascii?Q?xEOpXQHkB61T4c5bF/+ZRaVQzsa22tVazWOAyFk69eBUDtiNFWoAuCisOdki?=
- =?us-ascii?Q?k/RNOnQXC8T8EfqhOofQwo3YPau4wYU2bg9tTEc0cVDA30k8qx12dijQjW7N?=
- =?us-ascii?Q?8gLf1iLdSNF3tKxPOHUfH76n7m/6i6LTonTq8qoo5LikEDTnEi3r8Mrmq9Hb?=
- =?us-ascii?Q?1na0AgU2x3VVEw7RneWlUAU2G1mPmJB2+7bJf+j+/C6Jdy+27lCx4+DPeJWl?=
- =?us-ascii?Q?Gcg9vReXr6RCRztV/8L7ZwUFcZtxRZ4fOS1EcnqU03XYI/VBGKxMBAvS063z?=
- =?us-ascii?Q?Agyf7I+uB+nhQtqNDJI1QVwu+XrA2v1C+C0inn7n3uOlMQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oUarTb4BA4SJnRppEPsLRbdT6YjY5lcbzbBm2vyGV6dTPBHsPkMuZeJnblIH?=
- =?us-ascii?Q?b2Rhu0HywUpI8Y+nlsbU8WAu9rhKUOgVmytJrVaxMWwzrgdmQZb2uZwtcpGc?=
- =?us-ascii?Q?OLy64vzlRxLDN3y3QGlZJvbgn/4TVULzpsaM+OUP4rLoQohU4Sw+Dt6m4hVl?=
- =?us-ascii?Q?PhVlL4rcDai1at4Q1mFl55nlITSXk0RyGz0lbK3JkvDUWzsJUWiWrKVvqx++?=
- =?us-ascii?Q?bTZTzT0fj/UbpXcDkE2UVFRYct89T4l4yw7toc4echWkXv8XNEZ0cPBvPJaP?=
- =?us-ascii?Q?D3P+Ban5x4o0is2RoLptT+CbZ/657xGWJ/gWIUHKdiFD+eIlu/D+TWipqLzp?=
- =?us-ascii?Q?k7FWdvJrLGz+akw9hPQCdEcwLTcRCCWooLNbkl/H6kF8BIwIQrjG43W4xXWX?=
- =?us-ascii?Q?n1TgyPQq3XlcyXN92Fg1z6JE+9uU0B+Vo8loKXQlhPEqDOzyMdkjliWnppXw?=
- =?us-ascii?Q?ADmmGg9hxGffesmH+x05o1WzBdqVmD8BlbIkQ8smMO2OED3w3c/oYcKxDSDN?=
- =?us-ascii?Q?WhjhuDmA8Pam0iPaHSJ+tsGdns5VHNHRFfTPBMuG4ThaJEEwgEpjpuWWc/P/?=
- =?us-ascii?Q?48nyktwckogriFK05exhGXiP8lECC8y8XFmgPHy3zlfnGE+Ym0CAbjsKGIB2?=
- =?us-ascii?Q?tDPkq/bouyj5mOO4T79opSgt+Z9xT0kdvqWv5F6LGY/mF4zTmRyB/dG2Qyg/?=
- =?us-ascii?Q?XouZB9gxN6o8K1128ehRiw12LcGY31Lpie2IqlXMZdAkQRn3AvgYja347ykz?=
- =?us-ascii?Q?j0A1Igj1xez9THpQzI83lMCniOeJ8DAyQ+lxoHkEktrk/YgEtbgSkoebjiU6?=
- =?us-ascii?Q?8Geylgda064TMhnioo+pbcruT5FfeZ+wGy2sMM6P4Bh3/+Hw0jXCt5USp+NR?=
- =?us-ascii?Q?UZvNjJKe8+tIayGSR5UOcBSz82Sdt7QqxtffKUc1Co8H4Pi7G/zAyEHi2X1c?=
- =?us-ascii?Q?88L6rfKvl9CbdbC8wacuDbFig0QpwQV8IPZTKPS9lAFnNq0rmwVBizRYg2WF?=
- =?us-ascii?Q?At91nEXG15Vo09a3s1iLwSnZSwDe1BprT03xjApbEbj1Q3Vl5rK694Uu8c/+?=
- =?us-ascii?Q?yP6v82dtsPv/ysMRKQvwuaPBxFLOpSJOyySL8kxc7nG1D5qCMmEBdr6168OH?=
- =?us-ascii?Q?ArekhCP0vG4H7rYApJK0qeKrW3Pty7+fzCQovzI08Hpr1BjayrshuHhRGHjP?=
- =?us-ascii?Q?BY3OgSlsY06BkwRsdLICZotaUHCnfWg8L7Dy+YfE+xzLjKiToKMXBQbmn/pr?=
- =?us-ascii?Q?nJv+n11UZtbOQKd9mNDd5RKqS7TiKi5a+jpjeTurSM0EwgD5c59jhadg6gIc?=
- =?us-ascii?Q?4vN2DGU3FPd+5GnUp6FP3s7zHFrmkMw1Wodks7yKHQ89Ky2fujWW+UzKKITl?=
- =?us-ascii?Q?uZ987t0ij21psxZA4u13S5sPT7ByDiYS8cP8r1Oxwmzh3qiJJJkUSiFKOTcQ?=
- =?us-ascii?Q?HEUj2SYMZnxfj7YugcXOf8jnfipmwdcLB8mJBR6nny1mH/nQRg3AAUBAAlHv?=
- =?us-ascii?Q?RNZbwMv1ItmQJ1GJcHkQ4vR3QFJfwKBqayOXOjb1EOydPJCkCDGNGCDu74lJ?=
- =?us-ascii?Q?VCEcpaDrZXxcqFcXge4KM6oEy6w06yypW8yOxmmkInGW3fOfgPaEPUNPuIda?=
- =?us-ascii?Q?nA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdd4e36b-d9ca-4e92-47ff-08dd15cab535
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 07:50:52.5642
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +xTij1nDt5nho8xwlu3lZl+Gt863RffkRQqjjxIzaNnB2CQvOGN1c1ikSunn7psMOfhNFGtwBb1x+mu+NRBRvzCdOIa7tOOaQqbJRwb0u8Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB5892
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 06 Dec 2024 08:51:21 +0100
+Message-Id: <D64GCT2CXFLC.33Y61JJ8XFCHO@fairphone.com>
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Vikram Sharma" <quic_vikramsa@quicinc.com>, <rfoss@kernel.org>,
+ <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>, <mchehab@kernel.org>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <akapatra@quicinc.com>, <hariramp@quicinc.com>, <andersson@kernel.org>,
+ <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+ <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+ <will@kernel.org>
+Cc: <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+Subject: Re: [PATCH v7 3/5] media: qcom: camss: Add support for camss driver
+ on sc7280
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241204100003.300123-1-quic_vikramsa@quicinc.com>
+ <20241204100003.300123-4-quic_vikramsa@quicinc.com>
+In-Reply-To: <20241204100003.300123-4-quic_vikramsa@quicinc.com>
 
-Raghavendra K T wrote:
-> 
-> 
-> On 12/4/2024 9:25 AM, Dan Williams wrote:
-> > [ add regressions@lists.linux.dev ]
-> > 
-> > Next time make the subject of the patch:
-> > 
-> >     Revert "resource: fix region_intersects() vs add_memory_driver_managed()"
-> > 
-> > ...to make it clear that this is a revert, not a fix.
-> > 
-> > The revert should be applied if a fix does not materialize in the next few weeks.
-> > 
-> 
-> Agreed regarding fix.
-> one thing to note is it is not exact revert.
-> 
-> > Raghavendra K T wrote:
-> >> Before:
-> >> ~]$ numastat -m
-> >> ...
-> >>                            Node 0          Node 1           Total
-> >>                   --------------- --------------- ---------------
-> >> MemTotal               128096.18       128838.48       256934.65
-> >>
-> >> After:
-> >> $ numastat -m
-> >> .....
-> >>                            Node 0          Node 1          Node 2           Total
-> >>                   --------------- --------------- --------------- ---------------
-> >> MemTotal               128054.16       128880.51       129024.00       385958.67
-> >>
-> >> Current patch reverts the effect of first commit where the issue is seen.
-> > 
-> > Might you be able to dig a bit further into the details like memory map
-> > for this platform and ACPI SRAT tables? A dmesg comparison of the good
-> > and bad cases would be useful (those can be shared via a github gist).
-> > Even better would be some debug instrumentation to identify which call
-> > to __region_intersects() started behaving differently resulting in a
-> > whole node disappearing.
-> > 
-> > In terms of the urgency of fixing this it would also help to know how
-> > prevalent the system this was found on is in the wild.
-> 
-> I have compared dmesg, proc/iomem of both success and fail case.
-> 
-> A. dmesg:
-> 
-> 1. Address ranges is different
-> 2. extra message about printing Demotion target
-> 
-> Fallback order for Node 0: 0 1 2
-> Fallback order for Node 1: 1 0 2
-> Fallback order for Node 2: 2 0 1
-> Built 3 zonelists, mobility grouping on.  Total pages: 66145521
-> Policy zone: Normal
-> ....
-> Demotion targets for Node 0: preferred: 2, fallback: 2
-> Demotion targets for Node 1: preferred: 2, fallback: 2
-> Demotion targets for Node 2: null
-> 
-> B. /proc/iomem
-> 
-> $ vimdiff success fail
-> 
->   4050000000-604fffffff : Soft Reserved 
->    |  164 4050000000-604fffffff : Soft Reserved
->    165   4050000000-604fffffff : CXL Window 0 
->         |  165   4050000000-604fffffff : CXL Window 0
->    166     4080000000-5fffffffff : dax1.0 
->         | 
-> ------------------------------------------------------------------------
->    167       4080000000-5fffffffff : System RAM (kmem) 
->         | 
-> --------------------------------------------------------------------
+On Wed Dec 4, 2024 at 11:00 AM CET, Vikram Sharma wrote:
+> From: Suresh Vankadara <quic_svankada@quicinc.com>
+>
+> Add support for the camss driver on the sc7280 soc.
+>
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-My eyes only know how to read unified diff (diff -u) format. Is this
-saying that in the failure case the System RAM range for dax1.0 is
-missing?
+Hi Vikram,
+
+This is working on QCM6490 Fairphone 5 smartphone with WIP drivers for
+IMX858 and S5KJN1, thanks!
+
+Tested-by: Luca Weiss <luca.weiss@fairphone.com> # qcm6490-fairphone-fp5
+
+Regards
+Luca
+
+> ---
+>  .../qcom/camss/camss-csiphy-3ph-1-0.c         |   5 +
+>  .../media/platform/qcom/camss/camss-csiphy.c  |   5 +
+>  .../media/platform/qcom/camss/camss-csiphy.h  |   1 +
+>  drivers/media/platform/qcom/camss/camss-vfe.c |   2 +
+>  drivers/media/platform/qcom/camss/camss.c     | 319 ++++++++++++++++++
+>  drivers/media/platform/qcom/camss/camss.h     |   1 +
+>  6 files changed, 333 insertions(+)
+>
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/d=
+rivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index 7d2490c9de01..f341f7b7fd8a 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -505,6 +505,10 @@ static void csiphy_gen2_config_lanes(struct csiphy_d=
+evice *csiphy,
+>  	u32 val;
+> =20
+>  	switch (csiphy->camss->res->version) {
+> +	case CAMSS_7280:
+> +		r =3D &lane_regs_sm8250[0][0];
+> +		array_size =3D ARRAY_SIZE(lane_regs_sm8250[0]);
+> +		break;
+>  	case CAMSS_8250:
+>  		r =3D &lane_regs_sm8250[0][0];
+>  		array_size =3D ARRAY_SIZE(lane_regs_sm8250[0]);
+> @@ -557,6 +561,7 @@ static bool csiphy_is_gen2(u32 version)
+>  	bool ret =3D false;
+> =20
+>  	switch (version) {
+> +	case CAMSS_7280:
+>  	case CAMSS_8250:
+>  	case CAMSS_8280XP:
+>  	case CAMSS_845:
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/m=
+edia/platform/qcom/camss/camss-csiphy.c
+> index 5af2b382a843..3791c2d8a6cf 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+> @@ -103,6 +103,11 @@ const struct csiphy_formats csiphy_formats_8x96 =3D =
+{
+>  	.formats =3D formats_8x96
+>  };
+> =20
+> +const struct csiphy_formats csiphy_formats_sc7280 =3D {
+> +	.nformats =3D ARRAY_SIZE(formats_sdm845),
+> +	.formats =3D formats_sdm845
+> +};
+> +
+>  const struct csiphy_formats csiphy_formats_sdm845 =3D {
+>  	.nformats =3D ARRAY_SIZE(formats_sdm845),
+>  	.formats =3D formats_sdm845
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/m=
+edia/platform/qcom/camss/camss-csiphy.h
+> index eebc1ff1cfab..b6209bddfb61 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+> @@ -111,6 +111,7 @@ void msm_csiphy_unregister_entity(struct csiphy_devic=
+e *csiphy);
+> =20
+>  extern const struct csiphy_formats csiphy_formats_8x16;
+>  extern const struct csiphy_formats csiphy_formats_8x96;
+> +extern const struct csiphy_formats csiphy_formats_sc7280;
+>  extern const struct csiphy_formats csiphy_formats_sdm845;
+> =20
+>  extern const struct csiphy_hw_ops csiphy_ops_2ph_1_0;
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/medi=
+a/platform/qcom/camss/camss-vfe.c
+> index fb3234c65403..95f6a1ac7eaf 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -335,6 +335,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u3=
+2 sink_code,
+>  		}
+>  		break;
+>  	case CAMSS_660:
+> +	case CAMSS_7280:
+>  	case CAMSS_8x96:
+>  	case CAMSS_8250:
+>  	case CAMSS_8280XP:
+> @@ -1693,6 +1694,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
+>  	int ret =3D 8;
+> =20
+>  	switch (vfe->camss->res->version) {
+> +	case CAMSS_7280:
+>  	case CAMSS_8250:
+>  	case CAMSS_8280XP:
+>  	case CAMSS_845:
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/pl=
+atform/qcom/camss/camss.c
+> index f5704c23766a..4fa16ff6e614 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -1266,6 +1266,310 @@ static const struct resources_icc icc_res_sm8250[=
+] =3D {
+>  	},
+>  };
+> =20
+> +static const struct camss_subdev_resources csiphy_res_7280[] =3D {
+> +	/* CSIPHY0 */
+> +	{
+> +		.regulators =3D { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock =3D { "csiphy0", "csiphy0_timer" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 300000000 } },
+> +		.reg =3D { "csiphy0" },
+> +		.interrupt =3D { "csiphy0" },
+> +		.csiphy =3D {
+> +			.hw_ops =3D &csiphy_ops_3ph_1_0,
+> +			.formats =3D &csiphy_formats_sc7280
+> +		}
+> +	},
+> +	/* CSIPHY1 */
+> +	{
+> +		.regulators =3D { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock =3D { "csiphy1", "csiphy1_timer" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 300000000 } },
+> +		.reg =3D { "csiphy1" },
+> +		.interrupt =3D { "csiphy1" },
+> +		.csiphy =3D {
+> +			.hw_ops =3D &csiphy_ops_3ph_1_0,
+> +			.formats =3D &csiphy_formats_sc7280
+> +		}
+> +	},
+> +	/* CSIPHY2 */
+> +	{
+> +		.regulators =3D { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock =3D { "csiphy2", "csiphy2_timer" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 300000000 } },
+> +		.reg =3D { "csiphy2" },
+> +		.interrupt =3D { "csiphy2" },
+> +		.csiphy =3D {
+> +			.hw_ops =3D &csiphy_ops_3ph_1_0,
+> +			.formats =3D &csiphy_formats_sc7280
+> +		}
+> +	},
+> +	/* CSIPHY3 */
+> +	{
+> +		.regulators =3D { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock =3D { "csiphy3", "csiphy3_timer" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 300000000 } },
+> +		.reg =3D { "csiphy3" },
+> +		.interrupt =3D { "csiphy3" },
+> +		.csiphy =3D {
+> +			.hw_ops =3D &csiphy_ops_3ph_1_0,
+> +			.formats =3D &csiphy_formats_sc7280
+> +		}
+> +	},
+> +	/* CSIPHY4 */
+> +	{
+> +		.regulators =3D { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock =3D { "csiphy4", "csiphy4_timer" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 300000000 } },
+> +		.reg =3D { "csiphy4" },
+> +		.interrupt =3D { "csiphy4" },
+> +		.csiphy =3D {
+> +			.hw_ops =3D &csiphy_ops_3ph_1_0,
+> +			.formats =3D &csiphy_formats_sc7280
+> +		}
+> +	},
+> +};
+> +
+> +static const struct camss_subdev_resources csid_res_7280[] =3D {
+> +	/* CSID0 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "vfe0_csid", "vfe0_cphy_rx", "vfe0" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 0 },
+> +				{ 380000000, 510000000, 637000000, 760000000 }
+> +		},
+> +
+> +		.reg =3D { "csid0" },
+> +		.interrupt =3D { "csid0" },
+> +		.csid =3D {
+> +			.is_lite =3D false,
+> +			.hw_ops =3D &csid_ops_gen2,
+> +			.parent_dev_ops =3D &vfe_parent_dev_ops,
+> +			.formats =3D &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID1 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "vfe1_csid", "vfe1_cphy_rx", "vfe1" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 0 },
+> +				{ 380000000, 510000000, 637000000, 760000000 }
+> +		},
+> +
+> +		.reg =3D { "csid1" },
+> +		.interrupt =3D { "csid1" },
+> +		.csid =3D {
+> +			.is_lite =3D false,
+> +			.hw_ops =3D &csid_ops_gen2,
+> +			.parent_dev_ops =3D &vfe_parent_dev_ops,
+> +			.formats =3D &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID2 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "vfe2_csid", "vfe2_cphy_rx", "vfe2" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 0 },
+> +				{ 380000000, 510000000, 637000000, 760000000 }
+> +		},
+> +
+> +		.reg =3D { "csid2" },
+> +		.interrupt =3D { "csid2" },
+> +		.csid =3D {
+> +			.is_lite =3D false,
+> +			.hw_ops =3D &csid_ops_gen2,
+> +			.parent_dev_ops =3D &vfe_parent_dev_ops,
+> +			.formats =3D &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID3 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "vfe_lite0_csid", "vfe_lite0_cphy_rx", "vfe_lite0" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 0 },
+> +				{ 320000000, 400000000, 480000000, 600000000 }
+> +		},
+> +
+> +		.reg =3D { "csid_lite0" },
+> +		.interrupt =3D { "csid_lite0" },
+> +		.csid =3D {
+> +			.is_lite =3D true,
+> +			.hw_ops =3D &csid_ops_gen2,
+> +			.parent_dev_ops =3D &vfe_parent_dev_ops,
+> +			.formats =3D &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID4 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "vfe_lite1_csid", "vfe_lite1_cphy_rx", "vfe_lite1" },
+> +		.clock_rate =3D { { 300000000, 400000000 },
+> +				{ 0 },
+> +				{ 320000000, 400000000, 480000000, 600000000 }
+> +		},
+> +
+> +		.reg =3D { "csid_lite1" },
+> +		.interrupt =3D { "csid_lite1" },
+> +		.csid =3D {
+> +			.is_lite =3D true,
+> +			.hw_ops =3D &csid_ops_gen2,
+> +			.parent_dev_ops =3D &vfe_parent_dev_ops,
+> +			.formats =3D &csid_formats_gen2
+> +		}
+> +	},
+> +};
+> +
+> +static const struct camss_subdev_resources vfe_res_7280[] =3D {
+> +	/* VFE0 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "camnoc_axi", "cpas_ahb", "icp_ahb", "vfe0",
+> +			   "vfe0_axi", "gcc_cam_hf_axi" },
+> +		.clock_rate =3D { { 150000000, 240000000, 320000000, 400000000, 480000=
+000 },
+> +				{ 80000000 },
+> +				{ 0 },
+> +				{ 380000000, 510000000, 637000000, 760000000 },
+> +				{ 0 },
+> +				{ 0 } },
+> +
+> +		.reg =3D { "vfe0" },
+> +		.interrupt =3D { "vfe0" },
+> +		.vfe =3D {
+> +			.line_num =3D 3,
+> +			.is_lite =3D false,
+> +			.has_pd =3D true,
+> +			.pd_name =3D "ife0",
+> +			.hw_ops =3D &vfe_ops_170,
+> +			.formats_rdi =3D &vfe_formats_rdi_845,
+> +			.formats_pix =3D &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE1 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "camnoc_axi", "cpas_ahb", "icp_ahb", "vfe1",
+> +			   "vfe1_axi", "gcc_cam_hf_axi" },
+> +		.clock_rate =3D { { 150000000, 240000000, 320000000, 400000000, 480000=
+000 },
+> +				{ 80000000 },
+> +				{ 0 },
+> +				{ 380000000, 510000000, 637000000, 760000000 },
+> +				{ 0 },
+> +				{ 0 } },
+> +
+> +		.reg =3D { "vfe1" },
+> +		.interrupt =3D { "vfe1" },
+> +		.vfe =3D {
+> +			.line_num =3D 3,
+> +			.is_lite =3D false,
+> +			.has_pd =3D true,
+> +			.pd_name =3D "ife1",
+> +			.hw_ops =3D &vfe_ops_170,
+> +			.formats_rdi =3D &vfe_formats_rdi_845,
+> +			.formats_pix =3D &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE2 */
+> +	{
+> +		.regulators =3D {},
+> +
+> +		.clock =3D { "camnoc_axi", "cpas_ahb", "icp_ahb", "vfe2",
+> +			   "vfe2_axi", "gcc_cam_hf_axi" },
+> +		.clock_rate =3D { { 150000000, 240000000, 320000000, 400000000, 480000=
+000 },
+> +				{ 80000000 },
+> +				{ 0 },
+> +				{ 380000000, 510000000, 637000000, 760000000 },
+> +				{ 0 },
+> +				{ 0 } },
+> +
+> +		.reg =3D { "vfe2" },
+> +		.interrupt =3D { "vfe2" },
+> +		.vfe =3D {
+> +			.line_num =3D 3,
+> +			.is_lite =3D false,
+> +			.hw_ops =3D &vfe_ops_170,
+> +			.has_pd =3D true,
+> +			.pd_name =3D "ife2",
+> +			.formats_rdi =3D &vfe_formats_rdi_845,
+> +			.formats_pix =3D &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE3 (lite) */
+> +	{
+> +		.clock =3D { "camnoc_axi", "cpas_ahb", "icp_ahb",
+> +			   "vfe_lite0", "gcc_cam_hf_axi" },
+> +		.clock_rate =3D { { 150000000, 240000000, 320000000, 400000000, 480000=
+000 },
+> +				{ 80000000 },
+> +				{ 0 },
+> +				{ 320000000, 400000000, 480000000, 600000000 },
+> +				{ 0 } },
+> +
+> +		.regulators =3D {},
+> +		.reg =3D { "vfe_lite0" },
+> +		.interrupt =3D { "vfe_lite0" },
+> +		.vfe =3D {
+> +			.line_num =3D 4,
+> +			.is_lite =3D true,
+> +			.hw_ops =3D &vfe_ops_170,
+> +			.formats_rdi =3D &vfe_formats_rdi_845,
+> +			.formats_pix =3D &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE4 (lite) */
+> +	{
+> +		.clock =3D { "camnoc_axi", "cpas_ahb", "icp_ahb",
+> +			   "vfe_lite1", "gcc_cam_hf_axi" },
+> +		.clock_rate =3D { { 150000000, 240000000, 320000000, 400000000, 480000=
+000 },
+> +				{ 80000000 },
+> +				{ 0 },
+> +				{ 320000000, 400000000, 480000000, 600000000 },
+> +				{ 0 } },
+> +
+> +		.regulators =3D {},
+> +		.reg =3D { "vfe_lite1" },
+> +		.interrupt =3D { "vfe_lite1" },
+> +		.vfe =3D {
+> +			.line_num =3D 4,
+> +			.is_lite =3D true,
+> +			.hw_ops =3D &vfe_ops_170,
+> +			.formats_rdi =3D &vfe_formats_rdi_845,
+> +			.formats_pix =3D &vfe_formats_pix_845
+> +		}
+> +	},
+> +};
+> +
+> +static const struct resources_icc icc_res_sc7280[] =3D {
+> +	{
+> +		.name =3D "ahb",
+> +		.icc_bw_tbl.avg =3D 38400,
+> +		.icc_bw_tbl.peak =3D 76800,
+> +	},
+> +	{
+> +		.name =3D "hf_0",
+> +		.icc_bw_tbl.avg =3D 2097152,
+> +		.icc_bw_tbl.peak =3D 2097152,
+> +	},
+> +};
+> +
+>  static const struct camss_subdev_resources csiphy_res_sc8280xp[] =3D {
+>  	/* CSIPHY0 */
+>  	{
+> @@ -2622,10 +2926,25 @@ static const struct camss_resources sc8280xp_reso=
+urces =3D {
+>  	.link_entities =3D camss_link_entities
+>  };
+> =20
+> +static const struct camss_resources sc7280_resources =3D {
+> +	.version =3D CAMSS_7280,
+> +	.pd_name =3D "top",
+> +	.csiphy_res =3D csiphy_res_7280,
+> +	.csid_res =3D csid_res_7280,
+> +	.vfe_res =3D vfe_res_7280,
+> +	.icc_res =3D icc_res_sc7280,
+> +	.icc_path_num =3D ARRAY_SIZE(icc_res_sc7280),
+> +	.csiphy_num =3D ARRAY_SIZE(csiphy_res_7280),
+> +	.csid_num =3D ARRAY_SIZE(csid_res_7280),
+> +	.vfe_num =3D ARRAY_SIZE(vfe_res_7280),
+> +	.link_entities =3D camss_link_entities
+> +};
+> +
+>  static const struct of_device_id camss_dt_match[] =3D {
+>  	{ .compatible =3D "qcom,msm8916-camss", .data =3D &msm8916_resources },
+>  	{ .compatible =3D "qcom,msm8953-camss", .data =3D &msm8953_resources },
+>  	{ .compatible =3D "qcom,msm8996-camss", .data =3D &msm8996_resources },
+> +	{ .compatible =3D "qcom,sc7280-camss", .data =3D &sc7280_resources },
+>  	{ .compatible =3D "qcom,sc8280xp-camss", .data =3D &sc8280xp_resources =
+},
+>  	{ .compatible =3D "qcom,sdm660-camss", .data =3D &sdm660_resources },
+>  	{ .compatible =3D "qcom,sdm845-camss", .data =3D &sdm845_resources },
+> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/pl=
+atform/qcom/camss/camss.h
+> index ffce0a0edbc5..9a046eea334f 100644
+> --- a/drivers/media/platform/qcom/camss/camss.h
+> +++ b/drivers/media/platform/qcom/camss/camss.h
+> @@ -78,6 +78,7 @@ enum pm_domain {
+> =20
+>  enum camss_version {
+>  	CAMSS_660,
+> +	CAMSS_7280,
+>  	CAMSS_8x16,
+>  	CAMSS_8x53,
+>  	CAMSS_8x96,
+
 
