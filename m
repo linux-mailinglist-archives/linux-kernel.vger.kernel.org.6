@@ -1,117 +1,91 @@
-Return-Path: <linux-kernel+bounces-434459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE1D9E672B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C4A9E672F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7B218856F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CE6188589E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBCE1D90B6;
-	Fri,  6 Dec 2024 06:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SSs7cy/a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ADC1D90B1;
+	Fri,  6 Dec 2024 06:11:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3333B1B78E7;
-	Fri,  6 Dec 2024 06:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF691D8DE8
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 06:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733465269; cv=none; b=tmzNx5siMih5whNn3DRscYVXsSKDzdjbp20a7A07uJigIobkbFOMWqI4Juy1/Unfy8kNOaJfmQoicZo57t72oMU9tNJyc5S/8VarSG9WSs2Vd6K2EFuF1mrJo7uz5X0hzTUm/eZwJvVzmoHRUbdr6k2bcRfeUasvr+UFnHHlp6A=
+	t=1733465464; cv=none; b=aslXTHggNs11SkvAAb223JUfA0rTJchZo81odBFxXD4W7f9+YHgAQz8Nynl7qgMaU9OMD9c4tm01lWihorTKDi/mYMPjgcMELB0m6mRdOWtm3iAWH+TL3b2ywB51CBt3+/zP+WvdVlUeO10mD+nOcsJiwSL+UnaXXVAbzvIm618=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733465269; c=relaxed/simple;
-	bh=bQTG4ROYlpWnNTZGt1f8lJv5nTc7ecS7XcpJ7b2lGCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUvQQfFfeTSd8YhyctJKxoV1b9piMW6W47GMLd84tixWAICJO4wM3VaL69AHXRvt5QeksBAhVGR80IteWthZtqkakQ5Z+p8eBKVy1Eeq7YkxI0vFCCs74wDvVnmpSSn0Kzw1spYvD++h42N0gtuwrYiJNjvtAK8Jj1u6xl8f/ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SSs7cy/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B44C4CED1;
-	Fri,  6 Dec 2024 06:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733465268;
-	bh=bQTG4ROYlpWnNTZGt1f8lJv5nTc7ecS7XcpJ7b2lGCo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SSs7cy/azJLZmwU+NobQjIYR5WBA37D3ZFDEc9Xp0fi620u7V6ucA+XA9s0jqZx4F
-	 oSK/GW0ZbVQb1aZxyq5UWhPqsB2sWQKzsPtJ+tIQEO6wUEsHA9R886165NHIPJ9Bii
-	 +YUlWr66DKqZ0ojkMA80+NHuiAvF0RiVnzUlBtDQ=
-Date: Fri, 6 Dec 2024 07:07:45 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
-Message-ID: <2024120623-chloride-harvest-91fe@gregkh>
-References: <20241203141923.524658091@linuxfoundation.org>
- <71fc98de-2f61-4530-8c03-dcd7fa3bf470@rnnvmail204.nvidia.com>
- <5a174c4b-fa2b-4180-af6b-ae50d76fef4d@nvidia.com>
+	s=arc-20240116; t=1733465464; c=relaxed/simple;
+	bh=MBjj0dAZQ91LM+GKalVQvPREwDV2EQw40XbSGHtwPQo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=r5UPp7iXjQPmGXiaT01YeQtIyIVLkpx7n28nFsSc9EQSeyajR+27rX+XP+QOe+rXJ97M05j4mbfMwIA9ssw3f8wrfRcf5r7ktg3+A2dcAjdEX2ccdrv1Vf06Ogum67JJLBkdNiT3h4mNf3FUNsROQthBuXHxhn/tmgbFPQg33lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a814c7d58eso2214735ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 22:11:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733465462; x=1734070262;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hynB85QWUaqXvuaUinrYxAjUZnOP2rZjkeD3Kjfiybk=;
+        b=Ua+3eJbTMYoXjILEOsVdRyJFZvLUY8vHBQgKzxBXA7D9PEYALNRsBLT0Ei0WhC56/l
+         Ya3bJbUS6OHIDpSsdZY9l4/T+p/zC0maSETviBb5cwKz6EhdiyCEfAhIAe2sghiQ9bKA
+         hxqnK1D8G/PwdaVemzFC8REYvmINkv3KySvDmN0wpvhTo7DXaj4hU0D8aodcig3IOlXA
+         4Ig67SZH9cjv6hgMcQAeBBY/jbUEzPhHnRU+XQIh29Ka4j7YcqCqa1UDI4Qg6xr8tUlM
+         Hfm5PKg89PW/CIpmtvJ3v/hF9yeLbVP1Rf33mOMffPnLbrCqth9eXeq8oWpRztvHXYZz
+         8APw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5GWtgsGPxWH6AO1RVvwBWTTI9j1FvsO5OSOjZyphyTvtx2z9MVI8PN8diBam9aE88MFxBGwxD8BNMvrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+ViQpkjLm+6hQykwH+pcdLDjRxqqs9gIRBlUpj7ydmwJyl74s
+	dCfqhqqS8GiLJouID2WO7Ey1ISmtu7s5ifVg2lYlVYxoYCXL3o59fiJyEFuxZjkbH1Sh6jizJk9
+	c6skevvTbTW5IFXdE/0Vsv2dnD2dpWTQXSs8KUjFM1Arxw7GkFBIOlRw=
+X-Google-Smtp-Source: AGHT+IGkrPW2Nt1unJm5MKaU2EXZuiH4r5vIyjQNPX7z78aZdvL2K0aGwDFUJKoapWNJTeWsv95bwsnVpEXu0I/cPxHbjdt2fbk8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a174c4b-fa2b-4180-af6b-ae50d76fef4d@nvidia.com>
+X-Received: by 2002:a05:6e02:1447:b0:3a7:635e:d365 with SMTP id
+ e9e14a558f8ab-3a811dc1d84mr25280065ab.6.1733465462263; Thu, 05 Dec 2024
+ 22:11:02 -0800 (PST)
+Date: Thu, 05 Dec 2024 22:11:02 -0800
+In-Reply-To: <6751e9fb.050a0220.b4160.01e2.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67529576.050a0220.a30f1.0131.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: use-after-free Read in check_extent_overbig
+From: syzbot <syzbot+fbc1f6040dd365cce0d8@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 05, 2024 at 02:40:28PM +0000, Jon Hunter wrote:
-> 
-> On 05/12/2024 14:38, Jon Hunter wrote:
-> > On Tue, 03 Dec 2024 15:30:29 +0100, Greg Kroah-Hartman wrote:
-> > > ------------------
-> > > Note, this is the LAST 4.19.y kernel to be released.  After this one, it
-> > > is end-of-life.  It's been 6 years, everyone should have moved off of it
-> > > by now.
-> > > ------------------
-> > > 
-> > > This is the start of the stable review cycle for the 4.19.325 release.
-> > > There are 138 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Thu, 05 Dec 2024 14:18:57 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.325-rc1.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > Failures detected for Tegra ...
-> > 
-> > Test results for stable-v4.19:
-> >      10 builds:	6 pass, 4 fail
-> >      12 boots:	12 pass, 0 fail
-> >      21 tests:	21 pass, 0 fail
-> > 
-> > Linux version:	4.19.325-rc1-g1efbea5bef00
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                  tegra194-p2972-0000, tegra20-ventana,
-> >                  tegra210-p2371-2180, tegra30-cardhu-a04
-> > 
-> > Builds failed:	aarch64+defconfig+jetson, arm+multi_v7
-> 
-> 
-> This is the same build failure as reported here:
-> 
-> https://lore.kernel.org/stable/Z09KXnGlTJZBpA90@duo.ucw.cz/
+syzbot has bisected this issue to:
 
-Great, hopefully I fixed that up in the real release :)
+commit bf4baaa087e2be0279991f1dbf9acaa7a4c9148c
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Oct 5 21:37:02 2024 +0000
 
-thanks for testing this kernel all these years!
+    bcachefs: Fix lockdep splat in bch2_accounting_read
 
-greg k-h
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1147e8df980000
+start commit:   feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1347e8df980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1547e8df980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=91c852e3d1d7c1a6
+dashboard link: https://syzkaller.appspot.com/bug?extid=fbc1f6040dd365cce0d8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16804020580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ed1330580000
+
+Reported-by: syzbot+fbc1f6040dd365cce0d8@syzkaller.appspotmail.com
+Fixes: bf4baaa087e2 ("bcachefs: Fix lockdep splat in bch2_accounting_read")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
