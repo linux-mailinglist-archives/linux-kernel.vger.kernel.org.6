@@ -1,120 +1,114 @@
-Return-Path: <linux-kernel+bounces-434531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318E79E67EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:28:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C61D1670FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:28:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F351225D6;
-	Fri,  6 Dec 2024 07:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="J/C7hIeW"
-Received: from mail-m1035.netease.com (mail-m1035.netease.com [154.81.10.35])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339349E67AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:13:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D5B3D6B;
-	Fri,  6 Dec 2024 07:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.35
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB7D2817F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:13:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F891DB94F;
+	Fri,  6 Dec 2024 07:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HvYQ1QxI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8150A1D89F8;
+	Fri,  6 Dec 2024 07:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733470120; cv=none; b=I42+2Lr/CqO+xGCXCpm0lCUKLEOHEESwT0a1mdna27rKbd0ydR7Kgn3EkdE0mN+CRrBiPRj7WKUjI1KRjBKFS6KYekTfddesTu0hPYaAzhx4X9vTt6UNBAQioD1FplQx9WggkDk53U3W++7ZSnl8PmHS6ngfy40q+ohu0mNj3gM=
+	t=1733469213; cv=none; b=sC+V3XOk9IvPp0IZjsySH0oommNePeUTJ3r93zXpNwZmht3gCS700q49O+qk8Ox1HKETTUL0CgClrRTYZeecPHqtx3/4Op+k/jaH4ohNT9Uj7EQuj1KtG0NXv8YquIdl/2p9/8zMhn38msO1DROd5Dy9ZOOOHgLpaDqwJtjjjXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733470120; c=relaxed/simple;
-	bh=YL+9m+fKpEznl2nFJijfWwhBg5EzwRct9DJv4KiLwLg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XJa/kUPaSA9PrsfW1VIP4eFSzzqsTMFq+T7twvOAXJIL5n2N0zM10I9QVY+e+7VTgCRaHKdqMUCp/xZw/yzVJFs7vauUfod5GWhe+D6s8ZqNIk3B2emRCg7oL6gZUzoqzT3WaxlD78HbypLcJk0CMPdXulv/yW5mlk6iU6Yqtfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=J/C7hIeW; arc=none smtp.client-ip=154.81.10.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from localhost.localdomain (unknown [202.119.23.198])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4e55eede;
-	Fri, 6 Dec 2024 15:13:16 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: mjguzik@gmail.com
-Cc: dhowells@redhat.com,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	xujianhao01@gmail.com,
-	zilin@seu.edu.cn
-Subject: Re: [QUESTION] inconsistent use of smp_mb()
-Date: Fri,  6 Dec 2024 07:13:15 +0000
-Message-Id: <20241206071315.2958512-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ulg54pf2qnlzqfj247fypypzun2yvwepqrcwaqzlr6sn3ukuab@rov7btfppktc>
-References: <ulg54pf2qnlzqfj247fypypzun2yvwepqrcwaqzlr6sn3ukuab@rov7btfppktc>
+	s=arc-20240116; t=1733469213; c=relaxed/simple;
+	bh=I6togj3rCYdWZizm/vBZ+hpS0EcWywx3tvwMzR/v/Hk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9Pd10DgwR0oihfBY7Fae6l6nwRUj7nI+0BAUndAU4shHM2j3AEVj3bjPFwM+lH6R1TElackWupry1NA87K/2ZBDMZL0Uvm/QgyPH1RVpUsFFO4I7hq4skHV7otEdFM1E2l55Arl22VBAIVmRPfO+qP01R9T3SiBs8FCrhvvCF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HvYQ1QxI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A81B6C4CED1;
+	Fri,  6 Dec 2024 07:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733469213;
+	bh=I6togj3rCYdWZizm/vBZ+hpS0EcWywx3tvwMzR/v/Hk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HvYQ1QxIOTib9pAjNiUWByzjxOF8c7ghvkEfuBCoaWWC8LOyet0hvbQ+1/4xCdUbt
+	 m8wOq+nCuIftmqrpkfQqfhzWR+kSpVjq53zjheiabEA7rIwrgZI8+KSbwctU/tNB9e
+	 Ut7dm3jGijwMeC3kEPhSnaUIfc5/vY/tY769B0sE=
+Date: Fri, 6 Dec 2024 08:13:30 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Til Kaiser <mail@tk154.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, idosch@nvidia.com, petrm@nvidia.com
+Subject: Re: [PATCH net-next v2] net: sysfs: also pass network device driver
+ to uevent
+Message-ID: <2024120613-unicycle-abruptly-02d1@gregkh>
+References: <20241115140621.45c39269@kernel.org>
+ <20241116163206.7585-1-mail@tk154.de>
+ <20241116163206.7585-2-mail@tk154.de>
+ <20241118175543.1fbcab44@kernel.org>
+ <665459ff-9e99-4d22-9aeb-69c34be3db6b@tk154.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQkoaVh0aTRlDQ09DGBkYHVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJS0lVSkpCVUlIVUpCQ1lXWRYaDxIVHRRZQVlPS0hVSktISk5MSVVKS0tVSk
-	JLS1kG
-X-HM-Tid: 0a939ad0cff603a1kunm4e55eede
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MjY6Hio*TjIfCVEwSTkoUR4X
-	MS0KCyJVSlVKTEhIT01CSkJMSkNPVTMWGhIXVQESFxIVOwgeDlUeHw5VGBVFWVdZEgtZQVlJS0lV
-	SkpCVUlIVUpCQ1lXWQgBWUFJSk1KNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=J/C7hIeW+cVAxKPsAOD+OCo4W1hlx1gNOp/TIOdds4T9JRa2cuOENSbs4cfX+lDxC3HsPAYSEpQlmgVkiCWFVQsV7ivF7vIq0oLizpvt+/KMqXJZXmnWzlGrHxdzHuwsBw2GpESqqO7bsvjVnhNlEeuDGb5wR+Oq0I2d+JPXWp8=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
-	bh=KaeUVXapuHKSzLw5ctqEebg9c7ruMdXt2f6CPGdCRmE=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <665459ff-9e99-4d22-9aeb-69c34be3db6b@tk154.de>
 
-On Wed, Dec 04, 2024 at 09:27:22AM+0100, Mateusz Guzik wrote:
-> On Wed, Dec 04, 2024 at 06:48:18AM +0000, Zilin Guan wrote:
-> > Hello,
-> > 
-> > I have a question regarding the use of smp_rmb() to enforce 
-> > memory ordering in two related functions.
-> > 
-> > In the function netfs_unbuffered_write_iter_locked() from the file 
-> > fs/netfs/direct_write.c, smp_rmb() is explicitly used after the 
-> > wait_on_bit() call to ensure that the error and transferred fields are 
-> > read in the correct order following the NETFS_RREQ_IN_PROGRESS flag:
-> > 
-> > 105	wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS,
-> > 106		    TASK_UNINTERRUPTIBLE);
-> > 107	smp_rmb(); /* Read error/transferred after RIP flag */
-> > 108	ret = wreq->error;
-> > 109	if (ret == 0) {
-> > 110		ret = wreq->transferred;
-> > 111		iocb->ki_pos += ret;
-> > 112	}
-> > 
-> > However, in the function netfs_end_writethrough() from the file 
-> > fs/netfs/write_issue.c, there is no such use of smp_rmb() after 
-> > the corresponding wait_on_bit() call, despite accessing the same filed 
-> > of wreq->error and relying on the same NETFS_RREQ_IN_PROGRESS flag:
-> > 
-> > 681	wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS, 
-> > 		    TASK_UNINTERRUPTIBLE);
-> > 682	ret = wreq->error;
-> > 
-> > My question is why does the first function require a CPU memory barrier 
-> > smp_rmb() to enforce ordering, whereas the second function does not?
-> 
-> The fence is redundant.
-> 
-> Per the comment in wait_on_bit:
->  * Returned value will be zero if the bit was cleared in which case the
->  * call has ACQUIRE semantics, or %-EINTR if the process received a
->  * signal and the mode permitted wake up on that signal.
-> 
-> Since both sites pass TASK_UNINTERRUPTIBLE this will only ever return
-> after the bit is sorted out, already providing the needed fence.
- 
-Since the code does not need the fence, should I send a patch to 
-remove it? Commit 2df8654 introduced this fence during the transition 
-to a new writeback implementation. However, the author added this fence 
-as part of the changes and did not intend to address a specific CPU 
-reordering issue.
+On Thu, Dec 05, 2024 at 05:28:47PM +0100, Til Kaiser wrote:
+> On 19.11.24 02:55, Jakub Kicinski wrote:
+> > On Sat, 16 Nov 2024 17:30:30 +0100 Til Kaiser wrote:
+> > > Currently, for uevent, the interface name and
+> > > index are passed via shell variables.
+> > > 
+> > > This commit also passes the network device
+> > > driver as a shell variable to uevent.
+> > > 
+> > > One way to retrieve a network interface's driver
+> > > name is to resolve its sysfs device/driver symlink
+> > > and then substitute leading directory components.
+> > > 
+> > > You could implement this yourself (e.g., like udev from
+> > > systemd does) or with Linux tools by using a combination
+> > > of readlink and shell substitution or basename.
+> > > 
+> > > The advantages of passing the driver directly through uevent are:
+> > >   - Linux distributions don't need to implement additional code
+> > >     to retrieve the driver when, e.g., interface events happen.
+
+Why does the driver name matter for something like a network device?
+I.e. why are network devices "special" here and unlike all other class
+devices in the kernel like keyboards, mice, serial ports, etc.?
+
+> > >   - There is no need to create additional process forks in shell
+> > >     scripts for readlink or basename.
+
+"Do it in the kernel and have someone else maintain it for me to make my
+life easier in userspace" isn't always the best reason to do something.
+Generally if "you can do this in userspace" means "you SHOULD do this in
+userspace", it's not a good reason to add it to the kernel.
+
+And note, driver names change!  How are you going to handle that?
+
+> > >   - If a user wants to check his network interface's driver on the
+> > >     command line, he can directly read it from the sysfs uevent file.
+
+The symlink in sysfs shows this already, no need to
+open/read/parse/close the uevent file.
+
+Also, where did you now document this new user/kernel API that we have
+to maintain for 40+ years?  And what userspace tool is going to use it?
+
+But really, again, why are network devices so special that they need
+this but no other type of device in the kernel does?  And what changed
+to require this suddenly?
+
+thanks,
+
+greg k-h
 
