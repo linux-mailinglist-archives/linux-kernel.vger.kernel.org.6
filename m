@@ -1,146 +1,237 @@
-Return-Path: <linux-kernel+bounces-435295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B97C9E75B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 657BF9E75C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F014328B967
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208C6288478
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7709014F9CC;
-	Fri,  6 Dec 2024 16:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D3020E6FF;
+	Fri,  6 Dec 2024 16:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pdaHuQRv"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ALqLwO+t"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF02154BEA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F74720DD79;
+	Fri,  6 Dec 2024 16:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733502009; cv=none; b=ZvrU/o8EpVJooQrA1MGOM9v8+qOBwM5wa9UBCcHQ0n8VznWwhphjcro8EySg5yDPum+XmABGf2L53y6oOcgr8sOSFX0UjVDWHxy+ehSc3HgiOidkTjxhfHkaMfUybVUSwED+1iiQWLrum+jCcVkYhNCsw681vfFy+AE+6LogJgE=
+	t=1733502070; cv=none; b=noGc8OfVTalrOz3rO3xZgg+2Gvrxmk3SFA84ZXP0w2PHy38t6Wy+KuyYyrxgLlXpHMZaTz3rNql0Fpzjb4goMY6aeLE6EOTfzMheds2GX/7ZAtliEJFj5Z1fnKmMGIyFuMnAIYk71RNhbmG2m/XW8LmzosxldpSlxqXM8g/rNwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733502009; c=relaxed/simple;
-	bh=2uBIz0l+rdJ8wNGt2EYoUYNtmyuPT97Q2on0gtITs2Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OF84bhgP8yOuE+2sVQV9vxQiP/PihtFcIWumRbECD62BYcDq37Zz0JtmUuft15FXNCGdYbEKWjeibBj+x/INutGA6yJ+3yp+3AOa2gTxmWjTZQiyUrtE5vjBwrOGqDqqcuBCU6rrzCohWUAsjLQ1JJtX0FRXiI+BxEtkRrUOwmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pdaHuQRv; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ef79d9c692so317371a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 08:20:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733502008; x=1734106808; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+H1coxCLEnSNmORX7OfnAxVzTHRPtf7no40m4N/V/uk=;
-        b=pdaHuQRv/hmBzRrY9gKS45/pBng90v9AgPWPWX4nAlxXCFdKANpSuWX4kugOgDUoOQ
-         7P4ohQx9aVBR0iEL6eYAlEvGx6jr/ZbBEwDYlHpMSOwCcpcf5Ad4B+Il5W0nshEFmUiI
-         P4mp7MKGljl0Aej3Cww9MV/eFuKurV10O8CisjgsNtpk4mh6hFw/Kp0ej83cvUCVOuu+
-         96k/rN8f24tdIOSH3cZaR2drgz6OIOuolIczHfkPdT3RZAdOzp8kyBGSgmN1L/iTYQIE
-         BjAG+qUr2UCk/67okJecQfJ3WcOudhGMYAuYyiCRU3izrvs7jF9dRAlVhqU7oXIyURJn
-         698A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733502008; x=1734106808;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+H1coxCLEnSNmORX7OfnAxVzTHRPtf7no40m4N/V/uk=;
-        b=fRN7U+51xgvcVAKzh0J8EkHyMSPh206mpC2ZtKox3JJvw/PqBZOA/2xs//0+RZDD6d
-         7nisA8NyE5f64abSr4lb/3EEr8XCezUqRQ6SwYmkdZCVrA0LFSNg/qHMu7Gzkg1mqAac
-         AH7CRfw7jKVZe5LBU65+Y0auoNYsnvDEkHOv5a4ygDJp5gSDjuNMt5cRHET4g6qYWNjr
-         N4qZG1Du3iNGxaw1d8ilS8OZIaRiHO9YOAJ+Y68FCiWOGgS0fSeBBv2OrmatsjCfzVe1
-         CIxHLryDptjg8uCiVbeRY3ljGxUK0F7uTIbv5D3Ou/7iWaAqoQGo5/robvO8oo3EkxH6
-         bBCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW40qIk7+6xhObApNgdw4f9WCOEvbGXebvhFd9pgtYcTva/ymQ/iOoeP4l9t1+SRpN0bC1N+bfPGMFjXwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF6opsmDeYBefI+ELFG77xy27stAlxqBSMOpj3D6Q2oAzFVOci
-	czmArl7gBFbhp2SPyjmliIwU5r+hanaLv11+oaaaJnno2jYf/PiHiBItfPwdaLoc2Z41ezoxRFQ
-	8xA==
-X-Google-Smtp-Source: AGHT+IGeogtZGyGkhzocM8bBJCfu17eckQUvvO4h21X0DlxsLUMn7utLtFZJXoJK59nGBhJIwLTR9Ti29eU=
-X-Received: from pjbmf11.prod.google.com ([2002:a17:90b:184b:b0:2ea:83a6:9386])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4fcd:b0:2ea:4a6b:79d1
- with SMTP id 98e67ed59e1d1-2ef69e16bf5mr4580955a91.11.1733502007810; Fri, 06
- Dec 2024 08:20:07 -0800 (PST)
-Date: Fri, 6 Dec 2024 08:20:06 -0800
-In-Reply-To: <20241205220604.GA2054199@thelio-3990X>
+	s=arc-20240116; t=1733502070; c=relaxed/simple;
+	bh=JA9swdKidEphhW5MGht/Hzh1q4Pi43LbfowCrjRYTcQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=XVX/za7XvU9/lWD+UQ5cZyQt5mFp6+JZ4tGxG49JFmeYiz2t4B7IdR3PvH9iUb7cJBzPcoaeV4vNYVcBc2bpzG5loNzFYr8+eXN/RPdzGbUezjMI3193/yVL/5WKqo0QurmarSORVKsT481Suz2YyXDiS7D9XAReY75uOVG38l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ALqLwO+t; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B69c0mp026486;
+	Fri, 6 Dec 2024 16:20:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9rgdpypyMiuZFb/Kzr4lfbY2QURoDj3O7jTtUsLfNq4=; b=ALqLwO+tFzQ8S3N0
+	P5ZuZe7SffahvrYKAIW5KudVet22F7lPk9rJn2ukE50lYTAUeLxKurMBnVfUt7wJ
+	2hCPYqteUnt+kr0HY9JJ2M5WazDSJKJ3L4Xl2OZySmOtLJUme00vzbW64uEiUyAX
+	e47/Re/oZmSHGw6TTAZgYzSC/rsGF5lWJfHeed73TslAkDbpXfvB2EhC5DbvhY3Y
+	Q8AFfhWZAz5oRgYnmopcN54maND7T/RSFrVvIVoLJOl1CDXnKL8XW52MwicW1bx6
+	/sL9BoO8Oo+ZGJfBnpMDEplFqPdzLqD/HhlRptwZYd7R7ojIc77Wv7gsXknExfcq
+	hYfnZQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bxtc92y9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 16:20:48 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6GKlVI003601
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 16:20:47 GMT
+Received: from [10.253.9.12] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
+ 08:20:42 -0800
+Message-ID: <f54ad0e2-10d7-40ff-872f-d7c92ae8519b@quicinc.com>
+Date: Sat, 7 Dec 2024 00:20:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241205220604.GA2054199@thelio-3990X>
-Message-ID: <Z1MkNofJjt7Oq0G6@google.com>
-Subject: Re: Hitting AUTOIBRS WARN_ON_ONCE() in init_amd() booting 32-bit
- kernel under KVM
-From: Sean Christopherson <seanjc@google.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Kim Phillips <kim.phillips@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Lei Wei <quic_leiwei@quicinc.com>
+Subject: Re: [PATCH net-next v2 3/5] net: pcs: qcom-ipq9574: Add PCS
+ instantiation and phylink operations
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_luoj@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <bartosz.golaszewski@linaro.org>, <vsmuthu@qti.qualcomm.com>,
+        <john@phrozen.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
+ <20241204-ipq_pcs_rc1-v2-3-26155f5364a1@quicinc.com>
+ <Z1B1HuvxsjuMxtt0@shell.armlinux.org.uk>
+Content-Language: en-US
+In-Reply-To: <Z1B1HuvxsjuMxtt0@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RtqHHX_6FB2oPxCVouKABH1lM6wz7rPc
+X-Proofpoint-ORIG-GUID: RtqHHX_6FB2oPxCVouKABH1lM6wz7rPc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 adultscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ suspectscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060123
 
-On Thu, Dec 05, 2024, Nathan Chancellor wrote:
-> Hi Boris and x86 + KVM folks,
+
+
+On 12/4/2024 11:28 PM, Russell King (Oracle) wrote:
+> On Wed, Dec 04, 2024 at 10:43:55PM +0800, Lei Wei wrote:
+>> +static int ipq_pcs_enable(struct phylink_pcs *pcs)
+>> +{
+>> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+>> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+>> +	int index = qpcs_mii->index;
+>> +	int ret;
+>> +
+>> +	ret = clk_prepare_enable(qpcs_mii->rx_clk);
+>> +	if (ret) {
+>> +		dev_err(qpcs->dev, "Failed to enable MII %d RX clock\n", index);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(qpcs_mii->tx_clk);
+>> +	if (ret) {
+>> +		dev_err(qpcs->dev, "Failed to enable MII %d TX clock\n", index);
+>> +		clk_disable_unprepare(qpcs_mii->rx_clk);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void ipq_pcs_disable(struct phylink_pcs *pcs)
+>> +{
+>> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+>> +
+>> +	if (__clk_is_enabled(qpcs_mii->rx_clk))
+>> +		clk_disable_unprepare(qpcs_mii->rx_clk);
+>> +
+>> +	if (__clk_is_enabled(qpcs_mii->tx_clk))
+>> +		clk_disable_unprepare(qpcs_mii->tx_clk);
 > 
-> I got access to a new box that has an EPYC 9454P in it and I noticed
-> that I hit the warning from
+> Why do you need the __clk_is_enabled() calls here? Phylink should be
+> calling pcs_enable() once when the PCS when starting to use the PCS,
+> and then pcs_disable() when it stops using it - it won't call
+> pcs_disable() without a preceeding call to pcs_enable().
 > 
->         /*
->          * Make sure EFER[AIBRSE - Automatic IBRS Enable] is set. The APs are brought up
->          * using the trampoline code and as part of it, MSR_EFER gets prepared there in
->          * order to be replicated onto them. Regardless, set it here again, if not set,
->          * to protect against any future refactoring/code reorganization which might
->          * miss setting this important bit.
->          */
->         if (spectre_v2_in_eibrs_mode(spectre_v2_enabled) &&
->             cpu_has(c, X86_FEATURE_AUTOIBRS))
->                 WARN_ON_ONCE(msr_set_bit(MSR_EFER, _EFER_AUTOIBRS));
+> Are you seeing something different?
 > 
-> that was added by commit 8cc68c9c9e92 ("x86/CPU/AMD: Make sure
-> EFER[AIBRSE] is set") when booting a 32-bit kernel in QEMU with KVM. I
-> do not see this without KVM, so maybe this has something to do with
-> commit 8c19b6f257fa ("KVM: x86: Propagate the AMD Automatic IBRS feature
-> to the guest") as well?
 
-This is a bug in the above code.  msr_set_bit() returns '1' on a successful write.
-Presumably spectre_v2_select_mitigation() sets EFER.AUTOIBRS when booting on bare
-metal, in which case msr_set_bit() returns '0' because the bit is already set.
+Yes, understand that phylink won't call pcs_disable() without a 
+preceeding call to pcs_enable(). However, the "clk_prepare_enable" may 
+fail in the pcs_enable() method, so I added the __clk_is_enabled() check 
+in pcs_disable() method. This is because the phylink_major_config() 
+function today does not interpret the return value of phylink_pcs_enable().
 
---
-From: Sean Christopherson <seanjc@google.com>
-Date: Fri, 6 Dec 2024 08:14:45 -0800
-Subject: [PATCH] x86/CPU/AMD: WARN when setting EFER.AUTOIBRS if and only if
- the WRMSR fails
+>> +static void ipq_pcs_get_state(struct phylink_pcs *pcs,
+>> +			      struct phylink_link_state *state)
+>> +{
+>> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+>> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+>> +	int index = qpcs_mii->index;
+>> +
+>> +	switch (state->interface) {
+>> +	case PHY_INTERFACE_MODE_SGMII:
+>> +	case PHY_INTERFACE_MODE_QSGMII:
+>> +		ipq_pcs_get_state_sgmii(qpcs, index, state);
+>> +		break;
+>> +	default:
+>> +		break;
+> ...
+>> +static int ipq_pcs_config(struct phylink_pcs *pcs,
+>> +			  unsigned int neg_mode,
+>> +			  phy_interface_t interface,
+>> +			  const unsigned long *advertising,
+>> +			  bool permit)
+>> +{
+>> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+>> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+>> +	int index = qpcs_mii->index;
+>> +
+>> +	switch (interface) {
+>> +	case PHY_INTERFACE_MODE_SGMII:
+>> +	case PHY_INTERFACE_MODE_QSGMII:
+>> +		return ipq_pcs_config_sgmii(qpcs, index, neg_mode, interface);
+>> +	default:
+>> +		dev_err(qpcs->dev,
+>> +			"Unsupported interface %s\n", phy_modes(interface));
+>> +		return -EOPNOTSUPP;
+>> +	};
+>> +}
+>> +
+>> +static void ipq_pcs_link_up(struct phylink_pcs *pcs,
+>> +			    unsigned int neg_mode,
+>> +			    phy_interface_t interface,
+>> +			    int speed, int duplex)
+>> +{
+>> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+>> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+>> +	int index = qpcs_mii->index;
+>> +	int ret;
+>> +
+>> +	switch (interface) {
+>> +	case PHY_INTERFACE_MODE_SGMII:
+>> +	case PHY_INTERFACE_MODE_QSGMII:
+>> +		ret = ipq_pcs_link_up_config_sgmii(qpcs, index,
+>> +						   neg_mode, speed);
+>> +		break;
+>> +	default:
+>> +		dev_err(qpcs->dev,
+>> +			"Unsupported interface %s\n", phy_modes(interface));
+>> +		return;
+>> +	}
+> 
+> So you only support SGMII and QSGMII. Rather than checking this in every
+> method implementation, instead provide a .pcs_validate method that
+> returns an error for unsupported interfaces please.
+> 
 
-When ensuring EFER.AUTOIBRS is set, WARN only on a negative return code
-from msr_set_bit(), as '1' is used to indicate the WRMSR was successful
-('0' indicates the MSR bit was already set).
+Yes, I can add the pcs_validate() method to validate the link 
+configurations. This will catch invalid interface mode during the PCS 
+initialization time, earlier than the pcs_config and pcs_link_up contexts.
 
-Fixes: 8cc68c9c9e92 ("x86/CPU/AMD: Make sure EFER[AIBRSE] is set")
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/all/20241205220604.GA2054199@thelio-3990X
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But after of the PCS init, if at a later point the PHY interface mode 
+changes, it seems phylink today is not calling the pcs_validate() op to 
+validate the changed new interface mode at the time of 
+"phylink_resolve". (Hope my understanding is correct).
+So, In the pcs ops methods, I will keep the switch case to check and 
+handle the unsupported interface modes.
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index d8408aafeed9..79d2e17f6582 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -1065,7 +1065,7 @@ static void init_amd(struct cpuinfo_x86 *c)
- 	 */
- 	if (spectre_v2_in_eibrs_mode(spectre_v2_enabled) &&
- 	    cpu_has(c, X86_FEATURE_AUTOIBRS))
--		WARN_ON_ONCE(msr_set_bit(MSR_EFER, _EFER_AUTOIBRS));
-+		WARN_ON_ONCE(msr_set_bit(MSR_EFER, _EFER_AUTOIBRS) < 0);
- 
- 	/* AMD CPUs don't need fencing after x2APIC/TSC_DEADLINE MSR writes. */
- 	clear_cpu_cap(c, X86_FEATURE_APIC_MSRS_FENCE);
+> Thanks.
+> 
 
-base-commit: b8f52214c61a5b99a54168145378e91b40d10c90
--- 
 
