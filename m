@@ -1,204 +1,82 @@
-Return-Path: <linux-kernel+bounces-434814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A799E6B9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:17:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F959E6B5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:11:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0771884ED8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:11:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8694E1F8AF0;
+	Fri,  6 Dec 2024 10:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBP9H2H0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4464328667C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:17:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E0E204F6F;
-	Fri,  6 Dec 2024 10:14:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506112040BB;
-	Fri,  6 Dec 2024 10:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7BD1AD9F9;
+	Fri,  6 Dec 2024 10:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733480039; cv=none; b=jwGmzfW8gyhF8ZsugTb0vrsBY1Px8Ie4CJilCKfP17U1JR9mHVOUuQEY/R8Zwg9umax4hh6XmvwFqJB9j/8gtsQrFnA6GTCmYKj8E9VF4JwEFOR6m6DtgrDE5e4RPqYnNoknFnDzFslIbTCUKPyHNV5+O3wDFLvVba2PXVkA38g=
+	t=1733479874; cv=none; b=SW/zfWf73AL3ye4Nw26ts2Y/gAcr7ylAfdCxK/hYGO0etYstKuKHknvr59YUCzgQHlFBUGJnBVTHfAZX55bKgTSExDI97lAVJGo2/YIT4aKpnrtJkPyz7/TvnFUDI06nyiYoSXqukpK+baUVoA2xWISjpEzJEPS3eiVBdnhfSHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733480039; c=relaxed/simple;
-	bh=8Nu5bW0wSgTiG7JpIFob7gYIDf1SgPSD23qQTMtXXOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EJUsN3rNXoO5X2o0NGzTQYZS93DkciUxuRujo8v/8nn3RBN+1ey2mGPKD+eZNDpE97u6ljrxRAisdpLvxb5lphxFxi+D3I6gE2704KTzEvUO2oD0RvnZPGRk7tkNUmdvWkP261gXIkvPPKr+9bPSTflg6UoIiG+OI9h197j6JDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7FAF1A25;
-	Fri,  6 Dec 2024 02:14:25 -0800 (PST)
-Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE71F3F71E;
-	Fri,  6 Dec 2024 02:13:54 -0800 (PST)
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-To: linux-hardening@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	aruna.ramakrishna@oracle.com,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	jannh@google.com,
-	jeffxu@chromium.org,
-	joey.gouly@arm.com,
-	kees@kernel.org,
-	maz@kernel.org,
-	pierre.langlois@arm.com,
-	qperret@google.com,
-	ryan.roberts@arm.com,
-	will@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org
-Subject: [RFC PATCH 14/16] arm64: mm: Guard page table writes with kpkeys
-Date: Fri,  6 Dec 2024 10:11:08 +0000
-Message-ID: <20241206101110.1646108-15-kevin.brodsky@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241206101110.1646108-1-kevin.brodsky@arm.com>
-References: <20241206101110.1646108-1-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1733479874; c=relaxed/simple;
+	bh=MLNJAgBwRgs2KjM5s4PX7TmimuKXeMg69Vr4tEt3vIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMrt+p/y0SohUU2rnYHT4lfi4bCcFNDVunR/4N63ZuCfHlpaiK4uryM54n3yWzeE+QnksskaX0cJDtJqF2AcIyUHJ8IxB+rSp+4uPXe98jaKIdyg7a3+9XMWvSLOTpMdlXZYY9b7vsqnK4KBu5yMwDzx8Sm5kbum71xfIR6e7iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBP9H2H0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A591C4CED1;
+	Fri,  6 Dec 2024 10:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733479873;
+	bh=MLNJAgBwRgs2KjM5s4PX7TmimuKXeMg69Vr4tEt3vIU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YBP9H2H0tqtGwm1CvEqLxfcBJhulgIHIQU5M+lk2sHOvivaDxLZHUmWH/xKxtoUZJ
+	 RM8SdJK9fttmHgrm7fJEgRrFmSHFsXlyuRxfXwoW7qGICZqH0fjniM++fhLaza6mPu
+	 GbwBUhJjh6xRpWZU8IaaIJsB80z5GxnuwnMtze36uwqvw4MNjA1k3LqCqRhisG5T/S
+	 ibwfIcyBpTJeTbO22kikY5pILlQxYK2DJUJYDR48wjI/DvSmjXhQ+JLzPv/2K/pTlx
+	 XdRinRuf57Iq8dfUeAJU3Kz3Kbmd0fD9xHaJJZ88Xe5Ja8WIzRNN7vLHwQJJqL6UCF
+	 TAdA5nXM/N6ZQ==
+Date: Fri, 6 Dec 2024 10:11:09 +0000
+From: Simon Horman <horms@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, frank.li@nxp.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v6 RESEND net-next 3/5] net: enetc: update max chained Tx
+ BD number for i.MX95 ENETC
+Message-ID: <20241206101109.GK2581@kernel.org>
+References: <20241204052932.112446-1-wei.fang@nxp.com>
+ <20241204052932.112446-4-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204052932.112446-4-wei.fang@nxp.com>
 
-When CONFIG_KPKEYS_HARDENED_PGTABLES is enabled, page tables (both
-user and kernel) are mapped with a privileged pkey in the linear
-mapping. As a result, they can only be written under the
-kpkeys_hardened_pgtables guard, which sets POR_EL1 appropriately to
-allow such writes.
+On Wed, Dec 04, 2024 at 01:29:30PM +0800, Wei Fang wrote:
+> The max chained Tx BDs of latest ENETC (i.MX95 ENETC, rev 4.1) has been
+> increased to 63, but since the range of MAX_SKB_FRAGS is 17~45, so for
+> i.MX95 ENETC and later revision, it is better to set ENETC4_MAX_SKB_FRAGS
+> to MAX_SKB_FRAGS.
+> 
+> In addition, add max_frags in struct enetc_drvdata to indicate the max
+> chained BDs supported by device. Because the max number of chained BDs
+> supported by LS1028A and i.MX95 ENETC is different.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 
-Use this guard wherever page tables genuinely need to be written,
-keeping its scope as small as possible (so that POR_EL1 is reset as
-fast as possible). Where atomics are involved, the guard's scope
-encompasses the whole loop to avoid switching POR_EL1 unnecessarily.
-
-This patch is a no-op if CONFIG_KPKEYS_HARDENED_PGTABLES is disabled
-(default).
-
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
----
- arch/arm64/include/asm/pgtable.h | 19 +++++++++++++++++--
- arch/arm64/mm/fault.c            |  2 ++
- 2 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 6986345b537a..5f9d748f08ee 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -39,6 +39,7 @@
- #include <linux/mm_types.h>
- #include <linux/sched.h>
- #include <linux/page_table_check.h>
-+#include <linux/kpkeys.h>
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- #define __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
-@@ -314,6 +315,7 @@ static inline pte_t pte_clear_uffd_wp(pte_t pte)
- 
- static inline void __set_pte_nosync(pte_t *ptep, pte_t pte)
- {
-+	guard(kpkeys_hardened_pgtables)();
- 	WRITE_ONCE(*ptep, pte);
- }
- 
-@@ -758,6 +760,7 @@ static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
- 	}
- #endif /* __PAGETABLE_PMD_FOLDED */
- 
-+	guard(kpkeys_hardened_pgtables)();
- 	WRITE_ONCE(*pmdp, pmd);
- 
- 	if (pmd_valid(pmd)) {
-@@ -825,6 +828,7 @@ static inline void set_pud(pud_t *pudp, pud_t pud)
- 		return;
- 	}
- 
-+	guard(kpkeys_hardened_pgtables)();
- 	WRITE_ONCE(*pudp, pud);
- 
- 	if (pud_valid(pud)) {
-@@ -906,6 +910,7 @@ static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
- 		return;
- 	}
- 
-+	guard(kpkeys_hardened_pgtables)();
- 	WRITE_ONCE(*p4dp, p4d);
- 	dsb(ishst);
- 	isb();
-@@ -1033,6 +1038,7 @@ static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
- 		return;
- 	}
- 
-+	guard(kpkeys_hardened_pgtables)();
- 	WRITE_ONCE(*pgdp, pgd);
- 	dsb(ishst);
- 	isb();
-@@ -1233,6 +1239,7 @@ static inline int __ptep_test_and_clear_young(struct vm_area_struct *vma,
- {
- 	pte_t old_pte, pte;
- 
-+	guard(kpkeys_hardened_pgtables)();
- 	pte = __ptep_get(ptep);
- 	do {
- 		old_pte = pte;
-@@ -1279,7 +1286,10 @@ static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
- static inline pte_t __ptep_get_and_clear(struct mm_struct *mm,
- 				       unsigned long address, pte_t *ptep)
- {
--	pte_t pte = __pte(xchg_relaxed(&pte_val(*ptep), 0));
-+	pte_t pte;
-+
-+	scoped_guard(kpkeys_hardened_pgtables)
-+		pte = __pte(xchg_relaxed(&pte_val(*ptep), 0));
- 
- 	page_table_check_pte_clear(mm, pte);
- 
-@@ -1322,7 +1332,10 @@ static inline pte_t __get_and_clear_full_ptes(struct mm_struct *mm,
- static inline pmd_t pmdp_huge_get_and_clear(struct mm_struct *mm,
- 					    unsigned long address, pmd_t *pmdp)
- {
--	pmd_t pmd = __pmd(xchg_relaxed(&pmd_val(*pmdp), 0));
-+	pmd_t pmd;
-+
-+	scoped_guard(kpkeys_hardened_pgtables)
-+		pmd = __pmd(xchg_relaxed(&pmd_val(*pmdp), 0));
- 
- 	page_table_check_pmd_clear(mm, pmd);
- 
-@@ -1336,6 +1349,7 @@ static inline void ___ptep_set_wrprotect(struct mm_struct *mm,
- {
- 	pte_t old_pte;
- 
-+	guard(kpkeys_hardened_pgtables)();
- 	do {
- 		old_pte = pte;
- 		pte = pte_wrprotect(pte);
-@@ -1416,6 +1430,7 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- 		unsigned long address, pmd_t *pmdp, pmd_t pmd)
- {
- 	page_table_check_pmd_set(vma->vm_mm, pmdp, pmd);
-+	guard(kpkeys_hardened_pgtables)();
- 	return __pmd(xchg_relaxed(&pmd_val(*pmdp), pmd_val(pmd)));
- }
- #endif
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index ef63651099a9..ab45047155b9 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -220,6 +220,8 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
- 	if (pte_same(pte, entry))
- 		return 0;
- 
-+	guard(kpkeys_hardened_pgtables)();
-+
- 	/* only preserve the access flags and write permission */
- 	pte_val(entry) &= PTE_RDONLY | PTE_AF | PTE_WRITE | PTE_DIRTY;
- 
--- 
-2.47.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
