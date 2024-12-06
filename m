@@ -1,146 +1,70 @@
-Return-Path: <linux-kernel+bounces-435340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2BD9E764B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DB39E764E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:42:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7BFD160FB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D1616AEA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDF9206299;
-	Fri,  6 Dec 2024 16:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2FB206299;
+	Fri,  6 Dec 2024 16:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TFmBClOH"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwO/jMC8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA2A819;
-	Fri,  6 Dec 2024 16:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA55A20628D;
+	Fri,  6 Dec 2024 16:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503269; cv=none; b=Tkf53IiP5ue/n3IO7ZADW1ctf9M9syZsUJCAxG1uWS+usGnkVAEwcztxAerM5eV3KKAZGiRmPsQbp+BmBmaMklBwulaeJRp7hBkIrRIvVX+k/wQIJiBMk1ZGceoOWsVlR+8fYhNYKmM5UqzdT8Vu//z3gYGq1BR+gsPx4GLMZPA=
+	t=1733503319; cv=none; b=M9CIi/WyoIwZICqj7rnYG1g+Kn4lgdJ7o6xHQGspxYNpH/DzE3zDs9DPfrm7C3HFnuZ7cnWpJGR09JJj0O7UNboeTg+PtNLBgYcVvo3zyurA3dWyfhn06dZp9yLq52u2GpTV9PS8QmkkNmkGpcPjgF3OIDonDKPdmef+gd6Z8k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503269; c=relaxed/simple;
-	bh=7ANu5EScUwuJ6PQjUEeCzCCZry0hPu73TNNgvcoO70Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cxalo6z/R575WhhkW+5i8hyyse/B38cR5jwMbMOGVL7yd/QpM0LeXVaLqaEEGtCRcvJ18cC7hx8oUGIFDGKKjQj63TLRKBzvKCNozoJZ8VqqHgaTLIaKY6DKWDIOGWNlP+gwnQJLywvvaLG+VqitFqzz1idLCXwHYMnonXnEPz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TFmBClOH; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id JbMqtRjeSgyqpJbMqthh1y; Fri, 06 Dec 2024 17:39:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733503190;
-	bh=j8NFJHpTnotxjR23il/PFTjZwL7eJr/DxZvCjCEpviw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=TFmBClOHnKrl2gNLgLkmaW6lQl+KGzrIc46tK1ss2HkGyLTiwFvqzgioS7ZR2eROP
-	 awZaRWMpAMnDWrltN3qsw31k93H2PLh0+IIkd3hOP8i6VCuRaeTygE5f1dq2d0zsqr
-	 FRy7ltBzCuTgHA/HgBby7GAWG8W3/sFhXpx0IwWBK2/Op4l3ZQtoAfGk7ftlqeW7CM
-	 NLugchr9Jo1AradlZ0QLkKB4T6hXD+vDaflqqdwiZyJ2zs+aumuKHgPGle5cCZanV9
-	 fd1yj4C0vqdXZRRiPLeKN2hZBjVM/H+cnrNNocW5uod0ngkRf2AXGKBMhJ6QWoXDaU
-	 s+EyAUdqhqzpA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 06 Dec 2024 17:39:50 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH v2] iio: adc: ad9467: Fix the "don't allow reading vref if not available" case
-Date: Fri,  6 Dec 2024 17:39:28 +0100
-Message-ID: <cc65da19e0578823d29e11996f86042e84d5715c.1733503146.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733503319; c=relaxed/simple;
+	bh=GVom6tby0lr+M+AdlKnmYonY5gX0lhsKBw9N6+oS/bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PKsuAeEOwiABZyr6rFp0uYx6WqzE0yoMNxst/vA7mfANBfudTN3bP4mOQ3Xp+9HmKK2dn7TG5fZ9VI0Q3ihv2E2qNaqrXJPi5uDVwviPsTHcwMbObgGyQcVrqL9dWuUWxXVGmZrptaCAS9xaTb9liTHWLFc5wBb9wAkJUwj/ctk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwO/jMC8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC75FC4CED1;
+	Fri,  6 Dec 2024 16:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733503319;
+	bh=GVom6tby0lr+M+AdlKnmYonY5gX0lhsKBw9N6+oS/bw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XwO/jMC8QaCOnt3zj3h6VCYp6SCCGwoyMOAhzWRUqNn64xF6MojGsx9sWOlOeFqV3
+	 wsBwLjUHlIVI/+hUMM4RTLNsJ+6rlAcREgSPMQVUFNcaiBMg6NjrrCiN1QmcLD8oNi
+	 UGwDS9hCAh9FIqZqJ9MFtmi3vAwRlTHXMqSc0M7F6zYbhE6z8Tzd6yAwIVqZUHST2N
+	 5HziS4EYJby5A0U92JqecswBFhYO39xEQhHDpbSSAMMnyGXNf+QiGymwL/C/ghqhz8
+	 9JmxpYf1gNYRPsTs+DtBAM+GLxMIil/7cnNdRygVRCVkdxAjNj9KFOsbNVVhTebRtM
+	 JTv6LGo6YOj3Q==
+Date: Fri, 6 Dec 2024 08:41:58 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Cc: Justin Lai <justinlai0215@realtek.com>, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, andrew+netdev@lunn.ch,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, horms@kernel.org,
+ michal.kubiak@intel.com, pkshih@realtek.com, larry.chiu@realtek.com
+Subject: Re: [PATCH net-next] rtase: Refine the if statement
+Message-ID: <20241206084158.172dd06d@kernel.org>
+In-Reply-To: <Z1LVqssDBEZ7nsWQ@mev-dev.igk.intel.com>
+References: <20241206084851.760475-1-justinlai0215@realtek.com>
+	<Z1LVqssDBEZ7nsWQ@mev-dev.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The commit in Fixes adds a special case when only one possible scale is
-available.
-If several scales are available, it sets the .read_avail field of the
-struct iio_info to ad9467_read_avail().
+On Fri, 6 Dec 2024 11:44:58 +0100 Michal Swiatkowski wrote:
+> I am not sure if it is worth to change.
 
-However, this field already holds this function pointer, so the code is a
-no-op.
-
-Use another struct iio_info instead to actually reflect the intent
-described in the commit message. This way, the structure to use is selected
-at runtime and they can be kept as const.
-
-This is safer because modifying static structs that are shared between all
-instances like this, based on the properties of a single instance, is
-asking for trouble down the road.
-
-Fixes: b92f94f74826 ("iio: adc: ad9467: don't allow reading vref if not available")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is compile tested only and is completely speculative.
-
-Changes in v2:
-  - use another struct iio_info to keep the structure const
-
-v1: https://lore.kernel.org/linux-kernel/556f87c8931d7d7cdf56ebc79f974f8bef045b0d.1733431628.git.christophe.jaillet@wanadoo.fr/
----
- drivers/iio/adc/ad9467.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iio/adc/ad9467.c b/drivers/iio/adc/ad9467.c
-index d358958ab310..f30119b42ba0 100644
---- a/drivers/iio/adc/ad9467.c
-+++ b/drivers/iio/adc/ad9467.c
-@@ -895,7 +895,7 @@ static int ad9467_update_scan_mode(struct iio_dev *indio_dev,
- 	return 0;
- }
- 
--static struct iio_info ad9467_info = {
-+static const struct iio_info ad9467_info = {
- 	.read_raw = ad9467_read_raw,
- 	.write_raw = ad9467_write_raw,
- 	.update_scan_mode = ad9467_update_scan_mode,
-@@ -903,6 +903,14 @@ static struct iio_info ad9467_info = {
- 	.read_avail = ad9467_read_avail,
- };
- 
-+/* Same as above, but without .read_avail */
-+static const struct iio_info ad9467_info_no_read_avail = {
-+	.read_raw = ad9467_read_raw,
-+	.write_raw = ad9467_write_raw,
-+	.update_scan_mode = ad9467_update_scan_mode,
-+	.debugfs_reg_access = ad9467_reg_access,
-+};
-+
- static int ad9467_scale_fill(struct ad9467_state *st)
- {
- 	const struct ad9467_chip_info *info = st->info;
-@@ -1214,11 +1222,12 @@ static int ad9467_probe(struct spi_device *spi)
- 	}
- 
- 	if (st->info->num_scales > 1)
--		ad9467_info.read_avail = ad9467_read_avail;
-+		indio_dev->info = &ad9467_info;
-+	else
-+		indio_dev->info = &ad9467_info_no_read_avail;
- 	indio_dev->name = st->info->name;
- 	indio_dev->channels = st->info->channels;
- 	indio_dev->num_channels = st->info->num_channels;
--	indio_dev->info = &ad9467_info;
- 
- 	ret = ad9467_iio_backend_get(st);
- 	if (ret)
--- 
-2.47.1
-
+True, tho, FWIW, if it's the maintainer of the codebase sending the
+change it's generally fine. Our "no pointless churn" rule is primarily
+for randoes.
 
