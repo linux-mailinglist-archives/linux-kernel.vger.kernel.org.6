@@ -1,155 +1,145 @@
-Return-Path: <linux-kernel+bounces-434183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284439E62B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:57:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B42C9E62B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3042818844FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:57:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EEFB1636F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F2513A89B;
-	Fri,  6 Dec 2024 00:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FAB38384;
+	Fri,  6 Dec 2024 00:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="kb+PAfJg"
-Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="O/0Rdc5T"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA532BB09
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0694F193;
+	Fri,  6 Dec 2024 00:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733446602; cv=none; b=FVFGtZJfqC14k3zqimYqJwZkcd8ycMJ7fSJKvGFd4ZZTaj1VMBZG4p6SqMNSPw9myIkWTIhhQRHpzuYGiKCz5w/AeVyxC+bTCiYRJB6GQaapwlFv3TZ0GyfqhBx9ghKD7976tlZ9FKKZUUEZBSWi8HfdfAGhB0x5LKBLebsnh94=
+	t=1733446662; cv=none; b=jtBOwOO2ltpGWNZQDWkM9VyWt6hjlAEFdZfRAEIRqL1JeKmXScqU5fJrAL/1DNU8VkSlvhZLQuPKZXA11kgJL5C6onjNcsShjYoS9bZNdUI1WrbLmWtAPQ/fA0IB71/XeuIt/8LxvIoRP5IqqrLgBOkyUf/R9mgA1GZyGyTiBnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733446602; c=relaxed/simple;
-	bh=192sas5/3dB52EZjfRuQhdzd9qENarFp7gqCphryGrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJ85Z8APAlnaA1abfx4Z38/TTJG+oLW/BA3TwRcbcdlf6xqjMGSmERuonZP/7MVtbXLDGRVg9FkIlpWLo3VByhLb3U0Pr2QWza8I0TtdWUy7Wa/Dn67722DQ4kf5O3NvMJtgY7J40J3FnjXrJJsAwGwPRmUDSNANUpgQYKdImcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=kb+PAfJg; arc=none smtp.client-ip=17.58.6.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733446598;
-	bh=gD/eV8FniOqkvsbchGLbTggCmSZ3+Zy4ZNoHJzav1qY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=kb+PAfJgaCYIQRvFMLki16gYica5tRz/08+GznpmNX7VeO+OH27EOPjbOCq88Bq5G
-	 C85X8m08IvDSJIBUkQpWDkm/U+UPvjMndrTjwaHPdxebzthJxcCvzNq1UluTMsOJE0
-	 f/0ApVaydU3tkF/jonXQ6he1D/A1oPkgLYw3/ROwGhr2XOvjy8TJ9vq91JoxTwmWUc
-	 ba2JcPh21U8etDOzQaiUpPg1qZtmIP7MChQkfEtsT7WmDEkJB7EJJI67OyQh+q5UI+
-	 YN2aWgZIZGmaIvEcoooWNySYWbIvD/XfFw0E7Ta1fRv2r40AtsA3NMQGWCkVFfGaKX
-	 jqpQZGpB+nUgg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id 86E9E5001C0;
-	Fri,  6 Dec 2024 00:56:29 +0000 (UTC)
-Message-ID: <288fe563-bd3b-4075-bcf6-5fc4782a6cb9@icloud.com>
-Date: Fri, 6 Dec 2024 08:56:26 +0800
+	s=arc-20240116; t=1733446662; c=relaxed/simple;
+	bh=kwOMnH+u5IAoSHvIY6bkC0ZWheAOiJb0SlAVXMM1Q0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFeaZ6MXy9oWCRp6As9kTt7iLEZbB2e/2nbrWouCCe2pQmDqbpsWUjr2nLIm7NPZ6Fmg+6suYkBGWsMX+m55OM/9gANSNtoNfRCrvthTn9p6BWwbDP0SJZpK1Wr2+UG2YOSeOzwZyL3DXs7Qd9x0lS+ZmLgAcUYyFk1/Nm7BMlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=O/0Rdc5T; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0148664.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B60s4vr006020;
+	Fri, 6 Dec 2024 00:57:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps0720; bh=LrUSZi7g/a8xkb8UWL38FyDn1g
+	UQBK0tgVseIuMZxPU=; b=O/0Rdc5TaXrm/VGi29qXYAcgEslGan5QneGuRkD1FL
+	17ZECQJt4AhV4JRQqXyB/SnEun2OofYHuYRokfrxPS9Y1QntmZf/QdFwCmxyaUmG
+	rdXEjxfV/EdGzu13c3LPBWOIu6wOc3qT4InmnC6bN2YmbLl8jJh/JhWQAh9x25G8
+	bINVea3pxpw0SsZoNTirFejYhqHYPE9qPyo4IxkSf39hMI/U5xLgP8kW48ZM99Us
+	Cl8qTXrx7U979HcrBAgzqbXWAaZJCbK8PT7ybIBak23EVcWa0JPU3FS54SVO2cVB
+	ftcEVufuwv+5rMqm/jeyV7uapiEbPMitGAI3XSz5nJfw==
+Received: from p1lg14878.it.hpe.com ([16.230.97.204])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 43bq4800rs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 00:57:21 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 01F8227677;
+	Fri,  6 Dec 2024 00:57:20 +0000 (UTC)
+Received: from DESKTOP-V47QP3F. (unknown [16.231.227.36])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 3C8F480A244;
+	Fri,  6 Dec 2024 00:57:19 +0000 (UTC)
+Date: Thu, 5 Dec 2024 18:57:17 -0600
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: bp@alien8.de, james.morse@arm.com, mchehab@kernel.org, rric@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
+Message-ID: <Z1JL7fevweCQtTnT@hpe.com>
+References: <20241205165954.7957-1-kyle.meyer@hpe.com>
+ <Z1H7U9-O2LdAoa5r@agluck-desk3>
+ <Z1IHkBlm_0p-0-c3@hpe.com>
+ <Z1Iuk-_VdmZibOes@agluck-desk3>
+ <Z1I-A0Rhc8AHhvtw@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/11] libnvdimm: Simplify nd_namespace_store()
- implementation
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
- linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-1-1611f1486b5a@quicinc.com>
- <Z1I3lSpcnIIbc7S1@aschofie-mobl2.lan>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <Z1I3lSpcnIIbc7S1@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: m6MvnGCh7TgcaO5x_qBwHR0pa2QT6zvQ
-X-Proofpoint-GUID: m6MvnGCh7TgcaO5x_qBwHR0pa2QT6zvQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1I-A0Rhc8AHhvtw@agluck-desk3>
+X-Proofpoint-GUID: UQcTtQmVPiPioaFN6HTCjN8a9TKokAri
+X-Proofpoint-ORIG-GUID: UQcTtQmVPiPioaFN6HTCjN8a9TKokAri
+X-HPE-SCL: -1
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-05_16,2024-12-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0 adultscore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412060007
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060006
 
-On 2024/12/6 07:30, Alison Schofield wrote:
-> On Thu, Dec 05, 2024 at 08:10:10AM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Thu, Dec 05, 2024 at 03:57:55PM -0800, Luck, Tony wrote:
+> > +int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
+> > +{
+> > +#ifdef CONFIG_NUMA
+> > +	return skx_get_pkg_id(d, id);
+> > +#else
+> > +	u32 reg;
+> > +
+> > +	if (pci_read_config_dword(d->util_all, off, &reg)) {
+> > +		skx_printk(KERN_ERR, "Failed to read src id\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	*id = GET_BITFIELD(reg, 12, 14);
+> > +	return 0;
+> > +#endif
 > 
-> Hi Zihun,
+> Doh ... I alwasy forget about IS_ENABLED(). This can be written:
 > 
-> Similar to my comment on Patch 10/11, this commit msg can be
-> explicit:
 > 
-> libnvdimm: Replace namespace_match() w device_find_child_by_name()
+> int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
+> {
+> 	u32 reg;
 > 
->>
->> Simplify nd_namespace_store() implementation by  device_find_child_by_name()
->                                                   ^using 
+> 	if (IS_ENABLED(CONFIG_NUMA))
+> 		return skx_get_pkg_id(d, id);
 > 
+> 	if (pci_read_config_dword(d->util_all, off, &reg)) {
+> 		skx_printk(KERN_ERR, "Failed to read src id\n");
+> 		return -ENODEV;
+> 	}
+> 
+> 	*id = GET_BITFIELD(reg, 12, 14);
+> 	return 0;
+> }
 
-thank you Alison for code review.
+Looks good.
 
-will send v4 with your suggestions.
-(^^)
+> 1) Does this work? I tried on a non-clumpy system that is NUMA.
 
-> Otherwise you can add:
-> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-> 
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  drivers/nvdimm/claim.c | 9 +--------
->>  1 file changed, 1 insertion(+), 8 deletions(-)
->>
->> diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
->> index 030dbde6b0882050c90fb8db106ec15b1baef7ca..9e84ab411564f9d5e7ceb687c6491562564552e3 100644
->> --- a/drivers/nvdimm/claim.c
->> +++ b/drivers/nvdimm/claim.c
->> @@ -67,13 +67,6 @@ bool nd_attach_ndns(struct device *dev, struct nd_namespace_common *attach,
->>  	return claimed;
->>  }
->>  
->> -static int namespace_match(struct device *dev, void *data)
->> -{
->> -	char *name = data;
->> -
->> -	return strcmp(name, dev_name(dev)) == 0;
->> -}
->> -
->>  static bool is_idle(struct device *dev, struct nd_namespace_common *ndns)
->>  {
->>  	struct nd_region *nd_region = to_nd_region(dev->parent);
->> @@ -168,7 +161,7 @@ ssize_t nd_namespace_store(struct device *dev,
->>  		goto out;
->>  	}
->>  
->> -	found = device_find_child(dev->parent, name, namespace_match);
->> +	found = device_find_child_by_name(dev->parent, name);
->>  	if (!found) {
->>  		dev_dbg(dev, "'%s' not found under %s\n", name,
->>  				dev_name(dev->parent));
->>
->> -- 
->> 2.34.1
->>
->>
+Yes, I just tested this on a Sapphire Rapids system with multiple UPI domains.
 
+> 2) Is it better (assuming #fidef factored off into a .h file)?
+
+IMO, yes, but there's one subtle difference. EDAC will not load on systems
+that have a single UPI domain when CONFIG_NUMA is enabled but numa=off, because
+pcibus_to_node() in skx_get_pkg_id() will return NUMA_NO_NODE (-1). Is that a
+case that we need to worry about?
+
+Thanks,
+Kyle Meyer
 
