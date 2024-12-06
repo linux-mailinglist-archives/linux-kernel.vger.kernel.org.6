@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-434254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2369E6403
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:20:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783D31882D8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:20:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A9D144D0A;
-	Fri,  6 Dec 2024 02:19:54 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 511599E6409
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:21:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E891145B0C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09DC6283D74
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:21:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AA91714A1;
+	Fri,  6 Dec 2024 02:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fj7zNGU6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F6E13C8FF;
+	Fri,  6 Dec 2024 02:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733451594; cv=none; b=c3Jc/OKSXayTdyhMxliGz71S2gjFLvfovLfESlOK7dgKyYUqxNFa/hIQQJmbalKKEMvNN9ZPXjjHJgdygz60WFRi4XcIX66HSFR7zE9RdiT0qBldN9RPvy1m1bqaI8CEfN9jtyl/atwVQFgV7GBxE+uKyZMHfv5iS3dtvJ8G1ls=
+	t=1733451661; cv=none; b=hVcHDckORkeraNfIX2QXM8IasFsAxPv3t/1pJ3TEg4G0mJVZ0KVX72JCH5SfgWSErc36eKZv99pkrpfWAZz/qr0WApTKNXdhTfQiR05Cjz2gU55dm8qykQIUEw9K95veGzgEMdPvoUlm+z/CueK1tVew794eBEvsUyP0Bp1sQkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733451594; c=relaxed/simple;
-	bh=LnI0Na3/B3DR4dG1oO0Wy0h54NsiJph8a4Tm/NLGsLI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=qpb+6fGAqtrOSrzRZvv67JZSbsCfx2cACU3EuUpaQyaqwEgwhCK/osldMJLJjBtQ7h2xvoSr5PE9mCV1yHjM2ilocC+mYS2rJ3x5OKKYRtC8d0PClIJwQzgJg3Lz0LlRqT2RpTxqrCO4jU1oJEj5bjTo1xE3Atr2qLqxQrfRsyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-38-yTzVEjDMP82plyYRPmALzQ-1; Fri, 06 Dec 2024 02:19:43 +0000
-X-MC-Unique: yTzVEjDMP82plyYRPmALzQ-1
-X-Mimecast-MFC-AGG-ID: yTzVEjDMP82plyYRPmALzQ
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
- 2024 02:18:59 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Dec 2024 02:18:59 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Naresh Kamboju' <naresh.kamboju@linaro.org>, Dan Carpenter
-	<dan.carpenter@linaro.org>
-CC: open list <linux-kernel@vger.kernel.org>, "lkft-triage@lists.linaro.org"
-	<lkft-triage@lists.linaro.org>, Linux Regressions
-	<regressions@lists.linux.dev>, Linux ARM
-	<linux-arm-kernel@lists.infradead.org>, "netfilter-devel@vger.kernel.org"
-	<netfilter-devel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Anders
- Roxell" <anders.roxell@linaro.org>, Johannes Berg <johannes.berg@intel.com>,
-	"toke@kernel.org" <toke@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	"kernel@jfarr.cc" <kernel@jfarr.cc>, "kees@kernel.org" <kees@kernel.org>
-Subject: RE: arm64: include/linux/compiler_types.h:542:38: error: call to
- '__compiletime_assert_1050' declared with attribute error: clamp() low limit
- min greater than high limit max_avail
-Thread-Topic: arm64: include/linux/compiler_types.h:542:38: error: call to
- '__compiletime_assert_1050' declared with attribute error: clamp() low limit
- min greater than high limit max_avail
-Thread-Index: AQHbR0VgROIHG94lCEKLQVwMYBVLZbLYdnCQ
-Date: Fri, 6 Dec 2024 02:18:59 +0000
-Message-ID: <bd95d7249ff94e31beb11b3f71a64e87@AcuMS.aculab.com>
-References: <CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com>
- <8dde5a62-4ce6-4954-86c9-54d961aed6df@stanley.mountain>
- <CA+G9fYv5gW1gByakU1yyQ__BoAKWkCcg=vGGyNep7+5p9_2uJA@mail.gmail.com>
-In-Reply-To: <CA+G9fYv5gW1gByakU1yyQ__BoAKWkCcg=vGGyNep7+5p9_2uJA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733451661; c=relaxed/simple;
+	bh=akNeQOS7F+aeCKe8og5HELrAfPpoyjYBig7r2/tsigQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Zpq7OYGRzRFqccnJcOKKEX/ZPAJh1pI/EKhof22/qYSgAhpPenDGiAfxrhruzw1a6Y3P656MSf8vOveuRwHQTKJJD/9mQ2iWsKYkVrUt1rvUKzmmyj463NlLhPKTmwR9wMoSmeHXwNEB7Tc11S/uMTIpYSqzLmMjqvic1F/C90A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fj7zNGU6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5Ha2YN020274;
+	Fri, 6 Dec 2024 02:20:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SHzZ4xcY0wRotHaB4a7qtHnMNeWb63zB+1W3oS56BZY=; b=fj7zNGU6qLjHfbqk
+	5CQiDtNIQlM6MJ1wAKVmYQIdjOxaKe+FhzkBBwHm71UBz1ICoiF3On2q/2jGsWbY
+	9sF3YO5rFuR1FBQDRKqLI6K7CPIGL/3NqJW75G/XAsCAYNanBFmM98jrxoyBoBOK
+	QFJutjlu0ANX/PGsa+kBni9F4DF6AM0q9PlbaH8735yqrgxeOXmErUcixQCLBVEL
+	FN2THRuiw+kArlxZROa95PtHMnSVMeuzV1o7PteBpknrfBR2VFVtIBST47V0O/KX
+	iwnYZcIcoa5jbUPoW+LZPB2dSOqLFN60Z8ARC5AosYqNNq3swB0TjTbUmHGgMMaM
+	+csYkA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439v801m96-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 02:20:54 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62Kr1r012371
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 02:20:53 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 18:20:47 -0800
+Message-ID: <25cfe320-a8cd-44e9-85e1-fb833f65fb7e@quicinc.com>
+Date: Fri, 6 Dec 2024 10:20:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Wfrrq4lIgQvk-zWuCRszVoTifFC3po8g-ZvLlFmneXI_1733451582
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/16] media: qcom: camss: Add default case in
+ vfe_src_pad_code
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <vladimir.zapolskiy@linaro.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20241205155538.250743-1-quic_depengs@quicinc.com>
+ <20241205155538.250743-13-quic_depengs@quicinc.com>
+ <636ef629-2298-44cd-9e0c-d009379a72a6@linaro.org>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <636ef629-2298-44cd-9e0c-d009379a72a6@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QIqh4_aE95pbRMTSVzcaDvTbkT57FfJM
+X-Proofpoint-GUID: QIqh4_aE95pbRMTSVzcaDvTbkT57FfJM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060016
 
-RnJvbTogTmFyZXNoIEthbWJvanUNCj4gU2VudDogMDUgRGVjZW1iZXIgMjAyNCAxODo0Mg0KPiAN
-Cj4gT24gVGh1LCA1IERlYyAyMDI0IGF0IDIwOjQ2LCBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVu
-dGVyQGxpbmFyby5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gQWRkIERhdmlkIHRvIHRoZSBDQyBsaXN0
-Lg0KPiANCj4gQW5kZXJzIGJpc2VjdGVkIHRoaXMgcmVwb3J0ZWQgaXNzdWUgYW5kIGZvdW5kIHRo
-ZSBmaXJzdCBiYWQgY29tbWl0IGFzLA0KPiANCj4gIyBmaXJzdCBiYWQgY29tbWl0Og0KPiAgIFtl
-ZjMyYjkyYWM2MDViYTFiNzY5MjgyNzMzMGI5YzYwMjU5ZjBhZjQ5XQ0KPiAgIG1pbm1heC5oOiB1
-c2UgQlVJTERfQlVHX09OX01TRygpIGZvciB0aGUgbG8gPCBoaSB0ZXN0IGluIGNsYW1wKCkNCg0K
-VGhhdCAnanVzdCcgY2hhbmdlZCB0aGUgdGVzdCB0byB1c2UgX19idWlsdGluX2NvbnN0YW50X3Ao
-KSBhbmQNCnRodXMgZ2V0cyBjaGVja2VkIGFmdGVyIHRoZSBvcHRpbWlzZXIgaGFzIHJ1bi4NCg0K
-SSBjYW4gcGFyYXBocmFzZSB0aGUgY29kZSBhczoNCnVuc2lnbmVkIGludCBmbih1bnNpZ25lZCBp
-bnQgeCkNCnsNCglyZXR1cm4gY2xhbXAoMTAsIDUsIHggPT0gMCA/IDAgOiB4IC0gMSk7DQp9DQp3
-aGljaCBpcyBuZXZlciBhY3R1YWxseSBjYWxsZWQgd2l0aCB4IDw9IDUuDQpUaGUgY29tcGlsZXIg
-Y29udmVydHMgaXQgdG86DQoJcmV0dXJuIHggPCAwID8gY2xhbXAoMTAsIDUsIDApIDogY2xhbXAo
-MTAsIDUsIHgpOw0KKFByb2JhYmx5IGJlY2F1c2UgaXQgY2FuIHNlZSB0aGF0IGNsYW1wKDEwLCA1
-LCAwKSBpcyBjb25zdGFudC4pDQpBbmQgdGhlbiB0aGUgY29tcGlsZS10aW1lIHNhbml0eSBjaGVj
-ayBpbiBjbGFtcCgpIGZpcmVzLg0KDQpUaGUgb3JkZXIgb2YgdGhlIGFyZ3VtZW50cyB0byBjbGFt
-cCBpcyBqdXN0IHdyb25nIQ0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
-aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
-DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Hi Bryan,
+
+On 12/6/2024 8:21 AM, Bryan O'Donoghue wrote:
+> On 05/12/2024 15:55, Depeng Shao wrote:
+>> Add a default case in vfe_src_pad_code to get rid of a compile
+>> warning if a new hw enum is added.
+>>
+>> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
+>>   drivers/media/platform/qcom/camss/camss-vfe.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/ 
+>> media/platform/qcom/camss/camss-vfe.c
+>> index 58e24a043e81..1c9b6569fbe5 100644
+>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+>> @@ -404,6 +404,10 @@ static u32 vfe_src_pad_code(struct vfe_line 
+>> *line, u32 sink_code,
+>>               return sink_code;
+>>           }
+>>           break;
+>> +    default:
+>> +        WARN(1, "Unsupported HW version: %x\n",
+>> +             vfe->camss->res->version);
+>> +        break;
+>>       }
+>>       return 0;
+>>   }
+> 
+> Please re-order your patches here.
+> 
+> Generic fixes in a series to enable silicon are _fine_ but such fixes 
+> should come before the silicon enabling portion of the series.
+> 
+> So this patch should come before "[PATCH 11/16] dt-bindings: media: 
+> camss: Add qcom,sm8550-camss binding"
+> 
+
+Sure, will re-order the patches based on your suggestion.
+
+Thanks,
+Depeng
 
 
