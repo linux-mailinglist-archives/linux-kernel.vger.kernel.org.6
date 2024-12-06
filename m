@@ -1,101 +1,247 @@
-Return-Path: <linux-kernel+bounces-435014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E163F9E6E7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:44:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5E016CAEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:41:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660C4202F8A;
-	Fri,  6 Dec 2024 12:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WK2FExw1"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3199E6E73
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:42:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5BD202F77;
-	Fri,  6 Dec 2024 12:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCAEE28365E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:42:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE39820370F;
+	Fri,  6 Dec 2024 12:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="M/b16wYy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="krqYvCyz"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A042036E8;
+	Fri,  6 Dec 2024 12:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733488860; cv=none; b=j2mIBlRK5u3NnMIi13PZ+onxHR/TKYZrD2Wfo/we+FjDTMudhH33JEYiDTqx6Rkvvs9y6msJ5K6l1tPxNy/X45RvFZc9aEFUumjsst+/GfkWm3kkCdZU7oIqvGgrmaGexfgI0rC+h7j1stHFHu6Hijt2cS/feyS+xjU0uYb5IxQ=
+	t=1733488941; cv=none; b=kxX3GpQwwVFlu9dgjpefYJ0VbWm4NL/39Lt0IkURKbV8F43ZGyFTyq8YDEmNBvjGyywTe7fDUzhwls2yOkIL7twiYnObfvAX6jP0I2uJ1/fuz0EueUu38Eo4yAOeKriFIZ6anWbAA/b7jr4QyrXcbf2fGIosrWaEvne/NBDWYHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733488860; c=relaxed/simple;
-	bh=Bo1Ce5zrS12XQ8UB+VM+cT4Zz0Ahi9HZno4vkERIyfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/wNGE+O+Kv+txGmxvUCyvLzmyKPHRnOvlVjsoc20sTIVp9uumuysPYaO5CBxo+zov97YDCDMxwST3N1vXR/3T/bkPjif1b7Kz4O6HBRa/EN/1KjVx8AJzbpc55DtYVaYW7h9Br0rsOe9N/Q7BWNxTXb4JFS/hULODQt3cQ4L6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WK2FExw1; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=60+QdJdxKs6rZA+mdAzlD6sjzLBFb35Y3PSnzo24tzk=; b=WK2FExw1uNyzInbCva0clg0JsG
-	kZEr9EIkBLryuhClWgKxoTYYDN0lYpa9z8LIJeyGAS6eKvR9OmD3Ij4ifFmT0FKtLWlQbZWgOcGL5
-	VUkyvzI/WUWxwBJ/deE4lUIzj8aU9xYELZnqEwkA4LGPCy8QAtE0piWWjs3RBRHOkDauu3hrhmPhr
-	e+igfTThsB4ondJhfP7TEB+pyob6h27CKOvgcRz9L9Mmcpz7O5i8JR1UTHgEAaYDI7PVTz2E5Zc9G
-	nqI8LvD+CRzGY+WxpZPzOHGHxK42VxIiHebEJCtq91lNvWTw7E15ZU0P/TCGZf+zrX9aC0TmAzzyq
-	Zuj3CV+A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54884)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tJXdf-0006Fj-2g;
-	Fri, 06 Dec 2024 12:40:56 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tJXdc-0007YT-1B;
-	Fri, 06 Dec 2024 12:40:52 +0000
-Date: Fri, 6 Dec 2024 12:40:52 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Furong Xu <0x1207@gmail.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unaligned DMA unmap for
- non-paged SKB data
-Message-ID: <Z1Lw1LzgeAyHv2Bl@shell.armlinux.org.uk>
-References: <20241205091830.3719609-1-0x1207@gmail.com>
- <Z1HYKh9eCwkYGlrA@shell.armlinux.org.uk>
- <20241205085539.0258e5fb@kernel.org>
+	s=arc-20240116; t=1733488941; c=relaxed/simple;
+	bh=GJltY0XaxhiQu4LqgEHvaPBbhgHvEa0EFruFh0UnWUQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=pRc2wkydLEgWVPzIFZ+h1ocKrJgqsY086g7NX1kWKLoD11KO06/QOALfNiFlYmaCRNGWG4M+t0I4F+7c6NV4urT6mTynXf14k7H1viUnPsJ4Gg/OsqmlX3Xa/CHbhOFKk/JLbsXdhRQeCx6bPvv0KM/Vb6TWv7vseBRqxwOhhSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=M/b16wYy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=krqYvCyz; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 98A93138341A;
+	Fri,  6 Dec 2024 07:42:18 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 06 Dec 2024 07:42:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733488938;
+	 x=1733575338; bh=x1weric6zZmvWu4UV+Y5UDAgbXws/QOCE+rGDxo8gCY=; b=
+	M/b16wYyYsnI/s8XYS0cMZC8l+m9jwXwyywWsyiEWOWa0+Jz4tq4vDCXWJ58vqPn
+	Vj94uvNy2rLl0aNRjNxb+j9KBBXworFDKOxIhbONkQiHaVd6UPMPmnwazlfRsb7I
+	NgIyMxAqogq979jABuzZNVx6e/9kq+qfyg3DWAkYCW9hcm2SrForMIgL0A1680/E
+	l0MOrf8y/n2eL9qUCHOM+NEQIb4pJIhz6NgRVKBhTt9dZvUOmaj26RktFrFzrsQh
+	Js+9NlpzSSxXExqYUcIgBo5LHMYGD6jMQXt+Q4p6y49jR70SnmDckvWihcmJJWR4
+	fnH22kBK+mFE/dOmO/ko9Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733488938; x=
+	1733575338; bh=x1weric6zZmvWu4UV+Y5UDAgbXws/QOCE+rGDxo8gCY=; b=k
+	rqYvCyzVsmqaVOL2a9aaKizIgC/m4E/j7AtIF1/n2oQv47Pl15qFrk9Qnn/ouLG3
+	ftQ3nZhLzU8k8A5XpuAXNNFlc7gznVQj0g05sBzRcjmasl+wKrthMJ7OHTb4JjWI
+	4iaREQUesEzHwPjvBLsfnVboaFtKeKFOJFfshYXpOp1W7sTeYuZDLlE94o7l3D2C
+	upZe0+2wJkYD/9/cMR7TyBynV4gx7R5FK478nAapoVO1RdlltGZSPqgv6lhwQQq/
+	MFBs+0kCohmF2r8Q7Q8C6HhBEk4NTV0KBLK7AnLeip2/eNfcRvq24nEedSKM60bF
+	21YXndFSpZBbY/sxmWTFQ==
+X-ME-Sender: <xms:KvFSZ2HbZGPxrZSFzkMVsDotGkhONQaT36soRaG_Cpa0LGi_UQCFkQ>
+    <xme:KvFSZ3WqbJIGm_jQVqkiQSsJFTb7je053okl5c_bGlMivKj7lJLzUM6jgm0__TFwx
+    xg9hzCnrBz5QcPXhiI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieelgdegvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedukedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrsh
+    esrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegs
+    ohhothhlihhnrdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdr
+    ihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuh
+    igrdguvghvpdhrtghpthhtohepghhhvghnnhgrughirdhprhhotghophgtihhutgesnhig
+    phdrtghomh
+X-ME-Proxy: <xmx:KvFSZwIKpoqhOjksPy-RYhRsmbn8ptH_bJsu9Rc4YN3vWJRDjB-03Q>
+    <xmx:KvFSZwF7a3DMGk_xUV242igARosECCfwipB6tzrDV_-qQABKP5y4mw>
+    <xmx:KvFSZ8UJdu3h0eX0zSrDmA7ZxNPg7vMTjISiOU2Ikx9bhRp_J4kYaA>
+    <xmx:KvFSZzPDi4DXTMFC1WwyPq8Dr53SgjhJxRSmudaA_NZqhe3uors_4w>
+    <xmx:KvFSZyb2_1RniotkMjpKiRsqm6trs0jAS7Lu4xPTIGzGdCg0sL7wHrPr>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0E2D42220072; Fri,  6 Dec 2024 07:42:17 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205085539.0258e5fb@kernel.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Date: Fri, 06 Dec 2024 13:41:55 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ciprian Costea" <ciprianmarian.costea@oss.nxp.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "NXP S32 Linux Team" <s32@nxp.com>, imx@lists.linux.dev,
+ "Christophe Lizzi" <clizzi@redhat.com>, "Alberto Ruiz" <aruizrui@redhat.com>,
+ "Enric Balletbo" <eballetb@redhat.com>,
+ "Bogdan Hamciuc" <bogdan.hamciuc@nxp.com>,
+ "Ghennadi Procopciuc" <Ghennadi.Procopciuc@nxp.com>
+Message-Id: <94cba886-86cb-41f1-96ee-501623add7db@app.fastmail.com>
+In-Reply-To: <6f4a0be8-4def-4066-9b44-d43059b7a90d@oss.nxp.com>
+References: <20241206070955.1503412-1-ciprianmarian.costea@oss.nxp.com>
+ <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
+ <2005af5d-bdb7-4675-8f0e-82cb817801af@app.fastmail.com>
+ <6f4a0be8-4def-4066-9b44-d43059b7a90d@oss.nxp.com>
+Subject: Re: [PATCH v6 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 08:55:39AM -0800, Jakub Kicinski wrote:
-> On Thu, 5 Dec 2024 16:43:22 +0000 Russell King (Oracle) wrote:
-> > I'm slightly disappointed to have my patch turned into a commit under
-> > someone else's authorship before I've had a chance to do that myself.
-> > Next time I won't send a patch out until I've done that.
-> 
-> Yes, this is definitely not okay. LMK if you dropped this from your
-> TODO already, otherwise I'm tossing this patch and expecting the fix
-> from the real author.
+On Fri, Dec 6, 2024, at 13:05, Ciprian Marian Costea wrote:
+> On 12/6/2024 10:04 AM, Arnd Bergmann wrote:
+>> 
+>> However, the range of the register value is only 32 bits,
+>> which means there is no need to ever divide it by a 64-bit
+>> number, and with the 32kHz clock in the binding example,
+>> you only have about 37 hours worth of range here.
+>> 
+>
+> I am not sure what is the suggestion here. To cast 'cycles' variable to 
+> 32-bit ?
+> If yes, indeed 'div_u64' converts 'cycles' (the divisor) to 32-bit so I 
+> agree it should be u32 instead of u64.
+> If not, I would prefer to keep using a 64-by-32 division and avoid 
+> casting 'hz' to 32-bit.
 
-See https://lore.kernel.org/r/E1tJXcx-006N4Z-PC@rmk-PC.armlinux.org.uk/
+The confusing bit here is that the extra function just serves to
+the dividend 'cycles' from 32-bit to 64-bit, and then calling
+div_u64() implicitly casts the dividend 'hz' from 64-bit to
+32-bit, so you definitely get a 32-by-32 division already
+if the function is inlined properly.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+I think storing 'rtc_hz' as a u32 variable and adding a range
+check when filling it would help, mainly to save the next reader
+from having to understand what is going on.
+
+>> It would appear that this makes the rtc unsuitable for
+>> storing absolute time across reboots, and only serve during
+>> runtime, which is a limitation you should probably document.
+>> 
+>
+> Actually there is the option to use DIV512 and/or DIV32 hardware 
+> divisors for the RTC clock. The driver uses a DIV512 divisor by default 
+> in order to achieve higher RTC count ranges (by achieving a smaller RTC 
+> freq). Therefore, the 37 hours become 37 * 512 => ~ 2 years.
+
+Ah, makes sense. Can you add comments in an appropriate place in
+the code about this?
+
+> However, the rtc limitation of not being persistent during reboot 
+> remains, due to hardware RTC module registers present of NXP S32G2/S32G3 
+> SoCs being reset during system reboot. On the other hand, during system 
+> suspend, the RTC module will keep counting if a clock source is available.
+>
+> Currently, this limittion is documented as follows:
+> "RTC tracks clock time during system suspend. It can be a wakeup source 
+> for the S32G2/S32G3 SoC based boards.
+>
+> The RTC module from S32G2/S32G3 is not battery-powered and it is not 
+> kept alive during system reset."
+
+My bad, I really should not have skipped the patch
+description ;-)
+
+>> If 'counter' wraps every 37 hours, this will inevitably fail,
+>> right? E.g. if priv->base.cycles was already at a large
+>> 32-bit number, even reading it shortly later will produce
+>> a small value after the wraparound.
+>> 
+>> Using something like time_before() should address this,
+>> but I think you may need a custom version that works on
+>> 32-bit numbers.
+>> 
+>
+> This is correct. Would the following change be acceptable ?
+>
+> -       if (counter < priv->base.cycles)
+> -               return -EINVAL;
+> -
+> -       counter -= priv->base.cycles;
+> +       if (counter < priv->base.cycles) {
+> +               /* A rollover on RTCCTN has occurred */
+> +               counter += RTCCNT_MAX_VAL - priv->base.cycles;
+> +               priv->base.cycles = 0;
+> +       } else {
+> +               counter -= priv->base.cycles;
+> +       }
+
+This is the same as just removing the error handling and
+relying on unsigned integer overflow semantics.
+
+The usual check we do in time_before()/time_after instead
+checks if the elapsed time is less than half the available
+range:
+
+#define time_after(a,b)         \
+        (typecheck(unsigned long, a) && \
+         typecheck(unsigned long, b) && \
+         ((long)((b) - (a)) < 0))
+
+>>> +static int s32g_rtc_resume(struct device *dev)
+>>> +{
+>>> +     struct rtc_priv *priv = dev_get_drvdata(dev);
+>>> +     int ret;
+>>> +
+>>> +     if (!device_may_wakeup(dev))
+>>> +             return 0;
+>>> +
+>>> +     /* Disable wake-up interrupts */
+>>> +     s32g_enable_api_irq(dev, 0);
+>>> +
+>>> +     ret = rtc_clk_src_setup(priv);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     /*
+>>> +      * Now RTCCNT has just been reset, and is out of sync with priv->base;
+>>> +      * reapply the saved time settings.
+>>> +      */
+>>> +     return s32g_rtc_set_time(dev, &priv->base.tm);
+>>> +}
+>> 
+>> This also fails if the system has been suspended for more than
+>> 37 hours, right?
+>
+> Actually, the system would not go into suspend (returning with error) if 
+> the alarm setting passes the 32-bit / clk_freq range.
+> The check is added in 'sec_to_rtcval' which is called from the suspend 
+> routine.
+
+Who sets that alarm though? Are you relying on custom userspace
+for this, or is that something that the kernel already does
+that I'm missing?
+
+       Arnd
 
