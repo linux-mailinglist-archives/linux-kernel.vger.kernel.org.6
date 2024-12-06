@@ -1,114 +1,190 @@
-Return-Path: <linux-kernel+bounces-434513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339349E67AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:13:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA2E9E67B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:14:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB7D2817F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FED1881F83
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F891DB94F;
-	Fri,  6 Dec 2024 07:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545291DB363;
+	Fri,  6 Dec 2024 07:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HvYQ1QxI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnjGNj4O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8150A1D89F8;
-	Fri,  6 Dec 2024 07:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4A325760;
+	Fri,  6 Dec 2024 07:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733469213; cv=none; b=sC+V3XOk9IvPp0IZjsySH0oommNePeUTJ3r93zXpNwZmht3gCS700q49O+qk8Ox1HKETTUL0CgClrRTYZeecPHqtx3/4Op+k/jaH4ohNT9Uj7EQuj1KtG0NXv8YquIdl/2p9/8zMhn38msO1DROd5Dy9ZOOOHgLpaDqwJtjjjXc=
+	t=1733469278; cv=none; b=DfmjW1zSx1pYNtISquQdV2VX2BO6XT4eB9OxwjF11T04ACW8rk9HklKtl6FQkg9IiQccoEKk3X0Ia0wIHhfe1YbthBahEOF/Okn0GbN/Fe6IS/8EGODxA9OUiV+Yft7c/uVnzuymxetabacpae/4qDfbIXw98wHo0+jvO3qAZ7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733469213; c=relaxed/simple;
-	bh=I6togj3rCYdWZizm/vBZ+hpS0EcWywx3tvwMzR/v/Hk=;
+	s=arc-20240116; t=1733469278; c=relaxed/simple;
+	bh=gz5VB5WcVYdj3sWnlAqqhMxe8l6cYf22G/BGsh6efpQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9Pd10DgwR0oihfBY7Fae6l6nwRUj7nI+0BAUndAU4shHM2j3AEVj3bjPFwM+lH6R1TElackWupry1NA87K/2ZBDMZL0Uvm/QgyPH1RVpUsFFO4I7hq4skHV7otEdFM1E2l55Arl22VBAIVmRPfO+qP01R9T3SiBs8FCrhvvCF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HvYQ1QxI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A81B6C4CED1;
-	Fri,  6 Dec 2024 07:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733469213;
-	bh=I6togj3rCYdWZizm/vBZ+hpS0EcWywx3tvwMzR/v/Hk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+NQ5UGmKydH4d6DB6RqN4qenKkVq2I6cExnM0NVVO+PWkeG9GbmNOkGyMKkcYkroZ7kGnvD1+8SonkgzSr8ZWbNDw0Z/4zeI3kpVyyDKqLv7Cm7oNSF7BrYp6LFBANHowQqaedQoJt49cydW8jDNvvu96QE8rm0/mTV2cGtxGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnjGNj4O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A70FAC4CED1;
+	Fri,  6 Dec 2024 07:14:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733469276;
+	bh=gz5VB5WcVYdj3sWnlAqqhMxe8l6cYf22G/BGsh6efpQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HvYQ1QxIOTib9pAjNiUWByzjxOF8c7ghvkEfuBCoaWWC8LOyet0hvbQ+1/4xCdUbt
-	 m8wOq+nCuIftmqrpkfQqfhzWR+kSpVjq53zjheiabEA7rIwrgZI8+KSbwctU/tNB9e
-	 Ut7dm3jGijwMeC3kEPhSnaUIfc5/vY/tY769B0sE=
-Date: Fri, 6 Dec 2024 08:13:30 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Til Kaiser <mail@tk154.de>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, idosch@nvidia.com, petrm@nvidia.com
-Subject: Re: [PATCH net-next v2] net: sysfs: also pass network device driver
- to uevent
-Message-ID: <2024120613-unicycle-abruptly-02d1@gregkh>
-References: <20241115140621.45c39269@kernel.org>
- <20241116163206.7585-1-mail@tk154.de>
- <20241116163206.7585-2-mail@tk154.de>
- <20241118175543.1fbcab44@kernel.org>
- <665459ff-9e99-4d22-9aeb-69c34be3db6b@tk154.de>
+	b=rnjGNj4OaT1p2eBsbLgak8qcvaNq5sXmSzQzzi49G3yOckfQWTVWxmUA/Em94aiWi
+	 FRgpYAL4tfqn5lK0V8/tCz0bTK6hnNQC4rTtjY1f4m7Fd+vO/+Aj9UQI4osiZLxr6c
+	 6vj0cjUbm2iMNSTPc92Lt/LLXgefs4J+eQHT90mH1yhgNSRwfU4zjrXOsnh2RuS/xL
+	 m1pfcnc1pCKShrxbzaCKoggGOb+vdIYcRl7VUmGlNgSADsNS3Cea6hEEd7gmGpnJLp
+	 YHOxRgb0XCokMxRfUE36T40wIkUALNHfZ5Kx+q2LBAtP4EID9xVTJZM66PDhiqB7xc
+	 mdYryQuowwSvA==
+Date: Fri, 6 Dec 2024 07:14:30 +0000
+From: Lee Jones <lee@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] samples: rust: Provide example using the new Rust
+ MiscDevice abstraction
+Message-ID: <20241206071430.GC8882@google.com>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <20241205162531.1883859-4-lee@kernel.org>
+ <2024120604-diffusive-reach-6c99@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <665459ff-9e99-4d22-9aeb-69c34be3db6b@tk154.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024120604-diffusive-reach-6c99@gregkh>
 
-On Thu, Dec 05, 2024 at 05:28:47PM +0100, Til Kaiser wrote:
-> On 19.11.24 02:55, Jakub Kicinski wrote:
-> > On Sat, 16 Nov 2024 17:30:30 +0100 Til Kaiser wrote:
-> > > Currently, for uevent, the interface name and
-> > > index are passed via shell variables.
-> > > 
-> > > This commit also passes the network device
-> > > driver as a shell variable to uevent.
-> > > 
-> > > One way to retrieve a network interface's driver
-> > > name is to resolve its sysfs device/driver symlink
-> > > and then substitute leading directory components.
-> > > 
-> > > You could implement this yourself (e.g., like udev from
-> > > systemd does) or with Linux tools by using a combination
-> > > of readlink and shell substitution or basename.
-> > > 
-> > > The advantages of passing the driver directly through uevent are:
-> > >   - Linux distributions don't need to implement additional code
-> > >     to retrieve the driver when, e.g., interface events happen.
+On Fri, 06 Dec 2024, Greg KH wrote:
 
-Why does the driver name matter for something like a network device?
-I.e. why are network devices "special" here and unlike all other class
-devices in the kernel like keyboards, mice, serial ports, etc.?
+> On Thu, Dec 05, 2024 at 04:25:20PM +0000, Lee Jones wrote:
+> > This sample driver demonstrates the following basic operations:
+> > 
+> > * Register a Misc Device
+> > * Create /dev/rust-misc-device
+> > * Open the aforementioned character device
+> > * Operate on the character device via a simple ioctl()
+> > * Close the character device
+> 
+> Nit, the driver doesn't demonstrate open/close, it "provides" open/close
+> functionality if someone wants to use it :)
 
-> > >   - There is no need to create additional process forks in shell
-> > >     scripts for readlink or basename.
+Okay!  :)
 
-"Do it in the kernel and have someone else maintain it for me to make my
-life easier in userspace" isn't always the best reason to do something.
-Generally if "you can do this in userspace" means "you SHOULD do this in
-userspace", it's not a good reason to add it to the kernel.
+> > Signed-off-by: Lee Jones <lee@kernel.org>
+> > ---
+> >  samples/rust/Kconfig             | 10 ++++
+> >  samples/rust/Makefile            |  1 +
+> >  samples/rust/rust_misc_device.rs | 80 ++++++++++++++++++++++++++++++++
+> >  3 files changed, 91 insertions(+)
+> >  create mode 100644 samples/rust/rust_misc_device.rs
+> > 
+> > diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> > index b0f74a81c8f9..df384e679901 100644
+> > --- a/samples/rust/Kconfig
+> > +++ b/samples/rust/Kconfig
+> > @@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
+> >  
+> >  	  If unsure, say N.
+> >  
+> > +config SAMPLE_RUST_MISC_DEVICE
+> > +	tristate "Misc device"
+> > +	help
+> > +	  This option builds the Rust misc device.
+> > +
+> > +	  To compile this as a module, choose M here:
+> > +	  the module will be called rust_misc_device.
+> > +
+> > +	  If unsure, say N.
+> > +
+> >  config SAMPLE_RUST_PRINT
+> >  	tristate "Printing macros"
+> >  	help
+> > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> > index c1a5c1655395..ad4b97a98580 100644
+> > --- a/samples/rust/Makefile
+> > +++ b/samples/rust/Makefile
+> > @@ -2,6 +2,7 @@
+> >  ccflags-y += -I$(src)				# needed for trace events
+> >  
+> >  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+> > +obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+> >  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+> >  
+> >  rust_print-y := rust_print_main.o rust_print_events.o
+> > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+> > new file mode 100644
+> > index 000000000000..f50925713f1a
+> > --- /dev/null
+> > +++ b/samples/rust/rust_misc_device.rs
+> > @@ -0,0 +1,80 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Copyright (C) 2024 Google LLC.
+> > +
+> > +//! Rust misc device sample.
+> > +
+> > +use kernel::{
+> > +    c_str,
+> > +    ioctl::_IO,
+> > +    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+> > +    prelude::*,
+> > +};
+> > +
+> > +const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
+> > +
+> > +module! {
+> > +    type: RustMiscDeviceModule,
+> > +    name: "rust_misc_device",
+> > +    author: "Lee Jones",
+> > +    description: "Rust misc device sample",
+> > +    license: "GPL",
+> > +}
+> > +
+> > +struct RustMiscDeviceModule {
+> > +    _miscdev: Pin<KBox<MiscDeviceRegistration<RustMiscDevice>>>,
+> > +}
+> > +
+> > +impl kernel::Module for RustMiscDeviceModule {
+> > +    fn init(_module: &'static ThisModule) -> Result<Self> {
+> > +        pr_info!("Initialising Rust Misc Device Sample\n");
+> > +
+> > +        let options = MiscDeviceOptions {
+> > +            name: c_str!("rust-misc-device"),
+> > +        };
+> > +
+> > +        Ok(Self {
+> > +            _miscdev: KBox::pin_init(
+> > +                MiscDeviceRegistration::<RustMiscDevice>::register(options),
+> > +                GFP_KERNEL,
+> > +            )?,
+> > +        })
+> > +    }
+> > +}
+> > +
+> > +struct RustMiscDevice;
+> > +
+> > +#[vtable]
+> > +impl MiscDevice for RustMiscDevice {
+> > +    type Ptr = KBox<Self>;
+> > +
+> > +    fn open() -> Result<KBox<Self>> {
+> > +        pr_info!("Opening Rust Misc Device Sample\n");
+> 
+> I'd prefer this to be dev_info() to start with please.
 
-And note, driver names change!  How are you going to handle that?
+This is not possible at the moment.  Please see the cover-letter.
 
-> > >   - If a user wants to check his network interface's driver on the
-> > >     command line, he can directly read it from the sysfs uevent file.
-
-The symlink in sysfs shows this already, no need to
-open/read/parse/close the uevent file.
-
-Also, where did you now document this new user/kernel API that we have
-to maintain for 40+ years?  And what userspace tool is going to use it?
-
-But really, again, why are network devices so special that they need
-this but no other type of device in the kernel does?  And what changed
-to require this suddenly?
-
-thanks,
-
-greg k-h
+-- 
+Lee Jones [李琼斯]
 
