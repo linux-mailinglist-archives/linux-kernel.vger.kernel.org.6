@@ -1,176 +1,280 @@
-Return-Path: <linux-kernel+bounces-435714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2229E7B54
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:02:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417609E7B58
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D340281B1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1221282367
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313D81BFE06;
-	Fri,  6 Dec 2024 22:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02681F6671;
+	Fri,  6 Dec 2024 22:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Lku9mo2Y"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="h3BYADFy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vNJ/Nw21";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="h3BYADFy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vNJ/Nw21"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393EA22C6D1;
-	Fri,  6 Dec 2024 22:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E5722C6F4;
+	Fri,  6 Dec 2024 22:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733522565; cv=none; b=ROkjmB5oxtCjMt0URlRialdvMy74yLBWF2IJbHbEQYUxcDj+sR3qWMnnqkbnIvRXuX7VBCxtgkHsQYz6ZTpqqu2OpZtIBMNQWLsrfifQsfZWH7bCSuSTp3Vmz8TL8zgo2tpKM9KTIGH/IkbiHLrhuTwbMD3VN6q4NWflmt94tpc=
+	t=1733522580; cv=none; b=nNwFSsnFcsLXBjsKEwaWeQ//0xvPWroqAx5MTzmb67NMBc13NnK5fhBUjn3XsPHsGu1xeM6etu76MqJ+9uWr4P8skXjfWOgpOH+P7bkOu4JPhjHCO3Xwz1c94TWl712FUBZdRte8GBKpMHYInzPOftfKWCBDHrBNOrAIYdfIczs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733522565; c=relaxed/simple;
-	bh=4X935N0oxWWz1ukJT9s+jNSeaCMgBhqdCh2wNJQkshs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFuMNYwZFylPj1bN6TwAgHC4z/Ir66heOI84yaJeMGXj00XmrvZn0D2a9roX5LoLjj/1/9OSuOWdVU4mtqlWwPT9ftKWs/cqu08SPTUk5gEAEeJ57uo8qidgyAesSc4Xkwd6/HuB/H6InamNVA5M8rnOLEV0zmsMWuAcJDHecys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Lku9mo2Y; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1733522560; x=1734127360; i=w_armin@gmx.de;
-	bh=4X935N0oxWWz1ukJT9s+jNSeaCMgBhqdCh2wNJQkshs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Lku9mo2Y/PR6uoPIC5iAW1ExyZnpWaV7Jjsj27z7mJXIjweWohPfBfkovUKK6VE0
-	 rmEhNF8BamwENN7MCoRH7GiioaL12oei1jcXsSp8ZieK0JhSl1x36YHADtgBeFeR1
-	 QCpXwZvKvHDDDnbdje+jcotpMaW5P1IjIugB6NXBpKmvZIFCrEZXaneBuaCCio4PP
-	 vc92XqKjxv55KiET+D4A3DivZlT1lG7pb6qyMTzfPlfCipV8Ne9O2XiCH/OgIXeAp
-	 zofWY57D2cCUNbqzs6PYvXIwtrcJkfohuxREgm3GStrmVG5T33LCcDoNPjFB3uoEF
-	 SmlcCgnfFQSh469t3Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([91.14.230.110]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MYvY2-1t6Md61MwK-00NEDT; Fri, 06
- Dec 2024 23:02:40 +0100
-Message-ID: <9a3b1797-d978-4e46-abbd-e4e62a9fcdd2@gmx.de>
-Date: Fri, 6 Dec 2024 23:02:39 +0100
+	s=arc-20240116; t=1733522580; c=relaxed/simple;
+	bh=hqG/8AfkucCrxer8P3uRIrkeW0+aE/pp3YUuoahCgxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTAJT4BTE9Pg8gNxbxF4TE6yYUeqUif7PgSgYNV4nwsIR+hiY4g+CbHI9Zs6ia/Z1I53XlpL45zFaYLDtDx4idpreuVMOzMfs/d+kydv3D8/lGH34lIhcRbS/5KTPlzBGrJHJi1oEBndCORlguj2TnagbyS18F9XPtt2SfKX5ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=h3BYADFy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vNJ/Nw21; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=h3BYADFy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vNJ/Nw21; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 114BE1F381;
+	Fri,  6 Dec 2024 22:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733522576;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TRsn1BchjmOhokJgfVzCQkyd8e3Sysm6z1gUOGD9C/M=;
+	b=h3BYADFyyk+bD8jh9zvVNQK6JM09MIrH3O6AaOL5NPZu6qXN/8ZbkYYr15YmnovDMtiMkZ
+	NjcgvZG/G0GsHphSAS/QLQiju3Oqc9PKRfnFakbPzHq2yIPZVTCJWhbB6Lr2vM/UluPHSC
+	E5YYb3x5yB8bYOwWUo2KWDwBNdERNuo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733522576;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TRsn1BchjmOhokJgfVzCQkyd8e3Sysm6z1gUOGD9C/M=;
+	b=vNJ/Nw21WeZTLCZdqpA43Go3CWwEJhkbvAp+K//0/+pBi04Zc/gpt3ap7TQ8AP6sdCL6R5
+	lD65JSiC6eJXzKBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733522576;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TRsn1BchjmOhokJgfVzCQkyd8e3Sysm6z1gUOGD9C/M=;
+	b=h3BYADFyyk+bD8jh9zvVNQK6JM09MIrH3O6AaOL5NPZu6qXN/8ZbkYYr15YmnovDMtiMkZ
+	NjcgvZG/G0GsHphSAS/QLQiju3Oqc9PKRfnFakbPzHq2yIPZVTCJWhbB6Lr2vM/UluPHSC
+	E5YYb3x5yB8bYOwWUo2KWDwBNdERNuo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733522576;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TRsn1BchjmOhokJgfVzCQkyd8e3Sysm6z1gUOGD9C/M=;
+	b=vNJ/Nw21WeZTLCZdqpA43Go3CWwEJhkbvAp+K//0/+pBi04Zc/gpt3ap7TQ8AP6sdCL6R5
+	lD65JSiC6eJXzKBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75C4C138A7;
+	Fri,  6 Dec 2024 22:02:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ph9aGo50U2d2ZAAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Fri, 06 Dec 2024 22:02:54 +0000
+Date: Fri, 6 Dec 2024 23:02:52 +0100
+From: Petr Vorel <pvorel@suse.cz>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konradybcio@gmail.com>,
+	=?iso-8859-2?Q?Kry=B9tof_=C8ern=FD?= <cleverline1mc@gmail.com>,
+	Alexander Reimelt <alexander.reimelt@posteo.de>,
+	Dominik Kobinski <dominikkobinski314@gmail.com>,
+	Harry Austen <hpausten@protonmail.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RFT 4/4] arm64: dts: qcom: msm8994: Describe USB
+ interrupts
+Message-ID: <20241206220252.GA138783@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20241129-topic-qcom_usb_dtb_fixup-v1-0-cba24120c058@oss.qualcomm.com>
+ <20241129-topic-qcom_usb_dtb_fixup-v1-4-cba24120c058@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED] asus-wmi driver fails on my laptop
-To: Yurii Strilets <yurastr100@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org, regressions@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <33bfcda8-3d3d-46b9-84f0-44e0e9f44230@gmail.com>
- <bf3b9efd-6700-485a-bd0e-f81de1e11fcf@gmx.de>
- <78eb0efb-bbaf-4cba-840a-9aa507798075@gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <78eb0efb-bbaf-4cba-840a-9aa507798075@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wGrki7D3sUn8tpO4E/PodOKa3bhj678JNctpuqBJ8anGintRVh/
- o2xf6sjoJVFPzGz3Cp9OD1l/lHZy69CkRsOOVvMEiTq3x2NbY6XYa4O1D9eBgQW9Cgx4A/8
- i6LkGPsJ29Innk/N+kvwHkiXiyh9qEpkp0QRh/xWGO34sn9VKuRLoebAt5KwQz+6jGbtD8N
- OlK018yfvAxhhh1iMMaMw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129-topic-qcom_usb_dtb_fixup-v1-4-cba24120c058@oss.qualcomm.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linuxfoundation.org,kernel.org,quicinc.com,protonmail.com,somainline.org,vger.kernel.org,gmail.com,posteo.de,oss.qualcomm.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_EQ_FROM(0.00)[]
+X-Spam-Score: -2.00
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uMWPUruiFwQ=;7f4p2zOLOwRgYZn0ncG0htKeAki
- qGAjkt50AOHorcDl1Uq2jaCxn69WL2cdxYfy07DT49stBu3+8XxuHZIDOds5ixwi3UtNH7EDa
- 1FwcKEnke2N2ZfogtRQvEpPMckGXGjv8O0ao9zUMWvmTc24bbmK8kt/Q12MEJuHgDZ7j2Kyro
- UktZOTs/aUiBc2ddM/77udrm71bW/sCnSwCJKaq9iaqkT5GciRlP4wID5qQ4Qj+WHWNz38T2f
- PNThAtFv1+aavtgyE9oraAsBevKodozSKtOkWYjJ95gwSX6d9XsaRQX+Je4eeLxwlnpsz/XgC
- MSJTT/lgYeHMC4OKaRAk6KU6ChSvybjJG/qFP1kNVn5tGL9jbR9mdR5Yd7MxT0us/njgo4v/d
- fVB4T9BR6tPES1drCP50o5UbeP2geC80HhKXRQPm7Za9noCMF8vcQMauEWDh409klHD3VBMgk
- UXphhwysp49ix35ifPBEM3jASw4siKO8N0z6urprsXjCgBjQgE1DKIRme0OA8xNAOuKyca/KZ
- zY972gc05kqb0rPFw/KWxyjRT0VAC+yNw2SsXhkXgvgLFWlKIFpgoEsyeUXruA+Ehlc2wiJZg
- 6CGRV6ZaSXyycWGbAZUQvaNPn64NGCSmh1C5TDXE920WAEEWdJP9hwJc1ncjd6TGEcPThV7jz
- mHHZwc8vs1Evhsjy251PwiKjs3sEuH4PXF4AuSRCHPYDrR+1kmIAInON2GAs2p6h4xDf1y1v3
- 6MmFGQRo7b6icHCS5rt3a2aI4JWHoQEhTxXcoZzzW0LBp+oI5ydcTGVXYR7YFQhCDmziJ4xFn
- Y0ShUkveGccDD9xM+k/izRw8BuGcJQGFlcgPsySKsuSP+q4icwAiFynXxQb2FfIXl40gKM8z6
- tufpH5AlqtLuZ6i6dVBMqH12QbNjSHeQ+uvko4LcdOXUqU5kTMj9LdclRjimk0uVtEhpKJWt2
- mi2m2zN5cPnB68AnI1RYRtrTsT1EHTZ1aHBXvux3ObYq5b8fmanz4zJfPO5dozyX6aXh2tLx8
- FvFZf4qeI8oZUygSB/IjRBfAoRda5LgCbjdCgQPTQv8qceChEYOzrrQya+d55tCkpROM9mjz+
- RY3NE7kJXkGBJNLs33DyJMQKNHD8eR
 
-Am 06.12.24 um 22:18 schrieb Yurii Strilets:
+Hi Konrad, all,
 
-> Thank you very much for the fix!
-> I am terribly sorry about a faulty report, I did just find out I had an =
-issue during the mainline build.
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-There is nothing faulty about your report, the necessary fix is still not =
-available in any stable kernels.
-On the contrary i am happy that so many users are reporting this issue, be=
-cause otherwise we would have
-never heard of it :)
+> Previously the interrupt lanes were not described, fix that.
 
-Thanks,
-Armin Wolf
+> Fixes: d9be0bc95f25 ("arm64: dts: qcom: msm8994: Add USB support")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8994.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-> Dec 6, 2024 20:15:05 Armin Wolf <W_Armin@gmx.de>:
->
->> Am 06.12.24 um 14:33 schrieb Yura Strilets:
->>
->>> Hello,
->>>
->>> After upgrading from 6.11 to 6.12 a bunch of Fn+Fx buttons(touchpad,
->>> mic, kb backlight, my asus) stopped working and the
->>> /sys/(...)/asus::kbd_backlight interface is missing, which,
->>> considering the dmesg, looks like an asus-wmi driver issue.
->>>
->>> I've been able to bisect the issue to the commit
->>> [b012170fed282151f7ba8988a347670c299f5ab3] "platform/x86: asus-wmi:
->>> Fix thermal profile initialization"
->>>
->>> Additionally, here's some maybe-helpful information:
->>> my laptop's model -- ASUS Zenbook UX3402VA
->>> linux distro -- Arch Linux
->>> .config for bisection -- was taken from /proc/config.gz at 6.12.1 arch
->>> kernel(attached in [1]) and missing options are default
->>> dmesg logs -- The "grep asus" parts of both good and bad scenarios can
->>> be seen below and full logs are at [2] and [3]
->>>
->>> =3D=3D bad.log =3D=3D
->>> [=C2=A0=C2=A0=C2=A0 3.664546] asus_wmi: ASUS WMI generic driver loaded
->>> [=C2=A0=C2=A0=C2=A0 3.713358] asus_wmi: Initialization: 0x1
->>> [=C2=A0=C2=A0=C2=A0 3.714126] asus_wmi: SFUN value: 0x21
->>> [=C2=A0=C2=A0=C2=A0 3.714131] asus-nb-wmi asus-nb-wmi: Detected ATK, n=
-ot ASUSWMI, use
->>> DSTS
->>> [=C2=A0=C2=A0=C2=A0 3.757420] asus_wmi: Failed to set throttle thermal=
- policy
->>> (retval): 0x0
->>> [=C2=A0=C2=A0=C2=A0 3.757425] asus_wmi: Failed to set default thermal =
-profile
->>> [=C2=A0=C2=A0=C2=A0 3.757429] asus-nb-wmi asus-nb-wmi: probe with driv=
-er asus-nb-wmi
->>> failed with error -5
->>> =3D=3D end =3D=3D
->>>
->>> =3D=3D good.log =3D=3D
->>> [=C2=A0=C2=A0=C2=A0 4.557898] asus_wmi: ASUS WMI generic driver loaded
->>> [=C2=A0=C2=A0=C2=A0 4.776587] asus_wmi: Initialization: 0x1
->>> [=C2=A0=C2=A0=C2=A0 4.777253] asus_wmi: SFUN value: 0x21
->>> [=C2=A0=C2=A0=C2=A0 4.777256] asus-nb-wmi asus-nb-wmi: Detected ATK, n=
-ot ASUSWMI, use
->>> DSTS
->>> [=C2=A0=C2=A0=C2=A0 4.777258] asus-nb-wmi asus-nb-wmi: Detected ATK, e=
-nable event queue
->>> [=C2=A0=C2=A0=C2=A0 4.805497] input: Asus WMI hotkeys as
->>> /devices/platform/asus-nb-wmi/input/input15
->>> =3D=3D end =3D=3D
->>>
->>> [1] .config - https://pastebin.com/raw/3nDSV8Sm
->>> [2] bad.log - https://pastebin.com/raw/fvR5Sjzt
->>> [3] good.log - https://pastebin.com/raw/EazfLAWA
->>>
->>> Thanks,
->>> Yurii
->>>
->> I am aware of this issue, the necessary fix (commit 25fb5f47f34d) was a=
-lready submitted upstream and will likely
->> show up in the stable kernels soon.
->>
->> Thanks,
->> Armin Wolf
+> diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+> index 1acb0f159511996db07bc7543cf4f194a4ebd0fa..8c0b1e3a99a767e7c28bcaf3b9687501cc15cd58 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+> @@ -437,6 +437,15 @@ usb3: usb@f92f8800 {
+>  			#size-cells = <1>;
+>  			ranges;
+
+> +			interrupts = <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "pwr_event",
+> +					  "qusb2_phy",
+> +					  "hs_phy_irq",
+> +					  "ss_phy_irq";
+> +
+
+Tested-by: Petr Vorel <petr.vorel@gmail.com>
+
+Well, I tested this on msm8994 Huawei Nexus 6P. It did not break anything,
+but obviously it's not enough for phone to get USB working. IMHO none of
+msm899[24] has working USB.
+
+msm8996 has usb3phy, hsusb_phy[12] labels, I suppose USB will not be working
+until this is set. Below is a snippet of a downstream device tree. I might
+be able to transform it to the mainline tree, but feel free to post a patch
+(probably obvious for you).
+
+Kind regards,
+Petr
+
+		ssphy@f9b38000 {
+			phandle = <0xf1>;
+			linux,phandle = <0xf1>;
+			clock-names = "aux_clk\0pipe_clk\0cfg_ahb_clk\0phy_reset\0phy_phy_reset\0ldo_clk";
+			clocks = <0xaa 0xd9a36e0 0xaa 0xf279aff2 0xaa 0xd1231a0e 0xaa 0x3d559f1 0xaa 0xb1a4f885 0xaa 0x124410f7>;
+			qcom,no-pipe-clk-switch;
+			qcom,vbus-valid-override;
+			qcom,vdd-voltage-level = <0x00 0xf4240 0xf4240>;
+			vdda18-supply = <0xf4>;
+			vdd-supply = <0x2e>;
+			reg-names = "qmp_phy_base\0qmp_ahb2phy_base";
+			reg = <0xf9b38000 0x800 0xf9b3e000 0x3ff>;
+			status = "ok";
+			compatible = "qcom,usb-ssphy-qmp";
+		};
+
+		hsphy@f92f8800 {
+			phandle = <0xf0>;
+			linux,phandle = <0xf0>;
+			qcom,hsphy-host-init = <0xd1c9a7>;
+			clock-names = "phy_sleep_clk";
+			clocks = <0xaa 0x2e4d8839>;
+			qcom,vdda-force-on;
+			qcom,sleep-clk-reset;
+			qcom,set-pllbtune;
+			qcom,vbus-valid-override;
+			qcom,ext-vbus-id;
+			qcom,vdd-voltage-level = <0x01 0x05 0x07>;
+			vdda33-supply = <0xed>;
+			vdda18-supply = <0xf4>;
+			vddcx-supply = <0xf3>;
+			vdd-supply = <0xf2>;
+			qcom,hsphy-init = <0xd191a4>;
+			reg-names = "core\0phy_csr";
+			reg = <0xf92f8800 0x3ff 0xf9b3a000 0x110>;
+			status = "ok";
+			compatible = "qcom,usb-hsphy";
+		};
+
+		ssusb@f9200000 {
+			phandle = <0xea>;
+			linux,phandle = <0xea>;
+			clock-names = "core_clk\0iface_clk\0utmi_clk\0sleep_clk\0ref_clk\0xo";
+			clocks = <0xaa 0xb3b4e2cb 0xaa 0x94d26800 0xaa 0xa800b65a 0xaa 0xd0b65c92 0x47 0x3ab0b36d 0x47 0xf79c19f6>;
+			qcom,por-after-power-collapse;
+			qcom,power-collapse-on-cable-disconnect;
+			qcom,msm-bus,vectors-KBps = <0x3d 0x200 0x00 0x00 0x3d 0x200 0x3a980 0xea600>;
+			qcom,msm-bus,num-paths = <0x01>;
+			qcom,msm-bus,num-cases = <0x02>;
+			qcom,msm-bus,name = "usb3";
+			qcom,usb-dbm = <0xef>;
+			qcom,dwc-usb3-msm-qdss-tx-fifo-size = <0x2000>;
+			qcom,dwc-usb3-msm-tx-fifo-size = <0x7400>;
+			vbus_dwc3-supply = <0xee>;
+			vdda33-supply = <0xed>;
+			USB3_GDSC-supply = <0xec>;
+			interrupt-names = "hs_phy_irq\0pwr_event_irq\0pmic_id_irq";
+			interrupt-map = <0x00 0x00 0x01 0x00 0x85 0x00 0x00 0x01 0x01 0x00 0xb4 0x00 0x00 0x01 0xeb 0x00 0x00 0x09 0x00>;
+			interrupt-map-mask = <0x00 0xffffffff>;
+			#interrupt-cells = <0x01>;
+			interrupts = <0x00 0x01>;
+			interrupt-parent = <0xea>;
+			ranges;
+			#size-cells = <0x01>;
+			#address-cells = <0x01>;
+			reg = <0xf9200000 0xfc000 0xfd4ab000 0x04>;
+			status = "ok";
+			compatible = "qcom,dwc-usb3-msm";
+
+			dwc3@f9200000 {
+				maximum-speed = "high-speed";
+				usb-phy = <0xf0 0xf1>;
+				snps,usb3-u1u2-disable;
+				tx-fifo-resize;
+				interrupts = <0x00 0x83 0x00>;
+				interrupt-parent = <0x01>;
+				reg = <0xf9200000 0xfc000>;
+				compatible = "synopsys,dwc3";
+			};
+		};
+
+>  			clocks = <&gcc GCC_USB30_MASTER_CLK>,
+>  				 <&gcc GCC_SYS_NOC_USB3_AXI_CLK>,
+>  				 <&gcc GCC_USB30_SLEEP_CLK>,
 
