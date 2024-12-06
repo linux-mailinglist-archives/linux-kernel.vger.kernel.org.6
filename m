@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-434876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7449E6C42
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:30:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E2F9E6C60
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B05C18837CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:29:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58453188099A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448FF1FC7E5;
-	Fri,  6 Dec 2024 10:26:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BAA1FCD02
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3345201104;
+	Fri,  6 Dec 2024 10:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkFGVu7I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BCE1FC7CB
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733480783; cv=none; b=XLGUnV1KjFN3ig3wKKad3m6FB4rzbOHt5oLn2gIMr8WYtDsLH97mi9oVGc7TLoHnPhhiMQ8b0zcX8YxAvOLBxIWPMnNj6XcZBPeq881VEqUhcZs+qmLiYP3JJUS7RtYMWRhLWX7aadVugOL2D5XdxCJvV1e2ks1Eb8NTGQXHPQM=
+	t=1733480792; cv=none; b=XvJm/qp5A6o5Ll/rD7SoFaf85VdwNSYZzgkXQFgUoN70v76bgJ1tOx25SDdeP0wkWD+0UTCngCPS90ZmzzrMaV4cnwndPrxrqDuqTApBn/5pHk667o8uxIRhktu/XC4bx6MoPN7D0CWNebUd/YYwrx1miEKNvhMuDwW1bwkhgws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733480783; c=relaxed/simple;
-	bh=0HMnkTmnS0rb2WpcrG/kQAJJWv4D6/D+2+FAg19qHp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VXg0kT28YjzyIkuSWTj3RnQCQx+MbIHiLclHFfLT5mSvyJRLV/38XTgF3QcgEzojC2p1GjSbP4VbkBOjl1aWz8EBAhd4T/wqQ5hjZ/BPyvu76yc5Vy/XT7l7L8whVbSpST1a1v2bTaiugUfbFaL3lpjJBPnIXPrk9MnD/NVmWd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9600112FC;
-	Fri,  6 Dec 2024 02:26:49 -0800 (PST)
-Received: from [10.57.90.201] (unknown [10.57.90.201])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0063F71E;
-	Fri,  6 Dec 2024 02:26:18 -0800 (PST)
-Message-ID: <bd4a30ca-6725-4c78-94ba-03581700bdcc@arm.com>
-Date: Fri, 6 Dec 2024 10:26:17 +0000
+	s=arc-20240116; t=1733480792; c=relaxed/simple;
+	bh=QgY/p8o4MoYwmaB9p+ZHNIbF1pl77aGEMpBVKTpyrto=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uwpbd+8c9kA+2oQw5Pexu1cWYGGayQBQnYjzGxy+FRw41rGL1vQo0R8wATmE4KAAAX0InQOBx5V+Z3kdGeiaeFYLlXJiBuwkKXqUkq7LclBVQmZRWfen5bm6IgKMP5LSpY15KFFLfF6RMEQRzbEaPT4p63r4SwtlSZJOICbuSZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkFGVu7I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 930C8C4CED1;
+	Fri,  6 Dec 2024 10:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733480791;
+	bh=QgY/p8o4MoYwmaB9p+ZHNIbF1pl77aGEMpBVKTpyrto=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RkFGVu7IW7rr+XvPQP/stnT7EpTNaQdoyR6jjk3GerKlG0hkLkiUt1dunoTC6YYAW
+	 PeZJ9bfS1V9jxnoDxMzNeNyVem8wVYxX8TjPtc1jiMMRQ3okThA/2mCNJtbptK+iu7
+	 DF/2N09AQuyGSMotOBPTv6TW7Smm1l5Mtdf/909l+itL2fa5I/gcqwFcpp/nFyV3Dy
+	 RMU5CXSm+RvvaINkZyMr1tYPxPKof2My71Tl5mlCFeDTROS4I3m3o+Ypo56NQ441jD
+	 Vlsyi7BtCZPR6ipO1c1bxzmrRcrNpYtu5QNtzP78t8vFrrs2KntRQJyHOmTuXt3upT
+	 NSJ6l3StpaJOw==
+Date: Fri, 6 Dec 2024 12:26:20 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] memblock: restore check for node validity in arch_numa
+Message-ID: <Z1LRTHMT2as5VhEU@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-Content-Language: en-GB
-To: Petr Tesarik <ptesarik@suse.com>, Michael Kelley <mhklinux@outlook.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241017142752.17f2c816@mordecai.tesarici.cz>
- <aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
- <20241205182008.2b36476a@mordecai.tesarici.cz>
- <SN6PR02MB41571E0BD384C44C46127B49D4302@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20241206085026.32c89a03@mordecai.tesarici.cz>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241206085026.32c89a03@mordecai.tesarici.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 06/12/2024 07:50, Petr Tesarik wrote:
-> On Thu, 5 Dec 2024 18:52:35 +0000
-> Michael Kelley <mhklinux@outlook.com> wrote:
-> 
->> From: Petr Tesarik <ptesarik@suse.com> Sent: Thursday, December 5, 2024 9:20 AM
->>>
->>> Hi Ryan,
->>>
->>> On Thu, 17 Oct 2024 13:32:43 +0100
->>> Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>   
->>>> On 17/10/2024 13:27, Petr Tesarik wrote:  
->>>>> On Mon, 14 Oct 2024 11:55:11 +0100
->>>>> Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>>  
->>>>>> [...]
->>>>>> The series is arranged as follows:
->>>>>>
->>>>>>   - patch 1:	   Add macros required for converting non-arch code to support
->>>>>>   		   boot-time page size selection
->>>>>>   - patches 2-36:  Remove PAGE_SIZE compile-time constant assumption from all
->>>>>>   		   non-arch code  
->>>>>
->>>>> I have just tried to recompile the openSUSE kernel with these patches
->>>>> applied, and I'm running into this:
->>>>>
->>>>>   CC      arch/arm64/hyperv/hv_core.o
->>>>> In file included from ../arch/arm64/hyperv/hv_core.c:14:0:
->>>>> ../include/linux/hyperv.h:158:5: error: variably modified ‘reserved2’ at file scope
->>>>>   u8 reserved2[PAGE_SIZE - 68];
->>>>>      ^~~~~~~~~
->>>>>
->>>>> It looks like one more place which needs a patch, right?  
->>>>
->>>> As mentioned in the cover letter, so far I've only converted enough to get the
->>>> defconfig *image* building (i.e. no modules). If you are compiling a different
->>>> config or compiling the modules for defconfig, you will likely run into these
->>>> types of issues.
->>>>
->>>> That said, I do have some patches to fix Hyper-V, which Michael Kelley was kind
->>>> enough to send me.
->>>>
->>>> I understand that Suse might be able to help with wider performance testing - if
->>>> that's the reason you are trying to compile, you could send me your config and
->>>> I'll start working on fixing up other drivers?  
->>>
->>> This project was de-prioritised for some time, but I have just returned
->>> to it, and one of our test systems uses a Mellanox 5 NIC, which did not build.
+Hi Linus,
 
-No problem - I appreciate all the time you have spent on it so far!
+The following changes since commit bcc8eda6d34934d80b96adb8dc4ff5dfc632a53a:
 
->>>
->>> If you still have time to work on your patch series, please, can you
->>> look into enabling MLX5_CORE_EN?
+  Merge tag 'turbostat-2024.11.30' of git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux (2024-11-30 18:30:22 -0800)
 
-I've also had other things that have been taking up my time. I'm planning to get
-back to this series properly after Christmas and convert all the remaining
-module code. I'm hoping that Michael's patch will solve your problem for now?
+are available in the Git repository at:
 
->>>
->>> Oh, and have you rebased the series to 6.12 yet?
+  https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/fixes-2024-12-06
 
-Afraid the latest I have at the moment is based on v6.12-rc3. It also includes
-all the changes from the review feedback:
+for you to fetch changes up to 180bbad698641873120a48857bb3b9f3166bf684:
 
-https://gitlab.arm.com/linux-arm/linux-rr/-/tree/features/boot-time-page-size-v2-wip
+  arch_numa: Restore nid checks before registering a memblock with a node (2024-12-01 22:04:52 +0200)
 
->>>   
->>
->> FWIW, here's what I hacked together to compile and run the mlx5 driver in
->> a Hyper-V VM.  This was against a 6.11 kernel code base.
-> 
-> Wow! Thank you, Michael. I'll give it a try.
+----------------------------------------------------------------
+memblock: restore check for node validity in arch_numa
 
-Yes, thanks, Michael - I'll take a look at this and integrate into my tree after
-Christmas.
+Rework of NUMA initialization in arch_numa dropped a check that refused to
+accept configurations with invalid node IDs.
 
-Thanks,
-Ryan
+Restore that check to ensure that when firmware passes invalid nodes, such
+configuration is rejected and kernel gracefully falls back to dummy NUMA.
 
-> 
-> Petr T
+----------------------------------------------------------------
+Marc Zyngier (1):
+      arch_numa: Restore nid checks before registering a memblock with a node
 
+Mike Rapoport (Microsoft) (1):
+      memblock: allow zero threshold in validate_numa_converage()
+
+ drivers/base/arch_numa.c | 4 ++++
+ mm/memblock.c            | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+-- 
+Sincerely yours,
+Mike.
 
