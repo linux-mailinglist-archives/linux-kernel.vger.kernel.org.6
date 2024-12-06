@@ -1,222 +1,208 @@
-Return-Path: <linux-kernel+bounces-434941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF009E6D39
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:22:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8BF9E6D5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1CC283475
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:21:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F306D2857F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E861FBC80;
-	Fri,  6 Dec 2024 11:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G+TDjUMI"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE0D1FF7D6;
+	Fri,  6 Dec 2024 11:25:01 +0000 (UTC)
+Received: from mailfilter02-out21.webhostingserver.nl (mailfilter02-out21.webhostingserver.nl [141.138.168.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C73192B8F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733484114; cv=none; b=diGoAxqESXIGtGzD4q9g/9SDC75yRxRXxBQEkvpGPH3vUCV6KT2Kz791d8w/O+4/naShD5ZyjND8XxQYs4mbqQiNcUj4KM40jIW1Idcz21UqRCCVx/ZNKBTs2+mPXkuLh8oOIgcyYIcXuJ7UveU6PxgjtwHHcLKoKmZw0XWW2o0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733484114; c=relaxed/simple;
-	bh=JOVrPFDobmDS4Will9BL7O2tswVQbUHxNJGI9/i5TU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZdG8Ge16krAC5pXeP0SfBQAO7pMfpoeZCSQTksxX1VtUHMKRlNt7vuSZdyRDtmj30DXdj0AKoKg3yJFZTy6TkFO9+uXPtN+geUSIvuLpmB+evZpQtf2+yMwgB0pIpyy5CNZaowTwd57tD01Y/FfuYpDgc/GCufs2C/dFhNGx+bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=G+TDjUMI; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5f1e7639391so515759eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:21:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733484111; x=1734088911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HzC1e4teCdFBLzoPu7P0P5xRQQZ7w73jOzXQqSGBZMg=;
-        b=G+TDjUMI688dWgSRe7oMca9AL8N0CDXNNV9PIsA7SA4Q2Dh5PTki8lPye+S1uvshIF
-         /c+zy6ChGJ24JrpkKGygifGnDIvjaEmHGhIl1tAS41A3x49u8glgc2F7p95xVfDQx1be
-         libYqXpuZddg9KknKZQT9fjd+GdT3mPTNqazM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733484111; x=1734088911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HzC1e4teCdFBLzoPu7P0P5xRQQZ7w73jOzXQqSGBZMg=;
-        b=ooKvPDmkDbqTorqNJyHUocz00pCLHej02HVF9Sb6/FNvVLkF/cB3KsxitqvHw/ks6z
-         soz0aD3NDxepZLK4QPIzzYDm/BUiOTsfhV5uT/CK4Sf4G4iCj0mBtfLj83tApshDbdlL
-         g2k0hsxG6lSi+7w2kSGsW5PSNMIUrD9W51zEdSRSXA4Oc+dAb7Go2bRJoi3pHdDYWdl9
-         B5dTwZrodK7MsBesnwG2dp0yK9+9HRts1ite3Ont55gZgYMSu8D8w+Qm8bA/DMYdJ9Iv
-         Zpz1uZX00V3YPUJnprAaFfCDJPBBAUiFKJrSlkIzDNf9bkpIn4lHyJySBSTFgFKRYfEY
-         LmIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLklcgDWuknUiVbmm4xSgHqPOrSnM7iH+xQUDRy5a6UTRDJLxrhNFXEpoz7oNggCpm8FE0zDQO/5mYjHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhOBtKm7pb73V0yNfYR9LB9RhMX60rv6vwrd6cPOHKSH1VzXt6
-	JMEIM8Su77SytMFcUAyu6a645c9f+rJ3MmU65D8SOFo+0mezZOgL/JQB9qkDc3lRrQ7zcX2KYAo
-	ekI/hORkP/afJvdAGtC/ogb+QFAxHc3GCJsGG
-X-Gm-Gg: ASbGnctqW8xHffpo1qMZkCPVNOB8qX+C3jjKctDgg3R7stEqs7q3TlwUFsWnAgVCOVH
-	+uHPyEa4kV2TKqQGWCXWcihIUHGSoio3U0Ou6Y5xqfiNmR/2aJSe/Ics3dAwEmUBT3A==
-X-Google-Smtp-Source: AGHT+IEqM064ODaYIcbwkEvw943cAB8MaZqynHzMcodkpkM4ZpwbUg3AM6ND6qICmW1S7dG2Lbi6/ezcGS38bLFNrRg=
-X-Received: by 2002:a05:6830:9c7:b0:71d:4d3b:bdb9 with SMTP id
- 46e09a7af769-71dcf565bbemr1167225a34.30.1733484111452; Fri, 06 Dec 2024
- 03:21:51 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDA91FA246
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=141.138.168.70
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733484300; cv=pass; b=fA4qNNaJxyM0eKcpqHXkYhwL+4pyM1zoCRsm0Rt+0n5KAz5Pe/xmsb9jhFJM4WXj+dXooJkbsWQJfyJPoHaDFQ16YcM08GCzxPx090gDq6nDUKZZqGcLOL8wO0YTUQBG0UFD4igH2FYQFMOw/AtfhDmd/QqoC0Hs4YvUuDcL1NA=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733484300; c=relaxed/simple;
+	bh=MET7W4WnLCq6005qUbj5NtKGeohPo7kN/cQMFHdSAO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rxT3UeDjfWZApoc8Bc1nmelD+0P0fZYLqYVhdg02yAZ5zqzc67k6MRGKVPiaBXfhmJoR0/44fBwyd9HKDbZtLQLKzPLAqDVUaYANp4Pu2BIPg4fLfmXjMfC2NAMvtH5Ee9vX5xQRjRTtfY4pTAAhbPJn7LdW9hMkdOxfaajrUow=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=141.138.168.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+ARC-Seal: i=2; a=rsa-sha256; t=1733484229; cv=pass;
+	d=webhostingserver.nl; s=whs1;
+	b=HQuGC/6Igw9VWqt++HV/KbXcWkPA9OPDpHAwnCD5s5iHn2HTtI65UcoB2cQGMKm1+9odkcSPqJGxd
+	 0bqBqRJDKu//a7GHLbCFGTgkQ3KwmeHOMitA4rB3E1HuPb8gzAX4qKednv37tsicChl9/ZDKpHsnxq
+	 DI8PHCp3VZCWM8TKBF/vAhG2Vf72OUowmWOisKOsor1ULKxpTbV3b3RuqA/Aps7ZO3zR6YbuNf7mu2
+	 /Bqn3YXf+ktpN16NafQtXbUvF2eroFdWi7+JvfJtjCN6LCa4PP1IAEWQNvD7KO+xMZBT3YUFbyZGyH
+	 Qjctt4PcFl4p0HYrCj7xSBYO1goPyqw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
+	d=webhostingserver.nl; s=whs1;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=YtSPVooxyun9+mTGfKS72AWGootShF+nag7v1xcX57s=;
+	b=US60wxwiFvtUpqmlUFZfpH8gn+2bEW6u4BrfO3ytxOo3iHKL8hdrK+soCOCtCialhFBdJYTx9W6ui
+	 7C46xiPWmyKbw3dufd9nfXsQS+i48Qqem4pjRF/Kc3prEskhVLUw9N4FPn+QcDWTmoL+43fOa/8tzH
+	 Q6Cei4apCmUDCRW2qfE6eZjWbixaY1VoWO3m2+eJQk1vP2aKdiFFq2xnEVRXlO879xZr3680YOJ+bN
+	 qmrDemiW/dLX6ME+H7GovnBqk6DtkjKOnLxE2R7qn36qV6VGbHjxjor2xIo3V8oD0af9vV08xtpKNO
+	 hclj6bHb30s+cRv0UGHVRGdL6XL1aYQ==
+ARC-Authentication-Results: i=2; mailfilter02.webhostingserver.nl;
+	spf=softfail smtp.mailfrom=gmail.com smtp.remote-ip=141.138.168.154;
+	dmarc=fail header.from=gmail.com;
+	arc=pass header.oldest-pass=0;
+X-Halon-ID: 8fcc9952-b3c4-11ef-b67a-001a4a4cb922
+Received: from s198.webhostingserver.nl (s198.webhostingserver.nl [141.138.168.154])
+	by mailfilter02.webhostingserver.nl (Halon) with ESMTPSA
+	id 8fcc9952-b3c4-11ef-b67a-001a4a4cb922;
+	Fri, 06 Dec 2024 12:23:47 +0100 (CET)
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=webhostingserver.nl; s=whs1; t=1733484227;
+	 b=DoyINm4EL+srynz+UTxWDO4LNzIuaAfuA+Agfj9ABM/FETq/F3jMS+0at6Pzm36cyGNHTaoC1j
+	  KDTaDoAydnlgXaFNcI73iYLYdDSJ4hqod9wj6qLwK5C1wZcHqLyW2ItqEdAzt3Xgo0ofolk4Y/
+	  ejNhLVvjPlH19/80avJW2n6WiP/tX3OJWGE88tpUOFBj27y5EPiqHb+NcHL9mzSycdQHrT1NYi
+	  SZzTSX9Y9xknNgo92iYkzXUgqrdqfSO0ceKzlIdKfmW/D0CILh8EZFvOjLmNo0h98Fy95nim6r
+	  rsxExbow2BeRwkrYr9aRRkBEYDbTguxFkluzZCrqGkjB0Q==;
+ARC-Authentication-Results: i=1; webhostingserver.nl; smtp.remote-ip=178.250.146.69;
+	iprev=pass (cust-178-250-146-69.breedbanddelft.nl) smtp.remote-ip=178.250.146.69;
+	auth=pass (PLAIN) smtp.auth=ferry.toth@elsinga.info;
+	spf=softfail smtp.mailfrom=gmail.com;
+	dmarc=skipped header.from=gmail.com;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=webhostingserver.nl; s=whs1; t=1733484227;
+	bh=MET7W4WnLCq6005qUbj5NtKGeohPo7kN/cQMFHdSAO0=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+	  Subject:MIME-Version:Date:Message-ID;
+	b=JaRXj+MbQoiXpHrTJu1magZxh5aGkMFbf7bo4of+DJJvOWGg1/kUj/EQMFiCzzpbh2+6PxpHEH
+	  nMYLrrg61GRBTugC2i2FQuf1EhGmhx1uk6J/sKSxoout+zD23Qt6e7H1PcUezlD9Zxc7qhQrWe
+	  JWFP2/ybJPgx5zA7XSYEE+N+JuYDA4tFSP6o9l6P3vb5y468XWnJk1+X9ERgg6BzxUTsDNexW/
+	  w0hj+McIjniXqawi1At/D/H8ulsVHnQsCSopFRbDOm+R5OSYeebKYQVTjkMra5Xh4wmdulnP/j
+	  K1DofIMeZuiyRQjTFPMxWxQLcbd05c8SpIyBrTvTkiknJA==;
+Authentication-Results: webhostingserver.nl;
+	iprev=pass (cust-178-250-146-69.breedbanddelft.nl) smtp.remote-ip=178.250.146.69;
+	auth=pass (PLAIN) smtp.auth=ferry.toth@elsinga.info;
+	spf=softfail smtp.mailfrom=gmail.com;
+	dmarc=skipped header.from=gmail.com;
+	arc=none
+Received: from cust-178-250-146-69.breedbanddelft.nl ([178.250.146.69] helo=smtp)
+	by s198.webhostingserver.nl with esmtpa (Exim 4.98)
+	(envelope-from <fntoth@gmail.com>)
+	id 1tJWR1-00000007jgu-16gg;
+	Fri, 06 Dec 2024 12:23:47 +0100
+Message-ID: <d890eecc-97de-4abf-8e0e-b881d5db5c1d@gmail.com>
+Date: Fri, 6 Dec 2024 12:23:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127105709.4014302-1-treapking@chromium.org>
- <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
- <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
- <CAD=FV=XuResyZK1ke1NtaGREfwm_3MB-u5t6vw459kYPt0LZwQ@mail.gmail.com>
- <Z0-4umP9TnNAbJXO@google.com> <CAEXTbpeeZVwCYWR0wzX8QMYJ7okj=zmziwt9Nvtu2kzA4iMCmA@mail.gmail.com>
- <CAD=FV=Vrv6cJVMpm-vUQTG5p-k6Td1KFKvX6epDfiOzUOAON+w@mail.gmail.com>
- <CAEXTbpeEPw66aJAfNBYDGCuQP=UsHvrqBTG7cdQJ3D+w6AiCcA@mail.gmail.com> <CAD=FV=XdPzA8jO+4xMpYJU_1k8dp1GNGt7fnmLA4WX1f=civ4g@mail.gmail.com>
-In-Reply-To: <CAD=FV=XdPzA8jO+4xMpYJU_1k8dp1GNGt7fnmLA4WX1f=civ4g@mail.gmail.com>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Fri, 6 Dec 2024 19:21:40 +0800
-Message-ID: <CAEXTbpe6D_pwLP6+0Kv-n7KMRoOn-_CWdZygMz0yK1fFuC-2Bg@mail.gmail.com>
-Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
- from 10s to 5s
-To: Doug Anderson <dianders@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/11] x86: document X86_INTEL_MID as 64-bit-only
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ kvm@vger.kernel.org
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-9-arnd@kernel.org>
+ <CAHp75VfzHmV2anw6C8iSCiwnJc2YNa+1aLDj6Frf9OZyGjD0MQ@mail.gmail.com>
+Content-Language: en-US, nl
+From: Ferry Toth <fntoth@gmail.com>
+In-Reply-To: <CAHp75VfzHmV2anw6C8iSCiwnJc2YNa+1aLDj6Frf9OZyGjD0MQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ACL-Warn: Sender domain ( gmail.com ) must match your domain name used in authenticated email user ( ferry.toth@elsinga.info ).
+X-ACL-Warn: From-header domain ( gmail.com} ) must match your domain name used in authenticated email user ( ferry.toth@elsinga.info )
+X-Antivirus-Scanner: Clean mail though you should still use an Antivirus
 
-Hi Doug,
+Hi,
 
-On Fri, Dec 6, 2024 at 1:13=E2=80=AFAM Doug Anderson <dianders@chromium.org=
-> wrote:
+Op 04-12-2024 om 19:55 schreef Andy Shevchenko:
+> +Cc: Ferry
 >
-> Hi,
+> On Wed, Dec 4, 2024 at 12:31 PM Arnd Bergmann <arnd@kernel.org> wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> The X86_INTEL_MID code was originally introduced for the
+>> 32-bit Moorestown/Medfield/Clovertrail platform, later the 64-bit
+>> Merrifield/Moorefield variant got added, but the final
+> variant got --> variants were
 >
-> On Thu, Dec 5, 2024 at 5:46=E2=80=AFAM Pin-yen Lin <treapking@chromium.or=
-g> wrote:
-> >
-> > Hi Doug,
-> >
-> > On Thu, Dec 5, 2024 at 2:11=E2=80=AFAM Doug Anderson <dianders@chromium=
-.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Wed, Dec 4, 2024 at 5:45=E2=80=AFAM Pin-yen Lin <treapking@chromiu=
-m.org> wrote:
-> > > >
-> > > > > > >  Can you try testing (and gather timing numbers) when
-> > > > > > > suspending soon after initiating scans? It's hard to judge wh=
-at the
-> > > > > > > lower limit of this timeout should really be without any numb=
-ers, just
-> > > > > > > like it's hard to judge whether your 10 second watchdog is re=
-asonable.
-> > > > > >
-> > > > > > Pin-yen: is this something you could gather?
-> > > >
-> > > > I tried entering suspend right after wifi scans, and the time spent=
- in
-> > > > mwifiex_enable_hs() is always around 100ms. It seems initiating
-> > > > suspend does not increase the execution time for mwifiex_enable_hs(=
-),
-> > > > so I think the driver is capable of interrupting a scan.
-> > > > > >
-> > > > > >
-> > > > > > > Also, for the record, since we might have to field regression=
- reports
-> > > > > > > for other systems: what hardware (chip variant, FW version) a=
-re you
-> > > > > > > seeing problems on?
-> > > > > >
-> > > > > > Pin-yen: I'm assuming you'll provide this.
-> > > >
-> > > > From the debugfs entry:
-> > > >
-> > > > driver_name =3D "mwifiex"
-> > > > driver_version =3D mwifiex 1.0 (15.68.19.p54)
-> > > > verext =3D w8897o-B0, RF87XX, FP68, 15.68.19.p54
-> > > >
-> > > > The compatible string of the DT is "marvell,sd8897".
-> > > > >
-> > > > > I'll leave it up to y'all (Doug and Pin-Yen) whether you want to =
-provide
-> > > > > the above to provide a little more confidence, or if you want to
-> > > > > reconsider your use of CONFIG_DPM_WATCHDOG_TIMEOUT.
-> > > >
-> > > > It looks okay to me to decrease the timeout here given that scannin=
-g
-> > > > doesn't seem to affect the suspend time. What's your thought, Doug?
-> > >
-> > > I think Brian is right and that we should change how we're using the
-> > > DPM watchdog, but IMO that doesn't mean that we couldn't also change
-> > > this timeout.
-> > >
-> > > If nothing else, you'd want to post a v2 of your patch containing a
-> > > summary of the info you've gathered so it's recorded with the patch.
-> > >
-> > > Maybe what makes the most sense, though, is to put our money where ou=
-r
-> > > mouth is and land some sort of patch in the ChromeOS tree and then
-> > > report back to upstream in a month when we have data about it. If
-> > > things look good in the field then presumably that would give some
-> > > confidence for upstream to be willing to land the patch?
-> > >
-> > > Probably about the best data we could gather would be to break the
-> > > existing timeout into two halves. You could wait half the time, then
-> > > print a warning, and then wait the other half the time. We could even
-> > > land that change _without_ changing the timeout to 5 seconds. Then if
-> > > we ever see the warning print but then the suspend succeeds we know
-> > > that there are cases where waiting longer would have helped. If we
-> > > made that a WARN_ON() our existing infrastructure would help us gathe=
-r
-> > > that info...
-> >
-> > I just realized that mwifiex_wait_queue_complete() has another 12s
-> > timeout[1], though they are not directly involved in suspend/resume.
-> >
-> > Should we also add a warning to that and see if we can make it half?
-> > This starts to make me think how many timeouts we want to consider.
-> > Does it make sense to only focus on the one in mwifiex_enable_hs()? Or
-> > should we check other timeouts in mwifiex or even other drivers?
-> >
-> > [1]: https://elixir.bootlin.com/linux/v6.12.1/source/drivers/net/wirele=
-ss/marvell/mwifiex/sta_ioctl.c#L51
+>> Morganfield/Broxton 14nm chips were canceled before they hit
+>> the market.
+> Inaccurate. "Broxton for Mobile", and not "Broxton" in general.
 >
-> IMO any of these "arbitrary and really long timeout to make sure we
-> don't hang forever" type things probably should have a warning so we
-> know if we're getting close to the timeout. It wouldn't be very hard
-> to make a wrapper around wait_event_interruptible_timeout() to handle
-> this. I suppose that wrapper could just be local to mwifiex, though if
-> other drivers found it useful it would make sense to put it somewhere
-> more common.
 >
-> That being said, if we aren't actually hitting these other timeouts I
-> don't know that we need to do an extensive audit right now to find
-> every one of them.
+>> To help users understand what the option actually refers to,
+>> update the help text, and make it a hard dependency on 64-bit
+>> kernels. While they could theoretically run a 32-bit kernel,
+>> the devices originally shipped with 64-bit one in 2015, so that
+>> was proabably never tested.
+> probably
 >
-> Of course, Brian also said he'd be OK with just setting the timeout to
-> 5 seconds based on the research you've already done. In that case I
-> don't know if we'd want a WARNing after 2.5 seconds. Maybe? 2.5
-> seconds is still pretty long, but I don't know if it's WARN-worthy. It
-> could at least be dev_warn() worthy...
+> It's all other way around (from SW point of view). For unknown reasons
+> Intel decided to release only 32-bit SW and it became the only thing
+> that was heavily tested (despite misunderstanding by some developers
+> that pointed finger to the HW without researching the issue that
+> appears to be purely software in a few cases) _that_ time.  Starting
+> ca. 2017 I enabled 64-bit for Merrifield and from then it's being used
+> by both 32- and 64-bit builds.
 >
+> I'm totally fine to drop 32-bit defaults for Merrifield/Moorefield,
+> but let's hear Ferry who might/may still have a use case for that.
 
-Sounds like we will start to binary search the timeout...
+Do to the design of SLM if found (and it is also documented in Intel's 
+HW documentation)
 
-Then, I would like to just send out a v2 for this with an updated
-commit message. It sounds like it will be endless binary searches on
-all those timeouts in the kernel if we really want to create a wrapper
-around wait_event_interruptible_timeout(), and all the efforts only
-make us a few more seconds faster on the system.
+that there is a penalty introduced when executing certain instructions 
+in 64b mode. The one I found
+
+is crc32di, running slower than 2 crc32si in series. Then there are 
+other instructions seem to runs faster in 64b mode.
+
+And there is of course the usual limited memory space than could benefit 
+for 32b mode. I never tried the mixed (x86_32?)
+
+mode. But I am building and testing both i686 and x86_64 for each Edison 
+image.
+
+I think that should at minimum be useful to catch 32b errors in the 
+kernel in certain areas (shared with other 32b
+
+archs. So, I would prefer 32b support for this platform to continue.
+
+
+> ...
+>
+>> -               Moorestown MID devices
+> FTR, a year or so ago it was a (weak) interest to revive Medfield, but
+> I think it would require too much work even for the person who is
+> quite familiar with HW, U-Boot, and Linux kernel, so it is most
+> unlikely to happen.
+>
+> ...
+>
+>>            Select to build a kernel capable of supporting Intel MID (Mobile
+>>            Internet Device) platform systems which do not have the PCI legacy
+>> -         interfaces. If you are building for a PC class system say N here.
+>> +         interfaces.
+>> +
+>> +         The only supported devices are the 22nm Merrified (Z34xx) and
+>> +         Moorefield (Z35xx) SoC used in Android devices such as the
+>> +         Asus Zenfone 2, Asus FonePad 8 and Dell Venue 7.
+> The list is missing the Intel Edison DIY platform which is probably
+> the main user of Intel MID kernels nowadays.
+Despite the Dell Venue 7 originally running a 32b Android kernel (I 
+think), I got it run linux/Yocto in 64 bits.
+> ...
+>
+>> -         Intel MID platforms are based on an Intel processor and chipset which
+>> -         consume less power than most of the x86 derivatives.
+> Why remove this? AFAIK it states the truth.
 >
 >
-> -Doug
-
-Regards,
-Pin-yen
 
