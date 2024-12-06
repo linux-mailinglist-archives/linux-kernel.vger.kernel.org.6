@@ -1,239 +1,117 @@
-Return-Path: <linux-kernel+bounces-434337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE409E6516
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6269E6520
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:40:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83AD283FFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E31A281BF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD141917FD;
-	Fri,  6 Dec 2024 03:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mmp/o2H7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4D018D63C;
+	Fri,  6 Dec 2024 03:40:48 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEFF13DDDF;
-	Fri,  6 Dec 2024 03:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8E813DDDF
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 03:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733456260; cv=none; b=YB8cNnQ2jMhfwnWlT1kERuvvYEt0pqcahDmk8Ry3OEKv+0/hs7PU03C5NjkVS4gyI2ZbKNf1YmAYydCtRfV/QlQjtXUh9MhWyDazTYoIVaiIKhijs5iMX25qtWTvY35eoOs0JvCqPU1t+33b8KoQzLjqr1eJ9hy1zLpOh9hhi1U=
+	t=1733456448; cv=none; b=bprvDEG01s5pM+/FASJVBo43rGRjQ7+4QrHYQnWK2LREyZan90jBF3TKjkG48Tdw91Xq/ZGFic7kE9ieY2L4BJUxMHa6iK5h0cLSgZbfsHDm/czIrKHkbkiqDrA6ynyzxloxgvTnSxV5QnQH3jpm8O3sxLiUrBLhFDDP8ABEip8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733456260; c=relaxed/simple;
-	bh=WrKwAGr9rCPIoNqYi8F9dNIcqs5fsyfUF/2DoTg4HCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ni7mWkfaKc/GtSlZRg2HuhYilEgHgLuNBrYha8mso2IcuUjLR2QB45NwKzMPmJKrt6WozEpEqw4kP8pcUphnz8ri8jSdxPsvqWSwi7pV9bTPWuWlySVsjlXqG5corlbeOA0ZpQGwHFv0fIRBxC14TEHN4cPoagjb/GJ+2SCC8d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mmp/o2H7; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733456258; x=1764992258;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WrKwAGr9rCPIoNqYi8F9dNIcqs5fsyfUF/2DoTg4HCQ=;
-  b=mmp/o2H7m8bepPnb1BwQMu2lWMxdR8uDStr/2Z+MhOtcfUwqgCZgkKqK
-   T130duaLhPl+ZdyRob8vrVPoVjOtkuYt6BD2E3E5oO3onQbks83Qsaeo3
-   zpM4O3QWU12/fXMZq/yLdGkeZBguhyT4KNbYiIgcvMxruTfpPGA6Jy3VL
-   MzuWXoteh0bhvu5OziUcuPXZSSIasDABEjHfMocNehJCsjT4I0H9V3/3D
-   xlt+79hzt9JEisHwoUllJw0gY2cg0WVScVR3T3f5fmSWW7SCX0duXomtQ
-   XRmqYZzHbV+GKYdpFjcvTxN7doCxmuuUEnMgOqQ48aJtWryAV4CyPy/Aa
-   A==;
-X-CSE-ConnectionGUID: EEoxDbwQRUGm12BkDCo4QA==
-X-CSE-MsgGUID: RwBp05oeRg6BZmzAONgcsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="44269524"
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="44269524"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 19:37:38 -0800
-X-CSE-ConnectionGUID: LzfPS1TfTDmpsAGKGiZd/Q==
-X-CSE-MsgGUID: dbn1X0P1QEODfzWbuDfy3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="94488859"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 19:37:33 -0800
-Message-ID: <3f52c362-ac1b-4435-92c8-81ec97992b02@intel.com>
-Date: Fri, 6 Dec 2024 11:37:30 +0800
+	s=arc-20240116; t=1733456448; c=relaxed/simple;
+	bh=EDdmm0DHzlfUIVjgSjHafTsxqy+4Kuy7LBa8PuA68Ug=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=dZAN4MhFmN8G4uHhAuuBbnvDDApVriVobvbNfh3O+/1d0Z7CqRgBqBrsJJAftaMQqZvfVtXTba3E/F02xV9rqrDrWl9IdzaEeFOabOIa9Z198cdqndlcdaoSeV3XEatit/4qZQxro3G6P57xYlGuE69lbYM7FfMGqjfx5D8H+kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-280-C8E4fnSMOAGX_JjFtXp91A-1; Fri, 06 Dec 2024 03:40:43 +0000
+X-MC-Unique: C8E4fnSMOAGX_JjFtXp91A-1
+X-Mimecast-MFC-AGG-ID: C8E4fnSMOAGX_JjFtXp91A
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 03:39:59 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 03:39:59 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, Martin Uecker
+	<Martin.Uecker@med.uni-goettingen.de>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 01/10] compiler.h: add statically_false()
+Thread-Topic: [PATCH 01/10] compiler.h: add statically_false()
+Thread-Index: AQHbROCIk5mOE+KmUE+HEr8z57N8IbLWaz+wgAFe2gCAALnCYA==
+Date: Fri, 6 Dec 2024 03:39:59 +0000
+Message-ID: <b48e2f5dd8d64cbab471629ae03c7511@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-1-4e4cbaecc216@wanadoo.fr>
+ <e115a4245e5342a994a7e596cc6357fa@AcuMS.aculab.com>
+ <CAMZ6Rq+n0vG9zObF-kY-Xo+iP_Y3P8A6_nEfB8F=UhqeQBepRw@mail.gmail.com>
+In-Reply-To: <CAMZ6Rq+n0vG9zObF-kY-Xo+iP_Y3P8A6_nEfB8F=UhqeQBepRw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] KVM: TDX: Add TSX_CTRL msr into uret_msrs list
-To: Adrian Hunter <adrian.hunter@intel.com>, Chao Gao <chao.gao@intel.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Huang, Kai"
- <kai.huang@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Yang, Weijiang" <weijiang.yang@intel.com>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
- "dmatlack@google.com" <dmatlack@google.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "x86@kernel.org" <x86@kernel.org>
-References: <b36dd125-ad80-4572-8258-7eea3a899bf9@intel.com>
- <Z04Ffd7Lqxr4Wwua@google.com>
- <c98556099074f52af1c81ec1e82f89bec92cb7cd.camel@intel.com>
- <Z05SK2OxASuznmPq@google.com>
- <60e2ed472e03834c13a48e774dc9f006eda92bf5.camel@intel.com>
- <9beb9e92-b98c-42a2-a2d3-35c5b681ad03@intel.com> <Z0+vdVRptHNX5LPo@intel.com>
- <0e34f9d0-0927-4ac8-b1cb-ef8500b8d877@intel.com> <Z0/4wsR2WCwWfZyV@intel.com>
- <2bcd34eb-0d1f-46c0-933f-fb1d70c70a1e@intel.com> <Z1A5QWaTswaQyE3k@intel.com>
- <c9b14955-6e2f-4490-a18c-0537ffdfff30@intel.com>
- <a005d50c-6ca8-4572-80ba-5207b95323fb@intel.com>
- <84964644-e53f-4aac-b827-5626393f8c25@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: nyPohuxlcvuGC00IBd4RCHDK1MSIs5zDRf-kTxm6zoM_1733456442
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <84964644-e53f-4aac-b827-5626393f8c25@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On 12/6/2024 1:31 AM, Adrian Hunter wrote:
-> On 4/12/24 17:33, Xiaoyao Li wrote:
->> On 12/4/2024 7:55 PM, Adrian Hunter wrote:
->>> On 4/12/24 13:13, Chao Gao wrote:
->>>> On Wed, Dec 04, 2024 at 08:57:23AM +0200, Adrian Hunter wrote:
->>>>> On 4/12/24 08:37, Chao Gao wrote:
->>>>>> On Wed, Dec 04, 2024 at 08:18:32AM +0200, Adrian Hunter wrote:
->>>>>>> On 4/12/24 03:25, Chao Gao wrote:
->>>>>>>>> +#define TDX_FEATURE_TSX (__feature_bit(X86_FEATURE_HLE) | __feature_bit(X86_FEATURE_RTM))
->>>>>>>>> +
->>>>>>>>> +static bool has_tsx(const struct kvm_cpuid_entry2 *entry)
->>>>>>>>> +{
->>>>>>>>> +    return entry->function == 7 && entry->index == 0 &&
->>>>>>>>> +           (entry->ebx & TDX_FEATURE_TSX);
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static void clear_tsx(struct kvm_cpuid_entry2 *entry)
->>>>>>>>> +{
->>>>>>>>> +    entry->ebx &= ~TDX_FEATURE_TSX;
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static bool has_waitpkg(const struct kvm_cpuid_entry2 *entry)
->>>>>>>>> +{
->>>>>>>>> +    return entry->function == 7 && entry->index == 0 &&
->>>>>>>>> +           (entry->ecx & __feature_bit(X86_FEATURE_WAITPKG));
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static void clear_waitpkg(struct kvm_cpuid_entry2 *entry)
->>>>>>>>> +{
->>>>>>>>> +    entry->ecx &= ~__feature_bit(X86_FEATURE_WAITPKG);
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry)
->>>>>>>>> +{
->>>>>>>>> +    if (has_tsx(entry))
->>>>>>>>> +        clear_tsx(entry);
->>>>>>>>> +
->>>>>>>>> +    if (has_waitpkg(entry))
->>>>>>>>> +        clear_waitpkg(entry);
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static bool tdx_unsupported_cpuid(const struct kvm_cpuid_entry2 *entry)
->>>>>>>>> +{
->>>>>>>>> +    return has_tsx(entry) || has_waitpkg(entry);
->>>>>>>>> +}
->>>>>>>>
->>>>>>>> No need to check TSX/WAITPKG explicitly because setup_tdparams_cpuids() already
->>>>>>>> ensures that unconfigurable bits are not set by userspace.
->>>>>>>
->>>>>>> Aren't they configurable?
->>>>>>
->>>>>> They are cleared from the configurable bitmap by tdx_clear_unsupported_cpuid(),
->>>>>> so they are not configurable from a userspace perspective. Did I miss anything?
->>>>>> KVM should check user inputs against its adjusted configurable bitmap, right?
->>>>>
->>>>> Maybe I misunderstand but we rely on the TDX module to reject
->>>>> invalid configuration.  We don't check exactly what is configurable
->>>>> for the TDX Module.
->>>>
->>>> Ok, this is what I missed. I thought KVM validated user input and masked
->>>> out all unsupported features. sorry for this.
->>>>
->>>>>
->>>>> TSX and WAITPKG are not invalid for the TDX Module, but KVM
->>>>> must either support them by restoring their MSRs, or disallow
->>>>> them.  This patch disallows them for now.
->>>>
->>>> Yes. I agree. what if a new feature (supported by a future TDX module) also
->>>> needs KVM to restore some MSRs? current KVM will allow it to be exposed (since
->>>> only TSX/WAITPKG are checked); then some MSRs may get corrupted. I may think
->>>> this is not a good design. Current KVM should work with future TDX modules.
->>>
->>> With respect to CPUID, I gather this kind of thing has been
->>> discussed, such as here:
->>>
->>>      https://lore.kernel.org/all/ZhVsHVqaff7AKagu@google.com/
->>>
->>> and Rick and Xiaoyao are working on something.
->>>
->>> In general, I would expect a new TDX Module would advertise support for
->>> new features, but KVM would have to opt in to use them.
->>>
->>
->> There were discussion[1] on whether KVM to gatekeep the configurable/supported CPUIDs for TDX. I stand by Sean that KVM needs to do so.
->>
->> Regarding KVM opt in the new feature, KVM gatekeeps the CPUID bit that can be set by userspace is exactly the behavior of opt-in. i.e., for a given KVM, it only allows a CPUID set {S} to be configured by userspace, if new TDX module supports new feature X, it needs KVM to opt-in X by adding X to {S} so that X is allowed to be configured by userspace.
->>
->> Besides, I find current interface between KVM and userspace lacks the ability to tell userspace what bits are not supported by KVM. KVM_TDX_CAPABILITIES.cpuid doesn't work because it represents the configurable CPUIDs, not supported CPUIDs (I think we might rename it to configurable_cpuid to better reflect its meaning). So userspace has to hardcode that TSX and WAITPKG is not support itself.
-> 
-> I don't follow why hardcoding would be necessary.
-> 
-> If the leaf is represented in KVM_TDX_CAPABILITIES.cpuid, and
-> the bits are 0 there, why would userspace try to set them to 1?
-
-Userspace doesn't set the bit to 1 in kvm_tdx_init_vm.cpuid, doesn't 
-mean userspace wants the bit to be 0.
-
-Note, KVM_TDX_CAPABILITIES.cpuid reports the configurable bits. The 
-value 0 of a bit in KVM_TDX_CAPABILITIES.cpuid means the bit is not 
-configurable, not means the bit is unsupported.
-
-For kvm_tdx_init_vm.cpuid,
-  - if the corresponding bit is reported as 1 in 
-KVM_TDX_CAPABILITIES.cpuid, then a value 0 in kvm_tdx_init_vm.cpuid 
-means userspace wants to configure it as 0.
-  - if the corresponding bit is reported as 0 in 
-KVM_TDX_CAPABILITIES.cpuid, then userspace has to pass a value 0 in 
-kvm_tdx_init_vm.cpuid. But it doesn't mean the value of the bit will be 0.
-
-e.g., X2APIC bit is 0 in KVM_TDX_CAPABILITIES.cpuid, and it's also 0 in 
-kvm_tdx_init_vm.cpuid, but TD guest sees a value of 1. In the view of 
-QEMU, it maintains the bit of X2APIC as 1, and QEMU filters X2APIC bit 
-when calling KVM_TDX_INIT_VM because X2APIC is not configurable.
-
-So when it comes to TSX and WAITPKG, QEMU also needs an interface to be 
-informed that they are unsupported. Without the interface of fixed0 bits 
-reported by KVM, QEMU needs to hardcode itself like [1]. The problem of 
-hardcode is that it will conflict when future KVM allows them to be 
-configurable.
-
-In the future, if we have interface from KVM to report the fixed0 and 
-fixed1 bit (on top of the proposal [2]), userspace can drop the 
-hardcoded one it maintains. At that time, KVM can ensure no conflict by 
-removing the bits from fixed0/1 array when allowing them to be 
-configurable.
-
-[1] 
-https://lore.kernel.org/qemu-devel/20241105062408.3533704-49-xiaoyao.li@intel.com/
-[2] 
-https://lore.kernel.org/all/43b26df1-4c27-41ff-a482-e258f872cc31@intel.com/
-
->>
->> [1] https://lore.kernel.org/all/ZuM12EFbOXmpHHVQ@google.com/
->>
-> 
+RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDA1IERlY2VtYmVyIDIwMjQgMTU6MjYNCj4g
+DQo+IE9uIFRodS4gNSBEZWMgMjAyNCBhdCAwMzozMCwgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
+aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4gRnJvbTogVmluY2VudCBNYWlsaG9sDQo+ID4gPiBT
+ZW50OiAwMiBEZWNlbWJlciAyMDI0IDE3OjMzDQo+ID4gPg0KPiA+ID4gRnJvbTogVmluY2VudCBN
+YWlsaG9sIDxtYWlsaG9sLnZpbmNlbnRAd2FuYWRvby5mcj4NCj4gPiA+DQo+ID4gPiBGb3IgY29t
+cGxldGlvbiwgYWRkIHN0YXRpY2FsbHlfZmFsc2UoKSB3aGljaCBpcyB0aGUgZXF1aXZhbGVudCBv
+Zg0KPiA+ID4gc3RhdGljYWxseV90cnVlKCkgZXhjZXB0IHRoYXQgaXQgd2lsbCByZXR1cm4gdHJ1
+ZSBvbmx5IGlmIHRoZSBpbnB1dCBpcw0KPiA+ID4ga25vd24gdG8gYmUgZmFsc2UgYXQgY29tcGls
+ZSB0aW1lLg0KPiA+DQo+ID4gVGhpcyBpcyBwcmV0dHkgbXVjaCBwb2ludGxlc3MuDQo+ID4gSXQg
+aXMganVzdCBhcyBlYXN5IHRvIGludmVydCB0aGUgY29uZGl0aW9uIGF0IHRoZSBjYWxsIHNpdGUu
+DQo+IA0KPiBUbyBzdGFydCB3aXRoLCBJIHdpbGwgYXJndWUgdGhhdDoNCj4gDQo+ICAgc3RhdGlj
+YWxseV9mYWxzZShmb28pDQo+IA0KPiBpcyBtb3JlIHByZXR0eSB0aGFuDQo+IA0KPiAgIHN0YXRp
+Y2FsbHlfdHJ1ZSghKGZvbykpDQoNCkV4Y2VwdCB0aGF0IHRoZSB0ZXN0IGlzIG1vcmUgbGlrZWx5
+IHRvIGJlOg0KCXN0YXRpY2FsbHlfZmFsc2UoeCA+IHkpDQphbmQgdGhlIGludmVydCBpcyB0aGVu
+DQoJc3RhdGljYWxseV90cnVlKHggPD0geSkNCg0KTm8gZGlmZmVyZW50IGZyb20gQyBpdHNlbGYs
+IHRoZXJlIGlzIG5vICdpZm5vdCAoY29uZGl0aW9uKSB7Li4ufScNCihkb24ndCB0YWxrIHRvIG1l
+IGFib3V0IHBlcmwuLi4pDQoNCkkgc3VzcGVjdCB5b3UgbmVlZCB0byBwcmV0dHkgbXVjaCByZW1v
+dmUgYWxsIHRoZSBjb21tZW50cyB0aGF0DQpjcm9zcy1yZWZlciB0byBzdGF0aWNhbGx5X3RydWUo
+KSBmcm9tIHRoZSBvdGhlciBwYXRjaGVzLg0KDQpTbyBpc19jb25zdF90cnVlKCkgaXMganVzdCAn
+cmV0dXJuIHRydWUgaWYgdGhlIGV4cHJlc3Npb24NCmlzIGEgJ25vbi16ZXJvIGNvbnN0YW50IGlu
+dGVnZXIgZXhwcmVzc2lvbicuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFr
+ZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwg
+VUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
 
