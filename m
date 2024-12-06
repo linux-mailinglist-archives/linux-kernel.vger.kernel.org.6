@@ -1,170 +1,164 @@
-Return-Path: <linux-kernel+bounces-435424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3513F9E774C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:30:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89D19E7772
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD56816A024
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979B31888A50
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A94F204572;
-	Fri,  6 Dec 2024 17:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276A41F3D3E;
+	Fri,  6 Dec 2024 17:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sMfTboRC"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QLUmnG9s"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C4720459D;
-	Fri,  6 Dec 2024 17:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D817C2206B4;
+	Fri,  6 Dec 2024 17:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733506143; cv=none; b=Sd043ymhlW4yPBSPighCg4zGPH/G/z11AoTsgpMTpcq1ST5X7sdmYA0Hvb9JIvTDYju3h+8V9VTMgoZkYuliaw3UO2vROtWMQOrQGzYuD0y3UO6bL8vnF90tBILdPZBa+YKPJ7jCE8o2zUMGGHRqdzB6i7y2YyD+2J0xLUNl4sM=
+	t=1733506227; cv=none; b=mp+Plh4kTvam3Q9RcBr+lAGspb2yOfh0f0wUubj4t5J4y0v7beCnIqWeupoQYEW6+cldnPUfxO4FFkI7VLKRmPgUoRTsTzOqYES+cjzJigND1t6sSGeOArRrPlyCqnzThpYSueBxM/XdCNPh3btdn0UdktxQHu3WfDOqmLumyew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733506143; c=relaxed/simple;
-	bh=b080vVlV8tHb90OsSrK+IEUUi08J1cDRUHSL6tuv3e0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=law/EZD3Mpci47/m0Fs6mIKcsMPlAkzP7C5rda3JTlgw7pBKYy8+ajvqcHlSK4xepDUP9y2ZU81e5NRrz6JMjEfllb3nxFcmE8afR2PdO7RMRi/raPrKZnIOgfLi7GuKxV4aIFV6JmVAt2P9AhtN3FwcyYStxfvl3AwXIUVoOtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sMfTboRC; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=rjUd2AM2/YEWsLZUV6glYoJjEHrghXkYN6js8vSJ7uo=; b=sMfTboRCamx/JCedNhTDecnvGk
-	dDC6Czow+OToi2tF2XPKxCVgFjRlSn6bXqou0K6D43EXMvb0epseRAq8RtO4gC7yOJJUAWcccu3er
-	FeuTe/Lgrpmqgn39KCvkiABBNmxiRbw+u5hhKdOxl5N33Ua6AUeGus6lv21P2H8kmic0wySU7LZul
-	vVXJnsg4UMPYKoWwQ8qrEy0KMKIEWsUqpZKXUIm7Q4Rl33TC2JpE1hiZ0EIfDueBBDQnNW7Xlqb4p
-	iQLM7KePMRivGWx33xl2PBUHYRhlyIETsaxyxZSKusxRNPVNtrueZpz14nUswFowfHC8bijq0Pu87
-	dvmBeuAA==;
-Received: from 179-125-79-245-dinamico.pombonet.net.br ([179.125.79.245] helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tJc8R-00HUmO-Gl; Fri, 06 Dec 2024 18:29:00 +0100
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: linux-ext4@vger.kernel.org
-Cc: "Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Subject: [PATCH 5/5] ext4: make i_inline_off point to data
-Date: Fri,  6 Dec 2024 14:28:28 -0300
-Message-Id: <20241206172828.3219989-6-cascardo@igalia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241206172828.3219989-1-cascardo@igalia.com>
-References: <20241206172828.3219989-1-cascardo@igalia.com>
+	s=arc-20240116; t=1733506227; c=relaxed/simple;
+	bh=ow5rBDgJkta/XA4DgUkjimBjGufCKoc4OVk+hj1J9CQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BeHpzib9lwlHgx3Xn2aWXwJISvqHIP953yTHZthzHwLefcXqR4N09o2HrVXs+O50m5eBIYWPsk5PaRRCZNx3DS8t1fgp9IdEPHsFqRc9KkSwiLZFHthnyFydeWimib59nSaAccyFK9axhFCrwF/YPHsRbGUWBqdvSipYgG0pr0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QLUmnG9s; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ef75fac658so609407b3.3;
+        Fri, 06 Dec 2024 09:30:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733506225; x=1734111025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GJ6wO3L45AaYxQvu01dcB+Xeq6Tm84PAttAFYpDqMZk=;
+        b=QLUmnG9sNFopclzt8QqLXTQ0NdaODz9JfbH2Pw+wBemAFmkcHly7e519Kn6abfbvoG
+         Jq9zSr4AUOgKlsgaE8ZeecGKNCqw3M0305SkPV2Cp+I/1Qo5Er0vXqK+gPgHoXuoO89P
+         8qHWD1olBSDGQmHRxjiHLiDPxPdADPv/xy706k7/z15ZmD+372Ef8kGqVoLLY7T59yTP
+         KneuFGQv2JfO3ceXy3Gxxwsu3hUv+JoeLOf+Zq1HJREDa4rWYZDHr+mfp9L/t/ys0/GP
+         kC+CG+qwRLhwki/xJB6lz/PQ6Wi4lhmqVsJWD0LlOg2t0otiLDdIvYJKpWQT9h2OaDFu
+         dSOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733506225; x=1734111025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GJ6wO3L45AaYxQvu01dcB+Xeq6Tm84PAttAFYpDqMZk=;
+        b=Ajt1lq+CZW+G8o1kswyeFyrQSPspU3mXriEpWMK8SeATngAmB5mEFqYYzfxdwDACx/
+         CGfZmkKqUqnynzFAWnPeTHecH/kXJS+NLQFrRo3aqpj0xgt4hhoYEfi/9wz5IY70BaJG
+         cUZm7CmN+9GFGEWR7Myt7vJeVzV9m1SXpoKi0RBFYluX5Ab7dWlCwkOeR6HOurgRcXmO
+         e9XSf3zVSJnsYM61Ob1JPWkr2KCbKIjMMe3dww0c0hA65XZLdP483FT+ulRshw4jaNg0
+         tZdwv9a+fjDlLDW4b6wPvYrTbQ0JK2vTusDWNLMydlUt4oyXswvDvq+xwC1dCxLDGoLO
+         NtCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrkEea5oQo4DbWCbF3jhiUKMzy6+BWISDTbVjzn3vvr21LC6gxOdofN2Nb3HC+M3WI+VeOsFJcVxJCOEDs@vger.kernel.org, AJvYcCWEENP3zgYSvHQl87lIKgEZX1lZAeU/Kd6Js/g2Kw9DDKfnLoFrDYXU4CuqY7uRgWjlmqcFSoqbjGqa@vger.kernel.org, AJvYcCWKStO4MPgRx4esG+mJSM+XMrLy+beFeTkmnzg9DcTJ+U1g9Yyd9MGLRKvVlrno22O8tQKvpT3W9xmX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUZG5IRTyVOOl/rO3nLTO5HSv9p3sH9+2kekyFrVRjgGPTEQHH
+	96jCB3x93QnjIPS5tySOruibGlGw6AnEbruDFa3VRWsTr7ek9wXf5tEIGpNUZFWX3R74prmrfmJ
+	8VSuurHHx0CJTewTyZKwNOafQACGGPWbm
+X-Gm-Gg: ASbGnct2+Olj+/K941eOAFtKMAkk5oUSxl1Us1vKWnkdIO6Hgsm3wRybNVNjkOTvfeq
+	Kziy1JX+5VfkTvia1yhDWlT86wYcSskI=
+X-Google-Smtp-Source: AGHT+IE+oPKV6REojBEmRe9Fp9HxtdvKApFHbvQEeIKCoJd9jk/Lz0YUFgbbDvbS/Q0PT3OHurXM/ha0ZPAHGMnKjY8=
+X-Received: by 2002:a05:690c:6503:b0:6ef:97d0:a989 with SMTP id
+ 00721157ae682-6efe3bff0efmr18947287b3.4.1733506224613; Fri, 06 Dec 2024
+ 09:30:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241205171343.308963-1-l.rubusch@gmail.com> <20241205171343.308963-7-l.rubusch@gmail.com>
+ <20241205-fraying-overfull-4fe3eb6c5376@spud> <CAFXKEHbGcTGBNH8Hrg3i90_-xR1KYyw_97X1pPMFB6E4ztL5Aw@mail.gmail.com>
+ <20241206-settle-impulsive-280ce8dc312f@spud>
+In-Reply-To: <20241206-settle-impulsive-280ce8dc312f@spud>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Fri, 6 Dec 2024 18:29:48 +0100
+Message-ID: <CAFXKEHb1NbV-Us3kaNyG+P90SMXsV7233dXd64_gbtCKst6gmQ@mail.gmail.com>
+Subject: Re: [PATCH v5 06/10] dt-bindings: iio: accel: add interrupt-names
+To: Conor Dooley <conor@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Instead of having i_inline_off pointing to the xattr entry, make it point
-directly to the value offset. That will allow e_value_offs to be ignored,
-preventing many issues where it might have changed on disk after being
-validated.
+On Fri, Dec 6, 2024 at 6:08=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
+>
+> On Thu, Dec 05, 2024 at 08:41:52PM +0100, Lothar Rubusch wrote:
+> > On Thu, Dec 5, 2024 at 6:54=E2=80=AFPM Conor Dooley <conor@kernel.org> =
+wrote:
+> > >
+> > > On Thu, Dec 05, 2024 at 05:13:39PM +0000, Lothar Rubusch wrote:
+> > > > Add interrupt-names INT1 and INT2 for the two interrupt lines of th=
+e
+> > > > sensor. Only one line will be connected for incoming events. The dr=
+iver
+> > > > needs to be configured accordingly. If no interrupt line is set up,=
+ the
+> > > > sensor will still measure, but no events are possible.
+> > > >
+> > > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > > > ---
+> > > >  .../devicetree/bindings/iio/accel/adi,adxl345.yaml         | 7 +++=
+++++
+> > > >  1 file changed, 7 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl34=
+5.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+> > > > index 280ed479ef5..67e2c029a6c 100644
+> > > > --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+> > > > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+> > > > @@ -37,6 +37,11 @@ properties:
+> > > >    interrupts:
+> > > >      maxItems: 1
+> > > >
+> > > > +  interrupt-names:
+> > > > +    description: Use either INT1 or INT2 for events, or ignore eve=
+nts.
+> > > > +    items:
+> > > > +      - enum: [INT1, INT2]
+> > >
+> > > The description for this ", or ignore events" does not make sense. Ju=
+st
+> > > drop it, it's clear what happens if you don't provide interrupts.
+> > >
+> > > However, interrupts is a required property but interrupt-names is not=
+.
+> > > Seems rather pointless not making interrupt-names a required property
+> > > (in the binding!) since if you only add interrupts and not
+> > > interrupt-names you can't even use the interrupt as you do not know
+> > > whether or not it is INT1 or INT2?
+> >
+> > What I meant is, yes, the sensor needs an interrupt line.
+> > Interrupt-names is optional. The sensor always can measure. When
+> > interrupt-names is specified, though, the sensor will setup a FIFO and
+> > can use events, such as data ready, watermark, single tap, freefall,
+> > etc. Without the interrupt-names, the sensor goes into a "FIFO bypass
+> > mode" without its specific events.
+>
+> What I'm talking about here is how it is ultimately pointless for
+> interrupts to be a required property if it can never be used without
+> interrupt-names as you cannot know which interrupt is in use. I think
+> both should be made mandatory or neither.
+>
 
-This prevents many potential out-of-bound accesses.
+Ah, now I can see your point. I agree that it should be equally
+mandatory as the interrupt. Legacy implementations used simply always
+just INT1. I'd like to make it configurable in the IIO driver but
+tried to avoid the DT topic for now (which was not a smart decision
+either). Hence, I added the interrupt-names.
+I'm unsure should I make "interrupt-names" a required property now?
+What about the existing DTS files using this sensor? There are no
+interrupt-names specified, so if made required, the missing
+interrupt-names there would break binding check, or not?
 
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
----
- fs/ext4/inline.c | 35 +++++++++++------------------------
- 1 file changed, 11 insertions(+), 24 deletions(-)
-
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index cd2014af9823..92e300c3f873 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -133,7 +133,12 @@ static void ext4_update_inline_off_size(struct inode *inode,
- 					struct ext4_inode *raw_inode,
- 					struct ext4_xattr_entry *entry)
- {
--	EXT4_I(inode)->i_inline_off = (u16)((void *)entry - (void *)raw_inode);
-+	struct ext4_xattr_ibody_header *header;
-+	void *off;
-+
-+	header = IHDR(inode, raw_inode);
-+	off = (void *)IFIRST(header) + le16_to_cpu(entry->e_value_offs);
-+	EXT4_I(inode)->i_inline_off = (u16)(off - (void *)raw_inode);
- 	EXT4_I(inode)->i_inline_size = EXT4_MIN_INLINE_DATA_SIZE +
- 			le32_to_cpu(entry->e_value_size);
- }
-@@ -184,8 +189,6 @@ static int ext4_read_inline_data(struct inode *inode, void *buffer,
- 				 unsigned int len,
- 				 struct ext4_iloc *iloc)
- {
--	struct ext4_xattr_entry *entry;
--	struct ext4_xattr_ibody_header *header;
- 	int cp_len = 0;
- 	struct ext4_inode *raw_inode;
- 
-@@ -205,14 +208,7 @@ static int ext4_read_inline_data(struct inode *inode, void *buffer,
- 	if (!len)
- 		goto out;
- 
--	header = IHDR(inode, raw_inode);
--	entry = (struct ext4_xattr_entry *)((void *)raw_inode +
--					    EXT4_I(inode)->i_inline_off);
--	len = min_t(unsigned int, len,
--		    (unsigned int)le32_to_cpu(entry->e_value_size));
--
--	memcpy(buffer,
--	       (void *)IFIRST(header) + le16_to_cpu(entry->e_value_offs), len);
-+	memcpy(buffer, (void *)raw_inode + EXT4_I(inode)->i_inline_off, len);
- 	cp_len += len;
- 
- out:
-@@ -273,8 +269,6 @@ static int ext4_read_inline_data_from_inode(struct inode *inode, void **buffer,
- static void ext4_write_inline_data(struct inode *inode, struct ext4_iloc *iloc,
- 				   void *buffer, loff_t pos, unsigned int len)
- {
--	struct ext4_xattr_entry *entry;
--	struct ext4_xattr_ibody_header *header;
- 	struct ext4_inode *raw_inode;
- 	int cp_len = 0;
- 
-@@ -301,11 +295,8 @@ static void ext4_write_inline_data(struct inode *inode, struct ext4_iloc *iloc,
- 		return;
- 
- 	pos -= EXT4_MIN_INLINE_DATA_SIZE;
--	header = IHDR(inode, raw_inode);
--	entry = (struct ext4_xattr_entry *)((void *)raw_inode +
--					    EXT4_I(inode)->i_inline_off);
- 
--	memcpy((void *)IFIRST(header) + le16_to_cpu(entry->e_value_offs) + pos,
-+	memcpy((void *)raw_inode + EXT4_I(inode)->i_inline_off + pos,
- 	       buffer, len);
- }
- 
-@@ -1085,16 +1076,12 @@ static int ext4_add_dirent_to_inline(handle_t *handle,
- static void *ext4_get_inline_xattr_pos(struct inode *inode,
- 				       struct ext4_iloc *iloc)
- {
--	struct ext4_xattr_entry *entry;
--	struct ext4_xattr_ibody_header *header;
-+	struct ext4_inode *raw_inode;
- 
- 	BUG_ON(!EXT4_I(inode)->i_inline_off);
- 
--	header = IHDR(inode, ext4_raw_inode(iloc));
--	entry = (struct ext4_xattr_entry *)((void *)ext4_raw_inode(iloc) +
--					    EXT4_I(inode)->i_inline_off);
--
--	return (void *)IFIRST(header) + le16_to_cpu(entry->e_value_offs);
-+	raw_inode = ext4_raw_inode(iloc);
-+	return (void *)raw_inode + EXT4_I(inode)->i_inline_off;
- }
- 
- /* Set the final de to cover the whole block. */
--- 
-2.34.1
-
+> > Hence, I better drop the description entirely, since it rather seems
+> > to be confusing.
 
