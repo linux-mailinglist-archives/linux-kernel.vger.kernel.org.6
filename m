@@ -1,40 +1,78 @@
-Return-Path: <linux-kernel+bounces-434339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7F59E6522
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:43:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC429E6511
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BA01884D43
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 551F31660DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64780191F78;
-	Fri,  6 Dec 2024 03:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698EB190470;
+	Fri,  6 Dec 2024 03:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="kPHScr15"
-Received: from mail-m12796.qiye.163.com (mail-m12796.qiye.163.com [115.236.127.96])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBaazz6X"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CE113DDDF;
-	Fri,  6 Dec 2024 03:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A13339AB;
+	Fri,  6 Dec 2024 03:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733456627; cv=none; b=kJW9tr1kmQaBpdlROopxGT1Y8DmV0rV0zo0mcNQvN35tWwEr0NEl6OHV8+AAUBWc+IOIhuK+AhpoLpaVaBKfuNKzftVsB0s41P6kt2ti7g99OB4OKgQxklJi7X/ltom+ZeTEGqpE1T6yZEhA9HC1IMJKr9OtaJuXZrKqv4TgW74=
+	t=1733455959; cv=none; b=JUiwIBV2Qe6YOvyqxvRe4Dmp9tYwkHn7qK7giIN9EYNV5gsyotnVf41KmT/N0iGIal6QWG0P/SWwLi0SK6qdqkwNloVhffM9ZMtm7oKZwv6qD92HMu+LJB/tjod3cdZsi5VdaqixJLK5o8e02WykffhelEqBQXFqoiZPxJiJz3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733456627; c=relaxed/simple;
-	bh=dRuKrSs44UIo3EnTnqZjyoP90LhCHzf77THqP4gcSZg=;
+	s=arc-20240116; t=1733455959; c=relaxed/simple;
+	bh=mwMqE6yNUT+08zKxIXZH/OF0Mdj3OzY1yHnQ5kAYcWI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EHIWaLPJDX6QL45TzJNbHgXLUPJoxYlwHwy4PqGvVhHQSkNfdRWS+B+FryIycuvG0bIpkKW6e4Xe0sr29RzGF0ivuVOb8gzbPDuvq10nHdkA5H/IoBENK9wVTHpNWpVblaaYbEx5Jf/lBrJc7PE/9N1rAgF+bgKSHFJXwRgHFpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=kPHScr15; arc=none smtp.client-ip=115.236.127.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4df43c1a;
-	Fri, 6 Dec 2024 11:28:21 +0800 (GMT+08:00)
-Message-ID: <c0bc25b7-6e41-4ed8-ae8d-692a908607df@rock-chips.com>
-Date: Fri, 6 Dec 2024 11:28:21 +0800
+	 In-Reply-To:Content-Type; b=QDKN2+/iC4e+qZ2TSn6bPKpabGNWbc7BwrClgeLEHfEVP3bezFKzVKV9xg0O583MWnJM4P4eArsL2WEJAj+dpSQWWIZAakiXkGPIwgGeO3W+SXJSdrWsZgIXmZtL8tqtXvcYRPgYkh763ygwOGrcazoseH4im25MZ69HPH/1Mfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBaazz6X; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ef28f07dbaso1192207a91.2;
+        Thu, 05 Dec 2024 19:32:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733455957; x=1734060757; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=InGT874kUKhcsccv7ICljIdW+V3gP1KGLAFnR4ziHQA=;
+        b=KBaazz6XldyJC3mlcKz9xvv7lZDxuxwCeW2j5DznfpxQxeb9mZBW84TbNVu3Xt3gLF
+         952El/btioa+9RH44OLCZCHBHmsNMdMgAr6epxJrkHLlqIKM/qO3sSanW7T0CDsEhnPW
+         DuMND7ydPnREaUZYRXBUhU41brmUqViv9pJyPqzWAKejHMkNOa37f5eWVVib3hRWqP1r
+         iWWEk506OyT0aIX0keYFo+89nOkrP+YWK/xlG+iQMwayARf7UHToe3AAuncLk9FcRw98
+         uGxSmwUiBqS/a/dHILMFKWd1I/GvmSFIPYVwXsk99OLzvVJTaqJU13yDu1/H1qBw9viZ
+         l1Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733455957; x=1734060757;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=InGT874kUKhcsccv7ICljIdW+V3gP1KGLAFnR4ziHQA=;
+        b=QjGhGfvHA1oDPTpXE1wVR4LNioNEZIwQ1shVLnyTVG9bZLw7zgIDym8iWDrnXEl+rD
+         l4JEanDIB6dNqIlbeOu/nHv5vvNMvHJLZFxkneTLsbhBPwACklItLi8Ygdd//TdaSD2u
+         686cdZ4XmOo6F/n158CnmfbYhWPsZcn/yh4v0iLrj/6p8nCwjYZ+AbYA5v8XZuzLrHhs
+         Vx1TOGVUuCKLWRmc6IBuSOjgFltJ4v4Qs6P8zcm13QSBYIxF52tPHQoa1Fvhyz/HEBq5
+         TY9HgV1mlGQIMOVHAkcUED5YBtlnT8xp/n/FeX5FnO/puGpBaq6fGTbAytmqTZhd6Ecr
+         nIHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnKKhZoPQSfhplW09trDhPGZ7qaXpgVGBbYsXWd89nigvkut07evROrnv0lwgHZcdRAwC/0dNl7fqZ@vger.kernel.org, AJvYcCVonO9o1usONj2oFHNLa6qaSsv9SF2U1aDYi0hkmdCouj08C0mKBXFUgCBe7QhBP7N6OjfP2XRMYw/fOm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlSVRE6Le31quBer7VbwrPTxALHJMdNIVo5kgJmqKKP6lwZsoI
+	htxA7wwhZdmr0Uuqr5GpxwZ2YnrLLpCAThadCksbrAg05eRaJs3g
+X-Gm-Gg: ASbGncsNqDzMVaqKLfnoCgltGyf+Pd90mdLNTxTzDzRv5VhWUTeVZztokXrGvE5RPrv
+	TMwoBcHFwLsOl1HbDfj5Vjj+ockFBQ+225mMAc5J/xtmKbUeRslPZzsM3FfPZp1XN2mQC6R/mGU
+	NL4aeKljYTsb9S/1yc57hQz4wZSnY9BamS6YMFn6yk4s+Gol1GBgSxNjcp3XHPzeOBRaxcacxTX
+	B6XYKqH3D8x4eiCzvPYxNt2Y8AhwrEgm/AK3nvJ10mfiMo5tQXwhFN6qgTPU1lOrSiD2Yh6CCFq
+	ZSeEj9azmNol4cA/Km4CgZ2d
+X-Google-Smtp-Source: AGHT+IFzqeeiyWkh+7hlsWMiFQHoZNyYQ7mM3MvVKI/Bj7bYHGVlKAvdSQ8+aeb4VO2V4WUi5eqliQ==
+X-Received: by 2002:a17:90b:3a50:b0:2ee:9cd2:a589 with SMTP id 98e67ed59e1d1-2ef6a6be86dmr2550021a91.20.1733455957398;
+        Thu, 05 Dec 2024 19:32:37 -0800 (PST)
+Received: from [172.19.1.43] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef2700aa25sm4049963a91.16.2024.12.05.19.32.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 19:32:36 -0800 (PST)
+Message-ID: <1c0f9efb-61a0-42b9-abe5-87cabe2d783e@gmail.com>
+Date: Fri, 6 Dec 2024 11:32:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,100 +80,174 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support for
- eDP mode
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org,
- cristian.ciocaltea@collabora.com, l.stach@pengutronix.de,
- andy.yan@rock-chips.com, hjc@rock-chips.com, algea.cao@rock-chips.com,
- kever.yang@rock-chips.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-References: <20241127075157.856029-1-damon.ding@rock-chips.com>
- <2131853.KlZ2vcFHjT@diego>
- <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
- <2886747.Y6S9NjorxK@diego>
- <h4giob7bcrh7qmtepti6huym2llw4ujfmeff76vrgpahb5zy6x@dz6zghsifww5>
- <2342f342-672c-447e-90d8-674b748af6a4@rock-chips.com>
- <abzu2chif2g3urxoqbm3gbe6cciexbmqvn44qezrx4hgllfkkn@7bzi5jl3stqe>
- <42035ebe-09b7-4005-912a-8ec72d5dabcc@rock-chips.com>
- <5ncdog66jtc4s7vxk2yt4jkknf2es3whvweuqmrxbot3azi5ge@t6s3xadkiasp>
+Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ sudeep.holla@arm.com, arnd@arndb.de, peng.fan@nxp.com, conor+dt@kernel.org,
+ krzk+dt@kernel.org, robh@kernel.org, dmitry.torokhov@gmail.com
+References: <20241119025954.4161-1-mjchen0829@gmail.com>
+ <20241119025954.4161-2-mjchen0829@gmail.com>
+ <ql6m6qrdokwfu4iizn6wmvovawuc7kgg6jfzxebkmac5muz66e@myrjvq5jm7gg>
 Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <5ncdog66jtc4s7vxk2yt4jkknf2es3whvweuqmrxbot3azi5ge@t6s3xadkiasp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0JDQlYdSBoZS0sfTx0dTx9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a939a02e70703a3kunm4df43c1a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MhQ6GTo4OjIpSgEZKCkWFzww
-	FhVPCilVSlVKTEhIT05OTEtITkhNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJTUtLNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=kPHScr159WsiJG96Ork6FzwSMNbCQmUyQiTo49UIfTNDjTnurol/onZC7EOZpN8egR0d5Wltmfu4s4A1J2M/lM0yadBTKzrhmL5jyZk8oBUo6Ei1RJqUkOFc+a+RMgvgkwTIS2d4wyBGm1zAptOnnzrxcMoGdC5S+7C9miLNpcc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=OkOQFcENXzlE05E2GhFQKZHqHer5Jyvf4HzPjb5KtAk=;
-	h=date:mime-version:subject:message-id:from;
+From: Ming-Jen Chen <mjchen0829@gmail.com>
+In-Reply-To: <ql6m6qrdokwfu4iizn6wmvovawuc7kgg6jfzxebkmac5muz66e@myrjvq5jm7gg>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sebastian,
 
-On 2024/12/6 2:04, Sebastian Reichel wrote:
-> Hello Damon,
-> 
-> On Thu, Dec 05, 2024 at 09:13:33AM +0800, Damon Ding wrote:
->> Firstly, the term "the HDMI and eDP dynamic switching" can be somewhat
->> misleading, because the eDP usually does not support hot plug. The RK3588
->> eDP is often used as DP, and it actually supports DP 1.2. Therefore, it is
->> better to use the "the HDMI and DP dynamic switching" description.
-> 
-> The part unclear to me is how the dynamic switching is supposed to
-> happen. Looking at the TRM the hotplug detect signals also seem to be
-> shared between HDMI and eDP. Can the RK3588S EVB distinguish if HDMI
-> or eDP has been plugged, or does this require some user interaction
-> to set the right mode?
+Hi, Krzysztof:
 
-Indeed, HDMI and eDP share the same pin for hotplug detect. However, 
-some users may connect the hotplug detection pin of DP-connector with an 
-unexpected pin that can not support the iomux of hotplug detect function 
-on RK3588 SoC. This could be due to a flaw in the hardware design, a 
-conflict in pin multiplexing, or other factors. Therefore, we support 
-the GPIO HDP function for the eDP, as DP also supports this for the same 
-reasons.
+Thank you for your feedback on the v4 submission. I understand that some
+of your previous comments were not fully addressed. I want to make sure
+I completely understand your feedback and resolve the issues correctly.
 
-If the dynamic switching is enabled, HDMI detects the HPD signal through 
-  the hotplug detect function pin, while eDP uses one of the available 
-GPIO pins to do this.
+Could you kindly let me know if the following approach is acceptable?
 
-What's more, if the user connects an HDMI cable first and than connects 
-a DP cable as well, despite our clear instruction against using HDMI and 
-eDP simultaneously, the status register of GRF will indicate that HDMI 
-has been connected. Meanwhile, during the HPD detection process for eDP, 
-it will return "connector_status_disconnected". The reverse scenario 
-also applies.
 
-> 
->> Indeed, the devm_phy_get(dp->dev, "dp") and devm_of_phy_get_by_index() will
->> help to get the phy reference in .probe() or .bind().
+On 2024/11/20 下午 04:41, Krzysztof Kozlowski wrote:
+> On Tue, Nov 19, 2024 at 02:59:53AM +0000, Ming-Jen Chen wrote:
+>> Add YAML bindings for MA35D1 SoC keypad.
 >>
->> However, the phy_set_mode() may be still needed in the HDMI and DP dynamic
->> switching application scenarios. We need the enum phy_mode
->> PHY_MODE_DP/PHY_MODE_HDMI to differentiate the configuration processes in
->> .power_on(), .power_off() and .configure() of struct phy_ops, which will be
->> called in conjunction with plugging in and unplugging an HDMI or DP cable.
+>> Signed-off-by: Ming-Jen Chen <mjchen0829@gmail.com>
+>> ---
+>>  .../bindings/input/nuvoton,ma35d1-keypad.yaml | 69 +++++++++++++++++++
+>>  1 file changed, 69 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+>> new file mode 100644
+>> index 000000000000..9ccd81a2574d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
 > 
-> I suppose you could fetch the PHY in power_on() and release it in
-> power_off(). But using phy_set_mode() might indeed be better here.
+> Filename matching compatible. You got this comment already.
+> 
+> 
+>> @@ -0,0 +1,69 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/input/nuvoton,ma35d1-keypad.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Nuvoton MA35D1 Keypad
+>> +
+>> +maintainers:
+>> +  - Ming-jen Chen <mjchen0829@gmail.com>
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/input/matrix-keymap.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: nuvoton,ma35d1-kpi
+>> +
+>> +  debounce-delay-ms:
+>> +    description: Debounce delay time in milliseconds.
+>> +    maxItems: 1
+>> +
+>> +  scan-interval-ms:
+>> +    description: Scan interval time in milliseconds.
+>> +    maxItems: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+> 
+> Keep the same order of properties as in required: block.
+
+I will modify to:
+
+properties:
+  compatible:
+    const: nuvoton,ma35d1-kpi
+
+  reg:
+    maxItems: 1
+
+  interrupts:
+    maxItems: 1
+
+  clocks:
+    maxItems: 1
+
+  linux,keymap:
+    description: Keymap for the keypad.
+
+  keypad,num-rows:
+    description: Number of rows in the keypad.
+
+  keypad,num-columns:
+    description: Number of columns in the keypad.
+
+  debounce-delay-ms:
+    description: Debounce delay time in milliseconds.
+    maxItems: 1
+
+  scan-interval-ms:
+    description: Scan interval time in milliseconds.
+    maxItems: 1
+
+required:
+  - compatible
+  - reg
+  - interrupts
+  - clocks
+  - linux,keymap
+  - keypad,num-rows
+  - keypad,num-columns
+  - debounce-delay-ms
+  - scan-interval-ms
+
+> 
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - clocks
+>> +  - linux,keymap
+>> +  - keypad,num-rows
+>> +  - keypad,num-columns
+>> +  - debounce-delay-ms
+>> +  - scan-interval-ms
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/input/input.h>
+>> +    keypad@404A0000 {
+> 
+> Lowercase hex
+
+I will modify to:
+keypad@404a0000 {
+
+> 
+>> +      compatible = "nuvoton,ma35d1-kpi";
+>> +      reg = <0x404A0000 0x10000>;
+> 
+> Lowercase hex
+
+I will modify to:
+reg = <0x404a0000 0x10000>;
+
+
+Your guidance will be greatly appreciated, and I will incorporate the
+necessary changes in the next submission to fully address your concerns.
+
+Thank you for your time and patience.
+
+> 
+> Best regards,
+> Krzysztof
 > 
 
-As a future expansion, the .set_mode() can also be helpful in the txffe 
-level adjustment for HDMI 2.1. :)
-
-> -- Sebastian
-
-Best regards,
-Damon
 
