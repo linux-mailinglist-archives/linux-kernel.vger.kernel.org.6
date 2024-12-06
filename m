@@ -1,241 +1,305 @@
-Return-Path: <linux-kernel+bounces-434542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA68C9E680A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:38:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99E49E6810
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F592281D6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664CD28263D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA30E1DDA20;
-	Fri,  6 Dec 2024 07:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FE81DDA20;
+	Fri,  6 Dec 2024 07:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NKeAqybW"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2046.outbound.protection.outlook.com [40.107.223.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DV/UEmBY"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2240B32C8B;
-	Fri,  6 Dec 2024 07:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733470702; cv=fail; b=pvJKCCS5wUVnK636GQXNFGEa3Hl3fSLQgUaj5Nrk9aJZLnMrg192iDFJd5GiN2UdvGO1qPFfXz8mRqHSv1/pH2JKpzDzqBealmvznrZCanOOZWgwGhmB3df9bLRg9r4ca2X2030MwXQG/Y1DPdASjSpXSAI/JoMH8gBiaadKotU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733470702; c=relaxed/simple;
-	bh=hPO9Xt25DaVC3W6MYp0fg6mFmmUBsJ0dNCzfNw2+8KA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Tl5/raWzz6egfMdgINNzNfKcx8uTNrXUZD+FJ0GFpAY8G5ZfhiXkklygF2acb4tNf415VWQiS5TEb+4WY39T+xEnraUGHIJOSZ5JULpE8LQEcE5Ip+I+DMrZB4UBBCSD0eGy9lmB9cNWKq2nqIkHq1eBal3mhIvW1nMFUwF/FTs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NKeAqybW; arc=fail smtp.client-ip=40.107.223.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HwXfZcjP8KAD+2yPY28zfYOl7rW4J9ww7BTPy/mIDd3OOf4otGFKstGailCL1GIC3i25lSXyMQ5OKHSE38mvQTRPDvrrbux8UaagwtN2nBAIUof9F2VECA7fK8spOdm31XmO8uUqjGFjpToiTOa11/I3RJBnnXrem/lRFkhmxs4vVkTZoE45YL/vXWUzxYG64TNKs6SnJWbp4lnR4K7O4ZFuKTanBEYqCeMmfbLms0D4UqoIY2B3JnuzlHiQAsYEzo05xSRrBlx5wMEclGLbX63eWgQz9+/SmQ4DWkwyuou7gEwQOjEuVNwuzKTRmBBNjDi2u1Y++g2I7WxH19/IDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RD2O9sbCKU1XLjLTtECr4R4Q/C/XAmysJH7tHE8jEd8=;
- b=wRJGtRdpB0J1uW6jjV8dao6F8mr0nNyU1+85T5OsXESOJWBx/0apYLafTs5UdknC/Wcx15fJDrXwBLe/VNqu8AtSsP/cGCqTf3pTwhREWbBh2SzgISzejohi/3qSXULIWC53r0gPlQ6j/kfpCXJ3Abca5jlilqk5dMqWc9Qa+T8yu0kBKgfLmMmkM4hymkIArLtH3zWCvG89tOaGgcRwj/e3n879hTxmQdNkAjU+pcIlTogyFg/kLb3SKBUvcaty7briBeSOsQvYWG8GyFmhSx6fpZirjN3kohLa1W/R6xA5QCCvc6fbFCP7qv8T9lSUOLb68K2v1PCg1SgYfEQOyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RD2O9sbCKU1XLjLTtECr4R4Q/C/XAmysJH7tHE8jEd8=;
- b=NKeAqybW8VGh06+hoTOimANZiGnyvENT5MKZjRZkSw3//En2C5NuQsfZw0VzQmW4E4/kRIBJMPNRB61xzZxVMsWpkT7S05e35L1q2ZgYVFEJDuxtijX8L0IqjY3Kka4hw6HGrTX56s/7ljbdB4A4Lsxw5QWs9Tm+Z2o1j14zOsTPX9kofYN8YK7mHY8fYELzgEnSYk09W++/gBjYu74wZdldMnYV0N0o2W9ufUwFO1r/EgxCuSazeG2xB9fkWT2LE7GXQ5rLvexPpxIQha6e0RghcadFMRHUXDn+Y27oSGlwsN1uWPOOMZbsP/SpxYcUSvZ3ldUnBV0AuILYZsTuVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB7914.namprd12.prod.outlook.com (2603:10b6:510:27d::13)
- by SJ2PR12MB8012.namprd12.prod.outlook.com (2603:10b6:a03:4c7::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
- 2024 07:38:17 +0000
-Received: from PH7PR12MB7914.namprd12.prod.outlook.com
- ([fe80::8998:fe5c:833c:f378]) by PH7PR12MB7914.namprd12.prod.outlook.com
- ([fe80::8998:fe5c:833c:f378%6]) with mapi id 15.20.8207.017; Fri, 6 Dec 2024
- 07:38:17 +0000
-Message-ID: <a895a50a-af0d-4554-8be6-7ae0f48296a7@nvidia.com>
-Date: Fri, 6 Dec 2024 15:38:10 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] USB: core: Disable LPM only for non-suspended ports
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, mathias.nyman@linux.intel.com,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- Wayne Chang <waynec@nvidia.com>, stable@vger.kernel.org
-References: <20241205091215.41348-1-kaihengf@nvidia.com>
- <a9f767eb-2196-4273-ba1a-19b07ccdafd8@rowland.harvard.edu>
-Content-Language: en-US
-From: Kai-Heng Feng <kaihengf@nvidia.com>
-In-Reply-To: <a9f767eb-2196-4273-ba1a-19b07ccdafd8@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2P153CA0009.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::18) To PH7PR12MB7914.namprd12.prod.outlook.com
- (2603:10b6:510:27d::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870B21DB938
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 07:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733470715; cv=none; b=MMQgNlVUgcjnzN2KmihGFZ+V3xBwBml7A3bVyJ2RVFE3t34gnP3te2BuOFFpNJ/Ra51J0XUX2rIamTOZlTbgEL8mxGuqkI3fYehD1YCNWptv3JpXmIkzhoOXIk3nVNsJSaDWx9kmv9kM3j48MyobPnIKIR+5FtDjx3scI3zpoqs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733470715; c=relaxed/simple;
+	bh=6bkrrb/uiGTuE/W9xZJReBN+m+hOGzzdHINKIK2NnBo=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=j8GcllAvfKFyWH9gZ6E18XnINSGI17fK3CKmASYjo19tHt3sEAlPRHbhfZYyqnRk77kTuoTRra7cccGvWEdag2EeMc681MZp1W8waQOBmIqYjTtkZrMY9Xhm1eV/cS4aX/GXBwMrxdIOts/xZHvANIyFcNr7rzp38VrEKvyPIGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DV/UEmBY; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e391a40d3ecso3911072276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 23:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733470712; x=1734075512; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SLJxxCZMQjxFHfpRLUoPsE0Pog5U57DZgoMGmPXxLis=;
+        b=DV/UEmBYQt7lDBKYp2VF1OJ/CbX79NVUpWrz0tzCjGuIrEXtLE2+ES5UkA/7dhHb+3
+         O12Ppxc/daXR3k4MVCkSAcHdJV4Cu6ys6lJg+bho+B6IH9G34rARZzWU4yOQTGhaEZyn
+         /elhC2WeCQPXwK4HiSnc+HeS0xUetikHcMCvzs0hs+t+a+kH44cr1REoAuHQmrm92ZAv
+         e2rVN+Ps6ZNSOEZhj26qpOS4GUO0Z0/u2r+n6z/NJGU+UDUKOpt8iWuWv+855TqqPp4n
+         rvUgTaan/4O92YHQ2VNnf6dhg7ygAH66hpA02Dj/A+qVbj8aTLyA8P/pOXHsR/VDhwXl
+         O/yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733470712; x=1734075512;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SLJxxCZMQjxFHfpRLUoPsE0Pog5U57DZgoMGmPXxLis=;
+        b=hlc2VO0UJKxTbQvnO7ahy3IxwGkfRsq5WmUwIepVuNbzuoqMdq79WTCnLGx6JyBGW4
+         +FyPUmvlvIi5Frv/vCQ6Zx/kMaUSw2uqYQ2YflDyPfya4w0hos9wdBDjV+mkqBVT3ubD
+         2Tzgpdl/TiCZVJugLd5HloI11ZPzzbKplxUss6NwnmYw5CEP1HiIqs0jOblys0HED48X
+         qp9Ye75L3c0me3F+65sZdmGpynnAfdDzCh7ALD4dL5WAaHLBQQyhw9V3BRklCE1ukEv7
+         JVk/FN+3AcHguqcYDF99M4T9owSginsb6O9cT6JqQkaD7QyGphEZ2Tj7CQI+gktOf+Yi
+         kqUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQXa4STN+kNhGyks69/pHYvUy3f/vlLgzdLn6b1iyoaRU4inWt0tBlw+dmnLPzXaaTnYJksHa2/ZIcHy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkpWcUEuqhjYEtG970S9vOt6ekGN0tpw+isLnlKmTHoyMMASd9
+	P4fkcgczezoVgeEA/sqN7WmtK27Ue/YS4jcIbmy2QqZZt9pNVxTO7txJ/3RshVWx092bzDdUQtt
+	aIWR4GA==
+X-Google-Smtp-Source: AGHT+IFHADbgNWu44wH+EjPynn/KpIRmLys7JfKxs6jd18rOnGXtQ37Irj6xBMwTLehW76cUlY5nbXBYX++6
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:bff4:a354:8911:79b3])
+ (user=irogers job=sendgmr) by 2002:a25:e907:0:b0:e39:6c75:dd22 with SMTP id
+ 3f1490d57ef6-e3a0b0a8930mr3089276.2.1733470712462; Thu, 05 Dec 2024 23:38:32
+ -0800 (PST)
+Date: Thu,  5 Dec 2024 23:38:25 -0800
+Message-Id: <20241206073828.1119464-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB7914:EE_|SJ2PR12MB8012:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0cf2c8a7-4135-4d3c-9832-08dd15c8f2ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cklSdENkRHByMVJoMGJtVVRYMnl5ckE3TFR1ZFhzMFlWeTE1aWpHK25BRmto?=
- =?utf-8?B?ZjNBclJGUVpOa1ZFVitaRUE0TjJCNXFIK2ZnSDZhMVhaSXVDaVdPSk9WL3lV?=
- =?utf-8?B?N1owUGFGcWw1d2pGM0JIZTBiRHVadkxPYjZtdUM1UDZNQmRoZU1pQlVQV04z?=
- =?utf-8?B?cThEWDI5bzZSN2R6QmVSMlU0WkdHa1RMa0N0MjJLTmVlckgxa0dWM0NOSmJz?=
- =?utf-8?B?SE13S0V4eXErUFlMTlRPYnB6c1BZYVl6TG1jYlNsL29ob1VueEtCNUZmTW1V?=
- =?utf-8?B?cU5iR292L3NQVGRjVGZ4VlVsNGlwU0ZRV0xQZ1Q2a1BabVNxZWFWQ1ZzcWJV?=
- =?utf-8?B?RTVVdHZzZldYc3hXT0VLeE52T3c5SWc0UVowMXRHQVVJbWpJY0ovMmJQc2VQ?=
- =?utf-8?B?Z1JHeWdHcjVRdEtXNlg1NDVpblJrWlNhcnNaL0N1eWlNV1RyQTc4UUVxSkx6?=
- =?utf-8?B?V21vK1Z0bGdOT01zdXhuV0REbHBuRTJXenpIZWdJd2N0Nmc2RmR6RkRhQ05l?=
- =?utf-8?B?TXdRcUtoQTJaVnVkZFoyWmN1Um1wZytSS1JhUy9Zc0xpZHV2YkkvSCs5MFpz?=
- =?utf-8?B?YXlRbzU4VkdXVHlmQlIyRzhzZEFrdE1way9qbTIxZHhUdU0wU1hPWXZZV0hQ?=
- =?utf-8?B?UTR1RVdQUnBNM1NuNjJZOGRIeG11Ukl0R3k1eityVFMrQkttTjJaRzlONWhq?=
- =?utf-8?B?RUxOWlgwR3dKYmlSdEsrbmg2TmkrYThPejZ1UGZ1UWp5WUo2cVMwVkcySExU?=
- =?utf-8?B?bkllbStCbU1pRWp1OGhvd1ozNGNOc3VjUnBRRytSZ1hsNnV3VDV1UmEwT2lQ?=
- =?utf-8?B?a08zanRhMnZlNVdjaFlUZGtuODVSTWdmRXlWa3JhTnAyUXUzWE5tbmhoZUIx?=
- =?utf-8?B?ak5NeG5YQk43bVJ5YmtCeTBub0ROM25TamMzZ2Q2c0lERXo3MGVHcmZBeDRj?=
- =?utf-8?B?WFpDQ0RzbkhiTWhmVmlCci9qczF4VW1jQmRYUDBKeUkxNVpSdUlkMDlabXEr?=
- =?utf-8?B?MkRsdnhIWklIU3pSY2NvODlCalpnZDFBQmx2L3pIenYveGdVYkJ2YngyaERk?=
- =?utf-8?B?ZjJsK1BlWk5pL21DTGpRWEoxc2ZmZUxrOThnZ2RPaDhkVy9DdCtvTVh0Sksy?=
- =?utf-8?B?TVk3KzBsamtpMkoxKzB0cUVOT1k1eUo4ZVlmNWptWlNuYTJPdmdxUG5qR0tQ?=
- =?utf-8?B?SkhtUzZpa3kyUUUwVk0xWUdCTVoyd1RxN2lsM29XeHZ0RTdtc1JMSmM4QnVm?=
- =?utf-8?B?M09LalJxL3FtcG5tYkczY3FkZHJyQXpyZG9raUFOR25FRk5IeGZmK2xlMmZt?=
- =?utf-8?B?YWpkWHFmV3Y3K1lJdXF6cmVPTGJ1Q0pOVWZ6SW8yYWx0OUl4WlB1d0Znb01H?=
- =?utf-8?B?MStqVERGbjJjTERSQ2ZtZFFIWjBVRGI2N3puajhVdVF0WkNudXNvMXY2NlRx?=
- =?utf-8?B?cGxlZ3dZQXcwQWNwUEtxS0J6a0RhdExDZDNCS1pvb1c2ZHluMmNPb0dQbVpz?=
- =?utf-8?B?dVhSdmhpdHB5aVROa0JVd0JsbHBieDFFWHRxRUVETXJ5enVabG9RaE1RbHly?=
- =?utf-8?B?YTlEOWhtY0F3Z2tIRG9iSzdnNVVNandCQmRZNFZrMGQvY3dtY1BEVkRrbHBw?=
- =?utf-8?B?V1c5aldrakhqaFNlREtBQVZDZnlld3VhYXVnNnZ1ZURTdXNPejF6SVdxdzRr?=
- =?utf-8?B?WkRFa2ZKVmhSOUNIRG5HcWQrdGNUMkExbVRGNDB2U0VVTGkxNzZnVW9RemFq?=
- =?utf-8?B?d1haNTBKSlp3eXErY3djNVhLeWdTbWdNZDI1T1JCbCtnQnV4elNkQWJZR1pE?=
- =?utf-8?B?ZnhMZUlOOCsyZTdhVFhYUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7914.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d2pKOHIxdFRIYnFldElzVkRzaWh0akVUd3I4UnpTNzkrS0dzZERvV3lPaHVD?=
- =?utf-8?B?dTg4UmdaelNUbUZOenI5ckg2OTNnRHhDd2p6ZWgvcmVqdzJiTmlXek11SkhO?=
- =?utf-8?B?clBDYldRTS91T25ZMm0zdVkzVjVka0VKWCtHdFdpdXhrVDB6c1Qxc1VELzFY?=
- =?utf-8?B?TXh3UmVpTk5SOUtoUGhPcFpERmFGdUg2TDU2TE85allNS00xQm04c1UzWTVt?=
- =?utf-8?B?TEduWW9YaTRLOUdlU0lIc2dMV2x4a24vOERQSlFNUHZ3cFcyRG1uM1hjV0dw?=
- =?utf-8?B?T3RLNGVPVHhIb2NQdmVmUllvTEpvSXNGQ0FHZzZGSm1GZEVKQWdscUdlV3dp?=
- =?utf-8?B?MVQ0TEgrUVBIUnhCN0N1bEJWM1dHMEJHbGZmak9VK3BEaFo5clJpNVlHb2ta?=
- =?utf-8?B?cVhWTmRLd0dYU1lXdnBRTHpqT3JoRU9oSm51RjI4R1NSelRFM0t1MVdubGxJ?=
- =?utf-8?B?Q1prRUxvcSt5b3Q0UUdERG9ITk9PLzlDd3ExV1VDWEFJVnlyRXhqREZEU1Fp?=
- =?utf-8?B?WXRTRGNWd1RxSHFqRHM1N0dUN3ZNbEJGUVJrL1M1V3liM2dtOTQvMmQ4R01J?=
- =?utf-8?B?UlkyRm9GMkxlbDhWSlAxUnZSS0x5NHJnMjJzM3JTZnpvUXNsV3ZGVDZOdllN?=
- =?utf-8?B?SllmWDZyUVdWMDduL2JiOS9WOTZaN0JrRHkvc0FNc2FISllpcVRBQUp4REN0?=
- =?utf-8?B?UGhjNmhrQVpydmF0K1JVMjVsR2orenArcEd6aDg1QWkvT05iWEtrOHU2elR5?=
- =?utf-8?B?bzZBY2xrQ0MvRzZpK29Kb3U4KzRGTnlrRkdPT2NBZTZ1Tks2dEJrdmhSU2N5?=
- =?utf-8?B?Rkk5VWtoY2FmZnRMTTNjY0FzanJXZjNQS3ZJUXlFdVVUOEVKVUFabm4rU1du?=
- =?utf-8?B?T2lkZ1prbUIrblpBMklUZ2NzNTJicy96SzBvYkZxcEpxZ2I4VWNrVjdWQnlZ?=
- =?utf-8?B?UXdWa3hBVElPT3NBRllEUHk0MllIYityK1A5S20va2ltd092S3p6UXZBT2N1?=
- =?utf-8?B?L2w3cy96cWxrMGN1VFI5OTVSY3d1TGJTMnovVUw3NWtSWjlxemZ4b2VkZTNw?=
- =?utf-8?B?R09OUzc1RWZwZ2xhL3lta0pKOENyRjBBOGxOWHU0NGxKWmhLazc1ejJMbTVF?=
- =?utf-8?B?dzVSNnhWTTBMTmNLcXpiMG03WXF6N1g3THFLdWFSYlhFbzEzOHN0b2RqTTI1?=
- =?utf-8?B?K2Y2eU0zUHc1a1Z5a1pwQ084RVNPK1QvdmxOemlDbmdKM0hoM2o0YWVudXl2?=
- =?utf-8?B?cmJJY3VwVkR3UVlSNytlTDNxaGtJVlRSMnpKYjBZY0trNmliSktlb29HWDhK?=
- =?utf-8?B?Uys2bkZUWDUyTGhkUHNNRlRZeHcvSUdtVFNLdXlkWUVwQWgybUdoWTJMMGNw?=
- =?utf-8?B?SHgyamc2ZVFVL2VVQzRmWkJUNERHZXVVQnhWTUx0SnRCSlZ4c0xVWVRuVGMz?=
- =?utf-8?B?dFJyRFlhMjhCTDF4dWltaDBYS216UW1hb29jRi9CUkFoUnZ5VUFiRUVhbXFq?=
- =?utf-8?B?RG5CTVFpQXhxV0lhVy9pRktMc1JTQk1hWTZCbHgvWjZxY2VhRDg3MXZrMVJ0?=
- =?utf-8?B?OVFWd3VkOXVQVXFXcXlHeXZoczEvQkpOWkNtbko1NGd1UGU2LzdiS21OVWZu?=
- =?utf-8?B?K1BRWG9ONVNnNWJHZGpqS0NlRmxGa1htUTZNeHhpRk5pKy9Kdld3OXhNRW5y?=
- =?utf-8?B?T29TL1R1bFpsRStBOEwxSGpISkRKNFBmVEIrcnBNRi8yeWkxcDlRQnowTHVx?=
- =?utf-8?B?SzFEUDIreTk1SC9DbVJVaGhzZG44TE1BVElkMmZHY2R3WlJSWENhQXp2UFJX?=
- =?utf-8?B?ZmJqK0l6aWpNVDkwalpQWis3dHBuRFFKRStXSWJhR2lZUjVJNkVXRVcwL1F4?=
- =?utf-8?B?OHFiTGs3b0xDVWR1K0hjU3kreGNETWxYOVFETk5mcnhjVFh4QnI4VXhzdW5u?=
- =?utf-8?B?ODNBQVRiRFpHT29qVmgvV2hSMUg5NG9vVERtMlZURWx6MWNjQWRmbzQ4elha?=
- =?utf-8?B?U1duY1dTS1I0cGVmZXBPMjBMdlVDaW1Ud3MxcWh3a3A2QTNzdjJZU1RoNXJt?=
- =?utf-8?B?NDBBNE1WWW0wWTRxY3ptang4R2s1TnArQmozTTA4YlhqOVJWek1LUGJnUktt?=
- =?utf-8?Q?HHUWTugR3IZ22gUEXIPbSFYw2?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cf2c8a7-4135-4d3c-9832-08dd15c8f2ee
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7914.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 07:38:17.2848
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sam+7+2OUEzuZEK0rFnokemo+DAp431kYBXI1av9BzpsUo+oyX5TpM56PmdOSsXd8iMls2rZH3Rtk5EF//e+rA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8012
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Subject: [PATCH v5 1/4] proc_pid_fdinfo.5: Reduce indent for most of the page
+From: Ian Rogers <irogers@google.com>
+To: Alejandro Colomar <alx@kernel.org>, "G . Branden Robinson" <g.branden.robinson@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-man@vger.kernel.org, Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+When /proc/pid/fdinfo was part of proc.5 man page the indentation made
+sense. As a standalone man page the indentation doesn't need to be so
+far over to the right. Remove the initial tagged pragraph, move the
+"since Linux 2.6.22" to a new history subsection.
 
+Suggested-by: G. Branden Robinson <g.branden.robinson@gmail.com>
+---
+v5. Remove the word Since.
+v4. Since from Alejandro Colomar <alx@kernel.org> review comment.
+---
+ man/man5/proc_pid_fdinfo.5 | 51 +++++++++++++++++++-------------------
+ 1 file changed, 25 insertions(+), 26 deletions(-)
 
-On 2024/12/5 11:06 PM, Alan Stern wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Thu, Dec 05, 2024 at 05:12:15PM +0800, Kai-Heng Feng wrote:
->> There's USB error when tegra board is shutting down:
->> [  180.919315] usb 2-3: Failed to set U1 timeout to 0x0,error code -113
->> [  180.919995] usb 2-3: Failed to set U1 timeout to 0xa,error code -113
->> [  180.920512] usb 2-3: Failed to set U2 timeout to 0x4,error code -113
->> [  186.157172] tegra-xusb 3610000.usb: xHCI host controller not responding, assume dead
->> [  186.157858] tegra-xusb 3610000.usb: HC died; cleaning up
->> [  186.317280] tegra-xusb 3610000.usb: Timeout while waiting for evaluate context command
->>
->> The issue is caused by disabling LPM on already suspended ports.
->>
->> For USB2 LPM, the LPM is already disabled during port suspend. For USB3
->> LPM, port won't transit to U1/U2 when it's already suspended in U3,
->> hence disabling LPM is only needed for ports that are not suspended.
->>
->> Cc: Wayne Chang <waynec@nvidia.com>
->> Cc: stable@vger.kernel.org
->> Fixes: d920a2ed8620 ("usb: Disable USB3 LPM at shutdown")
->> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
->> ---
->> v2:
->>   Add "Cc: stable@vger.kernel.org"
->>
->>   drivers/usb/core/port.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
->> index e7da2fca11a4..d50b9e004e76 100644
->> --- a/drivers/usb/core/port.c
->> +++ b/drivers/usb/core/port.c
->> @@ -452,10 +452,11 @@ static int usb_port_runtime_suspend(struct device *dev)
->>   static void usb_port_shutdown(struct device *dev)
->>   {
->>        struct usb_port *port_dev = to_usb_port(dev);
->> +     struct usb_device *udev = port_dev->child;
->>
->> -     if (port_dev->child) {
->> -             usb_disable_usb2_hardware_lpm(port_dev->child);
->> -             usb_unlocked_disable_lpm(port_dev->child);
->> +     if (udev && !pm_runtime_suspended(&udev->dev)) {
-> 
-> Instead of testing !pm_runtime_suspended(&udev->dev), it would be better
-> to test udev->port_is_suspended.  This field records the actual status
-> of the device's upstream port, whereas in some circumstances
-> pm_runtime_suspended() will return true when the port is in U0.
-
-Thanks for the tip. This indeed is a better approach. Will send another revision.
-
-Kai-Heng
-
-
-> 
-> Alan Stern
-> 
->> +             usb_disable_usb2_hardware_lpm(udev);
->> +             usb_unlocked_disable_lpm(udev);
->>        }
->>   }
->>
->> --
->> 2.47.0
+diff --git a/man/man5/proc_pid_fdinfo.5 b/man/man5/proc_pid_fdinfo.5
+index 1e23bbe02..1c6c38423 100644
+--- a/man/man5/proc_pid_fdinfo.5
++++ b/man/man5/proc_pid_fdinfo.5
+@@ -8,8 +8,6 @@
+ .SH NAME
+ /proc/pid/fdinfo/ \- information about file descriptors
+ .SH DESCRIPTION
+-.TP
+-.IR /proc/ pid /fdinfo/ " (since Linux 2.6.22)"
+ This is a subdirectory containing one entry for each file which the
+ process has open, named by its file descriptor.
+ The files in this directory are readable only by the owner of the process.
+@@ -17,9 +15,9 @@ The contents of each file can be read to obtain information
+ about the corresponding file descriptor.
+ The content depends on the type of file referred to by the
+ corresponding file descriptor.
+-.IP
++.P
+ For regular files and directories, we see something like:
+-.IP
++.P
+ .in +4n
+ .EX
+ .RB "$" " cat /proc/12015/fdinfo/4"
+@@ -28,7 +26,7 @@ flags:  01002002
+ mnt_id: 21
+ .EE
+ .in
+-.IP
++.P
+ The fields are as follows:
+ .RS
+ .TP
+@@ -51,7 +49,6 @@ this field incorrectly displayed the setting of
+ at the time the file was opened,
+ rather than the current setting of the close-on-exec flag.
+ .TP
+-.I
+ .I mnt_id
+ This field, present since Linux 3.15,
+ .\" commit 49d063cb353265c3af701bab215ac438ca7df36d
+@@ -59,13 +56,13 @@ is the ID of the mount containing this file.
+ See the description of
+ .IR /proc/ pid /mountinfo .
+ .RE
+-.IP
++.P
+ For eventfd file descriptors (see
+ .BR eventfd (2)),
+ we see (since Linux 3.8)
+ .\" commit cbac5542d48127b546a23d816380a7926eee1c25
+ the following fields:
+-.IP
++.P
+ .in +4n
+ .EX
+ pos:	0
+@@ -74,16 +71,16 @@ mnt_id:	10
+ eventfd\-count:               40
+ .EE
+ .in
+-.IP
++.P
+ .I eventfd\-count
+ is the current value of the eventfd counter, in hexadecimal.
+-.IP
++.P
+ For epoll file descriptors (see
+ .BR epoll (7)),
+ we see (since Linux 3.8)
+ .\" commit 138d22b58696c506799f8de759804083ff9effae
+ the following fields:
+-.IP
++.P
+ .in +4n
+ .EX
+ pos:	0
+@@ -93,7 +90,7 @@ tfd:        9 events:       19 data: 74253d2500000009
+ tfd:        7 events:       19 data: 74253d2500000007
+ .EE
+ .in
+-.IP
++.P
+ Each of the lines beginning
+ .I tfd
+ describes one of the file descriptors being monitored via
+@@ -110,13 +107,13 @@ descriptor.
+ The
+ .I data
+ field is the data value associated with this file descriptor.
+-.IP
++.P
+ For signalfd file descriptors (see
+ .BR signalfd (2)),
+ we see (since Linux 3.8)
+ .\" commit 138d22b58696c506799f8de759804083ff9effae
+ the following fields:
+-.IP
++.P
+ .in +4n
+ .EX
+ pos:	0
+@@ -125,7 +122,7 @@ mnt_id:	10
+ sigmask:	0000000000000006
+ .EE
+ .in
+-.IP
++.P
+ .I sigmask
+ is the hexadecimal mask of signals that are accepted via this
+ signalfd file descriptor.
+@@ -135,12 +132,12 @@ and
+ .BR SIGQUIT ;
+ see
+ .BR signal (7).)
+-.IP
++.P
+ For inotify file descriptors (see
+ .BR inotify (7)),
+ we see (since Linux 3.8)
+ the following fields:
+-.IP
++.P
+ .in +4n
+ .EX
+ pos:	0
+@@ -150,7 +147,7 @@ inotify wd:2 ino:7ef82a sdev:800001 mask:800afff ignored_mask:0 fhandle\-bytes:8
+ inotify wd:1 ino:192627 sdev:800001 mask:800afff ignored_mask:0 fhandle\-bytes:8 fhandle\-type:1 f_handle:27261900802dfd73
+ .EE
+ .in
+-.IP
++.P
+ Each of the lines beginning with "inotify" displays information about
+ one file or directory that is being monitored.
+ The fields in this line are as follows:
+@@ -168,19 +165,19 @@ The ID of the device where the target file resides (in hexadecimal).
+ .I mask
+ The mask of events being monitored for the target file (in hexadecimal).
+ .RE
+-.IP
++.P
+ If the kernel was built with exportfs support, the path to the target
+ file is exposed as a file handle, via three hexadecimal fields:
+ .IR fhandle\-bytes ,
+ .IR fhandle\-type ,
+ and
+ .IR f_handle .
+-.IP
++.P
+ For fanotify file descriptors (see
+ .BR fanotify (7)),
+ we see (since Linux 3.8)
+ the following fields:
+-.IP
++.P
+ .in +4n
+ .EX
+ pos:	0
+@@ -190,7 +187,7 @@ fanotify flags:0 event\-flags:88002
+ fanotify ino:19264f sdev:800001 mflags:0 mask:1 ignored_mask:0 fhandle\-bytes:8 fhandle\-type:1 f_handle:4f261900a82dfd73
+ .EE
+ .in
+-.IP
++.P
+ The fourth line displays information defined when the fanotify group
+ was created via
+ .BR fanotify_init (2):
+@@ -210,7 +207,7 @@ argument given to
+ .BR fanotify_init (2)
+ (expressed in hexadecimal).
+ .RE
+-.IP
++.P
+ Each additional line shown in the file contains information
+ about one of the marks in the fanotify group.
+ Most of these fields are as for inotify, except:
+@@ -228,16 +225,16 @@ The events mask for this mark
+ The mask of events that are ignored for this mark
+ (expressed in hexadecimal).
+ .RE
+-.IP
++.P
+ For details on these fields, see
+ .BR fanotify_mark (2).
+-.IP
++.P
+ For timerfd file descriptors (see
+ .BR timerfd (2)),
+ we see (since Linux 3.17)
+ .\" commit af9c4957cf212ad9cf0bee34c95cb11de5426e85
+ the following fields:
+-.IP
++.P
+ .in +4n
+ .EX
+ pos:    0
+@@ -296,5 +293,7 @@ fields contain the values that
+ .BR timerfd_gettime (2)
+ on this file descriptor would return.)
+ .RE
++.SH HISTORY
++Linux 2.6.22.
+ .SH SEE ALSO
+ .BR proc (5)
+-- 
+2.47.0.338.g60cca15819-goog
 
 
