@@ -1,107 +1,117 @@
-Return-Path: <linux-kernel+bounces-435072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B28D9E6F2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:19:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B3B9E6F2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889E8168EC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F0C1884DC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6868C207647;
-	Fri,  6 Dec 2024 13:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5599820764F;
+	Fri,  6 Dec 2024 13:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnjHwrLO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fky88nM3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FC91E1C11;
-	Fri,  6 Dec 2024 13:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25E11FCD11;
+	Fri,  6 Dec 2024 13:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733491033; cv=none; b=DUv8jSDMVUbeyYiQPLLFLMxP2yFXrNBd77I9qaESzG3T6D/Mh+/o2Q6SS1RSXZGE7pkzR8cKUM3Z0FyuPrszSNl1e+ihy4nD/H1bk00Cl5HhFUNUPr8I5up6wpSSANM7NmorxvVjwLrBOiTRy9gZOruAe2rNt3tHzwz15GPE51g=
+	t=1733491049; cv=none; b=qjVocgZKnNFP47QIpugsp3nLouLldz5dBwjBFqW3coOBn2hqXLoSKtNpCFAa/J65n+NuSlRauTfy85nJP2rpslY/TgRoG8ZJl0M4Vx9Fuu+9cO5EcvhxGWNVqqrZv/wBi0nD/nEk3HSwgRHDgBCw6xYUJdJ0WCXXY1vnOD2l1fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733491033; c=relaxed/simple;
-	bh=W+2lps82yn7GdVsgLHvkw7CIhl5RQOcg6pgyV26KpL4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=udAAXf4cqr+RUB1Frd4qGSMqdiBVLvjZYjDXnTU7hmzYJA5+FRbNt0MPXCdiONWTqeXOx0igHs6jVEagRYZVi0R+5YS+qwvRX0X33hHP974cR2OIhPSyovhNteW6wmlNYg+3FWrQ+j9s47NwDHDhmFh8N7S156Om/50lKgmtQu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnjHwrLO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB91C4CEDF;
-	Fri,  6 Dec 2024 13:17:13 +0000 (UTC)
+	s=arc-20240116; t=1733491049; c=relaxed/simple;
+	bh=JSxJ/A3qBbdoVQTY0FusBl+IExWoxTKF+CRs14VxLrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Si8zzi/YcdKq8hIo1GiMW0JonnR0SGeJyM4TNY2U/dwM8+aA1qRiOwZ6RA0qpdEtKa8UrHig8gSaYtM+pih6ZuNJUOsW1NSnjN7kaJ2oY3zy865lDNoqBtVsOKpYXWc+v6PjtLqNHbRbMEwJRif4OnwByq0n4WcAmP34JfzMKAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fky88nM3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431E6C4CED1;
+	Fri,  6 Dec 2024 13:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733491033;
-	bh=W+2lps82yn7GdVsgLHvkw7CIhl5RQOcg6pgyV26KpL4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cnjHwrLO5EALvg0HHMP5tf3OGE5gVzifH1vM0F1rVcppuW1N2Zlck0ZYb+d6wN0RI
-	 5sd+grFC4Ox+sie/C/R3dAC7/nNExYXGLrxks51XslXgTpttmuMW2URpavx9xpPplf
-	 JJxL/+bVBlsyWNwkjR9o6/rQhkZb0hye/PssovpNZCc00YT/qZiFM6fae4aa5RL4sH
-	 doqSN+05X6ArlVurm2aGeEbsczmY5JhB/h4YO61S0rC8jLox3JiUuJRmUWQousp1Dd
-	 mYySHKziqjURpLWMJ8M39f0zbSabqeCmP8pWD1KB4nDkCmi51gH4aOeHKa+RPlFnVV
-	 cjieVizqIpsuQ==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53e0844ee50so2149013e87.0;
-        Fri, 06 Dec 2024 05:17:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW4JP41QDPXP79/24abfSE2b7+nkpkRy/mxDEoARMAw/OugP/1c3XXhtXohtntpYUfgEPaxr5p+@vger.kernel.org, AJvYcCXByyQWE6eTueyz2mn7yRReDkHgM3UayAmKHy7El3ECdqtz/TygdfFAXF78WaOkctpgok8135pU/muL5co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmQwTH0YhZHpVjdQ9C7jMAVnoUxtkUIzyrgOknfDZfftrH3vAn
-	/SKFSAztw+udFV/Iu2XioVJWIuVmDo7w4jXDV5t9GdKPMTL2Kq4a00RwgvWghVy17Hl8cvt1ns4
-	cfTTBJoafpQ9+KL2JmoIKqAd3bKg=
-X-Google-Smtp-Source: AGHT+IF7tUMRg52WWaAz6X12GM5qKhJYLqIJ2WOfMXjwuEOmJoTBVKqRvTAOkkyXnsHhE1w1Qaa7PKZGl2A4P9tHVIQ=
-X-Received: by 2002:a05:6512:2822:b0:53e:2306:6dd6 with SMTP id
- 2adb3069b0e04-53e2c2c4eaemr898595e87.31.1733491031769; Fri, 06 Dec 2024
- 05:17:11 -0800 (PST)
+	s=k20201202; t=1733491049;
+	bh=JSxJ/A3qBbdoVQTY0FusBl+IExWoxTKF+CRs14VxLrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fky88nM3uTjGKEdfnwzBY4SZ1Pz7d9YUi6vczbDEwEfGBO7y1bt/EgkBA1mD/ZBiy
+	 c/hHz1jFv3i0MKOnx3EQzGhzEOat4pT6YyW5aabfJhK3X/PqSlFByw0ZJUTY+Hd61X
+	 rKTedQSpfNIvVcNwSz+fS7cNVD4z2grHpYG6MUNjB1XLYs2MBt5udZ84eGyXLBDRXD
+	 XYAP5xcAg9gpiRj5GqOy4bYC2+Nlt7yBZItwk4Er12cI3j8AcTIMXi1Pl0TOKKP8fP
+	 +0TTDUyfu+/Mi4aHY0b6HI1hh3xbP6QKM2ykLYlrc9mr+LMtKk1WRQZQgAUDAbNz7r
+	 9huA+sxnmW1Ag==
+Date: Fri, 6 Dec 2024 13:17:16 +0000
+From: Lee Jones <lee@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] sample: rust_misc_device: Demonstrate additional
+ get/set value functionality
+Message-ID: <20241206131716.GF7684@google.com>
+References: <20241206124218.165880-1-lee@kernel.org>
+ <20241206124218.165880-4-lee@kernel.org>
+ <2024120652-champion-chute-4e74@gregkh>
+ <20241206130449.GC7684@google.com>
+ <20241206130630.GD7684@google.com>
+ <2024120637-handoff-monetary-c2f5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-2-brgerst@gmail.com>
- <20241206123207.GA2091@redhat.com>
-In-Reply-To: <20241206123207.GA2091@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 6 Dec 2024 14:17:00 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
-Message-ID: <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org, 
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024120637-handoff-monetary-c2f5@gregkh>
 
-On Fri, 6 Dec 2024 at 13:32, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> Add the necessary '#ifdef CONFIG_STACKPROTECTOR' into
-> arch/x86/kernel/vmlinux.lds.S
->
-> Fixes: 577c134d311b ("x86/stackprotector: Work around strict Clang TLS symbol requirements")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> ---
->  arch/x86/kernel/vmlinux.lds.S | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index fab3ac9a4574..2ff48645bab9 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -472,8 +472,10 @@ SECTIONS
->  . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
->            "kernel image bigger than KERNEL_IMAGE_SIZE");
->
-> +#ifdef CONFIG_STACKPROTECTOR
->  /* needed for Clang - see arch/x86/entry/entry.S */
->  PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
-> +#endif
->
->  #ifdef CONFIG_X86_64
->  /*
+On Fri, 06 Dec 2024, Greg KH wrote:
 
-This shouldn't be necessary - PROVIDE() is only evaluated if a
-reference exists to the symbol it defines.
+> On Fri, Dec 06, 2024 at 01:06:30PM +0000, Lee Jones wrote:
+> > On Fri, 06 Dec 2024, Lee Jones wrote:
+> > > On Fri, 06 Dec 2024, Greg KH wrote:
+> > > > On Fri, Dec 06, 2024 at 12:42:14PM +0000, Lee Jones wrote:
+> > > > > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
+> > > > > +        let guard = self.inner.lock();
+> > > > > +        let value = guard.value;
+> > > > > +
+> > > > > +        // Refrain from calling write() on a locked resource
+> > > > > +        drop(guard);
+> > > > > +
+> > > > > +        pr_info!("-> Copying data to userspace (value: {})\n", &value);
+> > > > > +
+> > > > > +        writer.write::<i32>(&value)?;
+> > > > > +        Ok(0)
+> > > > > +    }
+> > > > 
+> > > > I don't understand why you have to drop the mutex before calling
+> > > > pr_info() and write (i.e. copy_to_user())?  It's a mutex, not a
+> > > > spinlock, so you can hold it over that potentially-sleeping call, right?
+> > > > Or is there some other reason why here?
+> > > 
+> > > This was a request from Alice to demonstrate how to unlock a mutex.
+> > 
+> > It's common practice to apply guards only around the protected value.
+> > 
+> > Why would this be different?
+> 
+> It isn't, it's just that you are implying that the guard has to be
+> dropped because of the call to write(), which is confusing.  It's only
+> "needed" because you want to guard a single cpu instruction that is
+> guaranteed atomic by the processor :)
+> 
+> As this is an example driver, documentation is essential, so maybe the
+> comment should be:
+> 	// Drop the mutex as we can now use our local copy
+> or something like that.
 
-Also, I'm failing to reproduce this. Could you share your .config,
-please, and the error that you get during the build?
+Sounds reasonable.
+
+I've ran out of time this week.  I'll take another peek next week.
+
+-- 
+Lee Jones [李琼斯]
 
