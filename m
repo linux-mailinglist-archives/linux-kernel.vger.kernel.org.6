@@ -1,137 +1,225 @@
-Return-Path: <linux-kernel+bounces-435463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9539E7815
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:29:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA789E781D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:31:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F09A2827AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34E11886334
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2518204569;
-	Fri,  6 Dec 2024 18:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41D21D45F2;
+	Fri,  6 Dec 2024 18:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVrD5bIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAB3cP5n"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C961FFC47;
-	Fri,  6 Dec 2024 18:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A64F2206AA;
+	Fri,  6 Dec 2024 18:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733509750; cv=none; b=k+7+jnl673i7gRuSXEyDN4PZYK86ZDoIAGU0X2IqHupx5xPqprffOpLSRcIeKrIheRhfMT6VG9kJgoV0IaD52iXZ2V7L+xCkyyE68rBadLqz68uYDbk3HLnRjr37+YSR8+hKuqr9gAIFEVYsT9NVm6Emol4ocU+l8KfkwWVq1gg=
+	t=1733509873; cv=none; b=TJddpiKl3HoV8sIZWNtjL30B3h6py2jX8YVOZxO1aKvqg12Y0eHrKyawoal1vtm0RSunNUT2OK4kDmrOlKE0yr9XpDJqoxnQq6EuM1/aHO4ZL2f0CunrG+PuSYkFKZd2fRXIw84doK/DSnj6TEhWyjaxxOlON/BNEH7IcmGVdlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733509750; c=relaxed/simple;
-	bh=Vm6ouO02OmCcVEdNlPWgtMuW9IjQo2zRC+fgX1kpk30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8ZXrx55GTa5ivgfpAFeMd8E6dKXEtP2Q/lY/eIAsrlmZW55eUS3nNuwsJ7ihMntEFq4ZfUDoipp2Y0HZPED3dEXfcANpvdQbEz/ZEyhEx2Ct6qI/dVEjvKeAmQR+1EdKU8APpthextRtMWiVMSNRqnouT9Ed/oSY+RNerlz9vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVrD5bIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA051C4CED1;
-	Fri,  6 Dec 2024 18:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733509749;
-	bh=Vm6ouO02OmCcVEdNlPWgtMuW9IjQo2zRC+fgX1kpk30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aVrD5bIWfQMH0U0ERQrhTjU9gsClafC2IAsQgSsoj4/JPjPO24zhGhnfRfF6T/Aei
-	 7Wny8EwtCPNkWMledCf/UlHsiIgPs4u9xPnFezGnMkhjpZDB4haiQvNUFvMU2MHPMs
-	 t04BflC9LUUU1fYBCfCSFHrQW7PUumxMk+QbX/WN7mXNetX27x/lvlMkjqc44R+++/
-	 SsZDC+qYc9oQklrSovzZTjiX5QaWu5hxacsS5tMpPBKhBgI+824oCUdZwelxLZ9uLj
-	 F0x+CiLuLgjMWu5zyIQpE63LI4s/rVMk04Z4fMeEM2CB2HVEEl/erqiT97/OzHzr2p
-	 orKHpU8AgF7GQ==
-Date: Fri, 6 Dec 2024 19:29:04 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] rust: miscdevice: Provide sample driver using the
- new MiscDevice bindings
-Message-ID: <Z1NCcGOwarDhU8GB@pollux>
-References: <20241206124218.165880-1-lee@kernel.org>
- <Z1LzOORuFpO0MXAZ@pollux>
- <20241206125430.GB7684@google.com>
- <Z1L2tjNrIa2Q0Awf@pollux>
- <20241206131445.GE7684@google.com>
- <Z1L9dLyLRmLcwMne@pollux>
- <20241206164918.GA6336@google.com>
+	s=arc-20240116; t=1733509873; c=relaxed/simple;
+	bh=+2N0lSYv+NBz4Y6vr/lNiuvfJV7RX8RYoJK6s9GX4gY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nu8oF91OAvlUVOqUTvN9aUit8B7i/nuiDtuWdMXDO8AFtgMFal7GSSlbRaE+mgsUTD9jSMYc+pfRkoku105tHAmiYki3DxYVhXSjqv1jcX0iWphx+OvovhWMPE7GSGq6iK0HGB3cJ/kt2sINtwa0xRYpWz1lYIaFXro+JDtzsQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAB3cP5n; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so93253366b.0;
+        Fri, 06 Dec 2024 10:31:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733509870; x=1734114670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g7buzdn3/PR+OZ7E9SojfZrudu0PKQFtLTRAFouRbM0=;
+        b=HAB3cP5n48M+C74hHmh0ZmzPikkGLr7W6X0e5OjefouJmDGSUXywTNd5I+0i324Ugf
+         yfCjgkfN+ETLhQRZ4Ys+jUjUdqkHXNioDxIMGDIDqFDYLjX/y2jRHxw7OvVxM9eofqew
+         QW0p84FKJiZUWBfdFFW5iH0/o6R4H09z1q6UyMvDueyXJYT+24RizpqInZrrUDedKebq
+         CU+/8DJUKYHbJkPjPndSxYfAUfQG78Yrfa3EDsRLXSZDloL18WSgIw4wwqgUvIMri1xR
+         rI2F1PykG7VJ/vyjPLCCFpCAF5X+EVMTItNedawzEj64ktPiCSGiDlRGMdc6gbkxhhCL
+         4Z1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733509870; x=1734114670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g7buzdn3/PR+OZ7E9SojfZrudu0PKQFtLTRAFouRbM0=;
+        b=h2obUv0JVnhzDGBZ9vgMP/ZxrsFWZTsxeceAfQvJp+tSKe/86JQQZUSlCvB9OFLJDV
+         TsxSD6y3YjUUq1s2M0fwBAbWkZPeAyaiVhpHigPyE2Q88C2X23xRIQi3j9qMlCF6RHXi
+         FcfsycTTxZTuKB6vBbVp0Ifp64UG4qvcL/qh6NEIu1wcDEJxhee+L7c0PAjyqqPsQMw3
+         D+qXHYfW5TpciCI+ohz7CNl33ZzxS24EzHcGPwmGsyG/P8FboTN1CIu5t0A0msx9EaAX
+         13tkF2XWQr64GK4nKcF9OONaxJcD46T8cIMYoYdqEdjZsNoUpHlW0ZcXvnHukYjM7eR8
+         z+kA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXQZAs5k6whasUNkuYgeKyUIDvSIbKFijngOCc6mNvVryn+K+pIwb8Jc2Bc+v1mmh8F2SerH1z0fo1aWtk@vger.kernel.org, AJvYcCWyYxzAXA7KdeikVya/MpUTlAWnFkys43LdRknTgb4r1StXO08lg9AsdpJWp2iuqiqE72BMiKy3xA366nDg@vger.kernel.org, AJvYcCXA1BsnBVLeV6UCRKu1M9iVfKs4MuXF8fTenRXiuAi1SR9m+ek1mVtvHZDIzqGCE2E1ap5aWkzRxU1bHPG8sn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzncDg7soEWJn3bJsmFhOz9D5PdWWNie1rgtP9zbTB6o3ciCO+V
+	tkvTm3bdCPadudVQkBXjQ3+2Thipkrjq2MawXInd5CMeYoNHK7/rov1vys15NSpK0y/HAcdQUDj
+	s7X+CbWxkFDRzbCpDUVf12lWZK4c=
+X-Gm-Gg: ASbGncvMT5+iVgfpl7P+hKhmtKTDMYFgj+fCa9LYdZNkQM+JlpPmnlU+/BRPU4c93Vs
+	skWOFWBFHxP0u3UAMiPg3cUOxEWL69oo=
+X-Google-Smtp-Source: AGHT+IFnd7xj5Pq9akTxmspxJbkFJbmmIA03mUFW2B6h+sDDSyh+/NdbCh8gBxT6LtqsX9b+RXGKw/QASht5Itx+9Lw=
+X-Received: by 2002:a17:907:7703:b0:aa5:46d3:4d88 with SMTP id
+ a640c23a62f3a-aa639febbbfmr329138866b.15.1733509869483; Fri, 06 Dec 2024
+ 10:31:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241206164918.GA6336@google.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com> <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com> <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
+From: Vincent Mailhol <vincent.mailhol@gmail.com>
+Date: Sat, 7 Dec 2024 03:30:57 +0900
+Message-ID: <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of __is_constexpr()
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <David.Laight@aculab.com>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, uecker@tugraz.at
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 06, 2024 at 04:49:18PM +0000, Lee Jones wrote:
-> On Fri, 06 Dec 2024, Danilo Krummrich wrote:
-> > > > Also, there was a comment about how we can make use of the `dev_*` macros.
-> > > > 
-> > > > I really think we should fix those before we land a sample driver. It's gonna
-> > > > be hard to explain people later on that they shouldn't do what the example
-> > > > does...
-> > > 
-> > > We're authoring the sample based on what is available at the moment.
-> > 
-> > Well, for this I have to disagree, not being able to use the `dev_*` macros is
-> > simply meaning that the abstraction is incomplete (in this aspect).
-> > 
-> > I don't see the need to land a sample driver that tells the user to do the wrong
-> > thing, i.e. use the `pr_*` macros.
-> > 
-> > As Alice mentioned, you can get the miscdevice pointer from the file private
-> > data in open() and then make it accessible in the other fops hooks. If we go for
-> > this solution it will change the callbacks of `MiscDevice` and maybe even some
-> > other architectural aspects.
-> > 
-> > This needs to be addressed first.
-> 
-> The issue about ever growing dependencies _can_ be that authors have
-> other priorities and are slow to turn things around, which may end up
-> with nothing being accepted and contributors getting frustrated.
+Grrr, I just realized that my emails are bouncing=E2=80=A6 Didn't happen
+before, I guess this is because my smtp server is unhappy with the
+many people in CC.
 
-I would share your argumentation if
+Resending using another address (and, while at it, redacted two
+messages to combine them in one and added more details).
 
-1) we'd talk about a real driver, where people are actually waiting for,
-2) it'd be about a new feature, performance improvement, etc.
+My deep apologies for that, really sorry. Also, maybe the bouncing
+messages will finally find their way out? In that case, please just
+ignore them, and sorry for the noise.
 
-What we have here is different:
+On Fri. 6 Dec. 2024 at 15:14, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, 5 Dec 2024 at 18:26, David Laight <David.Laight@aculab.com> wrote=
+:
+> >
+> > From: Vincent Mailhol
+> > > ACK. Would adding a suggested--by Linus tag solve your concern?
+>
+> I'm genberally the one person who doesn't need any more credit ;)
+>
+> > I actually suspect the first patches to change __is_constexpr() to
+> > use _Generic were from myself.
+>
+> Yes. And David was also I think the one who suggested something else
+> than "!!" originally too.
 
-You wrote a sample implementation for a new and just landed abstraction that
-reveals a shortcoming. (Which is great, because it means the sample already
-served an important purpose.)
+Ack. Then, I will add a suggested-by tag to credit David!
 
-IMHO, the consequence should not be to merge the sample as is anyways, because
-another purpose of the sample implementation is to tell people "look, this is
-exactly how it should look like, please do it the same way".
+> I may have liked "!!" for being very idiomatic and traditional C, but
+> there were those pesky compilers that warn about "integer in bool
+> context" or whatever the annoying warning was when then doing the
+> "multiply by zero" to turn a constant expression into a constant zero
+> expression.
+>
+> So that
+>
+>   #define is_const(x) __is_const_zero(0 * (x))
+>
+> causes issues when 'x' is not an integer expression (think
+> "is_const(NULL)" or "is_const(1 =3D=3D 2)".
 
-Instead, we should fix the shortcoming, adjust the sample implementation and
-merge it then.
+But 1 =3D=3D 2 already has an integer type as proven by:
 
-Just to make it clear, for a real driver I think it would be reasonable to just
-go ahead, but for a sample that should educate, we should fix things first.
+  #define is_int(x) _Generic(x, int: 1, default: 0)
+  static_assert(is_int(1 =3D=3D 2));
 
-> 
-> However, taking into consideration how swift Alice is with these things,
-> I'd be happy to wait for this part if people are insistent.
-> 
-> > > There will always be something better / more convenient coming down the
-> > > pipe.  We don't usually put off contributors pending acceptance of
-> > > out-of-tree functionality, sample or otherwise.
-> > 
-> > No one asks for this here. But if the example reveals shortcomings, we shouldn't
-> > promote them as example.
-> 
-> IMHO it's reasonable for the sample to represent the current status of
-> the frameworks in use.  As advancements / adaptions are introduced we
-> can use them to continually improve the example.
-> 
-> -- 
-> Lee Jones [李琼斯]
+And regardless, __is_const_zero() performs a (long) cast, so
+__is_const_zero() works for any other scalar types. Even the u128
+works because after the (0 * (x)) multiplication, you are left with
+zero, preventing any loss of precision when casting to (long).
+
+Here are some tests to prove my claims:
+
+  https://godbolt.org/z/beGs841sz
+
+So, it leaves us with the is_const(pointer) case. To which I would
+question if we really want to support this. By definition, an
+expression with a pointer type can not be an *integer* constant
+expression. So one part of me tells me that it is a sane thing to
+*not* support this case and throw a warning if the user feeds
+is_const() with a pointer.
+
+By the way, currently, __is_constexpr(NULL) returns false:
+
+  https://godbolt.org/z/f5P9oP9n5
+
+and the reason this went unnotified in the kernel is because no one is
+using it that way. So instead of complicating the macro for a use case
+which currently does not exist (and which goes against the definition
+of an ICE in the C standard), why not say instead that this is not
+supported by just leaving the constraint violation in is_const()?
+
+> Side note: I think "(x) =3D=3D 0" will make sparse unhappy when 'x' is a
+> pointer, because it results that horrid "use integer zero as NULL
+> without a cast" thing when the plain zero gets implicitly cast to a
+> pointer. Which is a really nasty and broken C pattern and should never
+> have been silent.
+>
+> I think David suggested using ((x)?0:0) at some point. Silly
+> nonsensical and complex expression, but maybe that finally gets rid of
+> all the warnings:
+>
+>      #define is_const(x) __is_const_zero((x)?0:0)
+>
+> might work regardless of the type of 'x'.
+
+If we *really* want to go beyond the C standard and extend the meaning
+of integer constant expressions in the kernel to also include constant
+pointers, then what about:
+
+  #define is_const(x) __is_const_zero((x) !=3D (x))
+
+As established above, comparaisons return an int, thus making this
+pass all tests:
+
+  https://godbolt.org/z/f5zrzf44h
+
+And it is slightly more pretty than the ((x)?0:0).
+
+(...)
+
+Side question, Linus, what do you think about the __is_const_zero()
+documentation:
+
+  https://lore.kernel.org/all/20241203-is_constexpr-refactor-v1-2-4e4cbaecc=
+216@wanadoo.fr/
+
+Do you think I am too verbose as pointed out by David? Some people
+(including me and Yuri) like it that way. But if you also think this
+is too much, I will make it shorter.
+
+Thanks,
+
+
+Yours sincerely,
+Vincent Mailhol
 
