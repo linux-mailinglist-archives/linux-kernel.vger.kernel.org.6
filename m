@@ -1,238 +1,181 @@
-Return-Path: <linux-kernel+bounces-435322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6455D9E7611
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D089E75FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:31:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D02A16CBE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810D216C3FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0F72135D7;
-	Fri,  6 Dec 2024 16:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B551F4E36;
+	Fri,  6 Dec 2024 16:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="yBAOtJpZ"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NNZ0Dq4P"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5112C2063D2
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625421F18DE
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733502677; cv=none; b=RjW1Nh/0ezPbY8JqofDmO0GrLfxfXCZMhRpujz7fw6uU9sAsJ2itnK3par18wGztjwygEuSsLYQNnGyVshI3ZoV61V7FmNnv2zLg/Y6D9R/5qTuYgEInhTUCMSPaxp/1zjhkghyKAodyWnmJ7P7p0aIVsQrBotGJUCXL464xXhE=
+	t=1733502666; cv=none; b=IJ3YDK20OyGA7AYAn8r0M1w76pq/hyjIr1KbHUSnXJzq5/8NKkc9BGIUkcBscmTOzFND3loeZ847Psut6PP1/SZsmribgU5bDNUvnAbHnF4pCAMVf+Ab4e+mnN5yw7NNcD3WBrqgFxNLu3FUFpzFz6DQXiT9fp8WmPJVA66a/Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733502677; c=relaxed/simple;
-	bh=8aGdi4n+OgIuGS1aTYKtvEclOCI87M6OQhVWoyS/obM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o7POsrQEPhM0CXaoxMu3TtMwN1ipFL8dA6zOEDtyXhLmGrhIzqs/iBT+roJbcXU4LE2jNb97NIiJtQDy2L0x/s4UH9Lbx/h23U2KLw7ViASOqvggfR3BcSDw8Y5Jc6DHBkM6kRrgzxMd/t2OYYrhoKLhJwtrhe3JP6X/Unl9VjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=yBAOtJpZ; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso22146915e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 08:31:15 -0800 (PST)
+	s=arc-20240116; t=1733502666; c=relaxed/simple;
+	bh=GtJoFybvFh6AbrC9O+Fzs8cMuNJZ+3NTaYZfoyrNIV4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JDIYuuP5K8/eq+V9hJ4uesR6HLGi62QpHCeJ00nOaMMsSaLVyiigtzzH98nByPkyT6jVAzNEyM4SomJsm16NMl8kbhBLLAgS/JqhuI5WU+5u9RWgqLqyhjBkhWCJSfSHVxzM5EaOPiIWR0n+98bUFo6b74hEs/nWFiW3Gw5yzLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NNZ0Dq4P; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa5325af6a0so356917866b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 08:31:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733502673; x=1734107473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6pTgQSov7vYTWNucdQE0t9hyfOwyYPp0snQQ1hygLdA=;
-        b=yBAOtJpZ/Y2Y5GXwfL7sJwLGO1YB9d5TLfzwdJY6nR6ELbkUblNckmDvwb7bQK2N9p
-         Xc6KjIV2TfDX5WikrBekQoQrmvrcR+5MRs8lQwjL/M+O/wXkS/zQfkEijEdHtUoo6zEx
-         WqMhqWju8SPwh3JODIdwJvJZZoRxZWZYObuCcBW9v+E0BJU/kJsdePMW1F1O5HBLPjCi
-         GNmmIS+rE+ft4DWiH5EJ/ugYXXo2SIup04BS3toCK1qKZ+/1krI24SmPXhEfkFpBXQTP
-         Sxw6sbtKQAnuyu/s2lqxjpqcxjPQwuSudAdpwd2JF9lkBL7i1wDkeFrMrigqb7Bt7yrk
-         efjw==
+        d=linaro.org; s=google; t=1733502662; x=1734107462; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7nSjvUx63MADVpt7oEUea+FY7rhNfLzD9bh4ADhfVg=;
+        b=NNZ0Dq4PBde1CYREkSzdmPUnZQ9apG3wAr/aao1jt4wjCWpeswCYV4MtwK1CeBrViT
+         QqUVCYgRmYQIvjIOZlYpOdYmUViD5AI4tYE79H7KE787Y0gUmrG+Qm5aJ3O30Rj3IzxS
+         AP9JHHtcR/fJVucgV+kqighH5mvgQzXucKOArA+FbY9HRN4YN4JH1CpH38jaYhypFMgR
+         yVyoStUdytZExi1I4A95TZfIj39twV6FUosh1S/nyKytQcWw2vngHc91LmpzXC0LQbpr
+         KfQft6ZiaJYohfblszXb/L81nizKpk8lJ+DAnBHeEPfINPqZuME+6TE0t6BBExqQWQw4
+         H6oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733502673; x=1734107473;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6pTgQSov7vYTWNucdQE0t9hyfOwyYPp0snQQ1hygLdA=;
-        b=P2dep8jmAtK8Vgey4BEKKL0KKwLSst2cvsajH766ADBefdPEoSuBfSiVHuVzxoFm/b
-         NYV1WZRtWdU19zfr+Q3JpnKHASuumJ00Pe6MbPu6ZYOv2dExK/HrL5OrPUMT2VtOdXO4
-         Jvgs7RNbcgPzv5/QAYKen96vMYli+4IGoyVUh5xIOAi5rQDFIDLRivm4UqzpQTFwDHL+
-         wZlSWKsswMg/gngDWZCLGR5Hb/vqIGy6MuuL21XJUIKqz01y70TcDjSS46Y512bACJDl
-         9F1VQWnbxIMIUMQ0YG7ljN+ZAswDN9z6RyfKahsj8zxLOpc9pOfoSBvjpk1k0feEn4+l
-         Cudw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYoerHjAm0SRot/XJ+wdM169sKeliGqMosTCc8fpQ2mjnMvyvvyjd/sZv3uHKwmPCWPgQ890ZSia5MM/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfMX0RMcwU02GQZeTByXViLf1neX0PhaExaqrddig8MG4M3bS8
-	lEjr7Wa8jO7IT7gVXXY3ESlA3uf5BbObRa0v06FIh+G5UEF4pycLiX4YhAOoLcA=
-X-Gm-Gg: ASbGncv4kyXIyhTZ8yRuSISPaZI8I+RSaaea8k6qCYiyD73NeGV+U5hjUO4aOeothfu
-	JZrKEuZa9YIo2V13PeswE/GzMhmX6zezOr93E47w8oszMh1/kbHD3OdgvES4iKHrpQJvYTPn/Gu
-	6FnEyg6z2H60lUdmChOqpAVzteHnA3b1lTz6BkF3eKQ9dgatjWV95+Ovk5eMCEpQAWMTHjQPjuQ
-	HlgBN8uvNPR+FE+yKbfVZxSNqRc/J4wOnJush1rq90DEw4rUVI=
-X-Google-Smtp-Source: AGHT+IEXqcNtnOQtrn9HCLkcY6FnKIIl9CkgV9xxYEovPWiiPgpTNBlpOFS9Y9bIrLbUO0lLfarFWQ==
-X-Received: by 2002:a05:6000:1846:b0:385:fb2c:6034 with SMTP id ffacd0b85a97d-3862b3e6fddmr2723661f8f.47.1733502673558;
-        Fri, 06 Dec 2024 08:31:13 -0800 (PST)
-Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862f02f5c3sm1151942f8f.65.2024.12.06.08.31.12
+        d=1e100.net; s=20230601; t=1733502662; x=1734107462;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b7nSjvUx63MADVpt7oEUea+FY7rhNfLzD9bh4ADhfVg=;
+        b=WBwO1R0AHJDjMPDIO5g9/TH35i264xi/HGzdmbtoVCGy2RJ9M5cJPZau3vLaf0Xzis
+         rTzw1MhjBjtXTTtrUe9Lxu7V+D4xW+iDukjsusAj5TmZX4aDnMDL5IL+CcRrgF5fUshf
+         CCmwLJ/Rko5867m0dW8OwM/xaKJU7HxnWM//dg2LhG20NFfdwF8udb3Ai+YyZt8RhSz4
+         K8/UvaJGuoEpAXoPyiqGNOn3tvY0UvfyRl9EM90cgI7IJFQ2iLqjsV9RdtKEaXwHCN6Q
+         HL2CyzxS6V6is5ll8tOdw7LdjWOJN3Y7QPTJDv3DhFUxwtRY3up8iRayuTY9/MBjT9S8
+         8IFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUUTdyHizCGcVM6ITnjrypeElO8ZYzQNXmnnLpT0nBXHN+F4zwS/I7rQuNH+3MaDbe8zQyrdp9LDlFQ5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNKUDPaBOsbB6VUkVz4c0mB/Qa0lJtqx/iH0Lf28RgTDOdkRV+
+	xAC/6B8qa/i3Xw6GQOF7xyd7j8vbilCpn8uCq+R+6amo2jm1jY1tIMKvBXNYvsY=
+X-Gm-Gg: ASbGncu9lqdeN5LejmDgkGY36ceXDgqDO79xOi64rYT0tvQHRWt0Tvz8ji24cE1gfyk
+	4F0WxBGu2GIi3Eok6lF8Wg1U1psgFDD01ncRAwaDsz95l/NbGsFF8u2qXAqRzSLHnP1VGcXne+q
+	xOQ3VOAN/R2JoWGwCrXd603KShN4B2zdWMAtqkiY19IWKQwsoEX+WLDvTZ6GEOc1w3qeAQLVq4O
+	vNNDrsIXW63I9EVfMBu4ShrBbIr01ITZD7ZjAGmdCN3rO4znZa3E3sKs+cuIK3vNjgmjCCnrbrz
+	Mi9vcf1hsbt/3pSU2EOladyVAMmqiG8iXQ==
+X-Google-Smtp-Source: AGHT+IG5YohV/4iJ4GCzEmX7QvPbyvRE1dHLvIsPCNB971me4/Bxko7NAtS9jjY0kEtDTyMZljoJ8A==
+X-Received: by 2002:a17:907:770d:b0:aa6:23ba:d8c4 with SMTP id a640c23a62f3a-aa639fb1a24mr339321566b.4.1733502661682;
+        Fri, 06 Dec 2024 08:31:01 -0800 (PST)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260e8af8sm257710266b.191.2024.12.06.08.31.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 08:31:12 -0800 (PST)
-From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Himanshu Chauhan <hchauhan@ventanamicro.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Xu Lu <luxu.kernel@bytedance.com>,
-	Atish Patra <atishp@atishpatra.org>
-Subject: [PATCH v3 4/4] perf: RISC-V: add support for SSE event
-Date: Fri,  6 Dec 2024 17:31:00 +0100
-Message-ID: <20241206163102.843505-5-cleger@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241206163102.843505-1-cleger@rivosinc.com>
-References: <20241206163102.843505-1-cleger@rivosinc.com>
+        Fri, 06 Dec 2024 08:31:01 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v4 0/7] USB31DRD phy updates for Google Tensor gs101
+ (orientation & DWC3 rpm)
+Date: Fri, 06 Dec 2024 16:31:00 +0000
+Message-Id: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMQmU2cC/43NQQ6CMBQE0KuYrq3p/1QqrryHcQG0hSakJS0hE
+ sLd/bBR4wKXM8m8mVky0ZnEroeZRTO65IKnII8HVrelbwx3mjJDgRIAFW8SCOB9O/Gu9CbxQHM
+ /lAPtthYLjaLO9UVqZKT00Vj33B7uD8qtS0OI03Y4wtr+b4/ABYdK2dqgLHJR3TrnyxhOITZsx
+ Ud8gyiyfRAJlELXltRcCf0DZp/geR/MCMzQKoTKaITiC1yW5QUJoFYgcQEAAA==
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
 
-In order to use SSE within PMU drivers, register a SSE handler for the
-local PMU event. Reuse the existing overflow IRQ handler and pass
-appropriate pt_regs.
+Hi,
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
+This series enables USB3 Type-C lane orientation detection and
+configuration on platforms that support this (Google gs101), and it
+also allows the DWC3 core to enter runtime suspend even when UDC is
+active.
+
+For lane orientation, this driver now optionally (based on DT)
+subscribes to the TCPC's lane orientation notifier and remembers the
+orientation to later be used during phy_init().
+
+To enable DWC3 runtime suspend, the gadget needs to inform the core via
+dwc3_gadget_interrupt() with event type == DWC3_DEVICE_EVENT_DISCONNECT
+of a cable disconnect. For that to allow to happen, this driver
+therefore needs to stop forcing the Vbus and bvalid signals to active
+and instead change their state based on actual conditions. The same
+TCPC notifier is used to detect this, and program the hardware
+accordingly.
+
+That signal state is based on advice given by Thinh in
+https://lore.kernel.org/all/20240813230625.jgkatqstyhcmpezv@synopsys.com/
+
+Both changes together now allow cable orientation detection to work, as
+the DWC3 will now call phy_exit() on cable disconnect, and we can
+reprogram the lane mux in phy_init().
+
+On top of that, there are some small related cleanup patches.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/perf/riscv_pmu_sbi.c | 51 +++++++++++++++++++++++++++++-------
- 1 file changed, 41 insertions(+), 10 deletions(-)
+Changes in v4:
+- separate out patch 5 'phy: exynos5-usbdrd: gs101: ensure power is
+  gated to SS phy in phy_exit()' from this series, as a stable patch
+  shouldn't be buried inside a series like this (Greg)
+  Link: https://lore.kernel.org/all/20241205-gs101-usb-phy-fix-v4-1-0278809fb810@linaro.org/
+- Link to v3: https://lore.kernel.org/r/20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org
 
-diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-index 1aa303f76cc7..bd7ab15483db 100644
---- a/drivers/perf/riscv_pmu_sbi.c
-+++ b/drivers/perf/riscv_pmu_sbi.c
-@@ -17,6 +17,7 @@
- #include <linux/irqdomain.h>
- #include <linux/of_irq.h>
- #include <linux/of.h>
-+#include <linux/riscv_sse.h>
- #include <linux/cpu_pm.h>
- #include <linux/sched/clock.h>
- #include <linux/soc/andes/irq.h>
-@@ -946,10 +947,10 @@ static void pmu_sbi_start_overflow_mask(struct riscv_pmu *pmu,
- 		pmu_sbi_start_ovf_ctrs_sbi(cpu_hw_evt, ctr_ovf_mask);
- }
- 
--static irqreturn_t pmu_sbi_ovf_handler(int irq, void *dev)
-+static irqreturn_t pmu_sbi_ovf_handler(struct cpu_hw_events *cpu_hw_evt,
-+				       struct pt_regs *regs, bool from_sse)
- {
- 	struct perf_sample_data data;
--	struct pt_regs *regs;
- 	struct hw_perf_event *hw_evt;
- 	union sbi_pmu_ctr_info *info;
- 	int lidx, hidx, fidx;
-@@ -957,7 +958,6 @@ static irqreturn_t pmu_sbi_ovf_handler(int irq, void *dev)
- 	struct perf_event *event;
- 	u64 overflow;
- 	u64 overflowed_ctrs = 0;
--	struct cpu_hw_events *cpu_hw_evt = dev;
- 	u64 start_clock = sched_clock();
- 	struct riscv_pmu_snapshot_data *sdata = cpu_hw_evt->snapshot_addr;
- 
-@@ -967,13 +967,15 @@ static irqreturn_t pmu_sbi_ovf_handler(int irq, void *dev)
- 	/* Firmware counter don't support overflow yet */
- 	fidx = find_first_bit(cpu_hw_evt->used_hw_ctrs, RISCV_MAX_COUNTERS);
- 	if (fidx == RISCV_MAX_COUNTERS) {
--		csr_clear(CSR_SIP, BIT(riscv_pmu_irq_num));
-+		if (!from_sse)
-+			csr_clear(CSR_SIP, BIT(riscv_pmu_irq_num));
- 		return IRQ_NONE;
- 	}
- 
- 	event = cpu_hw_evt->events[fidx];
- 	if (!event) {
--		ALT_SBI_PMU_OVF_CLEAR_PENDING(riscv_pmu_irq_mask);
-+		if (!from_sse)
-+			ALT_SBI_PMU_OVF_CLEAR_PENDING(riscv_pmu_irq_mask);
- 		return IRQ_NONE;
- 	}
- 
-@@ -988,16 +990,16 @@ static irqreturn_t pmu_sbi_ovf_handler(int irq, void *dev)
- 
- 	/*
- 	 * Overflow interrupt pending bit should only be cleared after stopping
--	 * all the counters to avoid any race condition.
-+	 * all the counters to avoid any race condition. When using SSE,
-+	 * interrupt is cleared when stopping counters.
- 	 */
--	ALT_SBI_PMU_OVF_CLEAR_PENDING(riscv_pmu_irq_mask);
-+	if (!from_sse)
-+		ALT_SBI_PMU_OVF_CLEAR_PENDING(riscv_pmu_irq_mask);
- 
- 	/* No overflow bit is set */
- 	if (!overflow)
- 		return IRQ_NONE;
- 
--	regs = get_irq_regs();
--
- 	for_each_set_bit(lidx, cpu_hw_evt->used_hw_ctrs, RISCV_MAX_COUNTERS) {
- 		struct perf_event *event = cpu_hw_evt->events[lidx];
- 
-@@ -1053,6 +1055,22 @@ static irqreturn_t pmu_sbi_ovf_handler(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
-+static irqreturn_t pmu_sbi_ovf_irq_handler(int irq, void *dev)
-+{
-+	return pmu_sbi_ovf_handler(dev, get_irq_regs(), false);
-+}
-+
-+static int pmu_sbi_ovf_sse_handler(uint32_t evt, void *arg,
-+				   struct pt_regs *regs)
-+{
-+	struct cpu_hw_events __percpu *hw_events = arg;
-+	struct cpu_hw_events *hw_event = raw_cpu_ptr(hw_events);
-+
-+	pmu_sbi_ovf_handler(hw_event, regs, true);
-+
-+	return 0;
-+}
-+
- static int pmu_sbi_starting_cpu(unsigned int cpu, struct hlist_node *node)
- {
- 	struct riscv_pmu *pmu = hlist_entry_safe(node, struct riscv_pmu, node);
-@@ -1100,9 +1118,22 @@ static int pmu_sbi_dying_cpu(unsigned int cpu, struct hlist_node *node)
- static int pmu_sbi_setup_irqs(struct riscv_pmu *pmu, struct platform_device *pdev)
- {
- 	int ret;
-+	struct sse_event *evt;
- 	struct cpu_hw_events __percpu *hw_events = pmu->hw_events;
- 	struct irq_domain *domain = NULL;
- 
-+	evt = sse_event_register(SBI_SSE_EVENT_LOCAL_PMU, 0,
-+				 pmu_sbi_ovf_sse_handler, hw_events);
-+	if (!IS_ERR(evt)) {
-+		ret = sse_event_enable(evt);
-+		if (!ret) {
-+			pr_info("using SSE for PMU event delivery\n");
-+			return 0;
-+		}
-+
-+		sse_event_unregister(evt);
-+	}
-+
- 	if (riscv_isa_extension_available(NULL, SSCOFPMF)) {
- 		riscv_pmu_irq_num = RV_IRQ_PMU;
- 		riscv_pmu_use_irq = true;
-@@ -1137,7 +1168,7 @@ static int pmu_sbi_setup_irqs(struct riscv_pmu *pmu, struct platform_device *pde
- 		return -ENODEV;
- 	}
- 
--	ret = request_percpu_irq(riscv_pmu_irq, pmu_sbi_ovf_handler, "riscv-pmu", hw_events);
-+	ret = request_percpu_irq(riscv_pmu_irq, pmu_sbi_ovf_irq_handler, "riscv-pmu", hw_events);
- 	if (ret) {
- 		pr_err("registering percpu irq failed [%d]\n", ret);
- 		return ret;
+Changes in v3:
+- patches 1 & 2: update as per Rob's suggestions
+- patch 7 & 8: drop init to -1 of phy_drd->orientation (Vinod)
+- patch 7: avoid an #ifdef 
+- Link to v2: https://lore.kernel.org/r/20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org
+
+Changes in v2:
+- squash patches #2 and #3 from v1 to actually disallow
+  orientation-switch on !gs101 (not just optional) (Conor)
+- update bindings commit message to clarify that the intention for the
+  driver is to work with old and new DTS (Conor)
+- add cc-stable and fixes tags to power gating patch (Krzysztof)
+- fix an #include and typo (Peter)
+- Link to v1: https://lore.kernel.org/r/20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org
+
+---
+André Draszik (7):
+      dt-bindings: phy: samsung,usb3-drd-phy: add blank lines between DT properties
+      dt-bindings: phy: samsung,usb3-drd-phy: gs101: require Type-C properties
+      phy: exynos5-usbdrd: convert to dev_err_probe
+      phy: exynos5-usbdrd: fix EDS distribution tuning (gs101)
+      phy: exynos5-usbdrd: gs101: configure SS lanes based on orientation
+      phy: exynos5-usbdrd: subscribe to orientation notifier if required
+      phy: exynos5-usbdrd: allow DWC3 runtime suspend with UDC bound (E850+)
+
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         |  21 ++-
+ drivers/phy/samsung/Kconfig                        |   1 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 202 ++++++++++++++++-----
+ 3 files changed, 182 insertions(+), 42 deletions(-)
+---
+base-commit: c245a7a79602ccbee780c004c1e4abcda66aec32
+change-id: 20241127-gs101-phy-lanes-orientation-phy-29d20c6d84d2
+
+Best regards,
 -- 
-2.45.2
+André Draszik <andre.draszik@linaro.org>
 
 
