@@ -1,328 +1,162 @@
-Return-Path: <linux-kernel+bounces-435661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1979F9E7AB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:21:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625ED9E7A95
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:18:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C911628547A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:21:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 127E71887A3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E9D221D90;
-	Fri,  6 Dec 2024 21:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00808204576;
+	Fri,  6 Dec 2024 21:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Oeq1Gn7f"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErRn66Lr"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AAC21E095
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8F0213E98;
+	Fri,  6 Dec 2024 21:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733519939; cv=none; b=t8tkWPC4P67T4L3dgA6ZLM0tXHQVojOy8mxIuKce+C/LL6vqaWATIt6GM8vvdNICa9ebed80Z9cl94YFE5qiaBeTYNfRlG1MHncMLkjVafhoxkm6p20SlSbgP5xloi65a2Cav7IeFBvpR3wnm1rBnh0qVG4Mm7emsGgUhc+JJtw=
+	t=1733519924; cv=none; b=c6ORLnjCLliByQwYmCaSAJHQevKFDMj5YeXHqycLlXIKoB/YnwsgCylsxpVREjHMIhQxbUQaoINSD1d2LTG6Dv3PCKsr7D1OglD2/8qCO0mYo9UYqppCAJRwl/C5/rGS23Z5rZfC2IPh/jOtG2CvClrCdym9KVHck3BEIj++j+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733519939; c=relaxed/simple;
-	bh=Tcmis1yXyG1Git2X+8o1kprRdEHNd8dKBzBagujoje0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WeGG64NZXsWcC69oP3ZyFMop5W47+/f4EFN8qbzo7URea6Qj0Nm+Ax+PRkW/rh3eRCSa+aekaPwTLI+q0jpKIGArgG9V/Z6iJN1YvxM8pyEqZnK6q+pDVixEzB7HNvukq/KwCX3bG6ALDLpjl7+CcAvS8Nm4UX4iUZq8J8JBHMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Oeq1Gn7f; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434a766b475so24447335e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 13:18:54 -0800 (PST)
+	s=arc-20240116; t=1733519924; c=relaxed/simple;
+	bh=+G0VUTcrCnTC5rX+UjcLwTptgU7q/HBq1U1Y2xggPl4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=kfYLXXXBgqgq2MExoMacXHPp0Jkt3sAREyIBdcAXd/BUvsIZfHTdCjaPDF3abojW0/kdaop+5lOmv0/IGdLcjkPKm/N6Rko9AKmVBHhDPjwRAZ13rOKtfAQVJwAI81BNQ1fBalKK7BFCmLRORRztBsmjTEA7d51pVqN+hPe1mfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErRn66Lr; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa503cced42so352623966b.3;
+        Fri, 06 Dec 2024 13:18:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1733519933; x=1734124733; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ClGXX4576d+FS4AfSrsTJoO8ACeKpgP1Aq3SHCHN4ug=;
-        b=Oeq1Gn7fDEoBWFXWFd+tG4/iYbDydG7sYsuGbVWdJ5/fAUUW9ydT9xD3drTOCTPTES
-         1rp2KeVNuI/ClyayiHk1RVZYbyvniJtGSebXNvhu/9FMIUck0bejAfx9NC9PC2FXkyll
-         5046Mf0A6wpVI2c1j1tGLGhxTX2mfzcBoJ7+k4fGrDH3lgQ9qvOQuxD8B68943WQZfkv
-         ELR/j6RAmGFEu4gq4EISJDf7ZeJKQ2LmzD1r25LlhhD/D1NreHKlwLm6HWoSfmXRH/gB
-         +8qelN5900Vs37OBz2gizt8RXb0Vf7WskME+SGOdON10JFv2HCagIFcLyUMRJEm+4Mov
-         TQAQ==
+        d=gmail.com; s=20230601; t=1733519920; x=1734124720; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+G0VUTcrCnTC5rX+UjcLwTptgU7q/HBq1U1Y2xggPl4=;
+        b=ErRn66Lrkd1BRffrmAYPHrDaLy5hWARwN2D9uoGlVn+pDFc6WFqFv4NbbtIhS+wP3p
+         RshhR5Jyn7pwA+HrWwEQjr3AugfLn7hedCHJ/ucCRaf/ndovoLEXH4feaRBzDRxMPM9H
+         gW9ZNDDyegCUam/o57mDkc04xtoO6bQsBZ0clgFJJt9CRtAKsh/BhEEB0f+RGumi9tjk
+         6u2WqRykdzxzJx323s8q5izOrwN52xYxcvUfZXAsTTyNRb6f2Oaqc+W3z8dQWf2VhuUR
+         InkJC0OwrqmpxTYFvj/eR3Gu1Ayva0K/sL8v80GJHR+XZS76y35rR9tMlTC5ctPODLvl
+         lB5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733519933; x=1734124733;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ClGXX4576d+FS4AfSrsTJoO8ACeKpgP1Aq3SHCHN4ug=;
-        b=cGom7XuiLhVTqyzI622MZwLjuwUmhQuRrPEAvJG0VMHIbm/EFugHh7/z98DCdEpeQB
-         qIVoiACoxPrkK1bIBLsC0Lzrk2Y82APJjcA4+uF4zmgWorVawQlgc9eVwtEB8sktK437
-         4uxaZXvYj2pdmu5YsANJr0DSdSIFARVn9hehwMTtiOAeTyW/ok9NU09PsOMiUUSQKsiP
-         GVmvWSbwnplPVYkQ2hf4egXqaiEz4wxWCTDqy+w6qIABF7BloU5ruRp/7/jN1xb3rqTR
-         JLrErIDDGo7pTEudHv0dep8Pc2n0+8qvMBTaWpdpbyHIJp6KXa8TzRaGGT6JAsFX5EHx
-         CyuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWx9lAkZUzja1J/sBiClEfxsRMA3f9pXd7cfPKO5fdt43nLAY/rFJA5hk82QqJ4Uy0lm5AE1j/xhK9s4G8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSCstbaPbruZDhFgyXFc8rASu+ZjZe8sxXwImLncSIwhxBjSHs
-	eypmVW1TgEBSszClNUuhu3m/xSanrIypqOZipAboM9zS4zwIuEQ9Xw73j+Pjg2I=
-X-Gm-Gg: ASbGncvITzeJJ+cxw2O5UqU4lkq+KQkcomZ/+/gP1PekKdwy7qeZwLjGo/rezD9JQvq
-	WUkBdFLCb44NYnbfW9/5q9ipKxxuad1G8htCNHVmXBLuvjMO11YG1fq9DDtjAwTR1vU6u71eaT+
-	N5ysMWImRpwQk3U2qnr2ZXSP18RURvSwV3BbiDaH5UoQu+6oaHhkduzfCAoEVHKjuw+85u6mmww
-	pkH9d0lpKdKUteMCIaOmeQ4cCOGEPWBSBjbtQpC+CxQYoyZgtsvW7bDxzGZqA==
-X-Google-Smtp-Source: AGHT+IHtVw3KjxeCH9wir8jOx+KOef7V7Mp1iwfpR6Dzrz1WvJS67DDafbbs5mQbOjjTXm7dTPyaPw==
-X-Received: by 2002:a5d:6dab:0:b0:386:3262:28c6 with SMTP id ffacd0b85a97d-38632622926mr1100016f8f.5.1733519933466;
-        Fri, 06 Dec 2024 13:18:53 -0800 (PST)
-Received: from serenity.mandelbit.com ([2001:67c:2fbc:1:3cee:9adf:5d38:601e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861fd46839sm5441302f8f.52.2024.12.06.13.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 13:18:53 -0800 (PST)
-From: Antonio Quartulli <antonio@openvpn.net>
-Date: Fri, 06 Dec 2024 22:18:35 +0100
-Subject: [PATCH net-next v13 10/22] ovpn: store tunnel and transport
- statistics
+        d=1e100.net; s=20230601; t=1733519920; x=1734124720;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+G0VUTcrCnTC5rX+UjcLwTptgU7q/HBq1U1Y2xggPl4=;
+        b=WtXH9HR5OphZ7fQuB42Oy1MNN+4aQwvE/zZ1VgaWoBpKxMvaBYibewsNQsBLoXcyUH
+         L7/RBcII/J6rVqi6We+LV5qV7Sfn744cj/mg9P+THa0kw88hEzHhLQRpVoj6mkwxqvPr
+         K8Tf9b62EicNilT20UOLt/SZChjij29hWIzZdoJlcZns11n2Zw8Ge4wKvojSn1HX0yEf
+         6W1hzo3a/gBS+BIXMbk2CeNPI/vcrtBhsXUnNuIkq6sBUiNpFTOdnf/nFxHeJsq+nDrp
+         g7NLQlh6YNh4WXDGhem8Qp07vv/xvRKH9NdO8gTig+DKdl2JP1ENYA/ipszdOCZaNQO6
+         ZEaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr3gQqhHZ0C9s446uvZAo2Dy6yWQQxQNqZBzDEBXFt7V3B1eWOvt0EzpkeJ2KD4M2O6rjofPwoX8iFfsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbE/S7NhjO9GXPJ/czDzL9cjBLU24RekQtLoZoTHISh5cnEa7J
+	eqrzrqTI5NjKLFId8YnKhKSeoPk5u7S+CLGHmxAIyUestS+IC0x8
+X-Gm-Gg: ASbGnct0iK24QoXmvpf7+9gQ0fwZRfQX/W71zwQwWumziPGKyTmW43o/8MJFF1GBFBL
+	bRSPyh5KEqEwkCq59jcwd7ZWElP52jk0V2q6oUaE+hx3nKSbJLSNQEvP+RX3pbRnguQKdoGI7Da
+	u16x39EZeZ3jJuo1uDK1vxUmo9wMBYe1s4ppJV4IawJdN+zAictPfKWRB0A+r0ybwipLf7j9Tf/
+	y2fnDaSbFDYfk7Du5Y6wVAkDUC5A3i5QbfjeGWI5GN45g==
+X-Google-Smtp-Source: AGHT+IGcoxybZrhqT6jfLtgMG6i7/mc41GHYgMF8CO/3DtZQeH/elgJdfj7dasDNeMyogMXK8EXInA==
+X-Received: by 2002:a17:907:7714:b0:aa6:3418:d9d4 with SMTP id a640c23a62f3a-aa63a073aa6mr302410166b.17.1733519919441;
+        Fri, 06 Dec 2024 13:18:39 -0800 (PST)
+Received: from [127.0.0.1] ([45.152.72.7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e96a3esm291696566b.59.2024.12.06.13.18.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 13:18:39 -0800 (PST)
+Date: Fri, 6 Dec 2024 23:18:36 +0200 (GMT+02:00)
+From: Yurii Strilets <yurastr100@gmail.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: platform-driver-x86@vger.kernel.org, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Message-ID: <78eb0efb-bbaf-4cba-840a-9aa507798075@gmail.com>
+In-Reply-To: <bf3b9efd-6700-485a-bd0e-f81de1e11fcf@gmx.de>
+References: <33bfcda8-3d3d-46b9-84f0-44e0e9f44230@gmail.com> <bf3b9efd-6700-485a-bd0e-f81de1e11fcf@gmx.de>
+Subject: Re: [REGRESSION][BISECTED] asus-wmi driver fails on my laptop
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-b4-ovpn-v13-10-67fb4be666e2@openvpn.net>
-References: <20241206-b4-ovpn-v13-0-67fb4be666e2@openvpn.net>
-In-Reply-To: <20241206-b4-ovpn-v13-0-67fb4be666e2@openvpn.net>
-To: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Donald Hunter <donald.hunter@gmail.com>, 
- Antonio Quartulli <antonio@openvpn.net>, Shuah Khan <shuah@kernel.org>, 
- sd@queasysnail.net, ryazanov.s.a@gmail.com, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7121; i=antonio@openvpn.net;
- h=from:subject:message-id; bh=Tcmis1yXyG1Git2X+8o1kprRdEHNd8dKBzBagujoje0=;
- b=owEBbQGS/pANAwAIAQtw5TqgONWHAcsmYgBnU2pX+9u6++dwh7A49gOS1MllhYsQVQ3MUIwiJ
- pQ0pcjtb0GJATMEAAEIAB0WIQSZq9xs+NQS5N5fwPwLcOU6oDjVhwUCZ1NqVwAKCRALcOU6oDjV
- h7gLB/9NKT4hT1NATXan4/6K98i0mPdMdryB4MFbaoeQGWsg08g79yHp6ZB3i19cdwshPWW2Ehp
- w/LM4YLlKPj/6aEGv1+a7t2buHNY7QuZZnlhEKXOUc5YVnIT8gZi8pDaCl+K+BHN/MFJJZVtBkW
- ye2zBAQA39KCIb/XVWXy4eb+ut8Ubi0vdvfm9du9VXd2MunncMy2vHNF6An1Ja2XyyPBIdLXakS
- utkW++rXmicUQEEQVTKcOxxAQ5i3lYVhGIqpzAmHwqykYFDJnPA2YxQTtOAhaaiDfEzKb0OGJ9R
- jKrMBTDWdZiAYY+gVvQe1yf5XSRe1l5XAvmj5HPjJPEgOcZh
-X-Developer-Key: i=antonio@openvpn.net; a=openpgp;
- fpr=CABDA1282017C267219885C748F0CCB68F59D14C
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <78eb0efb-bbaf-4cba-840a-9aa507798075@gmail.com>
 
-Byte/packet counters for in-tunnel and transport streams
-are now initialized and updated as needed.
+Thank you very much for the fix!
+I am terribly sorry about a faulty report, I did just find out I had an iss=
+ue during the mainline build.
 
-To be exported via netlink.
+Dec 6, 2024 20:15:05 Armin Wolf <W_Armin@gmx.de>:
 
-Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
----
- drivers/net/ovpn/Makefile |  1 +
- drivers/net/ovpn/io.c     | 12 +++++++++++-
- drivers/net/ovpn/peer.c   |  2 ++
- drivers/net/ovpn/peer.h   |  5 +++++
- drivers/net/ovpn/stats.c  | 21 +++++++++++++++++++++
- drivers/net/ovpn/stats.h  | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 87 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ovpn/Makefile b/drivers/net/ovpn/Makefile
-index ccdaeced1982c851475657860a005ff2b9dfbd13..d43fda72646bdc7644d9a878b56da0a0e5680c98 100644
---- a/drivers/net/ovpn/Makefile
-+++ b/drivers/net/ovpn/Makefile
-@@ -17,4 +17,5 @@ ovpn-y += netlink-gen.o
- ovpn-y += peer.o
- ovpn-y += pktid.o
- ovpn-y += socket.o
-+ovpn-y += stats.o
- ovpn-y += udp.o
-diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
-index a6db02f712203430942e3908480026f4dbac673a..8414dbd24467d77a5122daa9c3c745aa5e258c98 100644
---- a/drivers/net/ovpn/io.c
-+++ b/drivers/net/ovpn/io.c
-@@ -12,6 +12,7 @@
- #include <linux/skbuff.h>
- #include <net/gro_cells.h>
- #include <net/gso.h>
-+#include <net/ip.h>
- 
- #include "ovpnstruct.h"
- #include "peer.h"
-@@ -55,9 +56,11 @@ static void ovpn_netdev_write(struct ovpn_peer *peer, struct sk_buff *skb)
- 	/* cause packet to be "received" by the interface */
- 	pkt_len = skb->len;
- 	ret = gro_cells_receive(&peer->ovpn->gro_cells, skb);
--	if (likely(ret == NET_RX_SUCCESS))
-+	if (likely(ret == NET_RX_SUCCESS)) {
- 		/* update RX stats with the size of decrypted packet */
-+		ovpn_peer_stats_increment_rx(&peer->vpn_stats, pkt_len);
- 		dev_sw_netstats_rx_add(peer->ovpn->dev, pkt_len);
-+	}
- }
- 
- void ovpn_decrypt_post(void *data, int ret)
-@@ -155,6 +158,8 @@ void ovpn_recv(struct ovpn_peer *peer, struct sk_buff *skb)
- 	struct ovpn_crypto_key_slot *ks;
- 	u8 key_id;
- 
-+	ovpn_peer_stats_increment_rx(&peer->link_stats, skb->len);
-+
- 	/* get the key slot matching the key ID in the received packet */
- 	key_id = ovpn_key_id_from_skb(skb);
- 	ks = ovpn_crypto_key_id_to_slot(&peer->crypto, key_id);
-@@ -176,6 +181,7 @@ void ovpn_encrypt_post(void *data, int ret)
- 	struct ovpn_crypto_key_slot *ks;
- 	struct sk_buff *skb = data;
- 	struct ovpn_peer *peer;
-+	unsigned int orig_len;
- 
- 	/* encryption is happening asynchronously. This function will be
- 	 * called later by the crypto callback with a proper return value
-@@ -198,6 +204,7 @@ void ovpn_encrypt_post(void *data, int ret)
- 		goto err;
- 
- 	skb_mark_not_on_list(skb);
-+	orig_len = skb->len;
- 
- 	switch (peer->sock->sock->sk->sk_protocol) {
- 	case IPPROTO_UDP:
-@@ -207,6 +214,8 @@ void ovpn_encrypt_post(void *data, int ret)
- 		/* no transport configured yet */
- 		goto err;
- 	}
-+
-+	ovpn_peer_stats_increment_tx(&peer->link_stats, orig_len);
- 	/* skb passed down the stack - don't free it */
- 	skb = NULL;
- err:
-@@ -325,6 +334,7 @@ netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev)
- 		goto drop;
- 	}
- 
-+	ovpn_peer_stats_increment_tx(&peer->vpn_stats, skb->len);
- 	ovpn_send(ovpn, skb_list.next, peer);
- 
- 	return NETDEV_TX_OK;
-diff --git a/drivers/net/ovpn/peer.c b/drivers/net/ovpn/peer.c
-index 456fd70ccd2a7e37f0ad1732ca9f5a07f2f54a97..0d625f065255c4947a18ae475b04c27f0cf6bb32 100644
---- a/drivers/net/ovpn/peer.c
-+++ b/drivers/net/ovpn/peer.c
-@@ -47,6 +47,8 @@ struct ovpn_peer *ovpn_peer_new(struct ovpn_priv *ovpn, u32 id)
- 	ovpn_crypto_state_init(&peer->crypto);
- 	spin_lock_init(&peer->lock);
- 	kref_init(&peer->refcount);
-+	ovpn_peer_stats_init(&peer->vpn_stats);
-+	ovpn_peer_stats_init(&peer->link_stats);
- 
- 	ret = dst_cache_init(&peer->dst_cache, GFP_KERNEL);
- 	if (ret < 0) {
-diff --git a/drivers/net/ovpn/peer.h b/drivers/net/ovpn/peer.h
-index 1b427870df2cf972e0f572e046452378358f245a..61c54fb864d990ff3d746f18c9a06d4c950bd1ac 100644
---- a/drivers/net/ovpn/peer.h
-+++ b/drivers/net/ovpn/peer.h
-@@ -13,6 +13,7 @@
- #include <net/dst_cache.h>
- 
- #include "crypto.h"
-+#include "stats.h"
- 
- /**
-  * struct ovpn_peer - the main remote peer object
-@@ -25,6 +26,8 @@
-  * @crypto: the crypto configuration (ciphers, keys, etc..)
-  * @dst_cache: cache for dst_entry used to send to peer
-  * @bind: remote peer binding
-+ * @vpn_stats: per-peer in-VPN TX/RX stays
-+ * @link_stats: per-peer link/transport TX/RX stats
-  * @delete_reason: why peer was deleted (i.e. timeout, transport error, ..)
-  * @lock: protects binding to peer (bind)
-  * @refcount: reference counter
-@@ -42,6 +45,8 @@ struct ovpn_peer {
- 	struct ovpn_crypto_state crypto;
- 	struct dst_cache dst_cache;
- 	struct ovpn_bind __rcu *bind;
-+	struct ovpn_peer_stats vpn_stats;
-+	struct ovpn_peer_stats link_stats;
- 	enum ovpn_del_peer_reason delete_reason;
- 	spinlock_t lock; /* protects bind */
- 	struct kref refcount;
-diff --git a/drivers/net/ovpn/stats.c b/drivers/net/ovpn/stats.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..a383842c3449b73694c318837b0b92eb9afaec22
---- /dev/null
-+++ b/drivers/net/ovpn/stats.c
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*  OpenVPN data channel offload
-+ *
-+ *  Copyright (C) 2020-2024 OpenVPN, Inc.
-+ *
-+ *  Author:	James Yonan <james@openvpn.net>
-+ *		Antonio Quartulli <antonio@openvpn.net>
-+ */
-+
-+#include <linux/atomic.h>
-+
-+#include "stats.h"
-+
-+void ovpn_peer_stats_init(struct ovpn_peer_stats *ps)
-+{
-+	atomic64_set(&ps->rx.bytes, 0);
-+	atomic64_set(&ps->rx.packets, 0);
-+
-+	atomic64_set(&ps->tx.bytes, 0);
-+	atomic64_set(&ps->tx.packets, 0);
-+}
-diff --git a/drivers/net/ovpn/stats.h b/drivers/net/ovpn/stats.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..868f49d25eaa8fef04a02a61c363d95f9c9ef80a
---- /dev/null
-+++ b/drivers/net/ovpn/stats.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*  OpenVPN data channel offload
-+ *
-+ *  Copyright (C) 2020-2024 OpenVPN, Inc.
-+ *
-+ *  Author:	James Yonan <james@openvpn.net>
-+ *		Antonio Quartulli <antonio@openvpn.net>
-+ *		Lev Stipakov <lev@openvpn.net>
-+ */
-+
-+#ifndef _NET_OVPN_OVPNSTATS_H_
-+#define _NET_OVPN_OVPNSTATS_H_
-+
-+/* one stat */
-+struct ovpn_peer_stat {
-+	atomic64_t bytes;
-+	atomic64_t packets;
-+};
-+
-+/* rx and tx stats combined */
-+struct ovpn_peer_stats {
-+	struct ovpn_peer_stat rx;
-+	struct ovpn_peer_stat tx;
-+};
-+
-+void ovpn_peer_stats_init(struct ovpn_peer_stats *ps);
-+
-+static inline void ovpn_peer_stats_increment(struct ovpn_peer_stat *stat,
-+					     const unsigned int n)
-+{
-+	atomic64_add(n, &stat->bytes);
-+	atomic64_inc(&stat->packets);
-+}
-+
-+static inline void ovpn_peer_stats_increment_rx(struct ovpn_peer_stats *stats,
-+						const unsigned int n)
-+{
-+	ovpn_peer_stats_increment(&stats->rx, n);
-+}
-+
-+static inline void ovpn_peer_stats_increment_tx(struct ovpn_peer_stats *stats,
-+						const unsigned int n)
-+{
-+	ovpn_peer_stats_increment(&stats->tx, n);
-+}
-+
-+#endif /* _NET_OVPN_OVPNSTATS_H_ */
-
--- 
-2.45.2
-
+> Am 06.12.24 um 14:33 schrieb Yura Strilets:
+>=20
+>> Hello,
+>>=20
+>> After upgrading from 6.11 to 6.12 a bunch of Fn+Fx buttons(touchpad,
+>> mic, kb backlight, my asus) stopped working and the
+>> /sys/(...)/asus::kbd_backlight interface is missing, which,
+>> considering the dmesg, looks like an asus-wmi driver issue.
+>>=20
+>> I've been able to bisect the issue to the commit
+>> [b012170fed282151f7ba8988a347670c299f5ab3] "platform/x86: asus-wmi:
+>> Fix thermal profile initialization"
+>>=20
+>> Additionally, here's some maybe-helpful information:
+>> my laptop's model -- ASUS Zenbook UX3402VA
+>> linux distro -- Arch Linux
+>> .config for bisection -- was taken from /proc/config.gz at 6.12.1 arch
+>> kernel(attached in [1]) and missing options are default
+>> dmesg logs -- The "grep asus" parts of both good and bad scenarios can
+>> be seen below and full logs are at [2] and [3]
+>>=20
+>> =3D=3D bad.log =3D=3D
+>> [=C2=A0=C2=A0=C2=A0 3.664546] asus_wmi: ASUS WMI generic driver loaded
+>> [=C2=A0=C2=A0=C2=A0 3.713358] asus_wmi: Initialization: 0x1
+>> [=C2=A0=C2=A0=C2=A0 3.714126] asus_wmi: SFUN value: 0x21
+>> [=C2=A0=C2=A0=C2=A0 3.714131] asus-nb-wmi asus-nb-wmi: Detected ATK, not=
+ ASUSWMI, use
+>> DSTS
+>> [=C2=A0=C2=A0=C2=A0 3.757420] asus_wmi: Failed to set throttle thermal p=
+olicy
+>> (retval): 0x0
+>> [=C2=A0=C2=A0=C2=A0 3.757425] asus_wmi: Failed to set default thermal pr=
+ofile
+>> [=C2=A0=C2=A0=C2=A0 3.757429] asus-nb-wmi asus-nb-wmi: probe with driver=
+ asus-nb-wmi
+>> failed with error -5
+>> =3D=3D end =3D=3D
+>>=20
+>> =3D=3D good.log =3D=3D
+>> [=C2=A0=C2=A0=C2=A0 4.557898] asus_wmi: ASUS WMI generic driver loaded
+>> [=C2=A0=C2=A0=C2=A0 4.776587] asus_wmi: Initialization: 0x1
+>> [=C2=A0=C2=A0=C2=A0 4.777253] asus_wmi: SFUN value: 0x21
+>> [=C2=A0=C2=A0=C2=A0 4.777256] asus-nb-wmi asus-nb-wmi: Detected ATK, not=
+ ASUSWMI, use
+>> DSTS
+>> [=C2=A0=C2=A0=C2=A0 4.777258] asus-nb-wmi asus-nb-wmi: Detected ATK, ena=
+ble event queue
+>> [=C2=A0=C2=A0=C2=A0 4.805497] input: Asus WMI hotkeys as
+>> /devices/platform/asus-nb-wmi/input/input15
+>> =3D=3D end =3D=3D
+>>=20
+>> [1] .config - https://pastebin.com/raw/3nDSV8Sm
+>> [2] bad.log - https://pastebin.com/raw/fvR5Sjzt
+>> [3] good.log - https://pastebin.com/raw/EazfLAWA
+>>=20
+>> Thanks,
+>> Yurii
+>>=20
+> I am aware of this issue, the necessary fix (commit 25fb5f47f34d) was alr=
+eady submitted upstream and will likely
+> show up in the stable kernels soon.
+>=20
+> Thanks,
+> Armin Wolf
 
