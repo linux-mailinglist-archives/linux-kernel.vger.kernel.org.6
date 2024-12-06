@@ -1,117 +1,166 @@
-Return-Path: <linux-kernel+bounces-434338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6269E6520
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:40:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F13B9E6524
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:48:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E31A281BF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493A21885558
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4D018D63C;
-	Fri,  6 Dec 2024 03:40:48 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3EC18C34B;
+	Fri,  6 Dec 2024 03:48:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8E813DDDF
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 03:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331EE6FBF;
+	Fri,  6 Dec 2024 03:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733456448; cv=none; b=bprvDEG01s5pM+/FASJVBo43rGRjQ7+4QrHYQnWK2LREyZan90jBF3TKjkG48Tdw91Xq/ZGFic7kE9ieY2L4BJUxMHa6iK5h0cLSgZbfsHDm/czIrKHkbkiqDrA6ynyzxloxgvTnSxV5QnQH3jpm8O3sxLiUrBLhFDDP8ABEip8=
+	t=1733456929; cv=none; b=Wl3LNV0W5oLctotd0qGF8Rgi5kXb+7f/s6iOTT6BsvLLlXwSyuaU+yf1iCaVVhgeMpytk4jZHPdy6L7guCE6G3oM+ouRW8FFQ2UqJHHlNlLtgMyBh/LYd+pyYuay/lDX5oqWcGKrYs0Zi2gC9HQSpJOUS+SwtGqzbRifGWXiZ9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733456448; c=relaxed/simple;
-	bh=EDdmm0DHzlfUIVjgSjHafTsxqy+4Kuy7LBa8PuA68Ug=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=dZAN4MhFmN8G4uHhAuuBbnvDDApVriVobvbNfh3O+/1d0Z7CqRgBqBrsJJAftaMQqZvfVtXTba3E/F02xV9rqrDrWl9IdzaEeFOabOIa9Z198cdqndlcdaoSeV3XEatit/4qZQxro3G6P57xYlGuE69lbYM7FfMGqjfx5D8H+kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-280-C8E4fnSMOAGX_JjFtXp91A-1; Fri, 06 Dec 2024 03:40:43 +0000
-X-MC-Unique: C8E4fnSMOAGX_JjFtXp91A-1
-X-Mimecast-MFC-AGG-ID: C8E4fnSMOAGX_JjFtXp91A
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
- 2024 03:39:59 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Dec 2024 03:39:59 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>
-CC: Linus Torvalds <torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, Martin Uecker
-	<Martin.Uecker@med.uni-goettingen.de>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 01/10] compiler.h: add statically_false()
-Thread-Topic: [PATCH 01/10] compiler.h: add statically_false()
-Thread-Index: AQHbROCIk5mOE+KmUE+HEr8z57N8IbLWaz+wgAFe2gCAALnCYA==
-Date: Fri, 6 Dec 2024 03:39:59 +0000
-Message-ID: <b48e2f5dd8d64cbab471629ae03c7511@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-1-4e4cbaecc216@wanadoo.fr>
- <e115a4245e5342a994a7e596cc6357fa@AcuMS.aculab.com>
- <CAMZ6Rq+n0vG9zObF-kY-Xo+iP_Y3P8A6_nEfB8F=UhqeQBepRw@mail.gmail.com>
-In-Reply-To: <CAMZ6Rq+n0vG9zObF-kY-Xo+iP_Y3P8A6_nEfB8F=UhqeQBepRw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733456929; c=relaxed/simple;
+	bh=ynRzNbP/8JinuPL9OYupd8jhTZfVrzQbdDdX3HyqwJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h2BBXaNNg4m1NkaUkMJe/mj2rlQbGN3YShof5HVAQi6bbCduvjISpeh+JbQYrtq90bL+0tAgNuReu7iaUZ60ayL6BDZgX4AFBYuRokFWkAt+icnVesmuVSZ6veDovMvq8IxaR1ZW3FHc2KkPnixN25vaUfzF3nTHmjHaNvUk9go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y4HHH29v2z11PQ2;
+	Fri,  6 Dec 2024 11:46:19 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3859F140118;
+	Fri,  6 Dec 2024 11:48:38 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 6 Dec
+ 2024 11:48:37 +0800
+Message-ID: <2ba08cbe-ce27-4b83-acad-3845421c9bf6@huawei.com>
+Date: Fri, 6 Dec 2024 11:48:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: nyPohuxlcvuGC00IBd4RCHDK1MSIs5zDRf-kTxm6zoM_1733456442
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] padata: fix UAF in padata_reorder
+To: Daniel Jordan <daniel.m.jordan@oracle.com>, Chen Ridong
+	<chenridong@huaweicloud.com>
+CC: <steffen.klassert@secunet.com>, <herbert@gondor.apana.org.au>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<wangweiyang2@huawei.com>
+References: <20241123080509.2573987-1-chenridong@huaweicloud.com>
+ <20241123080509.2573987-3-chenridong@huaweicloud.com>
+ <nihv732hsimy4lfnzspjur4ndal7n3nngrukvr5fx7emgp2jzl@mjz6q5zsswds>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <nihv732hsimy4lfnzspjur4ndal7n3nngrukvr5fx7emgp2jzl@mjz6q5zsswds>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDA1IERlY2VtYmVyIDIwMjQgMTU6MjYNCj4g
-DQo+IE9uIFRodS4gNSBEZWMgMjAyNCBhdCAwMzozMCwgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
-aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4gRnJvbTogVmluY2VudCBNYWlsaG9sDQo+ID4gPiBT
-ZW50OiAwMiBEZWNlbWJlciAyMDI0IDE3OjMzDQo+ID4gPg0KPiA+ID4gRnJvbTogVmluY2VudCBN
-YWlsaG9sIDxtYWlsaG9sLnZpbmNlbnRAd2FuYWRvby5mcj4NCj4gPiA+DQo+ID4gPiBGb3IgY29t
-cGxldGlvbiwgYWRkIHN0YXRpY2FsbHlfZmFsc2UoKSB3aGljaCBpcyB0aGUgZXF1aXZhbGVudCBv
-Zg0KPiA+ID4gc3RhdGljYWxseV90cnVlKCkgZXhjZXB0IHRoYXQgaXQgd2lsbCByZXR1cm4gdHJ1
-ZSBvbmx5IGlmIHRoZSBpbnB1dCBpcw0KPiA+ID4ga25vd24gdG8gYmUgZmFsc2UgYXQgY29tcGls
-ZSB0aW1lLg0KPiA+DQo+ID4gVGhpcyBpcyBwcmV0dHkgbXVjaCBwb2ludGxlc3MuDQo+ID4gSXQg
-aXMganVzdCBhcyBlYXN5IHRvIGludmVydCB0aGUgY29uZGl0aW9uIGF0IHRoZSBjYWxsIHNpdGUu
-DQo+IA0KPiBUbyBzdGFydCB3aXRoLCBJIHdpbGwgYXJndWUgdGhhdDoNCj4gDQo+ICAgc3RhdGlj
-YWxseV9mYWxzZShmb28pDQo+IA0KPiBpcyBtb3JlIHByZXR0eSB0aGFuDQo+IA0KPiAgIHN0YXRp
-Y2FsbHlfdHJ1ZSghKGZvbykpDQoNCkV4Y2VwdCB0aGF0IHRoZSB0ZXN0IGlzIG1vcmUgbGlrZWx5
-IHRvIGJlOg0KCXN0YXRpY2FsbHlfZmFsc2UoeCA+IHkpDQphbmQgdGhlIGludmVydCBpcyB0aGVu
-DQoJc3RhdGljYWxseV90cnVlKHggPD0geSkNCg0KTm8gZGlmZmVyZW50IGZyb20gQyBpdHNlbGYs
-IHRoZXJlIGlzIG5vICdpZm5vdCAoY29uZGl0aW9uKSB7Li4ufScNCihkb24ndCB0YWxrIHRvIG1l
-IGFib3V0IHBlcmwuLi4pDQoNCkkgc3VzcGVjdCB5b3UgbmVlZCB0byBwcmV0dHkgbXVjaCByZW1v
-dmUgYWxsIHRoZSBjb21tZW50cyB0aGF0DQpjcm9zcy1yZWZlciB0byBzdGF0aWNhbGx5X3RydWUo
-KSBmcm9tIHRoZSBvdGhlciBwYXRjaGVzLg0KDQpTbyBpc19jb25zdF90cnVlKCkgaXMganVzdCAn
-cmV0dXJuIHRydWUgaWYgdGhlIGV4cHJlc3Npb24NCmlzIGEgJ25vbi16ZXJvIGNvbnN0YW50IGlu
-dGVnZXIgZXhwcmVzc2lvbicuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFr
-ZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwg
-VUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
+
+On 2024/12/6 7:01, Daniel Jordan wrote:
+> Hello Ridong,
+> 
+> On Sat, Nov 23, 2024 at 08:05:09AM +0000, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> A bug was found when run ltp test:
+> ...snip...
+>> This can be explained as bellow:
+>>
+>> pcrypt_aead_encrypt
+>> ...
+>> padata_do_parallel
+>> refcount_inc(&pd->refcnt); // add refcnt
+>> ...
+>> padata_do_serial
+>> padata_reorder // pd
+>> while (1) {
+>> padata_find_next(pd, true); // using pd
+>> queue_work_on
+>> ...
+>> padata_serial_worker				crypto_del_alg
+>> padata_put_pd_cnt // sub refcnt
+>> 						padata_free_shell
+>> 						padata_put_pd(ps->pd);
+>> 						// pd is freed
+>> // loop again, but pd is freed
+>> // call padata_find_next, UAF
+>> }
+> 
+> Thanks for the fix and clear explanation.
+> 
+>> diff --git a/kernel/padata.c b/kernel/padata.c
+>> index 5d8e18cdcb25..627014825266 100644
+>> --- a/kernel/padata.c
+>> +++ b/kernel/padata.c
+>> @@ -319,6 +319,7 @@ static void padata_reorder(struct parallel_data *pd)
+>>  	if (!spin_trylock_bh(&pd->lock))
+>>  		return;
+>>  
+>> +	padata_get_pd(pd);
+>>  	while (1) {
+>>  		padata = padata_find_next(pd, true);
+>>  
+>> @@ -355,6 +356,7 @@ static void padata_reorder(struct parallel_data *pd)
+>>  	reorder = per_cpu_ptr(pd->reorder_list, pd->cpu);
+>>  	if (!list_empty(&reorder->list) && padata_find_next(pd, false))
+>>  		queue_work(pinst->serial_wq, &pd->reorder_work);
+>> +	padata_put_pd(pd);
+> 
+> Putting the ref unconditionally here doesn't cover the case where reorder_work
+> is queued and accesses the freed pd.
+> 
+> The review of patches 3-5 from this series has a potential solution for
+> this that also keeps some of these refcount operations out of the fast
+> path:
+> 
+>     https://lore.kernel.org/all/20221019083708.27138-1-nstange@suse.de/
+> 
+
+Thank you for your review.
+
+IIUC, patches 3-5 from this series aim to fix two issue.
+1. Avoid UAF for pd(the patch 3).
+2. Avoid UAF for ps(the patch 4-5).
+What my patch 2 intends to fix is the issue 1.
+
+Let's focus on issue 1.
+As shown bellow, if reorder_work is queued, the refcnt must greater than
+0, since its serial work have not be finished yet. Do your agree with that?
+
+pcrypt_aead_encrypt/pcrypt_aead_decrypt
+padata_do_parallel 			// refcount_inc(&pd->refcnt);
+padata_parallel_worker	
+padata->parallel(padata);
+padata_do_serial(padata);		
+// pd->reorder_list 			// enque reorder_list
+padata_reorder
+ - case1:squeue->work
+	padata_serial_worker		// sub refcnt cnt
+ - case2:pd->reorder_work		// reorder->list is not empty
+	invoke_padata_reorder 		// this means refcnt > 0
+	...
+	padata_serial_worker
+
+I think the patch 3(from Nicolai Stange) can also avoid UAF for pd, but
+it's complicated. IIUC, the issue 1 can only occur in the scenario what
+I mentioned is my commit message. How I fix issue 1 is by adding and
+putting the refcnt in the padata_reorder function, which is simple and
+clear.
+
+If understand something uncorrectly, please let me know.
+
+As the issue 2, I have not encountered it, but it exists in theory.
+
+Thanks,
+Ridong
 
