@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-434267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146DF9E6428
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:29:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1BD9E6420
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE161167E8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75FC188523B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16977156F54;
-	Fri,  6 Dec 2024 02:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HmdrrhjA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92B71714DF;
+	Fri,  6 Dec 2024 02:29:01 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56FF1741D2;
-	Fri,  6 Dec 2024 02:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB293D6B;
+	Fri,  6 Dec 2024 02:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452177; cv=none; b=PqW8gyjvmwAtm3Zs712RZuAdK3cRdmMIABaoxU5Oqn07B5Ea68qb4h/NTodBD/m05r7yIICANu3z0lmVXmeKJnjxCNbM1JuceZnb0lcJcYLeek4MnjntDZ2fa17JXyLSjbrg39Jv1WFmKWciAMRPR24+33aqMusnaTgoB/XZ85c=
+	t=1733452141; cv=none; b=Zfitg8zkt9kiVKGh83ewi38FqYUmLKyc3Cs/xM1cK8iogB9In0nUuCeLRRW1onxces+d1HvCyAOVptHQVdNNU6F8tq8igd0pDrZLr3cbU0qlu2QmSwGebhqMHCkAVyUQvc6uChbVJEuH3J9zy/hVCWAwVI5LiupAn8wEsLnmbOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452177; c=relaxed/simple;
-	bh=UWYkmQgJqsODlM0e3u/6lpT+QT8jC6RKy54hcLbglIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDtgZOEWvLnMbmIjlAh11/kkBXRMzjvP4KDjVfI8wBDswav+pVmhnhm+70aHLPLvP+3IR4ptdY5tiE43eoswAhOxhgvoVNapM0SaQuDQnZjUkk8RuWSryi79JqrCXxSzYCDElRFXeVXFdiIXt++ktmuqxWZmLpj9lmlFCOq3EzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HmdrrhjA; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733452176; x=1764988176;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UWYkmQgJqsODlM0e3u/6lpT+QT8jC6RKy54hcLbglIU=;
-  b=HmdrrhjAd1tYBPNKhYBStFC2Ek5Ra/3vkg6oMbUgOSGkdBNqX06OepQg
-   4b/OJcw2n00fKOv37oCydkwCn6TU4FUsFlD2iK2SpfCuSRYCtBHARcQiJ
-   eu560MvoL31SGrcIr0Fz4Is1I1NR7z4x3XZsw3UqtsbzrtltxaiyD1tzI
-   u1mr50UjMkTEKhJvm7wb8xnMDWhuUaEnU+gmaTXrQPtIpHTPBY/G0Fv8K
-   QC2IveNezNnTpDjvIBrXjrym4kWHMaMMY53vmo+sPnCbU83kzPl9fKXh+
-   oks/V4V68xySlC4yanHhf3Wk97b4pRjNuWYSk/EkCIHWLf39+Ff3Q35mx
-   A==;
-X-CSE-ConnectionGUID: L3Tvmo5kRw+e4bfgRL1CNw==
-X-CSE-MsgGUID: Zvub0rilT2i0kMPml5W4KQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33943020"
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="33943020"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 18:29:35 -0800
-X-CSE-ConnectionGUID: lwXnpxdgQ6yYKcNCD6eNMA==
-X-CSE-MsgGUID: znHyy5KWTeu/Yt7uR8mtgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
-   d="scan'208";a="94749549"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 05 Dec 2024 18:29:32 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tJO5x-0000cl-24;
-	Fri, 06 Dec 2024 02:29:29 +0000
-Date: Fri, 6 Dec 2024 10:28:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] clk: samsung: Introduce Exynos990 clock
- controller driver
-Message-ID: <202412061048.3gu75pLi-lkp@intel.com>
-References: <20241205193423.783815-4-igor.belwon@mentallysanemainliners.org>
+	s=arc-20240116; t=1733452141; c=relaxed/simple;
+	bh=wbLhQT3zz+yC6Xn7uDEsUyEfxjn1dhwRYtWQogfi448=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hQ1WtKhDX9qjxiykKjo6zKDnoSaj6l4FVnFG/C8OvAExYZL0k5axgieumx5aZLuyEBofZwFhbd07d323gjGjm/1/Ce6CPI3W7iBhorO/5aldUGgQx7L1Yex0j9E0HGDs3ZB9NOnmTnVjisL+s+xRGfrTkEYeZtb+brEjtLkYiho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Y4FZB0sSFz1yrgv;
+	Fri,  6 Dec 2024 10:29:06 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2BAB81A016C;
+	Fri,  6 Dec 2024 10:28:50 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 6 Dec 2024 10:28:49 +0800
+Message-ID: <09cd08cf-9c6b-4c5f-b0da-e9a74ef120a5@huawei.com>
+Date: Fri, 6 Dec 2024 10:28:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205193423.783815-4-igor.belwon@mentallysanemainliners.org>
-
-Hi Igor,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on krzk/for-next]
-[also build test ERROR on krzk-dt/for-next clk/clk-next linus/master v6.13-rc1 next-20241205]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Igor-Belwon/clk-samsung-clk-pll-Add-support-for-pll_-0717x-0718x-0732x/20241206-043559
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241205193423.783815-4-igor.belwon%40mentallysanemainliners.org
-patch subject: [PATCH v1 3/3] clk: samsung: Introduce Exynos990 clock controller driver
-config: arc-randconfig-001-20241206 (https://download.01.org/0day-ci/archive/20241206/202412061048.3gu75pLi-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061048.3gu75pLi-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412061048.3gu75pLi-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/samsung/clk-exynos990.c:13:10: fatal error: dt-bindings/clock/exynos990.h: No such file or directory
-      13 | #include <dt-bindings/clock/exynos990.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <hkelam@marvell.com>
+Subject: Re: [PATCH V4 RESEND net-next 1/7] net: hibmcge: Add debugfs
+ supported in this module
+To: Jakub Kicinski <kuba@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+References: <20241203150131.3139399-1-shaojijie@huawei.com>
+ <20241203150131.3139399-2-shaojijie@huawei.com>
+ <20241205175006.318f17d9@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20241205175006.318f17d9@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
 
-vim +13 drivers/clk/samsung/clk-exynos990.c
+on 2024/12/6 9:50, Jakub Kicinski wrote:
+> On Tue, 3 Dec 2024 23:01:25 +0800 Jijie Shao wrote:
+>> +static void hbg_debugfs_uninit(void *data)
+>> +{
+>> +	debugfs_remove_recursive((struct dentry *)data);
+>> +}
+>> +
+>> +void hbg_debugfs_init(struct hbg_priv *priv)
+>> +{
+>> +	const char *name = pci_name(priv->pdev);
+>> +	struct device *dev = &priv->pdev->dev;
+>> +	struct dentry *root;
+>> +	u32 i;
+>> +
+>> +	root = debugfs_create_dir(name, hbg_dbgfs_root);
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(hbg_dbg_infos); i++)
+>> +		debugfs_create_devm_seqfile(dev, hbg_dbg_infos[i].name,
+>> +					    root, hbg_dbg_infos[i].read);
+>> +
+>> +	/* Ignore the failure because debugfs is not a key feature. */
+>> +	devm_add_action_or_reset(dev, hbg_debugfs_uninit, root);
+> There is nothing specific to this driver in the devm action,
+> also no need to create all files as devm if you remove recursive..
+>
+> Hi Greg, are you okay with adding debugfs_create_devm_dir() ?
 
-    12	
-  > 13	#include <dt-bindings/clock/exynos990.h>
-    14	
+Of course, it's my pleasure. I will add a patch in V5 to try to add this interface.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Jijie Shao
+
 
