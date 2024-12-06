@@ -1,149 +1,110 @@
-Return-Path: <linux-kernel+bounces-435598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2C59E79FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:23:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058189E79EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725C918819D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D599616BEF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0666B1D61A3;
-	Fri,  6 Dec 2024 20:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0BD83A17;
+	Fri,  6 Dec 2024 20:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=cirno.name header.i=@cirno.name header.b="XpptpqrD"
-Received: from forward206d.mail.yandex.net (forward206d.mail.yandex.net [178.154.239.215])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e47uUW0U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAAA1C548A;
-	Fri,  6 Dec 2024 20:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594261C548A;
+	Fri,  6 Dec 2024 20:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733516624; cv=none; b=fhtrTrwCv8FVwvxADf7KM2JpaWC7gNbmM8dT10DRugA22KVyskOVlatqRVefkR3OdVv498omej5kdV5kX1J57jZwVSa2EE8zteBiZgRsntG5tVo8B0f0J6j6sf5gc0llW29mt0msNiNvINn4xd84oKDtW0N5dEwHPPqyy7/9gLU=
+	t=1733516248; cv=none; b=nW9dm0AKgj4LVVSlCuqx0vrXh7QL37ihPlCCAytwRkJESKwvdJd4TMo7VOh62u4IzAlImjHf2wtYxB3O+RnUL9+G/vNqQwlvCNL36TfGo4mpHcXDgD/dcKCQtCw52qGCY79ApXnhYtKtL6AeTPObVOUUqGNfffSHrdue5+xhrhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733516624; c=relaxed/simple;
-	bh=nJHqvSDEzZWwHL/QPBmZ+zkpjjhrSiB8uAjMJNM1B+I=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=rwsP2RLIS4vGLCIlSwzzIYdVyTQekq844xEuWx0+Dkf6BZ0tK1BZnvFrHh2IA6mt88y8wIu/AtgX8QAOQ4ncCogjKRZOzDeIQoPOJ98fw0oN01oo8MEr7znx1SyWGkWgE5z/oGkh+F25eEZzE9PMcD/jwBVbxXeA0789xvz/NCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cirno.name; spf=pass smtp.mailfrom=cirno.name; dkim=fail (0-bit key) header.d=cirno.name header.i=@cirno.name header.b=XpptpqrD reason="key not found in DNS"; arc=none smtp.client-ip=178.154.239.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cirno.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirno.name
-Received: from forward100d.mail.yandex.net (forward100d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d100])
-	by forward206d.mail.yandex.net (Yandex) with ESMTPS id F076F625CF;
-	Fri,  6 Dec 2024 23:16:41 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:26a5:0:640:547b:0])
-	by forward100d.mail.yandex.net (Yandex) with ESMTPS id 682CA60023;
-	Fri,  6 Dec 2024 23:16:34 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UGps2S5OmW20-snDwSBOC;
-	Fri, 06 Dec 2024 23:16:33 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirno.name; s=mail;
-	t=1733516193; bh=tSqt+eXRv/K6O8RPvlHIS317PkdnNTHI6BdZrqilh44=;
-	h=Subject:From:Cc:To:Date:Message-ID;
-	b=XpptpqrDLIolv0A/quUuGeXn+lzt53oKawT8YYQVOZCgW1jLFg/mnWMRz7gLtBkmy
-	 ErjdCCOFkZk0BUDn4qqsYYtqwUVj+awWwynSHR5Hnh+83Tx6sq2aEq7I45J1n+I82p
-	 yEkXFcFBspU/fielyRYDkcTqnvg4sWRO74kNEnR4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net; dkim=pass header.i=@cirno.name
-Message-ID: <7d73e19b-f264-4c31-8f5a-fb17b6bc0600@cirno.name>
-Date: Sat, 7 Dec 2024 04:16:29 +0800
+	s=arc-20240116; t=1733516248; c=relaxed/simple;
+	bh=KDmwUVqmo5/GFM8WAK/kNQMfrXHTIB5cC1zlRdTJc/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GATE4vJV0DEph0D9eiFeEKQftt6F1Cb5LF+EK2hTgF7QgO2ByltTiTx4VbD+xLVynxQ4ik3dI+5mkHS/62iIGkCbEXo5Ffl6hSTHQCbkAf3IQZgLh9G1U0rUqZhnp5e5go3B4UbEOPDSLU5NFSaViTwhsSKLFLmysr0dY0qjWx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e47uUW0U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEEE0C4CED1;
+	Fri,  6 Dec 2024 20:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733516248;
+	bh=KDmwUVqmo5/GFM8WAK/kNQMfrXHTIB5cC1zlRdTJc/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e47uUW0UqS3wwJhEvQuMssxn7vLOOo9MFRzyUrWWMAMpYOHgnEwM2fnS2TgLb9+P0
+	 8osQZqyVyUDLRVHvwZ5EnBV4Xo44PZH1TGY+8A44/PrL32B8K/M3UaNS9yY1y/EUin
+	 fGGSKlZ4aRwux3o7DIVRMbYbqlqoVk23GaYHVYcvCK7UqhVD9hSy9ddlYE7TWaZeBR
+	 HUeUK6jfpr/4/pkZfqv00b+o9clWmHl+u1zOEs7S4u7hSzn/BOkHZkepEaaZGX6Wwf
+	 EuXMnna6ktOa5fH0tN1QhgwkvH2aewTEuN/BuCtXYKpPON+kIlwOifQL2akhlyUXTu
+	 2eISW1FRkVHdg==
+Date: Fri, 6 Dec 2024 21:17:21 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 10/14] rust: alloc: add `Box::into_pin`
+Message-ID: <Z1Nb0dQvO0GKlMmb@pollux>
+References: <20241206-hrtimer-v3-v6-12-rc2-v4-0-6cb8c3673682@kernel.org>
+ <20241206-hrtimer-v3-v6-12-rc2-v4-10-6cb8c3673682@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
- Minchan Kim <minchan@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Nick Terrell <terrelln@fb.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-From: LiviaMedeiros <9@cirno.name>
-Subject: [PATCH] zram: make default ZSTD compression level configurable
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206-hrtimer-v3-v6-12-rc2-v4-10-6cb8c3673682@kernel.org>
 
-From: LiviaMedeiros <livia@cirno.name>
+On Fri, Dec 06, 2024 at 08:33:02PM +0100, Andreas Hindborg wrote:
+> Add an associated function to convert a `Box<T>` into a `Pin<Box<T>>`.
 
-Add support for configuring the default ZSTD compression level for zram
-devices via the CONFIG_ZRAM_DEFAULT_ZSTD_LEVEL configuration option.
-If this option is not set, fallback to zstd_default_clevel() is used.
+What do you need this function for?
 
-Signed-off-by: LiviaMedeiros <livia@cirno.name>
----
-Disclaimer:
-This probably should be implemented in userspace, I failed to find 
-relevant options in zram-init (v11.1) scripts nor zramctl (v2.40.2) utility.
-I also failed to make something like `echo "algo=zstd level=9" > 
-/sys/block/zram3/algorithm_params` work in runtime, but I assume I'm 
-just dumb and/or it requires extra steps.
+There is an `impl<T, A> From<Box<T, A>> for Pin<Box<T, A>>` already.
 
-Nevertheless IMHO it makes sense to set defaults in kernel config: when 
-kernel is built for specific hardware, it would be handy to adjust it 
-depending on amount of extra CPU power or extra RAM.
-The main usecase for adjusting the compression level that I see is 
-making zram device capable of holding _a lot_ of transparently 
-compressed text data, fitting into RAM at the cost of additional CPU time.
-Hence this patch implements this only for zstd backend, which provides 
-the best compression ratio potential (perhaps implementing xz/LZMA2 
-backend would also help with it).
-If this approach looks feasible, it can be expanded to other algos as well.
-
-I'm open for any suggestions.
----
-  drivers/block/zram/Kconfig        | 10 ++++++++++
-  drivers/block/zram/backend_zstd.c |  8 +++++++-
-  2 files changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
-index 402b7b175863..8a5e6da39834 100644
---- a/drivers/block/zram/Kconfig
-+++ b/drivers/block/zram/Kconfig
-@@ -32,6 +32,16 @@ config ZRAM_BACKEND_ZSTD
-  	select ZSTD_COMPRESS
-  	select ZSTD_DECOMPRESS
-
-+config ZRAM_DEFAULT_ZSTD_LEVEL
-+	int "Default zstd compression level"
-+	depends on ZRAM_BACKEND_ZSTD
-+	range 1 22
-+	default 3
-+	help
-+	  Sets the default compression level for zstd compression in zram.
-+	  The value can range from 1 (fastest) to 22 (maximum compression).
-+	  If not set, the system uses the zstd default (typically 3).
-+
-  config ZRAM_BACKEND_DEFLATE
-  	bool "deflate compression support"
-  	depends on ZRAM
-diff --git a/drivers/block/zram/backend_zstd.c 
-b/drivers/block/zram/backend_zstd.c
-index 1184c0036f44..af7b919ec11c 100644
---- a/drivers/block/zram/backend_zstd.c
-+++ b/drivers/block/zram/backend_zstd.c
-@@ -7,6 +7,12 @@
-
-  #include "backend_zstd.h"
-
-+#ifdef CONFIG_ZRAM_DEFAULT_ZSTD_LEVEL
-+#define ZRAM_DEFAULT_ZSTD_LEVEL CONFIG_ZRAM_DEFAULT_ZSTD_LEVEL
-+#else
-+#define ZRAM_DEFAULT_ZSTD_LEVEL zstd_default_clevel()
-+#endif
-+
-  struct zstd_ctx {
-  	zstd_cctx *cctx;
-  	zstd_dctx *dctx;
-@@ -68,7 +74,7 @@ static int zstd_setup_params(struct zcomp_params *params)
-
-  	params->drv_data = zp;
-  	if (params->level == ZCOMP_PARAM_NO_LEVEL)
--		params->level = zstd_default_clevel();
-+		params->level = ZRAM_DEFAULT_ZSTD_LEVEL;
-
-  	zp->cprm = zstd_get_params(params->level, PAGE_SIZE);
-
--- 
-2.47.1
+> 
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/alloc/kbox.rs | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> index 9ce414361c2c6dd8eea09b11041f6c307cbc7864..1a993ec8602b37041c192458d8b6acff30769a04 100644
+> --- a/rust/kernel/alloc/kbox.rs
+> +++ b/rust/kernel/alloc/kbox.rs
+> @@ -245,6 +245,16 @@ pub fn pin(x: T, flags: Flags) -> Result<Pin<Box<T, A>>, AllocError>
+>          Ok(Self::new(x, flags)?.into())
+>      }
+>  
+> +    /// Convert a [`Box<T,A>`] to a [`Pin<Box<T,A>>`]. If `T` does not implement
+> +    /// [`Unpin`], then `x` will be pinned in memory and can't be moved.
+> +    pub fn into_pin(boxed: Self) -> Pin<Self> {
+> +        // SAFETY: `Self` is guaranteed to be the only pointer to the boxed
+> +        // value. Thus, if `T: !Unpin`, `T` is guaranteed to stay pinned; there
+> +        // is no way to get rid of the `Pin` and move out of the returned
+> +        // `Pin<Box<T>>`.
+> +        unsafe { Pin::new_unchecked(boxed) }
+> +    }
+> +
+>      /// Forgets the contents (does not run the destructor), but keeps the allocation.
+>      fn forget_contents(this: Self) -> Box<MaybeUninit<T>, A> {
+>          let ptr = Self::into_raw(this);
+> 
+> -- 
+> 2.46.0
+> 
+> 
 
