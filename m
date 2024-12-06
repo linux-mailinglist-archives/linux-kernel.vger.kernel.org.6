@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-434716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F43F9E6A19
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:29:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F089E6A1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:30:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE3016A209
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:29:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7404E1F4734;
+	Fri,  6 Dec 2024 09:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S0CygbYQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7BA282964
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:29:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6274B1EF0BF;
-	Fri,  6 Dec 2024 09:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixuE945n"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5DF1DFE16;
-	Fri,  6 Dec 2024 09:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FCB1EF0A5
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477375; cv=none; b=KpqhMxLY8PZD6KbV8ToI0kemaIJ+Y/Wh1CbUXqhFcRkGnVhBxfbwwD8mF45bCzZCqWSpLj49qXIn6QS9GPaGROaBEg+cLXvRid/MTK4sFNzNuGIk4KMkD4/6Abae0IpLBy50WOzlBZ6weShplfE0V2wOINpSTeo2kMZOqI252EE=
+	t=1733477379; cv=none; b=u4c/6++QeRU0EAUeKk5RDD+t0w5t7Qr/23MMOBs+AasPPZwzDdIJxIPbISphorb1rUvUdw4U0sauhXiB9kwIBmeVkhIZ6NOxlqucHxnZdAl76nU5cN59XsEg+0fK+Fr1zXJ2gB9Yr+lOOuDay28w8wwsml/oAcpiYVr3JtvJ8Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477375; c=relaxed/simple;
-	bh=z3UgihyWzrbkvKFliqv8LzUML9WKdI0gtnwfc2ODd0A=;
+	s=arc-20240116; t=1733477379; c=relaxed/simple;
+	bh=4P3bXl+zXqlVCm5KX7YrScArn1Ic9UFjpwqtmEyN4QU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7XtZ2aSVR4KhZMbRCjY8Ey2jgULn6k1zH5EyqTGJcl4BhWRObRP0l/caQeSbOKbEU3FY2Ux/EroiJX5/M29rdLqVreYWvUWCBmca8x26bVkb44tUVmG2mCpyqRMBstzoNzG/lb0vD3s18tZwKV6QEiWz3cvHP8mYs+81tgJHbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixuE945n; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a45f05feso20377215e9.3;
-        Fri, 06 Dec 2024 01:29:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733477372; x=1734082172; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=stbx1NEM35bVdNwXBH7Qjy70Xo3jWZihLJ77LxtbkVE=;
-        b=ixuE945nQKK7jste/NZKiGAnv5EKR7xh9cLSs319X5wZznk5/QOop+ABZOwfjWKhTC
-         vHLlfjNuG729FmG6JDG45k6Z1YIRrwV0XPpCd6B9aNqbsGVDmPEjGEkjPNfHVuH+KsFb
-         mH1t/4cPZFMwy2wULfpAFSF7Cb9nvh7XTMMmqbymna/BwshDkmC2xf5aa4dGLrB+c2te
-         OPTCASVZM7bSYpbtEP5VkySOZ3DUL3gc68/tEXv1XXa8b4yWNhyWBYCyd0hfsp3/9/KQ
-         ogg1VV+DIewtd95TSiOmE7i1dNfqcHbZRRWMMDI7Xq1AOtAKnGVNZc1bXhwDH6sGiUXl
-         biFw==
+	 In-Reply-To:Content-Type; b=tqV3KFHg5g3O3KzoIc/hhMsmPhe0hzzmFRcCnJldHnbpzGVEZGH+y2nCkZePt7ZqwN9ECY5z9UVzfN28b4E3SvOx0j7CS/FBPH3FrPtkZ1N02onJxUcMaRHMnjRMtL2cKYWpWN4J6VqLF+qMQCDXXhC3Hp3+PwZUrJfZwOO2xlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S0CygbYQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733477376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G3OdmW3ZTheF+C2xsg2Rq2qHZNGCYQVLBHUY/AWR+lE=;
+	b=S0CygbYQCtIE+4YkVKy6p6qfNMXDqyjkKAwHbp7+rWwwVJMni3S69KU2jfEZ3USDQmMPtI
+	R54st2fOiqMVZMpLACuu4lc9b00qCiIalqW3jOkpnaWFEpKEQVDxsaS8yYSUngeRFafGQp
+	crg6+/JOE+/xLIPIw/bYYR3aFkPIeS4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-617-LVudIRAFMpOo6Is8J9eG_A-1; Fri, 06 Dec 2024 04:29:35 -0500
+X-MC-Unique: LVudIRAFMpOo6Is8J9eG_A-1
+X-Mimecast-MFC-AGG-ID: LVudIRAFMpOo6Is8J9eG_A
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-434996c1aa7so15471895e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:29:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733477372; x=1734082172;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=stbx1NEM35bVdNwXBH7Qjy70Xo3jWZihLJ77LxtbkVE=;
-        b=Jq4aA/rkZFgS/W2P1/ky/wPw9iORkw9CGX9UGjzNRfz5pMKYvK6SGqF0TYKJb9HbZ9
-         /PCKbXQDFBIMiXkRHphH5dPwP6OdtD0twLWA9WFEhBJQ/MLt9vwks29egtcC289pDw1Q
-         RMipei6YKQT0/pWNQvl11kv8CU3qqIzU9JrWEchRuTIC/0z0ftvFdMqTd775tZ8h6vez
-         eoHCNUvuP1moOOZanfexD5hW+rGWrWQw5yPByT70WFk0JdDbRQRP18P1ZkV1wUUUNz6G
-         xP5ucf2hfYxW0Z3UX9lVPNpUfQ8//Fe7BVbcG3JtbQG2csYkYcK89qeDHun4CBhWVG96
-         qsHw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4hMwMl65uNDI46OtG6VFpspG7exiaJ08SND+Rq8qcpfCXeq8As0epbDUYs7uH6WnD8dtCwpZmI7HUGLJu+uo=@vger.kernel.org, AJvYcCVqg5MgEwusNPZVwUGLjvtHCWG3u4+UiA0kRjmrrthTjt0OUbr+nkMcncJFRynMoofJM8naX7t2kv9J@vger.kernel.org, AJvYcCWRAd5ecHr4nEwSXowEl/1IDugn+2LPFn7Jaz/hcq95+cXTJdf3nF2OVQRytxsfMt6/1Pjdh0TVnQnx0PJt@vger.kernel.org, AJvYcCWqSwOqYpBQdkMFpDDRkXzs0vX6n0JTbSnnvtSuPrcAQzieWQj9EVmvw9JN06L4//JUiBPLvZeLaMyy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy64JGeqW0rx9gEot/muOMLvf6e6PduBf7TAdN7Eny2bXZKNW+T
-	Xnu6gsB9HFcosHrUCNQr5rwGyW+gtdJ2lgMtnECkH3vZyzCtwGe9
-X-Gm-Gg: ASbGnctY+u2rT+FWoBbupdzQjldD1KAje5r+Q07UXMNT/gLp7yusYLDU2vuQ4IKWI1r
-	EE3ipikvtExDMPwTBks1nQm0IiOa8Bkl8/Xgo/Ae33rEaXHT9o8grMbn6u5GRxnbkIIy3lIpEtL
-	gh3hJW9JzeD4SdCXWu0UHgIyz6uesAoBfj7aub34Jz+AsBnkwMRMhcD2CqHj2VzAWHOkaw1Ug0n
-	jLZsRCKpRFvdFHT0/yDD3AV4AeV61odQbLLR77aOfbgekPyOK8JmUHX0z7fk11hRTm0Fydau8t2
-	9ZTcHTgm81xAj5Dc5QC/XfPa0qdTPL5yA2PINmI/UuQJarQBjB9xM5O56pCGSE/UIrqQtGLSY7o
-	hJwJu5w==
-X-Google-Smtp-Source: AGHT+IGFIYyUD9HEqIG73xUb72UXx8tEHaiNhA0ipV2EB4tCdQu8+kXVLo5dUDpxcqbC3LEkvZb7ew==
-X-Received: by 2002:a05:600c:458a:b0:431:54f3:11ab with SMTP id 5b1f17b1804b1-434ddee1384mr17702945e9.33.1733477371270;
-        Fri, 06 Dec 2024 01:29:31 -0800 (PST)
-Received: from ?IPV6:2003:df:bf0d:b400:44f9:3850:f4a9:a264? (p200300dfbf0db40044f93850f4a9a264.dip0.t-ipconnect.de. [2003:df:bf0d:b400:44f9:3850:f4a9:a264])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0d691csm51269205e9.11.2024.12.06.01.29.29
+        d=1e100.net; s=20230601; t=1733477374; x=1734082174;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G3OdmW3ZTheF+C2xsg2Rq2qHZNGCYQVLBHUY/AWR+lE=;
+        b=IAks++VYqhrE8p5uxGZFVXTCrNNk4+I90SL5SjfluqXSbt5h/8tQiHGfUxK/CRgUjj
+         ChJ3+Rf+WvoUC/BpGbeNE9NFLuUGo7KxzwHIHFhQ8mN6GoUB5d2wGCPALF+ycHZA0JDe
+         tOtaoEt7bXWxd+T3j8NiTZdVb9cIrYm3SKyYV6FIJBzAfjRXukqMYREPWz59ktlVgNgl
+         cVhWvegJM39LXhrkLvMT8/mPxOqNI49FS54GRmSiEJaQrohgzcFtq7h8D9KYNMwGC2yd
+         3q5fb9OEb4v/5tEh3cLzdPCsA1TrBsCyHiWCEdeDeiGIozp9LuqXImBZ8DCiP4pvP9cW
+         dVmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQHUEhb7csRddXnyc8bvbv45cwx37oa0qb1uyt1zLVCrHfWa+JYBMIpCs4cYk8WjSo8/XmC/fpX5twLX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2RW4247XCp98J/6/voKqsTdVKEvBXtXlRRefPedWYb+bBvWOG
+	ZYcMkyMXpfITLMKedz4oxxPnZ9TDvmxfDItPXX3N2LPK+fSsw4gzt9Na7eUAwq8hleg29RPBYKM
+	xYZjAzPhffV18u5OUeEbjZWic2QDDIYVgYrvUORBYSZliNlJ7A4RfCfm5zdfQqA==
+X-Gm-Gg: ASbGnct6Ua3w95smEGhYtHBTk51gWE4Cqo4OAHtZSkDXyvleC0OeO/S44hTTI0WPK3k
+	XjQVga6BL0PCYJom86zVCE2lHAh3qaaQ4Sr3t54x8URUcQlqnSTRvFACtyMhyap6+3fRfUWqDld
+	kJPp8xGvKkuDeOj8pN51T91tuqpq7V92dD9CLiptHnVpd75IYOWa6hbIRzkxbyYUwRtSLZOrtbF
+	zHdHOU2YbrqxdrPczvh686BRT+fnXdxVQD0xCbtJRPPvFZe7H5Y5ow7vE3PBEmXVlglmie1LMSy
+	JYlDTm4QYAOcuVerr+lMdgGQcwJt4sbF+8oJFUbLjUCVxpRpQYXCXR+g7oU623TwnK6Z/71/3dw
+	X6A==
+X-Received: by 2002:a05:600c:3155:b0:431:52b7:a499 with SMTP id 5b1f17b1804b1-434dded67b1mr17297535e9.20.1733477374206;
+        Fri, 06 Dec 2024 01:29:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEa6UcXKjzynFFC/lQ8L9mqcwdputm4E+oGdTLs9BXmx1zNYs9K7S3cOzK3DfM522J8C9LaUg==
+X-Received: by 2002:a05:600c:3155:b0:431:52b7:a499 with SMTP id 5b1f17b1804b1-434dded67b1mr17297315e9.20.1733477373749;
+        Fri, 06 Dec 2024 01:29:33 -0800 (PST)
+Received: from ?IPV6:2003:cb:c71b:d000:1d1f:238e:aeaf:dbf7? (p200300cbc71bd0001d1f238eaeafdbf7.dip0.t-ipconnect.de. [2003:cb:c71b:d000:1d1f:238e:aeaf:dbf7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0dab9esm50876125e9.22.2024.12.06.01.29.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 01:29:30 -0800 (PST)
-Message-ID: <417cebcb-6311-43c3-a74f-edef10be0fb7@gmail.com>
-Date: Fri, 6 Dec 2024 10:29:29 +0100
+        Fri, 06 Dec 2024 01:29:32 -0800 (PST)
+Message-ID: <c43a3149-c84b-448b-be80-1e026740911c@redhat.com>
+Date: Fri, 6 Dec 2024 10:29:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,257 +89,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/13] samples: rust: add Rust platform sample driver
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
- ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
- airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
- pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
- daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com,
- j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241205141533.111830-1-dakr@kernel.org>
- <20241205141533.111830-14-dakr@kernel.org>
- <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com> <Z1K22NjYjwhFnsit@pollux>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <Z1K22NjYjwhFnsit@pollux>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
+To: Heiko Carstens <hca@linux.ibm.com>,
+ Guillaume Morin <guillaume@morinfr.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+ Eric Hagberg <ehagberg@janestreet.com>, linux-s390@vger.kernel.org
+References: <Z1EJssqd93w2erMZ@bender.morinfr.org>
+ <20241206045019.GA2215843@thelio-3990X> <Z1KLLXpzrDac-oqF@bender.morinfr.org>
+ <20241206092453.9026-A-hca@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241206092453.9026-A-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 06.12.24 09:33, Danilo Krummrich wrote:
-> On Thu, Dec 05, 2024 at 06:09:10PM +0100, Dirk Behme wrote:
->> Hi Danilo,
->>
->> On 05.12.24 15:14, Danilo Krummrich wrote:
->>> Add a sample Rust platform driver illustrating the usage of the platform
->>> bus abstractions.
+On 06.12.24 10:24, Heiko Carstens wrote:
+> On Fri, Dec 06, 2024 at 06:27:09AM +0100, Guillaume Morin wrote:
+>> On 05 Dec 21:50, Nathan Chancellor wrote:
+>>>>   #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
+>>>> +/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
+>>>> +static inline bool can_follow_write_pud(pud_t pud, struct page *page,
+>>>> +					struct vm_area_struct *vma,
+>>>> +					unsigned int flags)
+>>>> +{
+>>>> +	/* If the pud is writable, we can write to the page. */
+>>>> +	if (pud_write(pud))
+>>>> +		return true;
+>>>> +
+>>>> +	if (!can_follow_write_common(page, vma, flags))
+>>>> +		return false;
+>>>> +
+>>>> +	/* ... and a write-fault isn't required for other reasons. */
+>>>> +	return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
 >>>
->>> This driver probes through either a match of device / driver name or a
->>> match within the OF ID table.
+>>> This looks to be one of the first uses of pud_soft_dirty() in a generic
+>>> part of the tree from what I can tell, which shows that s390 is lacking
+>>> it despite setting CONFIG_HAVE_ARCH_SOFT_DIRTY:
 >>>
->>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>>>    $ make -skj"$(nproc)" ARCH=s390 CROSS_COMPILE=s390-linux- mrproper defconfig mm/gup.o
+>>>    mm/gup.c: In function 'can_follow_write_pud':
+>>>    mm/gup.c:665:48: error: implicit declaration of function 'pud_soft_dirty'; did you mean 'pmd_soft_dirty'? [-Wimplicit-function-declaration]
+>>>      665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
+>>>          |                                                ^~~~~~~~~~~~~~
+>>>          |                                                pmd_soft_dirty
+>>>
+>>> Is this expected?
 >>
->> Not a review comment, but a question/proposal:
+>> Yikes! It does look like an oversight in the s390 code since as you said
+>> it has CONFIG_HAVE_ARCH_SOFT_DIRTY and pud_mkdirty seems to be setting
+>> _REGION3_ENTRY_SOFT_DIRTY. But I'll let the s390 folks opine.
 >>
->> What do you think to convert the platform sample into an example/test?
->> And drop it in samples/rust then? Like [1] below?
+>> I don't mind dropping the pud part of the change (even if that's a bit
+>> of a shame) if it's causing too many issues.
 > 
-> Generally, I think doctests are indeed preferrable. In this particular case
-> though, I think it's better to have a sample module, since this way it can serve
-> as go-to example of how to write a platform driver in Rust.
+> It would be quite easy to add pud_soft_dirty() etc. helper functions
+> for s390, but I think that would be the wrong answer to this problem.
 > 
-> Especially for (kernel) folks who do not have a Rust (for Linux) background it's
-> way more accessible.
+> s390 implements pud_mkdirty(), but it is only used in the context of
+> HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD, which s390 doesn't support. So
+> this function should probably be removed from s390's pgtable.h.
+> 
+> Similar the pud_soft_dirty() and friends helper functions should only
+> be implemented if common code support for soft dirty would exist,
+> which is currently not the case. Otherwise similar fallbacks like for
+> pmd_soft_dirty() (-> include/linux/pgtable.h) would also need to be
+> implemented.
+> 
+> So IMHO the right fix (at this time) seems to be to remove the above
+> pud part of your patch, and in addition we should probably also drop
+> the partially implemented pud level soft dirty bits in s390 code,
+> since that is dead code and might cause even more confusion in future.
+> 
+> Does that make sense?
 
+As hugetlb does not support softdirty, and PUDs are currently only 
+possible (weird DAX thing put aside) with hugetlb, it makes sense to 
+drop the pud softdirty thingy.
 
-Yes, ack. Rob said the same :)
+-- 
+Cheers,
 
-Thanks
-
-Dirk
-
-
->> We would have (a) a complete example in the documentation and (b) some
->> (KUnit) test coverage and (c) have one patch less in the series and
->> (d) one file less to maintain long term.
->>
->> I think to remember that it was mentioned somewhere that a
->> documentation example / KUnit test is preferred over samples/rust (?).
->>
->> Just an idea :)
->>
->> Best regards
->>
->> Dirk
->>
->> [1]
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index ae576c842c51..365fc48b7041 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -7035,7 +7035,6 @@ F:	rust/kernel/device_id.rs
->>  F:	rust/kernel/devres.rs
->>  F:	rust/kernel/driver.rs
->>  F:	rust/kernel/platform.rs
->> -F:	samples/rust/rust_driver_platform.rs
->>
->>  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
->>  M:	Nishanth Menon <nm@ti.com>
->> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
->> index 868cfddb75a2..77aeb6fc2120 100644
->> --- a/rust/kernel/platform.rs
->> +++ b/rust/kernel/platform.rs
->> @@ -142,30 +142,55 @@ macro_rules! module_platform_driver {
->>  /// # Example
->>  ///
->>  ///```
->> -/// # use kernel::{bindings, c_str, of, platform};
->> +/// # mod mydriver {
->> +/// #
->> +/// # // Get this into the scope of the module to make the
->> assert_eq!() buildable
->> +/// # static __DOCTEST_ANCHOR: i32 = core::line!() as i32 - 4;
->> +/// #
->> +/// # use kernel::{c_str, of, platform, prelude::*};
->> +/// #
->> +/// struct MyDriver {
->> +///     pdev: platform::Device,
->> +/// }
->>  ///
->> -/// struct MyDriver;
->> +/// struct Info(u32);
->>  ///
->>  /// kernel::of_device_table!(
->>  ///     OF_TABLE,
->>  ///     MODULE_OF_TABLE,
->>  ///     <MyDriver as platform::Driver>::IdInfo,
->> -///     [
->> -///         (of::DeviceId::new(c_str!("test,device")), ())
->> -///     ]
->> +///     [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
->>  /// );
->>  ///
->>  /// impl platform::Driver for MyDriver {
->> -///     type IdInfo = ();
->> +///     type IdInfo = Info;
->>  ///     const OF_ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
->>  ///
->> -///     fn probe(
->> -///         _pdev: &mut platform::Device,
->> -///         _id_info: Option<&Self::IdInfo>,
->> -///     ) -> Result<Pin<KBox<Self>>> {
->> -///         Err(ENODEV)
->> +///     fn probe(pdev: &mut platform::Device, info:
->> Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
->> +///         dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver
->> sample.\n");
->> +///
->> +///         assert_eq!(info.unwrap().0, 42);
->> +///
->> +///         let drvdata = KBox::new(Self { pdev: pdev.clone() },
->> GFP_KERNEL)?;
->> +///
->> +///         Ok(drvdata.into())
->> +///     }
->> +/// }
->> +///
->> +/// impl Drop for MyDriver {
->> +///     fn drop(&mut self) {
->> +///         dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver
->> sample.\n");
->>  ///     }
->>  /// }
->> +///
->> +/// kernel::module_platform_driver! {
->> +///     type: MyDriver,
->> +///     name: "rust_driver_platform",
->> +///     author: "Danilo Krummrich",
->> +///     description: "Rust Platform driver",
->> +///     license: "GPL v2",
->> +/// }
->> +/// # }
->>  ///```
->>  pub trait Driver {
->>      /// The type holding information about each device id supported
->> by the driver.
->> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
->> index 70126b750426..6d468193cdd8 100644
->> --- a/samples/rust/Kconfig
->> +++ b/samples/rust/Kconfig
->> @@ -41,16 +41,6 @@ config SAMPLE_RUST_DRIVER_PCI
->>
->>  	  If unsure, say N.
->>
->> -config SAMPLE_RUST_DRIVER_PLATFORM
->> -	tristate "Platform Driver"
->> -	help
->> -	  This option builds the Rust Platform driver sample.
->> -
->> -	  To compile this as a module, choose M here:
->> -	  the module will be called rust_driver_platform.
->> -
->> -	  If unsure, say N.
->> -
->>  config SAMPLE_RUST_HOSTPROGS
->>  	bool "Host programs"
->>  	help
->> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
->> index 761d13fff018..2f5b6bdb2fa5 100644
->> --- a/samples/rust/Makefile
->> +++ b/samples/rust/Makefile
->> @@ -4,7 +4,6 @@ ccflags-y += -I$(src)				# needed for trace events
->>  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
->>  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
->>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
->> -obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
->>
->>  rust_print-y := rust_print_main.o rust_print_events.o
->>
->> diff --git a/samples/rust/rust_driver_platform.rs
->> b/samples/rust/rust_driver_platform.rs
->> deleted file mode 100644
->> index 2f0dbbe69e10..000000000000
->> --- a/samples/rust/rust_driver_platform.rs
->> +++ /dev/null
->> @@ -1,49 +0,0 @@
->> -// SPDX-License-Identifier: GPL-2.0
->> -
->> -//! Rust Platform driver sample.
->> -
->> -use kernel::{c_str, of, platform, prelude::*};
->> -
->> -struct SampleDriver {
->> -    pdev: platform::Device,
->> -}
->> -
->> -struct Info(u32);
->> -
->> -kernel::of_device_table!(
->> -    OF_TABLE,
->> -    MODULE_OF_TABLE,
->> -    <SampleDriver as platform::Driver>::IdInfo,
->> -    [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
->> -);
->> -
->> -impl platform::Driver for SampleDriver {
->> -    type IdInfo = Info;
->> -    const OF_ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
->> -
->> -    fn probe(pdev: &mut platform::Device, info:
->> Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
->> -        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
->> -
->> -        if let Some(info) = info {
->> -            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n",
->> info.0);
->> -        }
->> -
->> -        let drvdata = KBox::new(Self { pdev: pdev.clone() },
->> GFP_KERNEL)?;
->> -
->> -        Ok(drvdata.into())
->> -    }
->> -}
->> -
->> -impl Drop for SampleDriver {
->> -    fn drop(&mut self) {
->> -        dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver
->> sample.\n");
->> -    }
->> -}
->> -
->> -kernel::module_platform_driver! {
->> -    type: SampleDriver,
->> -    name: "rust_driver_platform",
->> -    author: "Danilo Krummrich",
->> -    description: "Rust Platform driver",
->> -    license: "GPL v2",
->> -}
->>
+David / dhildenb
 
 
