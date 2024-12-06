@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-435486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57499E7879
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:01:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 781F69E787A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:01:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA9416DD83
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B6ED288373
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED88204592;
-	Fri,  6 Dec 2024 19:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4027206278;
+	Fri,  6 Dec 2024 19:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="XRyJBV5r"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="AaKeSLfv"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B778B1FFC70
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B6D204572
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733511648; cv=none; b=M87znW3Z8m/7LxN7NJrPFvZfxDMN01J+XRxxTrqkvINZhF7hgy6AVQa/yBd2GzH+17Hsq9V8WssFw3y3WYZlFWX0f6T3xSZb5a/vx0v7UX3/3rLHF6tUTc7pFanr2aJihHc0pqeRVUqQpvaHlJfU7bqA/mKZINt4B5vGpVfb/Tk=
+	t=1733511650; cv=none; b=NMJ+cVDmYxO1wjHS3bCqGTDW7D6CzGnj2EZ0FGX2KIXNGuRm6io7J4t3D1wEbW9mqGLyXf6FX1IyBbNaci4hIvn22tFluR0zU2q5DkB/YFmj7ddXubAK1RYw9lBZtCKdmwH+1ygqH6we2Et6hl4u95ZbjAO/G50y3xaRErV0nH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733511648; c=relaxed/simple;
-	bh=b5jXhaNolTyyvrbjKKxRcvCAJp8P/hsnV5mqr6x9R1Y=;
+	s=arc-20240116; t=1733511650; c=relaxed/simple;
+	bh=KWMNtKFHSXqIJRHh07Fhy/LOB/evmZgba6wRNVyYg70=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ns1Ei9Qt++upN+uqtdfIuYSyGaKe2niPU/9zHQsgpJeGvO6+rcGpg9mgtyb5AKsv+lbHIag8c2QmbibqNfHM7it98DKq/77iOBxqi+0HDFJZ1AshrgROmffnryrX94TSL0iZy7fGtJouC/8+Ou8IJv8rYJbeSFy3GWzCA7QgwEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=XRyJBV5r; arc=none smtp.client-ip=209.85.208.177
+	 MIME-Version; b=br19pOYnsN1vV0rk/T3irK8gSD8iQTc1/6WyVnjDWAHTRlp08HYgWjoO1zyRvO/Q9hDIrfeXuOxpDjUKSnzkmuJXHcl3pDvRWnhBQN2pyCxlDrPWa/+oSP46+8TlENpqtTyjjmSklS8PuaW6P+VI78E+VGCMWsYsROjy4peYmIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=AaKeSLfv; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffbf4580cbso26642131fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:00:46 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffc80318c9so20763351fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:00:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733511645; x=1734116445; darn=vger.kernel.org;
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733511647; x=1734116447; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U6OmUl/hmI7+OxMAFAfIf+jIYSG9pd6PU033H69utPY=;
-        b=XRyJBV5r5naGO6NKYhqVdJ1aD41SPwRTObnU+SV6/NfOjJDykNY6Bo+ydj5kUjMuZs
-         0uT5TX16HjBY34lB7Mu6iV0uVeofnX4zfgowjzPQ7SBgZVr2lStVSRXJS7ZVmgFZnZDX
-         8ScRIS3kTXBtNiGgDsOid1y3nxeQxzC7+P78iHR68t8lRxhjPJJULAx25mMcPydWDIxl
-         du6U3Q4TCqiHEXhaH5wso9j0WXhptPUIlpfuh3wUUNNC0l/csE3RSdth1ARqF2xW3ZwY
-         eB4k2/unOTf/uRrJuIZg/Uxk+7b4NDtFOvnK3hcYyNmwX5djLN9QgmKk4ls/lnWKWD/D
-         6rKg==
+        bh=i2QojkySpM8U2FoZ7dctDq5YFcwKebuv3WnOzhKxOok=;
+        b=AaKeSLfvAuYARQhOkn8ve0wlftNC3sC4ypk8JATHhwRbT06adA4sEHbDxd8YS3B28S
+         mghGDaUCR1vHjKf3lrNzzBaG+NCBEScUvZg66xGYtsvT45/np4RPkXpjqEGAAMS10KHz
+         hVg9pkvb7tNwTcXU9fYL07Sas/g9B6ndgGwZa7Oc6fBpOJlhVQrTYfPgu9fLhzqr/0SU
+         7HNZHM+Otz6zC5l/5D3MMxPhh6o1koCSubufpkIZ6W3Od+as8eM51326nZlXRvmP490p
+         J0gdAQHgQ+6fc9TyfKGllHvk6P1/GJSIa8Oi5OL/gKPPmt5JsmSucpte1FmlZSEtOpED
+         KtyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733511645; x=1734116445;
+        d=1e100.net; s=20230601; t=1733511647; x=1734116447;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U6OmUl/hmI7+OxMAFAfIf+jIYSG9pd6PU033H69utPY=;
-        b=j3mMBJlEa6Wi0p247rI29jUJ0SlmDvAYgj1th6K4R4N7XL/gLQR0W/yD6JzomxadZI
-         u9ZBq14AaqaH60oesOQv9E3AnzIWklkSohvw4M4wvQNnha+2tFLhXoC8njXN2don+jh0
-         8Euj9l2phw7nnz41ic7fPHHHVbO/mdStvxXqQD7CJyV5rnEXPHP+68NJ70MpokxhqREE
-         JF7SpkXo9ohtyGczgDF1b9/HBIU+LKw4mIauXXfP9PJe36Xqa7Nn7RTt0txg/jwvb6VO
-         5WnRqeHbEDYPoRJjOYlbVprym+LxzI2ONRmLuxtNd540PwKmOLhvSBEJ6xbjqvVkqc5r
-         KIFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSheGEn8Ztly2EzwsYA0Sl6ZSUrd14WS3PCnM6aeblCmfasoe6hlhBCzfsUXU5yEfiOxtVkB6CJjwUOvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC7X5gixy9Co8bghsqVM4KeVZXvEVnyyHp1r+KoUfzhoueMY+3
-	gIWLd3rPnlim4Uj+e2FOfIgpCYEWNQYbWayuPfglRfyM37Em1x+TElEoeKZb3EI=
-X-Gm-Gg: ASbGncvSaGLWdlbK1tQlw6nBeAr5i8qD0eNgVgIfEM09KAgNOYJT7+p/ChJvHqJ3qPO
-	c5tH9di0MNjON9WyebsIkckLhonHNLPwrzq2z9yth/BdWeK2t58zz/gOcxyBadoo30bXwh9tU+s
-	6p5+SsGk3Az53V311FqQBiBnLx4ROymYcYNnwt8Egtq6Um45ZxRPorQIWLSaLfMgtrr2hYR63Y1
-	nWKqyJHxtHArnKGIBRCdPWm81wNZ2GddI3eGzy+Q8hz/eC29F1UkYhlli/5AFzV
-X-Google-Smtp-Source: AGHT+IG27wfeYMQbSTxDwOz7Jah13F/6degbx6OGNBuq2fRCCebyOoNgchqtp/MSVdvmUbDhxY2IGg==
-X-Received: by 2002:a05:651c:1586:b0:300:3e66:5881 with SMTP id 38308e7fff4ca-3003e6658cfmr4086831fa.7.1733511644842;
-        Fri, 06 Dec 2024 11:00:44 -0800 (PST)
+        bh=i2QojkySpM8U2FoZ7dctDq5YFcwKebuv3WnOzhKxOok=;
+        b=rcX14tkKGdRKo+/xyH2YYqM33kLp4RIwVyvs5lcx0+4n+ch8fxiBasCsILwr0OqWko
+         dsobX63FFh60pphQf0rVpRZAChvE+tAzZItDD52+JbFvHK8vw0SjxeF/5smX7o4cP2nv
+         ncqrR6IuKiAI2pAHeFe0VTkLNZ9QuTiDt9DIPyiSa/UKoQDLdX2r2e+npcbXxsaEn0E8
+         Iz71U4/+Ey9RhJp1UcP/4I/XHBbxE7iTEbBDxRNf+xa5XniWPsWZ1EWRrb3VLbKaoQwZ
+         otTBloNzhVhRb0I38HLklBBFTsUvFABTtUtc59FSdwmG8LSMYFt8aUKErr9udHs3eqLs
+         chRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRXAsEognjPMWruU8sXUOJBIZFZw6ibFsFdaArt1YmTg2RUtp/XSYJQiKZdhvgSw/a/WmhRhmYPh/aPIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY3Vncb7Xjkg9ZFFRJuZipJPTetf/BuMSUJbIkbT9Tx/wn8P1u
+	x46AIpnajTI5pSmGV1jmgYZYb3lXRZZcf8SznYmCk6EEGYGm+mNF8btfST5Phq8=
+X-Gm-Gg: ASbGncuCbVC2/y2pqpdojQtpj5+zXbhJtDalxYpd1O1NEI93C4P7XsfWdaRUmfdtvuH
+	Ivpa/xnz7cU1noxciUrQPRxr7iSATHb13A+jTGK0L+aNoufNJv0pG3CaiVPd+fsb2iM1k0cdtX+
+	MTgXHb2RaTaXRgP53NiqIIPbn48jQaxigejpCzfXgyUvsdeAxqruYzCZE/hlkDsQ2TZA6rUNcXf
+	0StKppsl9aVEBlAXL6BxCPLBY+GH0Pwj48Ly9HMfCOORxmSBnFlyB6eqO0d/QYd
+X-Google-Smtp-Source: AGHT+IEIsm4wQVX3IM84rN3fxaWi6YpUjvzeeTe6nAk1y92eqqKLDaXUQfpaQtMa2bkKEiL1wi3iHg==
+X-Received: by 2002:a2e:bd14:0:b0:300:2278:9b1f with SMTP id 38308e7fff4ca-3002fd1b175mr15585421fa.39.1733511646671;
+        Fri, 06 Dec 2024 11:00:46 -0800 (PST)
 Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020e58200sm5523201fa.113.2024.12.06.11.00.43
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020e58200sm5523201fa.113.2024.12.06.11.00.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 11:00:44 -0800 (PST)
+        Fri, 06 Dec 2024 11:00:46 -0800 (PST)
 From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -85,9 +85,9 @@ Cc: netdev@vger.kernel.org,
 	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
 	Dennis Ostermann <dennis.ostermann@renesas.com>,
 	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH net v2 2/4] net: renesas: rswitch: fix race window between tx start and complete
-Date: Sat,  7 Dec 2024 00:00:13 +0500
-Message-Id: <20241206190015.4194153-3-nikita.yoush@cogentembedded.com>
+Subject: [PATCH net v2 3/4] net: renesas: rswitch: fix leaked pointer on error path
+Date: Sat,  7 Dec 2024 00:00:14 +0500
+Message-Id: <20241206190015.4194153-4-nikita.yoush@cogentembedded.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241206190015.4194153-1-nikita.yoush@cogentembedded.com>
 References: <20241206190015.4194153-1-nikita.yoush@cogentembedded.com>
@@ -99,75 +99,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If hardware is already transmitting, it can start handling the
-descriptor being written to immediately after it observes updated DT
-field, before the queue is kicked by a write to GWTRC.
+If error path is taken while filling descriptor for a frame, skb
+pointer is left in the entry. Later, on the ring entry reuse, the
+same entry could be used as a part of a multi-descriptor frame,
+and skb for that new frame could be stored in a different entry.
 
-If the start_xmit() execution is preempted at unfortunate moment, this
-transmission can complete, and interrupt handled, before gq->cur gets
-updated. With the current implementation of completion, this will cause
-the last entry not completed.
+Then, the stale pointer will reach the completion routine, and passed
+to the release operation.
 
-Fix that by changing completion loop to check DT values directly, instead
-of depending on gq->cur.
+Fix that by clearing the saved skb pointer at the error path.
 
-3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
+Fixes: d2c96b9d5f83 ("net: rswitch: Add jumbo frames handling for TX")
 Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/renesas/rswitch.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index 32b32aa7e01f..800744a6c25b 100644
+index 800744a6c25b..9c55f3480678 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -862,13 +862,10 @@ static void rswitch_tx_free(struct net_device *ndev)
- 	struct rswitch_ext_desc *desc;
- 	struct sk_buff *skb;
+@@ -1704,6 +1704,7 @@ static netdev_tx_t rswitch_start_xmit(struct sk_buff *skb, struct net_device *nd
+ 	return ret;
  
--	for (; rswitch_get_num_cur_queues(gq) > 0;
--	     gq->dirty = rswitch_next_queue_index(gq, false, 1)) {
--		desc = &gq->tx_ring[gq->dirty];
--		if ((desc->desc.die_dt & DT_MASK) != DT_FEMPTY)
--			break;
--
-+	desc = &gq->tx_ring[gq->dirty];
-+	while ((desc->desc.die_dt & DT_MASK) == DT_FEMPTY) {
- 		dma_rmb();
-+
- 		skb = gq->skbs[gq->dirty];
- 		if (skb) {
- 			rdev->ndev->stats.tx_packets++;
-@@ -879,7 +876,10 @@ static void rswitch_tx_free(struct net_device *ndev)
- 			dev_kfree_skb_any(gq->skbs[gq->dirty]);
- 			gq->skbs[gq->dirty] = NULL;
- 		}
-+
- 		desc->desc.die_dt = DT_EEMPTY;
-+		gq->dirty = rswitch_next_queue_index(gq, false, 1);
-+		desc = &gq->tx_ring[gq->dirty];
- 	}
- }
+ err_unmap:
++	gq->skbs[(gq->cur + nr_desc - 1) % gq->ring_size] = NULL;
+ 	dma_unmap_single(ndev->dev.parent, dma_addr_orig, skb->len, DMA_TO_DEVICE);
  
-@@ -1685,6 +1685,9 @@ static netdev_tx_t rswitch_start_xmit(struct sk_buff *skb, struct net_device *nd
- 	gq->skbs[(gq->cur + nr_desc - 1) % gq->ring_size] = skb;
- 	gq->unmap_addrs[(gq->cur + nr_desc - 1) % gq->ring_size] = dma_addr_orig;
- 
-+	dma_wmb();	/* ensure that hw won't start and complete before
-+			   skb pointer was saved */
-+
- 	/* DT_FSTART should be set at last. So, this is reverse order. */
- 	for (i = nr_desc; i-- > 0; ) {
- 		desc = &gq->tx_ring[rswitch_next_queue_index(gq, true, i)];
-@@ -1695,8 +1698,6 @@ static netdev_tx_t rswitch_start_xmit(struct sk_buff *skb, struct net_device *nd
- 			goto err_unmap;
- 	}
- 
--	wmb();	/* gq->cur must be incremented after die_dt was set */
--
- 	gq->cur = rswitch_next_queue_index(gq, true, nr_desc);
- 	rswitch_modify(rdev->addr, GWTRC(gq->index), 0, BIT(gq->index % 32));
- 
+ err_kfree:
 -- 
 2.39.5
 
