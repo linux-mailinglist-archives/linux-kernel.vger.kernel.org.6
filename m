@@ -1,295 +1,368 @@
-Return-Path: <linux-kernel+bounces-434614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D150B9E68F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:33:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 016B19E68FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF7841883182
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:33:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014FE188622B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B208D1DF980;
-	Fri,  6 Dec 2024 08:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1471DE2B3;
+	Fri,  6 Dec 2024 08:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JybcPVst"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwp4SlyC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CBF13C816;
-	Fri,  6 Dec 2024 08:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771AF6FBF;
+	Fri,  6 Dec 2024 08:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474018; cv=none; b=m1TMDiEeP6zPVobkXVa8EjfDmmpfI/4pETKvuJ5R2eAMJyoCBovHU/or1ioaefTFvA/zF/zLyb0qpfjUmgvS5N3fGZcc/c610sShC9uHwVCnKjm+zhAUQQL+1N3tI+Z+MQLE2vo2pz7fC6Sbviv1OjXlvnbeGV9cPx5efAoQ9cU=
+	t=1733474034; cv=none; b=sBF1Pq/Fed65+aEiuT/OdYSP+aETklx+yzJp+QZT3OiJI7fWvD16gIww/Q/Mc+BtAphF1gDwTgq5SKUhLsrWtvhXZTW1SzxWyobHTG7kNyPt8ytHO1rZEE4GrwEVFzaV7SEw0gTbgdDWbP1W7Q60nDhM//aVsbNe5nQI+H0ozIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474018; c=relaxed/simple;
-	bh=Jj1aQjvKJiwl1l+9B0eUXboN5nIcWwPvvJJmz4xtzaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1TF0snTx3Ph7K0XZl/TsKDtJHTbAm4B7pC5Zw+iB6/LAUsRnK9qJN7XOgZjAZeGtMlNhpTFq+GpuBiR8VunuianDiAbsfL0RZiILWXVKte8GxsVME2WePzlgCrhO3QmhvdYpterZhM6UNfp4qT58WSG4AmbzMPwHDnAni3O1Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JybcPVst; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43B4C4CED1;
-	Fri,  6 Dec 2024 08:33:31 +0000 (UTC)
+	s=arc-20240116; t=1733474034; c=relaxed/simple;
+	bh=DdsykxjoYwGNap8VBMiXurGFc0Soee4yASPhhni6j/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lY2l8mJTi8mHssegF9oXwSo/HLMtoM+AZk994k0qGf0to3bPG6s9Mav2OLJ3d9GM9ZLAnfcXP7Sszea1G+fKlrojwA768zFhFrcmQT+IU1ksoe9vVYqfQ6Sx/JYgb9ytCAZP51452CgxH0qWL5Gccv5jaDLINux0WM9nJfrRu5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwp4SlyC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D8AC4CED1;
+	Fri,  6 Dec 2024 08:33:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733474017;
-	bh=Jj1aQjvKJiwl1l+9B0eUXboN5nIcWwPvvJJmz4xtzaY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JybcPVsteSqzpfvd6fvQFU4D2ThCjLN86Vtgk55RngInHaIayTYOFRCJcZLiNd5gd
-	 ByHII6X1M/x7Ymh+Fnl8l2Ist6j5TVgiuW36dU/s9EDl1F6EnEBou34Vmn5K7nUyBW
-	 Lnu9sNY6qKHp99H0xG95iVNAgJilEwAIm5jNQJ3rdaXzGQu12TUEN6sgL2omA7oMj3
-	 kWFgoQ9UxSlAfJxUQ9GOh/Em1mPT3ec71c2OviERk6jo94ZVW2U0XsiqsH5HGYwvt1
-	 93SK7U5XZ1ya3jz6iqdfNa60jaNmzeKTcIxsI38YoF/VfwRr5y8n2GWwHYsQSwfrIX
-	 JBSQPtjLI22wA==
-Date: Fri, 6 Dec 2024 09:33:28 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 13/13] samples: rust: add Rust platform sample driver
-Message-ID: <Z1K22NjYjwhFnsit@pollux>
-References: <20241205141533.111830-1-dakr@kernel.org>
- <20241205141533.111830-14-dakr@kernel.org>
- <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com>
+	s=k20201202; t=1733474034;
+	bh=DdsykxjoYwGNap8VBMiXurGFc0Soee4yASPhhni6j/Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bwp4SlyCOjqE1HX7OTfX265WGvdBBIYnnd5v2H7PnzHa0M+WMCXRw0hawTxkPyvDK
+	 WQiW3Utv+26d8d7PZy095rUn82Qhc8qqFbuu+Y0wIl2b/pDP+MPnpWh9uBdrGQaZQN
+	 IgPGsw9cp9OfQZcdN0wKBXzX9OtX5c73VnFf4syWEBXDSpwDH6PnYBgjAtzFLhM1P7
+	 JKtDUNUOcGgXxP/J1nTc7ECVXCj5woG/a0mfJiZDw9amF9Dhh977yBYIyB5sFr2rdO
+	 682Db5mC1VALKjbex0OZk+0dSIXPynaMtM5GEOO3Y0xcI3FjXtwG6rTbkhta743aEP
+	 rImWaBq/Lrb4g==
+Message-ID: <17a4dbd7-56cb-4c20-a913-0df5c39fc3ff@kernel.org>
+Date: Fri, 6 Dec 2024 09:33:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2c202c1-6bbe-4b6c-ae97-185fe2aed0e5@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator:s5m8767 Fully convert to GPIO descriptors
+To: Song Chen <chensong_2000@189.cn>, lgirdwood@gmail.com,
+ broonie@kernel.org, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20241206051358.496832-1-chensong_2000@189.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241206051358.496832-1-chensong_2000@189.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 06:09:10PM +0100, Dirk Behme wrote:
-> Hi Danilo,
-> 
-> On 05.12.24 15:14, Danilo Krummrich wrote:
-> > Add a sample Rust platform driver illustrating the usage of the platform
-> > bus abstractions.
-> > 
-> > This driver probes through either a match of device / driver name or a
-> > match within the OF ID table.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> 
-> Not a review comment, but a question/proposal:
-> 
-> What do you think to convert the platform sample into an example/test?
-> And drop it in samples/rust then? Like [1] below?
+On 06/12/2024 06:13, Song Chen wrote:
+> This converts s5m8767 regulator driver to use GPIO
+> descriptors.
 
-Generally, I think doctests are indeed preferrable. In this particular case
-though, I think it's better to have a sample module, since this way it can serve
-as go-to example of how to write a platform driver in Rust.
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-Especially for (kernel) folks who do not have a Rust (for Linux) background it's
-way more accessible.
+Subject: missing : after s5m prefix.
 
 > 
-> We would have (a) a complete example in the documentation and (b) some
-> (KUnit) test coverage and (c) have one patch less in the series and
-> (d) one file less to maintain long term.
+> Signed-off-by: Song Chen <chensong_2000@189.cn>
+> ---
+>  drivers/regulator/s5m8767.c      | 110 ++++++++++---------------------
+>  include/linux/mfd/samsung/core.h |   5 +-
+>  2 files changed, 37 insertions(+), 78 deletions(-)
 > 
-> I think to remember that it was mentioned somewhere that a
-> documentation example / KUnit test is preferred over samples/rust (?).
-> 
-> Just an idea :)
-> 
-> Best regards
-> 
-> Dirk
-> 
-> [1]
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ae576c842c51..365fc48b7041 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7035,7 +7035,6 @@ F:	rust/kernel/device_id.rs
->  F:	rust/kernel/devres.rs
->  F:	rust/kernel/driver.rs
->  F:	rust/kernel/platform.rs
-> -F:	samples/rust/rust_driver_platform.rs
-> 
->  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
->  M:	Nishanth Menon <nm@ti.com>
-> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-> index 868cfddb75a2..77aeb6fc2120 100644
-> --- a/rust/kernel/platform.rs
-> +++ b/rust/kernel/platform.rs
-> @@ -142,30 +142,55 @@ macro_rules! module_platform_driver {
->  /// # Example
->  ///
->  ///```
-> -/// # use kernel::{bindings, c_str, of, platform};
-> +/// # mod mydriver {
-> +/// #
-> +/// # // Get this into the scope of the module to make the
-> assert_eq!() buildable
-> +/// # static __DOCTEST_ANCHOR: i32 = core::line!() as i32 - 4;
-> +/// #
-> +/// # use kernel::{c_str, of, platform, prelude::*};
-> +/// #
-> +/// struct MyDriver {
-> +///     pdev: platform::Device,
-> +/// }
->  ///
-> -/// struct MyDriver;
-> +/// struct Info(u32);
->  ///
->  /// kernel::of_device_table!(
->  ///     OF_TABLE,
->  ///     MODULE_OF_TABLE,
->  ///     <MyDriver as platform::Driver>::IdInfo,
-> -///     [
-> -///         (of::DeviceId::new(c_str!("test,device")), ())
-> -///     ]
-> +///     [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
->  /// );
->  ///
->  /// impl platform::Driver for MyDriver {
-> -///     type IdInfo = ();
-> +///     type IdInfo = Info;
->  ///     const OF_ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
->  ///
-> -///     fn probe(
-> -///         _pdev: &mut platform::Device,
-> -///         _id_info: Option<&Self::IdInfo>,
-> -///     ) -> Result<Pin<KBox<Self>>> {
-> -///         Err(ENODEV)
-> +///     fn probe(pdev: &mut platform::Device, info:
-> Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
-> +///         dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver
-> sample.\n");
-> +///
-> +///         assert_eq!(info.unwrap().0, 42);
-> +///
-> +///         let drvdata = KBox::new(Self { pdev: pdev.clone() },
-> GFP_KERNEL)?;
-> +///
-> +///         Ok(drvdata.into())
-> +///     }
-> +/// }
-> +///
-> +/// impl Drop for MyDriver {
-> +///     fn drop(&mut self) {
-> +///         dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver
-> sample.\n");
->  ///     }
->  /// }
-> +///
-> +/// kernel::module_platform_driver! {
-> +///     type: MyDriver,
-> +///     name: "rust_driver_platform",
-> +///     author: "Danilo Krummrich",
-> +///     description: "Rust Platform driver",
-> +///     license: "GPL v2",
-> +/// }
-> +/// # }
->  ///```
->  pub trait Driver {
->      /// The type holding information about each device id supported
-> by the driver.
-> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> index 70126b750426..6d468193cdd8 100644
-> --- a/samples/rust/Kconfig
-> +++ b/samples/rust/Kconfig
-> @@ -41,16 +41,6 @@ config SAMPLE_RUST_DRIVER_PCI
-> 
->  	  If unsure, say N.
-> 
-> -config SAMPLE_RUST_DRIVER_PLATFORM
-> -	tristate "Platform Driver"
-> -	help
-> -	  This option builds the Rust Platform driver sample.
+> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+> index d25cd81e3f36..d0b1eed4dfa0 100644
+> --- a/drivers/regulator/s5m8767.c
+> +++ b/drivers/regulator/s5m8767.c
+> @@ -5,7 +5,7 @@
+>  
+>  #include <linux/cleanup.h>
+>  #include <linux/err.h>
+> -#include <linux/of_gpio.h>
+> +//#include <linux/of_gpio.h>
+
+Some development code was left.
+
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> @@ -15,6 +15,7 @@
+>  #include <linux/mfd/samsung/s5m8767.h>
+>  #include <linux/regulator/of_regulator.h>
+>  #include <linux/regmap.h>
+> +#include <linux/of.h>
+>  
+>  #define S5M8767_OPMODE_NORMAL_MODE 0x1
+>  
+> @@ -23,6 +24,8 @@ struct s5m8767_info {
+>  	struct sec_pmic_dev *iodev;
+>  	int num_regulators;
+>  	struct sec_opmode_data *opmode;
+> +	struct gpio_desc *buck_gpios[3];
+> +	struct gpio_desc *buck_ds[3];
+>  
+>  	int ramp_delay;
+>  	bool buck2_ramp;
+> @@ -35,8 +38,7 @@ struct s5m8767_info {
+>  	u8 buck2_vol[8];
+>  	u8 buck3_vol[8];
+>  	u8 buck4_vol[8];
+> -	int buck_gpios[3];
+> -	int buck_ds[3];
+
+Don't move them.
+
+> +
+
+No need.
+
+>  	int buck_gpioindex;
+>  };
+>  
+> @@ -272,9 +274,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
+>  {
+>  	int temp_index = s5m8767->buck_gpioindex;
+>  
+> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+>  
+>  	return 0;
+>  }
+> @@ -283,9 +285,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
+>  {
+>  	int temp_index = s5m8767->buck_gpioindex;
+>  
+> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+>  
+>  	return 0;
+>  }
+> @@ -486,16 +488,22 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
+>  			struct sec_platform_data *pdata,
+>  			struct device_node *pmic_np)
+>  {
+> -	int i, gpio;
+> +	int i;
+> +	char label[32];
+>  
+>  	for (i = 0; i < 3; i++) {
+> -		gpio = of_get_named_gpio(pmic_np,
+> -					"s5m8767,pmic-buck-dvs-gpios", i);
+> -		if (!gpio_is_valid(gpio)) {
+> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
+> +		pdata->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
+> +					"s5m8767,pmic-buck-dvs", i, GPIOD_OUT_LOW);
+> +		if (IS_ERR(pdata->buck_gpios[i])) {
+> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
+
+Why not printing error msg? This should be also return dev_err_probe
+
+>  			return -EINVAL;
+>  		}
+> -		pdata->buck_gpios[i] = gpio;
+> +
+> +		/* SET GPIO*/
+
+What is a SET GPIO?
+
+> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
+
+Why using "SET" as name, not the actual name it is used for? Buck DVS?
+
+> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
+> +		gpiod_direction_output(pdata->buck_gpios[i],
+> +					(pdata->buck_default_idx >> (2 - i)) & 0x1);
+
+This is not an equivalent code. You set values for GPIOs 0-1 even if
+requesting GPIO 2 fails.
+
+On which board did you test it?
+
+>  	}
+>  	return 0;
+>  }
+> @@ -504,16 +512,21 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
+>  			struct sec_platform_data *pdata,
+>  			struct device_node *pmic_np)
+>  {
+> -	int i, gpio;
+> +	int i;
+> +	char label[32];
+>  
+>  	for (i = 0; i < 3; i++) {
+> -		gpio = of_get_named_gpio(pmic_np,
+> -					"s5m8767,pmic-buck-ds-gpios", i);
+> -		if (!gpio_is_valid(gpio)) {
+> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
+> +		pdata->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
+> +					"s5m8767,pmic-buck-ds", i, GPIOD_OUT_LOW);
+> +		if (IS_ERR(pdata->buck_ds[i])) {
+> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
+>  			return -EINVAL;
+>  		}
+> -		pdata->buck_ds[i] = gpio;
+> +
+> +		/* SET GPIO*/
+> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
+> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
+> +		gpiod_direction_output(pdata->buck_gpios[i], 0);
+>  	}
+>  	return 0;
+>  }
+> @@ -785,61 +798,6 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
+> -						pdata->buck4_gpiodvs) {
 > -
-> -	  To compile this as a module, choose M here:
-> -	  the module will be called rust_driver_platform.
+> -		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
+> -			!gpio_is_valid(pdata->buck_gpios[1]) ||
+> -			!gpio_is_valid(pdata->buck_gpios[2])) {
+> -			dev_err(&pdev->dev, "GPIO NOT VALID\n");
+> -			return -EINVAL;
+> -		}
 > -
-> -	  If unsure, say N.
+> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
+> -					"S5M8767 SET1");
+> -		if (ret)
+> -			return ret;
 > -
->  config SAMPLE_RUST_HOSTPROGS
->  	bool "Host programs"
->  	help
-> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> index 761d13fff018..2f5b6bdb2fa5 100644
-> --- a/samples/rust/Makefile
-> +++ b/samples/rust/Makefile
-> @@ -4,7 +4,6 @@ ccflags-y += -I$(src)				# needed for trace events
->  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
->  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
->  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
-> -obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
-> 
->  rust_print-y := rust_print_main.o rust_print_events.o
-> 
-> diff --git a/samples/rust/rust_driver_platform.rs
-> b/samples/rust/rust_driver_platform.rs
-> deleted file mode 100644
-> index 2f0dbbe69e10..000000000000
-> --- a/samples/rust/rust_driver_platform.rs
-> +++ /dev/null
-> @@ -1,49 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
+> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
+> -					"S5M8767 SET2");
+> -		if (ret)
+> -			return ret;
 > -
-> -//! Rust Platform driver sample.
+> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
+> -					"S5M8767 SET3");
+> -		if (ret)
+> -			return ret;
 > -
-> -use kernel::{c_str, of, platform, prelude::*};
+> -		/* SET1 GPIO */
+> -		gpio_direction_output(pdata->buck_gpios[0],
+> -				(s5m8767->buck_gpioindex >> 2) & 0x1);
+> -		/* SET2 GPIO */
+> -		gpio_direction_output(pdata->buck_gpios[1],
+> -				(s5m8767->buck_gpioindex >> 1) & 0x1);
+> -		/* SET3 GPIO */
+> -		gpio_direction_output(pdata->buck_gpios[2],
+> -				(s5m8767->buck_gpioindex >> 0) & 0x1);
+> -	}
 > -
-> -struct SampleDriver {
-> -    pdev: platform::Device,
-> -}
+> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
+> -	if (ret)
+> -		return ret;
 > -
-> -struct Info(u32);
+> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
+> -	if (ret)
+> -		return ret;
 > -
-> -kernel::of_device_table!(
-> -    OF_TABLE,
-> -    MODULE_OF_TABLE,
-> -    <SampleDriver as platform::Driver>::IdInfo,
-> -    [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
-> -);
+> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
+> -	if (ret)
+> -		return ret;
 > -
-> -impl platform::Driver for SampleDriver {
-> -    type IdInfo = Info;
-> -    const OF_ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
+> -	/* DS2 GPIO */
+> -	gpio_direction_output(pdata->buck_ds[0], 0x0);
+> -	/* DS3 GPIO */
+> -	gpio_direction_output(pdata->buck_ds[1], 0x0);
+> -	/* DS4 GPIO */
+> -	gpio_direction_output(pdata->buck_ds[2], 0x0);
 > -
-> -    fn probe(pdev: &mut platform::Device, info:
-> Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
-> -        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
-> -
-> -        if let Some(info) = info {
-> -            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n",
-> info.0);
-> -        }
-> -
-> -        let drvdata = KBox::new(Self { pdev: pdev.clone() },
-> GFP_KERNEL)?;
-> -
-> -        Ok(drvdata.into())
-> -    }
-> -}
-> -
-> -impl Drop for SampleDriver {
-> -    fn drop(&mut self) {
-> -        dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver
-> sample.\n");
-> -    }
-> -}
-> -
-> -kernel::module_platform_driver! {
-> -    type: SampleDriver,
-> -    name: "rust_driver_platform",
-> -    author: "Danilo Krummrich",
-> -    description: "Rust Platform driver",
-> -    license: "GPL v2",
-> -}
-> 
+>  	regmap_update_bits(s5m8767->iodev->regmap_pmic,
+>  			   S5M8767_REG_BUCK2CTRL, 1 << 1,
+>  			   (pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
+> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+> index 750274d41fc0..b757f15877a3 100644
+> --- a/include/linux/mfd/samsung/core.h
+> +++ b/include/linux/mfd/samsung/core.h
+> @@ -33,6 +33,7 @@
+>  #define STEP_12_5_MV		12500
+>  #define STEP_6_25_MV		6250
+>  
+> +#define BULK_GPIO_COUNT		3
+
+Where do you use ot?
+
+>  struct gpio_desc;
+>  
+>  enum sec_device_type {
+> @@ -77,10 +78,10 @@ int sec_irq_resume(struct sec_pmic_dev *sec_pmic);
+>  struct sec_platform_data {
+>  	struct sec_regulator_data	*regulators;
+>  	struct sec_opmode_data		*opmode;
+> +	struct gpio_desc			*buck_gpios[3];
+> +	struct gpio_desc			*buck_ds[3];
+>  	int				num_regulators;
+>  
+> -	int				buck_gpios[3];
+> -	int				buck_ds[3];
+
+Don't move the code.
+
+>  	unsigned int			buck2_voltage[8];
+>  	bool				buck2_gpiodvs;
+>  	unsigned int			buck3_voltage[8];
+
+
+Best regards,
+Krzysztof
 
