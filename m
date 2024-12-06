@@ -1,173 +1,131 @@
-Return-Path: <linux-kernel+bounces-435546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF62A9E7923
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:40:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CAA69E7926
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E79918885E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CD72165267
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C6D215192;
-	Fri,  6 Dec 2024 19:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R35RYQoT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8D01C5498;
+	Fri,  6 Dec 2024 19:39:31 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2AB2135CD
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9283A1C5485
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733513920; cv=none; b=qjK4vQkC9TyMhWfzcHAkf0FIhL/tR4Vb/w0HkwES5OYB5HU5k2T0NEyJ+G7y9KoxbvBazGyCv7FtR09Go81eXixAxJDqlY69Cet7P/2LKaxSE2FzYGUFU+v/UCeSuxakal4Crj7h4KrN4elqA8E+w8bMjk8xtUYL8ClSqbyze3Q=
+	t=1733513971; cv=none; b=KRaE7LnIowklQgB1W52V3jZpFN4kCPoSFahb5ipLisTPXvLSQIF0gTycMn10S9j65tgrwJj0RBaG7pNe6l6orNlR38DaHkvXySIHx/j4c12/edLo7hxa0nyx6owYs3qdmy9uvW1UtiPETLaMqFVkcvDM3+BifpaNk7e8Lg/cE/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733513920; c=relaxed/simple;
-	bh=1W18IIfiPQcuVMS9i5YvkgbwEZx8qv0Tbp4ZVof+iOU=;
-	h=Subject:To:Cc:From:Date:References:In-Reply-To:Message-Id; b=Ed0UIi7kN7BURyovQOTOuX7X6evi5B005ZN54dqJsBMXJ3oTAdPBdHzZUTYVtbK69duGpWH3nNWyIg9FMGr2d329gcSeNvIOhNp0Y3JjR07VPW7VOsZma9u5OSoDZ1nHDiMjIyeZ+ryMlEsHEZP+VMu32M2jUImaoNuaa+lQpeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R35RYQoT; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733513918; x=1765049918;
-  h=subject:to:cc:from:date:references:in-reply-to:
-   message-id;
-  bh=1W18IIfiPQcuVMS9i5YvkgbwEZx8qv0Tbp4ZVof+iOU=;
-  b=R35RYQoT2LVhjxEsG6o8/+xtlD7VO/TQZQPAj3ZDACfCdWxdkSv+FYN7
-   dP9lZMkFvuZ3fucKsf6eSMW4JzOdUr58/zikz+0mo+Is/1JgblgUFEpT0
-   ivUbx0SSNCyNWXMq6vXCznoe0iBg5UOL5kP7FuWJDuamNpsq/9U3wn/+j
-   jTDi3wTU30567dT2qpdcDvn6EVTQCNbLPNasrgarhe3nFla8iy11bKl0V
-   Ghag54hQfs3WDU8VbGXJ3H1gCaxNarJMMFri5xTL61T1OmbdKVLv7q0wU
-   bR7v3XcoXjonS7z0rfpzF4MkmjVvySyjKmMUOkYae79qV+aiAFh7euqy1
-   w==;
-X-CSE-ConnectionGUID: pu0WhWQVQ4untXxqaGhDcw==
-X-CSE-MsgGUID: u95Dg95fTgOS487zKsTIHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="34027913"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="34027913"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 11:38:38 -0800
-X-CSE-ConnectionGUID: YEesrAm3Ti2Fqol5sWgfag==
-X-CSE-MsgGUID: 9ZwYC+M9Sj2HEEe6BMfKiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="94979054"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by fmviesa009.fm.intel.com with ESMTP; 06 Dec 2024 11:38:38 -0800
-Subject: [PATCH 5/5] x86/cpu: Remove 'x86_cpu_desc' infrastructure
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,tglx@linutronix.de,bp@alien8.de,kan.liang@linux.intel.com,mingo@kernel.org,peterz@infradead.org,tony.luck@intel.com,pawan.kumar.gupta@linux.intel.com,Dave Hansen <dave.hansen@linux.intel.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 06 Dec 2024 11:38:37 -0800
-References: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
-In-Reply-To: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
-Message-Id: <20241206193837.B3001666@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1733513971; c=relaxed/simple;
+	bh=WYU3BtfPgc8JALRFkC2f8cKo9E+ajIbNWzGzFbmxxNQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=jNq6P1AtUIbBVwC/SWHWl3Tv8bVB4LM9EDFG7vPZr+bvDm9YHocuSCwFZjVyrYkPW0V385lKFqgWMsw27Pz5anYa3LD24jKrTNlFLfV2yxwG3NkNcy07YiAy+pDJAoMgWZK1OoeLpKJzWKeYYTNdU2inIyRCeWXu9P5sCV7aB2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-184-wSN4kbhlPXCqAnAYZUig_Q-1; Fri, 06 Dec 2024 19:39:27 +0000
+X-MC-Unique: wSN4kbhlPXCqAnAYZUig_Q-1
+X-Mimecast-MFC-AGG-ID: wSN4kbhlPXCqAnAYZUig_Q
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 19:38:40 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 19:38:40 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+CC: Vincent Mailhol <vincent.mailhol@gmail.com>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "uecker@tugraz.at" <uecker@tugraz.at>
+Subject: RE: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Topic: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Index: AQHbROFPJXcuwP9wN0+yRzIQ2cx/pbLWa+gggAFf14CAACMqUIABpzoGgAAClHCAAAPoAIAAAwjg
+Date: Fri, 6 Dec 2024 19:38:40 +0000
+Message-ID: <0f5c07b827c3468c8fa3928a93a98bfa@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+ <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+ <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
+ <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
+ <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
+ <d23fe8a5dbe84bfeb18097fdef7aa4c4@AcuMS.aculab.com>
+ <CAHk-=win8afdcergvJ6f2=rRrff8giGUW62qmYs9Ae6aw=wcnA@mail.gmail.com>
+In-Reply-To: <CAHk-=win8afdcergvJ6f2=rRrff8giGUW62qmYs9Ae6aw=wcnA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: L2MUwZYPcvq71yMBtzb7EUm5FQQrhuZUWG2P8sAePmI_1733513966
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDYgRGVjZW1iZXIgMjAyNCAxOToxNQ0KPiBP
+biBGcmksIDYgRGVjIDIwMjQgYXQgMTE6MDcsIERhdmlkIExhaWdodCA8RGF2aWQuTGFpZ2h0QGFj
+dWxhYi5jb20+IHdyb3RlOg0KPiA+DQo+ID4gSSdtIG1pc3NpbmcgdGhlIGNvbXBpbGVyIHZlcnNp
+b24gYW5kIG9wdGlvbnMgdG8gZ2VuZXJhdGUgdGhlIGVycm9yLg0KPiANCj4gSnVzdCAtV2FsbCB3
+aXRoIG1vc3QgcmVjZW50IGdjYyB2ZXJzaW9ucyBzZWVtcyB0byBkbyBpdC4gQXQgbGVhc3QgSQ0K
+PiBjYW4gcmVwcm8gaXQgd2l0aCBnY2MtMTQuMi4xIGFuZCBzb21ldGhpbmcgc2lsbHkgbGlrZSB0
+aGlzOg0KDQpJIG1heSBoYXZlIGp1c3QgbWlzc2VkIGdvbGJvbHQgcmV0dXJuaW5nIGEgd2Fybmlu
+Zy4NCi4uLg0KPiA+IERvZXMgYSAnKyAwJyBoZWxwPyAgIih2YXIgPDwgMikgKyAwID8gMCA6IDAi
+DQo+IA0KPiBZZWFoLCB0aGF0IGFjdHVhbGx5IHdvcmtzLg0KPiANCj4gQW5kICIrMCIgaXMgbmlj
+ZSBpbiB0aGF0IGl0IHNob3VsZCB3b3JrIGluIGFueSBjb250ZXh0Lg0KDQpVbmxlc3MgaXQgZmFs
+bHMgZm91bCBvZiB0aGUgY2xhbmcgdGVzdCBmb3IgYXJ0aG1ldGljIG9uIE5VTEwgcG9pbnRlcnMu
+DQooSSdtIHN1cmUgdGhhdCBpcyBvbmx5IGEgcHJvYmxlbSBpZiBOVUxMIGlzbid0IHRoZSBhbGwt
+emVybyBiaXQgcGF0dGVybi4NCkFuZCBwcmV0dHkgbXVjaCBubyBDIGNvZGUgaGFzIGV2ZXIgYmVl
+biAndGhhdCBwb3J0YWJsZScuKQ0KDQpBZGRpbmcgMCBjYW4gYWxzbyBoZWxwIHdoZW4gY29tcGxp
+ZXJzIGFyZSBiZWluZyBwaWNreSBhYm91dCBlbnVtcy4NClNpbmNlIG5vbmUgaGF2ZSAoeWV0KSBt
+YWRlIHRoZW0gbW9yZSBsaWtlIGEgMzJiaXQgcG9pbnRlciB0byBhIG9uZQ0KYnl0ZSBzdHJ1Y3R1
+cmUgKG9yIHRoZSBQYXNjYWwgZW51bSkuDQpJbiBjYXNlIHRoZSByZWxldmFudCBwZW9wbGUgYXJl
+IHJlYWRpbmcgdGhpcywgbWF5YmUgb25seSBkbyBhbnkNCm5vbi1pbnRlZ2VyIHdhcm5pbmdzIGZv
+ciBuYW1lZCBlbnVtcz8NCg0KPiA+ICNkZWZpbmUgY29uc3RfTlVMTCh4KSBfR2VuZXJpYygwID8g
+KHgpIDogKGNoYXIgKikwLCBjaGFyICo6IDEsIHZvaWQgKjogMCkNCj4gPiAjZGVmaW5lIGNvbnN0
+X3RydWUoeCkgY29uc3RfTlVMTCgoeCkgPyBOVUxMIDogKHZvaWQgKikxTCkpDQo+ID4gI2RlZmlu
+ZSBjb25zdF9leHByKHgpIGNvbnN0X05VTEwoKHgpID8gTlVMTCA6IE5VTEwpKQ0KPiA+IEkgc2Vu
+ZCB0aGlzIG1vcm5pbmcuDQo+ID4gTmVlZHMgJ3MvY2hhci9zdHJ1Y3Qga2pramtqa2p1aS8nIGFw
+cGxpZWQuDQo+IA0KPiBPaCBDaHJpc3QuIFlvdSByZWFsbHkgYXJlIHRha2luZyB0aGlzIHdob2xl
+IHVnbHkgdG8gYW5vdGhlciBsZXZlbC4NCg0KSSBzb3J0IG9mIGxpa2VkIHRoYXQgdmVyc2lvbiBp
+biBhIHBlcnZlcnNlIHNvcnQgb2Ygd2F5Lg0KSXQgZG9lcyBnaXZlIHlvdSBhIHNpbXBsZSB0ZXN0
+IGZvciBOVUxMICh1bmxlc3MgeW91J3ZlIHVzZWQgJ3N0cnVjdCBramtqa2pranVpJykuDQoNCglE
+YXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91
+bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5
+NzM4NiAoV2FsZXMpDQo=
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
-
-All the users of 'x86_cpu_desc' are gone.  Zap it from the tree.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
----
-
- b/arch/x86/include/asm/cpu_device_id.h |   35 ---------------------------------
- b/arch/x86/kernel/cpu/match.c          |   31 -----------------------------
- 2 files changed, 66 deletions(-)
-
-diff -puN arch/x86/include/asm/cpu_device_id.h~zap-x86_cpu_desc-3 arch/x86/include/asm/cpu_device_id.h
---- a/arch/x86/include/asm/cpu_device_id.h~zap-x86_cpu_desc-3	2024-12-06 11:33:17.751210312 -0800
-+++ b/arch/x86/include/asm/cpu_device_id.h	2024-12-06 11:33:17.755210470 -0800
-@@ -243,42 +243,7 @@
- 		VFM_MODEL(vfm),				\
- 		X86_STEPPING_ANY, feature, data)
- 
--/*
-- * Match specific microcode revisions.
-- *
-- * vendor/family/model/stepping must be all set.
-- *
-- * Only checks against the boot CPU.  When mixed-stepping configs are
-- * valid for a CPU model, add a quirk for every valid stepping and
-- * do the fine-tuning in the quirk handler.
-- */
--
--struct x86_cpu_desc {
--	u8	x86_family;
--	u8	x86_vendor;
--	u8	x86_model;
--	u8	x86_stepping;
--	u32	x86_microcode_rev;
--};
--
--#define INTEL_CPU_DESC(vfm, stepping, revision) {		\
--	.x86_family		= VFM_FAMILY(vfm),		\
--	.x86_vendor		= VFM_VENDOR(vfm),		\
--	.x86_model		= VFM_MODEL(vfm),		\
--	.x86_stepping		= (stepping),			\
--	.x86_microcode_rev	= (revision),			\
--}
--
--#define AMD_CPU_DESC(fam, model, stepping, revision) {		\
--	.x86_family		= (fam),			\
--	.x86_vendor		= X86_VENDOR_AMD,		\
--	.x86_model		= (model),			\
--	.x86_stepping		= (stepping),			\
--	.x86_microcode_rev	= (revision),			\
--}
--
- extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
--extern bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table);
- extern bool x86_match_min_microcode_rev(const struct x86_cpu_id *table);
- 
- #endif /* _ASM_X86_CPU_DEVICE_ID */
-diff -puN arch/x86/kernel/cpu/match.c~zap-x86_cpu_desc-3 arch/x86/kernel/cpu/match.c
---- a/arch/x86/kernel/cpu/match.c~zap-x86_cpu_desc-3	2024-12-06 11:33:17.755210470 -0800
-+++ b/arch/x86/kernel/cpu/match.c	2024-12-06 11:33:17.755210470 -0800
-@@ -56,37 +56,6 @@ const struct x86_cpu_id *x86_match_cpu(c
- }
- EXPORT_SYMBOL(x86_match_cpu);
- 
--static const struct x86_cpu_desc *
--x86_match_cpu_with_stepping(const struct x86_cpu_desc *match)
--{
--	struct cpuinfo_x86 *c = &boot_cpu_data;
--	const struct x86_cpu_desc *m;
--
--	for (m = match; m->x86_family | m->x86_model; m++) {
--		if (c->x86_vendor != m->x86_vendor)
--			continue;
--		if (c->x86 != m->x86_family)
--			continue;
--		if (c->x86_model != m->x86_model)
--			continue;
--		if (c->x86_stepping != m->x86_stepping)
--			continue;
--		return m;
--	}
--	return NULL;
--}
--
--bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table)
--{
--	const struct x86_cpu_desc *res = x86_match_cpu_with_stepping(table);
--
--	if (!res || res->x86_microcode_rev > boot_cpu_data.microcode)
--		return false;
--
--	return true;
--}
--EXPORT_SYMBOL_GPL(x86_cpu_has_min_microcode_rev);
--
- bool x86_match_min_microcode_rev(const struct x86_cpu_id *table)
- {
- 	const struct x86_cpu_id *res = x86_match_cpu(table);
-_
 
