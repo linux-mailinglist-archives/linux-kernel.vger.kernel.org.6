@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-434099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE14C9E619E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:05:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044949E61A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:05:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D331016895C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D43188541D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CBB28F3;
-	Fri,  6 Dec 2024 00:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2F710E6;
+	Fri,  6 Dec 2024 00:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1cSwBwwf"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FR8GrlTK"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45907442C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78ED13FE4
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733443488; cv=none; b=T1sIZUcuuxP2NT26dHyJ+1XpBtDF1rpvgy1g8WpHf/LHAYGCNik24VSPHtLKYQwg3KEThjEls8cLV6sUZKwrxZFCG1F8nPgAY24rdJaioG4IH53FWUVIeZRzx50+4WURxppeDTv61c3h1Kxt6PRSVut9YmIqxEude0Wfy4IevWU=
+	t=1733443509; cv=none; b=cKzKWnGms/to9b+wlqnRI4AxRZM2rRzjWMdR21I398iWnxXLTaov0FGzjpyYh6bO/vLje+fK7109hMLwkBjqB8s1fRICvq7fLcX2fd2pOMsHzTxIFOI8Yd0IYNAQ0LqTgomlcf9QQsHYCR3N5FSMb+NgPqdKe3lDfNcGPYoKq5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733443488; c=relaxed/simple;
-	bh=Tvn36FuiWfVJJKwvwkybfuYf/nBnm7Srci3co3kdlRE=;
+	s=arc-20240116; t=1733443509; c=relaxed/simple;
+	bh=BwcwkBmpq9qoP9KdrIaMsk9b+cc/VqljtaRzLZNq7Q4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=im7Jsn+r1QOP/zmk7z5o1uAhqlVH1RizdRuHJrucOIs1DudF+B6IuGvc3xONuJDGf2UXPywBCAarGLLhw2B2/3Htc1KwmgcTRdd+rdVfxLDL/8LZ1YiaHcx7ZNsu65FG06303DADLIDo5T827aMzdz02yYh5tMurl4a5oE+KqOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1cSwBwwf; arc=none smtp.client-ip=209.85.208.172
+	 To:Cc:Content-Type; b=PwV7VWZjMsq7Vs37ErK3CQ8WK5cy0wWIVF2q9m47bMBDGjSJYxa384xESCQth+hWVKDoRnLDkcdDuKKEXbuINN7MmrdwXHMtEBdLS4qR4D//voQ0V1JCPOgFL3b6I5Z/fPXhcyByNh4EraPsidcyGCCJBmYbY53d2HsDz3so1yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FR8GrlTK; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3001d009633so13745161fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:04:46 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53de79c2be4so1624233e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:05:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733443484; x=1734048284; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733443506; x=1734048306; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nyJdJJn57+pQZInRZeuVGIN7AV1JUnt9vsohwzqk0TU=;
-        b=1cSwBwwfDG9quBHgMgzP21wnDWBK1FLvv5bdnSl7FrYQbp6/gOnltSJXhqnIUD0EoE
-         YjdOIWPTf3SrP2/Q/dt0jVDjhytTYx/C2tcRFN8Wm6io1IAY/yWUYi8CkogPVPv2LmKB
-         7rR4V/1+75r6fspiHB4erZ3/P772sl1K0m7fsTmS2G1QCor8pCAjchodGFfDBEM/okY4
-         q9/8D5mncDyNaz04LG0T44t37HUvTH0uvXH65XXbc/e18uwh//0Cp82boZG+D7SScSbK
-         iJL2HtONV8WJd5Oc9bVe+LW2/7dA6foZXdjgQKtUx7kco5nFDOu75Ty1XG6CdUhW0BGZ
-         lkSQ==
+        bh=4mffP7SIqpVqHwqmdEnMFI8Mhd4D6LAYDdX9afu8rwI=;
+        b=FR8GrlTKu6Ridt8xIB0szGVtwvS5bYx1wG48fVYFMsI5R28opspFztAyyOkq6rM0Au
+         2acEnLqbuT+SIbK15earmzPoShhHOSw3/bM+hWS2a1/zs6js430MM/On5ebsVpwSRozP
+         +PU3uOpjK4BWfcMvI1daLUktuGLpgAvLFCh6xDOko/wQFom4bvFUAzKJCPF+Vtt+RErm
+         QCkOp8h6mBmPGBfZIDSjcRpIjX1AvZqNiQrULo9GQlb+/HrwtUy1WyrpOcwmWoWlKVRJ
+         HhONafIuMLkLcAHitTAhwzA+E03ZB+O17jYI98NPbgMrQ6BRHmFeIGTdYmHYTRpy9Oo1
+         02Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733443484; x=1734048284;
+        d=1e100.net; s=20230601; t=1733443506; x=1734048306;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nyJdJJn57+pQZInRZeuVGIN7AV1JUnt9vsohwzqk0TU=;
-        b=L5fXNhTBt2pmkhC5eSbMz1sQ1I5Adt+EK2jpipUKi86VFyKYsjhG+jquV11npmBzZK
-         Dyw8iQWWEGBPT1DdyJZEbifprF/ceN8sNz6rkMnpUef2FVhi3TKd0TAxAIsxjuMN+mcf
-         Zk57b271jaWex0P+ZTxwh8oMz4CbfjUBRtHD/SX2bzyTkeu0E3+e+ZuynnpmOGGNWlhg
-         zqfF32qozCqFMdBzXzT4e/oC1BupdbTogWbu6OdiJGnj0GZAW9zkxp7RgqI9Hm9+6G8O
-         yCkU2ensy7ST96eqEsyHp1T//vTQuCNKhy1xs3xnul5+5EyTUgdI4DoED+4QryLs888a
-         x0ow==
-X-Gm-Message-State: AOJu0Yw+lL31rADZUYb3YF46Z26+sOVIBFLkbsWaDorYaD2vWi/RrXTT
-	5N234Lgv6H41Y5KVPkpGYW4tQ+XkrRo6wXZwi+Z7EOGWbXskfqS10E3FOBHdltDDMoCwJNE3q1y
-	Oa1dN4SGhln7A8AF/J8igkXR1QFt7q3VbZMbW
-X-Gm-Gg: ASbGncuSu2LpGAPimK+YuSS5vAwBcIGF9MtGgRBDeNHnohgUcjsekmNu+2/rYuraVkG
-	qeshpdjiK4STP6b+AtjMaYP+EQzXzIQ==
-X-Google-Smtp-Source: AGHT+IE92QurkCXbpPhW39S0T6DV3d1ZwkHiDAPalNEAhWDdnG9gboTXRwPqobgb8OqDtVbK6JdEhdq9iaiE115Ad5o=
-X-Received: by 2002:a05:651c:1a0c:b0:300:1947:a28c with SMTP id
- 38308e7fff4ca-3002fcec223mr1919581fa.26.1733443484316; Thu, 05 Dec 2024
- 16:04:44 -0800 (PST)
+        bh=4mffP7SIqpVqHwqmdEnMFI8Mhd4D6LAYDdX9afu8rwI=;
+        b=veFwP7mIg7KN8OPDHXm0gCgNI1vCeBrbVEzMyTv6CXGTEJJJhyhN9iGcMDA+QDcLGX
+         i/spMT8ksgQX9rZuzRy5oZ9pszgB1aZGSJgYRJRTfZSK3PIZosI/WcYffGfa117i0Tgj
+         XQsUomiAbxqXYeakaJogjR6FlqR/nviFBQ1Iws89C8f8BNUEHb5DvNXGdKd+Ur/1xJRn
+         /oVSp9KehYyhHBMBa4rwPEw1U3k2oaXZFQBuNbcIrnjX3vrxYunKEdSbwmm8GlxcB19E
+         NiciAqtFJGkyjg3n7nZTA7nhawO4aRUP4thRz6ciLopy3uk8oMZLnAaIjkIgfKm9XlEq
+         tjiQ==
+X-Gm-Message-State: AOJu0YzSKhsqaDWSH52eUlsejf8IUJy8GlekvsvxvNcxGiB+oiUkxFff
+	KCLy3L6MdzB3UdEfWfmUm5oaAjLPOWYl244VeHjVf3MjSFcuv4YClg0gzozd9skV76Cx0vS1QG6
+	8JYHca87l6S2bs33u2xNifgPXVXdIQLyZIFqb
+X-Gm-Gg: ASbGncsSp+6O2QAhYrYeGXYnKWNps60TzX4kdqPjldrP1pZbaPwDvdclLC9aQ+8sRv7
+	6au9lPIocfm8NxT0jwc6jrSENwd0DtA==
+X-Google-Smtp-Source: AGHT+IEphwAKG+akjlfTDJM0cFC6ySOTXKmmpvLObu98Xq16kqT8AeY48zqrBxP7D7gn8VnXD7qHI6i/RHkPxXyECew=
+X-Received: by 2002:a05:6512:1cb:b0:53e:3103:b967 with SMTP id
+ 2adb3069b0e04-53e3103ba29mr28490e87.35.1733443505497; Thu, 05 Dec 2024
+ 16:05:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204221942.2248973-1-sashal@kernel.org> <20241204221942.2248973-3-sashal@kernel.org>
-In-Reply-To: <20241204221942.2248973-3-sashal@kernel.org>
+References: <20241204221925.2248843-1-sashal@kernel.org> <20241204221925.2248843-3-sashal@kernel.org>
+In-Reply-To: <20241204221925.2248843-3-sashal@kernel.org>
 From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 5 Dec 2024 16:04:06 -0800
-Message-ID: <CAGETcx8vU60Rypu1TfGfKSNUuoikGMQYydqEYDQNsNPfoKt9fA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.10 3/5] phy: tegra: xusb: Set fwnode for xusb
+Date: Thu, 5 Dec 2024 16:04:29 -0800
+Message-ID: <CAGETcx82VRmbU-UJ3iQxipCWncJPB_N9rO702K5AoVitpLNo9g@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.15 3/5] phy: tegra: xusb: Set fwnode for xusb
  port devices
 To: Sasha Levin <sashal@kernel.org>
 Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
@@ -88,7 +88,7 @@ Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 4, 2024 at 3:31=E2=80=AFPM Sasha Levin <sashal@kernel.org> wrot=
+On Wed, Dec 4, 2024 at 3:30=E2=80=AFPM Sasha Levin <sashal@kernel.org> wrot=
 e:
 >
 > From: Saravana Kannan <saravanak@google.com>
@@ -132,10 +132,10 @@ Is there a pressing need for this in 4.19?
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index 856397def89ac..133f504dfe9a7 100644
+> index bf7706bf101a6..9a204f78f55db 100644
 > --- a/drivers/phy/tegra/xusb.c
 > +++ b/drivers/phy/tegra/xusb.c
-> @@ -531,7 +531,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_por=
+> @@ -537,7 +537,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_por=
 t *port,
 >
 >         device_initialize(&port->dev);
