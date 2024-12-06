@@ -1,91 +1,161 @@
-Return-Path: <linux-kernel+bounces-435346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BFB9E765D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:47:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 879F09E7660
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E64D0165890
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:47:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F17B166D0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD041F3D2D;
-	Fri,  6 Dec 2024 16:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02741F3D2E;
+	Fri,  6 Dec 2024 16:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="XQcXF0K0"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAEPZfD1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087E520627F;
-	Fri,  6 Dec 2024 16:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047B220627F;
+	Fri,  6 Dec 2024 16:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503661; cv=none; b=XCyOu0YQxkPmpFcdiq5jJXehxiwNk171tg9cQ0B29Z4zB9lbRzyXzqSKAGQtbfW6/6MMKP4vc8V4XeJF4ud2FuWqhEc53jtUOZX5SmHOYNsMa7w1Yl3teX7TWUw5SIvwv4mgkUVhi912R/RMY7rq7muQncXTc6NLZjWzlz1T408=
+	t=1733503765; cv=none; b=W8hJBP2D8k0PCZWIq7NDqDfgftf0ZumHB8fRsvxwOkjhQhM53fufwCRgNOM3G8uWrFmwjMzguSV6a3kEdtDaR8rD5PuVKAdLxpr9h9ftZiNeszMsuxlr6zeU6SL/34u8hhIt1JXZGML9Wg6sByk+5DNYGgZVDCeGyJ1yIGqkCaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503661; c=relaxed/simple;
-	bh=kvE0y4dFgneEl0Xw4h78GAQyKPGVaNI2DxPT0S+gJgQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pZNplnS/OSTH042BRxqEH6CPv4Ajt2L60bTicy9tbgRONKFUt4ZP+Y+Y8XFloPAa3GYHc9OvmSDrOR+cmrisMD5vVRq5EjNpB2/dOItf8CfiC7mN88ibWxmElWgvS9SlZ0Z7JDJyNzESX6ecwe59V0oKngc8gWhySoKIZ6zdUcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=XQcXF0K0; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1AFEF40409
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1733503659; bh=PSEFYRD5HPP4WZPiIKjB1GYPa+JV0S6EbNMDEY+qpB8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XQcXF0K0yueFjTcsx6fWvYkD/PYs3+k9Q6p1Igjct9xFlHmofbGtlfSR8JmAW1M2x
-	 SMB9L2pyMp2Wt7rnHGVng3X8goQKyVLXxaOB73EZSTXO0ILSWtQ5/hD8CYPcXY5kzU
-	 VkySquII2r41kGxp1Z6e2pHmGjO7tfR2HaAdqk8HCKLhPtj7h+iXdSI+UvM6iO3q2e
-	 1+UUzxSRjai4ge2oVdRWS9wF0z+EnUdJu+id3rfuiWhTH1agpeQVzNVqaD0EF0jTBa
-	 59Gx6uRMVhpHBgwjxo7Cg4k56eTZm2QG4t89A+BjvLQn00/geEf6EyAwVeJKLr0LWy
-	 pPxsmxjYiV6OQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 1AFEF40409;
-	Fri,  6 Dec 2024 16:47:39 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v1 0/3] x86/Documentation: boot.rst: More style &format
- fixes
-In-Reply-To: <20241128152546.2396782-1-andriy.shevchenko@linux.intel.com>
-References: <20241128152546.2396782-1-andriy.shevchenko@linux.intel.com>
-Date: Fri, 06 Dec 2024 09:47:38 -0700
-Message-ID: <874j3gu5at.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1733503765; c=relaxed/simple;
+	bh=UeKtN2BtVxO2wPZowv8deGBv035MOLPP/4qWZm6tNEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sQLZZsejtLvwZi4yEP5X9Rg8cAO2o4+uCPMfZ7L7z10otMmhjqVmBIyDil078ghe/dQOSwsiFHc/QjgxJz1CkFWfC7USgb7AWa/pokPt1P7gOZ8WKj7CD/qOHttTf3fc9kAVSxmtQRWbVIAfZYOZcD4rumBBGvcdFnDiTnCTv7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAEPZfD1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B2A7C4CEDE;
+	Fri,  6 Dec 2024 16:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733503764;
+	bh=UeKtN2BtVxO2wPZowv8deGBv035MOLPP/4qWZm6tNEc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gAEPZfD1MWRpDXbqvn2g1pA7KTG4zriOSMOp1tTDC6/23O/z5t9YkqWh+kHWvOGNn
+	 PRsxVIlJL9u8CEFKpHLeXaGIRyHsR3KIn5AFslVEPmPQkraVkvYGIR090fLOgd6Y0A
+	 oSc01N1bGBZIe6jfjbccoPQqT7clgP/+kYZqF8FKB0DeN8t5AXTOb2BOrsMaIr63Hc
+	 xlaLfQZkxvMDbD7l/cbKW0zQ6QEmgHiQfBuBqYN0rt/ApAOQZ1S921Jt1oLB06/CB7
+	 tNqzBlRSPTOy61L6nO4f9RL4VuRW67NtRaovCUbSL4gwTkcpY4YNKUcC4QcnEU2Sg+
+	 gFnEbKgL1L58w==
+Date: Fri, 6 Dec 2024 16:49:18 +0000
+From: Lee Jones <lee@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] rust: miscdevice: Provide sample driver using the
+ new MiscDevice bindings
+Message-ID: <20241206164918.GA6336@google.com>
+References: <20241206124218.165880-1-lee@kernel.org>
+ <Z1LzOORuFpO0MXAZ@pollux>
+ <20241206125430.GB7684@google.com>
+ <Z1L2tjNrIa2Q0Awf@pollux>
+ <20241206131445.GE7684@google.com>
+ <Z1L9dLyLRmLcwMne@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1L9dLyLRmLcwMne@pollux>
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+On Fri, 06 Dec 2024, Danilo Krummrich wrote:
 
-> The boot.rst is combined from the pieces of different epochs, hence has
-> some inconsistencies in style and format. Fix (some of) them in this
-> mini-series. Rendered result has been manually checked for PDF and HTML.
->
-> Andy Shevchenko (3):
->   x86/Documentation: Make Literal Blocks to follow reStructuredText
->     specification
->   x86/Documentation: Align Note Blocks style
->   x86/Documentation: Elaborate Intel MID device list
->
->  Documentation/arch/x86/boot.rst | 369 ++++++++++++++++----------------
->  1 file changed, 184 insertions(+), 185 deletions(-)
+> On Fri, Dec 06, 2024 at 01:14:45PM +0000, Lee Jones wrote:
+> > On Fri, 06 Dec 2024, Danilo Krummrich wrote:
+> > 
+> > > On Fri, Dec 06, 2024 at 12:54:30PM +0000, Lee Jones wrote:
+> > > > On Fri, 06 Dec 2024, Danilo Krummrich wrote:
+> > > > 
+> > > > > On Fri, Dec 06, 2024 at 12:42:11PM +0000, Lee Jones wrote:
+> > > > > > It has been suggested that the driver should use dev_info() instead of
+> > > > > > pr_info() however there is currently no scaffolding to successfully pull
+> > > > > > a 'struct device' out from driver data post register().  This is being
+> > > > > > worked on and we will convert this over in due course.
+> > > > > 
+> > > > > I think you're going too fast with this series.
+> > > > > 
+> > > > > Please address the comments you receive before sending out new versions.
+> > > > > 
+> > > > > Also, please document the changes you have made from one version to the next,
+> > > > > otherwise it's gonna be very hard to review this.
+> > > > 
+> > > > I can add a change log.
+> > > > 
+> > > > What comments were missed?
+> > > 
+> > > I think MiscDevice should ideally use the generic `Registration` type from [1].
+> > 
+> > How can an in-tree driver use out-of-tree functionality?
+> 
+> AFAICT, this sample module is in the exact same stage as the generic device / driver
+> infrastructure.
+> 
+> Both are on the mailing list in discussion for inclusion into the kernel.
+> Labeling one as in-tree and the other one as out-of-tree is clearly misleading.
 
-How were you thinking of getting this one upstream?  I can take it
-through docs if that's what's wanted, but would like an x86 ack first.
+If I was saying that, I'd agree with you.
 
-Thanks,
+I was asking how MiscDevice (in-tree) could use Registration (out-of-free).
 
-jon
+> I'm just saying it would be good to align this. If the sample driver is time
+> critical, I have no problem if you go ahead with the current
+> `MiscDeviceRegistration` and `InPlaceModule`, but again, why not align it from
+> the get-go?
+
+Because it's not available yet. :)
+
+> > > I see that you use `InPlaceModule` now, which is fine. But since this is just a
+> > > sample, we could probably afford to wait until the generic type lands.
+> > > 
+> > > Also, there was a comment about how we can make use of the `dev_*` macros.
+> > > 
+> > > I really think we should fix those before we land a sample driver. It's gonna
+> > > be hard to explain people later on that they shouldn't do what the example
+> > > does...
+> > 
+> > We're authoring the sample based on what is available at the moment.
+> 
+> Well, for this I have to disagree, not being able to use the `dev_*` macros is
+> simply meaning that the abstraction is incomplete (in this aspect).
+> 
+> I don't see the need to land a sample driver that tells the user to do the wrong
+> thing, i.e. use the `pr_*` macros.
+> 
+> As Alice mentioned, you can get the miscdevice pointer from the file private
+> data in open() and then make it accessible in the other fops hooks. If we go for
+> this solution it will change the callbacks of `MiscDevice` and maybe even some
+> other architectural aspects.
+> 
+> This needs to be addressed first.
+
+The issue about ever growing dependencies _can_ be that authors have
+other priorities and are slow to turn things around, which may end up
+with nothing being accepted and contributors getting frustrated.
+
+However, taking into consideration how swift Alice is with these things,
+I'd be happy to wait for this part if people are insistent.
+
+> > There will always be something better / more convenient coming down the
+> > pipe.  We don't usually put off contributors pending acceptance of
+> > out-of-tree functionality, sample or otherwise.
+> 
+> No one asks for this here. But if the example reveals shortcomings, we shouldn't
+> promote them as example.
+
+IMHO it's reasonable for the sample to represent the current status of
+the frameworks in use.  As advancements / adaptions are introduced we
+can use them to continually improve the example.
+
+-- 
+Lee Jones [李琼斯]
 
