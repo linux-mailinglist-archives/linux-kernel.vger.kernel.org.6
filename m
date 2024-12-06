@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-435600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0369E79FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D43AF9E7A02
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:28:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EC21887B3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:26:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38CE1887E4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD4C1D5CC1;
-	Fri,  6 Dec 2024 20:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA32B1DB956;
+	Fri,  6 Dec 2024 20:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xb3bbHeN"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="f7VX+n4E"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122B883A17
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378FA1C548A;
+	Fri,  6 Dec 2024 20:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733516804; cv=none; b=BD2l1qWnPmfKfN27j1tP7bRcaCNoRkAxSDHFN8+3jOFyJMdXBvx8xh3nmGVUrRXwDAfUOPu2UXjL3l8K03GNyHpNE3Q9cnC35LlTw5zyf4FWFGW3kWYaO62seEpe2CyvHYXIp5fm1zU0oNhLSsMc0Yt3DahtkEf9FR2kEKFQSDU=
+	t=1733516899; cv=none; b=ewWaCJ4Q4lQwt77V7N7I92yCwfI4ABIzlhyM1kaXhazwZE0WnI/bBl65A8ziNBJWVs7Lx3AUVWZ6pd8y31jx1LVcSIVx+0MOa7WT2kSFZ022iMulsp7oHcHA4ESq0fjkCQx5ApTSdDMZRvB1l4DMeTPRKwd/K7EctJRVHXsDnOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733516804; c=relaxed/simple;
-	bh=8oc8EwI0AnmhUu+nV0YrX6Le/d762O1AmGoD9ZK9eyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XMEKBt5BUrjmUr0T6n9ZHUyirRZ7J88sO8o6/fuyAoHm349orn8JhnFTI9LDOq6Q1tZDU9+L/cbkQUJJzK4IUiOWdKzvXpJiEx9pD+m7IeZIyorfPRl4qL2v8Rv8B6devZryDf6i6TV4Q0D7xpYGGQn80+2AlZtc5Wo6esGKTMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xb3bbHeN; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385eed29d17so1947550f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:26:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733516800; x=1734121600; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OjkawNe/zvVX+h0jYqx9NDeU0TKqmCFwHGIOk1udH/c=;
-        b=Xb3bbHeNRj935sMdCVaZvMa9huwcWZ8KE4WrASzuz+BFZVai1eu3hQ2hfCzHci+fFT
-         J+XoHZshCQHghv0VQWEr9UYUb/muDl3XaSyZtHXCsdNa4OdqpwfvoRWHgmufj1q/k8Un
-         DPdMl0hxdpnt1OWubs3l7PQoF+4AyJ2k8YKjREXRe305zAAJCEV8SAHcfvFhioktSmtb
-         ZbpC2lqF1P2b3CeplRRWATjp5u7UJ49o53Jw70Sd9QM8IU8fAlZ3myUVBnmUuid9Jzyu
-         VxqJFx790KVz/pMMjd+20MbohS27KN7OendRJ8uhKgjjFlIBEDhm7VLSQ+RPt4nISDYw
-         ClJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733516800; x=1734121600;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OjkawNe/zvVX+h0jYqx9NDeU0TKqmCFwHGIOk1udH/c=;
-        b=SBJpdNp1ZDvt+H+o9DyJ/41lKW1lTH0r5cNHNzrwRibSiixWbWgURqDKiS7FqmNT9G
-         CyKCYkefp9ED9w5aa0WWy9uB9eHku8OWTRGHR1TY/rLgRrTOs8eLm+wUmjZFJ8Z4xfDE
-         VmbDAotrWO/JysXJ1Cy3pk9XY/TGJzOKoHO9SPNTMrkzMzr/iQbMzPh5O/z6TIp1taDh
-         wXdaPZQvn92waZooyrh4lFd8kuf8sA/b2D7VmilU8GeV6O/tH97d6RYFCGlpIGlRvhe/
-         JY39cOIRPRax72/Ai2FCyv4sVpR2D5Z38GhtVi9wl/sGollt1jrXbuk0ejfDEDL4ZcCw
-         5eyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmke8AbyXXLshSHU8Sqr7aG49D9Ho6LXIOCmndMZ/YTHxP9RrNY69Ls+fn6ctFZKgr9eyF4RDNquE9e6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqDEJHy/9RCZaB4Y8AuPGXQeWGKwi4iJtgyRi61D10rw1Dcrj1
-	Ik/aDempCCtZJctHfpzIM3wtepnGKJ37vXuhS0/pD2zlCsB8EZejLhYGIKM1ggk=
-X-Gm-Gg: ASbGncu0j96LVsasN/V3CfC9zQH221NAGW5qWVjSD+L1o7vX+CZ5fObhAFi8Z/CMV/K
-	DDxWj8tl+u8g7gTrJZE8lMd5E0kTqZUIgViUIIdCGCra6Ln3zjgsKNlJRiPdZQaqKb2/ZRow0y3
-	cVKUES4+Dpgcl4XyjNVV0KTHygpNHh4oHgVdq0JJ9IWmgceWissVIWj5R6Xg+JHCCbN8f0ajhBL
-	BaJli5IKu6uNLd9ZPwfBIW0vdwFZa/V5/F+7nltJj8nslz73ADmtik=
-X-Google-Smtp-Source: AGHT+IHuuNn8PhPAm12rBVa+8Uo5b1NeCY06qOcGgQGqX87r5PhjVJ2tEF0YYVoSm7KTEvHFh633VQ==
-X-Received: by 2002:adf:e19e:0:b0:385:ed1e:2105 with SMTP id ffacd0b85a97d-3862b36cb56mr3597056f8f.26.1733516800528;
-        Fri, 06 Dec 2024 12:26:40 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280497sm102052885e9.23.2024.12.06.12.26.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 12:26:39 -0800 (PST)
-Date: Fri, 6 Dec 2024 23:26:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] mtdchar: fix integer overflow in read/write ioctls
-Message-ID: <020f98d2-eee1-434e-8236-775cca9fd157@stanley.mountain>
+	s=arc-20240116; t=1733516899; c=relaxed/simple;
+	bh=SomSZKv0MwR1KXTanKaXnnJoD8VX4U54jA9imBeh7Tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=re1PSEnhiEUJobu1TPoNqzdTQ1OyX4PUt6Dqk/Kd8Mi2f1cYqWwjCIUuNmzM11lrEjp9YUYicuCsm1QdObyZLDJPCH/8SXFsxcUAUVwyMP52zukme9daTz5AFl02UUgkBx4gNbntrbM+w6u/VAE6Pu6oX2msdX1fc1+tThQxuws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=f7VX+n4E; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7F10740E0269;
+	Fri,  6 Dec 2024 20:28:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gvEgViPukMSw; Fri,  6 Dec 2024 20:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733516889; bh=QyoHy6hkI+XssNKuiGZPsocO+ThZzyXeOYQClqjNDlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f7VX+n4E9WtsGab6VK49A55+w9FgVA4l2Mh4YP+en7KylO25svgCltdfzQu3EWngB
+	 R6x+mze+OO+3PLBw9OUxO33IikYCHqekn8OvU6MPUJKfCO+/sMa5PQBe7KXFLyF+59
+	 siGdVlZI12DrnmExO1zU6eUQLEhNSq/Je7xBTVPDdMdLTzQGmt7aox8P7AooWQqHqO
+	 XBMgUHmA/Ez2JF/aYtbidhnNM8tbGN10LHwBQi86Sd8NDn73R7x/26eC0AK5MqfFW+
+	 CL6o71Z6bgdVBZFc7WNsdcMPuiQKjl2mwy+94Rlg37VjPG2LelsV/lvZrIfNXk3jhx
+	 9QSG6WlOe8CvcMVaYaP7gz1ZU03awoMk0sCY5lfZVqZ21UuWyVRwjc38X2PdFwgXbr
+	 pBBjtvBiIXIX9UaPgj8RB0jK8SD9/bLcO451a2h0ggT2V5BFckZqeHPdpLAJ8qK3aS
+	 jJG6JZOHFPNn5aJPLV2cQycTqHNymHjvXQRTC9aWfeMPKbYYlMvrJ2DDr3MTri4mrK
+	 NGlgDjQDungI9hSQQUfeYX0nH2/VNjIZFt1HNtox5GPTEQwUr3jZmQUPW9zdV1DrgM
+	 fEGCUry8/PwwnvNIMIDMmKTunaNhVON9bVh8YHCR8KLDkMTyTrMbIwsVW8cH+8ihv9
+	 h8m8WW0qreWz4mame6E7c1Bo=
+Received: from zn.tnic (p200300Ea971f939c329C23FFFEa6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:939c:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 37B0640E01A2;
+	Fri,  6 Dec 2024 20:27:58 +0000 (UTC)
+Date: Fri, 6 Dec 2024 21:27:52 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v15 01/13] x86/sev: Carve out and export SNP guest
+ messaging init routines
+Message-ID: <20241206202752.GCZ1NeSMYTZ4ZDcfGJ@fat_crate.local>
+References: <20241203090045.942078-1-nikunj@amd.com>
+ <20241203090045.942078-2-nikunj@amd.com>
+ <20241203141950.GCZ08ThrMOHmDFeaa2@fat_crate.local>
+ <fef7abe1-29ce-4818-b8b5-988e5e6a2027@amd.com>
+ <20241204200255.GCZ1C1b3krGc_4QOeg@fat_crate.local>
+ <8965fa19-8a9b-403e-a542-8566f30f3fee@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <8965fa19-8a9b-403e-a542-8566f30f3fee@amd.com>
 
-The "req.start" and "req.len" variables are u64 values that come from the
-user at the start of the function.  We mask away the high 32 bits of
-"req.len" so that's capped at U32_MAX but the "req.start" variable can go
-up to U64_MAX.
+On Thu, Dec 05, 2024 at 11:53:53AM +0530, Nikunj A. Dadhania wrote:
+> > * get_report - I don't think so:
+> > 
+> >         /*      
+> >          * The intermediate response buffer is used while decrypting the
+> >          * response payload. Make sure that it has enough space to cover the
+> >          * authtag.
+> >          */
+> >         resp_len = sizeof(report_resp->data) + mdesc->ctx->authsize;
+> >         report_resp = kzalloc(resp_len, GFP_KERNEL_ACCOUNT);
+> > 
+> > That resp_len is limited and that's on the guest_ioctl path which cannot
+> > happen concurrently?
+> 
+> It is a trusted allocation, but should it be accounted as it is part of
+> the userspace ioctl path ?
 
-Use check_add_overflow() to fix this bug.
+Well, it is unlocked_ioctl() and snp_guest_ioctl() is not taking any locks.
+What's stopping anyone from writing a nasty little program which hammers the
+sev-guest on the ioctl interface until the OOM killer activates?
 
-Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE ioctl")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/mtd/mtdchar.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+IOW, this should probably remain _ACCOUNT AFAICT.
 
-diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-index 8dc4f5c493fc..335c702633ff 100644
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -599,6 +599,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
- 	uint8_t *datbuf = NULL, *oobbuf = NULL;
- 	size_t datbuf_len, oobbuf_len;
- 	int ret = 0;
-+	u64 end;
- 
- 	if (copy_from_user(&req, argp, sizeof(req)))
- 		return -EFAULT;
-@@ -618,7 +619,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
- 	req.len &= 0xffffffff;
- 	req.ooblen &= 0xffffffff;
- 
--	if (req.start + req.len > mtd->size)
-+	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size)
- 		return -EINVAL;
- 
- 	datbuf_len = min_t(size_t, req.len, mtd->erasesize);
-@@ -698,6 +699,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
- 	size_t datbuf_len, oobbuf_len;
- 	size_t orig_len, orig_ooblen;
- 	int ret = 0;
-+	u64 end;
- 
- 	if (copy_from_user(&req, argp, sizeof(req)))
- 		return -EFAULT;
-@@ -724,7 +726,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
- 	req.len &= 0xffffffff;
- 	req.ooblen &= 0xffffffff;
- 
--	if (req.start + req.len > mtd->size) {
-+	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
 -- 
-2.45.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
