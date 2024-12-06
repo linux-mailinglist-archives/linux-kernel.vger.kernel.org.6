@@ -1,228 +1,238 @@
-Return-Path: <linux-kernel+bounces-434656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59129E6973
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:58:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC46F9E6994
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969E5280E83
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:58:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6ED2825FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB05A1E0496;
-	Fri,  6 Dec 2024 08:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F4A1E1041;
+	Fri,  6 Dec 2024 09:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="coLIY0XM"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPNfTpoa"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113851BA86C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EFE18E050
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475485; cv=none; b=qq/Qp8fPma00cS8T03WO6AdfigOOZsa/aNPe0PCBbbu75J8fyBdnb1qTNbzJ4Z1/YBKn8Hsm9MPyjAsoVDUU/Bp5GvEIJvjRdT7lZubSNGY8rcVK3gzKscFGN1KCLm5kzkeUSXn5N93qsZ0uZzXPMGRMNrK39FqOV70RqVARr+U=
+	t=1733475716; cv=none; b=B47CI7xAuX6knpTACgNdjVCWUYdu9QfGJ8gJTvhxsQCEsKv5lqv4rFTJhMM7lpMChQIorYc4c6htpsyKYq5V/9GGioTJnw2dpySnsuInVqiUOWe4H1COozW5worZKhazWGMTAmaCOhIk2jbHQm/LEVaWRncz93w2ZTqlPlVEEW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475485; c=relaxed/simple;
-	bh=ipWHOOSpzzEhcOMd3ga6qACpNCgtJAu8hIWa3RvxlqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=MvF1NDcHaolXBH55sG+h2zRuK4VswFnO71x726hNn3qsFZt63l0UVQ9C7TP4DibQmCdA+cgZam+JOMBlOBu06nqd8ftpiXL2+4lgj3SCeU0OZoWzA6mKIo0KRbAHtiVvECoKQM1J3uiq27538vgzkF56Ssz86CkX1I/HUdGGJ8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=coLIY0XM; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241206085801epoutp03c0c17962dbf43239adae4310b55c7435~OisQETKKL1062810628epoutp03j
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:58:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241206085801epoutp03c0c17962dbf43239adae4310b55c7435~OisQETKKL1062810628epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733475481;
-	bh=SHFnUVyOXUbXOdDF1O6AcUDNl2Xmnx2b57PgiCCVVsU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=coLIY0XMSn2Zs00ARuHJbuKTnMzMLoq2rAOIegfNmgieBx/hl4tOCswk33skpHhpe
-	 XBtT2BALb/tUqPC9I6J69KYdGbDyFp1aYSLkd9/QL1fSHjdLbCrZsw6RVkfYSHE6vQ
-	 bSeC6Y9Jxh8++5Z70DhQaCxyrRA9PPFE8Lmj3two=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241206085800epcas2p4298c780705c73237ac1fc0242a8453b0~OisPT1kk53214632146epcas2p4X;
-	Fri,  6 Dec 2024 08:58:00 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.92]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Y4QBv53lhz4x9Pt; Fri,  6 Dec
-	2024 08:57:59 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	89.C0.22105.79CB2576; Fri,  6 Dec 2024 17:57:59 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241206085759epcas2p1a285a9cda99738a432ceebb0e19f65be~OisOTeFj22986829868epcas2p1B;
-	Fri,  6 Dec 2024 08:57:59 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241206085759epsmtrp1a6632e7aa5dcf2527ae690816f58b71f~OisORMxZC2591025910epsmtrp1Z;
-	Fri,  6 Dec 2024 08:57:59 +0000 (GMT)
-X-AuditID: b6c32a47-fd1c970000005659-63-6752bc97190b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	11.68.18729.69CB2576; Fri,  6 Dec 2024 17:57:58 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241206085758epsmtip1ec66baef78e9af11b08d8c486f1963bd~OisOA9dk_3119231192epsmtip1q;
-	Fri,  6 Dec 2024 08:57:58 +0000 (GMT)
-Date: Fri, 6 Dec 2024 18:01:22 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Youngmin Nam <youngmin.nam@samsung.com>, Jakub Kicinski
-	<kuba@kernel.org>, Neal Cardwell <ncardwell@google.com>,
-	davem@davemloft.net, dsahern@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, dujeong.lee@samsung.com, guo88.liu@samsung.com,
-	yiwang.cai@samsung.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, joonki.min@samsung.com,
-	hajun.sung@samsung.com, d7271.choe@samsung.com, sw.ju@samsung.com
-Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
-Message-ID: <Z1K9WVykZbo6u7uG@perf>
+	s=arc-20240116; t=1733475716; c=relaxed/simple;
+	bh=bIxAup2lz0R5xBDAVAzhHfisE8r1P4jcXjhac0PQRls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=go+K7+J3+gdA/QC+xfFC0QtqRZllKKUWd8N0hUIx+AH8dEX/S0n/m586uX7qyIwcbNwieaceMJp7RlFwvgt2c+H0hT1PqLbQ0q7KsC1tyrZilMrvKUhnkgJDloo6w0jUnCVZ6xjnlNlZhfJjhPwLT87L1k9k0Y3m9HNqt6aO7mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KPNfTpoa; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de8ecafeeso2043555e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:01:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733475713; x=1734080513; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewjfA2zB7MJtvrBmdqkSKX8dAgp3ONrC04bFiltR3uU=;
+        b=KPNfTpoauxM9rVly5pjYF/pKPJzg/a/0bLMEqVx/+aKhS9l7LoLt5sR9lfpFr9kE5D
+         Yn+ahc2IibSun2dWioDrZWr0Gq1ZXWSOCoezGysm1zV3MI9xoYh+rZFchnGDdVpzCpyV
+         RKBH3PQUSgvRYNpe5mlzSmXwZinutbFCVHl/d83cbL1d+78pMgYmU/vfmC1T14Pd54v3
+         4Bb05myOhgl58jeJ5peDOFfqBNnaDRKj+IV9b9/m7yg4E67/DoTh4gdOh29gcLhVp7BH
+         UUryUqLVoCD+O+7GmHrig2Xbk4cByy2Ax5rqgG8jAtcsx+nTqPLYSZ3mPvVtaCpObCL/
+         UJeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733475713; x=1734080513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ewjfA2zB7MJtvrBmdqkSKX8dAgp3ONrC04bFiltR3uU=;
+        b=sp7KyPdtB1U3n+3uicotVFlIerQu2dfF1wYWMkU5JPbOsUmOBzALGjLg7vgdDoJeCg
+         v4kNeaT3j31Jqxs1Vg4x166xnhJAZPU6yfAP+m4D1nUJaPTlsUAtBAQtkbgX/lmYPGJA
+         jdtYx/ZQjGvVNGsPQa1XN7b6CEoouhzOK/4fxE65ayGvAb/4/0Gfx4aNa2B7dNBsxdLa
+         aKK9MCeTT15/WmxlgQrq7fXxjLRrmAmORiyIxl9q8lD6eShXQMvZ1orYJ8KEiFhS/E7F
+         o+YylYs5RgmogzQlcsMww2SrP15vObgx9sfu/3/o4/7POb7UYoSG37Zy8AQ1zx21WruV
+         4PlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVA6X40OjHmL5h0rQRNxGpzELuhdh6ROKKso0q+mlHoDHow9aBqmEV/hmyrJVQM+Jj6rBt3BgYd25p5M20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHxuM3/3H0r60kTuljQ632pWi2U3nNXwQ7tXsfjE5Nw63d5tQZ
+	zBbiKpZ1R/NO+66ELqMpBDW8238EOj+L9f2qcIzdpINmIucFGme5XnzmTa+WbHE=
+X-Gm-Gg: ASbGncsS1Q50ZvhAglwTjNDy12/Yt/lG4LnURsoGNp9GxSSHBbciC+yuKQ2kG8yTnyW
+	7xb8pTdR17uDMaaucoxCLYzQKfcqeGZeZbl33AXUJ1vgt4jHpco6UBWyjbOCT8Ips/czbn17HcB
+	NKA3HJmRCLymR5ez/Y/kbNEWux9Pwb0N5LOCygnnwazy41qJTcK2Y9SGhVoP8vgiOMBBWueQj35
+	ij6e+sQCX5mbnjoJ5+jXNcDswHXsL1blP98siYIEbJQGvU2r7NqwnN/qJEbATVSQrdyVh9HhtQy
+	DQPcmhaExNAeky9GK6mxtFmhT71CBA==
+X-Google-Smtp-Source: AGHT+IHewBkomdVnD/xM5P6dyFTA0maIFSMrnI7aNDtbE1FGcJmiheT1aRvkMYU1aVoO3cS20XGa/A==
+X-Received: by 2002:a05:6512:1055:b0:53e:2628:3c24 with SMTP id 2adb3069b0e04-53e2c2effd3mr603786e87.47.1733475712650;
+        Fri, 06 Dec 2024 01:01:52 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e2cd847c2sm124389e87.161.2024.12.06.01.01.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 01:01:51 -0800 (PST)
+Date: Fri, 6 Dec 2024 11:01:48 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
+	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 06/45] drm/msm/dp: remove dp_display's dp_mode and use
+ dp_panel's instead
+Message-ID: <rjhv2modyvb2py4z6ve7i3xqu6ezrz7op7r6ygldbhydbvrtha@32bkl37jwol3>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-6-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CANn89iKOC9busc9G_akT=H45FvfVjWm97gmCyj=s7_zYJ43T3w@mail.gmail.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOJsWRmVeSWpSXmKPExsWy7bCmue70PUHpBj3H1Cyu7Z3IbjHnfAuL
-	xbpdrUwWzxbMYLF4euwRu8XkKYwWTfsvMVs86j/BZnF19ztmiwvb+lgtLu+aw2bRcWcvi8Wx
-	BWIW306/YbRoffyZ3eLj8SZ2i8UHPrE7CHpsWXmTyWPBplKPTas62Tze77vK5tG3ZRWjx+dN
-	cgFsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUCn
-	KymUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKzAv0ihNzi0vz0vXyUkusDA0MjEyB
-	ChOyMybOvsJUcF+64tSnuawNjH1iXYycHBICJhLPv/1n7GLk4hAS2MEosb9nJROE84lRovfX
-	MajMN0aJmw9nssG0XLo6jx0isZdRoqFxJTNIQkjgIaPEixM2IDaLgIrE51XPGUFsNgFdiW0n
-	/gHZHBwiAmoSXxv8QMLMAsuYJc6+twQJCws4S/y9YwsS5hVQlli78hsThC0ocXLmExYQm1Mg
-	UGLp7Vlg90gInOCQ6HzRBnWPi8Tck7/ZIWxhiVfHt0DZUhIv+9ug7GKJhvu3mCGaWxglTl1/
-	wQyRMJaY9awd7DZmgQyJVe1BIKYE0BFHbrFAnMkn0XH4LztEmFeio00IolFN4teUDYwQtozE
-	7sUroAZ6SNw6fgIaOh0sEjOX7mOdwCg3C8k7sxCWQZiaEut36c8CWyYv0bx1NjNEWFpi+T8O
-	JBULGNlWMYqlFhTnpqcWGxUYwyM6OT93EyM4RWu572Cc8faD3iFGJg7GQ4wSHMxKIryVYYHp
-	QrwpiZVVqUX58UWlOanFhxhNgXE0kVlKNDkfmCXySuINTSwNTMzMDM2NTA3MlcR577XOTRES
-	SE8sSc1OTS1ILYLpY+LglGpg6q59xfZvzbr4hScf6/ZU+z4vKLw5JTbmxPdcmceLpnMs3tsv
-	PPnrTV2X3z/TP0aeM9+U+GHLHDcW+RaBHzGpM+4/uhvoUmZfolc3y+gPi+/vRENTw37XTdsV
-	9twN83nDZBPINXWy5De+lP2b39qFPIj5oMikyz7laMjUOTunWKyJ7p+8a9Ek1kX6/ToSjI03
-	Li/W8vdSUJOxTxLTOHmK9XHsokNljkaH5zrtOxBtu5xxydp4y83LZK1Un6id1be7mTT9ZUsz
-	483+fTJp92ZwiFwKLl9nybCleOa9Y9NeaQhMjSha051wUPmqxf+SALvUjLtC12/deveO8+xn
-	N2fjty1OL/mi1VMCf7dWKDCEKbEUZyQaajEXFScCAFNUdrlaBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSnO70PUHpBi1iFtf2TmS3mHO+hcVi
-	3a5WJotnC2awWDw99ojdYvIURoum/ZeYLR71n2CzuLr7HbPFhW19rBaXd81hs+i4s5fF4tgC
-	MYtvp98wWrQ+/sxu8fF4E7vF4gOf2B0EPbasvMnksWBTqcemVZ1sHu/3XWXz6NuyitHj8ya5
-	ALYoLpuU1JzMstQifbsErozPC3rYCxolKx4+jW1gPCPcxcjJISFgInHp6jz2LkYuDiGB3YwS
-	a64dYIZIyEjcXnmZFcIWlrjfcoQVoug+o8STn58ZQRIsAioSn1c9B7PZBHQltp34B2RzcIgI
-	qEl8bfADqWcWWMEsMX/uc7C4sICzxN87tiDlvALKEmtXfmOCmNnFInGroYsFIiEocXLmEzCb
-	WUBd4s+8S8wgvcwC0hLL/3FAhOUlmrfOBruTUyBQYuntWYwTGAVnIemehaR7FkL3LCTdCxhZ
-	VjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBMefluYOxu2rPugdYmTiYDzEKMHBrCTC
-	WxkWmC7Em5JYWZValB9fVJqTWnyIUZqDRUmcV/xFb4qQQHpiSWp2ampBahFMlomDU6qB6XA4
-	y7mUudrHdWvfbf7Ef6okX/n5VVveg6bdD3zqih681ozcwzhZRNCnQKSz83JdDFN3Su/W2o/n
-	lvSzmXrnb333fu/BeNZo7uelD34u6a2Itj0dNnHn7TP8qbLLxBd851xSu0VY7nF4ufb10E+l
-	V/bcZ9GQW6/T31TY87vMZPWCp5b2P1jv1qkpnBU/o60dkOZ56m9tdKb5xXNTBB/vfz1fXF1T
-	a+nBbJd7vDN5l+1mX93FkX+t77O1wvTPLKphbAWJN0z+xteECUSFrj/KbSOyKHS5XfyOSjH1
-	71MfHLqlfEP64intSwtkDKZVbj64+m4ts0dMQuaGad4B/F86w8w+tpickV7vZlUV3PhIiaU4
-	I9FQi7moOBEA/CRvkC4DAAA=
-X-CMS-MailID: 20241206085759epcas2p1a285a9cda99738a432ceebb0e19f65be
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_e8b90_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295
-References: <CGME20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295@epcas2p2.samsung.com>
-	<20241203081247.1533534-1-youngmin.nam@samsung.com>
-	<CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
-	<CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com>
-	<20241203181839.7d0ed41c@kernel.org> <Z0/O1ivIwiVVNRf0@perf>
-	<CANn89iKms_9EX+wArf1FK7Cy3-Cr_ryX+MJ2YC8yt1xmvpY=Uw@mail.gmail.com>
-	<Z1KRaD78T3FMffuX@perf>
-	<CANn89iKOC9busc9G_akT=H45FvfVjWm97gmCyj=s7_zYJ43T3w@mail.gmail.com>
-
-------6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_e8b90_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241205-dp_mst-v1-6-f8618d42a99a@quicinc.com>
 
-On Fri, Dec 06, 2024 at 09:35:32AM +0100, Eric Dumazet wrote:
-> On Fri, Dec 6, 2024 at 6:50 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
-> >
-> > On Wed, Dec 04, 2024 at 08:13:33AM +0100, Eric Dumazet wrote:
-> > > On Wed, Dec 4, 2024 at 4:35 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
-> > > >
-> > > > On Tue, Dec 03, 2024 at 06:18:39PM -0800, Jakub Kicinski wrote:
-> > > > > On Tue, 3 Dec 2024 10:34:46 -0500 Neal Cardwell wrote:
-> > > > > > > I have not seen these warnings firing. Neal, have you seen this in the past ?
-> > > > > >
-> > > > > > I can't recall seeing these warnings over the past 5 years or so, and
-> > > > > > (from checking our monitoring) they don't seem to be firing in our
-> > > > > > fleet recently.
-> > > > >
-> > > > > FWIW I see this at Meta on 5.12 kernels, but nothing since.
-> > > > > Could be that one of our workloads is pinned to 5.12.
-> > > > > Youngmin, what's the newest kernel you can repro this on?
-> > > > >
-> > > > Hi Jakub.
-> > > > Thank you for taking an interest in this issue.
-> > > >
-> > > > We've seen this issue since 5.15 kernel.
-> > > > Now, we can see this on 6.6 kernel which is the newest kernel we are running.
-> > >
-> > > The fact that we are processing ACK packets after the write queue has
-> > > been purged would be a serious bug.
-> > >
-> > > Thus the WARN() makes sense to us.
-> > >
-> > > It would be easy to build a packetdrill test. Please do so, then we
-> > > can fix the root cause.
-> > >
-> > > Thank you !
-> > >
-> >
-> > Hi Eric.
-> >
-> > Unfortunately, we are not familiar with the Packetdrill test.
-> > Refering to the official website on Github, I tried to install it on my device.
-> >
-> > Here is what I did on my local machine.
-> >
-> > $ mkdir packetdrill
-> > $ cd packetdrill
-> > $ git clone https://protect2.fireeye.com/v1/url?k=746d28f3-15e63dd6-746ca3bc-74fe485cbff6-e405b48a4881ecfc&q=1&e=ca164227-d8ec-4d3c-bd27-af2d38964105&u=https%3A%2F%2Fgithub.com%2Fgoogle%2Fpacketdrill.git .
-> > $ cd gtests/net/packetdrill/
-> > $./configure
-> > $ make CC=/home/youngmin/Downloads/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc
-> >
-> > $ adb root
-> > $ adb push packetdrill /data/
-> > $ adb shell
-> >
-> > And here is what I did on my device
-> >
-> > erd9955:/data/packetdrill/gtests/net # ./packetdrill/run_all.py -S -v -L -l tcp/
-> > /system/bin/sh: ./packetdrill/run_all.py: No such file or directory
-> >
-> > I'm not sure if this procedure is correct.
-> > Could you help us run the Packetdrill on an Android device ?
+On Thu, Dec 05, 2024 at 08:31:37PM -0800, Abhinav Kumar wrote:
+> dp_display caches the current display mode and then passes it onto
+> the panel to be used for programming the panel params. Remove this
+> two level passing and directly populated the panel's dp_display_mode
+> instead.
+
+Remove both and use the one from crtc_state?
+
 > 
-> packetdrill can run anywhere, for instance on your laptop, no need to
-> compile / install it on Android
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 46 ++++++++++++++++---------------------
+>  1 file changed, 20 insertions(+), 26 deletions(-)
 > 
-> Then you can run single test like
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index 052db80c6a365f53c2c0a37d3b69ea2b627aea1f..4bd85ae754429333aa423c985368344cd03c7752 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -90,7 +90,6 @@ struct msm_dp_display_private {
+>  	struct msm_dp_panel   *panel;
+>  	struct msm_dp_ctrl    *ctrl;
+>  
+> -	struct msm_dp_display_mode msm_dp_mode;
+>  	struct msm_dp msm_dp_display;
+>  
+>  	/* wait for audio signaling */
+> @@ -1436,10 +1435,13 @@ bool msm_dp_needs_periph_flush(const struct msm_dp *msm_dp_display,
+>  bool msm_dp_wide_bus_available(const struct msm_dp *msm_dp_display)
+>  {
+>  	struct msm_dp_display_private *dp;
+> +	struct msm_dp_panel *dp_panel;
+>  
+>  	dp = container_of(msm_dp_display, struct msm_dp_display_private, msm_dp_display);
+>  
+> -	if (dp->msm_dp_mode.out_fmt_is_yuv_420)
+> +	dp_panel = dp->panel;
+> +
+> +	if (dp_panel->msm_dp_mode.out_fmt_is_yuv_420)
+>  		return false;
+>  
+>  	return dp->wide_bus_supported;
+> @@ -1501,10 +1503,6 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
+>  	bool force_link_train = false;
+>  
+>  	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
+> -	if (!msm_dp_display->msm_dp_mode.drm_mode.clock) {
+> -		DRM_ERROR("invalid params\n");
+> -		return;
+> -	}
+>  
+>  	if (dp->is_edp)
+>  		msm_dp_hpd_plug_handle(msm_dp_display, 0);
+> @@ -1516,13 +1514,6 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
+>  		return;
+>  	}
+>  
+> -	rc = msm_dp_display_set_mode(dp, &msm_dp_display->msm_dp_mode);
+> -	if (rc) {
+> -		DRM_ERROR("Failed to perform a mode set, rc=%d\n", rc);
+> -		mutex_unlock(&msm_dp_display->event_mutex);
+> -		return;
+> -	}
+> -
+>  	state =  msm_dp_display->hpd_state;
+>  
+>  	if (state == ST_CONNECTED && !dp->power_on) {
+> @@ -1599,37 +1590,40 @@ void msm_dp_bridge_mode_set(struct drm_bridge *drm_bridge,
+>  	struct msm_dp *dp = msm_dp_bridge->msm_dp_display;
+>  	struct msm_dp_display_private *msm_dp_display;
+>  	struct msm_dp_panel *msm_dp_panel;
+> +	struct msm_dp_display_mode msm_dp_mode;
+
+No need to allocate it on stack just to copy it later on. Please write
+the data directly to a proper location from the beginning.
+
+>  
+>  	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
+>  	msm_dp_panel = msm_dp_display->panel;
+>  
+> -	memset(&msm_dp_display->msm_dp_mode, 0x0, sizeof(struct msm_dp_display_mode));
+> +	memset(&msm_dp_mode, 0x0, sizeof(struct msm_dp_display_mode));
+>  
+>  	if (msm_dp_display_check_video_test(dp))
+> -		msm_dp_display->msm_dp_mode.bpp = msm_dp_display_get_test_bpp(dp);
+> +		msm_dp_mode.bpp = msm_dp_display_get_test_bpp(dp);
+>  	else /* Default num_components per pixel = 3 */
+> -		msm_dp_display->msm_dp_mode.bpp = dp->connector->display_info.bpc * 3;
+> +		msm_dp_mode.bpp = dp->connector->display_info.bpc * 3;
+>  
+> -	if (!msm_dp_display->msm_dp_mode.bpp)
+> -		msm_dp_display->msm_dp_mode.bpp = 24; /* Default bpp */
+> +	if (!msm_dp_mode.bpp)
+> +		msm_dp_mode.bpp = 24; /* Default bpp */
+
+The msm_dp_mode.bpp gets rewritten by msm_dp_panel_init_panel_info()
+after being set here. Is this code part redundant?
+
+>  
+> -	drm_mode_copy(&msm_dp_display->msm_dp_mode.drm_mode, adjusted_mode);
+> +	drm_mode_copy(&msm_dp_mode.drm_mode, adjusted_mode);
+>  
+> -	msm_dp_display->msm_dp_mode.v_active_low =
+> -		!!(msm_dp_display->msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NVSYNC);
+> +	msm_dp_mode.v_active_low =
+> +		!!(msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NVSYNC);
+>  
+> -	msm_dp_display->msm_dp_mode.h_active_low =
+> -		!!(msm_dp_display->msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NHSYNC);
+> +	msm_dp_mode.h_active_low =
+> +		!!(msm_dp_mode.drm_mode.flags & DRM_MODE_FLAG_NHSYNC);
+>  
+> -	msm_dp_display->msm_dp_mode.out_fmt_is_yuv_420 =
+> +	msm_dp_mode.out_fmt_is_yuv_420 =
+>  		drm_mode_is_420_only(&dp->connector->display_info, adjusted_mode) &&
+>  		msm_dp_panel->vsc_sdp_supported;
+>  
+> +	msm_dp_display_set_mode(dp, &msm_dp_mode);
+> +
+>  	/* populate wide_bus_support to different layers */
+>  	msm_dp_display->ctrl->wide_bus_en =
+> -		msm_dp_display->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
+> +		msm_dp_panel->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
+>  	msm_dp_display->catalog->wide_bus_en =
+> -		msm_dp_display->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
+> +		msm_dp_panel->msm_dp_mode.out_fmt_is_yuv_420 ? false : msm_dp_display->wide_bus_supported;
+>  }
+>  
+>  void msm_dp_bridge_hpd_enable(struct drm_bridge *bridge)
 > 
-> # packetdrill gtests/net/tcp/sack/sack-route-refresh-ip-tos.pkt
+> -- 
+> 2.34.1
 > 
 
-You mean.. To test an Android device, we need to run packetdrill on laptop, right ?
-
-Laptop(run packetdrill script) <--------------------------> Android device
-
-By the way, how can we test the Android device (DUT) from packetdrill which is running on Laptop?
-I hope you understand that I am aksing this question because we are not familiar with the packetdrill.
-Thanks.
-
-------6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_e8b90_
-Content-Type: text/plain; charset="utf-8"
-
-
-------6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_e8b90_--
+-- 
+With best wishes
+Dmitry
 
