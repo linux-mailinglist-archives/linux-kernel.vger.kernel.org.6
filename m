@@ -1,245 +1,194 @@
-Return-Path: <linux-kernel+bounces-435287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCE89E75B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:19:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F479E75B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5531F164FB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62BD618898EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EC9211487;
-	Fri,  6 Dec 2024 16:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEE7154BEA;
+	Fri,  6 Dec 2024 16:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfJY1aCk"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0ZHvSZgc"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2077.outbound.protection.outlook.com [40.107.243.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD11F216393;
-	Fri,  6 Dec 2024 16:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733501662; cv=none; b=Dc9nxxlKG7hGeRWF4wEplGXEfGksOTYqzKmwnxMWSjI64jJ+sCMb/Z7hJr5mxw9jR8i9xa8q5zJaK3acp5CZQeMwwUiFv8gyLMVAQNaxK6mNcm1tjXyCar0Jst6Vf53Qz9RfnPgQbvcVoGbt6MAU6Fv1xjQPB64Z9ZUTqV+QiPY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733501662; c=relaxed/simple;
-	bh=F1tJu0tNNZn8Kae/PiQYaJbS8f8Vv2Mwc4GURN/CsQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DgxYAlBQy8uMDo3yewgG10UTcBqomHYHYu1xpDnxZIzhcK0ULEpRw7WAu7THYt+V7nW1qPgjfg8AWLPj+fhoEWUhD+SttEVNkL4b5sfJ0+zN3fz3eWDnaXvy++/yjHR3oRHZcJ4bPgHo+vpPYOVZs5x9Ov43dJWwEzVyDtcKhBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfJY1aCk; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa549d9dffdso322706866b.2;
-        Fri, 06 Dec 2024 08:14:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733501659; x=1734106459; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fXaGALZRpVF00Ah97wy9KL1a0sGXBk3kjKaNXmrcIjI=;
-        b=dfJY1aCkYWfWhBQHCrw6V1PVFFszNW3Ig2B2Iobfieby0adgRlAqTbNUk/xQURkYSJ
-         OTvFpvH5Hu6mOucoLM+32r9Z4sXdZeiAo7hDrioED70V0p8WD30kl4pviYPxCBZ6Tkgn
-         cY6gYVc4Uo53m/niBe2hGSp1Mk5TAQ4R+2cuMEShmG6phtAzPdlAAAm4TeFumHLMhSpu
-         knVNOERYkajB4DFw7RB62rydgY/+N6R1Aju8t2PzItGiA/eBysJwH0FgMVlSefdepOpF
-         gAeEkb99H3uKVBEgzS4LQdM8o+eL3Avq1JzlJjZWDswPA3GTwI23abD24A8WWFUCFMOk
-         6qWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733501659; x=1734106459;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fXaGALZRpVF00Ah97wy9KL1a0sGXBk3kjKaNXmrcIjI=;
-        b=cFO/krQPoFllQJctjhAKj2FQy1J5XJum/xW1QFIgrI5hYQh0pLJPZyf9xMr8R/SJHs
-         j/XJ7HIC4xVXrdKJcnZTmQbEjDDFe2EMkKSE805WcEnyr6wrLwirRZH/jhobTPj3kWud
-         4EMYWQ8P8GNKXjmsPvDW0lc86vkIqi16+yKugzUKmGcOB44Ee1PVr6IU84P13CrIbYaH
-         5fKV/OfXJcGA4huvNRReAx1CF1pwKpzYI+aQAEt+Td8wWChSc2jgctnYEhmN1cGVtn2S
-         czBlbF2t1vGpeascQ/qgcOJqQObWPOdoj3RFfAjWX9hHbRaMTGY4yo+UC/vMGUtvowyG
-         UQEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs2osG4VJ9T3e85DFnxaF4+EmAdpMcXx9pknLS0M+/A2zyyO7CmFJPtpJ6/w3Vu9lPryJtp5uOyPyZ+E6J2Kp/02k=@vger.kernel.org, AJvYcCVPSoI9DYCM54sH9TKfuv7uZl8X9wDh3HxAi4OtQbBFtt0K9WWo0g21ySdqL40ikn87HKHnj5y69/Ng@vger.kernel.org, AJvYcCX6cytgKqqlFWSyXrQK+Q08tAeGiXmUJU9q5S0gPu88SIcW3C0yO/sBCssm2BMwu9IHVWCSlgt5vPl2dd05@vger.kernel.org
-X-Gm-Message-State: AOJu0YxChkgO3K6cMEW9UAVI6Q7MjQPcaR7pTjv2LFTSVWJRtvUFeepa
-	68jI9kQ/+VXcjWX5P+uEF7RDGAR2u2nQmnhwXi0HdeYgUEWwUH1V
-X-Gm-Gg: ASbGncsFDoPRQYqvM9a0pb2hSotNEJrLn460+KZQ+fxkF5Aiq7cZosjUYS5fE+mxUAs
-	pZC9XMErwLvl+hseE6ecrG/Os40ElKC7N/T5RN/rlYj/s4r6H8JxyluEIptrvUi6onN36fK7NpT
-	I9Ol9S+cBn8MetzAUPIohSKy2m6xr3FwKxH8w9nAqPtfxnLGy+MDvGhlSfHR832ZMqqnrocXvzG
-	XXjxsesHK41V4z5X8HPm8negGZAMLsvw5hM4YHoTGom52BfKd6eLJaJAGkYTLy1UMZq9qeMBR+L
-	Wx0sciKdMMWVh3qB+5wtWRk851+i
-X-Google-Smtp-Source: AGHT+IEBIRjHmYo28RiHnCZp8Gi2PiofN48HDLnGskCNXYlPsQ0Oej4qKEh8fJUXynlKVp/0AGxXGw==
-X-Received: by 2002:a17:907:9508:b0:aa5:f39a:bc99 with SMTP id a640c23a62f3a-aa63a127f80mr256126966b.36.1733501658659;
-        Fri, 06 Dec 2024 08:14:18 -0800 (PST)
-Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62608d2fbsm258270666b.149.2024.12.06.08.14.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 08:14:18 -0800 (PST)
-Message-ID: <51a87200-e562-409c-af21-2216288beb67@gmail.com>
-Date: Fri, 6 Dec 2024 18:14:16 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E4420DD62;
+	Fri,  6 Dec 2024 16:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733501692; cv=fail; b=pNFh1OTIzaB5w86teSXTrHt5Ke5mfT0f1LCleGS/trUlmrnwpwfEaXVDgB3L2SJorYC2iVBa0jcLzcHYqR8tbBMrHH+BytOd7EzhhiiqRvqOhYELt3HUCfiI3/Qtkyv3JH6p8VZtVMi6+tSEnzbU7RGh0n7i4ZABkCdoW5SxdZc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733501692; c=relaxed/simple;
+	bh=nWN69oeN1Cx4ZkiLI1G6DY9KEx80VUZA+z6MI8H8rxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TlZo3DGDdbQinsyCh9QpsDmWbEAcjqlNmsQUy+Z8y4PlTmi/0z7eJzYaTe/JOPQayeYw1XvBonDCl6o7alIzdWWJR4XgrBsYZwhN/ZcLfAN7kRbi1ucsGYGXKkJvTkGKsMYMU8pIFy0bC3hz1ycu3P2bMI+qjkeeKyK4DwKcuBY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0ZHvSZgc; arc=fail smtp.client-ip=40.107.243.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dkca6h2+uCxqwytj/akR6hXw2vlOJVc3JA6IXABUlD296dIy6FLz6800DAnFvjoZ5D3oDfrAsZ7/0vhunnGTokolWDx4aEJiZLtWyco/6KbPYulOSzjUITcaMduKHY+eGbFDfAEDwVD3h+BhY+ccYXnlmAND77tFch9/w9gmZYOyCr0ojnVq5KUekSaMKWicmMrwUo/3twd+iIRi+QDm9Vyx8UaA1ybKfZbcB7+5dFDNVmC0RUnjk/7/k7VG0cUZMe7e1hZ/TK8b1vL7cmDHzEdRrfXxj6QEjx9cjF32UrhY2UbhtIlb2X/cnHgg2W1zTDgZo2jpN7s1gb+6NzJDWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=54ZPkgqIhnCVs4+u31Q4z0OU4yI6Muidt7LAnlQPKFM=;
+ b=CDRS8xcHtztBDl3WUjYv2UQ1es9cnrxQuXyW9lAozNjlesRnyBzDIvdWXoX0+H9N9Bwy83sFGf5cp00JqM2aRYRgTI0FfvxBLiEHMMN8RCnEyv7UDODyeHE4Nkho0eJzboEIHX3PFFfAlcYL3SyOxT65DcM7KyRK7F4UbeEM1Ye6LZk7t5ZAYQcc8Y4Hmu3U5pZnWKzSsXRtUp+C+V8jxVQA1cfILzW6LyWMp8/swK9i2vOLfIbjNE13Plv/B6PF3K/FpHu2/93LHOr4zqWg8imZXKKbqbRF4jvpjpAq5DbFxm+cdsxSO+EBEoCJqEJn4Gw0wpwaMtDoEAug6QJScw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=54ZPkgqIhnCVs4+u31Q4z0OU4yI6Muidt7LAnlQPKFM=;
+ b=0ZHvSZgcPV/SsLN2oZGZaf7uJdja86zrwijp3n4LGJgxzojxLP8B7abw5wCA0mRvf/3l16VxtjzXQ+89+OBt7s4OEZw+mpcx+5ubq/FFvdcyW2izSefeBZhq0cWFlFzbYeuh1g7xm8Gpd/dklLQ6q9oXTgtnzsrH5d6WU/RDVNM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ CH3PR12MB8258.namprd12.prod.outlook.com (2603:10b6:610:128::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Fri, 6 Dec
+ 2024 16:14:46 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8207.017; Fri, 6 Dec 2024
+ 16:14:46 +0000
+Date: Fri, 6 Dec 2024 21:44:38 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Subject: Re: [PATCH 11/15] cpufreq/amd-pstate: Cache EPP value and use that
+ everywhere
+Message-ID: <Z1Mi7hclcaSaRRjO@BLRRASHENOY1.amd.com>
+References: <20241205222847.7889-1-mario.limonciello@amd.com>
+ <20241205222847.7889-12-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205222847.7889-12-mario.limonciello@amd.com>
+X-ClientProxiedBy: PN3PR01CA0018.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:95::8) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] arm64: dts: exynos: Add initial support for
- Samsung Galaxy S20 Series boards (hubble)
-Content-Language: en-US
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- igor.belwon@mentallysanemainliners.org
-References: <20241206154149.4271-1-umer.uddin@mentallysanemainliners.org>
- <20241206154149.4271-3-umer.uddin@mentallysanemainliners.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20241206154149.4271-3-umer.uddin@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|CH3PR12MB8258:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b83d4ed-58fa-4db3-fda3-08dd161119bb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MMhFxeLeCGUWxfoIymQdZzWvY/cirJvY1W1FFFtx7zitphFpkSueKFWwvX/c?=
+ =?us-ascii?Q?6CirqLPiUET/FrW+HMu4tpcKQjMpHqng9+XaB5B5KX24UNJtbpQ5exs73E7Z?=
+ =?us-ascii?Q?kkaJ62+7xko52pwkBoiekuc5hgBBBusDTUILc7ZrKlgEvBgP9pu6e9chfe8W?=
+ =?us-ascii?Q?VVoOL7ctfNDScwgb2QDr4QwsG0ToKF2ZQ5Wh+63Nftu8g+pBAXUWr83JQxp5?=
+ =?us-ascii?Q?TjSy9z5H4b9n8UW6TnYChiSK8jc9IZalDTpJPdcFNIj3h2At+zFzTugQlwAg?=
+ =?us-ascii?Q?wkYQgrk8gjAMav1sARDDGjloghFBRWait3UidKIXufDmS037MOYF9YPFYSbY?=
+ =?us-ascii?Q?LOaH0vQuRn7ShhI5ezSyE3QSatMjYXOtY+D79QmaxXzSJF6cJXZzmnv3+Bi0?=
+ =?us-ascii?Q?UYp6ULkNMqfxIairFMNBQ3TDTSbrkKoryt5cTurtJ84xs34W0th8PBNWHfWl?=
+ =?us-ascii?Q?p9uROqDVrUINEh9THAXSozrxkn5KkPniwCsDwJvUoXWcTihaefwTqndD6L70?=
+ =?us-ascii?Q?98s/CBIddA20k8mqQapp9OYEMZYsG5HUhth3jo6dk/Epjmr7fv1pPY+2vgIf?=
+ =?us-ascii?Q?G9IwpeRG1nSMNiKvCtUMNGvqiNTpQ2dHQSVFqqVyWBnLULvvA4uo6h3JqNWI?=
+ =?us-ascii?Q?mFkSBlvUt39Hex+WMGMIq1fGE+w/wR57Qkgm148osDS/BihpNmWh/VEnRFop?=
+ =?us-ascii?Q?bF2khQsTiwbTC1By6/NW04iLZ/Bp2nCq3QCbPaZ0SdUYFFG3/A6fUtjN5rQB?=
+ =?us-ascii?Q?SNamqfCs6OYoiCS7lmE/ZeSkqwy42Fha59GNpRVGScEScLza3+L1VazjZ8jl?=
+ =?us-ascii?Q?yEjzguD08Q4E1bra9bSZbVqqIkpOJ34YbwpYuMPqhot0JbTjQjK/gdSSg9QQ?=
+ =?us-ascii?Q?v5uoNQts1FQODYwblvB0PXA33u26mLfJcCvQLNwAsiEiwRaYFjzTpOvrqTBP?=
+ =?us-ascii?Q?v/GnqHH6ZVxvqS+Rq+HPTNQriSUFPIb6MNp79wAGZPj8wuZZW0vL7YuwEm13?=
+ =?us-ascii?Q?ag19rycHScbMQTJJBxzmxovhEqaSD3ymASGEmyAgn7XLg3Bo1vF4BkLQiQJ8?=
+ =?us-ascii?Q?yaM5Ne6FdF42g7fLjVFnt4/zPiUFXvGJyXVBQlXeSolpHZmtkUHnUyb0cCcz?=
+ =?us-ascii?Q?PoFacH0huxcZ1Du+KhDAMYndkwpAiBihezdr+9L9Gipi0Gu50NgehCtYUhrH?=
+ =?us-ascii?Q?LWEuQUsP0lH7pdhLP4G3N40Ysx2ARDJqf4anS5yWKFExAfZQ6a1Dk9m6S0BJ?=
+ =?us-ascii?Q?bQwt99ajrovqDR0jzQSvgrCP27Xsy7e5WQmFqPj3ACkHen2EHWOeEZa6qEeb?=
+ =?us-ascii?Q?d3yaflFzNp38UAnZlV1Ud5aw0G7ptN7TMENp68oqRC4JUw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RG07ox6yTyU/goaUXzThCofHpGdTNZPNPvkRQ5kC4SMxOgn5w0qFkqbsnhQo?=
+ =?us-ascii?Q?7UIrC/AccSjGX1PyaJmHO73hhC/l/8o3oRqpXAYq0M0YjKRH4keJGd50dHLL?=
+ =?us-ascii?Q?Iksq7LUoqeHrDayGHhBMCSS9nN5ibQCgx+YM8pLbVPgeWB07K1/bfnz39hyY?=
+ =?us-ascii?Q?o6zPIvOYA/buPL29405VvTCbNcVvohZV8liRv+0R1mN1ZgGHhUfwvvWONmSW?=
+ =?us-ascii?Q?lLy20u+My0wxEvZWvV9AK6u5t8b6chykJ8yzGVN1rDTx3mqC+l2J/veno5Sp?=
+ =?us-ascii?Q?pUY/n798yKnA8CuwfwlPybG5yr6lga//3tJ/XqdzB3aqNu/MBrMnIW/NYFNm?=
+ =?us-ascii?Q?7TGWizJzrIPP4vrHqfQA5FlLdao1D+uwNnHDOXmNt+wdb8v2l3x5LbkDmDUq?=
+ =?us-ascii?Q?D/M4OQFx2AyDUOHygEA7QdaST5ae6Tnxd5pgT2lXkw6CTJQdKK+hslEi6oiK?=
+ =?us-ascii?Q?vQlmio3haZmlQYDUunc06mMvBSl4u/Iq3QefzIThDn1i82ToTZHRifA8AroI?=
+ =?us-ascii?Q?sR8neWMOCLEy52y9eMaqbvIfNa7Vf99o/ti0JCzRkuK4zdxXjDLhtYksg1yF?=
+ =?us-ascii?Q?br2VsuuYm6gb8BWIX2KW815sW/AoVGEtKCaQ1cIHowvozqlAnaquroeKc5n/?=
+ =?us-ascii?Q?36gUnWbrY/k4nK6DcCrRiOeSHuYwCikFpNqWg35H28VdAljimHlUfu+QzBXy?=
+ =?us-ascii?Q?xEtoAo78tYv44xuVZbfv7oYYoVdV6uJTyvS7lHG9vgASqD5lfHwkIUEIyfjl?=
+ =?us-ascii?Q?uKdNRVMADt+VvAo8WHgcXigLzt2cu2PXr2G8BwzrYvch9YcXiPFmR7YC3dvS?=
+ =?us-ascii?Q?K4XbSy6pcQcF/3IHsnos69Vfv26jQhhPkE2gNfqkQOZAkHW9VmF89MsRGrmt?=
+ =?us-ascii?Q?Y5lv2o5fiqU3qg2zXqeWX5bdrQ3FYkpIdxw74bhbctG8cZAMvif+mUb4IAzI?=
+ =?us-ascii?Q?+dB4ptrQ5ObRo/nubAeu/QNJ/IVddv9A8rK2y2eLve4GDC4iUjzUIhrwekrG?=
+ =?us-ascii?Q?kQ780UOR3rEp38uzX2DnVXwa0BfhzONOCcbzBTykjhCT1eFKlIlvU/pcYzEO?=
+ =?us-ascii?Q?HMjmQuBLmmy8va9gj5chfde2OE9Wc3K5nM1qjpedvi3ESQ7/lMCeLo9cGzZF?=
+ =?us-ascii?Q?3Zk3fRfzb4ae4RWfEoCY2kH+fP+ZH0TfpQkLuZqjVBAbUYecvUi7R/FY43Tw?=
+ =?us-ascii?Q?MMe8WwifSBRFRE9VnF0KT+fD5qjqJVdMYJQNmeUpvt/RUfiuP5JdK9MKmOVA?=
+ =?us-ascii?Q?H147/BwPHFEmuvRKoHGMAf73BMuDOdlSow7vpKRxx8icl8I4nT6Jb2L3w+ZT?=
+ =?us-ascii?Q?r6mGV1XOtmptykb7liNfCuVmVixxjdZgGD3BUCvJ3x+a+SwFZ+lLGqIpLnsu?=
+ =?us-ascii?Q?9FZSHR/lp+50X+BBE4W6tm84D60yCrJHWxrqiW5FVgb+c7gPG47fgRYrZaW9?=
+ =?us-ascii?Q?rPT+rzw4rMeqJN9Ue/BDVjMQY/+Jks3u3uhIwfcc4wksEyNhjpw0RcEKMQ9P?=
+ =?us-ascii?Q?IZPtsQLsb2tg09q9tjwesYxRj+hXi/TbRxjxMBt3CAWtq2YxR/vmmQHxm4wa?=
+ =?us-ascii?Q?7yicj6tIsRG/VPFTXqb0PyXBnaFYZ+u/s+Wj0ux7?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b83d4ed-58fa-4db3-fda3-08dd161119bb
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 16:14:46.0218
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q/XrfohNr/66TxAqF/hd6hMOm96A1MUa1dE/Fq6OYgIhndLOavAFgrYbOwJSpbAoTo6P/vkQ0TKy7GlAV63apA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8258
 
-On 12/6/24 17:41, Umer Uddin wrote:
-> Add initial support for the Samsung Galaxy S20 Series (hubble) phones.
-> They were launched in 2020, and are based on the Exynos 990 SoC.
-> The devices have multiple RAM configurations,
+Hello Mario,
 
-A very small nit that I've noticed repeatedly in the other 990
-commits as well:
+On Thu, Dec 05, 2024 at 04:28:43PM -0600, Mario Limonciello wrote:
+> Cache the value in cpudata->epp_cached, and use that for all callers.
+> As all callers use cached value merge amd_pstate_get_energy_pref_index()
+> into show_energy_performance_preference().
+> 
+> Check if the EPP value is changed before writing it to MSR or
+> shared memory region.
 
-In the future, try to wrap commit message according to Linux coding
-style / submission process - neither too early nor over the limit, so
-that commit messages can look as good as they can:
+The patch looks ok to me. Just one comment below:
 
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+[..snip..]
 
-For example, in this particular case, you could move "starting from
-8GB" to the previous line, like so:
+> @@ -1610,6 +1591,8 @@ static int amd_pstate_epp_set_policy(struct cpufreq_policy *policy)
+>  
+>  	cpudata->policy = policy->policy;
+>  
+> +	guard(mutex)(&amd_pstate_limits_lock);
+> +
 
-...
-They were launched in 2020, and are based on the Exynos 990 SoC.
-The devices have multiple RAM configurations, starting from 8GB
-going all the way up to 16GB For the S20 Ultra devices.
+Shouldn't this hunk be a different patch. The changelog doesn't say
+anything about making amd_pstate_epp_update_limit() call while holding
+the amd_pstate_limits_lock.
 
-Otherwise, it looks good to me.
 
-Best regards, Ivo.
-
-> starting from 8GB going all the way up to 16GB for the S20 Ultra devices.
+>  	ret = amd_pstate_epp_update_limit(policy);
+>  	if (ret)
+>  		return ret;
+> -- 
+> 2.43.0
 >
-> This device tree adds support for the following:
->
-> - SimpleFB
-> - 8GB RAM (Any more will be mapped in device trees)
-> - Buttons
->
-> Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-> ---
->  .../boot/dts/exynos/exynos990-x1s-common.dtsi | 98 +++++++++++++++++++
->  1 file changed, 98 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi b/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
-> new file mode 100644
-> index 000000000..55fa8e9e0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Samsung Galaxy S20 Series device tree source
-> + *
-> + * Copyright (c) 2024, Umer Uddin <umer.uddin@mentallysanemainliners.org>
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos990.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +/ {
-> +	chosen {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		framebuffer0: framebuffer@f1000000 {
-> +			compatible = "simple-framebuffer";
-> +			reg = <0 0xf1000000 0 (1440 * 3200 * 4)>;
-> +			width = <1440>;
-> +			height = <3200>;
-> +			stride = <(1440 * 4)>;
-> +			format = "a8r8g8b8";
-> +		};
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		cont_splash_mem: framebuffer@f1000000 {
-> +			reg = <0 0xf1000000 0 0x1194000>;
-> +			no-map;
-> +		};
-> +
-> +		abox_reserved: audio@f7fb0000 {
-> +			reg = <0 0xf7fb0000 0 0x2a50000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-> +		pinctrl-names = "default";
-> +
-> +		power-key {
-> +			label = "Power";
-> +			linux,code = <KEY_POWER>;
-> +			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-> +			wakeup-source;
-> +		};
-> +
-> +		voldown-key {
-> +			label = "Volume Down";
-> +			linux,code = <KEY_VOLUMEDOWN>;
-> +			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-> +		};
-> +
-> +		volup-key {
-> +			label = "Volume Up";
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-> +};
-> +
-> +&oscclk {
-> +	clock-frequency = <26000000>;
-> +};
-> +
-> +&pinctrl_alive {
-> +	key_power: key-power-pins {
-> +		samsung,pins = "gpa2-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +
-> +	key_voldown: key-voldown-pins {
-> +		samsung,pins = "gpa0-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +
-> +	key_volup: key-volup-pins {
-> +		samsung,pins = "gpa0-3";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +};
 
+For the rest of the patch
+
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+--
+Thanks and Regards
+gautham.
 
