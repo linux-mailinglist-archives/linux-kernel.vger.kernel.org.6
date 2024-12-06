@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-435035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD2A9E6EA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:55:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C2A9E6EB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:58:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA8028020A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D501883E93
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1AB202F7E;
-	Fri,  6 Dec 2024 12:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370E4202F7E;
+	Fri,  6 Dec 2024 12:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9JrqhOB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k7HF1KNr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tiYtZTAf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k7HF1KNr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tiYtZTAf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B9B201006;
-	Fri,  6 Dec 2024 12:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124AE1F6681;
+	Fri,  6 Dec 2024 12:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489738; cv=none; b=W1vZplihWJ8UhkL2PJuO+/M8vDADvci0EDSaru5lv05Hdu7tRNLy/har3XCDsGLg9bKRBOzhkhRCVSF9PAuksvqlrOBtnOTcCRpV+jMCp91/uDdxD64YqkB64luKgEfuMc4hrjq7FDsuV5wr1Hc//yoAgCN6NYpGbvxLix8aCPQ=
+	t=1733489776; cv=none; b=KCLdHoYQXf8XvGoSn6F5Oqhp/d/l32d8G426PKtuO301HKFSjTYloouMIbovcxLdHbbs6r6fDcxU5/+f5Yqkkv7AUatVVX3ZIsL9Ev/RcGOyXskYwEQAsakBZeiQKp2pdIizkijRmPbB+0IQxDAl4+DEUAe6rRiD5fDDryDkysM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489738; c=relaxed/simple;
-	bh=xZjeMwCjMjZYYhQFWvUA2joTRkTaHDdHdVZko+sl5jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hNlEfYuyp6z3wMIPAUpaocBCmEPiiTph3QbsDOYZCeYowEUxJZM2qjo9Y7EhFH4TAxVOurO9c7HQa3Vo+W/J3GLgIWeWwuazbtiWMUX+g32yHrhJwP2/Q5wrVwijm/g8p/9Hyp2wN+wGd4+57bfRGgEbhJkD4c31IpIhFxFCv0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9JrqhOB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 620B4C4CED1;
-	Fri,  6 Dec 2024 12:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733489737;
-	bh=xZjeMwCjMjZYYhQFWvUA2joTRkTaHDdHdVZko+sl5jg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=c9JrqhOBMKvV1OxcpwXZe4k32YiqNK5HLXqJa8e5iAXyZlNFt+a8GdE4SFByh2qsN
-	 XWfPD8VMXExHnEEl7ntX906+pb6OHf1juVZ8J9UZyoAFOtMSmh0CzyIl9o4mlOuW9n
-	 sgbyB5B+D5dPpWuXQkI4ATtfnICW0Jhn8ueYPIO06I7uldf4e/kisIaqymo958Sk6b
-	 UyVegc9f7rdQgrQ0mBu1J9zUlxJK+XblQ74f2EEbrSOzu/VAnwAHWKvAtghG8Vz1Ad
-	 L3bT6E/IWa90doXh0CTWME2QXci0cIwgEdwEv8o50wMU+Zw/601+1+lBkZLqlOEvDv
-	 T3W95XHV20EAA==
-Date: Fri, 6 Dec 2024 12:55:33 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>
-Cc: John Harrison <John.C.Harrison@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-fixes tree
-Message-ID: <Z1L0RdL5kQCXzRRV@sirena.org.uk>
+	s=arc-20240116; t=1733489776; c=relaxed/simple;
+	bh=72LUJxgs/+MQeIJms0MDfuMiTHLYe1I/ue8PkNgEZT8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NukQ/I8AdjbowfOoz1TCobdo0y5dxQWYS6/VBULLyxgwl5Xu7SsYOBrIGzkfRDzC0E9zxlgYPrn6mpvVPAKkJS7vVy9K6TQ2+EXvxpFnFxFi1jruFXgRSqucaToQlPgVN3moYIIRrmLFW330iTfrHms590MQFUYpIU6OHcSThbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k7HF1KNr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tiYtZTAf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k7HF1KNr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tiYtZTAf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E40F2115B;
+	Fri,  6 Dec 2024 12:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733489772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KTwBQJA6d0xkJH+z2GGckQIl4ehOOnUecm/iCaf5Z0M=;
+	b=k7HF1KNrnQVBBgMSztwTQmGdPFIaVw6pix4wIZGKtZBpiX5UrUBPjw7WovQ4vz44F/eI9M
+	cNhqG84wy+NMId+O10lJQu8YwjkTAUNPu4oIXOMWnU3I3HG13EnCURUOx2pZErTljITmli
+	kYxQa0RPWrU5FoQshifKaexQJ8pGegs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733489772;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KTwBQJA6d0xkJH+z2GGckQIl4ehOOnUecm/iCaf5Z0M=;
+	b=tiYtZTAfowQpMectUy2EVhMVFNFpCNm4pKMAtBIHuwhFofuZJ7Yaj+XUDZnAkdOK34MgDP
+	gohg7eOzulSyZYAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733489772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KTwBQJA6d0xkJH+z2GGckQIl4ehOOnUecm/iCaf5Z0M=;
+	b=k7HF1KNrnQVBBgMSztwTQmGdPFIaVw6pix4wIZGKtZBpiX5UrUBPjw7WovQ4vz44F/eI9M
+	cNhqG84wy+NMId+O10lJQu8YwjkTAUNPu4oIXOMWnU3I3HG13EnCURUOx2pZErTljITmli
+	kYxQa0RPWrU5FoQshifKaexQJ8pGegs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733489772;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KTwBQJA6d0xkJH+z2GGckQIl4ehOOnUecm/iCaf5Z0M=;
+	b=tiYtZTAfowQpMectUy2EVhMVFNFpCNm4pKMAtBIHuwhFofuZJ7Yaj+XUDZnAkdOK34MgDP
+	gohg7eOzulSyZYAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1018013647;
+	Fri,  6 Dec 2024 12:56:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cfLPAWz0UmeoTAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 06 Dec 2024 12:56:12 +0000
+Date: Fri, 06 Dec 2024 13:56:11 +0100
+Message-ID: <87ldwtrmvo.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: <tiwai@suse.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<patches@opensource.cirrus.com>,
+	Simon Trimmer <simont@opensource.cirrus.com>
+Subject: Re: [PATCH] ALSA: hda: cs35l56: Remove calls to cs35l56_force_sync_asp1_registers_from_cache()
+In-Reply-To: <20241206105757.718750-1-rf@opensource.cirrus.com>
+References: <20241206105757.718750-1-rf@opensource.cirrus.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yqb3qgop15r2D2T9"
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+
+On Fri, 06 Dec 2024 11:57:57 +0100,
+Richard Fitzgerald wrote:
+> 
+> From: Simon Trimmer <simont@opensource.cirrus.com>
+> 
+> Commit 5d7e328e20b3 ("ASoC: cs35l56: Revert support for dual-ownership
+> of ASP registers")
+> replaced cs35l56_force_sync_asp1_registers_from_cache() with a dummy
+> implementation so that the HDA driver would continue to build.
+> 
+> Remove the calls from HDA and remove the stub function.
+> 
+> Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+
+Thanks, applied now.
 
 
---yqb3qgop15r2D2T9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the drm-xe tree got a conflict in:
-
-  drivers/gpu/drm/xe/xe_devcoredump.c
-
-between commit:
-
-  5dce85fecb877 ("drm/xe: Move the coredump registration to the worker thre=
-ad")
-
-=66rom the drm-fixes tree and commits:
-
-  90f51a7f4ec10 ("drm/xe: Move the coredump registration to the worker thre=
-ad")
-  906c4b306e934 ("drm/xe: Add mutex locking to devcoredump")
-
-=66rom the drm-xe tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-
-diff --cc drivers/gpu/drm/xe/xe_devcoredump.c
-index f8947e7e917ec,71636e80b71da..0000000000000
---- a/drivers/gpu/drm/xe/xe_devcoredump.c
-+++ b/drivers/gpu/drm/xe/xe_devcoredump.c
-
---yqb3qgop15r2D2T9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdS9EQACgkQJNaLcl1U
-h9AtxQf+LbiieYUYlYRCYegx4yY3aH7UB8QIZ5m/w5fCA07vo8XGn+161Zl1Wrjl
-Eo2UY7RIMSqvqgyY3zxuHQwskfdBDuIMAsz1mcBMigpG1T7bkBuipnY+dkbQRytb
-TP98U6MmcE9YTOcC/1LR8OrvkrKcos0V0+IqEyw+06iv9xqQH8uMyThnWEYAyGjO
-fQnAu5I9kV4k4ApGc11glOZQMPUZSSQPhwIINMopj1gFMWbpmZLW5UcmXZF4XZdL
-J2tsslw7QBeNmzImIUOWZ6u1Pcs81PnYcBncpUzDnPiS84C2NihW8wrkollA7i0U
-MOrgTztGJh3CujHocqUszp+PxEriIQ==
-=AIIM
------END PGP SIGNATURE-----
-
---yqb3qgop15r2D2T9--
+Takashi
 
