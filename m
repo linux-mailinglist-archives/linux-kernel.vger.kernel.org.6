@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-434981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BEF9E6DE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:15:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6129E6DE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:15:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40438166503
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D485A2837D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7044200BBC;
-	Fri,  6 Dec 2024 12:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA50C1FA246;
+	Fri,  6 Dec 2024 12:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gTC13rj/"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Oap3SO36"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBE520103E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7C51CEE97
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733487275; cv=none; b=rS94wDc65RmSnKEs8OHcDIzN2EuN/5xe3U6k9seFiok6hrhQ7Un7bS5u0U8cHZmKxyrAqF+opJBEiSwvFX4OaUOXbw2M/dn6o0LOFXIl7cV6MyF2BPegdDkv2H/y/WoJSm2GwAfG/DBVLGHY42BZ6zy2NW9I7nF6OkHzX4yPxWI=
+	t=1733487330; cv=none; b=n62VmG6WsjieQjkqFE3OWqv551v3+0l/Bx6mO5fKA9KdtFzGeRmz3GIkXXP04jz7+8DuQwdWPvRd5nMfVawqyAs4v05rKwMb1/deR8HMqe9Eybk5OW9wzbECAcEtgvcBTrQ6/Lnyh0w+eoh72Y7/piUFbBQ+KTXER7p+7yG7LGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733487275; c=relaxed/simple;
-	bh=MdkeGBoFKWIUCAPcL5K9k+34YiNLO8MevDvYtLeiJpU=;
+	s=arc-20240116; t=1733487330; c=relaxed/simple;
+	bh=69qXwDohScIWAfOVSletqrNr7qyRi4Q8ER4mXTXso78=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DgJSguhbyOiPFgaV2PTIMmn92xq9OAqMZwDqfpfIbyVrfiaxVtwk0cwz0ySSr3iLNFk+lfDh1DXSQSeLfanSw3yFt9ao+O7Kv/oLMPL2h3CsloX0BpND8uy89c0CbdtktD03kjPrbScfBtMj7rQlp3Ic7jDXficZzHbWPZdejUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gTC13rj/; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=eDBtVB6ZGhx24tNLPvdlsTZOe7s8JrFXeCwwh1l+cdJR0b+WfldFLnoPQCDVGx3vZQzWD+N0cTkEj6S58Tjckx2u1YlbokEpN5SO/KwY8tGURXTLqYYiQ7uXlrS06vyhi+gaVWCEFUnHaqL/b+Z2xZpoIsU5BcQ7DNx+AqvFjKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Oap3SO36; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B673dlD031094
-	for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2024 12:14:32 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6AIAfF029110
+	for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2024 12:15:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aQolUbZ4tdLNvJJPFjB5x4DwtbPK92yn3ct3b1Mhntc=; b=gTC13rj/sZQffvuJ
-	4rJv1gAJbzQh2K6Fodc49TEwOy3I1C1M7SiaWbuuR7BANnGPphmoUl8+orRGqY8J
-	VFcgCXgrUQ2Cmzk5Gyh7G6pJEWXB0kb6KaZfQYBl1zpAGdowJsRLZygOZVQTjfyA
-	r3nYfEM+oGxDu+/1vJF3GUt+CohhSnrY2FGHSSmXk+NkzNqF4MgiVWxaXkwvWwKU
-	xXlYxKnhAeHKo3SaffmEvAiOJUdpHa27yC9f4CoOGBfpG0X3gBSZ9MfIgtSEWRQv
-	Q7dUxW6sUwASyYztlT+lnhzYt3FVosF/RQ+/ry6tzN9RLLjhuQvKXtYB2Fg/u8fA
-	AaZMyg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43be173450-1
+	5OKC0p2yYzG/HSgY9TWkAGbxInJSraSIIykvrnmj30I=; b=Oap3SO36aA4Bmimg
+	qevVSJjCqQQTEUcGqcUyOEzB/MJuptREbOcmAN6RHC0k/00TGx1uG7vBUyGotksR
+	7iSY2PYclrQ/78NrrQqnWSQjYblGrRNfysHHoHM/pwvPH/bICbAt9knU0gSmsC1B
+	Ulx/oZojWyFzXoqzC3a2++ETIWGtKd048uNVT6HBLvWqjy5lbr34R83qCRGQYma2
+	qYOXE0LmsyxQ9z4bk4OhfibHxNSehyjftnzPJxoClDKMgu2uM3qZl8YWYfPVDaOI
+	BdVuMmcL2Q0eN7bCREcql9/1+VlxLhJ7FG851dEF7mO5zSRKJbqwdqeqmIlSL7GH
+	uCtR8A==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43byd809gf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:14:31 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4668c9aa8c7so5072281cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 04:14:31 -0800 (PST)
+	for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:15:27 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4668f02aeebso4504301cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 04:15:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733487271; x=1734092071;
+        d=1e100.net; s=20230601; t=1733487326; x=1734092126;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQolUbZ4tdLNvJJPFjB5x4DwtbPK92yn3ct3b1Mhntc=;
-        b=DNlNPdc86XbJZIKXlfdXcdqJnHzU17qPzP0Nwfl6vAmcrEb959YuKnOZhSzIkBQZE1
-         vDRso9Z4Cbg8K59mWB8BdRYAx/6Z9Mvw+jBLgAHApsszvAphwoHaXGWhOfASU2B+3GXN
-         h6E0u7iLdVgmccRtmt1yO2WBEjGdcRRdaOKUmLb4YXM+swTmITjfgZyMw8bp097xVlsd
-         IQ/TflNBhqFBlzvchN2BBHKOVv3vxc6VO+EgQv7SfBpq0hlll2uU3UGdP1DnXXyQAPjx
-         5oYpQ8xuH0bPmT8bZsxbp82OU458BfWkXRjmqWa7TLSkoBibBXX7FMETKN4hmvBHUkGA
-         ct2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXu1RFlDYA8xKAK02mLiPAGkS4I8KMaQGQls4+DdrmOu5qyEwI7UY63gRHcQ84zogQsucw5rVjtPjJBe1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7gyoaOyYdVWy6NtH5TL9dfxy47mCh93RaudqzBG+DpLs5lUaD
-	ivYap6MAKyxqK4QPxhKWrlNo/4oI4hxQzj1c7ulygPSFSTO4w0+JgxnvoPVM4Nnp62XYvN8pVJg
-	9NwTwaprBzz0hmer3Co+ruUeSfH0qbGKzrZzdjuNvCwnHSNYJcz5aG4skH+yc27I=
-X-Gm-Gg: ASbGncvmDQHLp4hfyRJpDVFYF5HpOw5kJvZAYeMq5g16MrcWWR+5zwt7XZL05XH7HtT
-	fea4C8GhWlq2lxyD0fE8UuRwmrDp3eONRwSocL9iPZLerGFwJFnYA3Tp8Y8VnS3OJyWmDrJMIBC
-	/k/2dgOulSthQj9dg2c2UwygEa3/3Hl3ZTvlAllSN0gD6mUcJW+nv2U1JQQuvpuaauASEXVKOKy
-	WzaoLI1/h7ni8MKvHyQ7Abw+5d8MsUz2muBp8Z3/W098kOJVYy921neWcm4EoDdn5p5it2HishK
-	L7uZb7OnV/BKh+0Mfn1wX0yteun+oI8=
-X-Received: by 2002:ac8:7f06:0:b0:461:7457:d802 with SMTP id d75a77b69052e-46734d9dbccmr17678121cf.11.1733487270956;
-        Fri, 06 Dec 2024 04:14:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEFjwFn34SakpnAe+V4sfh6VOa9cWYtqnDDUM06wcuTSCY5LC8ey7fhpFsyeBAmwUBNBMbfJw==
-X-Received: by 2002:ac8:7f06:0:b0:461:7457:d802 with SMTP id d75a77b69052e-46734d9dbccmr17677931cf.11.1733487270554;
-        Fri, 06 Dec 2024 04:14:30 -0800 (PST)
+        bh=5OKC0p2yYzG/HSgY9TWkAGbxInJSraSIIykvrnmj30I=;
+        b=NUZB3BT2DQu2ZczufeS9EbEBB4VrXftUafc+yeUSntOUZ1C0t2x84sF6Yof2SgUlU6
+         sJUSp7DajR0sjqLXzZwZl/HoUi8DyQA/vWSvuthOiOtngxEz0BUoSfnf/WxH9VnyPzmk
+         ozqgGkjRLaLL5UbmnEdQtrIiCpKM7AQ1TFFoRG06ynwVqsMSA+4v4jzy3vXSROxQM2Es
+         +naixDT+OtRxXrfE2VKwXj1Oy3aX0ypU8ssFYu8cX90lt62CLgl7CEw+1Mkdj2dpzqRF
+         oYpFwJ9EhewRlN89kbqUQThqhpDYeAQRPG+o01i+i5fzTw/UiTFbyJ32Sqric+EzlcBX
+         Gj5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX28kNsjrcvgDXd5yiDTaedEWWRMAY1uAMnzxZimrX1zaK2txVWmcaMS2tAfsbGnX6IzEdPdZeUxUeCVkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJEpYR1q6DpJFyMH+ww0rrX0SqpfkYCFs3ECTH0SmHKIj9Cdm8
+	Na9+3Vcp/25LrdHFZZP9E1a9TNX5lmNn39RmtjtLeIcSPdZSf7vI0vs6lpIB61M9nGAyb5IUxEC
+	c5Xz4a+wgcSh69fmOuSjxYemH9VyJh71l5HClM/KNEr3+sMtOm2kkCVTNQCbqC2E=
+X-Gm-Gg: ASbGncs4+HWvrycHI6SXQ9YwBGj63L4L/ZE5zy9t0VCH4n/H27PAguIDqKzm4NKh6UR
+	Zy6LkF8Q98ItemFAfKiptRLiGX9R5qq0vRmn2Wwg2ZhNuXvmF8BXia+2YfwN5UeKxxjSIaqrLJT
+	8MKRJZ6d6RrudzfQiv07rmcWStDPSAFBbFYzb2cCm0GZwIPtRVBzp0XSVpKZfOXOVlTiShkahsE
+	vPmrS2LYSFju51M0h+enabFWTay44YX0XMzZ80XQbh5FMY7WAGqjgt+ts8P94vwosTTgyAWajEC
+	DVQ3nyvrGIxW+wyCNUXuaB3wNmuzNPw=
+X-Received: by 2002:a05:620a:40d1:b0:7b3:2107:2eef with SMTP id af79cd13be357-7b6bcbb4a89mr152023385a.16.1733487326572;
+        Fri, 06 Dec 2024 04:15:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFP4i0WvzvqwHWvWzwD583pgEuYU7s1i/4a3MUxHVC4hDHUnMnNWl+iRwgty6HfmN9rqe918g==
+X-Received: by 2002:a05:620a:40d1:b0:7b3:2107:2eef with SMTP id af79cd13be357-7b6bcbb4a89mr152022585a.16.1733487326129;
+        Fri, 06 Dec 2024 04:15:26 -0800 (PST)
 Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c7ab1fasm2096091a12.86.2024.12.06.04.14.27
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c798fbasm2096012a12.59.2024.12.06.04.15.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 04:14:30 -0800 (PST)
-Message-ID: <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
-Date: Fri, 6 Dec 2024 13:14:26 +0100
+        Fri, 06 Dec 2024 04:15:25 -0800 (PST)
+Message-ID: <f948da90-91d0-43e2-aa3c-27e15e1cc7a3@oss.qualcomm.com>
+Date: Fri, 6 Dec 2024 13:15:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,91 +88,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-To: Wasim Nazir <quic_wasimn@quicinc.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH] arm64: dts: qcom: qcs8300: Add capacity and DPC
+ properties
+To: Jingyi Wang <quic_jingyw@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@quicinc.com
-References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
- <20241119174954.1219002-6-quic_wasimn@quicinc.com>
- <9e351979-be01-4d38-9b94-cc23efac4c3f@kernel.org>
- <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
+        Conor Dooley <conor+dt@kernel.org>
+Cc: quic_anshar@quicinc.com, quic_tengfan@quicinc.com,
+        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241206-qcs8300_dpc-v1-1-af2e8e6d3da9@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
+In-Reply-To: <20241206-qcs8300_dpc-v1-1-af2e8e6d3da9@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: vgUMFhkN3F804lJEjfgZwdXtNEi-uVho
-X-Proofpoint-ORIG-GUID: vgUMFhkN3F804lJEjfgZwdXtNEi-uVho
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 2Z5f85jQQi9nPyTeIYBtGSeEydANnk4E
+X-Proofpoint-ORIG-GUID: 2Z5f85jQQi9nPyTeIYBtGSeEydANnk4E
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060090
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ malwarescore=0 bulkscore=0 mlxlogscore=867 mlxscore=0 suspectscore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060091
 
-On 6.12.2024 12:04 PM, Wasim Nazir wrote:
-> On Wed, Nov 20, 2024 at 05:44:11PM +0100, Krzysztof Kozlowski wrote:
->> On 19/11/2024 18:49, Wasim Nazir wrote:
->>> Add device tree support for QCS9075 Ride & Ride-r3 boards.
->>> QCS9075 Ride & Ride-r3 are similar to QCS9100 Ride and Ride-r3
->>> boards but without safety monitoring feature of SAfety-IsLand
->>> subsystem.
->>>
->>> Difference between ride and ride-r3 is the ethernet phy.
->>> Ride uses 1G ethernet phy while ride-r3 uses 2.5G ethernet phy.
->>>
->>> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
->>>  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts | 12 ++++++++++++
->>>  arch/arm64/boot/dts/qcom/qcs9075-ride.dts    | 12 ++++++++++++
->>>  3 files changed, 26 insertions(+)
->>>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
->>>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->>> index 5d9847119f2e..91c811aca2ca 100644
->>> --- a/arch/arm64/boot/dts/qcom/Makefile
->>> +++ b/arch/arm64/boot/dts/qcom/Makefile
->>> @@ -116,6 +116,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
->>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
->>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
->>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-rb8.dtb
->>> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride.dtb
->>> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride-r3.dtb
->>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
->>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
->>>  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
->>> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
->>> new file mode 100644
->>> index 000000000000..a04c8d1fa258
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
->>> @@ -0,0 +1,12 @@
->>> +// SPDX-License-Identifier: BSD-3-Clause
->>> +/*
->>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>> + */
->>> +/dts-v1/;
->>> +
->>> +#include "sa8775p-ride-r3.dts"
->> No guys, you are making these things up. This is EXACTLY the same as
->> qcs9100.
+On 6.12.2024 7:41 AM, Jingyi Wang wrote:
+> The "capacity-dmips-mhz" and "dynamic-power-coefficient" are used to
+> build Energy Model which in turn is used by EAS to take placement
+> decisions. So add it to QCS8300 SoC.
 > 
-> 9100 & 9075 are different from “safe” perspective. They differ in
-> changes related to thermal which will be added later in devicetree.
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
 
-Since this can't be inferred from just looking at the changes, please
-make sure to add that to the commit message
+I'm willing to believe these numbers for a78c vs a55
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 Konrad
+
 
