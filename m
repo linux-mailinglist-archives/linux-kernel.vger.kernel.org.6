@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-435627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D8D9E7A52
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:02:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F2F18855DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:02:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246591FFC40;
-	Fri,  6 Dec 2024 21:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FoTgULz2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40159E7A54
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:03:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFB51D5ADD
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6585B284EF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:03:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F10202F9C;
+	Fri,  6 Dec 2024 21:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nnis4g0A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90BD1C3C18;
+	Fri,  6 Dec 2024 21:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733518944; cv=none; b=Mo4GfuYrdr1noLe3evwJ34kAv/5RBZMfIJQHaFhIasayrp5VVxtAfKeGbq2EGqEpQ2CMukwrr9Pyrt2ishENOGWXFVzXcxHVqhsbC1Orfu/fUauJDUMMNyvNX3VFSxMrzP6D7kfzi3ZXebGf5+S7g/H5M5v/PXZJzl0+O2Z7PtM=
+	t=1733519006; cv=none; b=d/PpMLT3NwD0zYTim4B8uffJs0JCw4WKRn/6k2IwEl1xqEb9MKBKGaLrorDf5wuS5eVn9G1mJEpaarbZ93NmyzO+ygpWWcqoI9z8HY3jTZwZJ2LSGAOvqk9AkY48QDwxxDGXpcd7oh3tekOXdoxexcJEj2pyqEun/tLmv6Wfw8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733518944; c=relaxed/simple;
-	bh=33q/gaB958eElAyWHRQAHfkY5pRfqLUEZy7XNq0cQUI=;
+	s=arc-20240116; t=1733519006; c=relaxed/simple;
+	bh=rjYe+1mTHx2nCmLqd3cmIWfysX4E1LYaiuujOJeiI6E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RYEF08FyzrMbgmCxvvl2OEKh+RjYrKDIkkub46onRAx4T/s7iBaebtoT0SHDWtHv0lhcvf+lkGKUNrrGhwjvRXO1TSEiEtH75aRsKPOPKrz+yByhYmrLWv5+FXR5AfjIJ5Ohe6o10Hob1ANWg0E+quBfc8xvKuQFzGANJvMqX9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FoTgULz2; arc=none smtp.client-ip=198.175.65.20
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwj8Oc+008r5UauOByV2vTtjzkyzcFW4QngkkCGEYjrFTCSSkQ2A6pTOyNeABvB4GVQIbktCu27z9PyosnciTI9F72Ma2/Cd1QMOr+2/8CWSlwdjvTzgaLs/phWCjw0VFcVkeOJrXPIfS5JGirQ7lf3F0MsMkSnf9Lhft7rD7BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nnis4g0A; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733518942; x=1765054942;
+  t=1733519005; x=1765055005;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=33q/gaB958eElAyWHRQAHfkY5pRfqLUEZy7XNq0cQUI=;
-  b=FoTgULz2ChscyS1s6YI6SCEpV9uK4ufJ/J9vE9BlxzaF0EBB722OuX/3
-   EdGTgx18GRMY1lr/gnF7CPOvsWP166ie4o7+1JTbdrjtMYef8SvROQF1n
-   OifepF5CImnWjn4dtPZk6wcvhGXHddmiEhIAW7krU5+5ypdPwzMA8/wJY
-   0ZoYtzCSUduqaMxtXKsmFwTqqqDj4NFef8IeH13VQcNQzkTODqmsawoZ1
-   lA9wkvbpzMKEM1TnSHIyCT7VVa7vkky0bM2vnoLcROqN+J0Wmb5h4B5vj
-   emloZK89SDvHRllUzPdFTOl5gahzCWD7HaMM232mgNm9Ecvbh5xNhj+A1
-   g==;
-X-CSE-ConnectionGUID: F0SPDE3QRLa/qZJTAn95jA==
-X-CSE-MsgGUID: zUE/dWxaRtGq64rW1OpQhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="33618919"
+  bh=rjYe+1mTHx2nCmLqd3cmIWfysX4E1LYaiuujOJeiI6E=;
+  b=nnis4g0Awp80RXkdPPH8wgQN1FbpDsoGxknMkf72MLK3FcBmd6JcQrnk
+   T2WslOwP/V7aw2hW0Hh0gjYhyh4QEzlzK9/40s5rOzCrGs7K03A/MjS4I
+   taVrmqOGDuFAEU6+gY5LrAY+TWYZzPiPhY0BgXxvSuQ9mud5AvnIl2eLx
+   Jj4M23BKy9/yuCMo1Xget2Vrz27zUvzYpr3+9D2jZ6xfmHZupThAfaDj+
+   gphWN2Avn08aGuqdzRKKPi5sxMnQyreAu7KjDB/ucypYHdoTqComdEKOC
+   Qc8rK84NP5ks4cgf0bck6AnlhJ/0rbBm6LoImxUViModFONm2mO9qExPM
+   A==;
+X-CSE-ConnectionGUID: c0cxSqSyT5SRllVGlujyMw==
+X-CSE-MsgGUID: D2Kt/jQFTuuPbDp5XB3h+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="33233818"
 X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="33618919"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 13:02:21 -0800
-X-CSE-ConnectionGUID: xCcpt17wTLyW2wKr1+DrUA==
-X-CSE-MsgGUID: dCj6Rt+FQ8Sxbi9ejto3SQ==
+   d="scan'208";a="33233818"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 13:03:24 -0800
+X-CSE-ConnectionGUID: P11hVv+GRmOT2rr69RHaUg==
+X-CSE-MsgGUID: Rl6xV7T1RHG+DT2T+/YfCA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="94874270"
+   d="scan'208";a="125344723"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 06 Dec 2024 13:02:19 -0800
+  by orviesa002.jf.intel.com with ESMTP; 06 Dec 2024 13:03:20 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tJfSq-0002Fp-2C;
-	Fri, 06 Dec 2024 21:02:16 +0000
-Date: Sat, 7 Dec 2024 05:02:14 +0800
+	id 1tJfTo-0002Fx-2P;
+	Fri, 06 Dec 2024 21:03:16 +0000
+Date: Sat, 7 Dec 2024 05:02:20 +0800
 From: kernel test robot <lkp@intel.com>
-To: Zhang Zekun <zhangzekun11@huawei.com>, xuwei5@hisilicon.com,
-	lihuisong@huawei.com, Jonathan.Cameron@huawei.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	liuyongqiang13@huawei.com, zhangzekun11@huawei.com
-Subject: Re: [PATCH 2/2] soc: hisilicon: kunpeng_hbmcache: Add support for
- online and offline the hbm cache
-Message-ID: <202412070443.dYzNQNfY-lkp@intel.com>
-References: <20241206112812.32618-3-zhangzekun11@huawei.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>, rafael@kernel.org,
+	lenb@kernel.org, james.morse@arm.com, tony.luck@intel.com,
+	bp@alien8.de, robert.moore@intel.com, dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com, Benjamin.Cheatham@amd.com,
+	Avadhut.Naik@amd.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
+	ira.weiny@intel.com, dave.jiang@intel.com,
+	sthanneeru.opensrc@micron.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2
+ capabilities
+Message-ID: <202412070418.9pHXTR91-lkp@intel.com>
+References: <20241205211854.43215-6-zaidal@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,74 +84,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206112812.32618-3-zhangzekun11@huawei.com>
+In-Reply-To: <20241205211854.43215-6-zaidal@os.amperecomputing.com>
 
-Hi Zhang,
+Hi Zaid,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.13-rc1 next-20241206]
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.13-rc1 next-20241206]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zhang-Zekun/soc-hisilicon-kunpeng_hbmdev-Add-support-for-controling-the-power-of-hbm-memory/20241206-193643
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241206112812.32618-3-zhangzekun11%40huawei.com
-patch subject: [PATCH 2/2] soc: hisilicon: kunpeng_hbmcache: Add support for online and offline the hbm cache
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241207/202412070443.dYzNQNfY-lkp@intel.com/config)
+url:    https://github.com/intel-lab-lkp/linux/commits/Zaid-Alali/ACPICA-Update-values-to-hex-to-follow-ACPI-specs/20241206-052420
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241205211854.43215-6-zaidal%40os.amperecomputing.com
+patch subject: [PATCH v2 5/9] ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities
+config: x86_64-randconfig-101-20241206 (https://download.01.org/0day-ci/archive/20241207/202412070418.9pHXTR91-lkp@intel.com/config)
 compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412070443.dYzNQNfY-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412070443.dYzNQNfY-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412070418.9pHXTR91-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+cocci warnings: (new ones prefixed by >>)
+>> drivers/acpi/apei/einj-core.c:728:21-27: ERROR: application of sizeof to pointer
 
-   drivers/soc/hisilicon/kunpeng_hbmcache.c: In function 'state_store':
->> drivers/soc/hisilicon/kunpeng_hbmcache.c:28:24: error: implicit declaration of function 'restart_syscall'; did you mean 'do_no_restart_syscall'? [-Werror=implicit-function-declaration]
-      28 |                 return restart_syscall();
-         |                        ^~~~~~~~~~~~~~~
-         |                        do_no_restart_syscall
-   cc1: some warnings being treated as errors
+vim +728 drivers/acpi/apei/einj-core.c
 
-
-vim +28 drivers/soc/hisilicon/kunpeng_hbmcache.c
-
-    18	
-    19	static ssize_t state_store(struct device *d, struct device_attribute *attr,
-    20				   const char *buf, size_t count)
-    21	{
-    22		struct acpi_device *adev = ACPI_COMPANION(d);
-    23		const int type = online_type_from_str(buf);
-    24		acpi_handle handle = adev->handle;
-    25		acpi_status status = AE_OK;
-    26	
-    27		if (!mutex_trylock(&cache_lock))
-  > 28			return restart_syscall();
-    29	
-    30		switch (type) {
-    31		case STATE_ONLINE:
-    32			status = acpi_evaluate_object(handle, "_ON", NULL, NULL);
-    33			break;
-    34		case STATE_OFFLINE:
-    35			status = acpi_evaluate_object(handle, "_OFF", NULL, NULL);
-    36			break;
-    37		default:
-    38			break;
-    39		}
-    40		mutex_unlock(&cache_lock);
-    41	
-    42		if (ACPI_FAILURE(status))
-    43			return -ENODEV;
-    44	
-    45		return count;
-    46	}
-    47	static DEVICE_ATTR_WO(state);
-    48	
+   721	
+   722	static ssize_t error_type_set(struct file *file, const char __user *buf,
+   723					size_t count, loff_t *ppos)
+   724	{
+   725		int rc;
+   726		u64 val;
+   727	
+ > 728		memset(einj_buf, 0, sizeof(einj_buf));
+   729		if (copy_from_user(einj_buf, buf, count))
+   730			return -EFAULT;
+   731	
+   732		if (strncmp(einj_buf, "V2_", 3) == 0) {
+   733			if (!sscanf(einj_buf, "V2_%llx", &val))
+   734				return -EINVAL;
+   735		} else
+   736			if (!sscanf(einj_buf, "%llx", &val))
+   737				return -EINVAL;
+   738	
+   739		rc = einj_validate_error_type(val);
+   740		if (rc)
+   741			return rc;
+   742	
+   743		error_type = val;
+   744	
+   745		return count;
+   746	}
+   747	
 
 -- 
 0-DAY CI Kernel Test Service
