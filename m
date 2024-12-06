@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-435029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51879E6E96
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:52:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CF29E6E9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6FAA282748
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D68A281F92
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8988C206F2E;
-	Fri,  6 Dec 2024 12:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEA4201019;
+	Fri,  6 Dec 2024 12:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uB+CD3kU"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="maq16Z+z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3563C2066C3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CA45464A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489557; cv=none; b=T2I9D8f6WeMMvJ68O/F5NnsO6CmDE7e/1VDmd11n4W1WdBhnJNGJkMWhik3d5zej1fU6goMkgu8RN1H6ap49QOR9kC7NaYiIB53qBcf9AG3O0spY2I2N1aITe5LUqSY55pP2ItNKb1UD3lrgFshXpYSZwDyQhb7NnPamsV8Pkg8=
+	t=1733489627; cv=none; b=Q10QVoBupH9XMTArW2g8ltXZbRgLP32eIBIqJu3xq5aTJNFad2J/Wp/6KL1EXyThDY67c7LI2axzqBRtkAZdehu1+s+lD4/sbE2MEcED0D+BineJqU/uzyXG39O2/Al6c0FhB8x4oin426X6+zsto8Y5iOfVT3Q4gDMwuntWxFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489557; c=relaxed/simple;
-	bh=f+27fzhEEViDzKM3BdD9NsjlQj3nr6zdqL/DbQ0dhcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gWpbTc86KikwzoWhC4KUKn29XNl6TG9pce5fgMFgMKRzUvfcRfn/HWVX9I+1QaGcnS9qIOIpgefEnh99Lk7WdDd56MAskj1e+mQnVBv+4/NWUhshOJOPcBk8wsTnwUDVB8EBiE6bc0In6ME2+KV2dHmMnnJ80k8Ilm4B2viWk9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uB+CD3kU; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3862b364538so425117f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 04:52:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733489553; x=1734094353; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QrDABpUIa8XNiUd2yRie5JLoWvXscChzPwT5Xcajj3I=;
-        b=uB+CD3kULrEBu9yaY++G1hkEM/iCyLHs4FFa+5H7UgK7p3Oh0iYfpLu1YpJ955ezoU
-         yhP+J7czsqhRrvVeQXCTWqGcIkDAwsLxlxRbO9aG78n1+3aZrpSaLwF3wcOQ40pDsgSi
-         MokuefxG8BIhh40ot0xnpySjf/wcJnGX3s/CF/3RwYuPMccOsTUe5UpOSMpkRt7hIYD3
-         fB5cd+zsQEo3qsUKw71QAviVZHTonFQWhLhnKnFKP1nTX9sB7hjrjFEzsJ2q1Rny/SKw
-         PdXuU3LGRIasKCb8czjez4dzitkJvpdRR7Qk1DED92MwSvMvS8jK1YNcFn0nbMkLktuR
-         XyhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733489553; x=1734094353;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QrDABpUIa8XNiUd2yRie5JLoWvXscChzPwT5Xcajj3I=;
-        b=RCzFlBy4ma2pc+HkBDtmqY8OAnsrqeNDVVHa+ANb8ql7pQIg6EEWWyvRsjaTtImHtb
-         PdsFj09vSoZemMrgRlcK8msrKty56iGpFpagHRCIubs17rnimBDIeEv6hq1dhfjmmigX
-         13/TWA9n6LAcnxVFVnT8xVLvMp3uMnqHdmeT1zCpfm3FarxBooGCmJPjo4Idss82mUDW
-         RcT2DKauJ2nuoF+nG4SMoDenfv2jk8fNN0KPiamlYE/36sBO97Hl9dX/v3C334yTCVDx
-         o6KtP4mfdfUZGfnh7PwuZmT35qLqONlbAq8HI6npZ+OGYfJgh+0fqmutyyyy3Bx6Uo2b
-         Yk/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX6ikThgKyN+IKPjb+IUq0O3aZlPbEag+JUDr1LGeQPYtHICd3kK9EkX3aYEzOxzYd37aATZvbc9GRUSj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1AxtSjdae4+dHURWIWVy0DXqCCQxw6rC5539Gs8niQHsXvRS7
-	OTaUOblkBV+H93afziEZG/Rrw6ox8XALlFWwqa0/hl4Jn2eTgG6Rt5/Tssa++bg=
-X-Gm-Gg: ASbGnct4VbErUDsNYKEVA/2n2KJbrbOp4uqVoAtXN18gMYls4BrTioTdBPBvt/GyQyR
-	DWxpUWKJMZ8ysUwcP9cm096iePCBvpLpTb0qG7WWoKnNSx3CgMVq0GuIEeD/DAuim9qfuC5HGj1
-	ogjrqyIev85IoC1i4pmroPnwURwHescKcVpAxWK0xLE4J7NsM4qqNbKy7kK1NNlKhXSqZGfZFso
-	M8ZVyxzE+BCbPu8vl6E3d8+EftJupPJM5CqQ2cf2i+COqhRrFKqcfI=
-X-Google-Smtp-Source: AGHT+IHm8JzdfN+FTAHMT8Z6wMEGsSN1pUfe5dL+iyuyKffu7U5Grq3ElPDgSbj9GKe3ItmO5v0RPw==
-X-Received: by 2002:a5d:588a:0:b0:385:f9ed:1637 with SMTP id ffacd0b85a97d-3861bf98719mr4466825f8f.28.1733489553444;
-        Fri, 06 Dec 2024 04:52:33 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da1134b9sm55104575e9.33.2024.12.06.04.52.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 04:52:32 -0800 (PST)
-Date: Fri, 6 Dec 2024 15:52:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sriram R <quic_srirrama@quicinc.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-	Rameshkumar Sundaram <quic_ramess@quicinc.com>,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] wifi: ath12k: Off by one in
- ath12k_wmi_process_csa_switch_count_event()
-Message-ID: <755becb1-819b-484d-8fac-9a2db53ced1b@stanley.mountain>
+	s=arc-20240116; t=1733489627; c=relaxed/simple;
+	bh=ywmW2KOAhh9b/GxPM4oy/ormt7yVohGPrAZcFiKsWtw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UwIFAZa48JrI+wCVuyWKydrvVJLaPcL6At6NdpMV9LQoadAwTXEJv6Jb1Z1AHXG79vVYdNyKTD92HaQLrcvwXZHwdF9RWzRnuCtsx0wXX4YpwF4p02PnCYXsEbJA8f6BHf8+oG1QDu5fdyPXtnaTjt2+udnOjp1HRU0AORp21h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=maq16Z+z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6BmwJV003138;
+	Fri, 6 Dec 2024 12:53:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=Q3gonYDhgHp8TDmpOVMp4K2m+cXMh6AwNwWl360M3ug=; b=ma
+	q16Z+zKt9XVniozz7pF6q4GQZk9RZFt9mPMe5qTKBw5PQn+YX1FaoeboUmsWn6cu
+	c07fEbIrA9N96MI9p0eaOT9k3emFMxEXlw600Xs1omhNmUYmrWqp1BgENc8RnDHm
+	zbl5nOyRPU9OkblMlRaWK5DQNSuK00NH2MgGhDJmm7cGT/Xd4+Q5tKHuzh5eM+d9
+	8NhjuIh2sk3HYBPOkmtq2qJyivWiUYMRTBn+udlKvQUBToZFSi1Y3VRBZf5ehL6i
+	pQANq2ekGG1/RBQYe+WltRYcDS8iSYLfY1OCSlX1+p+kfkiUnr7mmuxgg5E4CRbp
+	nodOhbkAi9gpjADjjGUg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43brgp1jq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 12:53:32 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6CrWu1029763
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 12:53:32 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Dec 2024 04:53:29 -0800
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <richard@nod.at>, <chengzhihao1@huawei.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
+        Pintu Kumar
+	<quic_pintu@quicinc.com>
+Subject: [PATCH] ubifs/debug: remove return from end of void function
+Date: Fri, 6 Dec 2024 18:22:58 +0530
+Message-ID: <20241206125258.9212-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QkxsqqPNAy4p3SUB3d43iKi6JwT1nT4d
+X-Proofpoint-ORIG-GUID: QkxsqqPNAy4p3SUB3d43iKi6JwT1nT4d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
+ adultscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 mlxlogscore=843
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060097
 
-The ahvif->vif->link_conf[] array has IEEE80211_MLD_MAX_NUM_LINKS elements
-so this should be >= instead of > to avoid an out of bounds access.
+Noticed that there is a useless return statement at the end of void
+function ubifs_dump_leb().
+Just removed it.
 
-Fixes: 3952657848c0 ("wifi: ath12k: Use mac80211 vif's link_conf instead of bss_conf")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
 ---
- drivers/net/wireless/ath/ath12k/wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ubifs/debug.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath12k/wmi.c b/drivers/net/wireless/ath/ath12k/wmi.c
-index 402ae477da61..46c5027e4f1c 100644
---- a/drivers/net/wireless/ath/ath12k/wmi.c
-+++ b/drivers/net/wireless/ath/ath12k/wmi.c
-@@ -6873,7 +6873,7 @@ ath12k_wmi_process_csa_switch_count_event(struct ath12k_base *ab,
- 		}
- 		ahvif = arvif->ahvif;
+diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
+index 5cc69beaa62e..987eb5b6782a 100644
+--- a/fs/ubifs/debug.c
++++ b/fs/ubifs/debug.c
+@@ -863,7 +863,6 @@ void ubifs_dump_leb(const struct ubifs_info *c, int lnum)
  
--		if (arvif->link_id > IEEE80211_MLD_MAX_NUM_LINKS) {
-+		if (arvif->link_id >= IEEE80211_MLD_MAX_NUM_LINKS) {
- 			ath12k_warn(ab, "Invalid CSA switch count even link id: %d\n",
- 				    arvif->link_id);
- 			continue;
+ out:
+ 	vfree(buf);
+-	return;
+ }
+ 
+ void ubifs_dump_znode(const struct ubifs_info *c,
 -- 
-2.45.2
+2.17.1
 
 
