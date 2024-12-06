@@ -1,142 +1,167 @@
-Return-Path: <linux-kernel+bounces-434918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088AC9E6CCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:09:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F799E6CD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:14:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F3D2829F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A92D1883D59
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9AD1FC7E9;
-	Fri,  6 Dec 2024 11:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCE61FCD1D;
+	Fri,  6 Dec 2024 11:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="MgjiqdzZ"
-Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dABlAaeK"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C35A1EE01B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474A9155C94
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733483334; cv=none; b=BJQZezHSSWxy+X6KOVgFJQSXiPi8aTUGfaVfh6JpdiNOvshM6GeCZxxxhY8XAshuzistBJyScHt44nkPcWpgSnucTmzNlkMizMsWwI1RMnussZRyrnm/xPzENv0zvfgSyLFXdXJJHXcr7/rQuI+MSEDein/dy9Xx5kKAw6KFuHg=
+	t=1733483637; cv=none; b=NUWvU4nwPQwfRmV+3idDt554YWw2Tf62hcyC03I0xfySs1uKwqSj/hax4OrJdbUD53Yb4PlULColngqx28Qv4hPPTy+ue4bzZzUnK7FX4dZxfcWvnG/oZwy+ROu48ga68VssK7ICP1SfMLHda48s5LYPCKnsilvK3kx5OcLIzx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733483334; c=relaxed/simple;
-	bh=W4VuhT+Jm07xuaoOKTSneZ6zXj4xO3p37XsQxo6QhR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GR66Iy+sAzsUXvSs2XwHPdXXiMM51vY2/1urcDCMQ1bW154BX2gXhNbFB+2+EMGkpB51DCJ+hFDiaWicSqfBB/f4BaDXfZlDY2YhXVM171tPv8zMWFcvPHemtcUS9ab3krfRalPRgymIYkTZ5W3k0VcZBX7wQdNwRcthLLcn+GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=MgjiqdzZ; arc=none smtp.client-ip=17.58.6.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733483330;
-	bh=NhyG+EmDBcuL7ITc5tFv2+rP51hoW90ADGxMFzERI+c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=MgjiqdzZfTmb/mVFTbzsypOWruuPXKPmqalwnrapBSSPRX9ZBXWuKx/rXEQNHK2pa
-	 Owdt0fT/DfIcknjmrc9RiPQm03DTgyCIfZaA0Ct84DRgRPn41GH/9ATt9WarD4oB7Z
-	 kp1tye/lvFsVtcUt9wEaRY3KIi4c4XR2lvGXACZO95dn1BzrfkmojzfeVy6LNqPP4n
-	 cuKwE61BSO3ibR5Zaj2OZLFYfkZ3aOGDENNFUeS+do+P7PcdFzPCx3SylOoxqhlQzu
-	 3vBrnTd0dnstMjHvqU/2HZ8ig8tIq43Kbs7RsrkBBEg+Xa3q76Kaj+3nG3pAqDsniz
-	 8LIg8qyWiAoMg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 604B31801BD;
-	Fri,  6 Dec 2024 11:08:42 +0000 (UTC)
-Message-ID: <71d9c99f-aa7d-4697-8561-17b54cfe97c6@icloud.com>
-Date: Fri, 6 Dec 2024 19:08:37 +0800
+	s=arc-20240116; t=1733483637; c=relaxed/simple;
+	bh=dDR4+Q0bwup8XiwfT7f6n2a0gDrV0vi56ih3uackW5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=an9x/F+QZDBpc3hpxcsMWcYz4P670LO0O0bEAPtwfjhbiUlTo1r7RuFy7IKY2wzoQSY+WlZY0QEjtzRoftLi4OqQdk0IvaziThapk2kX1fREgIavwiny2D2YpIaGVk2vJ/B4TGksy8zgQzORSS+Y9GK+JXglOY5yFZp7mG1isTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dABlAaeK; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa62f5cbcffso232866366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:13:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1733483633; x=1734088433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNv2zbazDCZ/pWBKvIEuI2Pxd+zGHz/To3nXkUZrj8k=;
+        b=dABlAaeKFe2g0SBgd2s1oTOHlV6y/JXrGEIbqbVZgAaFRA/WmSNy2FHxMFXD0d2eZi
+         t3LxiM0jwHHLmkPXuKy+TXx2mUJwKTZO3Huj8sDlCaYIdrdYJxgKFXJkUKwweeGI3AvX
+         yG4YsNZNLvdrdlrTl3oRu8FVcGLq8reUEZ0pAqRx/l0dOJLH+XFth/oE84/JkTkjNjE8
+         +Ke9WjhkA0N4VfK6/2VV8aHJdPbq61+NEa5uGVYaDkgSHiyrmuL8fTa1sD0cR7pw2I1n
+         lWEQzh5RdQlww6uhQxTk4JaqsA4tccmAAzVU+2rOQqT4ygsyJfx+Dm5P1MNCh22J5iaN
+         o+Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733483633; x=1734088433;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNv2zbazDCZ/pWBKvIEuI2Pxd+zGHz/To3nXkUZrj8k=;
+        b=Qe4LyoAnLL52WCi+JuU/BoEod+ua91M2f3as6ArknuvDtSWk48yp+SIBoCLAfBwPii
+         hNBAOjL1WDsmB7ipvJTgkii69cQgz0tZLyvnD28jNFohSmPPJjZaW5zk53P9zMPgCVYp
+         uPVjWJoAFpzHYFiF0h4guNlg8QYvVBH1cDEJajhjsZP9qLypTGu8e77cqxrKrZwotP8S
+         SmG/GCx25l0/2K0MTbQ8LyGDE6iXlp4KEG8nyPc84ntz7eQhbFYGRLcBr8Dc05dHiKQS
+         W7h7CdC1khWVWmRSsWlsTWhuc/LMzIg3PDWe/ZCeaGCvk+u4iWgeAnFJGK7yvcndlhKu
+         OgkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsWqTs99O0zYbUB1L0UgDyTlRi60ea4rf7rtzOuGB9Zq7MKDPgS4ZSL63TiJwGMGVf2r7o/yf6w8OXeng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdnCKtEEGG2XqdpUTm8VgEPrYG8oAH1uaoglqBQSGaRAt5Kfg2
+	VLEhwB9u2pk9O0nsTY82kIKo1eDLP/G2ZvnTbGgpLeZgZc2QKcs2P/rad9dVh08seJ6eAPj0kwB
+	5
+X-Gm-Gg: ASbGncsCpyLZlYELKLNAxZelBPTvpc3H1pcXB14t0mPE/pww4g3A1DzVu6DsQzTFt6K
+	UIb+hKbHYARB/s2V048xEk3pfY8pxUfshnIcwuJavUQ8MN2BQT1O3eXSWAFZCUzr6yDhJagYtpS
+	IA9wsObjMrTrDGq8gADtTmsAI61lNG7sRxr/5K1BXFfwiPhT2j3ztdealV3pcU/WEOkWWm86Aud
+	mtTAOM7wW3VnwI1ikrqh96kWxmM8+fLYTNU9Z8AzjkGfnaxRWWNuvKPH0qn3P7d5LKDmHvH09+m
+	NkDx
+X-Google-Smtp-Source: AGHT+IHll3lGOqyFO812VEboDgJwa6/Nx08MKrC77gJO3Ig+etbaCZN0rl3zYI2kKOz7kmgwe+LwuQ==
+X-Received: by 2002:a17:907:3a0f:b0:aa6:2b21:ab5b with SMTP id a640c23a62f3a-aa63739e4e9mr254496166b.12.1733483633411;
+        Fri, 06 Dec 2024 03:13:53 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625eee2a6sm226877866b.90.2024.12.06.03.13.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 03:13:52 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: prabhakar.mahadev-lad.rj@bp.renesas.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 00/15] iio: adc: rzg2l_adc: Add support for RZ/G3S
+Date: Fri,  6 Dec 2024 13:13:22 +0200
+Message-Id: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/11] driver core: Constify API device_find_child()
- then adapt for various usages
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
- linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-4-1611f1486b5a@quicinc.com>
- <7ylfj462lf6g3ej6d2cmsxadawsmajogbimi7cl4pjemb7df4h@snr73pd7vaid>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <7ylfj462lf6g3ej6d2cmsxadawsmajogbimi7cl4pjemb7df4h@snr73pd7vaid>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: UViy4Z1HSo-8jLvn8-7u7fwR8c_nYln5
-X-Proofpoint-GUID: UViy4Z1HSo-8jLvn8-7u7fwR8c_nYln5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-06_07,2024-12-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 suspectscore=0
- spamscore=0 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
- adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2412060082
 
-On 2024/12/6 15:21, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Thu, Dec 05, 2024 at 08:10:13AM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> Constify the following API:
->> struct device *device_find_child(struct device *dev, void *data,
->> 		int (*match)(struct device *dev, void *data));
->> To :
->> struct device *device_find_child(struct device *dev, const void *data,
->>                                  device_match_t match);
->> typedef int (*device_match_t)(struct device *dev, const void *data);
->> with the following reasons:
->>
->> - Protect caller's match data @*data which is for comparison and lookup
->>   and the API does not actually need to modify @*data.
->>
->> - Make the API's parameters (@match)() and @data have the same type as
->>   all of other device finding APIs (bus|class|driver)_find_device().
->>
->> - All kinds of existing device match functions can be directly taken
->>   as the API's argument, they were exported by driver core.
->>
->> Constify the API and adapt for various existing usages by simply making
->> various match functions take 'const void *' as type of match data @data.
-> 
-> With the discussion that a new name would ease the conversion, maybe
-> consider device_find_child_device() to also align the name (somewhat) to
-> the above mentioned (bus|class|driver)_find_device()?
-> i finally select this squashing method after considerations as shown by
-link below:
-https://lore.kernel.org/all/3a4de1bb-3eb2-469a-8ff7-ff706804f5bb@icloud.com
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-device_find_child() is consist with existing device_find_child_by_name()
-and device_find_any_child, device's child is also a device, so we may
-not need the tail _device().
+Hi,
 
-> Do you have a merge plan already? I guess this patch will go through
-> Greg's driver core tree?
-> 
+This series adds ADC support for the Renesas RZ/G3S SoC.
 
-this patch series is already squashing solution.
+Series is organized as follows:
+- patch 01/15:		adds clocks, reset and power domain support
+			for ADC
+- patches 02-07/15:	cleanup patches to ease the addition of RZ/G3S
+			support
+- patches 08/15:	enables runtime PM autosuspend support
+- patches 09-13/15:	add RZ/G3S support, including suspend-to-RAM
+			functionality
+- patches 14-15/15:	add device tree support
 
-yes. hope it move toward mainline by Greg's driver core tree.
+Merge strategy, if any:
+- patch 01/15 can go through the Renesas tree
+- patches 02-13/15 can go through the IIO tree
+- patch 14-15/15 can go through the Renesas tree
 
-(^^)(^^)
+Thank you,
+Claudiu Beznea
 
-> Best regards
-> Uwe
+Changes in v2:
+- added patch "iio: adc: rzg2l_adc: Convert dev_err() to dev_err_probe()"
+  as requested in the review process
+- addressed review comments
+- collected tags
+- each patch includes a detailed description of its changes
+
+
+Claudiu Beznea (15):
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the ADC IP
+  iio: adc: rzg2l_adc: Convert dev_err() to dev_err_probe()
+  iio: adc: rzg2l_adc: Use devres helpers to request pre-deasserted
+    reset controls
+  iio: adc: rzg2l_adc: Simplify the runtime PM code
+  iio: adc: rzg2l_adc: Switch to RUNTIME_PM_OPS() and pm_ptr()
+  iio: adc: rzg2l_adc: Use read_poll_timeout()
+  iio: adc: rzg2l_adc: Simplify the locking scheme in
+    rzg2l_adc_read_raw()
+  iio: adc: rzg2l_adc: Enable runtime PM autosuspend support
+  iio: adc: rzg2l_adc: Prepare for the addition of RZ/G3S support
+  iio: adc: rzg2l_adc: Add support for channel 8
+  iio: adc: rzg2l_adc: Add suspend/resume support
+  dt-bindings: iio: adc: renesas,rzg2l-adc: Document RZ/G3S SoC
+  iio: adc: rzg2l_adc: Add support for Renesas RZ/G3S
+  arm64: dts: renesas: r9a08g045: Add ADC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable ADC
+
+ .../bindings/iio/adc/renesas,rzg2l-adc.yaml   |  37 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  53 +++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   7 +
+ drivers/iio/adc/rzg2l_adc.c                   | 423 ++++++++++--------
+ 5 files changed, 316 insertions(+), 208 deletions(-)
+
+-- 
+2.39.2
 
 
