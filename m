@@ -1,235 +1,198 @@
-Return-Path: <linux-kernel+bounces-434488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FCC59E676E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:48:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7519E6770
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE1E1884B51
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1B216A7D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F6F1DA61E;
-	Fri,  6 Dec 2024 06:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135071DA619;
+	Fri,  6 Dec 2024 06:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="B5Zxev06";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FEjy8jmC"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yLLLcGmK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EF828684;
-	Fri,  6 Dec 2024 06:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E5728684;
+	Fri,  6 Dec 2024 06:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733467686; cv=none; b=j68wEPNpk0KHOwYfUVfc+4qxdwtIewRnkSyG9JoyXG1R86oKf6eSXrPCiTPUlWWs6jgInu9/b4QmLNoMQaHSx+MNqCh2HV9Pcw36YAytyCGdwS+kHGnZuu8vLWgigAKxQpQoCo9Wra4rcg7dJkpMQsMn0OT5pWEWV4m8+Qy3z7o=
+	t=1733467764; cv=none; b=NIrL/zVnGx+etlT4U5F5TVw6mBrj+G3x9EANjJl94gn2+6OLeGHgrb9WQGQNAcnqT2vraZhTg9yEpB20ogbIK6U2vCVHDpb0pC6BzG0PDmPZ9gFlYZzgYCk0JUjt60canJbjhkuLVUqVkhwC7sV0Twozugnayh7j7YCx6XMbKek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733467686; c=relaxed/simple;
-	bh=wtvA+GP896fwLuxsmRFWegydoQF/WX2HXSAacRUIlnI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=SHjlw0Hr4Zh/PLZg0mUir7YMt4FRfoc7qqXzqrzmQpuFlCDTqN7bsdY5bfXvMirafqVM1tfpjhu3o3zqTjQJN4MVETJCUtq3GkQNSuN2c4x/mPRXbK64rUOWByI3LFOLlOwvtSxTzXRO2Q3OS6TBvRDBY9DoPRLAKN7ggvcdylk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=B5Zxev06; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FEjy8jmC; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 67060114016E;
-	Fri,  6 Dec 2024 01:48:02 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 06 Dec 2024 01:48:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733467682;
-	 x=1733554082; bh=MXTnzO1XZ2VddqzjxnlaUzrpeuKoS+bHl85A8NmfDSY=; b=
-	B5Zxev0615rfInbbM8O/2wHlNzygAM3f4XoIYu8QItHfWEwDVhZOO9cCCMoR8VXh
-	w/uD+ZkO+fZQjtbCIdzVwtvg1JvS7Hs9F2+oQvB0BLLbwqjKbciGjIgIShCV/sYH
-	G7G67H3dwHCrr9DQfCPPnXuWS4fvoAkkyFe3G0LjoJPO7BgUDc2Jv0AHY7G8+vsP
-	g0a5AtBEArec58w4p3yhv+cF+ruAURKfB7LaSPZu/ZgMs2C/ApFZB1WmOXhg1woD
-	lXGw7WVUqiVIRnTzU7DjA6QCvdMLXmvJsP+4FA40snC3QP7GM9JIdsvWvORkAdVs
-	tnmLyeWdkCPfrgzpMWbKvQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733467682; x=
-	1733554082; bh=MXTnzO1XZ2VddqzjxnlaUzrpeuKoS+bHl85A8NmfDSY=; b=F
-	Ejy8jmCDiD6FwMT5K7rHQJ8R8P3166Jsms31AxIquKxq/20/XPbwpTrMeHfFFVzh
-	/ia/xHJVgWghbnXHMDT1kul1CCEhlPcv6CP7t2aEryjDja0UO1qO25R3keh+Y8xV
-	MmEC88UDJ7WG4TlVHU1vlXM28j1BdBJlDU8s4gY4CLpObRplTJKvuLKzDjLOLveM
-	0QKvsFiyIoGvyZm5TrVGiB+zWFST4u5dPfq+GydncyeX/KYgxJEq2TK6mjpzp0CS
-	hYMyUD4d7hJM7zWgcXSQzZ9aRLu0bVqhtC3mqd4klfjY9JOnMJXr6H5pa9tWtJ2U
-	Q7qw4/Ev0sWNe6HLnjfZg==
-X-ME-Sender: <xms:IZ5SZzCGJx7AAEz16aZ4CNjS5ecbseDHkIOirhww-rmVmznXIHokVA>
-    <xme:IZ5SZ5hemfXp8tdYm-Hjs-1Huj9ZGRcrCBUtSUlaWahdaO3hDh0ogh4wYM3zfcdHC
-    ge9-O6w8l6SzR8dFjY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieekgdelkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedukedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesrghnug
-    hrohhiugdrtghomhdprhgtphhtthhopeifihhllhhmtghvihgtkhgvrhesghhoohhglhgv
-    rdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgdrughrrghsiihikheslhhinh
-    grrhhordhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghr
-    ohdrohhrghdprhgtphhtthhopehpvghtvghrrdhgrhhifhhfihhnsehlihhnrghrohdroh
-    hrghdprhgtphhtthhopehtuhguohhrrdgrmhgsrghruhhssehlihhnrghrohdrohhrgh
-X-ME-Proxy: <xmx:IZ5SZ-kuyljmTwbW46smaKAIlhw1f8J9dTGwct-_fRW_2bgzKRp1dQ>
-    <xmx:IZ5SZ1y76gU_3p-q-FQLa0Vs3szN9McrP7Wo8TzzdpCONgY5frXYRA>
-    <xmx:IZ5SZ4QyWia5MJfYpAe-gKQWR1fl0muHRIl-hYCZH8-dfcB9t45u5g>
-    <xmx:IZ5SZ4a2YOhUyvflEDFMZTrMWF8ghVxwda_xcralOHPCll624rEy1A>
-    <xmx:Ip5SZ6FrmFlB7gs9EvcXlJmWImgkyaz8WymObdXCZUjoGaFwgXVeddxu>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2DBFB2220072; Fri,  6 Dec 2024 01:48:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733467764; c=relaxed/simple;
+	bh=tJ3wMUFBqlh1riFBZDToE1Db2FSIVqyfpQmviXvNarE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AC30SyXpcVOvi0hjN28hHbZP46mBTiQBGCpaSj5/rZ5no/RwwQ5xJ+4K/01q/QYK0NvECna7w9RKZtSgg7/clVHLokcWnMOZcgLGClZc4nsP5dPd0ssYc49gnJUI5GMkyj9lDLHa6/B0jeLTkw2cCsypxvNZ/Y9IYLhGE6iQ0fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yLLLcGmK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE77C4CED1;
+	Fri,  6 Dec 2024 06:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733467763;
+	bh=tJ3wMUFBqlh1riFBZDToE1Db2FSIVqyfpQmviXvNarE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yLLLcGmK1w9SOnaR3Vvo166Zne3XJXaBSGqeqHys7T0L8E3f+iwKGxT8IifqoXn3u
+	 H2nPt/HsVYTV8OHLFRFqvfe6zTEa+oHkYocstb7Ffs1ITYoreUORCaw1iQ4Xcwdkja
+	 ijiIcVReXK5K3vQraWqegbKL2IIyUqwbQ/agV/30=
+Date: Fri, 6 Dec 2024 07:49:20 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] samples: rust: Provide example using the new Rust
+ MiscDevice abstraction
+Message-ID: <2024120642-trend-omnivore-69d3@gregkh>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <20241205162531.1883859-4-lee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 06 Dec 2024 07:47:40 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- "Rob Herring" <robh@kernel.org>, krzk+dt@kernel.org,
- "Conor Dooley" <conor+dt@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- kernel-team@android.com, "William McVicker" <willmcvicker@google.com>,
- "Peter Griffin" <peter.griffin@linaro.org>,
- "Javier Martinez Canillas" <javierm@redhat.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Vincent Guittot" <vincent.guittot@linaro.org>,
- "Ulf Hansson" <ulf.hansson@linaro.org>
-Message-Id: <427caa87-b9ba-4797-88bd-a18a96eefdcf@app.fastmail.com>
-In-Reply-To: <20241205175345.201595-3-tudor.ambarus@linaro.org>
-References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
- <20241205175345.201595-3-tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205162531.1883859-4-lee@kernel.org>
 
-On Thu, Dec 5, 2024, at 18:53, Tudor Ambarus wrote:
-
-> +#define exynos_acpm_set_bulk(data, i)					\
-> +	(((data) & ACPM_BULK_MASK) << (ACPM_BULK_SHIFT * (i)))
-> +#define exynos_acpm_read_bulk(data, i)					\
-> +	(((data) >> (ACPM_BULK_SHIFT * (i))) & ACPM_BULK_MASK)
-
-Could these be inline functions for readability?
-
-> +	cmd[3] = (u32)(sched_clock() / 1000000); /*record ktime ms*/
-
-The comment does not match the implementation, sched_clock()
-is probably not what you want here because of its limitiations.
-
-Maybe ktime_to_ms(ktime_get())?
-
-> +/**
-> + * acpm_get_rx() - get response from RX queue.
-> + * @achan:	ACPM channel info.
-> + * @xfer:	reference to the transfer to get response for.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +static int acpm_get_rx(struct acpm_chan *achan, struct acpm_xfer *xfer)
-> +{
-> +	struct acpm_msg *tx = &xfer->tx;
-> +	struct acpm_msg *rx = &xfer->rx;
-> +	struct acpm_rx_data *rx_data;
-> +	const void __iomem *base, *addr;
-> +	u32 rx_front, rx_seqnum, tx_seqnum, seqnum;
-> +	u32 i, val, mlen;
-> +	bool rx_set = false;
+On Thu, Dec 05, 2024 at 04:25:20PM +0000, Lee Jones wrote:
+> This sample driver demonstrates the following basic operations:
+> 
+> * Register a Misc Device
+> * Create /dev/rust-misc-device
+> * Open the aforementioned character device
+> * Operate on the character device via a simple ioctl()
+> * Close the character device
+> 
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
+>  samples/rust/Kconfig             | 10 ++++
+>  samples/rust/Makefile            |  1 +
+>  samples/rust/rust_misc_device.rs | 80 ++++++++++++++++++++++++++++++++
+>  3 files changed, 91 insertions(+)
+>  create mode 100644 samples/rust/rust_misc_device.rs
+> 
+> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> index b0f74a81c8f9..df384e679901 100644
+> --- a/samples/rust/Kconfig
+> +++ b/samples/rust/Kconfig
+> @@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
+>  
+>  	  If unsure, say N.
+>  
+> +config SAMPLE_RUST_MISC_DEVICE
+> +	tristate "Misc device"
+> +	help
+> +	  This option builds the Rust misc device.
 > +
-> +	rx_front = readl_relaxed(achan->rx.front);
-> +	i = readl_relaxed(achan->rx.rear);
-
-If you have to use readl_relaxed(), please annotate why,
-otherwise just use the normal readl().  Is this access to
-the SRAM?
-
-> +	spin_lock_irqsave(&achan->tx_lock, flags);
+> +	  To compile this as a module, choose M here:
+> +	  the module will be called rust_misc_device.
 > +
-> +	tx_front = readl_relaxed(achan->tx.front);
-> +	idx = (tx_front + 1) % achan->qlen;
+> +	  If unsure, say N.
 > +
-> +	ret = acpm_wait_for_queue_slots(achan, idx);
-> +	if (ret) {
-> +		spin_unlock_irqrestore(&achan->tx_lock, flags);
-> +		return ret;
-> +	}
-
-It looks like you are calling a busy loop function inside
-of a hardirq handler here, with a 500ms timeout. This is
-not ok.
-
-If you may need to wait for a long timeout, I would suggest
-changing the interface so that this function is not allowed
-to be called from irq-disabled context, change the spinlock
-to a mutex and polling read to a sleeping version.
-
-> +	/* Advance TX front. */
-> +	writel_relaxed(idx, achan->tx.front);
+>  config SAMPLE_RUST_PRINT
+>  	tristate "Printing macros"
+>  	help
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index c1a5c1655395..ad4b97a98580 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -2,6 +2,7 @@
+>  ccflags-y += -I$(src)				# needed for trace events
+>  
+>  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+> +obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+>  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+>  
+>  rust_print-y := rust_print_main.o rust_print_events.o
+> diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+> new file mode 100644
+> index 000000000000..f50925713f1a
+> --- /dev/null
+> +++ b/samples/rust/rust_misc_device.rs
+> @@ -0,0 +1,80 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +	/* Flush SRAM posted writes. */
-> +	readl_relaxed(achan->tx.front);
+> +// Copyright (C) 2024 Google LLC.
 > +
-> +	spin_unlock_irqrestore(&achan->tx_lock, flags);
-
-I don't think this sequence guarantees the serialization
-you want. By making the access _relaxed() you explicitly
-say you don't want serialization, so the store does
-not have to complete before the unlock.
-
-> +static const struct of_device_id acpm_match[] = {
-> +	{ .compatible = "google,gs101-acpm-ipc" },
-> +	{},
+> +//! Rust misc device sample.
+> +
+> +use kernel::{
+> +    c_str,
+> +    ioctl::_IO,
+> +    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+> +    prelude::*,
 > +};
-> +MODULE_DEVICE_TABLE(of, acpm_match);
 > +
-> +static struct platform_driver acpm_driver = {
-> +	.probe	= acpm_probe,
-> +	.driver	= {
-> +		.name = "exynos-acpm-protocol",
-> +		.of_match_table	= of_match_ptr(acpm_match),
-
-Remove the stray of_match_ptr() here.
-
-> diff --git a/drivers/firmware/samsung/exynos-acpm.h 
-> b/drivers/firmware/samsung/exynos-acpm.h
-> new file mode 100644
-> index 000000000000..a03adcd260f5
-> --- /dev/null
-> +++ b/drivers/firmware/samsung/exynos-acpm.h
-> @@ -0,0 +1,15 @@
-> +#ifndef __EXYNOS_ACPM_H__
-> +#define __EXYNOS_ACPM_H__
+> +const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
 > +
-> +struct acpm_handle;
-> +struct acpm_xfer;
+> +module! {
+> +    type: RustMiscDeviceModule,
+> +    name: "rust_misc_device",
+> +    author: "Lee Jones",
+> +    description: "Rust misc device sample",
+> +    license: "GPL",
+> +}
 > +
-> +int acpm_do_xfer(const struct acpm_handle *handle, struct acpm_xfer 
-> *xfer);
+> +struct RustMiscDeviceModule {
+> +    _miscdev: Pin<KBox<MiscDeviceRegistration<RustMiscDevice>>>,
+> +}
 > +
-> +#endif /* __EXYNOS_ACPM_H__ */
-> diff --git a/include/linux/soc/samsung/exynos-acpm-protocol.h 
-> b/include/linux/soc/samsung/exynos-acpm-protocol.h
-> new file mode 100644
-> index 000000000000..762783af7617
-> --- /dev/null
-> +++ b/include/linux/soc/samsung/exynos-acpm-protocol.h
+> +impl kernel::Module for RustMiscDeviceModule {
+> +    fn init(_module: &'static ThisModule) -> Result<Self> {
+> +        pr_info!("Initialising Rust Misc Device Sample\n");
+> +
+> +        let options = MiscDeviceOptions {
+> +            name: c_str!("rust-misc-device"),
+> +        };
+> +
+> +        Ok(Self {
+> +            _miscdev: KBox::pin_init(
+> +                MiscDeviceRegistration::<RustMiscDevice>::register(options),
+> +                GFP_KERNEL,
+> +            )?,
+> +        })
+> +    }
+> +}
+> +
+> +struct RustMiscDevice;
+> +
+> +#[vtable]
+> +impl MiscDevice for RustMiscDevice {
+> +    type Ptr = KBox<Self>;
+> +
+> +    fn open() -> Result<KBox<Self>> {
+> +        pr_info!("Opening Rust Misc Device Sample\n");
+> +
+> +        Ok(KBox::new(RustMiscDevice, GFP_KERNEL)?)
+> +    }
+> +
+> +    fn ioctl(
+> +        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
+> +        cmd: u32,
+> +        _arg: usize,
+> +    ) -> Result<isize> {
+> +        pr_info!("IOCTLing Rust Misc Device Sample\n");
+> +
+> +        match cmd {
+> +            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
+> +            _ => {
+> +                pr_err!("IOCTL not recognised: {}\n", cmd);
+> +                return Err(ENOIOCTLCMD);
 
-Why is this in include/linux/soc, and not in the firmware
-header?
+To quote errno.h:
+	These should never be seen by user programs
 
-      Arnd
+The correct value here is ENOTTY.
+
+Yeah, fun stuff.  Not intuitive at all, sorry.
+
+thanks,
+
+greg k-h
 
