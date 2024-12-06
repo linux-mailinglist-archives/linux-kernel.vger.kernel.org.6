@@ -1,163 +1,151 @@
-Return-Path: <linux-kernel+bounces-435794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451289E7C73
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:30:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C885B9E7C90
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F6116A8DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 665C3188753F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E7A213E63;
-	Fri,  6 Dec 2024 23:30:35 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A29213E81;
+	Fri,  6 Dec 2024 23:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dQhUjTPS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8504320627C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 23:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2006C1EBFFC;
+	Fri,  6 Dec 2024 23:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733527835; cv=none; b=Stck9NZEB0dL/FjyjNIIK69/R3rW5tSoNLKD21rmdEKFyX7EOI/My00WgiSt2d/Fu2BnJDhiWOMo16W6+Hc7Uu1JAiCqLxYj253Y6kv5k5lXcFIIVg9qXFUkn2dbbRBM8j5bQy6THYtWjAz3dsd3jqYEAF8AbFFqTyrdkmQEPkc=
+	t=1733528153; cv=none; b=Bc5VpaIF1+PG3XVkw77UW7QGCxA2sMmjsYCzAxoXufyQs1pJ7l+E16WUD49zWnaW2kNqzhnR6GIdP4hr/HR3RDVLcpcz3CW99Yu2sFjZvKCJlqzpPO56fWnrK85t9xoaDJ9RIJQBCBrgLU7yQF0TbVm7u3z2m2p2nZWPzofNGWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733527835; c=relaxed/simple;
-	bh=bsMOdF9t+yZgl6nzP3eTKIJMsR1qdGjpAXoI3Rd5J3g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m6Pszy8zPnhuFkCLEzRGJOqWB47pfL6FA8BQK5AJQnX7j4s4leMbywsPnrhc4ZFgO6/ASyiC4PFt7DrOPFI5slzVlLHeXwYMjK1lqJoBeyWQa3Te4Lfb5xkHjO68BRLRxX5gbbl0rPkI7Bk5G5IuUC/7E0fbB2rQkemHcXb+JuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso52080605ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 15:30:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733527832; x=1734132632;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hp+viSbRlsRqNZfXm2mpqqZBCwoZAdp6M0GYeJNUQ6Q=;
-        b=VTPeKGVfMmg7BzytO3C99EIPrWzeS/ZrAH06jV+M0e3YWypL8HM0f62dQsOtREyjPT
-         6iwjr/FQbIZs2y5JjpJB8ylYzf5TYKt1yQD6LQ/fphQj9AMf7JWCCeWSSXtOwSXyfTX4
-         Uf/6f2uy+cDE71qEprxPaCN7tH8KB6cIiElDJysNyfYmmzBc+golPHjbET5ScrWRdVBS
-         bpcYW/v/j+gSwEQ6mutGLVSiMGF9K+nnsdaXlbRUdn3N6W422k2eW03qOkK8TnqPQWTR
-         PHidR6matSskE3K6RTaRlfUpKIg28R1aMpN87BtvK/gN7vlmqiVi3epinv2kSCN5UtVx
-         97fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXd7AvfxmSJ8C1ez8vbNnMVvHaKpKR4p8jPc2auBzSrvjQXDjCt1soFBjd5l5eO2PA0aLscTdCeYOukkfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlDotQ5wO4tvB9/E2cRTCVUsrtn7+j7kxV4yVOiybKf66GHNF+
-	mMhAN9XluboxmsfTLLfRvclPRlCzP4KoIdmUGfLV0c+Lt9L+0adv1r/4LAlVX1DC+WFpipYB5fV
-	P1vNSbVoXsWBScEG/hlD1RsEWF2n7W4ieOT5nIQ8vKv5t28LEbvVPta8=
-X-Google-Smtp-Source: AGHT+IFrFvDjkqMKbkN9cLKLl5XUaN62rGYgzNt/vfJD41BP4lc52+5MlX2vBTMoIa4jqWsaHlfCGQWxMslJDrKFcANCxgDNDwcB
+	s=arc-20240116; t=1733528153; c=relaxed/simple;
+	bh=MXIwrQewAajDh1gfesHB1c2CKu8WD9CnQN3aFCayvec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AuQyzrGmN7ILsc/KLFH8AhozKtj1wls/tx366B51iOzK7PgPrx+ZEv+Ahz+6Z1lwvRhWaRfvjtUS+suaNuyqk/ysnjg9edHb1zJfAge8fnBF4FgRX7ie+oDTmXC8H3/ZuExBiyfs0eUz4jDARrE/3q25xtM0NPgVFPvHQes476E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dQhUjTPS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6LL67m016383;
+	Fri, 6 Dec 2024 23:35:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MXIwrQewAajDh1gfesHB1c2CKu8WD9CnQN3aFCayvec=; b=dQhUjTPS9V+2stxc
+	mVLD8Jp5EnNTj/zTKUCu53bYpzWqePP8noc68BiHhuoRt0S71NhtCVubHR2UbDPr
+	dk9dKmmrH7Axh+a7YEe9HDgEl+GFFQS2Jj0cffkha2km113gm84zSuqTfu1W30hq
+	5qXhNlbP3gRYykDfJHpWGfBmX2wRLB4sVZt2bO2VSm+1jcDyqJSPvqhfTYHVOMsW
+	sJC6xj8q3iMCxnujrvYLJPVNUJMOvmMpB+2JgYzumiYBLzNcto234wgSMAXQ1l91
+	Mjku0wFdMJ6JIImHRWDMoSMdilo8r8cvfvzFZ7OfqiJC4i/0M1fjkKel+eDvpCkY
+	Xleq8g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bxnya034-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 23:35:27 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6NZQ6x018811
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 23:35:26 GMT
+Received: from [10.71.112.120] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
+ 15:35:25 -0800
+Message-ID: <33afcc55-1597-4aff-a20c-7a0df4b23236@quicinc.com>
+Date: Fri, 6 Dec 2024 15:35:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218a:b0:3a7:15aa:3fcc with SMTP id
- e9e14a558f8ab-3a811d774abmr67770135ab.1.1733527832584; Fri, 06 Dec 2024
- 15:30:32 -0800 (PST)
-Date: Fri, 06 Dec 2024 15:30:32 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67538918.050a0220.a30f1.014a.GAE@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in btrfs_get_extent_inline_ref_type
-From: syzbot <syzbot+4983e68a6d77180bfe33@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v30 28/30] ALSA: usb-audio: Add USB offload route kcontrol
+To: Cezary Rojewski <cezary.rojewski@intel.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
+        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
+        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>,
+        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
+        <gregkh@linuxfoundation.org>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <20241106193413.1730413-29-quic_wcheng@quicinc.com>
+ <1a361446-7a18-4f49-9eeb-d60d1adaa088@intel.com>
+ <28023a83-04a5-4c62-85a9-ca41be0ba9e1@quicinc.com>
+ <1644aa6b-a4e0-4dbd-a361-276cb95eb534@intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <1644aa6b-a4e0-4dbd-a361-276cb95eb534@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    e70140ba0d2b Get rid of 'remove_new' relic from platform d..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=156a0330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=91c852e3d1d7c1a6
-dashboard link: https://syzkaller.appspot.com/bug?extid=4983e68a6d77180bfe33
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8a904c062768/disk-e70140ba.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e4c464adbbce/vmlinux-e70140ba.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7a1fb1b0c526/bzImage-e70140ba.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4983e68a6d77180bfe33@syzkaller.appspotmail.com
-
-assertion failed: btrfs_fs_incompat(fs_info, SIMPLE_QUOTA), in fs/btrfs/extent-tree.c:344
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/extent-tree.c:344!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 83 Comm: kworker/u8:5 Not tainted 6.13.0-rc1-syzkaller-00001-ge70140ba0d2b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_unbound btrfs_async_reclaim_metadata_space
-RIP: 0010:btrfs_get_extent_inline_ref_type+0x42c/0x480 fs/btrfs/extent-tree.c:344
-Code: 4d fd 90 0f 0b e8 c4 52 e6 fd 48 c7 c7 a0 b0 4a 8c 48 c7 c6 00 b1 4a 8c 48 c7 c2 c0 ae 4a 8c b9 58 01 00 00 e8 15 e3 4d fd 90 <0f> 0b e8 9d 52 e6 fd 48 c7 c7 a0 b0 4a 8c 48 c7 c6 60 b1 4a 8c 48
-RSP: 0018:ffffc900015970c0 EFLAGS: 00010246
-RAX: 0000000000000059 RBX: 00000000000003c5 RCX: f7095654c42f1300
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff817f070c R09: 1ffff920002b2db4
-R10: dffffc0000000000 R11: fffff520002b2db5 R12: 00000000000000ac
-R13: ffff888029a91a40 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f653c3ff000 CR3: 000000002a19a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lookup_inline_extent_backref+0x7ad/0x1a00 fs/btrfs/extent-tree.c:882
- lookup_extent_backref fs/btrfs/extent-tree.c:1064 [inline]
- __btrfs_free_extent+0x443/0x3a10 fs/btrfs/extent-tree.c:3095
- btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:2007 [inline]
- __btrfs_run_delayed_refs+0x102a/0x4310 fs/btrfs/extent-tree.c:2077
- btrfs_run_delayed_refs+0xe3/0x2c0 fs/btrfs/extent-tree.c:2189
- flush_space+0x2f7/0xcf0
- btrfs_async_reclaim_metadata_space+0x28e/0x350 fs/btrfs/space-info.c:1105
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_get_extent_inline_ref_type+0x42c/0x480 fs/btrfs/extent-tree.c:344
-Code: 4d fd 90 0f 0b e8 c4 52 e6 fd 48 c7 c7 a0 b0 4a 8c 48 c7 c6 00 b1 4a 8c 48 c7 c2 c0 ae 4a 8c b9 58 01 00 00 e8 15 e3 4d fd 90 <0f> 0b e8 9d 52 e6 fd 48 c7 c7 a0 b0 4a 8c 48 c7 c6 60 b1 4a 8c 48
-RSP: 0018:ffffc900015970c0 EFLAGS: 00010246
-RAX: 0000000000000059 RBX: 00000000000003c5 RCX: f7095654c42f1300
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff817f070c R09: 1ffff920002b2db4
-R10: dffffc0000000000 R11: fffff520002b2db5 R12: 00000000000000ac
-R13: ffff888029a91a40 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f653c3ff000 CR3: 000000002a19a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GLu9OkWF2xnRrV0lI092seNdox1_pfiG
+X-Proofpoint-ORIG-GUID: GLu9OkWF2xnRrV0lI092seNdox1_pfiG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ phishscore=0 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060179
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 12/6/2024 1:09 AM, Cezary Rojewski wrote:
+> On 2024-12-04 12:15 AM, Wesley Cheng wrote:
+>>
+>> On 12/3/2024 8:13 AM, Cezary Rojewski wrote:
+>>> On 2024-11-06 8:34 PM, Wesley Cheng wrote:
+>>>> In order to allow userspace/applications know about USB offloading status,
+>>>> expose a sound kcontrol that fetches information about which sound card
+>>>> and PCM index the USB device is mapped to for supporting offloading.  In
+>>>> the USB audio offloading framework, the ASoC BE DAI link is the entity
+>>>> responsible for registering to the SOC USB layer.
+>
+> ...
+>
+>>> R) += mixer_usb_offload.o
+>>>> diff --git a/sound/usb/mixer_usb_offload.c b/sound/usb/mixer_usb_offload.c
+>>>> new file mode 100644
+>>>> index 000000000000..e0689a3b9b86
+>>>> --- /dev/null
+>>>> +++ b/sound/usb/mixer_usb_offload.c
+>>>> @@ -0,0 +1,102 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +#include <linux/usb.h>
+>>>> +
+>>>> +#include <sound/core.h>
+>>>> +#include <sound/control.h>
+>>>> +#include <sound/soc-usb.h>
+>>>
+>>> ALSA-components should not be dependent on ASoC ones. It should be done the other way around: ALSA <- ASoC.
+>>>
+>>
+>> At least for this kcontrol, we need to know the status of the ASoC state, so that we can communicate the proper path to userspace.  If the ASoC path is not probed or ready, then this module isn't blocked.  It will just communicate that there isn't a valid offload path.
+>
+> I'm not asking _why_ you need soc-usb.h header, your reasoning is probably perfectly fine. The code hierarchy is not though. If a sound module is dependent on soc-xxx.h i.e. ASoC symbols, it shall be part of sound/soc/ space.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I'm still reviewing the HDAudio flow a bit, so please correct me if I'm wrong.  During module initialization, it looks like there will be some overall platform card that will call snd_hdac_ext_bus_init() to create the HDA bus.  I referred to the Intel AVS core.  How do you ensure that the ALSA entities are loaded before this call goes out?  I think once the bus is created dynamic creation/removal of HDA devices is fine, and the hdev_attach/detach is executed. 
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Thanks
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Wesley Cheng
 
-If you want to undo deduplication, reply with:
-#syz undup
 
