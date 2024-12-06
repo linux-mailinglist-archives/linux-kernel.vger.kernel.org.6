@@ -1,122 +1,90 @@
-Return-Path: <linux-kernel+bounces-435056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CBDE9E6EDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:05:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C3C9E6EDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:05:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55A7284381
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A25F167867
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB7620CCD2;
-	Fri,  6 Dec 2024 13:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA66206F29;
+	Fri,  6 Dec 2024 13:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaYTzm4W"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kN7DvgOB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236FE20C47C;
-	Fri,  6 Dec 2024 13:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEAA1EE02E;
+	Fri,  6 Dec 2024 13:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490268; cv=none; b=OqLdFuUZbD9O2JUmEkVto3DbWm8mCx5N9rki83KaqiXvDCddsTLASE/AArciRbhBoLm5upqX0Dz0dY3tlyqWLqp9oMh1+3NCnHVKXHGxBb3dr7u5y7CDaUiBYLJD/Lu3tf/jT0GNP0V90iRA92DppeheMfyL8irYZXCF5tT9YqU=
+	t=1733490256; cv=none; b=jojktOnkvcZHG95e5eCpcDQMYwC6e6tfT6nbx3FSMjwQ/4eIxweeqmmlXrlEh3RPmLF7GK56agzyHvntGn9hTB1JyMF6OdHoMGCgz4nPO5B/V5O8a5B/ItFihMNZS0sWvliKpW+iiYMNsHUqEooWxCnzLXd4ij5uHpEAS2EdNVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490268; c=relaxed/simple;
-	bh=3JoSvgVSyWPdcDhFxJbqeFmv3Z/rfrPtZzh7qZxBCX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZIVTXU5OfoULJWNWAT/e9Iz64iDHlwIzx4qGsD6akpVhwp8Uc3pg3INMQxU8sxw4MAVmuGazr+8OgLZCCFtKnHeG3X1omVwmsGQoftS101FTlOH2Gr+AU8MWdM4S764/YOENpNwYEGuY0FazckxRICjrltSk0VL6HVbDIZgDQbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaYTzm4W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5524C4CED2;
-	Fri,  6 Dec 2024 13:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733490268;
-	bh=3JoSvgVSyWPdcDhFxJbqeFmv3Z/rfrPtZzh7qZxBCX8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HaYTzm4WPezL5jQKIv/vqxlxcLlqC6eIqwMGZkUG0FOSlkx3/WTK2SMhFX1qdMzIf
-	 FRfCsoQfeKHWczjfmu2HXKzqy/KzYuf0EQ2buVIOiMQrEeShKQeucA/gkicmSyU3jE
-	 lnqyj3ybzFgvkfmT+gQxSPkHGR2UdWXxqtsV3HSR1oMSiY/Ew9KcY0U2zWX1Nh3wSn
-	 jK4PIFtwWTqA8xYaT4TYnCStsKk0d1MJ2FxhML4aUiKIGWhUTW32EJeUy9r163OJy5
-	 GUEDg4U+m4et5EeyTYz01pIVfBiyCA3/kJPi60SPVPgkp74MdV6alW8meR4L+p3zdz
-	 G2AUXR9VFd/Ow==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4/5] cpuidle: Remove call_cpuidle_s2idle()
-Date: Fri,  6 Dec 2024 14:04:07 +0100
-Message-ID: <20241206130408.18690-5-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241206130408.18690-1-frederic@kernel.org>
-References: <20241206130408.18690-1-frederic@kernel.org>
+	s=arc-20240116; t=1733490256; c=relaxed/simple;
+	bh=gJMFTn5WLa0s3prw0ucaZuCAbEut3+7nW6zrckqI3mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EeU+hkjzqQY3GFqMRPd4gZ8X6n4BHwqkpE5NkQWhnnzWu2y2Hu+QhIe0R1XVMGE/U9GqJyTIbnC5rMNyvI/V2QWNdI7n/4QiBSb3nssMYgjg7GjPm60AGiFNopy4MqfHkzYTSedbV/tOQHWpK5g1y8TZXgHTufZeYNGxqZH4vHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kN7DvgOB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345C6C4CED2;
+	Fri,  6 Dec 2024 13:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733490255;
+	bh=gJMFTn5WLa0s3prw0ucaZuCAbEut3+7nW6zrckqI3mo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kN7DvgOBF7iAIshX2Mur8CcB9pM1LxCvpQOwaJ33XEova4anUsCe/5JIgO+mSUBoa
+	 G/rlR4yu08RtztNHpsuLXytpVpPTNcRJ+tXU0v0YKtGij+ZWcx1xETKj2PoNK20/uu
+	 KvvwKPyEOcAWUO16+spNk63bxU7JZUSAi5Nb3I3g=
+Date: Fri, 6 Dec 2024 14:04:12 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Sasha Levin <sashal@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Schier <nicolas@fjasle.eu>, stable@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH 6.1&6.6 0/3] kbuild: Avoid weak external linkage where
+ possible
+Message-ID: <2024120635-wham-campsite-b62b@gregkh>
+References: <20241206085810.112341-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206085810.112341-1-chenhuacai@loongson.cn>
 
-This middle call is unecessary, especially now that its counterpart
-call_cpuidle() has been removed.
+On Fri, Dec 06, 2024 at 04:58:07PM +0800, Huacai Chen wrote:
+> Backport this series to 6.1&6.6 because LoongArch gets build errors with
+> latest binutils which has commit 599df6e2db17d1c4 ("ld, LoongArch: print
+> error about linking without -fPIC or -fPIE flag in more detail").
+> 
+>   CC      .vmlinux.export.o
+>   UPD     include/generated/utsversion.h
+>   CC      init/version-timestamp.o
+>   LD      .tmp_vmlinux.kallsyms1
+> loongarch64-unknown-linux-gnu-ld: kernel/kallsyms.o:(.text+0): relocation R_LARCH_PCALA_HI20 against `kallsyms_markers` can not be used when making a PIE object; recompile with -fPIE
+> loongarch64-unknown-linux-gnu-ld: kernel/crash_core.o:(.init.text+0x984): relocation R_LARCH_PCALA_HI20 against `kallsyms_names` can not be used when making a PIE object; recompile with -fPIE
+> loongarch64-unknown-linux-gnu-ld: kernel/bpf/btf.o:(.text+0xcc7c): relocation R_LARCH_PCALA_HI20 against `__start_BTF` can not be used when making a PIE object; recompile with -fPIE
+> loongarch64-unknown-linux-gnu-ld: BFD (GNU Binutils) 2.43.50.20241126 assertion fail ../../bfd/elfnn-loongarch.c:2673
+> 
+> In theory 5.10&5.15 also need this, but since LoongArch get upstream at
+> 5.19, so I just ignore them because there is no error report about other
+> archs now.
 
-Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/sched/idle.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+Odd, why doesn't this affect other arches as well using new binutils?  I
+hate to have to backport all of this just for one arch, as that feels
+odd.
 
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 9eece3df1080..86b902eb24fe 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -126,19 +126,6 @@ void __cpuidle default_idle_call(void)
- 	instrumentation_end();
- }
- 
--static int call_cpuidle_s2idle(struct cpuidle_driver *drv,
--			       struct cpuidle_device *dev)
--{
--	int ret;
--
--	if (current_clr_polling_and_test())
--		return -EBUSY;
--
--	ret = cpuidle_enter_s2idle(drv, dev);
--	__current_set_polling();
--	return ret;
--}
--
- /**
-  * cpuidle_idle_call - the main idle function
-  *
-@@ -184,10 +171,12 @@ static void cpuidle_idle_call(void)
- 		u64 max_latency_ns;
- 
- 		if (idle_should_enter_s2idle()) {
--
--			entered_state = call_cpuidle_s2idle(drv, dev);
--			if (entered_state > 0)
--				goto exit_idle;
-+			if (!current_clr_polling_and_test()) {
-+				entered_state = cpuidle_enter_s2idle(drv, dev);
-+				__current_set_polling();
-+				if (entered_state > 0)
-+					goto exit_idle;
-+			}
- 
- 			max_latency_ns = U64_MAX;
- 		} else {
--- 
-2.46.0
+thanks,
 
+greg k-h
 
