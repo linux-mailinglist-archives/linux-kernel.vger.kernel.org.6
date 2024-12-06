@@ -1,185 +1,206 @@
-Return-Path: <linux-kernel+bounces-435591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9879E79DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:08:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A719E79E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC851657C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4701E188411B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179E51FFC67;
-	Fri,  6 Dec 2024 20:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A724A1FFC7C;
+	Fri,  6 Dec 2024 20:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JGFY4GgO"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1oB/ZI0"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3D4145B07
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E95D1C5490;
+	Fri,  6 Dec 2024 20:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733515696; cv=none; b=kOWJpwrZqUdZWSd5muSdpVGyYWoKCYpTkozc7EHGiSQ13t0mXR6/ByJOcES6BOStC4ozwdepOUHLGb3YDS+qINibaOx+2aR1SP0oLxQwqgU4PdbTgb403r9tBxkk7tCHKlkdSbCQZ/qjTDkmMx75Pdj5juTbln4bbR3ElJCMZfQ=
+	t=1733515994; cv=none; b=IJRfdC8+hn2dkpKx8foKIfaJj0/ruaS4naC3/vRitlRurPrPhgRDwbLqA2whyhddp3I98zsflCY4LhooHURzh6f8smIuMww/YBQR07RHTzBlvAD32HTUuyO6Xvr2nR8qKwmIM1YhqGDSwCDxJSX1fZCRlDa1URKaRxoHEssagoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733515696; c=relaxed/simple;
-	bh=z6Wqxq9GQSt08AJI8CDBz7RuSxWl1N8orrd/oG6fcs4=;
+	s=arc-20240116; t=1733515994; c=relaxed/simple;
+	bh=RAnkvM/BvCShbirWZQVBaFP+0SeE2bPdrROWZ73tLWQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c4C89MZCi+dNoCWe8BN41Lh9ukWx9V8XfQ1MWWW88efNu19pGwFk+3UT2Ewn9Ev9WGUY1v2vrPvHkHzOWV0xJXdofp6w2rs1o6QXWcp6HjCglU43F9zV+T3fx542gnKwocuZGVplg2D0G9KK1so54xCOzPjtDqfJgvCdm6GGrN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JGFY4GgO; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-71dace65bd4so340807a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:08:14 -0800 (PST)
+	 To:Cc:Content-Type; b=cbcB4y5lWLXahkhqJuGJt/DgvNWkaByOYF+dykuREE37LnH5MRY3zg2P6Tv04EP5XVHlOuHzNKeWK2HZ5DyKHaw/dpaRGr+Njf5b4YgSs8qQCcTHUuDNiHpY4xepP7SGYFecP+gBH8GR1jBp3swLPFQ8l6jPKAr4dIDZlmlW2Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1oB/ZI0; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30033e07ef3so8605641fa.0;
+        Fri, 06 Dec 2024 12:13:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733515694; x=1734120494; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733515990; x=1734120790; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Fa40TeoQXNd/EST0klScC6VWGBe0xBrJUCm38PJDQfk=;
-        b=JGFY4GgOLiqZSBfIKXbnLqW6QmgiNmw+XnkbwUH+LGodsRlVC3VeQQz5c1d+UBxpSw
-         zLYNCOkuqhdhQvzqbKpfYiAKlUzFm1I+dwfrPEf6ninq9ecKuOqMrUpl+TULOsr97Wl+
-         LI/i9cUACxVDNCbhIW4mhniAVbxQQp6s5Wv/4=
+        bh=Ig8zvMrquNxr9h6es/FC4GH4Fy/YJCq5InLvynwUlIw=;
+        b=m1oB/ZI0rU/y7vGbAGA9x6PgiETQSzUCdllkN4Cz4fTR79o+eB6xRc72OjUv49n70P
+         My6cwETGnu4dfbIlcHbVFJJm7FAiYMUpPTAg2Z4yR8c80SjOagWNzbO5OizAClb9NjaS
+         tUYGI+WhXIPLld80GBkIoOLJIy8eLWx0kjD5x+KI7gSMFbzS/ft3xA/87LQ89v6h0g/I
+         B0Fu/FaA0Gv1TXga3dUbSH8P4OK2Sqbo2ec5ClEAO2HCyUELtmCu/MoNWuLmX9wQVy3A
+         EhAH9gzjQkB5U/CpY98Sda2OYKjYr4eaht5NIdWEJWXKipbsiJBp4WFNJOhIic0gCNIj
+         3vsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733515694; x=1734120494;
+        d=1e100.net; s=20230601; t=1733515990; x=1734120790;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Fa40TeoQXNd/EST0klScC6VWGBe0xBrJUCm38PJDQfk=;
-        b=CVcU24FJiyIob0wAeBJKwKNpMFLX5YOfF5gVs4zp3/L9oJtrnp4b+l2zsTjXiOaXAh
-         jhM/c6cu5Z0GbhjBUIuuz+sn10xZ1yfX4frMydvqz17cJb2eJwbISQ8QGwoqv3AvzKPr
-         G0o9qY4wN9T5oEf2hIWLdGv8AsCBPAYWoreq/TwieRT+7iiobnbzlghgjuyuaAJKRkGD
-         hwix1AhCSAeNukmbRAAiuA+ipdLCl+If0NiVg7Z89aCAJhisbjNDQqgFd2di4R1IW5Rj
-         QQiCQTtN0jsl/JwdrOVyfL2wlpgxbaJQ4z7y6qtLsBuCM0QGTSqexzOxB8d324WZMudA
-         gyCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbbZk/EhCJ6unKpsgqIRZt7LZO4V71GrUICBN/7uPRjfnqw/CmBSy2QqLSBzHbbDrP3rACfAeYU3LAO58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytRyifGLQvo67XoqmYcTMlJQ9MjJY2hUaA98kClPnh0s1QSvsU
-	4NPkG8e76Y2UdJGDVSOmjdjhVF11Il+GhBwW0FOdv425TEF6P7rEo3NzQ7Rbov5se6YAZ7n4+C7
-	FXJ9U2p4zo7+xQ3FbQJM96HTPsczQu3jxKS3z
-X-Gm-Gg: ASbGncthksuCMWmjvf4EjATIbAY4kwyPyIR9hyeEH4ldYcBroIMg69mmRrVAU42OTw/
-	6e4KeQ1YZmrcMhZnoh6bUInobo6UUNWL9TqTTZbll/L/mYHPrTvmyemkzM6g=
-X-Google-Smtp-Source: AGHT+IGnhbchndsxQrpOqmx+L6gEP0mz4KnZxPFnbF3cSlHW3yU9Qu5eUura8Gsl1otfULbbGp1jxsGpXke5kG5WBgg=
-X-Received: by 2002:a05:6830:3746:b0:718:ff2:c147 with SMTP id
- 46e09a7af769-71dcf56a5f3mr987845a34.7.1733515693797; Fri, 06 Dec 2024
- 12:08:13 -0800 (PST)
+        bh=Ig8zvMrquNxr9h6es/FC4GH4Fy/YJCq5InLvynwUlIw=;
+        b=xGE8X3kcYQvOtzIpGGZS0eBjt+wwuovJJRHtXWIE9L+btC/8Cbs+gdjBacD7JXFmbw
+         h2IkNnmkDwJsrom85YCcLai9YdMhYOtxqFPnt5WqAgzhrkcHHVzmeT9VV2+72Z4lfbcI
+         Rcu4WkHP9m/dsZkx6EPHFmsrv5vjrEpqeDIVP8np1A6tcqnustLZ+0HqOH5TcGVdf1g5
+         t0T2rr9eB/Wli/FNx7PV6SBe69COmrCUH/mekp2z6z+1ktMO2UwumDHukydWSqVA3zhm
+         Xk4u76JX411d/WNvWRFGsybZ9GLVq4fkvGPhGlVl/m1EDdunjTt4t6zHWdEMfu05u4tA
+         rGUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEZ+sa3HwDabIUMuWxj3a+ETeJTcJQzcxdFX/qBFBGCa2PH7RplgDhTkck1UO/lhlxVimffLB6@vger.kernel.org, AJvYcCWhdyjxL7R/+gEg+6fUfyY1wFftcZoGSUlh4yi4u2/BbLpeD/DJ4qr8ON1dysg54mvuIgBypLMxylILfQZ5@vger.kernel.org, AJvYcCWzD1INquHxnbfDS0CcSBrEyUhDQjJRjrEOnYox7ltUyGCFHswjnxpTGr77jDFbTCornHkP2AlEJQY2dJVek88=@vger.kernel.org, AJvYcCXmdFvgJaTcWdXEo5o5sxvNJsuybxwZCu5fn7vV3d8S//quE8TTuguu0amvFOtV5tqema1DouL6TnQq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgmb8TVbqTbAbdYmVg2vkdMl8NekOHY2OFMl5sI0DpNGPukH7Y
+	jZg9FLySkrgH5fwDL4v8p0mz51PvlOg5i2edYs7vxDK857aHUSTfU6xHoAPJkM7b0jtnhNrkVxP
+	NVCVVAYSkIvTQ8P0x2+yIGPJOI3o=
+X-Gm-Gg: ASbGncsfEKdIS1gSw7BQ4UgBirmOBIvHwLuhl5fH5b36rrDfYmbwkJEn40WKNtLP6Y+
+	uojfUT0yasuU93T/130O5tYfwh/qUgqE=
+X-Google-Smtp-Source: AGHT+IFIz0aMhmjz3POY4AtV1zcbOoDHMMbGiot4T8nIxNJKxQFlR1A64t6StVNw5SBiP8Mwz8JQRkkcRW8pMZUf+r4=
+X-Received: by 2002:a2e:8058:0:b0:300:324e:34e2 with SMTP id
+ 38308e7fff4ca-300324e371fmr9329211fa.16.1733515989826; Fri, 06 Dec 2024
+ 12:13:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206194839.3030596-1-jeffxu@google.com> <20241206194839.3030596-2-jeffxu@google.com>
- <607a69bb-9b6f-4d0e-83aa-1ec6903c34a5@lucifer.local>
-In-Reply-To: <607a69bb-9b6f-4d0e-83aa-1ec6903c34a5@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 6 Dec 2024 12:08:02 -0800
-Message-ID: <CABi2SkV2gSx+5p1uS-YZnD90HzV8ZAFkpbsqSUL5usU+EW8HwA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mseal: remove can_do_mseal()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, jorgelo@chromium.org, keescook@chromium.org, 
-	pedro.falcato@gmail.com, rdunlap@infradead.org
+References: <20241205154247.43444-1-ubizjak@gmail.com> <20241205154247.43444-6-ubizjak@gmail.com>
+ <Z1KpWenJGqhjtNL9@V92F7Y9K0C.lan>
+In-Reply-To: <Z1KpWenJGqhjtNL9@V92F7Y9K0C.lan>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Fri, 6 Dec 2024 21:13:03 +0100
+Message-ID: <CAFULd4ardZ1GT0a9E_Bnu+8VAbxXTcFfvU7QrC14p+XbwdgC2A@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] percpu: Repurpose __percpu tag as a named address
+ space qualifier
+To: Dennis Zhou <dennis@kernel.org>
+Cc: x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-arch@vger.kernel.org, 
+	netdev@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>, Brian Gerst <brgerst@gmail.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 11:57=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Fri, Dec 6, 2024 at 8:35=E2=80=AFAM Dennis Zhou <dennis@kernel.org> wrot=
+e:
 >
-> On Fri, Dec 06, 2024 at 07:48:39PM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
+> Hi Uros,
+>
+> On Thu, Dec 05, 2024 at 04:40:55PM +0100, Uros Bizjak wrote:
+> > The patch introduces per_cpu_qual define and repurposes __percpu
+> > tag as a named address space qualifier using the new define.
 > >
-> > No code logic change.
+> > Arches can now conditionally define __per_cpu_qual as their
+> > named address space qualifier for percpu variables.
 > >
-> > can_do_mseal() is called exclusively by mseal.c, and mseal.c is compile=
-d
-> > only when CONFIG_64BIT flag is set in makefile.  Therefore, it is
-> > unnecessary to have 32 bit stub function in the header file, remove
-> > this function and merge the logic into do_mseal().
-> >
-> > Link: https://lkml.kernel.org/r/20241206013934.2782793-1-jeffxu@google.=
-com
-Please remove the link field here when applying.
-(I pull the mm-unstable and apply my change on top of the existing commit.)
-
-
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
->
-> LGTM,
->
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->
-> > Cc: Jorge Lucangeli Obes <jorgelo@chromium.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Cc: Pedro Falcato <pedro.falcato@gmail.com>
-> > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->
-> Not sure you should be submitting a S-o-b for Andrew :P I'm thinking this
-> is a copy/paste mistake.
->
-I realized where this is coming from after seeing this response.
- Thanks for pointing it out
-
-
+> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> > Acked-by: Nadav Amit <nadav.amit@gmail.com>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Dennis Zhou <dennis@kernel.org>
+> > Cc: Tejun Heo <tj@kernel.org>
+> > Cc: Christoph Lameter <cl@linux.com>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Brian Gerst <brgerst@gmail.com>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
 > > ---
-> >  mm/internal.h | 16 ----------------
-> >  mm/mseal.c    |  6 +++---
-> >  2 files changed, 3 insertions(+), 19 deletions(-)
+> >  include/asm-generic/percpu.h   | 15 +++++++++++++++
+> >  include/linux/compiler_types.h |  2 +-
+> >  2 files changed, 16 insertions(+), 1 deletion(-)
 > >
-> > diff --git a/mm/internal.h b/mm/internal.h
-> > index 74dc1c48fa31..5e4ef5ce9c0a 100644
-> > --- a/mm/internal.h
-> > +++ b/mm/internal.h
-> > @@ -1457,22 +1457,6 @@ void __meminit __init_single_page(struct page *p=
-age, unsigned long pfn,
-> >  unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *=
-memcg,
-> >                         int priority);
+> > diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.=
+h
+> > index 50597b975a49..3b93b168faa1 100644
+> > --- a/include/asm-generic/percpu.h
+> > +++ b/include/asm-generic/percpu.h
+> > @@ -6,6 +6,21 @@
+> >  #include <linux/threads.h>
+> >  #include <linux/percpu-defs.h>
 > >
-> > -#ifdef CONFIG_64BIT
-> > -static inline int can_do_mseal(unsigned long flags)
-> > -{
-> > -     if (flags)
-> > -             return -EINVAL;
-> > -
-> > -     return 0;
-> > -}
-> > -
-> > -#else
-> > -static inline int can_do_mseal(unsigned long flags)
-> > -{
-> > -     return -EPERM;
-> > -}
-> > -#endif
-> > -
-> >  #ifdef CONFIG_SHRINKER_DEBUG
-> >  static inline __printf(2, 0) int shrinker_debugfs_name_alloc(
-> >                       struct shrinker *shrinker, const char *fmt, va_li=
-st ap)
-> > diff --git a/mm/mseal.c b/mm/mseal.c
-> > index 81d6e980e8a9..c27197ac04e8 100644
-> > --- a/mm/mseal.c
-> > +++ b/mm/mseal.c
-> > @@ -217,9 +217,9 @@ int do_mseal(unsigned long start, size_t len_in, un=
-signed long flags)
-> >       unsigned long end;
-> >       struct mm_struct *mm =3D current->mm;
+> > +/*
+> > + * per_cpu_qual is the qualifier for the percpu named address space.
+> > + *
+> > + * Most arches use generic named address space for percpu variables bu=
+t
+> > + * some arches define percpu variables in different named address spac=
+e
+> > + * (on the x86 arch, percpu variable may be declared as being relative
+> > + * to the %fs or %gs segments using __seg_fs or __seg_gs named address
+> > + * space qualifier).
+> > + */
+> > +#ifdef __per_cpu_qual
+>
+> I read through the series and I think my only nit would be here. Can we
+> name this __percpu_qual? My thoughts are that it keeps it consistent
+> with the old address space identifier and largely most of the core
+> percpu stuff is defined with percpu as the naming scheme.
+
+I based the approach on the definition of per_cpu_offset() a few lines
+bellow in include/asm-generic/percpu.h:
+
+--q--
+#ifndef __per_cpu_offset
+extern unsigned long __per_cpu_offset[NR_CPUS];
+
+#define per_cpu_offset(x) (__per_cpu_offset[x])
+#endif
+--/q--
+
+Sure, we can call this __percpu_qual. So, the definition in
+arch/x86/include/asm/percpu.h would read as:
+
+# define __percpu_qual      __percpu_seg_override
+
+> > +# define per_cpu_qual __per_cpu_qual
+> > +#else
+> > +# define per_cpu_qual
+> > +#endif
+
+The above part could be recoded as:
+
+#ifndef __percpu_qual
+# define __percpu_qual
+#endif
+
+while the line below would become:
+
+# define __percpu    __percpu_qual BTF_TYPE_TAG(percpu)
+
+> > +
+> >  #ifdef CONFIG_SMP
 > >
-> > -     ret =3D can_do_mseal(flags);
-> > -     if (ret)
-> > -             return ret;
-> > +     /* Verify flags not set. */
-> > +     if (flags)
-> > +             return -EINVAL;
+> >  /*
+> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_ty=
+pes.h
+> > index 981cc3d7e3aa..877fe0c43c5d 100644
+> > --- a/include/linux/compiler_types.h
+> > +++ b/include/linux/compiler_types.h
+> > @@ -57,7 +57,7 @@ static inline void __chk_io_ptr(const volatile void _=
+_iomem *ptr) { }
+> >  #  define __user     BTF_TYPE_TAG(user)
+> >  # endif
+> >  # define __iomem
+> > -# define __percpu    BTF_TYPE_TAG(percpu)
+> > +# define __percpu    per_cpu_qual BTF_TYPE_TAG(percpu)
+> >  # define __rcu               BTF_TYPE_TAG(rcu)
 > >
-> >       start =3D untagged_addr(start);
-> >       if (!PAGE_ALIGNED(start))
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
+> >  # define __chk_user_ptr(x)   (void)0
+
+Let me test these changes a bit, I'll send a v3 in a couple of days.
+
+Thanks,
+Uros.
 
