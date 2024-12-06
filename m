@@ -1,140 +1,209 @@
-Return-Path: <linux-kernel+bounces-434679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440769E69B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:07:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7859E69B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:08:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE934285BFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A700428138B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519A31EF0BF;
-	Fri,  6 Dec 2024 09:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA1D1EF08D;
+	Fri,  6 Dec 2024 09:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="XQrZYdbF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rm6Ic1fZ"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vuwcapfY"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2060.outbound.protection.outlook.com [40.107.93.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793F1FBC95;
-	Fri,  6 Dec 2024 09:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475958; cv=none; b=Pb0CJ7ht1OHIWKC2J1bpyJ20vMSuosLQ6F4mLXAj5PruqgkwJmtIH+Mz4LGy0ZvGefKOn+u5IgBaKF05wxHMm3RGLsB7Zyiu2pyrai7D8xuwK/ZWYB4o//0vzIf2PhVcXkkMD8xaPZ7lARN0UlhgMsNTepvGlrVgwJP4AdgxyLs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475958; c=relaxed/simple;
-	bh=KMel/fejqC4xHakZdeJNDBt2c9vzHF+RSzfWeo+L2f4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HP4uODHHI7luhRmkAhCwL/udRqSchtHlaRCnzP1EE5bQzEbksMp4Zh13XN0Kp43EvN3FM4MUhYv7w2JX4qVpLvkprgCWQCKVokljhqAbwpl8LmCqjOtJNm/WPoWfJB6qhUuKlMQO01IczICPaRfIDmkZacWZlF3M0tykVXTB5ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=XQrZYdbF; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rm6Ic1fZ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733475955; x=1765011955;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=+YIfUdq9OR5ROGXG2tbL8UIVwnPsC3GbJ9XOwhsQXWg=;
-  b=XQrZYdbFlWsGLJJhXiiFFWev/2VLCcnhEuUQmOEtaFne4CpThmxe7DRu
-   nU9I1WjrbITAKedMIVVzEdq+pN92AASFR4+wXwLcyxgBzRpD5lduuCvrp
-   oBMBeqHqJutde9Y+ochMdM5IGPhCUxQO+rf2JdxWfQOtI90o1egFT6zFP
-   aR58KCOHFgY4Tn8KofoEl6zwSLG6/di9jHC2FcHQe7sVvGtXoa1uq9zSz
-   tDhcly6fHP+ZTdN24ev5HZ5E///jCdJm+iGBcgpHNsRJg+jJjkcXISGfi
-   jtSOgAOtSqFGRPJlzwMo+xmlT9lZSY722TnVenThUJDU8Sv/jUMsPXx79
-   Q==;
-X-CSE-ConnectionGUID: oVbENiJ4R3iM76QGjQUZbw==
-X-CSE-MsgGUID: YnhpYHKDRjOcgqB0ukZk4Q==
-X-IronPort-AV: E=Sophos;i="6.12,213,1728943200"; 
-   d="scan'208";a="40449387"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 06 Dec 2024 10:05:52 +0100
-X-CheckPoint: {6752BE70-2-1E10F2A5-CC0651E5}
-X-MAIL-CPID: 313663F2906B776E37CF64B963F0996B_4
-X-Control-Analysis: str=0001.0A682F17.6752BE70.0064,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 786FF163AD6;
-	Fri,  6 Dec 2024 10:05:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733475947;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YIfUdq9OR5ROGXG2tbL8UIVwnPsC3GbJ9XOwhsQXWg=;
-	b=rm6Ic1fZRlZmgzFL/7eQp1nhcTTvMsgpS9iWRkPgv1JDg/Ns2sYSxwQf/bZezXw447Kzki
-	1F8E5iNQtQQbMxiZPX1HgsO/xVUJLzMbprmisfvvnxy+2IE3Ubw4alQO5wjgMiWiPN8r9U
-	3hajrS3sEQPb7Z4c2fierSy9XjVNo0tcxmvxEK02C3JH64DEFXpwM9IO/hCGLtLn/Zn4PC
-	oVc8aRcUXK2gVwX3wqAwKgNiTKpoVzktaroRC6jt/6uBW6jFdRiM8bdXxNmtzDAF19mGzV
-	2vPwZLMeb/8y6NyicmynZBd6CT2hydwBNuzmMTPw/NdQ7VbJgOlePcy5WxCNpg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Pengfei Li <pengfei.li_1@nxp.com>, "open list:NXP i.MX CLOCK DRIVERS" <linux-clk@vger.kernel.org>, "open list:NXP i.MX CLOCK DRIVERS" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Subject: Re: [PATCH] clk: imx: Enable IMX93_CLK_LVDS_GATE only for i.MX93
-Date: Fri, 06 Dec 2024 10:05:46 +0100
-Message-ID: <4615625.LvFx2qVVIh@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20241203130530.1206526-1-peng.fan@oss.nxp.com>
-References: <20241203130530.1206526-1-peng.fan@oss.nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA6B1EC010;
+	Fri,  6 Dec 2024 09:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733476040; cv=fail; b=ZX9b636Kc7dLeIsBaXhhp8sX0bKrKUbWWQPFnWPyLHkh6L3pEAwVrdxovrDSQLBdUBw2ovTAQHZXJn6n/0QPAdfT/f4jnUrNFlEQonLa1JpX9YxYGJDfsqIlUotraUYnwzksrkbp49IUFMSGOcD8hbAzYm0VSqh+qHgFQ4pZDqc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733476040; c=relaxed/simple;
+	bh=DwXMk4PMtZaGRHDpSW9koyGNnxfVi4PVWXFX5CPZ9KQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=OH9ExXlStxKObuIoMmmyVQTz+xFZgvardjnjcir2OJs78oL7R3FeSaIy2QPHao9Flg3UPKkRc9M5VTRvY9Z1FqWnj7qj3KbBx93vKM/M2WX3wOFdvJIcRikhNpeUbxWNx4p3Y1kE8PzXHzE699d4UWxwOmnwqcjU7tcMcCZfDpc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vuwcapfY; arc=fail smtp.client-ip=40.107.93.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ti7yvyRNI4xomfrauW+Ly/wjQ90/JUZIJcEdi88nM72S/c+OwNHLaRTECLZpPoNeSm15P1F3NN1ST7Mb89K1HCu1EhHJTDRVu9W0znW/h1k9FaooGI4zPPPE5xZnts4/BwCAOJkLKTMZirsijzGSuuV8xQNrV8mreWBSZ1ROLteDbJXmrGXEG0PGd1sdjhvOSROGZbGpnLLa0lXibQYPEDzs/7haNtRhRLl7fH8xBSbJmJquAE8/pm1Rh/Kn9aug8+ZtYdJVrYvnctTT647HKAvNnIAf1N5v7UQfb3P3xQw0O9jF5A/lFzm6mu78Es7qus761/4SBSmlRKowLWIuJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AfgASD12dOwk2VN84fpu4JuQ/HMDG7Vzj3iLUD0jwCg=;
+ b=k6k/k2mETPzSTydQy3gIsparpKRAHnFVl8QFxWVJcqecM+AfjnXLcHu4AjWBUl1oe6MrxByuMJCzELKvKBsEtHMWKfYzaPKQQu4/HeWkYptEXDVDL6R5bqHw10DIYc4J+R0rLDasgornTjcDsMvys0Jvs4LkdmjpQhYAm0fBGyOra+E9ZdG+QbIpkQSmfn5PGhyqeSfUNJWGtZisOyEtHinY59pa2hWfTbVw7eoI4X6NCMaYvXGAnX/qYs3zfPXIa9dXycZrzvzgK/f5l+sv4rAouv3m/rDfnQDLW7J670svDWI8V/fMvbZaVvZDQChEgAVDZmEJ0Zajmk8nF1DvaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AfgASD12dOwk2VN84fpu4JuQ/HMDG7Vzj3iLUD0jwCg=;
+ b=vuwcapfYL0PdEgrorkRcCuGbr/zZZ9scEPQVRXN3t9E1kg3261d5ofEq0A23++oNAl4GiAgWQqETDb/BSyKRPtZJUD4qRigeoIrSVCPASyeQ+5mNYLwpKrb5lIYqEBs0UABIAjnRqInsd48R3EATZHI0s3fR9CPqgVIE3cNxiDI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by PH7PR12MB8779.namprd12.prod.outlook.com (2603:10b6:510:26b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
+ 2024 09:07:16 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%5]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
+ 09:07:15 +0000
+Message-ID: <abe58150-735f-4d9d-8ff4-a20b0fc6b376@amd.com>
+Date: Fri, 6 Dec 2024 14:37:04 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/10] perf/amd/ibs: Don't allow freq mode event
+ creation through ->config interface
+To: Ingo Molnar <mingo@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+ acme@kernel.org, eranian@google.com, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
+ Ravi Bangoria <ravi.bangoria@amd.com>
+References: <20241206051713.991-1-ravi.bangoria@amd.com>
+ <20241206051713.991-6-ravi.bangoria@amd.com> <Z1K6IckahmlME6Py@gmail.com>
+Content-Language: en-US
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+In-Reply-To: <Z1K6IckahmlME6Py@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0226.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:eb::9) To PH7PR12MB6588.namprd12.prod.outlook.com
+ (2603:10b6:510:210::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|PH7PR12MB8779:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4b7896c-145e-4892-73cb-08dd15d560f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?REhPd3FWbHVaSjJDVlA3ZVdOdUJlaHl2Y1c3bXlTV3d2UWJSWldjaDlrTWp2?=
+ =?utf-8?B?ckowOXJray9uYmNqbllBZi9rVzhZMmFFOXA2dnNRejN5dExCYWw1UlAwNmI2?=
+ =?utf-8?B?TEVvWDRqOG85L0ozb2R6ZHRVbVM1R3hXVDNpWnZPeUIzVDJkVCtlb0hFZ2Ev?=
+ =?utf-8?B?QUNXeUdXOFNOdzdBcUdLSjZlUmRjb3FieGNPTnZaQWhtUkZObTdkblh5T3ZG?=
+ =?utf-8?B?WXBIYVU2VVExTWRIMmpPdEpFZUFWNytrVXowUS9BbEZSNkNUQVkvRTc5eURR?=
+ =?utf-8?B?OTdOSzgvdGpDS2NhOGltaGlQeVlYaEU5ekRYYXBmSWlydDFxZTNSSEN0dTVY?=
+ =?utf-8?B?OEo2ZUJHbGdlS1VoSHFNOHNFY2ZWNHNIV0lzQXYvVnBtS2xrMTA1R3hNQTdU?=
+ =?utf-8?B?L1RWQTYzcFhXc1lCTHl6ZWNlcFRzODZHK01XdWFjUkpDYnFJUmdUbzVXY0Iy?=
+ =?utf-8?B?S3ZZVXlsT0lvbWlEMFpDamxwaEFpMkdnbncyUlpvdldYelhPcVlpaEY1ando?=
+ =?utf-8?B?MHpZQjJncnlGVSs5SXFzNkloV0RyUVdKdlVNQTRycUd0VVB5NWNQbUJBa0xO?=
+ =?utf-8?B?SDZyQjNscXZEOFhCMlRTa2RiMktzNzYzM0FiMm1JdDIwd0ovcEx4TndjYzg5?=
+ =?utf-8?B?U01uQklYYmRkbzB6T3E2Y2V2cDFwZ1FGYllpRWhkci9aTUR5VWVzYUE0TmlI?=
+ =?utf-8?B?ZGhVWmhVa0s2R1ZxL0I2SzFhdG1LcERxZTlkL0hoaVZFMjQyRnRWVys3V3RJ?=
+ =?utf-8?B?M0MyUkRtWjJ2SUZjUnBzMHpPWjRHL3JHeFRHeGw4VG9wc21wZUJFdFVJcGQ3?=
+ =?utf-8?B?alU4eVNHSFE5YU91TWN6eHowRno0a3NGdmcrckpmTlBaRTFvUHliRzU3d3FP?=
+ =?utf-8?B?cGcrOE80aTViMFpWYVYxZllOTEwyS2hLYkNxQzJDZzBYM1lyWVA0dUZNZ25K?=
+ =?utf-8?B?RkdqVEZNU0RqZW5hbmFVMnAwRnFuSG9KK3YrUG1WZUVKUWR3enJiaGJCVUJh?=
+ =?utf-8?B?T0dOTzJDNjVsV3cvS3gvT1prV203bThjTnZvZ1dHTGZEZFlQM2VpcWNLZnBU?=
+ =?utf-8?B?a0hxeUhEVWtIc3BrWlJrZHM0TkRwcUYrdGpOL2pFQ2x4NXRPdWh6ZkFVSjJN?=
+ =?utf-8?B?VlVER210TnlSNkxPSXM4S2JSMFJlTG1yYWNzZmMrMng3NGdCeXJqaXFqVXdl?=
+ =?utf-8?B?cGlRSnkzNFVXUlVhcW52RGltWXZ2SHUrNGhtanc2c2JwUTlzWjZ0Q0ZBV3p5?=
+ =?utf-8?B?RUZ0amI5LzZqN0crajl1eVdEbTU5OVpPMi9JYVNJZXJpa0hIRzU1S2tWdmNS?=
+ =?utf-8?B?WVNQdzQ0Yzg5RlZPZHBXcWxDQlRpcFZXb212cGx5K3NvakRxWkNYTVJrcERO?=
+ =?utf-8?B?OXR5Nk8vQm91ZVBvdmlEVWFRbHNYTGRUY2dSMmYrS2Y4M3lxSkVyd1k2Tjg2?=
+ =?utf-8?B?eW02SnhsZElJSklqR1Z2NnVPd1hWOXJzdGh0WGVDUmpLWDQzb05vYUZmTUx1?=
+ =?utf-8?B?ZDh6d2lDK05jb2I5dXl5bkFscFNYZUVZdWlIci85WU1FLzMyelBjeHNIUk9W?=
+ =?utf-8?B?aGJRTnd2SVB1NmZ2MzJHWDQxb2FGR0pFeDk2L3lyV0IvdjRqNlgyeW1qUW03?=
+ =?utf-8?B?RHJBUFdubGJqU3hpR0k0SEpsVGphcEVzSkdsaVB3VHBDYm5DQTdFQWt6akpj?=
+ =?utf-8?B?c2VZZi9Xc3RuaHNLYnk3U0dXR1Bia0FyME90WGl3UTcrdEM4NXd1OFF2aGQ5?=
+ =?utf-8?B?UXM0dGkra0Fnc09pN3RoSGNXaTdPRGtjQTd2RStOejJYR2kxTEZMd0JQcVFa?=
+ =?utf-8?B?d0xveldhWnkxNlQ1VjJNUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c1pOTzkveWV4R2pjN3BuaFZLZ011NldDd0dncW9DQk43cFlid1VLV1hFYXZE?=
+ =?utf-8?B?d1Y3RFNlZmY1Q04rZkMzTENGcTEvRnVWcUo4QVd0WFZDdVp6RHdVb3lpNlJz?=
+ =?utf-8?B?Z2Q0cXhCZnJQUklGdG9LTTcrTmk2OEppQnU1TUFyWG9ndUFNUEovN3VZQXBO?=
+ =?utf-8?B?bFJ2dTQvaUUvRXpYazZtZHVYQkVNbVZWT3JjTlBreHhhMXlUZHRPUTZzNHdz?=
+ =?utf-8?B?UXcrWG50RWsxK1cyZ0RxenN1MWI0TGx3eWNkTXp1bzAwS3dqOWxyMnNxeUV1?=
+ =?utf-8?B?eUNPSUJ3TFNjUXVUS0ZWUHN4NThidk40ZEE0TnczcThFeWpiMDRReitRUVVz?=
+ =?utf-8?B?TEpLbFM0dDhzNU93djNTcEFaMUt4M1V4cGlTUU1UOW9YNEdCMkQ1REloakc3?=
+ =?utf-8?B?VEIwZkZMSDZJcXBIeVNEbTVKQmlGbUZZR0lSWVlaYnpGWGhsTkZEY0h3RmxR?=
+ =?utf-8?B?a0NJMGMxdkZsanJqb2ZVdGJOYitIbWhydlJBRDBGUEhWcVZGMzcySytTSkVm?=
+ =?utf-8?B?NDRiY0tBOXd2VS95SjZhWkg2QndyUmhLaE1qbzVwaHExcFd3bXRoWE9VQktZ?=
+ =?utf-8?B?dmZaR2RlS1Y2Z0dsd2g4bXo3UzVmbHdXOWF3djhCdnppM0VaM01tNWpYMXBy?=
+ =?utf-8?B?TTJrU2REUGYwOGw3YWUxbEZoaWdtUnAyaFBwdVJuVmkwVExnelpnTnY4VHdp?=
+ =?utf-8?B?TUNIbXpSb3FKT2I1aFNqcmIzbWRCa0N3dnQxNHlmcTl3ZnFaV0dIUlRDVXFC?=
+ =?utf-8?B?N1JDOXJpamp3QjNKaG9iY2t1OG1vSFpHVHVhdi9Fd1gxcjgyVlZnVFcwRCt2?=
+ =?utf-8?B?Njh4NFZmMEFMVnBjL0RQRXVUcXVXbTRqRXMvSVJXL0tEeEJmN29SSjVDcGlD?=
+ =?utf-8?B?czI0QkZxQUt2Y2t2ZGVSckNxVWFUamxuRTNKSVA3S3IvNlBZeklCNmgyYkJF?=
+ =?utf-8?B?ZDNBRFpsb05yalU3M1dvRm9FVjV4Tm4yc0d4c21uMGdScnR5NkFDbVRVd0lP?=
+ =?utf-8?B?dzgvWjhBTXpRY3pwczRhZHZOcENzZDhXVlhuMVhDcGJ4MlcxTVBPcG1uZzMx?=
+ =?utf-8?B?aTFxMmpmTFU1L0JxZ2FWYzlkMFVwYllUZ2FWcHo3TmhxZzhzQ1JzZGxpUUdl?=
+ =?utf-8?B?Mk95aENzZmpSQ0U3MC82WUhzQ09FZmZCWHAwblRsR3B5dEhvUHpvU0cyUmhh?=
+ =?utf-8?B?cmxGWHYzV3Z1a1FoeFVFZFVFWnFUeFVEcUlkTU55Z0pOcVI2VXFnSlA1S25W?=
+ =?utf-8?B?R3Aza0orRWJ0eU9TbWZmVkN4NUJMaDF5cFRMK0NmeDd1REZYOTB3RXlEekpL?=
+ =?utf-8?B?ZjlZRllmcElhZ05yYVFVOE1zZDYxVUNYNGp4RVJHbXEvS05EcE5DNk9MUkpa?=
+ =?utf-8?B?ZFFtTllDNnU2S3pyVmlCdWh0VWhVeTlMaE9pYkY2V2ZoM2VpNUZOMThZbjhE?=
+ =?utf-8?B?QTlrMFVSenlQVG03S2YzQ0t1V3F6WS9zNm9rRnJFaXVNOWVEQTU2Ykl4cDZ5?=
+ =?utf-8?B?MFJic1BvekV2dHl5M1lVaTVKWGZsWmtwa0NuNkQ0UDV4REVwZXhvTXZuaTU0?=
+ =?utf-8?B?a3FETlRHQkQ3eEk5cENrM1RHREFmMmNQb1VzTlU5VjVWbkxJWWZsdUZ0NHJm?=
+ =?utf-8?B?Z0JMai9ab3p6SXZHOGlvSElqNm5tRmV4NytSRHNJaG9XUDV1T0JjTmdHWlBS?=
+ =?utf-8?B?dC92QXdFMktmdytDbCswS0FlamNpNHlQb01WRU9md1A0YVBMY1FUc0d5M2pm?=
+ =?utf-8?B?Mk5HeDEzVlVxUnRjdW1yZWZoZWZZa2dQRFdBVTl1ZGtRMW1oc1JGMTlodDdq?=
+ =?utf-8?B?VW93QTI2b2NabDFpZGZsVlBrd2p2dDU0RjV4S1N5Y1lFcTNNTllVODNNUHhG?=
+ =?utf-8?B?UUhjYmRlYVlnSXpvVFhFUExTQk5HM2FqL1NjWjRrZmp2NS95b0dPWjdsT0Ns?=
+ =?utf-8?B?azVXUSsxc0l4dlpOakN6dXhBV0Izclg1QzB6cHlnNWlTVGVDZlFFcy9oZy9H?=
+ =?utf-8?B?a0xPRC9YYjFqMDI4KzRBWEdzdDFHN3VJL2dPRDJrcWw3RDRsVldTaStzQ1lK?=
+ =?utf-8?B?cGNRTXJvUlhmcUdBUlFEb0s2ZmpCeHdyd1REUlNjclJXN1pMaHZWMnBxWVF1?=
+ =?utf-8?Q?EzPdqLKku2dl2/piHI35F8Dya?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4b7896c-145e-4892-73cb-08dd15d560f5
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 09:07:15.8791
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tcUSW060z0KmiXv17bQpEUsKAR00/3BqOdQ233H4vVLd/0Knxa4zN5sroVMvb7TUKCmWi0H+bfYZ5mMRiFMP8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8779
 
-Am Dienstag, 3. Dezember 2024, 14:05:29 CET schrieb Peng Fan (OSS):
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Enable the LVDS gate only for i.MX93, because i.MX91 does not support
-> LVDS.
->=20
-> Fixes: a27bfff88dd2 ("clk: imx: add i.MX91 clk")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx93.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 58a516dd385b..a0d2972ba9cd 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -239,7 +239,7 @@ static const struct imx93_clk_ccgr {
->  	{ IMX93_CLK_SAI3_IPG,		"sai3_ipg_clk", "bus_wakeup_root",	0x94c0, 0, &s=
-hare_count_sai3},
->  	{ IMX93_CLK_MIPI_CSI_GATE,	"mipi_csi",	"media_apb_root",	0x9580, },
->  	{ IMX93_CLK_MIPI_DSI_GATE,	"mipi_dsi",	"media_apb_root",	0x95c0, },
+Hi Ingo,
 
-mipi_csi and mipi_dsi are also only PLAT_IMX93.
+>> Most perf_event_attr->config bits directly maps to IBS_{FETCH|OP}_CTL
+>> MSR. Since the sample period is programmed in these control registers,
+>> IBS PMU driver allows opening an IBS event by setting sample period
+>> value directly in perf_event_attr->config instead of using explicit
+>> perf_event_attr->sample_period interface.
+>>
+>> However, this logic is not applicable for freq mode events since the
+>> semantics of control register fields are applicable only to fixed
+>> sample period whereas the freq mode event adjusts sample period after
+>> each and every sample. Currently, IBS driver (unintentionally) allows
+>> creating freq mode event via ->config interface, which is semantically
+>> wrong as well as detrimental because it can be misused to bypass
+>> perf_event_max_sample_rate checks.
+> 
+> Then let's fix those rate checks?
+> 
+> AFAICS this patch limits functionality because the IBS driver would 
+> have to be fixed/enhanced to support frequency based events?
+> 
+> I'd strongly favor fixing/enhancing the driver instead, as 'perf top -F 
+> 1000' is easy to use and it is a useful concept.
 
-> -	{ IMX93_CLK_LVDS_GATE,		"lvds",		"media_ldb_root",	0x9600, },
-> +	{ IMX93_CLK_LVDS_GATE,		"lvds",		"media_ldb_root",	0x9600, 0, NULL, PLA=
-T_IMX93 },
->  	{ IMX93_CLK_LCDIF_GATE,		"lcdif",	"media_apb_root",	0x9640, },
->  	{ IMX93_CLK_PXP_GATE,		"pxp",		"media_apb_root",	0x9680, },
+No. This patch does not prevent opening an IBS event in freq mode. User
+can still open freq mode IBS event with usual interface attr->freq=1 and
+attr->sample_freq=<freq>. i.e. 'perf top -F 1000' with IBS event will
+work fine with this patch.
 
-pxp is also only PLAT_IMX93.
-
->  	{ IMX93_CLK_ISI_GATE,		"isi",		"media_apb_root",	0x96c0, },
->=20
-
-Not visible in this diff, but also only PLAT_IMX93:
-* flexio1
-* flexio2
-* cm33
-
-An most probably also mu*_a and mu*_b, even though they are listed in
-i.MX91 RM, but AFAIK this SoC lacks MU.
-
-Best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Thanks,
+Ravi
 
