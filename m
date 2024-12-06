@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-434442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFE99E66D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:27:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC329E66DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE3F284DBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10D8C2848F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDD51B4136;
-	Fri,  6 Dec 2024 05:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905EF198A06;
+	Fri,  6 Dec 2024 05:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LWVYgCwf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="w7UMkDNC"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9B5194C6F;
-	Fri,  6 Dec 2024 05:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6DB194120
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 05:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733462864; cv=none; b=ZdLJgty7Lk7r/poDQH9eprSsBXiHb4dxQyK82R1ScKJ+fZ7yshv/F+6ZWW5EIs82hXq3L1PCvAWs24UPo+bj8KUGrT7smFmepeuOAJfvRAPR9xmMmMnW7kr5Myw4HG/YF+/EDcUmkGlPCd28S4qaGrqlhZ14nOjZgJm1F172okY=
+	t=1733462987; cv=none; b=Iq3eYSPPMdH1MWxrrKsjt923x6uF88lCbyEt+iyUzNjXUY4LJ4JyvuxNSrRCnJ9W4tR25FWHOF8X6XEU/hek6TPC60gRt5jrzndTJq/IkioRVwBTu8ZC4Nd8cDAyziX4C4VSPBkVS6dBeat1URm1Y2ymEstdjaxyzSVJrSb+nmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733462864; c=relaxed/simple;
-	bh=n49cZMt8fyzcEOsPskmd0i1C0Ujbbl232rPfrhh5Pc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=r8pRiG0TIZuTv3wwahN9LOuWgagIAZtoKsEpZYUBtA7sJxzwy528nYgVHYqT+ct/L1A8bSyvhh+R8QnMWIuxKFr3aZbSxWXV3+YwGe8vFhi/4H7Gt4h6YWVUWgAjB/9K7I82OY0KZZTW9woaOwUSUjdjtiEbFWkRozX3BMGTjgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LWVYgCwf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaRHI004903;
-	Fri, 6 Dec 2024 05:27:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MdckaWPuNfCGb6nEWiCV1VdAHxRdIKi2c95j7PHO29o=; b=LWVYgCwf936SiNgh
-	c3woNL0aNsIL3e4ZYTZ8invyzRTF/ep3XvLrsJ0bRWl3CbM/i+sWhw/WhNjoTJdV
-	F5iQFuXHsHjEhoy2Yz4M+BybX2hYuD7/pwCDyc7pKdVn2imUOlpwbzVe5VtJMAqe
-	G1tSHOAkwGJgjC6hNxtCYhqH8Fa2dHx/lRSdCD70pK8o9U0udbgUMzQ/3kqp0FVH
-	iaNn+7xic/QP2iDplHO9Mdc93Ib69uR1EqlOsX49JSeUT4+YlEcdA8SWW83PnF3+
-	CKai0AiGp52QsoVihbNkdNh3Fd234hqBsa7MUm4Oy3u1PfhcYrIf0jUr8tLaD8ed
-	ePP/dA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba142qbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 05:27:37 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B65RaJM011802
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 05:27:36 GMT
-Received: from [10.50.18.22] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 21:27:34 -0800
-Message-ID: <01a4eb57-d7bc-4d0b-82f6-d3c19a089966@quicinc.com>
-Date: Fri, 6 Dec 2024 10:57:31 +0530
+	s=arc-20240116; t=1733462987; c=relaxed/simple;
+	bh=EbHoky4remtxo6zTFYXnPsy+Jw3aoDFvV6C4DGYvjBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P3FuFXRN8RPO6n6hhAi61L1eE7qZn1n1CAWuoTiHvLgnJqOMRtRLv/ivlSXrLNJ2VM3US9+3FF+mkt3wc+Zgz1nQK54DZVpvt37K+73BXhVVlZS4L2oheXy5yowQybv/veoJQBXx5fdBoVDqtSdGViaqN60I1uaRewad6Itm0s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=w7UMkDNC; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733462981; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=g4QVWue6mo8zs80s5tU7lK6zhLbep1rtwd6KYeuWId0=;
+	b=w7UMkDNCWC7jhQRnhRUNDn+VWGDYRSPoaBknTdRi4jv7Ey47+ofqvjiar+13Qvf0eaIrMCfGRva6ACEsasWlqpxMdU2QDurOK8djzfB5fFryVxWiJStDuFOfdmH5cHXngd1Cf++JSNXcyxKUqRdWNCmAdvLoNi4IEsag6d4ho1Y=
+Received: from 30.39.241.89(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WKvI5vS_1733462977 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 06 Dec 2024 13:29:39 +0800
+Message-ID: <02358773-18dd-4aff-a466-28ae91e729d6@linux.alibaba.com>
+Date: Fri, 6 Dec 2024 13:29:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,65 +47,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] dt-bindings: mailbox: qcom: Document
- qcom,tmelite-qmp
-To: Krzysztof Kozlowski <krzk@kernel.org>, <jassisinghbrar@gmail.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20241205080633.2623142-1-quic_srichara@quicinc.com>
- <20241205080633.2623142-2-quic_srichara@quicinc.com>
- <e6759ca4-bcfb-4817-8a72-d1e9eb5d3d02@kernel.org>
- <360dda0a-35e0-4fcb-a2bf-77d400d71623@quicinc.com>
- <640201c7-84d5-4564-8ef3-afcc39929fd9@kernel.org>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <640201c7-84d5-4564-8ef3-afcc39929fd9@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [RFC PATCH v1 0/4] Control folio sizes used for page cache memory
+To: Barry Song <21cnbao@gmail.com>, Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
+ Gavin Shan <gshan@redhat.com>, Pankaj Raghav <kernel@pankajraghav.com>,
+ Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240717071257.4141363-1-ryan.roberts@arm.com>
+ <480f34d0-a943-40da-9c69-2353fe311cf7@arm.com>
+ <CAGsJ_4z8kh4Pn-TUrVq6FALR1J5j4fpvQkef2xPFYPWdWfXdxA@mail.gmail.com>
+ <CAGsJ_4y=5xvZsWWiZoGh6eqhh+NXCsztyeLVbraUrxR=ruhWzw@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4y=5xvZsWWiZoGh6eqhh+NXCsztyeLVbraUrxR=ruhWzw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: u1h9VA74s-AR7A9uzWuOcYv1H4rUJp_3
-X-Proofpoint-ORIG-GUID: u1h9VA74s-AR7A9uzWuOcYv1H4rUJp_3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- phishscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=680 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060038
 
 
 
-On 12/5/2024 5:13 PM, Krzysztof Kozlowski wrote:
-> On 05/12/2024 10:17, Sricharan Ramabadhran wrote:
->>
->>
->> On 12/5/2024 1:42 PM, Krzysztof Kozlowski wrote:
->>> On 05/12/2024 09:06, Sricharan R wrote:
->>>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>>>
->>>> This binding describes the component responsible for communication
->>>> between the TME-L server based subsystems (Q6) and the TME-L client
->>>> (APPSS/BTSS/AUDIOSS), used for security services like secure image
->>>> authentication, enable/disable efuses, crypto services. Each client
->>>> in the   SoC has its own block of message RAM and IRQ for communication
->>>> with the TME-L SS. The protocol used to communicate in the message RAM
->>>> is known as Qualcomm Messaging Protocol (QMP).
->>>
->>> This is RFC, so only limited review follows. I will review more once
->>> this is ready for review.
->>>
->> Thanks. Once i get the design/approach confirmed, will post the V1.
-> 
-> Not a v1, but next version. This was v1 already, because we do not count
-> from 0. Please use b4 to avoid such mistakes.
+On 2024/12/6 13:09, Barry Song wrote:
+> It's unusual that many emails sent days ago are resurfacing on LKML.
+> Please ignore them.
+> By the way, does anyone know what happened?
 
-Ok, understand.
+I also received many previous emails, and seems that changing the 
+maillist spam filtering rules by the owner of linux-mm@kvack.org caused 
+this.
 
-Regards,
-  Sricharan
+See: https://lore.kernel.org/all/20241205154213.GA5247@kvack.org/
 
