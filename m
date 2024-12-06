@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-434739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B039A9E6A74
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B779E6A69
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C30F1886511
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:37:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9566188593C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802541F9A87;
-	Fri,  6 Dec 2024 09:36:46 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B698A1FA260;
+	Fri,  6 Dec 2024 09:35:06 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606EC1EF0B5;
-	Fri,  6 Dec 2024 09:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452AA1F9F7B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477806; cv=none; b=g15399XIMTH+lIGNEdUVMbvrSJfwOqZvZniaFgbRXqEtfheWXytlhFVRbEqluq/Yzsuv0uOc/TGNfxUZWstraodSvAi6qF+eHiuAf10T06IR1stEC/WfG0xaEbRzxFETIGp2tUSZstlFWLx+KtAMJ0AGJs3+4aK85pRVszuC88I=
+	t=1733477706; cv=none; b=oMymNDf8QDXDDrmR3UcnwjorvyHbOYcOK510PuSkJFbzpa8pch4oAj7PcNZ6TR331brzXdVcWVb4i9MQx3gWqJr7JrDkRhVdnBi821tLvqKYijU0nmm/G4nNw5pwAxsy25SChS6si6VRDyoFvZ433i7w7xdJVlTpIJrResR/7H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477806; c=relaxed/simple;
-	bh=f8+dIajzyYAPrZ4LmaSjXo5dzhdutroeMqfDZfR+H6s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VM237VUb2vhgQJuyvkMQyIRI2dLpZwKd2/kkGH2sfbUkInj1VooIJyPcb77rwzCY0Jp1LhGrfDgJi63JN1KN9BdOhIqMFPMBw9nAgkXPzfuydikhHfnImThwrgCI2ufM6Ngiqnos7gY/7nq5qVo1dDYeyt33pOcaCo51tMKJq3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y4R0s5z4Vz11Pld;
-	Fri,  6 Dec 2024 17:34:21 +0800 (CST)
-Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 087C8140134;
-	Fri,  6 Dec 2024 17:36:41 +0800 (CST)
-Received: from kwepemn100017.china.huawei.com (7.202.194.122) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 6 Dec 2024 17:36:40 +0800
-Received: from huawei.com (10.50.165.33) by kwepemn100017.china.huawei.com
- (7.202.194.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Dec
- 2024 17:36:40 +0800
-From: Longfang Liu <liulongfang@huawei.com>
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
-Subject: [PATCH 5/5] hisi_acc_vfio_pci: bugfix live migration function without VF device driver
-Date: Fri, 6 Dec 2024 17:33:12 +0800
-Message-ID: <20241206093312.57588-6-liulongfang@huawei.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20241206093312.57588-1-liulongfang@huawei.com>
-References: <20241206093312.57588-1-liulongfang@huawei.com>
+	s=arc-20240116; t=1733477706; c=relaxed/simple;
+	bh=SFQA6iOLYo0SCjZeL+gF6rG0AM1b70ICi54Jp/cd2fY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=Fk6aFCpw7JVbncNcwyl0KY5yk7WrCkmCEe2Pzo4k/Hm81HcZPpIyNN08yBy54FITxa6heQUYRe3RguLqmy1oJCDOmzaWDnhfRMPU17sLYoSTHpjohQ5Ds23bWPn63LS5RaIdPoFz9v8o7mgxKud5UuJJWYetpx0d6mcyYHDPDbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-315-JT-U8hVaNj28TFwmYvvp_A-1; Fri, 06 Dec 2024 09:35:01 +0000
+X-MC-Unique: JT-U8hVaNj28TFwmYvvp_A-1
+X-Mimecast-MFC-AGG-ID: JT-U8hVaNj28TFwmYvvp_A
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 09:34:15 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 09:34:15 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, 'Martin Uecker'
+	<muecker@gwdg.de>
+CC: 'Linus Torvalds' <torvalds@linux-foundation.org>, 'Luc Van Oostenryck'
+	<luc.vanoostenryck@gmail.com>, 'Nathan Chancellor' <nathan@kernel.org>,
+	"'Nick Desaulniers'" <ndesaulniers@google.com>, 'Bill Wendling'
+	<morbo@google.com>, 'Justin Stitt' <justinstitt@google.com>, 'Yury Norov'
+	<yury.norov@gmail.com>, 'Rasmus Villemoes' <linux@rasmusvillemoes.dk>, 'Kees
+ Cook' <kees@kernel.org>, "'Gustavo A. R. Silva'" <gustavoars@kernel.org>,
+	'Jani Nikula' <jani.nikula@linux.intel.com>, 'Joonas Lahtinen'
+	<joonas.lahtinen@linux.intel.com>, 'Rodrigo Vivi' <rodrigo.vivi@intel.com>,
+	'Tvrtko Ursulin' <tursulin@ursulin.net>, 'David Airlie' <airlied@gmail.com>,
+	'Simona Vetter' <simona@ffwll.ch>, 'Suzuki K Poulose'
+	<suzuki.poulose@arm.com>, 'Mike Leach' <mike.leach@linaro.org>, 'James Clark'
+	<james.clark@linaro.org>, 'Alexander Shishkin'
+	<alexander.shishkin@linux.intel.com>, 'Rikard Falkeborn'
+	<rikard.falkeborn@gmail.com>, "'linux-sparse@vger.kernel.org'"
+	<linux-sparse@vger.kernel.org>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>, "'llvm@lists.linux.dev'"
+	<llvm@lists.linux.dev>, "'linux-hardening@vger.kernel.org'"
+	<linux-hardening@vger.kernel.org>, "'intel-gfx@lists.freedesktop.org'"
+	<intel-gfx@lists.freedesktop.org>, "'dri-devel@lists.freedesktop.org'"
+	<dri-devel@lists.freedesktop.org>, "'coresight@lists.linaro.org'"
+	<coresight@lists.linaro.org>, "'linux-arm-kernel@lists.infradead.org'"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Topic: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Index: AQHbROFPJXcuwP9wN0+yRzIQ2cx/pbLWa+gggAFf14CAACMqUIABAFYQ
+Date: Fri, 6 Dec 2024 09:34:15 +0000
+Message-ID: <6576cf10fc424eab874a31714e60474b@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+ <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+In-Reply-To: <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemn100017.china.huawei.com (7.202.194.122)
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: zZy0ISkNILDMXKc8rY1qXKFCUp_bKsDlJs-8ILWe1Cw_1733477699
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-If the driver of the VF device is not loaded in the Guest OS,
-then perform device data migration. The migrated data address will
-be NULL.
-The live migration recovery operation on the destination side will
-access a null address value, which will cause access errors.
-
-Therefore, live migration of VMs without added VF device drivers
-does not require device data migration.
-In addition, when the queue address data obtained by the destination
-is empty, device queue recovery processing will not be performed.
-
-Signed-off-by: Longfang Liu <liulongfang@huawei.com>
----
- drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-index 8d9e07ebf4fd..9a5f7e9bc695 100644
---- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-+++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-@@ -436,6 +436,7 @@ static int vf_qm_get_match_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
- 				struct acc_vf_data *vf_data)
- {
- 	struct hisi_qm *pf_qm = hisi_acc_vdev->pf_qm;
-+	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
- 	struct device *dev = &pf_qm->pdev->dev;
- 	int vf_id = hisi_acc_vdev->vf_id;
- 	int ret;
-@@ -460,6 +461,13 @@ static int vf_qm_get_match_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
- 		return ret;
- 	}
- 
-+	/* Get VF driver insmod state */
-+	ret = qm_read_regs(vf_qm, QM_VF_STATE, &vf_data->vf_qm_state, 1);
-+	if (ret) {
-+		dev_err(dev, "failed to read QM_VF_STATE!\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -499,6 +507,12 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
- 	qm->qp_base = vf_data->qp_base;
- 	qm->qp_num = vf_data->qp_num;
- 
-+	if (!vf_data->eqe_dma || !vf_data->aeqe_dma ||
-+	    !vf_data->sqc_dma || !vf_data->cqc_dma) {
-+		dev_err(dev, "resume dma addr is NULL!\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = qm_set_regs(qm, vf_data);
- 	if (ret) {
- 		dev_err(dev, "set VF regs failed\n");
-@@ -721,6 +735,9 @@ static int hisi_acc_vf_load_state(struct hisi_acc_vf_core_device *hisi_acc_vdev)
- 	struct hisi_acc_vf_migration_file *migf = hisi_acc_vdev->resuming_migf;
- 	int ret;
- 
-+	if (hisi_acc_vdev->vf_qm_state != QM_READY)
-+		return 0;
-+
- 	/* Recover data to VF */
- 	ret = vf_qm_load_data(hisi_acc_vdev, migf);
- 	if (ret) {
-@@ -1524,6 +1541,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct vfio_device *core_vdev)
- 	hisi_acc_vdev->vf_id = pci_iov_vf_id(pdev) + 1;
- 	hisi_acc_vdev->pf_qm = pf_qm;
- 	hisi_acc_vdev->vf_dev = pdev;
-+	hisi_acc_vdev->vf_qm_state = QM_NOT_READY;
- 	mutex_init(&hisi_acc_vdev->state_mutex);
- 	mutex_init(&hisi_acc_vdev->open_mutex);
- 
--- 
-2.24.0
+RnJvbTogRGF2aWQgTGFpZ2h0DQo+IFNlbnQ6IDA2IERlY2VtYmVyIDIwMjQgMDI6MjYNCg0KKG5v
+dyBpdCBpcyBubyBsb25nZXIgMmFtLi4uKQ0KDQpMaW51cyBzdWdnZXN0ZWQgdGhpcyBhIHdoaWxl
+IGJhY2s6DQoNCj4gIGluIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC9DQUhrLT13aXE9R1VO
+V0p3V2gxQ1JBWWNoVzczVW1PYVNrYUNvdkxhdGZES2V2ZVpjdEFAbWFpbC5nbWFpbC5jb20vDQo+
+IA0KPiAgICAvKg0KPiAgICAgKiBpZmYgJ3gnIGlzIGEgbm9uLXplcm8gY29uc3RhbnQgaW50ZWdl
+ciBleHByZXNzaW9uLA0KPiAgICAgKiB0aGVuICchKHgpJyB3aWxsIGJlIGEgemVybyBjb25zdGFu
+dCBpbnRlZ2VyIGV4cHJlc3Npb24sDQo+ICAgICAqIGFuZCBjYXN0aW5nIHRoYXQgdG8gJ3ZvaWQg
+Kicgd2lsbCByZXN1bHQgaW4gYSBOVUxMIHBvaW50ZXIuDQo+ICAgICAqIE90aGVyd2lzZSBjYXN0
+aW5nIGl0IHRvICd2b2lkIConIHdpbGwgYmUganVzdCBhIHJlZ3VsYXIgJ3ZvaWQgKicuDQo+ICAg
+ICAqDQo+ICAgICAqIFRoZSB0eXBlIG9mICcwID8gTlVMTCA6IChjaGFyICopJyBpcyAnY2hhciAq
+Jw0KPiAgICAgKiBUaGUgdHlwZSBvZiAnMCA/ICh2b2lkICopIDogKGNoYXIgKikgaXMgJ3ZvaWQg
+KicNCj4gICAgICovDQo+ICAgICAjZGVmaW5lIGNvbnN0X3RydWUoeCkgXA0KPiAgICAgICAgIF9H
+ZW5lcmljKDAgPyAodm9pZCAqKSgobG9uZykhKHgpKSA6IChjaGFyICopMCwgY2hhciAqOiAxLCB2
+b2lkICo6IDApDQoNCkJ1dCBzb21lIG9mIHRoZSB0aGluZ3MgYnVpbHQgb24gaXQgaGFzIGlzc3Vl
+cyB3aXRoIGNvbXBpbGVyIHdhcm5pbmdzLg0KSSB0aGluayB0aGVyZSBoYXZlIHNldmVyYWwgdmFy
+aWF0aW9ucyBiZWZvcmUgYW5kIHNpbmNlIHdpdGggc3VidGxlIGRpZmZlcmVuY2VzLg0KUHJvYmFi
+bHkgY29uc3RfemVybygpIGNvbnN0X3RydWUoKSBjb25zdF9mYWxzZSgpIGFuZCBjb25zdF9leHBy
+KCkuDQoNCldoaWxlIHRoZSAnYmFzZScgZGVmaW5lIGlzIHJlYWxseSBjb25zdF96ZXJvKCkgd2l0
+aCBqdXN0IChsb25nKSh4KSB0aGF0DQp3aWxsIG1hc2sgaGlnaCBiaXRzIG9mZiAnbG9uZyBsb25n
+Jy4gDQpBIGNvbnN0X2ZhbHNlKCkgY291bGQgJ2ZpeCcgdGhhdCB1c2luZyAobG9uZykhISh4KSBi
+dXQgZXZlbiAhKHgpIHN0YXJ0cw0KZ2l2aW5nIGNvbXBpbGUgZXJyb3JzLg0KDQpJZiBjYWxsZWQg
+Zm9yIHBvaW50ZXJzIChsb25nKSgoeCkgPT0gMCkgaXMgYWxzbyBwcm9ibGVtYXRpYy4NCihQZXJo
+YXBzIHRoaXMgaXMgbGVzcyBsaWtlbHkgbm93IHRoYXQgbWluL21heCBkb24ndCB1c2UgaXQuKQ0K
+DQpTbyB3ZSBtYXkgZW5kIHVwIHdpdGggKGxvbmcpKCh4KSA/IDAgOiAxKSB3aGljaCByZWFsbHkg
+bWlnaHQgYXMNCndlbGwgYmUgd3JpdHRlbiAoKHgpID8gMEwgOiAxTCkuDQoNClRoZSB1c2UgaXMg
+bGlrZWx5IHRvIGJlIGNvbnN0X3RydWUoeCA+IHkpIHNvIHBlcmhhcHMgdGhlcmUgaXNuJ3QgYQ0K
+cmVhc29uIHRvIGhhdmUgY29uc3RfZmFsc2UoKSBzaW5jZSB0aGUgYm9vbGVhbiBvcGVyYXRvciBj
+YW4gYmUgaW52ZXJ0ZWQuDQoNCmNvbnN0X2V4cHIoKSBoYXMgcmVsaWVkIG9uICcqIDAnIHRvIG1h
+a2UgYWxsIGNvbnN0YW50IGV4cHJlc3Npb25zIHplcm8uDQpCdXQgaXQgaGFzIHRvIGhhbmRsZSBw
+b2ludGVycyAtIHNvIG5lZWRzIGEgY29uZGl0aW9uYWwuDQpTaW5jZSBpdCBpcyBvbmx5IG9uZSBs
+aW5lLCBtYXliZSBqdXN0IHJlcGxpY2F0ZSB0aGUgd2hvbGUgdGhpbmcgYXM6DQoNCiNkZWZpbmUg
+Y29uc3RfdHJ1ZSh4KSBfR2VuZXJpYygwID8gKHZvaWQgKikoKHgpID8gMEwgOiAxTCkgOiAoY2hh
+ciAqKTAsIGNoYXIgKjogMSwgdm9pZCAqOiAwKQ0KI2RlZmluZSBjb25zdF9leHByKHgpIF9HZW5l
+cmljKDAgPyAodm9pZCAqKSgoeCkgPyAwTCA6IDBMKSA6IChjaGFyICopMCwgY2hhciAqOiAxLCB2
+b2lkICo6IDApDQoNCk9yIG1heWJlIChtb3N0bHkgYmVjYXVzZSB0aGUgbGluZXMgYXJlIHNob3J0
+ZXIpOg0KI2RlZmluZSBjb25zdF9OVUxMKHgpIF9HZW5lcmljKDAgPyAoeCkgOiAoY2hhciAqKTAs
+IGNoYXIgKjogMSwgdm9pZCAqOiAwKQ0KI2RlZmluZSBjb25zdF90cnVlKHgpIGNvbnN0X05VTEwo
+KHZvaWQgKikoeCkgPyAwTCA6IDFMKSkNCiNkZWZpbmUgY29uc3RfZXhwcih4KSBjb25zdF9OVUxM
+KCh2b2lkICopKHgpID8gMEwgOiAwTCkpDQoNCk9yIGV2ZW46DQojZGVmaW5lIGNvbnN0X3RydWUo
+eCkgY29uc3RfTlVMTCgoeCkgPyBOVUxMIDogKHZvaWQgKikxTCkpDQojZGVmaW5lIGNvbnN0X2V4
+cHIoeCkgY29uc3RfTlVMTCgoeCkgPyBOVUxMIDogTlVMTCkpDQoNCglEYXZpZA0KDQotDQpSZWdp
+c3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9u
+IEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
 
