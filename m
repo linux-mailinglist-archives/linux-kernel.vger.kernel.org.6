@@ -1,213 +1,174 @@
-Return-Path: <linux-kernel+bounces-435695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A7F9E7B24
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:40:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC5A9E7B2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:50:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55AD9188651A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:40:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A189169954
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAF71946DA;
-	Fri,  6 Dec 2024 21:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2049E1C5495;
+	Fri,  6 Dec 2024 21:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKzVlPPH"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="bo+6+gz6"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ACB22C6C2;
-	Fri,  6 Dec 2024 21:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C5F22C6C3
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733521199; cv=none; b=nLs6GyGPxkYDt0C/OULneRQGtwfczU3d7QcJJGPmmowFt0Vz9ZbhytNwVizAMLlwZoQT5Ut4GCcLiJzgPeeGn9Lev+NIBhw0b36TiaFVGSz0wpUwTOM0L9Ot1Rk0HVZPwWH56RyZB2s1ss28Yz36V+9OVdMtfuVCaSXJKoRc/R4=
+	t=1733521842; cv=none; b=e+G+JTrzpXah5QtmlEexDGY1fe0bF2nigesZZetYPEUW8rq0uYDrGEctbYKa21XoxB/wuYCqaVLIEr5Pm/8lu8umNZnIMBeXIbdaG/nEha5fd/yqgk9S7oBXsskslDsHSDsWxCfMAXuW6ZjkhJjaY9NjoeLxrAzdtQyu7DJxVuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733521199; c=relaxed/simple;
-	bh=ArcPzhginUvzo8hqwZ90kZqaeGNR8p7VkU1QkNSvbvM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tg/+5g8gev0ohGcwLJ95qjTJ5QQb3rK9VNzhj9wHy22g4kQvTwDrOlDc8kbzP3DYPqe80AmC0gdZugg6OV6UaEuFzi7iqRlZ7j6DIPLrn/+LafN2xG9LNNx9u+UcU4Zd4d8+zmXFcC7AnFy87U+RrjAM7Hszgc2HkFvubcLY868=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKzVlPPH; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6681e92b1so291837285a.0;
-        Fri, 06 Dec 2024 13:39:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733521197; x=1734125997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nhNrtrkwQMSxpIdT9BDntslWAjYECtg/oyySnSEisxE=;
-        b=GKzVlPPHFGhsM6BsoFJ8XB2kDOu2u5mVzSHrxHTr0xNDgQBwosP6SDAifQank/zUMO
-         83dvPrdoJ2JidqG2fvFZ7lJaA6lUlWVbRVJbMelEXWTRpn3LJXs2bVie0/lu64VHZWj9
-         pR1VbCxdT05Jf6HoBEEsY6lw5BLKUokLkkS9rSZpeXJoxWguPdng5QT82Ch3DkMRdV0Q
-         9O6jOYqRf+7A1h7bEhRQCWPyOS8xfj6w03X80QmAka/vLlkpUSrSqGxJKLY3gF7pbdvF
-         apvvisBVofpCGK7Htvl1uF9kMTGo8hDt10H5cutROetH9JMYckiRUmw6euOH7xMGurse
-         x5nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733521197; x=1734125997;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nhNrtrkwQMSxpIdT9BDntslWAjYECtg/oyySnSEisxE=;
-        b=H+l9L5Tr6WxnH34QMYuxzNCXLZghSQYAe0IzYoZWhSKx7YVie27P8XmBOwO1ZTtlAD
-         EiZxMCpotO/UNgZxCvZXfp59uNjIS1p2j1CVQsXlx+0IyAl8knfnYBk4xbewPZml1Y6t
-         yJNvLJYLs7AakH6q9ST4a5UqD6LGwNdvTBsAJVqOjXRMju5QFyyercXQMl5EJPMyPVzE
-         hFReeLr/iY6XdN0exz8mjJzeCy9hHMoJneHdkRVeT1rJtlWARe6sUx1tGW90Sv6vDif7
-         BY5IY+dOe+7cJP8YZonw63TcOusQUJKllIF5lWjjXIbKNF9d7rvb+z6ujNKo3n4G1Zg+
-         SpNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtXfYPgW52CboEUdjNj9nVi5ta/nsBLIwzmdhJxE4tAfn06Q1YgzSvw4YwcA44i4EcZ6oBHSHE52seHqG8@vger.kernel.org, AJvYcCX1lRIQ22MhFd+8S53xtyx8qVTj2aK3wM6Tn2Hn2o6whuo4Hi4o+Fi9Hu5rrv1gPctlUucJlQQLB12p@vger.kernel.org
-X-Gm-Message-State: AOJu0YykzF93Mv7I5Rf2x+WSYajQR1Sl5+s8vq0ysQbayWihZ/zxqskR
-	snIWzssZUxV5zB2IzK+99i5o4uH43ANh4R8RmqICWyA6u5InPhbS
-X-Gm-Gg: ASbGncsCZf0saYc/RZMylwOgygXVCJkX/fYsNyiqD7yGa1WpDr4vzZOORAgHJBGFb5T
-	Yf9FnPrEA9WQuZU88HHbdM3bMkEkHY6+PyqT5WdgiOjC667HfmVN69XVNUlnuYxknThnbbW3xg8
-	MVOLwPet2EzwXeSXsNAFbXCl6TbTm+dkcvnvHV6wyQHr7o5x5wd9jy8ak4ezwfoV0+vaJfoy/oJ
-	FfIW6Trz3mVtLyCPFD88DnnvpnT/lq3aMnPkGMS2Yzp/UDJAMsUHJl32GuDCw==
-X-Google-Smtp-Source: AGHT+IEEnGwLcZ6wgoSEVpifnZ7n698aIGd7Lu/CBlB0yurAYkGYemOCDvTincbiQGiudFkAp3rHqA==
-X-Received: by 2002:a05:620a:2682:b0:7b6:7356:a19e with SMTP id af79cd13be357-7b6bcac22a4mr686886185a.7.1733521196806;
-        Fri, 06 Dec 2024 13:39:56 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467451fa7fcsm3100801cf.9.2024.12.06.13.39.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 13:39:55 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: marex@denx.de
-Cc: linus.walleij@linaro.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	make24@iscas.ac.cn,
-	peng.fan@nxp.com,
-	fabien.dessenne@foss.st.com,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v3] pinctrl: stm32: Add check for clk_enable()
-Date: Fri,  6 Dec 2024 16:43:15 -0500
-Message-Id: <20241206214315.3385033-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733521842; c=relaxed/simple;
+	bh=SlOkHsGxtavNtcjtMvgZX7xOljQP1nIyV8Lg4jBIN3Y=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=hurBNbyBxF5CTEKGJClmEj/b2StGdSJcUIZg3WQxqccvb8E8FDGck8chKGaAwy7SKAzX/UMI+MZ1DTz5/DMcECzEkqsFk43riX09ue7t0mOm9q0rRyCUmC9qHTDBOGaQLWVgHPtCWPFZf9Pk8GZZmNiiEyagU47Sa6dW22G/oL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=bo+6+gz6; arc=none smtp.client-ip=67.231.154.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id B44EE2C0066;
+	Fri,  6 Dec 2024 21:50:37 +0000 (UTC)
+Received: from [192.168.100.159] (unknown [50.251.239.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id A9BDD13C2B0;
+	Fri,  6 Dec 2024 13:50:34 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com A9BDD13C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1733521834;
+	bh=SlOkHsGxtavNtcjtMvgZX7xOljQP1nIyV8Lg4jBIN3Y=;
+	h=Date:To:From:Subject:From;
+	b=bo+6+gz6xa2NCCOO09Fa36ePSUpjoJYMQK5PlnGkEyNn7xqVsZ/upNS5t9dhU7GGP
+	 iT+N4qeKpTH7WDM5FkWmBDQbcumzeE78BlsDOD7kNM2SdS/Rrtd0NHUiIC2qfOjTeF
+	 OEqpZPE05Gmj/LGWVrRBoLsuYiJjgUAuj8EK91/o=
+Message-ID: <1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com>
+Date: Fri, 6 Dec 2024 13:50:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+To: Suren Baghdasaryan <surenb@google.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Language: en-US
+From: Ben Greear <greearb@candelatech.com>
+Subject: BISECTED: 'alloc_tag: populate memory for module tags as needed'
+ crashes on boot.
+Organization: Candela Technologies
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-MDID: 1733521838-Ed6IaDlzvP9F
+X-MDID-O:
+ us5;at1;1733521838;Ed6IaDlzvP9F;<greearb@candelatech.com>;b4c026870a3b52e78af0ca2564020f08
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-Convert the driver to clk_bulk*() API.
-Add check for the return value of clk_bulk_enable() to catch
-the potential error.
+Hello Suren,
 
-Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled when LEVEL IRQ requested")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
+My system crashes on bootup, and I bisected to this commit.
 
-v2 -> v3:
+0f9b685626daa2f8e19a9788625c9b624c223e45 is the first bad commit
+commit 0f9b685626daa2f8e19a9788625c9b624c223e45
+Author: Suren Baghdasaryan <surenb@google.com>
+Date:   Wed Oct 23 10:07:57 2024 -0700
 
-1. Convert clk_disable_unprepare to clk_bulk_disable
-and clk_bulk_unprepare.
+     alloc_tag: populate memory for module tags as needed
 
-v1 -> v2:
+     The memory reserved for module tags does not need to be backed by physical
+     pages until there are tags to store there.  Change the way we reserve this
+     memory to allocate only virtual area for the tags and populate it with
+     physical pages as needed when we load a module.
 
-1. Move int ret declaration into if block.
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 28 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+The crash looks like this:
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 5b7fa77c1184..0ef912e82736 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -86,7 +86,6 @@ struct stm32_pinctrl_group {
- 
- struct stm32_gpio_bank {
- 	void __iomem *base;
--	struct clk *clk;
- 	struct reset_control *rstc;
- 	spinlock_t lock;
- 	struct gpio_chip gpio_chip;
-@@ -108,6 +107,7 @@ struct stm32_pinctrl {
- 	unsigned ngroups;
- 	const char **grp_names;
- 	struct stm32_gpio_bank *banks;
-+	struct clk_bulk_data *clks;
- 	unsigned nbanks;
- 	const struct stm32_pinctrl_match_data *match_data;
- 	struct irq_domain	*domain;
-@@ -1308,7 +1308,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 	if (IS_ERR(bank->base))
- 		return PTR_ERR(bank->base);
- 
--	err = clk_prepare_enable(bank->clk);
-+	err = clk_prepare_enable(pctl->clks[pctl->nbanks].clk);
- 	if (err) {
- 		dev_err(dev, "failed to prepare_enable clk (%d)\n", err);
- 		return err;
-@@ -1397,7 +1397,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 	return 0;
- 
- err_clk:
--	clk_disable_unprepare(bank->clk);
-+	clk_disable_unprepare(pctl->clks[pctl->nbanks].clk);
- 	return err;
- }
- 
-@@ -1631,11 +1631,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 			fwnode_handle_put(child);
- 			return -EPROBE_DEFER;
- 		}
--
--		bank->clk = of_clk_get_by_name(np, NULL);
--		if (IS_ERR(bank->clk)) {
-+		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
-+		if (IS_ERR(pctl->clks[i].clk)) {
- 			fwnode_handle_put(child);
--			return dev_err_probe(dev, PTR_ERR(bank->clk),
-+			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
- 					     "failed to get clk\n");
- 		}
- 		i++;
-@@ -1646,8 +1645,8 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 		if (ret) {
- 			fwnode_handle_put(child);
- 
--			for (i = 0; i < pctl->nbanks; i++)
--				clk_disable_unprepare(pctl->banks[i].clk);
-+			clk_bulk_disable(pctl->nbanks, pctl->clks);
-+			clk_bulk_unprepare(pctl->nbanks, pctl->clks);
- 
- 			return ret;
- 		}
-@@ -1726,10 +1725,8 @@ static int __maybe_unused stm32_pinctrl_restore_gpio_regs(
- int __maybe_unused stm32_pinctrl_suspend(struct device *dev)
- {
- 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
--	int i;
- 
--	for (i = 0; i < pctl->nbanks; i++)
--		clk_disable(pctl->banks[i].clk);
-+	clk_bulk_disable(pctl->nbanks, pctl->clks);
- 
- 	return 0;
- }
-@@ -1738,10 +1735,11 @@ int __maybe_unused stm32_pinctrl_resume(struct device *dev)
- {
- 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
- 	struct stm32_pinctrl_group *g = pctl->groups;
--	int i;
-+	int i, ret;
- 
--	for (i = 0; i < pctl->nbanks; i++)
--		clk_enable(pctl->banks[i].clk);
-+	ret = clk_bulk_enable(pctl->nbanks, pctl->clks);
-+	if (ret)
-+		return ret;
- 
- 	for (i = 0; i < pctl->ngroups; i++, g++)
- 		stm32_pinctrl_restore_gpio_regs(pctl, g->pin);
+BUG: unable to handle page fault for address: fffffbfff4041000
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 44d0e7067 P4D 44d0e7067 PUD 44d0e3067 PMD 10bb38067 PTE 0
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 UID: 0 PID: 319 Comm: systemd-udevd Not tainted 6.12.0-rc6+ #21
+Hardware name: Default string Default string/SKYBAY, BIOS 5.12 02/15/2023
+RIP: 0010:kasan_check_range+0xa5/0x190
+Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 ce 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 d0 0f 84 b29
+RSP: 0018:ffff88812c26f980 EFLAGS: 00010206
+RAX: fffffbfff4041000 RBX: fffffbfff404101e RCX: ffffffff814ec29b
+[  OK  DX: fffffbfff4041018 RSI: 00000000000000f0 RDI: ffffffffa0208000
+0m] Finished BP: fffffbfff4041000 R08: 0000000000000001 R09: fffffbfff404101d
+;1;39msystemd-udR10: ffffffffa02080ef R11: 0000000000000003 R12: ffffffffa0208000
+ev-trig…e R13: ffffc90000dac7c8 R14: ffffc90000dac7e8 R15: dffffc0000000000
+- Coldplug All uFS:  00007fe869216b40(0000) GS:ffff88841da00000(0000) knlGS:0000000000000000
+dev Devices.
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4041000 CR3: 0000000121e86002 CR4: 00000000003706f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <TASK>
+[  OK  ? __die+0x1f/0x60
+0m] Reached targ ? page_fault_oops+0x258/0x910
+et sysi ? dump_pagetable+0x690/0x690
+nit.target - ? search_bpf_extables+0x22/0x250
+  System Initiali ? trace_page_fault_kernel+0x120/0x120
+zation.
+  ? search_bpf_extables+0x164/0x250
+  ? kasan_check_range+0xa5/0x190
+  ? fixup_exception+0x4d/0xc70
+  ? exc_page_fault+0xe1/0xf0
+[  OK  ? asm_exc_page_fault+0x22/0x30
+0m] Reached targ ? load_module+0x3d7b/0x7560
+et netw ? kasan_check_range+0xa5/0x190
+ork.target - __asan_memcpy+0x38/0x60
+  Network.
+  load_module+0x3d7b/0x7560
+  ? module_frob_arch_sections+0x30/0x30
+  ? lockdep_lock+0xbe/0x1b0
+  ? rw_verify_area+0x18d/0x5e0
+  ? kernel_read_file+0x246/0x870
+  ? __x64_sys_fspick+0x290/0x290
+  ? init_module_from_file+0xd1/0x130
+  init_module_from_file+0xd1/0x130
+  ? __ia32_sys_init_module+0xa0/0xa0
+  ? lock_acquire+0x2d/0xb0
+  ? idempotent_init_module+0x116/0x790
+  ? do_raw_spin_unlock+0x54/0x220
+  idempotent_init_module+0x226/0x790
+  ? init_module_from_file+0x130/0x130
+  ? vm_mmap_pgoff+0x203/0x2e0
+  __x64_sys_finit_module+0xba/0x130
+  do_syscall_64+0x69/0x160
+  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7fe869de327d
+Code: 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 248
+RSP: 002b:00007ffe34a828d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 0000557fa8f3f3f0 RCX: 00007fe869de327d
+RDX: 0000000000000000 RSI: 00007fe869f4943c RDI: 0000000000000006
+RBP: 00007fe869f4943c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000020000
+R13: 0000557fa8f3f030 R14: 0000000000000000 R15: 0000557fa8f3d110
+  </TASK>
+Modules linked in:
+CR2: fffffbfff4041000
+---[ end trace 0000000000000000 ]---
+
+I suspect you only hit this with an unlucky amount of debugging enabled.  The kernel config I used
+is found here:
+
+http://www.candelatech.com/downloads/cfg-kasan-crash-regression.config
+
+I will be happy to test fixes.
+
+Thanks,
+Ben
+
 -- 
-2.34.1
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
 
 
