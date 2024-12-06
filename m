@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-434784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1499E6B44
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:05:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3B19E6B49
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EBF280F8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B11D285F05
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F331F4737;
-	Fri,  6 Dec 2024 10:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD461DFDAE;
+	Fri,  6 Dec 2024 10:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="taDKLzgB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pLk7R9x1"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ovbQ6e1x"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E051DFDAE;
-	Fri,  6 Dec 2024 10:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DF31EC013
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733479522; cv=none; b=HiftvcKngyRQlMoWX1ujnov7Rsxc3Le3IScyt5MK0X/vT9iuNDNHbpPD8tm1sjzDZGZ3Q3BZiBO8BuMqdplL+rfgNRSExXmnMpXeNlh944oG1ssgHuyT1U0nIZeHEs10O5fF0TAftfCZ9zNqKjjB/io4Dz1TyAnlVpYQPNCAQsA=
+	t=1733479590; cv=none; b=JjHp9xtha0Efiu4k/qJ9SRoYCX2YiVaBR4vYpvGBDBzOSJOBSokNc1N6uYeTF9S9rMcizXIbGJrJT+B/l0vsvz/UzxsRXWUc7qiRQ7En/z9zqKvAvUcoHz7K7SOM9Er3l/WuZPrlr+4l5i3Aa/r3ai+f97acyU5ZQwXg2Ak1OsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733479522; c=relaxed/simple;
-	bh=RrA8I8dF0J92FZTcmFvmsnpScWk0YFpUbKH70ww5FzI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=FUdXXqNdDYNoGwFOsDAXoYmcjIgGiaSruaE0KlzxRARSCmQnHjIq2NErdwh93RYLGUpu53hxX5n49P1RrNHxJtDllvRC5LIlvGpVRSsoxldlfrjnaJwCyMwmdzbLLhG5Y7EDNdrVpIeSLpNfr7TYWpqQTfsok6wPqaELf80Hq2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=taDKLzgB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pLk7R9x1; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 16D072540190;
-	Fri,  6 Dec 2024 05:05:19 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 06 Dec 2024 05:05:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733479518;
-	 x=1733565918; bh=inPW88KNR+Skr6L3XiROaAs7CBIGj/blbIFxaE3cAdA=; b=
-	taDKLzgB3LVPGgKXx9CVvD9CFlR8mKmUw2wyqungAF8LOmhJmywxorozkHJzyNEg
-	+09OJ0rbmFYpW3eAiWL7XngrtXIOMGob1Bkr2VBxsYrkIeM3flR1m2PA8cSVVKQy
-	BlWux3u24Lg6UaA12/oeOPkO8/wlD4XSx/+Arq0SRYNvBQ1IzmYNIpNdcLr94fxc
-	SqFhvJqc5MTvbc0IIUL8B0o8NAGZouuBPaMufX4n3l84OH9val1lnGXUXtGA7k3r
-	8I6ahpo6rLlCPIemjSd55vQfhPFHdXQuX7zI4cbGWZfwFhz4YEc1KPPtWLcqMG1h
-	ns6pAr7IpZ4W/hQyFcoxsg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733479518; x=
-	1733565918; bh=inPW88KNR+Skr6L3XiROaAs7CBIGj/blbIFxaE3cAdA=; b=p
-	Lk7R9x1R9MVIUPlREpL5Wi80EBtc6f0BxfVs4yN+t+Z/9FNBB9cFYzrS74vH3Q8p
-	njds9mr7+a30GjDQyHSrur4w42auc3ZVQ7Kz90rRIQMexV3z0tneUT7ji7hwpnF3
-	yJfNlWdz/StqX66P7uC2sXnOyipdG9VcuzY7kxwqfO2zvie0+dlNO3i67R2Q3NSq
-	G9+sABtSfcqt5Mv7OqUByQcSUvLi+zdt7ujXPdLCnwKgit4FyI93pN0PJH5xNpYe
-	1HtMJZ8QiS9EHFJyKgTNCo06wespVgMTc7jqWtkzf4fT0SWBrkBw4JQ6bbb7XEC/
-	MB8BMxgCLrvJm3sUBURMQ==
-X-ME-Sender: <xms:XsxSZ51DMsHQtsOy1NFCl3mf9jM3AXQdxcnERVf3tI813Omnm1WCIA>
-    <xme:XsxSZwH01y0x_9Ma-VsAUXwVFuof2yco1Hos1Vc89r4NipTFSpwJJQq39pZiSvcmJ
-    aSCnb6S49KAG39yMXM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieelgddutdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvg
-    htpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphht
-    thhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitg
-    gvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrghes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhh
-    sehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsggvnhhnohdrlh
-    hoshhsihhnsehprhhothhonhdrmhgv
-X-ME-Proxy: <xmx:XsxSZ54ieFB7nJHhiGNt9BbAgOfWqZsK1lPt855ZSq6oQQW2qG70xw>
-    <xmx:XsxSZ20dzGQY39KJJBERmnDSJKG2PdJog0uvqAFO7ZIxXbARTNFaVg>
-    <xmx:XsxSZ8E5GDBqdjOEr1at5iCm82ozWC93F6QSN_wJgIk65gVPU6pwYA>
-    <xmx:XsxSZ3-ZBluVtrDRRYNzRI4b7Dsol543PPVWnzmCMmv6rhqsdzZ81A>
-    <xmx:XsxSZzfft_Xlo4HEVGEON0HDZ3EFDnMmOWnLkI0EecQ8Ir_iQyy5pU4U>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 7AAB22220072; Fri,  6 Dec 2024 05:05:18 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733479590; c=relaxed/simple;
+	bh=gr0wVuYzqbScFxXpZ52+ApK6ae+ON1Z8MAshwsB0Z0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FaEYm01x3Jz8wqk48/RA0K8amt8z7p7Czwzp3ITYkiXcCgNG0tst0ggJSLAnnrUwvDwcXvL4ACaWZ0nKx4sWutFEMib0IWk1n4qXrRktg1l6GDOPRYitLy8S5h9W9HkTu+VX2ngzRgCVFPp/zi3WRbBcIvpTJUXe8kGluFHW6p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ovbQ6e1x; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3002c324e7eso11621911fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 02:06:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733479587; x=1734084387; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1kq5iLCatZqMNd1JIiH/Yx41KIxb4a7s0lro7kXyn4Y=;
+        b=ovbQ6e1xHMUfZ/yLCzDdtPXrQFQLPHEgon+O1P3uGNkton6ekWi/ee/ALbUahAqzKv
+         kJrtaZ9u8yd3BcqbPBsPdggm/U1aMkLm3Yzkg4By4vtMwN8T4KP7g0nteEDUMks/WJZN
+         HmEtXsOQEQKLHdD2VQj9ah6IHx1Y+Pta1mdvzNhOjWaOSBJzhQdMriIHUHhsPWQaSl0L
+         AjxLzKWy1YXiEo8wJMPAOtvjfLY0mxmmyJVMJ8grsGyykFFb0aVa8ZYDOl0vbaOynMPr
+         23rW/bDHm0LT0blbR0DS4+J9+NYmqC+e461AO8PC32JuWvYg/4n93fZck/hXTgmtG7td
+         cKQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733479587; x=1734084387;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1kq5iLCatZqMNd1JIiH/Yx41KIxb4a7s0lro7kXyn4Y=;
+        b=rBY3pzqzpc5kWP14ce8Gl2Z4S/3WR5+uZgD3JEaSF+dRxfE94hpZK9Y/FLWODSKDBW
+         ssHT0RQEvBfCSyWtfGK15QsPNWz7X0UTP6jLwJxKovDh/Hcy0XNsY6CK/8SblWjVdbvg
+         mRSTYa3yzFbvPs2VTl+LrpBMxhKupvGbuNetLWgVACFjK1WcaB3vTjK4OVpjk05p6251
+         MHTO55afimpLzeWsyfKDAqhU/MSDKJ2VDD3HMxhwkQ/L+zUwPahONk0esFqZLNUM1srK
+         Ddk+qRMM0dFXW0CobuMQFGvWD0Rih2+zJv7paCo8qdCwYM3Vvv2og7RPGWJdVmE3QMEq
+         e6gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFRemrUMdPdWAaK6EyrnewB4luJraxAoHx+4enC/Ee+8PZ0pPkeIajAsI+IpeEbs6SJ81yv/kkCHpm6B8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytxbaxs4piIZHAZDazsKPo3+7LnnABT0UUYwD+EyNmbbT+wQ9c
+	+imwYZhYh2jNbC+snaFKxwkYBiLwmYken/eZ3rHbIkON4RL3D9IBwz97OlEtwF8=
+X-Gm-Gg: ASbGncuFAFgjdf0eDZgXNYgtk7GOShgqC9eGj1g1ql/ClE3kGadVnIf8eKeZTj7T8XF
+	y5aDC0iHo9BL0Wm6SX5mmY1DwlWm41zYrkCXu+FoFkq9EyWhe+xI4zxxMQ2ElpirxsfoAMHC1n1
+	H1CVn/wBg3yMsnHEzqwpcX2loTNn6K/u1/zVb1RbhsBzGvsZZfbbx0Rf/RmrTm+p5wMdgRcMfAx
+	tCjqcOB+VUA1WyChIFzJQ4vcElk6qwqRA1UgeqNJW2sVo87Opfx/QyK1JyyCsY=
+X-Google-Smtp-Source: AGHT+IGGeMStTSdxcTd5bpMThyqNxEJJDfbzMe1IIVhlqf6bA9rVonkja56z4SWniuJeI0/SbZItnQ==
+X-Received: by 2002:a2e:be11:0:b0:300:17a3:7af3 with SMTP id 38308e7fff4ca-3002f9140d2mr10549571fa.17.1733479587170;
+        Fri, 06 Dec 2024 02:06:27 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a48ab4sm1949019a12.27.2024.12.06.02.06.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 02:06:26 -0800 (PST)
+Message-ID: <e5f89ace-3a22-41a7-aafe-1365f2fd9bcd@linaro.org>
+Date: Fri, 6 Dec 2024 10:06:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 06 Dec 2024 11:04:57 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lee Jones" <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org
-Message-Id: <57c35f7f-76e8-4e21-8288-c66a1b6e7069@app.fastmail.com>
-In-Reply-To: <20241206090515.752267-5-lee@kernel.org>
-References: <20241206090515.752267-1-lee@kernel.org>
- <20241206090515.752267-5-lee@kernel.org>
-Subject: Re: [PATCH v4 2/4] samples: rust: Provide example using the new Rust
- MiscDevice abstraction
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/16] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.zapolskiy@linaro.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20241205155538.250743-1-quic_depengs@quicinc.com>
+ <20241205155538.250743-12-quic_depengs@quicinc.com>
+ <0909a2b2-089d-41f3-82e6-f0e05682ce27@linaro.org>
+ <2515c9d8-0e9d-4e1e-b8ff-764b53ea3edb@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <2515c9d8-0e9d-4e1e-b8ff-764b53ea3edb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 6, 2024, at 10:05, Lee Jones wrote:
-> This sample driver demonstrates the following basic operations:
->
-> * Register a Misc Device
-> * Create /dev/rust-misc-device
-> * Provide open call-back for the aforementioned character device
-> * Operate on the character device via a simple ioctl()
-> * Provide close call-back for the character device
->
-> Signed-off-by: Lee Jones <lee@kernel.org>
+On 06/12/2024 02:18, Depeng Shao wrote:
+> 
+> Since the camss driver just support ife, so I think only ife related 
+> iommus are needed, just like we don't add ipe,bps,jpeg related clk and 
+> register in the dt-binding.
+> 
+>      msm_cam_smmu_ife {
+> 
+>          compatible = "qcom,msm-cam-smmu-cb";
+> 
+>          iommus = <&apps_smmu 0x800 0x20>;
+>          ......
+>      };
 
-Could you include a compat_ioctl() callback in the example?
-I think it would be good to include it as a reminder for
-authors of actual drivers that every driver implementing
-ioctl should also implement compat_ioctl. In C drivers, this
-can usually be done by pointing .compat_ioctl() to the
-generic compat_ptr_ioctl() function, which assumes that 'arg'
-is a pointer disguised as an 'unsigned long'.
+Upstream camss entries provide a long list of iommu entries, please 
+provide as complete a table as you can here.
 
-      Arnd
+---
+bod
 
