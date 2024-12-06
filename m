@@ -1,330 +1,240 @@
-Return-Path: <linux-kernel+bounces-434422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AD29E669A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:05:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E999E669B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40E51883C78
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:05:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D453A168E12
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F3D194C6F;
-	Fri,  6 Dec 2024 05:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E4B194A5A;
+	Fri,  6 Dec 2024 05:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="js7IAl73"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LKAlgiOD"
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D052C17991;
-	Fri,  6 Dec 2024 05:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733461543; cv=fail; b=Acwn323yqkem2AtRnsfXWnCjdkF4irylULfkAd0C9p3WwBMv13Z+n+MngKqLwHW+xmD9NA8ys9OUqOFUmXaxMK6/D+z81i79q90xa1I/WNpiEg1Va4fmlZ1QdVvlc1vzgn/HttCpyj/eqr1gipaw/MVhXObFCPnAlDFBw3hr/YU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733461543; c=relaxed/simple;
-	bh=fdhBH87PyP8IfhEbfB9cfRdxXovmrw5ZMVsNSfJkAd8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ri98+ic99oIJd5EdXbCrcafOuId5y6AqQ4tNw4I4EU7JvKxygYGtYkNRqMR9lNOCt1LfjgqILrtgTejsH6sye75Y4U6hYLdyNHbwX+My0Kb5R5/69LV74qfBExKmtodjnAStSCDcH65QlHcGifxZQAHuaPQfW986ElIYIwoRDsY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=js7IAl73; arc=fail smtp.client-ip=40.107.93.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A9JlXNnRyoqmlv6C4ED5DKCzJtKfsf8tjtca/EGPdSZAtigVUpsYNm34Y14q/YezKt2aoFJVnCXYYomn69/oCNdy000DRjd/cAUg9HAFSV10y3oF/qxOL+spra5isfpQKWFWt1lnvl8L9uVZd5O4w9Hr9w8qY+9ADFZAYqrx4zJQv0yFLCdISKE1wimtdY5ZpAa7rWIZDzn+8XenIzgC5GjbCU8BG0vdv4OxiZFvPqYI256OHwvmYBn4J/H4kkalToAvOYiq9KTJUOsYbytf9kMRwk8iXJS39stsBOBecc7Sb2BKlb/k4QqGbdSRuNy/ILwNMdEpxIVk9C0PCpN2gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CGSs5sBDbxZqIgtZXJYK1uvdvrd28vzDeUB796uBrSc=;
- b=F46bsz+dT25puHHnOOA48gdFTzMROxdNkCwN9tJfXyUtSpGmVSydbgCgwkVOx8zhKKmJEkUBLGWG4SVnpo0xhde7mDLEP3JX4CidOBO47ZOWUecvG8crzSD7JKLe7tbgDmpcstwP8kEjnt5qX535ISkWxM1NRDfZruTzOkWIQwpzQ0QI4P1Rjlbq2TIGxhJvxLS9+oMcBSzttoh/78e9Hp9eKX0wZ4rXuMqbx70+7rLvnVFawryuTpWQfH88CQaorfrzJB2YWeADWNYIYguZuxeOTc4r+4WKsZYGxHUe6RH1QfjJILc+Ga3r4zQDk4Jaqrj2L+Q6FhylcOMH5FpJ/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CGSs5sBDbxZqIgtZXJYK1uvdvrd28vzDeUB796uBrSc=;
- b=js7IAl731+kxJ7Lj/3vXJ/jqa2zvYBvHgJoA8cDogNRQtDGT8zrbRPdKRkfNO2+QLvYvEJwnTSe5YMm1oRY1vfPgD1iiFlgkl7zH8JhQcl1cK50YsXR5VLEv5+NDzKqmjco6+ntHwEr3rlpl34ymRLcvR2mYVZdiL5B1olhMUf0=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by CH3PR12MB9121.namprd12.prod.outlook.com (2603:10b6:610:1a1::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Fri, 6 Dec
- 2024 05:05:38 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%6]) with mapi id 15.20.8207.014; Fri, 6 Dec 2024
- 05:05:38 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: "Limonciello, Mario" <Mario.Limonciello@amd.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Shenoy,
- Gautham Ranjal" <gautham.shenoy@amd.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "Ugwekar, Dhananjay" <Dhananjay.Ugwekar@amd.com>
-Subject: RE: [PATCH 01/15] cpufreq/amd-pstate: Add trace event for EPP perf
- updates
-Thread-Topic: [PATCH 01/15] cpufreq/amd-pstate: Add trace event for EPP perf
- updates
-Thread-Index: AQHbR2UYMqO9DiI+H0uHJI4iq0FzhrLYqScg
-Date: Fri, 6 Dec 2024 05:05:38 +0000
-Message-ID:
- <CYYPR12MB8655972F2F9698BA604F869E9C312@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <20241205222847.7889-1-mario.limonciello@amd.com>
- <20241205222847.7889-2-mario.limonciello@amd.com>
-In-Reply-To: <20241205222847.7889-2-mario.limonciello@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=0239ce26-61dd-48f3-9033-4ee48da73436;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-12-06T05:01:55Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|CH3PR12MB9121:EE_
-x-ms-office365-filtering-correlation-id: 5363918e-6c5b-485d-b1f1-08dd15b39fe2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?tA3cHQ4C4HBlYj1KB8Wk/59J4dfnoBeom35nNvT8N4v6iAp7J6gJdawFc5AA?=
- =?us-ascii?Q?r0aLgEP4LGT3nhB/d9YDOqFkh+eWzScZhzZ9lOnV57WjcfC1YWpWmQoUpAmY?=
- =?us-ascii?Q?iyGg5oOIGdiGlPAr5GTaJ9mU8hZ4S0z2BxKZPLUR8/n4XKncYa/ZrB7ueTXv?=
- =?us-ascii?Q?quXzPo4m8ry32fI+D0d7gDXhRc5YwW0Tb47S8YKQ3xfX3mmj3VXg7SeXbwC1?=
- =?us-ascii?Q?Id07g1QYnVa9DziBPdWxFDyhLLLs1qBDQi11Nkpfy04+bptBpon4Rt4W+aWq?=
- =?us-ascii?Q?PM2Mg/zUMeZhwug+R2ABV7Felxw+DyfU4AInfiwkstnodwg8EsIyBIDCnIdk?=
- =?us-ascii?Q?G0tujvJFD8Nmt/79sesHZIiYMA87jP70TPVxclyJtx3GHau3iP/4awRKKEYG?=
- =?us-ascii?Q?LVW1+i6j2T6ZP3+sff6i0SPKcSwNFl2ku9h0mJwFeBr+XRfqnP25quQygMnd?=
- =?us-ascii?Q?344+eUzZAPbo/WNfHBqtze32dm1HlqE4+Qyvzz9EAc5Z6foqXxu2oCwZ5d23?=
- =?us-ascii?Q?hMNNsUDhTyG9NpieZ6AhDNLS1JUFhKHOy0HXxeqPHiFZzhIelOn6iWuYMhJ5?=
- =?us-ascii?Q?1pQxCTdTEtbA9M2GCTQRvllPyvYaYLXaNgFUBzHVnVRLmfyvvLDROkZnMWFZ?=
- =?us-ascii?Q?SLhYPZZyvT4xcjakIy8iyYBeRgEUYfQwJdFMP2PWnKuCjuqBUurT1xN52rv0?=
- =?us-ascii?Q?beLA/MgyNRJ89lgTOaG/NzEGEO6Y2Xgi8PsMEa2/QfU0Anpw4ZSyQcOMyt8H?=
- =?us-ascii?Q?FJwZhJBNMo5zCudnn0kI4C0x65N8rQxnUybaFYJ+dmZgu4WQrmvFoOYcdxhM?=
- =?us-ascii?Q?2o80qXwmCimD30zzwj/GVKku7W7bkl/7vohwq+Dyi0i0oySSSGzTS4zHisEd?=
- =?us-ascii?Q?ZnftX83REFWXNjAyBbOpA0rCoIa5t4oZPdL9exQiOcM3gszvSoWBYVYpBMnH?=
- =?us-ascii?Q?VCxtKoNyszk3Lz4Q1z4hO1THEw5bfzfmw9x2K1XEqy7Cor3vxZ+Appp/7GAS?=
- =?us-ascii?Q?25lmgXoMdLsYPa8pp3l18mNNukY7uIPbx2IKBkk5oQioF3ULMGVSUWKl+W1K?=
- =?us-ascii?Q?2TSzjxpu6d/CJSw0EqSNIRJqG5lHY2q7gnxkCyXHYPG7rTZdeVrxz/zuZ1xY?=
- =?us-ascii?Q?uO6539wQMvwRcAfMTPL/zPbCVtgY+p1d93me4gpebMymvz7VmLdpjCI+OH5w?=
- =?us-ascii?Q?Du5MlebySWOIOTc59XHMA8U/7XES5aYAicMDaFT3hSI8HAa5GsxlGEttTiw8?=
- =?us-ascii?Q?COepEFzgTKkGXfQ2+ip+Q7rBwybnZQfLcVykKUR3OHzyQKppSCt/4RWHGdAP?=
- =?us-ascii?Q?OfjQT1crOT9awX8xz40LbAgDxP+qX26tuiZU0Y5t0FEOPNmZGJ0Mw231zi68?=
- =?us-ascii?Q?wG+hZtKXwTd+JNyy0VqOC8bsCjdTJT5E/BN6+SKIVb7VmYC7MQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?c3tCG0HU+gTp0BXpF0rg0OFRsPD1Fs2u2jOTZLVhhr7/8D9VNmaigorRTEUW?=
- =?us-ascii?Q?neG/vB632UbeFxwArSi3Dg2hVcvlEGiEYAMk92aKLbrUWCIj1JOrSTWU9WP/?=
- =?us-ascii?Q?Y686vhuH1UFhbQbTvQ1kcWIbWg2hdIz40uRJp4r6briAucGz85GQl0YIWnjO?=
- =?us-ascii?Q?5AVytHQFj+oaa4KP/P8XzdBCAl64TqEqoYjvWXnK8o7JfuO2rvD5KjZIELwW?=
- =?us-ascii?Q?JlGB9BfCaDyYkWB+/zHZ3hqkRar3rhonwbiCxqOllLdmJI72ksnkDRikWS5B?=
- =?us-ascii?Q?mepWB+C83gK5ulQDs7znO5qm9/bNP56Oakv4zuqxS/2D4Su9FpiU4PqDHRaD?=
- =?us-ascii?Q?YyARRuyVQgH63H5a9llqouQeThJddePadTkhSkdedX8cOQ8RJSy1AKIagG6/?=
- =?us-ascii?Q?fwXP6hmduc1RT9G9oSXBNoK7NpLOfVwuQDIy/qiabVi73motPfcUcU3g+yod?=
- =?us-ascii?Q?q1eH+6/yo16xwXAJwiBxzIRXG1afTRkAZPy5hPrADSR8PRQbZvy3+6MeHfqj?=
- =?us-ascii?Q?CpmefUnCl8b5bmhquGwD9nNlHgzM1yWdyenNbVEEhkbS02UTqfPPp/1I7hk/?=
- =?us-ascii?Q?y/ZmxATSk/tDog4/LmK6Y6SxSgF57GW5E/N16Yn0p1MdFIvOwGTNLCHumbvB?=
- =?us-ascii?Q?R6oHvpExjXdmtajQecDBT3HBLD/NfwODUKRV+fAdv4zSmsAX0gbziFoyAdgh?=
- =?us-ascii?Q?uN4Sowqci/L1sqku/I4VwxWpVzGV1UldRv3H5igWj/PlYakssm3eE9M1G4Ln?=
- =?us-ascii?Q?iS1c+Gdmgh4/nxFeQ0DMJO1wscg7RsBPbXYWUkhUWU0hPrrnyCaE509yi/ee?=
- =?us-ascii?Q?mGfXWvF3TWMV+3RkF9vH3Av8dGarJ3kz45M/qMQSoI6f9D0XK1SJXBgtoEuJ?=
- =?us-ascii?Q?APUjAreBJanVocQ7VsWi+NNqD9hvAmY+K6ezoz9JFilxT07OK13qSKAe0XDp?=
- =?us-ascii?Q?KiTdUCoX1d4UoMxszPfkwqtaPMSOLnf0CbvGagczk665+x6ztrX09N7DTBwR?=
- =?us-ascii?Q?PhJ25A8PrwzS19IzeUCbZVrlu+8YDei4q2zHxF98JyAcPDQ2Gg8FK8Nsi7R2?=
- =?us-ascii?Q?cGTWjS4OjSY2XX8c5Gdi1n2srEpfDnDj9Xkymz71RiIfwFcOtLdSDuKbhkaW?=
- =?us-ascii?Q?cyv+cWt57rNsdo4quw+EIadUB/mKCf9NAEJyOh5lcLPV7zXBCG6c/zIFUdy2?=
- =?us-ascii?Q?9tL5apaeKJ4nP4daRq2+I6ApgZ7or8KoTPPzB9V4FiFJ0qJhr7Z1E3go49s1?=
- =?us-ascii?Q?IO/93y3X1MWq3deM2/0rZu511VE+kBz1HBrTNrGcuptLp3PQ5bJWTTUgRDYe?=
- =?us-ascii?Q?28wucYOWenbiA7L087xSw4l2JZFQNYS3EfWkT25WnpJOwoBuh3Xoex6GSFCQ?=
- =?us-ascii?Q?tqCv+CWHM/quEosU9M+4bQLeDuwnP+d34eCFLTPfX60RI3hV/qXxHk1QT6ZF?=
- =?us-ascii?Q?w157ZNkILdk2wKW70A0LNT8yb2NaLflokhn3hB9bX1S3WVqNFFc3nJkkmJOs?=
- =?us-ascii?Q?DDgQzvHXqqnqb3NL1wTQq/Dip/UwvBF3HY66Ncgvd8p6JGr6Nc7Zc20rn7Aw?=
- =?us-ascii?Q?T2fOlKtq2V7n9oTKrBg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C84517991
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 05:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733461797; cv=none; b=MACeP+XjEBy+YdgzHpJ6YOh02VjdHc54w1HETchwGKBnFttusxUzItwzYc2cG54RchdhIu3cfx5nOqbTIirrcES6e46TDqfVtFJ0wP17Nn0T031eyRcoS6FPvDg4F1TcJKt2BHFVIQh41pa0my4rIyuOfBealVJ4oZEKGDUvdSU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733461797; c=relaxed/simple;
+	bh=ZTvg3MAnXF3FnQmppIr63+0w4AjFyXv+5q4Mt7ix0Yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dMhZFV5qaq/PjJIVszoqDtbulSvUzN6uScruVhaQs8lq0HRyzfDkhlay/4spz3oghMZssH9yX77yKAmyU3rgn9+7sDIfXusJMgEGLEHTwnKGGsZqvF6Yp5nXJAcASS/e0CnAeAmQe2Tmcu8WnszOO7tWFdgKSG6Wv/GgAQKxWoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LKAlgiOD; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-85b804c0157so349138241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 21:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733461794; x=1734066594; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F8xIv+n+nDGR2NlbcHUc54eH2vCVwy0Vf5TmzPNyKhM=;
+        b=LKAlgiODcQsK852getJOr7PJAuSh/UWvxQulxPQwby5l6m22NtaXRHrUiZ5nKJG8kf
+         OVVpwdNqdfu/o+se34QdR954bMNCAGTCPwgFpP+yBmERz79u1l2rGXrsZsK+N6SZ4VVE
+         RsrZAsvEq+59N3WXFImLrNaKsCV1/wl08bn6C37DRia+SfZ2ViY/tx7cFVz25dHijivt
+         PcKe+vx1T/nA68ibdzxBGwdMFpmJUMoi+mH12NUF9S34pS/L4a8/jdE6Yp9iAUb+e2ZJ
+         zRccmp8ZJDKJ0YUmOlxQZjxcujjBj+MKc7QGkV51JIMmWp2f0o/OtbOl0QxuAjGgt2dU
+         25Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733461794; x=1734066594;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F8xIv+n+nDGR2NlbcHUc54eH2vCVwy0Vf5TmzPNyKhM=;
+        b=Z2KXS5TJMLVCszRMs8IXP6KOm4Lc1Ga2AoEVsaX8oph9A3wP1pWryOBVabV7k2b4wG
+         JY8RUkhSKcQubu5F3XLibKHoXjIHvr7AKU2Vo0LVtX+Eh29omrbtJ0XSZ++pgcy4W+2E
+         yhey99zGuzI48AgZX0LDsFvUEDp6gvQqPyw7X6IKGC8kgmLaWK74tOIXph/xu9ShcteU
+         JLCk3JKETpch4eXc274yBV6ybk//Vu35OK1ta1t8tHNmD9YAw21Vb+sHaQyIbP+PEwVV
+         WctTnr8eSrrH5rTfBkOzG3gEuXfcIYInN/yVdQqi9x40OZZNGLGdL9s0CcbOfI0gvXpR
+         RPoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSckkIhbPfxe6SC5NiwVhiPNg/o3VyqL0zj2ccDf6tfPfp+a4Sckl4rp2TEJm+qpTrGu/7yVhOCcG6CT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9Z38SAhrCEyobDHiKgAMXmCgwF2+5Z+XroV686fTbLyUs9qcx
+	e/1C0G6IcfP2TksdkSzM5GJesQYd2jGgXFa11ZGcy/iZJwUiRGonYDsVi+81RE2pyh4zN8sP9yp
+	GVhoZSyti4G35mfBq2DGQokfL+cc=
+X-Gm-Gg: ASbGnctgTIA3t4KwNyLd2lZyD4S4+uPa8IqTbCLRcXu2hlJ/mKfBDr5Uz2t7ethq3F1
+	fw8dxXUwWfu2EW5NvZIrYNSBGcORI3tiXhUbWe0QVDDeWUm9k8zZTGYeVGiitYAXVdA==
+X-Google-Smtp-Source: AGHT+IEdXmm3BCnqc5bm40aVNvGcUI1BO0166flqOho2p5LFZEnRt8SQR4Ca8ljT6jPmy5mghkIGggGXvt0ueKBmS+Q=
+X-Received: by 2002:a05:6102:3a13:b0:4af:a967:65c5 with SMTP id
+ ada2fe7eead31-4afcaa28a8cmr2507868137.10.1733461794020; Thu, 05 Dec 2024
+ 21:09:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5363918e-6c5b-485d-b1f1-08dd15b39fe2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2024 05:05:38.1784
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZC7+HKQe1qaSsRhRQ2r0H/HK0nW6Qo5dw3CeN86mZ13yM+3HCszZB0AmDY5/8uG7WU/a2bHDm2gkNQ+Mp1Pw8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9121
+References: <20240717071257.4141363-1-ryan.roberts@arm.com>
+ <480f34d0-a943-40da-9c69-2353fe311cf7@arm.com> <CAGsJ_4z8kh4Pn-TUrVq6FALR1J5j4fpvQkef2xPFYPWdWfXdxA@mail.gmail.com>
+In-Reply-To: <CAGsJ_4z8kh4Pn-TUrVq6FALR1J5j4fpvQkef2xPFYPWdWfXdxA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 6 Dec 2024 18:09:43 +1300
+Message-ID: <CAGsJ_4y=5xvZsWWiZoGh6eqhh+NXCsztyeLVbraUrxR=ruhWzw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/4] Control folio sizes used for page cache memory
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>, 
+	Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+It's unusual that many emails sent days ago are resurfacing on LKML.
+Please ignore them.
+By the way, does anyone know what happened?
 
-> -----Original Message-----
-> From: Limonciello, Mario <Mario.Limonciello@amd.com>
-> Sent: Friday, December 6, 2024 6:29 AM
-> To: Shenoy, Gautham Ranjal <gautham.shenoy@amd.com>
-> Cc: Yuan, Perry <Perry.Yuan@amd.com>; linux-kernel@vger.kernel.org; linux=
--
-> pm@vger.kernel.org; Ugwekar, Dhananjay <Dhananjay.Ugwekar@amd.com>;
-> Limonciello, Mario <Mario.Limonciello@amd.com>
-> Subject: [PATCH 01/15] cpufreq/amd-pstate: Add trace event for EPP perf u=
-pdates
+On Fri, Dec 6, 2024 at 5:12=E2=80=AFAM Barry Song <baohua@kernel.org> wrote=
+:
 >
-> In "active" mode the most important thing for debugging whether an issue =
-is
-> hardware or software based is to look at what was the last thing written =
-to the CPPC
-> request MSR or shared memory region.
+> On Thu, Aug 8, 2024 at 10:27=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.co=
+m> wrote:
+> >
+> > On 17/07/2024 08:12, Ryan Roberts wrote:
+> > > Hi All,
+> > >
+> > > This series is an RFC that adds sysfs and kernel cmdline controls to =
+configure
+> > > the set of allowed large folio sizes that can be used when allocating
+> > > file-memory for the page cache. As part of the control mechanism, it =
+provides
+> > > for a special-case "preferred folio size for executable mappings" mar=
+ker.
+> > >
+> > > I'm trying to solve 2 separate problems with this series:
+> > >
+> > > 1. Reduce pressure in iTLB and improve performance on arm64: This is =
+a modified
+> > > approach for the change at [1]. Instead of hardcoding the preferred e=
+xecutable
+> > > folio size into the arch, user space can now select it. This decouple=
+s the arch
+> > > code and also makes the mechanism more generic; it can be bypassed (t=
+he default)
+> > > or any folio size can be set. For my use case, 64K is preferred, but =
+I've also
+> > > heard from Willy of a use case where putting all text into 2M PMD-siz=
+ed folios
+> > > is preferred. This approach avoids the need for synchonous MADV_COLLA=
+PSE (and
+> > > therefore faulting in all text ahead of time) to achieve that.
+> >
+> > Just a polite bump on this; I'd really like to get something like this =
+merged to
+> > help reduce iTLB pressure. We had a discussion at the THP Cabal meeting=
+ a few
+> > weeks back without solid conclusion. I haven't heard any concrete objec=
+tions
+> > yet, but also only a luke-warm reception. How can I move this forwards?
 >
-> The 'amd_pstate_epp_perf' trace event shows the values being written for =
-all CPUs.
+> Hi Ryan,
 >
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/cpufreq/amd-pstate-trace.h | 45 ++++++++++++++++++++++++++++++
->  drivers/cpufreq/amd-pstate.c       | 28 +++++++++++++++++++
->  2 files changed, 73 insertions(+)
+> These requirements seem to apply to anon, swap, pagecache, and shmem to
+> some extent. While the swapin_enabled knob was rejected, the shmem_enable=
+d
+> option is already in place.
 >
-> diff --git a/drivers/cpufreq/amd-pstate-trace.h b/drivers/cpufreq/amd-pst=
-ate-trace.h
-> index 35f38ae67fb13..e2221a4b6901c 100644
-> --- a/drivers/cpufreq/amd-pstate-trace.h
-> +++ b/drivers/cpufreq/amd-pstate-trace.h
-> @@ -88,6 +88,51 @@ TRACE_EVENT(amd_pstate_perf,
->                )
->  );
+> I wonder if it's possible to use the existing 'enabled' setting across
+> all cases, as
+> from an architectural perspective with cont-pte, pagecache may not differ=
+ from
+> anon. The demand for reducing page faults, LRU overhead, etc., also seems
+> quite similar.
 >
-> +TRACE_EVENT(amd_pstate_epp_perf,
-> +
-> +     TP_PROTO(unsigned int cpu_id,
-> +              unsigned int highest_perf,
-> +              unsigned int epp,
-> +              unsigned int min_perf,
-> +              unsigned int max_perf,
-> +              bool boost
-> +              ),
-> +
-> +     TP_ARGS(cpu_id,
-> +             highest_perf,
-> +             epp,
-> +             min_perf,
-> +             max_perf,
-> +             boost),
-> +
-> +     TP_STRUCT__entry(
-> +             __field(unsigned int, cpu_id)
-> +             __field(unsigned int, highest_perf)
-> +             __field(unsigned int, epp)
-> +             __field(unsigned int, min_perf)
-> +             __field(unsigned int, max_perf)
-> +             __field(bool, boost)
-> +             ),
-> +
-> +     TP_fast_assign(
-> +             __entry->cpu_id =3D cpu_id;
-> +             __entry->highest_perf =3D highest_perf;
-> +             __entry->epp =3D epp;
-> +             __entry->min_perf =3D min_perf;
-> +             __entry->max_perf =3D max_perf;
-> +             __entry->boost =3D boost;
-> +             ),
-> +
-> +     TP_printk("cpu%u: [%u<->%u]/%u, epp=3D%u, boost=3D%u",
-> +               (unsigned int)__entry->cpu_id,
-> +               (unsigned int)__entry->min_perf,
-> +               (unsigned int)__entry->max_perf,
-> +               (unsigned int)__entry->highest_perf,
-> +               (unsigned int)__entry->epp,
-> +               (bool)__entry->boost
-> +              )
-> +);
-> +
->  #endif /* _AMD_PSTATE_TRACE_H */
+> I imagine that once Android's file systems support mTHP, we=E2=80=99ll un=
+iformly enable
+> 64KB for anon, swap, shmem, and page cache. It should then be sufficient =
+to
+> enable all of them using a single knob:
+> '/sys/kernel/mm/transparent_hugepage/hugepages-xxkB/enabled'.
 >
->  /* This part must be outside protection */ diff --git a/drivers/cpufreq/=
-amd-pstate.c
-> b/drivers/cpufreq/amd-pstate.c index 66fb7aee95d24..4d1da49d345ec 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -324,6 +324,14 @@ static int amd_pstate_set_energy_pref_index(struct
-> amd_cpudata *cpudata,
->               return -EBUSY;
->       }
+> Is there anything that makes pagecache and shmem significantly different
+> from anon? In my Android case, they all seem the same. However, I assume
+> there might be other use cases where differentiating them is necessary?
 >
-> +     if (trace_amd_pstate_epp_perf_enabled()) {
-> +             trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_pe=
-rf,
-> +                                       epp,
-> +                                       AMD_CPPC_MIN_PERF(cpudata-
-> >cppc_req_cached),
-> +                                       AMD_CPPC_MAX_PERF(cpudata-
-> >cppc_req_cached),
-> +                                       cpudata->boost_state);
-> +     }
-> +
->       ret =3D amd_pstate_set_epp(cpudata, epp);
+> >
+> > Thanks,
+> > Ryan
+> >
+> >
+> > >
+> > > 2. Reduce memory fragmentation in systems under high memory pressure =
+(e.g.
+> > > Android): The theory goes that if all folios are 64K, then failure to=
+ allocate a
+> > > 64K folio should become unlikely. But if the page cache is allocating=
+ lots of
+> > > different orders, with most allocations having an order below 64K (as=
+ is the
+> > > case today) then ability to allocate 64K folios diminishes. By provid=
+ing control
+> > > over the allowed set of folio sizes, we can tune to avoid crucial 64K=
+ folio
+> > > allocation failure. Additionally I've heard (second hand) of the need=
+ to disable
+> > > large folios in the page cache entirely due to latency concerns in so=
+me
+> > > settings. These controls allow all of this without kernel changes.
+> > >
+> > > The value of (1) is clear and the performance improvements are docume=
+nted in
+> > > patch 2. I don't yet have any data demonstrating the theory for (2) s=
+ince I
+> > > can't reproduce the setup that Barry had at [2]. But my view is that =
+by adding
+> > > these controls we will enable the community to explore further, in th=
+e same way
+> > > that the anon mTHP controls helped harden the understanding for anony=
+mous
+> > > memory.
+> > >
+> > > ---
+> > > This series depends on the "mTHP allocation stats for file-backed mem=
+ory" series
+> > > at [3], which itself applies on top of yesterday's mm-unstable (650b6=
+752c8a3). All
+> > > mm selftests have been run; no regressions were observed.
+> > >
+> > > [1] https://lore.kernel.org/linux-mm/20240215154059.2863126-1-ryan.ro=
+berts@arm.com/
+> > > [2] https://www.youtube.com/watch?v=3Dht7eGWqwmNs&list=3DPLbzoR-pLrL6=
+oj1rVTXLnV7cOuetvjKn9q&index=3D4
+> > > [3] https://lore.kernel.org/linux-mm/20240716135907.4047689-1-ryan.ro=
+berts@arm.com/
+> > >
+> > > Thanks,
+> > > Ryan
+> > >
+> > > Ryan Roberts (4):
+> > >   mm: mTHP user controls to configure pagecache large folio sizes
+> > >   mm: Introduce "always+exec" for mTHP file_enabled control
+> > >   mm: Override mTHP "enabled" defaults at kernel cmdline
+> > >   mm: Override mTHP "file_enabled" defaults at kernel cmdline
+> > >
+> > >  .../admin-guide/kernel-parameters.txt         |  16 ++
+> > >  Documentation/admin-guide/mm/transhuge.rst    |  66 +++++++-
+> > >  include/linux/huge_mm.h                       |  61 ++++---
+> > >  mm/filemap.c                                  |  26 ++-
+> > >  mm/huge_memory.c                              | 158 ++++++++++++++++=
++-
+> > >  mm/readahead.c                                |  43 ++++-
+> > >  6 files changed, 329 insertions(+), 41 deletions(-)
+> > >
+> > > --
+> > > 2.43.0
+> > >
+> >
 >
->       return ret;
-> @@ -1596,6 +1604,13 @@ static int amd_pstate_epp_update_limit(struct
-> cpufreq_policy *policy)
+> Thanks
+> Barry
 >
->       WRITE_ONCE(cpudata->cppc_req_cached, value);
->
-> +     if (trace_amd_pstate_epp_perf_enabled()) {
-> +             trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_pe=
-rf,
-> epp,
-> +                                       cpudata->min_limit_perf,
-> +                                       cpudata->max_limit_perf,
-> +                                       cpudata->boost_state);
-> +     }
-> +
->       amd_pstate_update_perf(cpudata, cpudata->min_limit_perf, 0U,
->                              cpudata->max_limit_perf, false);
->
-> @@ -1639,6 +1654,13 @@ static void amd_pstate_epp_reenable(struct
-> amd_cpudata *cpudata)
->
->       max_perf =3D READ_ONCE(cpudata->highest_perf);
->
-> +     if (trace_amd_pstate_epp_perf_enabled()) {
-> +             trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_pe=
-rf,
-> +                                       cpudata->epp_cached,
-> +                                       AMD_CPPC_MIN_PERF(cpudata-
-> >cppc_req_cached),
-> +                                       max_perf, cpudata->boost_state);
-> +     }
-> +
->       amd_pstate_update_perf(cpudata, 0, 0, max_perf, false);
->       amd_pstate_set_epp(cpudata, cpudata->epp_cached);  } @@ -1667,6
-> +1689,12 @@ static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *=
-policy)
->
->       mutex_lock(&amd_pstate_limits_lock);
->
-> +     if (trace_amd_pstate_epp_perf_enabled()) {
-> +             trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_pe=
-rf,
-> +
-> AMD_CPPC_EPP_BALANCE_POWERSAVE,
-> +                                       min_perf, min_perf, cpudata->boos=
-t_state);
-> +     }
-> +
->       amd_pstate_update_perf(cpudata, min_perf, 0, min_perf, false);
->       amd_pstate_set_epp(cpudata,
-> AMD_CPPC_EPP_BALANCE_POWERSAVE);
->
-> --
-> 2.43.0
-
-LGTM
-
-Reviewed-by: Perry Yuan <perry.yuan@amd.com>
 
