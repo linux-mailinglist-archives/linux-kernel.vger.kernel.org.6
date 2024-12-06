@@ -1,73 +1,278 @@
-Return-Path: <linux-kernel+bounces-435370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499B29E76AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:07:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E369E76AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:07:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07036286CA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B6E1882A24
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93ADD1F3D49;
-	Fri,  6 Dec 2024 17:07:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990AD1F3D5E;
+	Fri,  6 Dec 2024 17:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xjmI5jrH"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37610206274;
-	Fri,  6 Dec 2024 17:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5D2145A1C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733504825; cv=none; b=p7toaLeM7fkjFSDIj1xBEsGvWmy7N5+LbVzBjEBF3jMVkpy4vNapJL1BEtt1vx3Ms11rE4SoBMmU1emw5U65a1LYUmMbZENf2nQH8q4EBvQ8Z4CW7qyUhTG+RyJk374FaVbPtN0qMwPZ1qCsHo44Puozixy0tcKH+sEad6naKFI=
+	t=1733504848; cv=none; b=QkRMgUPS/xKuikqfWUPCBMlwSNnwnlG1AgdbX1ZS8IMUWvbXXxVfZmPc6T7wD1bjAeCLN4kAv8m9sr059KqF5W3MgiTO0tBxRqU+PenntHXM4kSXHynr/1rBu8CP7G0A/DoKyC+N1xMJEtJc2GqQGrT5o+h4NhwDal/xyTpFw9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733504825; c=relaxed/simple;
-	bh=Q586skKfDQhTq6OREz8sDPN/D5Ew+q2HHWTKe3sXCaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LOB4GKJ2BDB5pdBLamkz+m7+Vgx4bFrx2H3IWyqX0wg86QBhL0JQ4SXQL1HvxSBqUBcDUqLDprwKSmRmLYdCekX4j8UZtWf9W5WpjvYKVsMdxSnHc25EL8cVFjGSLr93r7mH2eanzEMrAX+KdPxNlonZMs/PCLYpntaCGNNk92g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7E0C4CED1;
-	Fri,  6 Dec 2024 17:07:04 +0000 (UTC)
-Date: Fri, 6 Dec 2024 12:07:09 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, linux-rt-users <linux-rt-users@vger.kernel.org>
-Subject: Can we switch the tracepoints from preempt protection to
- rcu_read_lock?
-Message-ID: <20241206120709.736f943e@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733504848; c=relaxed/simple;
+	bh=XM2fVk8BmpmZZgFdsT/Tztenzixcq7DzM15hBQ2FyuA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BUdSZENKl0GpVpQlEskwfKpAMnnxprf5FBeNoLJRPFXtMmjgeB7871k22HVIhw19OyPk42tExSzQ4hTfoT9cGS7EKv3EhpARPNjJ/Cr/XpPBZuKWIiZMzv+B22MZuhZ+u8mt3QVfLUXOYmEsn+QqsgzIwaJn3wneil71fP/AWiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xjmI5jrH; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d0f6fa6f8bso3250530a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 09:07:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733504845; x=1734109645; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vLpJg/ZXtkEHeTxDyyd4m3p5oVAzlFCx8NjwJbsinb4=;
+        b=xjmI5jrHn3oIuk+XHZNAV0DV7dyJ99ujN7IeZpWjjMNayTVRZTvV/ZebGzBKiZq+CT
+         xjVmurBKHffWCYk6yeaGsWMgzw0/YHQRrc5IbocyGGdx/AxlRKza2UWbPHGlpgaweP1j
+         zS9VUwvoRmKim5wjF1gxHnwLXP34f4ssd2BeWdgaopYMiknhuzuYpbemIdhG5KdgAGHl
+         ni3n4R5MrCQvOmyNXUSHRk819PlekHQ/t17d+n7j1aWlHF2Wy6eiKvhsLRxMreE96kPk
+         AfVJRPrW/Eqfh5BhiDstBnd8/u0lIUtDJWg/QNMZFh1gvK6+hftlT37B5gfpCczgheHu
+         QYcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733504845; x=1734109645;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vLpJg/ZXtkEHeTxDyyd4m3p5oVAzlFCx8NjwJbsinb4=;
+        b=XHlOWTMP2b0AAePp9idSEB8FQzEsEWDPtMQq+g1Ogc3DMZbze8X9GH/SPn4yN3rnWg
+         4ohods0BFAFqqwe+F9EXD9IQYL6mXEeprqJQ7W7kg/cTn5ZzsbjG1BjcdAnjY3Phd8xd
+         4zwhYBed0GC+H7mWF6x4eWMn4Qe+aXyElZKGnfZlAH43OSCWt0FTIeryfTbUlVlq8IYR
+         jzmu/73bsyYJ972yTHbb95EWQwIVqHgEYt6RMvFY1NSIDp4wMl23a8Yy/lOWKh7Jp51h
+         wrfSRRYaauWDxAyFzzydzm0LLh9FXb65ISA2qvFZ11ZKimAuRxpuin+Qv7RaD2GbLl11
+         /Oeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwnIgRrZ4e1PsjanFVSTlzc858pPujYAawdyvQD5i+wxPdp/o8U5S6j2Fosu2l4RfmDfI7nxBEjYqog5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9+66O1AaHdOTD9UMkMpiSJWBdaT0wrBANg4RKIT+QNXCA6cZL
+	U9/mn/U9yc/aBU+yEUSUoK7jWG4jDPGjFxOpu+rr5QzN2il/0MJwlkrTLcd74AA1pQVOgWPfv8z
+	9M0nuKNhAJdxE6IBtw6o2G36egFIbkgXBbX3Nmg==
+X-Gm-Gg: ASbGnctcM0LannCxwUcjxcsbRP8NRaLnib95IOFQYjpFbeM6/ZseUwRjZo3eNVtsoKC
+	FoX30RGoVY8BCe15m7Bk+kBxFydy7FMyBZuszdV3dfKM9GrwlQbSzNCEBQJ90cf//DA==
+X-Google-Smtp-Source: AGHT+IHRCNLjIBg+iMQYmfbQFP6R63D3BSZpfZaZ/J9rF+1bkY9cc2oTZoFpii/ei8CrYUwt6Tj9ffu61txKALNtkXQ=
+X-Received: by 2002:aa7:d1cb:0:b0:5d3:cff2:71a3 with SMTP id
+ 4fb4d7f45d1cf-5d3cff294f2mr2163067a12.33.1733504845038; Fri, 06 Dec 2024
+ 09:07:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com> <Z08+UnATLQQ6kmaD@p14s>
+ <1b7c8c21-37bc-4a1a-91bb-1d736d900f00@foss.st.com> <CANLsYkxk0NdKmbzOPEcVHbVpW9hPEz0gS-+9PysWMULDMxbkxw@mail.gmail.com>
+In-Reply-To: <CANLsYkxk0NdKmbzOPEcVHbVpW9hPEz0gS-+9PysWMULDMxbkxw@mail.gmail.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 6 Dec 2024 10:07:14 -0700
+Message-ID: <CANLsYkxqoN+CT6f=FHVsb_POgP9X8pp6-B+kQbybAU6qGMd5=w@mail.gmail.com>
+Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
+ optional operation
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mathieu,
+On Fri, 6 Dec 2024 at 10:05, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>
+> On Thu, 5 Dec 2024 at 11:22, Arnaud POULIQUEN
+> <arnaud.pouliquen@foss.st.com> wrote:
+> >
+> > Hello Mathieu,
+> >
+> > Thanks for the review!
+> > I just need to clarify a point below before preparing the next revision.
+> >
+> > On 12/3/24 18:22, Mathieu Poirier wrote:
+> > > On Thu, Nov 28, 2024 at 09:42:10AM +0100, Arnaud Pouliquen wrote:
+> > >> This patch updates the rproc_ops structures to include two new optional
+> > >> operations.
+> > >>
+> > >> - The load_fw() op is responsible for loading the remote processor
+> > >> non-ELF firmware image before starting the boot sequence. This ops will
+> > >> be used, for instance, to call OP-TEE to  authenticate an load the firmware
+> > >> image before accessing to its resources (a.e the resource table)
+> > >>
+> > >> - The release_fw op is responsible for releasing the remote processor
+> > >> firmware image. For instance to clean memories.
+> > >> The ops is called in the following cases:
+> > >>  - An error occurs between the loading of the firmware image and the
+> > >>    start of the remote processor.
+> > >>  - after stopping the remote processor.
+> > >>
+> > >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> > >> ---
+> > >> Update vs version V13:
+> > >> - Rework the commit to introduce load_fw() op.
+> > >> - remove rproc_release_fw() call from  rproc_start() as called in
+> > >>   rproc_boot() and rproc_boot_recovery() in case of error.
+> > >> - create rproc_load_fw() and rproc_release_fw() internal functions.
+> > >> ---
+> > >>  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
+> > >>  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
+> > >>  include/linux/remoteproc.h               |  6 ++++++
+> > >>  3 files changed, 35 insertions(+), 1 deletion(-)
+> > >>
+> > >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > >> index ace11ea17097..8df4b2c59bb6 100644
+> > >> --- a/drivers/remoteproc/remoteproc_core.c
+> > >> +++ b/drivers/remoteproc/remoteproc_core.c
+> > >> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> > >>      kfree(rproc->cached_table);
+> > >>      rproc->cached_table = NULL;
+> > >>      rproc->table_ptr = NULL;
+> > >> +    rproc_release_fw(rproc);
+> > >
+> > > This is not needed since rproc_release_fw() is called in rproc_boot().
+> > >
+> > >>  unprepare_rproc:
+> > >>      /* release HW resources if needed */
+> > >>      rproc_unprepare_device(rproc);
+> > >> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
+> > >>              return ret;
+> > >>      }
+> > >>
+> > >> +    ret = rproc_load_fw(rproc, firmware_p);
+> > >> +    if (ret)
+> > >> +            return ret;
+> > >> +
+> > >>      /* boot the remote processor up again */
+> > >>      ret = rproc_start(rproc, firmware_p);
+> > >> +    if (ret)
+> > >> +            rproc_release_fw(rproc);
+> > >>
+> > >>      release_firmware(firmware_p);
+> > >>
+> > >> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
+> > >>                      goto downref_rproc;
+> > >>              }
+> > >>
+> > >> +            ret = rproc_load_fw(rproc, firmware_p);
+> > >> +            if (ret)
+> > >> +                    goto downref_rproc;
+> > >
+> > > In case of error the firmware is not released.
+> >
+> > I considered that if the load fails, the firmware is not loaded
+> > and therefore does not need to be released.
+> > In other words, in case of a load error in OP-TEE, OP-TEE should
+> > perform the cleanup to return to its initial state before the load.
+> >
+> > Do you see a use case where we should force the release in Linux?
+> > Otherwise, I would propose to implement this behavior later if needed.
+> >
+>
+> I'm talking about release_firmware() - it is not called if
+> rproc_load_fw(), and it needs to.
 
-Sebastian brought up a point at our RT Stable meeting. BPF hooks into
-tracepoints and can cause long latency on RT setups.
+Take 2: I'm talking about release_firwware() - it is not called if
+rproc_load_fw() fails and it needs to.
 
-IIRC, tracepoints themselves do not need to have preemption disabled. It's
-just that some of the users of tracepoints expect preemption to be disabled.
-
-If we fix the users of tracepoints not to expect preemption to be disabled,
-then we could just switch the preempt_disable code (guard(preempt)) to
-rcu_read_lock()s for the tracepoint callbacks, right?
-
-There's a one or two places in ftrace that expect it, but I don't know
-enough about perf. I don't think BPF needs preemption disabled, but just
-migration disabled. I know you had some patches to work around this.
-
-We need to get BPF working without preemption disabled for RT, I'm not sure
-how much you know about what needs to be fixed.
-
-I'm not asking for you to do this work, but can you remind me what you saw
-when you created the faultable tracepoints?
-
-Thanks,
-
--- Steve
+>
+> > Thanks,
+> > Arnaud
+> >
+> > >
+> > >> +
+> > >>              ret = rproc_fw_boot(rproc, firmware_p);
+> > >> +            if (ret)
+> > >> +                    rproc_release_fw(rproc);
+> > >>
+> > >>              release_firmware(firmware_p);
+> > >>      }
+> > >> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
+> > >>      kfree(rproc->cached_table);
+> > >>      rproc->cached_table = NULL;
+> > >>      rproc->table_ptr = NULL;
+> > >> +    rproc_release_fw(rproc);
+> > >
+> > > Please move this after rproc_disable_iommu().
+> > >
+> > >
+> > >>  out:
+> > >>      mutex_unlock(&rproc->lock);
+> > >>      return ret;
+> > >> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+> > >>      if (!rproc->ops->coredump)
+> > >>              rproc->ops->coredump = rproc_coredump;
+> > >>
+> > >> -    if (rproc->ops->load)
+> > >> +    if (rproc->ops->load || rproc->ops->load_fw)
+> > >>              return 0;
+> > >>
+> > >>      /* Default to ELF loader if no load function is specified */
+> > >> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> > >> index 0cd09e67ac14..2104ca449178 100644
+> > >> --- a/drivers/remoteproc/remoteproc_internal.h
+> > >> +++ b/drivers/remoteproc/remoteproc_internal.h
+> > >> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
+> > >>      return (val <= (size_t) -1);
+> > >>  }
+> > >>
+> > >> +static inline void rproc_release_fw(struct rproc *rproc)
+> > >> +{
+> > >> +    if (rproc->ops->release_fw)
+> > >> +            rproc->ops->release_fw(rproc);
+> > >> +}
+> > >> +
+> > >> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
+> > >> +{
+> > >> +    if (rproc->ops->load_fw)
+> > >> +            return rproc->ops->load_fw(rproc, fw);
+> > >> +
+> > >> +    return 0;
+> > >> +}
+> > >> +
+> > >>  #endif /* REMOTEPROC_INTERNAL_H */
+> > >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> > >> index 2e0ddcb2d792..ba6fd560f7ba 100644
+> > >> --- a/include/linux/remoteproc.h
+> > >> +++ b/include/linux/remoteproc.h
+> > >> @@ -381,6 +381,10 @@ enum rsc_handling_status {
+> > >>   * @panic:  optional callback to react to system panic, core will delay
+> > >>   *          panic at least the returned number of milliseconds
+> > >>   * @coredump:         collect firmware dump after the subsystem is shutdown
+> > >> + * @load_fw:        optional function to load non-ELF firmware image to memory, where the remote
+> > >
+> > > Round this down to 80 characters please.  Here having a longer line doesn't
+> > > improve readability.
+> > >
+> > >> + *          processor expects to find it.
+> > >> + * @release_fw:     optional function to release the firmware image from memories.
+> > >> + *          This function is called after stopping the remote processor or in case of error
+> > >
+> > > Same.
+> > >
+> > > More comments tomorrow or later during the week.
+> > >
+> > > Thanks,
+> > > Mathieu
+> > >
+> > >>   */
+> > >>  struct rproc_ops {
+> > >>      int (*prepare)(struct rproc *rproc);
+> > >> @@ -403,6 +407,8 @@ struct rproc_ops {
+> > >>      u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> > >>      unsigned long (*panic)(struct rproc *rproc);
+> > >>      void (*coredump)(struct rproc *rproc);
+> > >> +    int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
+> > >> +    void (*release_fw)(struct rproc *rproc);
+> > >>  };
+> > >>
+> > >>  /**
+> > >> --
+> > >> 2.25.1
+> > >>
 
